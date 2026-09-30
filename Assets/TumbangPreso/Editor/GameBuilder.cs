@@ -812,6 +812,7 @@ namespace TumbangPreso.EditorTools
                 // written to fix, and only in the player. That is the worst possible failure to
                 // debug, which is why this line exists rather than being trusted to the fallback.
                 "TumbangPreso/ToonTransparent",
+                "TumbangPreso/DanteBarrier",
 
                 // ⚠️ THE COLOUR GRADE, FOR THE SAME REASON AND WITH A WORSE FAILURE. `ColourGrade`
                 // reaches it through `Shader.Find` too, and its miss path blits the frame through

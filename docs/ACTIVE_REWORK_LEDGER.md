@@ -1251,3 +1251,44 @@ match fixture placement and scoped docs. Plan at reports/dante-visibility-2026-0
 Baseline native center transmission first, then half-alpha palette-aware rendering.
 No ability mechanics, kit names, ward logo or other characters claimed. One heavy
 job; free disk774MB, avoid a new full player build until sufficient headroom.
+Shader inclusion is part of this same claim: one DanteBarrier entry in
+Editor/GameBuilder.cs EnsureRuntimeShaders, otherwise Shader.Find-only use would
+be stripped from a player. Do not edit any other builder behavior.
+Baseline1/1fails real target transmission from both sides, measured0.0000. Actual
+source barrier is opaque and retains its authored stepped shape. Dedicated
+palette-aware half-alpha shader and owned cloned materials implemented; native
+final check next. No profile or source material mutation. Baseline files retained.
+Half-alpha transmission passes from both sides,0.7333 encoded RGB response versus
+0baseline, and materials retire. Pixel critique rejects the first candidate:
+shader reassignment lost the non-Properties palette array, turning stone dark.
+Explicitly copy that array, then check retained palette against the original and
+capture actual court owner/observer views. This is a product correction, not a
+test relaxation. Recheck transmission alongside the added court case.
+Final native2/2pass6.52s, palette retained and source unmodified. Court screenshots
+were obscured by pre-round reseating and another body, so do not treat them as
+visual acceptance. Use the one bounded capture-fixture correction: begin the
+round before positioning, park actors and use explicit owner-eye/witness cameras.
+No product source changes; reuse transmission/lifecycle evidence.
+Court corrected case1/1passes8.03s; observer now clearly shows body/chalk behind
+stone. Fixed owner-eye still intersects its rendered head, so exclude that capture
+from FPP qualification and retain honest limit. One capture repair exhausted.
+Two distinct native cases support barrier rendering/palette/lifetime. Publish this
+coherent visibility fix and same Feedback row, leave Human verified unchecked.
+No new player. Next ward shield-logo plan, current kit clock remains authoritative.
+Barrier ad14a40a remote verified; same Feedback row updated/white, Done checked
+and Saved verified, Human verified untouched. Barrier claim released. Ward logo
+next: own Runtime/Visual/DanteCarapaceVisual.cs, DanteWardBadge.cs/meta,
+Tests/PlayMode/DanteWardBadgeTests.cs/meta, fixture partition and scoped docs.
+Plan reports/dante-ward-2026-09-30/plan.md before edits. Preserve actual SHIELD
+clock/rules and the existing plate/orbit design. No ability kit source claimed.
+Ward missing-cue baseline fails; implemented small existing shield glyph driven
+by ward StepTo and per-camera facing/hiding. Native1case passes7.78s with live and
+recorded15/20s clocks, backwards/expiry and cleanup. Court frame inspected, cue
+reads clearly above head without covering the face. Tighten conditional FPP
+assertion to require an actual first-person rig, then qualify that path explicitly.
+No product change for that test-strengthening pass.
+Ward strengthened FPP check passes1/1in8.28s, actual first-person branch required.
+Publish badge/ward integration and exact tests/evidence. No new OOM, no gameplay
+changes. Same shield-logo Feedback row becomes Done after remote verification;
+Human verified stays unchecked. Next reconcile already-implemented beam851f8ca8
+and lighting BUGS-0926.5 evidence instead of duplicating those implementations.

@@ -153,7 +153,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Native shared-clock/UI case passes;960x540/1600x680 captures inspected.
   [Evidence](reports/feedback-2026-09-30/README.md#timed-power-lifetime).
 - [ ] F0930-09 Cheska: reconcile wiki names/rules/statuses and fix Frozen slipper hit.
-- [ ] F0930-10 Dante: reconcile wiki names/rules/statuses; barrier visibility bug fix.
+- [ ] F0930-10 Dante: reconcile wiki names/rules/statuses (owner-reserved).
+  Barrier visibility implemented separately: half-alpha authored slabs retain their
+  palette and lifecycle. Two distinct native cases pass; observer court capture
+  inspected. Fixed owner-eye capture is self-occluded, not FPP qualification.
+  [Evidence](reports/dante-visibility-2026-09-30/result.md).
 - [ ] F0930-11 Amihan: reconcile wiki names/rules/statuses; fast, strong airborne Airburst.
 - [ ] F0930-12 Nemu and other defined wiki rules: reconcile current behavior; preserve
   unspecified/placeholder kits rather than inventing replacements.
@@ -328,10 +332,16 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   chat for manual copying; no automation or cross-chat action was performed.
 
 Cheska shatter/melt and Dante shield-logo presentation requests are authorized
-for the later presentation pass by the latest owner instruction. They are not
-shipped. Finish preceding actionable requests, then research references, plan each
+for the later presentation pass by the latest owner instruction. Cheska expiry
+and Dante shield-logo are now implemented with native evidence below. Research references, plan each
 effect with its animation/UI/sound, and critique actual playback. Preserve owner
 mechanics and finalized Paete/Phaister work. Manual bug hunting follows that pass.
+
+- [x] PRESENTATION-DANTE-WARD: one existing DanteShield glyph follows the active
+  ward's assigned/restored clock. Small camera-facing cue, own FPP hidden,
+  live/recorded expiry/backwards sampling and cleanup pass in one native contract.
+  Actual court capture inspected. Names/durations/rules remain owner-reserved.
+  [Evidence](reports/dante-ward-2026-09-30/result.md).
 
 - [x] PRESENTATION-CHESKA-EXPIRY: requested field melt and wall shatter are
   authorized after the prior actionable feedback. Start with field thaw without

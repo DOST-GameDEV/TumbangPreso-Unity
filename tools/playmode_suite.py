@@ -175,7 +175,7 @@ GROUPS = [
      """, [
         "AiLaneTests", "ArenaBoundsProbe", "BotMotionProbe", "CarriedSlipperSelfHideProbe",
         "CarryTests", "MapRetrievalProbe", "EmoteCameraProbe", "EmoteLifecycleProbe", "FppFrameProbe",
-        "CheskaExpiryPresentationTests", "CheskaIceContractProbe", "IceTractionProbe", "NemuKitContractProbe", "MapRouteProbe",
+        "DanteWardBadgeTests", "DanteVisibilityTests", "CheskaExpiryPresentationTests", "CheskaIceContractProbe", "IceTractionProbe", "NemuKitContractProbe", "MapRouteProbe",
         "RetrievalSlideTests", "HitFreezeProbe", "SecondMatchLifecycleProbe",
         "AudioListenerProbe",
         "FppOccluderProbe", "LandedHighlightTests", "LataFloatProbe", "MatchRunTests",
