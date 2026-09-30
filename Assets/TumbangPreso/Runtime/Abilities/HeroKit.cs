@@ -438,7 +438,7 @@ namespace TumbangPreso.Abilities
             if(ability.IsActive&&ability.CanReactivate)return ability.ReactivateReady?CastOutcome.Cast:CastOutcome.NotYet;
             if(PracticeMode)return CastOutcome.NotYet;
             if(!ability.IsReady)return CastOutcome.Cooling;
-            if(ctx?.Motor!=null&&!ctx.Motor.CanAct())return CastOutcome.CannotAct;
+            if(ctx?.Motor!=null&&!ctx.Motor.CanAct()&&!ability.AllowsImpairedCast(ctx))return CastOutcome.CannotAct;
             return ability.CanActivate(ctx)?CastOutcome.Cast:CastOutcome.CannotAct;
         }
         private CastOutcome Fire(HeroAbility ability, AbilityContext ctx)

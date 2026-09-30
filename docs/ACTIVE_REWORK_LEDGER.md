@@ -1,6 +1,6 @@
 # Active Rework Checkpoint
 
-Updated2026-10-01. Branch ASTRAReworks. Protocol106 candidate. Goal active.
+Updated2026-10-01. Branch ASTRAReworks. Protocol107 candidate. Goal active.
 Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 
 ## Live Local Resume
@@ -1545,3 +1545,14 @@ Next Dante ward/Bastion claim per plan: DanteHeroKit.cs, HeroAbility.cs/HeroKit.
 scoped disabled-cast exception, GeoRules ward/barrier values, NetSession.cs,
 Core numeric assertion, new DanteWardRuleTests.cs/meta and partition. Baseline
 frozen press, metadata and tag preservation before changes. No heavy job active.
+
+Ward baseline3/3fails: stale name, frozen press refused and delayed accepted ward
+erases Tagged. Add the signature-only impaired-cast exception, preserve Tagged/
+trip/round/pause gates, protect tagged state during accepted replay. Update ward
+15s/40s and Bastion35s/name. Final6native cases cover offline press, ordinary-skill
+refusal, host validation, tag retention, expiry and pause/warmup. Protocol107.
+
+Ward final6/6native1.35s and8Core pass, no guard/OOM. Publish exact signature
+eligibility/tag-preservation and current ward/Bastion names/clocks. Existing art
+unchanged. Full Dante row stays open for held-slipper Boulder and forward cascade.
+No heavy job active; fresh remote/claims before next unit.

@@ -66,12 +66,16 @@ namespace TumbangPreso.Abilities
             private DanteCarapaceVisual _ward;
 
             public Shield(DanteHeroKit kit)
-                : base("dante_skill1", "SHIELD",
-                       "Stone armour for 20 s. No status can touch you (except a tag), and casting it shakes off what you already have.",
+                : base("dante_skill1", "UNSTOPPABLE",
+                       "Remove removable negative effects and gain Status Immunity for 15 s. Tagged cannot be removed.",
                        GeoRules.ShieldCooldown, GeoRules.ShieldSeconds, AbilityGlyph.DanteShield,
-                       summary: "20 s of stone armour: no statuses land on you.",
+                       summary: "Cleanse removable effects and gain 15 s of Status Immunity.",
                        castAction: "hero-dante-roar", viewmodelAction: "carapace-guard",
                        castCue: "sfx_cast_dante_shield") { _kit = kit; }
+
+            public override bool AllowsImpairedCast(AbilityContext ctx)
+                => ctx?.Motor != null && ctx.Round?.RoundActive == true
+                    && !PresentationClock.BlocksInput && !ctx.Motor.IsTagged && !ctx.Motor.IsTripped;
 
             public void RestoreWard(AbilityContext ctx, float remaining)
             {
@@ -85,7 +89,7 @@ namespace TumbangPreso.Abilities
             {
                 _kit._joiningCarapaceSettled = true;
                 NetCue.Play("guard_block", ctx.Position);
-                ctx.Motor.ClearStun();
+                if (!ctx.Motor.IsTagged) ctx.Motor.ClearStun();
                 ctx.Motor.CleanseStatuses();
                 if (_ward != null) UnityEngine.Object.Destroy(_ward.gameObject);
                 _ward = DanteCarapaceVisual.Attach(ctx.Motor, false, Duration);
@@ -144,7 +148,7 @@ namespace TumbangPreso.Abilities
             private CharacterMotor _owner;
 
             public Barrier()
-                : base("dante_skill2d", "BARRIER",
+                : base("dante_skill2d", "BASTION",
                        "Defending. A wide stone force field in front of you for 7.5 s. It follows you, and every slipper that hits it flies back.",
                        GeoRules.BarrierCooldown, GeoRules.BarrierSeconds, AbilityGlyph.DanteBarrier,
                        summary: "A force field in front of you reflects slippers.",

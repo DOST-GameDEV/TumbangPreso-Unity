@@ -165,6 +165,9 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Earthbound incoming distance now approximately halves impulses/carries;4native
   cases plus the affected authored Airburst interaction pass. Classic/lift retained.
   [Passive evidence](reports/dante-wiki-2026-09-30/earthbound.md).
+  Unstoppable15s/40s and Bastion7.5s/35s now match; frozen signature input
+  cleanses while Tagged/pause/warmup remain protected. Six native/eight Core
+  checks pass; protocol107. [Ward evidence](reports/dante-wiki-2026-09-30/ward.md).
   Barrier visibility implemented separately: half-alpha authored slabs retain their
   palette and lifecycle. Two distinct native cases pass; observer court capture
   inspected. Fixed owner-eye capture is self-occluded, not FPP qualification.

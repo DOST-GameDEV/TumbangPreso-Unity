@@ -75,6 +75,14 @@ the simulating owner; its motor applies the kit factor once. Replica pose adopti
 does not reapply it. Held speed/time use sqrt(distance scale), lift stays unchanged.
 No new packet fields. Classic and default-one kits keep their existing behavior.
 
+## Unstoppable Compatibility
+
+Protocol107 aligns Dante ward/Bastion timing and permits only the cleanse
+signature to cross ordinary impairment in an active unpaused round. Tagged and
+physical trips still refuse it. Host validation uses the same ability eligibility
+as offline input; accepted playback cannot clear a newer tag. No packet layout
+changes. Existing bound timed-kit recovery reads the corrected15second duration.
+
 ## Cosmetic Reworks
 
 Cheska protocol103: the current Wiki7.5s field,1.5s ultimate delay/every-player

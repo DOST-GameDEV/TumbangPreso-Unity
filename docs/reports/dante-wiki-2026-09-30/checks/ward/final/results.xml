@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 23:21:57Z" end-time="2026-09-30 23:21:59Z" duration="1.3474142">
+  <test-suite type="TestSuite" id="2262" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1019" result="Passed" start-time="2026-09-30 23:21:57Z" end-time="2026-09-30 23:21:59Z" duration="1.347414" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2256" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1019" result="Passed" start-time="2026-09-30 23:21:57Z" end-time="2026-09-30 23:21:59Z" duration="1.337774" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="202137" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2257" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1019" result="Passed" start-time="2026-09-30 23:21:57Z" end-time="2026-09-30 23:21:59Z" duration="1.334741" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2258" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1019" result="Passed" start-time="2026-09-30 23:21:57Z" end-time="2026-09-30 23:21:59Z" duration="1.332052" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1269" name="DanteWardRuleTests" fullname="TumbangPreso.PlayTests.DanteWardRuleTests" classname="TumbangPreso.PlayTests.DanteWardRuleTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-30 23:21:57Z" end-time="2026-09-30 23:21:59Z" duration="1.310093" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1272" name="AcceptedWardCannotEraseANewerTag" fullname="TumbangPreso.PlayTests.DanteWardRuleTests.AcceptedWardCannotEraseANewerTag" methodname="AcceptedWardCannotEraseANewerTag" classname="TumbangPreso.PlayTests.DanteWardRuleTests" runstate="Runnable" seed="6724101" result="Passed" start-time="2026-09-30 23:21:57Z" end-time="2026-09-30 23:21:58Z" duration="0.256119" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1271" name="FrozenPlayerCanPressUnstoppable" fullname="TumbangPreso.PlayTests.DanteWardRuleTests.FrozenPlayerCanPressUnstoppable" methodname="FrozenPlayerCanPressUnstoppable" classname="TumbangPreso.PlayTests.DanteWardRuleTests" runstate="Runnable" seed="790316993" result="Passed" start-time="2026-09-30 23:21:58Z" end-time="2026-09-30 23:21:58Z" duration="0.260219" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1273" name="HostValidatedFrozenCastUsesTheSameCleanse" fullname="TumbangPreso.PlayTests.DanteWardRuleTests.HostValidatedFrozenCastUsesTheSameCleanse" methodname="HostValidatedFrozenCastUsesTheSameCleanse" classname="TumbangPreso.PlayTests.DanteWardRuleTests" runstate="Runnable" seed="2089291002" result="Passed" start-time="2026-09-30 23:21:58Z" end-time="2026-09-30 23:21:58Z" duration="0.242227" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1275" name="PauseAndWarmupStillRefuseCleanse" fullname="TumbangPreso.PlayTests.DanteWardRuleTests.PauseAndWarmupStillRefuseCleanse" methodname="PauseAndWarmupStillRefuseCleanse" classname="TumbangPreso.PlayTests.DanteWardRuleTests" runstate="Runnable" seed="1386198285" result="Passed" start-time="2026-09-30 23:21:58Z" end-time="2026-09-30 23:21:58Z" duration="0.238336" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1270" name="WardAndBastionMatchCurrentWiki" fullname="TumbangPreso.PlayTests.DanteWardRuleTests.WardAndBastionMatchCurrentWiki" methodname="WardAndBastionMatchCurrentWiki" classname="TumbangPreso.PlayTests.DanteWardRuleTests" runstate="Runnable" seed="76647498" result="Passed" start-time="2026-09-30 23:21:58Z" end-time="2026-09-30 23:21:58Z" duration="0.045657" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1274" name="WardExpiresAtTheCurrentFifteenSeconds" fullname="TumbangPreso.PlayTests.DanteWardRuleTests.WardExpiresAtTheCurrentFifteenSeconds" methodname="WardExpiresAtTheCurrentFifteenSeconds" classname="TumbangPreso.PlayTests.DanteWardRuleTests" runstate="Runnable" seed="898689305" result="Passed" start-time="2026-09-30 23:21:58Z" end-time="2026-09-30 23:21:59Z" duration="0.253598" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
