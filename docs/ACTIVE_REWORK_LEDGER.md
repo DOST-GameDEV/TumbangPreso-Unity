@@ -679,3 +679,34 @@ progress chrome retires, friendly defender/student controls remain, lesson reent
 stops AI. Three captures inspected. Reading2.5s is unchanged/reuses prior proof.
 Publish explicit paths; append the same Doc row and strikethrough only these
 resolved Human comments, preserving words/screenshots and existing Done history.
+Tutorial d2fe951d is pushed/remote verified. Same Feedback note appended and the
+three resolved new comments struck through natively; the2.5s comment and completed
+round follow-up are also struck, preserving all wording. Readback confirms. Tutorial
+paths release. User went to sleep16:08; keep routine updates in the Doc quiet.
+
+Next narrow cloud-render diagnosis, before trusting further visual review:
+prior evidence rules out camera grade, screen-space outline, ink hull and shadows.
+Private isolated fixture only, no runtime/art change: compare the same actual main
+camera/materials with the camera-scoped world-look weight disabled, then with only
+its ramp texture replaced for the diagnostic frame. Capture globals/material inputs.
+Question: is corruption in the world-look shader branch/ramp, rather than model
+or ordinary lighting? One bounded graphics run,3captures, stop at discriminating
+result. No shader/asset claim or modification until evidence identifies the cause.
+Cloud world-look diagnosis is discriminating: same live frame remains corrupt
+with world weight0, but replacing only the ramp texture with white restores normal
+body/prop colors. Global weight, key/soft-light vectors and material palette length
+are valid. This narrows the fault to the ramp lookup, not authored geometry.
+Next isolated experiment changes ONLY opaque Toon ramp lookup from implicit tex2D
+to explicit level0 tex2Dlod; the authored ramp has no mipmaps. Reuse the same3frame
+comparison. No source shader edit yet; retain original candidate shader bytes.
+Stop after captures establish whether implicit lookup is the mechanism. No fixed
+claim or Windows reproduction inferred. Previous run exits0 with no extra OOM.
+Explicit level0 lookup restores the authored opaque body/prop colours in the same
+full-map native frame, with the original ramp retained. No geometry/material edits.
+The implicit sample is the reproducing path; a no-mipmap ramp does not need screen
+texture derivatives. Claim Assets/TumbangPreso/Shaders/Toon.shader,
+Assets/TumbangPreso/Shaders/ToonTransparent.shader and
+Assets/TumbangPreso/Tests/PlayMode/WorldCourtCueTests.Stage.cs plus TODO/evidence.
+Both shaders share the same ramp lighting formula; preserve all palette/tuning.
+Add focused native opaque/transparent lighting-contract checks, not broad rework.
+Register the cloud/Linux-only defect in Feedback; Windows reproduction unverified.
