@@ -1225,3 +1225,11 @@ verification. Current player predates these presentation fixes; build a coherent
 integration candidate later rather than repeating a full build for every effect.
 No heavy job active. Next fresh Feedback intake, then remaining authorized
 presentation rows (Dante shield/status cue, beam/settings where specified).
+
+Dante barrier visibility claim,2026-09-30: source3256934b clean, fetched and no
+remote divergence. Own Runtime/Visual/GeoVfx.cs barrier-only material assignment,
+Shaders/DanteBarrier.shader/meta, Tests/PlayMode/DanteVisibilityTests.cs/meta,
+match fixture placement and scoped docs. Plan at reports/dante-visibility-2026-09-30.
+Baseline native center transmission first, then half-alpha palette-aware rendering.
+No ability mechanics, kit names, ward logo or other characters claimed. One heavy
+job; free disk774MB, avoid a new full player build until sufficient headroom.
