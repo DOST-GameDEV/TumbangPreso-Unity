@@ -121,8 +121,8 @@ namespace TumbangPreso.UI
             _promptPlate.color = HudDraw.Plate; _promptPlate.Radius = 22; _promptPlate.raycastTarget = false;
             _promptPlate.enabled = false;
             _prompt = Ink(_promptRoot, "ActionPrompt", "", 32, true); OwnerUiLayout.Place(_prompt.rectTransform, 0, 0, 1100, 74);
-            _readyGlyph = OwnerUiLayout.Rect(_promptRoot, "ReadyBindingGlyph").gameObject.AddComponent<Image>();
-            _readyGlyph.preserveAspect = true; _readyGlyph.raycastTarget = false; _readyGlyph.enabled = false;
+            _bindingGlyph = OwnerUiLayout.Rect(_promptRoot, "ActionBindingGlyph").gameObject.AddComponent<Image>();
+            _bindingGlyph.preserveAspect = true; _bindingGlyph.raycastTarget = false; _bindingGlyph.enabled = false;
             _context = Ink(_promptRoot, "ActionDetail", "", 28, false); OwnerUiLayout.Place(_context.rectTransform, 0, 77, 1100, 66);
             var track = OwnerUiLayout.Rect(_promptRoot, "RecoveryProgress").gameObject.AddComponent<Image>();
             OwnerUiLayout.Place(track.rectTransform, 320, 154, 460, 10); track.color = new Color32(35, 29, 33, 230); track.raycastTarget = false;

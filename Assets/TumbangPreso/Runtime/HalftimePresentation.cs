@@ -10,7 +10,7 @@ namespace TumbangPreso
     {
         public static HalftimePresentation Instance {get;private set;}
         public static bool Playing=>Instance!=null&&Instance.Active;
-        public const float BreakDuration = 3;
+        public const float BreakDuration = 5;
         public const float HalftimeDuration = 10;
         public bool Active {get;private set;}
         public bool IsHalftime {get;private set;}

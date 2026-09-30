@@ -408,10 +408,10 @@ namespace TumbangPreso.PlayTests
                 local.Teleport(can.transform.position + Vector3.back * (Balance.InteractionRadius * .8f));
                 SettingsStore.Current.ToggleRestore = false;
                 yield return new WaitForSeconds(.2f);
-                Assert.AreEqual("Hold to reset the can", prompt.text);
+                Assert.AreEqual("Reset Can", prompt.text);
                 Assert.Greater(grab.transform.localScale.x, 1);
                 SettingsStore.Current.ToggleRestore = true; yield return null;
-                Assert.AreEqual("Tap to reset the can", prompt.text);
+                Assert.AreEqual("Reset Can", prompt.text);
                 local.Intent.Set(Verb.Grab, true); yield return new WaitForSeconds(.2f);
                 Assert.Greater(local.GetComponent<Carrier>().ChannelRatio, 0);
                 Assert.AreEqual("Resetting can · tap to cancel", prompt.text);
@@ -419,7 +419,7 @@ namespace TumbangPreso.PlayTests
                     underlays: new[] { touch.Canvas }, checkActionBounds: true);
                 local.Intent.Set(Verb.Grab, false); yield return null; yield return new WaitForFixedUpdate(); yield return null;
                 Assert.AreEqual(0, local.GetComponent<Carrier>().ChannelRatio);
-                Assert.AreEqual("Tap to reset the can", prompt.text);
+                Assert.AreEqual("Reset Can", prompt.text);
             }
             finally
             {
@@ -566,7 +566,7 @@ namespace TumbangPreso.PlayTests
                 var hud = Object.FindAnyObjectByType<TumpMatchReadout>();
                 var prompt = hud.Canvas.GetComponentsInChildren<Text>(true).First(t => t.name == "ActionPrompt");
                 var detail = hud.Canvas.GetComponentsInChildren<Text>(true).First(t => t.name == "ActionDetail");
-                var glyph = hud.Canvas.GetComponentsInChildren<Image>(true).First(t => t.name == "ReadyBindingGlyph");
+                var glyph = hud.Canvas.GetComponentsInChildren<Image>(true).First(t => t.name == "ActionBindingGlyph");
                 typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { InputDeviceKind.KeyboardMouse });
                 Assert.IsNull(Rebinding.TryRebind(actions, "ReadyUp", keys.f10Key));
                 yield return null;
@@ -629,9 +629,9 @@ namespace TumbangPreso.PlayTests
                     var names = skills.Select(a => a.EffectiveName).ToArray();
                     var descriptions = skills.Select(a => a.EffectiveDescription).ToArray();
                     yield return null;
-                    Assert.AreEqual(Vector3.one * 1.5f, deck.localScale);
+                    Assert.AreEqual(Vector3.one * 1.25f, deck.localScale);
                     Assert.AreEqual(new Vector2(-40, 30), deck.anchoredPosition);
-                    Assert.AreEqual(316 * 1.5f, readout.DeckRect().width, .1f);
+                    Assert.AreEqual(316 * 1.25f, readout.DeckRect().width, .1f);
                     CollectionAssert.AreEqual(names, skills.Select(a => a.EffectiveName).ToArray());
                     CollectionAssert.AreEqual(descriptions, skills.Select(a => a.EffectiveDescription).ToArray());
                     var glyphs = deck.GetComponentsInChildren<Image>().Where(i => i.name == "BindingGlyph").ToArray();
@@ -647,7 +647,7 @@ namespace TumbangPreso.PlayTests
                     }
                 }
                 SettingsStore.Current.HudScale = 1.2f; yield return null;
-                Assert.AreEqual(1.8f, deck.localScale.x, .001f);
+                Assert.AreEqual(1.5f, deck.localScale.x, .001f);
                 Assert.AreEqual(new Vector2(-40, 30), deck.anchoredPosition);
                 TouchInput.Active = true;
                 typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { InputDeviceKind.Touch });
@@ -662,6 +662,71 @@ namespace TumbangPreso.PlayTests
                 QualitySettings.globalTextureMipmapLimit = mip;
                 SettingsStore.Current.HudScale = hudScale; SettingsStore.Current.LargerText = larger;
                 TouchInput.Active = touch;
+                typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { device });
+            }
+        }
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator RetrieveAndResetUseTheirLiveGlyphsAndKeepRealActions()
+        {
+            var actions = Resources.Load<InputActionAsset>("TumbangPreso");
+            string overrides = actions.SaveBindingOverridesAsJson(); var device = LastInputDevice.Current;
+            bool touch = TouchInput.Active, toggle = SettingsStore.Current.ToggleRestore;
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            var keys = InputSystem.AddDevice<Keyboard>(); var pad = InputSystem.AddDevice<Gamepad>();
+            try
+            {
+                TouchInput.Active = false; SettingsStore.Current.ToggleRestore = false;
+                typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { InputDeviceKind.KeyboardMouse });
+                yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);
+                Hud.Instance.ShowReadyPrompt(false);
+                var local = GameServices.Round.PlayerAt(GameLaunch.SoloSeat); local.Intent.Parked = false;
+                var shoe = local.GetComponent<Carrier>().Held; Assert.IsNotNull(shoe);
+                Assert.IsTrue(shoe.HostDisarm()); shoe.HostScatter(local.transform.position + Vector3.forward * .4f - shoe.transform.position);
+                var hud = Object.FindAnyObjectByType<TumpMatchReadout>();
+                var text = hud.Canvas.GetComponentsInChildren<Text>().First(t => t.name == "ActionPrompt");
+                var glyph = hud.Canvas.GetComponentsInChildren<Image>(true).First(i => i.name == "ActionBindingGlyph");
+                Assert.IsNull(Rebinding.TryRebind(actions, "Grab", keys.f10Key));
+                yield return new WaitForSeconds(.25f);
+                Assert.IsTrue(shoe.CanBeGrabbedBy(local)); Assert.AreEqual("Retrieve Slipper", text.text);
+                Assert.IsTrue(glyph.enabled); Assert.AreSame(InputGlyphs.For(Hud.KeyLabelFor("Grab"), true), glyph.sprite);
+                Assert.That(Hud.KeyLabelFor("Grab"), Does.Contain("F10"));
+                yield return TumpUiCapture.Capture("Feedback-retrieve-xelu", hud.Canvas, 960, 540, false, true);
+                // Write the synthetic edge after the physics snapshot, in the same window
+                // as PlayerInputReader.Update, so Carrier.Update can observe the press.
+                yield return new WaitForFixedUpdate();
+                local.Intent.Set(Verb.Grab, true); yield return new WaitForSeconds(.15f); local.Intent.Set(Verb.Grab, false);
+                Assert.IsTrue(local.HoldingSlipper, "The pictured retrieve action must still pick up the real shoe.");
+                yield return null; Assert.IsFalse(glyph.enabled); Assert.That(text.text, Does.Not.Contain("Retrieve Slipper"));
+                var defender = GameServices.Round.Players.First(p => p.IsDefender); defender.Intent.Parked = false;
+                var can = GameServices.Round.Lata;
+                float until = Time.time + 4; while (can.IsProtected && Time.time < until) yield return null;
+                can.HostKnockDown(local.PlayerSlot); Assert.IsFalse(can.IsUpright);
+                defender.Teleport(can.transform.position + Vector3.back * .7f); Hud.Instance.Bind(defender);
+                Assert.IsNull(Rebinding.TryRebind(actions, "Grab", pad.rightStickButton));
+                typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { InputDeviceKind.Gamepad });
+                yield return null;
+                Assert.AreEqual("Reset Can", text.text); Assert.IsTrue(glyph.enabled);
+                Assert.AreSame(InputGlyphs.For(Hud.KeyLabelFor("Grab"), true), glyph.sprite);
+                yield return TumpUiCapture.Capture("Feedback-reset-xelu", hud.Canvas, 1600, 680, false, true);
+                defender.Intent.Set(Verb.Grab, true); yield return new WaitForSeconds(.2f);
+                Assert.Greater(defender.GetComponent<Carrier>().ChannelRatio, 0); Assert.AreEqual("Resetting can", text.text);
+                Assert.IsFalse(glyph.enabled, "The old idle glyph must not leak into channel feedback.");
+                defender.Intent.Set(Verb.Grab, false); yield return null; yield return new WaitForFixedUpdate(); yield return null;
+                Assert.AreEqual("Reset Can", text.text); Assert.IsTrue(glyph.enabled);
+                TouchInput.Active = true;
+                typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { InputDeviceKind.Touch });
+                yield return null; Assert.AreEqual("Reset Can", text.text); Assert.IsFalse(glyph.enabled);
+                defender.Intent.Set(Verb.Grab, true); until = Time.time + 4;
+                while (!can.IsUpright && Time.time < until) yield return null;
+                defender.Intent.Set(Verb.Grab, false); Assert.IsTrue(can.IsUpright); yield return null;
+                Assert.That(text.text, Does.Not.Contain("Reset Can")); Assert.IsFalse(glyph.enabled);
+            }
+            finally
+            {
+                actions.LoadBindingOverridesFromJson(overrides); Rebinding.Invalidate(); Rebinding.Save(actions);
+                InputSystem.RemoveDevice(keys); InputSystem.RemoveDevice(pad);
+                TouchInput.Active = touch; SettingsStore.Current.ToggleRestore = toggle; QualitySettings.globalTextureMipmapLimit = mip;
                 typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { device });
             }
         }

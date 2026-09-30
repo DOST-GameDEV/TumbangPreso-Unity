@@ -64,7 +64,7 @@ namespace TumbangPreso.PlayTests
                 Vector3 position = local.transform.position; Quaternion facing = Camera.main.transform.rotation;
                 var modules = EventSystem.current?.GetComponents<BaseInputModule>().Where(m => m.enabled).ToArray();
                 round.EndRound(); match.BeginIntermission();
-                Assert.AreEqual(3, phase.Duration);
+                Assert.AreEqual(5, phase.Duration);
                 Assert.AreSame(texture, phase.FrozenFrame);
                 Assert.IsTrue(PresentationClock.BlocksInput); Assert.IsTrue(UI.RoleSwapCard.Showing);
                 Assert.IsFalse(phase.HasReplay); Assert.IsFalse(BufferSkipVote.Showing);
@@ -111,7 +111,7 @@ namespace TumbangPreso.PlayTests
             {
                 GameServices.Round.EndRound(); match.IsWarmupBuffer = true;
                 NetAuthority.Provider = new Client();
-                double began = SharedUltimatePhase.Now - 1;
+                double began = SharedUltimatePhase.Now - 3;
                 Assert.IsTrue(phase.Receive(match.PresentationMatchId, 1, 1, began, 0, false, 1));
                 Assert.That(phase.Remaining, Is.InRange(1.8f, 2.1f));
                 Assert.IsFalse(phase.Receive(match.PresentationMatchId, 1, 1, SharedUltimatePhase.Now, 0, false, 1));
@@ -129,7 +129,7 @@ namespace TumbangPreso.PlayTests
                     Assert.AreEqual(1, cold.CapturedFrames);
                 }
                 finally { cold.Release(); Object.Destroy(coldRoot); }
-                while (phase.Active && SharedUltimatePhase.Now < began + 3.5) yield return null;
+                while (phase.Active && SharedUltimatePhase.Now < began + 5.5) yield return null;
                 Assert.IsFalse(phase.Active); Assert.IsFalse(PresentationClock.Held);
                 Assert.AreEqual(1, match.RoundNumber, "A client cannot advance the authoritative round.");
                 Assert.IsFalse(phase.Receive(match.PresentationMatchId, 1, 1, began, 0, false, 1), "Expired packets cannot restart the break.");

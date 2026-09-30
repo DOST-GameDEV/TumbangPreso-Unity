@@ -794,3 +794,22 @@ Tests/PlayMode/RoundBreakFreezeTests.cs, Tests/PlayMode/ReplayRetentionTests.cs,
 Tests/PlayMode/TumpNativeHudTests.cs; TODO/NETWORKING/UI method/evidence.
 Preserve authoritative deadlines, saved overrides, normal channel/cancel feedback,
 unchanged hero text and original screen margins. Source screenshots read.
+Run match-ui-revision7focused native cases:5-second ordinary/late boundary and
+unchanged10-second middle break;25percent deck/edge margins/accessibility;
+Ready, real retrieval and reset channel/cancel with saved key/pad/touch glyphs.
+Protocol100 distinguishes the changed derived ordinary deadline. Keep ongoing
+reset/cancel feedback and unreachable-state text. Inspect new prompt/deck/round
+captures. One coherent guarded graphics pass, fresh XML; retry0.
+
+Match UI first pass:6/7pass,45.53s. The new retrieval fixture wrote its one
+synthetic press after a capture coroutine, before the next physics snapshot;
+CharacterMotor committed it before Carrier.Update could read the edge. Correct
+only fixture timing with WaitForFixedUpdate before the press, matching the actual
+input producer's Update window. Rerun this single case, retaining the six unchanged
+passes. One bounded fixture repair; no runtime pickup changes or weakened checks.
+
+Corrected prompt fixture1/1pass in6.00s, exit0. Real pickup and reset start/cancel/
+completion, saved key/pad glyphs and touch exit all pass. No new OOM. Together
+with the six unchanged passing cases, seven distinct cases qualify this batch.
+Native5second card,25percent powers and key/pad action prompts inspected.
+No runtime pickup change. Publish explicit paths; peers/player/hardware unqualified.

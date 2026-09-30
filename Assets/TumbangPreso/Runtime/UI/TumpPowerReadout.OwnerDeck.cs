@@ -48,7 +48,7 @@ namespace TumbangPreso.UI
             PlaceDeck(Hud.OnTouch);
             // Enlarge the live controls around their existing corner/bottom anchor.
             // HudReadingLayout retains this base scale for accessibility settings.
-            _deck.localScale = Vector3.one * 1.5f;
+            _deck.localScale = Vector3.one * 1.25f;
             for (int i = 0; i < 3; i++)
             {
                 float size = i == 2 ? 108 : 90, x = i == 0 ? 0 : i == 1 ? 102 : 206, y = OwnerDeckHeight - size - 4;

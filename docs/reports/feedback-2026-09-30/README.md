@@ -179,3 +179,6 @@ one bounded correction produced the passing case. No unchanged suites were run.
 - [Frozen inputs](checks/timed-ui-inputs.json)
 - [960x540](Timed-powers-960x540.png)
 - [1600x680](Timed-powers-1600x680.png)
+
+Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refinement:
+[match UI evidence](match-ui-revision.md).

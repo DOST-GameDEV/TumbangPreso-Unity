@@ -72,11 +72,14 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
 
 - [x] F0930-37 New Harry HUD refinement: Ready Up uses a larger live Xelu
   Interact/Ready prompt without the warmup subtitle; shared ability controls and
-  their key prompts grow50percent with edge margins preserved. Owner15:31
+  their key prompts originally grew50percent with edge margins preserved. Owner15:31
   explicitly approved shared sizing for Paete/Phaister too, then clarified that
   authorized global changes normally include them; character-specific work stays finalized. Two focused native cases pass, covering
   binding/device changes, margins, accessibility, finalized kit text and state exits.
   Four captures inspected. [Evidence](reports/feedback-2026-09-30/hud-readability.md).
+  Latest revision uses25percent above original size and live Xelu Reset Can /
+  Retrieve Slipper prompts. Real pickup, reset/cancel, pad/key/touch and margins
+  pass. [Revision evidence](reports/feedback-2026-09-30/match-ui-revision.md).
 
 - [x] F0930-03 Round scoreboard: centered, hides duplicated HUD for ordinary/halftime
   cards, removes redundant warmup line and fits large scores. Native state/bounds
@@ -240,6 +243,9 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   standings, input lock, no skip and the host-authored deadline. Protocol99 requires
   matching builds. Eight native cases pass; current-scene frame rerun passes1/1.
   Actual peers remain unqualified. [Revision evidence](reports/feedback-2026-09-30/round-timing-replay.md).
+  Latest Harry revision supersedes ordinary3seconds with5seconds, protocol100.
+  Halftime remains10seconds/replay. Native boundary/late-client/final-round and
+  lock checks pass. [Latest evidence](reports/feedback-2026-09-30/match-ui-revision.md).
 
 
 

@@ -20,7 +20,7 @@ namespace TumbangPreso.UI
         private float _staminaCaptionWidth;
         private CharacterMotor _aimOwner;
         private Carrier _aimCarrier;
-        private Image _stamina, _progress, _readyGlyph;
+        private Image _stamina, _progress, _bindingGlyph;
         private readonly Text[] _names = new Text[4], _scores = new Text[4], _roles = new Text[4];
         private readonly Image[] _portraits = new Image[4];
         private readonly RectTransform[] _scoreRows = new RectTransform[4];
@@ -363,7 +363,7 @@ namespace TumbangPreso.UI
             _promptRoot.gameObject.SetActive(local != null && !spectating);
             if (local == null || spectating) return;
             _prompt.text = ""; _context.text = ""; _progress.transform.parent.gameObject.SetActive(false);
-            if (_readyGlyph != null) _readyGlyph.enabled = false;
+            if (_bindingGlyph != null) _bindingGlyph.enabled = false;
             _prompt.color = OwnerUiTheme.Current.Pale;
             if(HalftimePresentation.Playing){_prompt.text="HALFTIME";_context.text="Next round in "+Mathf.CeilToInt(HalftimePresentation.Instance.Remaining)+"s";return;}
             var carrier = local.GetComponent<Carrier>(); var round = GameServices.Round;
@@ -393,12 +393,7 @@ namespace TumbangPreso.UI
             }
             if (ReadyWindow)
             {
-                if (_readyGlyph != null)
-                {
-                    _readyGlyph.sprite = Hud.OnTouch ? null : InputGlyphs.For(Hud.KeyLabelFor("ReadyUp"), true);
-                    _readyGlyph.enabled = _readyGlyph.sprite != null;
-                }
-                _prompt.text = !Hud.OnTouch && _readyGlyph?.enabled != true ? Hud.PressCue("ReadyUp") + "Ready Up" : "Ready Up";
+                BindingPrompt("ReadyUp", "Ready Up");
                 return;
             }
             if(PilotingFamiliar(local))
@@ -419,10 +414,9 @@ namespace TumbangPreso.UI
                 }
                 bool toggle = Settings.SettingsStore.Current.ToggleRestore;
                 string cue = Hud.PressCue("Grab");
-                _prompt.text = carrier.ChannelRatio > 0
-                    ? toggle ? "Resetting can · " + (Hud.OnTouch ? "tap" : "press " + cue.TrimEnd()) + " to cancel" : "Resetting can"
-                    : (toggle ? Hud.OnTouch ? "Tap to reset the can" : "Press " + cue + "to reset the can"
-                              : Hud.OnTouch ? "Hold to reset the can" : "Hold " + cue + "to reset the can");
+                if (carrier.ChannelRatio > 0)
+                    _prompt.text = toggle ? "Resetting can · " + (Hud.OnTouch ? "tap" : "press " + cue.TrimEnd()) + " to cancel" : "Resetting can";
+                else BindingPrompt("Grab", "Reset Can");
                 if (Hud.OnTouch) TouchHud.Emphasise(Verb.Grab);
                 if (carrier.ChannelRatio > 0) Progress(carrier.ChannelRatio); return;
             }
@@ -452,7 +446,7 @@ namespace TumbangPreso.UI
                     if (slipper == null) continue;
                     if (slipper.CanBeGrabbedBy(local))
                     {
-                        _prompt.text = Hud.PressCue("Grab") + "Pick up";
+                        BindingPrompt("Grab", "Retrieve Slipper");
                         if (Hud.OnTouch) TouchHud.Emphasise(Verb.Grab); return;
                     }
                     if (slipper.OwnerSlot == local.PlayerSlot && RooftopRecovery.Instance != null)
@@ -474,6 +468,16 @@ namespace TumbangPreso.UI
             if (local.IsDefender && round.IsTayaCampWarningActive)
                 _context.text = "Leave the can ring";
         }
+        private void BindingPrompt(string action, string label)
+        {
+            if (_bindingGlyph != null)
+            {
+                _bindingGlyph.sprite = Hud.OnTouch ? null : InputGlyphs.For(Hud.KeyLabelFor(action), true);
+                _bindingGlyph.enabled = _bindingGlyph.sprite != null;
+            }
+            _prompt.text = !Hud.OnTouch && _bindingGlyph?.enabled != true ? Hud.PressCue(action) + label : label;
+        }
+
         private static bool PilotingFamiliar(CharacterMotor local)
         {
             var visual=local!=null?local.GetComponent<Visual.CharacterVisual>():null;
