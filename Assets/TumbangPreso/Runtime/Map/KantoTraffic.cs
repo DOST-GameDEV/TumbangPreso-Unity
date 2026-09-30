@@ -640,8 +640,22 @@ namespace TumbangPreso
                 if (j == self || o.Body == null) continue;
                 var off = o.Body.position - at; off.y = 0f;
                 if (off.magnitude < (o.Length + Drivers[self].Length) * .5f + 12f) return false;
+                // ⚠️ Nobody re-enters a route while a vehicle joining it has passed its yield line
+                // (the bus in the S2 U-turn). A car let in behind a turning bus met it nose to nose
+                // mid-turn, each braking for the other, and both stood there for good (v11 probe).
+                if (o.Lane >= 0 && o.Lane < Routes.Length && o.Lane != r && Routes[o.Lane].Next == r && PastYield(o, Routes[o.Lane]))
+                    return false;
             }
             return true;
+        }
+
+        private static bool PastYield(Driver o, Route route)
+        {
+            var stops = route.StopAlong ?? Array.Empty<float>();
+            for (int k = 0; k < stops.Length; k++)
+                if (route.StopAxis != null && k < route.StopAxis.Length && route.StopAxis[k] == -2 && o.Along + o.Length * .5f > stops[k] - .5f)
+                    return true;
+            return false;
         }
 
 #if UNITY_EDITOR
