@@ -1589,3 +1589,5 @@ No Slipper physics claim until reproduction. Plan tutorial-regression.md; curren
 source clean before claim, no heavy job active. Dante cascade resumes afterward.
 
 Concurrent Boulder108 integration preserved at1d2f0e540; combined Catch/Boulder109. Only ledger conflict, both sides retained; code merge clean. Previous native approval108passed before this integration. One final existing approval/compilation case on combined109next; no repeated Catch tests or player rebuild. Preserve exact candidate scope if remote advances again.
+
+Combined842c1d04f protocol109 final native approval1/1passes/current accepted/prior108 and bad fingerprint refused;616hashes/no drift. No Catch rerun/player rebuild. Own Catch3322c6e8b source/eight distinct acceptance cases remain; all contributorDante/Boulder code integrated cleanly. Publish unit/merge/receipts, then update same Nemu row. Native26431terminal; no heavy job active. Next review Nemu Haunt7.5s reduced-perception status and current legacy seance, keeping rendering/audio/animation scope restricted to concrete bug fixes.

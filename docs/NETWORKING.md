@@ -1,6 +1,6 @@
 # Networking: Where To Work
 
-Current gameplay contract is protocol108, including Kuro Catch's host-confirmed
+Current gameplay contract is protocol109, including Kuro Catch's host-confirmed
 five-second can protection and owned/recovered clocks. Native acceptance passes;
 the earlier protocol103 direct-peer player does not qualify these later contracts.
 [Catch evidence](reports/feedback-2026-09-30/nemu-kuro-catch.md).

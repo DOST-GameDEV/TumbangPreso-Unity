@@ -45,8 +45,10 @@ world; the companion can be absent without affecting the objective contract.
   receipts; this is not a single final8/8 suite. No fixture repair or disabled test.
 
 Exact XML/input receipts are in nemu-catch-checks. Raw logs remain in the isolated
-checkout Logs/feedback-0930/nemu-catch-*.log. Protocol108 integrates the contributor's
-protocol107 plus this changed Catch contract. Actual peer transport, rendered companion/frame
+checkout Logs/feedback-0930/nemu-catch-*.log. Protocol109 integrates the contributor's
+protocol108 Boulder plus this changed Catch contract. Actual peer transport, rendered companion/frame
 qualification, player build and physical devices are still separate. The earlier
 protocol103 LAN receipt does not cover Catch. Haunt and complete Nemu alignment
 remain open in the same F0930-12 row.
+
+Combined842c1d04f protocol109 native approval1/1passes: current109accepted,108refused, wrong skill fingerprint refused. All merged assemblies compile;616frozen input hashes remain unchanged. The earlier108approval receipt is retained as pre-Boulder history, not the final candidate.
