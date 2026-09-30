@@ -1,6 +1,6 @@
 # Active Rework Checkpoint
 
-Updated2026-10-01. Branch ASTRAReworks. Protocol108 candidate. Goal active.
+Updated2026-10-01. Branch ASTRAReworks. Protocol109 candidate. Goal active.
 Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 
 ## Live Local Resume
@@ -1591,3 +1591,18 @@ source clean before claim, no heavy job active. Dante cascade resumes afterward.
 Concurrent Boulder108 integration preserved at1d2f0e540; combined Catch/Boulder109. Only ledger conflict, both sides retained; code merge clean. Previous native approval108passed before this integration. One final existing approval/compilation case on combined109next; no repeated Catch tests or player rebuild. Preserve exact candidate scope if remote advances again.
 
 Combined842c1d04f protocol109 final native approval1/1passes/current accepted/prior108 and bad fingerprint refused;616hashes/no drift. No Catch rerun/player rebuild. Own Catch3322c6e8b source/eight distinct acceptance cases remain; all contributorDante/Boulder code integrated cleanly. Publish unit/merge/receipts, then update same Nemu row. Native26431terminal; no heavy job active. Next review Nemu Haunt7.5s reduced-perception status and current legacy seance, keeping rendering/audio/animation scope restricted to concrete bug fixes.
+Tutorial current-source reproduction confirmed: high throw staysInFlight12s at
+11.77m, upwardvelocity1.54, enabled/timeScale1. Hidden protected can's flat contact
+keeps rebounding before timeout; skipped staging is correctlygrounded. Expand
+claim Slipper.cs active can/body contact gates and existing timeout before early
+contact returns, NetSession.cs protocol109. No geometric/score redesign. Corner
+counter fix also owned. Targeted protected-can lifetime control next.
+
+Tutorial final4/4native9.76s: automatic three throws land at true rest height,
+corner counter hides/restores, protected contact cannot bypass timeout and active
+Frostbite contact remains. Stuck high throw12s becomes landed1.58s; skipped-staging
+baseline remains valid. Completion frame inspected. Publish coherent fix and same
+Doc row with original comments struck only after remote verification. No heavy job.
+Next Dante forward cascade, fresh claims/intake first; current player still100.
+
+Concurrent tutorial hidden-can collision fix338c94bad integrated with all authored receipts; combined compatibility110. Approval receiver source unchanged since qualified109, constant advanced for both contracts. Reuse that case; no repeated gate/player build. Catch code/eight cases unchanged. Native109approval is pre-tutorial110 scope, actual103player scope remainsFFE. Publish now, then exactsame Nemu row note; no full110peer claim.

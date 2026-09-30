@@ -598,6 +598,75 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(120000)]
+        public IEnumerator CompletionCornerCounterHidesAndRestores()
+        {
+            yield return OpenRevisedTraining();
+            var route=Object.FindFirstObjectByType<GuidedTraining>(); route.enabled=false;
+            var hud=Object.FindFirstObjectByType<GuidedTrainingHud>();
+            var counter=(Text)typeof(GuidedTrainingHud).GetField("_counter",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(hud);
+            SelectLesson(route,GuidedTraining.Lesson.Complete);yield return null;
+            Assert.IsFalse(counter.gameObject.activeSelf,"The corner COMPLETE repeats TRAINING COMPLETE.");
+            yield return TumpUiCapture.Capture("Feedback0930-training-clean-completion",hud.GetComponent<Canvas>(),960,540,false,true);
+            SelectLesson(route,GuidedTraining.Lesson.Retrieve);yield return null;
+            Assert.IsTrue(counter.gameObject.activeSelf);Assert.AreEqual("07 / 20",counter.text);
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator AutomaticRetrieveHighThrowsReturnToReachableRoad()
+        {
+            yield return OpenRevisedTraining();
+            var route=Object.FindFirstObjectByType<GuidedTraining>(); var local=Student(route);
+            var carrier=local.GetComponent<Carrier>();
+            foreach(var target in new[]{new Vector3(0,14,0),new Vector3(7,7,-8),new Vector3(0,.25f,1)})
+            {
+                SelectLesson(route,GuidedTraining.Lesson.Throw);yield return null;
+                var shoe=carrier.Held;Assert.IsNotNull(shoe);
+                carrier.HostThrowAt(carrier.ThrowOrigin(),target,1f);
+                float end=Time.unscaledTime+12;
+                while((route.CurrentLesson!=GuidedTraining.Lesson.Retrieve || shoe.State==SlipperState.InFlight) && Time.unscaledTime<end)yield return null;
+                Assert.AreEqual(GuidedTraining.Lesson.Retrieve,route.CurrentLesson,"The real route must advance itself after release.");
+                float airborne=(float)typeof(Slipper).GetField("_airborneTotal",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(shoe);
+                Debug.Log($"Tutorial end target={target} state={shoe.State} pos={shoe.transform.position} velocity={shoe.Velocity} airborne={airborne} scale={Time.timeScale} active={shoe.isActiveAndEnabled}");
+                if(shoe.State==SlipperState.InFlight)
+                    yield return TumpUiCapture.Capture("Feedback0930-training-floating-repro",Object.FindFirstObjectByType<GuidedTrainingHud>().GetComponent<Canvas>(),960,540,false,true);
+                Assert.AreEqual(SlipperState.Loose,shoe.State);
+                float road=(float)typeof(Slipper).GetMethod("FindGroundY",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic)
+                    .Invoke(null,new object[]{new Vector3(shoe.transform.position.x,local.transform.position.y,shoe.transform.position.z),.5f});
+                Debug.Log($"Tutorial actual target={target} landed={shoe.transform.position} road={road} rest={shoe.RestHeight}");
+                Assert.That(shoe.transform.position.y-road,Is.EqualTo(shoe.RestHeight).Within(.05f));
+            }
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator ProtectedCanCannotBypassAirborneLifetime()
+        {
+            yield return OpenRevisedTraining();
+            var route=Object.FindFirstObjectByType<GuidedTraining>();route.enabled=false;
+            var local=Student(route); SelectLesson(route,GuidedTraining.Lesson.ThrowAndRetrieve);
+            var can=GameServices.Round.Lata;can.HostRestore();Assert.IsTrue(can.IsProtected);
+            var carrier=local.GetComponent<Carrier>();var shoe=carrier.Held;Assert.IsNotNull(shoe);
+            shoe.HostThrow(local,can.transform.position+Vector3.up*4,Vector3.down,SlipperAffinity.Normal,0);
+            typeof(Slipper).GetField("_airborneTotal",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)
+                .SetValue(shoe,Balance.MaxAirborneTime-.005f);
+            shoe.SendMessage("FixedUpdate");
+            Assert.AreEqual(SlipperState.Loose,shoe.State,"A contact return cannot defeat the existing six-second ceiling.");
+            Assert.IsTrue(can.IsUpright);Assert.IsTrue(can.IsProtected);
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator SkippedThrowStagesReachableSlipper()
+        {
+            yield return OpenRevisedTraining();
+            var route=Object.FindFirstObjectByType<GuidedTraining>();route.enabled=false;
+            var local=Student(route);var carrier=local.GetComponent<Carrier>();
+            SelectLesson(route,GuidedTraining.Lesson.Throw);var shoe=carrier.Held;Assert.IsNotNull(shoe);
+            SelectLesson(route,GuidedTraining.Lesson.Retrieve);yield return null;
+            Assert.AreEqual(SlipperState.Loose,shoe.State);
+            Assert.Less(shoe.transform.position.y,local.transform.position.y+.5f);
+            Debug.Log($"Tutorial skipped throw staged={shoe.transform.position}");
+        }
+
+        [UnityTest, Timeout(120000)]
         public IEnumerator RetrievePreservesTheRealThrowUntilItLandsOnTheRoad()
         {
             int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;

@@ -461,3 +461,12 @@ it and impact consumes it. Round reset clears unused charges. Accepted observer
 casts cannot mutate it. Existing status snapshots carry2.5second Concussed with
 0.25movement scale. No new packet layout, timer or separate rock is introduced.
 Native delivery/recovery checks do not qualify actual peers or reconnect.
+
+
+## Slipper Contact Lifetime Compatibility
+
+Protocol109 excludes inactive can/bodies from host slipper contact and enforces
+existing flight/airborne ceilings before contact early returns. No duration,
+active collision geometry, scoring or packet layout changes. This resolves the
+hidden tutorial can's indefinite rebound. Native proof is separate from actual
+matching-player/peer qualification.
