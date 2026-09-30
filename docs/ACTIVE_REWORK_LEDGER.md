@@ -213,3 +213,19 @@ captured image, not the live match. No hero/lighting/art behavior changes.
 Victory-screen input and per-round pause reports are separate; reconcile their
 local ownership before another implementation. Independent remaining-map checks
 are running on the frozen cloud candidate; source edits will not alter that run.
+
+
+Cloud revised replay unit:2.5s recorded animation,1.25s immutable captured tag
+frame,.18s fade. Recovery clamps/interruptions remain active; no live-world pause.
+Baseline old3.0 fails;3native state/timing cases and2real-time close/far contact
+cases pass, with inspected native images. One cold memory-guard stop, one warm
+retry; no new OOM. Exact evidence/limits in catch-replay-tag-hold.md. Runtime/test
+paths release after publication. No heavy job active. No new player/peer/full-map
+visual approval; Doc note remains pending explicit reservation-release approval.
+
+Owner11:53 explicitly asks to take the friend's new tutorial feedback next after
+replay. Fresh12:00read/screenshot confirms bigger prompts, Enter skip, Dumaradrop
+Skip Lesson/Quit labels and Xelu Enter/Backspace, alongside the new lesson flow.
+Reconcile local tutorial ownership before claiming; do not duplicate its unit.
+Remaining3-map check stopped at29.59s before results under the memory guard;
+no Plaza/Lagoon/Kanto pass is claimed. New Feedback takes priority.

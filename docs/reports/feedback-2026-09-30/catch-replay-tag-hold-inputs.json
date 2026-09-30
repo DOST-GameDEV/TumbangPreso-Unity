@@ -1,0 +1,18 @@
+{
+  "sourceBase": "9902d429",
+  "runtimeSha256": "5313da25760cc671764ca303b95201c446048f18646a77b704dfc8dcf00c1dff",
+  "finalTestsSha256": "60e26b8293ded915fd6d7ab6bc5fffd2617f53fadf7d0ce6ba440e726379517d",
+  "threeCaseTestsDifference": "Contact capture helper uses AnimationDuration and records hold frames in subsequent two-case run; three tested case bodies and runtime unchanged.",
+  "evidenceSha256": {
+    "catch-replay-tag-hold-far.png": "8125c58a87bfd43afbd66b5dde8a8b9c65d7cd28ee9df2218eb045f66afc0cd2",
+    "catch-replay-tag-hold-baseline-run.json": "d9c7f6c906ae5478933320ff22d5c13d9768b40617521aa42d3c417be8381c7a",
+    "catch-replay-tag-hold-contact.xml": "e4af8a86255907487378de001bde4ff2ce3d24f70d8412ec894694f52c5d3dac",
+    "catch-replay-tag-hold-timing-run.json": "9f008f60b34572092965b52c263a2ff36703f7cffe1e8e90eb46fe836f1091d1",
+    "catch-replay-tag-hold-far.txt": "acab80b39dba8bf52cf418f99e4d8a8e229b1d632a3a2dc17cae9455024a629e",
+    "catch-replay-tag-hold-timing.xml": "a1b32d6dab799d3fe8b2faf6d3b0e3f8280252da91bf4af82ca94a905fb22382",
+    "catch-replay-tag-hold-close.txt": "f8ff221a3b1c3b28e59884dbc1e65f861673729a3714f1c63f3f7af272c0fb45",
+    "catch-replay-tag-hold-contact-run.json": "0ca215ddfa2fbfa28b1e87eb97c5547b16b1b2e203cd1e2a57681d5a805e7f2d",
+    "catch-replay-tag-hold-close.png": "5eaf9d36eb2d14193541dfea8410017ec7e55b018ee3b12ae6e3588736c75c24",
+    "catch-replay-tag-hold-baseline.xml": "6ed1bb16b9f4f018a77621768fa3c8a86b670c947a6138f58f56a8bc699ece85"
+  }
+}

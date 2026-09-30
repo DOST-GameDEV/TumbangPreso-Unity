@@ -46,11 +46,14 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   cards, removes redundant warmup line and fits large scores. Native state/bounds
   and inspected 960x540/1600x680 captures pass. [Evidence](reports/feedback-2026-09-30/README.md).
 - [ ] F0930-04 Tagged replay: latest owner Feedback requests2.5seconds animated,
-  then a1.25second captured tag-frame hold before fade; cloud unit claimed.
+  then a1.25second captured tag-frame hold before fade. Implemented with.18s fade;
+  3native timing/state cases and2real-clock close/far contact cases pass. The whole
+  image holds while simulation/recovery continue. Full-map/player/peer and human
+  approval remain separate. [Evidence](reports/feedback-2026-09-30/catch-replay-tag-hold.md).
   Preserve earlier3second evidence as history, not the new acceptance target.
   Original request: approximately three seconds and truthful contact display;
   fix recording/reconstruction/contact timing without inventing a hit.
-  Victim replay duration is now approximately3 seconds, with5 native timing/exit
+  Earlier victim replay duration was approximately3 seconds, with5 native timing/exit
   cases passing. [Evidence](reports/feedback-2026-09-30/catch-replay-duration.md).
   Replay teleport discontinuities and visibility timing now pass9 native pose
   checks. [Evidence](reports/feedback-2026-09-30/live-pose-discontinuity.md).

@@ -188,7 +188,7 @@ namespace TumbangPreso.PlayTests
                 {
                     if (c != camera) return;
                     lastTime = Time.unscaledTime - began;
-                    lastPoseTime = Mathf.Lerp(start, end, Mathf.Clamp01(lastTime / duration));
+                    lastPoseTime = Mathf.Lerp(start, end, Mathf.Clamp01(lastTime / CatchReconstruction.AnimationDuration));
                     var bounds = victimCopy.Renderers[0].bounds;
                     foreach (var renderer in victimCopy.Renderers) bounds.Encapsulate(renderer.bounds);
                     lastGap = Vector3.Distance(hand.position, bounds.ClosestPoint(hand.position));
@@ -208,8 +208,9 @@ namespace TumbangPreso.PlayTests
                     // Read a completed real frame. Seeking bones and rendering several
                     // times in one frame can reuse stale native skinning matrices.
                     yield return null;
-                    if (!view.Playing || target == null || lastTime < next) continue;
-                    next = lastTime + .075f;
+                    float presentationTime = Time.unscaledTime - began;
+                    if (!view.Playing || target == null || lastTime < 0 || presentationTime < next) continue;
+                    next = presentationTime + .075f;
                     var previous = RenderTexture.active;
                     var image = new Texture2D(target.width, target.height, TextureFormat.RGB24, false);
                     try
@@ -217,7 +218,7 @@ namespace TumbangPreso.PlayTests
                         RenderTexture.active = target; image.ReadPixels(new Rect(0, 0, target.width, target.height), 0, 0); image.Apply();
                         byte[] bytes = image.EncodeToPNG();
                         System.IO.File.WriteAllBytes(directory + "/frame-" + frames.ToString("D3") + ".png", bytes);
-                        times.Add(lastTime.ToString("F6", System.Globalization.CultureInfo.InvariantCulture));
+                        times.Add(presentationTime.ToString("F6", System.Globalization.CultureInfo.InvariantCulture));
                         float proximity = Mathf.Abs(lastPoseTime - (contact + .17f));
                         if (proximity < bestDistance)
                         {
@@ -300,6 +301,110 @@ namespace TumbangPreso.PlayTests
             yield return null;
         }
 
+        [UnityTest]
+        public IEnumerator ReplayHoldsOneCapturedTagFrameThenFadesWithoutPausingPlay()
+        {
+            yield return OpenIsolatedCatchWorld(); Stage();
+            yield return new WaitForSeconds(.4f);
+            var actor = GameServices.Round.PlayerAt(0);
+            var victim = GameServices.Round.PlayerAt(1);
+            var view = Object.FindAnyObjectByType<CatchReconstruction>();
+            var settings = Settings.SettingsStore.Current;
+            bool reduced = settings.ReducedUiMotion, cinematic = settings.CinematicCameraMotion;
+            settings.ReducedUiMotion = false; settings.CinematicCameraMotion = true;
+            int rendered = 0;
+            Camera.CameraCallback probe = camera => { if (camera.name == "~CatchPlaybackCamera") rendered++; };
+            Camera.onPreRender += probe;
+            Texture2D image = null;
+            try
+            {
+                int score = GameServices.Match.ScoreFor(0);
+                Assert.IsTrue(actor.GetComponent<CombatVerbs>().HostResolvePunch(
+                    actor.transform.position, actor.transform.forward));
+                Assert.IsTrue(view.Playing);
+                Assert.That(view.Remaining, Is.InRange(3.9f, 3.94f),
+                    "Play 2.5 seconds, hold 1.25 seconds, then fade for .18 seconds.");
+                yield return new WaitForSeconds(.3f);
+                var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                var clock = typeof(CatchReconstruction).GetField("_began", flags);
+                var step = typeof(CatchReconstruction).GetMethod("LateUpdate", flags);
+                var target = (RenderTexture)typeof(CatchReconstruction).GetField("_target", flags).GetValue(view);
+                var picture = (UnityEngine.UI.RawImage)typeof(CatchReconstruction).GetField("_picture", flags).GetValue(view);
+                image = new Texture2D(target.width, target.height, TextureFormat.RGBA32, false);
+                Color32[] ReadFrame()
+                {
+                    var previous = RenderTexture.active;
+                    try
+                    {
+                        RenderTexture.active = target;
+                        image.ReadPixels(new Rect(0, 0, target.width, target.height), 0, 0); image.Apply();
+                        return image.GetPixels32();
+                    }
+                    finally { RenderTexture.active = previous; }
+                }
+                void Seek(float elapsed) { clock.SetValue(view, Time.unscaledTime - elapsed); step.Invoke(view, null); }
+                int before = rendered;
+                Seek(2.45f); Assert.Greater(rendered, before, "Animation must still render before its boundary.");
+                before = rendered;
+                Seek(2.5f); Assert.AreEqual(before + 1, rendered, "Capture the final tag frame at the boundary.");
+                var held = ReadFrame(); int captured = rendered;
+                float liveTime = Time.time, stun = victim.StunLeft;
+                actor.transform.position += Vector3.right;
+                yield return null;
+                Assert.Greater(Time.time, liveTime, "The live world must advance during the frozen image.");
+                Assert.Less(victim.StunLeft, stun, "Recovery must continue behind the image.");
+                Seek(3.74f);
+                Assert.IsTrue(view.Playing); Assert.AreEqual(1f, picture.color.a, .001f);
+                Assert.AreEqual(captured, rendered, "Live backgrounds must not render into the held frame.");
+                CollectionAssert.AreEqual(held, ReadFrame(), "The entire rendered image must stay frozen.");
+                Seek(3.84f);
+                Assert.IsTrue(view.Playing); Assert.That(picture.color.a, Is.InRange(.45f, .55f));
+                Assert.AreEqual(captured, rendered);
+                Assert.IsTrue(actor.CanAct()); Assert.IsFalse(victim.CanAct());
+                Assert.AreEqual(score + MatchRules.PointsFor(ScoreEvent.Tag), GameServices.Match.ScoreFor(0));
+                Seek(3.94f); Assert.IsFalse(view.Playing);
+                Assert.IsFalse(victim.CanAct(), "Presentation completion must not cancel recovery.");
+            }
+            finally
+            {
+                Camera.onPreRender -= probe; if (image != null) Object.Destroy(image);
+                view.End(); settings.ReducedUiMotion = reduced; settings.CinematicCameraMotion = cinematic;
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator FrozenReplayStillHonoursRecoveryAndComfortInterruptions()
+        {
+            yield return OpenIsolatedCatchWorld();
+            var view = Object.FindAnyObjectByType<CatchReconstruction>();
+            var settings = Settings.SettingsStore.Current;
+            bool reduced = settings.ReducedUiMotion, cinematic = settings.CinematicCameraMotion;
+            var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var clock = typeof(CatchReconstruction).GetField("_began", flags);
+            var step = typeof(CatchReconstruction).GetMethod("LateUpdate", flags);
+            try
+            {
+                for (int interruption = 0; interruption < 3; interruption++)
+                {
+                    settings.ReducedUiMotion = false; settings.CinematicCameraMotion = true;
+                    Stage(); yield return new WaitForSeconds(1f);
+                    var actor = GameServices.Round.PlayerAt(0); var victim = GameServices.Round.PlayerAt(1);
+                    Assert.IsTrue(actor.GetComponent<CombatVerbs>().HostResolvePunch(
+                        actor.transform.position, actor.transform.forward));
+                    yield return new WaitForSeconds(.3f);
+                    clock.SetValue(view, Time.unscaledTime - 2.6f); step.Invoke(view, null);
+                    Assert.IsTrue(view.Playing);
+                    if (interruption == 0) victim.ClearStun();
+                    else if (interruption == 1) settings.ReducedUiMotion = true;
+                    else settings.CinematicCameraMotion = false;
+                    step.Invoke(view, null);
+                    Assert.IsFalse(view.Playing, "A frozen image cannot bypass recovery or comfort exits.");
+                    if (interruption != 0) Assert.IsFalse(victim.CanAct());
+                }
+            }
+            finally { view.End(); settings.ReducedUiMotion = reduced; settings.CinematicCameraMotion = cinematic; }
+        }
+
         private IEnumerator CheckReplayMotion(bool isolated)
         {
             // Keep the software-rendered validation scene within its texture budget.
@@ -363,13 +468,13 @@ namespace TumbangPreso.PlayTests
                 };
                 Camera.onPreRender += captureProbe;
                 Vector3 middle = default, late = default;
-                foreach (float elapsed in new[] { .4f, 1.5f, 2.5f, 2.9f })
+                foreach (float elapsed in new[] { .4f, 1.3f, 2.1f, 2.4f })
                 {
                     clock.SetValue(view, Time.unscaledTime - elapsed);
                     step.Invoke(view, null);
                     Assert.IsTrue(view.Playing);
-                    if (elapsed == 1.5f) middle = copy.Root.transform.position;
-                    if (elapsed == 2.5f) late = copy.Root.transform.position;
+                    if (elapsed == 1.3f) middle = copy.Root.transform.position;
+                    if (elapsed == 2.4f) late = copy.Root.transform.position;
                     var previous = RenderTexture.active;
                     var image = new Texture2D(target.width, target.height, TextureFormat.RGB24, false);
                     try
@@ -394,7 +499,7 @@ namespace TumbangPreso.PlayTests
                     history.ForSeat(0).Record(future + i * MatchPoseHistory.Interval);
                     history.ForSeat(1).Record(future + i * MatchPoseHistory.Interval);
                 }
-                clock.SetValue(view, Time.unscaledTime - 2.5f); step.Invoke(view, null);
+                clock.SetValue(view, Time.unscaledTime - 2.4f); step.Invoke(view, null);
                 Assert.That(Vector3.Distance(late, copy.Root.transform.position), Is.LessThan(.001f),
                     "Ongoing live recording must not overwrite this catch's retained clip.");
                 Assert.That(actor.transform.position, Is.EqualTo(live));
@@ -404,7 +509,7 @@ namespace TumbangPreso.PlayTests
                 clock.SetValue(view, realStart);
                 bool haveMiddle = false, haveLate = false;
                 Vector3 realMiddle = default, realLate = default;
-                while (view.Playing && Time.unscaledTime - realStart < 3.5f)
+                while (view.Playing && Time.unscaledTime - realStart < CatchReconstruction.ReplayDuration + .5f)
                 {
                     yield return null;
                     if (!view.Playing) break;
@@ -412,7 +517,7 @@ namespace TumbangPreso.PlayTests
                     if (!haveMiddle && elapsed >= 1.3f) { realMiddle = copy.Root.transform.position; haveMiddle = true; }
                     if (!haveLate && elapsed >= 2.3f) { realLate = copy.Root.transform.position; haveLate = true; }
                 }
-                Assert.IsFalse(view.Playing, "The real replay clock must end without a held tail.");
+                Assert.IsFalse(view.Playing, "The real replay clock must end after its finite tag-frame hold and fade.");
                 Assert.IsTrue(haveMiddle && haveLate);
                 Assert.That(Vector3.Distance(realMiddle, realLate), Is.GreaterThan(.15f));
             }
@@ -425,7 +530,7 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(360000)]
-        public IEnumerator CatchLastsAboutThreeSecondsAndReturnsBeforeControl()
+        public IEnumerator CatchAnimationAndHoldReturnBeforeControl()
         {
             yield return Open(); Stage(); yield return new WaitForSeconds(.4f);
             var round = GameServices.Round;
@@ -440,7 +545,7 @@ namespace TumbangPreso.PlayTests
                 int score = GameServices.Match.ScoreFor(0);
                 Assert.IsTrue(taya.GetComponent<CombatVerbs>().HostResolvePunch(tayaAt, taya.transform.forward));
                 Assert.IsTrue(view.Playing);
-                Assert.That(view.Remaining, Is.InRange(2.9f, 3.01f));
+                Assert.That(view.Remaining, Is.InRange(3.9f, 3.94f));
                 Assert.AreEqual(score + MatchRules.PointsFor(ScoreEvent.Tag), GameServices.Match.ScoreFor(0));
                 Assert.IsTrue(taya.CanAct());
                 Assert.AreEqual(tayaAt, taya.transform.position);
