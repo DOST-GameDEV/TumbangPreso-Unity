@@ -1149,3 +1149,16 @@ update same tagged-contact Feedback row and Done. Human verified remains uncheck
 no claim of all441pairs, perfect composition or actual peers. Next authorized
 presentation pass: read current full specifications and method, research/plan
 each selected effect, preserve finalized heroes and owner-reserved mechanics.
+Tag7b848635 remote verified. Same Feedback row Done checked and Saved to Drive;
+Human verified unchanged. Fresh intake has no new actionable refinement comment.
+Presentation research starts with Cheska wall shatter/field melt. Current full
+Wiki names/durations read; mechanics remain untouched. Direct official Ayaka video
+page loads but footage never decodes (readyState0), so no new frame-study claim.
+Riot VFX clarity guidance read; existing researched kit method is the workflow.
+Small evidence-maintenance claim: tools/playmode_suite.py, to assign only the three
+owned ReplayReadbackSupportTests/DefenderLungeTravelTests/RoundBreakFreezeTests to
+match isolation. Existing plan has other unassigned fixtures; do not repair unrelated
+fixtures or claim the full aggregate gate passes. No Unity run needed for placement.
+Owned fixture placement verified; full plan still reports other pre-existing
+placement issues, including its nested Client helper false positive. No aggregate
+pass is claimed and no unrelated fixture/discovery repair was made.

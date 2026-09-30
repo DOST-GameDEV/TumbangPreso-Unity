@@ -222,6 +222,7 @@ GROUPS = [
         "MatchMomentTests",
         "RecordedEffectsTests",
         "ReplayRetentionTests",
+        "ReplayReadbackSupportTests", "DefenderLungeTravelTests", "RoundBreakFreezeTests",
         "RoundFieldCleanupTests",
         "ScoreFeedbackTests",
         "SharedUltimatePhaseTests",
