@@ -229,3 +229,19 @@ Skip Lesson/Quit labels and Xelu Enter/Backspace, alongside the new lesson flow.
 Reconcile local tutorial ownership before claiming; do not duplicate its unit.
 Remaining3-map check stopped at29.59s before results under the memory guard;
 no Plaza/Lagoon/Kanto pass is claimed. New Feedback takes priority.
+
+
+Published revised replay: aecb61247b86027253c355637f5823c1e19380ac, remoteHEAD
+verified. Runtime/replay fixture released, all5focused checks pass as scoped above.
+
+Next cloud unit, owner11:53 direct request and screenshot: tutorial prompt controls.
+The previous hold concerned approval to start the new tutorial text; the owner has
+now directly assigned the new Feedback after replay. Latest local checkpoint is
+F0930-32 round breaks, not active tutorial edits. Claim only
+Assets/TumbangPreso/Runtime/GuidedTraining.cs,
+Assets/TumbangPreso/Runtime/UI/GuidedTrainingHud.OwnerPainted.cs,
+Assets/TumbangPreso/Tests/PlayMode/OwnerTrainingUiTests.cs and matching TODO/evidence.
+First coherent unit: readable larger key prompts, Enter skip, Darumadrop action
+labels, actual Xelu Enter/Backspace. Then implement the revised lesson route on
+these claimed paths. Preserve current progress/Tab handling and owner ability
+behavior. No changes to local round-break/victory unit or loading. Current jobs:none.
