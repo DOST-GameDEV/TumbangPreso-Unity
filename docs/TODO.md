@@ -99,8 +99,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
 - [ ] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,
   no Escape return to title, queue cancel button, hamburger background, stamina drain.
   Lighting rename/default request is protected by the latest no-lighting restriction.
-- [ ] F0930-14 Taya can-down indicator: reconcile incoming aecc0ee2c fix and verify relevant
-  evidence before doing duplicate work.
+- [x] F0930-14 Existing taya can-down fix verified on current controls/charge candidate.
+  Native upright/down/reset case passes, distinct from attacker danger; offscreen
+  can state records DOWN/visible.1280x720 frame/icon capture inspected.
+  [Evidence](reports/feedback-2026-09-30/can-down-indicator.md).
 - [ ] F0930-15 Placeholder icons: reconcile current shipped icon coverage and correct bugs.
 - [ ] F0930-16 Running/walking defects: diagnose only concrete bugs; no animation redesign.
 - [ ] F0930-17 Highlight beam: owner request 2026-09-30 authorizes the overhaul, "similar to
