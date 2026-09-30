@@ -1,5 +1,9 @@
 # Networking: Where To Work
 
+Protocol98 requires matching builds for the10-second frozen boundary after every
+round. Native input/image/lifecycle cases and an actual Windows host/client pair
+qualify the shared deadline, held clock and round2 return. [Round-freeze evidence](reports/feedback-2026-09-30/round-freeze.md).
+
 Read [AGENTS](../AGENTS.md),[working rules](WORKING_RULES.md#gameplay-and-authority),
 [skill contract](SKILL_NETWORK_CONTRACT.md),then the current NET-SKILLS-1 queue and
 [multiplayer evidence](reports/stability-2026-09-27/multiplayer.md).

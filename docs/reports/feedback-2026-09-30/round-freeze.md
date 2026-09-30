@@ -26,7 +26,7 @@ An additional native case first reproduced old introduction cleanup releasing
 the new break hold. Cancelling that ended introduction before taking the new hold
 fixes the handoff; the same case passes. A separate native GPU case passes for
 preserving a visible full-screen view, including tint, when its presenter closes.
-Actual player/peer qualification remains pending; F0930-32 is not marked done.
+The actual Windows player/peer qualification below also passes.
 
 - [Initial native run](checks/round-freeze.xml)
 - [Native retry](checks/round-freeze-retry.xml)
@@ -35,3 +35,38 @@ Actual player/peer qualification remains pending; F0930-32 is not marked done.
 - [Handoff fix](checks/round-freeze-handoff-final.xml)
 - [Displayed-view snapshot](checks/round-freeze-overlay.xml)
 - [Frozen view](Round-frozen-final-view-960x540.png)
+
+## Actual Windows Peers
+
+Clean detached7cb964d0c builds successfully:231.847seconds of build steps. Before
+preparation,15348 tracked inputs were hashed. Preparation changes203 inputs
+(texture metadata and3settings) inside the isolated checkout. No runtime/package
+source, model or animation input changed. Runtime DLL SHA256 is
+4d29b3e2235ed71aa2c7992c56ff5e560ca82c5ce6d960ae2318e65440f000aa.
+
+The first real two-process batch run passes ordinary LAN progression and the
+shared freeze clock, but has no rendered image. Its image gate correctly fails.
+One graphics-enabled rerun removes batch mode and keeps the existing local-review
+sign-in bypass. The standalone review flag is last, so it disables UGS without
+installing the unrelated menu-walk diagnostic. No Relay/online session is allocated.
+
+That same binary passes the graphics-enabled Hero Strike/Eskinita pair through
+round2, protocol98 and matching structural state F8D5C0E1. The observed frozen spans
+are9.8732s host and9.9767s client,95/97samples at approximately100ms intervals. Both
+receive identical began109.467993964413, retain1920x1080images with unchanged
+capture count, keep simulation time and input blocked, then resume round2. Player
+screenshots were inspected. All-bot review suppresses its ordinary HUD/card, so
+these screenshots qualify the rendered frozen world; the native human-view capture
+above separately qualifies the centered card. This is direct local-peer evidence,
+not online/ranked/lossy/all-map or all-effect qualification.
+
+Both native players exited. Named profile/shared input preservation passes. The
+old Desktop binary and unrelated work were not replaced.
+
+- [Successful peer gate](checks/round-freeze-peer-result.json)
+- [Actual LAN report](checks/round-freeze-lan-result.json)
+- [Initial batch image failure](checks/round-freeze-batch-result.json)
+- [Player identity](checks/round-freeze-player-identity.json)
+- [Preparation drift](checks/round-freeze-preparation-drift.json)
+- [Host frozen frame](Round-frozen-peer-host.png)
+- [Client frozen frame](Round-frozen-peer-client.png)

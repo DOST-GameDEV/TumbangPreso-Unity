@@ -163,11 +163,13 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   All10 baseline failures reproduce;19 final native receiver cases pass for
   malformed/valid/spectator/non-host/repeated messages. Protocol97 unchanged.
   [Evidence](reports/feedback-2026-09-30/seat-assignment-packets.md). Actual peers unqualified.
-- [ ] F0930-32 Latest Feedback round flow: remove the per-round skip-warmup option
+- [x] F0930-32 Latest Feedback round flow: remove the per-round skip-warmup option
   and freeze the final view after every round, with no clicking/movement or halftime
   replay until the next round. Latest Doc wording supersedes the earlier announcement
-  wording. Implementing shared10-second host boundary/frozen image/input lock;
-  native qualification pending. Preserve protected art/motion assets and authority.
+  wording. Shared10-second host boundary/frozen image/input lock ships with6 native
+  cases and actual Windows host/client qualification through round2. Both peers
+  retain the same deadline, frozen image/clock and resume normally. Protocol98.
+  [Evidence](reports/feedback-2026-09-30/round-freeze.md). Protected assets preserved.
 
 
 

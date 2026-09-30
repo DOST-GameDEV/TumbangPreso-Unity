@@ -259,3 +259,20 @@ their10-second freeze, matching began value, stopped simulation/frame count and
 round2 resumption; inspect player frozen screenshots. No live UGS/paid Relay.
 Keep F0930-32 open until actual peer gate; publish coherent commits after the gate.
 Only this build is heavy/active; previous test/copy/hash sessions are terminal.
+
+## Completed Local Player Gate
+
+Build12680 completed success at detached7cb964d0c. Audit39165 completed:203
+preparation changes, no source/package/model/animation drift. Runtime SHA256
+4d29b3e2235ed71aa2c7992c56ff5e560ca82c5ce6d960ae2318e65440f000aa.
+Initial LAN18941 ordinary progression/clock passes, image gate fails because batch
+does not render frames. One graphics-enabled repair54028 passes the exact binary:
+host/client share began109.467993964413;95/97frozen samples span9.8732/9.9767s,
+1920x1080images and simulation/capture counts stay fixed; both resume round2.
+Matching protocol98/structuralF8D5C0E1. Screenshots inspected; all-bot HUD suppressed,
+native human-view capture separately proves the centered card. No live UGS/Relay.
+Both players exited, profiles/input preserved. No heavy job running. F0930-32 done
+for this scope; publish coherent local commits after fetch/integration, update the
+existing Feedback row. Keep Catch source/tests reserved to incoming contributor.
+Then continue the remaining authorized feedback/engineering queue. Tutorial release
+question still pending; overall goal active. Do not revive the old running-build note.
