@@ -254,3 +254,11 @@ wait; repaired baseline proves oldNskip. Cold final memory stop, one warm final
 pass, no new OOM. No broader tutorial-completion claim. All3tutorial paths remain
 claimed here for the owner-approved20-lesson flow and completion practice range.
 No Unity job active. Existing full-map cloud material artifact remains separate.
+
+
+Tutorial prompts published179009bc36a9674dcdf76b433aac8db8039a00b6; remoteHEAD
+verified. For the next20-lesson contract, also reserve
+Assets/TumbangPreso/Tests/PlayMode/TutorialLessonHonestyProbe.cs to update the
+obsolete16count/ultimate-next-lesson expectation and retain genuine jump/cast checks.
+Keep the existing TutorialDefenderProbe source unchanged unless a specific new
+contract requires claiming it. No unrelated test repair. No runtime job active.
