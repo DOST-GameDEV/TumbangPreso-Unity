@@ -1099,3 +1099,10 @@ pause remains motionless and resumes1legal tag. No guard/OOM. Publish explicit
 CombatVerbs/test/report paths; same lunge Feedback row gets resolution note.
 Release runtime/test ownership after remote verification. Full all-roster visuals
 and actual peers remain separate; no existing wire semantics changed.
+Lunge correction dcb64731 remote verified; same existing Feedback lunge row updated
+and re-read. Runtime ownership released. Continue the unfinished tag-body request
+with the smallest contrasting silhouettes: Nemu tagging Dante and Dante tagging
+Nemu at accepted far range. Claim only Tests/PlayMode/CatchReconstructionTests.cs
+initially; source model/assets/abilities remain untouched. Extend the existing
+real-clock contact film with exact art selection and actual skin proximity, then
+inspect outcomes before deciding any runtime fix. No claim of all-roster coverage.
