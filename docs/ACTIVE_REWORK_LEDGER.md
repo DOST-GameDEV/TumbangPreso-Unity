@@ -1594,3 +1594,11 @@ Frostbite contact remains. Stuck high throw12s becomes landed1.58s; skipped-stag
 baseline remains valid. Completion frame inspected. Publish coherent fix and same
 Doc row with original comments struck only after remote verification. No heavy job.
 Next Dante forward cascade, fresh claims/intake first; current player still100.
+
+Tutorial338c94ba remote verified. Same Doc Donechecked/Humanunchecked/Saved;
+new comments struck, Harry's awake question answered. New HUD screenshot specifies
+capitalized Resetting Can during the channel. Claim UI/TumpMatchReadout.cs three
+matching channel captions and TumpNativeHudTests.cs existing exact-copy checks.
+No layout/input/restore rule change or protocol increment. One native existing
+retrieve/reset/device flow and toggle touch check, capture channel label. Source
+clean and fetched before this claim; Dante cascade remains next independent work.
