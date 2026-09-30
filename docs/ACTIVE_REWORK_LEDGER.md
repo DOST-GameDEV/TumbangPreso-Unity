@@ -35,8 +35,15 @@ ability-contract paths. Do not continue Fetch/Catch/Haunt or other hero changes.
 The owner directly approved short Feedback-row updates; the Nemu partial fix note
 is written and verified, with the broader row left unchecked.
 
-Diddler next: read-only investigation of networking/bot defects before claiming
-exact independent paths. No active code edit reservation at this checkpoint.
+Diddler reservation: reproduce and reject malformed map-vote packets before
+reader exceptions or partial ballot mutation. Existing wire layouts and voting
+rules remain unchanged; no abilities, input or loading edits.
+Owned paths:
+- Assets/TumbangPreso/Runtime/Net/MatchRpc.cs (OnSelectMapVoteMsg, OnMapVoteTallyMsg and OnQueueVoteStateMsg only)
+- Assets/TumbangPreso/Tests/PlayMode/MapVotePacketTests.cs and its .meta
+- docs/NETWORKING.md (map-vote validation note only)
+- docs/reports/feedback-2026-09-30/map-vote-packets.md
+- docs/TODO.md and docs/ACTIVE_REWORK_LEDGER.md (this issue and evidence only)
 
 Local tutorial batch 2fbee1fb1 is complete and being integrated with this Nemu unit.
 Its source reservation is released except the pending human completion destination.
