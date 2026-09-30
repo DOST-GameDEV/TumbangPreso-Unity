@@ -368,6 +368,8 @@ scoring remain unchanged. No kit, loading, input or local build paths are owned.
 Native near/far real-time films and interruption/restoration checks will judge
 the change. No job running; no new animation acceptance claimed.
 
+Build-input fix4e230aab1 shipped throughc55574cd634b7c9745bd66a2a0f7702af39118c8, remote HEAD verified; incoming visible-tag code preserved. New clean detached validation checkout: C:/Users/matth/Documents/Codex/work/tump-net-0930 atc55574cd6, with its own copied Library cache. Frozen15330Assets/Packages/ProjectSettings inputs are in Logs/feedback-0930-network/build-inputs.json. Guarded internal Windows build is LIVE: unified exec session30949, Unity PID21560, profilefeedback-0930-network-build, output Builds/feedback-0930-network/TumbangPreso.exe, log Logs/feedback-0930-network/build.log. Poll this exact handle; do not restart on timeout. Last state compiling scripts, no completed build claim. After completion verify executable/data, inspect preparation diffs and motion hashes, then run tools/run_demo_lan.py with that exact internal binary, fresh Logs output and isolated profile prefix. Desktop is untouched. No other heavy job may run alongside it. Goal remains active.
+
 Whole-body tag revision: near/far real-time contact cases pass with body weight
 transfer and close-distance adaptation; arm extension is capped10percent. Actual
 capsules stay fixed, normal recovery restores root/scale, and the new film was
@@ -393,3 +395,5 @@ and metadata, related focused evidence, TODO/NETWORKING/ledger. No wire layout,
 stock rules, scoring rules, kit, input, loading or build paths are owned. Suspected
 truncated host payload exceptions and trailing payload acceptance need native
 reproduction before runtime edits. No test or defect claim yet; no heavy job running.
+
+Incoming whole-body tag5f7589760 is preserved in the main integration. The active internal build stays frozen atc55574cd6; it does not qualify this later presentation revision. Do not restart the live build for an unrelated visual integration. Source/unit evidence remain separate; continue the planned actual-peer network check on the frozen binary first.
