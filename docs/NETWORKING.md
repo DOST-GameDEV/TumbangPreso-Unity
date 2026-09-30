@@ -7,6 +7,11 @@ This is a source map,not another backlog or a declaration of complete replicatio
 
 ## Runtime Ownership
 
+A frozen c55574cd6 internal Windows player now passes a real two-process direct
+LAN check through round2, with matching protocol/seat/character/defender state.
+[Exact scope and limitations](reports/feedback-2026-09-30/player-lan.md). This does
+not qualify unexercised skills, online/ranked, loss, reconnect or later integrations.
+
 Protocol97 also gates the requested3m ordinary defender lunge. Local prediction
 and host resolution share the derived impulse; the movement ceiling remains28m/s.
 Bot attempt distances, safe-emote clearance and pressure stats follow actual reach.
