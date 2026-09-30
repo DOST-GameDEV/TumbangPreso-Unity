@@ -1022,3 +1022,26 @@ writes. Refresh the internal player with the proven headless build recipe, retai
 old runtime hash/identity and logs. Then one supported4round/30second automatic
 Hero match covers ordinary/halftime/card/final completion without another long
 unchanged8round run or manual-pause delay. Native graphics remain enabled in play.
+
+Refreshed headless build hit guard at77.85s during linking, no new OOM. Fresh
+PLAYER compilation spawned a second idle Roslyn cache after the earlier Editor
+cache was released; post-exit receipt confirms its exact owned745MB process.
+Bounded repair: observer releases that same cache once UnityLinker startup proves
+managed compilation finished, retaining the existing exact-path/process checks and
+memory threshold. One final build retry; partial output is not a successful player.
+No authored/project setting change. This supplements build-only headless mode.
+Warm headless follow-through succeeds62.91s,2076MB, no new OOM. New linker-cache
+cleanup hook did not run because the warmed link step was cached; do not claim its
+benefit was measured in this pass. Actual refreshed runtime hash/identity saved.
+Run the prepared4round/30s automatic Hero player now, with settled round witnesses,
+fresh isolated home/profile and real graphics.300s bound; no manual pause/input.
+
+Actual refreshed player terminal: one4round/30s Hero match completed naturally,
+scores750/1120/890/705, seat1wins; automatic result-board rematch began. Outer300s
+bound stops second match inround3. No frame-cap report; do not claim that report
+passed. Five ordinary boundaries frozen/blocked, three shared-card captures
+inspected at1364x1024. Custom4rounds did NOT exercise halftime, correcting the
+planned scope; prior8round/native evidence stays separate. Services refused and
+319replay readback failures remain diagnostic limits. No new OOM. Publish witness
+04c675f7 plus exact player evidence, update same Doc row and release witness claim.
+No heavy job active. Next fresh Feedback intake, prioritize actionable refinements.

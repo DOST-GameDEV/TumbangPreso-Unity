@@ -1,0 +1,16 @@
+{
+  "runtimeSha256": "25dfe9880cfa410aa85ef1eed61f17c2590a07589e31c51debd7825bf8020663",
+  "identity": {
+    "sha": "831368991a142fc2b4bfac1b86d6161402ce2d13",
+    "branch": "",
+    "protocol": 100,
+    "target": "StandaloneLinux64",
+    "appVersion": "1.0.0",
+    "ugsProject": "dcf0831e-a5f4-43b4-832e-b687f13a3569",
+    "ugsEnvironment": "production",
+    "builtAt": "2026-09-30 11:45:14",
+    "dirty": true,
+    "treeState": "dirty"
+  },
+  "source": "04c675f7"
+}
