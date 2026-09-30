@@ -17,7 +17,7 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(2.5f, whirled.Seconds);
             Assert.True(whirled.DropsHeldSlipper && whirled.BlocksSlipperRetrieval);
             Assert.False(whirled.BlocksMovement || whirled.BlocksInteraction);
-            Assert.Equal("Disabled Slipper Retrieval", whirled.Tooltip);
+            Assert.Equal("Disabled Slipper Retrieval and Can Reset", whirled.Tooltip);
 
             var chilled = StatusRules.For(StatusKind.Chilled);
             Assert.Equal(5.0f, chilled.Seconds);

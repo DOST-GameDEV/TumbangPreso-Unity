@@ -3050,7 +3050,7 @@ namespace TumbangPreso.Net
             var who = Unit(slot);
 
             if (lata == null || who == null || lata.IsUpright) return false;
-            if (!who.IsDefender || !who.CanAct()) return false;
+            if (!who.IsDefender || !who.CanAct() || who.IsWhirled) return false;
 
             Vector3 a = who.transform.position;
             Vector3 b = lata.transform.position;

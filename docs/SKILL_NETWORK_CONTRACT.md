@@ -60,6 +60,13 @@ repeated/older accepted events cannot refresh the timer. Shared ultimate reserve
 activation starts the same clock. Offline successful kit casts use that clock too.
 Round/transport reset clears it. This changes no other kit's event subscription.
 
+## Whirled Reset Compatibility
+
+Protocol105 makes Whirled refuse and cancel can-reset channels on both the local
+Carrier target gate and HostMayChannelReset. The existing status timer and unit
+snapshot carry the state; no new packet field. Other CanAct permissions remain.
+Matching builds are required. Local channel and host-gate tests are not actual peers.
+
 ## Cosmetic Reworks
 
 Cheska protocol103: the current Wiki7.5s field,1.5s ultimate delay/every-player

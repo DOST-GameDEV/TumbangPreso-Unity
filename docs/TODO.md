@@ -166,13 +166,15 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   palette and lifecycle. Two distinct native cases pass; observer court capture
   inspected. Fixed owner-eye capture is self-occluded, not FPP qualification.
   [Evidence](reports/dante-visibility-2026-09-30/result.md).
-- [ ] F0930-11 Amihan: reconcile wiki names/rules/statuses; fast, strong airborne Airburst.
+- [x] F0930-11 Amihan: current Wiki names/rules/statuses and fast airborne Airburst.
   Owner explicitly reopened this and the full remaining ability queue on2026-10-01.
   Check newest active file claims first; complete specs govern, no invented kits.
   Airburst status/airborne payload corrected: native4/4 and Core8/8pass;
   authored court1/1also passes with9m travel to the confinement edge.
   Second Wind25percent/2.5s and Drift35s/name now pass6native and22Core checks;
-  protocol103 carries recovery. Shared Whirled can-reset eligibility remains open.
+  recovery uses the scoped protocol104 contract. Whirled now blocks/cancels can
+  reset locally and on the host, with3native and8Core checks passing; protocol105.
+  [Status evidence](reports/amihan-feedback-2026-09-30/whirled.md).
   [Passive evidence](reports/amihan-feedback-2026-09-30/wiki.md). [Evidence](reports/amihan-feedback-2026-09-30/result.md).
 - [ ] F0930-12 Nemu and other defined wiki rules: reconcile current behavior; preserve
   unspecified/placeholder kits rather than inventing replacements.

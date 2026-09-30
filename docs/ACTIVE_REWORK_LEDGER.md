@@ -1,6 +1,6 @@
 # Active Rework Checkpoint
 
-Updated2026-10-01. Branch ASTRAReworks. Protocol104 candidate. Goal active.
+Updated2026-10-01. Branch ASTRAReworks. Protocol105 candidate. Goal active.
 Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 
 ## Live Local Resume
@@ -1489,3 +1489,8 @@ Whirled baseline3/3fails: local can restored while statusactive, active channel
 survives, host gate accepts. Fix uses existing HasResetTarget so local input/HUD
 and channel share refusal; host gate independently mirrors it. General CanAct
 stays allowed. Protocol105 changes this shared rule; final3cases next.
+
+Whirled final3/3native passes5.31s plus8Core. Publish exact local/host gate and
+status text; full Amihan Wiki row can now be Done with the prior scoped units.
+Human verification stays unchanged. No newplayer/actualpeer claim. Release runtime
+paths after remote verification; fresh intake before next independent hero.
