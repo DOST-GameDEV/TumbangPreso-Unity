@@ -1444,3 +1444,9 @@ Authored Airburst case1/1passes9.17s: real defender airborne,9m travel to z7
 confinement edge. Two witness frames inspected and retained. Publish test/evidence,
 update same Airburst row Done; full Amihan row stays open. Next Second Wind and
 Drift alignment, exact claim before edits. No heavy job active.
+Airburst same Doc Donechecked/Humanunchecked/Saved verified22:31. New name
+question answered in place under standing collaborator-reply permission. Amihan
+Second Wind/Drift plan appended: own AmihanHeroKit.cs, AmihanRules.cs,
+Net/MatchRpc.Featherfall.cs, NetSession.cs, new AmihanWikiTests.cs/meta and scoped
+wire fixtures. Baseline name/cooldown and accepted-cast boost next. Source fetched,
+no divergence; no heavy job active, no passive runtime edits yet.
