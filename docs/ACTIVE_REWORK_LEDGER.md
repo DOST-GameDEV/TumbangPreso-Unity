@@ -1263,3 +1263,14 @@ next: own Runtime/Visual/DanteCarapaceVisual.cs, DanteWardBadge.cs/meta,
 Tests/PlayMode/DanteWardBadgeTests.cs/meta, fixture partition and scoped docs.
 Plan reports/dante-ward-2026-09-30/plan.md before edits. Preserve actual SHIELD
 clock/rules and the existing plate/orbit design. No ability kit source claimed.
+Ward missing-cue baseline fails; implemented small existing shield glyph driven
+by ward StepTo and per-camera facing/hiding. Native1case passes7.78s with live and
+recorded15/20s clocks, backwards/expiry and cleanup. Court frame inspected, cue
+reads clearly above head without covering the face. Tighten conditional FPP
+assertion to require an actual first-person rig, then qualify that path explicitly.
+No product change for that test-strengthening pass.
+Ward strengthened FPP check passes1/1in8.28s, actual first-person branch required.
+Publish badge/ward integration and exact tests/evidence. No new OOM, no gameplay
+changes. Same shield-logo Feedback row becomes Done after remote verification;
+Human verified stays unchecked. Next reconcile already-implemented beam851f8ca8
+and lighting BUGS-0926.5 evidence instead of duplicating those implementations.

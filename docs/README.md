@@ -48,6 +48,8 @@ old prompts, counts and work orders are not current instructions.
   the scoped field-melt/wall-shatter plan and current reference limits.
   [Dante barrier visibility](reports/dante-visibility-2026-09-30/result.md) records
   the palette-aware half-alpha fix and native capture limits.
+  [Dante active ward cue](reports/dante-ward-2026-09-30/result.md) records
+  the clock-bound shield badge and native camera/lifecycle check.
 - **History:** archive, with original-path pointers and a replacement/reason in its index.
   Old documents keep their useful context; reusable methods remain live.
 - **Media:** latest two generated iterations per coherent subject/action/view when pruning

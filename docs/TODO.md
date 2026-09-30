@@ -328,10 +328,16 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   chat for manual copying; no automation or cross-chat action was performed.
 
 Cheska shatter/melt and Dante shield-logo presentation requests are authorized
-for the later presentation pass by the latest owner instruction. They are not
-shipped. Finish preceding actionable requests, then research references, plan each
+for the later presentation pass by the latest owner instruction. Cheska expiry
+and Dante shield-logo are now implemented with native evidence below. Research references, plan each
 effect with its animation/UI/sound, and critique actual playback. Preserve owner
 mechanics and finalized Paete/Phaister work. Manual bug hunting follows that pass.
+
+- [x] PRESENTATION-DANTE-WARD: one existing DanteShield glyph follows the active
+  ward's assigned/restored clock. Small camera-facing cue, own FPP hidden,
+  live/recorded expiry/backwards sampling and cleanup pass in one native contract.
+  Actual court capture inspected. Names/durations/rules remain owner-reserved.
+  [Evidence](reports/dante-ward-2026-09-30/result.md).
 
 - [x] PRESENTATION-CHESKA-EXPIRY: requested field melt and wall shatter are
   authorized after the prior actionable feedback. Start with field thaw without

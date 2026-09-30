@@ -22,6 +22,7 @@ namespace TumbangPreso.Visual
         private readonly List<Plate> _plates=new List<Plate>();
         private readonly List<Plate> _orbiting=new List<Plate>();
         private GameObject _orbitRoot;
+        private DanteWardBadge _badge;
         private Renderer[] _renderers;
         public float LifeSeconds=>Mathf.Max(.1f,_duration);
         public IReadOnlyList<Renderer> VisiblePieces=>_renderers;
@@ -59,7 +60,7 @@ namespace TumbangPreso.Visual
             var root=new GameObject("DanteStoneWard");root.transform.SetParent(body.bones[bone],false);root.transform.localPosition=bounds.center;
             var ward=root.AddComponent<DanteCarapaceVisual>();ward._owner=owner;ward._worldRoot=worldRoot;ward._duration=duration;ward._heavy=heavy;
             if(front==0)front=Mathf.Sign(Vector3.Dot(body.bones[bone].forward,worldRoot.forward));
-            ward._front=front==0?1:front;ward.Build(bounds.extents,ward._front);ward.StepTo(0);return ward;
+            ward._front=front==0?1:front;ward.Build(bounds.extents,ward._front);ward._badge=DanteWardBadge.Create(worldRoot,owner);ward.StepTo(0);return ward;
         }
 
         private static Bounds TorsoBounds(SkinnedMeshRenderer body,int bone)
@@ -244,6 +245,7 @@ namespace TumbangPreso.Visual
         public void StepTo(float seconds)
         {
             _recordedAge=seconds;
+            if(_badge!=null)_badge.StepTo(seconds,LifeSeconds);
             _visible=seconds>=0&&seconds<LifeSeconds;
             float release=Mathf.SmoothStep(0,1,Mathf.Clamp01((LifeSeconds-seconds)/.18f));
             for(int i=0;i<_plates.Count;i++)
@@ -275,7 +277,7 @@ namespace TumbangPreso.Visual
 
         private void OnEnable()=>Camera.onPreCull+=BeforeCamera;
         private void OnDisable()=>Camera.onPreCull-=BeforeCamera;
-        private void OnDestroy(){if(_orbitRoot!=null)Destroy(_orbitRoot);}
+        private void OnDestroy(){if(_orbitRoot!=null)Destroy(_orbitRoot);if(_badge!=null)Destroy(_badge.gameObject);}
         private void BeforeCamera(Camera camera)
         {
             if(_owner==null||_renderers==null)return;
