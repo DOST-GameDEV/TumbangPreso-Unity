@@ -1077,3 +1077,13 @@ rebuild or performance improvement. Same source may cost sync readback on these
 drivers, while supported devices keep asynchronous capture. Owner presentation
 permission is reconciled in TODO/Feedback queued notes; no renewed permission
 needed for those later requests, finalized Paete/Phaister remain protected.
+Replay correction2ecc571d remote verified; QA_TUMP_0048 added with Done checked,
+Human verified unchecked, native controls/save verified. Runtime ownership released.
+Next interrupted-lunge gap: CombatVerbs returns on !CanAct before aging its live
+sweep, potentially reviving an old dash after stun or round end. Claim exact paths
+Assets/TumbangPreso/Runtime/CombatVerbs.cs and Tests/PlayMode/DefenderLungeTravelTests.cs,
+plus TODO/report. Reproduce actual host dash interrupted before contact, then an
+attacker entering only after recovery; expected no tag without a fresh lunge.
+Two native cases (stagger, round inactivity), baseline then minimal correction.
+No ability-specific changes. Existing ordinary travel/accepted-tag cases reused
+unless the correction alters their active path. No heavy job yet.
