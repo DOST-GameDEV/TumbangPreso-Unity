@@ -395,13 +395,71 @@ namespace TumbangPreso.PlayTests
             finally { HubLoading.Cancel(); GameLaunch.TrainingRange = range; }
         }
 
+        /// <summary>
+        /// ⚠️⚠️ THERE IS ONE LOADING SCREEN AT BOOT AND NONE ON THE WAY TO THE HUB. Menu hops and
+        /// the hub's map previews used to raise `HubLoading` with a "GETTING READY" heading, a
+        /// second loading screen straight after the splash. Requested 2026-09-30: removed, with
+        /// the arenas' assets loaded by the splash instead. This asserts the curtain never
+        /// appears on the title-to-hub journey and that the preview still arrives on its own.
+        /// </summary>
         [UnityTest, Timeout(180000)]
-        public IEnumerator CustomMapSwitchesReusePreparedScenesAndLooksAfterTheLoadingCurtain()
+        public IEnumerator MenuHopsAndTheHubOpenWithoutASecondLoadingScreen()
+        {
+            bool boot = SceneFlow.BootedThroughSplash, networked = SceneFlow.Networked;
+            bool hubEnabled = ConvertedMatchSetup.HubEnabled;
+            try
+            {
+                SceneFlow.BootedThroughSplash = false; SceneFlow.Networked = false;
+                ConvertedMatchSetup.HubEnabled = true; TumpHub.PendingEntry = HubEntry.Home;
+                SceneFlow.Go(SceneFlow.MainMenu);
+                Assert.IsNull(Object.FindFirstObjectByType<HubLoading>(), "A menu hop raised a loading curtain.");
+                float until = Time.realtimeSinceStartup + 60;
+                ConvertedMainMenu menu = null;
+                while (menu == null || !menu.IsInitialized)
+                {
+                    Assert.IsFalse(HubLoading.Visible, "A loading curtain covered the title screen.");
+                    Assert.Less(Time.realtimeSinceStartup, until, "The title screen did not initialize.");
+                    yield return null;
+                    menu = SceneManager.GetActiveScene().name == SceneFlow.MainMenu
+                        ? Object.FindFirstObjectByType<ConvertedMainMenu>() : null;
+                }
+                Assert.IsNull(menu.InitializationError);
+
+                SceneFlow.Go(SceneFlow.MatchSetup);
+                Assert.IsNull(Object.FindFirstObjectByType<HubLoading>(), "Entering the hub raised a loading curtain.");
+                until = Time.realtimeSinceStartup + 150;
+                ConvertedMatchSetup hub = null;
+                while (hub == null || !hub.IsInitialized || hub.Preview == null ||
+                       hub.Preview.Showing != SceneFlow.SelectedMap)
+                {
+                    Assert.IsFalse(HubLoading.Visible, "A loading curtain covered the hub or its map preview.");
+                    Assert.Less(Time.realtimeSinceStartup, until, "The hub or its selected map preview did not arrive.");
+                    yield return null;
+                    hub = SceneManager.GetActiveScene().name == SceneFlow.MatchSetup
+                        ? Object.FindFirstObjectByType<ConvertedMatchSetup>() : null;
+                }
+                Assert.IsNull(hub.InitializationError);
+                Assert.IsFalse(MatchInstaller.PreviewOnly, "The preview load retained the match-install suppression gate.");
+            }
+            finally
+            {
+                SceneFlow.BootedThroughSplash = boot;
+                SceneFlow.Networked = networked; ConvertedMatchSetup.HubEnabled = hubEnabled;
+            }
+        }
+
+        /// <summary>
+        /// Each arena is instanced the first time it is picked, with no curtain, and a second pass
+        /// through every map reuses those instances without another scene load.
+        /// </summary>
+        [UnityTest, Timeout(180000)]
+        public IEnumerator CustomMapSwitchesShowEachArenaWithoutALoadingCurtainAndReuseIt()
         {
             bool networked = SceneFlow.Networked, hubEnabled = ConvertedMatchSetup.HubEnabled;
             string selected = SceneFlow.SelectedMap;
-            int loadsAfterReady = 0;
-            void CountLoad(Scene scene, LoadSceneMode mode) { loadsAfterReady++; }
+            int loadsOnSecondPass = 0;
+            bool counting = false;
+            void CountLoad(Scene scene, LoadSceneMode mode) { if (counting) loadsOnSecondPass++; }
             try
             {
                 SceneFlow.Networked = false; ConvertedMatchSetup.HubEnabled = true;
@@ -409,129 +467,56 @@ namespace TumbangPreso.PlayTests
                 yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup);
                 var controller = Object.FindFirstObjectByType<ConvertedMatchSetup>();
                 Assert.IsNotNull(controller);
-                float until = Time.realtimeSinceStartup + 150;
-                bool sawCurtain = false;
-                while (controller.Preview == null || !controller.Preview.IsPrepared || HubLoading.Visible)
+                // The hub builds itself after the scene load reports done; wait for it rather
+                // than for a curtain, which no longer exists.
+                float built = Time.realtimeSinceStartup + 30;
+                while (TumpHub.Current == null || !controller.IsInitialized)
                 {
-                    sawCurtain |= HubLoading.Visible;
-                    var loading = Object.FindFirstObjectByType<HubLoading>();
-                    if (loading != null) Assert.IsNull(loading.FailureReason, loading.FailureReason);
-                    Assert.Less(Time.realtimeSinceStartup, until, "Custom previews did not finish behind loading.");
+                    Assert.Less(Time.realtimeSinceStartup, built, "The hub did not build.");
                     yield return null;
                 }
-                Assert.IsTrue(sawCurtain);
-                Assert.IsFalse(MatchInstaller.PreviewOnly, "Preparation retained the match-install suppression gate.");
-                var preview = controller.Preview;
-                const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
-                var cache = (System.Collections.Generic.Dictionary<string, Scene>)typeof(MapPreviewSurface).GetField("_cache", flags).GetValue(preview);
-                var looks = (System.Collections.Generic.Dictionary<string, Visual.WorldLookPresentation>)typeof(MapPreviewSurface).GetField("_looks", flags).GetValue(preview);
-                Assert.AreEqual(SceneFlow.Maps.Length, cache.Count);
-                Assert.AreEqual(SceneFlow.Maps.Length, looks.Count);
-                var preparedScenes = cache.ToDictionary(x => x.Key, x => x.Value);
-                var preparedLooks = looks.ToDictionary(x => x.Key, x => x.Value);
                 TumpHub.Current.Push<HubHost>();
                 yield return null;
                 SceneManager.sceneLoaded += CountLoad;
-                var timer = new System.Diagnostics.Stopwatch();
                 for (int pass = 0; pass < 2; pass++)
+                {
+                    counting = pass == 1;
                     foreach (string map in SceneFlow.Maps)
                     {
-                        timer.Restart(); controller.SelectMap(map); timer.Stop();
-                        Assert.AreEqual(map, preview.Showing, "A prepared custom selection still waits for scene setup.");
-                        Assert.AreEqual(preparedScenes[map], cache[map]);
-                        Assert.AreSame(preparedLooks[map], looks[map]);
-                        Assert.AreSame(looks[map], Visual.WorldLookPresentation.Current);
-                        Debug.Log(System.FormattableString.Invariant($"[CustomMapSwitch] pass={pass} map={map} selectMs={timer.Elapsed.TotalMilliseconds:F3}"));
-                        yield return null;
-                        if (pass == 0)
+                        controller.SelectMap(map);
+                        var preview = controller.Preview;
+                        Assert.IsNotNull(preview);
+                        float until = Time.realtimeSinceStartup + 60;
+                        while (preview.Showing != map)
                         {
-                            preview.Camera.Render();
-                            var target = RenderTexture.GetTemporary(320, 180, 0, RenderTextureFormat.ARGB32);
-                            var image = new Texture2D(320, 180, TextureFormat.RGB24, false);
-                            var previous = RenderTexture.active;
-                            try
-                            {
-                                Graphics.Blit(preview.Camera.targetTexture, target); RenderTexture.active = target;
-                                image.ReadPixels(new Rect(0, 0, 320, 180), 0, 0); image.Apply();
-                                Assert.Greater(image.GetPixels32().Select(p => (p.r << 16) | (p.g << 8) | p.b).Distinct().Count(), 64,
-                                    "Prepared preview is blank or flat: " + map);
-                                string directory = System.IO.Path.Combine(Application.dataPath, "../Logs/custom-preview-loading-20260927");
-                                System.IO.Directory.CreateDirectory(directory);
-                                System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory, map + ".png"), image.EncodeToPNG());
-                            }
-                            finally { RenderTexture.active = previous; RenderTexture.ReleaseTemporary(target); Object.Destroy(image); }
+                            Assert.IsFalse(HubLoading.Visible, "Picking a map raised a loading curtain: " + map);
+                            Assert.Less(Time.realtimeSinceStartup, until, "The picked map never showed: " + map);
+                            yield return null;
                         }
+                        yield return null;
+                        if (pass != 0) continue;
+                        preview.Camera.Render();
+                        var target = RenderTexture.GetTemporary(320, 180, 0, RenderTextureFormat.ARGB32);
+                        var image = new Texture2D(320, 180, TextureFormat.RGB24, false);
+                        var previous = RenderTexture.active;
+                        try
+                        {
+                            Graphics.Blit(preview.Camera.targetTexture, target); RenderTexture.active = target;
+                            image.ReadPixels(new Rect(0, 0, 320, 180), 0, 0); image.Apply();
+                            Assert.Greater(image.GetPixels32().Select(p => (p.r << 16) | (p.g << 8) | p.b).Distinct().Count(), 64,
+                                "Map preview is blank or flat: " + map);
+                        }
+                        finally { RenderTexture.active = previous; RenderTexture.ReleaseTemporary(target); Object.Destroy(image); }
                     }
-                Assert.AreEqual(0, loadsAfterReady, "Changing a prepared map started another scene load.");
-                Assert.AreEqual(SceneFlow.Maps.Length, looks.Count);
+                }
+                Assert.AreEqual(0, loadsOnSecondPass, "Revisiting an already shown map started another scene load.");
+                Assert.IsFalse(MatchInstaller.PreviewOnly, "A preview load retained the match-install suppression gate.");
             }
             finally
             {
                 SceneManager.sceneLoaded -= CountLoad;
-                HubLoading.Cancel(); SceneFlow.Networked = networked;
+                SceneFlow.Networked = networked;
                 ConvertedMatchSetup.HubEnabled = hubEnabled; SceneFlow.SelectedMap = selected;
-            }
-        }
-
-        [UnityTest, Timeout(180000)]
-        public IEnumerator MenuTransitionsBlockPointerAndKeepOneCurtainThroughHubPreparation()
-        {
-            bool boot = SceneFlow.BootedThroughSplash, networked = SceneFlow.Networked;
-            bool hubEnabled = ConvertedMatchSetup.HubEnabled;
-            var priorScene = SceneManager.GetActiveScene();
-            try
-            {
-                SceneFlow.BootedThroughSplash = false; SceneFlow.Networked = false;
-                ConvertedMatchSetup.HubEnabled = true; TumpHub.PendingEntry = HubEntry.Home;
-                SceneFlow.Go(SceneFlow.MainMenu);
-                var loading = Object.FindFirstObjectByType<HubLoading>();
-                Assert.IsNotNull(loading);
-                Assert.AreEqual(priorScene, SceneManager.GetActiveScene(), "Scene work started before the curtain got a frame.");
-                Assert.IsTrue(HubLoading.BeginMenu(SceneFlow.MainMenu));
-                Assert.AreSame(loading, Object.FindFirstObjectByType<HubLoading>(), "Repeated navigation replaced the in-flight owner.");
-                yield return null;
-                Canvas.ForceUpdateCanvases();
-                var pointer = new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current)
-                    { position = new Vector2(Screen.width * .5f, Screen.height * .5f) };
-                var hits = new System.Collections.Generic.List<UnityEngine.EventSystems.RaycastResult>();
-                UnityEngine.EventSystems.EventSystem.current.RaycastAll(pointer, hits);
-                var loadingCanvas = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None).Single(x => x.name == "TumpLoadingCanvas");
-                Assert.IsNotEmpty(hits, $"Loading rect={((RectTransform)loadingCanvas.transform).rect}, graphic depth={loadingCanvas.GetComponent<Image>().depth}, screen={Screen.width}x{Screen.height}");
-                Assert.AreEqual("TumpLoadingCanvas", hits[0].gameObject.name, "Pointer input passes through the loading art.");
-                float until = Time.realtimeSinceStartup + 150;
-                while (HubLoading.Visible)
-                {
-                    Assert.IsNull(loading.FailureReason, loading.FailureReason);
-                    Assert.Less(Time.realtimeSinceStartup, until);
-                    yield return null;
-                }
-                var menu = Object.FindFirstObjectByType<ConvertedMainMenu>();
-                Assert.IsNotNull(menu); Assert.IsTrue(menu.IsInitialized); Assert.IsTrue(menu.IsPrepared);
-                Assert.IsNull(menu.InitializationError);
-
-                SceneFlow.Go(SceneFlow.MatchSetup);
-                loading = Object.FindFirstObjectByType<HubLoading>();
-                Assert.IsNotNull(loading);
-                int ownerId = loading.GetHashCode();
-                until = Time.realtimeSinceStartup + 150;
-                bool enteredHub = false;
-                while (HubLoading.Visible)
-                {
-                    Assert.AreSame(loading, Object.FindFirstObjectByType<HubLoading>(), "Hub Wire replaced rather than adopted the transition curtain.");
-                    Assert.IsNull(loading.FailureReason, loading.FailureReason);
-                    Assert.Less(Time.realtimeSinceStartup, until);
-                    enteredHub |= SceneManager.GetActiveScene().name == SceneFlow.MatchSetup;
-                    yield return null;
-                }
-                var hub = Object.FindFirstObjectByType<ConvertedMatchSetup>();
-                Assert.IsTrue(enteredHub); Assert.IsNotNull(hub); Assert.IsTrue(hub.IsInitialized);
-                Assert.IsTrue(hub.Preview.IsPrepared); Assert.IsFalse(MatchInstaller.PreviewOnly);
-                Debug.Log($"[MenuLoadingCheck] title initialized; hub curtain {ownerId} retained through preview readiness; pointer blocked.");
-            }
-            finally
-            {
-                HubLoading.Cancel(); SceneFlow.BootedThroughSplash = boot;
-                SceneFlow.Networked = networked; ConvertedMatchSetup.HubEnabled = hubEnabled;
             }
         }
     }

@@ -75,7 +75,8 @@ namespace TumbangPreso.UI
             if(net!=null && net.IsNetworked)
                 MatchRpc.Instance?.SelectLobbyPickServerRpc(settings.CharacterPick,settings.CanPick,settings.SlipperPick);
             RefreshOwnerPreparation();
-            if (HubEnabled && _preview != null) Hub.HubLoading.PreparePreview(_preview);
+            // No hub loading curtain: the arenas' assets are already resident from the boot
+            // splash, and the preview surface instances only the map it is asked to show.
             RejoinRunningMatch();AutoHost();
         }
         private void OwnerPreparationBack()

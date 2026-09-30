@@ -567,9 +567,13 @@ namespace TumbangPreso.UI
 
             if(MapPreviewSurface.DeferTransition(scene))return;
 
-            // Every peer owns its asynchronous scene load; NGO scene management is
+            // Every peer owns its asynchronous arena load; NGO scene management is
             // disabled. The curtain also owns destination setup and first-draw work.
-            if (Hub.HubLoading.BeginMenu(scene)) return;
+            // ⚠️ MENU SCENES HAVE NO CURTAIN, ON PURPOSE. `HubLoading.BeginMenu` put a second
+            // "GETTING READY" screen in front of every menu hop and the hub; request,
+            // 2026-09-30: it was redundant, and all asset and shader loading belongs to the boot
+            // splash, which now retains every arena's assets and the menu art before the title
+            // opens, so a menu hop is a plain scene change again.
             if (Hub.HubLoading.Begin(scene)) return;
             SceneManager.LoadScene(scene);
         }
