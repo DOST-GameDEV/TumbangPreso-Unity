@@ -377,3 +377,19 @@ received no render events outside replay. Incomplete probe removed from shipping
 source, both failure receipts retained; no interruption pass claimed. No job is
 running. Publish the checked runtime and update the same Feedback contact row.
 Loading, hero kits and the local build/input/tutorial reservations stay untouched.
+
+Whole-body tag5f758976 shipped through824cdfb4; remote HEAD verified and the same
+Feedback row updated, Human verified untouched. The full-Eskinita follow-up was
+terminated during loading (exit247, no XML) despite6.9GiB available at launch.
+It provides no additional runtime evidence. No unchanged launch retry is planned.
+Source stays checked by the close/far isolated native film and normal recovery.
+Latest live tutorial draft explicitly says DO NOT WORK ON THIS YET; preserve that
+hold. Latest input row now asks Curve Left Up/Right Down and Sprint renamed Run;
+these remain with the input contributor, not the tag unit.
+
+Diddler next F0930-20 investigation reserves only MatchRpc.cs OnScoreMsg and
+OnTsinelasMsg payload-bound checks, new Tests/PlayMode/ScoreStockPacketTests.cs
+and metadata, related focused evidence, TODO/NETWORKING/ledger. No wire layout,
+stock rules, scoring rules, kit, input, loading or build paths are owned. Suspected
+truncated host payload exceptions and trailing payload acceptance need native
+reproduction before runtime edits. No test or defect claim yet; no heavy job running.
