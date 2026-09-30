@@ -1,7 +1,7 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-30. Branch: ASTRAReworks. Current unit: FEEDBACK-0930.
-Current protocol:96 in [NetSession](../Assets/TumbangPreso/Runtime/Net/NetSession.cs).
+Current protocol:97 in [NetSession](../Assets/TumbangPreso/Runtime/Net/NetSession.cs).
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 TODO is the work-status queue; this file records resumption and evidence boundaries.
 
@@ -290,3 +290,5 @@ The complete341-line checkpoint and every older receipt it referenced remain in
 [ledger history through71396c97](archive/ledger-through-71396c97-2026-09-28.md).
 Its stale counts/protocol literals are historical. Earlier instruction/method context
 remains in [the2026-09-27 snapshot](archive/snapshots-2026-09-27/README.md).
+
+Local longer-lunge reservation: embedded Core Balance/Combat/AiTuning/MatchRecord/MoveBudget/Sabotage, NetSession compatibility only, Core balance/bot/move-budget/stat tests and DefenderLungeTravelTests. Travel is 3m with speed derived from friction, tier approach and safe-emote bounds follow reach, packet ceiling remains28m/s. Native local input travel (both modes), host travel/repeat refusal and near/far sweep pass. Initial target fixture lacked held-shoe/live-match preconditions; only its2changed cases were rerun. Focused Core56passed and corrected pressure literal passes1/1. No peer claim. This unit is being shipped; its source reservation will release after push. Loading/abilities and Diddler pause paths stay reserved.

@@ -61,7 +61,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Retrieve/Reset/Interact, wheel up-left/down-right, F Shove/Lunge/Ready. IDs and saved
   overrides retained. Native device/intents and shared Ready-release guard pass;
   default-collision and older-override checks pass. [Evidence](reports/feedback-2026-09-30/README.md#default-action-bindings).
-- [ ] F0930-07 Longer defender lunge, coherent travel/authority/bot bounds.
+- [x] F0930-07 Longer defender lunge: full charge targets3m in both modes, with
+  derived speed, bot approach/celebration bounds and pressure stats. Actual local
+  input and host-request travel, repeat refusal, new-range tag and distant miss
+  pass natively. Packet ceiling stays28m/s; protocol97 requires matching builds.
+  [Evidence](reports/feedback-2026-09-30/defender-lunge.md). Actual peers unqualified.
 - [ ] F0930-08 Visible remaining lifetime for timed abilities using real shared state.
 - [ ] F0930-09 Cheska: reconcile wiki names/rules/statuses and fix Frozen slipper hit.
 - [ ] F0930-10 Dante: reconcile wiki names/rules/statuses; barrier visibility bug fix.

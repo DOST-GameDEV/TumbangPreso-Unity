@@ -52,21 +52,8 @@ namespace TumbangPreso.Core
         /// The furthest a lunge started from here can still tag: the dash plus the sweep
         /// radius.
         ///
-        /// ⚠️⚠️ THIS IS 2.30 m AT THE SHIPPING CONSTANTS, AND Design.md REPORTS 3.20 m AS
-        /// MEASURED. Both cannot be true, and the code is the newer half. Design.md's own
-        /// §6 constants TABLE agrees with the code (7.746, "a 1.0 m dash by v²/60"); it is
-        /// the §6 prose and the §2.6 measurement that still describe LUNGE_SPEED 12.247
-        /// and a 2.5 m dash, which is where 2.5 + 1.3 - the charge = 3.20 came from.
-        ///
-        /// So the lunge was cut by more than half at some point, the table was updated,
-        /// and the probe was never re-run. This matters well beyond a doc tidy: the lunge
-        /// is the taya's primary scoring verb, §2.6's "the tag is a lead problem, not a
-        /// reach problem" conclusion was drawn at the old reach, and the tag's share of
-        /// all points is one of the numbers the fairness gate watches.
-        ///
-        /// ⚠️ DO NOT "FIX" EITHER SIDE FROM THIS FILE. Port_Plan.md §7.1 carries it as a
-        /// Phase 1 blocker: decide which is intended in the Godot repo, re-run mech_probe,
-        /// and let the answer arrive here as a constant change.
+        /// Owner feedback, 2026-09-30: the full dash is 3m and standing reach
+        /// is 4.3m. Host sweep, bot approach and pressure stats derive from this solve.
         /// </summary>
         public static float LungeReach(float power = 1.0f) =>
             LungeDash(power) + Balance.LungeTagRadius;

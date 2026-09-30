@@ -560,6 +560,11 @@ another slipper inside the box, so a taya who tagged well ended up standing on a
 of them. The penalty that remains is real — the safe-zone teleport, 5 s stunned, and
 the whole trip to make again.
 
+**Current Unity tuning, owner feedback2026-09-30:** the ordinary defender lunge
+now targets3m of travel, about13.416m/s, with4.3m standing sweep reach. Native
+local-input/host-travel and near/far tag checks pass. [Evidence](reports/feedback-2026-09-30/defender-lunge.md).
+The following August measurement history predates that request.
+
 ⚠️⚠️ **THE LUNGE REACHES 2.30 m, NOT 3.20 m.** `LUNGE_SPEED` is **7.746**, a **1.0 m**
 dash by `v²/60`, plus the 1.3 m sweep radius. It entered at 12.247 (a 2.5 m dash, 3.20 m of
 reach) on 2026-08-01 and was cut to 7.746 later the same day in `071061c`, on instruction:
