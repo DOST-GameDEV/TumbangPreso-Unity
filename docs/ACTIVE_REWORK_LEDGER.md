@@ -1192,3 +1192,11 @@ Publish exact shader/presentation/test/meta/partition and evidence; update same
 Cheska chilling-field melt Feedback row and Done, leave Human verified unchecked.
 Release field paths after publication. Wall shatter is still open and next, no
 HeroHazards or ability-rule changes made. No heavy job active.
+Cold Feet29c60f8f remote verified, same melt Feedback row updated/whitened, Done
+checked/Saved and Human verified unchecked. Field runtime/shader claim released.
+Wall breakup plan appended before implementation. Claim Runtime/Visual/CheskaIceVisuals.cs,
+Runtime/Visual/CheskaWallBreak.cs/meta, the single wall-visual call in
+Runtime/Abilities/HeroHazards.cs, existing CheskaExpiryPresentationTests.cs and
+scoped docs. Preserve all hazard mechanics and unrelated edits. Baseline native
+three-hit break captures current center-only puff; expected source-width debris,
+immediate no-collision, duplicate refusal and cleanup. One heavy job at a time.

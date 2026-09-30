@@ -89,3 +89,34 @@ No HeroHazards or ability-rule edits in this first unit. Claim before editing.
 A generated concept may help compare directions after the actual baseline is
 captured. Treat it as a sketch and critique it against the native frame; never use
 its apparent geometry or lighting as evidence that the game does that.
+
+## Second unit: Glacial Wall breakup
+
+Keep the real three-hit/expiry trigger and immediate collision removal. The
+current center-only puff does not account for the4.2metre arc. Hand-place three
+unequal authored ice fragments per actual slab, at different heights and offsets,
+so the existing wall's width, rotation and street placement carry into the break.
+Reuse the authored ice shard, not new cubes, circles of identical particles or a
+copy of another hero's visual vocabulary.
+
+-0.00seconds: collision is already retired by the unchanged hazard owner; fragments
+  occupy the source slabs' actual world-space locations
+-0.00-0.12: a short asymmetric split, mostly outward/sideways, with little upward lift
+-0.12-0.55: chunks fall and turn, exposing the route quickly; no rigidbodies,
+  colliders, force, camera shake, new sound or gameplay footprint
+-0.55-0.80: remaining chips shrink/thaw near the ground, then the owned visual dies
+
+Use15individually specified recipes for the five-slab arc, preserving a three-slab
+legacy fallback. One timeline owner samples their age; no15independent physics
+updates. The split must remain readable without a flash covering the whole court.
+
+Runtime scope: CheskaIceVisuals.cs, a new CheskaWallBreak.cs/meta, and only the
+wall presentation call in HeroHazards.Shatter to pass its actual Transform. The
+existing replicated IceShatter flair already calls each peer's wall.Shatter, so
+no wire format or hit semantics change. Restraint thaw stays on its old path.
+
+Acceptance: first two accepted hits retain collision; third retires it at once;
+fragments span the actual arc instead of one center; no physical debris; repeated
+Shatter cannot duplicate the effect; cleanup finishes; native court film inspected.
+Check the same visual entry from the existing flair route without claiming new
+actual-peer qualification. Preserve unrelated HeroHazards edits during integration.
