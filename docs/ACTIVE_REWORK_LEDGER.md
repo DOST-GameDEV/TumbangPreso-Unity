@@ -82,29 +82,23 @@ Feedback report contains its short shipped note and hidden QA_TUMP_0039. Human
 verification remains unchecked. Repeated intake recognizes the evidence and does
 not create another fix. PausePanel/Hitstop/test paths are released.
 
-Current Diddler reservation: continuous recorded motion throughout the caught
-replay. The owner's new Feedback clarification rejects padding a short clip with
-a frozen pose. Retain actual history, spread playback through the existing duration
-and keep authoritative contact/teleport/recovery unchanged. Contact-gap visual
-qualification stays separate until actual evidence supports a correction.
+Continuous replay motion shipped28582ac7 through10dd3b7c, remote HEAD verified.
+The same Feedback row contains the motion result; contact-gap qualification stays
+open. Final and integrated native cases pass with inspected early/contact frames.
+
+Current Diddler reservation: owner rejected the shared contact picture because
+the tag does not visibly hit and requested refinement. Diagnose the actual reaching
+hand, body animation and replay camera side/timing before changing motion. Preserve
+authoritative hit outcomes and both views; no ability or landing-circle overlap.
 Owned paths:
 - Assets/TumbangPreso/Runtime/Camera/CatchReconstruction.cs
+- Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.TagBody.cs (only if reach diagnosis requires it)
+- Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.TagReach.cs (only if matching first-person correction is needed)
 - Assets/TumbangPreso/Tests/PlayMode/CatchReconstructionTests.cs
-- docs/reports/feedback-2026-09-30/catch-replay-motion.md
-- docs/reports/feedback-2026-09-30/catch-motion-early.png
-- docs/reports/feedback-2026-09-30/catch-motion-contact.png
-- docs/reports/feedback-2026-09-30/checks/catch-motion-baseline.xml
-- docs/reports/feedback-2026-09-30/checks/catch-motion-final.xml
+- docs/reports/feedback-2026-09-30/tag-contact-readability.md and tag-contact-* captures
 - docs/TODO.md and docs/ACTIVE_REWORK_LEDGER.md (this issue only)
-Native isolated accepted-tag motion/isolation case passes1/1 after reproducing
-zero late movement. Real-time playback, ring overwrite stability and temporary
-live VFX/canvas/particle hiding all pass. Early/contact captures were inspected.
-Two full-map attempts terminated without XML; the isolated correction initially
-stalled before PlayMode under accumulated shutdown-helper pressure. Only verified
-task-owned shutdown helpers and the timed-out test were stopped; available memory
-recovered to7.9GiB. No job is running. Commit, integrate current incoming work and
-verify publication. The integratedcc430e37 candidate also passes the same1/1 native
-case with unchanged inputs. Full-map and actual-peer contact-gap qualification remain open.
+No native job is running. The previous camera-motion captures prove progression,
+not visible hand contact; inspect both sides and the reach peak next.
 
 Local tutorial batch 2fbee1fb1 is complete and being integrated with this Nemu unit.
 Its source reservation is released except the pending human completion destination.
