@@ -51,16 +51,24 @@ The live Feedback completion-destination row now contains the human-labelled ans
 "IT SHOULD RETURN TO THE LOBBY INSTEAD". Preserve the local tutorial reservation;
 its next contributor can reconcile this existing answer instead of asking again.
 
-Diddler reservation: investigate phantom interpolation across teleports in the live
-catch pose history. Retained clips already guard recorded epochs; live Track.Apply
-does not, and offline teleports do not advance the network MovementEpoch. Preserve
-normal fast movement and exact recorded contact; never move live actors or fabricate
-contact. No abilities, loading or input changes.
+Live pose-history discontinuity fix shipped in86ad3ef777b6e02a3a3377f20373f6dd0915bf76.
+Five native failures reproduced phantom teleport movement and early visibility;
+all9 final cases pass. The same contact Feedback row has a partial-resolution note.
+Full visible-contact proof remains open. Pose-history paths are released.
+
+Diddler reservation: shorten the requested ordinary tsinelas charge from2.5 to1.25
+seconds while preserving minimum/full power, release legality, signed spin and
+pickup/recovery rules. Test the real Carrier in both modes and observed charge.
+Bump compatibility for the changed interpretation of charge-seconds presentation.
+No hero abilities, authored effects, input bindings or loading edits.
 Owned paths:
-- Assets/TumbangPreso/Runtime/Camera/MatchPoseHistory.cs (recording discontinuity and playback only)
-- Assets/TumbangPreso/Tests/PlayMode/LivePoseHistoryTests.cs and its .meta
-- docs/reports/feedback-2026-09-30/live-pose-discontinuity.md
-- docs/TODO.md and docs/ACTIVE_REWORK_LEDGER.md (this issue and evidence only)
+- Packages/com.tumbangpreso.core/Runtime/Balance.cs (ChargeFullTime only)
+- Assets/TumbangPreso/Runtime/Carrier.cs (stale duration comment only)
+- Assets/TumbangPreso/Runtime/Net/NetSession.cs (ProtocolVersion only)
+- Assets/TumbangPreso/Tests/PlayMode/ThrowChargeDurationTests.cs and its .meta
+- docs/Design.md (ordinary throw charge duration only)
+- docs/reports/feedback-2026-09-30/throw-charge-duration.md
+- docs/TODO.md and docs/ACTIVE_REWORK_LEDGER.md (this unit and evidence only)
 
 Local tutorial batch 2fbee1fb1 is complete and being integrated with this Nemu unit.
 Its source reservation is released except the pending human completion destination.
