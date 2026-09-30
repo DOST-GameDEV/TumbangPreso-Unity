@@ -1106,3 +1106,11 @@ Nemu at accepted far range. Claim only Tests/PlayMode/CatchReconstructionTests.c
 initially; source model/assets/abilities remain untouched. Extend the existing
 real-clock contact film with exact art selection and actual skin proximity, then
 inspect outcomes before deciding any runtime fix. No claim of all-roster coverage.
+Contrasting silhouettes baseline2/2fails with visible gaps: Dante-to-Nemu hand is
+30.3cm from actual skin; Nemu-to-Dante24.1cm. Captures inspected; they reproduce
+the owner's remaining whole-body reach problem beyond the original Classic pair.
+Add Runtime/Visual/CharacterAnimator.TagBody.cs to ownership before editing.
+Test bounded adaptive body step for accepted contacts, preserving10percent arm
+stretch and actual motors/scoring. Include original Classic close/far controls.
+If target geometry remains wrong, diagnose that separately rather than enlarging
+arms or loosening contact assertions. No hero-specific mechanics/assets touched.
