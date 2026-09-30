@@ -8,14 +8,21 @@ TODO is the work-status queue; this file records resumption and evidence boundar
 
 ## Shared Ownership
 
-Diddler cloud reservation: FEEDBACK-0930, other complete Wiki specifications,
-first coherent unit: Nemu's Kuro passive. Reproduce and correct the missing
-10 percent movement bonus during basic-ability cooldown, with focused native
-checks. The broader Nemu kit reconciliation remains open; no full-row completion
-is claimed by this unit.
+Diddler cloud unit complete: Nemu's 10 percent basic-cooldown movement bonus
+shipped in 770162fed59f241de4e07d8e1d8599a861ff4639. Native before/after checks
+reproduced 7 failures, then passed 8/8 after the correction, with frozen inputs.
+No actual-peer or rendered-player qualification is claimed. The broader Wiki
+Feedback row remains open; its Doc tabs are still reserved locally.
+
+Next Diddler cloud reservation: Nemu's shared 25-second basic-ability cooldown
+from the complete current Wiki passive and basic ability definitions. Reproduce
+independent clocks, then make accepted basic casts start the same cooldown on
+all non-ultimate abilities, including accepted observer playback. Do not change
+ultimate behavior or the local tutorial unit.
 
 Owned edit paths:
 - Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs
+- Packages/com.tumbangpreso.core/Runtime/RosterReworkRules.cs (NecroRules cooldowns only)
 - Assets/TumbangPreso/Tests/NemuKuroPassiveTests.cs
 - Assets/TumbangPreso/Tests/NemuKuroPassiveTests.cs.meta
 - docs/reports/feedback-2026-09-30/nemu-kuro-passive.md
