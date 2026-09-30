@@ -93,12 +93,12 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(local.Intent.Pressed(Verb.Interact), "The contextual interaction must follow the pickup control.");
                 Assert.IsFalse(local.Intent.Pressed(Verb.Lunge), "Right click still drives Shove/Lunge.");
                 InputSystem.QueueStateEvent(mouse, new MouseState { scroll = new Vector2(0, 120) }); InputSystem.Update();
-                Assert.IsTrue(map.FindAction("CurveLeft").IsPressed());
-                Assert.IsFalse(map.FindAction("CurveRight").IsPressed());
-                yield return null;
-                InputSystem.QueueStateEvent(mouse, new MouseState { scroll = new Vector2(0, -120) }); InputSystem.Update();
                 Assert.IsTrue(map.FindAction("CurveRight").IsPressed());
                 Assert.IsFalse(map.FindAction("CurveLeft").IsPressed());
+                yield return null;
+                InputSystem.QueueStateEvent(mouse, new MouseState { scroll = new Vector2(0, -120) }); InputSystem.Update();
+                Assert.IsTrue(map.FindAction("CurveLeft").IsPressed());
+                Assert.IsFalse(map.FindAction("CurveRight").IsPressed());
                 UI.Hud.Instance.ShowReadyPrompt(true);
                 InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.F)); InputSystem.Update();
                 reader.SendMessage("Update");

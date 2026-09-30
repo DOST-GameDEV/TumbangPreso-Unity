@@ -83,6 +83,23 @@ or previous tutorial checks were repeated; physical hardware remains unqualified
 - [PlayMode results](checks/input-play.xml)
 - [Frozen merged inputs](checks/input-inputs.json)
 
+### Latest Actions Correction
+
+The latest human Feedback row reverses the first request's wheel directions:
+UP RIGHT / DOWN LEFT. The visible Actions order is Throw/Tag, Retrieve Slipper /
+Reset Can, Curve Right, Curve Left, Shove/Lunge. The separate Hold Interact row
+is removed from settings; the actual action, saved overrides and existing kit
+behavior remain. Binding IDs are unchanged.
+
+Three native EditMode checks pass for ordering and complete visible-row/group
+coverage. The updated real mouse/wheel/F input case also passes. The initial test
+filter listed an obsolete fourth method name; only the three actual cases are
+claimed. No broad unchanged tests or physical-device certification are inferred.
+
+- [Settings contract](checks/actions-order-edit.xml)
+- [Real inputs](checks/actions-order-play.xml)
+- [Frozen inputs](checks/actions-order-inputs.json)
+
 ## Xelu Control Prompts
 
 198 unchanged CC0 PNGs from the requested pack now resolve through the shared
@@ -103,3 +120,26 @@ claimed from these UI checks.
 - [Frozen source inputs](checks/xelu-inputs.json)
 - [Control display at 960x540](Xelu-controls-960x540.png)
 - [Control display at 1600x680](Xelu-controls-1600x680.png)
+
+## Timed Power Lifetime
+
+An active ultimate previously drew its objective-charge bank in the ring while
+printing duration inside it. The ring now reads DurationRatio during the effect.
+Reactivation skills retain their Again/availability cue and also show remaining
+seconds. No kit behavior, cooldown, status, input or shared clock was changed.
+
+One native D3D11 UI case passes in1.0560421s. The actual deck follows the shared
+HeroAbility clock from4s to3s, shows75percent for basic/recast/ultimate, then clears
+expired duration. Synthetic no-effect skills isolate the UI consumer; this does
+not claim all-hero effect or actual-peer qualification.960x540/1600x680 captures
+were inspected; both lifetime and recast cue fit.
+
+An accidental working-checkout launch was stopped before testing; no new tracked
+paths were dirtied beyond the intended unit and previously recorded dirt. The
+isolated first compilation caught a missing NetworkMode declaration in the fixture;
+one bounded correction produced the passing case. No unchanged suites were run.
+
+- [Native results](checks/timed-ui-final.xml)
+- [Frozen inputs](checks/timed-ui-inputs.json)
+- [960x540](Timed-powers-960x540.png)
+- [1600x680](Timed-powers-1600x680.png)

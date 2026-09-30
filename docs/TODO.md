@@ -65,8 +65,19 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Retrieve/Reset/Interact, wheel up-left/down-right, F Shove/Lunge/Ready. IDs and saved
   overrides retained. Native device/intents and shared Ready-release guard pass;
   default-collision and older-override checks pass. [Evidence](reports/feedback-2026-09-30/README.md#default-action-bindings).
-- [ ] F0930-07 Longer defender lunge, coherent travel/authority/bot bounds.
-- [ ] F0930-08 Visible remaining lifetime for timed abilities using real shared state.
+  Latest Feedback correction supersedes the first wheel order: UP RIGHT / DOWN LEFT.
+  Actions now show Throw/Tag, Retrieve/Reset, Curve Right, Curve Left, Shove/Lunge;
+  separate Hold Interact row removed. Actual action and saved overrides retained.
+  Three native settings-contract checks and the updated real-input case pass.
+- [x] F0930-07 Longer defender lunge: full charge targets3m in both modes, with
+  derived speed, bot approach/celebration bounds and pressure stats. Actual local
+  input and host-request travel, repeat refusal, new-range tag and distant miss
+  pass natively. Packet ceiling stays28m/s; protocol97 requires matching builds.
+  [Evidence](reports/feedback-2026-09-30/defender-lunge.md). Actual peers unqualified.
+- [x] F0930-08 Visible remaining lifetime: active ultimate rings now drain the
+  actual effect clock; reactivation skills retain Again plus seconds remaining.
+  Native shared-clock/UI case passes;960x540/1600x680 captures inspected.
+  [Evidence](reports/feedback-2026-09-30/README.md#timed-power-lifetime).
 - [ ] F0930-09 Cheska: reconcile wiki names/rules/statuses and fix Frozen slipper hit.
 - [ ] F0930-10 Dante: reconcile wiki names/rules/statuses; barrier visibility bug fix.
 - [ ] F0930-11 Amihan: reconcile wiki names/rules/statuses; fast, strong airborne Airburst.
@@ -87,7 +98,15 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   evidence before doing duplicate work.
 - [ ] F0930-15 Placeholder icons: reconcile current shipped icon coverage and correct bugs.
 - [ ] F0930-16 Running/walking defects: diagnose only concrete bugs; no animation redesign.
-- [ ] F0930-17 Highlight beam complaint: only a proven VFX bug is authorized now.
+- [ ] F0930-17 Highlight beam: owner request 2026-09-30 authorizes the overhaul, "similar to
+  the highlight beam of the dropped items in apex legends ... noticeable but not too
+  distracting". IMPLEMENTED, EVIDENCE PENDING. The 0.48 m locator column is replaced by a
+  1.9 m camera-facing line (`Shaders/SlipperBeam.shader`, `Visual/SlipperBeam.cs`): a
+  white-hot core about 3 cm wide in a low haze of the highlight colour, a soft road pool,
+  slow rising sparkles, a pixel-width floor at range, and the existing pickup-radius fade,
+  owner-only gate and highlight setting unchanged. `SlipperRecallShots` gains a far frame.
+  Done means that probe green with the beam under the 12 per cent frame budget, and the
+  near, side and far frames inspected.
 - [ ] F0930-18 Throw: remove trajectory line, quicker charge and coherent charge feedback.
   Full ordinary charge is1.25 seconds instead of2.5 in both modes;8 native carrier
   timing/release/observed-state cases pass. Protocol96 requires matching builds.

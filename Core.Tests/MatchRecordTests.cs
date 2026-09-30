@@ -166,7 +166,7 @@ namespace TumbangPreso.Core.Tests
         {
             float dash = Balance.LungeSpeed * Balance.LungeSpeed / (2.0f * Balance.Friction);
             Assert.Equal(MatchRecordRules.PressureRadius, dash + Balance.LungeTagRadius, 3);
-            Assert.Equal(2.3f, MatchRecordRules.PressureRadius, 2);
+            Assert.Equal(4.3f, MatchRecordRules.PressureRadius, 2);
         }
 
         [Fact]

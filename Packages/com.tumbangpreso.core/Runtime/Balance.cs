@@ -391,7 +391,11 @@
         // -------------------------------------------------------------------
 
         public const float LungeChargeTime = 0.5f;
-        public const float LungeSpeed = 7.746f;
+        // Owner feedback, 2026-09-30: a faster, farther defender commitment.
+        // Solve the impulse from travel so friction and all derived reach stay coherent.
+        public const float LungeDistance = 3.0f;
+        public static readonly float LungeSpeed =
+            (float)System.Math.Sqrt(2.0 * Friction * LungeDistance);
         public const float LungeTagRadius = 1.3f;
         public const float LungeActiveTime = 0.45f;
         public const float LungeCooldown = 1.5f;
@@ -438,10 +442,8 @@
         /// <summary>
         /// The impulse a slide leaves with, solved from <see cref="SlideDistance"/>.
         ///
-        /// ⚠️⚠️ COMPUTED RATHER THAN TYPED, WHICH `LungeSpeed` IS NOT AND SHOULD PROBABLY BE.
-        /// `CLAUDE.md` § 4 requires `v = sqrt(2 * Friction * d)` and 7.746 is that solve for a
-        /// 1.0 m lunge; it is a literal, so a `Friction` change would silently move the lunge's
-        /// distance and nothing would say so. This one cannot drift.
+        /// Like the defender lunge, this derives velocity from the intended travel
+        /// and friction instead of storing two independently tuned values.
         /// </summary>
         public static readonly float SlideSpeed =
             (float)System.Math.Sqrt(2.0 * Friction * SlideDistance);

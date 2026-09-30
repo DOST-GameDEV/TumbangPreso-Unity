@@ -282,7 +282,7 @@ namespace TumbangPreso.Core
         /// is the next reader's excuse to make gameplay depend on it. It cannot drift either,
         /// because it is computed from the two constants rather than copied from them.
         /// </summary>
-        public const float PressureRadius =
+        public static readonly float PressureRadius =
             Balance.LungeSpeed * Balance.LungeSpeed / (2.0f * Balance.Friction) + Balance.LungeTagRadius;
 
         /// <summary>

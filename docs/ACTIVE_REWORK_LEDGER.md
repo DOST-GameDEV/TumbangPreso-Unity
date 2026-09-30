@@ -1,7 +1,7 @@
 # Active Rework Checkpoint
 
 Updated 2026-09-30. Branch: ASTRAReworks. Current unit: FEEDBACK-0930.
-Current protocol:96 in [NetSession](../Assets/TumbangPreso/Runtime/Net/NetSession.cs).
+Current protocol:97 in [NetSession](../Assets/TumbangPreso/Runtime/Net/NetSession.cs).
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 TODO is the work-status queue; this file records resumption and evidence boundaries.
 
@@ -103,7 +103,8 @@ Two full-map attempts terminated without XML; the isolated correction initially
 stalled before PlayMode under accumulated shutdown-helper pressure. Only verified
 task-owned shutdown helpers and the timed-out test were stopped; available memory
 recovered to7.9GiB. No job is running. Commit, integrate current incoming work and
-verify publication. Full-map and actual-peer contact-gap qualification remain open.
+verify publication. The integratedcc430e37 candidate also passes the same1/1 native
+case with unchanged inputs. Full-map and actual-peer contact-gap qualification remain open.
 
 Local tutorial batch 2fbee1fb1 is complete and being integrated with this Nemu unit.
 Its source reservation is released except the pending human completion destination.
@@ -304,3 +305,9 @@ The complete341-line checkpoint and every older receipt it referenced remain in
 [ledger history through71396c97](archive/ledger-through-71396c97-2026-09-28.md).
 Its stale counts/protocol literals are historical. Earlier instruction/method context
 remains in [the2026-09-27 snapshot](archive/snapshots-2026-09-27/README.md).
+
+Local longer-lunge reservation: embedded Core Balance/Combat/AiTuning/MatchRecord/MoveBudget/Sabotage, NetSession compatibility only, Core balance/bot/move-budget/stat tests and DefenderLungeTravelTests. Travel is 3m with speed derived from friction, tier approach and safe-emote bounds follow reach, packet ceiling remains28m/s. Native local input travel (both modes), host travel/repeat refusal and near/far sweep pass. Initial target fixture lacked held-shoe/live-match preconditions; only its2changed cases were rerun. Focused Core56passed and corrected pressure literal passes1/1. No peer claim. This unit is being shipped; its source reservation will release after push. Loading/abilities and Diddler pause paths stay reserved.
+
+Local lunge bfe1c96ca shipped through72c7ee64c, remote HEAD verified. Lunge source paths released. Incoming offline pause is intact; continuous caught replay is Diddler-owned. Current local unit: newest Actions order/wheel request, inputactions, Rebinding, InputReaderTests/InputMapAndAbilityTests only. Hold Interact is removed from settings, retaining the actual action/saved overrides and protected kit behavior. Three native settings-contract cases and the real input case pass. This unit is being shipped. No task-owned job is running. Browser3 remains unavailable; short shipped notes are written via the Doc connector, but Done checkbox UI ticks for the newer local units are pending. Human verified stays untouched.
+
+Newest Actions correction67554a912 shipped through82731889c. Current local reservation: TumpPowerReadout.OwnerDeck.cs and TimedPowerUiTests, UI only. Active ultimate ring currently shows objective bank instead of live duration; reactivatable skills hide lifetime behind Again. Fix reads existing shared clocks and leaves kit behavior intact. One native UI/shared-clock case passes, with2inspected captures. Main-checkout launch was stopped before testing, prior dirt preserved. Isolated fixture needed one NetworkMode correction. No gameplay/ability reservation overlap. This unit is being shipped. Next local work is the requested landing-circle UI and throw-charge clarity; Diddler owns continuous replay.

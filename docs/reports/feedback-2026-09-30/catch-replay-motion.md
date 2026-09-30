@@ -71,3 +71,13 @@ alone, drove the final particle coverage. Assertions were strengthened, not rela
 - particles-inputs.json: SHA-256 9133f2450b2a2da6c9ad62ce13319badff3574ab14e9079023c46390208452c2
 - at-0.4.png: SHA-256 9955d7ac298cbf5a03eb5f340bbc9c51abe5ca925b721963097d139e3e2d0cef
 - at-2.9.png: SHA-256 9ae552e0a2f456585ba9fd00a60059e7738da7e91bb20302ae995a9c3e6a9a5a
+
+## Current branch integration
+
+The automatic merge withcc430e37 preserves incoming lunge/protocol97, revised
+controls, slipper-beam and timed-HUD source byte-for-byte. The same isolated native
+catch acceptance passes1/1 on that combined candidate, with frozen inputs unchanged.
+This does not expand the full-map or actual-peer evidence claim.
+
+- integration.xml: SHA-256 6778b2c7e11758da802dca80940d1ab3a4dc7a78f61d17dfef4e01054d5f5ec0
+- integration-inputs.json: SHA-256 777060290150661143519d629ce290f25f448494361922135ea948247b101eb6

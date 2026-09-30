@@ -7,6 +7,12 @@ This is a source map,not another backlog or a declaration of complete replicatio
 
 ## Runtime Ownership
 
+Protocol97 also gates the requested3m ordinary defender lunge. Local prediction
+and host resolution share the derived impulse; the movement ceiling remains28m/s.
+Bot attempt distances, safe-emote clearance and pressure stats follow actual reach.
+Local native travel/sweep checks are in [the lunge report](reports/feedback-2026-09-30/defender-lunge.md);
+they do not qualify real peer transport.
+
 Runtime files below are in `Assets/TumbangPreso/Runtime/`.
 
 | Concern | Entry points and invariant |
