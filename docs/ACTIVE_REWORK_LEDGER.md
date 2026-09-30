@@ -1494,3 +1494,11 @@ Whirled final3/3native passes5.31s plus8Core. Publish exact local/host gate and
 status text; full Amihan Wiki row can now be Done with the prior scoped units.
 Human verification stays unchanged. No newplayer/actualpeer claim. Release runtime
 paths after remote verification; fresh intake before next independent hero.
+Full Amihan Donechecked/Humanunchecked/Saved verified22:57. Existing Cheska
+Frozen-hit row likewise reconciledDone22:58, no second implementation. Full
+Cheska row remains open under its own evidence limits. Dante full Wiki/source
+reconciliation plan at reports/dante-wiki-2026-09-30/plan.md. First claimEarthbound:
+HeroKit.cs default distance property, DanteHeroKit.cs passive override,
+CharacterMotor.cs impulse, CharacterMotor.Status.cs carry, GeoRules constants,
+NetSession.cs protocol, new DanteEarthboundTests.cs/meta. Baseline before runtime.
+No heavy job active. Sourcebe249c3d fetched with no divergence.
