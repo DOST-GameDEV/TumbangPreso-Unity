@@ -2710,7 +2710,10 @@ namespace TumbangPreso
             var verbs = GetComponent<CombatVerbs>();
             if (verbs == null) return;
 
-            if (verbs.PunchCooldownLeft <= 0.0f && victim != null
+            // A charge already owns this tag attempt. Taking the punch branch
+            // would leave Lunge untouched, so Act's release sweep fires that dash
+            // too. Finish the existing charge; fresh close targets still get a jab.
+            if (_lungeHeld < 0.0f && verbs.PunchCooldownLeft <= 0.0f && victim != null
                 && Flat(transform.position, victim.transform.position) <= Balance.PunchRange
                 && Facing(victim, Balance.PunchArcDeg))
             {

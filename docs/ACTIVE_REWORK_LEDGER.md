@@ -418,3 +418,12 @@ StepLungeIntent only, new Tests/PlayMode/AiTagCommitmentTests.cs and metadata,
 focused report and queue/ledger/NETWORKING notes. CombatVerbs is read-only for the
 reproduction, not a gameplay-change target. No defect claim until native proof;
 no kit, local input/tutorial/build or friend loading overlap.
+
+Bot tag commitment is confirmed: the charged close-target case spent both punch
+and lunge cooldowns; the fresh target case passed. Requiring no existing lunge
+before selecting punch fixes the release-sweep interaction. Same2native controlled
+planner/input cases now pass, no fixture changes. Human combat rules and protocol
+unchanged. Publish explicit AI/test/report paths, verify remote and release those
+paths. Feedback-row insertion was rejected against an older reservation even after
+checking the owner's add-row permission; a fresh confirmation is pending in chat.
+Do not bypass that Doc block. Existing score/stock rows are already updated.

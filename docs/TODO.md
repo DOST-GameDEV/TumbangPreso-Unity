@@ -143,6 +143,12 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Other network paths and skill use remain unqualified.
   [Evidence](reports/feedback-2026-09-30/player-lan.md).
 
+
+- [x] F0930-29 Bot tag commitment: an already-held lunge no longer gets released
+  accidentally alongside a punch when the target enters close range. Fresh nearby
+  targets still get an immediate punch. Native baseline reproduces two cooldowns;
+  both final controlled-input cases pass. Feedback-row addition awaits Doc access.
+  [Evidence](reports/feedback-2026-09-30/bot-tag-commitment.md).
 - [x] F0930-27 Score notification packet bounds: reject truncated/trailing payloads
   before reader exceptions or events. Existing valid event/total semantics stay
   unchanged; shared16-case native score/stock suite passes after10baseline failures.
