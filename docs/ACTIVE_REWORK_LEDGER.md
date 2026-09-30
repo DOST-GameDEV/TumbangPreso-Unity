@@ -1,6 +1,6 @@
 # Active Rework Checkpoint
 
-Updated2026-10-01. Branch ASTRAReworks. Protocol107 candidate. Goal active.
+Updated2026-10-01. Branch ASTRAReworks. Protocol108 candidate. Goal active.
 Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 
 ## Live Local Resume
@@ -1573,3 +1573,11 @@ control, held/drop restore/round clear, observer refusal and affected Frostbite
 control qualified. Publish explicit unit paths, protocol108. No newplayer/peer
 claim. Fresh Doc report says tutorial slipper still flies; after publishing this
 unit, inspect that same row and current tutorial ownership before Dante cascade.
+
+Boulder20ee1f85 remote verified, protocol108. New tutorial screenshots inspected:
+Retrieve07/20 shows skyward slipper, build unknown; second boxes redundant corner
+COMPLETE. Same row reopened, Done cleared, history preserved. Current local next
+unit is Nemu Catch; published tutorial paths released. Claim GuidedTraining.cs
+corner counter only and OwnerTrainingUiTests.cs flight/staging/completion cases.
+No Slipper physics claim until reproduction. Plan tutorial-regression.md; current
+source clean before claim, no heavy job active. Dante cascade resumes afterward.
