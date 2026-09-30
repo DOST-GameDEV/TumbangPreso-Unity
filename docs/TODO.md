@@ -198,6 +198,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   All10 baseline failures reproduce;19 final native receiver cases pass for
   malformed/valid/spectator/non-host/repeated messages. Protocol97 unchanged.
   [Evidence](reports/feedback-2026-09-30/seat-assignment-packets.md). Actual peers unqualified.
+- [x] ENG-0930-RECOVERY Bot recovery input: preserve a recovery tap when several render
+  updates occur before physics. Three baseline failures;2/4/6-update fixed native
+  cases retain one real motor press, retire it once and respect Core's rate cap.
+  [Evidence](reports/feedback-2026-09-30/bot-recovery-input.md).
 - [x] F0930-37 Menu touch-look handback: actual Resume clears a pending menu drag
   before the next gameplay read. Native baseline reproduces look(12,6); fixed case
   preserves held touch state and accepts fresh look. Windows protocol99 integration

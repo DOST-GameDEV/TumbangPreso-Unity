@@ -721,6 +721,7 @@ namespace TumbangPreso
             {
                 _gates.Clear();
                 _chasing = null;
+                bool recoveryPressPending = intent.JustPressed(Verb.Jump);
                 ReleaseAll(intent);
 
                 // ⚠⚠ A BOT MASHES TO GET UP, BECAUSE A BOT PRESSES THE SAME BUTTONS A HUMAN
@@ -763,6 +764,9 @@ namespace TumbangPreso
                 {
                     _mashHeld = !_mashHeld;
                     intent.Set(Verb.Jump, _mashHeld);
+                    // Render updates may outnumber physics steps. Preserve one tap
+                    // until the motor consumes it, using the same buffer as humans.
+                    if (recoveryPressPending || _mashHeld) intent.BufferPress(Verb.Jump);
                 }
 
                 return;
