@@ -1200,3 +1200,28 @@ Runtime/Abilities/HeroHazards.cs, existing CheskaExpiryPresentationTests.cs and
 scoped docs. Preserve all hazard mechanics and unrelated edits. Baseline native
 three-hit break captures current center-only puff; expected source-width debris,
 immediate no-collision, duplicate refusal and cleanup. One heavy job at a time.
+
+Wall baseline2/2fails spatial acceptance: eight tiny chunks cover0.93/1.14m
+rather than the actual4.2m arc. Immediate collision retirement/duplicate guard
+already work. Native before/split frames inspected. Concept generated from that
+frame and critiqued: retain distributed breakup, reject opaque/smoothed ice and
+lingering puddles. Implement15hand-specified recipes on the actual slab transforms,
+one render-only0.8s timeline, existing authored shard/material ownership. Only
+HeroHazards change is passing its Transform to this visual entry; mechanics and
+restraint thaw untouched. Final two native hit/flair routes plus films next.
+
+Wall final2/2passes7.42s:15chunks span4.38/4.54m, immediate collision removal,
+no physical debris, duplicate guard and cleanup hold for hits and rotated flair.
+Native split/exit frames inspected. Real-time capture produced only4frames in
+0.85s under readback overhead; make one capture-only20Hz timeline film from the
+same unchanged runtime, rather than misrepresenting those four frames as smooth
+playback. Reuse actual lifetime checks; do not inflate distinct case count.
+
+Wall film capture passes,17native timeline samples inspected and encoded. Final
+2distinct lifetime/hit/flair cases remain the acceptance evidence, no inflated
+count. Publish exact visual files and one-line hazard entry, then same icicle
+shatter row notes/Done; Human verified untouched. Release wall paths after remote
+verification. Current player predates these presentation fixes; build a coherent
+integration candidate later rather than repeating a full build for every effect.
+No heavy job active. Next fresh Feedback intake, then remaining authorized
+presentation rows (Dante shield/status cue, beam/settings where specified).

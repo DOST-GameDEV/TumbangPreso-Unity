@@ -120,3 +120,12 @@ fragments span the actual arc instead of one center; no physical debris; repeate
 Shatter cannot duplicate the effect; cleanup finishes; native court film inspected.
 Check the same visual entry from the existing flair route without claiming new
 actual-peer qualification. Preserve unrelated HeroHazards edits during integration.
+
+## Concept critique
+
+[Concept only](concept-only.png) was generated from the actual baseline frame.
+Adopt its spatially distributed uneven chunks and clean absence of a flash.
+Reject its opaque/smoothed ice, nearly intact pillars at the first split, extra
+fragment clutter and lingering puddles. Keep the actual authored translucent
+shard mesh, fixed15recipe budget and complete0.8second cleanup. This concept is
+not a game capture and does not establish implementation or native quality.

@@ -329,7 +329,7 @@ shipped. Finish preceding actionable requests, then research references, plan ea
 effect with its animation/UI/sound, and critique actual playback. Preserve owner
 mechanics and finalized Paete/Phaister work. Manual bug hunting follows that pass.
 
-- [ ] PRESENTATION-CHESKA-EXPIRY: requested field melt and wall shatter are
+- [x] PRESENTATION-CHESKA-EXPIRY: requested field melt and wall shatter are
   authorized after the prior actionable feedback. Start with field thaw without
   changing mechanics or HeroHazards. Wiki7.5s/current runtime5s disagreement stays
   owner-reserved; presentation follows assigned Duration. Native baseline, then
@@ -337,7 +337,10 @@ mechanics and finalized Paete/Phaister work. Manual bug hunting follows that pas
   [Research and plan](reports/cheska-expiry-2026-09-30/plan.md).
   Field thaw implemented:2native checks pass, repeated duration sampling and
   separate Nova verified; coverage retreats to10percent while danger edge remains.
-  Native timeline film/captures inspected. Wall shatter remains next.
+  Native timeline film/captures inspected. Wall shatter now spreads15authored
+  chunks across the actual arc; third-hit/rotated-flair lifecycle cases pass2/2.
+  Collision retires immediately and debris is nonphysical.
+  [Wall evidence](reports/cheska-expiry-2026-09-30/wall.md).
   [Thaw evidence](reports/cheska-expiry-2026-09-30/thaw.md).
 
 Current owner order after DOCS-0927: actual loading/optimization,then shared

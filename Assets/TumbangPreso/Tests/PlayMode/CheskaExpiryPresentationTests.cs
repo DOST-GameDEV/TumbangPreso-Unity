@@ -1,5 +1,7 @@
 using System.Collections;
 using System.IO;
+using System.Linq;
+using TumbangPreso.Abilities;
 using NUnit.Framework;
 using TumbangPreso.Visual;
 using UnityEngine;
@@ -11,6 +13,111 @@ namespace TumbangPreso.PlayTests
     {
         [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
         [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
+
+        [UnityTest] public IEnumerator ThirdHitBreaksAcrossTheRealArcWithoutPhysicalDebris() => CheckWallBreak(false);
+        [UnityTest] public IEnumerator ReplicatedFlairUsesTheRotatedLocalWall() => CheckWallBreak(true);
+
+        [UnityTest] public IEnumerator WallBreakTimelineFilm() => CheckWallBreak(false, true);
+
+        private IEnumerator CheckWallBreak(bool flair, bool film = false)
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit;
+            QualitySettings.globalTextureMipmapLimit = 2;
+            GameObject wall = null, eye = null;
+            RenderTexture target = null;
+            try
+            {
+                yield return MapRetrievalProbe.Load("Eskinita", Core.GameMode.HeroStrike);
+                var position = GameServices.Round.Lata.transform.position + new Vector3(-3, 0, -2);
+                var forward = Quaternion.Euler(0, flair ? 57 : 0, 0) * Vector3.forward;
+                wall = HeroHazards.SpawnIceBarricade(position, forward, 8, silent: true,
+                    arcLength: Core.CryoRules.GlacialWallArcLength, arcRadius: Core.CryoRules.GlacialWallArcRadius);
+                var hazard = wall.GetComponent<HeroHazards.IceBarricadeComponent>();
+                hazard.HitsToShatter = 3;
+                var inverse = wall.transform.worldToLocalMatrix;
+                var blockers = wall.GetComponentsInChildren<Collider>();
+                yield return null;
+                eye = new GameObject("Wall breakup review camera");
+                var camera = eye.AddComponent<Camera>();
+                eye.transform.position = position + new Vector3(4, 3, -7);
+                eye.transform.LookAt(position + Vector3.up * .8f); camera.fieldOfView = 48;
+                target = new RenderTexture(960, 540, 24, RenderTextureFormat.ARGB32);
+                target.Create(); camera.targetTexture = target;
+                string directory = "Logs/cheska-wall-captures/" + (film ? "film" : flair ? "flair" : "hits");
+                Directory.CreateDirectory(directory);
+                Capture(camera, target, directory + "/before.png");
+                if (flair) MatchFlair.Play(MatchFlair.Kind.IceShatter, -1, -1, wall.transform.position);
+                else
+                {
+                    hazard.HostSlipperHit(); hazard.HostSlipperHit();
+                    Assert.IsTrue(blockers.All(c => c.enabled), "Two hits cannot retire the wall early.");
+                    hazard.HostSlipperHit();
+                }
+                Assert.IsTrue(blockers.All(c => !c.enabled), "Collision must disappear when the accepted break occurs.");
+                var debris = GameObject.Find("BarricadeThaw");
+                Assert.IsNotNull(debris);
+                hazard.Shatter();
+                Assert.AreEqual(1, Object.FindObjectsByType<Transform>(FindObjectsSortMode.None).Count(t => t.name == "BarricadeThaw"));
+                Assert.AreEqual(0, debris.GetComponentsInChildren<Collider>().Length);
+                Assert.AreEqual(0, debris.GetComponentsInChildren<Rigidbody>().Length);
+                yield return null;
+                Capture(camera, target, directory + "/split.png");
+                var chunks = debris.GetComponentsInChildren<MeshRenderer>();
+                float left = chunks.Min(c => inverse.MultiplyPoint3x4(c.bounds.center).x);
+                float right = chunks.Max(c => inverse.MultiplyPoint3x4(c.bounds.center).x);
+                Debug.Log($"[WallBreak] pieces={chunks.Length} localSpan={right-left}");
+                Assert.That(right-left, Is.GreaterThan(2.5f), "A center-only puff does not break across the actual arc.");
+                float began = Time.time;
+                int frame = 0;
+                var times = new System.Collections.Generic.List<string>();
+                if (film)
+                {
+                    var effect = debris.GetComponent<CheskaWallBreak>(); effect.enabled = false;
+                    float scale = Time.timeScale; Time.timeScale = 0;
+                    try
+                    {
+                        for (int i=0;i<=16;i++)
+                        {
+                            effect.StepTo(i*.05f);
+                            Capture(camera,target,directory+"/frame-"+i.ToString("D3")+".png");
+                            times.Add((i*.05f).ToString("F6",System.Globalization.CultureInfo.InvariantCulture));
+                            yield return null;
+                        }
+                    }
+                    finally { Time.timeScale=scale; Object.DestroyImmediate(debris); }
+                }
+                else while (Time.time - began < .85f)
+                {
+                    Capture(camera, target, directory + "/frame-" + frame.ToString("D3") + ".png");
+                    times.Add((Time.time - began).ToString("F6", System.Globalization.CultureInfo.InvariantCulture));
+                    frame++;
+                    yield return new WaitForSeconds(.05f);
+                }
+                File.WriteAllLines(directory + "/times.txt", times);
+                Assert.IsTrue(debris == null, "All decorative pieces must retire.");
+            }
+            finally
+            {
+                if (wall != null) Object.DestroyImmediate(wall);
+                if (eye != null) Object.DestroyImmediate(eye);
+                if (target != null) { target.Release(); Object.DestroyImmediate(target); }
+                QualitySettings.globalTextureMipmapLimit = mip;
+            }
+        }
+
+        private static void Capture(Camera camera, RenderTexture target, string path)
+        {
+            camera.Render();
+            var previous = RenderTexture.active;
+            var image = new Texture2D(target.width, target.height, TextureFormat.RGB24, false);
+            try
+            {
+                RenderTexture.active = target;
+                image.ReadPixels(new Rect(0, 0, target.width, target.height), 0, 0); image.Apply();
+                File.WriteAllBytes(path, image.EncodeToPNG());
+            }
+            finally { RenderTexture.active = previous; Object.Destroy(image); }
+        }
 
         [UnityTest]
         public IEnumerator NovaKeepsItsSeparateWave()
