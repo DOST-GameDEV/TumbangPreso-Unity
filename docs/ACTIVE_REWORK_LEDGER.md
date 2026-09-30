@@ -1539,3 +1539,9 @@ next ward/held-slipper/forward-cascade units retain existing presentation andSFX
 Incoming949eae63/af43ffb6 adds Windows protocol103 player/direct-localhost-peer
 evidence only, no overlapping runtime. Preserve its individual-skill and newer
 protocol limits; it does not qualify current106 transport or Second Wind.
+Earthbound6eecc832 integrated9577c3d2 remote verified. Incoming Windows103player/
+LAN evidence preserved with its individual-skill/newer-protocol limitations.
+Next Dante ward/Bastion claim per plan: DanteHeroKit.cs, HeroAbility.cs/HeroKit.cs
+scoped disabled-cast exception, GeoRules ward/barrier values, NetSession.cs,
+Core numeric assertion, new DanteWardRuleTests.cs/meta and partition. Baseline
+frozen press, metadata and tag preservation before changes. No heavy job active.
