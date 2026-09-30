@@ -142,6 +142,15 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   through round2 with replicated movement/objective state and no hard divergence.
   Other network paths and skill use remain unqualified.
   [Evidence](reports/feedback-2026-09-30/player-lan.md).
+
+- [x] F0930-27 Score notification packet bounds: reject truncated/trailing payloads
+  before reader exceptions or events. Existing valid event/total semantics stay
+  unchanged; shared16-case native score/stock suite passes after10baseline failures.
+  [Evidence](reports/feedback-2026-09-30/score-stock-packets.md).
+- [x] F0930-28 Last Tsinelas stock packet bounds: require a complete exact declared
+  table before stock mutation. Existing counts and sender/loopback rules stay
+  unchanged. Same16-case native suite passes; actual peers remain unqualified.
+  [Evidence](reports/feedback-2026-09-30/score-stock-packets.md).
 - [x] F0930-26 Build-input bug: ordinary builds now validate retained swim/recovery
   clips instead of rerunning authoring and overwriting approved curves. Missing
   Amihan/Paete rig sets were repaired explicitly, using the existing movement

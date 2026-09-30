@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="16" result="Failed(Child)" total="16" passed="6" failed="10" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 08:52:58Z" end-time="2026-09-30 08:52:59Z" duration="0.6810385">
+  <test-suite type="TestSuite" id="2115" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="893" result="Failed" site="Child" start-time="2026-09-30 08:52:58Z" end-time="2026-09-30 08:52:59Z" duration="0.681039" total="16" passed="6" failed="10" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2109" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="893" result="Failed" site="Child" start-time="2026-09-30 08:52:58Z" end-time="2026-09-30 08:52:59Z" duration="0.664319" total="16" passed="6" failed="10" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="70225" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2110" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="893" result="Failed" site="Child" start-time="2026-09-30 08:52:58Z" end-time="2026-09-30 08:52:59Z" duration="0.656418" total="16" passed="6" failed="10" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2111" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="893" result="Failed" site="Child" start-time="2026-09-30 08:52:58Z" end-time="2026-09-30 08:52:59Z" duration="0.649185" total="16" passed="6" failed="10" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1798" name="ScoreStockPacketTests" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" testcasecount="16" result="Failed" site="Child" start-time="2026-09-30 08:52:58Z" end-time="2026-09-30 08:52:59Z" duration="0.629906" total="16" passed="6" failed="10" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1819" name="NonHostSenderAndHostLoopbackCannotPublish" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.NonHostSenderAndHostLoopbackCannotPublish" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-30 08:52:58Z" end-time="2026-09-30 08:52:59Z" duration="0.118726" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1817" name="NonHostSenderAndHostLoopbackCannotPublish(False)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.NonHostSenderAndHostLoopbackCannotPublish(False)" methodname="NonHostSenderAndHostLoopbackCannotPublish" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="766023992" result="Passed" start-time="2026-09-30 08:52:58Z" end-time="2026-09-30 08:52:59Z" duration="0.070056" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1818" name="NonHostSenderAndHostLoopbackCannotPublish(True)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.NonHostSenderAndHostLoopbackCannotPublish(True)" methodname="NonHostSenderAndHostLoopbackCannotPublish" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="1543111290" result="Passed" start-time="2026-09-30 08:52:59Z" end-time="2026-09-30 08:52:59Z" duration="0.042120" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1816" name="PublishedStockCountsKeepTheirExistingMeaning" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.PublishedStockCountsKeepTheirExistingMeaning" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-30 08:52:59Z" end-time="2026-09-30 08:52:59Z" duration="0.115067" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1813" name="PublishedStockCountsKeepTheirExistingMeaning(0)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.PublishedStockCountsKeepTheirExistingMeaning(0)" methodname="PublishedStockCountsKeepTheirExistingMeaning" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="1354960075" result="Passed" start-time="2026-09-30 08:52:59Z" end-time="2026-09-30 08:52:59Z" duration="0.043242" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1814" name="PublishedStockCountsKeepTheirExistingMeaning(2)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.PublishedStockCountsKeepTheirExistingMeaning(2)" methodname="PublishedStockCountsKeepTheirExistingMeaning" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="848059842" result="Passed" start-time="2026-09-30 08:52:59Z" end-time="2026-09-30 08:52:59Z" duration="0.034711" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1815" name="PublishedStockCountsKeepTheirExistingMeaning(4)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.PublishedStockCountsKeepTheirExistingMeaning(4)" methodname="PublishedStockCountsKeepTheirExistingMeaning" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="916037077" result="Passed" start-time="2026-09-30 08:52:59Z" end-time="2026-09-30 08:52:59Z" duration="0.035523" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1804" name="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.ScoreRejectsNonExactPayloadBeforeReadingOrPublishing" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-09-30 08:52:59Z" end-time="2026-09-30 08:52:59Z" duration="0.185458" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1799" name="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing(0)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.ScoreRejectsNonExactPayloadBeforeReadingOrPublishing(0)" methodname="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="1705363624" result="Failed" start-time="2026-09-30 08:52:59Z" end-time="2026-09-30 08:52:59Z" duration="0.044381" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnScoreMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00085] in /workspace/shared/tump-validation/Assets/TumbangPreso/Runtime/Net/MatchRpc.cs:4120 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <94b103fb80364239bfc0542bee09d001>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <94b103fb80364239bfc0542bee09d001>:0 
+  at TumbangPreso.PlayTests.ScoreStockPacketTests.Deliver (System.String method, Unity.Netcode.FastBufferWriter writer, System.UInt64 sender) [0x0000c] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:59 
+  at TumbangPreso.PlayTests.ScoreStockPacketTests+<>c__DisplayClass13_0.<ScoreRejectsNonExactPayloadBeforeReadingOrPublishing>b__0 () [0x00000] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:72 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ScoreStockPacketTests.ScoreRejectsNonExactPayloadBeforeReadingOrPublishing (System.Int32 bytes) [0x00040] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:72
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1800" name="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing(4)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.ScoreRejectsNonExactPayloadBeforeReadingOrPublishing(4)" methodname="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="661025927" result="Failed" start-time="2026-09-30 08:52:59Z" end-time="2026-09-30 08:52:59Z" duration="0.035697" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnScoreMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00085] in /workspace/shared/tump-validation/Assets/TumbangPreso/Runtime/Net/MatchRpc.cs:4120 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <94b103fb80364239bfc0542bee09d001>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <94b103fb80364239bfc0542bee09d001>:0 
+  at TumbangPreso.PlayTests.ScoreStockPacketTests.Deliver (System.String method, Unity.Netcode.FastBufferWriter writer, System.UInt64 sender) [0x0000c] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:59 
+  at TumbangPreso.PlayTests.ScoreStockPacketTests+<>c__DisplayClass13_0.<ScoreRejectsNonExactPayloadBeforeReadingOrPublishing>b__0 () [0x00000] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:72 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ScoreStockPacketTests.ScoreRejectsNonExactPayloadBeforeReadingOrPublishing (System.Int32 bytes) [0x00040] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:72
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1801" name="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing(8)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.ScoreRejectsNonExactPayloadBeforeReadingOrPublishing(8)" methodname="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="237622270" result="Failed" start-time="2026-09-30 08:52:59Z" end-time="2026-09-30 08:52:59Z" duration="0.035289" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnScoreMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00085] in /workspace/shared/tump-validation/Assets/TumbangPreso/Runtime/Net/MatchRpc.cs:4120 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <94b103fb80364239bfc0542bee09d001>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <94b103fb80364239bfc0542bee09d001>:0 
+  at TumbangPreso.PlayTests.ScoreStockPacketTests.Deliver (System.String method, Unity.Netcode.FastBufferWriter writer, System.UInt64 sender) [0x0000c] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:59 
+  at TumbangPreso.PlayTests.ScoreStockPacketTests+<>c__DisplayClass13_0.<ScoreRejectsNonExactPayloadBeforeReadingOrPublishing>b__0 () [0x00000] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:72 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ScoreStockPacketTests.ScoreRejectsNonExactPayloadBeforeReadingOrPublishing (System.Int32 bytes) [0x00040] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:72
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1802" name="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing(11)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.ScoreRejectsNonExactPayloadBeforeReadingOrPublishing(11)" methodname="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="1136609450" result="Failed" start-time="2026-09-30 08:52:59Z" end-time="2026-09-30 08:52:59Z" duration="0.034201" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnScoreMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00085] in /workspace/shared/tump-validation/Assets/TumbangPreso/Runtime/Net/MatchRpc.cs:4120 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <94b103fb80364239bfc0542bee09d001>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <94b103fb80364239bfc0542bee09d001>:0 
+  at TumbangPreso.PlayTests.ScoreStockPacketTests.Deliver (System.String method, Unity.Netcode.FastBufferWriter writer, System.UInt64 sender) [0x0000c] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:59 
+  at TumbangPreso.PlayTests.ScoreStockPacketTests+<>c__DisplayClass13_0.<ScoreRejectsNonExactPayloadBeforeReadingOrPublishing>b__0 () [0x00000] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:72 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ScoreStockPacketTests.ScoreRejectsNonExactPayloadBeforeReadingOrPublishing (System.Int32 bytes) [0x00040] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:72
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1803" name="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing(13)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.ScoreRejectsNonExactPayloadBeforeReadingOrPublishing(13)" methodname="ScoreRejectsNonExactPayloadBeforeReadingOrPublishing" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="1484811901" result="Failed" start-time="2026-09-30 08:52:59Z" end-time="2026-09-30 08:52:59Z" duration="0.033556" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 0
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ScoreStockPacketTests.ScoreRejectsNonExactPayloadBeforeReadingOrPublishing (System.Int32 bytes) [0x00051] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:73
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1808" name="StocksRejectTruncatedHeaderWithoutMutation" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.StocksRejectTruncatedHeaderWithoutMutation" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-09-30 08:52:59Z" end-time="2026-09-30 08:52:59Z" duration="0.099953" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1805" name="StocksRejectTruncatedHeaderWithoutMutation(0)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.StocksRejectTruncatedHeaderWithoutMutation(0)" methodname="StocksRejectTruncatedHeaderWithoutMutation" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="243825884" result="Failed" start-time="2026-09-30 08:52:59Z" end-time="2026-09-30 08:52:59Z" duration="0.029728" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnTsinelasMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x0007e] in /workspace/shared/tump-validation/Assets/TumbangPreso/Runtime/Net/MatchRpc.cs:4151 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <94b103fb80364239bfc0542bee09d001>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <94b103fb80364239bfc0542bee09d001>:0 
+  at TumbangPreso.PlayTests.ScoreStockPacketTests.Deliver (System.String method, Unity.Netcode.FastBufferWriter writer, System.UInt64 sender) [0x0000c] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:59 
+  at TumbangPreso.PlayTests.ScoreStockPacketTests+<>c__DisplayClass14_0.<StocksRejectTruncatedHeaderWithoutMutation>b__0 () [0x00000] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:81 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ScoreStockPacketTests.StocksRejectTruncatedHeaderWithoutMutation (System.Int32 bytes) [0x00040] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:81
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1806" name="StocksRejectTruncatedHeaderWithoutMutation(4)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.StocksRejectTruncatedHeaderWithoutMutation(4)" methodname="StocksRejectTruncatedHeaderWithoutMutation" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="962399906" result="Failed" start-time="2026-09-30 08:52:59Z" end-time="2026-09-30 08:52:59Z" duration="0.036540" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnTsinelasMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x0007e] in /workspace/shared/tump-validation/Assets/TumbangPreso/Runtime/Net/MatchRpc.cs:4151 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <94b103fb80364239bfc0542bee09d001>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <94b103fb80364239bfc0542bee09d001>:0 
+  at TumbangPreso.PlayTests.ScoreStockPacketTests.Deliver (System.String method, Unity.Netcode.FastBufferWriter writer, System.UInt64 sender) [0x0000c] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:59 
+  at TumbangPreso.PlayTests.ScoreStockPacketTests+<>c__DisplayClass14_0.<StocksRejectTruncatedHeaderWithoutMutation>b__0 () [0x00000] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:81 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ScoreStockPacketTests.StocksRejectTruncatedHeaderWithoutMutation (System.Int32 bytes) [0x00040] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:81
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1807" name="StocksRejectTruncatedHeaderWithoutMutation(7)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.StocksRejectTruncatedHeaderWithoutMutation(7)" methodname="StocksRejectTruncatedHeaderWithoutMutation" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="247252804" result="Failed" start-time="2026-09-30 08:52:59Z" end-time="2026-09-30 08:52:59Z" duration="0.032368" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnTsinelasMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x0007e] in /workspace/shared/tump-validation/Assets/TumbangPreso/Runtime/Net/MatchRpc.cs:4151 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <94b103fb80364239bfc0542bee09d001>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <94b103fb80364239bfc0542bee09d001>:0 
+  at TumbangPreso.PlayTests.ScoreStockPacketTests.Deliver (System.String method, Unity.Netcode.FastBufferWriter writer, System.UInt64 sender) [0x0000c] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:59 
+  at TumbangPreso.PlayTests.ScoreStockPacketTests+<>c__DisplayClass14_0.<StocksRejectTruncatedHeaderWithoutMutation>b__0 () [0x00000] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:81 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ScoreStockPacketTests.StocksRejectTruncatedHeaderWithoutMutation (System.Int32 bytes) [0x00040] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:81
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1811" name="StockTableRequiresExactlyItsDeclaredCount" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.StockTableRequiresExactlyItsDeclaredCount" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-30 08:52:59Z" end-time="2026-09-30 08:52:59Z" duration="0.068315" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1809" name="StockTableRequiresExactlyItsDeclaredCount(False)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.StockTableRequiresExactlyItsDeclaredCount(False)" methodname="StockTableRequiresExactlyItsDeclaredCount" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="1597306356" result="Failed" start-time="2026-09-30 08:52:59Z" end-time="2026-09-30 08:52:59Z" duration="0.033777" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnTsinelasMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x0007e] in /workspace/shared/tump-validation/Assets/TumbangPreso/Runtime/Net/MatchRpc.cs:4151 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <94b103fb80364239bfc0542bee09d001>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <94b103fb80364239bfc0542bee09d001>:0 
+  at TumbangPreso.PlayTests.ScoreStockPacketTests.Deliver (System.String method, Unity.Netcode.FastBufferWriter writer, System.UInt64 sender) [0x0000c] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:59 
+  at TumbangPreso.PlayTests.ScoreStockPacketTests+<>c__DisplayClass15_0.<StockTableRequiresExactlyItsDeclaredCount>b__0 () [0x00000] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:92 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ScoreStockPacketTests.StockTableRequiresExactlyItsDeclaredCount (System.Boolean trailing) [0x00098] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:92
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1810" name="StockTableRequiresExactlyItsDeclaredCount(True)" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.StockTableRequiresExactlyItsDeclaredCount(True)" methodname="StockTableRequiresExactlyItsDeclaredCount" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="863464802" result="Failed" start-time="2026-09-30 08:52:59Z" end-time="2026-09-30 08:52:59Z" duration="0.033206" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 3
+  But was:  2
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ScoreStockPacketTests.StocksUnchanged () [0x00004] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:63
+at TumbangPreso.PlayTests.ScoreStockPacketTests.StockTableRequiresExactlyItsDeclaredCount (System.Boolean trailing) [0x000a9] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ScoreStockPacketTests.cs:93
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-case id="1812" name="ValidScorePublishesOnceWithoutAddingToReplicatedTotal" fullname="TumbangPreso.PlayTests.ScoreStockPacketTests.ValidScorePublishesOnceWithoutAddingToReplicatedTotal" methodname="ValidScorePublishesOnceWithoutAddingToReplicatedTotal" classname="TumbangPreso.PlayTests.ScoreStockPacketTests" runstate="Runnable" seed="66544147" result="Passed" start-time="2026-09-30 08:52:59Z" end-time="2026-09-30 08:52:59Z" duration="0.033518" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

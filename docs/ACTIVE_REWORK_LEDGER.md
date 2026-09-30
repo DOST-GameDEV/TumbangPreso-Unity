@@ -380,6 +380,31 @@ source, both failure receipts retained; no interruption pass claimed. No job is
 running. Publish the checked runtime and update the same Feedback contact row.
 Loading, hero kits and the local build/input/tutorial reservations stay untouched.
 
+Whole-body tag5f758976 shipped through824cdfb4; remote HEAD verified and the same
+Feedback row updated, Human verified untouched. The full-Eskinita follow-up was
+terminated during loading (exit247, no XML) despite6.9GiB available at launch.
+It provides no additional runtime evidence. No unchanged launch retry is planned.
+Source stays checked by the close/far isolated native film and normal recovery.
+Latest live tutorial draft explicitly says DO NOT WORK ON THIS YET; preserve that
+hold. Latest input row now asks Curve Left Up/Right Down and Sprint renamed Run;
+these remain with the input contributor, not the tag unit.
+
+Diddler next F0930-20 investigation reserves only MatchRpc.cs OnScoreMsg and
+OnTsinelasMsg payload-bound checks, new Tests/PlayMode/ScoreStockPacketTests.cs
+and metadata, related focused evidence, TODO/NETWORKING/ledger. No wire layout,
+stock rules, scoring rules, kit, input, loading or build paths are owned. Suspected
+truncated host payload exceptions and trailing payload acceptance need native
+reproduction before runtime edits. No test or defect claim yet; no heavy job running.
+
 Incoming whole-body tag5f7589760 is preserved in the main integration. The active internal build stays frozen atc55574cd6; it does not qualify this later presentation revision. Do not restart the live build for an unrelated visual integration. Source/unit evidence remain separate; continue the planned actual-peer network check on the frozen binary first.
 
 Frozen c55574cd6 player build and direct LAN complete:12scenes/2141MB/206s, both managed assemblies and exe/data verified;92motion files unchanged. Real150s client/163s host reach round2 with matching structural D34EC66E/protocol97 and replicated movement/objective state, no hard faults. Shared input unchanged; owned processes exited. Zero skills/ults exercised, so no hero-effects claim. Preparation churn remains only in tump-net-0930; later main tag/packet integration is separate. Raw inputs/logs and exact binary remain in that validation checkout. Next: existing F0930-13 routes, then a focused AI lunge/punch approach-speed correction using actual motor multipliers, plus remaining network qualification. Goal active; no heavy job running.
+
+Score/stock envelope reproduction confirmed10native failures before the fix;
+the same16cases now pass with frozen inputs. Score requires exactly12bytes and
+Last Tsinelas validates its header/full declared table before mutation. Valid
+payload semantics, totals, stocks and protocol97 stay unchanged. The two new
+Feedback rows are recorded separately under hidden QA_TUMP_0040/0041; both await
+the shipped note, Human verified untouched. No heavy cloud job running. Publish
+explicit handler/test/report paths, verify remote, update those rows and release
+this reservation. The local Windows build remains independently frozen.
