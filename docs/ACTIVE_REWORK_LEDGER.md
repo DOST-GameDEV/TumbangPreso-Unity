@@ -69,8 +69,9 @@ are pending despite shipped fix notes. Human verified is for the owner/testers.
 - Existing can-down UI: upright/down/reset case passes; frame/icon capture inspected,
   offscreen marker reports DOWN/visible. Arrow bounds not separately asserted.
 - Existing title/Home: actual Period key enters Home; shared Back/menu route stays
-  in MatchSetup and keeps ShowingHome. Native case passes. Physical Escape, actual
-  backdrop comparison, queue cancellation and stamina-specific rendering remain.
+  in MatchSetup and keeps ShowingHome. Follow-up2native cases pass for injected
+  Escape, unchanged actual poster texture and top-down actual stamina fill mesh.
+  Physical-keyboard, moving-video continuity and queue cancellation remain.
 - Incoming fixes: Nemu partials, malformed map-vote/score/stock packets, offline
   pause, Practice attention, replay motion/contact/body work, bot tag commitment
   and Unicode boundary retain their contributor-specific evidence and limitations.
@@ -92,8 +93,8 @@ Handoffs were supplied in chat for manual copying; never upload/send them elsewh
 ## Exact Next Action
 
 FeedbackMenuRouteTests/evidence and this compact checkpoint shipped through
-570ba128d, remote HEAD verified. Complete remaining F0930-13 queue-button/stamina/physical-Escape and backdrop
-checks or fix reproduced UX bugs. Continue independent network/bot work after
+570ba128d, remote HEAD verified. Complete remaining F0930-13 queue-button
+check or fix reproduced UX bugs. Continue independent network/bot work after
 checking latest shared ownership. All owned source/qualification work is committed; unrelated dirt remains untouched.
 
 History is preserved whole in archive/ledger-through-2e87bda16-2026-09-30.md,
@@ -120,3 +121,13 @@ older reservation. Fresh read finds the former score/stock/map-vote/offline-paus
 rows absent; author/cause unknown, so do not silently recreate those deleted rows.
 Preserve their shipped repository evidence. The owner wants substantial Doc fixes,
 then sustained hands-on gameplay, and expects independent setup troubleshooting.
+
+Local F0930-13 qualification: FeedbackHudMenuTests passes2/2 for Escape/poster
+texture and stamina mesh. First run compilation failed on an obsolete assumed
+GetMesh signature; one bounded fixture correction passed. Both jobs exited and
+isolated profile/input preferences restored. No runtime defect was found here.
+Latest Doc requests UP LEFT/DOWN RIGHT, Run/Ability Descriptions labels and removed
+separate Ready bind; next own input unit must preserve shared Interact/Ready
+rebinding. New tutorial lesson text is explicitly DO NOT WORK YET; hold tutorial
+source/wording pending owner release. Diddler replay-surface investigation remains
+independent. No heavy job running.

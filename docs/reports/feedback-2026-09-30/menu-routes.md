@@ -13,3 +13,26 @@ qualified by this case. Those limits are retained in F0930-13, not marked comple
 
 - [Native result](checks/menu-route.xml)
 - [Fixture inputs](checks/menu-route-inputs.json)
+
+## Escape And Stamina Follow-Up
+
+The frozen ecd6b8348 source plus FeedbackHudMenuTests passes2/2 native PlayMode
+cases. Escape key events open and close HubMenu through the shipped input route,
+keep MatchSetup active and preserve the actual enabled RawImage texture. Reduced
+UI motion is temporarily enabled to hold the poster stable; moving-video texture
+continuity and a physical keyboard are not independently qualified.
+
+Spending actual local-player stamina reduces the real CanvasRenderer fill mesh
+from near-full to half. Its upper boundary retreats more than20local units while
+the lower boundary stays within2units. This qualifies depletion direction, not
+every HUD state or a visual redesign. Queue-button cancellation remains open.
+No runtime code, artwork or loading code changed in this follow-up.
+
+The first run stopped at a fixture compile error: this Unity version has a
+parameterless CanvasRenderer.GetMesh returning its borrowed current mesh. One
+bounded correction used that signature and left the renderer-owned mesh intact.
+The retry produced fresh XML with both cases passing, durations3.056145s and
+5.719465s. The original failure log stays in the isolated validation checkout.
+
+- [Native result](checks/hud-menu-retry.xml)
+- [Fixture inputs and repair](checks/hud-menu-retry-inputs.json)
