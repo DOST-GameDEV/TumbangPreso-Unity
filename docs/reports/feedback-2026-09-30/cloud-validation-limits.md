@@ -139,3 +139,13 @@ admission without solving the session failure. The host recorded about30FPS duri
 its live round, but that excludes startup stalls and is not a general performance
 qualification. No new OOM and no runtime edits occurred. Both processes exited.
 [Control receipt](checks/linux-warm-host-control.json).
+
+## Toon sampling correction
+
+The earlier black/speckled surface limitation is now reproduced and corrected in
+the shader's generated no-mipmap lighting-ramp lookup. Opaque and transparent
+implicit samples produced non-finite native lighting values; explicit level0
+sampling preserves the authored ramp and restores normal full-map colours.
+[Baseline, final checks and captures](toon-ramp.md). This qualifies LinuxOpenGL
+Editor reproduction; Windows/device and newly built standalone-player checks
+remain separate. Earlier corrupt captures are still not visual acceptance.
