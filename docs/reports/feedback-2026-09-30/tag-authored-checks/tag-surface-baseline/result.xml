@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 17:30:15Z" end-time="2026-09-30 17:30:29Z" duration="14.6703319">
+  <test-suite type="TestSuite" id="2166" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="939" result="Passed" start-time="2026-09-30 17:30:15Z" end-time="2026-09-30 17:30:29Z" duration="14.670332" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2160" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="939" result="Passed" start-time="2026-09-30 17:30:15Z" end-time="2026-09-30 17:30:29Z" duration="14.658478" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="146032" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2161" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="939" result="Passed" start-time="2026-09-30 17:30:15Z" end-time="2026-09-30 17:30:29Z" duration="14.655058" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2162" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="939" result="Passed" start-time="2026-09-30 17:30:15Z" end-time="2026-09-30 17:30:29Z" duration="14.652320" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1119" name="CatchReconstructionTests" fullname="TumbangPreso.PlayTests.CatchReconstructionTests" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" testcasecount="16" result="Passed" start-time="2026-09-30 17:30:15Z" end-time="2026-09-30 17:30:29Z" duration="14.600840" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1127" name="AuthoredMapCloseTagRetainsVisibleWholeBodyContact" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.AuthoredMapCloseTagRetainsVisibleWholeBodyContact" methodname="AuthoredMapCloseTagRetainsVisibleWholeBodyContact" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1613787645" result="Passed" start-time="2026-09-30 17:30:15Z" end-time="2026-09-30 17:30:23Z" duration="7.956642" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+distance=1 contactGap=0 contactAlpha=1 sampleError=0.008017376 frames=30 bodyShift=0.1331889 torsoLean=21.57259 armStretch=1 skinSurfaceGap=0.02279067
+]]></output>
+            </test-case>
+            <test-case id="1128" name="AuthoredMapFarTagRetainsVisibleWholeBodyContact" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.AuthoredMapFarTagRetainsVisibleWholeBodyContact" methodname="AuthoredMapFarTagRetainsVisibleWholeBodyContact" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="763121951" result="Passed" start-time="2026-09-30 17:30:23Z" end-time="2026-09-30 17:30:29Z" duration="6.626552" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.0100003 frames=34 bodyShift=0.2592027 torsoLean=35.7694 armStretch=1.084845 skinSurfaceGap=0.06675485
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

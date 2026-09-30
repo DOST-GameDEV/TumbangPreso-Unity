@@ -182,3 +182,5 @@ one bounded correction produced the passing case. No unchanged suites were run.
 
 Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refinement:
 [match UI evidence](match-ui-revision.md).
+
+[Authored-map tag qualification and review limits](tag-authored-map.md).

@@ -874,3 +874,155 @@ full-map colours: claim Tests/PlayMode/CatchReconstructionTests.cs plus evidence
 TODO only. Reuse actual close/far contact measurement on authored Eskinita instead
 of the isolated floor. Stop at fresh two-case results and inspected native contact
 frames/film; no speculative animation rewrite. One guarded graphics pass, retry0.
+
+First authored-map launch stopped at compilation: new conditional was inserted
+into the neighbouring metadata case rather than the contact helper. Corrected
+the exact helper and restored the unrelated case. No runtime code changed;
+one bounded tooling repair. Final output tag-contact-authored-final,2cases.
+Authored-map native2/2pass in14.54s, no resource failure, but visual review rejects
+full acceptance: far-contact frame still appears to leave a gap despite the broad
+renderer-bounds metric returning zero. Preserve this evidence; do not mark replay
+Done. Strengthen the contact measurement to the actual baked victim skin surface,
+not its enclosing AABB. Diagnose the visible discrepancy before any animation edit.
+
+Actual skin-surface check passes both: hand-anchor distances2.3cm close/6.7cm far.
+The pictured foreground arm is not necessarily the reaching hand. Inspect the
+opposite camera side on the same far contact as a private candidate-only review
+overlay, no product write. This isolates shot occlusion from reach geometry.
+One far case, real completed frames; source fixture retained unchanged.
+Opposite-side native review passes1/1 and reveals the actual reaching hand and
+face; the previous automatic clear-side tie favoured the off-arm view, making
+contact look absent. Claim Runtime/Camera/CatchReconstruction.cs for a minimal
+shared shot-selection bug fix. Prefer the recorded reaching-shoulder side when
+both sides are comparably clear, retain obstacle/too-tight fallback and one-time
+selection. No body/ability/mesh changes. Validate two authored-map contacts plus
+existing wall/fallback case. Strengthened skin checks remain, private side override
+is removed before final validation. This follows the reviewed rendering defect.
+
+Camera trial result:2contact passes; existing both-wall fallback case failed its
+one-frame wait. Do not repair unrelated fixture timing in this unit or claim
+fallback qualification. Review showed this actor's recorded reaching shoulder
+already matches the default side; opposite-side framing alone was not a proven
+product fix. Trial camera code and preference assertion removed, original runtime
+restored exactly. Keep authored-map/surface checks and their original2/2passing
+evidence; no animation/runtime change shipped from this qualification unit.
+Native pictures show the body reach; human taste, all-roster, actual-peer and
+dedicated interrupted-lunge checks remain open. Preserve failed/inconclusive history.
+Authored-map qualification8613d3c7 pushed/remote verified; same tag row updated,
+still partial. All camera runtime bytes restored to prior published version.
+Next: refresh the isolated Linux player to current protocol100 for actual play/
+peer qualification. Source remains untouched except this checkpoint. Old private
+protocol97 generated player is obsolete; retain its exact file/hash inventory and
+all logs/captures, then remove only Builds/cloud-linux-20260930 to recover2.1GB.
+Sync tracked candidate Assets/Packages/ProjectSettings from clean current source,
+preserving private build entry point and caches/profiles. Fresh internal output
+Builds/cloud-linux-protocol100, one guarded job, native graphics/two workers.
+Stop at confirmed executable/data and build receipt before launching that player.
+No Desktop replacement, user profile deletion, paid service or loading changes.
+Fresh build preflight:15,364tracked source inputs hashed,233different candidate
+files synchronized. Source protected metadata/assets unchanged; candidate importer
+churn replaced only from authoritative source. Old254-file generated player hash
+inventory saved;2.1GB recovered,3.2GB free. Build identity will honestly retain the
+isolated checkout base83136899+dirty overlay; source-input manifest pins8613d3c7.
+Do not present that embedded base SHA as the current source revision. Actual
+protocol100 and the full input manifest qualify this internal candidate only.
+
+First current-player build stopped safely at66s during player script compilation,
+no OOM. Peak non-file memory~7GB included Editor3.1GB, build-program1.1GB and
+asset importer1.1GB; idle compiler had already been released. No executable was
+produced. Remove only its empty output directory and make one warm-cache retry
+with one job worker. Preserve first receipt and all authored assets/settings.
+Retry1 output Logs/protocol100-player-build-warm; no further unchanged retries.
+Warm retry also stopped at46.8s, now during asset/shader serialization: Editor
+~5GB plus one asset importer~1GB, no new OOM. Do not repeat unchanged. A measured
+next experiment disables parallel import for this Editor session only using the
+official -refreshImportMode InProcess argument, retaining all authored assets,
+graphics and the memory guard. This addresses the observed duplicate importer
+process instead of raising limits or killing unrelated apps. Stop at build receipt
+or the same guard; no persistent project/OS setting change.
+Reference: https://docs.unity.com/en-us/engine/6000.5/manual/unity-editor/command-line-arguments/editor
+
+Version-specific verification:6000.5manual does not list the newer CLI override.
+Use its established EditorSettings.refreshImportMode API and DesiredWorkerCount0
+with ForceToDesiredWorkerCount instead, inside the private build entry point,
+restoring previous values in finally. Snapshot candidate EditorSettings before
+launch for recovery if the guarded process stops. Log actual active mode/count.
+No product source or shared OS setting changes; one controlled import-mode trial.
+
+Import-mode trial did not solve build workers: two~1GB workers remained despite
+InProcess/desired0, and memory spiked before the observer could terminate; OOM
+counters increased10/5to11/6. No player produced. All owned jobs exited and exact
+EditorSettings snapshot is restored. The actual private EditorUserSettings had
+desired2, standby2, idle60seconds. Next targeted resource correction uses desired1,
+standby0 and idle1second BEFORE startup, not the ineffective runtime0 setting.
+These official local Editor settings retire idle caches without killing active
+imports. Preserve the original file privately and restore these three fields after
+this single controlled build. All authored content/graphics/output unchanged.
+Reference: https://docs.unity3d.com/ja/6000.0/ScriptReference/EditorUserSettings.html
+
+Worker-idle policy was observed but still hit guard at53s (Editor~5GB plus active
+importer1.1GB), no further OOM. Three original private worker settings restored.
+Next distinct correction: this is a BUILD, not a PlayMode/render check. Use
+-batchmode -nographics to avoid CPU-renderer graphics allocations while retaining
+all12scenes, assets, renderer targets and native build gates. The built player's
+validation will still use real graphics. No GI bake is requested. One measured
+headless build, no output/quality reduction and no increased memory limit.
+Headless BUILD succeeds in57.55s, exit0, no guard stop or further OOM. Full12-scene
+Linux protocol100 executable/data and runtime assembly verified. Editor no longer
+allocates a software graphics device for serialization; built player still targets
+normal graphics. This is the effective resource correction; retain unsuccessful
+worker-policy trials as history. Peak/receipts and exact source/artifact hashes saved.
+Now run the actual graphics player through its existing halftime-only native UI
+route in a fresh isolated home/profile: both modes, legal retained catch, full
+halftime/standings/round5 return.240second bound and unchanged memory guard.
+This is actual player execution, not Editor compilation or actual network peers.
+
+Actual player boots with correct colours and reaches the current HOME. Old
+halftime UI-review route fails at102s waiting for an obsolete control state before
+any halftime result; do not call that a gameplay failure or patch unrelated route
+fixtures. No new OOM. Continue through the existing built-player all-bot Hero
+match entry, with read-only RoundFreezeProbe traces/screenshots of real boundaries.
+No forced score/round transition. Stop at natural match completion/report or the
+1140s outer limit; observe movement, events, ordinary5s and halftime10s, full return.
+Fresh isolated profile/home, actual OpenGL graphics, requested30fps (not measured).
+
+Native full-match route reached the authored arena. Manual keyboard F starts
+round1 normally; trace confirms90second active clock and moving bodies. All-bots
+spectator rendering observed with correct colours. Escape did not open a menu in
+this diagnostic spectator route; do not infer human offline-pause qualification.
+No further input interference; await natural boundaries/completion and inspect
+read-only traces/screenshots. Raw result pending, not a passed match yet.
+Correction from actual settled screen and trace: Escape DID open MATCH MENU and
+pause the offline spectator match. Initial screenshot preceded menu presentation.
+Simulation time116.6562 and clock64.70425 remain fixed while wall time advances;
+menu explicitly says game paused. Preserve this positive actual-player evidence,
+not the earlier premature interpretation. Inspect nested settings then Resume.
+Nested Settings opened through the real pause menu and returned without advancing
+simulation. No graphics/profile values changed. Resume was pressed through actual
+keyboard UI. Initial click/screenshot observations were asynchronous; use settled
+screens and trace as authority, not immediate post-input pictures. Continue match.
+Player witness through round5: ordinary boundaries1/2/3 begin near5seconds and
+hold simulation/frame/input consistently; first/last sampled spans5.05-5.24s at
+this CPU-rendered frame rate. Halftime begins at9.998s, sampled span10.057s,
+simulation unchanged and one captured frozen frame. Actual retained replay visibly
+plays with its label, then round5 resumes. Mid-standings was not captured reliably;
+do not infer layout acceptance from the early witness screenshot. Only connection-
+refused Unity Services socket errors seen so far; online services unqualified.
+Full match still running. Preserve actual completion/timeout evidence before claims.
+
+Player run terminal:1100s diagnostic limit, round8 still42.98s remaining, not
+natural completion.165throws/26skills/6ultimates/46can knocks/116tags/0idle penalties;
+3.4measuredfps on software renderer including manual pause. Seven boundary traces
+freeze correctly (six5s plus halftime10s), replay visible, no new OOM.
+New concrete spectator defect: NativeSpectator disables RoleSwapCard, so ordinary
+frozen breaks have no next-taya/standings. Claim Runtime/UI/Hud.Native.cs, Hud.cs,
+RoleSwapCard.cs and Tests/PlayMode/RoundBreakFreezeTests.cs under Assets/TumbangPreso.
+Keep shared break card active for watchers while still respecting explicit clean
+feed. Baseline ordinary spectator case, then minimal fix with player/spectator and
+clean-feed checks. Original scoped native/player evidence retained. No heavy job now.
+Spectator transition baseline reproduces1/1failure: entering watch mode disables
+RoleSwapCard. Initial spectator setup also explicitly skips its creation in
+MatchInstaller.cs, explaining the actual player captures. Add that exact path to
+the claim before changing it. Keep YouCard personal; next-taya/standings are shared.
+Final scope: initial watch entry, player-to-watch entry, explicit clean-feed hide/
+restore, and the existing player's frozen-input/card check. No timer/wire changes.

@@ -109,7 +109,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   After owner review, the body now commits with a supporting step, hip transfer
   and shoulder turn; short contacts use a smaller lean and arm extension is capped
   at10percent. Close/far native films and normal recovery pass. Human/all-roster/
-  full-map/actual-peer and dedicated interrupted-lunge qualification remain open.
+  actual-peer and dedicated interrupted-lunge qualification remain open.
+  Authored Eskinita close/far native checks now pass2/2, including baked skin
+  proximity; no new animation/camera edit. Human/all-roster/player checks remain.
+  [Authored-map evidence](reports/feedback-2026-09-30/tag-authored-map.md).
 - [x] F0930-05 Adopted [Xelu prompts](https://thoseawesomeguys.com/prompts/): current
   binding labels and Xbox/PS families resolve whole supplied images, with retained
   fallback for absent variants. Live HUD and training key row use the same resolver.
