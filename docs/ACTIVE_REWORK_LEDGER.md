@@ -1375,3 +1375,7 @@ OOM; do not report normal Quit or barrier qualification. Finish the separate
 barrier FPP check in a bounded600s session, then Amihan current Wiki reconciliation.
 Current Wiki: Drift35s, Featherfall40s/5s, Whirlwind35s/2.5s, Airburst15points
 and2.5s windup; Second Wind25percent/2.5s. No ability code claimed yet.
+
+Local unit2026-10-01: F0930-09 Frostbite delivery. Claim Slipper.cs body-hit ordering, CheskaHeroKit.cs held-hand eligibility, FrostbiteDeliveryTests.cs and matching protocol revision. Root hypothesis: TriggerAffinityImpact clears Frost before HostFrostbite sees it in both body paths. Four native baseline cases next; stop at fresh XML, one bounded tooling repair maximum. No VFX, SFX, animation or authored asset change. Remaining character alignment stays open.
+
+Frostbite unit final4/4native passes: actual defender and attacker frozen on real Carrier releases, neutral block and held-hand eligibility retained. Corrected baseline1pass/3fail; initial short-target grace setup miss retained, one fixture repair.584input hashes/no non-metadata drift. Protocol101. Publish exact source/tests/evidence; full F0930-09 alignment remains open. Next independent Matchmaker cancellation ownership hypothesis, not yet a confirmed bug. No heavy job active.

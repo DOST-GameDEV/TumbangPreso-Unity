@@ -153,6 +153,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Native shared-clock/UI case passes;960x540/1600x680 captures inspected.
   [Evidence](reports/feedback-2026-09-30/README.md#timed-power-lifetime).
 - [ ] F0930-09 Cheska: reconcile wiki names/rules/statuses and fix Frozen slipper hit.
+  Frozen-hit bug fixed: both real body-hit paths now consume frost after applying
+  Frozen. Activation requires the held slipper. Four native cases pass; protocol101
+  requires matching updated builds. Complete kit alignment stays open.
+  [Evidence](reports/feedback-2026-09-30/frostbite-delivery.md).
 - [ ] F0930-10 Dante: reconcile wiki names/rules/statuses (owner reauthorized implementation).
   Barrier visibility implemented separately: half-alpha authored slabs retain their
   palette and lifecycle. Two distinct native cases pass; observer court capture

@@ -1325,8 +1325,8 @@ namespace TumbangPreso
                     int contactBit = 1 << p.PlayerSlot;
                     if ((_bodyContacts & contactBit) != 0) return;
                     _bodyContacts |= contactBit;
-                    TriggerAffinityImpact();
                     HostFrostbite(p);
+                    TriggerAffinityImpact();
                     HostBlockedBy(p);
                     return;
                 }
@@ -1366,8 +1366,8 @@ namespace TumbangPreso
                     int contactBit = 1 << p.PlayerSlot;
                     if ((_bodyContacts & contactBit) != 0) return;
                     _bodyContacts |= contactBit;
-                    TriggerAffinityImpact();
                     HostFrostbite(p);
+                    TriggerAffinityImpact();
                     HostBlockedBy(p);
                     return;
                 }
@@ -1767,6 +1767,7 @@ namespace TumbangPreso
         /// </summary>
         private void HostFrostbite(CharacterMotor victim)
         {
+            // Body hits must call this before generic impact consumes affinity.
             if (Affinity != SlipperAffinity.Frost || victim == null) return;
             victim.ApplyStagger(StatusRules.FrozenSeconds, StunElement.Ice, 9);
             Abilities.HeroHazards.SpawnIceCubePrison(victim.transform, StatusRules.FrozenSeconds);

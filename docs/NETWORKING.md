@@ -1,5 +1,10 @@
 # Networking: Where To Work
 
+Protocol101 also requires the corrected Frostbite hit/held-slipper contract.
+Both body-hit paths apply Frozen before generic impact consumes the payload.
+Native real-flight checks pass; protocol101 actual peers remain unqualified.
+[Evidence](reports/feedback-2026-09-30/frostbite-delivery.md).
+
 Protocol100 requires matching builds for the5-second ordinary round boundary and
 10-second halftime package. Both freeze simulation and reject gameplay/UI input.
 Halftime can play a retained authoritative clip before standings; unavailable or

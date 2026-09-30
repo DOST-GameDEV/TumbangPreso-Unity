@@ -35,6 +35,12 @@ Actual-peer transport and reconnect qualification remain open.
 
 ## Cosmetic Reworks
 
+Frostbite protocol101: a held slipper is required for activation; on body impact
+the host applies Frozen before generic affinity cleanup. The normal slipper and
+motor snapshot routes are unchanged. Native defender/attacker flight, eligibility
+and neutral-control cases pass; actual peer transport remains unqualified.
+[Evidence](reports/feedback-2026-09-30/frostbite-delivery.md).
+
 - Keep an ability's ID when its gameplay identity is unchanged. Display names,
   meshes,clips,effect implementation and cues can change without adding RPCs.
 - Continue using the ability's CastAction/ViewmodelAction and shared cast path.
