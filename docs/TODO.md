@@ -70,7 +70,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   input and host-request travel, repeat refusal, new-range tag and distant miss
   pass natively. Packet ceiling stays28m/s; protocol97 requires matching builds.
   [Evidence](reports/feedback-2026-09-30/defender-lunge.md). Actual peers unqualified.
-- [ ] F0930-08 Visible remaining lifetime for timed abilities using real shared state.
+- [x] F0930-08 Visible remaining lifetime: active ultimate rings now drain the
+  actual effect clock; reactivation skills retain Again plus seconds remaining.
+  Native shared-clock/UI case passes;960x540/1600x680 captures inspected.
+  [Evidence](reports/feedback-2026-09-30/README.md#timed-power-lifetime).
 - [ ] F0930-09 Cheska: reconcile wiki names/rules/statuses and fix Frozen slipper hit.
 - [ ] F0930-10 Dante: reconcile wiki names/rules/statuses; barrier visibility bug fix.
 - [ ] F0930-11 Amihan: reconcile wiki names/rules/statuses; fast, strong airborne Airburst.
