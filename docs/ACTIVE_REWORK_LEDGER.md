@@ -1,7 +1,6 @@
 # Active Rework Checkpoint
 
-Updated2026-10-01. Branch ASTRAReworks. Protocol103 candidate. Goal active.
-Updated2026-10-01. Branch ASTRAReworks. Protocol105 candidate. Goal active.
+Updated2026-10-01. Branch ASTRAReworks. Protocol107 candidate. Goal active.
 Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 
 ## Live Local Resume
@@ -1525,3 +1524,42 @@ Local next F0930-12 Catch unit: claim Lata.cs owned ability-protection clock, Ne
 Catch original6native cases pass on explicit605-input candidate, baseline1pass/5fail; no fixture repair. Remaining concrete risks are approved-recovery replica protection absent (generic recovery context is not marked approvedReplay) and destroyed-can reset with an independent shield rebuilding on a dead target. Added two focused cases only, original six retained. Baseline job native current output Logs/feedback-0930/nemu-catch-recovery-baseline.xml, profile feedback-nemu-catch-1001; no runtime inputs modified mid-run. Fresh remote Dante currentcontracts published107; own compatibility edit still deferred until source integration.
 
 Catch unit original6native passes; two follow-ups produce1pass/1approved-replica projection failure; corrected replica1/1passes. Eight distinct passed cases across receipts,605hashes/no drift, no fixture repair or unchanged rerun. Destroyed-can risk contradicted, no speculative fix. Host-confirmed5s protection/eligibility/owned cleanup and prepared recovery implemented. Commit checked unit privately, integrate contributorDante107 preserving GeoRules, advance compatibility once, then publish. Native77698/63541/8167/32803 terminal; no heavy job active. Protocol103 player stillfrozenFFE scope, does not qualify Catch or incoming107.
+Earthbound baseline Classic control passes; impulse/carry both wrongly travel
+1.0times neutral. Implement Dante-only distance factor0.5 at existing incoming
+local physics application, sqrt-scale speed and carrytime, preserve lift and caps.
+Final fourcases include large capped impact/lift parity. No art or voluntary
+movement change. Protocol106; source-only private candidate until verified.
+
+Earthbound final4/4native passes4.44s. Actual impulse1.116m vs2.28m, carry2.693m
+vs5.70m; caps/lift parity and Classic control hold. Reuse these checks. One
+affected integration: existing Airburst authored-court victim is Dante, so qualify
+that new passive interaction before publication rather than claiming old9m still
+applies. No runtime edits for this check; next publish with explicit limits.
+
+Earthbound interaction passes1/1native8.82s: Dante travels7.374m under Airburst
+with the new passive, not the historical9m before it. Landed frame inspected.
+Publish fourunitcases plus this affected interaction. Full Dante row stays open;
+next ward/held-slipper/forward-cascade units retain existing presentation andSFXban.
+
+Incoming949eae63/af43ffb6 adds Windows protocol103 player/direct-localhost-peer
+evidence only, no overlapping runtime. Preserve its individual-skill and newer
+protocol limits; it does not qualify current106 transport or Second Wind.
+Earthbound6eecc832 integrated9577c3d2 remote verified. Incoming Windows103player/
+LAN evidence preserved with its individual-skill/newer-protocol limitations.
+Next Dante ward/Bastion claim per plan: DanteHeroKit.cs, HeroAbility.cs/HeroKit.cs
+scoped disabled-cast exception, GeoRules ward/barrier values, NetSession.cs,
+Core numeric assertion, new DanteWardRuleTests.cs/meta and partition. Baseline
+frozen press, metadata and tag preservation before changes. No heavy job active.
+
+Ward baseline3/3fails: stale name, frozen press refused and delayed accepted ward
+erases Tagged. Add the signature-only impaired-cast exception, preserve Tagged/
+trip/round/pause gates, protect tagged state during accepted replay. Update ward
+15s/40s and Bastion35s/name. Final6native cases cover offline press, ordinary-skill
+refusal, host validation, tag retention, expiry and pause/warmup. Protocol107.
+
+Ward final6/6native1.35s and8Core pass, no guard/OOM. Publish exact signature
+eligibility/tag-preservation and current ward/Bastion names/clocks. Existing art
+unchanged. Full Dante row stays open for held-slipper Boulder and forward cascade.
+No heavy job active; fresh remote/claims before next unit.
+
+Catch3322c6e8b checked unit integrates contributorDante current107 fromf60eba049; NecroRules/GeoRules merge clean, all authored contributors preserved. Combined compatibility108. Next one existing current/previous LAN approval receiver case on this merged source verifies current108accepted/107refused and compilation; reuse eight Catch cases and contributor receipts. No claim that old103player qualifies108. No source/fixture/art redesign for this gate.

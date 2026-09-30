@@ -1,5 +1,10 @@
 # Networking: Where To Work
 
+Current gameplay contract is protocol108, including Kuro Catch's host-confirmed
+five-second can protection and owned/recovered clocks. Native acceptance passes;
+the earlier protocol103 direct-peer player does not qualify these later contracts.
+[Catch evidence](reports/feedback-2026-09-30/nemu-kuro-catch.md).
+
 Current Windows peer evidence: frozen committed overlaysffe5030c5, protocol103,
 same fresh internal binary on actual localhost UDP host/client. Both reach active
 HeroStrike/Eskinita round2 with matching structural state and no hard faults.

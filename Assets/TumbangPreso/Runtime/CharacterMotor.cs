@@ -2046,17 +2046,28 @@ namespace TumbangPreso
             ApplyImpulse(impulse);
         }
 
+        private float IncomingKnockbackSpeedScale => Mode == Core.GameMode.HeroStrike
+            ? Mathf.Sqrt(Mathf.Clamp01(AbilitySystem?.Kit?.IncomingKnockbackDistanceScale ?? 1)) : 1;
+
         public void ApplyImpulse(Vector3 impulse)
         {
             if (!MayMutateGameplayState() || !IsLocallySimulated()) return;
+            float lift=impulse.y;
+            float scale=IncomingKnockbackSpeedScale;
+            if(scale<1)
+            {
+                // Distance under friction is squared speed. Apply the existing cap first.
+                impulse=Vector3.ClampMagnitude(impulse,Balance.MaxKnockbackSpeed);
+                impulse.x*=scale; impulse.z*=scale;
+            }
             _externalVelocity += impulse;
 
             float mag = _externalVelocity.magnitude;
             if (mag > Balance.MaxKnockbackSpeed)
                 _externalVelocity = _externalVelocity.normalized * Balance.MaxKnockbackSpeed;
 
-            if (impulse.y > 0.0f)
-                _velocity.y = Mathf.Min(impulse.y, Balance.MaxKnockbackLift);
+            if (lift > 0.0f)
+                _velocity.y = Mathf.Min(lift, Balance.MaxKnockbackLift);
         }
 
         private void Update()

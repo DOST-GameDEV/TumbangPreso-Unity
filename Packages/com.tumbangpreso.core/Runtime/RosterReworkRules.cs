@@ -40,9 +40,10 @@ namespace TumbangPreso.Core
 
     public static class GeoRules
     {
-        /// <summary>SHIELD, owner: *"Status immunity for 20 seconds"*. Cooldown 45 s (set here).</summary>
-        public const float ShieldSeconds = 20.0f;
-        public const float ShieldCooldown = 45.0f;
+        public const float EarthboundDistanceScale = .5f;
+        /// <summary>Current Wiki UNSTOPPABLE:15seconds of status immunity,40second cooldown.</summary>
+        public const float ShieldSeconds = 15.0f;
+        public const float ShieldCooldown = 40.0f;
 
         /// <summary>BOULDER, owner: *"Throw rock -> Concussed"*. Cooldown, speed and roll set here.</summary>
         public const float BoulderCooldown = 30.0f;
@@ -54,7 +55,7 @@ namespace TumbangPreso.Core
 
         /// <summary>BARRIER, owner: *"lasts for 7.5 seconds and follows you around"*, *"25 Seconds
         /// Cooldown"*. Width and offset set here.</summary>
-        public const float BarrierCooldown = 25.0f;
+        public const float BarrierCooldown = 35.0f;
         public const float BarrierSeconds = 7.5f;
         public const float BarrierWidth = 3.4f;
         public const float BarrierForward = 1.2f;

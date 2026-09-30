@@ -45,8 +45,8 @@ world; the companion can be absent without affecting the objective contract.
   receipts; this is not a single final8/8 suite. No fixture repair or disabled test.
 
 Exact XML/input receipts are in nemu-catch-checks. Raw logs remain in the isolated
-checkout Logs/feedback-0930/nemu-catch-*.log. Compatibility advances after integrating
-the current contributor protocol. Actual peer transport, rendered companion/frame
+checkout Logs/feedback-0930/nemu-catch-*.log. Protocol108 integrates the contributor's
+protocol107 plus this changed Catch contract. Actual peer transport, rendered companion/frame
 qualification, player build and physical devices are still separate. The earlier
 protocol103 LAN receipt does not cover Catch. Haunt and complete Nemu alignment
 remain open in the same F0930-12 row.

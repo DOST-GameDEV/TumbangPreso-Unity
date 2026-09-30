@@ -80,9 +80,9 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(35.0f, CryoRules.GlacialWallCooldown);
             Assert.Equal(12.0f, CryoRules.AbsoluteZeroCost);
             Assert.Equal(1.5f, CryoRules.AbsoluteZeroDelay);
-            Assert.Equal(20.0f, GeoRules.ShieldSeconds);
+            Assert.Equal(15.0f, GeoRules.ShieldSeconds);
             Assert.Equal(7.5f, GeoRules.BarrierSeconds);
-            Assert.Equal(25.0f, GeoRules.BarrierCooldown);
+            Assert.Equal(35.0f, GeoRules.BarrierCooldown);
             // Higop's "no escape": the pull beats a run, so pushing away only buys a moment.
             Assert.True(VoodooRules.HigopPullOverRun > 0.0f);
             // A normal skill's footprint stays inside VISION section 2's 1.6 to 2.3 m band.

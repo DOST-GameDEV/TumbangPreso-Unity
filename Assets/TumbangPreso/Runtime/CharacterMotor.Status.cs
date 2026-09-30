@@ -315,8 +315,11 @@ namespace TumbangPreso
             if (!Finite(velocity) || float.IsNaN(seconds) || float.IsInfinity(seconds)) return;
             var flat = new Vector3(velocity.x, 0.0f, velocity.z);
             if (flat.magnitude > Balance.MaxKnockbackSpeed) flat = flat.normalized * Balance.MaxKnockbackSpeed;
+            float scale=IncomingKnockbackSpeedScale;
+            flat*=scale;
             _carryVelocity = flat;
-            _carryLeft = Mathf.Clamp(seconds, 0.0f, 3.0f);
+            // Scaling both held speed and time halves held travel and its friction tail.
+            _carryLeft = Mathf.Clamp(seconds, 0.0f, 3.0f)*scale;
             _externalVelocity = flat;
             if (velocity.y > 0.0f) _velocity.y = Mathf.Min(velocity.y, Balance.MaxKnockbackLift);
             // A carried body is not steering where it chose, and must not out-walk the wind.

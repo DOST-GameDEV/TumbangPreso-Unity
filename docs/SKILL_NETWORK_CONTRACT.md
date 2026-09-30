@@ -67,7 +67,32 @@ Carrier target gate and HostMayChannelReset. The existing status timer and unit
 snapshot carry the state; no new packet field. Other CanAct permissions remain.
 Matching builds are required. Local channel and host-gate tests are not actual peers.
 
+## Earthbound Compatibility
+
+Protocol106 halves Dante incoming horizontal knockback/carry distance in Hero
+Strike. Existing Impact/Carry packets still deliver unmodified host intent to
+the simulating owner; its motor applies the kit factor once. Replica pose adoption
+does not reapply it. Held speed/time use sqrt(distance scale), lift stays unchanged.
+No new packet fields. Classic and default-one kits keep their existing behavior.
+
+## Unstoppable Compatibility
+
+Protocol107 aligns Dante ward/Bastion timing and permits only the cleanse
+signature to cross ordinary impairment in an active unpaused round. Tagged and
+physical trips still refuse it. Host validation uses the same ability eligibility
+as offline input; accepted playback cannot clear a newer tag. No packet layout
+changes. Existing bound timed-kit recovery reads the corrected15second duration.
+
 ## Cosmetic Reworks
+
+Kuro Catch protocol108: nemu_skill2d becomes a host-confirmed five-second upright-can
+protection. Lata retains the ability-owned clock independently of restoration;
+the existing clock snapshot publishes the current maximum. Shared prepared-world
+recovery restores active/empty remaining state without recasting. Approved replicas
+project that clock for local state/presentation; unapproved calls cannot grant it,
+and actual knockdown always resolves on the host. Eight distinct native cases pass;
+actual peer/companion rendering qualification remains separate.
+[Evidence](reports/feedback-2026-09-30/nemu-kuro-catch.md).
 
 Cheska protocol103: the current Wiki7.5s field,1.5s ultimate delay/every-player
 targeting and Chilled shove passive require matching builds. Shared ultimate
