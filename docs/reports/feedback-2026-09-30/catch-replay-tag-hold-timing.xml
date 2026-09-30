@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 12:00:13Z" end-time="2026-09-30 12:00:30Z" duration="17.1615043">
+  <test-suite type="TestSuite" id="2132" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="906" result="Passed" start-time="2026-09-30 12:00:13Z" end-time="2026-09-30 12:00:30Z" duration="17.161504" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2126" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="906" result="Passed" start-time="2026-09-30 12:00:13Z" end-time="2026-09-30 12:00:30Z" duration="17.150488" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="101231" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2127" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="906" result="Passed" start-time="2026-09-30 12:00:13Z" end-time="2026-09-30 12:00:30Z" duration="17.147550" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2128" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="906" result="Passed" start-time="2026-09-30 12:00:13Z" end-time="2026-09-30 12:00:30Z" duration="17.145327" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1119" name="CatchReconstructionTests" fullname="TumbangPreso.PlayTests.CatchReconstructionTests" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" testcasecount="14" result="Passed" start-time="2026-09-30 12:00:13Z" end-time="2026-09-30 12:00:30Z" duration="17.080413" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1128" name="FrozenReplayStillHonoursRecoveryAndComfortInterruptions" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.FrozenReplayStillHonoursRecoveryAndComfortInterruptions" methodname="FrozenReplayStillHonoursRecoveryAndComfortInterruptions" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="365001332" result="Passed" start-time="2026-09-30 12:00:13Z" end-time="2026-09-30 12:00:18Z" duration="4.798338" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1123" name="IsolatedNativeCatchRetainsContinuousMotion" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.IsolatedNativeCatchRetainsContinuousMotion" methodname="IsolatedNativeCatchRetainsContinuousMotion" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1632842070" result="Passed" start-time="2026-09-30 12:00:18Z" end-time="2026-09-30 12:00:26Z" duration="7.926656" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1127" name="ReplayHoldsOneCapturedTagFrameThenFadesWithoutPausingPlay" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.ReplayHoldsOneCapturedTagFrameThenFadesWithoutPausingPlay" methodname="ReplayHoldsOneCapturedTagFrameThenFadesWithoutPausingPlay" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="967748364" result="Passed" start-time="2026-09-30 12:00:26Z" end-time="2026-09-30 12:00:30Z" duration="4.338614" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

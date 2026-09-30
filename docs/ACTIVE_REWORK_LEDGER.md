@@ -276,3 +276,70 @@ for this scope; publish coherent local commits after fetch/integration, update t
 existing Feedback row. Keep Catch source/tests reserved to incoming contributor.
 Then continue the remaining authorized feedback/engineering queue. Tutorial release
 question still pending; overall goal active. Do not revive the old running-build note.
+
+
+Cloud revised replay unit:2.5s recorded animation,1.25s immutable captured tag
+frame,.18s fade. Recovery clamps/interruptions remain active; no live-world pause.
+Baseline old3.0 fails;3native state/timing cases and2real-time close/far contact
+cases pass, with inspected native images. One cold memory-guard stop, one warm
+retry; no new OOM. Exact evidence/limits in catch-replay-tag-hold.md. Runtime/test
+paths release after publication. No heavy job active. No new player/peer/full-map
+visual approval; Doc note remains pending explicit reservation-release approval.
+
+Owner11:53 explicitly asks to take the friend's new tutorial feedback next after
+replay. Fresh12:00read/screenshot confirms bigger prompts, Enter skip, Dumaradrop
+Skip Lesson/Quit labels and Xelu Enter/Backspace, alongside the new lesson flow.
+Reconcile local tutorial ownership before claiming; do not duplicate its unit.
+Remaining3-map check stopped at29.59s before results under the memory guard;
+no Plaza/Lagoon/Kanto pass is claimed. New Feedback takes priority.
+
+
+Published revised replay: aecb61247b86027253c355637f5823c1e19380ac, remoteHEAD
+verified. Runtime/replay fixture released, all5focused checks pass as scoped above.
+
+Next cloud unit, owner11:53 direct request and screenshot: tutorial prompt controls.
+The previous hold concerned approval to start the new tutorial text; the owner has
+now directly assigned the new Feedback after replay. Latest local checkpoint is
+F0930-32 round breaks, not active tutorial edits. Claim only
+Assets/TumbangPreso/Runtime/GuidedTraining.cs,
+Assets/TumbangPreso/Runtime/UI/GuidedTrainingHud.OwnerPainted.cs,
+Assets/TumbangPreso/Tests/PlayMode/OwnerTrainingUiTests.cs and matching TODO/evidence.
+First coherent unit: readable larger key prompts, Enter skip, Darumadrop action
+labels, actual Xelu Enter/Backspace. Then implement the revised lesson route on
+these claimed paths. Preserve current progress/Tab handling and owner ability
+behavior. No changes to local round-break/victory unit or loading. Current jobs:none.
+
+
+Cloud tutorial prompt unit qualified: native actual-scene N/Enter test, real footer
+Xelu/font references and two action-bounds captures pass; both views inspected.
+72-unit keycaps replace42-unit caps. First fixture needed asynchronous installer
+wait; repaired baseline proves oldNskip. Cold final memory stop, one warm final
+pass, no new OOM. No broader tutorial-completion claim. All3tutorial paths remain
+claimed here for the owner-approved20-lesson flow and completion practice range.
+No Unity job active. Existing full-map cloud material artifact remains separate.
+
+
+Tutorial prompts published179009bc36a9674dcdf76b433aac8db8039a00b6; remoteHEAD
+verified. For the next20-lesson contract, also reserve
+Assets/TumbangPreso/Tests/PlayMode/TutorialLessonHonestyProbe.cs to update the
+obsolete16count/ultimate-next-lesson expectation and retain genuine jump/cast checks.
+Keep the existing TutorialDefenderProbe source unchanged unless a specific new
+contract requires claiming it. No unrelated test repair. No runtime job active.
+
+
+Tutorial look-prompt dependency: also claim Runtime/UI/InputGlyphs.cs and the
+Resources/UI/input/xelu/light/Mouse_Simple_Key_Light.png and
+Resources/UI/input/xelu/dark/Mouse_Simple_Key_Dark.png files plus their metadata
+(all beneath Assets/TumbangPreso). These are unchanged CC0 originals from Xelu's
+linked vendor archive, with a MOUSE label mapping; no input binding changes.
+
+
+Tutorial route's existing Assets/TumbangPreso/Tests/DeadFeatureAudit.cs count
+assertion also requires the adopted20-lesson contract; reserve only that count
+update. The original16 expectation is stale, not a production regression.
+Private memory recovery now also releases this task's exact Roslyn cache-server
+command after the verified compilation reload boundary; no unrelated compiler
+or application is stopped. The3-case route check reached runtime without a new
+OOM: movement/role/can setup and completed-range reset/realQuit pass; blocking
+revealed that the staged undercharged12m shot lands short. Correct its demonstration
+lane with the existing full-power solver, then rerun the physical block check.

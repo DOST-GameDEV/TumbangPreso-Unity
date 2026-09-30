@@ -32,7 +32,12 @@ for other characters. Phaister and Paete ability behavior is protected; descript
 may be corrected from their current implementations. Incomplete wiki cells are
 not specifications to invent. Scope restrictions supersede cosmetic additions.
 
-- [x] F0930-01 Tutorial: prevent Tab-deck overlap; assess real actions, expose per-lesson
+- [ ] F0930-01 Tutorial: latest owner-approved revision is IN PROGRESS in the cloud.
+  Prompt readability, Enter skip and Darumadrop/Xelu footer controls now pass the
+  actual-scene native key/layout case with inspected960x540/1600x680captures.
+  [Evidence](reports/feedback-2026-09-30/tutorial-prompts.md). Next reconcile the
+ 20-lesson route, observed objectives and post-completion range.
+  Earlier shipped history: prevent Tab-deck overlap; assess real actions, expose per-lesson
   progress and green completion, require three jumps, wait through ultimate playback
   plus 2.5 seconds, remove deprecated mash lesson, and return cleanly on completion.
   Tab compaction/release, three distinct takeoffs, full green completion, the real
@@ -46,11 +51,14 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   cards, removes redundant warmup line and fits large scores. Native state/bounds
   and inspected 960x540/1600x680 captures pass. [Evidence](reports/feedback-2026-09-30/README.md).
 - [ ] F0930-04 Tagged replay: latest owner Feedback requests2.5seconds animated,
-  then a1.25second captured tag-frame hold before fade; cloud unit claimed.
+  then a1.25second captured tag-frame hold before fade. Implemented with.18s fade;
+  3native timing/state cases and2real-clock close/far contact cases pass. The whole
+  image holds while simulation/recovery continue. Full-map/player/peer and human
+  approval remain separate. [Evidence](reports/feedback-2026-09-30/catch-replay-tag-hold.md).
   Preserve earlier3second evidence as history, not the new acceptance target.
   Original request: approximately three seconds and truthful contact display;
   fix recording/reconstruction/contact timing without inventing a hit.
-  Victim replay duration is now approximately3 seconds, with5 native timing/exit
+  Earlier victim replay duration was approximately3 seconds, with5 native timing/exit
   cases passing. [Evidence](reports/feedback-2026-09-30/catch-replay-duration.md).
   Replay teleport discontinuities and visibility timing now pass9 native pose
   checks. [Evidence](reports/feedback-2026-09-30/live-pose-discontinuity.md).
