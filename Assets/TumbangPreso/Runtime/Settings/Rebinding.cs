@@ -30,7 +30,7 @@ namespace TumbangPreso.Settings
     /// of the pickup key. Rebinding anything onto E or Q was refused by our own asset.
     ///
     /// The owner's 2026-09-30 defaults: WASD, sprint Left Shift, jump Space.
-    /// Throw / Tag left click; Retrieve / Reset / Interact right click;
+    /// Throw / Tag left click; Retrieve / Reset right click; Interact / Ready F;
     /// Shove / Lunge / Ready F; curve left wheel up, right wheel down.
     /// ABILITIES: Signature E (`Skill1`), Attacking /
     /// Defending Q (`Skill2`), Ultimate X. INTERFACE: Ability Tooltips Tab. COMMUNICATIONS: Emote
@@ -68,15 +68,15 @@ namespace TumbangPreso.Settings
     /// </summary>
     public static class Rebinding
     {
-        // The owner removed the separate Hold Interact row. Its action and saved
-        // overrides remain in the asset for existing gameplay; only this list is UI.
+        // Latest owner layout restores the Interact/Ready row on F; the previous
+        // separate Hold Interact label remains retired.
         /// <summary>Action names as they appear in the Input System asset or composite parts.</summary>
         public static readonly string[] RebindableActions =
         {
             "MoveForward", "MoveBackward", "MoveLeft", "MoveRight",
             "Sprint", "Jump",
             "SpecialAbility", "Grab", "Lunge", "CurveLeft", "CurveRight",
-            "Skill1", "Skill2", "Ultimate",
+            "Skill1", "Skill2", "Ultimate", "Interact",
             "ReadyUp", "CleanFeed", "AbilityInfo",
             "EmoteWheel",
             "Pause",
@@ -128,7 +128,7 @@ namespace TumbangPreso.Settings
 
         /// <summary>
         /// Contextual playing actions that share a key on purpose: Grab and Interact,
-        /// plus Lunge and ReadyUp in separate phases.
+        /// plus Interact/ReadyUp and older saved Lunge/ReadyUp pairs in separate phases.
         /// `Grab` AND `Interact`
         /// ARE THE OWNER'S ONE "INTERACT / USE" KEY. His default layout, 2026-09-27: *"Interact / Use
         /// - F"*. `Grab` is the tap and the reset hold (pick up the tsinelas, raise the can) and
@@ -140,7 +140,8 @@ namespace TumbangPreso.Settings
         /// </summary>
         public static bool IsOneUseKey(string a, string b)
             => (a == "Grab" && b == "Interact") || (a == "Interact" && b == "Grab")
-               || (a == "Lunge" && b == "ReadyUp") || (a == "ReadyUp" && b == "Lunge");
+               || (a == "Lunge" && b == "ReadyUp") || (a == "ReadyUp" && b == "Lunge")
+               || (a == "Interact" && b == "ReadyUp") || (a == "ReadyUp" && b == "Interact");
 
         /// <summary>True when binding one control to both actions would be two things on one press.</summary>
         public static bool WouldClash(string a, string b) => ShareAContext(a, b) && !IsOneUseKey(a, b);
@@ -175,7 +176,7 @@ namespace TumbangPreso.Settings
             { "Skill2", "Attacking / Defending" },
             { "Ultimate", "Ultimate Ability" },
             { "ReadyUp", "Ready Up" },
-            { "Interact", "Interact / Use: Hold" },
+            { "Interact", "Interact / Ready" },
             { "CleanFeed", "Hide HUD" },
             { "AbilityInfo", "Ability Tooltips" },
             { "EmoteWheel", "Emote Wheel" },
@@ -218,7 +219,7 @@ namespace TumbangPreso.Settings
         public static readonly (string Title, string[] Actions)[] Groups =
         {
             ("MOVEMENT", new[] { "MoveForward", "MoveBackward", "MoveLeft", "MoveRight", "Sprint", "Jump" }),
-            ("ACTIONS", new[] { "SpecialAbility", "Grab", "CurveRight", "CurveLeft", "Lunge" }),
+            ("ACTIONS", new[] { "SpecialAbility", "Lunge", "Grab", "CurveRight", "CurveLeft", "Interact" }),
             ("ABILITIES", new[] { "Skill1", "Skill2", "Ultimate" }),
             ("INTERFACE", new[] { "AbilityInfo", "ReadyUp", "CleanFeed", "Pause",
                                   "ToggleFullscreen" }),

@@ -239,9 +239,6 @@ namespace TumbangPreso.Tests
                 // to change about looking already has a row. Rebinding WHICH stick looks is not a
                 // request anybody has made, and it is why this is an exemption rather than a gap.
                 if (action.name == "Look") continue;
-                // Owner removed the separate Hold Interact settings row. Its
-                // gameplay action and saved overrides remain for existing kits.
-                if (action.name == "Interact") continue;
 
                 if (!listed.Contains(action.name)) orphans.Add(action.name);
             }
@@ -299,11 +296,11 @@ namespace TumbangPreso.Tests
             Assert.AreEqual("<Keyboard>/leftShift", Key("Sprint"));
             Assert.AreEqual("<Keyboard>/space", Key("Jump"));
             Assert.AreEqual("<Mouse>/leftButton", Key("SpecialAbility"));
-            Assert.AreEqual("<Keyboard>/f", Key("Lunge"));
+            Assert.AreEqual("<Mouse>/middleButton", Key("Lunge"));
             Assert.AreEqual("<Mouse>/scroll/up", Key("CurveRight"));
             Assert.AreEqual("<Mouse>/scroll/down", Key("CurveLeft"));
             Assert.AreEqual("<Mouse>/rightButton", Key("Grab"));
-            Assert.AreEqual("<Mouse>/rightButton", Key("Interact"));
+            Assert.AreEqual("<Keyboard>/f", Key("Interact"));
             Assert.AreEqual("<Keyboard>/e", Key("Skill1"), "the signature ability");
             Assert.AreEqual("<Keyboard>/q", Key("Skill2"), "the attacking / defending ability");
             Assert.AreEqual("<Keyboard>/x", Key("Ultimate"));
@@ -318,12 +315,13 @@ namespace TumbangPreso.Tests
         /// same silent failure mode the `Rebinding` class note warns about for stale rows.
         /// </summary>
         [Test]
-        public void ActionsUseTheRequestedOrderWithoutASeparateHoldRow()
+        public void ActionsUseTheLatestMouseAndInteractionOrder()
         {
             var actions = System.Array.Find(Rebinding.Groups, g => g.Title == "ACTIONS").Actions;
-            CollectionAssert.AreEqual(new[] { "SpecialAbility", "Grab", "CurveRight", "CurveLeft", "Lunge" }, actions);
+            CollectionAssert.AreEqual(new[] { "SpecialAbility", "Lunge", "Grab", "CurveRight", "CurveLeft", "Interact" }, actions);
             Assert.AreEqual("Retrieve Slipper / Reset Can", Rebinding.LabelFor("Grab"));
-            Assert.IsFalse(System.Array.Exists(Rebinding.RebindableActions, a => a == "Interact"));
+            Assert.AreEqual("Interact / Ready", Rebinding.LabelFor("Interact"));
+            Assert.IsTrue(System.Array.Exists(Rebinding.RebindableActions, a => a == "Interact"));
             Assert.IsNotNull(LoadActions().FindActionMap("Player").FindAction("Interact"),
                 "Removing a settings row must not remove the existing gameplay action.");
         }

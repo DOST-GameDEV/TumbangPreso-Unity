@@ -83,3 +83,13 @@ replacement for the inspected pixels or exact skin-surface collision measurement
 - tag-contact-native.mp4: SHA-256 6ca54483085804def18a5651710cbe909852c7858f312818607376635a491583
 - reach-1.00/contact.png: SHA-256 ea94da0bc06801f5287dc36339b6ca686d3c02f5698b45974e6111f4a8e829ba
 - reach-1.65/contact.png: SHA-256 bce634794ac001de4f7452910ffee565fb2f7042a29865ae753cf825db9b3009
+
+## Shared branch integration
+
+The automatic merge with80ff8b58 preserves the incoming charge-reticle and revised
+middle-mouse/F controls byte-for-byte. Far real-time contact and metadata lifecycle
+pass2/2 on the combined candidate, with frozen inputs unchanged. This does not
+expand the all-roster/full-map/actual-peer or first-person-film claims.
+
+- integration.xml: SHA-256 27cceded7eb78c16957f5a71a9dfdb07e546346c4e203cc068a71f4960be7c1d
+- integration-inputs.json: SHA-256 0b659ad1d9e042e5d3723a9985f96c771d7864f7a4a130d082392fad8056c0f8
