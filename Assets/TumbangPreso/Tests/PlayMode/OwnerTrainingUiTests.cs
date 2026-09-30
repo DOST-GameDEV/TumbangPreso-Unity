@@ -431,19 +431,18 @@ namespace TumbangPreso.PlayTests
                 var route = Object.FindFirstObjectByType<GuidedTraining>(); var local = Student(route);
                 SelectLesson(route, GuidedTraining.Lesson.Pektus);
                 var carrier = local.GetComponent<Carrier>(); var shoe = carrier.Held;
-                foreach (float spin in new[] { 0f, 1f })
-                {
-                    Assert.AreSame(shoe, carrier.Held);
-                    carrier.HostThrowAt(carrier.ThrowOrigin(), local.transform.position + local.transform.forward * 4, .5f, spin);
-                    float until = Time.time + 8;
-                    while (shoe.State != SlipperState.Loose && Time.time < until) yield return null;
-                    Assert.AreEqual(SlipperState.Loose, shoe.State);
-                    Assert.AreEqual(GuidedTraining.Lesson.Pektus, route.CurrentLesson, "A curved throw alone still needs retrieval.");
-                    local.Teleport(shoe.transform.position); Assert.IsTrue(shoe.HostGrab(local));
-                    yield return new WaitForSeconds(.8f);
-                    Assert.AreEqual(spin == 0 ? GuidedTraining.Lesson.Pektus : GuidedTraining.Lesson.ThrowAndRetrieve,
-                        route.CurrentLesson, "Only a genuinely curved throw plus retrieval can finish.");
-                }
+                carrier.HostThrowAt(carrier.ThrowOrigin(), local.transform.position + local.transform.forward * 4, .5f, 0f);
+                float until = Time.time + 8;
+                while (shoe.State != SlipperState.Loose && Time.time < until) yield return null;
+                Assert.AreEqual(GuidedTraining.Lesson.Pektus, route.CurrentLesson, "A straight throw cannot satisfy Curve Throw.");
+                local.Teleport(shoe.transform.position); Assert.IsTrue(shoe.HostGrab(local));
+                local.Teleport(new Vector3(0, 0, Confinement.AttackerSpawnRing()));
+                local.transform.forward = Vector3.back;
+                carrier.HostThrowAt(carrier.ThrowOrigin(), local.transform.position + local.transform.forward * 4, .5f, 1f);
+                until = Time.time + 3;
+                while (route.CurrentLesson == GuidedTraining.Lesson.Pektus && Time.time < until) yield return null;
+                Assert.AreEqual(GuidedTraining.Lesson.ThrowAndRetrieve, route.CurrentLesson,
+                    "A genuinely curved throw completes without a retrieval input.");
                 SelectLesson(route, GuidedTraining.Lesson.Lunge);
                 var dummy = (CharacterMotor)typeof(GuidedTraining).GetField("_dummy", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(route);
                 local.Intent.Set(Verb.SpecialAbility, true);
@@ -594,6 +593,149 @@ namespace TumbangPreso.PlayTests
                 SelectLesson(route, GuidedTraining.Lesson.Look); yield return null;
                 Assert.IsTrue(skip.gameObject.activeSelf); Assert.IsTrue(keys.gameObject.activeSelf);
                 Assert.AreEqual(320, quit.anchoredPosition.x);
+            }
+            finally { QualitySettings.globalTextureMipmapLimit = mip; }
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator RetrievePreservesTheRealThrowUntilItLandsOnTheRoad()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>(); route.enabled = false;
+                var local = Student(route); SelectLesson(route, GuidedTraining.Lesson.Throw);
+                var carrier = local.GetComponent<Carrier>(); var shoe = carrier.Held; Assert.IsNotNull(shoe);
+                carrier.HostThrowAt(carrier.ThrowOrigin(), new Vector3(0, .25f, 1), 1f);
+                Assert.AreEqual(SlipperState.InFlight, shoe.State);
+                Vector3 flyingAt = shoe.transform.position;
+                SelectLesson(route, GuidedTraining.Lesson.Retrieve);
+                Assert.AreEqual(SlipperState.InFlight, shoe.State, "The next lesson must not fake a landing by snapshotting the airborne slipper onto a new surface.");
+                Assert.Less(Vector3.Distance(flyingAt, shoe.transform.position), .001f);
+                float until = Time.unscaledTime + 8;
+                while (shoe.State == SlipperState.InFlight && Time.unscaledTime < until) yield return null;
+                Assert.AreEqual(SlipperState.Loose, shoe.State);
+                Assert.That(shoe.transform.position.y - (float)typeof(Slipper).GetMethod("FindGroundY",
+                    System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).Invoke(null, new object[] { shoe.transform.position, .5f }),
+                    Is.EqualTo(shoe.RestHeight).Within(.04f), "The real landing must rest on the road rather than hover above it.");
+                yield return TumpUiCapture.Capture("Feedback0930-training-real-landing",
+                    Object.FindFirstObjectByType<GuidedTrainingHud>().GetComponent<Canvas>(), 960, 540, false, true);
+            }
+            finally { QualitySettings.globalTextureMipmapLimit = mip; }
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator AttackingLessonTransitionsPreservePositionAndHideTheEventFeed()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>(); route.enabled = false;
+                var local = Student(route); var hud = Object.FindFirstObjectByType<GuidedTrainingHud>();
+                var feed = Object.FindFirstObjectByType<MatchEventFeed>(FindObjectsInactive.Include);
+                Assert.IsNotNull(feed); Assert.IsFalse(feed.gameObject.activeInHierarchy);
+                foreach (var lesson in new[] { GuidedTraining.Lesson.Move, GuidedTraining.Lesson.Sprint,
+                    GuidedTraining.Lesson.Jump, GuidedTraining.Lesson.Retrieve, GuidedTraining.Lesson.Pektus,
+                    GuidedTraining.Lesson.ThrowAndRetrieve })
+                {
+                    Vector3 at = new Vector3(1, 0, 9.5f); Quaternion facing = Quaternion.Euler(0, 23, 0);
+                    local.Teleport(at); local.transform.rotation = facing;
+                    SelectLesson(route, lesson);
+                    Assert.Less(Vector3.Distance(at, local.transform.position), .001f, lesson.ToString());
+                    Assert.Less(Quaternion.Angle(facing, local.transform.rotation), .001f, lesson.ToString());
+                }
+                foreach (var lesson in new[] { GuidedTraining.Lesson.Throw, GuidedTraining.Lesson.Shove })
+                {
+                    local.Teleport(new Vector3(2, 0, 10)); SelectLesson(route, lesson);
+                    Assert.Less(Vector3.Distance(new Vector3(0, 0, Confinement.AttackerSpawnRing()), local.transform.position), .001f);
+                }
+                GameServices.Match.AddScore(local.PlayerSlot, ScoreEvent.LataKnocked); yield return null;
+                Assert.IsFalse(feed.gameObject.activeInHierarchy, "Scoring must not restore the hidden training announcer.");
+                SelectLesson(route, GuidedTraining.Lesson.Throw); yield return null;
+                Assert.IsTrue(hud.GetComponentsInChildren<Text>().Any(t => t.text == "HOLD THEN RELEASE TO THROW"));
+                yield return TumpUiCapture.Capture("Feedback0930-training-throw-prompt", hud.GetComponent<Canvas>(), 960, 540, false, true, checkActionBounds: true);
+                SelectLesson(route, GuidedTraining.Lesson.Lunge); yield return null;
+                Assert.IsTrue(hud.GetComponentsInChildren<Text>().Any(t => t.text == "HOLD THEN RELEASE TO LUNGE"));
+                yield return TumpUiCapture.Capture("Feedback0930-training-lunge-prompt", hud.GetComponent<Canvas>(), 960, 540, false, true, checkActionBounds: true);
+            }
+            finally { QualitySettings.globalTextureMipmapLimit = mip; }
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator CompletedTrainingWheelReleaseEmotesOnTheStudent()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            var settings = UnityEngine.InputSystem.InputSystem.settings;
+            var background = settings.backgroundBehavior; var editor = settings.editorInputBehaviorInPlayMode;
+            settings.backgroundBehavior = UnityEngine.InputSystem.InputSettings.BackgroundBehavior.IgnoreFocus;
+            settings.editorInputBehaviorInPlayMode = UnityEngine.InputSystem.InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            var keys = UnityEngine.InputSystem.InputSystem.AddDevice<UnityEngine.InputSystem.Keyboard>();
+            var mouse = UnityEngine.InputSystem.InputSystem.AddDevice<UnityEngine.InputSystem.Mouse>();
+            UnityEngine.InputSystem.InputSystem.EnableDevice(keys); UnityEngine.InputSystem.InputSystem.EnableDevice(mouse);
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>(); route.enabled = false;
+                SelectLesson(route, GuidedTraining.Lesson.Complete);
+                var local = Student(route); local.Intent.Clear();
+                var player = local.GetComponent<TumbangPreso.Social.EmotePlayer>(); Assert.IsTrue(player.CanEmote());
+                var wheel = Object.FindFirstObjectByType<EmoteWheel>(); Assert.IsNotNull(wheel);
+                string chosen = null; wheel.EmoteChosen += id => chosen = id;
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(keys,
+                    new UnityEngine.InputSystem.LowLevel.KeyboardState(UnityEngine.InputSystem.Key.T));
+                UnityEngine.InputSystem.InputSystem.Update(); wheel.SendMessage("Update");
+                Assert.IsTrue(wheel.IsOpen);
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(mouse,
+                    new UnityEngine.InputSystem.LowLevel.MouseState { delta = new Vector2(160, 0) });
+                UnityEngine.InputSystem.InputSystem.Update(); wheel.SendMessage("Update");
+                Assert.GreaterOrEqual(wheel.Selection, 0);
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(keys, new UnityEngine.InputSystem.LowLevel.KeyboardState());
+                UnityEngine.InputSystem.InputSystem.Update(); wheel.SendMessage("Update");
+                Assert.IsFalse(wheel.IsOpen); Assert.IsNotEmpty(chosen);
+                Assert.AreEqual(chosen, player.Current, "The real wheel release must target the student, not an AI-disabled practice actor.");
+                foreach (var actor in GameServices.Round.Players)
+                    if (actor != null && actor != local) Assert.IsFalse(actor.GetComponent<TumbangPreso.Social.EmotePlayer>()?.IsEmoting ?? false);
+                yield return null;
+                Assert.IsTrue(player.IsEmoting);
+            }
+            finally
+            {
+                UnityEngine.InputSystem.InputSystem.RemoveDevice(keys); UnityEngine.InputSystem.InputSystem.RemoveDevice(mouse);
+                settings.backgroundBehavior = background; settings.editorInputBehaviorInPlayMode = editor;
+                QualitySettings.globalTextureMipmapLimit = mip;
+            }
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator CompletedPracticeKeepsBothRoamingAttackers()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>(); route.enabled = false;
+                var local = Student(route); SelectLesson(route, GuidedTraining.Lesson.Emote);
+                var friends = GameServices.Round.Players.Where(p => p != null && p != local && !p.IsDefender && p.gameObject.activeSelf).ToArray();
+                Assert.AreEqual(2, friends.Length);
+                var places = friends.Select(p => p.transform.position).ToArray();
+                SelectLesson(route, GuidedTraining.Lesson.Complete);
+                for (int n = 0; n < friends.Length; n++)
+                {
+                    Assert.IsTrue(friends[n].gameObject.activeInHierarchy); Assert.IsFalse(friends[n].IsDefender);
+                    Assert.Less(Vector3.Distance(places[n], friends[n].transform.position), .001f, "Completion should keep the existing practice partners in place.");
+                }
+                Assert.AreEqual(1, GameServices.Round.Players.Count(p => p != null && p.IsDefender && p.gameObject.activeSelf));
+                route.enabled = true; yield return new WaitForSeconds(.6f);
+                Assert.IsTrue(friends.Where((p, n) => Vector3.Distance(places[n], p.transform.position) > .15f).Any(),
+                    "The retained attackers should continue their existing roam.");
+                route.enabled = false;
+                SelectLesson(route, GuidedTraining.Lesson.Ready); SelectLesson(route, GuidedTraining.Lesson.Complete);
+                Assert.AreEqual(2, GameServices.Round.Players.Count(p => p != null && p != local && !p.IsDefender && p.gameObject.activeSelf),
+                    "Skipping earlier lessons must still prepare both friends.");
+                yield return TumpUiCapture.Capture("Feedback0930-training-complete-with-friends",
+                    Object.FindFirstObjectByType<GuidedTrainingHud>().GetComponent<Canvas>(), 960, 540, false, true);
             }
             finally { QualitySettings.globalTextureMipmapLimit = mip; }
         }

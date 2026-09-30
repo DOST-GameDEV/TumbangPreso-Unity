@@ -466,3 +466,12 @@ selection used by its existing emote callback; the current heuristic chooses an
 AI-disabled training dummy. Reproduce through actual wheel inputs before the guard.
 The preceding4focused flow/landing cases pass; old airborne-to-retrieval baseline
 failed because it replaced the flying shoe with a loose snapshot. No heavy job active.
+
+Tutorial flow follow-up qualified:7distinct focused native cases pass, including
+real wheel press/select/release on the student, actual road-relative slipper
+landing, centre/continuity rules, curve-only completion, hidden feed, new read/
+cast delays, retained attacker identities, reset-only defender and real Quit.
+Cold final import overlap hit the private memory guard, then faulted on shutdown;
+one unchanged warmed3-case pass exits0 in37.22seconds, no new OOM. Captures inspected.
+Four runtime/test paths release after publication. Next remains reserved ordinary
+3-second round break with10-second halftime replay. No heavy job active.

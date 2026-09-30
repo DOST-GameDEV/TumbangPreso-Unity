@@ -127,13 +127,16 @@ namespace TumbangPreso.PlayTests
                 var abilities = local.AbilitySystem; Assert.IsNotNull(abilities.Kit);
                 EnterLesson(route, GuidedTraining.Lesson.AbilityInfo);
                 InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.Tab)); InputSystem.Update();
-                yield return new WaitForSecondsRealtime(2.5f);
+                yield return new WaitForSecondsRealtime(2.1f);
                 Assert.AreEqual(GuidedTraining.Lesson.AbilityInfo, route.CurrentLesson);
                 InputSystem.QueueStateEvent(keyboard, new KeyboardState()); InputSystem.Update();
                 yield return new WaitForSecondsRealtime(.2f);
                 Assert.AreEqual(0f, Field<float>(route, "_metric"), .01f, "Releasing the description key resets the continuous read interval.");
                 InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.Tab)); InputSystem.Update();
-                float until = Time.unscaledTime + 5;
+                float readAt = Time.unscaledTime;
+                while (Time.unscaledTime < readAt + 2.7f) yield return null;
+                Assert.IsTrue(Field<bool>(route, "_advancing"), "The authored2.5second read interval should now be complete.");
+                float until = readAt + 4;
                 while (route.CurrentLesson == GuidedTraining.Lesson.AbilityInfo && Time.unscaledTime < until) yield return null;
                 InputSystem.QueueStateEvent(keyboard, new KeyboardState()); InputSystem.Update();
                 Assert.AreEqual(GuidedTraining.Lesson.Skill1, route.CurrentLesson);
@@ -161,10 +164,10 @@ namespace TumbangPreso.PlayTests
                     Assert.AreEqual(TumbangPreso.Abilities.HeroKit.CastOutcome.Cast, abilities.LastAnswer(item.Item2),
                         abilities.HeroId + " " + item.Item1 + " real cast must be accepted before this timing check can qualify.");
                     float accepted = Field<float>(route, "_castAcceptedAt"); Assert.GreaterOrEqual(accepted, 0);
-                    while (Time.unscaledTime < accepted + 2.3f) yield return null;
-                    Assert.IsFalse(Field<bool>(route, "_advancing"), "A successful cast must retain its full2.5second observation beat.");
+                    while (Time.unscaledTime < accepted + .8f) yield return null;
+                    Assert.IsFalse(Field<bool>(route, "_advancing"), "A successful cast must retain its full1second observation beat.");
                     Assert.AreEqual(item.Item1, route.CurrentLesson);
-                    while (Time.unscaledTime < accepted + 2.6f) yield return null;
+                    while (Time.unscaledTime < accepted + 1.1f) yield return null;
                     Assert.IsTrue(Field<bool>(route, "_advancing"), "The observation beat should now show completion.");
                     until = Time.unscaledTime + 4;
                     while (route.CurrentLesson == item.Item1 && Time.unscaledTime < until) yield return null;
