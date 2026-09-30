@@ -1257,3 +1257,9 @@ from FPP qualification and retain honest limit. One capture repair exhausted.
 Two distinct native cases support barrier rendering/palette/lifetime. Publish this
 coherent visibility fix and same Feedback row, leave Human verified unchecked.
 No new player. Next ward shield-logo plan, current kit clock remains authoritative.
+Barrier ad14a40a remote verified; same Feedback row updated/white, Done checked
+and Saved verified, Human verified untouched. Barrier claim released. Ward logo
+next: own Runtime/Visual/DanteCarapaceVisual.cs, DanteWardBadge.cs/meta,
+Tests/PlayMode/DanteWardBadgeTests.cs/meta, fixture partition and scoped docs.
+Plan reports/dante-ward-2026-09-30/plan.md before edits. Preserve actual SHIELD
+clock/rules and the existing plate/orbit design. No ability kit source claimed.

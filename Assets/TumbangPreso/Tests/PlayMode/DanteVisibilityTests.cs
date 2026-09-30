@@ -52,7 +52,7 @@ namespace TumbangPreso.PlayTests
                 camera.transform.position=who.transform.position+Vector3.up*1.25f;
                 camera.transform.rotation=who.transform.rotation;camera.fieldOfView=72;
                 yield return GameplayShots.Render(camera,"owner-viewpoint",false,"Logs/dante-court-v2",who);
-                
+
                 camera.transform.position=who.transform.position+new Vector3(4,3,6);
                 camera.transform.LookAt(who.transform.position+Vector3.up);camera.fieldOfView=48;
                 yield return GameplayShots.Render(camera,"observer",false,"Logs/dante-court-v2",who);
