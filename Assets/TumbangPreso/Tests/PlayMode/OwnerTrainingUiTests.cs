@@ -265,13 +265,13 @@ namespace TumbangPreso.PlayTests
                 SelectLesson(route, GuidedTraining.Lesson.Move);
                 local.Intent.Move = Vector2.up;
                 yield return new WaitForSeconds(.3f);
-                Assert.AreEqual(GuidedTraining.Lesson.Move, route.CurrentLesson, "Less than five metres cannot complete movement.");
+                Assert.AreEqual(GuidedTraining.Lesson.Move, route.CurrentLesson, "Less than 7.5 metres cannot complete movement.");
                 float until = Time.time + 8;
                 while (route.CurrentLesson == GuidedTraining.Lesson.Move && Time.time < until) yield return null;
                 Assert.AreEqual(GuidedTraining.Lesson.Sprint, route.CurrentLesson);
                 local.Intent.Move = Vector2.up; local.Intent.Set(Verb.Sprint, true);
                 yield return new WaitForSeconds(.5f);
-                Assert.AreEqual(GuidedTraining.Lesson.Sprint, route.CurrentLesson, "A short sprint cannot satisfy ten metres.");
+                Assert.AreEqual(GuidedTraining.Lesson.Sprint, route.CurrentLesson, "A short sprint cannot satisfy 7.5 metres.");
                 until = Time.time + 12;
                 while (route.CurrentLesson == GuidedTraining.Lesson.Sprint && Time.time < until) yield return null;
                 Assert.AreEqual(GuidedTraining.Lesson.Jump, route.CurrentLesson);
@@ -324,7 +324,7 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(180000)]
-        public IEnumerator ReadyAndLookRequireTheirActualInputAndThreeSeconds()
+        public IEnumerator ReadyAndLookRequireTheirActualInputAndOneAndAHalfSeconds()
         {
             int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
             var input = UnityEngine.InputSystem.InputSystem.settings;
@@ -349,9 +349,9 @@ namespace TumbangPreso.PlayTests
                 yield return new WaitForSecondsRealtime(.3f);
                 Assert.AreEqual(GuidedTraining.Lesson.Look, route.CurrentLesson, "Idle time must not count as looking.");
                 local.Intent.LookDelta = new Vector2(.2f, .1f);
-                yield return new WaitForSecondsRealtime(2.6f);
-                Assert.AreEqual(GuidedTraining.Lesson.Look, route.CurrentLesson, "Looking for less than three seconds must not finish.");
-                float until = Time.unscaledTime + 3;
+                yield return new WaitForSecondsRealtime(1.3f);
+                Assert.AreEqual(GuidedTraining.Lesson.Look, route.CurrentLesson, "Looking for less than 1.5 seconds must not finish.");
+                float until = Time.unscaledTime + 1.2f;
                 while (route.CurrentLesson == GuidedTraining.Lesson.Look && Time.unscaledTime < until) yield return null;
                 local.Intent.LookDelta = Vector2.zero;
                 Assert.AreEqual(GuidedTraining.Lesson.Move, route.CurrentLesson);
@@ -526,6 +526,74 @@ namespace TumbangPreso.PlayTests
                 SelectLesson(route, GuidedTraining.Lesson.Look); yield return null;
                 yield return TumpUiCapture.Capture("Feedback0930-training-hidden-can",
                     Object.FindFirstObjectByType<GuidedTrainingHud>().GetComponent<Canvas>(), 960, 540, false, true);
+            }
+            finally { QualitySettings.globalTextureMipmapLimit = mip; }
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator RefinedMovementTargetsRequireSevenAndAHalfMetres()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>(); var local = Student(route);
+                var flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
+                var metric = typeof(GuidedTraining).GetField("_metric", flags);
+                var advancing = typeof(GuidedTraining).GetField("_advancing", flags);
+                foreach (var lesson in new[] { GuidedTraining.Lesson.Move, GuidedTraining.Lesson.Sprint })
+                {
+                    SelectLesson(route, lesson); local.Intent.Move = Vector2.up;
+                    local.Intent.Set(Verb.Sprint, lesson == GuidedTraining.Lesson.Sprint);
+                    float until = Time.unscaledTime + 12;
+                    while ((float)metric.GetValue(route) < 6 && route.CurrentLesson == lesson && Time.unscaledTime < until) yield return null;
+                    Assert.AreEqual(lesson, route.CurrentLesson);
+                    Assert.GreaterOrEqual((float)metric.GetValue(route), 6);
+                    Assert.IsFalse((bool)advancing.GetValue(route), "Six metres cannot complete either movement lesson.");
+                    while (!(bool)advancing.GetValue(route) && route.CurrentLesson == lesson && Time.unscaledTime < until) yield return null;
+                    Assert.IsTrue((bool)advancing.GetValue(route));
+                    Assert.That((float)metric.GetValue(route), Is.InRange(7.5f, 8.2f), "Completion must begin at the authored distance.");
+                    local.Intent.Clear();
+                    while ((bool)advancing.GetValue(route) && Time.unscaledTime < until + 2) yield return null;
+                }
+            }
+            finally { QualitySettings.globalTextureMipmapLimit = mip; }
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator AuthoredLessonCopyAndCompletedQuitStayClean()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit; QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>(); route.enabled = false;
+                var hud = Object.FindFirstObjectByType<GuidedTrainingHud>();
+                var expected = new Dictionary<GuidedTraining.Lesson, string>
+                {
+                    { GuidedTraining.Lesson.Jump, "Jump around the arena." },
+                    { GuidedTraining.Lesson.Pektus, "Scroll the mouse wheel to curve the throw. Use this to make the throw harder to block." },
+                    { GuidedTraining.Lesson.Block, "You are now defending. Move around to block incoming slippers." },
+                    { GuidedTraining.Lesson.Skill1, "Signature abilities are always available regardless of your role. It gives you a reliable mix of mobility and utility." },
+                    { GuidedTraining.Lesson.Skill2, "Role abilities change depending on which role you take each round. It adapts to your role, helping you escape tags when attacking or chase attackers when defending" },
+                    { GuidedTraining.Lesson.Complete, "You are now ready to fight in the actual arena. Feel free to test everything you just learned while you are still here." }
+                };
+                var body = hud.GetComponentsInChildren<Text>(true).Single(t => t.name == "LessonBody");
+                foreach (var item in expected)
+                { SelectLesson(route, item.Key); yield return null; Assert.AreEqual(item.Value, body.text); }
+                var quit = hud.GetComponentsInChildren<RectTransform>(true).Single(t => t.name == "QuitTraining");
+                var skip = hud.GetComponentsInChildren<RectTransform>(true).Single(t => t.name == "SkipTrainingLesson");
+                var keys = hud.GetComponentsInChildren<RectTransform>(true).Single(t => t.name == "KeyRow");
+                Assert.IsFalse(skip.gameObject.activeSelf); Assert.IsFalse(keys.gameObject.activeSelf);
+                Assert.AreEqual(0, quit.anchoredPosition.x);
+                Assert.IsFalse(hud.GetComponentsInChildren<Text>().Any(t => t.text.Contains("PRACTISE FREELY")));
+                hud.SetInspecting(true); hud.SetInspecting(false); Assert.IsFalse(keys.gameObject.activeSelf);
+                foreach (var size in new[] { new Vector2Int(960, 540), new Vector2Int(1600, 680) })
+                    yield return TumpUiCapture.Capture("Feedback0930-training-refined-complete-" + size.x + "x" + size.y,
+                        hud.GetComponent<Canvas>(), size.x, size.y, false, true, checkActionBounds: true);
+                SelectLesson(route, GuidedTraining.Lesson.Look); yield return null;
+                Assert.IsTrue(skip.gameObject.activeSelf); Assert.IsTrue(keys.gameObject.activeSelf);
+                Assert.AreEqual(320, quit.anchoredPosition.x);
             }
             finally { QualitySettings.globalTextureMipmapLimit = mip; }
         }

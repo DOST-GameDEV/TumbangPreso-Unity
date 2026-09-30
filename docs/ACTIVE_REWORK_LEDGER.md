@@ -10,7 +10,8 @@ Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 - No resets, clean, force-push, discarded dirt, Desktop replacement or paid services
   without current authorization. Preserve profiles and task-unrelated processes.
 - Loading belongs to the owner's friend. All ability work now belongs to the owner.
-  Phaister/Paete ability behavior stays protected; descriptions may be corrected.
+  Paete/Phaister are finalized: demonstrated bug fixes only, including presentation.
+  In-game descriptions stay untouched except passives; stale Wiki is documentation.
 - No VFX/SFX/animation/models/maps/lighting except concrete bug fixes. Four absent
   generic Amihan/Paete swim/recovery sets were repaired under that exception;
   existing84asset/meta hashes and ability behavior stayed unchanged.
@@ -423,3 +424,26 @@ Doc already contains human-retired victory record; keep that record closed.
 No Unity job or task-owned browser tab active. Publish after integrating newest
 contributor commits; next inspect MatchRpc malformed-packet handling independently.
 
+Newest Harry refinement takes priority before the unstarted round-timing edit:
+look1.5seconds, move/run7.5metres, authored lesson wording only, no completion
+Practise Freely caption and left-aligned Quit after Skip disappears. Reclaim only
+Runtime/GuidedTraining.cs, Runtime/UI/GuidedTrainingHud.OwnerPainted.cs,
+Tests/PlayMode/OwnerTrainingUiTests.cs and Tests/PlayMode/TutorialLessonHonestyProbe.cs
+under Assets/TumbangPreso, plus this checkpoint/TODO/evidence. Round-timing paths
+stay reserved for the next coherent unit, with no edits started. Current jobs:none.
+Doc archive now has17 human-verified reports; active Feedback has31rows including
+header. Human notes/comments is added to both tables. Native checklist state is
+read from the document's own rich clipboard; preserve all controls and images.
+
+Latest tutorial refinement passes3/3 native checks, exit0,62.20seconds, no new OOM.
+Actual look and both movement thresholds, authored body copy and completion footer
+are qualified;960x540/1600x680 inspected. Source paths release after publication.
+Next implement the reserved3-second ordinary break/10-second halftime replay
+revision. No heavy job active. Existing cloud material artifact remains separate.
+
+Owner14:23 explicitly locks all finalized Paete/Phaister work, including skills,
+models, effects, sound, animation and cutscenes, except demonstrated bug fixes.
+Non-passive in-game descriptions/names are also protected. Their owner-approved
+implementation overrides stale Wiki descriptions, which the owner explicitly
+asks to update now. AGENTS.md is the current controlling rule. No hero code or
+assets were edited for this documentation correction.
