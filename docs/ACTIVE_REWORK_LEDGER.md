@@ -1380,3 +1380,8 @@ Actual player barrier FPP check completed: Q shows stepped golden half-alpha
 barrier at7.0s while can/chalk/street remain visible. Ordinary Leave/Home/Quit,
 304.16s exit0, no safety/OOM stop. Runtime hash matches training confirmation.
 Next Amihan current-Wiki plan and exact source claim; no heavy job active.
+Amihan intake65b9c8e2: current Wiki read in full for its row and statuses. First
+unit is Airburst missing Whirled/airborne slippers. Claim only new
+Tests/PlayMode/AmihanAirburstTests.cs/meta, match partition and scoped plan/report.
+Baseline actual motor/hazard first; runtime claim follows concrete findings.
+No ability runtime edits yet; broader kit/passive remains open in F0930-11.
