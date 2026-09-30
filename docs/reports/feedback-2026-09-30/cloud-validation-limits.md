@@ -117,8 +117,8 @@ OOM event occurred. This does not establish a Windows regression or its cause.
 The host's logged arena preparation took13.96 seconds while the existing runner
 started the client after7 seconds; NGO's configured approval-buffer timeout is
 10 seconds. Startup timing is a hypothesis, not a confirmed diagnosis. A separate
-30-second host-settle control is running; it cannot qualify the original cold
-entry simply by succeeding. No production timeout or connection rule was changed.
+30-second host-settle control completed; it does not qualify the original cold
+entry. No production timeout or connection rule was changed.
 
 Before this OpenGL run, the CPU Vulkan batch-mode attempt crashed natively inside
 QualitySettings.set_vSyncCount during initialization. The same Vulkan binary
@@ -130,3 +130,12 @@ state regression.
 - [Cold admission result](checks/linux-cold-rematch-result.json)
 - [Host state](checks/linux-cold-rematch-host.txt)
 - [Client state](checks/linux-cold-rematch-client.txt)
+
+The warm-host control admitted the client and both peers submitted Ready. The
+client then disconnected with ProtocolTimeout. The host completed its first round
+and moved to BayanPlaza but was waiting at round0 when sampled; the client remained
+non-networked in Eskinita. Thus additional host preparation time improved initial
+admission without solving the session failure. The host recorded about30FPS during
+its live round, but that excludes startup stalls and is not a general performance
+qualification. No new OOM and no runtime edits occurred. Both processes exited.
+[Control receipt](checks/linux-warm-host-control.json).

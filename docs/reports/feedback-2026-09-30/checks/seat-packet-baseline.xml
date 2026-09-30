@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Failed(Child)" total="10" passed="0" failed="10" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 11:01:58Z" end-time="2026-09-30 11:01:58Z" duration="0.3032837">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="691" result="Failed" site="Child" start-time="2026-09-30 11:01:58Z" end-time="2026-09-30 11:01:58Z" duration="0.303284" total="10" passed="0" failed="10" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1807" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="691" result="Failed" site="Child" start-time="2026-09-30 11:01:58Z" end-time="2026-09-30 11:01:58Z" duration="0.244828" total="10" passed="0" failed="10" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10144" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1808" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="691" result="Failed" site="Child" start-time="2026-09-30 11:01:58Z" end-time="2026-09-30 11:01:58Z" duration="0.196360" total="10" passed="0" failed="10" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1809" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="691" result="Failed" site="Child" start-time="2026-09-30 11:01:58Z" end-time="2026-09-30 11:01:58Z" duration="0.151466" total="10" passed="0" failed="10" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1691" name="SeatAssignmentPacketTests" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" testcasecount="19" result="Failed" site="Child" start-time="2026-09-30 11:01:58Z" end-time="2026-09-30 11:01:58Z" duration="0.070222" total="10" passed="0" failed="10" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1702" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-09-30 11:01:58Z" end-time="2026-09-30 11:01:58Z" duration="0.064870" total="10" passed="0" failed="10" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1692" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(0,1)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(0,1)" methodname="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="1869972459" result="Failed" start-time="2026-09-30 11:01:58Z" end-time="2026-09-30 11:01:58Z" duration="0.030988" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.NetSession.OnSeatAssignmentMessage (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x0001d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\NetSession.cs:2019 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.SeatAssignmentPacketTests+<>c__DisplayClass11_0.<Receive>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatAssignmentPacketTests.cs:98 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.SeatAssignmentPacketTests.Receive (System.UInt64 sender, System.Byte[] payload) [0x00023] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatAssignmentPacketTests.cs:98
+at TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat (System.Int32 length, System.Int32 seat) [0x00020] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatAssignmentPacketTests.cs:56
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Net] connected as seat 2
+]]></output>
+              </test-case>
+              <test-case id="1693" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(1,1)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(1,1)" methodname="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="1203584388" result="Failed" start-time="2026-09-30 11:01:58Z" end-time="2026-09-30 11:01:58Z" duration="0.001434" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.NetSession.OnSeatAssignmentMessage (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x0001d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\NetSession.cs:2019 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.SeatAssignmentPacketTests+<>c__DisplayClass11_0.<Receive>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatAssignmentPacketTests.cs:98 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.SeatAssignmentPacketTests.Receive (System.UInt64 sender, System.Byte[] payload) [0x00023] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatAssignmentPacketTests.cs:98
+at TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat (System.Int32 length, System.Int32 seat) [0x00020] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatAssignmentPacketTests.cs:56
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Net] connected as seat 2
+]]></output>
+              </test-case>
+              <test-case id="1694" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(2,1)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(2,1)" methodname="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="1133649158" result="Failed" start-time="2026-09-30 11:01:58Z" end-time="2026-09-30 11:01:58Z" duration="0.001270" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.NetSession.OnSeatAssignmentMessage (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x0001d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\NetSession.cs:2019 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.SeatAssignmentPacketTests+<>c__DisplayClass11_0.<Receive>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatAssignmentPacketTests.cs:98 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.SeatAssignmentPacketTests.Receive (System.UInt64 sender, System.Byte[] payload) [0x00023] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatAssignmentPacketTests.cs:98
+at TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat (System.Int32 length, System.Int32 seat) [0x00020] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatAssignmentPacketTests.cs:56
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Net] connected as seat 2
+]]></output>
+              </test-case>
+              <test-case id="1695" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(3,1)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(3,1)" methodname="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="1864471955" result="Failed" start-time="2026-09-30 11:01:58Z" end-time="2026-09-30 11:01:58Z" duration="0.001230" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.NetSession.OnSeatAssignmentMessage (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x0001d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\NetSession.cs:2019 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.SeatAssignmentPacketTests+<>c__DisplayClass11_0.<Receive>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatAssignmentPacketTests.cs:98 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.SeatAssignmentPacketTests.Receive (System.UInt64 sender, System.Byte[] payload) [0x00023] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatAssignmentPacketTests.cs:98
+at TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat (System.Int32 length, System.Int32 seat) [0x00020] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatAssignmentPacketTests.cs:56
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Net] connected as seat 2
+]]></output>
+              </test-case>
+              <test-case id="1696" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(5,2)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(5,2)" methodname="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="562979095" result="Failed" start-time="2026-09-30 11:01:58Z" end-time="2026-09-30 11:01:58Z" duration="0.007434" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1
+  But was:  2
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat (System.Int32 length, System.Int32 seat) [0x00029] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatAssignmentPacketTests.cs:57
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Net] connected as seat 2
+[Net] connected as seat 3
+]]></output>
+              </test-case>
+              <test-case id="1697" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(8,2)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(8,2)" methodname="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="1700847271" result="Failed" start-time="2026-09-30 11:01:58Z" end-time="2026-09-30 11:01:58Z" duration="0.001829" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1
+  But was:  2
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat (System.Int32 length, System.Int32 seat) [0x00029] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatAssignmentPacketTests.cs:57
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Net] connected as seat 2
+[Net] connected as seat 3
+]]></output>
+              </test-case>
+              <test-case id="1698" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(4,-2)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(4,-2)" methodname="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="1922447544" result="Failed" start-time="2026-09-30 11:01:58Z" end-time="2026-09-30 11:01:58Z" duration="0.001643" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1
+  But was:  -2
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat (System.Int32 length, System.Int32 seat) [0x00029] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatAssignmentPacketTests.cs:57
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Net] connected as seat 2
+[Net] connected as spectator
+]]></output>
+              </test-case>
+              <test-case id="1699" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(4,4)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(4,4)" methodname="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="700003922" result="Failed" start-time="2026-09-30 11:01:58Z" end-time="2026-09-30 11:01:58Z" duration="0.001728" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1
+  But was:  4
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat (System.Int32 length, System.Int32 seat) [0x00029] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatAssignmentPacketTests.cs:57
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Net] connected as seat 2
+[Net] connected as seat 5
+]]></output>
+              </test-case>
+              <test-case id="1700" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(4,int.MaxValue)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(4,int.MaxValue)" methodname="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="933688856" result="Failed" start-time="2026-09-30 11:01:58Z" end-time="2026-09-30 11:01:58Z" duration="0.001681" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1
+  But was:  2147483647
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat (System.Int32 length, System.Int32 seat) [0x00029] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatAssignmentPacketTests.cs:57
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Net] connected as seat 2
+[Net] connected as seat -2147483648
+]]></output>
+              </test-case>
+              <test-case id="1701" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(4,int.MinValue)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(4,int.MinValue)" methodname="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="609868329" result="Failed" start-time="2026-09-30 11:01:58Z" end-time="2026-09-30 11:01:58Z" duration="0.001587" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1
+  But was:  -2147483648
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat (System.Int32 length, System.Int32 seat) [0x00029] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatAssignmentPacketTests.cs:57
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Net] connected as seat 2
+[Net] connected as spectator
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
