@@ -178,6 +178,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   All10 baseline failures reproduce;19 final native receiver cases pass for
   malformed/valid/spectator/non-host/repeated messages. Protocol97 unchanged.
   [Evidence](reports/feedback-2026-09-30/seat-assignment-packets.md). Actual peers unqualified.
+- [x] F0930-36 Seat-request safety and readiness: reject malformed packets and
+  wide peer-ID aliases; repeating the current seat preserves Ready, while actual
+  changes still clear it. Nine baseline failures;17 fixed native receiver/lobby
+  cases pass. Protocol unchanged. Live transport unqualified.
+  [Evidence](reports/feedback-2026-09-30/seat-request-packets.md).
 - [x] F0930-35 Ordinary bot slipper-query allocation: share a native snapshot
   refreshed on births/destruction, reading current activity/owner/flight state.
   Calibrated100warmed lookups drop from200 allocation events to zero; five distinct

@@ -1005,7 +1005,8 @@ namespace TumbangPreso.Net
 
         private void OnReqSeatMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!NetAuthority.IsHost) return;
+            if (!NetAuthority.IsHost || senderClientId > int.MaxValue ||
+                reader.Length - reader.Position != 4 || !reader.TryBeginRead(4)) return;
 
             reader.ReadValueSafe(out int seat);
 
@@ -1020,7 +1021,14 @@ namespace TumbangPreso.Net
             if (!NetAuthority.IsHost) return;
 
             var lobby = NetSession.Instance?.Lobby;
-            if (lobby == null || !lobby.TryTakeSeat(peerId, seat)) return;
+            if (lobby == null) return;
+            var current = lobby.PeerById(peerId);
+            if (current != null && current.Seat == seat && current.Spectator == (seat < 0))
+            {
+                SendSeating(peerId);
+                return;
+            }
+            if (!lobby.TryTakeSeat(peerId, seat)) return;
 
             // ⚠️ MOVING SEATS CLEARS YOUR READY. The arrangement you agreed to is not the one
             // on screen any more, and a tick left standing would count towards a gate that has
