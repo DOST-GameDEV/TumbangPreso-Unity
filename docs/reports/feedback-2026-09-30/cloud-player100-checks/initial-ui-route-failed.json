@@ -1,0 +1,30 @@
+{
+  "exit": 1,
+  "seconds": 102.0429015159607,
+  "stopped": null,
+  "review": {
+    "passed": false,
+    "error": "System.InvalidOperationException: Expected UI state did not arrive.\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<WaitFor>d__83.MoveNext () [0x00069] in <f50f5c480c964918a717e70a7cab3a74>:0 \n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__76.MoveNext () [0x00054] in <f50f5c480c964918a717e70a7cab3a74>:0 ",
+    "stages": [
+      "real native halftime, both modes, recorded legal catch and full return"
+    ],
+    "frameWindows": []
+  },
+  "before": {
+    "low": "0",
+    "high": "0",
+    "max": "5794042",
+    "oom": "11",
+    "oom_kill": "6",
+    "oom_group_kill": "0"
+  },
+  "after": {
+    "low": "0",
+    "high": "0",
+    "max": "5797983",
+    "oom": "11",
+    "oom_kill": "6",
+    "oom_group_kill": "0"
+  },
+  "runtimeSha256": "9a26a51d8042b962ef48bc549f0b8653a9bf25d78a64d872a5ae2d7b5d641e3d"
+}
