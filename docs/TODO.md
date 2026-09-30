@@ -335,6 +335,10 @@ mechanics and finalized Paete/Phaister work. Manual bug hunting follows that pas
   owner-reserved; presentation follows assigned Duration. Native baseline, then
   restrained spatial melt, lifecycle/render checks and same-row Doc update.
   [Research and plan](reports/cheska-expiry-2026-09-30/plan.md).
+  Field thaw implemented:2native checks pass, repeated duration sampling and
+  separate Nova verified; coverage retreats to10percent while danger edge remains.
+  Native timeline film/captures inspected. Wall shatter remains next.
+  [Thaw evidence](reports/cheska-expiry-2026-09-30/thaw.md).
 
 Current owner order after DOCS-0927: actual loading/optimization,then shared
 network/flow correctness,then remaining applicable QA/TODO requirements. Newer task

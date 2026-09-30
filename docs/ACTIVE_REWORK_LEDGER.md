@@ -1171,3 +1171,24 @@ Assets/TumbangPreso/Runtime/Visual/FrostSurfacePresentation.cs, Shaders/FrostSur
 Tests/PlayMode/CheskaExpiryPresentationTests.cs/meta, tools/playmode_suite.py and
 scoped docs. HeroHazards untouched. Capture current native field before visual
 implementation; keep Nova wave unchanged, full danger boundary until its exit.
+
+Cold Feet native baseline captures confirm uniform fading and lacks spatial thaw,
+1/1expected failure. Implement a broad deterministic shader melt mask within the
+existing final0.7s, retaining the exact boundary and authored draped mesh. Keep
+interior islands visible until the final short trace instead of global alpha fade.
+Final check measures rendered coverage, samples5/7.5second durations repeatedly,
+and verifies Nova stays on its unchanged wave path. No gameplay-number edit.
+
+Thaw final2/2passes4.50s: rendered coverage47419→4898pixels while full danger
+edge remains,5/7.5s/repeated samples match, Nova unchanged. Native court stages
+inspected. Capture-only follow-through samples the same0.7s at20fps for a native
+review film; reuse the two distinct passed checks, do not inflate case count.
+No runtime change for this film. Extend edge assertion to its existing half-alpha
+point rather than treating every sub0.1s value as zero.
+
+Thaw native follow-through1/1passes with coverage unchanged47419→4898 and
+15timeline samples. Film and intermediate pixels inspected;2distinct cases total.
+Publish exact shader/presentation/test/meta/partition and evidence; update same
+Cheska chilling-field melt Feedback row and Done, leave Human verified unchecked.
+Release field paths after publication. Wall shatter is still open and next, no
+HeroHazards or ability-rule changes made. No heavy job active.
