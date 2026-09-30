@@ -14,22 +14,26 @@ reproduced 7 failures, then passed 8/8 after the correction, with frozen inputs.
 No actual-peer or rendered-player qualification is claimed. The broader Wiki
 Feedback row remains open; its Doc tabs are still reserved locally.
 
-Next Diddler cloud reservation: Nemu's shared 25-second basic-ability cooldown
-from the complete current Wiki passive and basic ability definitions. Reproduce
-independent clocks, then make accepted basic casts start the same cooldown on
-all non-ultimate abilities, including accepted observer playback. Do not change
-ultimate behavior or the local tutorial unit.
-The receipt path must correct the entire shared group after a refusal and must
-not let an older other-slot reply overwrite a newer accepted or pending cast.
+Shared 25-second basic cooldowns shipped in 6b4e1d4ffa02d3976d57efee55b932d97d9c8d2c.
+Four native cases reproduced separate 40/30/30 clocks; the final 18-case fixture
+passes, including accepted-cast callbacks, latest refusals and reordered receipts.
+Actual peers remain unqualified. HeroKit and SkillReceipts edits for that unit are
+finished and released.
+
+Next Diddler cloud reservation: implement the Wiki Kuro: Sit signature, keeping
+its stable ability ID, a 10-second stationary recall anchor, existing authored
+presentation and shared cooldown. Use the existing prepared-world recovery route
+and qualify recall, expiry, cancellation and restored state. Raise compatibility
+for the changed gameplay meaning; no Phaister or Paete changes.
 
 Owned edit paths:
 - Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs
-- Assets/TumbangPreso/Runtime/Abilities/HeroKit.cs (authoritative resource hook only)
-- Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.SkillReceipts.cs (shared-clock receipt routing only)
-- Packages/com.tumbangpreso.core/Runtime/RosterReworkRules.cs (NecroRules cooldowns only)
-- Assets/TumbangPreso/Tests/NemuKuroPassiveTests.cs
-- Assets/TumbangPreso/Tests/NemuKuroPassiveTests.cs.meta
-- docs/reports/feedback-2026-09-30/nemu-kuro-passive.md
+- Packages/com.tumbangpreso.core/Runtime/RosterReworkRules.cs (NecroRules Sit constants only)
+- Assets/TumbangPreso/Runtime/Net/NetSession.cs (protocol compatibility constant only)
+- Assets/TumbangPreso/Tests/PlayMode/NemuSitContractTests.cs
+- Assets/TumbangPreso/Tests/PlayMode/NemuSitContractTests.cs.meta
+- docs/SKILL_NETWORK_CONTRACT.md (Kuro Sit recovery contract only)
+- docs/reports/feedback-2026-09-30/nemu-kuro-sit.md
 - docs/TODO.md (only this unit's evidence pointer)
 - docs/ACTIVE_REWORK_LEDGER.md (only this reservation and its result)
 
