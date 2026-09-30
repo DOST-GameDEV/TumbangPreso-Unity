@@ -850,3 +850,9 @@ Anchor final1/1passes in3.16s, exit0, no new OOM. Repeated touch/keyboard then
 1.2/1scale round trips retain the original offsets and1.25base scale; unrelated
 score-group position unchanged. Publish focused runtime/test/evidence and append
 the result to the existing HUD refinement report. No visual redesign or mechanics.
+Power anchor7465c82d pushed/remote verified; same HUD row notes updated. Paths
+released. Continue the remaining tagged-replay qualification after restoring native
+full-map colours: claim Tests/PlayMode/CatchReconstructionTests.cs plus evidence/
+TODO only. Reuse actual close/far contact measurement on authored Eskinita instead
+of the isolated floor. Stop at fresh two-case results and inspected native contact
+frames/film; no speculative animation rewrite. One guarded graphics pass, retry0.
