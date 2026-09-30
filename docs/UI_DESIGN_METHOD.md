@@ -67,3 +67,17 @@ from native menu/clock checks.
 The owner replaced the directional line with a local ground circle. It follows the current launch and supporting floor at20Hz, disappears with charge/release and predicts world banks. It does not resolve gameplay or promise immunity to player/can interception. Read the [native flight/render evidence](reports/feedback-2026-09-30/landing-circle.md). Keep the ordinary charge ring tied to Carrier.ChargeRatio; clarity feedback remains open.
 
 Charge feedback names actual power percent and FULL RELEASE at the reticle, with WAIT when the objective is protected or the round/actor disallows use. Keep the adopted can-down throwing rule. Captions hide with the reticle/release and use the shared black outline. [Native charge UI evidence](reports/feedback-2026-09-30/throw-charge-ui.md).
+
+## Ready And Power Readability
+
+The latest Feedback asks for Ready Up beside a larger Xelu glyph resolved from
+the actual saved Interact/Ready binding, without the old warmup subtitle. Touch
+keeps action wording without a keyboard image. Other contextual action prompts
+retain their own layout. The live power deck grows50percent around its existing
+corner/bottom anchor, preserving edge margins and accessibility scaling. The
+separate held-description sheet and all kit descriptions stay unchanged. The
+owner explicitly includes Paete/Phaister in this shared-HUD sizing exception.
+Two focused native checks and four captures qualify the local binding/layout
+changes. [Evidence](reports/feedback-2026-09-30/hud-readability.md). Physical-device
+approval remains separate. The existing practice status sits above the larger deck
+and its hint so neither can obscure the ability controls.

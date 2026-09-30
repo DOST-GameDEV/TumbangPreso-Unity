@@ -548,6 +548,124 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(progress.transform.parent.gameObject.activeSelf);
         }
 
+        [UnityTest, Timeout(90000)]
+        public IEnumerator ReadyUpUsesLargeLiveXeluBindingsAndClearsAfterTheReadyWindow()
+        {
+            var actions = Resources.Load<InputActionAsset>("TumbangPreso");
+            string overrides = actions.SaveBindingOverridesAsJson();
+            var device = LastInputDevice.Current;
+            bool touch = TouchInput.Active, force = TouchHud.ForceVisible;
+            int mip = QualitySettings.globalTextureMipmapLimit;
+            var keys = InputSystem.AddDevice<Keyboard>(); var pad = InputSystem.AddDevice<Gamepad>();
+            QualitySettings.globalTextureMipmapLimit = 2;
+            try
+            {
+                TouchInput.Active = false; TouchHud.ForceVisible = false;
+                yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, GameMode.HeroStrike);
+                Hud.Instance.ShowReadyPrompt(true);
+                var hud = Object.FindAnyObjectByType<TumpMatchReadout>();
+                var prompt = hud.Canvas.GetComponentsInChildren<Text>(true).First(t => t.name == "ActionPrompt");
+                var detail = hud.Canvas.GetComponentsInChildren<Text>(true).First(t => t.name == "ActionDetail");
+                var glyph = hud.Canvas.GetComponentsInChildren<Image>(true).First(t => t.name == "ReadyBindingGlyph");
+                typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { InputDeviceKind.KeyboardMouse });
+                Assert.IsNull(Rebinding.TryRebind(actions, "ReadyUp", keys.f10Key));
+                yield return null;
+                Assert.AreEqual("Ready Up", prompt.text); Assert.IsEmpty(detail.text);
+                Assert.IsTrue(glyph.enabled); Assert.AreSame(InputGlyphs.For(Hud.KeyLabelFor("ReadyUp"), true), glyph.sprite);
+                Assert.That(Hud.KeyLabelFor("ReadyUp"), Does.Contain("F10"));
+                Assert.AreEqual(64, glyph.rectTransform.rect.height);
+                foreach (var shape in new[] { new Vector2Int(960, 540), new Vector2Int(1600, 680) })
+                    yield return TumpUiCapture.Capture("Feedback-ready-up-" + shape.x + "x" + shape.y, hud.Canvas, shape.x, shape.y, false, true);
+                Assert.IsNull(Rebinding.TryRebind(actions, "ReadyUp", pad.rightStickButton));
+                typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { InputDeviceKind.Gamepad });
+                yield return null;
+                Assert.IsTrue(glyph.enabled); Assert.AreSame(InputGlyphs.For(Hud.KeyLabelFor("ReadyUp"), true), glyph.sprite);
+                Assert.AreEqual("Ready Up", prompt.text); Assert.IsEmpty(detail.text);
+                TouchInput.Active = true;
+                typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { InputDeviceKind.Touch });
+                yield return null;
+                Assert.AreEqual("Ready Up", prompt.text); Assert.IsFalse(glyph.enabled); Assert.IsEmpty(detail.text);
+                TouchInput.Active = false;
+                Hud.Instance.ShowReadyPrompt(false); yield return null;
+                Assert.IsFalse(glyph.enabled); Assert.That(prompt.text, Does.Not.Contain("Ready Up"));
+                Assert.AreEqual(1100, prompt.rectTransform.rect.width, "Non-ready action prompts keep their original layout.");
+                Hud.Instance.EnterSpectatorMode(); yield return null;
+                Assert.IsFalse(prompt.gameObject.activeInHierarchy);
+            }
+            finally
+            {
+                actions.LoadBindingOverridesFromJson(overrides); Rebinding.Invalidate(); Rebinding.Save(actions);
+                TouchInput.Active = touch; TouchHud.ForceVisible = force;
+                InputSystem.RemoveDevice(keys); InputSystem.RemoveDevice(pad);
+                QualitySettings.globalTextureMipmapLimit = mip;
+                typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { device });
+            }
+        }
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator LargerPowerControlsPreserveMarginsBindingsAndFinalizedKitText()
+        {
+            int mip = QualitySettings.globalTextureMipmapLimit;
+            float hudScale = SettingsStore.Current.HudScale; bool larger = SettingsStore.Current.LargerText;
+            var device = LastInputDevice.Current; bool touch = TouchInput.Active;
+            QualitySettings.globalTextureMipmapLimit = 2;
+            SettingsStore.Current.HudScale = 1; SettingsStore.Current.LargerText = false;
+            try
+            {
+                TouchInput.Active = false;
+                typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { InputDeviceKind.KeyboardMouse });
+                yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, GameMode.HeroStrike);
+                var local = GameServices.Round.PlayerAt(GameLaunch.SoloSeat);
+                var system = local.GetComponent<HeroAbilitySystem>();
+                var readout = Object.FindAnyObjectByType<TumpPowerReadout>();
+                var hud = Object.FindAnyObjectByType<TumpMatchReadout>();
+                var deck = (RectTransform)hud.Canvas.transform.Find("PowerSeals");
+                foreach (string hero in new[] { "paete", "phaister", "zack" })
+                {
+                    system.BindHero(hero);
+                    yield return new WaitForSecondsRealtime(TumpPowerReadout.RoleSwapSeconds + .1f);
+                    var kit = system.Kit;
+                    var skills = new[] { kit.Skill1, kit.Skill2, kit.Ultimate };
+                    var names = skills.Select(a => a.EffectiveName).ToArray();
+                    var descriptions = skills.Select(a => a.EffectiveDescription).ToArray();
+                    yield return null;
+                    Assert.AreEqual(Vector3.one * 1.5f, deck.localScale);
+                    Assert.AreEqual(new Vector2(-40, 30), deck.anchoredPosition);
+                    Assert.AreEqual(316 * 1.5f, readout.DeckRect().width, .1f);
+                    CollectionAssert.AreEqual(names, skills.Select(a => a.EffectiveName).ToArray());
+                    CollectionAssert.AreEqual(descriptions, skills.Select(a => a.EffectiveDescription).ToArray());
+                    var glyphs = deck.GetComponentsInChildren<Image>().Where(i => i.name == "BindingGlyph").ToArray();
+                    Assert.AreEqual(3, glyphs.Length); Assert.IsTrue(glyphs.All(g => g.enabled && g.sprite != null));
+                    if (hero == "paete")
+                    {
+                        var sandbox = hud.Canvas.transform.Find("SandboxState") as RectTransform;
+                        var hint = deck.Find("PowerInfoBinding") as RectTransform;
+                        var corners = new Vector3[4]; sandbox.GetWorldCorners(corners); float bottom = corners[0].y;
+                        hint.GetWorldCorners(corners); Assert.Greater(bottom, corners[1].y, "Practice status must clear the enlarged power hints.");
+                        foreach (var shape in new[] { new Vector2Int(960, 540), new Vector2Int(1600, 680) })
+                            yield return TumpUiCapture.Capture("Feedback-larger-powers-" + shape.x + "x" + shape.y, hud.Canvas, shape.x, shape.y, false, true);
+                    }
+                }
+                SettingsStore.Current.HudScale = 1.2f; yield return null;
+                Assert.AreEqual(1.8f, deck.localScale.x, .001f);
+                Assert.AreEqual(new Vector2(-40, 30), deck.anchoredPosition);
+                TouchInput.Active = true;
+                typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { InputDeviceKind.Touch });
+                yield return null;
+                Assert.AreEqual(new Vector2(.5f, 0), deck.anchorMin);
+                Assert.AreEqual(new Vector2(0, 34), deck.anchoredPosition);
+                Assert.IsTrue(deck.GetComponentsInChildren<Image>(true).Where(i => i.name == "BindingGlyph").All(i => !i.enabled));
+                readout.Tick(system, false); Assert.IsFalse(readout.DeckVisible);
+            }
+            finally
+            {
+                QualitySettings.globalTextureMipmapLimit = mip;
+                SettingsStore.Current.HudScale = hudScale; SettingsStore.Current.LargerText = larger;
+                TouchInput.Active = touch;
+                typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { device });
+            }
+        }
+
         private static IEnumerator Open(GameMode mode)
         {
             SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode));

@@ -620,3 +620,110 @@ by actual Resume button: pending menu drag should not become next-frame camera
 input; fresh look and unrelated held touch state must survive. One native case,
 no loading lifecycle, hero mechanics or presentation work. No heavy job yet.
 
+Owner15:31 explicitly approved the shared HUD enlargement for everyone after the
+Paete/Phaister scope question. Add exact ownership:
+Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.OwnerDeck.cs.
+Enlarge the existing group by1.5 around its current screen anchor; preserve edge
+margins, saved bindings, all kit text/state and the separate held-reference sheet.
+This narrow shared-HUD exception does not authorize hero mechanics/presentation
+redesign or description edits.
+HUD native run hud-ready-powers-final:2cases, saved-key/pad rebind glyphs, touch,
+ready-to-game/spectator hiding,1.5x deck with unchanged corner/touch margins and
+accessibility scaling, unchanged finalized kit strings; inspect960x540/1600x680
+ready and power surfaces. Stop at fresh nonzero XML plus4capture inspections.
+Isolated profile, graphics, mip2; no mechanics or actual-peer claim. Retry count0.
+Owner15:36 clarifies the Paete/Phaister protection is character-specific: authorized
+global changes apply to everyone, including these two. Do not request extra
+exceptions merely for shared controls/behavior. AGENTS clarified accordingly;
+this is broader than just the50percent button adjustment, while their finalized
+individual kits, authored art and non-passive descriptions remain protected.
+First HUD run: power geometry/margins/kit strings pass; ready fixture incorrectly
+assumed an existing separately saved Ready binding follows Interact. Rebind the
+actual Ready action explicitly, preserving that supported legacy override.
+Capture critique also found the enlarged deck overlaps the practice F7 status;
+move that existing status above the deck/hint and assert separation. Wait through
+the existing role-swap animation before power captures. No authored motion changed.
+Rerun only these2 affected cases as hud-ready-powers-checked; one fixture repair.
+HUD refinement qualifies2/2 native cases in8.48seconds, exit0, no extra OOM.
+Four captures inspected: Ready Up/Xelu and enlarged power deck at960x540/1600x680;
+practice F7 status now clears the larger controls. Finalized kit text unchanged.
+Publish explicit paths and tick this same HUD report Done; Human verified stays
+human-owned. No heavy job. Shared/global changes need no repeated protected-hero
+exception questions; the owner clarified that scope explicitly at15:36.
+Integration preserves f542a50f's independently checked seat-request guards.
+Both contributors independently allocated F0930-36; the already published seat
+request keeps36 and this not-yet-published HUD unit uses37. Hidden Doc record46
+will identify the same HUD row. No runtime overlap or merge conflict; retained
+native evidence scopes are separate, not an integration-wide peer claim.
+HUD274586f0 integrated with seat-request safety ate98b53b9, remote HEAD verified.
+Same Doc row QA_TUMP_0046 has the short resolution and Done checked; Human verified
+is untouched. Native saved-state readback confirmed. HUD runtime/test paths release.
+Next reconcile freshly human-verified rows into the existing history, then take
+remaining actionable Feedback. No heavy job. Source and authored assets clean.
+Two newly human-verified rows (timed ability lifetime and loading) are preserved
+whole in existing Finished feedback history, including native checked controls,
+all5cell texts and hidden IDs. Original active rows removed after verification.
+Active30rows includingheader; history19reports. No duplicate tab or old-history loss.
+
+Reopen QA_TUMP_0044 for Harry's new tutorial-only comment: remove the slipper/can
+star highlight. Claim Assets/TumbangPreso/Runtime/GuidedTraining.cs and
+Assets/TumbangPreso/Tests/PlayMode/TutorialLessonHonestyProbe.cs plus the same
+TODO/ledger/evidence. Remove the tutorial objective-marker bindings for those
+objects, retaining ordinary world highlights and moving-dummy lesson markers.
+His2.5-second reading request is already implemented in100d8725 and qualified by
+actual Tab input; preserve that timing and reuse its unchanged passing evidence.
+Run training-object-markers, one native case: each object lesson entered after a
+marked person lesson must hide the tutorial pointer/glow, and returning to a
+person lesson must restore that cue. Inspect retrieval/reset captures; stop at
+fresh1case XML and both images. Keep ordinary highlights and2.5second reading
+unchanged. Isolated graphics/mip2, retry0. User also asks to strikethrough resolved
+Human notes/comments while retaining their original words; apply after shipping.
+Harry added two more comments to the same tutorial row: hide progress at Training
+Complete and make the two attacker AIs actually play. Extend this coherent unit
+using the already owned GuidedTraining.cs/TutorialLessonHonestyProbe.cs. Restore
+existing attacker AI brains and their owned slippers only after completion;
+keep the reset-only defender and student controls. Disable those brains again
+if entering a lesson. No AIController implementation changes or hero redesign.
+Object marker check already passes1/1 in4.72seconds; both captures inspected.
+Run training-complete-active asks whether both retained attackers actually throw
+through their existing AI within25simulation seconds, completion hides progress,
+student stays playable and returning to a lesson disables free-play brains/restores
+progress. One case plus native completion capture; stop at that outcome. No
+forced throws or AI-plan patches. Isolated graphics/mip2, retry0.
+Both same-row tutorial follow-ups pass: marker transitions1/1 (4.72s), actual
+completed attacker play1/1 (7.50s), both exit0/no OOM. Both attackers really throw;
+progress chrome retires, friendly defender/student controls remain, lesson reentry
+stops AI. Three captures inspected. Reading2.5s is unchanged/reuses prior proof.
+Publish explicit paths; append the same Doc row and strikethrough only these
+resolved Human comments, preserving words/screenshots and existing Done history.
+Tutorial d2fe951d is pushed/remote verified. Same Feedback note appended and the
+three resolved new comments struck through natively; the2.5s comment and completed
+round follow-up are also struck, preserving all wording. Readback confirms. Tutorial
+paths release. User went to sleep16:08; keep routine updates in the Doc quiet.
+
+Next narrow cloud-render diagnosis, before trusting further visual review:
+prior evidence rules out camera grade, screen-space outline, ink hull and shadows.
+Private isolated fixture only, no runtime/art change: compare the same actual main
+camera/materials with the camera-scoped world-look weight disabled, then with only
+its ramp texture replaced for the diagnostic frame. Capture globals/material inputs.
+Question: is corruption in the world-look shader branch/ramp, rather than model
+or ordinary lighting? One bounded graphics run,3captures, stop at discriminating
+result. No shader/asset claim or modification until evidence identifies the cause.
+Cloud world-look diagnosis is discriminating: same live frame remains corrupt
+with world weight0, but replacing only the ramp texture with white restores normal
+body/prop colors. Global weight, key/soft-light vectors and material palette length
+are valid. This narrows the fault to the ramp lookup, not authored geometry.
+Next isolated experiment changes ONLY opaque Toon ramp lookup from implicit tex2D
+to explicit level0 tex2Dlod; the authored ramp has no mipmaps. Reuse the same3frame
+comparison. No source shader edit yet; retain original candidate shader bytes.
+Stop after captures establish whether implicit lookup is the mechanism. No fixed
+claim or Windows reproduction inferred. Previous run exits0 with no extra OOM.
+Explicit level0 lookup restores the authored opaque body/prop colours in the same
+full-map native frame, with the original ramp retained. No geometry/material edits.
+The implicit sample is the reproducing path; a no-mipmap ramp does not need screen
+texture derivatives. Claim Assets/TumbangPreso/Shaders/Toon.shader,
+Assets/TumbangPreso/Shaders/ToonTransparent.shader and
+Assets/TumbangPreso/Tests/PlayMode/WorldCourtCueTests.Stage.cs plus TODO/evidence.
+Both shaders share the same ramp lighting formula; preserve all palette/tuning.
+Add focused native opaque/transparent lighting-contract checks, not broad rework.
+Register the cloud/Linux-only defect in Feedback; Windows reproduction unverified.

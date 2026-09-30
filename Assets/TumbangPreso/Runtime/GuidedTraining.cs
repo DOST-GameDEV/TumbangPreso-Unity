@@ -500,6 +500,16 @@ namespace TumbangPreso
             _dummy.GetComponent<Carrier>()?.Held?.HostDisarm(); _dummy.HoldingSlipper = false;
             if (_dummySlipper != null) _dummySlipper.gameObject.SetActive(false);
             _dummy.Teleport(SliceRunner.SpawnPointFor(_dummy.PlayerSlot, _dummy.PlayerSlot));
+            foreach (var seat in _seats)
+            {
+                if (seat == null || seat == _local || seat.IsDefender) continue;
+                seat.IsBot = true; seat.Intent.AllowOnly(null); seat.Intent.Parked = false;
+                foreach (var shoe in _slippers)
+                    if (shoe != null && shoe != _ownSlipper && shoe.OwnerSlot == seat.PlayerSlot)
+                    { shoe.gameObject.SetActive(true); shoe.HostForceEquip(seat); break; }
+                var brain = seat.GetComponent<AIController>();
+                if (brain != null) brain.enabled = true;
+            }
         }
 
         private readonly Vector3[] _roamTargets = new Vector3[Balance.PlayerCount];
@@ -510,7 +520,7 @@ namespace TumbangPreso
             { _dummy.Intent.Clear(); _dummy.gameObject.SetActive(false); if (_dummySlipper != null) _dummySlipper.gameObject.SetActive(false); }
             if (_lesson == Lesson.Complete)
             {
-                StepRoamingAttackers();
+                // The two attackers use their normal AI; only the friendly defender is scripted.
                 if (_dummy == null || !_dummy.gameObject.activeSelf) return;
                 _dummy.Intent.Clear(); _dummy.Intent.Parked = false;
                 if (!_lata.IsUpright)
@@ -858,7 +868,12 @@ namespace TumbangPreso
             // seventeen need a body in front of you; the other fourteen do not, and a character
             // standing on the road for all of them is the *"other shit"* the route was asked to
             // stop showing. `PrepareDummyInFront` brings it back on the frame it is needed.
-            if (lesson != Lesson.Complete) HideTheCast();
+            if (lesson != Lesson.Complete)
+            {
+                foreach (var seat in _seats)
+                    if (seat != null && seat != _local && seat.TryGetComponent<AIController>(out var brain)) brain.enabled = false;
+                HideTheCast();
+            }
             if (_ownSlipper != null) _ownSlipper.gameObject.SetActive(!LessonIsTheTayas(lesson));
             bool usesCan = lesson == Lesson.ThrowAndRetrieve || LessonIsTheTayas(lesson) || lesson == Lesson.Complete;
             _lata.gameObject.SetActive(usesCan);
@@ -910,7 +925,8 @@ namespace TumbangPreso
                     title = "RETRIEVE SLIPPER";
                     body = "Retrieve your thrown slipper. You are safe from tags while you don't have your slipper yet. Retrieving it makes you vulnerable, so run back to the safe zone as fast as possible.";
                     action = Key("Grab") + " RETRIEVE";
-                    _marker?.Bind(_ownSlipper != null ? _ownSlipper.transform : null); break;
+                    // The object remains visible without a tutorial star/glow overlay.
+                    break;
                 case Lesson.Pektus:
                     PrepareAttackerThrow(); title = "CURVE THROW";
                     body = "Scroll the mouse wheel to curve the throw. Use this to make the throw harder to block.";
@@ -919,7 +935,7 @@ namespace TumbangPreso
                     PrepareAttackerThrow(); title = "THROW AND RETRIEVE";
                     body = "The ultimate test in attacking. Throw your slipper at the can to hit it. Retrieve your slipper and run back to the safe zone afterwards.";
                     action = Key("SpecialAbility") + " THROW  " + Key("Grab") + " RETRIEVE";
-                    _marker?.Bind(_lata.transform); break;
+                    break;
                 case Lesson.Shove:
                     PrepareAttackerThrow(); PrepareDummyInFront(1.4f, true);
                     title = "SHOVE"; body = "Shove a fellow attacker to sabotage them. Sabotaging gives bonus points if the shoved attacker gets tagged.";
@@ -935,7 +951,7 @@ namespace TumbangPreso
                 case Lesson.DefenderReset:
                     title = "RESET CAN";
                     body = "Reset the can. You can tag vulnerable attackers while the can is upright. Knocking it down makes you unable to tag at all, so make sure to reset it back as fast as possible.";
-                    action = Key("Grab") + " HOLD TO RESET"; _marker?.Bind(_lata.transform);
+                    action = Key("Grab") + " HOLD TO RESET";
                     _armRoutine = StartCoroutine(ArmDefenderReset()); break;
                 case Lesson.ResetAndTag:
                     PrepareMovingAttacker();
@@ -1776,6 +1792,8 @@ namespace TumbangPreso
                 : $"{lesson + 1:00} / {total:00}";
 
             _title.text = title;
+            if (_fill != null) _fill.transform.parent.gameObject.SetActive(lesson < total);
+            if (_pips.Count > 0 && _pips[0] != null) _pips[0].transform.parent.gameObject.SetActive(lesson < total);
             if(_ownerSkipLabel!=null)
             { _ownerSkipLabel.text="SKIP LESSON"; _ownerSkipLabel.transform.parent.gameObject.SetActive(lesson<total); }
             _body.text = body;
