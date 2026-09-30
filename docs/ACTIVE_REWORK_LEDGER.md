@@ -8,8 +8,8 @@ Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 Updated2026-10-01. Published a7d36881b; protocol100. Overall goal active.
 Owner repeats: finish actionable Feedback bottom-up, then initial network/bot/
 optimization/UX and applicable TODO. Continue autonomously while the owner sleeps.
-Loading belongs to the friend. Preserve ability-owner reservations and finalized
-Paete/Phaister rules. No cross-chat work, subagents, resets or paid services.
+Loading remains concurrently owned by the friend. Owner reopened the remaining
+ability queue on2026-10-01; preserve active file claims and finalized Paete/Phaister rules. No cross-chat work, subagents, resets or paid services.
 
 Published local engineering units and focused native scope:
 - ccd6935e2: spectator results input; actual final-board flight/director/cursor/
@@ -55,10 +55,12 @@ physical devices, player builds and human visual approval.
   Ship coherent units with focused evidence. No subagents or cross-chat actions.
 - No resets, clean, force-push, discarded dirt, Desktop replacement or paid services
   without current authorization. Preserve profiles and task-unrelated processes.
-- Loading belongs to the owner's friend. All ability work now belongs to the owner.
+- Loading has a concurrent friend reservation; avoid overlapping changes. The owner
+  reauthorized remaining ability implementation on2026-10-01. Claim exact paths first.
   Paete/Phaister are finalized: demonstrated bug fixes only, including presentation.
   In-game descriptions stay untouched except passives; stale Wiki is documentation.
-- No VFX/SFX/animation/models/maps/lighting except concrete bug fixes. Four absent
+- Broader presentation work is authorized after preceding actionable feedback.
+  Finalized Paete/Phaister and no-new-skill-SFX restrictions still apply. Four absent
   generic Amihan/Paete swim/recovery sets were repaired under that exception;
   existing84asset/meta hashes and ability behavior stayed unchanged.
 - Incoming Diddler units are integrated with authored behavior intact. Latest
