@@ -13,6 +13,9 @@ namespace TumbangPreso.CameraSystem
     {
         private MatchPoseHistory _history;
         private MatchPoseHistory.Track _actorTrack, _victimTrack;
+        private RecordedPoseTrack _actorClip, _victimClip;
+        private float _clipStart, _clipEnd;
+        private bool _followthroughCaptured;
         private MatchPoseHistory.Copy _actorCopy, _victimCopy;
         private CharacterMotor _victim;
         private CameraRig _rig;
@@ -34,6 +37,9 @@ namespace TumbangPreso.CameraSystem
         private Quaternion _actorFacing, _victimFacing;
         private readonly List<Renderer> _hidden = new List<Renderer>();
         private readonly List<bool> _previous = new List<bool>();
+        private readonly List<Canvas> _hiddenCanvases = new List<Canvas>();
+        private readonly List<bool> _canvasPrevious = new List<bool>();
+        private readonly List<Canvas> _canvasScratch = new List<Canvas>();
         private readonly List<Renderer> _scratch = new List<Renderer>();
         private readonly HashSet<Renderer> _seen = new HashSet<Renderer>();
         private Renderer[] _copiedItems;
@@ -111,6 +117,11 @@ namespace TumbangPreso.CameraSystem
             _actorTrack = actor; _victimTrack = victimTrack; _victim = victim; _rig = rig;
             _contact = contact; _began = Time.unscaledTime; _duration = Mathf.Min(ReplayDuration, victim.StunLeft - .18f);
             _round = GameServices.Match != null ? GameServices.Match.RoundNumber : 0;
+            _clipStart = Mathf.Max(contact - (ReplayDuration - .18f), actor.Oldest, victimTrack.Oldest);
+            _clipEnd = contact + .18f;
+            float availableEnd = Mathf.Min(_clipEnd, actor.Newest, victimTrack.Newest);
+            if (!RetainClip(availableEnd)) { End(); return; }
+            _followthroughCaptured = availableEnd >= _clipEnd;
             actor.Apply(_actorCopy, contact); victimTrack.Apply(_victimCopy, contact);
             _actorContact = _actorCopy.Root.transform.position; _victimContact = _victimCopy.Root.transform.position;
             _actorFacing = _actorCopy.Root.transform.rotation; _victimFacing = _victimCopy.Root.transform.rotation;
@@ -200,9 +211,18 @@ namespace TumbangPreso.CameraSystem
                 Settings.SettingsStore.Current.ReducedUiMotion || GameServices.Round == null || !GameServices.Round.RoundActive ||
                 GameServices.Match == null || GameServices.Match.RoundNumber != _round || elapsed >= _duration)
             { End(); return; }
-            float recordedTime = elapsed < .30f ? _contact - .22f + elapsed / .30f * .22f :
-                _contact + Mathf.Min(.18f, (elapsed - .30f) * .6f);
-            _actorTrack.Apply(_actorCopy, recordedTime); _victimTrack.Apply(_victimCopy, recordedTime);
+            // Capture the short, real follow-through once it has happened. Detached
+            // frames keep this catch intact even as the live history ring wraps.
+            if (!_followthroughCaptured && _actorTrack.Newest >= _clipEnd && _victimTrack.Newest >= _clipEnd)
+            {
+                _followthroughCaptured = true;
+                if (!RetainClip(_clipEnd))
+                    _clipEnd = Mathf.Min(_actorClip.End, _victimClip.End);
+            }
+            // Use the complete available approach over the complete replay. The old
+            // mapping reached contact+.18 after .6 seconds and froze for the rest.
+            float recordedTime = Mathf.Lerp(_clipStart, _clipEnd, Mathf.Clamp01(elapsed / _duration));
+            _actorClip.Apply(_actorCopy.Bones, recordedTime); _victimClip.Apply(_victimCopy.Bones, recordedTime);
             if (recordedTime >= _contact)
             {
                 // Retain actual post-contact bone motion while keeping the
@@ -224,6 +244,15 @@ namespace TumbangPreso.CameraSystem
             try { RenderOnlyCopies(); }
             catch (System.Exception error) { End(); Debug.LogException(error); }
         }
+        private bool RetainClip(float end)
+        {
+            var actor = _actorTrack.Retain(_clipStart, end);
+            var victim = _victimTrack.Retain(_clipStart, end);
+            if (actor == null || victim == null) return false;
+            _actorClip = actor; _victimClip = victim;
+            return true;
+        }
+
         private static Vector3 ShotOffset(Vector3 forward, float side)
             => Vector3.Cross(Vector3.up, forward) * (2.9f * side) + forward * .85f + Vector3.up * .30f;
         private float ShotDistance(Vector3 focus, Vector3 offset)
@@ -242,6 +271,7 @@ namespace TumbangPreso.CameraSystem
         private void RenderOnlyCopies()
         {
             _hidden.Clear(); _previous.Clear(); _seen.Clear();
+            _hiddenCanvases.Clear(); _canvasPrevious.Clear();
             // A held shoe may also be under its actor. Hide each renderer once
             // so restoration cannot accidentally retain the temporary hidden flag.
             foreach (var actor in GameServices.Round.Players)
@@ -254,6 +284,10 @@ namespace TumbangPreso.CameraSystem
             HideTree(_rig.transform);
             // The catch records the players, not the current animal visits.
             foreach (var life in Object.FindObjectsByType<AmbientLife>()) HideTree(life.transform);
+            // Live tag callouts and particles belong to now, not the recorded approach.
+            foreach (var effect in Object.FindObjectsByType<VfxRenderTag>()) HideTree(effect.transform);
+            foreach (var particles in Object.FindObjectsByType<ParticleSystemRenderer>()) HideTree(particles.transform);
+            foreach (var callout in Object.FindObjectsByType<ComicPopup>()) HideTree(callout.transform);
             _actorCopy.ShowOnlyForCapture(true); _victimCopy.ShowOnlyForCapture(true);
             if (_copiedItems != null) foreach (var r in _copiedItems) if (r != null) r.forceRenderingOff = false;
             try { _camera.Render(); }
@@ -262,6 +296,8 @@ namespace TumbangPreso.CameraSystem
                 _actorCopy.ShowOnlyForCapture(false); _victimCopy.ShowOnlyForCapture(false);
                 if (_copiedItems != null) foreach (var r in _copiedItems) if (r != null) r.forceRenderingOff = true;
                 for (int i = 0; i < _hidden.Count; i++) if (_hidden[i] != null) _hidden[i].forceRenderingOff = _previous[i];
+                for (int i = 0; i < _hiddenCanvases.Count; i++)
+                    if (_hiddenCanvases[i] != null) _hiddenCanvases[i].enabled = _canvasPrevious[i];
             }
         }
         private void HideTree(Transform root)
@@ -271,6 +307,12 @@ namespace TumbangPreso.CameraSystem
             {
                 if (!_seen.Add(renderer)) continue;
                 _hidden.Add(renderer); _previous.Add(renderer.forceRenderingOff); renderer.forceRenderingOff = true;
+            }
+            _canvasScratch.Clear(); root.GetComponentsInChildren<Canvas>(true, _canvasScratch);
+            foreach (var canvas in _canvasScratch)
+            {
+                if (_hiddenCanvases.Contains(canvas)) continue;
+                _hiddenCanvases.Add(canvas); _canvasPrevious.Add(canvas.enabled); canvas.enabled = false;
             }
         }
         public void End()
@@ -283,7 +325,9 @@ namespace TumbangPreso.CameraSystem
             if (_stage != null) Destroy(_stage);
             _stage = null; _canvas = null; _target = null; _camera = null; _picture = null;
             _actorCopy = _victimCopy = null; _actorTrack = _victimTrack = null; _victim = null;
+            _actorClip = _victimClip = null; _followthroughCaptured = false;
             _copiedItems = null; _hidden.Clear(); _previous.Clear(); _seen.Clear(); _scratch.Clear();
+            _hiddenCanvases.Clear(); _canvasPrevious.Clear(); _canvasScratch.Clear();
         }
     }
 }
