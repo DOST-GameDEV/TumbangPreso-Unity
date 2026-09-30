@@ -1321,3 +1321,34 @@ switch/restore, current cards and dirty/discard. Captures inspected at1600x680 a
 both map looks, no guard stop/OOM. Publish evidence/docs only, same Lighting row
 Done after remote verification. No lighting values/assets changed. Next integrated
 player refresh and actual first-person barrier review before broader manual play.
+Beam/lighting same Feedback rows now Done with native evidence; Human verified
+untouched. Integrated player refresh targets583e2ec5 runtime plus Dante/Cheska
+units, source checkpointcc7038e4. Isolated candidate has known generated tangent
+changes in four arm meshes, metadata whitespace and automatic shader inclusion;
+these are retained privately, not committed as authored art. Preserve exact input
+manifest and build identity limits. Disk662MB was too tight for safe build headroom;
+remove only the unused installed Blender distribution under explicit owner approval,
+not art/projects/configuration. Keep warm Unity caches. One guarded headless build,
+then actual graphics player; no Desktop replacement or unrelated process stop.
+Integrated headless build stopped by memory guard at64s, no OOM. Actual phase:
+player assemblies compiled, data rebuild began; a second idle Roslyn cache held
+799MB and an import worker540MB beside the3GB Editor. Existing linker-only cache
+release hook never ran on this Mono data-build route. One bounded tooling repair:
+recognize the observed post-player-compile data-rebuild boundary too, releasing
+only the exact task-owned completed compiler cache. Close saved task Doc tab
+without logout; retry same inputs headless once. Old internal output was purged
+by the normal builder; do not claim a usable current player until success.
+Integrated warm retry succeeds57.65s, no memory guard/new OOM. Post-compile cache
+hook ran with no remaining helpers, so do not attribute a measured memory saving
+to that hook; warm compilation and closing the saved Doc tab are combined factors.
+Actual player exists; Runtime SHA256a492f4d8ff256c805ea5bae45cf37be182c696329948712053319bf370919786.
+Launch exact internal player with graphics and isolated profile for manual input,
+barrier/ward first-person inspection and match flow. Safety ceiling900seconds,
+not an assertion of natural match completion. No automated botmatch flag in this
+manual session. Stop on verified target behavior and ordinary menu exit.
+Actual manual player exits normally606s/no guard, Guest/title/Home/Dante/queue
+cancel/training/Eshield/Leave/Quit observed. New real bug: Escape training menu
+pauses correctly but disables Character/Defender/cheats because CanEdit uses
+BlocksInput at scale0. Claim PracticeRange.cs and PracticeRangeTests.cs only,
+ENG-0930-TRAINING-PAUSE. Preserve cinematic/network gates; configuration can work
+while world input stays blocked. Native baseline next. Barrier FPP review pending.
