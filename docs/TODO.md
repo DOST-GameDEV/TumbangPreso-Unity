@@ -69,6 +69,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Actions now show Throw/Tag, Retrieve/Reset, Curve Right, Curve Left, Shove/Lunge;
   separate Hold Interact row removed. Actual action and saved overrides retained.
   Three native settings-contract checks and the updated real-input case pass.
+  The owner's subsequent correction uses MIDDLE mouse Shove/Lunge and F Interact/
+  Ready. Its listed Actions order is adopted. Ready's held F cannot become gameplay
+  interaction when the window closes; a fresh press is required. IDs/overrides and
+  pad/touch routes are retained. Four native default/order/conflict/older-override
+  checks and the updated actual mouse/wheel/F case pass.
 - [x] F0930-07 Longer defender lunge: full charge targets3m in both modes, with
   derived speed, bot approach/celebration bounds and pressure stats. Actual local
   input and host-request travel, repeat refusal, new-range tag and distant miss

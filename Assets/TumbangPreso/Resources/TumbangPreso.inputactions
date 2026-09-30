@@ -400,7 +400,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000007",
-                    "path": "<Keyboard>/f",
+                    "path": "<Mouse>/middleButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -939,7 +939,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-0000000000a1",
-                    "path": "<Mouse>/rightButton",
+                    "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",

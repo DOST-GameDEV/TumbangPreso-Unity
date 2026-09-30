@@ -57,7 +57,7 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(60000)]
-        public IEnumerator RequestedDefaultsReachRealIntentsAndReadyDoesNotBecomeALunge()
+        public IEnumerator RequestedDefaultsReachRealIntentsAndReadyDoesNotBecomeAnInteraction()
         {
             var settings = InputSystem.settings;
             var background = settings.backgroundBehavior;
@@ -90,8 +90,13 @@ namespace TumbangPreso.PlayTests
                 InputSystem.QueueStateEvent(mouse, new MouseState { buttons = 2 }); InputSystem.Update();
                 reader.SendMessage("Update");
                 Assert.IsTrue(local.Intent.Pressed(Verb.Grab), "Right click did not reach pickup/reset.");
-                Assert.IsTrue(local.Intent.Pressed(Verb.Interact), "The contextual interaction must follow the pickup control.");
+                Assert.IsFalse(local.Intent.Pressed(Verb.Interact), "Pickup must not trigger the separate F interaction.");
                 Assert.IsFalse(local.Intent.Pressed(Verb.Lunge), "Right click still drives Shove/Lunge.");
+                InputSystem.QueueStateEvent(mouse, new MouseState { buttons = 4 }); InputSystem.Update();
+                reader.SendMessage("Update");
+                Assert.IsTrue(local.Intent.Pressed(Verb.Lunge), "Middle click did not reach Shove/Lunge.");
+                Assert.IsFalse(local.Intent.Pressed(Verb.Grab), "Middle click triggered pickup.");
+
                 InputSystem.QueueStateEvent(mouse, new MouseState { scroll = new Vector2(0, 120) }); InputSystem.Update();
                 Assert.IsTrue(map.FindAction("CurveRight").IsPressed());
                 Assert.IsFalse(map.FindAction("CurveLeft").IsPressed());
@@ -103,13 +108,15 @@ namespace TumbangPreso.PlayTests
                 InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.F)); InputSystem.Update();
                 reader.SendMessage("Update");
                 Assert.IsTrue(map.FindAction("ReadyUp").IsPressed());
-                Assert.IsFalse(local.Intent.Pressed(Verb.Lunge), "Ready also triggered a gameplay action.");
+                Assert.IsFalse(local.Intent.Pressed(Verb.Interact), "Ready also triggered interaction.");
+                Assert.IsFalse(local.Intent.Pressed(Verb.Lunge));
                 UI.Hud.Instance.ShowReadyPrompt(false);
                 reader.SendMessage("Update");
-                Assert.IsFalse(local.Intent.Pressed(Verb.Lunge), "Held Ready became a lunge when its window closed.");
+                Assert.IsFalse(local.Intent.Pressed(Verb.Interact), "Held Ready became interaction when its window closed.");
                 InputSystem.QueueStateEvent(keyboard, new KeyboardState()); InputSystem.Update(); reader.SendMessage("Update");
                 InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.F)); InputSystem.Update(); reader.SendMessage("Update");
-                Assert.IsTrue(local.Intent.Pressed(Verb.Lunge), "A fresh F press did not reach Shove/Lunge.");
+                Assert.IsTrue(local.Intent.Pressed(Verb.Interact), "A fresh F press did not reach interaction.");
+                Assert.IsFalse(local.Intent.Pressed(Verb.Lunge), "F still drives Shove/Lunge.");
             }
             finally
             {

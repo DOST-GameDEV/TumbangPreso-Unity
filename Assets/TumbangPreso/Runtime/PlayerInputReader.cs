@@ -109,7 +109,7 @@ namespace TumbangPreso
         /// </summary>
         private InputAction _curveLeft, _curveRight;
         private InputAction _readyUp;
-        private bool _readyUseHeld;
+        private bool _readyUseHeld, _readyInteractHeld;
 
         /// <summary>One wheel notch (or one tap) of curve, and the turn rate while a key is held.</summary>
         private const float CurveStep = 0.35f, CurveRate = 2.5f;
@@ -256,7 +256,8 @@ namespace TumbangPreso
             if (_skill1 != null) intent.Set(Verb.Skill1, ReadButton(_skill1,Verb.Skill1));
             if (_skill2 != null) intent.Set(Verb.Skill2, ReadButton(_skill2,Verb.Skill2));
             if (_ultimate != null) intent.Set(Verb.Ultimate, ReadButton(_ultimate,Verb.Ultimate));
-            if (_interact != null) intent.Set(Verb.Interact, ReadButton(_interact,Verb.Interact));
+            if (_interact != null)
+                intent.Set(Verb.Interact, !ConsumeReadyControl(_interact, ref _readyInteractHeld) && ReadButton(_interact,Verb.Interact));
 
             var visual = _motor.GetComponent<Visual.CharacterVisual>();
             if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)
@@ -311,16 +312,9 @@ namespace TumbangPreso
                 _restoreToggle.Read(grabDown, settings.ToggleRestore, false);
                 intent.Set(Verb.Grab, grabDown); // Pickup and shove retain their ordinary press edge.
             }
-            bool readyDown = _readyUp != null && _readyUp.IsPressed();
-            bool sharedReadyControl = readyDown && _lunge != null && _lunge.IsPressed()
-                                      && _readyUp.activeControl == _lunge.activeControl;
-            bool readyContext = (UI.Hud.Instance != null && UI.Hud.Instance.ReadyWindowOpen)
-                                || BufferSkipVote.Showing;
-            if (!sharedReadyControl) _readyUseHeld = false;
-            else if (readyContext) _readyUseHeld = true;
-            // F means Ready in its window, then Shove/Lunge during play. A held
-            // ready press must be released before it can become a gameplay action.
-            intent.Set(Verb.Lunge, !_readyUseHeld && ReadButton(_lunge,Verb.Lunge));
+            // A saved lunge binding may still share Ready. Independent middle
+            // mouse remains usable while F serves Ready/Interact in its context.
+            intent.Set(Verb.Lunge, !ConsumeReadyControl(_lunge, ref _readyUseHeld) && ReadButton(_lunge,Verb.Lunge));
             intent.Set(Verb.EmoteWheel, ReadButton(_emote,Verb.EmoteWheel));
 
             intent.LookDelta = ReadLookDelta();
@@ -469,9 +463,19 @@ namespace TumbangPreso
             return transform.position + transform.forward * CameraSystem.CameraRig.AimRayLength;
         }
 
+        private bool ConsumeReadyControl(InputAction action, ref bool held)
+        {
+            bool shared = _readyUp != null && action != null && _readyUp.IsPressed() && action.IsPressed()
+                          && _readyUp.activeControl == action.activeControl;
+            if (!shared) held = false;
+            else if ((UI.Hud.Instance != null && UI.Hud.Instance.ReadyWindowOpen) || BufferSkipVote.Showing) held = true;
+            return held;
+        }
+
         private void OnDisable()
         {
             _readyUseHeld = false;
+            _readyInteractHeld = false;
             ResetToggleControls();
             // ⚠️ RELEASE EVERYTHING ON THE WAY OUT. A verb held across a disable stays held
             // in the intent table forever, and the player walks back in already sprinting.
