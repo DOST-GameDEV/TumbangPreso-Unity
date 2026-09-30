@@ -37,7 +37,6 @@ namespace TumbangPreso
             DefenderReset,
             Punch,
             Lunge,
-            TripRecovery,
             Emote,
             Complete,
         }
@@ -99,7 +98,10 @@ namespace TumbangPreso
         private float _lastTagByStudentAt = -999.0f;
 
         private float _metric;
-        private float _lastTripLeft;
+        private bool _jumpAirborne;
+        private bool _ultimateAccepted;
+        private double _ultimateFinishedAt = -1;
+        private const float UltimateAfterSeconds = 2.5f;
         private Vector3 _lastPosition;
 
         public Lesson CurrentLesson => _lesson;
@@ -197,6 +199,7 @@ namespace TumbangPreso
         private void Update()
         {
             if (!_ready || _local == null) return;
+            _hud?.SetInspecting(_abilityInfo != null && _abilityInfo.IsPressed());
 
             var keyboard = Keyboard.current;
             if (keyboard != null && keyboard.backspaceKey.wasPressedThisFrame)
@@ -263,7 +266,11 @@ namespace TumbangPreso
                     break;
 
                 case Lesson.Jump:
-                    if (!_local.IsGrounded && _local.Velocity.y > 0.1f) CompleteLesson();
+                    bool airborne = !_local.IsGrounded;
+                    if (airborne && !_jumpAirborne && _local.Velocity.y > 0.1f) _metric++;
+                    _jumpAirborne = airborne;
+                    SetProgress(_metric / 3f);
+                    if (_metric >= 3) CompleteLesson();
                     break;
 
                 case Lesson.Throw:
@@ -323,7 +330,19 @@ namespace TumbangPreso
                     break;
 
                 case Lesson.Ultimate:
-                    if (WasSuccessfulCast(HeroAbilitySystem.Slot.Ultimate)) CompleteLesson();
+                    if (WasSuccessfulCast(HeroAbilitySystem.Slot.Ultimate)) _ultimateAccepted = true;
+                    if (!_ultimateAccepted) break;
+                    var phase = SharedUltimatePhase.Instance;
+                    if (phase != null && phase.Active)
+                    {
+                        _ultimateFinishedAt = -1;
+                        SetProgress(.75f * Mathf.Clamp01((float)((SharedUltimatePhase.Now - phase.Began) / phase.Duration)));
+                        break;
+                    }
+                    if (_ultimateFinishedAt < 0) _ultimateFinishedAt = Time.realtimeSinceStartupAsDouble;
+                    double after = Time.realtimeSinceStartupAsDouble - _ultimateFinishedAt;
+                    SetProgress(.75f + .25f * (float)(after / UltimateAfterSeconds));
+                    if (after >= UltimateAfterSeconds) CompleteLesson();
                     break;
 
                 case Lesson.DefenderReset:
@@ -337,42 +356,6 @@ namespace TumbangPreso
                 case Lesson.Punch:
                 case Lesson.Lunge:
                     if (_lastTagByStudentAt > _lessonBeganAt) CompleteLesson();
-                    break;
-
-                case Lesson.TripRecovery:
-                    // A press is detected as a drop LARGER than one frame of real time, so it
-                    // counts only presses `CharacterMotor` actually accepted through the real
-                    // rate cap.
-                    //
-                    // ⚠️ THERE IS NO BLEED AT ALL ABOVE `Balance.MinTripDown` AS OF 2026-08-26,
-                    // so above the floor the expected drop is zero and any movement is a press.
-                    // The `Time.deltaTime` allowance is kept because the LAST stretch of a fall,
-                    // under the floor, does still run at real time and would otherwise be
-                    // credited as presses nobody made.
-                    float expected = Mathf.Max(0.0f, _lastTripLeft - Time.deltaTime);
-                    if (_local.TripLeft < expected - 0.05f) _metric += 1.0f;
-                    _lastTripLeft = _local.TripLeft;
-                    SetProgress(_metric / 5.0f);
-
-                    if (_metric >= 5.0f)
-                    {
-                        CompleteLesson();
-                        break;
-                    }
-
-                    // ⚠️⚠️ THE LESSON PUTS YOU BACK DOWN, AND WITHOUT THIS IT COULD STRAND THE
-                    // PLAYER. The trip is applied ONCE, on entering the lesson, and the exit
-                    // condition is five ACCEPTED presses. A fall holds at most
-                    // (2.50 - 0.35) / 0.22 = 10 of them, so a player who watches the first fall
-                    // out instead of mashing reaches zero with the counter short and nothing
-                    // left to press: the lesson can then never be completed and the route stops
-                    // dead at step 15 of 17. Re-applying is also the honest teaching, because
-                    // the thing being taught is that mashing is what ends a fall.
-                    if (!_local.IsTripped)
-                    {
-                        _local.ApplyTrip();
-                        _lastTripLeft = _local.TripLeft;
-                    }
                     break;
 
                 case Lesson.Emote:
@@ -435,6 +418,7 @@ namespace TumbangPreso
         {
             if (_advancing) return;
             _advancing = true;
+            SetProgress(1);
             _hud?.FlashComplete();
 
             // 1.00 at LOOK to 1.50 at EMOTE, which is a fifth over the seventeen.
@@ -492,7 +476,6 @@ namespace TumbangPreso
                 case Lesson.DefenderReset:  return Verb.Grab;
                 case Lesson.Punch:          return Verb.SpecialAbility;
                 case Lesson.Lunge:          return Verb.Lunge;
-                case Lesson.TripRecovery:   return Verb.Jump;
                 case Lesson.Emote:          return Verb.EmoteWheel;
                 default:                    return null;
             }
@@ -569,7 +552,7 @@ namespace TumbangPreso
         /// is in hand. Re-running it on every lesson would yank a player across the street
         /// between PUNCH and LUNGE for no reason and undo `PrepareDummyInFront`'s placement.
         ///
-        /// ⚠️ AND THE ATTACKER SIDE IS APPLIED TOO, NOT JUST THE TAYA. `TripRecovery` and `Emote`
+        /// ⚠️ AND THE ATTACKER SIDE IS APPLIED TOO, NOT JUST THE TAYA. `Emote`
         /// follow the two taya lessons, and a player left holding the taya's role through them is
         /// being taught the wrong half of the game: the trip lesson's own text is about being an
         /// attacker put on the road.
@@ -626,6 +609,9 @@ namespace TumbangPreso
             _lesson = lesson;
             _advancing = false;
             _metric = 0.0f;
+            _jumpAirborne = !_local.IsGrounded;
+            _ultimateAccepted = false;
+            _ultimateFinishedAt = -1;
             _lastPosition = _local.transform.position;
             _defenderResetArmed = false;
             _lessonBeganAt = Time.time;
@@ -642,10 +628,7 @@ namespace TumbangPreso
                 _armRoutine = null;
             }
 
-            // ⚠️ BOTH BEFORE THE SWITCH, NOT AFTER IT. `Lesson.TripRecovery` opens by calling
-            // `_local.ApplyTrip()` and `Lesson.DefenderReset` opens by calling `BecomeDefender`;
-            // clearing or re-roling afterwards would undo the two lessons whose whole subject is
-            // the state being cleared.
+            // Clear previous effects before preparing this lesson's role and targets.
             ClearTheLastLessonsMess();
 
             // ⚠️⚠️ AND THE CAN GOES BACK ON ITS MARK BEFORE THE ROLE IS APPLIED, WHICH IS AN
@@ -709,7 +692,7 @@ namespace TumbangPreso
 
                 case Lesson.Jump:
                     title = "JUMP";
-                    body = "Jump once. Use it to clear street clutter, not to escape the defender's box.";
+                    body = "Jump three times. Land between jumps and watch your progress. Use jumping to clear street clutter.";
                     action = Key("Jump") + "  ·  JUMP";
                     break;
 
@@ -817,14 +800,6 @@ namespace TumbangPreso
                     _marker?.Bind(_dummy != null ? _dummy.transform : null);
                     break;
 
-                case Lesson.TripRecovery:
-                    _local.ApplyTrip();
-                    _lastTripLeft = _local.TripLeft;
-                    title = "RECOVER FROM A FALL";
-                    body = "Trips put you on the road. Mash the live jump binding to shorten the knockdown instead of waiting it out.";
-                    action = Key("Jump") + "  ·  MASH TO GET UP";
-                    break;
-
                 case Lesson.Emote:
                     title = "EMOTE";
                     body = "Hold the wheel, choose an emote, and release. Movement or another action interrupts it.";
@@ -833,7 +808,7 @@ namespace TumbangPreso
 
                 default:
                     title = "TRAINING COMPLETE";
-                    body = "You tested movement, stamina, jumping, throwing, retrieval, Pektus, hero powers, both roles, tags, fall recovery and emotes.";
+                    body = "You tested movement, stamina, jumping, throwing, retrieval, Pektus, hero powers, both roles, tags and emotes.";
                     action = "ENTER  ·  RETURN TO MAIN MENU";
                     _marker?.Bind(null);
 
@@ -1042,6 +1017,9 @@ namespace TumbangPreso
 
         private void ExitTraining()
         {
+            _ready = false;
+            StopAllCoroutines();
+            if (_local != null) _local.Intent.AllowOnly(null);
             GameLaunch.GuidedTutorial = false;
             Hitstop.End();
             SceneFlow.Go(SceneFlow.MainMenu);
@@ -1792,6 +1770,7 @@ namespace TumbangPreso
             {
                 _fill.fillAmount = Mathf.Clamp01(ratio);
                 _fill.rectTransform.anchorMax=new Vector2(Mathf.Clamp01(ratio),1);
+                _fill.color = ratio >= 1 ? TrainingDone : TrainingCurrent;
             }
         }
 

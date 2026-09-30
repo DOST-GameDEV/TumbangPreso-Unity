@@ -37,12 +37,14 @@ Owned edit paths:
 - docs/TODO.md (only this unit's evidence pointer)
 - docs/ACTIVE_REWORK_LEDGER.md (only this reservation and its result)
 
-Local contributor reservation supplied by owner: GuidedTraining.cs,
-GuidedTrainingHud.OwnerPainted.cs, OwnerTrainingUiTests.cs,
-TutorialLessonHonestyProbe.cs, TutorialDefenderProbe.cs and DeadFeatureAudit.cs.
-The local contributor also owns final review of Feedback and How to use Feedback
-in the shared Wiki. Do not edit those paths or tabs until released. Preserve this
-reservation when updating the checkpoint. No cross-chat contact is required.
+Local tutorial batch 2fbee1fb1 is complete and being integrated with this Nemu unit.
+Its source reservation is released except the pending human completion destination.
+Doc formatting is complete; contributors may update their own feedback rows after
+verified shipping. Local next reservation: Resources/TumbangPreso.inputactions,
+Runtime/Settings/Rebinding.cs if context/default reconciliation is needed, and the
+relevant InputMapAndAbilityTests/InputContractTests/PlayMode InputReaderTests.
+All paths are under Assets/TumbangPreso. Preserve the Nemu reservation above and
+these input paths when updating the checkpoint. No cross-chat contact is required.
 
 ## Current Unit
 
@@ -50,7 +52,8 @@ reservation when updating the checkpoint. No cross-chat contact is required.
 
 Owner's newest assignment is [FEEDBACK-0930](TODO.md#feedback-0930-owner-document-and-engineering-follow-through),
 followed by reasonable engineering/UI/UX fixes and applicable existing TODO work.
-Latest restrictions: no subagents, resets, cross-chat work or credit spending without
+Loading is reserved for the owner's friend (latest owner direction); do not edit
+loading paths. Continue other optimization later. Latest restrictions: no subagents, resets, cross-chat work or credit spending without
 approval; VFX/SFX/animation/models/maps/lighting only for demonstrated bug fixes.
 Phaister/Paete abilities are protected, descriptions only. The wiki's other complete
 ability/status definitions supersede old docs; blank cells are unspecified.
@@ -60,12 +63,12 @@ Fetched and fast forwarded 2bacb97c3 to aecc0ee2c before editing. Existing unrel
 RosterArms assets, two protected UI metadata files, HeroHazards.cs, QualitySettings,
 motion captures and untracked art/skill-FX work are preserved and not task-owned.
 
-First unit complete: Tasks retains unchanged rows through wallet refresh; ordinary
+Shipped ef4f9a729, remote HEAD verified: Tasks retains unchanged rows through wallet refresh; ordinary
 round cards hide the live HUD, center standings, fit score values and remove the
 duplicate warmup line. Two focused native cases pass, with all eight frozen source
 inputs unchanged. Inspected Tasks and 960x540/1600x680 standings captures are in
-[the feedback report](reports/feedback-2026-09-30/README.md). This batch is being
-committed/pushed with explicit owned paths; do not rerun its unchanged cases.
+[the feedback report](reports/feedback-2026-09-30/README.md). Do not rerun its
+unchanged cases. No task-owned gameplay edits are uncommitted at this checkpoint.
 
 No test/build/helper is running at this checkpoint. The managed worktree tool is
 unavailable from this projectless chat (Not a git repository). Validation checkout:
@@ -79,13 +82,38 @@ Wiki read: document 1jvr7NLzhHrbw-wrG676AeOkoTxJf4GokkfmxpO0ddLg,
 modified 2026-09-29T17:03:02.235Z. Tabs read include abilities (t.0), statuses
 (t.ybspp2s3qclp), feedback (t.3aojrspccof8). Owner then authorized organizing only
 the Feedback tab for QA/DOTS intake and clickable completion. Preserve original
-reports, screenshots, comments and the other tabs. Explicit status/evidence must
-remain readable to automation. DOTS setup prompt was given in chat for manual use;
-no automation/cross-chat action occurred. Native Doc checklist state may not be
-available through the connector. Xelu's prompt source declares CC0.
+reports, screenshots, comments and the other tabs. Owner rejected verbose forms,
+requested a simple table and created How to use Feedback (t.mj90cfojs1si). Current
+Feedback table: Done, Bug or feedback, Notes/screenshot. Repeated generated forms
+are removed; 39 concise entries and original screenshots remain. Native named
+ranges preserve IDs without exposing tracking jargon to testers. Instructions are
+five short paragraphs in How to use Feedback. Native table/checkmarks and the seven
+yellow human-needed rows are visually verified. The two shipped fixes are checked;
+their short fix notes name ef4f9a729. Original five image IDs remain intact. Generated
+forms were reduced from roughly 50,000 to 7,700 characters. F0930-21 is complete.
 
-Next: finish Feedback-tab organization alongside tutorial assessment/overlap and
-binding reconciliation. Native first unit passed; no repeat validation is needed.
+Latest queue rule: humans add new rows at the very top under the header. Process
+unchecked rows from bottom upward. Yellow rows need a human and are skipped until
+answered; the agent must continue other actionable rows. Record a short tested/shipped
+fix note before checking Done. No status/priority/owner forms in the tester view.
+DOTS setup and scope handoffs go in chat for manual copying; no automation or other
+conversation is contacted. Tutorial return destination is still pending from the
+owner; other tutorial fixes can proceed. Xelu's prompt source declares CC0.
+
+Doc formatting/control reservation is released. Tutorial source batch 2fbee1fb1
+passes its real-jump/common-completion
+case and final Tab/ultimate case. Native combined captures at 960x540/1600x680 were
+inspected; the earlier focus and coordinate-measurement fixture failures are recorded
+in the feedback report. Runtime source stayed frozen. It is committed and being
+merged with incoming authored Nemu changes, preserved byte-for-byte. The next input
+native check will compile the merged candidate; no whole-candidate qualification
+is inferred from the tutorial's earlier source snapshot.
+The completion destination remains human-needed. Do not repeat passing cases.
+Other network/bot files remain unclaimed by this unit. Reconcile explicit
+ownership before overlapping work. No subagents or cross-chat messaging.
+
+Next: default binding correction (inputactions asset and relevant input tests), then gameplay/network/bots
+and other optimization. Loading remains friend-owned. Do not repeat the first unit.
 
 Rematches now allocate a fresh host world identity before reload, adopt a matching
 previous/next pair on clients, scope votes/tallies and acknowledge seated voters.

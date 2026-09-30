@@ -2,11 +2,15 @@ using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Linq;
 using NUnit.Framework;
 using TumbangPreso.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.UI;
 
 namespace TumbangPreso.PlayTests
 {
@@ -103,6 +107,118 @@ namespace TumbangPreso.PlayTests
 
         private static float Flat(Vector3 a, Vector3 b)
             => Vector3.Distance(new Vector3(a.x, 0.0f, a.z), new Vector3(b.x, 0.0f, b.z));
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator ThreeRealJumpsFillTheLessonAndOneTimeCompletionTurnsGreen()
+        {
+            yield return LoadTraining();
+            var route = Object.FindFirstObjectByType<GuidedTraining>();
+            yield return Route(route, GuidedTraining.Lesson.Jump);
+            var local = Field<CharacterMotor>(route, "_local");
+            var hud = Field<GuidedTrainingHud>(route, "_hud");
+            var fill = hud.GetComponentsInChildren<Image>().First(i => i.name == "ProgressFill");
+            for (int jump = 1; jump <= 3; jump++)
+            {
+                float until = Time.realtimeSinceStartup + 5;
+                while (!local.IsGrounded && Time.realtimeSinceStartup < until) yield return null;
+                Assert.IsTrue(local.IsGrounded);
+                local.Intent.Set(Verb.Jump, true);
+                until = Time.realtimeSinceStartup + 2;
+                while (Field<float>(route, "_metric") < jump && Time.realtimeSinceStartup < until) yield return null;
+                local.Intent.Set(Verb.Jump, false);
+                Assert.AreEqual(jump, Field<float>(route, "_metric"));
+                Assert.AreEqual(jump / 3f, fill.rectTransform.anchorMax.x, .001f);
+                Assert.AreEqual(GuidedTraining.Lesson.Jump, route.CurrentLesson);
+                if (jump < 3)
+                {
+                    yield return new WaitForSecondsRealtime(.15f);
+                    Assert.AreEqual(jump, Field<float>(route, "_metric"), "One airborne episode was counted twice.");
+                }
+            }
+            Assert.AreEqual(1, fill.rectTransform.anchorMax.x);
+            Assert.Greater(fill.color.g, fill.color.r, "Completed progress must turn green.");
+            yield return TumpUiCapture.Capture("Feedback0930-tutorial-three-jumps", hud.GetComponent<Canvas>(), 960, 540, false, true);
+            float deadline = Time.realtimeSinceStartup + 2;
+            while (route.CurrentLesson == GuidedTraining.Lesson.Jump && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.AreEqual(GuidedTraining.Lesson.Throw, route.CurrentLesson);
+            route.SkipFromUi();
+            Assert.AreEqual(1, fill.rectTransform.anchorMax.x, .001f, "A one-time lesson completion left its progress empty.");
+            Assert.Greater(fill.color.g, fill.color.r);
+        }
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator TutorialKeepsTabReadableAndWaitsThroughTheUltimateIntroduction()
+        {
+            var oldRules = TumbangPreso.UI.SceneFlow.SelectedRules;
+            var inputSettings = InputSystem.settings;
+            var background = inputSettings.backgroundBehavior;
+            var editorInput = inputSettings.editorInputBehaviorInPlayMode;
+            inputSettings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+            inputSettings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            var keyboard = InputSystem.AddDevice<Keyboard>();
+            InputSystem.EnableDevice(keyboard);
+            try
+            {
+                TumbangPreso.UI.SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
+                yield return LoadTraining();
+                var route = Object.FindFirstObjectByType<GuidedTraining>();
+                yield return Route(route, GuidedTraining.Lesson.Ultimate);
+                var hud = Field<GuidedTrainingHud>(route, "_hud");
+                var local = Field<CharacterMotor>(route, "_local");
+                InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.Tab));
+                InputSystem.Update();
+                Assert.IsTrue(keyboard.tabKey.isPressed, "The fixture's Tab event was not received.");
+                Assert.IsTrue(Field<InputAction>(route, "_abilityInfo").IsPressed(), "The fixture's actual info binding was not received.");
+                yield return null; yield return null;
+                var body = hud.GetComponentsInChildren<Text>(true).First(t => t.name == "LessonBody");
+                Assert.IsFalse(body.gameObject.activeSelf, "The held kit reference did not compact the tutorial.");
+                var reference = GameObject.Find("HeldPowerReference").GetComponent<RectTransform>();
+                Assert.IsTrue(reference.gameObject.activeInHierarchy);
+                var card = (RectTransform)hud.transform.Find("ObjectiveCard");
+                var readout = Object.FindFirstObjectByType<TumbangPreso.UI.TumpMatchReadout>();
+                foreach (var size in new[] { new Vector2Int(960, 540), new Vector2Int(1600, 680) })
+                    yield return TumpUiCapture.Capture("Feedback0930-tutorial-tab-" + size.x + "x" + size.y,
+                        hud.GetComponent<Canvas>(), size.x, size.y, false, true, underlays: new[] { readout.Canvas }, inspectViewport: () =>
+                        {
+                            Canvas.ForceUpdateCanvases();
+                            var a = new Vector3[4]; var b = new Vector3[4];
+                            card.GetWorldCorners(a); reference.GetWorldCorners(b);
+                            var camera = hud.GetComponent<Canvas>().worldCamera;
+                            float bottom = camera.WorldToScreenPoint(a[0]).y;
+                            float top = camera.WorldToScreenPoint(b[1]).y;
+                            Assert.GreaterOrEqual(bottom, top + 2, "Tutorial and Tab reference overlap.");
+                        });
+                InputSystem.QueueStateEvent(keyboard, new KeyboardState());
+                yield return null; yield return null;
+                Assert.IsTrue(body.gameObject.activeSelf, "The tutorial description did not return on release.");
+                local.Intent.Set(Verb.Ultimate, true);
+                yield return null;
+                local.Intent.Set(Verb.Ultimate, false);
+                float deadline = Time.realtimeSinceStartup + 8;
+                while ((SharedUltimatePhase.Instance == null || !SharedUltimatePhase.Instance.Active) && Time.realtimeSinceStartup < deadline) yield return null;
+                Assert.IsTrue(SharedUltimatePhase.Instance != null && SharedUltimatePhase.Instance.Active, "The real input never accepted an ultimate.");
+                deadline = Time.realtimeSinceStartup + 40;
+                while (SharedUltimatePhase.Instance.Active && Time.realtimeSinceStartup < deadline)
+                {
+                    Assert.AreEqual(GuidedTraining.Lesson.Ultimate, route.CurrentLesson);
+                    yield return null;
+                }
+                Assert.IsFalse(SharedUltimatePhase.Instance.Active);
+                yield return new WaitForSecondsRealtime(2.2f);
+                Assert.AreEqual(GuidedTraining.Lesson.Ultimate, route.CurrentLesson, "The post-introduction delay was skipped.");
+                deadline = Time.realtimeSinceStartup + 4;
+                while (route.CurrentLesson == GuidedTraining.Lesson.Ultimate && Time.realtimeSinceStartup < deadline) yield return null;
+                Assert.AreEqual(GuidedTraining.Lesson.DefenderReset, route.CurrentLesson);
+                Assert.AreEqual(16, GuidedTraining.LessonCount);
+            }
+            finally
+            {
+                InputSystem.RemoveDevice(keyboard);
+                inputSettings.backgroundBehavior = background;
+                inputSettings.editorInputBehaviorInPlayMode = editorInput;
+                TumbangPreso.UI.SceneFlow.SetSelectedRules(oldRules);
+            }
+        }
 
         // -------------------------------------------------------------------
 
