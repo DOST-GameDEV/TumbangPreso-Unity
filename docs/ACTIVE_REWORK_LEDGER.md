@@ -890,3 +890,21 @@ restored exactly. Keep authored-map/surface checks and their original2/2passing
 evidence; no animation/runtime change shipped from this qualification unit.
 Native pictures show the body reach; human taste, all-roster, actual-peer and
 dedicated interrupted-lunge checks remain open. Preserve failed/inconclusive history.
+Authored-map qualification8613d3c7 pushed/remote verified; same tag row updated,
+still partial. All camera runtime bytes restored to prior published version.
+Next: refresh the isolated Linux player to current protocol100 for actual play/
+peer qualification. Source remains untouched except this checkpoint. Old private
+protocol97 generated player is obsolete; retain its exact file/hash inventory and
+all logs/captures, then remove only Builds/cloud-linux-20260930 to recover2.1GB.
+Sync tracked candidate Assets/Packages/ProjectSettings from clean current source,
+preserving private build entry point and caches/profiles. Fresh internal output
+Builds/cloud-linux-protocol100, one guarded job, native graphics/two workers.
+Stop at confirmed executable/data and build receipt before launching that player.
+No Desktop replacement, user profile deletion, paid service or loading changes.
+Fresh build preflight:15,364tracked source inputs hashed,233different candidate
+files synchronized. Source protected metadata/assets unchanged; candidate importer
+churn replaced only from authoritative source. Old254-file generated player hash
+inventory saved;2.1GB recovered,3.2GB free. Build identity will honestly retain the
+isolated checkout base83136899+dirty overlay; source-input manifest pins8613d3c7.
+Do not present that embedded base SHA as the current source revision. Actual
+protocol100 and the full input manifest qualify this internal candidate only.
