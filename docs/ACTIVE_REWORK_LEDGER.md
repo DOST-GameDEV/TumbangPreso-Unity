@@ -294,6 +294,15 @@ the unavailable selected browser. No new browser tabs or native processes remain
 Next independent unit is current victory-screen input feedback or network/bot bugs;
 re-read current Doc and ownership first. Do not rerun qualified frozen-boundary cases.
 
+Current local reservation: PlayerInputReader.cs, CameraRig.cs, SpectatorCamera.cs,
+MatchResult.Native.cs and VictoryInputTests.cs/meta for the victory mouse/movement
+report. Offline baseline did not reproduce result-time movement: its only failure
+was post-close synthetic mouse look, which does not drive legacy Mouse X/Y axes.
+No runtime fix or result-time regression is established. Keep the unfinished
+fixture; investigate online/spectator input with a valid look source if resumed.
+Owner requests bottom-up unfinished Feedback first. Loading and ability mechanics
+remain reserved; retain current contributor reservations. No heavy job active.
+
 
 Cloud revised replay unit:2.5s recorded animation,1.25s immutable captured tag
 frame,.18s fade. Recovery clamps/interruptions remain active; no live-world pause.
