@@ -279,8 +279,8 @@ namespace TumbangPreso.Abilities
             private AmihanStorm _storm;
 
             public StormSurge()
-                : base("amihan_ultimate", "STORM SURGE",
-                       "Plant and call the storm. After 2.5 s a map-wide fan of wind throws every player and loose slipper in it to the edge.",
+                : base("amihan_ultimate", "AIRBURST",
+                       "After 2.5 s, unleash a map-wide fan of wind. Players caught are Whirled and thrown airborne; caught slippers fly toward the arena edge.",
                        0.0f, 0.0f, AbilityGlyph.AmihanStormSurge,
                        summary: "After 2.5 s, a map-wide wind blows everyone to the edge.",
                        castAction: "hero-amihan-storm", viewmodelAction: "storm-call",

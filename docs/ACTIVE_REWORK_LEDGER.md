@@ -1385,3 +1385,27 @@ unit is Airburst missing Whirled/airborne slippers. Claim only new
 Tests/PlayMode/AmihanAirburstTests.cs/meta, match partition and scoped plan/report.
 Baseline actual motor/hazard first; runtime claim follows concrete findings.
 No ability runtime edits yet; broader kit/passive remains open in F0930-11.
+Airburst baseline compiles but stalls before test execution at unused-asset unload:
+no log progress for over3minutes, main thread sleeping/futex, memory below actual
+anon guard and no OOM. No test verdict. Stop only exact owned Editor and use one
+warm retry of unchanged source; retain stalled log/receipt. Runtime still unchanged.
+Warm Airburst baseline2/2fails expected behavior: Whirled false and slipper lift0m.
+Claim Runtime/Abilities/AmihanHazards.cs, AmihanHeroKit.cs ultimate text only,
+Packages/com.tumbangpreso.core/Runtime/AmihanRules.cs lift only and
+Runtime/Net/NetSession.cs compatibility version. Use existing HostThrow(null,...)
+for environmental slipper flight, avoiding a second displacement/landing system;
+apply Whirled before collecting loose/newly-dropped slippers. Preserve ownership,
+no shot-credit attribution, host-only outcomes and duplicate release refusal.
+Body lift rises to the existing7m/s safety cap;15m/s carry and16m budget unchanged.
+Protocol101 separates this changed gameplay contract. Broader Amihan stays open.
+
+Airburst corrected native3/3passes3.76s:2.5s activation gate, status/drop,
+real motor airborne travel and loose/held slipper flight/landing; caster/outside
+and duplicate guards retained. Extend this same coherent unit with an observer
+provider refusal check before publication; no additional runtime change. Actual
+peer transport remains separately unqualified; protocol101 prevents mixed behavior.
+
+Airburst final4/4native passes4.00s plus8Core contracts. Publish coherent host
+status/flight correction with protocol101. Keep same Feedback Airburst row open
+for full-map/near-edge/player review, and full F0930-11 open for remaining kit
+reconciliation. No new source art or SFX. Release runtime paths after publication.

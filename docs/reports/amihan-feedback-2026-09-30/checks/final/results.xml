@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 22:17:37Z" end-time="2026-09-30 22:17:41Z" duration="3.7561122">
+  <test-suite type="TestSuite" id="2234" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="995" result="Passed" start-time="2026-09-30 22:17:37Z" end-time="2026-09-30 22:17:41Z" duration="3.756112" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2228" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="995" result="Passed" start-time="2026-09-30 22:17:37Z" end-time="2026-09-30 22:17:41Z" duration="3.748310" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="189401" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2229" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="995" result="Passed" start-time="2026-09-30 22:17:37Z" end-time="2026-09-30 22:17:41Z" duration="3.746878" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2230" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="995" result="Passed" start-time="2026-09-30 22:17:37Z" end-time="2026-09-30 22:17:41Z" duration="3.745991" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1055" name="AmihanAirburstTests" fullname="TumbangPreso.PlayTests.AmihanAirburstTests" classname="TumbangPreso.PlayTests.AmihanAirburstTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-30 22:17:37Z" end-time="2026-09-30 22:17:41Z" duration="3.726566" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1058" name="AcceptedWindupDropsAndLiftsOnlyAtRelease" fullname="TumbangPreso.PlayTests.AmihanAirburstTests.AcceptedWindupDropsAndLiftsOnlyAtRelease" methodname="AcceptedWindupDropsAndLiftsOnlyAtRelease" classname="TumbangPreso.PlayTests.AmihanAirburstTests" runstate="Runnable" seed="1274213762" result="Passed" start-time="2026-09-30 22:17:37Z" end-time="2026-09-30 22:17:40Z" duration="2.941911" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1057" name="CaughtLooseSlipperBecomesAirborne" fullname="TumbangPreso.PlayTests.AmihanAirburstTests.CaughtLooseSlipperBecomesAirborne" methodname="CaughtLooseSlipperBecomesAirborne" classname="TumbangPreso.PlayTests.AmihanAirburstTests" runstate="Runnable" seed="1851406099" result="Passed" start-time="2026-09-30 22:17:40Z" end-time="2026-09-30 22:17:40Z" duration="0.521978" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1056" name="ReleaseWhirlsOnlyCaughtPlayers" fullname="TumbangPreso.PlayTests.AmihanAirburstTests.ReleaseWhirlsOnlyCaughtPlayers" methodname="ReleaseWhirlsOnlyCaughtPlayers" classname="TumbangPreso.PlayTests.AmihanAirburstTests" runstate="Runnable" seed="1449007673" result="Passed" start-time="2026-09-30 22:17:40Z" end-time="2026-09-30 22:17:41Z" duration="0.250107" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

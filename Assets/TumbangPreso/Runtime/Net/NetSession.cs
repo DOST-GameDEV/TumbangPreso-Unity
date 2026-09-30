@@ -546,8 +546,8 @@ namespace TumbangPreso.Net
         // 93: Phaister's introduction ends on the doll's stare, 6.0 s.
         // 97: the ordinary defender lunge travels 3 metres; predicted and host
         // movement must use matching tuning. The movement-budget ceiling is unchanged.
-        // Protocol100 derives a5-second ordinary break; retained halftime remains10seconds.
-        public const int ProtocolVersion = 100;
+        // Protocol101 adds Airburst Whirled and airborne environmental slipper flight.
+        public const int ProtocolVersion = 101;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

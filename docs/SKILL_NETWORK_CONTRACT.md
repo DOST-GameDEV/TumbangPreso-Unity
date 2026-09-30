@@ -33,6 +33,18 @@ The existing slipper snapshot route publishes the result; no packet layout chang
 Native delivery/authority checks are recorded in [the Fetch report](reports/feedback-2026-09-30/nemu-kuro-fetch.md).
 Actual-peer transport and reconnect qualification remain open.
 
+## Airburst Compatibility
+
+Protocol101 changes Amihan's existing ultimate outcome to include Whirled and
+an airborne launch of caught loose/in-flight slippers. ApplyWhirled disarms caught
+holders before the slipper pass. Existing immunity and status snapshots remain.
+HostThrow with a null thrower reuses environmental flight and carries no shot
+credit; existing slipper state/pose snapshots distribute flight and landing.
+Body carry still uses the existing owner-delivered Carry message, capped lift7m/s,
+15m/s horizontal speed and the unchanged16m travel budget. No packet layout changes.
+The2.5s accepted windup and stable ability ID remain. Actual peers require matching
+protocol101 builds; local authority checks are not actual-peer qualification.
+
 ## Cosmetic Reworks
 
 - Keep an ability's ID when its gameplay identity is unchanged. Display names,

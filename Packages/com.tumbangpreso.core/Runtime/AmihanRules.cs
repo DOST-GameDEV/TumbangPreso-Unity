@@ -107,8 +107,8 @@ namespace TumbangPreso.Core
         public const float StormSurgeDistance = 16.0f;
         public const float StormSurgeSpeed = 15.0f;
 
-        /// <summary>A small lift so the carry reads as the wind picking them up, not a slide.</summary>
-        public const float StormSurgeLift = 3.5f;
+        /// <summary>A clear airborne arc, within the existing shared knockback lift safety cap.</summary>
+        public const float StormSurgeLift = 7.0f;
 
         /// <summary>Her own walk while the storm gathers: half speed, the storm is not hers to ride.</summary>
         public const float StormSurgeGatherSpeedScale = 0.5f;

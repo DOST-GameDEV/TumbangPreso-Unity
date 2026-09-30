@@ -161,6 +161,9 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
 - [ ] F0930-11 Amihan: reconcile wiki names/rules/statuses; fast, strong airborne Airburst.
   Owner explicitly reopened this and the full remaining ability queue on2026-10-01.
   Check newest active file claims first; complete specs govern, no invented kits.
+  Airburst status/airborne payload corrected: native4/4 and Core8/8pass;
+  full-map/player near-edge follow-through remains. Second Wind, Drift and broader
+  naming/rule reconciliation stay open. [Evidence](reports/amihan-feedback-2026-09-30/result.md).
 - [ ] F0930-12 Nemu and other defined wiki rules: reconcile current behavior; preserve
   unspecified/placeholder kits rather than inventing replacements.
   Kuro movement bonus and shared 25-second basic cooldowns pass 18 native cases;
