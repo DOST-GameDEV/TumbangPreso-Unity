@@ -1045,3 +1045,14 @@ planned scope; prior8round/native evidence stays separate. Services refused and
 319replay readback failures remain diagnostic limits. No new OOM. Publish witness
 04c675f7 plus exact player evidence, update same Doc row and release witness claim.
 No heavy job active. Next fresh Feedback intake, prioritize actionable refinements.
+Publication verified d8973504; witness04c675f7 included, same Feedback note updated.
+Round witness ownership released. Replay log correction:447failed readbacks in
+first match plus319in rematch, not319total. This is separate from recorded-world
+halftime replay. Investigate the actual spectator pixel ring, not hero animation.
+Claim Runtime/Camera/SpectatorCamera.cs and Tests/PlayMode/ReplayReadbackSupportTests.cs
+plus its metadata, TODO/report. Hypothesis: general async/render-format support
+is insufficient for RGB565 readback; Unity requires ReadPixels format support.
+Discriminate with a minimal native real-capture test, no full map/build repetition.
+Expected: three requested known-colour frames become ready with matching pixels.
+Baseline then smallest correction and one final focused pass, one tooling repair
+maximum. No other runtime paths or contributor-owned loading changes.
