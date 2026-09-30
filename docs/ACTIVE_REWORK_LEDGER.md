@@ -361,3 +361,13 @@ bounded close to authored proportions. Live motor positions, hit range and
 scoring remain unchanged. No kit, loading, input or local build paths are owned.
 Native near/far real-time films and interruption/restoration checks will judge
 the change. No job running; no new animation acceptance claimed.
+
+Whole-body tag revision: near/far real-time contact cases pass with body weight
+transfer and close-distance adaptation; arm extension is capped10percent. Actual
+capsules stay fixed, normal recovery restores root/scale, and the new film was
+sent for owner review. The added missed/interrupted-lunge probe is inconclusive:
+its coroutine sampled before LateUpdate, then its one bounded callback repair
+received no render events outside replay. Incomplete probe removed from shipping
+source, both failure receipts retained; no interruption pass claimed. No job is
+running. Publish the checked runtime and update the same Feedback contact row.
+Loading, hero kits and the local build/input/tutorial reservations stay untouched.

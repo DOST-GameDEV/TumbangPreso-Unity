@@ -159,6 +159,10 @@ namespace TumbangPreso.PlayTests
             {
                 var sourceHand = actor.GetComponent<CharacterVisual>().HandAnchor;
                 Vector3 restScale = sourceHand.parent.localScale;
+                var sourceTorso = actor.GetComponent<CharacterVisual>().TorsoBone;
+                var sourceRoot = sourceTorso.parent;
+                Vector3 motorStart = actor.transform.position;
+                Vector3 rootStart = sourceRoot.localPosition;
                 int beforeScore = GameServices.Match.ScoreFor(0);
                 Assert.IsTrue(actor.GetComponent<CombatVerbs>().HostResolvePunch(actor.transform.position, actor.transform.forward));
                 Assert.IsTrue(view.Playing);
@@ -171,11 +175,15 @@ namespace TumbangPreso.PlayTests
                 var victimCopy = (MatchPoseHistory.Copy)Field("_victimCopy");
                 var hand = Object.FindAnyObjectByType<MatchPoseHistory>().ForSeat(0).CopiedBone(copy, sourceHand);
                 Assert.IsNotNull(hand);
+                var track = Object.FindAnyObjectByType<MatchPoseHistory>().ForSeat(0);
+                var copiedTorso = track.CopiedBone(copy, sourceTorso);
+                var copiedRoot = track.CopiedBone(copy, sourceRoot);
                 var camera = (Camera)Field("_camera"); var target = (RenderTexture)Field("_target");
                 var picture = (UnityEngine.UI.RawImage)Field("_picture");
                 string directory = "Logs/tag-contact/reach-" + distance.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
                 System.IO.Directory.CreateDirectory(directory);
                 float lastTime = -1, lastGap = float.MaxValue, lastPoseTime = 0, lastAlpha = 0;
+                float lastShift = 0, lastLean = 0, lastStretch = 0;
                 rendered = c =>
                 {
                     if (c != camera) return;
@@ -185,9 +193,14 @@ namespace TumbangPreso.PlayTests
                     foreach (var renderer in victimCopy.Renderers) bounds.Encapsulate(renderer.bounds);
                     lastGap = Vector3.Distance(hand.position, bounds.ClosestPoint(hand.position));
                     lastAlpha = picture.color.a;
+                    lastShift = copiedRoot.parent.TransformVector(copiedRoot.localPosition - rootStart).magnitude;
+                    lastLean = Vector3.Angle(copiedTorso.up, actor.transform.up);
+                    Vector3 armScale = hand.parent.localScale;
+                    lastStretch = Mathf.Max(armScale.x / restScale.x, armScale.y / restScale.y, armScale.z / restScale.z);
                 };
                 Camera.onPostRender += rendered;
                 float next = 0, bestDistance = float.MaxValue, bestGap = float.MaxValue, bestAlpha = 0;
+                float bestShift = 0, bestLean = 0, bestStretch = 0;
                 int frames = 0;
                 var times = new System.Collections.Generic.List<string>();
                 while (view.Playing && Time.unscaledTime - began < duration + .5f)
@@ -209,6 +222,7 @@ namespace TumbangPreso.PlayTests
                         if (proximity < bestDistance)
                         {
                             bestDistance = proximity; bestGap = lastGap; bestAlpha = lastAlpha;
+                            bestShift = lastShift; bestLean = lastLean; bestStretch = lastStretch;
                             System.IO.File.WriteAllBytes(directory + "/contact.png", bytes);
                         }
                         frames++;
@@ -217,13 +231,20 @@ namespace TumbangPreso.PlayTests
                 }
                 System.IO.File.WriteAllLines(directory + "/times.txt", times);
                 string values = "distance=" + distance + " contactGap=" + bestGap + " contactAlpha=" + bestAlpha
-                    + " sampleError=" + bestDistance + " frames=" + frames;
+                    + " sampleError=" + bestDistance + " frames=" + frames
+                    + " bodyShift=" + bestShift + " torsoLean=" + bestLean + " armStretch=" + bestStretch;
                 System.IO.File.WriteAllText(directory + "/measurements.txt", values); Debug.Log(values);
                 Assert.That(frames, Is.GreaterThan(8));
                 Assert.That(bestDistance, Is.LessThan(.09f));
                 Assert.That(bestGap, Is.LessThan(.08f), "The actual rendered reaching hand must reach the accepted victim's visible body bounds.");
                 Assert.That(bestAlpha, Is.GreaterThan(.95f), "Do not fade out while the hand first reaches the target.");
                 Assert.That(Vector3.Distance(restScale, sourceHand.parent.localScale), Is.LessThan(.001f), "Temporary limb extension must restore.");
+                Assert.That(bestShift, Is.GreaterThan(.1f), "The hips must transfer weight into the step.");
+                Assert.That(bestLean, Is.GreaterThan(distance > 1.5f ? 35f : 18f), "The chest must commit to the reach.");
+                if (distance < 1.1f) Assert.That(bestLean, Is.LessThan(30f), "Close tags should not dive through the target.");
+                Assert.That(bestStretch, Is.LessThanOrEqualTo(1.101f), "Do not substitute an elongated arm for body motion.");
+                Assert.That(Vector3.Distance(motorStart, actor.transform.position), Is.LessThan(.03f), "The visual step must not move the gameplay capsule.");
+                Assert.That(Vector3.Distance(rootStart, sourceRoot.localPosition), Is.LessThan(.03f), "The visual hip offset must restore after recovery.");
                 Assert.AreEqual(1, acceptedTags, "Animation must not create another accepted tag.");
             }
             finally

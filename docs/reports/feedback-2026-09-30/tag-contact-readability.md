@@ -93,3 +93,45 @@ expand the all-roster/full-map/actual-peer or first-person-film claims.
 
 - integration.xml: SHA-256 27cceded7eb78c16957f5a71a9dfdb07e546346c4e203cc068a71f4960be7c1d
 - integration-inputs.json: SHA-256 0b659ad1d9e042e5d3723a9985f96c771d7864f7a4a130d082392fad8056c0f8
+
+## Whole-body refinement after owner review
+
+The owner rejected the first film's arm-heavy reach and requested a body that
+tries to reach. The earlier film remains above as history, not visual acceptance.
+The next pose resets the old melee wind-up under the ordinary tag, turns the
+shoulder/chest into the touch and transfers the hips into a split supporting step.
+The offset is on the visual skeleton only. Leg-length geometry determines the
+forward shift and hip drop, preserving the authored limb lengths. Contact-driven
+arm scaling is now bounded to0.90-1.10 instead of0.75-2.25.
+
+The first body iteration passed both contact cases, but the close-range picture
+showed too much commitment into the target. The final jab adapts its lean/step to
+the accepted contact distance. Its close/far real-time cases both pass:
+
+-1m: body offset0.144m, torso lean23.33degrees, no arm elongation, bounds gap0.
+-1.65m: body offset0.273m, torso lean38degrees, arm scale1.10, bounds gap0.
+-Both retain full contact opacity, exactly one accepted Tag event, unchanged live
+ capsule position and restoration of the root offset and arm scale after recovery.
+-Restoration now unwinds tag offsets before the underlying locomotion layer in
+ Update, LateUpdate and graph release, matching the layer application order.
+
+[New close pose](tag-contact-body-v2-close.png),
+[new far pose](tag-contact-body-v2-far.png),
+[new3s native replay film](tag-contact-body-v2.mp4).
+The film uses36completed native frames and their recorded timestamps, encoded to
+960x720/30fps without interpolated poses. The extracted encoded contact frame and
+source close/far pictures were inspected. These remain isolated Classic pair
+checks, not an authored-map, all-body, actual-peer or human acceptance claim.
+
+The final run contains two passing contact cases and one failed new recovery
+probe. That probe first sampled before LateUpdate; its single bounded correction
+observed no camera callbacks outside an active replay in this batch fixture. It
+was removed from shipping test source as an incomplete harness, not treated as
+passing or used to claim interruption coverage. Both failed receipts and the
+incomplete probe are retained with the private run evidence. No further tooling
+loop was started. Normal recovery is covered by both actual replay checks;
+dedicated missed/lunge-interrupted playback remains unqualified. Runtime inputs
+are unchanged between the final contact capture and that harness-only attempt.
+
+[Final body run: two contact passes, incomplete recovery probe](checks/tag-contact-body-v2.xml).
+[Bounded recovery-harness attempt, not a product pass](checks/tag-contact-body-recovery-inconclusive.xml).
