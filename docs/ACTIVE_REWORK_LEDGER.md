@@ -360,3 +360,16 @@ or application is stopped. The3-case route check reached runtime without a new
 OOM: movement/role/can setup and completed-range reset/realQuit pass; blocking
 revealed that the staged undercharged12m shot lands short. Correct its demonstration
 lane with the existing full-power solver, then rerun the physical block check.
+
+Cloud tutorial route now implements the20-lesson Feedback contract, ordered real
+objectives,3-second continuous reading, accepted-cast delay and post-completion
+practice with reset-only defender. Twelve distinct focused native cases pass;
+raw earlier block/cast setup failures and their corrections are preserved in
+reports/feedback-2026-09-30/tutorial-route.md. Final integrated free-play/Quit
+check passes1/1 with the published protocol98 round-freeze paths. No new player
+build or human verification is claimed. Existing cloud material artifact remains.
+Owner13:32 prioritizes Harry's newest Feedback over the old bottom-up order.
+Owner13:26 confirms Done is independent of Human verified. Cloud native-checkbox
+access works: eight additional shipped rows were ticked, Human verified unchanged.
+New tutorial rows remain open until publication. Victory-screen input is the
+local contributor's next candidate; keep it separate. Tutorial paths release after this coherent unit is published. No loading/hero ability source is changed.

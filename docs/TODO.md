@@ -32,19 +32,15 @@ for other characters. Phaister and Paete ability behavior is protected; descript
 may be corrected from their current implementations. Incomplete wiki cells are
 not specifications to invent. Scope restrictions supersede cosmetic additions.
 
-- [ ] F0930-01 Tutorial: latest owner-approved revision is IN PROGRESS in the cloud.
-  Prompt readability, Enter skip and Darumadrop/Xelu footer controls now pass the
-  actual-scene native key/layout case with inspected960x540/1600x680captures.
-  [Evidence](reports/feedback-2026-09-30/tutorial-prompts.md). Next reconcile the
- 20-lesson route, observed objectives and post-completion range.
-  Earlier shipped history: prevent Tab-deck overlap; assess real actions, expose per-lesson
-  progress and green completion, require three jumps, wait through ultimate playback
-  plus 2.5 seconds, remove deprecated mash lesson, and return cleanly on completion.
-  Tab compaction/release, three distinct takeoffs, full green completion, the real
-  ultimate introduction plus post-delay, and the 16-lesson route are implemented
-  and natively verified. [Evidence](reports/feedback-2026-09-30/README.md#tutorial).
-  The owner answered lobby. Completion and quit now use the existing hub exit,
-  clearing the offline round/match state. The actual Finish-button native case passes.
+- [x] F0930-01 Tutorial: revised20-lesson route, real ordered objectives,
+  readable binding-specific prompts, Enter skip and Darumadrop/Xelu footer ship.
+  Completion stays in a usable practice ground with a reset-only defender; Quit
+  exits cleanly. This supersedes the earlier lobby-on-finish request.
+  Twelve distinct native cases pass, plus the integrated free-play/Quit check.
+  Three real jumps, green progress, Tab coexistence and ultimate presentation
+  plus2.5seconds remain qualified. No new player or human approval is claimed.
+  [Route evidence](reports/feedback-2026-09-30/tutorial-route.md).
+  [Prompt evidence](reports/feedback-2026-09-30/tutorial-prompts.md).
 - [x] F0930-02 Tasks: unchanged wallet refresh retains rows and entrance state;
   changed rows refresh without replaying entrance. Focused native path passes.
 - [x] F0930-03 Round scoreboard: centered, hides duplicated HUD for ordinary/halftime
