@@ -408,3 +408,9 @@ stay reserved for the next coherent unit, with no edits started. Current jobs:no
 Doc archive now has17 human-verified reports; active Feedback has31rows including
 header. Human notes/comments is added to both tables. Native checklist state is
 read from the document's own rich clipboard; preserve all controls and images.
+
+Latest tutorial refinement passes3/3 native checks, exit0,62.20seconds, no new OOM.
+Actual look and both movement thresholds, authored body copy and completion footer
+are qualified;960x540/1600x680 inspected. Source paths release after publication.
+Next implement the reserved3-second ordinary break/10-second halftime replay
+revision. No heavy job active. Existing cloud material artifact remains separate.

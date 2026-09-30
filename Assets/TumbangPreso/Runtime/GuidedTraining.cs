@@ -257,21 +257,21 @@ namespace TumbangPreso
                 case Lesson.Look:
                     bool looking = _local.Intent.LookAxis.sqrMagnitude > .01f;
                     if (looking) _metric += Mathf.Min(dt, .1f);
-                    SetProgress(_metric / 3f);
-                    if (_metric >= 3f) CompleteLesson();
+                    SetProgress(_metric / 1.5f);
+                    if (_metric >= 1.5f) CompleteLesson();
                     break;
 
                 case Lesson.Move:
                     AddTravel();
-                    SetProgress(_metric / 5.0f);
-                    if (_metric >= 5.0f) CompleteLesson();
+                    SetProgress(_metric / 7.5f);
+                    if (_metric >= 7.5f) CompleteLesson();
                     break;
 
                 case Lesson.Sprint:
                     if (_local.Stamina.IsSprinting && _local.Intent.MoveAxis.sqrMagnitude > .1f) AddTravel();
                     else _lastPosition = _local.transform.position;
-                    SetProgress(_metric / 10f);
-                    if (_metric >= 10f) CompleteLesson();
+                    SetProgress(_metric / 7.5f);
+                    if (_metric >= 7.5f) CompleteLesson();
                     break;
 
                 case Lesson.Jump:
@@ -879,7 +879,7 @@ namespace TumbangPreso
                     title = "RUN"; body = "Run around the arena. Running makes you move faster but consumes stamina that replenishes over time.";
                     action = Key("Sprint") + " + " + MovementPrompt() + " RUN"; break;
                 case Lesson.Jump:
-                    title = "JUMP"; body = "Jump around the arena. Land between three jumps.";
+                    title = "JUMP"; body = "Jump around the arena.";
                     action = Key("Jump") + " JUMP"; break;
                 case Lesson.Throw:
                     PrepareAttackerThrow(); title = "THROW";
@@ -893,7 +893,7 @@ namespace TumbangPreso
                     _marker?.Bind(_ownSlipper != null ? _ownSlipper.transform : null); break;
                 case Lesson.Pektus:
                     PrepareAttackerThrow(); title = "CURVE THROW";
-                    body = "Scroll the mouse wheel to curve the throw. Use this to make the throw harder to block. Retrieve your slipper afterwards.";
+                    body = "Scroll the mouse wheel to curve the throw. Use this to make the throw harder to block.";
                     action = Key("CurveLeft") + " / " + Key("CurveRight") + " CURVE"; break;
                 case Lesson.ThrowAndRetrieve:
                     PrepareAttackerThrow(); title = "THROW AND RETRIEVE";
@@ -906,7 +906,7 @@ namespace TumbangPreso
                     action = Key("Lunge") + " SHOVE"; _marker?.Bind(_dummy.transform); break;
                 case Lesson.Block:
                     PrepareBlockExercise(); title = "BLOCK";
-                    body = "You are now defending. Move around to block incoming slippers. Block three to continue.";
+                    body = "You are now defending. Move around to block incoming slippers.";
                     action = MovementPrompt() + " BLOCK"; break;
                 case Lesson.Punch:
                     PrepareMovingAttacker(); title = "TAG";
@@ -936,15 +936,15 @@ namespace TumbangPreso
                     action = Key("AbilityInfo") + " HOLD TO READ"; break;
                 case Lesson.Skill1:
                     PrepareAbilityGround(); ResetHeroKit(); title = "CAST SIGNATURE ABILITY";
-                    body = "Signature abilities are always available regardless of your role. They give you a reliable mix of mobility and utility.";
+                    body = "Signature abilities are always available regardless of your role. It gives you a reliable mix of mobility and utility.";
                     action = Key("Skill1") + " CAST"; break;
                 case Lesson.Skill2:
                     PrepareAbilityGround(); ResetHeroKit(); title = "CAST ROLE ABILITY";
-                    body = "Role abilities change depending on which role you take each round. They help you escape tags when attacking or chase attackers when defending.";
+                    body = "Role abilities change depending on which role you take each round. It adapts to your role, helping you escape tags when attacking or chase attackers when defending";
                     // MAGNET requires the student's own loose slipper. Prepare that real
                     // prerequisite instead of bypassing or modifying the hero's cast gate.
                     if (_abilities?.Kit is ZackHeroKit)
-                    { PlaceOwnSlipperTowardTheLata(); body += " Your slipper is on the ground for this recall."; }
+                    { PlaceOwnSlipperTowardTheLata(); }
                     action = Key("Skill2") + " CAST"; break;
                 case Lesson.Ultimate:
                     PrepareAbilityGround(); ResetHeroKit();
@@ -962,7 +962,7 @@ namespace TumbangPreso
                 default:
                     PrepareCompletedRange(); title = "TRAINING COMPLETE";
                     body = "You are now ready to fight in the actual arena. Feel free to test everything you just learned while you are still here.";
-                    action = "PRACTISE FREELY"; _marker?.Bind(null);
+                    action = ""; _marker?.Bind(null);
                     GameServices.Audio?.PlayUi("match_win"); break;
             }
 
@@ -1759,6 +1759,9 @@ namespace TumbangPreso
             if(_ownerSkipLabel!=null)
             { _ownerSkipLabel.text="SKIP LESSON"; _ownerSkipLabel.transform.parent.gameObject.SetActive(lesson<total); }
             _body.text = body;
+            if (_ownerQuit != null) _ownerQuit.anchoredPosition = new Vector2(lesson >= total ? 0 : 320, _ownerQuit.anchoredPosition.y);
+            _hasLessonAction = !string.IsNullOrEmpty(action);
+            if (_keyRow != null) _keyRow.gameObject.SetActive(_hasLessonAction && !_inspecting);
 
             for (int i = 0; i < _pips.Count; i++)
             {

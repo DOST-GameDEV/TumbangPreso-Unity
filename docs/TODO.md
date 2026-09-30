@@ -41,6 +41,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   plus2.5seconds remain qualified. No new player or human approval is claimed.
   [Route evidence](reports/feedback-2026-09-30/tutorial-route.md).
   [Prompt evidence](reports/feedback-2026-09-30/tutorial-prompts.md).
+  Latest refinement: Look1.5seconds; Move/Run7.5metres; authored lesson copy only;
+  completion hides the extra action caption and left-aligns Quit. Three focused
+  native checks pass with both completion sizes inspected.
+  [Refinement evidence](reports/feedback-2026-09-30/tutorial-refinements.md).
 - [x] F0930-02 Tasks: unchanged wallet refresh retains rows and entrance state;
   changed rows refresh without replaying entrance. Focused native path passes.
 - [x] F0930-03 Round scoreboard: centered, hides duplicated HUD for ordinary/halftime

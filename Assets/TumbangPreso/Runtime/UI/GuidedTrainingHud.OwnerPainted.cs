@@ -7,6 +7,8 @@ namespace TumbangPreso
     public sealed partial class GuidedTrainingHud
     {
         private Text _ownerSkipLabel;
+        private RectTransform _ownerQuit;
+        private bool _hasLessonAction;
         private bool _inspecting;
         public void SetInspecting(bool held)
         {
@@ -15,7 +17,7 @@ namespace TumbangPreso
             // The kit tray supplies the long descriptions while held. Retain the
             // objective/progress/exit controls in a compact card above that tray.
             if (_body != null) _body.gameObject.SetActive(!held);
-            if (_keyRow != null) _keyRow.gameObject.SetActive(!held);
+            if (_keyRow != null) _keyRow.gameObject.SetActive(!held && _hasLessonAction);
         }
         private static readonly Color TrainingInk=new Color32(244,238,219,255);
         private static readonly Color TrainingMuted=new Color32(180,202,212,255);
@@ -73,6 +75,7 @@ namespace TumbangPreso
             _ownerSkipLabel=skip.GetComponentInChildren<Text>();_ownerSkipLabel.color=TrainingCurrent;
             var quit=TrainingAction(footer,"QuitTraining","QUIT","BACKSPACE",()=>training?.QuitFromUi(),320,318);
             quit.GetComponentInChildren<Text>().color=TrainingMuted;
+            _ownerQuit=(RectTransform)quit.transform;
             HudReadingLayout.Watch(card);
             HudReadingLayout.Watch(_complete.rectTransform);
         }
