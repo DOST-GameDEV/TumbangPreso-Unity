@@ -85,6 +85,23 @@ or previous tutorial checks were repeated; physical hardware remains unqualified
 
 ## Xelu Control Prompts
 
+### Latest Actions Correction
+
+The latest human Feedback row reverses the first request's wheel directions:
+UP RIGHT / DOWN LEFT. The visible Actions order is Throw/Tag, Retrieve Slipper /
+Reset Can, Curve Right, Curve Left, Shove/Lunge. The separate Hold Interact row
+is removed from settings; the actual action, saved overrides and existing kit
+behavior remain. Binding IDs are unchanged.
+
+Three native EditMode checks pass for ordering and complete visible-row/group
+coverage. The updated real mouse/wheel/F input case also passes. The initial test
+filter listed an obsolete fourth method name; only the three actual cases are
+claimed. No broad unchanged tests or physical-device certification are inferred.
+
+- [Settings contract](checks/actions-order-edit.xml)
+- [Real inputs](checks/actions-order-play.xml)
+- [Frozen inputs](checks/actions-order-inputs.json)
+
 198 unchanged CC0 PNGs from the requested pack now resolve through the shared
 InputGlyphs path. Keyboard/mouse light and dark variants follow their background;
 Xbox and PlayStation keep actual button names. The live power HUD now draws the

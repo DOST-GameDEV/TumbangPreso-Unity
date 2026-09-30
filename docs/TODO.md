@@ -61,6 +61,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Retrieve/Reset/Interact, wheel up-left/down-right, F Shove/Lunge/Ready. IDs and saved
   overrides retained. Native device/intents and shared Ready-release guard pass;
   default-collision and older-override checks pass. [Evidence](reports/feedback-2026-09-30/README.md#default-action-bindings).
+  Latest Feedback correction supersedes the first wheel order: UP RIGHT / DOWN LEFT.
+  Actions now show Throw/Tag, Retrieve/Reset, Curve Right, Curve Left, Shove/Lunge;
+  separate Hold Interact row removed. Actual action and saved overrides retained.
+  Three native settings-contract checks and the updated real-input case pass.
 - [x] F0930-07 Longer defender lunge: full charge targets3m in both modes, with
   derived speed, bot approach/celebration bounds and pressure stats. Actual local
   input and host-request travel, repeat refusal, new-range tag and distant miss

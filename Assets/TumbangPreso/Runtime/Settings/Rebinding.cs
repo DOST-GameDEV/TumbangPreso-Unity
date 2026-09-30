@@ -68,13 +68,15 @@ namespace TumbangPreso.Settings
     /// </summary>
     public static class Rebinding
     {
+        // The owner removed the separate Hold Interact row. Its action and saved
+        // overrides remain in the asset for existing gameplay; only this list is UI.
         /// <summary>Action names as they appear in the Input System asset or composite parts.</summary>
         public static readonly string[] RebindableActions =
         {
             "MoveForward", "MoveBackward", "MoveLeft", "MoveRight",
             "Sprint", "Jump",
             "SpecialAbility", "Grab", "Lunge", "CurveLeft", "CurveRight",
-            "Skill1", "Skill2", "Ultimate", "Interact",
+            "Skill1", "Skill2", "Ultimate",
             "ReadyUp", "CleanFeed", "AbilityInfo",
             "EmoteWheel",
             "Pause",
@@ -163,7 +165,7 @@ namespace TumbangPreso.Settings
             { "MoveRight", "Move Right" },
             { "Move", "Move" },
             { "SpecialAbility", "Throw / Tag" },
-            { "Grab", "Interact / Use" },
+            { "Grab", "Retrieve Slipper / Reset Can" },
             { "Lunge", "Shove / Lunge" },
             { "CurveLeft", "Curve Throw Left" },
             { "CurveRight", "Curve Throw Right" },
@@ -216,8 +218,7 @@ namespace TumbangPreso.Settings
         public static readonly (string Title, string[] Actions)[] Groups =
         {
             ("MOVEMENT", new[] { "MoveForward", "MoveBackward", "MoveLeft", "MoveRight", "Sprint", "Jump" }),
-            ("ACTIONS", new[] { "SpecialAbility", "Lunge", "CurveRight", "CurveLeft",
-                                "Grab", "Interact" }),
+            ("ACTIONS", new[] { "SpecialAbility", "Grab", "CurveRight", "CurveLeft", "Lunge" }),
             ("ABILITIES", new[] { "Skill1", "Skill2", "Ultimate" }),
             ("INTERFACE", new[] { "AbilityInfo", "ReadyUp", "CleanFeed", "Pause",
                                   "ToggleFullscreen" }),
