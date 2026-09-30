@@ -576,3 +576,18 @@ scope. No runtime source changed after their passing run. Publish explicit paths
 then update QA_TUMP_0045 Notes/Done. No heavy job. Next Harry row is HUD Changes:
 larger ready Xelu prompt/Ready Up, remove warmup subtitle, ability controls/prompts
 50percent larger with margins preserved. Read its attached images before claiming.
+Round revision c10e8ec5 integrated with the independently checked bot inventory
+atb440ce6f, pushed and remote verified. Its Doc Notes/Done are updated; Human
+verified remains human-owned. Round runtime/test paths released, no heavy job.
+
+Claim newest Harry HUD Changes row, Ready Up portion first:
+Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.cs,
+Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.CourtHud.cs,
+Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.MatchBar.cs,
+Assets/TumbangPreso/Tests/PlayMode/TumpNativeHudTests.cs,
+and matching TODO/UI method/evidence. Read both supplied screenshots. Implement
+an actual larger Xelu Interact/Ready prompt and Ready Up label, remove the warmup
+subtitle, preserve saved bindings/device behavior and all non-ready action prompts.
+Ability-button enlargement is awaiting the owner's precise interpretation of the
+new Paete/Phaister presentation lock because the supplied screenshot is Paete.
+No power-deck or protected-hero changes until resolved.
