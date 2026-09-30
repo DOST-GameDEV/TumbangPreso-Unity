@@ -56,19 +56,21 @@ Five native failures reproduced phantom teleport movement and early visibility;
 all9 final cases pass. The same contact Feedback row has a partial-resolution note.
 Full visible-contact proof remains open. Pose-history paths are released.
 
-Diddler reservation: shorten the requested ordinary tsinelas charge from2.5 to1.25
-seconds while preserving minimum/full power, release legality, signed spin and
-pickup/recovery rules. Test the real Carrier in both modes and observed charge.
-Bump compatibility for the changed interpretation of charge-seconds presentation.
-No hero abilities, authored effects, input bindings or loading edits.
+Ordinary throw charge shipped in cc6476be2c2f112c8b088510e5e3433e4aea896a:
+1.25 seconds to full power, with8 native carrier/observed/release cases passing in
+both modes. Protocol96 requires matching builds. Its Feedback row is updated;
+landing-circle replacement and clearer charge feedback remain open. Charge and
+NetSession compatibility paths are released.
+
+Diddler reservation: Practice popup's Tutorial card is visually highlighted on
+opening without pointer hover. Separate this popup's automatic focus from real
+pointer/keyboard/pad attention, preserving navigation selection and all actions.
 Owned paths:
-- Packages/com.tumbangpreso.core/Runtime/Balance.cs (ChargeFullTime only)
-- Assets/TumbangPreso/Runtime/Carrier.cs (stale duration comment only)
-- Assets/TumbangPreso/Runtime/Net/NetSession.cs (ProtocolVersion only)
-- Assets/TumbangPreso/Tests/PlayMode/ThrowChargeDurationTests.cs and its .meta
-- docs/Design.md (ordinary throw charge duration only)
-- docs/reports/feedback-2026-09-30/throw-charge-duration.md
-- docs/TODO.md and docs/ACTIVE_REWORK_LEDGER.md (this unit and evidence only)
+- Assets/TumbangPreso/Runtime/UI/Hub/HubButton.cs (opt-in attention presentation only)
+- Assets/TumbangPreso/Runtime/UI/Hub/HubModeSelect.cs (Practice card opt-in only)
+- Assets/TumbangPreso/Tests/PlayMode/PracticeAttentionTests.cs and its .meta
+- docs/reports/feedback-2026-09-30/practice-attention.md
+- docs/TODO.md and docs/ACTIVE_REWORK_LEDGER.md (this issue and evidence only)
 
 Local tutorial batch 2fbee1fb1 is complete and being integrated with this Nemu unit.
 Its source reservation is released except the pending human completion destination.
