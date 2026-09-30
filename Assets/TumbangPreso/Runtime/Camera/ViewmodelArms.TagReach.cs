@@ -32,9 +32,9 @@ namespace TumbangPreso.CameraSystem
             if (!punch && !lunge) return;
             if (Settings.SettingsStore.Current.ReducedUiMotion) return;
             float t = _clipTime;
-            float w = lunge ? Reach(t, .10f, .38f, .62f) : Reach(t, .12f, .16f, .34f);
+            float w = lunge ? Reach(t, .10f, Core.Balance.LungeActiveTime, .62f) : Reach(t, .12f, .22f, .34f);
             if (w <= .001f) return;
-            _tagRight = (lunge ? new Vector3(-.13f, -.02f, .27f) : new Vector3(-.11f, .05f, .21f)) * w;
+            _tagRight = (lunge ? new Vector3(-.13f, -.02f, .27f) : new Vector3(-.11f, .05f, .28f)) * w;
             _tagLeft = new Vector3(.03f, -.08f, -.07f) * w;
             _rightPivot.localPosition += _tagRight;
             _leftPivot.localPosition += _tagLeft;

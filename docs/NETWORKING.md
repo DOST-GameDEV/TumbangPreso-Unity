@@ -44,7 +44,7 @@ Runtime files below are in `Assets/TumbangPreso/Runtime/`.
 | Live sentry targets | SentryTargetState and MatchRpc.SentryTargets deliver the host mask by match/round/owner/ultimate cohort,with bounded pre-birth delivery. PaeteSentry live registry binds it once; replicas never infer or catch. |
 | Live familiar recovery | FamiliarEffectState and MatchRpc.FamiliarEffects bind the seance to world/body scope, stable hero/ultimate IDs and accepted phase. Active duplicates, older phases and completed lifetimes cannot recreate its field or end a newly active role skill. Retired possession poses are not part of this recovery contract. |
 | Effect cleanup ownership | PaeteHeroKit's ultimate tracks its exact fresh sentries and adopts recovered owner instances through IWorldEffectBinding. One kit reset must not destroy other casters' effects. |
-| Contact presentation | Visual/MatchFlair announces accepted outcomes with match/round scope. UltimateImpact reuses HitFeel on the victim's own view; no gameplay mutation or caster confirmation. |
+| Contact presentation | Visual/MatchFlair announces accepted outcomes with match/round scope. Ordinary player tag posing consumes the existing actor/subject/contact point; it cannot award a hit or move a motor. UltimateImpact reuses HitFeel on the victim's own view; no gameplay mutation or caster confirmation. |
 | Compatibility | Net/SkillContractFingerprint and NetSession.ProtocolVersion. Fingerprints exclude cosmetic files,but semantic/wire changes still need explicit versioning. |
 
 Ranked,casual,custom,LAN/online and spectators share match delivery. Read the queue,

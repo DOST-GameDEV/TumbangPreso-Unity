@@ -92,13 +92,34 @@ hand, body animation and replay camera side/timing before changing motion. Prese
 authoritative hit outcomes and both views; no ability or landing-circle overlap.
 Owned paths:
 - Assets/TumbangPreso/Runtime/Camera/CatchReconstruction.cs
-- Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.TagBody.cs (only if reach diagnosis requires it)
+- Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.TagBody.cs
+- Assets/TumbangPreso/Runtime/Visual/MatchFlair.cs (accepted tag-contact presentation only)
 - Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.TagReach.cs (only if matching first-person correction is needed)
 - Assets/TumbangPreso/Tests/PlayMode/CatchReconstructionTests.cs
-- docs/reports/feedback-2026-09-30/tag-contact-readability.md and tag-contact-* captures
+- docs/reports/feedback-2026-09-30/tag-contact-readability.md
+- docs/reports/feedback-2026-09-30/tag-contact-close.png
+- docs/reports/feedback-2026-09-30/tag-contact-far.png
+- docs/reports/feedback-2026-09-30/tag-contact-native.mp4
+- docs/reports/feedback-2026-09-30/checks/tag-contact-far-before.xml
+- docs/reports/feedback-2026-09-30/checks/tag-contact-final.xml
+- docs/reports/feedback-2026-09-30/checks/tag-contact-lifecycle.xml
+- docs/reports/feedback-2026-09-30/catch-replay-motion.md (capture limitation correction)
+- docs/NETWORKING.md (contact-presentation contract only)
 - docs/TODO.md and docs/ACTIVE_REWORK_LEDGER.md (this issue only)
-No native job is running. The previous camera-motion captures prove progression,
-not visible hand contact; inspect both sides and the reach peak next.
+Grounded diagnosis: camera already shows the correct hand side. At a valid1.65m
+accepted tag, the copied hand still misses even the visible body bounds by0.4777m.
+The arm-axis hypothesis is ruled out (palm/axis dot0.9693). Refine the real tag
+pose toward its existing accepted event contact, with bounded arm extension and
+matching first-person timing; preserve gameplay hit range, score and teleport.
+The original motion fixture had disabled motors/default capsules; it now uses
+actual grounding and the shipped capsule dimensions. Manual same-frame seeks were
+also insufficient for skinned-pose review; the new film uses real completed frames.
+Near/far contacts pass, exact one Tag event and limb-scale restoration pass; receipt
+ordering rejects stale-contact reuse and cannot create scores. Continuous motion
+remains passing. Real-time960x720 film and close/far stills were inspected; human,
+all-roster, full-map and actual-peer approval are not claimed. No native job is
+running. Commit this unit, integrate current incoming work, verify remote and update
+the existing contact report. Preserve the local charge/input/tutorial reservation.
 
 Local tutorial batch 2fbee1fb1 is complete and being integrated with this Nemu unit.
 Its source reservation is released except the pending human completion destination.

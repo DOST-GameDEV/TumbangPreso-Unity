@@ -81,3 +81,12 @@ This does not expand the full-map or actual-peer evidence claim.
 
 - integration.xml: SHA-256 6778b2c7e11758da802dca80940d1ab3a4dc7a78f61d17dfef4e01054d5f5ec0
 - integration-inputs.json: SHA-256 777060290150661143519d629ce290f25f448494361922135ea948247b101eb6
+
+## Subsequent capture correction
+
+Owner review found that these isolated same-frame-seek stills did not establish
+visible hand contact. The fixture's disabled motors/default capsules and native
+skinning reuse made them insufficient animation evidence. The root-motion and
+isolation checks remain valid for their stated boundaries; use the new grounded,
+real-time [contact review](tag-contact-readability.md) for hand-contact evidence.
+The original images/history are retained, not silently replaced.
