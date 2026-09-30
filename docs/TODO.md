@@ -138,6 +138,12 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   authorized later; preserve loading as an outstanding contributor-owned requirement.
 - [ ] F0930-20 Continue focused network, bots, optimization, flow bugs and applicable
   existing TODO requirements after feedback, with actual behavior evidence.
+- [x] F0930-26 Build-input bug: ordinary builds now validate retained swim/recovery
+  clips instead of rerunning authoring and overwriting approved curves. Missing
+  Amihan/Paete rig sets were repaired explicitly, using the existing movement
+  definitions; all84existing asset/meta bytes stayed unchanged. Three native
+  prerequisite/refusal/actual-bone-motion cases pass. Ability behavior is untouched.
+  [Evidence](reports/feedback-2026-09-30/build-motion-inputs.md).
 - [x] F0930-24 Offline Esc/menu pauses simulation and resumes on close, including
   nested Settings and repeated opens. Network menus stay live; six native cases
   pass. [Evidence](reports/feedback-2026-09-30/offline-menu-pause.md).
