@@ -37,10 +37,12 @@ Only demonstrated bug fixes may change them; in-game skill descriptions stay
 untouched except passive descriptions. Wiki descriptions may document the final code. Incomplete wiki cells are
 not specifications to invent. Scope restrictions supersede cosmetic additions.
 
-- [x] F0930-01 Tutorial: revised20-lesson route, real ordered objectives,
+- [ ] F0930-01 Tutorial: revised20-lesson route, real ordered objectives,
   readable binding-specific prompts, Enter skip and Darumadrop/Xelu footer ship.
   Completion stays in a usable practice ground with a reset-only defender; Quit
   exits cleanly. This supersedes the earlier lobby-on-finish request.
+  Reopened October1: same-row flying-slipper report and redundant COMPLETE
+  corner label. Build unknown; targeted current-source reproduction in progress.
   Twelve distinct native cases pass, plus the integrated free-play/Quit check.
   Three real jumps, green progress, Tab coexistence and ultimate presentation
   plus2.5seconds remain qualified. No new player or human approval is claimed.
@@ -168,9 +170,13 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Unstoppable15s/40s and Bastion7.5s/35s now match; frozen signature input
   cleanses while Tagged/pause/warmup remain protected. Six native/eight Core
   checks pass; protocol107. [Ward evidence](reports/dante-wiki-2026-09-30/ward.md).
+  Boulder now imbues the actual held slipper,35s cooldown; Concussed75percent
+  slow for2.5s. Seven native cases and8Core pass, protocol108. Continental Drift
+  and retained UI review remain. [Boulder evidence](reports/dante-wiki-2026-09-30/boulder.md).
   Barrier visibility implemented separately: half-alpha authored slabs retain their
   palette and lifecycle. Two distinct native cases pass; observer court capture
-  inspected. Fixed owner-eye capture is self-occluded, not FPP qualification.
+  inspected. Actual protocol100 player FPP later verified at7s remaining;
+  the can/street remain visible through the authored slabs.
   [Evidence](reports/dante-visibility-2026-09-30/result.md).
 - [x] F0930-11 Amihan: current Wiki names/rules/statuses and fast airborne Airburst.
   Owner explicitly reopened this and the full remaining ability queue on2026-10-01.

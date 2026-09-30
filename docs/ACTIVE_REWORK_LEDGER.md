@@ -1,6 +1,6 @@
 # Active Rework Checkpoint
 
-Updated2026-10-01. Branch ASTRAReworks. Protocol107 candidate. Goal active.
+Updated2026-10-01. Branch ASTRAReworks. Protocol108 candidate. Goal active.
 Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 
 ## Live Local Resume
@@ -1563,3 +1563,29 @@ unchanged. Full Dante row stays open for held-slipper Boulder and forward cascad
 No heavy job active; fresh remote/claims before next unit.
 
 Catch3322c6e8b checked unit integrates contributorDante current107 fromf60eba049; NecroRules/GeoRules merge clean, all authored contributors preserved. Combined compatibility108. Next one existing current/previous LAN approval receiver case on this merged source verifies current108accepted/107refused and compilation; reuse eight Catch cases and contributor receipts. No claim that old103player qualifies108. No source/fixture/art redesign for this gate.
+Wardf60eba04 remote verified. Boulder plan appended after source/recovery review:
+claim DanteHeroKit.cs attacking ability, Slipper.cs appended affinity/contact and
+snapshot, Carrier.cs transfer, SliceRunner.cs round clear, Core Geo/StatusRules,
+Core assertions, NetSession.cs and new DanteBoulderImbueTests/meta/partition.
+Existing slipper state owns the charge; no new kit timer or separate projectile.
+Baseline real held gate and actual throw next. No heavy job or runtime edit yet.
+Boulder baseline4cases: ordinary throw passes; empty-hand acceptance and both
+imbued throws fail (affinity staysNormal). No guard/OOM. Implement existing
+slipper-owned charge, held/drop snapshot, body payload before cleanup and round
+clear, current2.5s/75percent Concussed and35s cooldown. Final recovery/observer
+cases join the three delivery controls; protocol108. No new projectile orSFX.
+Boulder final7/7native11.54s and8Core pass. Actual attacker/defender hits, ordinary
+control, held/drop restore/round clear, observer refusal and affected Frostbite
+control qualified. Publish explicit unit paths, protocol108. No newplayer/peer
+claim. Fresh Doc report says tutorial slipper still flies; after publishing this
+unit, inspect that same row and current tutorial ownership before Dante cascade.
+
+Boulder20ee1f85 remote verified, protocol108. New tutorial screenshots inspected:
+Retrieve07/20 shows skyward slipper, build unknown; second boxes redundant corner
+COMPLETE. Same row reopened, Done cleared, history preserved. Current local next
+unit is Nemu Catch; published tutorial paths released. Claim GuidedTraining.cs
+corner counter only and OwnerTrainingUiTests.cs flight/staging/completion cases.
+No Slipper physics claim until reproduction. Plan tutorial-regression.md; current
+source clean before claim, no heavy job active. Dante cascade resumes afterward.
+
+Concurrent Boulder108 integration preserved at1d2f0e540; combined Catch/Boulder109. Only ledger conflict, both sides retained; code merge clean. Previous native approval108passed before this integration. One final existing approval/compilation case on combined109next; no repeated Catch tests or player rebuild. Preserve exact candidate scope if remote advances again.

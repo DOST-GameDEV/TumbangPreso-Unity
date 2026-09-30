@@ -275,7 +275,8 @@ namespace TumbangPreso
             // the body's own wobble, on the host, which is where the throw is decided.
             float wobble = _motor.AimWobbleDegrees;
             if (Mathf.Abs(wobble) > 0.01f) velocity = Quaternion.AngleAxis(wobble, Vector3.up) * velocity;
-            SlipperAffinity affinity = SlipperAffinity.Normal;
+            SlipperAffinity affinity = Held.Affinity == SlipperAffinity.Concussed
+                ? SlipperAffinity.Concussed : SlipperAffinity.Normal;
 
             if (ability != null && ability.Kit is ZackHeroKit zack &&
                 (zack.IsOverchargeThrowActive || zack.IsThunderstrikeActive))

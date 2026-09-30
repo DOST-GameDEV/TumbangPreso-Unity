@@ -47,3 +47,24 @@ assertions and new DanteWardRuleTests.cs/meta. Native baseline checks metadata,
 actual frozen press and tag preservation; final tests include blocked ordinary
 skills, late accepted playback, expiry, pause and authority path. Broader Boulder,
 Continental Drift and status-table reconciliation remain separate units.
+
+## Held Boulder unit
+
+Replace the separate aimed rock with the specified held-slipper imbue. Reuse the
+slipper's existing authoritative affinity and reliable state snapshot, appending
+Concussed without renumbering existing values. Only a real held slipper qualifies;
+accepted observer playback cannot mutate it. Preserve the charge through held /
+dropped recovery and the ordinary throw, consume it on impact, and clear it at
+round reset. No invented expiry or second timer. Existing throw contact delivers
+Concussed before generic affinity cleanup, just as Frostbite does. Current Wiki
+Concussed is75percent slower for2.5seconds; retain existing impairment presentation
+and the skill-SFX ban. Cooldown35seconds; stable ability ID and input routes stay.
+
+Claim Abilities/DanteHeroKit.cs Boulder only, Slipper.cs affinity/body payload and
+snapshot preservation, Carrier.cs held affinity transfer, SliceRunner.cs round
+clear, Core StatusRules/GeoRules and numeric assertions, NetSession.cs protocol,
+new DanteBoulderImbueTests.cs/meta and suite partition. Baseline empty-hand gate
+and real throw first; final cases include defender/attacker contact, normal throw,
+held/drop snapshot, reset and observer authority. Reuse Frostbite contact control.
+One guarded graphics job, named profile, fresh nonzero XML, at most one bounded
+tooling repair. Actual newer player/peer qualification remains separate.

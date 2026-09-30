@@ -16,7 +16,8 @@ namespace TumbangPreso
         Normal,
         FireExplosive,  // Sean Skill 2 (Ignition Cannon)
         ElectricZap,    // Zack Skill 2 (Overcharge Throw)
-        Frost,          // Cheska attacking (Frostbite, ABILITY-2): the player it hits is Frozen
+        Frost = 3,      // Cheska attacking: the player it hits is Frozen
+        Concussed = 4,  // Dante Boulder held-slipper payload; stable wire value
     }
 
     /// <summary>
@@ -984,7 +985,8 @@ namespace TumbangPreso
             PektusSpin = state == SlipperState.InFlight
                 ? Mathf.Clamp(pektusSpin, -Balance.MaxPektusSpin, Balance.MaxPektusSpin)
                 : 0.0f;
-            Affinity = state == SlipperState.InFlight ? affinity : SlipperAffinity.Normal;
+            Affinity = state == SlipperState.InFlight || affinity == SlipperAffinity.Concussed
+                ? affinity : SlipperAffinity.Normal;
             _throwerSlot = state == SlipperState.InFlight ? throwerSlot : -1;
             if (enteringEmpoweredFlight)
             {
@@ -1325,7 +1327,7 @@ namespace TumbangPreso
                     int contactBit = 1 << p.PlayerSlot;
                     if ((_bodyContacts & contactBit) != 0) return;
                     _bodyContacts |= contactBit;
-                    HostFrostbite(p);
+                    HostBodyAffinity(p);
                     TriggerAffinityImpact();
                     HostBlockedBy(p);
                     return;
@@ -1366,7 +1368,7 @@ namespace TumbangPreso
                     int contactBit = 1 << p.PlayerSlot;
                     if ((_bodyContacts & contactBit) != 0) return;
                     _bodyContacts |= contactBit;
-                    HostFrostbite(p);
+                    HostBodyAffinity(p);
                     TriggerAffinityImpact();
                     HostBlockedBy(p);
                     return;
@@ -1762,13 +1764,20 @@ namespace TumbangPreso
         /// out of the game.
         /// </summary>
         /// <summary>
-        /// FROSTBITE (ABILITY-2, owner: *"Hitting another player with the slipper will inflict them with
-        /// Frozen"*): a frosted slipper Freezes the body it strikes, once, then flies on as a plain one.
+        /// Apply a carried body payload before generic impact consumes its affinity.
+        /// Frostbite freezes; Boulder inflicts Concussed. Each is spent once.
         /// </summary>
-        private void HostFrostbite(CharacterMotor victim)
+        private void HostBodyAffinity(CharacterMotor victim)
         {
             // Body hits must call this before generic impact consumes affinity.
-            if (Affinity != SlipperAffinity.Frost || victim == null) return;
+            if (victim == null) return;
+            if (Affinity == SlipperAffinity.Concussed)
+            {
+                victim.ApplyConcussed();
+                Affinity = SlipperAffinity.Normal;
+                return;
+            }
+            if (Affinity != SlipperAffinity.Frost) return;
             victim.ApplyStagger(StatusRules.FrozenSeconds, StunElement.Ice, 9);
             Abilities.HeroHazards.SpawnIceCubePrison(victim.transform, StatusRules.FrozenSeconds);
             NetCue.Play("sfx_cheska_frostbite_hit", transform.position);

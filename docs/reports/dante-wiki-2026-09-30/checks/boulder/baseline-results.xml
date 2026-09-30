@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 23:34:08Z" end-time="2026-09-30 23:34:15Z" duration="6.8395191">
+  <test-suite type="TestSuite" id="2267" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1023" result="Failed" site="Child" start-time="2026-09-30 23:34:08Z" end-time="2026-09-30 23:34:15Z" duration="6.839519" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2261" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1023" result="Failed" site="Child" start-time="2026-09-30 23:34:08Z" end-time="2026-09-30 23:34:15Z" duration="6.829819" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="203653" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2262" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1023" result="Failed" site="Child" start-time="2026-09-30 23:34:08Z" end-time="2026-09-30 23:34:15Z" duration="6.826987" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2263" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1023" result="Failed" site="Child" start-time="2026-09-30 23:34:08Z" end-time="2026-09-30 23:34:15Z" duration="6.824445" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1250" name="DanteBoulderImbueTests" fullname="TumbangPreso.PlayTests.DanteBoulderImbueTests" classname="TumbangPreso.PlayTests.DanteBoulderImbueTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-09-30 23:34:08Z" end-time="2026-09-30 23:34:15Z" duration="6.800883" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1251" name="BoulderRequiresARealHeldSlipper" fullname="TumbangPreso.PlayTests.DanteBoulderImbueTests.BoulderRequiresARealHeldSlipper" methodname="BoulderRequiresARealHeldSlipper" classname="TumbangPreso.PlayTests.DanteBoulderImbueTests" runstate="Runnable" seed="441290930" result="Failed" start-time="2026-09-30 23:34:08Z" end-time="2026-09-30 23:34:08Z" duration="0.063574" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Frostbite accepted an empty hand.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DanteBoulderImbueTests.BoulderRequiresARealHeldSlipper () [0x0002e] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/DanteBoulderImbueTests.cs:39
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1253" name="ImbuedThrowConcussesAttacker" fullname="TumbangPreso.PlayTests.DanteBoulderImbueTests.ImbuedThrowConcussesAttacker" methodname="ImbuedThrowConcussesAttacker" classname="TumbangPreso.PlayTests.DanteBoulderImbueTests" runstate="Runnable" seed="1468299327" result="Failed" start-time="2026-09-30 23:34:08Z" end-time="2026-09-30 23:34:12Z" duration="3.477819" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 4
+  But was:  Normal
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DanteBoulderImbueTests+<ThrowAtBody>d__12.MoveNext () [0x001ff] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/DanteBoulderImbueTests.cs:83
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1252" name="ImbuedThrowConcussesDefender" fullname="TumbangPreso.PlayTests.DanteBoulderImbueTests.ImbuedThrowConcussesDefender" methodname="ImbuedThrowConcussesDefender" classname="TumbangPreso.PlayTests.DanteBoulderImbueTests" runstate="Runnable" seed="562784975" result="Failed" start-time="2026-09-30 23:34:12Z" end-time="2026-09-30 23:34:14Z" duration="1.721740" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 4
+  But was:  Normal
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DanteBoulderImbueTests+<ThrowAtBody>d__12.MoveNext () [0x001ff] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/DanteBoulderImbueTests.cs:83
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1254" name="OrdinaryThrowDoesNotConcuss" fullname="TumbangPreso.PlayTests.DanteBoulderImbueTests.OrdinaryThrowDoesNotConcuss" methodname="OrdinaryThrowDoesNotConcuss" classname="TumbangPreso.PlayTests.DanteBoulderImbueTests" runstate="Runnable" seed="240877845" result="Passed" start-time="2026-09-30 23:34:14Z" end-time="2026-09-30 23:34:15Z" duration="1.521703" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
