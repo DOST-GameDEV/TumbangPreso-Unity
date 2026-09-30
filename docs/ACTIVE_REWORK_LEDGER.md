@@ -856,3 +856,27 @@ full-map colours: claim Tests/PlayMode/CatchReconstructionTests.cs plus evidence
 TODO only. Reuse actual close/far contact measurement on authored Eskinita instead
 of the isolated floor. Stop at fresh two-case results and inspected native contact
 frames/film; no speculative animation rewrite. One guarded graphics pass, retry0.
+
+First authored-map launch stopped at compilation: new conditional was inserted
+into the neighbouring metadata case rather than the contact helper. Corrected
+the exact helper and restored the unrelated case. No runtime code changed;
+one bounded tooling repair. Final output tag-contact-authored-final,2cases.
+Authored-map native2/2pass in14.54s, no resource failure, but visual review rejects
+full acceptance: far-contact frame still appears to leave a gap despite the broad
+renderer-bounds metric returning zero. Preserve this evidence; do not mark replay
+Done. Strengthen the contact measurement to the actual baked victim skin surface,
+not its enclosing AABB. Diagnose the visible discrepancy before any animation edit.
+
+Actual skin-surface check passes both: hand-anchor distances2.3cm close/6.7cm far.
+The pictured foreground arm is not necessarily the reaching hand. Inspect the
+opposite camera side on the same far contact as a private candidate-only review
+overlay, no product write. This isolates shot occlusion from reach geometry.
+One far case, real completed frames; source fixture retained unchanged.
+Opposite-side native review passes1/1 and reveals the actual reaching hand and
+face; the previous automatic clear-side tie favoured the off-arm view, making
+contact look absent. Claim Runtime/Camera/CatchReconstruction.cs for a minimal
+shared shot-selection bug fix. Prefer the recorded reaching-shoulder side when
+both sides are comparably clear, retain obstacle/too-tight fallback and one-time
+selection. No body/ability/mesh changes. Validate two authored-map contacts plus
+existing wall/fallback case. Strengthened skin checks remain, private side override
+is removed before final validation. This follows the reviewed rendering defect.
