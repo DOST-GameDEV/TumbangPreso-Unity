@@ -20,7 +20,8 @@ namespace TumbangPreso.EditorTools.MapKit
     /// methods at 30 steps a second (SidewalkLife.Simulate; KantoTraffic.UpdateRoutes and
     /// UpdateSignals; LagoonFlocks.StepAvoidance, StepBirds, StepGroundLife, StepFeathers),
     /// with the match look on an offscreen camera, one JPEG per step into
-    /// Logs/ilalim-unity/videos_v1/frames/&lt;event&gt;/. `ffmpeg` (imageio-ffmpeg) encodes them.
+    /// Logs/ilalim-unity/videos_v3/frames/&lt;event&gt;/ (v1 and v2 are earlier sets, kept).
+    /// `ffmpeg` (imageio-ffmpeg) encodes them: `py -3 tools/encode_ilalim_films.py --dir Logs/ilalim-unity/videos_v3`.
     ///
     /// ⚠️ TWO PASSES OVER ONE DETERMINISTIC RUN. The life's randomness is its own seeded
     /// System.Random and nothing it does depends on the traffic or the birds, so a scouting pass
@@ -43,7 +44,7 @@ namespace TumbangPreso.EditorTools.MapKit
     internal static class IlalimSidewalkFilm
     {
         private const string Tag = "[IlalimRebuild] ";
-        internal const string Out = "Logs/ilalim-unity/videos_v2";
+        internal const string Out = "Logs/ilalim-unity/videos_v3";
         private const float Dt = 1f / 30f;
         private const int W = 1280, H = 720;
         private static readonly Vector3 PlayerSpot = new Vector3(-9.6f, .212f, -16.15f);
@@ -56,7 +57,7 @@ namespace TumbangPreso.EditorTools.MapKit
         public static void RunAll() => Run(() => { Stills(); Videos(); });
 
         /// <summary>Batch: rebuild the scene (so it carries the current defaults), run the
-        /// sidewalk probe into videos_v1/probe, then the stills.</summary>
+        /// sidewalk probe into &lt;Out&gt;/probe, then the stills.</summary>
         public static void RunBuildProbeStills() => Run(() =>
         {
             IlalimSceneBuilder.Build();
@@ -524,6 +525,8 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             string stills = Path.Combine(Out, "stills");
             Directory.CreateDirectory(Path.Combine(stills, "taho"));
+            Directory.CreateDirectory(Path.Combine(stills, "wave"));
+            Directory.CreateDirectory(Path.Combine(stills, "carton"));
             var report = new StringBuilder("ILALIM SIDEWALK STILLS\n");
             var book = RosterBook.Load();
             var own = IlalimSidewalkAuthor.BeggarLook(book, IlalimSidewalkAuthor.BeggarOption.D_OwnModel);
@@ -584,17 +587,36 @@ namespace TumbangPreso.EditorTools.MapKit
                 Shoot(w, stills, "beggar_seated_context", new Vector3(-5.8f, 2.3f, -13.6f), seat + Vector3.up * .6f, 55f);
                 Shoot(w, stills, "beggar_seated_side_level", seat + across * 2.4f + f * .35f + Vector3.up * .45f, seat + Vector3.up * .35f + f * .35f, 42f);
                 Shoot(w, stills, "beggar_seated_front_low", seat + f * 2.3f + Vector3.up * .5f, seat + Vector3.up * .4f, 42f);
+                // The carton close (its drawing) and the seat on it from low at the side (the float the owner saw).
+                Shoot(w, stills, "carton/carton_above", seat + f * 1.5f - across * .5f + Vector3.up * 1.9f, seat + f * .25f + Vector3.up * .05f, 45f);
+                Shoot(w, stills, "carton/seat_low_front_left", seat + f * 1.7f - across * 1.2f + Vector3.up * .28f, seat + Vector3.up * .22f + f * .1f, 42f);
+                Shoot(w, stills, "carton/seat_low_street", seat + f * 2.2f + Vector3.up * .3f, seat + Vector3.up * .25f, 40f);
                 report.AppendLine(FormattableString.Invariant($"Seated: the legs' lowest point {w.Life.BeggarSeatClearance:+0.000;-0.000} m over the carton's top."));
-                // The coin and the seated thank-you, from beside the player spot: at the bow's deepest and at the wave.
+                // The coin and the seated thank-you, from the front and from the player's spot: the
+                // bow at its deepest, then the wave through its rocking (the wave's arm up from
+                // 1.32 s after the coin to 2.62 s, SidewalkLife.WaveFrom and WaveSeconds).
                 bool took = w.Life.Donate(PlayerSpot + Vector3.up * 1.1f);
                 float given = w.T;
-                while (w.T < given + 2.6f)
+                float[] waveAt = { 1.45f, 1.6f, 1.75f, 1.9f, 2.05f, 2.2f };
+                float lift = float.MinValue, clear = float.MaxValue, into = 0f;
+                while (w.T < given + 3.3f)
                 {
                     w.Step();
-                    if (w.T >= given + .95f && w.T < given + .95f + Dt) Shoot(w, stills, "beggar_thanks_bow", seat + f * 2.1f + across * .5f + Vector3.up * .95f, seat + Vector3.up * .5f, 45f);
-                    if (w.T >= given + 1.75f && w.T < given + 1.75f + Dt) Shoot(w, stills, "beggar_thanks_wave", seat + f * 2.1f + across * .5f + Vector3.up * .95f, seat + Vector3.up * .55f, 45f);
+                    if (!float.IsNaN(w.Life.BeggarWaveLift)) { lift = Mathf.Max(lift, w.Life.BeggarWaveLift); clear = Mathf.Min(clear, w.Life.BeggarWaveOut); if (!float.IsNaN(w.Life.BeggarWaveInHead)) into = Mathf.Max(into, w.Life.BeggarWaveInHead); }
+                    if (w.T >= given + .7f && w.T < given + .7f + Dt) Shoot(w, stills, "beggar_thanks_bow", seat + f * 2.1f + across * .5f + Vector3.up * .95f, seat + Vector3.up * .5f, 45f);
+                    for (int k = 0; k < waveAt.Length; k++)
+                        if (w.T >= given + waveAt[k] && w.T < given + waveAt[k] + Dt)
+                            Shoot(w, stills, $"wave/beggar_wave_front_{k}", seat + f * 2.1f + across * .2f + Vector3.up * .95f, seat + Vector3.up * .55f, 45f);
+                    if (w.T >= given + 1.75f && w.T < given + 1.75f + Dt)
+                    {
+                        Shoot(w, stills, "beggar_thanks_wave", seat + f * 2.1f + across * .5f + Vector3.up * .95f, seat + Vector3.up * .55f, 45f);
+                        Shoot(w, stills, "beggar_thanks_wave_player", PlayerSpot + Vector3.up * 1.55f, seat + Vector3.up * .6f, 50f);
+                    }
+                    if (w.T >= given + 1.9f && w.T < given + 1.9f + Dt)
+                        Shoot(w, stills, "beggar_thanks_wave_player_b", PlayerSpot + Vector3.up * 1.55f, seat + Vector3.up * .6f, 50f);
                 }
-                report.AppendLine($"Seated thank-you stills: coin accepted {took}.");
+                report.AppendLine(FormattableString.Invariant($"Seated thank-you stills: coin accepted {took}; the waving fist up to {lift:F2} m over his shoulder, at the least {clear:+0.00;-0.00} m out beside his head, at most {into:F3} m into it."));
+                report.AppendLine(FormattableString.Invariant($"Seated: his seat's lowest corner {w.Life.BeggarSeatRest:+0.000;-0.000} m over the carton's top (0 is sitting on it)."));
                 // The survey the wide film's camera is chosen from.
                 Survey(w, stills, report);
             }

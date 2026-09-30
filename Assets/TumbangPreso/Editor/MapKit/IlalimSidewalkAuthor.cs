@@ -32,16 +32,31 @@ namespace TumbangPreso.EditorTools.MapKit
     /// offsets the walkers use, and each sample is checked against the art (temporary MeshColliders
     /// on the dressing, removed afterwards): the ground under it must be the street kit's ground
     /// (pavement, lawn, kerb ramp), nothing solid may stand in a 0.22 m capsule from 0.35 to 1.6 m,
-    /// no small prop's footprint may cover it, it must lie outside the play area (|x| 11.2, |z| 16.7)
-    /// and at least 2 m from every live traffic route's centre line (a bus is 2.5 m wide). The build log's "Sidewalk"
-    /// lines count the failures by cause. <see cref="Probe"/> then steps the life for 300 s without
-    /// PlayMode beside the traffic and renders each event (sidewalk_*.png).
+    /// no small prop's footprint may cover it, it must stay out of the chalk box (|x| 7, |z| 16.5)
+    /// and off the court's kerb (|x| under 7.3 beside it), at least 0.5 m from every gameplay prop
+    /// on the court's pavements (the layout's anchors: the pisonet row and its cord, the pares cart,
+    /// the overclock pad, the bridge hoop, the stalls, crates, chairs, bench, bin and drum), and at
+    /// least 2 m from every live traffic route's centre line (a bus is 2.5 m wide). The build log's
+    /// "Sidewalk" lines count the failures by cause. <see cref="Probe"/> then steps the life for 300 s
+    /// without PlayMode beside the traffic and renders each event (sidewalk_*.png).
+    ///
+    /// ⚠️ THE COURT'S PAVEMENTS ARE WALKED (owner 2026-10-01: "they also stop before getting to the
+    /// middle of the sidewalk infront of the play area"). The people are scenery with no collider,
+    /// so they cannot block play; they used to turn back at the court's ends only because the
+    /// routes were kept outside the play area. Now the magtataho walks the whole west pavement in
+    /// front of the court, a passer-by watches from each of the west and east pavements, and the
+    /// kids' tag runs up the south-east pavement to the pares cart.
     /// </summary>
     internal static class IlalimSidewalkAuthor
     {
         private const string Tag = "[IlalimRebuild] ";
         private const string Folder = "Assets/TumbangPreso/Art/IlalimRebuild/Life";
         private const float PlayX = 11.2f, PlayZ = 16.7f, BoxX = 7f, BoxZ = 16.5f;
+        /// <summary>The court's kerb: the chalk box ends at |x| 7 and the kerb stone runs 6.65 to 7;
+        /// nobody walks closer to it than 7.3.</summary>
+        private const float KerbX = 7.3f;
+        /// <summary>The clearance every route keeps from a gameplay prop's footprint, metres.</summary>
+        private const float PropClear = .5f;
         private const float WalkLateral = .35f, KidHalfWidth = .7f, TrafficClear = 2f;
 
         // ------------------------------------------------------------------ where (game metres, x and z)
@@ -60,12 +75,21 @@ namespace TumbangPreso.EditorTools.MapKit
         /// at x -10.6, then measured again here in Unity (the build log's "Sidewalk" lines).</summary>
         private static readonly (string name, Vector2[] points, float[] width)[] WalkPlan =
         {
-            ("SW Taft, the magtataho", new[] { V(-8.5f, -46f), V(-8.5f, -21f) }, null),
+            // Up the south-west pavement and on along the court's WEST pavement, x -7.85: between
+            // the kerb (-7.0) and the hoop (-8.63), the stalls and the chairs (all past -9.7).
+            ("SW Taft and the west pavement, the magtataho", new[] { V(-8.5f, -46f), V(-8.5f, -21f), V(-7.85f, -17.2f), V(-7.85f, 12.5f) }, new[] { 1f, 1f, .6f, .6f }),
             ("SW Taft, the beggar", new[] { V(-8.5f, -46f), V(-8.5f, -19.6f), V(-10.2f, -18.05f) }, null),
             ("NW corner", NorthWest(V(-9.2f, 17.7f)), NorthWestWidth()),
-            ("NW corner, beside", NorthWest(V(-7.9f, 18.3f)), NorthWestWidth()),
+            // Round the north-west corner and down the west pavement to watch from beside the court
+            // (single file past the yellow railing's end at the corner, x -7.55 z 18.3).
+            ("NW corner, the west pavement", NorthWest(V(-7.9f, 18.3f)).Concat(new[] { V(-7.85f, 16.2f), V(-7.85f, 5.5f) }).ToArray(),
+             NorthWestWidth().Take(10).Concat(new[] { .15f, .3f, .6f }).ToArray()),
             ("NE corner", new[] { V(23f, 25.3f), V(10f, 25.3f), V(8.5f, 24.2f), V(8.4f, 17.9f) }, null),
-            ("NE corner, beside", new[] { V(23f, 25.3f), V(10f, 25.3f), V(8.5f, 24.2f), V(8.3f, 20.5f), V(8f, 19.4f) }, null),
+            // Round the north-east corner and down the EAST pavement, single file at x 7.55: between
+            // the kerb (7.0) and the pisonet cord (8.18) and the overclock pad (8.1), to a spot short
+            // of the pares cart's A-board (z -3.4).
+            ("NE corner, the east pavement", new[] { V(23f, 25.3f), V(10f, 25.3f), V(8.5f, 24.2f), V(8.3f, 20.5f), V(7.9f, 18.6f), V(7.55f, 16.4f), V(7.55f, 1.8f) },
+             new[] { 1f, 1f, 1f, 1f, .4f, 0f, 0f }),
             ("PGH lot, fence A", new[] { V(-42f, 3.5f), V(-26f, .6f), V(-15f, .4f), V(-12.3f, 1f) }, null),
             ("PGH lot, fence B", new[] { V(-42f, 3.5f), V(-26f, 1.2f), V(-13f, -.4f), V(-12.4f, -1.2f) }, null),
             ("PGH lot, fence C", new[] { V(-42f, 5.8f), V(-24f, 5.8f), V(-12.3f, 6.2f) }, null),
@@ -88,12 +112,13 @@ namespace TumbangPreso.EditorTools.MapKit
         private const int TahoWalk = 0, BeggarWalk = 1;
         private static readonly (string name, int walk)[] WatchPlan =
         {
-            ("the north-west corner", 2), ("the north-west corner", 3), ("the north-east corner", 4), ("the north-east corner", 5),
+            ("the north-west corner", 2), ("the west pavement", 3), ("the north-east corner", 4), ("the east pavement", 5),
             ("the PGH fence", 6), ("the PGH fence", 7), ("the PGH fence", 8),
         };
-        /// <summary>The kids' pavement: the south-east Taft pavement below the shops, 4.5 m and more
-        /// past the south wall; its last point is where they come and go.</summary>
-        private static readonly Vector2[] KidPlan = { V(8.5f, -21.2f), V(8.5f, -36.5f) };
+        /// <summary>The kids' pavement: the south-east Taft pavement below the shops and on up the
+        /// court's east pavement to 1 m short of the pares cart's crates (z -7); its last point is
+        /// where they come and go.</summary>
+        private static readonly Vector2[] KidPlan = { V(8.5f, -8f), V(8.5f, -36.5f) };
         /// <summary>The beggar's spot: on the pavement against the PGH fence, 1.55 m past the south
         /// wall, between the street pole (-10.58, -17.4) and the RABIES tarp on the fence (z -20.6).</summary>
         private static readonly Vector2 Seat = V(-10.2f, -18.05f);
@@ -264,13 +289,19 @@ namespace TumbangPreso.EditorTools.MapKit
             EditorApplication.Exit(0);
         }
 
-        private static readonly (string name, string hex, float gloss)[] PropColours =
+        /// <summary>The life props' materials: the flat colour they fall back to, their gloss, and
+        /// their drawing (tools/author_ilalim_textures_life.py writes Life/life_*.png; owner
+        /// 2026-10-01: "the cardboard is untextured"). With a drawing the colour is its tint: white,
+        /// or the bundle's knot the same cloth a shade darker.</summary>
+        private static readonly (string name, string hex, float gloss, string texture, string tint)[] PropColours =
         {
-            ("sidewalk_bamboo", "c9ae6e", .1f), ("sidewalk_aluminium", "c3c8cc", .45f), ("sidewalk_lid", "9aa1a8", .4f),
-            ("sidewalk_rope", "8a7a5a", .05f), ("sidewalk_tin", "b5b0a4", .35f), ("sidewalk_carton", "b8956a", .05f),
-            ("sidewalk_coin", "e3c04a", .6f),
+            ("sidewalk_bamboo", "c9ae6e", .1f, "life_bamboo", "ffffff"), ("sidewalk_aluminium", "c3c8cc", .45f, "life_aluminium", "ffffff"),
+            ("sidewalk_lid", "9aa1a8", .4f, "life_lid", "ffffff"), ("sidewalk_rope", "8a7a5a", .05f, "life_rope", "ffffff"),
+            ("sidewalk_tin", "b5b0a4", .35f, "life_tin", "ffffff"), ("sidewalk_carton", "b8956a", .05f, "life_carton", "ffffff"),
+            ("sidewalk_coin", "e3c04a", .6f, "life_coin", "ffffff"),
             // The beggar's things: a faded plum-brown cloth bundle, its darker knot, a white plastic bag.
-            ("sidewalk_bundle", "7d5c50", .05f), ("sidewalk_bundle_knot", "5e463d", .05f), ("sidewalk_bag", "dedcd3", .3f),
+            ("sidewalk_bundle", "7d5c50", .05f, "life_cloth", "ffffff"), ("sidewalk_bundle_knot", "5e463d", .05f, "life_cloth", "c4b8b2"),
+            ("sidewalk_bag", "dedcd3", .3f, "life_bag", "ffffff"),
         };
 
         private static readonly Color Offence = Hex("f87020"), Defence = Hex("0080e8");
@@ -386,12 +417,14 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             if (!AssetDatabase.IsValidFolder(Folder)) AssetDatabase.CreateFolder(Path.GetDirectoryName(Folder).Replace('\\', '/'), Path.GetFileName(Folder));
             var result = new Dictionary<string, Material>();
-            foreach (var (name, hex, gloss) in PropColours)
+            foreach (var (name, hex, gloss, textureName, tint) in PropColours)
             {
                 string path = $"{Folder}/{name}.mat";
                 var m = AssetDatabase.LoadAssetAtPath<Material>(path);
                 if (m == null) { m = new Material(Shader.Find("Standard")); AssetDatabase.CreateAsset(m, path); }
-                m.color = Hex(hex);
+                var texture = LifeTexture(textureName);
+                m.mainTexture = texture;
+                m.color = Hex(texture != null ? tint : hex);
                 m.SetFloat("_Glossiness", gloss);
                 EditorUtility.SetDirty(m);
                 result[name] = m;
@@ -399,6 +432,71 @@ namespace TumbangPreso.EditorTools.MapKit
             AssetDatabase.SaveAssets();
             return result;
         }
+
+        /// <summary>A life prop's drawing, imported as the house's props are: sRGB, mipmapped,
+        /// bilinear, at most 512; the carton clamped (its top and its edge strip share the image),
+        /// the rest repeating round their cylinders and spheres. Null (the flat colour) when the
+        /// painter has not been run.</summary>
+        private static Texture2D LifeTexture(string name)
+        {
+            string path = $"{Folder}/{name}.png";
+            if (!File.Exists(path)) { Debug.LogWarning(Tag + "Sidewalk: no " + path + " (run py -3 tools/author_ilalim_textures_life.py)"); return null; }
+            AssetDatabase.ImportAsset(path);
+            if (AssetImporter.GetAtPath(path) is TextureImporter importer)
+            {
+                var wrap = name == "life_carton" ? TextureWrapMode.Clamp : TextureWrapMode.Repeat;
+                if (!importer.sRGBTexture || !importer.mipmapEnabled || importer.wrapMode != wrap || importer.filterMode != FilterMode.Bilinear || importer.maxTextureSize != 512
+                    || importer.textureType != TextureImporterType.Default)
+                {
+                    importer.textureType = TextureImporterType.Default;
+                    importer.sRGBTexture = true; importer.mipmapEnabled = true; importer.wrapMode = wrap;
+                    importer.filterMode = FilterMode.Bilinear; importer.maxTextureSize = 512;
+                    importer.SaveAndReimport();
+                }
+            }
+            return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+        }
+
+        // ------------------------------------------------------------------ the gameplay props on the court's pavements
+
+        [Serializable] private sealed class LayoutFile { public LayoutAnchor[] anchors; }
+        [Serializable] private sealed class LayoutAnchor { public string name; public float[] origin, min, max; }
+        private const string LayoutPath = "Assets/TumbangPreso/Art/IlalimRebuild/ilalim_layout.json";
+
+        /// <summary>The footprints (x, z) of every prop standing on or beside the court's pavements
+        /// (the layout's anchors that reach below 1.5 m within 6.5 to 12.5 m of the centre line
+        /// and 19 m of the middle): the pisonet terminals, chairs and cord, the pares cart, its
+        /// A-board, stools and gas tank, the overclock pad, the bridge hoop, the three stalls, the
+        /// crates, chairs, bench, bin and drum. Every route keeps <see cref="PropClear"/> from them.</summary>
+        internal static List<(string name, Rect rect)> CourtProps()
+        {
+            var list = new List<(string, Rect)>();
+            if (!File.Exists(LayoutPath)) { Debug.LogWarning(Tag + "Sidewalk: no layout at " + LayoutPath); return list; }
+            var file = JsonUtility.FromJson<LayoutFile>(File.ReadAllText(LayoutPath));
+            foreach (var a in file?.anchors ?? new LayoutAnchor[0])
+            {
+                if (a?.min == null || a.max == null || a.min.Length < 3 || a.max.Length < 3) continue;
+                if (a.min[1] > 1.5f || a.max[1] < .02f) continue;
+                if (a.max[2] < -19f || a.min[2] > 19f) continue;
+                float near = Mathf.Min(Mathf.Abs(a.min[0]), Mathf.Abs(a.max[0])), far = Mathf.Max(Mathf.Abs(a.min[0]), Mathf.Abs(a.max[0]));
+                if (a.min[0] < 0f && a.max[0] > 0f) near = 0f;
+                if (far < 6.5f || near > 12.5f) continue;
+                list.Add((a.name, Rect.MinMaxRect(a.min[0], a.min[2], a.max[0], a.max[2])));
+            }
+            return list;
+        }
+
+        /// <summary>The flat distance from (x, z) to a footprint (0 inside it).</summary>
+        internal static float Gap(Rect r, Vector3 p)
+        {
+            float dx = Mathf.Max(0f, Mathf.Max(r.xMin - p.x, p.x - r.xMax)), dz = Mathf.Max(0f, Mathf.Max(r.yMin - p.z, p.z - r.yMax));
+            return Mathf.Sqrt(dx * dx + dz * dz);
+        }
+
+        /// <summary>On the court's kerb or in the chalk box: never. On the court's pavements: fine.</summary>
+        internal static bool OnKerb(Vector3 p) => Mathf.Abs(p.z) < PlayZ && Mathf.Abs(p.x) < KerbX && Mathf.Abs(p.x) >= BoxX;
+        internal static bool InBox(Vector3 p) => Mathf.Abs(p.x) < BoxX && Mathf.Abs(p.z) < BoxZ;
+        internal static bool OnCourtPavement(Vector3 p) => Mathf.Abs(p.x) < PlayX && Mathf.Abs(p.z) < PlayZ && !InBox(p);
 
         // ------------------------------------------------------------------ measuring the art
 
@@ -480,7 +578,10 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             var causes = new Dictionary<string, (int n, Vector3 first)>();
             var surfaces = new Dictionary<string, int>();
-            float nearestLane = float.MaxValue, nearestPlay = float.MaxValue;
+            float nearestLane = float.MaxValue, nearestPlay = float.MaxValue, nearestProp = float.MaxValue;
+            int onCourt = 0;
+            string nearestPropName = "";
+            var props = CourtProps();
             int samples = 0;
             void Fail(string why, Vector3 at) { causes[why] = causes.TryGetValue(why, out var v) ? (v.n + 1, v.first) : (1, at); }
             for (int k = 1; k < points.Length; k++)
@@ -513,9 +614,17 @@ namespace TumbangPreso.EditorTools.MapKit
                         var at = new Vector3(p.x, ground.y, p.z);
                         string touch = art.Touches(at, .22f);
                         if (touch != null) Fail("touches " + touch, p);
-                        if (Mathf.Abs(p.x) < PlayX && Mathf.Abs(p.z) < PlayZ) Fail("inside the play area", p);
-                        if (Mathf.Abs(p.x) < BoxX && Mathf.Abs(p.z) < BoxZ) Fail("inside the chalk box", p);
-                        nearestPlay = Mathf.Min(nearestPlay, OutsideBy(p));
+                        // The court's pavements are walked; the chalk box and the kerb are not.
+                        if (OnCourtPavement(p)) onCourt++;
+                        if (InBox(p)) Fail("inside the chalk box", p);
+                        else if (OnKerb(p)) Fail("on the court's kerb", p);
+                        foreach (var (prop, rect) in props)
+                        {
+                            float gap = Gap(rect, p);
+                            if (gap < nearestProp) { nearestProp = gap; nearestPropName = prop; }
+                            if (gap < PropClear) Fail($"within {PropClear} m of {prop}", p);
+                        }
+                        nearestPlay = Mathf.Min(nearestPlay, BoxBy(p));
                         foreach (var lane in lanes)
                         {
                             float dl = DistanceToLine(lane, p);
@@ -527,13 +636,16 @@ namespace TumbangPreso.EditorTools.MapKit
             }
             int bad = causes.Values.Sum(v => v.n);
             log.AppendLine(FormattableString.Invariant($"  {name}: {Length(points):F1} m, {samples} samples, {bad} failing; ground {string.Join(", ", surfaces.Select(kv => $"{kv.Key} {kv.Value}"))}; ") +
-                           FormattableString.Invariant($"nearest traffic lane {nearestLane:F1} m, {nearestPlay:F2} m outside the play area at the closest."));
+                           FormattableString.Invariant($"nearest traffic lane {nearestLane:F1} m, {nearestPlay:F2} m outside the chalk box at the closest, ") +
+                           FormattableString.Invariant($"{onCourt} samples on the court's pavements, nearest gameplay prop {(nearestProp == float.MaxValue ? -1f : nearestProp):F2} m ({nearestPropName})."));
             foreach (var kv in causes.OrderByDescending(kv => kv.Value.n))
                 log.AppendLine(FormattableString.Invariant($"    FAIL {kv.Key}: {kv.Value.n} samples, first at ({kv.Value.first.x:F2}, {kv.Value.first.z:F2})"));
             return bad;
         }
 
         private static float OutsideBy(Vector3 p) => Mathf.Max(Mathf.Abs(p.x) - PlayX, Mathf.Abs(p.z) - PlayZ);
+        /// <summary>How far outside the chalk box (negative inside).</summary>
+        private static float BoxBy(Vector3 p) => Mathf.Max(Mathf.Abs(p.x) - BoxX, Mathf.Abs(p.z) - BoxZ);
 
         /// <summary>The beggar's spot: clear ground for his seat and carton, outside the play area,
         /// and the nearest spot a player can stand (inside the walls, clear of the props'
@@ -550,7 +662,9 @@ namespace TumbangPreso.EditorTools.MapKit
                 string touch = art.Touches(p, .2f);
                 if (touch != null) { bad++; log.AppendLine($"    FAIL the beggar's spot {p:F2} touches {touch}"); }
             }
-            if (Mathf.Abs(seat.x) < PlayX && Mathf.Abs(seat.z) < PlayZ) { bad++; log.AppendLine("    FAIL the beggar sits inside the play area"); }
+            if (InBox(seat) || OnKerb(seat)) { bad++; log.AppendLine("    FAIL the beggar sits in the chalk box or on the kerb"); }
+            foreach (var (prop, rect) in CourtProps())
+                if (Gap(rect, seat) < PropClear + .3f) { bad++; log.AppendLine($"    FAIL the beggar sits within {PropClear + .3f} m of {prop}"); }
             Vector3 best = Vector3.zero; float bestDistance = float.MaxValue;
             for (float x = -10.65f; x <= 10.65f; x += .1f)
                 for (float z = -16.15f; z <= 16.15f; z += .1f)
@@ -613,11 +727,14 @@ namespace TumbangPreso.EditorTools.MapKit
 
         /// <summary>Opens the saved scene (never saves it) and drives SidewalkLife.Simulate and the
         /// traffic's own step methods at 20 steps a second for 300 simulated seconds. It measures,
-        /// per person: time shown, any step inside the play area or the chalk box, any step more
-        /// than 0.5 m off an authored route (1 m on the kids' pavement, the seat excepted), and any
-        /// overlap with a vehicle's rectangle (with 0.3 m to spare). It gives the beggar a coin from
-        /// a player spot at the wall the first time he sits, sends a can-down moment while somebody
-        /// watches, and renders each event with the match look.</summary>
+        /// per person: time shown, steps on the court's pavements (allowed since 2026-10-01), any
+        /// step in the chalk box, on the court's kerb or within 0.5 m of a gameplay prop (never),
+        /// any step more than 0.5 m off an authored route (1 m on the kids' pavement, the seat
+        /// excepted), and any overlap with a vehicle's rectangle (with 0.3 m to spare). The walks:
+        /// the planted sole's slip (the STANCE leg's sole, see SidewalkLife.PersonSole), the swing
+        /// sole's clearance, and the arms' swing against the legs. It gives the beggar a coin from
+        /// a player spot at the wall the first time he sits (and measures his seat and his wave),
+        /// sends a can-down moment while somebody watches, and renders each event with the match look.</summary>
         public static void Probe(string folder, string scenePath) => Probe(folder, scenePath, null, null, "sidewalk_probe.txt");
 
         /// <summary>The probe, optionally with the opened (never saved) scene's SidewalkLife
@@ -654,9 +771,17 @@ namespace TumbangPreso.EditorTools.MapKit
             }).ToArray();
 
             var lines = life.Walks.Select(w => w.Points).ToList();
+            var props = CourtProps();
             int n = life.PeopleCount;
-            var shown = new int[n]; var inPlay = new int[n]; var inBox = new int[n]; var offRoute = new int[n]; var hitTraffic = new int[n];
+            var shown = new int[n]; var inPlay = new int[n]; var inBox = new int[n]; var onKerb = new int[n]; var nearProp = new int[n]; var offRoute = new int[n]; var hitTraffic = new int[n];
             var closestPlay = Enumerable.Repeat(float.MaxValue, n).ToArray(); var closestCar = Enumerable.Repeat(float.MaxValue, n).ToArray();
+            var closestProp = Enumerable.Repeat(float.MaxValue, n).ToArray();
+            // The arms (SidewalkLife.PersonLimbs, degrees forward of hanging) while walking: each
+            // arm's range, and its correlation with its own side's leg (opposite phase reads under 0).
+            var armLo = Enumerable.Repeat(float.MaxValue, n).ToArray(); var armHi = Enumerable.Repeat(float.MinValue, n).ToArray();
+            var armRLo = Enumerable.Repeat(float.MaxValue, n).ToArray(); var armRHi = Enumerable.Repeat(float.MinValue, n).ToArray();
+            var sxy = new double[n]; var sxx = new double[n]; var syy = new double[n]; var sx = new double[n]; var sy = new double[n]; var sN = new int[n];
+            var liftN = new int[n]; var swingHigh = new float[n]; var swingSum = new float[n]; var swingN = new int[n];
             var states = Enumerable.Range(0, n).Select(_ => new HashSet<string>()).ToArray();
             var firstShown = Enumerable.Repeat(-1f, n).ToArray();
             // The drawn walk (SidewalkLife's class note): the planted sole's own ground speed
@@ -665,6 +790,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var soleLow = Enumerable.Repeat(float.MaxValue, n).ToArray(); var soleHigh = Enumerable.Repeat(float.MinValue, n).ToArray();
             var lastSole = new Vector3[n]; var lastLeft = new bool[n]; var hadSole = new bool[n]; var lastPos = new Vector3[n];
             float seatLow = float.MaxValue, seatHigh = float.MinValue; int seatN = 0;
+            float restLow = float.MaxValue, restHigh = float.MinValue, waveLift = float.MinValue, waveOut = float.MaxValue, waveIn = 0f; int waveN = 0;
             string donation = "the beggar never sat down in 300 s", reaction = "nobody watched in 300 s";
             bool donated = false, reacted = false;
             float kidsAt = -1f, beggarThanksAt = -1f;
@@ -701,7 +827,18 @@ namespace TumbangPreso.EditorTools.MapKit
                         if (firstShown[i] < 0f) firstShown[i] = t;
                         if (life.PersonSole(i, out var sole, out bool leftSole))
                         {
-                            bool walking = life.PersonLocomotion(i) > .95f && life.PersonSpeed(i) > .3f;
+                            bool walking = life.PersonLocomotion(i) > .95f && life.PersonSpeed(i) > .3f && life.PersonStepping(i);
+                            if (walking)
+                            {
+                                float swing = life.PersonSwingHeight(i);
+                                if (!float.IsNaN(swing)) { swingHigh[i] = Mathf.Max(swingHigh[i], swing); swingSum[i] += swing; swingN[i]++; }
+                                if (life.PersonLimbs(i, out float al, out float ar, out float ll, out float lr))
+                                {
+                                    armLo[i] = Mathf.Min(armLo[i], al); armHi[i] = Mathf.Max(armHi[i], al);
+                                    armRLo[i] = Mathf.Min(armRLo[i], ar); armRHi[i] = Mathf.Max(armRHi[i], ar);
+                                    sx[i] += al; sy[i] += ll; sxx[i] += al * al; syy[i] += ll * ll; sxy[i] += al * ll; sN[i]++;
+                                }
+                            }
                             if (walking && hadSole[i] && lastLeft[i] == leftSole)
                             {
                                 var v = (sole - lastSole[i]) / dt; v.y = 0f;
@@ -709,15 +846,22 @@ namespace TumbangPreso.EditorTools.MapKit
                                 if (go.sqrMagnitude > 1e-8f)
                                 {
                                     slipSum[i] += Vector3.Dot(v, go.normalized); slipAbs[i] += v.magnitude; slipSpeed[i] += go.magnitude / dt; slipN[i]++;
-                                    soleLow[i] = Mathf.Min(soleLow[i], sole.y - p.y); soleHigh[i] = Mathf.Max(soleHigh[i], sole.y - p.y);
+                                    soleLow[i] = Mathf.Min(soleLow[i], sole.y - p.y); soleHigh[i] = Mathf.Max(soleHigh[i], sole.y - p.y); if (sole.y - p.y > .02f) liftN[i]++;
                                 }
                             }
                             lastSole[i] = sole; lastLeft[i] = leftSole; hadSole[i] = walking;
                         }
                         lastPos[i] = p;
-                        if (Mathf.Abs(p.x) < PlayX && Mathf.Abs(p.z) < PlayZ) inPlay[i]++;
-                        if (Mathf.Abs(p.x) < BoxX && Mathf.Abs(p.z) < BoxZ) inBox[i]++;
-                        closestPlay[i] = Mathf.Min(closestPlay[i], OutsideBy(p));
+                        if (OnCourtPavement(p)) inPlay[i]++;
+                        if (InBox(p)) inBox[i]++;
+                        if (OnKerb(p)) onKerb[i]++;
+                        foreach (var (_, rect) in props)
+                        {
+                            float gap = Gap(rect, p);
+                            closestProp[i] = Mathf.Min(closestProp[i], gap);
+                            if (gap < PropClear) nearProp[i]++;
+                        }
+                        closestPlay[i] = Mathf.Min(closestPlay[i], BoxBy(p));
                         bool kid = life.PersonRole(i) == "kid";
                         float off = kid ? DistanceToLine(life.KidTrack, p) : lines.Min(l => DistanceToLine(l, p));
                         bool seat = Vector2.Distance(new Vector2(p.x, p.z), new Vector2(life.BeggarSeat.x, life.BeggarSeat.z)) < .7f;
@@ -738,6 +882,8 @@ namespace TumbangPreso.EditorTools.MapKit
                     {
                         seatLow = Mathf.Min(seatLow, life.BeggarSeatClearance); seatHigh = Mathf.Max(seatHigh, life.BeggarSeatClearance); seatN++;
                     }
+                    if (!float.IsNaN(life.BeggarSeatRest)) { restLow = Mathf.Min(restLow, life.BeggarSeatRest); restHigh = Mathf.Max(restHigh, life.BeggarSeatRest); }
+                    if (!float.IsNaN(life.BeggarWaveLift)) { waveLift = Mathf.Max(waveLift, life.BeggarWaveLift); waveOut = Mathf.Min(waveOut, life.BeggarWaveOut); if (!float.IsNaN(life.BeggarWaveInHead)) waveIn = Mathf.Max(waveIn, life.BeggarWaveInHead); waveN++; }
                     // The events, once each.
                     if (!donated && life.BeggarSeated)
                     {
@@ -791,7 +937,7 @@ namespace TumbangPreso.EditorTools.MapKit
                         {
                             shots.Add("spectator " + state);
                             var eye = new Vector3(Mathf.Clamp(p.x * .45f, -6f, 6f), 1.55f, Mathf.Clamp(p.z * .55f, -12f, 12f));
-                            string where = state.Contains("PGH") ? "pgh" : p.z > 0f ? (p.x < 0f ? "nw" : "ne") : "s";
+                            string where = state.Contains("PGH") ? "pgh" : Mathf.Abs(p.z) < PlayZ ? (p.x < 0f ? "west" : "east") : p.z > 0f ? (p.x < 0f ? "nw" : "ne") : "s";
                             Take("sidewalk_watch_" + where, eye, p + Vector3.up * 1f);
                         }
                     }
@@ -800,20 +946,31 @@ namespace TumbangPreso.EditorTools.MapKit
             finally { shooter?.Dispose(); }
 
             sb.AppendLine($"People: {n}. Steps: 6000 x 0.05 s.");
-            int totalPlay = inPlay.Sum(), totalBox = inBox.Sum(), totalOff = offRoute.Sum(), totalCar = hitTraffic.Sum();
-            sb.AppendLine($"Steps inside the play area: {totalPlay}. Inside the chalk box: {totalBox}. Off an authored route: {totalOff}. Within 0.3 m of a vehicle: {totalCar}.");
+            int totalPlay = inPlay.Sum(), totalBox = inBox.Sum(), totalKerb = onKerb.Sum(), totalProp = nearProp.Sum(), totalOff = offRoute.Sum(), totalCar = hitTraffic.Sum();
+            sb.AppendLine($"Steps on the court's pavements (allowed): {totalPlay}. In the chalk box: {totalBox}. On the court's kerb: {totalKerb}. Within {PropClear} m of a gameplay prop: {totalProp}. Off an authored route: {totalOff}. Within 0.3 m of a vehicle: {totalCar}.");
             for (int i = 0; i < n; i++)
-                sb.AppendLine(FormattableString.Invariant($"  {life.PersonName(i),-12} {life.PersonRole(i),-9} shown {shown[i] * .05f,6:F1} s (first at {firstShown[i]:F1} s), play {inPlay[i]}, box {inBox[i]}, off-route {offRoute[i]}, ") +
-                              FormattableString.Invariant($"nearest the play area {(closestPlay[i] == float.MaxValue ? 0f : closestPlay[i]):F2} m outside, nearest vehicle {(closestCar[i] == float.MaxValue ? -1f : closestCar[i]):F2} m; states: {string.Join(", ", states[i])}"));
-            sb.AppendLine("Walks (the planted sole while walking: its mean ground speed along the body's travel and its mean speed at all, against the body's, and its height over the pavement; a sole that does not slide reads about 0):");
+                sb.AppendLine(FormattableString.Invariant($"  {life.PersonName(i),-12} {life.PersonRole(i),-9} shown {shown[i] * .05f,6:F1} s (first at {firstShown[i]:F1} s), court pavement {inPlay[i]}, box {inBox[i]}, kerb {onKerb[i]}, near a prop {nearProp[i]}, off-route {offRoute[i]}, ") +
+                              FormattableString.Invariant($"nearest the chalk box {(closestPlay[i] == float.MaxValue ? 0f : closestPlay[i]):F2} m outside, nearest prop {(closestProp[i] == float.MaxValue ? -1f : closestProp[i]):F2} m, nearest vehicle {(closestCar[i] == float.MaxValue ? -1f : closestCar[i]):F2} m; states: {string.Join(", ", states[i])}"));
+            sb.AppendLine("Walks (the PLANTED sole while walking: the stance leg's, by the phase, not the lower one; its mean ground speed along the body's travel and its mean speed at all, against the body's, and its height over the pavement; a sole that does not slide reads about 0. Then the swinging sole's height, and the arms: each arm's range forward of hanging, and the left arm against the left leg, where opposite phase reads near -1):");
             for (int i = 0; i < n; i++)
             {
                 if (slipN[i] == 0) { sb.AppendLine($"  {life.PersonName(i),-12} {life.PersonGait(i),-12} no walking frames"); continue; }
-                sb.AppendLine(FormattableString.Invariant($"  {life.PersonName(i),-12} {life.PersonGait(i),-12} {slipN[i],5} frames, body {slipSpeed[i] / slipN[i]:F2} m/s, planted sole along {slipSum[i] / slipN[i]:+0.00;-0.00} m/s, at all {slipAbs[i] / slipN[i]:F2} m/s, height {soleLow[i]:+0.000;-0.000}..{soleHigh[i]:+0.000;-0.000} m"));
+                double corr = 0;
+                if (sN[i] > 1)
+                {
+                    double mx = sx[i] / sN[i], my = sy[i] / sN[i];
+                    double cov = sxy[i] / sN[i] - mx * my, vx = sxx[i] / sN[i] - mx * mx, vy = syy[i] / sN[i] - my * my;
+                    corr = vx > 1e-9 && vy > 1e-9 ? cov / Math.Sqrt(vx * vy) : 0;
+                }
+                sb.AppendLine(FormattableString.Invariant($"  {life.PersonName(i),-12} {life.PersonGait(i),-12} {slipN[i],5} frames, body {slipSpeed[i] / slipN[i]:F2} m/s, planted sole along {slipSum[i] / slipN[i]:+0.00;-0.00} m/s, at all {slipAbs[i] / slipN[i]:F2} m/s, height {soleLow[i]:+0.000;-0.000}..{soleHigh[i]:+0.000;-0.000} m ({100f * liftN[i] / slipN[i]:F1}% of frames over 2 cm); ") +
+                              FormattableString.Invariant($"swing sole up to {swingHigh[i]:F3} m (mean {(swingN[i] > 0 ? swingSum[i] / swingN[i] : 0f):F3}); arms L {armLo[i]:+0;-0}..{armHi[i]:+0;-0} deg, R {armRLo[i]:+0;-0}..{armRHi[i]:+0;-0} deg, L arm vs L leg {corr:+0.00;-0.00}"));
             }
             sb.AppendLine(seatN > 0
-                ? FormattableString.Invariant($"Seated beggar: the legs' lowest point {seatLow:+0.000;-0.000}..{seatHigh:+0.000;-0.000} m over the carton's top ({seatN} steps; under 0 is a leg in the carton).")
+                ? FormattableString.Invariant($"Seated beggar: the legs' lowest point {seatLow:+0.000;-0.000}..{seatHigh:+0.000;-0.000} m over the carton's top ({seatN} steps; under 0 is a leg in the carton); his seat (the chest block's lowest corner) {restLow:+0.000;-0.000}..{restHigh:+0.000;-0.000} m over it (about 0 is sitting ON it).")
                 : "Seated beggar: never seated.");
+            sb.AppendLine(waveN > 0
+                ? FormattableString.Invariant($"The thank-you wave: {waveN} steps at full height; the fist up to {waveLift:F2} m over his shoulder pivot, and at the least {waveOut:+0.00;-0.00} m out beside his head (over 0 is clear of it); the arm's block at most {waveIn:F3} m into the head's (0 is no clipping).")
+                : "The thank-you wave: never at full height.");
             sb.AppendLine("Donation: " + donation + ".");
             sb.AppendLine("Spectators: " + reaction + ".");
             sb.AppendLine(FormattableString.Invariant($"Kids first out at t={kidsAt:F1}s."));

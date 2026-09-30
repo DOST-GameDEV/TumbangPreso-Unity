@@ -219,9 +219,63 @@ Awaiting owner decisions. Nothing is in Unity. All work is committed LOCALLY on 
     200, cooldowns); pigeons read `LagoonFlocks.BirdSettled`/`BirdTakingOff` (new, read only).
     The probe now reports planted-foot slip and the seated clearance; the films log every sound
     and camera, and `tools/encode_ilalim_films.py` mixes and muxes the soundtracks
-    (`Logs/ilalim-unity/videos_v2/`). ⚠️ NOT YET VERIFIED IN UNITY: the batch editor had no
-    licence token on 2026-10-01 (exit 198); run `IlalimSidewalkFilm.RunBuildProbeStills`, then
-    `RunVideos`, then `py -3 tools/encode_ilalim_films.py`, and look.
+    (`Logs/ilalim-unity/videos_v2/`, rendered later that day; superseded by the pass below).
+  - **2026-10-01, second pass: arms, planted feet, the seat, the wave, the carton, the pop, the
+    court's pavements.** Owner: *"the feet are moving but the hands arent"*, *"the cardboard is
+    untextured"*, *"the guy looks like hes floating"*, *"the sit animation is too linear and too
+    unlively not poppy enough"*, *"they also stop before getting to the middle of the sidewalk
+    infront of the play area"*; the lead: the planted sole slid at body speed, and the thank-you
+    wave showed no raised arm. Causes and fixes (`SidewalkLife` class note, `Locomote`, `DrawSeat`):
+    * ARMS: the rigs' `idle` keys both arms, the chest and the head, and the PlayableGraph on the
+      rig's Animator wrote that pose back over the drawn one (Play and films alike) while the legs,
+      which idle does not key, kept theirs. Now there is no graph: each frame resets the seven bones
+      to bind, SAMPLES the clip (`AnimationClip.SampleAnimation`, crossfades blended by hand; the
+      Animator disabled) and draws on top. The arms swing opposite their own leg from the same
+      phase, per role (kids x1.15 carried 14 degrees forward, passers-by at least 22 degrees, the
+      beggar's own small swing, the magtataho's pole arm held within 9 degrees under the pole).
+      ⚠️ Outside Play every film step renders in one editor frame, so the bodies' skinned meshes set
+      `forceMatrixRecalculationPerRender` (edit mode only), or every frame shows the first pose.
+    * FOOT SLIDE was REAL: with kneeless mirrored legs the LOWER sole (which the hips were dropped
+      onto, and which the probe measured) is the one behind, which half of each step is the swing
+      foot, dragged at twice the body's speed. Now the stance leg is chosen by the phase, its sole
+      is locked to the world point where it landed while the body passes over it, the swing hip is
+      hiked 4.5 degrees at passing so the swing sole clears, and the probe measures the stance sole.
+      Probe (`videos_v3/probe/sidewalk_probe.txt`) planted sole along travel, before -> after:
+      taho +0.80 -> +0.00 m/s (body 0.80), beggar +0.74 -> +0.00 (0.75), passers-by +1.13..1.15 ->
+      +0.00..0.01 (1.15), kids +2.18..2.26 -> +0.04..0.08 (2.3..2.5; the rest is the run's flight
+      and juke corrections). Left arm against left leg: -0.77 to -0.95 (opposite phase).
+    * FLOATING: level legs join the chest at its middle and his heels (the foot block juts 5.7 cm
+      under the thigh) held him up, so the seat hovered 14 cm over the carton. Now the legs rest 10
+      degrees above level, set down by their real mesh corners (`Hull`), and the chest is lowered
+      until its lowest corner is on the carton: probe seat +0.002 m, legs +0.000 m.
+    * WAVE: the seated wave raises his right arm out to the side, fist 0.41 m over the shoulder
+      and 0.33 m out beside the head, rocking at 2.6 a second, the head tilted 20 and the chest 10
+      degrees away so the arm passes under the head's 0.3 m overhang (the probe's head-box check
+      reads 0.086 m, a conservative box round the hair tufts; no visible cut in the stills).
+    * POP: every gesture rides one curve (`Pop`: a wind-up the other way, a snap with an overshoot,
+      a hold, an eased return with a settle); the sit-down winds up, drops faster into the carton,
+      squashes on the cast's own squash spring (`CharacterSquashStretch`'s 24 / 8.5) and settles;
+      the stand-up leans, pops up past standing and stretches; the head lags the chest a beat
+      (`HeadLag`); cheer (arm pulled back then thrown up and out), a new clap after it, laugh hops
+      that squash on landing, the juke. No linear ramps are left in the drawn layers.
+    * CARTON AND PROPS: `tools/author_ilalim_textures_life.py` (the prop painter's helpers) paints
+      `Art/IlalimRebuild/Life/life_{carton, cloth, bag, tin, aluminium, lid, bamboo, rope, coin}.png`
+      (swatches `Logs/ilalim-unity/life_textures/`); the author puts them on the life materials. The
+      carton has its own mesh (`CartonMesh`: a torn far corner, top face and corrugated edge UVs):
+      kraft board, fold creases, a faded MARUPOK print and this-way-up arrows, water rings,
+      pavement dirt, a darker worn seat patch. The tin cup is an old milk can (maroon GATAS label).
+    * COURT PAVEMENTS: the magtataho now walks the whole west pavement (x -7.85) to z 12.5; a
+      passer-by watches from the west pavement (-7.85, 5.5) and one from the east (7.55, 1.8,
+      single file between the kerb and the pisonet cord and the overclock pad); the kids' tag runs
+      up the east pavement to z -8. The route check and the probe no longer fail the play area:
+      they fail the chalk box, the kerb (|x| under 7.3) and anything within 0.5 m of a gameplay
+      prop (the layout's anchors: pisonet row and cord, pares cart, pad, hoop, stalls, crates,
+      chairs, bench, bin, drum). Probe: 0 in the box, 0 on the kerb, 0 near a prop. The beggar's
+      spot stays against the PGH fence (the court's pavements put him by a prop or a doorway).
+    Films and stills: `Logs/ilalim-unity/videos_v3/` (`kids_tag`, `taho_calling`,
+    `spectators_cheer`, `beggar_donation`, `court_wide`, with sound; `stills/wave/`,
+    `stills/carton/`). NOT YET SEEN IN PLAY: the Animator-overwrite cause is inferred from the
+    clips' channels and the films, so the owner's Play check is the confirmation.
   - OPEN: the owner's look review in Play, cable shadows striping the court under the 27 degree
     sun (decision 2 below), then ILALIM-1.5 and 1.6.
 
