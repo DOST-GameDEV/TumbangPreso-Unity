@@ -1,6 +1,6 @@
 # Active Rework Checkpoint
 
-Updated2026-09-30. Branch ASTRAReworks. Protocol97. Goal active.
+Updated2026-09-30. Branch ASTRAReworks. Protocol98 candidate. Goal active.
 Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 
 ## Scope And Ownership
@@ -238,3 +238,24 @@ captured image, not the live match. No hero/lighting/art behavior changes.
 Victory-screen input and per-round pause reports are separate; reconcile their
 local ownership before another implementation. Independent remaining-map checks
 are running on the frozen cloud candidate; source edits will not alter that run.
+
+## Current Local Build And Exact Resume
+
+Local source480e7e1d5 contains F0930-32 and6 native checks; integration7cb964d0c
+preserves incoming9902d4290 docs/evidence and CatchReconstruction reservation.
+No incoming runtime differences. Source is committed locally, not pushed yet.
+Clean isolated worktree C:/Users/matth/Documents/Codex/work/tump-roundfreeze-0930
+is detached7cb964d0c. Complete15348 tracked Assets/Packages/ProjectSettings hashes
+were frozen before build preparation; manifest Logs/feedback-0930-roundplayer/
+build-inputs.json. Library copied from the inactive native validation checkout.
+Guarded Windows build is RUNNING on unified session12680, profile
+feedback-0930-roundfreeze-build, internal output Builds/feedback-0930-roundfreeze/
+TumbangPreso.exe; log Logs/feedback-0930-roundplayer/player-build.log.
+Poll that same handle; do not restart on observation timeout. If successful,
+verify executable/data and preparation drift/source preservation, then run local
+work/run_roundfreeze_lan.py against this exact binary. It wraps existing preserved
+two-process direct LAN150s and injects -tp-freezetrace for host/client. Compare
+their10-second freeze, matching began value, stopped simulation/frame count and
+round2 resumption; inspect player frozen screenshots. No live UGS/paid Relay.
+Keep F0930-32 open until actual peer gate; publish coherent commits after the gate.
+Only this build is heavy/active; previous test/copy/hash sessions are terminal.
