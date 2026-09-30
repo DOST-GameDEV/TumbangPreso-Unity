@@ -236,12 +236,15 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   All10 baseline failures reproduce;19 final native receiver cases pass for
   malformed/valid/spectator/non-host/repeated messages. Protocol97 unchanged.
   [Evidence](reports/feedback-2026-09-30/seat-assignment-packets.md). Actual peers unqualified.
-- [ ] ENG-0930-TRAINING-PAUSE: actual integrated player training menu disables
+- [x] ENG-0930-TRAINING-PAUSE: actual integrated player training menu disables
   Character, Defender and cheat controls when Escape pauses. PracticeRange.CanEdit
   reuses gameplay BlocksInput, which becomes true at requested scale0. Claim
   PracticeRange.cs and PracticeRangeTests.cs; retain offline pause/cinematic gates.
-  Reproduce through the existing native range-menu test, then fix configuration
-  eligibility without allowing gameplay input. Barrier FPP review resumes after it.
+  Fixed configuration eligibility independently of world input. Native baseline
+  fails with disabled controls; final1/1passes3.44s with paused scale, interactable
+  controls, model/defender/bot/cheat changes, cinematic/network refusal and resume.
+  [Evidence](reports/feedback-2026-09-30/training-pause.md).
+  Barrier FPP review resumes on a refreshed player after this fix.
 
 - [x] ENG-0930-HOP Normal bot hop delivery: an issued one-render Jump survives
   release until physics. Native baseline reproduces the lost edge; fixed producer/

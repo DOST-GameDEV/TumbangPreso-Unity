@@ -1342,3 +1342,12 @@ pauses correctly but disables Character/Defender/cheats because CanEdit uses
 BlocksInput at scale0. Claim PracticeRange.cs and PracticeRangeTests.cs only,
 ENG-0930-TRAINING-PAUSE. Preserve cinematic/network gates; configuration can work
 while world input stays blocked. Native baseline next. Barrier FPP review pending.
+Training baseline fixture compile caught internal Hold/Release visibility, no
+runtime result. One bounded tooling repair uses reflection for those existing
+internal presentation transitions; product untouched for baseline reproduction.
+Training baseline1/1fails exact paused CanEdit; final1/1passes3.44s. Controls now
+remain available at scale0, while original cinematic/network gates and parked
+input remain. Before/after menu frames inspected. QA_TUMP_0049 row added at top
+with native hidden ID; checkbox creation and final note pending publication.
+Publish exact PracticeRange/tests/docs, then refresh player for actual defender
+selection/barrier review. User awake21:27asked status; concise shipped summary sent.

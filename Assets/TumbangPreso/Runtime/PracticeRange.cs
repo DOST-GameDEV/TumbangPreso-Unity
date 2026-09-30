@@ -13,7 +13,11 @@ namespace TumbangPreso
             NetAuthority.IsNetworked, UI.SceneFlow.Networked, MatchAbandon.AuthorityRevoked,
             GameLaunch.GuidedTutorial, GameLaunch.Spectator || GameLaunch.AllBots);
         public static bool Active => Requested && Instance != null && Instance._ready && Instance.isActiveAndEnabled;
-        public bool CanEdit => Active && Instance == this && !PresentationClock.BlocksInput;
+        // Menu configuration remains available while offline pause blocks world input.
+        // Shared presentation phases still own actor/model state until their release.
+        public bool CanEdit => Active && Instance == this
+            && !(PresentationClock.Held && !SharedUltimatePhase.Collecting)
+            && !SharedUltimatePhase.BlocksActions;
         public CharacterMotor Local { get; private set; }
         public bool InfiniteSkills { get; private set; }
         public bool FullUltimate { get; private set; }
