@@ -591,3 +591,33 @@ subtitle, preserve saved bindings/device behavior and all non-ready action promp
 Ability-button enlargement is awaiting the owner's precise interpretation of the
 new Paete/Phaister presentation lock because the supplied screenshot is Paete.
 No power-deck or protected-hero changes until resolved.
+Owner15:31 explicitly approved the shared HUD enlargement for everyone after the
+Paete/Phaister scope question. Add exact ownership:
+Assets/TumbangPreso/Runtime/UI/TumpPowerReadout.OwnerDeck.cs.
+Enlarge the existing group by1.5 around its current screen anchor; preserve edge
+margins, saved bindings, all kit text/state and the separate held-reference sheet.
+This narrow shared-HUD exception does not authorize hero mechanics/presentation
+redesign or description edits.
+HUD native run hud-ready-powers-final:2cases, saved-key/pad rebind glyphs, touch,
+ready-to-game/spectator hiding,1.5x deck with unchanged corner/touch margins and
+accessibility scaling, unchanged finalized kit strings; inspect960x540/1600x680
+ready and power surfaces. Stop at fresh nonzero XML plus4capture inspections.
+Isolated profile, graphics, mip2; no mechanics or actual-peer claim. Retry count0.
+Owner15:36 clarifies the Paete/Phaister protection is character-specific: authorized
+global changes apply to everyone, including these two. Do not request extra
+exceptions merely for shared controls/behavior. AGENTS clarified accordingly;
+this is broader than just the50percent button adjustment, while their finalized
+individual kits, authored art and non-passive descriptions remain protected.
+First HUD run: power geometry/margins/kit strings pass; ready fixture incorrectly
+assumed an existing separately saved Ready binding follows Interact. Rebind the
+actual Ready action explicitly, preserving that supported legacy override.
+Capture critique also found the enlarged deck overlaps the practice F7 status;
+move that existing status above the deck/hint and assert separation. Wait through
+the existing role-swap animation before power captures. No authored motion changed.
+Rerun only these2 affected cases as hud-ready-powers-checked; one fixture repair.
+HUD refinement qualifies2/2 native cases in8.48seconds, exit0, no extra OOM.
+Four captures inspected: Ready Up/Xelu and enlarged power deck at960x540/1600x680;
+practice F7 status now clears the larger controls. Finalized kit text unchanged.
+Publish explicit paths and tick this same HUD report Done; Human verified stays
+human-owned. No heavy job. Shared/global changes need no repeated protected-hero
+exception questions; the owner clarified that scope explicitly at15:36.

@@ -54,6 +54,14 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   [Flow evidence](reports/feedback-2026-09-30/tutorial-flow.md).
 - [x] F0930-02 Tasks: unchanged wallet refresh retains rows and entrance state;
   changed rows refresh without replaying entrance. Focused native path passes.
+- [x] F0930-36 New Harry HUD refinement: Ready Up uses a larger live Xelu
+  Interact/Ready prompt without the warmup subtitle; shared ability controls and
+  their key prompts grow50percent with edge margins preserved. Owner15:31
+  explicitly approved shared sizing for Paete/Phaister too, then clarified that
+  authorized global changes normally include them; character-specific work stays finalized. Two focused native cases pass, covering
+  binding/device changes, margins, accessibility, finalized kit text and state exits.
+  Four captures inspected. [Evidence](reports/feedback-2026-09-30/hud-readability.md).
+
 - [x] F0930-03 Round scoreboard: centered, hides duplicated HUD for ordinary/halftime
   cards, removes redundant warmup line and fits large scores. Native state/bounds
   and inspected 960x540/1600x680 captures pass. [Evidence](reports/feedback-2026-09-30/README.md).

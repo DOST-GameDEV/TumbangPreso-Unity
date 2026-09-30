@@ -26,6 +26,10 @@ replaced, retired and genuinely blocked requirements without reviving old ideas.
   are the only description exception; do not infer permission to change passives'
   behavior. The owner separately authorized updating stale Wiki descriptions to
   accurately document the finalized implementation; that is documentation work.
+- This protection is character-specific. Authorized global/shared changes apply
+  normally to Paete and Phaister too, including changes to everyone's HUD buttons.
+  Do not ask for a separate exception merely because a shared change includes them.
+  Do not use a global change as a pretext to redesign their finalized kits or art.
 - Any permitted bug fix must identify the reproducible defect, preserve the
   finalized direction and include focused behavioral evidence.
 

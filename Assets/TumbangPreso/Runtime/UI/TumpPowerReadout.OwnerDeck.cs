@@ -46,6 +46,9 @@ namespace TumbangPreso.UI
         {
             _deck = OwnerUiLayout.Rect(root, "PowerSeals");
             PlaceDeck(Hud.OnTouch);
+            // Enlarge the live controls around their existing corner/bottom anchor.
+            // HudReadingLayout retains this base scale for accessibility settings.
+            _deck.localScale = Vector3.one * 1.5f;
             for (int i = 0; i < 3; i++)
             {
                 float size = i == 2 ? 108 : 90, x = i == 0 ? 0 : i == 1 ? 102 : 206, y = OwnerDeckHeight - size - 4;
@@ -97,7 +100,7 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Place(_roleBadge.rectTransform, 102 - 8, OwnerDeckHeight - 90 - 4 - 8, 38, 38);
             _roleBadge.gameObject.SetActive(false);
             _hint = OwnerUiLayout.Text(_deck, "PowerInfoBinding", "", 28); _hint.color = CourtPresentationPalette.Paper;
-            _hint.alignment = TextAnchor.MiddleCenter; OwnerUiLayout.Place(_hint.rectTransform, -90, -40, OwnerDeckWidth + 150, 36);
+            _hint.alignment = TextAnchor.MiddleCenter; OwnerUiLayout.Place(_hint.rectTransform, 0, -40, OwnerDeckWidth, 36);
             var outline = _hint.gameObject.AddComponent<Outline>(); outline.effectColor = UiTheme.InGameOutline; outline.effectDistance = new Vector2(1, -1);
             BuildDetails(root);
             var asset = Resources.Load<InputActionAsset>("TumbangPreso");

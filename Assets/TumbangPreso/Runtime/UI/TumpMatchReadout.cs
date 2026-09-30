@@ -20,7 +20,7 @@ namespace TumbangPreso.UI
         private float _staminaCaptionWidth;
         private CharacterMotor _aimOwner;
         private Carrier _aimCarrier;
-        private Image _stamina, _progress;
+        private Image _stamina, _progress, _readyGlyph;
         private readonly Text[] _names = new Text[4], _scores = new Text[4], _roles = new Text[4];
         private readonly Image[] _portraits = new Image[4];
         private readonly RectTransform[] _scoreRows = new RectTransform[4];
@@ -363,6 +363,7 @@ namespace TumbangPreso.UI
             _promptRoot.gameObject.SetActive(local != null && !spectating);
             if (local == null || spectating) return;
             _prompt.text = ""; _context.text = ""; _progress.transform.parent.gameObject.SetActive(false);
+            if (_readyGlyph != null) _readyGlyph.enabled = false;
             _prompt.color = OwnerUiTheme.Current.Pale;
             if(HalftimePresentation.Playing){_prompt.text="HALFTIME";_context.text="Next round in "+Mathf.CeilToInt(HalftimePresentation.Instance.Remaining)+"s";return;}
             var carrier = local.GetComponent<Carrier>(); var round = GameServices.Round;
@@ -392,8 +393,13 @@ namespace TumbangPreso.UI
             }
             if (ReadyWindow)
             {
-                _prompt.text = Hud.PressCue("ReadyUp") + (round.RoundActive ? "Ready" : "Ready to play");
-                _context.text = SceneFlow.SelectedMode == GameMode.HeroStrike ? "Warm up freely. Powers start with the round." : "Warm up freely. Scores are paused."; return;
+                if (_readyGlyph != null)
+                {
+                    _readyGlyph.sprite = Hud.OnTouch ? null : InputGlyphs.For(Hud.KeyLabelFor("ReadyUp"), true);
+                    _readyGlyph.enabled = _readyGlyph.sprite != null;
+                }
+                _prompt.text = !Hud.OnTouch && _readyGlyph?.enabled != true ? Hud.PressCue("ReadyUp") + "Ready Up" : "Ready Up";
+                return;
             }
             if(PilotingFamiliar(local))
             {
@@ -510,6 +516,16 @@ namespace TumbangPreso.UI
             if (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.f7Key.wasPressedThisFrame && PracticeSandbox.Allowed) PracticeSandbox.Toggle();
             _sandbox.enabled = PracticeSandbox.Allowed && !Hud.OnTouch && (PracticeSandbox.Active || ReadyWindow);
             _sandbox.text = "F7 · No cooldowns " + (PracticeSandbox.Active ? "on" : "off");
+            // Keep the practice status above the enlarged deck and its reading hint.
+            // The deck itself retains the same right/bottom screen margins.
+            float y = 71;
+            if (_powers != null && _powers.DeckVisible && !Hud.OnTouch)
+            {
+                float scale = Mathf.Max(Settings.GameSettings.ValidHudScale(Settings.SettingsStore.Current.HudScale),
+                    Settings.SettingsStore.Current.LargerText ? 1.2f : 1);
+                y = _powers.DeckRect().yMax - _root.rect.yMin + 116 * scale;
+            }
+            _sandbox.rectTransform.anchoredPosition = new Vector2(-286, y);
         }
     }
 }
