@@ -638,3 +638,20 @@ Both contributors independently allocated F0930-36; the already published seat
 request keeps36 and this not-yet-published HUD unit uses37. Hidden Doc record46
 will identify the same HUD row. No runtime overlap or merge conflict; retained
 native evidence scopes are separate, not an integration-wide peer claim.
+HUD274586f0 integrated with seat-request safety ate98b53b9, remote HEAD verified.
+Same Doc row QA_TUMP_0046 has the short resolution and Done checked; Human verified
+is untouched. Native saved-state readback confirmed. HUD runtime/test paths release.
+Next reconcile freshly human-verified rows into the existing history, then take
+remaining actionable Feedback. No heavy job. Source and authored assets clean.
+Two newly human-verified rows (timed ability lifetime and loading) are preserved
+whole in existing Finished feedback history, including native checked controls,
+all5cell texts and hidden IDs. Original active rows removed after verification.
+Active30rows includingheader; history19reports. No duplicate tab or old-history loss.
+
+Reopen QA_TUMP_0044 for Harry's new tutorial-only comment: remove the slipper/can
+star highlight. Claim Assets/TumbangPreso/Runtime/GuidedTraining.cs and
+Assets/TumbangPreso/Tests/PlayMode/TutorialLessonHonestyProbe.cs plus the same
+TODO/ledger/evidence. Remove the tutorial objective-marker bindings for those
+objects, retaining ordinary world highlights and moving-dummy lesson markers.
+His2.5-second reading request is already implemented in100d8725 and qualified by
+actual Tab input; preserve that timing and reuse its unchanged passing evidence.
