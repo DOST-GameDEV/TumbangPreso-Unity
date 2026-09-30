@@ -464,3 +464,13 @@ after fresh fetch, then continue bot-query allocation work; preserve loading own
 Icon report now yellow with the concrete screen/screenshot question;46illustrations
 and ComingSoon/Voodoo vector fallbacks found in source, no missing binding proven.
 
+ed60d6e5 tutorial timing/copy/footer refinement published and remote verified.
+The same live Feedback row has additional requests, so it stays open: centered
+attacker placement, no repeated attacker teleports except Throw/Shove, investigate
+levitating landed slipper, Curve completes on curved throw alone, Lunge HOLD/RELEASE
+prompt and2.5-second description hold. Reclaim GuidedTraining.cs,
+UI/GuidedTrainingHud.OwnerPainted.cs, Tests/PlayMode/OwnerTrainingUiTests.cs and
+Tests/PlayMode/TutorialLessonHonestyProbe.cs under Assets/TumbangPreso. Do not
+change the protected hero kits. Diagnose the training-owned placement first;
+ordinary Slipper.cs remains unclaimed until a reproduced defect requires it.
+No Unity job active. Reserved round timing is next after this newest row.
