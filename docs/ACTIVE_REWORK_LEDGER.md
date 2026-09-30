@@ -196,3 +196,45 @@ for revised2.5s animation/1.25s tag hold. Incoming3commits are docs/evidence onl
 Current opt-in RoundFreezeProbe.cs/meta observes actual peer phase/frame/clock
 and captures one game screenshot per boundary. Build/peer check pending. All jobs
 79670/98339/57162/60575/68147 terminal; no heavy job active. F0930-32 stays open.
+
+
+Cloud follow-through: bridge Classic full-match assertions pass1/1, all8rounds,
+198throws/193retrievals/41knocks/55resets/165tags. An internal Linux player now builds
+through the normal gates after one warmed-cache retry,2076MB;38 .anim hashes stay
+unchanged. Actual Guest/title/Home/Practice/training entry and keyboard movement
+work. OpenGL and explicitly selected CPU Vulkan both retain the visual anomaly;
+no Windows reproduction or manual aim/contact approval is claimed. Native players
+are closed. Rooftop Classic liveness also passed1/1:8rounds,195throws,189retrievals,43knocks,
+55resets,168tags. A private two-process Classic rematch check is now active, using
+the Linux candidate and separate empty profiles. No source gameplay paths are
+newly reserved.
+
+Latest Feedback read no longer contains the tutorial hold text and now describes
+continued practice after completion. The removal's author/intent is unknown and
+local tutorial ownership remains; do not infer release or edit that unit here.
+Two shipped cloud bug-row additions were refused twice despite the09:32 owner
+permission. A precise request to add the bot double-attack and chat-emoji rows
+superseding the old reservation is pending with the owner. No blank rows were
+inserted. Keep the published fixes/evidence; do not retry a different write route.
+
+
+Linux rematch baseline is not qualified: the actual host stayed at round0 and the
+client received ClosedByRemote before admission, with no OOM. The initial CPU
+Vulkan batch attempt crashed in native set_vSyncCount; one OpenGL repair allowed
+fresh reports. The separate warm-host control admitted the client, then it lost the transport
+with ProtocolTimeout; the host reached BayanPlaza but awaited peers at round0.
+The cold failure remains; longer preparation did not fix the session. Both
+processes exited, with no OOM. No runtime network source
+or timeout was edited. See cloud-validation-limits.md and its peer receipts.
+
+
+Current cloud ownership: F0930-04 latest Feedback revision, read11:40, asks for
+2.5seconds of animation followed by a1.25second tag freeze before fading back.
+Reserve Assets/TumbangPreso/Runtime/Camera/CatchReconstruction.cs and
+Assets/TumbangPreso/Tests/PlayMode/CatchReconstructionTests.cs, plus the matching
+TODO/checkpoint and a catch-replay-tag-hold report. Preserve authoritative contact,
+recovery time, ongoing simulation and existing interruption exits. Freeze the
+captured image, not the live match. No hero/lighting/art behavior changes.
+Victory-screen input and per-round pause reports are separate; reconcile their
+local ownership before another implementation. Independent remaining-map checks
+are running on the frozen cloud candidate; source edits will not alter that run.

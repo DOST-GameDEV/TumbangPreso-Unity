@@ -45,7 +45,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
 - [x] F0930-03 Round scoreboard: centered, hides duplicated HUD for ordinary/halftime
   cards, removes redundant warmup line and fits large scores. Native state/bounds
   and inspected 960x540/1600x680 captures pass. [Evidence](reports/feedback-2026-09-30/README.md).
-- [ ] F0930-04 Tagged replay: approximately three seconds and truthful contact display;
+- [ ] F0930-04 Tagged replay: latest owner Feedback requests2.5seconds animated,
+  then a1.25second captured tag-frame hold before fade; cloud unit claimed.
+  Preserve earlier3second evidence as history, not the new acceptance target.
+  Original request: approximately three seconds and truthful contact display;
   fix recording/reconstruction/contact timing without inventing a hit.
   Victim replay duration is now approximately3 seconds, with5 native timing/exit
   cases passing. [Evidence](reports/feedback-2026-09-30/catch-replay-duration.md).
@@ -144,6 +147,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   through round2 with replicated movement/objective state and no hard divergence.
   Other network paths and skill use remain unqualified.
   [Evidence](reports/feedback-2026-09-30/player-lan.md).
+  Cloud Classic whole-match cases now pass on Eskinita,Ilalim ng Tulay and Sa Bubong.
+  Internal Linux player builds and enters training, but software-rendered surfaces
+  remain unqualified. A Linux cold direct-peer attempt failed before round1;
+  startup timing is under investigation, with no Windows regression established.
+  [Cloud limits/evidence](reports/feedback-2026-09-30/cloud-validation-limits.md).
 - [x] F0930-30 Bot obstacle-query allocation: reuse bounded hit storage, preserve
   complete dense-world fallback and existing filters. Native behavior cases pass;
   calibrated Unity recorder detects a known allocation and records zero events

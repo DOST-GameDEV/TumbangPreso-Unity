@@ -63,3 +63,79 @@ Evidence: [XML](checks/classic-full-match-cloud.xml) and
 [match counters and trace](checks/classic-full-match-cloud.txt). Long loose-shoe
 samples with canAct=False include inactive presentation intervals and are not,
 by themselves, proof of a stuck bot.
+
+## Bridge follow-through and native Linux player
+
+Classic Ilalim ng Tulay also completed all eight rounds:198 throws,193 retrievals,
+41 can knocks,55 resets and165 tags. Existing behavior assertions passed1/1,
+with no camp/idle penalties and no new OOM event. This is an independent map
+coverage result, not a repeat of the unchanged Eskinita case. See the
+[XML](checks/classic-bridge-cloud.xml) and [trace](checks/classic-bridge-cloud.txt).
+
+An internal Linux x86_64 player was built through the existing GameBuilder
+pipeline, retaining the authored-animation and scene-script gates. The cold build
+was stopped by the memory safety threshold during compilation, without a kernel
+OOM kill. One warmed-cache retry succeeded:2076MB,26 seconds build phase,61.93
+seconds guarded process,exit0. All38 retained .anim file hashes remained unchanged.
+The build identity honestly records detached83136899 plus dirty candidate overlays,
+protocol97. It predates the later controls label/wheel-order integration and is
+not a clean build of the latest remote HEAD or a replacement Windows release.
+
+The actual player reached Guest, title,Home,Practice and the Eskinita training
+ground. Desktop-native keyboard input moved the player; the training menu and
+settings opened and closed. The training clock is deliberately fixed, so this
+route alone cannot certify an ordinary round's pause timer. Relative mouse look
+through the remote-control surface is not yet reliable enough for a claimed
+manual aim/throw/contact qualification.
+
+The earlier missing Vulkan driver was addressed with the official Debian Mesa
+25.0.7 userspace package, isolated from system installation. Selecting its CPU
+device explicitly with -force-vulkan -force-device-index0 starts the player;
+normal automatic selection rejects that CPU device. Both OpenGL and Vulkan
+software-rendered native players still show the character/prop surface anomaly.
+The existing Standard/Nostalgic lighting setting changes the scene look but does
+not remove it. The cause remains unresolved and Windows reproduction remains
+unverified. No authored visual or runtime gameplay correction was made for this
+platform discrepancy. No Blender removal, paid GPU or system security change
+was needed. All opened native player processes exited normally after the checks.
+
+## Rooftop behavior
+
+Classic Sa Bubong completed eight rounds with195 throws,189 retrievals,43 can
+knocks,55 resets and168 tags. The existing liveness assertions passed1/1 with
+normal match completion and no new OOM event. There were no camp or idle penalties.
+This sample does not separately force every off-roof slipper recovery or qualify
+map visuals. [XML](checks/classic-rooftop-cloud.xml),
+[counters](checks/classic-rooftop-cloud.txt).
+
+## Linux peer admission remains unqualified
+
+A real two-process Classic rematch check did not reach its first round. Both
+processes wrote fresh state reports: the host remained at round0; the joining
+client received ClosedByRemote and ended non-networked. No rematch began and no
+OOM event occurred. This does not establish a Windows regression or its cause.
+The host's logged arena preparation took13.96 seconds while the existing runner
+started the client after7 seconds; NGO's configured approval-buffer timeout is
+10 seconds. Startup timing is a hypothesis, not a confirmed diagnosis. A separate
+30-second host-settle control completed; it does not qualify the original cold
+entry. No production timeout or connection rule was changed.
+
+Before this OpenGL run, the CPU Vulkan batch-mode attempt crashed natively inside
+QualitySettings.set_vSyncCount during initialization. The same Vulkan binary
+worked interactively. One bounded renderer repair switched the peer check to
+OpenGL; those players then exited normally with the failed admission reports.
+That native batch failure is a platform qualification limit, not a proved game
+state regression.
+
+- [Cold admission result](checks/linux-cold-rematch-result.json)
+- [Host state](checks/linux-cold-rematch-host.txt)
+- [Client state](checks/linux-cold-rematch-client.txt)
+
+The warm-host control admitted the client and both peers submitted Ready. The
+client then disconnected with ProtocolTimeout. The host completed its first round
+and moved to BayanPlaza but was waiting at round0 when sampled; the client remained
+non-networked in Eskinita. Thus additional host preparation time improved initial
+admission without solving the session failure. The host recorded about30FPS during
+its live round, but that excludes startup stalls and is not a general performance
+qualification. No new OOM and no runtime edits occurred. Both processes exited.
+[Control receipt](checks/linux-warm-host-control.json).

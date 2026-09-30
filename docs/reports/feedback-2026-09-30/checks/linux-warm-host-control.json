@@ -1,0 +1,122 @@
+{
+  "passed": false,
+  "faults": [
+    "host: the host never reached round 1 (round 0). Two peers agreeing that nothing happened is not evidence about a link",
+    "client: the client fell back to hosting its own lobby: it lost the connection and this row expected it to stay joined for the whole run",
+    "host did not observe an actual rematch start",
+    "host is not in rematch round1",
+    "client did not observe an actual rematch start",
+    "client did not reach BayanPlaza",
+    "client is not in rematch round1"
+  ],
+  "host": {
+    "path": "/workspace/shared/tump-validation/Logs/cloud-classic-warm-host-control/cloud-classic-rematch/host.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": true,
+        "score": 0,
+        "travelled": 179.6
+      },
+      {
+        "seat": 1,
+        "char": 3,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 0,
+        "travelled": 123.3
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 0,
+        "travelled": 101.9
+      },
+      {
+        "seat": 3,
+        "char": 9,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 0,
+        "travelled": 131.0
+      }
+    ],
+    "role": "HOST",
+    "networked": "True",
+    "slot": "0",
+    "protocol": "97",
+    "sampled": "186.0",
+    "round": "0",
+    "active": "False",
+    "defender": "0",
+    "mode": "Classic",
+    "map": "BayanPlaza",
+    "structural": "F004202A",
+    "hash": "E8F7B23D"
+  },
+  "client": {
+    "path": "/workspace/shared/tump-validation/Logs/cloud-classic-warm-host-control/cloud-classic-rematch/client.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": -1,
+        "bot": false,
+        "origin": "Unknown",
+        "taya": false,
+        "score": 0,
+        "travelled": 3.6
+      },
+      {
+        "seat": 1,
+        "char": -1,
+        "bot": false,
+        "origin": "Unknown",
+        "taya": false,
+        "score": 0,
+        "travelled": 9.7
+      },
+      {
+        "seat": 2,
+        "char": -1,
+        "bot": false,
+        "origin": "Unknown",
+        "taya": false,
+        "score": 0,
+        "travelled": 8.2
+      },
+      {
+        "seat": 3,
+        "char": -1,
+        "bot": false,
+        "origin": "Unknown",
+        "taya": false,
+        "score": 0,
+        "travelled": 9.8
+      }
+    ],
+    "role": "HOST",
+    "networked": "False",
+    "slot": "0",
+    "protocol": "97",
+    "sampled": "150.0",
+    "round": "0",
+    "active": "False",
+    "defender": "0",
+    "mode": "HeroStrike",
+    "map": "MatchSetup",
+    "structural": "416D399B",
+    "hash": "2A8522B8"
+  },
+  "stoppedForMemory": false,
+  "before": "low 0\nhigh 0\nmax 5416911\noom 10\noom_kill 5\noom_group_kill 0\n",
+  "after": "low 0\nhigh 0\nmax 5416911\noom 10\noom_kill 5\noom_group_kill 0\n",
+  "runtimeSha256": "f4caf96a6bde70444a1d11fc6630ea9ebaae2e9824aa58214142116f07899024"
+}
