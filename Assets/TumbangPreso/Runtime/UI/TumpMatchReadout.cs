@@ -167,15 +167,11 @@ namespace TumbangPreso.UI
         /// </summary>
         public static IEnumerable<string> RoundLabelLines()
         {
-            yield return WarmupRoundLine;
-
             // ⚠️ EIGHT OF EIGHT IS THE WIDEST LEGAL ROUND LINE, not a round number anybody
             // plays: `CustomGameRules` caps the count at eight, and one digit either side is
             // the longest this string gets.
             yield return RoundLine(8, 8);
         }
-
-        internal const string WarmupRoundLine = "Warm up · Scores paused";
 
         internal static string RoundLine(int round, int total)
             => $"Round {Mathf.Max(1, round)} / {total}";
@@ -188,7 +184,7 @@ namespace TumbangPreso.UI
         public void Flash(bool active) => _effects.Flash(active);
         public void Tick(CharacterMotor local, bool spectating, bool training, bool hidePowers, bool spectatorControls)
         {
-            Canvas.enabled=!HalftimePresentation.Playing;
+            Canvas.enabled = !RoleSwapCard.Showing && !HalftimePresentation.Playing;
             float dt = Time.unscaledDeltaTime;
             if (_toastLeft > 0) { _toastLeft -= dt; if (_toastLeft <= 0) { _toast.enabled = false; SizeToastPlate(); } }
             if (_hitLeft > 0)
@@ -202,7 +198,7 @@ namespace TumbangPreso.UI
             _clockRoot.gameObject.SetActive(!training); _scoreRoot.gameObject.SetActive(!training);
             int time = Mathf.CeilToInt(Mathf.Max(0, round.TimeLeft));
             _clock.text = $"{time / 60:00}:{time % 60:00}";
-            _round.text = match.IsWarmupBuffer ? WarmupRoundLine : RoundLine(match.RoundNumber, match.TotalRounds);
+            _round.text = RoundLine(match.RoundNumber, match.TotalRounds);
             MatchBarClock(match, round, time);
             if (round.RoundActive && match.MatchInProgress) GameServices.Voice?.TickClock(round.TimeLeft);
             if (Time.unscaledTime >= _scoreAt) { _scoreAt = Time.unscaledTime + .1f; Scores(local, spectating); }

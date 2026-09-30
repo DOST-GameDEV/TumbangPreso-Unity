@@ -82,6 +82,39 @@ namespace TumbangPreso.PlayTests
             yield return new WaitForSecondsRealtime(0.45f);
         }
 
+        [UnityTest, Timeout(180000)]
+        public IEnumerator TasksRefreshKeepsItsRowsAndDoesNotRestartTheirEntrance()
+        {
+            yield return OpenHome();
+            float deadline = Time.realtimeSinceStartup + 120;
+            while (HubLoading.Visible)
+            {
+                Assert.Less(Time.realtimeSinceStartup, deadline);
+                yield return null;
+            }
+            Assert.IsFalse(Net.WalletStore.CanTransact, "This case must use the isolated offline wallet.");
+            yield return Press("TaskButton");
+            var tasks = TumpHub.Current.Top as HubTasks;
+            Assert.IsNotNull(tasks);
+            var rows = tasks.GetComponentsInChildren<RectTransform>().Where(r => r.name.StartsWith("Task_")).ToArray();
+            Assert.AreEqual(6, rows.Length);
+            var starts = rows.Select(r => (float)typeof(HubSlap).GetField("_start",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .GetValue(r.GetComponent<HubSlap>())).ToArray();
+            var refresh = GameServices.Wallet.RefreshAsync();
+            while (!refresh.IsCompleted) yield return null;
+            Assert.IsFalse(refresh.IsFaulted);
+            yield return null;
+            var refreshed = tasks.GetComponentsInChildren<RectTransform>().Where(r => r.name.StartsWith("Task_")).ToArray();
+            CollectionAssert.AreEqual(rows, refreshed, "An unchanged wallet refresh rebuilt the task rows.");
+            for (int i = 0; i < rows.Length; i++)
+                Assert.AreEqual(starts[i], (float)typeof(HubSlap).GetField("_start",
+                    System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                    .GetValue(rows[i].GetComponent<HubSlap>()), "Refresh replayed an entrance.");
+            yield return TumpUiCapture.Capture("Feedback0930-tasks-refresh-960x540", TumpHub.Current.Canvas,
+                960, 540, false, checkActionBounds: true);
+        }
+
         internal static IEnumerator Shots(string name)
         {
             var hub = TumpHub.Current;

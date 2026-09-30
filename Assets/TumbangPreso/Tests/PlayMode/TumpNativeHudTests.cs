@@ -22,6 +22,44 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
 
         [UnityTest]
+        public IEnumerator OrdinaryRoundStandingsAreCenteredAndReplaceTheLiveHud()
+        {
+            yield return Open(GameMode.Classic);
+            var card = Object.FindFirstObjectByType<RoleSwapCard>();
+            var readout = Object.FindFirstObjectByType<TumpMatchReadout>();
+            var view = card.GetComponent<TumpRoundSwapView>();
+            Assert.IsNotNull(card); Assert.IsNotNull(readout);
+            var scores = (Scoreboard)typeof(MatchDirector).GetField("_scores", BindingFlags.Instance | BindingFlags.NonPublic)
+                .GetValue(GameServices.Match);
+            scores.SetAll(new[] { int.MaxValue, 999999, 10000, 2670 });
+            card.ShowForShot(2, 1);
+            yield return null;
+            Assert.IsTrue(RoleSwapCard.Showing);
+            Assert.IsFalse(readout.Canvas.enabled, "Ordinary breaks must hide the HUD just like halftime.");
+            Assert.IsFalse(readout.Canvas.transform.Find("RoundClock/RoundLabel").GetComponent<Text>().enabled);
+            yield return new WaitForSecondsRealtime(.3f);
+            foreach (var shape in new[] { new Vector2Int(960, 540), new Vector2Int(1600, 680) })
+                yield return TumpUiCapture.Capture("Feedback0930-round-break-" + shape.x + "x" + shape.y,
+                    view.Canvas, shape.x, shape.y, false, true, inspectViewport: () =>
+                    {
+                        var popup = (RectTransform)view.Canvas.transform.Find("CourtBreakPopup");
+                        var canvas = (RectTransform)view.Canvas.transform;
+                        Assert.Less(Vector3.Distance(popup.TransformPoint(popup.rect.center),
+                            canvas.TransformPoint(canvas.rect.center)), .5f, "Standings left screen center.");
+                        foreach (var text in view.Canvas.GetComponentsInChildren<Text>().Where(t => t.name.StartsWith("StandingScore")))
+                            Assert.LessOrEqual(text.preferredWidth, text.rectTransform.rect.width + .5f,
+                                "Score overflow: " + text.text);
+                    });
+            card.DismissAndPractice();
+            yield return null;
+            Assert.IsFalse(RoleSwapCard.Showing); Assert.IsTrue(readout.Canvas.enabled);
+            card.ShowForShot(2, 1);
+            GameServices.Match.AdvanceRound();
+            yield return null;
+            Assert.IsFalse(RoleSwapCard.Showing); Assert.IsTrue(readout.Canvas.enabled);
+        }
+
+        [UnityTest]
         public IEnumerator LargeScoreChipsStayInsideTheBarAtNormalAndAccessibleSizes()
         {
             yield return Open(GameMode.Classic);

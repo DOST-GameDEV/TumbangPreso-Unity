@@ -83,7 +83,7 @@ namespace TumbangPreso.UI
                     // which means "something is wrong"); the portrait carries who it is.
                     _names[i].text=_popupBuilt?PlayerIdentity.Label(order[i]):PlayerIdentity.Label(order[i])+" · "+SeatLabel.Raw(order[i]);
                     _names[i].color=_scores[i].color=_popupBuilt?HudDraw.CardInk:CourtPresentationPalette.Ink;
-                    _scores[i].text=match.ScoreFor(order[i]).ToString();
+                    TumpMatchReadout.PaintScoreValue(_scores[i], match.ScoreFor(order[i]), _popupBuilt ? 44 : 46);
                     _portraits[i].sprite=Portrait(actor);_portraits[i].enabled=_portraits[i].sprite!=null;
                 }
                 PaintChips(order,defender,uniqueLeader);

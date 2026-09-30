@@ -152,12 +152,12 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>Fit only a changed score, leaving normal three-digit totals at their authored size.</summary>
-        public static void PaintScoreValue(Text label, int value)
+        public static void PaintScoreValue(Text label, int value, int size = ScoreFont)
         {
             string shown = ScoreTextForChip(value);
             if (label.text == shown) return;
             label.text = shown;
-            label.fontSize = ScoreFont;
+            label.fontSize = size;
             while (label.fontSize > ScoreFontFloor && label.preferredWidth > label.rectTransform.rect.width)
                 label.fontSize -= 2;
         }
@@ -216,9 +216,8 @@ namespace TumbangPreso.UI
         {
             _clock.color = time <= 10 && round.RoundActive ? OwnerUiTheme.Current.Orange : CourtPresentationPalette.Paper;
             _pips.Set(Mathf.Max(1, match.TotalRounds), match.IsWarmupBuffer ? 0 : match.RoundNumber);
-            // The round is the pips' job now. The line only speaks in the warm-up, where there
-            // is a real sentence to say and no round to point at.
-            _round.enabled = match.IsWarmupBuffer;
+            // Round pips and the ready prompt already cover this information.
+            _round.enabled = false;
         }
 
         private void MatchBarCan(Lata lata)

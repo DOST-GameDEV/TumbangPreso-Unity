@@ -23,6 +23,9 @@ namespace TumbangPreso.UI.Hub
         public override float CourtShade => 1.0f;
         private RectTransform _daily, _weekly;
         private Text _note;
+        private bool _rowsDrawn;
+        private System.Collections.Generic.List<WalletStore.TaskState> _shownTasks;
+        private readonly System.Collections.Generic.List<Button> _claimButtons = new System.Collections.Generic.List<Button>();
 
         public override void Build()
         {
@@ -80,24 +83,50 @@ namespace TumbangPreso.UI.Hub
         private void Draw()
         {
             if (_daily == null) return;
-            foreach (var column in new[] { _daily, _weekly })
-                for (int i = column.childCount - 1; i >= 1; i--) Destroy(column.GetChild(i).gameObject);
-
             var wallet = GameServices.Wallet;
             if (wallet == null) return;
+            _note.text = !WalletStore.CanTransact
+                ? "Offline: showing progress from matches on this machine. Sign in to claim."
+                : !string.IsNullOrEmpty(wallet.Status) ? wallet.Status
+                : "Finished matches pay " + EconomyRules.CurrencyName + " too, up to " + EconomyRules.DailyMatchCap + " a day.";
+            var tasks = wallet.Tasks();
+            if (SameRows(tasks))
+            {
+                foreach (var button in _claimButtons) if (button != null) button.interactable = !wallet.Busy;
+                return;
+            }
+            foreach (var column in new[] { _daily, _weekly })
+                for (int i = column.childCount - 1; i >= 1; i--)
+                {
+                    var old = column.GetChild(i).gameObject;
+                    old.SetActive(false);
+                    Destroy(old);
+                }
+            _claimButtons.Clear();
             int d = 0, w = 0;
-            foreach (var task in wallet.Tasks())
+            foreach (var task in tasks)
             {
                 bool daily = task.Def.Period == TaskPeriod.Daily;
                 var column = daily ? _daily : _weekly;
                 int index = daily ? d++ : w++;
                 Row(column, task, index);
             }
-            _note.text = !WalletStore.CanTransact
-                ? "Offline: showing progress from matches on this machine. Sign in to claim."
-                : !string.IsNullOrEmpty(wallet.Status) ? wallet.Status
-                : "Finished matches pay " + EconomyRules.CurrencyName + " too, up to " + EconomyRules.DailyMatchCap + " a day.";
+            _shownTasks = tasks;
+            _rowsDrawn = true;
             Hub.RefreshFocus();
+        }
+
+        private bool SameRows(System.Collections.Generic.List<WalletStore.TaskState> tasks)
+        {
+            if (_shownTasks == null || tasks.Count != _shownTasks.Count) return false;
+            for (int i = 0; i < tasks.Count; i++)
+            {
+                var next = tasks[i]; var previous = _shownTasks[i];
+                if (next.Def.Id != previous.Def.Id || next.Def.Target != previous.Def.Target ||
+                    next.Def.Reward != previous.Def.Reward || next.Progress != previous.Progress ||
+                    next.Claimed != previous.Claimed) return false;
+            }
+            return true;
         }
 
         private void Row(RectTransform column, WalletStore.TaskState task, int index)
@@ -158,8 +187,12 @@ namespace TumbangPreso.UI.Hub
                 var claim = HubKit.Button(card, "Claim_" + task.Def.Id, "CLAIM", HubStyle.Chartreuse, () => Claim(task.Def.Id), HubStyle.Label, 620 + index);
                 HubKit.Place((RectTransform)claim.transform, HubKit.BottomRight, new Vector2(-24, 22), new Vector2(220, 82));
                 claim.interactable = !GameServices.Wallet.Busy;
+                _claimButtons.Add(claim);
             }
-            HubSlap.On(card, 0.06f + 0.03f * index, index % 2 == 0 ? -1 : 1);
+            // RefreshAsync can report the same rows immediately after Build. Rebuilding
+            // their live data must not replay the entrance motion over the first one.
+            if (!_rowsDrawn)
+                HubSlap.On(card, 0.06f + 0.03f * index, index % 2 == 0 ? -1 : 1);
         }
 
         private async void Claim(string id)

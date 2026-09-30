@@ -17,6 +17,63 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### FEEDBACK-0930: owner document and engineering follow-through
+
+Owner scope, 2026-09-30: finish the supplied feedback, then continue finding and
+fixing reasonable network, bot, loading, optimization and UI/UX bugs and applicable
+existing TODO work. Work alone, ship coherent batches, validate changed behavior
+before checking it done, and avoid repeated unchanged validation. No resets or
+cross-chat work. Ask before spending service credits. Do not change VFX, SFX,
+animation, models, maps or lighting except for a demonstrated bug fix.
+
+Source: [TUMP Wiki](https://docs.google.com/document/d/1jvr7NLzhHrbw-wrG676AeOkoTxJf4GokkfmxpO0ddLg/edit),
+read on 2026-09-30, including ability, status and feedback tabs. The document wins
+for other characters. Phaister and Paete ability behavior is protected; descriptions
+may be corrected from their current implementations. Incomplete wiki cells are
+not specifications to invent. Scope restrictions supersede cosmetic additions.
+
+- [ ] F0930-01 Tutorial: prevent Tab-deck overlap; assess real actions, expose per-lesson
+  progress and green completion, require three jumps, wait through ultimate playback
+  plus 2.5 seconds, remove deprecated mash lesson, and return cleanly on completion.
+- [x] F0930-02 Tasks: unchanged wallet refresh retains rows and entrance state;
+  changed rows refresh without replaying entrance. Focused native path passes.
+- [x] F0930-03 Round scoreboard: centered, hides duplicated HUD for ordinary/halftime
+  cards, removes redundant warmup line and fits large scores. Native state/bounds
+  and inspected 960x540/1600x680 captures pass. [Evidence](reports/feedback-2026-09-30/README.md).
+- [ ] F0930-04 Tagged replay: approximately three seconds and truthful contact display;
+  fix recording/reconstruction/contact timing without inventing a hit.
+- [ ] F0930-05 Adopt [Xelu prompts](https://thoseawesomeguys.com/prompts/) for keyboard/controller.
+- [ ] F0930-06 Default action bindings: left mouse Throw/Tag, right mouse Retrieve/Reset,
+  wheel up/down Curve Left/Right, F Shove/Lunge/Ready. Preserve saved rebinding choices.
+- [ ] F0930-07 Longer defender lunge, coherent travel/authority/bot bounds.
+- [ ] F0930-08 Visible remaining lifetime for timed abilities using real shared state.
+- [ ] F0930-09 Cheska: reconcile wiki names/rules/statuses and fix Frozen slipper hit.
+- [ ] F0930-10 Dante: reconcile wiki names/rules/statuses; barrier visibility bug fix.
+- [ ] F0930-11 Amihan: reconcile wiki names/rules/statuses; fast, strong airborne Airburst.
+- [ ] F0930-12 Nemu and other defined wiki rules: reconcile current behavior; preserve
+  unspecified/placeholder kits rather than inventing replacements.
+- [ ] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,
+  no Escape return to title, queue cancel button, hamburger background, stamina drain.
+  Lighting rename/default request is protected by the latest no-lighting restriction.
+- [ ] F0930-14 Taya can-down indicator: reconcile incoming aecc0ee2c fix and verify relevant
+  evidence before doing duplicate work.
+- [ ] F0930-15 Placeholder icons: reconcile current shipped icon coverage and correct bugs.
+- [ ] F0930-16 Running/walking defects: diagnose only concrete bugs; no animation redesign.
+- [ ] F0930-17 Highlight beam complaint: only a proven VFX bug is authorized now.
+- [ ] F0930-18 Throw: remove trajectory line, quicker charge and coherent charge feedback.
+- [ ] F0930-19 Loading too frequent: move reusable work to boot, retain dependencies and
+  avoid repeated preparation/curtains where destination readiness is already retained.
+- [ ] F0930-20 Continue focused network, bots, optimization, flow bugs and applicable
+  existing TODO requirements after feedback, with actual behavior evidence.
+- [ ] F0930-21 Refine the same Google Doc Feedback tab for QA intake and future DOTS
+  use: stable IDs, clickable completion, explicit status, reproduction/acceptance,
+  preserved reports/screenshots and verified resolution evidence. Setup handoff
+  supplied directly in chat; no automation or cross-chat setup performed.
+
+Cheska shatter/melt additions and Dante shield-logo addition from the feedback
+remain source context, but new VFX/animation work is excluded by the owner's newer
+restriction. Do not silently implement them or mark them shipped.
+
 Current owner order after DOCS-0927: actual loading/optimization,then shared
 network/flow correctness,then remaining applicable QA/TODO requirements. Newer task
 scope and contributor reservations override older dated order below. Work alone;

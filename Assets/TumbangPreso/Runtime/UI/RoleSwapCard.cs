@@ -35,6 +35,9 @@ namespace TumbangPreso.UI
     /// </summary>
     public sealed class RoleSwapCard : MonoBehaviour
     {
+        private static RoleSwapCard _current;
+        public static bool Showing => _current != null && _current._canvas != null &&
+                                      _current._canvas.gameObject.activeInHierarchy;
         public const float RevealDelay = 1.2f;
         public const float FightDelay = 2.3f;
         public const float RevealFade = 0.35f;
@@ -52,6 +55,7 @@ namespace TumbangPreso.UI
 
         private void Awake()
         {
+            _current = this;
             _nativeSwap = gameObject.AddComponent<TumpRoundSwapView>();
             _nativeSwap.Build(transform, DismissAndPractice); _canvas = _nativeSwap.Canvas;
             _canvas.gameObject.SetActive(false);
@@ -70,6 +74,11 @@ namespace TumbangPreso.UI
             if (GameServices.Match == null) return;
             GameServices.Match.IntermissionStarted -= OnIntermissionStarted;
             GameServices.Match.RoundStarted -= OnRoundStarted;
+        }
+
+        private void OnDestroy()
+        {
+            if (_current == this) _current = null;
         }
 
         private void Update()

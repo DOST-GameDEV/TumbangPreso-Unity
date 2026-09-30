@@ -1,12 +1,52 @@
 # Active Rework Checkpoint
 
-Updated 2026-09-28. Branch: ASTRAReworks. Latest managed candidate: `9636c156`
-plus the rematch identity/voting changes.
-Current protocol:89 in [NetSession](../Assets/TumbangPreso/Runtime/Net/NetSession.cs).
+Updated 2026-09-30. Branch: ASTRAReworks. Current unit: FEEDBACK-0930.
+Current protocol:93 in [NetSession](../Assets/TumbangPreso/Runtime/Net/NetSession.cs).
 Read [AGENTS](../AGENTS.md), [task routes](README.md) and the [queue](TODO.md).
 TODO is the work-status queue; this file records resumption and evidence boundaries.
 
 ## Current Unit
+
+### 2026-09-30 continuation
+
+Owner's newest assignment is [FEEDBACK-0930](TODO.md#feedback-0930-owner-document-and-engineering-follow-through),
+followed by reasonable engineering/UI/UX fixes and applicable existing TODO work.
+Latest restrictions: no subagents, resets, cross-chat work or credit spending without
+approval; VFX/SFX/animation/models/maps/lighting only for demonstrated bug fixes.
+Phaister/Paete abilities are protected, descriptions only. The wiki's other complete
+ability/status definitions supersede old docs; blank cells are unspecified.
+
+Working checkout: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks.
+Fetched and fast forwarded 2bacb97c3 to aecc0ee2c before editing. Existing unrelated
+RosterArms assets, two protected UI metadata files, HeroHazards.cs, QualitySettings,
+motion captures and untracked art/skill-FX work are preserved and not task-owned.
+
+First unit complete: Tasks retains unchanged rows through wallet refresh; ordinary
+round cards hide the live HUD, center standings, fit score values and remove the
+duplicate warmup line. Two focused native cases pass, with all eight frozen source
+inputs unchanged. Inspected Tasks and 960x540/1600x680 standings captures are in
+[the feedback report](reports/feedback-2026-09-30/README.md). This batch is being
+committed/pushed with explicit owned paths; do not rerun its unchanged cases.
+
+No test/build/helper is running at this checkpoint. The managed worktree tool is
+unavailable from this projectless chat (Not a git repository). Validation checkout:
+C:/Users/matth/Documents/Codex/work/tump-feedback-0930, detached aecc0ee2c plus
+eight explicit overlays. Its native asset-import churn stays there. The first long
+path failed; one retry at this short path succeeded. Old validation dirt is preserved.
+Native checks use run_unity_guarded.py, a named profile, graphics, fresh XML and
+frozen current inputs. Main disk had about 204 GB free on the current check.
+
+Wiki read: document 1jvr7NLzhHrbw-wrG676AeOkoTxJf4GokkfmxpO0ddLg,
+modified 2026-09-29T17:03:02.235Z. Tabs read include abilities (t.0), statuses
+(t.ybspp2s3qclp), feedback (t.3aojrspccof8). Owner then authorized organizing only
+the Feedback tab for QA/DOTS intake and clickable completion. Preserve original
+reports, screenshots, comments and the other tabs. Explicit status/evidence must
+remain readable to automation. DOTS setup prompt was given in chat for manual use;
+no automation/cross-chat action occurred. Native Doc checklist state may not be
+available through the connector. Xelu's prompt source declares CC0.
+
+Next: finish Feedback-tab organization alongside tutorial assessment/overlap and
+binding reconciliation. Native first unit passed; no repeat validation is needed.
 
 Rematches now allocate a fresh host world identity before reload, adopt a matching
 previous/next pair on clients, scope votes/tallies and acknowledge seated voters.

@@ -1,0 +1,40 @@
+{
+  "base": "aecc0ee2c",
+  "question": "Tasks refresh preserves entrance and ordinary round standings hide HUD, fit scores and center",
+  "expectedCases": 2,
+  "retry": 0,
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubTasks.cs",
+      "sha256": "2B168E9ACB7619C4621CA915DD5BE7C45E94ECCE206C600D1166A6C3BD7D6413"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/RoleSwapCard.cs",
+      "sha256": "218987ACB81FA6E999B5C79426FDC2565983D8B18391E1F92E168E090C0B6C10"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.cs",
+      "sha256": "CC954B72B2F34EB076A2F21B804FA99ACA54B8775B79910BE7665F34F89EBFE6"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.MatchBar.cs",
+      "sha256": "2DFE8B6E2CFEDE366CA7CA5938335E8ACF75A422D117397076CAA2DC1C68C4ED"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/TumpRoundSwapView.cs",
+      "sha256": "07933E5D7F605C6C3E5AA65687D3E8E71438917EB9CF6FA8F5EBFC5DD718D379"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/TumpRoundSwapView.CourtBreak.cs",
+      "sha256": "142AA643D9467B619D67916A884C46DED1F69B3A9A311157D65934C3D3032248"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/TumpNativeHudTests.cs",
+      "sha256": "EB265BA40BFA1494724DC6F62AE5D0725D014216457768F5090E3DF662A18AC6"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/HubFlowTests.cs",
+      "sha256": "12342F14EB1D4AEBB77F5AE4088F10474E0A6BDBCE182D82A38EADADB2E6B543"
+    }
+  ]
+}
