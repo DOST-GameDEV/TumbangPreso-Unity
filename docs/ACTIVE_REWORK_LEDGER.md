@@ -1361,3 +1361,18 @@ input remain. Before/after menu frames inspected. QA_TUMP_0049 row added at top
 with native hidden ID; checkbox creation and final note pending publication.
 Publish exact PracticeRange/tests/docs, then refresh player for actual defender
 selection/barrier review. User awake21:27asked status; concise shipped summary sent.
+8ac03ff8 remote verified, new QA_TUMP_0049 Feedback top row has native controls:
+Done checked/Human unchecked, Saved and full native readback verified21:37.
+All32active Human verified controls unchecked; nothing eligible for archiving.
+Environment restarted21:35; filesystem/editor/player confirmed intact21:36.
+No current blocker from restart. Refresh internal player with this qualified
+training fix, then repeat actual training defender selection and barrierFPP review.
+Training-fix player rebuild succeeds76.40s without guard/OOM. Actual second manual
+session will copy only the previous isolated QA guest home to its own output,
+not use any real user profile. Target menu role selection and live barrier, then
+ordinary exit; preserve player hash and run receipt. No automated botmatch flag.
+Owner update2026-10-01: explicitly reopened Amihan Wiki alignment/Airburst, then
+all remaining work including ability implementation. Remove stale owner-only skip
+notes from the active Feedback queue. Preserve actual concurrent file reservations,
+finalized Paete/Phaister specifics and the separate no-skill-SFX instruction. Finish
+current player confirmation, then current complete ability specs and precise claims.
