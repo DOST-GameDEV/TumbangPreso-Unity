@@ -9,11 +9,11 @@ Owner requests bottom-up unfinished Feedback, then independent reasonable bug
 hunting. Loading belongs to the friend; hero mechanics remain owner-reserved.
 No subagents, cross-chat work, resets or paid services. Preserve unrelated dirt.
 
-Local published80622a013 contains spectator results input(ccd6935e2) and Ready
+Local published9127a54b9 contains spectator results input(ccd6935e2) and Ready
 tally guards(3862bd7d5). Native evidence:1 spectator lifecycle case;25 Ready packet
 cases. Native camera fix is independent of the human-retired player mouse report.
 
-Current bot slipper-query unit is qualified and ready to publish: four ordinary
+Bot slipper-query unit ac84902f5 is published through9127a54b9: four ordinary
 AIController loops, Slipper Awake/OnDestroy invalidation, BotSlipperInventory and
 BotSlipperQueryTests. Native100-call allocation count200→0; five distinct cases
 pass across four first-final passes plus the repaired flight case.543inputs and
@@ -30,8 +30,12 @@ controls and reports are preserved. Icon row is yellow: concrete screenshot/scre
 needed; source has46illustrations and two vector fallbacks, no missing binding proven.
 No background Doc monitor/instant archive trigger is configured by this chat.
 
-Next: publish the qualified bot unit after fresh integration, then continue one
-focused independent network/bot/input bug. Do not repeat these qualified cases.
+Current seat-request unit is qualified and ready to publish: MatchRpc receiver/
+duplicate-seat handling, SeatRequestPacketTests.cs/meta, TODO F0930-36 and report.
+Baseline91252 reproduces9failures; final70795 passes17cases.546frozen inputs and
+no non-metadata drift. Native receiver/lobby scope; live transport unqualified.
+No heavy job active. Publish after fresh integration, then continue one focused
+independent network/bot/input bug. Do not repeat these qualified cases.
 Detailed older checkpoints below are history; current status is in TODO.
 
 ## Scope And Ownership
@@ -546,6 +550,14 @@ lock, no skip, consumed-packet protection, actual retained clip and honest fallb
 Protocol must distinguish the changed derived timing. Keep the published frozen
 frame implementation and unrelated packet/spectator fixes intact.
 
+Bot slipper unit ac84902f5 published/integrated at9127a54b9; remote HEAD verified.
+Five distinct native checks pass; no heavy job active. Release those runtime paths.
+Next independent claim: MatchRpc.cs OnReqSeatMsg/HostAssignSeat and
+SeatRequestPacketTests.cs/meta. Check malformed lengths, ulong peer-ID wrapping
+and a repeated current-seat request dropping a guest's Ready state. Keep real seat
+changes clearing that guest's Ready and protect occupied seats/live matches.
+Native receiver/lobby scope only; no paid transport or protocol change planned.
+
 QA_TUMP_0045 also owns Runtime/RoundBreakFrame.cs under Assets/TumbangPreso:
 its frozen overlay is order259 above the retained replay at240. Hide only that
 image while recorded footage is ready, retaining the clock and UI input lock;
@@ -621,3 +633,8 @@ practice F7 status now clears the larger controls. Finalized kit text unchanged.
 Publish explicit paths and tick this same HUD report Done; Human verified stays
 human-owned. No heavy job. Shared/global changes need no repeated protected-hero
 exception questions; the owner clarified that scope explicitly at15:36.
+Integration preserves f542a50f's independently checked seat-request guards.
+Both contributors independently allocated F0930-36; the already published seat
+request keeps36 and this not-yet-published HUD unit uses37. Hidden Doc record46
+will identify the same HUD row. No runtime overlap or merge conflict; retained
+native evidence scopes are separate, not an integration-wide peer claim.

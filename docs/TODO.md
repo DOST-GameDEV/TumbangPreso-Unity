@@ -54,7 +54,7 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   [Flow evidence](reports/feedback-2026-09-30/tutorial-flow.md).
 - [x] F0930-02 Tasks: unchanged wallet refresh retains rows and entrance state;
   changed rows refresh without replaying entrance. Focused native path passes.
-- [x] F0930-36 New Harry HUD refinement: Ready Up uses a larger live Xelu
+- [x] F0930-37 New Harry HUD refinement: Ready Up uses a larger live Xelu
   Interact/Ready prompt without the warmup subtitle; shared ability controls and
   their key prompts grow50percent with edge margins preserved. Owner15:31
   explicitly approved shared sizing for Paete/Phaister too, then clarified that
@@ -186,6 +186,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   All10 baseline failures reproduce;19 final native receiver cases pass for
   malformed/valid/spectator/non-host/repeated messages. Protocol97 unchanged.
   [Evidence](reports/feedback-2026-09-30/seat-assignment-packets.md). Actual peers unqualified.
+- [x] F0930-36 Seat-request safety and readiness: reject malformed packets and
+  wide peer-ID aliases; repeating the current seat preserves Ready, while actual
+  changes still clear it. Nine baseline failures;17 fixed native receiver/lobby
+  cases pass. Protocol unchanged. Live transport unqualified.
+  [Evidence](reports/feedback-2026-09-30/seat-request-packets.md).
 - [x] F0930-35 Ordinary bot slipper-query allocation: share a native snapshot
   refreshed on births/destruction, reading current activity/owner/flight state.
   Calibrated100warmed lookups drop from200 allocation events to zero; five distinct

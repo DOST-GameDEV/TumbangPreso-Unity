@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="17" result="Failed(Child)" total="17" passed="8" failed="9" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.2795317">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="733" result="Failed" site="Child" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.279532" total="17" passed="8" failed="9" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1859" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="733" result="Failed" site="Child" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.254231" total="17" passed="8" failed="9" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="20728" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1860" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="733" result="Failed" site="Child" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.237631" total="17" passed="8" failed="9" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1861" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="733" result="Failed" site="Child" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.219288" total="17" passed="8" failed="9" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1744" name="SeatRequestPacketTests" fullname="TumbangPreso.Tests.SeatRequestPacketTests" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" testcasecount="17" result="Failed" site="Child" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.161996" total="17" passed="8" failed="9" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1765" name="AClientCannotHandleSeatRequests" fullname="TumbangPreso.Tests.SeatRequestPacketTests.AClientCannotHandleSeatRequests" methodname="AClientCannotHandleSeatRequests" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="271475921" result="Passed" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.051862" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1759" name="AnActualSeatChangeClearsOnlyTheChangingGuestsReady" fullname="TumbangPreso.Tests.SeatRequestPacketTests.AnActualSeatChangeClearsOnlyTheChangingGuestsReady" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.021127" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1757" name="AnActualSeatChangeClearsOnlyTheChangingGuestsReady(2)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.AnActualSeatChangeClearsOnlyTheChangingGuestsReady(2)" methodname="AnActualSeatChangeClearsOnlyTheChangingGuestsReady" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="648059894" result="Passed" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.012372" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1758" name="AnActualSeatChangeClearsOnlyTheChangingGuestsReady(-1)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.AnActualSeatChangeClearsOnlyTheChangingGuestsReady(-1)" methodname="AnActualSeatChangeClearsOnlyTheChangingGuestsReady" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="433126624" result="Passed" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.001248" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1762" name="InvalidSeatsCannotChangeReadiness" fullname="TumbangPreso.Tests.SeatRequestPacketTests.InvalidSeatsCannotChangeReadiness" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.006955" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1760" name="InvalidSeatsCannotChangeReadiness(-2)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.InvalidSeatsCannotChangeReadiness(-2)" methodname="InvalidSeatsCannotChangeReadiness" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="1016085904" result="Passed" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.001077" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1761" name="InvalidSeatsCannotChangeReadiness(4)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.InvalidSeatsCannotChangeReadiness(4)" methodname="InvalidSeatsCannotChangeReadiness" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="1822243448" result="Passed" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.000888" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1764" name="LiveMatchCannotChangeSeats" fullname="TumbangPreso.Tests.SeatRequestPacketTests.LiveMatchCannotChangeSeats" methodname="LiveMatchCannotChangeSeats" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="2109248686" result="Passed" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.000858" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1751" name="MalformedRequestsCannotThrowOrMoveAReadyGuest" fullname="TumbangPreso.Tests.SeatRequestPacketTests.MalformedRequestsCannotThrowOrMoveAReadyGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.053813" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1745" name="MalformedRequestsCannotThrowOrMoveAReadyGuest(0)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.MalformedRequestsCannotThrowOrMoveAReadyGuest(0)" methodname="MalformedRequestsCannotThrowOrMoveAReadyGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="1985452856" result="Failed" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.011596" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnReqSeatMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00023] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:1016 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.SeatRequestPacketTests+<>c__DisplayClass14_0.<Receive>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:62 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.SeatRequestPacketTests.Receive (System.UInt64 sender, System.Int32 seat, System.Int32 length) [0x0003d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:62
+at TumbangPreso.Tests.SeatRequestPacketTests.MalformedRequestsCannotThrowOrMoveAReadyGuest (System.Int32 length) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:73
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1746" name="MalformedRequestsCannotThrowOrMoveAReadyGuest(1)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.MalformedRequestsCannotThrowOrMoveAReadyGuest(1)" methodname="MalformedRequestsCannotThrowOrMoveAReadyGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="381629558" result="Failed" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.002419" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnReqSeatMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00023] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:1016 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.SeatRequestPacketTests+<>c__DisplayClass14_0.<Receive>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:62 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.SeatRequestPacketTests.Receive (System.UInt64 sender, System.Int32 seat, System.Int32 length) [0x0003d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:62
+at TumbangPreso.Tests.SeatRequestPacketTests.MalformedRequestsCannotThrowOrMoveAReadyGuest (System.Int32 length) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:73
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1747" name="MalformedRequestsCannotThrowOrMoveAReadyGuest(2)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.MalformedRequestsCannotThrowOrMoveAReadyGuest(2)" methodname="MalformedRequestsCannotThrowOrMoveAReadyGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="1213087319" result="Failed" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.028175" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnReqSeatMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00023] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:1016 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.SeatRequestPacketTests+<>c__DisplayClass14_0.<Receive>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:62 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.SeatRequestPacketTests.Receive (System.UInt64 sender, System.Int32 seat, System.Int32 length) [0x0003d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:62
+at TumbangPreso.Tests.SeatRequestPacketTests.MalformedRequestsCannotThrowOrMoveAReadyGuest (System.Int32 length) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:73
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1748" name="MalformedRequestsCannotThrowOrMoveAReadyGuest(3)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.MalformedRequestsCannotThrowOrMoveAReadyGuest(3)" methodname="MalformedRequestsCannotThrowOrMoveAReadyGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="2106829739" result="Failed" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.001177" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnReqSeatMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00023] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:1016 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.SeatRequestPacketTests+<>c__DisplayClass14_0.<Receive>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:62 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.SeatRequestPacketTests.Receive (System.UInt64 sender, System.Int32 seat, System.Int32 length) [0x0003d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:62
+at TumbangPreso.Tests.SeatRequestPacketTests.MalformedRequestsCannotThrowOrMoveAReadyGuest (System.Int32 length) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:73
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1749" name="MalformedRequestsCannotThrowOrMoveAReadyGuest(5)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.MalformedRequestsCannotThrowOrMoveAReadyGuest(5)" methodname="MalformedRequestsCannotThrowOrMoveAReadyGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="1399743191" result="Failed" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.002090" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1
+  But was:  2
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.SeatRequestPacketTests.Unchanged () [0x00026] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:67
+at TumbangPreso.Tests.SeatRequestPacketTests.MalformedRequestsCannotThrowOrMoveAReadyGuest (System.Int32 length) [0x0000a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:73
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1750" name="MalformedRequestsCannotThrowOrMoveAReadyGuest(8)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.MalformedRequestsCannotThrowOrMoveAReadyGuest(8)" methodname="MalformedRequestsCannotThrowOrMoveAReadyGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="822530516" result="Failed" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.000924" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1
+  But was:  2
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.SeatRequestPacketTests.Unchanged () [0x00026] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:67
+at TumbangPreso.Tests.SeatRequestPacketTests.MalformedRequestsCannotThrowOrMoveAReadyGuest (System.Int32 length) [0x0000a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:73
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-case id="1763" name="OccupiedSeatCannotDisplaceItsOwner" fullname="TumbangPreso.Tests.SeatRequestPacketTests.OccupiedSeatCannotDisplaceItsOwner" methodname="OccupiedSeatCannotDisplaceItsOwner" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="288946300" result="Passed" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.000610" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1756" name="RepeatingTheCurrentSeatPreservesReadyAndDoesNotPublishAChange" fullname="TumbangPreso.Tests.SeatRequestPacketTests.RepeatingTheCurrentSeatPreservesReadyAndDoesNotPublishAChange" methodname="RepeatingTheCurrentSeatPreservesReadyAndDoesNotPublishAChange" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="690620412" result="Failed" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.000912" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.SeatRequestPacketTests.Unchanged () [0x0004c] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:68
+at TumbangPreso.Tests.SeatRequestPacketTests.RepeatingTheCurrentSeatPreservesReadyAndDoesNotPublishAChange () [0x00014] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:83
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1755" name="WideTransportIdsCannotWrapIntoTheHostOrGuest" fullname="TumbangPreso.Tests.SeatRequestPacketTests.WideTransportIdsCannotWrapIntoTheHostOrGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.004253" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1752" name="WideTransportIdsCannotWrapIntoTheHostOrGuest(4294967296UL)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.WideTransportIdsCannotWrapIntoTheHostOrGuest(4294967296UL)" methodname="WideTransportIdsCannotWrapIntoTheHostOrGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="657429680" result="Failed" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.001468" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 0
+  But was:  2
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.SeatRequestPacketTests.Unchanged () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:66
+at TumbangPreso.Tests.SeatRequestPacketTests.WideTransportIdsCannotWrapIntoTheHostOrGuest (System.UInt64 sender) [0x00009] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:78
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1753" name="WideTransportIdsCannotWrapIntoTheHostOrGuest(4294967297UL)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.WideTransportIdsCannotWrapIntoTheHostOrGuest(4294967297UL)" methodname="WideTransportIdsCannotWrapIntoTheHostOrGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="2054144886" result="Failed" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.000730" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1
+  But was:  2
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.SeatRequestPacketTests.Unchanged () [0x00026] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:67
+at TumbangPreso.Tests.SeatRequestPacketTests.WideTransportIdsCannotWrapIntoTheHostOrGuest (System.UInt64 sender) [0x00009] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\SeatRequestPacketTests.cs:78
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1754" name="WideTransportIdsCannotWrapIntoTheHostOrGuest(ulong.MaxValue)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.WideTransportIdsCannotWrapIntoTheHostOrGuest(ulong.MaxValue)" methodname="WideTransportIdsCannotWrapIntoTheHostOrGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="527455543" result="Passed" start-time="2026-09-30 15:28:34Z" end-time="2026-09-30 15:28:34Z" duration="0.000444" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
