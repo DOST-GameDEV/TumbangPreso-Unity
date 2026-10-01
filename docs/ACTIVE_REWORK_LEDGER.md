@@ -3449,6 +3449,12 @@ at the low forward working position, rather than another blind Euler guess.
 One targeted bake and one focused native contact/pixels pass, one tooling repair
 maximum. Current source1e8aa569 protocol122; coating/bindings shipped and terminal.
 
+Measured Skim palm native1/1 passes actual shoe-bounds contact and forward working
+position (about0.38m), with25observer frames reviewed. Bake changedonlySkim.anim,
+GUID/roster/otherclips preserved; exactinputs match, norepair/newOOM. Handsnowwork
+againsttheactualshoe, thoughblockypalmsvisuallyoverlapbehindit. Boundscheck isnot
+meshpenetrationproof. Brief genericbluecastcubesremain,nextscopedpresentation
+cleanup. No freshplayer/peer/SFX/humanapproval. Alljobs terminal.
 Integrated loaded-Skim cue b28e300a9 and palm-refinement reservation869477475
 with Amped-Up bc31c60d4. Native6qualified source/receipts preserved,123 retained;
 no code overlap and no own authored art changes. Rafi refinement remains owned
@@ -3460,6 +3466,11 @@ as if already human-confirmed. Source current20point/7second aimed strike remain
 known mismatch to address, not a completed Zack claim.
 
 
+Integrated Amped-Up bc31c60d with measured Skim palm93ddf8d8. Current123;
+our exact palm candidate was122. No runtime overlap; retain distinct receipts.
+Generic cast flash lives in HeroAbilitySystem shared with ongoing Zack work;
+leave it for a clear reservation rather than overlap. Waterwall material remains
+independent presentation work after fresh Feedback review.
 Amped-Up bc31c60d4 published through b9b61f609, remote verified. Existing broader
 Feedback Notes updated/read back with one concise passive progress line; human
 columns and other writer text untouched. A missing line break corrected directly.
@@ -3505,4 +3516,72 @@ Private HeroHazards alpha overlay excluded: index contains only2line gameplay
 guard/signature change and native candidate matches committed-base+hunk. Publish
 state/status unit only; normal/upgraded basics are still required, not completed.
 124compatibility, no actualnewpeer or authored-presentation claim. All jobs done.
+
+RAFI-WALL-SURFACE-1001 owns RafiWaterVisual.cs Waterwall branch only and
+Resources/Shaders/RafiWater.shader _CurtainFlow branch, scoped RafiExpansionProbe
+surface assertion/evidence. Previous film remains too pane-like: uniform sheet
+and ruler-straight crown. Preserve footprint, real state, four-second life and
+single interception. Break optical uniformity with sparse flowing translucent
+bands, a rolled variable-width crown and a shallow runoff line at its own base.
+Keep the centre clear and all flow deterministic from sampled field age; no
+refraction, extra particles, lights or colliders. Other water types retain shader
+branch0. One existing focused wall motion/collapse review against changedmaterial,
+one tooling repair maximum. No generic cast changes in shared Zack-owned area.
+Current123; all earlier native jobs terminal, quiet mode and Doc edits permitted.
+
+Waterwallsurface native1/1 passes123 shippingmotion, actualinterception/collapse,
+sampledage/replay/no-collider andrunoffcontract. Owner/side60frameseachinspected:
+flowparcelsandunevencrown/baseareclearer,centrecanvisible. Notallmaps/Low/player/
+peer/humanapproval. Inputsunchanged,noOOM,norepair. Shelltransportbrieflydropped
+afterrunthenrecovered; nativeruncompleted66s. Publishsurface; sound/genericflash
+stillopen. Next inspectcurrentBaha/Crosscurrentpresentationagainstexistingplan.
+
+RAFI-BAHA-REVIEW-1001 owns UltimateIntroductionProbe.cs one Rafi-only entry and
+its dated review/plan. First inspect the actual existing3.4second authored boat-
+deck performance in its staged cameras, retaining model/clip/scene. No runtime
+or art changes authorized by this claim alone; diagnose the weakest real beat
+before claiming implementation paths. Reuse Study for one hero only with
+TUMP_INTRO_SCENE=1. Render-only baseline is not a real accepted-cast/pause/peer
+qualification. One baseline, one bounded tooling repair maximum. Alljobs terminal.
+
+Baha baseline stops on old Study assertion requiring retained theme playback,
+while owner-approved skill sound suppression is still active. No artframes or
+audio success claimed. One bounded fixture repair adds explicit visual-only
+allowMutedTheme for the Rafi-only entry; other hero checks unchanged. Log actual
+StartSound result, never re-enable rejected audio to make a visual study green.
+Retry baseline once with explicit output folder; runtime/art unchanged.
+
+Baha baselinev2 render-only1/1 passes;28timestampedframes inspected, grounding
+within0.00011m and0shoeverticesinsidehead. Scene's wavedraw is a flat two-row
+trapezoid; double trianglewindings plus CullOff duplicate the same surface.
+Distantblackhouses also pop atsea>.01. Expand RAFI-BAHA-REVIEW-1001 to own
+HeroIntroductionScene.Rafi.cs only: rolled five-row wave/single-winding/crest,
+soft deep-teal silhouettes fading with sea. Preservebody,cameras,3.4seconds,
+pilepositions andmechanics. Plan inbaha-review; allnativejobs terminal. Onefixture
+repairusedforbaseline audioassert; noaudioenablementorlisteningclaim.
+
+Baha scene finalrender-only1/1 passes rolled95vertex/432index geometry,stage
+isolation/RNG,grounding(-.00329..+.00009m) and0shoe/headvertices.29timestamped
+samplesreviewed; sidecurl andsofterfixedstiltfadeimprove theearlierflatwall.
+Frontface remains simpletranslucentcolour, notfinalreferencelevelapproval.
+Body/camera/3.4s/gameplayunchanged; soundstartedFalseexplicitly. Inputs match,
+noadditionalrepair/newOOM. Publishsceneunit; wholeHydro row remainsopen.
+
+TAGGED-RENDER-1001 takes the newly added live Feedback report "Tagged replay
+camera has some rendering conflicts", observed10:35UTC with two supplied images.
+Exact initial ownership: Runtime/Camera/CatchReconstruction.cs and focused
+Tests/PlayMode/CatchReconstructionTests.cs plus report evidence. Inspect/reproduce
+before changing other rendering owners. Fresh remotee2adf856 has no competing
+reservation. The other new report is non-flat player highlight rings; retain it
+as next independent intake. Both new rows inherited Done text but have unchecked
+native controls and no resolution evidence: do not treat those text copies as
+shipped. Pause optional Hydro polish for these newly added human defects. Native
+jobs terminal; Baha e2adf856 published/verified and same-row note written.
+
+Integrated Baha/Skim authored contributions through82400710b with Overclock
+state ef830005d; no runtime conflict,124 retained. Preserve collaborator art
+and validation limits, no own authored asset changes. Private HeroHazards alpha
+remains unstaged after owned guard commit. All own native jobs terminal. Full
+Zack basic migration next; current state unit is not a complete upgraded kit.
+No actual124peer proof, no Desktop replacement, no loading changes.
 

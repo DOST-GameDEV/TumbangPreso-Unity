@@ -19,8 +19,53 @@ namespace TumbangPreso.Visual
             var paths=ResolvePaths(root);
             if(paths==null)throw new System.InvalidOperationException("Rafi skim rig is missing a required bone.");
             var clip=BuildRafiSkim(paths);
+            AlignSkimPalms(clip,root,paths);
             GroundIntroduction(clip,root,paths["root"],anchorToRest:true);
             return clip;
+        }
+        private static void AlignSkimPalms(AnimationClip clip,Transform root,Dictionary<string,string> paths)
+        {
+            var skin=root.GetComponentInChildren<SkinnedMeshRenderer>(true);
+            int li=System.Array.FindIndex(skin.bones,b=>b!=null&&b.name=="arm-left");
+            int ri=System.Array.FindIndex(skin.bones,b=>b!=null&&b.name=="arm-right");
+            if(li<0||ri<0||!CharacterVisual.PalmCentre(skin,li,out var lp)||!CharacterVisual.PalmCentre(skin,ri,out var rp))
+                throw new System.InvalidOperationException("Skim needs both measured palms.");
+            rp.y+=CharacterVisual.HandTopLift;
+            var left=skin.bones[li];var right=skin.bones[ri];
+            var times=new[]{0f,.10f,.22f,.36f,.46f,.60f,.72f};
+            var weights=new[]{0f,.55f,1f,1f,.65f,.2f,0f};
+            var leftKeys=new Vector3[times.Length];var rightKeys=new Vector3[times.Length];
+            for(int i=0;i<times.Length;i++)
+            {
+                clip.SampleAnimation(root.gameObject,times[i]);
+                var lrot=left.localRotation;var rrot=right.localRotation;
+                Vector3 axis=right.position-left.position;float d=axis.magnitude;axis/=d;
+                float lr=left.TransformVector(lp).magnitude,rr=right.TransformVector(rp).magnitude;
+                float a=(lr*lr-rr*rr+d*d)/(2*d);
+                float reach=Mathf.Sqrt(Mathf.Max(.0001f,lr*lr-a*a));
+                var forward=Vector3.ProjectOnPlane(root.forward,axis).normalized;
+                var down=Vector3.ProjectOnPlane(-root.up,axis).normalized;
+                var working=left.position+axis*a+(forward*.9165f+down*.4f)*reach;
+                var leftTarget=working+axis*(i==2?-.018f:i==3?.018f:0)-root.up*.012f;
+                right.rotation=Quaternion.FromToRotation(right.TransformVector(rp),working-right.position)*right.rotation;
+                left.rotation=Quaternion.FromToRotation(left.TransformVector(lp),leftTarget-left.position)*left.rotation;
+                rightKeys[i]=Quaternion.Slerp(rrot,right.localRotation,weights[i]).eulerAngles;
+                leftKeys[i]=Quaternion.Slerp(lrot,left.localRotation,weights[i]).eulerAngles;
+                if(i>0)for(int k=0;k<3;k++)
+                {
+                    rightKeys[i][k]=rightKeys[i-1][k]+Mathf.DeltaAngle(rightKeys[i-1][k],rightKeys[i][k]);
+                    leftKeys[i][k]=leftKeys[i-1][k]+Mathf.DeltaAngle(leftKeys[i-1][k],leftKeys[i][k]);
+                }
+            }
+            for(int k=0;k<3;k++)
+            {
+                var lc=new AnimationCurve();var rc=new AnimationCurve();
+                for(int i=0;i<times.Length;i++){lc.AddKey(new Keyframe(times[i],leftKeys[i][k],0,0));rc.AddKey(new Keyframe(times[i],rightKeys[i][k],0,0));}
+                string suffix=k==0?"x":k==1?"y":"z";
+                clip.SetCurve(paths["arm-left"],typeof(Transform),"localEulerAnglesRaw."+suffix,lc);
+                clip.SetCurve(paths["arm-right"],typeof(Transform),"localEulerAnglesRaw."+suffix,rc);
+            }
+            clip.SampleAnimation(root.gameObject,0);
         }
         public static AnimationClip BuildRafiWallAuthored(Transform root)
         {

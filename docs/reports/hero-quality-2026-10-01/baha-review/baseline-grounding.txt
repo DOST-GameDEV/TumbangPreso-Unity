@@ -1,0 +1,5 @@
+Private body studies. Ground clearance uses the existing motion-strip deformed-vertex audit.
+[rafi] bake space: already scaled (renderer box 1.880 m, baked spans 1.880 and 4.475; rest pose sits at 0.100 m against a floor at 0)
+[rafi] visual-only study; retained theme started=False. No audio acceptance.
+rafi: clearance -0.00011 to 0.00008 metres
+rafi: maximum held-shoe vertices inside rigid head surfaces: 0

@@ -42,9 +42,9 @@ Shader "TumbangPreso/RafiWater"
             }
             float rivulet(float2 uv, float centre, float phase, float speed, float width)
             {
-                float path=centre+.008*sin(uv.y*7+phase)+.004*sin(uv.y*17-phase);
+                float path=centre+.018*sin(uv.y*7+phase)+.007*sin(uv.y*17-phase);
                 float strand=1-smoothstep(width,width*1.9,abs(uv.x-path));
-                float parcel=pow(saturate(.5+.5*sin(uv.y*13+_FlowAge*speed+phase)),7);
+                float parcel=pow(saturate(.5+.5*sin(uv.y*13+_FlowAge*speed+phase)),4);
                 return strand*parcel*smoothstep(0,.12,uv.y)*(1-smoothstep(.85,1,uv.y));
             }
             fixed4 frag(v2f i):SV_Target
@@ -61,7 +61,10 @@ Shader "TumbangPreso/RafiWater"
                     +rivulet(i.uv,.805,3.1,7.2,.011)
                     +rivulet(i.uv,.935,4.8,9.4,.007));
                 colour.rgb=lerp(colour.rgb,float3(.72,.89,.87),saturate(water)*.72);
-                colour.a=saturate(colour.a+_Color.a*water*.8);
+                // Uneven transparent channels interrupt the pane without hiding the court.
+                float channel=.32+.68*pow(saturate(.5+.5*sin(i.uv.x*23+sin(i.uv.y*4-_FlowAge*1.4))),2);
+                colour.a*=lerp(1,channel,saturate(_CurtainFlow));
+                colour.a=saturate(colour.a+_Color.a*water*1.35);
                 UNITY_APPLY_FOG(i.fogCoord,colour);
                 return colour;
             }

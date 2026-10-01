@@ -37,7 +37,10 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(90000)]
         public IEnumerator CheskaEmptyHandsKeepTheTwoHandGather()
             => Study(new[] { "cheska" }, false, true);
-        private static IEnumerator Study(string[] heroes, bool checkFraming, bool emptyHands = false)
+        [UnityTest, Timeout(90000)]
+        public IEnumerator RafiStagesHisCurrentBahaPerformance()
+            => Study(new[] { "rafi" }, false, false, true);
+        private static IEnumerator Study(string[] heroes, bool checkFraming, bool emptyHands = false, bool allowMutedTheme = false)
         {
             yield return MapRetrievalProbe.Load("Eskinita", GameMode.HeroStrike);
             var actor = GameServices.Round.PlayerAt(1);
@@ -132,7 +135,14 @@ namespace TumbangPreso.PlayTests
                             Assert.IsEmpty(scene.Root.GetComponentsInChildren<CharacterMotor>(true));
                             Assert.IsEmpty(scene.Root.GetComponentsInChildren<Abilities.HeroAbilitySystem>(true));
                             Assert.IsTrue(scene.Root.GetComponentsInChildren<Collider>(true).All(c => !c.enabled));
-                            Assert.IsTrue(scene.StartSound(), hero + " must resolve its retained theme mapping.");
+                            bool soundStarted=scene.StartSound();
+                            if(!allowMutedTheme)Assert.IsTrue(soundStarted, hero + " must resolve its retained theme mapping.");
+                            else report.AppendLine("["+hero+"] visual-only study; retained theme started="+soundStarted+". No audio acceptance.");
+                            if(hero=="rafi")
+                            {
+                                var wave=scene.Root.GetComponentsInChildren<MeshFilter>(true).Single(m=>m.sharedMesh.name=="Rafi rolled wave").sharedMesh;
+                                Assert.AreEqual(95,wave.vertexCount);Assert.AreEqual(432,wave.triangles.Length);
+                            }
                             scene.SetVisibleForCapture(true);
                         }
                         yield return ImprovementEvidenceProbe.Record(camera, hero + (withScene ? "-introduction-scene" : "-introduction-body"), seconds,

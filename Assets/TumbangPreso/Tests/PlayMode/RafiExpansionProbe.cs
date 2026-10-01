@@ -424,6 +424,9 @@ namespace TumbangPreso.PlayTests
                 var field=RafiWaterField.Active.Single(f=>f.Capture().Type==WorldEffectSnapshot.Kind.Waterwall);
                 var renderer=field.GetComponentsInChildren<MeshRenderer>().Single(r=>r.sharedMaterial.HasProperty("_CurtainFlow")&&r.sharedMaterial.GetFloat("_CurtainFlow")>.5f);
                 Assert.AreEqual(1,renderer.sharedMaterial.GetFloat("_UseVertexTint"));
+                var runoff=field.GetComponentsInChildren<LineRenderer>().Single(r=>r.name=="ShallowCurtainRunoff");
+                Assert.AreEqual(13,runoff.positionCount);
+                Assert.AreEqual(0,runoff.GetComponents<Collider>().Length);
                 var stateForReplay=field.Capture();
                 for(int frame=0;frame<60;frame++)
                 {
@@ -465,6 +468,65 @@ namespace TumbangPreso.PlayTests
             finally
             {
                 Time.captureFramerate=rate;System.IO.File.WriteAllText(folder+"/motion.csv",log.ToString());
+                Object.Destroy(witness.gameObject);Object.Destroy(hdr);Object.Destroy(ldr);Object.Destroy(pixels);
+            }
+        }
+
+        [UnityTest,Timeout(120000)]
+        public IEnumerator SkimBodyPalmReachesTheRealCarriedSole()
+        {
+            yield return Start();var caster=Rafi();caster.IsBot=false;
+            var art=RosterBook.Load().FindPersonArt("rafi");
+            var visual=caster.GetComponent<TumbangPreso.Visual.CharacterVisual>();
+            visual.ApplyModel(art.Model,art.Tint,art.Clips,art.Palette,art.PetModel);
+            var skin=visual.Model.GetComponentInChildren<SkinnedMeshRenderer>();
+            int li=System.Array.FindIndex(skin.bones,b=>b!=null&&b.name=="arm-left");
+            Assert.IsTrue(TumbangPreso.Visual.CharacterVisual.PalmCentre(skin,li,out var palm));
+            var shoe=caster.GetComponent<Carrier>().Held;Assert.IsNotNull(shoe);
+            var surface=shoe.GetComponentsInChildren<Renderer>().First(r=>r.GetComponent<TumbangPreso.Visual.VfxRenderTag>()==null);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.Follow(caster);rig.SetAimSource(AimSource.Movement);
+            var witness=new GameObject("Skim palm witness").AddComponent<Camera>();witness.CopyFrom(Camera.main);
+            witness.enabled=false;witness.tag="Untagged";witness.fieldOfView=40;
+            witness.gameObject.AddComponent<TumbangPreso.Visual.ColourGrade>().AdoptFromScene();
+            witness.transform.position=caster.transform.position+new Vector3(2.5f,1.55f,3.4f);
+            witness.transform.LookAt(caster.transform.position+Vector3.up*.9f);
+            var hdr=new RenderTexture(960,540,24,RenderTextureFormat.DefaultHDR,RenderTextureReadWrite.Linear);
+            var ldr=new RenderTexture(960,540,0,RenderTextureFormat.ARGB32,RenderTextureReadWrite.sRGB);
+            var pixels=new Texture2D(960,540,TextureFormat.RGB24,false);
+            const string folder="Logs/rafi-skim-palm";System.IO.Directory.CreateDirectory(folder);
+            var log=new System.Text.StringBuilder("frame,palm_surface_gap,shoe_forward\n");
+            int rate=Time.captureFramerate;Time.captureFramerate=30;yield return null;
+            float gap=float.PositiveInfinity,forwardAtContact=-100;
+            try
+            {
+                var ability=caster.AbilitySystem.Kit.Skill2;
+                Assert.AreEqual(HeroKit.CastOutcome.Cast,caster.AbilitySystem.ApplyNetworkCast(HeroAbilitySystem.Slot.Skill2,
+                    caster.transform.position,caster.transform.forward,caster.Intent.AimPoint,0,true,ability.Id,false));
+                for(int frame=0;frame<25;frame++)
+                {
+                    yield return null;
+                    // Complete the normal carry update before measuring/rendering the sampled pose.
+                    shoe.Holder.GetComponent<Carrier>().SendMessage("LateUpdate");
+                    Vector3 hand=skin.bones[li].TransformPoint(palm);
+                    float distance=Vector3.Distance(hand,surface.bounds.ClosestPoint(hand));
+                    float forward=Vector3.Dot(surface.bounds.center-caster.transform.position,caster.transform.forward);
+                    if(frame>=5&&frame<=13&&distance<gap){gap=distance;forwardAtContact=forward;}
+                    log.AppendLine(System.FormattableString.Invariant($"{frame},{distance:F4},{forward:F4}"));
+                    var surfaces=shoe.GetComponentsInChildren<Renderer>();var shadows=surfaces.Select(r=>r.shadowCastingMode).ToArray();
+                    foreach(var r in surfaces)r.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.On;
+                    try{PaeteKitPlayProbe.RenderFilmView(witness,hdr);}
+                    finally{for(int i=0;i<surfaces.Length;i++)surfaces[i].shadowCastingMode=shadows[i];}
+                    Graphics.Blit(hdr,ldr);var old=RenderTexture.active;RenderTexture.active=ldr;
+                    pixels.ReadPixels(new Rect(0,0,960,540),0,0);pixels.Apply();RenderTexture.active=old;
+                    System.IO.File.WriteAllBytes(folder+"/"+frame.ToString("D5")+".jpg",pixels.EncodeToJPG(90));
+                }
+                Assert.Less(gap,.14f,"The free palm must reach the actual shoe surface, not merely move.");
+                Assert.Greater(forwardAtContact,.05f,"The work must happen in front of the body.");
+                Assert.AreSame(shoe,caster.GetComponent<Carrier>().Held);
+            }
+            finally
+            {
+                Time.captureFramerate=rate;System.IO.File.WriteAllText(folder+"/contact.csv",log.ToString());
                 Object.Destroy(witness.gameObject);Object.Destroy(hdr);Object.Destroy(ldr);Object.Destroy(pixels);
             }
         }
