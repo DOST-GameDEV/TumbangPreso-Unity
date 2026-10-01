@@ -2875,3 +2875,31 @@ Identify1182b764f andlobbypicke25b8cefd qualified independently; no broad119play
 claim from old117/116binaries. All local heavy jobs terminal, private work intact.
 Next network unit remains roster-response framing after freshownerclaim checks;
 HUD announcement/scoring/duration follow-up remains contributor-owned.
+
+ROSTER-ATOMIC-FRAMING-1001 owns MatchRpc.cs roster receiver and new
+LobbyRosterPacketTests.cs/meta. Writer emitsfour unique seats/UTF16fields plus
+watchercount0..4; currentreader allocatesfromcount and writes `_replicatedSeats`
+inside decode, allowingpartial state on late malformed row. Baseline12safe cases
+(no intentional intMaxOOM): cuts/count-1/0/5/duplicate/watch-1/5/trailingbyte.
+Final16includes Unicode/hostdecisions/legacyfooter/authorityloopback controls.
+Preflight exactlayout and boundedcount beforeallocation; commit complete local
+roster afterward. One repair max, no other heavy job, no arbitrary text clamp.
+
+Roster baseline12/12fails at actualexceptions/partial replacement/watcher mutation.
+No fixture failure,15863terminal. Completepreflight bounds counttofour, uniquevalid
+seats, boolflags/occupiedpeer and watcher0..4, allUTF16fields; decode tempseats then
+commitall. Legacyomittedfooter retains existingwatchers. No OOMbaseline or arbitrary
+stringlimit. Final16currentUnicode/hostdecisions/rolescontrols, one repairmax.
+
+Roster finalfirst16cases:14pass, two validwatchercases fail cumulative eventcount2/3.
+Fixture Before didnotreset_events. One boundedfixture repair addsreset; runtime
+unchanged. Rerun validroster method3cases only; preserve14qualifiedmalformed/role/
+legacycontrols, no fullsuite repetition.57204terminal, prefs/profiles intact.
+
+Roster firstfinal14/16success, repairedvalid3/3:16distinctqualifications, not one
+16/16run. One fixture counterreset, runtime unchanged.692finalinputs no drift,
+four ownedfiles match currentcandidate, valid32hexnewmeta imported. Firstfinal
+manifest was overwritten onprepare; reconstructedfixturehash labelled explicitly,
+originalXMLretained. All15863/57204/40658terminal, profiles/inputprefs intact.
+Publish boundedatomic roster source/status/receipts. Current119, no actualpeer/
+player or all-network claim. Preserve UI/scoring reservations and oldplayer proofs.

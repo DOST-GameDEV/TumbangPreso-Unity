@@ -211,6 +211,12 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   sender authority and normal lobby choices.
   [Evidence](reports/feedback-2026-09-30/lobby-pick-packet-framing.md).
 
+- [x] ROSTER-ATOMIC-FRAMING-1001: validate the complete bounded four-seat roster
+  and footer before replacing replicated seats. Twelve reproduced failures;
+  sixteen distinct native successes across two final runs, one fixture reset
+  repair. Valid Unicode/host decisions/authority controls retained.
+  [Evidence](reports/feedback-2026-09-30/roster-atomic-framing.md).
+
 - [x] HELD-SEAT-PICKS-1001: matching-token reclaim retains picks and takeover
   rating; Identify cannot replace fixed match choices with local preferences.
   Five distinct native cases cover repeated cycles, fresh account state, foreign
