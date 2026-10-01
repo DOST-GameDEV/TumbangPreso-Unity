@@ -121,6 +121,10 @@ attribution; final native film/listening/implementation remain open. External
 reference video access was unavailable and is not claimed.
 
 
+Rafi generic cast-flash duplication is removed with a focused accepted-cast
+check (1/1 on126), preserving load, authored clip/coating and other callers.
+[Cast clarity](reports/hero-quality-2026-10-01/rafi-cast-clarity/README.md).
+
 ### HYDRO-WATERWALL-1001: single-use defending curtain
 
 Gameplay implemented; three native cases and current six Core cases pass.
