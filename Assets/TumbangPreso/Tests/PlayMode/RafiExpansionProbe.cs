@@ -380,6 +380,95 @@ namespace TumbangPreso.PlayTests
             yield return TumpUiCapture.Capture("Waterwall-broken-960x540",canvas,960,540,false,true);
         }
 
+        [UnityTest,Timeout(300000)]
+        public IEnumerator WaterwallUsesDedicatedShippingPoseAndAgeDrivenRivulets()
+        {
+            yield return Start(); var caster=WallCaster();caster.IsBot=false;
+            caster.CharacterIndex=Roster.IndexIn(Roster.HeroPeople,"rafi");
+            var art=RosterBook.Load().FindPersonArt("rafi");
+            var clip=art.Clips.SingleOrDefault(c=>c!=null&&c.name=="hero-rafi-wall");
+            Assert.IsNotNull(clip,"The shipping roster must reference the baked action, not just an Editor fallback.");
+            Assert.Greater(clip.length,.7f);
+            var visual=caster.GetComponent<TumbangPreso.Visual.CharacterVisual>();
+            visual.ApplyModel(art.Model,art.Tint,art.Clips,art.Palette,art.PetModel);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.Follow(caster);rig.SetAimSource(AimSource.Movement);
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.SetCharacter("rafi");
+            yield return null;yield return null;
+            var animator=caster.GetComponent<TumbangPreso.Visual.CharacterAnimator>();
+            var arm=visual.Model.GetComponentsInChildren<Transform>().First(t=>t.name=="arm-left");
+            var torso=visual.Model.GetComponentsInChildren<Transform>().First(t=>t.name=="torso");
+            var restArm=arm.localRotation;var restTorso=torso.localRotation;
+            var ability=caster.AbilitySystem.Kit.DefendingSkill;
+            Assert.AreEqual("hero-rafi-wall",ability.CastAction);Assert.AreEqual("waterwall-lift",ability.ViewmodelAction);
+            var witness=new GameObject("Rafi wall witness").AddComponent<Camera>();witness.CopyFrom(Camera.main);
+            witness.enabled=false;witness.tag="Untagged";witness.fieldOfView=48;
+            witness.gameObject.AddComponent<TumbangPreso.Visual.ColourGrade>().AdoptFromScene();
+            witness.transform.position=caster.transform.position+new Vector3(4,2,3);
+            witness.transform.LookAt(caster.transform.position+new Vector3(0,.9f,1.2f));
+            var hdr=new RenderTexture(960,540,24,RenderTextureFormat.DefaultHDR,RenderTextureReadWrite.Linear);
+            var ldr=new RenderTexture(960,540,0,RenderTextureFormat.ARGB32,RenderTextureReadWrite.sRGB);
+            var pixels=new Texture2D(960,540,TextureFormat.RGB24,false);
+            string folder="Logs/rafi-wall-motion";
+            System.IO.Directory.CreateDirectory(folder+"/owner");System.IO.Directory.CreateDirectory(folder+"/witness");
+            var log=new System.Text.StringBuilder("frame,seconds,arm_angle,torso_angle,clip,split\n");
+            int rate=Time.captureFramerate;Time.captureFramerate=30;
+            float armMotion=0,torsoMotion=0,firstPersonMotion=0;bool broke=false;
+            try
+            {
+                Assert.AreEqual(HeroKit.CastOutcome.Cast,caster.AbilitySystem.ApplyNetworkCast(HeroAbilitySystem.Slot.Skill2,
+                    caster.transform.position,caster.transform.forward,caster.Intent.AimPoint,0,true,ability.Id,false));
+                Assert.AreEqual("hero-rafi-wall",animator.CurrentClipName);
+                var viewArms=Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None).First(a=>a.gameObject.activeInHierarchy);
+                var viewFlags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+                Assert.IsNotNull(typeof(ViewmodelArms).GetField("_clip",viewFlags).GetValue(viewArms),"The first-person action must resolve, not only kick the camera.");
+                var field=RafiWaterField.Active.Single(f=>f.Capture().Type==WorldEffectSnapshot.Kind.Waterwall);
+                var renderer=field.GetComponentsInChildren<MeshRenderer>().Single(r=>r.sharedMaterial.HasProperty("_CurtainFlow")&&r.sharedMaterial.GetFloat("_CurtainFlow")>.5f);
+                Assert.AreEqual(1,renderer.sharedMaterial.GetFloat("_UseVertexTint"));
+                var stateForReplay=field.Capture();
+                for(int frame=0;frame<60;frame++)
+                {
+                    if(frame==40)
+                    {
+                        var state=field.Capture();var thrower=GameServices.Round.PlayerAt(2);var shoe=thrower.GetComponent<Carrier>().Held;
+                        shoe.enabled=false;shoe.HostThrow(thrower,state.Position-state.Forward*.1f+Vector3.up,state.Forward*10);
+                        field.SendMessage("RememberShoes");shoe.SendMessage("FixedUpdate");field.SendMessage("FixedUpdate");
+                        Assert.AreEqual(SlipperState.Loose,shoe.State);stateForReplay=field.Capture();broke=stateForReplay.Split;
+                    }
+                    yield return null;
+                    float armAngle=Quaternion.Angle(restArm,arm.localRotation),torsoAngle=Quaternion.Angle(restTorso,torso.localRotation);
+                    armMotion=Mathf.Max(armMotion,armAngle);torsoMotion=Mathf.Max(torsoMotion,torsoAngle);
+                    var offset=(Vector3)typeof(ViewmodelArms).GetField("_castLeft",viewFlags).GetValue(viewArms);
+                    firstPersonMotion=Mathf.Max(firstPersonMotion,offset.magnitude);
+                    log.AppendLine(System.FormattableString.Invariant($"{frame},{frame/30f:F3},{armAngle:F3},{torsoAngle:F3},{animator.CurrentClipName},{broke}"));
+                    foreach(var camera in new[]{Camera.main,witness})
+                    {
+                        PaeteKitPlayProbe.RenderFilmView(camera,hdr);Graphics.Blit(hdr,ldr);
+                        var old=RenderTexture.active;RenderTexture.active=ldr;pixels.ReadPixels(new Rect(0,0,960,540),0,0);pixels.Apply();RenderTexture.active=old;
+                        System.IO.File.WriteAllBytes(folder+(camera==witness?"/witness/":"/owner/")+frame.ToString("D5")+".jpg",pixels.EncodeToJPG(90));
+                    }
+                }
+                Assert.Greater(armMotion,25,"The actual body must visibly lift its arm.");Assert.Greater(torsoMotion,8,"The body participates in the scoop.");
+                Assert.Greater(firstPersonMotion,.15f,"The accepted cast must lift the actual first-person palm.");
+                Assert.IsTrue(broke,"The one-use break must be filmed from actual contact.");
+                var parent=new GameObject("Wall material replay");
+                using(var view=new RecordedFieldView(parent.transform,stateForReplay))
+                {
+                    view.Sample(stateForReplay,.2f);
+                    var sheet=view.Root.GetComponentsInChildren<MeshRenderer>().Single(r=>r.sharedMaterial.HasProperty("_CurtainFlow")&&r.sharedMaterial.GetFloat("_CurtainFlow")>.5f);
+                    var block=new MaterialPropertyBlock();sheet.GetPropertyBlock(block);float first=block.GetFloat("_FlowAge");
+                    view.Sample(stateForReplay,.6f);view.Sample(stateForReplay,.2f);sheet.GetPropertyBlock(block);
+                    Assert.AreEqual(first,block.GetFloat("_FlowAge"),.0001f,"Flow must be deterministic under non-monotonic replay sampling.");
+                    Assert.AreEqual(0,view.Root.GetComponentsInChildren<Collider>(true).Length);
+                }
+                Object.Destroy(parent);
+            }
+            finally
+            {
+                Time.captureFramerate=rate;System.IO.File.WriteAllText(folder+"/motion.csv",log.ToString());
+                Object.Destroy(witness.gameObject);Object.Destroy(hdr);Object.Destroy(ldr);Object.Destroy(pixels);
+            }
+        }
+
         [Ignore("Vaulted with the first Lagoon Court (owner, 2026-09-27: \"vault the old lagoon\"); its scene is out of the build. See docs/TODO.md LAGOON-1.7."),UnityTest,Timeout(120000)] public IEnumerator InnerAndOuterStairsLetBothModesLeaveTheWater()
         {
             foreach(var mode in new[]{GameMode.Classic,GameMode.HeroStrike})

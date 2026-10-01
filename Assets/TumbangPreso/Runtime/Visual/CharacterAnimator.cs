@@ -234,6 +234,7 @@ namespace TumbangPreso.Visual
             { "hero-phaister-hexreach", new[] { "hero-phaister-hexreach", "interact-right" } },
             { "hero-phaister-hexstab", new[] { "hero-phaister-hexstab", "attack-melee-right" } },
             { "hero-rafi-cut", new[] { "hero-rafi-cut", "interact-left" } },
+            { "hero-rafi-wall", new[] { "hero-rafi-wall", "interact-left" } },
             { "hero-rafi-feint", new[] { "hero-rafi-feint", "attack-melee-right" } },
             { "hero-rafi-breakwater", new[] { "hero-rafi-breakwater", "holding-both-shoot" } },
             { "hero-amihan-dash", new[] { "hero-amihan-dash", "attack-kick-right", Sprint } },
