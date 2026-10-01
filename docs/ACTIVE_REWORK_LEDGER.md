@@ -3585,3 +3585,12 @@ remains unstaged after owned guard commit. All own native jobs terminal. Full
 Zack basic migration next; current state unit is not a complete upgraded kit.
 No actual124peer proof, no Desktop replacement, no loading changes.
 
+
+Overclock/Zapped ef830005d published throughaab48539d, remote verified. Existing
+broader Feedback Notes updated/read back with scoped state/status progress;
+upgraded basics and124peer testing explicitly remain open. Human verified and
+other author text untouched. No own browser/preview/player/server/Editor remains.
+Private HeroHazards overlay still6insertions/1change outsideindex. Next normal/
+Overclocked basic mechanics in Wiki/plans, with proposal provenance explicit;
+full Zack remains open. No optional unchanged suite or art/lighting/loading edits.
+
