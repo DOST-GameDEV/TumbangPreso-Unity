@@ -3800,6 +3800,17 @@ remains available. Normal exit56.54s, zero repairs/newOOM. Evidence in
 hero-quality-2026-10-01/rafi-cast-clarity; no new film/SFX/peer claim. Release
 shared confirmation path after shipment. Hydro SFX and wider feel remain open.
 
+SOLO-HANDOVER-BINDINGS-1001 owns DebugPlayerSwitcher.cs and one additional actual F2 case in PauseOwnerRebindTests. Source ApplySlots moves controls/camera but omits PauseWatcher.Local/Hud.Bind/YouCard.Bind, unlike network rebinding. Prove pause/HUD stale after accepted F-key switch, then retarget those existing surfaces on the same action. No new UI, art/loading edits or Docs TODO work. One small baseline/final, tooling retry0; all own prior jobs terminal.
+
+SOLO-HANDOVER-BINDINGS-1001 baseline realF2 accepts secondseat but PauseWatcher
+stillreferences first. ApplySlots rebinds existing Hud/PauseWatcher/optional
+legacyYouCard alongside camera/control. Same native final1/1 passes actual
+F2/control/pause/HUD references;753finalinputs unchanged, zero repairs. Optional
+legacycard rendering absent from fixture, no peer/full-HUD/tournament claim.
+Protocol126 unchanged, sourcece36e32fa plus own overlay. Jobs57973/47894 terminal;
+publish independent input lifecycle fix, then inspect F-key handling while menu/
+rebinding/presentation owns input. Do not assume a failure before reproducing it.
+DOTS owns Docs TODO queue; no kit migration, loading/art change or cross-chat work.
 Closed Circuit assessment recorded in reports/feedback-2026-09-30/closed-circuit/plan.md.
 No implementation claim yet. Key constraint: maintained remote aim needs a
 bounded owner-to-host channel; the current aim snapshot intentionally carries
@@ -3839,3 +3850,4 @@ Closed Circuit scenario through three real peers and the normal round schedule.
 Use the existing isolated cloud Linux candidate build route; it supersedes only
 our prior internal protocol112 player through GameBuilder's guarded output path,
 never the user's Desktop or profiles. Preserve build identity and failure logs.
+Solo UI bindings58d309499 checked and ready to publish; next priority is independent network reliability under an existing shaped-link scenario using the exact126player. Do not take Closed Circuit paths or Docs TODO queue. Older player source04f remains the precise runtime qualification; no fresh whole-build readiness claim. All own native/player jobs currently terminal, no owned browser/preview/server remains.
