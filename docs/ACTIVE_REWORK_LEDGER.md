@@ -3528,3 +3528,14 @@ samplesreviewed; sidecurl andsofterfixedstiltfadeimprove theearlierflatwall.
 Frontface remains simpletranslucentcolour, notfinalreferencelevelapproval.
 Body/camera/3.4s/gameplayunchanged; soundstartedFalseexplicitly. Inputs match,
 noadditionalrepair/newOOM. Publishsceneunit; wholeHydro row remainsopen.
+
+TAGGED-RENDER-1001 takes the newly added live Feedback report "Tagged replay
+camera has some rendering conflicts", observed10:35UTC with two supplied images.
+Exact initial ownership: Runtime/Camera/CatchReconstruction.cs and focused
+Tests/PlayMode/CatchReconstructionTests.cs plus report evidence. Inspect/reproduce
+before changing other rendering owners. Fresh remotee2adf856 has no competing
+reservation. The other new report is non-flat player highlight rings; retain it
+as next independent intake. Both new rows inherited Done text but have unchecked
+native controls and no resolution evidence: do not treat those text copies as
+shipped. Pause optional Hydro polish for these newly added human defects. Native
+jobs terminal; Baha e2adf856 published/verified and same-row note written.
