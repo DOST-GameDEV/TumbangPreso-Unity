@@ -64,6 +64,7 @@ namespace TumbangPreso.Visual
 
             var go = new GameObject("BlockyClouds");
             go.transform.SetParent(owner.transform, false);
+            go.layer = owner.gameObject.layer;
             // The ring is laid out round the court centre in WORLD space; the look's parent may
             // be a nested, offset map root.
             go.transform.SetPositionAndRotation(new Vector3(0, floor, 0), Quaternion.identity);

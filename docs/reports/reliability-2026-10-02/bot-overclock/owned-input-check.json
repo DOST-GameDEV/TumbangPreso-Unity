@@ -1,0 +1,10 @@
+{
+  "source": "7e36a52426abe7e94019e2ad15ea66db869c4c2d",
+  "checks": {
+    "Assets/TumbangPreso/Tests/PlayMode/ZackKitAcceptanceProbe.cs": true,
+    "Assets/TumbangPreso/Runtime/AIController.cs": true,
+    "Assets/TumbangPreso/Runtime/Abilities/ZackHeroKit.cs": true
+  },
+  "retry": 0,
+  "scope": "Existing native Zack fixture, real AI/ability input with body simulation disabled solely to keep target distances fixed"
+}

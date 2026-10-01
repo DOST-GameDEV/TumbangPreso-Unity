@@ -151,8 +151,10 @@ namespace TumbangPreso.UI
             new MapEntry(BayanPlaza, "BAYAN PLAZA",
                          "Barangay plaza. Church, basketball ring, acacia.", 0.0f, 22.0f, 16.0f),
 
+            // The rebuilt court is below an 8 m soffit. Look down the street under it,
+            // rather than through the viaduct deck and the adjacent shop roofs.
             new MapEntry(IlalimNgTulay, "ILALIM NG TULAY",
-                         "LRT Gilmore strip. Viaduct pillars, PC Express, pisonet.", 35.0f, 22.0f, 13.5f),
+                         "LRT Gilmore strip. Viaduct pillars, PC Express, pisonet.", 0.0f, 22.0f, 5.5f),
             new MapEntry(SaBubong,"SA BUBONG",
                          "Condo roofdeck. Watch the edge; lost slippers return after 10s.",35,30,22),
             // ⚠️ THE LAGOON COURT IS THE REWORKED COVE NOW, and Kanto joins the list (owner,

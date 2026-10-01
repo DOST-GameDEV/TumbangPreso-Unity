@@ -41,11 +41,12 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(map, preview.Showing, "The selected map did not finish the actual additive preview route.");
                 yield return null; yield return null;
                 var camera = preview.Camera; Assert.IsNotNull(camera); Assert.IsNotNull(camera.targetTexture);
-                var planes = GeometryUtility.CalculateFrustumPlanes(camera); int total = 0, enabled = 0, visible = 0, badShaders = 0;
-                foreach (var renderer in Object.FindObjectsByType<MeshRenderer>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                var planes = GeometryUtility.CalculateFrustumPlanes(camera); int total = 0, enabled = 0, visible = 0, badShaders = 0, escaped = 0;
+                foreach (var renderer in Object.FindObjectsByType<Renderer>(FindObjectsInactive.Include, FindObjectsSortMode.None))
                 {
                     if (renderer.gameObject.scene.name != map) continue;
                     total++;
+                    if (renderer.gameObject.layer != MapPreviewSurface.PreviewLayer) escaped++;
                     if (!renderer.enabled || !renderer.gameObject.activeInHierarchy) continue;
                     enabled++;
                     if ((camera.cullingMask & (1 << renderer.gameObject.layer)) != 0 && GeometryUtility.TestPlanesAABB(planes, renderer.bounds)) visible++;
@@ -53,7 +54,7 @@ namespace TumbangPreso.PlayTests
                         if (material == null || material.shader == null || !material.shader.isSupported || material.shader.name == "Hidden/InternalErrorShader") badShaders++;
                 }
                 var directory = "Logs/feedback-0930/remade-previews"; Directory.CreateDirectory(directory);
-                File.WriteAllText(Path.Combine(directory, map + ".txt"), $"showing={preview.Showing}\ntotal={total}\nenabled={enabled}\nvisible={visible}\nbadShaders={badShaders}\ncameraEnabled={camera.enabled}\nlookScoped={TumbangPreso.Visual.WorldLookPresentation.HandlesCamera(camera)}\n");
+                File.WriteAllText(Path.Combine(directory, map + ".txt"), $"showing={preview.Showing}\ntotal={total}\nenabled={enabled}\nvisible={visible}\nbadShaders={badShaders}\nescaped={escaped}\ncameraEnabled={camera.enabled}\nlookScoped={TumbangPreso.Visual.WorldLookPresentation.HandlesCamera(camera)}\n");
                 camera.Render(); var previous = RenderTexture.active; RenderTexture.active = camera.targetTexture;
                 var pixels = new Texture2D(camera.targetTexture.width, camera.targetTexture.height, TextureFormat.RGB24, false);
                 try
@@ -65,6 +66,7 @@ namespace TumbangPreso.PlayTests
                 Assert.Greater(enabled, 20, "The preview lost the remade map's renderer roots.");
                 Assert.Greater(visible, 10, "Loaded geometry is outside the preview camera/layer scope.");
                 Assert.AreEqual(0, badShaders, "The map contains missing, unsupported or error shaders.");
+                Assert.AreEqual(0, escaped, "Runtime map geometry escaped the preview layer and can draw behind the menu.");
             }
             finally { Object.Destroy(root); }
             yield return null;

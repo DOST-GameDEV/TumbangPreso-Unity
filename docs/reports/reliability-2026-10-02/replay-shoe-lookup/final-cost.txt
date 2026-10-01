@@ -1,0 +1,4 @@
+samples=1000
+captured=4000
+bytes=0
+milliseconds=16.701700000000002

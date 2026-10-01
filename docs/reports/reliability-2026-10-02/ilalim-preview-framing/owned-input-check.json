@@ -1,0 +1,12 @@
+{
+  "source": "5df931be3",
+  "checks": {
+    "Assets/TumbangPreso/Tests/PlayMode/RemadeMapPreviewTests.cs": true,
+    "Assets/TumbangPreso/Runtime/Map/SidewalkLife.cs": true,
+    "Assets/TumbangPreso/Runtime/Visual/WorldLookPresentation.cs": true,
+    "Assets/TumbangPreso/Runtime/Visual/BlockyClouds.cs": true,
+    "Assets/TumbangPreso/Runtime/UI/SceneFlow.cs": true
+  },
+  "scope": "Five owned code/test inputs; no new player or all-map qualification",
+  "retry": 0
+}

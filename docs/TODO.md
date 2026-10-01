@@ -17,6 +17,32 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### BOT-OVERCLOCK-1002: repaired stale area-stun victim gates
+
+Actual Zack bot ignored ready permanent Overclock for13s outside the zap radius.
+Same native bot-input/activation case now passes1/1 at4.9s, with single-spend
+control. Existing cadence/opening and kit unchanged.
+[Evidence](reports/reliability-2026-10-02/bot-overclock/README.md).
+
+### REPLAY-SHOE-LOOKUP-1002: reuse existing live inventory
+
+Replay trail capture reuses the existing lifecycle-invalidated slipper inventory.
+Same native trail/lifecycle case passes before/after1/1; one1000capture batch
+19.7619ms to16.7017ms. Allocation counter unavailable; no FPS claim.
+[Evidence](reports/reliability-2026-10-02/replay-shoe-lookup/README.md).
+
+### ILALIM-PREVIEW-FRAMING-1002: repaired old above-deck camera
+
+Rebuilt Ilalim preview now faces its playing street below the viaduct rather than
+the roof. Native1/1passes and actual PNG inspected; authored map/lighting unchanged.
+[Evidence](reports/reliability-2026-10-02/ilalim-preview-framing/README.md).
+
+### ILALIM-PREVIEW-SCOPE-1002: repaired generated scenery camera leakage
+
+Rebuilt Ilalim actual preview baseline33escaped renderers; final0, native1/1passes.
+Runtime NPC/prop/look/cloud layer inheritance only; authored assets unchanged.
+Court framing remains a separate open defect. [Evidence](reports/reliability-2026-10-02/ilalim-preview-scope/README.md).
+
 ### KIT-RECALL-PARITY-1001: role-aware held descriptions
 
 Same-kit attacker/defender changes now refresh the real role ability. Native

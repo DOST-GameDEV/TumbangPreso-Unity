@@ -55,6 +55,44 @@ namespace TumbangPreso.PlayTests
             progress.Clear(); progress.AddRange(_challenges);
         }
 
+        [UnityTest, Timeout(60000)]
+        public IEnumerator BotUsesMatchLongOverclockWithoutWaitingForNearbyVictims()
+        {
+            var kit = (ZackHeroKit)_caster.AbilitySystem.Kit;
+            Unlock("zack_ultimate"); kit.AddUltimateCharge(kit.UltimateCost);
+            kit.Skill1.ApplyNetworkSnapshot(100, 1); kit.Skill2.ApplyNetworkSnapshot(100, 1);
+            foreach (var actor in GameServices.Round.Players)
+                if (actor != _caster) actor.Teleport(new Vector3(10 + actor.PlayerSlot, .12f, 10));
+            _caster.Teleport(new Vector3(-10, .12f, -10));
+            var brain = _caster.GetComponent<AIController>();
+            if (brain == null) brain = _caster.gameObject.AddComponent<AIController>();
+            Assert.IsTrue(_caster.CanAct()); Assert.IsTrue(kit.IsUltimateReady);
+            // Isolate ability choice from travel. The real AI and ability Update paths run;
+            // commit input edges here while the body simulation is disabled.
+            _caster.enabled = false; brain.enabled = true;
+            float began = Time.time; bool requested = false;
+            try
+            {
+                while (!kit.IsOverclocked && Time.time - began < 13)
+                {
+                    yield return null;
+                    requested |= _caster.Intent.Pressed(Verb.Ultimate);
+                    _caster.Intent.CommitFrame();
+                }
+                Directory.CreateDirectory("Logs/bot-overclock1002");
+                File.WriteAllText("Logs/bot-overclock1002/decision.txt",
+                    $"requested={requested}\noverclocked={kit.IsOverclocked}\nready={kit.IsUltimateReady}\nelapsed={Time.time-began}\n");
+                foreach (var actor in GameServices.Round.Players)
+                    if (actor != _caster) Assert.Greater(Vector3.Distance(actor.transform.position, _caster.transform.position), 10);
+                Assert.IsTrue(requested, "The bot ignored a ready match-long self-upgrade when nobody was in its secondary zap radius.");
+                Assert.IsTrue(kit.IsOverclocked, "Actual bot input never activated the permanent upgrade.");
+                Assert.Zero(kit.UltimateCharge);
+                kit.AddUltimateCharge(100); yield return new WaitForSeconds(.4f);
+                Assert.Zero(kit.UltimateCharge); Assert.IsFalse(kit.IsUltimateReady, "The bot must not spend the permanent upgrade twice.");
+            }
+            finally { brain.enabled = false; _caster.enabled = true; }
+        }
+
         private void Unlock(string id)
         {
             var progress = Settings.SettingsStore.Current.AbilityChallenges;
