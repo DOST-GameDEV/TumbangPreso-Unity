@@ -2258,3 +2258,32 @@ keep existing owner, score and host authority rules. Plan saved at
 reports/hero-quality-2026-10-01/waterwall-implementation.md. No Water wall runtime
 changes yet. Skim77bf73e3 integrated atae507b37; publication verification pending.
 Other contributors retain AI/Haunted/departure paths. No heavy Unity job active.
+
+Water wall first candidate frozen: three native cases for real role cast,
+first crossing/approach side/one-use, cover refusal without cost/expiry and
+render-only replay plus active/broken court captures. Six Core cases pass.
+Expected3fresh cases; no tooling retry used. Existing water duration validation
+remains unchanged for older kinds. Protocol117, no actual-peer claim.
+
+Owner05:26 requests deeper comparison with actual prior Paete/Phaister work
+and explicitly reopens all previous SFX, including protected heroes' sounds.
+Non-audio protection stays. Finish current wall unit, deepen source/pipeline/
+revision/media benchmark, then presentation. No sound replaced or heard claim.
+
+Wall first launch failed compilation in new capture fixture: unqualified CameraRig
+resolved the older root type instead of CameraSystem.CameraRig. One bounded
+fixture repair qualifies the existing capture type; runtime unchanged. Finalv2
+retries same3cases. Harry's latest tutorial notes and protected-hero Wiki edits
+were read/diffed; owner clarification pending for protected mechanics only.
+
+TUTORIAL-REFINE-1001 claims GuidedTraining.cs, UI/GuidedTrainingHud.OwnerPainted.cs
+and existing OwnerTrainingUiTests.cs. Harry's current screenshot shows the dummy
+with the remaining objective marker; other screenshot shows the small Backspace
+Quit footer and Training Complete heading. Remove remaining dummy marker binds,
+enlarge only Quit glyph/text/hit height inside the existing width, and rename the
+completion heading Tutorial Complete. Preserve ordinary gameplay status effects.
+No contributor claims these paths in the freshly fetched ledger. Protected-hero
+Wiki balance edits remain pending owner clarification. Wall capture fixture's
+first namespace repair failed; exact declared enum is CameraSystem.AimSource.
+Corrected source now awaits one coherent wall/tutorial native batch, not another
+standalone unchanged fixture loop. No runtime pass is claimed for Water wall yet.

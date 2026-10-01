@@ -54,7 +54,8 @@ made shitty sfx i give u permission to do all sfx na rin". The September29 ban i
 superseded. Research, plan and listen critically before implementing replacement
 sounds; do not simply restore rejected assets or generators. Existing runtime
 sound suppression remains until a tested replacement unit changes it. Human
-voice policy and finalized Paete/Phaister character-specific protection remain.
+voice policy remains. The owner subsequently reopened ALL previously authored
+SFX, including Paete/Phaister sounds; their non-audio protection remains.
 See [the current research brief](reports/hero-quality-2026-10-01/brief.md).
 
 3. **Each ability gets its own animation, effects and sound.** *"i want each of his skill to have their own animation"*, *"think of
