@@ -423,6 +423,18 @@ namespace TumbangPreso.Net
             }
         }
 
+        private async Task<bool> StartConnectionAsync(Func<Task<bool>> start, JoinAttemptGate.Attempt attempt)
+        {
+            try { return await start(); }
+            catch (OperationCanceledException) { return false; }
+            catch (Exception error)
+            {
+                if (this != null && attempt.CanContinue)
+                    Debug.LogWarning($"[Queue] connection startup failed: {error.Message}");
+                return false;
+            }
+        }
+
         private async Task JoinAsync(ServerQuery.Entry entry, Func<Task<bool>> startJoin)
         {
             var attempt = _queueAttempts.Begin();
@@ -438,7 +450,7 @@ namespace TumbangPreso.Net
                 // to a third player, and the lobby draws it from `LobbySession.JoinCode`.
                 if (!string.IsNullOrEmpty(entry.JoinCode)) _net.Lobby.SetJoinCode(entry.JoinCode);
 
-                bool ok = await startJoin();
+                bool ok = await StartConnectionAsync(startJoin, attempt);
                 if (this == null || !attempt.CanContinue) return;
 
                 if (ok)
@@ -482,7 +494,7 @@ namespace TumbangPreso.Net
                     State = QueueState.Hosting;
                     Raise();
 
-                    bool ok = await startHost();
+                    bool ok = await StartConnectionAsync(startHost, attempt);
                     if (this == null || !attempt.CanContinue) return;
 
                     if (!ok)

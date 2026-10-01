@@ -17,6 +17,13 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### QUEUE-START-FAULT-1002: recover from startup dependency exceptions
+
+Actual host/join queue helpers stuck and faulted on startup errors. Native final
+4/4: active failures search again, cancelled attempts stay cancelled. Narrow
+startup catch only; existing retry/owner fences retained, no online service call.
+[Evidence](reports/reliability-2026-10-02/queue-start-fault/README.md).
+
 ### REPLAY-EMPTY-CAPTURE-1002: remove unused empty-sample allocations
 
 Calibrated Unity recorder: 500 empty captures changed from 1,000 allocation

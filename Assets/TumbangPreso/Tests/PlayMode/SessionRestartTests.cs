@@ -397,6 +397,37 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(net.IsNetworked, "the cancelled host restart opened a new room");
         }
 
+        [UnityTest] public IEnumerator FailedHostStartupReturnsToSearchingWithoutFaulting()
+            => QueueStartupFault("HostAsync", false);
+        [UnityTest] public IEnumerator FailedJoinStartupReturnsToSearchingWithoutFaulting()
+            => QueueStartupFault("JoinAsync", false);
+        [UnityTest] public IEnumerator CancelledHostStartupFaultCannotReviveQueue()
+            => QueueStartupFault("HostAsync", true);
+        [UnityTest] public IEnumerator CancelledJoinStartupFaultCannotReviveQueue()
+            => QueueStartupFault("JoinAsync", true);
+        private IEnumerator QueueStartupFault(string method, bool cancel)
+        {
+            var net = NetSession.Ensure(); var queue = Matchmaker.Ensure(); SetQueueNet(queue, net);
+            var delayed = new TaskCompletionSource<bool>();
+            var start = (Func<Task<bool>>)(() => delayed.Task);
+            var operation = method == "HostAsync" ? InvokeQueue(queue, method, start)
+                : InvokeQueue(queue, method, new ServerQuery.Entry { Id = "fault-entry", RelayCode = "fault-relay", JoinCode = "" }, start);
+            Assert.AreEqual(method == "HostAsync" ? QueueState.Hosting : QueueState.Joining, queue.State);
+            if (cancel) queue.Cancel();
+            delayed.SetException(new System.IO.IOException("injected connection startup failure"));
+            float until = Time.realtimeSinceStartup + 5;
+            while (!operation.IsCompleted && Time.realtimeSinceStartup < until) yield return null;
+            Assert.IsTrue(operation.IsCompleted);
+            var observed = operation.Exception; // Observe the baseline fault without rethrowing it.
+            System.IO.Directory.CreateDirectory("Logs/queue-start-fault1002");
+            System.IO.File.WriteAllText("Logs/queue-start-fault1002/" + method + "-" + cancel + ".txt",
+                $"faulted={operation.IsFaulted}\nstate={queue.State}\nbusy={typeof(Matchmaker).GetField("_busy", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(queue)}\n");
+            Assert.IsFalse(operation.IsFaulted, "The startup dependency exception escaped the queue and its async-void caller.");
+            Assert.AreEqual(cancel ? QueueState.Cancelled : QueueState.Searching, queue.State);
+            Assert.IsFalse((bool)typeof(Matchmaker).GetField("_busy", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(queue));
+            queue.Cancel();
+        }
+
         [UnityTest]
         public IEnumerator CancelledDelayedHostCannotReadvertiseOrReviveQueue()
         {

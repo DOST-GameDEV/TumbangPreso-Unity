@@ -1,0 +1,3 @@
+faulted=False
+state=Cancelled
+busy=False
