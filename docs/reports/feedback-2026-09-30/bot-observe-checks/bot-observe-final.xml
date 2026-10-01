@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 05:16:42Z" end-time="2026-10-01 05:16:42Z" duration="0.3739644">
+  <test-suite type="TestSuite" id="2339" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1083" result="Passed" start-time="2026-10-01 05:16:42Z" end-time="2026-10-01 05:16:42Z" duration="0.373964" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2333" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1083" result="Passed" start-time="2026-10-01 05:16:42Z" end-time="2026-10-01 05:16:42Z" duration="0.362599" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10028" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2334" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1083" result="Passed" start-time="2026-10-01 05:16:42Z" end-time="2026-10-01 05:16:42Z" duration="0.360019" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2335" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1083" result="Passed" start-time="2026-10-01 05:16:42Z" end-time="2026-10-01 05:16:42Z" duration="0.358037" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1113" name="BotCompanionObservationTests" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-01 05:16:42Z" end-time="2026-10-01 05:16:42Z" duration="0.327948" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1118" name="ACompanionBotStillKnowsItsOwnFeetWithoutReactionLag" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.ACompanionBotStillKnowsItsOwnFeetWithoutReactionLag" methodname="ACompanionBotStillKnowsItsOwnFeetWithoutReactionLag" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="1428858" result="Passed" start-time="2026-10-01 05:16:42Z" end-time="2026-10-01 05:16:42Z" duration="0.095923" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1117" name="AReplacementInTheSameSeatStartsWithItsOwnPosition" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.AReplacementInTheSameSeatStartsWithItsOwnPosition" methodname="AReplacementInTheSameSeatStartsWithItsOwnPosition" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="88788935" result="Passed" start-time="2026-10-01 05:16:42Z" end-time="2026-10-01 05:16:42Z" duration="0.039546" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1116" name="CompanionBeliefUsesTheSameReactionLagAsPlayers" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.CompanionBeliefUsesTheSameReactionLagAsPlayers" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-01 05:16:42Z" end-time="2026-10-01 05:16:42Z" duration="0.069831" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1114" name="CompanionBeliefUsesTheSameReactionLagAsPlayers(Normal)" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.CompanionBeliefUsesTheSameReactionLagAsPlayers(Normal)" methodname="CompanionBeliefUsesTheSameReactionLagAsPlayers" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="883641861" result="Passed" start-time="2026-10-01 05:16:42Z" end-time="2026-10-01 05:16:42Z" duration="0.033349" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1115" name="CompanionBeliefUsesTheSameReactionLagAsPlayers(Astig)" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.CompanionBeliefUsesTheSameReactionLagAsPlayers(Astig)" methodname="CompanionBeliefUsesTheSameReactionLagAsPlayers" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="1299613470" result="Passed" start-time="2026-10-01 05:16:42Z" end-time="2026-10-01 05:16:42Z" duration="0.033419" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1121" name="TagRankingUsesObservedDepthUntilTheBotReacts" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.TagRankingUsesObservedDepthUntilTheBotReacts" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-01 05:16:42Z" end-time="2026-10-01 05:16:42Z" duration="0.073160" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1119" name="TagRankingUsesObservedDepthUntilTheBotReacts(Normal)" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.TagRankingUsesObservedDepthUntilTheBotReacts(Normal)" methodname="TagRankingUsesObservedDepthUntilTheBotReacts" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="931064060" result="Passed" start-time="2026-10-01 05:16:42Z" end-time="2026-10-01 05:16:42Z" duration="0.036814" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1120" name="TagRankingUsesObservedDepthUntilTheBotReacts(Astig)" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.TagRankingUsesObservedDepthUntilTheBotReacts(Astig)" methodname="TagRankingUsesObservedDepthUntilTheBotReacts" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="1708067085" result="Passed" start-time="2026-10-01 05:16:42Z" end-time="2026-10-01 05:16:42Z" duration="0.034991" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1122" name="WarmPerFrameObservationDoesNotAllocateAnActorEnumerator" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.WarmPerFrameObservationDoesNotAllocateAnActorEnumerator" methodname="WarmPerFrameObservationDoesNotAllocateAnActorEnumerator" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="1246604748" result="Passed" start-time="2026-10-01 05:16:42Z" end-time="2026-10-01 05:16:42Z" duration="0.034788" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

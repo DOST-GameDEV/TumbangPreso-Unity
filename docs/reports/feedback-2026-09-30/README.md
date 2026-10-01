@@ -209,3 +209,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Remaining bot planning scans and measured allocation reduction](bot-planning-inventory.md).
 
 [Exact departure notice framing and native receiver checks](peer-departure-framing.md).
+
+[Per-frame bot observation allocation](bot-observe-allocation.md).
