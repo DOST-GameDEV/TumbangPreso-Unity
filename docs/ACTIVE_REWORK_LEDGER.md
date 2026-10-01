@@ -3894,3 +3894,15 @@ bugs; avoid more unchanged matrix rows and never mark whole readiness complete.
 Latest owner priority after current reliability cleanup: optimization and correct shader/effect availability at the right times across all screens, singleplayer and network. Inspect missing/late shader/material/effect bindings, camera-scope and recovery/lifetime defects. This is readiness/visibility bug work, not an authored VFX/SFX/model/animation/map/lighting redesign. Keep friend's broader loading implementation ownership; do not silently overhaul loading. Continue autonomously without ending at unit checkpoints.
 
 REMADE-MAP-PREVIEW-1001: owner says all remade maps showed grey this morning, unsure current. Explicitly authorizes this preview-loading defect fix despite broader loading ownership remaining with friend. Own MapPreviewSurface.cs and one focused RemadeMapPreviewTests file/meta; inspect current Kanto/LagoonCove/Ilalim actual additive preview, renderer/layer/frustum/shader presence and PNGs before code changes. Sequential scene retirement, not retaining all maps. Use already-proven Editor idle import retirement=1ms and restore it; no worker-count/guard change or second memory-retry loop. No map/art/lighting asset edits or DOTS queue writes.
+
+REMADE-MAP-PREVIEW-1001 reproduced all3 background-only previews with0active
+renderers. Loaded meshes were parked because Start queued global default after
+an explicit Show(othermap). Corrected Start only defaults when no request/showing/
+queue exists. Callback fence hypothesis failed and removed; raw failure retained.
+Final3/3 native pass: Kanto2316active/804visible, Lagoon2552/1342, Ilalim1349/1069,
+shader errors0/world-look scopeTrue. Actual PNGs inspected, maps visible.755inputs
+unchanged, no tooling repair/newOOM. Editor idle worker retirement restored.
+Guards78488/11325/92826 terminal; no authored map/lighting/model/effect/sound or
+broader loading change. Explicit owner preview-bug exception only. Publish then
+continue correct shader/effect readiness/optimization across actual screens.
+No fresh player/network-menu/full-readiness claim. DOTS owns Docs queue.

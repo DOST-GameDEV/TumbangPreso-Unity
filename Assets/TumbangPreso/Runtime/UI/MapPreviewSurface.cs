@@ -350,7 +350,10 @@ namespace TumbangPreso.UI
         private void Start()
         {
             if (!Application.isPlaying) return;
-            Show(SceneFlow.SelectedMap);
+            // A caller may already have selected this surface's map before
+            // Start. Do not queue the global default over that explicit request.
+            if (!_busy && _showing == null && _wantedMap == null)
+                Show(SceneFlow.SelectedMap);
         }
 
         public void Show(string map)
