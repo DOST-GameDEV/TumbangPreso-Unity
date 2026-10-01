@@ -2933,3 +2933,10 @@ unchanged/no new OOM. Filled centre stays3.2, border1.5instead of1.2. No repeat
 of unchanged pulse lifecycle suite. Publish and close the combined Feedback row
 with tutorial repair evidence. Next HUD feed/status stacking/lifetimes, then
 announcement bonuses; current120. All owned native jobs terminal.
+
+HUD-FEED-STACK-1001 owns UI/MatchEventFeed.cs and Tests/PlayMode/
+TumpNativeHudTests.cs for three-second lifetime and smooth top-down reflow.
+Dot a7c63f21 remote verified, no native jobs. Preserve item identity/expiry across
+insertion, reduced-motion snap and capacity3. One focused native geometry/time/
+interrupted insertion check with capture. Status upward capacity/Haunted omission
+and announcement scoring remain subsequent coherent units. Plan retains all.

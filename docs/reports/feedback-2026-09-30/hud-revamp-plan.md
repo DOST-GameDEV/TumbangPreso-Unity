@@ -49,3 +49,18 @@ implementation. Resolve counts from actual accepted actions, preserve host
 ownership, and change protocol compatibility for new semantics. Re-read the
 live row before implementation because it is being actively refined. Do not
 change current scoring merely to make a screenshot match a proposed label.
+
+## Stack refinements added by Harry
+
+Live row rechecked after the tutorial regressions: score feed retains at most
+three entries, newest at top, each lasts three seconds, and existing entries
+animate into their updated stack positions. Statuses stack upward, retain their
+actual durations and must no longer silently drop everything beyond three.
+Respect reduced-motion settings and enlarged HUD layout. Implement feed first,
+then status capacity/placement, then the accepted announcement rules above.
+A source review also found Haunted absent from StatusIcons.Live despite its
+actual CharacterMotor timer; include that in the status unit with evidence.
+
+Tutorial throw refusal and above-can false contact were higher-priority fresh
+regressions; both are now repaired with their own focused evidence. Do not rerun
+or redo the earlier HUD layout/penalty work as a new implementation.
