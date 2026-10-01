@@ -89,6 +89,8 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   authorized global changes normally include them; character-specific work stays finalized. Two focused native cases pass, covering
   binding/device changes, margins, accessibility, finalized kit text and state exits.
   Four captures inspected. [Evidence](reports/feedback-2026-09-30/hud-readability.md).
+  Latest channel-copy refinement uses Resetting Can as requested; two native
+  actual-action/device cases pass and the active-channel capture is inspected.
   Latest revision uses25percent above original size and live Xelu Reset Can /
   Retrieve Slipper prompts. Real pickup, reset/cancel, pad/key/touch and margins
   pass. [Revision evidence](reports/feedback-2026-09-30/match-ui-revision.md).

@@ -1613,3 +1613,8 @@ No layout/input/restore rule change or protocol increment. One native existing
 retrieve/reset/device flow and toggle touch check, capture channel label. Source
 clean and fetched before this claim; Dante cascade remains next independent work.
 Concurrent tutorial hidden-can collision fix338c94bad integrated with all authored receipts; combined compatibility110. Approval receiver source unchanged since qualified109, constant advanced for both contracts. Reuse that case; no repeated gate/player build. Catch code/eight cases unchanged. Native109approval is pre-tutorial110 scope, actual103player scope remainsFFE. Publish now, then exactsame Nemu row note; no full110peer claim.
+
+Resetting Can requested copy passes2/2native14.21s on merged110; pickup, cancel,
+finish, saved glyphs and touch toggle/reach retained. Active channel frame inspected.
+No heavy job, no newplayer claim. Publish explicit UI/test/evidence paths; update
+same HUD row and strike only the resolved new comment. Dante cascade is next.
