@@ -11,6 +11,7 @@ namespace TumbangPreso.Abilities
     public sealed class SeanHeroKit : HeroKit, ITimedKitReplication, IWorldEffectBinding
     {
         public bool IsIgnitionCannonActive { get; set; }
+        public bool IsEmpoweredThrowLoadedFor(Slipper shoe) => ((IgnitionCannonAbility)AttackingSkill).LoadedFor(shoe);
         private bool _joinChargeStateSettled;
         public TimedKitSnapshot CaptureTimedKit()
             => new TimedKitSnapshot(AttackingSkill, IsIgnitionCannonActive ? AttackingSkill.DurationRemaining : 0);
@@ -326,69 +327,87 @@ namespace TumbangPreso.Abilities
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private readonly SeanHeroKit _kit;
 
+            private Slipper _loaded;
+            private int _joiningSeat = -1;
             public IgnitionCannonAbility(SeanHeroKit kit)
-                // ⚠️⚠️ TWO CHARGES A ROUND, BACK ONE PER LATA KNOCKDOWN. It leaves an effect on
-                // the court, so it takes charges rather than a cooldown (`HeroAbility.MaxCharges`
-                // has the rule), and paying it off the objective closes the skill's own loop:
-                // charge the throw, land it, get the charge back.
-                //
-                // ⚠️ THE EXPLOSION STAYS HERE AND LEAVES ZACK'S KIT. Sean and Zack shipped as
-                // the same kit in three matching slots, and this is the slot where they split:
-                // Sean is the one whose near miss still counts. `docs/Hero_Strike_Balance.md`
-                // § 4.4.
-                : base("sean_skill2", "IGNITION CANNON",
-                       "While attacking, loads your next throw with fire. Wherever that slipper lands it goes off, so a near miss still counts.",
-                       0.0f, 10.0f, TumbangPreso.UI.AbilityGlyph.SeanIgnite,
-                       summary: "Attacker only. Your next throw explodes where it lands.",
-                       castAction: "hero-sean-ignite",
-                       viewmodelAction: "ignite",
-                       castCue: "sfx_cast_sean_cannon",
-                       charges: 2,
-                       rechargedBy: Recharge.LataKnocked)
-            {
-                _kit = kit;
-            }
+                : base("sean_skill2", "EMPOWERED THROW",
+                       "Load your held slipper for one throw within eight seconds. Its first impact creates a compact pressure burst that nudges nearby rivals.",
+                       EmpoweredThrowRules.Cooldown, EmpoweredThrowRules.LoadSeconds, AbilityGlyph.SeanIgnite,
+                       summary: "One held throw, one compact pressure burst; no lingering fire.",
+                       castAction: "hero-sean-ignite", viewmodelAction: "ignite", castCue: "sfx_cast_sean_cannon")
+            { _kit = kit; }
 
-            // Defenders restore/tag instead of throwing. Do not spend one of
-            // their finite uses on a charge that this role cannot release.
             public override bool CanActivate(AbilityContext ctx)
-                => base.CanActivate(ctx) && !ctx.Motor.IsDefender;
+                => base.CanActivate(ctx) && !ctx.Motor.IsDefender && ctx.Carrier?.Held != null
+                    && ctx.Carrier.Held.State == SlipperState.Held && ctx.Carrier.Held.Holder == ctx.Motor;
+
+            public bool LoadedFor(Slipper shoe)
+                => _kit.IsIgnitionCannonActive && DurationRemaining > 0 && shoe != null
+                    && shoe.State == SlipperState.Held && shoe.Holder != null
+                    && (_loaded == shoe || (_loaded == null && _joiningSeat >= 0
+                        && shoe.Affinity == SlipperAffinity.FireExplosive && shoe.Holder.PlayerSlot == _joiningSeat));
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                _loaded = ctx.Carrier?.Held; _joiningSeat = -1;
                 _kit._joinChargeStateSettled = true;
-                _kit.IsIgnitionCannonActive = true;
+                _kit.IsIgnitionCannonActive = _loaded != null;
+                if (_loaded != null && NetAuthority.ShouldResolve())
+                {
+                    _loaded.Affinity = SlipperAffinity.FireExplosive;
+                    Net.MatchRpc.Instance?.BroadcastSlipperState(_loaded);
+                }
                 RefreshEmber(ctx);
             }
 
             private void RefreshEmber(AbilityContext ctx)
             {
                 var shoe = ctx.Carrier != null ? ctx.Carrier.Held : null;
-                if (shoe != null) SeanIgnitionVisual.Ensure(shoe.GetComponentInChildren<MeshFilter>(), shoe, _kit);
+                if (LoadedFor(shoe)) SeanIgnitionVisual.Ensure(shoe.GetComponentInChildren<MeshFilter>(), shoe, _kit);
             }
 
             public void RestoreCharge(AbilityContext ctx, float remaining)
             {
-                if (remaining <= 0)
-                {
-                    EndEarly(ctx);
-                    _kit.IsIgnitionCannonActive = false;
-                    return;
-                }
-                RestoreLiveClock(remaining);
+                if (remaining <= 0) { EndEarly(ctx); _kit.IsIgnitionCannonActive = false; return; }
+                RestoreLiveClock(Mathf.Min(remaining, EmpoweredThrowRules.LoadSeconds));
+                // Equipment recovery carries the held affinity on the exact object.
+                // Never adopt an arbitrary shoe solely because it is currently held.
+                _loaded = null; _joiningSeat = ctx.Motor.PlayerSlot;
                 _kit.IsIgnitionCannonActive = true;
                 RefreshEmber(ctx);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
-                if (!_kit.IsIgnitionCannonActive) { EndEarly(ctx); return; }
+                if (!_kit.IsIgnitionCannonActive || ctx.Motor.IsDefender)
+                { EndEarly(ctx); return; }
+                if (_loaded == null && _joiningSeat >= 0)
+                {
+                    var held = ctx.Carrier?.Held;
+                    if (held == null) return;
+                    if (held.Holder != ctx.Motor || held.Affinity != SlipperAffinity.FireExplosive) return;
+                    _loaded = held; _joiningSeat = -1;
+                }
+                if (_loaded == null || ctx.Carrier?.Held != _loaded
+                    || _loaded.State != SlipperState.Held || _loaded.Holder != ctx.Motor)
+                { EndEarly(ctx); return; }
                 RefreshEmber(ctx);
             }
 
             protected override void OnEnd(AbilityContext ctx)
             {
                 _kit.IsIgnitionCannonActive = false;
+                if (_loaded != null && _loaded.State != SlipperState.InFlight
+                    && _loaded.Affinity == SlipperAffinity.FireExplosive && NetAuthority.ShouldResolve())
+                {
+                    _loaded.Affinity = SlipperAffinity.Normal;
+                    Net.MatchRpc.Instance?.BroadcastSlipperState(_loaded);
+                }
+                _loaded = null; _joiningSeat = -1;
+            }
+            public override void Reset()
+            {
+                OnEnd(null); base.Reset(); _kit._joinChargeStateSettled = false;
             }
         }
 

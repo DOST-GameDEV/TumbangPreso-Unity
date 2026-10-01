@@ -283,9 +283,8 @@ namespace TumbangPreso
                 affinity = zack.BankShotAffinityFor(Held);
                 zack.ConsumeMagnetCharge();
             }
-            else if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
+            else if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsEmpoweredThrowLoadedFor(Held))
             {
-                velocity *= 1.3f * ability.VariantGain("sean.2.flare");
                 affinity = SlipperAffinity.FireExplosive;
                 sean.ConsumeIgnition();
             }
@@ -856,11 +855,7 @@ namespace TumbangPreso
 
             Vector3 vel = Held.LaunchVelocityTo(origin, target, ChargeRatio);
             var ability = _motor.AbilitySystem;
-            if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
-            {
-                vel *= 1.3f * ability.VariantGain("sean.2.flare");
-            }
-            else if (ability != null && ability.Kit is PhaisterHeroKit phaister && (phaister.IsWitchfireInfused || phaister.IsEclipseActive))
+            if (ability != null && ability.Kit is PhaisterHeroKit phaister && (phaister.IsWitchfireInfused || phaister.IsEclipseActive))
             {
                 vel *= 1.35f;
             }

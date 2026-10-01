@@ -3935,6 +3935,33 @@ This migrates the adopted Pyro8s/35s/1.25m held-object pressure payload coherent
 not the Flame Rush/Supernova units. No HeroHazards/private overlay or authored
 art changes. First implementation/validation remains pending.
 
+Empowered throw additionally owns new engine-free
+Packages/com.tumbangpreso.core/Runtime/EmpoweredThrowRules.cs/meta for the adopted
+cooldown/load/radius/push constants, and Runtime/Slipper.EmpoweredThrow.cs/meta
+for the isolated pressure contact. No shared explosion implementation change.
+The same payload unit also owns SeanIgnitionVisual.cs eligibility checks only:
+recovery must not draw the held ember on a different, unmarked slipper. Art,
+shape, timing, colour and sound are unchanged.
+
+Empowered throw first six native cases pass with zero fixture repairs. Add only
+three missing boundary cases (actual wall bounce, protected/single-award can,
+replica no-gameplay); do not rerun the unchanged six. Same unit extends to the
+existing NetSeanProbe.cs and tools/net_sean_review.py for one three-player
+Empowered throw case, preserving other scenarios. No new network test framework.
+
+
+Empowered throw128 acceptance complete: native6/6 plus boundary3/3, then
+actual-snapshot/reset2/2 (ten distinct behaviors, earlier direct-field witness
+superseded). Fresh full clean GameBuilder2077MB/81.53s candidate, Runtime
+1ce3d222..b2a0a8, after removing only unused official offline registry archives
+for verified capacity. Prior disk failures retained. Three actual Linux peers
+pass marked held load, real throw,0.923m near-miss push, no stagger/crater and
+cleanup/CD. No gameplay exceptions; no WAN/reconnect/device/audio claim.
+No heavy job remains. Publish explicit owned unit; preserve incoming remade-map
+preview changes and terminal126 evidence. Friend map tip is nowa7523a118 (fascia
+z-fight), still not merged; loading tip unchanged/already merged. Whole Pyro and
+foliage report remain open. Owner asleep, quiet continuation.
+
 Remade preview fix7670a7b71 ready to publish with measured3/3 and inspected actual map captures. Initial callback-fence failed and was removed; correct explicit-request Start fix only. Integrate Closed Circuit proof/author reservation without editing those paths. Older126 Windows player is now older protocol than incoming circuit work; do not reuse it to claim current130(?) networking. Check actual NetSession constant after merge. Next screen shader/effect readiness and measured optimization, preserve loading scope and nonstop continuation.
 
 Current integrated protocol127 confirmed (earlier130? placeholder superseded). Remade-preview7670a7b71 integrated/pushede618fa7fe and remote verified. All3 actual surfaces/PNGs qualified, no fresh currentplayer claim. Next ATTACHED-EFFECT-LAYER-1001 owns AbilityVfx.AttachAura only and one tiny native actual-particle/scoped-camera check. Auras defaultlayer0 evenwhen hostpreviewlayer30; determine actual invisibility before one-line inheritance fix. Preserve all authored shapes/colours/timing, no broader loading/Warmup changes. One baseline/final, zero tooling retriesplanned. All ownjobs terminal.

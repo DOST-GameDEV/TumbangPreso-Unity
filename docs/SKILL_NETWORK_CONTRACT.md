@@ -622,3 +622,17 @@ status replication owns victims. Native checks and actual direct Linux
 host/owner/observer qualify cancellation, optional different-target follow-up
 and expiry. WAN/loss/reconnect/device coverage remains separate.
 [Evidence and retained failures](reports/feedback-2026-09-30/closed-circuit/README.md).
+
+
+## Empowered throw compatibility
+
+Protocol128 redefines Sean's stable FireExplosive payload as a1.25m once-only
+pressure impact, without its old launch-speed multiplier or stagger. Held
+snapshots may carry FireExplosive only when state is Held with a real holder;
+this binds timed recovery to the actual marked object rather than another shoe.
+Drop clears the mark; round reset/expiry clear held ownership without stripping
+an already launched payload. Ordinary impact ownership and can scoring remain.
+Ten distinct native behavior checks and a matching Linux host/owner/observer
+case qualify the load, flight,0.923m near-miss push and cleanup. Actual reconnect,
+WAN/device and listening scope remain separate.
+[Evidence](reports/hero-quality-2026-10-01/empowered-throw/README.md).

@@ -45,7 +45,7 @@ namespace TumbangPreso.Diagnostics
             probe._observeExisting = Environment.GetCommandLineArgs().Contains("-tp-sean-observe-existing");
             string path = Path.GetFullPath(Argument("-tp-seantrace")); Directory.CreateDirectory(Path.GetDirectoryName(path));
             probe._writer = new StreamWriter(path) { AutoFlush = true };
-            probe._writer.WriteLine("time,elapsed,local,host,sean,pick,charged,held,s2charges,ultcharge,grounded,casterY,pose,craters,craterX,craterZ,embers,fireFlight,shoeState,shoeX,shoeY,shoeZ,frontStun,chargeRemaining,wallTime");
+            probe._writer.WriteLine("time,elapsed,local,host,sean,pick,charged,held,s2charges,ultcharge,grounded,casterY,pose,craters,craterX,craterZ,embers,fireFlight,shoeState,shoeX,shoeY,shoeZ,frontStun,chargeRemaining,wallTime,cooldown,heldAffinity,frontX,frontY,frontZ");
         }
         private void Update()
         {
@@ -87,7 +87,7 @@ namespace TumbangPreso.Diagnostics
                     caster.Teleport(new Vector3(0, .12f, -8)); caster.transform.rotation = Quaternion.identity;
                     caster.ClearStun(); caster.ClearTrip();
                 }
-                if (NetAuthority.IsHost || NetAuthority.LocalSlot == 2) front.Teleport(new Vector3(3, .12f, -5));
+                if (NetAuthority.IsHost || NetAuthority.LocalSlot == 2) front.Teleport(_scenario == "empowered" ? new Vector3(.8f, .12f, -2) : new Vector3(3, .12f, -5));
                 if (NetAuthority.IsHost)
                 {
                     round.PlayerAt(0).Teleport(new Vector3(-9, .12f, -12));
@@ -95,13 +95,14 @@ namespace TumbangPreso.Diagnostics
                 }
                 Debug.Log("[SeanProbe] prepared " + _scenario + " local=" + NetAuthority.LocalSlot);
             }
+            if (_scenario == "empowered") front.Intent.Parked = false;
             if (NetAuthority.LocalSlot == 1 && !_observeExisting)
             {
                 if (!_armed && elapsed >= 12) { kit.AddUltimateCharge(100); _armed = true; }
                 caster.Intent.Parked = false; caster.Intent.AimPoint = new Vector3(0, .15f, -2);
                 caster.Intent.FaceAimPoint = true;
-                caster.Intent.Set(_scenario == "ignite" ? Verb.Skill2 : Verb.Ultimate, elapsed >= 12 && elapsed < 12.3f);
-                if (_scenario == "ignite" && !_holdCharge) caster.Intent.Set(Verb.SpecialAbility, elapsed >= 13.4f && elapsed < 14);
+                caster.Intent.Set((_scenario == "ignite" || _scenario == "empowered") ? Verb.Skill2 : Verb.Ultimate, elapsed >= 12 && elapsed < 12.3f);
+                if ((_scenario == "ignite" || _scenario == "empowered") && !_holdCharge) caster.Intent.Set(Verb.SpecialAbility, elapsed >= 13.4f && elapsed < 14);
             }
             var carrier = caster.GetComponent<Carrier>(); if (_shoe == null) _shoe = carrier.Held;
             double now = NetworkManager.Singleton.ServerTime.Time;
@@ -116,7 +117,9 @@ namespace TumbangPreso.Diagnostics
                 craters.Length, crater.x, crater.z, FindObjectsByType<SeanIgnitionVisual>(FindObjectsSortMode.None).Length,
                 _shoe != null && _shoe.State == SlipperState.InFlight && _shoe.Affinity == SlipperAffinity.FireExplosive ? 1 : 0,
                 _shoe != null ? (int)_shoe.State : -1, shoePosition.x, shoePosition.y, shoePosition.z, front.StunLeft,
-                kit.Skill2.DurationRemaining, DateTime.UtcNow.Ticks/(double)TimeSpan.TicksPerSecond };
+                kit.Skill2.DurationRemaining, DateTime.UtcNow.Ticks/(double)TimeSpan.TicksPerSecond,
+                kit.Skill2.CooldownRemaining, carrier.Held != null ? (int)carrier.Held.Affinity : -1,
+                front.transform.position.x, front.transform.position.y, front.transform.position.z };
             _writer.WriteLine(string.Join(",", row.Select(value => Convert.ToString(value, CultureInfo.InvariantCulture))));
         }
         private void OnDestroy() => _writer?.Dispose();
