@@ -3471,3 +3471,10 @@ our exact palm candidate was122. No runtime overlap; retain distinct receipts.
 Generic cast flash lives in HeroAbilitySystem shared with ongoing Zack work;
 leave it for a clear reservation rather than overlap. Waterwall material remains
 independent presentation work after fresh Feedback review.
+Amped-Up bc31c60d4 published through b9b61f609, remote verified. Existing broader
+Feedback Notes updated/read back with one concise passive progress line; human
+columns and other writer text untouched. A missing line break corrected directly.
+No task-owned browser/preview/server/player or Unity job remains. Private source
+dirt retained. Next actual unit: current human Overclock lifetime/cost, shared
+persistent state and match/round resets, with full Zack migration still open.
+
