@@ -1768,3 +1768,17 @@ Publish explicit owned paths and same broad Nemu Feedback note; full feature
 remains open for Haunted nearsight/audio and current actual peers. Next functional
 perception should use existing ColourGrade and AudioDirector listener architecture,
 not mutate global map lighting or authored clips. Goal remains active.
+
+NEMU-HAUNT-1001 shipped b7c439e8569588bdce553ac806ec3561bc6acbad and
+remote verified. Same Nemu Feedback row appended with seven distinct native cases,
+protocol113 requirement and unfinished nearsight/audio/current-peer limits; exact
+note read back. Done/Human verified cells and human comments untouched.
+All task Unity jobs terminal, no task browser/player/temporary server left.
+Unrelated dirty roster arms, two protected UI metas, HeroHazards/QualitySettings,
+motion captures and private art/notes remain unstaged. Next continue Haunted
+functional nearsight/muffle: ColourGrade is the existing camera post-process;
+AudioDirector owns its listener on a child via BuildEars and follows the active
+camera in LateUpdate. Reuse the viewed local body's authoritative Haunted clock;
+restore on clear/reset, view exit, round exit and component teardown. Do not
+apply global map lighting, authored clip or other-character changes. No renderer,
+audible filter or current113 peer qualification yet. Full goal remains active.
