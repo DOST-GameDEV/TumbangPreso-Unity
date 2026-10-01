@@ -313,6 +313,12 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   and newer predicted/settled casts. Protocol123; remaining Zack kit stays open.
   [Evidence](reports/feedback-2026-09-30/amped-up-objective.md).
 
+- [x] OVERCLOCK-STATE-1001: confirmed15point/self-target/match-long state and
+  Wiki5second Zapped cast lock implemented. Native2baseline failures;12final
+  cases pass after one fixture compile repair, including recovery/codec/X UI.
+  Protocol124; full upgraded basics and actual peers remain open.
+  [Evidence](reports/feedback-2026-09-30/overclock-state.md).
+
 - [x] HELD-SEAT-PICKS-1001: matching-token reclaim retains picks and takeover
   rating; Identify cannot replace fixed match choices with local preferences.
   Five distinct native cases cover repeated cycles, fresh account state, foreign

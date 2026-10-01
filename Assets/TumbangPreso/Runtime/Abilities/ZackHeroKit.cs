@@ -11,6 +11,19 @@ namespace TumbangPreso.Abilities
     public sealed class ZackHeroKit : HeroKit, ITimedKitReplication, IWorldEffectBinding
     {
         public bool IsOverchargeThrowActive { get; set; }
+        public bool IsOverclocked { get; private set; }
+        public override bool CanGainUltimateCharge => !IsOverclocked;
+        private void RestoreOverclock()
+        { IsOverclocked = true; UltimateCharge = 0; _joinThunderSettled = true; }
+        public override void ResetForRound(AbilityContext context)
+        {
+            base.ResetForRound(context);
+            IsOverchargeThrowActive = false; _joinMagnetSettled = false;
+        }
+        public override void ResetForMatch(AbilityContext context)
+        { IsOverclocked = false; _joinThunderSettled = false; base.ResetForMatch(context); }
+        public override void Reset()
+        { IsOverclocked = false; IsOverchargeThrowActive = false; _joinMagnetSettled = _joinThunderSettled = false; base.Reset(); }
         public const float ObjectiveCooldownSeconds = 5;
         public override void OnObjectiveAwarded(float amount) => ApplyObjectiveCooldown(amount, true, true);
         public void ApplyObjectiveCooldown(float amount, bool signature, bool role)
@@ -28,10 +41,15 @@ namespace TumbangPreso.Abilities
 
         public TimedKitSnapshot CaptureTimedKit()
             => new TimedKitSnapshot(AttackingSkill, IsOverchargeThrowActive ? AttackingSkill.DurationRemaining : 0,
-                Ultimate, IsThunderstrikeActive ? Ultimate.DurationRemaining : 0, Ultimate.IsWindingUp);
+                Ultimate, 0, Ultimate.IsWindingUp, IsOverclocked);
 
         public bool RestoreTimedKit(CharacterMotor motor, TimedKitSnapshot state)
-            => RestoreJoiningCharges(motor, state.PersonalRemaining, state.UltimateRemaining, state.UltimatePending);
+        {
+            if (motor == null) return false;
+            bool restored = RestoreJoiningCharges(motor, state.PersonalRemaining, 0, state.UltimatePending);
+            if (state.UltimatePermanent && !IsOverclocked) { RestoreOverclock(); restored = true; }
+            return restored;
+        }
 
         public void ConsumeMagnetCharge()
         {
@@ -41,7 +59,8 @@ namespace TumbangPreso.Abilities
 
         public bool RestoreJoiningCharges(CharacterMotor motor, float magnetRemaining, float thunderRemaining, bool ultimatePending = false)
         {
-            if (motor == null) return false;
+            if (motor == null || !float.IsFinite(magnetRemaining) || magnetRemaining < 0 ||
+                magnetRemaining > AttackingSkill.Duration || thunderRemaining != 0) return false;
             var context = new AbilityContext(motor, motor.GetComponent<Carrier>(), motor.GetComponent<CombatVerbs>());
             bool restored = false;
             if (!_joinMagnetSettled && !IsOverchargeThrowActive && !AttackingSkill.IsActive)
@@ -50,18 +69,9 @@ namespace TumbangPreso.Abilities
                 ((MagnetRecallAbility)AttackingSkill).RestoreCharge(context, magnetRemaining);
                 restored = true;
             }
-            // A pre-impact snapshot has no active tail yet. Keep that state open
-            // for the post-contact snapshot if its preparation expires in transit.
-            // This never reopens an already settled/consumed newer state.
-            if (!ultimatePending && !_joinThunderSettled && !Ultimate.IsActive && !Ultimate.IsWindingUp)
-            {
-                _joinThunderSettled = true;
-                ((ThunderstrikeOverdriveAbility)Ultimate).RestoreChargeWindow(context, thunderRemaining);
-                restored = true;
-            }
             return restored;
         }
-        public bool IsThunderstrikeActive => Ultimate != null && Ultimate.IsActive;
+        public bool IsThunderstrikeActive => Ultimate != null && Ultimate.IsActive && !IsOverclocked;
         public HeroMovementState CaptureMovementState()=>((StaticRailGrindAbility)Skill1).CaptureMovement();
         public bool RestoreJoiningMovement(CharacterMotor motor,HeroMovementState state,float age)
             => motor!=null && ((StaticRailGrindAbility)Skill1).RestoreMovement(
@@ -81,19 +91,8 @@ namespace TumbangPreso.Abilities
             Ultimate = new ThunderstrikeOverdriveAbility(this);
         }
 
-        /// <summary>
-        /// ⚠️ THE MOST EXPENSIVE ULTIMATE IN THE GAME, AND IT IS PRICED ON RELIABILITY RATHER
-        /// THAN ON DAMAGE. Thunderstrike stuns everyone within 4.5 m of Zack's own feet. It
-        /// needs no aim, cannot miss, and there is nothing the victims can read in advance and
-        /// act on, so it converts into value in every situation a player chooses to press it.
-        /// Compare Titan Fissure at 12, which whiffs completely if the court scatters.
-        ///
-        /// ⚠️ 20 CHARGES, THE CEILING OF THE RANGE, AND IT IS TWENTY LATA KNOCKDOWNS. Was 150
-        /// against a knockdown worth 25, which is six. 🧑 asked for 10 to 20 *"depending on
-        /// impact"* and this is the highest-impact power in the game.
-        /// `docs/Hero_Strike_Balance.md` § 3.1.
-        /// </summary>
-        public override float UltimateCost => 20.0f;
+        // Current human Wiki anchor. New basic-mode migration remains separate.
+        public override float UltimateCost => 15;
 
         private void RefreshChargeVisual(AbilityContext ctx)
         {
@@ -515,53 +514,17 @@ namespace TumbangPreso.Abilities
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             private readonly ZackHeroKit _kit;
 
-            /// <summary>Closest he can call it. Under this it is on his own head.</summary>
-            private const float MinRange = 1.5f;
-
-            /// <summary>
-            /// Furthest, at a full hold.
-            ///
-            /// ⚠️ 7.0 m IS HALF THE 14 m BOX, AND IT IS THE LONGEST AIM BAND IN THE GAME BY
-            /// DESIGN. It costs 20 charges, the ceiling of the range, and the price note above
-            /// says why it was that expensive: *"it needs no aim, cannot miss, and there is
-            /// nothing the victims can read in advance and act on"*. Two of those three are no
-            /// longer true, so the reach is what the aim buys back.
-            /// </summary>
-            private const float MaxRange = 7.0f;
-
+            public override bool IsPersistentActive => _kit.IsOverclocked;
             public ThunderstrikeOverdriveAbility(ZackHeroKit kit)
-                : base("zack_ultimate", "THUNDERSTRIKE",
-                       "Aim, then release lightning to shock and knock rivals back. Your throws stay electrically charged for seven seconds.",
-                       0.0f, 7.0f, TumbangPreso.UI.AbilityGlyph.ZackThunderstrike,
-                       summary: "Aim lightning to jolt rivals and charge your throws.",
-                       telegraphRadius: 4.5f, telegraphRange: MaxRange,
-                       castAction: "hero-zack-summon",
-                       viewmodelAction: "summon-lightning",
-                       castCue: "sfx_cast_zack_summon")
+                : base("zack_ultimate", "OVERCLOCK",
+                       "Strike yourself with lightning, inflicting Zapped nearby and becoming Overclocked for the rest of the match.",
+                       0, 0, AbilityGlyph.ZackThunderstrike,
+                       summary: "Zap nearby rivals. Overclock lasts for the match.",
+                       telegraphRadius: 4.5f, telegraphRange: 0,
+                       castAction: "hero-zack-summon", viewmodelAction: "summon-lightning", castCue: "sfx_cast_zack_summon")
             {
-                // ⚠️⚠️ IT IS AIMED NOW, AND THAT IS THE THIRD OF THE THREE MATCHING SLOTS. 🧑
-                // 2026-09-02: *"the kit of zack and sean are the exact fricking same"*.
-                // Thunderstrike put a 4.5 m stun circle on Zack's own feet; Supernova puts a
-                // 4.8 m knockback circle on Sean's. Two ultimates that go off under the caster
-                // and cannot miss are one ultimate with two particle systems, whatever the
-                // payload does afterwards.
-                //
-                // ⚠️ SEAN'S STAYS SELF-CENTRED AND MUST. He leaps and lands on it, so the circle
-                // IS where his body arrives; making both of them aimed would fix the sameness by
-                // deleting the one thing that was already his. Sean commits his body, Zack
-                // commits the sky.
-                //
-                // ⚠️ AND IT COSTS ZACK THE ONE THING THE PRICE WAS PAYING FOR: a hold-to-aim
-                // ultimate can be read by everybody in the room, because the wind-up is now a
-                // decision made in the open rather than a press with no tell. `UltimateCost`
-                // stays at 20 for one release and is the first number to revisit if Zack comes
-                // back weak; the reach is the compensation offered first because it is the one
-                // that adds a decision rather than removing a cost.
-                AimByHolding(MinRange, MaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
-                TelegraphStyle = Visual.GroundReticle.Style.Storm;
-                _kit = kit;
-                Windup = UltimateWindup;
-                SupportsPendingSnapshot=true;
+                _kit = kit; Windup = UltimateWindup;
+                SupportsPendingSnapshot = true; SupportsPermanentSnapshot = true;
             }
 
             protected override void OnActivate(AbilityContext ctx)
@@ -571,11 +534,19 @@ namespace TumbangPreso.Abilities
                 // a thunderclap fired at the caster while the lightning hits seven metres away
                 // is the fault `LrtTrainFlyby` records about a moving train.
                 _kit._joinThunderSettled = true;
-                Vector3 at = AimedDestination(ctx);
+                Vector3 at = ctx.Position;
+                _kit.RestoreOverclock();
 
                 NetCue.Play("hero_zack_ult", ctx.Position);
                 NetCue.Play("sfx_lightning_strike", at);
-                HeroHazards.CreateThunderstrike(at, 4.5f, ctx.Motor.PlayerSlot);
+                HeroHazards.CreateThunderstrike(at, 4.5f, ctx.Motor.PlayerSlot, applyGameplay: false);
+                if (NetAuthority.ShouldResolve() && GameServices.Round != null)
+                    foreach (var body in GameServices.Round.Bodies)
+                    {
+                        if (body == null || body == ctx.Motor || !body.gameObject.activeInHierarchy) continue;
+                        var difference = body.transform.position - at; difference.y = 0;
+                        if (difference.sqrMagnitude <= 4.5f * 4.5f) body.ApplyZapped();
+                    }
                 Visual.AbilityVfx.SpawnElectricArcs(at, 4.5f);
                 _kit.RefreshChargeVisual(ctx);
 
@@ -583,17 +554,6 @@ namespace TumbangPreso.Abilities
                 if (squash != null) squash.Stretch(0.05f);
             }
 
-            public void RestoreChargeWindow(AbilityContext context, float remaining)
-            {
-                if (remaining <= 0) { EndEarly(context); return; }
-                RestoreLiveClock(remaining);
-                _kit.RefreshChargeVisual(context);
-            }
-
-            // No per-tick self impulse: Thunderstrike is an aimed strike, not the
-            // old forward overdrive. Its active tail still empowers throws through
-            // IsThunderstrikeActive, but cannot redirect an incoming knockback.
-            protected override void OnTick(AbilityContext ctx, float dt) => _kit.RefreshChargeVisual(ctx);
         }
     }
 }

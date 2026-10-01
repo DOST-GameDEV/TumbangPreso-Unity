@@ -1,0 +1,6 @@
+Assets\TumbangPreso\Tests\PlayMode\SkillReceiptTests.cs(572,57): error CS1657: Cannot use 'reader' as a ref or out value because it is a 'using variable'
+Assets\TumbangPreso\Tests\PlayMode\SkillReceiptTests.cs(580,54): error CS1657: Cannot use 'malformed' as a ref or out value because it is a 'using variable'
+Assets\TumbangPreso\Tests\PlayMode\SkillReceiptTests.cs(572,57): error CS1657: Cannot use 'reader' as a ref or out value because it is a 'using variable'
+Assets\TumbangPreso\Tests\PlayMode\SkillReceiptTests.cs(580,54): error CS1657: Cannot use 'malformed' as a ref or out value because it is a 'using variable'
+Assets\TumbangPreso\Tests\PlayMode\SkillReceiptTests.cs(572,57): error CS1657: Cannot use 'reader' as a ref or out value because it is a 'using variable'
+Assets\TumbangPreso\Tests\PlayMode\SkillReceiptTests.cs(580,54): error CS1657: Cannot use 'malformed' as a ref or out value because it is a 'using variable'

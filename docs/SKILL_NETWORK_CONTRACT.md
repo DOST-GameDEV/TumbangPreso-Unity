@@ -575,3 +575,15 @@ the sequence. ReliableSequenced ordering accompanies existing resource traffic;
 ordinary live-owner resource snapshots retain their no-refund rule. Native6cases
 pass; actual123peers and full Zack migration remain separate.
 [Evidence](reports/feedback-2026-09-30/amped-up-objective.md).
+
+## Permanent Overclock And Zapped
+
+Protocol124appends one validated permanent Boolean to TimedKitState (max231bytes),
+supported only by explicit ability capability. Permanent state has zero timed
+remaining and cannot be pending; existing binding/scope/sequence guards apply.
+Overclock's flag survives rounds, clears on a new match and hydrates without
+replaying contact. Zapped adds one bounded0..5second clock to SyncUnit and one
+append-only status value; it blocks ability casts, not movement or ordinary
+interaction. Logos show X and permanent state shows Active. Twelve native cases
+pass; actual124peers and complete upgraded basics remain separate.
+[Evidence](reports/feedback-2026-09-30/overclock-state.md).

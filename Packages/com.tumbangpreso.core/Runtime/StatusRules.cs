@@ -71,6 +71,8 @@ namespace TumbangPreso.Core
 
         /// <summary>Nemu. Reduced perception; status immunity does not prevent it.</summary>
         Haunted = 12,
+        /// <summary>Electro. Ability casts disabled for five seconds; movement and ordinary actions remain.</summary>
+        Zapped = 13,
     }
 
     /// <summary>One row of the owner's status table.</summary>
@@ -124,6 +126,7 @@ namespace TumbangPreso.Core
 
         /// <summary>*"Prevents movement or interaction for 2.5 seconds."* Glacial Nova's number already.</summary>
         public const float FrozenSeconds = 2.5f;
+        public const float ZappedSeconds = 5;
 
         /// <summary>At most the sentry's life; the hold or a tag ends it sooner.</summary>
         public const float RootedSeconds = PaeteRules.SentryLifeSeconds;
@@ -225,6 +228,10 @@ namespace TumbangPreso.Core
                 "Reduced Perception",
                 HauntedSeconds, 1.0f, blocksMovement: false, blocksInteraction: false,
                 blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: false),
+            new StatusRule(StatusKind.Zapped, "ZAPPED",
+                "Prevents ability casts for 5 seconds.", "Disabled Ability Cast",
+                ZappedSeconds, 1, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
         };
 
         public static IReadOnlyList<StatusRule> All => Table;

@@ -128,13 +128,14 @@ namespace TumbangPreso.UI
             for (int i = 0; i < 3; i++)
             {
                 var skill = _skills[i]; if (skill == null) continue;
+                _symbols[i].SetCastLocked(system.GetComponent<CharacterMotor>()?.IsZapped == true);
                 if (_symbols[i].Glyph != skill.Glyph) { _symbols[i].Glyph = skill.Glyph; _symbols[i].SetVerticesDirty(); }
-                bool ready = !kit.PracticeMode && (i == 2 ? kit.IsUltimateReady : skill.IsReady);
+                bool ready = !kit.PracticeMode && !system.GetComponent<CharacterMotor>().IsZapped && (i == 2 ? kit.IsUltimateReady : skill.IsReady);
                 float ratio = skill.IsActive ? skill.DurationRatio : i == 2 ? kit.UltimateRatio : 1 - skill.CooldownRatio;
                 _ownerDials[i].State(ratio, ready, skill.IsActive, i == 2);
                 _symbols[i].color = ready ? CourtPresentationPalette.Gold : CourtPresentationPalette.Paper;
                 if (_symbols[i].Muted == ready) { _symbols[i].Muted = !ready; _symbols[i].SetVerticesDirty(); }
-                string state = kit.PracticeMode ? "Wait" : skill.IsActive ? skill.CanReactivate
+                string state = kit.PracticeMode ? "Wait" : skill.IsPersistentActive ? "Active" : skill.IsActive ? skill.CanReactivate
                     ? (skill.ReactivateReady ? "Again" : AbilityDeckHud.CooldownLabel(skill.ReactivateReadyIn)) + "\n" + skill.DurationRemaining.ToString("0.0") + "s"
                     : skill.DurationRemaining.ToString("0.0") + "s" :
                     i == 2 ? ready ? "" : Mathf.FloorToInt(kit.UltimateRatio * 100) + "%" :

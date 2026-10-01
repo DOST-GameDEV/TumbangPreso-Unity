@@ -513,6 +513,103 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(20, kit.Skill1.CooldownRemaining);
         }
 
+        [Test] public void OverclockUsesTheWikiCostAndSelfTarget()
+        {
+            var kit = new ZackHeroKit();
+            Assert.AreEqual(15, kit.UltimateCost, "Overclock still uses the retired twenty-point price.");
+            Assert.IsFalse(kit.Ultimate.HoldToAim, "The Wiki strike targets Zack, not a remote ground ring.");
+            Assert.AreEqual("OVERCLOCK", kit.Ultimate.Name);
+        }
+
+        [Test] public void OverclockRemainsAfterItsOldSevenSecondWindowAndRoundReset()
+        {
+            var system = Owner("zack"); var body = system.GetComponent<CharacterMotor>();
+            NetAuthority.Provider = new ObservingHost();
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(body);
+            GameServices.Match.ApplySnapshot(new int[4], 1, true); GameServices.Round.ApplySnapshot(100, true, 0, true);
+            var kit = (ZackHeroKit)system.Kit; var context = new AbilityContext(body, null, null);
+            using (NetCue.SuppressRelay())
+            {
+                kit.Ultimate.Activate(context); kit.Tick(context, kit.Ultimate.Windup + .01f);
+                kit.Tick(context, 30);
+            }
+            Assert.IsTrue(kit.IsOverclocked, "The accepted upgrade expired instead of lasting for the match.");
+            kit.ResetForRound(context);
+            Assert.IsTrue(kit.IsOverclocked, "A round boundary erased the match-long upgrade.");
+            kit.ResetForMatch(context); Assert.IsFalse(kit.IsOverclocked);
+        }
+
+        [Test] public void OverclockRecoveryIsPermanentWithoutStrikeOrResourceRecast()
+        {
+            var system = Owner("zack"); var body = system.GetComponent<CharacterMotor>();
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(body);
+            GameServices.Match.ApplySnapshot(new int[4], 1, true); GameServices.Round.ApplySnapshot(98, false, 0, true);
+            var kit = (ZackHeroKit)system.Kit;
+            var root = new GameObject("Permanent recovery"); root.SetActive(false);
+            var router = root.AddComponent<MatchRpc>(); typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 123L);
+            var state = TimedKitState.Capture(kit, new TimedKitSnapshot(kit.AttackingSkill, 0, kit.Ultimate, 0, ultimatePermanent: true), 1,
+                new GameplayActionScope { Match = 123, Round = 1, Epoch = body.MovementEpoch }, 1, 100);
+            var apply = typeof(MatchRpc).GetMethod("ApplyTimedKitState", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            Assert.IsTrue((bool)apply.Invoke(router, new object[] { state, 98f }));
+            Assert.IsTrue(kit.IsOverclocked); Assert.IsTrue(kit.Ultimate.IsPersistentActive);
+            Assert.IsFalse(kit.IsThunderstrikeActive, "Permanent upgrade must not resurrect the old raw throw-speed window.");
+            Assert.AreEqual(0, kit.UltimateCharge); Assert.AreEqual(0, kit.Ultimate.DurationRemaining);
+            Assert.IsEmpty(Object.FindObjectsByType<Visual.DirectedLightningBolt>());
+            Assert.IsFalse((bool)apply.Invoke(router, new object[] { state, 98f }));
+            kit.AddUltimateCharge(20); Assert.AreEqual(0, kit.UltimateCharge); Assert.IsFalse(kit.IsUltimateReady);
+            Assert.IsFalse(kit.TryActivateUltimate(new AbilityContext(body, null, null)));
+            kit.ResetForRound(new AbilityContext(body, null, null)); Assert.IsTrue(kit.IsOverclocked);
+        }
+
+        [Test] public void PermanentStateCodecIsExplicitBoundedAndCannotBindOtherUltimates()
+        {
+            var kit = new ZackHeroKit();
+            var state = TimedKitState.Capture(kit, new TimedKitSnapshot(kit.AttackingSkill, 0, kit.Ultimate, 0, ultimatePermanent: true), 1,
+                new GameplayActionScope { Match = 123, Round = 1, Epoch = 0 }, 1, 100);
+            byte[] bytes;
+            using (var writer = new FastBufferWriter(TimedKitState.MaxWireBytes, Allocator.Temp))
+            { writer.WriteNetworkSerializable(state); bytes = writer.ToArray(); var reader = new FastBufferReader(writer, Allocator.Temp);
+                try { Assert.IsTrue(TimedKitState.TryRead(ref reader, out var decoded)); Assert.IsTrue(decoded.UltimatePermanent); }
+                finally { reader.Dispose(); } }
+            Assert.IsTrue(state.TryResolve(kit, 0, out var aged)); Assert.IsTrue(aged.UltimatePermanent);
+            var bad = state; bad.UltimateRemaining = 1; Assert.IsFalse(bad.IsValid);
+            bad = state; bad.UltimatePending = true; Assert.IsFalse(bad.IsValid);
+            var other = new TimedProbeKit(); bad = TimedKitState.Capture(other, other.CaptureTimedKit(), 1, state.Scope, 2, 100);
+            bad.UltimateRemaining = 0; bad.UltimatePermanent = true; Assert.IsFalse(bad.TryResolve(other, 98, out _));
+            bytes[bytes.Length - 1] = 2;
+            var malformed = new FastBufferReader(bytes, Allocator.Temp);
+            try { Assert.IsFalse(TimedKitState.TryRead(ref malformed, out _)); }
+            finally { malformed.Dispose(); }
+        }
+
+        [Test] public void ZappedDisablesPowersForFiveSecondsWithoutStoppingMovementOrStacking()
+        {
+            var system = Owner("cheska"); var body = system.GetComponent<CharacterMotor>();
+            NetAuthority.Provider = new ObservingHost();
+            var context = new AbilityContext(body, null, null);
+            body.ApplyZapped(); body.ApplyZapped();
+            Assert.AreEqual(5, body.ZappedLeft); Assert.IsTrue(body.CanAct()); Assert.IsFalse(body.IsStunned);
+            Assert.IsFalse(system.Kit.Skill1.CanActivate(context)); Assert.IsFalse(system.Kit.Ultimate.CanActivate(context));
+            var step = typeof(CharacterMotor).GetMethod("StepStatuses", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            step.Invoke(body, new object[] { 5.1f }); Assert.IsFalse(body.IsZapped);
+            body.ApplyZapped(); body.CleanseStatuses(); Assert.IsFalse(body.IsZapped);
+            body.ApplyNetworkStatuses(0, 0, 0, 0, 4); Assert.AreEqual(4, body.ZappedLeft);
+            body.ClearStatuses(); Assert.IsFalse(body.IsZapped);
+        }
+
+        [Test] public void OverclockSelfStrikeZapsNearbyRivalsWithoutTheRetiredShockImpulse()
+        {
+            var system = Owner("zack"); var caster = system.GetComponent<CharacterMotor>();
+            NetAuthority.Provider = new ObservingHost(); GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(caster);
+            var victim = new GameObject("Nearby zapped rival").AddComponent<CharacterMotor>(); victim.enabled = false; victim.PlayerSlot = 2;
+            victim.transform.position = Vector3.left * 3; GameServices.Round.Register(victim);
+            GameServices.Match.ApplySnapshot(new int[4], 1, true); GameServices.Round.ApplySnapshot(100, true, 0, true);
+            var kit = (ZackHeroKit)system.Kit; var context = new AbilityContext(caster, null, null);
+            using (NetCue.SuppressRelay()) { kit.Ultimate.Activate(context); kit.Tick(context, kit.Ultimate.Windup + .01f); }
+            Assert.IsTrue(victim.IsZapped); Assert.AreEqual(5, victim.ZappedLeft);
+            Assert.IsFalse(victim.IsStunned); Assert.IsFalse(caster.IsZapped); Assert.IsTrue(kit.IsOverclocked);
+        }
+
         [Test]
         public void ResourceSnapshotsMapBothRolesByIdentityAndRejectPartialOrMalformedSets()
         {

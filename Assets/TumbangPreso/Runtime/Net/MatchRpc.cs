@@ -2540,6 +2540,7 @@ namespace TumbangPreso.Net
             writer.WriteValueSafe(unit.FearSource);
             writer.WriteValueSafe(flightEpisode);
             writer.WriteValueSafe(unit.HauntedLeft);
+            writer.WriteValueSafe(unit.ZappedLeft);
             writer.WriteNetworkSerializable(VoodooBodySnapshot.Capture(unit));
             writer.WriteNetworkSerializable(unit.AbilitySystem?.CaptureAimPresentation() ?? default(AbilityAimSnapshot));
             var delivery = reliable ? NetworkDelivery.ReliableSequenced : PoseDelivery;
@@ -2554,7 +2555,7 @@ namespace TumbangPreso.Net
             // Netcode invokes the handler locally for the listen host, so every broadcast the
             // host sent was also applied ON the host, a second time, over authoritative state it
             // had just produced. See § THE LOOPBACK.
-            if (NetAuthority.IsHost || !reader.TryBeginRead(212 + VoodooBodySnapshot.WireBytes)) return;
+            if (NetAuthority.IsHost || !reader.TryBeginRead(216 + VoodooBodySnapshot.WireBytes)) return;
 
             reader.ReadValueSafe(out int slot);
             reader.ReadNetworkSerializable(out GameplayActionScope scope);
@@ -2599,10 +2600,12 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out Vector3 fearFrom);
             reader.ReadValueSafe(out long flightEpisode);
             reader.ReadValueSafe(out float hauntedLeft);
+            reader.ReadValueSafe(out float zappedLeft);
             if (!VoodooBodySnapshot.TryRead(ref reader, slot, out var voodoo)) return;
             if (!AbilityAimSnapshot.TryRead(ref reader, out var aim)) return;
             if(!Finite(whirledLeft) || !Finite(chilledLeft) || !Finite(rootedLeft))return;
             if (!Finite(hauntedLeft) || hauntedLeft < 0 || hauntedLeft > StatusRules.HauntedSeconds) return;
+            if (!Finite(zappedLeft) || zappedLeft < 0 || zappedLeft > StatusRules.ZappedSeconds) return;
             if(!Finite(concussedLeft) || !Finite(fearedLeft) || !Finite(disorientedLeft) || !Finite(vulnerableLeft) || !Finite(fearFrom))return;
             if(recoveryEpisode<0 || recoveryAcknowledged<0)return;
             if(edgeKind>(byte)EdgeRecoveryKind.Lagoon||edgePhase>2||!Finite(edgeGrip)||!Finite(edgeOutward)||!Finite(edgeRatio))return;
@@ -2643,7 +2646,7 @@ namespace TumbangPreso.Net
                                    tripLeft, tripTotal, tripMashPresses, tripMashRemoved,
                                    staminaCurrent, staminaIdle, fatigueLeft,
                                    recoveryEpisode,recoveryAcknowledged);
-            unit.ApplyNetworkStatuses(whirledLeft, chilledLeft, rootedLeft, hauntedLeft);
+            unit.ApplyNetworkStatuses(whirledLeft, chilledLeft, rootedLeft, hauntedLeft, zappedLeft);
             unit.ApplyNetworkEffort((effort & 1) != 0, pull / 255f);
             unit.ApplyNetworkReworkStatuses(concussedLeft, fearedLeft, disorientedLeft, vulnerableLeft, fearFrom);
             unit.AbilitySystem?.ApplyNetworkAim(aim);

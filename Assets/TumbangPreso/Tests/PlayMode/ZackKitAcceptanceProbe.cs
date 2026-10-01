@@ -71,19 +71,20 @@ namespace TumbangPreso.PlayTests
             var carrier=_caster.GetComponent<Carrier>();var held=carrier.Held;
             kit.Skill2.ApplyNetworkSnapshot(0,0);
             float bank=kit.UltimateCharge;Vector3 position=_caster.transform.position;
-            Assert.IsTrue(kit.RestoreJoiningCharges(_caster,1.1f,2.5f));
+            Assert.IsTrue(kit.RestoreTimedKit(_caster,new TimedKitSnapshot(kit.AttackingSkill,1.1f,kit.Ultimate,0,ultimatePermanent:true)));
             yield return null;yield return null;
-            Assert.IsTrue(kit.IsOverchargeThrowActive);Assert.IsTrue(kit.IsThunderstrikeActive);
+            Assert.IsTrue(kit.IsOverchargeThrowActive);Assert.IsTrue(kit.IsOverclocked);
             Assert.AreSame(held,carrier.Held);Assert.Zero(kit.Skill2.ChargesRemaining);Assert.AreEqual(bank,kit.UltimateCharge);
             Assert.IsEmpty(Object.FindObjectsByType<Visual.MagnetRecallTrace>(FindObjectsSortMode.None));
             Assert.IsEmpty(Object.FindObjectsByType<Visual.DirectedLightningBolt>(FindObjectsSortMode.None));
             Assert.Less(Vector3.Distance(position,_caster.transform.position),.05f);
             Assert.IsFalse(kit.RestoreJoiningCharges(_caster,10,7));
             yield return new WaitForSeconds(1.25f);
-            Assert.IsFalse(kit.IsOverchargeThrowActive);Assert.IsTrue(kit.IsThunderstrikeActive,
+            Assert.IsFalse(kit.IsOverchargeThrowActive);Assert.IsTrue(kit.IsOverclocked,
                 "Magnet expiry incorrectly ended the independent ultimate window.");
             yield return new WaitForSeconds(1.4f);
-            Assert.IsFalse(kit.IsThunderstrikeActive);
+            Assert.IsTrue(kit.IsOverclocked);
+            kit.ResetForMatch(Context()); Assert.IsFalse(kit.IsOverclocked);
             Assert.IsNull(held.GetComponentInChildren<Visual.ZackMagnetCharge>());
         }
 
@@ -94,12 +95,13 @@ namespace TumbangPreso.PlayTests
             var shoe=_caster.GetComponent<Carrier>().Held;
             shoe.ApplySnapshotState(SlipperState.InFlight,null,new Vector3(0,1,-5),Quaternion.identity,
                 Vector3.forward*8,0,SlipperAffinity.ElectricZap,_caster.PlayerSlot);
-            Assert.IsTrue(kit.RestoreJoiningCharges(_caster,5,1.2f));
+            Assert.IsTrue(kit.RestoreTimedKit(_caster,new TimedKitSnapshot(kit.AttackingSkill,5,kit.Ultimate,0,ultimatePermanent:true)));
             Assert.IsFalse(kit.IsOverchargeThrowActive,"A late joining record rearmed a consumed Magnet.");
-            Assert.IsTrue(kit.IsThunderstrikeActive);
+            Assert.IsTrue(kit.IsOverclocked);
             Assert.IsFalse(kit.RestoreJoiningCharges(_caster,10,7));
             yield return new WaitForSeconds(1.35f);
-            Assert.IsFalse(kit.IsThunderstrikeActive);
+            Assert.IsTrue(kit.IsOverclocked);
+            kit.ResetForMatch(Context()); Assert.IsFalse(kit.IsOverclocked);
             Assert.IsEmpty(Object.FindObjectsByType<Visual.DirectedLightningBolt>(FindObjectsSortMode.None));
         }
 
@@ -111,20 +113,21 @@ namespace TumbangPreso.PlayTests
             float bank=kit.UltimateCharge;
             Assert.IsTrue(kit.RestoreJoiningCharges(_caster,.8f,0,ultimatePending:true));
             Assert.IsTrue(kit.IsOverchargeThrowActive);
-            Assert.IsFalse(kit.IsThunderstrikeActive);
+            Assert.IsFalse(kit.IsOverclocked);
             Assert.IsFalse(kit.Ultimate.RestoreJoiningPreparation(Context(),0,.5f));
-            Assert.IsTrue(kit.RestoreJoiningCharges(_caster,0,1.8f));
+            Assert.IsTrue(kit.RestoreTimedKit(_caster,new TimedKitSnapshot(kit.AttackingSkill,0,kit.Ultimate,0,ultimatePermanent:true)));
             yield return null;
-            Assert.IsTrue(kit.IsThunderstrikeActive);
+            Assert.IsTrue(kit.IsOverclocked);
             Assert.AreSame(held,_caster.GetComponent<Carrier>().Held);
             Assert.AreEqual(bank,kit.UltimateCharge);
             Assert.IsEmpty(Object.FindObjectsByType<Visual.DirectedLightningBolt>(FindObjectsSortMode.None));
             Assert.IsFalse(kit.RestoreJoiningCharges(_caster,10,7));
             yield return new WaitForSeconds(1f);
             Assert.IsFalse(kit.IsOverchargeThrowActive);
-            Assert.IsTrue(kit.IsThunderstrikeActive);
+            Assert.IsTrue(kit.IsOverclocked);
             yield return new WaitForSeconds(1f);
-            Assert.IsFalse(kit.IsThunderstrikeActive);
+            Assert.IsTrue(kit.IsOverclocked);
+            kit.ResetForMatch(Context()); Assert.IsFalse(kit.IsOverclocked);
             Assert.IsFalse(kit.RestoreJoiningCharges(_caster,0,7));
             Assert.IsEmpty(Object.FindObjectsByType<Visual.DirectedLightningBolt>(FindObjectsSortMode.None));
         }
@@ -138,7 +141,7 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(kit.RestoreJoiningCharges(_caster,1,7));
             yield return null;
             Assert.IsFalse(kit.IsOverchargeThrowActive);
-            Assert.IsFalse(kit.IsThunderstrikeActive);
+            Assert.IsFalse(kit.IsOverclocked);
         }
 
         [UnityTest, Timeout(90000)]
