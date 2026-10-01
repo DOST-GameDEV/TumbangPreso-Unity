@@ -2588,3 +2588,11 @@ Round-status final4/4passes, frozen inputs unchanged, OOM11/kill6unchanged.
 Baseline kept. Tagged/trip clear at round reset; Chilled/Haunted and three field/
 map/replay controls pass. Publish explicit paths and update same row status
 portion; leave whole row unfinished for throw/reticle. No new player/peer claim.
+
+CAN-DOWN-THROW-1001 claims Core ThrowRules.cs, Core.Tests/BalanceTests.cs,
+RoundDirector.cs, Carrier.cs comments, Net/NetSession.cs compatibility constant,
+and existing ThrowChargeUiTests.cs. Current Feedback explicitly asks knockdown
+to cancel charge and block further throws until upright/protection gone; this
+revises the older allow-down rule. Baseline actual charge/UI case first, then
+shared Core gate and maintenance path, protocol118, focused Core/native checks.
+Other contributor's117player work remains an older compatible batch, not118proof.
