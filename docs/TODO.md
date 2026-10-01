@@ -33,6 +33,18 @@ attribution; final native film/listening/implementation remain open. External
 reference video access was unavailable and is not claimed.
 
 
+### QUALITY-BENCHMARK-1001: deepen the finalized-work comparison
+
+Owner reiteration: inspect the actual earlier implementation, authoring pipeline
+and revision history, then exceed that standard in demonstrable gameplay output.
+Finish the current Water wall unit, then deepen the Paete/Phaister comparison
+before the new presentation pass. All earlier SFX may now be replaced, including
+those protected heroes' sounds; other finalized work remains protected. Critique
+body/FPP motion, effects, framing, handoff and readability separately. Price and
+passing mechanics checks are not evidence of better creative quality. Listening
+in gameplay is required for sound judgment; silent cloud output is a real limit
+to resolve, not a quality pass.
+
 ### HYDRO-CURRENT-1001: first Hydro implementation unit
 
 Crosscurrent migrates from two charges to the published35second cooldown and

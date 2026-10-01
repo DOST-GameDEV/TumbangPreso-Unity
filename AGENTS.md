@@ -42,6 +42,15 @@ rest of Phaister or Paete. Preserve current cast/mark/recast rules and in-game
 copy unless the scoped refinement demonstrates a reason to change them; do not
 silently retune timings or replace the finalized doll/ultimate direction.
 
+### October 1 owner exception: replace all authored SFX
+
+The owner explicitly reopened all SFX made in the earlier presentation work,
+including the finalized Paete/Phaister cues. This permits researched, critically
+listened-to sound replacement and mixing, with timed in-game validation. It does
+not reopen their mechanics, models, animation, cameras or descriptions. Preserve
+human-voice policy; permission for SFX is not permission to imitate voices.
+Do not present amplitude measurements or silent film as listening approval.
+
 ## Autonomy And Continuity
 
 - Continue assigned independent work through questions, checkpoints, passing
