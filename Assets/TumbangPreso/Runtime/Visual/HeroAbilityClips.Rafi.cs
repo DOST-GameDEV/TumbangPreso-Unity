@@ -10,9 +10,17 @@ namespace TumbangPreso.Visual
         {
             var paths=ResolvePaths(root);
             if(paths==null)throw new System.InvalidOperationException("Rafi rig is missing a required bone.");
-            var clips=new[]{BuildRafiCut(paths),BuildRafiFeint(paths),BuildRafiBreakwater(paths),BuildRafiWall(paths)};
+            var clips=new[]{BuildRafiCut(paths),BuildRafiFeint(paths),BuildRafiBreakwater(paths),BuildRafiWall(paths),BuildRafiSkim(paths)};
             foreach(var clip in clips)GroundIntroduction(clip,root,paths["root"],anchorToRest:true);
             return clips;
+        }
+        public static AnimationClip BuildRafiSkimAuthored(Transform root)
+        {
+            var paths=ResolvePaths(root);
+            if(paths==null)throw new System.InvalidOperationException("Rafi skim rig is missing a required bone.");
+            var clip=BuildRafiSkim(paths);
+            GroundIntroduction(clip,root,paths["root"],anchorToRest:true);
+            return clip;
         }
         public static AnimationClip BuildRafiWallAuthored(Transform root)
         {
@@ -23,6 +31,19 @@ namespace TumbangPreso.Visual
             return clip;
         }
 #endif
+        private static AnimationClip BuildRafiSkim(Dictionary<string,string> paths)
+        {
+            var b=new ClipBuilder("hero-rafi-skim",paths);
+            PoseKey(b,0,0,V(0,0,0),V(0,0,0),V(0,0,15),V(0,0,-15));
+            // Keep the shoe low and steady in the right hand; the free palm coats its sole.
+            PoseKey(b,.10f,-.018f,V(8,8,0),V(10,-8,0),V(-28,-12,26),V(-52,18,-24),V(-5,0,2),V(4,0,-2));
+            PoseKey(b,.22f,-.018f,V(10,5,0),V(13,-5,0),V(-58,-30,18),V(-62,22,-22),V(-5,0,2),V(4,0,-2));
+            PoseKey(b,.36f,-.016f,V(8,-3,0),V(10,3,0),V(-65,12,32),V(-60,20,-22),V(-4,0,2),V(3,0,-2));
+            PoseKey(b,.46f,-.012f,V(5,-2,0),V(5,2,0),V(-42,22,45),V(-49,15,-24));
+            PoseKey(b,.60f,-.005f,V(2,0,0),V(2,0,0),V(-18,10,28),V(-24,6,-21));
+            PoseKey(b,.72f,0,V(0,0,0),V(0,0,0),V(0,0,15),V(0,0,-15));
+            return b.Build();
+        }
         private static AnimationClip BuildRafiWall(Dictionary<string,string> paths)
         {
             var b=new ClipBuilder("hero-rafi-wall",paths);

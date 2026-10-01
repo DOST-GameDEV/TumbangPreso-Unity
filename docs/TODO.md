@@ -104,8 +104,14 @@ and needs the planned distinct body/FPP/material/audio pass. Protocol117.
 Shipped fb41d20e, integrated845e65ad and remote verified. [Evidence](reports/hero-quality-2026-10-01/wall-tutorial-checks/README.md).
 Dedicated body/FPP lift and age-driven edge rivulets now have a native motion
 check and a shipping clip reference; review corrected cheek crowding and a missing
-FPP route. Icons/SFX and final material critique remain.
+FPP route. Dedicated Skim/Water wall illustrations and job labels now pass
+native resource/live-deck binding checks (aef85a28). Settled legibility joins the
+Skim motion review; SFX and final material critique remain.
 [Motion evidence](reports/hero-quality-2026-10-01/wall-motion-checks/README.md).
+Skim now has a dedicated shipping body/FPP coating action; initial native1/1
+qualifies routing, actual motion and retained held-shoe identity. Visual capture
+retry failed before filming; sole-contact/observer review remains open.
+[Skim evidence and limits](reports/hero-quality-2026-10-01/skim-motion-checks/README.md).
 
 ### TUTORIAL-REFINE-1001: latest human notes
 

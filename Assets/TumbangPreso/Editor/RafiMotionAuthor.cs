@@ -50,6 +50,38 @@ namespace TumbangPreso.EditorTools
             }
         }
 
+        public static void BakeSkimFromCommandLine()
+        {
+            var art=RosterBook.Load()?.FindPersonArt("rafi");
+            if(art==null||art.Model==null)throw new InvalidOperationException("Rafi authored model missing.");
+            Directory.CreateDirectory(Folder);AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            var copy=Object.Instantiate(art.Model);copy.hideFlags=HideFlags.HideAndDontSave;
+            AnimationClip clip=null;
+            try
+            {
+                var animator=copy.GetComponentInChildren<Animator>(true);
+                var root=animator!=null?animator.transform:copy.transform;
+                clip=HeroAbilityClips.BuildRafiSkimAuthored(root);
+                var bindings=AnimationUtility.GetCurveBindings(clip);
+                if(bindings.Length<21)throw new InvalidOperationException("Skim clip has insufficient bound curves.");
+                foreach(var binding in bindings)
+                    if(!string.IsNullOrEmpty(binding.path)&&root.Find(binding.path)==null)
+                        throw new InvalidOperationException("Missing skim bone: "+binding.path);
+                string path=Folder+"/hero-rafi-skim.anim";
+                var saved=AssetDatabase.LoadAssetAtPath<AnimationClip>(path);
+                if(saved==null){AssetDatabase.CreateAsset(clip,path);saved=clip;}
+                else{EditorUtility.CopySerialized(clip,saved);EditorUtility.SetDirty(saved);}
+                art.Clips=(art.Clips??Array.Empty<AnimationClip>()).Where(c=>c!=null&&c.name!="hero-rafi-skim").Append(saved).ToArray();
+                EditorUtility.SetDirty(art);AssetDatabase.SaveAssets();
+                Debug.Log("[RafiSkimBake] Saved one grounded skim clip and Rafi roster reference; existing clips preserved.");
+            }
+            finally
+            {
+                if(clip!=null&&!AssetDatabase.Contains(clip))Object.DestroyImmediate(clip);
+                Object.DestroyImmediate(copy);
+            }
+        }
+
         public static AnimationClip[] Bake(GameObject model)
         {
             if(model==null)throw new ArgumentNullException(nameof(model));

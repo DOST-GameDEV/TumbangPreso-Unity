@@ -216,6 +216,13 @@ namespace TumbangPreso.CameraSystem
                 K(.25f, .10f, .18f, .16f, -.10f, .40f, .16f),
                 K(.36f, .11f, .17f, .15f, -.11f, .39f, .15f),
                 K(.52f, .06f, .05f, .07f, -.06f, .20f, .07f), Rest(.78f)) },
+            // SKIM. Hold the actual shoe below aim while the free palm wipes along its sole.
+            { "skim-coat", new CastPath(.36f, false,
+                Rest(0), K(.10f, -.09f, .02f, .06f, .08f, .19f, .06f),
+                K(.22f, -.13f, .04f, .08f, .22f, .29f, .10f),
+                K(.36f, -.13f, .04f, .08f, .36f, .28f, .15f),
+                K(.46f, -.10f, .02f, .06f, .30f, .22f, .10f),
+                K(.60f, -.04f, .01f, .02f, .10f, .10f, .03f), Rest(.72f)) },
             // MIRRORWAKE. A real feint: a big sell to the right, held a beat, then the cut back left.
             { "mirror-feint", new CastPath(.14f, false,
                 Rest(0), K(.14f, .16f, .02f, .06f, .10f, .24f, .04f), K(.20f, .16f, .02f, .06f, .10f, .24f, .04f),

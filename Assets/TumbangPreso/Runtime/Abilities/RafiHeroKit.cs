@@ -87,7 +87,7 @@ namespace TumbangPreso.Abilities
                 "Coat your held slipper for 8 seconds. Its next throw skims up to 2 metres after first ground contact, then rests for normal retrieval.",
                 RafiRules.SkimCooldown, RafiRules.SkimLoadSeconds, glyph: AbilityGlyph.RafiSkim,
                 summary: "Your next throw skims on landing. Bodies and the can consume it normally.",
-                castAction: "hero-rafi-feint", viewmodelAction: "mirror-feint", castCue: "sfx_cast_rafi_mirror")
+                castAction: "hero-rafi-skim", viewmodelAction: "skim-coat", castCue: "sfx_cast_rafi_mirror")
             { _kit = kit; }
             public override bool CanActivate(AbilityContext ctx)
                 => base.CanActivate(ctx) && !ctx.Motor.IsDefender && ctx.Carrier?.Held != null;
