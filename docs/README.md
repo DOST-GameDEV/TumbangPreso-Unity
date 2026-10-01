@@ -75,3 +75,5 @@ Bank Shot mechanics and validation: [current report](reports/feedback-2026-09-30
 Rebuilt Ilalim generated-scenery preview isolation: [native evidence](reports/reliability-2026-10-02/ilalim-preview-scope/README.md).
 
 Rebuilt Ilalim under-viaduct preview framing: [native evidence](reports/reliability-2026-10-02/ilalim-preview-framing/README.md).
+
+Replay trail capture inventory reuse: [native evidence](reports/reliability-2026-10-02/replay-shoe-lookup/README.md).

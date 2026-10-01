@@ -14,6 +14,61 @@ namespace TumbangPreso.PlayTests
     {
         [UnitySetUp]public IEnumerator Before()=>PlayModeWorld.Reset();
         [UnityTearDown]public IEnumerator After()=>PlayModeWorld.Reset();
+        [UnityTest]
+        public IEnumerator FlightCapturePreservesTrailDataAcrossObjectLifecycle()
+        {
+            var roots = new System.Collections.Generic.List<GameObject>();
+            Slipper Shoe(int seat)
+            {
+                var go = new GameObject("Recorded shoe " + seat); roots.Add(go);
+                var shoe = go.AddComponent<Slipper>(); shoe.enabled = false; shoe.SeatOfOrigin = seat;
+                go.GetComponent<SlipperMotionAccent>().enabled = false;
+                var at = new Vector3(seat, 1, 0);
+                shoe.ApplySnapshotState(SlipperState.InFlight, null, at, Quaternion.identity,
+                    Vector3.forward, 0, SlipperAffinity.Normal, seat);
+                var stroke = new GameObject("SlipperMotionStroke"); stroke.transform.SetParent(go.transform, false);
+                var trail = stroke.AddComponent<TrailRenderer>(); trail.emitting = false; trail.time = 10;
+                trail.widthMultiplier = .05f; trail.widthCurve = AnimationCurve.Constant(0, 1, 1);
+                trail.startColor = new Color(.1f, .5f, .8f, .65f); trail.endColor = new Color(.1f, .5f, .8f, 0);
+                trail.AddPosition(at + Vector3.back); trail.AddPosition(at);
+                return shoe;
+            }
+            try
+            {
+                var shoes = new[] { Shoe(0), Shoe(1), Shoe(2), Shoe(3) };
+                var initial = RecordedTrail.Capture(); Assert.AreEqual(4, initial.Length);
+                var first = initial.Single(t => t.Id == 0);
+                Assert.AreEqual(0, first.Kind); Assert.AreEqual(.05f, first.Width, .0001f);
+                Assert.AreEqual(new Vector3(0, 1, 0), first.Points[0]);
+                Assert.AreEqual(new Vector3(0, 1, -1), first.Points.Last());
+                Assert.AreEqual((Color)(Color32)new Color(.1f, .5f, .8f, .65f), first.Head, "Native trail colours are stored as Color32.");
+                for (int i = 0; i < 10; i++) RecordedTrail.Capture();
+                var watch = new System.Diagnostics.Stopwatch();
+                long before = System.GC.GetAllocatedBytesForCurrentThread();
+                watch.Start(); int captured = 0;
+                const int samples = 1000;
+                for (int i = 0; i < samples; i++) captured += RecordedTrail.Capture().Length;
+                watch.Stop(); long bytes = System.GC.GetAllocatedBytesForCurrentThread() - before;
+                Assert.AreEqual(samples * 4, captured);
+                System.IO.Directory.CreateDirectory("Logs/replay-shoe-lookup1002");
+                System.IO.File.WriteAllText("Logs/replay-shoe-lookup1002/capture-cost.txt",
+                    "samples=" + samples + "\ncaptured=" + captured + "\nbytes=" + bytes + "\nmilliseconds=" +
+                    watch.Elapsed.TotalMilliseconds.ToString("R", System.Globalization.CultureInfo.InvariantCulture) + "\n");
+                shoes[0].gameObject.SetActive(false); Assert.AreEqual(3, RecordedTrail.Capture().Length);
+                shoes[0].gameObject.SetActive(true); Assert.AreEqual(4, RecordedTrail.Capture().Length);
+                shoes[0].SeatOfOrigin = -1; Assert.AreEqual(3, RecordedTrail.Capture().Length);
+                shoes[0].SeatOfOrigin = 0;
+                shoes[0].ApplySnapshotState(SlipperState.Loose, null, shoes[0].transform.position,
+                    Quaternion.identity, Vector3.zero, 0, SlipperAffinity.Normal, -1);
+                Assert.AreEqual(3, RecordedTrail.Capture().Length);
+                Object.DestroyImmediate(shoes[0].gameObject); Assert.AreEqual(3, RecordedTrail.Capture().Length);
+                shoes[0] = Shoe(0); Assert.AreEqual(4, RecordedTrail.Capture().Length);
+                Assert.AreEqual(new Vector3(0, 1, 0), RecordedTrail.Capture().Single(t => t.Id == 0).Points[0]);
+            }
+            finally { foreach (var go in roots) if (go != null) Object.DestroyImmediate(go); }
+            yield return null;
+        }
+
         private static void Hero(CharacterMotor actor,string id)
         {
             actor.CharacterIndex=Roster.IndexIn(Roster.HeroPeople,id);var art=RosterBook.Load().People.First(p=>p.Id==id);

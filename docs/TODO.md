@@ -17,6 +17,13 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### REPLAY-SHOE-LOOKUP-1002: reuse existing live inventory
+
+Replay trail capture reuses the existing lifecycle-invalidated slipper inventory.
+Same native trail/lifecycle case passes before/after1/1; one1000capture batch
+19.7619ms to16.7017ms. Allocation counter unavailable; no FPS claim.
+[Evidence](reports/reliability-2026-10-02/replay-shoe-lookup/README.md).
+
 ### ILALIM-PREVIEW-FRAMING-1002: repaired old above-deck camera
 
 Rebuilt Ilalim preview now faces its playing street below the viaduct rather than

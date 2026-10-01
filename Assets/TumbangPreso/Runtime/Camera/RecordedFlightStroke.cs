@@ -15,7 +15,8 @@ namespace TumbangPreso.CameraSystem
         public static RecordedTrail[] Capture()
         {
             var result=new List<RecordedTrail>(12);
-            foreach(var shoe in UnityEngine.Object.FindObjectsByType<Slipper>())
+            // Birth/destruction invalidate the shared inventory; flight and activity stay live.
+            foreach(var shoe in BotSlipperInventory.All)
             {
                 if(shoe.State!=SlipperState.InFlight||shoe.SeatOfOrigin<0||shoe.SeatOfOrigin>=4)continue;
                 foreach(var trail in shoe.GetComponentsInChildren<TrailRenderer>())
