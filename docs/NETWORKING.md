@@ -1,11 +1,13 @@
 # Networking: Where To Work
 
-Current gameplay contract is protocol115, including adopted Hydro Crosscurrent.
+Current gameplay contract is protocol116, including adopted Hydro Crosscurrent
+and Skim.
 Latest actual Windows direct-peer qualification is protocol114with the CLI
 admission handoff fix, through active round2with matching structural state.
-It predates Hydro115and the later local menu/bot/notice changes; it cannot qualify
+It predates Hydro115/116and the later local menu/bot/notice changes; it cannot qualify
 those integrations. [Player evidence](reports/feedback-2026-09-30/cli-admission-handoff.md).
 [Hydro evidence](reports/hero-quality-2026-10-01/hydro-current-checks/README.md).
+[Skim evidence](reports/hero-quality-2026-10-01/skim-checks/README.md).
 
 Departure notice payloads must end exactly after the declared name, before the
 receiver commits the sequence or toast. Six native receiver checks pass, including
