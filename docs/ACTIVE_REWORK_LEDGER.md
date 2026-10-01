@@ -2352,3 +2352,13 @@ Wiki balance edits remain pending owner clarification. Wall capture fixture's
 first namespace repair failed; exact declared enum is CameraSystem.AimSource.
 Corrected source now awaits one coherent wall/tutorial native batch, not another
 standalone unchanged fixture loop. No runtime pass is claimed for Water wall yet.
+
+Haunt actual-peercb3274f86 published at9574fed1c, remote verified. Same Nemu
+Feedback Notes updated/read back: actual client cast/all4timers/motion/completion,
+human rejoin/audio/movement still needed; native controls/comments unchanged.
+New tutorial/Water wall reservations preserved; no changes to protected kits or
+loading. Current source116; contributor117candidate not published/qualified here.
+All jobs/helpers/player processes terminal, no task browser/previews opened.
+Next authorized local unit: fully map Haunted Observe/At/selector/direct-position
+reads before editing so unseen actors cannot reenter via fallback. Current bot
+ranking and two allocation fixes stay qualified; no full sensor claim yet.
