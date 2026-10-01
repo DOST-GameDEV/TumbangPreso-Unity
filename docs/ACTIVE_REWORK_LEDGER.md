@@ -5,7 +5,7 @@ Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 
 ## Live Local Resume
 
-Updated2026-10-01. Publishedffe5030c5; protocol103. Overall goal active.
+Updated2026-10-01. Published636472796; protocol110. Overall goal active.
 Owner repeats: finish actionable Feedback bottom-up, then initial network/bot/
 optimization/UX and applicable TODO. Continue autonomously while the owner sleeps.
 Loading remains concurrently owned by the friend. Owner reopened the remaining
@@ -1614,6 +1614,7 @@ retrieve/reset/device flow and toggle touch check, capture channel label. Source
 clean and fetched before this claim; Dante cascade remains next independent work.
 Concurrent tutorial hidden-can collision fix338c94bad integrated with all authored receipts; combined compatibility110. Approval receiver source unchanged since qualified109, constant advanced for both contracts. Reuse that case; no repeated gate/player build. Catch code/eight cases unchanged. Native109approval is pre-tutorial110 scope, actual103player scope remainsFFE. Publish now, then exactsame Nemu row note; no full110peer claim.
 
+Current compact local continuation2026-10-01: own five engineering units now published: ba2e7eef8 Frostbite;5dcb6a54c queue adverts;137bde051 Fetch allocations;d331cd72d Cheska Wiki rules;3322c6e8b Catch, integrated636472796 protocol110.24distinct native gameplay acceptance cases, Core numeric1case, approval receiver qualified on108/109; later tutorial110constant integration reuses unchanged receiver. Real protocol103 Windows player/LAN remains exactFFE frozen scope, no later110player or individual-skill peer qualification. All Unity/Core/freeze/player jobs terminal, no task-owned player/browser windows remain. Unrelated dirty models/protected metas/HeroHazards/quality/motion preserved. Same Nemu Feedback note simplified and updated; human controls untouched. Incoming Amihan/Dante/Boulder/tutorial receipts retained, not claimed as local authorship. Next actionable bottom row: Nemu Haunt legacy DEVOURING SEANCE7s/10points still contradicts current Haunt15points/chase-all/Haunted7.5s. Current Status Effects says Haunted hides can/slipper HUD markers, nearsights, muffles audio, and is excluded from Status Immunity. StatusKind/CharacterMotor has no Haunted state yet. Inspect existing generic perception/audio helpers first; no new authored VFX/SFX/animation/model/map or loading work. Owner friend still owns loading; finalized Phaister/Paete protected. Fresh fetch/claims before edits. User priority is continued shipped fixes with bounded meaningful checks; do not redo qualified units or full-player build after every small integration.
 Resetting Can requested copy passes2/2native14.21s on merged110; pickup, cancel,
 finish, saved glyphs and touch toggle/reach retained. Active channel frame inspected.
 No heavy job, no newplayer claim. Publish explicit UI/test/evidence paths; update
@@ -1626,6 +1627,9 @@ WorldEffectSnapshot.cs appended kind, RecordedFieldView.cs route, GeoRules,
 NetSession.cs, new DanteDriftTests/meta and partition. Baseline near/far/behind
 release timing and metadata first. No heavy job. NemuHaunt remains local-owned;
 no contact/delegation, shared claims only. Current integratedprotocol110.
+
+Haunt current step: Core StatusKind.Haunted appended12 afterHexed11; policy7.5s/reduced perception/no extra movement or interaction block/immunity excluded. Engine-free HauntedRulesTests1/1passes. This is rule data only, not runtime/whole feature, no Done checkbox. Next runtime timer in CharacterMotor.Status.cs (StatusLeft249/clear, ApplyNetworkStatuses261, StepStatuses281); SyncUnit writer/reader in MatchRpc.cs (~2460-2616) needs scoped timer delivery/versioning; existing HUD marker owner SlipperRecall/LataClock/Hud needs gates. No generic nearsight/muffle helper found; only CourtDanger's source-local lowpass, so inspect before reuse and stay within bug-fix-only visual/audio scope. Legacy Nemu ultimate still7s/10points; current Wiki Haunt15points/chase all seen players/Haunted7.5s. Goal active; no heavy job active. Session reader44160 was cancelled as unproductive; latest effective Fast tier remains unverified. Model last verified Sol6.1/high, user selected fast, no claim of internal tier confirmation. All earlier qualified cases/players retained; no broad revalidation loop.
+
 Drift baseline2/2fails stale name and instant far hit. Final5/5native4.60s passes
 ordered host blasts, behind/caster exclusion, pause/observer, snapshot bounds,
 no-past-hit recovery, render-only replay and round cleanup. Authored court1/1passes
@@ -1641,3 +1645,11 @@ performance remains a quality-pass target. Five mechanical cases reused; six
 distinct total, no newplayer/peer/human-quality claim. Publish current coherent
 unit, then owner-priority HERO-QUALITY-1001. Full-roster brief and updated SFX
 authorization are saved; no new blank Wiki proposals or research claimed yet.
+
+Integration review: incoming1a1c989f adds engine-free Haunted policy only; no runtime conflict with Drift. Both ledger histories retained. Latest owner full-roster research priority/SFX permission in HERO-QUALITY-1001 supersedes older local scope language. Preserve Nemu runtime ownership. Combined focused Core status contracts next; no broad native rerun.
+
+Combined Core check exposes one stale table-count assertion (11 versus newly
+appended Haunted12); eight other cases pass. Update that exact count, preserve
+all prior status assertions and the new Haunted ID/policy case. This is a merge
+contract adjustment, not an unrelated fixture workaround. Retain failed receipt
+and run the same nine focused cases against the combined source.

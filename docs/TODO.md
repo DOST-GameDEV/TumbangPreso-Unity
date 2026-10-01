@@ -226,6 +226,9 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   and approved remaining-clock recovery preserve authority and replica state.
   Eight distinct native cases pass. Haunt/full-kit work stays open.
   [Evidence](reports/feedback-2026-09-30/nemu-kuro-catch.md).
+  Haunted rulebook appended with7.5-second perception/immunity policy; Core1/1
+  passes. Runtime/status delivery/perception/chase remain unfinished; no whole-kit
+  completion. [Current step](reports/feedback-2026-09-30/haunted-rulebook.md).
 - [x] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,
   no Escape return to title, queue cancel button, hamburger background, stamina drain.
   Lighting rename/default/order reconciled with already-shipped BUGS-0926.5:

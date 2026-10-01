@@ -39,3 +39,9 @@ compact XML/guard receipts and three inspected frames are beside this report.
 The sampled2.4s MP4 is retained with the working QA artifacts. New player,
 actual-peer/reconnect and human-quality approval remain unqualified. Retained
 Dante loadout/UI text review remains open; do not mark the entire Wiki row Done.
+
+Incoming Haunted policy1a1c989f is data-only and preserved. Combined Core run first
+catches its stale eleven-status count; updating the count to twelve retains every
+old status assertion and the specific appended Haunted ID/policy check. Final9/9
+focused Core passes. Both receipts retained; native Drift receipts are pre-merge
+and the appended unused policy does not change their runtime paths.
