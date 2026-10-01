@@ -4150,7 +4150,7 @@ namespace TumbangPreso
             // time using a stale picture, and the second one is what looking away actually does.
             float alpha = 1.0f - Mathf.Exp(-dt / Mathf.Max(Me.React * LapseScale, 0.02f));
 
-            foreach (var who in round.Players)
+            foreach (var who in round.Bodies)
             {
                 if (who == null) continue;
 
@@ -4158,8 +4158,9 @@ namespace TumbangPreso
                 Vector3 truth = who.transform.position;
                 Vector3 velocity = new Vector3(who.Velocity.x, 0.0f, who.Velocity.z);
 
-                if (who == _motor || !_seenPos.ContainsKey(slot))
+                if (who == _motor || !HasBelief(who))
                 {
+                    _seenBodies[slot] = who;
                     _seenPos[slot] = truth;
                     _seenVel[slot] = velocity;
                     continue;
@@ -4175,7 +4176,7 @@ namespace TumbangPreso
         {
             if (who == null) return Vector3.zero;
 
-            return _seenPos.TryGetValue(who.PlayerSlot, out Vector3 p)
+            return HasBelief(who) && _seenPos.TryGetValue(who.PlayerSlot, out Vector3 p)
                 ? p : who.transform.position;
         }
 
@@ -4185,12 +4186,17 @@ namespace TumbangPreso
         {
             if (who == null) return Vector3.zero;
 
-            Vector3 velocity = _seenVel.TryGetValue(who.PlayerSlot, out Vector3 v)
+            Vector3 velocity = HasBelief(who) && _seenVel.TryGetValue(who.PlayerSlot, out Vector3 v)
                 ? v : Vector3.zero;
 
             return At(who) + velocity * horizon * Me.Lead;
         }
 
+        // Seats can be reused by a new companion. Stable seat identity does not
+        // make a dead body's perceived position/velocity belong to its replacement.
+        private bool HasBelief(CharacterMotor who) => who != null &&
+            _seenBodies.TryGetValue(who.PlayerSlot,out var observed) && observed == who;
+        private readonly Dictionary<int, CharacterMotor> _seenBodies = new Dictionary<int, CharacterMotor>();
         private readonly Dictionary<int, Vector3> _seenPos = new Dictionary<int, Vector3>();
         private readonly Dictionary<int, Vector3> _seenVel = new Dictionary<int, Vector3>();
 

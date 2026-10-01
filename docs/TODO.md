@@ -78,10 +78,11 @@ continuous manual bug hunting. Research, plan and critique using HERO_KIT_METHOD
 finalized Paete/Phaister character-specific work remains protected. The owner reopened remaining ability implementation on2026-10-01;
 shared/global fixes apply normally and exact concurrent claims still govern.
 
-- [ ] BOT-COMPANION-OBSERVATION-1001: investigate/fix the ordinary reaction-lag
-  model skipping companion targets. Observe reads Players while tag selection
-  reads Bodies, so companion positions fall through to instantaneous truth.
-  Verify initial/repeated/replacement body and own-position behavior before Done.
+- [x] BOT-COMPANION-OBSERVATION-1001: shared observation now includes companion
+  targets and binds cached beliefs to the actual body. Native baseline reproduces
+  both tier bypasses; final4/4passes Normal/Astig, replacement identity and self
+  controls. [Evidence](reports/feedback-2026-09-30/bot-companion-observation.md).
+  Whole-match/player checks and Haunted sensor fairness remain separate.
 
 Source: [TUMP Wiki](https://docs.google.com/document/d/1jvr7NLzhHrbw-wrG676AeOkoTxJf4GokkfmxpO0ddLg/edit),
 read on 2026-09-30, including ability, status and feedback tabs. The document wins

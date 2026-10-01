@@ -1906,3 +1906,20 @@ to companions. RoundDirector.Bodies is cached players+companions, not an allocat
 query. Fix generic observation only, preserve Phaister/Paete mechanics/assets and
 keep Haunted sensor/unknown-target fairness as a separate remaining investigation.
 Then one coherent protocol114matching-player qualification when headroom permits.
+
+BOT-COMPANION-OBSERVATION-1001 owns AIController.cs observation/cache identity
+only and new BotCompanionObservationTests/meta. Sourcefcd3507cf, no incoming
+commits. Baseline asks Normal/Astig companion movement to use the same reaction
+lag as ordinary player movement; own feet remain exact. Final adds replacement
+body identity and companion-self control. Runtime unchanged for baseline; no
+protected hero mechanics, assets or tiers changed. No live native job yet.
+
+BOT-COMPANION-OBSERVATION-1001 baseline2fails prove immediate companion4m vs
+Normal0.131/Astig0.276m belief updates after10ms. Final4/4passes after Observe
+uses cached Bodies and position/velocity beliefs bind to actual body identity.
+Replacement seat starts fresh, ordinary/companion self stays exact.655hashes
+unchanged; three owned files match candidate. Jobs90210/82018 terminal; no
+fixture repair, preferences preserved. No protected mechanics/assets or tuning
+changes; generic host AI observation only, protocol114unchanged. Publish explicit
+source/receipts, keep report local (no unrequested Drive developer/QA uploads).
+Haunted sensor/unknown-target and actual matching-player qualification still open.

@@ -195,3 +195,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Airburst current Wiki timing, angle and court reach](airburst-current-wiki.md).
 
 [Moving familiar receipt smoothing](familiar-network-smoothing.md).
+
+[Bot companion reaction-delay correction](bot-companion-observation.md).
