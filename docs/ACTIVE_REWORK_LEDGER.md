@@ -2571,6 +2571,62 @@ unit/status/receipts. Next actual cold-process reconnect on new internal117batch
 covering bot sight + request framing + held metadata; retain old116player/proof,
 no Desktop replacement or loading source change. Full goal remains active.
 
+Held picks3bd0b1096 integrated with contributor curtain4fafbbd19 at72a1187b4,
+remote verified, protocol117. Both authored receipts retained; no own visual work
+or unrelated dirt staged. Claim RECONNECT-ACTUAL-1001 validation only: new coherent
+committed117player covering Haunted actor/items, snapshot framing and full held
+picks/Identify. Internal Builds/feedback-reconnect-player-1001 only, one heavy
+job. Freeze all tracked inputs, verify build/hash/no drift, then one actual host
+plus crash/relaunch of same own client profile with changed local character pick.
+Require host disconnect/bot takeover/new peerID/same seat and server character,
+active matched world/role; preserve failure. No service credits or loader edits.
+
+Reconnect candidate freeze21354terminal:15426inputs, committed source72a1187b4,
+no uncommitted code overlays, protocol117. Headroom6.25GB. One named-profile
+internal build now running; no players until terminal builder and post-hash.
+Actual reconnect driver will preserve two own profiles, seed client pick2, stop
+only its first client after confirmed admission, wait host disconnect/takeover,
+change the stopped client's own pick to0 and relaunch same identity. Require
+new peerID2 reclaiming seat1 and server character2 on both reports. Sampling
+instants differ, so do not assert score/hash equality across non-simultaneous data.
+
+Reconnect117 build78343terminal succeeds2141MB/117s. Post-hash95276terminal:
+15426inputs unchanged, no code drift, runtimeSHAa27665cb0a52c8f9999429698fa048a645c9fb5f72e57064f4d679cca0d91721.
+Driver parse preflight normalizes report numeric strings before launch; no prior
+reconnect attempt. Two isolated profiles cloned from our own earlier test template,
+fresh identities, client2/1/3picks. Stop only first task client after live admission/
+arena, edit its file only after terminal, wait actual host handover, relaunchsame
+identity with localcharacter0. Both report117active worlds/servercharacter2;
+record final different sampling times and later second disconnect honestly.
+
+Reconnect pair46640confirmed live. Logs show first admission/active arena, abrupt
+peer1disconnect and Normal bot handover, then peer2 seat1reclaim. Relaunched client
+logs seat admission and LocalSlot1/non-spectator/live input body. No success yet:
+wait same owned processes for final117role/character/active-world reports and
+preservation verdict; no restart based on observation timeout. No other heavy job.
+
+Actual reconnect46640terminal retained identity/seat/mode/map/117active worlds and
+matching char3, but fails requiredchosenchar2 on both peers. Preserve firstfailed
+result. Source confirms arena built bot placeholder3 before clientIdentify2;
+HostTakeSeatBack changes driver/name but never pre-round character, and world
+BroadcastPicks then overwrites client's choice. This is product gap, not loosened
+assertion. PRE-ROUND-PICK-1001 claims MatchRpc.cs handover and SessionRestartTests:
+baseline2cases pre-roundchoice2 vs live-matchretained3. Reuse existing model/kit/
+skin synchronization only before first round; no authored asset or loader change.
+One focused final, then new changed player and same actual reconnect once.
+
+Pre-round baseline2cases: live-match control passes, pre-roundcase fails2→3,
+confirming actualpair'swrong placeholder cause. Keep failed pair's strict expectation.
+Fixed handover uses existing SyncPicksClientRpc only before any round, with current
+Mirror format rule retained; authored art/animation data not changed. Final3cases
+adds mirror control. Baseline56793terminal before freeze, no fixture repair.
+
+Pre-round final3/3native passes2.153s;674inputs no drift, two files match candidate.
+Before-round selected2, midmatch retained3, Mirror rule preserved. Jobs56793/
+88521terminal, no fixture repair. Publish scopedsource/test/status/evidence, then
+new changed internal117player and same strict actualreconnect once. Original
+failed pair46640 remains preserved; do not change expectedcharacter or claimpass.
+
 ROUND-STATUS-1001 claims SliceRunner.cs and existing RoundFieldCleanupTests.cs.
 Harry reports Tagged/status carryover. ResetWorld teleports and clears elemental
 statuses but does not clear the independent stun/trip stacks. Reproduce a real
@@ -2609,3 +2665,8 @@ releases normally. Frozen hashes unchanged, no new OOM, no tooling retry.
 Publish protocol118coherent unit, update same row without marking its dot part
 done. Fresh live penalty row no longer includes earlier Tagged immunity request;
 current numbers cover camping, loose-slipper timers and2.5second fatigue only.
+Pre-roundb4c329b7b integrates contributorround-resetb25cff3a5 and native audio
+receipts with their scopes intact. Current117; can-down118work is reserved and
+not published in this candidate. No conflict in runtime paths; both ledger
+histories preserved. Next changed internalplayer output is feedback-reconnect-fixed-
+player-1001; retain original117failedpair and rerun same strictcharacter2once.

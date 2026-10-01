@@ -213,6 +213,36 @@ namespace TumbangPreso.PlayTests
             finally{net.Stop();}
         }
 
+        [UnityTest] public IEnumerator PreRoundArrivalAppliesItsPickToTheBotPlaceholder()
+            => CheckArrivalCharacter(false);
+        [UnityTest] public IEnumerator RunningMatchArrivalKeepsTheExistingCharacter()
+            => CheckArrivalCharacter(true);
+        [UnityTest] public IEnumerator PreRoundArrivalKeepsTheMirroredFormatCharacter()
+            => CheckArrivalCharacter(false,true);
+        private IEnumerator CheckArrivalCharacter(bool underway,bool mirror=false)
+        {
+            var net=NetSession.Ensure();yield return null;
+            try
+            {
+                bool hosted=false;yield return Await(net.StartHostAsync(18693),r=>hosted=r);
+                Assert.IsTrue(hosted,net.Status);GameServices.Ensure();GameServices.Round.Clear();
+                var rules=Core.CustomGameRules.Defaults(Core.GameMode.HeroStrike);
+                if(mirror)rules.Format=Core.MatchFormat.Mirror;
+                UI.SceneFlow.SetSelectedRules(rules);
+                var body=new GameObject("Arrival placeholder").AddComponent<CharacterMotor>();body.enabled=false;
+                body.PlayerSlot=0;body.Mode=Core.GameMode.HeroStrike;body.CharacterIndex=3;body.IsBot=true;
+                GameServices.Round.Register(body);net.Lobby.SetPicks(0,2,1,3);
+                GameServices.Match.ApplySnapshot(new int[4],underway?1:0,underway);
+                var rpc=net.GetComponent<MatchRpc>();
+                typeof(MatchRpc).GetMethod("HostTakeSeatBackFromBot",BindingFlags.Instance|BindingFlags.NonPublic)
+                    .Invoke(rpc,new object[]{0});
+                Assert.IsFalse(body.IsBot);
+                int expected=mirror?Core.CustomGameRules.MirrorIndex(Core.Roster.GetPeople(Core.GameMode.HeroStrike).Count,System.DateTime.UtcNow):underway?3:2;
+                Assert.AreEqual(expected,body.CharacterIndex,"Pre-round handover kept the bot's placeholder pick.");
+            }
+            finally{net.Stop();}
+        }
+
         /// <summary>
         /// ⚠️⚠️ A NESTED SESSION STILL HOSTS (QA, 2026-09-26: *"Could not open an online room. (relay allocation failed: There
         /// is no NetworkManager assigned to this instance!)"*). Netcode's `Initialize` returns silently for a NetworkManager

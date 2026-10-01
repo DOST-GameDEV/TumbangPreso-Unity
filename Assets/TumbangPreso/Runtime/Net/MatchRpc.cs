@@ -6056,6 +6056,16 @@ namespace TumbangPreso.Net
                 var unit = Unit(peerRecord.Seat);
                 if (unit != null)
                 {
+                    if (!MatchIsUnderway() && peerRecord.CharacterPick >= 0)
+                    {
+                        int pick = peerRecord.CharacterPick;
+                        if (UI.SceneFlow.SelectedFormat == MatchFormat.Mirror)
+                            pick = CustomGameRules.MirrorIndex(Roster.GetPeople(UI.SceneFlow.SelectedMode).Count, DateTime.UtcNow);
+                        // The arena can build this seat as a bot before Identify
+                        // arrives. Apply its chosen roster through the existing
+                        // art/kit/skin route before the first round freezes it.
+                        SyncPicksClientRpc(new[] { peerRecord.Seat, pick, peerRecord.CanPick, peerRecord.SlipperPick });
+                    }
                     var ai = unit.GetComponent<AIController>();
                     if (ai != null) Destroy(ai);
 
