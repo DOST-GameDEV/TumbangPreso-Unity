@@ -31,7 +31,7 @@ Harry's new tutorial input refusal is reproduced: hidden can restoration stays
 at 1.25 seconds. A narrow offline route exception passes two native checks,
 including actual charge/release and an actual listening-host control.
 [Evidence](reports/feedback-2026-09-30/tutorial-throw-checks/README.md). The above-can false-hit report is repaired in CAN-VERTICAL-CONTACT-1001; the
-slightly thicker centre-dot outline follows; prior shipped evidence is retained.
+slightly thicker centre-dot outline also passes its native capture check; prior shipped evidence is retained.
 
 
 ### HUD-LAYOUT-1001: Harry's supplied layout
@@ -40,7 +40,10 @@ Three left-side statuses, separate warning/action regions, in-panel recovery,
 roomier match bar and count-fit pips implemented. Six distinct native cases pass,
 including actual bound recovery and requirement-refusal/corrected-cast behavior.
 [Evidence](reports/feedback-2026-09-30/harry-hud-checks/README.md).
-The combined row remains open for current announcement bonuses/duration.
+Score feed now has three-second lifetime and smooth interrupted top-down reflow;
+one native case and small capture pass.
+[Feed evidence](reports/feedback-2026-09-30/feed-stack-checks/README.md).
+The combined row remains open for status stacking and announcement bonuses/duration.
 
 
 ### PENALTY-REVAMP-1001: current Harry timing revision
@@ -59,6 +62,8 @@ baseline reproduces5seconds of Tagged leaking; final4/4passes with field/map/
 replay boundary controls. [Evidence](reports/feedback-2026-09-30/round-status-checks/README.md).
 The centre-dot part also passes two native checks, with small/wide captures.
 [Reticle evidence](reports/feedback-2026-09-30/centre-dot-checks/README.md).
+The requested subtle1.5unit black outline is now applied with one native check
+and inspected small/wide frames. [Outline evidence](reports/feedback-2026-09-30/dot-outline-checks/README.md).
 
 ### CAN-DOWN-THROW-1001: current Feedback rule
 

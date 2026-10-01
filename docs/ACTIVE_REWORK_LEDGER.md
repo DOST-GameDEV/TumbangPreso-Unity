@@ -2962,3 +2962,34 @@ contact with authorednative/Core receipts preserved; current120. Atomic-roster
 contributor-owned; old117/116players do not qualify120. All local heavyjobs
 terminal, privateassets/metas/HeroHazards/quality/motion preserved. Next local
 engineering action from currentqueue, no repeated unchanged gates or crosschat.
+Dot outline final1native passes, small/wide captures inspected, frozen inputs
+unchanged/no new OOM. Filled centre stays3.2, border1.5instead of1.2. No repeat
+of unchanged pulse lifecycle suite. Publish and close the combined Feedback row
+with tutorial repair evidence. Next HUD feed/status stacking/lifetimes, then
+announcement bonuses; current120. All owned native jobs terminal.
+
+HUD-FEED-STACK-1001 owns UI/MatchEventFeed.cs and Tests/PlayMode/
+TumpNativeHudTests.cs for three-second lifetime and smooth top-down reflow.
+Dot a7c63f21 remote verified, no native jobs. Preserve item identity/expiry across
+insertion, reduced-motion snap and capacity3. One focused native geometry/time/
+interrupted insertion check with capture. Status upward capacity/Haunted omission
+and announcement scoring remain subsequent coherent units. Plan retains all.
+
+Feed stack final1native passes interrupted reflow/order/independent expiry/cap3/
+reduced-motion/three-second boundaries. Small capture inspected, frozen inputs
+unchanged, no tooling repair/new OOM. Publish; status capacity/upward reflow and
+Haunted omission are next, announcement scoring afterward. No live native job.
+
+HUD-STATUS-STACK-1001 claims UI/TumpMatchReadout.Statuses.cs, StatusIcons.cs,
+TumpMatchReadout.MatchBar.cs and Warnings.cs for adaptive bottom-up status columns
+and reserved action/warning space; existing TumpNativeHudTests.cs for controls.
+Feed ea45c159 remote verified. Preserve full names/tooltips and28unit floor,
+actual timers, stable identity and reduced motion. Dense columns wrap within the
+available height; action/warning text wraps in remaining width. Haunted must
+appear from its real timer. Qualify ordinary3 and dense/max/enlarged views,
+expiry/reflow/refresh without re-entry. No mechanics/protocol change from120.
+
+Integrated reticle-outline and score-feed contributions through9dc083a0d.
+Atomic roster validation retains16distinct native passes across two final runs;
+current protocol120. Status layout remains contributor-owned. No task jobs or
+previews remain; private dirt is preserved. Publish, then resume scoped engineering.
