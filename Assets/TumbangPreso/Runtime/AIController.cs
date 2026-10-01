@@ -3908,7 +3908,8 @@ namespace TumbangPreso
             landing = default;
             if (slipper == null || slipper.State != SlipperState.InFlight) return false;
             return SlipperLandingPrediction.TryPredictLanding(slipper.transform.position,
-                slipper.Velocity, slipper.PektusSpin, LandingHits, out landing);
+                slipper.Velocity, slipper.PektusSpin, LandingHits, out landing, null,
+                slipper.PredictionSkimDistance, slipper.IsSkimming, slipper.RestHeight);
         }
 
         // These queries run synchronously on the same Unity thread as the

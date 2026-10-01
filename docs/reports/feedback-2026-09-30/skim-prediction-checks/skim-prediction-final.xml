@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 09:06:29Z" end-time="2026-10-01 09:06:53Z" duration="24.3594099">
+  <test-suite type="TestSuite" id="2398" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1138" result="Passed" start-time="2026-10-01 09:06:29Z" end-time="2026-10-01 09:06:53Z" duration="24.359410" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2392" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1138" result="Passed" start-time="2026-10-01 09:06:29Z" end-time="2026-10-01 09:06:53Z" duration="24.347023" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="31196" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2393" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1138" result="Passed" start-time="2026-10-01 09:06:29Z" end-time="2026-10-01 09:06:53Z" duration="24.343838" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2394" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1138" result="Passed" start-time="2026-10-01 09:06:29Z" end-time="2026-10-01 09:06:53Z" duration="24.340669" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1132" name="BotLandingPredictionTests" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-01 09:06:29Z" end-time="2026-10-01 09:06:29Z" duration="0.190860" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1139" name="ALoadedSkimPredictionIncludesItsRealGroundContinuation" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.ALoadedSkimPredictionIncludesItsRealGroundContinuation" methodname="ALoadedSkimPredictionIncludesItsRealGroundContinuation" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="250079065" result="Passed" start-time="2026-10-01 09:06:29Z" end-time="2026-10-01 09:06:29Z" duration="0.101413" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Skim predicted=(0.00, 0.02, 0.60) actual=(0.00, 0.02, 0.60)
+]]></output>
+            </test-case>
+            <test-case id="1140" name="ASkimmingSlipperPredictsOnlyItsRemainingContinuation" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.ASkimmingSlipperPredictsOnlyItsRemainingContinuation" methodname="ASkimmingSlipperPredictsOnlyItsRemainingContinuation" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="65270178" result="Passed" start-time="2026-10-01 09:06:29Z" end-time="2026-10-01 09:06:29Z" duration="0.036381" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Skim predicted=(0.00, 0.02, 0.60) actual=(0.00, 0.02, 0.60)
+]]></output>
+            </test-case>
+            <test-case id="1141" name="SkimPredictionStopsAtTheSameSolidWorldCover" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.SkimPredictionStopsAtTheSameSolidWorldCover" methodname="SkimPredictionStopsAtTheSameSolidWorldCover" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="1728252864" result="Passed" start-time="2026-10-01 09:06:29Z" end-time="2026-10-01 09:06:29Z" duration="0.034106" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Skim predicted=(0.00, 0.02, -0.20) actual=(0.00, 0.02, -0.20)
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1501" name="LandingCircleTests" fullname="TumbangPreso.PlayTests.LandingCircleTests" classname="TumbangPreso.PlayTests.LandingCircleTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-01 09:06:29Z" end-time="2026-10-01 09:06:30Z" duration="0.046897" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1502" name="FlatFlightMatchesTheGroundCircle" fullname="TumbangPreso.PlayTests.LandingCircleTests.FlatFlightMatchesTheGroundCircle" methodname="FlatFlightMatchesTheGroundCircle" classname="TumbangPreso.PlayTests.LandingCircleTests" runstate="Runnable" seed="796068804" result="Passed" start-time="2026-10-01 09:06:29Z" end-time="2026-10-01 09:06:30Z" duration="0.042279" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1937" name="RafiExpansionProbe" fullname="TumbangPreso.PlayTests.RafiExpansionProbe" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" testcasecount="14" result="Passed" start-time="2026-10-01 09:06:30Z" end-time="2026-10-01 09:06:53Z" duration="23.787535" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1943" name="LoadedSkimGuideMatchesTheRealThrowWithoutSpendingItsLoad" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.LoadedSkimGuideMatchesTheRealThrowWithoutSpendingItsLoad" methodname="LoadedSkimGuideMatchesTheRealThrowWithoutSpendingItsLoad" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="892344127" result="Passed" start-time="2026-10-01 09:06:30Z" end-time="2026-10-01 09:06:43Z" duration="13.290837" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1946" name="SkimStaysInsideCourtAndStopsWhenTheRoundEnds" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.SkimStaysInsideCourtAndStopsWhenTheRoundEnds" methodname="SkimStaysInsideCourtAndStopsWhenTheRoundEnds" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="1523593396" result="Passed" start-time="2026-10-01 09:06:43Z" end-time="2026-10-01 09:06:48Z" duration="5.272575" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1944" name="SkimStopsBeforeNewSolidCover" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.SkimStopsBeforeNewSolidCover" methodname="SkimStopsBeforeNewSolidCover" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="1706945851" result="Passed" start-time="2026-10-01 09:06:48Z" end-time="2026-10-01 09:06:53Z" duration="5.213952" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

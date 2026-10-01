@@ -239,3 +239,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Current120actual direct players through round2and exact limits](network120-actual-player.md).
 
 [Bot landing target and shared world-flight prediction](bot-landing-terrain.md).
+
+[Skim ground continuation in loaded guides and bot predictions](skim-prediction.md).

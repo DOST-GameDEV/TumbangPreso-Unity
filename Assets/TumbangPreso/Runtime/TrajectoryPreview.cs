@@ -83,7 +83,13 @@ namespace TumbangPreso
         }
 
         public bool TryPredictLanding(Vector3 origin, Vector3 velocity, float spin, out Vector3 landing)
-            => SlipperLandingPrediction.TryPredictLanding(origin, velocity, spin, _hits, out landing, _path);
+        {
+            float skimDistance = _carrier != null && _carrier.Held != null &&
+                _motor?.AbilitySystem?.Kit is Abilities.RafiHeroKit rafi && rafi.IsSkimLoadedFor(_carrier.Held)
+                ? RafiRules.SkimDistance : 0;
+            return SlipperLandingPrediction.TryPredictLanding(origin, velocity, spin, _hits, out landing, _path,
+                skimDistance, false, _carrier?.Held != null ? _carrier.Held.RestHeight : Balance.SlipperRestHeight);
+        }
 
         private void Rebuild()
         {

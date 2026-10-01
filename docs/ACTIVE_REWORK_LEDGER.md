@@ -3159,6 +3159,31 @@ No runtime conflicts; current121. Actual120pair remains scoped c26c5c34b; no new
 then inspect intrinsic Skim ground-phase prediction without changing the kit.
 
 
+SKIM-PREDICTION-1001 claims shared prediction, read-only Slipper.Skim state/query,
+TrajectoryPreview and existing BotLandingPredictionTests. Current3ee5b5065remote
+verified,121announcement integrated. Landing8native evidence retained. Predict
+initial Skim against actual ground continuation; one native baseline, then
+reuse exact world step queries without retuning/recasting/consuming kit load.
+All prior heavy jobs terminal. No authored art/loading/protected kit edits.
+
+
+Skim baseline1/1 reproduces exactly2m short prediction,19398terminal. Share
+unchanged32-hit world step query between movement and prediction. Read-only
+phase/remaining distance and held-load identity feed bot/guide; no Consume or
+kit timing change. Extend ownership RafiHeroKit.cs read-only accessor and
+RafiExpansionProbe.cs actual loaded-guide control. Final7: three phase/world
+predictions, loaded guide/actualthrow/nonconsumption, two existing mechanics
+controls and normal circle. One repair max; reuse prior8normal predictions.
+
+
+Skim prediction final7/7passes:2m error fixed, remaining phase/wall/loaded actual
+guide and real throw without consumption; existing cover/court/round preserved.
+708frozen inputs no drift,19398/13819terminal, profiles intact, no native repair.
+No kit rule or wire change; current121. Publish then a coherent actual cold-rejoin
+follow-through on current integration, not repeated120clean pair. Preserve old
+117failed aggregate and its character recovery scope. Read driver timing before
+selecting one bounded current-player run; do not weaken acceptance gates.
+
 RAFI-WATERWALL-PRESENTATION-1001 owns only Waterwall presentation fields in
 Abilities/RafiHeroKit.cs; Visual/HeroAbilityClips.Rafi.cs and its BuildAll mapping,
 CharacterAnimator action mapping; Camera/ViewmodelArms.CastGesture.cs waterwall
@@ -3204,3 +3229,9 @@ and Rafi reference ship. One fixturecompile repair and one actual presentation
 correction, not a broad suite. Still partly pane-like in stills; icons/SFX/final
 quality remain. Publish coherent unit, then correct known Rafi icon mismatches.
 Owner study silence active; no chat message. All native jobs terminal.
+
+Integrated261a4e83 Skim endpoint prediction with9d8c9a74 Waterwall presentation.
+RafiHeroKit's added loaded-shoe query and separate RafiExpansionProbe cases merge
+cleanly; no changes to the tested wall action/material paths. Preserve both
+frozen qualification sets, not a combined integration/player claim. Current121.
+All owned native jobs terminal; next dedicated Rafi icon mismatch correction.

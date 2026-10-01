@@ -120,5 +120,54 @@ namespace TumbangPreso.PlayTests
             }
             finally { Object.DestroyImmediate(other.gameObject); Object.DestroyImmediate(shoe.gameObject); Object.DestroyImmediate(root); }
         }
+
+        [Test] public void ALoadedSkimPredictionIncludesItsRealGroundContinuation()
+            => CompareSkim(false, false);
+
+        [Test] public void ASkimmingSlipperPredictsOnlyItsRemainingContinuation()
+            => CompareSkim(true, false);
+
+        [Test] public void SkimPredictionStopsAtTheSameSolidWorldCover()
+            => CompareSkim(false, true);
+
+        private void CompareSkim(bool afterFirstGround, bool withWall)
+        {
+            GameServices.Ensure(); GameServices.Round.Clear();
+            GameServices.Match.ApplySnapshot(new int[4], 2, true);
+            GameServices.Round.ApplySnapshot(100, true, 1, true);
+            var floor = GameObject.CreatePrimitive(PrimitiveType.Cube); floor.name = "FloorSkimPrediction";
+            floor.transform.position = Vector3.down * .5f; floor.transform.localScale = new Vector3(30, 1, 30);
+            GameObject wall = null;
+            if (withWall)
+            {
+                wall = GameObject.CreatePrimitive(PrimitiveType.Cube); wall.name = "Skim prediction cover";
+                wall.transform.position = new Vector3(0, .5f, 0); wall.transform.localScale = new Vector3(4, 1, .2f);
+            }
+            Physics.SyncTransforms();
+            var shoe = new GameObject("Skim prediction flight").AddComponent<Slipper>(); shoe.enabled = false;
+            try
+            {
+                using (NetCue.SuppressRelay())
+                {
+                    shoe.HostThrow(null, new Vector3(0, .3f, -2), new Vector3(0, -1, 5), SlipperAffinity.Skim);
+                    var step = typeof(Slipper).GetMethod("FixedUpdate", BindingFlags.Instance | BindingFlags.NonPublic);
+                    if (afterFirstGround)
+                    {
+                        for (int i = 0; i < 60 && !shoe.IsSkimming && shoe.State == SlipperState.InFlight; i++) step.Invoke(shoe, null);
+                        Assert.IsTrue(shoe.IsSkimming);
+                        step.Invoke(shoe, null);
+                    }
+                    var args = new object[] { shoe, Vector3.zero };
+                    Assert.IsTrue((bool)typeof(AIController).GetMethod("TryPredictedLanding", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, args));
+                    var predicted = (Vector3)args[1];
+                    for (int i = 0; i < 320 && shoe.State == SlipperState.InFlight; i++) step.Invoke(shoe, null);
+                    Assert.AreEqual(SlipperState.Loose, shoe.State);
+                    var actual = shoe.transform.position; actual.y = predicted.y;
+                    TestContext.WriteLine("Skim predicted=" + predicted + " actual=" + actual);
+                    Assert.Less(Vector3.Distance(actual, predicted), .12f, "Prediction stopped at first ground contact instead of the complete Skim.");
+                }
+            }
+            finally { Object.DestroyImmediate(shoe.gameObject); if (wall != null) Object.DestroyImmediate(wall); Object.DestroyImmediate(floor); }
+        }
     }
 }

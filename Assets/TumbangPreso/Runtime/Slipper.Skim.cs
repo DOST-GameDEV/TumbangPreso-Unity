@@ -6,6 +6,8 @@ namespace TumbangPreso
     public sealed partial class Slipper
     {
         public bool IsSkimming => _skimLeft > 0 && Affinity == SlipperAffinity.Skim;
+        internal float PredictionSkimDistance => IsSkimming ? _skimLeft :
+            Affinity == SlipperAffinity.Skim && !_skimStarted ? RafiRules.SkimDistance : 0;
         private float _skimLeft;
         private bool _skimStarted;
         private Vector3 _skimDirection;
@@ -34,16 +36,30 @@ namespace TumbangPreso
             if (GameServices.Round?.RoundActive != true)
             { Land(false, _skimGround); return false; }
             float distance = Mathf.Min(_skimLeft, RafiRules.SkimSpeed * dt);
-            var from = transform.position;
-            var wanted = from + _skimDirection * distance;
+            if (!TrySkimStep(transform.position, _skimDirection, distance, _skimGround,
+                out var next, out float support, out float allowed))
+            { Land(true, _skimGround); return false; }
+            _skimGround = support;
+            transform.position = new Vector3(next.x, support + RestHeight, next.z);
+            transform.rotation = Quaternion.identity;
+            _skimLeft = allowed < distance - .001f ? 0 : Mathf.Max(0, _skimLeft - allowed);
+            _velocity = _skimDirection * RafiRules.SkimSpeed;
+            return true;
+        }
+
+        // Read-only world query shared by real movement and landing prediction.
+        internal static bool TrySkimStep(Vector3 from, Vector3 direction, float distance, float ground,
+            out Vector3 next, out float support, out float allowed)
+        {
+            var wanted = from + direction * distance;
             wanted.x = ClampToPlayableAxis(wanted.x, AIController.PlayableMinX, AIController.PlayableMaxX);
             wanted.z = ClampToPlayableAxis(wanted.z, AIController.PlayableMinZ, AIController.PlayableMaxZ);
-            float allowed = distance;
-            if (Mathf.Abs(_skimDirection.x) > .0001f) allowed = Mathf.Min(allowed, (wanted.x - from.x) / _skimDirection.x);
-            if (Mathf.Abs(_skimDirection.z) > .0001f) allowed = Mathf.Min(allowed, (wanted.z - from.z) / _skimDirection.z);
+            allowed = distance;
+            if (Mathf.Abs(direction.x) > .0001f) allowed = Mathf.Min(allowed, (wanted.x - from.x) / direction.x);
+            if (Mathf.Abs(direction.z) > .0001f) allowed = Mathf.Min(allowed, (wanted.z - from.z) / direction.z);
             allowed = Mathf.Max(0, allowed);
             int count = Physics.SphereCastNonAlloc(from + Vector3.up * .11f, .10f,
-                _skimDirection, SkimHits, allowed, ~0, QueryTriggerInteraction.Ignore);
+                direction, SkimHits, allowed, ~0, QueryTriggerInteraction.Ignore);
             if (count == SkimHits.Length) allowed = 0;
             for (int i = 0; i < count; i++)
             {
@@ -53,10 +69,10 @@ namespace TumbangPreso
                     || hit.collider.GetComponentInParent<Lata>() != null) continue;
                 allowed = Mathf.Min(allowed, Mathf.Max(0, hit.distance - .025f));
             }
-            var next = from + _skimDirection * allowed;
+            next = from + direction * allowed;
             count = Physics.RaycastNonAlloc(next + Vector3.up * .25f, Vector3.down,
                 SkimHits, .6f, ~0, QueryTriggerInteraction.Ignore);
-            float support = float.NegativeInfinity;
+            support = float.NegativeInfinity;
             if (count < SkimHits.Length)
                 for (int i = 0; i < count; i++)
                 {
@@ -66,13 +82,8 @@ namespace TumbangPreso
                         || hit.collider.GetComponentInParent<Lata>() != null) continue;
                     support = Mathf.Max(support, hit.point.y);
                 }
-            if (!float.IsFinite(support) || Mathf.Abs(support - _skimGround) > RafiRules.SkimStepHeight)
-            { Land(true, _skimGround); return false; }
-            _skimGround = support;
-            transform.position = new Vector3(next.x, support + RestHeight, next.z);
-            transform.rotation = Quaternion.identity;
-            _skimLeft = allowed < distance - .001f ? 0 : Mathf.Max(0, _skimLeft - allowed);
-            _velocity = _skimDirection * RafiRules.SkimSpeed;
+            if (!float.IsFinite(support) || Mathf.Abs(support - ground) > RafiRules.SkimStepHeight)
+                return false;
             return true;
         }
     }

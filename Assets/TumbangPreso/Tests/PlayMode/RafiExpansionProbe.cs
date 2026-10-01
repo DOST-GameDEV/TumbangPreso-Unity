@@ -176,6 +176,36 @@ namespace TumbangPreso.PlayTests
             yield return null;
         }
 
+        [UnityTest,Timeout(60000)] public IEnumerator LoadedSkimGuideMatchesTheRealThrowWithoutSpendingItsLoad()
+        {
+            yield return Start(); var caster = Rafi(); yield return null;
+            foreach (var actor in GameServices.Round.Players)
+            { actor.enabled = false; actor.GetComponent<Carrier>().enabled = false; }
+            caster.Teleport(new Vector3(-3, .12f, -5));
+            var carrier = caster.GetComponent<Carrier>(); var shoe = carrier.Held; shoe.enabled = false;
+            var kit = (RafiHeroKit)caster.AbilitySystem.Kit;
+            Assert.AreEqual(HeroKit.CastOutcome.Cast, kit.CastSkill2(Context(caster)));
+            Assert.IsTrue(kit.IsSkimLoadedFor(shoe));
+            var guide = TrajectoryPreview.AttachTo(caster); guide.enabled = false;
+            var origin = caster.transform.position + Vector3.up * .65f;
+            var target = new Vector3(-3, .12f, -2);
+            var velocity = shoe.LaunchVelocityTo(origin, target, .1f);
+            float remaining = kit.AttackingSkill.DurationRemaining;
+            Assert.IsTrue(guide.TryPredictLanding(origin, velocity, 0, out var predicted));
+            Assert.IsTrue(kit.IsSkimLoadedFor(shoe), "Reading the guide must not consume Skim.");
+            Assert.AreEqual(remaining, kit.AttackingSkill.DurationRemaining);
+            using (NetCue.SuppressRelay())
+            {
+                carrier.HostThrowAt(origin, target, .1f);
+                Assert.AreEqual(SlipperAffinity.Skim, shoe.Affinity); Assert.IsFalse(kit.IsSkimLoaded);
+                for (int i = 0; i < 320 && shoe.State == SlipperState.InFlight; i++) shoe.SendMessage("FixedUpdate");
+            }
+            Assert.AreEqual(SlipperState.Loose, shoe.State);
+            var actual = shoe.transform.position; actual.y = predicted.y;
+            Assert.Less(Vector3.Distance(actual, predicted), .12f);
+            Assert.AreEqual(1, shoe.OwnerSlot);
+        }
+
         [UnityTest,Timeout(60000)] public IEnumerator SkimStopsBeforeNewSolidCover()
         {
             yield return Start(); var caster=Rafi(); yield return null;

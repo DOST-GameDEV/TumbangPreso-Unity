@@ -272,6 +272,11 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   ground-circle controls. No whole-match FPS or new peer claim.
   [Evidence](reports/feedback-2026-09-30/bot-landing-terrain.md).
 
+- [x] SKIM-PREDICTION-1001: loaded guides and bots include actual intrinsic ground
+  continuation and remaining phase. Reproduced2m error repaired; seven native
+  cases preserve cover/court/round, load identity and ordinary flight behavior.
+  [Evidence](reports/feedback-2026-09-30/skim-prediction.md).
+
 - [x] HELD-SEAT-PICKS-1001: matching-token reclaim retains picks and takeover
   rating; Identify cannot replace fixed match choices with local preferences.
   Five distinct native cases cover repeated cycles, fresh account state, foreign
