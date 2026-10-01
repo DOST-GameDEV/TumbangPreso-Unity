@@ -177,6 +177,20 @@ namespace TumbangPreso.InputLayer
             }
         }
 
+        /// <summary>The current UI Submit must be released before a title transition.</summary>
+        public static bool SubmitHeld
+        {
+            get
+            {
+                var module = Module();
+                var action = module != null ? module.submit?.action : null;
+                if (action != null && action.enabled) return action.IsPressed();
+                var keys = Keyboard.current;
+                return (keys != null && (keys.enterKey.isPressed || keys.numpadEnterKey.isPressed || keys.spaceKey.isPressed))
+                    || (Gamepad.current != null && Gamepad.current.buttonSouth.isPressed);
+            }
+        }
+
         private static EventSystem _knownSystem;
         private static InputSystemUIInputModule _knownModule;
 

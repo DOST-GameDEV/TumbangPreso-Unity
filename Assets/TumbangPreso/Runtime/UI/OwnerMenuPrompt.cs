@@ -1,3 +1,4 @@
+using System.Collections;
 using TumbangPreso.InputLayer;
 using UnityEngine;
 using UnityEngine.UI;
@@ -31,6 +32,7 @@ namespace TumbangPreso.UI
         private int _revision = -1;
         private InputDeviceKind _kind = (InputDeviceKind)(-1);
         private float _born;
+        private bool _leaving;
 
         private void Awake()
         {
@@ -39,6 +41,25 @@ namespace TumbangPreso.UI
         }
 
         private void OnEnable() => _born = Time.unscaledTime;
+
+        public void ContinueToHome()
+        {
+            if (_leaving || !isActiveAndEnabled) return;
+            _leaving = true;
+            if (Press != null) Press.interactable = false;
+            MenuSfx.Start();
+            StartCoroutine(LeaveAfterSubmit());
+        }
+
+        private IEnumerator LeaveAfterSubmit()
+        {
+            // Home selects PLAY on entry. A held title Submit can be performed again
+            // when its new UI action map enables, so keep that press on this screen.
+            // Ordinary non-Submit keys and pointer clicks need only the frame boundary.
+            while (MenuNav.SubmitHeld) yield return null;
+            yield return null;
+            SceneFlow.GoHome();
+        }
 
         private void Update()
         {

@@ -1973,3 +1973,24 @@ smoothing and bot companion observation. Their Windows build remains contributor
 owned; its recorded in-progress state is not a new success claim. Local Linux
 player remains112 and cannot qualify114 peers. Continue title-input unit only;
 no overlap with contributor build or Haunted sensor investigations.
+
+Title baseline: source392d9e6b plus one new offline Enter regression case;
+question opening Submit must end before Home accepts PLAY. Stop on fresh1case
+XML/runner terminal; no retries yet, maximum one tooling repair. Inputs frozen
+in isolated Logs/title-submit-baseline/inputs.json; current114overlay.
+
+Baseline1case proves title transitions with Enter still held. Final defers only
+UI Submit release plus one frame; all title entry paths share single guarded
+callback. Final3cases cover keyboard/pad fresh Submit and unchanged ordinary-key
+Back route. Baseline inputs unchanged; final frozen separately. No tooling retry.
+
+Finalv1 preserves title release/no autoqueue but fresh Submit fixture yields
+past its injected input frame before module processing. One bounded repair calls
+real InputSystemUIInputModule.Process in that frame and asserts action performed;
+no direct button invocation or runtime change. Rerun same3cases once asv2.
+
+Title finalv2 native3/3passes6.5848261s; fresh keyboard/pad Submit reaches actual
+UI module and queues offline after release, Period/Back route retained. Frozen
+inputs unchanged, OOM11/kill6unchanged. Publish four owned source/test files and
+evidence; protocol114 unchanged. Linux112player remains older. Same Feedback
+any-key row needs regression/resolution appended after remote verification.

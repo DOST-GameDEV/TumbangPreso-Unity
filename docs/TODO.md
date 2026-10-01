@@ -296,7 +296,10 @@ incomplete cells still do not authorize invented specifications.
   [Network presentation evidence](reports/feedback-2026-09-30/familiar-network-smoothing.md).
   Audible mix, current actual peers and full-kit qualification remain open.
 
-- [x] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,
+- [x] F0930-13 Title Enter regression: release opening Submit before Home can queue;
+  three native keyboard/pad/ordinary-key checks pass. Publication pending.
+  [Evidence](reports/hero-quality-2026-10-01/title-submit-checks/README.md).
+  Prior already-labelled-fixed checks remain: any-key title,
   no Escape return to title, queue cancel button, hamburger background, stamina drain.
   Lighting rename/default/order reconciled with already-shipped BUGS-0926.5:
   current native2/2passes preserve old choices, default Standard, Nostalgic second,
