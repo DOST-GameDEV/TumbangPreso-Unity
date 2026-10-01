@@ -1,0 +1,48 @@
+[
+  {
+    "mode": "hero",
+    "rawVerdict": false,
+    "failureScope": "generic gate demands active round; both deliberate short matches completed before final sample",
+    "sides": {
+      "host": {
+        "completedMatches": 2,
+        "exceptionsFound": [],
+        "fps": "live frame rate : frames=1798; seconds=30.160; avg=59.62; p50=59.70; p5=57.97; p1=57.97; max_ms=28.20",
+        "roundActiveAtExit": false,
+        "map": "BayanPlaza",
+        "structural": "540E76A2"
+      },
+      "client": {
+        "completedMatches": 2,
+        "exceptionsFound": [],
+        "fps": "live frame rate : frames=1799; seconds=30.157; avg=59.65; p50=59.70; p5=57.97; p1=57.97; max_ms=27.17",
+        "roundActiveAtExit": false,
+        "map": "BayanPlaza",
+        "structural": "540E76A2"
+      }
+    }
+  },
+  {
+    "mode": "classic",
+    "rawVerdict": false,
+    "failureScope": "generic gate demands active round; both deliberate short matches completed before final sample",
+    "sides": {
+      "host": {
+        "completedMatches": 2,
+        "exceptionsFound": [],
+        "fps": "live frame rate : frames=1817; seconds=30.361; avg=59.85; p50=59.70; p5=57.97; p1=57.97; max_ms=19.32",
+        "roundActiveAtExit": false,
+        "map": "BayanPlaza",
+        "structural": "F0D9CFBF"
+      },
+      "client": {
+        "completedMatches": 2,
+        "exceptionsFound": [],
+        "fps": "live frame rate : frames=1819; seconds=30.393; avg=59.85; p50=59.70; p5=57.97; p1=57.97; max_ms=17.27",
+        "roundActiveAtExit": false,
+        "map": "BayanPlaza",
+        "structural": "F0D9CFBF"
+      }
+    }
+  }
+]

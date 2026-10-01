@@ -65,6 +65,10 @@ namespace TumbangPreso
             var open = GetComponentInChildren<UI.PausePanel>(includeInactive: false);
             if (open != null) { open.Close(); return; }
 
+            // Reopening enters synchronously. Bind the new local seat before
+            // that hook parks input, rather than parking the former body.
+            var existing = GetComponentInChildren<UI.PausePanel>(includeInactive: true);
+            if (existing != null) existing.Local = Local;
             var panel = UI.Panel.Open<UI.PausePanel>(this);
             panel.Local = Local;
         }
