@@ -3652,3 +3652,12 @@ Baseline weight0 failure and first-final memory stop retained with final evidenc
 in tagged-world-look-checks. Captures qualify shader context, not contact framing
 or separate foliage artifacts. Release owned camera/test paths after shipment.
 Next independent unit: flat shader player ground markers. No native job running.
+
+PLAYER-GROUND-MARKERS-1001 claims Runtime/Visual/CharacterNameplate.cs,
+CharacterNameplate.Catchable.cs, new CharacterNameplate.GroundMarker.cs/meta,
+Resources/Shaders/PlayerGroundMarker.shader/meta, Tests/RoleMarkerTests.cs and
+Tests/PlayMode/SwimmingNameplateTests.cs. Replace cylinder/collar/lipped brackets
+with flat shader glow while retaining disc, open octagon and scoped brackets,
+seat colours, water placement and local first-person hiding. Focused native
+shape/flatness/camera-scope and water checks; no character kit edits. Ground
+projection beyond existing water/flight behavior is not required by this unit.
