@@ -2464,6 +2464,23 @@ paths/status/receipts and update existing Nemu Notes with local actor/item scope
 Then continue actual reconnect/session recovery using existing authority/identity
 routes; no new paid service, queue query rate, visual or loading changes.
 
+HYDRO-CURTAIN-SHAPE-1001 claims Visual/RafiWaterVisual.cs,
+Resources/Shaders/RafiWater.shader and existing RafiExpansionProbe.cs visual case.
+Replace the glass rectangle with a sampled folded sheet, uneven curled lip and
+shallow source trough; near-clear centre, no opaque screen or gameplay changes.
+Reuse replay timeline and live one-use drain. No protocol changes; body/FPP/audio
+remain separate unfinished work. Validate deterministic sampling, zero colliders,
+visible fold and small/native court samples in one focused case. Current audio
+route old112player first attempt failed title entry before capture; one bounded
+manual-title retry now running, not a new gameplay qualification.
+
+Curtain shape native1/1passes, frozen hashes match, no new OOM. Active/broken
+960x540frames inspected: lip/source fold improves shape, can remains readable,
+but broad sheet still partly glass-like. Record incremental improvement honestly;
+not complete Hydro presentation. Audio player retry again expires during boot
+before expected UI, no output samples; no additional unchanged retry. Null sink
+removed ALSA errors but capture remains unproven. Revisit in a focused current
+Editor route after motion unit, not more old-player launch churn.
 Rival items64d1c97b0 remote verified. Same Nemu Notes updated/read back after two
 concurrent requiredRevision refusals; native targetRevision merge confined to
 unchanged agent-owned Notes cell, human controls/comments/screenshots preserved.

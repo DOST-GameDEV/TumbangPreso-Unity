@@ -1,6 +1,7 @@
 Shader "TumbangPreso/RafiWater"
 {
-    Properties { _Color ("Water tint", Color) = (.16,.60,.77,.36) }
+    Properties { _Color ("Water tint", Color) = (.16,.60,.77,.36)
+        _UseVertexTint ("Authored sheet opacity", Float) = 0 }
     SubShader
     {
         Tags { "Queue"="Transparent" "RenderType"="Transparent" "IgnoreProjector"="True" }
@@ -15,18 +16,21 @@ Shader "TumbangPreso/RafiWater"
             #pragma multi_compile_fog
             #include "UnityCG.cginc"
             fixed4 _Color;
-            struct appdata { float4 vertex:POSITION; float3 normal:NORMAL; };
+            float _UseVertexTint;
+            struct appdata { float4 vertex:POSITION; float3 normal:NORMAL; fixed4 colour:COLOR; };
             struct v2f
             {
                 float4 vertex:SV_POSITION;
                 float3 normal:TEXCOORD0;
                 float3 view:TEXCOORD1;
+                fixed4 colour:COLOR;
                 UNITY_FOG_COORDS(2)
             };
             v2f vert(appdata v)
             {
                 v2f o;
                 o.vertex=UnityObjectToClipPos(v.vertex);
+                o.colour=lerp(fixed4(1,1,1,1),v.colour,saturate(_UseVertexTint));
                 o.normal=mul(v.normal,(float3x3)unity_WorldToObject);
                 o.view=UnityWorldSpaceViewDir(mul(unity_ObjectToWorld,v.vertex).xyz);
                 UNITY_TRANSFER_FOG(o,o.vertex);
@@ -38,7 +42,7 @@ Shader "TumbangPreso/RafiWater"
                 float3 n=i.normal*rsqrt(max(dot(i.normal,i.normal),.0001));
                 float3 view=i.view*rsqrt(max(dot(i.view,i.view),.0001));
                 float rim=pow(1-saturate(abs(dot(n,view))),3);
-                fixed4 colour=fixed4(lerp(_Color.rgb,_Color.rgb*.65+.35,rim*.32),_Color.a);
+                fixed4 colour=fixed4(lerp(_Color.rgb,_Color.rgb*.65+.35,rim*.32),_Color.a*i.colour.a);
                 UNITY_APPLY_FOG(i.fogCoord,colour);
                 return colour;
             }
