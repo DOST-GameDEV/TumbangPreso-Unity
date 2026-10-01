@@ -17,6 +17,14 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### AIM-CIRCLE-CADENCE-1001: smooth visible landing-circle movement
+
+Ballistic prediction remains20Hz; circle presentation now interpolates every
+render frame with reset/snap boundaries. Actual local-charge acceptance passes
+1/1, including halfway position, no prediction mutation/overshoot and release.
+Native visible stroke106pixels, improved from88. No new peer/player claim.
+[Evidence](reports/feedback-2026-09-30/aim-circle-cadence-checks/README.md).
+
 ### PLAYER-GROUND-MARKERS-1001: flat hollow shader markers
 
 Removed raised cylinder/collar/bracket walls in favour of a soft flat shader rim.

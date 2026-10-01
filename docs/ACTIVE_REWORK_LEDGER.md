@@ -3751,3 +3751,20 @@ OWNER MAIN PRIORITY: demo/tournament reliability. Fix actual exceptions, stuck p
 October1 owner clarification, recorded verbatim in substance: main goal is that nothing breaks during a demo/tournament. Check that code works as intended and address real crashes, random pauses, lag and match failures. This is not permission to overengineer tests or spend the run expanding validation machinery. Use existing player/runtime paths; add only a small check tied to an observed defect. DOTS finishes the Docs TODO/Feedback queue; this worker prioritizes independent reliability/network/bot/optimization fixes. Preserve loading ownership and the authored VFX/SFX/animation/model/map restrictions.
 
 Current reliability run: frozen source04f6bfbb3/protocol126,15460inputs in isolated tump-feedback-0930. Freeze session41312 completed; guarded internal BuildWindows session94328 is live. Output Builds/demo-readiness126-1001/TumbangPreso.exe, log Logs/demo-readiness126-1001/build.log. Next poll this exact handle, then use existing run_demo_lan --rematch on matching actual host/client and inspect exceptions/stuck matchflow. No fresh validation framework or Docs TODO edits. Do not restart a live build or claim runtime success from build completion.
+
+Marker da411d8f integrated189a5c63 remote verified; Doc Done saved, human
+verification untouched, resolved hollow-circle comment struck. Closed only own
+completed cloud Docs tab to release its measured roughly400MB renderer; Google
+session retained. One capacity-recovery launch for the pending aiming acceptance
+is gated on at least200MB lower baseline than its previous3.61GB start. No
+fixture change, no guard increase, no unrelated process kill or profile deletion.
+If capacity is not improved, do not launch. Exact tested candidate remains125;
+source has independently integrated Quick Circuit126.
+
+Aiming capacity recovery passed1/1 and exited normally52.05s, OOM11/6 unchanged.
+Measured anon+shmem baseline improved2.006GB to1.670GB after closing owned Docs
+tab, not sign-out. Source/fixture unchanged for recovery; actual held charge,
+halfway/no-overshoot/exact-prediction and release-hide pass, stroke106pixels.
+Evidence aim-circle-cadence-checks. Exact candidate125; source126 Quick Circuit
+changes remain separately qualified. Release aiming paths after publication.
+Next resume feedback queue; foliage waits for the unpushed Ilalim rework.
