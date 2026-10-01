@@ -3327,3 +3327,15 @@ identity. Artistic sole contact/observer shoe and Waterwall settled icon remain
 open for distinct loaded-shoe presentation unit. No product failure inferred
 from the disabled-canvas fixture. Publish coherent dedicated-motion slice with
 these limits, not final quality. No native job running.
+
+RAFI-SKIM-COATING-1001 owns new Visual/RafiSkimCoating.cs/meta, RafiHeroKit.cs
+visual attachment on activate/restore only, ViewmodelArms.MatchSkin Rafi branch,
+RafiExpansionProbe focused loaded-state lifecycle and visual review, and dated
+plan/evidence/TODO. Existing Sean/Zack attachment pattern is the integration point;
+no Slipper physics/prediction edits. A narrow teal meniscus follows actual mesh
+bounds around the sole, with toe/heel variation and expiry drainage from real
+remaining time. Both owner prop and world prop observe the same loaded identity;
+no extra authoritative state. Dispose on throw, expiry, role/kit change, transfer.
+One focused native lifecycle/review, at most one bounded fixture repair. Include
+properly bound Hud and detached shoe observer restoration in this distinct VFX
+review, preserving earlier failed diagnostic. SFX remains separate. Quiet mode.
