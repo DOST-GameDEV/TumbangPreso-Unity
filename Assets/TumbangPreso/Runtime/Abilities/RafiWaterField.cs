@@ -142,7 +142,7 @@ namespace TumbangPreso.Abilities
             float firstTime = float.PositiveInfinity;
             foreach (var shoe in _shoes)
             {
-                if (shoe == null || shoe.State != SlipperState.InFlight) continue;
+                if (shoe == null || shoe.State != SlipperState.InFlight || shoe.IsSkimming) continue;
                 var velocity = shoe.Velocity;
                 if (new Vector2(velocity.x, velocity.z).sqrMagnitude < .001f) continue;
                 var a = (_previousShoes.TryGetValue(shoe, out var old) ? old : shoe.transform.position) - before;

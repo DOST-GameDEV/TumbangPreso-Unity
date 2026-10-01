@@ -12,6 +12,14 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(.65f, RafiRules.CurrentRadius);
         }
 
+        [Fact] public void SkimHasOneBoundedLoadAndGroundTravel()
+        {
+            Assert.Equal(35f,RafiRules.SkimCooldown);
+            Assert.Equal(8f,RafiRules.SkimLoadSeconds);
+            Assert.Equal(2f,RafiRules.SkimDistance);
+            Assert.Equal(.4f,RafiRules.SkimDistance/RafiRules.SkimSpeed,5);
+        }
+
         [Fact] public void FirstEntryPrecedesClosestApproachAndIsOrderable()
         {
             Assert.True(RafiRules.FirstCurrentContact(0, 0, 2, 0, 0, -2, .5f, out float later));

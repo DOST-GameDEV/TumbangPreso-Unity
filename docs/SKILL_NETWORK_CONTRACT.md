@@ -521,3 +521,15 @@ The stable rafi_skill1 ID and existing host-confirmed cast/resource, current wor
 snapshot and slipper state routes remain. Current rendering does not acquire
 resolution authority. Matching clients are required; no packet layout changes.
 [Focused evidence](reports/hero-quality-2026-10-01/hydro-current-checks/README.md).
+
+## Skim Compatibility
+
+Protocol116 changes rafi_skill2 from Mirrorwake to an eight-second held load and
+35second cooldown, appending slipper affinity5. The host continues the same
+throw through bounded first-ground travel, retaining ordinary body/can outcomes
+and ending loose. Existing slipper snapshots carry affinity/poses. The timed-kit
+personal channel binds rafi_skill2 to its remaining load after reliable equipment
+recovery; restoration does not cast. New-round reset permits that round's first
+snapshot; older/duplicate recovery retains the generic scope/sequence gates.
+Current ignores ground-skimming shoes. Historical Mirrorwake world rendering
+remains readable. Actual116peers require their own qualification.

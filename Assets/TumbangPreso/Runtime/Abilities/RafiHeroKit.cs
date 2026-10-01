@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using TumbangPreso.Net;
 using TumbangPreso.Core;
 using TumbangPreso.UI;
@@ -6,34 +5,58 @@ using UnityEngine;
 
 namespace TumbangPreso.Abilities
 {
-    public sealed class RafiHeroKit : HeroKit
+    public sealed class RafiHeroKit : HeroKit, ITimedKitReplication
     {
-        private readonly List<Vector3> _recent = new List<Vector3>(8);
-        private float _sampleLeft;
+        private Slipper _loadedSlipper;
+        private bool _joiningSkimSettled;
+        public bool IsSkimLoaded => _loadedSlipper != null && AttackingSkill.IsActive
+            && _loadedSlipper.State == SlipperState.Held && _loadedSlipper.Holder != null
+            && !_loadedSlipper.Holder.IsDefender && _loadedSlipper.Holder.AbilitySystem?.Kit == this;
+
+        public bool ConsumeSkim(Slipper slipper)
+        {
+            if (!IsSkimLoaded || _loadedSlipper != slipper) return false;
+            _loadedSlipper = null;
+            return true;
+        }
+
+        public TimedKitSnapshot CaptureTimedKit()
+            => new TimedKitSnapshot(AttackingSkill, IsSkimLoaded ? AttackingSkill.DurationRemaining : 0);
+
+        public bool RestoreTimedKit(CharacterMotor motor, TimedKitSnapshot state)
+        {
+            if (motor == null || _joiningSkimSettled || AttackingSkill.IsActive
+                || !float.IsFinite(state.PersonalRemaining) || state.PersonalRemaining < 0
+                || state.PersonalRemaining > RafiRules.SkimLoadSeconds) return false;
+            _joiningSkimSettled = true;
+            var held = motor.GetComponent<Carrier>()?.Held;
+            if (state.PersonalRemaining <= 0 || held == null || motor.IsDefender) return false;
+            _loadedSlipper = held;
+            ((Skim)AttackingSkill).RestoreLoad(state.PersonalRemaining);
+            return true;
+        }
+
+        public override void Reset()
+        {
+            _loadedSlipper = null; _joiningSkimSettled = false;
+            base.Reset();
+        }
+
+        public override void ResetForRound(AbilityContext ctx)
+        {
+            base.ResetForRound(ctx);
+            _loadedSlipper = null; _joiningSkimSettled = false;
+        }
+
         public override float UltimateCost => 16;
 
         public RafiHeroKit() : base("rafi", "RAFI")
         {
             Skill1 = new Crosscurrent();
             // ABILITY-2: the four-slot shape; the defending slot waits for the owner's Hydro design.
-            AttackingSkill = new Mirrorwake(this);
+            AttackingSkill = new Skim(this);
             DefendingSkill = new PlaceholderRoleAbility("rafi_skill2d", "Rafi", AbilityGlyph.RafiMirrorwake);
             Ultimate = new Breakwater();
-        }
-
-        public override void Tick(AbilityContext ctx, float dt)
-        {
-            base.Tick(ctx, dt);
-            if (!NetAuthority.ShouldResolve() || ctx?.Motor == null) return;
-            if (ctx.Round == null || !ctx.Round.RoundActive) { _recent.Clear(); _sampleLeft = 0; return; }
-            _sampleLeft -= dt;
-            if (_sampleLeft > 0) return;
-            _sampleLeft = .10f;
-            // Teleport/recovery is a discontinuity, not a route the echo can cross.
-            if (_recent.Count > 0 && Vector3.Distance(_recent[_recent.Count - 1], ctx.Position) > 2)
-                _recent.Clear();
-            if (_recent.Count == 8) _recent.RemoveAt(0);
-            _recent.Add(ctx.Position);
         }
 
         private sealed class Crosscurrent : HeroAbility
@@ -55,24 +78,29 @@ namespace TumbangPreso.Abilities
             }
         }
 
-        private sealed class Mirrorwake : HeroAbility
+        private sealed class Skim : HeroAbility
         {
-            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private readonly RafiHeroKit _kit;
-            public Mirrorwake(RafiHeroKit kit) : base("rafi_skill2", "MIRRORWAKE",
-                "Replay your route as a watery decoy with one harmless throw feint. You stay visible and vulnerable.",
-                0, glyph: AbilityGlyph.RafiMirrorwake,
-                summary: "A watery echo retraces your steps. No hit, shield or teleport.",
-                castAction: "hero-rafi-feint", viewmodelAction: "mirror-feint", castCue: "sfx_cast_rafi_mirror", charges: 2)
+            public Skim(RafiHeroKit kit) : base("rafi_skill2", "SKIM",
+                "Coat your held slipper for 8 seconds. Its next throw skims up to 2 metres after first ground contact, then rests for normal retrieval.",
+                RafiRules.SkimCooldown, RafiRules.SkimLoadSeconds, glyph: AbilityGlyph.RafiMirrorwake,
+                summary: "Your next throw skims on landing. Bodies and the can consume it normally.",
+                castAction: "hero-rafi-feint", viewmodelAction: "mirror-feint", castCue: "sfx_cast_rafi_mirror")
             { _kit = kit; }
+            public override bool CanActivate(AbilityContext ctx)
+                => base.CanActivate(ctx) && !ctx.Motor.IsDefender && ctx.Carrier?.Held != null;
+            public void RestoreLoad(float remaining) => RestoreLiveClock(remaining);
             protected override void OnActivate(AbilityContext ctx)
+            { _kit._joiningSkimSettled = true; _kit._loadedSlipper = ctx.Carrier?.Held; }
+            protected override void OnTick(AbilityContext ctx, float dt)
             {
-                if (!NetAuthority.ShouldResolve()) return;
-                bool longWake = ctx.HasVariant("rafi.2.longwake");
-                var path = _kit._recent.Count >= 2 ? _kit._recent.ToArray() : new[] { ctx.Position, ctx.Position };
-                RafiWaterField.Cast(ctx, WorldEffectSnapshot.Kind.Mirrorwake, 1, 0,
-                    1.25f * ctx.GainScale("rafi.2.longwake"), longWake, path);
+                if (_kit._loadedSlipper == null || ctx.Carrier?.Held != _kit._loadedSlipper
+                    || _kit._loadedSlipper.State != SlipperState.Held || ctx.Motor.IsDefender)
+                    DurationRemaining = 0;
             }
+            protected override void OnEnd(AbilityContext ctx) => _kit._loadedSlipper = null;
+            protected override void OnCancelled(AbilityContext ctx) => _kit._loadedSlipper = null;
         }
 
         private sealed class Breakwater : HeroAbility
