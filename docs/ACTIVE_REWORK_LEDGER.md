@@ -3769,6 +3769,22 @@ Evidence aim-circle-cadence-checks. Exact candidate125; source126 Quick Circuit
 changes remain separately qualified. Release aiming paths after publication.
 Next resume feedback queue; foliage waits for the unpushed Ilalim rework.
 
+PAUSE-OWNER-REBIND-1001 independently investigates PauseWatcher.Update assigning panel.Local after Panel.Open has synchronously entered a reused menu. Owns PauseWatcher.cs and one small PauseOwnerRebindTests native case. Reproduce actual keyboard re-open after local seat rebind: current body parks, former body remains released, online time stays live. No layout/art/loading change, no Docs TODO item. Native baseline then small fix/final, tooling retry0. Wait for current actual Classic pair34946 to terminate before starting Editor.
+
+PAUSE-OWNER-REBIND-1001 reproduced current body not parked when existing menu
+opens after a local seat rebind. Four-line PauseWatcher fix binds panel.Local
+before synchronous activation. Same actual keyboard case final1/1 passes with
+old/new body and online clock/close controls;752inputs unchanged, zero repairs.
+Native guards73328/29447 terminal. Source9670e846e+owned overlay, protocol126
+unchanged. Publish this independent real input bug; no Docs TODO/Feedback edit.
+Actual126build04f6bfbb3:2142MB/121s/15460inputs no drift; Hero/Classic both
+complete two short matches and voted rematch, no logged exceptions, matching
+structures. Raw matrix verdicts remainfalse because final samples are normal
+result boards, not active rounds. FPS59.6..59.85at640x400 only. All player jobs
+94328/15692/34946 terminal, port8910 released. New marker/circle contributions
+integrated9670e846e; actual126player predates those and this pause fix.
+Next independent demo/tournament reliability hunting. DOTS owns Docs queue;
+do not resume kit migration or add validation machinery. Goal stays active.
 RAFI-CAST-CLARITY-1001 claims only the Rafi condition in
 Runtime/Abilities/HeroAbilitySystem.cs and Tests/PlayMode/RafiExpansionProbe.cs.
 The previous measured Skim film showed generic blue cast particles competing
