@@ -3339,3 +3339,26 @@ no extra authoritative state. Dispose on throw, expiry, role/kit change, transfe
 One focused native lifecycle/review, at most one bounded fixture repair. Include
 properly bound Hud and detached shoe observer restoration in this distinct VFX
 review, preserving earlier failed diagnostic. SFX remains separate. Quiet mode.
+
+Loaded coating first runtime stops on a new component initialization defect:
+MaterialPropertyBlock cannot be created in a MonoBehaviour field initializer.
+Move construction into explicit Build after AddComponent; no test relaxation.
+Product correction, no tooling repair. Repeat the same relevant lifecycle/view
+check against corrected source; preserve failure evidence.
+
+Coating v2 native1/1 passes both copies, actual load and natural expiry/release
+cleanup. Native pixels show the narrow edge too buried in the sampled shoe sole.
+Increase only meniscus width and toe clearance slightly, lower it to the sole
+edge; preserve skin/material and all state. Product visual correction, nofixture
+change. Final same-case view/lifecycle review follows; no new OOM. Properly bound
+Hud now shows settled Waterwall icon correctly. Body palm/sole artistic relation
+still needs refinement; do not call the entire Hydro quality pass complete.
+
+Coating finalv3 passes1/1 natural expiry/release, two live copies, real state and
+no colliders. Source/frozen hashes match; no new OOM. Sole edge visible in owner
+view after width/clearance adjustment; tiny world cue preserves shoe silhouette.
+Proper Hud.Bind resolves settled Waterwall icon; observer now shows real held
+prop. The body free hand still misses a convincing sole stroke, so exact palm
+alignment is the next refinement, not a completed quality claim. Sound, skin
+matrix, cold-join cue film and actual-peer visual qualification remain open.
+All native jobs terminal. Ship coherent cue, then inspect measured palm geometry.

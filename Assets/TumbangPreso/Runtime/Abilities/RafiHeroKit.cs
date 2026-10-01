@@ -35,6 +35,7 @@ namespace TumbangPreso.Abilities
             if (state.PersonalRemaining <= 0 || held == null || motor.IsDefender) return false;
             _loadedSlipper = held;
             ((Skim)AttackingSkill).RestoreLoad(state.PersonalRemaining);
+            Visual.RafiSkimCoating.Ensure(held.GetComponentInChildren<MeshFilter>(),held,this);
             return true;
         }
 
@@ -93,7 +94,11 @@ namespace TumbangPreso.Abilities
                 => base.CanActivate(ctx) && !ctx.Motor.IsDefender && ctx.Carrier?.Held != null;
             public void RestoreLoad(float remaining) => RestoreLiveClock(remaining);
             protected override void OnActivate(AbilityContext ctx)
-            { _kit._joiningSkimSettled = true; _kit._loadedSlipper = ctx.Carrier?.Held; }
+            {
+                _kit._joiningSkimSettled = true; _kit._loadedSlipper = ctx.Carrier?.Held;
+                var shoe=_kit._loadedSlipper;
+                if(shoe!=null)Visual.RafiSkimCoating.Ensure(shoe.GetComponentInChildren<MeshFilter>(),shoe,_kit);
+            }
             protected override void OnTick(AbilityContext ctx, float dt)
             {
                 if (_kit._loadedSlipper == null || ctx.Carrier?.Held != _kit._loadedSlipper
