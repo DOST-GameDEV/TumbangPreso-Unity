@@ -1803,3 +1803,19 @@ files match candidate. Jobs50235/65991/36162 terminal. No authored assets, map
 fog/lighting, loading, paid calls or other chats. Publish original same-row note
 with current-peer/audible/whole-kit limits, then continue remaining Feedback
 bottom-up and practical bugs. Current protocol113player remains unbuilt.
+
+HAUNTED-PERCEPTION-1001 shipped dad79fa70d150079cb8dda6c94155600cc02af7e,
+remote verified. Same Nemu Feedback Notes cell consolidated to two readable
+paragraphs with current chase/perception status and explicit protocol113 matching
+player/rejoin/audio-human checks. Original Report, Done/Human verified controls,
+human comments and screenshot-bearing rows preserved. Exact note read back.
+No current whole-player/live-peer or recorded audible mix claim. All jobs terminal.
+Next bottom-up Wiki reconciliation has a concrete newly adopted Amihan mismatch:
+live non-proposed Airburst cell now says1.5second delay and60degree fan; current
+AmihanRules.StormSurgeGatherSeconds is2.5 and StormSurgeHalfAngle is35(total70).
+AmihanHeroKit description and native AcceptedWindup test still assume2.5. Align
+those timing/geometry rules with focused release/boundary evidence before the
+next coherent matching-player qualification. Hydro/Zack/Pyro new cells are
+explicitly Proposed and stay design proposals pending adopted implementation
+contract; do not silently invent/ship them as already accepted behavior.
+Preserve loading reservation, private dirt and authored assets. Full goal active.
