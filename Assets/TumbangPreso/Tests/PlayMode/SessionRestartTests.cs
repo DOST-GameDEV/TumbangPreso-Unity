@@ -215,6 +215,30 @@ namespace TumbangPreso.PlayTests
 
         [UnityTest] public IEnumerator PreRoundArrivalAppliesItsPickToTheBotPlaceholder()
             => CheckArrivalCharacter(false);
+
+        [UnityTest] public IEnumerator ValidIdentifyFrameStillUsesApprovedIdentityOnTheConnectedHost()
+        {
+            var net=NetSession.Ensure();yield return null;
+            try
+            {
+                bool hosted=false;yield return Await(net.StartHostAsync(18694),r=>hosted=r);
+                Assert.IsTrue(hosted,net.Status);string approved=net.Lobby.PeerById(0).Token;
+                using var writer=new FastBufferWriter(256,Allocator.Temp);
+                writer.WriteValueSafe(123UL);writer.WriteValueSafe("untrusted-message-token");writer.WriteValueSafe("QA 雨");
+                writer.WriteValueSafe("");writer.WriteValueSafe("");
+                writer.WriteValueSafe(2);writer.WriteValueSafe(1);writer.WriteValueSafe(3);
+                writer.WriteValueSafe("");writer.WriteValueSafe("");writer.WriteValueSafe("");
+                using var reader=new FastBufferReader(writer,Allocator.Temp);reader.ReadValueSafe(out ulong envelope);
+                var rpc=net.GetComponent<MatchRpc>();
+                typeof(MatchRpc).GetMethod("OnIdentifyMsg",BindingFlags.Instance|BindingFlags.NonPublic)
+                    .Invoke(rpc,new object[]{0UL,reader});
+                Assert.AreEqual(approved,net.Lobby.PeerById(0).Token);
+                Assert.AreEqual(2,net.Lobby.PeerById(0).CharacterPick);
+                Assert.IsTrue(((System.Collections.Generic.HashSet<int>)typeof(MatchRpc)
+                    .GetField("_identified",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(rpc)).Contains(0));
+            }
+            finally{net.Stop();}
+        }
         [UnityTest] public IEnumerator RunningMatchArrivalKeepsTheExistingCharacter()
             => CheckArrivalCharacter(true);
         [UnityTest] public IEnumerator PreRoundArrivalKeepsTheMirroredFormatCharacter()

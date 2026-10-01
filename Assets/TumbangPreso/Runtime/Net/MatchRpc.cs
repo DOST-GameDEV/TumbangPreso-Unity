@@ -739,7 +739,7 @@ namespace TumbangPreso.Net
 
         private void OnIdentifyMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!NetAuthority.IsHost) return;
+            if (!NetAuthority.IsHost || !ValidIdentifyFrame(ref reader)) return;
 
             reader.ReadValueSafe(out string token);
             reader.ReadValueSafe(out string name);
@@ -763,6 +763,34 @@ namespace TumbangPreso.Net
 
             HandleIdentify(senderClientId, token, name, accountPlayerId, handleProof, charPick,
                            canPick, slipperPick, cosmetics, custom, build);
+        }
+
+        private static bool SkipIdentifyString(ref FastBufferReader reader)
+        {
+            if (!reader.TryBeginRead(sizeof(uint))) return false;
+            reader.ReadValueSafe(out uint characters);
+            // UTF-16 byte counts must fit the actual unread payload before
+            // string decoding can allocate or multiply an untrusted length.
+            int available=reader.Length-reader.Position;
+            if (characters > (uint)(available/sizeof(ushort))) return false;
+            reader.Seek(reader.Position+(int)characters*sizeof(ushort));
+            return true;
+        }
+        private static bool ValidIdentifyFrame(ref FastBufferReader reader)
+        {
+            int start=reader.Position;
+            try
+            {
+                for(int i=0;i<4;i++) if(!SkipIdentifyString(ref reader)) return false;
+                if(!reader.TryBeginRead(sizeof(int)*3)) return false;
+                reader.Seek(reader.Position+sizeof(int)*3);
+                if(!SkipIdentifyString(ref reader)) return false;
+                // Keep the existing legacy optional custom/build tails.
+                if(reader.Position<reader.Length && !SkipIdentifyString(ref reader)) return false;
+                if(reader.Position<reader.Length && !SkipIdentifyString(ref reader)) return false;
+                return reader.Position==reader.Length;
+            }
+            finally { reader.Seek(start); }
         }
 
         private void HandleIdentify(ulong senderClientId, string token, string name,

@@ -2733,6 +2733,21 @@ second timer. No Tagged immunity paragraph in current Doc, so do not implement
 that removed revision. Two native scoring/pause/recall checks plus focused Core
 fatigue/boundary checks; one tooling repair maximum. Next HUD layout afterward.
 
+Compact local resume checkpoint: source50c266f51/ASTRAReworks, current118, all
+native/build/hash/player handles terminal; no unused task browser/previews.
+Owned shipped units this continuation: actor92ee8b8e9(native13), rivalitems64d1c97b0
+(native9), snapshot6cadc9593(native4), held/Identify3bd0b1096(five distinct native),
+pre-roundb4c329b7b(native3). Actual117coldrejoin fixeschar2/seat1 but strictaggregate
+stillfalse due laterhostboundary; receiptsoriginal+changed preserved in ecb598062.
+Current Docs Nemu note reflectsactor/items; Hydro author prefix preserved. Penalty
+Balance/Coretests/NetSession119 and nextHUD are contributor reservations. Loading
+stillfriend-owned; Phaister/Paete finalizedmechanics/art protected. No otherchat,
+subagent, reset, paidservice, Desktopreplacement or private-dirt staging.
+Next local independent unit: inspect OnIdentifyMsg malformed-string framing and
+actual receiver exception before changing it; preserve valid/repeated identity,
+approved-token authority and coalesced arrival. Focused native baseline/final,
+one bounded repair; no broad unchanged validation. Whole goal stillactive.
+
 Penalty baseline2/2fails at intended old-window differences: no camping warning
 at2.5seconds and slipper warning already active before7.5seconds. No fixture
 failures. Six Core constants now match current Feedback; existing pause/score/
@@ -2745,6 +2760,11 @@ loose shoe inside danger area, 11.25-second half-full recall clock and retrieval
 clear. Court image includes seeded award banner, not a clean HUD-quality proof.
 Publish protocol 119 and update same penalty row. Next Harry's HUD layout, using
 his actual mockup; no removed Tagged-immunity request or ability retune.
+
+Integratedb44205147 current penalty clocks with authored2native/4Core receipts;
+current119. Local actualreconnect/Haunt players remain117/116frozen boundaries.
+Preserve next HUD work reservation. Local next unit remains bounded Identify
+receiver framing; no live native/player/hash/build jobs, and private work intact.
 
 HUD-LAYOUT-1001 claims UI/TumpMatchReadout.cs, TumpMatchReadout.CourtHud.cs,
 TumpMatchReadout.MatchBar.cs, TumpMatchReadout.Statuses.cs, new Warnings partial,
@@ -2777,3 +2797,32 @@ appear. Extend ownership to Abilities/HeroAbilitySystem.cs only at buffer expiry
 record refusal feedback for an actor able to act, preserving buffer/cast timing.
 One targeted actual empty-hand Skim press/expiry check plus event-feed capture;
 no kit rules, protected ability values or transport changes.
+IDENTIFY-FRAMING-1001 owns MatchRpc.cs parser preflight and new IdentifyPacketBoundsTests.cs/meta.
+Library source confirms uint length→int cast and UTF16 bounds can throw before
+identity/arrival checks. Baseline6malformed cases with consumed8byte name hash;
+final8includes valid Unicode/current and legacy optionaltail. Preflight whole
+payload without managed strings, then existing decode/authority only on valid
+frame. No arbitrary text clamp, new wire fields, kit/loading or asset edits.
+One focused native baseline/final, one repair max, stop fresh XML. All old jobs terminal.
+
+Identify baseline6/6fails with actual Overflow/InvalidCast exceptions on truncated
+UTF16/ints and impossible uint lengths. No fixture/tooling failure,6231terminal.
+Preflight walks all required strings/three ints/optional tails using actual unread
+bytes, restores start position, then original decoding/authority remains. No guessed
+text limit or managed-string allocation before valid frame. Final8EditMode cases
+plus one actual listening-host receiver proves approved-token pin and admitted
+valid picks; two suites sequential, no broad unrelated run. No repair yet.
+
+Identify structural final8/8EditMode passes0.102s; malformed strings/ints safely
+reject, validUnicode/full/legacytail preflight explicitly accepts and restores8byte
+startingposition. No fixture repair. Live connected-host final now checks actual
+OnIdentify receiver, admittedpicks and approved-token pin after parser. Same
+frozeninputs/source; no unrelated suite or newplayer.11606terminal before livejob.
+
+Identify final8EditMode/1PlayMode passes; nine distinct cases, not one9/9suite.
+682inputs no drift, four ownedfiles match candidate, new32hexmeta nativelyimported.
+Six actualmalformed exceptions removed; Unicode/legacy tails/startposition and
+actualhost approved-token/picks path retained. No fixture repair, all jobs6231/
+11606/64329terminal, profiles/inputprefs preserved. Publish exact paths/status/
+receipts. Current119, no freshplayer/peerclaim. Next reasonable network receiver
+work remains scoped after fresh Feedback/reservations; whole goalactive.
