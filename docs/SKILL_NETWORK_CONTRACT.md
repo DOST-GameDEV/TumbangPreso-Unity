@@ -547,3 +547,8 @@ Protocol118 aligns ordinary throw legality: lata knockdown cancels held charge;
 new charge and release require upright lata with restoration protection expired.
 Existing charge cancellation replication is reused. No new payload or transport;
 117and118must not share a match because the accepted input rules differ.
+
+Protocol119 aligns camping entry/clear radii1.5m/2.0m, warning2.5seconds,
+loose-slipper warning7.5seconds and penalty grace15seconds, and fatigue2.5seconds.
+Existing host scoring, incapacity pause, score floor and snapshot fields remain.
+Both sides need matching tuning; no new payload or transport.

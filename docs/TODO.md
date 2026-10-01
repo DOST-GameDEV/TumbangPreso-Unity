@@ -17,6 +17,15 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### PENALTY-REVAMP-1001: current Harry timing revision
+
+Camping 1.5/2.0 m with warning at 2.5 s and penalty state at 5 s; slipper warning
+at 7.5 s and penalty at 15 s; fatigue 2.5 s. Native 2/2 and focused Core 4/4 pass.
+Existing circle reads the new grace interval, with incapacity pause and zero floor
+retained. Protocol 119; no new player/peer claim.
+[Evidence](reports/feedback-2026-09-30/penalty-timing-checks/README.md).
+
+
 ### ROUND-STATUS-1001: Harry's carryover report
 
 Tagged and trip stacks now clear through the existing round reset. Native

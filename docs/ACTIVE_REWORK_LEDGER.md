@@ -2694,3 +2694,16 @@ reads warning/grace constants; prove its7.5second countdown rather than add a
 second timer. No Tagged immunity paragraph in current Doc, so do not implement
 that removed revision. Two native scoring/pause/recall checks plus focused Core
 fatigue/boundary checks; one tooling repair maximum. Next HUD layout afterward.
+
+Penalty baseline2/2fails at intended old-window differences: no camping warning
+at2.5seconds and slipper warning already active before7.5seconds. No fixture
+failures. Six Core constants now match current Feedback; existing pause/score/
+recall paths unchanged. Protocol119. Final same2native cases plus focused Core
+fatigue/tournament controls; no unrelated suite or Tagged immunity changes.
+
+Penalty final native 2/2 and Core 4/4 pass, frozen hashes unchanged/no new OOM.
+Controlled host time deltas cover camping warning/debt/income/pause/hysteresis,
+loose shoe inside danger area, 11.25-second half-full recall clock and retrieval
+clear. Court image includes seeded award banner, not a clean HUD-quality proof.
+Publish protocol 119 and update same penalty row. Next Harry's HUD layout, using
+his actual mockup; no removed Tagged-immunity request or ability retune.

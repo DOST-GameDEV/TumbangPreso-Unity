@@ -223,7 +223,7 @@ sweep is now a no-op over an empty group. **The speed-zone STACK it feeds
 | `STAMINA_REGEN_RATE` | **20.0 /s** | a full bar refills in 3.0 s |
 | `STAMINA_REGEN_DELAY` | **1.0 s** | after the last sprint frame |
 | `STAMINA_SPRINT_FLOOR` | 7.5 | you cannot *start* a sprint below this, so the bar cannot be feathered |
-| `FATIGUE_TIME` | **2.0 s** | triggered by reaching 0. **Regen is locked for its whole duration** |
+| `FATIGUE_TIME` | **2.5 s** | triggered by reaching 0. **Regen is locked for its whole duration** |
 | `FATIGUE_SPEED_SCALE` | **0.75** | −25% speed, sprint locked out |
 | `JUMP_VELOCITY` | 5.8 | |
 | `GRAVITY` | 20.0 | |
@@ -237,13 +237,13 @@ Points every 0.25 seconds"*; it is implemented as a continuous 40/s, which spend
 identical 10 points per quarter-second held and cannot be feathered by tapping Shift
 on a sub-tick rhythm.
 
-⚠️ **FATIGUE NOW LOCKS REGEN, NOT JUST SPEED.** Reaching 0 costs 2.0 s at 0.75 speed
+⚠️ **FATIGUE NOW LOCKS REGEN, NOT JUST SPEED.** Reaching 0 costs 2.5 s at 0.75 speed
 with sprint locked out **and the bar refusing to refill at all**. Previously it
 refilled at full rate during the penalty, so the punishment did not touch the
 resource it was punishing.
 
 ⚠️ **§2.5 MEASURED 2026-08-01, ON THE 50-POINT POOL, BEFORE THE RAISE**
-(`tools/mech_probe.tscn`): sprint to empty **1.25 s** exactly, fatigue lockout **2.00 s**
+(`tools/mech_probe.tscn`, historical tuning): sprint to empty **1.25 s** exactly, fatigue lockout **2.00 s**
 exactly, and empty → full again in **2.97 s**. Every constant did what the table said.
 **On the 60-point pool that ships, sprint to empty is 1.50 s and a refill is 3.00 s.** The
 probe has not been re-run since the raise; those two are arithmetic on drain and regen rates
@@ -1061,3 +1061,14 @@ Classic already uses. `docs/TODO.md` § 2 has the full collision table. **Until 
 ⚠️ **WHERE A HERO SYSTEM CONTRADICTS A NUMBER ABOVE, THE HERO SYSTEM IS SCOPED TO ITS MODE**
 and the number above still stands for Classic. Nothing in the ability layer is allowed to
 change a Classic constant; if one ever needs to, it moves here in the same commit, per § 0.
+
+## Current anti-stall timing
+
+The current Feedback revision uses 1.5 m camping entry and 2.0 m clear distance.
+Warn after 2.5 seconds near an upright can; the penalty state begins at 5 seconds
+and deducts 5 points per second while suspending normal 10 points/sec defense income.
+An owned loose slipper warns at 7.5 seconds; its existing highlight counts the
+remaining 7.5 seconds until the 15-second penalty threshold. Both clocks hold
+while the player cannot act. Retrieving the slipper clears its episode. Scores
+retain their zero floor. Exhaustion now lasts 2.5 seconds at 75% speed with sprint
+and regeneration locked throughout. These shared timings require protocol 119.
