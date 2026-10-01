@@ -3497,3 +3497,11 @@ flowparcelsandunevencrown/baseareclearer,centrecanvisible. Notallmaps/Low/player
 peer/humanapproval. Inputsunchanged,noOOM,norepair. Shelltransportbrieflydropped
 afterrunthenrecovered; nativeruncompleted66s. Publishsurface; sound/genericflash
 stillopen. Next inspectcurrentBaha/Crosscurrentpresentationagainstexistingplan.
+
+RAFI-BAHA-REVIEW-1001 owns UltimateIntroductionProbe.cs one Rafi-only entry and
+its dated review/plan. First inspect the actual existing3.4second authored boat-
+deck performance in its staged cameras, retaining model/clip/scene. No runtime
+or art changes authorized by this claim alone; diagnose the weakest real beat
+before claiming implementation paths. Reuse Study for one hero only with
+TUMP_INTRO_SCENE=1. Render-only baseline is not a real accepted-cast/pause/peer
+qualification. One baseline, one bounded tooling repair maximum. Alljobs terminal.
