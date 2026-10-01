@@ -13,6 +13,8 @@ namespace TumbangPreso.Abilities
             && _loadedSlipper.State == SlipperState.Held && _loadedSlipper.Holder != null
             && !_loadedSlipper.Holder.IsDefender && _loadedSlipper.Holder.AbilitySystem?.Kit == this;
 
+        public bool IsSkimLoadedFor(Slipper slipper) => IsSkimLoaded && _loadedSlipper == slipper;
+
         public bool ConsumeSkim(Slipper slipper)
         {
             if (!IsSkimLoaded || _loadedSlipper != slipper) return false;

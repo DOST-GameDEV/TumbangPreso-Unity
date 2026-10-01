@@ -24,6 +24,7 @@ No native fixture repair.60473/70644terminal; profiles/input preferences preserv
 
 Actual actors/can contacts and later ability/world changes may redirect flight;
 cached predictions respond at the bot's ordinary decision cadence. Skim ground
-continuation remains separate follow-through. No whole-match FPS/difficulty or
+continuation was separate follow-through at this revision and is now qualified
+in [the Skim prediction repair](skim-prediction.md). No whole-match FPS/difficulty or
 new actual-player/peer claim. The current120peer result predates this change and
 remains its exact c26c5c34b scope. No wire/hero-kit/loading/assets change.

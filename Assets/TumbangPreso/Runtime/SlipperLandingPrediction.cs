@@ -7,13 +7,16 @@ namespace TumbangPreso
     // Shared deterministic world-flight prediction; actor/can interception remains live.
     internal static class SlipperLandingPrediction
     {
-        internal static bool TryPredictLanding(Vector3 origin, Vector3 velocity, float spin, RaycastHit[] buffer, out Vector3 landing, List<Vector3> path = null)
+        internal static bool TryPredictLanding(Vector3 origin, Vector3 velocity, float spin, RaycastHit[] buffer, out Vector3 landing, List<Vector3> path = null,
+            float skimDistance = 0, bool skimming = false, float restHeight = Balance.SlipperRestHeight)
         {
             landing = default;
             Vector3 point = origin;
             float dt = Time.fixedDeltaTime;
             if (dt <= 0 || !float.IsFinite(dt) || !float.IsFinite(spin) || !float.IsFinite(origin.sqrMagnitude) || !float.IsFinite(velocity.sqrMagnitude)) return false;
             path?.Clear(); path?.Add(point);
+            if (skimming)
+                return CompleteSkim(point, velocity, skimDistance, restHeight, dt, out landing, path);
             int banks = 0;
             int steps = Mathf.Min(1200, Mathf.CeilToInt(Balance.MaxAirborneTime / dt));
             for (int i = 0; i < steps; i++)
@@ -60,11 +63,37 @@ namespace TumbangPreso
                 float ground = Slipper.FindGroundY(support, Balance.SlipperRestHeight);
                 path?.Add(next);
                 if (next.y <= ground + Balance.SlipperRestHeight)
-                { landing = new Vector3(next.x, ground + TrajectoryPreview.FloorEpsilon, next.z); return true; }
+                {
+                    if (skimDistance > 0 && new Vector2(velocity.x, velocity.z).sqrMagnitude >= .001f)
+                        return CompleteSkim(new Vector3(next.x, ground + restHeight, next.z), velocity,
+                            skimDistance, restHeight, dt, out landing, path);
+                    landing = new Vector3(next.x, ground + TrajectoryPreview.FloorEpsilon, next.z); return true;
+                }
                 if (next.y < Balance.VoidY) return false;
                 point = next;
             }
             return false;
+        }
+
+        private static bool CompleteSkim(Vector3 point, Vector3 velocity, float left, float restHeight,
+            float dt, out Vector3 landing, List<Vector3> path)
+        {
+            var direction = new Vector3(velocity.x, 0, velocity.z).normalized;
+            float ground = Slipper.FindGroundY(point, Balance.SlipperRestHeight);
+            // The authored continuation is bounded; zero direction cannot start it.
+            int steps = Mathf.Min(1200, Mathf.CeilToInt(RafiRules.SkimDistance / (RafiRules.SkimSpeed * dt)) + 1);
+            for (int i = 0; i < steps && left > 0 && direction.sqrMagnitude > 0; i++)
+            {
+                float distance = Mathf.Min(left, RafiRules.SkimSpeed * dt);
+                if (!Slipper.TrySkimStep(point, direction, distance, ground,
+                    out var next, out float support, out float allowed)) break;
+                ground = support;
+                point = new Vector3(next.x, support + restHeight, next.z);
+                path?.Add(point);
+                left = allowed < distance - .001f ? 0 : Mathf.Max(0, left - allowed);
+            }
+            landing = new Vector3(point.x, ground + TrajectoryPreview.FloorEpsilon, point.z);
+            return true;
         }
 
         private static bool BounceAxis(ref float at, ref float velocity, float min, float max, float restitution)
