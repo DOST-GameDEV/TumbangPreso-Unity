@@ -263,6 +263,85 @@ namespace TumbangPreso.PlayTests
             yield return null;
         }
 
+        private static CharacterMotor WallCaster()
+        {
+            var caster=GameServices.Round.Players.First(p=>p.IsDefender);
+            foreach(var actor in GameServices.Round.Players)
+            { actor.enabled=false; actor.GetComponent<Carrier>().enabled=false; }
+            caster.AbilitySystem.BindHero("rafi");caster.Teleport(new Vector3(-3,.12f,-5));
+            caster.transform.rotation=Quaternion.identity;caster.Intent.AimPoint=new Vector3(-3,.12f,-2);
+            caster.AbilitySystem.Kit.SetRole(true,Context(caster));
+            return caster;
+        }
+
+        [UnityTest,Timeout(60000)] public IEnumerator WaterwallDropsOneCrossingOnItsApproachSide()
+        {
+            yield return Start(); var caster=WallCaster();var ctx=Context(caster);
+            var kit=caster.AbilitySystem.Kit;
+            Assert.AreEqual(HeroKit.CastOutcome.Cast,kit.CastSkill2(ctx));
+            Assert.AreEqual(35,kit.DefendingSkill.CooldownRemaining);
+            var field=RafiWaterField.Active.Single(f=>f.Capture().Type==WorldEffectSnapshot.Kind.Waterwall);
+            yield return new WaitForSeconds(.3f);
+            Assert.AreEqual(0,field.GetComponentsInChildren<Collider>(true).Length,"People must pass through the curtain.");
+            var state=field.Capture();Assert.IsTrue(WorldEffectSnapshot.Valid(state));
+            var shoe=GameServices.Round.PlayerAt(2).GetComponent<Carrier>().Held;shoe.enabled=false;
+            var at=state.Position-state.Forward*.1f+Vector3.up*.9f;
+            shoe.HostThrow(GameServices.Round.PlayerAt(2),at,state.Forward*10);
+            field.SendMessage("RememberShoes");shoe.SendMessage("FixedUpdate");field.SendMessage("FixedUpdate");
+            Assert.AreEqual(SlipperState.Loose,shoe.State);
+            Assert.Less(Vector3.Dot(shoe.transform.position-state.Position,state.Forward),0);
+            Assert.AreEqual(2,shoe.OwnerSlot);Assert.IsTrue(field.Capture().Split);
+            var later=GameServices.Round.PlayerAt(3).GetComponent<Carrier>().Held;later.enabled=false;
+            later.HostThrow(GameServices.Round.PlayerAt(3),at,state.Forward*10);
+            field.SendMessage("RememberShoes");later.SendMessage("FixedUpdate");field.SendMessage("FixedUpdate");
+            Assert.AreEqual(SlipperState.InFlight,later.State,"The spent curtain cannot block another throw.");
+            Assert.IsTrue(GameServices.Round.Lata.IsUpright);
+        }
+
+        [UnityTest,Timeout(60000)] public IEnumerator WaterwallRefusesSolidCoverWithoutSpendingAndExpires()
+        {
+            yield return Start();var caster=WallCaster();var ctx=Context(caster);var kit=caster.AbilitySystem.Kit;
+            var point=new Vector3(-3,.12f,-2);
+            Assert.IsTrue(RafiWaterField.CanPlaceWall(ctx,point));
+            Assert.IsFalse(RafiWaterField.CanPlaceWall(ctx,new Vector3(-3,.12f,5)),"Out of range.");
+            var block=GameObject.CreatePrimitive(PrimitiveType.Cube);
+            block.transform.position=new Vector3(-3,.8f,-3.5f);block.transform.localScale=new Vector3(1,2,.3f);
+            Physics.SyncTransforms();
+            Assert.IsFalse(RafiWaterField.CanPlaceWall(ctx,point));
+            Assert.AreNotEqual(HeroKit.CastOutcome.Cast,kit.CastSkill2(ctx));
+            Assert.AreEqual(0,kit.DefendingSkill.CooldownRemaining);
+            Object.Destroy(block);yield return null;Physics.SyncTransforms();
+            Assert.AreEqual(HeroKit.CastOutcome.Cast,kit.CastSkill2(ctx));
+            var field=RafiWaterField.Active.Single(f=>f.Capture().Type==WorldEffectSnapshot.Kind.Waterwall);
+            yield return new WaitForSeconds(4.1f);
+            Assert.IsTrue(field==null || !field.isActiveAndEnabled);
+        }
+
+        [UnityTest,Timeout(60000)] public IEnumerator WaterwallRecoveryIsRenderOnlyWithNativeCourtViews()
+        {
+            yield return Start();var caster=WallCaster();caster.IsBot=false;
+            Assert.AreEqual(HeroKit.CastOutcome.Cast,caster.AbilitySystem.Kit.CastSkill2(Context(caster)));
+            var field=RafiWaterField.Active.Single(f=>f.Capture().Type==WorldEffectSnapshot.Kind.Waterwall);
+            var rig=Object.FindFirstObjectByType<TumbangPreso.CameraSystem.CameraRig>();rig.Follow(caster);rig.SetAimSource(TumbangPreso.CameraSystem.AimSource.Movement);
+            yield return new WaitForSeconds(.35f);
+            var canvas=GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
+            yield return TumpUiCapture.Capture("Waterwall-active-960x540",canvas,960,540,false,true);
+            var state=field.Capture();var parent=new GameObject("Waterwall replay witness");
+            using(var view=new RecordedFieldView(parent.transform,state))
+            {
+                view.Sample(state,.4f);
+                Assert.AreEqual(0,view.Root.GetComponentsInChildren<Collider>(true).Length);
+                Assert.AreEqual(0,view.Root.GetComponentsInChildren<RafiWaterField>(true).Length);
+            }
+            Object.Destroy(parent);
+            var invalid=state;invalid.FirstScale=2;invalid.Split=false;
+            Assert.IsFalse(WorldEffectSnapshot.Valid(invalid));
+            state.Split=true;state.FirstScale=state.Duration-state.Remaining;
+            Assert.AreSame(field,RafiWaterField.Restore(state,0));
+            yield return new WaitForSeconds(.3f);
+            yield return TumpUiCapture.Capture("Waterwall-broken-960x540",canvas,960,540,false,true);
+        }
+
         [Ignore("Vaulted with the first Lagoon Court (owner, 2026-09-27: \"vault the old lagoon\"); its scene is out of the build. See docs/TODO.md LAGOON-1.7."),UnityTest,Timeout(120000)] public IEnumerator InnerAndOuterStairsLetBothModesLeaveTheWater()
         {
             foreach(var mode in new[]{GameMode.Classic,GameMode.HeroStrike})

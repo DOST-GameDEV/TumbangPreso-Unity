@@ -2362,3 +2362,22 @@ All jobs/helpers/player processes terminal, no task browser/previews opened.
 Next authorized local unit: fully map Haunted Observe/At/selector/direct-position
 reads before editing so unseen actors cannot reenter via fallback. Current bot
 ranking and two allocation fixes stay qualified; no full sensor claim yet.
+
+Wall/tutorial coherent candidate now frozen at source de810883 with owned
+wall/tutorial changes. Exact AimSource declaration checked; two earlier compile
+failures retained. Four expected native cases, active/broken wall and tutorial
+small/wide captures. No native Water wall success inferred from prior failed
+launches. Runtime remains separate from pending protected-hero clarification.
+
+Combined wall/tutorial native4/4pass, Core6/6; frozen inputs unchanged and
+OOM11/kill6unchanged. Five native captures inspected. Tutorial requested wording,
+Quit scaling and remaining dummy objective-marker removal verified. Wall is
+mechanically qualified but its sheet reads as glass, not finished water art;
+body/FPP/glyph/audio remain provisional. Publish explicit owned paths/evidence,
+then update same tutorial Feedback notes and strike resolved human comments.
+
+Integrated fb41d20ee curtain/tutorial with its authored4native/6Core/capture
+receipts intact. Current source117; actual Haunt Windows116pair remains exact
+frozen scope, no117actual-peer claim. Both histories preserved and owned runtime
+files clean. Broader goal stays active; next local work remains complete Haunted
+bot observation/fallback/target-selection handling, followed by remaining queue.

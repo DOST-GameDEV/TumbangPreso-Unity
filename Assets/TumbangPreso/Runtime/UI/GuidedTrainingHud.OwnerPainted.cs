@@ -69,25 +69,25 @@ namespace TumbangPreso
             _complete.rectTransform.anchorMin=_complete.rectTransform.anchorMax=_complete.rectTransform.pivot=new Vector2(.5f,.5f);
             _complete.rectTransform.anchoredPosition=new Vector2(0,150);_complete.rectTransform.sizeDelta=new Vector2(790,85);_complete.enabled=false;
             var outline=_complete.gameObject.AddComponent<Outline>();outline.effectColor=UiTheme.InGameOutline;outline.effectDistance=new Vector2(2,-2);
-            var footer=OwnerRow(card,"RouteControls",76);
+            var footer=OwnerRow(card,"RouteControls",96);
             var training=GetComponentInParent<GuidedTraining>();
             var skip=TrainingAction(footer,"SkipTrainingLesson","SKIP LESSON","ENTER",()=>training?.SkipFromUi(),0,300);
             _ownerSkipLabel=skip.GetComponentInChildren<Text>();_ownerSkipLabel.color=TrainingCurrent;
-            var quit=TrainingAction(footer,"QuitTraining","QUIT","BACKSPACE",()=>training?.QuitFromUi(),320,318);
+            var quit=TrainingAction(footer,"QuitTraining","QUIT","BACKSPACE",()=>training?.QuitFromUi(),320,318,1.25f);
             quit.GetComponentInChildren<Text>().color=TrainingMuted;
             _ownerQuit=(RectTransform)quit.transform;
             HudReadingLayout.Watch(card);
             HudReadingLayout.Watch(_complete.rectTransform);
         }
         private static OwnerTextAction TrainingAction(Transform parent,string name,string words,string key,
-            System.Action callback,float x,float width)
+            System.Action callback,float x,float width,float scale=1)
         {
-            var action=OwnerTextAction.Create(parent,name,words,callback,x,0,width,76,30);
+            var action=OwnerTextAction.Create(parent,name,words,callback,x,0,width,76*scale,Mathf.RoundToInt(30*scale));
             var label=action.GetComponentInChildren<Text>();label.font=OwnerUiTheme.Current.Display;
             label.alignment=TextAnchor.MiddleLeft;
-            OwnerUiLayout.Place(label.rectTransform,88,0,width-96,76);
+            OwnerUiLayout.Place(label.rectTransform,88*scale,0,width-96*scale,76*scale);
             KeyCap(action.transform,key);
-            OwnerUiLayout.Place((RectTransform)action.transform.Find("Key_"+key),8,2,72,72);
+            OwnerUiLayout.Place((RectTransform)action.transform.Find("Key_"+key),8,2,72*scale,72*scale);
             return action;
         }
         private static RectTransform OwnerRow(Transform parent,string name,float height)

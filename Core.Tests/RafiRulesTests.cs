@@ -20,6 +20,18 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(.4f,RafiRules.SkimDistance/RafiRules.SkimSpeed,5);
         }
 
+        [Fact] public void WaterwallCrossingIsBoundedAndWorksFromEitherSide()
+        {
+            Assert.Equal(35,RafiRules.WallCooldown);Assert.Equal(4,RafiRules.WallSeconds);
+            Assert.True(RafiRules.WallCrossing(0,1,-1,0,1,1,out float a));
+            Assert.True(RafiRules.WallCrossing(0,1,1,0,1,-1,out float b));
+            Assert.Equal(.5f,a);Assert.Equal(a,b);
+            Assert.False(RafiRules.WallCrossing(3,1,-1,3,1,1,out _));
+            Assert.False(RafiRules.WallCrossing(0,3,-1,0,3,1,out _));
+            Assert.False(RafiRules.WallCrossing(0,1,-2,0,1,-1,out _));
+            Assert.False(RafiRules.WallCrossing(0,1,float.NaN,0,1,1,out _));
+        }
+
         [Fact] public void FirstEntryPrecedesClosestApproachAndIsOrderable()
         {
             Assert.True(RafiRules.FirstCurrentContact(0, 0, 2, 0, 0, -2, .5f, out float later));

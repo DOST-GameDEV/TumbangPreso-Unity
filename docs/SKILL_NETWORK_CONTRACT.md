@@ -533,3 +533,12 @@ recovery; restoration does not cast. New-round reset permits that round's first
 snapshot; older/duplicate recovery retains the generic scope/sequence gates.
 Current ignores ground-skimming shoes. Historical Mirrorwake world rendering
 remains readable. Actual116peers require their own qualification.
+
+## Water wall Compatibility
+
+Protocol117 appends Waterwall kind16 to existing Rafi field replication. Stable
+rafi_skill2d now places a one-interception curtain. FirstScale holds sampled break
+age only for a spent wall; intact walls require zero. Shared world restore/replay
+uses the existing epoch/round/lifetime gates. Only host crossing resolves a drop;
+rendering adds no collider or authority. Existing water kinds keep their previous
+duration bounds. [Evidence](reports/hero-quality-2026-10-01/wall-tutorial-checks/README.md).

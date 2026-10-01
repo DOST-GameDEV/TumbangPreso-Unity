@@ -26,6 +26,7 @@ namespace TumbangPreso.Visual
             visual._block = new MaterialPropertyBlock();
             visual.transform.SetPositionAndRotation(state.Position, Quaternion.LookRotation(state.Forward));
             if (state.Type == WorldEffectSnapshot.Kind.Mirrorwake) visual.BuildEcho();
+            else if(state.Type==WorldEffectSnapshot.Kind.Waterwall) visual.BuildWall();
             else visual.BuildCrest();
             return visual;
         }
@@ -40,6 +41,44 @@ namespace TumbangPreso.Visual
             var material = new Material(shader) { name = "Rafi translucent water", color = colour };
             renderer.sharedMaterial = material;
             VfxRenderTag.Own(renderer.gameObject, material);
+        }
+
+        private static readonly float[] WallLip={1.8f,1.83f,1.81f,1.84f,1.8f};
+        private void BuildWall()
+        {
+            var surface=new GameObject("ThinWaterCurtain");surface.transform.SetParent(transform,false);
+            _mesh=new Mesh { name="RafiWaterCurtain" };_mesh.MarkDynamic();
+            surface.AddComponent<MeshFilter>().sharedMesh=_mesh;
+            _surface=surface.AddComponent<MeshRenderer>();
+            _surface.shadowCastingMode=ShadowCastingMode.Off;_surface.receiveShadows=false;
+            Paint(_surface,new Color(.16f,.60f,.77f,.16f));
+            _vertices=new Vector3[10];
+            _mesh.vertices=_vertices;
+            _mesh.triangles=new[]{0,1,2,2,1,3,2,3,4,4,3,5,4,5,6,6,5,7,6,7,8,8,7,9};
+            var lip=new GameObject("CurtainLipAndSides");lip.transform.SetParent(transform,false);
+            _foam=lip.AddComponent<LineRenderer>();_foam.useWorldSpace=false;
+            _foam.positionCount=7;_foam.widthMultiplier=.035f;
+            _foam.numCapVertices=1;_foam.numCornerVertices=1;
+            _foam.shadowCastingMode=ShadowCastingMode.Off;_foam.receiveShadows=false;
+            Paint(_foam,new Color(.63f,.88f,.91f,.85f));
+        }
+
+        private void Wall(float age,float fade)
+        {
+            float rise=Mathf.SmoothStep(0,1,Mathf.Clamp01(age/Core.RafiRules.WallGather));
+            float drain=_state.Split?Mathf.SmoothStep(0,1,Mathf.Clamp01((age-_state.FirstScale)/.25f)):0;
+            for(int i=0;i<5;i++)
+            {
+                float x=(i-2)*(_state.Radius*.5f)*(1-.12f*drain);
+                _vertices[i*2]=new Vector3(x,.018f,0);
+                _vertices[i*2+1]=new Vector3(x,WallLip[i]*rise*(1-drain)+.018f,
+                    Mathf.Sin(age*3+i*.8f)*.018f*rise);
+                _foam.SetPosition(i+1,_vertices[i*2+1]);
+            }
+            _foam.SetPosition(0,_vertices[0]);_foam.SetPosition(6,_vertices[8]);
+            _mesh.vertices=_vertices;_mesh.RecalculateNormals();_mesh.RecalculateBounds();
+            Tint(_surface,new Color(.16f,.60f,.77f,.16f*rise*fade*(1-drain)));
+            Tint(_foam,new Color(.63f,.88f,.91f,.85f*rise*fade*(1-drain)));
         }
 
         private void BuildCrest()
@@ -102,6 +141,7 @@ namespace TumbangPreso.Visual
             float age = Mathf.Clamp(seconds, 0, LifeSeconds);
             float fade = Mathf.Clamp01((LifeSeconds - age) / .22f);
             if (_state.Type == WorldEffectSnapshot.Kind.Mirrorwake) { Echo(age, fade); return; }
+            if (_state.Type == WorldEffectSnapshot.Kind.Waterwall) { Wall(age,fade); return; }
             if (_mesh == null) return;
             bool wave = _state.Type == WorldEffectSnapshot.Kind.Breakwater;
             float gather = RafiWaterField.Gather(_state.Type);

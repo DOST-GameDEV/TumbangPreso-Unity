@@ -598,6 +598,39 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(120000)]
+        public IEnumerator LatestTutorialNotesRemoveDummyMarkersAndEnlargeQuit()
+        {
+            bool previous=GameLaunch.GuidedTutorial;
+            try
+            {
+                yield return OpenRevisedTraining();
+                var route=Object.FindFirstObjectByType<GuidedTraining>();route.enabled=false;
+                var hud=Object.FindFirstObjectByType<GuidedTrainingHud>();
+                var marker=Object.FindObjectsByType<Transform>(FindObjectsInactive.Include,FindObjectsSortMode.None)
+                    .Single(t=>t.name=="TrainingObjectiveMarker");
+                foreach(var lesson in new[]{GuidedTraining.Lesson.Shove,GuidedTraining.Lesson.Block,GuidedTraining.Lesson.Lunge})
+                {
+                    SelectLesson(route,lesson);yield return null;
+                    Assert.IsFalse(marker.gameObject.activeInHierarchy,lesson+" still enables the tutorial star/ring.");
+                }
+                yield return TumpUiCapture.Capture("Tutorial-dummy-no-marker-960x540",hud.GetComponent<Canvas>(),960,540,false,true);
+                SelectLesson(route,GuidedTraining.Lesson.Complete);yield return null;Canvas.ForceUpdateCanvases();
+                var title=hud.GetComponentsInChildren<Text>().Single(t=>t.name=="LessonTitle");
+                Assert.AreEqual("TUTORIAL COMPLETE",title.text);
+                var quit=hud.GetComponentsInChildren<Button>().Single(b=>b.name=="QuitTraining");
+                Assert.GreaterOrEqual(quit.GetComponentInChildren<Text>().fontSize,37);
+                Assert.GreaterOrEqual(((RectTransform)quit.transform).rect.height,94);
+                var glyph=(RectTransform)quit.transform.Find("Key_BACKSPACE");
+                Assert.GreaterOrEqual(glyph.rect.width,89);Assert.GreaterOrEqual(glyph.rect.height,89);
+                foreach(var size in new[]{new Vector2Int(960,540),new Vector2Int(1600,680)})
+                    yield return TumpUiCapture.Capture("Tutorial-complete-readable-quit-"+size.x+"x"+size.y,
+                        hud.GetComponent<Canvas>(),size.x,size.y,false,true,checkActionBounds:true);
+                Assert.IsTrue(quit.IsInteractable());
+            }
+            finally { GameLaunch.GuidedTutorial=previous; }
+        }
+
+        [UnityTest, Timeout(120000)]
         public IEnumerator CompletionCornerCounterHidesAndRestores()
         {
             yield return OpenRevisedTraining();
