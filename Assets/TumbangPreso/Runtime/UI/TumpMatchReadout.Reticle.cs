@@ -32,7 +32,8 @@ namespace TumbangPreso.UI
             if (_reticle == null || !_reticle.enabled) return;
             if (_reticleShot) { _reticle.Set(_shotCharge, _shotSpin, _shotCooldown, _shotRefused, _shotReach); return; }
             var local = _aimOwner; var round = GameServices.Round;
-            if (local == null || round == null) { _reticle.Set(0, 0, 0, false, false); return; }
+            if (local == null || round == null) { _reticle.SetOwner(-1); _reticle.Set(0, 0, 0, false, false); return; }
+            _reticle.SetOwner(local.PlayerSlot);
             bool charging = _aimCarrier != null && _aimCarrier.IsCharging;
             float charge = charging ? Mathf.Max(.02f, _aimCarrier.ChargeRatio) : 0;
             float spin = charging ? _aimCarrier.CurrentPektusSpin : 0;

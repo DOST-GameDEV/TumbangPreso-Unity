@@ -12,7 +12,7 @@ namespace TumbangPreso.UI
     /// lines under the reticle. Every one of them asked the player to look away from the aim
     /// point at the exact moment the aim point mattered. They are shapes on the reticle now:
     ///
-    /// - a dot and four short ticks, drawn, instead of a "+" in the display face;
+    /// - a hollow aim circle, with no centre dot or weapon-like cardinal ticks;
     /// - a CHARGE ring that appears at the charge floor (`Balance.ChargeMinPower`, a third of
     ///   the way round) and fills to full power, clockwise from twelve like every timer here;
     /// - a PEKTUS tick: a short arc outside the ring on the side the throw will curve, as long
@@ -36,13 +36,52 @@ namespace TumbangPreso.UI
         public static readonly Color Keel = new Color(0, 0, 0, .85f);
         public static readonly Color RefusedInk = new Color(.62f, .60f, .58f, .9f);
         private Text _chargeCaption;
+        private int _ownerSlot = -1;
+        private float _fullPulseLeft, _releasePulseLeft;
+        private const float FullPulseSeconds = .18f, ReleasePulseSeconds = .22f;
+        public float ReleasePulseRemaining => _releasePulseLeft;
+        public void SetOwner(int slot) => _ownerSlot = slot;
+        private static bool Still => Settings.SettingsStore.Current.ReducedUiMotion
+            || Settings.SettingsStore.Current.ReducedEffects;
+        public float AimRadius => Mathf.Lerp(12, 9, Mathf.Clamp01(Charge)) + (Still ? 0 :
+            1.2f * Mathf.Sin(Mathf.PI * Mathf.Clamp01(_fullPulseLeft / FullPulseSeconds))
+            + 3 * Mathf.Sin(Mathf.PI * Mathf.Clamp01(_releasePulseLeft / ReleasePulseSeconds)));
+
+        private void OnPresented(Visual.MatchFlair.Kind kind, int actor, int subject, Vector3 at, float strength)
+        {
+            if (kind != Visual.MatchFlair.Kind.Throw || actor != _ownerSlot || _ownerSlot < 0
+                || !isActiveAndEnabled || canvas == null || !canvas.isActiveAndEnabled || Still) return;
+            // The existing host-confirmed presentation event is the receipt. A cancelled
+            // charge or refused input never invents a successful-release pulse.
+            _releasePulseLeft = ReleasePulseSeconds;
+            SetVerticesDirty();
+        }
+
+        private void Update()
+        {
+            if (_fullPulseLeft <= 0 && _releasePulseLeft <= 0) return;
+            if (Still) { _fullPulseLeft = _releasePulseLeft = 0; SetVerticesDirty(); return; }
+            if (Time.deltaTime <= 0) return;
+            _fullPulseLeft = Mathf.Max(0, _fullPulseLeft - Time.deltaTime);
+            _releasePulseLeft = Mathf.Max(0, _releasePulseLeft - Time.deltaTime);
+            SetVerticesDirty();
+        }
         private int _captionPercent = -1, _captionState = -1;
         public string ChargeCaption => _chargeCaption != null && _chargeCaption.enabled ? _chargeCaption.text : "";
 
         protected override void OnEnable()
-        { base.OnEnable(); if (_chargeCaption != null) _chargeCaption.enabled = Charge > 0; }
+        {
+            base.OnEnable();
+            Visual.MatchFlair.Presented += OnPresented;
+            if (_chargeCaption != null) _chargeCaption.enabled = Charge > 0;
+        }
         protected override void OnDisable()
-        { if (_chargeCaption != null) _chargeCaption.enabled = false; base.OnDisable(); }
+        {
+            Visual.MatchFlair.Presented -= OnPresented;
+            _fullPulseLeft = _releasePulseLeft = 0; _ownerSlot = -1;
+            if (_chargeCaption != null) _chargeCaption.enabled = false;
+            base.OnDisable();
+        }
 
         private void PaintChargeCaption(float charge, bool refused)
         {
@@ -70,6 +109,9 @@ namespace TumbangPreso.UI
 
         public void Set(float charge, float pektus, float cooldown, bool refused, bool inReach)
         {
+            if (charge >= .999f && Charge < .999f && !refused && !Still)
+                _fullPulseLeft = FullPulseSeconds;
+            if (charge <= 0 || refused) _fullPulseLeft = 0;
             PaintChargeCaption(charge, refused);
             if (Mathf.Abs(charge - Charge) < .004f && Mathf.Abs(pektus - Pektus) < .01f
                 && Mathf.Abs(cooldown - Cooldown) < .004f && refused == Refused && inReach == InReach) return;
@@ -83,19 +125,13 @@ namespace TumbangPreso.UI
             var c = GetPixelAdjustedRect().center;
             var ink = Refused ? RefusedInk : color;
             var gold = CourtPresentationPalette.Gold;
-            // Dot and ticks.
-            HudDraw.Disc(vh, c, 4.2f, Keel, 16); HudDraw.Disc(vh, c, 2.6f, ink, 16);
-            float gap = Charge > 0 ? 9 : 7, len = 8;
-            for (int k = 0; k < 4; k++)
-            {
-                float a = k * 90 * Mathf.Deg2Rad; var d = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
-                HudDraw.Bar(vh, c + d * (gap - 1.5f), c + d * (gap + len + 1.5f), 5.5f, Keel);
-            }
-            for (int k = 0; k < 4; k++)
-            {
-                float a = k * 90 * Mathf.Deg2Rad; var d = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
-                HudDraw.Bar(vh, c + d * gap, c + d * (gap + len), 2.6f, InReach ? UiTheme.Defense : ink);
-            }
+            // Small hollow circle. The centre remains entirely transparent in every state.
+            float radius = AimRadius;
+            float width = InReach ? 2.8f : 2.2f;
+            HudDraw.Arc(vh, c, radius + width * .5f + 1.5f,
+                radius - width * .5f - 1.5f, 90, 360, Keel, 64);
+            HudDraw.Arc(vh, c, radius + width * .5f,
+                radius - width * .5f, 90, 360, InReach ? UiTheme.Defense : ink, 64);
             // Cooldown sweep: thin, outside everything, drains clockwise.
             if (Cooldown > .001f)
             {
@@ -117,12 +153,7 @@ namespace TumbangPreso.UI
                     HudDraw.Arc(vh, c, 38.5f, 33.5f, mid + span * .5f, span, Refused ? RefusedInk : gold, 72);
                 }
             }
-            // Taya ready tick (VISUAL-1.2): a small filled chevron above the reticle.
-            if (InReach)
-            {
-                HudDraw.Fan(vh, c + new Vector2(0, 30), new[] { c + new Vector2(-9, 36), c + new Vector2(9, 36), c + new Vector2(0, 24) }, Keel);
-                HudDraw.Fan(vh, c + new Vector2(0, 31), new[] { c + new Vector2(-6, 34.5f), c + new Vector2(6, 34.5f), c + new Vector2(0, 26.5f) }, UiTheme.Defense);
-            }
+            // Reach is shown by the circle's edge weight and role tint, never a gun hitmarker.
         }
     }
 }

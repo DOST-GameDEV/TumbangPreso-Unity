@@ -1,0 +1,41 @@
+{
+  "scope": "Post-validation source snapshot; not a pre-run manifest",
+  "protocol": 112,
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/Hud.cs",
+      "sha256": "ec151204e48699cea994074a256e5b5c674e1892820e48aa272e779b95a69a64",
+      "candidateMatches": true
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/HudBadge.cs",
+      "sha256": "8f25db2159d2931d6803ef27f8609e68e0614309d0de9c95fd9946b07bd080de",
+      "candidateMatches": true
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/HudReticle.cs",
+      "sha256": "0e9dc0b92684b2769e6f5abfdc3e35bbdd26d62f48a007613f4474db1145c0d0",
+      "candidateMatches": true
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.cs",
+      "sha256": "3fba6fa446f74b76c9cd23010dfdcfb2f76d2394f261fec7c4bfd22ef387b96d",
+      "candidateMatches": true
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.OwnerPainted.cs",
+      "sha256": "e7f52e2a8a40a34bfcf389d74ea832a7469f2336a649dab153a6f63e21debc40",
+      "candidateMatches": true
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.Reticle.cs",
+      "sha256": "4f978bed1c68b92ee4e489a8b05c119417a61181791ae48b09bde3c9a3676c2b",
+      "candidateMatches": true
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/ThrowChargeUiTests.cs",
+      "sha256": "b8cdc3c50922bd4316da9d789c75a0c071fc90ca0bbd20ea4818521b1aa29be6",
+      "candidateMatches": true
+    }
+  ]
+}

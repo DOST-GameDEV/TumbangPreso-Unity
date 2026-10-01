@@ -1713,3 +1713,8 @@ Aim-circle first native run reaches real charge/refusal/release checks but both
 cases fail the same new reflection helper: OnPopulateMesh is overloaded on Graphic.
 One bounded fixture repair selects the exact VertexHelper overload; runtime unchanged.
 Retain v1XML; rerun the same two cases once asv2. No product pass claim yet.
+Aim-circle finalv2 native2/2passes11.48s after one exact-overload fixture repair.
+Idle/full960x540 and release1600x680 inspected. OOM11/kill6unchanged. Existing
+host-confirmed Presented event drives only the displayed owner's release pulse;
+no new gameplay/network contract. Seven owned files match tested candidate in an
+explicit post-validation snapshot. Publish this coherent UI unit; player remains100.

@@ -1493,7 +1493,7 @@ namespace TumbangPreso.UI
                     }
                     else
                     {
-                        _crosshair.text = "+\nPEKTUS 0%";
+                        _crosshair.text = "○\nPEKTUS 0%";
                     }
                 }
             }
@@ -1515,13 +1515,13 @@ namespace TumbangPreso.UI
                 else
                 {
                     _crosshair.fontSize = 34;
-                    _crosshair.text = "+";
+                    _crosshair.text = "○";
                 }
             }
             else
             {
                 _crosshair.fontSize = 34;
-                _crosshair.text = "+";
+                _crosshair.text = "○";
             }
 
             _vulnerable.enabled = _local.IsTaggable();
@@ -4281,7 +4281,7 @@ namespace TumbangPreso.UI
             Place(_crosshair.rectTransform, new Vector2(0.5f, 0.5f), Vector2.zero,
                   new Vector2(520, 72));
 
-            _crosshair.text = "+";
+            _crosshair.text = "○";
             _crosshair.enabled = false;
 
             _hitmarker = HudLabel(_root, "HitmarkerLabel", 42, UiTheme.Highlight,

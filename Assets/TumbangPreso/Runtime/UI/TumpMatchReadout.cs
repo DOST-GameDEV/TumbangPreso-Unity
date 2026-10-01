@@ -52,7 +52,7 @@ namespace TumbangPreso.UI
             _countdown = Ink(_root, "Countdown", "", 112, true);
             TumpUiFactory.Anchor(_countdown.rectTransform, new Vector2(.5f, .58f), Vector2.zero, new Vector2(740, 180));
             _countdown.enabled = false;
-            _crosshair = Ink(_root, "Reticle", "+", 34, false);
+            _crosshair = Ink(_root, "Reticle", "○", 34, false);
             TumpUiFactory.Anchor(_crosshair.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(76, 76));
             _hit = Ink(_root, "HitConfirmation", "×", 72, true);
             TumpUiFactory.Anchor(_hit.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(120, 120)); _hit.enabled = false;

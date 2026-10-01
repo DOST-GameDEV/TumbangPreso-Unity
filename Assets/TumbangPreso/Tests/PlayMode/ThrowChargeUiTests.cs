@@ -5,6 +5,7 @@ using TumbangPreso.Core;
 using TumbangPreso.UI;
 using UnityEngine;
 using UnityEngine.TestTools;
+using UnityEngine.UI;
 
 namespace TumbangPreso.PlayTests
 {
@@ -13,6 +14,86 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
         [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
         static readonly MethodInfo Step = typeof(Carrier).GetMethod("StepAttacker", BindingFlags.Instance | BindingFlags.NonPublic);
+
+        [UnityTest]
+        public IEnumerator HollowCircleKeepsItsCentreClearAndOnlyPulsesForItsOwnersThrow()
+        {
+            var root = new GameObject("CircleTestCanvas", typeof(Canvas));
+            root.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
+            var go = new GameObject("Reticle", typeof(RectTransform));
+            go.transform.SetParent(root.transform, false);
+            var reticle = go.AddComponent<HudReticle>();
+            reticle.rectTransform.sizeDelta = new Vector2(96, 96);
+            var settings = Settings.SettingsStore.Current;
+            bool motion = settings.ReducedUiMotion, effects = settings.ReducedEffects;
+            try
+            {
+                settings.ReducedUiMotion = settings.ReducedEffects = false;
+                reticle.SetOwner(1);
+                foreach (var charge in new[] { 0f, .5f, 1f })
+                {
+                    reticle.Set(charge, -.7f, .5f, false, true);
+                    AssertHollow(reticle);
+                }
+                reticle.Set(.8f, .7f, 0, true, false); AssertHollow(reticle);
+                reticle.Set(0, 0, 0, false, false);
+                Assert.Zero(reticle.ReleasePulseRemaining, "Cancellation is not a confirmed release.");
+                Visual.MatchFlair.Play(Visual.MatchFlair.Kind.Throw, 2, -1, Vector3.zero);
+                Assert.Zero(reticle.ReleasePulseRemaining, "Another player must not pulse this aim.");
+                Visual.MatchFlair.Play(Visual.MatchFlair.Kind.Throw, 1, -1, Vector3.zero);
+                Assert.Greater(reticle.ReleasePulseRemaining, 0);
+                yield return new WaitForSeconds(.26f);
+                Assert.Zero(reticle.ReleasePulseRemaining);
+                settings.ReducedUiMotion = true;
+                Visual.MatchFlair.Play(Visual.MatchFlair.Kind.Throw, 1, -1, Vector3.zero);
+                Assert.Zero(reticle.ReleasePulseRemaining);
+                reticle.Set(1, 0, 0, false, false);
+                Assert.AreEqual(9, reticle.AimRadius, .001f);
+                reticle.enabled = false;
+                settings.ReducedUiMotion = false;
+                Visual.MatchFlair.Play(Visual.MatchFlair.Kind.Throw, 1, -1, Vector3.zero);
+                Assert.Zero(reticle.ReleasePulseRemaining, "Disabled reticle must unsubscribe.");
+                reticle.enabled = true; reticle.SetOwner(1);
+                root.GetComponent<Canvas>().enabled = false;
+                Visual.MatchFlair.Play(Visual.MatchFlair.Kind.Throw, 1, -1, Vector3.zero);
+                Assert.Zero(reticle.ReleasePulseRemaining, "Hidden HUD must not retain a pulse.");
+            }
+            finally
+            {
+                settings.ReducedUiMotion = motion; settings.ReducedEffects = effects;
+                Object.Destroy(root);
+            }
+        }
+
+        private static void AssertHollow(HudReticle reticle)
+        {
+            using var vh = new VertexHelper();
+            typeof(HudReticle).GetMethod("OnPopulateMesh", BindingFlags.Instance | BindingFlags.NonPublic, null,
+                    new[] { typeof(VertexHelper) }, null)
+                .Invoke(reticle, new object[] { vh });
+            var mesh = new Mesh();
+            try
+            {
+                vh.FillMesh(mesh);
+                Assert.Greater(mesh.vertexCount, 0);
+                var vertices = mesh.vertices; var triangles = mesh.triangles;
+                var centre = reticle.rectTransform.rect.center;
+                foreach (var offset in new[] { Vector2.zero, Vector2.left * 3, Vector2.right * 3,
+                    Vector2.up * 3, Vector2.down * 3 })
+                {
+                    Vector2 point = centre + offset;
+                    for (int i = 0; i < triangles.Length; i += 3)
+                    {
+                        Vector2 a = vertices[triangles[i]], b = vertices[triangles[i + 1]], c = vertices[triangles[i + 2]];
+                        float x = Cross(b - a, point - a), y = Cross(c - b, point - b), z = Cross(a - c, point - c);
+                        bool inside = (x >= 0 && y >= 0 && z >= 0) || (x <= 0 && y <= 0 && z <= 0);
+                        Assert.IsFalse(inside, "The hollow aim centre contains a filled triangle.");
+                    }
+                }
+            }
+            finally { Object.Destroy(mesh); }
+        }
+        private static float Cross(Vector2 a, Vector2 b) => a.x * b.y - a.y * b.x;
 
         [UnityTest, Timeout(60000)]
         public IEnumerator LiveChargeShowsPowerFullAndRealRefusalsThenClearsOnRelease()
@@ -36,6 +117,8 @@ namespace TumbangPreso.PlayTests
             typeof(CameraSystem.CameraRig).GetField("_pitchDeg", BindingFlags.Instance | BindingFlags.NonPublic)
                 .SetValue(rig, Mathf.Atan2(-direction.y, new Vector2(direction.x, direction.z).magnitude) * Mathf.Rad2Deg);
             carrier.enabled = false;
+            var canvas = GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
+            yield return TumpUiCapture.Capture("Aim-circle-idle-960x540", canvas, 960, 540, false, true);
             Assert.IsTrue(GameServices.Round.CanThrow(who));
             who.Intent.Set(Verb.SpecialAbility, true);
             Step.Invoke(carrier, new object[] { 0f }); Step.Invoke(carrier, new object[] { Balance.ChargeFullTime * .5f });
@@ -45,7 +128,6 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual("50%", reticle.ChargeCaption); Assert.AreEqual(.5f, reticle.Charge, .001f);
             Step.Invoke(carrier, new object[] { Balance.ChargeFullTime * .5f }); yield return null;
             Assert.AreEqual("FULL · RELEASE", reticle.ChargeCaption); Assert.IsFalse(reticle.Refused);
-            var canvas = GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
             yield return TumpUiCapture.Capture("Throw-charge-full-960x540", canvas, 960, 540, false, true);
             yield return TumpUiCapture.Capture("Throw-charge-full-1600x680", canvas, 1600, 680, false, true);
             can.HostKnockDown(2);
@@ -59,9 +141,14 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(GameServices.Round.CanThrow(who)); Assert.IsFalse(can.IsProtected); yield return null;
             Assert.AreEqual("FULL · RELEASE", reticle.ChargeCaption);
             reticle.enabled = false; Assert.AreEqual("", reticle.ChargeCaption, "Hidden reticle must hide its caption too.");
-            reticle.enabled = true;
+            reticle.enabled = true; yield return null;
             who.Intent.Set(Verb.SpecialAbility, false); Step.Invoke(carrier, new object[] { .01f }); yield return null;
             Assert.IsFalse(carrier.IsCharging); Assert.AreEqual("", reticle.ChargeCaption);
+            Assert.Greater(reticle.ReleasePulseRemaining, 0, "The actual accepted throw must pulse the circle.");
+            AssertHollow(reticle);
+            yield return TumpUiCapture.Capture("Aim-circle-release-1600x680", canvas, 1600, 680, false, true);
+            yield return new WaitForSeconds(.3f);
+            Assert.Zero(reticle.ReleasePulseRemaining);
         }
     }
 }

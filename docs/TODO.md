@@ -42,7 +42,9 @@ Current live path is HudReticle via TumpMatchReadout.CourtHud; older text-plus
 builders also exist and must be reconciled by reachability, not blindly edited.
 Preserve truthful charge/curve/cooldown/refusal/reach state, actual aim projection,
 input and visibility rules. Plan: [hollow aim circle](reports/hero-quality-2026-10-01/aim-circle.md).
-Implement after the current priority research/planning pass, before manual hunt.
+Implemented hollow idle/charge/confirmed-release and contact circles. Two focused
+native checks pass;960x540/1600x680 captures inspected. Publication pending.
+No gameplay/protocol change or new player/peer claim.
 
 ### HARRY-REVIEW-1001: learn the human critique standard
 

@@ -35,3 +35,31 @@ chalk and asphalt at960x540 and a wide view. Verify centre stays empty and no
 legacy plus reticle appears in tutorial, both modes or reachable fallback UI.
 Check taya reach, pad/touch, scaling and reduced motion. No protocol change for
 pure presentation; if a new release event is needed, keep it local and truthful.
+
+## Implemented and checked
+
+The live drawn reticle is now hollow, with no centre dot/cardinal ticks or taya
+chevron. Its radius tightens12to9canvas units with actual charge; reaching full
+gets one small settling pulse. Accepted own throws use the existing shared
+MatchFlair presentation receipt for a short outward pulse. Cancellation/refusal
+never fabricate that receipt. Other actors and hidden/disabled HUDs do not pulse.
+Reduced motion/effects suppress pulses. Existing charge/curve/cooldown/refusal
+and reach data remain; reach changes edge weight/tint. The contact-confirmation
+X is now a hollow pulse too. Legacy text-plus builders use a circle glyph.
+
+Two focused native graphics cases pass,11.48s, on the isolated protocol112 source
+candidate. They cover hollow geometry in idle/charge/curve/refusal/reach states,
+owner-event filtering, reduced motion, disable/hidden cleanup, and actual Carrier
+charge/full/can-protection/release. Idle/full960x540 and release1600x680 captures
+were inspected. The can/defender remain visible through the centre. Input bindings,
+launch strength, timing, collision and network protocol are unchanged.
+
+The first run failed only the new geometry helper's ambiguous inherited overload.
+One bounded repair selected OnPopulateMesh(VertexHelper); the same two cases then
+passed. Both receipts are retained in aim-circle-checks. OOM counters did not
+increase. The post-validation manifest matches all seven owned source/test files
+to the tested candidate; it is explicitly not a pre-run input manifest.
+
+This is native Editor/UI validation, not a new player build, actual112peer session,
+physical controller/touch certification or human taste approval. The general
+HUD feed is shared by both modes; no new mode-specific rule was introduced.
