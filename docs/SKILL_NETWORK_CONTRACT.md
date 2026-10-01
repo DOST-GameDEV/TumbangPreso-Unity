@@ -587,3 +587,15 @@ append-only status value; it blocks ability casts, not movement or ordinary
 interaction. Logos show X and permanent state shows Active. Twelve native cases
 pass; actual124peers and complete upgraded basics remain separate.
 [Evidence](reports/feedback-2026-09-30/overclock-state.md).
+
+## Bank Shot compatibility
+
+Protocol125 changes zack_skill2 to a35second cooldown/8second held-shoe load.
+The existing affinity integer carries6(one remaining powered bank) or7(two);
+each wall bank consumes one into6/Normal. Host launch captures a fixed one/two
+bank credit limit for that episode, independent of the changing affinity.
+Expiry/drop/reset clear the personal load; flight recovery consumes it without
+recasting. Existing timed-kit scope/watermark/age gates remain, with8s maximum.
+Guide and host bot prediction share85percent retention; bots preserve completed
+bank count. No new packet layout. Actual125peer qualification remains open.
+[Native evidence and limits](reports/feedback-2026-09-30/bank-shot.md).

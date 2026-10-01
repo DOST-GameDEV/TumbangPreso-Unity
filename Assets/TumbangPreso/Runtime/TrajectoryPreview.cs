@@ -88,7 +88,8 @@ namespace TumbangPreso
                 _motor?.AbilitySystem?.Kit is Abilities.RafiHeroKit rafi && rafi.IsSkimLoadedFor(_carrier.Held)
                 ? RafiRules.SkimDistance : 0;
             return SlipperLandingPrediction.TryPredictLanding(origin, velocity, spin, _hits, out landing, _path,
-                skimDistance, false, _carrier?.Held != null ? _carrier.Held.RestHeight : Balance.SlipperRestHeight);
+                skimDistance, false, _carrier?.Held != null ? _carrier.Held.RestHeight : Balance.SlipperRestHeight,
+                _motor?.AbilitySystem?.Kit is Abilities.ZackHeroKit zack ? zack.BankShotAffinityFor(_carrier?.Held) : SlipperAffinity.Normal);
         }
 
         private void Rebuild()

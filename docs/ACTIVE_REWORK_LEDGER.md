@@ -3633,6 +3633,17 @@ restoration. Do not claim this solves the separate red/cyan foliage report.
 One focused baseline/final, one tooling repair maximum; source701d6828protocol124.
 Rings remain next independent fix after this concrete root cause. No native job.
 
+BANK-SHOT-1001 owns ZackHeroKit attacking slot, Carrier payload/guide, Slipper bank state, shared landing prediction and focused ZackBankShotTests. Implement current proposed Bank Shot35s/8s/85percent with one credited bank, two after Overclock, preserving objective/scoring authority and authored cues. No art/loading changes. Two native legacy contract baselines then one focused final; tooling retry0. Current124, all own native jobs terminal. Whole Zack signature/defending migration remains open.
+
+Bank Shot125mechanics implemented:35s/8s/85percent, normalone/Overclocktwo
+powered credited banks, real release no oldboost/zap, item-bound expiry/recovery,
+sharedguide and completed-bank-aware bot prediction. Nativebaseline2fail,
+firstfinalCS0122fixture, repairedrun8/10with actorinterceptionfixturefailure,
+focusedcorrected3/3:11distinctpasses acrossruns. Twofixturecorrections recorded
+beyond plannedone, nothidden.738finalinputs no drift. All own nativejobs terminal
+after guardexit; namedprofiles preserved. FullZacksignature/defending, legacyprobe
+migration and125actualpeers remainopen. No authoredart/loading/privateoverlayedit.
+Next publish coherentunit, then QuickCircuit/ClosedCircuit currentproposedcontracts.
 Tagged world-look baseline reproducesrealreplayweight0 vsactivegameplay1 and
 architecture0. AddexistingWorldLookCamera markeronlytotheoffscreenreplaycamera;
 no globalcamera widening or tuning. Same relevantfinalcasechecksactualscoped
@@ -3689,3 +3700,4 @@ circle each render frame with bounded linear interpolation, reset on hidden/
 invalid/released aim, and snap across large height discontinuities. Preserve
 LandingPoint as the exact latest prediction. Validate with the existing actual
 local-charge fixture plus deterministic intermediate geometry assertions.
+Bank Shot91de6867c integrated/pushed04429e627, remote verified. Feedback own Zack paragraph updated/read back; human controls, comments and Hydro note untouched. Active protocol125. Native guards59212/40251/71097/59082 terminal, only pre-existing Unity Hub serve remains; no task-owned browser/preview. Preserve failed first compile and8/10fixture run alongside focused3/3. Whole goal remains active. Next Quick Circuit signature then Closed Circuit; migrate obsolete Magnet acceptance contracts during the changed kit gate, without broad unchanged reruns.

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 11:19:08Z" end-time="2026-10-01 11:19:08Z" duration="0.2814347">
+  <test-suite type="TestSuite" id="2424" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1163" result="Failed" site="Child" start-time="2026-10-01 11:19:08Z" end-time="2026-10-01 11:19:08Z" duration="0.281435" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2418" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1163" result="Failed" site="Child" start-time="2026-10-01 11:19:08Z" end-time="2026-10-01 11:19:08Z" duration="0.253579" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="4408" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2419" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1163" result="Failed" site="Child" start-time="2026-10-01 11:19:08Z" end-time="2026-10-01 11:19:08Z" duration="0.234192" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2420" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1163" result="Failed" site="Child" start-time="2026-10-01 11:19:08Z" end-time="2026-10-01 11:19:08Z" duration="0.215325" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2401" name="ZackBankShotTests" fullname="TumbangPreso.PlayTests.ZackBankShotTests" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-01 11:19:08Z" end-time="2026-10-01 11:19:08Z" duration="0.182746" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2403" name="BankShotRequiresHeldSlipperInsteadOfRecallingLooseOne" fullname="TumbangPreso.PlayTests.ZackBankShotTests.BankShotRequiresHeldSlipperInsteadOfRecallingLooseOne" methodname="BankShotRequiresHeldSlipperInsteadOfRecallingLooseOne" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="1567452117" result="Failed" start-time="2026-10-01 11:19:08Z" end-time="2026-10-01 11:19:08Z" duration="0.124035" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A held slipper must be loadable.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ZackBankShotTests.BankShotRequiresHeldSlipperInsteadOfRecallingLooseOne () [0x00010] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\ZackBankShotTests.cs:49
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2402" name="BankShotUsesCooldownAndEightSecondLoad" fullname="TumbangPreso.PlayTests.ZackBankShotTests.BankShotUsesCooldownAndEightSecondLoad" methodname="BankShotUsesCooldownAndEightSecondLoad" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="872788270" result="Failed" start-time="2026-10-01 11:19:08Z" end-time="2026-10-01 11:19:08Z" duration="0.042930" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 9 but was 6. Strings differ at index 0.
+  Expected: "BANK SHOT"
+  But was:  "MAGNET"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ZackBankShotTests.BankShotUsesCooldownAndEightSecondLoad () [0x00006] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\ZackBankShotTests.cs:41
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

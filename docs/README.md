@@ -69,3 +69,5 @@ The pre-cleanup index/rules/ledger are preserved in
 [snapshots-2026-09-27](archive/snapshots-2026-09-27/README.md). Documents originating
 from Godot now live here as Unity-owned references; never overwrite them from the
 frozen Godot repository.
+
+Bank Shot mechanics and validation: [current report](reports/feedback-2026-09-30/bank-shot.md).
