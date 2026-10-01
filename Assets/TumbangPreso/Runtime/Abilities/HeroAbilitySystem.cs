@@ -1459,6 +1459,12 @@ namespace TumbangPreso.Abilities
             if (Kit == null || Kit.PracticeMode) return;
 
             Kit.AddUltimateCharge(amount);
+            if (NetAuthority.IsHost)
+            {
+                Kit.OnObjectiveAwarded(amount);
+                if (Kit is ZackHeroKit && amount > 0)
+                    Net.MatchRpc.Instance?.BroadcastObjectiveCooldown(_motor.PlayerSlot, amount);
+            }
         }
 
         public void OnLataKnocked()

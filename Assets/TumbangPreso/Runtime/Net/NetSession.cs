@@ -554,7 +554,8 @@ namespace TumbangPreso.Net
         //118: knockdown cancels charge and throws wait for can/protection reset.
         //119: revised camping/slipper warning windows and2.5second fatigue.
         //122: live Frostbite load uses the existing scoped timed-kit recovery.
-        public const int ProtocolVersion = 122;
+        //123: authoritative objective cooldown grants reach predicted owners.
+        public const int ProtocolVersion = 123;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

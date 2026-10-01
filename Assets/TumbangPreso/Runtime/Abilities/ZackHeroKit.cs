@@ -11,6 +11,19 @@ namespace TumbangPreso.Abilities
     public sealed class ZackHeroKit : HeroKit, ITimedKitReplication, IWorldEffectBinding
     {
         public bool IsOverchargeThrowActive { get; set; }
+        public const float ObjectiveCooldownSeconds = 5;
+        public override void OnObjectiveAwarded(float amount) => ApplyObjectiveCooldown(amount, true, true);
+        public void ApplyObjectiveCooldown(float amount, bool signature, bool role)
+        {
+            if (!float.IsFinite(amount) || amount <= 0) return;
+            float seconds = amount * ObjectiveCooldownSeconds;
+            if (signature) Skill1?.ReduceCooldown(seconds);
+            if (role)
+            {
+                AttackingSkill?.ReduceCooldown(seconds);
+                DefendingSkill?.ReduceCooldown(seconds);
+            }
+        }
         private bool _joinMagnetSettled, _joinThunderSettled;
 
         public TimedKitSnapshot CaptureTimedKit()

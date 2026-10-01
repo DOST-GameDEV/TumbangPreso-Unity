@@ -3384,3 +3384,32 @@ still has20point/temporary Thunderstrike. New blank-slot ideas remain Proposed,
 no invented adoption. Inspect actual objective hooks/resource/recovery before
 editing, respect fresh contributor claims, preserve all visual/loading scope.
 
+
+AMPED-UP-1001 owns HeroKit objective hook, HeroAbility cooldown reduction,
+HeroAbilitySystem award/readonly request watermark, ZackHeroKit passive only,
+new bounded objective-cooldown delivery and SkillReceiptTests plus protocol.
+Confirmed Wiki anchor5seconds per objective point is absent. Real Award is host
+objective income1/.5/.15; practice AddUltimateCharge must not trigger passive.
+Live owner snapshots deny cooldown decreases, so implement ordered explicit
+grant with processed-request guard rather than a host-only fix. Zack full-kit
+migration/legacy Magnet and permanent Overclock remain separate open scope.
+One native objective baseline, then focused host/owner/replay/framing controls.
+No authored visual/loading edits, no other heavy job. Current3b6f13342.
+
+
+Amped baseline1/1 reproduces20s remaining after an actual objective award;3497
+terminal. Add explicit objective callback, five-second-per-unit basic-only
+discount and bounded40byte reliable scoped grant. Owners compare per-slot latest
+request against host processed watermark; duplicate/scope/frame checks precede
+commit. Practice/refill bypasses hook; cooldown floor, charges/ultimate untouched.
+123compatibility. Final6focused cases, one native repair max; no full-Zack claim.
+
+
+Amped final6/6passes actual fractional/whole objective, owner replay/scope/watermark,
+framing/authority and resource/practice controls.726inputs no drift; newmeta imported;
+3497/39940terminal, profiles/inputprefs preserved, no native repair.123cooldown
+grant preserves ordinary no-refund snapshots. Full Zack remains open: legacy
+Magnet cooldown migration, other proposed slots and permanent Overclock15points.
+Publish confirmed passive only, then continue the actual full-kit mechanics path
+from current Wiki/plans. No actual123player or visual/loading qualification claim.
+

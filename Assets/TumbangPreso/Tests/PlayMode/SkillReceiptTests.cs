@@ -398,6 +398,121 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(replication.RestoreTimedKit(body, new TimedKitSnapshot(kit.AttackingSkill, 5)), "Authoritative empty state must close late hydration.");
         }
 
+        [Test] public void AmpedUpUsesTheRealObjectiveAwardWithoutDiscountingPracticeRefills()
+        {
+            var system = Owner("zack"); var body = system.GetComponent<CharacterMotor>();
+            NetAuthority.Provider = new ObservingHost();
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(body);
+            GameServices.Match.ApplySnapshot(new int[4], 1, true);
+            GameServices.Round.ApplySnapshot(100, true, 0, true);
+            var kit = system.Kit;
+            kit.Skill1.ApplyNetworkSnapshot(20, 0, true);
+            system.OnLataKnocked();
+            Assert.AreEqual(15, kit.Skill1.CooldownRemaining, .001f, "The awarded objective point never reached Amped-Up.");
+            Assert.AreEqual(1, kit.UltimateCharge);
+            system.OnThrowReleased();
+            Assert.AreEqual(14.25f, kit.Skill1.CooldownRemaining, .001f);
+            system.OnOwnSlipperRetrieved();
+            Assert.AreEqual(11.75f, kit.Skill1.CooldownRemaining, .001f);
+            kit.AddUltimateCharge(kit.UltimateCost);
+            Assert.AreEqual(11.75f, kit.Skill1.CooldownRemaining, .001f, "A non-objective practice/refill changed cooldowns.");
+        }
+
+        private MatchRpc ObjectiveReceiver(out HeroAbilitySystem system, out GameplayActionScope scope)
+        {
+            system = Owner("zack"); var body = system.GetComponent<CharacterMotor>();
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(body);
+            GameServices.Match.ApplySnapshot(new int[4], 1, true); GameServices.Round.ApplySnapshot(100, true, 0, true);
+            system.Kit.Skill1.ApplyNetworkSnapshot(20, 0, true); system.Kit.AttackingSkill.ApplyNetworkSnapshot(8, 1, true);
+            var root = new GameObject("Objective grant receiver"); root.SetActive(false);
+            var router = root.AddComponent<MatchRpc>(); typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 123L);
+            scope = new GameplayActionScope { Match = 123, Round = 1, Epoch = body.MovementEpoch }; return router;
+        }
+        private static bool ObjectiveGrant(MatchRpc router, GameplayActionScope scope, long sequence, float amount = 1, long processed = 0)
+            => (bool)typeof(MatchRpc).GetMethod("ApplyObjectiveCooldown", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .Invoke(router, new object[] { scope, 1, sequence, amount, processed });
+
+        [Test] public void AmpedUpOwnerGrantIsScopedAndIdempotent()
+        {
+            var router = ObjectiveReceiver(out var system, out var scope);
+            Assert.IsTrue(ObjectiveGrant(router, scope, 1));
+            Assert.AreEqual(15, system.Kit.Skill1.CooldownRemaining);
+            Assert.AreEqual(3, system.Kit.AttackingSkill.CooldownRemaining);
+            Assert.AreEqual(1, system.Kit.AttackingSkill.ChargesRemaining);
+            Assert.AreEqual(0, system.Kit.UltimateCharge);
+            Assert.IsFalse(ObjectiveGrant(router, scope, 1));
+            Assert.AreEqual(15, system.Kit.Skill1.CooldownRemaining);
+        }
+
+        [Test] public void AmpedUpDoesNotDiscountANewerPredictedOrSettledCast()
+        {
+            var router = ObjectiveReceiver(out var system, out var scope);
+            Assert.IsTrue(system.TrackSkillRequest(0, 2));
+            Assert.IsTrue(ObjectiveGrant(router, scope, 1, processed: 1));
+            Assert.AreEqual(20, system.Kit.Skill1.CooldownRemaining);
+            Assert.AreEqual(3, system.Kit.AttackingSkill.CooldownRemaining);
+            Assert.IsTrue(ObjectiveGrant(router, scope, 2, processed: 2));
+            Assert.AreEqual(15, system.Kit.Skill1.CooldownRemaining);
+            system.ResolveSkillReceipt(0, 2, true, 15, 0);
+            Assert.IsTrue(ObjectiveGrant(router, scope, 3, processed: 1));
+            Assert.AreEqual(15, system.Kit.Skill1.CooldownRemaining, "Settling a cast must not let an older award discount it.");
+        }
+
+        [Test] public void AmpedUpBadScopesAmountsAndBindingsCannotPoisonTheCurrentGrant()
+        {
+            var router = ObjectiveReceiver(out var system, out var scope); var bad = scope;
+            bad.Match--; Assert.IsFalse(ObjectiveGrant(router, bad, 99));
+            bad = scope; bad.Round++; Assert.IsFalse(ObjectiveGrant(router, bad, 99));
+            bad = scope; bad.Epoch++; Assert.IsFalse(ObjectiveGrant(router, bad, 99));
+            foreach (float amount in new[] { 0f, -1f, 2f, float.NaN, float.PositiveInfinity })
+                Assert.IsFalse(ObjectiveGrant(router, scope, 99, amount));
+            Assert.IsFalse(ObjectiveGrant(router, scope, 99, processed: -1));
+            GameServices.Round.ApplySnapshot(100, false, 0, true);
+            Assert.IsFalse(ObjectiveGrant(router, scope, 99));
+            GameServices.Round.ApplySnapshot(100, true, 0, true);
+            Assert.IsTrue(ObjectiveGrant(router, scope, 1));
+            system.BindHero("cheska"); Assert.IsFalse(ObjectiveGrant(router, scope, 2));
+        }
+
+        [Test] public void AmpedUpNamedPacketHonorsEnvelopeFramingAndHostAuthority()
+        {
+            var router = ObjectiveReceiver(out var system, out var scope);
+            byte[] Packet(long sequence)
+            {
+                using var writer = new FastBufferWriter(48, Allocator.Temp);
+                writer.WriteValueSafe(0UL); writer.WriteNetworkSerializable(scope); writer.WriteValueSafe(1);
+                writer.WriteValueSafe(sequence); writer.WriteValueSafe(1f); writer.WriteValueSafe(0L); return writer.ToArray();
+            }
+            void Receive(byte[] bytes, ulong sender = 0)
+            {
+                using var reader = new FastBufferReader(bytes, Allocator.Temp); reader.Seek(8);
+                typeof(MatchRpc).GetMethod("OnObjectiveCooldownMsg", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                    .Invoke(router, new object[] { sender, reader });
+            }
+            var bytes = Packet(1); Receive(bytes, 1); Assert.AreEqual(20, system.Kit.Skill1.CooldownRemaining);
+            var shortBytes = new byte[bytes.Length - 1]; System.Array.Copy(bytes, shortBytes, shortBytes.Length);
+            Receive(shortBytes); Assert.AreEqual(20, system.Kit.Skill1.CooldownRemaining);
+            var suffix = new byte[bytes.Length + 1]; System.Array.Copy(bytes, suffix, bytes.Length);
+            Receive(suffix); Assert.AreEqual(20, system.Kit.Skill1.CooldownRemaining);
+            Receive(bytes); Assert.AreEqual(15, system.Kit.Skill1.CooldownRemaining);
+            Receive(bytes); Assert.AreEqual(15, system.Kit.Skill1.CooldownRemaining);
+            NetAuthority.Provider = new ObservingHost(); Receive(Packet(2)); Assert.AreEqual(15, system.Kit.Skill1.CooldownRemaining);
+        }
+
+        [Test] public void AmpedUpNeverBanksCooldownOrChangesChargesUltimateAndOtherKits()
+        {
+            var system = Owner("zack"); var kit = system.Kit;
+            kit.Skill1.ApplyNetworkSnapshot(1, 0, true); kit.AttackingSkill.ApplyNetworkSnapshot(3, 1, true);
+            kit.Ultimate.ApplyNetworkSnapshot(9, 0, true);
+            kit.OnObjectiveAwarded(1); kit.OnObjectiveAwarded(1);
+            Assert.AreEqual(0, kit.Skill1.CooldownRemaining); Assert.AreEqual(0, kit.AttackingSkill.CooldownRemaining);
+            Assert.AreEqual(1, kit.AttackingSkill.ChargesRemaining); Assert.AreEqual(9, kit.Ultimate.CooldownRemaining);
+            var other = new CheskaHeroKit(); other.Skill1.ApplyNetworkSnapshot(20, 0, true); other.OnObjectiveAwarded(1);
+            Assert.AreEqual(20, other.Skill1.CooldownRemaining);
+            kit.Skill1.ApplyNetworkSnapshot(20, 0, true); kit.PracticeMode = true; system.OnLataKnocked();
+            Assert.AreEqual(20, kit.Skill1.CooldownRemaining);
+        }
+
         [Test]
         public void ResourceSnapshotsMapBothRolesByIdentityAndRejectPartialOrMalformedSets()
         {
