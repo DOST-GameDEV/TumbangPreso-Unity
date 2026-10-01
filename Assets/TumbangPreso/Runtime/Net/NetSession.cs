@@ -549,7 +549,8 @@ namespace TumbangPreso.Net
         // Protocol107 aligns Unstoppable/Bastion clocks and the bounded cleanse exception.
         //114: current Wiki Airburst releases at1.5seconds with a60degree fan.
         //115: Hydro Current uses a35second cooldown and earliest swept contact.
-        public const int ProtocolVersion = 115;
+        //116: Hydro Skim load and first-ground flight phase replace Mirrorwake.
+        public const int ProtocolVersion = 116;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

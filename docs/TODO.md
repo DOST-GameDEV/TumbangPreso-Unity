@@ -42,6 +42,16 @@ failure. Shipped ec644a4b; integrated with the incoming Haunted menu fix.
 Other Hydro slots and presentation remain open.
 [Evidence](reports/hero-quality-2026-10-01/hydro-current-checks/README.md).
 
+### HYDRO-SKIM-1001: bounded next-throw ground continuation
+
+Live Mirrorwake replacement implemented with held identity, eight-second load,
+35second cooldown and up-to-two-metre first-ground phase. Initial5native/5Core
+pass; final boundary/interaction pass adds court/round/body/current coverage,
+eight distinct native successes in total. Publication pending. Dedicated body,
+FPP, glyph/wake/audio and actual matching peers remain open.
+[Plan](reports/hero-quality-2026-10-01/skim-implementation.md) and
+[evidence](reports/hero-quality-2026-10-01/skim-checks/README.md).
+
 ### PHAISTER-HEX-1001: refine the hallucination presentation
 
 Owner-authorized exception to finalized-kit protection. Full-size grounded copies,

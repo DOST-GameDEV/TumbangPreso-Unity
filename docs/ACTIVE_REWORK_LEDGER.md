@@ -2130,3 +2130,42 @@ Exact held identity, one throw, first-ground bounded slide and cancellation are
 required before publication. Other contributors retain AI/Haunted/network-start
 work; no new code change for Skim yet. Current Crosscurrent publication check
 is finishing; continue directly, with no idle between coherent units.
+Skim scope adds new Slipper.Skim.cs/meta for the bounded flight phase; Slipper.cs
+becomes partial and keeps its existing body/can outcome path. Slide geometry
+stops at solid cover/unsupported terrain, while body/can checks retain normal
+host contact/chain rules. Existing reliable world snapshot sends slipper state
+before timed-kit recovery, allowing the load to bind its restored held identity.
+
+Skim first final candidate frozen for4new native cases plus ordinary body-block
+control: held identity/expiry/refusal, actual Carrier throw/two-metre ground
+phase, cover stop and timed recovery without recast. Expected5fresh cases, one
+heavy job, no tooling retries used. Film/glyph/audio and actual peers remain open.
+
+While first candidate runs, source review found the load-recovery latch also
+needs a round boundary reset. Added explicit ResetForRound and a same-object
+next-round restore check in source only; running candidate is unchanged. Final
+validation will include this correction after its terminal result.
+
+First Skim5/5native pass, frozen inputs unchanged. Next focused boundary pass
+validates the new round-recovery latch fix, court edge/round interruption and
+real body contact during slide. Reuse unchanged first-pass flight/cover/expiry
+evidence. Expected3cases; no fixture/tooling retries used.
+
+Skim interaction review adds RafiWaterField.cs one eligibility predicate:
+ground skimming is not a flying-current target, even while its host phase uses
+InFlight for normal body/can collision. HostSteerFlight also refuses that phase.
+Otherwise it could spend a current on a bend overwritten by the next slide step.
+New assertion covers that refusal; current running boundary candidate unchanged.
+
+Boundary2/3pass; edge succeeded but round interruption asserted after one
+step without proving ground-phase entry. Skin rest height can require more than
+one step. One bounded fixture repair waits for actual IsSkimming before round
+end and solid-cover insertion. Final4cases include these, real throw/current
+refusal, and ordinary current control after the eligibility correction.
+
+Skim final4/4native passes after one fixture precondition correction; eight
+distinct native successes across scoped runs and5Core cases. Real first-ground
+travel ends loose at2m; cover/edge/round/body/current interactions and load
+identity/expiry/recovery checked. Frozen inputs unchanged, OOM11/kill6unchanged.
+Publish coherent gameplay unit only; distinct body/FPP/glyph/wake/audio remains
+provisional. Actual116peer/player qualification is still separate.

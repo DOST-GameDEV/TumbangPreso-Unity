@@ -18,6 +18,7 @@ namespace TumbangPreso
         ElectricZap,    // Zack Skill 2 (Overcharge Throw)
         Frost = 3,      // Cheska attacking: the player it hits is Frozen
         Concussed = 4,  // Dante Boulder held-slipper payload; stable wire value
+        Skim = 5,       // Hydro first-ground continuation; stable wire value
     }
 
     /// <summary>
@@ -28,7 +29,7 @@ namespace TumbangPreso
     /// moment they pick one up inside the box. Anything that makes retrieval cheaper is a
     /// change to the core loop, not a convenience.
     /// </summary>
-    public sealed class Slipper : MonoBehaviour
+    public sealed partial class Slipper : MonoBehaviour
     {
         [SerializeField] private int _skinIndex = -1;
         [SerializeField] private int _ownerSlot = -1;
@@ -149,6 +150,7 @@ namespace TumbangPreso
             if (State == SlipperState.InFlight && next != SlipperState.InFlight) FinishChain(ThrowChainEnd.Miss);
 
             State = next;
+            if (next != SlipperState.InFlight) { _skimLeft = 0; _skimStarted = false; }
             if (next != SlipperState.InFlight && _motionAccent != null) _motionAccent.ClearFlight();
             if (next != SlipperState.Loose) SetLandedHighlight(false);
             if (changed) RefreshBeam();
@@ -1072,6 +1074,7 @@ namespace TumbangPreso
             if (thrower != null && !OwnershipAllows(thrower)) return;
             if (_motionAccent != null) _motionAccent.ClearFlight();
             FinishChain(ThrowChainEnd.Miss); // A credited flight replaced by a new launch has ended.
+            _skimLeft = 0; _skimStarted = false;
             _chainMatch = GameServices.Match;
             _chainOwner = thrower != null ? thrower.PlayerSlot : -1;
             _launchCanSerial = GameServices.Round != null && GameServices.Round.Lata != null
@@ -1171,6 +1174,7 @@ namespace TumbangPreso
 
         private void TriggerAffinityImpact()
         {
+            _skimLeft = 0;
             if (Affinity == SlipperAffinity.FireExplosive)
             {
                 // ⚠️⚠️ 2.6 m, DOWN FROM 4.5, BECAUSE THIS IS A SKILL'S PAYLOAD AND NOT AN
@@ -1281,14 +1285,20 @@ namespace TumbangPreso
             { Land(fromFlight: false); return; }
             if (_throwerIgnoreLeft > 0.0f) _throwerIgnoreLeft -= dt;
 
-            _velocity = StepFlightVelocity(_velocity, PektusSpin, dt);
-
             Vector3 prevPos = transform.position;
-            transform.position += _velocity * dt;
-
-            BounceOffObstacles(prevPos, dt);
-            BounceOffBounds();
-            SpinInFlight(dt);
+            bool skimming = _skimLeft > 0 && Affinity == SlipperAffinity.Skim;
+            if (skimming)
+            {
+                if (!MoveSkim(dt)) return;
+            }
+            else
+            {
+                _velocity = StepFlightVelocity(_velocity, PektusSpin, dt);
+                transform.position += _velocity * dt;
+                BounceOffObstacles(prevPos, dt);
+                BounceOffBounds();
+                SpinInFlight(dt);
+            }
             if(RooftopRecovery.Instance!=null&&RooftopRecovery.Instance.TryLoseSlipper(this))return;
             if(LagoonWater.Instance!=null&&LagoonWater.Instance.TryRecoverSlipper(this))return;
 
@@ -1397,8 +1407,14 @@ namespace TumbangPreso
             Vector3 supportAt = transform.position;
             supportAt.y = Mathf.Max(prevPos.y, supportAt.y);
             float flightGround = FindGroundY(supportAt, Balance.SlipperRestHeight);
-            if (transform.position.y <= flightGround + Balance.SlipperRestHeight)
-                Land(fromFlight: true, landingGround: flightGround);
+            if (skimming)
+            {
+                if (_skimLeft <= 0) Land(fromFlight: true, landingGround: _skimGround);
+            }
+            else if (transform.position.y <= flightGround + Balance.SlipperRestHeight)
+            {
+                if (!BeginSkim(flightGround)) Land(fromFlight: true, landingGround: flightGround);
+            }
         }
 
         /// <summary>
@@ -1836,7 +1852,7 @@ namespace TumbangPreso
         // Preserve vertical speed, spin, affinity, owner, chain and ignore clocks.
         public bool HostSteerFlight(Vector3 toward, float degrees)
         {
-            if (!NetAuthority.ShouldResolve() || State != SlipperState.InFlight
+            if (!NetAuthority.ShouldResolve() || State != SlipperState.InFlight || IsSkimming
                 || !float.IsFinite(degrees) || !float.IsFinite(toward.sqrMagnitude)) return false;
             toward.y = 0;
             var horizontal = new Vector3(_velocity.x, 0, _velocity.z);

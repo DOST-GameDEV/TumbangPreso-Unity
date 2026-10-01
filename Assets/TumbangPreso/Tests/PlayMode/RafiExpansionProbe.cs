@@ -124,29 +124,143 @@ namespace TumbangPreso.PlayTests
             Assert.Less(new Vector2(raised.transform.position.x-raisedStart.x,raised.transform.position.z-raisedStart.z).magnitude,.08f);
         }
 
-        [UnityTest,Timeout(60000)] public IEnumerator MirrorAndItsRecordedViewCannotCreateActorsOrEquipment()
+        [UnityTest,Timeout(60000)] public IEnumerator SkimLoadUsesHeldIdentityAndExpiresWithoutAnEmptyHandGrant()
         {
-            yield return Start();var caster=Rafi();caster.Intent.Move=Vector2.right;
-            yield return new WaitForSeconds(.45f);caster.Intent.Move=Vector2.zero;
-            int actors=Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).Length;
-            int shoes=Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None).Length;
-            Assert.AreEqual(HeroKit.CastOutcome.Cast,caster.AbilitySystem.Kit.CastSkill2(Context(caster)));yield return null;
-            var field=RafiWaterField.Active.Single(f=>f.Capture().Type==WorldEffectSnapshot.Kind.Mirrorwake);
-            var state=field.Capture();Assert.IsTrue(WorldEffectSnapshot.Valid(state));Assert.GreaterOrEqual(state.Path.Length,2);
-            Assert.AreEqual(0,field.GetComponentsInChildren<Collider>(true).Length);
-            Assert.AreEqual(0,field.GetComponentsInChildren<CharacterMotor>(true).Length);
-            var parent=new GameObject("Recorded water review");var before=caster.transform.position;
-            using(var view=new RecordedFieldView(parent.transform,state))
+            yield return Start(); var caster=Rafi(); yield return null;
+            var carrier=caster.GetComponent<Carrier>(); var shoe=carrier.Held;
+            var kit=(RafiHeroKit)caster.AbilitySystem.Kit; var ctx=Context(caster);
+            Assert.AreEqual(HeroKit.CastOutcome.Cast,kit.CastSkill2(ctx));
+            Assert.IsTrue(kit.IsSkimLoaded); Assert.AreEqual(35,kit.AttackingSkill.Cooldown);
+            kit.AttackingSkill.Tick(ctx,8.01f);
+            Assert.IsFalse(kit.IsSkimLoaded); Assert.IsFalse(kit.AttackingSkill.IsActive);
+            kit.ResetForRound(ctx);
+            Assert.AreEqual(HeroKit.CastOutcome.Cast,kit.CastSkill2(ctx));
+            Assert.IsTrue(shoe.HostDisarm());
+            Assert.IsFalse(kit.ConsumeSkim(shoe),"Dropping cannot preserve the load for a later pickup.");
+            kit.AttackingSkill.Tick(ctx,.01f); Assert.IsFalse(kit.AttackingSkill.IsActive);
+            kit.ResetForRound(ctx);
+            Assert.IsFalse(kit.AttackingSkill.CanActivate(ctx));
+            Assert.AreEqual(0,kit.AttackingSkill.CooldownRemaining);
+        }
+
+        [UnityTest,Timeout(60000)] public IEnumerator SkimRealThrowContinuesTwoMetresThenBecomesNormallyLoose()
+        {
+            yield return Start(); var caster=Rafi(); yield return null;
+            foreach(var actor in GameServices.Round.Players)
+            { actor.enabled=false; actor.GetComponent<Carrier>().enabled=false; }
+            caster.Teleport(new Vector3(-3,.12f,-5));
+            var carrier=caster.GetComponent<Carrier>(); var shoe=carrier.Held; shoe.enabled=false;
+            var kit=(RafiHeroKit)caster.AbilitySystem.Kit;
+            Assert.AreEqual(HeroKit.CastOutcome.Cast,kit.CastSkill2(Context(caster)));
+            carrier.HostThrowAt(caster.transform.position+Vector3.up*.65f,new Vector3(-3,.12f,-2),.1f);
+            Assert.AreEqual(SlipperAffinity.Skim,shoe.Affinity); Assert.IsFalse(kit.IsSkimLoaded);
+            var started=typeof(Slipper).GetField("_skimStarted",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            Vector3 first=Vector3.zero; bool saw=false;
+            Physics.SyncTransforms();
+            for(int step=0;step<300 && shoe.State==SlipperState.InFlight;step++)
             {
-                view.Sample(state,.3f);view.Sample(state,0);
-                Assert.AreEqual(0,view.Root.GetComponentsInChildren<Collider>(true).Length);
-                Assert.AreEqual(0,view.Root.GetComponentsInChildren<RafiWaterField>(true).Length);
+                shoe.SendMessage("FixedUpdate");
+                if(!saw && (bool)started.GetValue(shoe))
+                {
+                    saw=true; first=shoe.transform.position;
+                    Assert.IsTrue(shoe.IsSkimming);
+                    Assert.IsFalse(shoe.HostSteerFlight(Vector3.right,40),"Ground skimming is not an airborne current target.");
+                }
             }
-            Object.Destroy(parent);
-            Assert.AreEqual(actors,Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).Length);
-            Assert.AreEqual(shoes,Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None).Length);
-            Assert.AreEqual(before,caster.transform.position);
-            Assert.IsFalse(caster.AbilitySystem.IsImmuneToTags);
+            Assert.IsTrue(saw,"Real ground contact never began the skim.");
+            Assert.AreEqual(SlipperState.Loose,shoe.State);
+            Assert.AreEqual(SlipperAffinity.Normal,shoe.Affinity);
+            Assert.That(Vector2.Distance(new Vector2(first.x,first.z),new Vector2(shoe.transform.position.x,shoe.transform.position.z)),Is.InRange(1.95f,2.01f));
+            Assert.AreEqual(1,shoe.OwnerSlot); Assert.IsNull(carrier.Held);
+            Assert.IsTrue(GameServices.Round.Lata.IsUpright);
+            yield return null;
+        }
+
+        [UnityTest,Timeout(60000)] public IEnumerator SkimStopsBeforeNewSolidCover()
+        {
+            yield return Start(); var caster=Rafi(); yield return null;
+            foreach(var actor in GameServices.Round.Players)
+            { actor.enabled=false; actor.GetComponent<Carrier>().enabled=false; }
+            var shoe=caster.GetComponent<Carrier>().Held; shoe.enabled=false;
+            var at=new Vector3(-3,0,-5); at.y=Slipper.GroundY(at)+shoe.RestHeight+.01f;
+            shoe.HostThrow(caster,at,new Vector3(0,-1,5),SlipperAffinity.Skim);
+            for(int step=0;step<60 && !shoe.IsSkimming && shoe.State==SlipperState.InFlight;step++)shoe.SendMessage("FixedUpdate");
+            Assert.IsTrue(shoe.IsSkimming,"Cover check must begin in the real ground phase.");
+            var first=shoe.transform.position;
+            var wall=GameObject.CreatePrimitive(PrimitiveType.Cube);
+            wall.transform.position=first+new Vector3(0,.4f,.8f);wall.transform.localScale=new Vector3(1,1,.2f);
+            Physics.SyncTransforms();
+            for(int step=0;step<100 && shoe.State==SlipperState.InFlight;step++)shoe.SendMessage("FixedUpdate");
+            Assert.AreEqual(SlipperState.Loose,shoe.State);
+            Assert.That(shoe.transform.position.z-first.z,Is.InRange(0f,.61f));
+            Assert.AreEqual(SlipperAffinity.Normal,shoe.Affinity);
+            Object.Destroy(wall); yield return null;
+        }
+
+        [UnityTest,Timeout(60000)] public IEnumerator SkimJoiningLoadRestoresOnceWithoutRecasting()
+        {
+            yield return Start(); var caster=Rafi(); yield return null;
+            var kit=(RafiHeroKit)caster.AbilitySystem.Kit;
+            Assert.IsFalse(kit.RestoreTimedKit(caster,new TimedKitSnapshot(kit.AttackingSkill,float.NaN)));
+            Assert.IsTrue(kit.RestoreTimedKit(caster,new TimedKitSnapshot(kit.AttackingSkill,4)));
+            Assert.IsTrue(kit.IsSkimLoaded); Assert.AreEqual(4,kit.AttackingSkill.DurationRemaining);
+            Assert.AreEqual(0,kit.AttackingSkill.CooldownRemaining,"Recovery is not an activation.");
+            Assert.IsFalse(kit.RestoreTimedKit(caster,new TimedKitSnapshot(kit.AttackingSkill,7)));
+            Assert.AreEqual(4,kit.AttackingSkill.DurationRemaining);
+            caster.AbilitySystem.BindHero("rafi"); kit=(RafiHeroKit)caster.AbilitySystem.Kit;
+            Assert.IsFalse(kit.RestoreTimedKit(caster,new TimedKitSnapshot(kit.AttackingSkill,0)));
+            Assert.IsFalse(kit.RestoreTimedKit(caster,new TimedKitSnapshot(kit.AttackingSkill,4)));
+            Assert.IsFalse(kit.IsSkimLoaded);
+            kit.ResetForRound(Context(caster));
+            Assert.IsTrue(kit.RestoreTimedKit(caster,new TimedKitSnapshot(kit.AttackingSkill,3)),
+                "A new round must allow its own first recovery snapshot.");
+            Assert.AreEqual(3,kit.AttackingSkill.DurationRemaining);
+        }
+
+        [UnityTest,Timeout(60000)] public IEnumerator SkimStaysInsideCourtAndStopsWhenTheRoundEnds()
+        {
+            yield return Start(); var caster=Rafi(); yield return null;
+            foreach(var actor in GameServices.Round.Players)
+            { actor.enabled=false; actor.GetComponent<Carrier>().enabled=false; }
+            var shoe=caster.GetComponent<Carrier>().Held; shoe.enabled=false;
+            var at=new Vector3(AIController.PlayableMaxX-.5f,0,-5);
+            at.y=Slipper.GroundY(at)+shoe.RestHeight+.01f;
+            shoe.HostThrow(caster,at,new Vector3(5,-1,0),SlipperAffinity.Skim);
+            for(int step=0;step<80 && shoe.State==SlipperState.InFlight;step++)shoe.SendMessage("FixedUpdate");
+            Assert.AreEqual(SlipperState.Loose,shoe.State);
+            Assert.LessOrEqual(shoe.transform.position.x,AIController.PlayableMaxX);
+            Assert.Less(shoe.transform.position.x-at.x,.51f);
+            at=new Vector3(-3,0,-5);at.y=Slipper.GroundY(at)+shoe.RestHeight+.01f;
+            shoe.HostThrow(caster,at,new Vector3(0,-1,5),SlipperAffinity.Skim);
+            for(int step=0;step<60 && !shoe.IsSkimming && shoe.State==SlipperState.InFlight;step++)shoe.SendMessage("FixedUpdate");
+            Assert.IsTrue(shoe.IsSkimming,"Round interruption must start after real ground contact.");
+            GameServices.Round.EndRound();
+            shoe.SendMessage("FixedUpdate");
+            Assert.AreEqual(SlipperState.Loose,shoe.State);
+        }
+
+        [UnityTest,Timeout(60000)] public IEnumerator SkimBodyContactConsumesThePayloadNormally()
+        {
+            yield return Start(); var caster=Rafi(); yield return null;
+            foreach(var actor in GameServices.Round.Players)
+            { actor.enabled=false; actor.GetComponent<Carrier>().enabled=false; }
+            var victim=GameServices.Round.PlayerAt(2);victim.Teleport(new Vector3(-3,.12f,-3.4f));
+            var shoe=caster.GetComponent<Carrier>().Held;shoe.enabled=false;
+            var at=new Vector3(-3,0,-5);at.y=Slipper.GroundY(at)+shoe.RestHeight+.01f;
+            shoe.HostThrow(caster,at,new Vector3(0,-1,5),SlipperAffinity.Skim);
+            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            var contacts=typeof(Slipper).GetField("_bodyContacts",flags);
+            Physics.SyncTransforms();
+            for(int step=0;step<80 && shoe.State==SlipperState.InFlight;step++)
+            {
+                shoe.SendMessage("FixedUpdate");
+                if(((int)contacts.GetValue(shoe)&(1<<2))!=0)break;
+            }
+            Assert.AreNotEqual(0,(int)contacts.GetValue(shoe)&(1<<2));
+            Assert.AreEqual(SlipperAffinity.Normal,shoe.Affinity);
+            Assert.AreEqual(0f,(float)typeof(Slipper).GetField("_skimLeft",flags).GetValue(shoe));
+            Assert.AreEqual(StunElement.None,victim.StunElement);
+            yield return null;
         }
 
         [Ignore("Vaulted with the first Lagoon Court (owner, 2026-09-27: \"vault the old lagoon\"); its scene is out of the build. See docs/TODO.md LAGOON-1.7."),UnityTest,Timeout(120000)] public IEnumerator InnerAndOuterStairsLetBothModesLeaveTheWater()

@@ -295,6 +295,10 @@ namespace TumbangPreso
                 affinity = SlipperAffinity.FireExplosive;
                 sean.ConsumeIgnition();
             }
+            else if (ability != null && ability.Kit is RafiHeroKit rafi && rafi.ConsumeSkim(Held))
+            {
+                affinity = SlipperAffinity.Skim;
+            }
             else if (ability != null && ability.Kit is CheskaHeroKit cheska && cheska.IsFrostbiteLoaded)
             {
                 // FROSTBITE (ABILITY-2): the throw carries the frost; the first body it hits is Frozen.

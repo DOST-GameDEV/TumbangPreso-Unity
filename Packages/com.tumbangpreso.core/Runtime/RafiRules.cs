@@ -5,6 +5,11 @@ namespace TumbangPreso.Core
     public static class RafiRules
     {
         // Published Hydro design, October 1: replace two charges with 35 seconds.
+        public const float SkimCooldown = 35f;
+        public const float SkimLoadSeconds = 8f;
+        public const float SkimDistance = 2f;
+        public const float SkimSpeed = 5f;
+        public const float SkimStepHeight = .15f;
         public const float CurrentCooldown = 35f;
         public const float CurrentRange = 6f;
         public const float CurrentRadius = .65f;
