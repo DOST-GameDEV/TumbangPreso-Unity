@@ -33,6 +33,15 @@ replaced, retired and genuinely blocked requirements without reviving old ideas.
 - Any permitted bug fix must identify the reproducible defect, preserve the
   finalized direction and include focused behavioral evidence.
 
+### October1 owner exception: Phaister hallucination refinement
+
+The owner explicitly requested refining Phaister's hallucination skill. This
+permits a focused Curse: Hex hallucination refinement after inspecting its actual
+play, with a recorded plan and evidence. It is not permission to redesign the
+rest of Phaister or Paete. Preserve current cast/mark/recast rules and in-game
+copy unless the scoped refinement demonstrates a reason to change them; do not
+silently retune timings or replace the finalized doll/ultimate direction.
+
 ## Autonomy And Continuity
 
 - Continue assigned independent work through questions, checkpoints, passing

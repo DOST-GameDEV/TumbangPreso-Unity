@@ -1662,3 +1662,26 @@ and run the same nine focused cases against the combined source.
 Haunted e0f9015a2 integrates checked Continental Drift92fedc4c1; source merge clean except ledger, both checkpoints retained. Combined protocol112. Six native Haunted cases retained, no new whole-player/peer qualification, no duplicate unchanged checks. Remaining wholeHaunt chase/nearsight/audio not implemented. Finish remote verification and same Nemu note, then continue those exact requirements. All jobs terminal; owned runtime source staged cleanly, unrelated dirt unchanged.
 
 Published e0f9015a2 at044c86bbe, remote verified, protocol112. Same Nemu Feedback note updated with timer/wire/marker scope and explicit unfinished chase/nearsight/muffle; human/Done controls untouched. Current status native six distinct cases on pre-merge owned candidate,622hashes/no drift. Contributor Continental Drift independent source preserved. No paid calls, no cross-chat, no authored art/audio changes, no task-owned browser/player/job left. Next continue full Haunt: current legacy seance7s/10points still wrong versus15points/chase-all-seen/Haunted7.5s. Runtime timer now available viaApplyHaunted/HauntedLeft; controls do not block actions or movement; generic shared receiver accepts3/2/0 and rejects invalid state before consuming serial. Perception effects/chaser must use host outcomes and existing shared recovery without modifying finalized Pha/Paete or loading. Broader objective remains active.
+
+HERO-QUALITY-1001 research active after shipped Drift92fedc4c. Fast-forwarded
+published Haunted84f07fcb/protocol112 without altering contributor work. Own only
+docs/reports/hero-quality-2026-10-01/*, this checkpoint, TODO research status and
+missing Wiki design cells; no hero runtime claim. Paete/Phaister source/history
+quality audit saved, five opened primary written sources recorded. Official film
+stream remains unavailable after one lighter-quality attempt; no watched-film
+claim. Next full roster slot matrix and distinct Hydro/Pyro/Electro proposals,
+then per-character choreography/audio/acceptance plans. Nemu chase/perception and
+friend loading remain contributor-owned. No heavy job running or player refresh.
+
+Owner00:58 explicitly adds Phaister hallucination refinement. Scoped exception
+recorded in AGENTS and research/phaister-hex.md; no permission to redesign other
+finalized work. Source presenter inspected: local max4 render-only shoe copies,
+no-shadow tell, fixed spawn patterns/pop timing. Baseline questions and comparison
+plan saved; no new defect/runtime result claimed and no code path yet owned.
+
+Owner01:02 adds HARRY-REVIEW-1001 after all requested work, immediately before
+manual hunt: analyze real Harry Gomez's feedback/history to learn his critique
+standards and apply an evidence-linked self-review checklist. Preserve original
+comments and human approval semantics. No immediate Doc rewrite or impersonation.
+Owner00:59 screenshot confirms Hydro/Zack/Pyro rows are the later replacement
+targets after research/thought; image inspected, no Wiki proposals inserted yet.

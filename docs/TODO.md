@@ -26,8 +26,22 @@ references without copying or redesigning them. Fill missing Hydro/Pyro/Electro
 Wiki entries only after that research, ending each new entry with
 `(Made by Harry Gaymez)`. Skill SFX are reauthorized. Preserve human-authored
 anchors and distinguish proposed design from implemented behavior.
-[Scope and deliverables](reports/hero-quality-2026-10-01/brief.md).
+[Research and plans](reports/hero-quality-2026-10-01/README.md).
+Draft coverage now includes all nine heroes, missing-kit alternatives and scoped
+Phaister Hex refinement. Wiki replacement and final film/implementation remain open.
 
+
+### HARRY-REVIEW-1001: learn the human critique standard
+
+Owner October1: after all currently requested implementation/refinement work and
+immediately before continuous manual bug hunting, analyze Harry Gomez's original
+feedback and refinement comments across Feedback and Finished feedback history.
+The owner identifies Harry as the only human editor besides this assistant.
+Build an evidence-linked self-review checklist that anticipates his critiques;
+preserve his original observations and do not fabricate his approval. Evaluate
+current work against that checklist and fix justified shortcomings. This means
+replacing the need for repeated critique, not deleting or impersonating Harry.
+Do not interrupt the higher-priority full-roster research to perform this now.
 
 ### FEEDBACK-0930: owner document and engineering follow-through
 

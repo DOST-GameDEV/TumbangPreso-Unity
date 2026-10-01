@@ -63,6 +63,14 @@ That judgement requires actual implementation, film, critique and human review.
 Research not completed and no missing Wiki kit has been filled yet. Both supplied
 screenshots were inspected: Hydro has blank cells with Water wall/Baha anchors;
 Zack retains Amped-Up/Overclock and normal/overclocked placeholders; Pyro retains
-Empowered throw. Continental Drift mechanics passed focused native checks and are
-finishing the authored-court witness before publication. This brief preserves the
-new assignment while that existing coherent unit finishes.
+Empowered throw. Continental Drift shipped at92fedc4c with focused native checks and an inspected
+authored-court witness. The repeat-pattern art critique remains open. Research
+is active; reference-audit.md and sources.md preserve the evidence so far.
+
+## Owner addition, October1 00:58UTC
+
+Include a focused refinement of Phaister's hallucination skill. This is a specific
+exception to finalized protection, not a whole-kit redesign. Inspect real victim
+play before changing it. Current HexedPhantomSlippers creates up to four local
+render-only shoe copies, with short ground pops and no shadows. The actual cast,
+mark/recast timing and doll identity remain the baseline. See phaister-hex.md.
