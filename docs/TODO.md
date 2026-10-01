@@ -246,6 +246,22 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   repair. Valid Unicode/host decisions/authority controls retained.
   [Evidence](reports/feedback-2026-09-30/roster-atomic-framing.md).
 
+- [x] BOT-SPACING-ALLOC-1001: warmed rival-spacing reads produce zero allocation
+  events instead of200per100queries. Four native cases preserve expiry, refresh,
+  self exclusion and independent brains; no measured FPS claim.
+  [Evidence](reports/feedback-2026-09-30/bot-spacing-allocation.md).
+
+- [x] HAUNTED-SPACING-1001: hidden actors cannot expose new lane claims through
+  the bot spacing board. Native baseline reproduces the leak; three final cases
+  cover sight range, recovery, Classic and companion/absent-body behavior.
+  [Evidence](reports/feedback-2026-09-30/haunted-spacing.md).
+
+- [x] NETWORK120-PLAYER-1001: actual identical Windows UDP host/client candidate
+  reaches active round2with matching structural state. One109second build,
+ 15440inputs without drift and one passing existing pair, no source retry.
+  Clean local admission/round progression only; broader network scope stays open.
+  [Evidence](reports/feedback-2026-09-30/network120-actual-player.md).
+
 - [x] HELD-SEAT-PICKS-1001: matching-token reclaim retains picks and takeover
   rating; Identify cannot replace fixed match choices with local preferences.
   Five distinct native cases cover repeated cycles, fresh account state, foreign

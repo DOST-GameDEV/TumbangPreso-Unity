@@ -231,3 +231,9 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Lobby pick framing, sender ownership and live-match rejection](lobby-pick-packet-framing.md).
 
 [Atomic bounded roster response and preserved state on rejection](roster-atomic-framing.md).
+
+[Bot spacing query allocation measurement and retained claims](bot-spacing-allocation.md).
+
+[Haunted bot spacing claims and preserved ordinary court reading](haunted-spacing.md).
+
+[Current120actual direct players through round2and exact limits](network120-actual-player.md).

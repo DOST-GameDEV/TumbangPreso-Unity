@@ -3014,6 +3014,25 @@ expiry/reflow/refresh checks pass. Pixels inspected, frozen inputs unchanged, no
 tooling repair/new OOM. Publish UI/art paths only. Next announcement scoring and
 2.5second presentation; current120. No native jobs or player/peer qualification.
 
+BOT-SPACING-ALLOC-1001 owns AIController.cs and new BotSpacingQueryTests.cs/meta.
+Measure 100 warm RivalBearings calls with three active rival claims; expected
+current list/backing allocations, then retain per-brain scratch preserving TTL,
+self exclusion, refresh/empty and independent-brain controls. Four final native
+cases; one bounded repair max. No gameplay/loading/art changes or player claim.
+Current6daecd842, all other local heavy jobs terminal. Status/scoring reserved.
+
+
+Spacing baseline1/1 reproduces200GC.Alloc events per100 warmed three-rival
+reads.81100 terminal; profiles/input preferences preserved. Per-brain retained
+list now clears and refills through unchanged own-seat/TTL filters. Final four
+focused cases, no broader suite or invented FPS claim.
+
+
+Spacing final4/4 native passes;100 warmed reads200allocation events to0.
+697frozen inputs no drift, valid metadata imported, no native repair.81100/67847
+terminal, profiles preserved. Publish scoped performance source/receipts. Next
+inspect bot Tap cancellation between render and physics; no proven fix yet.
+
 ANNOUNCEMENT-RULES-1001 owns Core ActionChains.cs, MatchRules.cs, MatchMoment.cs;
 Runtime MatchDirector.Moments.cs, MatchDirector.ActionChains.cs, Lata.cs accepted
 can-down hook, UI/MatchMomentBanner.cs, NetSession.cs protocol constant; Core
@@ -3063,3 +3082,47 @@ global first bonus. Frozen final inputs/source match, no new OOM, all jobs termi
 Publish121 and same HUD row Done text with explicit no-new-player/actualpeer limits.
 Next fresh Feedback intake and reconcile history before resuming hero presentation.
 Owner study silence stays active; Docs edits allowed, no chat notification.
+
+HAUNTED-SPACING-1001 owns AIController.cs and existing BotSpacingQueryTests.cs.
+Spacing optimization ced6bf29 published through8a6f323ed. Tap investigation found
+normal action consumers in Update; no demonstrated dropped action, no speculative
+change. Shared spacing board still reveals hidden actors' new bearings while
+Haunted. One native far-actor baseline, then three new visibility/Classic/expiry
+and companion controls; preserve prior four allocation/board results. One native
+repair max; all local jobs terminal, protocol120 unchanged.
+
+
+Haunted spacing baseline1/1 fails at far live bearing .2 despite active Haunted.
+89524terminal, no fixture failure. Add existing ActorIsVisible/BodyAt gate only
+to Haunted HeroStrike claim reads. Ordinary/Classic and TTL/score formulas stay.
+Final three new cases cover far moving claim,7m boundary/recovery/Classic and
+visible/inactive companion or absent body. Reuse unchanged four spacing checks.
+
+
+Haunted spacing final3/3passes,697input hashes no drift, no native repair.
+89524/24002terminal, profiles preserved. Publish scoped sight/board fix, reuse
+prior four normal query checks without a combined-run claim. Next coherent
+network/gameplay follow-through from current queue; all local helpers terminal.
+
+
+NETWORK120-PLAYER-1001: c26c5c34b remote verified. One current internal Windows
+build then actual direct UDP host/client through ordinary round2, using existing
+run_demo_lan.py --seconds150 and separate guarded profiles. Freeze tracked inputs
+and executable/runtime hashes. This addresses stale114general peer qualification;
+not specific120skill/rejoin/loss/cross-platform proof. One build/pair, no unchanged
+retry. Prior89524/24002terminal. Loading/assets/protected private dirt unchanged.
+
+
+Current120build2141MB/109s succeeds,15440input hashes no drift. Actual identical
+Windows UDP host/client PASS through active round2/defender1/structural5B80664C;
+client150s/host163s are different sample instants, host handover follows client
+exit. RuntimeSHAeb06179b8f451b6d31dae716fa514b3122dd0b70be5b4dca98e7473e02ae8656.
+59960/34750/67840terminal; profiles/inputprefs preserved, own players/port absent.
+No unchanged retry or every-skill/rejoin/loss claim. Feedback charge Notes corrected
+to current can-down rule through required-revision single replacement/readback;
+human columns intact. Publish receipts, then bot landing-on-raised-terrain hunt.
+
+Integrated ced6bf29/c26c5c34 bot spacing and7653ea53 protocol120 Windows peer
+round2 evidence while preserving announcement e3f21acf protocol121. The120pair
+is useful scoped history, not qualification of new121score events. Code histories
+merge without conflict; ledger preserves both append histories. No native job.

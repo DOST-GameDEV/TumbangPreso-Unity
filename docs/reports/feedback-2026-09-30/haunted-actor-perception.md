@@ -38,3 +38,7 @@ knowledge is separate follow-through, not a claim that every bot sensor is done.
 The earlier actual116 Haunt pair predates this host-AI change. No new peer/player,
 hardware, audible mix or whole-match difficulty claim. Protocol117 and authored
 assets/loading remain unchanged.
+
+October1 follow-through: the separate shared spacing board also gates hidden
+actors' fresh lane claims. Three new native cases pass after one reproduced leak;
+[exact evidence](haunted-spacing.md). This extends sensing without changing kits.

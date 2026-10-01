@@ -3784,19 +3784,28 @@ namespace TumbangPreso
         /// mid-round cannot hold a bearing for ever.</summary>
         private List<float> RivalBearings()
         {
-            var found = new List<float>();
+            var found = _rivalBearingsScratch;
+            found.Clear();
             float now = Time.time;
 
             foreach (var pair in _claims)
             {
                 if (pair.Key == _motor.PlayerSlot) continue;
                 if (now - pair.Value.At > AiTuning.ClaimTtl) continue;
+                // The board is a read of the court, not communication between
+                // bots. A hidden body cannot reveal its latest intended bearing.
+                if (_motor.Mode == GameMode.HeroStrike && _motor.IsHaunted &&
+                    !ActorIsVisible(GameServices.Round?.BodyAt(pair.Key))) continue;
 
                 found.Add(pair.Value.Bearing);
             }
 
             return found;
         }
+
+        // ThrowSpot consumes this synchronously. Keep it per brain so another
+        // bot reading the shared board cannot overwrite the current selection.
+        private readonly List<float> _rivalBearingsScratch = new List<float>(4);
 
         private void Claim(float bearing)
             => _claims[_motor.PlayerSlot] = new BearingClaim(bearing, Time.time);

@@ -1,11 +1,14 @@
 # Networking: Where To Work
 
-Current gameplay contract is protocol119, including adopted Hydro Crosscurrent,
-Skim, Water wall, can-down charge cancellation and revised penalty/fatigue timings.
-Latest actual Windows direct-peer qualification is protocol114with the CLI
-admission handoff fix, through active round2with matching structural state.
-It predates Hydro115/116/117/118/119and the later local menu/bot/notice changes; it cannot qualify
-those integrations. [Player evidence](reports/feedback-2026-09-30/cli-admission-handoff.md).
+Current gameplay contract is protocol120, including adopted Hydro Crosscurrent,
+Skim, Water wall, can-down charge cancellation, revised penalty/fatigue timings
+and finite can-height contact. Latest general Windows direct-peer qualification
+is protocol120on committed c26c5c34b: actual identical host/client players reach
+active round2, defender1and matching structural state. Clean local admission and
+round transition only; not all skills, Relay/loss/rejoin or cross-platform proof.
+[Current player evidence](reports/feedback-2026-09-30/network120-actual-player.md).
+Earlier114CLI admission evidence is retained with its original scope.
+[Admission repair](reports/feedback-2026-09-30/cli-admission-handoff.md).
 [Hydro evidence](reports/hero-quality-2026-10-01/hydro-current-checks/README.md).
 [Skim evidence](reports/hero-quality-2026-10-01/skim-checks/README.md).
 [Water wall/tutorial evidence](reports/hero-quality-2026-10-01/wall-tutorial-checks/README.md).
