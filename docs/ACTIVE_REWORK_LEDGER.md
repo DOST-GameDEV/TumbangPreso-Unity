@@ -3936,3 +3936,16 @@ not the Flame Rush/Supernova units. No HeroHazards/private overlay or authored
 art changes. First implementation/validation remains pending.
 
 Remade preview fix7670a7b71 ready to publish with measured3/3 and inspected actual map captures. Initial callback-fence failed and was removed; correct explicit-request Start fix only. Integrate Closed Circuit proof/author reservation without editing those paths. Older126 Windows player is now older protocol than incoming circuit work; do not reuse it to claim current130(?) networking. Check actual NetSession constant after merge. Next screen shader/effect readiness and measured optimization, preserve loading scope and nonstop continuation.
+
+Current integrated protocol127 confirmed (earlier130? placeholder superseded). Remade-preview7670a7b71 integrated/pushede618fa7fe and remote verified. All3 actual surfaces/PNGs qualified, no fresh currentplayer claim. Next ATTACHED-EFFECT-LAYER-1001 owns AbilityVfx.AttachAura only and one tiny native actual-particle/scoped-camera check. Auras defaultlayer0 evenwhen hostpreviewlayer30; determine actual invisibility before one-line inheritance fix. Preserve all authored shapes/colours/timing, no broader loading/Warmup changes. One baseline/final, zero tooling retriesplanned. All ownjobs terminal.
+
+Attached-effect first baseline/final stopped on fixture random-seed assertion while emitterplaying; no layer/render success claim. Both guards38782/34837terminal. One bounded fixture repair StopEmittingAndClear beforeseed, preserving real particle/pixel checks. Corrected baseline explicitly restores committed AbilityVfx (not pendinginheritance overlay) in isolatedtarget; use fresh baseline-repaired XML. Retrycount1, no second fixture repair allowed. Continue through turn, no goal completion.
+
+ATTACHED-EFFECT-LAYER-1001 corrected baseline proves host30/aura0; one-line
+AttachAura layer inheritance final1/1passes actual supported-material particles
+and scoped-camera pixel readback.771inputs unchanged. Original baseline/final
+fixture seed errors retained; one StopEmittingAndClear repair, no secondrepair.
+Jobs38782/34837/21130/75623 terminal; profiles/input preserved. Sourcee618fa7fe+
+owned overlay protocol127, no authored shape/colour/rate/lifetime/material edits.
+Publish real visibility fix, continue optimization/readiness; no full-screens/
+currentplayer/tournament completion claim. No Docs queue or broader loading work.

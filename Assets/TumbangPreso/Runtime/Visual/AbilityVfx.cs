@@ -179,6 +179,7 @@ namespace TumbangPreso.Visual
 
             var go = new GameObject("Vfx_Aura_" + aura);
             go.transform.SetParent(host, false);
+            go.layer = host.gameObject.layer;
             go.transform.localPosition = new Vector3(0.0f, 0.9f, 0.0f);
 
             var ps = go.AddComponent<ParticleSystem>();
