@@ -1,0 +1,47 @@
+{
+  "ok": false,
+  "errors": [
+    "host minted unexpected score during the circuit scenario",
+    "owner minted unexpected score during the circuit scenario",
+    "observer minted unexpected score during the circuit scenario"
+  ],
+  "measurements": {
+    "host": {
+      "samples": 330,
+      "acquiring_samples": 28,
+      "followup_samples": 12,
+      "last_episode": 3.0,
+      "first_contact_elapsed": 5.400124,
+      "second_contact_elapsed": 6.200142,
+      "final_cooldown": 29.39642,
+      "final_front_zap": 0.0,
+      "final_second_zap": 0.0
+    },
+    "owner": {
+      "samples": 324,
+      "acquiring_samples": 25,
+      "followup_samples": 12,
+      "last_episode": 3.0,
+      "first_contact_elapsed": 5.440125,
+      "second_contact_elapsed": 6.220142,
+      "final_cooldown": 29.42732,
+      "final_front_zap": 0.0,
+      "final_second_zap": 0.0
+    },
+    "observer": {
+      "samples": 323,
+      "acquiring_samples": 25,
+      "followup_samples": 13,
+      "last_episode": 3.0,
+      "first_contact_elapsed": 5.460125,
+      "second_contact_elapsed": 6.240143,
+      "final_cooldown": 29.43048,
+      "final_front_zap": 0.0,
+      "final_second_zap": 0.0
+    }
+  },
+  "rejoined_seat": null,
+  "delay_one_way_ms": 0,
+  "exe_sha256": "78fd4776b65e70e3e0ac9e2daf7af26b8c94372247ceaf0dd4edf8b1bb4d4096",
+  "runtime_sha256": "a0c0b81c79fac3ba303aade4276d08ae2bd1f0c2d0b6c9754c0d69e9d6f056a7"
+}

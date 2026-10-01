@@ -3878,3 +3878,13 @@ Jobs21241/18683 terminal, profiles/input preserved. Source788ede121+owned overla
 protocol126 unchanged. Publish; keep working through checkpoint, no final stop.
 Next existing actual-peer terminal-connection scenario; diagnose real result,
 do not broaden validation framework or edit DOTS queue/loading/authored art.
+
+Closed Circuit focused native and real-peer acceptance is complete. The same
+unit owns its evidence report, TODO entry and SKILL_NETWORK_CONTRACT appendix
+for publication; no other runtime paths are added. Source includes incoming
+solo shortcut fix5bce6331a. First player build failed during final copy at disk
+capacity; one bounded unchanged-input copy recovery succeeded. Three real Linux
+players exercised normal round transition, remote owner cancellation and two
+separate commitments. The initial evaluator incorrectly rejected existing
++10/s defence income; corrected cadence check passes the same retained traces,
+with no runtime change or repeated player run. Publication pending below.

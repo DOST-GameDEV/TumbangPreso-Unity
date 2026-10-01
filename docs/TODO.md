@@ -243,6 +243,13 @@ continuous manual bug hunting. Research, plan and critique using HERO_KIT_METHOD
 finalized Paete/Phaister character-specific work remains protected. The owner reopened remaining ability implementation on2026-10-01;
 shared/global fixes apply normally and exact concurrent claims still govern.
 
+- [x] CLOSED-CIRCUIT-1001: cancellable6m/.4s defending acquisition,2s host
+  Zapped,35s commitment cooldown and Overclock different-target follow-up.
+  Fourteen distinct focused native checks and actual Linux host/owner/observer
+  traces pass with documented fixture/evaluator corrections. Protocol127;
+  whole Zack presentation and WAN/device coverage remain open.
+  [Evidence](reports/feedback-2026-09-30/closed-circuit/README.md).
+
 - [x] BOT-COMPANION-OBSERVATION-1001: shared observation now includes companion
   targets and binds cached beliefs to the actual body. Native baseline reproduces
   both tier bypasses; final4/4passes Normal/Astig, replacement identity and self

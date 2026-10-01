@@ -5004,6 +5004,14 @@ namespace TumbangPreso
                         && (!_motor.IsDefender || lataDistance > Balance.TayaCampRadius))
                         Consider(intent, Verb.Skill2, dt);
                 }
+                else if (kit is Abilities.ZackHeroKit && _motor.IsDefender)
+                {
+                    if(target!=null && targetDistance<=6 && Facing(target,25))
+                    {
+                        intent.AimPoint=target.transform.position+Vector3.up*.8f;
+                        Consider(intent,Verb.Skill2,dt);
+                    }
+                }
                 else if (kit is Abilities.SeanHeroKit || kit is Abilities.ZackHeroKit)
                 {
                     // ⚠️⚠️ THESE TWO WERE THE ONE PLACE A BOT SPENT A POWER WITH NO OPPORTUNITY
