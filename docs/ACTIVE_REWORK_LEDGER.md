@@ -3274,6 +3274,17 @@ all existing icons/serialized enum values and protected hero art. One native
 binding/label/non-placeholder check plus real deck capture; no mechanics/protocol
 change from121. Nativejobs terminal; owner studying, Docs updates only.
 
+Rafi icon first native case imports both sprite/labels correctly but its deck
+assertion looked for Image components; this HUD draws TumpAbilitySymbol graphics.
+One bounded fixture repair checks active symbol glyph and actual mainTexture.
+Runtime/art unchanged. Retry the same one-case two-role capture only.
+
+Rafi role icon native v2 passes1/1 with imported resources, truthful labels and
+actual custom-symbol texture binding. One fixture repair used; no new OOM.
+Captured stills coincide with existing0.45s role flip, so settled legibility is
+not qualified. Preserve that limit and inspect during next distinct Skim motion
+review rather than repeat this fixture. Publish wrong-binding correction only;
+whole icon/hero rows remain open. Evidence: hero-quality-2026-10-01/icon-binding-checks.
 Integrated Waterwall presentation9d8c9a740 and icon reservationa3f276da0 with
 current121rejoin evidence266b2fd28. Authored contribution/receipts preserved;
 no own visual edits or runtime conflicts. Actual121player qualification remains
@@ -3306,4 +3317,25 @@ terminal, profiles preserved.122binding uses unchanged timed payload. Publish
 coherent code/status/receipts, then update existing Cheska Feedback Notes only.
 Actual121e47rejoin remains separate from122; no visual/loading changes. Proposed
 new-kit rows are proposals, not a claim of implemented full-roster mechanics.
+
+RAFI-SKIM-MOTION-1001 owns RafiHeroKit Skim cast strings; HeroAbilityClips.Rafi.cs
+and BuildAll; CharacterAnimator action mapping; ViewmodelArms.cs and CastGesture;
+Editor/RafiMotionAuthor targeted single-clip bake; new hero-rafi-skim.anim/meta and
+person_rafi clip reference; RafiExpansionProbe scoped motion/capture; hero-quality
+Skim plan/evidence and TODO progress. No gameplay, prediction, timing or network
+semantics change. Replace obsolete deception feint with deliberate sole coating:
+raise held shoe, support it, sweep free hand across its sole, release to ready.
+Inspect real owner/witness motion and settled role icons in the same distinct
+presentation review. Preserve old clips, shipping saved controls and other heroes.
+One focused native review, one bounded tooling repair maximum. Source510f356f;
+icon unit aef85a28 remote verified, both same-row Doc notes read back. Study silence.
+
+Merged Rafi icon correctionaef85a282 and Skim-presentation reservation497fd2905
+with Frostbite3bf3263cc; no runtime conflicts,122 preserved. Agent Notes in existing
+Cheska and broader reconciliation rows shortened/read back; human-review phrases
+highlighted. Original reports/screenshots/human comments and collaborator Hydro
+prefix retained. Human verified controls untouched. Four native Frostbite proofs
+remain exact candidate;121peer proof predates122. All owned heavy jobs terminal.
+Publish merge, then independent next engineering action from current queue;
+reserved art/loading and private dirt stay outside owned edits.
 

@@ -469,6 +469,36 @@ namespace TumbangPreso.PlayTests
             }
         }
 
+        [UnityTest,Timeout(90000)]
+        public IEnumerator SkimAndWaterwallUseTheirOwnIllustrationsAndTruthfulJobLabels()
+        {
+            yield return Start();
+            var art=RosterBook.Load().FindPersonArt("rafi");
+            foreach(bool defending in new[]{false,true})
+            {
+                var actor=defending?WallCaster():Rafi();
+                actor.IsBot=false;GameLaunch.SoloSeat=actor.PlayerSlot;
+                actor.CharacterIndex=Roster.IndexIn(Roster.HeroPeople,"rafi");
+                actor.GetComponent<TumbangPreso.Visual.CharacterVisual>().ApplyModel(art.Model,art.Tint,art.Clips,art.Palette,art.PetModel);
+                actor.AbilitySystem.Kit.SetRole(defending,Context(actor));
+                var ability=defending?actor.AbilitySystem.Kit.DefendingSkill:actor.AbilitySystem.Kit.Skill2;
+                var glyph=defending?AbilityGlyph.RafiWaterwall:AbilityGlyph.RafiSkim;
+                Assert.AreEqual(glyph,ability.Glyph);
+                Assert.AreEqual(defending?"SLIPPER SCREEN":"GROUND SKIM",AbilityIcons.LabelFor(glyph));
+                var artSprite=Resources.Load<Sprite>("UI/ability-icons/"+glyph);
+                Assert.IsNotNull(artSprite,"The new sprite must import natively.");
+                Assert.AreSame(artSprite,AbilityIcons.For(glyph),"Do not silently pass through a generated placeholder.");
+                Assert.AreNotSame(AbilityIcons.For(AbilityGlyph.RafiCrosscurrent),artSprite);
+                Assert.AreNotSame(AbilityIcons.For(AbilityGlyph.RafiMirrorwake),artSprite);
+                var rig=Object.FindFirstObjectByType<CameraRig>();rig.Follow(actor);rig.SetAimSource(AimSource.Movement);
+                foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.SetCharacter("rafi");
+                var view=Object.FindFirstObjectByType<TumpMatchReadout>();
+                view.Tick(actor,false,false,false,false);yield return null;view.Tick(actor,false,false,false,false);
+                Assert.IsTrue(view.Canvas.GetComponentsInChildren<TumpAbilitySymbol>().Any(i=>i.enabled&&i.Glyph==glyph&&i.mainTexture==artSprite.texture),"The real role deck must display the correct drawing through its custom symbol graphic.");
+                yield return TumpUiCapture.Capture(defending?"Rafi-waterwall-icon-960x540":"Rafi-skim-icon-960x540",view.Canvas,960,540,false,true);
+            }
+        }
+
         [Ignore("Vaulted with the first Lagoon Court (owner, 2026-09-27: \"vault the old lagoon\"); its scene is out of the build. See docs/TODO.md LAGOON-1.7."),UnityTest,Timeout(120000)] public IEnumerator InnerAndOuterStairsLetBothModesLeaveTheWater()
         {
             foreach(var mode in new[]{GameMode.Classic,GameMode.HeroStrike})

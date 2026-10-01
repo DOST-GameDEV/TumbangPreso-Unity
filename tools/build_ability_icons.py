@@ -533,6 +533,28 @@ def phaister_vulnerable(a):
     a.glint(745, 125, 17, 29)
 
 
+def rafi_skim(a):
+    # The actual sole continues along the ground; no mirrored person or decoy.
+    a.add(a.ellipse(500, 795, 390, 78), hexc("238C9D"))
+    a.add(a.band([(130, 720), (350, 680), (780, 680)], 76), hexc("278F9A"))
+    a.add(a.band([(185, 820), (470, 765), (870, 765)], 38), FOAM, shade=False)
+    slipper(a, 540, 460, 650, 68, PERSIMMON, CREAM)
+    a.add(a.band([(115, 585), (275, 555)], 44), FOAM, shade=False)
+    a.glint(525, 335, 18, 40)
+
+
+def rafi_waterwall(a):
+    # A finite falling curtain and the one slipper it drops, rather than a turn arrow.
+    a.add(a.poly([(170, 260), (310, 205), (365, 280), (335, 440), (380, 585), (350, 740), (215, 805), (155, 720), (190, 560), (160, 415)]), hexc("238C9D"))
+    a.add(a.poly([(655, 265), (770, 220), (820, 320), (785, 490), (835, 635), (785, 750), (670, 790), (685, 610), (645, 475)]), hexc("278F9A"))
+    a.add(a.band([(210, 245), (345, 215), (480, 260), (620, 225), (770, 250)], 70), FOAM)
+    a.add(a.band([(260, 320), (245, 470), (270, 675)], 35), FOAM, shade=False)
+    a.add(a.band([(710, 310), (690, 470)], 30), FOAM, shade=False)
+    a.add(a.ellipse(490, 810, 320, 55), hexc("238C9D"))
+    slipper(a, 535, 600, 380, -15, PERSIMMON, CREAM)
+    a.add(a.band([(515, 305), (515, 385)], 34), FOAM, shade=False)
+
+
 def rafi_crosscurrent(a):
     current = np.maximum(a.band([(120, 800), (420, 700)], 120), a.arc_band(430, 380, 320, 90, -8, 120))
     a.add(np.maximum(current, a.poly([(690, 230), (920, 400), (650, 480)])), SEA)
@@ -935,7 +957,7 @@ GLYPHS = {
     "PhaisterEclipse": phaister_coven, "PhaisterWitchfire": phaister_witchfire,
     "PhaisterCursedDoll": phaister_cursed_doll, "PhaisterVulnerable": phaister_vulnerable,
     "RafiCrosscurrent": rafi_crosscurrent, "RafiMirrorwake": rafi_mirrorwake,
-    "RafiBreakwater": rafi_breakwater,
+    "RafiBreakwater": rafi_breakwater, "RafiSkim": rafi_skim, "RafiWaterwall": rafi_waterwall,
     "AmihanQuickDash": amihan_dash, "AmihanUpdraft": amihan_updraft,
     "AmihanWhirlwind": amihan_whirlwind, "AmihanStormSurge": amihan_storm,
     "PaeteVine": paete_vine, "PaeteSprout": paete_sprout, "PaeteThorn": paete_thorn, "PaeteSentry": paete_sentry,

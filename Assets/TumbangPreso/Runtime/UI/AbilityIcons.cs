@@ -145,6 +145,8 @@ namespace TumbangPreso.UI
         /// <summary>Phaister ultimate: VOODOO DOLL (HERO-10 v3; it replaced OMEN, whose eclipse it borrowed): a doll hung on three
         /// strings from the arc of THE CIRCLE, an X for one eye. Appended after `ComingSoon` to keep every serialized value.</summary>
         PhaisterVoodooDoll,
+        RafiSkim,
+        RafiWaterwall,
     }
 
     /// <summary>
@@ -364,6 +366,8 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.PhaisterWitchfire: return "SLIPPER BUFF";
                 case AbilityGlyph.RafiCrosscurrent: return "REDIRECTION";
                 case AbilityGlyph.RafiMirrorwake: return "DECOY";
+                case AbilityGlyph.RafiSkim: return "GROUND SKIM";
+                case AbilityGlyph.RafiWaterwall: return "SLIPPER SCREEN";
                 case AbilityGlyph.RafiBreakwater: return "MOVING WAVE";
                 case AbilityGlyph.AmihanQuickDash: return "MOBILITY";
                 case AbilityGlyph.AmihanUpdraft: return "FLIGHT";
@@ -452,6 +456,11 @@ namespace TumbangPreso.UI
                 case AbilityGlyph.RafiCrosscurrent:
                     return Mathf.Max(Sub(EllipseRing(u + .12f, v, .67f, .60f, .16f), Box(u - .5f, v + .4f, .6f, .65f)),
                         RightTriangle(u - .38f, v - .44f, .24f, .28f));
+                case AbilityGlyph.RafiSkim:
+                    return Mathf.Max(EllipseRing(u-.12f,v-.12f,.57f,.25f,.13f),Box(u+.12f,v+.48f,.65f,.07f));
+                case AbilityGlyph.RafiWaterwall:
+                    return Mathf.Max(Mathf.Max(Box(u+.6f,v,.09f,.65f),Box(u-.6f,v,.09f,.65f)),
+                        Box(u,v-.52f-.07f*Mathf.Sin(u*6),.68f,.08f));
                 case AbilityGlyph.RafiMirrorwake:
                     return Mathf.Max(Mathf.Max(Disc(u + .3f, v - .42f, .19f), Box(u + .3f, v + .15f, .17f, .35f)),
                         Mathf.Max(EllipseRing(u - .27f, v - .4f, .21f, .21f, .075f), Box(u - .27f, v + .15f, .075f, .33f)));
