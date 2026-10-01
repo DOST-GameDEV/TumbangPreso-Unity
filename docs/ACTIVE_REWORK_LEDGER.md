@@ -2903,3 +2903,62 @@ manifest was overwritten onprepare; reconstructedfixturehash labelled explicitly
 originalXMLretained. All15863/57204/40658terminal, profiles/inputprefs intact.
 Publish boundedatomic roster source/status/receipts. Current119, no actualpeer/
 player or all-network claim. Preserve UI/scoring reservations and oldplayer proofs.
+
+TUTORIAL-THROW-REGRESSION-1001 claims Runtime/RoundDirector.cs,
+Runtime/GuidedTraining.cs and Tests/PlayMode/TutorialLessonHonestyProbe.cs.
+New Harry Feedback reports that the can-down gate blocks tutorial throws and
+requests hosted controls; separate high-over-can contact report remains next.
+Reproduce real Carrier input through cumulative lesson routing before repair.
+Keep ordinary down/protected-can rejection. No previous tutorial direct HostThrow
+check qualifies this input gate. Current integrated28b22f31, protocol119, clean
+checkout, all native jobs terminal. One focused baseline/final, one tooling repair.
+HUD extras follow these regressions; do not redo shipped HUD/penalty work.
+
+Tutorial real-input baseline reproduces refusal with upright hidden can holding
+1.25 seconds of restoration protection forever. Native1case fails at actual
+Carrier charge acceptance; no fixture failure or new OOM. Narrow repair binds
+exception to active offline route, exact student and hidden target only. Visible
+can and listening host retain normal rules. Final2cases: actual charge/release
+and real listening host with stale tutorial flag, upright/down/restore boundaries.
+No wire/rule change online; protocol119 retained. Baseline259627 terminal.
+
+Tutorial final2/2 native cases pass with frozen inputs unchanged and no new OOM.
+Actual charge/release launches; listening host retains protected/down restrictions
+even with stale tutorial flag. No fixture repair, no actual remote-peer/build
+claim. Publish this coherent repair, then above-can false contact; dot outline
+and HUD extras remain pending. Both existing Doc rows reopened/read back.
+
+CAN-VERTICAL-CONTACT-1001 owns Runtime/Lata.cs, Tests/PlayMode/
+TutorialLessonHonestyProbe.cs and NetSession.cs protocol constant only. Fresh
+fetch20b06b17 with0/0, clean. Harry's above-can hit report maps to flat-only
+Connects; reproduce actual flying slipper above visible target, then measure
+Visual mesh bounds for a finite vertical contact interval. Preserve horizontal
+skin/stance window and normal real contact. No authored asset changes. A gameplay
+contact change will bump protocol; existing networking contributor paths remain
+untouched except the explicit constant. One native baseline/final, one repair.
+
+Can-height native baseline1case reproduces a real flight metres above the visible
+can knocking it over. No fixture failure/new OOM. Finite vertical interval now
+measures only Visual mesh bounds, cached per model replacement, plus existing
+slipper radius; horizontal stance generosity retained. Final2native cases cover
+high miss/low hit and every authored can skin's exact top/bottom/horizontal bounds
+through replacement. Protocol120 for changed contact semantics. No peer/build
+claim. Baseline261559 terminal before final; no tooling repair so far.
+
+Can-height final2/2 passes: actual high miss/low hit plus six authored skin
+vertical/horizontal edge and replacement checks. Frozen inputs/owned source
+match, no tooling repair/new OOM. Publish120; no new player/actualpeer claim.
+Next slight dot outline, then latest HUD stacks/lifetimes/scoring.
+
+DOT-OUTLINE-1001 claims UI/HudReticle.cs and existing ThrowChargeUiTests.cs only.
+Can-height c205dfcb remote verified. Harry requested a slight increase: black
+outline1.2→1.5canvas units, filled centre radius unchanged. One existing native
+charge/release capture check at small/wide views; reuse prior lifecycle checks.
+No gameplay/protocol change beyond current120, no new asset. Prior jobs terminal.
+
+Integrated20b06b17 tutorial-only throw recovery andc205dfcb9 finite can-height
+contact with authorednative/Core receipts preserved; current120. Atomic-roster
+9c177f3b0 ownedruntime doesnotconflict. Newdot-outline/nextHUD/scoring remain
+contributor-owned; old117/116players do not qualify120. All local heavyjobs
+terminal, privateassets/metas/HeroHazards/quality/motion preserved. Next local
+engineering action from currentqueue, no repeated unchanged gates or crosschat.

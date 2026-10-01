@@ -128,19 +128,53 @@ namespace TumbangPreso
         }
 
         /// <summary>
-        /// Host-side. Did a slipper at this position connect?
-        ///
-        /// ⚠️ FLAT DISTANCE, TESTED PER PHYSICS FRAME, AND NOT AN OVERLAP VOLUME. The Godot
-        /// `Lata.tscn` still carries an `Area3D` authored to a hurtbox shape that nothing
-        /// ever read: the rule ran off a bare literal in another file while the balance doc
-        /// documented a third shape. Three numbers that were meant to be one. Here there is
-        /// exactly one, and it is <see cref="Balance.LataHitMargin"/>.
+        /// Host-side contact keeps the authored horizontal stance window, but a flight
+        /// must also overlap the actual can height. A flat-only test hit an infinite column.
         /// </summary>
         public bool Connects(Vector3 slipperPosition)
         {
             Vector3 a = new Vector3(slipperPosition.x, 0.0f, slipperPosition.z);
             Vector3 b = new Vector3(transform.position.x, 0.0f, transform.position.z);
-            return ThrowRules.Connects(Vector3.Distance(a, b), _skinIndex);
+            if (!ThrowRules.Connects(Vector3.Distance(a, b), _skinIndex)) return false;
+            ResolveContactHeight();
+            float y = transform.InverseTransformPoint(slipperPosition).y;
+            float margin = Balance.SlipperHitRadius / Mathf.Max(.001f, Mathf.Abs(transform.lossyScale.y));
+            return y >= _contactBottom - margin && y <= _contactTop + margin;
+        }
+
+        private Transform _contactVisual;
+        private bool _contactHeightReady;
+        private float _contactBottom;
+        private float _contactTop;
+
+        private void ResolveContactHeight()
+        {
+            var visual = transform.Find("Visual");
+            if (_contactHeightReady && _contactVisual == visual) return;
+            _contactVisual = visual;
+            _contactHeightReady = true;
+            // Same finite height as the fallback cylinder. Never include world cues,
+            // restoration shields or other presentation children in the target shape.
+            _contactBottom = 0;
+            _contactTop = .3f;
+            if (visual == null) return;
+            bool found = false;
+            foreach (var filter in visual.GetComponentsInChildren<MeshFilter>(true))
+            {
+                if (filter.sharedMesh == null) continue;
+                var bounds = filter.sharedMesh.bounds;
+                var matrix = transform.worldToLocalMatrix * filter.transform.localToWorldMatrix;
+                for (int corner = 0; corner < 8; corner++)
+                {
+                    var point = bounds.center + Vector3.Scale(bounds.extents, new Vector3(
+                        (corner & 1) == 0 ? -1 : 1,
+                        (corner & 2) == 0 ? -1 : 1,
+                        (corner & 4) == 0 ? -1 : 1));
+                    float y = matrix.MultiplyPoint3x4(point).y;
+                    if (!found) { _contactBottom = y; _contactTop = y; found = true; }
+                    else { _contactBottom = Mathf.Min(_contactBottom, y); _contactTop = Mathf.Max(_contactTop, y); }
+                }
+            }
         }
 
         /// <summary>
