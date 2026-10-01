@@ -2244,11 +2244,38 @@ IReadOnlyList Bodies boxes its enumerator. Measure a warmed bound delegate with
 calibrated recorder, replace only that loop with indexing if confirmed, retain
 six existing observation/ranking controls. Full Haunted sensing still open.
 
+Departurecaa2e78be remote verified. BOT-OBSERVE-ALLOCATION owns AIController.cs
+Observe loop and existing BotCompanionObservationTests.cs only. Calibrated native
+one-case baseline through warmed bound delegate; final seven cases includes same
+allocation and six adjacent reaction/self/replacement/ranking controls. One heavy
+job, one tooling repair maximum, stop at fresh XML. Preserve all perception rules,
+loading, hero mechanics, protocol115 and contributor Skim reservation.
+
+Observer baseline1/1fails at calibrated allocation:100events/100warm Observe
+calls. Source change indexes the same cached Bodies list only; all self/identity/
+lag behavior retained. Baseline21662terminal, no fixture repair. Freeze final7
+cases now. No broad suite, new player or FPS claim from this small unit.
+
+BOT-OBSERVE final7/7native passes0.374s;100warm calls100allocation events baseline
+to0final.666inputs no drift, two owned files match testedcaa2e78be candidate.
+No fixture repair, jobs21662/69409terminal. Publish exact source/status/receipts,
+then resume remaining bottom-row Haunt qualification/sensor work. Fresh Feedback
+read still has same32character row, notes preserve menu fix; placeholder icon/
+walking observations need specific human evidence, loading remains friend-owned.
+No new DONE/human checkbox or archive monitor claim. Full objective active.
+
 Skim77bf73e3 integrated with incoming bot inventory reuse and departure payload
 framing fixes, preserving both histories. Protocol116; no runtime conflict.
 Owned native/Core receipts are scoped to their frozen candidate, not a new
 whole-branch or actual-peer qualification. Next Water wall follows the saved
 Hydro plan; old Skim feint/glyph/audio is provisional until presentation pass.
+
+Observerfa4508803 integrated with Skim77bf73e3 at current116; both histories
+preserved, runtime paths merge cleanly. Observer/notice receipts retain tested115
+candidate scope. Skim authored8native/5Core receipts retained as contributor work,
+not new actual peers. No unrelated dirt staged or old build replaced. Next resume
+Haunt transport qualification with existing diagnostic route; keep full sensor
+work explicit and avoid fake unknown positions. All native jobs terminal.
 
 HYDRO-WATERWALL-1001 next cloud unit claims RafiHeroKit.cs, RafiWaterField.cs,
 Visual/RafiWaterVisual.cs, Net/WorldEffectSnapshot.cs Kind/validation route,

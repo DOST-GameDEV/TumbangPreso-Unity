@@ -4150,8 +4150,10 @@ namespace TumbangPreso
             // time using a stale picture, and the second one is what looking away actually does.
             float alpha = 1.0f - Mathf.Exp(-dt / Mathf.Max(Me.React * LapseScale, 0.02f));
 
-            foreach (var who in round.Bodies)
+            var bodies = round.Bodies;
+            for (int bodyIndex = 0; bodyIndex < bodies.Count; bodyIndex++)
             {
+                var who = bodies[bodyIndex];
                 if (who == null) continue;
 
                 int slot = who.PlayerSlot;

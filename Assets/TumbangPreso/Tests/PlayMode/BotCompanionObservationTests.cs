@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Reflection;
 using NUnit.Framework;
+using Unity.Profiling;
 using TumbangPreso.Core;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -77,6 +78,18 @@ namespace TumbangPreso.PlayTests
             Observe(_brain,10);
             typeof(AIController).GetField("_lastTagTarget",Hidden).SetValue(_brain,null);
             Assert.AreSame(_companion,select.Invoke(_brain,null),"Fresh observation must still update target ranking.");
+        }
+        [Test] public void WarmPerFrameObservationDoesNotAllocateAnActorEnumerator()
+        {
+            var observe=(System.Action<float>)System.Delegate.CreateDelegate(typeof(System.Action<float>),_brain,
+                typeof(AIController).GetMethod("Observe",Hidden));
+            for(int i=0;i<5;i++)observe(.01f);
+            using(var calibration=ProfilerRecorder.StartNew(ProfilerCategory.Internal,"GC.Alloc",100,ProfilerRecorderOptions.CollectOnlyOnCurrentThread))
+            { Assert.IsTrue(calibration.Valid);System.GC.KeepAlive(new byte[4096]);calibration.Stop();Assert.Greater(calibration.Count,0); }
+            int allocations;
+            using(var recorder=ProfilerRecorder.StartNew(ProfilerCategory.Internal,"GC.Alloc",256,ProfilerRecorderOptions.CollectOnlyOnCurrentThread))
+            { for(int i=0;i<100;i++)observe(.01f);recorder.Stop();allocations=recorder.Count; }
+            Assert.AreEqual(0,allocations,"The per-frame bot observer still allocates an actor enumerator.");
         }
     }
 }
