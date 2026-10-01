@@ -3086,3 +3086,29 @@ exit. RuntimeSHAeb06179b8f451b6d31dae716fa514b3122dd0b70be5b4dca98e7473e02ae8656
 No unchanged retry or every-skill/rejoin/loss claim. Feedback charge Notes corrected
 to current can-down rule through required-revision single replacement/readback;
 human columns intact. Publish receipts, then bot landing-on-raised-terrain hunt.
+
+BOT-LANDING-TERRAIN-1001 owns AIController.cs, new BotLandingPredictionTests.cs/
+meta and any justified shared prediction helper. Current7653ea534 remote verified;
+120actual clean peers passed, all heavy jobs terminal. Existing bot formula stops
+at a height relative to launch and forces y0; actual slipper uses swept support.
+Reproduce lower-floor landing after raised launch before changing code. Single
+baseline/native actual flight. Preserve map/art/loading, then reuse existing
+flight/support math and bound recurring cost if demonstrated. No speculative fix.
+
+
+Landing baseline1/1 reproduces2.73m early target: predictedz1.85 vs actual4.58.
+60473terminal, profiles preserved. Extract existing ground-circle flight math
+without changing visual geometry; bot uses same support/curve/bank prediction.
+Per-brain retrieval cache refreshes at unchanged Me.Think0.34/0.24/0.16 seconds,
+new/null/landed source handling covered. Final5bot plus3existing native flight
+cases, cached100reads calibrated allocation, one repair max. Current120peerproof
+predates this source edit; no map/loading/art or wire mechanics changes.
+
+
+Landing final8/8passes: baseline2.73m error now0horizontal; actual terrain/curve/
+bank and existing UI controls, cache refresh/source and100warm reads0allocations.
+701frozen inputs no drift, new metas imported, no native repair.60473/70644terminal,
+profiles preserved.120actualpeerproof is stillc26c5c34b, not this newer helper.
+Publish scoped source/docs/receipts. Next inspect Skim's predictable ground phase
+as separate prediction follow-through; no kit/mechanics/art/loading change.
+

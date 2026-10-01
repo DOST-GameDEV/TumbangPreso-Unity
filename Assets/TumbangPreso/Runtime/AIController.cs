@@ -2344,7 +2344,7 @@ namespace TumbangPreso
                 if (mine == null) mine = NearestFlyingSlipper();
 
                 if (mine != null && mine.State == SlipperState.InFlight
-                    && TryPredictedLanding(mine, out Vector3 landing))
+                    && TryPositionLanding(mine, out Vector3 landing))
                 {
                     Goto(intent, PullOutside(landing, 0.4f), AiTuning.ArriveSlop, false);
                     return;
@@ -3905,25 +3905,32 @@ namespace TumbangPreso
         /// <summary>Where a slipper already in flight will come down.</summary>
         private static bool TryPredictedLanding(Slipper slipper, out Vector3 landing)
         {
-            landing = Vector3.zero;
+            landing = default;
+            if (slipper == null || slipper.State != SlipperState.InFlight) return false;
+            return SlipperLandingPrediction.TryPredictLanding(slipper.transform.position,
+                slipper.Velocity, slipper.PektusSpin, LandingHits, out landing);
+        }
 
-            Vector3 launch = slipper.Velocity;
-            if (launch.magnitude < 0.5f) return false;
-
-            Vector3 from = slipper.transform.position;
-
-            for (float t = 0.0f; t < Balance.MaxFlightTime; t += 0.05f)
+        // These queries run synchronously on the same Unity thread as the
+        // existing shared support buffer. No scene scan or visual object is created.
+        private static readonly RaycastHit[] LandingHits = new RaycastHit[64];
+        private Slipper _landingSource;
+        private Vector3 _landingPoint;
+        private float _landingRefreshAt;
+        private bool _landingKnown;
+        private bool TryPositionLanding(Slipper slipper, out Vector3 landing)
+        {
+            landing = default;
+            if (slipper == null || slipper.State != SlipperState.InFlight)
+            { _landingSource = null; return false; }
+            if (_landingSource != slipper || Time.time >= _landingRefreshAt)
             {
-                Vector3 point = from + launch * t
-                                + Vector3.down * (0.5f * Balance.Gravity * t * t);
-
-                if (point.y > from.y - 1.2f && point.y > 0.2f) continue;
-
-                landing = new Vector3(point.x, 0.0f, point.z);
-                return true;
+                _landingSource = slipper;
+                _landingRefreshAt = Time.time + Me.Think;
+                _landingKnown = TryPredictedLanding(slipper, out _landingPoint);
             }
-
-            return false;
+            landing = _landingPoint;
+            return _landingKnown;
         }
 
         /// <summary>

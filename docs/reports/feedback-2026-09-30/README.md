@@ -237,3 +237,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Haunted bot spacing claims and preserved ordinary court reading](haunted-spacing.md).
 
 [Current120actual direct players through round2and exact limits](network120-actual-player.md).
+
+[Bot landing target and shared world-flight prediction](bot-landing-terrain.md).

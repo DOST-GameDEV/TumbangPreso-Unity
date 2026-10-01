@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 08:56:59Z" end-time="2026-10-01 08:57:00Z" duration="0.5688921">
+  <test-suite type="TestSuite" id="2392" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1132" result="Passed" start-time="2026-10-01 08:56:59Z" end-time="2026-10-01 08:57:00Z" duration="0.568892" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2386" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1132" result="Passed" start-time="2026-10-01 08:56:59Z" end-time="2026-10-01 08:57:00Z" duration="0.556275" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27060" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2387" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1132" result="Passed" start-time="2026-10-01 08:56:59Z" end-time="2026-10-01 08:57:00Z" duration="0.553356" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2388" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1132" result="Passed" start-time="2026-10-01 08:56:59Z" end-time="2026-10-01 08:57:00Z" duration="0.550761" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1130" name="BotLandingPredictionTests" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-01 08:56:59Z" end-time="2026-10-01 08:57:00Z" duration="0.284548" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1131" name="AThrowFromRaisedTerrainPredictsTheActualLowerFloorLanding" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.AThrowFromRaisedTerrainPredictsTheActualLowerFloorLanding" methodname="AThrowFromRaisedTerrainPredictsTheActualLowerFloorLanding" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="28468347" result="Passed" start-time="2026-10-01 08:56:59Z" end-time="2026-10-01 08:57:00Z" duration="0.103125" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Predicted=(0.00, 0.02, 4.58) actual=(0.00, 0.05, 4.58)
+]]></output>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1135" name="BotPredictionRetainsFlatCurvedAndBankedWorldFlight" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.BotPredictionRetainsFlatCurvedAndBankedWorldFlight" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-01 08:57:00Z" end-time="2026-10-01 08:57:00Z" duration="0.108580" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1132" name="BotPredictionRetainsFlatCurvedAndBankedWorldFlight(0.0f,0.0f,False)" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.BotPredictionRetainsFlatCurvedAndBankedWorldFlight(0.0f,0.0f,False)" methodname="BotPredictionRetainsFlatCurvedAndBankedWorldFlight" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="551676638" result="Passed" start-time="2026-10-01 08:57:00Z" end-time="2026-10-01 08:57:00Z" duration="0.035525" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1133" name="BotPredictionRetainsFlatCurvedAndBankedWorldFlight(0.6f,0.65f,False)" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.BotPredictionRetainsFlatCurvedAndBankedWorldFlight(0.6f,0.65f,False)" methodname="BotPredictionRetainsFlatCurvedAndBankedWorldFlight" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="1645297779" result="Passed" start-time="2026-10-01 08:57:00Z" end-time="2026-10-01 08:57:00Z" duration="0.034898" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1134" name="BotPredictionRetainsFlatCurvedAndBankedWorldFlight(0.0f,0.9f,True)" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.BotPredictionRetainsFlatCurvedAndBankedWorldFlight(0.0f,0.9f,True)" methodname="BotPredictionRetainsFlatCurvedAndBankedWorldFlight" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="119940503" result="Passed" start-time="2026-10-01 08:57:00Z" end-time="2026-10-01 08:57:00Z" duration="0.034676" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1136" name="RetrievalPredictionRefreshesAtThinkCadenceAndRetiresOldSources" fullname="TumbangPreso.PlayTests.BotLandingPredictionTests.RetrievalPredictionRefreshesAtThinkCadenceAndRetiresOldSources" methodname="RetrievalPredictionRefreshesAtThinkCadenceAndRetiresOldSources" classname="TumbangPreso.PlayTests.BotLandingPredictionTests" runstate="Runnable" seed="1847859486" result="Passed" start-time="2026-10-01 08:57:00Z" end-time="2026-10-01 08:57:00Z" duration="0.057888" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1496" name="LandingCircleTests" fullname="TumbangPreso.PlayTests.LandingCircleTests" classname="TumbangPreso.PlayTests.LandingCircleTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-01 08:57:00Z" end-time="2026-10-01 08:57:00Z" duration="0.128492" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1499" name="BankShotMatchesTheGroundCircle" fullname="TumbangPreso.PlayTests.LandingCircleTests.BankShotMatchesTheGroundCircle" methodname="BankShotMatchesTheGroundCircle" classname="TumbangPreso.PlayTests.LandingCircleTests" runstate="Runnable" seed="410478424" result="Passed" start-time="2026-10-01 08:57:00Z" end-time="2026-10-01 08:57:00Z" duration="0.046662" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1497" name="FlatFlightMatchesTheGroundCircle" fullname="TumbangPreso.PlayTests.LandingCircleTests.FlatFlightMatchesTheGroundCircle" methodname="FlatFlightMatchesTheGroundCircle" classname="TumbangPreso.PlayTests.LandingCircleTests" runstate="Runnable" seed="1895046911" result="Passed" start-time="2026-10-01 08:57:00Z" end-time="2026-10-01 08:57:00Z" duration="0.036361" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1498" name="RaisedGroundAndCurveMatchRealFlight" fullname="TumbangPreso.PlayTests.LandingCircleTests.RaisedGroundAndCurveMatchRealFlight" methodname="RaisedGroundAndCurveMatchRealFlight" classname="TumbangPreso.PlayTests.LandingCircleTests" runstate="Runnable" seed="1046677483" result="Passed" start-time="2026-10-01 08:57:00Z" end-time="2026-10-01 08:57:00Z" duration="0.042123" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -258,6 +258,12 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   Clean local admission/round progression only; broader network scope stays open.
   [Evidence](reports/feedback-2026-09-30/network120-actual-player.md).
 
+- [x] BOT-LANDING-TERRAIN-1001: retrieval uses actual world-flight prediction
+  instead of stopping at launch-relative height. Reproduced2.73m error repaired;
+  eight native cases cover real terrain/curve/bank, cache/source and existing
+  ground-circle controls. No whole-match FPS or new peer claim.
+  [Evidence](reports/feedback-2026-09-30/bot-landing-terrain.md).
+
 - [x] HELD-SEAT-PICKS-1001: matching-token reclaim retains picks and takeover
   rating; Identify cannot replace fixed match choices with local preferences.
   Five distinct native cases cover repeated cycles, fresh account state, foreign

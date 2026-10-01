@@ -12,6 +12,12 @@ Bot rival-spacing queries reuse per-brain scratch storage. A calibrated native
 claim expiry/refresh and reader independence. No loading or whole-frame claim.
 [Evidence](reports/feedback-2026-09-30/bot-spacing-allocation.md).
 
+Bot retrieval landing prediction shares world-flight math with the existing
+ground circle and refreshes a per-brain cache at existing Think cadence. Eight
+native cases pass;100cached reads allocate0events. Full forecasting and whole-frame
+cost are separate; this does not alter loading.
+[Evidence](reports/feedback-2026-09-30/bot-landing-terrain.md).
+
 Runtime files are under `Assets/TumbangPreso/Runtime/`.
 
 | Responsibility | Source |
