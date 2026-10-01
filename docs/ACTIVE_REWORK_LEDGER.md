@@ -3879,6 +3879,33 @@ protocol126 unchanged. Publish; keep working through checkpoint, no final stop.
 Next existing actual-peer terminal-connection scenario; diagnose real result,
 do not broaden validation framework or edit DOTS queue/loading/authored art.
 
+Shortcut context5bce6331a published/remote verified; native21241/18683terminal. Continue actual terminal-link-loss using existing matrix policy:25ms/5ms jitter, outage20s..end, clientterminal/hostreferees/no simultaneous comparison. Live client mode/round gates are inapplicable to a terminal peer; matrix terminal policy remains intact and must also inspect roundActiveFalse manually. Initial shell quoting failed before any launch; file-backed preparation fixed it. Temporary native tools/tmp_demo126_terminal.py must be removed after run. Exact player04f/protocol126; network/round diff remains empty. No changed-source build or whole-readiness claim.
+
+Permanent-link126 existing terminal gate passes: proxy2581forward/4365drop,
+outage20s..end. Host active round2/taya1 with bot takeover; client ProtocolTimeout/
+Abandon then MatchSetup networkedFalse/roundActiveFalse, no loggedexception.
+Same-PC fallback AutoHost logs handled port8910 refusal (survivinghostownsport),
+not a game crash. OBSERVED client transition max1031ms; loading remains friend-
+owned, no implementation change or smooth-transition claim. Exact04f/DLL2956730f
+protocol126 only, later UI/art separate. Driver62247 terminal, preservation good.
+Remove ownedtmp_demo126_terminal.py; verify ports. Continue independent real
+bugs; avoid more unchanged matrix rows and never mark whole readiness complete.
+
+Latest owner priority after current reliability cleanup: optimization and correct shader/effect availability at the right times across all screens, singleplayer and network. Inspect missing/late shader/material/effect bindings, camera-scope and recovery/lifetime defects. This is readiness/visibility bug work, not an authored VFX/SFX/model/animation/map/lighting redesign. Keep friend's broader loading implementation ownership; do not silently overhaul loading. Continue autonomously without ending at unit checkpoints.
+
+REMADE-MAP-PREVIEW-1001: owner says all remade maps showed grey this morning, unsure current. Explicitly authorizes this preview-loading defect fix despite broader loading ownership remaining with friend. Own MapPreviewSurface.cs and one focused RemadeMapPreviewTests file/meta; inspect current Kanto/LagoonCove/Ilalim actual additive preview, renderer/layer/frustum/shader presence and PNGs before code changes. Sequential scene retirement, not retaining all maps. Use already-proven Editor idle import retirement=1ms and restore it; no worker-count/guard change or second memory-retry loop. No map/art/lighting asset edits or DOTS queue writes.
+
+REMADE-MAP-PREVIEW-1001 reproduced all3 background-only previews with0active
+renderers. Loaded meshes were parked because Start queued global default after
+an explicit Show(othermap). Corrected Start only defaults when no request/showing/
+queue exists. Callback fence hypothesis failed and removed; raw failure retained.
+Final3/3 native pass: Kanto2316active/804visible, Lagoon2552/1342, Ilalim1349/1069,
+shader errors0/world-look scopeTrue. Actual PNGs inspected, maps visible.755inputs
+unchanged, no tooling repair/newOOM. Editor idle worker retirement restored.
+Guards78488/11325/92826 terminal; no authored map/lighting/model/effect/sound or
+broader loading change. Explicit owner preview-bug exception only. Publish then
+continue correct shader/effect readiness/optimization across actual screens.
+No fresh player/network-menu/full-readiness claim. DOTS owns Docs queue.
 Closed Circuit focused native and real-peer acceptance is complete. The same
 unit owns its evidence report, TODO entry and SKILL_NETWORK_CONTRACT appendix
 for publication; no other runtime paths are added. Source includes incoming
@@ -3934,3 +3961,5 @@ No heavy job remains. Publish explicit owned unit; preserve incoming remade-map
 preview changes and terminal126 evidence. Friend map tip is nowa7523a118 (fascia
 z-fight), still not merged; loading tip unchanged/already merged. Whole Pyro and
 foliage report remain open. Owner asleep, quiet continuation.
+
+Remade preview fix7670a7b71 ready to publish with measured3/3 and inspected actual map captures. Initial callback-fence failed and was removed; correct explicit-request Start fix only. Integrate Closed Circuit proof/author reservation without editing those paths. Older126 Windows player is now older protocol than incoming circuit work; do not reuse it to claim current130(?) networking. Check actual NetSession constant after merge. Next screen shader/effect readiness and measured optimization, preserve loading scope and nonstop continuation.
