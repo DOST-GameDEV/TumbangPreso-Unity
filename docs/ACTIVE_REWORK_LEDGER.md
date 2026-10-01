@@ -3661,3 +3661,31 @@ with flat shader glow while retaining disc, open octagon and scoped brackets,
 seat colours, water placement and local first-person hiding. Focused native
 shape/flatness/camera-scope and water checks; no character kit edits. Ground
 projection beyond existing water/flight behavior is not required by this unit.
+
+Ground-marker first final run stopped at unchanged memory guard during Bayan
+load before XML. OOM remains11/6; idle import worker still1.18GB. One bounded
+fixture repair lets one real-time second elapse after reset/idle-retirement
+setting before loading the map. No runtime assertion weakened or guard raised.
+
+Marker v2 ran all three cases: water-return and camera-scoped target checks
+pass; actual attacker centre pixel was black. Shader used pow with negative
+base inside the Gaussian, a possible undefined-value source. Replace with explicit
+squared multiplication; rerun only the affected pixel-shape case. No second
+fixture repair; retained passing lifecycle evidence. OOM unchanged11/6.
+
+Marker v3 pixel witness still fails with centre0 after squared multiplication;
+the shader arithmetic change did not establish the cause. Water return and
+camera-scope cases passed v2, but shape rendering is NOT accepted or shipped.
+One fixture-repair allowance exhausted. Preserve owned candidate uncommitted;
+do not mark Done or repeat unchanged runs. The isolated pixel witness loads a
+map without starting a match, unlike the passing camera-scope fixture; investigate
+that lifecycle discrepancy before any later coherent validation. Continue the
+independent landing-circle cadence report with the existing real-match fixture.
+
+AIM-CIRCLE-CADENCE-1001 claims Runtime/TrajectoryPreview.cs and
+Tests/PlayMode/LandingCircleTests.cs. Actual source throttles both prediction
+and visible circle mesh to 20Hz. Keep prediction cadence, interpolate displayed
+circle each render frame with bounded linear interpolation, reset on hidden/
+invalid/released aim, and snap across large height discontinuities. Preserve
+LandingPoint as the exact latest prediction. Validate with the existing actual
+local-charge fixture plus deterministic intermediate geometry assertions.
