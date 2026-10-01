@@ -168,6 +168,68 @@ namespace TumbangPreso.PlayTests
             yield return null;
         }
 
+        [UnityTest, Timeout(90000)]
+        public IEnumerator AboveCanFlightMissesWhileBodyHeightFlightKnocksDown()
+        {
+            yield return LoadTraining();
+            var route = Object.FindFirstObjectByType<GuidedTraining>();
+            yield return Route(route, GuidedTraining.Lesson.ThrowAndRetrieve);
+            route.enabled = false;
+            var can = Field<Lata>(route, "_lata");
+            var who = Field<CharacterMotor>(route, "_local");
+            Assert.IsTrue(can.gameObject.activeInHierarchy);
+            float deadline = Time.realtimeSinceStartup + 6;
+            while (can.IsProtected && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.IsFalse(can.IsProtected);
+            var shoe = who.GetComponent<Carrier>().Held;
+            Assert.IsNotNull(shoe);
+            shoe.enabled = false;
+            var flight = typeof(Slipper).GetMethod("FixedUpdate", BindingFlags.Instance | BindingFlags.NonPublic);
+            var mark = can.transform.position;
+            shoe.HostThrow(who, mark + new Vector3(0, 3, -1.2f), Vector3.forward * 12);
+            for (int i = 0; i < 12; i++) flight.Invoke(shoe, null);
+            Assert.IsTrue(can.IsUpright, "An actual flying slipper metres above the can must miss.");
+            shoe.HostThrow(who, mark + new Vector3(0, .2f, -1.2f), new Vector3(0, 1, 12));
+            for (int i = 0; i < 12 && can.IsUpright; i++) flight.Invoke(shoe, null);
+            Assert.IsFalse(can.IsUpright, "Preserve an actual flight through the can body.");
+            yield return null;
+        }
+
+        [Test]
+        public void EveryCanSkinHasFiniteMeasuredVerticalContactAfterReplacement()
+        {
+            var book = RosterBook.Load();
+            Assert.IsNotNull(book);
+            var root = new GameObject("CanHeightBoundary");
+            try
+            {
+                var can = root.AddComponent<Lata>();
+                for (int skin = 0; skin < Roster.Cans.Count; skin++)
+                {
+                    var old = root.transform.Find("Visual");
+                    if (old != null) Object.DestroyImmediate(old.gameObject);
+                    var art = book.CanArt(skin);
+                    Assert.IsNotNull(art?.Model);
+                    var model = Object.Instantiate(art.Model, root.transform); model.name = "Visual";
+                    can.SkinIndex = skin;
+                    float bottom = float.PositiveInfinity, top = float.NegativeInfinity;
+                    foreach (var mesh in model.GetComponentsInChildren<MeshFilter>())
+                    foreach (var vertex in mesh.sharedMesh.vertices)
+                    {
+                        float y = mesh.transform.TransformPoint(vertex).y;
+                        bottom = Mathf.Min(bottom, y); top = Mathf.Max(top, y);
+                    }
+                    Assert.Greater(top, bottom);
+                    Assert.IsTrue(can.Connects(Vector3.up * ((bottom + top) * .5f)), Roster.Cans[skin].Id);
+                    Assert.IsTrue(can.Connects(Vector3.up * (top + Balance.SlipperHitRadius - .001f)));
+                    Assert.IsFalse(can.Connects(Vector3.up * (top + Balance.SlipperHitRadius + .001f)));
+                    Assert.IsFalse(can.Connects(Vector3.up * (bottom - Balance.SlipperHitRadius - .001f)));
+                    Assert.IsFalse(can.Connects(new Vector3(can.HitWindow + .001f, (bottom + top) * .5f, 0)));
+                }
+            }
+            finally { Object.DestroyImmediate(root); }
+        }
+
         private static float Flat(Vector3 a, Vector3 b)
             => Vector3.Distance(new Vector3(a.x, 0.0f, a.z), new Vector3(b.x, 0.0f, b.z));
 

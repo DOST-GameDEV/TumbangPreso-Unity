@@ -649,6 +649,14 @@ overlap, and it can only happen where the score is written.
 
 ### 7.1 · The hit window is not the collider, and that is the fairness ruling
 
+Current Unity contact also requires vertical overlap with the upright Visual
+mesh's measured bottom/top, expanded by the existing slipper hit radius. This
+closes the infinite-height column that knocked cans down from high overflights.
+The horizontal stance-based window below remains unchanged; shields and world
+cues are excluded from measured height. Model replacement refreshes the cached
+height. Protocol120 peers are required for the finite-height contact rule.
+
+
 ⚠️⚠️ **THE NUMBER THAT DECIDES EVERY KNOCKDOWN IN THE GAME WAS AN UNNAMED LITERAL IN
 ANOTHER FILE UNTIL 2026-08-01.** A thrown slipper connects when its flat distance to the
 can is inside `Slipper.HIT_RADIUS + Lata.HIT_MARGIN` = **0.53 m** at neutral, tested per

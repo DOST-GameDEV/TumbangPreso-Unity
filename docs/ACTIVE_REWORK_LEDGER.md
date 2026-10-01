@@ -2908,3 +2908,16 @@ Visual mesh bounds for a finite vertical contact interval. Preserve horizontal
 skin/stance window and normal real contact. No authored asset changes. A gameplay
 contact change will bump protocol; existing networking contributor paths remain
 untouched except the explicit constant. One native baseline/final, one repair.
+
+Can-height native baseline1case reproduces a real flight metres above the visible
+can knocking it over. No fixture failure/new OOM. Finite vertical interval now
+measures only Visual mesh bounds, cached per model replacement, plus existing
+slipper radius; horizontal stance generosity retained. Final2native cases cover
+high miss/low hit and every authored can skin's exact top/bottom/horizontal bounds
+through replacement. Protocol120 for changed contact semantics. No peer/build
+claim. Baseline261559 terminal before final; no tooling repair so far.
+
+Can-height final2/2 passes: actual high miss/low hit plus six authored skin
+vertical/horizontal edge and replacement checks. Frozen inputs/owned source
+match, no tooling repair/new OOM. Publish120; no new player/actualpeer claim.
+Next slight dot outline, then latest HUD stacks/lifetimes/scoring.

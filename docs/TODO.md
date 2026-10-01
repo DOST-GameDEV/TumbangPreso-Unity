@@ -17,13 +17,21 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CAN-VERTICAL-CONTACT-1001: repaired
+
+Actual above-can flight false hit reproduced. Finite Visual-height contact now
+passes real high-miss/low-hit and all six authored skin boundary controls (2/2
+native cases). Horizontal stance window retained. Protocol120; new player/peer
+qualification remains separate. [Evidence](reports/feedback-2026-09-30/can-height-checks/README.md).
+
+
 ### TUTORIAL-THROW-REGRESSION-1001: repaired
 
 Harry's new tutorial input refusal is reproduced: hidden can restoration stays
 at 1.25 seconds. A narrow offline route exception passes two native checks,
 including actual charge/release and an actual listening-host control.
-[Evidence](reports/feedback-2026-09-30/tutorial-throw-checks/README.md). The above-can false-hit report and
-slightly thicker centre-dot outline follow; prior shipped evidence is retained.
+[Evidence](reports/feedback-2026-09-30/tutorial-throw-checks/README.md). The above-can false-hit report is repaired in CAN-VERTICAL-CONTACT-1001; the
+slightly thicker centre-dot outline follows; prior shipped evidence is retained.
 
 
 ### HUD-LAYOUT-1001: Harry's supplied layout
