@@ -3701,3 +3701,37 @@ invalid/released aim, and snap across large height discontinuities. Preserve
 LandingPoint as the exact latest prediction. Validate with the existing actual
 local-charge fixture plus deterministic intermediate geometry assertions.
 Bank Shot91de6867c integrated/pushed04429e627, remote verified. Feedback own Zack paragraph updated/read back; human controls, comments and Hydro note untouched. Active protocol125. Native guards59212/40251/71097/59082 terminal, only pre-existing Unity Hub serve remains; no task-owned browser/preview. Preserve failed first compile and8/10fixture run alongside focused3/3. Whole goal remains active. Next Quick Circuit signature then Closed Circuit; migrate obsolete Magnet acceptance contracts during the changed kit gate, without broad unchanged reruns.
+
+Aiming first native run reached the real match but the old fixture tried to
+charge before current can restoration protection expired. One bounded fixture
+repair waits the actual ProtectionLeft plus .05s, without changing gameplay or
+weakening CanThrow. Retry the same relevant real-charge/interpolation/release
+case once. Ring candidate excluded from this validation; protocol125 retained.
+
+Aiming v2 passes intermediate interpolation/no-overshoot assertions but actual
+FPP guide contributes only88 visible pixels (existing minimum100). Inspected
+frame shows a broken-looking thin distant circle. Product correction increases
+distance-scaled stroke width25%, retaining radius/prediction and black outline.
+Same focused native case reruns; no fixture assertion/threshold relaxed.
+
+Aiming v3 actual stroke now contributes106 visible pixels, but memory guard
+stopped before completed XML/release acceptance. No final pass or shipment.
+Preserve candidate and receipts, no unchanged rerun after fixture allowance.
+
+Live Feedback clarifies foliage belongs to the collaborator's unpushed Ilalim
+ng Tulay rework: wait for that revision, do not test unrelated maps. The marker
+row now explicitly prefers hollow circles. Adopt that new shape requirement.
+Source investigation identifies the failed marker pixel witness selected local
+seat1, whose entire renderer hierarchy CameraRig hides with ShadowsOnly. The
+shader arithmetic was not the cause. Preserve failed receipts; new hollow-circle
+acceptance must use an observer-visible seat and require visible rim pixels as
+well as an open centre. This is the newly requested hollow shape, not a repeat
+of the abandoned filled-disc acceptance. No human checkbox has been ticked.
+
+Hollow marker final native1/1 passes protocol125 on observer-visible seat2.
+Actual rim/open-centre pixels and flat/no-collider geometry pass; circle/octagon
+captures inspected. Prior water/scoped-camera passes retained. Final XML passed
+before memory guard acted during exit, OOM unchanged11/6; not a clean shutdown.
+Evidence ground-marker-checks preserves all failed attempts and exact inputs.
+Aiming candidate excluded and still unshipped. Release marker paths on shipment;
+next fix the aiming validation infrastructure without discarding either history.

@@ -17,6 +17,15 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### PLAYER-GROUND-MARKERS-1001: flat hollow shader markers
+
+Removed raised cylinder/collar/bracket walls in favour of a soft flat shader rim.
+Both roles are hollow per Harry's latest preference; circle versus octagon and
+camera-scoped catchable brackets preserve their distinct signals. Final native
+shape case passes1/1; earlier water/scoped-camera cases pass separately. Shutdown
+memory guard and previous failed captures are retained without a clean-exit claim.
+[Evidence](reports/feedback-2026-09-30/ground-marker-checks/README.md).
+
 ### TAGGED-WORLD-LOOK-1001: repaired shader-context omission
 
 Replay now explicitly adopts the gameplay world-look shader scope. Native
