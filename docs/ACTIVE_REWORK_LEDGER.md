@@ -3292,3 +3292,15 @@ exact e47source, before these presentation assets. All owned jobs terminal, priv
 dirt/PNGmetas/quality/HeroHazards preserved. Next refresh bottom Feedback and
 continue independent engineering; icon/presentation work remains reserved.
 
+
+RAFI-SKIM-MOTION-1001 owns RafiHeroKit Skim cast strings; HeroAbilityClips.Rafi.cs
+and BuildAll; CharacterAnimator action mapping; ViewmodelArms.cs and CastGesture;
+Editor/RafiMotionAuthor targeted single-clip bake; new hero-rafi-skim.anim/meta and
+person_rafi clip reference; RafiExpansionProbe scoped motion/capture; hero-quality
+Skim plan/evidence and TODO progress. No gameplay, prediction, timing or network
+semantics change. Replace obsolete deception feint with deliberate sole coating:
+raise held shoe, support it, sweep free hand across its sole, release to ready.
+Inspect real owner/witness motion and settled role icons in the same distinct
+presentation review. Preserve old clips, shipping saved controls and other heroes.
+One focused native review, one bounded tooling repair maximum. Source510f356f;
+icon unit aef85a28 remote verified, both same-row Doc notes read back. Study silence.
