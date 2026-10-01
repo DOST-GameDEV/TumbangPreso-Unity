@@ -297,7 +297,8 @@ incomplete cells still do not authorize invented specifications.
   Audible mix, current actual peers and full-kit qualification remain open.
 
 - [x] F0930-13 Title Enter regression: release opening Submit before Home can queue;
-  three native keyboard/pad/ordinary-key checks pass. Publication pending.
+  three native keyboard/pad/ordinary-key checks pass. Shipped c403800c;
+  remote verified and same Feedback row updated.
   [Evidence](reports/hero-quality-2026-10-01/title-submit-checks/README.md).
   Prior already-labelled-fixed checks remain: any-key title,
   no Escape return to title, queue cancel button, hamburger background, stamina drain.
