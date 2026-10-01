@@ -4067,3 +4067,11 @@ All jobs terminal; publish explicit UI/test/report/TODO/ledger paths. Current
 full129player predates this UI-only fix; do not claim refreshed-player validation.
 
 RESUME-1002: Previous turn interrupted; all owned native/player jobs terminal and no task source WIP. Integrate incoming rebuilt Ilalim and protocol129 intact with local fullHD128 evidence. Private arm assets, composition metadata, HeroHazards opacity, quality settings and motion captures remain unstaged. DOTS retains Feedback/kit queue; friend retains broad loading. Next one current rebuilt-Ilalim preview/render/shader check because scene assets changed; reuse unchanged Kanto/Lagoon proof. No validation loop or whole tournament-readiness claim. Then continue concrete reliability/optimization defects. No reset, cross-chat work, paid service, Desktop replacement or authored visual redesign.
+
+SETUP-RECOVERY-1001 owns AGENTS.md and WORKSTATION_SETUP.md documentation only.
+Owner explicitly requests automatic restoration of the approved cloud tooling if
+it becomes unavailable again. Record the existing scope and accepted Unity terms,
+without assuming the cause of missing local files or weakening evidence gates.
+Source9590 was clean; incoming de307b08 documentation integrated intact.
+Unity/.NET restored; managed smoke8/8pass on9590. Native
+licensing remains pending user sign-in. No runtime edits or current-player claim.

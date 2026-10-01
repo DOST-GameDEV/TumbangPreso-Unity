@@ -31,6 +31,29 @@ historical command run.
 
 ## Isolation And Profiles
 
+### Cloud recovery receipt, October 1, 2026
+
+The owner authorizes restoring this approved setup without a new request for
+routine official software installation. Preserve existing account sessions and
+source work. Diagnose missing paths before attributing them to a reset.
+
+The owner explicitly accepted the Hub's presented
+[Unity Terms of Service](https://unity.com/legal/terms-of-service) and
+[Editor Software Terms](https://unity.com/legal/editor-terms-of-service/software)
+on October 1, 2026. The Hub showed Terms last updated June 30, 2026. Reuse this
+acceptance for the same agreement; changed agreements need their own review.
+
+Restoration verified Unity6000.5.8f1 extraction from the official changeset archive,
+Hub3.22.0 launch, Blender4.3.2 and .NET9.0.318. The eight ThrowAimRulesTests passed
+on source9590f4bd. These are managed tooling checks, not native Unity qualification.
+Hub account activation and a fresh native smoke test remain required.
+
+Keep DOTNET_CLI_HOME, NUGET_PACKAGES, NUGET_HTTP_CACHE_PATH and
+NUGET_PLUGINS_CACHE_PATH in writable task-owned directories. A read-only default
+NuGet cache can otherwise fail package restore even after the SDK installs.
+Native desktop DISPLAY and shell process namespaces may differ; verify the
+shared files and launch on the actual graphics-capable environment.
+
 Use a named validation profile and guarded runner. Every concurrent candidate needs
 its own writable project caches,profile,ports and output. Freeze tested inputs and
 limit heavy workloads. Profile hashes and shared input preferences are preserved

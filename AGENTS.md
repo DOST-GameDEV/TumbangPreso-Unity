@@ -78,6 +78,23 @@ Do not present amplitude measurements or silent film as listening approval.
 - Keep updates concise and useful. Prefer actual fixes to planning, audit,
   diagnostic, fixture or capture-framework churn.
 
+## Approved Cloud Setup Recovery
+
+- The owner explicitly authorizes restoring the existing TUMP cloud setup when
+  tools or files become unavailable. Recover the approved repository/branch,
+  matching Unity editor, .NET test tools and required official dependencies
+  autonomously. Reuse available installations and preserve existing logins,
+  profiles, source assets and unfinished work. Follow docs/WORKSTATION_SETUP.md.
+- Missing files alone do not prove a reset or replacement. Verify the actual
+  workspace, native execution environment and tool state before explaining a cause.
+- Record successful recovery steps and exact blockers, then verify fresh managed
+  and native results before resuming implementation. Installation is not activation
+  and a website login is not an editor licence. Do not redo already-shipped work.
+- The owner accepted the Unity Hub Terms of Service and Editor Software Terms
+  presented on October 1, 2026. Do not ask again for those same accepted terms.
+  This recovery authorization does not cover different new agreements, purchases,
+  expanded account access or entering passwords on the owner's behalf.
+
 ## Shared Workspace And Publication
 
 - Work and integrate on ASTRAReworks. Fetch first; inspect status and divergence.
