@@ -72,7 +72,15 @@ namespace TumbangPreso.Audio
                 // with NO row, fell back to 0.0 dB, and was reported off the build as *"a loud
                 // wind soudn that plays randomly"*. A long sound is mixed as a background
                 // whatever it is called.
-                { "sfx_lrt_pass", -16.0f },
+                //
+                // ⚠️ -8, UP FROM -16 (2026-10-01). 🧑, on the rebuilt Ilalim: *"does the train/lrt
+                // move and have a loud LRT sfx?"*, then "proceed" on making it louder. The -16 was
+                // set while the clip still played for the whole traverse from 70 m; the source now
+                // reaches only 44 m (`LrtTrainFlyby.RumbleMaxDistance`), so it arrives with the
+                // warning toast and leaves with the consist, and a louder pass no longer reads as
+                // random wind. The deck hides the consist from every place a player can stand,
+                // so this recording and the shake ARE the train.
+                { "sfx_lrt_pass", -8.0f },
 
                 // ⚠️⚠️ THE SIX ULTIMATE THEMES ARE BEDS, NOT EVENTS, AND ARE MIXED AS BEDS.
                 // The train row above records what happens to a sustained cue with no row:
