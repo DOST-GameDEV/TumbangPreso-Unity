@@ -3624,3 +3624,23 @@ membership, then use existing explicit marker and verify camera globals and
 restoration. Do not claim this solves the separate red/cyan foliage report.
 One focused baseline/final, one tooling repair maximum; source701d6828protocol124.
 Rings remain next independent fix after this concrete root cause. No native job.
+
+Tagged world-look baseline reproducesrealreplayweight0 vsactivegameplay1 and
+architecture0. AddexistingWorldLookCamera markeronlytotheoffscreenreplaycamera;
+no globalcamera widening or tuning. Same relevantfinalcasechecksactualscoped
+weights, restoration andunrelatedportraitexclusion; nofixture repairused.
+
+World-look finalrun hitmemoryguardbeforecases afterfullcompile; nofinalpass.
+Snapshotshows1.13GBidleimportworker plus687MBILPP beside3.35GBEditor. Onebounded
+fixture/toolingrepair usesinstalledUnityEditorUserSettings documented idle
+importworker shutdown delay=1ms beforeload, restoringoldvalueafterworldreset.
+Unlike rejectedworker-count0, this is the dedicated idle-retirement setting.
+No guardraise/countchange/unrelatedkill. Retrycorrectedruntimefinalonce.
+
+TAGGED-WORLD-LOOK-1001 final passes 1/1 on exact frozen protocol124 inputs.
+Replay weight 1 matches gameplay, architecture 1, scoped restoration and unrelated
+portrait exclusion pass. Idle import retirement restored after test; no new OOM.
+Baseline weight0 failure and first-final memory stop retained with final evidence
+in tagged-world-look-checks. Captures qualify shader context, not contact framing
+or separate foliage artifacts. Release owned camera/test paths after shipment.
+Next independent unit: flat shader player ground markers. No native job running.
