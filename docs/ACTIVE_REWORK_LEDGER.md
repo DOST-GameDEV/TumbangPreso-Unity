@@ -2927,3 +2927,9 @@ Can-height c205dfcb remote verified. Harry requested a slight increase: black
 outline1.2→1.5canvas units, filled centre radius unchanged. One existing native
 charge/release capture check at small/wide views; reuse prior lifecycle checks.
 No gameplay/protocol change beyond current120, no new asset. Prior jobs terminal.
+
+Dot outline final1native passes, small/wide captures inspected, frozen inputs
+unchanged/no new OOM. Filled centre stays3.2, border1.5instead of1.2. No repeat
+of unchanged pulse lifecycle suite. Publish and close the combined Feedback row
+with tutorial repair evidence. Next HUD feed/status stacking/lifetimes, then
+announcement bonuses; current120. All owned native jobs terminal.

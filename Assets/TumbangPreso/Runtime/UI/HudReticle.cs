@@ -127,7 +127,7 @@ namespace TumbangPreso.UI
             var gold = CourtPresentationPalette.Gold;
             // Current Feedback: a filled dot precisely on the existing aim centre.
             float radius = AimRadius;
-            HudDraw.Disc(vh, c, radius + 1.2f, Keel, 32);
+            HudDraw.Disc(vh, c, radius + 1.5f, Keel, 32);
             HudDraw.Disc(vh, c, radius, InReach ? UiTheme.Defense : ink, 32);
             // Cooldown sweep: thin, outside everything, drains clockwise.
             if (Cooldown > .001f)
