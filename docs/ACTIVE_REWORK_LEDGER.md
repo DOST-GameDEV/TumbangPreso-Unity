@@ -1,6 +1,6 @@
 # Active Rework Checkpoint
 
-Updated2026-10-01. Branch ASTRAReworks. Protocol109 candidate. Goal active.
+Updated2026-10-01. Branch ASTRAReworks. Protocol110 candidate. Goal active.
 Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 
 ## Live Local Resume
@@ -1519,6 +1519,11 @@ CharacterMotor.cs impulse, CharacterMotor.Status.cs carry, GeoRules constants,
 NetSession.cs protocol, new DanteEarthboundTests.cs/meta. Baseline before runtime.
 No heavy job active. Sourcebe249c3d fetched with no divergence.
 
+Local next F0930-12 Catch unit: claim Lata.cs owned ability-protection clock, NemuHeroKit.cs KuroGuard/Catch implementation, NecroRules section only in shared RosterReworkRules.cs and NemuCatchContractTests.cs/meta. Current Wiki5s immunity/upright activation supersedes physical6s guard. Six native baseline cases: actual knockdown/lifetime, eligibility, independent reset-shield cancellation, round reset, observer authority and remaining-clock recovery. NativeCore/services minimal world, no authored art/animation/SFX/VFX changes. Compatibility edit deferred while Dante contributor owns NetSession; do not overlap its GeoRules/HeroKit/motor paths. No heavy job active before baseline launch.
+
+Catch original6native cases pass on explicit605-input candidate, baseline1pass/5fail; no fixture repair. Remaining concrete risks are approved-recovery replica protection absent (generic recovery context is not marked approvedReplay) and destroyed-can reset with an independent shield rebuilding on a dead target. Added two focused cases only, original six retained. Baseline job native current output Logs/feedback-0930/nemu-catch-recovery-baseline.xml, profile feedback-nemu-catch-1001; no runtime inputs modified mid-run. Fresh remote Dante currentcontracts published107; own compatibility edit still deferred until source integration.
+
+Catch unit original6native passes; two follow-ups produce1pass/1approved-replica projection failure; corrected replica1/1passes. Eight distinct passed cases across receipts,605hashes/no drift, no fixture repair or unchanged rerun. Destroyed-can risk contradicted, no speculative fix. Host-confirmed5s protection/eligibility/owned cleanup and prepared recovery implemented. Commit checked unit privately, integrate contributorDante107 preserving GeoRules, advance compatibility once, then publish. Native77698/63541/8167/32803 terminal; no heavy job active. Protocol103 player stillfrozenFFE scope, does not qualify Catch or incoming107.
 Earthbound baseline Classic control passes; impulse/carry both wrongly travel
 1.0times neutral. Implement Dante-only distance factor0.5 at existing incoming
 local physics application, sqrt-scale speed and carrytime, preserve lift and caps.
@@ -1557,6 +1562,7 @@ eligibility/tag-preservation and current ward/Bastion names/clocks. Existing art
 unchanged. Full Dante row stays open for held-slipper Boulder and forward cascade.
 No heavy job active; fresh remote/claims before next unit.
 
+Catch3322c6e8b checked unit integrates contributorDante current107 fromf60eba049; NecroRules/GeoRules merge clean, all authored contributors preserved. Combined compatibility108. Next one existing current/previous LAN approval receiver case on this merged source verifies current108accepted/107refused and compilation; reuse eight Catch cases and contributor receipts. No claim that old103player qualifies108. No source/fixture/art redesign for this gate.
 Wardf60eba04 remote verified. Boulder plan appended after source/recovery review:
 claim DanteHeroKit.cs attacking ability, Slipper.cs appended affinity/contact and
 snapshot, Carrier.cs transfer, SliceRunner.cs round clear, Core Geo/StatusRules,
@@ -1581,6 +1587,10 @@ unit is Nemu Catch; published tutorial paths released. Claim GuidedTraining.cs
 corner counter only and OwnerTrainingUiTests.cs flight/staging/completion cases.
 No Slipper physics claim until reproduction. Plan tutorial-regression.md; current
 source clean before claim, no heavy job active. Dante cascade resumes afterward.
+
+Concurrent Boulder108 integration preserved at1d2f0e540; combined Catch/Boulder109. Only ledger conflict, both sides retained; code merge clean. Previous native approval108passed before this integration. One final existing approval/compilation case on combined109next; no repeated Catch tests or player rebuild. Preserve exact candidate scope if remote advances again.
+
+Combined842c1d04f protocol109 final native approval1/1passes/current accepted/prior108 and bad fingerprint refused;616hashes/no drift. No Catch rerun/player rebuild. Own Catch3322c6e8b source/eight distinct acceptance cases remain; all contributorDante/Boulder code integrated cleanly. Publish unit/merge/receipts, then update same Nemu row. Native26431terminal; no heavy job active. Next review Nemu Haunt7.5s reduced-perception status and current legacy seance, keeping rendering/audio/animation scope restricted to concrete bug fixes.
 Tutorial current-source reproduction confirmed: high throw staysInFlight12s at
 11.77m, upwardvelocity1.54, enabled/timeScale1. Hidden protected can's flat contact
 keeps rebounding before timeout; skipped staging is correctlygrounded. Expand
@@ -1602,3 +1612,4 @@ matching channel captions and TumpNativeHudTests.cs existing exact-copy checks.
 No layout/input/restore rule change or protocol increment. One native existing
 retrieve/reset/device flow and toggle touch check, capture channel label. Source
 clean and fetched before this claim; Dante cascade remains next independent work.
+Concurrent tutorial hidden-can collision fix338c94bad integrated with all authored receipts; combined compatibility110. Approval receiver source unchanged since qualified109, constant advanced for both contracts. Reuse that case; no repeated gate/player build. Catch code/eight cases unchanged. Native109approval is pre-tutorial110 scope, actual103player scope remainsFFE. Publish now, then exactsame Nemu row note; no full110peer claim.

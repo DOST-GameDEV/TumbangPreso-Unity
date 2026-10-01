@@ -85,6 +85,15 @@ changes. Existing bound timed-kit recovery reads the corrected15second duration.
 
 ## Cosmetic Reworks
 
+Kuro Catch protocol109: nemu_skill2d becomes a host-confirmed five-second upright-can
+protection. Lata retains the ability-owned clock independently of restoration;
+the existing clock snapshot publishes the current maximum. Shared prepared-world
+recovery restores active/empty remaining state without recasting. Approved replicas
+project that clock for local state/presentation; unapproved calls cannot grant it,
+and actual knockdown always resolves on the host. Eight distinct native cases pass;
+actual peer/companion rendering qualification remains separate.
+[Evidence](reports/feedback-2026-09-30/nemu-kuro-catch.md).
+
 Cheska protocol103: the current Wiki7.5s field,1.5s ultimate delay/every-player
 targeting and Chilled shove passive require matching builds. Shared ultimate
 delivery and existing status/slipper snapshot formats stay intact. Five native

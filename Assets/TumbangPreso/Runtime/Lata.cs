@@ -2,6 +2,8 @@
 // work/protection | filling/draining close ring | Defense/gold | can clock.
 // Voice/contact is one shared beat. No duplicate LATA DOWN world sentence.
 using System;
+using System.Collections.Generic;
+using TumbangPreso.Abilities;
 using TumbangPreso.Core;
 using UnityEngine;
 
@@ -34,13 +36,34 @@ namespace TumbangPreso
         private float _toppleTimer;
         private Vector3 _mark;
         private float _restoreProtectionLeft;
+        private readonly HashSet<HeroAbility> _abilityProtection = new HashSet<HeroAbility>();
         private GameObject _downBeacon;
         private GameObject _protectionShell;
 
         public int SkinIndex { get => _skinIndex; set => _skinIndex = value; }
         public bool IsUpright => _isUpright;
-        public bool IsProtected => _restoreProtectionLeft > 0.0f;
-        public float ProtectionLeft => Mathf.Max(0.0f, _restoreProtectionLeft);
+        public bool IsProtected => ProtectionLeft > 0.0f;
+        public float ProtectionLeft
+        {
+            get
+            {
+                float left = Mathf.Max(0.0f, _restoreProtectionLeft);
+                foreach (var ability in _abilityProtection)
+                    if (ability != null && ability.IsActive)
+                        left = Mathf.Max(left, ability.DurationRemaining);
+                return left;
+            }
+        }
+        internal void AddAbilityProtection(HeroAbility ability, bool approvedReplica = false)
+        {
+            if ((!NetAuthority.ShouldResolve() && !approvedReplica) || !IsUpright || ability == null || !ability.IsActive) return;
+            if (_abilityProtection.Add(ability)) RefreshStatePresentation();
+        }
+        internal void RemoveAbilityProtection(HeroAbility ability)
+        {
+            _abilityProtection.Remove(ability);
+            RefreshStatePresentation();
+        }
         // Actual supporting offset used by the can's grounded tilt. Imported
         // renderer bounds are not a flight state and may include artist offsets.
         public float PresentationSupportOffset => _isUpright?0:DownedLift*Mathf.Abs(Mathf.Sin(transform.eulerAngles.x*Mathf.Deg2Rad));
@@ -480,6 +503,7 @@ namespace TumbangPreso
             }
 
             _restoreProtectionLeft = 0.0f;
+            _abilityProtection.Clear();
             ClearProtectionShell();
             BuildDownBeacon();
         }
@@ -661,8 +685,11 @@ namespace TumbangPreso
         private void StepStatePresentation()
         {
             if (_restoreProtectionLeft > 0.0f)
-            {
                 _restoreProtectionLeft = Mathf.Max(0.0f, _restoreProtectionLeft - Time.deltaTime);
+            // Ability clocks have their own owner; never decrement or clear a
+            // Catch grant through the independent restoration timer.
+            if (IsProtected)
+            {
                 BuildProtectionShell();
 
                 if (_protectionShell != null)
@@ -672,8 +699,8 @@ namespace TumbangPreso
                     _protectionShell.transform.localScale = new Vector3(radius, 1, radius);
                 }
 
-                if (_restoreProtectionLeft <= 0.0f) ClearProtectionShell();
             }
+            else if (_protectionShell != null) ClearProtectionShell();
 
             // ⚠️ THE WHOLE MARKER NO LONGER SCALES, ONLY THE COLLAR DOES. Scaling the parent
             // scaled the shaft's HEIGHT along with everything else, which is part of why the old

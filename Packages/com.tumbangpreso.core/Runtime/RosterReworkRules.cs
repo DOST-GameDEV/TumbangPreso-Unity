@@ -86,10 +86,10 @@ namespace TumbangPreso.Core
         /// <summary>A tag this close to Kuro while he carries makes him drop it.</summary>
         public const float FetchInterceptRadius = 1.3f;
 
-        /// <summary>KURO GUARD, owner: *"kuro aids withh blocking and becomes a bit bigger"*, *"give her
-        /// like an AI to think abt where to stand but dont make it infallible"*. Set here.</summary>
+        /// <summary>KURO: CATCH! Current Wiki grants five seconds of can protection.
+        /// Original companion presentation tuning is retained below.</summary>
         public const float GuardCooldown = BasicCooldown;
-        public const float GuardSeconds = 6.0f;
+        public const float GuardSeconds = 5.0f;
         public const float GuardScale = 1.6f;
         public const float GuardMoveSpeed = 6.0f;
         public const float GuardBlockRadius = 0.9f;
