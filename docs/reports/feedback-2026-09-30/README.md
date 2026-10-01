@@ -229,3 +229,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Identify packet framing and preserved approved-identity path](identify-packet-framing.md).
 
 [Lobby pick framing, sender ownership and live-match rejection](lobby-pick-packet-framing.md).
+
+[Atomic bounded roster response and preserved state on rejection](roster-atomic-framing.md).

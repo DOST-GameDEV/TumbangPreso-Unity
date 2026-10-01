@@ -2876,6 +2876,34 @@ claim from old117/116binaries. All local heavy jobs terminal, private work intac
 Next network unit remains roster-response framing after freshownerclaim checks;
 HUD announcement/scoring/duration follow-up remains contributor-owned.
 
+ROSTER-ATOMIC-FRAMING-1001 owns MatchRpc.cs roster receiver and new
+LobbyRosterPacketTests.cs/meta. Writer emitsfour unique seats/UTF16fields plus
+watchercount0..4; currentreader allocatesfromcount and writes `_replicatedSeats`
+inside decode, allowingpartial state on late malformed row. Baseline12safe cases
+(no intentional intMaxOOM): cuts/count-1/0/5/duplicate/watch-1/5/trailingbyte.
+Final16includes Unicode/hostdecisions/legacyfooter/authorityloopback controls.
+Preflight exactlayout and boundedcount beforeallocation; commit complete local
+roster afterward. One repair max, no other heavy job, no arbitrary text clamp.
+
+Roster baseline12/12fails at actualexceptions/partial replacement/watcher mutation.
+No fixture failure,15863terminal. Completepreflight bounds counttofour, uniquevalid
+seats, boolflags/occupiedpeer and watcher0..4, allUTF16fields; decode tempseats then
+commitall. Legacyomittedfooter retains existingwatchers. No OOMbaseline or arbitrary
+stringlimit. Final16currentUnicode/hostdecisions/rolescontrols, one repairmax.
+
+Roster finalfirst16cases:14pass, two validwatchercases fail cumulative eventcount2/3.
+Fixture Before didnotreset_events. One boundedfixture repair addsreset; runtime
+unchanged. Rerun validroster method3cases only; preserve14qualifiedmalformed/role/
+legacycontrols, no fullsuite repetition.57204terminal, prefs/profiles intact.
+
+Roster firstfinal14/16success, repairedvalid3/3:16distinctqualifications, not one
+16/16run. One fixture counterreset, runtime unchanged.692finalinputs no drift,
+four ownedfiles match currentcandidate, valid32hexnewmeta imported. Firstfinal
+manifest was overwritten onprepare; reconstructedfixturehash labelled explicitly,
+originalXMLretained. All15863/57204/40658terminal, profiles/inputprefs intact.
+Publish boundedatomic roster source/status/receipts. Current119, no actualpeer/
+player or all-network claim. Preserve UI/scoring reservations and oldplayer proofs.
+
 TUTORIAL-THROW-REGRESSION-1001 claims Runtime/RoundDirector.cs,
 Runtime/GuidedTraining.cs and Tests/PlayMode/TutorialLessonHonestyProbe.cs.
 New Harry Feedback reports that the can-down gate blocks tutorial throws and
@@ -2928,6 +2956,12 @@ outline1.2→1.5canvas units, filled centre radius unchanged. One existing nativ
 charge/release capture check at small/wide views; reuse prior lifecycle checks.
 No gameplay/protocol change beyond current120, no new asset. Prior jobs terminal.
 
+Integrated20b06b17 tutorial-only throw recovery andc205dfcb9 finite can-height
+contact with authorednative/Core receipts preserved; current120. Atomic-roster
+9c177f3b0 ownedruntime doesnotconflict. Newdot-outline/nextHUD/scoring remain
+contributor-owned; old117/116players do not qualify120. All local heavyjobs
+terminal, privateassets/metas/HeroHazards/quality/motion preserved. Next local
+engineering action from currentqueue, no repeated unchanged gates or crosschat.
 Dot outline final1native passes, small/wide captures inspected, frozen inputs
 unchanged/no new OOM. Filled centre stays3.2, border1.5instead of1.2. No repeat
 of unchanged pulse lifecycle suite. Publish and close the combined Feedback row
@@ -2955,6 +2989,10 @@ available height; action/warning text wraps in remaining width. Haunted must
 appear from its real timer. Qualify ordinary3 and dense/max/enlarged views,
 expiry/reflow/refresh without re-entry. No mechanics/protocol change from120.
 
+Integrated reticle-outline and score-feed contributions through9dc083a0d.
+Atomic roster validation retains16distinct native passes across two final runs;
+current protocol120. Status layout remains contributor-owned. No task jobs or
+previews remain; private dirt is preserved. Publish, then resume scoped engineering.
 Status candidate frozen: stable catalog-backed slots remove the silent3cap;
 Haunted follows its real timer. Bottom-up columns fit available height, retaining
 28unit tooltip text; dense layouts reserve right-side action/warning room with

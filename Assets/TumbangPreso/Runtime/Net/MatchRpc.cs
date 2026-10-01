@@ -4896,6 +4896,37 @@ namespace TumbangPreso.Net
         /// </summary>
         public static int SpectatorsWatching { get; private set; }
 
+        private static bool ValidLobbyRosterFrame(ref FastBufferReader reader)
+        {
+            int start=reader.Position;
+            try
+            {
+                if(!reader.TryBeginRead(sizeof(int))) return false;
+                reader.ReadValueSafe(out int count);
+                if(count!=Balance.PlayerCount) return false;
+                int seen=0;
+                for(int i=0;i<count;i++)
+                {
+                    if(!reader.TryBeginRead(sizeof(int)*2)) return false;
+                    reader.ReadValueSafe(out int seat);reader.ReadValueSafe(out int peer);
+                    if(seat<0 || seat>=Balance.PlayerCount || (seen&(1<<seat))!=0) return false;
+                    seen|=1<<seat;
+                    if(!SkipWireString(ref reader) || !reader.TryBeginRead(2)) return false;
+                    reader.ReadValueSafe(out byte occupied);reader.ReadValueSafe(out byte spectator);
+                    if(occupied>1 || spectator>1 || (occupied==1 && (peer<0 || spectator==1))) return false;
+                    if(!reader.TryBeginRead(sizeof(int)*3+1)) return false;
+                    reader.Seek(reader.Position+sizeof(int)*3);reader.ReadValueSafe(out byte ready);
+                    if(ready>1 || (occupied==0 && ready==1)) return false;
+                    for(int field=0;field<4;field++) if(!SkipWireString(ref reader)) return false;
+                }
+                if(reader.Position==reader.Length) return true;
+                if(reader.Length-reader.Position!=sizeof(int) || !reader.TryBeginRead(sizeof(int))) return false;
+                reader.ReadValueSafe(out int watching);
+                return watching>=0 && watching<=LobbySession.MaxSpectators;
+            }
+            finally { reader.Seek(start); }
+        }
+
         private void OnSyncLobbyPicksMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (!FromHost(senderClientId)) return;
@@ -4903,10 +4934,10 @@ namespace TumbangPreso.Net
             // Netcode invokes the handler locally for the listen host, so every broadcast the
             // host sent was also applied ON the host, a second time, over authoritative state it
             // had just produced. See § THE LOOPBACK.
-            if (NetAuthority.IsHost) return;
+            if (NetAuthority.IsHost || !ValidLobbyRosterFrame(ref reader)) return;
 
             reader.ReadValueSafe(out int count);
-            var seats = new LobbySeatInfo[Mathf.Max(count, Balance.PlayerCount)];
+            var seats = new LobbySeatInfo[Balance.PlayerCount];
             for (int i = 0; i < count; i++)
             {
                 reader.ReadValueSafe(out int seat);
@@ -4948,11 +4979,7 @@ namespace TumbangPreso.Net
                     Custom = custom ?? "",
                     Build = build ?? "",
                 };
-                if (seat >= 0 && seat < _replicatedSeats.Length)
-                {
-                    _replicatedSeats[seat] = info;
-                }
-                if (i < seats.Length) seats[i] = info;
+                seats[seat] = info;
             }
 
             // ⚠️ READ AFTER THE SEATS AND ONLY IF IT IS THERE. `FastBufferReader` throws past the
@@ -4964,6 +4991,10 @@ namespace TumbangPreso.Net
                 reader.ReadValueSafe(out int watching);
                 SpectatorsWatching = Mathf.Max(0, watching);
             }
+
+            // Decode into a bounded temporary roster. A malformed later row
+            // must never leave earlier seats changed without a complete event.
+            for(int slot=0;slot<seats.Length;slot++) _replicatedSeats[slot]=seats[slot];
 
             var table = new int[Balance.PlayerCount * 4];
             for (int i = 0; i < table.Length; i++) table[i] = -1;
