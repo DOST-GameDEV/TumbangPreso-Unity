@@ -2365,3 +2365,30 @@ Quit scaling and remaining dummy objective-marker removal verified. Wall is
 mechanically qualified but its sheet reads as glass, not finished water art;
 body/FPP/glyph/audio remain provisional. Publish explicit owned paths/evidence,
 then update same tutorial Feedback notes and strike resolved human comments.
+
+Wall/tutorial fb41d20e integrated845e65adfde273ead1f88c83b0b4abc8e419d71e,
+remote verified. Same tutorial Feedback row updated and its two new comments
+struck; readback exact, originals/images/human controls preserved. Current117
+source; no refreshed player/peer claim. Native tutorial capture saved for user.
+Next deepen actual source/media quality benchmark and audio route; protected
+mechanics exception question remains unanswered, independent work continues.
+
+Quality benchmark source/pipeline audit saved, including current-vs-historical
+Phaister timeline distinction and concrete Hydro presentation weaknesses.145
+reference-named files match candidate. One fresh read-only Phaister18second
+three-view film planned with existing probe, frozen inputs and named profile;
+expected1case plus540frames/view. No audio or watched-film claim yet.
+Phaister reference capture completes1/1,540frames in each of3views, clock
+89.520unchanged through introduction; doll/circle/live movement observed by probe.
+Input hashes unchanged, OOM11/kill6unchanged. Sampled native frames inspected;
+54second three-view export verified. This is visual reference, not SFX listening.
+Next existing Paete18second three-view film, same unchanged reference inputs,
+separate output/profile. No protected implementation or authored assets changed.
+
+Paete reference completes1/1,540frames/view, frozen hashes unchanged and no
+new OOM. Clock89.580held then88.580after handback. Six native samples inspected;
+benchmark records physical continuity and framing limits. Both54second exports
+are visual-only: Paete theme WAV missing, Phaister cue log empty. Existing
+ReviewAudioCapture found; process-local ALSA null opens but Unity sample capture
+still unproven. Next validate that route using existing player diagnostic, then
+Hydro body/material presentation. No protected reference edits.
