@@ -2945,3 +2945,12 @@ Feed stack final1native passes interrupted reflow/order/independent expiry/cap3/
 reduced-motion/three-second boundaries. Small capture inspected, frozen inputs
 unchanged, no tooling repair/new OOM. Publish; status capacity/upward reflow and
 Haunted omission are next, announcement scoring afterward. No live native job.
+
+HUD-STATUS-STACK-1001 claims UI/TumpMatchReadout.Statuses.cs, StatusIcons.cs,
+TumpMatchReadout.MatchBar.cs and Warnings.cs for adaptive bottom-up status columns
+and reserved action/warning space; existing TumpNativeHudTests.cs for controls.
+Feed ea45c159 remote verified. Preserve full names/tooltips and28unit floor,
+actual timers, stable identity and reduced motion. Dense columns wrap within the
+available height; action/warning text wraps in remaining width. Haunted must
+appear from its real timer. Qualify ordinary3 and dense/max/enlarged views,
+expiry/reflow/refresh without re-entry. No mechanics/protocol change from120.
