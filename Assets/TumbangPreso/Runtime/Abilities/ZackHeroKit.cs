@@ -66,7 +66,7 @@ namespace TumbangPreso.Abilities
             if (!_joinMagnetSettled && !IsOverchargeThrowActive && !AttackingSkill.IsActive)
             {
                 _joinMagnetSettled = true;
-                ((MagnetRecallAbility)AttackingSkill).RestoreCharge(context, magnetRemaining);
+                ((BankShotAbility)AttackingSkill).RestoreCharge(context, magnetRemaining);
                 restored = true;
             }
             return restored;
@@ -86,7 +86,7 @@ namespace TumbangPreso.Abilities
         {
             Skill1 = new StaticRailGrindAbility(this);
             // ABILITY-2: the four-slot shape; the defending slot waits for the owner's Electro design.
-            AttackingSkill = new MagnetRecallAbility(this);
+            AttackingSkill = new BankShotAbility(this);
             DefendingSkill = new PlaceholderRoleAbility("zack_skill2d", "Zack", AbilityGlyph.ZackOvercharge);
             Ultimate = new ThunderstrikeOverdriveAbility(this);
         }
@@ -331,182 +331,66 @@ namespace TumbangPreso.Abilities
             }
         }
 
-        /// <summary>
-        /// Skill 2: MAGNET. Your own tsinelas snaps back into your hand from anywhere.
-        ///
-        /// ⚠️⚠️ IT REPLACES STATIC CHARGE, WHICH WAS SEAN'S IGNITION CANNON WITH A DIFFERENT
-        /// ELEMENT ON IT. 🧑 2026-09-02: *"the kit of zack and sean are the exact fricking
-        /// same"*, *"bcaz its js speed up and upgraded attack"*, *"it feels like theyre the exact
-        /// same character js diff color based on kits"*. He is right and this file already said
-        /// so: `docs/Hero_Strike_Balance.md` § 4.4 is titled *"Sean and Zack shipped as the same
-        /// kit in three matching slots"*, and the fix attempted there moved NUMBERS — Sean got
-        /// the blast, Zack got the speed. Two throw buffs tuned apart are still two throw buffs,
-        /// and slot two was the loudest of the three matches.
-        ///
-        /// ⚠️⚠️ SO THE NICHE IS THE ONE THING THIS GAME IS ACTUALLY ABOUT. `docs/VISION.md` § 0:
-        /// *"The tension is the retrieval, not the throw."* Every attacker's round is throw, walk
-        /// back in, get caught or do not; the taya's only scoring verb exists to punish that
-        /// walk. **Nothing in the game touched that loop until now.** Zack is the hero who can
-        /// skip the walk, which makes him the one attacker a taya cannot plan around by standing
-        /// between somebody and their tsinelas, and it is a job no other kit is doing.
-        ///
-        /// ⚠️⚠️ THE COST IS THAT IT IS PAID FOR BY HITTING. It keeps `Recharge.LataKnocked` from
-        /// the ability it replaces, and it keeps ONE charge instead of two: recall, throw, land
-        /// it, recall again. A Zack who hits never walks; a Zack who misses walks exactly like
-        /// everybody else, from wherever the miss went. That is a skill loop rather than a
-        /// cooldown, and it is self-limiting without a single new number.
-        ///
-        /// ⚠️ AND IT REFUSES RATHER THAN WASTING THE CHARGE when there is nothing to pull:
-        /// already holding one, somebody else picked it up, or it is still in the air. See
-        /// <see cref="CanActivate"/>. `HeroKit.CastOutcome.CannotAct` is buffered and retried for
-        /// `InputBufferWindow`, so a press made a fraction of a second before the tsinelas lands
-        /// still fires when it does.
-        ///
-        /// ⚠️ THE GLYPH IS KEPT. `AbilityGlyph.ZackOvercharge` is a charge orb with things
-        /// orbiting it, which reads as a magnet as readily as it read as static, and
-        /// `EveryAbilityAcrossAllHeroesHasAUniqueBespokeGlyph` only asks that no two abilities
-        /// share one. `VISION.md` § 3's rule is that an icon says what the power does to the
-        /// WORLD; pulling and charging are both "this thing attracts", and inventing an
-        /// eighteenth bespoke glyph to say so again would be art spent on a distinction the
-        /// player never has to make.
-        /// </summary>
-        private sealed class MagnetRecallAbility : HeroAbility
+        public bool IsBankShotLoadedFor(Slipper shoe)
+            => ((BankShotAbility)AttackingSkill).LoadedFor(shoe);
+        public SlipperAffinity BankShotAffinityFor(Slipper shoe)
+            => IsBankShotLoadedFor(shoe) ? (IsOverclocked ? SlipperAffinity.OverclockBank : SlipperAffinity.BankShot)
+                : SlipperAffinity.Normal;
+
+        private sealed class BankShotAbility : HeroAbility
         {
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
-            // Recall already equips immediately on the host. The previous 0.45 s
-            // flight comment described no implemented delay. A short collapsing
-            // trace now shows the actual source and receiving hand without changing
-            // equip authority or inventing a damaging radial field.
-
-            /// <summary>
-            /// How long the returned tsinelas stays live in his hand, in seconds.
-            ///
-            /// ⚠️⚠️ THE CHARGE IS KEPT AND FOLDED INTO THE RECALL RATHER THAN DELETED WITH THE
-            /// ABILITY IT CAME FROM. `SlipperAffinity.ElectricStun`, `Carrier.HostThrowAt`,
-            /// `StatusStack` and `Slipper.TriggerAffinityImpact` are all built around
-            /// <see cref="ZackHeroKit.IsOverchargeThrowActive"/>; dropping the only thing that
-            /// sets it would have left four files of shipped, tuned behaviour that nothing in the
-            /// game could ever reach again.
-            ///
-            /// ⚠️ AND IT IS THE BETTER ABILITY FOR IT. The shoe comes back LIVE, so the recall
-            /// and the charged throw are one loop instead of two presses that happen to sit on
-            /// the same hero: pull it in, throw it hard, knock the lata over, get the charge
-            /// back. 10 s is the window STATIC CHARGE carried, unchanged.
-            /// </summary>
-            private const float ChargeSeconds = 10.0f;
-
             private readonly ZackHeroKit _kit;
-            private GameObject _recallTrace;
+            private Slipper _loaded;
+            private int _joiningSeat = -1;
+            public BankShotAbility(ZackHeroKit kit)
+                : base("zack_skill2", "BANK SHOT",
+                       "Load your held slipper for eight seconds. Its next throw retains 85% speed on the first wall bank. Overclock permits two credited banks.",
+                       35, 8, AbilityGlyph.ZackOvercharge,
+                       summary: "Load one throw for a stronger bank; Overclock allows two.",
+                       castAction: "hero-zack-charge", viewmodelAction: "overcharge", castCue: "sfx_cast_zack_magnet")
+            { _kit = kit; }
 
-            public MagnetRecallAbility(ZackHeroKit kit)
-                : base("zack_skill2", "MAGNET",
-                       "Attacker only. Recalls your slipper from anywhere. Its next throw flies faster and jolts where it lands.",
-                       0.0f, ChargeSeconds, TumbangPreso.UI.AbilityGlyph.ZackOvercharge,
-                       summary: "Pulls your slipper back, charged. No walk back in.",
-                       castAction: "hero-zack-charge",
-                       viewmodelAction: "overcharge",
-                       castCue: "sfx_cast_zack_magnet",
-                       charges: 1,
-                       rechargedBy: Recharge.LataKnocked)
-            {
-                _kit = kit;
-            }
-
-            /// <summary>
-            /// ⚠️ EVERY REFUSAL IS A STATE THE PLAYER CAN SEE ON THE COURT. He is holding one, it
-            /// is in the air, or somebody else has it. None of the three is a bug and none of
-            /// them should cost the charge, which is why this is a `CanActivate` and not a check
-            /// inside `OnActivate`.
-            /// </summary>
             public override bool CanActivate(AbilityContext ctx)
+                => base.CanActivate(ctx) && !ctx.Motor.IsDefender && ctx.Carrier?.Held != null;
+
+            public bool LoadedFor(Slipper shoe)
             {
-                if (!base.CanActivate(ctx)) return false;
-                if (ctx.Motor == null || ctx.Motor.IsDefender) return false;
-                // ⚠️⚠️ ALREADY HOLDING ONE IS A REFUSAL AND NOT A FREE CHARGE-UP, AND THAT IS
-                // WHAT KEEPS THIS FROM BEING SEAN'S SKILL WITH EXTRA STEPS. If it charged a
-                // tsinelas he is already carrying, the ability would be IGNITION CANNON and the
-                // recall would be a rider on it rather than the point of it. He has to have
-                // thrown, which is the whole loop.
-                if (ctx.Carrier != null && ctx.Carrier.Held != null) return false;
-
-                return FindOwn(ctx) != null;
+                if (!_kit.IsOverchargeThrowActive || DurationRemaining <= 0 || shoe == null) return false;
+                return _loaded == shoe || (_loaded == null && _joiningSeat >= 0 && shoe.SeatOfOrigin == _joiningSeat);
             }
-
-            /// <summary>
-            /// His own tsinelas, if it is lying in the street.
-            ///
-            /// ⚠️ `OwnerSlot`, WHICH IS DEALT PER ROUND BY `SliceRunner.EquipOwnedSlippers` AND
-            /// IS A LABEL RATHER THAN A LOCK (`Slipper.OwnerSlot`, `docs/TODO.md` § 79.9). That
-            /// is the right key anyway: this power is about the walk back to YOUR shoe, and a
-            /// version that could yank somebody else's out from under them would be a different,
-            /// much nastier ability wearing this one's description.
-            ///
-            /// ⚠️ `Loose` ONLY. In flight it has not landed yet and held means somebody beat him
-            /// to it, which is exactly the moment the taya's positioning is supposed to have paid
-            /// off.
-            /// </summary>
-            private static Slipper FindOwn(AbilityContext ctx)
-            {
-                if (ctx == null || ctx.Motor == null) return null;
-
-                foreach (var s in UnityEngine.Object.FindObjectsByType<Slipper>(
-                             FindObjectsInactive.Exclude, FindObjectsSortMode.None))
-                {
-                    if (s == null || s.OwnerSlot != ctx.Motor.PlayerSlot) continue;
-                    if (s.State != SlipperState.Loose) continue;
-                    return s;
-                }
-
-                return null;
-            }
-
             protected override void OnActivate(AbilityContext ctx)
             {
-                var mine = FindOwn(ctx);
-                if (mine == null) return;
-
-                Vector3 from = mine.transform.position;
-
-                // ⚠️ THE CAST CUE SOUNDS AT ZACK, CENTRALLY. What plays HERE is the far end:
-                // the tsinelas leaving the road, up to a court away, which is the same reasoning
-                // `sfx_blink_arrive` records about the far end of a teleport.
-                NetCue.Play("hero_zack_grunt", ctx.Position);
-                NetCue.Play("slipper_bounce", from);
-
-                var hand = ctx.Motor.GetComponent<CharacterVisual>()?.HandAnchor;
-                if (_recallTrace != null) UnityEngine.Object.Destroy(_recallTrace);
-                _recallTrace = MagnetRecallTrace.Spawn(from, hand, ctx.Position + Vector3.up * .95f);
-
-                mine.HostForceEquip(ctx.Motor);
-
-                // ⚠️ THE SHOE ARRIVES LIVE. See `ChargeSeconds`: this flag is what
-                // `Carrier.HostThrowAt` reads to stamp `SlipperAffinity.ElectricStun` onto the
-                // launch, and `Carrier` clears it on the throw, so one recall charges one throw.
-                _kit._joinMagnetSettled = true;
-                _kit.IsOverchargeThrowActive = true;
+                if (ctx?.Carrier?.Held == null) return;
+                _loaded = ctx.Carrier.Held; _joiningSeat = -1;
+                _kit._joinMagnetSettled = true; _kit.IsOverchargeThrowActive = true;
                 _kit.RefreshChargeVisual(ctx);
             }
-
-            public void RestoreCharge(AbilityContext context, float remaining)
+            public void RestoreCharge(AbilityContext ctx, float remaining)
             {
-                if (remaining <= 0) { EndEarly(context); _kit.IsOverchargeThrowActive = false; return; }
+                if (remaining <= 0) { EndEarly(ctx); _kit.IsOverchargeThrowActive = false; return; }
                 RestoreLiveClock(remaining);
-                _kit.IsOverchargeThrowActive = true;
-                _kit.RefreshChargeVisual(context);
+                _loaded = ctx.Carrier?.Held;
+                // Timed state can precede equipment during recovery. Bind only the
+                // original dealt shoe, never an arbitrary later replacement.
+                _joiningSeat = _loaded == null ? ctx.Motor.PlayerSlot : -1;
+                _kit.IsOverchargeThrowActive = true; _kit.RefreshChargeVisual(ctx);
             }
-
             protected override void OnTick(AbilityContext ctx, float dt)
             {
-                if (!_kit.IsOverchargeThrowActive) EndEarly(ctx);
-                else _kit.RefreshChargeVisual(ctx);
+                if (!_kit.IsOverchargeThrowActive) { EndEarly(ctx); return; }
+                if (_loaded == null && _joiningSeat >= 0)
+                {
+                    var held = ctx.Carrier?.Held;
+                    if (held == null) return;
+                    if (held.SeatOfOrigin != _joiningSeat) { EndEarly(ctx); return; }
+                    _loaded = held; _joiningSeat = -1;
+                }
+                if (_loaded == null || ctx.Carrier?.Held != _loaded) { EndEarly(ctx); return; }
+                _kit.RefreshChargeVisual(ctx);
             }
-
             protected override void OnEnd(AbilityContext ctx)
-            {
-                _kit.IsOverchargeThrowActive = false;
-                if (_recallTrace != null) UnityEngine.Object.Destroy(_recallTrace);
-                _recallTrace = null;
-            }
+            { _kit.IsOverchargeThrowActive = false; _loaded = null; _joiningSeat = -1; }
         }
 
         private sealed class ThunderstrikeOverdriveAbility : HeroAbility

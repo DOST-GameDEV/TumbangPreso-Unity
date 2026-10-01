@@ -3909,7 +3909,7 @@ namespace TumbangPreso
             if (slipper == null || slipper.State != SlipperState.InFlight) return false;
             return SlipperLandingPrediction.TryPredictLanding(slipper.transform.position,
                 slipper.Velocity, slipper.PektusSpin, LandingHits, out landing, null,
-                slipper.PredictionSkimDistance, slipper.IsSkimming, slipper.RestHeight);
+                slipper.PredictionSkimDistance, slipper.IsSkimming, slipper.RestHeight, slipper.Affinity, slipper.BankCount);
         }
 
         // These queries run synchronously on the same Unity thread as the

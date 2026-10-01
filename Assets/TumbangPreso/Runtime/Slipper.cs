@@ -19,6 +19,8 @@ namespace TumbangPreso
         Frost = 3,      // Cheska attacking: the player it hits is Frozen
         Concussed = 4,  // Dante Boulder held-slipper payload; stable wire value
         Skim = 5,       // Hydro first-ground continuation; stable wire value
+        BankShot = 6,   // Zack: one remaining powered wall bank
+        OverclockBank = 7, // Zack: two remaining powered wall banks
     }
 
     /// <summary>
@@ -191,6 +193,15 @@ namespace TumbangPreso
             _chainThrow = 0; _chainMatch = null;
         }
         private int _bankCount;
+        private int _bankCreditLimit = Balance.MaxScoringBanks;
+        internal static bool IsPoweredBank(SlipperAffinity affinity)
+            => affinity == SlipperAffinity.BankShot || affinity == SlipperAffinity.OverclockBank;
+        internal static SlipperAffinity ConsumePoweredBank(SlipperAffinity affinity)
+            => affinity == SlipperAffinity.OverclockBank ? SlipperAffinity.BankShot
+                : affinity == SlipperAffinity.BankShot ? SlipperAffinity.Normal : affinity;
+        internal static float BankRestitution(float spin, int banks, SlipperAffinity affinity)
+            => IsPoweredBank(affinity) ? .85f : Mathf.Abs(spin) >= Balance.PektusBankSpinThreshold && banks == 0
+                ? Balance.PektusBankRestitution : Balance.BounceRestitution;
         private float _closestCanFlat = float.PositiveInfinity;
         private bool _nearMissReported;
 
@@ -924,13 +935,13 @@ namespace TumbangPreso
                                        SlipperAffinity affinity, int throwerSlot)
         {
             bool enteringEmpoweredFlight = state == SlipperState.InFlight
-                && (affinity == SlipperAffinity.FireExplosive || affinity == SlipperAffinity.ElectricZap)
+                && (affinity == SlipperAffinity.FireExplosive || affinity == SlipperAffinity.ElectricZap || IsPoweredBank(affinity))
                 && (State != SlipperState.InFlight || Affinity != affinity);
             if (enteringEmpoweredFlight && Holder != null && Holder.PlayerSlot == throwerSlot)
             {
                 if (affinity == SlipperAffinity.FireExplosive && Holder.AbilitySystem?.Kit is Abilities.SeanHeroKit sean)
                     sean.ConsumeIgnition();
-                else if (affinity == SlipperAffinity.ElectricZap && Holder.AbilitySystem?.Kit is Abilities.ZackHeroKit zack)
+                else if ((affinity == SlipperAffinity.ElectricZap || IsPoweredBank(affinity)) && Holder.AbilitySystem?.Kit is Abilities.ZackHeroKit zack)
                     zack.ConsumeMagnetCharge();
             }
             ReleasePreviousHolder(holder);
@@ -1095,6 +1106,7 @@ namespace TumbangPreso
             SetState(SlipperState.InFlight);
             _throwerSlot = thrower != null ? thrower.PlayerSlot : -1;
             Affinity = affinity;
+            _bankCreditLimit = affinity == SlipperAffinity.OverclockBank ? 2 : Balance.MaxScoringBanks;
             PektusSpin = Mathf.Clamp(pektusSpin, -Balance.MaxPektusSpin, Balance.MaxPektusSpin);
             _bankCount = 0;
             _airborneTotal = 0.0f;
@@ -1613,10 +1625,7 @@ namespace TumbangPreso
 
             if (!hitFound) return;
 
-            float restitution = Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold
-                                && _bankCount == 0
-                ? Balance.PektusBankRestitution
-                : Balance.BounceRestitution;
+            float restitution = BankRestitution(PektusSpin, _bankCount, Affinity);
 
             Vector3 normal = closest.normal;
             normal.y = 0.0f;
@@ -1626,6 +1635,7 @@ namespace TumbangPreso
             _velocity = Vector3.Reflect(_velocity, normal) * restitution;
             transform.position = closest.point + normal * (Balance.SlipperHitRadius + 0.02f);
 
+            Affinity = ConsumePoweredBank(Affinity);
             _bankCount++;
             NetCue.PlayVaried("slipper_land", transform.position, 0.88f, 1.08f, 0.85f);
 
@@ -1642,7 +1652,7 @@ namespace TumbangPreso
                                            _throwerSlot, -1, transform.position);
             }
 
-            if (_bankCount > Balance.MaxScoringBanks)
+            if (_bankCount > _bankCreditLimit)
             {
                 FinishChain(ThrowChainEnd.Miss);
                 _throwerSlot = -1;
@@ -1677,10 +1687,8 @@ namespace TumbangPreso
 
             Vector3 p = transform.position;
             bool bounced = false;
-            float restitution = Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold
-                                && _bankCount == 0
-                ? Balance.PektusBankRestitution
-                : Balance.BounceRestitution;
+            bool powered = IsPoweredBank(Affinity);
+            float restitution = powered ? 1 : BankRestitution(PektusSpin, _bankCount, Affinity);
 
             // ⚠️⚠️ EACH WALL TURNS THE SHOE BACK TOWARD THE MIDDLE, WHICHEVER SIDE IT IS ON.
             // The symmetric version read the side off `Mathf.Sign(p.x)`; with per-side walls the
@@ -1732,12 +1740,13 @@ namespace TumbangPreso
             // ⚠️ IT IS A CEILING AND NOT A FLOOR. Nothing here touches downward travel: the
             // ground, the kill plane and the resting height own that, and reflecting upward off
             // a low Y would turn every landing into a bounce.
+            bool sideBank = bounced;
             float ceiling = AIController.PlayableCeilingY - Balance.SlipperHitRadius;
 
             if (p.y > ceiling)
             {
                 p.y = ceiling;
-                _velocity.y = -Mathf.Abs(_velocity.y) * restitution;
+                _velocity.y = -Mathf.Abs(_velocity.y) * (powered ? Balance.BounceRestitution : restitution);
                 bounced = true;
             }
 
@@ -1745,6 +1754,8 @@ namespace TumbangPreso
 
             if (!bounced) return;
 
+            if (sideBank && powered) _velocity *= .85f;
+            if (sideBank) Affinity = ConsumePoweredBank(Affinity);
             _bankCount++;
             NetCue.PlayVaried("slipper_land", transform.position, 0.88f, 1.08f, 0.85f);
 
@@ -1758,7 +1769,7 @@ namespace TumbangPreso
 
             // One authored bank can still score. Further wall contacts remain valid
             // physics but lose player credit, preventing pinball loops from farming cans.
-            if (_bankCount > Balance.MaxScoringBanks)
+            if (_bankCount > _bankCreditLimit)
             {
                 FinishChain(ThrowChainEnd.Miss);
                 _throwerSlot = -1;

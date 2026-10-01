@@ -319,6 +319,12 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   Protocol124; full upgraded basics and actual peers remain open.
   [Evidence](reports/feedback-2026-09-30/overclock-state.md).
 
+- [x] BANK-SHOT-1001: proposed attacking load and normal/Overclock bank mechanics
+  replace forced recall and stun.11distinct native cases pass across focused runs;
+  two fixture corrections and original failed results are retained. Protocol125;
+  full Zack signature/defending and actual peers remain open.
+  [Evidence](reports/feedback-2026-09-30/bank-shot.md).
+
 - [x] HELD-SEAT-PICKS-1001: matching-token reclaim retains picks and takeover
   rating; Identify cannot replace fixed match choices with local preferences.
   Five distinct native cases cover repeated cycles, fresh account state, foreign

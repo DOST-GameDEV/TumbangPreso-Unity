@@ -3632,3 +3632,15 @@ membership, then use existing explicit marker and verify camera globals and
 restoration. Do not claim this solves the separate red/cyan foliage report.
 One focused baseline/final, one tooling repair maximum; source701d6828protocol124.
 Rings remain next independent fix after this concrete root cause. No native job.
+
+BANK-SHOT-1001 owns ZackHeroKit attacking slot, Carrier payload/guide, Slipper bank state, shared landing prediction and focused ZackBankShotTests. Implement current proposed Bank Shot35s/8s/85percent with one credited bank, two after Overclock, preserving objective/scoring authority and authored cues. No art/loading changes. Two native legacy contract baselines then one focused final; tooling retry0. Current124, all own native jobs terminal. Whole Zack signature/defending migration remains open.
+
+Bank Shot125mechanics implemented:35s/8s/85percent, normalone/Overclocktwo
+powered credited banks, real release no oldboost/zap, item-bound expiry/recovery,
+sharedguide and completed-bank-aware bot prediction. Nativebaseline2fail,
+firstfinalCS0122fixture, repairedrun8/10with actorinterceptionfixturefailure,
+focusedcorrected3/3:11distinctpasses acrossruns. Twofixturecorrections recorded
+beyond plannedone, nothidden.738finalinputs no drift. All own nativejobs terminal
+after guardexit; namedprofiles preserved. FullZacksignature/defending, legacyprobe
+migration and125actualpeers remainopen. No authoredart/loading/privateoverlayedit.
+Next publish coherentunit, then QuickCircuit/ClosedCircuit currentproposedcontracts.

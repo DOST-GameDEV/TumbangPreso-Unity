@@ -1,0 +1,29 @@
+{
+  "runs": {
+    "baseline": {
+      "total": "2",
+      "passed": "0",
+      "failed": "2",
+      "result": "Failed(Child)"
+    },
+    "retry": {
+      "total": "10",
+      "passed": "8",
+      "failed": "2",
+      "result": "Failed(Child)"
+    },
+    "contact-final": {
+      "total": "3",
+      "passed": "3",
+      "failed": "0",
+      "result": "Passed"
+    }
+  },
+  "distinctPassed": 11,
+  "finalInputs": 738,
+  "finalInputDrift": [],
+  "protocol": 125,
+  "toolingCompileRepairs": 1,
+  "additionalFixtureCorrection": "Player intersected flight. Moved actor out of path; same .12m assertion retained.",
+  "newProductCorrection": "AI prediction retains completed bank count so later ordinary spin bank cannot regain first-bank restitution."
+}

@@ -278,15 +278,9 @@ namespace TumbangPreso
             SlipperAffinity affinity = Held.Affinity == SlipperAffinity.Concussed
                 ? SlipperAffinity.Concussed : SlipperAffinity.Normal;
 
-            if (ability != null && ability.Kit is ZackHeroKit zack &&
-                (zack.IsOverchargeThrowActive || zack.IsThunderstrikeActive))
+            if (ability?.Kit is ZackHeroKit zack && zack.IsBankShotLoadedFor(Held))
             {
-                // ⚠️ THE ALTERNATE'S FRACTION COMES OFF THE TABLE, NOT OUT OF THIS LINE. `2.4f`
-                // was written here as `1.6 x 1.5` at a moment when Snap Discharge happened to be
-                // +50 per cent; the row is the only place that number may live, or the label the
-                // player reads and the shoe they throw are two different numbers.
-                velocity *= 1.6f * ability.VariantGain("zack.2.discharge");
-                affinity = SlipperAffinity.ElectricZap;
+                affinity = zack.BankShotAffinityFor(Held);
                 zack.ConsumeMagnetCharge();
             }
             else if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
@@ -862,11 +856,7 @@ namespace TumbangPreso
 
             Vector3 vel = Held.LaunchVelocityTo(origin, target, ChargeRatio);
             var ability = _motor.AbilitySystem;
-            if (ability != null && ability.Kit is ZackHeroKit zack && (zack.IsOverchargeThrowActive || zack.IsThunderstrikeActive))
-            {
-                vel *= 1.6f * ability.VariantGain("zack.2.discharge");
-            }
-            else if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
+            if (ability != null && ability.Kit is SeanHeroKit sean && sean.IsIgnitionCannonActive)
             {
                 vel *= 1.3f * ability.VariantGain("sean.2.flare");
             }

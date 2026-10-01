@@ -1,0 +1,3 @@
+Assets\TumbangPreso\Tests\PlayMode\ZackBankShotTests.cs(140,27): error CS0122: 'SlipperLandingPrediction' is inaccessible due to its protection level
+Assets\TumbangPreso\Tests\PlayMode\ZackBankShotTests.cs(140,27): error CS0122: 'SlipperLandingPrediction' is inaccessible due to its protection level
+Assets\TumbangPreso\Tests\PlayMode\ZackBankShotTests.cs(140,27): error CS0122: 'SlipperLandingPrediction' is inaccessible due to its protection level
