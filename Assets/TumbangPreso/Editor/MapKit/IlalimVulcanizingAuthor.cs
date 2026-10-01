@@ -21,7 +21,7 @@ namespace TumbangPreso.EditorTools.MapKit
             new Color(.59f,.62f,.59f),new Color(.51f,.24f,.19f),new Color(.60f,.56f,.43f)};
         public static void Run()
         {
-            var scene=EditorSceneManager.OpenScene("Assets/TumbangPreso/Scenes/Maps/IlalimNgTulay.unity");var report=new StringBuilder();FinishLoadedScene(report);
+            var scene=EditorSceneManager.OpenScene(IlalimNgTulayBuilder.ScenePath);var report=new StringBuilder();FinishLoadedScene(report);
             EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);AssetDatabase.SaveAssets();
             Directory.CreateDirectory("Logs/ilalim-vulcanizing");File.WriteAllText("Logs/ilalim-vulcanizing/author.txt",report.ToString());Debug.Log(report.ToString());EditorApplication.Exit(0);
         }

@@ -1,0 +1,10 @@
+{
+    "passed": true,
+    "error": "",
+    "stages": [
+        "Ilalim a752 direct player rendering",
+        "Scene IlalimNgTulay, LagoonFoliage renderers=2079",
+        "Four render controls captured from actual rebuilt-map player catch"
+    ],
+    "frameWindows": []
+}

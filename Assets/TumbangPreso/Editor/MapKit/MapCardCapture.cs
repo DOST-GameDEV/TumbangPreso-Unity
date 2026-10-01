@@ -14,7 +14,9 @@ namespace TumbangPreso.EditorTools.MapKit
     /// THE MAP VOTE CARDS for Kanto and the Lagoon Cove: `Resources/UI/map-cards/&lt;Id&gt;.png`, the
     /// 960 x 540 picture `HubMapVote` shows for each registered map ("must show its actual court",
     /// MatchArrivalFlowTests). Written when both joined the map list (2026-09-27); the shipped
-    /// maps' cards are not touched.
+    /// maps' cards are not touched. Ilalim ng Tulay's card was re-rendered the same way when the
+    /// Blender rebuild was swapped in under its scene name (ILALIM-1.6, 2026-10-01): menu
+    /// Tumbang Preso/Maps/Render Ilalim ng Tulay Card, batch .RunIlalim.
     ///
     /// ⚠️ CAPTURED IN PLAY, THROUGH THE MATCH'S OWN CAMERA. The look a player sees lives in
     /// components that only run in Play (`WorldLookPresentation`, `ColourGrade`, `WorldOutline`;
@@ -43,15 +45,19 @@ namespace TumbangPreso.EditorTools.MapKit
         }
 
         [MenuItem("Tumbang Preso/Maps/Render Kanto and Lagoon Cove Cards")]
-        public static void Menu() => Start(false);
+        public static void Menu() => Start(false, SceneFlow.LagoonCove, SceneFlow.Kanto);
 
-        public static void Run() => Start(true);
+        public static void Run() => Start(true, SceneFlow.LagoonCove, SceneFlow.Kanto);
 
-        private static void Start(bool batch)
+        [MenuItem("Tumbang Preso/Maps/Render Ilalim ng Tulay Card")]
+        public static void MenuIlalim() => Start(false, SceneFlow.IlalimNgTulay);
+
+        public static void RunIlalim() => Start(true, SceneFlow.IlalimNgTulay);
+
+        private static void Start(bool batch, params string[] maps)
         {
             if (EditorApplication.isPlaying) { Debug.LogWarning("[MapCard] Stop Play first."); return; }
             if (!batch && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
-            string[] maps = { SceneFlow.LagoonCove, SceneFlow.Kanto };
             SessionState.SetString(QueueKey, string.Join(",", maps));
             SessionState.SetBool(BatchKey, batch);
             EditorSceneManager.OpenScene($"Assets/TumbangPreso/Scenes/Maps/{maps[0]}.unity", OpenSceneMode.Single);
@@ -98,7 +104,10 @@ namespace TumbangPreso.EditorTools.MapKit
             var entry = SceneFlow.MapRegistry.First(e => e.Id == map);
             var cam = Camera.main;
             float floor = 0f;
-            foreach (var hit in Physics.RaycastAll(new Vector3(0.3f, 80f, 0.3f), Vector3.down, 200f).OrderBy(h => h.distance))
+            // ⚠️ Ilalim's court is under the LRT deck, whose collider (top 9.04 m) is the first
+            // thing a ray from 80 m hits: cast from under the soffit (8.0 m) there.
+            float castFrom = map == SceneFlow.IlalimNgTulay ? 7f : 80f;
+            foreach (var hit in Physics.RaycastAll(new Vector3(0.3f, castFrom, 0.3f), Vector3.down, 200f).OrderBy(h => h.distance))
             {
                 if (hit.collider.isTrigger) continue;
                 floor = hit.point.y; break;
@@ -111,8 +120,20 @@ namespace TumbangPreso.EditorTools.MapKit
             {
                 var dir = Quaternion.Euler(0, entry.Yaw, 0) * Vector3.back;
                 var at = new Vector3(0, floor, 0) + dir * 24f + Vector3.up * 20f;
+                var aim = new Vector3(0, floor, 0) - dir * 3f;
+                // ⚠️ ILALIM NG TULAY IS SHOT UNDER THE VIADUCT, NOT OVER IT. The pose above is
+                // 20 m up, over the LRT deck (top 9.04 m), and the deck hides the whole court
+                // (the first render of the rebuild's card showed only track and rooftops). The
+                // shipped card was framed down the street from under the soffit (8.0 m); this
+                // keeps that framing: from just inside the south wall, 6.2 m up, north over the
+                // can along Taft, with both pier rows framing the court.
+                if (map == SceneFlow.IlalimNgTulay)
+                {
+                    at = new Vector3(0, floor + 6.2f, -15.6f);
+                    aim = new Vector3(0, floor + 0.6f, 8f);
+                }
                 cam.fieldOfView = Camera.HorizontalToVerticalFieldOfView(80f, 16f / 9f);
-                cam.transform.SetPositionAndRotation(at, Quaternion.LookRotation(new Vector3(0, floor, 0) - dir * 3f - at));
+                cam.transform.SetPositionAndRotation(at, Quaternion.LookRotation(aim - at));
                 var rt = new RenderTexture(W, H, 24, RenderTextureFormat.ARGBHalf) { antiAliasing = 4 };
                 rt.Create(); cam.targetTexture = rt; cam.Render();
                 var previous = RenderTexture.active;

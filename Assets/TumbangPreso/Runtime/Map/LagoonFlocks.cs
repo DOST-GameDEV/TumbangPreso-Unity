@@ -61,6 +61,16 @@ namespace TumbangPreso
         // then rolling it about the body's forward axis lays the outer edge down over the flank, the
         // two wings meeting in a low ridge along the back with the tips crossed over the tail.
         public float WingFoldSweep = 84f, WingFoldDroop = 10f;
+        // ⚠️ ILALIM PIGEONS (ILALIM-1.4, owner 2026-09-30: "make the live moving cars and pigeons").
+        // With PERCH LINES (pairs of points: a ledge, a parapet coping, a crossarm, a roof edge, a
+        // pavement's outer edge), a landing picks a spot ON a line instead of a raycast in the
+        // court square, a group lands along the same line, hops stay on it, and a takeoff heads
+        // back toward the sky area rather than wherever the bird faced (a ledge has a wall behind
+        // it). The Ilalim builder measures the lines against the real meshes; nothing is raycast
+        // at runtime for them. Empty (the Lagoon, Kanto): unchanged.
+        public Vector3[] PerchLines = Array.Empty<Vector3>();
+        // The low skim over "open water". Off where the open ground is a city block.
+        public bool Dips = true;
 
         /// <summary>How many bird slots exist (for the soundscape). Stable for the whole match.</summary>
         public int BirdCount => _birdCount;
@@ -69,6 +79,12 @@ namespace TumbangPreso
             _birdPos != null && i >= 0 && i < _birdCount ? _birdPos[i] : transform.position;
         /// <summary>False while bird <paramref name="i"/> is burst and waiting to respawn.</summary>
         public bool BirdVisible(int i) => _mode != null && i >= 0 && i < _birdCount && _mode[i] != ModeDead;
+        /// <summary>True while bird <paramref name="i"/> stands on the ground or a perch. Read only (the
+        /// Ilalim sidewalk life's coos listen for it); nothing here changes because it is asked.</summary>
+        public bool BirdSettled(int i) => _mode != null && i >= 0 && i < _birdCount && _mode[i] == ModeGrounded;
+        /// <summary>True while bird <paramref name="i"/> beats up off the ground or a perch (a flush).
+        /// Read only, for the Ilalim sidewalk life's wing-flap sound.</summary>
+        public bool BirdTakingOff(int i) => _mode != null && i >= 0 && i < _birdCount && _mode[i] == ModeTakeoff;
         /// <summary>Raised with the burst point whenever a slipper bursts a bird.</summary>
         public event Action<Vector3> BirdBurst;
         /// <summary>How many birds slippers have burst since Start (for probes).</summary>
@@ -124,6 +140,7 @@ namespace TumbangPreso
         private float[] _landDelay, _groupStay, _avoidHold;
         private Vector3[] _avoid;
         private int _groupSerial, _castCursor;
+        private int[] _perch;           // the perch line a landing or grounded bird is on, or -1
 
         // Birds, one slot per bird, flock members contiguous.
         private int _birdCount;
@@ -246,7 +263,8 @@ namespace TumbangPreso
             _pitch = new float[n]; _act = new int[n]; _hopFrom = new Vector3[n]; _hopTo = new Vector3[n];
             _group = new int[n]; _landPending = new bool[n]; _landDelay = new float[n]; _groupStay = new float[n];
             _avoid = new Vector3[n]; _avoidHold = new float[n];
-            for (int i = 0; i < n; i++) _group[i] = -1;
+            _perch = new int[n];
+            for (int i = 0; i < n; i++) { _group[i] = -1; _perch[i] = -1; }
             float cruise = (FlightSpeed.x + FlightSpeed.y) * .5f;
             _flockStart = new int[_flockCount]; _flockSize = new int[_flockCount];
             _flockGoal = new Vector3[_flockCount]; _flockGoalTimer = new float[_flockCount]; _dipLeft = new float[_flockCount];
@@ -573,7 +591,7 @@ namespace TumbangPreso
                 }
             }
             _nextDip -= dt;
-            if (_nextDip <= 0f && !anyDipping)
+            if (_nextDip <= 0f && !anyDipping && Dips)
             {
                 // ⚠️ One flock at a time, now and then: a dip is an event the eye catches, and
                 // three flocks skimming at once would just be birds flying low.
@@ -774,8 +792,9 @@ namespace TumbangPreso
                 int i = (start + k) % _birdCount;
                 if (_mode[i] == ModeFlying) { pick = i; break; }
             }
-            if (pick < 0 || !FindLandingSpot(out var spot)) return;
+            if (pick < 0 || !FindLandingSpot(out var spot, out int line)) return;
             _mode[pick] = ModeLanding; _landAt[pick] = spot; _stateTime[pick] = 0f; _flapsLeft[pick] = 0; _glideLeft[pick] = 99f;
+            _perch[pick] = line;
         }
 
         // ⚠️ Pigeons land as a group: LandGroup.x to LandGroup.y birds of ONE flock, spots within
@@ -793,7 +812,7 @@ namespace TumbangPreso
                 for (int i = start; i < start + _flockSize[f]; i++)
                     if (_mode[i] == ModeFlying && !_landPending[i]) { flock = f; break; }
             }
-            if (flock < 0 || !FindLandingSpot(out var centre)) return;
+            if (flock < 0 || !FindLandingSpot(out var centre, out int line)) return;
             int group = ++_groupSerial, taken = 0, size = _flockSize[flock], from = _flockStart[flock], offset = _random.Next(size);
             float stay = Range(8f, 20f), delay = 0f;
             for (int k = 0; k < size && taken < want; k++)
@@ -801,13 +820,20 @@ namespace TumbangPreso
                 int i = from + (offset + k) % size;
                 if (_mode[i] != ModeFlying || _landPending[i]) continue;
                 var spot = centre;
-                if (taken > 0)
+                if (taken > 0 && line >= 0)
+                {
+                    // Along the same line, alternating either side of the first bird, about a body apart.
+                    float side = (taken & 1) == 1 ? 1f : -1f;
+                    spot = OnPerch(line, centre, side * (.3f * ((taken + 1) / 2) + Range(.05f, .25f)));
+                }
+                else if (taken > 0)
                 {
                     float a = Range(0f, Mathf.PI * 2f), r = Range(.5f, 2.5f);
                     spot.x = Mathf.Clamp(centre.x + Mathf.Cos(a) * r, CourtCentre.x - CourtHalf, CourtCentre.x + CourtHalf);
                     spot.z = Mathf.Clamp(centre.z + Mathf.Sin(a) * r, CourtCentre.z - CourtHalf, CourtCentre.z + CourtHalf);
                     spot.y = GroundAt(spot, centre.y);
                 }
+                _perch[i] = line;
                 _landAt[i] = spot; _group[i] = group; _groupStay[i] = stay + Range(0f, 1.5f);
                 _landPending[i] = true; _landDelay[i] = delay;
                 delay += Range(.2f, .8f);
@@ -831,6 +857,38 @@ namespace TumbangPreso
         // ⚠️ The ground is found with a read-only downward raycast from above the landing square,
         // triggers ignored, because the court's sand is not guaranteed to sit at one height. A
         // spot on a steep face or near a player is rejected; no hit falls back to CourtGroundY.
+        private bool FindLandingSpot(out Vector3 spot, out int line)
+        {
+            line = -1;
+            int lines = PerchLines != null ? PerchLines.Length / 2 : 0;
+            if (lines > 0)
+            {
+                // A line picked by its length, so a long parapet gets more birds than a crossarm.
+                float total = 0f;
+                for (int l = 0; l < lines; l++) total += Vector3.Distance(PerchLines[2 * l], PerchLines[2 * l + 1]);
+                for (int k = 0; k < 8; k++)
+                {
+                    float pick = Range(0f, total); int l = 0;
+                    for (; l < lines - 1; l++) { pick -= Vector3.Distance(PerchLines[2 * l], PerchLines[2 * l + 1]); if (pick <= 0f) break; }
+                    spot = Vector3.Lerp(PerchLines[2 * l], PerchLines[2 * l + 1], Range(.1f, .9f));
+                    if (!NearPlayer(spot, PlayerStartle * 2f)) { line = l; return true; }
+                }
+                spot = Vector3.zero;
+                return false;
+            }
+            return FindLandingSpot(out spot);
+        }
+
+        /// <summary>The point `shift` metres along perch line `line` from `from`, kept on the line.</summary>
+        private Vector3 OnPerch(int line, Vector3 from, float shift)
+        {
+            var a = PerchLines[2 * line]; var b = PerchLines[2 * line + 1];
+            var ab = b - a; float len = ab.magnitude;
+            if (len < 1e-3f) return a;
+            float t = Mathf.Clamp(Vector3.Dot(from - a, ab) / (len * len) + shift / len, .03f, .97f);
+            return a + ab * t;
+        }
+
         private bool FindLandingSpot(out Vector3 spot)
         {
             float top = Mathf.Max(CourtGroundY, WaterY) + 40f;
@@ -961,6 +1019,18 @@ namespace TumbangPreso
             {
                 float h = _heading[i] * Mathf.Deg2Rad;
                 var next = pos + new Vector3(Mathf.Sin(h), 0f, Mathf.Cos(h)) * Range(.2f, .5f);
+                if (_perch[i] >= 0)
+                {
+                    // On a ledge: the hop lands back on the line, and at its end the bird turns back.
+                    var onLine = OnPerch(_perch[i], next, 0f);
+                    if ((onLine - pos).sqrMagnitude < .01f)
+                    {
+                        var mid = (PerchLines[2 * _perch[i]] + PerchLines[2 * _perch[i] + 1]) * .5f;
+                        BeginTurn(i, Mathf.Atan2(mid.x - pos.x, mid.z - pos.z) * Mathf.Rad2Deg); return;
+                    }
+                    _act[i] = 1; _hopFrom[i] = pos; _hopTo[i] = onLine; _actLeft[i] = .32f;
+                    return;
+                }
                 if (Mathf.Abs(next.x - CourtCentre.x) > CourtHalf || Mathf.Abs(next.z - CourtCentre.z) > CourtHalf)
                 { BeginTurn(i, Mathf.Atan2(CourtCentre.x - pos.x, CourtCentre.z - pos.z) * Mathf.Rad2Deg); return; }
                 next.y = GroundAt(next, pos.y);
@@ -977,6 +1047,13 @@ namespace TumbangPreso
 
         private void BeginTakeoff(int i)
         {
+            if (_perch != null && _perch[i] >= 0)
+            {
+                // Off a ledge toward the open sky area, never into the wall behind it.
+                var open = Flat(SkyCentre - _birdPos[i]);
+                if (open.sqrMagnitude > 1f) _heading[i] = Mathf.Atan2(open.x, open.z) * Mathf.Rad2Deg + Range(-40f, 40f);
+                _perch[i] = -1;
+            }
             float h = _heading[i] * Mathf.Deg2Rad;
             _mode[i] = ModeTakeoff; _stateTime[i] = 0f;
             _birdVel[i] = new Vector3(Mathf.Sin(h), 0f, Mathf.Cos(h)) * 2f + Vector3.up * 3f;

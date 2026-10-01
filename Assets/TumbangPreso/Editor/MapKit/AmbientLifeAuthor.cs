@@ -23,7 +23,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var report=new StringBuilder();
             foreach(string map in new[]{"Eskinita","BayanPlaza","IlalimNgTulay","SaBubong"})
             {
-                var scene=EditorSceneManager.OpenScene("Assets/TumbangPreso/Scenes/Maps/"+map+".unity",OpenSceneMode.Single);
+                var scene=EditorSceneManager.OpenScene(IlalimNgTulayBuilder.LegacyScenePath(map),OpenSceneMode.Single);
                 FinishLoadedScene(map,report);EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);
             }
             AssetDatabase.SaveAssets();Directory.CreateDirectory("Logs");File.WriteAllText("Logs/ambient-life-author.txt",report.ToString());

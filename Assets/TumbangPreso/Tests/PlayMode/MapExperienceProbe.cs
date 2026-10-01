@@ -419,6 +419,7 @@ namespace TumbangPreso.PlayTests
             finally { File.WriteAllText(Path.Combine(Output,"architecture-views.csv"),metadata.ToString()); }
         }
 
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest, Timeout(180000)]
         public IEnumerator StreetFrontageClearanceReview()
         {
@@ -466,6 +467,7 @@ namespace TumbangPreso.PlayTests
             }
         }
 
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest, Timeout(180000)]
         public IEnumerator DiagnoseStreetGlazing()
         {

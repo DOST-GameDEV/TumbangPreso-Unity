@@ -3976,3 +3976,16 @@ Jobs38782/34837/21130/75623 terminal; profiles/input preserved. Sourcee618fa7fe+
 owned overlay protocol127, no authored shape/colour/rate/lifetime/material edits.
 Publish real visibility fix, continue optimization/readiness; no full-screens/
 currentplayer/tournament completion claim. No Docs queue or broader loading work.
+
+
+Integrate friend map a7523a118 into current128gameplay and aura visibility, with
+all authored source/assets retained. Loading35a2bda9 already merged. No protected
+composition metas/ProjectSettings/Abilities changes. Integrated C# plus authored
+animation and scene-script gates pass46.78s. Exact new-map offline player verifies
+Ilalim+2079LagoonFoliage materials and captures a real tag; one direct-entry fixture
+repair,50.04snormalexit/noOOM. Sampled foliage green, but black/white architecture
+speckles persist even without post; rendering Feedback remains OPEN. Evidence
+rebuilt-ilalim-replay. No full integrated player, Windows/device/full-match or
+performance claim. Private capture driver restored out of candidate runtime.
+All owned heavy jobs terminal. Continue investigating the concrete graphics
+artifact or another actionable report; do not redo shipped Circuit/Empowered.

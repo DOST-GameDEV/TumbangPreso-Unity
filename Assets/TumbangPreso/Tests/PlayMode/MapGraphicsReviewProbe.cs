@@ -689,6 +689,7 @@ namespace TumbangPreso.PlayTests
             yield return PlayModeWorld.Reset();
         }
 
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator IlalimFinalArtReview()
         {
@@ -733,6 +734,7 @@ namespace TumbangPreso.PlayTests
                     yield return GameplayShots.Render(camera,"Ilalim-sky-"+seconds,false,Output,width:1280,height:720);
         }
 
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator IlalimSkylineFinishReview()
         {
@@ -782,6 +784,7 @@ namespace TumbangPreso.PlayTests
             return after=>{root.SetActive(after);foreach(var item in originals)item.renderer.sharedMaterials=after?item.after:item.before;};
         }
 
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator IlalimSkylineMaterialStudy()
         {
@@ -811,6 +814,7 @@ namespace TumbangPreso.PlayTests
             {RenderSettings.fog=fog;for(int i=0;i<all.Length;i++)if(all[i]!=null)all[i].enabled=states[i];}
         }
 
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator IlalimStructureFinishReview()
         {
@@ -872,6 +876,7 @@ namespace TumbangPreso.PlayTests
             };
         }
 
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator IlalimArtBaselineReview()
         {
@@ -900,6 +905,7 @@ namespace TumbangPreso.PlayTests
             }
         }
 
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator IlalimPrintSignReview()
         {
@@ -943,6 +949,7 @@ namespace TumbangPreso.PlayTests
             finally{renderer.sharedMaterial=after;face.localScale=scale;board.localScale=backing;face.localPosition=facePosition;board.localPosition=boardPosition;equipment.gameObject.SetActive(true);foreach(var part in oldParts)part.enabled=false;Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=enabled;}
         }
 
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest,Timeout(90000)]
         public IEnumerator IlalimVulcanizingReview()
         {
@@ -978,6 +985,7 @@ namespace TumbangPreso.PlayTests
             finally{equipment.gameObject.SetActive(true);foreach(var part in oldParts)part.enabled=false;Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=enabled;}
         }
 
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator IlalimBakeryReview()
         {
@@ -1021,6 +1029,7 @@ namespace TumbangPreso.PlayTests
             finally{renderer.sharedMaterial=after;face.localScale=scale;board.localScale=backing;face.localPosition=facePosition;board.localPosition=boardPosition;equipment.gameObject.SetActive(true);foreach(var part in oldParts)part.enabled=false;Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=enabled;}
         }
 
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator IlalimPisonetReview()
         {
@@ -1068,6 +1077,7 @@ namespace TumbangPreso.PlayTests
             finally{Screens(true);renderer.sharedMaterial=after;face.localScale=scale;board.localScale=backing;face.localPosition=facePosition;board.localPosition=boardPosition;equipment.gameObject.SetActive(true);foreach(var part in oldParts)part.enabled=false;Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=enabled;}
         }
 
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator IlalimParesReview()
         {
@@ -1111,6 +1121,7 @@ namespace TumbangPreso.PlayTests
             finally{renderer.sharedMaterial=after;face.localScale=scale;board.localScale=backing;face.localPosition=facePosition;board.localPosition=boardPosition;equipment.gameObject.SetActive(true);foreach(var part in oldParts)part.enabled=false;Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=enabled;}
         }
 
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator IlalimBarberReview()
         {
@@ -1156,6 +1167,7 @@ namespace TumbangPreso.PlayTests
             finally{for(int i=0;i<chairs.Length;i++)chairs[i].localRotation=rotations[i];renderer.sharedMaterial=after;face.localScale=scale;board.localScale=backing;face.localPosition=facePosition;board.localPosition=boardPosition;equipment.gameObject.SetActive(true);foreach(var part in oldParts)part.enabled=false;Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=enabled;}
         }
 
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator IlalimUkayReview()
         {
@@ -1203,6 +1215,7 @@ namespace TumbangPreso.PlayTests
             finally{vendor.position=vendorPosition;renderer.sharedMaterial=after;face.localScale=scale;board.localScale=backing;face.localPosition=facePosition;board.localPosition=boardPosition;equipment.gameObject.SetActive(true);foreach(var part in oldParts)part.enabled=false;Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=enabled;}
         }
 
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator IlalimTindahanReview()
         {
@@ -1246,6 +1259,7 @@ namespace TumbangPreso.PlayTests
             finally{renderer.sharedMaterial=after;face.localScale=scale;board.localScale=backing;face.localPosition=facePosition;board.localPosition=boardPosition;equipment.gameObject.SetActive(true);foreach(var part in oldParts)part.enabled=false;Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=enabled;}
         }
 
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator IlalimPCExpressAspectReview()
         {
@@ -1288,6 +1302,7 @@ namespace TumbangPreso.PlayTests
             finally{renderer.sharedMaterial=after;face.localScale=scale;board.localScale=backing;face.localPosition=facePosition;board.localPosition=boardPosition;Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=enabled;}
         }
 
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator IlalimRepairReview()
         {
@@ -1331,6 +1346,7 @@ namespace TumbangPreso.PlayTests
             finally{renderer.sharedMaterial=after;face.localScale=scale;board.localScale=backing;face.localPosition=facePosition;board.localPosition=boardPosition;equipment.gameObject.SetActive(true);foreach(var part in oldParts)part.enabled=false;Time.timeScale=1;Camera.onPreCull-=pin;if(clock!=null)clock.enabled=enabled;}
         }
 
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest, Timeout(90000)]
         public IEnumerator IlalimLaundryReview()
         {

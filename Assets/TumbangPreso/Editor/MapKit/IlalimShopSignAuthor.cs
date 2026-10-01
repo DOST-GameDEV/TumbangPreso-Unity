@@ -15,7 +15,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private const string Folder="Assets/TumbangPreso/Art/IlalimShopSigns";
         public static void Run()
         {
-            var scene=EditorSceneManager.OpenScene("Assets/TumbangPreso/Scenes/Maps/IlalimNgTulay.unity");var report=new StringBuilder();FinishLoadedScene(report);
+            var scene=EditorSceneManager.OpenScene(IlalimNgTulayBuilder.ScenePath);var report=new StringBuilder();FinishLoadedScene(report);
             EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);AssetDatabase.SaveAssets();
             Directory.CreateDirectory("Logs/ilalim-shop-signs");File.WriteAllText("Logs/ilalim-shop-signs/author.txt",report.ToString());Debug.Log(report.ToString());EditorApplication.Exit(0);
         }
