@@ -3245,3 +3245,15 @@ illustrations through existing art pipeline; generate only these two. Preserve
 all existing icons/serialized enum values and protected hero art. One native
 binding/label/non-placeholder check plus real deck capture; no mechanics/protocol
 change from121. Nativejobs terminal; owner studying, Docs updates only.
+
+Rafi icon first native case imports both sprite/labels correctly but its deck
+assertion looked for Image components; this HUD draws TumpAbilitySymbol graphics.
+One bounded fixture repair checks active symbol glyph and actual mainTexture.
+Runtime/art unchanged. Retry the same one-case two-role capture only.
+
+Rafi role icon native v2 passes1/1 with imported resources, truthful labels and
+actual custom-symbol texture binding. One fixture repair used; no new OOM.
+Captured stills coincide with existing0.45s role flip, so settled legibility is
+not qualified. Preserve that limit and inspect during next distinct Skim motion
+review rather than repeat this fixture. Publish wrong-binding correction only;
+whole icon/hero rows remain open. Evidence: hero-quality-2026-10-01/icon-binding-checks.

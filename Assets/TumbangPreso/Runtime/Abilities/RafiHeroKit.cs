@@ -85,7 +85,7 @@ namespace TumbangPreso.Abilities
             private readonly RafiHeroKit _kit;
             public Skim(RafiHeroKit kit) : base("rafi_skill2", "SKIM",
                 "Coat your held slipper for 8 seconds. Its next throw skims up to 2 metres after first ground contact, then rests for normal retrieval.",
-                RafiRules.SkimCooldown, RafiRules.SkimLoadSeconds, glyph: AbilityGlyph.RafiMirrorwake,
+                RafiRules.SkimCooldown, RafiRules.SkimLoadSeconds, glyph: AbilityGlyph.RafiSkim,
                 summary: "Your next throw skims on landing. Bodies and the can consume it normally.",
                 castAction: "hero-rafi-feint", viewmodelAction: "mirror-feint", castCue: "sfx_cast_rafi_mirror")
             { _kit = kit; }
@@ -109,7 +109,7 @@ namespace TumbangPreso.Abilities
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
             public Waterwall() : base("rafi_skill2d", "WATER WALL",
                 "Raise a thin 4-metre water curtain for 4 seconds. People pass through; its first flying slipper drops on the approach side and breaks it.",
-                RafiRules.WallCooldown, glyph: AbilityGlyph.RafiCrosscurrent,
+                RafiRules.WallCooldown, glyph: AbilityGlyph.RafiWaterwall,
                 summary: "Place a single-use curtain. People pass through.",
                 telegraphRadius: RafiRules.WallHalfWidth, telegraphRange: RafiRules.WallRange,
                 castAction: "hero-rafi-wall", viewmodelAction: "waterwall-lift", castCue: "sfx_cast_rafi_current")
