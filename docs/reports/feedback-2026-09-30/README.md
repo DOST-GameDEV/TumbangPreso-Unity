@@ -223,3 +223,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Reconnect pick/rating retention through normal Identify](held-seat-picks.md).
 
 [Pre-round placeholder handover and retained failed peer evidence](pre-round-pick-handover.md).
+
+[Actual crash/relaunch, corrected character and preserved failed gate](reconnect-actual-player.md).
