@@ -4104,3 +4104,14 @@ Replaylookup7e36a5242 published/remoteverified. BOT-OVERCLOCK-1002 owns AIContro
 BOT-OVERCLOCK-1002 baseline actual1/1fails: ready=True/requested=False/overclocked=False after13.0004s withrivals>10m. Both stale victim gates isolated; two botdecision branches now value permanent selfupgrade, retainopening/cadence/deliberation/single-spendkit. ZackHeroKit/otherhero/mechanics/art/wire unchanged. Native71286terminal/profilesrestored,0fixture repairs. Same actualAI/input/activation final frozen next; no wholematch/networkbot qualification.
 
 BOT-OVERCLOCK-1002 final1/1passes actualAI/input/activation4.900695s versusready/no request13sbaseline; cannotfund/spendpermanenttwice controlpasses. Three hashes unchanged,0fixture repairs, native18727terminal/profilesrestored. Publish bot-onlygates/test/report/TODO/index/ledger. Next coherent current129internalWindows build plus supported rebuilt-Ilalim runtime route; previous128Eskinita player predatesnewmap/kits/fixes. Inspect existing LAN runner map argument before choosing exactscene; no retiredUIroute/newframework/Desktopreplacement/unchangedbroadmatrix. Friend owns broadloading; DOTS Feedback/kit migrations.
+
+SETUP-RECOVERY-1001 update: restored matching Unity6000.5.8f1, Hub3.22.0 and
+.NET9.0.318; existing Blender4.3.2 verified. Hub Personal and editor entitlement
+work. Managed8/8 and native2/2 fresh smoke cases pass on isolated9590 inputs.
+First-import memory guard requested stop at195s; editor finished tests and exited
+orderly at275s. Preserve warning, no clean resource/full-build claim. Restored
+202 verified trailing-whitespace-only generated metadata changes after saving
+the run diff; source assets untouched. No unchanged test rerun. Incoming7b48
+readiness fixes integrated intact; these were not in the9590 smoke candidate.
+Owner prioritizes deeper all-nine-hero YouTube research and implementation plans
+before new kit work. No Cinder Gate implementation or ownership claim.

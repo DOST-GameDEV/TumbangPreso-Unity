@@ -46,7 +46,11 @@ acceptance for the same agreement; changed agreements need their own review.
 Restoration verified Unity6000.5.8f1 extraction from the official changeset archive,
 Hub3.22.0 launch, Blender4.3.2 and .NET9.0.318. The eight ThrowAimRulesTests passed
 on source9590f4bd. These are managed tooling checks, not native Unity qualification.
-Hub account activation and a fresh native smoke test remain required.
+Hub Personal activation and two fresh KitRecallParityChecks PlayMode cases then
+passed on the isolated9590 candidate. The memory guard requested termination
+during first import; Unity nevertheless completed both cases and wrote fresh XML
+before orderly exit. This is scoped native evidence, not clean memory-headroom
+or full-player qualification. Preserve that warning before heavier runs.
 
 Keep DOTNET_CLI_HOME, NUGET_PACKAGES, NUGET_HTTP_CACHE_PATH and
 NUGET_PLUGINS_CACHE_PATH in writable task-owned directories. A read-only default
