@@ -3811,3 +3811,21 @@ Protocol126 unchanged, sourcece36e32fa plus own overlay. Jobs57973/47894 termina
 publish independent input lifecycle fix, then inspect F-key handling while menu/
 rebinding/presentation owns input. Do not assume a failure before reproducing it.
 DOTS owns Docs TODO queue; no kit migration, loading/art change or cross-chat work.
+Closed Circuit assessment recorded in reports/feedback-2026-09-30/closed-circuit/plan.md.
+No implementation claim yet. Key constraint: maintained remote aim needs a
+bounded owner-to-host channel; the current aim snapshot intentionally carries
+no destination. Base Windup is uninterruptible/rooted and cannot represent this
+cancellable lock honestly. Preserve independent reliability build126 and the
+private HeroHazards overlay. All own native jobs terminal, Rafi cleanup shipped.
+
+CLOSED-CIRCUIT-1001 now reserves Runtime/Abilities/ZackHeroKit.cs and new
+ZackHeroKit.ClosedCircuit.cs/meta; Runtime/Visual/ZackCircuitTell.cs/meta;
+Runtime/Net/ZackCircuitState.cs/meta and MatchRpc.Circuit.cs/meta;
+MatchRpc.cs circuit registration/snapshot call sites only; NetSession protocol;
+AIController.cs Zack defending branch only; focused ClosedCircuitTests and
+ZackCircuitStateTests scripts/metas. No HeroHazards or reliability-build edits.
+Implement the recorded maintained-aim/LOS plan. Remote aim must be explicit and
+fresh, with an acquisition episode and scoped ordered state; do not silently
+reuse a stale cast aim. Native and parser acceptance remain pending.
+
+Solo UI bindings58d309499 checked and ready to publish; next priority is independent network reliability under an existing shaped-link scenario using the exact126player. Do not take Closed Circuit paths or Docs TODO queue. Older player source04f remains the precise runtime qualification; no fresh whole-build readiness claim. All own native/player jobs currently terminal, no owned browser/preview/server remains.
