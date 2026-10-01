@@ -216,8 +216,45 @@ def life_bag():
 # ------------------------------------------------------------------ the tin cup (a milk can)
 
 def life_tin():
-    """An old condensed-milk can for a cup: a maroon-and-cream paper label worn through to the
-    tin, rust blooms at the rims, and on the caps (the same square) a plain dull tin."""
+    """An old condensed-milk can for a cup, laid out for SidewalkLife.CupMesh: the SIDE (the
+    image's top 0.615, v 0.385..1) a maroon-and-cream paper label worn through to the tin, rust at
+    the rims; the TOP (the disc in the lower left square) the open can: a bright rolled rim, the
+    dark inside, two coins at the bottom of it; the BOTTOM (the lower right disc) plain dull tin.
+    The built-in Cylinder put the whole image on each cap, so the label showed on top."""
+    side = life_tin_side()
+    S = 256
+    img = fill(S, S, "aaa598")
+    top0, top1 = int(round(S * (1 - 0.995))), int(round(S * (1 - 0.385)))
+    img[top0:top1] = np.asarray(Image.fromarray((np.clip(side, 0, 1) * 255).astype(np.uint8)).resize((S, top1 - top0), Image.LANCZOS), dtype=float) / 255
+    img[:top0] = img[top0]
+    yy, xx = np.mgrid[0:S, 0:S].astype(float)
+    r_px = 0.17 * S
+    # The top: the open can seen from above.
+    cx, cy = 0.18 * S, (1 - 0.18) * S
+    r = np.hypot(xx - cx, yy - cy) / r_px
+    disc = r < 1.08
+    inside = fill(S, S, "2e2924")
+    inside = shade(inside, (1.5, 1.45, 1.4), np.clip(1 - r / 0.8, 0, 1) ** 1.5 * 0.5)   # the far floor catches a little light
+    for (ox, oy, rr, col) in ((-0.22, 0.12, 0.2, "c9a440"), (0.18, -0.08, 0.17, "b8963c")):
+        coin = np.hypot((xx - cx) / r_px - ox, ((yy - cy) / r_px - oy) * 1.25) < rr
+        inside = mix(inside, col, feathered(coin.astype(float), 0.8))
+        rim_c = np.abs(np.hypot((xx - cx) / r_px - ox, ((yy - cy) / r_px - oy) * 1.25) - rr * 0.82) < 0.025
+        inside = mix(inside, "8a6d2a", rim_c.astype(float) * 0.6)
+    rim = (r > 0.84) & (r < 1.08)
+    top = np.where(disc[..., None], inside, img)
+    top = mix(top, "cfcac0", feathered(rim.astype(float), 0.8))
+    top = mix(top, "7a7469", np.exp(-((r - 0.84) / 0.025) ** 2) * 0.7)          # the lip's inner shadow
+    top = mix(top, "7a5a44", (np.clip(1 - np.abs(r - 0.97) / 0.07, 0, 1) * (0.5 + 0.5 * P.smooth(S, S, 20, 4408))) * 0.35)  # rust on the rim
+    img = np.where((r < 1.12)[..., None], top, img)
+    # The bottom: plain dull tin with a pressed ring.
+    bx = 0.68 * S
+    rb = np.hypot(xx - bx, yy - cy) / r_px
+    img = np.where((rb < 1.12)[..., None], shade(fill(S, S, "aaa598"), (0.88, 0.88, 0.88), np.exp(-((rb - 0.7) / 0.04) ** 2)), img)
+    return save("life_tin", img)
+
+
+def life_tin_side():
+    """The can's side, drawn square; life_tin fits it into the side's UV band."""
     S = 256
     img = fill(S, S, "b5b0a4")
     img = coat(img, (1.08, 1.08, 1.08), 40, 0.25, seed=4401, feather=1.3, stretch=(0.4, 1.0))
@@ -238,7 +275,7 @@ def life_tin():
         rust = np.clip((ragged[None, :] - np.abs(yy - y0)) / 4 + 0.5, 0, 1)
         img = mix(img, "7a5a44", rust * 0.45)
     img = coat(img, (0.92, 0.91, 0.9), 90, 0.2, seed=4407, feather=1.5)  # handled grime
-    return save("life_tin", img)
+    return img
 
 
 # ------------------------------------------------------------------ the magtataho's kit

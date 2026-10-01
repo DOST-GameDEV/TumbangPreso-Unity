@@ -75,8 +75,8 @@ SKIN_DARK, SKIN_MID, SKIN = 13, 14, 15
 
 PALETTE = {
     0: "8c826c", 1: "5b4f43", 2: "3e352d",
-    SANDAL: "6f7c66",     # worn green-grey rubber, sun-faded
-    STRAP: "4c5746",      # the thong strap, darker
+    SANDAL: "6a6d64",     # worn grey-green rubber, sun-faded and dusty (2026-10-01: duller, the soles read loudly from the front)
+    STRAP: "4d5048",      # the thong strap, darker
     HAIR_DARK: "625e58",  # dark grey, the underside and the back
     HAIR_LIT: "a39e94",   # the lit locks, grey
     BEARD: "858077",      # salt-grey beard, darker than the lit hair

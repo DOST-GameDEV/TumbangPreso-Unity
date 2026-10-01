@@ -20,8 +20,8 @@ namespace TumbangPreso.EditorTools.MapKit
     /// methods at 30 steps a second (SidewalkLife.Simulate; KantoTraffic.UpdateRoutes and
     /// UpdateSignals; LagoonFlocks.StepAvoidance, StepBirds, StepGroundLife, StepFeathers),
     /// with the match look on an offscreen camera, one JPEG per step into
-    /// Logs/ilalim-unity/videos_v3/frames/&lt;event&gt;/ (v1 and v2 are earlier sets, kept).
-    /// `ffmpeg` (imageio-ffmpeg) encodes them: `py -3 tools/encode_ilalim_films.py --dir Logs/ilalim-unity/videos_v3`.
+    /// Logs/ilalim-unity/videos_v4/frames/&lt;event&gt;/ (v1 to v3 are earlier sets, kept).
+    /// `ffmpeg` (imageio-ffmpeg) encodes them: `py -3 tools/encode_ilalim_films.py --dir Logs/ilalim-unity/videos_v4`.
     ///
     /// ⚠️ TWO PASSES OVER ONE DETERMINISTIC RUN. The life's randomness is its own seeded
     /// System.Random and nothing it does depends on the traffic or the birds, so a scouting pass
@@ -44,7 +44,7 @@ namespace TumbangPreso.EditorTools.MapKit
     internal static class IlalimSidewalkFilm
     {
         private const string Tag = "[IlalimRebuild] ";
-        internal const string Out = "Logs/ilalim-unity/videos_v3";
+        internal const string Out = "Logs/ilalim-unity/videos_v4";
         private const float Dt = 1f / 30f;
         private const int W = 1280, H = 720;
         private static readonly Vector3 PlayerSpot = new Vector3(-9.6f, .212f, -16.15f);
@@ -588,6 +588,10 @@ namespace TumbangPreso.EditorTools.MapKit
                 Shoot(w, stills, "beggar_seated_side_level", seat + across * 2.4f + f * .35f + Vector3.up * .45f, seat + Vector3.up * .35f + f * .35f, 42f);
                 Shoot(w, stills, "beggar_seated_front_low", seat + f * 2.3f + Vector3.up * .5f, seat + Vector3.up * .4f, 42f);
                 // The carton close (its drawing) and the seat on it from low at the side (the float the owner saw).
+                // The tin cup from above (its open top, not the label) and the soles from the front, low.
+                var cup = w.Life.CupPosition;
+                Shoot(w, stills, "carton/cup_above", cup + Vector3.up * .55f + f * .25f, cup, 40f);
+                Shoot(w, stills, "carton/soles_front", seat + f * 1.9f + Vector3.up * .4f, seat + Vector3.up * .25f + f * .3f, 45f);
                 Shoot(w, stills, "carton/carton_above", seat + f * 1.5f - across * .5f + Vector3.up * 1.9f, seat + f * .25f + Vector3.up * .05f, 45f);
                 Shoot(w, stills, "carton/seat_low_front_left", seat + f * 1.7f - across * 1.2f + Vector3.up * .28f, seat + Vector3.up * .22f + f * .1f, 42f);
                 Shoot(w, stills, "carton/seat_low_street", seat + f * 2.2f + Vector3.up * .3f, seat + Vector3.up * .25f, 40f);

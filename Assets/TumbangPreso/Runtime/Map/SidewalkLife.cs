@@ -228,7 +228,7 @@ namespace TumbangPreso
         /// straight ahead; the chest leaning back toward the fence; the head bowed; the right
         /// forearm over his lap (yaw in toward the middle, elevation below level); the left arm's
         /// yaw out toward the cup (its elevation is solved so the fist meets the pavement).</summary>
-        private const float SeatLegSplay = 9f, SeatLean = -5f, SeatBow = 13f;
+        private const float SeatLegSplay = 18f, SeatLean = -5f, SeatBow = 13f;
         private const float SeatLapYaw = -16f, SeatLapDrop = 16f, SeatCupYaw = 26f;
         /// <summary>The beggar's beats, seconds: turning to face out and laying the carton
         /// (the carton down at SettleCarton), then sitting (SitSeconds). Packing up: reaching for
@@ -359,6 +359,11 @@ namespace TumbangPreso
             public float LookWeight, LookYaw, NodAt = -99f, NextNod, NextLook, LookUntil;
             public Body LookAt;
             public float JukeUntil, JukeSide, ClapUntil, CheerFrom = -99f, LaughFrom = -99f;
+            // The relaxed idle (see Relax): the next small weight shift and which way, and the
+            // role's idle touch (arms folded, hands on hips, a kid's fidget) with its start and length.
+            public float ShiftAt = -99f, ShiftSide = 1f, NextShift, TouchFrom = -99f, TouchLength, NextTouch;
+            public int Touch;
+            public float BreathPhase;
             public int Hops;
         }
 
@@ -436,6 +441,9 @@ namespace TumbangPreso
         private Vector3 _coinFrom;
         private Transform _carton, _cup, _coin, _bundle, _bag;
         private System.Random _rng;
+        /// <summary>The idle's own randomness (weight shifts, idle touches): never the story's
+        /// <see cref="_rng"/> or the sound's, so the life's story is the same with or without it.</summary>
+        private System.Random _poseRng;
         private bool _begun;
         private CharacterMotor _local;
         private float _localScan, _slipperScan;
@@ -503,6 +511,17 @@ namespace TumbangPreso
             legLeft = legLIsLeft ? ll : lr; legRight = legLIsLeft ? lr : ll;
             return true;
         }
+        /// <summary>How far the body's two arms hang off straight down, degrees, averaged (probes:
+        /// the rigs' own idle holds them 45 degrees out; the relaxed idle about 10). Standing only.</summary>
+        public float PersonArmHang(int i)
+        {
+            var b = _all[i];
+            if (b.ArmL == null || b.ArmR == null) return float.NaN;
+            float Off(Transform arm, Vector3 axis) => Vector3.Angle(b.Root.InverseTransformDirection(arm.TransformDirection(axis)), Vector3.down);
+            return .5f * (Off(b.ArmL, b.AlongL) + Off(b.ArmR, b.AlongR));
+        }
+        /// <summary>0 to 1: how far the body is seated (probes).</summary>
+        public float PersonSeated(int i) => _all[i].SeatAmount;
         /// <summary>The seated beggar's waving hand (his right fist) over his shoulder pivot, metres,
         /// and how far it stands out beside his head (probes). NaN unless he is waving.</summary>
         public float BeggarWaveLift { get; private set; } = float.NaN;
@@ -521,6 +540,9 @@ namespace TumbangPreso
         /// <summary>The lowest point of his seat (the chest block) above the carton top: about 0 is
         /// sitting ON it; well over 0 is floating. NaN unless he is seated.</summary>
         public float BeggarSeatRest { get; private set; } = float.NaN;
+        /// <summary>The higher of his two thighs' lowest points over the carton's top: about 0 is
+        /// both thighs resting on it (not held up by the heels). NaN unless he is seated.</summary>
+        public float BeggarThighRest { get; private set; } = float.NaN;
         public float Clock => _clock;
         public int Donations { get; private set; }
         public bool BeggarSeated => _beggar != null && _beggar.Phase == Seated;
@@ -563,6 +585,7 @@ namespace TumbangPreso
             _begun = true;
             _rng = new System.Random(Seed);
             _soundRng = new System.Random(Seed * 31 + 5);
+            _poseRng = new System.Random(Seed * 17 + 3);
             _lines = new Line[Walks.Length];
             for (int i = 0; i < Walks.Length; i++) _lines[i] = new Line(Walks[i]?.Points, Walks[i]?.Width);
             _track = new Line(KidTrack);
@@ -860,6 +883,7 @@ namespace TumbangPreso
             b.Root.SetPositionAndRotation(b.Position, Quaternion.Euler(0f, b.Yaw, 0f));
             Spring(b, dt);
             Sample(b);
+            Relax(b, dt);
             Locomote(b, dt);
             DrawSeat(b, dt);
             Overlays(b, dt);
@@ -936,6 +960,93 @@ namespace TumbangPreso
             var facing = Quaternion.Euler(0f, b.Yaw, 0f) * Vector3.forward;
             b.Speed += (moved.magnitude / dt - b.Speed) * k;
             b.AlongSpeed += (Vector3.Dot(moved, facing) / dt - b.AlongSpeed) * k;
+        }
+
+        // ------------------------------------------------------------------ the relaxed idle
+
+        private const int TouchNone = 0, TouchFold = 1, TouchHips = 2, TouchFidget = 3, TouchBounce = 4;
+
+        /// <summary>
+        /// THE RELAXED IDLE (owner 2026-10-01, on the extras standing in the rigs' own `idle`, both
+        /// arms held 45 degrees out: "proceed with the fixes for the known issues"). Drawn over the
+        /// sampled clip whenever the body is not walking and not seated, faded out by the walk
+        /// (1 minus its weight) and by the seat, so it hands over smoothly both ways:
+        ///   * the arms hang at the sides, a little forward of straight and a little out, the
+        ///     slight bend these elbowless rigs can show; they breathe with the chest (about 0.25
+        ///     breaths a second, its own phase per body) and sway a touch;
+        ///   * every 3 to 7 seconds a weight shift onto one leg: the hips roll a few degrees and
+        ///     the chest leans back over them, on the <see cref="Pop"/> curve, and holds;
+        ///   * a role's touch now and then, also on the Pop curve: a passer-by folds the arms or
+        ///     sets the hands on the hips for a few seconds; a kid fidgets (an arm swung up and
+        ///     back) or bounces on the spot. The magtataho keeps his hands down under the pole.
+        /// The gestures (cheer, clap, bow, laugh) are drawn after this, over it.
+        /// </summary>
+        private void Relax(Body b, float dt)
+        {
+            float w = (1f - Smooth(b.Loco)) * (1f - Smooth(b.SeatAmount));
+            if (b.ArmL == null || b.ArmR == null || w <= .001f) return;
+            float s = b.Scale;
+            b.BreathPhase += dt * (.24f + .03f * (b.Name.Length % 3));
+            float breath = Mathf.Sin(b.BreathPhase * 2f * Mathf.PI);
+            var right = b.Root.right; var forward = b.Root.forward;
+
+            // The weight shift: start a new one now and then, alternating sides.
+            if (_clock >= b.NextShift)
+            {
+                b.ShiftAt = _clock; b.ShiftSide = -b.ShiftSide;
+                b.NextShift = _clock + 3f + (float)_poseRng.NextDouble() * 4f;
+            }
+            float shiftAge = _clock - b.ShiftAt, shiftLength = Mathf.Max(1.2f, b.NextShift - b.ShiftAt);
+            float shift = Pop(shiftAge, .12f, .35f, Mathf.Max(0f, shiftLength - 1.1f), .5f) * b.ShiftSide;
+
+            // The role's touch: chosen when the last one is over.
+            if (_clock >= b.NextTouch && _clock - b.TouchFrom > b.TouchLength)
+            {
+                double roll = _poseRng.NextDouble();
+                if (b.Role == "spectator") { b.Touch = roll < .35 ? TouchFold : roll < .65 ? TouchHips : TouchNone; b.TouchLength = 3.5f + (float)_poseRng.NextDouble() * 3f; }
+                else if (b.Role == "kid") { b.Touch = roll < .55 ? TouchFidget : TouchBounce; b.TouchLength = .9f + (float)_poseRng.NextDouble() * .6f; }
+                else b.Touch = TouchNone;
+                b.TouchFrom = _clock;
+                b.NextTouch = _clock + b.TouchLength + (b.Role == "kid" ? 1.5f : 4f) + (float)_poseRng.NextDouble() * (b.Role == "kid" ? 2.5f : 6f);
+            }
+            float touchAge = _clock - b.TouchFrom;
+            float touch = b.Touch != TouchNone && touchAge < b.TouchLength ? Pop(touchAge, .12f, .28f, Mathf.Max(0f, b.TouchLength - .8f), .4f) : 0f;
+
+            // The hips and chest: the weight shift's roll, the chest leaning back over it, the breath.
+            if (b.RootBone != null && b.LegL != null && b.LegR != null)
+            {
+                b.RootBone.RotateAround((b.LegL.position + b.LegR.position) * .5f, forward, 3f * shift * w);
+                float low = Mathf.Min((b.LegL.position + b.LegL.TransformDirection(b.LegAxisL).normalized * b.Reach).y,
+                                      (b.LegR.position + b.LegR.TransformDirection(b.LegAxisR).normalized * b.Reach).y);
+                b.RootBone.position += Vector3.up * (b.Position.y - low) * w;
+            }
+            if (b.Torso != null)
+                b.Torso.rotation = Quaternion.AngleAxis(-5f * shift * w, forward) * Quaternion.AngleAxis(breath * 1.2f * w, right) * b.Torso.rotation;
+            if (b.Head != null)
+                b.Head.rotation = Quaternion.AngleAxis(2.5f * shift * w, forward) * b.Head.rotation;
+
+            // The arms: hanging relaxed, then the touch over them.
+            foreach (var arm in new[] { b.ArmL, b.ArmR })
+            {
+                var axis = arm == b.ArmL ? b.AlongL : b.AlongR;
+                float side = SideOf(b, arm, arm == b.ArmL ? -1f : 1f);
+                float sway = Mathf.Sin((b.BreathPhase + (side > 0 ? .3f : 0f)) * 2f * Mathf.PI) * 1.5f;
+                var dir = Limb(side, 6f + sway, 9f + breath * 1.2f + (shift * side > 0 ? 2f * Mathf.Abs(shift) : 0f));
+                var target = dir;
+                switch (b.Touch)
+                {
+                    // Folded: both forearms across the chest (inward, forward, a little down).
+                    case TouchFold: target = Reaching(side, -38f, 18f); break;
+                    // Hands on the hips: out and back, elbows (the arms' tops) out wide.
+                    case TouchHips: target = Limb(side, -18f, 34f); break;
+                    // A kid's fidget: one arm (the right) swung up and round.
+                    case TouchFidget: target = side > 0 ? Limb(side, 70f + Mathf.Sin(touchAge * 11f) * 25f, 20f) : dir; break;
+                }
+                if (b.Touch != TouchNone && touch != 0f) dir = Vector3.SlerpUnclamped(dir, target, touch);
+                Aim(b, arm, axis, dir.normalized, w);
+            }
+            if (b.Touch == TouchBounce && touch > 0f)
+                b.Root.position += Vector3.up * Mathf.Abs(Mathf.Sin(touchAge * 10f)) * .045f * b.Scale * touch * w;
         }
 
         // ------------------------------------------------------------------ the drawn walk
@@ -1156,11 +1267,18 @@ namespace TumbangPreso
 
         // ------------------------------------------------------------------ the seated pose
 
-        /// <summary>How far above level the seated legs rest (degrees): the feet a little raised,
-        /// so the thighs, not the heels, rest on the carton (the foot block juts 5.7 cm below the
-        /// thigh at the far end of a level leg, and he rested on his heels with the thighs and
-        /// seat floating over the carton: owner 2026-10-01, "the guy looks like hes floating").</summary>
-        private const float SeatLegRaise = 10f;
+        /// <summary>How far above level the seated legs rest (degrees): nearly level, the feet just
+        /// clear, so the thighs rest on the carton (owner 2026-10-01: "the guy looks like hes
+        /// floating"; the 10 degrees first tried showed the soles to the street).</summary>
+        private const float SeatLegRaise = 4f;
+        /// <summary>The seated legs turned out about their own length (degrees), knees apart and
+        /// the feet rolled outward, so the tsinelas soles face out to the sides rather than at
+        /// whoever stands in front of him (owner 2026-10-01: the green soles read loudly from the
+        /// front). Turned 80 degrees the legs lie on their outer sides, knees out (a floor sit),
+        /// where the foot block is flush with the thigh: lying on their backs, the heel juts 5.7 cm
+        /// below the thigh and held both thighs 3.5 cm off the carton. The legs are still set down
+        /// on their real mesh, so nothing hovers (the probe's thigh line).</summary>
+        private const float SeatFootTurn = 80f;
         /// <summary>The legs' swing when he is fully down: level plus the raise.</summary>
         private const float SeatFull = 90f + SeatLegRaise;
 
@@ -1178,7 +1296,7 @@ namespace TumbangPreso
         private void DrawSeat(Body b, float dt)
         {
             if (_beggar == null || b != _beggar.Body) return;
-            BeggarSeatClearance = BeggarSeatRest = BeggarWaveLift = BeggarWaveOut = BeggarWaveInHead = float.NaN;
+            BeggarSeatClearance = BeggarSeatRest = BeggarThighRest = BeggarWaveLift = BeggarWaveOut = BeggarWaveInHead = float.NaN;
             if (b.SeatAmount <= 0f || b.LegL == null || b.LegR == null || b.RootBone == null || b.Torso == null) return;
             float a = Smooth(b.SeatAmount), s = PersonScale * b.Scale;
             float alpha = Mathf.Clamp(b.SeatAlpha, 0f, SeatFull), u = alpha / SeatFull, rad = Mathf.Min(alpha, 90f) * Mathf.Deg2Rad;
@@ -1193,6 +1311,9 @@ namespace TumbangPreso
             float legDrop = 90f - alpha;
             Aim(b, b.LegL, b.LegAxisL, Reaching(sll, SeatLegSplay * u, legDrop), a);
             Aim(b, b.LegR, b.LegAxisR, Reaching(slr, SeatLegSplay * u, legDrop), a);
+            // The feet rolled outward: each leg turned about its own length, toes away from the middle.
+            foreach (var (leg, axis, side) in new[] { (b.LegL, b.LegAxisL, sll), (b.LegR, b.LegAxisR, slr) })
+                leg.rotation = Quaternion.AngleAxis(side * SeatFootTurn * Smooth(u) * a, leg.TransformDirection(axis)) * leg.rotation;
 
             // The hips: the legs' lowest point on the ground, on the carton's top as he comes down
             // onto it, plus the wind-up's rise and the stand-up's pop (SeatLift).
@@ -1286,6 +1407,7 @@ namespace TumbangPreso
             if (alpha > SeatFull - 8f && _beggar.Phase == Seated)
             {
                 BeggarSeatClearance = Clearance(b);
+                BeggarThighRest = Mathf.Max(ThighLow(b, b.LegL, b.LegAxisL, b.LegHullL), ThighLow(b, b.LegR, b.LegAxisR, b.LegHullR)) - (b.Position.y + CartonTop);
                 BeggarSeatRest = Lowest(b.Torso, b.TorsoHull) - (b.Position.y + CartonTop);
             }
         }
@@ -1345,6 +1467,18 @@ namespace TumbangPreso
 
         /// <summary>Ease in: slow off the mark, fastest at the end (a drop landing hard).</summary>
         private static float EaseIn(float x) { x = Mathf.Clamp01(x); return x * x * (1.6f - .6f * x); }
+
+        /// <summary>The lowest world height of the hip half of a leg's block (its thigh), so the
+        /// probe can tell a thigh resting on the carton from one held up by its heel.</summary>
+        private static float ThighLow(Body b, Transform leg, Vector3 axis, Vector3[] hull)
+        {
+            if (leg == null || hull == null || hull.Length == 0) return float.NaN;
+            float far = 0f;
+            foreach (var p in hull) far = Mathf.Max(far, Vector3.Dot(p, axis));
+            float low = float.PositiveInfinity;
+            foreach (var p in hull) if (Vector3.Dot(p, axis) < far * .5f) low = Mathf.Min(low, leg.TransformPoint(p).y);
+            return low;
+        }
 
         /// <summary>The lowest point of the drawn legs above the carton's top, world metres: the
         /// check that nothing sinks into it (their real mesh when it is readable).</summary>
@@ -1722,6 +1856,57 @@ namespace TumbangPreso
             return _meshes["Carton"] = mesh;
         }
 
+        /// <summary>
+        /// THE TIN CUP'S OWN MESH: Unity's Cylinder (radius 0.5, height 2, so the cup's scale is
+        /// unchanged) but with its three faces in their own parts of `life_tin.png`: the side wraps
+        /// u round v 0.375..1 (the milk-can label), the TOP takes the disc in the lower left square
+        /// (an open rim, the dark inside, a coin or two), the bottom the lower right one (plain
+        /// tin). The built-in Cylinder maps the whole image onto each cap, so the label sat on top.
+        /// </summary>
+        private Mesh CupMesh()
+        {
+            if (_meshes.TryGetValue("Cup", out var cached) && cached != null) return cached;
+            const int n = 28;
+            var vertices = new List<Vector3>(); var normals = new List<Vector3>(); var uvs = new List<Vector2>(); var triangles = new List<int>();
+            void Tri(int a, int b, int c, Vector3 facing)
+            {
+                var nrm = Vector3.Cross(vertices[b] - vertices[a], vertices[c] - vertices[a]);
+                if (Vector3.Dot(nrm, facing) < 0f) { triangles.Add(a); triangles.Add(c); triangles.Add(b); }
+                else { triangles.Add(a); triangles.Add(b); triangles.Add(c); }
+            }
+            // The side.
+            for (int k = 0; k <= n; k++)
+            {
+                float t = k / (float)n, ang = t * 2f * Mathf.PI;
+                var rim = new Vector3(Mathf.Cos(ang) * .5f, 0f, Mathf.Sin(ang) * .5f);
+                vertices.Add(rim + Vector3.down); normals.Add(rim.normalized); uvs.Add(new Vector2(t, .385f));
+                vertices.Add(rim + Vector3.up); normals.Add(rim.normalized); uvs.Add(new Vector2(t, .995f));
+            }
+            for (int k = 0; k < n; k++)
+            {
+                int i = k * 2; var outward = (vertices[i] + vertices[i + 2]); outward.y = 0f;
+                Tri(i, i + 2, i + 3, outward); Tri(i, i + 3, i + 1, outward);
+            }
+            // The caps: the top in the square (0..0.36, 0..0.36), the bottom in (0.5..0.86, 0..0.36).
+            foreach (var (y, centre) in new[] { (1f, new Vector2(.18f, .18f)), (-1f, new Vector2(.68f, .18f)) })
+            {
+                var facing = new Vector3(0f, y, 0f);
+                int c = vertices.Count;
+                vertices.Add(facing); normals.Add(facing); uvs.Add(centre);
+                for (int k = 0; k < n; k++)
+                {
+                    float ang = k / (float)n * 2f * Mathf.PI;
+                    vertices.Add(new Vector3(Mathf.Cos(ang) * .5f, y, Mathf.Sin(ang) * .5f)); normals.Add(facing);
+                    uvs.Add(centre + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * .17f);
+                }
+                for (int k = 0; k < n; k++) Tri(c, c + 1 + k, c + 1 + (k + 1) % n, facing);
+            }
+            var mesh = new Mesh { name = "Sidewalk tin cup" };
+            mesh.SetVertices(vertices); mesh.SetNormals(normals); mesh.SetUVs(0, uvs); mesh.SetTriangles(triangles, 0);
+            mesh.RecalculateBounds();
+            return _meshes["Cup"] = mesh;
+        }
+
         private void BuildBeggarProps()
         {
             var f = BeggarFacing; f.y = 0f; f = f.sqrMagnitude > 1e-4f ? f.normalized : Vector3.right;
@@ -1732,7 +1917,7 @@ namespace TumbangPreso
             _carton = Part(holder, "Carton", CartonMesh(), Cardboard, new Vector3(0f, .008f, .12f), Vector3.one, Vector3.zero);
             // The cup on his left, the side toward the court and the players at the wall, just
             // inside where his left hand rests on the pavement.
-            _cup = Part(holder, "Tin cup", cylinder, Tin, new Vector3(-.26f, .05f, .62f), new Vector3(.11f, .05f, .11f), Vector3.zero);
+            _cup = Part(holder, "Tin cup", CupMesh(), Tin, new Vector3(-.26f, .05f, .62f), new Vector3(.11f, .05f, .11f), Vector3.zero);
             _coin = Part(transform, "Coin", cylinder, Coin, Vector3.zero, new Vector3(.05f, .004f, .05f), Vector3.zero);
             _carton.gameObject.SetActive(false); _cup.gameObject.SetActive(false); _coin.gameObject.SetActive(false);
             // His things on his right, off the carton's edge: a soft tied bundle and a plastic bag.

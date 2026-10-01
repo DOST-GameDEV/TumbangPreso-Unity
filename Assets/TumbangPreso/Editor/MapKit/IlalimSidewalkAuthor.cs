@@ -781,7 +781,9 @@ namespace TumbangPreso.EditorTools.MapKit
             var armLo = Enumerable.Repeat(float.MaxValue, n).ToArray(); var armHi = Enumerable.Repeat(float.MinValue, n).ToArray();
             var armRLo = Enumerable.Repeat(float.MaxValue, n).ToArray(); var armRHi = Enumerable.Repeat(float.MinValue, n).ToArray();
             var sxy = new double[n]; var sxx = new double[n]; var syy = new double[n]; var sx = new double[n]; var sy = new double[n]; var sN = new int[n];
-            var liftN = new int[n]; var swingHigh = new float[n]; var swingSum = new float[n]; var swingN = new int[n];
+            var liftN = new int[n]; var swingHigh = new float[n];
+            // Standing still: how far the arms hang off straight down (the rigs' idle is 45).
+            var hangSum = new float[n]; var hangHigh = new float[n]; var hangN = new int[n]; var swingSum = new float[n]; var swingN = new int[n];
             var states = Enumerable.Range(0, n).Select(_ => new HashSet<string>()).ToArray();
             var firstShown = Enumerable.Repeat(-1f, n).ToArray();
             // The drawn walk (SidewalkLife's class note): the planted sole's own ground speed
@@ -790,6 +792,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var soleLow = Enumerable.Repeat(float.MaxValue, n).ToArray(); var soleHigh = Enumerable.Repeat(float.MinValue, n).ToArray();
             var lastSole = new Vector3[n]; var lastLeft = new bool[n]; var hadSole = new bool[n]; var lastPos = new Vector3[n];
             float seatLow = float.MaxValue, seatHigh = float.MinValue; int seatN = 0;
+            float thighLow = float.MaxValue, thighHigh = float.MinValue;
             float restLow = float.MaxValue, restHigh = float.MinValue, waveLift = float.MinValue, waveOut = float.MaxValue, waveIn = 0f; int waveN = 0;
             string donation = "the beggar never sat down in 300 s", reaction = "nobody watched in 300 s";
             bool donated = false, reacted = false;
@@ -852,6 +855,11 @@ namespace TumbangPreso.EditorTools.MapKit
                             lastSole[i] = sole; lastLeft[i] = leftSole; hadSole[i] = walking;
                         }
                         lastPos[i] = p;
+                        if (life.PersonLocomotion(i) < .02f && life.PersonSeated(i) <= 0f)
+                        {
+                            float hang = life.PersonArmHang(i);
+                            if (!float.IsNaN(hang)) { hangSum[i] += hang; hangHigh[i] = Mathf.Max(hangHigh[i], hang); hangN[i]++; }
+                        }
                         if (OnCourtPavement(p)) inPlay[i]++;
                         if (InBox(p)) inBox[i]++;
                         if (OnKerb(p)) onKerb[i]++;
@@ -882,6 +890,7 @@ namespace TumbangPreso.EditorTools.MapKit
                     {
                         seatLow = Mathf.Min(seatLow, life.BeggarSeatClearance); seatHigh = Mathf.Max(seatHigh, life.BeggarSeatClearance); seatN++;
                     }
+                    if (!float.IsNaN(life.BeggarThighRest)) { thighLow = Mathf.Min(thighLow, life.BeggarThighRest); thighHigh = Mathf.Max(thighHigh, life.BeggarThighRest); }
                     if (!float.IsNaN(life.BeggarSeatRest)) { restLow = Mathf.Min(restLow, life.BeggarSeatRest); restHigh = Mathf.Max(restHigh, life.BeggarSeatRest); }
                     if (!float.IsNaN(life.BeggarWaveLift)) { waveLift = Mathf.Max(waveLift, life.BeggarWaveLift); waveOut = Mathf.Min(waveOut, life.BeggarWaveOut); if (!float.IsNaN(life.BeggarWaveInHead)) waveIn = Mathf.Max(waveIn, life.BeggarWaveInHead); waveN++; }
                     // The events, once each.
@@ -968,6 +977,12 @@ namespace TumbangPreso.EditorTools.MapKit
             sb.AppendLine(seatN > 0
                 ? FormattableString.Invariant($"Seated beggar: the legs' lowest point {seatLow:+0.000;-0.000}..{seatHigh:+0.000;-0.000} m over the carton's top ({seatN} steps; under 0 is a leg in the carton); his seat (the chest block's lowest corner) {restLow:+0.000;-0.000}..{restHigh:+0.000;-0.000} m over it (about 0 is sitting ON it).")
                 : "Seated beggar: never seated.");
+            if (seatN > 0) sb.AppendLine(FormattableString.Invariant($"Seated beggar's thighs (the hip half of each leg; the higher of the two): {thighLow:+0.000;-0.000}..{thighHigh:+0.000;-0.000} m over the carton (about 0 is both resting on it, not held up by the heels)."));
+            sb.AppendLine("Standing still (the relaxed idle): the arms' mean and highest hang off straight down, degrees (the rigs' own idle is 45; a fold or hands-on-hips touch reads higher for a while):");
+            for (int i = 0; i < n; i++)
+                sb.AppendLine(hangN[i] > 0
+                    ? FormattableString.Invariant($"  {life.PersonName(i),-12} {hangN[i],5} frames, mean {hangSum[i] / hangN[i]:F1}, highest {hangHigh[i]:F1}")
+                    : $"  {life.PersonName(i),-12} never stood still");
             sb.AppendLine(waveN > 0
                 ? FormattableString.Invariant($"The thank-you wave: {waveN} steps at full height; the fist up to {waveLift:F2} m over his shoulder pivot, and at the least {waveOut:+0.00;-0.00} m out beside his head (over 0 is clear of it); the arm's block at most {waveIn:F3} m into the head's (0 is no clipping).")
                 : "The thank-you wave: never at full height.");

@@ -274,8 +274,31 @@ Awaiting owner decisions. Nothing is in Unity. All work is committed LOCALLY on 
       spot stays against the PGH fence (the court's pavements put him by a prop or a doorway).
     Films and stills: `Logs/ilalim-unity/videos_v3/` (`kids_tag`, `taho_calling`,
     `spectators_cheer`, `beggar_donation`, `court_wide`, with sound; `stills/wave/`,
-    `stills/carton/`). NOT YET SEEN IN PLAY: the Animator-overwrite cause is inferred from the
-    clips' channels and the films, so the owner's Play check is the confirmation.
+    `stills/carton/`).
+  - **2026-10-01, the known issues fixed (owner: "proceed with the fixes for the known issues").**
+    * TIN CUP: its own mesh (`SidewalkLife.CupMesh`), each face in its own part of `life_tin.png`:
+      the label wraps the side only; the top is the open can (a rolled rim, the dark inside, two
+      coins); the bottom plain tin. The built-in Cylinder had put the whole label on the top.
+    * RELAXED IDLE (`SidewalkLife.Relax`): anyone standing still no longer holds the rigs' own idle
+      (both arms 45 degrees out). The arms hang at the sides a little forward and out, breathe and
+      sway; every 3 to 7 s a weight shift onto one leg (hip roll, chest leaning back over it); now
+      and then a passer-by folds the arms or sets the hands on the hips, a kid fidgets or bounces;
+      all on the `Pop` curve, faded out by the walk and the seat, gestures drawn over it, with its
+      own seeded randomness (the story is unchanged). Probe: standing arms hang 11.7 to 11.8
+      degrees off straight down (magtataho, beggar), passers-by 22 to 27 on average with their touches.
+    * SOLES: the seated legs are nearly level (4 degrees), 18 degrees apart and rolled 80 degrees
+      onto their outer sides (knees out), so the soles angle away instead of facing the street,
+      and the tsinelas are a duller worn grey-green (`npc-beggar-palette.json` slots 3 and 4,
+      6a6d64 and 4d5048, matching `tools/build_beggar_voxel.py`). Rolled, the foot no longer juts
+      under the thigh: probe thighs +0.003 m, legs +0.000 m, seat +0.002 m over the carton.
+    * ARMS IN PLAY, CONFIRMED: `Tests/PlayMode/IlalimSidewalkPlayProbe` loads the sample in Play
+      (`EditorSceneManager.LoadSceneAsyncInPlayMode`), lets the life run on its own `Update` 25 s
+      and reads the limbs in a LateUpdate at execution order 32000, after the animation system
+      (WaitForEndOfFrame never fires in batch). Result (`videos_v4/play_arms.txt`, passed): no rig
+      Animator enabled; three passers-by walking, left arm against left leg -0.73 to -0.89, arm
+      swing 35 to 48 degrees, planted sole +0.00 m/s. Run it with
+      `py -3 tools/run_unity_guarded.py -batchmode -force-d3d11 -runTests -testPlatform PlayMode -testFilter "TumbangPreso.PlayTests.IlalimSidewalkPlayProbe" -testResults Logs/ilalim-unity/videos_v4/play_arms.xml -logFile Logs/ilalim-unity/play_v4.log`.
+    Films, stills and probe: `Logs/ilalim-unity/videos_v4/` (`stills/carton/cup_above.png`, `soles_front.png`).
   - OPEN: the owner's look review in Play, cable shadows striping the court under the 27 degree
     sun (decision 2 below), then ILALIM-1.5 and 1.6.
 
