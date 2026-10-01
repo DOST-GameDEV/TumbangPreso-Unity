@@ -1923,3 +1923,21 @@ fixture repair, preferences preserved. No protected mechanics/assets or tuning
 changes; generic host AI observation only, protocol114unchanged. Publish explicit
 source/receipts, keep report local (no unrequested Drive developer/QA uploads).
 Haunted sensor/unknown-target and actual matching-player qualification still open.
+
+BOT-COMPANION-OBSERVATION-1001 shipped239050ac60a338f88b482b8a79dec2aa4aa1321b,
+remote verified. Generic observation/cache identity fix and4native passes;
+whole-match/Haunted sensing still separate. No unrequested Drive engineering logs
+uploaded. Runtime source clean; private dirt remains unstaged.
+CURRENT-PLAYER-1001 now active: freeze job50961/Python32556 completed,15422
+Assets/Packages/ProjectSettings hashes at committed source239050ac6 recorded in
+isolated Logs/feedback-current-player-1001/build-inputs.json. Native baseaecc0ee2,
+retained imported assets/committed overlays; not pristine-source certification.
+Guarded Unity job50183 is LIVE for EditorTools.GameBuilder.BuildWindows, named
+profilefeedback-current-build-1001, batchmode/nographics(build only), explicit
+internal Builds/feedback-current-player-1001/TumbangPreso.exe. Latest log reached
+AuthoredAnimationBuildCheck; no successful build/player/peer claim yet. Preserve
+old Desktop/protocol103/98 outputs. Next poll SAME50183 until authoritative
+terminal; verify fresh executable/data/runtime hash and15422input drift(prep
+settings separately); then actual matching protocol114peers with preserved named
+profiles. One heavy job. Do not restart merely because a wait yields. Full goal
+active. No task browser/preview/player open; only this task build helper alive.
