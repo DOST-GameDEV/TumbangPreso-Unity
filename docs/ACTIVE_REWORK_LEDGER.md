@@ -3783,3 +3783,20 @@ loaded shoe, authored cast clip and coating; no generic burst. Factory control
 remains available. Normal exit56.54s, zero repairs/newOOM. Evidence in
 hero-quality-2026-10-01/rafi-cast-clarity; no new film/SFX/peer claim. Release
 shared confirmation path after shipment. Hydro SFX and wider feel remain open.
+
+Closed Circuit assessment recorded in reports/feedback-2026-09-30/closed-circuit/plan.md.
+No implementation claim yet. Key constraint: maintained remote aim needs a
+bounded owner-to-host channel; the current aim snapshot intentionally carries
+no destination. Base Windup is uninterruptible/rooted and cannot represent this
+cancellable lock honestly. Preserve independent reliability build126 and the
+private HeroHazards overlay. All own native jobs terminal, Rafi cleanup shipped.
+
+CLOSED-CIRCUIT-1001 now reserves Runtime/Abilities/ZackHeroKit.cs and new
+ZackHeroKit.ClosedCircuit.cs/meta; Runtime/Visual/ZackCircuitTell.cs/meta;
+Runtime/Net/ZackCircuitState.cs/meta and MatchRpc.Circuit.cs/meta;
+MatchRpc.cs circuit registration/snapshot call sites only; NetSession protocol;
+AIController.cs Zack defending branch only; focused ClosedCircuitTests and
+ZackCircuitStateTests scripts/metas. No HeroHazards or reliability-build edits.
+Implement the recorded maintained-aim/LOS plan. Remote aim must be explicit and
+fresh, with an acquisition episode and scoped ordered state; do not silently
+reuse a stale cast aim. Native and parser acceptance remain pending.
