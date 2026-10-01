@@ -2885,3 +2885,17 @@ Keep ordinary down/protected-can rejection. No previous tutorial direct HostThro
 check qualifies this input gate. Current integrated28b22f31, protocol119, clean
 checkout, all native jobs terminal. One focused baseline/final, one tooling repair.
 HUD extras follow these regressions; do not redo shipped HUD/penalty work.
+
+Tutorial real-input baseline reproduces refusal with upright hidden can holding
+1.25 seconds of restoration protection forever. Native1case fails at actual
+Carrier charge acceptance; no fixture failure or new OOM. Narrow repair binds
+exception to active offline route, exact student and hidden target only. Visible
+can and listening host retain normal rules. Final2cases: actual charge/release
+and real listening host with stale tutorial flag, upright/down/restore boundaries.
+No wire/rule change online; protocol119 retained. Baseline259627 terminal.
+
+Tutorial final2/2 native cases pass with frozen inputs unchanged and no new OOM.
+Actual charge/release launches; listening host retains protected/down restrictions
+even with stale tutorial flag. No fixture repair, no actual remote-peer/build
+claim. Publish this coherent repair, then above-can false contact; dot outline
+and HUD extras remain pending. Both existing Doc rows reopened/read back.

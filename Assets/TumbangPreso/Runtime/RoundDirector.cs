@@ -647,13 +647,14 @@ namespace TumbangPreso
         {
             if (who == null) return false;
 
+            bool hiddenPracticeCan = GuidedTraining.HasHiddenPracticeCan(who, Lata);
             var ctx = new ThrowContext
             {
                 RoundActive = RoundActive,
                 IsDefender = who.IsDefender,
                 HoldingSlipper = who.HoldingSlipper,
-                LataUpright = Lata != null && Lata.IsUpright,
-                ThrowCooldownLeft = Mathf.Max(_throwCooldownLeft, Lata != null ? Lata.ProtectionLeft : 0),
+                LataUpright = hiddenPracticeCan || (Lata != null && Lata.IsUpright),
+                ThrowCooldownLeft = Mathf.Max(_throwCooldownLeft, Lata != null && !hiddenPracticeCan ? Lata.ProtectionLeft : 0),
                 X = who.transform.position.x,
                 Z = who.transform.position.z,
                 ConfinementRadius = Balance.ConfinementRadius,

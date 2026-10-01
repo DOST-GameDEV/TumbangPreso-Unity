@@ -96,6 +96,17 @@ namespace TumbangPreso
         private const float UltimateAfterSeconds = 2.5f;
         private Vector3 _lastPosition;
 
+        private static GuidedTraining _activeRoute;
+
+        // Hidden practice targets do not tick their restoration clock. Only the active
+        // offline student's hidden can is exempt, never a live hosted match or visible can.
+        internal static bool HasHiddenPracticeCan(CharacterMotor student, Lata can)
+            => _activeRoute != null && _activeRoute.isActiveAndEnabled
+                && GameLaunch.GuidedTutorial
+                && (Net.NetSession.Instance == null || !Net.NetSession.Instance.IsNetworked)
+                && _activeRoute._local == student && _activeRoute._lata == can
+                && can != null && !can.gameObject.activeInHierarchy;
+
         public Lesson CurrentLesson => _lesson;
 
         public void Configure(CharacterMotor local, Lata lata, CharacterMotor[] seats,
@@ -114,6 +125,7 @@ namespace TumbangPreso
                 return;
             }
 
+            _activeRoute = this;
             _carrier = _local.GetComponent<Carrier>();
             _verbs = _local.GetComponent<CombatVerbs>();
 
@@ -1380,6 +1392,7 @@ namespace TumbangPreso
 
         private void OnDestroy()
         {
+            if (_activeRoute == this) _activeRoute = null;
             StopOrbit();
             GameLaunch.GuidedTutorial = false;
 

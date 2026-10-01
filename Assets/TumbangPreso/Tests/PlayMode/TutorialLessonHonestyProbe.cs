@@ -105,6 +105,69 @@ namespace TumbangPreso.PlayTests
                 if (reader != null) reader.enabled = false;
         }
 
+        [UnityTest, Timeout(90000)]
+        public IEnumerator HiddenCanDoesNotBlockTheTutorialThrowInput()
+        {
+            yield return LoadTraining();
+            var route = Object.FindFirstObjectByType<GuidedTraining>();
+            Assert.IsNotNull(route);
+            yield return Route(route, GuidedTraining.Lesson.Throw);
+            var who = Field<CharacterMotor>(route, "_local");
+            var can = Field<Lata>(route, "_lata");
+            var carrier = who.GetComponent<Carrier>();
+            Assert.IsFalse(can.gameObject.activeInHierarchy);
+            Assert.IsFalse(who.IsDefender);
+            Assert.IsTrue(who.HoldingSlipper);
+            who.Intent.Parked = false;
+            carrier.enabled = false;
+            var step = typeof(Carrier).GetMethod("StepAttacker", BindingFlags.Instance | BindingFlags.NonPublic);
+            who.Intent.Set(Verb.SpecialAbility, true);
+            step.Invoke(carrier, new object[] { 0f });
+            step.Invoke(carrier, new object[] { Balance.ChargeFullTime });
+            Assert.IsTrue(carrier.IsCharging,
+                $"Tutorial Throw must accept the actual input; upright={can.IsUpright}, hidden protection={can.ProtectionLeft}, canThrow={GameServices.Round.CanThrow(who)}");
+            who.Intent.Set(Verb.SpecialAbility, false);
+            step.Invoke(carrier, new object[] { .02f });
+            Assert.IsFalse(who.HoldingSlipper, "Releasing the actual charge must launch the slipper.");
+            yield return null;
+        }
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator ListeningHostKeepsCanDownAndRestoreThrowRestrictions()
+        {
+            yield return LoadTraining();
+            var route = Object.FindFirstObjectByType<GuidedTraining>();
+            yield return Route(route, GuidedTraining.Lesson.Throw);
+            var who = Field<CharacterMotor>(route, "_local");
+            var can = Field<Lata>(route, "_lata");
+            Assert.IsTrue(GameServices.Round.CanThrow(who), "The offline hidden target must allow practice.");
+            var net = Net.NetSession.Ensure();
+            try
+            {
+                var start = net.StartHostAsync(18719);
+                float deadline = Time.realtimeSinceStartup + 20;
+                while (!start.IsCompleted && Time.realtimeSinceStartup < deadline) yield return null;
+                Assert.IsTrue(start.IsCompleted, "Listening host start timed out.");
+                Assert.IsTrue(start.Result, net.Status);
+                Assert.IsTrue(net.IsNetworked && net.IsHost);
+                GameLaunch.GuidedTutorial = true; // Even a stale route flag cannot bypass host rules.
+                Assert.IsFalse(GameServices.Round.CanThrow(who), "Hosted play must not inherit the hidden tutorial exception.");
+                can.gameObject.SetActive(true);
+                deadline = Time.realtimeSinceStartup + 6;
+                while (can.IsProtected && Time.realtimeSinceStartup < deadline) yield return null;
+                Assert.IsFalse(can.IsProtected);
+                Assert.IsTrue(GameServices.Round.CanThrow(who), "Host permits an ordinary upright, unprotected can.");
+                can.HostKnockDown(2);
+                Assert.IsFalse(can.IsUpright);
+                Assert.IsFalse(GameServices.Round.CanThrow(who));
+                can.HostRestore();
+                Assert.IsTrue(can.IsProtected);
+                Assert.IsFalse(GameServices.Round.CanThrow(who));
+            }
+            finally { net.Stop(); }
+            yield return null;
+        }
+
         private static float Flat(Vector3 a, Vector3 b)
             => Vector3.Distance(new Vector3(a.x, 0.0f, a.z), new Vector3(b.x, 0.0f, b.z));
 

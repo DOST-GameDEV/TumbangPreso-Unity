@@ -17,6 +17,15 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### TUTORIAL-THROW-REGRESSION-1001: repaired
+
+Harry's new tutorial input refusal is reproduced: hidden can restoration stays
+at 1.25 seconds. A narrow offline route exception passes two native checks,
+including actual charge/release and an actual listening-host control.
+[Evidence](reports/feedback-2026-09-30/tutorial-throw-checks/README.md). The above-can false-hit report and
+slightly thicker centre-dot outline follow; prior shipped evidence is retained.
+
+
 ### HUD-LAYOUT-1001: Harry's supplied layout
 
 Three left-side statuses, separate warning/action regions, in-panel recovery,
