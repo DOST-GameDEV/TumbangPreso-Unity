@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TumbangPreso.Core;
 using UnityEngine;
 using UnityEngine.UI;
@@ -5,7 +6,7 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI
 {
     // One earned central phrase. The side feed keeps parallel ordinary events;
-    // this channel drops stale/lower-priority phrases instead of queueing them.
+    // valid same-round qualifications queue for their full display interval.
     public sealed class MatchMomentBanner : MonoBehaviour
     {
         private RectTransform _rect;
@@ -16,6 +17,8 @@ namespace TumbangPreso.UI
         private MatchDirector _match;
         private MatchMoment _moment;
         private float _began, _duration;
+        private readonly Queue<MatchMoment> _pending = new Queue<MatchMoment>();
+        public const float Lifetime = 2.5f;
         public bool Showing => _group != null && _group.alpha > .001f;
         public string Phrase => _title != null ? _title.text : "";
 
@@ -53,7 +56,7 @@ namespace TumbangPreso.UI
         private void OnDisable()
         { if (_match != null) _match.MomentPresented -= OnMoment; _match = null; Hide(); }
         private void Hide()
-        { if (_group != null) _group.alpha = 0; _duration = 0; _moment = default; }
+        { if (_group != null) _group.alpha = 0; _duration = 0; _moment = default; _pending.Clear(); }
         private static string Title(MatchMomentKind kind)
         {
             switch (kind)
@@ -64,18 +67,26 @@ namespace TumbangPreso.UI
                 case MatchMomentKind.DoubleCatch: return "DOUBLE CATCH";
                 case MatchMomentKind.TripleCatch: return "TRIPLE CATCH";
                 case MatchMomentKind.LateKnockdown: return "LATE KNOCKDOWN";
+                case MatchMomentKind.MultiKnockdown: return "MULTI KNOCKDOWN";
+                case MatchMomentKind.SingleCatch: return "SINGLE CATCH";
+                case MatchMomentKind.MultiCatch: return "MULTI CATCH";
                 default: return "TAKES THE LEAD";
             }
         }
         private void OnMoment(MatchMoment moment)
         {
             if (_group == null || !moment.IsValid || !isActiveAndEnabled) return;
-            if (_duration > 0 && Time.unscaledTime - _began < .7f && moment.Priority < _moment.Priority) return;
-            _moment = moment; _began = Time.unscaledTime; _duration = moment.Priority >= 2 ? 1.65f : 1.25f;
+            if (_duration > 0 && (_moment.MatchId != moment.MatchId || _moment.Round != moment.Round)) Hide();
+            if (_duration > 0) { _pending.Enqueue(moment); return; }
+            Begin(moment);
+        }
+        private void Begin(MatchMoment moment)
+        {
+            _moment = moment; _began = Time.unscaledTime; _duration = Lifetime;
             _title.text = Title(moment.Kind);
             _plate.color=moment.Priority>=2?CourtPresentationPalette.Red:CourtPresentationPalette.DeepRed;
             _detail.text = PlayerIdentity.Label(moment.Actor) + " · " + SeatLabel.Raw(moment.Actor)
-                + (moment.Bonus > 0 ? "   +" + moment.Bonus + " CHAIN BONUS" : "");
+                + (moment.Bonus > 0 ? "   +" + moment.Bonus + " BONUS" : "");
             _detail.color = _accent.color = PlayerIdentity.Colour(moment.Actor);
             Paint();
         }
@@ -91,7 +102,12 @@ namespace TumbangPreso.UI
         private void Paint()
         {
             float age = Time.unscaledTime - _began;
-            if (age >= _duration) { Hide(); return; }
+            if (age >= _duration)
+            {
+                if (_pending.Count > 0) Begin(_pending.Dequeue());
+                else Hide();
+                return;
+            }
             float enter = Mathf.Clamp01(age / .18f), leave = Mathf.Clamp01((_duration - age) / .2f);
             bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
             _group.alpha = Mathf.Min(reduced ? 1 : enter, leave);

@@ -540,17 +540,34 @@ Keep deterministic rules in the engine-free Core package, owned by MatchDirector
 
 For each attacker, a legal credited direct throw knockdown advances once. A true miss or defensive block resets that player's sequence. Another player's score does not erase it. A non-scoring flight whose original can cycle was consumed can be no-contest; an actual later legal knockdown still counts. Do not prematurely void a live shot. Resolve once with explicit hit/block/no-contest/miss precedence and no duplicate can-cycle award. Invalid input is not a launched miss. Tag/new round resets. Ultimate/field knockdowns keep base rewards without masquerading as accurate throws.
 
-For the taya, retain distinct victim identities and last qualifying active-play time. Start with 8 seconds between different catches. The same victim neither advances nor refreshes the chain. A can knockdown need not erase it. Round/role changes reset it; three distinct victims is the natural ceiling.
+Current Feedback supersedes the earlier paid accuracy schedule. Accuracy remains
+a throw statistic, but earns no extra10/20/25 points. First credited knockdown
+in the round pays+50; any credited knockdown with at most10seconds left pays+50;
+the third and later credited knockdowns since that player's tag/round reset pay
++50 each. These independently satisfied criteria stack. Misses do not clear the
+paid knockdown streak. Normal and Sprout base awards remain unchanged.
 
-Start rewards at 0 for the first action; +10 for a second hit/catch; +20 for a third consecutive throw hit; +25 maximum for fourth/later throw hits; +25 for a third distinct catch. Tune from actual scoring influence. No multipliers, power buffs or extra ultimate charge. A base action advances normal resources once.
+For the taya, accepted tags form a five-second rolling window. The first is
+Single Catch with no bonus; second, third and later catches each pay+25 and show
+Double, Triple and Multi Catch. A later legal repeat victim counts; duplicate
+event IDs never do. Every real can-down, including an uncredited one, clears the
+catch window. Round/role changes also reset it. Bonuses add no ultimate charge;
+the base accepted action advances normal resources once.
 
 Use explicit appended bonus reasons through MatchDirector.AddScore, preserving existing enum values. Replicated totals remain authoritative. Correlate awards/milestones with accepted event IDs so duplicate delivery cannot repeat recognition. Reason/value and actual count must reach clients consistently. Do not infer a bonus from two snapshots or emit another fake Tag/LataKnocked event. Wire/compatibility changes are a named C4 integration dependency.
 
-The side feed has at most three recent short entries with expiry/dedupe, without footsteps, passive ticks, routine releases or stale pickup messages. Central milestones sit under the timer, away from the crosshair. Start with third/fifth-hit accuracy milestones and double/triple catches; higher milestones replace lower ones. Threat, recovery and cast information outrank celebration. Longer streak milestones can be tuned for rarity while the per-hit bonus remains capped.
+The side feed keeps at most three recent entries, each for three seconds, with
+smooth top-down reflow and unchanged per-item expiry. Current central banners
+are First/Late/Multi Knockdown and Single/Double/Triple/Multi Catch. Each lasts
+2.5seconds; concurrent valid qualifications queue and clear at round/rematch/
+hide boundaries. Threat and recovery remain separate. Do not restore retired
+accuracy or lead-change announcements merely because legacy enum values remain.
 
-Close-call recognition stays separate from points. Lead changes need anti-flutter handling for ties/passive ticks. Use a short escalating motif and sparse voice, not more volume or a permanent excitement bar.
-
-Required checks: independent players, intervening scorers, misses/blocks, consumed cycles, duplicate contacts/messages, tag/round reset, repeated victim, eight-second boundary during pause, caps, exact client totals, unchanged base ultimate gain, and replay/recognition unable to award score.
+Required checks: independent players, intervening scorers, retained accuracy
+statistics, no duplicate can-cycle award, tag/can/round reset, repeated legal
+victim, five-second boundary, stacked bonus totals, unchanged base ultimate gain,
+replica idempotency and recognition unable to award score. Native/provider checks
+are not actual remote-peer qualification. Protocol121 carries the new reasons.
 
 ### E. Shared ultimate phase and authored performances
 

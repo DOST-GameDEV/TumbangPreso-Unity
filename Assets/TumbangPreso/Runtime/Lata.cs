@@ -296,6 +296,7 @@ namespace TumbangPreso
             // equivalent of that path and is reached exactly once per peer.
             HostKnockdownSerial++;
             SetUpright(false);
+            GameServices.Match?.ResetHostCatchChain();
             _toppleTimer = Balance.ToppleTime;
 
             // ⚠️ THE KNOCKDOWN CUE IS NOT PLAYED HERE, AND ADDING ONE DOUBLED IT. `SetUpright`

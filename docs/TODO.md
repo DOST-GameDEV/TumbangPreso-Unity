@@ -46,7 +46,11 @@ one native case and small capture pass.
 Live status stacking now retains the catalog with adaptive bottom-up columns,
 real timers and a Haunted icon. Two distinct native cases pass; dense case
 repeated after sprite import. [Status evidence](reports/feedback-2026-09-30/status-stack-checks/README.md).
-The combined row remains open for announcement bonuses/duration.
+Announcement rules now implemented: first/late/multi knockdown50, catch2+25
+with five-second resettable window and queued2.5second banners. Core8/8 and five
+distinct native cases pass across final runs, with one bounded fixture repair.
+Protocol121; no new player/actual-peer qualification.
+[Announcement evidence](reports/feedback-2026-09-30/announcement-checks/README.md).
 
 
 ### PENALTY-REVAMP-1001: current Harry timing revision

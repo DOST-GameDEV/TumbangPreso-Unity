@@ -3028,3 +3028,38 @@ victims for Multi Catch; duplicate event IDs remain rejected. Queue banners so
 simultaneous qualifications are not silently suppressed. Protocol121 planned.
 Focused Core/native behavior, ultimate-charge invariant and replica idempotency;
 no fresh remote-peer claim. All prior jobs terminal; owner studying, no chat pings.
+
+Announcement Core8/8 passes the new scoring values, five-second catch boundary,
+repeat accepted victims, duplicate/out-of-order guards, knockdown3+ and tag/can/
+round resets. Paid accuracy rewards retired while its statistic remains. Runtime
+uses existing accepted can and AddScore authority; uncredited can-down also resets
+catch timing. New moment/score enum values append, protocol121. Queued banners
+retain2.5seconds and clear on hide/round/rematch. Native final4cases planned:
+Classic/Hero actual flights/punches and ultimate-charge invariance, stacked first/
+late/multi plus uncredited reset, replica no-score/idempotency/queue lifetime.
+Real flight fixture now aims through finite can height rather than old1.2m false
+hit. No tooling repair used; all previous native jobs terminal.
+
+Announcement first native4/4passes, Core8/8passes. Real Classic/Hero flights and
+punches qualify scores/base ultimate charging; stacked first/late/multi and neutral
+can-down reset qualify; replica/queue lifetime/rematch guards pass. Hero case took
+137seconds; no new OOM, raw receipts retained. Add one distinct native boundary
+case for actual four catches with first victim's natural recovery and unchanged
+Sprout base award. No repeat of passed4. Update ScoreFeedbackTests expected first
+bonus only, as an affected arithmetic expectation. No fixture repair so far.
+
+The extra natural-recovery case timed out90s: its fixture disabled RoundDirector,
+which also owns Hitstop.Step, so a tag left micro-hitstop slowed indefinitely.
+This explains the earlier Hero case's137s after the first/late fixture leaked the
+same disabled director. One bounded fixture repair: keep director enabled, count
+normal defense ticks in totals, restore active stepping at fixture entry, and
+bound waits with real-time deadlines. Rerun only first/late and new4catch cases;
+retain three unaffected first-run cases. Runtime/point rules unchanged.
+
+Announcement repaired final2/2 passes in16seconds; retain three unaffected first
+run cases and Core8/8. Five distinct native cases, one bounded fixture repair.
+Natural recovery allows fourth legal catch; Sprout base remains authored50 plus
+global first bonus. Frozen final inputs/source match, no new OOM, all jobs terminal.
+Publish121 and same HUD row Done text with explicit no-new-player/actualpeer limits.
+Next fresh Feedback intake and reconcile history before resuming hero presentation.
+Owner study silence stays active; Docs edits allowed, no chat notification.

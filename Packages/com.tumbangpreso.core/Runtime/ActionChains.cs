@@ -3,7 +3,7 @@ using System;
 namespace TumbangPreso.Core
 {
     public enum ThrowChainEnd { Hit, Block, Miss, NoContest }
-    public enum ChainMilestone { None, AccurateThree, AccurateFive, DoubleCatch, TripleCatch }
+    public enum ChainMilestone { None, AccurateThree, AccurateFive, DoubleCatch, TripleCatch, SingleCatch, MultiCatch }
 
     // A result describes one accepted resolution. The match score authority must
     // explicitly consume Bonus; reading this value cannot award points or charge.
@@ -23,20 +23,22 @@ namespace TumbangPreso.Core
     /// </summary>
     public sealed class ActionChains
     {
-        public const double CatchWindow = 8;
+        public const double CatchWindow = 5;
         private sealed class Seat
         {
             public long LastThrow, PendingThrow, LastTag;
-            public int Accuracy, LaunchCycle, Victims;
-            public double LastDistinctCatch;
+            public int Accuracy, LaunchCycle, CatchCount;
+            public double LastCatch;
         }
         private readonly Seat[] _seats = new Seat[Balance.PlayerCount];
-        private int _lastHitCycle = -1;
+        private int _lastHitCycle = -1, _lastKnockdownCycle = -1;
+        private readonly int[] _knockdowns = new int[Balance.PlayerCount];
         public ActionChains() { ResetRound(); }
         public void ResetRound()
         {
             for (int i = 0; i < _seats.Length; i++) _seats[i] = new Seat();
-            _lastHitCycle = -1;
+            _lastHitCycle = _lastKnockdownCycle = -1;
+            Array.Clear(_knockdowns, 0, _knockdowns.Length);
         }
         private bool Valid(int seat) => seat >= 0 && seat < _seats.Length;
         public int AccuracyFor(int seat) => Valid(seat) ? _seats[seat].Accuracy : 0;
@@ -65,10 +67,9 @@ namespace TumbangPreso.Core
             {
                 _lastHitCycle = canCycle;
                 s.Accuracy++;
-                int bonus = s.Accuracy == 1 ? 0 : s.Accuracy == 2 ? 10 : s.Accuracy == 3 ? 20 : 25;
-                var milestone = s.Accuracy == 3 ? ChainMilestone.AccurateThree :
-                    s.Accuracy == 5 ? ChainMilestone.AccurateFive : ChainMilestone.None;
-                return new ChainResult(s.Accuracy, bonus, milestone);
+                // Accuracy remains a statistic. The current paid streak is accepted
+                // knockdowns since tag/round, not the retired accuracy reward schedule.
+                return new ChainResult(s.Accuracy, 0);
             }
             if (outcome == ThrowChainEnd.Block || (outcome == ThrowChainEnd.Miss && !launchCycleConsumed))
                 s.Accuracy = 0;
@@ -79,8 +80,23 @@ namespace TumbangPreso.Core
         {
             if (!Valid(seat)) return;
             _seats[seat].Accuracy = 0;
+            _knockdowns[seat] = 0;
             // A pre-tag flight cannot later rebuild this player's broken sequence.
             _seats[seat].PendingThrow = 0;
+        }
+
+        public void ResetCatchChains()
+        {
+            foreach (var seat in _seats) seat.CatchCount = 0;
+        }
+
+        public ChainResult AcceptedKnockdown(int seat, int canCycle)
+        {
+            if (!Valid(seat) || canCycle < 0 || canCycle <= _lastKnockdownCycle) return default;
+            _lastKnockdownCycle = canCycle;
+            ResetCatchChains();
+            int count = ++_knockdowns[seat];
+            return new ChainResult(count, count >= 3 ? 50 : 0);
         }
 
         public ChainResult AcceptedTag(int taya, int victim, long eventId, double activeSeconds)
@@ -88,17 +104,15 @@ namespace TumbangPreso.Core
             if (!Valid(taya) || !Valid(victim) || taya == victim || eventId <= 0 ||
                 double.IsNaN(activeSeconds) || double.IsInfinity(activeSeconds) || activeSeconds < 0) return default;
             var s = _seats[taya];
-            if (eventId <= s.LastTag || (s.Victims != 0 && activeSeconds < s.LastDistinctCatch)) return default;
+            if (eventId <= s.LastTag || activeSeconds < s.LastCatch) return default;
             s.LastTag = eventId;
             AttackerTagged(victim);
-            if (s.Victims == 0 || activeSeconds - s.LastDistinctCatch > CatchWindow) s.Victims = 0;
-            int mask = 1 << victim;
-            if ((s.Victims & mask) != 0) return default; // Neither count nor window is refreshed.
-            s.Victims |= mask; s.LastDistinctCatch = activeSeconds;
-            int count = 0;
-            for (int i = 0; i < _seats.Length; i++) if ((s.Victims & (1 << i)) != 0) count++;
-            return new ChainResult(count, count == 2 ? 10 : count >= 3 ? 25 : 0,
-                count == 2 ? ChainMilestone.DoubleCatch : count >= 3 ? ChainMilestone.TripleCatch : ChainMilestone.None);
+            if (s.CatchCount == 0 || activeSeconds - s.LastCatch > CatchWindow) s.CatchCount = 0;
+            s.LastCatch = activeSeconds;
+            int count = ++s.CatchCount;
+            return new ChainResult(count, count >= 2 ? 25 : 0,
+                count == 1 ? ChainMilestone.SingleCatch : count == 2 ? ChainMilestone.DoubleCatch :
+                count == 3 ? ChainMilestone.TripleCatch : ChainMilestone.MultiCatch);
         }
     }
 }
