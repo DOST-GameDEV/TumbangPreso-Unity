@@ -979,6 +979,14 @@ namespace TumbangPreso.CameraSystem
             new Key(0,0,0,0,0,0,0,true), new Key(.09f,-.08f,.03f,0,-.35f,-.32f,.25f,true),
             new Key(.18f,-.10f,-.03f,0,-.70f,.55f,.42f,true), new Key(.33f,-.05f,0,0,-.32f,.48f,.18f,true),
             new Key(.58f,0,0,0,0,0,0,true) };
+        private static readonly Key[] WaterwallLiftClip = {
+            new Key(0,0,0,0,0,0,0,true),
+            new Key(.08f,.12f,.03f,-.06f,.10f,-.03f,.06f,true),
+            new Key(.18f,-.24f,.06f,-.14f,-.28f,-.06f,.14f,true),
+            new Key(.25f,-.45f,.10f,-.20f,-.55f,-.10f,.20f,true),
+            new Key(.36f,-.43f,.10f,-.19f,-.51f,-.10f,.19f,true),
+            new Key(.52f,-.18f,.04f,-.10f,-.23f,-.04f,.10f,true),
+            new Key(.78f,0,0,0,0,0,0,true) };
         private static readonly Key[] MirrorFeintClip = {
             new Key(0,0,0,0,0,0,0,true), new Key(.14f,-.25f,-.16f,-.08f,-.18f,.28f,.12f,true),
             new Key(.30f,-.12f,.20f,.04f,-.28f,-.18f,.20f,true), new Key(.47f,-.05f,.08f,0,-.10f,-.06f,.08f,true),
@@ -1114,6 +1122,7 @@ namespace TumbangPreso.CameraSystem
                   : clip == "seance-channel" ? SeanceChannelClip
                   : clip == "cast-hex" ? CastHexClip
                   : clip == "blink" ? BlinkClip
+                  : clip == "waterwall-lift" ? WaterwallLiftClip
                   : clip == "current-cut" ? CurrentCutClip
                   : clip == "mirror-feint" ? MirrorFeintClip
                   : clip == "breakwater-release" ? BreakwaterReleaseClip

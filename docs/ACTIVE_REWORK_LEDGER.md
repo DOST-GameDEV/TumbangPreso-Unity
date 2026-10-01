@@ -3173,3 +3173,34 @@ No mechanics/timing/width/collision/protocol change from121. Bake only new Rafi
 clip/reference; preserve all existing models/arms/other hero assets. Material
 sample and actual body/FPP motion review required; no SFX/listening completion
 claim in this unit. Owner study silence continues; no chat pings.
+
+Targeted Rafi wall bake succeeded in51seconds. Existing three clips/meta unchanged;
+only new hero-rafi-wall.anim/meta and one person_rafi.asset reference added. Native
+GUID3b02d45fb4ee5731dafbef9225991e70; no new OOM. Distinct0.25s two-palm lift/body
+scoop and FPP path now route through existing cast confirmation. Four edge rivulets
+use field-age property/UVs, leaving other water types at shader default. Native
+one-case motion review now captures60frames each owner/witness, actual single-use
+interception/collapse, baked-clip binding, real arm/torso motion and deterministic
+replay material sampling. No input/mechanics/SFX/protocol change; no repair used.
+
+Waterwall review first launch stopped at a missing Visual namespace on the new
+fixture ColourGrade reference. No runtime case executed or movie produced. One
+bounded fixture repair qualifies the type; runtime/assets unchanged. Retry the
+same one-case motion review once, retaining compiler log. Bake remains valid.
+
+Waterwall v2 native1/1 produces60frames per owner/witness and real collapse, but
+review catches an incomplete FPP route: the new position path had no rotational
+clip mapping, so it produced camera kick/static palms. Extend ownership to
+Camera/ViewmodelArms.cs new wall-only Key array/mapping and require real palm
+offset in the native test. Body contact pose also crowds the oversized cheeks;
+spread/lower the palms before rebaking only the wall clip. This is a demonstrated
+presentation correction, not another fixture repair or an unchanged rerun.
+
+Waterwall v3 strengthened native1/1 passes real body/FPP motion, first-contact
+collapse and deterministic material replay.120frames across two views inspected;
+2second30fps silent film retained. Arm94.8/torso14.4degrees, source/assets/frozen
+inputs match, no new OOM. Bake preserves all old clips/GUIDs; only new wallasset
+and Rafi reference ship. One fixturecompile repair and one actual presentation
+correction, not a broad suite. Still partly pane-like in stills; icons/SFX/final
+quality remain. Publish coherent unit, then correct known Rafi icon mismatches.
+Owner study silence active; no chat message. All native jobs terminal.

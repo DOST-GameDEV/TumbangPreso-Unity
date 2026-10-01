@@ -15,6 +15,7 @@ namespace TumbangPreso.Visual
         private LineRenderer _foam;
         private Vector3[] _vertices;
         private MaterialPropertyBlock _block;
+        private float _sampleAge;
         private Transform _echo, _leftArm, _rightArm, _head, _leftLeg, _rightLeg;
         private Renderer[] _echoRenderers;
         public float LifeSeconds => _state.Duration;
@@ -55,11 +56,14 @@ namespace TumbangPreso.Visual
             _surface.shadowCastingMode=ShadowCastingMode.Off;_surface.receiveShadows=false;
             Paint(_surface,new Color(.16f,.60f,.77f,.27f));
             _surface.sharedMaterial.SetFloat("_UseVertexTint",1);
+            _surface.sharedMaterial.SetFloat("_CurtainFlow",1);
             _vertices=new Vector3[WallColumns*WallRows];
             var colours=new Color[_vertices.Length];
+            var uv=new Vector2[_vertices.Length];
             var triangles=new int[(WallColumns-1)*(WallRows-1)*6];int at=0;
             for(int x=0;x<WallColumns;x++) for(int row=0;row<WallRows;row++)
             {
+                uv[x*WallRows+row]=new Vector2(x/(float)(WallColumns-1),WallHeight[row]);
                 // Quiet centre, denser curled lip and wet source. No opaque pane.
                 float alpha=row==0?.10f:row==1?.65f:row==2?.27f:row==3?.18f:1;
                 float side=Mathf.Abs(x/(float)(WallColumns-1)*2-1);
@@ -69,7 +73,7 @@ namespace TumbangPreso.Visual
                 triangles[at++]=v;triangles[at++]=w;triangles[at++]=v+1;
                 triangles[at++]=w;triangles[at++]=w+1;triangles[at++]=v+1;
             }
-            _mesh.vertices=_vertices;_mesh.colors=colours;_mesh.triangles=triangles;
+            _mesh.vertices=_vertices;_mesh.colors=colours;_mesh.uv=uv;_mesh.triangles=triangles;
             var lip=new GameObject("RollingCurtainLip");lip.transform.SetParent(transform,false);
             _foam=lip.AddComponent<LineRenderer>();_foam.useWorldSpace=false;
             _foam.positionCount=WallColumns;_foam.widthMultiplier=.026f;
@@ -163,6 +167,7 @@ namespace TumbangPreso.Visual
         public void StepTo(float seconds)
         {
             float age = Mathf.Clamp(seconds, 0, LifeSeconds);
+            _sampleAge = age;
             float fade = Mathf.Clamp01((LifeSeconds - age) / .22f);
             if (_state.Type == WorldEffectSnapshot.Kind.Mirrorwake) { Echo(age, fade); return; }
             if (_state.Type == WorldEffectSnapshot.Kind.Waterwall) { Wall(age,fade); return; }
@@ -237,7 +242,7 @@ namespace TumbangPreso.Visual
             Tint(_foam, new Color(.54f, .86f, .91f, .5f * reveal * fade));
         }
         private void Tint(Renderer renderer, Color colour)
-        { _block.Clear(); _block.SetColor("_Color", colour); _block.SetColor("_BaseColor", colour); renderer.SetPropertyBlock(_block); }
+        { _block.Clear(); _block.SetColor("_Color", colour); _block.SetColor("_BaseColor", colour); _block.SetFloat("_FlowAge", _sampleAge); renderer.SetPropertyBlock(_block); }
         private void OnDestroy() { if (_mesh != null) Destroy(_mesh); }
     }
 }

@@ -10,11 +10,32 @@ namespace TumbangPreso.Visual
         {
             var paths=ResolvePaths(root);
             if(paths==null)throw new System.InvalidOperationException("Rafi rig is missing a required bone.");
-            var clips=new[]{BuildRafiCut(paths),BuildRafiFeint(paths),BuildRafiBreakwater(paths)};
+            var clips=new[]{BuildRafiCut(paths),BuildRafiFeint(paths),BuildRafiBreakwater(paths),BuildRafiWall(paths)};
             foreach(var clip in clips)GroundIntroduction(clip,root,paths["root"],anchorToRest:true);
             return clips;
         }
+        public static AnimationClip BuildRafiWallAuthored(Transform root)
+        {
+            var paths=ResolvePaths(root);
+            if(paths==null)throw new System.InvalidOperationException("Rafi wall rig is missing a required bone.");
+            var clip=BuildRafiWall(paths);
+            GroundIntroduction(clip,root,paths["root"],anchorToRest:true);
+            return clip;
+        }
 #endif
+        private static AnimationClip BuildRafiWall(Dictionary<string,string> paths)
+        {
+            var b=new ClipBuilder("hero-rafi-wall",paths);
+            PoseKey(b,0,0,V(0,0,0),V(0,0,0),V(0,0,15),V(0,0,-15));
+            // Knees gather the low water; both palms raise it instead of cutting sideways.
+            PoseKey(b,.08f,-.045f,V(14,-4,0),V(-6,2,0),V(-22,-6,28),V(-22,6,-28),V(-10,0,4),V(8,0,-4));
+            PoseKey(b,.18f,-.03f,V(6,0,0),V(-5,0,0),V(-55,-12,60),V(-55,12,-60),V(-6,0,3),V(5,0,-3));
+            PoseKey(b,.25f,-.01f,V(-5,0,0),V(-5,0,0),V(-82,-12,74),V(-82,12,-74),V(-3,0,2),V(3,0,-2));
+            PoseKey(b,.36f,-.01f,V(-3,0,0),V(-3,0,0),V(-76,-10,70),V(-76,10,-70),V(-3,0,2),V(3,0,-2));
+            PoseKey(b,.52f,-.015f,V(2,0,0),V(0,0,0),V(-48,-14,34),V(-48,14,-34));
+            PoseKey(b,.78f,0,V(0,0,0),V(0,0,0),V(0,0,15),V(0,0,-15));
+            return b.Build();
+        }
         private static AnimationClip BuildRafiCut(Dictionary<string, string> paths)
         {
             var b = new ClipBuilder("hero-rafi-cut", paths);

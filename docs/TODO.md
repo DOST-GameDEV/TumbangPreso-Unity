@@ -102,6 +102,10 @@ Gameplay implemented; three native cases and current six Core cases pass.
 Transparency/broken-state views inspected, but the first sheet reads as glass
 and needs the planned distinct body/FPP/material/audio pass. Protocol117.
 Shipped fb41d20e, integrated845e65ad and remote verified. [Evidence](reports/hero-quality-2026-10-01/wall-tutorial-checks/README.md).
+Dedicated body/FPP lift and age-driven edge rivulets now have a native motion
+check and a shipping clip reference; review corrected cheek crowding and a missing
+FPP route. Icons/SFX and final material critique remain.
+[Motion evidence](reports/hero-quality-2026-10-01/wall-motion-checks/README.md).
 
 ### TUTORIAL-REFINE-1001: latest human notes
 

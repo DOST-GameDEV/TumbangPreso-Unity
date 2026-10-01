@@ -209,6 +209,13 @@ namespace TumbangPreso.CameraSystem
             { "current-cut", new CastPath(.18f, false,
                 Rest(0), K(.08f, .04f, .02f, -.04f, -.08f, .32f, .08f),
                 K(.18f, .02f, .04f, -.06f, .24f, .22f, .14f), K(.36f, .02f, .04f, -.06f, .23f, .22f, .13f), Rest(.76f)) },
+            // WATER WALL. A shallow scoop, then two open palms framing the clear centre.
+            { "waterwall-lift", new CastPath(.25f, true,
+                Rest(0), K(.08f, .05f, -.10f, .04f, -.05f, .10f, .04f),
+                K(.18f, .06f, .06f, .12f, -.06f, .28f, .12f),
+                K(.25f, .10f, .18f, .16f, -.10f, .40f, .16f),
+                K(.36f, .11f, .17f, .15f, -.11f, .39f, .15f),
+                K(.52f, .06f, .05f, .07f, -.06f, .20f, .07f), Rest(.78f)) },
             // MIRRORWAKE. A real feint: a big sell to the right, held a beat, then the cut back left.
             { "mirror-feint", new CastPath(.14f, false,
                 Rest(0), K(.14f, .16f, .02f, .06f, .10f, .24f, .04f), K(.20f, .16f, .02f, .06f, .10f, .24f, .04f),

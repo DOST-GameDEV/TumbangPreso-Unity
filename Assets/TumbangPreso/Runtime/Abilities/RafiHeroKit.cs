@@ -110,7 +110,7 @@ namespace TumbangPreso.Abilities
                 RafiRules.WallCooldown, glyph: AbilityGlyph.RafiCrosscurrent,
                 summary: "Place a single-use curtain. People pass through.",
                 telegraphRadius: RafiRules.WallHalfWidth, telegraphRange: RafiRules.WallRange,
-                castAction: "hero-rafi-cut", viewmodelAction: "current-cut", castCue: "sfx_cast_rafi_current")
+                castAction: "hero-rafi-wall", viewmodelAction: "waterwall-lift", castCue: "sfx_cast_rafi_current")
             { AimByHolding(.75f,RafiRules.WallRange,.4f,0,whereLooking:true); }
             public override bool CanActivate(AbilityContext ctx)
                 => base.CanActivate(ctx) && ctx.Motor.IsDefender
