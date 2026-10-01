@@ -1,7 +1,8 @@
 # Hero quality research, October1
 
 Status: researched design proposal and implementation plan, not final game art
-or shipped new-kit behaviour. Proposed Wiki cells are published with attribution. Current code is protocol112 after published Haunted integration.
+or shipped new-kit behaviour. Proposed Wiki cells are published with attribution. The original research baseline was protocol112. Later gameplay and Feedback
+shipments are tracked in TODO; this research header is not the current build identity.
 No new game build, actual-peer qualification or human aesthetic approval here.
 
 1. [Owner scope and priority](brief.md)

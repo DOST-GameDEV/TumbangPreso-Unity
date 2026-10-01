@@ -3184,3 +3184,17 @@ follow-through on current integration, not repeated120clean pair. Preserve old
 117failed aggregate and its character recovery scope. Read driver timing before
 selecting one bounded current-player run; do not weaken acceptance gates.
 
+RAFI-WATERWALL-PRESENTATION-1001 owns only Waterwall presentation fields in
+Abilities/RafiHeroKit.cs; Visual/HeroAbilityClips.Rafi.cs and its BuildAll mapping,
+CharacterAnimator action mapping; Camera/ViewmodelArms.CastGesture.cs waterwall
+entry; Editor/RafiMotionAuthor.cs targeted wall bake; new rafi-motion wall clip
+and Resources/Roster/person_rafi.asset clip reference; RafiWaterVisual.cs and
+Resources/Shaders/RafiWater.shader; RafiExpansionProbe.cs focused presentation.
+Fresh3ee5b506 integrated terrain prediction; contributor's Skim prediction stays
+untouched. Current curtain pixels still resemble a clear pane; wall currently
+reuses Crosscurrent's body/FPP cut. Author a distinct planted two-palm lift to
+match0.25s gather, deterministic sparse downward rivulets and quiet centre.
+No mechanics/timing/width/collision/protocol change from121. Bake only new Rafi
+clip/reference; preserve all existing models/arms/other hero assets. Material
+sample and actual body/FPP motion review required; no SFX/listening completion
+claim in this unit. Owner study silence continues; no chat pings.

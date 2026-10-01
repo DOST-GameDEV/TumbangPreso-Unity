@@ -38,3 +38,21 @@ Placement success/refusal with no resource loss, first crossing only, correct
 approach side/owner/loose result, no human collider, timeout/round cleanup, scoped
 world recovery and render-only replay. Capture native active/broken views and
 critique transparency/edge clarity. Matching actual peers remain a separate gate.
+
+## Current presentation unit
+
+Native critique: the full sheet is too uniformly clear, so a curled lip alone
+still reads as glass. Its cast also reuses Crosscurrent's lateral cutting motion.
+Keep the proven collision/lifetime unchanged. Give Water wall a planted, shallow
+knee/hip scoop, simultaneous palm rise to the0.25second gather, a short open hold
+and relaxed return. First-person hands lift along the sides of the view, leaving
+the can sightline open. Bake a dedicated shipping clip rather than rely on the
+Editor-only generated fallback.
+
+Use four deliberately placed edge rivulets with differing curves/speeds, sampled
+from the field's age rather than global shader time. Their downward movement
+makes the material readable without a full-screen refraction pass, opaque blue
+pane or another particle cloud. Keep the centre quiet, and drain every layer
+through the existing one-use break state. Judge actual body/FPP and effect motion,
+including interrupted retirement. Existing skill sound suppression stays until
+a separately listened replacement unit is ready.
