@@ -137,6 +137,7 @@ namespace TumbangPreso
             if (_ears == null) return;
 
             var head = UnityEngine.Camera.main;
+            UpdateHauntedAudio(head);
 
             if (head == null)
             {

@@ -189,3 +189,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Spectator round-card visibility correction](spectator-break.md).
 
 [Nemu Haunt chase and scoped live/terminal delivery](nemu-kuro-haunt.md).
+
+[Haunted local sight and listener behavior](haunted-perception.md).

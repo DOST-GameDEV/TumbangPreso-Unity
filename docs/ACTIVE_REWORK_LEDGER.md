@@ -1782,3 +1782,24 @@ camera in LateUpdate. Reuse the viewed local body's authoritative Haunted clock;
 restore on clear/reset, view exit, round exit and component teardown. Do not
 apply global map lighting, authored clip or other-character changes. No renderer,
 audible filter or current113 peer qualification yet. Full goal remains active.
+
+HAUNTED-PERCEPTION-1001 owns Visual/HauntedPerception.cs/meta, ColourGrade.cs,
+ColourGrade.Experiments.cs, Shaders/ColourGrade.shader, AudioDirector.cs and new
+AudioDirector.Haunted.cs/meta plus focused HauntedPerceptionTests. Source8910a50aa
+current, no incoming commits. Missing functional status: local-victim depth-based
+near sight and listener low-pass; shared helper gates main/active/local HeroStrike
+view, round, replay, menu and spectator. Existing grade/depth ownership reused;
+no map fog/lighting or authored clips changed. Native viewer/cleanup and actual
+near/far render questions next; no pass or audible qualification claim yet.
+
+HAUNTED-PERCEPTION-1001 final native2/2passes. Real CameraRig.Follow/grade/listener
+paths cover local victim/other seat/replay/round/clear/view/component exit; near3m
+stays readable and far10m is hidden. Cleared PNG byte-identical to before; native
+before/active960x540 inspected. Filter routing/configuration/cleanup qualified,
+not recorded audible mix. First preparation launch overlapped by2.315seconds,
+stopped only matched Unity17412; guard restored inputs. One bounded sequencing
+repair:650hashes verified before final start, no drift afterward; ten owned
+files match candidate. Jobs50235/65991/36162 terminal. No authored assets, map
+fog/lighting, loading, paid calls or other chats. Publish original same-row note
+with current-peer/audible/whole-kit limits, then continue remaining Feedback
+bottom-up and practical bugs. Current protocol113player remains unbuilt.

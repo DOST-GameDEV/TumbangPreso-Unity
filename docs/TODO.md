@@ -274,7 +274,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   round-bounded completion and existing companion presentation. Scoped familiar
   movement/terminal recovery rejects stale/reviving packets. Native chase/receiver
   checks and exact limits: [Haunt evidence](reports/feedback-2026-09-30/nemu-kuro-haunt.md).
-  Nearsight/audio, current actual peers and full-kit qualification remain open.
+  Haunted local near sight/listener filtering now passes two native cases,
+  including actual near/far pixels, byte-identical cleared frame, view/round/replay
+  and component cleanup. [Perception evidence](reports/feedback-2026-09-30/haunted-perception.md).
+  Audible mix, current actual peers and full-kit qualification remain open.
 
 - [x] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,
   no Escape return to title, queue cancel button, hamburger background, stamina drain.
