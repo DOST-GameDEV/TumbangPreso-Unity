@@ -56,8 +56,12 @@ first; the CURRENT STATE entries under it are the detailed record, newest first.
      the evaluated mesh. Fix it in the kit, re-export, rebuild.
   3. PERFORMANCE: 6.4 M triangles (trees 2.8 M, heritage 760 k, eastside 640 k, rooftops 323 k); only
      cull LODs so far. Measure the frame rate, then real LODs or simpler far trees and rooftops.
-  4. Owner decisions still open: the train hidden by the solid parapet (railing recommended), cable
-     shadows on the court (the low sun makes them stripe it), Rizal Hall's size from the court, names.
+  4. Owner decisions still open: cable shadows on the court (the low sun makes them stripe it),
+     Rizal Hall's size from the court, names. CLOSED 2026-10-01, the train behind the parapet: a ray
+     test (court, both pavements, third-person camera heights) sees 0% of the consist with the solid
+     parapet AND with a railing, because the DECK hides it; the railing was built, measured and
+     reverted. The pass is the recording (`sfx_lrt_pass`, raised -16 to -8 dB on the owner's ask for a
+     loud LRT sfx) plus the existing camera shake.
   5. Real voice recordings would beat the synthesized taho call, "salamat po" and the giggles (drop in
      files with the same names). Repo size: the Unity art is about 231 MB with no LFS.
 
