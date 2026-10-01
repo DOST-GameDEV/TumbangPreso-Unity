@@ -3069,3 +3069,20 @@ Haunted spacing final3/3passes,697input hashes no drift, no native repair.
 prior four normal query checks without a combined-run claim. Next coherent
 network/gameplay follow-through from current queue; all local helpers terminal.
 
+
+NETWORK120-PLAYER-1001: c26c5c34b remote verified. One current internal Windows
+build then actual direct UDP host/client through ordinary round2, using existing
+run_demo_lan.py --seconds150 and separate guarded profiles. Freeze tracked inputs
+and executable/runtime hashes. This addresses stale114general peer qualification;
+not specific120skill/rejoin/loss/cross-platform proof. One build/pair, no unchanged
+retry. Prior89524/24002terminal. Loading/assets/protected private dirt unchanged.
+
+
+Current120build2141MB/109s succeeds,15440input hashes no drift. Actual identical
+Windows UDP host/client PASS through active round2/defender1/structural5B80664C;
+client150s/host163s are different sample instants, host handover follows client
+exit. RuntimeSHAeb06179b8f451b6d31dae716fa514b3122dd0b70be5b4dca98e7473e02ae8656.
+59960/34750/67840terminal; profiles/inputprefs preserved, own players/port absent.
+No unchanged retry or every-skill/rejoin/loss claim. Feedback charge Notes corrected
+to current can-down rule through required-revision single replacement/readback;
+human columns intact. Publish receipts, then bot landing-on-raised-terrain hunt.

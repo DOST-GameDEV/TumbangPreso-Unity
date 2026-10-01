@@ -252,6 +252,12 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   cover sight range, recovery, Classic and companion/absent-body behavior.
   [Evidence](reports/feedback-2026-09-30/haunted-spacing.md).
 
+- [x] NETWORK120-PLAYER-1001: actual identical Windows UDP host/client candidate
+  reaches active round2with matching structural state. One109second build,
+ 15440inputs without drift and one passing existing pair, no source retry.
+  Clean local admission/round progression only; broader network scope stays open.
+  [Evidence](reports/feedback-2026-09-30/network120-actual-player.md).
+
 - [x] HELD-SEAT-PICKS-1001: matching-token reclaim retains picks and takeover
   rating; Identify cannot replace fixed match choices with local preferences.
   Five distinct native cases cover repeated cycles, fresh account state, foreign
@@ -4011,5 +4017,3 @@ movement/equipment/network/graphics/TODO scope remains open.
   Logs/inday-source-arm-author-v2; prior motion in Logs/inday-source-arm-motion-v1.
   Retain existing animations, source proportions, material and character palette.
   Resolve framing and remove obsolete reconstruction code/assets when resumed.
-
-

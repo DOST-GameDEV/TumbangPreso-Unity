@@ -235,3 +235,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Bot spacing query allocation measurement and retained claims](bot-spacing-allocation.md).
 
 [Haunted bot spacing claims and preserved ordinary court reading](haunted-spacing.md).
+
+[Current120actual direct players through round2and exact limits](network120-actual-player.md).
