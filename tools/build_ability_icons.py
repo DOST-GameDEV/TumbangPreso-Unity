@@ -845,11 +845,23 @@ def status_hexed(a):
         a.add(a.band([(x0 + 30, y0 - 40), (x0 - 30, y0 + 40)], 16), CREAM)
 
 
+def status_haunted(a):
+    # Reduced perception: an eye obscured by a dark veil, in the status badge family.
+    _badge(a)
+    a.add(a.poly([(175, 510), (320, 365), (510, 300), (710, 365),
+                  (850, 510), (710, 655), (510, 720), (320, 655)]), CREAM)
+    a.add(a.circle(510, 510, 180), WITCH)
+    a.add(a.circle(510, 510, 95), KURO, shade=False)
+    a.add(a.circle(465, 465, 37), LILAC, shade=False)
+    a.add(a.band([(265, 280), (770, 765)], 100), KURO)
+    a.add(a.band([(300, 282), (790, 730)], 24), PLUM, shade=False)
+
+
 STATUSES = {"StatusWhirled": status_whirled, "StatusChilled": status_chilled,
             "StatusFrozen": status_frozen, "StatusTagged": status_tagged, "StatusRooted": status_rooted,
             "StatusConcussed": status_concussed, "StatusFeared": status_feared,
             "StatusDisoriented": status_disoriented, "StatusVulnerable": status_vulnerable,
-            "StatusDrained": status_drained, "StatusHexed": status_hexed}
+            "StatusDrained": status_drained, "StatusHexed": status_hexed, "StatusHaunted": status_haunted}
 
 
 # the nine job glyphs, for any power without a bespoke picture

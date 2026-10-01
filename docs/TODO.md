@@ -43,7 +43,10 @@ including actual bound recovery and requirement-refusal/corrected-cast behavior.
 Score feed now has three-second lifetime and smooth interrupted top-down reflow;
 one native case and small capture pass.
 [Feed evidence](reports/feedback-2026-09-30/feed-stack-checks/README.md).
-The combined row remains open for status stacking and announcement bonuses/duration.
+Live status stacking now retains the catalog with adaptive bottom-up columns,
+real timers and a Haunted icon. Two distinct native cases pass; dense case
+repeated after sprite import. [Status evidence](reports/feedback-2026-09-30/status-stack-checks/README.md).
+The combined row remains open for announcement bonuses/duration.
 
 
 ### PENALTY-REVAMP-1001: current Harry timing revision

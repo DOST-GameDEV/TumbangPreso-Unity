@@ -53,7 +53,8 @@ namespace TumbangPreso.UI
             bool glyph = _bindingGlyph != null && _bindingGlyph.enabled;
             bool progress = _progress != null && _progress.transform.parent.gameObject.activeSelf;
             float words = Mathf.Min(glyph ? 820 : 900, _prompt.preferredWidth);
-            float width = Mathf.Max(300, words + (glyph ? 136 : 56));
+            float width = Mathf.Min(_statusPromptMaxWidth, Mathf.Max(300, words + (glyph ? 136 : 56)));
+            _prompt.horizontalOverflow = HorizontalWrapMode.Wrap;
             float left = (1100 - width) * .5f;
             OwnerUiLayout.Place(_promptPlate.rectTransform, left, 0, width, progress ? 102 : 74);
             if(glyph)
@@ -62,9 +63,12 @@ namespace TumbangPreso.UI
                 OwnerUiLayout.Place(_prompt.rectTransform, left + 108, 0, width - 136, 74);
             }
             else OwnerUiLayout.Place(_prompt.rectTransform, left + 28, 0, width - 56, 74);
+            float textHeight = Mathf.Max(74, _prompt.preferredHeight + 12);
+            _prompt.rectTransform.sizeDelta = new Vector2(_prompt.rectTransform.sizeDelta.x, textHeight);
+            _promptPlate.rectTransform.sizeDelta = new Vector2(width, textHeight + (progress ? 28 : 0));
             if(_progress != null)
-                OwnerUiLayout.Place((RectTransform)_progress.transform.parent, left + 28, 80, width - 56, 10);
-            OwnerUiLayout.Place(_context.rectTransform, 0, progress ? 108 : 77, 1100, 66);
+                OwnerUiLayout.Place((RectTransform)_progress.transform.parent, left + 28, textHeight + 6, width - 56, 10);
+            OwnerUiLayout.Place(_context.rectTransform, left, textHeight + (progress ? 34 : 3), width, 66);
         }
 
         private const float ChipWidth = 240, ChipHeight = 64, ClockWidth = 232, BarTop = 12;

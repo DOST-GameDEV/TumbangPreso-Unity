@@ -57,6 +57,7 @@ namespace TumbangPreso.UI
             // HERO-10 v3: Phaister's curses.
             if (body.IsDrained) into.Add(StatusKind.Drained);
             if (body.IsHexed) into.Add(StatusKind.Hexed);
+            if (body.IsHaunted) into.Add(StatusKind.Haunted);
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
