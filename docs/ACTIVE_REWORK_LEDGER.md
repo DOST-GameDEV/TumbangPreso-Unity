@@ -3768,3 +3768,12 @@ halfway/no-overshoot/exact-prediction and release-hide pass, stroke106pixels.
 Evidence aim-circle-cadence-checks. Exact candidate125; source126 Quick Circuit
 changes remain separately qualified. Release aiming paths after publication.
 Next resume feedback queue; foliage waits for the unpushed Ilalim rework.
+
+RAFI-CAST-CLARITY-1001 claims only the Rafi condition in
+Runtime/Abilities/HeroAbilitySystem.cs and Tests/PlayMode/RafiExpansionProbe.cs.
+The previous measured Skim film showed generic blue cast particles competing
+with the actual sole-working motion and loaded meniscus. Rafi's abilities now
+have their own directed water tells; suppress only his redundant generic flash,
+retain ground-target confirmation and all other heroes. Validate an accepted
+Skim cast retains its load/coating/motion and a non-Rafi flash control. No SFX,
+kit rules, authored clips or protected characters change.
