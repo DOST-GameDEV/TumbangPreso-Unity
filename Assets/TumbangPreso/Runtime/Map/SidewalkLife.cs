@@ -2629,7 +2629,8 @@ namespace TumbangPreso
             near *= Reach;
             far *= Mathf.Max(1f, Reach * .5f);
             if (RecordSounds) SoundLog.Add(new Heard { Time = _clock, Clip = clip.name, At = at, Gain = gain, Pitch = pitch, Near = near, Far = far });
-            if (!Application.isPlaying || AudioListener.pause || gain <= .001f) return;
+            if (!Application.isPlaying || gameObject.layer == UI.MapPreviewSurface.PreviewLayer
+                || AudioListener.pause || gain <= .001f) return;
             var ear = Ear();
             if (ear.HasValue && (ear.Value - at).sqrMagnitude > far * far * 1.3f) return;
             if (_voices.Length == 0) BuildVoices();

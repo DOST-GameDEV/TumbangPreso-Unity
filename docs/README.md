@@ -81,3 +81,5 @@ Replay trail capture inventory reuse: [native evidence](reports/reliability-2026
 Zack bot Overclock decision repair: [native evidence](reports/reliability-2026-10-02/bot-overclock/README.md).
 
 Current129 Windows rebuilt-Ilalim player observations: [evidence](reports/reliability-2026-10-02/ilalim-player129/README.md).
+
+Rebuilt Ilalim late preview-audio playback fix: [native evidence](reports/reliability-2026-10-02/ilalim-preview-audio/README.md).

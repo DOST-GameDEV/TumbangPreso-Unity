@@ -17,6 +17,12 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### ILALIM-PREVIEW-AUDIO-1002: repaired late street voices behind menus
+
+Actual preview created 10 enabled late voices after its silence pass. Same native
+case now passes 1/1: preview 0, normal game scope 10. Authored audio/mix unchanged.
+[Evidence](reports/reliability-2026-10-02/ilalim-preview-audio/README.md).
+
 ### BOT-OVERCLOCK-1002: repaired stale area-stun victim gates
 
 Actual Zack bot ignored ready permanent Overclock for13s outside the zap radius.

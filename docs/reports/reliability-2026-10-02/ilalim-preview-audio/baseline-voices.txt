@@ -1,0 +1,2 @@
+previewVoices=10
+gameVoices=10

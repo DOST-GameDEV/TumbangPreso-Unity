@@ -30,6 +30,44 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(90000)] public IEnumerator KantoPreviewContainsVisibleMapGeometry() => Inspect(SceneFlow.Kanto);
         [UnityTest, Timeout(90000)] public IEnumerator LagoonCovePreviewContainsVisibleMapGeometry() => Inspect(SceneFlow.LagoonCove);
         [UnityTest, Timeout(90000)] public IEnumerator IlalimPreviewContainsVisibleMapGeometry() => Inspect(SceneFlow.IlalimNgTulay);
+        [UnityTest, Timeout(90000)]
+        public IEnumerator LateStreetVoicesRemainSilentInMapPreviewButPlayInGameScope()
+        {
+            var root = new GameObject("Preview sound check", typeof(RectTransform), typeof(RawImage));
+            var preview = root.AddComponent<MapPreviewSurface>();
+            bool oldPause = AudioListener.pause; AudioListener.pause = false;
+            try
+            {
+                preview.Show(SceneFlow.IlalimNgTulay); float until = Time.realtimeSinceStartup + 45;
+                while (preview.Showing != SceneFlow.IlalimNgTulay && Time.realtimeSinceStartup < until) yield return null;
+                Assert.AreEqual(SceneFlow.IlalimNgTulay, preview.Showing);
+                yield return null; yield return null;
+                var life = Object.FindFirstObjectByType<SidewalkLife>(); Assert.IsNotNull(life);
+                Assert.AreEqual(MapPreviewSurface.PreviewLayer, life.gameObject.layer);
+                int Voices()
+                {
+                    int count = 0;
+                    foreach (var source in life.GetComponentsInChildren<AudioSource>(true))
+                        if (source.enabled && source.clip != null) count++;
+                    return count;
+                }
+                // Drive its authored story through the real runtime step. This reaches sources
+                // created after MapPreviewSurface.Silence, without a long idle wall-clock wait.
+                for (int i = 0; i < 1000; i++) life.Simulate(.1f);
+                int previewVoices = Voices();
+                life.gameObject.layer = 0;
+                for (int i = 0; i < 1000; i++) life.Simulate(.1f);
+                int gameVoices = Voices();
+                Directory.CreateDirectory("Logs/ilalim-preview-audio1002");
+                File.WriteAllText("Logs/ilalim-preview-audio1002/voices.txt",
+                    $"previewVoices={previewVoices}\ngameVoices={gameVoices}\n");
+                Assert.Greater(gameVoices, 0, "The authored street never created a normal game-scope voice.");
+                Assert.Zero(previewVoices, "Late-created street voices bypassed the map preview's audio silence.");
+            }
+            finally { AudioListener.pause = oldPause; Object.Destroy(root); }
+            yield return null;
+        }
+
         IEnumerator Inspect(string map)
         {
             var root = new GameObject("Remade preview check", typeof(RectTransform), typeof(RawImage));
