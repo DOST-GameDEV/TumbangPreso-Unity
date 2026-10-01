@@ -17,6 +17,13 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CAREER-SUBMIT-ACK-1002: retain results without acknowledgement
+
+Missing/unknown submit verdicts no longer discard queued records or witnesses.
+Actual native completion/cache mutation checks pass 10/10, including recognized
+verdicts and duplicate applied=false responses. No backend call or schema change.
+[Evidence](reports/reliability-2026-10-02/career-submit-ack/README.md).
+
 ### QUEUE-START-FAULT-1002: recover from startup dependency exceptions
 
 Actual host/join queue helpers stuck and faulted on startup errors. Native final

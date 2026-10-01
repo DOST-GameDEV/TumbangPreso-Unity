@@ -87,3 +87,5 @@ Rebuilt Ilalim late preview-audio playback fix: [native evidence](reports/reliab
 Empty replay sample allocation removal: [native evidence](reports/reliability-2026-10-02/replay-empty-capture/README.md).
 
 Queue connection startup exception recovery: [native evidence](reports/reliability-2026-10-02/queue-start-fault/README.md).
+
+Career submission acknowledgement and saved-result retention: [native evidence](reports/reliability-2026-10-02/career-submit-ack/README.md).

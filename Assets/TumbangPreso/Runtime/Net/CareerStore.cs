@@ -473,6 +473,25 @@ namespace TumbangPreso.Net
         /// a match silently deleted from a career is worse than one that never uploads: the
         /// player at least knows to say something about the second.
         /// </summary>
+        private void CompleteSubmission(string output)
+        {
+            if (string.IsNullOrWhiteSpace(output) || output.Trim() == "null")
+                throw new InvalidDataException("Career submission returned no acknowledgement.");
+            var answer = JsonUtility.FromJson<SubmitResponse>(output);
+            if (answer == null || (answer.verdict != "pending" && answer.verdict != "witnessed"
+                && answer.verdict != "disputed" && answer.verdict != "impossible" && answer.verdict != "offline"))
+                throw new InvalidDataException("Career submission returned an unknown acknowledgement.");
+            if (!string.IsNullOrWhiteSpace(answer.profile)) AdoptRemoteProfile(answer.profile);
+
+            // Known terminal verdicts also acknowledge duplicates and permanent refusals.
+            // Missing or unknown answers leave the record and its witness queued for retry.
+            LastVerdict = answer.verdict;
+            _cache.Queue.RemoveAt(0);
+            if (_cache.QueueWitness.Count > 0) _cache.QueueWitness.RemoveAt(0);
+            Save();
+            Changed?.Invoke();
+        }
+
         public async Task FlushAsync()
         {
             if (_flushing || _cache.Queue.Count == 0) return;
@@ -494,21 +513,7 @@ namespace TumbangPreso.Net
                     string output = await CloudCode.CallAsync(
                         ScriptName, new { action = "submit", record = json, witness = witness });
 
-                    var answer = JsonUtility.FromJson<SubmitResponse>(output);
-                    if (answer != null && !string.IsNullOrWhiteSpace(answer.profile))
-                        AdoptRemoteProfile(answer.profile);
-
-                    // ⚠️⚠️ THE VERDICT IS REPORTED AND NEVER RETRIED. A disputed match is
-                    // a finished piece of business: the career stats still applied, the ranked
-                    // rating did not, and submitting it again would produce the same answer. The
-                    // one thing that must not happen is the wedge `docs/TODO.md` § 94.1 records,
-                    // where one record that can never be accepted holds up every match behind it.
-                    LastVerdict = answer?.verdict ?? "";
-
-                    _cache.Queue.RemoveAt(0);
-                    if (_cache.QueueWitness.Count > 0) _cache.QueueWitness.RemoveAt(0);
-                    Save();
-                    Changed?.Invoke();
+                    CompleteSubmission(output);
                 }
 
                 Status = abandoned > 0

@@ -19,6 +19,61 @@ namespace TumbangPreso.Tests
     /// </summary>
     public class CareerAndCloudCodeTests
     {
+        [TestCase("{}")]
+        [TestCase("null")]
+        [TestCase("{\"profile\":\"\",\"applied\":false}")]
+        [TestCase("{\"verdict\":\"\"}")]
+        [TestCase("{\"verdict\":\"unknown-server-error\"}")]
+        public void UnacknowledgedSubmissionKeepsRecordAndWitness(string output)
+            => CheckSubmissionCompletion(output, false);
+
+        [TestCase("pending")]
+        [TestCase("witnessed")]
+        [TestCase("disputed")]
+        [TestCase("impossible")]
+        [TestCase("offline")]
+        public void TerminalSubmissionVerdictRemovesOnlyAcknowledgedRecord(string verdict)
+            => CheckSubmissionCompletion("{\"verdict\":\"" + verdict + "\",\"applied\":false}", true);
+
+        private static void CheckSubmissionCompletion(string output, bool acknowledged)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"), "Career checks need an isolated profile.");
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career acknowledgement check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                var cache = typeof(TumbangPreso.Net.CareerStore).GetField("_cache", flags).GetValue(career);
+                var queue = (System.Collections.Generic.List<MatchRecord>)cache.GetType().GetField("Queue").GetValue(cache);
+                var witnesses = (System.Collections.Generic.List<string>)cache.GetType().GetField("QueueWitness").GetValue(cache);
+                queue.Clear(); witnesses.Clear();
+                var first = new MatchRecord { MatchId = "first-ack-check" };
+                var second = new MatchRecord { MatchId = "second-ack-check" };
+                queue.Add(first); queue.Add(second); witnesses.Add("first-witness"); witnesses.Add("second-witness");
+                System.Exception failure = null;
+                try { typeof(TumbangPreso.Net.CareerStore).GetMethod("CompleteSubmission", flags).Invoke(career, new object[] { output }); }
+                catch (System.Reflection.TargetInvocationException error) { failure = error.InnerException; }
+                if (acknowledged)
+                {
+                    Assert.IsNull(failure); Assert.AreEqual(1, queue.Count); Assert.AreSame(second, queue[0]);
+                    CollectionAssert.AreEqual(new[] { "second-witness" }, witnesses);
+                }
+                else
+                {
+                    Assert.AreEqual(2, queue.Count, "Missing/unknown acknowledgement discarded a queued result.");
+                    Assert.AreSame(first, queue[0]); Assert.AreSame(second, queue[1]);
+                    CollectionAssert.AreEqual(new[] { "first-witness", "second-witness" }, witnesses);
+                    Assert.IsInstanceOf<InvalidDataException>(failure, "Invalid acknowledgement must reach the existing deferred-upload path.");
+                }
+            }
+            finally
+            {
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
         private const string AssetsRoot = "Assets/TumbangPreso";
         private const string CloudCodeRoot = "ugs/cloud-code";
 

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 18:57:24Z" end-time="2026-10-01 18:57:24Z" duration="0.102659">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="787" result="Failed" site="Child" start-time="2026-10-01 18:57:24Z" end-time="2026-10-01 18:57:24Z" duration="0.102659" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1931" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="787" result="Failed" site="Child" start-time="2026-10-01 18:57:24Z" end-time="2026-10-01 18:57:24Z" duration="0.091095" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16316" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1932" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="787" result="Failed" site="Child" start-time="2026-10-01 18:57:24Z" end-time="2026-10-01 18:57:24Z" duration="0.089023" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1933" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="787" result="Failed" site="Child" start-time="2026-10-01 18:57:24Z" end-time="2026-10-01 18:57:24Z" duration="0.087541" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1060" name="CareerAndCloudCodeTests" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="25" result="Failed" site="Child" start-time="2026-10-01 18:57:24Z" end-time="2026-10-01 18:57:24Z" duration="0.068566" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1066" name="UnacknowledgedSubmissionKeepsRecordAndWitness" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.UnacknowledgedSubmissionKeepsRecordAndWitness" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-01 18:57:24Z" end-time="2026-10-01 18:57:24Z" duration="0.061939" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1061" name="UnacknowledgedSubmissionKeepsRecordAndWitness(&quot;{}&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.UnacknowledgedSubmissionKeepsRecordAndWitness(&quot;{}&quot;)" methodname="UnacknowledgedSubmissionKeepsRecordAndWitness" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="714461210" result="Failed" start-time="2026-10-01 18:57:24Z" end-time="2026-10-01 18:57:24Z" duration="0.036982" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Missing/unknown acknowledgement discarded a queued result.
+  Expected: 2
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.CheckSubmissionCompletion (System.String output, System.Boolean acknowledged) [0x00168] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:64
+at TumbangPreso.Tests.CareerAndCloudCodeTests.UnacknowledgedSubmissionKeepsRecordAndWitness (System.String output) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:28
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1062" name="UnacknowledgedSubmissionKeepsRecordAndWitness(&quot;null&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.UnacknowledgedSubmissionKeepsRecordAndWitness(&quot;null&quot;)" methodname="UnacknowledgedSubmissionKeepsRecordAndWitness" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="288714850" result="Failed" start-time="2026-10-01 18:57:24Z" end-time="2026-10-01 18:57:24Z" duration="0.003719" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Invalid acknowledgement must reach the existing deferred-upload path.
+  Expected: instance of <System.IO.InvalidDataException>
+  But was:  <System.ArgumentException>
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.CheckSubmissionCompletion (System.String output, System.Boolean acknowledged) [0x001c4] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:67
+at TumbangPreso.Tests.CareerAndCloudCodeTests.UnacknowledgedSubmissionKeepsRecordAndWitness (System.String output) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:28
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1063" name="UnacknowledgedSubmissionKeepsRecordAndWitness(&quot;{\&quot;profile\&quot;:\&quot;\&quot;,\&quot;applied\&quot;:false}&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.UnacknowledgedSubmissionKeepsRecordAndWitness(&quot;{\&quot;profile\&quot;:\&quot;\&quot;,\&quot;applied\&quot;:false}&quot;)" methodname="UnacknowledgedSubmissionKeepsRecordAndWitness" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="982041181" result="Failed" start-time="2026-10-01 18:57:24Z" end-time="2026-10-01 18:57:24Z" duration="0.002284" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Missing/unknown acknowledgement discarded a queued result.
+  Expected: 2
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.CheckSubmissionCompletion (System.String output, System.Boolean acknowledged) [0x00168] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:64
+at TumbangPreso.Tests.CareerAndCloudCodeTests.UnacknowledgedSubmissionKeepsRecordAndWitness (System.String output) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:28
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1064" name="UnacknowledgedSubmissionKeepsRecordAndWitness(&quot;{\&quot;verdict\&quot;:\&quot;\&quot;}&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.UnacknowledgedSubmissionKeepsRecordAndWitness(&quot;{\&quot;verdict\&quot;:\&quot;\&quot;}&quot;)" methodname="UnacknowledgedSubmissionKeepsRecordAndWitness" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="423221014" result="Failed" start-time="2026-10-01 18:57:24Z" end-time="2026-10-01 18:57:24Z" duration="0.003257" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Missing/unknown acknowledgement discarded a queued result.
+  Expected: 2
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.CheckSubmissionCompletion (System.String output, System.Boolean acknowledged) [0x00168] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:64
+at TumbangPreso.Tests.CareerAndCloudCodeTests.UnacknowledgedSubmissionKeepsRecordAndWitness (System.String output) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:28
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1065" name="UnacknowledgedSubmissionKeepsRecordAndWitness(&quot;{\&quot;verdict\&quot;:\&quot;unknown-server-error\&quot;}&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.UnacknowledgedSubmissionKeepsRecordAndWitness(&quot;{\&quot;verdict\&quot;:\&quot;unknown-server-error\&quot;}&quot;)" methodname="UnacknowledgedSubmissionKeepsRecordAndWitness" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="224916810" result="Failed" start-time="2026-10-01 18:57:24Z" end-time="2026-10-01 18:57:24Z" duration="0.002215" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Missing/unknown acknowledgement discarded a queued result.
+  Expected: 2
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.CheckSubmissionCompletion (System.String output, System.Boolean acknowledged) [0x00168] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:64
+at TumbangPreso.Tests.CareerAndCloudCodeTests.UnacknowledgedSubmissionKeepsRecordAndWitness (System.String output) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:28
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
