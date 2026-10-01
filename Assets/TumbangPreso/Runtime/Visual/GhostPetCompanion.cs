@@ -121,8 +121,9 @@ namespace TumbangPreso.Visual
             _devourStretch=_ragePresentation!=null?Vector3.one:
                 new Vector3(Mathf.Lerp(1,1.30f,open),Mathf.Lerp(1,1.08f,open),Mathf.Lerp(1,1.08f,open));
             transform.localScale=Vector3.Scale(_baseScale,_devourStretch)*(grown*breath);
-            transform.position=_ragePresentation!=null?Vector3.Lerp(_devourStartPosition,_devourGround,open):
-                _devourGround+Vector3.up*(_originAboveFeet*grown*_devourStretch.y*breath);
+            if(!_smoothDevour)_devourRenderedGround=_devourGround;
+            transform.position=_ragePresentation!=null?Vector3.Lerp(_devourStartPosition,_devourRenderedGround,open):
+                _devourRenderedGround+Vector3.up*(_originAboveFeet*grown*_devourStretch.y*breath);
             PoseDevourFace(open);
             PoseDevourBody(open);
         }
@@ -191,15 +192,25 @@ namespace TumbangPreso.Visual
 
         public Vector3 DevourGround=>_devourGround;
         public float DevourRemaining=>_devourLeft;
-        public void RestoreDevour(Vector3 ground,float duration,float remaining,bool fullyRevealed=false)
+        public void RestoreDevour(Vector3 ground,float duration,float remaining,bool fullyRevealed=false,bool smoothPose=false)
         {
+            bool moving=smoothPose && IsDevouring;
             if(!IsDevouring)
             {
                 transform.localScale=_baseScale;RestoreFace();
                 transform.position=ground;Devour(duration,fullyRevealed);
             }
+            _smoothDevour=moving;
             _devourGround=VfxShapes.GroundPoint(ground);_devourTotal=duration;
+            if(!moving)_devourRenderedGround=_devourGround;
             StepTo(Mathf.Clamp(duration-remaining,0,duration));
+        }
+
+        public void ApplyDevourFacing(float yaw,bool smoothPose=false)
+        {
+            if(!IsDevouring || !FinitePose(_devourGround,yaw))return;
+            _devourYaw=yaw%360f;
+            if(!smoothPose || !_smoothDevour)transform.rotation=Quaternion.Euler(0,_devourYaw,0);
         }
 
         /// <summary>Move the transformed familiar without restarting its authored pose.</summary>
@@ -208,7 +219,8 @@ namespace TumbangPreso.Visual
             if (!IsDevouring || !float.IsFinite(ground.x) || !float.IsFinite(ground.y) || !float.IsFinite(ground.z)) return;
             ground = VfxShapes.GroundPoint(ground);
             Vector3 shift = ground - _devourGround;
-            _devourStartPosition += shift; _devourGround = ground; transform.position += shift;
+            _devourStartPosition += shift; _devourGround = ground; _devourRenderedGround = ground;
+            _smoothDevour = false; transform.position += shift;
         }
 
         private bool _devourStartsRevealed, _invocationPreview;
@@ -280,11 +292,14 @@ namespace TumbangPreso.Visual
 
             // Prefer the real court under an overhead bridge, just as ground skills do.
             _devourGround=VfxShapes.GroundPoint(transform.position);
+            _devourRenderedGround=_devourGround;_devourYaw=transform.eulerAngles.y;_smoothDevour=false;
             if(fullyRevealed)StepTo(0);
         }
 
         /// <summary>Where the road is under the maw. Written once, at the cast.</summary>
-        private Vector3 _devourGround;
+        private Vector3 _devourGround,_devourRenderedGround;
+        private float _devourYaw;
+        private bool _smoothDevour;
 
         /// <summary>
         /// How far his origin sits above his own lowest point, at bind scale, in metres.
@@ -393,8 +408,14 @@ namespace TumbangPreso.Visual
         /// </summary>
         private void StepDevour(float dt)
         {
-            // Review sampling and runtime use the same transformation and clock.
-            // Keep facing the court instead of spinning the face away from its victims.
+            if(_smoothDevour)
+            {
+                // Reuse the familiar's existing remote possession blend. Only the
+                // drawn pose lags; authoritative ground and remaining time do not.
+                float blend=1-Mathf.Exp(-18f*Mathf.Max(0,dt));
+                _devourRenderedGround=Vector3.Lerp(_devourRenderedGround,_devourGround,blend);
+                transform.rotation=Quaternion.Slerp(transform.rotation,Quaternion.Euler(0,_devourYaw,0),blend);
+            }
             StepTo(_devourTotal-_devourLeft+dt);
             if (_devourLeft<=0) BeginReturn();
         }
@@ -893,6 +914,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         private void BeginReturn()
         {
+            _smoothDevour=false;
             _returnFromDevour=_devourTotal>0 || IsRageFormVisible;
             _returnFrom = transform.position;
             _returnTotal = ReturnSeconds;

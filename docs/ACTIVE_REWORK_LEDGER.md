@@ -1868,3 +1868,27 @@ when build headroom permits. Separate bot investigation: AIController.Observe
 unknown-target fallback also reads truth. Handle both observation and unknown
 target decisions before claiming fair reduced perception. Neither new issue is
 claimed fixed from source inspection alone. Loading remains friend's scope.
+
+NET-FAMILIAR-SMOOTH-1001 owns NemuHeroKit.cs receive/restore binding,
+GhostPetCompanion.cs live network pose presentation and new NemuFamiliarPoseTests
+with valid meta. Existing possession presentation already uses exponential18Hz
+position/yaw smoothing. First reproduce current10Hz Haunt restore snapping using
+the actual private familiar receiver and real companion, then reuse that model
+for repeated same-phase poses while first hydration/new phase stays exact.
+Keep authoritative DevourGround/clock/terminal/authority gates and authored
+transformation/return unchanged. Source47302c716, no incoming commits, no live job
+yet. No actual-peer or new interpolation pass claimed.
+
+NET-FAMILIAR-SMOOTH-1001 reproduced native1case failure: live receipt jumps drawn
+X0->2. Final3/3passes after same-phase client position/yaw blend using existing
+18Hzformula. First/new lifetimes exact, authoritative ground/time immediate,
+terminal returns from drawn pose, no resource/contact replay. Existing actual
+receiver scope/clock/terminal/windup control passes.653hashes/no drift; four owned
+files match candidate; jobs1172/59942 terminal, no tooling repair, prefs preserved.
+No authored asset/animation or packet change; protocol114current. Publish scoped
+source/receipts and short same Nemu note; actual peer/film/human checks separate.
+Next bot source review found Observe iterates Players, but TagTarget uses Bodies:
+companion positions fall through At to immediate truth, bypassing reaction lag.
+Confirm with focused native ordinary/companion/self observations before editing;
+keep protected hero mechanics/assets intact. Haunted sensor/unknown-target handling
+is still a separate unfinished investigation. Full goal remains active.

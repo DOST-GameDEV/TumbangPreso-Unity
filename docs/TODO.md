@@ -281,6 +281,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Haunted local near sight/listener filtering now passes two native cases,
   including actual near/far pixels, byte-identical cleared frame, view/round/replay
   and component cleanup. [Perception evidence](reports/feedback-2026-09-30/haunted-perception.md).
+  Repeated client Haunt poses now blend without altering authoritative ground
+  or clocks. Actual receiver baseline reproduces snapping; final native3/3passes
+  include first/new/terminal lifetimes and existing rejection/windup controls.
+  [Network presentation evidence](reports/feedback-2026-09-30/familiar-network-smoothing.md).
   Audible mix, current actual peers and full-kit qualification remain open.
 
 - [x] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,

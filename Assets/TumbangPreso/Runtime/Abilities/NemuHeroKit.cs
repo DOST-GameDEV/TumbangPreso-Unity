@@ -407,14 +407,14 @@ namespace TumbangPreso.Abilities
                     Net.MatchRpc.Instance?.BroadcastFamiliarEffect(_castMotor.PlayerSlot);
             }
 
-            public void RestoreSeance(AbilityContext ctx, Vector3 position, float remaining)
+            public void RestoreSeance(AbilityContext ctx, Vector3 position, float remaining, bool smoothPose=false)
             {
                 var pet = Kuro(ctx); if (pet == null) return;
                 _castAnchor = position; _approaching = false; _familiar = pet;
                 // Recovery moves the existing monster and adopts its clock. It does
                 // not recreate the retired pull field or replay a hit/resource spend.
                 bool starting = !pet.IsDevouring;
-                pet.RestoreDevour(position, Duration, remaining, true);
+                pet.RestoreDevour(position, Duration, remaining, true, smoothPose);
                 if (starting)
                 {
                     ctx.Motor.AbilitySystem.Kit.Skill1.EndEarly(ctx);
@@ -544,12 +544,14 @@ namespace TumbangPreso.Abilities
                 if (phase == AcceptedUltimatePhase && !IsActive && !IsWindingUp) return false;
                 if (phase == _receivedPhase && (clock > _receivedClock ||
                     (clock == _receivedClock && remaining > 0))) return false;
+                bool smoothPose=remaining>0 && phase==_receivedPhase && phase==AcceptedUltimatePhase &&
+                    IsActive && !NetAuthority.ShouldResolve();
                 _receivedPhase = phase; _receivedClock = clock;
                 if (remaining <= 0)
                 { RestoreLiveClock(0); OnEnd(ctx); }
-                else RestoreSeance(ctx, position, remaining);
+                else RestoreSeance(ctx, position, remaining, smoothPose);
                 var pet = Kuro(ctx);
-                if (pet != null) pet.transform.rotation = Quaternion.Euler(0, yaw, 0);
+                if (pet != null) pet.ApplyDevourFacing(yaw,smoothPose);
                 AdoptUltimatePhase(phase);
                 return true;
             }

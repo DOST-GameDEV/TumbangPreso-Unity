@@ -193,3 +193,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Haunted local sight and listener behavior](haunted-perception.md).
 
 [Airburst current Wiki timing, angle and court reach](airburst-current-wiki.md).
+
+[Moving familiar receipt smoothing](familiar-network-smoothing.md).
