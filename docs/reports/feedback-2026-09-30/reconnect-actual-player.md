@@ -44,3 +44,6 @@ task players and helpers are terminal. Original Desktop/older players remain.
 Build/hash/verdict/report/log-extract receipts and the unchanged driver are in
 [reconnect-player-checks](reconnect-player-checks). Private profile backups and
 full logs stay in the isolated checkout; no profile/token data is committed.
+
+Later current121cold-rejoin case passes with stronger gates and later samples.
+The failed117runs above retain their original verdicts. See [new scoped evidence](reconnect121-actual-player.md).

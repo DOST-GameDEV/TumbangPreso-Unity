@@ -241,3 +241,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Bot landing target and shared world-flight prediction](bot-landing-terrain.md).
 
 [Skim ground continuation in loaded guides and bot predictions](skim-prediction.md).
+
+[Current121cold-process rejoin through active round2](reconnect121-actual-player.md).

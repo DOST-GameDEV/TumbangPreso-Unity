@@ -277,6 +277,12 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   cases preserve cover/court/round, load identity and ordinary flight behavior.
   [Evidence](reports/feedback-2026-09-30/skim-prediction.md).
 
+- [x] RECONNECT121-PLAYER-1001: actual same-identity cold rejoin retains seat1and
+  servercharacter2, returns as a client-controlled seat and progresses through
+  active round2with matching structural state. One124second build,15444inputs
+  without drift, one passing strengthened gate; old117failed results retained.
+  [Evidence](reports/feedback-2026-09-30/reconnect121-actual-player.md).
+
 - [x] HELD-SEAT-PICKS-1001: matching-token reclaim retains picks and takeover
   rating; Identify cannot replace fixed match choices with local preferences.
   Five distinct native cases cover repeated cycles, fresh account state, foreign

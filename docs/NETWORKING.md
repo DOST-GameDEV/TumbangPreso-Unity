@@ -13,6 +13,14 @@ Earlier114CLI admission evidence is retained with its original scope.
 The120pair predates the121announcement rules and the later bot landing helper;
 it does not qualify those changes. Announcement Core/native receipts are scoped
 separately. [Announcement evidence](reports/feedback-2026-09-30/announcement-checks/README.md).
+
+Actual121cold-process rejoin now passes on e47fa2719: peer1crashes, peer2with the
+same saved identity reclaims seat1and servercharacter2despite local preference0.
+The client-controlled seat and host progress to active round2with matching
+defender/structural state. Explicit later195/120second samples preserve the old
+117failure and add stronger round/ownership gates. Separate launches/sample times;
+no every-skill/physical-feel/loss/account-proof or later-presentation claim.
+[Current rejoin evidence](reports/feedback-2026-09-30/reconnect121-actual-player.md).
 [Hydro evidence](reports/hero-quality-2026-10-01/hydro-current-checks/README.md).
 [Skim evidence](reports/hero-quality-2026-10-01/skim-checks/README.md).
 [Water wall/tutorial evidence](reports/hero-quality-2026-10-01/wall-tutorial-checks/README.md).
