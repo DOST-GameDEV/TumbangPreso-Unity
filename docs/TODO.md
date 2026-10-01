@@ -38,14 +38,15 @@ reference video access was unavailable and is not claimed.
 Gameplay implemented; three native cases and current six Core cases pass.
 Transparency/broken-state views inspected, but the first sheet reads as glass
 and needs the planned distinct body/FPP/material/audio pass. Protocol117.
-Publication pending. [Evidence](reports/hero-quality-2026-10-01/wall-tutorial-checks/README.md).
+Shipped fb41d20e, integrated845e65ad and remote verified. [Evidence](reports/hero-quality-2026-10-01/wall-tutorial-checks/README.md).
 
 ### TUTORIAL-REFINE-1001: latest human notes
 
 Remaining dummy objective markers removed; completion renamed Tutorial Complete;
 Quit glyph/text/hit height increased25percent inside existing width. One native
 case checks three marker routes plus real layout, with small/wide captures
-inspected. Publication and same-row note/strikethrough pending. No new player claim.
+inspected. Shipped fb41d20e/845e65ad; same-row note and resolved-comment
+strikethrough read back. No new player claim.
 
 ### QUALITY-BENCHMARK-1001: deepen the finalized-work comparison
 
@@ -57,7 +58,11 @@ those protected heroes' sounds; other finalized work remains protected. Critique
 body/FPP motion, effects, framing, handoff and readability separately. Price and
 passing mechanics checks are not evidence of better creative quality. Listening
 in gameplay is required for sound judgment; silent cloud output is a real limit
-to resolve, not a quality pass.
+to resolve, not a quality pass. Both reference captures now pass their one
+case with540frames per view; source/pose/pipeline and sampled-frame critique
+is recorded in [the deeper benchmark](reports/hero-quality-2026-10-01/quality-benchmark.md).
+Exports are visual-only because current cue assets are absent; actual Unity
+audio capture remains open.
 
 ### HYDRO-CURRENT-1001: first Hydro implementation unit
 

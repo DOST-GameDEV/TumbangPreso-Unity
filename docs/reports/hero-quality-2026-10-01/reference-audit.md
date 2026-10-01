@@ -92,8 +92,9 @@ what must not replay. A replay must show the accepted event, not improve its aim
 
 ## Current audit discrepancies to retain, not silently overwrite
 
-- Live Amihan Wiki now says Airburst delay1.5s; the recently qualified runtime uses
-  2.5s. Record this fresh mismatch for reconciliation after the priority research.
+- The initial Airburst delay/fan discrepancy is now resolved by8680d9ad: current
+  runtime follows1.5seconds and60degrees. See the existing airburst-current-wiki
+  report for its evidence limits; do not reopen the historical mismatch.
 - Paete Wiki aliases Pulling Vines/Nature's Wrath and15points differ from finalized
   source LIANA LEAP/MAKILING'S EMBRACE and16points. Finalized source protection
   governs; no rename/retune is authorized by a stale or edited Wiki cell alone.
@@ -136,6 +137,6 @@ must incorporate these existing strengths rather than restart from generic prose
 Airburst throws caught players airborne; it does not require them to be airborne
 already. Corrected that mistaken draft interpretation before implementation.
 Cold Feet is a stationary chilling field, not a frost trail following footsteps;
-corrected its proposed staging to match. Current Airburst Core uses70degrees and
-2.5s, while current Wiki says60degrees and1.5s. Both numerical differences are
-recorded for a coherent mechanics reconciliation, not changed by a VFX plan.
+corrected its proposed staging to match. At this initial audit Airburst used70degrees and2.5seconds; subsequent8680d9ad
+reconciled both to the current Wiki60degrees/1.5seconds. Preserve that shipped
+mechanics correction during presentation work.
