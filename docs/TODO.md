@@ -17,6 +17,12 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### ILALIM-PREVIEW-FRAMING-1002: repaired old above-deck camera
+
+Rebuilt Ilalim preview now faces its playing street below the viaduct rather than
+the roof. Native1/1passes and actual PNG inspected; authored map/lighting unchanged.
+[Evidence](reports/reliability-2026-10-02/ilalim-preview-framing/README.md).
+
 ### ILALIM-PREVIEW-SCOPE-1002: repaired generated scenery camera leakage
 
 Rebuilt Ilalim actual preview baseline33escaped renderers; final0, native1/1passes.
