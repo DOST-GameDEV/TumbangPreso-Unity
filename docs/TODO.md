@@ -40,7 +40,10 @@ Three left-side statuses, separate warning/action regions, in-panel recovery,
 roomier match bar and count-fit pips implemented. Six distinct native cases pass,
 including actual bound recovery and requirement-refusal/corrected-cast behavior.
 [Evidence](reports/feedback-2026-09-30/harry-hud-checks/README.md).
-The combined row remains open for current announcement bonuses/duration.
+Score feed now has three-second lifetime and smooth interrupted top-down reflow;
+one native case and small capture pass.
+[Feed evidence](reports/feedback-2026-09-30/feed-stack-checks/README.md).
+The combined row remains open for status stacking and announcement bonuses/duration.
 
 
 ### PENALTY-REVAMP-1001: current Harry timing revision

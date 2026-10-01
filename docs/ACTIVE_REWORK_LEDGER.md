@@ -2940,3 +2940,8 @@ Dot a7c63f21 remote verified, no native jobs. Preserve item identity/expiry acro
 insertion, reduced-motion snap and capacity3. One focused native geometry/time/
 interrupted insertion check with capture. Status upward capacity/Haunted omission
 and announcement scoring remain subsequent coherent units. Plan retains all.
+
+Feed stack final1native passes interrupted reflow/order/independent expiry/cap3/
+reduced-motion/three-second boundaries. Small capture inspected, frozen inputs
+unchanged, no tooling repair/new OOM. Publish; status capacity/upward reflow and
+Haunted omission are next, announcement scoring afterward. No live native job.

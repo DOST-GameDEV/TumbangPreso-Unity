@@ -881,6 +881,59 @@ namespace TumbangPreso.PlayTests
             finally{SettingsStore.Current.HudScale=scale;}
         }
 
+        [UnityTest, Timeout(90000)]
+        public IEnumerator ScoreFeedReflowsWithoutResettingExpiryAndHonoursReducedMotion()
+        {
+            bool reduced = SettingsStore.Current.ReducedUiMotion;
+            try
+            {
+                yield return Open(GameMode.Classic);
+                SettingsStore.Current.ReducedUiMotion = false;
+                var feed = Object.FindFirstObjectByType<MatchEventFeed>();
+                Assert.IsNotNull(feed);
+                var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+                typeof(MatchEventFeed).GetMethod("Clear", flags).Invoke(feed, null);
+                var at = GameServices.Round.Lata.transform.position;
+                Visual.MatchFlair.Play(Visual.MatchFlair.Kind.LataDown, 1, -1, at);
+                yield return new WaitForSecondsRealtime(.22f);
+                var first = feed.Entry(0);
+                var itemsField = typeof(MatchEventFeed).GetField("_items", flags);
+                var items = (System.Array)itemsField.GetValue(feed);
+                float firstExpiry = (float)items.GetValue(0).GetType().GetField("Expires").GetValue(items.GetValue(0));
+                var row0 = (RectTransform)feed.transform.Find("Event0");
+                float oldY = row0.anchoredPosition.y;
+                Visual.MatchFlair.Play(Visual.MatchFlair.Kind.Tag, 0, 2, at);
+                var row1 = (RectTransform)feed.transform.Find("Event1");
+                Assert.AreEqual(oldY, row1.anchoredPosition.y, .1f, "Existing entry must start from its current position.");
+                Assert.AreEqual(first, feed.Entry(1));
+                yield return new WaitForSecondsRealtime(.08f);
+                Assert.That(row1.anchoredPosition.y, Is.LessThan(oldY).And.GreaterThan(-60));
+                float interruptedY = row1.anchoredPosition.y;
+                Visual.MatchFlair.Play(Visual.MatchFlair.Kind.Block, 3, 2, at);
+                var row2 = (RectTransform)feed.transform.Find("Event2");
+                Assert.AreEqual(interruptedY, row2.anchoredPosition.y, .1f, "An interrupted insertion must continue from the visible position.");
+                items = (System.Array)itemsField.GetValue(feed);
+                Assert.AreEqual(firstExpiry, (float)items.GetValue(2).GetType().GetField("Expires").GetValue(items.GetValue(2)));
+                Assert.AreEqual(3, feed.Count);
+                yield return new WaitForSecondsRealtime(.22f);
+                Assert.AreEqual(-60, row1.anchoredPosition.y, .1f); Assert.AreEqual(-120, row2.anchoredPosition.y, .1f);
+                var view = Object.FindFirstObjectByType<TumpMatchReadout>();
+                yield return TumpUiCapture.Capture("HarryHud-feed-stack-960x540", view.Canvas, 960, 540, false, true);
+                SettingsStore.Current.ReducedUiMotion = true;
+                Visual.MatchFlair.Play(Visual.MatchFlair.Kind.Tag, 0, 1, at);
+                Assert.AreEqual(3, feed.Count);
+                Assert.AreEqual(0, row0.anchoredPosition.y, .001f); Assert.AreEqual(-60, row1.anchoredPosition.y, .001f);
+                items = (System.Array)itemsField.GetValue(feed);
+                var newest = items.GetValue(0); var type = newest.GetType();
+                float born = (float)type.GetField("Born").GetValue(newest);
+                float expiry = (float)type.GetField("Expires").GetValue(newest);
+                Assert.AreEqual(3, expiry - born, .001f);
+                typeof(MatchEventFeed).GetMethod("Paint", flags).Invoke(feed, new object[] { expiry + .01f });
+                Assert.Zero(feed.Count, "Every entry must expire without a new event.");
+            }
+            finally { SettingsStore.Current.ReducedUiMotion = reduced; }
+        }
+
         private static Rect HudRevisionBounds(RectTransform root,RectTransform target)
         {
             var points=new Vector3[4];target.GetWorldCorners(points);

@@ -26,7 +26,7 @@ namespace TumbangPreso.UI
     public sealed class MatchEventFeed : MonoBehaviour
     {
         public const int Capacity = 3;
-        public const float Lifetime = 4f;
+        public const float Lifetime = 3f;
         private const float RowHeight = 54, Chip = 44, GlyphSize = 42, Pad = 5, Gap = 7, RowStep = 60, Width = 450;
 
         private sealed class Row
@@ -39,7 +39,7 @@ namespace TumbangPreso.UI
             public Text[] Tag = new Text[2];
             public HudBadge Glyph;
         }
-        private struct Item { public string Words; public int Actor, Other; public HudBadge.Glyph Glyph; public Color Accent; public float Expires, Born; }
+        private struct Item { public string Words; public int Actor, Other; public HudBadge.Glyph Glyph; public Color Accent; public float Expires, Born, StackFromY, StackMovedAt; }
 
         private readonly Row[] _rows = new Row[Capacity];
         private readonly Item[] _items = new Item[Capacity];
@@ -139,12 +139,18 @@ namespace TumbangPreso.UI
             float now = Time.unscaledTime; string key = actor + ":" + kind;
             if (_lastKey == key && now - _lastAt < .15f) return;
             _lastKey = key; _lastAt = now;
-            for (int i = Capacity - 1; i > 0; i--) _items[i] = _items[i - 1];
+            for (int i = Capacity - 1; i > 0; i--)
+            {
+                _items[i] = _items[i - 1];
+                _items[i].StackFromY = _rows[i - 1].Root.anchoredPosition.y;
+                _items[i].StackMovedAt = now;
+            }
             _items[0] = new Item
             {
                 Words = PlayerIdentity.Label(actor) + "  " + words, Actor = actor,
                 Other = other >= 0 && other < Core.Balance.PlayerCount ? other : -1,
                 Glyph = glyph, Accent = accent, Expires = now + Lifetime, Born = now,
+                StackFromY = RowStep * .35f, StackMovedAt = now,
             };
             Count = Mathf.Min(Capacity, Count + 1);
             for (int i = 0; i < Count; i++) Layout(_rows[i], _items[i]);
@@ -196,7 +202,9 @@ namespace TumbangPreso.UI
                 float fadeIn = still ? 1 : Mathf.Clamp01((now - item.Born) / .14f);
                 row.Group.alpha = Mathf.Min(fadeIn, Mathf.Clamp01((item.Expires - now) / .55f));
                 // A new row slides in from the edge, so the eye catches it without a flash.
-                row.Root.anchoredPosition = new Vector2((1 - fadeIn) * 36, row.Root.anchoredPosition.y);
+                float stack = still ? 1 : Mathf.SmoothStep(0, 1, Mathf.Clamp01((now - item.StackMovedAt) / .2f));
+                row.Root.anchoredPosition = new Vector2((1 - fadeIn) * 36,
+                    Mathf.Lerp(item.StackFromY, -i * RowStep, stack));
             }
         }
     }

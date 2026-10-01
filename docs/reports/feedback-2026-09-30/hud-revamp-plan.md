@@ -64,3 +64,11 @@ actual CharacterMotor timer; include that in the status unit with evidence.
 Tutorial throw refusal and above-can false contact were higher-priority fresh
 regressions; both are now repaired with their own focused evidence. Do not rerun
 or redo the earlier HUD layout/penalty work as a new implementation.
+
+Status capacity constraint: twelve catalog statuses cannot fit as110unit cards
+in one1080unit column, especially with enlarged text. Preserve readable names,
+actual duration rings and tooltips rather than shrinking everything or dropping
+rows. Use adaptive bottom-up columns when the available vertical space fills,
+and reserve horizontal room for action/warning panels. Keep stable status identity
+through reflow; refresh should not replay entry animation. Qualify dense overlap,
+expiry, replacement, reduced motion and enlarged HUD before calling it complete.
