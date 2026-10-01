@@ -108,6 +108,18 @@ namespace TumbangPreso.UI
                 }
             }
 
+            // A street character's offer (StreetInteractions, the Ilalim rebuild's beggar): last,
+            // below every hero prompt, and absent on every map without one.
+            if (text == null && _local != null)
+            {
+                string street = StreetInteractions.ActionFor(_local);
+                if (street != null)
+                {
+                    text = (OnTouch ? "TAP INTERACT" : "PRESS [" + KeyLabel("Interact") + "]") + " TO " + street.ToUpperInvariant();
+                    if (OnTouch) InputLayer.TouchHud.Emphasise(Verb.Interact);
+                }
+            }
+
             if (text == null)
             {
                 if (_interactCard.gameObject.activeSelf) { _interactCard.gameObject.SetActive(false); _interactShown = ""; }

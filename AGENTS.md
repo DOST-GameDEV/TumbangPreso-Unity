@@ -61,6 +61,17 @@ Do not present amplitude measurements or silent film as listening approval.
   or hand back implementable work as a human-review blocker.
 - Finish each coherent unit before switching. Record new requests, decisions,
   ownership, evidence limits, jobs and the exact next action for resumption.
+- While a test or build runs, advance useful independent work: inspect new
+  feedback, critique retained results or plan the next coherent fix. Do not
+  mutate frozen test inputs or overlap heavy Unity jobs. Recover ordinary
+  tooling failures autonomously within the bounded retry and safety rules.
+- Before compaction or resumption, preserve current source/publication identity,
+  active jobs, failures, ownership, the next action and recent owner corrections.
+  Track which owner messages already received answers; do not replay an old
+  answered question as a new request or resend an unchanged status update.
+- Maximize useful progress rather than activity for its own sake. If execution
+  must wait, critique the actual result and prepare a concrete next step; never
+  repeat unchanged tests, invent completion or burn resources as busywork.
 - Do not spawn or delegate workers, contact other conversations, buy services,
   reset usage, mutate live profiles or replace the Desktop build without explicit
   current authorization. Honor contributor reservations and private owner notes.

@@ -37,7 +37,18 @@ namespace TumbangPreso.EditorTools.MapKit
     /// </summary>
     public static class IlalimNgTulayBuilder
     {
-        public const string ScenePath = "Assets/TumbangPreso/Scenes/Maps/IlalimNgTulay.unity";
+        // ⚠️ VAULTED 2026-10-01 (ILALIM-1.6, owner: "you also need to replace the old ilalim ng tulay
+        // with this one in the map pool"): this first Ilalim lives in Scenes/Vault, out of the map
+        // registry and the build, under its own file name so it never shares a scene name with
+        // the shipped map. Scenes/Maps/IlalimNgTulay.unity (same GUID, same map index) is now the
+        // Blender rebuild, written by IlalimSceneBuilder. Rebuilding THIS map writes the vault.
+        public const string ScenePath = "Assets/TumbangPreso/Scenes/Vault/IlalimNgTulayOld.unity";
+
+        /// <summary>The scene a legacy per-map authoring tool should open for <paramref name="map"/>:
+        /// the vault for "IlalimNgTulay" (its finishing passes were written for this first Ilalim
+        /// and would rewrite the rebuild), Scenes/Maps for every other map.</summary>
+        public static string LegacyScenePath(string map) =>
+            map == "IlalimNgTulay" ? ScenePath : "Assets/TumbangPreso/Scenes/Maps/" + map + ".unity";
         private const string ModelsDir = "Assets/TumbangPreso/Art/models";
         private const string KitsDir = ModelsDir + "/kits";
 

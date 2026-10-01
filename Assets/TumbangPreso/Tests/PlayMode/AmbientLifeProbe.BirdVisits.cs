@@ -185,6 +185,7 @@ namespace TumbangPreso.PlayTests
                 File.WriteAllText(Path.Combine(Output,"bayan-bird-visits.csv"),report.ToString());
             }
         }
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest,Timeout(300000)]
         public IEnumerator IlalimBirdsKeepTheirFlightsBelowTheGuideway()
         {

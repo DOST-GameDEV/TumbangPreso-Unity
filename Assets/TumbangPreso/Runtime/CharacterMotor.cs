@@ -1471,7 +1471,8 @@ namespace TumbangPreso
         // -------------------------------------------------------------------
 
         // ⚠️ FEARED ACTS ON NOTHING (owner, 2026-09-26: *"Flee from kuro and drop slipper"*): no throw, pickup or skill.
-        public bool CanAct() => RoundActive && !IsStunned && !IsFeared && !PresentationClock.BlocksInput;
+        public bool CanAct() => RoundActive && !IsStunned && !IsFeared && !PresentationClock.BlocksInput
+            && !(AbilitySystem?.Kit?.BlocksOwnActions ?? false);
 
         // -------------------------------------------------------------------
         // § COMMITMENT
@@ -1540,7 +1541,7 @@ namespace TumbangPreso
         /// </summary>
         // ⚠️ ROOTED IS NOT A STUN AND DOES NOT STOP ANYTHING BUT THE LEGS (Paete's sentry, 2026-09-25):
         // no steering, no jump, and throwing and skills still work (`CanAct` does not read it).
-        public bool CanMove() => !IsStunned && !IsRooted;
+        public bool CanMove() => !IsStunned && !IsRooted && !(AbilitySystem?.Kit?.BlocksOwnLocomotion ?? false);
 
         public bool IsStunned => _stunLeft > 0.0f || _tripLeft > 0.0f;
         public bool HoldingSlipper { get; set; }

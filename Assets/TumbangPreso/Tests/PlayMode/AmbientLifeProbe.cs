@@ -174,6 +174,7 @@ namespace TumbangPreso.PlayTests
             }
         }
 
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest,Timeout(300000)]
         public IEnumerator IlalimPatchedAspinUsesItsStorefrontHabitat()
         {
@@ -400,6 +401,7 @@ namespace TumbangPreso.PlayTests
             }
         }
 
+        [Ignore("Vaulted with the first Ilalim ng Tulay (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this reviews that map's own authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [UnityTest,Timeout(300000)]
         public IEnumerator IlalimTuxedoCatUsesItsStorefrontWatchSites()
         {
@@ -542,7 +544,8 @@ namespace TumbangPreso.PlayTests
             var report=new StringBuilder("map,id,width,height,depth,start_x,start_y,start_z,end_x,end_y,end_z,travel,player_x,player_y,player_z,state\n");
             try
             {
-                foreach(string map in new[]{SceneFlow.Eskinita,SceneFlow.BayanPlaza,SceneFlow.IlalimNgTulay,SceneFlow.SaBubong})
+                // The Blender Ilalim (ILALIM-1.6, 2026-10-01) has no AmbientLife: its cat and dog left with the vaulted first Ilalim. docs/TODO.md ILALIM-1.7.
+                foreach(string map in new[]{SceneFlow.Eskinita,SceneFlow.BayanPlaza,SceneFlow.SaBubong})
                 {
                     yield return MapRetrievalProbe.Load(map);GraphicsProfiles.Apply(1);Time.timeScale=1;GameServices.Round.BeginRound();
                     var life=Object.FindFirstObjectByType<AmbientLife>();Assert.IsNotNull(life,map+" has no ambient integration");
@@ -609,7 +612,8 @@ namespace TumbangPreso.PlayTests
             var report=new StringBuilder("map,id,maximum_leg_rotation,minimum_ground_gap,maximum_ground_gap\n");
             try
             {
-                foreach(string map in new[]{SceneFlow.Eskinita,SceneFlow.BayanPlaza,SceneFlow.IlalimNgTulay})
+                // The Blender Ilalim (ILALIM-1.6, 2026-10-01) has no AmbientLife: its cat and dog left with the vaulted first Ilalim. docs/TODO.md ILALIM-1.7.
+                foreach(string map in new[]{SceneFlow.Eskinita,SceneFlow.BayanPlaza})
                 {
                     yield return MapRetrievalProbe.Load(map);GraphicsProfiles.Apply(1);Time.timeScale=1;GameServices.Round.BeginRound();
                     var life=Object.FindFirstObjectByType<AmbientLife>();var who=GameServices.Round.PlayerAt(1);
@@ -668,7 +672,8 @@ namespace TumbangPreso.PlayTests
             var report=new StringBuilder("map,id,leg_rotation,surface_side_dot,state_after_approach\n");
             try
             {
-                foreach(string map in new[]{SceneFlow.Eskinita,SceneFlow.BayanPlaza,SceneFlow.IlalimNgTulay})
+                // The Blender Ilalim (ILALIM-1.6, 2026-10-01) has no AmbientLife: its cat and dog left with the vaulted first Ilalim. docs/TODO.md ILALIM-1.7.
+                foreach(string map in new[]{SceneFlow.Eskinita,SceneFlow.BayanPlaza})
                 {
                     yield return MapRetrievalProbe.Load(map);GraphicsProfiles.Apply(1);Time.timeScale=1;GameServices.Round.BeginRound();
                     var life=Object.FindFirstObjectByType<AmbientLife>();var who=GameServices.Round.PlayerAt(1);

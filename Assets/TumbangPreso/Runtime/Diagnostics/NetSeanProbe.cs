@@ -45,7 +45,7 @@ namespace TumbangPreso.Diagnostics
             probe._observeExisting = Environment.GetCommandLineArgs().Contains("-tp-sean-observe-existing");
             string path = Path.GetFullPath(Argument("-tp-seantrace")); Directory.CreateDirectory(Path.GetDirectoryName(path));
             probe._writer = new StreamWriter(path) { AutoFlush = true };
-            probe._writer.WriteLine("time,elapsed,local,host,sean,pick,charged,held,s2charges,ultcharge,grounded,casterY,pose,craters,craterX,craterZ,embers,fireFlight,shoeState,shoeX,shoeY,shoeZ,frontStun,chargeRemaining,wallTime,cooldown,heldAffinity,frontX,frontY,frontZ");
+            probe._writer.WriteLine("time,elapsed,local,host,sean,pick,charged,held,s2charges,ultcharge,grounded,casterY,pose,craters,craterX,craterZ,embers,fireFlight,shoeState,shoeX,shoeY,shoeZ,frontStun,chargeRemaining,wallTime,cooldown,heldAffinity,frontX,frontY,frontZ,casterX,casterZ,s1Windup,s1Remaining,s1Cooldown,canAct,canMove,fireTrails");
         }
         private void Update()
         {
@@ -101,7 +101,8 @@ namespace TumbangPreso.Diagnostics
                 if (!_armed && elapsed >= 12) { kit.AddUltimateCharge(100); _armed = true; }
                 caster.Intent.Parked = false; caster.Intent.AimPoint = new Vector3(0, .15f, -2);
                 caster.Intent.FaceAimPoint = true;
-                caster.Intent.Set((_scenario == "ignite" || _scenario == "empowered") ? Verb.Skill2 : Verb.Ultimate, elapsed >= 12 && elapsed < 12.3f);
+                if(_scenario=="stoke" && elapsed>=12.2f && elapsed<12.65f)caster.Intent.Move=Vector2.right;
+                caster.Intent.Set(_scenario == "stoke" ? Verb.Skill1 : ((_scenario == "ignite" || _scenario == "empowered") ? Verb.Skill2 : Verb.Ultimate), elapsed >= 12 && elapsed < 12.3f);
                 if ((_scenario == "ignite" || _scenario == "empowered") && !_holdCharge) caster.Intent.Set(Verb.SpecialAbility, elapsed >= 13.4f && elapsed < 14);
             }
             var carrier = caster.GetComponent<Carrier>(); if (_shoe == null) _shoe = carrier.Held;
@@ -119,7 +120,10 @@ namespace TumbangPreso.Diagnostics
                 _shoe != null ? (int)_shoe.State : -1, shoePosition.x, shoePosition.y, shoePosition.z, front.StunLeft,
                 kit.Skill2.DurationRemaining, DateTime.UtcNow.Ticks/(double)TimeSpan.TicksPerSecond,
                 kit.Skill2.CooldownRemaining, carrier.Held != null ? (int)carrier.Held.Affinity : -1,
-                front.transform.position.x, front.transform.position.y, front.transform.position.z };
+                front.transform.position.x, front.transform.position.y, front.transform.position.z,
+                caster.transform.position.x,caster.transform.position.z,kit.Skill1.WindupRemaining,
+                kit.Skill1.DurationRemaining,kit.Skill1.CooldownRemaining,caster.CanAct()?1:0,caster.CanMove()?1:0,
+                FindObjectsByType<HeroHazards.FireTrailComponent>().Length };
             _writer.WriteLine(string.Join(",", row.Select(value => Convert.ToString(value, CultureInfo.InvariantCulture))));
         }
         private void OnDestroy() => _writer?.Dispose();

@@ -39,7 +39,7 @@ namespace TumbangPreso.EditorTools.MapKit
         }
         public static void Run()
         {
-            var scene=EditorSceneManager.OpenScene("Assets/TumbangPreso/Scenes/Maps/IlalimNgTulay.unity");
+            var scene=EditorSceneManager.OpenScene(IlalimNgTulayBuilder.ScenePath);
             var report=new StringBuilder();FinishLoadedScene(report);
             EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);AssetDatabase.SaveAssets();
             Directory.CreateDirectory("Logs/ilalim-structure");File.WriteAllText("Logs/ilalim-structure/author.txt",report.ToString());

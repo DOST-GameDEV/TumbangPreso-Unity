@@ -3995,3 +3995,75 @@ hardware/currentfuturechanges/tournament completion claim. Jobs86024/42191/76498
 terminal, preservation good. Remove ownedtmp_readiness128_fullhd.py/verifyport.
 Continue requested optimization/shader/effect readiness; preserve DOTS queue,
 authored assets and friend's broader loading. Nonstop goal remainsactive.
+
+Integrate friend map a7523a118 into current128gameplay and aura visibility, with
+all authored source/assets retained. Loading35a2bda9 already merged. No protected
+composition metas/ProjectSettings/Abilities changes. Integrated C# plus authored
+animation and scene-script gates pass46.78s. Exact new-map offline player verifies
+Ilalim+2079LagoonFoliage materials and captures a real tag; one direct-entry fixture
+repair,50.04snormalexit/noOOM. Sampled foliage green, but black/white architecture
+speckles persist even without post; rendering Feedback remains OPEN. Evidence
+rebuilt-ilalim-replay. No full integrated player, Windows/device/full-match or
+performance claim. Private capture driver restored out of candidate runtime.
+All owned heavy jobs terminal. Continue investigating the concrete graphics
+artifact or another actionable report; do not redo shipped Circuit/Empowered.
+
+CONTINUITY-1001 owns AGENTS.md and this checkpoint only. Owner reiterates useful
+independent work during tests, autonomous recovery, critical review/planning when
+execution is waiting, and durable resumption without delayed duplicate replies.
+Record the rule explicitly without widening runtime scope or parallel heavy jobs.
+Current0e9 source clean and up to date before this documentation-only edit.
+
+STOKE-STEP-1001 claims SeanHeroKit.cs signature only, HeroKit.cs default-false
+self-action/locomotion gates, CharacterMotor.cs gate reads, MatchRpc.Movement.cs
+Sean recovery handling, NetSession compatibility and SeanSkillTimingProbe.cs
+focused new cases. Own associated TODO/network/report updates. Plan follows
+hero-quality new-kit-design Stoke Step:2m grounded commitment,0.18s anticipation,
+0.25s recovery,30s cooldown; no damaging trail or contact stagger. Preserve other
+Sean slots and authored art. Source376188 clean/up to date at claim. No heavy job.
+
+Stoke Step first candidate replaces legacy rush/trail/contact damage, retains
+accepted-aim windup and adds opt-in kit action/locomotion gates. Protocol129
+candidate only, not published. Four isolated native cases running with frozen
+owned inputs under cloud-stoke-step-native. No source edits to those inputs while
+running. Independent plan/Feedback note updated to working/not shipped. Legacy
+MovementSnapshotProbe Sean-specific expectations need migration after this result;
+Zack assertions remain unchanged. No new current-player or peer claim.
+
+Stoke Step first four native cases pass4/4,46.94snormal exit/no newOOM or fixture
+repair. Add only missing body/confinement/default-kit controls, not an unchanged
+four-case rerun. Same unit also owns Sean branches in MovementSnapshotProbe.cs
+because the old emission/zero-windup expectations are explicitly superseded.
+No other hero assertions or unrelated fixture repair.
+
+Six distinct Stoke checks now pass across4+2native cases, including body collision,
+defender confinement, prediction rollback and default-false other-kit gates.
+No fixture repairs. Same unit extends existing NetSeanProbe.cs and net_sean_review.py
+with one stoke scenario; preserve other scenarios. Fresh129full player/three peers
+remain pending. Restore candidate EditorBuildSettings to the source12scenes before
+building: the stopped earlier private graphics build left its2scene scope saved.
+
+Stoke129acceptance complete: native4+2 and fresh12scene Linux player, then three
+actual peers all1.891603m forward/zero lateral under conflicting input. Recovery
+and final action gates agree, no fire/stagger/crater;30s cooldown spent once.
+Player runner43.02sexit0/noOOM; Runtime98138963..48e2e61. Full build first hit memory
+guard, one bounded retry after closing completed owned Docs preview passed77.28s.
+Inputs drift0. All heavy jobs terminal. Publish explicit owned mechanics/evidence;
+whole Pyro motion/SFX remains open. No unrelated runtime paths added.
+
+KIT-RECALL-PARITY-1001 owns AbilityInspectPanel.cs cache identity only and new
+focused cases in LoadoutSurfaceProbe.cs, plus TODO/evidence. Source inspection
+finds Bind caches only the kit object: switching its attacker/defender role keeps
+the previous role's description. Establish native baseline before fixing; no kit
+mechanics, names, descriptions, authored art or layout redesign. Current69da6bb63
+clean/up to date. Use this to finish the remaining Cheska/Dante UI parity check.
+
+KIT-RECALL-PARITY-1001 acceptance: baseline2/2wrong-role names reproduced; final
+2role cases pass, plus1current four-slot guide/capture case after one root-canvas
+fixture repair. All six PNGs inspected small/wide and defender trays. No authored
+copy/mechanics/layout/protocol changes. OriginalCheska/DanteWiki parity rows can
+close after publication; human verification and HERO-QUALITY remain separate.
+All jobs terminal; publish explicit UI/test/report/TODO/ledger paths. Current
+full129player predates this UI-only fix; do not claim refreshed-player validation.
+
+RESUME-1002: Previous turn interrupted; all owned native/player jobs terminal and no task source WIP. Integrate incoming rebuilt Ilalim and protocol129 intact with local fullHD128 evidence. Private arm assets, composition metadata, HeroHazards opacity, quality settings and motion captures remain unstaged. DOTS retains Feedback/kit queue; friend retains broad loading. Next one current rebuilt-Ilalim preview/render/shader check because scene assets changed; reuse unchanged Kanto/Lagoon proof. No validation loop or whole tournament-readiness claim. Then continue concrete reliability/optimization defects. No reset, cross-chat work, paid service, Desktop replacement or authored visual redesign.

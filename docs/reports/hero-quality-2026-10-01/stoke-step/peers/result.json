@@ -1,0 +1,39 @@
+{
+  "ok": true,
+  "errors": [],
+  "measurements": {
+    "host": {
+      "samples": 369,
+      "forward_travel": 1.891603,
+      "lateral_drift": 0.0,
+      "windup_samples": 3,
+      "recovery_samples": 3,
+      "final_cooldown": 18.07547,
+      "final_can_act": 1.0
+    },
+    "owner": {
+      "samples": 370,
+      "forward_travel": 1.891603,
+      "lateral_drift": 0.0,
+      "windup_samples": 3,
+      "recovery_samples": 4,
+      "final_cooldown": 18.10612,
+      "final_can_act": 1.0
+    },
+    "observer": {
+      "samples": 367,
+      "forward_travel": 1.891603,
+      "lateral_drift": 0.0,
+      "windup_samples": 3,
+      "recovery_samples": 3,
+      "final_cooldown": 18.0588,
+      "final_can_act": 1.0
+    }
+  },
+  "observer_reconnected": false,
+  "owner_reconnected": false,
+  "rejoined_seat": null,
+  "delay_one_way_ms": 0,
+  "exe_sha256": "78fd4776b65e70e3e0ac9e2daf7af26b8c94372247ceaf0dd4edf8b1bb4d4096",
+  "runtime_sha256": "9813896320f1f3ff05e67b31054e99802382c7df32a8d151cf9bfd61848e2e61"
+}

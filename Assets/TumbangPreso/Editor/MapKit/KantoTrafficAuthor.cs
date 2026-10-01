@@ -132,7 +132,7 @@ namespace TumbangPreso.EditorTools.MapKit
         /// seam, a click every lap) and NOTHING is normalized: the authoring tool set the bed,
         /// engines and horns at different peaks on purpose, and Unity's default normalize would
         /// flatten that balance.</summary>
-        private static AudioClip Clip(string name, bool loop)
+        internal static AudioClip Clip(string name, bool loop)
         {
             string path = $"Assets/TumbangPreso/Art/audio/ambience/{name}.wav";
             if (AssetImporter.GetAtPath(path) is AudioImporter importer)
@@ -152,7 +152,7 @@ namespace TumbangPreso.EditorTools.MapKit
         }
 
         /// <summary>Every clip named prefix1, prefix2, ... in order, until one is missing.</summary>
-        private static AudioClip[] Clips(string prefix)
+        internal static AudioClip[] Clips(string prefix)
         {
             var list = new List<AudioClip>();
             for (int i = 1; i < 32; i++)

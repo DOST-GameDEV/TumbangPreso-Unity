@@ -17,6 +17,26 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### KIT-RECALL-PARITY-1001: role-aware held descriptions
+
+Same-kit attacker/defender changes now refresh the real role ability. Native
+baseline fails for Cheska and Dante; both corrected regressions pass. One actual
+four-slot guide/capture case also passes after one root-canvas fixture repair.
+Names, summaries, descriptions, cooldowns and12point costs checked; small/wide
+captures inspected. No mechanics/authored-copy/layout or protocol change.
+[Evidence](reports/feedback-2026-09-30/kit-recall-parity/README.md).
+
+### STOKE-STEP-1001: mechanics qualified
+
+Sean signature migration follows the researched2m grounded commitment,0.18s
+anticipation,0.25s recovery and30s cooldown. Six distinct native cases pass across
+4+2: accepted aim, real motor travel, no steering/fire field, wall/body/confinement,
+tag cancellation, rollback, aged restoration and default other-kit gates.
+Protocol129 full player and three actual Linux peers pass:1.8916m forward travel,
+zero lateral drift under perpendicular input, recovery gates and cleanup agree.
+Authored motion/SFX review remains separate. [Plan](reports/hero-quality-2026-10-01/stoke-step/plan.md).
+
+
 ### AIM-CIRCLE-CADENCE-1001: smooth visible landing-circle movement
 
 Ballistic prediction remains20Hz; circle presentation now interpolates every
@@ -513,16 +533,16 @@ incomplete cells still do not authorize invented specifications.
   actual effect clock; reactivation skills retain Again plus seconds remaining.
   Native shared-clock/UI case passes;960x540/1600x680 captures inspected.
   [Evidence](reports/feedback-2026-09-30/README.md#timed-power-lifetime).
-- [ ] F0930-09 Cheska: reconcile wiki names/rules/statuses and fix Frozen slipper hit.
+- [x] F0930-09 Cheska: reconcile wiki names/rules/statuses and fix Frozen slipper hit.
   Frozen-hit bug fixed: both real body-hit paths now consume frost after applying
   Frozen. Activation requires the held slipper. Four native cases pass; protocol101
-  requires matching updated builds. Complete kit alignment stays open.
+  requires matching updated builds. Remaining copy/UI parity is now qualified below.
   [Evidence](reports/feedback-2026-09-30/frostbite-delivery.md).
   Current Wiki timing/passive rules implemented: Cold Feet7.5s; Absolute Zero1.5s
   then all players including caster Frozen/Chilled; landed Hero Strike shove Chilled.
   Five distinct native cases pass across two final receipts, plus one Core numeric
   check. Protocol103. [Evidence](reports/feedback-2026-09-30/cheska-wiki-rules.md).
-- [ ] F0930-10 Dante: reconcile wiki names/rules/statuses (owner reauthorized implementation).
+- [x] F0930-10 Dante: reconcile wiki names/rules/statuses (owner reauthorized implementation).
   Earthbound incoming distance now approximately halves impulses/carries;4native
   cases plus the affected authored Airburst interaction pass. Classic/lift retained.
   [Passive evidence](reports/dante-wiki-2026-09-30/earthbound.md).
@@ -533,7 +553,8 @@ incomplete cells still do not authorize invented specifications.
   slow for2.5s. Seven native cases and8Core pass, protocol108. [Boulder evidence](reports/dante-wiki-2026-09-30/boulder.md).
   Continental Drift now sends five forward Concussed blasts for12points; six
   distinct native cases cover timing, host/recovery/replay and authored court.
-  Protocol111; presentation critique and retained UI review remain open.
+  Protocol111; retained UI parity is now qualified by KIT-RECALL-PARITY-1001.
+  Broader presentation critique remains in HERO-QUALITY, not this Wiki-parity row.
   [Cascade evidence](reports/dante-wiki-2026-09-30/drift.md).
   Barrier visibility implemented separately: half-alpha authored slabs retain their
   palette and lifecycle. Two distinct native cases pass; observer court capture
@@ -2542,7 +2563,7 @@ Supersedes REFINE-2.6 for this map.
   UNVERIFIED: what a player wading off the sea side stands on, and whether a slipper thrown into
   the sea is recovered), then retarget or delete the ignored tests.
 
-### ILALIM-1 · Ilalim ng Tulay rebuilt in Blender ⚠️ OPEN, NOT STARTED, 2026-09-29
+### ILALIM-1 · Ilalim ng Tulay rebuilt in Blender ⚠️ OPEN, 1.1 AWAITING OWNER REVIEW, 2026-09-29
 
 **Read [ILALIM_REWORK_GUIDE.md](ILALIM_REWORK_GUIDE.md) first** (its CURRENT STATE block, the
 gameplay contract in § 1, the proven pipeline in § 2, the traps in § 3), then
@@ -2550,25 +2571,104 @@ gameplay contract in § 1, the proven pipeline in § 2, the traps in § 3), then
 after Kanto and the Lagoon Cove. Team-facing issues from that merge are in
 [map-integration issues](reports/map-integration-2026-09-28/issues.md).
 
-- [ ] ILALIM-1.1 References and feel: the real place under the LRT-2 guideway, written up with the
-  owner in the format of the Kanto and Lagoon guides' § 1.
+- [ ] ILALIM-1.1 References and feel (owner, 2026-09-29: the UP Manila Padre Faura area, "cuz we
+  wanna see our school's Rizal Hall in the game"). PROPOSAL WRITTEN: guide § 0, with the
+  [research](reports/ilalim-rework-2026-09-29/research.md) and the
+  [plan](reports/ilalim-rework-2026-09-29/place-plan-v1.png). The line is LRT-1 over Taft Avenue,
+  not LRT-2. OPEN: the owner's answers to guide § 0.6.
 - [ ] ILALIM-1.2 A Blender blockout at the exact gameplay dimensions (the 14 m carriageway box, the
   flanks to x +/-11.2 and z +/-16.7, the columns, the hoop and the pad). Eye-height and aerial
-  renders, then owner review.
+  renders, then owner review. BUILT 2026-09-29 as v3: `tools/author_ilalim_blockout.py` writes
+  `ArtSource/ilalim/ilalim_blockout.blend` and eight renders (two plans, two aerials, four
+  eye-level views). It uses the guide's § 0.6 default answers. The owner rejected v3's layout
+  ("the positioning, zoning and lack of sidewalks arent" accurate). v5 (2026-09-29) builds
+  everything outside the play area from OpenStreetMap (`tools/ilalim_osm_layout.js`, then
+  `ArtSource/ilalim/osm_layout.json`), with sidewalks on every street. v9 (2026-09-29, owner's
+  markup): the Supreme Court is thinned at x = -50, the Rizal Hall compound moves 26 m east,
+  the PGH block in the view line is removed and the view-line trees are cleared. Rizal Hall now
+  reads from the spawn. The ground is rebuilt as clean dissolved surfaces. OPEN: owner review.
 - [ ] ILALIM-1.3 Kits and textures, one at a time with owner review: the guideway and columns,
-  shopfronts and signs, props and trip hazards, vehicles, and the LRT consist.
+  shopfronts and signs, props and trip hazards, vehicles, and the LRT consist. GUIDEWAY KIT
+  v3 BUILT 2026-09-29 (`tools/author_ilalim_lrt.py`, `tools/author_ilalim_textures.py`, then
+  `ArtSource/ilalim/lrt_kit.blend`; guide CURRENT STATE). ALL KITS BUILT 2026-09-29, the rest
+  by parallel agents: guideway v11, Rizal Hall, heritage, east side, streets, trees (reusing
+  the Kanto and Lagoon leaves), props, train and vehicles. They are assembled by
+  `tools/author_ilalim_city.py` into `ilalim_city.blend`. OPEN:
+  - owner review of the sari-sari store, BUILT 2026-09-29 (`tools/author_ilalim_sarisari.py`, the
+    north-east corner of Taft and Padre Faura, linked into the city);
+  - owner decisions: the train hidden by the parapet, cable shadows on the court, Rizal Hall's
+    size from the court, and names;
+  - owner review of the assembled map.
+
+  PUSHED 2026-10-01 at `2a610270` (owner asked). Since then (2026-09-30 and 10-01): the liveliness
+  pass (facade variety, rooftops, street life, landmarks), UN Avenue and Pedro Gil stations with
+  street-end rows and a haze to close the view, street furniture validated against every kit, and
+  many owner fixes. The guide's HANDOFF block at the top is the current summary.
 - [ ] ILALIM-1.4 Export, and a Unity builder that writes an UNREGISTERED sample scene. Every column
   goes on `TumbangPreso/NearFade`, because the AO NearGuard depends on it. Retune the Ilalim
   WorldLookProfile row in Play. Keep BridgeHoop, the overclock pad, LrtTrainFlyby, and the match
-  between the train and the train window.
+  between the train and the train window. BUILT 2026-09-30 (owner: "put it in game"):
+  `tools/export_ilalim_unity.py` writes `Art/IlalimRebuild/` (614 prototype .glb, 628 materials,
+  the pier grime baked for NearFade), and `Editor/MapKit/IlalimSceneBuilder.cs` (`.Run`,
+  `.RunReview`) writes the unregistered `Scenes/Samples/IlalimRebuild.unity` (the shipped
+  `Scenes/Maps/IlalimNgTulay.unity` since ILALIM-1.6). Blender (x, y, z) is
+  Unity (x, z, y) here, proved against the shipped scene (`Logs/ilalim-unity/v2/frame_proof.txt`:
+  hoop, pares cart, pillars, walls and spawns agree to 0.000 m). Gameplay wired: Bounds, pier
+  legs with HazardVolume, deck, hoop, pad, pisonet booths, cord trigger, pares cart, flyby (150 s,
+  6 s, window 24.3). Review renders `Logs/ilalim-unity/v2`. DONE SINCE (2026-09-30 to 10-01): its
+  own late-afternoon look row (owner: "less like the lagoon map"); moving traffic (KantoTraffic
+  routes mode), pigeons and the street sound bed; sidewalk life (kids, magtataho, spectators, a
+  beggar with a cosmetic donation, his own voxel model) with drawn gaits, planted feet, poppy
+  gestures and 36 synthesized sounds, proved by a probe, films and a PlayMode test. OPEN: the
+  z-fight near the Karinderya sign, performance (6.4 M triangles), and the owner's play review.
 - [ ] ILALIM-1.5 Checks:
-  - MapGeometryCheck is clean (Ilalim is Gated);
+  - MapGeometryCheck is clean (Ilalim is Gated). 2026-10-01: NOT clean. The swap moved the shipped
+    Ilalim to Informational (the Kanto and Lagoon Cove rule for Blender maps): 866 findings, 861
+    "floating" (sub-renderers of one prototype rested one at a time: leaves over trunks, roof caps,
+    vehicle bodies over wheels, rooftop kit) and 5 can-clearance (merged street meshes whose bounds
+    cover the origin: median planter walls, median soil, yellow railings, notices, parol brackets).
+    Nothing excused. It rejoins Gated when the check groups a placement's renderers or these are
+    fixed; the 5 can-clearance ones need a per-vertex look first. Triangles: 6,428,586 placed.
+    Preview-preparation time: not yet measured;
   - the map's probes are green against a clean baseline;
   - a bot match and a played match both finish;
   - the triangle count and the preview-preparation time are measured.
-- [ ] ILALIM-1.6 Swap the rebuild in under the `IlalimNgTulay` scene name. That keeps the same map
+- [x] ILALIM-1.6 Swap the rebuild in under the `IlalimNgTulay` scene name. That keeps the same map
   index, so there is no protocol bump. Vault the old scene in `Scenes/Vault/`, and re-render the
-  map card with MapCardCapture.
+  map card with MapCardCapture. DONE 2026-10-01 (owner: "wait you also need to replace the old
+  ilalim ng tulaywith this one in the map pool"):
+  - `IlalimSceneBuilder` (SceneName "IlalimNgTulay") saves over `Scenes/Maps/IlalimNgTulay.unity`,
+    so its .meta GUID `d1023436a0787e94abfffc99704e8f3a`, the build-settings row, `SceneFlow` and
+    `GameLaunch` entries, the map index and NetSession.ProtocolVersion are all unchanged. The sample
+    `Scenes/Samples/IlalimRebuild.unity` is deleted.
+  - The first Ilalim is at `Scenes/Vault/IlalimNgTulayOld.unity` with a new GUID, out of the build;
+    `IlalimNgTulayBuilder.ScenePath` points there, and every legacy Ilalim author and per-map
+    finishing pass opens it through `IlalimNgTulayBuilder.LegacyScenePath`.
+  - Look: the rebuild's row is now the "IlalimNgTulay" row; the old row is "IlalimNgTulayOld". The
+    rebuild keeps `IlalimRebuildSky.mat` (builder `SkyKey`; the "IlalimRebuild" alias in
+    `WorldLookProfile.Find` serves it). Builder grade written as the scene carries it (saturation
+    1.06, which `MapAtmosphereAuthor.Apply` always set).
+  - Card: `MapCardCapture.RunIlalim` wrote `Resources/UI/map-cards/IlalimNgTulay.png`, shot under
+    the soffit (the generic pose sat over the LRT deck and hid the court).
+- [ ] ILALIM-1.7 THE FIRST ILALIM IS VAULTED; what the rebuild does not carry yet. Tests about the
+  vaulted map's own content are [Ignore]d with this entry as the reason: MapGraphicsReviewProbe's
+  16 Ilalim finish reviews, AmbientLifeProbe's Ilalim dog, cat and bird visits, MapExperienceProbe
+  StreetFrontageClearanceReview and DiagnoseStreetGlazing, MapSurfaceTests' two, NearFadeTests'
+  Ilalim pole count. Missing on the rebuild, owner decisions:
+  - no AmbientLife (the cat and the dog): Ilalim was taken out of AmbientLifeProbe's three
+    all-map animal lists;
+  - no near-fade on its street poles (no `SidewalkPole_*` / `PavementTree_*`; NearFadeTests accepts
+    those two prefixes from the vaulted scene only);
+  - the court chalk is two road-wide lines merged into one `chalk box lines` mesh (Blender), not
+    four box edges, so `CourtBoundaryPresentation` registers no authored edge and
+    `CourtSurfacePresentation` finds too few marks: WorldCourtCueTests
+    CourtMatchesAllFiveMapsAndCapturesRestArmedAndOff and
+    FiveMapStageCapturesPreserveGeometryAndRestoreOriginalLighting fail on IlalimNgTulay (the
+    static lines stay drawn under the live square);
+  - the map description still reads "LRT Gilmore strip" (the rebuild is Taft at Padre Faura), and
+    the registry preview shot (yaw 35, 22 m, 13.5 m up) frames from over the deck.
+  - legacy tools that loop over `SceneFlow.Maps` (MapSurfaceAuthor, MapFinalInventory) still treat
+    "IlalimNgTulay" as the first Ilalim's surfaces; do not run them on the rebuild unreviewed.
 ### LIGHT-2 · Lighting style picker in the Graphics tab ⚠️ IN PROGRESS, 2026-09-25 (only slot 3 open)
 
 **Renamed 2026-09-26 (BUGS-0926.5):** Bright is now **Standard** (slot 1, the default) and Classic is

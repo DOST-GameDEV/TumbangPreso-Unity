@@ -30,7 +30,7 @@ namespace TumbangPreso.EditorTools.MapKit
             if(!string.IsNullOrEmpty(selected)&&!maps.Contains(selected))throw new InvalidOperationException("Unknown neighborhood repeatability map "+selected);
             foreach (string map in maps.Where(m=>string.IsNullOrEmpty(selected)||m==selected))
             {
-                string path = "Assets/TumbangPreso/Scenes/Maps/" + map + ".unity";
+                string path = IlalimNgTulayBuilder.LegacyScenePath(map);
                 File.Copy(path, Path.Combine(output, map + "-before.unity"), true);
                 var scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
                 var before = Capture(scene);

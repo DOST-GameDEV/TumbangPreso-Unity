@@ -133,6 +133,9 @@ namespace TumbangPreso.Abilities
 
         /// <summary>Existing movement skills may scale wish speed; impulses and slows retain their own rules.</summary>
         public virtual float MovementSpeedScale => 1.0f;
+        // Ability-owned commitment gates are opt-in; they are not a status effect.
+        public virtual bool BlocksOwnLocomotion => false;
+        public virtual bool BlocksOwnActions => false;
         public virtual float IncomingKnockbackDistanceScale => 1.0f;
         // Kits with accepted-cast state need the owner event, without repeating a predicted payload.
         public virtual bool RequiresOwnerCastEvents => false;

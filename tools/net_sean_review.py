@@ -23,6 +23,8 @@ def rows(path):
 
 def evaluate(folder, case, hold_charge=False, rejoined_seat=None, delay=0):
     data = {name: rows(folder / (name + ".csv")) for name in ("host", "owner", "observer")}
+    if case == "stoke":
+        return evaluate_stoke(data)
     if case == "empowered":
         return evaluate_empowered(data)
     errors, measurements = [], {}
@@ -125,10 +127,40 @@ def evaluate_empowered(data):
     return {"ok": not errors, "errors": errors, "measurements": measurements}
 
 
+def evaluate_stoke(data):
+    errors, measurements = [], {}
+    for name, records in data.items():
+        seat = {"host": 0, "owner": 1, "observer": 2}[name]
+        if len(records) < 200 or any(r["local"] != seat or r["sean"] != 1 for r in records):
+            errors.append(name + " lacks continuous correct-seat evidence")
+            continue
+        before = next((r for r in records if 11 < r["elapsed"] < 12), None)
+        tail = records[-1]
+        active = [r for r in records if r["s1Remaining"] > 0]
+        recovering = [r for r in active if .02 < r["s1Remaining"] < .24]
+        windup = [r for r in records if r["s1Windup"] > 0]
+        distance = tail["casterZ"] - before["casterZ"] if before else 0
+        lateral = max(abs(r["casterX"] - before["casterX"]) for r in records if r["elapsed"] >= 12) if before else 99
+        measurements[name] = {"samples": len(records), "forward_travel": distance, "lateral_drift": lateral,
+                              "windup_samples": len(windup), "recovery_samples": len(recovering),
+                              "final_cooldown": tail["s1Cooldown"], "final_can_act": tail["canAct"]}
+        if not 1.6 < distance <= 2.15 or lateral > .15:
+            errors.append(name + " lost bounded committed travel")
+        if not active or not recovering or any(r["canAct"] or r["canMove"] for r in recovering):
+            errors.append(name + " missed the action/locomotion recovery gate")
+        if any(r["fireTrails"] or r["frontStun"] or r["craters"] for r in records):
+            errors.append(name + " created an obsolete damaging field/contact")
+        if tail["s1Remaining"] or tail["s1Windup"] or not tail["canAct"] or not tail["canMove"]:
+            errors.append(name + " leaked its commitment gate")
+        if not 17 < tail["s1Cooldown"] < 19:
+            errors.append(name + " did not spend the30second cooldown once")
+    return {"ok": not errors, "errors": errors, "measurements": measurements}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("exe", type=Path)
-    parser.add_argument("--case", choices=["ignite", "supernova", "empowered"], required=True)
+    parser.add_argument("--case", choices=["ignite", "supernova", "empowered", "stoke"], required=True)
     parser.add_argument("--delay", type=float, default=0)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--hold-charge", action="store_true")

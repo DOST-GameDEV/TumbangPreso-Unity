@@ -31,7 +31,7 @@ namespace TumbangPreso.EditorTools
     /// </summary>
     public static class JeepneyFinishProbe
     {
-        private const string ScenePath = "Assets/TumbangPreso/Scenes/Maps/IlalimNgTulay.unity";
+        private const string ScenePath = MapKit.IlalimNgTulayBuilder.ScenePath;
         private const string Out = "Logs/jeepney-finish.txt";
 
         [MenuItem("Tumbang Preso/Probes/Jeepney finish")]

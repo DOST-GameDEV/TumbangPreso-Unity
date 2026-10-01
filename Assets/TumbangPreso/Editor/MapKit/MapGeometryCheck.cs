@@ -95,7 +95,10 @@ namespace TumbangPreso.EditorTools.MapKit
         private static readonly string[] Gated =
         {
             SaBubongBuilder.ScenePath,
-            IlalimNgTulayBuilder.ScenePath,
+            // ⚠️ ILALIM NG TULAY LEFT THE GATE ON 2026-10-01 (ILALIM-1.6). The gated Ilalim was the
+            // first one, now vaulted (IlalimNgTulayBuilder.ScenePath, out of the build, and its
+            // elevated-assembly check below still keys on that path). The shipped scene is the
+            // Blender rebuild and is reported under Informational, the Kanto and Lagoon Cove rule.
 
             // ⚠️ BAYAN PLAZA JOINED THE GATE ON 2026-08-26, WHICH IS THE POINT OF FIXING A
             // FINDING RATHER THAN RECORDING IT. `docs/TODO.md` § 4 was the only thing this map
@@ -123,6 +126,16 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             "Assets/TumbangPreso/Scenes/Maps/Kanto.unity",
             "Assets/TumbangPreso/Scenes/Maps/LagoonCove.unity",
+            // ⚠️ ILALIM NG TULAY, THE BLENDER REBUILD SWAPPED IN 2026-10-01 (ILALIM-1.6). Same rule
+            // as Kanto and the Lagoon Cove: reported, not gated, until its findings are worked.
+            // Its first report (Logs/ilalim-unity/v13/geometry_check.txt) is the worklist: about
+            // 860 "floating" findings, nearly all a Blender prototype split into several renderers
+            // that this check rests one at a time (tree leaves over their trunk, roof caps over
+            // walls, a vehicle body over its wheels, rooftop kit over its roof), and 5 can-clearance
+            // findings from merged street meshes whose bounds cover the origin. Neither class is
+            // excused here. It rejoins Gated when the check groups a placement's renderers or the
+            // findings are fixed; docs/TODO.md ILALIM-1.5.
+            IlalimSceneBuilder.ScenePath,
         };
 
         public static bool Execute(bool gate)

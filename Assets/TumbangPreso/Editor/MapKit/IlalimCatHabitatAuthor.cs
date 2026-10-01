@@ -13,7 +13,7 @@ namespace TumbangPreso.EditorTools.MapKit
     {
         public static void Run()
         {
-            var scene=EditorSceneManager.OpenScene("Assets/TumbangPreso/Scenes/Maps/IlalimNgTulay.unity",OpenSceneMode.Single);
+            var scene=EditorSceneManager.OpenScene(IlalimNgTulayBuilder.ScenePath,OpenSceneMode.Single);
             var report=new StringBuilder();FinishLoadedScene(report);
             EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);AssetDatabase.SaveAssets();
             Directory.CreateDirectory("Logs/ilalim-cat");File.WriteAllText("Logs/ilalim-cat/author.txt",report.ToString());

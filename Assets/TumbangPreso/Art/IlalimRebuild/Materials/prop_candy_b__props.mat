@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: prop_candy_b__props
+  m_Shader: {fileID: 4800000, guid: bba2ce0ce293e0a43b65fc1aa96545ba, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 0
+  m_EnableInstancingVariants: 1
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Ov0Tex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Ov1Tex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Ov2Tex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AntiTileCount: 0
+    - _BumpScale: 1
+    - _Cull: 2
+    - _Cutoff: 0
+    - _EmissionFromAlbedo: 0
+    - _Glossiness: 0.6
+    - _MainRot: 0
+    - _Saturation: 1
+    m_Colors:
+    - _AT0: {r: 37, g: 0.61, b: 0.37, a: 0.71}
+    - _AT0Mask: {r: 0.35, g: 0.42, b: 0.58, a: 1}
+    - _AT0Seed: {r: 0, g: 0, b: 0, a: 0}
+    - _AT1: {r: -71, g: 1.43, b: 0.13, a: 0.52}
+    - _AT1Mask: {r: 0.23, g: 0.42, b: 0.58, a: 1}
+    - _AT1Seed: {r: 11.3, g: 5.7, b: 0, a: 0}
+    - _Color: {r: 0.95469, g: 0.90633, b: 0.67998, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Ov0: {r: 1, g: 0, b: 0, a: 0}
+    - _Ov1: {r: 2, g: 0, b: 0, a: 0}
+    - _Ov2: {r: 3, g: 0, b: 0, a: 0}
+    - _PostTint: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
