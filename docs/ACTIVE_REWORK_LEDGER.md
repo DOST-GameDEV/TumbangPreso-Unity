@@ -2415,3 +2415,25 @@ AI/tests/status/receipts now. Actor observation/fallback/selection unit qualifie
 item knowledge and whole-match AI remain separate. Prior116actual Haunt pair is
 older source, no new117peer claim. Next filter distant rival slippers in bot item
 planning while preserving own retrieval knowledge and live inventory lifecycle.
+
+Actor92ee8b8e9 remote verified. HAUNTED-RIVAL-ITEMS-1001 claims AIController.cs
+inventory view and existing BotSlipperQueryTests.cs. Filter distant rival shoes
+from flying/area/denial/cover/glance queries while retaining existing own retrieval.
+Same7m body-distance rule; ownership/flight/activity remain live, no cache or art/
+kit/loading/protocol edit. Two native baseline cases; final9query/allocation/
+lifecycle controls. One tooling repair max; stop fresh XML. All prior jobs terminal.
+
+Rival-item baseline2/2fails at intended defects: distant flying rival remains
+selected and hidden loose rival appears in area count. Native75348terminal,
+no fixture repair. Thirteen existing inventory readers now share an allocation-
+free sight-filtered view; own items retain existing retrieval. Two formerly static
+private helpers now use the observer instance; test delegate binding follows that
+API change. Same9query/lifecycle/allocation cases next, no actor suite rerun.
+
+Rival-item final9/9native passes;670inputs no drift, two owned files match
+92ee8b8e9overlaycandidate. Thirteen readers share sight gate, own retrieval and
+near/clear/activity/ownership/native-order controls pass; warmed allocations stay0.
+Jobs75348/8587terminal, no fixture repair or actor suite repetition. Publish exact
+paths/status/receipts and update existing Nemu Notes with local actor/item scope.
+Then continue actual reconnect/session recovery using existing authority/identity
+routes; no new paid service, queue query rate, visual or loading changes.

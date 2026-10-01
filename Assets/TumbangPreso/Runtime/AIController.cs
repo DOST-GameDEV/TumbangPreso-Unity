@@ -950,7 +950,7 @@ namespace TumbangPreso
 
             Vector3 can = lata.transform.position;
 
-            foreach (var s in BotSlipperInventory.All)
+            foreach (var s in PerceivedSlippers)
             {
                 if (s == null || s.State != SlipperState.InFlight) continue;
                 if (s.OwnerSlot == _motor.PlayerSlot) continue;
@@ -1237,9 +1237,9 @@ namespace TumbangPreso
         private static long RunRank(float odds, int slot)
             => (long)Mathf.Round(odds / AiTuning.RunOddsMargin) * 1000L - slot;
 
-        private static Slipper SlipperOwnedBy(RoundDirector round, int slot)
+        private Slipper SlipperOwnedBy(RoundDirector round, int slot)
         {
-            foreach (var s in BotSlipperInventory.All)
+            foreach (var s in PerceivedSlippers)
                 if (s != null && s.OwnerSlot == slot) return s;
 
             return null;
@@ -1682,7 +1682,7 @@ namespace TumbangPreso
         /// </summary>
         private Slipper MySlipper()
         {
-            foreach (var s in BotSlipperInventory.All)
+            foreach (var s in PerceivedSlippers)
                 if (s.OwnerSlot == _motor.PlayerSlot) return s;
 
             return null;
@@ -1703,7 +1703,7 @@ namespace TumbangPreso
         {
             point = Vector3.zero;
 
-            foreach (var s in BotSlipperInventory.All)
+            foreach (var s in PerceivedSlippers)
             {
                 if (s.State != SlipperState.InFlight) continue;
 
@@ -3690,7 +3690,7 @@ namespace TumbangPreso
             Slipper nearest = null;
             float best = float.MaxValue;
 
-            foreach (var s in BotSlipperInventory.All)
+            foreach (var s in PerceivedSlippers)
             {
                 if (s.State != SlipperState.Loose && s.State != SlipperState.InFlight) continue;
 
@@ -4035,7 +4035,7 @@ namespace TumbangPreso
             bool found = false;
             float bestDistance = float.MaxValue;
 
-            foreach (var s in BotSlipperInventory.All)
+            foreach (var s in PerceivedSlippers)
             {
                 if (s.State != SlipperState.Loose) continue;
 
@@ -4118,7 +4118,7 @@ namespace TumbangPreso
             Slipper best = null;
             float bestDistance = float.MaxValue;
 
-            foreach (var s in BotSlipperInventory.All)
+            foreach (var s in PerceivedSlippers)
             {
                 if (s.State != SlipperState.InFlight) continue;
 
@@ -4206,6 +4206,34 @@ namespace TumbangPreso
                 (who.transform.position - transform.position).sqrMagnitude <= 49f;
         }
         private ActorView Perceived(IReadOnlyList<CharacterMotor> actors) => new ActorView(this, actors);
+        private SlipperView PerceivedSlippers => new SlipperView(this);
+        private bool SlipperIsVisible(Slipper shoe) => shoe != null &&
+            (_motor.Mode != GameMode.HeroStrike || !_motor.IsHaunted || shoe.OwnerSlot == _motor.PlayerSlot ||
+             (shoe.transform.position - transform.position).sqrMagnitude <= 49f);
+        private readonly struct SlipperView
+        {
+            private readonly AIController _brain;
+            public SlipperView(AIController brain) { _brain=brain; }
+            public Enumerator GetEnumerator() => new Enumerator(_brain);
+            public struct Enumerator
+            {
+                private readonly AIController _brain;
+                private BotSlipperInventory.Enumerator _items;
+                public Slipper Current { get; private set; }
+                public Enumerator(AIController brain)
+                { _brain=brain; _items=BotSlipperInventory.All.GetEnumerator(); Current=null; }
+                public bool MoveNext()
+                {
+                    while(_items.MoveNext())
+                    {
+                        var shoe=_items.Current;
+                        if(!_brain.SlipperIsVisible(shoe)) continue;
+                        Current=shoe; return true;
+                    }
+                    Current=null; return false;
+                }
+            }
+        }
         private readonly struct ActorView
         {
             private readonly AIController _brain;
@@ -4440,7 +4468,7 @@ namespace TumbangPreso
         {
             best = from;
             int most = PaeteThornCount(from, out carriedOut);
-            foreach (var shoe in BotSlipperInventory.All)
+            foreach (var shoe in PerceivedSlippers)
             {
                 if (shoe == null || shoe.OwnerSlot == _motor.PlayerSlot) continue;
                 Vector3 at = shoe.transform.position; at.y = from.y;
@@ -4457,7 +4485,7 @@ namespace TumbangPreso
         {
             carriedOut = false;
             int count = 0;
-            foreach (var shoe in BotSlipperInventory.All)
+            foreach (var shoe in PerceivedSlippers)
             {
                 if (shoe == null || shoe.OwnerSlot == _motor.PlayerSlot) continue;
                 if (Flat(from, shoe.transform.position) > Core.PaeteRules.ThornRange - .3f) continue;
@@ -4527,7 +4555,7 @@ namespace TumbangPreso
             var lata = round?.Lata;
             if (lata != null && Flat(where, lata.transform.position) <= reach) return true;
 
-            foreach (var s in BotSlipperInventory.All)
+            foreach (var s in PerceivedSlippers)
                 if (s.State == SlipperState.Loose
                     && Flat(where, s.transform.position) <= reach) return true;
 
@@ -4564,9 +4592,9 @@ namespace TumbangPreso
             return null;
         }
 
-        private static bool AnyLooseSlipperInsideTheBox()
+        private bool AnyLooseSlipperInsideTheBox()
         {
-            foreach (var s in BotSlipperInventory.All)
+            foreach (var s in PerceivedSlippers)
             {
                 if (s.State != SlipperState.Loose) continue;
 
@@ -4934,7 +4962,7 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.RafiHeroKit)
                 {
-                    foreach(var shoe in BotSlipperInventory.All)
+                    foreach(var shoe in PerceivedSlippers)
                         if(shoe.State==SlipperState.InFlight && Flat(myPos,shoe.transform.position)<5
                             && Vector3.Dot(shoe.Velocity,myPos-shoe.transform.position)>0)
                         { Consider(intent,Verb.Skill1,dt);break; }
@@ -5340,7 +5368,7 @@ namespace TumbangPreso
 
         private bool HasRelevantVoidTarget(Vector3 center, float radius)
         {
-            foreach (var slipper in BotSlipperInventory.All)
+            foreach (var slipper in PerceivedSlippers)
             {
                 if (slipper == null || slipper.State != SlipperState.Loose) continue;
                 if (!_motor.IsDefender && slipper.OwnerSlot != _motor.PlayerSlot) continue;
