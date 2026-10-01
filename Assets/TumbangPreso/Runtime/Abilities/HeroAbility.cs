@@ -763,6 +763,8 @@ namespace TumbangPreso.Abilities
             if (charges && UsesCharges) ChargesRemaining = MaxCharges;
         }
 
+        public virtual AbilityContext CaptureLocalCastContext(AbilityContext ctx) => ctx;
+
         public virtual bool AllowsImpairedCast(AbilityContext ctx) => false;
 
         public virtual bool CanActivate(AbilityContext ctx)

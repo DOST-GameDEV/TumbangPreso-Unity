@@ -732,19 +732,20 @@ namespace TumbangPreso.Abilities
             var familiar=_motor.GetComponent<Visual.CharacterVisual>()?.Companion;
             bool hasFamiliar=familiar!=null;
             Vector3 familiarPosition=hasFamiliar?familiar.transform.position:Vector3.zero;
-            Vector3 castPosition=_context.Position,castForward=_context.Forward,castAim=_context.AimPoint;
+            var castContext = requestedAbility?.CaptureLocalCastContext(_context) ?? _context;
+            Vector3 castPosition=castContext.Position,castForward=castContext.Forward,castAim=castContext.AimPoint;
             bool flightRecast=slot==Slot.Skill2 && Kit is AmihanHeroKit && !Kit.IsDefending && Kit.AttackingSkill.IsActive;
             long flightIntent=flightRecast?_motor.FlightEpisode:0;
             HeroKit.CastOutcome outcome;
             if (NetAuthority.IsNetworked)
             {
                 _motor.BeginAbilityPrediction((int)slot);
-                try{using (NetCue.SuppressRelay()) outcome = CastWithContext(slot, _context);}
+                try{using (NetCue.SuppressRelay()) outcome = CastWithContext(slot, castContext);}
                 finally{_motor.EndAbilityPrediction();}
             }
             else
             {
-                outcome = CastWithContext(slot, _context);
+                outcome = CastWithContext(slot, castContext);
             }
             if (outcome != HeroKit.CastOutcome.Cast || !NetAuthority.IsNetworked) return outcome;
             // A prediction never submitted to transport has no accepted episode to cancel.

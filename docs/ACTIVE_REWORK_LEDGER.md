@@ -3735,3 +3735,19 @@ before memory guard acted during exit, OOM unchanged11/6; not a clean shutdown.
 Evidence ground-marker-checks preserves all failed attempts and exact inputs.
 Aiming candidate excluded and still unshipped. Release marker paths on shipment;
 next fix the aiming validation infrastructure without discarding either history.
+QUICK-CIRCUIT-1001 owns Zack signature, shared cast-context hook and recast impairment gate, HeroMovementState/MatchRpc.Movement and focused QuickCircuitTests. Planned30s/2m lateral cut, .15s tell/.2s recovery, Overclock one optional same-button second cut within1s. Preserve authored assets/cues; remove legacy stun/travel behavior. Snapshot restores followup clock without replaying impulse or extending it. Native baseline name and actual Zapped-recast bypass, then focused acceptance; tooling retry0. All own jobs terminal; no loading edits.
+
+OWNER SCOPE SWITCH: leave all new Docs TODO/Feedback work to DOTS. This worker
+finishes the already-running Quick Circuit check, then independent network/bot/
+optimization bugs. No messaging/delegation, no further Google Docs writes.
+Quick Circuit final10/10 native passed;2baseline failures include actual Zapped
+recast bypass.742 frozen inputs unchanged, zero tooling repairs. Protocol126.
+Guards63752/44973 terminal and profiles preserved. Publish current coherent unit,
+then inspect independent CastPreparation framing before further kit migration.
+Closed Circuit/legacy kit-probe migration belong to DOTS. Full goal stays active.
+
+OWNER MAIN PRIORITY: demo/tournament reliability. Fix actual exceptions, stuck pause/matchflow, disconnects and stalls; avoid validation-framework expansion. DOTS owns Docs TODO queue. QuickCircuit9803a3c93 shipped through04f6bfbb3 with10/10native, no tooling repair. This worker next runs existing actual two-player finish/rematch scenario on a new current126internal build and inspects real logs. All prior jobs terminal; no visual/loading edits or paid services.
+
+October1 owner clarification, recorded verbatim in substance: main goal is that nothing breaks during a demo/tournament. Check that code works as intended and address real crashes, random pauses, lag and match failures. This is not permission to overengineer tests or spend the run expanding validation machinery. Use existing player/runtime paths; add only a small check tied to an observed defect. DOTS finishes the Docs TODO/Feedback queue; this worker prioritizes independent reliability/network/bot/optimization fixes. Preserve loading ownership and the authored VFX/SFX/animation/model/map restrictions.
+
+Current reliability run: frozen source04f6bfbb3/protocol126,15460inputs in isolated tump-feedback-0930. Freeze session41312 completed; guarded internal BuildWindows session94328 is live. Output Builds/demo-readiness126-1001/TumbangPreso.exe, log Logs/demo-readiness126-1001/build.log. Next poll this exact handle, then use existing run_demo_lan --rematch on matching actual host/client and inspect exceptions/stuck matchflow. No fresh validation framework or Docs TODO edits. Do not restart a live build or claim runtime success from build completion.

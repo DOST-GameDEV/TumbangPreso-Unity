@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 11:31:41Z" end-time="2026-10-01 11:31:41Z" duration="0.2611101">
+  <test-suite type="TestSuite" id="2437" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1174" result="Failed" site="Child" start-time="2026-10-01 11:31:41Z" end-time="2026-10-01 11:31:41Z" duration="0.261110" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2431" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1174" result="Failed" site="Child" start-time="2026-10-01 11:31:41Z" end-time="2026-10-01 11:31:41Z" duration="0.238805" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="33132" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2432" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1174" result="Failed" site="Child" start-time="2026-10-01 11:31:41Z" end-time="2026-10-01 11:31:41Z" duration="0.224167" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2433" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1174" result="Failed" site="Child" start-time="2026-10-01 11:31:41Z" end-time="2026-10-01 11:31:41Z" duration="0.211151" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1939" name="QuickCircuitTests" fullname="TumbangPreso.PlayTests.QuickCircuitTests" classname="TumbangPreso.PlayTests.QuickCircuitTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-01 11:31:41Z" end-time="2026-10-01 11:31:41Z" duration="0.179603" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1940" name="QuickCircuitUsesTheSpecifiedCooldownInsteadOfLegacySprint" fullname="TumbangPreso.PlayTests.QuickCircuitTests.QuickCircuitUsesTheSpecifiedCooldownInsteadOfLegacySprint" methodname="QuickCircuitUsesTheSpecifiedCooldownInsteadOfLegacySprint" classname="TumbangPreso.PlayTests.QuickCircuitTests" runstate="Runnable" seed="1122423168" result="Failed" start-time="2026-10-01 11:31:41Z" end-time="2026-10-01 11:31:41Z" duration="0.065203" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 13 but was 11. Strings differ at index 0.
+  Expected: "QUICK CIRCUIT"
+  But was:  "BOLT SPRINT"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.QuickCircuitTests.QuickCircuitUsesTheSpecifiedCooldownInsteadOfLegacySprint () [0x00006] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\QuickCircuitTests.cs:43
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1941" name="ZappedMustBlockAnAlreadyActiveFollowup" fullname="TumbangPreso.PlayTests.QuickCircuitTests.ZappedMustBlockAnAlreadyActiveFollowup" methodname="ZappedMustBlockAnAlreadyActiveFollowup" classname="TumbangPreso.PlayTests.QuickCircuitTests" runstate="Runnable" seed="332351245" result="Failed" start-time="2026-10-01 11:31:41Z" end-time="2026-10-01 11:31:41Z" duration="0.098834" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: CannotAct
+  But was:  Cast
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.QuickCircuitTests.ZappedMustBlockAnAlreadyActiveFollowup () [0x00046] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\QuickCircuitTests.cs:51
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

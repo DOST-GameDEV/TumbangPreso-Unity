@@ -599,3 +599,12 @@ recasting. Existing timed-kit scope/watermark/age gates remain, with8s maximum.
 Guide and host bot prediction share85percent retention; bots preserve completed
 bank count. No new packet layout. Actual125peer qualification remains open.
 [Native evidence and limits](reports/feedback-2026-09-30/bank-shot.md).
+
+## Quick Circuit compatibility
+
+Protocol126 changes zack_skill1 to the lateral cut and appends a movement flag
+byte0/1/2 for ordinary/optional follow-up/second-cut recovery. Sean uses0.
+Recovery never relaunches or extends the remaining clock. The captured local
+cast context transmits the chosen lateral side using the existing aim field.
+Active recasts now honor CanAct/Zapped and explicit impaired-cast exceptions.
+[Native evidence and current peer limits](reports/feedback-2026-09-30/quick-circuit.md).
