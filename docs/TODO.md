@@ -106,12 +106,17 @@ Dedicated body/FPP lift and age-driven edge rivulets now have a native motion
 check and a shipping clip reference; review corrected cheek crowding and a missing
 FPP route. Dedicated Skim/Water wall illustrations and job labels now pass
 native resource/live-deck binding checks (aef85a28). Settled legibility joins the
-Skim motion review; SFX and final material critique remain.
+Skim/coating review now confirms the settled Water wall icon; SFX and final
+material critique remain.
 [Motion evidence](reports/hero-quality-2026-10-01/wall-motion-checks/README.md).
 Skim now has a dedicated shipping body/FPP coating action; initial native1/1
 qualifies routing, actual motion and retained held-shoe identity. Visual capture
 retry failed before filming; sole-contact/observer review remains open.
 [Skim evidence and limits](reports/hero-quality-2026-10-01/skim-motion-checks/README.md).
+Loaded-shoe meniscus now follows real state in world/FPP with native expiry/release
+cleanup. The distinct cue review resolves observer prop/icon capture limits;
+body palm/sole alignment still needs refinement.
+[Coating evidence](reports/hero-quality-2026-10-01/skim-coating-checks/README.md).
 
 ### TUTORIAL-REFINE-1001: latest human notes
 

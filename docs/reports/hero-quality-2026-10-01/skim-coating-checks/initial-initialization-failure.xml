@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 09:58:09Z" end-time="2026-10-01 09:58:17Z" duration="7.785315">
+  <test-suite type="TestSuite" id="2409" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1148" result="Failed" site="Child" start-time="2026-10-01 09:58:09Z" end-time="2026-10-01 09:58:17Z" duration="7.785315" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2403" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1148" result="Failed" site="Child" start-time="2026-10-01 09:58:09Z" end-time="2026-10-01 09:58:17Z" duration="7.767349" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="280902" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2404" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1148" result="Failed" site="Child" start-time="2026-10-01 09:58:09Z" end-time="2026-10-01 09:58:17Z" duration="7.756287" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2405" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1148" result="Failed" site="Child" start-time="2026-10-01 09:58:10Z" end-time="2026-10-01 09:58:17Z" duration="7.745526" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1944" name="RafiExpansionProbe" fullname="TumbangPreso.PlayTests.RafiExpansionProbe" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" testcasecount="18" result="Failed" site="Child" start-time="2026-10-01 09:58:10Z" end-time="2026-10-01 09:58:17Z" duration="7.723879" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1960" name="SkimCoatingFollowsRealLoadedShoeAndClearsOnExpiryOrRelease" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.SkimCoatingFollowsRealLoadedShoeAndClearsOnExpiryOrRelease" methodname="SkimCoatingFollowsRealLoadedShoeAndClearsOnExpiryOrRelease" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="1764717799" result="Failed" start-time="2026-10-01 09:58:10Z" end-time="2026-10-01 09:58:17Z" duration="7.709941" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Exception] UnityException: CreateImpl is not allowed to be called from a MonoBehaviour constructor (or instance field initializer), call it in Awake or Start instead. Called from MonoBehaviour 'RafiSkimCoating' on game object 'SkimSoleMeniscus'.
+See "Script Serialization" page in the Unity Manual for further details.'. Use UnityEngine.TestTools.LogAssert.Expect
+TearDown : Unhandled log message: '[Exception] UnityException: CreateImpl is not allowed to be called from a MonoBehaviour constructor (or instance field initializer), call it in Awake or Start instead. Called from MonoBehaviour 'RafiSkimCoating' on game object 'SkimSoleMeniscus'.
+See "Script Serialization" page in the Unity Manual for further details.'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[UnityEngine.MaterialPropertyBlock..ctor () (at /home/bokken/build/output/unity/unity/Runtime/Export/Shaders/MaterialPropertyBlock.cs:81)
+TumbangPreso.Visual.RafiSkimCoating..ctor () (at Assets/TumbangPreso/Runtime/Visual/RafiSkimCoating.cs:21)
+UnityEngine.GameObject:AddComponent()
+TumbangPreso.Visual.RafiSkimCoating:Ensure(MeshFilter, Slipper, RafiHeroKit) (at Assets/TumbangPreso/Runtime/Visual/RafiSkimCoating.cs:34)
+TumbangPreso.CameraSystem.ViewmodelArms:MatchSkin(Slipper) (at Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs:321)
+TumbangPreso.CameraSystem.CameraRig:ApplyFpp() (at Assets/TumbangPreso/Runtime/Camera/CameraRig.cs:1047)
+TumbangPreso.CameraSystem.CameraRig:LateUpdate() (at Assets/TumbangPreso/Runtime/Camera/CameraRig.cs:800)
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] Rafi-skim-settled-960x540/Power0: vertices=659, cull=False, alpha=1, depth=104, material=1
+[TumpGeometry] Rafi-skim-settled-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=105, material=1
+[TumpGeometry] Rafi-skim-settled-960x540/Power1: vertices=659, cull=False, alpha=1, depth=109, material=1
+[TumpGeometry] Rafi-skim-settled-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=110, material=1
+[TumpGeometry] Rafi-skim-settled-960x540/Power2: vertices=418, cull=False, alpha=1, depth=114, material=1
+[TumpGeometry] Rafi-skim-settled-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=115, material=1
+[TumpUiCapture] Rafi-skim-settled-960x540 cream source=252,211,159 pixel=180,189,233; isolated UI camera, no ColourGrade.
+UnityException: CreateImpl is not allowed to be called from a MonoBehaviour constructor (or instance field initializer), call it in Awake or Start instead. Called from MonoBehaviour 'RafiSkimCoating' on game object 'SkimSoleMeniscus'.
+See "Script Serialization" page in the Unity Manual for further details.
+UnityEngine.MaterialPropertyBlock..ctor () (at /home/bokken/build/output/unity/unity/Runtime/Export/Shaders/MaterialPropertyBlock.cs:81)
+TumbangPreso.Visual.RafiSkimCoating..ctor () (at Assets/TumbangPreso/Runtime/Visual/RafiSkimCoating.cs:21)
+UnityEngine.GameObject:AddComponent()
+TumbangPreso.Visual.RafiSkimCoating:Ensure(MeshFilter, Slipper, RafiHeroKit) (at Assets/TumbangPreso/Runtime/Visual/RafiSkimCoating.cs:34)
+TumbangPreso.Abilities.Skim:OnActivate(AbilityContext) (at Assets/TumbangPreso/Runtime/Abilities/RafiHeroKit.cs:100)
+TumbangPreso.Abilities.HeroAbility:Activate(AbilityContext) (at Assets/TumbangPreso/Runtime/Abilities/HeroAbility.cs:820)
+TumbangPreso.Abilities.HeroKit:Fire(HeroAbility, AbilityContext) (at Assets/TumbangPreso/Runtime/Abilities/HeroKit.cs:447)
+TumbangPreso.Abilities.HeroKit:CastSkill2(AbilityContext) (at Assets/TumbangPreso/Runtime/Abilities/HeroKit.cs:392)
+TumbangPreso.Abilities.HeroAbilitySystem:CastWithContext(Slot, AbilityContext) (at Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.cs:779)
+TumbangPreso.Abilities.HeroAbilitySystem:ApplyNetworkCast(Slot, Vector3, Vector3, Vector3, Single, Boolean, String, Nullable`1) (at Assets/TumbangPreso/Runtime/Abilities/HeroAbilitySystem.cs:821)
+TumbangPreso.PlayTests.<SkimCoatingFollowsRealLoadedShoeAndClearsOnExpiryOrRelease>d__27:MoveNext() (at Assets/TumbangPreso/Tests/PlayMode/RafiExpansionProbe.cs:583)
+UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr) (at /home/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+UnityException: CreateImpl is not allowed to be called from a MonoBehaviour constructor (or instance field initializer), call it in Awake or Start instead. Called from MonoBehaviour 'RafiSkimCoating' on game object 'SkimSoleMeniscus'.
+See "Script Serialization" page in the Unity Manual for further details.
+UnityEngine.MaterialPropertyBlock..ctor () (at /home/bokken/build/output/unity/unity/Runtime/Export/Shaders/MaterialPropertyBlock.cs:81)
+TumbangPreso.Visual.RafiSkimCoating..ctor () (at Assets/TumbangPreso/Runtime/Visual/RafiSkimCoating.cs:21)
+UnityEngine.GameObject:AddComponent()
+TumbangPreso.Visual.RafiSkimCoating:Ensure(MeshFilter, Slipper, RafiHeroKit) (at Assets/TumbangPreso/Runtime/Visual/RafiSkimCoating.cs:34)
+TumbangPreso.CameraSystem.ViewmodelArms:MatchSkin(Slipper) (at Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs:321)
+TumbangPreso.CameraSystem.CameraRig:ApplyFpp() (at Assets/TumbangPreso/Runtime/Camera/CameraRig.cs:1047)
+TumbangPreso.CameraSystem.CameraRig:LateUpdate() (at Assets/TumbangPreso/Runtime/Camera/CameraRig.cs:800)
+
+NullReferenceException: Object reference not set to an instance of an object
+TumbangPreso.Visual.RafiSkimCoating.Sample () (at Assets/TumbangPreso/Runtime/Visual/RafiSkimCoating.cs:79)
+TumbangPreso.Visual.RafiSkimCoating.Ensure (UnityEngine.MeshFilter target, TumbangPreso.Slipper shoe, TumbangPreso.Abilities.RafiHeroKit kit) (at Assets/TumbangPreso/Runtime/Visual/RafiSkimCoating.cs:36)
+TumbangPreso.CameraSystem.ViewmodelArms.MatchSkin (TumbangPreso.Slipper held) (at Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs:321)
+TumbangPreso.CameraSystem.CameraRig.ApplyFpp () (at Assets/TumbangPreso/Runtime/Camera/CameraRig.cs:1047)
+TumbangPreso.CameraSystem.CameraRig.LateUpdate () (at Assets/TumbangPreso/Runtime/Camera/CameraRig.cs:800)
+
+NullReferenceException: Object reference not set to an instance of an object
+TumbangPreso.Visual.RafiSkimCoating.Sample () (at Assets/TumbangPreso/Runtime/Visual/RafiSkimCoating.cs:79)
+TumbangPreso.Visual.RafiSkimCoating.LateUpdate () (at Assets/TumbangPreso/Runtime/Visual/RafiSkimCoating.cs:71)
+
+NullReferenceException: Object reference not set to an instance of an object
+TumbangPreso.Visual.RafiSkimCoating.Sample () (at Assets/TumbangPreso/Runtime/Visual/RafiSkimCoating.cs:79)
+TumbangPreso.Visual.RafiSkimCoating.LateUpdate () (at Assets/TumbangPreso/Runtime/Visual/RafiSkimCoating.cs:71)
+
+NullReferenceException: Object reference not set to an instance of an object
+TumbangPreso.Visual.RafiSkimCoating.Sample () (at Assets/TumbangPreso/Runtime/Visual/RafiSkimCoating.cs:79)
+TumbangPreso.Visual.RafiSkimCoating.LateUpdate () (at Assets/TumbangPreso/Runtime/Visual/RafiSkimCoating.cs:71)
+
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

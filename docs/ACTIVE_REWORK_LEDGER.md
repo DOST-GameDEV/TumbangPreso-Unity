@@ -3374,6 +3374,28 @@ One focused native lifecycle/review, at most one bounded fixture repair. Include
 properly bound Hud and detached shoe observer restoration in this distinct VFX
 review, preserving earlier failed diagnostic. SFX remains separate. Quiet mode.
 
+Loaded coating first runtime stops on a new component initialization defect:
+MaterialPropertyBlock cannot be created in a MonoBehaviour field initializer.
+Move construction into explicit Build after AddComponent; no test relaxation.
+Product correction, no tooling repair. Repeat the same relevant lifecycle/view
+check against corrected source; preserve failure evidence.
+
+Coating v2 native1/1 passes both copies, actual load and natural expiry/release
+cleanup. Native pixels show the narrow edge too buried in the sampled shoe sole.
+Increase only meniscus width and toe clearance slightly, lower it to the sole
+edge; preserve skin/material and all state. Product visual correction, nofixture
+change. Final same-case view/lifecycle review follows; no new OOM. Properly bound
+Hud now shows settled Waterwall icon correctly. Body palm/sole artistic relation
+still needs refinement; do not call the entire Hydro quality pass complete.
+
+Coating finalv3 passes1/1 natural expiry/release, two live copies, real state and
+no colliders. Source/frozen hashes match; no new OOM. Sole edge visible in owner
+view after width/clearance adjustment; tiny world cue preserves shoe silhouette.
+Proper Hud.Bind resolves settled Waterwall icon; observer now shows real held
+prop. The body free hand still misses a convincing sole stroke, so exact palm
+alignment is the next refinement, not a completed quality claim. Sound, skin
+matrix, cold-join cue film and actual-peer visual qualification remain open.
+All native jobs terminal. Ship coherent cue, then inspect measured palm geometry.
 Publication race integrated f2bbdd28f loaded-Skim presentation reservation; no
 code overlap or private-file changes. Frostbite122coherent native4/4 plus earlier
 failed baseline retained; all owned jobs terminal. Feedback shorter Notes and
@@ -3412,4 +3434,28 @@ grant preserves ordinary no-refund snapshots. Full Zack remains open: legacy
 Magnet cooldown migration, other proposed slots and permanent Overclock15points.
 Publish confirmed passive only, then continue the actual full-kit mechanics path
 from current Wiki/plans. No actual123player or visual/loading qualification claim.
+
+Integrated Frostbite timed recovery3bf3263c with Skim coatingb28e300a. Current
+protocol122; our coating source was qualified on121before this disjoint recovery
+change. Preserve exact candidate limits; no122actual-peer or combined-suiteclaim.
+
+RAFI-SKIM-PALM-1001 reopens the shipped body pose for demonstrated observer
+mismatch: the free palm moves but does not reach the carried sole. Own only
+HeroAbilityClips.Rafi.cs editor-authored palm alignment, targeted RafiMotionAuthor
+bake diagnostic, existing hero-rafi-skim.anim and focused RafiExpansionProbe
+contact/observer evidence. Retain clip GUID, all gameplay, other clips and FPP
+path. Use measured weighted palm centres on the real rig to align the two arms
+at the low forward working position, rather than another blind Euler guess.
+One targeted bake and one focused native contact/pixels pass, one tooling repair
+maximum. Current source1e8aa569 protocol122; coating/bindings shipped and terminal.
+
+Integrated loaded-Skim cue b28e300a9 and palm-refinement reservation869477475
+with Amped-Up bc31c60d4. Native6qualified source/receipts preserved,123 retained;
+no code overlap and no own authored art changes. Rafi refinement remains owned
+by contributor. All local heavy jobs terminal, private dirt intact. Next explicit
+confirmed Zack requirement is match-long Overclock15points with persistent
+recovery/reset lifecycle; plan3m/.8s and new blank slots are labelled proposals.
+Keep full migration open and avoid inventing final art or retuning those proposals
+as if already human-confirmed. Source current20point/7second aimed strike remains
+known mismatch to address, not a completed Zack claim.
 
