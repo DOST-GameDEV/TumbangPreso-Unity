@@ -17,6 +17,13 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### REPLAY-EMPTY-CAPTURE-1002: remove unused empty-sample allocations
+
+Calibrated Unity recorder: 500 empty captures changed from 1,000 allocation
+events to 0. Native empty and actual flying-trail lifecycle cases pass 2/2.
+No new pools, wire or authored visual change.
+[Evidence](reports/reliability-2026-10-02/replay-empty-capture/README.md).
+
 ### ILALIM-PREVIEW-AUDIO-1002: repaired late street voices behind menus
 
 Actual preview created 10 enabled late voices after its silence pass. Same native
