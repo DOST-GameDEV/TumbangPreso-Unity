@@ -3672,3 +3672,5 @@ with flat shader glow while retaining disc, open octagon and scoped brackets,
 seat colours, water placement and local first-person hiding. Focused native
 shape/flatness/camera-scope and water checks; no character kit edits. Ground
 projection beyond existing water/flight behavior is not required by this unit.
+
+Bank Shot91de6867c integrated/pushed04429e627, remote verified. Feedback own Zack paragraph updated/read back; human controls, comments and Hydro note untouched. Active protocol125. Native guards59212/40251/71097/59082 terminal, only pre-existing Unity Hub serve remains; no task-owned browser/preview. Preserve failed first compile and8/10fixture run alongside focused3/3. Whole goal remains active. Next Quick Circuit signature then Closed Circuit; migrate obsolete Magnet acceptance contracts during the changed kit gate, without broad unchanged reruns.
