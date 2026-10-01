@@ -10,6 +10,7 @@ namespace TumbangPreso.Abilities
         public float Remaining, UntilNextEmission;
         public Vector3[] Wake;
         public uint KnownWake;
+        public bool QuickFollowup, QuickSecondCut;
 
         public bool Valid(float duration, float interval, float age)
         {

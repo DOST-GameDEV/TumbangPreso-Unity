@@ -3674,3 +3674,14 @@ shape/flatness/camera-scope and water checks; no character kit edits. Ground
 projection beyond existing water/flight behavior is not required by this unit.
 
 Bank Shot91de6867c integrated/pushed04429e627, remote verified. Feedback own Zack paragraph updated/read back; human controls, comments and Hydro note untouched. Active protocol125. Native guards59212/40251/71097/59082 terminal, only pre-existing Unity Hub serve remains; no task-owned browser/preview. Preserve failed first compile and8/10fixture run alongside focused3/3. Whole goal remains active. Next Quick Circuit signature then Closed Circuit; migrate obsolete Magnet acceptance contracts during the changed kit gate, without broad unchanged reruns.
+
+QUICK-CIRCUIT-1001 owns Zack signature, shared cast-context hook and recast impairment gate, HeroMovementState/MatchRpc.Movement and focused QuickCircuitTests. Planned30s/2m lateral cut, .15s tell/.2s recovery, Overclock one optional same-button second cut within1s. Preserve authored assets/cues; remove legacy stun/travel behavior. Snapshot restores followup clock without replaying impulse or extending it. Native baseline name and actual Zapped-recast bypass, then focused acceptance; tooling retry0. All own jobs terminal; no loading edits.
+
+OWNER SCOPE SWITCH: leave all new Docs TODO/Feedback work to DOTS. This worker
+finishes the already-running Quick Circuit check, then independent network/bot/
+optimization bugs. No messaging/delegation, no further Google Docs writes.
+Quick Circuit final10/10 native passed;2baseline failures include actual Zapped
+recast bypass.742 frozen inputs unchanged, zero tooling repairs. Protocol126.
+Guards63752/44973 terminal and profiles preserved. Publish current coherent unit,
+then inspect independent CastPreparation framing before further kit migration.
+Closed Circuit/legacy kit-probe migration belong to DOTS. Full goal stays active.

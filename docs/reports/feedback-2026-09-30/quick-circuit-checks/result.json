@@ -1,0 +1,10 @@
+{
+  "source": "937ca6483e75f0f8a42c359ff93b323e8bf66570",
+  "protocol": 126,
+  "nativeFinal": "10/10",
+  "baseline": "2/2 failed: legacy sprint and Zapped recast bypass",
+  "inputs": 742,
+  "drift": [],
+  "toolingRepairs": 0,
+  "actualPeerQualification": false
+}
