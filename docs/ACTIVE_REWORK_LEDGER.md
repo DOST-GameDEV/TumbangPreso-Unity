@@ -3869,3 +3869,12 @@ DOTS owns Docs queue; full demo/tournament readiness remains unproven/active.
 Outage cleanup verified: temporary runner absent; no task player/proxy or8910/8911 listener. No task browser/preview. Preserve scoped pass and old false rematch verdicts. Continue reliability fixes, no completion claim.
 
 Owner reiterated nonstop work: continue through checkpoints and user questions; do not end merely because one unit shipped. Maintain concise progress updates and active goal. Next SOLO-SHORTCUT-CONTEXT-1001 owns DebugPlayerSwitcher.Update input gate and one small pause/presentation shortcut case in PauseOwnerRebindTests. Reproduce actual F2 through normal Update while menu/presentation owns input, then gate the same shortcut path. No layout, kit, network protocol, loading or art edits.
+
+SOLO-SHORTCUT-CONTEXT-1001 reproduced F2 seat0to1 behind actual pause menu and
+inside PresentationClock.Hold. Existing Update now gates open Panels/held or
+blocked presentation clock while preserving network refusal. Same native2/2
+final pass fresh key after each release;753inputs unchanged, zero repairs.
+Jobs21241/18683 terminal, profiles/input preserved. Source788ede121+owned overlay,
+protocol126 unchanged. Publish; keep working through checkpoint, no final stop.
+Next existing actual-peer terminal-connection scenario; diagnose real result,
+do not broaden validation framework or edit DOTS queue/loading/authored art.
