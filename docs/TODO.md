@@ -301,6 +301,12 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   Protocol122; actual new peers remain separate.
   [Evidence](reports/feedback-2026-09-30/frostbite-recovery.md).
 
+- [x] AMPED-UP-1001: authoritative objective income reduces Zack's running basic
+  cooldowns by5seconds per unit with guarded owner delivery. Baseline reproduced;
+  six native cases cover fractional income, resources, scope/sequence/framing
+  and newer predicted/settled casts. Protocol123; remaining Zack kit stays open.
+  [Evidence](reports/feedback-2026-09-30/amped-up-objective.md).
+
 - [x] HELD-SEAT-PICKS-1001: matching-token reclaim retains picks and takeover
   rating; Identify cannot replace fixed match choices with local preferences.
   Five distinct native cases cover repeated cycles, fresh account state, foreign

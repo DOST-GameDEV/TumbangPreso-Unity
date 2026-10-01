@@ -242,6 +242,9 @@ namespace TumbangPreso.Abilities
             UltimateCharge = Mathf.Clamp(UltimateCharge + amount, 0.0f, UltimateCost);
         }
 
+        // Objective income is distinct from practice/refill or network hydration.
+        public virtual void OnObjectiveAwarded(float amount) { }
+
         /// <summary>
         /// Everything about this kit that has to survive a reconnect, in the order it goes on
         /// the wire. See <see cref="HeroAbility.ApplyNetworkSnapshot"/> for why durations are

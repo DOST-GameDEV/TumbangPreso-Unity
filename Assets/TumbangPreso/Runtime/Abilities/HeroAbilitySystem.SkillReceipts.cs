@@ -73,6 +73,7 @@ namespace TumbangPreso.Abilities
         public bool HasPendingUltimateAfter(long processedRequest) => _pendingUltimateRequest > processedRequest;
 
         public bool MatchesSkillRequest(int slot,long request)=>slot>=0&&slot<2&&request>0&&_skillRequests[slot]==request;
+        public long LatestSkillRequest(int slot) => slot >= 0 && slot < _skillRequests.Length ? _skillRequests[slot] : 0;
         public bool PendingSkillReceipt(int slot,long request)
             =>(MatchesSkillRequest(slot,request)&&!_skillSettled[slot])
                 ||PendingEffectMatches(slot,request)

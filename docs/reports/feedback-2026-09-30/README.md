@@ -245,3 +245,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Current121cold-process rejoin through active round2](reconnect121-actual-player.md).
 
 [Cheska Frostbite timed recovery and restored real hit](frostbite-recovery.md).
+
+[Amped-Up objective cooldowns and guarded owner delivery](amped-up-objective.md).

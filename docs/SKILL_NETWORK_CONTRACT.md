@@ -562,3 +562,16 @@ match/round/epoch/sequence/hero/ability gates remain. Authoritative empty state 
 settle-once lifecycle prevent late resurrection; reset opens the next round's
 hydration. Four native checks include a restored real Frozen hit. Actual122peers
 remain separate. [Evidence](reports/feedback-2026-09-30/frostbite-recovery.md).
+
+## Objective Cooldown Compatibility
+
+Protocol123adds ObjectiveCooldown, a fixed40byte host grant with match/round/
+epoch, seat, monotonic sequence, bounded objective income and processed-request
+watermark. It follows actual awarded income, not practice/refill or UI effects.
+Current Zack basics reduce by5seconds per objective unit; effect clocks, charge
+counts and ultimate resources remain unchanged. Owner slots with a newer issued
+request, including a settled one, skip the old discount. Valid no-ops still retire
+the sequence. ReliableSequenced ordering accompanies existing resource traffic;
+ordinary live-owner resource snapshots retain their no-refund rule. Native6cases
+pass; actual123peers and full Zack migration remain separate.
+[Evidence](reports/feedback-2026-09-30/amped-up-objective.md).

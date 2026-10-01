@@ -986,6 +986,12 @@ namespace TumbangPreso.Abilities
             }
         }
 
+        public void ReduceCooldown(float seconds)
+        {
+            if (!float.IsFinite(seconds) || seconds <= 0) return;
+            CooldownRemaining = Mathf.Max(0, CooldownRemaining - seconds);
+        }
+
         public virtual void Reset()
         {
             AcceptedCastEvent = 0;

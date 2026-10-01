@@ -3407,6 +3407,34 @@ no invented adoption. Inspect actual objective hooks/resource/recovery before
 editing, respect fresh contributor claims, preserve all visual/loading scope.
 
 
+AMPED-UP-1001 owns HeroKit objective hook, HeroAbility cooldown reduction,
+HeroAbilitySystem award/readonly request watermark, ZackHeroKit passive only,
+new bounded objective-cooldown delivery and SkillReceiptTests plus protocol.
+Confirmed Wiki anchor5seconds per objective point is absent. Real Award is host
+objective income1/.5/.15; practice AddUltimateCharge must not trigger passive.
+Live owner snapshots deny cooldown decreases, so implement ordered explicit
+grant with processed-request guard rather than a host-only fix. Zack full-kit
+migration/legacy Magnet and permanent Overclock remain separate open scope.
+One native objective baseline, then focused host/owner/replay/framing controls.
+No authored visual/loading edits, no other heavy job. Current3b6f13342.
+
+
+Amped baseline1/1 reproduces20s remaining after an actual objective award;3497
+terminal. Add explicit objective callback, five-second-per-unit basic-only
+discount and bounded40byte reliable scoped grant. Owners compare per-slot latest
+request against host processed watermark; duplicate/scope/frame checks precede
+commit. Practice/refill bypasses hook; cooldown floor, charges/ultimate untouched.
+123compatibility. Final6focused cases, one native repair max; no full-Zack claim.
+
+
+Amped final6/6passes actual fractional/whole objective, owner replay/scope/watermark,
+framing/authority and resource/practice controls.726inputs no drift; newmeta imported;
+3497/39940terminal, profiles/inputprefs preserved, no native repair.123cooldown
+grant preserves ordinary no-refund snapshots. Full Zack remains open: legacy
+Magnet cooldown migration, other proposed slots and permanent Overclock15points.
+Publish confirmed passive only, then continue the actual full-kit mechanics path
+from current Wiki/plans. No actual123player or visual/loading qualification claim.
+
 Integrated Frostbite timed recovery3bf3263c with Skim coatingb28e300a. Current
 protocol122; our coating source was qualified on121before this disjoint recovery
 change. Preserve exact candidate limits; no122actual-peer or combined-suiteclaim.
@@ -3427,3 +3455,19 @@ GUID/roster/otherclips preserved; exactinputs match, norepair/newOOM. Handsnowwo
 againsttheactualshoe, thoughblockypalmsvisuallyoverlapbehindit. Boundscheck isnot
 meshpenetrationproof. Brief genericbluecastcubesremain,nextscopedpresentation
 cleanup. No freshplayer/peer/SFX/humanapproval. Alljobs terminal.
+Integrated loaded-Skim cue b28e300a9 and palm-refinement reservation869477475
+with Amped-Up bc31c60d4. Native6qualified source/receipts preserved,123 retained;
+no code overlap and no own authored art changes. Rafi refinement remains owned
+by contributor. All local heavy jobs terminal, private dirt intact. Next explicit
+confirmed Zack requirement is match-long Overclock15points with persistent
+recovery/reset lifecycle; plan3m/.8s and new blank slots are labelled proposals.
+Keep full migration open and avoid inventing final art or retuning those proposals
+as if already human-confirmed. Source current20point/7second aimed strike remains
+known mismatch to address, not a completed Zack claim.
+
+
+Integrated Amped-Up bc31c60d with measured Skim palm93ddf8d8. Current123;
+our exact palm candidate was122. No runtime overlap; retain distinct receipts.
+Generic cast flash lives in HeroAbilitySystem shared with ongoing Zack work;
+leave it for a clear reservation rather than overlap. Waterwall material remains
+independent presentation work after fresh Feedback review.

@@ -321,6 +321,7 @@ namespace TumbangPreso.Net
             PresentationMatchId = 0; _pendingMoments.Clear();
             ResetUltimateTransport();
             ResetTimedKitTransport();
+            ResetObjectiveCooldownTransport();
             _lastSkillRequest.Clear();_skillRequestSequence=0;_skillEventSequence=0;_skillEpoch=long.MinValue;
             _pendingSkillCasts.Clear();
             for (int slot = 0; slot < Balance.PlayerCount; slot++) Unit(slot)?.AbilitySystem?.ResetNetworkSkillReceipts();
@@ -393,6 +394,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("SkipBuffer", OnSkipBufferMsg);
             cm.RegisterNamedMessageHandler("BufferVotes", OnBufferVotesMsg);
             cm.RegisterNamedMessageHandler("SyncAbility", OnSyncAbilityMsg);
+            cm.RegisterNamedMessageHandler("ObjectiveCooldown", OnObjectiveCooldownMsg);
             cm.RegisterNamedMessageHandler("RebindSeat", OnRebindSeatMsg);
             cm.RegisterNamedMessageHandler("ReqCue", OnReqCueMsg);
             cm.RegisterNamedMessageHandler("PlayCue", OnPlayCueMsg);
