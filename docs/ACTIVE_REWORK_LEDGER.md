@@ -3410,3 +3410,13 @@ editing, respect fresh contributor claims, preserve all visual/loading scope.
 Integrated Frostbite timed recovery3bf3263c with Skim coatingb28e300a. Current
 protocol122; our coating source was qualified on121before this disjoint recovery
 change. Preserve exact candidate limits; no122actual-peer or combined-suiteclaim.
+
+RAFI-SKIM-PALM-1001 reopens the shipped body pose for demonstrated observer
+mismatch: the free palm moves but does not reach the carried sole. Own only
+HeroAbilityClips.Rafi.cs editor-authored palm alignment, targeted RafiMotionAuthor
+bake diagnostic, existing hero-rafi-skim.anim and focused RafiExpansionProbe
+contact/observer evidence. Retain clip GUID, all gameplay, other clips and FPP
+path. Use measured weighted palm centres on the real rig to align the two arms
+at the low forward working position, rather than another blind Euler guess.
+One targeted bake and one focused native contact/pixels pass, one tooling repair
+maximum. Current source1e8aa569 protocol122; coating/bindings shipped and terminal.
