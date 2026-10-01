@@ -3033,3 +3033,17 @@ Spacing final4/4 native passes;100 warmed reads200allocation events to0.
 terminal, profiles preserved. Publish scoped performance source/receipts. Next
 inspect bot Tap cancellation between render and physics; no proven fix yet.
 
+ANNOUNCEMENT-RULES-1001 owns Core ActionChains.cs, MatchRules.cs, MatchMoment.cs;
+Runtime MatchDirector.Moments.cs, MatchDirector.ActionChains.cs, Lata.cs accepted
+can-down hook, UI/MatchMomentBanner.cs, NetSession.cs protocol constant; Core
+ActionChainTests.cs and native ActionChainIntegrationTests.cs/MatchMoment tests
+as needed. Live Feedback rechecked: first/late/multi knockdown50, catch2+25,
+five-second catch window reset by can-down, banners2.5seconds. Replace old paid
+accuracy-chain rewards; preserve accuracy statistics and accepted-action guards.
+Knockdown streak counts accepted knocks since tag/round, including misses between;
+independently qualifying first/late/multi bonuses stack. Normal and Sprout base
+awards remain unchanged. Catch counts accepted tags, allowing later legal repeat
+victims for Multi Catch; duplicate event IDs remain rejected. Queue banners so
+simultaneous qualifications are not silently suppressed. Protocol121 planned.
+Focused Core/native behavior, ultimate-charge invariant and replica idempotency;
+no fresh remote-peer claim. All prior jobs terminal; owner studying, no chat pings.
