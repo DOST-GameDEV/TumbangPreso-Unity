@@ -47,7 +47,7 @@ Other Hydro slots and presentation remain open.
 Live Mirrorwake replacement implemented with held identity, eight-second load,
 35second cooldown and up-to-two-metre first-ground phase. Initial5native/5Core
 pass; final boundary/interaction pass adds court/round/body/current coverage,
-eight distinct native successes in total. Publication pending. Dedicated body,
+eight distinct native successes in total. Implemented77bf73e3. Dedicated body,
 FPP, glyph/wake/audio and actual matching peers remain open.
 [Plan](reports/hero-quality-2026-10-01/skim-implementation.md) and
 [evidence](reports/hero-quality-2026-10-01/skim-checks/README.md).
@@ -114,6 +114,16 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   depth and distance. Both native tier regressions fail before the fix; final6/6
   passes with fresh-observation and companion identity controls. Broader Haunted
   sensing remains open. [Evidence](reports/feedback-2026-09-30/bot-tag-depth.md).
+
+- [x] BOT-PLANNING-INVENTORY-1001: nine remaining bot slipper scans reuse the
+  existing live inventory. Five measured helpers reduce1400allocation events to0
+  across100warmed passes; seven native lifecycle/order/query checks pass. No kit
+  or loading change. [Evidence](reports/feedback-2026-09-30/bot-planning-inventory.md).
+
+- [x] NETWORK-DEPARTURE-FRAMING-1001: malformed trailing notice bytes cannot show
+  a toast or consume its sequence. Native baseline2/2fails; final6/6passes with
+  valid NGO envelope/authority/freshness/name/transport controls. No wire change.
+  [Evidence](reports/feedback-2026-09-30/peer-departure-framing.md).
 
 Source: [TUMP Wiki](https://docs.google.com/document/d/1jvr7NLzhHrbw-wrG676AeOkoTxJf4GokkfmxpO0ddLg/edit),
 read on 2026-09-30, including ability, status and feedback tabs. The document wins

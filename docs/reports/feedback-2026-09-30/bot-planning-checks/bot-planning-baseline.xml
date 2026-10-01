@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 04:59:35Z" end-time="2026-10-01 04:59:35Z" duration="0.2589411">
+  <test-suite type="TestSuite" id="2337" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1081" result="Failed" site="Child" start-time="2026-10-01 04:59:35Z" end-time="2026-10-01 04:59:35Z" duration="0.258941" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2331" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1081" result="Failed" site="Child" start-time="2026-10-01 04:59:35Z" end-time="2026-10-01 04:59:35Z" duration="0.246873" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12280" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2332" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1081" result="Failed" site="Child" start-time="2026-10-01 04:59:35Z" end-time="2026-10-01 04:59:35Z" duration="0.243532" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2333" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1081" result="Failed" site="Child" start-time="2026-10-01 04:59:35Z" end-time="2026-10-01 04:59:35Z" duration="0.240770" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1131" name="BotSlipperQueryTests" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-01 04:59:35Z" end-time="2026-10-01 04:59:35Z" duration="0.175898" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1138" name="PlanningScansFollowLiveActivityFlightAndReplacement" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests.PlanningScansFollowLiveActivityFlightAndReplacement" methodname="PlanningScansFollowLiveActivityFlightAndReplacement" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" seed="776101530" result="Passed" start-time="2026-10-01 04:59:35Z" end-time="2026-10-01 04:59:35Z" duration="0.094007" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1137" name="WarmPlanningScansDoNotAllocateSceneArrays" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests.WarmPlanningScansDoNotAllocateSceneArrays" methodname="WarmPlanningScansDoNotAllocateSceneArrays" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" seed="1943797760" result="Failed" start-time="2026-10-01 04:59:35Z" end-time="2026-10-01 04:59:35Z" duration="0.064426" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Warmed planning queries still allocate scene result arrays.
+  Expected: 0
+  But was:  1400
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.BotSlipperQueryTests.WarmPlanningScansDoNotAllocateSceneArrays () [0x00164] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\BotSlipperQueryTests.cs:131
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

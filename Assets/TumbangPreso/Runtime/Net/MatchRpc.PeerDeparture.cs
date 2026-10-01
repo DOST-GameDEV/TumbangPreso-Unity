@@ -95,7 +95,8 @@ namespace TumbangPreso.Net
             var characters = new char[nameLength];
             for (int i = 0; i < characters.Length; i++)
             { reader.ReadValueSafe(out ushort character); characters[i] = (char)character; }
-            if (match <= 0 || match != PresentationMatchId || sequence <= _lastPeerDepartureSequence ||
+            if (reader.Position != reader.Length ||
+                match <= 0 || match != PresentationMatchId || sequence <= _lastPeerDepartureSequence ||
                 !ValidSlot(seat) || reason > 1) return;
             _lastPeerDepartureSequence = sequence;
             PresentPeerDeparture(seat, SafeDepartureName(new string(characters), seat), reason == 1, bot);

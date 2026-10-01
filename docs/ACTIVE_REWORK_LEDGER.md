@@ -2122,6 +2122,34 @@ retained slipper inventory to remaining planning scans; preserve every predicate
 selection order and hero mechanics. Measure calibrated warm allocations and
 live flight/activity/ownership/lifecycle; no claimed FPS gain. No heavy job active.
 
+BOT-TAG-DEPTH0b9475534 remote verified; no owned source remains dirty. Claim
+BOT-PLANNING-INVENTORY-1001 AIController nine remaining slipper scans and existing
+BotSlipperQueryTests only. Existing retained inventory already invalidates birth/
+destroy and filters live activity. Keep every original predicate/order/kit rule;
+use calibrated seven-helper100-pass allocation plus live flight/ownership/activity/
+birth/destroy controls. Baseline2cases; final7cases with earlier inventory controls.
+One tooling repair maximum. No loading/presentation/compatibility edit.
+
+Preparation corrected a manifest prior-name typo before any engine launch.
+Allocation measurement isolates five scan helpers: flying/loose/void/thorn-count/
+thorn-aim. Glance/cover also have separate IReadOnlyList actor enumeration; do not
+misattribute those enumerator allocations to scene arrays or claim their total
+allocation is zero. All nine substitutions keep unchanged predicates and ordering.
+
+BOT-PLANNING baseline2cases: live flight/activity/ownership/replacement control
+passes; warmed five-helper100pass allocation records1400events and fails as
+expected. No fixture repair. Final source changes only nine inventory expressions;
+all predicates and hero rules retained. Baseline67198terminal. Freeze final7cases
+and verify fresh XML plus input drift; no broad gate or player rebuild.
+
+BOT-PLANNING final7/7native passes0.387s; calibrated five-helper100passes1400
+allocation events baseline to0final.659inputs no drift; two owned source files
+match candidate. Shared nine substitutions only; actor-enumerator allocations,
+structural scan rebuilds and whole-game FPS remain separate. No kit/loading/art/
+protocol change or fixture repair. Jobs67198/97546terminal. Publish exact paths,
+then inspect PeerDeparture receiver framing: unlike newer bounded carriers it
+currently accepts trailing unread bytes before advancing its notice sequence.
+
 HYDRO-SKIM-1001 next cloud unit claims RafiHeroKit.cs, Carrier.cs, Slipper.cs,
 Core RafiRules.cs/tests, existing RafiExpansionProbe.cs and NetSession protocol
 line. Plan is reports/hero-quality-2026-10-01/skim-implementation.md. Preserve
@@ -2169,3 +2197,55 @@ travel ends loose at2m; cover/edge/round/body/current interactions and load
 identity/expiry/recovery checked. Frozen inputs unchanged, OOM11/kill6unchanged.
 Publish coherent gameplay unit only; distinct body/FPP/glyph/wake/audio remains
 provisional. Actual116peer/player qualification is still separate.
+
+
+Integrated Hydro first-contactec644a4b and Skim reservationa47d0206d, with
+both ledger histories intact and no runtime conflict. Current compatibility115;
+local bot/menu receipts remain114overlay checks, not merged115peer qualification.
+Keep contributor Rafi/Carrier/Slipper/Core/NetSession reservations untouched.
+Local planningfd15da554 ready to publish; no unchanged native rerun justified.
+
+BOT-PLANNINGfd15da554 published at661ed3bfd, remote verified; current115Hydro
+integrated with authored receipts intact. Next NETWORK-DEPARTURE-FRAMING-1001
+owns MatchRpc.PeerDeparture.cs and existing Tests/PeerDepartureTests.cs only.
+Receiver currently checks bounded name bytes but accepts a trailing suffix,
+then advances notice sequence. Two native baseline malformed-suffix cases use
+an already-consumed8byte NGO name envelope. Final6cases retain authority/stale/
+name sanitation/lifecycle and valid-envelope controls. Stop fresh XML; one
+fixture repair maximum. No protocol/schema/loading/tuning/assets change.
+
+Departure baseline engine exits before project/tests: licensing error198 with
+no headless entitlement, no XML. Earlier final planning had valid entitlement
+minutes before. Shared prefs preserved, job terminal. One unchanged bounded
+licensing retry uses separatev2log/XML; no license/profile/reset mutation. If it
+fails, retain unverified candidate and continue engine-free/source work, not a
+DONE claim or repeated launch loop.
+
+User refreshed signed-in Unity Hub and asked to confirm restored operation.
+License failure was automatic process entitlement validation, never an absent
+Editor. External state changed; resume baseline with separatev3receipt, same
+frozen old receiver and regressions. Main has pending strict suffix check only;
+do not overwrite baseline until its actual failure is recorded. Prior two
+license attempts produced no tests/qualification; profiles/preferences retained.
+
+Departurev3launch accepts Unity Personal/Unlimited and runs nativeEditMode.
+Actual baseline2/2fails at intended notice count (malformed suffix accepted),
+not licensing or fixture setup. Main suffix-length check now ready for final6cases;
+no further license retries. Baseline85628terminal, profiles/inputprefs preserved.
+
+Departure final6/6nativeEditMode passes0.263s;666inputs no drift and two owned
+files match candidate661ed3bfd overlays. Suffix guard precedes notice sequence/
+toast; valid named envelope/repeat/authority/state cleanup retained. Jobs85628/
+44597terminal, no fixture repair. Initial two license failures did not run tests;
+user-refreshed Hub resolved process entitlement before actual baseline/final.
+Publish exact source/status/evidence; protocol115 unchanged and no new peer/player
+claim. Next BOT-OBSERVE-ALLOCATION-1001: per-render Observe foreach over cached
+IReadOnlyList Bodies boxes its enumerator. Measure a warmed bound delegate with
+calibrated recorder, replace only that loop with indexing if confirmed, retain
+six existing observation/ranking controls. Full Haunted sensing still open.
+
+Skim77bf73e3 integrated with incoming bot inventory reuse and departure payload
+framing fixes, preserving both histories. Protocol116; no runtime conflict.
+Owned native/Core receipts are scoped to their frozen candidate, not a new
+whole-branch or actual-peer qualification. Next Water wall follows the saved
+Hydro plan; old Skim feint/glyph/audio is provisional until presentation pass.
