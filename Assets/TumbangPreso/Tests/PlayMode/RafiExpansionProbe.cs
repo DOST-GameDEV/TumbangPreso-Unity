@@ -71,7 +71,36 @@ namespace TumbangPreso.PlayTests
             }
             Assert.AreEqual(1,bent.Count,"One current must intercept one flight, not zero or both.");
             Assert.AreEqual("rafi",caster.AbilitySystem.Kit.HeroId,"A fixture roster mismatch replaced the kit.");
-            Assert.AreEqual(1,caster.AbilitySystem.Kit.Skill1.ChargesRemaining);
+            Assert.IsFalse(caster.AbilitySystem.Kit.Skill1.UsesCharges);
+            Assert.That(caster.AbilitySystem.Kit.Skill1.CooldownRemaining,Is.InRange(34f,35f));
+            Assert.IsFalse(caster.AbilitySystem.Kit.Skill1.CanActivate(Context(caster)));
+        }
+
+        [UnityTest,Timeout(60000)] public IEnumerator CurrentChoosesFirstContactRegardlessOfInventoryOrder()
+        {
+            yield return Start(); var caster=Rafi(); yield return null;
+            var near=GameServices.Round.PlayerAt(2).GetComponent<Carrier>().Held;
+            var far=GameServices.Round.PlayerAt(3).GetComponent<Carrier>().Held;
+            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            var inventory=typeof(RafiWaterField).GetField("_shoes",flags);
+            var resolve=typeof(RafiWaterField).GetMethod("ResolveCurrent",flags);
+            foreach(bool reversed in new[]{true,false})
+            {
+                Vector3 origin=caster.transform.position;
+                near.HostThrow(GameServices.Round.PlayerAt(2),origin+new Vector3(0,.85f,1),Vector3.right*4.5f);
+                far.HostThrow(GameServices.Round.PlayerAt(3),origin+new Vector3(0,.85f,3),Vector3.right*4.5f);
+                var field=RafiWaterField.Cast(Context(caster),WorldEffectSnapshot.Kind.Current,.65f,8,.93f,false);
+                Assert.IsNotNull(field);
+                inventory.SetValue(field,reversed?new[]{far,near}:new[]{near,far});
+                // A controlled four-metre host sweep through two real flights.
+                resolve.Invoke(field,new object[]{4f});
+                Assert.Greater(near.Velocity.z,1f,"The earlier contact must win even when enumerated last.");
+                Assert.AreEqual(0,far.Velocity.z,.001f,"The later slipper remains unchanged.");
+                Assert.AreEqual(4.5f,new Vector2(near.Velocity.x,near.Velocity.z).magnitude,.001f);
+                Assert.AreEqual(2,near.ThrowerSlot); Assert.AreEqual(2,near.OwnerSlot);
+                Assert.IsTrue(field.Capture().Split,"The current is spent after one interception.");
+                Object.Destroy(field.gameObject); yield return null;
+            }
         }
 
         [UnityTest,Timeout(60000)] public IEnumerator WaveCarriesLooseEquipmentWithoutScoringOrMovingHeldEquipment()

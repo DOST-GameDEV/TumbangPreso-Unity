@@ -2058,3 +2058,20 @@ No other Rafi slots or contributor network/bootstrap/bot/Haunted paths claimed.
 Presentation remains its existing authored provisional current until its own film
 pass; do not mark the whole Hydro kit complete. Protocol changes need fresh fetch
 before publication and matching-player qualification remains separate.
+
+Hydro baseline isolates current resolver ordering on two real flights with
+reversed inventory; other new cooldown/Core inputs staged independently. Expected
+1case XML, no retries used. Baseline old resolver frozen on isolated candidate;
+final native check will also retain real moving-flight identity/resource case.
+
+Hydro baseline1failure reproduces later-enumerated near flight untouched. No
+fixture repair; final copies only earliest-contact resolver and runs two cases:
+reversed inventory plus original real moving-flight/identity/cooldown case.
+Core4/4passes after fixing command HOME to writable existing setup home; first
+CLI attempt hit read-only default home, no product/test failure. Native inputs
+frozen in Logs/rafi-current-final, no overlapping heavy job.
+
+Hydro final2/2native and Core4/4pass; first-contact reversed-order control and
+real moving current preserve speed/credit/one-hit, cooldown spent/refused. All
+frozen inputs unchanged; OOM11/kill6unchanged. No native fixture repair. Ready
+to publish scoped115unit; new peer/player/film/audio qualification separate.
