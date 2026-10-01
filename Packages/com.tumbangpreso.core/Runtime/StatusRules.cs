@@ -68,6 +68,9 @@ namespace TumbangPreso.Core
         /// <summary>Voodoo (CURSE: HEX). *"Hallucinations of slippers randomly appear on your screen for 7.5
         /// seconds."* Local presentation on the victim's screen only, like Disoriented.</summary>
         Hexed = 11,
+
+        /// <summary>Nemu. Reduced perception; status immunity does not prevent it.</summary>
+        Haunted = 12,
     }
 
     /// <summary>One row of the owner's status table.</summary>
@@ -154,6 +157,7 @@ namespace TumbangPreso.Core
 
         /// <summary>*"Hallucinations of slippers randomly appear on your screen for 7.5 seconds."*</summary>
         public const float HexedSeconds = 7.5f;
+        public const float HauntedSeconds = 7.5f;
 
         private static readonly StatusRule[] Table =
         {
@@ -216,6 +220,11 @@ namespace TumbangPreso.Core
                 "Hallucinations",
                 HexedSeconds, 1.0f, blocksMovement: false, blocksInteraction: false,
                 blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+            new StatusRule(StatusKind.Haunted, "HAUNTED",
+                "For 7.5 seconds, can and slipper HUD markers are hidden, sight is reduced and audio is muffled.",
+                "Reduced Perception",
+                HauntedSeconds, 1.0f, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: false),
         };
 
         public static IReadOnlyList<StatusRule> All => Table;
