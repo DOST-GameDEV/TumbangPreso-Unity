@@ -1973,16 +1973,16 @@ namespace TumbangPreso
                 // How far inside the chalk they are. `IsTaggable` is a yes or no and cannot tell
                 // a step past the line from a stand over the lata; the one with further to run
                 // back out is the one this chase can actually catch.
+                Vector3 observed = At(who);
                 float depth = Balance.ConfinementRadius
-                              - Mathf.Max(Mathf.Abs(who.transform.position.x),
-                                          Mathf.Abs(who.transform.position.z));
+                              - Mathf.Max(Mathf.Abs(observed.x), Mathf.Abs(observed.z));
                 if (depth > 0.0f) score += AiTuning.TagDepthWeight * depth;
 
                 // ⚠️ OFF THE OBSERVED POSITION, NOT THE TRUE ONE. Every other read of a rival in
                 // this file goes through `At`, which is this bot's belief lagged by its own
                 // reaction time. A selector that read the truth would pick targets off
                 // information the body it is steering has not been given yet.
-                score -= AiTuning.TagDistanceWeight * Flat(transform.position, At(who));
+                score -= AiTuning.TagDistanceWeight * Flat(transform.position, observed);
 
                 int tieDistance = (slot - _tagTieCursor + Balance.PlayerCount) % Balance.PlayerCount;
                 if (score < bestScore ||
