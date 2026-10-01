@@ -62,6 +62,10 @@ namespace TumbangPreso.Core
         /// above, and the reason the protocol moved when it arrived.
         /// </summary>
         SproutKnock,
+        FirstKnockdownBonus,
+        LateKnockdownBonus,
+        MultiKnockdownBonus,
+        MultiCatch,
     }
 
     /// <summary>
@@ -111,8 +115,12 @@ namespace TumbangPreso.Core
                 // currency is a format whose scores cannot be read beside anybody else's, and a
                 // second literal 100 in this switch is the first step towards the two drifting.
                 case ScoreEvent.LastTsinelasStanding: return CustomGameRules.LastStandingPoints;
-                case ScoreEvent.AccuracyChainTwo:
-                case ScoreEvent.DoubleCatch: return 10;
+                case ScoreEvent.AccuracyChainTwo: return 10;
+                case ScoreEvent.DoubleCatch:
+                case ScoreEvent.MultiCatch: return 25;
+                case ScoreEvent.FirstKnockdownBonus:
+                case ScoreEvent.LateKnockdownBonus:
+                case ScoreEvent.MultiKnockdownBonus: return 50;
                 case ScoreEvent.AccuracyChainThree: return 20;
                 case ScoreEvent.AccuracyChainLong:
                 case ScoreEvent.TripleCatch: return 25;
@@ -122,7 +130,8 @@ namespace TumbangPreso.Core
             }
         }
 
-        public static bool IsChainBonus(ScoreEvent e) => e >= ScoreEvent.AccuracyChainTwo && e <= ScoreEvent.TripleCatch;
+        public static bool IsChainBonus(ScoreEvent e) => (e >= ScoreEvent.AccuracyChainTwo && e <= ScoreEvent.TripleCatch)
+            || (e >= ScoreEvent.FirstKnockdownBonus && e <= ScoreEvent.MultiCatch);
     }
 
     /// <summary>
