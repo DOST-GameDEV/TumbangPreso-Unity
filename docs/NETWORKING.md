@@ -1,7 +1,8 @@
 # Networking: Where To Work
 
-Current gameplay contract is protocol119, including adopted Hydro Crosscurrent,
-Skim, Water wall, can-down charge cancellation and revised penalty/fatigue timings.
+Current gameplay contract is protocol120, including adopted Hydro Crosscurrent,
+Skim, Water wall, can-down charge cancellation, revised penalty/fatigue timings
+and finite can-height contact. Existing player evidence predates120.
 Latest actual Windows direct-peer qualification is protocol114with the CLI
 admission handoff fix, through active round2with matching structural state.
 It predates Hydro115/116/117/118/119and the later local menu/bot/notice changes; it cannot qualify

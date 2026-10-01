@@ -7,6 +7,11 @@ Read the current queue,[loading evidence](reports/stability-2026-09-27/loading-a
 
 ## Current Entry Points
 
+Bot rival-spacing queries reuse per-brain scratch storage. A calibrated native
+100-query measurement falls from200allocation events to0; four cases preserve
+claim expiry/refresh and reader independence. No loading or whole-frame claim.
+[Evidence](reports/feedback-2026-09-30/bot-spacing-allocation.md).
+
 Runtime files are under `Assets/TumbangPreso/Runtime/`.
 
 | Responsibility | Source |

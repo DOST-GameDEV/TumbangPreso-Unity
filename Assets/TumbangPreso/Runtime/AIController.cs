@@ -3784,7 +3784,8 @@ namespace TumbangPreso
         /// mid-round cannot hold a bearing for ever.</summary>
         private List<float> RivalBearings()
         {
-            var found = new List<float>();
+            var found = _rivalBearingsScratch;
+            found.Clear();
             float now = Time.time;
 
             foreach (var pair in _claims)
@@ -3797,6 +3798,10 @@ namespace TumbangPreso
 
             return found;
         }
+
+        // ThrowSpot consumes this synchronously. Keep it per brain so another
+        // bot reading the shared board cannot overwrite the current selection.
+        private readonly List<float> _rivalBearingsScratch = new List<float>(4);
 
         private void Claim(float bearing)
             => _claims[_motor.PlayerSlot] = new BearingClaim(bearing, Time.time);

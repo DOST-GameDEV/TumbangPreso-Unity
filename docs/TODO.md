@@ -242,6 +242,11 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   repair. Valid Unicode/host decisions/authority controls retained.
   [Evidence](reports/feedback-2026-09-30/roster-atomic-framing.md).
 
+- [x] BOT-SPACING-ALLOC-1001: warmed rival-spacing reads produce zero allocation
+  events instead of200per100queries. Four native cases preserve expiry, refresh,
+  self exclusion and independent brains; no measured FPS claim.
+  [Evidence](reports/feedback-2026-09-30/bot-spacing-allocation.md).
+
 - [x] HELD-SEAT-PICKS-1001: matching-token reclaim retains picks and takeover
   rating; Identify cannot replace fixed match choices with local preferences.
   Five distinct native cases cover repeated cycles, fresh account state, foreign
@@ -4001,3 +4006,5 @@ movement/equipment/network/graphics/TODO scope remains open.
   Logs/inday-source-arm-author-v2; prior motion in Logs/inday-source-arm-motion-v1.
   Retain existing animations, source proportions, material and character palette.
   Resolve framing and remove obsolete reconstruction code/assets when resumed.
+
+

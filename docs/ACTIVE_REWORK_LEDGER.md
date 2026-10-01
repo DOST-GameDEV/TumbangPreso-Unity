@@ -3013,3 +3013,23 @@ layout case from initial2/2. Ten actual statuses, viewport/scale/no-overlap/time
 expiry/reflow/refresh checks pass. Pixels inspected, frozen inputs unchanged, no
 tooling repair/new OOM. Publish UI/art paths only. Next announcement scoring and
 2.5second presentation; current120. No native jobs or player/peer qualification.
+
+BOT-SPACING-ALLOC-1001 owns AIController.cs and new BotSpacingQueryTests.cs/meta.
+Measure 100 warm RivalBearings calls with three active rival claims; expected
+current list/backing allocations, then retain per-brain scratch preserving TTL,
+self exclusion, refresh/empty and independent-brain controls. Four final native
+cases; one bounded repair max. No gameplay/loading/art changes or player claim.
+Current6daecd842, all other local heavy jobs terminal. Status/scoring reserved.
+
+
+Spacing baseline1/1 reproduces200GC.Alloc events per100 warmed three-rival
+reads.81100 terminal; profiles/input preferences preserved. Per-brain retained
+list now clears and refills through unchanged own-seat/TTL filters. Final four
+focused cases, no broader suite or invented FPS claim.
+
+
+Spacing final4/4 native passes;100 warmed reads200allocation events to0.
+697frozen inputs no drift, valid metadata imported, no native repair.81100/67847
+terminal, profiles preserved. Publish scoped performance source/receipts. Next
+inspect bot Tap cancellation between render and physics; no proven fix yet.
+
