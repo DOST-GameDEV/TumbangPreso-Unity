@@ -2670,3 +2670,17 @@ receipts with their scopes intact. Current117; can-down118work is reserved and
 not published in this candidate. No conflict in runtime paths; both ledger
 histories preserved. Next changed internalplayer output is feedback-reconnect-fixed-
 player-1001; retain original117failedpair and rerun same strictcharacter2once.
+
+CENTRE-DOT-1001 claims UI/HudReticle.cs and existing ThrowChargeUiTests.cs.
+Current Feedback replaces hollow aim circle with a filled centre dot. Keep
+existing charge/curve/cooldown information and real-owner release feedback,
+reduce pulse extent to suit the small dot, preserve reduced-motion behavior.
+Two existing native cases cover geometry/event lifecycle and real charge/
+can-down/release flow with small/wide captures. Cosmetic only, protocol118stays.
+
+Centre-dot native2/2passes, hashes unchanged/no new OOM. Idle960x540dot is
+centred and filled; full1600x680charge retains separate ring/caption. Native
+owner-event/reduced-motion/hidden controls and real throw gating pass. Publish
+this last part of Harry's combined row, then mark Done text with the three
+commit/evidence scopes; Human verified stays untouched. New penalty row queued
+note added via revision-aware insertion after one concurrent-edit refusal.

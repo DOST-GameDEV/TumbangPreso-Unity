@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 06:48:38Z" end-time="2026-10-01 06:48:50Z" duration="11.8956182">
+  <test-suite type="TestSuite" id="2367" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1110" result="Passed" start-time="2026-10-01 06:48:38Z" end-time="2026-10-01 06:48:50Z" duration="11.895618" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2361" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1110" result="Passed" start-time="2026-10-01 06:48:38Z" end-time="2026-10-01 06:48:50Z" duration="11.878024" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="251428" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2362" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1110" result="Passed" start-time="2026-10-01 06:48:38Z" end-time="2026-10-01 06:48:50Z" duration="11.864956" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2363" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1110" result="Passed" start-time="2026-10-01 06:48:38Z" end-time="2026-10-01 06:48:50Z" duration="11.853519" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2191" name="ThrowChargeUiTests" fullname="TumbangPreso.PlayTests.ThrowChargeUiTests" classname="TumbangPreso.PlayTests.ThrowChargeUiTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-01 06:48:38Z" end-time="2026-10-01 06:48:50Z" duration="11.831253" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2192" name="CentreDotStaysFilledAndOnlyPulsesForItsOwnersThrow" fullname="TumbangPreso.PlayTests.ThrowChargeUiTests.CentreDotStaysFilledAndOnlyPulsesForItsOwnersThrow" methodname="CentreDotStaysFilledAndOnlyPulsesForItsOwnersThrow" classname="TumbangPreso.PlayTests.ThrowChargeUiTests" runstate="Runnable" seed="1062082459" result="Passed" start-time="2026-10-01 06:48:38Z" end-time="2026-10-01 06:48:38Z" duration="0.319101" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2193" name="LiveChargeShowsPowerFullAndRealRefusalsThenClearsOnRelease" fullname="TumbangPreso.PlayTests.ThrowChargeUiTests.LiveChargeShowsPowerFullAndRealRefusalsThenClearsOnRelease" methodname="LiveChargeShowsPowerFullAndRealRefusalsThenClearsOnRelease" classname="TumbangPreso.PlayTests.ThrowChargeUiTests" runstate="Runnable" seed="1394182165" result="Passed" start-time="2026-10-01 06:48:38Z" end-time="2026-10-01 06:48:50Z" duration="11.497877" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] Aim-dot-idle-960x540 cream source=252,211,159 pixel=203,200,231; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Throw-charge-full-960x540 cream source=252,211,159 pixel=203,200,231; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Throw-charge-full-1600x680 cream source=252,211,159 pixel=203,94,62; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Aim-circle-release-1600x680 cream source=252,211,159 pixel=203,94,62; isolated UI camera, no ColourGrade.
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

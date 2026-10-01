@@ -22,7 +22,8 @@ Nothing was deleted or renumbered.
 Tagged and trip stacks now clear through the existing round reset. Native
 baseline reproduces5seconds of Tagged leaking; final4/4passes with field/map/
 replay boundary controls. [Evidence](reports/feedback-2026-09-30/round-status-checks/README.md).
-The combined Feedback row still has the reticle change pending.
+The centre-dot part also passes two native checks, with small/wide captures.
+[Reticle evidence](reports/feedback-2026-09-30/centre-dot-checks/README.md).
 
 ### CAN-DOWN-THROW-1001: current Feedback rule
 
