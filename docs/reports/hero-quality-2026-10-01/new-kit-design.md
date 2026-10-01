@@ -206,13 +206,17 @@ change the angle. Compare silhouettes and tactical traces, not colours.
 
 ### Attacking: Bank Shot
 
-Normal: load the held slipper for8s. On its first legal side-wall contact it may
-ricochet once, retaining thrower credit and a capped speed; no can/body bounce or
-homing.35s cooldown. Refuse without a held slipper. A split-arrow icon and one
+Normal: load the held slipper for8s. Its first legal side-wall contact retains
+85% of incoming speed (proposed), instead of ordinary45% or first-spin-bank62%.
+It still permits only one scoring bank, with no can/body bounce or homing.35s
+cooldown. Refuse without a held slipper. Never accelerate beyond incoming speed. A split-arrow icon and one
 brief wall contact spark show the ricochet; do not restore the full trajectory.
 
-Overclocked: the same throw may bank twice, with a clear second contact cue.
-No speed increase or status added. This makes the permanent upgrade intelligible
+Overclocked: the same charged throw may retain scoring credit for two banks,
+with a clear second contact cue. Each loses at least15% speed, with no added
+status. This is an explicit Hero Strike-only exception to the current one-bank
+credit limit, not a global Balance change. One throw still cannot score twice
+from the same can event; further contacts lose credit normally. This makes the permanent upgrade intelligible
 without turning every shot into an unavoidable stun. Host stores remaining banks,
 consumption and throw episode; round/impact/expiry clear it. Reject invalid or
 unbounded geometry and test corner contacts for duplicate collisions.

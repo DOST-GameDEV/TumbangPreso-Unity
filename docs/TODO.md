@@ -28,8 +28,21 @@ Wiki entries only after that research, ending each new entry with
 anchors and distinguish proposed design from implemented behavior.
 [Research and plans](reports/hero-quality-2026-10-01/README.md).
 Draft coverage now includes all nine heroes, missing-kit alternatives and scoped
-Phaister Hex refinement. Wiki replacement and final film/implementation remain open.
+Phaister Hex refinement. Thirteen proposed Wiki entries are published with
+attribution; final native film/listening/implementation remain open. External
+reference video access was unavailable and is not claimed.
 
+
+### AIM-CIRCLE-1001: replace the crosshair with a hollow circle
+
+Owner October1 explicitly requests a hollow circle instead of the gun-like
+crosshair, with thoughtfully chosen animations. This is a global HUD change in
+both modes, including protected heroes through the ordinary shared-UI exception.
+Current live path is HudReticle via TumpMatchReadout.CourtHud; older text-plus
+builders also exist and must be reconciled by reachability, not blindly edited.
+Preserve truthful charge/curve/cooldown/refusal/reach state, actual aim projection,
+input and visibility rules. Plan: [hollow aim circle](reports/hero-quality-2026-10-01/aim-circle.md).
+Implement after the current priority research/planning pass, before manual hunt.
 
 ### HARRY-REVIEW-1001: learn the human critique standard
 

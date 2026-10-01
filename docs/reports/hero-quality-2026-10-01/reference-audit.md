@@ -106,3 +106,36 @@ what must not replay. A replay must show the accepted event, not improve its aim
   contains Water wall/Baha anchors and blanks. Do not treat legacy code as the
   owner's missing design by default. Sean likewise has legacy implementation and
   a Pyro row retaining only the Empowered throw anchor.
+
+## Additional current-source findings,01:08UTC
+
+- Rafi's active BADJAO_EXPANSION direction establishes a fictional water-trickster/
+  boat-repairer, practical workcloth/cord/buoy details and no gills. Its authored
+  introduction has a boat-deck crouch, currents and fixed stilt silhouettes. The
+  older CHARACTER_ORIGINS header is incomplete, so do not treat it as proof that
+  no direction exists. Preserve these individual features; do not invent cultural
+  markings or call fictional workwear traditional dress.
+- Sean's existing introduction builds a five-stick parol between cupped hands,
+  then connects it to his live leap. This is more character-specific than the
+  first generic compression/launch sketch. Retain and refine that causal craft
+  motif instead of replacing it with another anonymous fire blast.
+- Zack's existing introduction uses a fingertip spark, an answering storm, a snap
+  and casual shrug. Preserve that confident timing while changing the ultimate's
+  meaning to the human Overclock specification. The draft's dramatic planted
+  pose alone would be less specific and is not an improvement by itself.
+- Ordinary slippers already bank off obstacles and confinement with restitution
+  and a scoring-bank limit. A new Bank Shot skill cannot merely promise a bounce
+  everyone already has. Resolve its actual differentiator and bounded scoring
+  exception before writing a misleading ability description.
+
+These are source observations, not newly reviewed native motion. The plans below
+must incorporate these existing strengths rather than restart from generic prose.
+
+## Source-check corrections to the first planning draft
+
+Airburst throws caught players airborne; it does not require them to be airborne
+already. Corrected that mistaken draft interpretation before implementation.
+Cold Feet is a stationary chilling field, not a frost trail following footsteps;
+corrected its proposed staging to match. Current Airburst Core uses70degrees and
+2.5s, while current Wiki says60degrees and1.5s. Both numerical differences are
+recorded for a coherent mechanics reconciliation, not changed by a VFX plan.

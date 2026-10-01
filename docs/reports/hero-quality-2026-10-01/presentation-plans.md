@@ -78,17 +78,18 @@ The existing Vigan/binakol inspiration informs rhythm, not copied sacred motifs.
   edge as a travelling crescent with a readable gap behind it, not a solid ring.
   Contact cue is spatial and short; no new body knockdown or invisible widening.
 - Airburst: a clear held breath, opposing arm draw and forward release. The air
-  front crosses real airborne bodies/shoes; do not fake ground hits. Caster and
+  front catches eligible bodies/shoes and launches them airborne; being airborne
+  beforehand is not a prerequisite. Do not fake ground hits outside the fan. Caster and
   victim cues identify release and actual arrival separately.
 
 Ultimate sketch:0-.5 settle facing; .5-1.2 gather with chest/arms opposing;
 1.2-1.6 compressed quiet;1.6-2.1 release pose/forward camera opening;2.1-2.5 return
 to playable view. Preserve the actual live delay until the new Wiki1.5s versus
-source2.5s discrepancy is reconciled. The movie does not determine that value.
+source2.5s discrepancy is reconciled. Also reconcile the live Wiki60-degree fan
+against the current Core70-degree fan; do not silently change either in this art pass. The movie does not determine that value.
 
 Audio: dry fabric pull plus shaped air impulse, a short low body layer on release,
-no continuous vacuum roar. Failure cue is a soft cloth stop. Acceptance: grounded
-actors remain unaffected by the airborne-only ultimate, observer fronts are visual,
+no continuous vacuum roar. Failure cue is a soft cloth stop. Acceptance: grounded actors caught in the fan are actually launched, observer fronts are visual,
 no stale flight lift on expiry, no old pitch/LOS fix regression. Review pose and
 front readability before adding particles. Risk: ribbons resemble generic magic;
 keep them tied to hand path and departure air, not orbiting the hero.
@@ -101,9 +102,9 @@ practical, not a dramatic ice queen imported from another game.
 
 - Chilling Touch: shove contact gets a small directional frost bite at real contact,
   not an aura declaring every nearby player chilled.
-- Cold Feet: heel-to-toe surface marks follow actual steps. Shoulders stay balanced;
-  the effect supports movement, not a new skating rig. Expiry dries from oldest
-  step to newest with no collision residue.
+- Cold Feet: a planted foot sends frost across the actual fixed field footprint.
+  The7.5s field is not a trail following her footsteps or a movement buff. Keep
+  its edge and expiry legible, with no misleading frost outside the status area.
 - Frostbite: turn the actual held slipper, pinch frost into its sole/edge, then
   return it to the normal throw-ready pose. Imbue follows that exact object's state.
   Hit/expiry/drop rules stay truthful; no phantom projectile added for spectacle.
@@ -228,9 +229,10 @@ repair. No fake gameplay UI or tag sounds in the hallucination.
 
 ## Hydro / Rafi: scoop, fold, drain
 
-Mechanics are proposals in new-kit-design.md, not implemented claims. Retain model
-identity until its current appearance is inspected; do not invent lore or import
-a surfboard from Mualani. Water should visibly transport or redirect, not freeze.
+Mechanics are proposals in new-kit-design.md, not implemented claims. Preserve
+the active boat-repairer/water-trickster direction, practical workcloth/cord/buoy
+identity and no-gills rule from BADJAO_EXPANSION. Do not import a surfboard from
+Mualani or turn fictional workwear into a claim about traditional dress. Water should visibly transport or redirect, not freeze.
 
 - Backwash: two heel strokes begin at the real pickup, then decay over1.5s.
 - Crosscurrent: one hand scoops across the other, hips follow; a narrow travelling
@@ -277,8 +279,11 @@ large flame appears only at release and clears quickly.
   landing and recoil through knees/hips. The body is the event, not a fireball
   hiding a static rig. Real destination is shown early and remains fixed.
 
-Ultimate sketch:0-.6 brace; .6-1.1 ignition tightens;1.1-1.8 launch;
-1.8-2.1 apex hold;2.1-2.5 descent framing/handback. The live landing warning must
+Revised ultimate sketch: preserve the existing five-stick parol construction,
+not a generic fire orb.0-.6 cup hands/check one joint; .6-1.4 assemble the frame
+with staggered clean contacts;1.4-1.9 hold the completed shape and look up;
+1.9-2.5 compress it into the body/feet;2.5-3.0 launch with the frame breaking into
+directional sparks;3.0-3.4 handback into the actual live leap/landing. The live landing warning must
 remain adequate; do not freeze victims through their only chance to evade. Follow
 actual airborne motor state, not a fake animation landing while physics still flies.
 
@@ -311,8 +316,11 @@ storm. Keep the actual body's balance legible through rapid motion.
   Brief stillness precedes the snap; after the impact he checks/settles the charged
   stance, then returns to gameplay. No permanent camera shake or rapid flicker.
 
-Ultimate sketch:0-.5 plant; .5-1.2 upward tension;1.2-1.6 near-silence;
-1.6-1.9 strike pose;1.9-2.5 controlled recovery/handback. Apply the separately
+Revised ultimate sketch: retain the existing casual fingertip/snap confidence.
+0-.5 flick one spark and notice it; .5-1.2 raise a finger as the storm answers;
+1.2-1.65 a held sideways glance, almost a dare;1.65-2.0 snap as lightning returns
+to Zack himself;2.0-2.65 absorb it through the actual grounded body;2.65-3.4 small
+shrug and handback. The persistent upgrade is the payoff, not a generic angry pose. Apply the separately
 telegraphed live strike and persistent state once. Joining peers receive upgraded
 state without the camera sequence or nearby Zapped being repeated.
 

@@ -60,12 +60,13 @@ That judgement requires actual implementation, film, critique and human review.
 
 ## Current checkpoint
 
-Research not completed and no missing Wiki kit has been filled yet. Both supplied
-screenshots were inspected: Hydro has blank cells with Water wall/Baha anchors;
-Zack retains Amped-Up/Overclock and normal/overclocked placeholders; Pyro retains
-Empowered throw. Continental Drift shipped at92fedc4c with focused native checks and an inspected
-authored-court witness. The repeat-pattern art critique remains open. Research
-is active; reference-audit.md and sources.md preserve the evidence so far.
+The research/planning pass has durable all-nine-hero coverage and a self-critiqued
+set of proposed missing kits. Thirteen Wiki entries were written/read back with
+attribution after the owner's exact-edit confirmation. Human anchors remain;
+Amped-Up and Overclock are unchanged. External video playback remained unavailable,
+so frame-analysis/audio claims are explicitly limited. Native implementation,
+film and listening are the next quality gates, not implied by these proposals.
+Continental Drift shipped at92fedc4c; its repeat-pattern art critique remains open.
 
 ## Owner addition, October1 00:58UTC
 

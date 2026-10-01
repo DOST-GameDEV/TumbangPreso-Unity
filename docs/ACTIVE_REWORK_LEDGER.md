@@ -1685,3 +1685,31 @@ standards and apply an evidence-linked self-review checklist. Preserve original
 comments and human approval semantics. No immediate Doc rewrite or impersonation.
 Owner00:59 screenshot confirms Hydro/Zack/Pyro rows are the later replacement
 targets after research/thought; image inspected, no Wiki proposals inserted yet.
+
+Owner01:10 AIM-CIRCLE-1001 requests global hollow circle instead of crosshair.
+Live HudReticle/TumpMatchReadout feed inspected, scoped design saved; no runtime
+claim yet. Preserve actual aim/charge/curve/cooldown/refusal/reach and device rules.
+Complete current research first, then this refinement before manual hunt.
+
+Wiki design copy written after owner01:30 confirmation of the exact pending
+Hydro/Zack/Pyro edit. Thirteen proposed entries retain attribution and human
+anchors; Amped-Up/Overclock unchanged. Readback exact; visual review shortened
+two entries to avoid orphaned metadata. No implementation Done claim. Research
+source corrections preserve Airburst's launch-all semantics and fixed Cold Feet.
+
+AIM-CIRCLE-1001 next coherent runtime unit while final research docs are retained.
+Claim UI/HudReticle.cs, UI/TumpMatchReadout.Reticle.cs, UI/TumpMatchReadout.cs,
+UI/TumpMatchReadout.OwnerPainted.cs, UI/Hud.cs and Tests/PlayMode/ThrowChargeUiTests.cs.
+Goal hollow centre/no cardinal ticks, truthful charge/full/release/curve/recovery,
+legacy plus removed; no gameplay, input or protocol change. Existing source is
+baseline evidence for dot/ticks; run focused actual-charge and geometry/transition
+checks on isolated graphics candidate, with960x540 and1600x680 captures. One heavy
+job, no unrelated tests. Nemu runtime/loading reservations remain untouched.
+Aim-circle scope adds UI/HudBadge.cs for the existing contact-confirmation glyph,
+replacing its diagonal ticks with a hollow pulse. Found existing MatchFlair.Presented
+for accepted throw presentation; HudReticle subscribes/unsubscribes locally and
+filters the displayed owner. No new carrier/network event or gameplay edit needed.
+Aim-circle first native run reaches real charge/refusal/release checks but both
+cases fail the same new reflection helper: OnPopulateMesh is overloaded on Graphic.
+One bounded fixture repair selects the exact VertexHelper overload; runtime unchanged.
+Retain v1XML; rerun the same two cases once asv2. No product pass claim yet.
