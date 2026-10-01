@@ -1,10 +1,10 @@
 # Networking: Where To Work
 
-Current gameplay contract is protocol123, including adopted Hydro Crosscurrent,
+Current gameplay contract is protocol124, including adopted Hydro Crosscurrent,
 Skim, Water wall, can-down charge cancellation, revised penalty/fatigue timings
 finite can-height contact, revised knockdown/catch announcement rewards and
-live Frostbite timed recovery and authoritative Amped-Up objective discounts.
-Actual123player/peer qualification remains open.
+live Frostbite timed recovery, authoritative Amped-Up objective discounts and
+match-long Overclock/Zapped recovery. Actual124player/peer qualification remains open.
 Latest general Windows direct-peer qualification
 is protocol120on committed c26c5c34b: actual identical host/client players reach
 active round2, defender1and matching structural state. Clean local admission and

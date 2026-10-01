@@ -239,8 +239,11 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public void AddUltimateCharge(float amount)
         {
+            if (!CanGainUltimateCharge) return;
             UltimateCharge = Mathf.Clamp(UltimateCharge + amount, 0.0f, UltimateCost);
         }
+
+        public virtual bool CanGainUltimateCharge => true;
 
         // Objective income is distinct from practice/refill or network hydration.
         public virtual void OnObjectiveAwarded(float amount) { }
@@ -278,6 +281,7 @@ namespace TumbangPreso.Abilities
         public void ApplyNetworkUltimateCharge(float charge)
         {
             if (float.IsNaN(charge) || float.IsInfinity(charge)) return;
+            if (!CanGainUltimateCharge) { UltimateCharge = 0; return; }
             UltimateCharge = Mathf.Clamp(charge, 0, UltimateCost);
         }
 

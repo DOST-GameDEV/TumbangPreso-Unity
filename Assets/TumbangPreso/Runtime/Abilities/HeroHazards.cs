@@ -3483,7 +3483,7 @@ namespace TumbangPreso.Abilities
         // itself survives in that file and is now used by nothing.
         // -------------------------------------------------------------------
 
-        public static void CreateThunderstrike(Vector3 position, float radius = 7.0f, int sourceSlot = -1)
+        public static void CreateThunderstrike(Vector3 position, float radius = 7.0f, int sourceSlot = -1, bool applyGameplay = true)
         {
             position = VfxShapes.GroundPoint(position);
             // 1. Sky Lightning Bolt Column & Multi-segment Arc
@@ -3614,7 +3614,7 @@ namespace TumbangPreso.Abilities
                 if (rig != null) rig.Shake(0.6f, 0.3f);
             }
 
-            if (!NetAuthority.ShouldResolve()) return;
+            if (!NetAuthority.ShouldResolve() || !applyGameplay) return;
             // Stagger and knock back enemies
             var round = GameServices.Round;
             if (round != null)

@@ -20,6 +20,9 @@ namespace TumbangPreso
         // ------------------------------------------------------------------ WHIRLED and CHILLED
 
         private float _whirledLeft, _chilledLeft, _hauntedLeft;
+        private float _zappedLeft;
+        public float ZappedLeft => _zappedLeft;
+        public bool IsZapped => _zappedLeft > 0;
         public float HauntedLeft => _hauntedLeft;
         public bool IsHaunted => _hauntedLeft > 0;
 
@@ -63,6 +66,7 @@ namespace TumbangPreso
                 case StatusKind.Drained: return _drainedLeft;
                 case StatusKind.Hexed: return _hexedLeft;
                 case StatusKind.Haunted: return _hauntedLeft;
+                case StatusKind.Zapped: return _zappedLeft;
                 default: return 0.0f;
             }
         }
@@ -125,6 +129,14 @@ namespace TumbangPreso
             bool fresh = _chilledLeft <= 0.0f;
             _chilledLeft = StatusRules.Refresh(_chilledLeft, seconds);
             if (fresh) StatusGained?.Invoke(this, StatusKind.Chilled);
+        }
+
+        public void ApplyZapped(float seconds = StatusRules.ZappedSeconds)
+        {
+            if (!MayMutateGameplayState() || !float.IsFinite(seconds) || seconds <= 0 || AbilitySystem?.IsImmuneToStuns == true) return;
+            bool fresh = !IsZapped;
+            _zappedLeft = StatusRules.Refresh(_zappedLeft, Mathf.Min(seconds, StatusRules.ZappedSeconds));
+            if (fresh) StatusGained?.Invoke(this, StatusKind.Zapped);
         }
 
         public void ApplyHaunted(float seconds = StatusRules.HauntedSeconds)
@@ -260,6 +272,7 @@ namespace TumbangPreso
         /// <summary>Ends Whirled and Chilled. For the round reset and the respawn only.</summary>
         public void ClearStatuses()
         {
+            _zappedLeft = 0;
             _whirledLeft = 0.0f;
             _chilledLeft = 0.0f;
             _hauntedLeft = 0.0f;
@@ -271,8 +284,11 @@ namespace TumbangPreso
         }
 
         /// <summary>The host's status timers, off the wire (`SyncUnit`).</summary>
-        public void ApplyNetworkStatuses(float whirledLeft, float chilledLeft, float rootedLeft = 0.0f, float hauntedLeft = 0.0f)
+        public void ApplyNetworkStatuses(float whirledLeft, float chilledLeft, float rootedLeft = 0.0f, float hauntedLeft = 0.0f, float zappedLeft = 0)
         {
+            bool zapped = !IsZapped && zappedLeft > 0;
+            _zappedLeft = float.IsFinite(zappedLeft) ? Mathf.Clamp(zappedLeft, 0, StatusRules.ZappedSeconds) : 0;
+            if (zapped) StatusGained?.Invoke(this, StatusKind.Zapped);
             bool haunted = !IsHaunted && hauntedLeft > 0;
             _hauntedLeft = float.IsFinite(hauntedLeft) ? Mathf.Clamp(hauntedLeft, 0, StatusRules.HauntedSeconds) : 0;
             if (haunted) StatusGained?.Invoke(this, StatusKind.Haunted);
@@ -296,6 +312,7 @@ namespace TumbangPreso
 
         private void StepStatuses(float dt)
         {
+            if (_zappedLeft > 0) _zappedLeft = Mathf.Max(0, _zappedLeft - dt);
             if (_hauntedLeft > 0) _hauntedLeft = Mathf.Max(0, _hauntedLeft - dt);
             if (_whirledLeft > 0.0f) _whirledLeft = Mathf.Max(0.0f, _whirledLeft - dt);
             if (_chilledLeft > 0.0f) _chilledLeft = Mathf.Max(0.0f, _chilledLeft - dt);

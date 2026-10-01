@@ -125,13 +125,14 @@ namespace TumbangPreso.UI
             for (int i = 0; i < 3; i++)
             {
                 var skill = skills[i]; if (skill == null) continue;
+                _symbols[i].SetCastLocked(system.GetComponent<CharacterMotor>()?.IsZapped == true);
                 if (_symbols[i].Glyph != skill.Glyph) { _symbols[i].Glyph = skill.Glyph; _symbols[i].SetVerticesDirty(); }
-                bool ready = !kit.PracticeMode && (i == 2 ? kit.IsUltimateReady : skill.IsReady);
-                float ratio = i == 2 ? kit.UltimateRatio : skill.IsActive ? skill.DurationRatio : 1 - skill.CooldownRatio;
+                bool ready = !kit.PracticeMode && !system.GetComponent<CharacterMotor>().IsZapped && (i == 2 ? kit.IsUltimateReady : skill.IsReady);
+                float ratio = skill.IsActive ? skill.DurationRatio : i == 2 ? kit.UltimateRatio : 1 - skill.CooldownRatio;
                 _dials[i].State(ratio, ready, skill.IsActive, i == 2);
                 _symbols[i].color = ready ? f.Lime : f.Cream;
                 if (_symbols[i].Muted == ready) { _symbols[i].Muted = !ready; _symbols[i].SetVerticesDirty(); }
-                string state = kit.PracticeMode ? "Wait" : skill.IsActive ? skill.CanReactivate ? (skill.ReactivateReady ? "Again" : AbilityDeckHud.CooldownLabel(skill.ReactivateReadyIn)) : skill.DurationRemaining.ToString("0.0")
+                string state = kit.PracticeMode ? "Wait" : skill.IsPersistentActive ? "Active" : skill.IsActive ? skill.CanReactivate ? (skill.ReactivateReady ? "Again" : AbilityDeckHud.CooldownLabel(skill.ReactivateReadyIn)) : skill.DurationRemaining.ToString("0.0")
                     : i == 2 ? ready ? "" : Mathf.FloorToInt(kit.UltimateRatio * 100) + "%"
                     : skill.UsesCharges ? skill.ChargesRemaining.ToString() : skill.CooldownRemaining > 0 ? AbilityDeckHud.CooldownLabel(skill.CooldownRemaining) : "";
                 var slot = i == 0 ? HeroAbilitySystem.Slot.Skill1 : i == 1 ? HeroAbilitySystem.Slot.Skill2 : HeroAbilitySystem.Slot.Ultimate;

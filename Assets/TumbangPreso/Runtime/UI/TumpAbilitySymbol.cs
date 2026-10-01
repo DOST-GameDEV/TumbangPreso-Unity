@@ -35,6 +35,22 @@ namespace TumbangPreso.UI
             }
         }
         public bool HudStyle;
+        private UnityEngine.UI.Text _castLock;
+        public bool CastLocked => _castLock != null && _castLock.gameObject.activeSelf;
+        public void SetCastLocked(bool locked)
+        {
+            if (_castLock == null && locked)
+            {
+                _castLock = TumpUiFactory.Text(transform, "CastLock", "X", 58, bold: true);
+                _castLock.alignment = TextAnchor.MiddleCenter; _castLock.raycastTarget = false;
+                _castLock.color = new Color(.86f, .12f, .08f);
+                var rect = _castLock.rectTransform; rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one;
+                rect.offsetMin = rect.offsetMax = Vector2.zero;
+                var outline = _castLock.gameObject.AddComponent<UnityEngine.UI.Outline>();
+                outline.effectColor = UiTheme.InGameOutline; outline.effectDistance = new Vector2(1.5f, -1.5f);
+            }
+            if (_castLock != null) _castLock.gameObject.SetActive(locked);
+        }
 
         /// <summary>
         /// Draw the ability's illustration dimmed: a power on cooldown or not yet available.

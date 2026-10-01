@@ -247,3 +247,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Cheska Frostbite timed recovery and restored real hit](frostbite-recovery.md).
 
 [Amped-Up objective cooldowns and guarded owner delivery](amped-up-objective.md).
+
+[Overclock permanent state, Wiki Zapped and scoped recovery](overclock-state.md).

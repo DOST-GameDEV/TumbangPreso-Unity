@@ -114,6 +114,7 @@ namespace TumbangPreso
         public void CleanseStatuses()
         {
             if (!MayMutateGameplayState()) return;
+            _zappedLeft = 0;
             _whirledLeft = 0.0f; _chilledLeft = 0.0f;
             _hauntedLeft = 0.0f;
             _concussedLeft = 0.0f; _fearedLeft = 0.0f; _disorientedLeft = 0.0f; _vulnerableLeft = 0.0f;

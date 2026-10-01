@@ -3467,3 +3467,42 @@ No task-owned browser/preview/server/player or Unity job remains. Private source
 dirt retained. Next actual unit: current human Overclock lifetime/cost, shared
 persistent state and match/round resets, with full Zack migration still open.
 
+
+OVERCLOCK-STATE-1001 owns ZackHeroKit persistent state/cost/self-target, existing
+timed snapshot/state codec's explicit permanent flag, related receiver validation,
+NetSession compatibility and focused SkillReceipt tests. Current0852df0b6clean
+ahead/behind0/0, private dirt preserved. Confirmed human anchor15points/self
+strike/match-long upgrade differs20points/aimed7second tail. Native cost and
+lifetime/round baseline. Preserve authored effects/clips/cues, existing unspecified
+radius/warning values; proposed3m/.8s not adopted as confirmed. Permanent recovery
+must not replay strike and must clear only on new match. Full normal/upgraded
+basic migration remains required next; do not call Zack complete from state only.
+
+
+Overclock baseline2/2 fails real20point/7s mismatch;50485terminal. Explicit
+permanent bit added to bounded timed state231bytes and supported-ability check;
+Zack match flag survives round, clears new match, disallows re-bank/recast.
+Selfstrike preserves4.5m/old warning and authored effect; newZapped follows live
+Wiki5s cast lock, ordinary movement unaffected, replicated bounded status clock
+and X over current logos. Global persistent UI saysActive, not0s. HeroHazards
+private Supernova overlay preserved; isolated candidate uses committed base plus
+only applyGameplay guard. Final12focused cases include changed codec and three
+legacy timed-tail controls migrated to match-long contract. No native repair yet.
+Full upgraded-basic implementation remains open; permanent flag alone is not
+completion.124wire compatibility. All private code/art remain out of staging.
+
+
+Overclock first final stops before tests at fixtureCS1657: using readers passed
+byref.14558terminal, no runtimecase or movie. One bounded fixture declaration
+repair uses try/finally disposal; runtime unchanged. Preserve first log/manifest
+then same12case retry once. No further tooling retry permitted in this unit.
+
+
+Overclock final12/12passes after one fixtureCS1657repair;734inputs no drift.
+50485/14558/48437terminal, profiles preserved. Explicit permanent bit231bytes,
+Zapped5seconds/SyncUnit/X and self-target15cost; no timed raw throw boost retained.
+Private HeroHazards alpha overlay excluded: index contains only2line gameplay
+guard/signature change and native candidate matches committed-base+hunk. Publish
+state/status unit only; normal/upgraded basics are still required, not completed.
+124compatibility, no actualnewpeer or authored-presentation claim. All jobs done.
+
