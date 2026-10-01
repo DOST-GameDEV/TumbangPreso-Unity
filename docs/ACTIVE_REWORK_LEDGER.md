@@ -3673,6 +3673,33 @@ seat colours, water placement and local first-person hiding. Focused native
 shape/flatness/camera-scope and water checks; no character kit edits. Ground
 projection beyond existing water/flight behavior is not required by this unit.
 
+Ground-marker first final run stopped at unchanged memory guard during Bayan
+load before XML. OOM remains11/6; idle import worker still1.18GB. One bounded
+fixture repair lets one real-time second elapse after reset/idle-retirement
+setting before loading the map. No runtime assertion weakened or guard raised.
+
+Marker v2 ran all three cases: water-return and camera-scoped target checks
+pass; actual attacker centre pixel was black. Shader used pow with negative
+base inside the Gaussian, a possible undefined-value source. Replace with explicit
+squared multiplication; rerun only the affected pixel-shape case. No second
+fixture repair; retained passing lifecycle evidence. OOM unchanged11/6.
+
+Marker v3 pixel witness still fails with centre0 after squared multiplication;
+the shader arithmetic change did not establish the cause. Water return and
+camera-scope cases passed v2, but shape rendering is NOT accepted or shipped.
+One fixture-repair allowance exhausted. Preserve owned candidate uncommitted;
+do not mark Done or repeat unchanged runs. The isolated pixel witness loads a
+map without starting a match, unlike the passing camera-scope fixture; investigate
+that lifecycle discrepancy before any later coherent validation. Continue the
+independent landing-circle cadence report with the existing real-match fixture.
+
+AIM-CIRCLE-CADENCE-1001 claims Runtime/TrajectoryPreview.cs and
+Tests/PlayMode/LandingCircleTests.cs. Actual source throttles both prediction
+and visible circle mesh to 20Hz. Keep prediction cadence, interpolate displayed
+circle each render frame with bounded linear interpolation, reset on hidden/
+invalid/released aim, and snap across large height discontinuities. Preserve
+LandingPoint as the exact latest prediction. Validate with the existing actual
+local-charge fixture plus deterministic intermediate geometry assertions.
 Bank Shot91de6867c integrated/pushed04429e627, remote verified. Feedback own Zack paragraph updated/read back; human controls, comments and Hydro note untouched. Active protocol125. Native guards59212/40251/71097/59082 terminal, only pre-existing Unity Hub serve remains; no task-owned browser/preview. Preserve failed first compile and8/10fixture run alongside focused3/3. Whole goal remains active. Next Quick Circuit signature then Closed Circuit; migrate obsolete Magnet acceptance contracts during the changed kit gate, without broad unchanged reruns.
 
 QUICK-CIRCUIT-1001 owns Zack signature, shared cast-context hook and recast impairment gate, HeroMovementState/MatchRpc.Movement and focused QuickCircuitTests. Planned30s/2m lateral cut, .15s tell/.2s recovery, Overclock one optional same-button second cut within1s. Preserve authored assets/cues; remove legacy stun/travel behavior. Snapshot restores followup clock without replaying impulse or extending it. Native baseline name and actual Zapped-recast bypass, then focused acceptance; tooling retry0. All own jobs terminal; no loading edits.
