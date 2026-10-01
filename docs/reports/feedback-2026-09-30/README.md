@@ -219,3 +219,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Haunted rival-item planning and preserved retrieval](haunted-rival-items.md).
 
 [Snapshot request framing and preserved deferred refresh](snapshot-request-framing.md).
+
+[Reconnect pick/rating retention through normal Identify](held-seat-picks.md).

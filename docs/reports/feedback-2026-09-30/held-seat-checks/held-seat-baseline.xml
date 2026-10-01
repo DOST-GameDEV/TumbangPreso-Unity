@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 06:12:21Z" end-time="2026-10-01 06:12:21Z" duration="0.1298267">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="736" result="Failed" site="Child" start-time="2026-10-01 06:12:21Z" end-time="2026-10-01 06:12:21Z" duration="0.129827" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1863" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="736" result="Failed" site="Child" start-time="2026-10-01 06:12:21Z" end-time="2026-10-01 06:12:21Z" duration="0.107930" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="19436" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1864" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="736" result="Failed" site="Child" start-time="2026-10-01 06:12:21Z" end-time="2026-10-01 06:12:21Z" duration="0.099971" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1865" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="736" result="Failed" site="Child" start-time="2026-10-01 06:12:21Z" end-time="2026-10-01 06:12:21Z" duration="0.092057" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1333" name="LobbyAndSettingsTests" fullname="TumbangPreso.Tests.LobbyAndSettingsTests" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" testcasecount="85" result="Failed" site="Child" start-time="2026-10-01 06:12:21Z" end-time="2026-10-01 06:12:21Z" duration="0.064726" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1405" name="ThreeConsecutiveAltF4ReconnectCyclesPreserveSameSeatAndCharacter" fullname="TumbangPreso.Tests.LobbyAndSettingsTests.ThreeConsecutiveAltF4ReconnectCyclesPreserveSameSeatAndCharacter" methodname="ThreeConsecutiveAltF4ReconnectCyclesPreserveSameSeatAndCharacter" classname="TumbangPreso.Tests.LobbyAndSettingsTests" runstate="Runnable" seed="459209712" result="Failed" start-time="2026-10-01 06:12:21Z" end-time="2026-10-01 06:12:21Z" duration="0.037251" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Cycle 1: retained character was lost
+  Expected: 2
+  But was:  -1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyAndSettingsTests.ThreeConsecutiveAltF4ReconnectCyclesPreserveSameSeatAndCharacter () [0x00205] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyAndSettingsTests.cs:1651
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

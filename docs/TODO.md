@@ -166,6 +166,13 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   envelope/coalescing/deferred/disable controls. Cold rejoin remains separate.
   [Evidence](reports/feedback-2026-09-30/snapshot-request-framing.md).
 
+- [x] HELD-SEAT-PICKS-1001: matching-token reclaim retains picks and takeover
+  rating; Identify cannot replace fixed match choices with local preferences.
+  Five distinct native cases cover repeated cycles, fresh account state, foreign
+  tokens, boundaries, actual Identify, lobby edits and backfill initialization.
+  Actual cold-process rejoin remains separate.
+  [Evidence](reports/feedback-2026-09-30/held-seat-picks.md).
+
 Source: [TUMP Wiki](https://docs.google.com/document/d/1jvr7NLzhHrbw-wrG676AeOkoTxJf4GokkfmxpO0ddLg/edit),
 read on 2026-09-30, including ability, status and feedback tabs. The document wins
 for other characters. Paete and Phaister are finalized and governed by the

@@ -818,7 +818,8 @@ namespace TumbangPreso.Net
             int resolvedCharPick = charPick >= 0 ? charPick : 0;
             int resolvedCanPick = canPick >= 0 ? canPick : 0;
             int resolvedSlipperPick = slipperPick >= 0 ? slipperPick : 0;
-            lobby.SetPicks(peerId, resolvedCharPick, resolvedCanPick, resolvedSlipperPick);
+            lobby.SetArrivalPicks(peerId, resolvedCharPick, resolvedCanPick, resolvedSlipperPick);
+            resolvedCharPick = record.CharacterPick >= 0 ? record.CharacterPick : resolvedCharPick;
             HostAuthoriseCosmetics(peerId, cosmetics, resolvedCharPick, custom, build);
 
             // ⚠️ THE MODE IS THE FIRST THING A JOINER IS TOLD, for the reason `HostStartMatch`

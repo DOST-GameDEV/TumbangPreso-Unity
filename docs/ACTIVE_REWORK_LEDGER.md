@@ -2488,3 +2488,43 @@ held-seat metadata: LobbySession.Depart retains only token, so genuine reclaim
 may lose character/can/slipper picks and takeover rating; existing three-cycle
 fixture claims character retention but checks only seat/spectator. Add the missing
 behavior assertion before changing authoritative lobby bookkeeping.
+
+HELD-SEAT-PICKS-1001 owns LobbySession.cs retained metadata and existing
+LobbyAndSettingsTests.cs. Three-cycle fixture now asserts actual character/can/
+slipper/rating after reclaim, not just seat. Baseline1case; final4cases will retain
+foreign-token isolation, clear/end/new-match lifecycle and mutable departed-record
+snapshot control. No account proof inheritance, scoring, hero mechanics, protocol,
+loading or authored asset change. Stop fresh native XML; one tooling repair max.
+
+Held-seat baseline1/1fails first reconnect: CharacterPick2 becomes-1 while seat
+returns correctly. Native6759terminal, no fixture repair. Store bounded value
+snapshot of character/can/slipper/rating beside the existing token hold; restore
+only matching token reclaim and consume both. Clear snapshot at Reset/StartMatch/
+ReturnToLobby/EndMatch. Do not carry account identity/handle trust across transport.
+Final4cases: three repeated cycles, mutable-record snapshot/account separation,
+foreign-token isolation and all four clear boundaries. No schema/protocol change.
+
+Held metadata final4/4passes; old restoration helpers unchanged after run.
+Follow-through source shows HandleIdentify unconditionally SetPicks from local
+preferences, so retained metadata could immediately be overwritten. Expand unit
+to MatchRpc.cs Identify plus existing SessionRestartTests live-host case. New
+baseline1native real handler case; final same case retains lobby-change control.
+Keep earlier4bookkeeping evidence without rerun. Fresh backfill must initialize
+only unchosen fields; fixed choices lock during match, ordinary lobby stays free.
+
+Identify baseline99354terminal fails actual host handler: retained character2
+becomes0 from new local preferences. SetArrivalPicks now preserves already chosen
+fields while MatchInProgress, permits uninitialized backfill, and returns to normal
+choice after ReturnToLobby. HandleIdentify authorises cosmetics for resolved
+server character. Final1live-handler case includes both controls; earlier4pure
+bookkeeping cases reused because capture/restore/boundary logic unchanged.
+No fixture repair, extra auth requests, schema or protected kit change.
+
+Held metadata4native cases and actual Identify final1/1pass; five distinct scoped
+cases, not one5/5run. Final673inputs no drift, four owned files match frozen
+f66cf0664overlays. Capture/restore/boundary functions unchanged after prior4case
+run; actual handler final validates fixed choices, lobby edits and fresh backfill.
+Jobs6759/43206/99354/12624terminal, no fixture repair. Publish coherent four-source
+unit/status/receipts. Next actual cold-process reconnect on new internal117batch
+covering bot sight + request framing + held metadata; retain old116player/proof,
+no Desktop replacement or loading source change. Full goal remains active.

@@ -187,6 +187,32 @@ namespace TumbangPreso.PlayTests
             }
         }
 
+        [UnityTest] public IEnumerator ReconnectIdentifyKeepsServerPicksUntilReturningToLobby()
+        {
+            var net=NetSession.Ensure();yield return null;
+            try
+            {
+                bool hosted=false;yield return Await(net.StartHostAsync(18692),r=>hosted=r);
+                Assert.IsTrue(hosted,net.Status);
+                var lobby=net.Lobby;const int peer=0;
+                lobby.SetPicks(peer,2,1,3);lobby.StartMatch();
+                var router=net.GetComponent<MatchRpc>();
+                var identify=typeof(MatchRpc).GetMethod("HandleIdentify",BindingFlags.Instance|BindingFlags.NonPublic);
+                void Identify() => identify.Invoke(router,new object[]{0UL,lobby.PeerById(peer).Token,"Owner","","",0,0,0,"","",""});
+                Identify();
+                Assert.AreEqual(2,lobby.PeerById(peer).CharacterPick,"Identify replaced the retained match character.");
+                Assert.AreEqual(1,lobby.PeerById(peer).CanPick);Assert.AreEqual(3,lobby.PeerById(peer).SlipperPick);
+                lobby.ReturnToLobby();Identify();
+                Assert.AreEqual(0,lobby.PeerById(peer).CharacterPick,"Ordinary lobby choice must remain available.");
+                Assert.AreEqual(0,lobby.PeerById(peer).CanPick);Assert.AreEqual(0,lobby.PeerById(peer).SlipperPick);
+                lobby.StartMatch();var backfill=lobby.Admit(99,"fresh-backfill","Backfill");
+                lobby.SetArrivalPicks(99,2,1,3);
+                Assert.AreEqual(2,backfill.CharacterPick,"Fresh backfill must still initialize its choices.");
+                Assert.AreEqual(1,backfill.CanPick);Assert.AreEqual(3,backfill.SlipperPick);
+            }
+            finally{net.Stop();}
+        }
+
         /// <summary>
         /// ⚠️⚠️ A NESTED SESSION STILL HOSTS (QA, 2026-09-26: *"Could not open an online room. (relay allocation failed: There
         /// is no NetworkManager assigned to this instance!)"*). Netcode's `Initialize` returns silently for a NetworkManager
