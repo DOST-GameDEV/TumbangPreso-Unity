@@ -2765,3 +2765,11 @@ Integratedb44205147 current penalty clocks with authored2native/4Core receipts;
 current119. Local actualreconnect/Haunt players remain117/116frozen boundaries.
 Preserve next HUD work reservation. Local next unit remains bounded Identify
 receiver framing; no live native/player/hash/build jobs, and private work intact.
+
+HUD-LAYOUT-1001 claims UI/TumpMatchReadout.cs, TumpMatchReadout.CourtHud.cs,
+TumpMatchReadout.MatchBar.cs, TumpMatchReadout.Statuses.cs, new Warnings partial,
+UI/HudReadingLayout.cs, UI/MatchMomentBanner.cs, UI/MatchEventFeed.cs and focused
+HUD tests. Actual two-image mockup inspected; plan in hud-revamp-plan.md. Three
+bottom-left statuses, separate warning/action regions, in-panel progress, fitted
+round track and modest larger bar. New first/late/catch bonuses remain a separate
+scoring unit after layout; don't fake those with labels. Current protocol119.
