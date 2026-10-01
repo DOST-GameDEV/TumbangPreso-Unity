@@ -1483,8 +1483,11 @@ def shop_row(col, rng):
     # and the tiles flickered (owner: "z-fighting + clipping signage").
     buf.box((FRONT + 3.33, -24.28, WEC_G / 2 - 0.1), (6.54, 0.42, WEC_G + 0.1), "east_wec_render", r=0.06)
     buf.box((FRONT + 3.33, 20.38, ASTRAL_G / 2 - 0.1), (6.54, 0.42, ASTRAL_G + 0.1), "east_astral_cream", r=0.06)
-    # The fascia beam over the whole row (the sign zone), in each podium's own paint.
-    for (ya, yb), g, mat in (((-24.3, SPLIT_Y + 0.08), WEC_G, "east_wec_render"), ((SPLIT_Y - 0.08, 20.4), ASTRAL_G, "east_astral_cream")):
+    # The fascia beam over the whole row (the sign zone), in each podium's own paint. The two beams
+    # BUTT at SPLIT_Y: they used to run 8 cm past it into each other, and the 16 cm where pink and
+    # cream shared the plane x = FRONT z-fought beside the BEDSPACE plate (owner: "z-fighting is
+    # in blender", "maybe just make it so that the models dont overlap").
+    for (ya, yb), g, mat in (((-24.3, SPLIT_Y), WEC_G, "east_wec_render"), ((SPLIT_Y, 20.4), ASTRAL_G, "east_astral_cream")):
         buf.extrude_y(fillet([(FRONT, 3.2), (FRONT + 1.8, 3.2), (FRONT + 1.8, g + 0.05), (FRONT, g + 0.05)], 0.08, 2),
                       ya, yb, mat)
     tiles = {"cell": "east_tile_green", "print": "east_tile_cream", "eatery": "east_tile_maroon", "lobby": "east_tile_cream",
