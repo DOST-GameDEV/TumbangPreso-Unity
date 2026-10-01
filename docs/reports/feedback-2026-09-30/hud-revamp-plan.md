@@ -72,3 +72,12 @@ rows. Use adaptive bottom-up columns when the available vertical space fills,
 and reserve horizontal room for action/warning panels. Keep stable status identity
 through reflow; refresh should not replay entry animation. Qualify dense overlap,
 expiry, replacement, reduced motion and enlarged HUD before calling it complete.
+
+Announcement implementation interpretation: independently met knockdown criteria
+stack their specified bonuses. Multi Knockdown counts accepted knocks since the
+player was tagged or the round reset; misses do not reset that counter. Keep the
+existing accuracy statistic separate but retire its old paid10/20/25 awards.
+Any real can-down clears catch timing; repeated victims count only through new
+accepted host tags, enabling more than three catches. Base normal/Sprout awards
+and ultimate charging remain unchanged. Banner messages queue for their full
+2.5seconds instead of suppressing another valid same-frame qualification.

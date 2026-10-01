@@ -2975,3 +2975,18 @@ layout case from initial2/2. Ten actual statuses, viewport/scale/no-overlap/time
 expiry/reflow/refresh checks pass. Pixels inspected, frozen inputs unchanged, no
 tooling repair/new OOM. Publish UI/art paths only. Next announcement scoring and
 2.5second presentation; current120. No native jobs or player/peer qualification.
+
+ANNOUNCEMENT-RULES-1001 owns Core ActionChains.cs, MatchRules.cs, MatchMoment.cs;
+Runtime MatchDirector.Moments.cs, MatchDirector.ActionChains.cs, Lata.cs accepted
+can-down hook, UI/MatchMomentBanner.cs, NetSession.cs protocol constant; Core
+ActionChainTests.cs and native ActionChainIntegrationTests.cs/MatchMoment tests
+as needed. Live Feedback rechecked: first/late/multi knockdown50, catch2+25,
+five-second catch window reset by can-down, banners2.5seconds. Replace old paid
+accuracy-chain rewards; preserve accuracy statistics and accepted-action guards.
+Knockdown streak counts accepted knocks since tag/round, including misses between;
+independently qualifying first/late/multi bonuses stack. Normal and Sprout base
+awards remain unchanged. Catch counts accepted tags, allowing later legal repeat
+victims for Multi Catch; duplicate event IDs remain rejected. Queue banners so
+simultaneous qualifications are not silently suppressed. Protocol121 planned.
+Focused Core/native behavior, ultimate-charge invariant and replica idempotency;
+no fresh remote-peer claim. All prior jobs terminal; owner studying, no chat pings.
