@@ -100,6 +100,11 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   with matching structure and preserved profiles. Loading/deadlines unchanged.
   [Evidence and limits](reports/feedback-2026-09-30/cli-admission-handoff.md).
 
+- [x] BOT-TAG-DEPTH-1001: tag ranking uses delayed observations for both chalk
+  depth and distance. Both native tier regressions fail before the fix; final6/6
+  passes with fresh-observation and companion identity controls. Broader Haunted
+  sensing remains open. [Evidence](reports/feedback-2026-09-30/bot-tag-depth.md).
+
 Source: [TUMP Wiki](https://docs.google.com/document/d/1jvr7NLzhHrbw-wrG676AeOkoTxJf4GokkfmxpO0ddLg/edit),
 read on 2026-09-30, including ability, status and feedback tabs. The document wins
 for other characters. Paete and Phaister are finalized and governed by the

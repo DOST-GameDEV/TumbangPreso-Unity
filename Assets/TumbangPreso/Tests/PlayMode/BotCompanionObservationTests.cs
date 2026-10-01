@@ -58,5 +58,25 @@ namespace TumbangPreso.PlayTests
             Observe(brain);_companion.transform.position+=Vector3.right*3;Observe(brain);
             Assert.AreEqual(3,At(brain,_companion).x,.0001f);
         }
+        [TestCase(Difficulty.Normal)] [TestCase(Difficulty.Astig)]
+        public void TagRankingUsesObservedDepthUntilTheBotReacts(Difficulty tier)
+        {
+            _brain.SeatDifficulty=tier;
+            _observer.transform.position=Vector3.zero;
+            _owner.transform.position=Vector3.right;
+            _companion.transform.position=Vector3.right*5;
+            _owner.HoldingSlipper=true;_companion.HoldingSlipper=true;
+            var can=new GameObject("Observed depth can").AddComponent<Lata>();can.enabled=false;
+            GameServices.Round.Lata=can;
+            Assert.IsTrue(can.IsUpright);Assert.IsTrue(_owner.IsTaggable());Assert.IsTrue(_companion.IsTaggable());
+            Observe(_brain);
+            _owner.transform.position=Vector3.right*6;
+            _companion.transform.position=Vector3.right;
+            var select=typeof(AIController).GetMethod("TagTarget",Hidden);
+            Assert.AreSame(_owner,select.Invoke(_brain,null),"Live depth leaked into target ranking before observation.");
+            Observe(_brain,10);
+            typeof(AIController).GetField("_lastTagTarget",Hidden).SetValue(_brain,null);
+            Assert.AreSame(_companion,select.Invoke(_brain,null),"Fresh observation must still update target ranking.");
+        }
     }
 }

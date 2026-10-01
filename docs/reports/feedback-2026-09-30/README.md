@@ -203,3 +203,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [CLI admission handoff and actual passing114peers](cli-admission-handoff.md).
 
 [Haunted through match menus with clear UI feedback](haunted-menu.md).
+
+[Bot tag ranking observation correction](bot-tag-depth.md).

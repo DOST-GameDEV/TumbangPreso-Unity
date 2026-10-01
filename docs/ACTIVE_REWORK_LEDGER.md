@@ -2098,3 +2098,26 @@ runtime conflict; current protocol115. Owned2native/4Core receipts retain their
 pre-merge source boundary; incoming Haunted receipts remain separate. Next Hydro
 Skim replaces legacy Mirrorwake through existing held/throw/ground/snapshot
 routes; inspect exact identity/cancellation/terrain/recovery contracts first.
+
+Published HAUNTED-MENU229a9aaaf atbc86453ff, remote verified. Same Nemu Notes
+updated/read back; controls/comments unchanged. Integrated Hydro claim265e63bde;
+its reserved Rafi/Core/compatibility paths remain untouched. Next bounded bot
+unit BOT-TAG-DEPTH-1001 owns AIController.cs depth term and existing companion
+observation tests. TagTarget uses delayed distance but live true chalk depth;
+two native tier regressions should show selection before a fresh observation.
+Final scope same two cases plus four adjacent observation/identity controls;
+one tooling repair maximum, stop at fresh XML. No kit/loading/art/tier change.
+Broader Haunted sensing requires every selector/fallback and stays open.
+
+BOT-TAG-DEPTH baseline2/2fails at intended assertion: Normal/Astig choose body4
+from its live depth while body0 remains the nearer observed target. No fixture
+failure/repair. Final uses one At(who) position for depth and distance; state
+eligibility, assignment rotation and focus remain unchanged. Freeze final6cases
+now; baseline runner24578terminal and profiles/preferences preserved.
+
+BOT-TAG-DEPTH final6/6native passes0.397s;659inputs no drift, two owned files
+match tested candidate. Sourcebc86453ff with overlays. No fixture repair, jobs
+24578/63649terminal. Publish exact two files/status/receipts. Next extend existing
+retained slipper inventory to remaining planning scans; preserve every predicate,
+selection order and hero mechanics. Measure calibrated warm allocations and
+live flight/activity/ownership/lifecycle; no claimed FPS gain. No heavy job active.
