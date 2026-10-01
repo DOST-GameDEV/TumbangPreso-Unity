@@ -3799,3 +3799,15 @@ loaded shoe, authored cast clip and coating; no generic burst. Factory control
 remains available. Normal exit56.54s, zero repairs/newOOM. Evidence in
 hero-quality-2026-10-01/rafi-cast-clarity; no new film/SFX/peer claim. Release
 shared confirmation path after shipment. Hydro SFX and wider feel remain open.
+
+SOLO-HANDOVER-BINDINGS-1001 owns DebugPlayerSwitcher.cs and one additional actual F2 case in PauseOwnerRebindTests. Source ApplySlots moves controls/camera but omits PauseWatcher.Local/Hud.Bind/YouCard.Bind, unlike network rebinding. Prove pause/HUD stale after accepted F-key switch, then retarget those existing surfaces on the same action. No new UI, art/loading edits or Docs TODO work. One small baseline/final, tooling retry0; all own prior jobs terminal.
+
+SOLO-HANDOVER-BINDINGS-1001 baseline realF2 accepts secondseat but PauseWatcher
+stillreferences first. ApplySlots rebinds existing Hud/PauseWatcher/optional
+legacyYouCard alongside camera/control. Same native final1/1 passes actual
+F2/control/pause/HUD references;753finalinputs unchanged, zero repairs. Optional
+legacycard rendering absent from fixture, no peer/full-HUD/tournament claim.
+Protocol126 unchanged, sourcece36e32fa plus own overlay. Jobs57973/47894 terminal;
+publish independent input lifecycle fix, then inspect F-key handling while menu/
+rebinding/presentation owns input. Do not assume a failure before reproducing it.
+DOTS owns Docs TODO queue; no kit migration, loading/art change or cross-chat work.

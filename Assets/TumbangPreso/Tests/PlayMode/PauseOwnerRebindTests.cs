@@ -12,6 +12,40 @@ namespace TumbangPreso.PlayTests
     {
         [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
         [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
+        [UnityTest] public IEnumerator SoloSeatKeyRetargetsPauseAndHudAlongWithControl()
+        {
+            var settings = InputSystem.settings;
+            var background = settings.backgroundBehavior; var editor = settings.editorInputBehaviorInPlayMode;
+            settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+            settings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            var keyboard = InputSystem.AddDevice<Keyboard>(); InputSystem.EnableDevice(keyboard);
+            var root = new GameObject("Solo switch binding");
+            var firstGo = new GameObject("First seat"); var secondGo = new GameObject("Second seat");
+            var first = firstGo.AddComponent<CharacterMotor>(); first.PlayerSlot = 0; first.enabled = false;
+            var second = secondGo.AddComponent<CharacterMotor>(); second.PlayerSlot = 1; second.enabled = false;
+            try
+            {
+                SceneFlow.Networked = false; GameLaunch.Reset(); NetAuthority.Provider = new SoloProvider();
+                var watcher = root.AddComponent<PauseWatcher>(); watcher.enabled = false; watcher.Local = first;
+                var hudGo = new GameObject("Switch HUD"); hudGo.transform.SetParent(root.transform);
+                var hud = hudGo.AddComponent<Hud>(); hud.enabled = false; hud.Bind(first);
+                var switcher = root.AddComponent<DebugPlayerSwitcher>(); switcher.enabled = false;
+                InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.F2)); InputSystem.Update();
+                switcher.SendMessage("Update");
+                Assert.AreEqual(1, switcher.DrivenSlot); Assert.IsFalse(second.IsBot);
+                Assert.AreSame(second, watcher.Local, "The pause menu kept the former local seat after an accepted F-key handover.");
+                var local = typeof(Hud).GetField("_local", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                Assert.AreSame(second, local.GetValue(hud), "The HUD still reads the old body's state.");
+                yield return null;
+            }
+            finally
+            {
+                Object.DestroyImmediate(root); Object.DestroyImmediate(firstGo); Object.DestroyImmediate(secondGo);
+                InputSystem.RemoveDevice(keyboard);
+                settings.backgroundBehavior = background; settings.editorInputBehaviorInPlayMode = editor;
+                GameLaunch.Reset(); NetAuthority.Provider = null;
+            }
+        }
         [UnityTest] public IEnumerator ReopeningAfterLocalSeatRebindParksAndReleasesTheCurrentBody()
         {
             var settings = InputSystem.settings;
