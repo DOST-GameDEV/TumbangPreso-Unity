@@ -3816,3 +3816,26 @@ ZackCircuitStateTests scripts/metas. No HeroHazards or reliability-build edits.
 Implement the recorded maintained-aim/LOS plan. Remote aim must be explicit and
 fresh, with an acquisition episode and scoped ordered state; do not silently
 reuse a stale cast aim. Native and parser acceptance remain pending.
+
+Closed Circuit candidate now has host-only Zapped commitment, cancellable .4s
+acquisition, .25s stale remote-aim cutoff, optional different-target followup and
+no passive refill during the sequence. New58byte host state/48byte private aim
+frames are scoped, episode-bound and sequenced; protocol127 candidate only.
+Named state registration/snapshot and narrow bot defending branch are written.
+Six EditMode frame checks and eight component/physics PlayMode cases are next;
+no compile/runtime/peer success claimed. Whole Zack row remains open.
+
+Closed Circuit compile/framing6/6 pass; first native component/physics7/8 pass.
+The stale-aim fixture wrote99.7 against a round clock already clamped below100,
+so it never aged the clock. One bounded fixture repair subtracts.3 from the
+actual current TimeLeft. Repeat only that failed case; all runtime source and
+assertions remain unchanged. No OOM, no player/actual-peer claim yet.
+
+Closed Circuit's corrected stale-aim case passes1/1; all eight distinct native
+cases and six wire checks now pass across the retained focused runs. No current
+player/peer proof. Extend this same unit's reservation to the existing
+Runtime/Diagnostics/NetZackProbe.cs and tools/net_zack_review.py, adding only a
+Closed Circuit scenario through three real peers and the normal round schedule.
+Use the existing isolated cloud Linux candidate build route; it supersedes only
+our prior internal protocol112 player through GameBuilder's guarded output path,
+never the user's Desktop or profiles. Preserve build identity and failure logs.
