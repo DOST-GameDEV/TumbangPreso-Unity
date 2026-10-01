@@ -2826,3 +2826,10 @@ actualhost approved-token/picks path retained. No fixture repair, all jobs6231/
 11606/64329terminal, profiles/inputprefs preserved. Publish exact paths/status/
 receipts. Current119, no freshplayer/peerclaim. Next reasonable network receiver
 work remains scoped after fresh Feedback/reservations; whole goalactive.
+
+HUD requirement-refusal native1/1passes with actual empty-hand Skim attempt,
+buffer expiry feedback, no activation/cost, separate three-entry feed and a
+corrected successful cast clearing warning. Six distinct cases now pass across
+three runs; one fixture repair, no new OOM. Small/wide frames inspected. Pink
+staged flair particles remain outside this UI claim. Publish owned UI/feedback
+unit; leave row open for latest announcement scoring and2.5second banner duration.

@@ -168,7 +168,7 @@ namespace TumbangPreso.UI
             if (held && !_captureReference) _referenceOpened = true;
             var match = GameServices.Match;
             _hint.text = Hud.OnTouch ? "Hold info for skills" : "Hold " + Hud.KeyLabelFor("AbilityInfo") + " for skills";
-            _hint.enabled = !held && !_referenceOpened && (match == null || match.RoundNumber <= 1);
+            _hint.enabled = false; // Current Feedback removes the extra instruction above the deck.
             _detail.gameObject.SetActive(held); if (held) Describe(kit, _skills);
         }
 

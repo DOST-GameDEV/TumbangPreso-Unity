@@ -6,15 +6,15 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI
 {
     /// <summary>
-    /// ⚠️ YOUR OWN STATUSES, UNDER THE RETICLE (owner's status table, 2026-09-25): each one is its
+    /// ⚠️ YOUR OWN STATUSES, IN THE LEFT STACK (owner's status table, 2026-09-25): each one is its
     /// icon, its name and the owner's tooltip ("Disabled Slipper Retrieval"), with a ring draining
     /// round the icon. VISUAL-1.6 moved every timed row off text and into shapes; a status is the
     /// exception that names itself, because the tooltip is the only thing that tells a player WHY
-    /// the grab has stopped working. Two chips at most. Every label is at least 28 units.
+    /// the grab has stopped working. Three chips at most. Every label is at least 28 units.
     /// </summary>
     public sealed partial class TumpMatchReadout
     {
-        private const int StatusChips = 2;
+        private const int StatusChips = 3;
         private readonly RectTransform[] _chip = new RectTransform[StatusChips];
         private readonly Image[] _chipIcon = new Image[StatusChips];
         private readonly HudRing[] _chipRing = new HudRing[StatusChips];
@@ -27,7 +27,8 @@ namespace TumbangPreso.UI
             for (int i = 0; i < StatusChips; i++)
             {
                 var chip = OwnerUiLayout.Rect(_root, "StatusChip" + i);
-                Pin(chip, new Vector2(.5f, .5f), new Vector2(i == 0 ? -250 : 250, -170), new Vector2(470, 92));
+                Pin(chip, new Vector2(0, 0), new Vector2(230, 75 + i * 120), new Vector2(420, 110));
+                HudReadingLayout.Watch(chip, new Vector2(0, i * 120));
                 var plate = OwnerUiLayout.Rect(chip, "StatusPlate").gameObject.AddComponent<HudCard>();
                 plate.color = HudDraw.Plate; plate.Radius = 22; plate.raycastTarget = false;
                 OwnerUiLayout.Fill(plate.rectTransform);
@@ -38,9 +39,10 @@ namespace TumbangPreso.UI
                 _chipIcon[i].raycastTarget = false; _chipIcon[i].preserveAspect = true;
                 Pin(_chipIcon[i].rectTransform, new Vector2(0, .5f), new Vector2(50, 0), new Vector2(66, 66));
                 _chipName[i] = Ink(chip, "StatusName", "", 30, true); _chipName[i].alignment = TextAnchor.MiddleLeft;
-                Pin(_chipName[i].rectTransform, new Vector2(0, .5f), new Vector2(275, 20), new Vector2(360, 40));
+                Pin(_chipName[i].rectTransform, new Vector2(0, .5f), new Vector2(260, 28), new Vector2(300, 38));
                 _chipTip[i] = Ink(chip, "StatusTooltip", "", 28, false); _chipTip[i].alignment = TextAnchor.MiddleLeft;
-                Pin(_chipTip[i].rectTransform, new Vector2(0, .5f), new Vector2(275, -20), new Vector2(360, 40));
+                Pin(_chipTip[i].rectTransform, new Vector2(0, .5f), new Vector2(260, -18), new Vector2(300, 60));
+                _chipTip[i].horizontalOverflow = HorizontalWrapMode.Wrap;
                 _chip[i] = chip; chip.gameObject.SetActive(false);
             }
         }
@@ -56,8 +58,7 @@ namespace TumbangPreso.UI
                 if (_chip[i].gameObject.activeSelf != on) _chip[i].gameObject.SetActive(on);
                 if (!on) continue;
                 var kind = _liveStatuses[i];
-                // One chip centres; two sit either side of the reticle's column.
-                _chip[i].anchoredPosition = new Vector2(count == 1 ? 0 : (i == 0 ? -250 : 250), -170);
+                // Placement belongs to the left stack and its accessibility scaler.
                 var sprite = StatusIcons.For(kind);
                 if (_chipIcon[i].sprite != sprite) _chipIcon[i].sprite = sprite;
                 _chipIcon[i].enabled = sprite != null;

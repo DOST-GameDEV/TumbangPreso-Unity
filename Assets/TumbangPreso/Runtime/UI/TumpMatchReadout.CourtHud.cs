@@ -14,7 +14,7 @@ namespace TumbangPreso.UI
             // `BuildCourtScores` and `BuildCourtClock` below are the previous layout, kept for
             // the record and no longer called.
             BuildMatchBar(); BuildCourtCan(); BuildCourtPersonal(); BuildStaminaArc(); BuildCourtPrompts();
-            BuildStatusChips();
+            BuildStatusChips(); BuildWarnings();
             MatchEventFeed.Create(_root);
             MatchMomentBanner.Create(_root);
             _powers = gameObject.AddComponent<TumpPowerReadout>(); _powers.Build(_root);
@@ -114,7 +114,7 @@ namespace TumbangPreso.UI
         private void BuildCourtPrompts()
         {
             _promptRoot = OwnerUiLayout.Rect(_root, "ContextualAction");
-            Pin(_promptRoot, new Vector2(.5f, .32f), Vector2.zero, new Vector2(1100, 174));
+            Pin(_promptRoot, new Vector2(.5f, .28f), Vector2.zero, new Vector2(1100, 174));
             // VISUAL-1.4: the verb sits on a dark pill sized to its own words, the same plate as
             // the clock, so it reads over sky, chalk and asphalt alike.
             _promptPlate = OwnerUiLayout.Rect(_promptRoot, "PromptPlate").gameObject.AddComponent<HudCard>();
