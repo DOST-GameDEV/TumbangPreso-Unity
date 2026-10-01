@@ -3989,3 +3989,9 @@ rebuilt-ilalim-replay. No full integrated player, Windows/device/full-match or
 performance claim. Private capture driver restored out of candidate runtime.
 All owned heavy jobs terminal. Continue investigating the concrete graphics
 artifact or another actionable report; do not redo shipped Circuit/Empowered.
+
+CONTINUITY-1001 owns AGENTS.md and this checkpoint only. Owner reiterates useful
+independent work during tests, autonomous recovery, critical review/planning when
+execution is waiting, and durable resumption without delayed duplicate replies.
+Record the rule explicitly without widening runtime scope or parallel heavy jobs.
+Current0e9 source clean and up to date before this documentation-only edit.
