@@ -82,10 +82,17 @@ namespace TumbangPreso.Net
             // per script, and `JsonUtility` has no representation for "some JSON I will parse
             // later": typing the field as `string` makes it silently read empty. Newtonsoft hands
             // back the sub-document as text, which is what every caller actually wants.
-            var envelope = JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(
-                request.downloadHandler.text);
+            return ReadOutput(request.downloadHandler.text);
+        }
+
+        private static string ReadOutput(string response)
+        {
+            var envelope = JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(response);
             var output = envelope?["output"];
-            return output?.ToString(Formatting.None) ?? "";
+            if (output == null || output.Type == Newtonsoft.Json.Linq.JTokenType.Null
+                || output.Type == Newtonsoft.Json.Linq.JTokenType.Undefined)
+                throw new InvalidOperationException("Cloud Code returned no output payload.");
+            return output.ToString(Formatting.None);
         }
     }
 }

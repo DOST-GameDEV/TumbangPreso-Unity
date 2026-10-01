@@ -74,6 +74,29 @@ namespace TumbangPreso.Tests
             }
         }
 
+        [TestCase("{}")]
+        [TestCase("null")]
+        [TestCase("{\"other\":{}}")]
+        [TestCase("{\"output\":null}")]
+        public void MissingCloudOutputCannotReportSuccessfulDelivery(string response)
+        {
+            var read = typeof(TumbangPreso.Net.CloudCode).GetMethod("ReadOutput", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            System.Exception failure = null;
+            try { read.Invoke(null, new object[] { response }); }
+            catch (System.Reflection.TargetInvocationException error) { failure = error.InnerException; }
+            Assert.IsInstanceOf<System.InvalidOperationException>(failure, "An absent service output was accepted as successful delivery.");
+        }
+
+        [TestCase("{\"output\":{\"ok\":true}}", "{\"ok\":true}")]
+        [TestCase("{\"output\":[1,2]}", "[1,2]")]
+        [TestCase("{\"output\":false}", "false")]
+        [TestCase("{\"output\":0}", "0")]
+        public void CloudOutputKeepsCallerOwnedPayloadShape(string response, string expected)
+        {
+            var read = typeof(TumbangPreso.Net.CloudCode).GetMethod("ReadOutput", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            Assert.AreEqual(expected, read.Invoke(null, new object[] { response }));
+        }
+
         private const string AssetsRoot = "Assets/TumbangPreso";
         private const string CloudCodeRoot = "ugs/cloud-code";
 

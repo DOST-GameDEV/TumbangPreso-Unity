@@ -17,6 +17,13 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CLOUD-OUTPUT-1002: reject missing service output
+
+Shared response helper no longer reports missing/null output as success. Native
+production-parser checks pass 8/8, preserving object/array/false/zero payloads.
+Existing caller failure paths retained; no live service call or configuration change.
+[Evidence](reports/reliability-2026-10-02/cloud-output/README.md).
+
 ### CAREER-SUBMIT-ACK-1002: retain results without acknowledgement
 
 Missing/unknown submit verdicts no longer discard queued records or witnesses.
