@@ -551,7 +551,8 @@ namespace TumbangPreso.Net
         //115: Hydro Current uses a35second cooldown and earliest swept contact.
         //116: Hydro Skim load and first-ground flight phase replace Mirrorwake.
         //117: Hydro Water wall uses a single-interception stationary field.
-        public const int ProtocolVersion = 117;
+        //118: knockdown cancels charge and throws wait for can/protection reset.
+        public const int ProtocolVersion = 118;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

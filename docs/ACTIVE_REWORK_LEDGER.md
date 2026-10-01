@@ -2596,3 +2596,16 @@ to cancel charge and block further throws until upright/protection gone; this
 revises the older allow-down rule. Baseline actual charge/UI case first, then
 shared Core gate and maintenance path, protocol118, focused Core/native checks.
 Other contributor's117player work remains an older compatible batch, not118proof.
+
+Can-down baseline1/1fails because the down can still permits release. Core now
+requires upright; maintenance shares the real gate; the gate includes actual
+can protection. Existing cancel replication clears banked power. Protocol118
+records the semantic change. Final same native charge/UI flow plus focused
+Core independent-gate case; old unaffected shape checks need no repeat.
+
+Can-down final1/1native and Core1/1pass. Full charge cancels to zero on
+knockdown, barrier blocks new charging, and a fresh post-protection charge
+releases normally. Frozen hashes unchanged, no new OOM, no tooling retry.
+Publish protocol118coherent unit, update same row without marking its dot part
+done. Fresh live penalty row no longer includes earlier Tagged immunity request;
+current numbers cover camping, loose-slipper timers and2.5second fatigue only.

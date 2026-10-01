@@ -653,7 +653,7 @@ namespace TumbangPreso
                 IsDefender = who.IsDefender,
                 HoldingSlipper = who.HoldingSlipper,
                 LataUpright = Lata != null && Lata.IsUpright,
-                ThrowCooldownLeft = _throwCooldownLeft,
+                ThrowCooldownLeft = Mathf.Max(_throwCooldownLeft, Lata != null ? Lata.ProtectionLeft : 0),
                 X = who.transform.position.x,
                 Z = who.transform.position.z,
                 ConfinementRadius = Balance.ConfinementRadius,
@@ -662,30 +662,10 @@ namespace TumbangPreso
         }
 
         /// <summary>
-        /// Whether an already-started throw wind-up may stay visually committed.
-        ///
-        /// The lata being down and the short restoration lock are transient release gates, not
-        /// reasons to snap a charged arm back to idle. Starting still asks <see cref="CanThrow"/>
-        /// and releasing still asks it again, so this cannot launch an illegal throw. It only
-        /// keeps the animation and stored charge while the attacker holds the button.
+        /// Current feedback cancels charge on knockdown or restoration protection.
+        /// Starting, maintaining and releasing share the same legal gate.
         /// </summary>
-        public bool CanMaintainThrowCharge(CharacterMotor who)
-        {
-            if (who == null) return false;
-
-            var ctx = new ThrowContext
-            {
-                RoundActive = RoundActive,
-                IsDefender = who.IsDefender,
-                HoldingSlipper = who.HoldingSlipper,
-                LataUpright = true,
-                ThrowCooldownLeft = 0.0f,
-                X = who.transform.position.x,
-                Z = who.transform.position.z,
-                ConfinementRadius = Balance.ConfinementRadius,
-            };
-            return ThrowRules.CanThrow(in ctx);
-        }
+        public bool CanMaintainThrowCharge(CharacterMotor who) => CanThrow(who);
 
         /// <summary>
         /// ⚠️ NOBODY MAY THROW FOR A MOMENT AFTER THE CAN IS STOOD BACK UP. It stops the lata

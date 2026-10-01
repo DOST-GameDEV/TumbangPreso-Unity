@@ -22,7 +22,14 @@ Nothing was deleted or renumbered.
 Tagged and trip stacks now clear through the existing round reset. Native
 baseline reproduces5seconds of Tagged leaking; final4/4passes with field/map/
 replay boundary controls. [Evidence](reports/feedback-2026-09-30/round-status-checks/README.md).
-The combined Feedback row still has throw gating and reticle changes pending.
+The combined Feedback row still has the reticle change pending.
+
+### CAN-DOWN-THROW-1001: current Feedback rule
+
+Can knockdown cancels charge; new charge/release wait for upright can with
+restoration protection gone. Native1case and focused Core1case pass after
+a reproduced baseline failure. Protocol118, no fresh player/peer claim.
+[Evidence](reports/feedback-2026-09-30/can-down-throw-checks/README.md).
 
 
 ### HERO-QUALITY-1001: full-roster research and durable plans

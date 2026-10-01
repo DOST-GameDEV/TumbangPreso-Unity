@@ -675,12 +675,8 @@ namespace TumbangPreso
                 _pektusSpin = Mathf.Clamp(intent.SpinInput, -Balance.MaxPektusSpin, Balance.MaxPektusSpin);
                 _observedSpin = _pektusSpin;
 
-                // Walking into the box, losing the slipper or ending the round cancels the
-                // commitment. The lata going down does not. That state is often caused by a
-                // teammate during somebody else's wind-up, and snapping every charged arm to
-                // idle on that frame made the shared knockdown feel like an animation error.
-                // Release legality is still checked below, so holding the pose cannot bank an
-                // illegal shot inside the box or launch through restoration protection.
+                // The current rule also cancels on can knockdown/protection, so
+                // a previously full charge cannot be banked across the reset.
                 if (!canMaintainCharge) CancelCharge();
                 else
                 {
