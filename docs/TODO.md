@@ -191,6 +191,11 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   envelope/coalescing/deferred/disable controls. Cold rejoin remains separate.
   [Evidence](reports/feedback-2026-09-30/snapshot-request-framing.md).
 
+- [x] IDENTIFY-FRAMING-1001: complete string/int framing is checked before
+  decoding can allocate or throw. Six reproduced failures, native8packet plus
+  one connected-host valid/approved-identity case pass. No wire change.
+  [Evidence](reports/feedback-2026-09-30/identify-packet-framing.md).
+
 - [x] HELD-SEAT-PICKS-1001: matching-token reclaim retains picks and takeover
   rating; Identify cannot replace fixed match choices with local preferences.
   Five distinct native cases cover repeated cycles, fresh account state, foreign

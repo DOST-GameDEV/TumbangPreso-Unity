@@ -2773,3 +2773,33 @@ HUD tests. Actual two-image mockup inspected; plan in hud-revamp-plan.md. Three
 bottom-left statuses, separate warning/action regions, in-panel progress, fitted
 round track and modest larger bar. New first/late/catch bonuses remain a separate
 scoring unit after layout; don't fake those with labels. Current protocol119.
+
+IDENTIFY-FRAMING-1001 owns MatchRpc.cs parser preflight and new IdentifyPacketBoundsTests.cs/meta.
+Library source confirms uint length→int cast and UTF16 bounds can throw before
+identity/arrival checks. Baseline6malformed cases with consumed8byte name hash;
+final8includes valid Unicode/current and legacy optionaltail. Preflight whole
+payload without managed strings, then existing decode/authority only on valid
+frame. No arbitrary text clamp, new wire fields, kit/loading or asset edits.
+One focused native baseline/final, one repair max, stop fresh XML. All old jobs terminal.
+
+Identify baseline6/6fails with actual Overflow/InvalidCast exceptions on truncated
+UTF16/ints and impossible uint lengths. No fixture/tooling failure,6231terminal.
+Preflight walks all required strings/three ints/optional tails using actual unread
+bytes, restores start position, then original decoding/authority remains. No guessed
+text limit or managed-string allocation before valid frame. Final8EditMode cases
+plus one actual listening-host receiver proves approved-token pin and admitted
+valid picks; two suites sequential, no broad unrelated run. No repair yet.
+
+Identify structural final8/8EditMode passes0.102s; malformed strings/ints safely
+reject, validUnicode/full/legacytail preflight explicitly accepts and restores8byte
+startingposition. No fixture repair. Live connected-host final now checks actual
+OnIdentify receiver, admittedpicks and approved-token pin after parser. Same
+frozeninputs/source; no unrelated suite or newplayer.11606terminal before livejob.
+
+Identify final8EditMode/1PlayMode passes; nine distinct cases, not one9/9suite.
+682inputs no drift, four ownedfiles match candidate, new32hexmeta nativelyimported.
+Six actualmalformed exceptions removed; Unicode/legacy tails/startposition and
+actualhost approved-token/picks path retained. No fixture repair, all jobs6231/
+11606/64329terminal, profiles/inputprefs preserved. Publish exact paths/status/
+receipts. Current119, no freshplayer/peerclaim. Next reasonable network receiver
+work remains scoped after fresh Feedback/reservations; whole goalactive.

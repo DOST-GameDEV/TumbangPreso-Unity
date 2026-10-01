@@ -225,3 +225,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Pre-round placeholder handover and retained failed peer evidence](pre-round-pick-handover.md).
 
 [Actual crash/relaunch, corrected character and preserved failed gate](reconnect-actual-player.md).
+
+[Identify packet framing and preserved approved-identity path](identify-packet-framing.md).
