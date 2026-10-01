@@ -17,6 +17,15 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### KIT-RECALL-PARITY-1001: role-aware held descriptions
+
+Same-kit attacker/defender changes now refresh the real role ability. Native
+baseline fails for Cheska and Dante; both corrected regressions pass. One actual
+four-slot guide/capture case also passes after one root-canvas fixture repair.
+Names, summaries, descriptions, cooldowns and12point costs checked; small/wide
+captures inspected. No mechanics/authored-copy/layout or protocol change.
+[Evidence](reports/feedback-2026-09-30/kit-recall-parity/README.md).
+
 ### STOKE-STEP-1001: mechanics qualified
 
 Sean signature migration follows the researched2m grounded commitment,0.18s
@@ -524,16 +533,16 @@ incomplete cells still do not authorize invented specifications.
   actual effect clock; reactivation skills retain Again plus seconds remaining.
   Native shared-clock/UI case passes;960x540/1600x680 captures inspected.
   [Evidence](reports/feedback-2026-09-30/README.md#timed-power-lifetime).
-- [ ] F0930-09 Cheska: reconcile wiki names/rules/statuses and fix Frozen slipper hit.
+- [x] F0930-09 Cheska: reconcile wiki names/rules/statuses and fix Frozen slipper hit.
   Frozen-hit bug fixed: both real body-hit paths now consume frost after applying
   Frozen. Activation requires the held slipper. Four native cases pass; protocol101
-  requires matching updated builds. Complete kit alignment stays open.
+  requires matching updated builds. Remaining copy/UI parity is now qualified below.
   [Evidence](reports/feedback-2026-09-30/frostbite-delivery.md).
   Current Wiki timing/passive rules implemented: Cold Feet7.5s; Absolute Zero1.5s
   then all players including caster Frozen/Chilled; landed Hero Strike shove Chilled.
   Five distinct native cases pass across two final receipts, plus one Core numeric
   check. Protocol103. [Evidence](reports/feedback-2026-09-30/cheska-wiki-rules.md).
-- [ ] F0930-10 Dante: reconcile wiki names/rules/statuses (owner reauthorized implementation).
+- [x] F0930-10 Dante: reconcile wiki names/rules/statuses (owner reauthorized implementation).
   Earthbound incoming distance now approximately halves impulses/carries;4native
   cases plus the affected authored Airburst interaction pass. Classic/lift retained.
   [Passive evidence](reports/dante-wiki-2026-09-30/earthbound.md).
@@ -544,7 +553,8 @@ incomplete cells still do not authorize invented specifications.
   slow for2.5s. Seven native cases and8Core pass, protocol108. [Boulder evidence](reports/dante-wiki-2026-09-30/boulder.md).
   Continental Drift now sends five forward Concussed blasts for12points; six
   distinct native cases cover timing, host/recovery/replay and authored court.
-  Protocol111; presentation critique and retained UI review remain open.
+  Protocol111; retained UI parity is now qualified by KIT-RECALL-PARITY-1001.
+  Broader presentation critique remains in HERO-QUALITY, not this Wiki-parity row.
   [Cascade evidence](reports/dante-wiki-2026-09-30/drift.md).
   Barrier visibility implemented separately: half-alpha authored slabs retain their
   palette and lifecycle. Two distinct native cases pass; observer court capture

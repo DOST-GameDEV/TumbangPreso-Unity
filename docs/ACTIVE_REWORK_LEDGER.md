@@ -4032,3 +4032,18 @@ Player runner43.02sexit0/noOOM; Runtime98138963..48e2e61. Full build first hit m
 guard, one bounded retry after closing completed owned Docs preview passed77.28s.
 Inputs drift0. All heavy jobs terminal. Publish explicit owned mechanics/evidence;
 whole Pyro motion/SFX remains open. No unrelated runtime paths added.
+
+KIT-RECALL-PARITY-1001 owns AbilityInspectPanel.cs cache identity only and new
+focused cases in LoadoutSurfaceProbe.cs, plus TODO/evidence. Source inspection
+finds Bind caches only the kit object: switching its attacker/defender role keeps
+the previous role's description. Establish native baseline before fixing; no kit
+mechanics, names, descriptions, authored art or layout redesign. Current69da6bb63
+clean/up to date. Use this to finish the remaining Cheska/Dante UI parity check.
+
+KIT-RECALL-PARITY-1001 acceptance: baseline2/2wrong-role names reproduced; final
+2role cases pass, plus1current four-slot guide/capture case after one root-canvas
+fixture repair. All six PNGs inspected small/wide and defender trays. No authored
+copy/mechanics/layout/protocol changes. OriginalCheska/DanteWiki parity rows can
+close after publication; human verification and HERO-QUALITY remain separate.
+All jobs terminal; publish explicit UI/test/report/TODO/ledger paths. Current
+full129player predates this UI-only fix; do not claim refreshed-player validation.
