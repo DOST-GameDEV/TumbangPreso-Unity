@@ -156,6 +156,11 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   includes unchanged tier/replacement/self/ranking behavior. Broader Haunted
   sensing remains open. [Evidence](reports/feedback-2026-09-30/bot-observe-allocation.md).
 
+- [x] SNAPSHOT-REQUEST-FRAMING-1001: malformed refresh requests cannot reserve or
+  spend the peer's throttle. Actual host baseline3/3fails; final4/4passes with valid
+  envelope/coalescing/deferred/disable controls. Cold rejoin remains separate.
+  [Evidence](reports/feedback-2026-09-30/snapshot-request-framing.md).
+
 Source: [TUMP Wiki](https://docs.google.com/document/d/1jvr7NLzhHrbw-wrG676AeOkoTxJf4GokkfmxpO0ddLg/edit),
 read on 2026-09-30, including ability, status and feedback tabs. The document wins
 for other characters. Paete and Phaister are finalized and governed by the

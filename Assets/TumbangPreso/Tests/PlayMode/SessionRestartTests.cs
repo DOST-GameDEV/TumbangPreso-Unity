@@ -87,6 +87,43 @@ namespace TumbangPreso.PlayTests
             => typeof(Matchmaker).GetField("_net", BindingFlags.Instance | BindingFlags.NonPublic)
                                  .SetValue(queue, net);
 
+        [UnityTest] public IEnumerator EmptySnapshotRequestDoesNotConsumeRefreshBudget()
+            => RejectMalformedSnapshotRequest(System.Array.Empty<byte>());
+        [UnityTest] public IEnumerator UnknownSnapshotMarkerDoesNotConsumeRefreshBudget()
+            => RejectMalformedSnapshotRequest(new byte[]{1});
+        [UnityTest] public IEnumerator TrailingSnapshotBytesDoNotConsumeRefreshBudget()
+            => RejectMalformedSnapshotRequest(new byte[]{0,0});
+        private IEnumerator RejectMalformedSnapshotRequest(byte[] payload)
+        {
+            var net=NetSession.Ensure();yield return null;
+            try
+            {
+                bool hosted=false;yield return Await(net.StartHostAsync(18691),r=>hosted=r);
+                Assert.IsTrue(hosted,net.Status);
+                var router=net.GetComponent<MatchRpc>();
+                const BindingFlags flags=BindingFlags.Instance|BindingFlags.NonPublic;
+                var handler=typeof(MatchRpc).GetMethod("OnReqSnapshotMsg",flags);
+                var sent=(System.Collections.Generic.Dictionary<ulong,float>)typeof(MatchRpc).GetField("_lastSnapshotRequest",flags).GetValue(router);
+                var pending=(System.Collections.Generic.Dictionary<ulong,long>)typeof(MatchRpc).GetField("_pendingSnapshotReplies",flags).GetValue(router);
+                void Deliver(byte[] bytes)
+                {
+                    using var writer=new FastBufferWriter(32,Allocator.Temp);
+                    writer.WriteValueSafe(123UL);
+                    foreach(byte b in bytes)writer.WriteValueSafe(b);
+                    using var reader=new FastBufferReader(writer,Allocator.Temp);
+                    reader.ReadValueSafe(out ulong hash);
+                    handler.Invoke(router,new object[]{NetworkManager.ServerClientId,reader});
+                }
+                Deliver(payload);
+                Assert.AreEqual(0,sent.Count,"Malformed snapshot request consumed the refresh throttle.");
+                Assert.AreEqual(0,pending.Count);
+                Deliver(new byte[]{0});
+                Assert.IsTrue(sent.ContainsKey(NetworkManager.ServerClientId),"The valid request after rejection was lost.");
+                Assert.AreEqual(0,pending.Count);
+            }
+            finally{net.Stop();}
+        }
+
         [UnityTest, Timeout(30000)]
         public IEnumerator SnapshotRequestsCoalesceOnTheConnectedHostAndCancelOnDisable()
         {
