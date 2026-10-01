@@ -32,16 +32,36 @@ namespace TumbangPreso.Tests
         { Object.DestroyImmediate(_root); NetAuthority.Provider = _before; }
 
         private void Deliver(ulong sender, long match, int sequence, int seat, byte reason,
-            bool bot = true, string name = "Maya")
+            bool bot = true, string name = "Maya", int trailingBytes = 0, bool namedEnvelope = false)
         {
             using var writer = new FastBufferWriter(192, Allocator.Temp);
+            if(namedEnvelope)writer.WriteValueSafe(123UL);
             writer.WriteValueSafe(match); writer.WriteValueSafe(sequence); writer.WriteValueSafe(seat);
             writer.WriteValueSafe(reason); writer.WriteValueSafe(bot);
             writer.WriteValueSafe(name.Length);
             foreach (char character in name) writer.WriteValueSafe((ushort)character);
+            for(int i=0;i<trailingBytes;i++)writer.WriteValueSafe((byte)0);
             using var reader = new FastBufferReader(writer, Allocator.Temp);
+            if(namedEnvelope)reader.ReadValueSafe(out ulong hash);
             typeof(MatchRpc).GetMethod("OnPeerDepartureMsg", Private)
                 .Invoke(_rpc, new object[] { sender, reader });
+        }
+
+        [TestCase(1)] [TestCase(64)]
+        public void TrailingPayloadCannotShowANoticeOrConsumeItsSequence(int extra)
+        {
+            Deliver(0,100,10,1,1,trailingBytes:extra,namedEnvelope:true);
+            Assert.AreEqual(0,_rpc.PeerDepartureNotices,"A malformed departure consumed the notice sequence.");
+            Assert.IsEmpty(_rpc.LastPeerDepartureText);
+            Deliver(0,100,10,1,1,namedEnvelope:true);
+            Assert.AreEqual(1,_rpc.PeerDepartureNotices,"A rejected payload must leave the valid sequence available.");
+        }
+        [Test] public void CompleteNoticeAfterTheNgoNameHashStillArrivesOnce()
+        {
+            Deliver(0,100,1,1,0,false,"Maya",namedEnvelope:true);
+            Assert.AreEqual("P2 · Maya DISCONNECTED · SEAT RESERVED",_rpc.LastPeerDepartureText);
+            Deliver(0,100,1,1,0,false,"Maya",namedEnvelope:true);
+            Assert.AreEqual(1,_rpc.PeerDepartureNotices);
         }
 
         [Test] public void OnlyFreshHostNoticesReachThePlayerOnce()

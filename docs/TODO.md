@@ -110,6 +110,11 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   across100warmed passes; seven native lifecycle/order/query checks pass. No kit
   or loading change. [Evidence](reports/feedback-2026-09-30/bot-planning-inventory.md).
 
+- [x] NETWORK-DEPARTURE-FRAMING-1001: malformed trailing notice bytes cannot show
+  a toast or consume its sequence. Native baseline2/2fails; final6/6passes with
+  valid NGO envelope/authority/freshness/name/transport controls. No wire change.
+  [Evidence](reports/feedback-2026-09-30/peer-departure-framing.md).
+
 Source: [TUMP Wiki](https://docs.google.com/document/d/1jvr7NLzhHrbw-wrG676AeOkoTxJf4GokkfmxpO0ddLg/edit),
 read on 2026-09-30, including ability, status and feedback tabs. The document wins
 for other characters. Paete and Phaister are finalized and governed by the

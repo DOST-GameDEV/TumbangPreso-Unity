@@ -2164,3 +2164,42 @@ both ledger histories intact and no runtime conflict. Current compatibility115;
 local bot/menu receipts remain114overlay checks, not merged115peer qualification.
 Keep contributor Rafi/Carrier/Slipper/Core/NetSession reservations untouched.
 Local planningfd15da554 ready to publish; no unchanged native rerun justified.
+
+BOT-PLANNINGfd15da554 published at661ed3bfd, remote verified; current115Hydro
+integrated with authored receipts intact. Next NETWORK-DEPARTURE-FRAMING-1001
+owns MatchRpc.PeerDeparture.cs and existing Tests/PeerDepartureTests.cs only.
+Receiver currently checks bounded name bytes but accepts a trailing suffix,
+then advances notice sequence. Two native baseline malformed-suffix cases use
+an already-consumed8byte NGO name envelope. Final6cases retain authority/stale/
+name sanitation/lifecycle and valid-envelope controls. Stop fresh XML; one
+fixture repair maximum. No protocol/schema/loading/tuning/assets change.
+
+Departure baseline engine exits before project/tests: licensing error198 with
+no headless entitlement, no XML. Earlier final planning had valid entitlement
+minutes before. Shared prefs preserved, job terminal. One unchanged bounded
+licensing retry uses separatev2log/XML; no license/profile/reset mutation. If it
+fails, retain unverified candidate and continue engine-free/source work, not a
+DONE claim or repeated launch loop.
+
+User refreshed signed-in Unity Hub and asked to confirm restored operation.
+License failure was automatic process entitlement validation, never an absent
+Editor. External state changed; resume baseline with separatev3receipt, same
+frozen old receiver and regressions. Main has pending strict suffix check only;
+do not overwrite baseline until its actual failure is recorded. Prior two
+license attempts produced no tests/qualification; profiles/preferences retained.
+
+Departurev3launch accepts Unity Personal/Unlimited and runs nativeEditMode.
+Actual baseline2/2fails at intended notice count (malformed suffix accepted),
+not licensing or fixture setup. Main suffix-length check now ready for final6cases;
+no further license retries. Baseline85628terminal, profiles/inputprefs preserved.
+
+Departure final6/6nativeEditMode passes0.263s;666inputs no drift and two owned
+files match candidate661ed3bfd overlays. Suffix guard precedes notice sequence/
+toast; valid named envelope/repeat/authority/state cleanup retained. Jobs85628/
+44597terminal, no fixture repair. Initial two license failures did not run tests;
+user-refreshed Hub resolved process entitlement before actual baseline/final.
+Publish exact source/status/evidence; protocol115 unchanged and no new peer/player
+claim. Next BOT-OBSERVE-ALLOCATION-1001: per-render Observe foreach over cached
+IReadOnlyList Bodies boxes its enumerator. Measure a warmed bound delegate with
+calibrated recorder, replace only that loop with indexing if confirmed, retain
+six existing observation/ranking controls. Full Haunted sensing still open.

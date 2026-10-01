@@ -207,3 +207,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Bot tag ranking observation correction](bot-tag-depth.md).
 
 [Remaining bot planning scans and measured allocation reduction](bot-planning-inventory.md).
+
+[Exact departure notice framing and native receiver checks](peer-departure-framing.md).

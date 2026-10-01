@@ -1,11 +1,18 @@
 # Networking: Where To Work
 
-Current gameplay contract is protocol109, including Kuro Catch's host-confirmed
-five-second can protection and owned/recovered clocks. Native acceptance passes;
-the earlier protocol103 direct-peer player does not qualify these later contracts.
-[Catch evidence](reports/feedback-2026-09-30/nemu-kuro-catch.md).
+Current gameplay contract is protocol115, including adopted Hydro Crosscurrent.
+Latest actual Windows direct-peer qualification is protocol114with the CLI
+admission handoff fix, through active round2with matching structural state.
+It predates Hydro115and the later local menu/bot/notice changes; it cannot qualify
+those integrations. [Player evidence](reports/feedback-2026-09-30/cli-admission-handoff.md).
+[Hydro evidence](reports/hero-quality-2026-10-01/hydro-current-checks/README.md).
 
-Current Windows peer evidence: frozen committed overlaysffe5030c5, protocol103,
+Departure notice payloads must end exactly after the declared name, before the
+receiver commits the sequence or toast. Six native receiver checks pass, including
+the consumed NGO name envelope and malformed suffix recovery.
+[Evidence](reports/feedback-2026-09-30/peer-departure-framing.md).
+
+Earlier Windows peer evidence: frozen committed overlaysffe5030c5, protocol103,
 same fresh internal binary on actual localhost UDP host/client. Both reach active
 HeroStrike/Eskinita round2 with matching structural state and no hard faults.
 This is direct local session qualification, not individual skill/online/Relay/
