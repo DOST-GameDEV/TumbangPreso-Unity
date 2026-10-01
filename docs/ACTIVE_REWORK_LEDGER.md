@@ -2045,3 +2045,20 @@ Original failing pair retained; shorter second warmup is an explicit confound,
 no blanket cold-load/timeout cause claim. Publish only NetBootstrap waiter fix
 and scoped receipts/status. Actual all-ability/rejoin/WAN/hardware/audio remain
 separate. Full goal active; do not treat this pair as whole-feedback completion.
+
+HAUNTED-MENU-1001 owns Visual/HauntedPerception.cs panel gate, AudioDirector.cs
+UI-source listener bypass and existing HauntedPerceptionTests. Current shared
+helper drops all impairment when Panel.AnyOpen, even though base/pause backdrop
+is translucent and the live status remains. Reproduce actual PausePanel opening
+through existing gameplay view before changing it. Keep UI feedback clear via
+its existing pooled-source route, not by removing the world impairment. No
+authored sounds, visual redesign, loader or input mapping changes. Sourceed86e3b2c;
+no incoming commits/current live native job. Full goal active.
+
+HAUNTED-MENU-1001 actual PausePanel baseline1/1fails near sight; final3/3native
+D3D11 passes menu/UI-source/world-source/status controls and existing lifecycle/
+pixel checks.659inputs unchanged; three owned source files match candidate.
+Jobs56826/29674terminal, no fixture repair. Publish exact files/receipts/status;
+protocol114 unchanged, no new player or audible/physical/peer claim. Prior actual
+admission pair retains its older source boundary. Next investigate Haunted bot
+sensing and target eligibility together; do not claim fairness from Observe alone.

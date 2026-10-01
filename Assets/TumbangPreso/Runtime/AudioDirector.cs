@@ -618,6 +618,7 @@ namespace TumbangPreso
                 var made = go.AddComponent<AudioSource>();
 
                 made.spatialBlend = 0.0f;
+                made.bypassListenerEffects = true;
                 made.playOnAwake = false;
                 made.dopplerLevel = 0.0f;
 

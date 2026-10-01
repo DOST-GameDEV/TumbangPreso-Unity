@@ -8,7 +8,7 @@ continues to show the nearby viewmodel; HUD canvases retain their normal route.
 The previously shipped can/slipper marker gates still own marker hiding.
 
 A shared view gate requires the main enabled gameplay camera following the local
-active HeroStrike body in a live round. Other followed seats, spectators, menus,
+active HeroStrike body in a live round. Other followed seats, spectators,
 replays and non-gameplay cameras do not inherit the victim's impairment. Clearing
 the status or exiting the view releases both effects. The grade keeps its
 identity bypass outside the status. Existing depth-normal/motion bits are retained
@@ -51,3 +51,7 @@ rejoin, current player/hardware and complete authored-arena qualification remain
 separate. Protocol113 from the chase unit remains current; this local consumer
 adds no packet field or compatibility change. Original broad F0930-12 Feedback
 row stays open for its remaining qualifications/other character reconciliation.
+
+Later [menu regression correction](haunted-menu.md) keeps perception active behind
+translucent match menus while exempting UI feedback from listener effects. Its
+three native checks and protocol114 source boundary are recorded separately.

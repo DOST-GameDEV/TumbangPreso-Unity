@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 04:33:39Z" end-time="2026-10-01 04:33:40Z" duration="0.9796535">
+  <test-suite type="TestSuite" id="2332" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1077" result="Failed" site="Child" start-time="2026-10-01 04:33:39Z" end-time="2026-10-01 04:33:40Z" duration="0.979654" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2326" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1077" result="Failed" site="Child" start-time="2026-10-01 04:33:39Z" end-time="2026-10-01 04:33:40Z" duration="0.954935" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="29444" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2327" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1077" result="Failed" site="Child" start-time="2026-10-01 04:33:39Z" end-time="2026-10-01 04:33:40Z" duration="0.944490" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2328" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1077" result="Failed" site="Child" start-time="2026-10-01 04:33:39Z" end-time="2026-10-01 04:33:40Z" duration="0.933103" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1371" name="HauntedPerceptionTests" fullname="TumbangPreso.PlayTests.HauntedPerceptionTests" classname="TumbangPreso.PlayTests.HauntedPerceptionTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-01 04:33:39Z" end-time="2026-10-01 04:33:40Z" duration="0.869527" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1373" name="OpeningAMatchMenuDoesNotClearVictimPerception" fullname="TumbangPreso.PlayTests.HauntedPerceptionTests.OpeningAMatchMenuDoesNotClearVictimPerception" methodname="OpeningAMatchMenuDoesNotClearVictimPerception" classname="TumbangPreso.PlayTests.HauntedPerceptionTests" runstate="Runnable" seed="570534609" result="Failed" start-time="2026-10-01 04:33:39Z" end-time="2026-10-01 04:33:40Z" duration="0.837831" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  An open translucent menu bypassed active near sight.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.HauntedPerceptionTests+<OpeningAMatchMenuDoesNotClearVictimPerception>d__12.MoveNext () [0x000c0] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\HauntedPerceptionTests.cs:84
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
