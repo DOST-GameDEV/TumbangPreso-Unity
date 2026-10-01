@@ -1,13 +1,14 @@
 # Networking: Where To Work
 
-Current gameplay contract is protocol116, including adopted Hydro Crosscurrent
-and Skim.
+Current gameplay contract is protocol117, including adopted Hydro Crosscurrent,
+Skim and Water wall.
 Latest actual Windows direct-peer qualification is protocol114with the CLI
 admission handoff fix, through active round2with matching structural state.
-It predates Hydro115/116and the later local menu/bot/notice changes; it cannot qualify
+It predates Hydro115/116/117and the later local menu/bot/notice changes; it cannot qualify
 those integrations. [Player evidence](reports/feedback-2026-09-30/cli-admission-handoff.md).
 [Hydro evidence](reports/hero-quality-2026-10-01/hydro-current-checks/README.md).
 [Skim evidence](reports/hero-quality-2026-10-01/skim-checks/README.md).
+[Water wall/tutorial evidence](reports/hero-quality-2026-10-01/wall-tutorial-checks/README.md).
 
 A separate actual116Windows owner-client Haunt fixture passes with host contacts,
 replicated clocks, moving familiar and terminal cleanup. Stationary bystanders,
