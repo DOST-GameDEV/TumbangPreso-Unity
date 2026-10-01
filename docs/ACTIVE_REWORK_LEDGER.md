@@ -2993,3 +2993,23 @@ Integrated reticle-outline and score-feed contributions through9dc083a0d.
 Atomic roster validation retains16distinct native passes across two final runs;
 current protocol120. Status layout remains contributor-owned. No task jobs or
 previews remain; private dirt is preserved. Publish, then resume scoped engineering.
+Status candidate frozen: stable catalog-backed slots remove the silent3cap;
+Haunted follows its real timer. Bottom-up columns fit available height, retaining
+28unit tooltip text; dense layouts reserve right-side action/warning room with
+wrapping. Reduced motion snaps; expiry removes only that status. Final2native
+cases cover ten simultaneous real status applications, ordinary3, small/wide
+normal/enlarged layouts, timer fill, removal/reflow and no repeated entry motion.
+No new mechanics or peer semantics; no tooling repair used. Feed job terminal.
+
+Status final2/2 passes geometry/timers/reflow and ordinary HUD controls, but pixel
+review exposes a real missing Haunted sprite: its new row has an empty ring.
+Extend this unit to tools/build_ability_icons.py and new StatusHaunted.png/meta
+using the existing authored icon pipeline: occluded eye for reduced perception,
+not a reused unrelated ability. Generate valid metadata; one dense native check
+for import/binding and revised capture. Preserve passing ordinary layout evidence.
+
+Status final dense1/1 passes after real Haunted sprite import; retain ordinary
+layout case from initial2/2. Ten actual statuses, viewport/scale/no-overlap/timer/
+expiry/reflow/refresh checks pass. Pixels inspected, frozen inputs unchanged, no
+tooling repair/new OOM. Publish UI/art paths only. Next announcement scoring and
+2.5second presentation; current120. No native jobs or player/peer qualification.

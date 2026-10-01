@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 08:23:54Z" end-time="2026-10-01 08:24:10Z" duration="16.0531877">
+  <test-suite type="TestSuite" id="2382" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1124" result="Passed" start-time="2026-10-01 08:23:54Z" end-time="2026-10-01 08:24:10Z" duration="16.053188" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2376" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1124" result="Passed" start-time="2026-10-01 08:23:54Z" end-time="2026-10-01 08:24:10Z" duration="16.032409" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="265588" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2377" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1124" result="Passed" start-time="2026-10-01 08:23:54Z" end-time="2026-10-01 08:24:10Z" duration="16.015358" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2378" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1124" result="Passed" start-time="2026-10-01 08:23:54Z" end-time="2026-10-01 08:24:10Z" duration="15.998767" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2216" name="TumpNativeHudTests" fullname="TumbangPreso.PlayTests.TumpNativeHudTests" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-10-01 08:23:54Z" end-time="2026-10-01 08:24:10Z" duration="15.945981" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2233" name="DenseStatusesRetainHauntedTimersAndReflowWithoutOverlap" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.DenseStatusesRetainHauntedTimersAndReflowWithoutOverlap" methodname="DenseStatusesRetainHauntedTimersAndReflowWithoutOverlap" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="786444000" result="Passed" start-time="2026-10-01 08:23:54Z" end-time="2026-10-01 08:24:03Z" duration="9.354071" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] HarryHud-dense-status-1-960x540/Power0: vertices=659, cull=False, alpha=1, depth=162, material=1
+[TumpGeometry] HarryHud-dense-status-1-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=163, material=1
+[TumpGeometry] HarryHud-dense-status-1-960x540/Power1: vertices=659, cull=False, alpha=1, depth=167, material=1
+[TumpGeometry] HarryHud-dense-status-1-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=168, material=1
+[TumpGeometry] HarryHud-dense-status-1-960x540/Power2: vertices=418, cull=False, alpha=1, depth=174, material=1
+[TumpGeometry] HarryHud-dense-status-1-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=175, material=1
+[TumpUiCapture] HarryHud-dense-status-1-960x540 cream source=252,211,159 pixel=213,224,227; isolated UI camera, no ColourGrade.
+[TumpGeometry] HarryHud-dense-status-1-1600x680/Power0: vertices=659, cull=False, alpha=1, depth=162, material=1
+[TumpGeometry] HarryHud-dense-status-1-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=163, material=1
+[TumpGeometry] HarryHud-dense-status-1-1600x680/Power1: vertices=659, cull=False, alpha=1, depth=167, material=1
+[TumpGeometry] HarryHud-dense-status-1-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=168, material=1
+[TumpGeometry] HarryHud-dense-status-1-1600x680/Power2: vertices=418, cull=False, alpha=1, depth=174, material=1
+[TumpGeometry] HarryHud-dense-status-1-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=175, material=1
+[TumpUiCapture] HarryHud-dense-status-1-1600x680 cream source=252,211,159 pixel=187,155,134; isolated UI camera, no ColourGrade.
+[TumpGeometry] HarryHud-dense-status-1.2-960x540/Power0: vertices=659, cull=False, alpha=1, depth=162, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=163, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-960x540/Power1: vertices=659, cull=False, alpha=1, depth=167, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=168, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-960x540/Power2: vertices=418, cull=False, alpha=1, depth=174, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=175, material=1
+[TumpUiCapture] HarryHud-dense-status-1.2-960x540 cream source=252,211,159 pixel=208,193,231; isolated UI camera, no ColourGrade.
+[TumpGeometry] HarryHud-dense-status-1.2-1600x680/Power0: vertices=659, cull=False, alpha=1, depth=162, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=163, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-1600x680/Power1: vertices=659, cull=False, alpha=1, depth=167, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=168, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-1600x680/Power2: vertices=418, cull=False, alpha=1, depth=174, material=1
+[TumpGeometry] HarryHud-dense-status-1.2-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=175, material=1
+[TumpUiCapture] HarryHud-dense-status-1.2-1600x680 cream source=252,211,159 pixel=187,155,134; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="2230" name="RevisedHudSeparatesStatusesWarningActionAndFitsFourRounds" fullname="TumbangPreso.PlayTests.TumpNativeHudTests.RevisedHudSeparatesStatusesWarningActionAndFitsFourRounds" methodname="RevisedHudSeparatesStatusesWarningActionAndFitsFourRounds" classname="TumbangPreso.PlayTests.TumpNativeHudTests" runstate="Runnable" seed="217209199" result="Passed" start-time="2026-10-01 08:24:03Z" end-time="2026-10-01 08:24:10Z" duration="6.576579" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[TumpGeometry] HarryHud-states-1-960x540/Power0: vertices=659, cull=False, alpha=1, depth=123, material=1
+[TumpGeometry] HarryHud-states-1-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=124, material=1
+[TumpGeometry] HarryHud-states-1-960x540/Power1: vertices=659, cull=False, alpha=1, depth=128, material=1
+[TumpGeometry] HarryHud-states-1-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=129, material=1
+[TumpGeometry] HarryHud-states-1-960x540/Power2: vertices=418, cull=False, alpha=1, depth=135, material=1
+[TumpGeometry] HarryHud-states-1-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=136, material=1
+[TumpUiCapture] HarryHud-states-1-960x540 cream source=252,211,159 pixel=211,223,227; isolated UI camera, no ColourGrade.
+[TumpGeometry] HarryHud-states-1-1600x680/Power0: vertices=659, cull=False, alpha=1, depth=123, material=1
+[TumpGeometry] HarryHud-states-1-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=124, material=1
+[TumpGeometry] HarryHud-states-1-1600x680/Power1: vertices=659, cull=False, alpha=1, depth=128, material=1
+[TumpGeometry] HarryHud-states-1-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=129, material=1
+[TumpGeometry] HarryHud-states-1-1600x680/Power2: vertices=418, cull=False, alpha=1, depth=135, material=1
+[TumpGeometry] HarryHud-states-1-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=136, material=1
+[TumpUiCapture] HarryHud-states-1-1600x680 cream source=252,211,159 pixel=183,151,132; isolated UI camera, no ColourGrade.
+[TumpGeometry] HarryHud-states-1.2-960x540/Power0: vertices=659, cull=False, alpha=1, depth=123, material=1
+[TumpGeometry] HarryHud-states-1.2-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=124, material=1
+[TumpGeometry] HarryHud-states-1.2-960x540/Power1: vertices=659, cull=False, alpha=1, depth=128, material=1
+[TumpGeometry] HarryHud-states-1.2-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=129, material=1
+[TumpGeometry] HarryHud-states-1.2-960x540/Power2: vertices=418, cull=False, alpha=1, depth=135, material=1
+[TumpGeometry] HarryHud-states-1.2-960x540/PowerIcon: vertices=4, cull=False, alpha=1, depth=136, material=1
+[TumpUiCapture] HarryHud-states-1.2-960x540 cream source=252,211,159 pixel=208,193,231; isolated UI camera, no ColourGrade.
+[TumpGeometry] HarryHud-states-1.2-1600x680/Power0: vertices=659, cull=False, alpha=1, depth=123, material=1
+[TumpGeometry] HarryHud-states-1.2-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=124, material=1
+[TumpGeometry] HarryHud-states-1.2-1600x680/Power1: vertices=659, cull=False, alpha=1, depth=128, material=1
+[TumpGeometry] HarryHud-states-1.2-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=129, material=1
+[TumpGeometry] HarryHud-states-1.2-1600x680/Power2: vertices=418, cull=False, alpha=1, depth=135, material=1
+[TumpGeometry] HarryHud-states-1.2-1600x680/PowerIcon: vertices=4, cull=False, alpha=1, depth=136, material=1
+[TumpUiCapture] HarryHud-states-1.2-1600x680 cream source=252,211,159 pixel=187,155,134; isolated UI camera, no ColourGrade.
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

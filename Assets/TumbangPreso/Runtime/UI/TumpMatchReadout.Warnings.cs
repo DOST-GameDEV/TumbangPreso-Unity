@@ -83,9 +83,12 @@ namespace TumbangPreso.UI
             _warningRoot.gameObject.SetActive(show);
             if(!show)return;
             _warningText.text=text;
-            float width=Mathf.Clamp(_warningText.preferredWidth+48,400,620);
+            float width=Mathf.Min(_statusPromptMaxWidth,Mathf.Clamp(_warningText.preferredWidth+48,400,620));
             _warningRoot.sizeDelta=new Vector2(width,90);
             OwnerUiLayout.Place(_warningText.rectTransform,24,8,width-48,74);
+            float height=Mathf.Max(90,_warningText.preferredHeight+16);
+            _warningRoot.sizeDelta=new Vector2(width,height);
+            _warningText.rectTransform.sizeDelta=new Vector2(width-48,height-16);
         }
     }
 }

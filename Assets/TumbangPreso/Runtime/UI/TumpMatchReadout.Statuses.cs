@@ -10,11 +10,11 @@ namespace TumbangPreso.UI
     /// icon, its name and the owner's tooltip ("Disabled Slipper Retrieval"), with a ring draining
     /// round the icon. VISUAL-1.6 moved every timed row off text and into shapes; a status is the
     /// exception that names itself, because the tooltip is the only thing that tells a player WHY
-    /// the grab has stopped working. Three chips at most. Every label is at least 28 units.
+    /// the grab has stopped working. Every live status is retained. Every label is at least 28 units.
     /// </summary>
     public sealed partial class TumpMatchReadout
     {
-        private const int StatusChips = 3;
+        private static readonly int StatusChips = StatusRules.All.Count;
         private readonly RectTransform[] _chip = new RectTransform[StatusChips];
         private readonly Image[] _chipIcon = new Image[StatusChips];
         private readonly HudRing[] _chipRing = new HudRing[StatusChips];
@@ -22,13 +22,17 @@ namespace TumbangPreso.UI
         private readonly Text[] _chipTip = new Text[StatusChips];
         private readonly List<StatusKind> _liveStatuses = new List<StatusKind>(4);
 
+        private readonly Vector2[] _chipFrom = new Vector2[StatusChips];
+        private readonly Vector2[] _chipTarget = new Vector2[StatusChips];
+        private readonly float[] _chipMovedAt = new float[StatusChips];
+        private float _statusPromptMaxWidth = 1100;
+
         private void BuildStatusChips()
         {
             for (int i = 0; i < StatusChips; i++)
             {
                 var chip = OwnerUiLayout.Rect(_root, "StatusChip" + i);
                 Pin(chip, new Vector2(0, 0), new Vector2(230, 75 + i * 120), new Vector2(420, 110));
-                HudReadingLayout.Watch(chip, new Vector2(0, i * 120));
                 var plate = OwnerUiLayout.Rect(chip, "StatusPlate").gameObject.AddComponent<HudCard>();
                 plate.color = HudDraw.Plate; plate.Radius = 22; plate.raycastTarget = false;
                 OwnerUiLayout.Fill(plate.rectTransform);
@@ -51,14 +55,35 @@ namespace TumbangPreso.UI
         {
             if (_chip[0] == null) return;
             StatusIcons.Live(show ? local : null, _liveStatuses);
-            int count = Mathf.Min(StatusChips, _liveStatuses.Count);
+            var settings = Settings.SettingsStore.Current;
+            float scale = Mathf.Max(Settings.GameSettings.ValidHudScale(settings.HudScale), settings.LargerText ? 1.2f : 1f);
+            int rows = Mathf.Max(1, Mathf.FloorToInt((_root.rect.height - 180 * scale) / (120 * scale)));
+            int columns = Mathf.Max(1, Mathf.CeilToInt(_liveStatuses.Count / (float)rows));
+            float occupied = 20 + columns * 440 * scale;
+            float centre = columns == 1 ? .5f : Mathf.Clamp01((occupied + _root.rect.width - 20) * .5f / _root.rect.width);
+            _statusPromptMaxWidth = columns == 1 ? 1100 : Mathf.Max(240, (_root.rect.width - occupied - 40) / scale);
+            if (_promptRoot != null) _promptRoot.anchorMin = _promptRoot.anchorMax = new Vector2(centre, columns == 1 ? .28f : .36f);
+            if (_warningRoot != null) _warningRoot.anchorMin = _warningRoot.anchorMax = new Vector2(centre, .66f);
             for (int i = 0; i < StatusChips; i++)
             {
-                bool on = i < count;
+                // A catalog slot belongs to one status, so inserting/removing another
+                // cannot transfer its ring, entry motion or expiry to the wrong effect.
+                var kind = StatusRules.All[i].Kind;
+                int order = _liveStatuses.IndexOf(kind);
+                bool on = order >= 0;
+                bool entered = on && !_chip[i].gameObject.activeSelf;
                 if (_chip[i].gameObject.activeSelf != on) _chip[i].gameObject.SetActive(on);
                 if (!on) continue;
-                var kind = _liveStatuses[i];
-                // Placement belongs to the left stack and its accessibility scaler.
+                var target = new Vector2(20 + (210 + order / rows * 440) * scale,
+                    (75 + order % rows * 120) * scale);
+                _chip[i].localScale = Vector3.one * scale;
+                if (entered || Vector2.SqrMagnitude(_chipTarget[i] - target) > .01f)
+                {
+                    _chipFrom[i] = entered ? target - Vector2.up * 24 * scale : _chip[i].anchoredPosition;
+                    _chipTarget[i] = target; _chipMovedAt[i] = Time.unscaledTime;
+                }
+                float move = settings.ReducedUiMotion ? 1 : Mathf.SmoothStep(0, 1, Mathf.Clamp01((Time.unscaledTime - _chipMovedAt[i]) / .2f));
+                _chip[i].anchoredPosition = Vector2.Lerp(_chipFrom[i], target, move);
                 var sprite = StatusIcons.For(kind);
                 if (_chipIcon[i].sprite != sprite) _chipIcon[i].sprite = sprite;
                 _chipIcon[i].enabled = sprite != null;

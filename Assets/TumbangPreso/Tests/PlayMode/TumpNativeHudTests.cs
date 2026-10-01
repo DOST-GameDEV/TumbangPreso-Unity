@@ -814,12 +814,13 @@ namespace TumbangPreso.PlayTests
                                 var progress=HudRevisionBounds(root,(RectTransform)root.Find("ContextualAction/RecoveryProgress"));
                                 Assert.IsTrue(action.Contains(progress.min)&&action.Contains(progress.max),"Progress must sit inside the action background");
                                 Assert.IsFalse(action.Overlaps(warning));
-                                for(int i=0;i<3;i++)
+                                var shownChips = root.GetComponentsInChildren<RectTransform>().Where(x => x.name.StartsWith("StatusChip")).ToArray();
+                                for(int i=0;i<shownChips.Length;i++)
                                 {
-                                    var chip=HudRevisionBounds(root,(RectTransform)root.Find("StatusChip"+i));
+                                    var chip=HudRevisionBounds(root,shownChips[i]);
                                     Assert.IsFalse(chip.Overlaps(action));Assert.IsFalse(chip.Overlaps(warning));
                                     Assert.GreaterOrEqual(chip.xMin,root.rect.xMin);Assert.GreaterOrEqual(chip.yMin,root.rect.yMin);
-                                    if(i>0)Assert.IsFalse(chip.Overlaps(HudRevisionBounds(root,(RectTransform)root.Find("StatusChip"+(i-1)))));
+                                    if(i>0)Assert.IsFalse(chip.Overlaps(HudRevisionBounds(root,shownChips[i-1])));
                                 }
                             });
                     }
@@ -932,6 +933,67 @@ namespace TumbangPreso.PlayTests
                 Assert.Zero(feed.Count, "Every entry must expire without a new event.");
             }
             finally { SettingsStore.Current.ReducedUiMotion = reduced; }
+        }
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator DenseStatusesRetainHauntedTimersAndReflowWithoutOverlap()
+        {
+            var settings = SettingsStore.Current; float originalScale = settings.HudScale; bool reduced = settings.ReducedUiMotion;
+            try
+            {
+                yield return Open(GameMode.HeroStrike);
+                var local = GameServices.Round.PlayerAt(GameLaunch.SoloSeat);
+                local.GetComponent<PlayerInputReader>().enabled = false; local.Intent.Clear(); local.enabled = false;
+                GameServices.Round.enabled = false;
+                local.ApplyWhirled(30); local.ApplyChilled(30); local.ApplyRooted(30);
+                local.ApplyConcussed(30); local.ApplyFeared(Vector3.zero,30); local.ApplyDisoriented(30);
+                local.ApplyVulnerable(30); local.ApplyDrained(30); local.ApplyHexed(30); local.ApplyHaunted();
+                var idle = new float[4]; idle[local.PlayerSlot] = 8; GameServices.Round.ApplyNetworkTournamentState(0,idle);
+                var view = Object.FindFirstObjectByType<TumpMatchReadout>(); var root = (RectTransform)view.Canvas.transform;
+                var live = new System.Collections.Generic.List<StatusKind>(); StatusIcons.Live(local,live);
+                Assert.AreEqual(10,live.Count); Assert.Contains(StatusKind.Haunted,live);
+                Assert.IsNotNull(StatusIcons.For(StatusKind.Haunted), "Haunted must import and bind its own icon.");
+                settings.ReducedUiMotion = true;
+                foreach(float scale in new[]{1f,1.2f})
+                foreach(var size in new[]{new Vector2Int(960,540),new Vector2Int(1600,680)})
+                {
+                    settings.HudScale = scale; view.Tick(local,false,false,false,false); yield return null;
+                    yield return TumpUiCapture.Capture("HarryHud-dense-status-"+scale+"-"+size.x+"x"+size.y,view.Canvas,size.x,size.y,false,true,
+                        inspectViewport:()=>
+                        {
+                            view.Tick(local,false,false,false,false);
+                            typeof(TumpMatchReadout).GetMethod("SizePromptPlate",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(view,null);
+                            var chips = root.GetComponentsInChildren<RectTransform>().Where(x=>x.name.StartsWith("StatusChip")).ToArray();
+                            Assert.AreEqual(10,chips.Length);
+                            var warning = HudRevisionBounds(root,(RectTransform)root.Find("WarningMessage"));
+                            var action = HudRevisionBounds(root,(RectTransform)root.Find("ContextualAction/PromptPlate"));
+                            foreach(var chip in chips)
+                            {
+                                var bounds = HudRevisionBounds(root,chip);
+                                Assert.IsTrue(root.rect.Contains(bounds.min)&&root.rect.Contains(bounds.max),chip.name+" must stay on screen");
+                                Assert.IsFalse(bounds.Overlaps(warning),chip.name+" overlaps warning");
+                                if(root.Find("ContextualAction/PromptPlate").GetComponent<HudCard>().enabled)
+                                    Assert.IsFalse(bounds.Overlaps(action),chip.name+" overlaps action");
+                                foreach(var other in chips)if(other!=chip)Assert.IsFalse(bounds.Overlaps(HudRevisionBounds(root,other)));
+                            }
+                        });
+                }
+                local.ClearStatuses(); local.ClearStun(); local.ApplyWhirled(3); local.ApplyChilled(3); local.ApplyHaunted(1);
+                settings.HudScale=1; settings.ReducedUiMotion=false;
+                view.Tick(local,false,false,false,false); yield return new WaitForSecondsRealtime(.22f); view.Tick(local,false,false,false,false);
+                var haunted = root.GetComponentsInChildren<Text>().First(x=>x.name=="StatusName"&&x.text=="HAUNTED").transform.parent as RectTransform;
+                var before = haunted.anchoredPosition;
+                local.ApplyHaunted(1); view.Tick(local,false,false,false,false);
+                Assert.AreEqual(before,haunted.anchoredPosition,"Refreshing the same effect must not restart entry animation");
+                local.ApplyNetworkStatuses(0,3,0,.5f); view.Tick(local,false,false,false,false);
+                Assert.AreEqual(before,haunted.anchoredPosition,"Reflow begins at the existing position");
+                yield return new WaitForSecondsRealtime(.22f); view.Tick(local,false,false,false,false);
+                Assert.Less(haunted.anchoredPosition.y,before.y);
+                Assert.AreEqual(.5f/StatusRules.HauntedSeconds,haunted.GetComponentInChildren<HudRing>().Fill,.001f);
+                local.ApplyNetworkStatuses(0,0,0,0); view.Tick(local,false,false,false,false);
+                Assert.IsFalse(haunted.gameObject.activeSelf,"Expired statuses disappear from actual shared timers");
+            }
+            finally { settings.HudScale=originalScale; settings.ReducedUiMotion=reduced; }
         }
 
         private static Rect HudRevisionBounds(RectTransform root,RectTransform target)
