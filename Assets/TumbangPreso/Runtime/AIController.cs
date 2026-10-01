@@ -4814,7 +4814,9 @@ namespace TumbangPreso
                     || _ultimateReadyFor >= AiTuning.UltimateHoldSeconds
                     || round.TimeLeft <= AiTuning.UltimateDumpWindowSeconds
                     // Phaister's doll needs nobody under it: its worth is the round it has left.
-                    || (kit is Abilities.PhaisterHeroKit && round.TimeLeft >= PhaisterDollWorthSeconds);
+                    || (kit is Abilities.PhaisterHeroKit && round.TimeLeft >= PhaisterDollWorthSeconds)
+                    // Overclock is valuable for the rest of the match even without a zap victim.
+                    || (kit is Abilities.ZackHeroKit zack && !zack.IsOverclocked);
             }
 
             if (kit.IsUltimateReady && kit.Ultimate != null && ultimateWorthIt)
@@ -4853,10 +4855,9 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.ZackHeroKit)
                 {
-                    // ⚠️⚠️ THUNDERSTRIKE LANDS ON ZACK. Its telegraph is 4.5 m at range 0, and
-                    // the old gate fired it at a target up to 8.0 m away, which is a lightning
-                    // strike on an empty piece of road with the target watching from outside it.
-                    if (WouldCatch(kit.Ultimate, stunPayload: true)) Consider(intent, Verb.Ultimate, dt);
+                    // The nearby zap is secondary to the permanent self-upgrade. Opening,
+                    // cadence, deliberation and the kit's single-spend gate still apply.
+                    Consider(intent, Verb.Ultimate, dt);
                 }
                 else if (kit is Abilities.NemuHeroKit)
                 {

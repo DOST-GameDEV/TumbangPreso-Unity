@@ -17,6 +17,13 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### BOT-OVERCLOCK-1002: repaired stale area-stun victim gates
+
+Actual Zack bot ignored ready permanent Overclock for13s outside the zap radius.
+Same native bot-input/activation case now passes1/1 at4.9s, with single-spend
+control. Existing cadence/opening and kit unchanged.
+[Evidence](reports/reliability-2026-10-02/bot-overclock/README.md).
+
 ### REPLAY-SHOE-LOOKUP-1002: reuse existing live inventory
 
 Replay trail capture reuses the existing lifecycle-invalidated slipper inventory.
