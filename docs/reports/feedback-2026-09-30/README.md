@@ -221,3 +221,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Snapshot request framing and preserved deferred refresh](snapshot-request-framing.md).
 
 [Reconnect pick/rating retention through normal Identify](held-seat-picks.md).
+
+[Pre-round placeholder handover and retained failed peer evidence](pre-round-pick-handover.md).
