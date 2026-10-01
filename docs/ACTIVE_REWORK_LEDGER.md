@@ -2875,3 +2875,13 @@ Identify1182b764f andlobbypicke25b8cefd qualified independently; no broad119play
 claim from old117/116binaries. All local heavy jobs terminal, private work intact.
 Next network unit remains roster-response framing after freshownerclaim checks;
 HUD announcement/scoring/duration follow-up remains contributor-owned.
+
+TUTORIAL-THROW-REGRESSION-1001 claims Runtime/RoundDirector.cs,
+Runtime/GuidedTraining.cs and Tests/PlayMode/TutorialLessonHonestyProbe.cs.
+New Harry Feedback reports that the can-down gate blocks tutorial throws and
+requests hosted controls; separate high-over-can contact report remains next.
+Reproduce real Carrier input through cumulative lesson routing before repair.
+Keep ordinary down/protected-can rejection. No previous tutorial direct HostThrow
+check qualifies this input gate. Current integrated28b22f31, protocol119, clean
+checkout, all native jobs terminal. One focused baseline/final, one tooling repair.
+HUD extras follow these regressions; do not redo shipped HUD/penalty work.
