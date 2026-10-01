@@ -547,7 +547,7 @@ namespace TumbangPreso.Net
         // 97: the ordinary defender lunge travels 3 metres; predicted and host
         // movement must use matching tuning. The movement-budget ceiling is unchanged.
         // Protocol107 aligns Unstoppable/Bastion clocks and the bounded cleanse exception.
-        public const int ProtocolVersion = 111;
+        public const int ProtocolVersion = 112;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

@@ -1,6 +1,6 @@
 # Active Rework Checkpoint
 
-Updated2026-10-01. Branch ASTRAReworks. Protocol110 candidate. Goal active.
+Updated2026-10-01. Branch ASTRAReworks. Protocol111 candidate. Goal active.
 Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 
 ## Live Local Resume
@@ -1635,3 +1635,28 @@ Local Haunted runtime unit claim: CharacterMotor.Status.cs timer/status API, Cha
 Haunted first native run6cases5pass/1HUD setup fail: recall marker needs explicit Build(owner), which fixture omitted. One fixture repair Build/ForceUpdateCanvases; onlyHUD rerun1/1passes. Timer/immunity/cleanse/authority/invalid/API and prior Voodoo receiver qualified; source behavior remains no new authored effects. Expanded only existing SyncUnit receiver with real Haunted3/2/0 and invalidNaN/negative/overlimit serial preservation. One wire case currently running, no repeated actor/HUD cases. Core/player/whole Haunt not complete; nearsight/muffle/chase remain. Existing protocol103player unchanged and not111qualification.
 
 Haunted runtime six distinct native cases pass: original actor4retained plus repaired real HUD1plus expanded actual SyncUnit1. First6run5pass/1missing Build(owner) fixture error; one HUD-only repair/retry. Wire3/2/0, invalidNaN/negative/overlimit state+serial and Voodoo controls pass.622input hashes/no drift. New timer/status API/cleanse, SyncUnit field and HUD gates implemented; no new authored effects/audio/animation. Native98641/24560/19969 terminal. Commit owned unit, integrate contributor Continental Drift111, combine compatibility112. No actual111/112peer/player or wholeHaunt claim. Next Kuro chase and remaining perception pipeline; original Feedback row open.
+Drift baseline2/2fails stale name and instant far hit. Final5/5native4.60s passes
+ordered host blasts, behind/caster exclusion, pause/observer, snapshot bounds,
+no-past-hit recovery, render-only replay and round cleanup. Authored court1/1passes
+10.67s but witness camera sits behind a tree: no visual clarity claim. One bounded
+camera-only repair moves it inside the previously qualified court view; gameplay
+checks unchanged. Owner00:16/00:18 reprioritizes full-roster research/design/SFX
+planning after finishing this current unit. Preserve work; durable plan/doc pass
+is next, before other backlog/manual hunt. New skill SFX are explicitly permitted.
+
+Drift court camera repair1/1passes10.27s,24native timeline frames. Early/mid/late
+inspected: clear forward order, but lateral cracks too regular and bespoke body
+performance remains a quality-pass target. Five mechanical cases reused; six
+distinct total, no newplayer/peer/human-quality claim. Publish current coherent
+unit, then owner-priority HERO-QUALITY-1001. Full-roster brief and updated SFX
+authorization are saved; no new blank Wiki proposals or research claimed yet.
+
+Integration review: incoming1a1c989f adds engine-free Haunted policy only; no runtime conflict with Drift. Both ledger histories retained. Latest owner full-roster research priority/SFX permission in HERO-QUALITY-1001 supersedes older local scope language. Preserve Nemu runtime ownership. Combined focused Core status contracts next; no broad native rerun.
+
+Combined Core check exposes one stale table-count assertion (11 versus newly
+appended Haunted12); eight other cases pass. Update that exact count, preserve
+all prior status assertions and the new Haunted ID/policy case. This is a merge
+contract adjustment, not an unrelated fixture workaround. Retain failed receipt
+and run the same nine focused cases against the combined source.
+
+Haunted e0f9015a2 integrates checked Continental Drift92fedc4c1; source merge clean except ledger, both checkpoints retained. Combined protocol112. Six native Haunted cases retained, no new whole-player/peer qualification, no duplicate unchanged checks. Remaining wholeHaunt chase/nearsight/audio not implemented. Finish remote verification and same Nemu note, then continue those exact requirements. All jobs terminal; owned runtime source staged cleanly, unrelated dirt unchanged.

@@ -13,6 +13,8 @@ old prompts, counts and work orders are not current instructions.
 [REFERENCE_INDEX](REFERENCE_INDEX.md) lists every root document and its status.
 [Archive](archive/README.md) maps historical documents to their current replacements.
 
+Current owner-priority research/design: [full hero quality brief](reports/hero-quality-2026-10-01/brief.md).
+
 ## Pick The Task
 
 | Task | Read first | Then inspect |
