@@ -3644,3 +3644,31 @@ beyond plannedone, nothidden.738finalinputs no drift. All own nativejobs termina
 after guardexit; namedprofiles preserved. FullZacksignature/defending, legacyprobe
 migration and125actualpeers remainopen. No authoredart/loading/privateoverlayedit.
 Next publish coherentunit, then QuickCircuit/ClosedCircuit currentproposedcontracts.
+Tagged world-look baseline reproducesrealreplayweight0 vsactivegameplay1 and
+architecture0. AddexistingWorldLookCamera markeronlytotheoffscreenreplaycamera;
+no globalcamera widening or tuning. Same relevantfinalcasechecksactualscoped
+weights, restoration andunrelatedportraitexclusion; nofixture repairused.
+
+World-look finalrun hitmemoryguardbeforecases afterfullcompile; nofinalpass.
+Snapshotshows1.13GBidleimportworker plus687MBILPP beside3.35GBEditor. Onebounded
+fixture/toolingrepair usesinstalledUnityEditorUserSettings documented idle
+importworker shutdown delay=1ms beforeload, restoringoldvalueafterworldreset.
+Unlike rejectedworker-count0, this is the dedicated idle-retirement setting.
+No guardraise/countchange/unrelatedkill. Retrycorrectedruntimefinalonce.
+
+TAGGED-WORLD-LOOK-1001 final passes 1/1 on exact frozen protocol124 inputs.
+Replay weight 1 matches gameplay, architecture 1, scoped restoration and unrelated
+portrait exclusion pass. Idle import retirement restored after test; no new OOM.
+Baseline weight0 failure and first-final memory stop retained with final evidence
+in tagged-world-look-checks. Captures qualify shader context, not contact framing
+or separate foliage artifacts. Release owned camera/test paths after shipment.
+Next independent unit: flat shader player ground markers. No native job running.
+
+PLAYER-GROUND-MARKERS-1001 claims Runtime/Visual/CharacterNameplate.cs,
+CharacterNameplate.Catchable.cs, new CharacterNameplate.GroundMarker.cs/meta,
+Resources/Shaders/PlayerGroundMarker.shader/meta, Tests/RoleMarkerTests.cs and
+Tests/PlayMode/SwimmingNameplateTests.cs. Replace cylinder/collar/lipped brackets
+with flat shader glow while retaining disc, open octagon and scoped brackets,
+seat colours, water placement and local first-person hiding. Focused native
+shape/flatness/camera-scope and water checks; no character kit edits. Ground
+projection beyond existing water/flight behavior is not required by this unit.

@@ -17,6 +17,14 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### TAGGED-WORLD-LOOK-1001: repaired shader-context omission
+
+Replay now explicitly adopts the gameplay world-look shader scope. Native
+baseline weight 0 versus gameplay 1; final focused case passes 1/1 with matching
+weight, architecture and restored globals. Separate foliage artifacts and full
+replay framing remain unqualified. [Evidence](reports/feedback-2026-09-30/tagged-world-look-checks/README.md).
+
+
 ### CAN-VERTICAL-CONTACT-1001: repaired
 
 Actual above-can flight false hit reproduced. Finite Visual-height contact now
@@ -2448,6 +2456,8 @@ Supersedes REFINE-2.6 for this map.
   no components, so it drew without the rig's `ColourGrade` and `WorldOutline` (grade, ink, AO).
   It now adds both, as `RecordedWorldView` and `UltimatePhaseView` already did. Game-wide, not
   only the cove.
+  October 1: TAGGED-WORLD-LOOK-1001 also repairs the omitted scoped shader marker;
+  Eskinita native globals pass. The requested cove visual comparison remains open.
 - [ ] LAGOON-1.4 BIRDS AND FISH AS BOIDS (owner, 2026-09-27: *"add birds and fish (via boids)"*).
   Flocks of chunky, style-matched birds over the cove and schools of fish over the reefs, steered
   by separation, alignment and cohesion, kept inside their volumes (sky band, water between the

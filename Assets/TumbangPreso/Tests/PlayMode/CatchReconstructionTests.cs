@@ -14,7 +14,15 @@ namespace TumbangPreso.PlayTests
     public sealed class CatchReconstructionTests
     {
         [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
-        [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
+        private static int _previousIdleImportDelay=-1;
+        [UnityTearDown] public IEnumerator After()
+        {
+            yield return PlayModeWorld.Reset();
+#if UNITY_EDITOR
+            if(_previousIdleImportDelay>=0)UnityEditor.EditorUserSettings.idleImportWorkerShutdownDelayMilliseconds=_previousIdleImportDelay;
+#endif
+            _previousIdleImportDelay=-1;
+        }
         private static IEnumerator Open()
         {
             SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
@@ -37,6 +45,51 @@ namespace TumbangPreso.PlayTests
             victim.transform.forward = Vector3.forward;
             for (int i = 2; i < 4; i++) round.PlayerAt(i).Teleport(can + new Vector3(-5, 0, i * 2));
         }
+        [UnityTest,Timeout(90000)]
+        public IEnumerator CatchCameraAdoptsGameplayShaderContextAndRestoresGlobals()
+        {
+#if UNITY_EDITOR
+            // Release completed import workers before loading the real map in
+            // the isolated review. Do not change worker count or memory guards.
+            _previousIdleImportDelay=UnityEditor.EditorUserSettings.idleImportWorkerShutdownDelayMilliseconds;
+            UnityEditor.EditorUserSettings.idleImportWorkerShutdownDelayMilliseconds=1;
+            yield return null;
+#endif
+            yield return Open();Stage();yield return new WaitForSeconds(1.1f);
+            Assert.IsNotNull(WorldLookPresentation.Current);
+            Assert.Greater(WorldLookPresentation.Current.Weight,.1f,"Use an active gameplay look as the witness.");
+            var view=Object.FindAnyObjectByType<CatchReconstruction>();var actor=GameServices.Round.PlayerAt(0);
+            bool reduced=Settings.SettingsStore.Current.ReducedUiMotion;Settings.SettingsStore.Current.ReducedUiMotion=false;
+            bool observed=false;float weight=-1,architecture=-1;
+            void Observe(Camera camera)
+            {
+                if(camera.name!="~CatchPlaybackCamera")return;
+                observed=true;weight=Shader.GetGlobalFloat("_WorldLookWeight");architecture=Shader.GetGlobalFloat("_WorldArchitecture");
+            }
+            Camera.onPreRender+=Observe;
+            try
+            {
+                Assert.IsTrue(actor.GetComponent<CombatVerbs>().HostResolvePunch(actor.transform.position,actor.transform.forward));
+                yield return new WaitForSecondsRealtime(.2f);Assert.IsTrue(view.Playing);Assert.IsTrue(observed);
+                var camera=GameObject.Find("~CatchPlaybackCamera").GetComponent<Camera>();
+                string folder=System.Environment.GetEnvironmentVariable("TUMP_EVIDENCE")??"Logs/tagged-world-look";
+                System.IO.Directory.CreateDirectory(folder);
+                var target=camera.targetTexture;var image=new Texture2D(target.width,target.height,TextureFormat.RGB24,false);
+                var old=RenderTexture.active;RenderTexture.active=target;image.ReadPixels(new Rect(0,0,target.width,target.height),0,0);image.Apply();RenderTexture.active=old;
+                System.IO.File.WriteAllBytes(folder+"/actual-replay.png",image.EncodeToPNG());Object.Destroy(image);
+                System.IO.File.WriteAllText(folder+"/look.txt",$"replay weight={weight}; gameplay={WorldLookPresentation.Current.Weight}; architecture={architecture}");
+                Assert.AreEqual(WorldLookPresentation.Current.Weight,weight,.001f,"Replay must adopt the same scoped world shader look as gameplay.");
+                Assert.AreEqual(WorldCueProfile.Current.EnvironmentAppeal,architecture,.001f);
+                Assert.IsTrue(WorldLookPresentation.HandlesCamera(camera));
+                float before=Shader.GetGlobalFloat("_WorldLookWeight");
+                typeof(CatchReconstruction).GetMethod("RenderOnlyCopies",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(view,null);
+                Assert.AreEqual(before,Shader.GetGlobalFloat("_WorldLookWeight"),.001f,"Off-screen capture must restore surrounding shader state.");
+                var portrait=new GameObject("UnrelatedPortraitCamera").AddComponent<Camera>();portrait.enabled=false;
+                Assert.IsFalse(WorldLookPresentation.HandlesCamera(portrait),"Do not broaden every camera into the match look.");Object.Destroy(portrait.gameObject);
+            }
+            finally{Camera.onPreRender-=Observe;view.End();Settings.SettingsStore.Current.ReducedUiMotion=reduced;}
+        }
+
         [UnityTest]
         public IEnumerator CatchCameraHidesUnrecordedAnimalsAndRestoresTheirVisibility()
         {
