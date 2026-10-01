@@ -3828,6 +3828,28 @@ Implement the recorded maintained-aim/LOS plan. Remote aim must be explicit and
 fresh, with an acquisition episode and scoped ordered state; do not silently
 reuse a stale cast aim. Native and parser acceptance remain pending.
 
+Closed Circuit candidate now has host-only Zapped commitment, cancellable .4s
+acquisition, .25s stale remote-aim cutoff, optional different-target followup and
+no passive refill during the sequence. New58byte host state/48byte private aim
+frames are scoped, episode-bound and sequenced; protocol127 candidate only.
+Named state registration/snapshot and narrow bot defending branch are written.
+Six EditMode frame checks and eight component/physics PlayMode cases are next;
+no compile/runtime/peer success claimed. Whole Zack row remains open.
+
+Closed Circuit compile/framing6/6 pass; first native component/physics7/8 pass.
+The stale-aim fixture wrote99.7 against a round clock already clamped below100,
+so it never aged the clock. One bounded fixture repair subtracts.3 from the
+actual current TimeLeft. Repeat only that failed case; all runtime source and
+assertions remain unchanged. No OOM, no player/actual-peer claim yet.
+
+Closed Circuit's corrected stale-aim case passes1/1; all eight distinct native
+cases and six wire checks now pass across the retained focused runs. No current
+player/peer proof. Extend this same unit's reservation to the existing
+Runtime/Diagnostics/NetZackProbe.cs and tools/net_zack_review.py, adding only a
+Closed Circuit scenario through three real peers and the normal round schedule.
+Use the existing isolated cloud Linux candidate build route; it supersedes only
+our prior internal protocol112 player through GameBuilder's guarded output path,
+never the user's Desktop or profiles. Preserve build identity and failure logs.
 Solo UI bindings58d309499 checked and ready to publish; next priority is independent network reliability under an existing shaped-link scenario using the exact126player. Do not take Closed Circuit paths or Docs TODO queue. Older player source04f remains the precise runtime qualification; no fresh whole-build readiness claim. All own native/player jobs currently terminal, no owned browser/preview/server remains.
 
 Solo handover58d309499 integrated/pushedf54c36281, remote verified. Native57973/47894terminal; no browser or Editor remains. Independent next run reuses existing run_demo_lan/profile preservation with the exact net_matrix five-second outage parameters (25ms delay/5ms jitter/outage20s..25s),150s sample. Temporary native tools/tmp_demo126_outage.py is task-owned and must be removed after run. Exact existing DLL2956730f..b766/source04f/protocol126; network/round/shared-phase source diff to currentHEAD is empty. No claim that later visual/UI source is in this player. Do not rerun unchanged for a green gate; inspect real transport/progress and fix actual failure. DOTS owns Docs queue.
@@ -3845,3 +3867,5 @@ presentation input blocking. Reproduce rather than retune or broaden blindly.
 DOTS owns Docs queue; full demo/tournament readiness remains unproven/active.
 
 Outage cleanup verified: temporary runner absent; no task player/proxy or8910/8911 listener. No task browser/preview. Preserve scoped pass and old false rematch verdicts. Continue reliability fixes, no completion claim.
+
+Owner reiterated nonstop work: continue through checkpoints and user questions; do not end merely because one unit shipped. Maintain concise progress updates and active goal. Next SOLO-SHORTCUT-CONTEXT-1001 owns DebugPlayerSwitcher.Update input gate and one small pause/presentation shortcut case in PauseOwnerRebindTests. Reproduce actual F2 through normal Update while menu/presentation owns input, then gate the same shortcut path. No layout, kit, network protocol, loading or art edits.
