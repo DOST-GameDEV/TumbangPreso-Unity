@@ -1744,3 +1744,27 @@ measured-ground settling/max3/plausible placement refined; rules and other Phais
 work unchanged. Native centre/edge stills inspected; no fullmovie/player/peer claim.
 Suite plan has pre-existing unassigned fixtures; newHex fixture placedmatch only.
 Publish scoped presenter/tests/evidence, then continue current requested work.
+
+NEMU-HAUNT-1001 owns Runtime/Abilities/NemuHeroKit.cs, Runtime/Visual/GhostPetCompanion.cs,
+Runtime/Net/MatchRpc.FamiliarEffects.cs, NetSession protocol113, new NemuHauntContractTests
+and the existing familiar recovery contract in SkillReceiptTests. Fast-forwarded
+5cce9a552; unrelated dirty assets/HeroHazards preserved. Existing monster presentation
+is reused, no authored changes. Host sequential visible contacts,15points,
+round-bounded lifetime replace the retired pull field. Existing scoped reliable
+familiar carrier now publishes moving/terminal state with accepted-phase/clock
+ordering. Five focused native questions next: sequential contact/all-player policy,
+occlusion/persistence, observer/reset, defender reach and real receiver move/end/stale.
+No new pass claim; remaining nearsight/audio still open. No live jobs yet.
+
+NEMU-HAUNT-1001 native complete: initial5/5, terminal-windup receiver1/1,
+reused sweep/defender reach2/2, final missing-companion/refusal and full sequential
+chase2/2. Seven distinct cases across receipts, no failed native/setup cases.
+640final input hashes/no drift; eight owned runtime/test files match the native
+candidate. Jobs76734/78902/12865/67915 all terminal and named profiles/input
+preferences preserved. Source work includes GhostPetMotion's optional reusable
+sweep storage; saturation keeps the last safe position. The existing monster
+presentation is reused, no authored art/audio/animation or loading work.
+Publish explicit owned paths and same broad Nemu Feedback note; full feature
+remains open for Haunted nearsight/audio and current actual peers. Next functional
+perception should use existing ColourGrade and AudioDirector listener architecture,
+not mutate global map lighting or authored clips. Goal remains active.

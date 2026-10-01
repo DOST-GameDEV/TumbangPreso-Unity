@@ -187,3 +187,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 
 [Current cloud player and measured limits](cloud-player100.md).
 [Spectator round-card visibility correction](spectator-break.md).
+
+[Nemu Haunt chase and scoped live/terminal delivery](nemu-kuro-haunt.md).

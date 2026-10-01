@@ -490,3 +490,15 @@ The accepted shared ultimate still owns windup/release; cost12, stable ID retain
 Focused native recovery is not actual matching-peer qualification.
 
 Protocol112 combines the checked Continental Drift111 contract with Haunted's appended SyncUnit timer. Native Haunted evidence is the pre-merge owned candidate; current receiver logic is unchanged by the independent cascade. Actual protocol112 peers/player remain unqualified.
+
+## Kuro Haunt Compatibility
+
+Protocol113 replaces Nemu's old seance with15point host-owned sequential Haunt.
+The existing FamiliarEffect packet carries current ground position/remaining
+round-bounded clock at10Hz and terminal zero. Scope/identity/phase checks remain;
+within-phase round-clock ordering rejects old/duplicate movement. Completed
+lifetimes cannot revive, including completion during windup. Recovery never
+replays a hit/resource spend and live movement does not cancel new basic skills.
+No wire layout changes. Native companion/receiver evidence is separate from
+actual-peer qualification and remaining Haunted nearsight/audio.
+[Evidence](reports/feedback-2026-09-30/nemu-kuro-haunt.md).

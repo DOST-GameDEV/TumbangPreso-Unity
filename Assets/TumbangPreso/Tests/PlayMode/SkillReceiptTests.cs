@@ -161,7 +161,7 @@ namespace TumbangPreso.PlayTests
         }
 
         [Test]
-        public void FamiliarRecoveryCannotReplaceAnActiveOrCompletedAcceptedLifetime()
+        public void FamiliarRecoveryMovesAnActiveHauntAndCannotResurrectItsCompletedLifetime()
         {
             var system = Owner("nemu"); var body = system.GetComponent<CharacterMotor>();
             var kit = (NemuHeroKit)system.Kit;
@@ -193,7 +193,7 @@ namespace TumbangPreso.PlayTests
                 bad.Scope.Round = 1; bad.Scope.Epoch++; Assert.IsFalse(Apply(bad));
                 bad = state; bad.HeroId = new FixedString64Bytes("other"); Assert.IsFalse(Apply(bad));
                 bad = state; bad.AbilityId = new FixedString64Bytes("other"); Assert.IsFalse(Apply(bad));
-                bad = state; bad.RoundClock = 105; Assert.IsFalse(Apply(bad));
+                bad = state; bad.Remaining = kit.Ultimate.Duration + 1; Assert.IsFalse(Apply(bad));
                 GameServices.Round.ApplySnapshot(100, false, 0, true);
                 Assert.IsFalse(Apply(state), "A non-live round must not restore the effect.");
                 GameServices.Round.ApplySnapshot(100, true, 0, true);
@@ -202,16 +202,33 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(Apply(state)); Assert.IsTrue(pet.IsDevouring);
                 Assert.AreEqual(4, kit.Ultimate.AcceptedUltimatePhase); Assert.AreEqual(4, kit.Ultimate.DurationRemaining, .001f);
                 Assert.AreEqual(meter, kit.UltimateCharge);
-                var field = Object.FindFirstObjectByType<HeroHazards.SeanceVoidComponent>(); Assert.IsNotNull(field);
+                Assert.IsEmpty(Object.FindObjectsByType<HeroHazards.SeanceVoidComponent>(FindObjectsSortMode.None));
                 typeof(HeroAbility).GetProperty("DurationRemaining").SetValue(kit.Skill2, 2f);
                 Assert.IsFalse(Apply(state)); Assert.AreEqual(2, kit.Skill2.DurationRemaining);
-                Assert.AreSame(field, Object.FindFirstObjectByType<HeroHazards.SeanceVoidComponent>());
+                var moved = state; moved.RoundClock = 99; moved.Position = new Vector3(2, 0, 2); moved.Remaining = 3;
+                Assert.IsTrue(Apply(moved)); Assert.AreEqual(moved.Position.x, pet.DevourGround.x, .001f);
+                Assert.AreEqual(3, kit.Ultimate.DurationRemaining, .001f);
+                Assert.IsFalse(Apply(state), "An older movement snapshot rewound the chase.");
+                moved.RoundClock = 98; moved.Remaining = 0;
+                Assert.IsTrue(Apply(moved)); Assert.IsFalse(pet.IsDevouring);
+                Assert.IsFalse(Apply(state), "A terminal lifetime was resurrected by delayed movement.");
                 bad = state; bad.Phase = 3; Assert.IsFalse(Apply(bad));
                 var context = new AbilityContext(body, body.GetComponent<Carrier>(), body.GetComponent<CombatVerbs>());
                 kit.Ultimate.EndEarly(context); pet.StopDevouring();
                 Assert.IsFalse(Apply(state), "A completed lifetime was resurrected.");
                 Assert.IsFalse(pet.IsDevouring); Assert.AreEqual(0, kit.Ultimate.DurationRemaining);
                 Assert.AreEqual(2, kit.Skill2.DurationRemaining);
+                typeof(HeroAbility).GetProperty("Windup").SetValue(kit.Ultimate, .4f);
+                using (NetCue.SuppressRelay()) kit.Ultimate.Activate(context);
+                kit.Ultimate.AdoptUltimatePhase(5);
+                Assert.IsTrue(kit.Ultimate.IsWindingUp);
+                var closedDuringWindup = state; closedDuringWindup.Phase = 5;
+                closedDuringWindup.Remaining = 0; closedDuringWindup.RoundClock = 97;
+                Assert.IsTrue(Apply(closedDuringWindup));
+                Assert.IsFalse(kit.Ultimate.IsWindingUp);
+                using (NetCue.SuppressRelay()) kit.Ultimate.Tick(context, 1);
+                Assert.IsFalse(kit.Ultimate.IsActive, "Delayed activation restarted a terminal lifetime.");
+                Assert.IsFalse(pet.IsDevouring);
             }
             finally { Object.DestroyImmediate(root); Object.DestroyImmediate(petRoot); }
         }

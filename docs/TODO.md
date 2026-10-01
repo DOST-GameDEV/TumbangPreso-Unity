@@ -253,7 +253,7 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Fetch delivery now leaves a loose shoe for normal pickup and no longer moves
   an already-held shoe or leaves a carried shoe floating on cancellation;9 focused
   native cases pass. [Fetch evidence](reports/feedback-2026-09-30/nemu-kuro-fetch.md).
-  Remaining Fetch eligibility, Catch and Haunt reconciliation stays open.
+  Remaining Haunt/full-kit reconciliation stays open; later checked steps are below.
   Fetch availability lookup now reuses the existing slipper inventory. Three
   native checks pass;100warmed calls reduce allocation events200to0 with live
   ownership/activity/flight/lifecycle retained. No kit-rule change.
@@ -268,8 +268,14 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   completion. [Current step](reports/feedback-2026-09-30/haunted-rulebook.md).
   Haunted timer/shared delivery/local HUD marker gates now pass six distinct
   native cases, including immunity/cleanse and real receiver invalid-state/serial
-  controls. Nearsight/audio/chase still open; no whole-Haunt completion.
+  controls. Later chase evidence is below; nearsight/audio remain open.
   [Runtime evidence](reports/feedback-2026-09-30/haunted-runtime.md).
+  Haunt now uses15points and host-owned sequential visible-player contacts,
+  round-bounded completion and existing companion presentation. Scoped familiar
+  movement/terminal recovery rejects stale/reviving packets. Native chase/receiver
+  checks and exact limits: [Haunt evidence](reports/feedback-2026-09-30/nemu-kuro-haunt.md).
+  Nearsight/audio, current actual peers and full-kit qualification remain open.
+
 - [x] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,
   no Escape return to title, queue cancel button, hamburger background, stamina drain.
   Lighting rename/default/order reconciled with already-shipped BUGS-0926.5:

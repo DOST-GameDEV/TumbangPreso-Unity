@@ -202,6 +202,15 @@ namespace TumbangPreso.Visual
             StepTo(Mathf.Clamp(duration-remaining,0,duration));
         }
 
+        /// <summary>Move the transformed familiar without restarting its authored pose.</summary>
+        public void MoveDevour(Vector3 ground)
+        {
+            if (!IsDevouring || !float.IsFinite(ground.x) || !float.IsFinite(ground.y) || !float.IsFinite(ground.z)) return;
+            ground = VfxShapes.GroundPoint(ground);
+            Vector3 shift = ground - _devourGround;
+            _devourStartPosition += shift; _devourGround = ground; transform.position += shift;
+        }
+
         private bool _devourStartsRevealed, _invocationPreview;
         public void PreviewRevealedInvocation(Vector3 ground,Quaternion facing)
         {
