@@ -1618,3 +1618,11 @@ Resetting Can requested copy passes2/2native14.21s on merged110; pickup, cancel,
 finish, saved glyphs and touch toggle/reach retained. Active channel frame inspected.
 No heavy job, no newplayer claim. Publish explicit UI/test/evidence paths; update
 same HUD row and strike only the resolved new comment. Dante cascade is next.
+
+ResettingCan5d8b6c67 remote verified; same HUD note updated/comment struck and
+readback verified. Source clean. Dante Continental Drift plan appended: own
+DanteHeroKit.cs ultimate, new DanteDriftWave/Visual scripts and metas,
+WorldEffectSnapshot.cs appended kind, RecordedFieldView.cs route, GeoRules,
+NetSession.cs, new DanteDriftTests/meta and partition. Baseline near/far/behind
+release timing and metadata first. No heavy job. NemuHaunt remains local-owned;
+no contact/delegation, shared claims only. Current integratedprotocol110.

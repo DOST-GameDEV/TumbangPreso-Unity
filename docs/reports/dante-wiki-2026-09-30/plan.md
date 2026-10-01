@@ -68,3 +68,36 @@ and real throw first; final cases include defender/attacker contact, normal thro
 held/drop snapshot, reset and observer authority. Reuse Frostbite contact control.
 One guarded graphics job, named profile, fresh nonzero XML, at most one bounded
 tooling repair. Actual newer player/peer qualification remains separate.
+
+## Continental Drift mechanical unit
+
+The current complete Wiki asks for a map-wide forward cascade, with Concussed at
+each blast and12objective points. Current source hits every other player instantly
+and adds an unspecified vertical impulse. Preserve the accepted shared ultimate
+introduction, stable ID and caster exclusion; replace only the released payload.
+
+Use an ability-owned world-effect component, following the existing travelling
+Gale route. Freeze the accepted origin/forward and projected playable bounds.
+Five contiguous forward bands detonate0.30s apart across the court width; these
+spacing numbers are implementation tuning, not quoted Wiki numbers. Behind-origin
+players are outside the cascade. Each blast checks current host-owned positions,
+so players can enter/escape later bands; Concussed uses the newly qualified2.5s /
+75percent rules. No invented damage, score or lift. Keep the prior caster exclusion.
+
+Append one world-field kind with exact origin, forward, width, length and age in
+existing bounded fields. Restore skips past blast outcomes and reconstructs only
+remaining presentation; observers never resolve contact. Existing generation /
+match / scene / event watermark gates, atomic replacement and round cleanup own
+recovery. A render-only replay builder must share the same deterministic age.
+Retain the authored seismic fracture/stone vocabulary for this functional pass;
+sequence its existing silent render builder at the actual band times. This is not
+the later broader cinematic art-quality pass, and skill SFX remain disabled.
+
+Claim DanteHeroKit.cs ultimate, new Abilities/DanteDriftWave.cs/meta and
+Visual/DanteDriftVisual.cs/meta, Net/WorldEffectSnapshot.cs appended kind/routing,
+Camera/RecordedFieldView.cs render-only routing, GeoRules constants,
+NetSession.cs protocol, new DanteDriftTests.cs/meta and suite partition. Baseline
+cost/name and near/far/behind timing first. Then validate host-only successive
+contact, pause/expiry, restored age without past hits, round retirement, snapshot
+bounds and replay without colliders or live effects. One authored-court view/film
+for directional readability; actual-player/peer qualification remains separate.
