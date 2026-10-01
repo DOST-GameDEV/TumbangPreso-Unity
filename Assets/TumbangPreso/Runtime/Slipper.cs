@@ -888,6 +888,16 @@ namespace TumbangPreso
             Land(false, FindGroundY(at, Balance.SlipperRestHeight + 2.0f));
         }
 
+        // A stationary water curtain ends the existing flight on its incoming side.
+        public bool HostDropFlightAt(Vector3 at)
+        {
+            if (!NetAuthority.ShouldResolve() || State != SlipperState.InFlight || IsSkimming
+                || !float.IsFinite(at.sqrMagnitude) || Vector3.Distance(at, transform.position) > 2f) return false;
+            transform.position = AIController.ClampToPlayable(at);
+            Land(true, FindGroundY(at, Balance.SlipperRestHeight + 2f));
+            return true;
+        }
+
         public bool HostBeginMapRecovery()
         {
             if(!NetAuthority.ShouldResolve()||!gameObject.activeSelf)return false;

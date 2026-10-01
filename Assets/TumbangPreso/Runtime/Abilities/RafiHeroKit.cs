@@ -53,9 +53,8 @@ namespace TumbangPreso.Abilities
         public RafiHeroKit() : base("rafi", "RAFI")
         {
             Skill1 = new Crosscurrent();
-            // ABILITY-2: the four-slot shape; the defending slot waits for the owner's Hydro design.
             AttackingSkill = new Skim(this);
-            DefendingSkill = new PlaceholderRoleAbility("rafi_skill2d", "Rafi", AbilityGlyph.RafiMirrorwake);
+            DefendingSkill = new Waterwall();
             Ultimate = new Breakwater();
         }
 
@@ -101,6 +100,25 @@ namespace TumbangPreso.Abilities
             }
             protected override void OnEnd(AbilityContext ctx) => _kit._loadedSlipper = null;
             protected override void OnCancelled(AbilityContext ctx) => _kit._loadedSlipper = null;
+        }
+
+        private sealed class Waterwall : HeroAbility
+        {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
+            public Waterwall() : base("rafi_skill2d", "WATER WALL",
+                "Raise a thin 4-metre water curtain for 4 seconds. People pass through; its first flying slipper drops on the approach side and breaks it.",
+                RafiRules.WallCooldown, glyph: AbilityGlyph.RafiCrosscurrent,
+                summary: "Place a single-use curtain. People pass through.",
+                telegraphRadius: RafiRules.WallHalfWidth, telegraphRange: RafiRules.WallRange,
+                castAction: "hero-rafi-cut", viewmodelAction: "current-cut", castCue: "sfx_cast_rafi_current")
+            { AimByHolding(.75f,RafiRules.WallRange,.4f,0,whereLooking:true); }
+            public override bool CanActivate(AbilityContext ctx)
+                => base.CanActivate(ctx) && ctx.Motor.IsDefender
+                    && RafiWaterField.CanPlaceWall(ctx,AimedDestination(ctx));
+            protected override void OnActivate(AbilityContext ctx)
+            {
+                if (NetAuthority.ShouldResolve()) RafiWaterField.CastWall(ctx,AimedDestination(ctx));
+            }
         }
 
         private sealed class Breakwater : HeroAbility

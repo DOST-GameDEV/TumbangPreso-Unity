@@ -33,6 +33,20 @@ attribution; final native film/listening/implementation remain open. External
 reference video access was unavailable and is not claimed.
 
 
+### HYDRO-WATERWALL-1001: single-use defending curtain
+
+Gameplay implemented; three native cases and current six Core cases pass.
+Transparency/broken-state views inspected, but the first sheet reads as glass
+and needs the planned distinct body/FPP/material/audio pass. Protocol117.
+Publication pending. [Evidence](reports/hero-quality-2026-10-01/wall-tutorial-checks/README.md).
+
+### TUTORIAL-REFINE-1001: latest human notes
+
+Remaining dummy objective markers removed; completion renamed Tutorial Complete;
+Quit glyph/text/hit height increased25percent inside existing width. One native
+case checks three marker routes plus real layout, with small/wide captures
+inspected. Publication and same-row note/strikethrough pending. No new player claim.
+
 ### QUALITY-BENCHMARK-1001: deepen the finalized-work comparison
 
 Owner reiteration: inspect the actual earlier implementation, authoring pipeline

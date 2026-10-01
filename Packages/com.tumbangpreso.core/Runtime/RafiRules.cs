@@ -10,6 +10,26 @@ namespace TumbangPreso.Core
         public const float SkimDistance = 2f;
         public const float SkimSpeed = 5f;
         public const float SkimStepHeight = .15f;
+        public const float WallCooldown = 35f;
+        public const float WallSeconds = 4f;
+        public const float WallRange = 4f;
+        public const float WallHalfWidth = 2f;
+        public const float WallHeight = 1.8f;
+        public const float WallGather = .25f;
+
+        public static bool WallCrossing(float ax, float ay, float az,
+            float bx, float by, float bz, out float time)
+        {
+            time = 0;
+            if (!float.IsFinite(ax) || !float.IsFinite(ay) || !float.IsFinite(az)
+                || !float.IsFinite(bx) || !float.IsFinite(by) || !float.IsFinite(bz)) return false;
+            float dz = az - bz;
+            if (Math.Abs(dz) < .00001f || (az > 0 && bz > 0) || (az < 0 && bz < 0)) return false;
+            time = az / dz;
+            if (time < 0 || time > 1) return false;
+            float x = ax + (bx - ax) * time, y = ay + (by - ay) * time;
+            return Math.Abs(x) <= WallHalfWidth && y >= -.05f && y <= WallHeight;
+        }
         public const float CurrentCooldown = 35f;
         public const float CurrentRange = 6f;
         public const float CurrentRadius = .65f;

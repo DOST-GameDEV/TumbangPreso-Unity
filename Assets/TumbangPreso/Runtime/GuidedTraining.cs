@@ -456,7 +456,7 @@ namespace TumbangPreso
             _dummy.gameObject.SetActive(true); _dummy.IsDefender = false; _dummy.RoundActive = true;
             _dummy.Intent.Clear(); _dummy.Intent.Parked = false; _dummy.ClearStun(); _dummy.ClearTrip();
             _dummy.Teleport(_lata.transform.position + new Vector3(3, 0, 0));
-            EquipDummySlipper(); _marker?.Bind(_dummy.transform);
+            EquipDummySlipper(); _marker?.Bind(null);
         }
 
         private void PrepareBlockExercise()
@@ -465,7 +465,7 @@ namespace TumbangPreso
             // A fixed lane crosses the middle beside the can rather than targeting it.
             _dummy.Teleport(new Vector3(2, 0, Confinement.AttackerSpawnRing()));
             Face(_dummy, new Vector3(2, 0, -3));
-            _dummy.Intent.Parked = true; _marker?.Bind(_dummy.transform);
+            _dummy.Intent.Parked = true; _marker?.Bind(null);
         }
 
         private void PrepareAbilityGround(bool preserveExisting = false)
@@ -961,7 +961,7 @@ namespace TumbangPreso
                 case Lesson.Shove:
                     PrepareAttackerThrow(); PrepareDummyInFront(1.4f, true);
                     title = "SHOVE"; body = "Shove a fellow attacker to sabotage them. Sabotaging gives bonus points if the shoved attacker gets tagged.";
-                    action = Key("Lunge") + " SHOVE"; _marker?.Bind(_dummy.transform); break;
+                    action = Key("Lunge") + " SHOVE"; _marker?.Bind(null); break;
                 case Lesson.Block:
                     PrepareBlockExercise(); title = "BLOCK";
                     body = "You are now defending. Move around to block incoming slippers.";
@@ -1018,7 +1018,7 @@ namespace TumbangPreso
                     title = "EMOTE"; body = "Emote to express yourself in the arena.";
                     action = Key("EmoteWheel") + " EMOTE"; break;
                 default:
-                    PrepareCompletedRange(); title = "TRAINING COMPLETE";
+                    PrepareCompletedRange(); title = "TUTORIAL COMPLETE";
                     body = "You are now ready to fight in the actual arena. Feel free to test everything you just learned while you are still here.";
                     action = ""; _marker?.Bind(null);
                     GameServices.Audio?.PlayUi("match_win"); break;

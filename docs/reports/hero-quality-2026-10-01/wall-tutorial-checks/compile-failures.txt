@@ -1,0 +1,9 @@
+rafi-waterwall-final:
+Assets/TumbangPreso/Tests/PlayMode/RafiExpansionProbe.cs(325,109): error CS0117: 'CameraRig' does not contain a definition for 'AimSource'
+Assets/TumbangPreso/Tests/PlayMode/RafiExpansionProbe.cs(325,109): error CS0117: 'CameraRig' does not contain a definition for 'AimSource'
+Assets/TumbangPreso/Tests/PlayMode/RafiExpansionProbe.cs(325,109): error CS0117: 'CameraRig' does not contain a definition for 'AimSource'
+
+rafi-waterwall-final-v2:
+Assets/TumbangPreso/Tests/PlayMode/RafiExpansionProbe.cs(325,161): error CS0117: 'CameraRig' does not contain a definition for 'AimSource'
+Assets/TumbangPreso/Tests/PlayMode/RafiExpansionProbe.cs(325,161): error CS0117: 'CameraRig' does not contain a definition for 'AimSource'
+Assets/TumbangPreso/Tests/PlayMode/RafiExpansionProbe.cs(325,161): error CS0117: 'CameraRig' does not contain a definition for 'AimSource'

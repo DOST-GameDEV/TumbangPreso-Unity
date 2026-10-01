@@ -550,7 +550,8 @@ namespace TumbangPreso.Net
         //114: current Wiki Airburst releases at1.5seconds with a60degree fan.
         //115: Hydro Current uses a35second cooldown and earliest swept contact.
         //116: Hydro Skim load and first-ground flight phase replace Mirrorwake.
-        public const int ProtocolVersion = 116;
+        //117: Hydro Water wall uses a single-interception stationary field.
+        public const int ProtocolVersion = 117;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
