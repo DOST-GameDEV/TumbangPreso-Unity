@@ -2753,3 +2753,27 @@ HUD tests. Actual two-image mockup inspected; plan in hud-revamp-plan.md. Three
 bottom-left statuses, separate warning/action regions, in-panel progress, fitted
 round track and modest larger bar. New first/late/catch bonuses remain a separate
 scoring unit after layout; don't fake those with labels. Current protocol119.
+
+HUD layout first candidate frozen. Three bottom-left chips, independent dark-red
+warning, recovery progress inside action panel, +10% bar scale with longer cards,
+round-count-fit track, moved feed/banner and removed power hint. Rooted uses its
+real Interact glyph and Remove/Removing wording; no recovery-input remap. Five
+focused native cases include actual keyboard/pad/touch held recovery, reset
+reach/toggle control, large scores and new viewport/warning states. Expected 5;
+one tooling repair maximum. New score bonuses are still not implemented.
+
+HUD first run: three existing native controls pass (real Rooted keyboard/pad/
+touch hold, reset reach/toggle and large scores). Two new fixtures fail: visual
+fixture called client-only ApplyNetworkMoment on a host; warning fixture left
+the staged defender input parked. One bounded fixture repair uses host moment
+presentation and unparks the controlled input. Runtime unchanged. Rerun only
+these two cases; retain the three passing controls, not an unchanged full loop.
+
+HUD v2 native two new cases pass; retain three earlier passing controls. Images
+show separated status/action/warning and fitted four-round track. Review found a
+real missing refusal path: failed requirements return CannotAct, which stays in
+input buffer and expires without LastAnswer, so requested CANNOT CAST cannot
+appear. Extend ownership to Abilities/HeroAbilitySystem.cs only at buffer expiry:
+record refusal feedback for an actor able to act, preserving buffer/cast timing.
+One targeted actual empty-hand Skim press/expiry check plus event-feed capture;
+no kit rules, protected ability values or transport changes.
