@@ -2121,3 +2121,12 @@ match tested candidate. Sourcebc86453ff with overlays. No fixture repair, jobs
 retained slipper inventory to remaining planning scans; preserve every predicate,
 selection order and hero mechanics. Measure calibrated warm allocations and
 live flight/activity/ownership/lifecycle; no claimed FPS gain. No heavy job active.
+
+HYDRO-SKIM-1001 next cloud unit claims RafiHeroKit.cs, Carrier.cs, Slipper.cs,
+Core RafiRules.cs/tests, existing RafiExpansionProbe.cs and NetSession protocol
+line. Plan is reports/hero-quality-2026-10-01/skim-implementation.md. Preserve
+shared input, scores, host authority and existing snapshot/role/recovery routes.
+Exact held identity, one throw, first-ground bounded slide and cancellation are
+required before publication. Other contributors retain AI/Haunted/network-start
+work; no new code change for Skim yet. Current Crosscurrent publication check
+is finishing; continue directly, with no idle between coherent units.
