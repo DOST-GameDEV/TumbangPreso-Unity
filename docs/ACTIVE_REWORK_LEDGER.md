@@ -1,6 +1,6 @@
 # Active Rework Checkpoint
 
-Updated2026-10-01. Branch ASTRAReworks. Protocol110 candidate. Goal active.
+Updated2026-10-01. Branch ASTRAReworks. Protocol111 candidate. Goal active.
 Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 
 ## Live Local Resume
@@ -1626,3 +1626,18 @@ WorldEffectSnapshot.cs appended kind, RecordedFieldView.cs route, GeoRules,
 NetSession.cs, new DanteDriftTests/meta and partition. Baseline near/far/behind
 release timing and metadata first. No heavy job. NemuHaunt remains local-owned;
 no contact/delegation, shared claims only. Current integratedprotocol110.
+Drift baseline2/2fails stale name and instant far hit. Final5/5native4.60s passes
+ordered host blasts, behind/caster exclusion, pause/observer, snapshot bounds,
+no-past-hit recovery, render-only replay and round cleanup. Authored court1/1passes
+10.67s but witness camera sits behind a tree: no visual clarity claim. One bounded
+camera-only repair moves it inside the previously qualified court view; gameplay
+checks unchanged. Owner00:16/00:18 reprioritizes full-roster research/design/SFX
+planning after finishing this current unit. Preserve work; durable plan/doc pass
+is next, before other backlog/manual hunt. New skill SFX are explicitly permitted.
+
+Drift court camera repair1/1passes10.27s,24native timeline frames. Early/mid/late
+inspected: clear forward order, but lateral cracks too regular and bespoke body
+performance remains a quality-pass target. Five mechanical cases reused; six
+distinct total, no newplayer/peer/human-quality claim. Publish current coherent
+unit, then owner-priority HERO-QUALITY-1001. Full-roster brief and updated SFX
+authorization are saved; no new blank Wiki proposals or research claimed yet.

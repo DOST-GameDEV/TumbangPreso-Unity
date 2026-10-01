@@ -8,20 +8,9 @@ using UnityEngine;
 namespace TumbangPreso.Abilities
 {
     /// <summary>
-    /// ⚠️⚠️ DANTE, GEO, IN THE NEW SHAPE (ABILITY-2, owner 2026-09-26: *"geo to dante"*, with the table
-    /// below). `docs/reports/ability-rework-2026-09-26/plan.md` § 3.3; numbers in `Core.GeoRules`.
-    ///
-    /// | Slot | Name | Owner's table |
-    /// |---|---|---|
-    /// | Signature | SHIELD | Status immunity for 20 seconds |
-    /// | Attacking | BOULDER | Throw rock -> Concussed |
-    /// | Defending | BARRIER | a wide force field that reflects slippers in front of you; lasts 7.5 s and follows you around; 25 s |
-    /// | Ultimate | EARTHQUAKE | Everyone concussed |
-    ///
-    /// ⚠️ THE SHIELD IS THE OLD CARAPACE'S BODY (its ward visual, its restore path for a rejoiner),
-    /// lengthened to the owner's 20 s and widened from stuns to every status but Tagged, which nothing
-    /// may be immune to (the status table). `IsDemonicCarapaceActive` keeps its name because the wire's
-    /// restore path and the ability system read it.
+    /// Current Wiki mechanics: Earthbound, Unstoppable, held-slipper Boulder,
+    /// following Bastion and the forward Continental Drift cascade. Stable ability
+    /// IDs remain the network boundary. Authored presentation refinement is separate.
     /// </summary>
     public sealed class DanteHeroKit : HeroKit, ITimedKitReplication
     {
@@ -191,10 +180,10 @@ namespace TumbangPreso.Abilities
         {
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             public Earthquake()
-                : base("dante_ultimate", "EARTHQUAKE",
-                       "Stamp and the whole court heaves. Every other player is Concussed: slower, no sprint, wobbly aim.",
+                : base("dante_ultimate", "CONTINENTAL DRIFT",
+                       "A wide earthquake cascades forward in successive blasts. Players caught in each blast are Concussed for 2.5 s.",
                        0.0f, 0.0f, AbilityGlyph.DanteFissure,
-                       summary: "The whole court heaves. Everyone is Concussed.",
+                       summary: "Successive forward blasts inflict Concussed.",
                        castAction: "hero-dante-fissure", viewmodelAction: "fissure-slam",
                        castCue: "sfx_cast_dante_earthquake")
             {
@@ -206,19 +195,8 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 NetCue.Play("hero_dante_ult", ctx.Position);
-                DanteSeismicVisual.Impact(ctx.Position, ctx.Forward, 6.0f, true);
                 ctx.Motor.GetComponent<CharacterSquashStretch>()?.Stretch(0.4f);
-                if (UnityEngine.Camera.main != null)
-                    UnityEngine.Camera.main.GetComponent<CameraSystem.CameraRig>()?.Shake(0.8f, 0.6f);
-                var round = ctx.Round;
-                if (round == null || !NetAuthority.ShouldResolve()) return;
-                foreach (var p in round.Players)
-                {
-                    if (p == null || p.PlayerSlot == ctx.Motor.PlayerSlot) continue;
-                    p.ApplyConcussed();
-                    p.ApplyResolvedImpact(Vector3.up * 3.0f);
-                    MatchFlair.Announce(MatchFlair.Kind.UltimateImpact, ctx.Motor.PlayerSlot, p.PlayerSlot, ctx.Position);
-                }
+                DanteDriftWave.Spawn(ctx.Position, ctx.Forward, ctx.Motor.PlayerSlot);
             }
         }
     }

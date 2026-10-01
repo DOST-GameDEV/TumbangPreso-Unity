@@ -61,7 +61,12 @@ namespace TumbangPreso.Core
         public const float BarrierForward = 1.2f;
 
         /// <summary>EARTHQUAKE, owner: *"Everyone concussed"*. Cost set here.</summary>
-        public const float EarthquakeCost = 14.0f;
+        public const float EarthquakeCost = 12.0f;
+        // Current Wiki specifies successive forward blasts. Spacing is gameplay tuning.
+        public const int DriftBlasts = 5;
+        public const float DriftInterval = .30f;
+        public const float DriftVisualTail = 1.2f;
+        public const float DriftSeconds = (DriftBlasts - 1) * DriftInterval + DriftVisualTail;
     }
 
     public static class NecroRules

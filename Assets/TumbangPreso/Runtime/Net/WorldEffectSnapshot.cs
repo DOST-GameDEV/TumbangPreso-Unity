@@ -14,7 +14,7 @@ namespace TumbangPreso.Net
             // ⚠️ APPEND ONLY (protocol 53): Amihan's Whirlwind gale, a travelling front.
             Gale = 11,
             // ⚠️ APPEND ONLY (protocol 55, HERO-9): Paete's seedling, his thorn construct and his sentry.
-            Plant = 12, Thorns = 13, Sentry = 14 }
+            Plant = 12, Thorns = 13, Sentry = 14, Drift = 15 }
         public struct Field
         {
             public Kind Type;
@@ -92,6 +92,8 @@ namespace TumbangPreso.Net
                 if (pillar.isActiveAndEnabled && pillar.Remaining > .02f) fields.Add(new Field { Type = Kind.Fissure, Source = pillar.gameObject,
                     Position = pillar.transform.position, Forward = pillar.transform.forward,
                     Duration = pillar.LifeSeconds, Remaining = pillar.Remaining, Owner = -1, FirstScale = pillar.Side });
+            foreach (var drift in Object.FindObjectsByType<DanteDriftWave>(FindObjectsSortMode.None))
+                if (drift.isActiveAndEnabled && drift.Remaining > .02f) fields.Add(drift.Capture());
             foreach (var gale in Object.FindObjectsByType<AmihanGale>())
                 if (gale.isActiveAndEnabled && gale.Remaining > .02f) fields.Add(gale.Capture());
             foreach (var plant in PaetePlant.Live)
@@ -116,6 +118,11 @@ namespace TumbangPreso.Net
                 || (field.TargetMask & ~((1 << Core.Balance.PlayerCount) - 1)) != 0
                 || (field.Type != Kind.Sentry && field.TargetMask != 0)) return false;
             if (RafiWaterField.IsWater(field.Type)) return RafiWaterField.Valid(field);
+            if (field.Type == Kind.Drift)
+                return field.Owner >= 0 && Mathf.Abs(field.Duration - Core.GeoRules.DriftSeconds) < .001f
+                    && Mathf.Abs(field.Forward.y) < .001f && Mathf.Abs(field.Forward.sqrMagnitude - 1) < .001f
+                    && field.Radius > 0 && field.Radius <= 100 && field.FirstScale > 0 && field.FirstScale <= 100
+                    && field.SecondScale == 0;
             if (field.Type == Kind.Sheet)
                 return field.Radius > 0 && field.Radius <= 10 && field.FirstScale > 0 && field.FirstScale <= 1
                     && field.SecondScale > 0 && field.SecondScale <= 3;
@@ -203,6 +210,8 @@ namespace TumbangPreso.Net
                     // A rejoiner's sentry is the same tree at the same age; the host alone catches.
                     PaeteSentry.Spawn(field.Position, field.Position, field.Owner, field.Duration - remaining,
                         restoredTargets: field.TargetMask, instanceId: field.InstanceId);
+                else if (field.Type == Kind.Drift)
+                    DanteDriftWave.Restore(field, elapsed);
                 else if (field.Type == Kind.Gale)
                 {
                     // A rejoiner's gale is the same front at the same age; the host alone hits.
@@ -236,6 +245,7 @@ namespace TumbangPreso.Net
             Retire<HeroHazards.ShockTrailComponent>();
             Retire<HeroHazards.SupernovaCraterComponent>();
             Retire<HeroHazards.HexSigilComponent>();
+            Retire<DanteDriftWave>();
             Retire<AmihanGale>();
             Retire<AmihanStorm>();
             Retire<PaetePlant>();

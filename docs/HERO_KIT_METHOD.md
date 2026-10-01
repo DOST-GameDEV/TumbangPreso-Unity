@@ -48,13 +48,14 @@ Where Paete's own records live, for the detail behind every line below:
 2. **Typed by hand, one part at a time.** *"do it one by one dont try to mass generate it"*, *"manually do each part of that builder
    dont js auto generate looping shit"*. Every leaf, cord, petal, root, row of a particle table has its own typed numbers. A loop
    that stamps one shape round a circle at one size is the thing he rejects.
-⚠️⚠️ **SKILL SOUNDS ARE DELETED AND NONE ARE TO BE ADDED UNTIL THE OWNER ASKS (2026-09-29).** *"also all ur skill sfx suck shit what
-is that HAHAHA even paete's"*, *"dont put sfx for all skills for now"*, *"will rework them at a lter date"*, *"can we delete all skill
-abilities sfx ty haha"*. Every cast, variant, status, payload, zone, ultimate theme and ultimate weather cue of every hero is gone from
-`Resources/Sfx` and from `AudioCues.Live`; call sites stay and play nothing (`AudioCues.IsSkillSfx`, `Audible`, `SkillSfxOn` false).
-Wherever this method says "sound" below (rules 3 and 8, the beat tables, the cutscene theme), SKIP IT for now and do not rerun the
-`tools/build_*_audio.py` or `tools/generate_*_audio.py` generators into `Resources/Sfx`. The heroes' voices and the base game's
-sounds stay.
+**Current sound authorization,2026-10-01:** the owner explicitly reauthorized
+all skill SFX while requesting the full-roster research/design pass: "opus5.5
+made shitty sfx i give u permission to do all sfx na rin". The September29 ban is
+superseded. Research, plan and listen critically before implementing replacement
+sounds; do not simply restore rejected assets or generators. Existing runtime
+sound suppression remains until a tested replacement unit changes it. Human
+voice policy and finalized Paete/Phaister character-specific protection remain.
+See [the current research brief](reports/hero-quality-2026-10-01/brief.md).
 
 3. **Each ability gets its own animation, effects and sound.** *"i want each of his skill to have their own animation"*, *"think of
    vfx that should accompany it as well as sfx"*. No clip, effect builder or sound recipe is shared between two verbs.

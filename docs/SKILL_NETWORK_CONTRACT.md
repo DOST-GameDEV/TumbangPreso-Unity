@@ -470,3 +470,14 @@ existing flight/airborne ceilings before contact early returns. No duration,
 active collision geometry, scoring or packet layout changes. This resolves the
 hidden tutorial can's indefinite rebound. Native proof is separate from actual
 matching-player/peer qualification.
+
+
+## Continental Drift Compatibility
+
+Protocol111 appends world-field kind15 using existing origin, unit forward,
+radius-as-half-width, first-scale-as-reach, duration and remaining fields. Five
+host-owned bands run0.30s apart; restore skips past outcomes and observers cannot
+apply status. The shared atomic world snapshot generation/match/scene/event gates
+and round retirement apply. Replay is render-only. No packet layout changes.
+The accepted shared ultimate still owns windup/release; cost12, stable ID retained.
+Focused native recovery is not actual matching-peer qualification.

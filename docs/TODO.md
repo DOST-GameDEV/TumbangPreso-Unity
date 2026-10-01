@@ -17,6 +17,18 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### HERO-QUALITY-1001: full-roster research and durable plans
+
+Owner priority October1: finish the current Continental Drift unit, then thoroughly
+research and plan every hero's skills, cutscenes, animation, VFX, SFX and UI before
+resuming other feedback/manual hunt. Analyze finalized Paete/Phaister as quality
+references without copying or redesigning them. Fill missing Hydro/Pyro/Electro
+Wiki entries only after that research, ending each new entry with
+`(Made by Harry Gaymez)`. Skill SFX are reauthorized. Preserve human-authored
+anchors and distinguish proposed design from implemented behavior.
+[Scope and deliverables](reports/hero-quality-2026-10-01/brief.md).
+
+
 ### FEEDBACK-0930: owner document and engineering follow-through
 
 Owner scope, 2026-09-30: finish the supplied feedback, then continue finding and
@@ -175,8 +187,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   cleanses while Tagged/pause/warmup remain protected. Six native/eight Core
   checks pass; protocol107. [Ward evidence](reports/dante-wiki-2026-09-30/ward.md).
   Boulder now imbues the actual held slipper,35s cooldown; Concussed75percent
-  slow for2.5s. Seven native cases and8Core pass, protocol108. Continental Drift
-  and retained UI review remain. [Boulder evidence](reports/dante-wiki-2026-09-30/boulder.md).
+  slow for2.5s. Seven native cases and8Core pass, protocol108. [Boulder evidence](reports/dante-wiki-2026-09-30/boulder.md).
+  Continental Drift now sends five forward Concussed blasts for12points; six
+  distinct native cases cover timing, host/recovery/replay and authored court.
+  Protocol111; presentation critique and retained UI review remain open.
+  [Cascade evidence](reports/dante-wiki-2026-09-30/drift.md).
   Barrier visibility implemented separately: half-alpha authored slabs retain their
   palette and lifecycle. Two distinct native cases pass; observer court capture
   inspected. Actual protocol100 player FPP later verified at7s remaining;
