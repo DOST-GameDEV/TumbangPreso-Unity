@@ -52,7 +52,7 @@ namespace TumbangPreso.Tests
                 var second = new MatchRecord { MatchId = "second-ack-check" };
                 queue.Add(first); queue.Add(second); witnesses.Add("first-witness"); witnesses.Add("second-witness");
                 System.Exception failure = null;
-                try { typeof(TumbangPreso.Net.CareerStore).GetMethod("CompleteSubmission", flags).Invoke(career, new object[] { output }); }
+                try { typeof(TumbangPreso.Net.CareerStore).GetMethod("CompleteSubmission", flags).Invoke(career, new object[] { cache, first, output }); }
                 catch (System.Reflection.TargetInvocationException error) { failure = error.InnerException; }
                 if (acknowledged)
                 {
@@ -95,6 +95,51 @@ namespace TumbangPreso.Tests
         {
             var read = typeof(TumbangPreso.Net.CloudCode).GetMethod("ReadOutput", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
             Assert.AreEqual(expected, read.Invoke(null, new object[] { response }));
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void LateSubmissionAcknowledgementCannotRemoveAnotherRecord(bool replaceAccountCache)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career pending identity check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                var cacheField = typeof(TumbangPreso.Net.CareerStore).GetField("_cache", flags);
+                var submittedCache = cacheField.GetValue(career);
+                var queue = (System.Collections.Generic.List<MatchRecord>)submittedCache.GetType().GetField("Queue").GetValue(submittedCache);
+                var witnesses = (System.Collections.Generic.List<string>)submittedCache.GetType().GetField("QueueWitness").GetValue(submittedCache);
+                queue.Clear(); witnesses.Clear();
+                var submitted = new MatchRecord { MatchId = "submitted-old" };
+                var remaining = new MatchRecord { MatchId = "not-submitted" };
+                queue.Add(submitted); queue.Add(remaining); witnesses.Add("old-witness"); witnesses.Add("remaining-witness");
+                if (replaceAccountCache)
+                {
+                    var nextCache = System.Activator.CreateInstance(submittedCache.GetType(), true);
+                    cacheField.SetValue(career, nextCache);
+                    queue = (System.Collections.Generic.List<MatchRecord>)nextCache.GetType().GetField("Queue").GetValue(nextCache);
+                    witnesses = (System.Collections.Generic.List<string>)nextCache.GetType().GetField("QueueWitness").GetValue(nextCache);
+                    queue.Add(remaining); witnesses.Add("remaining-witness");
+                }
+                else
+                {
+                    // Record's bounded queue can evict its oldest entry while upload awaits.
+                    queue.RemoveAt(0); witnesses.RemoveAt(0);
+                }
+                var accepted = (bool)typeof(TumbangPreso.Net.CareerStore).GetMethod("CompleteSubmission", flags)
+                    .Invoke(career, new object[] { submittedCache, submitted, "{\"verdict\":\"pending\",\"applied\":true}" });
+                Assert.AreEqual(1, queue.Count, "The late response removed a different queued result.");
+                Assert.AreSame(remaining, queue[0]); CollectionAssert.AreEqual(new[] { "remaining-witness" }, witnesses);
+                Assert.AreEqual(!replaceAccountCache, accepted, "An obsolete account upload must stop its old flush.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
         }
 
         private const string AssetsRoot = "Assets/TumbangPreso";

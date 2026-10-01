@@ -17,6 +17,13 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CAREER-SUBMIT-IDENTITY-1002: preserve other pending results
+
+Late upload completion now follows its captured cache/result identity, preserving
+other records and witnesses after head eviction or account-cache replacement.
+Native 12/12 includes existing acknowledgement controls; storage schema unchanged.
+[Evidence](reports/reliability-2026-10-02/career-submit-identity/README.md).
+
 ### HTTP-TIMEOUT-1002: bound stalled service requests
 
 Shared production requests now have a 20-second timeout. Actual native loopback

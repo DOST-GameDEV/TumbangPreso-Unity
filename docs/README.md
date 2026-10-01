@@ -93,3 +93,5 @@ Career submission acknowledgement and saved-result retention: [native evidence](
 Shared Cloud Code missing-output failure boundary: [native evidence](reports/reliability-2026-10-02/cloud-output/README.md).
 
 Bounded shared service-request timeout: [native evidence](reports/reliability-2026-10-02/http-timeout/README.md).
+
+Late career submission identity and pending-result preservation: [native evidence](reports/reliability-2026-10-02/career-submit-identity/README.md).

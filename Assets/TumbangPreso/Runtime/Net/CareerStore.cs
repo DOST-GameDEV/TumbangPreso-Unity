@@ -473,8 +473,9 @@ namespace TumbangPreso.Net
         /// a match silently deleted from a career is worse than one that never uploads: the
         /// player at least knows to say something about the second.
         /// </summary>
-        private void CompleteSubmission(string output)
+        private bool CompleteSubmission(Cache submittedCache, MatchRecord submittedRecord, string output)
         {
+            if (!ReferenceEquals(_cache, submittedCache)) return false;
             if (string.IsNullOrWhiteSpace(output) || output.Trim() == "null")
                 throw new InvalidDataException("Career submission returned no acknowledgement.");
             var answer = JsonUtility.FromJson<SubmitResponse>(output);
@@ -486,10 +487,15 @@ namespace TumbangPreso.Net
             // Known terminal verdicts also acknowledge duplicates and permanent refusals.
             // Missing or unknown answers leave the record and its witness queued for retry.
             LastVerdict = answer.verdict;
-            _cache.Queue.RemoveAt(0);
-            if (_cache.QueueWitness.Count > 0) _cache.QueueWitness.RemoveAt(0);
+            int index = submittedCache.Queue.IndexOf(submittedRecord);
+            if (index >= 0)
+            {
+                submittedCache.Queue.RemoveAt(index);
+                if (index < submittedCache.QueueWitness.Count) submittedCache.QueueWitness.RemoveAt(index);
+            }
             Save();
             Changed?.Invoke();
+            return true;
         }
 
         public async Task FlushAsync()
@@ -504,7 +510,8 @@ namespace TumbangPreso.Net
 
                 while (_cache.Queue.Count > 0)
                 {
-                    var record = _cache.Queue[0];
+                    var submittedCache = _cache;
+                    var record = submittedCache.Queue[0];
                     string json = JsonUtility.ToJson(record);
 
                     PadWitnesses();
@@ -513,7 +520,7 @@ namespace TumbangPreso.Net
                     string output = await CloudCode.CallAsync(
                         ScriptName, new { action = "submit", record = json, witness = witness });
 
-                    CompleteSubmission(output);
+                    if (!CompleteSubmission(submittedCache, record, output)) return;
                 }
 
                 Status = abandoned > 0
