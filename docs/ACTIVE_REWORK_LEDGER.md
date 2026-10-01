@@ -3235,3 +3235,13 @@ RafiHeroKit's added loaded-shoe query and separate RafiExpansionProbe cases merg
 cleanly; no changes to the tested wall action/material paths. Preserve both
 frozen qualification sets, not a combined integration/player claim. Current121.
 All owned native jobs terminal; next dedicated Rafi icon mismatch correction.
+
+RAFI-ICON-BINDINGS-1001 owns RafiHeroKit Skim/Waterwall glyph fields only;
+UI/AbilityIcons.cs appended glyphs/job names/fallback shapes; tools/build_ability_icons.py
+and two new RafiSkim/RafiWaterwall PNG/meta assets; RafiExpansionProbe icon contract.
+Current source maps Skim to obsolete DECOY and Water wall to REDIRECTION, confirmed
+in live definitions. Draw distinct sole/wake and finite water-curtain/slipper-drop
+illustrations through existing art pipeline; generate only these two. Preserve
+all existing icons/serialized enum values and protected hero art. One native
+binding/label/non-placeholder check plus real deck capture; no mechanics/protocol
+change from121. Nativejobs terminal; owner studying, Docs updates only.
