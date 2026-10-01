@@ -235,6 +235,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   the can/street remain visible through the authored slabs.
   [Evidence](reports/dante-visibility-2026-09-30/result.md).
 - [x] F0930-11 Amihan: current Wiki names/rules/statuses and fast airborne Airburst.
+  Latest live Wiki1.5second/60degree contract aligned; measured court reach also
+  fixes expanded-shore misses and the old short warning. Four distinct native
+  cases/two Core cases pass; current114player/actual peers remain unqualified.
+  [Current Wiki evidence](reports/feedback-2026-09-30/airburst-current-wiki.md).
   Owner explicitly reopened this and the full remaining ability queue on2026-10-01.
   Check newest active file claims first; complete specs govern, no invented kits.
   Airburst status/airborne payload corrected: native4/4 and Core8/8pass;

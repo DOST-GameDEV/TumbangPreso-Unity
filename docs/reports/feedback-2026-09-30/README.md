@@ -191,3 +191,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Nemu Haunt chase and scoped live/terminal delivery](nemu-kuro-haunt.md).
 
 [Haunted local sight and listener behavior](haunted-perception.md).
+
+[Airburst current Wiki timing, angle and court reach](airburst-current-wiki.md).

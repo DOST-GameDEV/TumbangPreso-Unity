@@ -132,6 +132,18 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
+        public void AirburstCourtRangeCoversExpandedShoreWithoutPoisonedBounds()
+        {
+            Assert.Equal(40f, AmihanRules.StormSurgeRangeForCourt(-8.6f,8.6f,-13,13));
+            float shore=AmihanRules.StormSurgeRangeForCourt(-16,16,-13,24);
+            Assert.InRange(shore,48.9f,49f);
+            Assert.Equal(40f,AmihanRules.StormSurgeRangeForCourt(float.NaN,16,-13,24));
+            Assert.Equal(40f,AmihanRules.StormSurgeRangeForCourt(-16,float.PositiveInfinity,-13,24));
+            Assert.Equal(40f,AmihanRules.StormSurgeRangeForCourt(16,-16,-13,24));
+            Assert.Equal(40f,AmihanRules.StormSurgeRangeForCourt(-16,16,24,24));
+            Assert.Equal(40f,AmihanRules.StormSurgeRangeForCourt(-float.MaxValue,float.MaxValue,-float.MaxValue,float.MaxValue));
+        }
+        [Fact]
         public void AmihanUsesTheOwnersCostsAndStaysInsideTheKnockbackCap()
         {
             Assert.Equal(35.0f, AmihanRules.QuickDashCooldown);
@@ -140,7 +152,8 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(5.0f, AmihanRules.UpdraftSeconds);
             Assert.Equal(40.0f, AmihanRules.UpdraftCooldown);
             Assert.Equal(15.0f, AmihanRules.StormSurgeCost);
-            Assert.Equal(2.5f, AmihanRules.StormSurgeGatherSeconds);
+            Assert.Equal(1.5f, AmihanRules.StormSurgeGatherSeconds);
+            Assert.Equal(60.0f, AmihanRules.StormSurgeHalfAngle * 2);
 
             // Every held speed is under the single-impulse cap, so a clamp never shortens a move.
             Assert.True(AmihanRules.QuickDashSpeed <= Balance.MaxKnockbackSpeed);

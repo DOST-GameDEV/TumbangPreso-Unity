@@ -502,3 +502,13 @@ replays a hit/resource spend and live movement does not cancel new basic skills.
 No wire layout changes. Native companion/receiver evidence is separate from
 actual-peer qualification and remaining Haunted nearsight/audio.
 [Evidence](reports/feedback-2026-09-30/nemu-kuro-haunt.md).
+
+## Airburst Current Wiki Compatibility
+
+Protocol114 aligns the accepted Airburst delay to1.5seconds and its fan to60degrees.
+Ordinary cast and reserved post-introduction activation share the same committed
+windup; reservation spends once and cannot release early. Contact and warning
+reach use the measured court diagonal with40mminimum, correcting expanded-court
+misses and the old26mwarning mismatch. No packet layout change. Four distinct
+native cases and two Core cases pass; actual peers/current player remain separate.
+[Evidence](reports/feedback-2026-09-30/airburst-current-wiki.md).

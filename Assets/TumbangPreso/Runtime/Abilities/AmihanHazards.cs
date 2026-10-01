@@ -123,6 +123,9 @@ namespace TumbangPreso.Abilities
         public Vector3 Origin { get; private set; }
         public Vector3 Forward { get; private set; }
         public float Age => _age;
+        public static float FanRange => AmihanRules.StormSurgeRangeForCourt(
+            AIController.PlayableMinX, AIController.PlayableMaxX,
+            AIController.PlayableMinZ, AIController.PlayableMaxZ);
         public bool Released => _released;
 
         private float _age;
@@ -152,7 +155,7 @@ namespace TumbangPreso.Abilities
         {
             Vector3 d = point - origin; d.y = 0.0f;
             if (d.sqrMagnitude < 0.04f) return false; // her own spot
-            if (d.magnitude > AmihanRules.StormSurgeRange) return false;
+            if (d.magnitude > FanRange) return false;
             return Vector3.Angle(forward, d) <= AmihanRules.StormSurgeHalfAngle;
         }
 

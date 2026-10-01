@@ -1819,3 +1819,35 @@ next coherent matching-player qualification. Hydro/Zack/Pyro new cells are
 explicitly Proposed and stay design proposals pending adopted implementation
 contract; do not silently invent/ship them as already accepted behavior.
 Preserve loading reservation, private dirt and authored assets. Full goal active.
+
+AIRBURST-WIKI-1001 owns Core AmihanRules.cs, runtime AmihanHeroKit.cs, NetSession
+protocol114, existing Core status/Amihan numeric case and AmihanAirburstTests.
+Live Wiki cell reread: non-proposed1.5seconds/60degrees. Current rules now1.5/30
+half-angle; telegraph already reads shared Core half-angle. No authored assets
+changed. Exact pre-release/direct and reserved introduction paths plus real
+inside/outside body/slipper contacts are the three native questions. One focused
+Core numeric case first; no new pass yet. Main/private dirt preserved, no live
+Unity job. Host is playing VALORANT; ~2.3GiBphysical/~5.6GiBvirtual headroom, so
+keep checks small/sequential and defer full-player builds until adequate headroom.
+
+AIRBURST-WIKI-1001 first native3/3 passes direct release, reserved introduction
+and29.9/30.1degree body/slipper boundary.650hashes verified unchanged. Concrete
+map-wide defect found in actual Lagoon bounds(-16..16,-13..24): diagonal48.9m,
+old contact range40 and warning range26. Extend ownership to AmihanHazards.cs
+FanRange/InsideFan and only AmihanVfx.cs's existing fan range binding. Pure Core
+measured-court range retains40minimum and rejects malformed bounds. Existing
+fan geometry/material/density/art direction retained; this is truthful warning/
+reach bug correction. One additional expanded-court contact/warning question
+plus Core bounds case next. No map/lighting/animation/audio assets changed.
+
+AIRBURST-WIKI-1001 checks complete: native first3/3 plus expanded-court1/1,
+Core2/2TRX; four distinct native cases, no failures/repairs.650final hashes
+unchanged; six owned runtime/test inputs match native source. Direct/reserved
+release1.5s,60degree body/slipper boundary, >40mreal selection and same warning
+range binding qualified. Range helper uses measured court diagonal with40minimum
+and malformed-bound fallback. Warning binding bug fix only, no authored art
+redesign or map changes. Jobs98108/51440 terminal; profiles/preferences preserved.
+Publish explicit owned source/receipts, same Amihan Feedback short note and protocol114
+matching-player limit. No current player/actual peer/arena film qualification.
+Next coherent matching-player qualification when headroom permits, followed by
+remaining bottom-up feedback/independent engineering bugs. Full goal stays active.
