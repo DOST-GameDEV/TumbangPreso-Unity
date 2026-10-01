@@ -1,0 +1,9 @@
+{
+  "source": "52ca6732cb33df175956a2811a691af827ef5a15",
+  "protocol": 128,
+  "inputCount": 15488,
+  "inputDrift": [],
+  "executable": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Builds\\readiness128-1001\\TumbangPreso.exe",
+  "runtimeSha256": "dbe9ca0746bc87834042688080e84e03ba7a0fa7872ab3436621b1816ad1442c",
+  "scope": "Committed overlays in separate imported checkout; no Desktop replacement or whole readiness claim"
+}

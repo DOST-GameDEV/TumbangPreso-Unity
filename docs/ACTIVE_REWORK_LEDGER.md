@@ -3976,3 +3976,22 @@ Jobs38782/34837/21130/75623 terminal; profiles/input preserved. Sourcee618fa7fe+
 owned overlay protocol127, no authored shape/colour/rate/lifetime/material edits.
 Publish real visibility fix, continue optimization/readiness; no full-screens/
 currentplayer/tournament completion claim. No Docs queue or broader loading work.
+
+Attached aura49714e36e integrated/published52ca6732c and remote verified. All prior nativejobs terminal, only pre-existing Unity Hub serve remains. Currentprotocol128 includes independently shipped circuit/Empowered throw. Do not call old126peer evidence current. Existing map-surfaces player route uses retired Start/Classic/Practice/MapNext controls; do not launch unchanged or spend loops repairing whole review framework. Prepare one current128internal build, inspect shader/build failures and a supported current runtime route at fullHD. No Desktop replacement, broader loading or authored asset edits.
+
+Current128 build frozen52ca6732c/15488tracked inputs in isolated tump-feedback-0930; freeze68883terminal. One guarded internal BuildWindows nowlive, output Builds/readiness128-1001/TumbangPreso.exe, log Logs/readiness128-1001/build.log. Includes preview/aura fixes and shipped circuit/Empowered. Existing map-surfaces player route uses retired UI controls and must not be launched unchanged. Next supported actual128run at1920x1080 using current LAN runner, inspect real shader/exception/performance output; no new review framework, no Desktop replacement. Continue autonomously, goal active.
+
+Guarded128 Windows build86024 completed107s/2142MB, source52ca6732c, no shader compile error. Build receipt/check is read-only; use exactinternal DLL/output. Next supported existing LAN/profile-preservation route at1920x1080 D3D11,150s, no old retired-menu review route. Temporary native tools/tmp_readiness128_fullhd.py changes only launch resolution/API and must be removed after run. No wholeall-screens/shader/tournament completion claim; user wants actual correctness/optimization, no authored appearance edits.
+
+Current128internal build succeeded107s/2142MB;15488inputs unchanged. Exact runtime SHA dbe9ca0746bc87834042688080e84e03ba7a0fa7872ab3436621b1816ad1442c, source52ca6732c. Guard86024 and read-only receipt42191terminal. Existing protected-profile LAN route now running1920x1080 D3D11/60cap,150sclient (not retired all-map UI driver). Preserve exacthandle/output; do not restart whilelive. This is current actualpeer rendering/performance observation, not allmaps/previews/variants or readiness completion. Temporarytmp_readiness128_fullhd.py removeaftercase.
+
+Current128 fullHD actualpair passes: source52ca6732c, internal107s/2142MB build,
+15488inputs no drift, DLLdbe9ca..442c. Existing direct LAN/profile-preserving route
+at1920x1080/D3D11/Balanced/60cap reaches active round2/taya1/Eskinita, structural
+ACB0E9F4 both. Client150s/host163s distinctsamples/naturalexit later; no logged
+shader/script exception. Gameplay metrics raw, client59.74FPS/max27.60ms; initial
+2632/3842msRTT during loading recovers, no smoothstartup claim. No allmaps/effects/
+hardware/currentfuturechanges/tournament completion claim. Jobs86024/42191/76498
+terminal, preservation good. Remove ownedtmp_readiness128_fullhd.py/verifyport.
+Continue requested optimization/shader/effect readiness; preserve DOTS queue,
+authored assets and friend's broader loading. Nonstop goal remainsactive.
