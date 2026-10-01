@@ -3198,3 +3198,32 @@ No mechanics/timing/width/collision/protocol change from121. Bake only new Rafi
 clip/reference; preserve all existing models/arms/other hero assets. Material
 sample and actual body/FPP motion review required; no SFX/listening completion
 claim in this unit. Owner study silence continues; no chat pings.
+
+RECONNECT121-PLAYER-1001: e47fa2719remote verified. One current internal player
+then actual crash/relaunch with old seededchar2/same identity/local preference0.
+Existing driver117gates preserved, protocol explicit121; host195s/return120s
+samples after old110s intermission. Add bothround>=2, matchinground/defender/
+structural and client-controlled seat checks. This is changed source/integration,
+not an unchanged117retry; old false gates stay. Freeze/hash one build, one case.
+19398/13819terminal. Only fresh hidden owned players/profiles/port18917; no Desktop
+replacement, other chats, paid services, loading or authored asset edits.
+
+
+121build2141MB/124s succeeds;15444inputs no drift. RuntimeSHA
+ba5d13d2a761eda1705f9826a4163be9dd86fef90cd0286011d2e68241d19aca.
+66476/71015terminal. Actual rejoin job86666 running in rejoin-round2: peer1
+left, seat1 handed to bot, peer2 admitted to same seat. Strict195/120s final
+reports pending; no pass claim yet. Named reconnect121-peer-1001 profiles only.
+Skim Feedback note appended by required revision/readback, human text retained.
+Next wait86666 terminal, read verdict/cleanup, preserve failure or publish scope.
+
+
+Actual121rejoin PASS: same identity, peer2/seat1/serverchar2 despite local0, client
+nonbot and bothactive round2/defender1/structural41C4880E. Host195s/client120s after
+separate launches; second takeover follows natural client exit. Old117failed
+verdicts retained, no source fix/repeated case.66476/71015/86666terminal; all three
+owned player PIDs absent,18917released, profiles/inputprefs preserved. Publish
+exact e47candidate receipts. IncomingWaterwall presentation/nexticons are reserved;
+no own authored asset edits. Next current Feedback refresh, then independent
+network/bot/UX hunt; no broad unchanged validation gates.
+
