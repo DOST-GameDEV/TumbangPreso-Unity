@@ -3878,3 +3878,19 @@ Jobs21241/18683 terminal, profiles/input preserved. Source788ede121+owned overla
 protocol126 unchanged. Publish; keep working through checkpoint, no final stop.
 Next existing actual-peer terminal-connection scenario; diagnose real result,
 do not broaden validation framework or edit DOTS queue/loading/authored art.
+
+Shortcut context5bce6331a published/remote verified; native21241/18683terminal. Continue actual terminal-link-loss using existing matrix policy:25ms/5ms jitter, outage20s..end, clientterminal/hostreferees/no simultaneous comparison. Live client mode/round gates are inapplicable to a terminal peer; matrix terminal policy remains intact and must also inspect roundActiveFalse manually. Initial shell quoting failed before any launch; file-backed preparation fixed it. Temporary native tools/tmp_demo126_terminal.py must be removed after run. Exact player04f/protocol126; network/round diff remains empty. No changed-source build or whole-readiness claim.
+
+Permanent-link126 existing terminal gate passes: proxy2581forward/4365drop,
+outage20s..end. Host active round2/taya1 with bot takeover; client ProtocolTimeout/
+Abandon then MatchSetup networkedFalse/roundActiveFalse, no loggedexception.
+Same-PC fallback AutoHost logs handled port8910 refusal (survivinghostownsport),
+not a game crash. OBSERVED client transition max1031ms; loading remains friend-
+owned, no implementation change or smooth-transition claim. Exact04f/DLL2956730f
+protocol126 only, later UI/art separate. Driver62247 terminal, preservation good.
+Remove ownedtmp_demo126_terminal.py; verify ports. Continue independent real
+bugs; avoid more unchanged matrix rows and never mark whole readiness complete.
+
+Latest owner priority after current reliability cleanup: optimization and correct shader/effect availability at the right times across all screens, singleplayer and network. Inspect missing/late shader/material/effect bindings, camera-scope and recovery/lifetime defects. This is readiness/visibility bug work, not an authored VFX/SFX/model/animation/map/lighting redesign. Keep friend's broader loading implementation ownership; do not silently overhaul loading. Continue autonomously without ending at unit checkpoints.
+
+REMADE-MAP-PREVIEW-1001: owner says all remade maps showed grey this morning, unsure current. Explicitly authorizes this preview-loading defect fix despite broader loading ownership remaining with friend. Own MapPreviewSurface.cs and one focused RemadeMapPreviewTests file/meta; inspect current Kanto/LagoonCove/Ilalim actual additive preview, renderer/layer/frustum/shader presence and PNGs before code changes. Sequential scene retirement, not retaining all maps. Use already-proven Editor idle import retirement=1ms and restore it; no worker-count/guard change or second memory-retry loop. No map/art/lighting asset edits or DOTS queue writes.
