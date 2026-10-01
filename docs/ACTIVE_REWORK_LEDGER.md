@@ -2684,3 +2684,13 @@ owner-event/reduced-motion/hidden controls and real throw gating pass. Publish
 this last part of Harry's combined row, then mark Done text with the three
 commit/evidence scopes; Human verified stays untouched. New penalty row queued
 note added via revision-aware insertion after one concurrent-edit refusal.
+
+PENALTY-REVAMP-1001 claims Core Balance.cs, Core.Tests/BalanceTests.cs,
+Net/NetSession.cs protocol119, and new focused TournamentPenaltyTimingTests.cs.
+Current live Feedback: camping1.5m/2.0m, warning2.5s/grace5s; loose-slipper
+warning7.5s/grace15s; fatigue2.5s at.75speed. Existing incapacity pause,
+-5tick and defense-income suppression stay. Existing SlipperRecall clock already
+reads warning/grace constants; prove its7.5second countdown rather than add a
+second timer. No Tagged immunity paragraph in current Doc, so do not implement
+that removed revision. Two native scoring/pause/recall checks plus focused Core
+fatigue/boundary checks; one tooling repair maximum. Next HUD layout afterward.
