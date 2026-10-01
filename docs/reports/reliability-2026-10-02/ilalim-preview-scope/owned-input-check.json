@@ -1,0 +1,12 @@
+{
+  "source": "de307b08a01c99d07aca9dc150d922f604d6bfc6",
+  "checks": {
+    "Assets/TumbangPreso/Tests/PlayMode/RemadeMapPreviewTests.cs": true,
+    "Assets/TumbangPreso/Runtime/Map/SidewalkLife.cs": true,
+    "Assets/TumbangPreso/Runtime/Visual/WorldLookPresentation.cs": true,
+    "Assets/TumbangPreso/Runtime/Visual/BlockyClouds.cs": true
+  },
+  "scope": "Four owned code/test inputs; unchanged full-game evidence reused, not requalified",
+  "retry": 1,
+  "interrupted": "PC shutdown during initial import; resumed baseline is actual failure"
+}

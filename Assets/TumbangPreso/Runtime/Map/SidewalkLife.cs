@@ -640,6 +640,7 @@ namespace TumbangPreso
         {
             var root = new GameObject(name).transform;
             root.SetParent(transform, false);
+            root.gameObject.layer = gameObject.layer;
             var b = new Body { Name = name, Role = role, Root = root, Scale = Mathf.Max(.3f, look.Scale) };
             _all.Add(b);
             var model = Instantiate(look.Art.Model, root, false);
@@ -654,6 +655,7 @@ namespace TumbangPreso
             // In the bind pose, before any clip moves a bone.
             Bones(b, model);
             if (look.Wear != null) Dress(b, look.Wear);
+            SetLayer(model.transform, root.gameObject.layer);
 
             // ⚠️⚠️ NO ANIMATOR, NO PLAYABLE GRAPH: the clips are SAMPLED onto the bones (see Sample).
             // With a graph on the rig's Animator, the idle clip's own channels (both arms, the
@@ -1641,10 +1643,18 @@ namespace TumbangPreso
             return _meshes[name] = mesh;
         }
 
+        // Runtime additions must follow the host camera scope, including map previews.
+        private static void SetLayer(Transform root, int layer)
+        {
+            root.gameObject.layer = layer;
+            foreach (Transform child in root) SetLayer(child, layer);
+        }
+
         private static Transform Part(Transform parent, string name, Mesh mesh, Material material, Vector3 at, Vector3 scale, Vector3 euler)
         {
             var t = new GameObject(name).transform;
             t.SetParent(parent, false);
+            t.gameObject.layer = parent.gameObject.layer;
             t.localPosition = at; t.localScale = scale; t.localRotation = Quaternion.Euler(euler);
             if (mesh == null || material == null) return t;
             t.gameObject.AddComponent<MeshFilter>().sharedMesh = mesh;
@@ -1917,6 +1927,7 @@ namespace TumbangPreso
             var f = BeggarFacing; f.y = 0f; f = f.sqrMagnitude > 1e-4f ? f.normalized : Vector3.right;
             var holder = new GameObject("Beggar's things").transform;
             holder.SetParent(transform, false);
+            holder.gameObject.layer = gameObject.layer;
             holder.SetPositionAndRotation(BeggarSeat, Quaternion.LookRotation(f, Vector3.up));
             var cube = Builtin("Cube.fbx"); var cylinder = Builtin("Cylinder.fbx");
             _carton = Part(holder, "Carton", CartonMesh(), Cardboard, new Vector3(0f, .008f, .12f), Vector3.one, Vector3.zero);

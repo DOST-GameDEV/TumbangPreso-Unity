@@ -71,3 +71,5 @@ from Godot now live here as Unity-owned references; never overwrite them from th
 frozen Godot repository.
 
 Bank Shot mechanics and validation: [current report](reports/feedback-2026-09-30/bank-shot.md).
+
+Rebuilt Ilalim generated-scenery preview isolation: [native evidence](reports/reliability-2026-10-02/ilalim-preview-scope/README.md).

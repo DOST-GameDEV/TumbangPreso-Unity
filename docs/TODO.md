@@ -17,6 +17,12 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### ILALIM-PREVIEW-SCOPE-1002: repaired generated scenery camera leakage
+
+Rebuilt Ilalim actual preview baseline33escaped renderers; final0, native1/1passes.
+Runtime NPC/prop/look/cloud layer inheritance only; authored assets unchanged.
+Court framing remains a separate open defect. [Evidence](reports/reliability-2026-10-02/ilalim-preview-scope/README.md).
+
 ### KIT-RECALL-PARITY-1001: role-aware held descriptions
 
 Same-kit attacker/defender changes now refresh the real role ability. Native
