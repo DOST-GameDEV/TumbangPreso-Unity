@@ -17,6 +17,13 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### HTTP-TIMEOUT-1002: bound stalled service requests
+
+Shared production requests now have a 20-second timeout. Actual native loopback
+stall ends at 20.004s; normal local response succeeds. Final 2/2, no live endpoint
+or retry/UI configuration change.
+[Evidence](reports/reliability-2026-10-02/http-timeout/README.md).
+
 ### CLOUD-OUTPUT-1002: reject missing service output
 
 Shared response helper no longer reports missing/null output as success. Native

@@ -63,12 +63,7 @@ namespace TumbangPreso.Net
             string url = $"https://cloud-code.services.api.unity.com/v1/projects/{projectId}/scripts/{script}";
             string body = JsonConvert.SerializeObject(new { @params = parameters });
 
-            using var request = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST);
-            request.uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(body));
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Authorization", "Bearer " + accessToken);
-            request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("Accept", "application/json, application/problem+json");
+            using var request = CreateRequest(url, body, accessToken);
 
             UnityWebRequestAsyncOperation operation = request.SendWebRequest();
             while (!operation.isDone) await Task.Yield();
@@ -83,6 +78,19 @@ namespace TumbangPreso.Net
             // later": typing the field as `string` makes it silently read empty. Newtonsoft hands
             // back the sub-document as text, which is what every caller actually wants.
             return ReadOutput(request.downloadHandler.text);
+        }
+
+        private const int RequestTimeoutSeconds = 20;
+
+        private static UnityWebRequest CreateRequest(string url, string body, string accessToken)
+        {
+            var request = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST) { timeout = RequestTimeoutSeconds };
+            request.uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(body));
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Authorization", "Bearer " + accessToken);
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Accept", "application/json, application/problem+json");
+            return request;
         }
 
         private static string ReadOutput(string response)

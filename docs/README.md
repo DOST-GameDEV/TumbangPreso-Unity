@@ -91,3 +91,5 @@ Queue connection startup exception recovery: [native evidence](reports/reliabili
 Career submission acknowledgement and saved-result retention: [native evidence](reports/reliability-2026-10-02/career-submit-ack/README.md).
 
 Shared Cloud Code missing-output failure boundary: [native evidence](reports/reliability-2026-10-02/cloud-output/README.md).
+
+Bounded shared service-request timeout: [native evidence](reports/reliability-2026-10-02/http-timeout/README.md).
