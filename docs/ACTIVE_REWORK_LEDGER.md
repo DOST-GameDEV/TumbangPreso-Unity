@@ -2249,3 +2249,12 @@ framing fixes, preserving both histories. Protocol116; no runtime conflict.
 Owned native/Core receipts are scoped to their frozen candidate, not a new
 whole-branch or actual-peer qualification. Next Water wall follows the saved
 Hydro plan; old Skim feint/glyph/audio is provisional until presentation pass.
+
+HYDRO-WATERWALL-1001 next cloud unit claims RafiHeroKit.cs, RafiWaterField.cs,
+Visual/RafiWaterVisual.cs, Net/WorldEffectSnapshot.cs Kind/validation route,
+NetSession.cs protocol line, Core RafiRules/tests and RafiExpansionProbe.cs.
+A small Slipper host landing helper may be needed for exact approach-side drop;
+keep existing owner, score and host authority rules. Plan saved at
+reports/hero-quality-2026-10-01/waterwall-implementation.md. No Water wall runtime
+changes yet. Skim77bf73e3 integrated atae507b37; publication verification pending.
+Other contributors retain AI/Haunted/departure paths. No heavy Unity job active.
