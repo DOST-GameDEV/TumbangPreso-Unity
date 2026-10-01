@@ -24,13 +24,16 @@ namespace TumbangPreso.EditorTools.MapKit
     /// file; nothing here makes geometry except the gameplay colliders and markers. Mirrors
     /// LagoonCoveSceneBuilder and KantoSceneBuilder.
     ///
-    /// ⚠️⚠️ UNREGISTERED. The scene is Scenes/Samples/IlalimRebuild.unity: not in
-    /// `SceneFlow.MapRegistry`, not in `GameLaunch.Maps`, not in the build settings. The shipped
-    /// IlalimNgTulay scene, its builder and every map index are untouched. Swapping the rebuild in
-    /// under the `IlalimNgTulay` name (same index, no protocol bump) is ILALIM-1.6, on the owner's
-    /// say-so. Until then the scene wears its own "IlalimRebuild" WorldLookProfile row (see
+    /// ⚠️⚠️ SWAPPED IN AS THE SHIPPED MAP (ILALIM-1.6, owner 2026-10-01: "you also need to replace
+    /// the old ilalim ng tulay with this one in the map pool"). This builder writes
+    /// Scenes/Maps/IlalimNgTulay.unity, the scene the build settings, `SceneFlow.MapRegistry` and
+    /// `GameLaunch.Maps` already name. Saving over that path keeps its .meta, so the scene GUID
+    /// (d1023436a0787e94abfffc99704e8f3a), the map index and the network surface are unchanged:
+    /// no protocol bump. The first Ilalim is vaulted at Scenes/Vault/IlalimNgTulayOld.unity
+    /// (IlalimNgTulayBuilder writes there now), out of the build. The scene wears the
+    /// "IlalimNgTulay" WorldLookProfile row, which is the rebuild's late-afternoon look (see
     /// <see cref="Lighting"/>), and its moving traffic, street sound and pigeons come from
-    /// IlalimLifeAuthor.
+    /// IlalimLifeAuthor. Before the swap it was the unregistered Scenes/Samples/IlalimRebuild.unity.
     ///
     /// ⚠️ COORDINATES ARE NOT KANTO'S. The Ilalim kits are modelled in the game's own frame
     /// (Blender X = game x east, Blender Y = game z north), so a Blender point (x, y, z) lands at
@@ -68,8 +71,15 @@ namespace TumbangPreso.EditorTools.MapKit
     /// </summary>
     public static class IlalimSceneBuilder
     {
-        public const string SceneName = "IlalimRebuild";
-        public const string ScenePath = "Assets/TumbangPreso/Scenes/Samples/" + SceneName + ".unity";
+        /// <summary>The shipped map's scene name and path (ILALIM-1.6). The map root carries this
+        /// name, and the world look and the map preview find their row by it.</summary>
+        public const string SceneName = "IlalimNgTulay";
+        public const string ScenePath = "Assets/TumbangPreso/Scenes/Maps/" + SceneName + ".unity";
+        /// <summary>The sky material key: Art/MapAtmosphere/IlalimRebuildSky.mat, the rebuild's own
+        /// sky since ILALIM-1.4. ⚠️ NOT the scene name: `MapAtmosphereAuthor.Apply("IlalimNgTulay")`
+        /// would overwrite IlalimNgTulaySky.mat, which the vaulted first Ilalim still wears, and
+        /// switch to the first Ilalim's hand-tuned clouds and sun.</summary>
+        private const string SkyKey = "IlalimRebuild";
         private const string Root = "Assets/TumbangPreso/Art/IlalimRebuild";
         private const string LayoutPath = Root + "/ilalim_layout.json";
         private const string Tag = "[IlalimRebuild] ";
@@ -137,7 +147,7 @@ namespace TumbangPreso.EditorTools.MapKit
         /// <summary>Opens the built scene in an interactive editor and stays open, for walking it.</summary>
         public static void Open() { EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single); }
 
-        /// <summary>Build, prove the frame against the current map, run the geometry checks,
+        /// <summary>Build, prove the frame against the vaulted first Ilalim, run the geometry checks,
         /// render the review. ⚠️ A batch run must EXIT with a failure code on an exception, or the
         /// caller reads a silent zero and a stale scene.</summary>
         public static void RunReview()
@@ -167,8 +177,13 @@ namespace TumbangPreso.EditorTools.MapKit
             var materials = BuildMaterials(layout.materials);
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             var root = new GameObject(SceneName).transform;
-            // The shipped Ilalim's grade (IlalimNgTulayBuilder), so the rebuild is judged in the same frame.
-            root.gameObject.AddComponent<MapGrade>().Set(1.00f, 1.025f, 1.045f, 1.00f, 1.90f);
+            // The map grade. ⚠️ Saturation 1.06, NOT the first Ilalim's 1.045: Lighting() calls
+            // MapAtmosphereAuthor.Apply("IlalimRebuild"), which sets every non-bridge map's grade to
+            // (1, 1.025, 1.06, 1, 1.9), so the scene the owner reviewed has always carried 1.06.
+            // Writing the shipped value here keeps the builder and the scene in agreement
+            // (MapGradeSanityTests.TheIlalimBuilderAgreesWithTheSceneItGenerates reads this call).
+            var grade = root.gameObject.AddComponent<MapGrade>();
+            grade.Set(1.00f, 1.025f, 1.06f, 1.00f, 1.90f);
             var dressing = Group(root, "Dressing");
             var groups = new Dictionary<string, Transform>();
             var byObject = new Dictionary<string, GameObject>();
@@ -698,8 +713,8 @@ namespace TumbangPreso.EditorTools.MapKit
         /// <summary>⚠️⚠️ THE REBUILD'S OWN LOOK, NOT THE LAGOON'S (owner, 2026-09-30: "change the
         /// lighting setting so its less like the lagoon map"). The sample used to wear the shipped
         /// Ilalim row, whose cyan fog, teal zenith and blue-violet shade read as the Lagoon. It now
-        /// has its own "IlalimRebuild" WorldLookProfile row, and the scene as authored matches that
-        /// row exactly (the LagoonCove pattern), so the look's weight in Play changes only the
+        /// has its own WorldLookProfile row (the "IlalimNgTulay" row since the ILALIM-1.6 swap;
+        /// before it, "IlalimRebuild"), and the scene as authored matches that row exactly (the LagoonCove pattern), so the look's weight in Play changes only the
         /// extras it owns (ramp, grade, clouds):
         ///   * the SUN keeps the Blender direction (the layout's `sun.forward`: 27 degrees up from
         ///     the west-south-west, the row's elevation 27 so Play does not lift it to 52), in the
@@ -711,7 +726,7 @@ namespace TumbangPreso.EditorTools.MapKit
         ///     cap, but the cap only bites at 243 m, past the game's 240 m far plane. The colour is
         ///     the row's warm grey smog rather than the Blender haze's pale blue (0.58, 0.68, 0.82
         ///     linear), which read too clean for Taft at 5 pm;
-        ///   * the SKY (Art/MapAtmosphere/IlalimRebuildSky.mat; the shipped IlalimNgTulaySky.mat is
+        ///   * the SKY (Art/MapAtmosphere/IlalimRebuildSky.mat; the first Ilalim's IlalimNgTulaySky.mat is
         ///     never written) takes the row's pale grey-teal zenith, warm grey-cream horizon and
         ///     cloud colours, and the sun's direction.</summary>
         private static void Lighting(Transform root, Layout layout)
@@ -719,7 +734,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var sun = new GameObject("Sun").AddComponent<Light>();
             sun.transform.SetParent(root, false);
             sun.type = LightType.Directional;
-            MapAtmosphereAuthor.Apply(SceneName);
+            MapAtmosphereAuthor.Apply(SkyKey);
             var s = layout.sun;
             if (s != null && s.forward != null && s.forward.Length == 3)
                 sun.transform.rotation = Quaternion.LookRotation(new Vector3(s.forward[0], s.forward[1], s.forward[2]), Vector3.up);
@@ -744,7 +759,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 RenderSettings.fog = true; RenderSettings.fogMode = FogMode.Linear;
                 RenderSettings.fogColor = look.Fog; RenderSettings.fogStartDistance = look.FogStart; RenderSettings.fogEndDistance = look.FogEnd;
             }
-            else Debug.LogWarning(Tag + "No IlalimRebuild row in the WorldLookProfile asset: the scene keeps the layout's Blender light and haze.");
+            else Debug.LogWarning(Tag + "No " + SceneName + " row in the WorldLookProfile asset: the scene keeps the layout's Blender light and haze.");
             var sky = RenderSettings.skybox;
             if (sky != null && look != null && look.Map == SceneName && sky.HasProperty("_Zenith"))
             {
@@ -759,8 +774,8 @@ namespace TumbangPreso.EditorTools.MapKit
 
         // ------------------------------------------------------------------ the frame proof
 
-        /// <summary>Reads the CURRENT IlalimNgTulay scene (opened, never saved) and the rebuild,
-        /// and writes both maps' gameplay positions side by side: the numeric proof that Blender
+        /// <summary>Reads the FIRST Ilalim, vaulted at IlalimNgTulayBuilder.ScenePath (opened,
+        /// never saved), and the rebuild, and writes both maps' gameplay positions side by side: the numeric proof that Blender
         /// (x, y, z) is Unity (x, z, y). The hoop and the pares cart must agree to the centimetre,
         /// the pillars exactly; the pad and the pisonet row moved on purpose (guide § 0.6).</summary>
         public static void ProveFrame(string folder)
@@ -772,7 +787,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 "LrtPillar_SouthWest_19", "LrtPillar_NorthEast_19", "LrtTrainSystem", "WallEast", "WallNorth", "Spawn2",
             };
             var sb = new StringBuilder();
-            sb.AppendLine("ILALIM FRAME PROOF: the shipped IlalimNgTulay scene against the rebuild (world metres).");
+            sb.AppendLine("ILALIM FRAME PROOF: the vaulted first IlalimNgTulay scene against the rebuild (world metres).");
             var current = Measure(IlalimNgTulayBuilder.ScenePath, names);
             var rebuilt = Measure(ScenePath, names);
             foreach (var n in names)

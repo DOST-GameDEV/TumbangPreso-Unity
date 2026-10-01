@@ -1,5 +1,89 @@
 # Ilalim ng Tulay rework guide (ILALIM-1)
 
+⚠️⚠️⚠️ **HANDOFF FOR THE NEXT SESSION (written 2026-10-01 before a manual compaction). Read this
+first; the CURRENT STATE entries under it are the detailed record, newest first.**
+- **Branch and remote.** `claude/kanto-blender-assembly-909442` was PUSHED at `2a610270` on the
+  owner's explicit "need you to push this to the branch". That push holds all the Ilalim work and a
+  merge of `origin/ASTRAReworks` (402 commits; the one conflict, `TumpMatchReadout.cs`, kept both the
+  upstream penalty-surface change and the beggar's prompt). `main` is stale (2026-09-19); the live
+  team branch is `ASTRAReworks`. Push only when the owner asks; never commit the owner's files
+  (`Resources/UI/composition-redesign/*.png.meta`, `ProjectSettings/ProjectAuditorSettings.asset`)
+  or Unity's reimport `.meta` churn (`Resources/UI/input/xelu/**`, the two `prop_glass` materials).
+- **ILALIM-1.6, the map-pool swap, is DONE and PUSHED** (owner: "you also need to replace the old
+  ilalim ng tulay with this one in the map pool"). Details are in the CURRENT STATE entry right
+  below; the owner's open decisions are in TODO ILALIM-1.7.
+  - `IlalimSceneBuilder` writes the shipped `Scenes/Maps/IlalimNgTulay.unity`, keeping the same GUID,
+    index and network surface.
+  - The old map is vaulted at `Scenes/Vault/IlalimNgTulayOld.unity`.
+  - The rebuild's look is the IlalimNgTulay row, and the map card is re-rendered.
+  - Two WorldCourtCue tests are red (the chalk is road-wide lines, not four box edges), and 21
+    old-map probes are ignored.
+  - No played match yet. The bot match does not finish, the same as on clean ASTRAReworks per §4.
+- **The pipeline, end to end.** Blender kits (`tools/author_ilalim_<kit>.py`, textures in
+  `tools/author_ilalim_textures_<kit>.py`) build in this order: street, then trees, then eastside and
+  props, then rooftops and streetlife (they read the east walls and roofs), then
+  `tools/author_ilalim_city.py` (links every kit, plus stations and landmarks). Then
+  `blender -b ArtSource/ilalim/ilalim_city.blend --python tools/export_ilalim_unity.py`, and in Unity
+  **Tumbang Preso > Sample Map > Build Ilalim Rebuild** (batch: `IlalimSceneBuilder.Run`; review
+  renders: `RunReview`). Blender (x, y, z) is Unity (x, z, y).
+- **Life in Unity** (all built by the builder, no hand edits):
+  - traffic: `KantoTraffic`'s routes mode (`Editor/MapKit/IlalimLifeAuthor.cs`; 21 vehicles, never
+    in the court);
+  - pigeons: `LagoonFlocks` on measured perch lines;
+  - the street bed: `KantoStreetSound`;
+  - the sidewalk people in `Runtime/Map/SidewalkLife.cs` and `Editor/MapKit/IlalimSidewalkAuthor.cs`:
+    kids at tag, the magtataho (shoulder pole), spectators, and the beggar (his own voxel model,
+    `tools/build_beggar_voxel.py`) with a COSMETIC coin donation on the Interact verb.
+
+  They walk the court's pavements but never the chalk box, the kerb or within 0.5 m of a prop.
+  Their 36 sounds are synthesized by `tools/synth_ilalim_life_sfx.py`, with the `Loudness` and
+  `Reach` knobs on SidewalkLife. The checks:
+  - the probe: `IlalimSidewalkFilm.RunBuildProbeStills`;
+  - the films: `RunVideos`, then `py -3 tools/encode_ilalim_films.py`;
+  - real Play: `Tests/PlayMode/IlalimSidewalkPlayProbe.cs`.
+- **Unity rules.** Batch Unity (`tools/run_unity_guarded.py`) needs the owner's editor CLOSED and a
+  signed-in Unity Hub (exit 198 with "No valid Unity Editor license" means the Hub session lapsed: the
+  owner signs in). Only one Unity at a time. C# edits recompile in the owner's open editor. Open the
+  scene for the owner with `Unity.exe -projectPath <worktree> -executeMethod
+  TumbangPreso.EditorTools.MapKit.IlalimSceneBuilder.Open`.
+- **OPEN, in order:**
+  1. Finish, commit and push ILALIM-1.6 (above).
+  2. A Z-FIGHT the owner saw on the east shop row near KARINDERYA NI ALING DORY. The first lead is the
+     West East Center balcony front, where a render panel and a breeze-block panel share a plane
+     (x 10.42 to 10.47, y -4.7 to -7.6, about 4.5 m up, in `author_ilalim_eastside.py`'s WEC
+     balcony parapets), and the eatery tarp sign's own faces. The ray-peel check
+     (`scratchpad/zpeel.py`) crashed indexing the original mesh with an evaluated face index: read
+     the evaluated mesh. Fix it in the kit, re-export, rebuild.
+  3. PERFORMANCE: 6.4 M triangles (trees 2.8 M, heritage 760 k, eastside 640 k, rooftops 323 k); only
+     cull LODs so far. Measure the frame rate, then real LODs or simpler far trees and rooftops.
+  4. Owner decisions still open: the train hidden by the solid parapet (railing recommended), cable
+     shadows on the court (the low sun makes them stripe it), Rizal Hall's size from the court, names.
+  5. Real voice recordings would beat the synthesized taho call, "salamat po" and the giggles (drop in
+     files with the same names). Repo size: the Unity art is about 231 MB with no LFS.
+
+⚠️⚠️ **CURRENT STATE (2026-10-01): THE REBUILD IS THE SHIPPED ILALIM NG TULAY (ILALIM-1.6).**
+Owner, 2026-10-01: "wait you also need to replace the old ilalim ng tulaywith this one in the map
+pool". `IlalimSceneBuilder` now writes `Scenes/Maps/IlalimNgTulay.unity`, saving over the shipped
+scene so its GUID (`d1023436a0787e94abfffc99704e8f3a`), the build-settings entry, the map index and
+the network surface are unchanged: no registry change, no protocol bump. The sample
+`Scenes/Samples/IlalimRebuild.unity` is gone (the builder regenerates the map).
+- **The first Ilalim** is vaulted at `Scenes/Vault/IlalimNgTulayOld.unity` with a NEW GUID (the old
+  GUID stays with the shipped path). It has its own file name so two scenes never share the name
+  `IlalimNgTulay`. `IlalimNgTulayBuilder.ScenePath` and every legacy Ilalim author or per-map
+  finishing pass (`IlalimNgTulayBuilder.LegacyScenePath`) open the vault, so none of them can
+  rewrite the rebuild.
+- **The look:** the rebuild's late-afternoon row IS the "IlalimNgTulay" WorldLookProfile row (code
+  defaults and `Resources/WorldLookProfile.asset`); the first Ilalim's row is kept as
+  "IlalimNgTulayOld" so the vaulted scene opens in its own look. The sky material stays
+  `Art/MapAtmosphere/IlalimRebuildSky.mat` (the builder's `SkyKey`); `IlalimNgTulaySky.mat` belongs
+  to the vault. Review renders `Logs/ilalim-unity/v14` match v13 (mean pixel difference under 1/255).
+- **Map card:** `MapCardCapture.RunIlalim` (menu Tumbang Preso/Maps/Render Ilalim ng Tulay Card)
+  wrote `Resources/UI/map-cards/IlalimNgTulay.png`, shot under the soffit down Taft.
+- **MapGeometryCheck:** the shipped Ilalim moved from Gated to Informational, the Kanto and Lagoon
+  Cove rule for Blender maps. 866 findings are the worklist (861 "floating": a prototype's
+  sub-renderers rested one at a time; 5 can-clearance from merged street meshes whose bounds cover
+  the origin). Nothing is excused. See TODO ILALIM-1.5 and ILALIM-1.7.
+
 ⚠️⚠️ **CURRENT STATE (2026-09-29, end of session): EVERY KIT BUILT IN BLENDER AND ASSEMBLED.
 Awaiting owner decisions. Nothing is in Unity. All work is committed LOCALLY on branch
 `claude/kanto-blender-assembly-909442` and NOT pushed (the owner plays before a push).**
@@ -125,7 +209,8 @@ Awaiting owner decisions. Nothing is in Unity. All work is committed LOCALLY on 
   - how big Rizal Hall reads from the court;
   - names.
 - **ILALIM-1.4, IN UNITY (2026-09-30, owner: "put it in game").** Unregistered sample scene
-  `Scenes/Samples/IlalimRebuild.unity`:
+  `Scenes/Samples/IlalimRebuild.unity` (since ILALIM-1.6 the builder writes the shipped
+  `Scenes/Maps/IlalimNgTulay.unity` instead; see CURRENT STATE):
   - Export: `blender -b ArtSource/ilalim/ilalim_city.blend --python tools/export_ilalim_unity.py`
     (about 2 minutes, never saves a .blend) writes `Art/IlalimRebuild/` (Models, Textures,
     `ilalim_layout.json`). Its docstring records every decision.

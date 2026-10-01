@@ -197,7 +197,9 @@ namespace TumbangPreso.Tests
         [Test]
         public void TheIlalimBuilderAgreesWithTheSceneItGenerates()
         {
-            const string builder = "Assets/TumbangPreso/Editor/MapKit/IlalimNgTulayBuilder.cs";
+            // Since ILALIM-1.6 (2026-10-01) the shipped IlalimNgTulay.unity is the Blender rebuild,
+            // written by IlalimSceneBuilder; IlalimNgTulayBuilder writes the vaulted first Ilalim.
+            const string builder = "Assets/TumbangPreso/Editor/MapKit/IlalimSceneBuilder.cs";
             const string scene = MapDirectory + "/IlalimNgTulay.unity";
 
             Assert.IsTrue(File.Exists(builder), builder + " is missing");
@@ -223,7 +225,7 @@ namespace TumbangPreso.Tests
 
                 Assert.AreEqual(fromBuilder, fromScene, 0.0005f,
                     $"grade component '{key}' is {fromBuilder} in the builder and {fromScene} in "
-                    + "the scene. The SCENE is what ships. Re-run IlalimNgTulayPipeline, or "
+                    + "the scene. The SCENE is what ships. Re-run IlalimSceneBuilder.Run, or "
                     + "correct whichever of the two is wrong.");
             }
         }

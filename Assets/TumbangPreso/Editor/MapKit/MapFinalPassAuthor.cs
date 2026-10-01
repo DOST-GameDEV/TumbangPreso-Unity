@@ -18,7 +18,7 @@ namespace TumbangPreso.EditorTools.MapKit
         private const string Folder="Assets/TumbangPreso/Art/MapFinalPass";
         public static void ExtendIlalimVisualGround()
         {
-            var scene=EditorSceneManager.OpenScene("Assets/TumbangPreso/Scenes/Maps/IlalimNgTulay.unity");
+            var scene=EditorSceneManager.OpenScene(IlalimNgTulayBuilder.ScenePath);
             var report=new StringBuilder();var ground=SetIlalimVisualGround("IlalimNgTulay",report);
             MapSurfaceAuthor.FinishLoadedScene("IlalimNgTulay",report,ground);
             EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);AssetDatabase.SaveAssets();
@@ -62,7 +62,7 @@ namespace TumbangPreso.EditorTools.MapKit
             }
             foreach(string map in maps)
             {
-                var scene=EditorSceneManager.OpenScene("Assets/TumbangPreso/Scenes/Maps/"+map+".unity",OpenSceneMode.Single);
+                var scene=EditorSceneManager.OpenScene(IlalimNgTulayBuilder.LegacyScenePath(map),OpenSceneMode.Single);
                 NeighborhoodFinishAuthor.FinishLoadedScene(map,report);
                 EditorSceneManager.MarkSceneDirty(scene);EditorSceneManager.SaveScene(scene);
                 MapFinalInventory.WriteLoadedScene(map, Environment.GetEnvironmentVariable("TUMP_MAP_INVENTORY") ?? "Logs/map-spatial-current");

@@ -19,6 +19,7 @@ namespace TumbangPreso.Tests
     {
         private const string ScenePath = "Assets/TumbangPreso/Scenes/Maps/IlalimNgTulay.unity";
 
+        [Ignore("The first Ilalim ng Tulay is vaulted (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this asserts its authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [Test]
         public void ShopSignBackingsActuallyMeetTheirOwnFascia()
         {
@@ -44,6 +45,7 @@ namespace TumbangPreso.Tests
             finally{EditorSceneManager.CloseScene(scene,true);}
         }
 
+        [Ignore("The first Ilalim ng Tulay is vaulted (ILALIM-1.6, owner 2026-10-01: \"replace the old ilalim ng tulay with this one in the map pool\"); this asserts its authored content, which the Blender rebuild does not carry. See docs/TODO.md ILALIM-1.7.")]
         [Test]
         public void IlalimUsesOneContinuousAsphaltSkinAndNoPatchSlabs()
         {

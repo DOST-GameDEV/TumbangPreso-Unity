@@ -2520,28 +2520,75 @@ after Kanto and the Lagoon Cove. Team-facing issues from that merge are in
     size from the court, and names;
   - owner review of the assembled map.
 
-  All of it is committed locally and not pushed.
+  PUSHED 2026-10-01 at `2a610270` (owner asked). Since then (2026-09-30 and 10-01): the liveliness
+  pass (facade variety, rooftops, street life, landmarks), UN Avenue and Pedro Gil stations with
+  street-end rows and a haze to close the view, street furniture validated against every kit, and
+  many owner fixes. The guide's HANDOFF block at the top is the current summary.
 - [ ] ILALIM-1.4 Export, and a Unity builder that writes an UNREGISTERED sample scene. Every column
   goes on `TumbangPreso/NearFade`, because the AO NearGuard depends on it. Retune the Ilalim
   WorldLookProfile row in Play. Keep BridgeHoop, the overclock pad, LrtTrainFlyby, and the match
   between the train and the train window. BUILT 2026-09-30 (owner: "put it in game"):
   `tools/export_ilalim_unity.py` writes `Art/IlalimRebuild/` (614 prototype .glb, 628 materials,
   the pier grime baked for NearFade), and `Editor/MapKit/IlalimSceneBuilder.cs` (`.Run`,
-  `.RunReview`) writes the unregistered `Scenes/Samples/IlalimRebuild.unity`. Blender (x, y, z) is
+  `.RunReview`) writes the unregistered `Scenes/Samples/IlalimRebuild.unity` (the shipped
+  `Scenes/Maps/IlalimNgTulay.unity` since ILALIM-1.6). Blender (x, y, z) is
   Unity (x, z, y) here, proved against the shipped scene (`Logs/ilalim-unity/v2/frame_proof.txt`:
   hoop, pares cart, pillars, walls and spawns agree to 0.000 m). Gameplay wired: Bounds, pier
   legs with HazardVolume, deck, hoop, pad, pisonet booths, cord trigger, pares cart, flyby (150 s,
-  6 s, window 24.3). Review renders `Logs/ilalim-unity/v2`. OPEN: the WorldLookProfile retune in
-  Play (the rebuild wears the Ilalim row through an alias: sun lifted to 52 degrees, fog 36..180 m,
-  against Blender's 27 degree sun and 45..405 m haze), and the owner's look review.
+  6 s, window 24.3). Review renders `Logs/ilalim-unity/v2`. DONE SINCE (2026-09-30 to 10-01): its
+  own late-afternoon look row (owner: "less like the lagoon map"); moving traffic (KantoTraffic
+  routes mode), pigeons and the street sound bed; sidewalk life (kids, magtataho, spectators, a
+  beggar with a cosmetic donation, his own voxel model) with drawn gaits, planted feet, poppy
+  gestures and 36 synthesized sounds, proved by a probe, films and a PlayMode test. OPEN: the
+  z-fight near the Karinderya sign, performance (6.4 M triangles), and the owner's play review.
 - [ ] ILALIM-1.5 Checks:
-  - MapGeometryCheck is clean (Ilalim is Gated);
+  - MapGeometryCheck is clean (Ilalim is Gated). 2026-10-01: NOT clean. The swap moved the shipped
+    Ilalim to Informational (the Kanto and Lagoon Cove rule for Blender maps): 866 findings, 861
+    "floating" (sub-renderers of one prototype rested one at a time: leaves over trunks, roof caps,
+    vehicle bodies over wheels, rooftop kit) and 5 can-clearance (merged street meshes whose bounds
+    cover the origin: median planter walls, median soil, yellow railings, notices, parol brackets).
+    Nothing excused. It rejoins Gated when the check groups a placement's renderers or these are
+    fixed; the 5 can-clearance ones need a per-vertex look first. Triangles: 6,428,586 placed.
+    Preview-preparation time: not yet measured;
   - the map's probes are green against a clean baseline;
   - a bot match and a played match both finish;
   - the triangle count and the preview-preparation time are measured.
-- [ ] ILALIM-1.6 Swap the rebuild in under the `IlalimNgTulay` scene name. That keeps the same map
+- [x] ILALIM-1.6 Swap the rebuild in under the `IlalimNgTulay` scene name. That keeps the same map
   index, so there is no protocol bump. Vault the old scene in `Scenes/Vault/`, and re-render the
-  map card with MapCardCapture.
+  map card with MapCardCapture. DONE 2026-10-01 (owner: "wait you also need to replace the old
+  ilalim ng tulaywith this one in the map pool"):
+  - `IlalimSceneBuilder` (SceneName "IlalimNgTulay") saves over `Scenes/Maps/IlalimNgTulay.unity`,
+    so its .meta GUID `d1023436a0787e94abfffc99704e8f3a`, the build-settings row, `SceneFlow` and
+    `GameLaunch` entries, the map index and NetSession.ProtocolVersion are all unchanged. The sample
+    `Scenes/Samples/IlalimRebuild.unity` is deleted.
+  - The first Ilalim is at `Scenes/Vault/IlalimNgTulayOld.unity` with a new GUID, out of the build;
+    `IlalimNgTulayBuilder.ScenePath` points there, and every legacy Ilalim author and per-map
+    finishing pass opens it through `IlalimNgTulayBuilder.LegacyScenePath`.
+  - Look: the rebuild's row is now the "IlalimNgTulay" row; the old row is "IlalimNgTulayOld". The
+    rebuild keeps `IlalimRebuildSky.mat` (builder `SkyKey`; the "IlalimRebuild" alias in
+    `WorldLookProfile.Find` serves it). Builder grade written as the scene carries it (saturation
+    1.06, which `MapAtmosphereAuthor.Apply` always set).
+  - Card: `MapCardCapture.RunIlalim` wrote `Resources/UI/map-cards/IlalimNgTulay.png`, shot under
+    the soffit (the generic pose sat over the LRT deck and hid the court).
+- [ ] ILALIM-1.7 THE FIRST ILALIM IS VAULTED; what the rebuild does not carry yet. Tests about the
+  vaulted map's own content are [Ignore]d with this entry as the reason: MapGraphicsReviewProbe's
+  16 Ilalim finish reviews, AmbientLifeProbe's Ilalim dog, cat and bird visits, MapExperienceProbe
+  StreetFrontageClearanceReview and DiagnoseStreetGlazing, MapSurfaceTests' two, NearFadeTests'
+  Ilalim pole count. Missing on the rebuild, owner decisions:
+  - no AmbientLife (the cat and the dog): Ilalim was taken out of AmbientLifeProbe's three
+    all-map animal lists;
+  - no near-fade on its street poles (no `SidewalkPole_*` / `PavementTree_*`; NearFadeTests accepts
+    those two prefixes from the vaulted scene only);
+  - the court chalk is two road-wide lines merged into one `chalk box lines` mesh (Blender), not
+    four box edges, so `CourtBoundaryPresentation` registers no authored edge and
+    `CourtSurfacePresentation` finds too few marks: WorldCourtCueTests
+    CourtMatchesAllFiveMapsAndCapturesRestArmedAndOff and
+    FiveMapStageCapturesPreserveGeometryAndRestoreOriginalLighting fail on IlalimNgTulay (the
+    static lines stay drawn under the live square);
+  - the map description still reads "LRT Gilmore strip" (the rebuild is Taft at Padre Faura), and
+    the registry preview shot (yaw 35, 22 m, 13.5 m up) frames from over the deck.
+  - legacy tools that loop over `SceneFlow.Maps` (MapSurfaceAuthor, MapFinalInventory) still treat
+    "IlalimNgTulay" as the first Ilalim's surfaces; do not run them on the rebuild unreviewed.
 ### LIGHT-2 · Lighting style picker in the Graphics tab ⚠️ IN PROGRESS, 2026-09-25 (only slot 3 open)
 
 **Renamed 2026-09-26 (BUGS-0926.5):** Bright is now **Standard** (slot 1, the default) and Classic is

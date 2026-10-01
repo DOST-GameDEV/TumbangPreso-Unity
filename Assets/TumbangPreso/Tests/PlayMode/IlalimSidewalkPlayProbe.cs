@@ -13,7 +13,7 @@ namespace TumbangPreso.PlayTests
     /// <summary>
     /// THE SIDEWALK PEOPLE'S ARMS IN REAL PLAY (owner 2026-10-01: "the feet are moving but the
     /// hands arent", seen in Play). The builder's probe and films step `SidewalkLife.Simulate` by
-    /// hand outside Play; this enters Play in the Ilalim rebuild sample, lets the life run on its
+    /// hand outside Play; this enters Play on the Ilalim rebuild (the shipped IlalimNgTulay scene), lets the life run on its
     /// own `Update` for 25 s, and reads every walker's limbs in a LateUpdate at execution order
     /// 32000 (after the animation system and every other LateUpdate; WaitForEndOfFrame never fires
     /// in batch mode), so whatever an Animator wrote would be in it):
@@ -24,7 +24,8 @@ namespace TumbangPreso.PlayTests
     [Category("WallClock")]
     public sealed class IlalimSidewalkPlayProbe
     {
-        private const string Scene = "Assets/TumbangPreso/Scenes/Samples/IlalimRebuild.unity";
+        // The rebuild IS the shipped Ilalim since ILALIM-1.6 (2026-10-01).
+        private const string Scene = "Assets/TumbangPreso/Scenes/Maps/IlalimNgTulay.unity";
         private const string Report = "Logs/ilalim-unity/videos_v4/play_arms.txt";
 
         [UnityTest, Timeout(240000)]
