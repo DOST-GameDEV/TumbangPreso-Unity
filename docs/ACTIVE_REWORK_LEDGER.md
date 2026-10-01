@@ -1,11 +1,11 @@
 # Active Rework Checkpoint
 
-Updated2026-10-01. Branch ASTRAReworks. Protocol109 candidate. Goal active.
+Updated2026-10-01. Branch ASTRAReworks. Protocol110 candidate. Goal active.
 Read AGENTS, docs/TODO (the status queue), WORKING_RULES and NETWORKING.
 
 ## Live Local Resume
 
-Updated2026-10-01. Publishedffe5030c5; protocol103. Overall goal active.
+Updated2026-10-01. Published636472796; protocol110. Overall goal active.
 Owner repeats: finish actionable Feedback bottom-up, then initial network/bot/
 optimization/UX and applicable TODO. Continue autonomously while the owner sleeps.
 Loading remains concurrently owned by the friend. Owner reopened the remaining
@@ -1606,3 +1606,5 @@ Doc row with original comments struck only after remote verification. No heavy j
 Next Dante forward cascade, fresh claims/intake first; current player still100.
 
 Concurrent tutorial hidden-can collision fix338c94bad integrated with all authored receipts; combined compatibility110. Approval receiver source unchanged since qualified109, constant advanced for both contracts. Reuse that case; no repeated gate/player build. Catch code/eight cases unchanged. Native109approval is pre-tutorial110 scope, actual103player scope remainsFFE. Publish now, then exactsame Nemu row note; no full110peer claim.
+
+Current compact local continuation2026-10-01: own five engineering units now published: ba2e7eef8 Frostbite;5dcb6a54c queue adverts;137bde051 Fetch allocations;d331cd72d Cheska Wiki rules;3322c6e8b Catch, integrated636472796 protocol110.24distinct native gameplay acceptance cases, Core numeric1case, approval receiver qualified on108/109; later tutorial110constant integration reuses unchanged receiver. Real protocol103 Windows player/LAN remains exactFFE frozen scope, no later110player or individual-skill peer qualification. All Unity/Core/freeze/player jobs terminal, no task-owned player/browser windows remain. Unrelated dirty models/protected metas/HeroHazards/quality/motion preserved. Same Nemu Feedback note simplified and updated; human controls untouched. Incoming Amihan/Dante/Boulder/tutorial receipts retained, not claimed as local authorship. Next actionable bottom row: Nemu Haunt legacy DEVOURING SEANCE7s/10points still contradicts current Haunt15points/chase-all/Haunted7.5s. Current Status Effects says Haunted hides can/slipper HUD markers, nearsights, muffles audio, and is excluded from Status Immunity. StatusKind/CharacterMotor has no Haunted state yet. Inspect existing generic perception/audio helpers first; no new authored VFX/SFX/animation/model/map or loading work. Owner friend still owns loading; finalized Phaister/Paete protected. Fresh fetch/claims before edits. User priority is continued shipped fixes with bounded meaningful checks; do not redo qualified units or full-player build after every small integration.
