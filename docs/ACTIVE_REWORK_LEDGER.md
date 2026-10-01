@@ -1941,3 +1941,18 @@ terminal; verify fresh executable/data/runtime hash and15422input drift(prep
 settings separately); then actual matching protocol114peers with preserved named
 profiles. One heavy job. Do not restart merely because a wait yields. Full goal
 active. No task browser/preview/player open; only this task build helper alive.
+
+CURRENT-PLAYER-1001 build50183 terminal SUCCESS2141MB/155s.15422before/after
+input hashes unchanged, no prep or code drift. Source239050ac6, nativeaecc0ee2
+imported candidate. Exact runtimeSHA36cdbf3c41afbb287e4f4890046a26373b5a4e082a478705fdd7a3a61182da21.
+Post-build checker70733 terminal; no Desktop replacement. Actual guarded direct
+peer34576 FAILS: hostround0inactive, clientdrops/offlineHOST, no round boundary,
+structural mismatch. Both114/sameDLL, actualD3D11/localUDP; profiles/input prefs
+restored and both players exited. No successful current-peer/release claim.
+Specific investigation: NetBootstrap joins then immediately SceneFlow.Go before
+existing WaitForConnectionAsync(admission+seat); host has no peer1approval log,
+clientClosedByRemote, warmup11.31/11.97s. NGO2.13.1approval default10, UTPsilence8.
+Do not blindly lengthen established outage timing or change friend's loading.
+Next correct/prove network admission handoff via existing waiter, then targeted
+startup/deadline evidence and actual pair only after an actual fix. Retain failed
+receipt and no unchanged retry. Full goal active; all current jobs terminal.

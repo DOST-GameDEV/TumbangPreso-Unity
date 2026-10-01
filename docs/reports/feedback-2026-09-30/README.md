@@ -197,3 +197,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Moving familiar receipt smoothing](familiar-network-smoothing.md).
 
 [Bot companion reaction-delay correction](bot-companion-observation.md).
+
+[Current114player build and failed direct-peer evidence](current-player-114.md).

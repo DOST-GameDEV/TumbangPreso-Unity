@@ -84,6 +84,11 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   controls. [Evidence](reports/feedback-2026-09-30/bot-companion-observation.md).
   Whole-match/player checks and Haunted sensor fairness remain separate.
 
+- [ ] NETWORK-COLD-JOIN-1001: current114player build succeeds, but real direct
+  peers fail before admission/round1. Investigate immediate CLI arena handoff
+  before connection/seat completion and startup deadlines; retain loading
+  ownership and established outage behavior. [Evidence](reports/feedback-2026-09-30/current-player-114.md).
+
 Source: [TUMP Wiki](https://docs.google.com/document/d/1jvr7NLzhHrbw-wrG676AeOkoTxJf4GokkfmxpO0ddLg/edit),
 read on 2026-09-30, including ability, status and feedback tabs. The document wins
 for other characters. Paete and Phaister are finalized and governed by the
