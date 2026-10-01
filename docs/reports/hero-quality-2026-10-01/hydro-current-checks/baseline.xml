@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 04:51:46Z" end-time="2026-10-01 04:51:53Z" duration="6.8850361">
+  <test-suite type="TestSuite" id="2339" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1083" result="Failed" site="Child" start-time="2026-10-01 04:51:46Z" end-time="2026-10-01 04:51:53Z" duration="6.885036" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2333" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1083" result="Failed" site="Child" start-time="2026-10-01 04:51:46Z" end-time="2026-10-01 04:51:53Z" duration="6.868637" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="230064" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2334" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1083" result="Failed" site="Child" start-time="2026-10-01 04:51:46Z" end-time="2026-10-01 04:51:53Z" duration="6.858714" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2335" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1083" result="Failed" site="Child" start-time="2026-10-01 04:51:46Z" end-time="2026-10-01 04:51:53Z" duration="6.848241" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1909" name="RafiExpansionProbe" fullname="TumbangPreso.PlayTests.RafiExpansionProbe" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-01 04:51:46Z" end-time="2026-10-01 04:51:53Z" duration="6.819060" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1911" name="CurrentChoosesFirstContactRegardlessOfInventoryOrder" fullname="TumbangPreso.PlayTests.RafiExpansionProbe.CurrentChoosesFirstContactRegardlessOfInventoryOrder" methodname="CurrentChoosesFirstContactRegardlessOfInventoryOrder" classname="TumbangPreso.PlayTests.RafiExpansionProbe" runstate="Runnable" seed="797149024" result="Failed" start-time="2026-10-01 04:51:46Z" end-time="2026-10-01 04:51:53Z" duration="6.806785" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The earlier contact must win even when enumerated last.
+  Expected: greater than 1.0f
+  But was:  0.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RafiExpansionProbe+<CurrentChoosesFirstContactRegardlessOfInventoryOrder>d__12.MoveNext () [0x0022b] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/RafiExpansionProbe.cs:97
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

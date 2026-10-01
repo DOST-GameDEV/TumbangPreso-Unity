@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TumbangPreso.Net;
+using TumbangPreso.Core;
 using TumbangPreso.Visual;
 using UnityEngine;
 
@@ -28,7 +29,7 @@ namespace TumbangPreso.Abilities
         { var f = _state; f.Source = gameObject; f.Remaining = Remaining; return f; }
         public static bool IsWater(WorldEffectSnapshot.Kind kind) => kind == WorldEffectSnapshot.Kind.Current
             || kind == WorldEffectSnapshot.Kind.Mirrorwake || kind == WorldEffectSnapshot.Kind.Breakwater;
-        public static float Gather(WorldEffectSnapshot.Kind kind) => kind == WorldEffectSnapshot.Kind.Current ? .18f
+        public static float Gather(WorldEffectSnapshot.Kind kind) => kind == WorldEffectSnapshot.Kind.Current ? RafiRules.CurrentGather
             : kind == WorldEffectSnapshot.Kind.Breakwater ? .55f : 0;
 
         public static RafiWaterField Cast(AbilityContext ctx, WorldEffectSnapshot.Kind kind,
@@ -137,17 +138,21 @@ namespace TumbangPreso.Abilities
             // Solid cover stops the current itself; players and equipment do not.
             if (ClearDistance(_state.Position + Vector3.up * .85f, _state.Forward, travel) < travel - .03f)
             { SpendCurrent(); return; }
+            Slipper first = null;
+            float firstTime = float.PositiveInfinity;
             foreach (var shoe in _shoes)
             {
                 if (shoe == null || shoe.State != SlipperState.InFlight) continue;
+                var velocity = shoe.Velocity;
+                if (new Vector2(velocity.x, velocity.z).sqrMagnitude < .001f) continue;
                 var a = (_previousShoes.TryGetValue(shoe, out var old) ? old : shoe.transform.position) - before;
-                var b = shoe.transform.position - now; var delta = b - a;
-                float t = delta.sqrMagnitude > .00001f ? Mathf.Clamp01(-Vector3.Dot(a, delta) / delta.sqrMagnitude) : 0;
-                var closest = a + delta * t;
-                if (Mathf.Abs(closest.y) > .70f || new Vector2(closest.x, closest.z).magnitude > _state.Radius) continue;
-                if (shoe.HostSteerFlight(_state.Forward, 40))
-                { NetCue.Play("sfx_rafi_intercept", shoe.transform.position); SpendCurrent(); break; }
+                var b = shoe.transform.position - now;
+                if (!RafiRules.FirstCurrentContact(a.x, a.y, a.z, b.x, b.y, b.z, _state.Radius, out float time)) continue;
+                if (time < firstTime || (time == firstTime && first != null && shoe.OwnerSlot < first.OwnerSlot))
+                { first = shoe; firstTime = time; }
             }
+            if (first != null && first.HostSteerFlight(_state.Forward, RafiRules.CurrentTurnDegrees))
+            { NetCue.Play("sfx_rafi_intercept", first.transform.position); SpendCurrent(); }
         }
         private void SpendCurrent()
         { _state.Split = true; _visual.SetState(_state); MatchRpc.Instance?.BroadcastRafiWater(Capture()); }

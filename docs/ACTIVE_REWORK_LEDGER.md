@@ -2076,6 +2076,29 @@ Presentation remains its existing authored provisional current until its own fil
 pass; do not mark the whole Hydro kit complete. Protocol changes need fresh fetch
 before publication and matching-player qualification remains separate.
 
+Hydro baseline isolates current resolver ordering on two real flights with
+reversed inventory; other new cooldown/Core inputs staged independently. Expected
+1case XML, no retries used. Baseline old resolver frozen on isolated candidate;
+final native check will also retain real moving-flight identity/resource case.
+
+Hydro baseline1failure reproduces later-enumerated near flight untouched. No
+fixture repair; final copies only earliest-contact resolver and runs two cases:
+reversed inventory plus original real moving-flight/identity/cooldown case.
+Core4/4passes after fixing command HOME to writable existing setup home; first
+CLI attempt hit read-only default home, no product/test failure. Native inputs
+frozen in Logs/rafi-current-final, no overlapping heavy job.
+
+Hydro final2/2native and Core4/4pass; first-contact reversed-order control and
+real moving current preserve speed/credit/one-hit, cooldown spent/refused. All
+frozen inputs unchanged; OOM11/kill6unchanged. No native fixture repair. Ready
+to publish scoped115unit; new peer/player/film/audio qualification separate.
+
+Hydro ec644a4b integrated with incoming229a9aaa Haunted menu correction without
+runtime conflict; current protocol115. Owned2native/4Core receipts retain their
+pre-merge source boundary; incoming Haunted receipts remain separate. Next Hydro
+Skim replaces legacy Mirrorwake through existing held/throw/ground/snapshot
+routes; inspect exact identity/cancellation/terrain/recovery contracts first.
+
 Published HAUNTED-MENU229a9aaaf atbc86453ff, remote verified. Same Nemu Notes
 updated/read back; controls/comments unchanged. Integrated Hydro claim265e63bde;
 its reserved Rafi/Core/compatibility paths remain untouched. Next bounded bot
@@ -2126,3 +2149,18 @@ structural scan rebuilds and whole-game FPS remain separate. No kit/loading/art/
 protocol change or fixture repair. Jobs67198/97546terminal. Publish exact paths,
 then inspect PeerDeparture receiver framing: unlike newer bounded carriers it
 currently accepts trailing unread bytes before advancing its notice sequence.
+
+HYDRO-SKIM-1001 next cloud unit claims RafiHeroKit.cs, Carrier.cs, Slipper.cs,
+Core RafiRules.cs/tests, existing RafiExpansionProbe.cs and NetSession protocol
+line. Plan is reports/hero-quality-2026-10-01/skim-implementation.md. Preserve
+shared input, scores, host authority and existing snapshot/role/recovery routes.
+Exact held identity, one throw, first-ground bounded slide and cancellation are
+required before publication. Other contributors retain AI/Haunted/network-start
+work; no new code change for Skim yet. Current Crosscurrent publication check
+is finishing; continue directly, with no idle between coherent units.
+
+Integrated Hydro first-contactec644a4b and Skim reservationa47d0206d, with
+both ledger histories intact and no runtime conflict. Current compatibility115;
+local bot/menu receipts remain114overlay checks, not merged115peer qualification.
+Keep contributor Rafi/Carrier/Slipper/Core/NetSession reservations untouched.
+Local planningfd15da554 ready to publish; no unchanged native rerun justified.

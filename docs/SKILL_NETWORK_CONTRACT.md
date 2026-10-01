@@ -512,3 +512,12 @@ reach use the measured court diagonal with40mminimum, correcting expanded-court
 misses and the old26mwarning mismatch. No packet layout change. Four distinct
 native cases and two Core cases pass; actual peers/current player remain separate.
 [Evidence](reports/feedback-2026-09-30/airburst-current-wiki.md).
+
+## Crosscurrent Compatibility
+
+Protocol115 replaces Hydro signature charges with a35second cooldown and chooses
+the earliest swept eligible flight contact instead of scene inventory order.
+The stable rafi_skill1 ID and existing host-confirmed cast/resource, current world
+snapshot and slipper state routes remain. Current rendering does not acquire
+resolution authority. Matching clients are required; no packet layout changes.
+[Focused evidence](reports/hero-quality-2026-10-01/hydro-current-checks/README.md).

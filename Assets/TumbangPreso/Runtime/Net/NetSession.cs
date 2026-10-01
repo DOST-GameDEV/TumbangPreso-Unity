@@ -548,7 +548,8 @@ namespace TumbangPreso.Net
         // movement must use matching tuning. The movement-budget ceiling is unchanged.
         // Protocol107 aligns Unstoppable/Bastion clocks and the bounded cleanse exception.
         //114: current Wiki Airburst releases at1.5seconds with a60degree fan.
-        public const int ProtocolVersion = 114;
+        //115: Hydro Current uses a35second cooldown and earliest swept contact.
+        public const int ProtocolVersion = 115;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

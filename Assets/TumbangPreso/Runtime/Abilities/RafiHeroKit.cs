@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TumbangPreso.Net;
+using TumbangPreso.Core;
 using TumbangPreso.UI;
 using UnityEngine;
 
@@ -40,17 +41,17 @@ namespace TumbangPreso.Abilities
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
             public Crosscurrent() : base("rafi_skill1", "CROSSCURRENT",
                 "Aim a narrow current to bend one flying slipper. Its thrower keeps the credit; later throws pass through.",
-                0, glyph: AbilityGlyph.RafiCrosscurrent,
+                RafiRules.CurrentCooldown, glyph: AbilityGlyph.RafiCrosscurrent,
                 summary: "Bend one flying slipper. Its thrower keeps the credit.",
-                telegraphRadius: .65f, telegraphRange: 6,
-                castAction: "hero-rafi-cut", viewmodelAction: "current-cut", castCue: "sfx_cast_rafi_current", charges: 2) { }
+                telegraphRadius: RafiRules.CurrentRadius, telegraphRange: RafiRules.CurrentRange,
+                castAction: "hero-rafi-cut", viewmodelAction: "current-cut", castCue: "sfx_cast_rafi_current") { }
             protected override void OnActivate(AbilityContext ctx)
             {
                 if (!NetAuthority.ShouldResolve()) return;
                 bool tight = ctx.HasVariant("rafi.1.tightcut");
                 float speed = 8 * ctx.GainScale("rafi.1.tightcut");
-                RafiWaterField.Cast(ctx, WorldEffectSnapshot.Kind.Current, .65f * ctx.CostScale("rafi.1.tightcut"),
-                    speed, .18f + 6f / speed, tight);
+                RafiWaterField.Cast(ctx, WorldEffectSnapshot.Kind.Current, RafiRules.CurrentRadius * ctx.CostScale("rafi.1.tightcut"),
+                    speed, RafiRules.CurrentGather + RafiRules.CurrentRange / speed, tight);
             }
         }
 

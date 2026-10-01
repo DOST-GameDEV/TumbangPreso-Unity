@@ -33,6 +33,15 @@ attribution; final native film/listening/implementation remain open. External
 reference video access was unavailable and is not claimed.
 
 
+### HYDRO-CURRENT-1001: first Hydro implementation unit
+
+Crosscurrent migrates from two charges to the published35second cooldown and
+chooses the earliest swept flying-slipper contact while retaining throw credit.
+Core4cases and final native2cases pass; baseline reproduces earlier-contact
+failure. Shipped ec644a4b; integrated with the incoming Haunted menu fix.
+Other Hydro slots and presentation remain open.
+[Evidence](reports/hero-quality-2026-10-01/hydro-current-checks/README.md).
+
 ### PHAISTER-HEX-1001: refine the hallucination presentation
 
 Owner-authorized exception to finalized-kit protection. Full-size grounded copies,
