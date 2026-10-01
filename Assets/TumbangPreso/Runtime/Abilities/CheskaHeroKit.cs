@@ -12,7 +12,7 @@ namespace TumbangPreso.Abilities
     ///
     /// | Slot | Name | Owner's table |
     /// |---|---|---|
-    /// | Signature | COLD FEET | a chilling field on the floor that inflicts Chilled indefinitely to players caught inside it; lasts 5 s; 35 s |
+    /// | Signature | COLD FEET | a chilling field on the floor that inflicts Chilled indefinitely to players caught inside it; lasts7.5s;35s |
     /// | Attacking | FROSTBITE | imbue the slipper with Frozen; hitting another player with it inflicts Frozen; 35 s |
     /// | Defending | GLACIAL WALL | an arc-shaped icicle wall that blocks slippers and players; takes 3 slipper hits to shatter; 35 s |
     /// | Ultimate | ABSOLUTE ZERO | inflict Frozen on every player, followed by Chilled after thawing; 12 objective points |
@@ -22,7 +22,7 @@ namespace TumbangPreso.Abilities
     /// git history (`CheskaHeroKit.cs` before this commit) and the effects it built are reused: the sheet
     /// is Cold Feet's field, the barricade is the wall's body, the nova's prison is the freeze.
     /// </summary>
-    public sealed class CheskaHeroKit : HeroKit
+    public sealed class CheskaHeroKit : HeroKit, ITimedKitReplication
     {
         public CheskaHeroKit() : base("cheska", "CHESKA")
         {
@@ -36,6 +36,37 @@ namespace TumbangPreso.Abilities
 
         /// <summary>True while her slipper carries the frost (Frostbite loaded, not yet thrown).</summary>
         public bool IsFrostbiteLoaded { get; set; }
+        private bool _joiningFrostbiteSettled;
+
+        public TimedKitSnapshot CaptureTimedKit()
+            => new TimedKitSnapshot(AttackingSkill, IsFrostbiteLoaded ? AttackingSkill.DurationRemaining : 0);
+
+        public bool RestoreTimedKit(CharacterMotor motor, TimedKitSnapshot state)
+        {
+            float remaining = state.PersonalRemaining;
+            if (motor == null || _joiningFrostbiteSettled || AttackingSkill.IsActive ||
+                !float.IsFinite(remaining) || remaining < 0 || remaining > CryoRules.FrostbiteLoadSeconds ||
+                (remaining > 0 && motor.IsDefender)) return false;
+            _joiningFrostbiteSettled = true;
+            if (remaining <= 0) return false;
+            // Equipment hydration may follow this message. Restore the accepted
+            // personal load without activating, spending or touching a slipper.
+            IsFrostbiteLoaded = true;
+            ((Frostbite)AttackingSkill).RestoreLoad(remaining);
+            return true;
+        }
+
+        public override void Reset()
+        {
+            IsFrostbiteLoaded = false; _joiningFrostbiteSettled = false;
+            base.Reset();
+        }
+
+        public override void ResetForRound(AbilityContext ctx)
+        {
+            base.ResetForRound(ctx);
+            IsFrostbiteLoaded = false; _joiningFrostbiteSettled = false;
+        }
 
         /// <summary>The throw took the frost: the load is spent.</summary>
         public void ConsumeFrostbite() => IsFrostbiteLoaded = false;
@@ -48,7 +79,7 @@ namespace TumbangPreso.Abilities
 
             public ColdFeet()
                 : base("cheska_skill1", "COLD FEET",
-                       "Hold to aim, release to freeze a patch of street for 5 s. Anyone standing in it is Chilled: half speed, and it lingers.",
+                       "Hold to aim, release to freeze a patch of street for 7.5 s. Anyone standing in it is Chilled: half speed, and it lingers.",
                        CryoRules.ColdFeetCooldown, 0.0f, AbilityGlyph.CheskaFrostSheet,
                        summary: "Freeze a patch of street. Anyone in it is Chilled.",
                        telegraphRadius: CryoRules.ColdFeetRadius, telegraphRange: CryoRules.ColdFeetMaxRange,
@@ -89,12 +120,16 @@ namespace TumbangPreso.Abilities
                 _kit = kit;
             }
 
-            public override bool CanActivate(AbilityContext ctx) => base.CanActivate(ctx) && !ctx.Motor.IsDefender;
+            public override bool CanActivate(AbilityContext ctx)
+                => base.CanActivate(ctx) && !ctx.Motor.IsDefender && ctx.Motor.HoldingSlipper;
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                _kit._joiningFrostbiteSettled = true;
                 _kit.IsFrostbiteLoaded = true;
             }
+
+            public void RestoreLoad(float remaining) => RestoreLiveClock(remaining);
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
@@ -143,14 +178,14 @@ namespace TumbangPreso.Abilities
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
             public AbsoluteZero()
                 : base("cheska_ultimate", "ABSOLUTE ZERO",
-                       "The whole street freezes. Every other player is Frozen for 2.5 s, then Chilled for 5 s as they thaw.",
+                       "After 1.5 s, every player is Frozen for 2.5 s, then Chilled for 5 s as they thaw.",
                        0.0f, 0.0f, AbilityGlyph.CheskaNova,
                        summary: "Freeze every player on the map, then chill them.",
                        castAction: "hero-cheska-nova", viewmodelAction: "nova-burst",
                        castCue: "sfx_cast_cheska_absolutezero")
             {
                 TelegraphStyle = GroundReticle.Style.Frost;
-                Windup = UltimateWindup;
+                Windup = CryoRules.AbsoluteZeroDelay;
                 SupportsPendingSnapshot = true;
             }
 
@@ -166,7 +201,7 @@ namespace TumbangPreso.Abilities
                 {
                     foreach (var p in round.Players)
                     {
-                        if (p == null || p.PlayerSlot == ctx.Motor.PlayerSlot) continue;
+                        if (p == null) continue;
                         // Frozen now; Chilled for the 5 s after the thaw (the timer runs through the
                         // freeze, where a slow changes nothing, so it is the thaw's 5 s exactly).
                         p.ApplyStagger(StatusRules.FrozenSeconds, StunElement.Ice, 9);

@@ -1,0 +1,116 @@
+{
+  "passed": true,
+  "faults": [],
+  "host": {
+    "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-roundfreeze-0930\\Logs\\feedback-0930-roundplayer\\lan-freeze-graphics\\demo-clean-direct\\host.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": false,
+        "score": 2340,
+        "travelled": 239.9
+      },
+      {
+        "seat": 1,
+        "char": 3,
+        "bot": true,
+        "origin": "HandedToBot",
+        "taya": true,
+        "score": 80,
+        "travelled": 121.1
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 100,
+        "travelled": 223.2
+      },
+      {
+        "seat": 3,
+        "char": 0,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 400,
+        "travelled": 216.5
+      }
+    ],
+    "role": "HOST",
+    "networked": "True",
+    "slot": "0",
+    "protocol": "98",
+    "sampled": "163.0",
+    "round": "2",
+    "active": "True",
+    "defender": "1",
+    "mode": "HeroStrike",
+    "map": "Eskinita",
+    "structural": "F8D5C0E1",
+    "hash": "07AEFBF4"
+  },
+  "client": {
+    "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-roundfreeze-0930\\Logs\\feedback-0930-roundplayer\\lan-freeze-graphics\\demo-clean-direct\\client.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": false,
+        "score": 2340,
+        "travelled": 247.9
+      },
+      {
+        "seat": 1,
+        "char": 3,
+        "bot": false,
+        "origin": "Human",
+        "taya": true,
+        "score": 40,
+        "travelled": 22.3
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 100,
+        "travelled": 217.7
+      },
+      {
+        "seat": 3,
+        "char": 0,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 400,
+        "travelled": 214.5
+      }
+    ],
+    "role": "CLIENT",
+    "networked": "True",
+    "slot": "1",
+    "protocol": "98",
+    "sampled": "150.0",
+    "round": "2",
+    "active": "True",
+    "defender": "1",
+    "mode": "HeroStrike",
+    "map": "Eskinita",
+    "structural": "F8D5C0E1",
+    "hash": "EE2ACC47"
+  },
+  "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-roundfreeze-0930\\Builds\\feedback-0930-roundfreeze\\TumbangPreso.exe",
+  "clientArtifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-roundfreeze-0930\\Builds\\feedback-0930-roundfreeze\\TumbangPreso.exe",
+  "expectedProtocolRefusal": false,
+  "runtimeSha256": "4d29b3e2235ed71aa2c7992c56ff5e560ca82c5ce6d960ae2318e65440f000aa",
+  "clientRuntimeSha256": "4d29b3e2235ed71aa2c7992c56ff5e560ca82c5ce6d960ae2318e65440f000aa",
+  "sharedInputUnchanged": true
+}

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 22:19:37Z" end-time="2026-09-30 22:19:37Z" duration="0.2563054">
+  <test-suite type="TestSuite" id="2237" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="997" result="Passed" start-time="2026-09-30 22:19:37Z" end-time="2026-09-30 22:19:37Z" duration="0.256305" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2231" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="997" result="Passed" start-time="2026-09-30 22:19:37Z" end-time="2026-09-30 22:19:37Z" duration="0.242166" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28068" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2232" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="997" result="Passed" start-time="2026-09-30 22:19:37Z" end-time="2026-09-30 22:19:37Z" duration="0.237200" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2233" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="997" result="Passed" start-time="2026-09-30 22:19:37Z" end-time="2026-09-30 22:19:37Z" duration="0.232443" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1284" name="FetchQueryAllocationTests" fullname="TumbangPreso.PlayTests.FetchQueryAllocationTests" classname="TumbangPreso.PlayTests.FetchQueryAllocationTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-30 22:19:37Z" end-time="2026-09-30 22:19:37Z" duration="0.203699" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1287" name="DestructionAndBirthRefreshTheSharedInventory" fullname="TumbangPreso.PlayTests.FetchQueryAllocationTests.DestructionAndBirthRefreshTheSharedInventory" methodname="DestructionAndBirthRefreshTheSharedInventory" classname="TumbangPreso.PlayTests.FetchQueryAllocationTests" runstate="Runnable" seed="1151985548" result="Passed" start-time="2026-09-30 22:19:37Z" end-time="2026-09-30 22:19:37Z" duration="0.093515" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1285" name="WarmFetchEligibilityDoesNotAllocateSceneQueryArrays" fullname="TumbangPreso.PlayTests.FetchQueryAllocationTests.WarmFetchEligibilityDoesNotAllocateSceneQueryArrays" methodname="WarmFetchEligibilityDoesNotAllocateSceneQueryArrays" classname="TumbangPreso.PlayTests.FetchQueryAllocationTests" runstate="Runnable" seed="1277897581" result="Passed" start-time="2026-09-30 22:19:37Z" end-time="2026-09-30 22:19:37Z" duration="0.044426" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1286" name="WarmQueriesReadCurrentOwnershipActivityAndFlightState" fullname="TumbangPreso.PlayTests.FetchQueryAllocationTests.WarmQueriesReadCurrentOwnershipActivityAndFlightState" methodname="WarmQueriesReadCurrentOwnershipActivityAndFlightState" classname="TumbangPreso.PlayTests.FetchQueryAllocationTests" runstate="Runnable" seed="1709570506" result="Passed" start-time="2026-09-30 22:19:37Z" end-time="2026-09-30 22:19:37Z" duration="0.049684" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

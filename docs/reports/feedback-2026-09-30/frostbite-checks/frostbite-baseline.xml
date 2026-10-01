@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 22:04:40Z" end-time="2026-09-30 22:04:52Z" duration="12.2286961">
+  <test-suite type="TestSuite" id="2228" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="990" result="Failed" site="Child" start-time="2026-09-30 22:04:40Z" end-time="2026-09-30 22:04:52Z" duration="12.228696" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2222" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="990" result="Failed" site="Child" start-time="2026-09-30 22:04:40Z" end-time="2026-09-30 22:04:52Z" duration="12.214937" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26020" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2223" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="990" result="Failed" site="Child" start-time="2026-09-30 22:04:40Z" end-time="2026-09-30 22:04:52Z" duration="12.209983" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2224" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="990" result="Failed" site="Child" start-time="2026-09-30 22:04:40Z" end-time="2026-09-30 22:04:52Z" duration="12.205494" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1297" name="FrostbiteDeliveryTests" fullname="TumbangPreso.PlayTests.FrostbiteDeliveryTests" classname="TumbangPreso.PlayTests.FrostbiteDeliveryTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-09-30 22:04:40Z" end-time="2026-09-30 22:04:52Z" duration="12.176985" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1301" name="AnOrdinaryBodyBlockDoesNotFreeze" fullname="TumbangPreso.PlayTests.FrostbiteDeliveryTests.AnOrdinaryBodyBlockDoesNotFreeze" methodname="AnOrdinaryBodyBlockDoesNotFreeze" classname="TumbangPreso.PlayTests.FrostbiteDeliveryTests" runstate="Runnable" seed="594758296" result="Failed" start-time="2026-09-30 22:04:40Z" end-time="2026-09-30 22:04:48Z" duration="7.668986" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The actual throw must hit the requested body.
+  Expected: not equal to 0
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.FrostbiteDeliveryTests+<ThrowAtBody>d__12.MoveNext () [0x002bf] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\FrostbiteDeliveryTests.cs:94
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1300" name="ARealFrostedThrowFreezesAnotherAttacker" fullname="TumbangPreso.PlayTests.FrostbiteDeliveryTests.ARealFrostedThrowFreezesAnotherAttacker" methodname="ARealFrostedThrowFreezesAnotherAttacker" classname="TumbangPreso.PlayTests.FrostbiteDeliveryTests" runstate="Runnable" seed="1598671304" result="Failed" start-time="2026-09-30 22:04:48Z" end-time="2026-09-30 22:04:50Z" duration="2.459719" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The actual throw must hit the requested body.
+  Expected: not equal to 0
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.FrostbiteDeliveryTests+<ThrowAtBody>d__12.MoveNext () [0x002bf] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\FrostbiteDeliveryTests.cs:94
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1299" name="ARealFrostedThrowFreezesTheDefender" fullname="TumbangPreso.PlayTests.FrostbiteDeliveryTests.ARealFrostedThrowFreezesTheDefender" methodname="ARealFrostedThrowFreezesTheDefender" classname="TumbangPreso.PlayTests.FrostbiteDeliveryTests" runstate="Runnable" seed="1107606896" result="Failed" start-time="2026-09-30 22:04:50Z" end-time="2026-09-30 22:04:52Z" duration="1.987557" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The actual throw must hit the requested body.
+  Expected: not equal to 0
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.FrostbiteDeliveryTests+<ThrowAtBody>d__12.MoveNext () [0x002bf] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\FrostbiteDeliveryTests.cs:94
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1298" name="FrostbiteRequiresAHeldSlipperAndAnActionableAttacker" fullname="TumbangPreso.PlayTests.FrostbiteDeliveryTests.FrostbiteRequiresAHeldSlipperAndAnActionableAttacker" methodname="FrostbiteRequiresAHeldSlipperAndAnActionableAttacker" classname="TumbangPreso.PlayTests.FrostbiteDeliveryTests" runstate="Runnable" seed="765827441" result="Failed" start-time="2026-09-30 22:04:52Z" end-time="2026-09-30 22:04:52Z" duration="0.044469" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Frostbite accepted an empty hand.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.FrostbiteDeliveryTests.FrostbiteRequiresAHeldSlipperAndAnActionableAttacker () [0x0002e] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\FrostbiteDeliveryTests.cs:39
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

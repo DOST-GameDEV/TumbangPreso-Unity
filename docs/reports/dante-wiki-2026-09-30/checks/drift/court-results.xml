@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 00:22:40Z" end-time="2026-10-01 00:22:51Z" duration="10.6741819">
+  <test-suite type="TestSuite" id="2289" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1043" result="Passed" start-time="2026-10-01 00:22:40Z" end-time="2026-10-01 00:22:51Z" duration="10.674182" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2283" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1043" result="Passed" start-time="2026-10-01 00:22:40Z" end-time="2026-10-01 00:22:51Z" duration="10.663236" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="212910" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2284" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1043" result="Passed" start-time="2026-10-01 00:22:40Z" end-time="2026-10-01 00:22:51Z" duration="10.659286" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2285" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1043" result="Passed" start-time="2026-10-01 00:22:40Z" end-time="2026-10-01 00:22:51Z" duration="10.656202" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1257" name="DanteDriftTests" fullname="TumbangPreso.PlayTests.DanteDriftTests" classname="TumbangPreso.PlayTests.DanteDriftTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-01 00:22:40Z" end-time="2026-10-01 00:22:51Z" duration="10.634251" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1261" name="AuthoredCourtCascadeKeepsItsDirection" fullname="TumbangPreso.PlayTests.DanteDriftTests.AuthoredCourtCascadeKeepsItsDirection" methodname="AuthoredCourtCascadeKeepsItsDirection" classname="TumbangPreso.PlayTests.DanteDriftTests" runstate="Runnable" seed="652541836" result="Passed" start-time="2026-10-01 00:22:40Z" end-time="2026-10-01 00:22:51Z" duration="10.621186" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/dante-drift-film/000.png
+[Play] wrote Logs/dante-drift-film/001.png
+[Play] wrote Logs/dante-drift-film/002.png
+[Play] wrote Logs/dante-drift-film/003.png
+[Play] wrote Logs/dante-drift-film/004.png
+[Play] wrote Logs/dante-drift-film/005.png
+[Play] wrote Logs/dante-drift-film/006.png
+[Play] wrote Logs/dante-drift-film/007.png
+[Play] wrote Logs/dante-drift-film/008.png
+[Play] wrote Logs/dante-drift-film/009.png
+[Play] wrote Logs/dante-drift-film/010.png
+[Play] wrote Logs/dante-drift-film/011.png
+[Play] wrote Logs/dante-drift-film/012.png
+[Play] wrote Logs/dante-drift-film/013.png
+[Play] wrote Logs/dante-drift-film/014.png
+[Play] wrote Logs/dante-drift-film/015.png
+[Play] wrote Logs/dante-drift-film/016.png
+[Play] wrote Logs/dante-drift-film/017.png
+[Play] wrote Logs/dante-drift-film/018.png
+[Play] wrote Logs/dante-drift-film/019.png
+[Play] wrote Logs/dante-drift-film/020.png
+[Play] wrote Logs/dante-drift-film/021.png
+[Play] wrote Logs/dante-drift-film/022.png
+[Play] wrote Logs/dante-drift-film/023.png
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

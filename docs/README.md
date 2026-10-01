@@ -13,6 +13,8 @@ old prompts, counts and work orders are not current instructions.
 [REFERENCE_INDEX](REFERENCE_INDEX.md) lists every root document and its status.
 [Archive](archive/README.md) maps historical documents to their current replacements.
 
+Current owner-priority research/design: [full hero quality brief](reports/hero-quality-2026-10-01/brief.md).
+
 ## Pick The Task
 
 | Task | Read first | Then inspect |
@@ -42,6 +44,14 @@ old prompts, counts and work orders are not current instructions.
 - **Methods:** the live topic method, including pitfalls and source ownership.
 - **Evidence:** dated reports, exact revisions/receipts and clearly labelled limits.
   Do not rewrite old results to imply qualification of newer source.
+  [September 30 feedback fixes](reports/feedback-2026-09-30/README.md) records the
+  current Tasks/round-standings batch; its status lives in TODO FEEDBACK-0930.
+  [Cheska expiry presentation](reports/cheska-expiry-2026-09-30/plan.md) records
+  the scoped field-melt/wall-shatter plan and current reference limits.
+  [Dante barrier visibility](reports/dante-visibility-2026-09-30/result.md) records
+  the palette-aware half-alpha fix and native capture limits.
+  [Dante active ward cue](reports/dante-ward-2026-09-30/result.md) records
+  the clock-bound shield badge and native camera/lifecycle check.
 - **History:** archive, with original-path pointers and a replacement/reason in its index.
   Old documents keep their useful context; reusable methods remain live.
 - **Media:** latest two generated iterations per coherent subject/action/view when pruning

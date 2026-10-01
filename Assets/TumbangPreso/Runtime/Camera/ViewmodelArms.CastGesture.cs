@@ -183,15 +183,17 @@ namespace TumbangPreso.CameraSystem
                 K(1.9f, .04f, .52f, .06f, -.04f, .70f, .06f), K(2.2f, -.02f, -.18f, .34f, .02f, .04f, .34f),
                 K(2.45f, -.02f, -.16f, .32f, .02f, .06f, .32f), Rest(2.9f)) },
 
-            // v3, THE REACH (plan 9.5). DRAIN: the right hand dips out bottom right (the slipper to her belt) and comes up
-            // palm out at chest height, the left brings the doll into the lower left; it ENDS on the hold (key 1), which stays for
-            // as long as she reaches (`HeldCastPaths`). HEX: the same dip, then higher, the doll up by her left eye.
+            // v3, THE REACH (plan 9.5). The right hand dips out bottom right (the slipper to her belt) and comes back up palm
+            // out; it ENDS on the hold (key 1), which stays for as long as she reaches (`HeldCastPaths`). v17 (2026-09-29, the
+            // owner: *"make her hold up her voodoo too towards the person"*): the LEFT pushes the doll out toward the middle of the
+            // view, at them (`VoodooSoulDraw` sets `HoldingProp`, which already lifts it by (.10, .30, .08)), and their soul streams
+            // into it. DRAIN holds it at chest height; HEX raises it.
             { "reach-drain", new CastPath(.14f, false,
-                Rest(0), K(.06f, .06f, -.16f, -.04f, .00f, .04f, .00f), K(.14f, -.05f, .22f, .26f, -.04f, .24f, .06f),
-                K(.40f, -.05f, .22f, .26f, -.04f, .24f, .06f)) },
+                Rest(0), K(.06f, .06f, -.16f, -.04f, .00f, .04f, .00f), K(.14f, -.02f, .12f, .24f, .08f, .14f, .22f),
+                K(.40f, -.02f, .12f, .24f, .08f, .14f, .22f)) },
             { "reach-hex", new CastPath(.14f, false,
-                Rest(0), K(.06f, .06f, -.16f, -.04f, .00f, .06f, .00f), K(.14f, -.06f, .32f, .22f, -.12f, .36f, .04f),
-                K(.40f, -.06f, .32f, .22f, -.12f, .36f, .04f)) },
+                Rest(0), K(.06f, .06f, -.16f, -.04f, .00f, .06f, .00f), K(.14f, -.04f, .18f, .22f, .06f, .24f, .20f),
+                K(.40f, -.04f, .18f, .22f, .06f, .24f, .20f)) },
             // HEX's recast: the doll up before her eyes, the pin raised high on the right, stabbed down and across into it.
             { "hex-stab", new CastPath(.22f, false,
                 Rest(0), K(.10f, .06f, .34f, .06f, -.06f, .30f, .10f), K(.22f, -.04f, .22f, .14f, -.06f, .30f, .10f),
@@ -207,6 +209,20 @@ namespace TumbangPreso.CameraSystem
             { "current-cut", new CastPath(.18f, false,
                 Rest(0), K(.08f, .04f, .02f, -.04f, -.08f, .32f, .08f),
                 K(.18f, .02f, .04f, -.06f, .24f, .22f, .14f), K(.36f, .02f, .04f, -.06f, .23f, .22f, .13f), Rest(.76f)) },
+            // WATER WALL. A shallow scoop, then two open palms framing the clear centre.
+            { "waterwall-lift", new CastPath(.25f, true,
+                Rest(0), K(.08f, .05f, -.10f, .04f, -.05f, .10f, .04f),
+                K(.18f, .06f, .06f, .12f, -.06f, .28f, .12f),
+                K(.25f, .10f, .18f, .16f, -.10f, .40f, .16f),
+                K(.36f, .11f, .17f, .15f, -.11f, .39f, .15f),
+                K(.52f, .06f, .05f, .07f, -.06f, .20f, .07f), Rest(.78f)) },
+            // SKIM. Hold the actual shoe below aim while the free palm wipes along its sole.
+            { "skim-coat", new CastPath(.36f, false,
+                Rest(0), K(.10f, -.09f, .02f, .06f, .08f, .19f, .06f),
+                K(.22f, -.13f, .04f, .08f, .22f, .29f, .10f),
+                K(.36f, -.13f, .04f, .08f, .36f, .28f, .15f),
+                K(.46f, -.10f, .02f, .06f, .30f, .22f, .10f),
+                K(.60f, -.04f, .01f, .02f, .10f, .10f, .03f), Rest(.72f)) },
             // MIRRORWAKE. A real feint: a big sell to the right, held a beat, then the cut back left.
             { "mirror-feint", new CastPath(.14f, false,
                 Rest(0), K(.14f, .16f, .02f, .06f, .10f, .24f, .04f), K(.20f, .16f, .02f, .06f, .10f, .24f, .04f),

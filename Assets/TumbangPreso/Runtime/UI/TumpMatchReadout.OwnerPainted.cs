@@ -14,7 +14,7 @@ namespace TumbangPreso.UI
             _powers=gameObject.AddComponent<TumpPowerReadout>();_powers.Build(_root);
             _toast=Ink(_root,"MatchToast","",38,true);Pin(_toast.rectTransform,new Vector2(.5f,1),new Vector2(0,-204),new Vector2(1040,78));_toast.enabled=false;
             _countdown=Ink(_root,"Countdown","",110,true);Pin(_countdown.rectTransform,new Vector2(.5f,.58f),Vector2.zero,new Vector2(740,180));_countdown.enabled=false;
-            _crosshair=Ink(_root,"Reticle","+",34,false);Pin(_crosshair.rectTransform,new Vector2(.5f,.5f),Vector2.zero,new Vector2(76,76));
+            _crosshair=Ink(_root,"Reticle","○",34,false);Pin(_crosshair.rectTransform,new Vector2(.5f,.5f),Vector2.zero,new Vector2(76,76));
             _hit=Ink(_root,"HitConfirmation","×",72,true);Pin(_hit.rectTransform,new Vector2(.5f,.5f),Vector2.zero,new Vector2(120,120));_hit.enabled=false;
             _spectator=Ink(_root,"SpectatorReadout","",27,false);Pin(_spectator.rectTransform,new Vector2(.5f,0),new Vector2(0,100),new Vector2(1420,136));
             _sandbox=Ink(_root,"SandboxState","",25,false);Pin(_sandbox.rectTransform,new Vector2(1,0),new Vector2(-250,38),new Vector2(456,54));

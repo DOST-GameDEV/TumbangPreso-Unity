@@ -1,38 +1,64 @@
-using System.Collections.Generic;
 using TumbangPreso.Net;
+using TumbangPreso.Core;
 using TumbangPreso.UI;
 using UnityEngine;
 
 namespace TumbangPreso.Abilities
 {
-    public sealed class RafiHeroKit : HeroKit
+    public sealed class RafiHeroKit : HeroKit, ITimedKitReplication
     {
-        private readonly List<Vector3> _recent = new List<Vector3>(8);
-        private float _sampleLeft;
+        private Slipper _loadedSlipper;
+        private bool _joiningSkimSettled;
+        public bool IsSkimLoaded => _loadedSlipper != null && AttackingSkill.IsActive
+            && _loadedSlipper.State == SlipperState.Held && _loadedSlipper.Holder != null
+            && !_loadedSlipper.Holder.IsDefender && _loadedSlipper.Holder.AbilitySystem?.Kit == this;
+
+        public bool IsSkimLoadedFor(Slipper slipper) => IsSkimLoaded && _loadedSlipper == slipper;
+
+        public bool ConsumeSkim(Slipper slipper)
+        {
+            if (!IsSkimLoaded || _loadedSlipper != slipper) return false;
+            _loadedSlipper = null;
+            return true;
+        }
+
+        public TimedKitSnapshot CaptureTimedKit()
+            => new TimedKitSnapshot(AttackingSkill, IsSkimLoaded ? AttackingSkill.DurationRemaining : 0);
+
+        public bool RestoreTimedKit(CharacterMotor motor, TimedKitSnapshot state)
+        {
+            if (motor == null || _joiningSkimSettled || AttackingSkill.IsActive
+                || !float.IsFinite(state.PersonalRemaining) || state.PersonalRemaining < 0
+                || state.PersonalRemaining > RafiRules.SkimLoadSeconds) return false;
+            _joiningSkimSettled = true;
+            var held = motor.GetComponent<Carrier>()?.Held;
+            if (state.PersonalRemaining <= 0 || held == null || motor.IsDefender) return false;
+            _loadedSlipper = held;
+            ((Skim)AttackingSkill).RestoreLoad(state.PersonalRemaining);
+            Visual.RafiSkimCoating.Ensure(held.GetComponentInChildren<MeshFilter>(),held,this);
+            return true;
+        }
+
+        public override void Reset()
+        {
+            _loadedSlipper = null; _joiningSkimSettled = false;
+            base.Reset();
+        }
+
+        public override void ResetForRound(AbilityContext ctx)
+        {
+            base.ResetForRound(ctx);
+            _loadedSlipper = null; _joiningSkimSettled = false;
+        }
+
         public override float UltimateCost => 16;
 
         public RafiHeroKit() : base("rafi", "RAFI")
         {
             Skill1 = new Crosscurrent();
-            // ABILITY-2: the four-slot shape; the defending slot waits for the owner's Hydro design.
-            AttackingSkill = new Mirrorwake(this);
-            DefendingSkill = new PlaceholderRoleAbility("rafi_skill2d", "Rafi", AbilityGlyph.RafiMirrorwake);
+            AttackingSkill = new Skim(this);
+            DefendingSkill = new Waterwall();
             Ultimate = new Breakwater();
-        }
-
-        public override void Tick(AbilityContext ctx, float dt)
-        {
-            base.Tick(ctx, dt);
-            if (!NetAuthority.ShouldResolve() || ctx?.Motor == null) return;
-            if (ctx.Round == null || !ctx.Round.RoundActive) { _recent.Clear(); _sampleLeft = 0; return; }
-            _sampleLeft -= dt;
-            if (_sampleLeft > 0) return;
-            _sampleLeft = .10f;
-            // Teleport/recovery is a discontinuity, not a route the echo can cross.
-            if (_recent.Count > 0 && Vector3.Distance(_recent[_recent.Count - 1], ctx.Position) > 2)
-                _recent.Clear();
-            if (_recent.Count == 8) _recent.RemoveAt(0);
-            _recent.Add(ctx.Position);
         }
 
         private sealed class Crosscurrent : HeroAbility
@@ -40,37 +66,65 @@ namespace TumbangPreso.Abilities
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
             public Crosscurrent() : base("rafi_skill1", "CROSSCURRENT",
                 "Aim a narrow current to bend one flying slipper. Its thrower keeps the credit; later throws pass through.",
-                0, glyph: AbilityGlyph.RafiCrosscurrent,
+                RafiRules.CurrentCooldown, glyph: AbilityGlyph.RafiCrosscurrent,
                 summary: "Bend one flying slipper. Its thrower keeps the credit.",
-                telegraphRadius: .65f, telegraphRange: 6,
-                castAction: "hero-rafi-cut", viewmodelAction: "current-cut", castCue: "sfx_cast_rafi_current", charges: 2) { }
+                telegraphRadius: RafiRules.CurrentRadius, telegraphRange: RafiRules.CurrentRange,
+                castAction: "hero-rafi-cut", viewmodelAction: "current-cut", castCue: "sfx_cast_rafi_current") { }
             protected override void OnActivate(AbilityContext ctx)
             {
                 if (!NetAuthority.ShouldResolve()) return;
                 bool tight = ctx.HasVariant("rafi.1.tightcut");
                 float speed = 8 * ctx.GainScale("rafi.1.tightcut");
-                RafiWaterField.Cast(ctx, WorldEffectSnapshot.Kind.Current, .65f * ctx.CostScale("rafi.1.tightcut"),
-                    speed, .18f + 6f / speed, tight);
+                RafiWaterField.Cast(ctx, WorldEffectSnapshot.Kind.Current, RafiRules.CurrentRadius * ctx.CostScale("rafi.1.tightcut"),
+                    speed, RafiRules.CurrentGather + RafiRules.CurrentRange / speed, tight);
             }
         }
 
-        private sealed class Mirrorwake : HeroAbility
+        private sealed class Skim : HeroAbility
         {
-            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private readonly RafiHeroKit _kit;
-            public Mirrorwake(RafiHeroKit kit) : base("rafi_skill2", "MIRRORWAKE",
-                "Replay your route as a watery decoy with one harmless throw feint. You stay visible and vulnerable.",
-                0, glyph: AbilityGlyph.RafiMirrorwake,
-                summary: "A watery echo retraces your steps. No hit, shield or teleport.",
-                castAction: "hero-rafi-feint", viewmodelAction: "mirror-feint", castCue: "sfx_cast_rafi_mirror", charges: 2)
+            public Skim(RafiHeroKit kit) : base("rafi_skill2", "SKIM",
+                "Coat your held slipper for 8 seconds. Its next throw skims up to 2 metres after first ground contact, then rests for normal retrieval.",
+                RafiRules.SkimCooldown, RafiRules.SkimLoadSeconds, glyph: AbilityGlyph.RafiSkim,
+                summary: "Your next throw skims on landing. Bodies and the can consume it normally.",
+                castAction: "hero-rafi-skim", viewmodelAction: "skim-coat", castCue: "sfx_cast_rafi_mirror")
             { _kit = kit; }
+            public override bool CanActivate(AbilityContext ctx)
+                => base.CanActivate(ctx) && !ctx.Motor.IsDefender && ctx.Carrier?.Held != null;
+            public void RestoreLoad(float remaining) => RestoreLiveClock(remaining);
             protected override void OnActivate(AbilityContext ctx)
             {
-                if (!NetAuthority.ShouldResolve()) return;
-                bool longWake = ctx.HasVariant("rafi.2.longwake");
-                var path = _kit._recent.Count >= 2 ? _kit._recent.ToArray() : new[] { ctx.Position, ctx.Position };
-                RafiWaterField.Cast(ctx, WorldEffectSnapshot.Kind.Mirrorwake, 1, 0,
-                    1.25f * ctx.GainScale("rafi.2.longwake"), longWake, path);
+                _kit._joiningSkimSettled = true; _kit._loadedSlipper = ctx.Carrier?.Held;
+                var shoe=_kit._loadedSlipper;
+                if(shoe!=null)Visual.RafiSkimCoating.Ensure(shoe.GetComponentInChildren<MeshFilter>(),shoe,_kit);
+            }
+            protected override void OnTick(AbilityContext ctx, float dt)
+            {
+                if (_kit._loadedSlipper == null || ctx.Carrier?.Held != _kit._loadedSlipper
+                    || _kit._loadedSlipper.State != SlipperState.Held || ctx.Motor.IsDefender)
+                    DurationRemaining = 0;
+            }
+            protected override void OnEnd(AbilityContext ctx) => _kit._loadedSlipper = null;
+            protected override void OnCancelled(AbilityContext ctx) => _kit._loadedSlipper = null;
+        }
+
+        private sealed class Waterwall : HeroAbility
+        {
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
+            public Waterwall() : base("rafi_skill2d", "WATER WALL",
+                "Raise a thin 4-metre water curtain for 4 seconds. People pass through; its first flying slipper drops on the approach side and breaks it.",
+                RafiRules.WallCooldown, glyph: AbilityGlyph.RafiWaterwall,
+                summary: "Place a single-use curtain. People pass through.",
+                telegraphRadius: RafiRules.WallHalfWidth, telegraphRange: RafiRules.WallRange,
+                castAction: "hero-rafi-wall", viewmodelAction: "waterwall-lift", castCue: "sfx_cast_rafi_current")
+            { AimByHolding(.75f,RafiRules.WallRange,.4f,0,whereLooking:true); }
+            public override bool CanActivate(AbilityContext ctx)
+                => base.CanActivate(ctx) && ctx.Motor.IsDefender
+                    && RafiWaterField.CanPlaceWall(ctx,AimedDestination(ctx));
+            protected override void OnActivate(AbilityContext ctx)
+            {
+                if (NetAuthority.ShouldResolve()) RafiWaterField.CastWall(ctx,AimedDestination(ctx));
             }
         }
 

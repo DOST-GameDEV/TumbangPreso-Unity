@@ -1,0 +1,26 @@
+{
+  "exit": 0,
+  "seconds": 1108.6470971107483,
+  "stopped": null,
+  "review": {
+    "botmatch": "frame cap probe, built player\nrequested cap        30 fps\nvSyncCount           0\nfixedDeltaTime       0.02000 s\nmeasured frame rate  3.4 fps  (3699 frames in 1100.2 s)\nmap                  Eskinita\n\nthrows          165\nskill uses      26\nultimate uses   6\nlata knocks     46\ntags            116\nidle penalties  0\nkits seen       True\n",
+    "traceExists": true
+  },
+  "before": {
+    "low": "0",
+    "high": "0",
+    "max": "5797983",
+    "oom": "11",
+    "oom_kill": "6",
+    "oom_group_kill": "0"
+  },
+  "after": {
+    "low": "0",
+    "high": "0",
+    "max": "5797983",
+    "oom": "11",
+    "oom_kill": "6",
+    "oom_group_kill": "0"
+  },
+  "runtimeSha256": "9a26a51d8042b962ef48bc549f0b8653a9bf25d78a64d872a5ae2d7b5d641e3d"
+}

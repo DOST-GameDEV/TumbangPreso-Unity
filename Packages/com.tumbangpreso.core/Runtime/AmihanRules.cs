@@ -13,10 +13,12 @@ namespace TumbangPreso.Core
     /// </summary>
     public static class AmihanRules
     {
+        public const float SecondWindSeconds = 2.5f;
+        public const float SecondWindScale = 1.25f;
         // ------------------------------------------------------------------ QUICK DASH (signature)
 
-        /// <summary>Owner's table: *"40 s cooldown"*.</summary>
-        public const float QuickDashCooldown = 40.0f;
+        /// <summary>Current Wiki: *"35 Seconds Cooldown"*.</summary>
+        public const float QuickDashCooldown = 35.0f;
 
         /// <summary>How far the dash throws her, metres, along her facing.</summary>
         public const float QuickDashDistance = 5.0f;
@@ -89,15 +91,26 @@ namespace TumbangPreso.Core
         /// <summary>Owner's table: *"15 objective points"*.</summary>
         public const float StormSurgeCost = 15.0f;
 
-        /// <summary>Owner's table: *"After a 2.5 s delay"*.</summary>
-        public const float StormSurgeGatherSeconds = 2.5f;
+        /// <summary>Current Wiki: release after a 1.5 second delay.</summary>
+        public const float StormSurgeGatherSeconds = 1.5f;
 
-        /// <summary>Half the fan's angle. 70 degrees across: wide enough to be a storm, narrow
-        /// enough that stepping out of it sideways in 2.5 s is always possible.</summary>
-        public const float StormSurgeHalfAngle = 35.0f;
+        /// <summary>Half the current Wiki 60 degree fan, shared by contact and telegraph.</summary>
+        public const float StormSurgeHalfAngle = 30.0f;
 
-        /// <summary>*"map-wide"*: longer than the longest playable diagonal of any map.</summary>
+        /// <summary>Minimum reach; expanded courts use their measured diagonal below.</summary>
         public const float StormSurgeRange = 40.0f;
+
+        public static float StormSurgeRangeForCourt(float minX, float maxX, float minZ, float maxZ)
+        {
+            if (float.IsNaN(minX) || float.IsInfinity(minX) || float.IsNaN(maxX) || float.IsInfinity(maxX) ||
+                float.IsNaN(minZ) || float.IsInfinity(minZ) || float.IsNaN(maxZ) || float.IsInfinity(maxZ) ||
+                minX >= maxX || minZ >= maxZ) return StormSurgeRange;
+            double width = (double)maxX - minX, depth = (double)maxZ - minZ;
+            double diagonal = System.Math.Sqrt(width * width + depth * depth);
+            if (diagonal > float.MaxValue) return StormSurgeRange;
+            return System.Math.Max(StormSurgeRange, (float)diagonal);
+        }
+
 
         /// <summary>
         /// Owner, 2026-09-25: *"very far, the rsn for this is we want them to fall off the map or
@@ -107,8 +120,8 @@ namespace TumbangPreso.Core
         public const float StormSurgeDistance = 16.0f;
         public const float StormSurgeSpeed = 15.0f;
 
-        /// <summary>A small lift so the carry reads as the wind picking them up, not a slide.</summary>
-        public const float StormSurgeLift = 3.5f;
+        /// <summary>A clear airborne arc, within the existing shared knockback lift safety cap.</summary>
+        public const float StormSurgeLift = 7.0f;
 
         /// <summary>Her own walk while the storm gathers: half speed, the storm is not hers to ride.</summary>
         public const float StormSurgeGatherSpeedScale = 0.5f;

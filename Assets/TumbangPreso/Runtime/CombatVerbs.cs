@@ -136,6 +136,10 @@ namespace TumbangPreso
 
             if (!_motor.CanAct())
             {
+                // A real interruption retires the dash's contact window. A presentation
+                // hold or offline pause merely freezes it and must survive Resume.
+                if (!_motor.RoundActive || _motor.IsStunned || _motor.IsFeared)
+                    _lungeActiveLeft = 0.0f;
                 _lungeCharging = false;
                 _lungeCharge = 0.0f;
                 return;
@@ -406,7 +410,8 @@ namespace TumbangPreso
             var round = GameServices.Round;
             if (round == null || round.Lata == null || !round.Lata.IsUpright) return;
 
-            foreach (var p in round.Players)
+            // `Bodies`, not `Players`: a companion attacker is taggable like any attacker (plan 9.12).
+            foreach (var p in round.Bodies)
             {
                 if (p == null || p == _motor || p.IsDefender) continue;
                 if (!p.IsTaggable()) continue;
@@ -979,6 +984,8 @@ namespace TumbangPreso
 
             victim.ApplyResolvedImpact(push);
             victim.ApplyStagger(Balance.ShoveStun);
+            if (_motor.Mode == GameMode.HeroStrike && _motor.AbilitySystem?.Kit is Abilities.CheskaHeroKit)
+                victim.ApplyChilled();
             Visual.DizzyStars.Attach(victim.transform, Balance.ShoveStun);
             Visual.ComicPopup.Bonk(victim.transform.position);
 
@@ -1011,10 +1018,12 @@ namespace TumbangPreso
             facing.y = 0.0f;
             facing.Normalize();
 
-            foreach (var p in round.Players)
+            foreach (var p in round.Bodies)
             {
                 if (p == null || p == _motor) continue;
                 if (requireTaggable && !p.IsTaggable()) continue;
+                // A companion and its owner never shove each other: it is on her side.
+                if (CompanionSeats.OwnerOf(p.PlayerSlot) == CompanionSeats.OwnerOf(_motor.PlayerSlot)) continue;
 
                 // Attackers shove attackers. The defender is neither a shover nor a target.
                 if (!requireTaggable && (p.IsDefender || _motor.IsDefender)) continue;

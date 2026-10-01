@@ -164,6 +164,15 @@ namespace TumbangPreso.Net
 
         /// <summary>Seats vacated mid-match, held for their original token.</summary>
         private readonly Dictionary<int, string> _heldSeats = new Dictionary<int, string>();
+        private readonly Dictionary<int, HeldPicks> _heldPicks = new Dictionary<int, HeldPicks>();
+        private readonly struct HeldPicks
+        {
+            public readonly int Character, Can, Slipper, Rating;
+            public HeldPicks(PeerRecord peer)
+            { Character=peer.CharacterPick; Can=peer.CanPick; Slipper=peer.SlipperPick; Rating=peer.Rating; }
+            public void Restore(PeerRecord peer)
+            { peer.CharacterPick=Character; peer.CanPick=Can; peer.SlipperPick=Slipper; peer.Rating=Rating; }
+        }
 
         public string JoinCode { get; private set; } = "";
         /// <summary>
@@ -215,6 +224,7 @@ namespace TumbangPreso.Net
             _peers.Clear();
             _seenThisMatch.Clear();
             _heldSeats.Clear();
+            _heldPicks.Clear();
             MatchInProgress = false;
 
             if (LeaderPeerId != -1)
@@ -373,7 +383,7 @@ namespace TumbangPreso.Net
                 switch (RuleOnArrival(record.Token))
                 {
                     case MidMatchRuling.Reclaim:
-                        record.Seat = ReclaimSeatFor(record.Token);
+                        record.Seat = ReclaimSeatFor(record.Token, record);
                         break;
 
                     case MidMatchRuling.Seat:
@@ -445,7 +455,10 @@ namespace TumbangPreso.Net
             if (!_peers.TryGetValue(peerId, out var record)) return null;
 
             if (MatchInProgress && record.Seat >= 0 && !string.IsNullOrEmpty(record.Token))
+            {
                 _heldSeats[record.Seat] = record.Token;
+                _heldPicks[record.Seat] = new HeldPicks(record);
+            }
 
             _peers.Remove(peerId);
 
@@ -453,13 +466,15 @@ namespace TumbangPreso.Net
             return record;
         }
 
-        private int ReclaimSeatFor(string token)
+        private int ReclaimSeatFor(string token, PeerRecord returning)
         {
             foreach (var kv in _heldSeats)
             {
                 if (kv.Value != token) continue;
 
                 int seat = kv.Key;
+                if (_heldPicks.TryGetValue(seat, out var picks)) picks.Restore(returning);
+                _heldPicks.Remove(seat);
                 _heldSeats.Remove(seat);
                 return seat;
             }
@@ -855,6 +870,20 @@ namespace TumbangPreso.Net
         /// unit, because a peer on an older build legitimately sends indices this build has no
         /// entry for.
         /// </summary>
+        public void SetArrivalPicks(int peerId, int character, int can, int slipper)
+        {
+            if (!_peers.TryGetValue(peerId, out var record)) return;
+            if (MatchInProgress)
+            {
+                // Reconnect and repeated Identify cannot replace match choices.
+                // A fresh backfill can still initialize fields not chosen yet.
+                if (record.CharacterPick >= 0) character=record.CharacterPick;
+                if (record.CanPick >= 0) can=record.CanPick;
+                if (record.SlipperPick >= 0) slipper=record.SlipperPick;
+            }
+            SetPicks(peerId,character,can,slipper);
+        }
+
         public void SetPicks(int peerId, int character, int can, int slipper)
         {
             if (!_peers.TryGetValue(peerId, out var record)) return;
@@ -881,6 +910,7 @@ namespace TumbangPreso.Net
         {
             MatchInProgress = true;
             _heldSeats.Clear();
+            _heldPicks.Clear();
         }
 
         /// <summary>
@@ -912,12 +942,14 @@ namespace TumbangPreso.Net
         {
             MatchInProgress = false;
             _heldSeats.Clear();
+            _heldPicks.Clear();
         }
 
         public void EndMatch()
         {
             MatchInProgress = false;
             _heldSeats.Clear();
+            _heldPicks.Clear();
             _seenThisMatch.Clear();
             SetJoinCode("");
         }

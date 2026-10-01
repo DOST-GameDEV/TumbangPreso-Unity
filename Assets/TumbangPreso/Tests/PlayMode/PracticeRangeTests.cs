@@ -70,6 +70,16 @@ namespace TumbangPreso.PlayTests
                 var menu = Panel.Open<PausePanel>(watcher);
                 yield return null;
                 Assert.AreSame(prepared, menu); Assert.IsTrue(local.Intent.Parked);
+                Assert.Zero(Time.timeScale, "Training menu must keep offline simulation paused.");
+                yield return TumpUiCapture.Capture("TrainingPauseControls", canvas, 1280, 720, false);
+                Assert.IsTrue(range.CanEdit, "Pausing the world must not disable its training configuration menu.");
+                Assert.IsTrue(canvas.GetComponentsInChildren<Button>().First(b => b.name == "DefenderChoice").interactable);
+                Assert.IsTrue(canvas.GetComponentsInChildren<Toggle>().First(t => t.name == "Infinite staminaToggle").interactable);
+                typeof(PresentationClock).GetMethod("Hold", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).Invoke(null, null);
+                Assert.IsFalse(range.CanEdit, "A shared presentation hold must still block world changes.");
+                typeof(PresentationClock).GetMethod("Release", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).Invoke(null, null);
+                Assert.IsTrue(range.CanEdit);
+
 
                 var toggle = canvas.GetComponentsInChildren<Toggle>().First(t => t.name == "Infinite staminaToggle");
                 toggle.isOn = true;

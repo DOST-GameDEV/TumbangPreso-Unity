@@ -126,6 +126,36 @@ namespace TumbangPreso.Tests
             StringAssert.Contains("four", clamped);
         }
 
+        [TestCase(118), TestCase(119)]
+        public void ChatLengthBoundaryKeepsWholeUnicodeCharacters(int prefixLength)
+        {
+            string prefix = new string('x', prefixLength);
+            string face = "\uD83D\uDE42";
+            string clamped = MatchRpc.ClampChatLine(prefix + face + "extra");
+            Assert.DoesNotThrow(() => new UTF8Encoding(false, true).GetByteCount(clamped),
+                "The length cap must not create an unmatched surrogate from a valid message.");
+            Assert.AreEqual(prefixLength == 118 ? prefix + face : prefix, clamped);
+            Assert.LessOrEqual(clamped.Length, MatchRpc.MaxChatLength);
+        }
+
+        [Test]
+        public void ChatFieldPreclippingCannotSendHalfAnEmoji()
+        {
+            var go = new GameObject("Chat boundary field", typeof(RectTransform));
+            try
+            {
+                var field = go.AddComponent<UnityEngine.UI.InputField>();
+                field.characterLimit = MatchRpc.MaxChatLength;
+                string prefix = new string('x', MatchRpc.MaxChatLength - 1);
+                field.text = prefix + "\uD83D\uDE42";
+                Assert.LessOrEqual(field.text.Length, MatchRpc.MaxChatLength);
+                string clamped = MatchRpc.ClampChatLine(field.text);
+                Assert.DoesNotThrow(() => new UTF8Encoding(false, true).GetByteCount(clamped));
+                Assert.AreEqual(prefix, clamped);
+            }
+            finally { Object.DestroyImmediate(go); }
+        }
+
         [Test]
         public void AnEmptyOrWhitespaceChatLineIsNothing()
         {
@@ -345,7 +375,12 @@ namespace TumbangPreso.Tests
             //64 adds the shared skill fingerprint, including Phaister's updated 5.0 s introduction.
             //65 adds phase-aware world freshness and ability-owned prepared-effect recovery.
             //87 changes what the map indices mean: LagoonCove at 4 (the first Lagoon vaulted), Kanto at 5.
-            Assert.AreEqual(87, NetSession.ProtocolVersion,
+            //88 and 89 (intermission votes, rematch identities) are recorded in NetSession; this line was not moved with them.
+            //90 adds companion bodies (seats 4 to 7, `CompanionSet`).
+            //91 names the scoring body in `Score` and lengthens Phaister's introduction to 6.4 s (VOODOO DOLL v7).
+            //92 makes Phaister's introduction 6.35 s (THE TWIST) and the doll 0.5 of a player's speed.
+            //93 makes Phaister's introduction 6.0 s (it ends on the doll's stare).
+            Assert.AreEqual(93, NetSession.ProtocolVersion,
                 "a message, a replicated roster index or a connection-hello field has been added " +
                 "or removed. Bump this number and `NetSession.ProtocolVersion` together, in the " +
                 "same commit.");

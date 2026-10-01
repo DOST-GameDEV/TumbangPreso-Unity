@@ -537,7 +537,25 @@ namespace TumbangPreso.Net
         // and acknowledge the authoritative tally without client round events.
         // 89: rematches allocate and announce a fresh world identity; rematch
         // votes/tallies name the old result and acknowledge seated participants.
-        public const int ProtocolVersion = 89;
+        // 90: companion bodies (HERO-10 v3, Phaister's VOODOO DOLL): seats 4 to 7 exist; `CompanionSet` lists them
+        // and SyncUnit, Teleport, PlayAction, SyncSlipper and SlipperPose admit their seats.
+        // 91: the `Score` message names the body that scored after the event (a companion's seat, whose owner is paid), so every
+        // peer shows the point over the doll that made it (`MatchDirector.CompanionScored`, HERO-10 v3); and Phaister's introduction
+        // becomes 6.4 s (VOODOO DOLL v7), which changes the shared ultimate phase every peer derives.
+        // 92: Phaister's introduction becomes 6.35 s (VOODOO DOLL v12, THE TWIST) and the doll body's speed 0.5.
+        // 93: Phaister's introduction ends on the doll's stare, 6.0 s.
+        // 97: the ordinary defender lunge travels 3 metres; predicted and host
+        // movement must use matching tuning. The movement-budget ceiling is unchanged.
+        // Protocol107 aligns Unstoppable/Bastion clocks and the bounded cleanse exception.
+        //114: current Wiki Airburst releases at1.5seconds with a60degree fan.
+        //115: Hydro Current uses a35second cooldown and earliest swept contact.
+        //116: Hydro Skim load and first-ground flight phase replace Mirrorwake.
+        //117: Hydro Water wall uses a single-interception stationary field.
+        //118: knockdown cancels charge and throws wait for can/protection reset.
+        //119: revised camping/slipper warning windows and2.5second fatigue.
+        //122: live Frostbite load uses the existing scoped timed-kit recovery.
+        //123: authoritative objective cooldown grants reach predicted owners.
+        public const int ProtocolVersion = 123;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
@@ -2005,7 +2023,11 @@ namespace TumbangPreso.Net
         private void OnSeatAssignmentMessage(ulong senderClientId, FastBufferReader reader)
         {
             if(senderClientId!=NetworkManager.ServerClientId)return;
+            // One complete seat only. Refuse malformed payloads before reads or
+            // seating notifications can throw/rebind the local player's controls.
+            if (reader.Length - reader.Position != sizeof(int) || !reader.TryBeginRead(sizeof(int))) return;
             reader.ReadValueSafe(out int seat);
+            if (seat < -1 || seat >= Core.Balance.PlayerCount) return;
             ApplyAssignedSeat(seat);
         }
 

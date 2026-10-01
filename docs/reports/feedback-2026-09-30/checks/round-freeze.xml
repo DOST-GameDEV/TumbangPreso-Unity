@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 11:42:06Z" end-time="2026-09-30 11:42:29Z" duration="22.5666943">
+  <test-suite type="TestSuite" id="2133" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="905" result="Failed" site="Child" start-time="2026-09-30 11:42:06Z" end-time="2026-09-30 11:42:29Z" duration="22.566694" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2127" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="905" result="Failed" site="Child" start-time="2026-09-30 11:42:06Z" end-time="2026-09-30 11:42:29Z" duration="22.546093" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="14512" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2128" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="905" result="Failed" site="Child" start-time="2026-09-30 11:42:06Z" end-time="2026-09-30 11:42:29Z" duration="22.534419" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2129" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="905" result="Failed" site="Child" start-time="2026-09-30 11:42:06Z" end-time="2026-09-30 11:42:29Z" duration="22.523316" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1760" name="ReplayRetentionTests" fullname="TumbangPreso.PlayTests.ReplayRetentionTests" classname="TumbangPreso.PlayTests.ReplayRetentionTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-09-30 11:42:06Z" end-time="2026-09-30 11:42:13Z" duration="6.074088" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1762" name="ScheduledBreakUsesOneDeadlineAndNeverRunsAfterTheFinalRound" fullname="TumbangPreso.PlayTests.ReplayRetentionTests.ScheduledBreakUsesOneDeadlineAndNeverRunsAfterTheFinalRound" methodname="ScheduledBreakUsesOneDeadlineAndNeverRunsAfterTheFinalRound" classname="TumbangPreso.PlayTests.ReplayRetentionTests" runstate="Runnable" seed="277967562" result="Failed" start-time="2026-09-30 11:42:07Z" end-time="2026-09-30 11:42:13Z" duration="6.058366" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ReplayRetentionTests+<ScheduledBreakUsesOneDeadlineAndNeverRunsAfterTheFinalRound>d__3.MoveNext () [0x0011a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\ReplayRetentionTests.cs:49
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1797" name="RoundBreakFreezeTests" fullname="TumbangPreso.PlayTests.RoundBreakFreezeTests" classname="TumbangPreso.PlayTests.RoundBreakFreezeTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-09-30 11:42:13Z" end-time="2026-09-30 11:42:29Z" duration="16.394876" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1800" name="AbortingTheBreakRestoresTheRequestedClockAndUiInput" fullname="TumbangPreso.PlayTests.RoundBreakFreezeTests.AbortingTheBreakRestoresTheRequestedClockAndUiInput" methodname="AbortingTheBreakRestoresTheRequestedClockAndUiInput" classname="TumbangPreso.PlayTests.RoundBreakFreezeTests" runstate="Runnable" seed="1142964674" result="Passed" start-time="2026-09-30 11:42:13Z" end-time="2026-09-30 11:42:14Z" duration="1.741037" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1798" name="FinalViewAndRealInputsStayFrozenUntilTheHostDeadline" fullname="TumbangPreso.PlayTests.RoundBreakFreezeTests.FinalViewAndRealInputsStayFrozenUntilTheHostDeadline" methodname="FinalViewAndRealInputsStayFrozenUntilTheHostDeadline" classname="TumbangPreso.PlayTests.RoundBreakFreezeTests" runstate="Runnable" seed="663151376" result="Failed" start-time="2026-09-30 11:42:14Z" end-time="2026-09-30 11:42:26Z" duration="11.889778" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The gameplay camera never supplied its final image.
+  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RoundBreakFreezeTests+<FinalViewAndRealInputsStayFrozenUntilTheHostDeadline>d__3.MoveNext () [0x00162] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\RoundBreakFreezeTests.cs:46
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1799" name="LateClientSharesTheDeadlineWithoutAdvancingOrRestartingIt" fullname="TumbangPreso.PlayTests.RoundBreakFreezeTests.LateClientSharesTheDeadlineWithoutAdvancingOrRestartingIt" methodname="LateClientSharesTheDeadlineWithoutAdvancingOrRestartingIt" classname="TumbangPreso.PlayTests.RoundBreakFreezeTests" runstate="Runnable" seed="981747265" result="Failed" start-time="2026-09-30 11:42:26Z" end-time="2026-09-30 11:42:29Z" duration="2.761940" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RoundBreakFreezeTests+<LateClientSharesTheDeadlineWithoutAdvancingOrRestartingIt>d__4.MoveNext () [0x001c9] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\RoundBreakFreezeTests.cs:112
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

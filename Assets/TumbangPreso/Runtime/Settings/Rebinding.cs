@@ -29,17 +29,17 @@ namespace TumbangPreso.Settings
     /// was not on left click even though it was bound there, and a hero's first skill fired out
     /// of the pickup key. Rebinding anything onto E or Q was refused by our own asset.
     ///
-    /// ⚠️⚠️ THE DEFAULT LAYOUT IS THE OWNER'S, 2026-09-27, KEY FOR KEY. MOVEMENT: WASD, sprint
-    /// Left Shift, jump Space. ACTIONS: Throw / Tag left click, Shove / Lunge right click, Curve
-    /// Throw the mouse wheel, Interact / Use F. ABILITIES: Signature E (`Skill1`), Attacking /
-    /// Defending Q (`Skill2`), Ultimate X. INTERFACE: Ability Tooltips Tab. COMMUNICATIONS: Emote
+    /// The owner's latest 2026-09-30 defaults: WASD, Run Left Shift, jump Space.
+    /// Throw / Tag left click; Retrieve / Reset right click; Interact / Ready F;
+    /// Shove / Lunge middle click; curve left wheel up, right wheel down.
+    /// ABILITIES: Signature E (`Skill1`), Role Ability Q (`Skill2`),
+    /// Ultimate X. INTERFACE: Ability Descriptions Tab. COMMUNICATIONS: Emote
     /// Wheel T. `Groups` below is laid out under the same five headings. It replaced Q/E/F for
     /// the deck, X for a contextual pickup/shove/reset, G for interact, B for emotes and Z/C
     /// for the curve (Z and C were themselves the fix for the arrow keys, 2026-08-27).
     ///
-    /// Every playing action holds ONE control, with ONE deliberate pair: `Grab` and `Interact`
-    /// are both F because they are his one Interact / Use key (`IsOneUseKey`). The shove left
-    /// the pickup key for Shove / Lunge, which is what makes that pair safe.
+    /// Interact/Ready share a control in separate phases; older saved Lunge/Ready
+    /// pairs remain supported. PlayerInputReader requires release after Ready use.
     /// `SettingsPanelTests` asserts the rest, so the collisions cannot come back quietly.
     ///
     /// ⚠️ THE CURVE IS A WHEEL NOTCH NOW: `PlayerInputReader.CurveInput` steps on each press edge
@@ -68,6 +68,8 @@ namespace TumbangPreso.Settings
     /// </summary>
     public static class Rebinding
     {
+        // Latest owner layout restores the Interact/Ready row on F; the previous
+        // separate Hold Interact label remains retired.
         /// <summary>Action names as they appear in the Input System asset or composite parts.</summary>
         public static readonly string[] RebindableActions =
         {
@@ -125,7 +127,9 @@ namespace TumbangPreso.Settings
             => IsSpectatorAction(a) == IsSpectatorAction(b);
 
         /// <summary>
-        /// ⚠️⚠️ THE ONE PAIR OF PLAYING ACTIONS THAT SHARES A KEY ON PURPOSE: `Grab` AND `Interact`
+        /// Contextual playing actions that share a key on purpose: Grab and Interact,
+        /// plus Interact/ReadyUp and older saved Lunge/ReadyUp pairs in separate phases.
+        /// `Grab` AND `Interact`
         /// ARE THE OWNER'S ONE "INTERACT / USE" KEY. His default layout, 2026-09-27: *"Interact / Use
         /// - F"*. `Grab` is the tap and the reset hold (pick up the tsinelas, raise the can) and
         /// `Interact` is the free hold (break out of roots, pull out a plant); they were split on
@@ -135,7 +139,9 @@ namespace TumbangPreso.Settings
         /// buttons.
         /// </summary>
         public static bool IsOneUseKey(string a, string b)
-            => (a == "Grab" && b == "Interact") || (a == "Interact" && b == "Grab");
+            => (a == "Grab" && b == "Interact") || (a == "Interact" && b == "Grab")
+               || (a == "Lunge" && b == "ReadyUp") || (a == "ReadyUp" && b == "Lunge")
+               || (a == "Interact" && b == "ReadyUp") || (a == "ReadyUp" && b == "Interact");
 
         /// <summary>True when binding one control to both actions would be two things on one press.</summary>
         public static bool WouldClash(string a, string b) => ShareAContext(a, b) && !IsOneUseKey(a, b);
@@ -160,19 +166,19 @@ namespace TumbangPreso.Settings
             { "MoveRight", "Move Right" },
             { "Move", "Move" },
             { "SpecialAbility", "Throw / Tag" },
-            { "Grab", "Interact / Use" },
+            { "Grab", "Retrieve Slipper / Reset Can" },
             { "Lunge", "Shove / Lunge" },
             { "CurveLeft", "Curve Throw Left" },
             { "CurveRight", "Curve Throw Right" },
             { "Jump", "Jump" },
-            { "Sprint", "Sprint" },
+            { "Sprint", "Run" },
             { "Skill1", "Signature Ability" },
-            { "Skill2", "Attacking / Defending" },
+            { "Skill2", "Role Ability" },
             { "Ultimate", "Ultimate Ability" },
             { "ReadyUp", "Ready Up" },
-            { "Interact", "Interact / Use: Hold" },
+            { "Interact", "Interact / Ready" },
             { "CleanFeed", "Hide HUD" },
-            { "AbilityInfo", "Ability Tooltips" },
+            { "AbilityInfo", "Ability Descriptions" },
             { "EmoteWheel", "Emote Wheel" },
             { "Pause", "Pause / Match Menu" },
             { "SpectatorDown", "Fly Down" },
@@ -191,6 +197,10 @@ namespace TumbangPreso.Settings
         public static string LabelFor(string action)
             => ActionLabels.TryGetValue(action, out string label) ? label : action;
 
+        /// <summary>Ready uses the shared Interact row; its action/legacy overrides remain valid.</summary>
+        public static string SettingsRowFor(string action)
+            => action == "ReadyUp" ? "Interact" : action;
+
         /// <summary>
         /// The controls list, cut into named groups in the order they should be shown.
         ///
@@ -203,9 +213,9 @@ namespace TumbangPreso.Settings
         /// ⚠️ THE GROUPS ARE BY WHEN YOU USE THEM, NOT BY DEVICE OR BY SUBSYSTEM, and since
         /// 2026-09-27 they are the owner's own headings, in his order: MOVEMENT, ACTIONS, ABILITIES,
         /// INTERFACE, COMMUNICATIONS. A player looking for the throw key does not think "mouse
-        /// buttons". Rows he did not list (ready, hide HUD, pause, fullscreen) sit under INTERFACE.
+        /// buttons". Ready shares Interact; hide HUD, pause and fullscreen sit under INTERFACE.
         ///
-        /// ⚠️ EVERY ACTION IN `RebindableActions` MUST APPEAR IN EXACTLY ONE GROUP. A row that
+        /// Every action's SettingsRowFor must appear in exactly one group. A row that
         /// belongs to no group would vanish from the panel with no error, which is the same
         /// silent failure the class note at the top warns about. `SettingsGroupsCoverEveryAction`
         /// asserts it.
@@ -213,10 +223,9 @@ namespace TumbangPreso.Settings
         public static readonly (string Title, string[] Actions)[] Groups =
         {
             ("MOVEMENT", new[] { "MoveForward", "MoveBackward", "MoveLeft", "MoveRight", "Sprint", "Jump" }),
-            ("ACTIONS", new[] { "SpecialAbility", "Lunge", "CurveRight", "CurveLeft",
-                                "Grab", "Interact" }),
+            ("ACTIONS", new[] { "SpecialAbility", "Lunge", "Grab", "CurveLeft", "CurveRight", "Interact" }),
             ("ABILITIES", new[] { "Skill1", "Skill2", "Ultimate" }),
-            ("INTERFACE", new[] { "AbilityInfo", "ReadyUp", "CleanFeed", "Pause",
+            ("INTERFACE", new[] { "AbilityInfo", "CleanFeed", "Pause",
                                   "ToggleFullscreen" }),
             ("COMMUNICATIONS", new[] { "EmoteWheel" }),
             ("SPECTATOR CAMERA", new[] { "SpectatorAutopilot", "SpectatorCycleTarget",
@@ -770,7 +779,16 @@ namespace TumbangPreso.Settings
             // should make first so the player never gets this far.
             if (index < 0) return LabelFor(action);
 
+            // Move Ready with its shared keyboard/mouse control. A separate saved
+            // Ready override and the controller's separate Ready button stay intact.
+            InputAction ready = null;
+            int readyIndex = -1;
+            bool sharedReady = action == "Interact" && kind == InputDeviceKind.KeyboardMouse
+                && ResolveBindingIndexFor(asset, "ReadyUp", kind, out ready, out readyIndex)
+                && string.Equals(ready.bindings[readyIndex].effectivePath,
+                    target.bindings[index].effectivePath, System.StringComparison.OrdinalIgnoreCase);
             target.ApplyBindingOverride(index, path);
+            if (sharedReady) ready.ApplyBindingOverride(readyIndex, path);
             Invalidate();
             Save(asset);
             return null;

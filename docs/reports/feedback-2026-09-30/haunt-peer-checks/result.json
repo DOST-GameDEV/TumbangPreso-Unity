@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "faults": [],
+  "host": null,
+  "client": null,
+  "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Builds\\feedback-haunt-player-1001\\TumbangPreso.exe",
+  "clientArtifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Builds\\feedback-haunt-player-1001\\TumbangPreso.exe",
+  "expectedProtocolRefusal": false,
+  "runtimeSha256": "4315b0b076a961955428fb2d58d2ec657bc17fa3c98acd4eb6e434289b2616c8",
+  "clientRuntimeSha256": "4315b0b076a961955428fb2d58d2ec657bc17fa3c98acd4eb6e434289b2616c8",
+  "haunt": {
+    "host": {
+      "samples": 604,
+      "peaks": {
+        "0": 7.4489,
+        "1": 7.4667,
+        "2": 7.4499,
+        "3": 7.4663
+      },
+      "finalPhase": 1,
+      "movementSpan": 13.086799999999998,
+      "timeStart": 11.3324,
+      "timeEnd": 45.3176
+    },
+    "client": {
+      "samples": 534,
+      "peaks": {
+        "0": 7.4496,
+        "1": 7.4667,
+        "2": 7.4666,
+        "3": 7.4833
+      },
+      "finalPhase": 1,
+      "movementSpan": 12.969999999999999,
+      "timeStart": 11.6536,
+      "timeEnd": 41.6527
+    }
+  },
+  "scope": "Dedicated actual owner-client Haunt fixture; not whole-match/round2/rejoin qualification",
+  "expectedProtocol": 116,
+  "sharedInputUnchanged": true
+}

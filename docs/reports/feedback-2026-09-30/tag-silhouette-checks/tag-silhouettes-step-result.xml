@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 19:22:45Z" end-time="2026-09-30 19:23:04Z" duration="18.5283296">
+  <test-suite type="TestSuite" id="2196" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="962" result="Failed" site="Child" start-time="2026-09-30 19:22:45Z" end-time="2026-09-30 19:23:04Z" duration="18.528330" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2190" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="962" result="Failed" site="Child" start-time="2026-09-30 19:22:45Z" end-time="2026-09-30 19:23:04Z" duration="18.518423" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="163308" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2191" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="962" result="Failed" site="Child" start-time="2026-09-30 19:22:45Z" end-time="2026-09-30 19:23:04Z" duration="18.516054" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2192" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="962" result="Failed" site="Child" start-time="2026-09-30 19:22:45Z" end-time="2026-09-30 19:23:04Z" duration="18.514307" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1130" name="CatchReconstructionTests" fullname="TumbangPreso.PlayTests.CatchReconstructionTests" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" testcasecount="18" result="Failed" site="Child" start-time="2026-09-30 19:22:45Z" end-time="2026-09-30 19:23:04Z" duration="18.444095" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1135" name="ContactCameraShowsTheActualReachingHand" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.ContactCameraShowsTheActualReachingHand" methodname="ContactCameraShowsTheActualReachingHand" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="320575368" result="Failed" start-time="2026-09-30 19:22:45Z" end-time="2026-09-30 19:22:50Z" duration="4.841833" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The hips must transfer weight into the step.
+  Expected: greater than 0.100000001f
+  But was:  0.0963458195f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CatchReconstructionTests+<CheckContactReach>d__16.MoveNext () [0x00ae7] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/CatchReconstructionTests.cs:278
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[distance=1 contactGap=0 contactAlpha=1 sampleError=0.004421249 frames=45 bodyShift=0.09634582 torsoLean=23.19447 armStretch=1 skinSurfaceGap=3.402823E+38
+]]></output>
+            </test-case>
+            <test-case id="1141" name="DanteTaggingSmallNemuHasVisibleContact" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.DanteTaggingSmallNemuHasVisibleContact" methodname="DanteTaggingSmallNemuHasVisibleContact" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="43531592" result="Failed" start-time="2026-09-30 19:22:50Z" end-time="2026-09-30 19:22:55Z" duration="4.663370" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A bounding-box overlap is not visible contact with the actual skin.
+  Expected: less than 0.0799999982f
+  But was:  0.0855083242f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CatchReconstructionTests+<CheckContactReach>d__16.MoveNext () [0x00a61] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/CatchReconstructionTests.cs:275
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.001890108 frames=46 bodyShift=0.5910266 torsoLean=37.96635 armStretch=1.001192 skinSurfaceGap=0.08550832
+]]></output>
+            </test-case>
+            <test-case id="1136" name="FarAcceptedTagHasVisibleHandContact" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.FarAcceptedTagHasVisibleHandContact" methodname="FarAcceptedTagHasVisibleHandContact" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1427072435" result="Passed" start-time="2026-09-30 19:22:55Z" end-time="2026-09-30 19:22:59Z" duration="4.439952" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.003087118 frames=49 bodyShift=0.3440497 torsoLean=37.97823 armStretch=1.00015 skinSurfaceGap=3.402823E+38
+]]></output>
+            </test-case>
+            <test-case id="1140" name="SmallNemuTaggingDanteHasVisibleContact" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.SmallNemuTaggingDanteHasVisibleContact" methodname="SmallNemuTaggingDanteHasVisibleContact" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="9645475" result="Passed" start-time="2026-09-30 19:22:59Z" end-time="2026-09-30 19:23:04Z" duration="4.478892" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[distance=1.65 contactGap=0 contactAlpha=1 sampleError=0.009011343 frames=49 bodyShift=0.6322383 torsoLean=37.75991 armStretch=1.015222 skinSurfaceGap=0.03651381
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

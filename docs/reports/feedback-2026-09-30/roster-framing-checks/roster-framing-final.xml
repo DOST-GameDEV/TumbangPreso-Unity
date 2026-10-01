@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="16" result="Failed(Child)" total="16" passed="14" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.1826235">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="771" result="Failed" site="Child" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.182624" total="16" passed="14" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1911" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="771" result="Failed" site="Child" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.166180" total="16" passed="14" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="30924" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1912" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="771" result="Failed" site="Child" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.159445" total="16" passed="14" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1913" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="771" result="Failed" site="Child" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.149444" total="16" passed="14" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1455" name="LobbyRosterPacketTests" fullname="TumbangPreso.Tests.LobbyRosterPacketTests" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" testcasecount="16" result="Failed" site="Child" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.125898" total="16" passed="14" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1469" name="DuplicateSeatCannotReplaceAnotherRow" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.DuplicateSeatCannotReplaceAnotherRow" methodname="DuplicateSeatCannotReplaceAnotherRow" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="666339115" result="Passed" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.041066" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1468" name="ImpossibleWatchingCountDoesNotApplySeats" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.ImpossibleWatchingCountDoesNotApplySeats" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.011004" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1466" name="ImpossibleWatchingCountDoesNotApplySeats(-1)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.ImpossibleWatchingCountDoesNotApplySeats(-1)" methodname="ImpossibleWatchingCountDoesNotApplySeats" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="610963408" result="Passed" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.001610" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1467" name="ImpossibleWatchingCountDoesNotApplySeats(5)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.ImpossibleWatchingCountDoesNotApplySeats(5)" methodname="ImpossibleWatchingCountDoesNotApplySeats" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="2019835813" result="Passed" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.001332" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1465" name="InvalidSeatCountDoesNotPublishOrAllocateFromTheCount" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.InvalidSeatCountDoesNotPublishOrAllocateFromTheCount" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.013584" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1462" name="InvalidSeatCountDoesNotPublishOrAllocateFromTheCount(-1)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.InvalidSeatCountDoesNotPublishOrAllocateFromTheCount(-1)" methodname="InvalidSeatCountDoesNotPublishOrAllocateFromTheCount" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="548300212" result="Passed" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.001394" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1463" name="InvalidSeatCountDoesNotPublishOrAllocateFromTheCount(0)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.InvalidSeatCountDoesNotPublishOrAllocateFromTheCount(0)" methodname="InvalidSeatCountDoesNotPublishOrAllocateFromTheCount" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="866574486" result="Passed" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.001778" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1464" name="InvalidSeatCountDoesNotPublishOrAllocateFromTheCount(5)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.InvalidSeatCountDoesNotPublishOrAllocateFromTheCount(5)" methodname="InvalidSeatCountDoesNotPublishOrAllocateFromTheCount" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="362668240" result="Passed" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.001724" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1475" name="NonHostAndListenHostLoopbackCannotReplaceRoster" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.NonHostAndListenHostLoopbackCannotReplaceRoster" methodname="NonHostAndListenHostLoopbackCannotReplaceRoster" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="1583009077" result="Passed" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.001504" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1470" name="TrailingBytesDoNotCommitTheRoster" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.TrailingBytesDoNotCommitTheRoster" methodname="TrailingBytesDoNotCommitTheRoster" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="1815828679" result="Passed" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.001967" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1461" name="TruncatedRosterDoesNotThrowOrPartiallyApply" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.TruncatedRosterDoesNotThrowOrPartiallyApply" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.016882" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1456" name="TruncatedRosterDoesNotThrowOrPartiallyApply(8)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.TruncatedRosterDoesNotThrowOrPartiallyApply(8)" methodname="TruncatedRosterDoesNotThrowOrPartiallyApply" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="1574013252" result="Passed" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.001796" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1457" name="TruncatedRosterDoesNotThrowOrPartiallyApply(11)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.TruncatedRosterDoesNotThrowOrPartiallyApply(11)" methodname="TruncatedRosterDoesNotThrowOrPartiallyApply" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="94245613" result="Passed" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.001341" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1458" name="TruncatedRosterDoesNotThrowOrPartiallyApply(24)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.TruncatedRosterDoesNotThrowOrPartiallyApply(24)" methodname="TruncatedRosterDoesNotThrowOrPartiallyApply" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="763985205" result="Passed" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.001108" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1459" name="TruncatedRosterDoesNotThrowOrPartiallyApply(90)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.TruncatedRosterDoesNotThrowOrPartiallyApply(90)" methodname="TruncatedRosterDoesNotThrowOrPartiallyApply" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="1802285889" result="Passed" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.001215" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1460" name="TruncatedRosterDoesNotThrowOrPartiallyApply(170)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.TruncatedRosterDoesNotThrowOrPartiallyApply(170)" methodname="TruncatedRosterDoesNotThrowOrPartiallyApply" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="801928167" result="Passed" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.001149" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1474" name="ValidRosterPreservesUnicodeAndHostDecisionFields" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.ValidRosterPreservesUnicodeAndHostDecisionFields" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.018629" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1471" name="ValidRosterPreservesUnicodeAndHostDecisionFields(False,3)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.ValidRosterPreservesUnicodeAndHostDecisionFields(False,3)" methodname="ValidRosterPreservesUnicodeAndHostDecisionFields" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="1723210493" result="Passed" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.003036" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1472" name="ValidRosterPreservesUnicodeAndHostDecisionFields(True,0)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.ValidRosterPreservesUnicodeAndHostDecisionFields(True,0)" methodname="ValidRosterPreservesUnicodeAndHostDecisionFields" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="1028413227" result="Failed" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.008446" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1
+  But was:  2
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyRosterPacketTests.ValidRosterPreservesUnicodeAndHostDecisionFields (System.Boolean footer, System.Int32 watching) [0x00022] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:66
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1473" name="ValidRosterPreservesUnicodeAndHostDecisionFields(True,4)" fullname="TumbangPreso.Tests.LobbyRosterPacketTests.ValidRosterPreservesUnicodeAndHostDecisionFields(True,4)" methodname="ValidRosterPreservesUnicodeAndHostDecisionFields" classname="TumbangPreso.Tests.LobbyRosterPacketTests" runstate="Runnable" seed="1836789530" result="Failed" start-time="2026-10-01 08:01:49Z" end-time="2026-10-01 08:01:49Z" duration="0.001112" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1
+  But was:  3
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyRosterPacketTests.ValidRosterPreservesUnicodeAndHostDecisionFields (System.Boolean footer, System.Int32 watching) [0x00022] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyRosterPacketTests.cs:66
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

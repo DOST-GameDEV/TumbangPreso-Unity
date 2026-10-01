@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Linq;
 using NUnit.Framework;
+using TumbangPreso.Core;
 using TumbangPreso.Settings;
 using TumbangPreso.UI;
 using UnityEngine;
@@ -32,7 +33,7 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(can.IsProtected);
             int before = match.ScoreFor(3); can.HostKnockDown(3);
             yield return new WaitForSecondsRealtime(.10f);
-            Assert.AreEqual((before + 100).ToString(), Score(3).text);
+            Assert.AreEqual((before + 100 + MatchRules.PointsFor(ScoreEvent.FirstKnockdownBonus)).ToString(), Score(3).text);
             // VISUAL-1.4: chips hold seat order (a crown marks the leader) instead of re-sorting,
             // so the credited seat keeps its own chip and the emphasis must land on it.
             Assert.AreEqual("ScoreRow3", Score(3).transform.parent.name, "The credited seat's chip carries the emphasis in place.");
@@ -45,7 +46,7 @@ namespace TumbangPreso.PlayTests
             SettingsStore.Current.ReducedUiMotion = false;
             Hud.Instance.SetCleanFeed(false); yield return null; yield return null;
             Assert.AreEqual(Vector3.one, Score(3).rectTransform.localScale, "Reopening must not replay an expired/hidden receipt.");
-            Assert.AreEqual((before + 100).ToString(), Score(3).text);
+            Assert.AreEqual((before + 100 + MatchRules.PointsFor(ScoreEvent.FirstKnockdownBonus)).ToString(), Score(3).text);
             can.HostRestore();
             limit = Time.time + 4;
             while (can.IsProtected && Time.time < limit) yield return null;

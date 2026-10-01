@@ -172,7 +172,7 @@ namespace TumbangPreso.Core
                     react: 0.55f, think: 0.34f, lead: 0.00f, aimError: 1.75f,
                     aimSettle: 99.0f, powerMargin: 1.04f, lanePatience: 0.0f, spacing: 0.15f,
                     fetchCaution: 0.0f, sabotage: 0.0f, intercept: 0.0f, camp: 0.0f,
-                    lungeRange: 1.9f, lungeCone: 55.0f, dodge: 0.0f, sprintReserve: 0.0f,
+                    lungeRange: Combat.LungeReach() - 0.4f, lungeCone: 55.0f, dodge: 0.0f, sprintReserve: 0.0f,
                     mistake: 0.30f,
                     // ⚠️ THE KID IS DISTRACTIBLE, NOT SOCIABLE. `Lapse` is the highest of the
                     // three because a lapse IS inattention and that is what this tier is. `Flair`
@@ -184,7 +184,7 @@ namespace TumbangPreso.Core
                     react: 0.30f, think: 0.24f, lead: 0.45f, aimError: 1.45f,
                     aimSettle: 1.40f, powerMargin: 1.18f, lanePatience: 1.1f, spacing: 0.60f,
                     fetchCaution: 3.2f, sabotage: 0.35f, intercept: 0.60f, camp: 0.45f,
-                    lungeRange: 2.6f, lungeCone: 34.0f, dodge: 0.55f, sprintReserve: 0.25f,
+                    lungeRange: Combat.LungeReach() + 0.3f, lungeCone: 34.0f, dodge: 0.55f, sprintReserve: 0.25f,
                     mistake: 0.10f,
                     // ⚠️⚠️ NORMAL IS THE MOST HUMAN TIER ON PURPOSE AND THESE THREE ROWS ARE
                     // WHERE THAT IS WRITTEN DOWN. 🧑 2026-08-28 asked for exactly that. It taunts
@@ -196,7 +196,7 @@ namespace TumbangPreso.Core
                     react: 0.14f, think: 0.16f, lead: 0.85f, aimError: 1.10f,
                     aimSettle: 0.80f, powerMargin: 1.32f, lanePatience: 2.2f, spacing: 1.00f,
                     fetchCaution: 5.0f, sabotage: 0.85f, intercept: 1.00f, camp: 1.00f,
-                    lungeRange: 3.1f, lungeCone: 28.0f, dodge: 1.00f, sprintReserve: 0.45f,
+                    lungeRange: Combat.LungeReach() + 0.8f, lungeCone: 28.0f, dodge: 1.00f, sprintReserve: 0.45f,
                     mistake: 0.02f,
                     // ⚠️ ASTIG STILL LAPSES AND STILL CELEBRATES, FOR THE REASON `Mistake` IS NOT
                     // ZERO HERE EITHER: a bot that never looks away and never plays to the crowd
@@ -1176,12 +1176,10 @@ namespace TumbangPreso.Core
         /// <summary>
         /// How near a rival may be before an emote is refused outright, in metres.
         ///
-        /// ⚠️⚠️ IT IS SIZED OFF THE THING THAT PUNISHES IT, NOT PICKED. `Balance.LungeRange` is
-        /// what reaches a standing body, and `AiPersonality.LungeRange` tops out at 3.1 for
-        /// Astig; 6.0 is roughly twice that, so a taya has to cross a real distance before it can
-        /// answer a celebration, and the bot has the hold's own length to see it coming.
+        /// Preserve the previous 3.7m clearance beyond actual lunge reach. Longer
+        /// lunges must also move the safe celebration boundary outwards.
         /// </summary>
-        public const float EmoteSafeRadius = 6.0f;
+        public static readonly float EmoteSafeRadius = Combat.LungeReach() + 3.7f;
 
         /// <summary>
         /// The chance a bot celebrates something that just went its way, before the tier's

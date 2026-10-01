@@ -16,7 +16,9 @@ namespace TumbangPreso
         Normal,
         FireExplosive,  // Sean Skill 2 (Ignition Cannon)
         ElectricZap,    // Zack Skill 2 (Overcharge Throw)
-        Frost,          // Cheska attacking (Frostbite, ABILITY-2): the player it hits is Frozen
+        Frost = 3,      // Cheska attacking: the player it hits is Frozen
+        Concussed = 4,  // Dante Boulder held-slipper payload; stable wire value
+        Skim = 5,       // Hydro first-ground continuation; stable wire value
     }
 
     /// <summary>
@@ -27,7 +29,7 @@ namespace TumbangPreso
     /// moment they pick one up inside the box. Anything that makes retrieval cheaper is a
     /// change to the core loop, not a convenience.
     /// </summary>
-    public sealed class Slipper : MonoBehaviour
+    public sealed partial class Slipper : MonoBehaviour
     {
         [SerializeField] private int _skinIndex = -1;
         [SerializeField] private int _ownerSlot = -1;
@@ -148,6 +150,7 @@ namespace TumbangPreso
             if (State == SlipperState.InFlight && next != SlipperState.InFlight) FinishChain(ThrowChainEnd.Miss);
 
             State = next;
+            if (next != SlipperState.InFlight) { _skimLeft = 0; _skimStarted = false; }
             if (next != SlipperState.InFlight && _motionAccent != null) _motionAccent.ClearFlight();
             if (next != SlipperState.Loose) SetLandedHighlight(false);
             if (changed) RefreshBeam();
@@ -388,9 +391,12 @@ namespace TumbangPreso
         private Visual.SlipperMotionAccent _motionAccent;
         private void Awake()
         {
+            BotSlipperInventory.Invalidate();
             _motionAccent = GetComponent<Visual.SlipperMotionAccent>();
             if (_motionAccent == null) _motionAccent = gameObject.AddComponent<Visual.SlipperMotionAccent>();
         }
+
+        private void OnDestroy() => BotSlipperInventory.Invalidate();
 
         /// <summary>
         /// `slipper.gd::OWNER_RIM_COLOR`. Gold, and deliberately NOT the UI theme's highlight:
@@ -882,6 +888,16 @@ namespace TumbangPreso
             Land(false, FindGroundY(at, Balance.SlipperRestHeight + 2.0f));
         }
 
+        // A stationary water curtain ends the existing flight on its incoming side.
+        public bool HostDropFlightAt(Vector3 at)
+        {
+            if (!NetAuthority.ShouldResolve() || State != SlipperState.InFlight || IsSkimming
+                || !float.IsFinite(at.sqrMagnitude) || Vector3.Distance(at, transform.position) > 2f) return false;
+            transform.position = AIController.ClampToPlayable(at);
+            Land(true, FindGroundY(at, Balance.SlipperRestHeight + 2f));
+            return true;
+        }
+
         public bool HostBeginMapRecovery()
         {
             if(!NetAuthority.ShouldResolve()||!gameObject.activeSelf)return false;
@@ -981,7 +997,8 @@ namespace TumbangPreso
             PektusSpin = state == SlipperState.InFlight
                 ? Mathf.Clamp(pektusSpin, -Balance.MaxPektusSpin, Balance.MaxPektusSpin)
                 : 0.0f;
-            Affinity = state == SlipperState.InFlight ? affinity : SlipperAffinity.Normal;
+            Affinity = state == SlipperState.InFlight || affinity == SlipperAffinity.Concussed
+                ? affinity : SlipperAffinity.Normal;
             _throwerSlot = state == SlipperState.InFlight ? throwerSlot : -1;
             if (enteringEmpoweredFlight)
             {
@@ -1067,6 +1084,7 @@ namespace TumbangPreso
             if (thrower != null && !OwnershipAllows(thrower)) return;
             if (_motionAccent != null) _motionAccent.ClearFlight();
             FinishChain(ThrowChainEnd.Miss); // A credited flight replaced by a new launch has ended.
+            _skimLeft = 0; _skimStarted = false;
             _chainMatch = GameServices.Match;
             _chainOwner = thrower != null ? thrower.PlayerSlot : -1;
             _launchCanSerial = GameServices.Round != null && GameServices.Round.Lata != null
@@ -1166,6 +1184,7 @@ namespace TumbangPreso
 
         private void TriggerAffinityImpact()
         {
+            _skimLeft = 0;
             if (Affinity == SlipperAffinity.FireExplosive)
             {
                 // ⚠️⚠️ 2.6 m, DOWN FROM 4.5, BECAUSE THIS IS A SKILL'S PAYLOAD AND NOT AN
@@ -1250,6 +1269,18 @@ namespace TumbangPreso
         /// overlap volume fires on whichever peer owns the body, and 16 of 36 were measured
         /// failing to land.
         /// </summary>
+        // Shared by real flight and its local landing preview. This has no effects,
+        // collision, score or authority mutation.
+        internal static Vector3 StepFlightVelocity(Vector3 velocity, float spin, float dt)
+        {
+            velocity.y -= Balance.Gravity * dt;
+            var flat = new Vector3(velocity.x, 0, velocity.z);
+            if (Mathf.Abs(spin) > .01f && flat.sqrMagnitude > .1f)
+                velocity += Vector3.Cross(flat.normalized, Vector3.up).normalized * (spin * Balance.PektusCurveStrength * dt);
+            const float terminalSpeed = 34;
+            return velocity.sqrMagnitude > terminalSpeed * terminalSpeed ? velocity.normalized * terminalSpeed : velocity;
+        }
+
         private void FixedUpdate()
         {
             if (State != SlipperState.InFlight) return;
@@ -1258,55 +1289,26 @@ namespace TumbangPreso
             float dt = Time.fixedDeltaTime;
             _flightTime += dt;
             _airborneTotal += dt;
+            // Contact may rebound and return below. It cannot bypass the existing
+            // lifetime ceiling, even while a protected can repeatedly rejects it.
+            if (_flightTime >= Balance.MaxFlightTime || _airborneTotal >= Balance.MaxAirborneTime)
+            { Land(fromFlight: false); return; }
             if (_throwerIgnoreLeft > 0.0f) _throwerIgnoreLeft -= dt;
 
-            _velocity.y -= Balance.Gravity * dt;
-
-            // Apply lateral Magnus acceleration from Pektus spin
-            if (Mathf.Abs(PektusSpin) > 0.01f)
-            {
-                Vector3 flatVel = new Vector3(_velocity.x, 0.0f, _velocity.z);
-                if (flatVel.sqrMagnitude > 0.1f)
-                {
-                    Vector3 lateral = Vector3.Cross(flatVel.normalized, Vector3.up).normalized;
-                    _velocity += lateral * (PektusSpin * Balance.PektusCurveStrength * dt);
-                }
-            }
-
-            // -------------------------------------------------------------------
-            // ⚠️⚠️ A TSINELAS HAS A TERMINAL SPEED, AND THIS IS A GUARD RATHER THAN A CURE.
-            // 🧑 2026-08-27: *"appparently slippers randomly fly to sky too? idk how playtesters
-            // did that"*. The exact source is NOT identified and this does not claim to have
-            // found it; what it does is bound the symptom so a single bad frame cannot remove a
-            // slipper from the match.
-            //
-            // ⚠️ THERE ARE SEVERAL PLACES A LARGE VELOCITY CAN BE MANUFACTURED and none of them
-            // is obviously wrong on its own: `Deflect` off the lata multiplies the incoming speed
-            // by `LataRecoilScale`, so two recoils in quick succession compound; a
-            // `Vector3.Reflect` in `BounceOffObstacles` falls back to `-disp.normalized` which is
-            // ZERO if the slipper did not move that frame, and reflecting about a zero normal
-            // returns the velocity unchanged rather than reversing it; and `HeroHazards`
-            // teleports loose slippers every frame during Nemu's ultimate, which can drive one
-            // into a collider that then ejects it.
-            //
-            // ⚠️ 34 m/s IS ABOVE ANYTHING THE GAME CAN LEGITIMATELY PRODUCE. The hardest legal
-            // throw leaves the hand well under this, so a slipper that reaches it has been given
-            // energy by a defect. Clamping preserves the DIRECTION, so a hard throw still flies
-            // hard and only the impossible case is cut. **If this clamp ever fires in normal
-            // play the number is wrong; if the sky-launch stops being reported, the cause is
-            // still out there and is worth finding.** `docs/TODO.md` § 32.
-            const float TerminalSpeed = 34.0f;
-            if (_velocity.sqrMagnitude > TerminalSpeed * TerminalSpeed)
-            {
-                _velocity = _velocity.normalized * TerminalSpeed;
-            }
-
             Vector3 prevPos = transform.position;
-            transform.position += _velocity * dt;
-
-            BounceOffObstacles(prevPos, dt);
-            BounceOffBounds();
-            SpinInFlight(dt);
+            bool skimming = _skimLeft > 0 && Affinity == SlipperAffinity.Skim;
+            if (skimming)
+            {
+                if (!MoveSkim(dt)) return;
+            }
+            else
+            {
+                _velocity = StepFlightVelocity(_velocity, PektusSpin, dt);
+                transform.position += _velocity * dt;
+                BounceOffObstacles(prevPos, dt);
+                BounceOffBounds();
+                SpinInFlight(dt);
+            }
             if(RooftopRecovery.Instance!=null&&RooftopRecovery.Instance.TryLoseSlipper(this))return;
             if(LagoonWater.Instance!=null&&LagoonWater.Instance.TryRecoverSlipper(this))return;
 
@@ -1318,7 +1320,7 @@ namespace TumbangPreso
 
             var round = GameServices.Round;
             if (round != null && _bodyContacts != 0)
-                foreach (var player in round.Players)
+                foreach (var player in round.Bodies)
                     if (player != null && !HitsBody(player)) _bodyContacts &= ~(1 << player.PlayerSlot);
 
             // ⚠️⚠️ THE TAYA'S BODY IS TESTED BEFORE THE CAN, AND EVERY OTHER BODY AFTER IT.
@@ -1340,24 +1342,25 @@ namespace TumbangPreso
             // this line is what makes the trade a real one rather than a lost tie.
             if (round != null && _throwerIgnoreLeft <= 0.0f)
             {
-                foreach (var p in round.Players)
+                foreach (var p in round.Bodies)
                 {
-                    if (p == null || !p.IsDefender || p.PlayerSlot == _throwerSlot) continue;
+                    if (p == null || !p.gameObject.activeInHierarchy || !p.IsDefender || p.PlayerSlot == _throwerSlot) continue;
                     if (!HitsBody(p)) continue;
                     // Keep simulating the rebound, but don't restart its lift, body
                     // impulse, sound and flair on every step spent inside one body.
                     int contactBit = 1 << p.PlayerSlot;
                     if ((_bodyContacts & contactBit) != 0) return;
                     _bodyContacts |= contactBit;
+                    HostBodyAffinity(p);
                     TriggerAffinityImpact();
-                    HostFrostbite(p);
                     HostBlockedBy(p);
                     return;
                 }
             }
 
             // The can next: it is the thing being aimed at.
-            if (round?.Lata != null && round.Lata.IsUpright && round.Lata.Connects(transform.position))
+            if (round?.Lata != null && round.Lata.gameObject.activeInHierarchy
+                && round.Lata.IsUpright && round.Lata.Connects(transform.position))
             {
                 int before = round.Lata.HostKnockdownSerial;
                 TriggerAffinityImpact();
@@ -1378,19 +1381,20 @@ namespace TumbangPreso
             // ⚠️ THEN ANY STANDING BODY, ATTACKERS INCLUDED. Three of them crowding one box
             // means friendly fire is part of the traffic, and a slipper that passed through
             // teammates would make the Defender's body block the only block in the game.
+            // `Bodies`: a companion (Phaister's doll) stands in the way like anyone.
             if (round != null && _throwerIgnoreLeft <= 0.0f)
             {
-                foreach (var p in round.Players)
+                foreach (var p in round.Bodies)
                 {
-                    if (p == null || p.PlayerSlot == _throwerSlot) continue;
+                    if (p == null || !p.gameObject.activeInHierarchy || p.PlayerSlot == _throwerSlot) continue;
                     if (!HitsBody(p)) continue;
                     // Keep simulating the rebound, but don't restart its lift, body
                     // impulse, sound and flair on every step spent inside one body.
                     int contactBit = 1 << p.PlayerSlot;
                     if ((_bodyContacts & contactBit) != 0) return;
                     _bodyContacts |= contactBit;
+                    HostBodyAffinity(p);
                     TriggerAffinityImpact();
-                    HostFrostbite(p);
                     HostBlockedBy(p);
                     return;
                 }
@@ -1413,11 +1417,14 @@ namespace TumbangPreso
             Vector3 supportAt = transform.position;
             supportAt.y = Mathf.Max(prevPos.y, supportAt.y);
             float flightGround = FindGroundY(supportAt, Balance.SlipperRestHeight);
-            if (transform.position.y <= flightGround + Balance.SlipperRestHeight)
-                Land(fromFlight: true, landingGround: flightGround);
-            else if (_flightTime >= Balance.MaxFlightTime
-                     || _airborneTotal >= Balance.MaxAirborneTime)
-                Land(fromFlight: false);
+            if (skimming)
+            {
+                if (_skimLeft <= 0) Land(fromFlight: true, landingGround: _skimGround);
+            }
+            else if (transform.position.y <= flightGround + Balance.SlipperRestHeight)
+            {
+                if (!BeginSkim(flightGround)) Land(fromFlight: true, landingGround: flightGround);
+            }
         }
 
         /// <summary>
@@ -1785,12 +1792,20 @@ namespace TumbangPreso
         /// out of the game.
         /// </summary>
         /// <summary>
-        /// FROSTBITE (ABILITY-2, owner: *"Hitting another player with the slipper will inflict them with
-        /// Frozen"*): a frosted slipper Freezes the body it strikes, once, then flies on as a plain one.
+        /// Apply a carried body payload before generic impact consumes its affinity.
+        /// Frostbite freezes; Boulder inflicts Concussed. Each is spent once.
         /// </summary>
-        private void HostFrostbite(CharacterMotor victim)
+        private void HostBodyAffinity(CharacterMotor victim)
         {
-            if (Affinity != SlipperAffinity.Frost || victim == null) return;
+            // Body hits must call this before generic impact consumes affinity.
+            if (victim == null) return;
+            if (Affinity == SlipperAffinity.Concussed)
+            {
+                victim.ApplyConcussed();
+                Affinity = SlipperAffinity.Normal;
+                return;
+            }
+            if (Affinity != SlipperAffinity.Frost) return;
             victim.ApplyStagger(StatusRules.FrozenSeconds, StunElement.Ice, 9);
             Abilities.HeroHazards.SpawnIceCubePrison(victim.transform, StatusRules.FrozenSeconds);
             NetCue.Play("sfx_cheska_frostbite_hit", transform.position);
@@ -1847,7 +1862,7 @@ namespace TumbangPreso
         // Preserve vertical speed, spin, affinity, owner, chain and ignore clocks.
         public bool HostSteerFlight(Vector3 toward, float degrees)
         {
-            if (!NetAuthority.ShouldResolve() || State != SlipperState.InFlight
+            if (!NetAuthority.ShouldResolve() || State != SlipperState.InFlight || IsSkimming
                 || !float.IsFinite(degrees) || !float.IsFinite(toward.sqrMagnitude)) return false;
             toward.y = 0;
             var horizontal = new Vector3(_velocity.x, 0, _velocity.z);
@@ -1897,17 +1912,24 @@ namespace TumbangPreso
         public static float GroundY(Vector3 at)
             => FindGroundY(at, 6.0f);
 
-        private static float FindGroundY(Vector3 at, float scanAbove)
+        private static readonly RaycastHit[] GroundHits = new RaycastHit[64];
+
+        internal static float FindGroundY(Vector3 at, float scanAbove)
         {
             var from = new Vector3(at.x, at.y + scanAbove, at.z);
 
-            var hits = Physics.RaycastAll(from, Vector3.down, 40.0f, ~0,
-                                          QueryTriggerInteraction.Ignore);
+            var hits = GroundHits;
+            int count = Physics.RaycastNonAlloc(from, Vector3.down, hits, 40, ~0, QueryTriggerInteraction.Ignore);
+            // NonAlloc does not promise nearest hits if the buffer fills. Preserve
+            // the original complete query on unusually dense geometry.
+            if (count == hits.Length)
+            { hits = Physics.RaycastAll(from, Vector3.down, 40, ~0, QueryTriggerInteraction.Ignore); count = hits.Length; }
 
             float best = float.NegativeInfinity;
 
-            foreach (var hit in hits)
+            for (int i = 0; i < count; i++)
             {
+                var hit = hits[i];
                 // ⚠️⚠️ A BODY IS NOT THE GROUND, AND SKIPPING THIS PUT SLIPPERS ON PEOPLE'S
                 // HEADS. Every slipper starts at its owner's FEET, so the first thing a downward
                 // cast from above that mark meets is the owner's own capsule — and the slipper

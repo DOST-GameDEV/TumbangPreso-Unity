@@ -1,0 +1,22 @@
+{
+  "sourceEquivalent": "c0760c173 plus charge UI",
+  "question": "live carrier power/can gates/release feed truthful compact labels; hidden reticle hides caption",
+  "expectedCases": 1,
+  "retry": 0,
+  "inputs": {
+    "Assets/TumbangPreso/Runtime/UI/HudReticle.cs": "a3010a6da3f362d26e699292eb9641489567a81c9c5332bbc2489100aaede0dc",
+    "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.Reticle.cs": "2f33f973ad875e820c19e590029e853b390f6b0c1507c61d5ebff8d5697ffc62",
+    "Assets/TumbangPreso/Tests/PlayMode/ThrowChargeUiTests.cs": "5cedc7748e51dd943b1671e41d683cb49fe8b106ec416637988422142ae2d4f2"
+  },
+  "acceptedInputs": {
+    "Assets/TumbangPreso/Runtime/UI/HudReticle.cs": "a3010a6da3f362d26e699292eb9641489567a81c9c5332bbc2489100aaede0dc",
+    "Assets/TumbangPreso/Runtime/UI/TumpMatchReadout.Reticle.cs": "64c84f618bafaf95694e3e11ca9f54400241e7801f03ab1fb354e2377744b554",
+    "Assets/TumbangPreso/Tests/PlayMode/ThrowChargeUiTests.cs": "a38975762f7471414152bd869fb99af658570a0cd28357cd36ddf1ad83e1b4c6",
+    "Assets/TumbangPreso/Tests/PlayMode/ThrowChargeUiTests.cs.meta": "3d08cb2044a1a6dc32e7c249539f73416062e7aaaa8441a4bd4305972fee4f0e"
+  },
+  "acceptedSourceDrift": [],
+  "corrections": [
+    "retained original protection predicate",
+    "fixture now waits protection and asserts permitted can-down throws"
+  ]
+}

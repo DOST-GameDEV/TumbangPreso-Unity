@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TumbangPreso.Net;
+using TumbangPreso.Core;
 using TumbangPreso.Visual;
 using UnityEngine;
 
@@ -27,9 +28,11 @@ namespace TumbangPreso.Abilities
         public WorldEffectSnapshot.Field Capture()
         { var f = _state; f.Source = gameObject; f.Remaining = Remaining; return f; }
         public static bool IsWater(WorldEffectSnapshot.Kind kind) => kind == WorldEffectSnapshot.Kind.Current
-            || kind == WorldEffectSnapshot.Kind.Mirrorwake || kind == WorldEffectSnapshot.Kind.Breakwater;
-        public static float Gather(WorldEffectSnapshot.Kind kind) => kind == WorldEffectSnapshot.Kind.Current ? .18f
-            : kind == WorldEffectSnapshot.Kind.Breakwater ? .55f : 0;
+            || kind == WorldEffectSnapshot.Kind.Mirrorwake || kind == WorldEffectSnapshot.Kind.Breakwater
+            || kind == WorldEffectSnapshot.Kind.Waterwall;
+        public static float Gather(WorldEffectSnapshot.Kind kind) => kind == WorldEffectSnapshot.Kind.Current ? RafiRules.CurrentGather
+            : kind == WorldEffectSnapshot.Kind.Breakwater ? .55f
+            : kind == WorldEffectSnapshot.Kind.Waterwall ? RafiRules.WallGather : 0;
 
         public static RafiWaterField Cast(AbilityContext ctx, WorldEffectSnapshot.Kind kind,
             float radius, float speed, float duration, bool alternate, Vector3[] path = null)
@@ -56,11 +59,44 @@ namespace TumbangPreso.Abilities
             return field;
         }
 
+        public static bool CanPlaceWall(AbilityContext ctx, Vector3 point)
+        {
+            if (ctx?.Motor == null || !float.IsFinite(point.sqrMagnitude)) return false;
+            var flat=point-ctx.Position;flat.y=0;
+            if (flat.sqrMagnitude<.25f || flat.sqrMagnitude>RafiRules.WallRange*RafiRules.WallRange+.01f) return false;
+            var forward=flat.normalized;var right=Vector3.Cross(Vector3.up,forward);
+            float floor=Slipper.FindGroundY(point,.5f);
+            if(Mathf.Abs(floor-point.y)>.3f) return false;
+            var left=point-right*RafiRules.WallHalfWidth;var end=point+right*RafiRules.WallHalfWidth;
+            if(left.x<AIController.PlayableMinX || left.x>AIController.PlayableMaxX
+                || left.z<AIController.PlayableMinZ || left.z>AIController.PlayableMaxZ
+                || end.x<AIController.PlayableMinX || end.x>AIController.PlayableMaxX
+                || end.z<AIController.PlayableMinZ || end.z>AIController.PlayableMaxZ) return false;
+            if(Mathf.Abs(Slipper.FindGroundY(left,.5f)-floor)>.3f
+                || Mathf.Abs(Slipper.FindGroundY(end,.5f)-floor)>.3f) return false;
+            return ClearDistance(ctx.Position+Vector3.up*.9f,forward,flat.magnitude)>=flat.magnitude-.02f
+                && ClearDistance(left+Vector3.up*.9f,right,RafiRules.WallHalfWidth*2)>=RafiRules.WallHalfWidth*2-.02f
+                && ClearDistance(point+Vector3.up*.05f,Vector3.up,RafiRules.WallHeight)>=RafiRules.WallHeight-.02f;
+        }
+
+        public static RafiWaterField CastWall(AbilityContext ctx, Vector3 point)
+        {
+            if(!NetAuthority.ShouldResolve() || !CanPlaceWall(ctx,point)) return null;
+            var forward=point-ctx.Position;forward.y=0;forward.Normalize();
+            point.y=Slipper.FindGroundY(point,.5f);
+            var state=new WorldEffectSnapshot.Field { Type=WorldEffectSnapshot.Kind.Waterwall,
+                EventId=++_nextId, Position=point, Forward=forward, Radius=RafiRules.WallHalfWidth,
+                Duration=RafiRules.WallSeconds, Remaining=RafiRules.WallSeconds,
+                Owner=ctx.Motor.PlayerSlot, Path=Array.Empty<Vector3>() };
+            var field=Restore(state,0);MatchRpc.Instance?.BroadcastRafiWater(state);return field;
+        }
+
         public static bool Valid(WorldEffectSnapshot.Field f)
         {
             if (!IsWater(f.Type) || f.EventId <= 0 || f.Owner < 0 || f.Owner >= Core.Balance.PlayerCount
                 || f.Forward.sqrMagnitude < .99f || f.Forward.sqrMagnitude > 1.01f || Mathf.Abs(f.Forward.y) > .01f
-                || f.Duration > 3 || f.Radius <= 0 || f.Radius > 3
+                || f.Duration > RafiRules.WallSeconds || (f.Type != WorldEffectSnapshot.Kind.Waterwall && f.Duration > 3)
+                || f.Radius <= 0 || f.Radius > 3
                 || (f.SecondScale != 0 && f.SecondScale != 1) || f.Path == null || f.Path.Length > MaxPathPoints) return false;
             if (f.Type == WorldEffectSnapshot.Kind.Mirrorwake)
             {
@@ -71,6 +107,12 @@ namespace TumbangPreso.Abilities
             }
             else if (f.Type == WorldEffectSnapshot.Kind.Current)
             { if (f.Path.Length != 0 || f.FirstScale < 8 || f.FirstScale > 11 || f.Radius > .65f) return false; }
+            else if (f.Type == WorldEffectSnapshot.Kind.Waterwall)
+            {
+                if (f.Path.Length != 0 || f.Radius != RafiRules.WallHalfWidth || f.Duration != RafiRules.WallSeconds
+                    || f.SecondScale != 0 || f.FirstScale < 0 || f.FirstScale > f.Duration
+                    || (!f.Split && f.FirstScale != 0)) return false;
+            }
             else
             {
                 if (f.Path.Length != 9 || f.FirstScale != 5 || f.Radius != 3) return false;
@@ -124,6 +166,7 @@ namespace TumbangPreso.Abilities
             if (_age < Gather(_state.Type)) { RememberShoes(); return; }
             if (_state.Type == WorldEffectSnapshot.Kind.Current && !_state.Split) ResolveCurrent(travel);
             else if (_state.Type == WorldEffectSnapshot.Kind.Breakwater) ResolveWave(travel);
+            else if (_state.Type == WorldEffectSnapshot.Kind.Waterwall && !_state.Split) ResolveWall();
             _previousTravel = travel; RememberShoes();
         }
         private void RememberShoes()
@@ -137,18 +180,45 @@ namespace TumbangPreso.Abilities
             // Solid cover stops the current itself; players and equipment do not.
             if (ClearDistance(_state.Position + Vector3.up * .85f, _state.Forward, travel) < travel - .03f)
             { SpendCurrent(); return; }
+            Slipper first = null;
+            float firstTime = float.PositiveInfinity;
             foreach (var shoe in _shoes)
             {
-                if (shoe == null || shoe.State != SlipperState.InFlight) continue;
+                if (shoe == null || shoe.State != SlipperState.InFlight || shoe.IsSkimming) continue;
+                var velocity = shoe.Velocity;
+                if (new Vector2(velocity.x, velocity.z).sqrMagnitude < .001f) continue;
                 var a = (_previousShoes.TryGetValue(shoe, out var old) ? old : shoe.transform.position) - before;
-                var b = shoe.transform.position - now; var delta = b - a;
-                float t = delta.sqrMagnitude > .00001f ? Mathf.Clamp01(-Vector3.Dot(a, delta) / delta.sqrMagnitude) : 0;
-                var closest = a + delta * t;
-                if (Mathf.Abs(closest.y) > .70f || new Vector2(closest.x, closest.z).magnitude > _state.Radius) continue;
-                if (shoe.HostSteerFlight(_state.Forward, 40))
-                { NetCue.Play("sfx_rafi_intercept", shoe.transform.position); SpendCurrent(); break; }
+                var b = shoe.transform.position - now;
+                if (!RafiRules.FirstCurrentContact(a.x, a.y, a.z, b.x, b.y, b.z, _state.Radius, out float time)) continue;
+                if (time < firstTime || (time == firstTime && first != null && shoe.OwnerSlot < first.OwnerSlot))
+                { first = shoe; firstTime = time; }
             }
+            if (first != null && first.HostSteerFlight(_state.Forward, RafiRules.CurrentTurnDegrees))
+            { NetCue.Play("sfx_rafi_intercept", first.transform.position); SpendCurrent(); }
         }
+        private void ResolveWall()
+        {
+            var right=Vector3.Cross(Vector3.up,_state.Forward);
+            Slipper first=null;float best=float.PositiveInfinity;Vector3 stop=Vector3.zero;
+            foreach(var shoe in _shoes)
+            {
+                if(shoe==null || shoe.State!=SlipperState.InFlight || shoe.IsSkimming)continue;
+                var before=(_previousShoes.TryGetValue(shoe,out var old)?old:shoe.transform.position)-_state.Position;
+                var after=shoe.transform.position-_state.Position;
+                float az=Vector3.Dot(before,_state.Forward),bz=Vector3.Dot(after,_state.Forward);
+                if(!RafiRules.WallCrossing(Vector3.Dot(before,right),before.y,az,
+                    Vector3.Dot(after,right),after.y,bz,out float time))continue;
+                if(time<best || (time==best && first!=null && shoe.OwnerSlot<first.OwnerSlot))
+                {
+                    first=shoe;best=time;
+                    stop=_state.Position+Vector3.Lerp(before,after,time)+_state.Forward*(az>=0?.15f:-.15f);
+                }
+            }
+            if(first==null || !first.HostDropFlightAt(stop))return;
+            _state.Split=true;_state.FirstScale=_age;_visual.SetState(_state);
+            MatchRpc.Instance?.BroadcastRafiWater(Capture());
+        }
+
         private void SpendCurrent()
         { _state.Split = true; _visual.SetState(_state); MatchRpc.Instance?.BroadcastRafiWater(Capture()); }
 

@@ -1,0 +1,83 @@
+{
+  "breaks": [
+    {
+      "round": 1,
+      "firstRemaining": 4.993409,
+      "sampledWallSpan": 5.238197326660156,
+      "simulationSpan": 0.0,
+      "capturedFrameCounts": 1,
+      "blockedAll": true
+    },
+    {
+      "round": 2,
+      "firstRemaining": 4.998293,
+      "sampledWallSpan": 5.046600341796875,
+      "simulationSpan": 0.0,
+      "capturedFrameCounts": 1,
+      "blockedAll": true
+    },
+    {
+      "round": 3,
+      "firstRemaining": 4.997267,
+      "sampledWallSpan": 5.1616973876953125,
+      "simulationSpan": 0.0,
+      "capturedFrameCounts": 1,
+      "blockedAll": true
+    },
+    {
+      "round": 4,
+      "firstRemaining": 9.998188,
+      "sampledWallSpan": 10.05670166015625,
+      "simulationSpan": 0.0,
+      "capturedFrameCounts": 1,
+      "blockedAll": true
+    },
+    {
+      "round": 5,
+      "firstRemaining": 4.998518,
+      "sampledWallSpan": 5.078498840332031,
+      "simulationSpan": 0.0,
+      "capturedFrameCounts": 1,
+      "blockedAll": true
+    },
+    {
+      "round": 6,
+      "firstRemaining": 4.998122,
+      "sampledWallSpan": 5.010795593261719,
+      "simulationSpan": 0.0,
+      "capturedFrameCounts": 1,
+      "blockedAll": true
+    },
+    {
+      "round": 7,
+      "firstRemaining": 4.998095,
+      "sampledWallSpan": 5.128898620605469,
+      "simulationSpan": 0.0,
+      "capturedFrameCounts": 1,
+      "blockedAll": true
+    }
+  ],
+  "last": {
+    "utc": "63926389372.5605",
+    "host": "1",
+    "slot": "0",
+    "round": "8",
+    "roundActive": "1",
+    "buffer": "0",
+    "inProgress": "1",
+    "left": "42.98388",
+    "breakActive": "0",
+    "began": "1045.94128573065",
+    "remaining": "0",
+    "held": "0",
+    "blocked": "0",
+    "simulationTime": "769.7905",
+    "frameCount": "3258",
+    "frameWidth": "1364",
+    "frameHeight": "1024",
+    "x": "-1.8",
+    "y": "0.1799999",
+    "z": "9"
+  },
+  "naturalMatchCompletion": false
+}

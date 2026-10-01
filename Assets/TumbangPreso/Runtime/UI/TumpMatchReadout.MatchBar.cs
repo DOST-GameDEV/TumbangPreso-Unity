@@ -36,6 +36,7 @@ namespace TumbangPreso.UI
         private HudBadge _canGlyph;
         private HudRing _canRing;
         private HudPips _pips;
+        private RectTransform _roundTrack;
         private HudRing _staminaArc;
         private CanvasGroup _staminaGroup;
         private float _staminaAlpha;
@@ -49,23 +50,41 @@ namespace TumbangPreso.UI
             if (_promptPlate == null || _prompt == null) return;
             bool show = _promptRoot.gameObject.activeInHierarchy && _prompt.enabled && !string.IsNullOrEmpty(_prompt.text);
             _promptPlate.enabled = show;
-            if (!show) return;
-            float width = Mathf.Min(1100, _prompt.preferredWidth + 56);
-            OwnerUiLayout.Place(_promptPlate.rectTransform, (1100 - width) * .5f, 11, width, 52);
+            bool glyph = _bindingGlyph != null && _bindingGlyph.enabled;
+            bool progress = _progress != null && _progress.transform.parent.gameObject.activeSelf;
+            float words = Mathf.Min(glyph ? 820 : 900, _prompt.preferredWidth);
+            float width = Mathf.Min(_statusPromptMaxWidth, Mathf.Max(300, words + (glyph ? 136 : 56)));
+            _prompt.horizontalOverflow = HorizontalWrapMode.Wrap;
+            float left = (1100 - width) * .5f;
+            OwnerUiLayout.Place(_promptPlate.rectTransform, left, 0, width, progress ? 102 : 74);
+            if(glyph)
+            {
+                OwnerUiLayout.Place(_bindingGlyph.rectTransform, left + 28, 5, 64, 64);
+                OwnerUiLayout.Place(_prompt.rectTransform, left + 108, 0, width - 136, 74);
+            }
+            else OwnerUiLayout.Place(_prompt.rectTransform, left + 28, 0, width - 56, 74);
+            float textHeight = Mathf.Max(74, _prompt.preferredHeight + 12);
+            _prompt.rectTransform.sizeDelta = new Vector2(_prompt.rectTransform.sizeDelta.x, textHeight);
+            _promptPlate.rectTransform.sizeDelta = new Vector2(width, textHeight + (progress ? 28 : 0));
+            if(_progress != null)
+                OwnerUiLayout.Place((RectTransform)_progress.transform.parent, left + 28, textHeight + 6, width - 56, 10);
+            OwnerUiLayout.Place(_context.rectTransform, left, textHeight + (progress ? 34 : 3), width, 66);
         }
 
-        private const float ChipWidth = 220, ChipHeight = 64, ClockWidth = 232, BarTop = 12;
+        private const float ChipWidth = 240, ChipHeight = 64, ClockWidth = 232, BarTop = 12;
         private const int ScoreFont = 36, ScoreFontFloor = 28;
-        private static readonly float[] ChipX = { 0, 230, 710, 940 };
+        private static readonly float[] ChipX = { 0, 250, 750, 1000 };
 
         private void BuildMatchBar()
         {
             _scoreRoot = OwnerUiLayout.Rect(_root, "MatchScores");
-            Pin(_scoreRoot, new Vector2(.5f, 1), new Vector2(0, -(BarTop + ChipHeight * .5f)), new Vector2(1160, ChipHeight));
+            Pin(_scoreRoot, new Vector2(.5f, 1), new Vector2(0, -(BarTop + ChipHeight * .55f)), new Vector2(1240, ChipHeight));
+            _scoreRoot.localScale = Vector3.one * 1.1f;
             for (int i = 0; i < 4; i++) BuildChip(i);
 
             _clockRoot = OwnerUiLayout.Rect(_root, "RoundClock");
-            Pin(_clockRoot, new Vector2(.5f, 1), new Vector2(0, -(BarTop + 48)), new Vector2(ClockWidth, 96));
+            Pin(_clockRoot, new Vector2(.5f, 1), new Vector2(0, -(BarTop + 52.8f)), new Vector2(ClockWidth, 96));
+            _clockRoot.localScale = Vector3.one * 1.1f;
             var plate = OwnerUiLayout.Rect(_clockRoot, "ClockFace").gameObject.AddComponent<HudCard>();
             OwnerUiLayout.Place(plate.rectTransform, 0, 0, ClockWidth, ChipHeight);
             plate.color = HudDraw.Plate; plate.Radius = 16; plate.raycastTarget = false;
@@ -86,6 +105,7 @@ namespace TumbangPreso.UI
             // A quiet plate under the pips so they read against bright sky as well as dark roofs.
             var track = OwnerUiLayout.Rect(_clockRoot, "RoundTrack").gameObject.AddComponent<HudCard>();
             OwnerUiLayout.Place(track.rectTransform, (ClockWidth - 214) * .5f, 69, 214, 24);
+            _roundTrack = track.rectTransform;
             track.color = new Color(HudDraw.Plate.r, HudDraw.Plate.g, HudDraw.Plate.b, .72f); track.Radius = 12; track.ShadowAlpha = 0; track.raycastTarget = false;
             _pips = OwnerUiLayout.Rect(_clockRoot, "RoundPips").gameObject.AddComponent<HudPips>();
             OwnerUiLayout.Place(_pips.rectTransform, -40, 72, ClockWidth + 80, 18); _pips.raycastTarget = false;
@@ -122,7 +142,7 @@ namespace TumbangPreso.UI
             _stateBadges[i].Detail = CourtPresentationPalette.Paper; _stateBadges[i].raycastTarget = false;
 
             _scores[i] = OwnerUiLayout.Text(row, "Score", "", ScoreFont, OwnerUiLayout.TypeRole.Display);
-            OwnerUiLayout.Place(_scores[i].rectTransform, 90, 2, 120, 60);
+            OwnerUiLayout.Place(_scores[i].rectTransform, 90, 2, 140, 60);
             _scores[i].alignment = TextAnchor.MiddleRight; _scores[i].color = HudDraw.CardInk;
             _scores[i].horizontalOverflow = HorizontalWrapMode.Overflow;
             _scores[i].verticalOverflow = VerticalWrapMode.Overflow;
@@ -152,12 +172,12 @@ namespace TumbangPreso.UI
         }
 
         /// <summary>Fit only a changed score, leaving normal three-digit totals at their authored size.</summary>
-        public static void PaintScoreValue(Text label, int value)
+        public static void PaintScoreValue(Text label, int value, int size = ScoreFont)
         {
             string shown = ScoreTextForChip(value);
             if (label.text == shown) return;
             label.text = shown;
-            label.fontSize = ScoreFont;
+            label.fontSize = size;
             while (label.fontSize > ScoreFontFloor && label.preferredWidth > label.rectTransform.rect.width)
                 label.fontSize -= 2;
         }
@@ -216,9 +236,12 @@ namespace TumbangPreso.UI
         {
             _clock.color = time <= 10 && round.RoundActive ? OwnerUiTheme.Current.Orange : CourtPresentationPalette.Paper;
             _pips.Set(Mathf.Max(1, match.TotalRounds), match.IsWarmupBuffer ? 0 : match.RoundNumber);
-            // The round is the pips' job now. The line only speaks in the warm-up, where there
-            // is a real sentence to say and no round to point at.
-            _round.enabled = match.IsWarmupBuffer;
+            float gap = _pips.Count >= 4 && _pips.Count % 2 == 0 ? _pips.Gap : 0;
+            float width = _pips.Count * _pips.Diameter + (_pips.Count - 1) * _pips.Gap + gap + 18;
+            if(_roundTrack != null) OwnerUiLayout.Place(_roundTrack, (ClockWidth-width)*.5f, 69, width, 24);
+            OwnerUiLayout.Place(_pips.rectTransform, (ClockWidth-width)*.5f, 72, width, 18);
+            // Round pips and the ready prompt already cover this information.
+            _round.enabled = false;
         }
 
         private void MatchBarCan(Lata lata)

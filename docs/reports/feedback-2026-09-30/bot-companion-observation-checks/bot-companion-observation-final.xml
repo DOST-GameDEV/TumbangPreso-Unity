@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 03:18:45Z" end-time="2026-10-01 03:18:46Z" duration="0.4783097">
+  <test-suite type="TestSuite" id="2329" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1074" result="Passed" start-time="2026-10-01 03:18:45Z" end-time="2026-10-01 03:18:46Z" duration="0.478310" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2323" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1074" result="Passed" start-time="2026-10-01 03:18:45Z" end-time="2026-10-01 03:18:46Z" duration="0.459710" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="30820" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2324" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1074" result="Passed" start-time="2026-10-01 03:18:45Z" end-time="2026-10-01 03:18:46Z" duration="0.455715" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2325" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1074" result="Passed" start-time="2026-10-01 03:18:45Z" end-time="2026-10-01 03:18:46Z" duration="0.451360" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1113" name="BotCompanionObservationTests" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-01 03:18:45Z" end-time="2026-10-01 03:18:46Z" duration="0.399926" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1118" name="ACompanionBotStillKnowsItsOwnFeetWithoutReactionLag" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.ACompanionBotStillKnowsItsOwnFeetWithoutReactionLag" methodname="ACompanionBotStillKnowsItsOwnFeetWithoutReactionLag" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="696593642" result="Passed" start-time="2026-10-01 03:18:45Z" end-time="2026-10-01 03:18:45Z" duration="0.187510" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1117" name="AReplacementInTheSameSeatStartsWithItsOwnPosition" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.AReplacementInTheSameSeatStartsWithItsOwnPosition" methodname="AReplacementInTheSameSeatStartsWithItsOwnPosition" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="121036603" result="Passed" start-time="2026-10-01 03:18:45Z" end-time="2026-10-01 03:18:45Z" duration="0.066232" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1116" name="CompanionBeliefUsesTheSameReactionLagAsPlayers" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.CompanionBeliefUsesTheSameReactionLagAsPlayers" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-01 03:18:45Z" end-time="2026-10-01 03:18:46Z" duration="0.122951" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1114" name="CompanionBeliefUsesTheSameReactionLagAsPlayers(Normal)" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.CompanionBeliefUsesTheSameReactionLagAsPlayers(Normal)" methodname="CompanionBeliefUsesTheSameReactionLagAsPlayers" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="1963956244" result="Passed" start-time="2026-10-01 03:18:45Z" end-time="2026-10-01 03:18:46Z" duration="0.057028" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1115" name="CompanionBeliefUsesTheSameReactionLagAsPlayers(Astig)" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.CompanionBeliefUsesTheSameReactionLagAsPlayers(Astig)" methodname="CompanionBeliefUsesTheSameReactionLagAsPlayers" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="1705031290" result="Passed" start-time="2026-10-01 03:18:46Z" end-time="2026-10-01 03:18:46Z" duration="0.060188" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

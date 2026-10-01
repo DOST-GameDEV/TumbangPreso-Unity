@@ -338,6 +338,8 @@ namespace TumbangPreso.Visual
             dict["hero-phaister-hexstab"] = BuildPhaisterHexStab(paths);
 
             dict["hero-rafi-cut"] = BuildRafiCut(paths);
+            dict["hero-rafi-skim"] = BuildRafiSkim(paths);
+            dict["hero-rafi-wall"] = BuildRafiWall(paths);
             dict["hero-rafi-feint"] = BuildRafiFeint(paths);
             dict["hero-rafi-breakwater"] = BuildRafiBreakwater(paths);
 

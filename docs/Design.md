@@ -223,7 +223,7 @@ sweep is now a no-op over an empty group. **The speed-zone STACK it feeds
 | `STAMINA_REGEN_RATE` | **20.0 /s** | a full bar refills in 3.0 s |
 | `STAMINA_REGEN_DELAY` | **1.0 s** | after the last sprint frame |
 | `STAMINA_SPRINT_FLOOR` | 7.5 | you cannot *start* a sprint below this, so the bar cannot be feathered |
-| `FATIGUE_TIME` | **2.0 s** | triggered by reaching 0. **Regen is locked for its whole duration** |
+| `FATIGUE_TIME` | **2.5 s** | triggered by reaching 0. **Regen is locked for its whole duration** |
 | `FATIGUE_SPEED_SCALE` | **0.75** | −25% speed, sprint locked out |
 | `JUMP_VELOCITY` | 5.8 | |
 | `GRAVITY` | 20.0 | |
@@ -237,13 +237,13 @@ Points every 0.25 seconds"*; it is implemented as a continuous 40/s, which spend
 identical 10 points per quarter-second held and cannot be feathered by tapping Shift
 on a sub-tick rhythm.
 
-⚠️ **FATIGUE NOW LOCKS REGEN, NOT JUST SPEED.** Reaching 0 costs 2.0 s at 0.75 speed
+⚠️ **FATIGUE NOW LOCKS REGEN, NOT JUST SPEED.** Reaching 0 costs 2.5 s at 0.75 speed
 with sprint locked out **and the bar refusing to refill at all**. Previously it
 refilled at full rate during the penalty, so the punishment did not touch the
 resource it was punishing.
 
 ⚠️ **§2.5 MEASURED 2026-08-01, ON THE 50-POINT POOL, BEFORE THE RAISE**
-(`tools/mech_probe.tscn`): sprint to empty **1.25 s** exactly, fatigue lockout **2.00 s**
+(`tools/mech_probe.tscn`, historical tuning): sprint to empty **1.25 s** exactly, fatigue lockout **2.00 s**
 exactly, and empty → full again in **2.97 s**. Every constant did what the table said.
 **On the 60-point pool that ships, sprint to empty is 1.50 s and a refill is 3.00 s.** The
 probe has not been re-run since the raise; those two are arithmetic on drain and regen rates
@@ -320,7 +320,7 @@ file is 🤖 `build ai`'s; a second binding for one verb costs a human nothing.
 
 | Constant | Value | Where |
 |---|---|---|
-| `CHARGE_FULL_TIME` | **2.5 s** | `carrier.gd` |
+| `CHARGE_FULL_TIME` | **1.25 s** | Current Feedback: faster ordinary throw wind-up; power range and launch speed unchanged |
 | `CHARGE_MIN_POWER` | 0.35 | a tap still throws |
 | `THROW_LOCK_TIME` | **1.25 s** | after a pickup; ÷ the tsinelas' GRIT (§9) → 1.03–1.42 s |
 | `LAUNCH_SPEED` | **18.5 m/s** | at full charge, `slipper.gd`; × the tsinelas' SPEED (§9) → 17.6–19.4 |
@@ -330,31 +330,18 @@ file is 🤖 `build ai`'s; a second binding for one verb costs a human nothing.
 | `MAX_FLIGHT_TIME` | 6.0 s | |
 | `THROWER_IGNORE_TIME` | 0.25 s | you cannot block your own throw on release |
 
-**All three of these must hold or the throw is refused** (`ThrowRules.CanThrow`):
+**All of these must hold or an attacker throw is refused** (`ThrowRules.CanThrow`):
 
-1. holding a slipper;
-2. **outside the box** — `max(|x|,|z|) >= CONFINEMENT_RADIUS` (**7.0**). ⚠️ Written as a
-   bare `5.0` here until 2026-08-23; the code has always tested the constant, and the constant
-   was raised twice on 2026-08-01 (§2). Name it, never number it;
-3. the post-restore cooldown has expired.
+1. The round is live and the player is an attacker holding a slipper.
+2. The player is outside the confinement box, using the shared geometry rule.
+3. The lata is upright and its restoration protection has expired.
 
-⚠️⚠️ **THERE WERE FOUR, AND "THE LATA IS UPRIGHT" WAS REMOVED ON 2026-08-26. THIS IS A
-DELIBERATE RULE CHANGE, NOT A NINTH DRIFT**, and `Design_Drift_Report.md` § 9 records it as such.
-
-🧑, off the built player, twice: *"my charge still pauses when lata is down"*, *"i dont want it
-to pause"*. The refusal had ended up in the worst possible shape. An earlier pass had already
-stopped a down lata CANCELLING a wind-up, because snapping every charged arm to idle on a
-teammate's knockdown *"made the shared knockdown feel like an animation error"*. So the charge
-was maintained and the release was then rejected: the player held a fully wound arm, pressed the
-button, and nothing happened, with no way to spend or clear the commitment.
-
-**Nothing is lost by allowing it.** A slipper that reaches a lata already on its side cannot
-score: `Lata.HostKnockDown` returns on its second line while `!_isUpright`. The reason the clause
-was written, protecting the reset channel from a shot banked on its last frame, is condition 3
-above (`Balance.ThrowRestoreCooldown`) together with the lata's own `IsProtected` shield, and
-both of those were added **specifically because this clause did not cover an airborne slipper**.
-It was guarding a door that already had two locks on it and jamming the player's arm in the
-process.
+Current Feedback changes the earlier allow-down behavior: can knockdown cancels
+an existing charge, and no charge/release is accepted until the can is restored
+and its barrier is gone. A later valid charge starts from zero. Already airborne
+slippers retain existing collision and can-protection behavior. This shared rule
+applies in Classic and Hero Strike and requires matching protocol118clients.
+The previous rationale is retained in Git history, not as a conflicting live rule.
 
 ⚠️ **§2.16 MEASURED 2026-08-01 — THE DOTTED ARC LANDS WHERE THE SLIPPER LANDS.**
 `tools/mech_probe.tscn` integrates the preview's own scheme from the velocity it is
@@ -560,6 +547,11 @@ another slipper inside the box, so a taya who tagged well ended up standing on a
 of them. The penalty that remains is real — the safe-zone teleport, 5 s stunned, and
 the whole trip to make again.
 
+**Current Unity tuning, owner feedback2026-09-30:** the ordinary defender lunge
+now targets3m of travel, about13.416m/s, with4.3m standing sweep reach. Native
+local-input/host-travel and near/far tag checks pass. [Evidence](reports/feedback-2026-09-30/defender-lunge.md).
+The following August measurement history predates that request.
+
 ⚠️⚠️ **THE LUNGE REACHES 2.30 m, NOT 3.20 m.** `LUNGE_SPEED` is **7.746**, a **1.0 m**
 dash by `v²/60`, plus the 1.3 m sweep radius. It entered at 12.247 (a 2.5 m dash, 3.20 m of
 reach) on 2026-08-01 and was cut to 7.746 later the same day in `071061c`, on instruction:
@@ -656,6 +648,14 @@ overlap, and it can only happen where the score is written.
 | body cylinder | **measured off the worn mesh**, per skin |
 
 ### 7.1 · The hit window is not the collider, and that is the fairness ruling
+
+Current Unity contact also requires vertical overlap with the upright Visual
+mesh's measured bottom/top, expanded by the existing slipper hit radius. This
+closes the infinite-height column that knocked cans down from high overflights.
+The horizontal stance-based window below remains unchanged; shields and world
+cues are excluded from measured height. Model replacement refreshes the cached
+height. Protocol120 peers are required for the finite-height contact rule.
+
 
 ⚠️⚠️ **THE NUMBER THAT DECIDES EVERY KNOCKDOWN IN THE GAME WAS AN UNNAMED LITERAL IN
 ANOTHER FILE UNTIL 2026-08-01.** A thrown slipper connects when its flat distance to the
@@ -1069,3 +1069,14 @@ Classic already uses. `docs/TODO.md` § 2 has the full collision table. **Until 
 ⚠️ **WHERE A HERO SYSTEM CONTRADICTS A NUMBER ABOVE, THE HERO SYSTEM IS SCOPED TO ITS MODE**
 and the number above still stands for Classic. Nothing in the ability layer is allowed to
 change a Classic constant; if one ever needs to, it moves here in the same commit, per § 0.
+
+## Current anti-stall timing
+
+The current Feedback revision uses 1.5 m camping entry and 2.0 m clear distance.
+Warn after 2.5 seconds near an upright can; the penalty state begins at 5 seconds
+and deducts 5 points per second while suspending normal 10 points/sec defense income.
+An owned loose slipper warns at 7.5 seconds; its existing highlight counts the
+remaining 7.5 seconds until the 15-second penalty threshold. Both clocks hold
+while the player cannot act. Retrieving the slipper clears its episode. Scores
+retain their zero floor. Exhaustion now lasts 2.5 seconds at 75% speed with sprint
+and regeneration locked throughout. These shared timings require protocol 119.

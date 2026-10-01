@@ -20,7 +20,7 @@ namespace TumbangPreso.UI
         private float _staminaCaptionWidth;
         private CharacterMotor _aimOwner;
         private Carrier _aimCarrier;
-        private Image _stamina, _progress;
+        private Image _stamina, _progress, _bindingGlyph;
         private readonly Text[] _names = new Text[4], _scores = new Text[4], _roles = new Text[4];
         private readonly Image[] _portraits = new Image[4];
         private readonly RectTransform[] _scoreRows = new RectTransform[4];
@@ -52,7 +52,7 @@ namespace TumbangPreso.UI
             _countdown = Ink(_root, "Countdown", "", 112, true);
             TumpUiFactory.Anchor(_countdown.rectTransform, new Vector2(.5f, .58f), Vector2.zero, new Vector2(740, 180));
             _countdown.enabled = false;
-            _crosshair = Ink(_root, "Reticle", "+", 34, false);
+            _crosshair = Ink(_root, "Reticle", "○", 34, false);
             TumpUiFactory.Anchor(_crosshair.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(76, 76));
             _hit = Ink(_root, "HitConfirmation", "×", 72, true);
             TumpUiFactory.Anchor(_hit.rectTransform, new Vector2(.5f, .5f), Vector2.zero, new Vector2(120, 120)); _hit.enabled = false;
@@ -167,15 +167,11 @@ namespace TumbangPreso.UI
         /// </summary>
         public static IEnumerable<string> RoundLabelLines()
         {
-            yield return WarmupRoundLine;
-
             // ⚠️ EIGHT OF EIGHT IS THE WIDEST LEGAL ROUND LINE, not a round number anybody
             // plays: `CustomGameRules` caps the count at eight, and one digit either side is
             // the longest this string gets.
             yield return RoundLine(8, 8);
         }
-
-        internal const string WarmupRoundLine = "Warm up · Scores paused";
 
         internal static string RoundLine(int round, int total)
             => $"Round {Mathf.Max(1, round)} / {total}";
@@ -188,7 +184,7 @@ namespace TumbangPreso.UI
         public void Flash(bool active) => _effects.Flash(active);
         public void Tick(CharacterMotor local, bool spectating, bool training, bool hidePowers, bool spectatorControls)
         {
-            Canvas.enabled=!HalftimePresentation.Playing;
+            Canvas.enabled = !RoleSwapCard.Showing && !HalftimePresentation.Playing;
             float dt = Time.unscaledDeltaTime;
             if (_toastLeft > 0) { _toastLeft -= dt; if (_toastLeft <= 0) { _toast.enabled = false; SizeToastPlate(); } }
             if (_hitLeft > 0)
@@ -202,7 +198,7 @@ namespace TumbangPreso.UI
             _clockRoot.gameObject.SetActive(!training); _scoreRoot.gameObject.SetActive(!training);
             int time = Mathf.CeilToInt(Mathf.Max(0, round.TimeLeft));
             _clock.text = $"{time / 60:00}:{time % 60:00}";
-            _round.text = match.IsWarmupBuffer ? WarmupRoundLine : RoundLine(match.RoundNumber, match.TotalRounds);
+            _round.text = RoundLine(match.RoundNumber, match.TotalRounds);
             MatchBarClock(match, round, time);
             if (round.RoundActive && match.MatchInProgress) GameServices.Voice?.TickClock(round.TimeLeft);
             if (Time.unscaledTime >= _scoreAt) { _scoreAt = Time.unscaledTime + .1f; Scores(local, spectating); }
@@ -210,6 +206,7 @@ namespace TumbangPreso.UI
             _crosshair.enabled = !spectating && local != null && round.RoundActive;
             if(_aimOwner!=local){_aimOwner=local;_aimCarrier=local!=null?local.GetComponent<Carrier>():null;}
             Prompts(local, spectating);
+            Warnings(local, spectating);
             _powers.Tick(local != null ? local.GetComponent<Abilities.HeroAbilitySystem>() : null,
                 !spectating && !hidePowers && SceneFlow.SelectedMode == GameMode.HeroStrike);
             _spectator.enabled = spectating && spectatorControls;
@@ -273,7 +270,7 @@ namespace TumbangPreso.UI
                 if (spectating)
                 {
                     string activity = actor.IsSwimming ? "Swimming" : actor.IsTripped ? "Down" : actor.IsStunned ? "Stunned" :
-                        actor.IsDefender ? (actor.GetComponent<Carrier>()?.ChannelRatio > 0 ? "Resetting can" : "") :
+                        actor.IsDefender ? (actor.GetComponent<Carrier>()?.ChannelRatio > 0 ? "Resetting Can" : "") :
                         actor.HoldingSlipper ? "Holding" : "Retrieving";
                     if (!string.IsNullOrEmpty(activity)) state += (state.Length > 0 ? " · " : "") + activity;
                 }
@@ -367,6 +364,7 @@ namespace TumbangPreso.UI
             _promptRoot.gameObject.SetActive(local != null && !spectating);
             if (local == null || spectating) return;
             _prompt.text = ""; _context.text = ""; _progress.transform.parent.gameObject.SetActive(false);
+            if (_bindingGlyph != null) _bindingGlyph.enabled = false;
             _prompt.color = OwnerUiTheme.Current.Pale;
             if(HalftimePresentation.Playing){_prompt.text="HALFTIME";_context.text="Next round in "+Mathf.CeilToInt(HalftimePresentation.Instance.Remaining)+"s";return;}
             var carrier = local.GetComponent<Carrier>(); var round = GameServices.Round;
@@ -386,7 +384,9 @@ namespace TumbangPreso.UI
             // Paete's roots must be represented on this live action surface too.
             if (local.IsRooted)
             {
-                InteractPrompt("break free", local.BreakFreeProgress);
+                BindingPrompt("Interact", local.Intent.Pressed(Verb.Interact) ? "Removing Rooted" : "Remove Rooted");
+                Progress(local.BreakFreeProgress);
+                if (Hud.OnTouch) TouchHud.Emphasise(Verb.Interact);
                 return;
             }
             if (BufferSkipVote.Showing)
@@ -396,8 +396,8 @@ namespace TumbangPreso.UI
             }
             if (ReadyWindow)
             {
-                _prompt.text = Hud.PressCue("ReadyUp") + (round.RoundActive ? "Ready" : "Ready to play");
-                _context.text = SceneFlow.SelectedMode == GameMode.HeroStrike ? "Warm up freely. Powers start with the round." : "Warm up freely. Scores are paused."; return;
+                BindingPrompt("ReadyUp", "Ready Up");
+                return;
             }
             if(PilotingFamiliar(local))
             {
@@ -417,10 +417,9 @@ namespace TumbangPreso.UI
                 }
                 bool toggle = Settings.SettingsStore.Current.ToggleRestore;
                 string cue = Hud.PressCue("Grab");
-                _prompt.text = carrier.ChannelRatio > 0
-                    ? toggle ? "Resetting can · " + (Hud.OnTouch ? "tap" : "press " + cue.TrimEnd()) + " to cancel" : "Resetting can"
-                    : (toggle ? Hud.OnTouch ? "Tap to reset the can" : "Press " + cue + "to reset the can"
-                              : Hud.OnTouch ? "Hold to reset the can" : "Hold " + cue + "to reset the can");
+                if (carrier.ChannelRatio > 0)
+                    _prompt.text = toggle ? "Resetting Can · " + (Hud.OnTouch ? "tap" : "press " + cue.TrimEnd()) + " to cancel" : "Resetting Can";
+                else BindingPrompt("Grab", "Reset Can");
                 if (Hud.OnTouch) TouchHud.Emphasise(Verb.Grab);
                 if (carrier.ChannelRatio > 0) Progress(carrier.ChannelRatio); return;
             }
@@ -450,7 +449,7 @@ namespace TumbangPreso.UI
                     if (slipper == null) continue;
                     if (slipper.CanBeGrabbedBy(local))
                     {
-                        _prompt.text = Hud.PressCue("Grab") + "Pick up";
+                        BindingPrompt("Grab", "Retrieve Slipper");
                         if (Hud.OnTouch) TouchHud.Emphasise(Verb.Grab); return;
                     }
                     if (slipper.OwnerSlot == local.PlayerSlot && RooftopRecovery.Instance != null)
@@ -469,8 +468,7 @@ namespace TumbangPreso.UI
                         ? $"Fetch your slipper · {Balance.SlipperUnretrievedGracePeriod - idle:0.0}s" : "Fetch your slipper · -5 / second";
                 }
             }
-            if (local.IsDefender && round.IsTayaCampWarningActive)
-                _context.text = "Leave the can ring";
+            // Persistent penalties have their own warning surface.
             // A street character's offer (StreetInteractions, the Ilalim rebuild's beggar): read
             // last and only into an empty line, so every match prompt above keeps its priority.
             // No offer on any other map, so this line never speaks there.
@@ -484,6 +482,16 @@ namespace TumbangPreso.UI
                 }
             }
         }
+        private void BindingPrompt(string action, string label)
+        {
+            if (_bindingGlyph != null)
+            {
+                _bindingGlyph.sprite = Hud.OnTouch ? null : InputGlyphs.For(Hud.KeyLabelFor(action), true);
+                _bindingGlyph.enabled = _bindingGlyph.sprite != null;
+            }
+            _prompt.text = !Hud.OnTouch && _bindingGlyph?.enabled != true ? Hud.PressCue(action) + label : label;
+        }
+
         private static bool PilotingFamiliar(CharacterMotor local)
         {
             var visual=local!=null?local.GetComponent<Visual.CharacterVisual>():null;
@@ -526,6 +534,16 @@ namespace TumbangPreso.UI
             if (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.f7Key.wasPressedThisFrame && PracticeSandbox.Allowed) PracticeSandbox.Toggle();
             _sandbox.enabled = PracticeSandbox.Allowed && !Hud.OnTouch && (PracticeSandbox.Active || ReadyWindow);
             _sandbox.text = "F7 · No cooldowns " + (PracticeSandbox.Active ? "on" : "off");
+            // Keep the practice status above the enlarged deck and its reading hint.
+            // The deck itself retains the same right/bottom screen margins.
+            float y = 71;
+            if (_powers != null && _powers.DeckVisible && !Hud.OnTouch)
+            {
+                float scale = Mathf.Max(Settings.GameSettings.ValidHudScale(Settings.SettingsStore.Current.HudScale),
+                    Settings.SettingsStore.Current.LargerText ? 1.2f : 1);
+                y = _powers.DeckRect().yMax - _root.rect.yMin + 116 * scale;
+            }
+            _sandbox.rectTransform.anchoredPosition = new Vector2(-286, y);
         }
     }
 }

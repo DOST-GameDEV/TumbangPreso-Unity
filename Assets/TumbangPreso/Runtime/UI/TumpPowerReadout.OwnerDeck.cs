@@ -46,6 +46,9 @@ namespace TumbangPreso.UI
         {
             _deck = OwnerUiLayout.Rect(root, "PowerSeals");
             PlaceDeck(Hud.OnTouch);
+            // Enlarge the live controls around their existing corner/bottom anchor.
+            // HudReadingLayout retains this base scale for accessibility settings.
+            _deck.localScale = Vector3.one * 1.25f;
             for (int i = 0; i < 3; i++)
             {
                 float size = i == 2 ? 108 : 90, x = i == 0 ? 0 : i == 1 ? 102 : 206, y = OwnerDeckHeight - size - 4;
@@ -97,7 +100,7 @@ namespace TumbangPreso.UI
             OwnerUiLayout.Place(_roleBadge.rectTransform, 102 - 8, OwnerDeckHeight - 90 - 4 - 8, 38, 38);
             _roleBadge.gameObject.SetActive(false);
             _hint = OwnerUiLayout.Text(_deck, "PowerInfoBinding", "", 28); _hint.color = CourtPresentationPalette.Paper;
-            _hint.alignment = TextAnchor.MiddleCenter; OwnerUiLayout.Place(_hint.rectTransform, -90, -40, OwnerDeckWidth + 150, 36);
+            _hint.alignment = TextAnchor.MiddleCenter; OwnerUiLayout.Place(_hint.rectTransform, 0, -40, OwnerDeckWidth, 36);
             var outline = _hint.gameObject.AddComponent<Outline>(); outline.effectColor = UiTheme.InGameOutline; outline.effectDistance = new Vector2(1, -1);
             BuildDetails(root);
             var asset = Resources.Load<InputActionAsset>("TumbangPreso");
@@ -112,7 +115,7 @@ namespace TumbangPreso.UI
             if (touch) { _deck.anchorMin = _deck.anchorMax = _deck.pivot = new Vector2(.5f, 0); _deck.anchoredPosition = new Vector2(0, 34); }
             else { _deck.anchorMin = _deck.anchorMax = _deck.pivot = new Vector2(1, 0); _deck.anchoredPosition = new Vector2(-40, 30); }
             _deck.sizeDelta = new Vector2(OwnerDeckWidth, OwnerDeckHeight);
-            GetComponent<HudReadingLayout>()?.RebasePlacement();
+            _deck.GetComponentInParent<HudReadingLayout>()?.RebasePlacement(_deck);
         }
 
         public void Tick(HeroAbilitySystem system, bool visible)
@@ -127,11 +130,13 @@ namespace TumbangPreso.UI
                 var skill = _skills[i]; if (skill == null) continue;
                 if (_symbols[i].Glyph != skill.Glyph) { _symbols[i].Glyph = skill.Glyph; _symbols[i].SetVerticesDirty(); }
                 bool ready = !kit.PracticeMode && (i == 2 ? kit.IsUltimateReady : skill.IsReady);
-                float ratio = i == 2 ? kit.UltimateRatio : skill.IsActive ? skill.DurationRatio : 1 - skill.CooldownRatio;
+                float ratio = skill.IsActive ? skill.DurationRatio : i == 2 ? kit.UltimateRatio : 1 - skill.CooldownRatio;
                 _ownerDials[i].State(ratio, ready, skill.IsActive, i == 2);
                 _symbols[i].color = ready ? CourtPresentationPalette.Gold : CourtPresentationPalette.Paper;
                 if (_symbols[i].Muted == ready) { _symbols[i].Muted = !ready; _symbols[i].SetVerticesDirty(); }
-                string state = kit.PracticeMode ? "Wait" : skill.IsActive ? skill.CanReactivate ? (skill.ReactivateReady ? "Again" : AbilityDeckHud.CooldownLabel(skill.ReactivateReadyIn)) : skill.DurationRemaining.ToString("0.0") :
+                string state = kit.PracticeMode ? "Wait" : skill.IsActive ? skill.CanReactivate
+                    ? (skill.ReactivateReady ? "Again" : AbilityDeckHud.CooldownLabel(skill.ReactivateReadyIn)) + "\n" + skill.DurationRemaining.ToString("0.0") + "s"
+                    : skill.DurationRemaining.ToString("0.0") + "s" :
                     i == 2 ? ready ? "" : Mathf.FloorToInt(kit.UltimateRatio * 100) + "%" :
                     skill.UsesCharges ? skill.ChargesRemaining.ToString() : skill.CooldownRemaining > 0 ? AbilityDeckHud.CooldownLabel(skill.CooldownRemaining) : "";
                 var slot = i == 0 ? HeroAbilitySystem.Slot.Skill1 : i == 1 ? HeroAbilitySystem.Slot.Skill2 : HeroAbilitySystem.Slot.Ultimate;
@@ -151,8 +156,8 @@ namespace TumbangPreso.UI
                 _symbols[i].canvasRenderer.SetAlpha(string.IsNullOrEmpty(state) ? 1 : drawn ? .5f : .22f);
                 string binding = Hud.KeyLabelFor(Actions[i]); _keys[i].text = Hud.OnTouch ? "" : binding;
                 bool pad = LastInputDevice.Current == InputDeviceKind.Gamepad;
-                _keyGlyphs[i].sprite = pad ? InputGlyphs.For(binding.ToUpperInvariant(), true) : null; _keyGlyphs[i].enabled = _keyGlyphs[i].sprite != null;
-                bool cap = !Hud.OnTouch && !pad && binding.Length <= 3;
+                _keyGlyphs[i].sprite = !Hud.OnTouch ? InputGlyphs.For(binding.ToUpperInvariant(), true) : null; _keyGlyphs[i].enabled = _keyGlyphs[i].sprite != null;
+                bool cap = !Hud.OnTouch && !pad && !_keyGlyphs[i].enabled && binding.Length <= 3;
                 _ownerKeycaps[i].gameObject.SetActive(cap);
                 _keys[i].color = _keyGlyphs[i].enabled ? Color.clear : cap ? HudDraw.CardInk : CourtPresentationPalette.Paper;
                 var edge = _keys[i].GetComponent<Outline>(); if (edge != null) edge.enabled = !cap && !_keyGlyphs[i].enabled;
@@ -163,7 +168,7 @@ namespace TumbangPreso.UI
             if (held && !_captureReference) _referenceOpened = true;
             var match = GameServices.Match;
             _hint.text = Hud.OnTouch ? "Hold info for skills" : "Hold " + Hud.KeyLabelFor("AbilityInfo") + " for skills";
-            _hint.enabled = !held && !_referenceOpened && (match == null || match.RoundNumber <= 1);
+            _hint.enabled = false; // Current Feedback removes the extra instruction above the deck.
             _detail.gameObject.SetActive(held); if (held) Describe(kit, _skills);
         }
 

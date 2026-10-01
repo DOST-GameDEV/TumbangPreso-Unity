@@ -38,7 +38,7 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(0.45f, n.Lead);
             Assert.Equal(1.45f, n.AimError);
             Assert.Equal(1.18f, n.PowerMargin);
-            Assert.Equal(2.6f, n.LungeRange);
+            Assert.Equal(4.6f, n.LungeRange, 3);
             Assert.Equal(34.0f, n.LungeCone);
             Assert.Equal(0.10f, n.Mistake);
         }

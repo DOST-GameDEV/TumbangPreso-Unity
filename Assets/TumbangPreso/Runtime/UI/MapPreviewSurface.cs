@@ -194,10 +194,8 @@ namespace TumbangPreso.UI
         }
         private string _showing;
         private bool _busy;
-        private bool _preparing;
         private string _wantedMap;
         private AsyncOperation _pendingLoad;
-        public bool IsPrepared { get; private set; }
         private bool _retiring,_ownsPreviewGate;
         private string _transitionScene;
         private static int _previewLoads;
@@ -215,7 +213,7 @@ namespace TumbangPreso.UI
             foreach(var preview in previews)
             {
                 preview._retiring=true;
-                if((preview._busy || preview._pendingLoad != null || preview._preparing)&&owner==null)owner=preview;
+                if((preview._busy || preview._pendingLoad != null)&&owner==null)owner=preview;
             }
             if(owner==null)return false;
             _transitionOwner=owner;owner._transitionScene=scene;
@@ -228,7 +226,7 @@ namespace TumbangPreso.UI
             do
             {
                 pending=false;foreach(var preview in previews)pending|=preview!=null &&
-                    (preview._busy || preview._pendingLoad != null || preview._preparing);
+                    (preview._busy || preview._pendingLoad != null);
                 if(pending)yield return null;
             }while(pending);
             string destination=_transitionScene;_transitionOwner=null;
@@ -358,53 +356,21 @@ namespace TumbangPreso.UI
         public void Show(string map)
         {
             if (_retiring || string.IsNullOrEmpty(map)) return;
-            if (_busy || _preparing) { _wantedMap = map; return; }
+            if (_busy) { _wantedMap = map; return; }
             if (map == _showing) return;
             StartCoroutine(Swap(map));
         }
 
-        public IEnumerator PrepareAll(System.Action<float> progress)
-        {
-            if (IsPrepared) { progress?.Invoke(1); yield break; }
-            _preparing = true;
-            try
-            {
-                while (_busy || _pendingLoad != null) yield return null;
-                var maps = SceneFlow.Maps;
-                for (int i = 0; i < maps.Length; i++)
-                {
-                    if (_retiring) yield break;
-                    if (!Application.CanStreamedLevelBeLoaded(maps[i]))
-                        throw new System.InvalidOperationException("Preview scene missing: " + maps[i]);
-                    var swap = Swap(maps[i]);
-                    try { while (swap.MoveNext()) yield return swap.Current; }
-                    finally { (swap as System.IDisposable)?.Dispose(); }
-                    if (!_cache.TryGetValue(maps[i], out var scene) || !scene.IsValid() || !scene.isLoaded)
-                        throw new System.InvalidOperationException("Preview scene did not prepare: " + maps[i]);
-                    // Let authored Start/Update initialization run and draw the actual preview
-                    // behind the curtain, rather than leaving its first draw on the map click.
-                    yield return null;
-                    if (_camera != null) _camera.Render();
-                    progress?.Invoke((i + 1f) / (maps.Length + 1f));
-                }
-                string selected = _wantedMap ?? SceneFlow.SelectedMap;
-                _wantedMap = null;
-                if (_showing != selected)
-                {
-                    var restore = Swap(selected);
-                    try { while (restore.MoveNext()) yield return restore.Current; }
-                    finally { (restore as System.IDisposable)?.Dispose(); }
-                }
-                IsPrepared = true;
-                progress?.Invoke(1);
-            }
-            finally
-            {
-                _preparing = false;
-                if (IsPrepared && !_retiring && isActiveAndEnabled && _wantedMap != null)
-                { string wanted = _wantedMap; _wantedMap = null; Show(wanted); }
-            }
-        }
+        // ⚠️⚠️ THERE IS NO `PrepareAll` ANY MORE, AND NO HUB LOADING SCREEN IN FRONT OF IT.
+        // 2026-09-27 to 2026-09-30 the hub loaded every arena as a preview scene behind its own
+        // "GETTING READY" curtain on EVERY entry to the hub (38.52 s in the editor on the first
+        // measurement), which put a second loading screen straight after the boot one.
+        // Request, 2026-09-30: that screen is redundant, and every asset and shader loads in the
+        // boot splash instead. `SplashScreen.WarmMapAssets` now retains every arena's meshes,
+        // textures and materials at boot, so the one map this surface shows is instanced from
+        // memory when it is asked for, and the rest are instanced only if the player picks them.
+        // The scene instances cannot be made at boot: a menu change is a single-scene load and
+        // unloads every additive scene, so they would be thrown away before the hub opened.
 
         private IEnumerator Swap(string map)
         {
@@ -499,7 +465,7 @@ namespace TumbangPreso.UI
             finally
             {
                 EndPreviewLoad(); _busy = false;
-                if (!_preparing && !_retiring && isActiveAndEnabled && _wantedMap != null)
+                if (!_retiring && isActiveAndEnabled && _wantedMap != null)
                 {
                     string wanted = _wantedMap; _wantedMap = null;
                     Show(wanted);

@@ -370,7 +370,7 @@ namespace TumbangPreso.Tests
                 { "sean", "SUPERNOVA" },
                 { "zack", "THUNDERSTRIKE" },
                 { "nemu", "DEVOURING SEANCE" },
-                { "phaister", "OMEN" },
+                { "phaister", "VOODOO DOLL" },
             };
 
             var seen = new HashSet<string>();

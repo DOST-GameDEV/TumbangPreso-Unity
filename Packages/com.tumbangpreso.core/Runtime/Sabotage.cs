@@ -190,7 +190,7 @@ namespace TumbangPreso.Core
         /// ⚠️ THE LUNGE AT FULL COMMITMENT, OR THE PUNCH, WHICHEVER REACHES FURTHER. The taya
         /// has two tag verbs (`Balance`'s note: *"they answer different problems"*), so the
         /// reach a victim has to be pushed inside is the better of the two rather than either
-        /// one alone. `Combat.LungeReach` is 2.30 and `Balance.PunchRange` is 1.70.
+        /// one alone. Both are read from current tuning rather than duplicated here.
         /// </summary>
         public static float ActionableReach
         {

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 23:36:33Z" end-time="2026-09-30 23:36:33Z" duration="0.1814391">
+  <test-suite type="TestSuite" id="2267" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1023" result="Passed" start-time="2026-09-30 23:36:33Z" end-time="2026-09-30 23:36:33Z" duration="0.181439" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2261" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1023" result="Passed" start-time="2026-09-30 23:36:33Z" end-time="2026-09-30 23:36:33Z" duration="0.162357" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="8232" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2262" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1023" result="Passed" start-time="2026-09-30 23:36:33Z" end-time="2026-09-30 23:36:33Z" duration="0.152205" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2263" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1023" result="Passed" start-time="2026-09-30 23:36:33Z" end-time="2026-09-30 23:36:33Z" duration="0.142212" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1624" name="NemuCatchContractTests" fullname="TumbangPreso.PlayTests.NemuCatchContractTests" classname="TumbangPreso.PlayTests.NemuCatchContractTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-09-30 23:36:33Z" end-time="2026-09-30 23:36:33Z" duration="0.109938" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1631" name="ApprovedRecoveryProjectsProtectionOnAnObserverAndThenExpires" fullname="TumbangPreso.PlayTests.NemuCatchContractTests.ApprovedRecoveryProjectsProtectionOnAnObserverAndThenExpires" methodname="ApprovedRecoveryProjectsProtectionOnAnObserverAndThenExpires" classname="TumbangPreso.PlayTests.NemuCatchContractTests" runstate="Runnable" seed="300536559" result="Passed" start-time="2026-09-30 23:36:33Z" end-time="2026-09-30 23:36:33Z" duration="0.092186" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

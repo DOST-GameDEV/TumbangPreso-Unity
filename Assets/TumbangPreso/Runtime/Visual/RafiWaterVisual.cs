@@ -12,9 +12,10 @@ namespace TumbangPreso.Visual
         private WorldEffectSnapshot.Field _state;
         private Mesh _mesh;
         private MeshRenderer _surface;
-        private LineRenderer _foam;
+        private LineRenderer _foam, _wallRunoff;
         private Vector3[] _vertices;
         private MaterialPropertyBlock _block;
+        private float _sampleAge;
         private Transform _echo, _leftArm, _rightArm, _head, _leftLeg, _rightLeg;
         private Renderer[] _echoRenderers;
         public float LifeSeconds => _state.Duration;
@@ -26,6 +27,7 @@ namespace TumbangPreso.Visual
             visual._block = new MaterialPropertyBlock();
             visual.transform.SetPositionAndRotation(state.Position, Quaternion.LookRotation(state.Forward));
             if (state.Type == WorldEffectSnapshot.Kind.Mirrorwake) visual.BuildEcho();
+            else if(state.Type==WorldEffectSnapshot.Kind.Waterwall) visual.BuildWall();
             else visual.BuildCrest();
             return visual;
         }
@@ -40,6 +42,83 @@ namespace TumbangPreso.Visual
             var material = new Material(shader) { name = "Rafi translucent water", color = colour };
             renderer.sharedMaterial = material;
             VfxRenderTag.Own(renderer.gameObject, material);
+        }
+
+        private const int WallColumns=13, WallRows=6;
+        private static readonly float[] WallHeight={0,.06f,.26f,.74f,1,.94f};
+        private static readonly float[] WallFold={-.23f,-.04f,0,.015f,-.055f,-.16f};
+        private void BuildWall()
+        {
+            var surface=new GameObject("FoldedWaterCurtain");surface.transform.SetParent(transform,false);
+            _mesh=new Mesh { name="RafiWaterCurtain" };_mesh.MarkDynamic();
+            surface.AddComponent<MeshFilter>().sharedMesh=_mesh;
+            _surface=surface.AddComponent<MeshRenderer>();
+            _surface.shadowCastingMode=ShadowCastingMode.Off;_surface.receiveShadows=false;
+            Paint(_surface,new Color(.16f,.60f,.77f,.27f));
+            _surface.sharedMaterial.SetFloat("_UseVertexTint",1);
+            _surface.sharedMaterial.SetFloat("_CurtainFlow",1);
+            _vertices=new Vector3[WallColumns*WallRows];
+            var colours=new Color[_vertices.Length];
+            var uv=new Vector2[_vertices.Length];
+            var triangles=new int[(WallColumns-1)*(WallRows-1)*6];int at=0;
+            for(int x=0;x<WallColumns;x++) for(int row=0;row<WallRows;row++)
+            {
+                uv[x*WallRows+row]=new Vector2(x/(float)(WallColumns-1),WallHeight[row]);
+                // Quiet centre, denser curled lip and wet source. No opaque pane.
+                float alpha=row==0?.10f:row==1?.65f:row==2?.27f:row==3?.18f:1;
+                float side=Mathf.Abs(x/(float)(WallColumns-1)*2-1);
+                colours[x*WallRows+row]=new Color(1,1,1,Mathf.Lerp(alpha,Mathf.Max(alpha,.65f),side*side*side));
+                if(x==WallColumns-1||row==WallRows-1)continue;
+                int v=x*WallRows+row,w=v+WallRows;
+                triangles[at++]=v;triangles[at++]=w;triangles[at++]=v+1;
+                triangles[at++]=w;triangles[at++]=w+1;triangles[at++]=v+1;
+            }
+            _mesh.vertices=_vertices;_mesh.colors=colours;_mesh.uv=uv;_mesh.triangles=triangles;
+            var lip=new GameObject("RollingCurtainLip");lip.transform.SetParent(transform,false);
+            _foam=lip.AddComponent<LineRenderer>();_foam.useWorldSpace=false;
+            _foam.positionCount=WallColumns;_foam.widthMultiplier=.048f;
+            _foam.widthCurve=new AnimationCurve(new Keyframe(0,.35f),new Keyframe(.17f,.9f),
+                new Keyframe(.44f,.55f),new Keyframe(.73f,1),new Keyframe(1,.28f));
+            _foam.numCapVertices=1;_foam.numCornerVertices=1;
+            _foam.shadowCastingMode=ShadowCastingMode.Off;_foam.receiveShadows=false;
+            Paint(_foam,new Color(.63f,.88f,.91f,.75f));
+            var runoff=new GameObject("ShallowCurtainRunoff");runoff.transform.SetParent(transform,false);
+            _wallRunoff=runoff.AddComponent<LineRenderer>();_wallRunoff.useWorldSpace=false;
+            _wallRunoff.positionCount=WallColumns;_wallRunoff.widthMultiplier=.026f;
+            _wallRunoff.widthCurve=new AnimationCurve(new Keyframe(0,0),new Keyframe(.2f,.8f),
+                new Keyframe(.5f,.35f),new Keyframe(.82f,.65f),new Keyframe(1,0));
+            _wallRunoff.numCornerVertices=1;_wallRunoff.shadowCastingMode=ShadowCastingMode.Off;
+            _wallRunoff.receiveShadows=false;Paint(_wallRunoff,new Color(.49f,.79f,.78f,.65f));
+        }
+
+        private void Wall(float age,float fade)
+        {
+            float rise=Mathf.SmoothStep(0,1,Mathf.Clamp01(age/Core.RafiRules.WallGather));
+            float drain=_state.Split?Mathf.SmoothStep(0,1,Mathf.Clamp01((age-_state.FirstScale)/.25f)):0;
+            for(int x=0;x<WallColumns;x++)
+            {
+                float u=x/(float)(WallColumns-1),side=u*2-1;
+                // Travelling low-amplitude folds remain inside the accepted width.
+                float wave=Mathf.Sin(age*3.1f-u*7.4f);
+                float crown=1.80f+.105f*wave+.035f*Mathf.Sin(u*17+age*1.7f);
+                float edge=1-.08f*Mathf.Pow(Mathf.Abs(side),5);
+                for(int row=0;row<WallRows;row++)
+                {
+                    float height=WallHeight[row];
+                    float y=.018f+crown*height*rise*edge*(1-drain);
+                    float z=WallFold[row]*rise+Mathf.Sin(age*2.8f-u*8-height*2.2f)*.038f*height*rise;
+                    // Collapse into its own shallow trough, not a shrinking glass frame.
+                    z=Mathf.Lerp(z,WallFold[row]*1.6f,drain);
+                    _vertices[x*WallRows+row]=new Vector3(side*_state.Radius,y,z);
+                }
+                _foam.SetPosition(x,_vertices[x*WallRows+WallRows-2]);
+                _wallRunoff.SetPosition(x,new Vector3(side*_state.Radius,.026f,
+                    -.27f-.065f*Mathf.Sin(u*9.2f+age*2.6f)));
+            }
+            _mesh.vertices=_vertices;_mesh.RecalculateNormals();_mesh.RecalculateBounds();
+            Tint(_surface,new Color(.18f,.64f,.69f,.27f*rise*fade*(1-drain)));
+            Tint(_foam,new Color(.63f,.88f,.85f,.75f*rise*fade*(1-drain)));
+            Tint(_wallRunoff,new Color(.49f,.79f,.78f,.65f*rise*fade*(1-drain)));
         }
 
         private void BuildCrest()
@@ -100,8 +179,10 @@ namespace TumbangPreso.Visual
         public void StepTo(float seconds)
         {
             float age = Mathf.Clamp(seconds, 0, LifeSeconds);
+            _sampleAge = age;
             float fade = Mathf.Clamp01((LifeSeconds - age) / .22f);
             if (_state.Type == WorldEffectSnapshot.Kind.Mirrorwake) { Echo(age, fade); return; }
+            if (_state.Type == WorldEffectSnapshot.Kind.Waterwall) { Wall(age,fade); return; }
             if (_mesh == null) return;
             bool wave = _state.Type == WorldEffectSnapshot.Kind.Breakwater;
             float gather = RafiWaterField.Gather(_state.Type);
@@ -173,7 +254,7 @@ namespace TumbangPreso.Visual
             Tint(_foam, new Color(.54f, .86f, .91f, .5f * reveal * fade));
         }
         private void Tint(Renderer renderer, Color colour)
-        { _block.Clear(); _block.SetColor("_Color", colour); _block.SetColor("_BaseColor", colour); renderer.SetPropertyBlock(_block); }
+        { _block.Clear(); _block.SetColor("_Color", colour); _block.SetColor("_BaseColor", colour); _block.SetFloat("_FlowAge", _sampleAge); renderer.SetPropertyBlock(_block); }
         private void OnDestroy() { if (_mesh != null) Destroy(_mesh); }
     }
 }

@@ -39,9 +39,9 @@ namespace TumbangPreso.Visual
         private void OnPreCull()
         {
             PrepareExperimentValues();
-            if(_cueWorld>0 && !_cueOwnsDepth)
+            if((_cueWorld>0 || HauntedSight) && !_cueOwnsDepth)
             {_cueOriginalDepth=_camera.depthTextureMode;_camera.depthTextureMode|=DepthTextureMode.Depth;_cueOwnsDepth=true;}
-            else if(_cueWorld<=0)ReleaseCueDepth();
+            else if(_cueWorld<=0 && !HauntedSight)ReleaseCueDepth();
         }
         private void ReleaseCueDepth()
         {

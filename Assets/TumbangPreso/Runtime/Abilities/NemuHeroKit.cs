@@ -8,21 +8,9 @@ using UnityEngine;
 namespace TumbangPreso.Abilities
 {
     /// <summary>
-    /// ⚠️⚠️ NEMU, NECRO, IN THE NEW SHAPE (ABILITY-2, owner 2026-09-26: *"NECRO maps to nemu"*, the table and
-    /// his answers). `docs/reports/ability-rework-2026-09-26/plan.md` § 3.4; numbers in `Core.NecroRules`.
-    /// KURO IS THE KIT: every ability sends her ghost pet somewhere (`GhostPetCompanion.BeginErrand`).
-    ///
-    /// | Slot | Name | Owner |
-    /// |---|---|---|
-    /// | Signature | TERRIFY | *"Leave Kuro somewhere and everyone there gets feared"*; Feared = *"Flee from kuro and drop slipper"* |
-    /// | Attacking | KURO FETCH | *"Kuro Slipper retrieve"*; the taya can intercept |
-    /// | Defending | KURO GUARD | *"kuro aids withh blocking and becomes a bit bigger"*, *"give her like an AI to think abt where to stand but dont make it infallible"* |
-    /// | Ultimate | KURO PLAYS (NOT YET) | *"HARD BOT and fulfills whatever role u have and ghets separate copy of ur skills"* |
-    ///
-    /// ⚠️⚠️ THE ULTIMATE IS STILL DEVOURING SEANCE. KURO PLAYS is a fifth unit in a four-seat match (a
-    /// seatless motor, a bot brain, scoring routed to her seat, a second taya body, a snapshot for a
-    /// rejoiner) and the plan gives it its own design pass; building it blind would put a broken seat in
-    /// every match. It is the next Necro item in TODO ABILITY-2.
+    /// Nemu's current Wiki passive and Kuro: Sit signature use the shared basic
+    /// cooldown and recall anchor. Catch protects the can through its owned clock.
+    /// Haunt chases visible players sequentially using the existing companion.
     /// </summary>
     public sealed class NemuHeroKit : HeroKit
     {
@@ -32,7 +20,29 @@ namespace TumbangPreso.Abilities
         /// <summary>Phantom Veil is gone; a rejoiner has no veil to restore.</summary>
         public bool RestoreJoiningVeil(CharacterMotor motor, float remaining) => false;
 
-        public override float MovementSpeedScale => 1f;
+        // Kuro's current Wiki passive gives one 10 percent bonus while a basic
+        // ability is cooling down. Read the existing clocks so expiry, round
+        // resets and authoritative corrections cannot leave a stale bonus.
+        public override float MovementSpeedScale =>
+            Skill1?.CooldownRemaining > 0f || AttackingSkill?.CooldownRemaining > 0f ||
+            DefendingSkill?.CooldownRemaining > 0f ? 1.1f : 1f;
+
+        private void ShareBasicCooldown(float seconds, bool mayLower)
+        {
+            Skill1?.ApplyNetworkSnapshot(seconds, Skill1.ChargesRemaining, mayLower);
+            AttackingSkill?.ApplyNetworkSnapshot(seconds, AttackingSkill.ChargesRemaining, mayLower);
+            DefendingSkill?.ApplyNetworkSnapshot(seconds, DefendingSkill.ChargesRemaining, mayLower);
+        }
+
+        internal override void ApplySkillReceiptResources(HeroAbility ability, float cooldown,
+            int charges, bool newerSkillRequestExists)
+        {
+            // A reply for the other slot must not refund or shorten a later cast,
+            // even when that later request has already been acknowledged.
+            if (newerSkillRequestExists) return;
+            base.ApplySkillReceiptResources(ability, cooldown, charges, false);
+            ShareBasicCooldown(cooldown, mayLower: true);
+        }
 
         public void RestoreFamiliar(CharacterMotor motor, int mode, Vector3 position, float remaining, float? yaw = null)
         {
@@ -48,68 +58,127 @@ namespace TumbangPreso.Abilities
             }
         }
 
+        public bool ReceiveHaunt(CharacterMotor motor, long phase, float clock, Vector3 position, float remaining, float yaw)
+            => ((NightmareSeanceVoidAbility)Ultimate).ReceiveHaunt(
+                new AbilityContext(motor, motor.GetComponent<Carrier>(), motor.GetComponent<CombatVerbs>()),
+                phase, clock, position, remaining, yaw);
+
         public NemuHeroKit() : base("nemu", "NEMU")
         {
-            Skill1 = new Terrify();
-            AttackingSkill = new KuroFetch();
-            DefendingSkill = new KuroGuard();
+            Skill1 = new KuroSit(this);
+            AttackingSkill = new KuroFetch(this);
+            DefendingSkill = new KuroGuard(this);
             Ultimate = new NightmareSeanceVoidAbility();
         }
 
-        /// <summary>The seance's price (unchanged until KURO PLAYS replaces it).</summary>
-        public override float UltimateCost => 10.0f;
+        public override float UltimateCost => 15.0f;
 
         private static GhostPetCompanion Kuro(AbilityContext ctx) => ctx?.Motor?.GetComponent<CharacterVisual>()?.Companion;
 
-        // ================================================================== TERRIFY (signature)
+        // ================================================================== KURO: SIT!
 
-        private sealed class Terrify : HeroAbility
+        private sealed class KuroSit : HeroAbility, IPreparedWorldReplication
         {
-            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
+            private readonly NemuHeroKit _kit;
             private Vector3 _spot;
-            private readonly HashSet<int> _feared = new HashSet<int>();
+            private bool _hasAnchor;
+            private CharacterMotor _owner;
             private GhostPetCompanion _kuro;
 
-            public Terrify()
-                : base("nemu_skill1", "TERRIFY",
-                       "Hold to aim, release to leave Kuro haunting a spot for 4 s. Anyone who comes near him drops their slipper and runs in terror.",
-                       NecroRules.TerrifyCooldown, NecroRules.TerrifyHauntSeconds, AbilityGlyph.NemuTerrify,
-                       summary: "Kuro haunts a spot. Whoever comes near is Feared.",
-                       telegraphRadius: NecroRules.TerrifyRadius, telegraphRange: NecroRules.TerrifyMaxRange,
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
+            public override bool CanReactivate => true;
+            public override bool ReactivateReady => IsActive && _hasAnchor && _owner != null && _owner.CanAct();
+
+            public KuroSit(NemuHeroKit kit)
+                : base("nemu_skill1", "KURO: SIT!",
+                       "Hold to aim, release to leave Kuro at a location for 10 seconds. Reactivate to teleport back to him.",
+                       NecroRules.BasicCooldown, NecroRules.SitSeconds, AbilityGlyph.NemuPhase,
+                       summary: "Leave Kuro at a spot. Reactivate to return to him.",
+                       telegraphRadius: 0.4f, telegraphRange: NecroRules.SitMaxRange,
                        castAction: "hero-nemu-project", viewmodelAction: "project-spirit",
                        castCue: "sfx_cast_nemu_terrify")
             {
-                AimByHolding(2.0f, NecroRules.TerrifyMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
+                _kit = kit;
+                AimByHolding(2.0f, NecroRules.SitMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
                 TelegraphStyle = GroundReticle.Style.Maw;
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                _kit.ShareBasicCooldown(CooldownRemaining, mayLower: false);
                 _spot = AimedDestination(ctx);
-                _feared.Clear();
-                _kuro = Kuro(ctx);
-                Vector3 spot = _spot;
-                _kuro?.BeginErrand(() => spot, 11.0f, 1.25f);
+                _owner = ctx?.Motor;
+                _hasAnchor = true;
+                BindCompanion(ctx);
                 NetCue.Play("sfx_ghost_teleport", _spot);
+            }
+
+            private void BindCompanion(AbilityContext ctx)
+            {
+                _kuro = Kuro(ctx);
+                if (_kuro == null) return;
+                _kuro.ApplyCastAnchor(_spot + Vector3.up * 0.9f);
+                _kuro.BeginErrand(() => _spot, NecroRules.FetchSpeed);
             }
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
-                if (!NetAuthority.ShouldResolve()) return;
-                var round = ctx?.Round;
-                if (round == null) return;
-                foreach (var p in round.Players)
-                {
-                    if (p == null || p == ctx.Motor || _feared.Contains(p.PlayerSlot)) continue;
-                    Vector3 d = p.transform.position - _spot; d.y = 0.0f;
-                    if (d.magnitude > NecroRules.TerrifyRadius) continue;
-                    _feared.Add(p.PlayerSlot);
-                    p.ApplyFeared(_spot);
-                    MatchFlair.Announce(MatchFlair.Kind.HeroHit, ctx.Motor.PlayerSlot, p.PlayerSlot, p.transform.position, 1.5f);
-                }
+                // A delayed model load must adopt the existing anchor, not cast
+                // again or restart the lifetime and shared cooldown.
+                if (_hasAnchor && _kuro == null) BindCompanion(ctx);
             }
 
-            protected override void OnEnd(AbilityContext ctx) { _kuro?.EndErrand(); _kuro = null; }
+            public override Vector3 TelegraphCentre(AbilityContext ctx)
+                => _hasAnchor && IsActive ? _spot : AimedDestination(ctx);
+
+            public override void Reactivate(AbilityContext ctx)
+            {
+                if (!IsActive || !_hasAnchor || ctx?.Motor == null) return;
+                if (!ctx.IsApprovedReplay && !ctx.Motor.CanAct()) return;
+                // Teleport owns confinement, prediction and host transform delivery.
+                // An observing replica cannot mutate another player's motor.
+                ctx.Motor.Teleport(_spot);
+                EndEarly(ctx);
+            }
+
+            public bool CapturePreparedWorld(out Vector3 centre, out float preparation, out float remaining)
+            {
+                bool active = _hasAnchor && IsActive;
+                centre = active ? _spot : Vector3.zero;
+                preparation = 0;
+                remaining = active ? DurationRemaining : 0;
+                return active;
+            }
+
+            public bool RestorePreparedWorld(AbilityContext ctx, Vector3 centre, float preparation, float remaining)
+            {
+                if (ctx?.Motor == null || !float.IsFinite(centre.x) || !float.IsFinite(centre.y)
+                    || !float.IsFinite(centre.z) || !float.IsFinite(preparation) || preparation != 0
+                    || !float.IsFinite(remaining) || remaining < 0 || remaining > Duration) return false;
+                if (remaining == 0)
+                {
+                    EndEarly(ctx);
+                    OnEnd(ctx);
+                    return false;
+                }
+                _spot = centre;
+                _owner = ctx.Motor;
+                _hasAnchor = true;
+                RestoreLiveClock(remaining);
+                BindCompanion(ctx);
+                // The interface returns true only for a restored preparation pose.
+                // Sit has no windup; its live anchor was restored without a cast.
+                return false;
+            }
+
+            protected override void OnEnd(AbilityContext ctx)
+            {
+                _kuro?.EndErrand();
+                _kuro = null;
+                _owner = null;
+                _hasAnchor = false;
+            }
+
             protected override void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
         }
 
@@ -117,19 +186,20 @@ namespace TumbangPreso.Abilities
 
         private sealed class KuroFetch : HeroAbility
         {
+            private readonly NemuHeroKit _kit;
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
             private Slipper _shoe;
             private GhostPetCompanion _kuro;
             private bool _carrying;
             private float _nextBroadcast;
 
-            public KuroFetch()
-                : base("nemu_skill2", "KURO FETCH",
-                       "Attacking. Kuro flies to your slipper and brings it back to your hand. If the taya tags him on the way, he drops it.",
+            public KuroFetch(NemuHeroKit kit)
+                : base("nemu_skill2", "KURO: FETCH!",
+                       "Attacking. Kuro brings your loose slipper beside you for pickup. If the taya tags him on the way, he drops it.",
                        NecroRules.FetchCooldown, 8.0f, AbilityGlyph.NemuAstralPet,
                        summary: "Kuro fetches your slipper. The taya can make him drop it.",
                        castAction: "hero-nemu-project", viewmodelAction: "project-spirit",
-                       castCue: "sfx_cast_nemu_fetch") { }
+                       castCue: "sfx_cast_nemu_fetch") { _kit = kit; }
 
             public override bool CanActivate(AbilityContext ctx)
             {
@@ -139,13 +209,14 @@ namespace TumbangPreso.Abilities
 
             private static Slipper OwnLooseSlipper(CharacterMotor who)
             {
-                foreach (var s in UnityEngine.Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
-                    if (s != null && s.OwnerSlot == who.PlayerSlot && s.State == SlipperState.Loose) return s;
+                foreach (var s in BotSlipperInventory.All)
+                    if (s.OwnerSlot == who.PlayerSlot && s.State == SlipperState.Loose) return s;
                 return null;
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                _kit.ShareBasicCooldown(CooldownRemaining, mayLower: false);
                 _shoe = OwnLooseSlipper(ctx.Motor);
                 _kuro = Kuro(ctx);
                 _carrying = false;
@@ -159,10 +230,18 @@ namespace TumbangPreso.Abilities
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {
-                if (_shoe == null || _kuro == null) { DurationRemaining = 0.0f; return; }
+                if (_shoe == null || !_shoe.gameObject.activeInHierarchy ||
+                    _shoe.OwnerSlot != ctx.Motor.PlayerSlot || _shoe.State != SlipperState.Loose)
+                {
+                    // A normal pickup or round ownership change wins over an old
+                    // fetch. Never reposition equipment that is now held or thrown.
+                    _carrying = false;
+                    DurationRemaining = 0.0f;
+                    return;
+                }
+                if (_kuro == null) { DurationRemaining = 0.0f; return; }
                 if (!_carrying)
                 {
-                    if (_shoe.State != SlipperState.Loose) { DurationRemaining = 0.0f; return; }
                     if (_kuro.ErrandArrived) { _carrying = true; NetCue.Play("sfx_possess_enter", _kuro.transform.position); }
                     return;
                 }
@@ -178,8 +257,7 @@ namespace TumbangPreso.Abilities
                         if (p != null && p.IsDefender && p.CanAct() &&
                             (p.transform.position - at).sqrMagnitude < NecroRules.FetchInterceptRadius * NecroRules.FetchInterceptRadius)
                         {
-                            _shoe.transform.position = new Vector3(at.x, Slipper.GroundY(at) + 0.05f, at.z);
-                            Net.MatchRpc.Instance?.BroadcastSlipperState(_shoe);
+                            GroundCarriedSlipper();
                             MatchFlair.Announce(MatchFlair.Kind.Block, ctx.Motor.PlayerSlot, p.PlayerSlot, at, 4f);
                             NetCue.Play("sfx_nemu_fetch_drop", at);
                             DurationRemaining = 0.0f;
@@ -187,268 +265,311 @@ namespace TumbangPreso.Abilities
                         }
                 if ((ctx.Motor.transform.position - at).sqrMagnitude < 1.2f * 1.2f)
                 {
-                    _shoe.HostForceEquip(ctx.Motor);
-                    Net.MatchRpc.Instance?.BroadcastSlipperState(_shoe);
+                    _shoe.transform.position = ctx.Motor.transform.position + ctx.Motor.transform.right * 0.8f;
+                    GroundCarriedSlipper();
                     DurationRemaining = 0.0f;
                 }
             }
 
-            protected override void OnEnd(AbilityContext ctx) { _kuro?.EndErrand(); _kuro = null; _shoe = null; _carrying = false; }
+            private void GroundCarriedSlipper()
+            {
+                if (_carrying && _shoe != null && _shoe.gameObject.activeInHierarchy &&
+                    _shoe.State == SlipperState.Loose && NetAuthority.ShouldResolve())
+                {
+                    // Reuse normal landing: terrain height, authored shoe rest pose,
+                    // playable bounds and pickup highlights stay in one place.
+                    _shoe.HostScatter(Vector3.zero);
+                    Net.MatchRpc.Instance?.BroadcastSlipperState(_shoe);
+                }
+                _carrying = false;
+            }
+
+            protected override void OnEnd(AbilityContext ctx)
+            {
+                GroundCarriedSlipper();
+                _kuro?.EndErrand();
+                _kuro = null;
+                _shoe = null;
+            }
             protected override void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
         }
 
-        // ================================================================== KURO GUARD (defending)
+        // ================================================================== KURO: CATCH! (defending)
 
-        private sealed class KuroGuard : HeroAbility
+        private sealed class KuroGuard : HeroAbility, IPreparedWorldReplication
         {
-            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
+            private readonly NemuHeroKit _kit;
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
             private GhostPetCompanion _kuro;
-            private Vector3 _spot, _pending;
-            private float _think, _react;
-            private readonly HashSet<Slipper> _blocked = new HashSet<Slipper>();
+            private Lata _can;
+            private bool _approvedReplica;
 
-            public KuroGuard()
-                : base("nemu_skill2d", "KURO GUARD",
-                       "Defending. Kuro grows and guards the can for 6 s, moving to block the throws he sees coming. He is quick, not perfect.",
+            public KuroGuard(NemuHeroKit kit)
+                : base("nemu_skill2d", "KURO: CATCH!",
+                       "Defending. Command Kuro to protect the upright can from knockdown for 5 s.",
                        NecroRules.GuardCooldown, NecroRules.GuardSeconds, AbilityGlyph.NemuKuroGuard,
-                       summary: "Kuro grows and blocks throws at the can.",
+                       summary: "Protect the upright can for 5 s.",
                        castAction: "hero-nemu-seance", viewmodelAction: "seance-channel",
-                       castCue: "sfx_cast_nemu_guard") { }
+                       castCue: "sfx_cast_nemu_guard") { _kit = kit; }
+
+            public override bool CanActivate(AbilityContext ctx)
+                => base.CanActivate(ctx) && ctx.Motor.IsDefender && ctx.Round?.Lata?.IsUpright == true;
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                _kuro = Kuro(ctx);
-                _blocked.Clear();
-                var lata = ctx.Round?.Lata;
-                _spot = _pending = lata != null ? lata.transform.position + Vector3.forward * 1.2f : ctx.Position;
-                _think = 0.0f; _react = 0.0f;
-                _kuro?.BeginErrand(() => _spot, NecroRules.GuardMoveSpeed, NecroRules.GuardScale);
+                _kit.ShareBasicCooldown(CooldownRemaining, mayLower: false);
+                _approvedReplica = ctx.IsApprovedReplay;
+                BindCan(ctx);
             }
-
+            private void BindCan(AbilityContext ctx)
+            {
+                _can = ctx?.Round?.Lata;
+                _can?.AddAbilityProtection(this, _approvedReplica);
+                BindCompanion(ctx);
+            }
+            private void BindCompanion(AbilityContext ctx)
+            {
+                if (_can == null) return;
+                _kuro = Kuro(ctx);
+                _kuro?.BeginErrand(() => _can != null
+                    ? _can.transform.position + Vector3.forward * 1.2f : ctx.Position,
+                    NecroRules.GuardMoveSpeed, NecroRules.GuardScale);
+            }
             protected override void OnTick(AbilityContext ctx, float dt)
             {
-                var round = ctx?.Round;
-                var lata = round?.Lata;
-                if (lata == null || _kuro == null) return;
-                // ⚠️ THE FALLIBLE AI (owner: *"dont make it infallible"*): he re-decides every 0.35 s and acts
-                // on it 0.25 s later, standing between the can and whichever attacker holding a slipper is
-                // closest to it. He never predicts a curve and never sees a throw before it leaves the hand.
-                _think -= dt;
-                if (_think <= 0.0f)
-                {
-                    _think = NecroRules.GuardThinkSeconds;
-                    CharacterMotor threat = null; float best = float.MaxValue;
-                    foreach (var p in round.Players)
-                    {
-                        if (p == null || p.IsDefender || !p.HoldingSlipper) continue;
-                        float dd = (p.transform.position - lata.transform.position).sqrMagnitude;
-                        if (dd < best) { best = dd; threat = p; }
-                    }
-                    Vector3 toward = threat != null ? threat.transform.position - lata.transform.position : ctx.Motor.transform.forward;
-                    toward.y = 0.0f;
-                    _pending = lata.transform.position + (toward.sqrMagnitude > 0.01f ? toward.normalized : Vector3.forward) * 1.4f;
-                    _react = NecroRules.GuardReactSeconds;
-                }
-                if (_react > 0.0f) { _react -= dt; if (_react <= 0.0f) _spot = _pending; }
-
-                if (!NetAuthority.ShouldResolve()) return;
-                float reach = NecroRules.GuardBlockRadius * NecroRules.GuardScale;
-                foreach (var s in UnityEngine.Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
-                {
-                    if (s == null || s.State != SlipperState.InFlight || _blocked.Contains(s)) continue;
-                    if ((s.transform.position - _kuro.transform.position).sqrMagnitude > reach * reach) continue;
-                    _blocked.Add(s);
-                    Vector3 away = s.transform.position - _kuro.transform.position; away.y = 0.0f;
-                    s.Deflect((away.sqrMagnitude > 0.01f ? away.normalized : -s.Velocity.normalized) * Balance.LaunchSpeed * Balance.DeflectSpeedScale, 1.0f);
-                    NetCue.Play("sfx_nemu_guard_block", s.transform.position);
-                }
+                if (_can == null) { BindCan(ctx); return; }
+                if (_can != ctx?.Round?.Lata || (NetAuthority.ShouldResolve() && !_can.IsUpright))
+                { DurationRemaining = 0; return; }
+                _can.AddAbilityProtection(this, _approvedReplica);
+                if (_kuro == null) BindCompanion(ctx);
             }
-
-            protected override void OnEnd(AbilityContext ctx) { _kuro?.EndErrand(); _kuro = null; }
+            public bool CapturePreparedWorld(out Vector3 centre, out float preparation, out float remaining)
+            {
+                bool active = IsActive && _can != null;
+                centre = active ? _can.transform.position : Vector3.zero;
+                preparation = 0; remaining = active ? DurationRemaining : 0;
+                return active;
+            }
+            public bool RestorePreparedWorld(AbilityContext ctx, Vector3 centre, float preparation, float remaining)
+            {
+                if (ctx?.Motor == null || !float.IsFinite(centre.x) || !float.IsFinite(centre.y)
+                    || !float.IsFinite(centre.z) || !float.IsFinite(preparation) || preparation != 0
+                    || !float.IsFinite(remaining) || remaining < 0 || remaining > Duration) return false;
+                if (remaining == 0)
+                { EndEarly(ctx); OnEnd(ctx); return false; }
+                if (ctx.Round?.Lata == null || (NetAuthority.ShouldResolve() && !ctx.Round.Lata.IsUpright)) return false;
+                RestoreLiveClock(remaining);
+                // This callback is reached through the validated shared recovery
+                // route, whose context is not an ordinary cast-playback context.
+                _approvedReplica = true;
+                BindCan(ctx);
+                return false;
+            }
+            protected override void OnEnd(AbilityContext ctx)
+            {
+                _can?.RemoveAbilityProtection(this); _can = null;
+                _approvedReplica = false;
+                _kuro?.EndErrand(); _kuro = null;
+            }
             protected override void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
         }
 
         private sealed class NightmareSeanceVoidAbility : HeroAbility
         {
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
-            /// <summary>Where it opens when Kuro is not out. Her own reach, as before.</summary>
-            private GameObject _field;
+            private readonly RaycastHit[] _sightHits = new RaycastHit[32];
+            private readonly RaycastHit[] _moveHits = new RaycastHit[32];
             private GhostPetCompanion _familiar;
-            private CharacterMotor _castMotor;
-            private const float FallbackRange = 3.5f;
-            private Vector3 _castAnchor,_approachStart;
+            private CharacterMotor _castMotor, _target;
+            private Vector3 _castAnchor, _approachStart;
             private Quaternion _castFacing;
             private bool _approaching;
+            private int _caughtMask;
+            private float _syncLeft, _receivedClock;
+            private long _receivedPhase;
 
             public NightmareSeanceVoidAbility()
-                : base("nemu_ultimate", "DEVOURING SEANCE",
-                       "Send your familiar ahead as a giant, pulling rivals and loose slippers inward. While possessed, it transforms in place.",
-                       0.0f, 7.0f, TumbangPreso.UI.AbilityGlyph.NemuSeanceVoid,
-                       summary: "Send a giant spirit ahead to pull rivals and slippers inward.",
-                       // ⚠️⚠️ 2.8 m, DOWN FROM 3.2, AND THE 0.4 m BUYS THE BOTS BACK.
-                       // `AiTuning.HazardAvoidMaxRadius` is 3.0 and this was the ONE registered
-                       // hazard in the game above it, so it was the one thing the bots were
-                       // told to walk straight through rather than around. Its own note says
-                       // *"when the ability footprints come down, every hazard falls under this
-                       // cap and avoidance starts applying to all of them with no further
-                       // change here. That is the intended end state."* This is that change.
-                       //
-                       // ⚠️ THE AREA COMES BACK AS THE FUNNEL. `docs/VISION.md` § 2 rule 3: a
-                       // smaller flat plane is still a puddle. The void reads vertically now,
-                       // through a deeper core and pulled debris, rather than by being wide.
-                       telegraphRadius: 4.0f, telegraphRange: 3.5f,
-                       castAction: "hero-nemu-seance",
-                       viewmodelAction: "seance-channel",
+                : base("nemu_ultimate", "KURO: HAUNT!",
+                       "Kuro becomes a monster and chases every player he sees, one at a time. Contact inflicts Haunted for 7.5 s. He returns after chasing everyone or when the round ends.",
+                       0, CustomGameRules.MaxRoundSeconds, AbilityGlyph.NemuSeanceVoid,
+                       summary: "Kuro chases seen players and inflicts Haunted on contact.",
+                       telegraphRadius: .4f, telegraphRange: 3.5f,
+                       castAction: "hero-nemu-seance", viewmodelAction: "seance-channel",
                        castCue: "sfx_cast_nemu_seance")
-            {
-                TelegraphStyle = Visual.GroundReticle.Style.Maw;
-                Windup = UltimateWindup;
-            }
+            { TelegraphStyle = GroundReticle.Style.Maw; Windup = UltimateWindup; }
 
             public override bool CanActivate(AbilityContext ctx)
-            {
-                if (!base.CanActivate(ctx) || IsActive) return false;
-                var pet=ctx.Motor.GetComponent<CharacterVisual>()?.Companion;
-                return pet==null || !pet.IsDevouring;
-            }
+                => base.CanActivate(ctx) && !IsActive && Kuro(ctx) != null && !Kuro(ctx).IsDevouring;
 
-            protected override void OnAcceptedUltimatePhase(long phaseId)
+            protected override void OnAcceptedUltimatePhase(long phase)
             {
-                // Immediate activation binds its accepted lifetime after OnActivate.
                 if (IsActive && _castMotor != null)
                     Net.MatchRpc.Instance?.BroadcastFamiliarEffect(_castMotor.PlayerSlot);
             }
 
-            public void RestoreSeance(AbilityContext ctx,Vector3 position,float remaining)
+            public void RestoreSeance(AbilityContext ctx, Vector3 position, float remaining, bool smoothPose=false)
             {
-                remaining=Mathf.Clamp(remaining,0,Duration);
-                var pet=ctx.Motor.GetComponent<CharacterVisual>()?.Companion;
-                if(pet==null)return;
-                _castAnchor=position;_approaching=false;
-                Vector3 facing=ctx.Position-position;facing.y=0;
-                if(facing.sqrMagnitude<.01f)facing=-ctx.Forward;
-                _castFacing=Quaternion.LookRotation(facing.normalized,Vector3.up);
-                // The predicted root has its own scheduled destruction. Recreate
-                // that short-lived field on confirmation so its lifetime agrees
-                // with the authoritative ghost/ability clock, even at high latency.
-                if(_field!=null){_field.SetActive(false);UnityEngine.Object.Destroy(_field);}
-                _field=HeroHazards.SpawnKuroUnbound(position,4,remaining,ctx.Motor.PlayerSlot,true,false);
-                _familiar=pet;pet.transform.rotation=_castFacing;pet.RestoreDevour(position,Duration,remaining,true);
-                ctx.Motor.AbilitySystem.Kit.Skill2.EndEarly(ctx);
+                var pet = Kuro(ctx); if (pet == null) return;
+                _castAnchor = position; _approaching = false; _familiar = pet;
+                // Recovery moves the existing monster and adopts its clock. It does
+                // not recreate the retired pull field or replay a hit/resource spend.
+                bool starting = !pet.IsDevouring;
+                pet.RestoreDevour(position, Duration, remaining, true, smoothPose);
+                if (starting)
+                {
+                    ctx.Motor.AbilitySystem.Kit.Skill1.EndEarly(ctx);
+                    ctx.Motor.AbilitySystem.Kit.Skill2.EndEarly(ctx);
+                }
                 RestoreLiveClock(remaining);
             }
 
             public override Vector3 TelegraphCentre(AbilityContext ctx)
-            {
-                if(IsWindingUp || IsActive)return _castAnchor;
-                return ResolveAnchor(ctx);
-            }
+                => IsWindingUp || IsActive ? _castAnchor : ResolveAnchor(ctx);
 
             private static Vector3 ResolveAnchor(AbilityContext ctx)
             {
-                var companion = ctx.Motor.GetComponent<Visual.CharacterVisual>()?.Companion;
-                if(companion!=null && companion.IsPossessed)return VfxShapes.GroundPoint(companion.transform.position);
-                return VfxShapes.GroundPoint(GhostPetMotion.Move(ctx.Motor,ctx.Position,ctx.Forward*FallbackRange));
+                var pet = Kuro(ctx);
+                if (pet != null && pet.IsPossessed) return VfxShapes.GroundPoint(pet.transform.position);
+                return VfxShapes.GroundPoint(GhostPetMotion.Move(ctx.Motor, ctx.Position, ctx.Forward * 3.5f));
             }
 
             public override void Activate(AbilityContext ctx)
             {
-                _castMotor = ctx.Motor;
-                _castAnchor=ResolveAnchor(ctx);
-                _familiar=ctx.Motor.GetComponent<CharacterVisual>()?.Companion;
+                _castMotor = ctx.Motor; _castAnchor = ResolveAnchor(ctx); _familiar = Kuro(ctx);
                 _familiar?.PrepareForInvocation();
-                _approaching=_familiar!=null && !_familiar.IsPossessed;
-                _approachStart=_familiar!=null?_familiar.transform.position:_castAnchor;
-                Vector3 towardsCaster=ctx.Position-_castAnchor;towardsCaster.y=0;
-                if(towardsCaster.sqrMagnitude<.01f)towardsCaster=-ctx.Forward;
-                _castFacing=Quaternion.LookRotation(towardsCaster.normalized,Vector3.up);
+                _approaching = _familiar != null && !_familiar.IsPossessed;
+                _approachStart = _familiar != null ? _familiar.transform.position : _castAnchor;
+                Vector3 facing = ctx.Position - _castAnchor; facing.y = 0;
+                if (facing.sqrMagnitude < .01f) facing = -ctx.Forward;
+                _castFacing = Quaternion.LookRotation(facing.normalized, Vector3.up);
                 base.Activate(ctx);
-                if(HadSharedIntroduction && _familiar!=null)
-                {
-                    _approaching=false;
-                    _familiar.PreviewRevealedInvocation(_castAnchor,_castFacing);
-                }
+                if (HadSharedIntroduction && _familiar != null)
+                { _approaching = false; _familiar.PreviewRevealedInvocation(_castAnchor, _castFacing); }
             }
 
-            public override void Tick(AbilityContext ctx,float dt)
+            public override void Tick(AbilityContext ctx, float dt)
             {
-                if(IsWindingUp && _approaching && _familiar!=null)
+                if (IsWindingUp && _approaching && _familiar != null)
                 {
-                    float p=Mathf.SmoothStep(0,1,1-Mathf.Max(0,WindupRemaining-dt)/Windup);
-                    _familiar.ApplyCastAnchor(Vector3.Lerp(_approachStart,_castAnchor+Vector3.up*.9f,p));
-                    _familiar.transform.rotation=Quaternion.Slerp(_familiar.transform.rotation,_castFacing,p);
+                    float p = Mathf.SmoothStep(0, 1, 1 - Mathf.Max(0, WindupRemaining - dt) / Windup);
+                    _familiar.ApplyCastAnchor(Vector3.Lerp(_approachStart, _castAnchor + Vector3.up * .9f, p));
+                    _familiar.transform.rotation = Quaternion.Slerp(_familiar.transform.rotation, _castFacing, p);
                 }
-                base.Tick(ctx,dt);
+                base.Tick(ctx, dt);
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                _caughtMask = 0; _target = null; _syncLeft = 0;
+                DurationRemaining = Mathf.Min(Duration, ctx.Round?.TimeLeft ?? Duration);
+                _familiar = Kuro(ctx); _castMotor = ctx.Motor; _approaching = false;
                 NetCue.Play("hero_nemu_ult", ctx.Position);
-
-                // ⚠️ ON KURO IF KURO IS OUT. `CharacterVisual.Companion` is the pet, and it is
-                // present whenever she has one whether or not it is currently possessed: an
-                // ultimate cast from inside a possession opens under the body the player is
-                // driving, which is the strongest version of this and needs no special case.
-                var companion = ctx.Motor.GetComponent<Visual.CharacterVisual>()?.Companion;
-
-                bool onPet = companion != null;
-                Vector3 at = _castAnchor;
-
-                // ⚠️⚠️ THE PET IS CONSUMED BY IT AND THAT IS THE ANIMATION. `Devour` swells Kuro
-                // into the maw over the wind-up and hides the pet inside it, so what the other
-                // three players see is the small thing that has been following her around all
-                // round becoming the thing that is eating them. A vortex spawned beside an
-                // unchanged pet would have been the old effect with a new name.
-                // ⚠️⚠️ 2.8 m / 5.0 s BECAME 4.0 m / 7.0 s. 🧑 2026-08-27: *"make kuro's pull
-                // stronger and longer ... make it pull everyone and everything"*. The strength is
-                // in `SpawnKuroUnbound` (`PullStrength` 4.0 to 14.0); these two are the reach and
-                // the life. At 2.8 m the maw covered 4 per cent of the court, so *"everyone"* was
-                // usually nobody: an ultimate that pulls hard but cannot reach anybody is the
-                // same complaint one step further in.
-                //
-                // ⚠️ 4.0 m IS 5.1 PER CENT OF THE 196 m² BOX AND IT IS STILL UNDER PHAISTER'S
-                // ECLIPSE AT 5.0 m. `docs/VISION.md` § 2 rule 2 allows an ultimate to be big and
-                // rule 4 caps what may OVERLAP; this is one zone, it paints no bright floor (the
-                // bite is near-black by construction), and it is the only thing on the court while
-                // it runs.
-                _familiar=companion;
-                if (onPet)
+                ctx.Motor.AbilitySystem?.Kit?.Skill1?.EndEarly(ctx);
+                ctx.Motor.AbilitySystem?.Kit?.Skill2?.EndEarly(ctx);
+                if (_familiar != null)
                 {
-                    // The following familiar crosses the existing3.5m cast reach
-                    // during invocation. The controlled familiar keeps its anchor.
-                    // Both then grow on that exact field, facing the caster so the
-                    // first-person view sees the maw instead of a giant's back.
-                    companion.ApplyCastAnchor(at+Vector3.up*.9f);
-                    companion.transform.rotation=_castFacing;
-                    companion.Devour(Duration,HadSharedIntroduction);
-                    // Devour ends the ride without teleporting Nemu. Close its
-                    // ability timer too, so a stale E recast cannot act as a ride.
-                    ctx.Motor.AbilitySystem?.Kit?.Skill2?.EndEarly(ctx);
+                    _familiar.ApplyCastAnchor(_castAnchor + Vector3.up * .9f);
+                    _familiar.transform.rotation = _castFacing;
+                    _familiar.Devour(DurationRemaining, HadSharedIntroduction);
                 }
-
-                _field=HeroHazards.SpawnKuroUnbound(at, 4.0f, Duration, ctx.Motor.PlayerSlot, onPet);
-                _approaching=false;
                 Net.MatchRpc.Instance?.BroadcastFamiliarEffect(ctx.Motor.PlayerSlot);
+            }
+
+            private static bool Eligible(CharacterMotor motor) => motor != null &&
+                motor.gameObject.activeInHierarchy && motor.PlayerSlot >= 0 && motor.PlayerSlot < Balance.PlayerCount;
+
+            private bool Visible(CharacterMotor motor, Vector3 ground)
+            {
+                Vector3 origin = ground + Vector3.up * .8f;
+                Vector3 delta = motor.transform.position + Vector3.up * .8f - origin;
+                if (delta.sqrMagnitude < .0001f) return true;
+                int count = Physics.RaycastNonAlloc(origin, delta.normalized, _sightHits, delta.magnitude,
+                    ~0, QueryTriggerInteraction.Ignore);
+                if (count == _sightHits.Length) return false;
+                for (int i = 0; i < count; i++)
+                {
+                    var collider = _sightHits[i].collider;
+                    if (collider.GetComponentInParent<CharacterMotor>() != null ||
+                        collider.GetComponentInParent<Slipper>() != null) continue;
+                    return false;
+                }
+                return true;
+            }
+
+            protected override void OnTick(AbilityContext ctx, float dt)
+            {
+                if (!NetAuthority.ShouldResolve()) return;
+                if (ctx.Round?.RoundActive != true || _familiar == null || !Eligible(ctx.Motor))
+                { DurationRemaining = 0; return; }
+                var players = ctx.Round.Players;
+                int pending = 0; float nearest = float.PositiveInfinity;
+                Vector3 ground = _familiar.DevourGround;
+                if (!Eligible(_target) || (_caughtMask & (1 << _target.PlayerSlot)) != 0 ||
+                    !Visible(_target, ground)) _target = null;
+                CharacterMotor choice = null;
+                for (int i = 0; i < players.Count; i++)
+                {
+                    var player = players[i];
+                    if (!Eligible(player) || (_caughtMask & (1 << player.PlayerSlot)) != 0) continue;
+                    pending++;
+                    if (_target != null || !Visible(player, ground)) continue;
+                    float distance = (player.transform.position - ground).sqrMagnitude;
+                    if (distance < nearest) { nearest = distance; choice = player; }
+                }
+                if (pending == 0) { DurationRemaining = 0; return; }
+                if (_target == null) _target = choice;
+                if (_target != null)
+                {
+                    Vector3 delta = _target.transform.position - ground; delta.y = 0;
+                    // The familiar uses the arena even when Nemu is the confined defender.
+                    Vector3 next = GhostPetMotion.Move(null, ground,
+                        Vector3.ClampMagnitude(delta, Mathf.Max(0, dt) * 10f), _moveHits);
+                    _familiar.MoveDevour(next);
+                    if (delta.sqrMagnitude > .0001f)
+                        _familiar.transform.rotation = Quaternion.LookRotation(delta, Vector3.up);
+                    Vector3 contact = _target.transform.position - next;
+                    if (new Vector2(contact.x, contact.z).sqrMagnitude <= 1.1f * 1.1f &&
+                        Mathf.Abs(contact.y) <= 2f && Visible(_target, next))
+                    {
+                        _target.ApplyHaunted(); _caughtMask |= 1 << _target.PlayerSlot; _target = null;
+                    }
+                }
+                _syncLeft -= dt;
+                if (_syncLeft <= 0)
+                { _syncLeft = .1f; Net.MatchRpc.Instance?.BroadcastFamiliarEffect(ctx.Motor.PlayerSlot); }
+            }
+
+            public bool ReceiveHaunt(AbilityContext ctx, long phase, float clock, Vector3 position, float remaining, float yaw)
+            {
+                if (phase == AcceptedUltimatePhase && !IsActive && !IsWindingUp) return false;
+                if (phase == _receivedPhase && (clock > _receivedClock ||
+                    (clock == _receivedClock && remaining > 0))) return false;
+                bool smoothPose=remaining>0 && phase==_receivedPhase && phase==AcceptedUltimatePhase &&
+                    IsActive && !NetAuthority.ShouldResolve();
+                _receivedPhase = phase; _receivedClock = clock;
+                if (remaining <= 0)
+                { RestoreLiveClock(0); OnEnd(ctx); }
+                else RestoreSeance(ctx, position, remaining, smoothPose);
+                var pet = Kuro(ctx);
+                if (pet != null) pet.ApplyDevourFacing(yaw,smoothPose);
+                AdoptUltimatePhase(phase);
+                return true;
+            }
+
+            public override void Reset()
+            {
+                base.Reset();
+                _receivedPhase = 0; _receivedClock = 0; _caughtMask = 0; _target = null;
             }
 
             protected override void OnEnd(AbilityContext ctx)
             {
-                // Their matching timers own the normal close cue and return.
-                _field=null;_familiar=null;_castMotor=null;_approaching=false;
+                // Publish the terminal clock before releasing the companion.
+                if (_castMotor != null) Net.MatchRpc.Instance?.BroadcastFamiliarEffect(_castMotor.PlayerSlot);
+                _familiar?.StopDevouring();
+                _familiar = null; _castMotor = null; _target = null; _approaching = false;
             }
-            protected override void OnCancelled(AbilityContext ctx)
-            {
-                // A denied or reset cast must not leave seven seconds of pull in
-                // the next state. Disable immediately before deferred destruction.
-                if (_field!=null)
-                {
-                    _field.SetActive(false);
-                    if(Application.isPlaying)UnityEngine.Object.Destroy(_field);
-                    else UnityEngine.Object.DestroyImmediate(_field);
-                }
-                if(_familiar!=null)_familiar.StopDevouring();
-                _field=null;_familiar=null;_castMotor=null;
-            }
+            protected override void OnCancelled(AbilityContext ctx) => OnEnd(ctx);
         }
     }
 }

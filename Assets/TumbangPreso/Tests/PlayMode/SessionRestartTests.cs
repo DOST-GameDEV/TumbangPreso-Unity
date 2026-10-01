@@ -87,6 +87,43 @@ namespace TumbangPreso.PlayTests
             => typeof(Matchmaker).GetField("_net", BindingFlags.Instance | BindingFlags.NonPublic)
                                  .SetValue(queue, net);
 
+        [UnityTest] public IEnumerator EmptySnapshotRequestDoesNotConsumeRefreshBudget()
+            => RejectMalformedSnapshotRequest(System.Array.Empty<byte>());
+        [UnityTest] public IEnumerator UnknownSnapshotMarkerDoesNotConsumeRefreshBudget()
+            => RejectMalformedSnapshotRequest(new byte[]{1});
+        [UnityTest] public IEnumerator TrailingSnapshotBytesDoNotConsumeRefreshBudget()
+            => RejectMalformedSnapshotRequest(new byte[]{0,0});
+        private IEnumerator RejectMalformedSnapshotRequest(byte[] payload)
+        {
+            var net=NetSession.Ensure();yield return null;
+            try
+            {
+                bool hosted=false;yield return Await(net.StartHostAsync(18691),r=>hosted=r);
+                Assert.IsTrue(hosted,net.Status);
+                var router=net.GetComponent<MatchRpc>();
+                const BindingFlags flags=BindingFlags.Instance|BindingFlags.NonPublic;
+                var handler=typeof(MatchRpc).GetMethod("OnReqSnapshotMsg",flags);
+                var sent=(System.Collections.Generic.Dictionary<ulong,float>)typeof(MatchRpc).GetField("_lastSnapshotRequest",flags).GetValue(router);
+                var pending=(System.Collections.Generic.Dictionary<ulong,long>)typeof(MatchRpc).GetField("_pendingSnapshotReplies",flags).GetValue(router);
+                void Deliver(byte[] bytes)
+                {
+                    using var writer=new FastBufferWriter(32,Allocator.Temp);
+                    writer.WriteValueSafe(123UL);
+                    foreach(byte b in bytes)writer.WriteValueSafe(b);
+                    using var reader=new FastBufferReader(writer,Allocator.Temp);
+                    reader.ReadValueSafe(out ulong hash);
+                    handler.Invoke(router,new object[]{NetworkManager.ServerClientId,reader});
+                }
+                Deliver(payload);
+                Assert.AreEqual(0,sent.Count,"Malformed snapshot request consumed the refresh throttle.");
+                Assert.AreEqual(0,pending.Count);
+                Deliver(new byte[]{0});
+                Assert.IsTrue(sent.ContainsKey(NetworkManager.ServerClientId),"The valid request after rejection was lost.");
+                Assert.AreEqual(0,pending.Count);
+            }
+            finally{net.Stop();}
+        }
+
         [UnityTest, Timeout(30000)]
         public IEnumerator SnapshotRequestsCoalesceOnTheConnectedHostAndCancelOnDisable()
         {
@@ -148,6 +185,110 @@ namespace TumbangPreso.PlayTests
                 if (router != null) router.enabled = true;
                 net.Stop();
             }
+        }
+
+        [UnityTest] public IEnumerator ReconnectIdentifyKeepsServerPicksUntilReturningToLobby()
+        {
+            var net=NetSession.Ensure();yield return null;
+            try
+            {
+                bool hosted=false;yield return Await(net.StartHostAsync(18692),r=>hosted=r);
+                Assert.IsTrue(hosted,net.Status);
+                var lobby=net.Lobby;const int peer=0;
+                lobby.SetPicks(peer,2,1,3);lobby.StartMatch();
+                var router=net.GetComponent<MatchRpc>();
+                var identify=typeof(MatchRpc).GetMethod("HandleIdentify",BindingFlags.Instance|BindingFlags.NonPublic);
+                void Identify() => identify.Invoke(router,new object[]{0UL,lobby.PeerById(peer).Token,"Owner","","",0,0,0,"","",""});
+                Identify();
+                Assert.AreEqual(2,lobby.PeerById(peer).CharacterPick,"Identify replaced the retained match character.");
+                Assert.AreEqual(1,lobby.PeerById(peer).CanPick);Assert.AreEqual(3,lobby.PeerById(peer).SlipperPick);
+                lobby.ReturnToLobby();Identify();
+                Assert.AreEqual(0,lobby.PeerById(peer).CharacterPick,"Ordinary lobby choice must remain available.");
+                Assert.AreEqual(0,lobby.PeerById(peer).CanPick);Assert.AreEqual(0,lobby.PeerById(peer).SlipperPick);
+                lobby.StartMatch();var backfill=lobby.Admit(99,"fresh-backfill","Backfill");
+                lobby.SetArrivalPicks(99,2,1,3);
+                Assert.AreEqual(2,backfill.CharacterPick,"Fresh backfill must still initialize its choices.");
+                Assert.AreEqual(1,backfill.CanPick);Assert.AreEqual(3,backfill.SlipperPick);
+            }
+            finally{net.Stop();}
+        }
+
+        [UnityTest] public IEnumerator PreRoundArrivalAppliesItsPickToTheBotPlaceholder()
+            => CheckArrivalCharacter(false);
+
+        [UnityTest] public IEnumerator ValidIdentifyFrameStillUsesApprovedIdentityOnTheConnectedHost()
+        {
+            var net=NetSession.Ensure();yield return null;
+            try
+            {
+                bool hosted=false;yield return Await(net.StartHostAsync(18694),r=>hosted=r);
+                Assert.IsTrue(hosted,net.Status);string approved=net.Lobby.PeerById(0).Token;
+                using var writer=new FastBufferWriter(256,Allocator.Temp);
+                writer.WriteValueSafe(123UL);writer.WriteValueSafe("untrusted-message-token");writer.WriteValueSafe("QA 雨");
+                writer.WriteValueSafe("");writer.WriteValueSafe("");
+                writer.WriteValueSafe(2);writer.WriteValueSafe(1);writer.WriteValueSafe(3);
+                writer.WriteValueSafe("");writer.WriteValueSafe("");writer.WriteValueSafe("");
+                using var reader=new FastBufferReader(writer,Allocator.Temp);reader.ReadValueSafe(out ulong envelope);
+                var rpc=net.GetComponent<MatchRpc>();
+                typeof(MatchRpc).GetMethod("OnIdentifyMsg",BindingFlags.Instance|BindingFlags.NonPublic)
+                    .Invoke(rpc,new object[]{0UL,reader});
+                Assert.AreEqual(approved,net.Lobby.PeerById(0).Token);
+                Assert.AreEqual(2,net.Lobby.PeerById(0).CharacterPick);
+                Assert.IsTrue(((System.Collections.Generic.HashSet<int>)typeof(MatchRpc)
+                    .GetField("_identified",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(rpc)).Contains(0));
+            }
+            finally{net.Stop();}
+        }
+
+        [UnityTest] public IEnumerator LobbyPickUsesSenderAndRejectsChangesDuringTheMatch()
+        {
+            var net=NetSession.Ensure();yield return null;
+            try
+            {
+                bool hosted=false;yield return Await(net.StartHostAsync(18696),r=>hosted=r);Assert.IsTrue(hosted,net.Status);
+                var lobby=net.Lobby;var other=lobby.Admit(99,"other-owner","Other");lobby.SetPicks(99,1,0,0);
+                var rpc=net.GetComponent<MatchRpc>();var handler=typeof(MatchRpc).GetMethod("OnSelectLobbyPickMsg",BindingFlags.Instance|BindingFlags.NonPublic);
+                void Deliver(int character)
+                {
+                    using var writer=new FastBufferWriter(128,Allocator.Temp);writer.WriteValueSafe(123UL);
+                    writer.WriteValueSafe(99);writer.WriteValueSafe(character);writer.WriteValueSafe(1);writer.WriteValueSafe(3);
+                    writer.WriteValueSafe("");writer.WriteValueSafe("");writer.WriteValueSafe("");
+                    using var reader=new FastBufferReader(writer,Allocator.Temp);reader.ReadValueSafe(out ulong hash);
+                    handler.Invoke(rpc,new object[]{0UL,reader});
+                }
+                Deliver(2);Assert.AreEqual(2,lobby.PeerById(0).CharacterPick);Assert.AreEqual(1,other.CharacterPick);
+                lobby.StartMatch();Deliver(0);rpc.SelectLobbyPickServerRpc(0,0,0);
+                Assert.AreEqual(2,lobby.PeerById(0).CharacterPick,"Lobby pick replaced a running match choice.");
+                lobby.ReturnToLobby();Deliver(0);Assert.AreEqual(0,lobby.PeerById(0).CharacterPick);
+            }
+            finally{net.Stop();}
+        }
+        [UnityTest] public IEnumerator RunningMatchArrivalKeepsTheExistingCharacter()
+            => CheckArrivalCharacter(true);
+        [UnityTest] public IEnumerator PreRoundArrivalKeepsTheMirroredFormatCharacter()
+            => CheckArrivalCharacter(false,true);
+        private IEnumerator CheckArrivalCharacter(bool underway,bool mirror=false)
+        {
+            var net=NetSession.Ensure();yield return null;
+            try
+            {
+                bool hosted=false;yield return Await(net.StartHostAsync(18693),r=>hosted=r);
+                Assert.IsTrue(hosted,net.Status);GameServices.Ensure();GameServices.Round.Clear();
+                var rules=Core.CustomGameRules.Defaults(Core.GameMode.HeroStrike);
+                if(mirror)rules.Format=Core.MatchFormat.Mirror;
+                UI.SceneFlow.SetSelectedRules(rules);
+                var body=new GameObject("Arrival placeholder").AddComponent<CharacterMotor>();body.enabled=false;
+                body.PlayerSlot=0;body.Mode=Core.GameMode.HeroStrike;body.CharacterIndex=3;body.IsBot=true;
+                GameServices.Round.Register(body);net.Lobby.SetPicks(0,2,1,3);
+                GameServices.Match.ApplySnapshot(new int[4],underway?1:0,underway);
+                var rpc=net.GetComponent<MatchRpc>();
+                typeof(MatchRpc).GetMethod("HostTakeSeatBackFromBot",BindingFlags.Instance|BindingFlags.NonPublic)
+                    .Invoke(rpc,new object[]{0});
+                Assert.IsFalse(body.IsBot);
+                int expected=mirror?Core.CustomGameRules.MirrorIndex(Core.Roster.GetPeople(Core.GameMode.HeroStrike).Count,System.DateTime.UtcNow):underway?3:2;
+                Assert.AreEqual(expected,body.CharacterIndex,"Pre-round handover kept the bot's placeholder pick.");
+            }
+            finally{net.Stop();}
         }
 
         /// <summary>

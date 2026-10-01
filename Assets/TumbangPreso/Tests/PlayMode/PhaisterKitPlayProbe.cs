@@ -340,33 +340,31 @@ namespace TumbangPreso.PlayTests
         }
 
         /// <summary>
-        /// ⚠️ OMEN ON HER SCREEN (HERO-10): the cutscene overlay copied in on her own view, then the live eye, filmed with the court
-        /// and a caught player, the round clock read as the cutscene comes up, on its last frame and a second after (it must not
-        /// run under the cutscene). `SharedUltimatePhase.FilmClock` gives the cutscene the film's frame clock so it lasts its
-        /// real length. Runs only with TUMP_PHAISTER_FILM=1.
+        /// ⚠️ THE VOODOO DOLL IN A MATCH (HERO-10 v3; it replaced OMEN): she presses her ultimate as an attacker; the cutscene is copied
+        /// into her screen; then the doll stands up beside her in her companion seat with its own slipper, THE CIRCLE opens in the sky
+        /// over it and draws in to hold its string, and the doll plays (its brain is on; everyone else's is off). Views: `owner/` her
+        /// screen, `wide/` the court framed high enough for the circle, `doll/` a camera that follows the doll. The round clock is read
+        /// as the cutscene comes up and on its last frame (it must not run under it). Runs only with TUMP_PHAISTER_FILM=1.
         /// </summary>
         [UnityTest, Timeout(600000)]
-        public IEnumerator FilmOmenOnHerScreen()
+        public IEnumerator FilmTheVoodooDollInAMatch()
         {
             if (Environment.GetEnvironmentVariable("TUMP_PHAISTER_FILM") != "1") Assert.Ignore("Film only: set TUMP_PHAISTER_FILM=1.");
             string tag = Environment.GetEnvironmentVariable("TUMP_PHAISTER_TAG") ?? "v1";
-            string root = Path.Combine(Environment.GetEnvironmentVariable("TUMP_EVIDENCE") ?? "Logs", "phaister-omen-film-" + tag);
-            foreach (string view in new[] { "owner", "wide", "victim" }) Directory.CreateDirectory(Path.Combine(root, view));
+            string root = Path.Combine(Environment.GetEnvironmentVariable("TUMP_EVIDENCE") ?? "Logs", "phaister-doll-film-" + tag);
+            foreach (string view in new[] { "owner", "wide", "doll" }) Directory.CreateDirectory(Path.Combine(root, view));
             var round = GameServices.Round;
-            var her = Phaister(GameLaunch.SoloSeat, new Vector3(0, .12f, -11));
+            var can = Flat(round.Lata.transform.position);
+            int taya = -1;
+            foreach (var p in round.Players) if (p.IsDefender) taya = p.PlayerSlot;
+            int me = GameLaunch.SoloSeat != taya ? GameLaunch.SoloSeat : (taya + 1) % 4;
+            var her = Phaister(me, can + new Vector3(-2f, .12f, -10f));
+            FaceTo(her, can);
             her.AbilitySystem.Kit.AddUltimateCharge(100);
-            var centre = new Vector3(0, 0, -4);
-            // HERO-10: she hangs the eye in the air (owner: *"put ppl on the air"*); the aim's y is the height.
-            var aim = centre + Vector3.up * 3.2f;
-            var others = new System.Collections.Generic.List<CharacterMotor>();
-            foreach (var p in round.Players) if (p != her) others.Add(p);
-            var stands = new[] { new Vector3(4.6f, .12f, -2.4f), new Vector3(-4.2f, .12f, -1.8f), new Vector3(1.4f, .12f, 1.6f) };
-            for (int i = 0; i < others.Count && i < stands.Length; i++)
-            {
-                others[i].Teleport(stands[i]); others[i].Intent.Parked = false;
-                others[i].transform.rotation = Quaternion.LookRotation(centre - stands[i]);
-            }
-            her.Intent.AimPoint = aim;
+            var tayaBody = round.PlayerAt(taya);
+            tayaBody.Teleport(can + new Vector3(1.5f, .12f, 1.5f));
+            int seat = CompanionSeats.For(me);
+
             Camera Make(string name, float fov)
             {
                 var c = new GameObject(name).AddComponent<Camera>();
@@ -374,8 +372,8 @@ namespace TumbangPreso.PlayTests
                 c.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
                 return c;
             }
-            var wide = Make("OmenWide", 52);
-            var victimCam = Make("OmenVictim", 62);
+            var wide = Make("DollWide", 60);
+            var follow = Make("DollFollow", 55);
             var hdr = new RenderTexture(1280, 720, 24, RenderTextureFormat.DefaultHDR, RenderTextureReadWrite.Linear);
             var ldr = new RenderTexture(1280, 720, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
             var pixels = new Texture2D(1280, 720, TextureFormat.RGB24, false);
@@ -387,67 +385,72 @@ namespace TumbangPreso.PlayTests
                 File.WriteAllBytes(Path.Combine(root, view, $"{index:D5}.jpg"), pixels.EncodeToJPG(92));
             }
             void Shoot(Camera c, string view, int index) { PaeteKitPlayProbe.RenderFilmView(c, hdr); Save(hdr, view, index); }
-            bool sawScene = false, pulled = false;
-            float clockAtScene = -1f, clockAtSceneEnd = -1f, clockAfter = -1f; int lastSceneFrame = -1;
-            float startDistance = others.Count > 1 ? Vector3.Distance(Flat(others[1].transform.position), Flat(centre)) : 0f;
+            bool sawScene = false, dollUp = false, circle = false, dollMoved = false;
+            float clockAtScene = -1f, clockAtSceneEnd = -1f; int lastSceneFrame = -1;
+            Vector3 dollStart = Vector3.zero;
             int previousRate = Time.captureFramerate;
             Time.captureFramerate = 30;
             int frame = 0; double clockBase = Time.realtimeSinceStartupAsDouble;
             SharedUltimatePhase.FilmClock = () => clockBase + frame / 30.0;
             var cues = new StringBuilder().AppendLine("seconds,cue,pitch,gain");
-            Action<string, Vector3, float, float> heard = (id, at, pitch, gain) =>
-                cues.AppendLine(FormattableString.Invariant($"{frame / 30.0:F3},{Audio.AudioCues.FileStemFor(id)},{pitch:F3},{gain:F3}"));
-            AudioDirector.WorldCuePlayed += heard;
             try
             {
-                const int frames = 30 * 16;
-                var victim = others.Count > 1 ? others[1] : others[0];
+                const int frames = 30 * 18;
                 for (int f = 0; f < frames; f++)
                 {
                     frame = f;
                     float t = f / 30f;
-                    her.Intent.AimPoint = aim;
-                    // v8: held 1.2 s, so her aim picture (the ring, the ghost eye at its height, the line of lights) and her tell show.
-                    her.Intent.Set(Verb.Ultimate, t < 1.2f);
+                    her.Intent.Set(Verb.Ultimate, t > 0.3f && t < 0.45f);
                     yield return null;
-                    pulled |= Vector3.Distance(Flat(victim.transform.position), Flat(centre)) < startDistance - 1.5f;
+                    var doll = round.BodyAt(seat);
+                    if (doll != null && !dollUp) { dollUp = true; dollStart = doll.transform.position; }
+                    if (doll != null)
+                    {
+                        circle |= doll.GetComponent<VoodooSkyCircle>() != null;
+                        dollMoved |= Vector3.Distance(Flat(doll.transform.position), Flat(dollStart)) > 1.0f;
+                    }
                     UnityEngine.UI.RawImage scene = null;
                     foreach (var image in Object.FindObjectsByType<UnityEngine.UI.RawImage>())
                         if (image.name == "UltimateScene" && image.enabled && image.isActiveAndEnabled && image.texture != null) scene = image;
                     if (scene != null)
                     {
-                        // Her theme plays from the introduction's own AudioSource, not as a world cue: log it once for the mp4.
-                        if (!sawScene) { clockAtScene = round.TimeLeft; cues.AppendLine(FormattableString.Invariant($"{f / 30.0:F3},sfx_ult_theme_phaister,1,0.2")); }
+                        if (!sawScene) clockAtScene = round.TimeLeft;
                         sawScene = true; Save(scene.texture, "owner", f);
                         clockAtSceneEnd = round.TimeLeft; lastSceneFrame = f;
                     }
                     else if (Camera.main != null) Shoot(Camera.main, "owner", f);
-                    wide.transform.position = centre + new Vector3(9.5f, 7.0f, 9.0f);
-                    wide.transform.LookAt(centre + Vector3.up * 2.0f);
-                    var toEye = centre - victim.transform.position; toEye.y = 0;
-                    toEye = toEye.sqrMagnitude > .01f ? toEye.normalized : Vector3.back;
-                    var side = Vector3.Cross(Vector3.up, toEye);
-                    victimCam.transform.position = victim.transform.position + side * 3.4f - toEye * 1.4f + Vector3.up * 1.6f;
-                    victimCam.transform.LookAt(victim.transform.position + toEye * 1.0f + Vector3.up * 1.0f);
+                    // The court, framed high enough that the circle 7 m up is in it.
+                    Vector3 look = doll != null ? doll.transform.position : her.transform.position;
+                    // v3: from the court's open side (v2's corner put a plaza tree across the frame), low, looking up at the sky.
+                    wide.transform.position = her.transform.position + new Vector3(-7.5f, 1.8f, -8.5f);
+                    wide.transform.LookAt(look + Vector3.up * 3.8f);
+                    if (doll != null)
+                    {
+                        var fwd = doll.transform.forward; fwd.y = 0f; fwd = fwd.sqrMagnitude > .01f ? fwd.normalized : Vector3.forward;
+                        follow.transform.position = doll.transform.position - fwd * 4.2f + Vector3.Cross(Vector3.up, fwd) * 2.2f + Vector3.up * 2.4f;
+                        follow.transform.LookAt(doll.transform.position + Vector3.up * 1.2f);
+                    }
+                    else { follow.transform.position = wide.transform.position; follow.transform.rotation = wide.transform.rotation; }
                     Shoot(wide, "wide", f);
-                    Shoot(victimCam, "victim", f);
-                    if (lastSceneFrame >= 0 && f == lastSceneFrame + 30) clockAfter = round.TimeLeft;
+                    Shoot(follow, "doll", f);
                 }
             }
             finally
             {
                 SharedUltimatePhase.FilmClock = null;
-                AudioDirector.WorldCuePlayed -= heard;
                 File.WriteAllText(Path.Combine(root, "cues.csv"), cues.ToString());
                 Time.captureFramerate = previousRate;
-                Object.Destroy(wide.gameObject); Object.Destroy(victimCam.gameObject);
+                Object.Destroy(wide.gameObject); Object.Destroy(follow.gameObject);
                 hdr.Release(); ldr.Release();
             }
-            string clock = FormattableString.Invariant($"round clock: {clockAtScene:F3} s left as the cutscene came up, {clockAtSceneEnd:F3} on its last frame, {clockAfter:F3} one second after");
+            string clock = FormattableString.Invariant($"round clock: {clockAtScene:F3} s left as the cutscene came up, {clockAtSceneEnd:F3} on its last frame");
             File.WriteAllText(Path.Combine(root, "clock.txt"), clock + Environment.NewLine + "cutscene frames through " + lastSceneFrame + Environment.NewLine);
-            File.WriteAllText(Path.Combine(root, "claims.csv"), "saw_scene," + sawScene + Environment.NewLine + "pulled," + pulled + Environment.NewLine);
+            File.WriteAllText(Path.Combine(root, "claims.csv"), FormattableString.Invariant(
+                $"saw_scene,{sawScene}\ndoll_up,{dollUp}\ncircle,{circle}\ndoll_moved,{dollMoved}\n"));
             Assert.IsTrue(sawScene, "The cutscene never came up on her screen.");
-            Assert.IsTrue(pulled, "OMEN never pulled the filmed player in.");
+            Assert.IsTrue(dollUp, "The doll never stood up in her companion seat.");
+            Assert.IsTrue(circle, "THE CIRCLE never opened over the doll.");
+            Assert.IsTrue(dollMoved, "The doll never played.");
             Assert.Less(Mathf.Abs(clockAtScene - clockAtSceneEnd), 0.05f, "The match clock ran during the cutscene: " + clock);
         }
 
@@ -755,6 +758,100 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(drained, "DRAIN never drained the local player.");
             Assert.IsTrue(hexed, "HEX never hexed the local player.");
             Assert.IsTrue(phantoms, "HEXED showed no phantom slippers on the victim's screen.");
+        }
+
+        /// <summary>
+        /// ⚠️ THE REACH, STAGED FOR REVIEW (HERO-10 v3, 2026-09-29). The owner on film v19: *"this animation dont look that good yet"*,
+        /// *"lock in thoroughly improve also hthe doll is floating"*. A whole match film costs minutes a round; the reach's pose, the
+        /// doll in her hand and the soul drawn out of the victim are judged here from every side first, then filmed. Each curse is
+        /// pressed once at a victim 4.5 m in front of the caster and photographed at five moments (the lock, early and late in the
+        /// hold, the mark, the gulp after it) from her FRONT three-quarter, her SIDE, BEHIND her toward the victim, and (DRAIN, the
+        /// local seat) HER OWN SCREEN. Frames: `phaister-reach-review-TAG/{drain,hex}_{view}_{ms}.jpg`. Runs only with
+        /// TUMP_PHAISTER_FILM=1.
+        /// </summary>
+        [UnityTest, Timeout(300000)]
+        public IEnumerator ReviewHerReachFromEverySide()
+        {
+            if (Environment.GetEnvironmentVariable("TUMP_PHAISTER_FILM") != "1") Assert.Ignore("Film only: set TUMP_PHAISTER_FILM=1.");
+            string tag = Environment.GetEnvironmentVariable("TUMP_PHAISTER_TAG") ?? "v1";
+            string root = Path.Combine(Environment.GetEnvironmentVariable("TUMP_EVIDENCE") ?? "Logs", "phaister-reach-review-" + tag);
+            Directory.CreateDirectory(root);
+            var round = GameServices.Round;
+            var can = Flat(round.Lata.transform.position);
+            int taya = -1;
+            foreach (var p in round.Players) if (p.IsDefender) taya = p.PlayerSlot;
+            int me = GameLaunch.SoloSeat != taya ? GameLaunch.SoloSeat : (taya + 1) % 4;
+            int victimSeat = -1;
+            foreach (var p in round.Players) if (p.PlayerSlot != taya && p.PlayerSlot != me && victimSeat < 0) victimSeat = p.PlayerSlot;
+            var victim = round.PlayerAt(victimSeat);
+            victim.Intent.Parked = true;
+
+            var cam = new GameObject("ReachReview").AddComponent<Camera>();
+            cam.CopyFrom(Camera.main); cam.enabled = false; cam.tag = "Untagged"; cam.fieldOfView = 42; cam.cullingMask &= ~(1 << 5);
+            cam.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+            var hdr = new RenderTexture(1280, 720, 24, RenderTextureFormat.DefaultHDR, RenderTextureReadWrite.Linear);
+            var ldr = new RenderTexture(1280, 720, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+            var pixels = new Texture2D(1280, 720, TextureFormat.RGB24, false);
+            void Shoot(Camera c, string name)
+            {
+                PaeteKitPlayProbe.RenderFilmView(c, hdr);
+                Graphics.Blit(hdr, ldr);
+                var active = RenderTexture.active; RenderTexture.active = ldr;
+                pixels.ReadPixels(new Rect(0, 0, 1280, 720), 0, 0); pixels.Apply(); RenderTexture.active = active;
+                File.WriteAllBytes(Path.Combine(root, name + ".jpg"), pixels.EncodeToJPG(90));
+            }
+            void Place(CharacterMotor caster, string view)
+            {
+                Vector3 at = caster.transform.position, to = victim.transform.position;
+                var line = to - at; line.y = 0f; line.Normalize();
+                var side = Vector3.Cross(Vector3.up, line);
+                Vector3 mid = (at + to) * 0.5f;
+                switch (view)
+                {
+                    case "front": cam.transform.position = at + line * 2.6f - side * 2.2f + Vector3.up * 1.5f; cam.transform.LookAt(at + Vector3.up * 1.0f + line * 0.6f); break;
+                    case "side": cam.transform.position = mid + side * 6.2f + Vector3.up * 1.6f; cam.transform.LookAt(mid + Vector3.up * 0.9f); break;
+                    default: cam.transform.position = at - line * 2.2f + side * 2.0f + Vector3.up * 2.8f; cam.transform.LookAt(mid + Vector3.up * 0.8f); break;
+                }
+            }
+            int previousRate = Time.captureFramerate;
+            Time.captureFramerate = 30;
+            var moments = new[] { 4, 18, 40, 62, 68 };   // frames after the press: the lock, the hold, late hold, the mark, the gulp
+            bool reachedDrain = false, reachedHex = false;
+            try
+            {
+                foreach (string curse in new[] { "drain", "hex" })
+                {
+                    bool drain = curse == "drain";
+                    var caster = Phaister(drain ? me : taya, can + new Vector3(drain ? -3f : 3f, .12f, -7f));
+                    caster.Intent.Parked = false;
+                    victim.Teleport(caster.transform.position + new Vector3(0f, 0f, 4.5f));
+                    FaceTo(victim, caster.transform.position);
+                    FaceTo(caster, victim.transform.position);
+                    for (int w = 0; w < 6; w++) yield return null;
+                    for (int f = 0; f <= 70; f++)
+                    {
+                        FaceTo(caster, victim.transform.position);
+                        caster.Intent.Set(Verb.Skill2, f == 1 || f == 2);
+                        yield return null;
+                        if (drain) reachedDrain |= caster.IsVoodooReaching; else reachedHex |= caster.IsVoodooReaching;
+                        if (Array.IndexOf(moments, f) < 0) continue;
+                        int ms = Mathf.RoundToInt(f / 30f * 1000f);
+                        foreach (string view in new[] { "front", "side", "behind" }) { Place(caster, view); Shoot(cam, $"{curse}_{view}_{ms:D4}"); }
+                        if (drain && Camera.main != null) Shoot(Camera.main, $"{curse}_screen_{ms:D4}");
+                    }
+                    caster.Intent.Clear(); caster.Intent.Parked = true;
+                    caster.Teleport(can + new Vector3(10f, .12f, 8f));
+                    for (int w = 0; w < 90; w++) yield return null;
+                }
+            }
+            finally
+            {
+                Time.captureFramerate = previousRate;
+                Object.Destroy(cam.gameObject);
+                hdr.Release(); ldr.Release();
+            }
+            Assert.IsTrue(reachedDrain, "DRAIN never reached.");
+            Assert.IsTrue(reachedHex, "HEX never reached.");
         }
     }
 }

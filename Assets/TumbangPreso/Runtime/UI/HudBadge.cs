@@ -142,21 +142,9 @@ namespace TumbangPreso.UI
                     HudDraw.Bar(vh, P(-.26f, .10f), P(.26f, .10f), s * .07f, Detail);
                     break;
                 case Glyph.Hit:
-                    // The hit mark: four short ticks round the aim point, each on a black keel so
-                    // it reads over sky and asphalt alike. The old mark was a "×" glyph in the
-                    // display face, whose weight and centre moved with the font.
-                    for (int k = 0; k < 4; k++)
-                    {
-                        float a = (45 + k * 90) * Mathf.Deg2Rad;
-                        var d = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
-                        HudDraw.Bar(vh, c + d * s * .16f, c + d * s * .48f, s * .13f + RimWidth * 2, Rim);
-                    }
-                    for (int k = 0; k < 4; k++)
-                    {
-                        float a = (45 + k * 90) * Mathf.Deg2Rad;
-                        var d = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
-                        HudDraw.Bar(vh, c + d * s * .18f, c + d * s * .46f, s * .13f, fill);
-                    }
+                    // A hollow contact pulse continues the aim-circle language.
+                    HudDraw.Arc(vh, c, s * .30f + RimWidth, s * .25f - RimWidth, 90, 360, Rim, 64);
+                    HudDraw.Arc(vh, c, s * .30f, s * .25f, 90, 360, fill, 64);
                     break;
             }
         }

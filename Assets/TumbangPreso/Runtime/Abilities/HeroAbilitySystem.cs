@@ -688,6 +688,15 @@ namespace TumbangPreso.Abilities
             if (Time.time - bufferedAt > InputBufferWindow)
             {
                 bufferedAt = float.NegativeInfinity;
+                // Requirements can keep a valid actor's press buffered until it
+                // expires. Record that failed attempt for the requested warning;
+                // an incapacitated actor still receives no false refusal.
+                if (_motor != null && _motor.CanAct())
+                {
+                    _answer[(int)slot] = HeroKit.CastOutcome.CannotAct;
+                    _answeredAt[(int)slot] = Time.time;
+                    PlayRefusal();
+                }
                 return;
             }
 
@@ -1450,6 +1459,12 @@ namespace TumbangPreso.Abilities
             if (Kit == null || Kit.PracticeMode) return;
 
             Kit.AddUltimateCharge(amount);
+            if (NetAuthority.IsHost)
+            {
+                Kit.OnObjectiveAwarded(amount);
+                if (Kit is ZackHeroKit && amount > 0)
+                    Net.MatchRpc.Instance?.BroadcastObjectiveCooldown(_motor.PlayerSlot, amount);
+            }
         }
 
         public void OnLataKnocked()

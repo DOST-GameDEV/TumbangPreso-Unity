@@ -137,6 +137,7 @@ namespace TumbangPreso
             if (_ears == null) return;
 
             var head = UnityEngine.Camera.main;
+            UpdateHauntedAudio(head);
 
             if (head == null)
             {
@@ -265,6 +266,7 @@ namespace TumbangPreso
 
         public void PlayReplayCue(string id,float pitch,float gain,float pan)
         {
+            if(!Audio.AudioCues.Audible(id))return;
             if(!_cues.TryGetValue(id,out var cue))return;
             int index=_replayVoice++%_replayVoices.Length;
             var voice=_replayVoices[index];
@@ -331,6 +333,8 @@ namespace TumbangPreso
         public void PlayAtVaried(string id, Vector3 position, float pitchMin = 0.94f,
                                  float pitchMax = 1.06f, float volumeScale = 1.0f)
         {
+            // Hero skill sounds are off until they are reworked (`AudioCues.SkillSfxOn`).
+            if (!Audio.AudioCues.Audible(id)) return;
             if (!_cues.TryGetValue(id, out var cue))
             {
                 Debug.LogWarning($"[Audio] no cue registered for '{id}'.");
@@ -390,6 +394,7 @@ namespace TumbangPreso
         public void PlayUiVaried(string id, float pitchMin = 1.0f, float pitchMax = 1.0f,
                                  float volumeScale = 1.0f)
         {
+            if (!Audio.AudioCues.Audible(id)) return;
             if (!_cues.TryGetValue(id, out var cue))
             {
                 Debug.LogWarning($"[Audio] no cue registered for '{id}'.");
@@ -613,6 +618,7 @@ namespace TumbangPreso
                 var made = go.AddComponent<AudioSource>();
 
                 made.spatialBlend = 0.0f;
+                made.bypassListenerEffects = true;
                 made.playOnAwake = false;
                 made.dopplerLevel = 0.0f;
 

@@ -1,0 +1,12 @@
+{
+  "source": "c26c5c34b648ed2890c7c9197f4239e53b551a4b",
+  "nativeGitHead": "aecc0ee2cf6c03f9705249022454106620743eb4",
+  "protocol": 120,
+  "executable": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Builds\\feedback-network120-player-1001\\TumbangPreso.exe",
+  "executableSha256": "ba26219c895f07eae430a96cf0bc31a09bd767905c1ffa957bbfa86d60d2be59",
+  "runtimeSha256": "eb06179b8f451b6d31dae716fa514b3122dd0b70be5b4dca98e7473e02ae8656",
+  "inputCount": 15440,
+  "preparationDrift": [],
+  "codeDrift": [],
+  "scope": "Committed overlays in separate imported checkout; not a pristine release certification"
+}

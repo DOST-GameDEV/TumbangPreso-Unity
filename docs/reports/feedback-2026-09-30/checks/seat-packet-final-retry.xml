@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="19" result="Passed" total="19" passed="19" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.2635322">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="691" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.263532" total="19" passed="19" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1807" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="691" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.212449" total="19" passed="19" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10300" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1808" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="691" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.157381" total="19" passed="19" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1809" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="691" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.132556" total="19" passed="19" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1691" name="SeatAssignmentPacketTests" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" testcasecount="19" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.080196" total="19" passed="19" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1708" name="HostCanAssignEveryPlayerSeatAndTheSpectatorSentinel" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.HostCanAssignEveryPlayerSeatAndTheSpectatorSentinel" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.046861" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1703" name="HostCanAssignEveryPlayerSeatAndTheSpectatorSentinel(-1)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.HostCanAssignEveryPlayerSeatAndTheSpectatorSentinel(-1)" methodname="HostCanAssignEveryPlayerSeatAndTheSpectatorSentinel" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="1274664034" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.033235" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Net] connected as seat 2
+[Net] connected as spectator
+]]></output>
+              </test-case>
+              <test-case id="1704" name="HostCanAssignEveryPlayerSeatAndTheSpectatorSentinel(0)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.HostCanAssignEveryPlayerSeatAndTheSpectatorSentinel(0)" methodname="HostCanAssignEveryPlayerSeatAndTheSpectatorSentinel" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="869559006" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.001935" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Net] connected as seat 2
+[Net] connected as seat 1
+]]></output>
+              </test-case>
+              <test-case id="1705" name="HostCanAssignEveryPlayerSeatAndTheSpectatorSentinel(1)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.HostCanAssignEveryPlayerSeatAndTheSpectatorSentinel(1)" methodname="HostCanAssignEveryPlayerSeatAndTheSpectatorSentinel" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="551352650" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.000771" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Net] connected as seat 2
+]]></output>
+              </test-case>
+              <test-case id="1706" name="HostCanAssignEveryPlayerSeatAndTheSpectatorSentinel(2)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.HostCanAssignEveryPlayerSeatAndTheSpectatorSentinel(2)" methodname="HostCanAssignEveryPlayerSeatAndTheSpectatorSentinel" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="1955750713" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.001446" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Net] connected as seat 2
+[Net] connected as seat 3
+]]></output>
+              </test-case>
+              <test-case id="1707" name="HostCanAssignEveryPlayerSeatAndTheSpectatorSentinel(3)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.HostCanAssignEveryPlayerSeatAndTheSpectatorSentinel(3)" methodname="HostCanAssignEveryPlayerSeatAndTheSpectatorSentinel" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="1739024125" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.001468" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Net] connected as seat 2
+[Net] connected as seat 4
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1702" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.012019" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1692" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(0,1)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(0,1)" methodname="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="1702198458" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.002015" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Net] connected as seat 2
+]]></output>
+              </test-case>
+              <test-case id="1693" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(1,1)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(1,1)" methodname="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="1191479090" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.000986" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Net] connected as seat 2
+]]></output>
+              </test-case>
+              <test-case id="1694" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(2,1)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(2,1)" methodname="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="935992112" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.000758" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Net] connected as seat 2
+]]></output>
+              </test-case>
+              <test-case id="1695" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(3,1)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(3,1)" methodname="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="1849755226" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.000760" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Net] connected as seat 2
+]]></output>
+              </test-case>
+              <test-case id="1696" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(5,2)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(5,2)" methodname="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="1070459666" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.000740" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Net] connected as seat 2
+]]></output>
+              </test-case>
+              <test-case id="1697" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(8,2)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(8,2)" methodname="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="1449692530" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.000731" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Net] connected as seat 2
+]]></output>
+              </test-case>
+              <test-case id="1698" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(4,-2)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(4,-2)" methodname="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="1455387258" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.000729" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Net] connected as seat 2
+]]></output>
+              </test-case>
+              <test-case id="1699" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(4,4)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(4,4)" methodname="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="1723188915" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.001465" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Net] connected as seat 2
+]]></output>
+              </test-case>
+              <test-case id="1700" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(4,int.MaxValue)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(4,int.MaxValue)" methodname="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="64347375" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.000880" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Net] connected as seat 2
+]]></output>
+              </test-case>
+              <test-case id="1701" name="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(4,int.MinValue)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat(4,int.MinValue)" methodname="MalformedSeatAssignmentCannotThrowOrChangeTheLocalSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="265734573" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.000802" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Net] connected as seat 2
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1712" name="NonHostCannotAssignASeatEvenWithMalformedPayload" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.NonHostCannotAssignASeatEvenWithMalformedPayload" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.004015" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1709" name="NonHostCannotAssignASeatEvenWithMalformedPayload(0)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.NonHostCannotAssignASeatEvenWithMalformedPayload(0)" methodname="NonHostCannotAssignASeatEvenWithMalformedPayload" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="1227706302" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.001233" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Net] connected as seat 2
+]]></output>
+              </test-case>
+              <test-case id="1710" name="NonHostCannotAssignASeatEvenWithMalformedPayload(4)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.NonHostCannotAssignASeatEvenWithMalformedPayload(4)" methodname="NonHostCannotAssignASeatEvenWithMalformedPayload" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="790698594" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.000820" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Net] connected as seat 2
+]]></output>
+              </test-case>
+              <test-case id="1711" name="NonHostCannotAssignASeatEvenWithMalformedPayload(8)" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.NonHostCannotAssignASeatEvenWithMalformedPayload(8)" methodname="NonHostCannotAssignASeatEvenWithMalformedPayload" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="1102068613" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.000767" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Net] connected as seat 2
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-case id="1713" name="RepeatedValidAssignmentDoesNotRebuildTheSeat" fullname="TumbangPreso.Tests.SeatAssignmentPacketTests.RepeatedValidAssignmentDoesNotRebuildTheSeat" methodname="RepeatedValidAssignmentDoesNotRebuildTheSeat" classname="TumbangPreso.Tests.SeatAssignmentPacketTests" runstate="Runnable" seed="1730907868" result="Passed" start-time="2026-09-30 11:05:26Z" end-time="2026-09-30 11:05:26Z" duration="0.001978" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] connected as seat 2
+[Net] connected as seat 3
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

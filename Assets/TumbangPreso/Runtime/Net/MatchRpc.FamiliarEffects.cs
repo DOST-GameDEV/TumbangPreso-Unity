@@ -12,13 +12,13 @@ namespace TumbangPreso.Net
             if (!NetAuthority.ShouldResolve() || !ValidSlot(slot) || GameServices.Round?.RoundActive != true ||
                 _nm?.CustomMessagingManager == null) return;
             var unit = Unit(slot); var pet = Familiar(slot); var kit = unit?.AbilitySystem?.Kit;
-            // Possession is retired from the current kit. This is the live seance.
-            if (pet == null || !pet.IsDevouring || kit?.Ultimate == null) return;
+            // Haunt uses the scoped familiar carrier for movement and completion.
+            if (pet == null || !(kit is NemuHeroKit) || kit.Ultimate == null) return;
             var state = new FamiliarEffectState
             {
                 Seat = slot, Scope = CaptureActionScope(slot), Phase = kit.Ultimate.AcceptedUltimatePhase,
                 HeroId = new FixedString64Bytes(kit.HeroId), AbilityId = new FixedString64Bytes(kit.Ultimate.Id),
-                Position = pet.DevourGround, RoundClock = GameServices.Round.TimeLeft, Remaining = pet.DevourRemaining,
+                Position = pet.DevourGround, RoundClock = GameServices.Round.TimeLeft, Remaining = kit.Ultimate.DurationRemaining,
                 Yaw = pet.transform.eulerAngles.y,
             };
             if (!state.IsValid) return;
@@ -48,12 +48,9 @@ namespace TumbangPreso.Net
             var ability = kit.Ultimate;
             var pet = Familiar(state.Seat);
             if (pet == null || ability.ReservedForIntroduction || state.Phase < ability.AcceptedUltimatePhase) return false;
-            if (state.Phase == ability.AcceptedUltimatePhase &&
-                ((!ability.IsActive && !ability.IsWindingUp) || pet.IsDevouring)) return false;
-            if (!state.TryAge(now, ability.Duration, out float remaining) || remaining <= 0) return false;
-            kit.RestoreFamiliar(unit, 2, state.Position, remaining, state.Yaw);
-            ability.AdoptUltimatePhase(state.Phase);
-            return true;
+            if (!state.TryAge(now, ability.Duration, out float remaining)) return false;
+            using (NetCue.SuppressRelay())
+                return kit.ReceiveHaunt(unit, state.Phase, state.RoundClock, state.Position, remaining, state.Yaw);
         }
     }
 }

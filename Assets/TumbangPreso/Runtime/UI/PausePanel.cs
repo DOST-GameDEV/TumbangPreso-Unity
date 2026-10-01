@@ -4,7 +4,7 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI
 {
     /// <summary>
-    /// The in-match menu overlay. Match-time controls live only on SpectatorCamera.
+    /// The in-match menu overlay. Offline menus pause; network matches remain live.
     ///
     /// ⚠️ OPENING THE MENU PARKS INPUT. A verb held across the boundary
     /// would stay held in the intent table, and the player walks out of the menu already
@@ -13,7 +13,9 @@ namespace TumbangPreso.UI
     public sealed partial class PausePanel : Panel
     {
         public CharacterMotor Local;
-        private Text _title;
+        private Text _title, _notice;
+        private bool _pausedOffline;
+        private float _resumeScale;
         private GameObject _settingsOwner;
         public bool HasNestedView => _settingsOwner != null && _settingsOwner.activeInHierarchy;
 
@@ -75,8 +77,8 @@ namespace TumbangPreso.UI
         /// STOPPED WORKING AFTER THE FIRST TIME. Build runs from `Start`, once per component
         /// for its whole life, and the card is reused rather than rebuilt (see
         /// <see cref="Panel.Open{T}"/>). So the second Escape re-activated a fully drawn card
-        /// over a match with the cursor never released. The match intentionally remains live
-        /// now; the menu still has to park local input and release the pointer on every open.
+        /// over a match with the cursor never released. Offline time, local input and the
+        /// pointer must enter and leave the menu together on every open.
         ///
         /// ⚠️⚠️ AND THE CURSOR IS THE HALF THAT LOOKS LIKE A UI BUG. A match captures the mouse
         /// so the camera can steer from raw deltas; with it captured, the pointer is pinned to
@@ -87,8 +89,18 @@ namespace TumbangPreso.UI
         {
             RefreshTrainingRange();
             if (Canvas != null) Canvas.gameObject.SetActive(true);
-            // This is a menu, not a time-control path. Only SpectatorCamera's broadcast keys
-            // may pause or slow the match; opening settings as a player never stops the game.
+            // End a transient hitstop before saving the actual requested match speed.
+            // A presentation hold retains this request until its own release.
+            _pausedOffline = !SceneFlow.Networked && !(Net.NetSession.Instance?.IsNetworked ?? false);
+            if (_pausedOffline)
+            {
+                Hitstop.End();
+                _resumeScale = PresentationClock.RequestedScale;
+                PresentationClock.RequestScale(0);
+            }
+            if (_notice != null)
+                _notice.text = _pausedOffline ? "Game paused while this menu is open."
+                    : "The match keeps playing while this menu is open.";
             if (_title != null)
                 _title.text = PracticeRange.Active ? "TRAINING" : GameLaunch.Spectator ? "BROADCAST MENU" : "MATCH MENU";
 
@@ -104,6 +116,13 @@ namespace TumbangPreso.UI
         /// </summary>
         protected override void OnClosed()
         {
+            if (_pausedOffline)
+            {
+                _pausedOffline = false;
+                // A scene exit may already have selected its own speed. Do not undo it.
+                if (PresentationClock.RequestedScale == 0)
+                    PresentationClock.RequestScale(_resumeScale);
+            }
             if (Canvas != null) Canvas.gameObject.SetActive(false);
             if (Local != null)
             {

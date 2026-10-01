@@ -1,0 +1,29 @@
+{
+  "base": "aecc0ee2c",
+  "sourceEquivalent": "ef4f9a729 with prior eight overlays, plus tutorial inputs",
+  "question": "Three grounded takeoffs, full green completion, Tab non-overlap, and actual ultimate introduction plus delay",
+  "expectedCases": 2,
+  "retry": 0,
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/GuidedTraining.cs",
+      "sha256": "C382869F5FC67E9C62C2E2C315A34A62F1AF28A876C27ECC163274AF7B15D5F4"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/GuidedTrainingHud.OwnerPainted.cs",
+      "sha256": "93E9EF5FB7929929EEAC7CAA925984472E2E17ABA4CBD32C5365A36D3C45F2CC"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/DeadFeatureAudit.cs",
+      "sha256": "21E1D7D696372372389FDAE151E6386011C04610E2B30EBD6EBCCC0866435D0B"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/TutorialDefenderProbe.cs",
+      "sha256": "75F0DB98E289E6588E72D7D8A22668A91CDB8910846A955507A9CEC3EE31979F"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/TutorialLessonHonestyProbe.cs",
+      "sha256": "9A45C326FBB41F68480206D11D81DF85949AC4ED4E3B865DD67635936D1C214D"
+    }
+  ]
+}

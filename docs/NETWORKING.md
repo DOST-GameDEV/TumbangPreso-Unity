@@ -1,11 +1,110 @@
 # Networking: Where To Work
 
+Current gameplay contract is protocol123, including adopted Hydro Crosscurrent,
+Skim, Water wall, can-down charge cancellation, revised penalty/fatigue timings
+finite can-height contact, revised knockdown/catch announcement rewards and
+live Frostbite timed recovery and authoritative Amped-Up objective discounts.
+Actual123player/peer qualification remains open.
+Latest general Windows direct-peer qualification
+is protocol120on committed c26c5c34b: actual identical host/client players reach
+active round2, defender1and matching structural state. Clean local admission and
+round transition only; not all skills, Relay/loss/rejoin or cross-platform proof.
+[Current player evidence](reports/feedback-2026-09-30/network120-actual-player.md).
+Earlier114CLI admission evidence is retained with its original scope.
+[Admission repair](reports/feedback-2026-09-30/cli-admission-handoff.md).
+The120pair predates the121announcement rules and the later bot landing helper;
+it does not qualify those changes. Announcement Core/native receipts are scoped
+separately. [Announcement evidence](reports/feedback-2026-09-30/announcement-checks/README.md).
+
+Actual121cold-process rejoin now passes on e47fa2719: peer1crashes, peer2with the
+same saved identity reclaims seat1and servercharacter2despite local preference0.
+The client-controlled seat and host progress to active round2with matching
+defender/structural state. Explicit later195/120second samples preserve the old
+117failure and add stronger round/ownership gates. Separate launches/sample times;
+no every-skill/physical-feel/loss/account-proof or later-presentation claim.
+[Current rejoin evidence](reports/feedback-2026-09-30/reconnect121-actual-player.md).
+That121case predates the new Frostbite timed binding. Four scoped native recovery/
+real-hit checks qualify the122change locally.
+[Frostbite recovery](reports/feedback-2026-09-30/frostbite-recovery.md).
+Protocol123adds explicit scoped objective cooldown grants for predicted owners;
+ordinary snapshots keep their no-refund policy. Six native objective/owner/replay/
+watermark/framing cases pass. [Evidence](reports/feedback-2026-09-30/amped-up-objective.md).
+[Hydro evidence](reports/hero-quality-2026-10-01/hydro-current-checks/README.md).
+[Skim evidence](reports/hero-quality-2026-10-01/skim-checks/README.md).
+[Water wall/tutorial evidence](reports/hero-quality-2026-10-01/wall-tutorial-checks/README.md).
+
+A separate actual116Windows owner-client Haunt fixture passes with host contacts,
+replicated clocks, moving familiar and terminal cleanup. Stationary bystanders,
+not whole-match/rejoin/loss/other-kit qualification.
+[Exact evidence and boundaries](reports/feedback-2026-09-30/haunt-actual-peers.md).
+
+Actual117crash/relaunch restores the same identity/seat and selected character on
+the changed pre-round handover candidate. Aggregate gate remains failed at the
+host's later round-boundary sample; no118/119or complete-round proof is claimed.
+[Preserved results and limits](reports/feedback-2026-09-30/reconnect-actual-player.md).
+
+Departure notice payloads must end exactly after the declared name, before the
+receiver commits the sequence or toast. Six native receiver checks pass, including
+the consumed NGO name envelope and malformed suffix recovery.
+[Evidence](reports/feedback-2026-09-30/peer-departure-framing.md).
+
+Earlier Windows peer evidence: frozen committed overlaysffe5030c5, protocol103,
+same fresh internal binary on actual localhost UDP host/client. Both reach active
+HeroStrike/Eskinita round2 with matching structural state and no hard faults.
+This is direct local session qualification, not individual skill/online/Relay/
+lossy/reconnect/cross-platform delivery.
+[Evidence](reports/feedback-2026-09-30/engineering-player-1001.md).
+
+Protocol103 requires current Cheska field/delay/passive/all-player targeting rules.
+Cold Feet lasts7.5s, Absolute Zero waits1.5s and includes its caster, and landed
+Hero Strike Cheska shoves apply Chilled. Native cases pass; protocol103 actual
+peers are not yet qualified. [Evidence](reports/feedback-2026-09-30/cheska-wiki-rules.md).
+
+Protocol101 also requires the corrected Frostbite hit/held-slipper contract.
+Both body-hit paths apply Frozen before generic impact consumes the payload.
+Native real-flight checks pass; protocol101 actual peers remain unqualified.
+[Evidence](reports/feedback-2026-09-30/frostbite-delivery.md).
+
+Queue cancellation only withdraws an active search's advert. A locally refused
+attempt cannot clear an existing room's backfill offer; replacing an active search
+retires it before a replacement can refuse. Four native offline ownership cases
+pass; actual online browse/backfill delivery remains separate.
+[Evidence](reports/feedback-2026-09-30/queue-advert-ownership.md).
+
+Protocol100 requires matching builds for the5-second ordinary round boundary and
+10-second halftime package. Both freeze simulation and reject gameplay/UI input.
+Halftime can play a retained authoritative clip before standings; unavailable or
+late footage falls back to the same frozen image without extending the host end.
+The latest ordinary/late-deadline and halftime cases pass locally. Earlier eight
+focused native cases cover visible retained playback, late clients,
+input/image locking and round5 return. [Revision evidence](reports/feedback-2026-09-30/round-timing-replay.md). Earlier [protocol98 evidence](reports/feedback-2026-09-30/round-freeze.md)
+covered the former uniform10-second frozen boundary and is not peer qualification
+of protocol100.
+
+Latest timing revision: [match UI evidence](reports/feedback-2026-09-30/match-ui-revision.md). Actual protocol100 peers remain unqualified.
+
 Read [AGENTS](../AGENTS.md),[working rules](WORKING_RULES.md#gameplay-and-authority),
 [skill contract](SKILL_NETWORK_CONTRACT.md),then the current NET-SKILLS-1 queue and
 [multiplayer evidence](reports/stability-2026-09-27/multiplayer.md).
 This is a source map,not another backlog or a declaration of complete replication.
 
 ## Runtime Ownership
+
+A frozen c55574cd6 internal Windows player now passes a real two-process direct
+LAN check through round2, with matching protocol/seat/character/defender state.
+[Exact scope and limitations](reports/feedback-2026-09-30/player-lan.md). This does
+not qualify unexercised skills, online/ranked, loss, reconnect or later integrations.
+
+Protocol97 also gates the requested3m ordinary defender lunge. Local prediction
+and host resolution share the derived impulse; the movement ceiling remains28m/s.
+Bot attempt distances, safe-emote clearance and pressure stats follow actual reach.
+Local native travel/sweep checks are in [the lunge report](reports/feedback-2026-09-30/defender-lunge.md);
+they do not qualify real peer transport.
+
+Legacy seat-assignment reception now requires exactly4bytes and a valid player
+seat0..3 or spectator-1 before notifying local controls. Sender and repeated-seat
+semantics stay intact; protocol97 is unchanged. Native19-case receiver proof and
+the reproduced malformed baseline are in [seat packet evidence](reports/feedback-2026-09-30/seat-assignment-packets.md).
 
 Runtime files below are in `Assets/TumbangPreso/Runtime/`.
 
@@ -38,7 +137,7 @@ Runtime files below are in `Assets/TumbangPreso/Runtime/`.
 | Live sentry targets | SentryTargetState and MatchRpc.SentryTargets deliver the host mask by match/round/owner/ultimate cohort,with bounded pre-birth delivery. PaeteSentry live registry binds it once; replicas never infer or catch. |
 | Live familiar recovery | FamiliarEffectState and MatchRpc.FamiliarEffects bind the seance to world/body scope, stable hero/ultimate IDs and accepted phase. Active duplicates, older phases and completed lifetimes cannot recreate its field or end a newly active role skill. Retired possession poses are not part of this recovery contract. |
 | Effect cleanup ownership | PaeteHeroKit's ultimate tracks its exact fresh sentries and adopts recovered owner instances through IWorldEffectBinding. One kit reset must not destroy other casters' effects. |
-| Contact presentation | Visual/MatchFlair announces accepted outcomes with match/round scope. UltimateImpact reuses HitFeel on the victim's own view; no gameplay mutation or caster confirmation. |
+| Contact presentation | Visual/MatchFlair announces accepted outcomes with match/round scope. Ordinary player tag posing consumes the existing actor/subject/contact point; its supporting visual step and bounded hand aim cannot award a hit or move a motor. UltimateImpact reuses HitFeel on the victim's own view; no gameplay mutation or caster confirmation. |
 | Compatibility | Net/SkillContractFingerprint and NetSession.ProtocolVersion. Fingerprints exclude cosmetic files,but semantic/wire changes still need explicit versioning. |
 
 Ranked,casual,custom,LAN/online and spectators share match delivery. Read the queue,
@@ -54,6 +153,25 @@ owner's 2026-09-27 checkpoint; temporary effects are not permanent transport API
 Read the [authoring contract](SKILL_NETWORK_CONTRACT.md) before adding a new RPC.
 New gameplay data needs an explicit reusable state/recovery contract; no promise
 that every future mechanic fits the current centre-plus-clocks adapter.
+
+## Score And Stock Packet Bounds
+
+Score requires exactly12remaining bytes. Last Tsinelas checks its8-byte header,
+existing0-4count bound and exact declared table length before any stock update.
+Both reject truncated/trailing messages without events or partial state changes.
+Published layouts, count semantics and protocol97 remain unchanged.
+[Native before/after evidence](reports/feedback-2026-09-30/score-stock-packets.md)
+separates packet-handler checks from actual-peer qualification.
+
+## Map Ballot Packet Bounds
+
+SelectMapVote requires exactly one integer and a sender ID representable by the
+lobby's peer key. MapVoteTally validates its count, exact payload size and every map
+entry before applying any ballot. QueueVoteState requires exactly its published
+28 bytes. Existing packet layouts and map-selection rules remain unchanged.
+[Native malformed/valid packet evidence](reports/feedback-2026-09-30/map-vote-packets.md)
+also records four previously unrun rematch/intermission cases now passing locally.
+Actual-peer qualification remains separate.
 
 ## Evidence And Remaining Limits
 

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace TumbangPreso.Visual
 {
@@ -41,7 +42,7 @@ namespace TumbangPreso.Visual
             root.transform.localPosition = new Vector3(0f, 0f, Core.GeoRules.BarrierForward);
             // The modelled barrier grinds up slab by slab; the blocks below are the fallback only.
             var model = ReworkProp.Spawn("barrier", root.transform, ReworkProp.GeoPalette);
-            if (model != null) { root.AddComponent<BarrierRise>().Bind(model); return root; }
+            if (model != null) { root.AddComponent<BarrierRise>().Bind(model); ApplyVisibility(root); return root; }
             float w = Core.GeoRules.BarrierWidth;
             var left = GrowthVfx.Block(root.transform, "slab-left", new Vector3(w * 0.34f, 1.7f, 0.14f), Stone).transform;
             left.localPosition = new Vector3(-w * 0.33f, 0.85f, 0.06f); left.localRotation = Quaternion.Euler(0f, -12f, 0f);
@@ -53,7 +54,39 @@ namespace TumbangPreso.Visual
             seamA.localPosition = new Vector3(-w * 0.165f, 0.8f, 0.1f);
             var seamB = GrowthVfx.Block(root.transform, "seam-b", new Vector3(0.04f, 1.5f, 0.18f), Gold, 0.35f).transform;
             seamB.localPosition = new Vector3(w * 0.17f, 0.75f, 0.1f);
+            ApplyVisibility(root);
             return root;
         }
+
+        private static void ApplyVisibility(GameObject root)
+        {
+            var shader = Shader.Find("TumbangPreso/DanteBarrier");
+            if (shader == null) { Debug.LogError("Dante barrier shader missing from build."); return; }
+            var copies = new Dictionary<Material, Material>();
+            foreach (var renderer in root.GetComponentsInChildren<Renderer>())
+            {
+                var slots = renderer.sharedMaterials;
+                for (int i = 0; i < slots.Length; i++)
+                {
+                    var source = slots[i];
+                    if (source == null) continue;
+                    if (!copies.TryGetValue(source, out var transparent))
+                    {
+                        transparent = new Material(source) { shader = shader, name = "DanteBarrier-half" };
+                        // Shader reassignment does not retain non-Properties vector arrays.
+                        if (source.HasProperty("_UsePalette") && source.GetFloat("_UsePalette") > .5f)
+                            transparent.SetVectorArray("_Palette", source.GetVectorArray("_Palette"));
+                        transparent.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                        var tint = source.HasProperty("_Color") ? source.GetColor("_Color") : Color.white;
+                        tint.a = .5f; transparent.SetColor("_Color", tint);
+                        copies.Add(source, transparent);
+                        VfxRenderTag.Own(root, transparent);
+                    }
+                    slots[i] = transparent;
+                }
+                renderer.sharedMaterials = slots;
+            }
+        }
+
     }
 }

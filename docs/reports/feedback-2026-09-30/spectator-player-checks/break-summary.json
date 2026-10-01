@@ -1,0 +1,42 @@
+[
+  {
+    "round": 1,
+    "initialRemaining": 4.993123,
+    "sampledWallSeconds": 5.095703125,
+    "simulationSpan": 0.0,
+    "distinctFrames": 1,
+    "inputBlocked": true
+  },
+  {
+    "round": 2,
+    "initialRemaining": 4.998473,
+    "sampledWallSeconds": 5.176300048828125,
+    "simulationSpan": 0.0,
+    "distinctFrames": 1,
+    "inputBlocked": true
+  },
+  {
+    "round": 3,
+    "initialRemaining": 4.998717,
+    "sampledWallSeconds": 5.07769775390625,
+    "simulationSpan": 0.0,
+    "distinctFrames": 1,
+    "inputBlocked": true
+  },
+  {
+    "round": 1,
+    "initialRemaining": 4.998254,
+    "sampledWallSeconds": 5.157997131347656,
+    "simulationSpan": 0.0,
+    "distinctFrames": 1,
+    "inputBlocked": true
+  },
+  {
+    "round": 2,
+    "initialRemaining": 4.998552,
+    "sampledWallSeconds": 5.30450439453125,
+    "simulationSpan": 0.0,
+    "distinctFrames": 1,
+    "inputBlocked": true
+  }
+]

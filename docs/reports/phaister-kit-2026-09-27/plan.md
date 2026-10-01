@@ -307,6 +307,9 @@ applied by this one; recorded in `docs/TODO.md` HERO-10. The owner will send eac
 | The slipper during a skill | *"think abt where slipper goes when u use skill and make it so that u can use right hand when doing skills"* | 9.4 |
 | The doll while she ATTACKS (asked 2026-09-28: assist without a slipper, its own slipper, or defend only) | **"Own slipper, throws"** | a true fifth player with its own fifth slipper, its knockdowns paid to her; 9.12 |
 | The cutscene pitch 9.8 (SEW / GROW / WAKE: THE THREAD, THE STITCH, THE LIFT, THE WAKE), asked 2026-09-28 | **"her ult is supposed to be like its own character i approve everything except for any part where she ends up dead and controls the vooodoo"** | APPROVED as pitched. Standing rule: the doll is its own character (its own AI); she never dies, faints or possesses it, in the cutscene or in play |
+| The reach's look, on film v16 (2026-09-29) | *"dont make the pulling thing look like a physical line i want it to look like sucking aura or smth"*, *"it sucks rn ur implementation"* | THE SOUL DRAW replaces the thread (9.5): wisps of their aura peeled off them and sucked into the doll; no line anywhere |
+| Her pose while marking (2026-09-29) | *"i want u to make her hold up her voodoo too towards the person when markingt hem"* | the doll is in her LEFT hand held OUT AT THEM through the reach (and through DRAIN's wring and HEX's stab), the right hand open beside it; the soul goes into the doll |
+| The cast's spectacle (his note, 2026-09-29) | *"to make it cooler cast like a big magic circle in the sky or smth when she ults"* | THE CIRCLE: a huge stitched magic circle opens in the sky over the court when she ults; the doll's string hangs from its centre. In the cutscene (9.8 shot 3) and in play for every player (9.7, 9.9 rows 17 and in-play 12) |
 
 ### 9.3 The idea, the look, and how a cast talks
 
@@ -344,6 +347,21 @@ hand (she arrives holding it). This is a shared mechanism: each ability declares
 (`Hand` right as today, `OffHand` left, `Belt`, or `Kept`), the default is the left hand, and each hero's choice is their own.
 
 ### 9.5 THE REACH: how both curses mark (proposed numbers)
+
+⚠️⚠️ **2026-09-29: THE THREAD BELOW IS REPLACED BY THE SOUL DRAW (9.2).** Wherever this table says "the thread", read: wisps of the
+victim's aura peel off their body (DRAIN from the chest, HEX from the head, some from all over them), cling a moment, then are
+SUCKED along a curve into the doll she holds out at them, faster and thinner as they go in; DRAIN's stream twists, HEX's wavers
+straight; more of them as it fills; a swirl of light at the doll. The mark is a gulp (everything rushes in, a last burst is ripped
+off them, the doll flares); a broken reach lets go (the wisps slow, drift up and thin away). The doll is in her LEFT hand held out
+at them, the right open beside it. The pierce X at their chest is gone with the thread. `Visual.VoodooSoulDraw`,
+`Shaders/VoodooWisp`.
+
+⚠️⚠️ **v20 to v22 (the owner on v19: *"this animation dont look that good yet"*, *"the doll is floating"*): THE SOUL IS A GHOST OF
+THEM.** Read the soul draw above as: a see-through ghost of the victim (their own shape, a lit rim over a faint fill, in the curse's
+colour; `Shaders/VoodooGhost`) is dragged OUT of their body toward the doll, 0.3 m at the lock to 1.25 m full, smearing toward her;
+fine motes tear off the ghost into the doll; on the mark the ghost is yanked the rest of the way in, shrinking; a broken reach snaps
+it back into them. The doll is GRIPPED in her fist and RAISED at them (DRAIN 26 degrees above level, HEX 38). Not drawn on the
+victim's own screen (their body is the lens), where motes rise from under their view. No sound (skill sounds are deleted).
 
 Input (proposed): **tap** the skill to start reaching toward the opponent under the crosshair; it keeps going on its own while she
 keeps them in view; tap again to let go. (Holding the key for the 2 s is the alternative: it matches "hold her hand out", but on a
@@ -399,8 +417,8 @@ his text).
 | Beat | What happens | Sound |
 |---|---|---|
 | Ready | the doll at her hip wakes: its button eye glows faintly, it turns its head to look at whoever is near, it twitches now and then. Everyone who sees her knows her ultimate is up | a faint music-box note when it first wakes |
-| Cast | the cutscene, 5.0 s, the match clock frozen (9.8) | |
-| Hand-back | the doll stands beside her at player size, swaying, head tilted, eye lit; play picks up here | |
+| Cast | the cutscene, 5.0 s, the match clock frozen (9.8). THE CIRCLE opens in the sky over the court: a ring of glowing thread about 12 m across, 9 m up, stitched with X stitches, eight pins driven in round its rim at the compass points, her sigil inside it, crimson outer ring and violet inner, turning slowly. Everyone on the court sees it the moment the cutscene ends | a deep music-box chord and a cloth-tearing swell |
+| Hand-back | the doll stands beside her at player size, swaying, head tilted, eye lit, its string running up to the centre of THE CIRCLE; play picks up here. The circle hangs at full size for 3 s, then draws in to a small ring (about 1.5 m) that follows the doll high overhead as the top of its string for the round | the chord decays |
 | In play | a fifth body on her side, Astig (hard) bot. It walks like a puppet with half its strings cut: head lolling, arms swinging late, a jerk now and then. Nameplate PHAISTER'S DOLL in her colour. Attacking: it throws its own slipper at the can with a floppy overhand. Defending: it guards and tags with a flopping lunge. Its points pop over it as +100 in her colour with a small doll icon, and go to her | soft cloth footsteps, creaks, a music-box motif when it scores |
 | Tagged or sabotaged | stuffing puffs out, it sits slumped like a dropped doll for the stun; a grey stitched X pops over it so the one who tagged it knows it paid nothing; it gets back up with a jerk as if its strings were pulled | a stuffing puff; a sad tine |
 | Round end | it shrinks back in three jolts (the cutscene's growth in reverse) to a small limp doll that unravels into thread; her hip doll is back | a descending music box |
@@ -417,19 +435,104 @@ doll's chest, out through its seams, up its crown string, and out of its eyes at
 
 **The theme.** A puppet show in the dark. When she casts, the world steps back: the court drops to violet-black and the only
 light is hers (the method's "the backdrop steps back"). Everything is cloth, thread, pins and that light. The emblem is her X
-stitch, the last one she sews; it flashes once on the court under the doll. The power is the string: a single glowing thread
-from the doll's tied crown up into the dark sky, the vertical light every ultimate needs. The sound is a detuned music box over
+stitch, the last one she sews; it flashes once on the court under the doll. The power is the string and THE CIRCLE (owner, 2026-09-29: *"a big magic circle in
+the sky"*): a single glowing thread from the doll's tied crown up into a huge stitched magic circle that opens in the dark sky
+above the court, the vertical light and the spectacle every ultimate needs. The sound is a detuned music box over
 a slow heartbeat.
 
 | Shot | Time | Picture, every moving part | Camera | Sound |
 |---|---|---|---|---|
 | 1 THE THREAD | 0.00 to 1.40 | The court goes dark round her at frame 0; motes of her light drift up out of the dark. The small doll lies limp in her left palm, its chest split open and dark. She draws a long pin from her hat band; a strand of soul light pulls out of her right palm like thread off a spool and she threads the pin with it. Her eyes catch the glow from below. Loose glowing threads drift across the lens left to right (the near layer). | a close two-shot of her hands and face, pushing in slowly, a slight tilt | a low hum rising; a thread drawn off a spool; one faint heartbeat |
 | 2 THE STITCH | 1.40 to 2.60 | She stabs the pin through the doll's chest split and draws the thread through in one long pull: the thread whips across the frame left to right as a stroke of light (the strike). She knots the X. Two impact frames on the knot (the whole picture inverted, her ink splashing). Then the doll floods with light: the splits light up one after another (chest, shoulders, spine, thigh), its grin glows, light leaks round its button, the eye under its X opens behind the stitches. | tight on the doll in her palm, then a whip pan riding the thread's pull | the pin's prick; a long cloth draw rising in pitch; the knot's snap; silence for the two frames; a deep heartbeat as it floods |
-| 3 THE LIFT | 2.60 to 4.20 | She tips it off her palm. It tumbles down through the frame and lands in a heap with a puff of stuffing. Her X stitch flashes on the court under it as a ring of light races out. A glowing string shoots up out of its tied crown into the sky and pulls taut: it is hauled up off the court by its head, limp, toes dragging. It grows in three jerks, each one a yank on the string: its seams flare and spit light, its pins pop out and slide back in, stuffing puffs from its hem, until it hangs at full size, limbs dangling. | low on the court looking up; the doll grows up into and past the top of the frame, the string rising into the dark above it | a soft thud; three cloth stretches with a bass swell, each bigger; the music box plays one note per jerk |
+| 3 THE LIFT | 2.60 to 4.20 | She tips it off her palm. It tumbles down through the frame and lands in a heap with a puff of stuffing. Her X stitch flashes on the court under it as a ring of light races out. Far above, THE CIRCLE opens in the dark sky: its rim sews itself round in one sweep (stitches racing clockwise), eight pins stab into the rim one after another, her sigil blooms in the middle. A glowing string shoots up out of the doll's tied crown to the circle's centre and pulls taut: it is hauled up off the court by its head, limp, toes dragging. It grows in three jerks, each one a yank on the string: its seams flare and spit light, its pins pop out and slide back in, stuffing puffs from its hem, until it hangs at full size, limbs dangling. | low on the court looking up past the doll to THE CIRCLE filling the sky; the doll grows up into the frame, the string rising to the circle's centre | a soft thud; three cloth stretches with a bass swell, each bigger; the music box plays one note per jerk |
 | 4 THE WAKE | 4.20 to 5.60 | A held beat, hanging still, head lolled. Then its head snaps up: light streaks out of its X eye and round its button across the lens, and its grin splits wider and brighter. It cracks its neck side to side. It turns its head to the REAL opponents (staged copies of who is on the court, their own clips), who flinch. She steps in beside it, leans her elbow on its shoulder and points at them with her chin, smirking. | a slow orbit from behind its shoulder (the opponents ahead, soft) round to a two-shot of her and the doll with the opponents in frame | a held silence; a neck crack; her three-note motif on the music box, resolving |
 
 **Hand-back.** Play opens on the doll standing beside her, lit, facing the opponents, its string up. Nothing is shown twice: the
 cutscene ends on it waking; play is it moving. The world was frozen underneath (the match clock stops, as Paete's did).
+
+### 9.8b The cutscene, v3 direction: THE CIRCLE AND THE MARIONETTE (2026-09-29, the owner's)
+
+The owner, on the OMEN cutscene still playing in front of the doll: *"ult cutscene doesnt amke sense why does she thhrow some random
+shit and it doesnt touch anythhing thhoroughly rethink direction of it"*, then his direction: **"i want her to cast like a really
+scary magic circle in teh sky for her cutscene and then this monster comes out of it and looks like its controlled by strings and
+scary"**. This replaces 9.8 (SEW / GROW / WAKE) and the ONE THREAD pitch. The rules it keeps: nothing leaves her hand without landing
+on something you can see; every beat is caused by the one before; the doll is its own character and she never dies, faints or
+controls it (the STRINGS come from the circle, not from her); no sound (skill sounds are deleted).
+
+**One sentence: she offers her doll up to the sky, a terrible circle tears open and swallows it, and it comes back down out of the
+circle as a monster hung on strings.**
+
+| Shot | Time | Cause | Effect | Camera |
+|---|---|---|---|---|
+| 1 THE OFFERING | 0.00 to 1.10 | her night replaces the world (an unlit violet sky and floor, an ember horizon); she raises the small doll out to her side in her left fist, grinning at it (v5: held in front of her face in both hands it hid her face) | its button eye lights; its seams leak light; a first thread of light rises from it into the dark | low on her, looking up past the doll into the sky |
+| 2 THE CIRCLE | 1.10 to 2.40 | the thread reaches the sky | THE CIRCLE tears open, huge and scary: a black cord with a crimson core sews a ring of jagged teeth, eight long pins stab in, runes crawl round it counter-turning, and in its centre a stitched EYE opens; the small doll is yanked up out of her hands into the eye and gone | tilt up with the doll into the circle, the circle filling the frame |
+| 3 THE DESCENT | 2.40 to 4.10 | the eye looks down | strings drop out of the circle and the MONSTER is lowered out of the eye on them: the doll, huge, hanging limp and head-down at first, strings at its crown, both mitten hands and its back; it turns upright on the strings in jerks, limbs dangling late, light spitting from its seams | from under the circle looking up as it comes down at the lens |
+| 4 THE DROP | 4.10 to 4.70 | the strings let go an arm's length | it lands on the court feet-first at full size, knees buckling like a puppet's, a ring of dust and light racing out; the real opponents stagger back | low and wide, the opponents behind it |
+| 5 THE PUPPET | 4.70 to 5.80 | the strings jerk | its head snaps up and lolls, its grin splits wide and glows, its X eye and button eye flare; it jerks its head to the real opponents and takes one lurching step at them, strings taut to the circle; she stands behind it, smirking | a slow push in on its face, the opponents small in front of it, then the two-shot with her |
+
+**Hand-back and in play.** Play opens there: the monster beside her, the circle full overhead, STRINGS from its crown and both hands
+up into the circle (the marionette read the owner asked for, in play too: 9.9 in-play rows 1 and 12). The circle draws in to a
+smaller ring high over it after 3 s and the strings stay, so everyone can always see it is a puppet and whose.
+
+### 9.8c The cutscene, v7 direction: THE PUPPETEER (2026-09-29, the owner's notes on film v6)
+
+The owner on v6: *"I like the eye but the execution is weird"*, *"dont make her raise it up"*, *"i want her to look like she starts
+flying and is casting"*, *"i want the handheld vodoo to look diff from ult too"*, *"show transition from day to dark too"*, *"when the
+eye opens the theres like a lot of vfx or smth of it being summoned"*, *"I want the portal (eye) to be diff from the thing that
+controls it too"*, a photo of white-gloved hands working a wooden marionette control (*"like this"*, *"i want the wires on its head to
+look like this"*), *"thoroughly plan first how to make it look better and cooler"*, Flins' burst as the reference (*"his ult starts
+with darkness in the bg ... making him look cool and terrifying"*), *"phaister's ult does not have a terrifying feeel at all eh"*,
+and a screenshot of an ink impact frame (*"a complete 1-2 frames change everything biriefy to put focus on some moments"*).
+
+**Why v6 was not terrifying.** Everything was lit and seen at once: the night arrived in the first 0.3 s (you never saw the day
+die), the circle was a bright friendly disc, the eye opened while the camera was busy, the monster came down in full view with
+nothing hidden, and nobody on screen was afraid. Fear is WAITING for something you cannot see yet, then being LOOKED AT by it.
+
+**References.** Flins (Genshin): the burst opens in darkness, the character lit only by his own light, a dense storm of effects
+round him. Black Swan (Star Rail, `ZK6JM-GXxeE`, YouTube's own scrub frames): she floats while casting with cards circling her,
+the world drains to a dark space cut by shafts of light, a close-up of her face at the peak, then giant hands reach in and a
+radial burst of rays and shards goes off. The owner's impact-frame screenshot: one or two frames of black ink on white with radial
+speed lines, on the hits. Castorice (`research.md` section 5): the world is replaced; show the summon's face big.
+
+**One sentence: the day dies, she rises into the dark, an eye tears open in the sky and LOOKS AT YOU, and out of it two huge hands
+lower a puppet on wires.**
+
+**Three separate things, three looks.** THE EYE is the PORTAL (the circle), where it comes from. THE PUPPETEER is two huge white
+mitten gloves (no fingers, the cast's rule) on long black sleeves reaching out of the eye, working a wooden MARIONETTE CONTROL
+(`Visual.MarionetteControl`): the thing that controls it. THE DOLL is the monster on the wires. Nothing is hers: she opens the door,
+the puppeteer does the rest (plan 9.2: she never controls it).
+
+| Shot | Time | What happens (cause, then effect) | Terror device | Camera |
+|---|---|---|---|---|
+| 1 THE DAY DIES | 0.00 to 1.10 | Daylight. She lowers her head; the light drains in a WAVE: the sky goes dark from the top down, the ground goes dark outward from her feet, her shadow stretches long, then everything but her is black-violet | you watch the world be taken | wide and low in front, the whole sky in frame, holding still |
+| 2 SHE RISES | 1.10 to 2.10 | Her feet leave the court; she rises slowly 0.8 m, limp at first as if something lifted her, then her arms spread low, palms down, casting; her coat drifts up; eight pins orbit her, points out; her eyes and the doll at her hip glow; light is drawn up out of the ground into her palms | lit only from below by her own light, her face in shadow but for the eyes and grin | a slow push up her body to her face from below (Black Swan's close-up) |
+| 3 THE SEAM | 2.10 to 2.90 | Above her the sky SPLITS along a line: a stitched seam, red light leaking between the stitches, the stitches snapping one by one; the circle's rim sews round it in the dark; pins stab in | something behind the sky is trying to get out | from under her, tilting up past her to the seam |
+| 4 THE EYE OPENS | 2.90 to 3.60 | The seam opens slowly into the EYE; the pupil darts left, right, then LOCKS ON THE LENS. IMPACT FRAME. Then THE BURST: a flash, rays radiating from the eye, two shockwave rings racing out across the sky, shards and embers flung out, lightning down all round the court | it looks at you | straight up at the eye, filling the frame |
+| 5 THE PUPPETEER | 3.60 to 4.60 | Out of the pupil two huge white GLOVES push through on black sleeves, holding the control; wires run from it down into the eye; they PULL: IMPACT FRAME; the doll is dragged out head-first, upside down, limp, turning slowly on the wires | the hands are too big and have no body | under the eye, the gloves coming at the lens |
+| 6 THE DESCENT | 4.60 to 5.40 | The gloves lower it in three jerks, its limbs flicking at each; at the last it rights itself on the wires; its head turns round too far to face the lens before its body follows | a head that turns the wrong way | from the court looking up, its face coming down at the lens |
+| 7 THE DROP AND THE PUPPET | 5.40 to 6.40 | The gloves let the wires go slack: it drops to the court, knees buckling: IMPACT FRAME; dust and light race out; the real opponents stagger back. The gloves jerk the control: its head snaps up at them, its grin tearing open with light: IMPACT FRAME; it lurches one step. She floats down behind it, smirking. The gloves let go and draw back up into the eye; the control stays over its head | its first look at them | low, the opponents' shoulders in front, the doll looming, her behind, the eye and the control above |
+
+**The impact frames** (four: the eye locking on, the first pull, the landing, the head snap): one or two frames each of the picture
+turned to black ink on white, radial speed lines from the focus, a slight zoom (`Shaders/PhaisterImpact` extended with the lines).
+Reduced effects drops them.
+
+**The day to dark** (`Shaders/VoodooNight` gains a reach): the dome darkens from its top down and the floor outward from her feet over
+0.3 to 1.0 s, the grade following; the day shows beyond the wave until it is gone.
+
+**The eye, done properly.** Shut, it is a stitched seam leaking light. It opens with the lids peeling apart and the stitches tearing.
+The iris is hot crimson with an ember slit that DARTS, then fixes on the lens (the cutscene aims `_Look` at the camera). Lashes of
+black thread. It never blinks after that.
+
+**In play.** The eye closes and fades after 3 s (the portal shuts); the MARIONETTE CONTROL hangs about 1.3 m over the doll's head for
+the round, swaying behind its moves and tilting on its jerks, with wires to its crown and both mitten hands (*"the wires on its
+head"*). No gloves in play (they would cover the court); the control alone.
+
+**Her handheld doll, a different doll** (*"i want the handheld vodoo to look diff from ult too"*). The monster is a fat burlap sack.
+Her own doll becomes a small, flat, gingerbread-shaped doll of BLACK cloth (her coat's charcoal) with magenta stitching round its
+edge, two mismatched buttons for eyes (one violet, one crimson), a red thread mouth sewn shut, and three pins through its chest with
+her colours on their heads. It lives at her hip and is the doll she holds out in THE REACH. Proposed; built with its own builder.
+
+**Sound.** Still none: skill sounds are deleted until the owner asks (2026-09-29).
 
 ### 9.9 Every moving part of the doll, in the cutscene and in play
 
@@ -451,6 +554,7 @@ cutscene ends on it waking; play is it moving. The world was frozen underneath (
 | 14 | The wake | its head, lolled | snaps UP, then cracks side to side | 0.08 s snap, two cracks | the doll | facing the opponents |
 | 15 | Eye streaks | its eyes | light streaks out sideways across the lens | 0.15 s | its eyes | fade |
 | 16 | Her lean | beside it | steps in, elbow onto its shoulder | 0.4 s | the doll | the hand-back pose |
+| 17 | THE CIRCLE | the dark sky over the court, about 9 m up, 12 m across | its rim sews round CLOCKWISE in one sweep, eight pins stab IN one after another, the sigil blooms OUT from its centre, then it turns slowly | 0.5 s sew, 0.06 s per pin, 0.3 s bloom, then 8 degrees/s | the court (the doll's string hangs from its centre) | stays through the hand-back (row 12 in play) |
 
 **In play** (the doll is a fifth body on her side for the rest of the round; the owner: *"make the walking animation of this
 voodooo look like its fucking dead or js getting dragged around by magic idk"*, *"js dont make it human like"*):
@@ -468,6 +572,7 @@ voodooo look like its fucking dead or js getting dragged around by magic idk"*, 
 | 9 | Scores | its seams flare, the music box plays a note, +100 floats up in her colour with a small doll mark | the points are hers |
 | 10 | Toe scuffs | faint lit scuffs where its toes drag, fading in a second | you can follow where it went |
 | 11 | Round end | the string hauls it up, it shrinks in three jerks back to hand size and the thread reels it back to her hip | nothing vanishes; it goes back where it came from |
+| 12 | THE CIRCLE | full size over the court for 3 s after the hand-back, seen by every player; then it draws in to a small ring high over the doll, the top of its string, turning; at round end it unstitches and frays away | the whole court learns her ultimate is on; the string has somewhere to hang from |
 
 ### 9.10 The doll's model
 

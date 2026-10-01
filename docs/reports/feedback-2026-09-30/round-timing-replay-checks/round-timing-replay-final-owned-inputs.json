@@ -1,0 +1,7 @@
+{
+  "Assets/TumbangPreso/Runtime/HalftimePresentation.cs": "dc03be955e0efa34b429fc258dfde7a7db1edc5d55193ceb0e912b4bfff1c22c",
+  "Assets/TumbangPreso/Runtime/RoundBreakFrame.cs": "00fc9433dade97a3dd3effe45caace3411956e4c05d4de82fa0c0948bad0f773",
+  "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "2447368ce69a8c0f211e549d33e49cd1243453ee1e06c03e353e3a67c5ce9603",
+  "Assets/TumbangPreso/Tests/PlayMode/RoundBreakFreezeTests.cs": "d05db70af857064ba4599d2852ee8f3671bcdb5dd547063a35a34ed98cb9f37c",
+  "Assets/TumbangPreso/Tests/PlayMode/ReplayRetentionTests.cs": "d87aa8c2469dbdba44e17824a91df0dd18d8763f6959d938ce78fa99cfb25201"
+}

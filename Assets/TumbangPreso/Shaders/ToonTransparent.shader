@@ -106,7 +106,9 @@ Shader "TumbangPreso/ToonTransparent"
             half level = lerp(_ShadowBand, 1.0h, band);
             half shadowed = lerp(atten, 1.0h, _WorldSpaceLightPos0.w);
             half softBand = smoothstep(-_WorldSoftLight.y, max(0.02h, _WorldSoftLight.x) - _WorldSoftLight.y, ndl) * shadowed;
-            half3 ramp = tex2D(_WorldToonRamp, half2(softBand, .5h)).rgb;
+            // This generated lookup has no mipmaps. Sample its authored level directly;
+            // implicit screen derivatives produced invalid cloud/Mesa lighting samples.
+            half3 ramp = tex2Dlod(_WorldToonRamp, float4(softBand, .5, 0, 0)).rgb;
 
             half4 c;
             // Preserve the authored directional-light toon shadow band. Positional

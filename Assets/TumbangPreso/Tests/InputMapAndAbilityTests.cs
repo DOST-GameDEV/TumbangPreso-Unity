@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using TumbangPreso.Abilities;
 using TumbangPreso.Core;
+using TumbangPreso.InputLayer;
 using TumbangPreso.Settings;
 using TumbangPreso.UI;
 using UnityEngine;
@@ -182,6 +183,19 @@ namespace TumbangPreso.Tests
                 string.Join(" | ", clashes));
         }
 
+        [Test]
+        public void EarlierGrabOverrideStillLoadsAfterDefaultMouseMappingChanges()
+        {
+            var asset = LoadActions();
+            asset.RemoveAllBindingOverrides();
+            const string saved = "{\"bindings\":[{\"action\":\"Player/Grab\",\"id\":\"6f1a2b30-0002-4000-8000-000000000005\",\"path\":\"<Keyboard>/g\",\"interactions\":null,\"processors\":null}]}";
+            asset.LoadBindingOverridesFromJson(saved);
+            var grab = asset.FindAction("Player/Grab");
+            Assert.AreEqual("<Keyboard>/g", grab.bindings[0].effectivePath);
+            Assert.AreEqual("<Mouse>/rightButton", grab.bindings[0].path, "Saved override replaced the new default.");
+            Assert.IsTrue(Rebinding.IsOneUseKey("Lunge", "ReadyUp"));
+        }
+
         /// <summary>Every rebindable action has to actually exist, or the panel draws a dead row.</summary>
         [Test]
         public void EveryRebindableActionExists()
@@ -267,9 +281,9 @@ namespace TumbangPreso.Tests
         }
 
         /// <summary>
-        /// The owner's default layout, 2026-09-27, key for key: Throw / Tag left click, Shove /
-        /// Lunge right click, Curve Throw the wheel, Interact / Use F, Signature E, Attacking /
-        /// Defending Q, Ultimate X, Ability Tooltips Tab, Emote Wheel T.
+        /// The latest owner layout: Throw/Tag left click, Shove/Lunge middle click,
+        /// Retrieve/Reset right click, curve left wheel up and right wheel down,
+        /// Interact/Ready F, Signature E, Role Ability Q, Ultimate X, descriptions Tab.
         /// </summary>
         [Test]
         public void TheDefaultsAreTheOwnersLayout()
@@ -283,10 +297,10 @@ namespace TumbangPreso.Tests
             Assert.AreEqual("<Keyboard>/leftShift", Key("Sprint"));
             Assert.AreEqual("<Keyboard>/space", Key("Jump"));
             Assert.AreEqual("<Mouse>/leftButton", Key("SpecialAbility"));
-            Assert.AreEqual("<Mouse>/rightButton", Key("Lunge"));
-            Assert.AreEqual("<Mouse>/scroll/up", Key("CurveRight"));
-            Assert.AreEqual("<Mouse>/scroll/down", Key("CurveLeft"));
-            Assert.AreEqual("<Keyboard>/f", Key("Grab"));
+            Assert.AreEqual("<Mouse>/middleButton", Key("Lunge"));
+            Assert.AreEqual("<Mouse>/scroll/up", Key("CurveLeft"));
+            Assert.AreEqual("<Mouse>/scroll/down", Key("CurveRight"));
+            Assert.AreEqual("<Mouse>/rightButton", Key("Grab"));
             Assert.AreEqual("<Keyboard>/f", Key("Interact"));
             Assert.AreEqual("<Keyboard>/e", Key("Skill1"), "the signature ability");
             Assert.AreEqual("<Keyboard>/q", Key("Skill2"), "the attacking / defending ability");
@@ -301,6 +315,67 @@ namespace TumbangPreso.Tests
         /// missing from every group vanishes from the screen with no error at all. That is the
         /// same silent failure mode the `Rebinding` class note warns about for stale rows.
         /// </summary>
+        [Test]
+        public void ActionsUseTheLatestMouseAndInteractionOrder()
+        {
+            var actions = System.Array.Find(Rebinding.Groups, g => g.Title == "ACTIONS").Actions;
+            CollectionAssert.AreEqual(new[] { "SpecialAbility", "Lunge", "Grab", "CurveLeft", "CurveRight", "Interact" }, actions);
+            Assert.AreEqual("Retrieve Slipper / Reset Can", Rebinding.LabelFor("Grab"));
+            Assert.AreEqual("Interact / Ready", Rebinding.LabelFor("Interact"));
+            Assert.AreEqual("Run", Rebinding.LabelFor("Sprint"));
+            Assert.AreEqual("Role Ability", Rebinding.LabelFor("Skill2"));
+            Assert.AreEqual("Ability Descriptions", Rebinding.LabelFor("AbilityInfo"));
+            CollectionAssert.DoesNotContain(System.Array.Find(Rebinding.Groups, g => g.Title == "INTERFACE").Actions, "ReadyUp");
+            Assert.AreEqual("Interact", Rebinding.SettingsRowFor("ReadyUp"));
+            Assert.IsTrue(System.Array.Exists(Rebinding.RebindableActions, a => a == "Interact"));
+            Assert.IsNotNull(LoadActions().FindActionMap("Player").FindAction("Interact"),
+                "Removing a settings row must not remove the existing gameplay action.");
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void InteractRebindingKeepsReadyReachableWithoutErasingAnIndependentSavedKey(bool independentReady)
+        {
+            const string store = "tumbangpreso.bindings";
+            bool hadSaved = PlayerPrefs.HasKey(store);
+            string originalSaved = PlayerPrefs.GetString(store, "");
+            var asset = InputActionAsset.FromJson(LoadActions().ToJson());
+            var keyboard = InputSystem.AddDevice<Keyboard>();
+            try
+            {
+                var interact = asset.FindAction("Player/Interact", true);
+                var ready = asset.FindAction("Player/ReadyUp", true);
+                if (independentReady) ready.ApplyBindingOverride(0, "<Keyboard>/f9");
+                string readyPad = Rebinding.PathFor(asset, "ReadyUp", InputDeviceKind.Gamepad);
+                string interactPad = Rebinding.PathFor(asset, "Interact", InputDeviceKind.Gamepad);
+                string expectedReady = independentReady ? "<Keyboard>/f9" : "<Keyboard>/f10";
+
+                Assert.IsNull(Rebinding.TryRebind(asset, "Interact", keyboard.f10Key));
+                Assert.AreEqual("<Keyboard>/f10", interact.bindings[0].effectivePath);
+                Assert.AreEqual(expectedReady, ready.bindings[0].effectivePath);
+                Assert.AreEqual(readyPad, Rebinding.PathFor(asset, "ReadyUp", InputDeviceKind.Gamepad));
+                Assert.AreEqual(interactPad, Rebinding.PathFor(asset, "Interact", InputDeviceKind.Gamepad));
+
+                // Restart from the shipped asset and the actual stored JSON.
+                asset.RemoveAllBindingOverrides();
+                Rebinding.Load(asset);
+                Assert.AreEqual("<Keyboard>/f10", interact.bindings[0].effectivePath);
+                Assert.AreEqual(expectedReady, ready.bindings[0].effectivePath);
+                Assert.IsNotNull(Rebinding.TryRebind(asset, "Interact", keyboard.spaceKey));
+                Assert.AreEqual("<Keyboard>/f10", interact.bindings[0].effectivePath);
+                Assert.AreEqual(expectedReady, ready.bindings[0].effectivePath);
+
+                Assert.IsNull(Rebinding.TryRebind(asset, "Interact", keyboard.f8Key));
+                Assert.AreEqual(independentReady ? "<Keyboard>/f9" : "<Keyboard>/f8", ready.bindings[0].effectivePath);
+            }
+            finally
+            {
+                InputSystem.RemoveDevice(keyboard); Object.DestroyImmediate(asset);
+                if (hadSaved) PlayerPrefs.SetString(store, originalSaved); else PlayerPrefs.DeleteKey(store);
+                PlayerPrefs.Save(); Rebinding.Invalidate();
+            }
+        }
+
         [Test]
         public void SettingsGroupsCoverEveryActionExactlyOnce()
         {
@@ -322,7 +397,7 @@ namespace TumbangPreso.Tests
 
             foreach (string action in Rebinding.RebindableActions)
             {
-                counted.TryGetValue(action, out int n);
+                counted.TryGetValue(Rebinding.SettingsRowFor(action), out int n);
                 if (n == 0) missing.Add(action);
                 else if (n > 1) twice.Add(action);
             }
@@ -493,7 +568,7 @@ namespace TumbangPreso.Tests
                 ["sean"] = 15.0f,
                 ["zack"] = 20.0f,
                 ["nemu"] = 10.0f,
-                ["phaister"] = VoodooRules.HigopCost,
+                ["phaister"] = VoodooRules.DollCost,
                 ["rafi"] = 16.0f,
                 ["amihan"] = AmihanRules.StormSurgeCost,
                 ["paete"] = PaeteRules.SentryCost,

@@ -10,7 +10,108 @@ matching forward transition. Reusing a round-one/body-zero scope from the previo
 game defeats otherwise correct packet guards. Cosmetic changes do not mint world
 identities; the host's match/rematch transition owns them.
 
+## Kuro Sit Compatibility
+
+Protocol94 changes nemu_skill1 from Terrify to the Wiki Kuro: Sit recall anchor.
+Its stable ID remains; peers with the former behavior cannot join this version.
+The existing prepared-world route sends its anchor and simulation-clock lifetime,
+including authoritative empty state. Restore does not cast, spend resources or
+replay a cue. Recall uses CharacterMotor.Teleport for confinement and authority;
+observer playback cannot move another player's motor. The existing request/event,
+match/round/scene and snapshot-generation gates protect recovery ordering.
+Native lifecycle, real-companion placement and resource checks pass; actual-peer
+qualification remains open. [Evidence](reports/feedback-2026-09-30/nemu-kuro-sit.md).
+
+## Kuro Fetch Delivery
+
+Protocol95 changes nemu_skill2 delivery from forced equipment to a loose slipper
+beside its owner. Only the host moves or lands the slipper; ordinary pickup retains
+its ownership, reach and status gates. A changed owner or non-loose state ends the
+old fetch before any transform write. Delivery, interception and cancellation reuse
+Slipper.HostScatter for the existing terrain, playable bounds and landing state.
+The existing slipper snapshot route publishes the result; no packet layout changes.
+Native delivery/authority checks are recorded in [the Fetch report](reports/feedback-2026-09-30/nemu-kuro-fetch.md).
+Actual-peer transport and reconnect qualification remain open.
+
+## Airburst Compatibility
+
+Protocol102 changes Amihan's existing ultimate outcome to include Whirled and
+an airborne launch of caught loose/in-flight slippers. ApplyWhirled disarms caught
+holders before the slipper pass. Existing immunity and status snapshots remain.
+HostThrow with a null thrower reuses environmental flight and carries no shot
+credit; existing slipper state/pose snapshots distribute flight and landing.
+Body carry still uses the existing owner-delivered Carry message, capped lift7m/s,
+15m/s horizontal speed and the unchanged16m travel budget. No packet layout changes.
+The2.5s accepted windup and stable ability ID remain. Actual peers require matching
+protocol102 builds; local authority checks are not actual-peer qualification.
+
+## Second Wind Compatibility
+
+Protocol104 appends a bounded Second Wind remaining float to Amihan's existing
+scoped flight recovery tail (61bytes). The same match, round, epoch, generation,
+request/event watermark and adopted-clock gates protect it. A non-live round
+cannot restore positive time; simulation-clock age preserves ordinary pauses.
+Drift uses the current35second cooldown with its stable ability ID unchanged.
+
+Amihan opts into owner accepted-cast events through HeroKit.RequiresOwnerCastEvents.
+The existing matching owner request receives its event without activating or
+spending the predicted payload again. Rejected prediction alone grants no speed;
+repeated/older accepted events cannot refresh the timer. Shared ultimate reserved
+activation starts the same clock. Offline successful kit casts use that clock too.
+Round/transport reset clears it. This changes no other kit's event subscription.
+
+## Whirled Reset Compatibility
+
+Protocol105 makes Whirled refuse and cancel can-reset channels on both the local
+Carrier target gate and HostMayChannelReset. The existing status timer and unit
+snapshot carry the state; no new packet field. Other CanAct permissions remain.
+Matching builds are required. Local channel and host-gate tests are not actual peers.
+
+## Earthbound Compatibility
+
+Protocol106 halves Dante incoming horizontal knockback/carry distance in Hero
+Strike. Existing Impact/Carry packets still deliver unmodified host intent to
+the simulating owner; its motor applies the kit factor once. Replica pose adoption
+does not reapply it. Held speed/time use sqrt(distance scale), lift stays unchanged.
+No new packet fields. Classic and default-one kits keep their existing behavior.
+
+## Unstoppable Compatibility
+
+Protocol107 aligns Dante ward/Bastion timing and permits only the cleanse
+signature to cross ordinary impairment in an active unpaused round. Tagged and
+physical trips still refuse it. Host validation uses the same ability eligibility
+as offline input; accepted playback cannot clear a newer tag. No packet layout
+changes. Existing bound timed-kit recovery reads the corrected15second duration.
+
 ## Cosmetic Reworks
+
+Haunted status delivery appends a bounded remaining-time float to SyncUnit before
+Voodoo/Aim. The existing host/loopback/world/body/serial gates remain. Invalid
+remaining values reject before serial/state mutation. Existing status IDs and
+Voodoo semantics remain. Native receiver/actor/HUD cases pass; actual peers and
+full Haunt perception/chase remain separate.
+[Evidence](reports/feedback-2026-09-30/haunted-runtime.md).
+
+Kuro Catch protocol109: nemu_skill2d becomes a host-confirmed five-second upright-can
+protection. Lata retains the ability-owned clock independently of restoration;
+the existing clock snapshot publishes the current maximum. Shared prepared-world
+recovery restores active/empty remaining state without recasting. Approved replicas
+project that clock for local state/presentation; unapproved calls cannot grant it,
+and actual knockdown always resolves on the host. Eight distinct native cases pass;
+actual peer/companion rendering qualification remains separate.
+[Evidence](reports/feedback-2026-09-30/nemu-kuro-catch.md).
+
+Cheska protocol103: the current Wiki7.5s field,1.5s ultimate delay/every-player
+targeting and Chilled shove passive require matching builds. Shared ultimate
+delivery and existing status/slipper snapshot formats stay intact. Five native
+cases and one Core numeric case pass; actual peer delivery remains separate.
+[Evidence](reports/feedback-2026-09-30/cheska-wiki-rules.md).
+
+Frostbite protocol101: a held slipper is required for activation; on body impact
+the host applies Frozen before generic affinity cleanup. The normal slipper and
+motor snapshot routes are unchanged. Native defender/attacker flight, eligibility
+and neutral-control cases pass; actual peer transport remains unqualified.
+[Evidence](reports/feedback-2026-09-30/frostbite-delivery.md).
 
 - Keep an ability's ID when its gameplay identity is unchanged. Display names,
   meshes,clips,effect implementation and cues can change without adding RPCs.
@@ -240,6 +341,53 @@ It does not apply status, modify global time scale or add a second effect on the
 caster. Flair messages carry match/round scope in protocol72. Derive the accent from
 the actual kit identity, not a cosmetic body's roster index.
 
+## Companion Bodies
+
+Protocol90 (HERO-10 v3, Phaister's VOODOO DOLL; Nemu's KURO PLAYS is the same kind of body).
+A companion is a body that is not a player, in a companion seat: `Core.CompanionSeats`,
+`PlayerCount + owner` (4 to 7), at most one per player. The HOST owns it: it spawns it
+(`Abilities.VoodooDollBody.HostSpawn`), runs its brain (an Astig `AIController`) and
+resolves everything it does. It is never in `RoundDirector.Players`; `Companions`,
+`Bodies` and `BodyAt` are how the few sweeps that must see it (tags, shoves, a slipper's
+body blocks, bot tag targets, flair seat lookups) find it.
+
+- Existence: `CompanionSet` (host to all; to one peer inside `HostSyncPeer`) lists every
+  live companion (seat, kind, position, yaw) scoped to the presentation match and round.
+  A receiver keeps or builds a brainless replica (`VoodooDollBody.Spawn(..., brain:false)`)
+  for each listed seat and removes every other companion with its slipper. A list from
+  another match, from an earlier round than the receiver's, or from a peer that is not the
+  host is ignored. The host sends it on every change (`RoundDirector.CompanionsChanged`:
+  spawn, `EndRound`, `ResetForNewMatch`, `Clear`, its owner's `Unregister`).
+- Body state rides the existing seat-keyed routes, which admit companion seats
+  (`MatchRpc.ValidBody`): SyncUnit (pose, statuses, the voodoo snapshot), Teleport,
+  PlayAction, ThrowCharge, SyncSlipper and SlipperPose. `_movementEpochs`,
+  `_unitPoseSerial` and `_slippersBySeat` are sized `CompanionSeats.BodyCount`; the host
+  broadcasts only LIVE companions' slippers, so an empty seat never forces a rescan.
+- Stays four seats wide (`ValidSlot`): abilities, cooldown receipts, timed kits, emotes,
+  scores, seat ownership and departures. A companion has no kit, no peer can claim its
+  seat, and `MatchDirector.AddScore` pays its points to its owner before any Score
+  message exists. Impact and Carry target a peer-simulated body; a companion is always
+  host-simulated, so the host applies them directly.
+- Its slipper is a fifth `Slipper`: seat of origin and owner = the companion's seat,
+  armed into its hand by the host when it attacks, parked (inactive, owner -1) when it
+  defends, destroyed with it.
+- A tag on a companion (`RoundDirector.ResolveTag`) stuns it five seconds where it stands,
+  pays nobody, credits no sabotage and raises `CompanionTagged`, never `Tagged`. Every peer
+  shows the grey stitched X from the replicated stun (`CharacterMotor.IsTagged`), with no
+  message of its own (`Visual.VoodooDollPresence`).
+- Protocol91: the `Score` message carries the scoring BODY after the event (its own seat, or
+  a companion's seat whose owner is the paid `slot`). The host raises
+  `MatchDirector.CompanionScored` in `AddScore`; a client raises it in
+  `ApplyNetworkScoreEvent` only when that body is a companion owned by `slot`. It is
+  presentation (the +100 over the doll in its owner's colour), never a second payment.
+- Protocol92: Phaister's introduction is 6.35 s (the shared phase every peer derives) and
+  the doll's `BodySpeedScale` is 0.5 (`VoodooRules.DollSpeedScale`). Protocol93: the
+  introduction is 6.0 s (it ends on the doll's stare).
+- Presentation owned by the body on every peer: its nameplate (`CharacterNameplate` reads a
+  companion seat: the owner's colour, the body's own name), THE CIRCLE as a portal that shuts
+  3 s after the hand-back, and the marionette control over its head with its wires
+  (`VoodooSkyCircle`, `MarionetteControl`). A rejoiner builds it with the portal already shut.
+
 ## Compatibility And Checks
 
 Protocol73's VoodooBodySnapshot carries DRAINED/HEXED timers and mark/reach state
@@ -310,3 +458,120 @@ Check the behavior actually changed: admission,prediction/confirmation,owner and
 observer presentation,spectators,late join,interruption and cleanup as applicable.
 Reuse unaffected evidence. Cosmetic edits do not justify repeating every network
 suite or character film. Native/real-peer gaps remain explicit until exercised.
+
+## Boulder Slipper Compatibility
+
+Protocol108 appends Concussed affinity4 while preserving Normal0, Fire1, Electric2
+and Frost3. The host imbues a real held slipper and publishes the existing reliable
+slipper state. Held/drop recovery retains this affinity; ordinary throw carries
+it and impact consumes it. Round reset clears unused charges. Accepted observer
+casts cannot mutate it. Existing status snapshots carry2.5second Concussed with
+0.25movement scale. No new packet layout, timer or separate rock is introduced.
+Native delivery/recovery checks do not qualify actual peers or reconnect.
+
+
+## Slipper Contact Lifetime Compatibility
+
+Protocol109 excludes inactive can/bodies from host slipper contact and enforces
+existing flight/airborne ceilings before contact early returns. No duration,
+active collision geometry, scoring or packet layout changes. This resolves the
+hidden tutorial can's indefinite rebound. Native proof is separate from actual
+matching-player/peer qualification.
+
+
+## Continental Drift Compatibility
+
+Protocol111 appends world-field kind15 using existing origin, unit forward,
+radius-as-half-width, first-scale-as-reach, duration and remaining fields. Five
+host-owned bands run0.30s apart; restore skips past outcomes and observers cannot
+apply status. The shared atomic world snapshot generation/match/scene/event gates
+and round retirement apply. Replay is render-only. No packet layout changes.
+The accepted shared ultimate still owns windup/release; cost12, stable ID retained.
+Focused native recovery is not actual matching-peer qualification.
+
+Protocol112 combines the checked Continental Drift111 contract with Haunted's appended SyncUnit timer. Native Haunted evidence is the pre-merge owned candidate; current receiver logic is unchanged by the independent cascade. Actual protocol112 peers/player remain unqualified.
+
+## Kuro Haunt Compatibility
+
+Protocol113 replaces Nemu's old seance with15point host-owned sequential Haunt.
+The existing FamiliarEffect packet carries current ground position/remaining
+round-bounded clock at10Hz and terminal zero. Scope/identity/phase checks remain;
+within-phase round-clock ordering rejects old/duplicate movement. Completed
+lifetimes cannot revive, including completion during windup. Recovery never
+replays a hit/resource spend and live movement does not cancel new basic skills.
+No wire layout changes. Native companion/receiver evidence is separate from
+actual-peer qualification and remaining Haunted nearsight/audio.
+[Evidence](reports/feedback-2026-09-30/nemu-kuro-haunt.md).
+
+## Airburst Current Wiki Compatibility
+
+Protocol114 aligns the accepted Airburst delay to1.5seconds and its fan to60degrees.
+Ordinary cast and reserved post-introduction activation share the same committed
+windup; reservation spends once and cannot release early. Contact and warning
+reach use the measured court diagonal with40mminimum, correcting expanded-court
+misses and the old26mwarning mismatch. No packet layout change. Four distinct
+native cases and two Core cases pass; actual peers/current player remain separate.
+[Evidence](reports/feedback-2026-09-30/airburst-current-wiki.md).
+
+## Crosscurrent Compatibility
+
+Protocol115 replaces Hydro signature charges with a35second cooldown and chooses
+the earliest swept eligible flight contact instead of scene inventory order.
+The stable rafi_skill1 ID and existing host-confirmed cast/resource, current world
+snapshot and slipper state routes remain. Current rendering does not acquire
+resolution authority. Matching clients are required; no packet layout changes.
+[Focused evidence](reports/hero-quality-2026-10-01/hydro-current-checks/README.md).
+
+## Skim Compatibility
+
+Protocol116 changes rafi_skill2 from Mirrorwake to an eight-second held load and
+35second cooldown, appending slipper affinity5. The host continues the same
+throw through bounded first-ground travel, retaining ordinary body/can outcomes
+and ending loose. Existing slipper snapshots carry affinity/poses. The timed-kit
+personal channel binds rafi_skill2 to its remaining load after reliable equipment
+recovery; restoration does not cast. New-round reset permits that round's first
+snapshot; older/duplicate recovery retains the generic scope/sequence gates.
+Current ignores ground-skimming shoes. Historical Mirrorwake world rendering
+remains readable. Actual116peers require their own qualification.
+
+## Water wall Compatibility
+
+Protocol117 appends Waterwall kind16 to existing Rafi field replication. Stable
+rafi_skill2d now places a one-interception curtain. FirstScale holds sampled break
+age only for a spent wall; intact walls require zero. Shared world restore/replay
+uses the existing epoch/round/lifetime gates. Only host crossing resolves a drop;
+rendering adds no collider or authority. Existing water kinds keep their previous
+duration bounds. [Evidence](reports/hero-quality-2026-10-01/wall-tutorial-checks/README.md).
+
+Protocol118 aligns ordinary throw legality: lata knockdown cancels held charge;
+new charge and release require upright lata with restoration protection expired.
+Existing charge cancellation replication is reused. No new payload or transport;
+117and118must not share a match because the accepted input rules differ.
+
+Protocol119 aligns camping entry/clear radii1.5m/2.0m, warning2.5seconds,
+loose-slipper warning7.5seconds and penalty grace15seconds, and fatigue2.5seconds.
+Existing host scoring, incapacity pause, score floor and snapshot fields remain.
+Both sides need matching tuning; no new payload or transport.
+
+## Frostbite Recovery Compatibility
+
+Protocol122 binds Cheska's accepted Frostbite load to the existing TimedKitState
+personal channel with stablecheska_skill2. The load clock ages against the scoped
+round clock; recovery never casts, writes equipment or changes resources. Existing
+match/round/epoch/sequence/hero/ability gates remain. Authoritative empty state and
+settle-once lifecycle prevent late resurrection; reset opens the next round's
+hydration. Four native checks include a restored real Frozen hit. Actual122peers
+remain separate. [Evidence](reports/feedback-2026-09-30/frostbite-recovery.md).
+
+## Objective Cooldown Compatibility
+
+Protocol123adds ObjectiveCooldown, a fixed40byte host grant with match/round/
+epoch, seat, monotonic sequence, bounded objective income and processed-request
+watermark. It follows actual awarded income, not practice/refill or UI effects.
+Current Zack basics reduce by5seconds per objective unit; effect clocks, charge
+counts and ultimate resources remain unchanged. Owner slots with a newer issued
+request, including a settled one, skip the old discount. Valid no-ops still retire
+the sequence. ReliableSequenced ordering accompanies existing resource traffic;
+ordinary live-owner resource snapshots retain their no-refund rule. Native6cases
+pass; actual123peers and full Zack migration remain separate.
+[Evidence](reports/feedback-2026-09-30/amped-up-objective.md).

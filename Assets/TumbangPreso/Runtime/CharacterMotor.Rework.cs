@@ -115,6 +115,7 @@ namespace TumbangPreso
         {
             if (!MayMutateGameplayState()) return;
             _whirledLeft = 0.0f; _chilledLeft = 0.0f;
+            _hauntedLeft = 0.0f;
             _concussedLeft = 0.0f; _fearedLeft = 0.0f; _disorientedLeft = 0.0f; _vulnerableLeft = 0.0f;
             if (IsFrozen) { _stunLeft = 0.0f; _stunTotal = 0.0f; }
             EndRooted();

@@ -161,7 +161,7 @@ namespace TumbangPreso.PlayTests
         }
 
         [Test]
-        public void FamiliarRecoveryCannotReplaceAnActiveOrCompletedAcceptedLifetime()
+        public void FamiliarRecoveryMovesAnActiveHauntAndCannotResurrectItsCompletedLifetime()
         {
             var system = Owner("nemu"); var body = system.GetComponent<CharacterMotor>();
             var kit = (NemuHeroKit)system.Kit;
@@ -193,7 +193,7 @@ namespace TumbangPreso.PlayTests
                 bad.Scope.Round = 1; bad.Scope.Epoch++; Assert.IsFalse(Apply(bad));
                 bad = state; bad.HeroId = new FixedString64Bytes("other"); Assert.IsFalse(Apply(bad));
                 bad = state; bad.AbilityId = new FixedString64Bytes("other"); Assert.IsFalse(Apply(bad));
-                bad = state; bad.RoundClock = 105; Assert.IsFalse(Apply(bad));
+                bad = state; bad.Remaining = kit.Ultimate.Duration + 1; Assert.IsFalse(Apply(bad));
                 GameServices.Round.ApplySnapshot(100, false, 0, true);
                 Assert.IsFalse(Apply(state), "A non-live round must not restore the effect.");
                 GameServices.Round.ApplySnapshot(100, true, 0, true);
@@ -202,16 +202,33 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(Apply(state)); Assert.IsTrue(pet.IsDevouring);
                 Assert.AreEqual(4, kit.Ultimate.AcceptedUltimatePhase); Assert.AreEqual(4, kit.Ultimate.DurationRemaining, .001f);
                 Assert.AreEqual(meter, kit.UltimateCharge);
-                var field = Object.FindFirstObjectByType<HeroHazards.SeanceVoidComponent>(); Assert.IsNotNull(field);
+                Assert.IsEmpty(Object.FindObjectsByType<HeroHazards.SeanceVoidComponent>(FindObjectsSortMode.None));
                 typeof(HeroAbility).GetProperty("DurationRemaining").SetValue(kit.Skill2, 2f);
                 Assert.IsFalse(Apply(state)); Assert.AreEqual(2, kit.Skill2.DurationRemaining);
-                Assert.AreSame(field, Object.FindFirstObjectByType<HeroHazards.SeanceVoidComponent>());
+                var moved = state; moved.RoundClock = 99; moved.Position = new Vector3(2, 0, 2); moved.Remaining = 3;
+                Assert.IsTrue(Apply(moved)); Assert.AreEqual(moved.Position.x, pet.DevourGround.x, .001f);
+                Assert.AreEqual(3, kit.Ultimate.DurationRemaining, .001f);
+                Assert.IsFalse(Apply(state), "An older movement snapshot rewound the chase.");
+                moved.RoundClock = 98; moved.Remaining = 0;
+                Assert.IsTrue(Apply(moved)); Assert.IsFalse(pet.IsDevouring);
+                Assert.IsFalse(Apply(state), "A terminal lifetime was resurrected by delayed movement.");
                 bad = state; bad.Phase = 3; Assert.IsFalse(Apply(bad));
                 var context = new AbilityContext(body, body.GetComponent<Carrier>(), body.GetComponent<CombatVerbs>());
                 kit.Ultimate.EndEarly(context); pet.StopDevouring();
                 Assert.IsFalse(Apply(state), "A completed lifetime was resurrected.");
                 Assert.IsFalse(pet.IsDevouring); Assert.AreEqual(0, kit.Ultimate.DurationRemaining);
                 Assert.AreEqual(2, kit.Skill2.DurationRemaining);
+                typeof(HeroAbility).GetProperty("Windup").SetValue(kit.Ultimate, .4f);
+                using (NetCue.SuppressRelay()) kit.Ultimate.Activate(context);
+                kit.Ultimate.AdoptUltimatePhase(5);
+                Assert.IsTrue(kit.Ultimate.IsWindingUp);
+                var closedDuringWindup = state; closedDuringWindup.Phase = 5;
+                closedDuringWindup.Remaining = 0; closedDuringWindup.RoundClock = 97;
+                Assert.IsTrue(Apply(closedDuringWindup));
+                Assert.IsFalse(kit.Ultimate.IsWindingUp);
+                using (NetCue.SuppressRelay()) kit.Ultimate.Tick(context, 1);
+                Assert.IsFalse(kit.Ultimate.IsActive, "Delayed activation restarted a terminal lifetime.");
+                Assert.IsFalse(pet.IsDevouring);
             }
             finally { Object.DestroyImmediate(root); Object.DestroyImmediate(petRoot); }
         }
@@ -312,6 +329,188 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(5, kit.Restorations);
             }
             finally { Object.DestroyImmediate(root); }
+        }
+
+        [Test] public void FreshCheskaRecoveryRestoresFrostbiteWithoutRecastingOrRefundingResources()
+        {
+            var system = Owner("cheska"); var body = system.GetComponent<CharacterMotor>();
+            var kit = (CheskaHeroKit)system.Kit;
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(body);
+            GameServices.Match.ApplySnapshot(new int[4], 1, true);
+            GameServices.Round.ApplySnapshot(98, true, 0, true);
+            kit.AttackingSkill.ApplyNetworkSnapshot(30, 0, true);
+            var root = new GameObject("Frostbite recovery receiver"); root.SetActive(false);
+            var router = root.AddComponent<MatchRpc>(); typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 123L);
+            const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var apply = typeof(MatchRpc).GetMethod("ApplyTimedKitState", hidden);
+            bool Apply(TimedKitState value) => (bool)apply.Invoke(router, new object[] { value, 98f });
+            var state = TimedKitState.Capture(kit, new TimedKitSnapshot(kit.AttackingSkill, 7), 1,
+                new GameplayActionScope { Match = 123, Round = 1, Epoch = body.MovementEpoch }, 1, 100);
+            try
+            {
+                Assert.IsTrue(state.IsValid);
+                Assert.IsTrue(Apply(state), "A valid returning Cheska cannot bind her live Frostbite state.");
+                Assert.IsTrue(kit.IsFrostbiteLoaded);
+                Assert.AreEqual(5, kit.AttackingSkill.DurationRemaining, .001f);
+                Assert.AreEqual(30, kit.AttackingSkill.CooldownRemaining, .001f);
+                Assert.AreEqual(0, kit.UltimateCharge);
+                Assert.IsFalse(Apply(state), "The same recovery sequence must not refresh the load.");
+                kit.ConsumeFrostbite(); kit.Tick(new AbilityContext(body, null, null), .01f);
+                state.Sequence = 2; state.PersonalRemaining = 8;
+                Assert.IsTrue(Apply(state), "A valid no-op should retire the new sequence.");
+                Assert.IsFalse(kit.IsFrostbiteLoaded, "Late hydration resurrected an already-spent load.");
+            }
+            finally { Object.DestroyImmediate(root); }
+        }
+
+        [Test] public void FrostbiteRecoveryRejectsInvalidLoadsWithoutPoisoningTheFirstValidState()
+        {
+            var system = Owner("cheska"); var body = system.GetComponent<CharacterMotor>();
+            var kit = (CheskaHeroKit)system.Kit;
+            var replication = (ITimedKitReplication)kit;
+            foreach (float invalid in new[] { float.NaN, float.PositiveInfinity, -1f, CryoRules.FrostbiteLoadSeconds + 1 })
+                Assert.IsFalse(replication.RestoreTimedKit(body, new TimedKitSnapshot(kit.AttackingSkill, invalid)));
+            Assert.IsFalse(replication.RestoreTimedKit(null, new TimedKitSnapshot(kit.AttackingSkill, 5)));
+            body.IsDefender = true;
+            Assert.IsFalse(replication.RestoreTimedKit(body, new TimedKitSnapshot(kit.AttackingSkill, 5)));
+            body.IsDefender = false;
+            Assert.IsTrue(replication.RestoreTimedKit(body, new TimedKitSnapshot(kit.AttackingSkill, 5)));
+            Assert.IsFalse(replication.RestoreTimedKit(body, new TimedKitSnapshot(kit.AttackingSkill, 8)));
+            Assert.AreEqual(5, kit.AttackingSkill.DurationRemaining);
+            Assert.AreSame(kit.AttackingSkill, replication.CaptureTimedKit().PersonalAbility);
+            Assert.AreEqual(5, replication.CaptureTimedKit().PersonalRemaining);
+        }
+
+        [Test] public void FrostbiteRecoveryExpiresAndResetsWithoutGrantingASecondLoad()
+        {
+            var system = Owner("cheska"); var body = system.GetComponent<CharacterMotor>();
+            var kit = (CheskaHeroKit)system.Kit; var replication = (ITimedKitReplication)kit;
+            var ctx = new AbilityContext(body, null, null);
+            Assert.IsTrue(replication.RestoreTimedKit(body, new TimedKitSnapshot(kit.AttackingSkill, 2)));
+            kit.Tick(ctx, 2.1f);
+            Assert.IsFalse(kit.IsFrostbiteLoaded); Assert.IsFalse(kit.AttackingSkill.IsActive);
+            Assert.AreEqual(0, replication.CaptureTimedKit().PersonalRemaining);
+            Assert.IsFalse(replication.RestoreTimedKit(body, new TimedKitSnapshot(kit.AttackingSkill, 7)));
+            kit.ResetForRound(ctx);
+            Assert.IsTrue(replication.RestoreTimedKit(body, new TimedKitSnapshot(kit.AttackingSkill, 3)));
+            kit.Reset(); Assert.IsFalse(kit.IsFrostbiteLoaded);
+            Assert.IsFalse(replication.RestoreTimedKit(body, new TimedKitSnapshot(kit.AttackingSkill, 0)));
+            Assert.IsFalse(replication.RestoreTimedKit(body, new TimedKitSnapshot(kit.AttackingSkill, 5)), "Authoritative empty state must close late hydration.");
+        }
+
+        [Test] public void AmpedUpUsesTheRealObjectiveAwardWithoutDiscountingPracticeRefills()
+        {
+            var system = Owner("zack"); var body = system.GetComponent<CharacterMotor>();
+            NetAuthority.Provider = new ObservingHost();
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(body);
+            GameServices.Match.ApplySnapshot(new int[4], 1, true);
+            GameServices.Round.ApplySnapshot(100, true, 0, true);
+            var kit = system.Kit;
+            kit.Skill1.ApplyNetworkSnapshot(20, 0, true);
+            system.OnLataKnocked();
+            Assert.AreEqual(15, kit.Skill1.CooldownRemaining, .001f, "The awarded objective point never reached Amped-Up.");
+            Assert.AreEqual(1, kit.UltimateCharge);
+            system.OnThrowReleased();
+            Assert.AreEqual(14.25f, kit.Skill1.CooldownRemaining, .001f);
+            system.OnOwnSlipperRetrieved();
+            Assert.AreEqual(11.75f, kit.Skill1.CooldownRemaining, .001f);
+            kit.AddUltimateCharge(kit.UltimateCost);
+            Assert.AreEqual(11.75f, kit.Skill1.CooldownRemaining, .001f, "A non-objective practice/refill changed cooldowns.");
+        }
+
+        private MatchRpc ObjectiveReceiver(out HeroAbilitySystem system, out GameplayActionScope scope)
+        {
+            system = Owner("zack"); var body = system.GetComponent<CharacterMotor>();
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(body);
+            GameServices.Match.ApplySnapshot(new int[4], 1, true); GameServices.Round.ApplySnapshot(100, true, 0, true);
+            system.Kit.Skill1.ApplyNetworkSnapshot(20, 0, true); system.Kit.AttackingSkill.ApplyNetworkSnapshot(8, 1, true);
+            var root = new GameObject("Objective grant receiver"); root.SetActive(false);
+            var router = root.AddComponent<MatchRpc>(); typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 123L);
+            scope = new GameplayActionScope { Match = 123, Round = 1, Epoch = body.MovementEpoch }; return router;
+        }
+        private static bool ObjectiveGrant(MatchRpc router, GameplayActionScope scope, long sequence, float amount = 1, long processed = 0)
+            => (bool)typeof(MatchRpc).GetMethod("ApplyObjectiveCooldown", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .Invoke(router, new object[] { scope, 1, sequence, amount, processed });
+
+        [Test] public void AmpedUpOwnerGrantIsScopedAndIdempotent()
+        {
+            var router = ObjectiveReceiver(out var system, out var scope);
+            Assert.IsTrue(ObjectiveGrant(router, scope, 1));
+            Assert.AreEqual(15, system.Kit.Skill1.CooldownRemaining);
+            Assert.AreEqual(3, system.Kit.AttackingSkill.CooldownRemaining);
+            Assert.AreEqual(1, system.Kit.AttackingSkill.ChargesRemaining);
+            Assert.AreEqual(0, system.Kit.UltimateCharge);
+            Assert.IsFalse(ObjectiveGrant(router, scope, 1));
+            Assert.AreEqual(15, system.Kit.Skill1.CooldownRemaining);
+        }
+
+        [Test] public void AmpedUpDoesNotDiscountANewerPredictedOrSettledCast()
+        {
+            var router = ObjectiveReceiver(out var system, out var scope);
+            Assert.IsTrue(system.TrackSkillRequest(0, 2));
+            Assert.IsTrue(ObjectiveGrant(router, scope, 1, processed: 1));
+            Assert.AreEqual(20, system.Kit.Skill1.CooldownRemaining);
+            Assert.AreEqual(3, system.Kit.AttackingSkill.CooldownRemaining);
+            Assert.IsTrue(ObjectiveGrant(router, scope, 2, processed: 2));
+            Assert.AreEqual(15, system.Kit.Skill1.CooldownRemaining);
+            system.ResolveSkillReceipt(0, 2, true, 15, 0);
+            Assert.IsTrue(ObjectiveGrant(router, scope, 3, processed: 1));
+            Assert.AreEqual(15, system.Kit.Skill1.CooldownRemaining, "Settling a cast must not let an older award discount it.");
+        }
+
+        [Test] public void AmpedUpBadScopesAmountsAndBindingsCannotPoisonTheCurrentGrant()
+        {
+            var router = ObjectiveReceiver(out var system, out var scope); var bad = scope;
+            bad.Match--; Assert.IsFalse(ObjectiveGrant(router, bad, 99));
+            bad = scope; bad.Round++; Assert.IsFalse(ObjectiveGrant(router, bad, 99));
+            bad = scope; bad.Epoch++; Assert.IsFalse(ObjectiveGrant(router, bad, 99));
+            foreach (float amount in new[] { 0f, -1f, 2f, float.NaN, float.PositiveInfinity })
+                Assert.IsFalse(ObjectiveGrant(router, scope, 99, amount));
+            Assert.IsFalse(ObjectiveGrant(router, scope, 99, processed: -1));
+            GameServices.Round.ApplySnapshot(100, false, 0, true);
+            Assert.IsFalse(ObjectiveGrant(router, scope, 99));
+            GameServices.Round.ApplySnapshot(100, true, 0, true);
+            Assert.IsTrue(ObjectiveGrant(router, scope, 1));
+            system.BindHero("cheska"); Assert.IsFalse(ObjectiveGrant(router, scope, 2));
+        }
+
+        [Test] public void AmpedUpNamedPacketHonorsEnvelopeFramingAndHostAuthority()
+        {
+            var router = ObjectiveReceiver(out var system, out var scope);
+            byte[] Packet(long sequence)
+            {
+                using var writer = new FastBufferWriter(48, Allocator.Temp);
+                writer.WriteValueSafe(0UL); writer.WriteNetworkSerializable(scope); writer.WriteValueSafe(1);
+                writer.WriteValueSafe(sequence); writer.WriteValueSafe(1f); writer.WriteValueSafe(0L); return writer.ToArray();
+            }
+            void Receive(byte[] bytes, ulong sender = 0)
+            {
+                using var reader = new FastBufferReader(bytes, Allocator.Temp); reader.Seek(8);
+                typeof(MatchRpc).GetMethod("OnObjectiveCooldownMsg", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                    .Invoke(router, new object[] { sender, reader });
+            }
+            var bytes = Packet(1); Receive(bytes, 1); Assert.AreEqual(20, system.Kit.Skill1.CooldownRemaining);
+            var shortBytes = new byte[bytes.Length - 1]; System.Array.Copy(bytes, shortBytes, shortBytes.Length);
+            Receive(shortBytes); Assert.AreEqual(20, system.Kit.Skill1.CooldownRemaining);
+            var suffix = new byte[bytes.Length + 1]; System.Array.Copy(bytes, suffix, bytes.Length);
+            Receive(suffix); Assert.AreEqual(20, system.Kit.Skill1.CooldownRemaining);
+            Receive(bytes); Assert.AreEqual(15, system.Kit.Skill1.CooldownRemaining);
+            Receive(bytes); Assert.AreEqual(15, system.Kit.Skill1.CooldownRemaining);
+            NetAuthority.Provider = new ObservingHost(); Receive(Packet(2)); Assert.AreEqual(15, system.Kit.Skill1.CooldownRemaining);
+        }
+
+        [Test] public void AmpedUpNeverBanksCooldownOrChangesChargesUltimateAndOtherKits()
+        {
+            var system = Owner("zack"); var kit = system.Kit;
+            kit.Skill1.ApplyNetworkSnapshot(1, 0, true); kit.AttackingSkill.ApplyNetworkSnapshot(3, 1, true);
+            kit.Ultimate.ApplyNetworkSnapshot(9, 0, true);
+            kit.OnObjectiveAwarded(1); kit.OnObjectiveAwarded(1);
+            Assert.AreEqual(0, kit.Skill1.CooldownRemaining); Assert.AreEqual(0, kit.AttackingSkill.CooldownRemaining);
+            Assert.AreEqual(1, kit.AttackingSkill.ChargesRemaining); Assert.AreEqual(9, kit.Ultimate.CooldownRemaining);
+            var other = new CheskaHeroKit(); other.Skill1.ApplyNetworkSnapshot(20, 0, true); other.OnObjectiveAwarded(1);
+            Assert.AreEqual(20, other.Skill1.CooldownRemaining);
+            kit.Skill1.ApplyNetworkSnapshot(20, 0, true); kit.PracticeMode = true; system.OnLataKnocked();
+            Assert.AreEqual(20, kit.Skill1.CooldownRemaining);
         }
 
         [Test]
@@ -903,7 +1102,7 @@ namespace TumbangPreso.PlayTests
             var receive = typeof(MatchRpc).GetMethod("OnSyncUnitMsg", flags);
             var state = new VoodooBodySnapshot { Drained = 2, Hexed = 3, MarkKind = 2, MarkSource = 0,
                 MarkAge = 12, ReachKind = 1, ReachTarget = 2, ReachElapsed = 1 };
-            void Deliver(ulong serial, VoodooBodySnapshot data, long match = 123, int round = 1, int epoch = 0)
+            void Deliver(ulong serial, VoodooBodySnapshot data, long match = 123, int round = 1, int epoch = 0, float haunted = 0)
             {
                 using var writer = new FastBufferWriter(304, Allocator.Temp);
                 writer.WriteValueSafe(1);
@@ -921,9 +1120,9 @@ namespace TumbangPreso.PlayTests
                 writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f);
                 writer.WriteValueSafe((byte)0); writer.WriteValueSafe((byte)0);
                 writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f);
-                writer.WriteValueSafe(Vector3.zero); writer.WriteValueSafe(0L);
+                writer.WriteValueSafe(Vector3.zero); writer.WriteValueSafe(0L); writer.WriteValueSafe(haunted);
                 writer.WriteNetworkSerializable(data); writer.WriteNetworkSerializable(default(AbilityAimSnapshot));
-                Assert.AreEqual(208 + VoodooBodySnapshot.WireBytes, writer.Length);
+                Assert.AreEqual(212 + VoodooBodySnapshot.WireBytes, writer.Length);
                 using var reader = new FastBufferReader(writer, Allocator.Temp);
                 receive.Invoke(receiver, new object[] { NetworkManager.ServerClientId, reader });
             }
@@ -953,6 +1152,16 @@ namespace TumbangPreso.PlayTests
             var invalid = state; invalid.Drained = float.NaN;
             Deliver(3, invalid);
             Assert.IsFalse(body.IsDrained); Assert.AreEqual(1, ended);
+            Deliver(3, finish, haunted: 3);
+            Assert.AreEqual(3f, body.HauntedLeft, .001f);
+            Deliver(4, finish, haunted: float.NaN);
+            Deliver(4, finish, haunted: -1);
+            Deliver(4, finish, haunted: StatusRules.HauntedSeconds + .1f);
+            Assert.AreEqual(3f, body.HauntedLeft, .001f, "Invalid Haunted packets mutated current state.");
+            Deliver(4, finish, haunted: 2);
+            Assert.AreEqual(2f, body.HauntedLeft, .001f, "Invalid packets consumed the pose serial.");
+            Deliver(5, finish, haunted: 0);
+            Assert.IsFalse(body.IsHaunted);
             Object.Destroy(root);
             yield return null;
         }
@@ -1437,42 +1646,6 @@ namespace TumbangPreso.PlayTests
             Assert.AreSame(plant, PaetePlant.OwnedBy(1));
             Object.Destroy(root);
             yield return null;
-        }
-
-        [UnityTest, Timeout(30000)]
-        public IEnumerator OmenRecoverySeeksAuthoredVisualTimeAndEmptyStateEndsItsGrant()
-        {
-            var system = Owner("phaister");
-            var motor = system.GetComponent<CharacterMotor>();
-            var kit = (PhaisterHeroKit)system.Kit;
-            Assert.AreSame(kit.Ultimate, system.FindPreparedWorldAbility(kit.Ultimate.Id));
-            Assert.IsNull(system.FindPreparedWorldAbility(kit.Skill1.Id));
-            var centre = new Vector3(-10, 4, -8);
-            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
-            kit.RestoreCoven(motor, centre, 0, 2);
-            var hole = Object.FindAnyObjectByType<VoodooBlackHole>();
-            Assert.IsNotNull(hole);
-            var omen = hole.GetComponentInChildren<Visual.PhaisterOmen>();
-            float expected = kit.Ultimate.Windup + kit.Ultimate.Duration - 2;
-            Assert.AreEqual(expected, (float)typeof(Visual.PhaisterOmen).GetField("_t", flags).GetValue(omen), .001f);
-            Assert.AreEqual(2, (float)typeof(VoodooBlackHole).GetField("_life", flags).GetValue(hole), .001f);
-            Assert.Greater(omen.LifeSeconds, kit.Ultimate.Windup + kit.Ultimate.Duration,
-                "Recovery shortened the authored timeline instead of seeking it.");
-            kit.RestoreCoven(motor, centre, 0, 0);
-            Assert.IsFalse(kit.Ultimate.IsActive);
-            yield return null;
-            Assert.IsNull(Object.FindAnyObjectByType<VoodooBlackHole>());
-
-            kit.RestoreCoven(motor, centre, .3f, kit.Ultimate.Duration);
-            hole = Object.FindAnyObjectByType<VoodooBlackHole>();
-            omen = hole.GetComponentInChildren<Visual.PhaisterOmen>();
-            Assert.AreEqual(kit.Ultimate.Windup - .3f,
-                (float)typeof(Visual.PhaisterOmen).GetField("_t", flags).GetValue(omen), .001f);
-            Assert.IsTrue(kit.Ultimate.IsWindingUp);
-            kit.RestoreCoven(motor, centre, 0, 0);
-            Assert.IsFalse(kit.Ultimate.IsWindingUp);
-            yield return null;
-            Assert.IsNull(Object.FindAnyObjectByType<VoodooBlackHole>());
         }
 
         [Test]

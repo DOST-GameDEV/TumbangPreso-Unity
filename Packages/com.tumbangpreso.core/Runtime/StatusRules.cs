@@ -68,6 +68,9 @@ namespace TumbangPreso.Core
         /// <summary>Voodoo (CURSE: HEX). *"Hallucinations of slippers randomly appear on your screen for 7.5
         /// seconds."* Local presentation on the victim's screen only, like Disoriented.</summary>
         Hexed = 11,
+
+        /// <summary>Nemu. Reduced perception; status immunity does not prevent it.</summary>
+        Haunted = 12,
     }
 
     /// <summary>One row of the owner's status table.</summary>
@@ -128,9 +131,9 @@ namespace TumbangPreso.Core
         /// <summary>*"Prevents movement or interaction for 5 seconds."* The tag's own number.</summary>
         public const float TaggedSeconds = Balance.TagStunTime;
 
-        /// <summary>Concussed: 3 s (set in the plan), speed x0.7, no sprint, aim wobble up to 9 degrees.</summary>
-        public const float ConcussedSeconds = 3.0f;
-        public const float ConcussedSpeedScale = 0.7f;
+        /// <summary>Concussed: 2.5 s, speed x0.25, no sprint, aim wobble up to 9 degrees.</summary>
+        public const float ConcussedSeconds = 2.5f;
+        public const float ConcussedSpeedScale = 0.25f;
         public const float ConcussedAimWobbleDegrees = 9.0f;
 
         /// <summary>Feared: 1.5 s of fleeing from the source at run speed; the held slipper drops at once.</summary>
@@ -154,12 +157,13 @@ namespace TumbangPreso.Core
 
         /// <summary>*"Hallucinations of slippers randomly appear on your screen for 7.5 seconds."*</summary>
         public const float HexedSeconds = 7.5f;
+        public const float HauntedSeconds = 7.5f;
 
         private static readonly StatusRule[] Table =
         {
             new StatusRule(StatusKind.Whirled, "WHIRLED",
-                "Drops slipper if currently in hand. Prevents slipper retrieval for 2.5 seconds.",
-                "Disabled Slipper Retrieval",
+                "Drops slipper if currently in hand. Prevents slipper retrieval and can resetting for 2.5 seconds.",
+                "Disabled Slipper Retrieval and Can Reset",
                 WhirledSeconds, 1.0f, blocksMovement: false, blocksInteraction: false,
                 blocksSlipperRetrieval: true, dropsHeldSlipper: true, removable: true, immunityApplies: true),
             new StatusRule(StatusKind.Chilled, "CHILLED",
@@ -186,7 +190,7 @@ namespace TumbangPreso.Core
                 blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
             // ⚠️ APPENDED (the enum's note). ABILITY-2.
             new StatusRule(StatusKind.Concussed, "CONCUSSED",
-                "Dizzy for 3 seconds: 30% slower, no sprint, and throws wobble off aim.",
+                "Dizzy for 2.5 seconds: 75% slower, no sprint, and throws wobble off aim.",
                 "Dizzy: Slower, No Sprint, Wobbly Aim",
                 ConcussedSeconds, ConcussedSpeedScale, blocksMovement: false, blocksInteraction: false,
                 blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
@@ -216,6 +220,11 @@ namespace TumbangPreso.Core
                 "Hallucinations",
                 HexedSeconds, 1.0f, blocksMovement: false, blocksInteraction: false,
                 blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: true),
+            new StatusRule(StatusKind.Haunted, "HAUNTED",
+                "For 7.5 seconds, can and slipper HUD markers are hidden, sight is reduced and audio is muffled.",
+                "Reduced Perception",
+                HauntedSeconds, 1.0f, blocksMovement: false, blocksInteraction: false,
+                blocksSlipperRetrieval: false, dropsHeldSlipper: false, removable: true, immunityApplies: false),
         };
 
         public static IReadOnlyList<StatusRule> All => Table;

@@ -234,6 +234,8 @@ namespace TumbangPreso.Visual
             { "hero-phaister-hexreach", new[] { "hero-phaister-hexreach", "interact-right" } },
             { "hero-phaister-hexstab", new[] { "hero-phaister-hexstab", "attack-melee-right" } },
             { "hero-rafi-cut", new[] { "hero-rafi-cut", "interact-left" } },
+            { "hero-rafi-skim", new[] { "hero-rafi-skim", "interact-left" } },
+            { "hero-rafi-wall", new[] { "hero-rafi-wall", "interact-left" } },
             { "hero-rafi-feint", new[] { "hero-rafi-feint", "attack-melee-right" } },
             { "hero-rafi-breakwater", new[] { "hero-rafi-breakwater", "holding-both-shoot" } },
             { "hero-amihan-dash", new[] { "hero-amihan-dash", "attack-kick-right", Sprint } },
@@ -509,10 +511,10 @@ namespace TumbangPreso.Visual
         private void ReleaseGraph()
         {
             ClearIntroductionPose();
+            ClearTagBody();
+            ClearResetRaise();
             ClearLocomotionArms();
             ClearThrowBody();
-            ClearResetRaise();
-            ClearTagBody();
             ClearLocomotionWeight();
             ClearChargePose();
             _throwReleaseTime=-1;_lastThrowPose=ThrowGesture.Rest;
@@ -546,10 +548,10 @@ namespace TumbangPreso.Visual
         {
             RestoreEdgeRecoveryPose();
             RestoreIntroductionPose();
+            RestoreTagBody();
+            RestoreResetRaise();
             RestoreLocomotionArms();
             RestoreThrowBody();
-            RestoreResetRaise();
-            RestoreTagBody();
             RestoreLocomotionWeight();
             if (!_graph.IsValid()) return;
 
@@ -991,10 +993,10 @@ namespace TumbangPreso.Visual
         {
             RestoreEdgeRecoveryPose();
             RestoreIntroductionPose();
+            RestoreTagBody();
+            RestoreResetRaise();
             RestoreLocomotionArms();
             RestoreThrowBody();
-            RestoreResetRaise();
-            RestoreTagBody();
             RestoreLocomotionWeight();
             try
             {

@@ -17,6 +17,754 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CAN-VERTICAL-CONTACT-1001: repaired
+
+Actual above-can flight false hit reproduced. Finite Visual-height contact now
+passes real high-miss/low-hit and all six authored skin boundary controls (2/2
+native cases). Horizontal stance window retained. Protocol120; new player/peer
+qualification remains separate. [Evidence](reports/feedback-2026-09-30/can-height-checks/README.md).
+
+
+### TUTORIAL-THROW-REGRESSION-1001: repaired
+
+Harry's new tutorial input refusal is reproduced: hidden can restoration stays
+at 1.25 seconds. A narrow offline route exception passes two native checks,
+including actual charge/release and an actual listening-host control.
+[Evidence](reports/feedback-2026-09-30/tutorial-throw-checks/README.md). The above-can false-hit report is repaired in CAN-VERTICAL-CONTACT-1001; the
+slightly thicker centre-dot outline also passes its native capture check; prior shipped evidence is retained.
+
+
+### HUD-LAYOUT-1001: Harry's supplied layout
+
+Three left-side statuses, separate warning/action regions, in-panel recovery,
+roomier match bar and count-fit pips implemented. Six distinct native cases pass,
+including actual bound recovery and requirement-refusal/corrected-cast behavior.
+[Evidence](reports/feedback-2026-09-30/harry-hud-checks/README.md).
+Score feed now has three-second lifetime and smooth interrupted top-down reflow;
+one native case and small capture pass.
+[Feed evidence](reports/feedback-2026-09-30/feed-stack-checks/README.md).
+Live status stacking now retains the catalog with adaptive bottom-up columns,
+real timers and a Haunted icon. Two distinct native cases pass; dense case
+repeated after sprite import. [Status evidence](reports/feedback-2026-09-30/status-stack-checks/README.md).
+Announcement rules now implemented: first/late/multi knockdown50, catch2+25
+with five-second resettable window and queued2.5second banners. Core8/8 and five
+distinct native cases pass across final runs, with one bounded fixture repair.
+Protocol121; no new player/actual-peer qualification.
+[Announcement evidence](reports/feedback-2026-09-30/announcement-checks/README.md).
+
+
+### PENALTY-REVAMP-1001: current Harry timing revision
+
+Camping 1.5/2.0 m with warning at 2.5 s and penalty state at 5 s; slipper warning
+at 7.5 s and penalty at 15 s; fatigue 2.5 s. Native 2/2 and focused Core 4/4 pass.
+Existing circle reads the new grace interval, with incapacity pause and zero floor
+retained. Protocol 119; no new player/peer claim.
+[Evidence](reports/feedback-2026-09-30/penalty-timing-checks/README.md).
+
+
+### ROUND-STATUS-1001: Harry's carryover report
+
+Tagged and trip stacks now clear through the existing round reset. Native
+baseline reproduces5seconds of Tagged leaking; final4/4passes with field/map/
+replay boundary controls. [Evidence](reports/feedback-2026-09-30/round-status-checks/README.md).
+The centre-dot part also passes two native checks, with small/wide captures.
+[Reticle evidence](reports/feedback-2026-09-30/centre-dot-checks/README.md).
+The requested subtle1.5unit black outline is now applied with one native check
+and inspected small/wide frames. [Outline evidence](reports/feedback-2026-09-30/dot-outline-checks/README.md).
+
+### CAN-DOWN-THROW-1001: current Feedback rule
+
+Can knockdown cancels charge; new charge/release wait for upright can with
+restoration protection gone. Native1case and focused Core1case pass after
+a reproduced baseline failure. Protocol118, no fresh player/peer claim.
+[Evidence](reports/feedback-2026-09-30/can-down-throw-checks/README.md).
+
+
+### HERO-QUALITY-1001: full-roster research and durable plans
+
+Owner priority October1: finish the current Continental Drift unit, then thoroughly
+research and plan every hero's skills, cutscenes, animation, VFX, SFX and UI before
+resuming other feedback/manual hunt. Analyze finalized Paete/Phaister as quality
+references without copying or redesigning them. Fill missing Hydro/Pyro/Electro
+Wiki entries only after that research, ending each new entry with
+`(Made by Harry Gaymez)`. Skill SFX are reauthorized. Preserve human-authored
+anchors and distinguish proposed design from implemented behavior.
+[Research and plans](reports/hero-quality-2026-10-01/README.md).
+Draft coverage now includes all nine heroes, missing-kit alternatives and scoped
+Phaister Hex refinement. Thirteen proposed Wiki entries are published with
+attribution; final native film/listening/implementation remain open. External
+reference video access was unavailable and is not claimed.
+
+
+### HYDRO-WATERWALL-1001: single-use defending curtain
+
+Gameplay implemented; three native cases and current six Core cases pass.
+Transparency/broken-state views inspected, but the first sheet reads as glass
+and needs the planned distinct body/FPP/material/audio pass. Protocol117.
+Shipped fb41d20e, integrated845e65ad and remote verified. [Evidence](reports/hero-quality-2026-10-01/wall-tutorial-checks/README.md).
+Dedicated body/FPP lift and age-driven edge rivulets now have a native motion
+check and a shipping clip reference; review corrected cheek crowding and a missing
+FPP route. Dedicated Skim/Water wall illustrations and job labels now pass
+native resource/live-deck binding checks (aef85a28). Settled legibility joins the
+Skim/coating review now confirms the settled Water wall icon; SFX and final
+broader presentation review remain.
+Waterwall optical uniformity now has an uneven flow/crown/runoff pass with
+one focused native motion/contact/collapse check and inspected court views.
+[Surface evidence](reports/hero-quality-2026-10-01/wall-surface-checks/README.md).
+[Motion evidence](reports/hero-quality-2026-10-01/wall-motion-checks/README.md).
+Skim now has a dedicated shipping body/FPP coating action; initial native1/1
+qualifies routing, actual motion and retained held-shoe identity. Visual capture
+retry failed before filming; sole-contact/observer review remains open.
+[Skim evidence and limits](reports/hero-quality-2026-10-01/skim-motion-checks/README.md).
+Loaded-shoe meniscus now follows real state in world/FPP with native expiry/release
+cleanup. The distinct cue review resolves observer prop/icon capture limits;
+body palm/sole alignment is now baked from the real weighted hand geometry,
+with a focused native contact check. Generic cast particles and sound remain.
+[Coating evidence](reports/hero-quality-2026-10-01/skim-coating-checks/README.md).
+
+### TUTORIAL-REFINE-1001: latest human notes
+
+Remaining dummy objective markers removed; completion renamed Tutorial Complete;
+Quit glyph/text/hit height increased25percent inside existing width. One native
+case checks three marker routes plus real layout, with small/wide captures
+inspected. Shipped fb41d20e/845e65ad; same-row note and resolved-comment
+strikethrough read back. No new player claim.
+
+### QUALITY-BENCHMARK-1001: deepen the finalized-work comparison
+
+Owner reiteration: inspect the actual earlier implementation, authoring pipeline
+and revision history, then exceed that standard in demonstrable gameplay output.
+Finish the current Water wall unit, then deepen the Paete/Phaister comparison
+before the new presentation pass. All earlier SFX may now be replaced, including
+those protected heroes' sounds; other finalized work remains protected. Critique
+body/FPP motion, effects, framing, handoff and readability separately. Price and
+passing mechanics checks are not evidence of better creative quality. Listening
+in gameplay is required for sound judgment; silent cloud output is a real limit
+to resolve, not a quality pass. Both reference captures now pass their one
+case with540frames per view; source/pose/pipeline and sampled-frame critique
+is recorded in [the deeper benchmark](reports/hero-quality-2026-10-01/quality-benchmark.md).
+Exports are visual-only because current cue assets are absent; actual Unity
+audio capture remains open.
+
+### HYDRO-CURRENT-1001: first Hydro implementation unit
+
+Crosscurrent migrates from two charges to the published35second cooldown and
+chooses the earliest swept flying-slipper contact while retaining throw credit.
+Core4cases and final native2cases pass; baseline reproduces earlier-contact
+failure. Shipped ec644a4b; integrated with the incoming Haunted menu fix.
+Other Hydro slots and presentation remain open.
+[Evidence](reports/hero-quality-2026-10-01/hydro-current-checks/README.md).
+
+### HYDRO-SKIM-1001: bounded next-throw ground continuation
+
+Live Mirrorwake replacement implemented with held identity, eight-second load,
+35second cooldown and up-to-two-metre first-ground phase. Initial5native/5Core
+pass; final boundary/interaction pass adds court/round/body/current coverage,
+eight distinct native successes in total. Implemented77bf73e3. Dedicated body,
+FPP, glyph/wake/audio and actual matching peers remain open.
+[Plan](reports/hero-quality-2026-10-01/skim-implementation.md) and
+[evidence](reports/hero-quality-2026-10-01/skim-checks/README.md).
+
+### PHAISTER-HEX-1001: refine the hallucination presentation
+
+Owner-authorized exception to finalized-kit protection. Full-size grounded copies,
+bounded plausible placement and victim-view isolation implemented; cast/mark/
+recast/status/ultimate rules unchanged. Two native checks pass; shipped5cce9a55
+and remote verified.
+[Evidence and limits](reports/hero-quality-2026-10-01/phaister-hex.md).
+
+### AIM-CIRCLE-1001: replace the crosshair with a hollow circle
+
+Owner October1 explicitly requests a hollow circle instead of the gun-like
+crosshair, with thoughtfully chosen animations. This is a global HUD change in
+both modes, including protected heroes through the ordinary shared-UI exception.
+Current live path is HudReticle via TumpMatchReadout.CourtHud; older text-plus
+builders also exist and must be reconciled by reachability, not blindly edited.
+Preserve truthful charge/curve/cooldown/refusal/reach state, actual aim projection,
+input and visibility rules. Plan: [hollow aim circle](reports/hero-quality-2026-10-01/aim-circle.md).
+Implemented hollow idle/charge/confirmed-release and contact circles. Two focused
+native checks pass;960x540/1600x680 captures inspected. Shipped4c36b726,
+remote verified.
+No gameplay/protocol change or new player/peer claim.
+
+### HARRY-REVIEW-1001: learn the human critique standard
+
+Owner October1: after all currently requested implementation/refinement work and
+immediately before continuous manual bug hunting, analyze Harry Gomez's original
+feedback and refinement comments across Feedback and Finished feedback history.
+The owner identifies Harry as the only human editor besides this assistant.
+Build an evidence-linked self-review checklist that anticipates his critiques;
+preserve his original observations and do not fabricate his approval. Evaluate
+current work against that checklist and fix justified shortcomings. This means
+replacing the need for repeated critique, not deleting or impersonating Harry.
+Do not interrupt the higher-priority full-roster research to perform this now.
+
+### FEEDBACK-0930: owner document and engineering follow-through
+
+Owner scope, 2026-09-30: finish the supplied feedback, then continue finding and
+fixing reasonable network, bot, loading, optimization and UI/UX bugs and applicable
+existing TODO work. Work alone, ship coherent batches, validate changed behavior
+before checking it done, and avoid repeated unchanged validation. No resets or
+cross-chat work. Ask before spending service credits. Latest owner direction
+permits broader presentation work after prior actionable requests and before
+continuous manual bug hunting. Research, plan and critique using HERO_KIT_METHOD;
+finalized Paete/Phaister character-specific work remains protected. The owner reopened remaining ability implementation on2026-10-01;
+shared/global fixes apply normally and exact concurrent claims still govern.
+
+- [x] BOT-COMPANION-OBSERVATION-1001: shared observation now includes companion
+  targets and binds cached beliefs to the actual body. Native baseline reproduces
+  both tier bypasses; final4/4passes Normal/Astig, replacement identity and self
+  controls. [Evidence](reports/feedback-2026-09-30/bot-companion-observation.md).
+  Whole-match/player checks and Haunted sensor fairness remain separate.
+
+- [x] NETWORK-COLD-JOIN-1001: CLI client now awaits connection+seat admission;
+  trusted server messages own arena handoff. First actual pair failure retained,
+  changed candidate passes real protocol114host/client through active round2
+  with matching structure and preserved profiles. Loading/deadlines unchanged.
+  [Evidence and limits](reports/feedback-2026-09-30/cli-admission-handoff.md).
+
+- [x] BOT-TAG-DEPTH-1001: tag ranking uses delayed observations for both chalk
+  depth and distance. Both native tier regressions fail before the fix; final6/6
+  passes with fresh-observation and companion identity controls. Broader Haunted
+  sensing remains open. [Evidence](reports/feedback-2026-09-30/bot-tag-depth.md).
+
+- [x] BOT-PLANNING-INVENTORY-1001: nine remaining bot slipper scans reuse the
+  existing live inventory. Five measured helpers reduce1400allocation events to0
+  across100warmed passes; seven native lifecycle/order/query checks pass. No kit
+  or loading change. [Evidence](reports/feedback-2026-09-30/bot-planning-inventory.md).
+
+- [x] NETWORK-DEPARTURE-FRAMING-1001: malformed trailing notice bytes cannot show
+  a toast or consume its sequence. Native baseline2/2fails; final6/6passes with
+  valid NGO envelope/authority/freshness/name/transport controls. No wire change.
+  [Evidence](reports/feedback-2026-09-30/peer-departure-framing.md).
+
+- [x] BOT-OBSERVE-ALLOCATION-1001: per-frame observation indexes the same cached
+  body list. Native calibrated100call allocation goes100events to0; final7/7
+  includes unchanged tier/replacement/self/ranking behavior. Broader Haunted
+  sensing remains open. [Evidence](reports/feedback-2026-09-30/bot-observe-allocation.md).
+
+- [x] SNAPSHOT-REQUEST-FRAMING-1001: malformed refresh requests cannot reserve or
+  spend the peer's throttle. Actual host baseline3/3fails; final4/4passes with valid
+  envelope/coalescing/deferred/disable controls. Cold rejoin remains separate.
+  [Evidence](reports/feedback-2026-09-30/snapshot-request-framing.md).
+
+- [x] IDENTIFY-FRAMING-1001: complete string/int framing is checked before
+  decoding can allocate or throw. Six reproduced failures, native8packet plus
+  one connected-host valid/approved-identity case pass. No wire change.
+  [Evidence](reports/feedback-2026-09-30/identify-packet-framing.md).
+
+- [x] LOBBY-PICK-FRAMING-1001: malformed pick packets cannot throw through the
+  receiver; remote/local picks cannot rewrite a running match. Six packet and
+  actual-host mutation baselines reproduce; native8+1final cases pass, preserving
+  sender authority and normal lobby choices.
+  [Evidence](reports/feedback-2026-09-30/lobby-pick-packet-framing.md).
+
+- [x] ROSTER-ATOMIC-FRAMING-1001: validate the complete bounded four-seat roster
+  and footer before replacing replicated seats. Twelve reproduced failures;
+  sixteen distinct native successes across two final runs, one fixture reset
+  repair. Valid Unicode/host decisions/authority controls retained.
+  [Evidence](reports/feedback-2026-09-30/roster-atomic-framing.md).
+
+- [x] BOT-SPACING-ALLOC-1001: warmed rival-spacing reads produce zero allocation
+  events instead of200per100queries. Four native cases preserve expiry, refresh,
+  self exclusion and independent brains; no measured FPS claim.
+  [Evidence](reports/feedback-2026-09-30/bot-spacing-allocation.md).
+
+- [x] HAUNTED-SPACING-1001: hidden actors cannot expose new lane claims through
+  the bot spacing board. Native baseline reproduces the leak; three final cases
+  cover sight range, recovery, Classic and companion/absent-body behavior.
+  [Evidence](reports/feedback-2026-09-30/haunted-spacing.md).
+
+- [x] NETWORK120-PLAYER-1001: actual identical Windows UDP host/client candidate
+  reaches active round2with matching structural state. One109second build,
+ 15440inputs without drift and one passing existing pair, no source retry.
+  Clean local admission/round progression only; broader network scope stays open.
+  [Evidence](reports/feedback-2026-09-30/network120-actual-player.md).
+
+- [x] BOT-LANDING-TERRAIN-1001: retrieval uses actual world-flight prediction
+  instead of stopping at launch-relative height. Reproduced2.73m error repaired;
+  eight native cases cover real terrain/curve/bank, cache/source and existing
+  ground-circle controls. No whole-match FPS or new peer claim.
+  [Evidence](reports/feedback-2026-09-30/bot-landing-terrain.md).
+
+- [x] SKIM-PREDICTION-1001: loaded guides and bots include actual intrinsic ground
+  continuation and remaining phase. Reproduced2m error repaired; seven native
+  cases preserve cover/court/round, load identity and ordinary flight behavior.
+  [Evidence](reports/feedback-2026-09-30/skim-prediction.md).
+
+- [x] RECONNECT121-PLAYER-1001: actual same-identity cold rejoin retains seat1and
+  servercharacter2, returns as a client-controlled seat and progresses through
+  active round2with matching structural state. One124second build,15444inputs
+  without drift, one passing strengthened gate; old117failed results retained.
+  [Evidence](reports/feedback-2026-09-30/reconnect121-actual-player.md).
+
+- [x] FROSTBITE-RECOVERY-1001: current-scope recovery restores the live aged load
+  without recasting or resource changes. Reproduced receiver rejection repaired;
+  four native cases include replay/bounds/lifecycle and restored real Frozen hit.
+  Protocol122; actual new peers remain separate.
+  [Evidence](reports/feedback-2026-09-30/frostbite-recovery.md).
+
+- [x] AMPED-UP-1001: authoritative objective income reduces Zack's running basic
+  cooldowns by5seconds per unit with guarded owner delivery. Baseline reproduced;
+  six native cases cover fractional income, resources, scope/sequence/framing
+  and newer predicted/settled casts. Protocol123; remaining Zack kit stays open.
+  [Evidence](reports/feedback-2026-09-30/amped-up-objective.md).
+
+- [x] HELD-SEAT-PICKS-1001: matching-token reclaim retains picks and takeover
+  rating; Identify cannot replace fixed match choices with local preferences.
+  Five distinct native cases cover repeated cycles, fresh account state, foreign
+  tokens, boundaries, actual Identify, lobby edits and backfill initialization.
+  Actual cold-process rejoin remains separate.
+  [Evidence](reports/feedback-2026-09-30/held-seat-picks.md).
+
+- [x] PRE-ROUND-PICK-1001: arrival replaces an already-built bot placeholder with
+  the accepted choice before round one, retaining live-match and Mirror rules.
+  Actual pair exposed the mismatch; native final3/3passes. Changed-player retry
+  remains separate. [Evidence](reports/feedback-2026-09-30/pre-round-pick-handover.md).
+  Changed actual117crash/relaunch restores seat1and chosencharacter2despite local
+  preference0. Aggregate run remains failed at the host's later boundary sample;
+  both verdicts retained. [Exact evidence/limits](reports/feedback-2026-09-30/reconnect-actual-player.md).
+
+Source: [TUMP Wiki](https://docs.google.com/document/d/1jvr7NLzhHrbw-wrG676AeOkoTxJf4GokkfmxpO0ddLg/edit),
+read on 2026-09-30, including ability, status and feedback tabs. The document wins
+for other characters. Paete and Phaister are finalized and governed by the
+protected-hero rule in AGENTS.md. Their implementation supersedes stale Wiki text.
+Only demonstrated bug fixes may change them, plus the owner-authorized scoped
+Phaister Hex hallucination refinement; in-game skill descriptions stay untouched
+except passive descriptions. Wiki descriptions may document the final code. HERO-QUALITY-1001 now explicitly
+authorizes filling missing Hydro/Pyro/Electro designs after research; unrelated
+incomplete cells still do not authorize invented specifications.
+
+- [x] F0930-01 Tutorial: revised20-lesson route, real ordered objectives,
+  readable binding-specific prompts, Enter skip and Darumadrop/Xelu footer ship.
+  Completion stays in a usable practice ground with a reset-only defender; Quit
+  exits cleanly. This supersedes the earlier lobby-on-finish request.
+  October1 same-row regression fixed: hidden protected can no longer rebounds
+  a high throw forever; existing lifetime ceiling cannot be bypassed by contact.
+  Redundant COMPLETE corner removed. Four final native checks pass, earlier
+  skipped-staging control retained. [Evidence](reports/feedback-2026-09-30/tutorial-regression.md).
+  Twelve distinct native cases pass, plus the integrated free-play/Quit check.
+  Three real jumps, green progress, Tab coexistence and ultimate presentation
+  plus2.5seconds remain qualified. No new player or human approval is claimed.
+  [Route evidence](reports/feedback-2026-09-30/tutorial-route.md).
+  [Prompt evidence](reports/feedback-2026-09-30/tutorial-prompts.md).
+  Latest refinement: Look1.5seconds; Move/Run7.5metres; authored lesson copy only;
+  completion hides the extra action caption and left-aligns Quit. Three focused
+  native checks pass with both completion sizes inspected.
+  [Refinement evidence](reports/feedback-2026-09-30/tutorial-refinements.md).
+  Follow-up flow: centred attacker setup; continuous attacker transitions; real
+  slipper landing; curve-only completion; hidden event feed;2.5-second reading
+  and1-second accepted-cast waits; two retained attackers plus reset defender;
+  actual wheel release targets the student. Seven focused native cases pass.
+  [Flow evidence](reports/feedback-2026-09-30/tutorial-flow.md).
+  Latest same-row comments: tutorial can/slipper star markers removed; completion
+  hides progress chrome and the two retained attackers now use their real AI and
+  owned slippers. Both perform legal throws in the focused native case. The
+  existing2.5-second continuous-read qualification is unchanged.
+  [Comment evidence](reports/feedback-2026-09-30/tutorial-comments.md).
+  Circling target now follows smooth tangent/radial steering at the original
+  training pace, with its private slow released on lesson change/destruction.
+  Tutorial ultimate identity banner hides while the actual introduction remains.
+  Two native cases pass. [Evidence](reports/feedback-2026-09-30/tutorial-orbit.md).
+
+- [x] F0930-02 Tasks: unchanged wallet refresh retains rows and entrance state;
+  changed rows refresh without replaying entrance. Focused native path passes.
+- [x] ENG-0930-REPLAY-FORMAT Spectator pixel replay: unsupported RGB565 readback
+  no longer silently drops every frame. Exact format gate and one reused RGBA
+  staging image preserve the bounded RGB565 ring. Original3captures all fail;
+  corrected three-colour native capture1/1passes. Full-player/performance scope
+  remains separate. [Evidence](reports/feedback-2026-09-30/replay-format.md).
+- [x] F0930-38 Cloud toon-ramp sampling: opaque and transparent no-mipmap
+  lookups use explicit level0. Original shaders reproduce non-finite lighting;
+  both final measured lighting contracts pass and actual full-map colours recover.
+  Art, palettes and lighting tuning unchanged. Windows/device parity remains
+  unqualified. [Evidence](reports/feedback-2026-09-30/toon-ramp.md).
+
+- [x] F0930-37 New Harry HUD refinement: Ready Up uses a larger live Xelu
+  Interact/Ready prompt without the warmup subtitle; shared ability controls and
+  their key prompts originally grew50percent with edge margins preserved. Owner15:31
+  explicitly approved shared sizing for Paete/Phaister too, then clarified that
+  authorized global changes normally include them; character-specific work stays finalized. Two focused native cases pass, covering
+  binding/device changes, margins, accessibility, finalized kit text and state exits.
+  Four captures inspected. [Evidence](reports/feedback-2026-09-30/hud-readability.md).
+  Latest channel-copy refinement uses Resetting Can as requested; two native
+  actual-action/device cases pass and the active-channel capture is inspected.
+  Latest revision uses25percent above original size and live Xelu Reset Can /
+  Retrieve Slipper prompts. Real pickup, reset/cancel, pad/key/touch and margins
+  pass. [Revision evidence](reports/feedback-2026-09-30/match-ui-revision.md).
+  Follow-up device-then-scale defect reproduced: touch centre reverted to keyboard
+  offset. Targeted canvas-layout rebase fixes it; repeated device/scale round trips
+  pass1/1. [Evidence](reports/feedback-2026-09-30/power-anchor.md).
+
+- [x] F0930-03 Round scoreboard: centered, hides duplicated HUD for ordinary/halftime
+  cards, removes redundant warmup line and fits large scores. Native state/bounds
+  and inspected 960x540/1600x680 captures pass. [Evidence](reports/feedback-2026-09-30/README.md).
+- [x] F0930-04 Tagged replay: latest owner Feedback requests2.5seconds animated,
+  then a1.25second captured tag-frame hold before fade. Implemented with.18s fade;
+  3native timing/state cases and2real-clock close/far contact cases pass. The whole
+  image holds while simulation/recovery continue. Full-map/player/peer and human
+  approval remain separate. [Evidence](reports/feedback-2026-09-30/catch-replay-tag-hold.md).
+  Preserve earlier3second evidence as history, not the new acceptance target.
+  Original request: approximately three seconds and truthful contact display;
+  fix recording/reconstruction/contact timing without inventing a hit.
+  Earlier victim replay duration was approximately3 seconds, with5 native timing/exit
+  cases passing. [Evidence](reports/feedback-2026-09-30/catch-replay-duration.md).
+  Replay teleport discontinuities and visibility timing now pass9 native pose
+  checks. [Evidence](reports/feedback-2026-09-30/live-pose-discontinuity.md).
+  Recorded approach now advances through the full replay instead of freezing after
+  0.6 seconds; detached clips survive ring wrap and current callouts/particles stay
+  out of past frames. The native accepted-tag motion/isolation case passes with
+  inspected early/contact captures. [Evidence](reports/feedback-2026-09-30/catch-replay-motion.md).
+  The owner-reviewed tag reach gap is corrected for the measured Classic pair:
+  accepted-contact hand aim, bounded restored reach and a visible follow-through
+  pass close/far real-time native checks. [Contact evidence](reports/feedback-2026-09-30/tag-contact-readability.md).
+  After owner review, the body now commits with a supporting step, hip transfer
+  and shoulder turn; short contacts use a smaller lean and arm extension is capped
+  at10percent. Close/far native films and normal recovery pass. Human/all-roster/
+  actual-peer and dedicated interrupted-lunge qualification remain open.
+  Authored Eskinita close/far native checks now pass2/2, including baked skin
+  proximity; no new animation/camera edit. Human/all-roster/player checks remain.
+  [Authored-map evidence](reports/feedback-2026-09-30/tag-authored-map.md).
+  Latest cross-body correction adds a bounded accepted-contact step, smaller far
+  lean and stronger shoulder turn without stretching arms or moving motors.
+  Four contrast/Classic,21cyclic all-model and2authored-map native cases pass.
+  Tester taste/all pair combinations/actual peers remain separate.
+  [Current evidence](reports/feedback-2026-09-30/tag-silhouettes.md).
+- [x] F0930-05 Adopted [Xelu prompts](https://thoseawesomeguys.com/prompts/): current
+  binding labels and Xbox/PS families resolve whole supplied images, with retained
+  fallback for absent variants. Live HUD and training key row use the same resolver.
+  Native import/family/cache checks pass 5/5; display case passes with inspected
+  960x540/1600x680 captures. [Evidence](reports/feedback-2026-09-30/README.md#xelu-control-prompts).
+- [x] F0930-06 Latest default/action feedback: left mouse Throw/Tag, middle mouse
+  Shove/Lunge, right mouse Retrieve/Reset, wheel up-left/down-right, F Interact/Ready,
+  in that order. Display Run, Role Ability and Ability Descriptions. Remove the
+  separate Ready row while preserving its action and saved overrides; a shared
+  keyboard Interact rebind must also move Ready and require release before gameplay.
+  Eight native settings/default/override checks and the real input/Ready-release
+  case pass for the newest labels, wheel correction and shared rebind.
+  IDs, independent saved Ready overrides and controller/touch routes stay intact.
+  [Evidence](reports/feedback-2026-09-30/README.md#default-action-bindings).
+- [x] F0930-07 Longer defender lunge: full charge targets3m in both modes, with
+  derived speed, bot approach/celebration bounds and pressure stats. Actual local
+  input and host-request travel, repeat refusal, new-range tag and distant miss
+  pass natively. Interrupted-lunge follow-up prevents the old sweep tagging after
+  stun recovery or a new round; baseline2failures, final3/3including legitimate
+  pause/resume contact pass. [Interruption evidence](reports/feedback-2026-09-30/lunge-interrupt.md).
+  Packet ceiling stays28m/s; protocol97 requires matching builds.
+  [Evidence](reports/feedback-2026-09-30/defender-lunge.md). Actual peers unqualified.
+- [x] F0930-08 Visible remaining lifetime: active ultimate rings now drain the
+  actual effect clock; reactivation skills retain Again plus seconds remaining.
+  Native shared-clock/UI case passes;960x540/1600x680 captures inspected.
+  [Evidence](reports/feedback-2026-09-30/README.md#timed-power-lifetime).
+- [ ] F0930-09 Cheska: reconcile wiki names/rules/statuses and fix Frozen slipper hit.
+  Frozen-hit bug fixed: both real body-hit paths now consume frost after applying
+  Frozen. Activation requires the held slipper. Four native cases pass; protocol101
+  requires matching updated builds. Complete kit alignment stays open.
+  [Evidence](reports/feedback-2026-09-30/frostbite-delivery.md).
+  Current Wiki timing/passive rules implemented: Cold Feet7.5s; Absolute Zero1.5s
+  then all players including caster Frozen/Chilled; landed Hero Strike shove Chilled.
+  Five distinct native cases pass across two final receipts, plus one Core numeric
+  check. Protocol103. [Evidence](reports/feedback-2026-09-30/cheska-wiki-rules.md).
+- [ ] F0930-10 Dante: reconcile wiki names/rules/statuses (owner reauthorized implementation).
+  Earthbound incoming distance now approximately halves impulses/carries;4native
+  cases plus the affected authored Airburst interaction pass. Classic/lift retained.
+  [Passive evidence](reports/dante-wiki-2026-09-30/earthbound.md).
+  Unstoppable15s/40s and Bastion7.5s/35s now match; frozen signature input
+  cleanses while Tagged/pause/warmup remain protected. Six native/eight Core
+  checks pass; protocol107. [Ward evidence](reports/dante-wiki-2026-09-30/ward.md).
+  Boulder now imbues the actual held slipper,35s cooldown; Concussed75percent
+  slow for2.5s. Seven native cases and8Core pass, protocol108. [Boulder evidence](reports/dante-wiki-2026-09-30/boulder.md).
+  Continental Drift now sends five forward Concussed blasts for12points; six
+  distinct native cases cover timing, host/recovery/replay and authored court.
+  Protocol111; presentation critique and retained UI review remain open.
+  [Cascade evidence](reports/dante-wiki-2026-09-30/drift.md).
+  Barrier visibility implemented separately: half-alpha authored slabs retain their
+  palette and lifecycle. Two distinct native cases pass; observer court capture
+  inspected. Actual protocol100 player FPP later verified at7s remaining;
+  the can/street remain visible through the authored slabs.
+  [Evidence](reports/dante-visibility-2026-09-30/result.md).
+- [x] F0930-11 Amihan: current Wiki names/rules/statuses and fast airborne Airburst.
+  Latest live Wiki1.5second/60degree contract aligned; measured court reach also
+  fixes expanded-shore misses and the old short warning. Four distinct native
+  cases/two Core cases pass; current114player/actual peers remain unqualified.
+  [Current Wiki evidence](reports/feedback-2026-09-30/airburst-current-wiki.md).
+  Owner explicitly reopened this and the full remaining ability queue on2026-10-01.
+  Check newest active file claims first; complete specs govern, no invented kits.
+  Airburst status/airborne payload corrected: native4/4 and Core8/8pass;
+  authored court1/1also passes with9m travel to the confinement edge.
+  Second Wind25percent/2.5s and Drift35s/name now pass6native and22Core checks;
+  recovery uses the scoped protocol104 contract. Whirled now blocks/cancels can
+  reset locally and on the host, with3native and8Core checks passing; protocol105.
+  [Status evidence](reports/amihan-feedback-2026-09-30/whirled.md).
+  [Passive evidence](reports/amihan-feedback-2026-09-30/wiki.md). [Evidence](reports/amihan-feedback-2026-09-30/result.md).
+- [ ] F0930-12 Nemu and other defined wiki rules: reconcile current behavior; preserve
+  unspecified/placeholder kits rather than inventing replacements.
+  Kuro movement bonus and shared 25-second basic cooldowns pass 18 native cases;
+  broader Nemu behavior remains open. [Evidence](reports/feedback-2026-09-30/nemu-kuro-passive.md).
+  Kuro: Sit recall and recovery now pass native lifecycle and real-companion
+  checks. [Sit evidence](reports/feedback-2026-09-30/nemu-kuro-sit.md).
+  Fetch delivery now leaves a loose shoe for normal pickup and no longer moves
+  an already-held shoe or leaves a carried shoe floating on cancellation;9 focused
+  native cases pass. [Fetch evidence](reports/feedback-2026-09-30/nemu-kuro-fetch.md).
+  Remaining Haunt/full-kit reconciliation stays open; later checked steps are below.
+  Fetch availability lookup now reuses the existing slipper inventory. Three
+  native checks pass;100warmed calls reduce allocation events200to0 with live
+  ownership/activity/flight/lifecycle retained. No kit-rule change.
+  [Evidence](reports/feedback-2026-09-30/fetch-query-allocations.md).
+  Kuro: Catch protects the upright can for5seconds through its owned clock;
+  independent restore protection survives cancellation. Host-confirmed delivery
+  and approved remaining-clock recovery preserve authority and replica state.
+  Eight distinct native cases pass. Haunt/full-kit work stays open.
+  [Evidence](reports/feedback-2026-09-30/nemu-kuro-catch.md).
+  Haunted rulebook appended with7.5-second perception/immunity policy; Core1/1
+  passes. Runtime/status delivery/perception/chase remain unfinished; no whole-kit
+  completion. [Current step](reports/feedback-2026-09-30/haunted-rulebook.md).
+  Haunted timer/shared delivery/local HUD marker gates now pass six distinct
+  native cases, including immunity/cleanse and real receiver invalid-state/serial
+  controls. Later chase evidence is below; nearsight/audio remain open.
+  [Runtime evidence](reports/feedback-2026-09-30/haunted-runtime.md).
+  Haunt now uses15points and host-owned sequential visible-player contacts,
+  round-bounded completion and existing companion presentation. Scoped familiar
+  movement/terminal recovery rejects stale/reviving packets. Native chase/receiver
+  checks and exact limits: [Haunt evidence](reports/feedback-2026-09-30/nemu-kuro-haunt.md).
+  Haunted local near sight/listener filtering now passes two native cases,
+  including actual near/far pixels, byte-identical cleared frame, view/round/replay
+  and component cleanup. [Perception evidence](reports/feedback-2026-09-30/haunted-perception.md).
+  Repeated client Haunt poses now blend without altering authoritative ground
+  or clocks. Actual receiver baseline reproduces snapping; final native3/3passes
+  include first/new/terminal lifetimes and existing rejection/windup controls.
+  [Network presentation evidence](reports/feedback-2026-09-30/familiar-network-smoothing.md).
+  Match menus no longer clear active Haunted perception; UI voices bypass the
+  world listener filter. Actual PausePanel baseline fails; native final3/3passes
+  with659unchanged inputs. [Menu evidence](reports/feedback-2026-09-30/haunted-menu.md).
+  Audible mix, current actual peers and full-kit qualification remain open.
+  Later116Windows actual owner-client Haunt fixture passes: host contacts all
+  four seats, both sides receive bounded status clocks, move and complete the
+  chase, clear timers and preserve settings. Rejoin/other kits/Haunted bot sensing
+  and human mix remain open. [Actual peer evidence](reports/feedback-2026-09-30/haunt-actual-peers.md).
+  Haunted bot actor perception now passes13native cases: distant actors cannot
+  update memory or reenter target queries through live fallback; unknown position
+  is explicit and near reacquisition retains lag. Item sensing remains separate.
+  [Actor evidence](reports/feedback-2026-09-30/haunted-actor-perception.md).
+  Haunted rival-item queries now use the same7m sensing limit while preserving
+  existing own retrieval. Native9/9passes with near/clear/lifecycle/allocation
+  controls; no whole-match feel claim.
+  [Item evidence](reports/feedback-2026-09-30/haunted-rival-items.md).
+
+- [x] F0930-13 Title Enter regression: release opening Submit before Home can queue;
+  three native keyboard/pad/ordinary-key checks pass. Shipped c403800c;
+  remote verified and same Feedback row updated.
+  [Evidence](reports/hero-quality-2026-10-01/title-submit-checks/README.md).
+  Prior already-labelled-fixed checks remain: any-key title,
+  no Escape return to title, queue cancel button, hamburger background, stamina drain.
+  Lighting rename/default/order reconciled with already-shipped BUGS-0926.5:
+  current native2/2passes preserve old choices, default Standard, Nostalgic second,
+  live switch and discard. No lighting redesign or second implementation.
+  [Lighting evidence](reports/feedback-2026-09-30/lighting.md).
+  Native Period-key title entry, Escape opening/closing the menu with the same
+  actual background texture, and top-down stamina mesh depletion pass. The actual
+  IN QUEUE button cancels/restarts both casual modes in a focused native case.
+  Live online queue-room teardown and physical devices were not qualified.
+  [Route evidence](reports/feedback-2026-09-30/menu-routes.md).
+- [x] F0930-14 Existing taya can-down fix verified on current controls/charge candidate.
+  Native upright/down/reset case passes, distinct from attacker danger; offscreen
+  can state records DOWN/visible.1280x720 frame/icon capture inspected.
+  [Evidence](reports/feedback-2026-09-30/can-down-indicator.md).
+- [ ] F0930-15 Placeholder icons: reconcile current shipped icon coverage and correct bugs.
+- [ ] F0930-16 Running/walking defects: diagnose only concrete bugs; no animation redesign.
+- [x] F0930-17 Highlight beam: owner request 2026-09-30 authorizes the overhaul, "similar to
+  the highlight beam of the dropped items in apex legends ... noticeable but not too
+  distracting". IMPLEMENTED, NATIVE CHECKED. The 0.48 m locator column is replaced by a
+  1.9 m camera-facing line (`Shaders/SlipperBeam.shader`, `Visual/SlipperBeam.cs`): a
+  white-hot core about 3 cm wide in a low haze of the highlight colour, a soft road pool,
+  slow rising sparkles, a pixel-width floor at range, and the existing pickup-radius fade,
+  owner-only gate and highlight setting unchanged. `SlipperRecallShots` gains a far frame.
+  Native probe passes1/1 in14.56s; max effect coverage0.689percent, below12percent.
+  Near/side/far frames inspected. Far capture-only continuation hit the memory
+  safety guard after producing its frames, so it is not a second passed run.
+  [Evidence](reports/feedback-2026-09-30/beam.md).
+- [x] F0930-18 Throw: remove trajectory line, quicker charge and coherent charge feedback.
+  Full ordinary charge is1.25 seconds instead of2.5 in both modes;8 native carrier
+  timing/release/observed-state cases pass. Protocol96 requires matching builds.
+  [Evidence](reports/feedback-2026-09-30/throw-charge-duration.md).
+  The trajectory line is replaced with a local ground circle. Native real flight
+  comparisons cover flat, raised/curved and banked throws; legal charge/render/
+  release passes with an inspected capture. Shared support query reuses hit storage
+  and retains a dense-geometry fallback; the earlier zero-allocation counter was
+  later found uncalibrated and is not usable performance evidence.
+  [Circle evidence](reports/feedback-2026-09-30/landing-circle.md).
+  The reticle now shows actual power percentage, FULL RELEASE and WAIT for blocked
+  states. Real carrier/can/protection/hidden-reticle/release check passes; two sizes
+  inspected. The current can-down release rule is retained.
+  [Charge UI evidence](reports/feedback-2026-09-30/throw-charge-ui.md).
+- [ ] F0930-19 FRIEND RESERVED (owner 2026-09-30): loading work is assigned to the
+  owner's friend. This agent must not edit loading paths. Other optimization remains
+  authorized later; preserve loading as an outstanding contributor-owned requirement.
+- [ ] F0930-20 Continue focused network, bots, optimization, flow bugs and applicable
+  existing TODO requirements after feedback, with actual behavior evidence.
+  Queue advert ownership fixed: refused new attempts preserve existing room adverts;
+  refused replacements withdraw old active searches/subscriptions. Four native
+  offline cases pass. [Evidence](reports/feedback-2026-09-30/queue-advert-ownership.md).
+  Integratedffe5030c5 protocol103 Windows player builds and passes a real two-process
+  direct LAN session through active round2. Input/profile preservation passes;
+  individual skills, online/lossy/cross-platform paths remain unqualified.
+  [Current player evidence](reports/feedback-2026-09-30/engineering-player-1001.md).
+  Frozen c55574cd6 Windows build succeeds and passes real two-process direct LAN
+  through round2 with replicated movement/objective state and no hard divergence.
+  Other network paths and skill use remain unqualified.
+  [Evidence](reports/feedback-2026-09-30/player-lan.md).
+  Cloud Classic whole-match cases now pass on Eskinita,Ilalim ng Tulay and Sa Bubong.
+  Internal Linux player builds and enters training, but software-rendered surfaces
+  remain unqualified. A Linux cold direct-peer attempt failed before round1;
+  startup timing is under investigation, with no Windows regression established.
+  [Cloud limits/evidence](reports/feedback-2026-09-30/cloud-validation-limits.md).
+- [x] F0930-30 Bot obstacle-query allocation: reuse bounded hit storage, preserve
+  complete dense-world fallback and existing filters. Native behavior cases pass;
+  calibrated Unity recorder detects a known allocation and records zero events
+  across100warmed bot queries. Ground-query claim is corrected and requalified
+  using the same calibrated recorder. [Evidence](reports/feedback-2026-09-30/bot-obstacle-allocation.md).
+
+- [x] F0930-31 Seat-assignment packet bounds: reject truncated/trailing payloads
+  before exceptions, and invalid seats before local-control seating changes.
+  All10 baseline failures reproduce;19 final native receiver cases pass for
+  malformed/valid/spectator/non-host/repeated messages. Protocol97 unchanged.
+  [Evidence](reports/feedback-2026-09-30/seat-assignment-packets.md). Actual peers unqualified.
+- [x] ENG-0930-TRAINING-PAUSE: actual integrated player training menu disables
+  Character, Defender and cheat controls when Escape pauses. PracticeRange.CanEdit
+  reuses gameplay BlocksInput, which becomes true at requested scale0. Claim
+  PracticeRange.cs and PracticeRangeTests.cs; retain offline pause/cinematic gates.
+  Fixed configuration eligibility independently of world input. Native baseline
+  fails with disabled controls; final1/1passes3.44s with paused scale, interactable
+  controls, model/defender/bot/cheat changes, cinematic/network refusal and resume.
+  [Evidence](reports/feedback-2026-09-30/training-pause.md).
+  Barrier FPP review resumes on a refreshed player after this fix.
+
+- [x] ENG-0930-HOP Normal bot hop delivery: an issued one-render Jump survives
+  release until physics. Native baseline reproduces the lost edge; fixed producer/
+  motor case passes, retaining held release and existing hop tuning.
+  [Evidence](reports/feedback-2026-09-30/bot-hop-input.md).
+- [x] ENG-0930-RECOVERY Bot recovery input: preserve a recovery tap when several render
+  updates occur before physics. Three baseline failures;2/4/6-update fixed native
+  cases retain one real motor press, retire it once and respect Core's rate cap.
+  [Evidence](reports/feedback-2026-09-30/bot-recovery-input.md).
+- [x] F0930-37 Menu touch-look handback: actual Resume clears a pending menu drag
+  before the next gameplay read. Native baseline reproduces look(12,6); fixed case
+  preserves held touch state and accepts fresh look. Windows protocol99 integration
+  approval check also passes separately. Physical touch hardware unqualified.
+  [Evidence](reports/feedback-2026-09-30/menu-touch-look.md).
+- [x] F0930-36 Seat-request safety and readiness: reject malformed packets and
+  wide peer-ID aliases; repeating the current seat preserves Ready, while actual
+  changes still clear it. Nine baseline failures;17 fixed native receiver/lobby
+  cases pass. Protocol unchanged. Live transport unqualified.
+  [Evidence](reports/feedback-2026-09-30/seat-request-packets.md).
+- [x] F0930-35 Ordinary bot slipper-query allocation: share a native snapshot
+  refreshed on births/destruction, reading current activity/owner/flight state.
+  Calibrated100warmed lookups drop from200 allocation events to zero; five distinct
+  native selection/lifecycle/flight cases pass. Hero planning and loading unchanged.
+  [Evidence](reports/feedback-2026-09-30/bot-slipper-queries.md).
+- [x] F0930-34 Lobby Ready tally: reject short/trailing packets and impossible
+  counts before publishing a UI event. Valid empty/four-player tallies, host
+  authority and loopback remain.16 native baseline failures;25 fixed receiver
+  cases pass. Protocol unchanged. Actual peers unqualified.
+  [Evidence](reports/feedback-2026-09-30/ready-tally-packets.md).
+- [x] F0930-33 Spectator results input: external takeover screens now stop manual
+  flight and automatic directing while retaining the spectator's own replay route.
+  Actual final-round keyboard baseline reproduced drift; native fixed case proves
+  frozen position/rotation, visible unlocked cursor and flight resumption on close.
+  [Evidence](reports/feedback-2026-09-30/victory-spectator-input.md).
+- [x] F0930-32 Latest Feedback round flow: remove the per-round skip-warmup option
+  and freeze the final view after every round, with no clicking/movement or halftime
+  replay until the next round. Latest Doc wording supersedes the earlier announcement
+  wording. Shared10-second host boundary/frozen image/input lock ships with6 native
+  cases and actual Windows host/client qualification through round2. Both peers
+  retain the same deadline, frozen image/clock and resume normally. Protocol98.
+  [Evidence](reports/feedback-2026-09-30/round-freeze.md). Protected assets preserved.
+  New Harry refinement QA_TUMP_0045 is implemented and locally checked: ordinary boundary3seconds,
+  halftime10seconds with retained replay. The prior no-replay/uniform10-second
+  wording above is history, superseded by this refinement. Preserve frozen
+  standings, input lock, no skip and the host-authored deadline. Protocol99 requires
+  matching builds. Eight native cases pass; current-scene frame rerun passes1/1.
+  Actual peers remain unqualified. [Revision evidence](reports/feedback-2026-09-30/round-timing-replay.md).
+  Actual cloud player then exposed missing spectator standings. Shared card now
+  survives initial/watch transitions while respecting explicit clean feed;3/3
+  native cases pass. Refreshed protocol100 Linux player shows the shared card,
+  completes a custom4round match and enters rematch. Five ordinary boundaries
+  remain frozen; actual peers and new halftime qualification are separate.
+  [Spectator evidence](reports/feedback-2026-09-30/spectator-break.md).
+  Latest Harry revision supersedes ordinary3seconds with5seconds, protocol100.
+  Halftime remains10seconds/replay. Native boundary/late-client/final-round and
+  lock checks pass. [Latest evidence](reports/feedback-2026-09-30/match-ui-revision.md).
+
+
+
+- [x] F0930-30 Chat Unicode boundary: preserve complete UTF-16 pairs at the120-unit
+  cap, including text already clipped by the real uGUI field. Original malformed
+  result reproduced; six native boundary/field/existing-contract cases pass.
+  Feedback-row addition awaits Doc access; peers/font rendering are not qualified.
+  [Evidence](reports/feedback-2026-09-30/chat-unicode-boundary.md).
+- [x] F0930-29 Bot tag commitment: an already-held lunge no longer gets released
+  accidentally alongside a punch when the target enters close range. Fresh nearby
+  targets still get an immediate punch. Native baseline reproduces two cooldowns;
+  both final controlled-input cases pass. Feedback-row addition awaits Doc access.
+  [Evidence](reports/feedback-2026-09-30/bot-tag-commitment.md).
+- [x] F0930-27 Score notification packet bounds: reject truncated/trailing payloads
+  before reader exceptions or events. Existing valid event/total semantics stay
+  unchanged; shared16-case native score/stock suite passes after10baseline failures.
+  [Evidence](reports/feedback-2026-09-30/score-stock-packets.md).
+- [x] F0930-28 Last Tsinelas stock packet bounds: require a complete exact declared
+  table before stock mutation. Existing counts and sender/loopback rules stay
+  unchanged. Same16-case native suite passes; actual peers remain unqualified.
+  [Evidence](reports/feedback-2026-09-30/score-stock-packets.md).
+- [x] F0930-26 Build-input bug: ordinary builds now validate retained swim/recovery
+  clips instead of rerunning authoring and overwriting approved curves. Missing
+  Amihan/Paete rig sets were repaired explicitly, using the existing movement
+  definitions; all84existing asset/meta bytes stayed unchanged. Three native
+  prerequisite/refusal/actual-bone-motion cases pass. Ability behavior is untouched.
+  [Evidence](reports/feedback-2026-09-30/build-motion-inputs.md).
+- [x] F0930-24 Offline Esc/menu pauses simulation and resumes on close, including
+  nested Settings and repeated opens. Network menus stay live; six native cases
+  pass. [Evidence](reports/feedback-2026-09-30/offline-menu-pause.md).
+- [x] F0930-23 Practice popup: automatic Tutorial focus no longer appears hovered.
+  Pointer entry/exit and keyboard/pad navigation keep their feedback;8 native cases
+  pass, with960x540 and1600x680 captures inspected.
+  [Evidence](reports/feedback-2026-09-30/practice-attention.md).
+- [x] F0930-22 Map-vote packet bug found during authorized hunting: reject truncated,
+  trailing and invalid ballots before exceptions or partial mutation; reject sender
+  narrowing aliases.13 packet cases plus4 existing rematch/intermission cases pass
+  natively. [Evidence](reports/feedback-2026-09-30/map-vote-packets.md). Actual peers unqualified.
+- [x] F0930-21 Simplify the same Doc: Done / Human verified / Bug or feedback / Notes-screenshot table,
+  short separate How to use Feedback tab, hidden stable native IDs and retained
+  original reports/images. Native table/checkmarks and yellow human-needed rows
+  are visually verified. Humans add rows at top; fixes proceed bottom upward,
+  skipping completed and human-needed rows. Setup/scope handoffs were given in
+  chat for manual copying; no automation or cross-chat action was performed.
+
+Cheska shatter/melt and Dante shield-logo presentation requests are authorized
+for the later presentation pass by the latest owner instruction. Cheska expiry
+and Dante shield-logo are now implemented with native evidence below. Research references, plan each
+effect with its animation/UI/sound, and critique actual playback. Preserve owner
+mechanics and finalized Paete/Phaister work. Manual bug hunting follows that pass.
+
+- [x] PRESENTATION-DANTE-WARD: one existing DanteShield glyph follows the active
+  ward's assigned/restored clock. Small camera-facing cue, own FPP hidden,
+  live/recorded expiry/backwards sampling and cleanup pass in one native contract.
+  Actual court capture inspected. Names/durations/rules remain owner-reserved.
+  [Evidence](reports/dante-ward-2026-09-30/result.md).
+
+- [x] PRESENTATION-CHESKA-EXPIRY: requested field melt and wall shatter are
+  authorized after the prior actionable feedback. Start with field thaw without
+  changing mechanics or HeroHazards. Wiki7.5s/current runtime5s disagreement stays
+  owner-reserved; presentation follows assigned Duration. Native baseline, then
+  restrained spatial melt, lifecycle/render checks and same-row Doc update.
+  [Research and plan](reports/cheska-expiry-2026-09-30/plan.md).
+  Field thaw implemented:2native checks pass, repeated duration sampling and
+  separate Nova verified; coverage retreats to10percent while danger edge remains.
+  Native timeline film/captures inspected. Wall shatter now spreads15authored
+  chunks across the actual arc; third-hit/rotated-flair lifecycle cases pass2/2.
+  Collision retires immediately and debris is nonphysical.
+  [Wall evidence](reports/cheska-expiry-2026-09-30/wall.md).
+  [Thaw evidence](reports/cheska-expiry-2026-09-30/thaw.md).
+
 Current owner order after DOCS-0927: actual loading/optimization,then shared
 network/flow correctness,then remaining applicable QA/TODO requirements. Newer task
 scope and contributor reservations override older dated order below. Work alone;
@@ -179,6 +927,8 @@ scenes behind hub loading and reuses scene/look instances. One real-hub native c
 passes: all five maps cycle twice with zero loads and0.090-8.241ms Editor selection
 calls. Initial preparation was38.52s; player frame/memory/build and total-load-time
 qualification remain OPEN. [Evidence](reports/stability-2026-09-27/loading-audit.md#custom-preview-loading).
+Superseded 2026-09-30 by LOAD-1.4: the hub preview curtain and the menu-hop curtain
+below are removed, arena assets load in the boot splash instead.
 Converted menu scene loads are now asynchronous behind the existing curtain and
 wait for real UI initialization/layout. Hub preview preparation adopts the same
 owner; the loading canvas now blocks pointer input. New native title/hub handoff
@@ -1125,12 +1875,96 @@ and every beat on every layer: `docs/reports/phaister-kit-2026-09-27/plan.md` se
   `phaister_voodoo_victim_v14.mp4` sent; `direction.md` section 4 has the rounds. OPEN: the owner's verdict; HEX's raised arm
   reads weakly on this rig (the head is most of the silhouette); the target's screen (the BEING CURSED chip, the edge marker,
   the vignette, the stitch-blink); the doll in her hand changing into their colours.
+  ⚠️ 2026-09-29, v16 sent (HEX's thread now runs into the victim), then the owner: *"dont make the pulling thing look like a
+  physical line i want it to look like sucking aura or smth"*, *"it sucks rn ur implementation"*, *"i want u to make her hold up
+  her voodoo too towards the person when markingt hem"*. THE THREAD AND ITS PIERCE X ARE GONE: `VoodooSoulDraw` peels wisps of the
+  victim's aura off their body (`Shaders/VoodooWisp`), a glow clings round them, and the wisps are sucked into the ultimate's doll
+  at hand size, held out at them in her left hand in both views (while the slipper is at her belt); a gulp on the mark, a
+  let-go on a snap. Body and first-person reach poses rebuilt round the doll (v17, v18). The marks and the HEXED band stay in
+  `VoodooCursePresenter`.
+  v20 to v22 (owner on v19: *"this animation dont look that good yet"*, *"the doll is floating"*): the victim's own shape as a
+  see-through GHOST dragged out of them into the doll (`Shaders/VoodooGhost`), fine motes off it, the doll gripped in her fist and
+  raised at them; `PhaisterKitPlayProbe.ReviewHerReachFromEverySide` stages both curses from every side for review; films v22 sent.
+- [x] ⚠️ EVERY HERO SKILL SOUND DELETED (2026-09-29, owner: *"also all ur skill sfx suck shit what is that HAHAHA even paete's"*,
+  *"dont put sfx for all skills for now"*, *"will rework them at a lter date"*, *"can we delete all skill abilities sfx ty haha"*).
+  149 files out of `Resources/Sfx` and out of `AudioCues.Live`: casts, variants, statuses, payloads, zones, ultimate themes and
+  weather, every hero. Call sites stay silent through `AudioCues.Audible` (`IsSkillSfx`, `SkillSfxOn` false), including the cutscene
+  theme; `AudioCueCheck` passes them as deleted; the Featherfall landing test no longer counts its cue. Voices and base-game sounds
+  stay. OPEN, when he asks: the skill sound rework.
 - [~] TELEPORT: renamed from VANISHING ACT, 35 s (`VoodooRules.TeleportCooldown`), the 2.5 m shove and its host resolver deleted.
   OPEN: the decoy doll of her flopping where she stood (ask before its look), the moths streaming to her, a front-on tell.
 - [ ] VOODOO DOLL: a fifth body, Astig AI, attacking or defending with her role, points to her, none for tagging it, gone at the
   round's end; its network contract in `docs/SKILL_NETWORK_CONTRACT.md` (owner: *"You build it all"*). Owner, 2026-09-28, asked
   what it does while she attacks: **"Own slipper, throws"** (a true fifth player with a fifth slipper). Built on a COMPANION
   SEAT (`PlayerCount` + her seat), plan 9.12.
+  [~] 2026-09-29, the body on the host (`Abilities.VoodooDollBody.HostSpawn`/`Spawn`): a `CharacterMotor` in her companion seat
+  with the doll's art, `BodySpeedScale` 0.65, an Astig `AIController`, no skills, its own fifth slipper (seat of origin and owner =
+  its seat) in its hand when attacking and parked when defending; `RoundDirector` keeps companions OUT of `Players` (`Companions`,
+  `Bodies`, `BodyAt`, `RegisterCompanion`, `ReleaseCompanions` at `EndRound`/`ResetForNewMatch`/`Clear`, and with its owner on
+  `Unregister`); `MatchDirector.AddScore` pays a companion's points to its owner; `ResolveTag` on a companion stuns it 5 s where it
+  stands, pays nobody and raises `CompanionTagged`; the lunge and shove sweeps, a slipper's body blocks, the bots' tag targets and
+  `MatchFlair`'s seat lookup see companions (a companion and its owner never shove each other). `VoodooDollBodyTests` 3/3.
+  [x] Its network (protocol 90, `SKILL_NETWORK_CONTRACT.md` "Companion Bodies"): `CompanionSet` builds and removes brainless
+  replicas on every peer and reaches a rejoiner in `HostSyncPeer`; SyncUnit, Teleport, PlayAction, SyncSlipper and SlipperPose admit
+  companion seats (`ValidBody`), `Unit` is `BodyAt`, the body-level seat arrays are `BodyCount` wide, the host streams live
+  companions' slippers. `VoodooDollBodyTests.AClientBuildsAndDropsTheDollFromTheHostsCompanionList`. Not yet proved between two
+  real processes.
+  [x] 2026-09-29, VOODOO DOLL replaces OMEN (id `phaister_ultimate`, `VoodooRules.DollCost` 12, SharedUltimate): after the shared
+  introduction the host stands the doll up beside her (`VoodooDollBody.HostSpawn`), refused while her doll stands; bots cast it
+  ready with 20 s or more left, or in the dump window. THE CIRCLE (`Visual.VoodooSkyCircle`, owned by the doll on every peer): the
+  rim sews round, eight pins stab in, her X sigil blooms 7 m up, 3 s later it draws in to a small ring holding the doll's string.
+  `PhaisterKitPlayProbe.FilmTheVoodooDollInAMatch`, film v3 sent. OMEN's `PhaisterRitualContractProbe` and the Omen recovery
+  receipt test retired. OWED: a doll glyph of its own (it borrows OMEN's eclipse glyph), its nameplate, the CUTSCENE (the OMEN
+  one still plays; owner on it, 2026-09-29: *"ult cutscene doesnt amke sense why does she thhrow some random shit and it doesnt
+  touch anythhing thhoroughly rethink direction of it"*).
+  [~] The new cutscene (plan 9.8b, the owner's direction: *"a really scary magic circle in teh sky ... this monster comes out of it
+  and looks like its controlled by strings and scary"*): THE OFFERING, THE CIRCLE, THE DESCENT, THE DROP, THE PUPPET, 5.8 s
+  (`author_ultimate_intros.py` `phaister()`, `HeroIntroductionScene.Phaister.cs`, `.PhaisterMark.cs` for the real opponents and the
+  computed cameras; OMEN's `.PhaisterBurst.cs` deleted). THE CIRCLE redone as light after *"it looks underwhelming af it doesnt feel
+  like an ult"* and *"use genshin reference"* (research.md section 5): `Shaders/VoodooCircle` on a disc plus 3D pins and lightning
+  (`Visual.SkyCircle`), the same object in play; marionette strings in play from the eye to the doll's crown and hands; play opens
+  with the circle already open (never sewn twice). Film v4 sent. v5 and v6 (2026-09-29) fixed v4's four faults: the doll gripped in
+  her left fist at her side and the lens at her eye line (her face and grin in frame); her night REPLACES the world
+  (`Shaders/VoodooNight`, an unlit dome and a floor on the court's own surface); the eye nearly the void's width with thick stitched
+  lids, open by 2.2 s; the landing slumps (v4 pitched its head 60 degrees face-down on top of the torso); the puppet's close-up on
+  its face, its head turned to the real opponents. Film v6 sent (`phaister_voodoo_doll_ult_v6_small.mp4`).
+  [~] v7 THE PUPPETEER (plan 9.8c; the owner on v6: *"phaister's ult does not have a terrifying feeel at all eh"*, Flins as the
+  reference, the portal apart from what controls it, a marionette-control photo, ink impact frames), 6.4 s: the day dies on screen
+  (`Shaders/VoodooNight` reach); she rises and casts, pins circling her, light drawn up into her palms, lit from below; a stitched
+  SEAM splits the sky and tears (`Shaders/VoodooCircle` `_Seam`, `_Tear`); the eye opens, darts and LOCKS ON THE LENS; THE BURST
+  (rays, two shockwave rings, shards, lightning); two huge white mitten GLOVES push out of the pupil working a wooden control
+  (`Visual.MarionetteControl`), PULL, and the doll is dragged out head-first and swings through; lowered in three jerks, its head
+  turning round too far; the drop; the puppet; four ink impact frames with radial speed lines (`Shaders/PhaisterImpact` `_Lines`,
+  `_Zoom`). In play the portal shuts after 3 s and the control hangs over the doll's head with its wires, slack while it is tagged.
+  Her handheld doll is her own (`Visual.PhaisterHandVoodoo`: flat black cloth, magenta stitches, mismatched button eyes, mouth sewn
+  shut, pins), no longer the monster at hand size. Film v11 sent. The owner on v11: *"the stuff that floats around her doesnt look thhat great"*, *"the eye looks amazing but the circle
+  itself looks flatly drawn and basic"*, *"so basic"*, *"put more focus as well on the head twist"*, *"figure out ... where u can add
+  vfx"*, *"make doll coming out look more scary too ... add impact frames for him"*, *"make his stare look very scary"*, *"refine
+  animation of doll i want it to look more sluggish, make it slow too"*. v12 to v18: THE CIRCLE IN DEPTH (`SkyCircle` draws its parts
+  on four discs at different heights turning against each other, the eye deepest; a band of height round the rim and a curtain of
+  light hanging from it, `Shaders/VoodooRim`; the void an abyss with spiral filaments; the seam a jagged tear); her pins a HALO of
+  needles behind her head and a casting SIGIL on the court; sparks on the seam, the pull, the emergence, each crank and the landing;
+  THE TWIST in its own shot (the gloves crank the control round, its head ratchets 180 degrees, an ink frame as its face locks on);
+  THE STARE (burning pinpoint eyes, twitches, a half dolly zoom, the dark closing in; she floats up out of frame); an ink frame as its
+  face clears the pupil; 6.35 s. In play the doll is 0.5 of a player's speed with a heavier gait (`GaitStyles.PhaisterDoll` v2, a
+  slump on every step). Film v18 and `doll_walk_v5` sent.
+  v19 to v21 (the owner on v18: *"just end it here"* on the stare, *"hold that frame and make the ending transition ... scary"*, *"all ur
+  impact frames look very similar"*, *"make this dark frame show his eyes"*, *"or draw eyes similar to his 0 and X"*, *"his aniamtion
+  seems poppy and fast"*): the cutscene ENDS ON THE STARE, 6.0 s (protocol 93): the frame holds, then fades to black leaving only his
+  O and X burning (drawn over his real eyes, `PhaisterImpact` `_Iris`, `_Eyes`); no body turn, drop or puppet (their timings are past
+  the end; v20 left them live and the doll turned and two ink frames fired on nothing). Each ink frame its own: the eye a target of
+  rings, the pull a one-frame rake, the emergence three torn frames, the stare his face in ink with his eyes crimson (`_Style`). The
+  doll's gait v3: plain slow swings, dragged steps, a slow sink per step, a heaving yank. Cutscene-only film v21 and `doll_walk_v6`
+  sent. v22: the eye's
+  ink frame crimson on black with thin rings (v21's inverted bands went cyan). v27: she floats beside it through THE TWIST (v19 to v22
+  flew her 3 m up to clear the stare, the owner: *"why tf is she flying away"*); THE STARE is its close-up alone (her renderers off for
+  that shot only). Cutscene-only v27 sent. OPEN: the owner's verdict; the hip doll in her model is still the old one; her kit's notes
+  (her handheld doll reads just black; the soul-draw aura bunches in the middle; the status-effect UI blocks the screen, move it aside).
+  [~] The doll's own glyph (`AbilityGlyph.PhaisterVoodooDoll`, a doll hung from the circle on three strings), its nameplate
+  PHAISTER'S DOLL in her colour, the grey stitched X over it while tagged and +100 over it in her colour when it scores
+  (`Visual.VoodooDollPresence`, `MatchDirector.CompanionScored`, protocol 91).
+  (`SkillReceiptTests.RefusedFreeRecallDoesNotCreateAChargeAndEligibilityDoesNotMutateHeldTime`, Nemu, fails `CannotAct`; it failed
+  the same way on 2026-09-27 and before this work on 2026-09-29, so it is not the doll's.)
 - [ ] The cutscene SEW / GROW / WAKE; sounds; voice rows; icons; bots; films sent; the gate.
 
 **OPEN before v3 (superseded where it names OMEN, MANIKA or SPOTLIGHT PIN):**
@@ -1291,6 +2125,46 @@ it downloads or renders in the background in the loading screen".
   arena offscreen from 20 viewpoints, one per frame, into a target of the screen's HDR/MSAA
   format, so pipeline states, meshes and textures are on the GPU before the first visible frame.
   `HubLoading` lifts when that finishes; its 2 s hold is gone.
+- [ ] LOAD-1.4 One loading screen before the title, none on the way to the hub. IMPLEMENTED
+  2026-09-30, NATIVE CHECK OPEN. Request with two frames: the boot court screen and the hub's
+  "GETTING READY 50%" curtain, "the second one is redundant ... all loading of assets, shaders and
+  everything should be in the splashscreen section ... not hard coded to a fixed amount of time".
+  `HubLoading.BeginMenu`/`FollowMenu` (menu hops) and `PreparePreview`/`FollowPreview` with
+  `MapPreviewSurface.PrepareAll` (every arena instanced behind the curtain on EVERY hub entry,
+  38.52 s in the editor) are deleted; menu hops are plain scene changes again. The splash runs
+  `WarmMapAssets` unconditionally (it was skipped while the hub was on), so every arena's meshes,
+  textures and materials are read and retained at boot, and the illustrated splash lost its 0.5 s
+  floor, so it lasts exactly as long as the work. The hub preview instances only the map it shows,
+  then each map the first time it is picked, reusing it after that. `HubLoading` now covers
+  arenas only (map name heading). Done means: `MatchLoadingReadinessTests.MenuHopsAndTheHubOpenWithoutASecondLoadingScreen`
+  and `CustomMapSwitchesShowEachArenaWithoutALoadingCurtainAndReuseIt` green natively, boot time
+  measured against LOAD-1's 2.53 s, and the first pick of each map checked for a visible hitch.
+  Native evidence 2026-09-30 (Windows editor, PlayMode, `MatchLoadingReadinessTests` and
+  `OwnerMenuEditsTests` in one launch): total 25, passed 25, failed 0. The map-switch case took
+  11.8 s for five first picks plus a cached second pass with zero scene loads. A wider launch
+  that also ran `HomeFlowTests` and `HubFlowTests` first went 33/37: the map-switch case pushed
+  the hub before it had built (fixed), `SplashShaderAndMenuArtWarmupsCompleteInBoundedStages`
+  lacked the gitignored `ShaderWarmup.shadervariants` in a fresh worktree, and the two cold-cache
+  cases (`ViewmodelMeshWarmup...`, `LoadingPreparationRetains...`) found caches already warmed by
+  `HomeFlowTests`' boot, which is cross-fixture state rather than this change.
+  Mac evidence 2026-09-30 (editor 6000.5.8f1, OSXUniversal, merged onto ASTRAReworks 013d4cba,
+  `ShaderWarmup.shadervariants` regenerated first): `MatchLoadingReadinessTests` and
+  `OwnerMenuEditsTests` in one launch, total 25, passed 25, failed 0; the map-switch case took
+  7.1 s and the menu-hop case 1.1 s. The splash log reads `[SplashShaders] shaders=69
+  variants=128 warmed=128 complete=True frames=20`, so every shader variant is warmed inside the
+  boot splash. `HomeFlowTests` and `HubFlowTests` in a second launch (after the hub-build fix):
+  total 12, passed 11, failed 1, `HighContrastAndLargerTextKeepEveryDoorAndLobbyReadable`
+  (`HubHero/Status clips its content`, 132 against a 123 bound at 960x540). That case
+  fails identically (132.0) on untouched ASTRAReworks 013d4cba run alone, so it is not this
+  change; it is filed as its own open item below.
+  Still OPEN: boot time and the first-pick hitch in a player.
+- [ ] LOAD-1.4a (hub accessibility, found while verifying LOAD-1.4, OPEN). The hub hero's
+  `Status` label clips under high contrast plus larger text at 960x540: measured 132 against
+  the 123 bound in `HubFlowTests.HighContrastAndLargerTextKeepEveryDoorAndLobbyReadable`
+  (`Hub-A11y-Hero-960x540/TumpHubCanvas/Screens/HubHero/Status`). It fails identically on
+  ASTRAReworks 013d4cba without the LOAD-1.4 change, Mac editor 6000.5.8f1. Done means the
+  status line fits its box at every probe shape with the larger text setting on, and that test
+  is green.
 - Evidence (Mac player built from this work): boot loading finished after 2.53 s (it waited at
   least 5 s before); a bot match's Eskinita curtain lifted after 1.60 s with the prewarm taking
   0.84 s; Ilalim through HOME lifted after 1.47 s (prewarm 0.87 s). Not measured: the Windows
@@ -2425,6 +3299,11 @@ Batch A, communication:
   [look-1.2-world](reports/visual-research-2026-09-23/look-1.2-world/report.md).
   Target checks passed v4; wire compatibility v3; strengthened actual clock v7 (1/1).
   Real peer/latency and native/human interpretation acceptance remain P7.
+  Follow-up 2026-09-30 (owner: the taya did not notice the can fell): the local taya
+  gets the VISUAL-1.1 frame and onset cue in Offense orange while the can is down.
+  Two new native cases pass 2/2 with renders in
+  [taya-can-down-frame](reports/taya-can-down-frame-2026-09-30/README.md). Peers and
+  mid-chase human review remain P7.
 - [x] **VISUAL-1.3 Timers on objects.** DONE (look-batchA-v4 icon sheet): the recall ring
   drains in gold through the fetch warning, turns solid Offense orange while the penalty
   runs and drains in the owner's seat colour during a roof or lagoon return

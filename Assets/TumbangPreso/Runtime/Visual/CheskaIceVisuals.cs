@@ -128,6 +128,8 @@ namespace TumbangPreso.Visual
             }
         }
 
+        public static void ShatterWall(Transform wall) => CheskaWallBreak.Play(wall);
+
         public static void Shatter(Vector3 center, bool wall)
         {
             var root=new GameObject(wall?"BarricadeThaw":"RestraintThaw");root.transform.position=center;

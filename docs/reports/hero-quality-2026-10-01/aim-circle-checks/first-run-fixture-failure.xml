@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 01:41:58Z" end-time="2026-10-01 01:42:09Z" duration="10.878938">
+  <test-suite type="TestSuite" id="2311" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1061" result="Failed" site="Child" start-time="2026-10-01 01:41:58Z" end-time="2026-10-01 01:42:09Z" duration="10.878938" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2305" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1061" result="Failed" site="Child" start-time="2026-10-01 01:41:58Z" end-time="2026-10-01 01:42:09Z" duration="10.859026" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="218928" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2306" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1061" result="Failed" site="Child" start-time="2026-10-01 01:41:58Z" end-time="2026-10-01 01:42:09Z" duration="10.846064" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2307" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1061" result="Failed" site="Child" start-time="2026-10-01 01:41:58Z" end-time="2026-10-01 01:42:09Z" duration="10.835800" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2135" name="ThrowChargeUiTests" fullname="TumbangPreso.PlayTests.ThrowChargeUiTests" classname="TumbangPreso.PlayTests.ThrowChargeUiTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-01 01:41:58Z" end-time="2026-10-01 01:42:09Z" duration="10.813690" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2136" name="HollowCircleKeepsItsCentreClearAndOnlyPulsesForItsOwnersThrow" fullname="TumbangPreso.PlayTests.ThrowChargeUiTests.HollowCircleKeepsItsCentreClearAndOnlyPulsesForItsOwnersThrow" methodname="HollowCircleKeepsItsCentreClearAndOnlyPulsesForItsOwnersThrow" classname="TumbangPreso.PlayTests.ThrowChargeUiTests" runstate="Runnable" seed="653349670" result="Failed" label="Error" start-time="2026-10-01 01:41:58Z" end-time="2026-10-01 01:41:59Z" duration="0.138557" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.Reflection.AmbiguousMatchException : Ambiguous match found.]]></message>
+                <stack-trace><![CDATA[  at System.RuntimeType.GetMethodImplCommon (System.String name, System.Int32 genericParameterCount, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, System.Reflection.CallingConventions callConv, System.Type[] types, System.Reflection.ParameterModifier[] modifiers) [0x00050] in <94b103fb80364239bfc0542bee09d001>:0 
+  at System.RuntimeType.GetMethodImpl (System.String name, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, System.Reflection.CallingConventions callConv, System.Type[] types, System.Reflection.ParameterModifier[] modifiers) [0x00000] in <94b103fb80364239bfc0542bee09d001>:0 
+  at System.Type.GetMethod (System.String name, System.Reflection.BindingFlags bindingAttr) [0x0000e] in <94b103fb80364239bfc0542bee09d001>:0 
+  at TumbangPreso.PlayTests.ThrowChargeUiTests.AssertHollow (TumbangPreso.UI.HudReticle reticle) [0x00006] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ThrowChargeUiTests.cs:71 
+  at TumbangPreso.PlayTests.ThrowChargeUiTests+<HollowCircleKeepsItsCentreClearAndOnlyPulsesForItsOwnersThrow>d__3.MoveNext () [0x0014b] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ThrowChargeUiTests.cs:36 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2137" name="LiveChargeShowsPowerFullAndRealRefusalsThenClearsOnRelease" fullname="TumbangPreso.PlayTests.ThrowChargeUiTests.LiveChargeShowsPowerFullAndRealRefusalsThenClearsOnRelease" methodname="LiveChargeShowsPowerFullAndRealRefusalsThenClearsOnRelease" classname="TumbangPreso.PlayTests.ThrowChargeUiTests" runstate="Runnable" seed="1900893630" result="Failed" label="Error" start-time="2026-10-01 01:41:59Z" end-time="2026-10-01 01:42:09Z" duration="10.662787" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.Reflection.AmbiguousMatchException : Ambiguous match found.]]></message>
+                <stack-trace><![CDATA[  at System.RuntimeType.GetMethodImplCommon (System.String name, System.Int32 genericParameterCount, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, System.Reflection.CallingConventions callConv, System.Type[] types, System.Reflection.ParameterModifier[] modifiers) [0x00050] in <94b103fb80364239bfc0542bee09d001>:0 
+  at System.RuntimeType.GetMethodImpl (System.String name, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, System.Reflection.CallingConventions callConv, System.Type[] types, System.Reflection.ParameterModifier[] modifiers) [0x00000] in <94b103fb80364239bfc0542bee09d001>:0 
+  at System.Type.GetMethod (System.String name, System.Reflection.BindingFlags bindingAttr) [0x0000e] in <94b103fb80364239bfc0542bee09d001>:0 
+  at TumbangPreso.PlayTests.ThrowChargeUiTests.AssertHollow (TumbangPreso.UI.HudReticle reticle) [0x00006] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ThrowChargeUiTests.cs:71 
+  at TumbangPreso.PlayTests.ThrowChargeUiTests+<LiveChargeShowsPowerFullAndRealRefusalsThenClearsOnRelease>d__6.MoveNext () [0x0071e] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/ThrowChargeUiTests.cs:147 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] Aim-circle-idle-960x540 cream source=252,211,159 pixel=203,200,231; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Throw-charge-full-960x540 cream source=252,211,159 pixel=203,200,231; isolated UI camera, no ColourGrade.
+[TumpUiCapture] Throw-charge-full-1600x680 cream source=252,211,159 pixel=203,94,62; isolated UI camera, no ColourGrade.
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

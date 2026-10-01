@@ -171,7 +171,7 @@ namespace TumbangPreso.UI
             SettingsWorkspaceRows.Slider(Row("FirstPersonFov","First-person field of view"),"FirstPersonFovValue",
                 s.FirstPersonFov,75,110,v=>{s.FirstPersonFov=v;_session.Preview();},v=>Mathf.RoundToInt(v)+"°");
             Header("PLAY CONTROLS");
-            Choice("SprintControl","Sprint control",new[]{"Hold","Toggle"},s.ToggleSprint?1:0,v=>s.ToggleSprint=v==1);
+            Choice("SprintControl","Run control",new[]{"Hold","Toggle"},s.ToggleSprint?1:0,v=>s.ToggleSprint=v==1);
             Choice("RestoreControl","Restore can control",new[]{"Hold","Toggle"},s.ToggleRestore?1:0,v=>s.ToggleRestore=v==1);
             Note("Toggle restore: press near the fallen can to start, press again to cancel. Moving away cancels it.");
             Toggle("Rumble","Controller vibration",s.Rumble,v=>s.Rumble=v,()=>Rumble.Enabled=s.Rumble);

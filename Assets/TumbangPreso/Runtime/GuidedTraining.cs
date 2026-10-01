@@ -22,24 +22,9 @@ namespace TumbangPreso
     {
         public enum Lesson
         {
-            Look,
-            Move,
-            Sprint,
-            Jump,
-            Throw,
-            Retrieve,
-            Pektus,
-            Shove,
-            AbilityInfo,
-            Skill1,
-            Skill2,
-            Ultimate,
-            DefenderReset,
-            Punch,
-            Lunge,
-            TripRecovery,
-            Emote,
-            Complete,
+            Ready, Look, Move, Sprint, Jump, Throw, Retrieve, Pektus,
+            ThrowAndRetrieve, Shove, Block, Punch, DefenderReset, ResetAndTag,
+            Lunge, AbilityInfo, Skill1, Skill2, Ultimate, Emote, Complete,
         }
 
         public const int LessonCount = (int)Lesson.Complete;
@@ -55,7 +40,13 @@ namespace TumbangPreso
         private CombatVerbs _verbs;
         private HeroAbilitySystem _abilities;
         private EmotePlayer _emotes;
-        private InputAction _abilityInfo;
+        private InputAction _abilityInfo, _readyAction;
+        private int _exerciseStage, _blocks;
+        private float _castAcceptedAt = -1, _nextDummyThrow;
+        private bool _dummyCaught;
+        private Slipper _dummySlipper;
+        private readonly System.Collections.Generic.List<Behaviour> _mutedBanners = new System.Collections.Generic.List<Behaviour>();
+        private readonly System.Collections.Generic.List<GameObject> _hiddenCallouts = new System.Collections.Generic.List<GameObject>();
 
         private GuidedTrainingHud _hud;
         private TrainingMarker _marker;
@@ -99,8 +90,22 @@ namespace TumbangPreso
         private float _lastTagByStudentAt = -999.0f;
 
         private float _metric;
-        private float _lastTripLeft;
+        private bool _jumpAirborne;
+        private bool _ultimateAccepted;
+        private double _ultimateFinishedAt = -1;
+        private const float UltimateAfterSeconds = 2.5f;
         private Vector3 _lastPosition;
+
+        private static GuidedTraining _activeRoute;
+
+        // Hidden practice targets do not tick their restoration clock. Only the active
+        // offline student's hidden can is exempt, never a live hosted match or visible can.
+        internal static bool HasHiddenPracticeCan(CharacterMotor student, Lata can)
+            => _activeRoute != null && _activeRoute.isActiveAndEnabled
+                && GameLaunch.GuidedTutorial
+                && (Net.NetSession.Instance == null || !Net.NetSession.Instance.IsNetworked)
+                && _activeRoute._local == student && _activeRoute._lata == can
+                && can != null && !can.gameObject.activeInHierarchy;
 
         public Lesson CurrentLesson => _lesson;
 
@@ -120,6 +125,7 @@ namespace TumbangPreso
                 return;
             }
 
+            _activeRoute = this;
             _carrier = _local.GetComponent<Carrier>();
             _verbs = _local.GetComponent<CombatVerbs>();
 
@@ -128,6 +134,8 @@ namespace TumbangPreso
             // and the lunge and for a bot and a human alike. Watching a cooldown instead is what
             // let PUNCH and LUNGE be completed by pressing the key at nobody.
             if (GameServices.Round != null) GameServices.Round.Tagged += OnSomebodyTagged;
+            if (GameServices.Match != null) GameServices.Match.Scored += OnTrainingScore;
+            Visual.MatchFlair.Presented += OnTrainingMoment;
             _abilities = _local.AbilitySystem;
             _emotes = _local.GetComponent<EmotePlayer>();
 
@@ -154,6 +162,8 @@ namespace TumbangPreso
             var input = Resources.Load<InputActionAsset>("TumbangPreso");
             _abilityInfo = input?.FindActionMap("Player", false)?.FindAction("AbilityInfo", false);
             _abilityInfo?.Enable();
+            _readyAction = input?.FindActionMap("Player", false)?.FindAction("ReadyUp", false);
+            _readyAction?.Enable();
 
             StartCoroutine(BeginAfterInstall());
         }
@@ -184,19 +194,31 @@ namespace TumbangPreso
             UI.Hud.Instance?.SetTrainingDeckHidden(true);
 
             _ready = true;
-            EnterLesson(Lesson.Look);
+            foreach (var banner in FindObjectsByType<MatchMomentBanner>(FindObjectsSortMode.None))
+            { if (banner.enabled) { _mutedBanners.Add(banner); banner.enabled = false; } }
+            var readout = FindFirstObjectByType<TumpMatchReadout>();
+            if (readout != null && readout.Canvas != null)
+                foreach (string name in new[] { "MatchToast", "MatchToastPlate", "MatchEventFeed" })
+                {
+                    var item = readout.Canvas.transform.Find(name);
+                    if (item != null && item.gameObject.activeSelf)
+                    { _hiddenCallouts.Add(item.gameObject); item.gameObject.SetActive(false); }
+                }
+            EnterLesson(Lesson.Ready);
         }
 
         public void SkipFromUi()
         {
             if(!_ready || _local==null || _advancing)return;
-            if(_lesson==Lesson.Complete)ExitTraining();else CompleteLesson();
+            if(_lesson!=Lesson.Complete)CompleteLesson();
         }
         public void QuitFromUi()=>ExitTraining();
 
         private void Update()
         {
-            if (!_ready || _local == null) return;
+            if (!_ready || _local == null || Panel.AnyOpen || UI.Hub.HubLoading.Visible) return;
+            _hud?.SetInspecting(_abilityInfo != null && _abilityInfo.IsPressed());
+            StepTrainingWorld();
 
             var keyboard = Keyboard.current;
             if (keyboard != null && keyboard.backspaceKey.wasPressedThisFrame)
@@ -207,13 +229,12 @@ namespace TumbangPreso
 
             if (_lesson == Lesson.Complete)
             {
-                if (keyboard != null && keyboard.enterKey.wasPressedThisFrame) ExitTraining();
                 return;
             }
 
             if (_advancing) return;
 
-            if (keyboard != null && keyboard.nKey.wasPressedThisFrame)
+            if (keyboard != null && (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame))
             {
                 CompleteLesson();
                 return;
@@ -241,29 +262,36 @@ namespace TumbangPreso
 
             switch (_lesson)
             {
+                case Lesson.Ready:
+                    if ((_readyAction != null && _readyAction.WasPressedThisFrame())
+                        || (Hud.OnTouch && _local.Intent.JustPressed(Verb.Interact))) CompleteLesson();
+                    break;
                 case Lesson.Look:
-                    if (Mouse.current != null)
-                        _metric += Mouse.current.delta.ReadValue().magnitude;
-                    SetProgress(_metric / 520.0f);
-                    if (_metric >= 520.0f) CompleteLesson();
+                    bool looking = _local.Intent.LookAxis.sqrMagnitude > .01f;
+                    if (looking) _metric += Mathf.Min(dt, .1f);
+                    SetProgress(_metric / 1.5f);
+                    if (_metric >= 1.5f) CompleteLesson();
                     break;
 
                 case Lesson.Move:
                     AddTravel();
-                    SetProgress(_metric / 4.0f);
-                    if (_metric >= 4.0f) CompleteLesson();
+                    SetProgress(_metric / 7.5f);
+                    if (_metric >= 7.5f) CompleteLesson();
                     break;
 
                 case Lesson.Sprint:
-                    if (_local.Intent.Pressed(Verb.Sprint)
-                        && _local.Intent.MoveAxis.sqrMagnitude > 0.1f)
-                        _metric += dt;
-                    SetProgress(_metric / 1.0f);
-                    if (_metric >= 1.0f) CompleteLesson();
+                    if (_local.Stamina.IsSprinting && _local.Intent.MoveAxis.sqrMagnitude > .1f) AddTravel();
+                    else _lastPosition = _local.transform.position;
+                    SetProgress(_metric / 7.5f);
+                    if (_metric >= 7.5f) CompleteLesson();
                     break;
 
                 case Lesson.Jump:
-                    if (!_local.IsGrounded && _local.Velocity.y > 0.1f) CompleteLesson();
+                    bool airborne = !_local.IsGrounded;
+                    if (airborne && !_jumpAirborne && _local.Velocity.y > 0.1f) _metric++;
+                    _jumpAirborne = airborne;
+                    SetProgress(_metric / 3f);
+                    if (_metric >= 3) CompleteLesson();
                     break;
 
                 case Lesson.Throw:
@@ -280,9 +308,24 @@ namespace TumbangPreso
 
                 case Lesson.Pektus:
                     if (_ownSlipper != null && _ownSlipper.State == SlipperState.InFlight
-                        && _ownSlipper.ThrowerSlot == _local.PlayerSlot
-                        && Mathf.Abs(_ownSlipper.PektusSpin) >= 0.30f)
-                        CompleteLesson();
+                        && _ownSlipper.ThrowerSlot == _local.PlayerSlot && Mathf.Abs(_ownSlipper.PektusSpin) >= .30f)
+                        _exerciseStage = 1;
+                    SetProgress(_exerciseStage);
+                    if (_exerciseStage == 1) CompleteLesson();
+                    break;
+                case Lesson.ThrowAndRetrieve:
+                    if (_exerciseStage == 1 && HasOwnSlipper()) _exerciseStage = 2;
+                    SetProgress(_exerciseStage / 3f);
+                    if (_exerciseStage == 2 && !_local.IsInsideBox()) CompleteLesson();
+                    break;
+                case Lesson.Block:
+                    SetProgress(_blocks / 3f);
+                    if (_blocks >= 3) CompleteLesson();
+                    break;
+                case Lesson.ResetAndTag:
+                    if (_defenderResetArmed && _lata.IsUpright && _exerciseStage == 0) _exerciseStage = 1;
+                    SetProgress(_exerciseStage * .5f);
+                    if (_exerciseStage == 2) CompleteLesson();
                     break;
 
                 // ⚠️⚠️ THE THREE CONTACT LESSONS ASK WHETHER THE VERB **LANDED**, AND ALL THREE
@@ -309,21 +352,34 @@ namespace TumbangPreso
                     if (_abilityInfo != null && _abilityInfo.IsPressed())
                     {
                         _metric += dt;
-                        SetProgress(_metric / 0.65f);
-                        if (_metric >= 0.65f) CompleteLesson();
+                        SetProgress(_metric / 2.5f);
+                        if (_metric >= 2.5f) CompleteLesson();
                     }
+                    else { _metric = 0; SetProgress(0); }
                     break;
 
                 case Lesson.Skill1:
-                    if (WasSuccessfulCast(HeroAbilitySystem.Slot.Skill1)) CompleteLesson();
+                    ObserveCastDelay(HeroAbilitySystem.Slot.Skill1);
                     break;
 
                 case Lesson.Skill2:
-                    if (WasSuccessfulCast(HeroAbilitySystem.Slot.Skill2)) CompleteLesson();
+                    ObserveCastDelay(HeroAbilitySystem.Slot.Skill2);
                     break;
 
                 case Lesson.Ultimate:
-                    if (WasSuccessfulCast(HeroAbilitySystem.Slot.Ultimate)) CompleteLesson();
+                    if (WasSuccessfulCast(HeroAbilitySystem.Slot.Ultimate)) _ultimateAccepted = true;
+                    if (!_ultimateAccepted) break;
+                    var phase = SharedUltimatePhase.Instance;
+                    if (phase != null && phase.Active)
+                    {
+                        _ultimateFinishedAt = -1;
+                        SetProgress(.75f * Mathf.Clamp01((float)((SharedUltimatePhase.Now - phase.Began) / phase.Duration)));
+                        break;
+                    }
+                    if (_ultimateFinishedAt < 0) _ultimateFinishedAt = Time.realtimeSinceStartupAsDouble;
+                    double after = Time.realtimeSinceStartupAsDouble - _ultimateFinishedAt;
+                    SetProgress(.75f + .25f * (float)(after / UltimateAfterSeconds));
+                    if (after >= UltimateAfterSeconds) CompleteLesson();
                     break;
 
                 case Lesson.DefenderReset:
@@ -337,42 +393,6 @@ namespace TumbangPreso
                 case Lesson.Punch:
                 case Lesson.Lunge:
                     if (_lastTagByStudentAt > _lessonBeganAt) CompleteLesson();
-                    break;
-
-                case Lesson.TripRecovery:
-                    // A press is detected as a drop LARGER than one frame of real time, so it
-                    // counts only presses `CharacterMotor` actually accepted through the real
-                    // rate cap.
-                    //
-                    // ⚠️ THERE IS NO BLEED AT ALL ABOVE `Balance.MinTripDown` AS OF 2026-08-26,
-                    // so above the floor the expected drop is zero and any movement is a press.
-                    // The `Time.deltaTime` allowance is kept because the LAST stretch of a fall,
-                    // under the floor, does still run at real time and would otherwise be
-                    // credited as presses nobody made.
-                    float expected = Mathf.Max(0.0f, _lastTripLeft - Time.deltaTime);
-                    if (_local.TripLeft < expected - 0.05f) _metric += 1.0f;
-                    _lastTripLeft = _local.TripLeft;
-                    SetProgress(_metric / 5.0f);
-
-                    if (_metric >= 5.0f)
-                    {
-                        CompleteLesson();
-                        break;
-                    }
-
-                    // ⚠️⚠️ THE LESSON PUTS YOU BACK DOWN, AND WITHOUT THIS IT COULD STRAND THE
-                    // PLAYER. The trip is applied ONCE, on entering the lesson, and the exit
-                    // condition is five ACCEPTED presses. A fall holds at most
-                    // (2.50 - 0.35) / 0.22 = 10 of them, so a player who watches the first fall
-                    // out instead of mashing reaches zero with the counter short and nothing
-                    // left to press: the lesson can then never be completed and the route stops
-                    // dead at step 15 of 17. Re-applying is also the honest teaching, because
-                    // the thing being taught is that mashing is what ends a fall.
-                    if (!_local.IsTripped)
-                    {
-                        _local.ApplyTrip();
-                        _lastTripLeft = _local.TripLeft;
-                    }
                     break;
 
                 case Lesson.Emote:
@@ -390,6 +410,200 @@ namespace TumbangPreso
                || lesson == Lesson.Skill1
                || lesson == Lesson.Skill2
                || lesson == Lesson.Ultimate;
+
+        private bool HasOwnSlipper() => _carrier != null && _carrier.Held != null
+            && _carrier.Held.OwnerSlot == _local.PlayerSlot;
+
+        private void ObserveCastDelay(HeroAbilitySystem.Slot slot)
+        {
+            if (_castAcceptedAt < 0 && WasSuccessfulCast(slot)) _castAcceptedAt = Time.unscaledTime;
+            if (_castAcceptedAt < 0) return;
+            float elapsed = Time.unscaledTime - _castAcceptedAt;
+            SetProgress(elapsed);
+            if (elapsed >= 1f) CompleteLesson();
+        }
+
+        private void OnTrainingScore(int seat, ScoreEvent kind)
+        {
+            if (_local != null && seat == _local.PlayerSlot && kind == ScoreEvent.LataKnocked
+                && _lesson == Lesson.ThrowAndRetrieve && _exerciseStage == 0) _exerciseStage = 1;
+        }
+
+        private void OnTrainingMoment(Visual.MatchFlair.Kind kind, int actor, int subject, Vector3 at, float strength)
+        {
+            if (_local != null && _lesson == Lesson.Pektus && kind == Visual.MatchFlair.Kind.Throw
+                && actor == _local.PlayerSlot && Mathf.Abs(strength) >= .30f) _exerciseStage = 1;
+            if (_local != null && _lesson == Lesson.Block && kind == Visual.MatchFlair.Kind.Block
+                && subject == _local.PlayerSlot && _dummy != null && actor == _dummy.PlayerSlot) _blocks++;
+        }
+
+        private static string LookPrompt()
+        {
+            if (Hud.OnTouch) return "[SWIPE]";
+            return InputLayer.LastInputDevice.Current == InputLayer.InputDeviceKind.Gamepad ? "[RIGHT STICK]" : "[MOUSE]";
+        }
+
+        private static string MovementPrompt()
+        {
+            string label = Hud.KeyLabelFor("Move");
+            if (Hud.OnTouch || InputLayer.LastInputDevice.Current == InputLayer.InputDeviceKind.Gamepad) return Key("Move");
+            if (label.Length == 4 && !label.Contains("/"))
+                return "[" + label[0] + "] [" + label[1] + "] [" + label[2] + "] [" + label[3] + "]";
+            return "[" + label.Replace("/", "] [") + "]";
+        }
+
+        private void EquipDummySlipper()
+        {
+            if (_dummy == null || _slippers == null) return;
+            if (_dummySlipper == null)
+                foreach (var shoe in _slippers) if (shoe != null && shoe != _ownSlipper) { _dummySlipper = shoe; break; }
+            if (_dummySlipper == null) return;
+            _dummySlipper.gameObject.SetActive(true); _dummySlipper.OwnerSlot = _dummy.PlayerSlot;
+            _dummySlipper.HostForceEquip(_dummy);
+        }
+
+        private void PrepareMovingAttacker()
+        {
+            if (_dummy == null) return;
+            _dummy.gameObject.SetActive(true); _dummy.IsDefender = false; _dummy.RoundActive = true;
+            _dummy.Intent.Clear(); _dummy.Intent.Parked = false; _dummy.ClearStun(); _dummy.ClearTrip();
+            _dummy.Teleport(_lata.transform.position + new Vector3(3, 0, 0));
+            EquipDummySlipper(); _marker?.Bind(null);
+        }
+
+        private void PrepareBlockExercise()
+        {
+            PrepareMovingAttacker(); if (_dummy == null) return;
+            // A fixed lane crosses the middle beside the can rather than targeting it.
+            _dummy.Teleport(new Vector3(2, 0, Confinement.AttackerSpawnRing()));
+            Face(_dummy, new Vector3(2, 0, -3));
+            _dummy.Intent.Parked = true; _marker?.Bind(null);
+        }
+
+        private void PrepareAbilityGround(bool preserveExisting = false)
+        {
+            PrepareAttackerThrow();
+            int shown = 0;
+            foreach (var seat in _seats)
+            {
+                if (seat == null || seat == _local || seat.IsDefender || shown >= 2) continue;
+                bool wasVisible = seat.gameObject.activeSelf;
+                seat.gameObject.SetActive(true); seat.Intent.Clear(); seat.Intent.Parked = false;
+                seat.ClearStun(); seat.ClearTrip(); seat.RoundActive = true;
+                if (!preserveExisting || !wasVisible) seat.Teleport(new Vector3(shown == 0 ? -3 : 3, 0, 2));
+                shown++;
+            }
+        }
+
+        private void PrepareCompletedRange()
+        {
+            // Keep both existing attackers; use the already assigned defender rather
+            // than converting one of the two roaming partners into the reset actor.
+            foreach (var seat in _seats)
+                if (seat != null && seat != _local && seat.IsDefender) { _dummy = seat; break; }
+            if (_dummy == null) return;
+            ApplyRoles(_dummy.PlayerSlot);
+            PrepareAbilityGround(preserveExisting: true);
+            _local.Intent.AllowOnly(null);
+            if (_ownSlipper != null) { _ownSlipper.gameObject.SetActive(true); _ownSlipper.HostForceEquip(_local); }
+            _lata.HostRestore();
+            _dummy.gameObject.SetActive(true); _dummy.IsDefender = true; _dummy.RoundActive = true;
+            _dummy.ClearStun(); _dummy.ClearTrip(); _dummy.Intent.Clear(); _dummy.Intent.Parked = false;
+            _dummy.GetComponent<Carrier>()?.Held?.HostDisarm(); _dummy.HoldingSlipper = false;
+            if (_dummySlipper != null) _dummySlipper.gameObject.SetActive(false);
+            _dummy.Teleport(SliceRunner.SpawnPointFor(_dummy.PlayerSlot, _dummy.PlayerSlot));
+            foreach (var seat in _seats)
+            {
+                if (seat == null || seat == _local || seat.IsDefender) continue;
+                seat.IsBot = true; seat.Intent.AllowOnly(null); seat.Intent.Parked = false;
+                foreach (var shoe in _slippers)
+                    if (shoe != null && shoe != _ownSlipper && shoe.OwnerSlot == seat.PlayerSlot)
+                    { shoe.gameObject.SetActive(true); shoe.HostForceEquip(seat); break; }
+                var brain = seat.GetComponent<AIController>();
+                if (brain != null) brain.enabled = true;
+            }
+        }
+
+        private const float OrbitRadius = 3f, OrbitAngularSpeed = .45f;
+        private CharacterMotor _orbitActor;
+        private float _orbitSlow = 1;
+        private void EnsureOrbitSpeed()
+        {
+            if (_orbitActor == _dummy) return;
+            StopOrbit(); _orbitActor = _dummy;
+            float walking = Balance.Speed * Stamina.RoleSpeedScale(false) * Roster.PersonSpeedScale(_dummy.CharacterIndex, _dummy.Mode);
+            _orbitSlow = Mathf.Min(1, OrbitRadius * OrbitAngularSpeed / Mathf.Max(.1f, walking));
+            _orbitActor.EnterSpeedZone(_orbitSlow);
+        }
+        private void StopOrbit()
+        {
+            if (_orbitActor != null) _orbitActor.ExitSpeedZone(_orbitSlow);
+            _orbitActor = null; _orbitSlow = 1;
+        }
+
+        private readonly Vector3[] _roamTargets = new Vector3[Balance.PlayerCount];
+        private float _nextRoamTarget, _roamUntil;
+        private void StepTrainingWorld()
+        {
+            if (_dummyCaught && _dummy != null && _dummy.gameObject.activeSelf)
+            { _dummy.Intent.Clear(); _dummy.gameObject.SetActive(false); if (_dummySlipper != null) _dummySlipper.gameObject.SetActive(false); }
+            if (_lesson == Lesson.Complete)
+            {
+                // The two attackers use their normal AI; only the friendly defender is scripted.
+                if (_dummy == null || !_dummy.gameObject.activeSelf) return;
+                _dummy.Intent.Clear(); _dummy.Intent.Parked = false;
+                if (!_lata.IsUpright)
+                {
+                    Vector3 goal = _lata.transform.position + Vector3.back * .9f;
+                    Vector3 delta = goal - _dummy.transform.position; delta.y = 0;
+                    _dummy.Intent.Move = delta.magnitude > .4f ? new Vector2(delta.x, delta.z).normalized : Vector2.zero;
+                    _dummy.Intent.Set(Verb.Grab, true);
+                }
+                return;
+            }
+            if (_lesson == Lesson.Block && _dummy != null && _dummySlipper != null)
+            {
+                if (_dummySlipper.State == SlipperState.Loose) EquipDummySlipper();
+                if (Time.time >= _nextDummyThrow && _dummySlipper.Holder == _dummy)
+                {
+                    _nextDummyThrow = Time.time + 2.5f;
+                    _dummy.GetComponent<Carrier>()?.HostThrowAt(_dummy.transform.position + Vector3.up * .9f,
+                        new Vector3(2, .25f, 0), 1f);
+                }
+                return;
+            }
+            if ((_lesson == Lesson.Punch || _lesson == Lesson.Lunge || _lesson == Lesson.ResetAndTag)
+                && !_dummyCaught && _dummy != null && _dummy.gameObject.activeSelf)
+            {
+                EnsureOrbitSpeed();
+                Vector3 radial = _dummy.transform.position - _lata.transform.position; radial.y = 0;
+                float radius = radial.magnitude;
+                Vector3 outward = radius > .01f ? radial / radius : Vector3.right;
+                // Follow the orbit tangent with gentle radial correction. Chasing a slow
+                // moving point at full walking speed repeatedly overshot and reversed.
+                Vector3 wish = new Vector3(-outward.z, 0, outward.x) + outward * ((OrbitRadius - radius) * 2f);
+                _dummy.Intent.Parked = false; _dummy.Intent.Move = new Vector2(wish.x, wish.z).normalized;
+                if (!_dummy.HoldingSlipper) EquipDummySlipper();
+                return;
+            }
+            if (_lesson >= Lesson.AbilityInfo && _lesson <= Lesson.Emote) StepRoamingAttackers();
+        }
+
+        private void StepRoamingAttackers()
+        {
+            if (Time.time >= _nextRoamTarget)
+            {
+                _nextRoamTarget = Time.time + 3; _roamUntil = Time.time + .65f;
+                for (int i = 0; i < _roamTargets.Length; i++)
+                { var pick = Random.insideUnitCircle * 4; _roamTargets[i] = new Vector3(pick.x, 0, pick.y); }
+            }
+            foreach (var seat in _seats)
+            {
+                if (seat == null || seat == _local || seat.IsDefender || !seat.gameObject.activeSelf) continue;
+                Vector3 delta = _roamTargets[seat.PlayerSlot] - seat.transform.position;
+                seat.Intent.Move = Time.time < _roamUntil ? new Vector2(delta.x, delta.z).normalized : Vector2.zero;
+            }
+        }
 
         private bool WasSuccessfulCast(HeroAbilitySystem.Slot slot)
             => _abilities != null
@@ -435,6 +649,7 @@ namespace TumbangPreso
         {
             if (_advancing) return;
             _advancing = true;
+            SetProgress(1);
             _hud?.FlashComplete();
 
             // 1.00 at LOOK to 1.50 at EMOTE, which is a fifth over the seventeen.
@@ -477,6 +692,7 @@ namespace TumbangPreso
         {
             switch (lesson)
             {
+                case Lesson.Ready:          return Verb.Interact;
                 case Lesson.Look:           return null;
                 case Lesson.Move:           return null;
                 case Lesson.Sprint:         return Verb.Sprint;
@@ -492,7 +708,6 @@ namespace TumbangPreso
                 case Lesson.DefenderReset:  return Verb.Grab;
                 case Lesson.Punch:          return Verb.SpecialAbility;
                 case Lesson.Lunge:          return Verb.Lunge;
-                case Lesson.TripRecovery:   return Verb.Jump;
                 case Lesson.Emote:          return Verb.EmoteWheel;
                 default:                    return null;
             }
@@ -520,12 +735,15 @@ namespace TumbangPreso
                 return;
             }
 
-            for (var step = Lesson.Look; step <= lesson; step++)
+            _unlocked.Clear();
+            for (var step = Lesson.Ready; step <= lesson; step++)
             {
                 var taught = VerbTaughtBy(step);
                 if (taught.HasValue) _unlocked.Add(taught.Value);
             }
 
+            // This exercise assesses the lunge, not another stationary punch.
+            if (lesson == Lesson.Lunge) _unlocked.Remove(Verb.SpecialAbility);
             _local.Intent.AllowOnly(_unlocked);
         }
 
@@ -557,7 +775,7 @@ namespace TumbangPreso
         /// rather than a test of one path through it.
         /// </summary>
         private static bool LessonIsTheTayas(Lesson lesson)
-            => lesson == Lesson.DefenderReset
+            => lesson == Lesson.Block || lesson == Lesson.ResetAndTag || lesson == Lesson.DefenderReset
             || lesson == Lesson.Punch
             || lesson == Lesson.Lunge;
 
@@ -569,14 +787,14 @@ namespace TumbangPreso
         /// is in hand. Re-running it on every lesson would yank a player across the street
         /// between PUNCH and LUNGE for no reason and undo `PrepareDummyInFront`'s placement.
         ///
-        /// ⚠️ AND THE ATTACKER SIDE IS APPLIED TOO, NOT JUST THE TAYA. `TripRecovery` and `Emote`
+        /// ⚠️ AND THE ATTACKER SIDE IS APPLIED TOO, NOT JUST THE TAYA. `Emote`
         /// follow the two taya lessons, and a player left holding the taya's role through them is
         /// being taught the wrong half of the game: the trip lesson's own text is about being an
         /// attacker put on the road.
         /// </summary>
         private void ApplyLessonRole(Lesson lesson)
         {
-            if (_local == null || lesson >= Lesson.Complete) return;
+            if (_local == null) return;
 
             bool wantsTaya = LessonIsTheTayas(lesson);
             if (_local.IsDefender == wantsTaya) return;
@@ -623,12 +841,18 @@ namespace TumbangPreso
 
         private void EnterLesson(Lesson lesson)
         {
+            StopOrbit();
             _lesson = lesson;
             _advancing = false;
             _metric = 0.0f;
+            _jumpAirborne = !_local.IsGrounded;
+            _ultimateAccepted = false;
+            _ultimateFinishedAt = -1;
             _lastPosition = _local.transform.position;
             _defenderResetArmed = false;
             _lessonBeganAt = Time.time;
+            _exerciseStage = _blocks = 0; _castAcceptedAt = -1; _dummyCaught = false;
+            _nextDummyThrow = Time.time + 1;
             _marker?.Bind(null);
             SetProgress(0.0f);
             ApplyVerbLock(lesson);
@@ -642,10 +866,7 @@ namespace TumbangPreso
                 _armRoutine = null;
             }
 
-            // ⚠️ BOTH BEFORE THE SWITCH, NOT AFTER IT. `Lesson.TripRecovery` opens by calling
-            // `_local.ApplyTrip()` and `Lesson.DefenderReset` opens by calling `BecomeDefender`;
-            // clearing or re-roling afterwards would undo the two lessons whose whole subject is
-            // the state being cleared.
+            // Clear previous effects before preparing this lesson's role and targets.
             ClearTheLastLessonsMess();
 
             // ⚠️⚠️ AND THE CAN GOES BACK ON ITS MARK BEFORE THE ROLE IS APPLIED, WHICH IS AN
@@ -674,13 +895,35 @@ namespace TumbangPreso
             // the whole exercise off the chalk box it is supposed to be taught inside.
             if (LessonIsTheTayas(lesson) && _lata != null) _lata.HostRestore();
 
+            bool changedRole = _local.IsDefender != LessonIsTheTayas(lesson);
             ApplyLessonRole(lesson);
 
             // ⚠️ THE DUMMY GOES AWAY AGAIN BETWEEN THE LESSONS THAT WANT IT. Three of the
             // seventeen need a body in front of you; the other fourteen do not, and a character
             // standing on the road for all of them is the *"other shit"* the route was asked to
             // stop showing. `PrepareDummyInFront` brings it back on the frame it is needed.
-            if (_dummy != null && _dummy.gameObject.activeSelf) _dummy.gameObject.SetActive(false);
+            if (lesson != Lesson.Complete)
+            {
+                foreach (var seat in _seats)
+                    if (seat != null && seat != _local && seat.TryGetComponent<AIController>(out var brain)) brain.enabled = false;
+                HideTheCast();
+            }
+            if (_ownSlipper != null) _ownSlipper.gameObject.SetActive(!LessonIsTheTayas(lesson));
+            bool usesCan = lesson == Lesson.ThrowAndRetrieve || LessonIsTheTayas(lesson) || lesson == Lesson.Complete;
+            _lata.gameObject.SetActive(usesCan);
+            // The clock is installed beside the can, so hiding the can alone leaves its cue alive.
+            var canClock = Visual.LataClockPresentation.For(_lata);
+            if (canClock != null) canClock.gameObject.SetActive(usesCan);
+            bool placeStudent = LessonIsTheTayas(lesson) || changedRole || lesson == Lesson.Ready
+                || lesson == Lesson.Throw || lesson == Lesson.Shove;
+            if (placeStudent)
+            {
+                _local.Teleport(_local.IsDefender
+                    ? SliceRunner.SpawnPointFor(_local.PlayerSlot, GameServices.Match.DefenderSlot)
+                    : new Vector3(0, 0, Confinement.AttackerSpawnRing()));
+                Face(_local, _lata.transform.position);
+            }
+            _lastPosition = _local.transform.position;
 
             string title;
             string body;
@@ -688,161 +931,109 @@ namespace TumbangPreso
 
             switch (lesson)
             {
+                case Lesson.Ready:
+                    title = "READY UP"; body = "Every match needs you to ready up before it starts.";
+                    action = Key("ReadyUp") + " READY UP"; break;
                 case Lesson.Look:
-                    title = "LOOK AROUND";
-                    body = "Move the mouse and find the can. Your camera is also your aim.";
-                    action = "MOUSE  ·  LOOK AND AIM";
-                    _marker?.Bind(_lata.transform);
-                    break;
-
+                    title = "LOOK AROUND"; body = "Use the mouse to look around.";
+                    action = LookPrompt() + " LOOK AROUND"; break;
                 case Lesson.Move:
-                    title = "MOVE THROUGH THE STREET";
-                    body = "Move four metres. The defender is faster; attackers must plan their route back out.";
-                    action = Key("Move") + "  ·  MOVE";
-                    break;
-
+                    title = "MOVE AROUND";
+                    body = "Move around the arena. Attackers move to retrieve slippers from the defender. Defenders move much faster to tag attackers.";
+                    action = MovementPrompt() + " MOVE"; break;
                 case Lesson.Sprint:
-                    title = "SPRINT";
-                    body = "Sprint while moving for one second. A full stamina bar buys roughly one crossing of the danger box.";
-                    action = Key("Sprint") + " + " + Key("Move");
-                    break;
-
+                    title = "RUN"; body = "Run around the arena. Running makes you move faster but consumes stamina that replenishes over time.";
+                    action = Key("Sprint") + " + " + MovementPrompt() + " RUN"; break;
                 case Lesson.Jump:
-                    title = "JUMP";
-                    body = "Jump once. Use it to clear street clutter, not to escape the defender's box.";
-                    action = Key("Jump") + "  ·  JUMP";
-                    break;
-
+                    title = "JUMP"; body = "Jump around the arena.";
+                    action = Key("Jump") + " JUMP"; break;
                 case Lesson.Throw:
-                    PrepareAttackerThrow();
-                    title = "THROW AT THE CAN";
-                    body = "Hold to charge, aim at the can, then release. Throwing is safe; retrieving is the risk.";
-                    action = Key("SpecialAbility") + "  ·  HOLD, AIM, RELEASE";
-                    _marker?.Bind(_lata.transform);
-                    break;
-
+                    PrepareAttackerThrow(); title = "THROW";
+                    body = "You are now attacking. Hold to charge, aim, then throw the slipper. You can only throw your slipper outside the danger zone.";
+                    action = Key("SpecialAbility") + " HOLD THEN RELEASE TO THROW"; break;
                 case Lesson.Retrieve:
-                    // ⚠️ THE SHOE GOES ON THE ROAD FIRST, WHATEVER THE THROW LESSON LEFT
-                    // BEHIND. See `PlaceOwnSlipperOnTheRoad`: skipping the throw arrives here
-                    // still holding it, and you cannot pick up what is already in your hand.
-                    if (_ownSlipper == null || _ownSlipper.State != SlipperState.Loose)
-                        PlaceOwnSlipperTowardTheLata();
-                    title = "GET YOUR SLIPPER BACK";
-                    body = "Walk to your own slipper and press the pickup key. Holding it inside the box makes you taggable.";
-                    action = Key("Grab") + "  ·  PICK UP";
-                    _marker?.Bind(_ownSlipper != null ? _ownSlipper.transform : null);
+                    // Keep the student's actual flight and landing. A skipped Throw still
+                    // needs a staged shoe, but a real throw must not be snapped onto a new surface.
+                    if (_ownSlipper == null || (_ownSlipper.State != SlipperState.Loose
+                        && _ownSlipper.State != SlipperState.InFlight)) PlaceOwnSlipperTowardTheLata();
+                    title = "RETRIEVE SLIPPER";
+                    body = "Retrieve your thrown slipper. You are safe from tags while you don't have your slipper yet. Retrieving it makes you vulnerable, so run back to the safe zone as fast as possible.";
+                    action = Key("Grab") + " RETRIEVE";
+                    // The object remains visible without a tutorial star/glow overlay.
                     break;
-
                 case Lesson.Pektus:
-                    PrepareAttackerThrow();
-                    title = "CURVE A PEKTUS THROW";
-                    body = "Charge another throw, add spin, then release. Strong spin can bank once. The mouse wheel does it too.";
-                    // ⚠️ THE LIVE BINDING, NOT THE WORD "ARROWS". The curve is two real actions
-                    // in the map as of 2026-08-26 (`PlayerInputReader._curveLeft`), so this
-                    // lesson teaches whatever the player has bound, like every other one.
-                    action = Key("SpecialAbility") + " + " + Key("CurveLeft") + " / " + Key("CurveRight");
-                    _marker?.Bind(_lata.transform);
+                    PrepareAttackerThrow(); title = "CURVE THROW";
+                    body = "Scroll the mouse wheel to curve the throw. Use this to make the throw harder to block.";
+                    action = Key("CurveLeft") + " / " + Key("CurveRight") + " CURVE"; break;
+                case Lesson.ThrowAndRetrieve:
+                    PrepareAttackerThrow(); title = "THROW AND RETRIEVE";
+                    body = "The ultimate test in attacking. Throw your slipper at the can to hit it. Retrieve your slipper and run back to the safe zone afterwards.";
+                    action = Key("SpecialAbility") + " THROW  " + Key("Grab") + " RETRIEVE";
                     break;
-
                 case Lesson.Shove:
-                    // ⚠️ 1.40 m, OUT FROM 1.15. `TrainingStreetProbe` measured the dummy's body
-                    // mesh 1.09 m from the eye on this lesson, which is a character filling the
-                    // frame rather than one standing in front of you. `Balance.ShoveRange` is
-                    // 1.60, so this is still comfortably inside the verb being taught.
-                    PrepareDummyInFront(1.40f, attacker: true);
-                    _local.Stamina.RefillAndClearFatigue();
-                    title = "SHOVE AN ATTACKER";
-                    body = "Shove the training dummy. It costs stamina you may need for the run back out.";
-                    action = Key("Lunge") + "  ·  SHOVE";
-                    _marker?.Bind(_dummy != null ? _dummy.transform : null);
-                    break;
-
-                case Lesson.AbilityInfo:
-                    // ⚠️ THIS IS THE LESSON THE DECK EXISTS FOR, so this is where it appears.
-                    UI.Hud.Instance?.SetTrainingDeckHidden(false);
-                    title = "READ YOUR HERO KIT";
-                    body = "Hold the info key to inspect every power without filling the live HUD with instructions.";
-                    action = Key("AbilityInfo") + "  ·  HOLD FOR DETAILS";
-                    break;
-
-                case Lesson.Skill1:
-                    ResetHeroKit();
-                    title = "USE " + AbilityName(HeroAbilitySystem.Slot.Skill1, "SKILL 1");
-                    body = AbilityDescription(HeroAbilitySystem.Slot.Skill1);
-                    action = Key("Skill1") + "  ·  SKILL 1";
-                    break;
-
-                case Lesson.Skill2:
-                    ResetHeroKit();
-                    title = "USE " + AbilityName(HeroAbilitySystem.Slot.Skill2, "SKILL 2");
-                    body = AbilityDescription(HeroAbilitySystem.Slot.Skill2);
-                    action = Key("Skill2") + "  ·  SKILL 2";
-                    break;
-
-                case Lesson.Ultimate:
-                    ResetHeroKit();
-                    if (_abilities?.Kit != null)
-                        _abilities.Kit.AddUltimateCharge(_abilities.Kit.UltimateCost);
-                    title = "USE " + AbilityName(HeroAbilitySystem.Slot.Ultimate, "ULTIMATE");
-                    body = "Ultimates are earned by playing the objective. Training fills the meter once so you can learn the cast.";
-                    action = Key("Ultimate") + "  ·  ULTIMATE";
-                    break;
-
-                case Lesson.DefenderReset:
-                    // ⚠️ NO `BecomeDefender()` HERE ANY MORE. `ApplyLessonRole` above already
-                    // ran it, from `LessonIsTheTayas`, and now runs it AFTER the can is back on
-                    // its mark, which is the whole point of the reordering. The second call was
-                    // a duplicate that happened to be the one whose placement was wrong.
-                    title = "ROLE SWAP: DEFENDER";
-                    body = "You are now the defender. Stay inside the chalk box and hold the pickup key beside the fallen can to stand it up.";
-                    action = Key("Grab") + "  ·  HOLD TO RESET";
-                    _marker?.Bind(_lata.transform);
-                    _armRoutine = StartCoroutine(ArmDefenderReset());
-                    break;
-
+                    PrepareAttackerThrow(); PrepareDummyInFront(1.4f, true);
+                    title = "SHOVE"; body = "Shove a fellow attacker to sabotage them. Sabotaging gives bonus points if the shoved attacker gets tagged.";
+                    action = Key("Lunge") + " SHOVE"; _marker?.Bind(null); break;
+                case Lesson.Block:
+                    PrepareBlockExercise(); title = "BLOCK";
+                    body = "You are now defending. Move around to block incoming slippers.";
+                    action = MovementPrompt() + " BLOCK"; break;
                 case Lesson.Punch:
-                    // ⚠️ 1.50 m against `Balance.PunchRange` 1.70, for the reason on the shove.
-                    PrepareDummyInFront(1.50f, attacker: true);
-                    title = "PUNCH A VULNERABLE ATTACKER";
-                    body = "The defender's left click is a quick stationary tag. The dummy is holding a slipper inside your box.";
-                    action = Key("SpecialAbility") + "  ·  PUNCH";
-                    _marker?.Bind(_dummy != null ? _dummy.transform : null);
-                    break;
-
+                    PrepareMovingAttacker(); title = "TAG";
+                    body = "Tag the attackers inside the danger zone. You can only tag attackers with their slipper inside the danger zone.";
+                    action = Key("SpecialAbility") + " TAG"; break;
+                case Lesson.DefenderReset:
+                    title = "RESET CAN";
+                    body = "Reset the can. You can tag vulnerable attackers while the can is upright. Knocking it down makes you unable to tag at all, so make sure to reset it back as fast as possible.";
+                    action = Key("Grab") + " HOLD TO RESET";
+                    _armRoutine = StartCoroutine(ArmDefenderReset()); break;
+                case Lesson.ResetAndTag:
+                    PrepareMovingAttacker();
+                    if (_dummy != null) _dummy.gameObject.SetActive(false);
+                    if (_dummySlipper != null) _dummySlipper.gameObject.SetActive(false);
+                    title = "RESET AND TAG";
+                    body = "The ultimate test in defending. Reset the can so that you can tag again. Tag the attackers before they run back to the safe zone.";
+                    action = Key("Grab") + " RESET  " + Key("SpecialAbility") + " TAG";
+                    _armRoutine = StartCoroutine(ArmDefenderReset()); break;
                 case Lesson.Lunge:
-                    PrepareDummyInFront(3.0f, attacker: true);
-                    title = "LUNGE";
-                    body = "Hold to charge, release to dash, and sweep through the dummy. Use this when an attacker is running past you.";
-                    action = Key("Lunge") + "  ·  HOLD, THEN RELEASE";
-                    _marker?.Bind(_dummy != null ? _dummy.transform : null);
-                    break;
-
-                case Lesson.TripRecovery:
-                    _local.ApplyTrip();
-                    _lastTripLeft = _local.TripLeft;
-                    title = "RECOVER FROM A FALL";
-                    body = "Trips put you on the road. Mash the live jump binding to shorten the knockdown instead of waiting it out.";
-                    action = Key("Jump") + "  ·  MASH TO GET UP";
-                    break;
-
+                    PrepareMovingAttacker(); title = "LUNGE";
+                    body = "Lunge at an attacker inside the danger zone. Use this to make the tag harder to escape.";
+                    action = Key("Lunge") + " HOLD THEN RELEASE TO LUNGE"; break;
+                case Lesson.AbilityInfo:
+                    PrepareAbilityGround(); Hud.Instance?.SetTrainingDeckHidden(false);
+                    title = "READ ABILITY DESCRIPTIONS";
+                    body = "Heroes have unique abilities. Read what each one does so you know when to use them.";
+                    action = Key("AbilityInfo") + " HOLD TO READ"; break;
+                case Lesson.Skill1:
+                    PrepareAbilityGround(); ResetHeroKit(); title = "CAST SIGNATURE ABILITY";
+                    body = "Signature abilities are always available regardless of your role. It gives you a reliable mix of mobility and utility.";
+                    action = Key("Skill1") + " CAST"; break;
+                case Lesson.Skill2:
+                    PrepareAbilityGround(); ResetHeroKit(); title = "CAST ROLE ABILITY";
+                    body = "Role abilities change depending on which role you take each round. It adapts to your role, helping you escape tags when attacking or chase attackers when defending";
+                    // MAGNET requires the student's own loose slipper. Prepare that real
+                    // prerequisite instead of bypassing or modifying the hero's cast gate.
+                    if (_abilities?.Kit is ZackHeroKit)
+                    { PlaceOwnSlipperTowardTheLata(); }
+                    action = Key("Skill2") + " CAST"; break;
+                case Lesson.Ultimate:
+                    PrepareAbilityGround(); ResetHeroKit();
+                    if (_abilities?.Kit != null) _abilities.Kit.AddUltimateCharge(_abilities.Kit.UltimateCost);
+                    title = "CAST ULTIMATE ABILITY";
+                    body = "Ultimate abilities are match-defining powers charged by hitting or tagging. Unleash them to turn the round in your favor.";
+                    action = Key("Ultimate") + " CAST"; break;
                 case Lesson.Emote:
-                    title = "EMOTE";
-                    body = "Hold the wheel, choose an emote, and release. Movement or another action interrupts it.";
-                    action = Key("EmoteWheel") + "  ·  HOLD, CHOOSE, RELEASE";
-                    break;
-
+                    PrepareAbilityGround();
+                    // Keep this expression exercise clear of the held training slipper.
+                    if (_ownSlipper != null)
+                    { _ownSlipper.HostDisarm(); _ownSlipper.gameObject.SetActive(false); }
+                    title = "EMOTE"; body = "Emote to express yourself in the arena.";
+                    action = Key("EmoteWheel") + " EMOTE"; break;
                 default:
-                    title = "TRAINING COMPLETE";
-                    body = "You tested movement, stamina, jumping, throwing, retrieval, Pektus, hero powers, both roles, tags, fall recovery and emotes.";
-                    action = "ENTER  ·  RETURN TO MAIN MENU";
-                    _marker?.Bind(null);
-
-                    // ⚠️ THE END OF THE ROUTE GETS THE MATCH FANFARE, NOT AN EIGHTEENTH PING.
-                    // `CompleteLesson` climbs a fifth over seventeen steps and then stops; a
-                    // route that ended on the same sound as step sixteen would be seventeen
-                    // notifications rather than an arc with a finish on it.
-                    GameServices.Audio?.PlayUi("match_win");
-                    break;
+                    PrepareCompletedRange(); title = "TUTORIAL COMPLETE";
+                    body = "You are now ready to fight in the actual arena. Feel free to test everything you just learned while you are still here.";
+                    action = ""; _marker?.Bind(null);
+                    GameServices.Audio?.PlayUi("match_win"); break;
             }
 
             _hud?.SetLesson((int)lesson, LessonCount, title, body, action,
@@ -881,6 +1072,8 @@ namespace TumbangPreso
 
             _lata.HostKnockDown(-1);
             _defenderResetArmed = !_lata.IsUpright;
+            if (_defenderResetArmed && _lesson == Lesson.ResetAndTag && _dummy != null)
+            { _dummy.gameObject.SetActive(true); EquipDummySlipper(); }
 
             if (!_defenderResetArmed)
                 Debug.LogError("[Training] the can refused to go over, so ROLE SWAP: DEFENDER "
@@ -893,7 +1086,7 @@ namespace TumbangPreso
         private void PrepareAttackerThrow()
         {
             if (_local.IsDefender) BecomeAttacker();
-            if (_ownSlipper != null) _ownSlipper.HostForceEquip(_local);
+            if (_ownSlipper != null) { _ownSlipper.gameObject.SetActive(true); _ownSlipper.HostForceEquip(_local); }
             if (!_lata.IsUpright) _lata.HostRestore();
         }
 
@@ -1042,9 +1235,16 @@ namespace TumbangPreso
 
         private void ExitTraining()
         {
+            _ready = false;
+            StopAllCoroutines();
+            if (_local != null) _local.Intent.AllowOnly(null);
             GameLaunch.GuidedTutorial = false;
             Hitstop.End();
-            SceneFlow.Go(SceneFlow.MainMenu);
+            // Offline directors survive the arena. End their training state before
+            // returning to the hub, just as network shutdown ends a live match.
+            GameServices.Round?.ResetForNewMatch();
+            GameServices.Match?.ResetForNewMatch();
+            SceneFlow.LeaveMatchToMainMenu();
         }
 
         /// <summary>
@@ -1183,17 +1383,27 @@ namespace TumbangPreso
         /// <summary>The student landed a tag. Which lesson cares is decided in `EvaluateLesson`.</summary>
         private void OnSomebodyTagged(int tayaSlot, int victimSlot)
         {
-            if (_local != null && tayaSlot == _local.PlayerSlot) _lastTagByStudentAt = Time.time;
+            if (_local == null || tayaSlot != _local.PlayerSlot) return;
+            _lastTagByStudentAt = Time.time;
+            if (_lesson == Lesson.ResetAndTag && _defenderResetArmed && _lata.IsUpright) _exerciseStage = 2;
+            if ((_lesson == Lesson.Punch || _lesson == Lesson.Lunge || _lesson == Lesson.ResetAndTag)
+                && _dummy != null && victimSlot == _dummy.PlayerSlot) _dummyCaught = true;
         }
 
         private void OnDestroy()
         {
+            if (_activeRoute == this) _activeRoute = null;
+            StopOrbit();
             GameLaunch.GuidedTutorial = false;
 
             // ⚠️ UNSUBSCRIBED WITH THE ROUTE. `RoundDirector` outlives this component, and a
             // handler on a destroyed MonoBehaviour throws once per tag for the rest of the
             // session. `MatchInstaller` records the same fault on `LataRestored`.
             if (GameServices.Round != null) GameServices.Round.Tagged -= OnSomebodyTagged;
+            if (GameServices.Match != null) GameServices.Match.Scored -= OnTrainingScore;
+            Visual.MatchFlair.Presented -= OnTrainingMoment;
+            foreach (var banner in _mutedBanners) if (banner != null) banner.enabled = true;
+            foreach (var callout in _hiddenCallouts) if (callout != null) callout.SetActive(true);
 
             // ⚠️⚠️ THE VERB LOCK IS RELEASED WITH THE ROUTE, AND NOT DOING THIS WOULD SHIP A
             // PLAYER WHO CANNOT THROW. `InputIntent` belongs to the SEAT, which outlives this
@@ -1570,7 +1780,7 @@ namespace TumbangPreso
         /// tutorial chrome, not gameplay verbs), so the binding cannot be asked for its label the
         /// way `Hud.KeyLabel` asks; naming them once is the next best guarantee.
         /// </summary>
-        private const string SkipKeyLabel = "N";
+        private const string SkipKeyLabel = "ENTER";
 
         private const string QuitKeyLabel = "BACKSPACE";
 
@@ -1613,13 +1823,18 @@ namespace TumbangPreso
         public void SetLesson(int lesson, int total, string title, string body, string action,
                               Color role)
         {
-            _counter.text = lesson >= total
-                ? "COMPLETE"
-                : $"{lesson + 1:00} / {total:00}";
+            _counter.gameObject.SetActive(lesson < total);
+            _counter.text = lesson < total ? $"{lesson + 1:00} / {total:00}" : "";
 
             _title.text = title;
-            if(_ownerSkipLabel!=null)_ownerSkipLabel.text=lesson>=total?"ENTER · FINISH":"N · SKIP LESSON";
+            if (_fill != null) _fill.transform.parent.gameObject.SetActive(lesson < total);
+            if (_pips.Count > 0 && _pips[0] != null) _pips[0].transform.parent.gameObject.SetActive(lesson < total);
+            if(_ownerSkipLabel!=null)
+            { _ownerSkipLabel.text="SKIP LESSON"; _ownerSkipLabel.transform.parent.gameObject.SetActive(lesson<total); }
             _body.text = body;
+            if (_ownerQuit != null) _ownerQuit.anchoredPosition = new Vector2(lesson >= total ? 0 : 320, _ownerQuit.anchoredPosition.y);
+            _hasLessonAction = !string.IsNullOrEmpty(action);
+            if (_keyRow != null) _keyRow.gameObject.SetActive(_hasLessonAction && !_inspecting);
 
             for (int i = 0; i < _pips.Count; i++)
             {
@@ -1792,6 +2007,7 @@ namespace TumbangPreso
             {
                 _fill.fillAmount = Mathf.Clamp01(ratio);
                 _fill.rectTransform.anchorMax=new Vector2(Mathf.Clamp01(ratio),1);
+                _fill.color = ratio >= 1 ? TrainingDone : TrainingCurrent;
             }
         }
 

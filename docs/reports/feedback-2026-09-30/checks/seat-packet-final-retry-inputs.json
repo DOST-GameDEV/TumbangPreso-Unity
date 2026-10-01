@@ -1,0 +1,13 @@
+{
+  "retry": 1,
+  "expectedCases": 19,
+  "sourceEquivalent": "a52fe4f62 plus focused receiver fixture on existing fully overlaid candidate",
+  "inputs": {
+    "Assets/TumbangPreso/Tests/SeatAssignmentPacketTests.cs": "20e27c607167c1682f0436964036bf67fd46df129092198bd0b5bc511e35a87f",
+    "Assets/TumbangPreso/Tests/SeatAssignmentPacketTests.cs.meta": "7ccba8e2c34da651c09b17fcc563ba651c4d174b1ea309d9c0f17cc1aa6d0a3c",
+    "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "3c41827d1f986d52943f4cba96aa51e397a8aff6cd57dd95ba95109741f6adc8"
+  },
+  "question": "Malformed packets are rejected without exceptions/mutation; all valid seats, spectator, host gate and duplicate semantics retained",
+  "baseline": "10/10 baseline failures: truncated0..3 throw, trailing5/8 and out-of-range seats mutate local state",
+  "repair": "Qualify Core.Balance from the networking namespace; first final launch stopped before testing."
+}

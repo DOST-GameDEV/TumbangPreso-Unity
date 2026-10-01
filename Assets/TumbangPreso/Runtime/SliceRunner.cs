@@ -356,6 +356,10 @@ namespace TumbangPreso
 
                 m.IsDefender = slot == defenderSlot;
                 m.HoldingSlipper = false;
+                // Teleport clears elemental statuses, not the independent tagged/
+                // stun and trip recovery stacks. A new round retires those too.
+                m.ClearStun();
+                m.ClearTrip();
                 m.Stamina.RefillAndClearFatigue();
 
                 // ⚠️ THE MATCH-END PARK IS LIFTED HERE, and it is the other half of the freeze
@@ -429,6 +433,7 @@ namespace TumbangPreso
                 // the rule in ONE place rather than two that have to agree.
                 if (!Slippers[slot].gameObject.activeSelf) Slippers[slot].gameObject.SetActive(true);
 
+                Slippers[slot].Affinity = SlipperAffinity.Normal;
                 Slippers[slot].transform.position = SlipperHome(slot);
             }
         }

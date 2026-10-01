@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 20:37:28Z" end-time="2026-09-30 20:37:34Z" duration="6.5150676">
+  <test-suite type="TestSuite" id="2226" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="990" result="Passed" start-time="2026-09-30 20:37:28Z" end-time="2026-09-30 20:37:34Z" duration="6.515068" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2220" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="990" result="Passed" start-time="2026-09-30 20:37:28Z" end-time="2026-09-30 20:37:34Z" duration="6.505497" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="174331" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2221" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="990" result="Passed" start-time="2026-09-30 20:37:28Z" end-time="2026-09-30 20:37:34Z" duration="6.502730" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2222" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="990" result="Passed" start-time="2026-09-30 20:37:28Z" end-time="2026-09-30 20:37:34Z" duration="6.500232" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1242" name="DanteVisibilityTests" fullname="TumbangPreso.PlayTests.DanteVisibilityTests" classname="TumbangPreso.PlayTests.DanteVisibilityTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-30 20:37:28Z" end-time="2026-09-30 20:37:34Z" duration="6.478189" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1243" name="BarrierKeepsAuthoredPlayVisibleInTheCourt" fullname="TumbangPreso.PlayTests.DanteVisibilityTests.BarrierKeepsAuthoredPlayVisibleInTheCourt" methodname="BarrierKeepsAuthoredPlayVisibleInTheCourt" classname="TumbangPreso.PlayTests.DanteVisibilityTests" runstate="Runnable" seed="499761938" result="Passed" start-time="2026-09-30 20:37:28Z" end-time="2026-09-30 20:37:33Z" duration="5.635027" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote Logs/dante-court/owner.png
+[Play] wrote Logs/dante-court/observer.png
+]]></output>
+            </test-case>
+            <test-case id="1244" name="BarrierTransmitsPlayFromBothSides" fullname="TumbangPreso.PlayTests.DanteVisibilityTests.BarrierTransmitsPlayFromBothSides" methodname="BarrierTransmitsPlayFromBothSides" classname="TumbangPreso.PlayTests.DanteVisibilityTests" runstate="Runnable" seed="169543484" result="Passed" start-time="2026-09-30 20:37:33Z" end-time="2026-09-30 20:37:34Z" duration="0.829398" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[DanteVisibility] side=-1 transmission=0.3708
+[DanteVisibility] side=1 transmission=0.4571
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

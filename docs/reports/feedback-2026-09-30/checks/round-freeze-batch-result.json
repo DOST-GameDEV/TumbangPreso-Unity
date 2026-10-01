@@ -1,0 +1,28 @@
+{
+  "playerCheckExit": 0,
+  "phaseResults": {
+    "host": {
+      "samples": 98,
+      "span": 9.89630126953125,
+      "began": 103.239624440875,
+      "frame": [
+        0,
+        0
+      ]
+    },
+    "client": {
+      "samples": 97,
+      "span": 9.898300170898438,
+      "began": 103.239624440875,
+      "frame": [
+        0,
+        0
+      ]
+    }
+  },
+  "failures": [
+    "host frozen image missing",
+    "client frozen image missing"
+  ],
+  "passed": false
+}

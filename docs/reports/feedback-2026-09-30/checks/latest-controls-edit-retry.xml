@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 10:38:20Z" end-time="2026-09-30 10:38:21Z" duration="0.3425226">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="672" result="Passed" start-time="2026-09-30 10:38:20Z" end-time="2026-09-30 10:38:21Z" duration="0.342523" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1784" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="672" result="Passed" start-time="2026-09-30 10:38:20Z" end-time="2026-09-30 10:38:21Z" duration="0.327871" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="5596" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1785" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="672" result="Passed" start-time="2026-09-30 10:38:20Z" end-time="2026-09-30 10:38:21Z" duration="0.323083" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1786" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="672" result="Passed" start-time="2026-09-30 10:38:20Z" end-time="2026-09-30 10:38:21Z" duration="0.318485" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1235" name="InputContractTests" fullname="TumbangPreso.Tests.InputContractTests" classname="TumbangPreso.Tests.InputContractTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-30 10:38:20Z" end-time="2026-09-30 10:38:20Z" duration="0.039950" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1241" name="EveryRebindableActionDeclaresADeviceAnswer" fullname="TumbangPreso.Tests.InputContractTests.EveryRebindableActionDeclaresADeviceAnswer" methodname="EveryRebindableActionDeclaresADeviceAnswer" classname="TumbangPreso.Tests.InputContractTests" runstate="Runnable" seed="266705387" result="Passed" start-time="2026-09-30 10:38:20Z" end-time="2026-09-30 10:38:20Z" duration="0.018084" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1255" name="InputMapAndAbilityTests" fullname="TumbangPreso.Tests.InputMapAndAbilityTests" classname="TumbangPreso.Tests.InputMapAndAbilityTests" runstate="Runnable" testcasecount="40" result="Passed" start-time="2026-09-30 10:38:20Z" end-time="2026-09-30 10:38:21Z" duration="0.173294" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1272" name="ActionsUseTheLatestMouseAndInteractionOrder" fullname="TumbangPreso.Tests.InputMapAndAbilityTests.ActionsUseTheLatestMouseAndInteractionOrder" methodname="ActionsUseTheLatestMouseAndInteractionOrder" classname="TumbangPreso.Tests.InputMapAndAbilityTests" runstate="Runnable" seed="175727735" result="Passed" start-time="2026-09-30 10:38:20Z" end-time="2026-09-30 10:38:20Z" duration="0.039620" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1267" name="EarlierGrabOverrideStillLoadsAfterDefaultMouseMappingChanges" fullname="TumbangPreso.Tests.InputMapAndAbilityTests.EarlierGrabOverrideStillLoadsAfterDefaultMouseMappingChanges" methodname="EarlierGrabOverrideStillLoadsAfterDefaultMouseMappingChanges" classname="TumbangPreso.Tests.InputMapAndAbilityTests" runstate="Runnable" seed="402426993" result="Passed" start-time="2026-09-30 10:38:20Z" end-time="2026-09-30 10:38:20Z" duration="0.009943" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1275" name="InteractRebindingKeepsReadyReachableWithoutErasingAnIndependentSavedKey" fullname="TumbangPreso.Tests.InputMapAndAbilityTests.InteractRebindingKeepsReadyReachableWithoutErasingAnIndependentSavedKey" classname="TumbangPreso.Tests.InputMapAndAbilityTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-30 10:38:20Z" end-time="2026-09-30 10:38:21Z" duration="0.095373" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1273" name="InteractRebindingKeepsReadyReachableWithoutErasingAnIndependentSavedKey(False)" fullname="TumbangPreso.Tests.InputMapAndAbilityTests.InteractRebindingKeepsReadyReachableWithoutErasingAnIndependentSavedKey(False)" methodname="InteractRebindingKeepsReadyReachableWithoutErasingAnIndependentSavedKey" classname="TumbangPreso.Tests.InputMapAndAbilityTests" runstate="Runnable" seed="1164346218" result="Passed" start-time="2026-09-30 10:38:20Z" end-time="2026-09-30 10:38:20Z" duration="0.088196" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1274" name="InteractRebindingKeepsReadyReachableWithoutErasingAnIndependentSavedKey(True)" fullname="TumbangPreso.Tests.InputMapAndAbilityTests.InteractRebindingKeepsReadyReachableWithoutErasingAnIndependentSavedKey(True)" methodname="InteractRebindingKeepsReadyReachableWithoutErasingAnIndependentSavedKey" classname="TumbangPreso.Tests.InputMapAndAbilityTests" runstate="Runnable" seed="2048817328" result="Passed" start-time="2026-09-30 10:38:20Z" end-time="2026-09-30 10:38:21Z" duration="0.004958" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1266" name="NoTwoActionsShareAControl" fullname="TumbangPreso.Tests.InputMapAndAbilityTests.NoTwoActionsShareAControl" methodname="NoTwoActionsShareAControl" classname="TumbangPreso.Tests.InputMapAndAbilityTests" runstate="Runnable" seed="577765437" result="Passed" start-time="2026-09-30 10:38:21Z" end-time="2026-09-30 10:38:21Z" duration="0.002717" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1276" name="SettingsGroupsCoverEveryActionExactlyOnce" fullname="TumbangPreso.Tests.InputMapAndAbilityTests.SettingsGroupsCoverEveryActionExactlyOnce" methodname="SettingsGroupsCoverEveryActionExactlyOnce" classname="TumbangPreso.Tests.InputMapAndAbilityTests" runstate="Runnable" seed="853283672" result="Passed" start-time="2026-09-30 10:38:21Z" end-time="2026-09-30 10:38:21Z" duration="0.001722" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1271" name="TheDefaultsAreTheOwnersLayout" fullname="TumbangPreso.Tests.InputMapAndAbilityTests.TheDefaultsAreTheOwnersLayout" methodname="TheDefaultsAreTheOwnersLayout" classname="TumbangPreso.Tests.InputMapAndAbilityTests" runstate="Runnable" seed="1065150200" result="Passed" start-time="2026-09-30 10:38:21Z" end-time="2026-09-30 10:38:21Z" duration="0.001643" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

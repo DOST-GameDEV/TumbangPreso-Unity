@@ -9,7 +9,9 @@ namespace TumbangPreso
     public sealed class HalftimePresentation : MonoBehaviour
     {
         public static HalftimePresentation Instance {get;private set;}
-        public static bool Playing=>Instance!=null&&Instance.Active&&Instance.IsHalftime;
+        public static bool Playing=>Instance!=null&&Instance.Active;
+        public const float BreakDuration = 5;
+        public const float HalftimeDuration = 10;
         public bool Active {get;private set;}
         public bool IsHalftime {get;private set;}
         public long MatchId {get;private set;}
@@ -17,11 +19,13 @@ namespace TumbangPreso
         public int CompletedRound {get;private set;}
         public int NextTaya {get;private set;}
         public double Began {get;private set;}
-        public float Duration=>IsHalftime?10:3;
+        public float Duration=>IsHalftime?HalftimeDuration:BreakDuration;
         public float Remaining=>Active?Mathf.Max(0,Duration-(float)(SharedUltimatePhase.Now-Began)):0;
         public bool HasReplay=>_view?.Ready==true;
         public RenderTexture ReplayFrame=>_view?.Target;
+        public RenderTexture FrozenFrame=>_frame?.Texture;
         public string FallbackReason {get;private set;}
+        private RoundBreakFrame _frame;
         private RecordedWorldView _view;
         private RecordedMatchClip _clip;
         private bool _attempted,_standings;
@@ -32,7 +36,7 @@ namespace TumbangPreso
             if(Instance!=null)return Instance;
             return GameServices.Match!=null?GameServices.Match.gameObject.AddComponent<HalftimePresentation>():null;
         }
-        private void Awake()=>Instance=this;
+        private void Awake(){Instance=this;_frame=gameObject.AddComponent<RoundBreakFrame>();}
         public void BeginHost(int nextRound,int nextTaya)
         {
             if(!NetAuthority.ShouldResolve())return;
@@ -56,11 +60,15 @@ namespace TumbangPreso
                 ||completed<1||completed>=GameServices.Match.TotalRounds||nextTaya!=Core.MatchRules.DefenderSlotFor(completed+1)
                 ||double.IsNaN(began)||double.IsInfinity(began)||began>SharedUltimatePhase.Now+1||clip<0
                 ||halftime!=IsMiddleBreak(completed,GameServices.Match.TotalRounds)||!float.IsFinite(requestedScale)||requestedScale<0||requestedScale>4)return false;
-            if(Active&&MatchId==match&&CompletedRound==completed)return false;
-            if(SharedUltimatePhase.Now-began>=(halftime?10:3))return false;
-            End(false);MatchId=match;CompletedRound=completed;NextTaya=nextTaya;Began=began;ClipId=clip;IsHalftime=halftime;
+            if(MatchId==match&&CompletedRound==completed)return false;
+            if(SharedUltimatePhase.Now-began>=(halftime?HalftimeDuration:BreakDuration))return false;
+            End(false);
+            if(halftime)FindAnyObjectByType<UI.RoleSwapCard>()?.DismissAndPractice();
+            _frame.Freeze();SharedUltimatePhase.Instance?.Cancel();
+            MatchId=match;CompletedRound=completed;NextTaya=nextTaya;Began=began;ClipId=clip;IsHalftime=halftime;
             _scene=SceneManager.GetActiveScene();Active=true;_attempted=false;_standings=false;FallbackReason=null;
-            if(halftime){FindAnyObjectByType<UI.RoleSwapCard>()?.DismissAndPractice();PresentationClock.RequestScale(requestedScale);PresentationClock.Hold();FreshInput();}
+            PresentationClock.RequestScale(requestedScale);PresentationClock.Hold();FreshInput();
+            if(!halftime)FindAnyObjectByType<UI.RoleSwapCard>()?.ShowScheduledBreak(completed+1,nextTaya,Remaining,null);
             return true;
         }
         private void Update()
@@ -98,6 +106,7 @@ namespace TumbangPreso
                 try{_view.Draw(_clip.Start+offset);}
                 catch(Exception failure){Debug.LogWarning("[Replay] Recorded view failed: "+failure.Message);_view.Dispose();_view=null;FallbackReason="Replay unavailable on this screen";}
             }
+            _frame.SetImageVisible(_view?.Ready!=true||age>=5.8f);
             if(!_standings&&_attempted&&(_view==null||age>=5.8f))
             {
                 _standings=true;_view?.Dispose();_view=null;
@@ -106,8 +115,10 @@ namespace TumbangPreso
         }
         public void End(bool advance)
         {
-            bool wasActive=Active,held=IsHalftime;Active=false;IsHalftime=false;_clip=null;_view?.Dispose();_view=null;
-            if(wasActive&&held){PresentationClock.Release();FreshInput();}
+            bool wasActive=Active;Active=false;IsHalftime=false;
+            _clip=null;_view?.Dispose();_view=null;
+            _frame?.Release();
+            if(wasActive){PresentationClock.Release();FreshInput();}
             if(advance&&wasActive&&NetAuthority.ShouldResolve()&&GameServices.Match?.IsWarmupBuffer==true)GameServices.Match.AdvanceRound();
         }
         private static void FreshInput(){if(GameServices.Round!=null)foreach(var actor in GameServices.Round.Players)actor?.Intent.RequireFreshActions();}

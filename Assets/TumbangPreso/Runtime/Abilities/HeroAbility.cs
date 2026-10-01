@@ -761,6 +761,8 @@ namespace TumbangPreso.Abilities
             if (charges && UsesCharges) ChargesRemaining = MaxCharges;
         }
 
+        public virtual bool AllowsImpairedCast(AbilityContext ctx) => false;
+
         public virtual bool CanActivate(AbilityContext ctx)
         {
             if (ctx == null || ctx.Motor == null) return false;
@@ -771,7 +773,7 @@ namespace TumbangPreso.Abilities
             // exit it once, leaving one root behind for every extra press.
             if (IsWindingUp) return false;
 
-            if (!ctx.Motor.CanAct()) return false;
+            if (!ctx.Motor.CanAct() && !AllowsImpairedCast(ctx)) return false;
             return true;
         }
 
@@ -982,6 +984,12 @@ namespace TumbangPreso.Abilities
                 DurationRemaining = 0.0f;
                 OnEnd(ctx);
             }
+        }
+
+        public void ReduceCooldown(float seconds)
+        {
+            if (!float.IsFinite(seconds) || seconds <= 0) return;
+            CooldownRemaining = Mathf.Max(0, CooldownRemaining - seconds);
         }
 
         public virtual void Reset()

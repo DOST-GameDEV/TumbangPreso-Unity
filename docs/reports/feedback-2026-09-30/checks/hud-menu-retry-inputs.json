@@ -1,0 +1,11 @@
+{
+  "sourceEquivalent": "ecd6b8348 plus focused feedback fixtures",
+  "question": "actual Escape routing preserves hub and backdrop; actual stamina fill retreats from top",
+  "expectedCases": 2,
+  "retry": 1,
+  "inputs": {
+    "Assets/TumbangPreso/Tests/PlayMode/FeedbackHudMenuTests.cs": "474fd96f550d9ca3ee581bdbfcf13f20938167dc5d82b8cce59c22e88dcd2350",
+    "Assets/TumbangPreso/Tests/PlayMode/FeedbackHudMenuTests.cs.meta": "e92434080e1d557e2b317feaa10ef25ec56d1b8b01bb2360de9d3752e2db67f2"
+  },
+  "repair": "Unity6000.5 CanvasRenderer.GetMesh returns its current borrowed mesh without an argument; preserve original compile-failure log."
+}

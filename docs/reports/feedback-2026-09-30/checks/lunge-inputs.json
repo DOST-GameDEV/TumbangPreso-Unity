@@ -1,0 +1,21 @@
+{
+  "base": "aecc0ee2c",
+  "sourceEquivalent": "945da2350 plus longer lunge",
+  "question": "real input and host request travel; sweep reaches new near target and refuses distant target",
+  "expectedCases": 5,
+  "retry": 0,
+  "inputs": {
+    "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "5c2aea333d1de6059f02351135c884c866905aac67de8583ff2ee662bd3575ea",
+    "Assets/TumbangPreso/Tests/PlayMode/DefenderLungeTravelTests.cs": "7e59ce0d5a293dee7f6c2bcd766b91a9b9cdeb1d62841ffad34f43dc6de5381b",
+    "Assets/TumbangPreso/Tests/PlayMode/DefenderLungeTravelTests.cs.meta": "e40c60cb0d4f0eefa33c61b44aa911cbb960e5d4437a209d8fb4510a38e91daa",
+    "Packages/com.tumbangpreso.core/Runtime/AiTuning.cs": "a33544b417acfbeda69f88f78139403010c9acbd1057d34d4ba6220d99b8b8c2",
+    "Packages/com.tumbangpreso.core/Runtime/Balance.cs": "2ddede15be85f2a08abe1a8d5f820b8a4c5ab347b649511ff6087ad314205a32",
+    "Packages/com.tumbangpreso.core/Runtime/Combat.cs": "b64233004fd76c5096b390e1709b7df464db43aafd0698c200bc8eb0354a5a4d",
+    "Packages/com.tumbangpreso.core/Runtime/MatchRecord.cs": "30ac7f45de534175964627091eb2a449fca745cd7c55599db3010378b756b5d9",
+    "Packages/com.tumbangpreso.core/Runtime/MoveBudget.cs": "3228b01657b436f30f7ef8b1610f0ec445d61f6f805dc5177a98e18c9ee83811",
+    "Packages/com.tumbangpreso.core/Runtime/RosterReworkRules.cs": "6045b770aea163a6661a084b00f38be7fba2282719ca75f52cf622d4a9b1e5b1",
+    "Packages/com.tumbangpreso.core/Runtime/Sabotage.cs": "11a69b67a16fb95bcef305383080ce47d472cf0d592f9ca0ba876b9d562f4d90"
+  },
+  "finalFixtureSha256": "200589313353f342cc87744c76424b13df787c75a58a5efd9e575e0a576e53c4",
+  "runtimeDrift": []
+}

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 07:35:46Z" end-time="2026-10-01 07:35:46Z" duration="0.730973">
+  <test-suite type="TestSuite" id="2368" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1111" result="Failed" site="Child" start-time="2026-10-01 07:35:46Z" end-time="2026-10-01 07:35:46Z" duration="0.730973" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2362" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1111" result="Failed" site="Child" start-time="2026-10-01 07:35:46Z" end-time="2026-10-01 07:35:46Z" duration="0.701119" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27736" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2363" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1111" result="Failed" site="Child" start-time="2026-10-01 07:35:46Z" end-time="2026-10-01 07:35:46Z" duration="0.683996" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2364" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1111" result="Failed" site="Child" start-time="2026-10-01 07:35:46Z" end-time="2026-10-01 07:35:46Z" duration="0.666124" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2069" name="SessionRestartTests" fullname="TumbangPreso.PlayTests.SessionRestartTests" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" testcasecount="21" result="Failed" site="Child" start-time="2026-10-01 07:35:46Z" end-time="2026-10-01 07:35:46Z" duration="0.627951" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2077" name="LobbyPickUsesSenderAndRejectsChangesDuringTheMatch" fullname="TumbangPreso.PlayTests.SessionRestartTests.LobbyPickUsesSenderAndRejectsChangesDuringTheMatch" methodname="LobbyPickUsesSenderAndRejectsChangesDuringTheMatch" classname="TumbangPreso.PlayTests.SessionRestartTests" runstate="Runnable" seed="1295245758" result="Failed" start-time="2026-10-01 07:35:46Z" end-time="2026-10-01 07:35:46Z" duration="0.606343" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Lobby pick replaced a running match choice.
+  Expected: 2
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SessionRestartTests+<LobbyPickUsesSenderAndRejectsChangesDuringTheMatch>d__16.MoveNext () [0x00194] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\SessionRestartTests.cs:261
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18696, join code U927
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

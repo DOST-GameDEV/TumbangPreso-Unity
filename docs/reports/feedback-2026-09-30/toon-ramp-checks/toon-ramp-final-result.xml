@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 16:23:16Z" end-time="2026-09-30 16:23:31Z" duration="14.6935273">
+  <test-suite type="TestSuite" id="2162" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="934" result="Failed" site="Child" start-time="2026-09-30 16:23:16Z" end-time="2026-09-30 16:23:31Z" duration="14.693527" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2156" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="934" result="Failed" site="Child" start-time="2026-09-30 16:23:16Z" end-time="2026-09-30 16:23:31Z" duration="14.671441" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="136589" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2157" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="934" result="Failed" site="Child" start-time="2026-09-30 16:23:16Z" end-time="2026-09-30 16:23:31Z" duration="14.657245" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2158" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="934" result="Failed" site="Child" start-time="2026-09-30 16:23:16Z" end-time="2026-09-30 16:23:31Z" duration="14.644571" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1175" name="CloudWorldLookProbe" fullname="TumbangPreso.PlayTests.CloudWorldLookProbe" classname="TumbangPreso.PlayTests.CloudWorldLookProbe" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-30 16:23:16Z" end-time="2026-09-30 16:23:20Z" duration="3.921102" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1176" name="CompareWorldLookBranchAndRampOnTheSameLiveFrame" fullname="TumbangPreso.PlayTests.CloudWorldLookProbe.CompareWorldLookBranchAndRampOnTheSameLiveFrame" methodname="CompareWorldLookBranchAndRampOnTheSameLiveFrame" classname="TumbangPreso.PlayTests.CloudWorldLookProbe" runstate="Runnable" seed="1593491451" result="Passed" start-time="2026-09-30 16:23:16Z" end-time="2026-09-30 16:23:20Z" duration="3.909367" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2108" name="WorldCourtCueTests" fullname="TumbangPreso.PlayTests.WorldCourtCueTests" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" testcasecount="31" result="Failed" site="Child" start-time="2026-09-30 16:23:20Z" end-time="2026-09-30 16:23:31Z" duration="10.667544" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2128" name="ToonRampChangesMeasuredLightingAndLeavesUnownedPreviewGlobalsAlone" fullname="TumbangPreso.PlayTests.WorldCourtCueTests.ToonRampChangesMeasuredLightingAndLeavesUnownedPreviewGlobalsAlone" methodname="ToonRampChangesMeasuredLightingAndLeavesUnownedPreviewGlobalsAlone" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" seed="496797033" result="Passed" start-time="2026-09-30 16:23:20Z" end-time="2026-09-30 16:23:26Z" duration="5.724624" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="2129" name="TransparentToonRampKeepsTheSameMeasuredLightingContract" fullname="TumbangPreso.PlayTests.WorldCourtCueTests.TransparentToonRampKeepsTheSameMeasuredLightingContract" methodname="TransparentToonRampKeepsTheSameMeasuredLightingContract" classname="TumbangPreso.PlayTests.WorldCourtCueTests" runstate="Runnable" seed="1944458151" result="Failed" start-time="2026-09-30 16:23:26Z" end-time="2026-09-30 16:23:31Z" duration="4.934799" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The bright look must open the shade side up against the authored lighting.
+  Expected: less than 1.77619874f
+  But was:  1.78908396f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.WorldCourtCueTests+<CheckToonRampScene>d__31.MoveNext () [0x0073c] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/WorldCourtCueTests.Stage.cs:215
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

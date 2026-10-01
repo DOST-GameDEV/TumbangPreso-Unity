@@ -74,14 +74,14 @@
         public const float ThrowRestoreCooldown = 1.25f;
 
         // Tournament Anti-Camping & Anti-Stall Penalties
-        public const float TayaCampRadius = 2.2f;
-        public const float TayaCampClearRadius = 2.8f;
-        public const float TayaCampWarningTime = 3.0f;
+        public const float TayaCampRadius = 1.5f;
+        public const float TayaCampClearRadius = 2.0f;
+        public const float TayaCampWarningTime = 2.5f;
         public const float TayaCampGracePeriod = 5.0f;
         public const int ScoreTayaCampPenalty = -5;
 
-        public const float SlipperUnretrievedWarningTime = 7.0f;
-        public const float SlipperUnretrievedGracePeriod = 10.0f;
+        public const float SlipperUnretrievedWarningTime = 7.5f;
+        public const float SlipperUnretrievedGracePeriod = 15.0f;
         public const int ScoreUnretrievedPenalty = -5;
         public const float TournamentPenaltyInterval = 1.0f;
 
@@ -360,7 +360,7 @@
         /// <summary>You cannot START a sprint below this, so the bar cannot be feathered.</summary>
         public const float StaminaSprintFloor = 7.5f;
 
-        public const float FatigueTime = 2.0f;
+        public const float FatigueTime = 2.5f;
         public const float FatigueSpeedScale = 0.75f;
 
         // -------------------------------------------------------------------
@@ -391,7 +391,11 @@
         // -------------------------------------------------------------------
 
         public const float LungeChargeTime = 0.5f;
-        public const float LungeSpeed = 7.746f;
+        // Owner feedback, 2026-09-30: a faster, farther defender commitment.
+        // Solve the impulse from travel so friction and all derived reach stay coherent.
+        public const float LungeDistance = 3.0f;
+        public static readonly float LungeSpeed =
+            (float)System.Math.Sqrt(2.0 * Friction * LungeDistance);
         public const float LungeTagRadius = 1.3f;
         public const float LungeActiveTime = 0.45f;
         public const float LungeCooldown = 1.5f;
@@ -438,10 +442,8 @@
         /// <summary>
         /// The impulse a slide leaves with, solved from <see cref="SlideDistance"/>.
         ///
-        /// ⚠️⚠️ COMPUTED RATHER THAN TYPED, WHICH `LungeSpeed` IS NOT AND SHOULD PROBABLY BE.
-        /// `CLAUDE.md` § 4 requires `v = sqrt(2 * Friction * d)` and 7.746 is that solve for a
-        /// 1.0 m lunge; it is a literal, so a `Friction` change would silently move the lunge's
-        /// distance and nothing would say so. This one cannot drift.
+        /// Like the defender lunge, this derives velocity from the intended travel
+        /// and friction instead of storing two independently tuned values.
         /// </summary>
         public static readonly float SlideSpeed =
             (float)System.Math.Sqrt(2.0 * Friction * SlideDistance);
@@ -521,7 +523,9 @@
         // THE THROW — carrier.gd and slipper.gd
         // -------------------------------------------------------------------
 
-        public const float ChargeFullTime = 2.5f;
+        // Faster ordinary wind-up requested in Feedback. Power range, launch
+        // speed and retrieval recovery remain unchanged in both modes.
+        public const float ChargeFullTime = 1.25f;
         public const float ChargeMinPower = 0.35f;
         public const float ThrowLockTime = 1.25f;
         /// <summary>How close a body's FEET have to be to a resting tsinelas to pick it up.

@@ -10,11 +10,98 @@ namespace TumbangPreso.Visual
         {
             var paths=ResolvePaths(root);
             if(paths==null)throw new System.InvalidOperationException("Rafi rig is missing a required bone.");
-            var clips=new[]{BuildRafiCut(paths),BuildRafiFeint(paths),BuildRafiBreakwater(paths)};
+            var clips=new[]{BuildRafiCut(paths),BuildRafiFeint(paths),BuildRafiBreakwater(paths),BuildRafiWall(paths),BuildRafiSkim(paths)};
             foreach(var clip in clips)GroundIntroduction(clip,root,paths["root"],anchorToRest:true);
             return clips;
         }
+        public static AnimationClip BuildRafiSkimAuthored(Transform root)
+        {
+            var paths=ResolvePaths(root);
+            if(paths==null)throw new System.InvalidOperationException("Rafi skim rig is missing a required bone.");
+            var clip=BuildRafiSkim(paths);
+            AlignSkimPalms(clip,root,paths);
+            GroundIntroduction(clip,root,paths["root"],anchorToRest:true);
+            return clip;
+        }
+        private static void AlignSkimPalms(AnimationClip clip,Transform root,Dictionary<string,string> paths)
+        {
+            var skin=root.GetComponentInChildren<SkinnedMeshRenderer>(true);
+            int li=System.Array.FindIndex(skin.bones,b=>b!=null&&b.name=="arm-left");
+            int ri=System.Array.FindIndex(skin.bones,b=>b!=null&&b.name=="arm-right");
+            if(li<0||ri<0||!CharacterVisual.PalmCentre(skin,li,out var lp)||!CharacterVisual.PalmCentre(skin,ri,out var rp))
+                throw new System.InvalidOperationException("Skim needs both measured palms.");
+            rp.y+=CharacterVisual.HandTopLift;
+            var left=skin.bones[li];var right=skin.bones[ri];
+            var times=new[]{0f,.10f,.22f,.36f,.46f,.60f,.72f};
+            var weights=new[]{0f,.55f,1f,1f,.65f,.2f,0f};
+            var leftKeys=new Vector3[times.Length];var rightKeys=new Vector3[times.Length];
+            for(int i=0;i<times.Length;i++)
+            {
+                clip.SampleAnimation(root.gameObject,times[i]);
+                var lrot=left.localRotation;var rrot=right.localRotation;
+                Vector3 axis=right.position-left.position;float d=axis.magnitude;axis/=d;
+                float lr=left.TransformVector(lp).magnitude,rr=right.TransformVector(rp).magnitude;
+                float a=(lr*lr-rr*rr+d*d)/(2*d);
+                float reach=Mathf.Sqrt(Mathf.Max(.0001f,lr*lr-a*a));
+                var forward=Vector3.ProjectOnPlane(root.forward,axis).normalized;
+                var down=Vector3.ProjectOnPlane(-root.up,axis).normalized;
+                var working=left.position+axis*a+(forward*.9165f+down*.4f)*reach;
+                var leftTarget=working+axis*(i==2?-.018f:i==3?.018f:0)-root.up*.012f;
+                right.rotation=Quaternion.FromToRotation(right.TransformVector(rp),working-right.position)*right.rotation;
+                left.rotation=Quaternion.FromToRotation(left.TransformVector(lp),leftTarget-left.position)*left.rotation;
+                rightKeys[i]=Quaternion.Slerp(rrot,right.localRotation,weights[i]).eulerAngles;
+                leftKeys[i]=Quaternion.Slerp(lrot,left.localRotation,weights[i]).eulerAngles;
+                if(i>0)for(int k=0;k<3;k++)
+                {
+                    rightKeys[i][k]=rightKeys[i-1][k]+Mathf.DeltaAngle(rightKeys[i-1][k],rightKeys[i][k]);
+                    leftKeys[i][k]=leftKeys[i-1][k]+Mathf.DeltaAngle(leftKeys[i-1][k],leftKeys[i][k]);
+                }
+            }
+            for(int k=0;k<3;k++)
+            {
+                var lc=new AnimationCurve();var rc=new AnimationCurve();
+                for(int i=0;i<times.Length;i++){lc.AddKey(new Keyframe(times[i],leftKeys[i][k],0,0));rc.AddKey(new Keyframe(times[i],rightKeys[i][k],0,0));}
+                string suffix=k==0?"x":k==1?"y":"z";
+                clip.SetCurve(paths["arm-left"],typeof(Transform),"localEulerAnglesRaw."+suffix,lc);
+                clip.SetCurve(paths["arm-right"],typeof(Transform),"localEulerAnglesRaw."+suffix,rc);
+            }
+            clip.SampleAnimation(root.gameObject,0);
+        }
+        public static AnimationClip BuildRafiWallAuthored(Transform root)
+        {
+            var paths=ResolvePaths(root);
+            if(paths==null)throw new System.InvalidOperationException("Rafi wall rig is missing a required bone.");
+            var clip=BuildRafiWall(paths);
+            GroundIntroduction(clip,root,paths["root"],anchorToRest:true);
+            return clip;
+        }
 #endif
+        private static AnimationClip BuildRafiSkim(Dictionary<string,string> paths)
+        {
+            var b=new ClipBuilder("hero-rafi-skim",paths);
+            PoseKey(b,0,0,V(0,0,0),V(0,0,0),V(0,0,15),V(0,0,-15));
+            // Keep the shoe low and steady in the right hand; the free palm coats its sole.
+            PoseKey(b,.10f,-.018f,V(8,8,0),V(10,-8,0),V(-28,-12,26),V(-52,18,-24),V(-5,0,2),V(4,0,-2));
+            PoseKey(b,.22f,-.018f,V(10,5,0),V(13,-5,0),V(-58,-30,18),V(-62,22,-22),V(-5,0,2),V(4,0,-2));
+            PoseKey(b,.36f,-.016f,V(8,-3,0),V(10,3,0),V(-65,12,32),V(-60,20,-22),V(-4,0,2),V(3,0,-2));
+            PoseKey(b,.46f,-.012f,V(5,-2,0),V(5,2,0),V(-42,22,45),V(-49,15,-24));
+            PoseKey(b,.60f,-.005f,V(2,0,0),V(2,0,0),V(-18,10,28),V(-24,6,-21));
+            PoseKey(b,.72f,0,V(0,0,0),V(0,0,0),V(0,0,15),V(0,0,-15));
+            return b.Build();
+        }
+        private static AnimationClip BuildRafiWall(Dictionary<string,string> paths)
+        {
+            var b=new ClipBuilder("hero-rafi-wall",paths);
+            PoseKey(b,0,0,V(0,0,0),V(0,0,0),V(0,0,15),V(0,0,-15));
+            // Knees gather the low water; both palms raise it instead of cutting sideways.
+            PoseKey(b,.08f,-.045f,V(14,-4,0),V(-6,2,0),V(-22,-6,28),V(-22,6,-28),V(-10,0,4),V(8,0,-4));
+            PoseKey(b,.18f,-.03f,V(6,0,0),V(-5,0,0),V(-55,-12,60),V(-55,12,-60),V(-6,0,3),V(5,0,-3));
+            PoseKey(b,.25f,-.01f,V(-5,0,0),V(-5,0,0),V(-82,-12,74),V(-82,12,-74),V(-3,0,2),V(3,0,-2));
+            PoseKey(b,.36f,-.01f,V(-3,0,0),V(-3,0,0),V(-76,-10,70),V(-76,10,-70),V(-3,0,2),V(3,0,-2));
+            PoseKey(b,.52f,-.015f,V(2,0,0),V(0,0,0),V(-48,-14,34),V(-48,14,-34));
+            PoseKey(b,.78f,0,V(0,0,0),V(0,0,0),V(0,0,15),V(0,0,-15));
+            return b.Build();
+        }
         private static AnimationClip BuildRafiCut(Dictionary<string, string> paths)
         {
             var b = new ClipBuilder("hero-rafi-cut", paths);

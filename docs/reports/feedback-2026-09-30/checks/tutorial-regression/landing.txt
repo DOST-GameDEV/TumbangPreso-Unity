@@ -1,0 +1,7 @@
+diagnosis: Tutorial end target=(0.00, 14.00, 0.00) state=InFlight pos=(0.00, 11.77, 0.44) velocity=(0.00, 1.54, 0.00) airborne=12.00008 scale=1 active=True
+final: Tutorial end target=(0.00, 14.00, 0.00) state=Loose pos=(0.00, 0.17, -7.82) velocity=(0.00, 0.00, 0.00) airborne=1.579999 scale=1 active=True
+final: Tutorial actual target=(0.00, 14.00, 0.00) landed=(0.00, 0.17, -7.82) road=0.1 rest=0.06604385
+final: Tutorial end target=(7.00, 7.00, -8.00) state=Loose pos=(4.74, 0.17, -2.56) velocity=(0.00, 0.00, 0.00) airborne=0.6999995 scale=1 active=True
+final: Tutorial actual target=(7.00, 7.00, -8.00) landed=(4.74, 0.17, -2.56) road=0.1 rest=0.06604385
+final: Tutorial end target=(0.00, 0.25, 1.00) state=Loose pos=(0.00, 0.17, 0.75) velocity=(0.00, 0.00, 0.00) airborne=0.4399998 scale=1 active=True
+final: Tutorial actual target=(0.00, 0.25, 1.00) landed=(0.00, 0.17, 0.75) road=0.1 rest=0.06604385

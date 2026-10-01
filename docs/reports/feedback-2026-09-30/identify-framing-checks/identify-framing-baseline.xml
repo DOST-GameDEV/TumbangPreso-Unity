@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 07:20:42Z" end-time="2026-10-01 07:20:42Z" duration="0.1178754">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="747" result="Failed" site="Child" start-time="2026-10-01 07:20:42Z" end-time="2026-10-01 07:20:42Z" duration="0.117875" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1878" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="747" result="Failed" site="Child" start-time="2026-10-01 07:20:42Z" end-time="2026-10-01 07:20:42Z" duration="0.102819" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25280" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1879" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="747" result="Failed" site="Child" start-time="2026-10-01 07:20:42Z" end-time="2026-10-01 07:20:42Z" duration="0.098783" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1880" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="747" result="Failed" site="Child" start-time="2026-10-01 07:20:42Z" end-time="2026-10-01 07:20:42Z" duration="0.094719" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1235" name="IdentifyPacketBoundsTests" fullname="TumbangPreso.Tests.IdentifyPacketBoundsTests" classname="TumbangPreso.Tests.IdentifyPacketBoundsTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-01 07:20:42Z" end-time="2026-10-01 07:20:42Z" duration="0.061318" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1243" name="ImpossibleStringLengthsAreRejectedBeforeDecode" fullname="TumbangPreso.Tests.IdentifyPacketBoundsTests.ImpossibleStringLengthsAreRejectedBeforeDecode" classname="TumbangPreso.Tests.IdentifyPacketBoundsTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-01 07:20:42Z" end-time="2026-10-01 07:20:42Z" duration="0.049902" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1241" name="ImpossibleStringLengthsAreRejectedBeforeDecode(uint.MaxValue)" fullname="TumbangPreso.Tests.IdentifyPacketBoundsTests.ImpossibleStringLengthsAreRejectedBeforeDecode(uint.MaxValue)" methodname="ImpossibleStringLengthsAreRejectedBeforeDecode" classname="TumbangPreso.Tests.IdentifyPacketBoundsTests" runstate="Runnable" seed="1721041764" result="Failed" start-time="2026-10-01 07:20:42Z" end-time="2026-10-01 07:20:42Z" duration="0.034916" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.InvalidCastException: length value outside of int32 range
+  at Unity.Netcode.FastBufferReader.ReadValueSafe (System.String& s, System.Boolean oneByteChars) [0x0002c] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\FastBufferReader.cs:660 
+  at TumbangPreso.Net.MatchRpc.OnIdentifyMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00008] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:744 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+   --- End of inner exception stack trace ---
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.IdentifyPacketBoundsTests.Deliver (Unity.Netcode.FastBufferWriter writer, System.Int32 payloadBytes) [0x0001e] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\IdentifyPacketBoundsTests.cs:24 
+  at TumbangPreso.Tests.IdentifyPacketBoundsTests+<>c__DisplayClass9_0.<ImpossibleStringLengthsAreRejectedBeforeDecode>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\IdentifyPacketBoundsTests.cs:45 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.IdentifyPacketBoundsTests.ImpossibleStringLengthsAreRejectedBeforeDecode (System.UInt32 length) [0x0004c] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\IdentifyPacketBoundsTests.cs:45
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1242" name="ImpossibleStringLengthsAreRejectedBeforeDecode(2147483647)" fullname="TumbangPreso.Tests.IdentifyPacketBoundsTests.ImpossibleStringLengthsAreRejectedBeforeDecode(2147483647)" methodname="ImpossibleStringLengthsAreRejectedBeforeDecode" classname="TumbangPreso.Tests.IdentifyPacketBoundsTests" runstate="Runnable" seed="1526911048" result="Failed" start-time="2026-10-01 07:20:42Z" end-time="2026-10-01 07:20:42Z" duration="0.001506" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Invalid reader position detected when trying to read a string of size 4294967294! This can result from an error in the serialization. Ensure deserialization exactly matches what was serialized!
+  at Unity.Netcode.FastBufferReader.ReadValueSafe (System.String& s, System.Boolean oneByteChars) [0x0002c] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\FastBufferReader.cs:660 
+  at TumbangPreso.Net.MatchRpc.OnIdentifyMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00008] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:744 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.IdentifyPacketBoundsTests.Deliver (Unity.Netcode.FastBufferWriter writer, System.Int32 payloadBytes) [0x0001e] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\IdentifyPacketBoundsTests.cs:24 
+  at TumbangPreso.Tests.IdentifyPacketBoundsTests+<>c__DisplayClass9_0.<ImpossibleStringLengthsAreRejectedBeforeDecode>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\IdentifyPacketBoundsTests.cs:45 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.IdentifyPacketBoundsTests.ImpossibleStringLengthsAreRejectedBeforeDecode (System.UInt32 length) [0x0004c] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\IdentifyPacketBoundsTests.cs:45
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1240" name="TruncatedIdentifyDoesNotThrowOrConsumeArrival" fullname="TumbangPreso.Tests.IdentifyPacketBoundsTests.TruncatedIdentifyDoesNotThrowOrConsumeArrival" classname="TumbangPreso.Tests.IdentifyPacketBoundsTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-01 07:20:42Z" end-time="2026-10-01 07:20:42Z" duration="0.006051" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1236" name="TruncatedIdentifyDoesNotThrowOrConsumeArrival(8)" fullname="TumbangPreso.Tests.IdentifyPacketBoundsTests.TruncatedIdentifyDoesNotThrowOrConsumeArrival(8)" methodname="TruncatedIdentifyDoesNotThrowOrConsumeArrival" classname="TumbangPreso.Tests.IdentifyPacketBoundsTests" runstate="Runnable" seed="1406653361" result="Failed" start-time="2026-10-01 07:20:42Z" end-time="2026-10-01 07:20:42Z" duration="0.002582" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at Unity.Netcode.FastBufferReader.ReadValueSafe (System.String& s, System.Boolean oneByteChars) [0x0002c] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\FastBufferReader.cs:660 
+  at TumbangPreso.Net.MatchRpc.OnIdentifyMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00008] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:744 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.IdentifyPacketBoundsTests.Deliver (Unity.Netcode.FastBufferWriter writer, System.Int32 payloadBytes) [0x0001e] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\IdentifyPacketBoundsTests.cs:24 
+  at TumbangPreso.Tests.IdentifyPacketBoundsTests+<>c__DisplayClass8_0.<TruncatedIdentifyDoesNotThrowOrConsumeArrival>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\IdentifyPacketBoundsTests.cs:38 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.IdentifyPacketBoundsTests.TruncatedIdentifyDoesNotThrowOrConsumeArrival (System.Int32 length) [0x00032] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\IdentifyPacketBoundsTests.cs:38
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1237" name="TruncatedIdentifyDoesNotThrowOrConsumeArrival(11)" fullname="TumbangPreso.Tests.IdentifyPacketBoundsTests.TruncatedIdentifyDoesNotThrowOrConsumeArrival(11)" methodname="TruncatedIdentifyDoesNotThrowOrConsumeArrival" classname="TumbangPreso.Tests.IdentifyPacketBoundsTests" runstate="Runnable" seed="1575694289" result="Failed" start-time="2026-10-01 07:20:42Z" end-time="2026-10-01 07:20:42Z" duration="0.000698" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at Unity.Netcode.FastBufferReader.ReadValueSafe (System.String& s, System.Boolean oneByteChars) [0x0002c] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\FastBufferReader.cs:660 
+  at TumbangPreso.Net.MatchRpc.OnIdentifyMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00008] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:744 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.IdentifyPacketBoundsTests.Deliver (Unity.Netcode.FastBufferWriter writer, System.Int32 payloadBytes) [0x0001e] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\IdentifyPacketBoundsTests.cs:24 
+  at TumbangPreso.Tests.IdentifyPacketBoundsTests+<>c__DisplayClass8_0.<TruncatedIdentifyDoesNotThrowOrConsumeArrival>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\IdentifyPacketBoundsTests.cs:38 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.IdentifyPacketBoundsTests.TruncatedIdentifyDoesNotThrowOrConsumeArrival (System.Int32 length) [0x00032] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\IdentifyPacketBoundsTests.cs:38
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1238" name="TruncatedIdentifyDoesNotThrowOrConsumeArrival(17)" fullname="TumbangPreso.Tests.IdentifyPacketBoundsTests.TruncatedIdentifyDoesNotThrowOrConsumeArrival(17)" methodname="TruncatedIdentifyDoesNotThrowOrConsumeArrival" classname="TumbangPreso.Tests.IdentifyPacketBoundsTests" runstate="Runnable" seed="700779093" result="Failed" start-time="2026-10-01 07:20:42Z" end-time="2026-10-01 07:20:42Z" duration="0.000583" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at Unity.Netcode.FastBufferReader.ReadValueSafe (System.String& s, System.Boolean oneByteChars) [0x0002c] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\FastBufferReader.cs:660 
+  at TumbangPreso.Net.MatchRpc.OnIdentifyMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00008] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:744 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.IdentifyPacketBoundsTests.Deliver (Unity.Netcode.FastBufferWriter writer, System.Int32 payloadBytes) [0x0001e] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\IdentifyPacketBoundsTests.cs:24 
+  at TumbangPreso.Tests.IdentifyPacketBoundsTests+<>c__DisplayClass8_0.<TruncatedIdentifyDoesNotThrowOrConsumeArrival>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\IdentifyPacketBoundsTests.cs:38 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.IdentifyPacketBoundsTests.TruncatedIdentifyDoesNotThrowOrConsumeArrival (System.Int32 length) [0x00032] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\IdentifyPacketBoundsTests.cs:38
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1239" name="TruncatedIdentifyDoesNotThrowOrConsumeArrival(48)" fullname="TumbangPreso.Tests.IdentifyPacketBoundsTests.TruncatedIdentifyDoesNotThrowOrConsumeArrival(48)" methodname="TruncatedIdentifyDoesNotThrowOrConsumeArrival" classname="TumbangPreso.Tests.IdentifyPacketBoundsTests" runstate="Runnable" seed="567369981" result="Failed" start-time="2026-10-01 07:20:42Z" end-time="2026-10-01 07:20:42Z" duration="0.000794" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnIdentifyMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x000cc] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:766 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.IdentifyPacketBoundsTests.Deliver (Unity.Netcode.FastBufferWriter writer, System.Int32 payloadBytes) [0x0001e] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\IdentifyPacketBoundsTests.cs:24 
+  at TumbangPreso.Tests.IdentifyPacketBoundsTests+<>c__DisplayClass8_0.<TruncatedIdentifyDoesNotThrowOrConsumeArrival>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\IdentifyPacketBoundsTests.cs:38 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.IdentifyPacketBoundsTests.TruncatedIdentifyDoesNotThrowOrConsumeArrival (System.Int32 length) [0x00032] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\IdentifyPacketBoundsTests.cs:38
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

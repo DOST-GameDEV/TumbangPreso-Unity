@@ -18,12 +18,12 @@ namespace TumbangPreso.Abilities
     /// | Signature | TELEPORT | *"Teleport to the target location instantly."*, 35 s |
     /// | Attacking | CURSE: DRAIN | *"Mark a person with a curse ... After a 1.5 seconds delay, inflict Drained"*, 35 s |
     /// | Defending | CURSE: HEX | *"Mark a person with a curse ... After 10 seconds it can be recast to inflict Hex"*, 35 s |
-    /// | Ultimate | OMEN, until the VOODOO DOLL's body exists | |
+    /// | Ultimate | VOODOO DOLL | *"The voodoo doll becomes a sentient being that assists you in attacking or defending for the rest of the round."*, 12 points (`VoodooDollBody`) |
     ///
     /// ⚠️ BOTH CURSES MARK BY THE REACH, NOT A THROW (owner: *"actually dont throw needle to mark them"*, *"i want her to just hold
     /// her hand out towards someone for like 2 seconds or smth and thats marked"*). The body owns the reach and the mark
     /// (`CharacterMotor.Voodoo.cs`, host-resolved, replicated in `SyncUnit`); these abilities only start it and answer its end.
-    /// MANIKA MISCHIEF and SPOTLIGHT PIN are retired; their effect classes stay for OMEN's era of films and are not cast.
+    /// MANIKA MISCHIEF, SPOTLIGHT PIN and OMEN are retired; their effect classes stay for their era of films and are not cast.
     /// </summary>
     public sealed class PhaisterHeroKit : HeroKit
     {
@@ -35,21 +35,16 @@ namespace TumbangPreso.Abilities
         /// <summary>Kept for the throw path; HIGOP does not charge her throws.</summary>
         public bool IsEclipseActive => false;
 
-        public bool CaptureCoven(out Vector3 centre, out float preparation, out float remaining)
-            => ((IPreparedWorldReplication)Ultimate).CapturePreparedWorld(out centre, out preparation, out remaining);
-
-        public void RestoreCoven(CharacterMotor motor, Vector3 centre, float preparation, float remaining)
-            => HeroAbilitySystem.RestorePreparedWorld(motor, Ultimate, centre, preparation, remaining);
-
         public PhaisterHeroKit() : base("phaister", "PHAISTER")
         {
             Skill1 = new Teleport();
             AttackingSkill = new CurseDrain();
             DefendingSkill = new CurseHex();
-            Ultimate = new Higop();
+            Ultimate = new VoodooDoll();
         }
 
-        public override float UltimateCost => VoodooRules.HigopCost;
+        /// <summary>VOODOO DOLL, *"12 Objective Points"*.</summary>
+        public override float UltimateCost => VoodooRules.DollCost;
 
         /// <summary>
         /// Whom her curse would reach from here: of the players `CharacterMotor.VoodooReachIsValid` lets her start on (in reach,
@@ -418,103 +413,54 @@ namespace TumbangPreso.Abilities
             }
         }
 
-        // ================================================================== HIGOP (ultimate)
+        // ================================================================== VOODOO DOLL (ultimate)
 
-        private sealed class Higop : HeroAbility, IPreparedWorldReplication
+        /// <summary>
+        /// ⚠️⚠️ VOODOO DOLL (HERO-10 v3, the owner's table): *"The voodoo doll becomes a sentient being that assists you in attacking
+        /// or defending for the rest of the round."*, 12 objective points (`VoodooRules.DollCost`). It replaces OMEN (the black eye),
+        /// keeping the id `phaister_ultimate`. After the shared introduction (the cutscene every peer watches) the HOST stands the
+        /// doll up beside her (`VoodooDollBody.HostSpawn`: her companion seat, a Hard AI, its own slipper when she attacks); every
+        /// other peer receives it through `CompanionSet`. It lives until the round ends. Nothing is aimed: it wakes where she is.
+        /// A second cast while it lives does nothing new (`HostSpawn` hands back the one she has), so the meter is not spent twice:
+        /// `CheckUltimate` refuses while her doll stands.
+        ///
+        /// Owner rules for its look (plan 9.2): it is its OWN character; she never dies, faints or controls it. When it wakes THE
+        /// CIRCLE opens in the sky over it (*"a big magic circle in the sky or smth when she ults"*), drawn by the doll's body on
+        /// every peer (`Visual.VoodooSkyCircle`).
+        /// </summary>
+        private sealed class VoodooDoll : HeroAbility
         {
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
-            private GameObject _hole;
-            private Vector3 _centre;
 
-            public Higop()
-                : base("phaister_ultimate", "OMEN",
-                       "Aim a black eye in a storm of black butterflies. For 5 s it drags other players and their slippers in, even as they run.",
-                       0.0f, VoodooRules.HigopSeconds, AbilityGlyph.PhaisterEclipse,
-                       summary: "A black eye swallows every player and slipper nearby.",
-                       telegraphRadius: VoodooRules.HigopRadius, telegraphRange: VoodooRules.HigopMaxRange,
-                       castAction: "hero-phaister-omen", viewmodelAction: "omen-rise",
-                       castCue: "sfx_cast_phaister_higop")
+            public VoodooDoll()
+                : base("phaister_ultimate", "VOODOO DOLL",
+                       "Your voodoo doll wakes beside you as its own fighter for the round, with its own slipper. Its points are yours.",
+                       // Its own glyph: the doll hung on three strings from THE CIRCLE (it borrowed OMEN's eclipse until 2026-09-29).
+                       0.0f, 0.0f, AbilityGlyph.PhaisterVoodooDoll,
+                       summary: "Wake the voodoo doll to fight on your side for the round.",
+                       castAction: "hero-phaister-omen", viewmodelAction: "omen-rise")
             {
-                TelegraphStyle = GroundReticle.Style.Ward;
-                // ⚠️ THE SLOW CAST IS THE WIND-UP (owner: *"i want her to really slowly cast the black
-                // whole"*): she is rooted while the power surges through her (her cast clip), and the
-                // spot is marked for everyone to read.
-                Windup = VoodooRules.HigopCastSeconds;
-                // HERO-10: placed where she LOOKS, and as HIGH as she looks (owner: *"she can choose as well where blackhole goes
-                // and how high ... put ppl on the air"*). The spot and its height travel in the commit's aim.
-                AimByHolding(3.0f, VoodooRules.HigopMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f, whereLooking: true);
-                AimInTheAir(VoodooRules.HigopMinHeight, VoodooRules.HigopMaxHeight);
-                // HERO-10 (plan 4.4; the owner must see how HIGH it will hang before he lets go): the ring on the court, a ghost of the
-                // eye at its height and a line of lights down to the court (`PhaisterAimSigil`); she looks up at it, one hand raised.
-                AimPoseAction = "hero-phaister-omen-aim";
             }
 
-            private PhaisterAimSigil _aim;
-            public override bool DrawsOwnAim => true;
-
-            public override void PresentAim(CharacterMotor caster, Vector3 at, float heldSeconds)
+            /// <summary>
+            /// Refused while her doll already stands (one companion per player). ⚠️ Asked by the HOST before it accepts a cast, and
+            /// never of a cast already reserved for its introduction: a peer running the accepted cast may receive the host's
+            /// `CompanionSet` first, and must still play it.
+            /// </summary>
+            public override bool CanActivate(AbilityContext ctx)
             {
-                if (_aim == null) _aim = PhaisterAimSigil.Create(PhaisterAimSigil.Kind.Omen);
-                _aim.Show(caster, at);
-            }
-
-            public override void EndAim()
-            {
-                if (_aim != null) _aim.Release();
-                _aim = null;
-            }
-
-            public override void Activate(AbilityContext ctx)
-            {
-                base.Activate(ctx);
-                if (!IsWindingUp || ctx?.Motor == null) return;
-                _centre = AimedDestination(ctx);
-                if (_hole != null) UnityEngine.Object.Destroy(_hole);
-                _hole = VoodooBlackHole.Spawn(_centre, ctx.Motor.PlayerSlot, Windup, Duration);
-            }
-
-            public bool CapturePreparedWorld(out Vector3 centre, out float preparation, out float remaining)
-            {
-                centre = _centre; preparation = WindupRemaining; remaining = DurationRemaining;
-                return IsWindingUp || IsActive;
-            }
-
-            public bool RestorePreparedWorld(AbilityContext ctx, Vector3 centre, float preparation, float remaining)
-            {
-                if (preparation <= 0 && remaining <= 0)
-                {
-                    RollBackPredictedCast(ctx, refundResources: false);
-                    if (_hole != null) { _hole.SetActive(false); UnityEngine.Object.Destroy(_hole); }
-                    _hole = null;
-                    return false;
-                }
-                if (IsWindingUp || IsActive) return false;
-                _centre = centre;
-                preparation = Mathf.Clamp(preparation, 0, Windup);
-                remaining = Mathf.Clamp(remaining, 0, Duration);
-                if (preparation > 0) RestoreWindupClock(ctx, preparation);
-                else RestoreLiveClock(remaining);
-                if (_hole != null) UnityEngine.Object.Destroy(_hole);
-                float elapsed = preparation > 0 ? Windup - preparation : Windup + Duration - remaining;
-                _hole = VoodooBlackHole.Spawn(centre, ctx.Motor != null ? ctx.Motor.PlayerSlot : -1, Windup, Duration, elapsed);
-                return true;
+                var round = GameServices.Round;
+                if (NetAuthority.ShouldResolve() && !ReservedForIntroduction && ctx?.Motor != null && round != null
+                    && round.BodyAt(CompanionSeats.For(ctx.Motor.PlayerSlot)) != null) return false;
+                return base.CanActivate(ctx);
             }
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                if (ctx?.Motor == null) return;
                 if (!IntroductionVoiced) NetCue.Play("hero_phaister_ult", ctx.Position);
-                NetCue.Play("sfx_phaister_higop_open", _centre);
-                if (_hole == null && ctx?.Motor != null)
-                {
-                    _centre = AimedDestination(ctx);
-                    _hole = VoodooBlackHole.Spawn(_centre, ctx.Motor.PlayerSlot, 0.0f, Duration);
-                }
-            }
-
-            public override void Reset()
-            {
-                if (_hole != null) UnityEngine.Object.Destroy(_hole);
-                _hole = null; base.Reset();
+                // The host decides; every other peer gets the body from `CompanionSet`.
+                if (NetAuthority.ShouldResolve()) VoodooDollBody.HostSpawn(ctx.Motor);
             }
         }
     }

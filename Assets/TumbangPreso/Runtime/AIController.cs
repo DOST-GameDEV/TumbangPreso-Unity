@@ -540,7 +540,7 @@ namespace TumbangPreso
             // has time to be abandoned. An attacker holding a tsinelas is a threat to nobody, so
             // only the defender is measured.
             var taya = DefenderOf(round);
-            if (taya != null && Flat(transform.position, At(taya)) < AiTuning.EmoteSafeRadius)
+            if (taya != null && Flat(transform.position, At(taya).Value) < AiTuning.EmoteSafeRadius)
                 return false;
 
             // ⚠️ A TAYA ITSELF NEVER CELEBRATES MID-ROUND WITH SOMEBODY IN THE CHALK. The passive
@@ -567,7 +567,7 @@ namespace TumbangPreso
         {
             if (round == null || round.Lata == null || !round.Lata.IsUpright) return false;
 
-            foreach (var who in round.Players)
+            foreach (var who in Perceived(round.Players))
             {
                 if (who == null || who == _motor || who.IsDefender) continue;
                 if (who.IsTaggable()) return true;
@@ -721,6 +721,7 @@ namespace TumbangPreso
             {
                 _gates.Clear();
                 _chasing = null;
+                bool recoveryPressPending = intent.JustPressed(Verb.Jump);
                 ReleaseAll(intent);
 
                 // ⚠⚠ A BOT MASHES TO GET UP, BECAUSE A BOT PRESSES THE SAME BUTTONS A HUMAN
@@ -763,6 +764,9 @@ namespace TumbangPreso
                 {
                     _mashHeld = !_mashHeld;
                     intent.Set(Verb.Jump, _mashHeld);
+                    // Render updates may outnumber physics steps. Preserve one tap
+                    // until the motor consumes it, using the same buffer as humans.
+                    if (recoveryPressPending || _mashHeld) intent.BufferPress(Verb.Jump);
                 }
 
                 return;
@@ -946,7 +950,7 @@ namespace TumbangPreso
 
             Vector3 can = lata.transform.position;
 
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var s in PerceivedSlippers)
             {
                 if (s == null || s.State != SlipperState.InFlight) continue;
                 if (s.OwnerSlot == _motor.PlayerSlot) continue;
@@ -1036,7 +1040,8 @@ namespace TumbangPreso
 
         private bool ChaseIsGoingSomewhere(CharacterMotor quarry)
         {
-            float now = Flat(transform.position, At(quarry));
+            if (!At(quarry).HasValue) return false;
+            float now = Flat(transform.position, At(quarry).Value);
 
             if (_chasing != quarry)
             {
@@ -1176,10 +1181,10 @@ namespace TumbangPreso
             var round = GameServices.Round;
             if (round == null || taya == null || mine == null) return true;
 
-            long myRank = RunRank(RunOdds(At(taya), transform.position, mine.transform.position),
+            long myRank = RunRank(RunOdds(At(taya).Value, transform.position, mine.transform.position),
                                   _motor.PlayerSlot);
 
-            foreach (var who in round.Players)
+            foreach (var who in Perceived(round.Players))
             {
                 if (who == null || who == _motor || who.IsDefender) continue;
 
@@ -1194,7 +1199,7 @@ namespace TumbangPreso
                 var theirs = SlipperOwnedBy(round, who.PlayerSlot);
                 if (theirs == null || theirs.State != SlipperState.Loose) continue;
 
-                long theirRank = RunRank(RunOdds(At(taya), At(who), theirs.transform.position),
+                long theirRank = RunRank(RunOdds(At(taya).Value, At(who).Value, theirs.transform.position),
                                          who.PlayerSlot);
 
                 if (theirRank > myRank) return false;
@@ -1232,9 +1237,9 @@ namespace TumbangPreso
         private static long RunRank(float odds, int slot)
             => (long)Mathf.Round(odds / AiTuning.RunOddsMargin) * 1000L - slot;
 
-        private static Slipper SlipperOwnedBy(RoundDirector round, int slot)
+        private Slipper SlipperOwnedBy(RoundDirector round, int slot)
         {
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var s in PerceivedSlippers)
                 if (s != null && s.OwnerSlot == slot) return s;
 
             return null;
@@ -1276,7 +1281,7 @@ namespace TumbangPreso
             if (tayaVerbs != null && tayaVerbs.LungeCooldownLeft > 0.35f) return true;
 
             // Somebody ELSE is taggable, so the taya has a better target than me.
-            foreach (var who in round.Players)
+            foreach (var who in Perceived(round.Players))
                 if (who != null && who != _motor && who.IsTaggable()) return true;
 
             // Or it is simply far enough from them to risk.
@@ -1511,7 +1516,7 @@ namespace TumbangPreso
             var bestPlan = default(SabotageProjection);
             float bestQuality = float.NegativeInfinity;
 
-            foreach (var who in round.Players)
+            foreach (var who in Perceived(round.Players))
             {
                 if (who == null || who == _motor) continue;
                 if (_sabotageCooldown.ContainsKey(who.PlayerSlot)) continue;
@@ -1561,9 +1566,10 @@ namespace TumbangPreso
         /// </summary>
         private SabotageProjection ProjectSabotage(CharacterMotor who, CharacterMotor taya)
         {
+            if (!ActorIsVisible(who) || (taya != null && !ActorIsVisible(taya))) return default;
             Vector3 me = transform.position;
-            Vector3 victimAt = At(who);
-            Vector3 tayaAt = taya != null ? At(taya) : Vector3.zero;
+            Vector3 victimAt = At(who).Value;
+            Vector3 tayaAt = taya != null ? At(taya).Value : Vector3.zero;
 
             bool tayaCanAct = taya != null && taya.CanAct() && !taya.IsTripped;
 
@@ -1620,6 +1626,7 @@ namespace TumbangPreso
         /// obstruction**: bodies are shoved through each other, and a tsinelas on the road stops
         /// nothing.
         /// </summary>
+        private readonly RaycastHit[] _shoveRouteHits = new RaycastHit[32];
         private bool ShoveRouteIsClear(Vector3 from, float toX, float toZ)
         {
             Vector3 a = from + Vector3.up * ShoveRouteProbeHeight;
@@ -1629,11 +1636,16 @@ namespace TumbangPreso
             float length = delta.magnitude;
             if (length < 0.05f) return true;
 
-            var hits = Physics.RaycastAll(a, delta / length, length, ~0,
-                                          QueryTriggerInteraction.Ignore);
+            var hits = _shoveRouteHits;
+            int count = Physics.RaycastNonAlloc(a, delta / length, hits, length, ~0, QueryTriggerInteraction.Ignore);
+            // A full buffer may omit the actual wall behind ignored bodies.
+            // Keep the original complete query for that dense-world case.
+            if (count == hits.Length)
+            { hits = Physics.RaycastAll(a, delta / length, length, ~0, QueryTriggerInteraction.Ignore); count = hits.Length; }
 
-            foreach (var hit in hits)
+            for (int i = 0; i < count; i++)
             {
+                var hit = hits[i];
                 var collider = hit.collider;
                 if (collider == null) continue;
 
@@ -1670,7 +1682,7 @@ namespace TumbangPreso
         /// </summary>
         private Slipper MySlipper()
         {
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var s in PerceivedSlippers)
                 if (s.OwnerSlot == _motor.PlayerSlot) return s;
 
             return null;
@@ -1691,7 +1703,7 @@ namespace TumbangPreso
         {
             point = Vector3.zero;
 
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var s in PerceivedSlippers)
             {
                 if (s.State != SlipperState.InFlight) continue;
 
@@ -1781,7 +1793,7 @@ namespace TumbangPreso
                 if (point.y < arrivalTarget.y - 1.0f)
                     return true;                        // it fell short of the can's hit band
 
-                foreach (var who in round.Players)
+                foreach (var who in Perceived(round.Players))
                 {
                     if (who == null || who == _motor) continue;
 
@@ -1890,6 +1902,9 @@ namespace TumbangPreso
         /// check, but it was still identity bias, and over a round it could make one player feel
         /// singled out for reasons no action in the arena explained.
         /// </summary>
+        /// <summary>A bot Phaister wakes her VOODOO DOLL while at least this much of the round is left for it to earn in.</summary>
+        private const float PhaisterDollWorthSeconds = 20.0f;
+
         private CharacterMotor TagTarget()
         {
             var round = GameServices.Round;
@@ -1909,7 +1924,8 @@ namespace TumbangPreso
             }
 
             _tagCandidates.Clear();
-            foreach (var who in round.Players)
+            // `Bodies`: a companion attacker (Phaister's doll) is chased like any attacker, though tagging it pays nothing.
+            foreach (var who in Perceived(round.Bodies))
             {
                 if (who == null || who == _motor || who.IsDefender || !who.IsTaggable()) continue;
                 _tagCandidates.Add(who);
@@ -1959,16 +1975,16 @@ namespace TumbangPreso
                 // How far inside the chalk they are. `IsTaggable` is a yes or no and cannot tell
                 // a step past the line from a stand over the lata; the one with further to run
                 // back out is the one this chase can actually catch.
+                Vector3 observed = At(who).Value;
                 float depth = Balance.ConfinementRadius
-                              - Mathf.Max(Mathf.Abs(who.transform.position.x),
-                                          Mathf.Abs(who.transform.position.z));
+                              - Mathf.Max(Mathf.Abs(observed.x), Mathf.Abs(observed.z));
                 if (depth > 0.0f) score += AiTuning.TagDepthWeight * depth;
 
                 // ⚠️ OFF THE OBSERVED POSITION, NOT THE TRUE ONE. Every other read of a rival in
                 // this file goes through `At`, which is this bot's belief lagged by its own
                 // reaction time. A selector that read the truth would pick targets off
                 // information the body it is steering has not been given yet.
-                score -= AiTuning.TagDistanceWeight * Flat(transform.position, At(who));
+                score -= AiTuning.TagDistanceWeight * Flat(transform.position, observed);
 
                 int tieDistance = (slot - _tagTieCursor + Balance.PlayerCount) % Balance.PlayerCount;
                 if (score < bestScore ||
@@ -1997,9 +2013,9 @@ namespace TumbangPreso
         private int _tagTieCursor;
 
         /// <summary>Whoever holds the taya role this round.</summary>
-        private static CharacterMotor DefenderOf(RoundDirector round)
+        private CharacterMotor DefenderOf(RoundDirector round)
         {
-            foreach (var p in round.Players)
+            foreach (var p in Perceived(round.Players))
                 if (p != null && p.IsDefender) return p;
 
             return null;
@@ -2225,7 +2241,7 @@ namespace TumbangPreso
         private bool MineIsExposed(Slipper mine)
         {
             var taya = GameServices.Round != null ? DefenderOf(GameServices.Round) : null;
-            return taya != null && Flat(At(taya), mine.transform.position) < 4.5f;
+            return taya != null && Flat(At(taya).Value, mine.transform.position) < 4.5f;
         }
 
         private void DoStalk(InputIntent intent)
@@ -2277,7 +2293,7 @@ namespace TumbangPreso
 
             if (taya != null)
             {
-                Vector3 tayaAt = At(taya);
+                Vector3 tayaAt = At(taya).Value;
                 float tayaBearing = Mathf.Atan2(tayaAt.x, tayaAt.z);
 
                 float apart = DeltaRadians(bearing, tayaBearing);
@@ -2328,7 +2344,7 @@ namespace TumbangPreso
                 if (mine == null) mine = NearestFlyingSlipper();
 
                 if (mine != null && mine.State == SlipperState.InFlight
-                    && TryPredictedLanding(mine, out Vector3 landing))
+                    && TryPositionLanding(mine, out Vector3 landing))
                 {
                     Goto(intent, PullOutside(landing, 0.4f), AiTuning.ArriveSlop, false);
                     return;
@@ -2510,7 +2526,7 @@ namespace TumbangPreso
             // ⚠️ BREAK PERPENDICULAR TO THE LUNGE, NOT AWAY FROM IT. A 2.5 m dash beats a
             // 3.45 m/s attacker running in a straight line down the same axis; stepping across
             // it is the only answer the geometry allows.
-            Vector3 toward = transform.position - At(taya);
+            Vector3 toward = transform.position - At(taya).Value;
             toward.y = 0.0f;
             if (toward.magnitude < 0.05f) toward = Vector3.forward;
 
@@ -2561,8 +2577,8 @@ namespace TumbangPreso
                 return;
             }
 
-            Vector3 victimAt = At(victim);
-            Vector3 tayaAt = At(taya);
+            Vector3 victimAt = At(victim).Value;
+            Vector3 tayaAt = At(taya).Value;
 
             SabotageRules.LaunchPoint(victimAt.x, victimAt.z, tayaAt.x, tayaAt.z,
                                       out float standX, out float standZ);
@@ -2631,7 +2647,7 @@ namespace TumbangPreso
 
             // Close on where they are GOING. `Lead` is the tier's willingness to do that and is
             // 0 on the kid, which is why the kid chases a shadow.
-            Vector3 toward = AheadOf(victim, 0.35f) - transform.position;
+            Vector3 toward = AheadOf(victim, 0.35f).Value - transform.position;
             toward.y = 0.0f;
 
             // ⚠️⚠️ IT NEVER STOPS CLOSING, AND THAT IS FORCED BY THE GAME RATHER THAN CHOSEN.
@@ -2671,7 +2687,7 @@ namespace TumbangPreso
             }
 
             // Stand BETWEEN the lata and the threat, dynamically outside the camping penalty ring!
-            Vector3 toward = At(threat) - lata.transform.position;
+            Vector3 toward = At(threat).Value - lata.transform.position;
             toward.y = 0.0f;
 
             if (toward.magnitude < 0.05f) toward = Vector3.forward;
@@ -2706,7 +2722,10 @@ namespace TumbangPreso
             var verbs = GetComponent<CombatVerbs>();
             if (verbs == null) return;
 
-            if (verbs.PunchCooldownLeft <= 0.0f && victim != null
+            // A charge already owns this tag attempt. Taking the punch branch
+            // would leave Lunge untouched, so Act's release sweep fires that dash
+            // too. Finish the existing charge; fresh close targets still get a jab.
+            if (_lungeHeld < 0.0f && verbs.PunchCooldownLeft <= 0.0f && victim != null
                 && Flat(transform.position, victim.transform.position) <= Balance.PunchRange
                 && Facing(victim, Balance.PunchArcDeg))
             {
@@ -2725,7 +2744,7 @@ namespace TumbangPreso
                 return;
             }
 
-            float reach = Flat(transform.position, AheadOf(victim, AiTuning.LungeHoldTime));
+            float reach = Flat(transform.position, AheadOf(victim, AiTuning.LungeHoldTime).Value);
 
             if (_lungeHeld < 0.0f)
             {
@@ -3196,6 +3215,7 @@ namespace TumbangPreso
 
             _hopHeld = true;
             Press(intent, Verb.Jump, true);
+            intent.BufferPress(Verb.Jump);
         }
 
         /// <summary>
@@ -3503,7 +3523,7 @@ namespace TumbangPreso
             Vector3 push = Vector3.zero;
             Vector3 here = transform.position;
 
-            foreach (var who in round.Players)
+            foreach (var who in Perceived(round.Players))
             {
                 if (who == null || who == _motor) continue;
 
@@ -3664,13 +3684,13 @@ namespace TumbangPreso
             if (pick == 1)
             {
                 var who = _motor.IsDefender ? _lastThreat : DefenderOf(round);
-                if (who != null) { point = At(who); return true; }
+                if (ActorIsVisible(who)) { point = At(who).Value; return true; }
             }
 
             Slipper nearest = null;
             float best = float.MaxValue;
 
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var s in PerceivedSlippers)
             {
                 if (s.State != SlipperState.Loose && s.State != SlipperState.InFlight) continue;
 
@@ -3712,7 +3732,7 @@ namespace TumbangPreso
 
             if (taya != null)
             {
-                Vector3 offset = At(taya) - lata.transform.position;
+                Vector3 offset = At(taya).Value - lata.transform.position;
                 tayaBearing = Mathf.Atan2(offset.x, offset.z);
             }
 
@@ -3764,19 +3784,28 @@ namespace TumbangPreso
         /// mid-round cannot hold a bearing for ever.</summary>
         private List<float> RivalBearings()
         {
-            var found = new List<float>();
+            var found = _rivalBearingsScratch;
+            found.Clear();
             float now = Time.time;
 
             foreach (var pair in _claims)
             {
                 if (pair.Key == _motor.PlayerSlot) continue;
                 if (now - pair.Value.At > AiTuning.ClaimTtl) continue;
+                // The board is a read of the court, not communication between
+                // bots. A hidden body cannot reveal its latest intended bearing.
+                if (_motor.Mode == GameMode.HeroStrike && _motor.IsHaunted &&
+                    !ActorIsVisible(GameServices.Round?.BodyAt(pair.Key))) continue;
 
                 found.Add(pair.Value.Bearing);
             }
 
             return found;
         }
+
+        // ThrowSpot consumes this synchronously. Keep it per brain so another
+        // bot reading the shared board cannot overwrite the current selection.
+        private readonly List<float> _rivalBearingsScratch = new List<float>(4);
 
         private void Claim(float bearing)
             => _claims[_motor.PlayerSlot] = new BearingClaim(bearing, Time.time);
@@ -3876,25 +3905,33 @@ namespace TumbangPreso
         /// <summary>Where a slipper already in flight will come down.</summary>
         private static bool TryPredictedLanding(Slipper slipper, out Vector3 landing)
         {
-            landing = Vector3.zero;
+            landing = default;
+            if (slipper == null || slipper.State != SlipperState.InFlight) return false;
+            return SlipperLandingPrediction.TryPredictLanding(slipper.transform.position,
+                slipper.Velocity, slipper.PektusSpin, LandingHits, out landing, null,
+                slipper.PredictionSkimDistance, slipper.IsSkimming, slipper.RestHeight);
+        }
 
-            Vector3 launch = slipper.Velocity;
-            if (launch.magnitude < 0.5f) return false;
-
-            Vector3 from = slipper.transform.position;
-
-            for (float t = 0.0f; t < Balance.MaxFlightTime; t += 0.05f)
+        // These queries run synchronously on the same Unity thread as the
+        // existing shared support buffer. No scene scan or visual object is created.
+        private static readonly RaycastHit[] LandingHits = new RaycastHit[64];
+        private Slipper _landingSource;
+        private Vector3 _landingPoint;
+        private float _landingRefreshAt;
+        private bool _landingKnown;
+        private bool TryPositionLanding(Slipper slipper, out Vector3 landing)
+        {
+            landing = default;
+            if (slipper == null || slipper.State != SlipperState.InFlight)
+            { _landingSource = null; return false; }
+            if (_landingSource != slipper || Time.time >= _landingRefreshAt)
             {
-                Vector3 point = from + launch * t
-                                + Vector3.down * (0.5f * Balance.Gravity * t * t);
-
-                if (point.y > from.y - 1.2f && point.y > 0.2f) continue;
-
-                landing = new Vector3(point.x, 0.0f, point.z);
-                return true;
+                _landingSource = slipper;
+                _landingRefreshAt = Time.time + Me.Think;
+                _landingKnown = TryPredictedLanding(slipper, out _landingPoint);
             }
-
-            return false;
+            landing = _landingPoint;
+            return _landingKnown;
         }
 
         /// <summary>
@@ -3904,12 +3941,12 @@ namespace TumbangPreso
         /// </summary>
         private bool Facing(CharacterMotor who, float cone)
         {
-            if (who == null) return false;
+            if (!ActorIsVisible(who)) return false;
 
             Vector3 forward = transform.forward;
             forward.y = 0.0f;
 
-            Vector3 toward = who.transform.position - transform.position;
+            Vector3 toward = At(who).Value - transform.position;
             toward.y = 0.0f;
 
             if (forward.magnitude < 0.01f || toward.magnitude < 0.01f) return false;
@@ -3963,7 +4000,7 @@ namespace TumbangPreso
             CharacterMotor best = null;
             float bestScore = float.NegativeInfinity;
 
-            foreach (var who in round.Players)
+            foreach (var who in Perceived(round.Players))
             {
                 if (who == null || who.IsDefender) continue;
 
@@ -3977,7 +4014,7 @@ namespace TumbangPreso
                 if (carrier != null && carrier.ObservedChargePower >= 0.0f)
                     score += 1.0f + carrier.ObservedChargePower;
 
-                score -= 0.08f * Flat(transform.position, At(who));
+                score -= 0.08f * Flat(transform.position, At(who).Value);
 
                 if (who == _lastThreat) score -= 0.6f;
 
@@ -4015,7 +4052,7 @@ namespace TumbangPreso
             bool found = false;
             float bestDistance = float.MaxValue;
 
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var s in PerceivedSlippers)
             {
                 if (s.State != SlipperState.Loose) continue;
 
@@ -4028,7 +4065,7 @@ namespace TumbangPreso
                 var holder = NearestClaimantTo(s);
                 if (holder == null) continue;
 
-                Vector3 toward = At(holder) - at;
+                Vector3 toward = At(holder).Value - at;
                 toward.y = 0.0f;
                 if (toward.magnitude < 0.05f) continue;
 
@@ -4063,7 +4100,7 @@ namespace TumbangPreso
         /// <summary>The attacker most likely to come for a slipper: the nearest one with free
         /// hands. Mirrors the attackers' own claim rule, so the taya camps the line the bot
         /// that is actually coming will walk up.</summary>
-        private static CharacterMotor NearestClaimantTo(Slipper slipper)
+        private CharacterMotor NearestClaimantTo(Slipper slipper)
         {
             var round = GameServices.Round;
             if (round == null) return null;
@@ -4071,7 +4108,7 @@ namespace TumbangPreso
             CharacterMotor best = null;
             float bestDistance = float.MaxValue;
 
-            foreach (var who in round.Players)
+            foreach (var who in Perceived(round.Players))
             {
                 if (who == null || who.IsDefender || !who.CanAct()) continue;
                 if (who.HoldingSlipper) continue;
@@ -4098,7 +4135,7 @@ namespace TumbangPreso
             Slipper best = null;
             float bestDistance = float.MaxValue;
 
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var s in PerceivedSlippers)
             {
                 if (s.State != SlipperState.InFlight) continue;
 
@@ -4132,16 +4169,19 @@ namespace TumbangPreso
             // time using a stale picture, and the second one is what looking away actually does.
             float alpha = 1.0f - Mathf.Exp(-dt / Mathf.Max(Me.React * LapseScale, 0.02f));
 
-            foreach (var who in round.Players)
+            var bodies = round.Bodies;
+            for (int bodyIndex = 0; bodyIndex < bodies.Count; bodyIndex++)
             {
-                if (who == null) continue;
+                var who = bodies[bodyIndex];
+                if (!ActorIsVisible(who)) continue;
 
                 int slot = who.PlayerSlot;
                 Vector3 truth = who.transform.position;
                 Vector3 velocity = new Vector3(who.Velocity.x, 0.0f, who.Velocity.z);
 
-                if (who == _motor || !_seenPos.ContainsKey(slot))
+                if (who == _motor || !HasBelief(who))
                 {
+                    _seenBodies[slot] = who;
                     _seenPos[slot] = truth;
                     _seenVel[slot] = velocity;
                     continue;
@@ -4153,26 +4193,96 @@ namespace TumbangPreso
         }
 
         /// <summary>Where this bot believes a unit is.</summary>
-        private Vector3 At(CharacterMotor who)
+        private Vector3? At(CharacterMotor who)
         {
-            if (who == null) return Vector3.zero;
+            if (who == null) return null;
 
-            return _seenPos.TryGetValue(who.PlayerSlot, out Vector3 p)
-                ? p : who.transform.position;
+            if (HasBelief(who) && _seenPos.TryGetValue(who.PlayerSlot, out Vector3 p)) return p;
+            return ActorIsVisible(who) ? who.transform.position : (Vector3?)null;
         }
 
         /// <summary>Where this bot believes a unit will be, at its tier's willingness to
         /// extrapolate. A `Lead` of 0 is a bot that runs at your shadow.</summary>
-        private Vector3 AheadOf(CharacterMotor who, float horizon)
+        private Vector3? AheadOf(CharacterMotor who, float horizon)
         {
-            if (who == null) return Vector3.zero;
+            if (who == null) return null;
 
-            Vector3 velocity = _seenVel.TryGetValue(who.PlayerSlot, out Vector3 v)
+            Vector3 velocity = HasBelief(who) && _seenVel.TryGetValue(who.PlayerSlot, out Vector3 v)
                 ? v : Vector3.zero;
 
             return At(who) + velocity * horizon * Me.Lead;
         }
 
+        // Use the existing sight pass's seven-metre outer range for bot sensing.
+        // retain memory outside it, but cannot sample live actors through it.
+        private bool ActorIsVisible(CharacterMotor who)
+        {
+            if (who == null) return false;
+            if (who == _motor || _motor.Mode != GameMode.HeroStrike || !_motor.IsHaunted) return true;
+            return who.gameObject.activeInHierarchy &&
+                (who.transform.position - transform.position).sqrMagnitude <= 49f;
+        }
+        private ActorView Perceived(IReadOnlyList<CharacterMotor> actors) => new ActorView(this, actors);
+        private SlipperView PerceivedSlippers => new SlipperView(this);
+        private bool SlipperIsVisible(Slipper shoe) => shoe != null &&
+            (_motor.Mode != GameMode.HeroStrike || !_motor.IsHaunted || shoe.OwnerSlot == _motor.PlayerSlot ||
+             (shoe.transform.position - transform.position).sqrMagnitude <= 49f);
+        private readonly struct SlipperView
+        {
+            private readonly AIController _brain;
+            public SlipperView(AIController brain) { _brain=brain; }
+            public Enumerator GetEnumerator() => new Enumerator(_brain);
+            public struct Enumerator
+            {
+                private readonly AIController _brain;
+                private BotSlipperInventory.Enumerator _items;
+                public Slipper Current { get; private set; }
+                public Enumerator(AIController brain)
+                { _brain=brain; _items=BotSlipperInventory.All.GetEnumerator(); Current=null; }
+                public bool MoveNext()
+                {
+                    while(_items.MoveNext())
+                    {
+                        var shoe=_items.Current;
+                        if(!_brain.SlipperIsVisible(shoe)) continue;
+                        Current=shoe; return true;
+                    }
+                    Current=null; return false;
+                }
+            }
+        }
+        private readonly struct ActorView
+        {
+            private readonly AIController _brain;
+            private readonly IReadOnlyList<CharacterMotor> _actors;
+            public ActorView(AIController brain, IReadOnlyList<CharacterMotor> actors) { _brain=brain; _actors=actors; }
+            public Enumerator GetEnumerator() => new Enumerator(_brain,_actors);
+            public struct Enumerator
+            {
+                private readonly AIController _brain;
+                private readonly IReadOnlyList<CharacterMotor> _actors;
+                private int _next;
+                public CharacterMotor Current { get; private set; }
+                public Enumerator(AIController brain,IReadOnlyList<CharacterMotor> actors)
+                { _brain=brain; _actors=actors; _next=0; Current=null; }
+                public bool MoveNext()
+                {
+                    while(_next<_actors.Count)
+                    {
+                        var actor=_actors[_next++];
+                        if(!_brain.ActorIsVisible(actor)) continue;
+                        Current=actor; return true;
+                    }
+                    Current=null; return false;
+                }
+            }
+        }
+
+        // Seats can be reused by a new companion. Stable seat identity does not
+        // make a dead body's perceived position/velocity belong to its replacement.
+        private bool HasBelief(CharacterMotor who) => who != null &&
+            _seenBodies.TryGetValue(who.PlayerSlot,out var observed) && observed == who;
+        private readonly Dictionary<int, CharacterMotor> _seenBodies = new Dictionary<int, CharacterMotor>();
         private readonly Dictionary<int, Vector3> _seenPos = new Dictionary<int, Vector3>();
         private readonly Dictionary<int, Vector3> _seenVel = new Dictionary<int, Vector3>();
 
@@ -4339,7 +4449,7 @@ namespace TumbangPreso
             foreach (var plant in Abilities.PaetePlant.Live)
             {
                 if (plant == null || plant.OwnerSlot == _motor.PlayerSlot || !plant.Pullable) continue;
-                if (Flat(At(_motor), plant.transform.position) > Core.PaeteRules.PlantPullReach - .1f) continue;
+                if (Flat(At(_motor).Value, plant.transform.position) > Core.PaeteRules.PlantPullReach - .1f) continue;
                 intent.Set(Verb.Interact, true);
                 intent.Move = Vector2.zero;
                 return;
@@ -4349,18 +4459,18 @@ namespace TumbangPreso
         /// <summary>How many opponents a sentry thrown to the best point within range would catch, and that point.</summary>
         private int PaeteSentryAim(RoundDirector round, out Vector3 best)
         {
-            best = At(_motor);
+            best = At(_motor).Value;
             int most = 0;
             if (round == null) return 0;
-            foreach (var centre in round.Players)
+            foreach (var centre in Perceived(round.Players))
             {
                 if (centre == null || centre == _motor || !centre.RoundActive) continue;
-                Vector3 at = At(centre);
-                if (Flat(At(_motor), at) > Core.PaeteRules.SentryThrowRange) continue;
+                Vector3 at = At(centre).Value;
+                if (Flat(At(_motor).Value, at) > Core.PaeteRules.SentryThrowRange) continue;
                 int caught = 0;
-                foreach (var who in round.Players)
+                foreach (var who in Perceived(round.Players))
                     if (who != null && who != _motor && who.RoundActive && !who.IsAloft
-                        && Flat(at, At(who)) <= Core.PaeteRules.SentryRadius - AiTuning.AbilityVictimMargin) caught++;
+                        && Flat(at, At(who).Value) <= Core.PaeteRules.SentryRadius - AiTuning.AbilityVictimMargin) caught++;
                 if (caught > most) { most = caught; best = at; }
             }
             return most;
@@ -4375,7 +4485,7 @@ namespace TumbangPreso
         {
             best = from;
             int most = PaeteThornCount(from, out carriedOut);
-            foreach (var shoe in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var shoe in PerceivedSlippers)
             {
                 if (shoe == null || shoe.OwnerSlot == _motor.PlayerSlot) continue;
                 Vector3 at = shoe.transform.position; at.y = from.y;
@@ -4392,7 +4502,7 @@ namespace TumbangPreso
         {
             carriedOut = false;
             int count = 0;
-            foreach (var shoe in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var shoe in PerceivedSlippers)
             {
                 if (shoe == null || shoe.OwnerSlot == _motor.PlayerSlot) continue;
                 if (Flat(from, shoe.transform.position) > Core.PaeteRules.ThornRange - .3f) continue;
@@ -4409,11 +4519,11 @@ namespace TumbangPreso
 
             int found = 0;
 
-            foreach (var who in round.Players)
+            foreach (var who in Perceived(round.Players))
             {
                 if (who == null || who == _motor || !who.RoundActive) continue;
                 if (stunPayload && (who.IsStunned || who.IsTripped)) continue;
-                if (Flat(centre, At(who)) <= radius) found++;
+                if (Flat(centre, At(who).Value) <= radius) found++;
             }
 
             return found;
@@ -4462,7 +4572,7 @@ namespace TumbangPreso
             var lata = round?.Lata;
             if (lata != null && Flat(where, lata.transform.position) <= reach) return true;
 
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var s in PerceivedSlippers)
                 if (s.State == SlipperState.Loose
                     && Flat(where, s.transform.position) <= reach) return true;
 
@@ -4481,8 +4591,8 @@ namespace TumbangPreso
         private int AmihanFanCount(RoundDirector round)
         {
             int count = 0;
-            foreach (var p in round.Players)
-                if (p != null && p != _motor && Abilities.AmihanStorm.InsideFan(transform.position, transform.forward, At(p)))
+            foreach (var p in Perceived(round.Players))
+                if (p != null && p != _motor && Abilities.AmihanStorm.InsideFan(transform.position, transform.forward, At(p).Value))
                     count++;
             return count;
         }
@@ -4490,18 +4600,18 @@ namespace TumbangPreso
         /// <summary>An attacker carrying a slipper in front of her, within reach and the cone.</summary>
         private CharacterMotor AmihanCarrierAhead(RoundDirector round, float reach, float halfAngle)
         {
-            foreach (var p in round.Players)
+            foreach (var p in Perceived(round.Players))
             {
                 if (p == null || p == _motor || p.IsDefender || !p.HoldingSlipper || p.IsWhirled) continue;
-                if (Flat(transform.position, At(p)) > reach || !Facing(p, halfAngle)) continue;
+                if (Flat(transform.position, At(p).Value) > reach || !Facing(p, halfAngle)) continue;
                 return p;
             }
             return null;
         }
 
-        private static bool AnyLooseSlipperInsideTheBox()
+        private bool AnyLooseSlipperInsideTheBox()
         {
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var s in PerceivedSlippers)
             {
                 if (s.State != SlipperState.Loose) continue;
 
@@ -4532,8 +4642,8 @@ namespace TumbangPreso
         {
             if (!_motor.IsVoodooReaching || Plan == AiPlan.Windup) return;
             var victim = round.PlayerAt(_motor.VoodooReachTarget);
-            if (victim == null) return;
-            intent.AimPoint = At(victim) + Vector3.up * 1.2f;
+            if (!ActorIsVisible(victim)) return;
+            intent.AimPoint = At(victim).Value + Vector3.up * 1.2f;
             intent.FaceAimPoint = true;
         }
 
@@ -4666,7 +4776,7 @@ namespace TumbangPreso
             // while every other decision it made about the same body was `Me.React` behind. That
             // is a power cast faster than a hand can move, and it is the kind of thing a player
             // reads as the bots cheating rather than as the bots being good.
-            float targetDistance = target != null ? Flat(myPos, At(target)) : float.MaxValue;
+            float targetDistance = target != null ? Flat(myPos, At(target).Value) : float.MaxValue;
             var lata = round.Lata;
             float lataDistance = lata != null
                 ? Flat(myPos, lata.transform.position)
@@ -4702,7 +4812,9 @@ namespace TumbangPreso
                 ultimateWorthIt =
                     underIt >= AiTuning.UltimateWantsVictims
                     || _ultimateReadyFor >= AiTuning.UltimateHoldSeconds
-                    || round.TimeLeft <= AiTuning.UltimateDumpWindowSeconds;
+                    || round.TimeLeft <= AiTuning.UltimateDumpWindowSeconds
+                    // Phaister's doll needs nobody under it: its worth is the round it has left.
+                    || (kit is Abilities.PhaisterHeroKit && round.TimeLeft >= PhaisterDollWorthSeconds);
             }
 
             if (kit.IsUltimateReady && kit.Ultimate != null && ultimateWorthIt)
@@ -4761,23 +4873,10 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.PhaisterHeroKit)
                 {
-                    // ⚠️ § 31.4 MADE THE ECLIPSE A ZONE, AND A ZONE HAS A SECOND CORRECT USE THE
-                    // OLD DISTANCE GATE COULD NOT EXPRESS. Cast over the lata by a DEFENDING
-                    // Phaister it makes the retrieval run impossible for its whole duration, so
-                    // it is worth its `UltimateCost` 115 with nobody standing in it yet. Cast by
-                    // an attacker it is a hole in the defence, and then it needs a body in it.
-                    // ⚠️⚠️ AND "IT COVERS THE LATA" ALONE IS NOT ENOUGH, BECAUSE ITS REACH IS
-                    // 10.5 m IN A 14 m BOX. A defending Phaister is nearly always inside that of
-                    // the can, so covering it is very close to "cast the moment it is ready",
-                    // which is the frame-one dump § 31.7 spent an opening delay removing. What
-                    // makes the zone worth 115 charge is that it denies a RETRIEVAL, so there has
-                    // to be a retrieval left to deny: a tsinelas lying loose inside the chalk that
-                    // somebody has to come back in for.
-                    bool overTheCan = _motor.IsDefender && lata != null
-                                      && lataDistance <= kit.Ultimate.TelegraphRadius
-                                      && AnyLooseSlipperInsideTheBox();
-
-                    if (overTheCan || WouldCatch(kit.Ultimate, stunPayload: true))
+                    // ⚠️ VOODOO DOLL (HERO-10 v3) is a body on her side for the REST OF THE ROUND, so it is worth most the earlier it
+                    // wakes: cast as soon as the meter allows while a doll still has a round to earn in, or in the last seconds
+                    // rather than waste the charge. Nothing is aimed; it wakes beside her.
+                    if (round.TimeLeft >= PhaisterDollWorthSeconds || round.TimeLeft <= AiTuning.UltimateDumpWindowSeconds)
                         Consider(intent, Verb.Ultimate, dt);
                 }
                 else if (kit is Abilities.RafiHeroKit && target != null && targetDistance < 8 && Facing(target, 42))
@@ -4871,7 +4970,7 @@ namespace TumbangPreso
                                   && target != null && targetDistance <= 4.5f;
                     if (escape)
                     {
-                        Vector3 away = myPos - At(target); away.y = 0;
+                        Vector3 away = myPos - At(target).Value; away.y = 0;
                         if (away.sqrMagnitude < .01f) away = -transform.forward;
                         intent.AimPoint = myPos + away.normalized * Core.PaeteRules.VineRange + Vector3.up * 1.2f;
                         Consider(intent, Verb.Skill1, dt);
@@ -4880,7 +4979,7 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.RafiHeroKit)
                 {
-                    foreach(var shoe in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+                    foreach(var shoe in PerceivedSlippers)
                         if(shoe.State==SlipperState.InFlight && Flat(myPos,shoe.transform.position)<5
                             && Vector3.Dot(shoe.Velocity,myPos-shoe.transform.position)>0)
                         { Consider(intent,Verb.Skill1,dt);break; }
@@ -4940,7 +5039,7 @@ namespace TumbangPreso
                     if (curse.IsActive && curse.CanReactivate)
                     {
                         CharacterMotor hexed = null;
-                        foreach (var p in round.Players)
+                        foreach (var p in Perceived(round.Players))
                             if (p != null && p.VoodooMark == VoodooMarkKind.Hex && p.VoodooMarkSource == _motor.PlayerSlot) hexed = p;
                         bool fraying = hexed != null && hexed.VoodooMarkAge >= Core.VoodooRules.HexMarkLifeSeconds - 4.0f;
                         if (curse.ReactivateReady && hexed != null && (!hexed.HoldingSlipper || fraying))
@@ -4949,8 +5048,8 @@ namespace TumbangPreso
                     else if (!_motor.IsVoodooReaching)
                     {
                         var victim = Abilities.PhaisterHeroKit.ReachTargetFor(_motor, transform.forward);
-                        bool worth = victim != null && (_motor.IsDefender
-                            ? lata != null && Flat(At(victim), lata.transform.position) <= 6.0f
+                        bool worth = ActorIsVisible(victim) && (_motor.IsDefender
+                            ? lata != null && Flat(At(victim).Value, lata.transform.position) <= 6.0f
                             : victim.IsDefender);
                         if (worth) Consider(intent, Verb.Skill2, dt);
                     }
@@ -5286,7 +5385,7 @@ namespace TumbangPreso
 
         private bool HasRelevantVoidTarget(Vector3 center, float radius)
         {
-            foreach (var slipper in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var slipper in PerceivedSlippers)
             {
                 if (slipper == null || slipper.State != SlipperState.Loose) continue;
                 if (!_motor.IsDefender && slipper.OwnerSlot != _motor.PlayerSlot) continue;

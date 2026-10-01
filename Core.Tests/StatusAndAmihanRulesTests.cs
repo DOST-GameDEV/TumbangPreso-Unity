@@ -17,7 +17,7 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(2.5f, whirled.Seconds);
             Assert.True(whirled.DropsHeldSlipper && whirled.BlocksSlipperRetrieval);
             Assert.False(whirled.BlocksMovement || whirled.BlocksInteraction);
-            Assert.Equal("Disabled Slipper Retrieval", whirled.Tooltip);
+            Assert.Equal("Disabled Slipper Retrieval and Can Reset", whirled.Tooltip);
 
             var chilled = StatusRules.For(StatusKind.Chilled);
             Assert.Equal(5.0f, chilled.Seconds);
@@ -40,7 +40,8 @@ namespace TumbangPreso.Core.Tests
             Assert.False(rooted.BlocksInteraction, "Rooted players can still throw and use skills (owner).");
             Assert.True(rooted.Removable, "A hold or a tag ends Rooted.");
             Assert.Equal(PaeteRules.SentryLifeSeconds, rooted.Seconds);
-            Assert.Equal(11, StatusRules.All.Count);
+            // Haunted is appended after the eleven existing statuses; IDs are unchanged.
+            Assert.Equal(12, StatusRules.All.Count);
         }
 
         [Fact]
@@ -53,7 +54,9 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(9, (int)StatusKind.Vulnerable);
 
             var concussed = StatusRules.For(StatusKind.Concussed);
-            Assert.Equal(0.7f, concussed.SpeedScale);
+            Assert.Equal(0.25f, concussed.SpeedScale);
+            Assert.Equal(2.5f, StatusRules.ConcussedSeconds);
+            Assert.Equal(35.0f, GeoRules.BoulderCooldown);
             Assert.False(concussed.BlocksMovement || concussed.BlocksInteraction);
 
             // "Flee from kuro and drop slipper".
@@ -73,15 +76,16 @@ namespace TumbangPreso.Core.Tests
         [Fact]
         public void TheReworkKitsCarryTheOwnersNumbers()
         {
-            Assert.Equal(5.0f, CryoRules.ColdFeetSeconds);
+            Assert.Equal(7.5f, CryoRules.ColdFeetSeconds);
             Assert.Equal(35.0f, CryoRules.ColdFeetCooldown);
             Assert.Equal(35.0f, CryoRules.FrostbiteCooldown);
             Assert.Equal(3, CryoRules.GlacialWallHits);
             Assert.Equal(35.0f, CryoRules.GlacialWallCooldown);
             Assert.Equal(12.0f, CryoRules.AbsoluteZeroCost);
-            Assert.Equal(20.0f, GeoRules.ShieldSeconds);
+            Assert.Equal(1.5f, CryoRules.AbsoluteZeroDelay);
+            Assert.Equal(15.0f, GeoRules.ShieldSeconds);
             Assert.Equal(7.5f, GeoRules.BarrierSeconds);
-            Assert.Equal(25.0f, GeoRules.BarrierCooldown);
+            Assert.Equal(35.0f, GeoRules.BarrierCooldown);
             // Higop's "no escape": the pull beats a run, so pushing away only buys a moment.
             Assert.True(VoodooRules.HigopPullOverRun > 0.0f);
             // A normal skill's footprint stays inside VISION section 2's 1.6 to 2.3 m band.
@@ -128,15 +132,28 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
+        public void AirburstCourtRangeCoversExpandedShoreWithoutPoisonedBounds()
+        {
+            Assert.Equal(40f, AmihanRules.StormSurgeRangeForCourt(-8.6f,8.6f,-13,13));
+            float shore=AmihanRules.StormSurgeRangeForCourt(-16,16,-13,24);
+            Assert.InRange(shore,48.9f,49f);
+            Assert.Equal(40f,AmihanRules.StormSurgeRangeForCourt(float.NaN,16,-13,24));
+            Assert.Equal(40f,AmihanRules.StormSurgeRangeForCourt(-16,float.PositiveInfinity,-13,24));
+            Assert.Equal(40f,AmihanRules.StormSurgeRangeForCourt(16,-16,-13,24));
+            Assert.Equal(40f,AmihanRules.StormSurgeRangeForCourt(-16,16,24,24));
+            Assert.Equal(40f,AmihanRules.StormSurgeRangeForCourt(-float.MaxValue,float.MaxValue,-float.MaxValue,float.MaxValue));
+        }
+        [Fact]
         public void AmihanUsesTheOwnersCostsAndStaysInsideTheKnockbackCap()
         {
-            Assert.Equal(40.0f, AmihanRules.QuickDashCooldown);
+            Assert.Equal(35.0f, AmihanRules.QuickDashCooldown);
             Assert.Equal(35.0f, AmihanRules.WhirlwindCooldown);
             Assert.Equal(2.5f, AmihanRules.WhirlwindSeconds);
             Assert.Equal(5.0f, AmihanRules.UpdraftSeconds);
             Assert.Equal(40.0f, AmihanRules.UpdraftCooldown);
             Assert.Equal(15.0f, AmihanRules.StormSurgeCost);
-            Assert.Equal(2.5f, AmihanRules.StormSurgeGatherSeconds);
+            Assert.Equal(1.5f, AmihanRules.StormSurgeGatherSeconds);
+            Assert.Equal(60.0f, AmihanRules.StormSurgeHalfAngle * 2);
 
             // Every held speed is under the single-impulse cap, so a clamp never shortens a move.
             Assert.True(AmihanRules.QuickDashSpeed <= Balance.MaxKnockbackSpeed);

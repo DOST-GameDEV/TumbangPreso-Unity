@@ -159,14 +159,14 @@ namespace TumbangPreso
         public float AimGuideConfidence => ThrowAimRules.GuideConfidence(_aimHeldSeconds, _aimMovement, Held != null ? Held.SkinIndex : -1);
         public float AimGuideHorizon => ThrowAimRules.GuideHorizon(_aimHeldSeconds, _aimMovement, Held != null ? Held.SkinIndex : -1);
         public Vector3 AimGuidePoint() => RawAimPoint();
-        public Vector3 AimGuideOrigin() => ThrowOriginFor(AimGuidePoint());
+        public Vector3 AimGuideOrigin() => ThrowOriginFor(AimPoint());
 
         /// <summary>
         /// ⚠️⚠️ THE WIND-UP EVERY OTHER PLAYER CAN SEE, and it is a SEPARATE value from
         /// <see cref="ChargeRatio"/> on purpose. `carrier.gd`'s header states it: the charge
         /// clock only ticks on the peer that controls the unit, so a third-person wind-up pose
         /// driven from it is invisible to the person being aimed at — which is the whole
-        /// counterplay the 2.5 s charge exists to create.
+        /// counterplay the shared charge duration exists to create.
         ///
         /// -1 when nobody is winding up.
         /// </summary>
@@ -275,7 +275,8 @@ namespace TumbangPreso
             // the body's own wobble, on the host, which is where the throw is decided.
             float wobble = _motor.AimWobbleDegrees;
             if (Mathf.Abs(wobble) > 0.01f) velocity = Quaternion.AngleAxis(wobble, Vector3.up) * velocity;
-            SlipperAffinity affinity = SlipperAffinity.Normal;
+            SlipperAffinity affinity = Held.Affinity == SlipperAffinity.Concussed
+                ? SlipperAffinity.Concussed : SlipperAffinity.Normal;
 
             if (ability != null && ability.Kit is ZackHeroKit zack &&
                 (zack.IsOverchargeThrowActive || zack.IsThunderstrikeActive))
@@ -293,6 +294,10 @@ namespace TumbangPreso
                 velocity *= 1.3f * ability.VariantGain("sean.2.flare");
                 affinity = SlipperAffinity.FireExplosive;
                 sean.ConsumeIgnition();
+            }
+            else if (ability != null && ability.Kit is RafiHeroKit rafi && rafi.ConsumeSkim(Held))
+            {
+                affinity = SlipperAffinity.Skim;
             }
             else if (ability != null && ability.Kit is CheskaHeroKit cheska && cheska.IsFrostbiteLoaded)
             {
@@ -670,12 +675,8 @@ namespace TumbangPreso
                 _pektusSpin = Mathf.Clamp(intent.SpinInput, -Balance.MaxPektusSpin, Balance.MaxPektusSpin);
                 _observedSpin = _pektusSpin;
 
-                // Walking into the box, losing the slipper or ending the round cancels the
-                // commitment. The lata going down does not. That state is often caused by a
-                // teammate during somebody else's wind-up, and snapping every charged arm to
-                // idle on that frame made the shared knockdown feel like an animation error.
-                // Release legality is still checked below, so holding the pose cannot bank an
-                // illegal shot inside the box or launch through restoration protection.
+                // The current rule also cancels on can knockdown/protection, so
+                // a previously full charge cannot be banked across the reset.
                 if (!canMaintainCharge) CancelCharge();
                 else
                 {
@@ -853,7 +854,7 @@ namespace TumbangPreso
             => LaunchVelocityFor(ThrowOrigin(), AimPoint());
 
         public Vector3 AimGuideVelocityNow()
-            => LaunchVelocityFor(AimGuideOrigin(), AimGuidePoint());
+            => LaunchVelocityNow();
 
         private Vector3 LaunchVelocityFor(Vector3 origin, Vector3 target)
         {
@@ -929,6 +930,7 @@ namespace TumbangPreso
         {
             get
             {
+                if (_motor != null && _motor.IsWhirled) return false;
                 var lata = GameServices.Round?.Lata;
                 if (lata == null || lata.IsUpright) return false;
                 var offset = transform.position - lata.transform.position; offset.y = 0;

@@ -83,6 +83,102 @@ namespace TumbangPreso
         private float _clock;
 
         public IReadOnlyList<CharacterMotor> Players => _players;
+
+        // -------------------------------------------------------------------
+        // § COMPANIONS (HERO-10 v3, plan 9.12)
+        //
+        // ⚠️⚠️ A COMPANION IS A BODY THAT IS NOT A PLAYER, AND IT IS KEPT OUT OF `Players` ON PURPOSE. Phaister's VOODOO DOLL
+        // (Nemu's KURO PLAYS later) sits in a companion seat (`Core.CompanionSeats`: 4 + its owner) and plays by a player's rules,
+        // but it is never a player: no chip, no result row, no passive defence, no tournament clock. `Players` has 152 readers and
+        // every one of them means "the four people"; the handful that must also see a companion (the tag sweeps, a slipper's body
+        // blocks, the bots' tag targets, a flourish's seat lookup) read `Bodies` or `BodyAt` instead.
+        // -------------------------------------------------------------------
+
+        private readonly List<CharacterMotor> _companions = new List<CharacterMotor>();
+        private readonly List<CharacterMotor> _bodies = new List<CharacterMotor>();
+        private bool _bodiesStale = true;
+
+        /// <summary>The live companions (at most one per player).</summary>
+        public IReadOnlyList<CharacterMotor> Companions => _companions;
+
+        /// <summary>Every body on the court: the players, then their companions. For the few sweeps a companion is part of.</summary>
+        public IReadOnlyList<CharacterMotor> Bodies
+        {
+            get
+            {
+                if (!_bodiesStale) return _bodies;
+                _bodies.Clear();
+                _bodies.AddRange(_players);
+                _bodies.AddRange(_companions);
+                _bodiesStale = false;
+                return _bodies;
+            }
+        }
+
+        /// <summary>Raised when a companion joins or leaves the round (the network's companion set listens).</summary>
+        public event Action CompanionsChanged;
+
+        /// <summary>A companion was tagged: stunned where it stands, and nobody paid (defenderSeat, companionSeat).</summary>
+        public event Action<int, int> CompanionTagged;
+
+        /// <summary>
+        /// Adds a companion. It takes its owner's side for the round (a companion of the taya guards and tags with them) and the
+        /// round's live state. A second companion for the same seat replaces nothing: the call is refused.
+        /// </summary>
+        public bool RegisterCompanion(CharacterMotor companion)
+        {
+            if (companion == null || !CompanionSeats.IsCompanion(companion.PlayerSlot)) return false;
+            if (_companions.Contains(companion)) return true;
+            if (BodyAt(companion.PlayerSlot) != null) return false;
+            var owner = PlayerAt(CompanionSeats.OwnerOf(companion.PlayerSlot));
+            companion.IsDefender = owner != null && owner.IsDefender;
+            _companions.Add(companion);
+            _bodiesStale = true;
+            CompanionsChanged?.Invoke();
+            return true;
+        }
+
+        /// <summary>Takes a companion out of the round (its body is its own owner's business).</summary>
+        public void UnregisterCompanion(CharacterMotor companion)
+        {
+            if (companion == null || !_companions.Remove(companion)) return;
+            _bodiesStale = true;
+            CompanionsChanged?.Invoke();
+        }
+
+        /// <summary>The body in any seat, a player's or a companion's, or null.</summary>
+        public CharacterMotor BodyAt(int seat)
+        {
+            if (CompanionSeats.IsPlayer(seat)) return PlayerAt(seat);
+            if (!CompanionSeats.IsCompanion(seat)) return null;
+            for (int i = 0; i < _companions.Count; i++)
+                if (_companions[i] != null && _companions[i].PlayerSlot == seat) return _companions[i];
+            return null;
+        }
+
+        /// <summary>
+        /// ⚠️ EVERY COMPANION LEAVES WITH THE ROUND (plan 9.12: *"removed with its slipper at the round's end, the match's end, or
+        /// if she leaves"*). Destroying the body is what removes it everywhere: its own `OnDestroy` unregisters it and takes its
+        /// slipper with it.
+        /// </summary>
+        public void ReleaseCompanions()
+        {
+            if (_companions.Count == 0) return;
+            var leaving = _companions.ToArray();
+            _companions.Clear();
+            _bodiesStale = true;
+            foreach (var companion in leaving)
+                if (companion != null) Destroy(companion.gameObject);
+            CompanionsChanged?.Invoke();
+        }
+
+        private void ReleaseCompanionOf(int owner)
+        {
+            var companion = BodyAt(CompanionSeats.For(owner));
+            if (companion == null) return;
+            UnregisterCompanion(companion);
+            Destroy(companion.gameObject);
+        }
         public float TayaCampSeconds => _tayaCampTimer;
         public bool IsTayaCampWarningActive => TournamentRules.IsCampWarning(_tayaCampTimer);
         public bool IsTayaCampPenaltyActive => TournamentRules.IsCampPenalty(_tayaCampTimer);
@@ -93,10 +189,22 @@ namespace TumbangPreso
         public void Register(CharacterMotor m)
         {
             if (!_players.Contains(m)) _players.Add(m);
+            _bodiesStale = true;
         }
 
-        public void Clear() => _players.Clear();
-        public void Unregister(CharacterMotor motor) => _players.Remove(motor);
+        public void Clear()
+        {
+            ReleaseCompanions();
+            _players.Clear();
+            _bodiesStale = true;
+        }
+
+        public void Unregister(CharacterMotor motor)
+        {
+            if (motor != null && CompanionSeats.IsPlayer(motor.PlayerSlot)) ReleaseCompanionOf(motor.PlayerSlot);
+            _players.Remove(motor);
+            _bodiesStale = true;
+        }
 
         public CharacterMotor PlayerAt(int slot)
         {
@@ -220,6 +328,14 @@ namespace TumbangPreso
                 player.IsDefender = player.PlayerSlot == defenderSlot;
                 player.GetComponentInChildren<Visual.CharacterNameplate>()?.Refresh();
             }
+
+            // A companion is on its owner's side and lives while the round does.
+            foreach (var companion in _companions)
+            {
+                if (companion == null) continue;
+                companion.IsDefender = CompanionSeats.OwnerOf(companion.PlayerSlot) == defenderSlot;
+                if (matchInProgress) companion.RoundActive = roundActive;
+            }
         }
 
         /// <summary>
@@ -265,6 +381,7 @@ namespace TumbangPreso
         {
             RoundActive = false;
             foreach (var p in _players) p.RoundActive = false;
+            ReleaseCompanions();
             Net.WorldEffectSnapshot.ClearPersistentFields();
 
             // ⚠️⚠️ THE WEATHER IS PUT BACK HERE, AND IT IS THE ONE PIECE OF AN ABILITY THAT CAN
@@ -280,7 +397,9 @@ namespace TumbangPreso
 
         public void ResetForNewMatch()
         {
+            ReleaseCompanions();
             _players.Clear();
+            _bodiesStale = true;
             _fieldRound=0;_fieldMatch=0;
 
             RoundActive = false;
@@ -528,13 +647,14 @@ namespace TumbangPreso
         {
             if (who == null) return false;
 
+            bool hiddenPracticeCan = GuidedTraining.HasHiddenPracticeCan(who, Lata);
             var ctx = new ThrowContext
             {
                 RoundActive = RoundActive,
                 IsDefender = who.IsDefender,
                 HoldingSlipper = who.HoldingSlipper,
-                LataUpright = Lata != null && Lata.IsUpright,
-                ThrowCooldownLeft = _throwCooldownLeft,
+                LataUpright = hiddenPracticeCan || (Lata != null && Lata.IsUpright),
+                ThrowCooldownLeft = Mathf.Max(_throwCooldownLeft, Lata != null && !hiddenPracticeCan ? Lata.ProtectionLeft : 0),
                 X = who.transform.position.x,
                 Z = who.transform.position.z,
                 ConfinementRadius = Balance.ConfinementRadius,
@@ -543,30 +663,10 @@ namespace TumbangPreso
         }
 
         /// <summary>
-        /// Whether an already-started throw wind-up may stay visually committed.
-        ///
-        /// The lata being down and the short restoration lock are transient release gates, not
-        /// reasons to snap a charged arm back to idle. Starting still asks <see cref="CanThrow"/>
-        /// and releasing still asks it again, so this cannot launch an illegal throw. It only
-        /// keeps the animation and stored charge while the attacker holds the button.
+        /// Current feedback cancels charge on knockdown or restoration protection.
+        /// Starting, maintaining and releasing share the same legal gate.
         /// </summary>
-        public bool CanMaintainThrowCharge(CharacterMotor who)
-        {
-            if (who == null) return false;
-
-            var ctx = new ThrowContext
-            {
-                RoundActive = RoundActive,
-                IsDefender = who.IsDefender,
-                HoldingSlipper = who.HoldingSlipper,
-                LataUpright = true,
-                ThrowCooldownLeft = 0.0f,
-                X = who.transform.position.x,
-                Z = who.transform.position.z,
-                ConfinementRadius = Balance.ConfinementRadius,
-            };
-            return ThrowRules.CanThrow(in ctx);
-        }
+        public bool CanMaintainThrowCharge(CharacterMotor who) => CanThrow(who);
 
         /// <summary>
         /// ⚠️ NOBODY MAY THROW FOR A MOMENT AFTER THE CAN IS STOOD BACK UP. It stops the lata
@@ -602,6 +702,9 @@ namespace TumbangPreso
             if (!taya.IsDefender || !victim.IsTaggable()) return;
             if (Lata == null || !Lata.IsUpright) return;
 
+            // ⚠️⚠️ TAGGING A COMPANION PAYS NOBODY (the owner: *"The doll does not give points when tagged/sabotaged"*).
+            if (CompanionSeats.IsCompanion(victim.PlayerSlot)) { ResolveCompanionTag(taya, victim); return; }
+
             GameServices.Match.AddScore(taya.PlayerSlot, ScoreEvent.Tag);
             GameServices.Match.RecordHostTagChain(taya.PlayerSlot, victim.PlayerSlot);
             taya.AbilitySystem?.OnTagScored();
@@ -619,6 +722,19 @@ namespace TumbangPreso
 
             ApplyTagPenalty(taya, victim);
             Tagged?.Invoke(taya.PlayerSlot, victim.PlayerSlot);
+        }
+
+        /// <summary>
+        /// A companion tagged (plan 9.12): stunned five seconds WHERE IT STANDS (no trip home, it has no spawn mark), no score for
+        /// the taya, no sabotage credit for whoever shoved it, and nothing for its owner to lose. The stun is the host's decision
+        /// and replicates with the body; `CompanionTagged` is for its presentation.
+        /// </summary>
+        private void ResolveCompanionTag(CharacterMotor taya, CharacterMotor companion)
+        {
+            _shoveCredit.Remove(companion.PlayerSlot);
+            companion.ApplyTagged();
+            NetCue.PlayImpact("tag", "downed", companion.transform.position, 0.7f);
+            CompanionTagged?.Invoke(taya.PlayerSlot, companion.PlayerSlot);
         }
 
         /// <summary>

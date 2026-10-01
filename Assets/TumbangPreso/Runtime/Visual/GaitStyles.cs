@@ -391,19 +391,25 @@ namespace TumbangPreso.Visual
         public static readonly GaitStyle PhaisterDoll = new GaitStyle
         {
             Name = "phaister-doll",
+            // v2 (2026-09-29, the owner: *"i want it to look more sluggish, make it slow too"*): heavier and later everywhere, the body
+            // rolling further and later over each foot, the arms hanging later, a deeper slump on every step (the Quirk's THUD).
+            // v3 (2026-09-29, the owner on v2: *"his aniamtion seems poppy and fast even tho he walks slow i want it to feel like he's
+            // struggling to move or sluggish"*). What popped: legs that lingered at the plant then HURRIED through the swing (LegSnap
+            // under 1), a hard stomp at every footfall, a slump that snapped in, and a string yank that rose in 25 ms. So: plain slow
+            // swings (snaps at 1), fewer, longer, dragged steps (the slide is the drag), no stomp, a slump that sinks, a yank that heaves.
             Walk = new Gait
             {
-                LegForward = 30, LegBack = 28, LegSnap = .55f, Stance = 6,
-                ArmSpread = 8, ArmForward = 6, ArmBack = 8, ArmCarry = 3, ArmSnap = .7f, ArmLag = .12f,
-                Lean = 8, LeanPulse = 4, Roll = 8, RollDelay = .18f, Twist = 3,
-                HeadPitch = 10, HeadTilt = 12, HeadNod = 6, HeadSteady = 0, Stomp = .07f, Sway = .09f, Glide = 1.6f,
+                LegForward = 28, LegBack = 26, LegSnap = 1f, Stance = 7,
+                ArmSpread = 8, ArmForward = 4, ArmBack = 6, ArmCarry = 3, ArmSnap = 1f, ArmLag = .12f,
+                Lean = 13, LeanPulse = 3, Roll = 13, RollDelay = .12f, Twist = 3,
+                HeadPitch = 14, HeadTilt = 14, HeadNod = 5, HeadSteady = 0, Stomp = .02f, Sway = .14f, Glide = 2.3f,
             },
             Run = new Gait
             {
-                LegForward = 36, LegBack = 20, LegSnap = .45f, Stance = 6,
-                ArmSpread = 9, ArmForward = 6, ArmBack = 6, ArmCarry = 16, ArmSnap = .7f, ArmLag = .16f,
-                Lean = 16, LeanPulse = 8, Roll = 6, RollDelay = .12f, Twist = 5,
-                HeadPitch = 16, HeadTilt = 9, HeadNod = 7, HeadSteady = 0, Stomp = .08f, Sway = .08f, Glide = 1.7f,
+                LegForward = 34, LegBack = 20, LegSnap = .95f, Stance = 7,
+                ArmSpread = 9, ArmForward = 4, ArmBack = 5, ArmCarry = 16, ArmSnap = 1f, ArmLag = .12f,
+                Lean = 21, LeanPulse = 5, Roll = 10, RollDelay = .12f, Twist = 5,
+                HeadPitch = 20, HeadTilt = 10, HeadNod = 6, HeadSteady = 0, Stomp = .03f, Sway = .12f, Glide = 2.5f,
             },
             Quirk = (ref GaitPose p, in GaitMoment m) =>
             {
@@ -422,6 +428,15 @@ namespace TumbangPreso.Visual
                 // The arms swing only because the body sways: pendulums on the roll, out and in, late.
                 p.SpreadLeft += .9f * p.TorsoRoll;
                 p.SpreadRight -= .9f * p.TorsoRoll;
+                // THE THUD (v2): just after each foot lands the whole sack slumps down onto it, the chest folds forward and the head
+                // drops, then it drags itself back up; so every step looks like an effort.
+                // v3: it SINKS onto the foot and is slowly hauled back up (a smooth hump over the step, never a snap).
+                float after = Mathf.Repeat(2f * (m.Phase - .25f), 1f);
+                float thud = Mathf.Sin(Mathf.Clamp01(after / .7f) * Mathf.PI);
+                thud *= thud;
+                p.RootUp -= .04f * thud;
+                p.TorsoPitch += 6f * thud;
+                p.HeadPitch += 7f * thud;
                 // Hung from one point: the whole body drifts a little from side to side under it.
                 p.RootRight += .03f * Wave(m.Time, .55f);
                 // THE YANK: the string snaps taut. Up, upright, head back, arms flicked out, feet lifted; then it sags.
@@ -440,7 +455,7 @@ namespace TumbangPreso.Visual
         };
 
         /// <summary>
-        /// How hard the doll's string is yanking now, 0 to 1: a snap in 25 ms, gone in about half a second. The yanks come every 2.4
+        /// How hard the doll's string is yanking now, 0 to 1: a heave over a fifth of a second, sagging off over a second. The yanks come every 2.4
         /// to 3.6 s, each beat's own moment picked from its count, so they never fall into a rhythm.
         /// </summary>
         public static float DollYank(float time)
@@ -449,7 +464,10 @@ namespace TumbangPreso.Visual
             int beat = Mathf.FloorToInt(time / 3f);
             float since = time - Beat(beat);
             if (since < 0f) since = time - Beat(beat - 1);
-            return since < 0f ? 0f : Mathf.Clamp01(since * 40f) * Mathf.Exp(-since * 7f);
+            // v3: a HEAVE, not a pop: it rises over a fifth of a second and sags off over a second (v2 rose in 25 ms).
+            if (since < 0f) return 0f;
+            float rise = Mathf.Clamp01(since / .2f);
+            return rise * rise * (3f - 2f * rise) * Mathf.Exp(-Mathf.Max(0f, since - .2f) * 2.2f);
         }
 
         /// <summary>

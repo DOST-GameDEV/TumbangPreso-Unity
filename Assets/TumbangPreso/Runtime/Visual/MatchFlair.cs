@@ -377,6 +377,7 @@ namespace TumbangPreso.Visual
         /// </summary>
         private static void PlayTag(CharacterMotor taya, CharacterMotor victim, Vector3 at)
         {
+            taya?.GetComponent<CharacterAnimator>()?.PresentTagContact(victim, at);
             if (victim != null)
             {
                 DizzyStars.Attach(victim.transform, Balance.TagStunTime, UI.UiTheme.Defense);
@@ -455,13 +456,8 @@ namespace TumbangPreso.Visual
         {
             if (slot < 0) return null;
 
-            var round = GameServices.Round;
-            if (round == null) return null;
-
-            foreach (var p in round.Players)
-                if (p != null && p.PlayerSlot == slot) return p;
-
-            return null;
+            // `BodyAt`: a companion's seat (Phaister's doll) has a body too.
+            return GameServices.Round != null ? GameServices.Round.BodyAt(slot) : null;
         }
     }
 }

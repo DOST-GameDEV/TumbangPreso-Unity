@@ -147,12 +147,27 @@ namespace TumbangPreso.PlayTests
             Object.Destroy(camera.gameObject);Time.timeScale=1;
         }
         [UnityTest] public IEnumerator ToonRampChangesMeasuredLightingAndLeavesUnownedPreviewGlobalsAlone()
+            => CheckToonRamp("TumbangPreso/Toon");
+        [UnityTest] public IEnumerator TransparentToonRampKeepsTheSameMeasuredLightingContract()
+            => CheckToonRamp("TumbangPreso/ToonTransparent");
+        private IEnumerator CheckToonRamp(string shaderName)
+        {
+            int mip=QualitySettings.globalTextureMipmapLimit;
+            QualitySettings.globalTextureMipmapLimit=2;
+            try { yield return CheckToonRampScene(shaderName); }
+            finally { QualitySettings.globalTextureMipmapLimit=mip; }
+        }
+        private IEnumerator CheckToonRampScene(string shaderName)
         {
             yield return Load(SceneFlow.BayanPlaza);
             var look=WorldLookPresentation.Current;var sun=SkyEvent.RecordedSun;Assert.IsNotNull(sun);
             var cube=GameObject.CreatePrimitive(PrimitiveType.Cube);cube.name="Temporary lighting calibration only";
             cube.GetComponent<Collider>().enabled=false;
-            var material=new Material(Shader.Find("TumbangPreso/Toon"));material.SetColor("_Color",new Color(.4f,.4f,.4f));material.SetFloat("_OutlineWidth",0);
+            var material=new Material(Shader.Find(shaderName));material.SetColor("_Color",new Color(.4f,.4f,.4f));
+            if(material.HasProperty("_OutlineWidth"))material.SetFloat("_OutlineWidth",0);
+            // Compare shader paths at identical calibration values. Transparent's
+            // authored defaults are .55/.02; this does not alter those materials.
+            material.SetFloat("_ShadowBand",.45f);material.SetFloat("_BandEdge",.03f);
             var surface=cube.GetComponent<Renderer>();surface.sharedMaterial=material;surface.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
             surface.lightProbeUsage=UnityEngine.Rendering.LightProbeUsage.Off;
             Vector3 away=sun.transform.forward;away.y=0;away.Normalize();
@@ -186,6 +201,7 @@ namespace TumbangPreso.PlayTests
                         float lit=Luma(top),shade=Luma(side),ratio=lit/Mathf.Max(.0001f,shade);
                         if(weight==0)oldRatio=ratio;else newRatio=ratio;
                         output.AppendLine(System.FormattableString.Invariant($"{weight},{applied},{lit:F6},{shade:F6},{ratio:F4}"));
+                        Assert.IsTrue(float.IsFinite(lit)&&float.IsFinite(shade)&&float.IsFinite(ratio), "The no-mipmap ramp must never produce non-finite lighting.");
                         Assert.AreEqual(weight,applied,"Actual camera render must receive the map shader scope.");
                         Assert.Greater(lit,0);Assert.Greater(shade,0);
                     }
@@ -194,7 +210,7 @@ namespace TumbangPreso.PlayTests
                 var actor=GameServices.Round.PlayerAt(1);var body=actor.GetComponent<CharacterVisual>().Model.GetComponentInChildren<Renderer>();
                 var block=new MaterialPropertyBlock();body.GetPropertyBlock(block);
                 output.AppendLine("body_shader="+body.sharedMaterial.shader.name+",flash="+block.GetFloat("_FlashAmount")+",probe="+body.lightProbeUsage);
-                System.IO.Directory.CreateDirectory(Output);System.IO.File.WriteAllText(System.IO.Path.Combine(Output,"lighting-response.csv"),output.ToString());
+                System.IO.Directory.CreateDirectory(Output);System.IO.File.WriteAllText(System.IO.Path.Combine(Output,shaderName.EndsWith("Transparent")?"lighting-response-transparent.csv":"lighting-response.csv"),output.ToString());
                 // ⚠️ LIGHT-1.7. VISUAL-1.8 asked for MORE contrast here (2 to 2.5:1 and above the
                 // authored lighting). The bright look asks for the opposite on purpose: PEAK's cast
                 // turns from light to a bright coloured shade, so the shade side opens up against the

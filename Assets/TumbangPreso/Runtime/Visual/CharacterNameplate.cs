@@ -301,7 +301,10 @@ namespace TumbangPreso.Visual
             bool isDefense = _character.IsDefender;
             if(_roleKnown && isDefense!=_previousDefense)_roleChangedAt=Time.unscaledTime;
             _roleKnown=true;_previousDefense=isDefense;
-            _roleColor = PlayerIdentity.Colour(_character.PlayerSlot);
+            // ⚠️ A COMPANION WEARS ITS OWNER'S COLOUR AND ITS OWN NAME (HERO-10 v3, plan 9.7: *"Nameplate PHAISTER'S DOLL in her
+            // colour"*): the colour says whose it is, the name says it is not a fifth player. Seats 4 to 7 have no colour of their own.
+            bool companion = Core.CompanionSeats.IsCompanion(_character.PlayerSlot);
+            _roleColor = PlayerIdentity.Colour(Core.CompanionSeats.OwnerOf(_character.PlayerSlot));
 
             // ⚠️⚠️ THE TAYA'S MARKER IS A RING AND AN ATTACKER'S IS A DISC, AND THAT IS THE ONLY
             // PLACE THE ROLE IS CARRIED BY SOMETHING OTHER THAN HUE ON THE FLOOR.
@@ -369,9 +372,11 @@ namespace TumbangPreso.Visual
             // ⚠️ THE TAYA KEEPS ITS WORD, DELIBERATELY. Which of the four is the taya is the one
             // fact worth naming in the world, it changes every round, and a player who has just
             // rotated needs to find them before the colour rule has re-registered.
-            _label.text = isDefense
-                ? $"{PlayerIdentity.Label(_character.PlayerSlot)} · TAYA"
-                : PlayerIdentity.Label(_character.PlayerSlot);
+            _label.text = companion
+                ? _character.PlayerName
+                : isDefense
+                    ? $"{PlayerIdentity.Label(_character.PlayerSlot)} · TAYA"
+                    : PlayerIdentity.Label(_character.PlayerSlot);
             _label.color = _roleColor;
         }
 

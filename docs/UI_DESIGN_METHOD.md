@@ -52,3 +52,64 @@ builds without entering; the owner must hide its root-level canvas until opening
 Reused controls refresh from range state, and each gameplay setter rechecks the
 offline gate. Choice popups own nested Back through `ScreenTakeover`.
 [Current evidence and remaining native checks](reports/stability-2026-09-27/practice-range.md).
+
+## Offline Match Menu
+
+Esc/menu pauses offline simulation and retains that pause through nested Settings.
+Resume, repeated closes and destruction restore the prior requested speed unless
+scene exit already selected another rate. Online matches continue running. The
+notice reflects the current mode. Menu animation/navigation remain unscaled, and
+hitstop may not unpause a stopped clock. Human play confirmation remains separate
+from native menu/clock checks.
+
+## Throw Landing Preview, Feedback2026-09-30
+
+The owner replaced the directional line with a local ground circle. It follows the current launch and supporting floor at20Hz, disappears with charge/release and predicts world banks. It does not resolve gameplay or promise immunity to player/can interception. Read the [native flight/render evidence](reports/feedback-2026-09-30/landing-circle.md). Keep the ordinary charge ring tied to Carrier.ChargeRatio; clarity feedback remains open.
+
+Charge feedback names actual power percent and FULL RELEASE at the reticle, with WAIT when the objective is protected or the round/actor disallows use. Can-down/protected state cancels charge and refuses a new throw under protocol118+. Captions hide with the reticle/release and use the shared black outline. [Native charge UI evidence](reports/feedback-2026-09-30/throw-charge-ui.md).
+
+## Ready And Power Readability
+
+The latest Feedback asks for Ready Up beside a larger Xelu glyph resolved from
+the actual saved Interact/Ready binding, without the old warmup subtitle. Touch
+keeps action wording without a keyboard image. Other contextual action prompts
+now reuse the live glyph for Reset Can and Retrieve Slipper. The live power deck grows25percent around its existing
+corner/bottom anchor, preserving edge margins and accessibility scaling. The
+separate held-description sheet and all kit descriptions stay unchanged. The
+owner explicitly includes Paete/Phaister in this shared-HUD sizing exception.
+Two focused native checks and four captures qualify the local binding/layout
+changes. [Evidence](reports/feedback-2026-09-30/hud-readability.md). Physical-device
+approval remains separate. The existing practice status sits above the larger deck
+and its hint so neither can obscure the ability controls.
+
+The25percent revision supersedes the earlier50percent target. Saved keyboard/pad
+bindings drive the glyph; touch retains the action label and emphasis. Ongoing
+reset progress/cancel wording stays intact. Real pickup, channel cancellation and
+completed reset pass locally. [Revision evidence](reports/feedback-2026-09-30/match-ui-revision.md).
+
+After a device-dependent anchor change, rebase that group on its actual canvas
+HudReadingLayout before accessibility refresh. Do not capture other already-scaled
+groups as new authored positions. Device-then-scale round trips must retain margins.
+
+## Spectator Round Boundaries
+
+The passive next-taya/standings card belongs to the whole match. Install it for
+watchers and keep its event owner active when entering watch mode; only personal
+seat/stamina cards are excluded. Explicit clean feed hides the card's root canvas
+without reparenting away its scaler or losing the live boundary state.
+
+## Title Submit Boundary
+
+The title's opening action is accepted once and waits for the existing UI Submit
+to release before Home installs its selected PLAY. Ordinary non-Submit keys and
+pointer/touch clicks retain the same entry route with a frame boundary. A fresh
+Submit remains usable on Home. [Focused evidence](reports/hero-quality-2026-10-01/title-submit-checks/README.md).
+
+## Current Feedback HUD layout
+
+Harry's mockup separates status cards at bottom-left, the action and contained
+progress centrally below aim, and a dark-red warning above aim. Persistent
+penalties and short input refusals no longer replace the action instruction.
+Rooted keeps its actual Interact hold and saved glyph; no recovery remapping.
+Round backing follows pip count. See the current HUD report for native checks
+and the separate pending announcement-scoring work.

@@ -389,7 +389,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000005",
-                    "path": "<Keyboard>/f",
+                    "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -400,7 +400,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-000000000007",
-                    "path": "<Mouse>/rightButton",
+                    "path": "<Mouse>/middleButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -422,7 +422,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0002-4000-8000-00000000000a",
-                    "path": "<Keyboard>/r",
+                    "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -510,7 +510,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0004-4000-8000-000000000101",
-                    "path": "<Mouse>/scroll/down",
+                    "path": "<Mouse>/scroll/up",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -521,7 +521,7 @@
                 {
                     "name": "",
                     "id": "6f1a2b30-0004-4000-8000-000000000102",
-                    "path": "<Mouse>/scroll/up",
+                    "path": "<Mouse>/scroll/down",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",

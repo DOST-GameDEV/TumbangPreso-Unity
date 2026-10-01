@@ -1,0 +1,26 @@
+{
+  "exit": 0,
+  "seconds": 901.8890128135681,
+  "stopped": "900-second manual-session safety ceiling",
+  "review": {
+    "botmatch": null,
+    "traceExists": false
+  },
+  "before": {
+    "low": "0",
+    "high": "0",
+    "max": "6084872",
+    "oom": "11",
+    "oom_kill": "6",
+    "oom_group_kill": "0"
+  },
+  "after": {
+    "low": "0",
+    "high": "0",
+    "max": "6095421",
+    "oom": "11",
+    "oom_kill": "6",
+    "oom_group_kill": "0"
+  },
+  "runtimeSha256": "d74e5a6a66d008567be98e8af6c6d4413490f052af13824544ffe773ba952ee3"
+}

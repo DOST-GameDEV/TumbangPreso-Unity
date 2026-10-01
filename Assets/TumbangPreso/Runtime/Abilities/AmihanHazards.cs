@@ -123,13 +123,15 @@ namespace TumbangPreso.Abilities
         public Vector3 Origin { get; private set; }
         public Vector3 Forward { get; private set; }
         public float Age => _age;
+        public static float FanRange => AmihanRules.StormSurgeRangeForCourt(
+            AIController.PlayableMinX, AIController.PlayableMaxX,
+            AIController.PlayableMinZ, AIController.PlayableMaxZ);
         public bool Released => _released;
 
         private float _age;
         private bool _released;
         private HeroAbility _source;
         private AmihanStormFan _fan;
-        private readonly Dictionary<Slipper, float> _blown = new Dictionary<Slipper, float>();
 
         public static AmihanStorm Spawn(Vector3 origin, Vector3 forward, int ownerSlot, HeroAbility source, float age = 0.0f)
         {
@@ -153,7 +155,7 @@ namespace TumbangPreso.Abilities
         {
             Vector3 d = point - origin; d.y = 0.0f;
             if (d.sqrMagnitude < 0.04f) return false; // her own spot
-            if (d.magnitude > AmihanRules.StormSurgeRange) return false;
+            if (d.magnitude > FanRange) return false;
             return Vector3.Angle(forward, d) <= AmihanRules.StormSurgeHalfAngle;
         }
 
@@ -189,11 +191,19 @@ namespace TumbangPreso.Abilities
                 Vector3 dir = BlowDirection(Origin, Forward, p.transform.position);
                 // ⚠️ THE CAN IS NOT A SLIPPER AND IS NOT TOUCHED. The table names players and
                 // slippers; moving the objective would be a third thing nobody asked for.
+                p.ApplyWhirled();
                 p.ApplyResolvedCarry(dir * AmihanRules.StormSurgeSpeed + Vector3.up * AmihanRules.StormSurgeLift, hold);
             }
             foreach (var shoe in FindObjectsByType<Slipper>())
-                if (shoe != null && shoe.State == SlipperState.Loose && InsideFan(Origin, Forward, shoe.transform.position))
-                    _blown[shoe] = AmihanRules.StormSurgeDistance;
+                if (shoe != null && shoe.gameObject.activeInHierarchy
+                    && shoe.State != SlipperState.Held && InsideFan(Origin, Forward, shoe.transform.position))
+                {
+                    Vector3 velocity = BlowDirection(Origin, Forward, shoe.transform.position)
+                        * AmihanRules.StormSurgeSlipperSpeed + Vector3.up * AmihanRules.StormSurgeLift;
+                    // Existing host flight owns collision, bounds, landing and snapshots.
+                    // An environmental launch must not grant the caster another player's shot.
+                    shoe.HostThrow(null, shoe.transform.position, velocity);
+                }
         }
 
         private void PunchNearbyCamera()
@@ -220,33 +230,5 @@ namespace TumbangPreso.Abilities
             if (_fan != null && _age >= _fan.LifeSeconds) Destroy(gameObject);
         }
 
-        private void FixedUpdate()
-        {
-            if (!_released || _blown.Count == 0 || !NetAuthority.ShouldResolve()) return;
-            float dt = Time.fixedDeltaTime;
-            var done = new List<Slipper>();
-            foreach (var pair in _blown)
-            {
-                var shoe = pair.Key;
-                float left = pair.Value;
-                if (shoe == null || shoe.State != SlipperState.Loose || left <= 0.01f) { done.Add(shoe); continue; }
-                // Decelerating against `Friction` from the speed that slides the full distance, so a
-                // slipper travels exactly `StormSurgeDistance` unless a wall stops it first.
-                float speed = Mathf.Sqrt(2.0f * Balance.Friction * left);
-                float step = Mathf.Min(left, speed * dt);
-                Vector3 dir = BlowDirection(Origin, Forward, shoe.transform.position);
-                Vector3 wanted = shoe.transform.position + dir * step;
-                wanted = AIController.ClampToPlayable(wanted);
-                Vector3 delta = wanted - shoe.transform.position;
-                float moved = shoe.HostSweepLoose(delta);
-                float remaining = moved < delta.magnitude - 0.01f ? 0.0f : left - moved;
-                _blownNext[shoe] = remaining;
-            }
-            foreach (var pair in _blownNext) _blown[pair.Key] = pair.Value;
-            _blownNext.Clear();
-            foreach (var shoe in done) _blown.Remove(shoe);
-        }
-
-        private readonly Dictionary<Slipper, float> _blownNext = new Dictionary<Slipper, float>();
     }
 }

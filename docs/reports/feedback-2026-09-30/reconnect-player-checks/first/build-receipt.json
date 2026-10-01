@@ -1,0 +1,12 @@
+{
+  "source": "72a1187b4284ee7d88aba8f3dc6419fcfe434ad7",
+  "nativeGitHead": "aecc0ee2cf6c03f9705249022454106620743eb4",
+  "protocol": 117,
+  "executable": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Builds\\feedback-reconnect-player-1001\\TumbangPreso.exe",
+  "executableSha256": "ba26219c895f07eae430a96cf0bc31a09bd767905c1ffa957bbfa86d60d2be59",
+  "runtimeSha256": "a27665cb0a52c8f9999429698fa048a645c9fb5f72e57064f4d679cca0d91721",
+  "inputCount": 15426,
+  "preparationDrift": [],
+  "codeDrift": [],
+  "scope": "Explicit committed overlays in a separate imported checkout; not a pristine source release certification"
+}

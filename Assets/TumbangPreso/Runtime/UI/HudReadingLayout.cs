@@ -28,7 +28,7 @@ namespace TumbangPreso.UI
         {
             var layout = root.gameObject.AddComponent<HudReadingLayout>();
             string[] names = { "MatchScores", "RoundClock", "CanReadout", "LocalState", "ContextualAction",
-                "PowerSeals", "MatchEventFeed", "SpectatorReadout", "SandboxState", "MatchToastPlate", "MatchToast",
+                "WarningMessage", "PowerSeals", "MatchEventFeed", "SpectatorReadout", "SandboxState", "MatchToastPlate", "MatchToast",
                 "Reticle", "HitConfirmation", "Countdown", "CalloutCaption", "StaminaArc", "TimedStatus0", "TimedStatus1", "TimedStatus2", "TimedStatus3" };
             foreach (string name in names)
             {
@@ -40,13 +40,14 @@ namespace TumbangPreso.UI
         }
 
         private void LateUpdate() => Refresh();
-        public void RebasePlacement()
+        public void RebasePlacement(RectTransform target = null)
         {
             // A caller such as match chat supplies its final corner after construction.
             // Keep the original unit scale, but adopt the newly authored anchor placement.
             for (int i = 0; i < _groups.Count; i++)
             {
-                var group = _groups[i]; if (group.Rect == null) continue;
+                var group = _groups[i];
+                if (group.Rect == null || (target != null && group.Rect != target)) continue;
                 group.Position = group.Rect.anchoredPosition; group.Size = group.Rect.sizeDelta; _groups[i] = group;
             }
             _scale = -1; Refresh();

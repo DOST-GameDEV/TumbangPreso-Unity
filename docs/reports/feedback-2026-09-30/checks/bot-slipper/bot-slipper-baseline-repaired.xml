@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 14:59:50Z" end-time="2026-09-30 14:59:51Z" duration="0.3144915">
+  <test-suite type="TestSuite" id="2156" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="926" result="Failed" site="Child" start-time="2026-09-30 14:59:50Z" end-time="2026-09-30 14:59:51Z" duration="0.314492" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2150" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="926" result="Failed" site="Child" start-time="2026-09-30 14:59:50Z" end-time="2026-09-30 14:59:51Z" duration="0.299450" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="14496" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2151" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="926" result="Failed" site="Child" start-time="2026-09-30 14:59:50Z" end-time="2026-09-30 14:59:51Z" duration="0.296395" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2152" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="926" result="Failed" site="Child" start-time="2026-09-30 14:59:50Z" end-time="2026-09-30 14:59:51Z" duration="0.293560" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1097" name="BotSlipperQueryTests" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-09-30 14:59:50Z" end-time="2026-09-30 14:59:51Z" duration="0.252769" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1101" name="DestroyedAndReplacedSlippersDoNotLeaveStaleOwnership" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests.DestroyedAndReplacedSlippersDoNotLeaveStaleOwnership" methodname="DestroyedAndReplacedSlippersDoNotLeaveStaleOwnership" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" seed="1978275100" result="Passed" start-time="2026-09-30 14:59:51Z" end-time="2026-09-30 14:59:51Z" duration="0.097527" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1100" name="DisabledComponentsRemainVisibleButInactiveObjectsDoNot" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests.DisabledComponentsRemainVisibleButInactiveObjectsDoNot" methodname="DisabledComponentsRemainVisibleButInactiveObjectsDoNot" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" seed="806120973" result="Passed" start-time="2026-09-30 14:59:51Z" end-time="2026-09-30 14:59:51Z" duration="0.035886" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1099" name="ExistingQueryOrderMatchesAscendingEntityIds" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests.ExistingQueryOrderMatchesAscendingEntityIds" methodname="ExistingQueryOrderMatchesAscendingEntityIds" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" seed="910360380" result="Failed" start-time="2026-09-30 14:59:51Z" end-time="2026-09-30 14:59:51Z" duration="0.057890" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected and actual are both <UnityEngine.EntityId[4]>
+  Values differ at index [0]
+  Expected: 568105589213755594
+  But was:  568105589213755618
+]]></message>
+                <stack-trace><![CDATA[at NUnit.Framework.CollectionAssert.AreEqual (System.Collections.IEnumerable expected, System.Collections.IEnumerable actual, System.String message, System.Object[] args) [0x00008] in <8b63e8ac0a4746599ed207982825ae6c>:0
+at NUnit.Framework.CollectionAssert.AreEqual (System.Collections.IEnumerable expected, System.Collections.IEnumerable actual) [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0
+at TumbangPreso.PlayTests.BotSlipperQueryTests.ExistingQueryOrderMatchesAscendingEntityIds () [0x0003f] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\BotSlipperQueryTests.cs:68
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1098" name="WarmOwnedLookupDoesNotAllocateSceneResultArrays" fullname="TumbangPreso.PlayTests.BotSlipperQueryTests.WarmOwnedLookupDoesNotAllocateSceneResultArrays" methodname="WarmOwnedLookupDoesNotAllocateSceneResultArrays" classname="TumbangPreso.PlayTests.BotSlipperQueryTests" runstate="Runnable" seed="1181287589" result="Failed" start-time="2026-09-30 14:59:51Z" end-time="2026-09-30 14:59:51Z" duration="0.041101" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Each repeated bot lookup still allocates scene result arrays.
+  Expected: 0
+  But was:  200
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.BotSlipperQueryTests.WarmOwnedLookupDoesNotAllocateSceneResultArrays () [0x000df] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\BotSlipperQueryTests.cs:61
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

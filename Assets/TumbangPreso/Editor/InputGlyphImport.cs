@@ -50,7 +50,7 @@ namespace TumbangPreso.EditorTools
             var importer = (TextureImporter)assetImporter;
 
             importer.textureType = TextureImporterType.Default;
-            importer.filterMode = FilterMode.Point;
+            importer.filterMode = assetPath.Contains("/xelu/") ? FilterMode.Bilinear : FilterMode.Point;
             importer.wrapMode = TextureWrapMode.Clamp;
             importer.mipmapEnabled = false;
             importer.textureCompression = TextureImporterCompression.Uncompressed;

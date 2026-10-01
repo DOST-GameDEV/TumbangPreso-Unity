@@ -11,9 +11,9 @@ namespace TumbangPreso.Core
     /// </summary>
     public static class CryoRules
     {
-        /// <summary>COLD FEET, owner: *"The chilling field lasts for 5 seconds"*, *"35 Seconds Cooldown"*.</summary>
+        /// <summary>COLD FEET: current Wiki field lifetime7.5seconds, cooldown35seconds.</summary>
         public const float ColdFeetCooldown = 35.0f;
-        public const float ColdFeetSeconds = 5.0f;
+        public const float ColdFeetSeconds = 7.5f;
         /// <summary>The old Permafrost Sheet's radius and aim band, which already sat in the footprint budget.</summary>
         public const float ColdFeetRadius = 2.3f;
         public const float ColdFeetMinRange = 1.8f;
@@ -35,16 +35,18 @@ namespace TumbangPreso.Core
 
         /// <summary>ABSOLUTE ZERO, owner: *"12 Objective Points"*; Frozen on everyone, then Chilled.</summary>
         public const float AbsoluteZeroCost = 12.0f;
+        public const float AbsoluteZeroDelay = 1.5f;
     }
 
     public static class GeoRules
     {
-        /// <summary>SHIELD, owner: *"Status immunity for 20 seconds"*. Cooldown 45 s (set here).</summary>
-        public const float ShieldSeconds = 20.0f;
-        public const float ShieldCooldown = 45.0f;
+        public const float EarthboundDistanceScale = .5f;
+        /// <summary>Current Wiki UNSTOPPABLE:15seconds of status immunity,40second cooldown.</summary>
+        public const float ShieldSeconds = 15.0f;
+        public const float ShieldCooldown = 40.0f;
 
-        /// <summary>BOULDER, owner: *"Throw rock -> Concussed"*. Cooldown, speed and roll set here.</summary>
-        public const float BoulderCooldown = 30.0f;
+        /// <summary>BOULDER imbues a held slipper. Legacy rock constants remain for retained assets.</summary>
+        public const float BoulderCooldown = 35.0f;
         public const float BoulderSpeed = 14.0f;
         public const float BoulderRollDistance = 2.0f;
         public const float BoulderHitRadius = 0.7f;
@@ -53,34 +55,46 @@ namespace TumbangPreso.Core
 
         /// <summary>BARRIER, owner: *"lasts for 7.5 seconds and follows you around"*, *"25 Seconds
         /// Cooldown"*. Width and offset set here.</summary>
-        public const float BarrierCooldown = 25.0f;
+        public const float BarrierCooldown = 35.0f;
         public const float BarrierSeconds = 7.5f;
         public const float BarrierWidth = 3.4f;
         public const float BarrierForward = 1.2f;
 
         /// <summary>EARTHQUAKE, owner: *"Everyone concussed"*. Cost set here.</summary>
-        public const float EarthquakeCost = 14.0f;
+        public const float EarthquakeCost = 12.0f;
+        // Current Wiki specifies successive forward blasts. Spacing is gameplay tuning.
+        public const int DriftBlasts = 5;
+        public const float DriftInterval = .30f;
+        public const float DriftVisualTail = 1.2f;
+        public const float DriftSeconds = (DriftBlasts - 1) * DriftInterval + DriftVisualTail;
     }
 
     public static class NecroRules
     {
+        /// <summary>Current Wiki: every Kuro basic ability shares one 25-second cooldown.</summary>
+        public const float BasicCooldown = 25.0f;
+        public const float SitSeconds = 10.0f;
+        // The Wiki changes the action, not its existing hold-to-aim reach.
+        public const float SitMaxRange = TerrifyMaxRange;
+
         /// <summary>TERRIFY, owner: *"Leave Kuro somewhere and everyone there gets feared"*. Set here:
-        /// 40 s cooldown, aimed up to 7 m, a 4 s haunt, feared within 2.2 m, once per body per haunt.</summary>
-        public const float TerrifyCooldown = 40.0f;
+        /// aimed up to 7 m, a 4 s haunt, feared within 2.2 m, once per body per haunt.
+        /// Legacy fear-spot tuning is retained for references; the live signature now uses Sit.</summary>
+        public const float TerrifyCooldown = BasicCooldown;
         public const float TerrifyMaxRange = 7.0f;
         public const float TerrifyHauntSeconds = 4.0f;
         public const float TerrifyRadius = 2.2f;
 
         /// <summary>KURO FETCH, owner: *"Slipper retrieve"*, and the taya can intercept. Set here.</summary>
-        public const float FetchCooldown = 30.0f;
+        public const float FetchCooldown = BasicCooldown;
         public const float FetchSpeed = 9.0f;
         /// <summary>A tag this close to Kuro while he carries makes him drop it.</summary>
         public const float FetchInterceptRadius = 1.3f;
 
-        /// <summary>KURO GUARD, owner: *"kuro aids withh blocking and becomes a bit bigger"*, *"give her
-        /// like an AI to think abt where to stand but dont make it infallible"*. Set here.</summary>
-        public const float GuardCooldown = 30.0f;
-        public const float GuardSeconds = 6.0f;
+        /// <summary>KURO: CATCH! Current Wiki grants five seconds of can protection.
+        /// Original companion presentation tuning is retained below.</summary>
+        public const float GuardCooldown = BasicCooldown;
+        public const float GuardSeconds = 5.0f;
         public const float GuardScale = 1.6f;
         public const float GuardMoveSpeed = 6.0f;
         public const float GuardBlockRadius = 0.9f;
@@ -180,9 +194,10 @@ namespace TumbangPreso.Core
         /// <summary>
         /// The doll body's share of a player's walk and run. The rule is the owner's (*"big fat voodoo doll that's kinda sllow(to
         /// balance it)"*, *"make him look sluggish and its okay if he's slower than others"*); the number is proposed. Slow is its
-        /// balance (a Hard AI that never tires) and its look: at a player's speed its short legs could only skate.
+        /// balance (a Hard AI that never tires) and its look: at a player's speed its short legs could only skate. 0.65 until
+        /// 2026-09-29, then 0.5 on the owner's *"refine animation of doll i want it to look more sluggish, make it slow too"*.
         /// </summary>
-        public const float DollSpeedScale = 0.65f;
+        public const float DollSpeedScale = 0.5f;
 
         /// <summary>May she start reaching for someone this far away and this far off her aim, in sight?</summary>
         public static bool ReachCanStart(float distance, float offAimDegrees, bool inSight)

@@ -1,0 +1,23 @@
+{
+  "source": "ffe5030c5298c3efbb60895af163a7627d7f3c21",
+  "nativeGitHead": "aecc0ee2cf6c03f9705249022454106620743eb4",
+  "protocol": 103,
+  "executable": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Builds\\feedback-engineering-1001\\TumbangPreso.exe",
+  "executableSha256": "ba26219c895f07eae430a96cf0bc31a09bd767905c1ffa957bbfa86d60d2be59",
+  "runtimeSha256": "40bdd1e400eaa66d1081259251bd5995b510a3673ec853dadaf9592c370a4c71",
+  "inputCount": 15390,
+  "preparationDrift": [
+    {
+      "path": "ProjectSettings/GraphicsSettings.asset",
+      "before": "ba2ec8c698bae8e89767e9d28147990b9b6599b96d03e579866aeaa415bdbbd0",
+      "after": "ebbf9d77aa04069f663fd8c8312fb0c3160c61ca0ca6a5893911ba4190b77800"
+    },
+    {
+      "path": "ProjectSettings/ProjectSettings.asset",
+      "before": "6e8261ba99968175c032d9802a6964a7ff580d5f703b024a025801308a670c8d",
+      "after": "f5cfb1b8f70592e0498d32c87be7d847a2079f94ccf683291c59871b8515c677"
+    }
+  ],
+  "codeDrift": [],
+  "scope": "Explicit committed overlays in a separate imported checkout; not a pristine source release certification"
+}

@@ -62,6 +62,7 @@ namespace TumbangPreso
             CaptureMenuButton(_sprint,Verb.Sprint);CaptureMenuButton(_emote,Verb.EmoteWheel);
             CaptureMenuButton(_skill1,Verb.Skill1);CaptureMenuButton(_skill2,Verb.Skill2);CaptureMenuButton(_ultimate,Verb.Ultimate);
             InputLayer.TouchInput.ConsumeRecoveryPress();
+            InputLayer.TouchInput.LookDelta = Vector2.zero;
             _motor?.Intent.Clear();_motor?.Intent.CommitFrame();
         }
         private void CaptureMenuButton(InputAction action,Verb verb)
@@ -99,9 +100,8 @@ namespace TumbangPreso
         /// other lesson drew the live binding. 🧑, 2026-08-26: *"im not sure as well if pektus
         /// controls are in settings"*. They were not.
         ///
-        /// ⚠️⚠️ THE DEFAULTS ARE THE MOUSE WHEEL SINCE 2026-09-27 (the owner's layout: *"Curve
-        /// Throw: Mouse Wheel Up / Mouse Wheel Up"*, wheel down curving left, up right, the way the
-        /// wheel always turned it). Z and C before that, the arrows before THAT. A wheel notch is
+        /// The owner's 2026-09-30 defaults curve left on wheel up and right on wheel down.
+        /// A wheel notch is
         /// a one-frame pulse, not a hold, so every press EDGE of either action steps the curve by
         /// `CurveStep` and a held key or d-pad keeps turning it at `CurveRate`. The wheel used to be
         /// read straight off `Mouse.current` as well; that read is gone, or a wheel binding would
@@ -109,6 +109,8 @@ namespace TumbangPreso
         /// the wheel.
         /// </summary>
         private InputAction _curveLeft, _curveRight;
+        private InputAction _readyUp;
+        private bool _readyUseHeld, _readyInteractHeld;
 
         /// <summary>One wheel notch (or one tap) of curve, and the turn rate while a key is held.</summary>
         private const float CurveStep = 0.35f, CurveRate = 2.5f;
@@ -179,6 +181,7 @@ namespace TumbangPreso
             _special = map.FindAction("SpecialAbility", true);
             _grab = map.FindAction("Grab", true);
             _lunge = map.FindAction("Lunge", true);
+            _readyUp = map.FindAction("ReadyUp", false);
             _emote = map.FindAction("EmoteWheel", true);
             _skill1 = map.FindAction("Skill1", false);
             _skill2 = map.FindAction("Skill2", false);
@@ -254,7 +257,8 @@ namespace TumbangPreso
             if (_skill1 != null) intent.Set(Verb.Skill1, ReadButton(_skill1,Verb.Skill1));
             if (_skill2 != null) intent.Set(Verb.Skill2, ReadButton(_skill2,Verb.Skill2));
             if (_ultimate != null) intent.Set(Verb.Ultimate, ReadButton(_ultimate,Verb.Ultimate));
-            if (_interact != null) intent.Set(Verb.Interact, ReadButton(_interact,Verb.Interact));
+            if (_interact != null)
+                intent.Set(Verb.Interact, !ConsumeReadyControl(_interact, ref _readyInteractHeld) && ReadButton(_interact,Verb.Interact));
 
             var visual = _motor.GetComponent<Visual.CharacterVisual>();
             if (visual != null && visual.Companion != null && visual.Companion.IsPossessed)
@@ -309,7 +313,9 @@ namespace TumbangPreso
                 _restoreToggle.Read(grabDown, settings.ToggleRestore, false);
                 intent.Set(Verb.Grab, grabDown); // Pickup and shove retain their ordinary press edge.
             }
-            intent.Set(Verb.Lunge, ReadButton(_lunge,Verb.Lunge));
+            // A saved lunge binding may still share Ready. Independent middle
+            // mouse remains usable while F serves Ready/Interact in its context.
+            intent.Set(Verb.Lunge, !ConsumeReadyControl(_lunge, ref _readyUseHeld) && ReadButton(_lunge,Verb.Lunge));
             intent.Set(Verb.EmoteWheel, ReadButton(_emote,Verb.EmoteWheel));
 
             intent.LookDelta = ReadLookDelta();
@@ -458,8 +464,19 @@ namespace TumbangPreso
             return transform.position + transform.forward * CameraSystem.CameraRig.AimRayLength;
         }
 
+        private bool ConsumeReadyControl(InputAction action, ref bool held)
+        {
+            bool shared = _readyUp != null && action != null && _readyUp.IsPressed() && action.IsPressed()
+                          && _readyUp.activeControl == action.activeControl;
+            if (!shared) held = false;
+            else if ((UI.Hud.Instance != null && UI.Hud.Instance.ReadyWindowOpen) || BufferSkipVote.Showing) held = true;
+            return held;
+        }
+
         private void OnDisable()
         {
+            _readyUseHeld = false;
+            _readyInteractHeld = false;
             ResetToggleControls();
             // ⚠️ RELEASE EVERYTHING ON THE WAY OUT. A verb held across a disable stays held
             // in the intent table forever, and the player walks back in already sprinting.

@@ -299,24 +299,18 @@ namespace TumbangPreso.Core.Tests
         }
 
         /// <summary>
-        /// ⚠️ 2.30 m, WHERE Design.md REPORTS 3.20 m AS MEASURED. ✅ RESOLVED 2026-08-15:
-        /// the CODE is right and the doc's measurement is stale. LUNGE_SPEED went
-        /// 12.247 → 7.746 in commit 071061c on explicit human instruction ("a short 1-meter
-        /// forward dash"), re-derived as sqrt(1.0 × 60) rather than nudged.
-        ///
-        /// ⚠️ AND THE REACH LOSS IS COMPENSATED, WHICH IS WHY THIS IS NOT A REGRESSION. The
-        /// same commit gave the taya a SECOND tag verb. The punch has 1.7 m of reach, no
-        /// charge and a 0.9 s cooldown, and covers exactly the close-range case the
-        /// shortened lunge gives up: the lunge is for somebody running PAST you, and its
-        /// charge is precisely long enough for somebody standing next to you to leave.
-        /// §2.6's measurement predates both changes. See docs/Design_Drift_Report.md.
+        /// The owner requested a longer lunge on 2026-09-30. Full travel is 3m;
+        /// the charge, sweep radius and active window keep their existing rules.
         /// </summary>
         [Fact]
         public void LungeReach_IsDashPlusSweepRadius()
         {
-            Assert.Equal(1.00f, Combat.LungeDash(), 2);
-            Assert.Equal(1.00f + Balance.LungeTagRadius, Combat.LungeReach(), 2);
-            Assert.Equal(2.30f, Combat.LungeReach(), 2);
+            Assert.Equal(3.00f, Combat.LungeDash(), 2);
+            Assert.Equal(3.00f + Balance.LungeTagRadius, Combat.LungeReach(), 2);
+            Assert.Equal(4.30f, Combat.LungeReach(), 2);
+            Assert.True(Balance.LungeSpeed / Balance.Friction <= Balance.LungeActiveTime);
+            Assert.Equal(3.0f * Balance.LungeMinPower * Balance.LungeMinPower,
+                Combat.LungeDash(0), 3);
         }
 
         /// <summary>
@@ -704,7 +698,7 @@ namespace TumbangPreso.Core.Tests
             Assert.True(ThrowRules.HitWindow(boyben) < ThrowRules.HitWindow(pasip));
         }
 
-        /// <summary>All five conditions, each refused on its own.</summary>
+        /// <summary>All six conditions, each refused on its own.</summary>
         [Fact]
         public void CanThrow_RefusesOnEachConditionIndependently()
         {
@@ -717,14 +711,8 @@ namespace TumbangPreso.Core.Tests
             c = ok; c.HoldingSlipper = false; Assert.False(ThrowRules.CanThrow(c));
             c = ok; c.ThrowCooldownLeft = 0.5f; Assert.False(ThrowRules.CanThrow(c));
 
-            // ⚠️⚠️ A DOWN LATA NO LONGER REFUSES THE THROW, AND THAT IS ASSERTED RATHER THAN
-            // MERELY NOT TESTED. Changed 2026-08-26 on 🧑's report that a charge held against a
-            // downed can could be neither spent nor cleared. The reason the clause existed,
-            // protecting the reset channel, is `ThrowCooldownLeft` on the line above and the
-            // lata's own protection shield, and a slipper that reaches a downed lata cannot
-            // score because `Lata.HostKnockDown` returns while it is not upright. If somebody
-            // re-adds the refusal, this line is what tells them it was deliberate.
-            c = ok; c.LataUpright = false; Assert.True(ThrowRules.CanThrow(c));
+            // Current feedback cancels/refuses throws until the can is restored.
+            c = ok; c.LataUpright = false; Assert.False(ThrowRules.CanThrow(c));
             c = ok; c.X = 0.0f; c.Z = 0.0f; Assert.False(ThrowRules.CanThrow(c)); // inside
         }
 
@@ -1163,7 +1151,13 @@ namespace TumbangPreso.Core.Tests
             Assert.True(Balance.TayaCampWarningTime < Balance.TayaCampGracePeriod);
             Assert.True(Balance.TayaCampClearRadius > Balance.TayaCampRadius);
             Assert.True(Balance.SlipperUnretrievedWarningTime < Balance.SlipperUnretrievedGracePeriod);
-            Assert.Equal(10.0f, Balance.SlipperUnretrievedGracePeriod);
+            Assert.Equal(15.0f, Balance.SlipperUnretrievedGracePeriod);
+            Assert.Equal(7.5f, Balance.SlipperUnretrievedWarningTime);
+            Assert.Equal(2.5f, Balance.TayaCampWarningTime);
+            Assert.Equal(1.5f, Balance.TayaCampRadius);
+            Assert.Equal(2.0f, Balance.TayaCampClearRadius);
+            Assert.Equal(2.5f, Balance.FatigueTime);
+            Assert.Equal(.75f, Balance.FatigueSpeedScale);
         }
 
         [Fact]

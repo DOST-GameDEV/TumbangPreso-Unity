@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 22:18:12Z" end-time="2026-09-30 22:18:12Z" duration="0.2663681">
+  <test-suite type="TestSuite" id="2237" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="997" result="Failed" site="Child" start-time="2026-09-30 22:18:12Z" end-time="2026-09-30 22:18:12Z" duration="0.266368" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2231" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="997" result="Failed" site="Child" start-time="2026-09-30 22:18:12Z" end-time="2026-09-30 22:18:12Z" duration="0.252405" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12528" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2232" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="997" result="Failed" site="Child" start-time="2026-09-30 22:18:12Z" end-time="2026-09-30 22:18:12Z" duration="0.247601" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2233" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="997" result="Failed" site="Child" start-time="2026-09-30 22:18:12Z" end-time="2026-09-30 22:18:12Z" duration="0.242963" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1284" name="FetchQueryAllocationTests" fullname="TumbangPreso.PlayTests.FetchQueryAllocationTests" classname="TumbangPreso.PlayTests.FetchQueryAllocationTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-09-30 22:18:12Z" end-time="2026-09-30 22:18:12Z" duration="0.213621" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1287" name="DestructionAndBirthRefreshTheSharedInventory" fullname="TumbangPreso.PlayTests.FetchQueryAllocationTests.DestructionAndBirthRefreshTheSharedInventory" methodname="DestructionAndBirthRefreshTheSharedInventory" classname="TumbangPreso.PlayTests.FetchQueryAllocationTests" runstate="Runnable" seed="2055472600" result="Passed" start-time="2026-09-30 22:18:12Z" end-time="2026-09-30 22:18:12Z" duration="0.092865" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1285" name="WarmFetchEligibilityDoesNotAllocateSceneQueryArrays" fullname="TumbangPreso.PlayTests.FetchQueryAllocationTests.WarmFetchEligibilityDoesNotAllocateSceneQueryArrays" methodname="WarmFetchEligibilityDoesNotAllocateSceneQueryArrays" classname="TumbangPreso.PlayTests.FetchQueryAllocationTests" runstate="Runnable" seed="217228119" result="Failed" start-time="2026-09-30 22:18:12Z" end-time="2026-09-30 22:18:12Z" duration="0.051724" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Repeated Fetch availability queries still allocate scene result arrays.
+  Expected: 0
+  But was:  200
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.FetchQueryAllocationTests.WarmFetchEligibilityDoesNotAllocateSceneQueryArrays () [0x00114] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\FetchQueryAllocationTests.cs:53
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1286" name="WarmQueriesReadCurrentOwnershipActivityAndFlightState" fullname="TumbangPreso.PlayTests.FetchQueryAllocationTests.WarmQueriesReadCurrentOwnershipActivityAndFlightState" methodname="WarmQueriesReadCurrentOwnershipActivityAndFlightState" classname="TumbangPreso.PlayTests.FetchQueryAllocationTests" runstate="Runnable" seed="315560753" result="Passed" start-time="2026-09-30 22:18:12Z" end-time="2026-09-30 22:18:12Z" duration="0.052606" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

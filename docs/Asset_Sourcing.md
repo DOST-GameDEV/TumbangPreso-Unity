@@ -1,5 +1,18 @@
 # Asset sourcing: ability VFX, SFX and later map art
 
+## Current control prompts
+
+Owner-requested [Xelu controller and keyboard prompts](https://thoseawesomeguys.com/prompts/)
+are integrated from the supplied CC0 pack. Source download:
+https://thoseawesomeguys.com/prompts/Xelu_Free_Controller&Key_Prompts.zip.
+The pack Readme declares public-domain CC0 use for personal/commercial projects.
+Only 198 used keyboard/mouse light/dark and Xbox Series/PlayStation prompts are
+copied into Resources/UI/input/xelu, with original PNG bytes retained. Runtime
+resolution follows the current binding label and pad family, uses whole images,
+and keeps the existing wheel/missing-control fallback. No model, map, VFX, SFX,
+animation or loading path is replaced. Native import/display qualification is
+recorded in the September 30 feedback report.
+
 > Current implementation note, 2026-09-14: the source catalogue and composition
 > table below preserve earlier sourcing proposals. New native geometry and
 > direction in PHILIPPINE_ABILITY_DIRECTION.md and the current hero reports take

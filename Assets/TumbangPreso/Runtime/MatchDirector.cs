@@ -20,6 +20,9 @@ namespace TumbangPreso
         public event Action<int, int> IntermissionStarted; // (nextRound, nextDefenderSlot)
         public event Action<int> MatchEnded;               // (winningSlot, or -1 for a draw)
         public event Action<int, ScoreEvent> Scored;
+        /// <summary>A COMPANION's point (its seat, the event), raised after `Scored` has paid its owner, on every peer: what the body
+        /// that scored shows over its head (`Visual.VoodooDollPresence`, plan 9.7). Never a second payment.</summary>
+        public event Action<int, ScoreEvent> CompanionScored;
 
         private readonly Scoreboard _scores = new Scoreboard();
 
@@ -110,9 +113,15 @@ namespace TumbangPreso
             if (IsWarmupBuffer) return;
             if (!NetAuthority.ShouldResolve()) return;
 
+            // ⚠️ A COMPANION'S POINTS ARE ITS OWNER'S (the owner: *"The doll gives points gained to Phaister"*). Mapped here, the
+            // one function that makes a point, so nothing that awards one has to know companions exist (plan 9.12).
+            int body = slot;
+            if (CompanionSeats.IsCompanion(slot)) slot = CompanionSeats.OwnerOf(slot);
+
             int previousLeader = _scores.WinningSlot();
             _scores.Add(slot, e);
             Scored?.Invoke(slot, e);
+            if (body != slot) CompanionScored?.Invoke(body, e);
             HostScoreMoment(slot, e, previousLeader);
 
             // ⚠️⚠️ THE AWARD IS ANNOUNCED, NOT ONLY RECORDED, AND THAT IS THE HALF THAT WAS
@@ -131,7 +140,7 @@ namespace TumbangPreso
             // announcement cannot be made anywhere a point cannot be created. See this class's
             // header: a point that can only be created in one function cannot be created on a
             // client at all, and the same is now true of the noise it makes.
-            Net.MatchRpc.Instance?.BroadcastScore(slot, e);
+            Net.MatchRpc.Instance?.BroadcastScore(slot, e, body);
 
             // A first point is the first durable result the game can honestly call worth
             // keeping today. PlayerAccount records the offer for the next menu rather than
@@ -149,7 +158,11 @@ namespace TumbangPreso
         /// matter because a client cannot see the host's distance checks. This raises the EVENT
         /// and nothing else.
         /// </summary>
-        public void ApplyNetworkScoreEvent(int slot, ScoreEvent e) => Scored?.Invoke(slot, e);
+        public void ApplyNetworkScoreEvent(int slot, ScoreEvent e, int body = -1)
+        {
+            Scored?.Invoke(slot, e);
+            if (CompanionSeats.IsCompanion(body) && CompanionSeats.OwnerOf(body) == slot) CompanionScored?.Invoke(body, e);
+        }
 
         /// <summary>
         /// The replicated match, as the host last described it.
@@ -249,6 +262,7 @@ namespace TumbangPreso
         {
             SharedUltimatePhase.Instance?.Cancel();
             BeginPresentationMatch();
+            HalftimePresentation.Ensure();
             _scores.Reset();
             RoundNumber = 0;
             MatchInProgress = true;

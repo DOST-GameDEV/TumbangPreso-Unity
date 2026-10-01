@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="b0f23dfa-de4b-4cd1-ab11-f9bb702e292b" name="@0cb6403a4672 2026-10-01 16:36:50" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-01T16:36:50.8095525+08:00" queuing="2026-10-01T16:36:50.8095525+08:00" start="2026-10-01T16:36:50.1362894+08:00" finish="2026-10-01T16:36:50.8149140+08:00" />
+  <TestSettings name="default" id="2246f4fd-361d-4780-acc6-500e062fa428">
+    <Deployment runDeploymentRoot="_0cb6403a4672_2026-10-01_16_36_50" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="f58f0ab2-5ff9-4b03-a61a-3eb33087d636" testId="ba0b2c99-63f1-ea74-968c-56118e5fca98" testName="TumbangPreso.Core.Tests.ActionChainTests.KnockdownStreakPaysFromThreeAndResetsOnTagWhileCanDownBreaksCatches" computerName="0cb6403a4672" duration="00:00:00.0003069" startTime="2026-10-01T16:36:50.6778847+08:00" endTime="2026-10-01T16:36:50.6778847+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f58f0ab2-5ff9-4b03-a61a-3eb33087d636" />
+    <UnitTestResult executionId="9031a9a0-b619-4fa8-9dc5-ac0db071e182" testId="bfa61a54-10cb-7ae7-d3a5-55fd9cb44a64" testName="TumbangPreso.Core.Tests.ActionChainTests.AcceptedCatchesRefreshFiveSecondsAndPermitLegalRepeatVictims" computerName="0cb6403a4672" duration="00:00:00.0002989" startTime="2026-10-01T16:36:50.6772570+08:00" endTime="2026-10-01T16:36:50.6772570+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9031a9a0-b619-4fa8-9dc5-ac0db071e182" />
+    <UnitTestResult executionId="06cd0cde-0cd0-4dd3-a39c-959611843fd0" testId="afcaf922-45f5-b45d-6500-4934638eb7e5" testName="TumbangPreso.Core.Tests.ActionChainTests.CatchWindowIncludesBoundaryAndRejectsInvalidTimeAndIdentity" computerName="0cb6403a4672" duration="00:00:00.0006842" startTime="2026-10-01T16:36:50.6765932+08:00" endTime="2026-10-01T16:36:50.6765932+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="06cd0cde-0cd0-4dd3-a39c-959611843fd0" />
+    <UnitTestResult executionId="e625bd4f-7f2a-47e1-aab0-760fdb094c09" testId="9afa94d4-1c38-43e6-d97a-3a979551dd31" testName="TumbangPreso.Core.Tests.ActionChainTests.DuplicateThrowCycleAndOutOfOrderResolutionCannotAwardAgain" computerName="0cb6403a4672" duration="00:00:00.0002004" startTime="2026-10-01T16:36:50.6775798+08:00" endTime="2026-10-01T16:36:50.6775798+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e625bd4f-7f2a-47e1-aab0-760fdb094c09" />
+    <UnitTestResult executionId="27d1323b-fb05-4c2d-905e-e4aa8d53e31d" testId="12fb7777-0aea-7aaf-97f2-451ae38ac241" testName="TumbangPreso.Core.Tests.ActionChainTests.IndependentAccuracyCapsAndMilestonesDoNotChangeBaseScore" computerName="0cb6403a4672" duration="00:00:00.0019773" startTime="2026-10-01T16:36:50.6769145+08:00" endTime="2026-10-01T16:36:50.6769146+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="27d1323b-fb05-4c2d-905e-e4aa8d53e31d" />
+    <UnitTestResult executionId="d80018fd-671a-45c1-9d24-f2e6f2baee1d" testId="37832cd2-a3f6-a234-5984-85ed2a32a10e" testName="TumbangPreso.Core.Tests.ActionChainTests.TagBreaksPendingAccuracyAndRoundClearsAllState" computerName="0cb6403a4672" duration="00:00:00.0007502" startTime="2026-10-01T16:36:50.6768839+08:00" endTime="2026-10-01T16:36:50.6768840+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d80018fd-671a-45c1-9d24-f2e6f2baee1d" />
+    <UnitTestResult executionId="2a906dc2-5298-4dab-b154-bec14fa4e388" testId="416f4d0b-b5f6-6003-32b4-fe229dffd4aa" testName="TumbangPreso.Core.Tests.ActionChainTests.NewBonusAndMomentValuesRemainExplicitAndSerializable" computerName="0cb6403a4672" duration="00:00:00.0061846" startTime="2026-10-01T16:36:50.6737807+08:00" endTime="2026-10-01T16:36:50.6737937+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2a906dc2-5298-4dab-b154-bec14fa4e388" />
+    <UnitTestResult executionId="f8125584-c93d-437f-a47f-8a926f448a05" testId="a6637125-226e-cc2c-d064-2b98da672c3d" testName="TumbangPreso.Core.Tests.ActionChainTests.MissAndBlockResetButConsumedFlightDoesNotAndLaterHitStillCounts" computerName="0cb6403a4672" duration="00:00:00.0001555" startTime="2026-10-01T16:36:50.6769392+08:00" endTime="2026-10-01T16:36:50.6769392+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f8125584-c93d-437f-a47f-8a926f448a05" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="TumbangPreso.Core.Tests.ActionChainTests.IndependentAccuracyCapsAndMilestonesDoNotChangeBaseScore" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="12fb7777-0aea-7aaf-97f2-451ae38ac241">
+      <Execution id="27d1323b-fb05-4c2d-905e-e4aa8d53e31d" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.ActionChainTests" name="IndependentAccuracyCapsAndMilestonesDoNotChangeBaseScore" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.ActionChainTests.AcceptedCatchesRefreshFiveSecondsAndPermitLegalRepeatVictims" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="bfa61a54-10cb-7ae7-d3a5-55fd9cb44a64">
+      <Execution id="9031a9a0-b619-4fa8-9dc5-ac0db071e182" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.ActionChainTests" name="AcceptedCatchesRefreshFiveSecondsAndPermitLegalRepeatVictims" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.ActionChainTests.KnockdownStreakPaysFromThreeAndResetsOnTagWhileCanDownBreaksCatches" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="ba0b2c99-63f1-ea74-968c-56118e5fca98">
+      <Execution id="f58f0ab2-5ff9-4b03-a61a-3eb33087d636" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.ActionChainTests" name="KnockdownStreakPaysFromThreeAndResetsOnTagWhileCanDownBreaksCatches" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.ActionChainTests.TagBreaksPendingAccuracyAndRoundClearsAllState" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="37832cd2-a3f6-a234-5984-85ed2a32a10e">
+      <Execution id="d80018fd-671a-45c1-9d24-f2e6f2baee1d" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.ActionChainTests" name="TagBreaksPendingAccuracyAndRoundClearsAllState" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.ActionChainTests.NewBonusAndMomentValuesRemainExplicitAndSerializable" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="416f4d0b-b5f6-6003-32b4-fe229dffd4aa">
+      <Execution id="2a906dc2-5298-4dab-b154-bec14fa4e388" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.ActionChainTests" name="NewBonusAndMomentValuesRemainExplicitAndSerializable" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.ActionChainTests.DuplicateThrowCycleAndOutOfOrderResolutionCannotAwardAgain" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="9afa94d4-1c38-43e6-d97a-3a979551dd31">
+      <Execution id="e625bd4f-7f2a-47e1-aab0-760fdb094c09" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.ActionChainTests" name="DuplicateThrowCycleAndOutOfOrderResolutionCannotAwardAgain" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.ActionChainTests.MissAndBlockResetButConsumedFlightDoesNotAndLaterHitStillCounts" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="a6637125-226e-cc2c-d064-2b98da672c3d">
+      <Execution id="f8125584-c93d-437f-a47f-8a926f448a05" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.ActionChainTests" name="MissAndBlockResetButConsumedFlightDoesNotAndLaterHitStillCounts" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.ActionChainTests.CatchWindowIncludesBoundaryAndRejectsInvalidTimeAndIdentity" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="afcaf922-45f5-b45d-6500-4934638eb7e5">
+      <Execution id="06cd0cde-0cd0-4dd3-a39c-959611843fd0" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.ActionChainTests" name="CatchWindowIncludesBoundaryAndRejectsInvalidTimeAndIdentity" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="ba0b2c99-63f1-ea74-968c-56118e5fca98" executionId="f58f0ab2-5ff9-4b03-a61a-3eb33087d636" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bfa61a54-10cb-7ae7-d3a5-55fd9cb44a64" executionId="9031a9a0-b619-4fa8-9dc5-ac0db071e182" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="afcaf922-45f5-b45d-6500-4934638eb7e5" executionId="06cd0cde-0cd0-4dd3-a39c-959611843fd0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9afa94d4-1c38-43e6-d97a-3a979551dd31" executionId="e625bd4f-7f2a-47e1-aab0-760fdb094c09" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="12fb7777-0aea-7aaf-97f2-451ae38ac241" executionId="27d1323b-fb05-4c2d-905e-e4aa8d53e31d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="37832cd2-a3f6-a234-5984-85ed2a32a10e" executionId="d80018fd-671a-45c1-9d24-f2e6f2baee1d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="416f4d0b-b5f6-6003-32b4-fe229dffd4aa" executionId="2a906dc2-5298-4dab-b154-bec14fa4e388" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a6637125-226e-cc2c-d064-2b98da672c3d" executionId="f8125584-c93d-437f-a47f-8a926f448a05" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="8" executed="8" passed="8" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.20)
+[xUnit.net 00:00:00.06]   Discovering: TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.16]   Discovered:  TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.16]   Starting:    TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.21]   Finished:    TumbangPreso.Core.Tests
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

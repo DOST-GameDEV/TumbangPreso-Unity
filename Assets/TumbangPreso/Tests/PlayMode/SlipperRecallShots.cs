@@ -373,10 +373,11 @@ namespace TumbangPreso.PlayTests
 
             // ⚠️ A SIDE CAMERA, BECAUSE A COLUMN CANNOT BE JUDGED FROM ABOVE IT. The frames above
             // are the player's own eyes looking down at the road, which is the right view for the
-            // ring and the wrong one for a 2.2 m vertical: § 127.3 records the identical finding
+            // ring and the wrong one for a 1.9 m vertical: § 127.3 records the identical finding
             // about a floor marker caught only edge-on. This is the one that shows its height
             // against a body.
             yield return Witness(mine, me, "beam-witness");
+            yield return Witness(mine, me, "beam-witness-far", 11f);
 
             // The same frame at his own window, which is the shape § 6.2b says nobody has seen.
             yield return Shot(mine, me, "recall-2-loose-at-range-shortwide",
@@ -438,11 +439,11 @@ namespace TumbangPreso.PlayTests
         /// A camera beside the tsinelas rather than above it, so a vertical reads as a vertical.
         ///
         /// ⚠️ IT FRAMES THE SHOE AND THE PLAYER TOGETHER. A column photographed alone has no
-        /// scale in it, and the one thing a person has to judge here is whether 2.2 m is right
-        /// next to a body, which is the number `SlipperBeam.Height` picked against the two maps
+        /// scale in it, and the one thing a person has to judge here is whether the line's
+        /// `SlipperBeam.Height` is right next to a body, a number picked against the two maps
         /// that are built under a roof.
         /// </summary>
-        private static IEnumerator Witness(Slipper mine, CharacterMotor me, string name)
+        private static IEnumerator Witness(Slipper mine, CharacterMotor me, string name, float distance = 5.5f)
         {
             Vector3 shoe = mine.transform.position;
             Vector3 mid = (shoe + me.transform.position) * 0.5f;
@@ -460,7 +461,7 @@ namespace TumbangPreso.PlayTests
             cam.fieldOfView = 45.0f;
             cam.nearClipPlane = 0.05f;
             cam.farClipPlane = 200.0f;
-            cam.transform.position = mid + side * 5.5f + Vector3.up * 1.7f;
+            cam.transform.position = mid + side * distance + Vector3.up * 1.7f;
             cam.transform.LookAt(shoe + Vector3.up * 1.0f);
 
             yield return GameplayShots.Render(cam, name, flipCanvases: false, outDir: OutDir);

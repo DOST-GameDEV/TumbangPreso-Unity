@@ -37,6 +37,8 @@ namespace TumbangPreso.CameraSystem
             {Root.transform.rotation=Quaternion.LookRotation(field.Forward);CheskaIceVisuals.BuildWall(Root.transform,field.FirstScale,field.SecondScale,field.Split,renderOnly:true);}
             else if(field.Type==WorldEffectSnapshot.Kind.Hex)
             {var visual=HeroHazards.SpawnHexSigil(field.Position,field.Radius,field.Duration,field.Owner,field.FirstScale,silent:true,renderOnly:true);visual.transform.SetParent(Root.transform,true);var fx=visual.GetComponent<HeroHazards.WardInscribe>();fx.enabled=false;_step=fx.StepTo;}
+            else if(field.Type==WorldEffectSnapshot.Kind.Drift)
+            {var fx=DanteDriftVisual.Build(Root.transform,field.Position,field.Forward,field.Radius,field.FirstScale);_step=fx.StepTo;}
             else if(field.Type==WorldEffectSnapshot.Kind.Gale)
             {var fx=AmihanGaleFront.Build(Root.transform,field.Position,field.Forward,field.Duration,Core.AmihanRules.WhirlwindSpeed,Core.AmihanRules.WhirlwindStart,Core.AmihanRules.WhirlwindWidth);fx.enabled=false;_step=fx.StepTo;}
             // Paete (HERO-9): the render-only bodies, posed from age alone like every other field here.

@@ -59,7 +59,7 @@ namespace TumbangPreso
         {
             // A child settings/confirmation or chat editor owns this press, regardless
             // of component Update order. The underlying live menu must not close it.
-            if (UI.ScreenTakeover.EscapeIsSpoken || UI.LobbyChat.AnyTyping) return;
+            if (HalftimePresentation.Playing || UI.ScreenTakeover.EscapeIsSpoken || UI.LobbyChat.AnyTyping) return;
             if (!Requested()) return;
 
             var open = GetComponentInChildren<UI.PausePanel>(includeInactive: false);

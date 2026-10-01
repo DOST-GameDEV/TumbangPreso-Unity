@@ -243,7 +243,11 @@ namespace TumbangPreso.Net
                 Debug.Log($"[NetBoot] join requested to {address}:{joinPort}: " +
                           (ok ? "connecting" : "FAILED"));
 
-                if (ok) UI.SceneFlow.Go(UI.SceneFlow.SelectedMap);
+                if (!ok) return;
+                // Starting the transport is not admission. The existing trusted
+                // seating/start messages own arena entry after assigning this client.
+                bool admitted = await net.WaitForConnectionAsync();
+                Debug.Log($"[NetBoot] join admission: {(admitted ? "seat assigned" : "FAILED: " + net.Status)}");
             });
         }
 

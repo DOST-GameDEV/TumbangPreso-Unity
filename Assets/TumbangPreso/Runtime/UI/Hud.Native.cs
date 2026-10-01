@@ -54,7 +54,7 @@ namespace TumbangPreso.UI
             // simply stay on screen. `PopHitmarker`'s note records the identical fault.
             if (_recall != null) _recall.SetVisible(!spectating);
             foreach (var card in FindObjectsByType<YouCard>(FindObjectsInactive.Include, FindObjectsSortMode.None)) card.gameObject.SetActive(!spectating);
-            foreach (var card in FindObjectsByType<RoleSwapCard>(FindObjectsInactive.Include, FindObjectsSortMode.None)) card.gameObject.SetActive(!spectating);
+            // The next-taya/standings card describes the match, including for watchers.
         }
     }
 }

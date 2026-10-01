@@ -24,7 +24,7 @@ namespace TumbangPreso.UI
         /// red LEAVE MATCH is the one destructive control, which is exactly the logo palette's role
         /// table. The card is the in-match card family's warm ink. Names and callbacks are unchanged,
         /// so every diagnostic route that clicks `ResumeMatch` or `LeaveMatch` still finds them.
-        /// The live-match notice stays: it is a rule (the match does not pause), not navigation.
+        /// The notice reflects whether this is a paused offline game or a live network match.
         /// </summary>
         protected override void Build()
         {
@@ -36,6 +36,7 @@ namespace TumbangPreso.UI
             _title = OwnerUiLayout.Text(holder, "PauseTitle", "MATCH MENU", 64, OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(_title.rectTransform, 44, 40, 580, 104); _title.color = Hub.HubStyle.Honey;
             var notice = OwnerUiLayout.Text(holder, "LiveNotice", "The match keeps playing while this menu is open.", 30);
+            _notice = notice;
             OwnerUiLayout.Place(notice.rectTransform, 46, 150, 570, 92); notice.color = Hub.HubStyle.HoneySoft;
             notice.font = Hub.HubStyle.ReadingFont;
             var rule = OwnerUiLayout.Rect(holder, "PauseRule").gameObject.AddComponent<Image>();

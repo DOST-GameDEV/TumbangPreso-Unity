@@ -35,6 +35,9 @@ namespace TumbangPreso.UI
     /// </summary>
     public sealed class RoleSwapCard : MonoBehaviour
     {
+        private static RoleSwapCard _current;
+        public static bool Showing => _current != null && _current._canvas != null &&
+                                      _current._canvas.isActiveAndEnabled;
         public const float RevealDelay = 1.2f;
         public const float FightDelay = 2.3f;
         public const float RevealFade = 0.35f;
@@ -52,6 +55,7 @@ namespace TumbangPreso.UI
 
         private void Awake()
         {
+            _current = this;
             _nativeSwap = gameObject.AddComponent<TumpRoundSwapView>();
             _nativeSwap.Build(transform, DismissAndPractice); _canvas = _nativeSwap.Canvas;
             _canvas.gameObject.SetActive(false);
@@ -72,8 +76,16 @@ namespace TumbangPreso.UI
             GameServices.Match.RoundStarted -= OnRoundStarted;
         }
 
+        private void OnDestroy()
+        {
+            if (_current == this) _current = null;
+        }
+
         private void Update()
         {
+            // Root canvases keep their own scaler. Hide drawing for explicit clean
+            // feed without disabling the event owner or losing its break state.
+            if (_canvas != null) _canvas.enabled = Hud.Instance == null || !Hud.Instance.CleanFeedEnabled;
             if (_isBufferActive && _canvas != null && _canvas.gameObject.activeSelf)
             {
                 _bufferRemaining = HalftimePresentation.Instance?.Active==true ? HalftimePresentation.Instance.Remaining : Mathf.Max(0.0f, _bufferRemaining - Time.deltaTime);
@@ -103,6 +115,7 @@ namespace TumbangPreso.UI
 
         public void DismissAndPractice()
         {
+            if (HalftimePresentation.Playing) return;
             if (_canvas != null)
             {
                 _canvas.gameObject.SetActive(false);
@@ -111,8 +124,9 @@ namespace TumbangPreso.UI
 
         private void OnIntermissionStarted(int nextRound, int nextDefenderSlot)
         {
-            if (HalftimePresentation.Playing) { _canvas.gameObject.SetActive(false); return; }
-            ShowScheduledBreak(nextRound,nextDefenderSlot,3,null);
+            // The shared phase already opened the passive card once.
+            if (HalftimePresentation.Playing) return;
+            ShowScheduledBreak(nextRound,nextDefenderSlot,HalftimePresentation.Instance?.Remaining??HalftimePresentation.BreakDuration,null);
         }
 
         public void ShowScheduledBreak(int nextRound,int nextDefenderSlot,float remaining,string fallback)
@@ -121,7 +135,7 @@ namespace TumbangPreso.UI
             {
                 _bufferRemaining = remaining; _isBufferActive = true;
                 _nativeSwap.Show(nextRound, nextDefenderSlot); _nativeSwap.Remaining(_bufferRemaining);
-                _nativeSwap.SetBreakContext(HalftimePresentation.Playing, fallback);
+                _nativeSwap.SetBreakContext(HalftimePresentation.Instance?.IsHalftime==true, fallback);
                 GameServices.Audio?.PlayUi("round_end"); return;
             }
             _title.text = $"END OF ROUND {Mathf.Max(1, nextRound - 1)}";

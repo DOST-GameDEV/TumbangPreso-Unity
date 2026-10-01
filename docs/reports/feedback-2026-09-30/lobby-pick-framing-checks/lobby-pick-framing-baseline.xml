@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 07:32:22Z" end-time="2026-10-01 07:32:22Z" duration="0.3813798">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="755" result="Failed" site="Child" start-time="2026-10-01 07:32:22Z" end-time="2026-10-01 07:32:22Z" duration="0.381380" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1890" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="755" result="Failed" site="Child" start-time="2026-10-01 07:32:22Z" end-time="2026-10-01 07:32:22Z" duration="0.334762" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="17572" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1891" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="755" result="Failed" site="Child" start-time="2026-10-01 07:32:22Z" end-time="2026-10-01 07:32:22Z" duration="0.306363" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1892" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="755" result="Failed" site="Child" start-time="2026-10-01 07:32:22Z" end-time="2026-10-01 07:32:22Z" duration="0.272936" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1443" name="LobbyPickPacketBoundsTests" fullname="TumbangPreso.Tests.LobbyPickPacketBoundsTests" classname="TumbangPreso.Tests.LobbyPickPacketBoundsTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-01 07:32:22Z" end-time="2026-10-01 07:32:22Z" duration="0.101715" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1451" name="ImpossibleStringLengthsAreRejectedBeforeDecode" fullname="TumbangPreso.Tests.LobbyPickPacketBoundsTests.ImpossibleStringLengthsAreRejectedBeforeDecode" classname="TumbangPreso.Tests.LobbyPickPacketBoundsTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-01 07:32:22Z" end-time="2026-10-01 07:32:22Z" duration="0.054954" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1449" name="ImpossibleStringLengthsAreRejectedBeforeDecode(uint.MaxValue)" fullname="TumbangPreso.Tests.LobbyPickPacketBoundsTests.ImpossibleStringLengthsAreRejectedBeforeDecode(uint.MaxValue)" methodname="ImpossibleStringLengthsAreRejectedBeforeDecode" classname="TumbangPreso.Tests.LobbyPickPacketBoundsTests" runstate="Runnable" seed="1776930580" result="Failed" start-time="2026-10-01 07:32:22Z" end-time="2026-10-01 07:32:22Z" duration="0.036574" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.InvalidCastException: length value outside of int32 range
+  at Unity.Netcode.FastBufferReader.ReadValueSafe (System.String& s, System.Boolean oneByteChars) [0x0002c] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\FastBufferReader.cs:660 
+  at TumbangPreso.Net.MatchRpc.OnSelectLobbyPickMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00054] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:4709 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+   --- End of inner exception stack trace ---
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.LobbyPickPacketBoundsTests.Deliver (Unity.Netcode.FastBufferWriter writer, System.Int32 payloadBytes) [0x0001e] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyPickPacketBoundsTests.cs:24 
+  at TumbangPreso.Tests.LobbyPickPacketBoundsTests+<>c__DisplayClass9_0.<ImpossibleStringLengthsAreRejectedBeforeDecode>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyPickPacketBoundsTests.cs:44 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyPickPacketBoundsTests.ImpossibleStringLengthsAreRejectedBeforeDecode (System.UInt32 length) [0x00071] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyPickPacketBoundsTests.cs:44
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1450" name="ImpossibleStringLengthsAreRejectedBeforeDecode(2147483647)" fullname="TumbangPreso.Tests.LobbyPickPacketBoundsTests.ImpossibleStringLengthsAreRejectedBeforeDecode(2147483647)" methodname="ImpossibleStringLengthsAreRejectedBeforeDecode" classname="TumbangPreso.Tests.LobbyPickPacketBoundsTests" runstate="Runnable" seed="1746823023" result="Failed" start-time="2026-10-01 07:32:22Z" end-time="2026-10-01 07:32:22Z" duration="0.003047" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Invalid reader position detected when trying to read a string of size 4294967294! This can result from an error in the serialization. Ensure deserialization exactly matches what was serialized!
+  at Unity.Netcode.FastBufferReader.ReadValueSafe (System.String& s, System.Boolean oneByteChars) [0x0002c] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\FastBufferReader.cs:660 
+  at TumbangPreso.Net.MatchRpc.OnSelectLobbyPickMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00054] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:4709 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.LobbyPickPacketBoundsTests.Deliver (Unity.Netcode.FastBufferWriter writer, System.Int32 payloadBytes) [0x0001e] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyPickPacketBoundsTests.cs:24 
+  at TumbangPreso.Tests.LobbyPickPacketBoundsTests+<>c__DisplayClass9_0.<ImpossibleStringLengthsAreRejectedBeforeDecode>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyPickPacketBoundsTests.cs:44 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyPickPacketBoundsTests.ImpossibleStringLengthsAreRejectedBeforeDecode (System.UInt32 length) [0x00071] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyPickPacketBoundsTests.cs:44
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1448" name="TruncatedLobbyPickDoesNotThrow" fullname="TumbangPreso.Tests.LobbyPickPacketBoundsTests.TruncatedLobbyPickDoesNotThrow" classname="TumbangPreso.Tests.LobbyPickPacketBoundsTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-01 07:32:22Z" end-time="2026-10-01 07:32:22Z" duration="0.040467" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1444" name="TruncatedLobbyPickDoesNotThrow(8)" fullname="TumbangPreso.Tests.LobbyPickPacketBoundsTests.TruncatedLobbyPickDoesNotThrow(8)" methodname="TruncatedLobbyPickDoesNotThrow" classname="TumbangPreso.Tests.LobbyPickPacketBoundsTests" runstate="Runnable" seed="739571012" result="Failed" start-time="2026-10-01 07:32:22Z" end-time="2026-10-01 07:32:22Z" duration="0.031293" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnSelectLobbyPickMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x000d8] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:4725 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.LobbyPickPacketBoundsTests.Deliver (Unity.Netcode.FastBufferWriter writer, System.Int32 payloadBytes) [0x0001e] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyPickPacketBoundsTests.cs:24 
+  at TumbangPreso.Tests.LobbyPickPacketBoundsTests+<>c__DisplayClass8_0.<TruncatedLobbyPickDoesNotThrow>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyPickPacketBoundsTests.cs:37 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyPickPacketBoundsTests.TruncatedLobbyPickDoesNotThrow (System.Int32 length) [0x00032] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyPickPacketBoundsTests.cs:37
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1445" name="TruncatedLobbyPickDoesNotThrow(11)" fullname="TumbangPreso.Tests.LobbyPickPacketBoundsTests.TruncatedLobbyPickDoesNotThrow(11)" methodname="TruncatedLobbyPickDoesNotThrow" classname="TumbangPreso.Tests.LobbyPickPacketBoundsTests" runstate="Runnable" seed="2036938229" result="Failed" start-time="2026-10-01 07:32:22Z" end-time="2026-10-01 07:32:22Z" duration="0.001399" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnSelectLobbyPickMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x000d8] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:4725 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.LobbyPickPacketBoundsTests.Deliver (Unity.Netcode.FastBufferWriter writer, System.Int32 payloadBytes) [0x0001e] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyPickPacketBoundsTests.cs:24 
+  at TumbangPreso.Tests.LobbyPickPacketBoundsTests+<>c__DisplayClass8_0.<TruncatedLobbyPickDoesNotThrow>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyPickPacketBoundsTests.cs:37 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyPickPacketBoundsTests.TruncatedLobbyPickDoesNotThrow (System.Int32 length) [0x00032] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyPickPacketBoundsTests.cs:37
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1446" name="TruncatedLobbyPickDoesNotThrow(20)" fullname="TumbangPreso.Tests.LobbyPickPacketBoundsTests.TruncatedLobbyPickDoesNotThrow(20)" methodname="TruncatedLobbyPickDoesNotThrow" classname="TumbangPreso.Tests.LobbyPickPacketBoundsTests" runstate="Runnable" seed="1412374029" result="Failed" start-time="2026-10-01 07:32:22Z" end-time="2026-10-01 07:32:22Z" duration="0.001215" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnSelectLobbyPickMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x000d8] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:4725 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.LobbyPickPacketBoundsTests.Deliver (Unity.Netcode.FastBufferWriter writer, System.Int32 payloadBytes) [0x0001e] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyPickPacketBoundsTests.cs:24 
+  at TumbangPreso.Tests.LobbyPickPacketBoundsTests+<>c__DisplayClass8_0.<TruncatedLobbyPickDoesNotThrow>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyPickPacketBoundsTests.cs:37 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyPickPacketBoundsTests.TruncatedLobbyPickDoesNotThrow (System.Int32 length) [0x00032] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyPickPacketBoundsTests.cs:37
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1447" name="TruncatedLobbyPickDoesNotThrow(26)" fullname="TumbangPreso.Tests.LobbyPickPacketBoundsTests.TruncatedLobbyPickDoesNotThrow(26)" methodname="TruncatedLobbyPickDoesNotThrow" classname="TumbangPreso.Tests.LobbyPickPacketBoundsTests" runstate="Runnable" seed="659086125" result="Failed" start-time="2026-10-01 07:32:22Z" end-time="2026-10-01 07:32:22Z" duration="0.001100" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at Unity.Netcode.FastBufferReader.ReadValueSafe (System.String& s, System.Boolean oneByteChars) [0x0002c] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\FastBufferReader.cs:660 
+  at TumbangPreso.Net.MatchRpc.OnSelectLobbyPickMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00054] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:4709 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.LobbyPickPacketBoundsTests.Deliver (Unity.Netcode.FastBufferWriter writer, System.Int32 payloadBytes) [0x0001e] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyPickPacketBoundsTests.cs:24 
+  at TumbangPreso.Tests.LobbyPickPacketBoundsTests+<>c__DisplayClass8_0.<TruncatedLobbyPickDoesNotThrow>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyPickPacketBoundsTests.cs:37 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.LobbyPickPacketBoundsTests.TruncatedLobbyPickDoesNotThrow (System.Int32 length) [0x00032] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LobbyPickPacketBoundsTests.cs:37
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-30 22:41:53Z" end-time="2026-09-30 22:42:07Z" duration="14.1954904">
+  <test-suite type="TestSuite" id="2246" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1005" result="Passed" start-time="2026-09-30 22:41:53Z" end-time="2026-09-30 22:42:07Z" duration="14.195490" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2240" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1005" result="Passed" start-time="2026-09-30 22:41:53Z" end-time="2026-09-30 22:42:07Z" duration="14.186780" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="194333" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2241" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1005" result="Passed" start-time="2026-09-30 22:41:53Z" end-time="2026-09-30 22:42:07Z" duration="14.185163" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2242" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1005" result="Passed" start-time="2026-09-30 22:41:53Z" end-time="2026-09-30 22:42:07Z" duration="14.184094" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1061" name="AmihanKitPlayProbe" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-09-30 22:41:53Z" end-time="2026-09-30 22:42:07Z" duration="14.123108" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1070" name="FeatherfallTimedKitHonoursGenerationRequestsAndKitIdentity" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe.FeatherfallTimedKitHonoursGenerationRequestsAndKitIdentity" methodname="FeatherfallTimedKitHonoursGenerationRequestsAndKitIdentity" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" seed="2113785529" result="Passed" start-time="2026-09-30 22:41:53Z" end-time="2026-09-30 22:41:59Z" duration="6.550255" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1069" name="OfflineAcceptedFlightGrantsAndExpiresSecondWind" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe.OfflineAcceptedFlightGrantsAndExpiresSecondWind" methodname="OfflineAcceptedFlightGrantsAndExpiresSecondWind" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" seed="892029181" result="Passed" start-time="2026-09-30 22:41:59Z" end-time="2026-09-30 22:42:07Z" duration="7.557893" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1074" name="AmihanWikiTests" fullname="TumbangPreso.PlayTests.AmihanWikiTests" classname="TumbangPreso.PlayTests.AmihanWikiTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-30 22:42:07Z" end-time="2026-09-30 22:42:07Z" duration="0.005417" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1076" name="AcceptedCastsRefreshSecondWindWithoutStacking" fullname="TumbangPreso.PlayTests.AmihanWikiTests.AcceptedCastsRefreshSecondWindWithoutStacking" methodname="AcceptedCastsRefreshSecondWindWithoutStacking" classname="TumbangPreso.PlayTests.AmihanWikiTests" runstate="Runnable" seed="1348633893" result="Passed" start-time="2026-09-30 22:42:07Z" end-time="2026-09-30 22:42:07Z" duration="0.003075" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1075" name="DriftUsesCurrentNameAndCooldown" fullname="TumbangPreso.PlayTests.AmihanWikiTests.DriftUsesCurrentNameAndCooldown" methodname="DriftUsesCurrentNameAndCooldown" classname="TumbangPreso.PlayTests.AmihanWikiTests" runstate="Runnable" seed="1078173521" result="Passed" start-time="2026-09-30 22:42:07Z" end-time="2026-09-30 22:42:07Z" duration="0.000286" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1077" name="RecoveryRejectsInvalidAndOlderPassiveState" fullname="TumbangPreso.PlayTests.AmihanWikiTests.RecoveryRejectsInvalidAndOlderPassiveState" methodname="RecoveryRejectsInvalidAndOlderPassiveState" classname="TumbangPreso.PlayTests.AmihanWikiTests" runstate="Runnable" seed="171216817" result="Passed" start-time="2026-09-30 22:42:07Z" end-time="2026-09-30 22:42:07Z" duration="0.000635" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

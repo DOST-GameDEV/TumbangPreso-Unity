@@ -15,6 +15,42 @@ TODO IDs; open bodies live in TODO_Backlog and finished bodies in TODO_Archive.
 An old OPEN heading is not proof a feature is missing. Reconcile implemented,
 replaced, retired and genuinely blocked requirements without reviving old ideas.
 
+## Finalized Paete And Phaister
+
+- The owner-approved finalized Paete and Phaister implementations are authoritative
+  over stale Wiki text, old TODO entries and earlier proposals.
+- Do not change either hero's mechanics, model, animation, VFX, SFX, cutscene,
+  camera direction, UI presentation or authored assets except for a demonstrated
+  bug fix. Do not redesign or polish them as part of the broader presentation pass.
+- Do not change their in-game skill names or descriptions. Passive descriptions
+  are the only description exception; do not infer permission to change passives'
+  behavior. The owner separately authorized updating stale Wiki descriptions to
+  accurately document the finalized implementation; that is documentation work.
+- This protection is character-specific. Authorized global/shared changes apply
+  normally to Paete and Phaister too, including changes to everyone's HUD buttons.
+  Do not ask for a separate exception merely because a shared change includes them.
+  Do not use a global change as a pretext to redesign their finalized kits or art.
+- Any permitted bug fix must identify the reproducible defect, preserve the
+  finalized direction and include focused behavioral evidence.
+
+### October1 owner exception: Phaister hallucination refinement
+
+The owner explicitly requested refining Phaister's hallucination skill. This
+permits a focused Curse: Hex hallucination refinement after inspecting its actual
+play, with a recorded plan and evidence. It is not permission to redesign the
+rest of Phaister or Paete. Preserve current cast/mark/recast rules and in-game
+copy unless the scoped refinement demonstrates a reason to change them; do not
+silently retune timings or replace the finalized doll/ultimate direction.
+
+### October 1 owner exception: replace all authored SFX
+
+The owner explicitly reopened all SFX made in the earlier presentation work,
+including the finalized Paete/Phaister cues. This permits researched, critically
+listened-to sound replacement and mixing, with timed in-game validation. It does
+not reopen their mechanics, models, animation, cameras or descriptions. Preserve
+human-voice policy; permission for SFX is not permission to imitate voices.
+Do not present amplitude measurements or silent film as listening approval.
+
 ## Autonomy And Continuity
 
 - Continue assigned independent work through questions, checkpoints, passing

@@ -16,10 +16,8 @@ namespace TumbangPreso.UI
     /// standings as the bar's cream chips (portrait on the seat colour, seat tag, score, crown
     /// for a unique leader, gold underline for you). The one highlighted fact is the next taya.
     ///
-    /// ⚠️ UPPER THIRD, NOT BOTTOM CENTRE. It sat over the first-person arms and the held
-    /// slipper, the one part of the frame that is already full. The match bar is hidden while
-    /// it shows (`TumpMatchReadout.Tick`), so the popup takes the bar's place at the top and
-    /// the court stays visible underneath it.
+    /// The owner requested centered standings on 2026-09-30. The ordinary HUD hides
+    /// while this card is visible, including non-halftime breaks and late-peer cards.
     /// </summary>
     public sealed partial class TumpRoundSwapView
     {
@@ -34,7 +32,7 @@ namespace TumbangPreso.UI
         private float _entered,_remaining=3,_remainingStart;
         private int _nextRoundNumber;
         private bool _popupBuilt;
-        private const float PopupWidth=1100, PopupTop=28;
+        private const float PopupWidth=1100, PopupTop=0;
 
         public void Build(Transform owner,Action dismiss)
         {
@@ -42,7 +40,7 @@ namespace TumbangPreso.UI
             var focus=Canvas.GetComponent<InputLayer.ScreenFocus>();if(focus!=null)focus.enabled=false;
             // Passive graphic over the court. It does not open a page or need a click.
             _popup=OwnerUiLayout.Rect(Canvas.transform,"CourtBreakPopup");
-            _popup.anchorMin=_popup.anchorMax=new Vector2(.5f,1);_popup.pivot=new Vector2(.5f,1);
+            _popup.anchorMin=_popup.anchorMax=new Vector2(.5f,.5f);_popup.pivot=new Vector2(.5f,.5f);
             _popup.sizeDelta=new Vector2(PopupWidth,270);_popup.anchoredPosition=new Vector2(0,-PopupTop);
             _popupFade=_popup.gameObject.AddComponent<CanvasGroup>();_popupFade.blocksRaycasts=false;_popupFade.interactable=false;
 

@@ -79,7 +79,6 @@ namespace TumbangPreso.UI
             // ⚠️ UX-1, 2026-09-23: TAP TO START OPENS HOME, and this destination is the only thing
             // on the title screen that changed. The owner: "DO NOT TOUCH LOGIN AND MAIN MENU", and
             // "the NEW HOME opens from the existing main menu TAP TO START action" (`intake.md`).
-            press.onClick.AddListener(()=>{MenuSfx.Start();SceneFlow.GoHome();});
 
             var prompt=OwnerUiLayout.Text(design,"ContinuePrompt","",CaptionSize,OwnerUiLayout.TypeRole.Display);
             OwnerUiLayout.Place(prompt.rectTransform,Caption.x,Caption.y,Caption.width,Caption.height);
@@ -90,7 +89,9 @@ namespace TumbangPreso.UI
             // same warm ink the rest of the front end uses rather than black.
             var shade=prompt.gameObject.AddComponent<Shadow>();
             shade.effectColor=new Color32(28,15,6,150);shade.effectDistance=new Vector2(2,-2);
-            prompt.gameObject.AddComponent<OwnerMenuPrompt>().Press=press;
+            var continuePrompt=prompt.gameObject.AddComponent<OwnerMenuPrompt>();
+            continuePrompt.Press=press;
+            press.onClick.AddListener(continuePrompt.ContinueToHome);
 
             canvas.GetComponent<InputLayer.ScreenFocus>().Rebuild();
             return canvas;

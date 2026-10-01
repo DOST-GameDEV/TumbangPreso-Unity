@@ -320,6 +320,8 @@ namespace TumbangPreso.Visual
         {
             if (_sound != null) return true;
             string cue = Abilities.HeroAbilitySystem.ThemeFor(_hero);
+            // Hero skill sounds, the ultimate themes among them, are off until they are reworked (`AudioCues.SkillSfxOn`).
+            if (!Audio.AudioCues.Audible(cue)) return false;
             var clip = !string.IsNullOrEmpty(cue) ? Resources.Load<AudioClip>("Sfx/" + Audio.AudioCues.FileStemFor(cue)) : null;
             if (clip == null) return false;
             _sound = _root.AddComponent<AudioSource>(); _sound.playOnAwake = false;
@@ -414,7 +416,7 @@ namespace TumbangPreso.Visual
             if (_performance.Shots[index].Fit) FitBodies(ref position, ref focus, fov, aspect, seconds);
         }
 
-        private Vector3 Shake(float t) => _hero == "paete" ? PaeteShake(t / PaeteStretch) : Vector3.zero;
+        private Vector3 Shake(float t) => _hero == "paete" ? PaeteShake(t / PaeteStretch) : _hero == "phaister" ? PhaisterShake(t) : Vector3.zero;
 
         /// <summary>
         /// ⚠️ THE STAGE'S OWN GRADE ON THE PHASE CAMERA (v6, 2026-09-27): a whole-frame brightness and saturation multiplier for this

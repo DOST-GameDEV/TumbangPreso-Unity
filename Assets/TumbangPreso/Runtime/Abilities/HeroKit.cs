@@ -133,6 +133,9 @@ namespace TumbangPreso.Abilities
 
         /// <summary>Existing movement skills may scale wish speed; impulses and slows retain their own rules.</summary>
         public virtual float MovementSpeedScale => 1.0f;
+        public virtual float IncomingKnockbackDistanceScale => 1.0f;
+        // Kits with accepted-cast state need the owner event, without repeating a predicted payload.
+        public virtual bool RequiresOwnerCastEvents => false;
 
         /// <summary>
         /// ⚠️⚠️ KEPT AS THE METER'S FULL-SCALE VALUE, NOT AS THE PRICE. It used to be both, and
@@ -239,6 +242,9 @@ namespace TumbangPreso.Abilities
             UltimateCharge = Mathf.Clamp(UltimateCharge + amount, 0.0f, UltimateCost);
         }
 
+        // Objective income is distinct from practice/refill or network hydration.
+        public virtual void OnObjectiveAwarded(float amount) { }
+
         /// <summary>
         /// Everything about this kit that has to survive a reconnect, in the order it goes on
         /// the wire. See <see cref="HeroAbility.ApplyNetworkSnapshot"/> for why durations are
@@ -290,6 +296,12 @@ namespace TumbangPreso.Abilities
             if (Skill1 != null && Skill1.RechargedBy == what) Skill1.GrantCharge();
             if (Skill2 != null && Skill2.RechargedBy == what) Skill2.GrantCharge();
         }
+
+        // Most kits correct only the acknowledged ability. A kit with shared
+        // basic resources can correct its group without changing receipt guards.
+        internal virtual void ApplySkillReceiptResources(HeroAbility ability, float cooldown,
+            int charges, bool newerSkillRequestExists)
+            => ability.ApplyNetworkSnapshot(cooldown, charges, mayLower: true);
 
         public virtual void Tick(AbilityContext ctx, float dt)
         {
@@ -429,7 +441,7 @@ namespace TumbangPreso.Abilities
             if(ability.IsActive&&ability.CanReactivate)return ability.ReactivateReady?CastOutcome.Cast:CastOutcome.NotYet;
             if(PracticeMode)return CastOutcome.NotYet;
             if(!ability.IsReady)return CastOutcome.Cooling;
-            if(ctx?.Motor!=null&&!ctx.Motor.CanAct())return CastOutcome.CannotAct;
+            if(ctx?.Motor!=null&&!ctx.Motor.CanAct()&&!ability.AllowsImpairedCast(ctx))return CastOutcome.CannotAct;
             return ability.CanActivate(ctx)?CastOutcome.Cast:CastOutcome.CannotAct;
         }
         private CastOutcome Fire(HeroAbility ability, AbilityContext ctx)

@@ -274,7 +274,7 @@ namespace TumbangPreso.Tests
             {
                 "Look", "Move", "Sprint", "Jump", "Throw", "Retrieve", "Pektus",
                 "Shove", "AbilityInfo", "Skill1", "Skill2", "Ultimate", "DefenderReset",
-                "Punch", "Lunge", "TripRecovery", "Emote",
+                "Punch", "Lunge", "Emote",
             })
             {
                 StringAssert.Contains("case Lesson." + lesson, training,
@@ -300,7 +300,7 @@ namespace TumbangPreso.Tests
                 "the title screen's TUTORIAL button no longer reaches playable training, and the "
                 + "text panel that used to carry the only other way in is deleted");
 
-            Assert.AreEqual(17, GuidedTraining.LessonCount,
+            Assert.AreEqual(20, GuidedTraining.LessonCount,
                 "the objective counter no longer agrees with the complete training route");
         }
 

@@ -7,6 +7,17 @@ Read the current queue,[loading evidence](reports/stability-2026-09-27/loading-a
 
 ## Current Entry Points
 
+Bot rival-spacing queries reuse per-brain scratch storage. A calibrated native
+100-query measurement falls from200allocation events to0; four cases preserve
+claim expiry/refresh and reader independence. No loading or whole-frame claim.
+[Evidence](reports/feedback-2026-09-30/bot-spacing-allocation.md).
+
+Bot retrieval landing prediction shares world-flight math with the existing
+ground circle and refreshes a per-brain cache at existing Think cadence. Eight
+native cases pass;100cached reads allocate0events. Full forecasting and whole-frame
+cost are separate; this does not alter loading.
+[Evidence](reports/feedback-2026-09-30/bot-landing-terrain.md).
+
 Runtime files are under `Assets/TumbangPreso/Runtime/`.
 
 | Responsibility | Source |
@@ -30,10 +41,10 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 | Effect sheets and authored intro data | Visual/VfxFlipbook.cs,UltimatePerformance and existing per-kit warmups |
 | Shared particles and status icons | Visual/AbilityVfx.WarmupAssets prepares existing cached geometry; UI/StatusIcons.Warmup follows StatusRules.All with async sprite loading |
 | Ability icons and cooldown | UI/AbilityIcons.Warmup async-loads illustrations,yields per existing fallback bake/upload and prepares the radial cooldown graphic; repeated warmup reuses completed cache entries |
-| Match loading surface | UI/Hub/HubLoading.cs and MatchInstaller.IsPrepared; every SceneFlow peer uses owned async loading after a curtain frame, with in-flight target deduplication, destination setup, failure/return and cancellation instead of timed success. externallyLoaded is explicit observation only, not the network default |
+| Match loading surface | UI/Hub/HubLoading.cs and MatchInstaller.IsPrepared; ARENAS ONLY. Every SceneFlow peer uses owned async loading after a curtain frame, with in-flight target deduplication, destination setup, failure/return and cancellation instead of timed success. externallyLoaded is explicit observation only, not the network default |
 | Loading illustration deck | LoadingArtwork.Warmup asynchronously retains all three existing textures during boot; subsequent curtain installs and rotations reuse them. Direct no-boot fallback and artwork remain unchanged |
-| Menu scene entry | SceneFlow.Go -> HubLoading.BeginMenu; asynchronous known converted scenes,ConvertedScreen initialization/error,canvas layout and same-curtain hub preparation; root pointer blocker |
-| Custom map switching | HubLoading.PreparePreview and MapPreviewSurface.PrepareAll; real hub curtain covers all scene/setup/first-draw work,then cached scene/look instances serve selection without new loads |
+| Menu scene entry | SceneFlow.Go -> SceneManager.LoadScene. No curtain since 2026-09-30 (TODO LOAD-1.4): the second "GETTING READY" screen was removed as redundant; the boot splash is the one loading screen before a match |
+| Custom map switching | Arena assets are retained by SplashScreen.WarmMapAssets at boot (unconditional again). MapPreviewSurface instances the shown map on hub entry and each other map on its first pick, then reuses the cached scene/look. No hub curtain and no PrepareAll |
 | Training controls/targets | PracticeRange.cs,UI/PausePanel.TrainingRange.cs; prebuilt inactive menu and target bodies reused without changing saved preferences |
 | First-use/runtime costs | Existing profiler markers,FrameRateHistogram,tools/cold_start.py and current internal player |
 | Settings value changes | UI/TumpSettingsView partials; whole-row reflow only for new sections/text size,cached chips and one unsaved-state calculation per notification |
@@ -44,6 +55,8 @@ Runtime files are under `Assets/TumbangPreso/Runtime/`.
 
 ## Rules For Changes
 
+- ONE loading screen before the title (the boot splash) and none between menus; asset
+  and shader loading belongs there (TODO LOAD-1.4). Arena entry keeps its curtain.
 - Owner permits loading screens wherever substantial initialization needs one.
   Reuse the existing surface,cover the actual work,keep feedback responsive and
   provide failure/exit behavior. Do not add timed waits to cheap interactions.
