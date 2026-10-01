@@ -239,6 +239,30 @@ namespace TumbangPreso.PlayTests
             }
             finally{net.Stop();}
         }
+
+        [UnityTest] public IEnumerator LobbyPickUsesSenderAndRejectsChangesDuringTheMatch()
+        {
+            var net=NetSession.Ensure();yield return null;
+            try
+            {
+                bool hosted=false;yield return Await(net.StartHostAsync(18696),r=>hosted=r);Assert.IsTrue(hosted,net.Status);
+                var lobby=net.Lobby;var other=lobby.Admit(99,"other-owner","Other");lobby.SetPicks(99,1,0,0);
+                var rpc=net.GetComponent<MatchRpc>();var handler=typeof(MatchRpc).GetMethod("OnSelectLobbyPickMsg",BindingFlags.Instance|BindingFlags.NonPublic);
+                void Deliver(int character)
+                {
+                    using var writer=new FastBufferWriter(128,Allocator.Temp);writer.WriteValueSafe(123UL);
+                    writer.WriteValueSafe(99);writer.WriteValueSafe(character);writer.WriteValueSafe(1);writer.WriteValueSafe(3);
+                    writer.WriteValueSafe("");writer.WriteValueSafe("");writer.WriteValueSafe("");
+                    using var reader=new FastBufferReader(writer,Allocator.Temp);reader.ReadValueSafe(out ulong hash);
+                    handler.Invoke(rpc,new object[]{0UL,reader});
+                }
+                Deliver(2);Assert.AreEqual(2,lobby.PeerById(0).CharacterPick);Assert.AreEqual(1,other.CharacterPick);
+                lobby.StartMatch();Deliver(0);rpc.SelectLobbyPickServerRpc(0,0,0);
+                Assert.AreEqual(2,lobby.PeerById(0).CharacterPick,"Lobby pick replaced a running match choice.");
+                lobby.ReturnToLobby();Deliver(0);Assert.AreEqual(0,lobby.PeerById(0).CharacterPick);
+            }
+            finally{net.Stop();}
+        }
         [UnityTest] public IEnumerator RunningMatchArrivalKeepsTheExistingCharacter()
             => CheckArrivalCharacter(true);
         [UnityTest] public IEnumerator PreRoundArrivalKeepsTheMirroredFormatCharacter()

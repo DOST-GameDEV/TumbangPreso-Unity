@@ -2803,3 +2803,37 @@ actualhost approved-token/picks path retained. No fixture repair, all jobs6231/
 11606/64329terminal, profiles/inputprefs preserved. Publish exact paths/status/
 receipts. Current119, no freshplayer/peerclaim. Next reasonable network receiver
 work remains scoped after fresh Feedback/reservations; whole goalactive.
+
+Identify1182b764f remote verified. LOBBY-PICK-FRAMING-1001 owns MatchRpc.cs
+SelectLobbyPick parser/lobby-only gate and new LobbyPickPacketBoundsTests/meta,
+existing SessionRestartTests live control. Four ints plus cosmetic/optional tails
+currently throw on truncation/length; running-match path also rewrites choices.
+Baseline6packet failures, final8structure plus actualhostvalid/ownership/lobby/
+livematch controls. Reuse bounded UTF16 preflight without arbitrary text limits.
+No asset/loading/kit/wire-field change. One tooling repair max, stop fresh XML.
+
+Lobby-pick structural baseline6/6fails at real Overflow/InvalidCast exceptions.
+Native14827terminal. Before final copy, isolated runtime remains old; stage only
+new SessionRestart live case to prove running-match mutation on actual receiver,
+with baseline-specific hash manifest. Main source fixed but not copied into this
+old-runtime baseline. One expected case, no fixture repair; final structural8
+plus same actualhost/lobby/sender/match boundaries afterward.
+
+Lobby-pick live baseline15746terminal fails actual running-choice mutation2→0.
+Source now checks complete16byte/UTF16/optionaltail frame and blocks both raw
+message/local RPC while MatchInProgress, preserving sender identity and lobby
+changes. Shared skip helper renamed only, identity algorithm unchanged. Final8
+structural plus1livecase sequential, no identity-suite repeat or fixture repair.
+
+Lobby-pick structural final8/8EditMode passes0.127s, no fixture repair. Frozen
+runtime/tests unchanged for live final. Actualhost case now verifies reservedpeer
+spoofignored/sender0updated, matchchangesrejected in messageandlocalRPC, returnto-
+lobby stillallowschange.32941terminal before nextheavyjob, no duplicate suites.
+
+Lobby-pick final8EditMode/1PlayMode passes, no single9/9claim.684inputs no drift,
+four ownedfiles match candidate, valid32hexnewmeta nativelyimported. Six malformed
+exceptions plus actualmatch2→0mutation reproduced; finalvalidlobby/sender/remote-
+localmatchgate/return controls pass. No fixture repair, all14827/15746/32941/45207
+jobs terminal, profiles/inputprefs preserved. Publish source/status/receipts.
+Current119; no freshactualpeer/player proof. Next inspect remaining roster-message
+bounds independently of reserved HUD work; full feedback/goal staysactive.

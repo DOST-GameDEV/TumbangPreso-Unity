@@ -196,6 +196,12 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   one connected-host valid/approved-identity case pass. No wire change.
   [Evidence](reports/feedback-2026-09-30/identify-packet-framing.md).
 
+- [x] LOBBY-PICK-FRAMING-1001: malformed pick packets cannot throw through the
+  receiver; remote/local picks cannot rewrite a running match. Six packet and
+  actual-host mutation baselines reproduce; native8+1final cases pass, preserving
+  sender authority and normal lobby choices.
+  [Evidence](reports/feedback-2026-09-30/lobby-pick-packet-framing.md).
+
 - [x] HELD-SEAT-PICKS-1001: matching-token reclaim retains picks and takeover
   rating; Identify cannot replace fixed match choices with local preferences.
   Five distinct native cases cover repeated cycles, fresh account state, foreign

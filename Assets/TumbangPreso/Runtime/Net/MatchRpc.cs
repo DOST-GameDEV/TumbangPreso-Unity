@@ -765,7 +765,7 @@ namespace TumbangPreso.Net
                            canPick, slipperPick, cosmetics, custom, build);
         }
 
-        private static bool SkipIdentifyString(ref FastBufferReader reader)
+        private static bool SkipWireString(ref FastBufferReader reader)
         {
             if (!reader.TryBeginRead(sizeof(uint))) return false;
             reader.ReadValueSafe(out uint characters);
@@ -781,13 +781,13 @@ namespace TumbangPreso.Net
             int start=reader.Position;
             try
             {
-                for(int i=0;i<4;i++) if(!SkipIdentifyString(ref reader)) return false;
+                for(int i=0;i<4;i++) if(!SkipWireString(ref reader)) return false;
                 if(!reader.TryBeginRead(sizeof(int)*3)) return false;
                 reader.Seek(reader.Position+sizeof(int)*3);
-                if(!SkipIdentifyString(ref reader)) return false;
+                if(!SkipWireString(ref reader)) return false;
                 // Keep the existing legacy optional custom/build tails.
-                if(reader.Position<reader.Length && !SkipIdentifyString(ref reader)) return false;
-                if(reader.Position<reader.Length && !SkipIdentifyString(ref reader)) return false;
+                if(reader.Position<reader.Length && !SkipWireString(ref reader)) return false;
+                if(reader.Position<reader.Length && !SkipWireString(ref reader)) return false;
                 return reader.Position==reader.Length;
             }
             finally { reader.Seek(start); }
@@ -4654,6 +4654,7 @@ namespace TumbangPreso.Net
         /// </summary>
         public void SelectLobbyPickServerRpc(int character, int can, int slipper)
         {
+            if (NetSession.Instance?.Lobby?.MatchInProgress == true) return;
             string cosmetics = LocalCosmetics.Encoded(character);
 
             // ⚠️⚠️ THE CUSTOM CHARACTER RIDES THIS TOO, AND NOT ONLY `Identify`, FOR THE SAME
@@ -4701,7 +4702,8 @@ namespace TumbangPreso.Net
 
         private void OnSelectLobbyPickMsg(ulong senderClientId, FastBufferReader reader)
         {
-            if (!NetAuthority.IsHost) return;
+            if (!NetAuthority.IsHost || NetSession.Instance?.Lobby?.MatchInProgress == true ||
+                !ValidLobbyPickFrame(ref reader)) return;
             reader.ReadValueSafe(out int peerId);
             reader.ReadValueSafe(out int character);
             reader.ReadValueSafe(out int can);
@@ -4722,6 +4724,21 @@ namespace TumbangPreso.Net
                 HostAuthoriseCosmetics((int)senderClientId, cosmetics, character, custom, build);
                 BroadcastLobbyPicks();
             }
+        }
+
+        private static bool ValidLobbyPickFrame(ref FastBufferReader reader)
+        {
+            int start=reader.Position;
+            try
+            {
+                if(!reader.TryBeginRead(sizeof(int)*4)) return false;
+                reader.Seek(reader.Position+sizeof(int)*4);
+                if(!SkipWireString(ref reader)) return false;
+                if(reader.Position<reader.Length && !SkipWireString(ref reader)) return false;
+                if(reader.Position<reader.Length && !SkipWireString(ref reader)) return false;
+                return reader.Position==reader.Length;
+            }
+            finally { reader.Seek(start); }
         }
 
         private static int StringPacketBytes(params string[] values)

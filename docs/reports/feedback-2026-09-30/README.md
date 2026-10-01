@@ -227,3 +227,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Actual crash/relaunch, corrected character and preserved failed gate](reconnect-actual-player.md).
 
 [Identify packet framing and preserved approved-identity path](identify-packet-framing.md).
+
+[Lobby pick framing, sender ownership and live-match rejection](lobby-pick-packet-framing.md).
