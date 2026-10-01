@@ -2899,3 +2899,12 @@ Actual charge/release launches; listening host retains protected/down restrictio
 even with stale tutorial flag. No fixture repair, no actual remote-peer/build
 claim. Publish this coherent repair, then above-can false contact; dot outline
 and HUD extras remain pending. Both existing Doc rows reopened/read back.
+
+CAN-VERTICAL-CONTACT-1001 owns Runtime/Lata.cs, Tests/PlayMode/
+TutorialLessonHonestyProbe.cs and NetSession.cs protocol constant only. Fresh
+fetch20b06b17 with0/0, clean. Harry's above-can hit report maps to flat-only
+Connects; reproduce actual flying slipper above visible target, then measure
+Visual mesh bounds for a finite vertical contact interval. Preserve horizontal
+skin/stance window and normal real contact. No authored asset changes. A gameplay
+contact change will bump protocol; existing networking contributor paths remain
+untouched except the explicit constant. One native baseline/final, one repair.
