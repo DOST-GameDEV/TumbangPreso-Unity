@@ -2732,3 +2732,18 @@ reads warning/grace constants; prove its7.5second countdown rather than add a
 second timer. No Tagged immunity paragraph in current Doc, so do not implement
 that removed revision. Two native scoring/pause/recall checks plus focused Core
 fatigue/boundary checks; one tooling repair maximum. Next HUD layout afterward.
+
+Compact local resume checkpoint: source50c266f51/ASTRAReworks, current118, all
+native/build/hash/player handles terminal; no unused task browser/previews.
+Owned shipped units this continuation: actor92ee8b8e9(native13), rivalitems64d1c97b0
+(native9), snapshot6cadc9593(native4), held/Identify3bd0b1096(five distinct native),
+pre-roundb4c329b7b(native3). Actual117coldrejoin fixeschar2/seat1 but strictaggregate
+stillfalse due laterhostboundary; receiptsoriginal+changed preserved in ecb598062.
+Current Docs Nemu note reflectsactor/items; Hydro author prefix preserved. Penalty
+Balance/Coretests/NetSession119 and nextHUD are contributor reservations. Loading
+stillfriend-owned; Phaister/Paete finalizedmechanics/art protected. No otherchat,
+subagent, reset, paidservice, Desktopreplacement or private-dirt staging.
+Next local independent unit: inspect OnIdentifyMsg malformed-string framing and
+actual receiver exception before changing it; preserve valid/repeated identity,
+approved-token authority and coalesced arrival. Focused native baseline/final,
+one bounded repair; no broad unchanged validation. Whole goal stillactive.
