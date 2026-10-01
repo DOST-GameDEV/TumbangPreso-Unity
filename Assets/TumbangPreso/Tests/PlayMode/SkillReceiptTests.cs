@@ -331,6 +331,73 @@ namespace TumbangPreso.PlayTests
             finally { Object.DestroyImmediate(root); }
         }
 
+        [Test] public void FreshCheskaRecoveryRestoresFrostbiteWithoutRecastingOrRefundingResources()
+        {
+            var system = Owner("cheska"); var body = system.GetComponent<CharacterMotor>();
+            var kit = (CheskaHeroKit)system.Kit;
+            GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(body);
+            GameServices.Match.ApplySnapshot(new int[4], 1, true);
+            GameServices.Round.ApplySnapshot(98, true, 0, true);
+            kit.AttackingSkill.ApplyNetworkSnapshot(30, 0, true);
+            var root = new GameObject("Frostbite recovery receiver"); root.SetActive(false);
+            var router = root.AddComponent<MatchRpc>(); typeof(MatchRpc).GetProperty("PresentationMatchId").SetValue(router, 123L);
+            const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var apply = typeof(MatchRpc).GetMethod("ApplyTimedKitState", hidden);
+            bool Apply(TimedKitState value) => (bool)apply.Invoke(router, new object[] { value, 98f });
+            var state = TimedKitState.Capture(kit, new TimedKitSnapshot(kit.AttackingSkill, 7), 1,
+                new GameplayActionScope { Match = 123, Round = 1, Epoch = body.MovementEpoch }, 1, 100);
+            try
+            {
+                Assert.IsTrue(state.IsValid);
+                Assert.IsTrue(Apply(state), "A valid returning Cheska cannot bind her live Frostbite state.");
+                Assert.IsTrue(kit.IsFrostbiteLoaded);
+                Assert.AreEqual(5, kit.AttackingSkill.DurationRemaining, .001f);
+                Assert.AreEqual(30, kit.AttackingSkill.CooldownRemaining, .001f);
+                Assert.AreEqual(0, kit.UltimateCharge);
+                Assert.IsFalse(Apply(state), "The same recovery sequence must not refresh the load.");
+                kit.ConsumeFrostbite(); kit.Tick(new AbilityContext(body, null, null), .01f);
+                state.Sequence = 2; state.PersonalRemaining = 8;
+                Assert.IsTrue(Apply(state), "A valid no-op should retire the new sequence.");
+                Assert.IsFalse(kit.IsFrostbiteLoaded, "Late hydration resurrected an already-spent load.");
+            }
+            finally { Object.DestroyImmediate(root); }
+        }
+
+        [Test] public void FrostbiteRecoveryRejectsInvalidLoadsWithoutPoisoningTheFirstValidState()
+        {
+            var system = Owner("cheska"); var body = system.GetComponent<CharacterMotor>();
+            var kit = (CheskaHeroKit)system.Kit;
+            var replication = (ITimedKitReplication)kit;
+            foreach (float invalid in new[] { float.NaN, float.PositiveInfinity, -1f, CryoRules.FrostbiteLoadSeconds + 1 })
+                Assert.IsFalse(replication.RestoreTimedKit(body, new TimedKitSnapshot(kit.AttackingSkill, invalid)));
+            Assert.IsFalse(replication.RestoreTimedKit(null, new TimedKitSnapshot(kit.AttackingSkill, 5)));
+            body.IsDefender = true;
+            Assert.IsFalse(replication.RestoreTimedKit(body, new TimedKitSnapshot(kit.AttackingSkill, 5)));
+            body.IsDefender = false;
+            Assert.IsTrue(replication.RestoreTimedKit(body, new TimedKitSnapshot(kit.AttackingSkill, 5)));
+            Assert.IsFalse(replication.RestoreTimedKit(body, new TimedKitSnapshot(kit.AttackingSkill, 8)));
+            Assert.AreEqual(5, kit.AttackingSkill.DurationRemaining);
+            Assert.AreSame(kit.AttackingSkill, replication.CaptureTimedKit().PersonalAbility);
+            Assert.AreEqual(5, replication.CaptureTimedKit().PersonalRemaining);
+        }
+
+        [Test] public void FrostbiteRecoveryExpiresAndResetsWithoutGrantingASecondLoad()
+        {
+            var system = Owner("cheska"); var body = system.GetComponent<CharacterMotor>();
+            var kit = (CheskaHeroKit)system.Kit; var replication = (ITimedKitReplication)kit;
+            var ctx = new AbilityContext(body, null, null);
+            Assert.IsTrue(replication.RestoreTimedKit(body, new TimedKitSnapshot(kit.AttackingSkill, 2)));
+            kit.Tick(ctx, 2.1f);
+            Assert.IsFalse(kit.IsFrostbiteLoaded); Assert.IsFalse(kit.AttackingSkill.IsActive);
+            Assert.AreEqual(0, replication.CaptureTimedKit().PersonalRemaining);
+            Assert.IsFalse(replication.RestoreTimedKit(body, new TimedKitSnapshot(kit.AttackingSkill, 7)));
+            kit.ResetForRound(ctx);
+            Assert.IsTrue(replication.RestoreTimedKit(body, new TimedKitSnapshot(kit.AttackingSkill, 3)));
+            kit.Reset(); Assert.IsFalse(kit.IsFrostbiteLoaded);
+            Assert.IsFalse(replication.RestoreTimedKit(body, new TimedKitSnapshot(kit.AttackingSkill, 0)));
+            Assert.IsFalse(replication.RestoreTimedKit(body, new TimedKitSnapshot(kit.AttackingSkill, 5)), "Authoritative empty state must close late hydration.");
+        }
+
         [Test]
         public void ResourceSnapshotsMapBothRolesByIdentityAndRejectPartialOrMalformedSets()
         {

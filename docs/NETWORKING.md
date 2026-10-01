@@ -1,8 +1,9 @@
 # Networking: Where To Work
 
-Current gameplay contract is protocol121, including adopted Hydro Crosscurrent,
+Current gameplay contract is protocol122, including adopted Hydro Crosscurrent,
 Skim, Water wall, can-down charge cancellation, revised penalty/fatigue timings
-finite can-height contact and revised knockdown/catch announcement rewards.
+finite can-height contact, revised knockdown/catch announcement rewards and
+live Frostbite timed recovery. Actual122player/peer qualification remains open.
 Latest general Windows direct-peer qualification
 is protocol120on committed c26c5c34b: actual identical host/client players reach
 active round2, defender1and matching structural state. Clean local admission and
@@ -21,6 +22,9 @@ defender/structural state. Explicit later195/120second samples preserve the old
 117failure and add stronger round/ownership gates. Separate launches/sample times;
 no every-skill/physical-feel/loss/account-proof or later-presentation claim.
 [Current rejoin evidence](reports/feedback-2026-09-30/reconnect121-actual-player.md).
+That121case predates the new Frostbite timed binding. Four scoped native recovery/
+real-hit checks qualify the122change locally.
+[Frostbite recovery](reports/feedback-2026-09-30/frostbite-recovery.md).
 [Hydro evidence](reports/hero-quality-2026-10-01/hydro-current-checks/README.md).
 [Skim evidence](reports/hero-quality-2026-10-01/skim-checks/README.md).
 [Water wall/tutorial evidence](reports/hero-quality-2026-10-01/wall-tutorial-checks/README.md).

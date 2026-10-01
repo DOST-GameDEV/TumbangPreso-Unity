@@ -553,7 +553,8 @@ namespace TumbangPreso.Net
         //117: Hydro Water wall uses a single-interception stationary field.
         //118: knockdown cancels charge and throws wait for can/protection reset.
         //119: revised camping/slipper warning windows and2.5second fatigue.
-        public const int ProtocolVersion = 121;
+        //122: live Frostbite load uses the existing scoped timed-kit recovery.
+        public const int ProtocolVersion = 122;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

@@ -294,6 +294,12 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   without drift, one passing strengthened gate; old117failed results retained.
   [Evidence](reports/feedback-2026-09-30/reconnect121-actual-player.md).
 
+- [x] FROSTBITE-RECOVERY-1001: current-scope recovery restores the live aged load
+  without recasting or resource changes. Reproduced receiver rejection repaired;
+  four native cases include replay/bounds/lifecycle and restored real Frozen hit.
+  Protocol122; actual new peers remain separate.
+  [Evidence](reports/feedback-2026-09-30/frostbite-recovery.md).
+
 - [x] HELD-SEAT-PICKS-1001: matching-token reclaim retains picks and takeover
   rating; Identify cannot replace fixed match choices with local preferences.
   Five distinct native cases cover repeated cycles, fresh account state, foreign

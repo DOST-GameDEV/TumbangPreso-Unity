@@ -48,7 +48,8 @@ namespace TumbangPreso.PlayTests
         [UnityTest] public IEnumerator ARealFrostedThrowFreezesTheDefender() => ThrowAtBody(true, true);
         [UnityTest] public IEnumerator ARealFrostedThrowFreezesAnotherAttacker() => ThrowAtBody(false, true);
         [UnityTest] public IEnumerator AnOrdinaryBodyBlockDoesNotFreeze() => ThrowAtBody(true, false);
-        private IEnumerator ThrowAtBody(bool defender, bool frosted)
+        [UnityTest] public IEnumerator ARestoredFrostedThrowStillFreezesTheDefender() => ThrowAtBody(true, true, true);
+        private IEnumerator ThrowAtBody(bool defender, bool frosted, bool restored = false)
         {
             yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, GameMode.HeroStrike);
             GameServices.Round.BeginRound();
@@ -76,7 +77,13 @@ namespace TumbangPreso.PlayTests
                 {
                     var context = new AbilityContext(caster, carrier, caster.GetComponent<CombatVerbs>());
                     Assert.IsTrue(kit.AttackingSkill.CanActivate(context));
-                    kit.AttackingSkill.Activate(context);
+                    if (restored)
+                    {
+                        kit.AttackingSkill.ApplyNetworkSnapshot(30, 0, true);
+                        Assert.IsTrue(kit.RestoreTimedKit(caster, new TimedKitSnapshot(kit.AttackingSkill, 5)));
+                        Assert.AreEqual(30, kit.AttackingSkill.CooldownRemaining);
+                    }
+                    else kit.AttackingSkill.Activate(context);
                 }
                 carrier.HostThrowAt(caster.transform.position + Vector3.up * .65f,
                     victim.transform.position + Vector3.up * .65f, 1f);
