@@ -365,6 +365,8 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("SkyEffect", OnSkyEffectMsg);
             cm.RegisterNamedMessageHandler("TimedKit", OnTimedKitMsg);
             cm.RegisterNamedMessageHandler("TimedKitState", OnTimedKitStateMsg);
+            cm.RegisterNamedMessageHandler("CircuitAim", OnCircuitAimMsg);
+            cm.RegisterNamedMessageHandler("CircuitState", OnCircuitStateMsg);
             cm.RegisterNamedMessageHandler("CastPreparation", OnCastPreparationMsg);
             cm.RegisterNamedMessageHandler("MovementWindow", OnMovementWindowMsg);
             cm.RegisterNamedMessageHandler("WorldFieldBegin", OnWorldFieldBeginMsg);
@@ -1953,6 +1955,7 @@ namespace TumbangPreso.Net
             }
             if (!(kit is Abilities.ITimedKitReplication replication)) return;
             SendBoundTimedKit(slot, peer, kit, replication);
+            if(kit is Abilities.ZackHeroKit)SendCircuitSnapshot(slot,peer);
         }
 
         private void OnTimedKitMsg(ulong senderClientId, FastBufferReader reader)

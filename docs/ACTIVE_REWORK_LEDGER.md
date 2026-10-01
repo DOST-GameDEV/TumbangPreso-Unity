@@ -3906,3 +3906,33 @@ Guards78488/11325/92826 terminal; no authored map/lighting/model/effect/sound or
 broader loading change. Explicit owner preview-bug exception only. Publish then
 continue correct shader/effect readiness/optimization across actual screens.
 No fresh player/network-menu/full-readiness claim. DOTS owns Docs queue.
+Closed Circuit focused native and real-peer acceptance is complete. The same
+unit owns its evidence report, TODO entry and SKILL_NETWORK_CONTRACT appendix
+for publication; no other runtime paths are added. Source includes incoming
+solo shortcut fix5bce6331a. First player build failed during final copy at disk
+capacity; one bounded unchanged-input copy recovery succeeded. Three real Linux
+players exercised normal round transition, remote owner cancellation and two
+separate commitments. The initial evaluator incorrectly rejected existing
++10/s defence income; corrected cadence check passes the same retained traces,
+with no runtime change or repeated player run. Publication pending below.
+
+Closed Circuit a2db7527aa2f7a7e392c0f807674dd2391dc0355 published and remote
+verified. Protocol127; fourteen distinct native checks and actual three-player
+Linux cancellation/commitment/expiry evidence. Whole Zack presentation remains
+open. Runtime paths released. Owner sleeping, quiet continuation requested.
+
+Owner asks to recheck friends' loading and map branches before integration.
+At13:19UTC loading35a2bda9 is already an ASTRA ancestor; map15618516 is not.
+Map evidence capture was mistargeted to Eskinita, so it proves no Ilalim result;
+that tooling pass has stopped with original evidence retained. Candidate-only
+map overlay parked and original files restored. Do not mark foliage issue done.
+
+EMPOWERED-THROW-1001 reserves SeanHeroKit.cs held-load branch; Carrier.cs Sean
+load/guide branches; Slipper.cs FireExplosive impact and new dedicated partial
+if needed; focused EmpoweredThrowTests/metas; NetSession compatibility and only
+relevant timed-kit bounds. Plan in hero-quality-2026-10-01/empowered-throw/plan.md.
+This migrates the adopted Pyro8s/35s/1.25m held-object pressure payload coherently,
+not the Flame Rush/Supernova units. No HeroHazards/private overlay or authored
+art changes. First implementation/validation remains pending.
+
+Remade preview fix7670a7b71 ready to publish with measured3/3 and inspected actual map captures. Initial callback-fence failed and was removed; correct explicit-request Start fix only. Integrate Closed Circuit proof/author reservation without editing those paths. Older126 Windows player is now older protocol than incoming circuit work; do not reuse it to claim current130(?) networking. Check actual NetSession constant after merge. Next screen shader/effect readiness and measured optimization, preserve loading scope and nonstop continuation.

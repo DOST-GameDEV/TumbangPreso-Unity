@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace TumbangPreso.Abilities
 {
-    public sealed class ZackHeroKit : HeroKit, ITimedKitReplication, IWorldEffectBinding
+    public sealed partial class ZackHeroKit : HeroKit, ITimedKitReplication, IWorldEffectBinding
     {
         public bool IsOverchargeThrowActive { get; set; }
         public bool IsOverclocked { get; private set; }
@@ -32,7 +32,7 @@ namespace TumbangPreso.Abilities
             if (role)
             {
                 AttackingSkill?.ReduceCooldown(seconds);
-                DefendingSkill?.ReduceCooldown(seconds);
+                if (!CircuitSequenceActive) DefendingSkill?.ReduceCooldown(seconds);
             }
         }
         private bool _joinMagnetSettled, _joinThunderSettled;
@@ -81,9 +81,9 @@ namespace TumbangPreso.Abilities
         public ZackHeroKit() : base("zack", "ZACK")
         {
             Skill1 = new QuickCircuitAbility(this);
-            // ABILITY-2: the four-slot shape; the defending slot waits for the owner's Electro design.
+            // Role-specific authored Electro jobs.
             AttackingSkill = new BankShotAbility(this);
-            DefendingSkill = new PlaceholderRoleAbility("zack_skill2d", "Zack", AbilityGlyph.ZackOvercharge);
+            DefendingSkill = new ClosedCircuitAbility(this);
             Ultimate = new ThunderstrikeOverdriveAbility(this);
         }
 

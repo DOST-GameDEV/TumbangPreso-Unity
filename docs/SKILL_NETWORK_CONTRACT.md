@@ -608,3 +608,17 @@ Recovery never relaunches or extends the remaining clock. The captured local
 cast context transmits the chosen lateral side using the existing aim field.
 Active recasts now honor CanAct/Zapped and explicit impaired-cast exceptions.
 [Native evidence and current peer limits](reports/feedback-2026-09-30/quick-circuit.md).
+
+
+## Closed Circuit compatibility
+
+Protocol127 adds a48byte CircuitAim owner-to-host message and a58byte host
+CircuitState snapshot. Both use match/round/movement epoch scope and sequences;
+aim also requires the current acquisition episode. Host checks sender ownership,
+finite/range-bounded aim and freshness within.25s. Replicas accept only the host,
+age phase/cooldown clocks and never apply Zapped. Accepted cast playback precedes
+state flushing; late snapshots cannot restart expired acquisition. Existing
+status replication owns victims. Native checks and actual direct Linux
+host/owner/observer qualify cancellation, optional different-target follow-up
+and expiry. WAN/loss/reconnect/device coverage remains separate.
+[Evidence and retained failures](reports/feedback-2026-09-30/closed-circuit/README.md).
