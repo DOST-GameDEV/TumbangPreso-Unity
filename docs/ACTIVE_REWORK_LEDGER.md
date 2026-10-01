@@ -3361,3 +3361,26 @@ identity. Artistic sole contact/observer shoe and Waterwall settled icon remain
 open for distinct loaded-shoe presentation unit. No product failure inferred
 from the disabled-canvas fixture. Publish coherent dedicated-motion slice with
 these limits, not final quality. No native job running.
+
+RAFI-SKIM-COATING-1001 owns new Visual/RafiSkimCoating.cs/meta, RafiHeroKit.cs
+visual attachment on activate/restore only, ViewmodelArms.MatchSkin Rafi branch,
+RafiExpansionProbe focused loaded-state lifecycle and visual review, and dated
+plan/evidence/TODO. Existing Sean/Zack attachment pattern is the integration point;
+no Slipper physics/prediction edits. A narrow teal meniscus follows actual mesh
+bounds around the sole, with toe/heel variation and expiry drainage from real
+remaining time. Both owner prop and world prop observe the same loaded identity;
+no extra authoritative state. Dispose on throw, expiry, role/kit change, transfer.
+One focused native lifecycle/review, at most one bounded fixture repair. Include
+properly bound Hud and detached shoe observer restoration in this distinct VFX
+review, preserving earlier failed diagnostic. SFX remains separate. Quiet mode.
+
+Publication race integrated f2bbdd28f loaded-Skim presentation reservation; no
+code overlap or private-file changes. Frostbite122coherent native4/4 plus earlier
+failed baseline retained; all owned jobs terminal. Feedback shorter Notes and
+yellow/bold human-review markers saved/read back; no human verified controls
+changed. Next explicit human Wiki anchors to inspect: Zack Amped-Up5seconds
+cooldown reduction per objective and permanent Overclock15points; current code
+still has20point/temporary Thunderstrike. New blank-slot ideas remain Proposed,
+no invented adoption. Inspect actual objective hooks/resource/recovery before
+editing, respect fresh contributor claims, preserve all visual/loading scope.
+
