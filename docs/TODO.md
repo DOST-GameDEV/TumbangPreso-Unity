@@ -78,6 +78,11 @@ continuous manual bug hunting. Research, plan and critique using HERO_KIT_METHOD
 finalized Paete/Phaister character-specific work remains protected. The owner reopened remaining ability implementation on2026-10-01;
 shared/global fixes apply normally and exact concurrent claims still govern.
 
+- [ ] BOT-COMPANION-OBSERVATION-1001: investigate/fix the ordinary reaction-lag
+  model skipping companion targets. Observe reads Players while tag selection
+  reads Bodies, so companion positions fall through to instantaneous truth.
+  Verify initial/repeated/replacement body and own-position behavior before Done.
+
 Source: [TUMP Wiki](https://docs.google.com/document/d/1jvr7NLzhHrbw-wrG676AeOkoTxJf4GokkfmxpO0ddLg/edit),
 read on 2026-09-30, including ability, status and feedback tabs. The document wins
 for other characters. Paete and Phaister are finalized and governed by the

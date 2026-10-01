@@ -1892,3 +1892,17 @@ companion positions fall through At to immediate truth, bypassing reaction lag.
 Confirm with focused native ordinary/companion/self observations before editing;
 keep protected hero mechanics/assets intact. Haunted sensor/unknown-target handling
 is still a separate unfinished investigation. Full goal remains active.
+
+NET-FAMILIAR-SMOOTH-1001 shipped0a368bcb9c5f2ef42a639c110d2e5be7b1952aae,
+remote verified. Same Nemu Feedback note updated/read back with movement fix,
+three native passes and current protocol114 requirement; native/human/peer limits
+remain explicit and controls untouched. Runtime source clean; private dirt stays
+unstaged. All jobs terminal, no task previews/player/server. Full goal active.
+Next BOT-COMPANION-OBSERVATION: confirmed source mismatch at AIController.Observe
+(Players only) versus TagTarget(Bodies incl companion). At(companion) falls back
+to live transform, bypassing its reaction-lag model. Reproduce ordinary/companion/
+self beliefs before patching, include replacement-body identity if caching expands
+to companions. RoundDirector.Bodies is cached players+companions, not an allocating
+query. Fix generic observation only, preserve Phaister/Paete mechanics/assets and
+keep Haunted sensor/unknown-target fairness as a separate remaining investigation.
+Then one coherent protocol114matching-player qualification when headroom permits.
