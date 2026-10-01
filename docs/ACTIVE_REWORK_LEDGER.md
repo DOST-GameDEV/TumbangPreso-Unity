@@ -2921,3 +2921,9 @@ Can-height final2/2 passes: actual high miss/low hit plus six authored skin
 vertical/horizontal edge and replacement checks. Frozen inputs/owned source
 match, no tooling repair/new OOM. Publish120; no new player/actualpeer claim.
 Next slight dot outline, then latest HUD stacks/lifetimes/scoring.
+
+DOT-OUTLINE-1001 claims UI/HudReticle.cs and existing ThrowChargeUiTests.cs only.
+Can-height c205dfcb remote verified. Harry requested a slight increase: black
+outline1.2→1.5canvas units, filled centre radius unchanged. One existing native
+charge/release capture check at small/wide views; reuse prior lifecycle checks.
+No gameplay/protocol change beyond current120, no new asset. Prior jobs terminal.
