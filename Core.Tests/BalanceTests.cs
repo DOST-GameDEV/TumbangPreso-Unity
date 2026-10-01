@@ -698,7 +698,7 @@ namespace TumbangPreso.Core.Tests
             Assert.True(ThrowRules.HitWindow(boyben) < ThrowRules.HitWindow(pasip));
         }
 
-        /// <summary>All five conditions, each refused on its own.</summary>
+        /// <summary>All six conditions, each refused on its own.</summary>
         [Fact]
         public void CanThrow_RefusesOnEachConditionIndependently()
         {
@@ -711,14 +711,8 @@ namespace TumbangPreso.Core.Tests
             c = ok; c.HoldingSlipper = false; Assert.False(ThrowRules.CanThrow(c));
             c = ok; c.ThrowCooldownLeft = 0.5f; Assert.False(ThrowRules.CanThrow(c));
 
-            // ⚠️⚠️ A DOWN LATA NO LONGER REFUSES THE THROW, AND THAT IS ASSERTED RATHER THAN
-            // MERELY NOT TESTED. Changed 2026-08-26 on 🧑's report that a charge held against a
-            // downed can could be neither spent nor cleared. The reason the clause existed,
-            // protecting the reset channel, is `ThrowCooldownLeft` on the line above and the
-            // lata's own protection shield, and a slipper that reaches a downed lata cannot
-            // score because `Lata.HostKnockDown` returns while it is not upright. If somebody
-            // re-adds the refusal, this line is what tells them it was deliberate.
-            c = ok; c.LataUpright = false; Assert.True(ThrowRules.CanThrow(c));
+            // Current feedback cancels/refuses throws until the can is restored.
+            c = ok; c.LataUpright = false; Assert.False(ThrowRules.CanThrow(c));
             c = ok; c.X = 0.0f; c.Z = 0.0f; Assert.False(ThrowRules.CanThrow(c)); // inside
         }
 

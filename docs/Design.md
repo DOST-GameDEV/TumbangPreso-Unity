@@ -330,31 +330,18 @@ file is 🤖 `build ai`'s; a second binding for one verb costs a human nothing.
 | `MAX_FLIGHT_TIME` | 6.0 s | |
 | `THROWER_IGNORE_TIME` | 0.25 s | you cannot block your own throw on release |
 
-**All three of these must hold or the throw is refused** (`ThrowRules.CanThrow`):
+**All of these must hold or an attacker throw is refused** (`ThrowRules.CanThrow`):
 
-1. holding a slipper;
-2. **outside the box** — `max(|x|,|z|) >= CONFINEMENT_RADIUS` (**7.0**). ⚠️ Written as a
-   bare `5.0` here until 2026-08-23; the code has always tested the constant, and the constant
-   was raised twice on 2026-08-01 (§2). Name it, never number it;
-3. the post-restore cooldown has expired.
+1. The round is live and the player is an attacker holding a slipper.
+2. The player is outside the confinement box, using the shared geometry rule.
+3. The lata is upright and its restoration protection has expired.
 
-⚠️⚠️ **THERE WERE FOUR, AND "THE LATA IS UPRIGHT" WAS REMOVED ON 2026-08-26. THIS IS A
-DELIBERATE RULE CHANGE, NOT A NINTH DRIFT**, and `Design_Drift_Report.md` § 9 records it as such.
-
-🧑, off the built player, twice: *"my charge still pauses when lata is down"*, *"i dont want it
-to pause"*. The refusal had ended up in the worst possible shape. An earlier pass had already
-stopped a down lata CANCELLING a wind-up, because snapping every charged arm to idle on a
-teammate's knockdown *"made the shared knockdown feel like an animation error"*. So the charge
-was maintained and the release was then rejected: the player held a fully wound arm, pressed the
-button, and nothing happened, with no way to spend or clear the commitment.
-
-**Nothing is lost by allowing it.** A slipper that reaches a lata already on its side cannot
-score: `Lata.HostKnockDown` returns on its second line while `!_isUpright`. The reason the clause
-was written, protecting the reset channel from a shot banked on its last frame, is condition 3
-above (`Balance.ThrowRestoreCooldown`) together with the lata's own `IsProtected` shield, and
-both of those were added **specifically because this clause did not cover an airborne slipper**.
-It was guarding a door that already had two locks on it and jamming the player's arm in the
-process.
+Current Feedback changes the earlier allow-down behavior: can knockdown cancels
+an existing charge, and no charge/release is accepted until the can is restored
+and its barrier is gone. A later valid charge starts from zero. Already airborne
+slippers retain existing collision and can-protection behavior. This shared rule
+applies in Classic and Hero Strike and requires matching protocol118clients.
+The previous rationale is retained in Git history, not as a conflicting live rule.
 
 ⚠️ **§2.16 MEASURED 2026-08-01 — THE DOTTED ARC LANDS WHERE THE SLIPPER LANDS.**
 `tools/mech_probe.tscn` integrates the preview's own scheme from the velocity it is

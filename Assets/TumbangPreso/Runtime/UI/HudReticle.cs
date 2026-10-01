@@ -12,7 +12,7 @@ namespace TumbangPreso.UI
     /// lines under the reticle. Every one of them asked the player to look away from the aim
     /// point at the exact moment the aim point mattered. They are shapes on the reticle now:
     ///
-    /// - a hollow aim circle, with no centre dot or weapon-like cardinal ticks;
+    /// - a compact filled centre dot, with no weapon-like cardinal ticks;
     /// - a CHARGE ring that appears at the charge floor (`Balance.ChargeMinPower`, a third of
     ///   the way round) and fills to full power, clockwise from twelve like every timer here;
     /// - a PEKTUS tick: a short arc outside the ring on the side the throw will curve, as long
@@ -43,9 +43,9 @@ namespace TumbangPreso.UI
         public void SetOwner(int slot) => _ownerSlot = slot;
         private static bool Still => Settings.SettingsStore.Current.ReducedUiMotion
             || Settings.SettingsStore.Current.ReducedEffects;
-        public float AimRadius => Mathf.Lerp(12, 9, Mathf.Clamp01(Charge)) + (Still ? 0 :
-            1.2f * Mathf.Sin(Mathf.PI * Mathf.Clamp01(_fullPulseLeft / FullPulseSeconds))
-            + 3 * Mathf.Sin(Mathf.PI * Mathf.Clamp01(_releasePulseLeft / ReleasePulseSeconds)));
+        public float AimRadius => 3.2f + (Still ? 0 :
+            0.4f * Mathf.Sin(Mathf.PI * Mathf.Clamp01(_fullPulseLeft / FullPulseSeconds))
+            + .7f * Mathf.Sin(Mathf.PI * Mathf.Clamp01(_releasePulseLeft / ReleasePulseSeconds)));
 
         private void OnPresented(Visual.MatchFlair.Kind kind, int actor, int subject, Vector3 at, float strength)
         {
@@ -125,13 +125,10 @@ namespace TumbangPreso.UI
             var c = GetPixelAdjustedRect().center;
             var ink = Refused ? RefusedInk : color;
             var gold = CourtPresentationPalette.Gold;
-            // Small hollow circle. The centre remains entirely transparent in every state.
+            // Current Feedback: a filled dot precisely on the existing aim centre.
             float radius = AimRadius;
-            float width = InReach ? 2.8f : 2.2f;
-            HudDraw.Arc(vh, c, radius + width * .5f + 1.5f,
-                radius - width * .5f - 1.5f, 90, 360, Keel, 64);
-            HudDraw.Arc(vh, c, radius + width * .5f,
-                radius - width * .5f, 90, 360, InReach ? UiTheme.Defense : ink, 64);
+            HudDraw.Disc(vh, c, radius + 1.2f, Keel, 32);
+            HudDraw.Disc(vh, c, radius, InReach ? UiTheme.Defense : ink, 32);
             // Cooldown sweep: thin, outside everything, drains clockwise.
             if (Cooldown > .001f)
             {
@@ -153,7 +150,7 @@ namespace TumbangPreso.UI
                     HudDraw.Arc(vh, c, 38.5f, 33.5f, mid + span * .5f, span, Refused ? RefusedInk : gold, 72);
                 }
             }
-            // Reach is shown by the circle's edge weight and role tint, never a gun hitmarker.
+            // Reach is shown by the dot's role tint, never a gun hitmarker.
         }
     }
 }

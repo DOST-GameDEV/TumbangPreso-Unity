@@ -2653,6 +2653,18 @@ revises the older allow-down rule. Baseline actual charge/UI case first, then
 shared Core gate and maintenance path, protocol118, focused Core/native checks.
 Other contributor's117player work remains an older compatible batch, not118proof.
 
+Can-down baseline1/1fails because the down can still permits release. Core now
+requires upright; maintenance shares the real gate; the gate includes actual
+can protection. Existing cancel replication clears banked power. Protocol118
+records the semantic change. Final same native charge/UI flow plus focused
+Core independent-gate case; old unaffected shape checks need no repeat.
+
+Can-down final1/1native and Core1/1pass. Full charge cancels to zero on
+knockdown, barrier blocks new charging, and a fresh post-protection charge
+releases normally. Frozen hashes unchanged, no new OOM, no tooling retry.
+Publish protocol118coherent unit, update same row without marking its dot part
+done. Fresh live penalty row no longer includes earlier Tagged immunity request;
+current numbers cover camping, loose-slipper timers and2.5second fatigue only.
 Pre-roundb4c329b7b integrates contributorround-resetb25cff3a5 and native audio
 receipts with their scopes intact. Current117; can-down118work is reserved and
 not published in this candidate. No conflict in runtime paths; both ledger
@@ -2690,3 +2702,23 @@ Both runssettings/profiles intact, all taskplayers/helpers terminal. New evidenc
 qualifies scoped seat/character recovery, not whole-round/loss/abilities proof.
 Publish receipts/status honestly; full objective active. Next actionable work
 continues from current Feedback and reasonable remaining network/UX defects.
+
+CENTRE-DOT-1001 claims UI/HudReticle.cs and existing ThrowChargeUiTests.cs.
+Current Feedback replaces hollow aim circle with a filled centre dot. Keep
+existing charge/curve/cooldown information and real-owner release feedback,
+reduce pulse extent to suit the small dot, preserve reduced-motion behavior.
+Two existing native cases cover geometry/event lifecycle and real charge/
+can-down/release flow with small/wide captures. Cosmetic only, protocol118stays.
+
+Centre-dot native2/2passes, hashes unchanged/no new OOM. Idle960x540dot is
+centred and filled; full1600x680charge retains separate ring/caption. Native
+owner-event/reduced-motion/hidden controls and real throw gating pass. Publish
+this last part of Harry's combined row, then mark Done text with the three
+commit/evidence scopes; Human verified stays untouched. New penalty row queued
+note added via revision-aware insertion after one concurrent-edit refusal.
+
+Integrated0dff4beb1 can-downcharge cancellation and0bb2973d3centre-dot with scoped
+Core/native/capture receipts intact. Current118; both actual reconnect players
+remain117frozenproof. Keep new penalty row contributor-reserved ifclaimed. No
+own loading/art rewrite or unrelated dirt staged. Next refresh current Feedback
+bottom-first and continue actionable engineering work, retain honest gate limits.

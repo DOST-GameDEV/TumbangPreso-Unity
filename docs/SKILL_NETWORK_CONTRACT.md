@@ -542,3 +542,8 @@ age only for a spent wall; intact walls require zero. Shared world restore/repla
 uses the existing epoch/round/lifetime gates. Only host crossing resolves a drop;
 rendering adds no collider or authority. Existing water kinds keep their previous
 duration bounds. [Evidence](reports/hero-quality-2026-10-01/wall-tutorial-checks/README.md).
+
+Protocol118 aligns ordinary throw legality: lata knockdown cancels held charge;
+new charge and release require upright lata with restoration protection expired.
+Existing charge cancellation replication is reused. No new payload or transport;
+117and118must not share a match because the accepted input rules differ.
