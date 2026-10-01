@@ -3420,3 +3420,10 @@ path. Use measured weighted palm centres on the real rig to align the two arms
 at the low forward working position, rather than another blind Euler guess.
 One targeted bake and one focused native contact/pixels pass, one tooling repair
 maximum. Current source1e8aa569 protocol122; coating/bindings shipped and terminal.
+
+Measured Skim palm native1/1 passes actual shoe-bounds contact and forward working
+position (about0.38m), with25observer frames reviewed. Bake changedonlySkim.anim,
+GUID/roster/otherclips preserved; exactinputs match, norepair/newOOM. Handsnowwork
+againsttheactualshoe, thoughblockypalmsvisuallyoverlapbehindit. Boundscheck isnot
+meshpenetrationproof. Brief genericbluecastcubesremain,nextscopedpresentation
+cleanup. No freshplayer/peer/SFX/humanapproval. Alljobs terminal.

@@ -115,7 +115,8 @@ retry failed before filming; sole-contact/observer review remains open.
 [Skim evidence and limits](reports/hero-quality-2026-10-01/skim-motion-checks/README.md).
 Loaded-shoe meniscus now follows real state in world/FPP with native expiry/release
 cleanup. The distinct cue review resolves observer prop/icon capture limits;
-body palm/sole alignment still needs refinement.
+body palm/sole alignment is now baked from the real weighted hand geometry,
+with a focused native contact check. Generic cast particles and sound remain.
 [Coating evidence](reports/hero-quality-2026-10-01/skim-coating-checks/README.md).
 
 ### TUTORIAL-REFINE-1001: latest human notes
