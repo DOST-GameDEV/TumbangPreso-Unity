@@ -414,7 +414,7 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual("Reset Can", prompt.text);
                 local.Intent.Set(Verb.Grab, true); yield return new WaitForSeconds(.2f);
                 Assert.Greater(local.GetComponent<Carrier>().ChannelRatio, 0);
-                Assert.AreEqual("Resetting can · tap to cancel", prompt.text);
+                Assert.AreEqual("Resetting Can · tap to cancel", prompt.text);
                 yield return TumpUiCapture.Capture("CourtHud-can-reset-touch", canvas, 1280, 720, false, true,
                     underlays: new[] { touch.Canvas }, checkActionBounds: true);
                 local.Intent.Set(Verb.Grab, false); yield return null; yield return new WaitForFixedUpdate(); yield return null;
@@ -753,8 +753,9 @@ namespace TumbangPreso.PlayTests
                 Assert.AreSame(InputGlyphs.For(Hud.KeyLabelFor("Grab"), true), glyph.sprite);
                 yield return TumpUiCapture.Capture("Feedback-reset-xelu", hud.Canvas, 1600, 680, false, true);
                 defender.Intent.Set(Verb.Grab, true); yield return new WaitForSeconds(.2f);
-                Assert.Greater(defender.GetComponent<Carrier>().ChannelRatio, 0); Assert.AreEqual("Resetting can", text.text);
+                Assert.Greater(defender.GetComponent<Carrier>().ChannelRatio, 0); Assert.AreEqual("Resetting Can", text.text);
                 Assert.IsFalse(glyph.enabled, "The old idle glyph must not leak into channel feedback.");
+                yield return TumpUiCapture.Capture("Feedback-resetting-can-caption", hud.Canvas, 960, 540, false, true);
                 defender.Intent.Set(Verb.Grab, false); yield return null; yield return new WaitForFixedUpdate(); yield return null;
                 Assert.AreEqual("Reset Can", text.text); Assert.IsTrue(glyph.enabled);
                 TouchInput.Active = true;

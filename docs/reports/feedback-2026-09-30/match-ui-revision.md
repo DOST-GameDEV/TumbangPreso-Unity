@@ -34,3 +34,15 @@ existing camera; it proves the contextual UI, not a defender camera journey.
 
 No fresh player build, actual protocol100 peer session, physical device or human
 approval is claimed. Earlier protocol98/99 peer results do not qualify100.
+
+
+## October1 reset caption refinement
+
+Harry's new screenshot asks for exactly Resetting Can. The channel label now
+uses that capitalization, including toggle-cancel and spectator activity text.
+Idle Reset Can, saved Xelu bindings, control sizes and gameplay remain unchanged.
+Two existing native cases pass14.21s on the merged protocol110 source: actual
+pickup, reset/cancel/finish and key/pad/touch glyphs; touch toggle/reach behavior.
+The active-channel960x540 image was inspected. Fresh XML/guard receipts are in
+checks/resetting-can-caption. No memory guard or new OOM; no fresh player claim.
+This copy-only revision does not change the compatibility number.

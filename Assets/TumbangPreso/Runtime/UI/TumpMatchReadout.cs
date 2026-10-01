@@ -269,7 +269,7 @@ namespace TumbangPreso.UI
                 if (spectating)
                 {
                     string activity = actor.IsSwimming ? "Swimming" : actor.IsTripped ? "Down" : actor.IsStunned ? "Stunned" :
-                        actor.IsDefender ? (actor.GetComponent<Carrier>()?.ChannelRatio > 0 ? "Resetting can" : "") :
+                        actor.IsDefender ? (actor.GetComponent<Carrier>()?.ChannelRatio > 0 ? "Resetting Can" : "") :
                         actor.HoldingSlipper ? "Holding" : "Retrieving";
                     if (!string.IsNullOrEmpty(activity)) state += (state.Length > 0 ? " · " : "") + activity;
                 }
@@ -415,7 +415,7 @@ namespace TumbangPreso.UI
                 bool toggle = Settings.SettingsStore.Current.ToggleRestore;
                 string cue = Hud.PressCue("Grab");
                 if (carrier.ChannelRatio > 0)
-                    _prompt.text = toggle ? "Resetting can · " + (Hud.OnTouch ? "tap" : "press " + cue.TrimEnd()) + " to cancel" : "Resetting can";
+                    _prompt.text = toggle ? "Resetting Can · " + (Hud.OnTouch ? "tap" : "press " + cue.TrimEnd()) + " to cancel" : "Resetting Can";
                 else BindingPrompt("Grab", "Reset Can");
                 if (Hud.OnTouch) TouchHud.Emphasise(Verb.Grab);
                 if (carrier.ChannelRatio > 0) Progress(carrier.ChannelRatio); return;
