@@ -2381,3 +2381,37 @@ receipts intact. Current source117; actual Haunt Windows116pair remains exact
 frozen scope, no117actual-peer claim. Both histories preserved and owned runtime
 files clean. Broader goal stays active; next local work remains complete Haunted
 bot observation/fallback/target-selection handling, followed by remaining queue.
+
+HAUNTED-ACTOR-PERCEPTION-1001 owns AIController.cs and existing companion
+observation tests. Scope: same7m outer near-sight cutoff, stop far actor updates,
+represent unknown position/prediction as nullable (no fake coordinates), filter
+actor selection/defender/aim queries and retain remembered positions/self/normal
+lag. Four native baseline cases cover unknown/far selectors/memory/replacement;
+final adds prior seven controls. Slipper sensing remains explicitly separate,
+not a full Haunted bot claim. No kit mechanics/art/loading or protocol edit.
+Stop at fresh XML; one tooling repair maximum. No active heavy job.
+
+Haunted actors baseline4/4fails at intended defects: unknown live coordinates,
+new companion coordinate exposure, distant memory following truth, and far tag
+selection. Runner51299terminal, no fixture repair. Source now nullable At/AheadOf,
+retained no-allocation actor view for selectors, indexed visible-only Observe,
+defender/claimant helper filtering and observed rather than live Facing. Actor
+sensing uses7m body distance based on existing outer sight limit (not pixel-identical
+camera-depth geometry). Normal kits/rules remain unchanged; unknowns have no
+invented coordinates. Final four plus prior seven behavior/allocation controls.
+
+Actor final first launch66972terminal before tests: one missed nullable caller
+in SafeToEmote caused CS1503. Corrected source caller; no fixture change or pass
+claimed. ReachTargetFor external actor result also receives shared sight gate.
+One bounded integration repair; coherent finalv2includes11observation cases plus
+existing two actual close-tag commitment/input cases (13expected). All earlier
+menu/player/wire proofs retained without rerun. No additional validation loop.
+
+Haunted actor finalv2 native13/13passes0.946s;670inputs no drift, two owned source
+files match frozen8120ab03c overlays. Four Haunted plus seven prior controls and
+two real close-tag input cases; first final CS1503 corrected once, no fixture
+repair. All jobs51299/66972/91287terminal, prefs/profiles preserved. Publish exact
+AI/tests/status/receipts now. Actor observation/fallback/selection unit qualified;
+item knowledge and whole-match AI remain separate. Prior116actual Haunt pair is
+older source, no new117peer claim. Next filter distant rival slippers in bot item
+planning while preserving own retrieval knowledge and live inventory lifecycle.

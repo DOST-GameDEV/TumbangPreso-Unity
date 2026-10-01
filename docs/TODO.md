@@ -373,6 +373,10 @@ incomplete cells still do not authorize invented specifications.
   four seats, both sides receive bounded status clocks, move and complete the
   chase, clear timers and preserve settings. Rejoin/other kits/Haunted bot sensing
   and human mix remain open. [Actual peer evidence](reports/feedback-2026-09-30/haunt-actual-peers.md).
+  Haunted bot actor perception now passes13native cases: distant actors cannot
+  update memory or reenter target queries through live fallback; unknown position
+  is explicit and near reacquisition retains lag. Item sensing remains separate.
+  [Actor evidence](reports/feedback-2026-09-30/haunted-actor-perception.md).
 
 - [x] F0930-13 Title Enter regression: release opening Submit before Home can queue;
   three native keyboard/pad/ordinary-key checks pass. Shipped c403800c;

@@ -32,6 +32,54 @@ namespace TumbangPreso.PlayTests
             => typeof(AIController).GetMethod("Observe",Hidden).Invoke(brain,new object[]{dt});
         private static Vector3 At(AIController brain,CharacterMotor body)
             => (Vector3)typeof(AIController).GetMethod("At",Hidden).Invoke(brain,new object[]{body});
+        private object Read(string name,params object[] args)
+            => typeof(AIController).GetMethod(name,Hidden).Invoke(_brain,args);
+        private void BlindFixture()
+        {
+            _observer.transform.position=Vector3.zero;
+            _owner.transform.position=new Vector3(6,0,6);
+            _owner.HoldingSlipper=true;_companion.gameObject.SetActive(false);
+            var can=new GameObject("Blind bot can").AddComponent<Lata>();can.enabled=false;
+            GameServices.Round.Lata=can;_observer.ApplyHaunted();
+            Assert.IsTrue(_observer.IsHaunted);Assert.IsTrue(_owner.IsTaggable());
+        }
+        [Test] public void AnUnseenActorHasNoPositionWhileHaunted()
+        {
+            BlindFixture();Observe(_brain);
+            Assert.IsNull(Read("At",_owner),"Unknown actor position fell back to live truth.");
+            Assert.IsNull(Read("AheadOf",_owner,.35f));
+            Assert.AreEqual(Vector3.zero,At(_brain,_observer));
+        }
+        [Test] public void HauntedSelectorsCannotAcquireAFarActor()
+        {
+            BlindFixture();Observe(_brain);
+            Assert.IsNull(Read("TagTarget"),"Tag selection sees through Haunted.");
+            Assert.IsNull(Read("LiveThreat"));
+            Assert.AreEqual(0,Read("VictimsUnder",Vector3.zero,20f,false));
+            Assert.AreEqual(0,Read("PaeteSentryAim",GameServices.Round,Vector3.zero));
+            Assert.IsFalse((bool)Read("Facing",_owner,70f));
+        }
+        [Test] public void HauntedRemembersOldPositionsWithoutTrackingUnseenMovement()
+        {
+            BlindFixture();_observer.ClearStatuses();_owner.transform.position=Vector3.right*2;
+            Observe(_brain);_observer.ApplyHaunted();_owner.transform.position=new Vector3(6,0,6);
+            Observe(_brain,10);
+            Assert.AreEqual(Vector3.right*2,At(_brain,_owner),"Blind memory followed live distant movement.");
+            _owner.transform.position=Vector3.right*3;Observe(_brain,.01f);
+            Assert.Greater(At(_brain,_owner).x,2);Assert.Less(At(_brain,_owner).x,3);
+            _owner.transform.position=new Vector3(6,0,6);_observer.ClearStatuses();Observe(_brain,10);
+            Assert.AreEqual(_owner.transform.position,At(_brain,_owner));
+        }
+        [Test] public void AnUnseenReplacementCannotInheritADeadCompanionsMemory()
+        {
+            Observe(_brain);_observer.ApplyHaunted();
+            GameServices.Round.UnregisterCompanion(_companion);Object.DestroyImmediate(_companion.gameObject);
+            _companion=Body(4,new Vector3(10,0,10));Assert.IsTrue(GameServices.Round.RegisterCompanion(_companion));
+            Observe(_brain);
+            Assert.IsNull(Read("At",_companion),"Unseen replacement inherited or exposed a position.");
+            _companion.transform.position=new Vector3(0,0,2);Observe(_brain);
+            Assert.AreEqual(_companion.transform.position,At(_brain,_companion));
+        }
         [TestCase(Difficulty.Normal)] [TestCase(Difficulty.Astig)]
         public void CompanionBeliefUsesTheSameReactionLagAsPlayers(Difficulty tier)
         {
