@@ -229,7 +229,9 @@ repair. No fake gameplay UI or tag sounds in the hallucination.
 
 ## Hydro / Rafi: scoop, fold, drain
 
-Mechanics are proposals in new-kit-design.md, not implemented claims. Preserve
+The original designs live in new-kit-design.md; gameplay implementation and
+qualification now live in TODO and the dated Hydro evidence. This section is
+the presentation plan, not a blanket completion claim. Preserve
 the active boat-repairer/water-trickster direction, practical workcloth/cord/buoy
 identity and no-gills rule from BADJAO_EXPANSION. Do not import a surfboard from
 Mualani or turn fictional workwear into a claim about traditional dress. Water should visibly transport or redirect, not freeze.

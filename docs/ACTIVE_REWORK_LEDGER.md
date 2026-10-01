@@ -3304,3 +3304,26 @@ Inspect real owner/witness motion and settled role icons in the same distinct
 presentation review. Preserve old clips, shipping saved controls and other heroes.
 One focused native review, one bounded tooling repair maximum. Source510f356f;
 icon unit aef85a28 remote verified, both same-row Doc notes read back. Study silence.
+
+Skim targeted bake succeeds41seconds; all four previous clips/metas unchanged.
+New clip/reference only. Body and FPP now use explicit skim-coat, with one native
+review prepared: actual shipping clip, loaded held-shoe identity, body/hand motion,
+36frames owner/witness and settled two-role icon views. No fixture repair used;
+all SFX and sustained loaded-shoe material remain separate, unchanged.
+
+Skim first native1/1 confirms runtime binding/motion and held identity, but the
+review exposes capture defects: first frame inherited the expensive previous
+UI capture delta; observer helper restored body but not the detached held shoe;
+manual role Tick competed with Hud's cached owner. One bounded fixture repair
+applies capture delta before cast, restores shoe shadows only while witnessing,
+and disables automatic Hud Tick in this explicitly driven owner fixture. Product
+source/assets unchanged. Retry the one review once; keep initial evidence.
+
+Skim capture-only retry failed before motion: disabling Hud invokes OnDisable
+and hides its canvas, so Power0 mesh is absent. One repair limit reached; no
+further fixture retry. Restore exact initial passing test (hash verified), retain
+failed diagnostic. Initial1/1 still qualifies real cast routing/body/FPP and held
+identity. Artistic sole contact/observer shoe and Waterwall settled icon remain
+open for distinct loaded-shoe presentation unit. No product failure inferred
+from the disabled-canvas fixture. Publish coherent dedicated-motion slice with
+these limits, not final quality. No native job running.

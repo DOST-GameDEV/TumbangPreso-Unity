@@ -469,6 +469,79 @@ namespace TumbangPreso.PlayTests
             }
         }
 
+        [UnityTest,Timeout(180000)]
+        public IEnumerator SkimUsesDedicatedShippingCoatMotionAndPreservesHeldShoe()
+        {
+            yield return Start();var caster=Rafi();caster.IsBot=false;GameLaunch.SoloSeat=caster.PlayerSlot;
+            var art=RosterBook.Load().FindPersonArt("rafi");
+            Assert.IsNotNull(art.Clips.SingleOrDefault(c=>c!=null&&c.name=="hero-rafi-skim"));
+            var visual=caster.GetComponent<TumbangPreso.Visual.CharacterVisual>();
+            visual.ApplyModel(art.Model,art.Tint,art.Clips,art.Palette,art.PetModel);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.Follow(caster);rig.SetAimSource(AimSource.Movement);
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))arms.SetCharacter("rafi");
+            var view=Object.FindFirstObjectByType<TumpMatchReadout>();
+            float settle=Time.realtimeSinceStartup+TumpPowerReadout.RoleSwapSeconds+.15f;
+            while(Time.realtimeSinceStartup<settle){view.Tick(caster,false,false,false,false);yield return null;}
+            yield return TumpUiCapture.Capture("Rafi-skim-settled-960x540",view.Canvas,960,540,false,true);
+            var animator=caster.GetComponent<TumbangPreso.Visual.CharacterAnimator>();
+            var arm=visual.Model.GetComponentsInChildren<Transform>().First(t=>t.name=="arm-left");
+            var torso=visual.Model.GetComponentsInChildren<Transform>().First(t=>t.name=="torso");
+            var restArm=arm.localRotation;var restTorso=torso.localRotation;
+            var carrier=caster.GetComponent<Carrier>();var shoe=carrier.Held;Assert.IsNotNull(shoe);
+            var ability=caster.AbilitySystem.Kit.Skill2;
+            Assert.AreEqual("hero-rafi-skim",ability.CastAction);Assert.AreEqual("skim-coat",ability.ViewmodelAction);
+            var witness=new GameObject("Rafi skim witness").AddComponent<Camera>();witness.CopyFrom(Camera.main);
+            witness.enabled=false;witness.tag="Untagged";witness.fieldOfView=45;
+            witness.gameObject.AddComponent<TumbangPreso.Visual.ColourGrade>().AdoptFromScene();
+            witness.transform.position=caster.transform.position+new Vector3(3,1.6f,2.5f);
+            witness.transform.LookAt(caster.transform.position+Vector3.up*.9f);
+            var hdr=new RenderTexture(960,540,24,RenderTextureFormat.DefaultHDR,RenderTextureReadWrite.Linear);
+            var ldr=new RenderTexture(960,540,0,RenderTextureFormat.ARGB32,RenderTextureReadWrite.sRGB);
+            var pixels=new Texture2D(960,540,TextureFormat.RGB24,false);
+            const string folder="Logs/rafi-skim-motion";
+            System.IO.Directory.CreateDirectory(folder+"/owner");System.IO.Directory.CreateDirectory(folder+"/witness");
+            var log=new System.Text.StringBuilder("frame,arm_angle,torso_angle,left_offset\n");
+            int rate=Time.captureFramerate;Time.captureFramerate=30;
+            float armMotion=0,torsoMotion=0,firstPersonMotion=0;
+            try
+            {
+                Assert.AreEqual(HeroKit.CastOutcome.Cast,caster.AbilitySystem.ApplyNetworkCast(HeroAbilitySystem.Slot.Skill2,
+                    caster.transform.position,caster.transform.forward,caster.Intent.AimPoint,0,true,ability.Id,false));
+                Assert.AreEqual("hero-rafi-skim",animator.CurrentClipName);
+                Assert.IsTrue(((RafiHeroKit)caster.AbilitySystem.Kit).IsSkimLoadedFor(shoe));
+                var viewArms=Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None).First(a=>a.gameObject.activeInHierarchy);
+                var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+                Assert.IsNotNull(typeof(ViewmodelArms).GetField("_clip",flags).GetValue(viewArms));
+                for(int frame=0;frame<36;frame++)
+                {
+                    yield return null;
+                    float a=Quaternion.Angle(restArm,arm.localRotation),t=Quaternion.Angle(restTorso,torso.localRotation);
+                    float offset=((Vector3)typeof(ViewmodelArms).GetField("_castLeft",flags).GetValue(viewArms)).magnitude;
+                    armMotion=Mathf.Max(a,armMotion);torsoMotion=Mathf.Max(t,torsoMotion);firstPersonMotion=Mathf.Max(offset,firstPersonMotion);
+                    Assert.AreSame(shoe,carrier.Held);Assert.AreEqual(SlipperState.Held,shoe.State);
+                    log.AppendLine(System.FormattableString.Invariant($"{frame},{a:F3},{t:F3},{offset:F3}"));
+                    foreach(var camera in new[]{Camera.main,witness})
+                    {
+                        PaeteKitPlayProbe.RenderFilmView(camera,hdr);Graphics.Blit(hdr,ldr);
+                        var old=RenderTexture.active;RenderTexture.active=ldr;pixels.ReadPixels(new Rect(0,0,960,540),0,0);pixels.Apply();RenderTexture.active=old;
+                        System.IO.File.WriteAllBytes(folder+(camera==witness?"/witness/":"/owner/")+frame.ToString("D5")+".jpg",pixels.EncodeToJPG(90));
+                    }
+                }
+                Assert.Greater(armMotion,25);Assert.Greater(torsoMotion,5);Assert.Greater(firstPersonMotion,.2f);
+                Assert.IsTrue(((RafiHeroKit)caster.AbilitySystem.Kit).IsSkimLoadedFor(shoe));
+            }
+            finally
+            {
+                Time.captureFramerate=rate;System.IO.File.WriteAllText(folder+"/motion.csv",log.ToString());
+                Object.Destroy(witness.gameObject);Object.Destroy(hdr);Object.Destroy(ldr);Object.Destroy(pixels);
+            }
+            var defender=WallCaster();defender.IsBot=false;GameLaunch.SoloSeat=defender.PlayerSlot;
+            rig.Follow(defender);defender.AbilitySystem.Kit.SetRole(true,Context(defender));
+            settle=Time.realtimeSinceStartup+TumpPowerReadout.RoleSwapSeconds+.15f;
+            while(Time.realtimeSinceStartup<settle){view.Tick(defender,false,false,false,false);yield return null;}
+            yield return TumpUiCapture.Capture("Rafi-wall-settled-960x540",view.Canvas,960,540,false,true);
+        }
+
         [UnityTest,Timeout(90000)]
         public IEnumerator SkimAndWaterwallUseTheirOwnIllustrationsAndTruthfulJobLabels()
         {
