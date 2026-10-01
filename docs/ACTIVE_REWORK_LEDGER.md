@@ -3158,3 +3158,18 @@ No runtime conflicts; current121. Actual120pair remains scoped c26c5c34b; no new
 121peer or post-helper player claim. No owned heavy jobs/previews. Publish merge
 then inspect intrinsic Skim ground-phase prediction without changing the kit.
 
+
+RAFI-WATERWALL-PRESENTATION-1001 owns only Waterwall presentation fields in
+Abilities/RafiHeroKit.cs; Visual/HeroAbilityClips.Rafi.cs and its BuildAll mapping,
+CharacterAnimator action mapping; Camera/ViewmodelArms.CastGesture.cs waterwall
+entry; Editor/RafiMotionAuthor.cs targeted wall bake; new rafi-motion wall clip
+and Resources/Roster/person_rafi.asset clip reference; RafiWaterVisual.cs and
+Resources/Shaders/RafiWater.shader; RafiExpansionProbe.cs focused presentation.
+Fresh3ee5b506 integrated terrain prediction; contributor's Skim prediction stays
+untouched. Current curtain pixels still resemble a clear pane; wall currently
+reuses Crosscurrent's body/FPP cut. Author a distinct planted two-palm lift to
+match0.25s gather, deterministic sparse downward rivulets and quiet centre.
+No mechanics/timing/width/collision/protocol change from121. Bake only new Rafi
+clip/reference; preserve all existing models/arms/other hero assets. Material
+sample and actual body/FPP motion review required; no SFX/listening completion
+claim in this unit. Owner study silence continues; no chat pings.
