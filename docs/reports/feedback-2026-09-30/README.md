@@ -199,3 +199,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Bot companion reaction-delay correction](bot-companion-observation.md).
 
 [Current114player build and failed direct-peer evidence](current-player-114.md).
+
+[CLI admission handoff and actual passing114peers](cli-admission-handoff.md).

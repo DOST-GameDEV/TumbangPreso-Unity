@@ -85,10 +85,11 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   controls. [Evidence](reports/feedback-2026-09-30/bot-companion-observation.md).
   Whole-match/player checks and Haunted sensor fairness remain separate.
 
-- [ ] NETWORK-COLD-JOIN-1001: current114player build succeeds, but real direct
-  peers fail before admission/round1. Investigate immediate CLI arena handoff
-  before connection/seat completion and startup deadlines; retain loading
-  ownership and established outage behavior. [Evidence](reports/feedback-2026-09-30/current-player-114.md).
+- [x] NETWORK-COLD-JOIN-1001: CLI client now awaits connection+seat admission;
+  trusted server messages own arena handoff. First actual pair failure retained,
+  changed candidate passes real protocol114host/client through active round2
+  with matching structure and preserved profiles. Loading/deadlines unchanged.
+  [Evidence and limits](reports/feedback-2026-09-30/cli-admission-handoff.md).
 
 Source: [TUMP Wiki](https://docs.google.com/document/d/1jvr7NLzhHrbw-wrG676AeOkoTxJf4GokkfmxpO0ddLg/edit),
 read on 2026-09-30, including ability, status and feedback tabs. The document wins

@@ -2022,3 +2022,26 @@ Linux/native receipts intact. Windows239050ac6player remains successfully built
 but failed direct admission; Linux112 evidence is separate. Both ledger histories
 retained; no runtime network conflict or unrelated dirt overwritten. Continue
 NETWORK-COLD-JOIN-1001 existing connection/seat waiter investigation next.
+
+NETWORK-COLD-JOIN-1001 owns only NetBootstrap.cs client admission sequencing.
+Immediate independent SceneFlow.Go after StartClientAsync removed; existing
+WaitForConnectionAsync waits for connection+applied seat, while trusted seating/
+match-start messages retain arena ownership. Log explicit admission result. No
+loading/prewarm/SceneFlow source, steady8s transport silence, approval defaults,
+protocol or authored assets changed. This corrects a proven premature handoff;
+complete startup-failure cause remains unproven until actual peers. Next freeze
+this owned overlay plus merged title fix on a NEW candidate, incremental build
+and same preserved-profile direct pair. Retain first failed114receipt; no claim
+of success from this edit or compilation. All old jobs terminal; no new job yet.
+
+NETWORK-COLD-JOIN-1001 changed candidate build34516 succeeds2141MB/188s;
+post-hash66089 terminal,15422inputs unchanged. RuntimeSHAd561c1f18851597d192f6e3a68f8bc35450c841b788e01a5a14966c59b67fd57.
+Actual direct pair68477 PASSES no faults, both114/active round2/defender1/
+HeroStrikeEskinita/structural282AB88E. Hostpeer1approved+seat1, clientadmission
+seat assigned before arena. Client150s thenexit, host163s withbot handoff; do not
+compare later numeric scores as simultaneous state. Shared prefs/profile files
+preserved; all players/jobs terminal. Loader/prewarm/steady8s deadlines unchanged.
+Original failing pair retained; shorter second warmup is an explicit confound,
+no blanket cold-load/timeout cause claim. Publish only NetBootstrap waiter fix
+and scoped receipts/status. Actual all-ability/rejoin/WAN/hardware/audio remain
+separate. Full goal active; do not treat this pair as whole-feedback completion.
