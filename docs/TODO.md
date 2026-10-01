@@ -185,6 +185,9 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   the accepted choice before round one, retaining live-match and Mirror rules.
   Actual pair exposed the mismatch; native final3/3passes. Changed-player retry
   remains separate. [Evidence](reports/feedback-2026-09-30/pre-round-pick-handover.md).
+  Changed actual117crash/relaunch restores seat1and chosencharacter2despite local
+  preference0. Aggregate run remains failed at the host's later boundary sample;
+  both verdicts retained. [Exact evidence/limits](reports/feedback-2026-09-30/reconnect-actual-player.md).
 
 Source: [TUMP Wiki](https://docs.google.com/document/d/1jvr7NLzhHrbw-wrG676AeOkoTxJf4GokkfmxpO0ddLg/edit),
 read on 2026-09-30, including ability, status and feedback tabs. The document wins

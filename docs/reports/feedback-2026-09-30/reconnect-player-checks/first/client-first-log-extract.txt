@@ -1,0 +1,10 @@
+[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+[NetReport] writing C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Logs\feedback-reconnect-player-1001\rejoin\client-first.txt after 95 s.
+[Net] connecting to 127.0.0.1:18917
+[NetBoot] join requested to 127.0.0.1:18917: connecting
+[Net] connected
+[Net] connected as seat 2
+[NetBoot] join admission: seat assigned
+[NetSeat] arena installed: LocalSlot=1 spectator=False host=False allBots=False | s0:-+live+act | s1:reader+sim+live+act | s2:-+bot+live+act | s3:-+bot+live+act
+[NetAuto] READY submitted from a client peer.
+[Slice] round 1 begins, taya is seat 0

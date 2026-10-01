@@ -2658,3 +2658,35 @@ receipts with their scopes intact. Current117; can-down118work is reserved and
 not published in this candidate. No conflict in runtime paths; both ledger
 histories preserved. Next changed internalplayer output is feedback-reconnect-fixed-
 player-1001; retain original117failedpair and rerun same strictcharacter2once.
+
+Changed reconnect candidate freeze49762terminal:15426inputs, committed source
+5d2758f95, protocol117. All original failedpair/report/build retained. New named-
+profile internal build active in feedback-reconnect-fixed-player-1001; wait same
+handle then post-hash before players. Exactsame driver/expectation, fresh output
+rejoin-v2and own profilesfeedback-reconnect-fixed-peer-1001. Original pair proved
+activeworld/reclaimedseat but wrongpre-roundchar3; sourcefix and native3cases now
+requirechosen2and preserve live/mirror behavior. No changed loader/deadline or
+weakened verifier. Keep full goal active; no unrelated process or profile touched.
+
+Changed reconnect build15699terminal succeeds2141MB/98s; no fixture/source
+preparation overlap. Same strictdriver requiresactualchosenchar2; firstfailed
+build/pair retained. Post-build hash job now owns read-only full verification,
+then exactlyone changed realpair in fresh rejoin-v2output/profile. Do not relaunch
+oldfailedbinary or infer currentpeer success from native3cases/build alone.
+
+Changed117post-hash43762terminal:15426inputs unchanged, runtimeSHAd3830cacd058bd683de12a82fa76eb2942c75d9c7d3035a4e74f2f4c77d1c414.
+Now launchsame unchanged reconnectdriver on fixedbinary/freshrejoin-v2profiles.
+Expected chosenchar2 on both actual peers remainsstrict; no verifier relaxation.
+All build/hash/native jobs terminal. Only owned test-client crash is intentional;
+other players/profiles/apps preserved. Stop at freshterminalreports/verdict.
+
+Changed actualpair28481terminal: identity retained, peer1drop/bottakeover, peer2
+seat1reclaim, returnerCLIENT/local1/active/non-spectator and bothchosenchar2.
+Matching117/Eskinita/HeroStrike/structuralE2DF775D. Aggregateverdict FAILED solely
+host110sreportinactive at round1boundary (liveframes90.002s); client45sreportactive,
+thenlaterhostbot takeover is expected after client'snaturalexit. Preserve strict
+falseverdict, no third unchanged retry. Originalwrongchar3failedpair retained.
+Both runssettings/profiles intact, all taskplayers/helpers terminal. New evidence
+qualifies scoped seat/character recovery, not whole-round/loss/abilities proof.
+Publish receipts/status honestly; full objective active. Next actionable work
+continues from current Feedback and reasonable remaining network/UX defects.
