@@ -22,7 +22,7 @@ namespace TumbangPreso.Abilities
     /// git history (`CheskaHeroKit.cs` before this commit) and the effects it built are reused: the sheet
     /// is Cold Feet's field, the barricade is the wall's body, the nova's prison is the freeze.
     /// </summary>
-    public sealed class CheskaHeroKit : HeroKit
+    public sealed class CheskaHeroKit : HeroKit, ITimedKitReplication
     {
         public CheskaHeroKit() : base("cheska", "CHESKA")
         {
@@ -36,6 +36,37 @@ namespace TumbangPreso.Abilities
 
         /// <summary>True while her slipper carries the frost (Frostbite loaded, not yet thrown).</summary>
         public bool IsFrostbiteLoaded { get; set; }
+        private bool _joiningFrostbiteSettled;
+
+        public TimedKitSnapshot CaptureTimedKit()
+            => new TimedKitSnapshot(AttackingSkill, IsFrostbiteLoaded ? AttackingSkill.DurationRemaining : 0);
+
+        public bool RestoreTimedKit(CharacterMotor motor, TimedKitSnapshot state)
+        {
+            float remaining = state.PersonalRemaining;
+            if (motor == null || _joiningFrostbiteSettled || AttackingSkill.IsActive ||
+                !float.IsFinite(remaining) || remaining < 0 || remaining > CryoRules.FrostbiteLoadSeconds ||
+                (remaining > 0 && motor.IsDefender)) return false;
+            _joiningFrostbiteSettled = true;
+            if (remaining <= 0) return false;
+            // Equipment hydration may follow this message. Restore the accepted
+            // personal load without activating, spending or touching a slipper.
+            IsFrostbiteLoaded = true;
+            ((Frostbite)AttackingSkill).RestoreLoad(remaining);
+            return true;
+        }
+
+        public override void Reset()
+        {
+            IsFrostbiteLoaded = false; _joiningFrostbiteSettled = false;
+            base.Reset();
+        }
+
+        public override void ResetForRound(AbilityContext ctx)
+        {
+            base.ResetForRound(ctx);
+            IsFrostbiteLoaded = false; _joiningFrostbiteSettled = false;
+        }
 
         /// <summary>The throw took the frost: the load is spent.</summary>
         public void ConsumeFrostbite() => IsFrostbiteLoaded = false;
@@ -94,8 +125,11 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
+                _kit._joiningFrostbiteSettled = true;
                 _kit.IsFrostbiteLoaded = true;
             }
+
+            public void RestoreLoad(float remaining) => RestoreLiveClock(remaining);
 
             protected override void OnTick(AbilityContext ctx, float dt)
             {

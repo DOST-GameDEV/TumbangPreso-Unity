@@ -3281,3 +3281,29 @@ exact e47source, before these presentation assets. All owned jobs terminal, priv
 dirt/PNGmetas/quality/HeroHazards preserved. Next refresh bottom Feedback and
 continue independent engineering; icon/presentation work remains reserved.
 
+
+FROSTBITE-RECOVERY-1001 owns Abilities/CheskaHeroKit.cs, SkillReceiptTests.cs,
+FrostbiteDeliveryTests.cs and NetSession.cs protocol constant only. Fresh
+ba053560a0/0; no heavy jobs. Cheska lacks ITimedKitReplication although live
+Frostbite flag/timer survives on host; resource snapshots restore cooldown only.
+Reproduce actual scoped receiver failing a valid aged Frostbite state. One native
+baseline; final receiver/idempotency, kit lifecycle and restored real-body flight.
+Use existing timed channel, no cast/resource spend/refund/art/loading change.
+New supported recovery semantics require122; other incoming claims preserved.
+
+
+Frostbite baseline1/1 rejects valid current-scope timed state,26621terminal.
+Add Cheska timed binding with aged personal load only, settle-once guard and
+normal expiry/reset; restore never calls Activate or changes resources/slipper.
+Equipment may arrive later.122compatibility; unchanged bounded wire format.
+Final4cases: actual receiver/resources/replay, invalid/role bounds, expiry/empty/
+newround and actual restored frost throw/body hit. One repair max; no broad suite.
+
+
+Frostbite final4/4passes actual receiver/aging/resource/replay, bounded lifecycle
+and restored actual Frozen flight.716inputs no drift, no native repair;26621/16853
+terminal, profiles preserved.122binding uses unchanged timed payload. Publish
+coherent code/status/receipts, then update existing Cheska Feedback Notes only.
+Actual121e47rejoin remains separate from122; no visual/loading changes. Proposed
+new-kit rows are proposals, not a claim of implemented full-roster mechanics.
+

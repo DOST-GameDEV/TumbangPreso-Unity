@@ -552,3 +552,13 @@ Protocol119 aligns camping entry/clear radii1.5m/2.0m, warning2.5seconds,
 loose-slipper warning7.5seconds and penalty grace15seconds, and fatigue2.5seconds.
 Existing host scoring, incapacity pause, score floor and snapshot fields remain.
 Both sides need matching tuning; no new payload or transport.
+
+## Frostbite Recovery Compatibility
+
+Protocol122 binds Cheska's accepted Frostbite load to the existing TimedKitState
+personal channel with stablecheska_skill2. The load clock ages against the scoped
+round clock; recovery never casts, writes equipment or changes resources. Existing
+match/round/epoch/sequence/hero/ability gates remain. Authoritative empty state and
+settle-once lifecycle prevent late resurrection; reset opens the next round's
+hydration. Four native checks include a restored real Frozen hit. Actual122peers
+remain separate. [Evidence](reports/feedback-2026-09-30/frostbite-recovery.md).
