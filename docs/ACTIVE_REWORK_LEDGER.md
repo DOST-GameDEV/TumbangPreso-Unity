@@ -3613,3 +3613,14 @@ No tagged rendering fix claimed. Owner11:04Doccleanup complete:28strayDone
 labelsremoved, unfinishedAmihanunchecked, otherunfinishedrowsvisuallyunchecked,
 completedchecksretained andhumanverificationuntouched. Nativecheckboxreadability
 nowavailablethroughcloudbrowser; no archive move yet. Continueflatgroundmarkers.
+
+TAGGED-WORLD-LOOK-1001 owns CatchReconstruction.cs andCatchReconstructionTests.cs
+for the separate newest human report "Fix tagged replay camera to use the same
+shading rendering system as the in-game first person camera". Source diagnosis:
+WorldLookPresentation.HandlesCamera does not include ~CatchPlaybackCamera and
+that camera lacks WorldLookCamera. ColourGrade/WorldOutline alone cannot adopt
+the scoped shader globals. Reproduce real accepted replay failing world-look
+membership, then use existing explicit marker and verify camera globals and
+restoration. Do not claim this solves the separate red/cyan foliage report.
+One focused baseline/final, one tooling repair maximum; source701d6828protocol124.
+Rings remain next independent fix after this concrete root cause. No native job.
