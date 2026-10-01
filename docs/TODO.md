@@ -343,6 +343,10 @@ incomplete cells still do not authorize invented specifications.
   world listener filter. Actual PausePanel baseline fails; native final3/3passes
   with659unchanged inputs. [Menu evidence](reports/feedback-2026-09-30/haunted-menu.md).
   Audible mix, current actual peers and full-kit qualification remain open.
+  Later116Windows actual owner-client Haunt fixture passes: host contacts all
+  four seats, both sides receive bounded status clocks, move and complete the
+  chase, clear timers and preserve settings. Rejoin/other kits/Haunted bot sensing
+  and human mix remain open. [Actual peer evidence](reports/feedback-2026-09-30/haunt-actual-peers.md).
 
 - [x] F0930-13 Title Enter regression: release opening Submit before Home can queue;
   three native keyboard/pad/ordinary-key checks pass. Shipped c403800c;
