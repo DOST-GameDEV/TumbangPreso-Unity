@@ -95,3 +95,5 @@ Shared Cloud Code missing-output failure boundary: [native evidence](reports/rel
 Bounded shared service-request timeout: [native evidence](reports/reliability-2026-10-02/http-timeout/README.md).
 
 Late career submission identity and pending-result preservation: [native evidence](reports/reliability-2026-10-02/career-submit-identity/README.md).
+
+Refreshed129 Windows Classic tournament-context observations: [evidence](reports/reliability-2026-10-02/current-tournament129/README.md).
