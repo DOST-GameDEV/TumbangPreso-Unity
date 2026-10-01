@@ -11,6 +11,11 @@ namespace TumbangPreso.Abilities
     public sealed class SeanHeroKit : HeroKit, ITimedKitReplication, IWorldEffectBinding
     {
         public bool IsIgnitionCannonActive { get; set; }
+        public override bool BlocksOwnLocomotion => Skill1.IsWindingUp || Skill1.IsActive;
+        public override bool BlocksOwnActions => BlocksOwnLocomotion;
+        public const float StokeDistance = 2f, StokeAnticipation = .18f, StokeRecovery = .25f;
+        public static float StokeSpeed => Mathf.Sqrt(2f * Balance.Friction * StokeDistance);
+        public static float StokeTravelSeconds => StokeSpeed / Balance.Friction;
         public bool IsEmpoweredThrowLoadedFor(Slipper shoe) => ((IgnitionCannonAbility)AttackingSkill).LoadedFor(shoe);
         private bool _joinChargeStateSettled;
         public TimedKitSnapshot CaptureTimedKit()
@@ -19,11 +24,11 @@ namespace TumbangPreso.Abilities
         public bool RestoreTimedKit(CharacterMotor motor, TimedKitSnapshot state)
             => RestoreJoiningIgnition(motor, state.PersonalRemaining);
 
-        public HeroMovementState CaptureMovementState()=>((RocketBurnDashAbility)Skill1).CaptureMovement();
+        public HeroMovementState CaptureMovementState()=>((StokeStepAbility)Skill1).CaptureMovement();
         public bool RestoreJoiningMovement(CharacterMotor motor,HeroMovementState state,float age)
-            => motor!=null && ((RocketBurnDashAbility)Skill1).RestoreMovement(
+            => motor!=null && ((StokeStepAbility)Skill1).RestoreMovement(
                 new AbilityContext(motor,motor.GetComponent<Carrier>(),motor.GetComponent<CombatVerbs>()),state,age);
-        public void AdoptMovementFields(int owner)=>((RocketBurnDashAbility)Skill1).AdoptFields(owner);
+        public void AdoptMovementFields(int owner) { } // Stoke Step creates no recoverable fire fields.
         public void RebindWorldEffects(CharacterMotor motor)
         { if (motor != null) AdoptMovementFields(motor.PlayerSlot); }
 
@@ -56,7 +61,7 @@ namespace TumbangPreso.Abilities
 
         public SeanHeroKit() : base("sean", "SEAN")
         {
-            Skill1 = new RocketBurnDashAbility();
+            Skill1 = new StokeStepAbility();
             // ABILITY-2: the four-slot shape; the defending slot waits for the owner's Pyro design.
             AttackingSkill = new IgnitionCannonAbility(this);
             DefendingSkill = new PlaceholderRoleAbility("sean_skill2d", "Sean", AbilityGlyph.SeanIgnite);
@@ -74,252 +79,72 @@ namespace TumbangPreso.Abilities
         /// </summary>
         public override float UltimateCost => 15.0f;
 
-        private sealed class RocketBurnDashAbility : HeroAbility
+        private sealed class StokeStepAbility : HeroAbility
         {
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.Predicted;
-            private readonly HashSet<int> _hitSlots = new HashSet<int>();
-
-            /// <summary>
-            /// ⚠️⚠️ 1.0 m, DOWN FROM 1.6, FOR THE REASON WRITTEN UP ON ZACK'S `TrailRadius`: the
-            /// per-disc number was never what the player was looking at. `OnTick` drops one
-            /// every 0.10 s for the whole dash and each lives 3.0 s, so the whole run is live at
-            /// once.
-            ///
-            /// The dash carries `17² / (2 · Balance.Friction) = 4.82 m`, so the corridor was
-            /// `2 · 1.6 · 4.82 + π · 1.6² = 23.5 m² = 12.0 per cent of the box` for a skill,
-            /// against a budget of 3 to 8 per cent. At 1.0 m it is 7.5 per cent and the lane is
-            /// 2.0 m across, which is one body plus margin.
-            /// </summary>
-            private const float TrailRadius = 1.0f;
-
-            /// <summary>See Zack's `MaxLiveDiscs`. Six is the whole dash at the new 0.15 s drop
-            /// rate, so for Sean this is a ceiling rather than a window: his rush is short
-            /// enough that the cap should never bind, and it is here so a future change to the
-            /// dash distance cannot quietly reintroduce the corridor.</summary>
-            private const int MaxLiveDiscs = 6;
-
-            private readonly Queue<GameObject> _live = new Queue<GameObject>();
             private bool _movementKnown, _movementRestored;
             private GameObject _rushAura;
+            public StokeStepAbility()
+                : base("sean_skill1", "STOKE STEP",
+                    "Brace, then burst two metres along your aim. Recover before acting again. No knockdown or burning trail.",
+                    30f, StokeTravelSeconds + StokeRecovery, AbilityGlyph.SeanRush,
+                    summary: "A short committed burst, then a planted recovery.",
+                    castAction: "hero-sean-dash", viewmodelAction: "thrust-fire", castCue: "sfx_cast_sean_rush")
+            { Windup = StokeAnticipation; }
 
-            public HeroMovementState CaptureMovement()=>IsActive
-                ? new HeroMovementState { Remaining=DurationRemaining,UntilNextEmission=Mathf.Max(0,.15f-_trailSpawnAccum),Wake=Array.Empty<Vector3>() }
+            public override bool CanActivate(AbilityContext ctx)
+                => base.CanActivate(ctx) && ctx?.Motor != null && ctx.Motor.IsGrounded && !ctx.Motor.IsFlying;
+
+            public HeroMovementState CaptureMovement() => IsActive
+                ? new HeroMovementState { Remaining = DurationRemaining, Wake = Array.Empty<Vector3>() }
                 : HeroMovementState.Empty;
 
-            public bool RestoreMovement(AbilityContext ctx,HeroMovementState state,float age)
+            public bool RestoreMovement(AbilityContext ctx, HeroMovementState state, float age)
             {
-                if(!state.Valid(Duration,.15f,age) || (state.Wake?.Length??0)!=0
+                if (!state.Valid(Duration, 0, age) || (state.Wake?.Length ?? 0) != 0
                     || (_movementKnown && (!_movementRestored || !IsActive))) return false;
-                float remaining=Mathf.Max(0,state.Remaining-age);
-                if(_movementKnown) remaining=Mathf.Min(remaining,DurationRemaining);
-                bool first=!_movementRestored;
-                _movementKnown=true; _movementRestored=remaining>0;
-                if(remaining<=0) { EndEarly(ctx); return true; }
+                float remaining = Mathf.Max(0, state.Remaining - age);
+                if (_movementKnown) remaining = Mathf.Min(remaining, DurationRemaining);
+                _movementKnown = true; _movementRestored = remaining > 0;
+                if (remaining <= 0) { EndEarly(ctx); return true; }
+                // The movement snapshot already owns position and velocity. Recovery
+                // restores only the remaining gate; never launch a second impulse.
                 RestoreLiveClock(remaining);
-                _trailSpawnAccum=.15f-state.NextEmission(age,.15f,out _);
-                if(first)
-                {
-                    AdoptFields(ctx.Motor.PlayerSlot);
-                    _rushAura=AbilityVfx.AttachAura(ctx.Motor.transform,AbilityVfx.Aura.FireEmber,remaining);
-                }
                 return true;
             }
 
-            public void AdoptFields(int owner)
+            public override void Tick(AbilityContext ctx, float dt)
             {
-                if(!IsActive) return;
-                _live.Clear();
-                foreach(var field in UnityEngine.Object.FindObjectsByType<HeroHazards.FireTrailComponent>(FindObjectsSortMode.None)
-                    .Where(field=>field.OwnerSlot==owner).OrderBy(field=>field.Remaining)) _live.Enqueue(field.gameObject);
+                if ((IsWindingUp || IsActive) && ctx?.Motor != null
+                    && (!ctx.Motor.RoundActive || ctx.Motor.IsStunned || ctx.Motor.IsFeared || ctx.Motor.IsRooted))
+                { _movementKnown = true; _movementRestored = false; RollBackPredictedCast(ctx, false); }
+                base.Tick(ctx, dt);
+                if (_rushAura != null && DurationRemaining <= StokeRecovery) ReleaseAura();
             }
-
-            public RocketBurnDashAbility()
-                // ⚠️⚠️ 50 s, UP FROM 6.5. Longer than Zack's 46 because this dash also KNOCKS
-                // DOWN everyone it passes through, so it is a mobility skill and an opener at
-                // once. 1.8 casts a round. See Zack's `StaticRailGrindAbility` for the reasoning
-                // behind the whole retune and `docs/Hero_Strike_Balance.md` § 3.1 for the table.
-                : base("sean_skill1", "FLAME RUSH",
-                       "Rushes you forward in a line of fire. Anyone you run through is knocked down, and the trail burns whoever follows.",
-                       50.0f, 0.6f, TumbangPreso.UI.AbilityGlyph.SeanRush,
-                       summary: "Rush forward. Knocks down who you hit, burns who follows.",
-                       castAction: "hero-sean-dash",
-                       viewmodelAction: "thrust-fire",
-                       castCue: "sfx_cast_sean_rush")
-            {
-            }
-
-            private float _trailSpawnAccum;
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                _movementKnown=true; _movementRestored=false;
-                _trailSpawnAccum = 0.0f;
-                _hitSlots.Clear();
-                Vector3 forward = ctx.Forward;
-                forward.y = 0.0f;
-
-                var squash = ctx.Motor.GetComponent<CharacterSquashStretch>();
-                if (squash != null) squash.DashStretch(forward, 0.06f);
-
-                ctx.Motor.ApplyImpulse(forward.normalized * 17.0f
-                                       * ctx.CostScale("sean.1.afterburn")
-                                       + Vector3.up * 1.5f);
-                _live.Clear();
-                DropScorch(ctx);
-
-                // ⚠️ 0.6 s, WHICH IS THE DASH ITSELF AND NOT A SECOND LONGER. The rush is the
-                // shortest power in the game; an aura that outlived it would say Sean was still
-                // charging when he had already stopped.
-                _rushAura=Visual.AbilityVfx.AttachAura(ctx.Motor.transform,
-                                             Visual.AbilityVfx.Aura.FireEmber, Duration);
-
-                // ⚠️⚠️ THE LEADING EDGE, WHICH IS THE HALF OF THIS ABILITY NOTHING DREW.
-                // `docs/Asset_Sourcing.md` § 3 for Flame Rush: *"Ember Jet at the leading edge
-                // and short flame tongues along the swept path. Orient them with movement so
-                // they read as a streak, not circular puddles."* Everything the rush had was
-                // BEHIND Sean: scorch discs on the road and embers falling off his body. The
-                // front of a 17 m/s launch had nothing on it at all.
-                //
-                // ⚠️⚠️ `Facing.Fixed` AND NOT A BILLBOARD, WHICH IS THE WHOLE POINT OF THE
-                // SENTENCE ABOVE. `ember-jet` is drawn travelling LEFT TO RIGHT across its cell,
-                // so a quad that turns to face the camera turns the jet with it and Sean's
-                // direction stops meaning anything. Held square to his heading, the same 96
-                // pixels read as a streak going the way he went, and a defender standing off to
-                // the side sees it edge on, which is exactly what a jet looks like from there.
-                //
-                // ⚠️ IT IS PARENTED TO NOTHING AND SITS AT HIS CHEST. The dash moves him 17 m/s
-                // and the sheet lives 0.7 s, so a jet stuck to his body would still be burning
-                // at the far wall; left in world space it is the flame he came OUT of, which is
-                // where a player looks to work out where he started.
-                //
-                // ⚠️⚠️ THE YAW IS `-90` AND THE SIGN IS NOT COSMETIC. `LookRotation` puts the
-                // quad's local +Z along the heading, which is its NORMAL: that draws the jet
-                // across Sean's path rather than along it. Turning it -90 about Y sends local
-                // +X, which is the direction the art blows, onto the heading. `+90` sends it
-                // onto the heading REVERSED, so the jet fires out of his back.
-                //
-                // ⚠️ THE 0.5 m IS THE PACK'S OWN PIVOT ARITHMETIC. `ember-jet` is drawn with its
-                // nozzle at x = 24 of 96, which is a quarter of the way across, and this quad is
-                // centred on X. Quarter to half is 0.25 of the width, and the width is 2.0 m, so
-                // the centre has to sit half a metre AHEAD for the nozzle to land on his chest.
-                //
-                // ⚠️ 2.0 m WIDE, WHICH IS INSIDE `docs/VISION.md` § 2 RULE 1 AND LEAVES NOTHING
-                // BEHIND. The rule's 1.8 to 2.5 m is about a skill's floor FOOTPRINT; this is a
-                // transient that lives 0.7 s and never touches the deck, and the footprint this
-                // ability actually leaves is still `TrailRadius` and unchanged.
-                Vector3 heading = forward.sqrMagnitude > 0.0001f ? forward.normalized : Vector3.forward;
-                Visual.VfxFlipbook.Play(Visual.VfxSheets.EmberJet,
-                                        ctx.Position + Vector3.up * 0.95f + heading * 0.5f,
-                                        2.0f,
-                                        Visual.VfxFlipbook.Facing.Fixed,
-                                        tint: new Color(1, 1, .08f),
-                                        rotation: Quaternion.LookRotation(heading, Vector3.up)
-                                                  * Quaternion.Euler(0.0f, -90.0f, 0.0f));
-
-                NetCue.Play("hero_sean_grunt", ctx.Position);
+                _movementKnown = true; _movementRestored = false;
+                if (ctx?.Motor == null || !ctx.Motor.IsGrounded || ctx.Motor.IsFlying
+                    || ctx.Motor.IsStunned || ctx.Motor.IsFeared || ctx.Motor.IsRooted)
+                { EndEarly(ctx); return; }
+                Vector3 heading = ctx.Forward; heading.y = 0;
+                if (heading.sqrMagnitude < .0001f) { EndEarly(ctx); return; }
+                // Native motor owns friction, body/cover collision and confinement.
+                // No teleport, vertical launch, hit loop or damaging world field.
+                ctx.Motor.ApplyImpulse(heading.normalized * StokeSpeed);
+                _rushAura = AbilityVfx.AttachAura(ctx.Motor.transform, AbilityVfx.Aura.FireEmber, StokeTravelSeconds);
             }
 
-            protected override void OnTick(AbilityContext ctx, float dt)
+            private void ReleaseAura()
             {
-                // ⚠️ 0.15 s RATHER THAN 0.10. At 1.0 m the discs no longer need to overlap
-                // heavily to read as a continuous line, and a third fewer of them is a third
-                // fewer translucent primitives in a frame `docs/VISION.md` § 2 rule 4 is about.
-                _trailSpawnAccum += dt;
-                if (_trailSpawnAccum >= 0.15f)
-                {
-                    _trailSpawnAccum = 0.0f;
-                    DropScorch(ctx);
-                }
-
-                // Hit check during dash
-                if (!NetAuthority.ShouldResolve()) return;
-                var round = ctx.Round;
-                if (round != null)
-                {
-                    foreach (var p in round.Players)
-                    {
-                        if (p == null || p.PlayerSlot == ctx.Motor.PlayerSlot
-                            || _hitSlots.Contains(p.PlayerSlot)) continue;
-
-                        Vector3 diff = p.transform.position - ctx.Position;
-                        diff.y = 0.0f;
-                        if (diff.magnitude <= 2.2f)
-                        {
-                            _hitSlots.Add(p.PlayerSlot);
-                            Vector3 hitForce = (diff.sqrMagnitude > 0.01f ? diff.normalized : ctx.Forward) * 15.0f;
-                            hitForce.y = 4.5f;
-                            p.ApplyResolvedImpact(hitForce);
-                            // ⚠️ 4, WHICH IS THE LIGHTEST HOLD IN THE GAME ON PURPOSE. This is
-                            // a SKILL on a short cooldown, not an ultimate: it should interrupt
-                            // a run and be shrugged off, and a burn nobody can shake is a
-                            // different ability.
-                            //
-                            // ⚠️⚠️ THIS WAS THE WORST CASE OF § 83.14 AND THE NOTE HERE RECORDED
-                            // THE SYMPTOM WITHOUT SEEING IT. It read *"the 1.5 s duration leaves
-                            // only 0.3 s of mashable slack above `Balance.MinStunDown`, so four
-                            // presses is already brisk"* — 0.3 s over four presses is 0.075 s
-                            // each, and once they were spent `MashOutOfStun` refused every press
-                            // for the remaining 1.1 s. Four presses at 10 Hz is 0.4 s of input,
-                            // so the player spent nearly three times that hammering a key that
-                            // did nothing: 🧑's *"only up to 2-3 button mash and nothing registers
-                            // anymore"*. The floor is 0.60 now and the same four presses buy
-                            // 0.225 s each, which is what "brisk" was supposed to mean.
-                            p.ApplyStagger(1.5f, StunElement.Fire, 4);
-                            // ⚠️ A DASH THROUGH THREE PLAYERS USED TO PRINT THREE "BAM!"s
-                            // ON TOP OF ITS OWN "ROCKET!". The stars and the sound already
-                            // confirm each hit.
-                            NetCue.Play("bump", p.transform.position);
-
-                            // ⚠️⚠️ THE STARS AND THE JOLT TRAVEL NOW, AND THE SOUND ALREADY DID.
-                            // `OnTick` opens with `if (!NetAuthority.ShouldResolve()) return;`, so
-                            // three players out of four watched a burning attacker with no crown
-                            // over them and felt nothing when it was their own body. The accent
-                            // and the weight are the same two this line chose by hand;
-                            // `MatchFlair` looks the colour up off the caster's hero instead, so
-                            // it cannot drift from the kit it belongs to.
-                            Visual.MatchFlair.Announce(Visual.MatchFlair.Kind.HeroHit,
-                                                       ctx.Motor != null ? ctx.Motor.PlayerSlot : -1,
-                                                       p.PlayerSlot, p.transform.position, 1.5f);
-                        }
-                    }
-                }
+                if (_rushAura != null) { _rushAura.SetActive(false); UnityEngine.Object.Destroy(_rushAura); }
+                _rushAura = null;
             }
-
-            private void DropScorch(AbilityContext ctx)
-            {
-                // ⚠️ THE FACING IS PASSED SO THE MARK POINTS. `SpawnFireTrail` lays a STREAK
-                // rather than a disc now, and a streak with no direction is just a disc that
-                // took more triangles to draw. A player who finds one has to be able to tell
-                // which way Sean went, which is most of what surviving Sean is.
-                var disc = HeroHazards.SpawnFireTrail(ctx.Position, TrailRadius,
-                                                      3.0f * ctx.GainScale("sean.1.afterburn"),
-                                                      ctx.Motor.PlayerSlot, ctx.Forward);
-                if (disc == null) return;
-
-                _live.Enqueue(disc);
-
-                while (_live.Count > MaxLiveDiscs)
-                {
-                    var oldest = _live.Dequeue();
-                    if (oldest != null) UnityEngine.Object.Destroy(oldest);
-                }
-            }
-
-            /// <summary>See Zack's. The queue is cleared and the discs are left to their own
-            /// 3.0 s life, which they are meant to outlive the dash by.</summary>
-            protected override void OnEnd(AbilityContext ctx)
-            {
-                _live.Clear();
-                if(_rushAura!=null) { _rushAura.SetActive(false); UnityEngine.Object.Destroy(_rushAura); }
-                _rushAura=null;
-            }
-
-            protected override void OnCancelled(AbilityContext ctx)
-            {
-                foreach(var field in _live)
-                    if(field!=null) { field.SetActive(false); UnityEngine.Object.Destroy(field); }
-                OnEnd(ctx);
-            }
+            protected override void OnEnd(AbilityContext ctx) => ReleaseAura();
+            protected override void OnCancelled(AbilityContext ctx) => ReleaseAura();
+            public override void Reset()
+            { ReleaseAura(); base.Reset(); _movementKnown = _movementRestored = false; }
         }
 
         private sealed class IgnitionCannonAbility : HeroAbility

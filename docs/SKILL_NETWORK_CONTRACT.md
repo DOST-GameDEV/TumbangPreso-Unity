@@ -636,3 +636,21 @@ Ten distinct native behavior checks and a matching Linux host/owner/observer
 case qualify the load, flight,0.923m near-miss push and cleanup. Actual reconnect,
 WAN/device and listening scope remain separate.
 [Evidence](reports/hero-quality-2026-10-01/empowered-throw/README.md).
+
+## Stoke Step compatibility
+
+Protocol129 replaces sean_skill1 Flame Rush with Stoke Step. The accepted aim
+is held through0.18s anticipation; the ordinary owner-simulated motor receives
+one horizontal impulse with a continuous2m friction bound, followed by0.25s
+recovery. Default-false kit gates suppress voluntary locomotion and actions for
+the commitment without conferring a status or immunity. Cover, body collision,
+confinement and incoming impulses remain under the normal motor.
+
+The existing Sean MovementWindow now permits only zero emission phase and no
+wake points. It restores an aged, non-extending live gate, never another impulse
+or cast. The normal movement snapshots retain position/velocity authority. The
+old missing-fire-emission refresh is removed for Sean. Existing scope/generation,
+round and accepted-cast checks remain. Incompatible older clients must not join.
+Native6distinct checks pass across4+2receipts. A fresh full129Linux player and
+three actual peers pass1.8916m travel with zero lateral drift, held recovery,
+no fire/stagger and released gates. WAN/reconnect/device checks remain separate.

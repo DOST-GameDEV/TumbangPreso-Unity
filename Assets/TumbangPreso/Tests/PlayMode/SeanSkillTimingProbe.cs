@@ -332,3 +332,121 @@ namespace TumbangPreso.PlayTests
         }
     }
 }
+
+namespace TumbangPreso.PlayTests
+{
+    // Small native world for the signature migration; no authored map import.
+    public sealed class StokeStepChecks
+    {
+        private readonly System.Collections.Generic.List<GameObject> _built = new System.Collections.Generic.List<GameObject>();
+        private INetProvider _old;
+        private CharacterMotor _body;
+        private SeanHeroKit _kit;
+        private AbilityContext _ctx;
+        private static readonly System.Reflection.BindingFlags Flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+        [UnitySetUp] public IEnumerator Before()
+        {
+            _old = NetAuthority.Provider; NetAuthority.Provider = null;
+            yield return PlayModeWorld.Reset(); GameServices.Ensure(); GameServices.Round.Clear();
+            var floor = Track(GameObject.CreatePrimitive(PrimitiveType.Cube));
+            floor.transform.position = new Vector3(0, -.1f, 0); floor.transform.localScale = new Vector3(30, .2f, 30);
+            var go = Track(new GameObject("Stoke native body"));
+            var cc = go.AddComponent<CharacterController>(); cc.height = 1.6f; cc.radius = .35f; cc.center = new Vector3(0, .8f, 0);
+            _body = go.AddComponent<CharacterMotor>(); _body.enabled = false; _body.PlayerSlot = 1; _body.IsBot = true;
+            var system = go.AddComponent<HeroAbilitySystem>(); system.enabled = false; system.BindHero("sean");
+            _kit = (SeanHeroKit)system.Kit; _ctx = new AbilityContext(_body, null, null);
+            GameServices.Round.Register(_body); GameServices.Match.ApplySnapshot(new int[4], 1, true);
+            GameServices.Round.ApplySnapshot(100, true, 0, true);
+            _body.Teleport(new Vector3(0, .02f, -3)); _body.Intent.Parked = false;
+            Physics.SyncTransforms(); for (int i = 0; i < 12; i++) Step();
+            Assert.IsTrue(_body.IsGrounded, "Native controller did not settle on its floor.");
+        }
+        [UnityTearDown] public IEnumerator After()
+        {
+            _kit?.Skill1.Reset(); foreach (var go in _built) if (go != null) Object.DestroyImmediate(go); _built.Clear();
+            yield return PlayModeWorld.Reset(); NetAuthority.Provider = _old;
+        }
+        private GameObject Track(GameObject go) { _built.Add(go); return go; }
+        private void Step() => typeof(CharacterMotor).GetMethod("FixedUpdate", Flags).Invoke(_body, null);
+        private Vector3 Impulse => (Vector3)typeof(CharacterMotor).GetField("_externalVelocity", Flags).GetValue(_body);
+        private void Cast() { using (NetCue.SuppressRelay()) Assert.AreEqual(HeroKit.CastOutcome.Cast, _kit.CastSkill1(_ctx)); }
+        [Test] public void GroundedRefusalAndAnticipationUseRealAcceptedAim()
+        {
+            _body.transform.forward = Vector3.forward; Cast();
+            Assert.AreEqual(30, _kit.Skill1.Cooldown); Assert.IsTrue(_kit.Skill1.IsWindingUp);
+            Assert.IsFalse(_body.CanMove()); Assert.IsFalse(_body.CanAct()); Assert.Less(Impulse.magnitude, .001f);
+            _body.transform.forward = Vector3.right;
+            _kit.Skill1.Tick(_ctx, .17f); Assert.Less(Impulse.magnitude, .001f);
+            using (NetCue.SuppressRelay()) _kit.Skill1.Tick(_ctx, .02f);
+            Assert.Greater(Impulse.z, 10); Assert.Less(Mathf.Abs(Impulse.x), .001f); Assert.Zero(Impulse.y);
+            _kit.Skill1.Reset(); typeof(CharacterMotor).GetField("_grounded", Flags).SetValue(_body, false);
+            Assert.IsFalse(_kit.Skill1.CanActivate(_ctx)); Assert.Zero(_kit.Skill1.CooldownRemaining);
+        }
+        [Test] public void ActualBurstCannotSteerAndRecoversWithoutDamageFields()
+        {
+            _body.transform.forward = Vector3.forward; Cast();
+            using (NetCue.SuppressRelay()) _kit.Skill1.Tick(_ctx, .18f);
+            Vector3 start = _body.transform.position; _body.Intent.Move = Vector2.right;
+            for (int i = 0; i < 18; i++) { Step(); _kit.Skill1.Tick(_ctx, Time.fixedDeltaTime); }
+            Vector3 delta = _body.transform.position - start;
+            Assert.That(delta.z, Is.InRange(1.75f, 2.05f)); Assert.Less(Mathf.Abs(delta.x), .015f); Assert.Less(Mathf.Abs(delta.y), .1f);
+            Assert.IsFalse(_body.CanAct()); Assert.IsFalse(_body.CanMove());
+            Assert.Zero(Object.FindObjectsByType<HeroHazards.FireTrailComponent>().Length);
+            for (int i = 0; i < 16; i++) { Step(); _kit.Skill1.Tick(_ctx, Time.fixedDeltaTime); }
+            Assert.IsTrue(_body.CanAct()); Assert.IsTrue(_body.CanMove());
+        }
+        [Test] public void WallBlocksBurstAndWindupTagCannotRelaunch()
+        {
+            var wall = Track(GameObject.CreatePrimitive(PrimitiveType.Cube));
+            wall.transform.position = _body.transform.position + Vector3.forward * 1.1f + Vector3.up;
+            wall.transform.localScale = new Vector3(3, 2, .2f); Physics.SyncTransforms();
+            _body.transform.forward = Vector3.forward; Cast(); using (NetCue.SuppressRelay()) _kit.Skill1.Tick(_ctx, .18f);
+            float start = _body.transform.position.z;
+            for (int i = 0; i < 35; i++) { Step(); _kit.Skill1.Tick(_ctx, Time.fixedDeltaTime); }
+            Assert.Less(_body.transform.position.z - start, .85f); Assert.IsTrue(_body.CanMove());
+            _kit.Skill1.Reset(); Cast(); _body.ApplyTagged(); _kit.Skill1.Tick(_ctx, .3f);
+            Assert.IsFalse(_kit.Skill1.IsWindingUp); Assert.IsFalse(_kit.Skill1.IsActive); Assert.Greater(_kit.Skill1.CooldownRemaining, 29);
+            _body.ClearStun(); _kit.Skill1.Tick(_ctx, .3f); Assert.IsFalse(_kit.Skill1.IsActive); Assert.IsTrue(_body.CanAct());
+        }
+        [Test] public void BodyAndConfinementBlockTravelWithoutStagger()
+        {
+            var other = Track(new GameObject("Stoke obstacle body"));
+            var capsule = other.AddComponent<CharacterController>(); capsule.height = 1.6f; capsule.radius = .35f; capsule.center = new Vector3(0, .8f, 0);
+            var rival = other.AddComponent<CharacterMotor>(); rival.enabled = false; rival.PlayerSlot = 2;
+            rival.Teleport(_body.transform.position + Vector3.forward * 1.1f); GameServices.Round.Register(rival); Physics.SyncTransforms();
+            _body.transform.forward = Vector3.forward; Cast(); using (NetCue.SuppressRelay()) _kit.Skill1.Tick(_ctx, .18f);
+            float before = _body.transform.position.z;
+            for (int i = 0; i < 35; i++) { Step(); _kit.Skill1.Tick(_ctx, Time.fixedDeltaTime); }
+            Assert.Less(_body.transform.position.z - before, .7f); Assert.IsFalse(rival.IsStunned);
+            other.SetActive(false); _kit.Skill1.Reset(); _body.IsDefender = true; _body.Teleport(new Vector3(0, .02f, 6.6f));
+            for (int i = 0; i < 12; i++) Step();
+            Cast(); using (NetCue.SuppressRelay()) _kit.Skill1.Tick(_ctx, .18f);
+            for (int i = 0; i < 35; i++) { Step(); _kit.Skill1.Tick(_ctx, Time.fixedDeltaTime); }
+            Assert.LessOrEqual(_body.transform.position.z, Balance.ConfinementRadius + .01f);
+            Assert.IsTrue(_body.CanMove());
+        }
+        [Test] public void RejectedPredictionAndOtherKitsDoNotKeepCommitmentGates()
+        {
+            Cast(); _kit.Skill1.RollBackPredictedCast(_ctx);
+            Assert.IsTrue(_body.CanAct()); Assert.IsTrue(_body.CanMove()); Assert.Zero(_kit.Skill1.CooldownRemaining);
+            foreach(string hero in new[]{"cheska","dante","amihan","phaister","paete","nemu","zack","rafi"})
+            {
+                _body.AbilitySystem.BindHero(hero);
+                Assert.IsFalse(_body.AbilitySystem.Kit.BlocksOwnActions,hero);
+                Assert.IsFalse(_body.AbilitySystem.Kit.BlocksOwnLocomotion,hero);
+                Assert.IsTrue(_body.CanAct(),hero); Assert.IsTrue(_body.CanMove(),hero);
+            }
+        }
+        [Test] public void AgedRecoveryCannotDuplicateImpulseOrExtendGate()
+        {
+            var state = new HeroMovementState { Remaining = .2f, Wake = Array.Empty<Vector3>() };
+            Assert.IsTrue(_kit.RestoreJoiningMovement(_body, state, .05f));
+            Assert.Less(Impulse.magnitude, .001f); Assert.IsFalse(_body.CanAct());
+            Assert.IsTrue(_kit.RestoreJoiningMovement(_body, state, 0)); Assert.That(_kit.Skill1.DurationRemaining, Is.EqualTo(.15f).Within(.001));
+            _kit.Skill1.Tick(_ctx, .16f); Assert.IsTrue(_body.CanAct());
+            Assert.IsFalse(_kit.RestoreJoiningMovement(_body, state, 0));
+            _kit.Skill1.Reset(); Assert.IsTrue(_body.CanMove());
+            state.UntilNextEmission = .1f; Assert.IsFalse(_kit.RestoreJoiningMovement(_body, state, 0));
+        }
+    }
+}

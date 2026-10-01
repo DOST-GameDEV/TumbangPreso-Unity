@@ -17,6 +17,17 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### STOKE-STEP-1001: mechanics qualified
+
+Sean signature migration follows the researched2m grounded commitment,0.18s
+anticipation,0.25s recovery and30s cooldown. Six distinct native cases pass across
+4+2: accepted aim, real motor travel, no steering/fire field, wall/body/confinement,
+tag cancellation, rollback, aged restoration and default other-kit gates.
+Protocol129 full player and three actual Linux peers pass:1.8916m forward travel,
+zero lateral drift under perpendicular input, recovery gates and cleanup agree.
+Authored motion/SFX review remains separate. [Plan](reports/hero-quality-2026-10-01/stoke-step/plan.md).
+
+
 ### AIM-CIRCLE-CADENCE-1001: smooth visible landing-circle movement
 
 Ballistic prediction remains20Hz; circle presentation now interpolates every

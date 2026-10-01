@@ -3995,3 +3995,40 @@ independent work during tests, autonomous recovery, critical review/planning whe
 execution is waiting, and durable resumption without delayed duplicate replies.
 Record the rule explicitly without widening runtime scope or parallel heavy jobs.
 Current0e9 source clean and up to date before this documentation-only edit.
+
+STOKE-STEP-1001 claims SeanHeroKit.cs signature only, HeroKit.cs default-false
+self-action/locomotion gates, CharacterMotor.cs gate reads, MatchRpc.Movement.cs
+Sean recovery handling, NetSession compatibility and SeanSkillTimingProbe.cs
+focused new cases. Own associated TODO/network/report updates. Plan follows
+hero-quality new-kit-design Stoke Step:2m grounded commitment,0.18s anticipation,
+0.25s recovery,30s cooldown; no damaging trail or contact stagger. Preserve other
+Sean slots and authored art. Source376188 clean/up to date at claim. No heavy job.
+
+Stoke Step first candidate replaces legacy rush/trail/contact damage, retains
+accepted-aim windup and adds opt-in kit action/locomotion gates. Protocol129
+candidate only, not published. Four isolated native cases running with frozen
+owned inputs under cloud-stoke-step-native. No source edits to those inputs while
+running. Independent plan/Feedback note updated to working/not shipped. Legacy
+MovementSnapshotProbe Sean-specific expectations need migration after this result;
+Zack assertions remain unchanged. No new current-player or peer claim.
+
+Stoke Step first four native cases pass4/4,46.94snormal exit/no newOOM or fixture
+repair. Add only missing body/confinement/default-kit controls, not an unchanged
+four-case rerun. Same unit also owns Sean branches in MovementSnapshotProbe.cs
+because the old emission/zero-windup expectations are explicitly superseded.
+No other hero assertions or unrelated fixture repair.
+
+Six distinct Stoke checks now pass across4+2native cases, including body collision,
+defender confinement, prediction rollback and default-false other-kit gates.
+No fixture repairs. Same unit extends existing NetSeanProbe.cs and net_sean_review.py
+with one stoke scenario; preserve other scenarios. Fresh129full player/three peers
+remain pending. Restore candidate EditorBuildSettings to the source12scenes before
+building: the stopped earlier private graphics build left its2scene scope saved.
+
+Stoke129acceptance complete: native4+2 and fresh12scene Linux player, then three
+actual peers all1.891603m forward/zero lateral under conflicting input. Recovery
+and final action gates agree, no fire/stagger/crater;30s cooldown spent once.
+Player runner43.02sexit0/noOOM; Runtime98138963..48e2e61. Full build first hit memory
+guard, one bounded retry after closing completed owned Docs preview passed77.28s.
+Inputs drift0. All heavy jobs terminal. Publish explicit owned mechanics/evidence;
+whole Pyro motion/SFX remains open. No unrelated runtime paths added.

@@ -1,0 +1,7 @@
+{
+  "source": "376188bc9 plus Stoke Step owned overlay",
+  "cases": 4,
+  "question": "Ground/aim timing, real motor2m/no steer, wall/tag cancellation, aged recovery no impulse",
+  "stopping_condition": "Four fresh native cases or bounded launch failure; at most one fixture repair",
+  "retry_count": 0
+}

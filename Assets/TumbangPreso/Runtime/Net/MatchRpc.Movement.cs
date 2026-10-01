@@ -53,15 +53,13 @@ namespace TumbangPreso.Net
             if(system?.Kit?.HeroId!=hero || (hero!="zack" && hero!="sean")) return;
             float age=Mathf.Max(0,(float)_nm.ServerTime.Time-sentAt);
             var state=new HeroMovementState { Remaining=remaining,UntilNextEmission=untilNext,Wake=wake,KnownWake=knownWake,QuickFollowup=(flags & 1)!=0,QuickSecondCut=(flags & 2)!=0 };
-            float interval=hero=="zack"?.30f:.15f;
+            float interval=hero=="zack"?.30f:0f;
             if(!state.Valid(system.Kit.Skill1.Duration,interval,age)) return;
             if(remaining>0 && age>=remaining)
                 Debug.Log($"[MovementWindow] expired in transit seat={seat} remaining={remaining:F4} age={age:F4}");
             using(NetCue.SuppressRelay()) system.RestoreJoiningMovement(state,age);
-            // A spike can hide host emissions that happened after this captured
-            // field batch. Recover those real fields, never replay guessed drops.
-            if(hero=="sean" && remaining>0 && age>=untilNext && !_preparationFollowupPending)
-                StartCoroutine(RefreshAfterExpiredPreparation(round));
+            // Sean's committed step has no trail emissions to recover. Position
+            // and velocity stay on the normal movement snapshots.
         }
     }
 }
