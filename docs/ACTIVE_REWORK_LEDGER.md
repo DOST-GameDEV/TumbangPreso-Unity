@@ -3478,3 +3478,15 @@ No task-owned browser/preview/server/player or Unity job remains. Private source
 dirt retained. Next actual unit: current human Overclock lifetime/cost, shared
 persistent state and match/round resets, with full Zack migration still open.
 
+
+RAFI-WALL-SURFACE-1001 owns RafiWaterVisual.cs Waterwall branch only and
+Resources/Shaders/RafiWater.shader _CurtainFlow branch, scoped RafiExpansionProbe
+surface assertion/evidence. Previous film remains too pane-like: uniform sheet
+and ruler-straight crown. Preserve footprint, real state, four-second life and
+single interception. Break optical uniformity with sparse flowing translucent
+bands, a rolled variable-width crown and a shallow runoff line at its own base.
+Keep the centre clear and all flow deterministic from sampled field age; no
+refraction, extra particles, lights or colliders. Other water types retain shader
+branch0. One existing focused wall motion/collapse review against changedmaterial,
+one tooling repair maximum. No generic cast changes in shared Zack-owned area.
+Current123; all earlier native jobs terminal, quiet mode and Doc edits permitted.
