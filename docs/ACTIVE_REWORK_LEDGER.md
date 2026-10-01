@@ -2353,6 +2353,16 @@ first namespace repair failed; exact declared enum is CameraSystem.AimSource.
 Corrected source now awaits one coherent wall/tutorial native batch, not another
 standalone unchanged fixture loop. No runtime pass is claimed for Water wall yet.
 
+Haunt actual-peercb3274f86 published at9574fed1c, remote verified. Same Nemu
+Feedback Notes updated/read back: actual client cast/all4timers/motion/completion,
+human rejoin/audio/movement still needed; native controls/comments unchanged.
+New tutorial/Water wall reservations preserved; no changes to protected kits or
+loading. Current source116; contributor117candidate not published/qualified here.
+All jobs/helpers/player processes terminal, no task browser/previews opened.
+Next authorized local unit: fully map Haunted Observe/At/selector/direct-position
+reads before editing so unseen actors cannot reenter via fallback. Current bot
+ranking and two allocation fixes stay qualified; no full sensor claim yet.
+
 Wall/tutorial coherent candidate now frozen at source de810883 with owned
 wall/tutorial changes. Exact AimSource declaration checked; two earlier compile
 failures retained. Four expected native cases, active/broken wall and tutorial
@@ -2392,3 +2402,64 @@ are visual-only: Paete theme WAV missing, Phaister cue log empty. Existing
 ReviewAudioCapture found; process-local ALSA null opens but Unity sample capture
 still unproven. Next validate that route using existing player diagnostic, then
 Hydro body/material presentation. No protected reference edits.
+Integrated fb41d20ee curtain/tutorial with its authored4native/6Core/capture
+receipts intact. Current source117; actual Haunt Windows116pair remains exact
+frozen scope, no117actual-peer claim. Both histories preserved and owned runtime
+files clean. Broader goal stays active; next local work remains complete Haunted
+bot observation/fallback/target-selection handling, followed by remaining queue.
+
+HAUNTED-ACTOR-PERCEPTION-1001 owns AIController.cs and existing companion
+observation tests. Scope: same7m outer near-sight cutoff, stop far actor updates,
+represent unknown position/prediction as nullable (no fake coordinates), filter
+actor selection/defender/aim queries and retain remembered positions/self/normal
+lag. Four native baseline cases cover unknown/far selectors/memory/replacement;
+final adds prior seven controls. Slipper sensing remains explicitly separate,
+not a full Haunted bot claim. No kit mechanics/art/loading or protocol edit.
+Stop at fresh XML; one tooling repair maximum. No active heavy job.
+
+Haunted actors baseline4/4fails at intended defects: unknown live coordinates,
+new companion coordinate exposure, distant memory following truth, and far tag
+selection. Runner51299terminal, no fixture repair. Source now nullable At/AheadOf,
+retained no-allocation actor view for selectors, indexed visible-only Observe,
+defender/claimant helper filtering and observed rather than live Facing. Actor
+sensing uses7m body distance based on existing outer sight limit (not pixel-identical
+camera-depth geometry). Normal kits/rules remain unchanged; unknowns have no
+invented coordinates. Final four plus prior seven behavior/allocation controls.
+
+Actor final first launch66972terminal before tests: one missed nullable caller
+in SafeToEmote caused CS1503. Corrected source caller; no fixture change or pass
+claimed. ReachTargetFor external actor result also receives shared sight gate.
+One bounded integration repair; coherent finalv2includes11observation cases plus
+existing two actual close-tag commitment/input cases (13expected). All earlier
+menu/player/wire proofs retained without rerun. No additional validation loop.
+
+Haunted actor finalv2 native13/13passes0.946s;670inputs no drift, two owned source
+files match frozen8120ab03c overlays. Four Haunted plus seven prior controls and
+two real close-tag input cases; first final CS1503 corrected once, no fixture
+repair. All jobs51299/66972/91287terminal, prefs/profiles preserved. Publish exact
+AI/tests/status/receipts now. Actor observation/fallback/selection unit qualified;
+item knowledge and whole-match AI remain separate. Prior116actual Haunt pair is
+older source, no new117peer claim. Next filter distant rival slippers in bot item
+planning while preserving own retrieval knowledge and live inventory lifecycle.
+
+Actor92ee8b8e9 remote verified. HAUNTED-RIVAL-ITEMS-1001 claims AIController.cs
+inventory view and existing BotSlipperQueryTests.cs. Filter distant rival shoes
+from flying/area/denial/cover/glance queries while retaining existing own retrieval.
+Same7m body-distance rule; ownership/flight/activity remain live, no cache or art/
+kit/loading/protocol edit. Two native baseline cases; final9query/allocation/
+lifecycle controls. One tooling repair max; stop fresh XML. All prior jobs terminal.
+
+Rival-item baseline2/2fails at intended defects: distant flying rival remains
+selected and hidden loose rival appears in area count. Native75348terminal,
+no fixture repair. Thirteen existing inventory readers now share an allocation-
+free sight-filtered view; own items retain existing retrieval. Two formerly static
+private helpers now use the observer instance; test delegate binding follows that
+API change. Same9query/lifecycle/allocation cases next, no actor suite rerun.
+
+Rival-item final9/9native passes;670inputs no drift, two owned files match
+92ee8b8e9overlaycandidate. Thirteen readers share sight gate, own retrieval and
+near/clear/activity/ownership/native-order controls pass; warmed allocations stay0.
+Jobs75348/8587terminal, no fixture repair or actor suite repetition. Publish exact
+paths/status/receipts and update existing Nemu Notes with local actor/item scope.
+Then continue actual reconnect/session recovery using existing authority/identity
+routes; no new paid service, queue query rate, visual or loading changes.

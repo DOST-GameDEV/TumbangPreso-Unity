@@ -213,3 +213,7 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Per-frame bot observation allocation](bot-observe-allocation.md).
 
 [Actual116owner-client Haunt delivery and limits](haunt-actual-peers.md).
+
+[Haunted bot actor observation and target selection](haunted-actor-perception.md).
+
+[Haunted rival-item planning and preserved retrieval](haunted-rival-items.md).

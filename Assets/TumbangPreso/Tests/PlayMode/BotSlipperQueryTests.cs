@@ -98,8 +98,7 @@ namespace TumbangPreso.PlayTests
                 typeof(AIController).GetMethod("TryInterceptPoint", hidden));
             var inbound = (Func<Lata, bool>)Delegate.CreateDelegate(typeof(Func<Lata, bool>), _brain,
                 typeof(AIController).GetMethod("RivalShotIsInbound", hidden));
-            var ownedBy = (Func<RoundDirector, int, Slipper>)Delegate.CreateDelegate(typeof(Func<RoundDirector, int, Slipper>),
-                typeof(AIController).GetMethod("SlipperOwnedBy", BindingFlags.Static | BindingFlags.NonPublic));
+            var ownedBy = Query<Func<RoundDirector, int, Slipper>>("SlipperOwnedBy");
             var can = Track(new GameObject("Query can")).AddComponent<Lata>(); can.enabled = false;
             Assert.AreSame(_owned, _mine()); Assert.IsFalse(intercept(out _));
             _owned.ApplySnapshotState(SlipperState.InFlight, null, Vector3.back * 2 + Vector3.up * .35f, Quaternion.identity,
@@ -118,8 +117,7 @@ namespace TumbangPreso.PlayTests
             var flying=Query<Func<Slipper>>("NearestFlyingSlipper");
             var count=Query<ThornCount>("PaeteThornCount");var aim=Query<ThornAim>("PaeteThornAim");
             var relevant=Query<Func<Vector3,float,bool>>("HasRelevantVoidTarget");
-            var loose=(Func<bool>)Delegate.CreateDelegate(typeof(Func<bool>),typeof(AIController).GetMethod(
-                "AnyLooseSlipperInsideTheBox",BindingFlags.Static|BindingFlags.NonPublic));
+            var loose=Query<Func<bool>>("AnyLooseSlipperInsideTheBox");
             void ScanPlanning()
             { flying();loose();relevant(Vector3.zero,5);count(Vector3.zero,out _);aim(Vector3.zero,out _,out _); }
             for(int i=0;i<5;i++)ScanPlanning();
@@ -149,6 +147,39 @@ namespace TumbangPreso.PlayTests
             Assert.IsNull(flying());Assert.IsTrue(relevant(Vector3.zero,5));
             _owned.OwnerSlot=2;Assert.IsFalse(relevant(Vector3.zero,5));Assert.AreEqual(1,count(Vector3.zero,out _));
             _owned.gameObject.SetActive(false);Assert.AreEqual(0,count(Vector3.zero,out _));
+        }
+        private CharacterMotor BlindObserver()
+        {
+            var motor=_brain.GetComponent<CharacterMotor>();motor.Mode=Core.GameMode.HeroStrike;
+            motor.ApplyHaunted();Assert.IsTrue(motor.IsHaunted);return motor;
+        }
+        [Test] public void HauntedCannotTrackAFarRivalFlightButCanStillRetrieveItsOwnShoe()
+        {
+            var motor=BlindObserver();var rival=Scan().First(s=>s!=_owned);
+            var flying=Query<Func<Slipper>>("NearestFlyingSlipper");
+            rival.ApplySnapshotState(SlipperState.InFlight,null,Vector3.right*12,Quaternion.identity,Vector3.left*8,0,SlipperAffinity.Normal,2);
+            Assert.IsNull(flying(),"A distant rival flight remains globally visible to a Haunted bot.");
+            rival.transform.position=Vector3.right*3;Assert.AreSame(rival,flying());
+            rival.transform.position=Vector3.right*12;
+            _owned.ApplySnapshotState(SlipperState.InFlight,null,Vector3.left*10,Quaternion.identity,Vector3.right*8,0,SlipperAffinity.Normal,1);
+            Assert.AreSame(_owned,_mine());Assert.AreSame(_owned,flying(),"Own retrieval must remain usable.");
+            Object.DestroyImmediate(_owned.gameObject);motor.ClearStatuses();Assert.AreSame(rival,flying());
+        }
+        [Test] public void HauntedItemAimsExcludeFarRivalsAndReacquireNearbyOnes()
+        {
+            var motor=BlindObserver();motor.IsDefender=true;
+            var rival=Scan().First(s=>s!=_owned);var at=new Vector3(6,0,6);
+            rival.transform.position=at;_owned.transform.position=Vector3.right*20;
+            var count=Query<ThornCount>("PaeteThornCount");var aim=Query<ThornAim>("PaeteThornAim");
+            var relevant=Query<Func<Vector3,float,bool>>("HasRelevantVoidTarget");
+            Assert.AreEqual(0,count(at,out _),"A hidden rival shoe leaked into an area target count.");
+            Assert.AreEqual(0,aim(Vector3.zero,out _,out _));Assert.IsFalse(relevant(at,1));
+            rival.transform.position=Vector3.right*3;
+            Assert.AreEqual(1,count(Vector3.zero,out _));Assert.AreEqual(1,aim(Vector3.zero,out _,out _));
+            Assert.IsTrue(relevant(Vector3.zero,5));
+            rival.gameObject.SetActive(false);Assert.AreEqual(0,count(Vector3.zero,out _));
+            rival.gameObject.SetActive(true);rival.transform.position=at;motor.ClearStatuses();
+            Assert.AreEqual(1,count(at,out _));Assert.IsTrue(relevant(at,1));
         }
     }
 }
