@@ -169,6 +169,11 @@ namespace TumbangPreso
         public LagoonFlocks Pigeons;
         /// <summary>One knob over every life sound (1 is the authored balance).</summary>
         [Range(0f, 1f)] public float SoundGain = 1f;
+        /// <summary>Lifts every life sound over the match music (owner: "too low"); capped at 1.</summary>
+        [Range(.5f, 3f)] public float Loudness = 1.8f;
+        /// <summary>Scales each sound's full-volume distance (its far edge grows by half as much),
+        /// so a voice across the pavement is not already faded to a fifth.</summary>
+        [Range(1f, 5f)] public float Reach = 3f;
 
         /// <summary>REVIEW ONLY (the author's filmed events): lets the TAHOOO and thank-you popups
         /// spawn outside Play, where the film steps <see cref="Simulate"/> by hand. Never set in
@@ -2606,7 +2611,12 @@ namespace TumbangPreso
         private void Sound(AudioClip clip, Vector3 at, float gain, float near, float far, float pitch, Body follow)
         {
             if (clip == null) return;
-            gain *= SoundGain;
+            // Owner 2026-10-01: "the sfx for those liveliness characters are too low, you can barely
+            // hear them over the music". Every call site's gain and reach stay as authored; these
+            // two lift the whole street together (a voice 10 m off sat at a fifth of its gain).
+            gain = Mathf.Min(1f, gain * SoundGain * Loudness);
+            near *= Reach;
+            far *= Mathf.Max(1f, Reach * .5f);
             if (RecordSounds) SoundLog.Add(new Heard { Time = _clock, Clip = clip.name, At = at, Gain = gain, Pitch = pitch, Near = near, Far = far });
             if (!Application.isPlaying || AudioListener.pause || gain <= .001f) return;
             var ear = Ear();
