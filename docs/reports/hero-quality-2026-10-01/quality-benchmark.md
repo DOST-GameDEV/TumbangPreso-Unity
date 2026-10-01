@@ -159,3 +159,7 @@ PCM reports no device. No global or user audio setting changed. This only
 proves a sink can open; Unity output and usable capture remain unproven. Reuse
 the existing ReviewAudioCapture listener route before inventing another audio
 recording framework. It explicitly fails if no engine samples arrive.
+
+The subsequent [native output check](audio-route-checks/README.md) now produces
+nonzero actual listener samples using clocked AudioRenderer mode. This resolves
+recording access; it does not yet approve any replacement sound or hardware mix.

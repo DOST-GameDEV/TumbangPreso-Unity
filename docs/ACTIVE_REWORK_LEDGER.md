@@ -2506,6 +2506,31 @@ may lose character/can/slipper picks and takeover rating; existing three-cycle
 fixture claims character retention but checks only seat/spectator. Add the missing
 behavior assertion before changing authoritative lobby bookkeeping.
 
+AUDIO-OUTPUT-ROUTE-1001 claims existing AudioListenerProbe.cs only. Old112
+player diagnostic failed before title entry twice, so switch to the current
+scene-based native probe using existing ReviewAudioCapture, existing score cue
+and a process-local null sink. Expected one opt-in case and nonzero real output
+samples; this tests recording, never speaker playback or subjective SFX quality.
+No new recording framework, microphone, global audio change or restored skill
+cues. One bounded tooling retry maximum, stop at fresh terminal result.
+
+Audio native first case reaches actual callbacks but fails its bounded buffer:
+unpaced ALSA null consumes samples faster than wall time. One bounded tooling
+repair uses documented AudioRenderer recording mode with30fps/45rendered frames
+while retaining the existing listener capture and restoring mode in finally.
+No louder mix or enlarged buffer to hide the failure. Fresh output directory.
+Owner requested penalty list and live Doc status; supplied code-grounded six
+consequence categories, disclosed server/comment abandon cooldown mismatch.
+24complete Feedback rows now have visible Done labels; native checkboxes and
+Human verified unchanged. Current Hydro/audio note and two new queued Harry
+rows read back; original observations/comments preserved. Next after this unit:
+Harry's round-status carryover/throw-gating row before more Hydro presentation.
+
+Audio clocked retry native1/1passes, frozen inputs unchanged, OOM11/kill6
+unchanged. Actual stereo48kHz listener WAV1.493333s, peak.058779/RMS.003304.
+Existing score cue only; no new SFX or hardware/listening quality approval.
+Recording route unblocked through AudioRenderer with a process-local null sink.
+Publish owned probe/receipts, then investigate Harry round-reset/throw-gating row.
 HELD-SEAT-PICKS-1001 owns LobbySession.cs retained metadata and existing
 LobbyAndSettingsTests.cs. Three-cycle fixture now asserts actual character/can/
 slipper/rating after reclaim, not just seat. Baseline1case; final4cases will retain
@@ -2601,3 +2626,35 @@ Before-round selected2, midmatch retained3, Mirror rule preserved. Jobs56793/
 88521terminal, no fixture repair. Publish scopedsource/test/status/evidence, then
 new changed internal117player and same strict actualreconnect once. Original
 failed pair46640 remains preserved; do not change expectedcharacter or claimpass.
+
+ROUND-STATUS-1001 claims SliceRunner.cs and existing RoundFieldCleanupTests.cs.
+Harry reports Tagged/status carryover. ResetWorld teleports and clears elemental
+statuses but does not clear the independent stun/trip stacks. Reproduce a real
+round transition with Tagged and trip, retain existing field/map/replay controls,
+then clear through existing recovery methods at round reset only. No protected
+kit retune or new wire semantics. Throw-gating/design changes are separate.
+
+Round-status baseline1/1fails at the actual defect: Tagged remains5seconds
+after EndRound/BeginIntermission/AdvanceRound. No tooling failure. ResetWorld
+now clears independent stun and trip recovery through their existing methods;
+Teleport still owns elemental cleanup. Final same case plus three retained
+field/map/replay boundary controls, expected4native cases.
+
+Round-status final4/4passes, frozen inputs unchanged, OOM11/kill6unchanged.
+Baseline kept. Tagged/trip clear at round reset; Chilled/Haunted and three field/
+map/replay controls pass. Publish explicit paths and update same row status
+portion; leave whole row unfinished for throw/reticle. No new player/peer claim.
+
+CAN-DOWN-THROW-1001 claims Core ThrowRules.cs, Core.Tests/BalanceTests.cs,
+RoundDirector.cs, Carrier.cs comments, Net/NetSession.cs compatibility constant,
+and existing ThrowChargeUiTests.cs. Current Feedback explicitly asks knockdown
+to cancel charge and block further throws until upright/protection gone; this
+revises the older allow-down rule. Baseline actual charge/UI case first, then
+shared Core gate and maintenance path, protocol118, focused Core/native checks.
+Other contributor's117player work remains an older compatible batch, not118proof.
+
+Pre-roundb4c329b7b integrates contributorround-resetb25cff3a5 and native audio
+receipts with their scopes intact. Current117; can-down118work is reserved and
+not published in this candidate. No conflict in runtime paths; both ledger
+histories preserved. Next changed internalplayer output is feedback-reconnect-fixed-
+player-1001; retain original117failedpair and rerun same strictcharacter2once.
