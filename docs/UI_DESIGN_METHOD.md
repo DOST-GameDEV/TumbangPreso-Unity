@@ -97,3 +97,10 @@ The passive next-taya/standings card belongs to the whole match. Install it for
 watchers and keep its event owner active when entering watch mode; only personal
 seat/stamina cards are excluded. Explicit clean feed hides the card's root canvas
 without reparenting away its scaler or losing the live boundary state.
+
+## Title Submit Boundary
+
+The title's opening action is accepted once and waits for the existing UI Submit
+to release before Home installs its selected PLAY. Ordinary non-Submit keys and
+pointer/touch clicks retain the same entry route with a frame boundary. A fresh
+Submit remains usable on Home. [Focused evidence](reports/hero-quality-2026-10-01/title-submit-checks/README.md).

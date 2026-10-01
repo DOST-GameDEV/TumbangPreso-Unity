@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 03:42:49Z" end-time="2026-10-01 03:42:55Z" duration="6.3790952">
+  <test-suite type="TestSuite" id="2338" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1082" result="Failed" site="Child" start-time="2026-10-01 03:42:49Z" end-time="2026-10-01 03:42:55Z" duration="6.379095" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2332" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1082" result="Failed" site="Child" start-time="2026-10-01 03:42:49Z" end-time="2026-10-01 03:42:55Z" duration="6.367187" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="227122" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2333" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1082" result="Failed" site="Child" start-time="2026-10-01 03:42:49Z" end-time="2026-10-01 03:42:55Z" duration="6.362474" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2334" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1082" result="Failed" site="Child" start-time="2026-10-01 03:42:49Z" end-time="2026-10-01 03:42:55Z" duration="6.359146" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1345" name="FeedbackMenuRouteTests" fullname="TumbangPreso.PlayTests.FeedbackMenuRouteTests" classname="TumbangPreso.PlayTests.FeedbackMenuRouteTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-01 03:42:49Z" end-time="2026-10-01 03:42:55Z" duration="6.336358" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1348" name="OrdinaryKeyboardKeyEntersHomeAndBackKeepsItsBackground" fullname="TumbangPreso.PlayTests.FeedbackMenuRouteTests.OrdinaryKeyboardKeyEntersHomeAndBackKeepsItsBackground" methodname="OrdinaryKeyboardKeyEntersHomeAndBackKeepsItsBackground" classname="TumbangPreso.PlayTests.FeedbackMenuRouteTests" runstate="Runnable" seed="94004620" result="Passed" start-time="2026-10-01 03:42:49Z" end-time="2026-10-01 03:42:51Z" duration="2.072454" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+]]></output>
+            </test-case>
+            <test-case id="1347" name="TitlePadSubmitIsReleasedBeforeHomeCanReceiveIt" fullname="TumbangPreso.PlayTests.FeedbackMenuRouteTests.TitlePadSubmitIsReleasedBeforeHomeCanReceiveIt" methodname="TitlePadSubmitIsReleasedBeforeHomeCanReceiveIt" classname="TumbangPreso.PlayTests.FeedbackMenuRouteTests" runstate="Runnable" seed="1592341215" result="Failed" start-time="2026-10-01 03:42:51Z" end-time="2026-10-01 03:42:53Z" duration="2.137578" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A fresh deliberate Submit still activates PLAY.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.FeedbackMenuRouteTests+<SubmitRoute>d__4.MoveNext () [0x002ef] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/FeedbackMenuRouteTests.cs:66
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="1346" name="TitleSubmitIsReleasedBeforeHomeCanReceiveIt" fullname="TumbangPreso.PlayTests.FeedbackMenuRouteTests.TitleSubmitIsReleasedBeforeHomeCanReceiveIt" methodname="TitleSubmitIsReleasedBeforeHomeCanReceiveIt" classname="TumbangPreso.PlayTests.FeedbackMenuRouteTests" runstate="Runnable" seed="1521122875" result="Failed" start-time="2026-10-01 03:42:53Z" end-time="2026-10-01 03:42:55Z" duration="2.110007" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A fresh deliberate Submit still activates PLAY.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.FeedbackMenuRouteTests+<SubmitRoute>d__4.MoveNext () [0x002ef] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/FeedbackMenuRouteTests.cs:66
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Net] offline
+Saving results to: /workspace/shared/tump-setup/home/.config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

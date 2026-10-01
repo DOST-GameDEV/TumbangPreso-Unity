@@ -37,7 +37,8 @@ reference video access was unavailable and is not claimed.
 
 Owner-authorized exception to finalized-kit protection. Full-size grounded copies,
 bounded plausible placement and victim-view isolation implemented; cast/mark/
-recast/status/ultimate rules unchanged. Two native checks pass; publication pending.
+recast/status/ultimate rules unchanged. Two native checks pass; shipped5cce9a55
+and remote verified.
 [Evidence and limits](reports/hero-quality-2026-10-01/phaister-hex.md).
 
 ### AIM-CIRCLE-1001: replace the crosshair with a hollow circle
@@ -93,9 +94,11 @@ Source: [TUMP Wiki](https://docs.google.com/document/d/1jvr7NLzhHrbw-wrG676AeOko
 read on 2026-09-30, including ability, status and feedback tabs. The document wins
 for other characters. Paete and Phaister are finalized and governed by the
 protected-hero rule in AGENTS.md. Their implementation supersedes stale Wiki text.
-Only demonstrated bug fixes may change them; in-game skill descriptions stay
-untouched except passive descriptions. Wiki descriptions may document the final code. Incomplete wiki cells are
-not specifications to invent. Scope restrictions supersede cosmetic additions.
+Only demonstrated bug fixes may change them, plus the owner-authorized scoped
+Phaister Hex hallucination refinement; in-game skill descriptions stay untouched
+except passive descriptions. Wiki descriptions may document the final code. HERO-QUALITY-1001 now explicitly
+authorizes filling missing Hydro/Pyro/Electro designs after research; unrelated
+incomplete cells still do not authorize invented specifications.
 
 - [x] F0930-01 Tutorial: revised20-lesson route, real ordered objectives,
   readable binding-specific prompts, Enter skip and Darumadrop/Xelu footer ship.
@@ -298,7 +301,11 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   [Network presentation evidence](reports/feedback-2026-09-30/familiar-network-smoothing.md).
   Audible mix, current actual peers and full-kit qualification remain open.
 
-- [x] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,
+- [x] F0930-13 Title Enter regression: release opening Submit before Home can queue;
+  three native keyboard/pad/ordinary-key checks pass. Shipped c403800c;
+  remote verified and same Feedback row updated.
+  [Evidence](reports/hero-quality-2026-10-01/title-submit-checks/README.md).
+  Prior already-labelled-fixed checks remain: any-key title,
   no Escape return to title, queue cancel button, hamburger background, stamina drain.
   Lighting rename/default/order reconciled with already-shipped BUGS-0926.5:
   current native2/2passes preserve old choices, default Standard, Nostalgic second,

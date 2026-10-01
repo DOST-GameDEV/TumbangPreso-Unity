@@ -1744,6 +1744,30 @@ measured-ground settling/max3/plausible placement refined; rules and other Phais
 work unchanged. Native centre/edge stills inspected; no fullmovie/player/peer claim.
 Suite plan has pre-existing unassigned fixtures; newHex fixture placedmatch only.
 Publish scoped presenter/tests/evidence, then continue current requested work.
+Hex5cce9a55 remote verified; source clean before player preparation. Refresh the
+owned internal Linux candidate next so actual play can include tutorial/circle/
+Hex/Drift112 source. Only1.7GBfree versus old2.1GBplayer: moved that reproducible
+owned output to Builds/cloud-linux-current and retain its old identity/hash;
+GameBuilder's normal guarded player-output replacement will rebuild it in place.
+No Desktop/source/profile deletion. Current Editor build gates copied; non-code
+source delta matches except200Xelu importer trailing-whitespace rewrites, retained.
+Build identity will honestly retain isolatedbase831/dirty plus explicit source
+5cce9a55 runtime-input manifest. One heavy guarded build, then run that exact player.
+Current internal Linux build succeeds:2077MB,45s build/81.86s guarded process,
+protocol112, runtimeSHA67e444f5f668430913d517fc9eaadd2186f27c7ad426d29b58f39501ac988ff5.
+OOM11/kill6unchanged. Old100player output superseded; no new runtime claim yet.
+Next exact-player offline practice/aim-circle/pause/return/quit qualification in
+an isolated copied QA home. No user profile/Desktop/network-room mutation.
+Actual current112player manual check exited0 normally after852s/no OOM. Observed
+hollow aim, Ready/walk/run/three accepted jumps, actual throw→loose Retrieve,
+offline pause/resume, tutorialQuit→Home and QuitGame. Look intentionally skipped;
+not fulltutorial/peer/audio qualification. New real-player observation: title
+Return entered Home alreadyqueueing; cancelled, temporary lobby deletedconfirmed.
+Investigate title Submit leak (existingPeriod test misses it). Claim
+UI/OwnerMenuPrompt.cs, UI/HomeCourtView.cs, Input/MenuNav.cs and
+Tests/PlayMode/FeedbackMenuRouteTests.cs for focused offline reproduction/fix.
+No new profile/room action intended; no heavy job active. Other claims unchanged.
+
 
 NEMU-HAUNT-1001 owns Runtime/Abilities/NemuHeroKit.cs, Runtime/Visual/GhostPetCompanion.cs,
 Runtime/Net/MatchRpc.FamiliarEffects.cs, NetSession protocol113, new NemuHauntContractTests
@@ -1956,3 +1980,45 @@ Do not blindly lengthen established outage timing or change friend's loading.
 Next correct/prove network admission handoff via existing waiter, then targeted
 startup/deadline evidence and actual pair only after an actual fix. Retain failed
 receipt and no unchanged retry. Full goal active; all current jobs terminal.
+Cloud integration checkpoint03:38UTC: retained Linux112 player evidence and
+title Submit regression claim alongside incoming contributor protocol114 work.
+Incoming100da2c9 includes Haunt/perception, Airburst Wiki alignment, familiar
+smoothing and bot companion observation. Their Windows build remains contributor
+owned; its recorded in-progress state is not a new success claim. Local Linux
+player remains112 and cannot qualify114 peers. Continue title-input unit only;
+no overlap with contributor build or Haunted sensor investigations.
+
+Title baseline: source392d9e6b plus one new offline Enter regression case;
+question opening Submit must end before Home accepts PLAY. Stop on fresh1case
+XML/runner terminal; no retries yet, maximum one tooling repair. Inputs frozen
+in isolated Logs/title-submit-baseline/inputs.json; current114overlay.
+
+Baseline1case proves title transitions with Enter still held. Final defers only
+UI Submit release plus one frame; all title entry paths share single guarded
+callback. Final3cases cover keyboard/pad fresh Submit and unchanged ordinary-key
+Back route. Baseline inputs unchanged; final frozen separately. No tooling retry.
+
+Finalv1 preserves title release/no autoqueue but fresh Submit fixture yields
+past its injected input frame before module processing. One bounded repair calls
+real InputSystemUIInputModule.Process in that frame and asserts action performed;
+no direct button invocation or runtime change. Rerun same3cases once asv2.
+
+Title finalv2 native3/3passes6.5848261s; fresh keyboard/pad Submit reaches actual
+UI module and queues offline after release, Period/Back route retained. Frozen
+inputs unchanged, OOM11/kill6unchanged. Publish four owned source/test files and
+evidence; protocol114 unchanged. Linux112player remains older. Same Feedback
+any-key row needs regression/resolution appended after remote verification.
+
+Title c403800ced55837e0dc5b2f79cb723a7c6ed56b4 remote verified; same any-key
+Feedback row resolution appended with original Period history preserved. Native
+controls left untouched; no human approval claim. Tool initially cited a stale
+reservation; verified later explicit owner update instruction allowed same retry.
+No heavy job active. Next resume hero implementation plan from current114source;
+local112player refresh belongs to a later coherent batch, contributor Windows
+player/Haunted sensors remain reserved.
+
+Integrated c22318646 title-Submit/Home-search prevention with its authored
+Linux/native receipts intact. Windows239050ac6player remains successfully built
+but failed direct admission; Linux112 evidence is separate. Both ledger histories
+retained; no runtime network conflict or unrelated dirt overwritten. Continue
+NETWORK-COLD-JOIN-1001 existing connection/seat waiter investigation next.
