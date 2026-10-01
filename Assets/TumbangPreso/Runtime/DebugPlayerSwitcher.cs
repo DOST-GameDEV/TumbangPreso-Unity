@@ -101,8 +101,10 @@ namespace TumbangPreso
 
         private void Update()
         {
-            // ⚠️ NEVER IN A NETWORKED SESSION.
-            if (NetAuthority.IsNetworked) return;
+            // Seat shortcuts belong to gameplay, not a menu/rebinding dialog
+            // or a presentation that currently owns the controlled view.
+            if (NetAuthority.IsNetworked || UI.Panel.AnyOpen || PresentationClock.Held
+                || PresentationClock.BlocksInput) return;
 
             var kb = Keyboard.current;
             if (kb == null) return;
@@ -241,7 +243,13 @@ namespace TumbangPreso
 
                 if (spectator != null) spectator.enabled = false;
 
-                UnityEngine.Object.FindFirstObjectByType<UI.Hud>()?.ExitSpectatorMode();
+                var hud = UnityEngine.Object.FindFirstObjectByType<UI.Hud>();
+                hud?.Bind(claimed);
+                hud?.ExitSpectatorMode();
+                var pause = UnityEngine.Object.FindFirstObjectByType<PauseWatcher>();
+                if (pause != null) pause.Local = claimed;
+                var youCard = UnityEngine.Object.FindFirstObjectByType<UI.YouCard>();
+                if (youCard != null) { youCard.Bind(claimed); youCard.Refresh(); }
             }
         }
 

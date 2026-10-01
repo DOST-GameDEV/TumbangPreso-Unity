@@ -188,6 +188,9 @@ namespace TumbangPreso.CameraSystem
             // to their playback cameras go on here, the grade FIRST (image effects run in
             // component order and the outline composites over a graded frame on the rig too).
             // PostAntiAlias stays off, as on those views: the frame lands in a RawImage.
+            // Image effects alone do not opt an off-screen camera into the map's
+            // scoped material lighting. Keep replay on the same world-look path.
+            _camera.gameObject.AddComponent<WorldLookCamera>();
             _camera.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
             _camera.gameObject.AddComponent<WorldOutline>().PrototypeEnabled =
                 Camera.main.GetComponent<WorldOutline>()?.PrototypeEnabled ?? true;

@@ -14,8 +14,22 @@ namespace TumbangPreso.PlayTests
         readonly List<GameObject> _built = new List<GameObject>();
         static readonly MethodInfo Flight = typeof(Slipper).GetMethod("FixedUpdate", BindingFlags.Instance | BindingFlags.NonPublic);
         static readonly MethodInfo Ground = typeof(Slipper).GetMethod("FindGroundY", BindingFlags.Static | BindingFlags.NonPublic);
-        [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
-        [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
+        private int _idleDelay;
+        [UnitySetUp] public IEnumerator Before()
+        {
+#if UNITY_EDITOR
+            _idleDelay=UnityEditor.EditorUserSettings.idleImportWorkerShutdownDelayMilliseconds;
+            UnityEditor.EditorUserSettings.idleImportWorkerShutdownDelayMilliseconds=1;
+#endif
+            yield return PlayModeWorld.Reset();yield return new WaitForSecondsRealtime(1);
+        }
+        [UnityTearDown] public IEnumerator After()
+        {
+            yield return PlayModeWorld.Reset();
+#if UNITY_EDITOR
+            UnityEditor.EditorUserSettings.idleImportWorkerShutdownDelayMilliseconds=_idleDelay;
+#endif
+        }
         [TearDown] public void Cleanup() { foreach (var go in _built) if (go != null) Object.DestroyImmediate(go); _built.Clear(); }
         GameObject Track(GameObject go) { _built.Add(go); return go; }
         GameObject Slab(string name, Vector3 at, Vector3 scale)
@@ -76,6 +90,7 @@ namespace TumbangPreso.PlayTests
             ready.enabled = true; ready.StartLocalCountdown();
             yield return new WaitForSeconds(3.6f);
             Assert.IsFalse(ready.AwaitingReady || ready.CountingDown);
+            yield return new WaitForSeconds(GameServices.Round.Lata.ProtectionLeft+.05f);
             var who = GameServices.Round.PlayerAt(1); var carrier = who.GetComponent<Carrier>();
             var rig = Object.FindFirstObjectByType<CameraSystem.CameraRig>();
             foreach (var brain in Object.FindObjectsByType<AIController>()) brain.enabled = false;
@@ -103,6 +118,19 @@ namespace TumbangPreso.PlayTests
                 Assert.That(vertex.y, Is.EqualTo(guide.LandingPoint.y).Within(.001));
                 Assert.Less(Vector3.Distance(vertex, guide.LandingPoint), .6f, "The old flight line must not remain in the mesh.");
             }
+            // Exercise the real mesh between two prediction ticks. Prediction remains exact;
+            // only the visible centre travels linearly at render cadence.
+            var flags=BindingFlags.Instance|BindingFlags.NonPublic;
+            var exact=guide.LandingPoint;var from=exact+Vector3.right*.4f;
+            typeof(TrajectoryPreview).GetField("_drawFrom",flags).SetValue(guide,from);
+            typeof(TrajectoryPreview).GetField("_drawStart",flags).SetValue(guide,Time.unscaledTime);
+            var draw=typeof(TrajectoryPreview).GetMethod("DrawInterpolated",flags);
+            float start=Time.unscaledTime;
+            draw.Invoke(guide,new object[]{start+TrajectoryPreview.PredictionInterval*.5f});
+            Assert.Less(Vector3.Distance(guide.DisplayedLandingPoint,Vector3.Lerp(from,exact,.5f)),.002f);
+            Assert.AreEqual(exact,guide.LandingPoint,"Presentation may not rewrite the ballistic prediction.");
+            draw.Invoke(guide,new object[]{start+TrajectoryPreview.PredictionInterval*2});
+            Assert.Less(Vector3.Distance(guide.DisplayedLandingPoint,exact),.001f,"Never overshoot a landing target.");
             System.IO.Directory.CreateDirectory("Logs/feedback-0930/landing-circle");
             typeof(ThrowAimIntegrationProbe).GetMethod("CaptureGuideDifference", BindingFlags.Static | BindingFlags.NonPublic)
                 .Invoke(null, new object[] { rig.Camera, guide, "Logs/feedback-0930/landing-circle", "landing-visible" });

@@ -62,7 +62,8 @@ namespace TumbangPreso.Abilities
 
         public float CooldownRemaining { get; protected set; }
         public float DurationRemaining { get; protected set; }
-        public bool IsActive => DurationRemaining > 0.0f;
+        public virtual bool IsPersistentActive => false;
+        public bool IsActive => DurationRemaining > 0.0f || IsPersistentActive;
 
         // ------------------------------------------------------------------ wind-up
         //
@@ -118,6 +119,7 @@ namespace TumbangPreso.Abilities
         private AbilityContext _committedContext;
         private bool _joiningPreparationSettled;
         public bool SupportsPendingSnapshot { get; protected set; }
+        public bool SupportsPermanentSnapshot { get; protected set; }
 
         // ------------------------------------------------------------------ charges
         //
@@ -199,7 +201,7 @@ namespace TumbangPreso.Abilities
         /// view failed still hears the line from the live cast.
         /// </summary>
         internal bool IntroductionVoiced { get; set; }
-        public bool IsReady => !_reservedForIntroduction && (UsesCharges ? ChargesRemaining > 0 : CooldownRemaining <= 0.0f);
+        public bool IsReady => !IsPersistentActive && !_reservedForIntroduction && (UsesCharges ? ChargesRemaining > 0 : CooldownRemaining <= 0.0f);
         internal void ReserveForIntroduction()
         {
             if (_reservedForIntroduction) return;
@@ -219,7 +221,7 @@ namespace TumbangPreso.Abilities
         internal void CancelIntroductionReservation() => _reservedForIntroduction = false;
 
         public float CooldownRatio => Cooldown > 0.0f ? Mathf.Clamp01(CooldownRemaining / Cooldown) : 0.0f;
-        public float DurationRatio => Duration > 0.0f ? Mathf.Clamp01(DurationRemaining / Duration) : 0.0f;
+        public float DurationRatio => IsPersistentActive ? 1 : Duration > 0.0f ? Mathf.Clamp01(DurationRemaining / Duration) : 0.0f;
 
         /// <summary>
         /// How wide the ground telegraph is, in metres, or 0 for a power that puts nothing on
@@ -761,6 +763,8 @@ namespace TumbangPreso.Abilities
             if (charges && UsesCharges) ChargesRemaining = MaxCharges;
         }
 
+        public virtual AbilityContext CaptureLocalCastContext(AbilityContext ctx) => ctx;
+
         public virtual bool AllowsImpairedCast(AbilityContext ctx) => false;
 
         public virtual bool CanActivate(AbilityContext ctx)
@@ -774,6 +778,7 @@ namespace TumbangPreso.Abilities
             if (IsWindingUp) return false;
 
             if (!ctx.Motor.CanAct() && !AllowsImpairedCast(ctx)) return false;
+            if (ctx.Motor.IsZapped && !AllowsImpairedCast(ctx)) return false;
             return true;
         }
 

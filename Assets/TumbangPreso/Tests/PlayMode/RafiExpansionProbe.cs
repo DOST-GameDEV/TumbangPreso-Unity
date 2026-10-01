@@ -51,6 +51,43 @@ namespace TumbangPreso.PlayTests
         }
         private static AbilityContext Context(CharacterMotor actor)=>new AbilityContext(actor,actor.GetComponent<Carrier>(),actor.GetComponent<CombatVerbs>());
 
+        [UnityTest,Timeout(60000)]
+        public IEnumerator AcceptedSkimKeepsItsWaterTellWithoutGenericCastParticles()
+        {
+#if UNITY_EDITOR
+            int idle=UnityEditor.EditorUserSettings.idleImportWorkerShutdownDelayMilliseconds;
+            UnityEditor.EditorUserSettings.idleImportWorkerShutdownDelayMilliseconds=1;
+#endif
+            GameObject control=null;
+            try
+            {
+                yield return new WaitForSecondsRealtime(1);
+                yield return Start();var caster=Rafi();
+                var art=RosterBook.Load().FindPersonArt("rafi");
+                caster.GetComponent<TumbangPreso.Visual.CharacterVisual>().ApplyModel(art.Model,art.Tint,art.Clips,art.Palette,art.PetModel);
+                yield return null;
+                Assert.IsNull(GameObject.Find("Vfx_CastFlash"),"Start without an unrelated flash.");
+                var shoe=caster.GetComponent<Carrier>().Held;Assert.IsNotNull(shoe);
+                var ability=caster.AbilitySystem.Kit.Skill2;
+                Assert.AreEqual(HeroKit.CastOutcome.Cast,caster.AbilitySystem.ApplyNetworkCast(HeroAbilitySystem.Slot.Skill2,
+                    caster.transform.position,caster.transform.forward,caster.Intent.AimPoint,0,true,ability.Id,false));
+                Assert.IsNull(GameObject.Find("Vfx_CastFlash"),"Rafi already supplies a directed water tell.");
+                Assert.IsTrue(((RafiHeroKit)caster.AbilitySystem.Kit).IsSkimLoadedFor(shoe));
+                Assert.AreEqual("hero-rafi-skim",caster.GetComponent<TumbangPreso.Visual.CharacterAnimator>().CurrentClipName);
+                yield return null;
+                Assert.IsNotEmpty(Object.FindObjectsByType<TumbangPreso.Visual.RafiSkimCoating>(FindObjectsSortMode.None));
+                control=TumbangPreso.Visual.AbilityVfx.SpawnCastFlash(caster.transform.position+Vector3.right*3,Color.cyan,.55f);
+                Assert.IsNotNull(control.GetComponent<ParticleSystem>(),"The generic factory remains available to other callers.");
+            }
+            finally
+            {
+                if(control!=null)Object.Destroy(control);
+#if UNITY_EDITOR
+                UnityEditor.EditorUserSettings.idleImportWorkerShutdownDelayMilliseconds=idle;
+#endif
+            }
+        }
+
         [UnityTest,Timeout(60000)] public IEnumerator CurrentSteersOneFlightWithoutStealingCredit()
         {
             yield return Start();var caster=Rafi();yield return null;

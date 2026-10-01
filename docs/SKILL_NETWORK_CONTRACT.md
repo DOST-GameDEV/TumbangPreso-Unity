@@ -575,3 +575,50 @@ the sequence. ReliableSequenced ordering accompanies existing resource traffic;
 ordinary live-owner resource snapshots retain their no-refund rule. Native6cases
 pass; actual123peers and full Zack migration remain separate.
 [Evidence](reports/feedback-2026-09-30/amped-up-objective.md).
+
+## Permanent Overclock And Zapped
+
+Protocol124appends one validated permanent Boolean to TimedKitState (max231bytes),
+supported only by explicit ability capability. Permanent state has zero timed
+remaining and cannot be pending; existing binding/scope/sequence guards apply.
+Overclock's flag survives rounds, clears on a new match and hydrates without
+replaying contact. Zapped adds one bounded0..5second clock to SyncUnit and one
+append-only status value; it blocks ability casts, not movement or ordinary
+interaction. Logos show X and permanent state shows Active. Twelve native cases
+pass; actual124peers and complete upgraded basics remain separate.
+[Evidence](reports/feedback-2026-09-30/overclock-state.md).
+
+## Bank Shot compatibility
+
+Protocol125 changes zack_skill2 to a35second cooldown/8second held-shoe load.
+The existing affinity integer carries6(one remaining powered bank) or7(two);
+each wall bank consumes one into6/Normal. Host launch captures a fixed one/two
+bank credit limit for that episode, independent of the changing affinity.
+Expiry/drop/reset clear the personal load; flight recovery consumes it without
+recasting. Existing timed-kit scope/watermark/age gates remain, with8s maximum.
+Guide and host bot prediction share85percent retention; bots preserve completed
+bank count. No new packet layout. Actual125peer qualification remains open.
+[Native evidence and limits](reports/feedback-2026-09-30/bank-shot.md).
+
+## Quick Circuit compatibility
+
+Protocol126 changes zack_skill1 to the lateral cut and appends a movement flag
+byte0/1/2 for ordinary/optional follow-up/second-cut recovery. Sean uses0.
+Recovery never relaunches or extends the remaining clock. The captured local
+cast context transmits the chosen lateral side using the existing aim field.
+Active recasts now honor CanAct/Zapped and explicit impaired-cast exceptions.
+[Native evidence and current peer limits](reports/feedback-2026-09-30/quick-circuit.md).
+
+
+## Closed Circuit compatibility
+
+Protocol127 adds a48byte CircuitAim owner-to-host message and a58byte host
+CircuitState snapshot. Both use match/round/movement epoch scope and sequences;
+aim also requires the current acquisition episode. Host checks sender ownership,
+finite/range-bounded aim and freshness within.25s. Replicas accept only the host,
+age phase/cooldown clocks and never apply Zapped. Accepted cast playback precedes
+state flushing; late snapshots cannot restart expired acquisition. Existing
+status replication owns victims. Native checks and actual direct Linux
+host/owner/observer qualify cancellation, optional different-target follow-up
+and expiry. WAN/loss/reconnect/device coverage remains separate.
+[Evidence and retained failures](reports/feedback-2026-09-30/closed-circuit/README.md).

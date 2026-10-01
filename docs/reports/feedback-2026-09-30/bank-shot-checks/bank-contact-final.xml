@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 11:24:46Z" end-time="2026-10-01 11:24:47Z" duration="0.830799">
+  <test-suite type="TestSuite" id="2433" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1171" result="Passed" start-time="2026-10-01 11:24:46Z" end-time="2026-10-01 11:24:47Z" duration="0.830799" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2427" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1171" result="Passed" start-time="2026-10-01 11:24:46Z" end-time="2026-10-01 11:24:47Z" duration="0.791799" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="31272" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2428" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1171" result="Passed" start-time="2026-10-01 11:24:46Z" end-time="2026-10-01 11:24:47Z" duration="0.765274" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2429" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1171" result="Passed" start-time="2026-10-01 11:24:46Z" end-time="2026-10-01 11:24:47Z" duration="0.740498" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2401" name="ZackBankShotTests" fullname="TumbangPreso.PlayTests.ZackBankShotTests" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-10-01 11:24:46Z" end-time="2026-10-01 11:24:47Z" duration="0.669396" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2412" name="BotPredictionAfterTwoPoweredBanksDoesNotRestoreFirstSpinBank" fullname="TumbangPreso.PlayTests.ZackBankShotTests.BotPredictionAfterTwoPoweredBanksDoesNotRestoreFirstSpinBank" methodname="BotPredictionAfterTwoPoweredBanksDoesNotRestoreFirstSpinBank" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="961044510" result="Passed" start-time="2026-10-01 11:24:46Z" end-time="2026-10-01 11:24:47Z" duration="0.498825" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2411" name="PoweredGuideMatchesActualWallFlight" fullname="TumbangPreso.PlayTests.ZackBankShotTests.PoweredGuideMatchesActualWallFlight" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-01 11:24:47Z" end-time="2026-10-01 11:24:47Z" duration="0.151859" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2409" name="PoweredGuideMatchesActualWallFlight(False)" fullname="TumbangPreso.PlayTests.ZackBankShotTests.PoweredGuideMatchesActualWallFlight(False)" methodname="PoweredGuideMatchesActualWallFlight" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="2047713674" result="Passed" start-time="2026-10-01 11:24:47Z" end-time="2026-10-01 11:24:47Z" duration="0.103260" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2410" name="PoweredGuideMatchesActualWallFlight(True)" fullname="TumbangPreso.PlayTests.ZackBankShotTests.PoweredGuideMatchesActualWallFlight(True)" methodname="PoweredGuideMatchesActualWallFlight" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="1861893555" result="Passed" start-time="2026-10-01 11:24:47Z" end-time="2026-10-01 11:24:47Z" duration="0.045240" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -57,5 +57,25 @@ namespace TumbangPreso.PlayTests
             }
             finally { Object.DestroyImmediate(root); Object.DestroyImmediate(actor); }
         }
+
+        [Test] public void PermanentOverclockShowsActiveAndZappedCrossesExistingLogos()
+        {
+            var provider = NetAuthority.Provider;
+            var root = new GameObject("Permanent power UI"); var actor = new GameObject("Permanent actor", typeof(CharacterMotor));
+            var system = actor.AddComponent<HeroAbilitySystem>(); system.enabled = false; system.BindHero("zack");
+            var body = actor.GetComponent<CharacterMotor>(); body.enabled = false;
+            var kit = (ZackHeroKit)system.Kit;
+            kit.RestoreTimedKit(body, new TimedKitSnapshot(kit.AttackingSkill, 0, kit.Ultimate, 0, ultimatePermanent: true));
+            var canvas = OwnerUiLayout.Canvas(root.transform, "PermanentCanvas");
+            var readout = root.AddComponent<TumpPowerReadout>(); readout.Build(canvas.transform); readout.Tick(system, true);
+            var dials = canvas.GetComponentsInChildren<OwnerAbilitySeal>(true);
+            Assert.AreEqual("Active", dials[2].GetComponentInChildren<Text>().text);
+            NetAuthority.Provider = new SoloProvider(); body.ApplyZapped(); readout.Tick(system, true);
+            var symbols = canvas.GetComponentsInChildren<TumpAbilitySymbol>(true);
+            Assert.AreEqual(3, symbols.Count(s => s.CastLocked));
+            body.ClearStatuses(); readout.Tick(system, true); Assert.AreEqual(0, symbols.Count(s => s.CastLocked));
+            Object.DestroyImmediate(root); Object.DestroyImmediate(actor);
+            NetAuthority.Provider = provider;
+        }
     }
 }

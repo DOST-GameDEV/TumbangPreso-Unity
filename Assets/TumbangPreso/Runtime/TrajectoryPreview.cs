@@ -13,7 +13,7 @@ namespace TumbangPreso
     public sealed class TrajectoryPreview : MonoBehaviour
     {
         public const int Samples = 36;
-        public const float WidthPerMetre = .0032f, WidthMin = .002f, WidthMax = .06f;
+        public const float WidthPerMetre = .004f, WidthMin = .002f, WidthMax = .075f;
         public const float AlphaMax = .92f;
         public const float NearFadeStart = .12f, NearFadeEnd = .65f;
         public const float FloorEpsilon = .018f;
@@ -27,7 +27,11 @@ namespace TumbangPreso
         private readonly List<int> _tris = new List<int>(Samples * 12);
         private static Material _arcMaterial;
         private readonly RaycastHit[] _hits = new RaycastHit[64];
-        private float _nextDraw;
+        private float _nextDraw, _drawStart;
+        private Vector3 _drawFrom;
+        private bool _hasLanding;
+        public const float PredictionInterval = .05f;
+        public Vector3 DisplayedLandingPoint { get; private set; }
         public Vector3 LandingPoint { get; private set; }
         public bool LandingVisible => _renderer != null && _renderer.enabled;
         public const float CircleRadius = .4f;
@@ -58,9 +62,12 @@ namespace TumbangPreso
         private void LateUpdate()
         {
             if (!ShouldShow()) { Clear(); return; }
-            if (Time.unscaledTime < _nextDraw) return;
-            _nextDraw = Time.unscaledTime + .05f;
-            Rebuild();
+            if (Time.unscaledTime >= _nextDraw)
+            {
+                _nextDraw = Time.unscaledTime + PredictionInterval;
+                Rebuild();
+            }
+            else if (_hasLanding) DrawInterpolated(Time.unscaledTime);
         }
 
         private bool ShouldShow()
@@ -78,6 +85,7 @@ namespace TumbangPreso
         private void Clear()
         {
             _nextDraw = 0;
+            _hasLanding = false;
             if (_renderer != null) _renderer.enabled = false;
             if (_mesh != null && _mesh.vertexCount > 0) _mesh.Clear();
         }
@@ -88,7 +96,8 @@ namespace TumbangPreso
                 _motor?.AbilitySystem?.Kit is Abilities.RafiHeroKit rafi && rafi.IsSkimLoadedFor(_carrier.Held)
                 ? RafiRules.SkimDistance : 0;
             return SlipperLandingPrediction.TryPredictLanding(origin, velocity, spin, _hits, out landing, _path,
-                skimDistance, false, _carrier?.Held != null ? _carrier.Held.RestHeight : Balance.SlipperRestHeight);
+                skimDistance, false, _carrier?.Held != null ? _carrier.Held.RestHeight : Balance.SlipperRestHeight,
+                _motor?.AbilitySystem?.Kit is Abilities.ZackHeroKit zack ? zack.BankShotAffinityFor(_carrier?.Held) : SlipperAffinity.Normal);
         }
 
         private void Rebuild()
@@ -96,7 +105,21 @@ namespace TumbangPreso
             var camera = UnityEngine.Camera.main;
             if (camera == null || !TryPredictLanding(_carrier.AimGuideOrigin(), _carrier.AimGuideVelocityNow(), _carrier.CurrentPektusSpin, out var landing))
             { Clear(); return; }
+            // Smooth only presentation. Never invent an interpolated ballistic result.
+            _drawFrom = !_hasLanding || Mathf.Abs(landing.y - LandingPoint.y) > .15f ||
+                Vector3.SqrMagnitude(landing - LandingPoint) > 64 ? landing : DisplayedLandingPoint;
             LandingPoint = landing;
+            _drawStart = Time.unscaledTime;
+            _hasLanding = true;
+            DrawInterpolated(_drawStart);
+        }
+
+        private void DrawInterpolated(float now)
+        {
+            var camera = UnityEngine.Camera.main;
+            if (camera == null || !_hasLanding) return;
+            var landing = Vector3.Lerp(_drawFrom, LandingPoint, Mathf.Clamp01((now - _drawStart) / PredictionInterval));
+            DisplayedLandingPoint = landing;
             _verts.Clear(); _colours.Clear(); _tris.Clear();
             bool legal = GameServices.Round.CanThrow(_motor);
             var tint = legal ? new Color(1, .92f, .58f, AlphaMax) : new Color(.72f, .72f, .68f, AlphaMax);

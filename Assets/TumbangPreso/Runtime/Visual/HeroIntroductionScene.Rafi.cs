@@ -29,37 +29,59 @@ namespace TumbangPreso.Visual
             _seaSky = Wall("SeaSky", 1.07f, 11, new Color(.55f, .78f, .76f, .6f), emission: .3f, cap: true);
             for (int i = 0; i < 4; i++)
             {
-                _stilts.Add(AddSolid("StiltHouse" + i, VfxShapes.Prism(4, 1, .8f), new Color(.1f, .12f, .12f, 1)));
-                _stilts.Add(AddSolid("StiltRoof" + i, VfxShapes.Prism(4, 1, .05f), new Color(.08f, .09f, .09f, 1)));
-                _stilts.Add(AddSolid("StiltPileA" + i, VfxShapes.Prism(4, 1, 1), new Color(.08f, .09f, .09f, 1)));
-                _stilts.Add(AddSolid("StiltPileB" + i, VfxShapes.Prism(4, 1, 1), new Color(.08f, .09f, .09f, 1)));
+                _stilts.Add(Add("StiltHouse" + i, VfxShapes.Prism(4, 1, .8f), new Color(.10f,.28f,.28f,.62f), emission:0, plain:true));
+                _stilts.Add(Add("StiltRoof" + i, VfxShapes.Prism(4, 1, .05f), new Color(.08f,.22f,.23f,.68f), emission:0, plain:true));
+                _stilts.Add(Add("StiltPileA" + i, VfxShapes.Prism(4, 1, 1), new Color(.08f,.22f,.23f,.68f), emission:0, plain:true));
+                _stilts.Add(Add("StiltPileB" + i, VfxShapes.Prism(4, 1, 1), new Color(.08f,.22f,.23f,.68f), emission:0, plain:true));
             }
             for (int i = 0; i < 3; i++) _ripples.Add(Add("FalseStepRipple" + i, VfxShapes.Collar(24, .02f, .82f), new Color(.6f, .9f, .92f, .7f)));
             for (int i = 0; i < 4; i++) _currents.Add(Add("GatheredCurrent" + i, WaterRibbon(), new Color(.25f, .67f, .78f, .5f)));
-            _wave = Add("BreakwaterWave", ArcWallMesh(18, 120), new Color(.16f, .55f, .62f, .78f));
-            _waveCrest = Add("BreakwaterCrest", ArcWallMesh(18, 120), new Color(.88f, .97f, .96f, .9f));
+            _wave = Add("BreakwaterWave", ArcWallMesh(18, 120), new Color(.16f, .55f, .62f, .64f));
+            _waveCrest = Add("BreakwaterCrest", ArcCrestMesh(18, 120), new Color(.88f, .97f, .96f, .9f));
             for (int i = 0; i < 6; i++) _spray.Add(Add("SendSpray" + i, VfxShapes.TwoSided(VfxShapes.Splat(8, .3f, 60 + i)), new Color(.85f, .96f, .95f, .85f), plain: true));
         }
 
         /// <summary>An arc of wall behind the hero, open toward the camera side: the wave's face.</summary>
         private static Mesh ArcWallMesh(int sides, float arcDegrees)
         {
-            var mesh = new Mesh { name = "Rafi breakwater arc" };
-            var vertices = new Vector3[(sides + 1) * 2];
-            var triangles = new int[sides * 12];
-            for (int i = 0; i <= sides; i++)
+            var mesh=new Mesh {name="Rafi rolled wave"};
+            float[] heights={0,.42f,.75f,.96f,1};
+            float[] radii={1,1.015f,.93f,.78f,.62f};
+            var vertices=new Vector3[(sides+1)*5];var uv=new Vector2[vertices.Length];
+            var triangles=new int[sides*4*6];int at=0;
+            for(int i=0;i<=sides;i++)
             {
-                float a = Mathf.Deg2Rad * (180 - arcDegrees * .5f + arcDegrees * i / sides);
-                var rim = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a));
-                // The top leans inward: a wave's face curls toward what it is about to hit.
-                vertices[i * 2] = rim; vertices[i * 2 + 1] = rim * .82f + Vector3.up;
-                if (i == sides) continue;
-                int n = i * 2, t = i * 12;
-                int[] faces = { n, n + 1, n + 2, n + 2, n + 1, n + 3, n, n + 2, n + 1, n + 2, n + 3, n + 1 };
-                for (int k = 0; k < 12; k++) triangles[t + k] = faces[k];
+                float u=i/(float)sides,a=Mathf.Deg2Rad*(180-arcDegrees*.5f+arcDegrees*u);
+                var rim=new Vector3(Mathf.Sin(a),0,Mathf.Cos(a));
+                for(int row=0;row<5;row++)
+                {
+                    vertices[i*5+row]=rim*radii[row]+Vector3.up*heights[row];
+                    uv[i*5+row]=new Vector2(u,heights[row]);
+                    if(i==sides||row==4)continue;
+                    int n=i*5+row,w=n+5;
+                    // RafiWater is Cull Off: one winding, not two coplanar draws.
+                    triangles[at++]=n;triangles[at++]=w;triangles[at++]=n+1;
+                    triangles[at++]=w;triangles[at++]=w+1;triangles[at++]=n+1;
+                }
             }
-            mesh.vertices = vertices; mesh.triangles = triangles; mesh.RecalculateNormals(); mesh.RecalculateBounds();
-            return mesh;
+            mesh.vertices=vertices;mesh.uv=uv;mesh.triangles=triangles;
+            mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
+        }
+        private static Mesh ArcCrestMesh(int sides,float arcDegrees)
+        {
+            var mesh=new Mesh {name="Rafi rolled crest"};
+            var vertices=new Vector3[(sides+1)*2];var triangles=new int[sides*6];
+            for(int i=0;i<=sides;i++)
+            {
+                float a=Mathf.Deg2Rad*(180-arcDegrees*.5f+arcDegrees*i/sides);
+                var rim=new Vector3(Mathf.Sin(a),0,Mathf.Cos(a));
+                vertices[i*2]=rim*.70f+Vector3.up*.985f;
+                vertices[i*2+1]=rim*.62f+Vector3.up;
+                if(i==sides)continue;int n=i*2,t=i*6;
+                triangles[t]=n;triangles[t+1]=n+2;triangles[t+2]=n+1;
+                triangles[t+3]=n+2;triangles[t+4]=n+3;triangles[t+5]=n+1;
+            }
+            mesh.vertices=vertices;mesh.triangles=triangles;mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
         }
 
         private void SampleRafi(float t)
@@ -73,7 +95,7 @@ namespace TumbangPreso.Visual
                 float angle = (180 - 55 + i * 34) * Mathf.Deg2Rad;
                 var at = new Vector3(Mathf.Sin(angle) * 7.3f, 0, Mathf.Cos(angle) * 7.3f);
                 var face = Quaternion.LookRotation(-at.normalized, Vector3.up);
-                float stand = sea > .01f ? 1 : 0;
+                float stand = sea;
                 // Two piles from the water up to the floor, the house, then a hipped roof. The first
                 // pass started the piles 0.6 m above the water; the stage sketch caught it.
                 var across = face * Vector3.right * .45f;
@@ -107,7 +129,7 @@ namespace TumbangPreso.Visual
             var waveTilt = Quaternion.Euler(-pitch * 28, 0, 0);
             var wavePos = new Vector3(0, 0, -.2f + pitch * .8f);
             Place(_wave, wavePos, new Vector3(2.4f, height, 2.4f), waveTilt, climb * leave * (1 - pitch * .35f));
-            Place(_waveCrest, wavePos + waveTilt * Vector3.up * height * .97f, new Vector3(2.4f * .84f, .16f + pitch * .1f, 2.4f * .84f), waveTilt,
+            Place(_waveCrest, wavePos, new Vector3(2.4f, height, 2.4f), waveTilt,
                 climb * leave);
             for (int i = 0; i < _spray.Count; i++)
             {

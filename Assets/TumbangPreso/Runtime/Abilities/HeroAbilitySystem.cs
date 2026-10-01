@@ -732,19 +732,20 @@ namespace TumbangPreso.Abilities
             var familiar=_motor.GetComponent<Visual.CharacterVisual>()?.Companion;
             bool hasFamiliar=familiar!=null;
             Vector3 familiarPosition=hasFamiliar?familiar.transform.position:Vector3.zero;
-            Vector3 castPosition=_context.Position,castForward=_context.Forward,castAim=_context.AimPoint;
+            var castContext = requestedAbility?.CaptureLocalCastContext(_context) ?? _context;
+            Vector3 castPosition=castContext.Position,castForward=castContext.Forward,castAim=castContext.AimPoint;
             bool flightRecast=slot==Slot.Skill2 && Kit is AmihanHeroKit && !Kit.IsDefending && Kit.AttackingSkill.IsActive;
             long flightIntent=flightRecast?_motor.FlightEpisode:0;
             HeroKit.CastOutcome outcome;
             if (NetAuthority.IsNetworked)
             {
                 _motor.BeginAbilityPrediction((int)slot);
-                try{using (NetCue.SuppressRelay()) outcome = CastWithContext(slot, _context);}
+                try{using (NetCue.SuppressRelay()) outcome = CastWithContext(slot, castContext);}
                 finally{_motor.EndAbilityPrediction();}
             }
             else
             {
-                outcome = CastWithContext(slot, _context);
+                outcome = CastWithContext(slot, castContext);
             }
             if (outcome != HeroKit.CastOutcome.Cast || !NetAuthority.IsNetworked) return outcome;
             // A prediction never submitted to transport has no accepted episode to cancel.
@@ -917,7 +918,9 @@ namespace TumbangPreso.Abilities
             // Amihan's casts carry their own tell (the heel kick, the lift ring, the gale's unroll;
             // `AmihanVfx`), so the generic flash would be a second picture of one beat.
             if (Kit != null && (Kit.HeroId == "phaister" || Kit.HeroId == "sean" || Kit.HeroId == "amihan" || Kit.HeroId == "paete")) return;
-            if (Kit == null || Kit.HeroId != "zack")
+            // Rafi's real shoe coating, water curtain and wave already carry the cast.
+            // Keep target confirmation below without adding a second generic particle burst.
+            if (Kit == null || (Kit.HeroId != "zack" && Kit.HeroId != "rafi"))
                 Visual.AbilityVfx.SpawnCastFlash(transform.position, AccentColour(), .55f);
 
             // ⚠️⚠️ THE GROUND CONFIRM EXISTS BECAUSE THE PRE-CAST RING WAS UNREACHABLE FOR EVERY

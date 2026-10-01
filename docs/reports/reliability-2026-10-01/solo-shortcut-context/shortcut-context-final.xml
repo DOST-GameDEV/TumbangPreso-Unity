@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 12:54:13Z" end-time="2026-10-01 12:54:14Z" duration="0.7548706">
+  <test-suite type="TestSuite" id="2453" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1188" result="Passed" start-time="2026-10-01 12:54:13Z" end-time="2026-10-01 12:54:14Z" duration="0.754871" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2447" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1188" result="Passed" start-time="2026-10-01 12:54:13Z" end-time="2026-10-01 12:54:14Z" duration="0.731034" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="7128" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2448" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1188" result="Passed" start-time="2026-10-01 12:54:13Z" end-time="2026-10-01 12:54:14Z" duration="0.716312" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2449" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1188" result="Passed" start-time="2026-10-01 12:54:13Z" end-time="2026-10-01 12:54:14Z" duration="0.702318" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1879" name="PauseOwnerRebindTests" fullname="TumbangPreso.PlayTests.PauseOwnerRebindTests" classname="TumbangPreso.PlayTests.PauseOwnerRebindTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-01 12:54:13Z" end-time="2026-10-01 12:54:14Z" duration="0.630813" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1880" name="SoloSeatKeyCannotChangeControlDuringPresentationHold" fullname="TumbangPreso.PlayTests.PauseOwnerRebindTests.SoloSeatKeyCannotChangeControlDuringPresentationHold" methodname="SoloSeatKeyCannotChangeControlDuringPresentationHold" classname="TumbangPreso.PlayTests.PauseOwnerRebindTests" runstate="Runnable" seed="754746523" result="Passed" start-time="2026-10-01 12:54:13Z" end-time="2026-10-01 12:54:13Z" duration="0.380702" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1881" name="SoloSeatKeyCannotChangeControlInsideThePauseMenu" fullname="TumbangPreso.PlayTests.PauseOwnerRebindTests.SoloSeatKeyCannotChangeControlInsideThePauseMenu" methodname="SoloSeatKeyCannotChangeControlInsideThePauseMenu" classname="TumbangPreso.PlayTests.PauseOwnerRebindTests" runstate="Runnable" seed="1125674106" result="Passed" start-time="2026-10-01 12:54:13Z" end-time="2026-10-01 12:54:14Z" duration="0.232563" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

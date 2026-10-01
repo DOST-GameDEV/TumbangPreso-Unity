@@ -3909,7 +3909,7 @@ namespace TumbangPreso
             if (slipper == null || slipper.State != SlipperState.InFlight) return false;
             return SlipperLandingPrediction.TryPredictLanding(slipper.transform.position,
                 slipper.Velocity, slipper.PektusSpin, LandingHits, out landing, null,
-                slipper.PredictionSkimDistance, slipper.IsSkimming, slipper.RestHeight);
+                slipper.PredictionSkimDistance, slipper.IsSkimming, slipper.RestHeight, slipper.Affinity, slipper.BankCount);
         }
 
         // These queries run synchronously on the same Unity thread as the
@@ -5003,6 +5003,14 @@ namespace TumbangPreso
                     if (WorthDenying(kit.Skill2)
                         && (!_motor.IsDefender || lataDistance > Balance.TayaCampRadius))
                         Consider(intent, Verb.Skill2, dt);
+                }
+                else if (kit is Abilities.ZackHeroKit && _motor.IsDefender)
+                {
+                    if(target!=null && targetDistance<=6 && Facing(target,25))
+                    {
+                        intent.AimPoint=target.transform.position+Vector3.up*.8f;
+                        Consider(intent,Verb.Skill2,dt);
+                    }
                 }
                 else if (kit is Abilities.SeanHeroKit || kit is Abilities.ZackHeroKit)
                 {

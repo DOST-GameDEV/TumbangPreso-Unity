@@ -12,8 +12,69 @@ namespace TumbangPreso.PlayTests
 {
     public sealed class SwimmingNameplateTests
     {
-        [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
-        [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
+        private int _idleDelay;
+        [UnitySetUp] public IEnumerator Before()
+        {
+#if UNITY_EDITOR
+            _idleDelay=UnityEditor.EditorUserSettings.idleImportWorkerShutdownDelayMilliseconds;
+            UnityEditor.EditorUserSettings.idleImportWorkerShutdownDelayMilliseconds=1;
+#endif
+            yield return PlayModeWorld.Reset();
+            // Let the Editor retire completed import workers before loading the map.
+            yield return new WaitForSecondsRealtime(1);
+        }
+        [UnityTearDown] public IEnumerator After()
+        {
+            yield return PlayModeWorld.Reset();
+#if UNITY_EDITOR
+            UnityEditor.EditorUserSettings.idleImportWorkerShutdownDelayMilliseconds=_idleDelay;
+#endif
+        }
+        [UnityTest]
+        public IEnumerator HollowGlowPreservesCircleAndOpenTayaSilhouettes()
+        {
+            SceneFlow.Networked=false;SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
+            yield return SceneManager.LoadSceneAsync(SceneFlow.BayanPlaza);
+            yield return new WaitForSecondsRealtime(.4f);
+            var actor=Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).First(m=>m.PlayerSlot==2);
+            var plate=actor.GetComponentInChildren<CharacterNameplate>();plate.enabled=false;
+            var ring=plate.transform.Find("NameplateRing");ring.gameObject.SetActive(true);
+            var renderer=ring.GetComponent<Renderer>();var mesh=ring.GetComponent<MeshFilter>().sharedMesh;
+            Assert.AreEqual("TumbangPreso/PlayerGroundMarker",renderer.sharedMaterial.shader.name);
+            Assert.IsEmpty(ring.GetComponents<Collider>());
+            Assert.AreNotEqual(UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly,renderer.shadowCastingMode,"Use an observer-visible seat, not the local FPP-hidden body.");
+            foreach(var vertex in mesh.vertices)Assert.AreEqual(0,vertex.y);
+            Assert.LessOrEqual(CharacterNameplate.RingFloorMargin,.006f);
+            int oldLayer=ring.gameObject.layer;ring.gameObject.layer=31;
+            bool wasDefense=actor.IsDefender;
+            var camera=new GameObject("Ground marker isolated witness").AddComponent<Camera>();camera.enabled=false;
+            camera.orthographic=true;camera.orthographicSize=1.25f;camera.cullingMask=1<<31;
+            camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=Color.black;
+            var rt=new RenderTexture(256,256,24);camera.targetTexture=rt;
+            var image=new Texture2D(256,256,TextureFormat.RGB24,false);
+            string output=System.Environment.GetEnvironmentVariable("TUMP_EVIDENCE")??"Logs/ground-markers";
+            System.IO.Directory.CreateDirectory(output);
+            try
+            {
+                for(int role=0;role<2;role++)
+                {
+                    actor.IsDefender=role==1;plate.Refresh();
+                    var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block);Assert.AreEqual(role,block.GetFloat("_Shape"));
+                    camera.transform.position=ring.position+Vector3.up*3;camera.transform.rotation=Quaternion.Euler(90,0,0);
+                    camera.Render();var old=RenderTexture.active;RenderTexture.active=rt;
+                    image.ReadPixels(new Rect(0,0,256,256),0,0);image.Apply();RenderTexture.active=old;
+                    float centre=image.GetPixel(128,128).grayscale;
+                    Assert.Less(centre,.005f,"Both roles now have the requested hollow centre.");
+                    Assert.Greater(image.GetPixels().Max(c=>c.grayscale),.04f,"Marker must actually render.");
+                    System.IO.File.WriteAllBytes(output+(role==0?"/attacker.png":"/defender.png"),image.EncodeToPNG());
+                }
+            }
+            finally
+            {
+                actor.IsDefender=wasDefense;plate.Refresh();ring.gameObject.layer=oldLayer;plate.enabled=true;
+                camera.targetTexture=null;Object.Destroy(camera.gameObject);rt.Release();Object.Destroy(rt);Object.Destroy(image);
+            }
+        }
         [UnityTest]
         public IEnumerator RoleMarkerFollowsWaterAndReturnsToTheCapsuleFloor()
         {

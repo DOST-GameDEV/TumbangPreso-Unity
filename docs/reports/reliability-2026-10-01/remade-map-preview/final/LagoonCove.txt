@@ -1,0 +1,7 @@
+showing=LagoonCove
+total=2564
+enabled=2552
+visible=1342
+badShaders=0
+cameraEnabled=True
+lookScoped=True

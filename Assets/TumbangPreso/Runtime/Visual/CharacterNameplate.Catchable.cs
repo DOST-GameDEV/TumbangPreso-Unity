@@ -20,7 +20,7 @@ namespace TumbangPreso.Visual
             Camera.onPreCull-=BeginCatchable;Camera.onPostRender-=EndCatchable;
             for(int i=_ringScopes.Count-1;i>=0;i--)RestoreRing(_ringScopes[i]);_ringScopes.Clear();
         }
-        private void OnDestroy(){if(_catchMaterial!=null)Destroy(_catchMaterial);}
+        private void OnDestroy(){if(_catchMaterial!=null)Destroy(_catchMaterial);if(_groundMaterial!=null)Destroy(_groundMaterial);if(_discMesh!=null)Destroy(_discMesh);}
         private void BeginCatchable(Camera camera)
         {
             if(_ringRenderer==null)return;
@@ -31,13 +31,13 @@ namespace TumbangPreso.Visual
             _ringScopes.Add(state);
             if(!CharacterVisual.CatchableFor(camera,_character) || WorldCueProfile.Current.TayaTarget<=0)return;
             if(_catchable==null)_catchable=BuildCatchable();
-            if(_catchMaterial==null)_catchMaterial=new Material(Shader.Find("TumbangPreso/WorldClock")){name="Catchable ink brackets"};
+            if(_catchMaterial==null)_catchMaterial=new Material(Shader.Find("TumbangPreso/PlayerGroundMarker")){name="Catchable ink brackets"};
             _ringFilter.sharedMesh=_catchable;_ringRenderer.sharedMaterial=_catchMaterial;
             var capsule=_character.GetComponent<CharacterController>();float radius=(capsule!=null?capsule.radius:.4f)*2.1f;
             _ring.localScale=new Vector3(radius,1,radius);
             _ringRenderer.GetPropertyBlock(_ringBlock);
-            _ringBlock.SetFloat("_Fill",1);_ringBlock.SetFloat("_Weight",WorldCueProfile.Current.TayaTarget);
-            _ringBlock.SetColor("_Face",UI.UiTheme.Defense);_ringRenderer.SetPropertyBlock(_ringBlock);
+            _ringBlock.SetFloat("_Shape",2);_ringBlock.SetFloat("_Weight",WorldCueProfile.Current.TayaTarget);
+            _ringBlock.SetColor("_Color",UI.UiTheme.Defense);_ringRenderer.SetPropertyBlock(_ringBlock);
         }
         private void EndCatchable(Camera camera)
         {
@@ -51,31 +51,6 @@ namespace TumbangPreso.Visual
             _ringRenderer.sharedMaterial=state.Material;_ringRenderer.SetPropertyBlock(state.Block);
         }
         private void RestoreRing(RingScope state){ApplyRing(state);state.Camera=null;_ringPool.Push(state);}
-        private static Mesh BuildCatchable()
-        {
-            var vertices=new List<Vector3>();var uv=new List<Vector2>();var triangles=new List<int>();
-            // Four open brackets are visibly different from the taya's unbroken
-            // octagon and the ordinary attacker's filled identity disc.
-            for(int quadrant=0;quadrant<4;quadrant++)for(int part=0;part<8;part++)
-            {
-                float a=(quadrant*90+14+part*7.75f)*Mathf.Deg2Rad,b=a+7.75f*Mathf.Deg2Rad;
-                int at=vertices.Count;
-                vertices.Add(new Vector3(Mathf.Sin(a),0,Mathf.Cos(a)));
-                vertices.Add(new Vector3(Mathf.Sin(a),0,Mathf.Cos(a))*.72f);
-                vertices.Add(new Vector3(Mathf.Sin(b),0,Mathf.Cos(b))*.72f);
-                vertices.Add(new Vector3(Mathf.Sin(b),0,Mathf.Cos(b)));
-                uv.Add(new Vector2(0,0));uv.Add(new Vector2(0,1));uv.Add(new Vector2(0,1));uv.Add(new Vector2(0,0));
-                triangles.Add(at);triangles.Add(at+1);triangles.Add(at+2);triangles.Add(at);triangles.Add(at+2);triangles.Add(at+3);
-                // A shallow outer lip survives a low eye angle at10m. It stays
-                // at ankle level, not an upright beacon or filled target area.
-                int wall=vertices.Count;
-                vertices.Add(vertices[at]);vertices.Add(vertices[at]+Vector3.up*.065f);
-                vertices.Add(vertices[at+3]+Vector3.up*.065f);vertices.Add(vertices[at+3]);
-                uv.Add(new Vector2(0,0));uv.Add(new Vector2(0,1));uv.Add(new Vector2(0,1));uv.Add(new Vector2(0,0));
-                triangles.Add(wall);triangles.Add(wall+1);triangles.Add(wall+2);triangles.Add(wall);triangles.Add(wall+2);triangles.Add(wall+3);
-            }
-            var mesh=new Mesh{name="Catchable four brackets",hideFlags=HideFlags.HideAndDontSave};
-            mesh.SetVertices(vertices);mesh.SetUVs(0,uv);mesh.SetTriangles(triangles,0);mesh.RecalculateBounds();return mesh;
-        }
+        private static Mesh BuildCatchable() => GroundMarkerMesh("Catchable four brackets");
     }
 }

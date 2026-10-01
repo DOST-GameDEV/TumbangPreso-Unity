@@ -1,0 +1,119 @@
+{
+  "passed": false,
+  "faults": [
+    "host: the host stopped refereeing before it sampled (round active False). A host that freezes when a peer leaves is exactly what this row is looking for",
+    "client: the client was not in a live round at exit (round active False)"
+  ],
+  "host": {
+    "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\demo-readiness126-1001\\classic-rematch\\demo-rematch-classic\\host.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": true,
+        "score": 900,
+        "travelled": 142.0
+      },
+      {
+        "seat": 1,
+        "char": 0,
+        "bot": true,
+        "origin": "HandedToBot",
+        "taya": false,
+        "score": 0,
+        "travelled": 59.5
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 400,
+        "travelled": 145.0
+      },
+      {
+        "seat": 3,
+        "char": 9,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 0,
+        "travelled": 151.8
+      }
+    ],
+    "role": "HOST",
+    "networked": "True",
+    "slot": "0",
+    "protocol": "126",
+    "sampled": "118.0",
+    "round": "1",
+    "active": "False",
+    "defender": "0",
+    "mode": "Classic",
+    "map": "BayanPlaza",
+    "structural": "F0D9CFBF",
+    "hash": "B11A1931"
+  },
+  "client": {
+    "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\demo-readiness126-1001\\classic-rematch\\demo-rematch-classic\\client.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": true,
+        "score": 900,
+        "travelled": 146.1
+      },
+      {
+        "seat": 1,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": false,
+        "score": 0,
+        "travelled": 4.8
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 400,
+        "travelled": 156.3
+      },
+      {
+        "seat": 3,
+        "char": 9,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 0,
+        "travelled": 162.6
+      }
+    ],
+    "role": "CLIENT",
+    "networked": "True",
+    "slot": "1",
+    "protocol": "126",
+    "sampled": "105.0",
+    "round": "1",
+    "active": "False",
+    "defender": "0",
+    "mode": "Classic",
+    "map": "BayanPlaza",
+    "structural": "F0D9CFBF",
+    "hash": "302CE462"
+  },
+  "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Builds\\demo-readiness126-1001\\TumbangPreso.exe",
+  "clientArtifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Builds\\demo-readiness126-1001\\TumbangPreso.exe",
+  "expectedProtocolRefusal": false,
+  "runtimeSha256": "2956730f9bb6404497bccb15e9e655a25bc4a5ade5dbb9f5a38b45314129b766",
+  "clientRuntimeSha256": "2956730f9bb6404497bccb15e9e655a25bc4a5ade5dbb9f5a38b45314129b766",
+  "sharedInputUnchanged": true
+}

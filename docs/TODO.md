@@ -17,6 +17,31 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### AIM-CIRCLE-CADENCE-1001: smooth visible landing-circle movement
+
+Ballistic prediction remains20Hz; circle presentation now interpolates every
+render frame with reset/snap boundaries. Actual local-charge acceptance passes
+1/1, including halfway position, no prediction mutation/overshoot and release.
+Native visible stroke106pixels, improved from88. No new peer/player claim.
+[Evidence](reports/feedback-2026-09-30/aim-circle-cadence-checks/README.md).
+
+### PLAYER-GROUND-MARKERS-1001: flat hollow shader markers
+
+Removed raised cylinder/collar/bracket walls in favour of a soft flat shader rim.
+Both roles are hollow per Harry's latest preference; circle versus octagon and
+camera-scoped catchable brackets preserve their distinct signals. Final native
+shape case passes1/1; earlier water/scoped-camera cases pass separately. Shutdown
+memory guard and previous failed captures are retained without a clean-exit claim.
+[Evidence](reports/feedback-2026-09-30/ground-marker-checks/README.md).
+
+### TAGGED-WORLD-LOOK-1001: repaired shader-context omission
+
+Replay now explicitly adopts the gameplay world-look shader scope. Native
+baseline weight 0 versus gameplay 1; final focused case passes 1/1 with matching
+weight, architecture and restored globals. Separate foliage artifacts and full
+replay framing remain unqualified. [Evidence](reports/feedback-2026-09-30/tagged-world-look-checks/README.md).
+
+
 ### CAN-VERTICAL-CONTACT-1001: repaired
 
 Actual above-can flight false hit reproduced. Finite Visual-height contact now
@@ -96,6 +121,10 @@ attribution; final native film/listening/implementation remain open. External
 reference video access was unavailable and is not claimed.
 
 
+Rafi generic cast-flash duplication is removed with a focused accepted-cast
+check (1/1 on126), preserving load, authored clip/coating and other callers.
+[Cast clarity](reports/hero-quality-2026-10-01/rafi-cast-clarity/README.md).
+
 ### HYDRO-WATERWALL-1001: single-use defending curtain
 
 Gameplay implemented; three native cases and current six Core cases pass.
@@ -111,6 +140,9 @@ broader presentation review remain.
 Waterwall optical uniformity now has an uneven flow/crown/runoff pass with
 one focused native motion/contact/collapse check and inspected court views.
 [Surface evidence](reports/hero-quality-2026-10-01/wall-surface-checks/README.md).
+Baha retained cinematic now has a rolled single-winding wave and gently fading
+stilt silhouettes; one render-only scene check passes. Body/camera/timing remain.
+[Baha review and limits](reports/hero-quality-2026-10-01/baha-review/result.md).
 [Motion evidence](reports/hero-quality-2026-10-01/wall-motion-checks/README.md).
 Skim now has a dedicated shipping body/FPP coating action; initial native1/1
 qualifies routing, actual motion and retained held-shoe identity. Visual capture
@@ -211,6 +243,13 @@ continuous manual bug hunting. Research, plan and critique using HERO_KIT_METHOD
 finalized Paete/Phaister character-specific work remains protected. The owner reopened remaining ability implementation on2026-10-01;
 shared/global fixes apply normally and exact concurrent claims still govern.
 
+- [x] CLOSED-CIRCUIT-1001: cancellable6m/.4s defending acquisition,2s host
+  Zapped,35s commitment cooldown and Overclock different-target follow-up.
+  Fourteen distinct focused native checks and actual Linux host/owner/observer
+  traces pass with documented fixture/evaluator corrections. Protocol127;
+  whole Zack presentation and WAN/device coverage remain open.
+  [Evidence](reports/feedback-2026-09-30/closed-circuit/README.md).
+
 - [x] BOT-COMPANION-OBSERVATION-1001: shared observation now includes companion
   targets and binds cached beliefs to the actual body. Native baseline reproduces
   both tier bypasses; final4/4passes Normal/Astig, replacement identity and self
@@ -309,6 +348,18 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   six native cases cover fractional income, resources, scope/sequence/framing
   and newer predicted/settled casts. Protocol123; remaining Zack kit stays open.
   [Evidence](reports/feedback-2026-09-30/amped-up-objective.md).
+
+- [x] OVERCLOCK-STATE-1001: confirmed15point/self-target/match-long state and
+  Wiki5second Zapped cast lock implemented. Native2baseline failures;12final
+  cases pass after one fixture compile repair, including recovery/codec/X UI.
+  Protocol124; full upgraded basics and actual peers remain open.
+  [Evidence](reports/feedback-2026-09-30/overclock-state.md).
+
+- [x] BANK-SHOT-1001: proposed attacking load and normal/Overclock bank mechanics
+  replace forced recall and stun.11distinct native cases pass across focused runs;
+  two fixture corrections and original failed results are retained. Protocol125;
+  full Zack signature/defending and actual peers remain open.
+  [Evidence](reports/feedback-2026-09-30/bank-shot.md).
 
 - [x] HELD-SEAT-PICKS-1001: matching-token reclaim retains picks and takeover
   rating; Identify cannot replace fixed match choices with local preferences.
@@ -2433,6 +2484,8 @@ Supersedes REFINE-2.6 for this map.
   no components, so it drew without the rig's `ColourGrade` and `WorldOutline` (grade, ink, AO).
   It now adds both, as `RecordedWorldView` and `UltimatePhaseView` already did. Game-wide, not
   only the cove.
+  October 1: TAGGED-WORLD-LOOK-1001 also repairs the omitted scoped shader marker;
+  Eskinita native globals pass. The requested cove visual comparison remains open.
 - [ ] LAGOON-1.4 BIRDS AND FISH AS BOIDS (owner, 2026-09-27: *"add birds and fish (via boids)"*).
   Flocks of chunky, style-matched birds over the cove and schools of fish over the reefs, steered
   by separation, alignment and cohesion, kept inside their volumes (sky band, water between the

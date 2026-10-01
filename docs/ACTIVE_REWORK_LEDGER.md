@@ -3479,6 +3479,44 @@ dirt retained. Next actual unit: current human Overclock lifetime/cost, shared
 persistent state and match/round resets, with full Zack migration still open.
 
 
+OVERCLOCK-STATE-1001 owns ZackHeroKit persistent state/cost/self-target, existing
+timed snapshot/state codec's explicit permanent flag, related receiver validation,
+NetSession compatibility and focused SkillReceipt tests. Current0852df0b6clean
+ahead/behind0/0, private dirt preserved. Confirmed human anchor15points/self
+strike/match-long upgrade differs20points/aimed7second tail. Native cost and
+lifetime/round baseline. Preserve authored effects/clips/cues, existing unspecified
+radius/warning values; proposed3m/.8s not adopted as confirmed. Permanent recovery
+must not replay strike and must clear only on new match. Full normal/upgraded
+basic migration remains required next; do not call Zack complete from state only.
+
+
+Overclock baseline2/2 fails real20point/7s mismatch;50485terminal. Explicit
+permanent bit added to bounded timed state231bytes and supported-ability check;
+Zack match flag survives round, clears new match, disallows re-bank/recast.
+Selfstrike preserves4.5m/old warning and authored effect; newZapped follows live
+Wiki5s cast lock, ordinary movement unaffected, replicated bounded status clock
+and X over current logos. Global persistent UI saysActive, not0s. HeroHazards
+private Supernova overlay preserved; isolated candidate uses committed base plus
+only applyGameplay guard. Final12focused cases include changed codec and three
+legacy timed-tail controls migrated to match-long contract. No native repair yet.
+Full upgraded-basic implementation remains open; permanent flag alone is not
+completion.124wire compatibility. All private code/art remain out of staging.
+
+
+Overclock first final stops before tests at fixtureCS1657: using readers passed
+byref.14558terminal, no runtimecase or movie. One bounded fixture declaration
+repair uses try/finally disposal; runtime unchanged. Preserve first log/manifest
+then same12case retry once. No further tooling retry permitted in this unit.
+
+
+Overclock final12/12passes after one fixtureCS1657repair;734inputs no drift.
+50485/14558/48437terminal, profiles preserved. Explicit permanent bit231bytes,
+Zapped5seconds/SyncUnit/X and self-target15cost; no timed raw throw boost retained.
+Private HeroHazards alpha overlay excluded: index contains only2line gameplay
+guard/signature change and native candidate matches committed-base+hunk. Publish
+state/status unit only; normal/upgraded basics are still required, not completed.
+124compatibility, no actualnewpeer or authored-presentation claim. All jobs done.
+
 RAFI-WALL-SURFACE-1001 owns RafiWaterVisual.cs Waterwall branch only and
 Resources/Shaders/RafiWater.shader _CurtainFlow branch, scoped RafiExpansionProbe
 surface assertion/evidence. Previous film remains too pane-like: uniform sheet
@@ -3497,3 +3535,404 @@ flowparcelsandunevencrown/baseareclearer,centrecanvisible. Notallmaps/Low/player
 peer/humanapproval. Inputsunchanged,noOOM,norepair. Shelltransportbrieflydropped
 afterrunthenrecovered; nativeruncompleted66s. Publishsurface; sound/genericflash
 stillopen. Next inspectcurrentBaha/Crosscurrentpresentationagainstexistingplan.
+
+RAFI-BAHA-REVIEW-1001 owns UltimateIntroductionProbe.cs one Rafi-only entry and
+its dated review/plan. First inspect the actual existing3.4second authored boat-
+deck performance in its staged cameras, retaining model/clip/scene. No runtime
+or art changes authorized by this claim alone; diagnose the weakest real beat
+before claiming implementation paths. Reuse Study for one hero only with
+TUMP_INTRO_SCENE=1. Render-only baseline is not a real accepted-cast/pause/peer
+qualification. One baseline, one bounded tooling repair maximum. Alljobs terminal.
+
+Baha baseline stops on old Study assertion requiring retained theme playback,
+while owner-approved skill sound suppression is still active. No artframes or
+audio success claimed. One bounded fixture repair adds explicit visual-only
+allowMutedTheme for the Rafi-only entry; other hero checks unchanged. Log actual
+StartSound result, never re-enable rejected audio to make a visual study green.
+Retry baseline once with explicit output folder; runtime/art unchanged.
+
+Baha baselinev2 render-only1/1 passes;28timestampedframes inspected, grounding
+within0.00011m and0shoeverticesinsidehead. Scene's wavedraw is a flat two-row
+trapezoid; double trianglewindings plus CullOff duplicate the same surface.
+Distantblackhouses also pop atsea>.01. Expand RAFI-BAHA-REVIEW-1001 to own
+HeroIntroductionScene.Rafi.cs only: rolled five-row wave/single-winding/crest,
+soft deep-teal silhouettes fading with sea. Preservebody,cameras,3.4seconds,
+pilepositions andmechanics. Plan inbaha-review; allnativejobs terminal. Onefixture
+repairusedforbaseline audioassert; noaudioenablementorlisteningclaim.
+
+Baha scene finalrender-only1/1 passes rolled95vertex/432index geometry,stage
+isolation/RNG,grounding(-.00329..+.00009m) and0shoe/headvertices.29timestamped
+samplesreviewed; sidecurl andsofterfixedstiltfadeimprove theearlierflatwall.
+Frontface remains simpletranslucentcolour, notfinalreferencelevelapproval.
+Body/camera/3.4s/gameplayunchanged; soundstartedFalseexplicitly. Inputs match,
+noadditionalrepair/newOOM. Publishsceneunit; wholeHydro row remainsopen.
+
+TAGGED-RENDER-1001 takes the newly added live Feedback report "Tagged replay
+camera has some rendering conflicts", observed10:35UTC with two supplied images.
+Exact initial ownership: Runtime/Camera/CatchReconstruction.cs and focused
+Tests/PlayMode/CatchReconstructionTests.cs plus report evidence. Inspect/reproduce
+before changing other rendering owners. Fresh remotee2adf856 has no competing
+reservation. The other new report is non-flat player highlight rings; retain it
+as next independent intake. Both new rows inherited Done text but have unchecked
+native controls and no resolution evidence: do not treat those text copies as
+shipped. Pause optional Hydro polish for these newly added human defects. Native
+jobs terminal; Baha e2adf856 published/verified and same-row note written.
+
+Tagged fullEskinita baseline produces controls without the supplied textured-leaf
+artifact; this is not a fix. Its trees are the current stylized NearFade masses,
+unlike screenshot foliage. Source/candidate map/Garden/shader hashes match, so
+no stale-assets assumption. Inspect Kanto, whose foliage/civic backdrop fits the
+images, using the same one-case capture and full1.1s staged pose history. No
+product change; the capture diagnosis must establish the actual affected path.
+
+Kanto baseline hit the existing memory safety stop during scene load, no runtime
+XML. OOM/kill counters unchanged11/6. Snapshot showed1.17GB owned idle asset
+worker alongside3.46GB Editor. One bounded tooling repair uses installedUnity
+6000.5.8f1 documented AssetDatabase.DesiredWorkerCount/ForceToDesiredWorkerCount
+to release idle workers before this isolated Kanto review, restoringdesiredcount
+afterworldreset. Guardthreshold unchanged; no unrelatedprocess killed, no
+profiles/assets deleted. Repeat Kanto once; if stillblocked continueotherreport.
+
+Tagged Kanto tooling retry rejectedDesiredWorkerCount0 inthisUnitybuild; original
+countrestoredafterReset. No Kanto pixels, nofix, nosecondtoolingretry. Eskinita
+control didnotreproduce suppliedtexturedleafartifact. Precise missingfact:which
+mapisshown? AskonthesameDocrow. Private diagnosticfixture saved; shippingtest
+restoredexactHEAD ratherthancommitfailinghelper. ReleaseCatchReconstructioncode
+reservationwhileawaitingmap; retainreport/history. Continue newplayerhighlight
+flatshaderglowreport, noall-workstop. Allnativejobs terminal.
+Integrated Baha/Skim authored contributions through82400710b with Overclock
+state ef830005d; no runtime conflict,124 retained. Preserve collaborator art
+and validation limits, no own authored asset changes. Private HeroHazards alpha
+remains unstaged after owned guard commit. All own native jobs terminal. Full
+Zack basic migration next; current state unit is not a complete upgraded kit.
+No actual124peer proof, no Desktop replacement, no loading changes.
+
+
+Overclock/Zapped ef830005d published throughaab48539d, remote verified. Existing
+broader Feedback Notes updated/read back with scoped state/status progress;
+upgraded basics and124peer testing explicitly remain open. Human verified and
+other author text untouched. No own browser/preview/player/server/Editor remains.
+Private HeroHazards overlay still6insertions/1change outsideindex. Next normal/
+Overclocked basic mechanics in Wiki/plans, with proposal provenance explicit;
+full Zack remains open. No optional unchanged suite or art/lighting/loading edits.
+
+Integrated Overclock ef830005 with tagged investigation c21f8a5c; current124.
+No tagged rendering fix claimed. Owner11:04Doccleanup complete:28strayDone
+labelsremoved, unfinishedAmihanunchecked, otherunfinishedrowsvisuallyunchecked,
+completedchecksretained andhumanverificationuntouched. Nativecheckboxreadability
+nowavailablethroughcloudbrowser; no archive move yet. Continueflatgroundmarkers.
+
+TAGGED-WORLD-LOOK-1001 owns CatchReconstruction.cs andCatchReconstructionTests.cs
+for the separate newest human report "Fix tagged replay camera to use the same
+shading rendering system as the in-game first person camera". Source diagnosis:
+WorldLookPresentation.HandlesCamera does not include ~CatchPlaybackCamera and
+that camera lacks WorldLookCamera. ColourGrade/WorldOutline alone cannot adopt
+the scoped shader globals. Reproduce real accepted replay failing world-look
+membership, then use existing explicit marker and verify camera globals and
+restoration. Do not claim this solves the separate red/cyan foliage report.
+One focused baseline/final, one tooling repair maximum; source701d6828protocol124.
+Rings remain next independent fix after this concrete root cause. No native job.
+
+BANK-SHOT-1001 owns ZackHeroKit attacking slot, Carrier payload/guide, Slipper bank state, shared landing prediction and focused ZackBankShotTests. Implement current proposed Bank Shot35s/8s/85percent with one credited bank, two after Overclock, preserving objective/scoring authority and authored cues. No art/loading changes. Two native legacy contract baselines then one focused final; tooling retry0. Current124, all own native jobs terminal. Whole Zack signature/defending migration remains open.
+
+Bank Shot125mechanics implemented:35s/8s/85percent, normalone/Overclocktwo
+powered credited banks, real release no oldboost/zap, item-bound expiry/recovery,
+sharedguide and completed-bank-aware bot prediction. Nativebaseline2fail,
+firstfinalCS0122fixture, repairedrun8/10with actorinterceptionfixturefailure,
+focusedcorrected3/3:11distinctpasses acrossruns. Twofixturecorrections recorded
+beyond plannedone, nothidden.738finalinputs no drift. All own nativejobs terminal
+after guardexit; namedprofiles preserved. FullZacksignature/defending, legacyprobe
+migration and125actualpeers remainopen. No authoredart/loading/privateoverlayedit.
+Next publish coherentunit, then QuickCircuit/ClosedCircuit currentproposedcontracts.
+Tagged world-look baseline reproducesrealreplayweight0 vsactivegameplay1 and
+architecture0. AddexistingWorldLookCamera markeronlytotheoffscreenreplaycamera;
+no globalcamera widening or tuning. Same relevantfinalcasechecksactualscoped
+weights, restoration andunrelatedportraitexclusion; nofixture repairused.
+
+World-look finalrun hitmemoryguardbeforecases afterfullcompile; nofinalpass.
+Snapshotshows1.13GBidleimportworker plus687MBILPP beside3.35GBEditor. Onebounded
+fixture/toolingrepair usesinstalledUnityEditorUserSettings documented idle
+importworker shutdown delay=1ms beforeload, restoringoldvalueafterworldreset.
+Unlike rejectedworker-count0, this is the dedicated idle-retirement setting.
+No guardraise/countchange/unrelatedkill. Retrycorrectedruntimefinalonce.
+
+TAGGED-WORLD-LOOK-1001 final passes 1/1 on exact frozen protocol124 inputs.
+Replay weight 1 matches gameplay, architecture 1, scoped restoration and unrelated
+portrait exclusion pass. Idle import retirement restored after test; no new OOM.
+Baseline weight0 failure and first-final memory stop retained with final evidence
+in tagged-world-look-checks. Captures qualify shader context, not contact framing
+or separate foliage artifacts. Release owned camera/test paths after shipment.
+Next independent unit: flat shader player ground markers. No native job running.
+
+PLAYER-GROUND-MARKERS-1001 claims Runtime/Visual/CharacterNameplate.cs,
+CharacterNameplate.Catchable.cs, new CharacterNameplate.GroundMarker.cs/meta,
+Resources/Shaders/PlayerGroundMarker.shader/meta, Tests/RoleMarkerTests.cs and
+Tests/PlayMode/SwimmingNameplateTests.cs. Replace cylinder/collar/lipped brackets
+with flat shader glow while retaining disc, open octagon and scoped brackets,
+seat colours, water placement and local first-person hiding. Focused native
+shape/flatness/camera-scope and water checks; no character kit edits. Ground
+projection beyond existing water/flight behavior is not required by this unit.
+
+Ground-marker first final run stopped at unchanged memory guard during Bayan
+load before XML. OOM remains11/6; idle import worker still1.18GB. One bounded
+fixture repair lets one real-time second elapse after reset/idle-retirement
+setting before loading the map. No runtime assertion weakened or guard raised.
+
+Marker v2 ran all three cases: water-return and camera-scoped target checks
+pass; actual attacker centre pixel was black. Shader used pow with negative
+base inside the Gaussian, a possible undefined-value source. Replace with explicit
+squared multiplication; rerun only the affected pixel-shape case. No second
+fixture repair; retained passing lifecycle evidence. OOM unchanged11/6.
+
+Marker v3 pixel witness still fails with centre0 after squared multiplication;
+the shader arithmetic change did not establish the cause. Water return and
+camera-scope cases passed v2, but shape rendering is NOT accepted or shipped.
+One fixture-repair allowance exhausted. Preserve owned candidate uncommitted;
+do not mark Done or repeat unchanged runs. The isolated pixel witness loads a
+map without starting a match, unlike the passing camera-scope fixture; investigate
+that lifecycle discrepancy before any later coherent validation. Continue the
+independent landing-circle cadence report with the existing real-match fixture.
+
+AIM-CIRCLE-CADENCE-1001 claims Runtime/TrajectoryPreview.cs and
+Tests/PlayMode/LandingCircleTests.cs. Actual source throttles both prediction
+and visible circle mesh to 20Hz. Keep prediction cadence, interpolate displayed
+circle each render frame with bounded linear interpolation, reset on hidden/
+invalid/released aim, and snap across large height discontinuities. Preserve
+LandingPoint as the exact latest prediction. Validate with the existing actual
+local-charge fixture plus deterministic intermediate geometry assertions.
+Bank Shot91de6867c integrated/pushed04429e627, remote verified. Feedback own Zack paragraph updated/read back; human controls, comments and Hydro note untouched. Active protocol125. Native guards59212/40251/71097/59082 terminal, only pre-existing Unity Hub serve remains; no task-owned browser/preview. Preserve failed first compile and8/10fixture run alongside focused3/3. Whole goal remains active. Next Quick Circuit signature then Closed Circuit; migrate obsolete Magnet acceptance contracts during the changed kit gate, without broad unchanged reruns.
+
+Aiming first native run reached the real match but the old fixture tried to
+charge before current can restoration protection expired. One bounded fixture
+repair waits the actual ProtectionLeft plus .05s, without changing gameplay or
+weakening CanThrow. Retry the same relevant real-charge/interpolation/release
+case once. Ring candidate excluded from this validation; protocol125 retained.
+
+Aiming v2 passes intermediate interpolation/no-overshoot assertions but actual
+FPP guide contributes only88 visible pixels (existing minimum100). Inspected
+frame shows a broken-looking thin distant circle. Product correction increases
+distance-scaled stroke width25%, retaining radius/prediction and black outline.
+Same focused native case reruns; no fixture assertion/threshold relaxed.
+
+Aiming v3 actual stroke now contributes106 visible pixels, but memory guard
+stopped before completed XML/release acceptance. No final pass or shipment.
+Preserve candidate and receipts, no unchanged rerun after fixture allowance.
+
+Live Feedback clarifies foliage belongs to the collaborator's unpushed Ilalim
+ng Tulay rework: wait for that revision, do not test unrelated maps. The marker
+row now explicitly prefers hollow circles. Adopt that new shape requirement.
+Source investigation identifies the failed marker pixel witness selected local
+seat1, whose entire renderer hierarchy CameraRig hides with ShadowsOnly. The
+shader arithmetic was not the cause. Preserve failed receipts; new hollow-circle
+acceptance must use an observer-visible seat and require visible rim pixels as
+well as an open centre. This is the newly requested hollow shape, not a repeat
+of the abandoned filled-disc acceptance. No human checkbox has been ticked.
+
+Hollow marker final native1/1 passes protocol125 on observer-visible seat2.
+Actual rim/open-centre pixels and flat/no-collider geometry pass; circle/octagon
+captures inspected. Prior water/scoped-camera passes retained. Final XML passed
+before memory guard acted during exit, OOM unchanged11/6; not a clean shutdown.
+Evidence ground-marker-checks preserves all failed attempts and exact inputs.
+Aiming candidate excluded and still unshipped. Release marker paths on shipment;
+next fix the aiming validation infrastructure without discarding either history.
+QUICK-CIRCUIT-1001 owns Zack signature, shared cast-context hook and recast impairment gate, HeroMovementState/MatchRpc.Movement and focused QuickCircuitTests. Planned30s/2m lateral cut, .15s tell/.2s recovery, Overclock one optional same-button second cut within1s. Preserve authored assets/cues; remove legacy stun/travel behavior. Snapshot restores followup clock without replaying impulse or extending it. Native baseline name and actual Zapped-recast bypass, then focused acceptance; tooling retry0. All own jobs terminal; no loading edits.
+
+OWNER SCOPE SWITCH: leave all new Docs TODO/Feedback work to DOTS. This worker
+finishes the already-running Quick Circuit check, then independent network/bot/
+optimization bugs. No messaging/delegation, no further Google Docs writes.
+Quick Circuit final10/10 native passed;2baseline failures include actual Zapped
+recast bypass.742 frozen inputs unchanged, zero tooling repairs. Protocol126.
+Guards63752/44973 terminal and profiles preserved. Publish current coherent unit,
+then inspect independent CastPreparation framing before further kit migration.
+Closed Circuit/legacy kit-probe migration belong to DOTS. Full goal stays active.
+
+OWNER MAIN PRIORITY: demo/tournament reliability. Fix actual exceptions, stuck pause/matchflow, disconnects and stalls; avoid validation-framework expansion. DOTS owns Docs TODO queue. QuickCircuit9803a3c93 shipped through04f6bfbb3 with10/10native, no tooling repair. This worker next runs existing actual two-player finish/rematch scenario on a new current126internal build and inspects real logs. All prior jobs terminal; no visual/loading edits or paid services.
+
+October1 owner clarification, recorded verbatim in substance: main goal is that nothing breaks during a demo/tournament. Check that code works as intended and address real crashes, random pauses, lag and match failures. This is not permission to overengineer tests or spend the run expanding validation machinery. Use existing player/runtime paths; add only a small check tied to an observed defect. DOTS finishes the Docs TODO/Feedback queue; this worker prioritizes independent reliability/network/bot/optimization fixes. Preserve loading ownership and the authored VFX/SFX/animation/model/map restrictions.
+
+Current reliability run: frozen source04f6bfbb3/protocol126,15460inputs in isolated tump-feedback-0930. Freeze session41312 completed; guarded internal BuildWindows session94328 is live. Output Builds/demo-readiness126-1001/TumbangPreso.exe, log Logs/demo-readiness126-1001/build.log. Next poll this exact handle, then use existing run_demo_lan --rematch on matching actual host/client and inspect exceptions/stuck matchflow. No fresh validation framework or Docs TODO edits. Do not restart a live build or claim runtime success from build completion.
+
+Marker da411d8f integrated189a5c63 remote verified; Doc Done saved, human
+verification untouched, resolved hollow-circle comment struck. Closed only own
+completed cloud Docs tab to release its measured roughly400MB renderer; Google
+session retained. One capacity-recovery launch for the pending aiming acceptance
+is gated on at least200MB lower baseline than its previous3.61GB start. No
+fixture change, no guard increase, no unrelated process kill or profile deletion.
+If capacity is not improved, do not launch. Exact tested candidate remains125;
+source has independently integrated Quick Circuit126.
+
+Aiming capacity recovery passed1/1 and exited normally52.05s, OOM11/6 unchanged.
+Measured anon+shmem baseline improved2.006GB to1.670GB after closing owned Docs
+tab, not sign-out. Source/fixture unchanged for recovery; actual held charge,
+halfway/no-overshoot/exact-prediction and release-hide pass, stroke106pixels.
+Evidence aim-circle-cadence-checks. Exact candidate125; source126 Quick Circuit
+changes remain separately qualified. Release aiming paths after publication.
+Next resume feedback queue; foliage waits for the unpushed Ilalim rework.
+
+PAUSE-OWNER-REBIND-1001 independently investigates PauseWatcher.Update assigning panel.Local after Panel.Open has synchronously entered a reused menu. Owns PauseWatcher.cs and one small PauseOwnerRebindTests native case. Reproduce actual keyboard re-open after local seat rebind: current body parks, former body remains released, online time stays live. No layout/art/loading change, no Docs TODO item. Native baseline then small fix/final, tooling retry0. Wait for current actual Classic pair34946 to terminate before starting Editor.
+
+PAUSE-OWNER-REBIND-1001 reproduced current body not parked when existing menu
+opens after a local seat rebind. Four-line PauseWatcher fix binds panel.Local
+before synchronous activation. Same actual keyboard case final1/1 passes with
+old/new body and online clock/close controls;752inputs unchanged, zero repairs.
+Native guards73328/29447 terminal. Source9670e846e+owned overlay, protocol126
+unchanged. Publish this independent real input bug; no Docs TODO/Feedback edit.
+Actual126build04f6bfbb3:2142MB/121s/15460inputs no drift; Hero/Classic both
+complete two short matches and voted rematch, no logged exceptions, matching
+structures. Raw matrix verdicts remainfalse because final samples are normal
+result boards, not active rounds. FPS59.6..59.85at640x400 only. All player jobs
+94328/15692/34946 terminal, port8910 released. New marker/circle contributions
+integrated9670e846e; actual126player predates those and this pause fix.
+Next independent demo/tournament reliability hunting. DOTS owns Docs queue;
+do not resume kit migration or add validation machinery. Goal stays active.
+RAFI-CAST-CLARITY-1001 claims only the Rafi condition in
+Runtime/Abilities/HeroAbilitySystem.cs and Tests/PlayMode/RafiExpansionProbe.cs.
+The previous measured Skim film showed generic blue cast particles competing
+with the actual sole-working motion and loaded meniscus. Rafi's abilities now
+have their own directed water tells; suppress only his redundant generic flash,
+retain ground-target confirmation and all other heroes. Validate an accepted
+Skim cast retains its load/coating/motion and a non-Rafi flash control. No SFX,
+kit rules, authored clips or protected characters change.
+
+RAFI-CAST-CLARITY-1001 native1/1 passes exact126 inputs: acceptedSkim retains
+loaded shoe, authored cast clip and coating; no generic burst. Factory control
+remains available. Normal exit56.54s, zero repairs/newOOM. Evidence in
+hero-quality-2026-10-01/rafi-cast-clarity; no new film/SFX/peer claim. Release
+shared confirmation path after shipment. Hydro SFX and wider feel remain open.
+
+SOLO-HANDOVER-BINDINGS-1001 owns DebugPlayerSwitcher.cs and one additional actual F2 case in PauseOwnerRebindTests. Source ApplySlots moves controls/camera but omits PauseWatcher.Local/Hud.Bind/YouCard.Bind, unlike network rebinding. Prove pause/HUD stale after accepted F-key switch, then retarget those existing surfaces on the same action. No new UI, art/loading edits or Docs TODO work. One small baseline/final, tooling retry0; all own prior jobs terminal.
+
+SOLO-HANDOVER-BINDINGS-1001 baseline realF2 accepts secondseat but PauseWatcher
+stillreferences first. ApplySlots rebinds existing Hud/PauseWatcher/optional
+legacyYouCard alongside camera/control. Same native final1/1 passes actual
+F2/control/pause/HUD references;753finalinputs unchanged, zero repairs. Optional
+legacycard rendering absent from fixture, no peer/full-HUD/tournament claim.
+Protocol126 unchanged, sourcece36e32fa plus own overlay. Jobs57973/47894 terminal;
+publish independent input lifecycle fix, then inspect F-key handling while menu/
+rebinding/presentation owns input. Do not assume a failure before reproducing it.
+DOTS owns Docs TODO queue; no kit migration, loading/art change or cross-chat work.
+Closed Circuit assessment recorded in reports/feedback-2026-09-30/closed-circuit/plan.md.
+No implementation claim yet. Key constraint: maintained remote aim needs a
+bounded owner-to-host channel; the current aim snapshot intentionally carries
+no destination. Base Windup is uninterruptible/rooted and cannot represent this
+cancellable lock honestly. Preserve independent reliability build126 and the
+private HeroHazards overlay. All own native jobs terminal, Rafi cleanup shipped.
+
+CLOSED-CIRCUIT-1001 now reserves Runtime/Abilities/ZackHeroKit.cs and new
+ZackHeroKit.ClosedCircuit.cs/meta; Runtime/Visual/ZackCircuitTell.cs/meta;
+Runtime/Net/ZackCircuitState.cs/meta and MatchRpc.Circuit.cs/meta;
+MatchRpc.cs circuit registration/snapshot call sites only; NetSession protocol;
+AIController.cs Zack defending branch only; focused ClosedCircuitTests and
+ZackCircuitStateTests scripts/metas. No HeroHazards or reliability-build edits.
+Implement the recorded maintained-aim/LOS plan. Remote aim must be explicit and
+fresh, with an acquisition episode and scoped ordered state; do not silently
+reuse a stale cast aim. Native and parser acceptance remain pending.
+
+Closed Circuit candidate now has host-only Zapped commitment, cancellable .4s
+acquisition, .25s stale remote-aim cutoff, optional different-target followup and
+no passive refill during the sequence. New58byte host state/48byte private aim
+frames are scoped, episode-bound and sequenced; protocol127 candidate only.
+Named state registration/snapshot and narrow bot defending branch are written.
+Six EditMode frame checks and eight component/physics PlayMode cases are next;
+no compile/runtime/peer success claimed. Whole Zack row remains open.
+
+Closed Circuit compile/framing6/6 pass; first native component/physics7/8 pass.
+The stale-aim fixture wrote99.7 against a round clock already clamped below100,
+so it never aged the clock. One bounded fixture repair subtracts.3 from the
+actual current TimeLeft. Repeat only that failed case; all runtime source and
+assertions remain unchanged. No OOM, no player/actual-peer claim yet.
+
+Closed Circuit's corrected stale-aim case passes1/1; all eight distinct native
+cases and six wire checks now pass across the retained focused runs. No current
+player/peer proof. Extend this same unit's reservation to the existing
+Runtime/Diagnostics/NetZackProbe.cs and tools/net_zack_review.py, adding only a
+Closed Circuit scenario through three real peers and the normal round schedule.
+Use the existing isolated cloud Linux candidate build route; it supersedes only
+our prior internal protocol112 player through GameBuilder's guarded output path,
+never the user's Desktop or profiles. Preserve build identity and failure logs.
+Solo UI bindings58d309499 checked and ready to publish; next priority is independent network reliability under an existing shaped-link scenario using the exact126player. Do not take Closed Circuit paths or Docs TODO queue. Older player source04f remains the precise runtime qualification; no fresh whole-build readiness claim. All own native/player jobs currently terminal, no owned browser/preview/server remains.
+
+Solo handover58d309499 integrated/pushedf54c36281, remote verified. Native57973/47894terminal; no browser or Editor remains. Independent next run reuses existing run_demo_lan/profile preservation with the exact net_matrix five-second outage parameters (25ms delay/5ms jitter/outage20s..25s),150s sample. Temporary native tools/tmp_demo126_outage.py is task-owned and must be removed after run. Exact existing DLL2956730f..b766/source04f/protocol126; network/round/shared-phase source diff to currentHEAD is empty. No claim that later visual/UI source is in this player. Do not rerun unchanged for a green gate; inspect real transport/progress and fix actual failure. DOTS owns Docs queue.
+
+Independent outage126 actual peer case passes existing gate:25ms/5ms jitter,
+five-second blackout20s..25s,150sclient/163shost. Proxy19459forwarded/2550dropped,
+all dropped during actualoutage. Client stayedjoined; both active round2/taya1,
+structural540E76A2. No loggedexceptions. DLL2956730f..b766/source04f, matching
+unchanged network/round code throughf54c36281; later UI/art remains separate.
+Small-resolution FPS59.81/59.86, max44.95/27.62ms only. Driver96842 terminal,
+profile/input preservation good. No unchanged rerun or new framework. Remove
+ownedtmp_demo126_outage.py and verify ports8910/8911 before checkpoint.
+Next independent input-context defect: solo F-keys currently bypass menu/
+presentation input blocking. Reproduce rather than retune or broaden blindly.
+DOTS owns Docs queue; full demo/tournament readiness remains unproven/active.
+
+Outage cleanup verified: temporary runner absent; no task player/proxy or8910/8911 listener. No task browser/preview. Preserve scoped pass and old false rematch verdicts. Continue reliability fixes, no completion claim.
+
+Owner reiterated nonstop work: continue through checkpoints and user questions; do not end merely because one unit shipped. Maintain concise progress updates and active goal. Next SOLO-SHORTCUT-CONTEXT-1001 owns DebugPlayerSwitcher.Update input gate and one small pause/presentation shortcut case in PauseOwnerRebindTests. Reproduce actual F2 through normal Update while menu/presentation owns input, then gate the same shortcut path. No layout, kit, network protocol, loading or art edits.
+
+SOLO-SHORTCUT-CONTEXT-1001 reproduced F2 seat0to1 behind actual pause menu and
+inside PresentationClock.Hold. Existing Update now gates open Panels/held or
+blocked presentation clock while preserving network refusal. Same native2/2
+final pass fresh key after each release;753inputs unchanged, zero repairs.
+Jobs21241/18683 terminal, profiles/input preserved. Source788ede121+owned overlay,
+protocol126 unchanged. Publish; keep working through checkpoint, no final stop.
+Next existing actual-peer terminal-connection scenario; diagnose real result,
+do not broaden validation framework or edit DOTS queue/loading/authored art.
+
+Shortcut context5bce6331a published/remote verified; native21241/18683terminal. Continue actual terminal-link-loss using existing matrix policy:25ms/5ms jitter, outage20s..end, clientterminal/hostreferees/no simultaneous comparison. Live client mode/round gates are inapplicable to a terminal peer; matrix terminal policy remains intact and must also inspect roundActiveFalse manually. Initial shell quoting failed before any launch; file-backed preparation fixed it. Temporary native tools/tmp_demo126_terminal.py must be removed after run. Exact player04f/protocol126; network/round diff remains empty. No changed-source build or whole-readiness claim.
+
+Permanent-link126 existing terminal gate passes: proxy2581forward/4365drop,
+outage20s..end. Host active round2/taya1 with bot takeover; client ProtocolTimeout/
+Abandon then MatchSetup networkedFalse/roundActiveFalse, no loggedexception.
+Same-PC fallback AutoHost logs handled port8910 refusal (survivinghostownsport),
+not a game crash. OBSERVED client transition max1031ms; loading remains friend-
+owned, no implementation change or smooth-transition claim. Exact04f/DLL2956730f
+protocol126 only, later UI/art separate. Driver62247 terminal, preservation good.
+Remove ownedtmp_demo126_terminal.py; verify ports. Continue independent real
+bugs; avoid more unchanged matrix rows and never mark whole readiness complete.
+
+Latest owner priority after current reliability cleanup: optimization and correct shader/effect availability at the right times across all screens, singleplayer and network. Inspect missing/late shader/material/effect bindings, camera-scope and recovery/lifetime defects. This is readiness/visibility bug work, not an authored VFX/SFX/model/animation/map/lighting redesign. Keep friend's broader loading implementation ownership; do not silently overhaul loading. Continue autonomously without ending at unit checkpoints.
+
+REMADE-MAP-PREVIEW-1001: owner says all remade maps showed grey this morning, unsure current. Explicitly authorizes this preview-loading defect fix despite broader loading ownership remaining with friend. Own MapPreviewSurface.cs and one focused RemadeMapPreviewTests file/meta; inspect current Kanto/LagoonCove/Ilalim actual additive preview, renderer/layer/frustum/shader presence and PNGs before code changes. Sequential scene retirement, not retaining all maps. Use already-proven Editor idle import retirement=1ms and restore it; no worker-count/guard change or second memory-retry loop. No map/art/lighting asset edits or DOTS queue writes.
+
+REMADE-MAP-PREVIEW-1001 reproduced all3 background-only previews with0active
+renderers. Loaded meshes were parked because Start queued global default after
+an explicit Show(othermap). Corrected Start only defaults when no request/showing/
+queue exists. Callback fence hypothesis failed and removed; raw failure retained.
+Final3/3 native pass: Kanto2316active/804visible, Lagoon2552/1342, Ilalim1349/1069,
+shader errors0/world-look scopeTrue. Actual PNGs inspected, maps visible.755inputs
+unchanged, no tooling repair/newOOM. Editor idle worker retirement restored.
+Guards78488/11325/92826 terminal; no authored map/lighting/model/effect/sound or
+broader loading change. Explicit owner preview-bug exception only. Publish then
+continue correct shader/effect readiness/optimization across actual screens.
+No fresh player/network-menu/full-readiness claim. DOTS owns Docs queue.
+Closed Circuit focused native and real-peer acceptance is complete. The same
+unit owns its evidence report, TODO entry and SKILL_NETWORK_CONTRACT appendix
+for publication; no other runtime paths are added. Source includes incoming
+solo shortcut fix5bce6331a. First player build failed during final copy at disk
+capacity; one bounded unchanged-input copy recovery succeeded. Three real Linux
+players exercised normal round transition, remote owner cancellation and two
+separate commitments. The initial evaluator incorrectly rejected existing
++10/s defence income; corrected cadence check passes the same retained traces,
+with no runtime change or repeated player run. Publication pending below.
+
+Closed Circuit a2db7527aa2f7a7e392c0f807674dd2391dc0355 published and remote
+verified. Protocol127; fourteen distinct native checks and actual three-player
+Linux cancellation/commitment/expiry evidence. Whole Zack presentation remains
+open. Runtime paths released. Owner sleeping, quiet continuation requested.
+
+Owner asks to recheck friends' loading and map branches before integration.
+At13:19UTC loading35a2bda9 is already an ASTRA ancestor; map15618516 is not.
+Map evidence capture was mistargeted to Eskinita, so it proves no Ilalim result;
+that tooling pass has stopped with original evidence retained. Candidate-only
+map overlay parked and original files restored. Do not mark foliage issue done.
+
+EMPOWERED-THROW-1001 reserves SeanHeroKit.cs held-load branch; Carrier.cs Sean
+load/guide branches; Slipper.cs FireExplosive impact and new dedicated partial
+if needed; focused EmpoweredThrowTests/metas; NetSession compatibility and only
+relevant timed-kit bounds. Plan in hero-quality-2026-10-01/empowered-throw/plan.md.
+This migrates the adopted Pyro8s/35s/1.25m held-object pressure payload coherently,
+not the Flame Rush/Supernova units. No HeroHazards/private overlay or authored
+art changes. First implementation/validation remains pending.
+
+Remade preview fix7670a7b71 ready to publish with measured3/3 and inspected actual map captures. Initial callback-fence failed and was removed; correct explicit-request Start fix only. Integrate Closed Circuit proof/author reservation without editing those paths. Older126 Windows player is now older protocol than incoming circuit work; do not reuse it to claim current130(?) networking. Check actual NetSession constant after merge. Next screen shader/effect readiness and measured optimization, preserve loading scope and nonstop continuation.
