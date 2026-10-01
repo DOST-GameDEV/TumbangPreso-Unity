@@ -2505,3 +2505,29 @@ held-seat metadata: LobbySession.Depart retains only token, so genuine reclaim
 may lose character/can/slipper picks and takeover rating; existing three-cycle
 fixture claims character retention but checks only seat/spectator. Add the missing
 behavior assertion before changing authoritative lobby bookkeeping.
+
+AUDIO-OUTPUT-ROUTE-1001 claims existing AudioListenerProbe.cs only. Old112
+player diagnostic failed before title entry twice, so switch to the current
+scene-based native probe using existing ReviewAudioCapture, existing score cue
+and a process-local null sink. Expected one opt-in case and nonzero real output
+samples; this tests recording, never speaker playback or subjective SFX quality.
+No new recording framework, microphone, global audio change or restored skill
+cues. One bounded tooling retry maximum, stop at fresh terminal result.
+
+Audio native first case reaches actual callbacks but fails its bounded buffer:
+unpaced ALSA null consumes samples faster than wall time. One bounded tooling
+repair uses documented AudioRenderer recording mode with30fps/45rendered frames
+while retaining the existing listener capture and restoring mode in finally.
+No louder mix or enlarged buffer to hide the failure. Fresh output directory.
+Owner requested penalty list and live Doc status; supplied code-grounded six
+consequence categories, disclosed server/comment abandon cooldown mismatch.
+24complete Feedback rows now have visible Done labels; native checkboxes and
+Human verified unchanged. Current Hydro/audio note and two new queued Harry
+rows read back; original observations/comments preserved. Next after this unit:
+Harry's round-status carryover/throw-gating row before more Hydro presentation.
+
+Audio clocked retry native1/1passes, frozen inputs unchanged, OOM11/kill6
+unchanged. Actual stereo48kHz listener WAV1.493333s, peak.058779/RMS.003304.
+Existing score cue only; no new SFX or hardware/listening quality approval.
+Recording route unblocked through AudioRenderer with a process-local null sink.
+Publish owned probe/receipts, then investigate Harry round-reset/throw-gating row.
