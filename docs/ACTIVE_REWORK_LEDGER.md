@@ -3907,3 +3907,30 @@ relevant timed-kit bounds. Plan in hero-quality-2026-10-01/empowered-throw/plan.
 This migrates the adopted Pyro8s/35s/1.25m held-object pressure payload coherently,
 not the Flame Rush/Supernova units. No HeroHazards/private overlay or authored
 art changes. First implementation/validation remains pending.
+
+Empowered throw additionally owns new engine-free
+Packages/com.tumbangpreso.core/Runtime/EmpoweredThrowRules.cs/meta for the adopted
+cooldown/load/radius/push constants, and Runtime/Slipper.EmpoweredThrow.cs/meta
+for the isolated pressure contact. No shared explosion implementation change.
+The same payload unit also owns SeanIgnitionVisual.cs eligibility checks only:
+recovery must not draw the held ember on a different, unmarked slipper. Art,
+shape, timing, colour and sound are unchanged.
+
+Empowered throw first six native cases pass with zero fixture repairs. Add only
+three missing boundary cases (actual wall bounce, protected/single-award can,
+replica no-gameplay); do not rerun the unchanged six. Same unit extends to the
+existing NetSeanProbe.cs and tools/net_sean_review.py for one three-player
+Empowered throw case, preserving other scenarios. No new network test framework.
+
+
+Empowered throw128 acceptance complete: native6/6 plus boundary3/3, then
+actual-snapshot/reset2/2 (ten distinct behaviors, earlier direct-field witness
+superseded). Fresh full clean GameBuilder2077MB/81.53s candidate, Runtime
+1ce3d222..b2a0a8, after removing only unused official offline registry archives
+for verified capacity. Prior disk failures retained. Three actual Linux peers
+pass marked held load, real throw,0.923m near-miss push, no stagger/crater and
+cleanup/CD. No gameplay exceptions; no WAN/reconnect/device/audio claim.
+No heavy job remains. Publish explicit owned unit; preserve incoming remade-map
+preview changes and terminal126 evidence. Friend map tip is nowa7523a118 (fascia
+z-fight), still not merged; loading tip unchanged/already merged. Whole Pyro and
+foliage report remain open. Owner asleep, quiet continuation.

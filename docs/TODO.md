@@ -243,6 +243,12 @@ continuous manual bug hunting. Research, plan and critique using HERO_KIT_METHOD
 finalized Paete/Phaister character-specific work remains protected. The owner reopened remaining ability implementation on2026-10-01;
 shared/global fixes apply normally and exact concurrent claims still govern.
 
+- [x] EMPOWERED-THROW-1001: exact held-object8s load/35s cooldown and compact
+  first-impact pressure payload, without legacy speed/stagger/charges. Ten
+  distinct native behavior checks plus actual Linux host/owner/observer pass;
+  protocol128. Other Pyro slots and full presentation remain open.
+  [Evidence](reports/hero-quality-2026-10-01/empowered-throw/README.md).
+
 - [x] CLOSED-CIRCUIT-1001: cancellable6m/.4s defending acquisition,2s host
   Zapped,35s commitment cooldown and Overclock different-target follow-up.
   Fourteen distinct focused native checks and actual Linux host/owner/observer

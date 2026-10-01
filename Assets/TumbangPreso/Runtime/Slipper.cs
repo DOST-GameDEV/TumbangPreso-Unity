@@ -850,6 +850,7 @@ namespace TumbangPreso
 
             var previous = Holder;
 
+            if (Affinity == SlipperAffinity.FireExplosive) Affinity = SlipperAffinity.Normal;
             SetState(SlipperState.Loose);
             Holder = null;
             _velocity = Vector3.zero;
@@ -1009,6 +1010,7 @@ namespace TumbangPreso
                 ? Mathf.Clamp(pektusSpin, -Balance.MaxPektusSpin, Balance.MaxPektusSpin)
                 : 0.0f;
             Affinity = state == SlipperState.InFlight || affinity == SlipperAffinity.Concussed
+                || (state == SlipperState.Held && holder != null && affinity == SlipperAffinity.FireExplosive)
                 ? affinity : SlipperAffinity.Normal;
             _throwerSlot = state == SlipperState.InFlight ? throwerSlot : -1;
             if (enteringEmpoweredFlight)
@@ -1198,37 +1200,7 @@ namespace TumbangPreso
         {
             _skimLeft = 0;
             if (Affinity == SlipperAffinity.FireExplosive)
-            {
-                // ⚠️⚠️ 2.6 m, DOWN FROM 4.5, BECAUSE THIS IS A SKILL'S PAYLOAD AND NOT AN
-                // ULTIMATE. At 4.5 m it covered **32.5 per cent of the 14 by 14 box**, the same
-                // area as Zack's Thunderstrike, off Sean's second skill. `docs/VISION.md` § 2
-                // rule 1 asks a skill for 1.8 to 2.5 m and rule 2 reserves "big" for one
-                // ultimate at a time.
-                //
-                // ⚠️ THE REACH IS REPLACED BY A HARD VERTICAL, WHICH IS RULE 3. A smaller flat
-                // blast is still a puddle, so `CreateExplosion` is given a taller, faster
-                // silhouette to work with rather than a wider one: the knockback is unchanged
-                // at 13.0 and the stun at 1.4 s, so what a direct hit DOES is untouched. What
-                // changed is how far away it can be felt by someone who was nowhere near it.
-                // ⚠️ THE SLIPPER STYLE, because a tsinelas going off is the game's joke and not
-                // an ultimate. It shared the supernova's fireball, flash, shake and sound, which
-                // told the player the two were the same size of event.
-                //
-                // ⚠️⚠️ FLARE SHOT TIGHTENS THE CRATER, AND IT IS READ HERE RATHER THAN AT THE
-                // THROW. `AdoptState` can hand a peer a shoe that is already in flight with no
-                // record of how it left the hand, so a flag latched in `HostThrow` would be
-                // false on exactly the machines that did not watch the throw and they would
-                // draw a 2.6 m fireball over a 1.95 m blast. Every peer binds the seat's
-                // checked build in `MatchInstaller`, so asking the thrower at impact gives the
-                // same answer everywhere. The fraction is read off the row rather than written
-                // here, for the reason `Carrier`'s throw note gives.
-                var caster = GameServices.Round?.PlayerAt(_throwerSlot);
-                float blastRadius = 2.6f * (caster != null && caster.AbilitySystem != null
-                    ? caster.AbilitySystem.VariantCost("sean.2.flare")
-                    : 1.0f);
-                Abilities.HeroHazards.CreateExplosion(transform.position, blastRadius, 13.0f, 1.4f, _throwerSlot, "BOOM!",
-                    style: Abilities.HeroHazards.ExplosionStyle.Ignition);
-            }
+                ResolveEmpoweredThrowImpact();
             else if (Affinity == SlipperAffinity.ElectricZap)
             {
                 NetCue.Play("ability_flick_dash", transform.position);
@@ -1635,6 +1607,7 @@ namespace TumbangPreso
             _velocity = Vector3.Reflect(_velocity, normal) * restitution;
             transform.position = closest.point + normal * (Balance.SlipperHitRadius + 0.02f);
 
+            if (Affinity == SlipperAffinity.FireExplosive) TriggerAffinityImpact();
             Affinity = ConsumePoweredBank(Affinity);
             _bankCount++;
             NetCue.PlayVaried("slipper_land", transform.position, 0.88f, 1.08f, 0.85f);
@@ -1754,6 +1727,7 @@ namespace TumbangPreso
 
             if (!bounced) return;
 
+            if (Affinity == SlipperAffinity.FireExplosive) TriggerAffinityImpact();
             if (sideBank && powered) _velocity *= .85f;
             if (sideBank) Affinity = ConsumePoweredBank(Affinity);
             _bankCount++;
