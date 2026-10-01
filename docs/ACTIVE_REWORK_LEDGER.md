@@ -2045,3 +2045,16 @@ Original failing pair retained; shorter second warmup is an explicit confound,
 no blanket cold-load/timeout cause claim. Publish only NetBootstrap waiter fix
 and scoped receipts/status. Actual all-ability/rejoin/WAN/hardware/audio remain
 separate. Full goal active; do not treat this pair as whole-feedback completion.
+
+HYDRO-CURRENT-1001 cloud unit at04:47UTC, sourceed86e3b2 clean and fetched.
+Claim Abilities/RafiHeroKit.cs, Abilities/RafiWaterField.cs, new Core/RafiRules
+and Core.Tests/RafiRulesTests, existing PlayMode/RafiExpansionProbe.cs, and
+Net/NetSession.cs compatibility line only. Implement published Crosscurrent
+35second cooldown and chronological first flying-slipper interception, retaining
+speed/ownership/credit and shared world/accepted-cast routes. Existing array order
+currently selects the winner when two shoes cross within one physics step.
+Use pure swept contact intervals plus native real-flight/cover/resource checks.
+No other Rafi slots or contributor network/bootstrap/bot/Haunted paths claimed.
+Presentation remains its existing authored provisional current until its own film
+pass; do not mark the whole Hydro kit complete. Protocol changes need fresh fetch
+before publication and matching-player qualification remains separate.
