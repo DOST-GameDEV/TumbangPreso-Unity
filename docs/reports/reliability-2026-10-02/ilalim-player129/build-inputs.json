@@ -1,0 +1,25 @@
+{
+  "source": "7b48f76d7368fc6b8be68de9618b7cbf1d6be038",
+  "inputs": {
+    "Assets/TumbangPreso/Runtime/AIController.cs": "d8da8bdd7ef8c83155ab89f6b55649fb6b751c21f47f1588544e4f8737d36e1b",
+    "Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs": "1536af5d76a4fe5753c74ca92bca42fdf9f406937089c410ee07ba7ec501f14e",
+    "Assets/TumbangPreso/Runtime/Camera/RecordedFlightStroke.cs": "a3a62479606dbc3eaf1d84a6d5da2def96d215d6fc8378db88eef2a543735af5",
+    "Assets/TumbangPreso/Runtime/Map/SidewalkLife.cs": "336bbe45b1218c6cdbccadb22118be37cbbfbc416817c85c2dadec88c3d781af",
+    "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "72b95baab14939c6ab13327545bdad6e0159533089ce2df795e0f162b11d3422",
+    "Assets/TumbangPreso/Runtime/UI/SceneFlow.cs": "660545bbda67ef09866eac1cda6b240d413853e270f368b796e2f1263c2f6d4c",
+    "Assets/TumbangPreso/Runtime/Visual/BlockyClouds.cs": "205d88f693074ab67b21030a0d515cb3c82bd179b678341888786485fba5d72a",
+    "Assets/TumbangPreso/Runtime/Visual/WorldLookPresentation.cs": "e6a167a829b6fc2d31e74693f75bfc6fe3edb024bc0149539140bd44485261fe",
+    "Assets/TumbangPreso/Scenes/Maps/IlalimNgTulay.unity": "dfc16fa01455919c383f43e5b3849b76069a25171d6faa221334fb0719d207a6",
+    "Assets/TumbangPreso/Shaders/IlalimPainted.shader": "02c736a95348bb8244a3090072356dfffd464e7e7916776be437722c91c66566",
+    "Assets/TumbangPreso/Tests/PlayMode/RecordedEffectsTests.cs": "ad391ec245d581811081e635f0f650d7c509bac754f97c4db2b78319da6cc5c9",
+    "Assets/TumbangPreso/Tests/PlayMode/RemadeMapPreviewTests.cs": "af33fe9bae6371949f3cfa6a0aca2112aea3207d34c9b3777fb477fa7785b713",
+    "Assets/TumbangPreso/Tests/PlayMode/ZackKitAcceptanceProbe.cs": "0ab44ebb2a1b2e5f124ed1fa4f34bbec89398fc8bea456d105dfa5a4de055e39",
+    "ProjectSettings/EditorBuildSettings.asset": "c3f932e9343b0d29d0d65dbb9175a58a4e2a6f906e8eb49c0f27c3a7296688ea"
+  },
+  "inheritedInputs": "Logs/ilalim-readiness1002/inputs.json",
+  "protocol": 129,
+  "question": "Current Windows player with rebuilt Ilalim, camera-layer/framing fixes, replay lookup and bot correction; actual rebuilt-map peer/render/performance route after build",
+  "stoppingCondition": "One guarded internal Windows build, one supported actual Ilalim pair; no retired UI/all-map matrix or Desktop replacement",
+  "retry": 0,
+  "scope": "Committed overlays in imported isolated checkout. Changed/critical hashes only; unchanged evidence reused, not pristine certification"
+}

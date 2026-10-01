@@ -1,0 +1,116 @@
+{
+  "passed": true,
+  "faults": [],
+  "host": {
+    "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\readiness129-1002\\ilalim-fullhd\\demo-clean-direct\\host.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": false,
+        "score": 2235,
+        "travelled": 254.8
+      },
+      {
+        "seat": 1,
+        "char": 0,
+        "bot": true,
+        "origin": "HandedToBot",
+        "taya": true,
+        "score": 470,
+        "travelled": 129.2
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 250,
+        "travelled": 223.2
+      },
+      {
+        "seat": 3,
+        "char": 0,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 300,
+        "travelled": 207.3
+      }
+    ],
+    "role": "HOST",
+    "networked": "True",
+    "slot": "0",
+    "protocol": "129",
+    "sampled": "163.0",
+    "round": "2",
+    "active": "True",
+    "defender": "1",
+    "mode": "HeroStrike",
+    "map": "IlalimNgTulay",
+    "structural": "D2F4FB7D",
+    "hash": "9E5FDC33"
+  },
+  "client": {
+    "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\readiness129-1002\\ilalim-fullhd\\demo-clean-direct\\client.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": false,
+        "score": 2235,
+        "travelled": 247.9
+      },
+      {
+        "seat": 1,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": true,
+        "score": 20,
+        "travelled": 12.0
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 150,
+        "travelled": 225.8
+      },
+      {
+        "seat": 3,
+        "char": 0,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 300,
+        "travelled": 201.9
+      }
+    ],
+    "role": "CLIENT",
+    "networked": "True",
+    "slot": "1",
+    "protocol": "129",
+    "sampled": "150.0",
+    "round": "2",
+    "active": "True",
+    "defender": "1",
+    "mode": "HeroStrike",
+    "map": "IlalimNgTulay",
+    "structural": "D2F4FB7D",
+    "hash": "3487BEE3"
+  },
+  "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Builds\\readiness129-1002\\TumbangPreso.exe",
+  "clientArtifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Builds\\readiness129-1002\\TumbangPreso.exe",
+  "expectedProtocolRefusal": false,
+  "runtimeSha256": "2629bdd8226f9a3742813f5af28e2902eb2cdafd751de98195f7614ed021e6cf",
+  "clientRuntimeSha256": "2629bdd8226f9a3742813f5af28e2902eb2cdafd751de98195f7614ed021e6cf",
+  "sharedInputUnchanged": true
+}
