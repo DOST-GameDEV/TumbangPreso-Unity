@@ -84,9 +84,9 @@ The existing Vigan/binakol inspiration informs rhythm, not copied sacred motifs.
 
 Ultimate sketch:0-.5 settle facing; .5-1.2 gather with chest/arms opposing;
 1.2-1.6 compressed quiet;1.6-2.1 release pose/forward camera opening;2.1-2.5 return
-to playable view. Preserve the actual live delay until the new Wiki1.5s versus
-source2.5s discrepancy is reconciled. Also reconcile the live Wiki60-degree fan
-against the current Core70-degree fan; do not silently change either in this art pass. The movie does not determine that value.
+to playable view. The current8680d9ad correction already implements the Wiki1.5second delay
+and60-degree fan. Preserve those values; this proposed movie does not determine
+the live timing or reopen the resolved discrepancy.
 
 Audio: dry fabric pull plus shaped air impulse, a short low body layer on release,
 no continuous vacuum roar. Failure cue is a soft cloth stop. Acceptance: grounded actors caught in the fan are actually launched, observer fronts are visual,

@@ -332,6 +332,14 @@ namespace TumbangPreso.PlayTests
                 view.Sample(state,.4f);
                 Assert.AreEqual(0,view.Root.GetComponentsInChildren<Collider>(true).Length);
                 Assert.AreEqual(0,view.Root.GetComponentsInChildren<RafiWaterField>(true).Length);
+                var sheet=view.Root.GetComponentsInChildren<MeshFilter>(true).Single(m=>m.sharedMesh.name=="RafiWaterCurtain").sharedMesh;
+                Assert.AreEqual(78,sheet.vertexCount,"A folded sheet, not the former flat rectangle");
+                var sampled=sheet.vertices;
+                Assert.Greater(sampled.Max(v=>v.z)-sampled.Min(v=>v.z),.14f,"Visible curled lip/source trough");
+                Assert.Less(sheet.colors[6*6+3].a,.25f,"Quiet transparent centre");
+                view.Sample(state,.65f);view.Sample(state,.4f);
+                CollectionAssert.AreEqual(sampled,sheet.vertices,"Replay sampling is independent of prior age");
+                Assert.IsTrue(sheet.vertices.All(v=>!float.IsNaN(v.x)&&!float.IsNaN(v.y)&&!float.IsNaN(v.z)));
             }
             Object.Destroy(parent);
             var invalid=state;invalid.FirstScale=2;invalid.Split=false;
