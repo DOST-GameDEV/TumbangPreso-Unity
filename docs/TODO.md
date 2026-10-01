@@ -33,6 +33,13 @@ attribution; final native film/listening/implementation remain open. External
 reference video access was unavailable and is not claimed.
 
 
+### PHAISTER-HEX-1001: refine the hallucination presentation
+
+Owner-authorized exception to finalized-kit protection. Full-size grounded copies,
+bounded plausible placement and victim-view isolation implemented; cast/mark/
+recast/status/ultimate rules unchanged. Two native checks pass; publication pending.
+[Evidence and limits](reports/hero-quality-2026-10-01/phaister-hex.md).
+
 ### AIM-CIRCLE-1001: replace the crosshair with a hollow circle
 
 Owner October1 explicitly requests a hollow circle instead of the gun-like
@@ -43,7 +50,8 @@ builders also exist and must be reconciled by reachability, not blindly edited.
 Preserve truthful charge/curve/cooldown/refusal/reach state, actual aim projection,
 input and visibility rules. Plan: [hollow aim circle](reports/hero-quality-2026-10-01/aim-circle.md).
 Implemented hollow idle/charge/confirmed-release and contact circles. Two focused
-native checks pass;960x540/1600x680 captures inspected. Publication pending.
+native checks pass;960x540/1600x680 captures inspected. Shipped4c36b726,
+remote verified.
 No gameplay/protocol change or new player/peer claim.
 
 ### HARRY-REVIEW-1001: learn the human critique standard

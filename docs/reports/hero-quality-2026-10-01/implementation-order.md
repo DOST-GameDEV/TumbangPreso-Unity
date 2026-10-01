@@ -80,3 +80,13 @@ A coherent unit ships explicit owned paths and receipts, then same Feedback row
 gets commit and short result. Done is separate from human approval. Human-verified
 rows move to existing Finished feedback history with observations intact. A
 regression reopens that same row. No duplicate implementation or duplicate report.
+
+## Objective economy source detail
+
+HeroAbilitySystem.Award uses objective-charge units, distinct from scoreboard
+points: current Lata knock/tag1, own retrieval0.5, legal throw0.15. Amped-Up must
+not multiply raw scoreboard awards by5. Proposed integration applies5seconds per
+positive objective-charge unit awarded, including proportional fractions, once
+per authoritative event, independent of the ultimate meter being capped. Verify
+this interpretation in the adopted ability contract before implementing it; do
+not silently connect it to every MatchDirector score tick or practice award.

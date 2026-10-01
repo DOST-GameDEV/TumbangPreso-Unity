@@ -13,7 +13,7 @@ namespace TumbangPreso.Visual
     ///
     /// Adapted from `DisorientedHallucinations` (the same copy of a real object's renderers); the difference is what it copies
     /// and how: slippers only, one at a time, placed where a player looks (in front of the victim, or beside a real loose
-    /// slipper so a pair lies where one should), popped in and out at the ground rather than wandering.
+    /// slipper so a pair lies where one should), settling at full size on plausible ground rather than growing from miniature shoes.
     /// </summary>
     public sealed class HexedPhantomSlippers : MonoBehaviour
     {
@@ -24,7 +24,7 @@ namespace TumbangPreso.Visual
         private int _count;
 
         /// <summary>How many may lie on the court at once, and how often a new one turns up (seconds, typed per turn).</summary>
-        private const int MaxAtOnce = 4;
+        private const int MaxAtOnce = 3;
         private static readonly float[] Gaps = { 0.25f, 0.8f, 0.55f, 1.1f, 0.7f, 0.95f, 0.5f, 1.25f, 0.65f, 0.9f };
         /// <summary>How long each lies there, typed per turn so no two match.</summary>
         private static readonly float[] Lives = { 1.6f, 2.4f, 1.2f, 2.8f, 1.9f, 2.2f, 1.4f, 2.6f, 1.7f, 2.1f };
@@ -33,18 +33,31 @@ namespace TumbangPreso.Visual
                                                     new Vector2(2.4f, -34f), new Vector2(5.4f, 30f), new Vector2(3.8f, -4f),
                                                     new Vector2(7.0f, -22f), new Vector2(2.8f, 14f) };
 
-        private const float PopSeconds = 0.12f;
+        private const float SettleSeconds = 0.12f;
+        private readonly RaycastHit[] _sightHits = new RaycastHit[24];
+        private Camera _view;
+        private CameraSystem.CameraRig _rig;
+        private bool VictimView()
+        {
+            var current = Camera.main;
+            if (_view != current)
+            {
+                _view = current;
+                _rig = current != null ? current.GetComponent<CameraSystem.CameraRig>() : null;
+            }
+            return _rig != null && _rig.IsFollowing(_victim);
+        }
 
         private sealed class Phantom
         {
-            public GameObject Body; public float Age, Life; public Vector3 Scale;
+            public GameObject Body; public float Age, Life; public Vector3 Rest;
         }
 
         /// <summary>Start (or refresh) the hallucination for the local player's body.</summary>
         public static void Begin(CharacterMotor victim)
         {
             if (victim == null) return;
-            if (_live != null) return;
+            if (_live != null) { if (_live._victim == victim) return; _live.End(); }
             var go = new GameObject("~HexedPhantomSlippers");
             _live = go.AddComponent<HexedPhantomSlippers>();
             _live._victim = victim;
@@ -56,17 +69,21 @@ namespace TumbangPreso.Visual
             float dt = Time.deltaTime;
             if (_victim == null || !_victim.IsHexed) { End(); return; }
 
+            bool visible = VictimView();
             for (int i = _phantoms.Count - 1; i >= 0; i--)
             {
                 var ph = _phantoms[i];
                 if (ph.Body == null) { _phantoms.RemoveAt(i); continue; }
                 ph.Age += dt;
                 if (ph.Age >= ph.Life) { Destroy(ph.Body); _phantoms.RemoveAt(i); continue; }
-                // In and out at the ground: a quick pop, never a fade (a lit slipper cannot fade without looking wrong).
-                float pop = Mathf.Min(Mathf.Clamp01(ph.Age / PopSeconds), Mathf.Clamp01((ph.Life - ph.Age) / PopSeconds));
-                ph.Body.transform.localScale = ph.Scale * Mathf.SmoothStep(0.0f, 1.0f, pop);
+                if (ph.Body.activeSelf != visible) ph.Body.SetActive(visible);
+                // Keep the copied silhouette at its true size. A tiny vertical settle is
+                // less revealing than inflating an obvious miniature in the aim point.
+                float settle = 1 - Mathf.SmoothStep(0, 1, Mathf.Clamp01(ph.Age / SettleSeconds));
+                ph.Body.transform.position = ph.Rest + Vector3.up * (.035f * settle);
             }
 
+            if (!visible) { _nextIn = Mathf.Max(_nextIn, .2f); return; }
             _nextIn -= dt;
             if (_nextIn > 0.0f) return;
             _nextIn = Gaps[_count % Gaps.Length];
@@ -102,16 +119,49 @@ namespace TumbangPreso.Visual
                 at = _victim.transform.position + Quaternion.Euler(0.0f, spot.y, 0.0f) * look.normalized * spot.x;
             }
 
-            float lift = loose ? source.transform.position.y - Slipper.GroundY(source.transform.position) : 0.0f;
-            at.y = Slipper.GroundY(at) + lift;
+            at.y = Slipper.GroundY(at);
+            if (!PlausibleSpot(at)) return;
             Quaternion turnTo = Quaternion.Euler(0.0f, 53.0f * turn + 20.0f, 0.0f);
             Quaternion rotation = loose ? turnTo * source.transform.rotation : turnTo;
 
             var body = Copy(source.transform);
             body.transform.SetPositionAndRotation(at, rotation);
-            var ph = new Phantom { Body = body, Life = Lives[turn % Lives.Length], Scale = source.transform.lossyScale };
-            body.transform.localScale = Vector3.zero;
+            body.transform.localScale = source.transform.lossyScale;
+            var renderers = body.GetComponentsInChildren<Renderer>();
+            if (renderers.Length == 0) { Destroy(body); return; }
+            float lowest = float.PositiveInfinity;
+            foreach (var renderer in renderers) lowest = Mathf.Min(lowest, renderer.bounds.min.y);
+            body.transform.position += Vector3.up * (at.y + .01f - lowest);
+            var ph = new Phantom { Body = body, Life = Lives[turn % Lives.Length], Rest = body.transform.position };
+            body.transform.position += Vector3.up * .035f;
             _phantoms.Add(ph);
+        }
+
+        private bool PlausibleSpot(Vector3 at)
+        {
+            const float margin = .25f;
+            if (!float.IsFinite(at.y) || at.x < AIController.PlayableMinX + margin
+                || at.x > AIController.PlayableMaxX - margin || at.z < AIController.PlayableMinZ + margin
+                || at.z > AIController.PlayableMaxZ - margin) return false;
+            if (Mathf.Abs(at.y - Slipper.GroundY(_victim.transform.position)) > 1.0f) return false;
+            foreach (var phantom in _phantoms)
+                if (phantom.Body != null && (phantom.Rest - at).sqrMagnitude < .75f * .75f) return false;
+            if (_view == null) return false;
+            var screen = _view.WorldToViewportPoint(at + Vector3.up * .1f);
+            if (screen.z <= 0 || screen.x < .05f || screen.x > .95f || screen.y < .05f || screen.y > .95f) return false;
+            Vector3 origin = _view.transform.position, delta = at + Vector3.up * .15f - origin;
+            int hits = Physics.RaycastNonAlloc(origin, delta.normalized, _sightHits,
+                Mathf.Max(0, delta.magnitude - .2f), ~0, QueryTriggerInteraction.Ignore);
+            // A saturated query is ambiguous; skip this cosmetic copy instead of inventing visibility.
+            if (hits == _sightHits.Length) return false;
+            for (int i = 0; i < hits; i++)
+            {
+                var collider = _sightHits[i].collider;
+                if (collider == null || collider.GetComponentInParent<CharacterMotor>() != null
+                    || collider.GetComponentInParent<Slipper>() != null || collider.GetComponentInParent<Lata>() != null) continue;
+                return false;
+            }
+            return true;
         }
 
         /// <summary>The slipper's own meshes and materials, with NO SHADOW (the tell), and nothing to collide with.</summary>

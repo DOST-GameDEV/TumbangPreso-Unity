@@ -63,3 +63,50 @@ no effect on observer cameras, no residue after expiry/round, no per-frame scene
 search/material churn, and the real can/tag remains legible. Show actual before
 and after frames from the victim view. Taste approval remains distinct from a
 passing existence test. No runtime edits have been made in this research pass.
+
+## Native baseline findings
+
+The corrected human-seat baseline demonstrates a real view leak: changing the
+camera to another body leaves the victim's phantom renderers visible. The victim
+centre capture was inspected: copies use plausible real shoe appearance, but
+fixed scale pops are an obvious presentation cue. Preserve the real materials
+and no-shadow tell rather than replacing them with purple holograms.
+
+The edge phase did not establish an out-of-bounds defect: Teleport calls
+BeginSpawnSettle, which legitimately clears Hex. Its empty result is cleanup,
+not failed placement. Do not quote it as an observed placement regression.
+For final coverage, explicitly assert that cleanup, then apply a fresh Hex at
+the edge. No more unchanged baseline runs. The already-proven view leak justifies
+the scoped fix; bounded placement and full-size settling are authorized refinement.
+
+## Scoped refinement result
+
+Copies now keep their full authored size and settle a tiny distance onto measured
+renderer ground contact, instead of scaling up from miniature shoes. Up to three
+copies can coexist. Placement rejects out-of-court, obstructed, offscreen, large
+height-jump and overlapping candidates; if there is no plausible location it
+creates no copy. Real mesh/materials and the no-shadow tell remain. No invented
+pickup, collider, fake HUD prompt or new sound was added.
+
+The presenter tracks the active followed body, hides its copies when leaving the
+victim view, resumes them when returning and ages them normally while hidden.
+A new local victim replaces an old presenter. Hex duration and all Phaister
+cast/mark/recast/ultimate mechanics and authored models are unchanged.
+
+Final native graphics checks:2/2 pass in21.65s. They verify centre copies exist,
+view switching hides/restores them, natural expiry removes the presenter/copies,
+teleport clears the status as before, and a fresh outward-facing edge Hex rejects
+all impossible candidates. The edge case has zero copies by design, not proof of
+a visible edge placement. Baseline and final centre/edge captures are retained;
+final centre and edge views were inspected.788frozen runtime/Core/test inputs have
+no drift. OOM counters remain11/kill6. No additional camera/audio effect introduced.
+
+These are focused native lifecycle/placement checks and still-image review, not
+a new whole-player build, actual peer session, all-map qualification, normal-speed
+film verdict or human taste approval. Material/skin assignments differ between
+fresh test worlds, so the images are not a pixel-diff quality score. Broader
+hallucination believability still benefits from representative player review.
+
+The suite planner discovers this new fixture in the match group, but reports
+unrelated pre-existing unassigned fixtures elsewhere. No aggregate-suite pass is
+claimed and no unrelated fixture-registration cleanup was made.

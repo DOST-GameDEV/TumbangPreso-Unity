@@ -1718,3 +1718,29 @@ Idle/full960x540 and release1600x680 inspected. OOM11/kill6unchanged. Existing
 host-confirmed Presented event drives only the displayed owner's release pulse;
 no new gameplay/network contract. Seven owned files match tested candidate in an
 explicit post-validation snapshot. Publish this coherent UI unit; player remains100.
+Aim-circle4c36b726 and research7c23f2ad remote verified. Source clean. Next scoped
+Phaister Hex refinement: claim Visual/HexedPhantomSlippers.cs, new
+Tests/PlayMode/HexPhantomReviewTests.cs/meta and its tools/playmode_suite.py entry.
+Baseline two questions: copies stay on plausible playable ground; changing away
+from victim view hides them. Film actual victim before changing density/timing.
+Do not alter cast/mark/recast rules, statuses, models or other finalized effects.
+Hex baseline fixture reached Hexed state but no local presenter: the staged seat
+retained its bot flag after disabling its AI component. Existing Phaister film
+fixtures explicitly mark their viewed seat human. Apply that same setup in one
+bounded baseline fixture repair, log seat/network identity, retry two questions.
+No hallucination runtime change or defect claim yet; first failedXML retained.
+Hex corrected baseline proves other-view leakage. Edge phase is inconclusive:
+Teleport legitimately clears Hex through BeginSpawnSettle, so empty copies are
+correct cleanup, not a bounds regression. No further unchanged baseline rerun.
+Refinement now uses victim-view gating, max3 copies, plausible bounded/visible
+placement and full-size measured-ground settling instead of miniature inflation.
+Rules/materials/no-shadow tell unchanged. Final checks include real centre copies,
+view switch/return, natural expiry and explicit teleport cleanup then fresh edge
+Hex; no forced nonempty result where no legal candidate exists.788inputs frozen.
+Hex final2/2native21.65s passes,788inputs/no drift, OOM11/kill6unchanged. View leak
+fixed; centre copies exist and hide/return with victim view, naturally expire,
+teleport cleanup preserved, fresh outward edge correctly spawnsnone. Full-size
+measured-ground settling/max3/plausible placement refined; rules and other Phaister
+work unchanged. Native centre/edge stills inspected; no fullmovie/player/peer claim.
+Suite plan has pre-existing unassigned fixtures; newHex fixture placedmatch only.
+Publish scoped presenter/tests/evidence, then continue current requested work.
