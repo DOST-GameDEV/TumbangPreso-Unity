@@ -3521,3 +3521,10 @@ HeroIntroductionScene.Rafi.cs only: rolled five-row wave/single-winding/crest,
 soft deep-teal silhouettes fading with sea. Preservebody,cameras,3.4seconds,
 pilepositions andmechanics. Plan inbaha-review; allnativejobs terminal. Onefixture
 repairusedforbaseline audioassert; noaudioenablementorlisteningclaim.
+
+Baha scene finalrender-only1/1 passes rolled95vertex/432index geometry,stage
+isolation/RNG,grounding(-.00329..+.00009m) and0shoe/headvertices.29timestamped
+samplesreviewed; sidecurl andsofterfixedstiltfadeimprove theearlierflatwall.
+Frontface remains simpletranslucentcolour, notfinalreferencelevelapproval.
+Body/camera/3.4s/gameplayunchanged; soundstartedFalseexplicitly. Inputs match,
+noadditionalrepair/newOOM. Publishsceneunit; wholeHydro row remainsopen.

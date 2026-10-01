@@ -111,6 +111,9 @@ broader presentation review remain.
 Waterwall optical uniformity now has an uneven flow/crown/runoff pass with
 one focused native motion/contact/collapse check and inspected court views.
 [Surface evidence](reports/hero-quality-2026-10-01/wall-surface-checks/README.md).
+Baha retained cinematic now has a rolled single-winding wave and gently fading
+stilt silhouettes; one render-only scene check passes. Body/camera/timing remain.
+[Baha review and limits](reports/hero-quality-2026-10-01/baha-review/result.md).
 [Motion evidence](reports/hero-quality-2026-10-01/wall-motion-checks/README.md).
 Skim now has a dedicated shipping body/FPP coating action; initial native1/1
 qualifies routing, actual motion and retained held-shoe identity. Visual capture

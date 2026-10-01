@@ -138,6 +138,11 @@ namespace TumbangPreso.PlayTests
                             bool soundStarted=scene.StartSound();
                             if(!allowMutedTheme)Assert.IsTrue(soundStarted, hero + " must resolve its retained theme mapping.");
                             else report.AppendLine("["+hero+"] visual-only study; retained theme started="+soundStarted+". No audio acceptance.");
+                            if(hero=="rafi")
+                            {
+                                var wave=scene.Root.GetComponentsInChildren<MeshFilter>(true).Single(m=>m.sharedMesh.name=="Rafi rolled wave").sharedMesh;
+                                Assert.AreEqual(95,wave.vertexCount);Assert.AreEqual(432,wave.triangles.Length);
+                            }
                             scene.SetVisibleForCapture(true);
                         }
                         yield return ImprovementEvidenceProbe.Record(camera, hero + (withScene ? "-introduction-scene" : "-introduction-body"), seconds,
