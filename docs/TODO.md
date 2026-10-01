@@ -17,6 +17,14 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### ROUND-STATUS-1001: Harry's carryover report
+
+Tagged and trip stacks now clear through the existing round reset. Native
+baseline reproduces5seconds of Tagged leaking; final4/4passes with field/map/
+replay boundary controls. [Evidence](reports/feedback-2026-09-30/round-status-checks/README.md).
+The combined Feedback row still has throw gating and reticle changes pending.
+
+
 ### HERO-QUALITY-1001: full-roster research and durable plans
 
 Owner priority October1: finish the current Continental Drift unit, then thoroughly

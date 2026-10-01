@@ -2570,3 +2570,21 @@ Jobs6759/43206/99354/12624terminal, no fixture repair. Publish coherent four-sou
 unit/status/receipts. Next actual cold-process reconnect on new internal117batch
 covering bot sight + request framing + held metadata; retain old116player/proof,
 no Desktop replacement or loading source change. Full goal remains active.
+
+ROUND-STATUS-1001 claims SliceRunner.cs and existing RoundFieldCleanupTests.cs.
+Harry reports Tagged/status carryover. ResetWorld teleports and clears elemental
+statuses but does not clear the independent stun/trip stacks. Reproduce a real
+round transition with Tagged and trip, retain existing field/map/replay controls,
+then clear through existing recovery methods at round reset only. No protected
+kit retune or new wire semantics. Throw-gating/design changes are separate.
+
+Round-status baseline1/1fails at the actual defect: Tagged remains5seconds
+after EndRound/BeginIntermission/AdvanceRound. No tooling failure. ResetWorld
+now clears independent stun and trip recovery through their existing methods;
+Teleport still owns elemental cleanup. Final same case plus three retained
+field/map/replay boundary controls, expected4native cases.
+
+Round-status final4/4passes, frozen inputs unchanged, OOM11/kill6unchanged.
+Baseline kept. Tagged/trip clear at round reset; Chilled/Haunted and three field/
+map/replay controls pass. Publish explicit paths and update same row status
+portion; leave whole row unfinished for throw/reticle. No new player/peer claim.

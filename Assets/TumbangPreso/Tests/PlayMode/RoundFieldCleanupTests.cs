@@ -26,6 +26,24 @@ namespace TumbangPreso.PlayTests
             SceneFlow.AdoptRemoteRules(_rules);if(_pinned)SceneFlow.PinSelectedRules(_rules);else SceneFlow.UnpinSelectedRules();
         }
         [UnityTest]
+        public IEnumerator NextRoundClearsTaggedAndTripAlongsideOtherStatuses()
+        {
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita,Core.GameMode.HeroStrike);
+            Object.FindAnyObjectByType<SliceRunner>().Begin();
+            yield return null;
+            var round=GameServices.Round;var tagged=round.PlayerAt(1);var tripped=round.PlayerAt(2);
+            tagged.ApplyTagged();tripped.ApplyTrip(5);
+            round.PlayerAt(3).ApplyChilled();round.PlayerAt(3).ApplyHaunted();
+            Assert.IsTrue(tagged.IsTagged);Assert.Greater(tripped.TripLeft,0);
+            round.EndRound();GameServices.Match.BeginIntermission();
+            GameServices.Match.AdvanceRound();
+            Assert.IsTrue(round.RoundActive);
+            Assert.AreEqual(0,tagged.StunLeft,"Tagged leaked from the previous round");
+            Assert.AreEqual(0,tripped.TripLeft,"Trip recovery leaked from the previous round");
+            Assert.IsFalse(round.PlayerAt(3).IsChilled);Assert.IsFalse(round.PlayerAt(3).IsHaunted);
+        }
+
+        [UnityTest]
         public IEnumerator RoundEndRemovesLiveFieldsImmediatelyButKeepsMapAndRecordedGeometry()
         {
             yield return MapRetrievalProbe.Load(SceneFlow.Eskinita,Core.GameMode.HeroStrike);
