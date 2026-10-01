@@ -2481,3 +2481,27 @@ not complete Hydro presentation. Audio player retry again expires during boot
 before expected UI, no output samples; no additional unchanged retry. Null sink
 removed ALSA errors but capture remains unproven. Revisit in a focused current
 Editor route after motion unit, not more old-player launch churn.
+Rival items64d1c97b0 remote verified. Same Nemu Notes updated/read back after two
+concurrent requiredRevision refusals; native targetRevision merge confined to
+unchanged agent-owned Notes cell, human controls/comments/screenshots preserved.
+Next SNAPSHOT-REQUEST-FRAMING-1001 owns MatchRpc.cs OnReqSnapshotMsg and existing
+SessionRestartTests.cs only. Current handler ignores payload and consumes its
+world-refresh budget even for empty/unknown-marker/trailing payloads. Three live
+host regressions with consumed NGO name hash; final4includes current coalescing/
+deferred-reply/disable control. Stop fresh XML; one tooling repair maximum.
+No loader, approval, service query rate, schema/protocol or authored asset change.
+
+Snapshot framing baseline3/3fails on real listening host: empty/marker1/trailing
+payload consumes refresh throttle. No fixture failure, runner20952terminal.
+Guard now requires exactly one unread byte0 after NGO name envelope, before
+QueueSnapshotReply. Valid format/rate/deferred logic unchanged. Final4cases now,
+including immediate valid recovery and existing coalescing/disable behavior.
+
+Snapshot framing final4/4native passes;671inputs no drift, two files match
+64d1c97b0candidate. Real listening host malformed rejection/immediate valid
+recovery and current coalescing/deferred/disable behavior pass. Jobs20952/25940
+terminal, no fixture repair. Publish exact paths/status/receipts. Next investigate
+held-seat metadata: LobbySession.Depart retains only token, so genuine reclaim
+may lose character/can/slipper picks and takeover rating; existing three-cycle
+fixture claims character retention but checks only seat/spectator. Add the missing
+behavior assertion before changing authoritative lobby bookkeeping.

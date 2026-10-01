@@ -217,3 +217,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Haunted bot actor observation and target selection](haunted-actor-perception.md).
 
 [Haunted rival-item planning and preserved retrieval](haunted-rival-items.md).
+
+[Snapshot request framing and preserved deferred refresh](snapshot-request-framing.md).

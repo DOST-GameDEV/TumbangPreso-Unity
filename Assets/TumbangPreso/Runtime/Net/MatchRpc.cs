@@ -6175,6 +6175,11 @@ namespace TumbangPreso.Net
         private void OnReqSnapshotMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (!SnapshotPeerConnected(senderClientId)) return;
+            // The named-message hash is already consumed. Reject malformed
+            // requests before they reserve or spend the peer's refresh budget.
+            if (reader.Length - reader.Position != sizeof(byte) || !reader.TryBeginRead(sizeof(byte))) return;
+            reader.ReadValueSafe(out byte marker);
+            if (marker != 0) return;
             long ticket = QueueSnapshotReply(senderClientId);
             if (ticket == 0) return;
             if (TakeSnapshotReply(senderClientId, ticket, Time.realtimeSinceStartup))
