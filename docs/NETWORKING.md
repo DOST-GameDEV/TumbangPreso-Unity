@@ -9,6 +9,11 @@ those integrations. [Player evidence](reports/feedback-2026-09-30/cli-admission-
 [Hydro evidence](reports/hero-quality-2026-10-01/hydro-current-checks/README.md).
 [Skim evidence](reports/hero-quality-2026-10-01/skim-checks/README.md).
 
+A separate actual116Windows owner-client Haunt fixture passes with host contacts,
+replicated clocks, moving familiar and terminal cleanup. Stationary bystanders,
+not whole-match/rejoin/loss/other-kit qualification.
+[Exact evidence and boundaries](reports/feedback-2026-09-30/haunt-actual-peers.md).
+
 Departure notice payloads must end exactly after the declared name, before the
 receiver commits the sequence or toast. Six native receiver checks pass, including
 the consumed NGO name envelope and malformed suffix recovery.

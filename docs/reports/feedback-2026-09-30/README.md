@@ -211,3 +211,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Exact departure notice framing and native receiver checks](peer-departure-framing.md).
 
 [Per-frame bot observation allocation](bot-observe-allocation.md).
+
+[Actual116owner-client Haunt delivery and limits](haunt-actual-peers.md).

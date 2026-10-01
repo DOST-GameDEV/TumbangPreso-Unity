@@ -2286,6 +2286,44 @@ reports/hero-quality-2026-10-01/waterwall-implementation.md. No Water wall runti
 changes yet. Skim77bf73e3 integrated atae507b37; publication verification pending.
 Other contributors retain AI/Haunted/departure paths. No heavy Unity job active.
 
+HAUNT-ACTUAL-PEERS-1001 owns existing Diagnostics/NetFamiliarProbe.cs switch only.
+Add explicit haunt scenario using actual owner-client Ultimate input, host-only
+clear-street positions, append timers0..3/roundclock/acceptedphase/drawnXZ to the
+existing CSV. Longer34/30s fixture allows clear clocks; legacy routes unchanged.
+No ordinary gameplay/kit/asset/loading change. Build one coherent116candidate
+including published menu/bot/notice fixes and incoming Skim; never Desktop. One
+heavy job and one actual pair, stop at traces/terminal verdict; retain failures.
+This dedicated ability fixture is separate from generic whole-match round2gate.
+Prior native/jobs terminal; headroom8GB. Freeze all tracked inputs before build,
+then exact compiled runtime hash and post-build drift. No paid service requests.
+
+Haunt candidate freeze45423terminal:15426tracked inputs, sourced25142982 plus
+one explicit diagnostic overlay, protocol116. Headroom6.87GB; no native Editor
+job active (Hub unity.exe serve is unrelated and preserved). Build now owns one
+isolated output Builds/feedback-haunt-player-1001 with named profile; stop on
+terminal builder/receipt, do not launch peers until post-build drift verifies.
+
+Haunt116 build53435terminal succeeds2141MB/84s. Post-hash77495terminal confirms
+all15426inputs unchanged, runtimeSHA4315b0b076a961955428fb2d58d2ec657bc17fa3c98acd4eb6e434289b2616c8.
+One explicit diagnostic overlay matches built candidate. Dedicated local driver
+reuses existing hidden-player/profile guard with CSV-specific verdict; original
+generic round2evaluator unchanged. NetStateReport may not reach its later timer
+before fixture self-quit, so no missing optional report is called whole-match
+success. Actual network roles/local seats, accepted phase, all four status clocks,
+meaningful chase/terminal and old-field absence required from live CSV plus logs.
+Launch one actual same-binary pair now. Stop at terminal result; retain failure.
+
+Actual Haunt pair85757terminal PASSES:604host/534client samples with expected
+network role/local seats, phase1, all four Haunted clocks<=7.5and final0, meaningful
+chase motion/terminal and no legacy pull field. Hostpeer1approval and clientseat
+admission logged; no hard exception/remote-close. Estimated-clock steady comparison
+max67.8ms across122/123pairs eachseat; not atomic clock equality. Same116binary
+runtime4315b0b076a961955428fb2d58d2ec657bc17fa3c98acd4eb6e434289b2616c8.
+Profiles/shared input preserved; taskplayers exited. No generic round2/rejoin/loss/
+Android/audio/human/full-kit claim. Publish explicit diagnostic source and receipts,
+update existing Nemu Notes cell concisely. Then continue Haunted bot sensing as
+one complete observation+unknown-target+selection unit; avoid falsepositions.
+
 Water wall first candidate frozen: three native cases for real role cast,
 first crossing/approach side/one-use, cover refusal without cost/expiry and
 render-only replay plus active/broken court captures. Six Core cases pass.
