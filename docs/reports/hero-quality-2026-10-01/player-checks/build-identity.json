@@ -1,0 +1,12 @@
+{
+    "sha": "831368991a142fc2b4bfac1b86d6161402ce2d13",
+    "branch": "",
+    "protocol": 112,
+    "target": "StandaloneLinux64",
+    "appVersion": "1.0.0",
+    "ugsProject": "dcf0831e-a5f4-43b4-832e-b687f13a3569",
+    "ugsEnvironment": "production",
+    "builtAt": "2026-09-30 19:08:28",
+    "dirty": true,
+    "treeState": "dirty"
+}

@@ -1744,3 +1744,26 @@ measured-ground settling/max3/plausible placement refined; rules and other Phais
 work unchanged. Native centre/edge stills inspected; no fullmovie/player/peer claim.
 Suite plan has pre-existing unassigned fixtures; newHex fixture placedmatch only.
 Publish scoped presenter/tests/evidence, then continue current requested work.
+Hex5cce9a55 remote verified; source clean before player preparation. Refresh the
+owned internal Linux candidate next so actual play can include tutorial/circle/
+Hex/Drift112 source. Only1.7GBfree versus old2.1GBplayer: moved that reproducible
+owned output to Builds/cloud-linux-current and retain its old identity/hash;
+GameBuilder's normal guarded player-output replacement will rebuild it in place.
+No Desktop/source/profile deletion. Current Editor build gates copied; non-code
+source delta matches except200Xelu importer trailing-whitespace rewrites, retained.
+Build identity will honestly retain isolatedbase831/dirty plus explicit source
+5cce9a55 runtime-input manifest. One heavy guarded build, then run that exact player.
+Current internal Linux build succeeds:2077MB,45s build/81.86s guarded process,
+protocol112, runtimeSHA67e444f5f668430913d517fc9eaadd2186f27c7ad426d29b58f39501ac988ff5.
+OOM11/kill6unchanged. Old100player output superseded; no new runtime claim yet.
+Next exact-player offline practice/aim-circle/pause/return/quit qualification in
+an isolated copied QA home. No user profile/Desktop/network-room mutation.
+Actual current112player manual check exited0 normally after852s/no OOM. Observed
+hollow aim, Ready/walk/run/three accepted jumps, actual throw→loose Retrieve,
+offline pause/resume, tutorialQuit→Home and QuitGame. Look intentionally skipped;
+not fulltutorial/peer/audio qualification. New real-player observation: title
+Return entered Home alreadyqueueing; cancelled, temporary lobby deletedconfirmed.
+Investigate title Submit leak (existingPeriod test misses it). Claim
+UI/OwnerMenuPrompt.cs, UI/HomeCourtView.cs, Input/MenuNav.cs and
+Tests/PlayMode/FeedbackMenuRouteTests.cs for focused offline reproduction/fix.
+No new profile/room action intended; no heavy job active. Other claims unchanged.
