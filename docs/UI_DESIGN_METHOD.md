@@ -66,7 +66,7 @@ from native menu/clock checks.
 
 The owner replaced the directional line with a local ground circle. It follows the current launch and supporting floor at20Hz, disappears with charge/release and predicts world banks. It does not resolve gameplay or promise immunity to player/can interception. Read the [native flight/render evidence](reports/feedback-2026-09-30/landing-circle.md). Keep the ordinary charge ring tied to Carrier.ChargeRatio; clarity feedback remains open.
 
-Charge feedback names actual power percent and FULL RELEASE at the reticle, with WAIT when the objective is protected or the round/actor disallows use. Keep the adopted can-down throwing rule. Captions hide with the reticle/release and use the shared black outline. [Native charge UI evidence](reports/feedback-2026-09-30/throw-charge-ui.md).
+Charge feedback names actual power percent and FULL RELEASE at the reticle, with WAIT when the objective is protected or the round/actor disallows use. Can-down/protected state cancels charge and refuses a new throw under protocol118+. Captions hide with the reticle/release and use the shared black outline. [Native charge UI evidence](reports/feedback-2026-09-30/throw-charge-ui.md).
 
 ## Ready And Power Readability
 
@@ -104,3 +104,12 @@ The title's opening action is accepted once and waits for the existing UI Submit
 to release before Home installs its selected PLAY. Ordinary non-Submit keys and
 pointer/touch clicks retain the same entry route with a frame boundary. A fresh
 Submit remains usable on Home. [Focused evidence](reports/hero-quality-2026-10-01/title-submit-checks/README.md).
+
+## Current Feedback HUD layout
+
+Harry's mockup separates status cards at bottom-left, the action and contained
+progress centrally below aim, and a dark-red warning above aim. Persistent
+penalties and short input refusals no longer replace the action instruction.
+Rooted keeps its actual Interact hold and saved glyph; no recovery remapping.
+Round backing follows pip count. See the current HUD report for native checks
+and the separate pending announcement-scoring work.

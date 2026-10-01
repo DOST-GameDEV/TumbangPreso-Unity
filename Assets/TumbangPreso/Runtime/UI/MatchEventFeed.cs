@@ -57,7 +57,7 @@ namespace TumbangPreso.UI
         {
             var root = OwnerUiLayout.Rect(parent, "MatchEventFeed");
             root.anchorMin = root.anchorMax = root.pivot = new Vector2(1, 1);
-            root.anchoredPosition = new Vector2(-30, -240); root.sizeDelta = new Vector2(Width, RowStep * Capacity);
+            root.anchoredPosition = new Vector2(-30, -170); root.sizeDelta = new Vector2(Width, RowStep * Capacity);
             var feed = root.gameObject.AddComponent<MatchEventFeed>();
             for (int i = 0; i < Capacity; i++) feed._rows[i] = BuildRow(root, i);
             return feed;

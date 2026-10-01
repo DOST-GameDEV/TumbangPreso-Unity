@@ -206,6 +206,7 @@ namespace TumbangPreso.UI
             _crosshair.enabled = !spectating && local != null && round.RoundActive;
             if(_aimOwner!=local){_aimOwner=local;_aimCarrier=local!=null?local.GetComponent<Carrier>():null;}
             Prompts(local, spectating);
+            Warnings(local, spectating);
             _powers.Tick(local != null ? local.GetComponent<Abilities.HeroAbilitySystem>() : null,
                 !spectating && !hidePowers && SceneFlow.SelectedMode == GameMode.HeroStrike);
             _spectator.enabled = spectating && spectatorControls;
@@ -383,7 +384,9 @@ namespace TumbangPreso.UI
             // Paete's roots must be represented on this live action surface too.
             if (local.IsRooted)
             {
-                InteractPrompt("break free", local.BreakFreeProgress);
+                BindingPrompt("Interact", local.Intent.Pressed(Verb.Interact) ? "Removing Rooted" : "Remove Rooted");
+                Progress(local.BreakFreeProgress);
+                if (Hud.OnTouch) TouchHud.Emphasise(Verb.Interact);
                 return;
             }
             if (BufferSkipVote.Showing)
@@ -465,8 +468,7 @@ namespace TumbangPreso.UI
                         ? $"Fetch your slipper · {Balance.SlipperUnretrievedGracePeriod - idle:0.0}s" : "Fetch your slipper · -5 / second";
                 }
             }
-            if (local.IsDefender && round.IsTayaCampWarningActive)
-                _context.text = "Leave the can ring";
+            // Persistent penalties have their own warning surface.
         }
         private void BindingPrompt(string action, string label)
         {

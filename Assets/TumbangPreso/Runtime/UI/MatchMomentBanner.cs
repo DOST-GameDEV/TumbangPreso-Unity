@@ -22,7 +22,7 @@ namespace TumbangPreso.UI
         public static MatchMomentBanner Create(RectTransform parent)
         {
             var rect = OwnerUiLayout.Rect(parent, "EarnedMoment");
-            rect.anchorMin = rect.anchorMax = new Vector2(.5f, .76f); rect.pivot = new Vector2(.5f, .5f);
+            rect.anchorMin = rect.anchorMax = new Vector2(.5f, .79f); rect.pivot = new Vector2(.5f, .5f);
             rect.sizeDelta = new Vector2(660, 116);
             var banner = rect.gameObject.AddComponent<MatchMomentBanner>(); banner._rect = rect;
             banner._group = rect.gameObject.AddComponent<CanvasGroup>(); banner._group.blocksRaycasts = false;

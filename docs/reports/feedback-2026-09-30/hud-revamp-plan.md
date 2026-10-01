@@ -36,11 +36,16 @@ changing saved settings. Geometry overlap tests do not replace image critique.
 
 ## Next coherent unit: requested announcement rules
 
-The latest row also requests first knockdown +50, last-ten-seconds knockdown +25,
-a five-second refreshing catch streak, Double +25, Triple +50 and Multi +50.
-Current first/late moments have no such bonus, and catch bonuses are lower.
+Live row checked again at 07:23 UTC: banners last 2.5 seconds. First knockdown
++50; last-ten-seconds knockdown +50; Multi Knockdown at three or more consecutive
+knockdowns +50, with the player's streak reset by being tagged. Single Catch
+starts a five-second timer, also reset by can knockdown. Double, Triple and Multi
+Catch each add +25 and refresh that timer; Multi is more than three catches.
+These values supersede the earlier draft while Harry was editing.
+
+Current first/late moments have no such bonus, and catch bonuses/counting differ.
 Reconcile existing ActionChains/MatchDirector scoring rather than add a second
-implementation. Resolve counts from actual accepted tags, keep host ownership,
-and change protocol compatibility for new score semantics. “Tagged two players”
-repeated under Triple/Multi is treated as a copy typo, not permission to award
-three milestones for the second tag. Preserve distinct actual-peer limits.
+implementation. Resolve counts from actual accepted actions, preserve host
+ownership, and change protocol compatibility for new semantics. Re-read the
+live row before implementation because it is being actively refined. Do not
+change current scoring merely to make a screenshot match a proposed label.

@@ -2774,6 +2774,29 @@ bottom-left statuses, separate warning/action regions, in-panel progress, fitted
 round track and modest larger bar. New first/late/catch bonuses remain a separate
 scoring unit after layout; don't fake those with labels. Current protocol119.
 
+HUD layout first candidate frozen. Three bottom-left chips, independent dark-red
+warning, recovery progress inside action panel, +10% bar scale with longer cards,
+round-count-fit track, moved feed/banner and removed power hint. Rooted uses its
+real Interact glyph and Remove/Removing wording; no recovery-input remap. Five
+focused native cases include actual keyboard/pad/touch held recovery, reset
+reach/toggle control, large scores and new viewport/warning states. Expected 5;
+one tooling repair maximum. New score bonuses are still not implemented.
+
+HUD first run: three existing native controls pass (real Rooted keyboard/pad/
+touch hold, reset reach/toggle and large scores). Two new fixtures fail: visual
+fixture called client-only ApplyNetworkMoment on a host; warning fixture left
+the staged defender input parked. One bounded fixture repair uses host moment
+presentation and unparks the controlled input. Runtime unchanged. Rerun only
+these two cases; retain the three passing controls, not an unchanged full loop.
+
+HUD v2 native two new cases pass; retain three earlier passing controls. Images
+show separated status/action/warning and fitted four-round track. Review found a
+real missing refusal path: failed requirements return CannotAct, which stays in
+input buffer and expires without LastAnswer, so requested CANNOT CAST cannot
+appear. Extend ownership to Abilities/HeroAbilitySystem.cs only at buffer expiry:
+record refusal feedback for an actor able to act, preserving buffer/cast timing.
+One targeted actual empty-hand Skim press/expiry check plus event-feed capture;
+no kit rules, protected ability values or transport changes.
 IDENTIFY-FRAMING-1001 owns MatchRpc.cs parser preflight and new IdentifyPacketBoundsTests.cs/meta.
 Library source confirms uint length→int cast and UTF16 bounds can throw before
 identity/arrival checks. Baseline6malformed cases with consumed8byte name hash;
@@ -2837,3 +2860,18 @@ localmatchgate/return controls pass. No fixture repair, all14827/15746/32941/452
 jobs terminal, profiles/inputprefs preserved. Publish source/status/receipts.
 Current119; no freshactualpeer/player proof. Next inspect remaining roster-message
 bounds independently of reserved HUD work; full feedback/goal staysactive.
+
+HUD requirement-refusal native1/1passes with actual empty-hand Skim attempt,
+buffer expiry feedback, no activation/cost, separate three-entry feed and a
+corrected successful cast clearing warning. Six distinct cases now pass across
+three runs; one fixture repair, no new OOM. Small/wide frames inspected. Pink
+staged flair particles remain outside this UI claim. Publish owned UI/feedback
+unit; leave row open for latest announcement scoring and2.5second banner duration.
+
+Integratedf024653f9 HUD/refusal feedback with six distinct authorednativecases
+and inspectedsmall/widecaptures; no localauthoredart changes. Both code histories
+mergecleanly, local packet/source testsretain frozen119candidate boundaries.
+Identify1182b764f andlobbypicke25b8cefd qualified independently; no broad119player
+claim from old117/116binaries. All local heavy jobs terminal, private work intact.
+Next network unit remains roster-response framing after freshownerclaim checks;
+HUD announcement/scoring/duration follow-up remains contributor-owned.

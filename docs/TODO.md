@@ -17,6 +17,15 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### HUD-LAYOUT-1001: Harry's supplied layout
+
+Three left-side statuses, separate warning/action regions, in-panel recovery,
+roomier match bar and count-fit pips implemented. Six distinct native cases pass,
+including actual bound recovery and requirement-refusal/corrected-cast behavior.
+[Evidence](reports/feedback-2026-09-30/harry-hud-checks/README.md).
+The combined row remains open for current announcement bonuses/duration.
+
+
 ### PENALTY-REVAMP-1001: current Harry timing revision
 
 Camping 1.5/2.0 m with warning at 2.5 s and penalty state at 5 s; slipper warning

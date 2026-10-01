@@ -305,6 +305,7 @@ namespace TumbangPreso.PlayTests
                 var canvas = GameObject.Find("OwnerMatchCanvas").GetComponent<Canvas>();
                 var prompt = canvas.GetComponentsInChildren<Text>().First(t => t.name == "ActionPrompt");
                 var progress = canvas.GetComponentsInChildren<Image>(true).First(i => i.name == "ProgressFill");
+                var glyph = canvas.GetComponentsInChildren<Image>(true).First(i => i.name == "ActionBindingGlyph");
                 var touch = Object.FindFirstObjectByType<TouchHud>();
                 var interact = touch.Buttons.First(b => b.Entry.Verb == Verb.Interact);
                 local.ApplyRooted(45);
@@ -312,14 +313,16 @@ namespace TumbangPreso.PlayTests
                 InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.F9));
                 InputSystem.Update(); keyboard.MakeCurrent(); LastInputDevice.Sample();
                 yield return null;
-                Assert.That(prompt.text, Does.Contain(Hud.PressCue("Interact")).And.Contain("break free"));
+                Assert.That(prompt.text, Does.Contain("Remove Rooted"));
+                Assert.IsTrue(glyph.enabled);Assert.AreSame(InputGlyphs.For(Hud.KeyLabelFor("Interact"),true),glyph.sprite);
                 Assert.IsTrue(progress.transform.parent.gameObject.activeSelf);
 
                 Assert.IsNull(Rebinding.TryRebind(actions, "Interact", keyboard.f10Key));
                 InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.F10));
                 yield return new WaitForSeconds(.4f);
                 Assert.AreEqual(InputDeviceKind.KeyboardMouse, LastInputDevice.Current);
-                Assert.AreEqual("Hold [F10]  to break free", prompt.text, "The existing prompt must refresh after a live rebind.");
+                Assert.AreEqual("Removing Rooted", prompt.text);
+                Assert.IsTrue(glyph.enabled);Assert.AreSame(InputGlyphs.For(Hud.KeyLabelFor("Interact"),true),glyph.sprite);
                 Debug.Log($"[RootedInput] device={keyboard.enabled} key={keyboard.f10Key.isPressed} action={interactAction.enabled}/{interactAction.IsPressed()} reader={reader.isActiveAndEnabled} intent={local.Intent.Pressed(Verb.Interact)} parked={local.Intent.Parked} locked={local.Intent.Locked(Verb.Interact)} held={PresentationClock.Held} local={local.IsLocallySimulated()} rooted={local.IsRooted} progress={local.BreakFreeProgress:F3}");
                 Assert.IsTrue(keyboard.enabled && keyboard.f10Key.isPressed, "The synthetic F10 hold did not reach an enabled keyboard.");
                 Assert.IsTrue(interactAction.enabled && interactAction.IsPressed(), "The configured Interact action did not read the F10 hold.");
@@ -337,7 +340,8 @@ namespace TumbangPreso.PlayTests
                 yield return new WaitForSeconds(.4f);
                 Assert.AreEqual(InputDeviceKind.Gamepad, LastInputDevice.Current);
                 Assert.Greater(local.BreakFreeProgress, released, "The prompted pad control must perform the hold.");
-                Assert.AreEqual("Hold " + Hud.PressCue("Interact") + "to break free", prompt.text);
+                Assert.AreEqual("Removing Rooted", prompt.text);
+                Assert.IsTrue(glyph.enabled);Assert.AreSame(InputGlyphs.For(Hud.KeyLabelFor("Interact"),true),glyph.sprite);
                 InputSystem.QueueStateEvent(pad, new GamepadState());
                 yield return null;
                 yield return TumpUiCapture.Capture("CourtHud-rooted-pad", canvas, 960, 540, false, true, checkActionBounds: true);
@@ -346,7 +350,7 @@ namespace TumbangPreso.PlayTests
                 TouchInput.Move = Vector2.zero;
                 yield return new WaitForSeconds(.15f);
                 Assert.AreEqual(InputDeviceKind.Touch, LastInputDevice.Current);
-                Assert.AreEqual("Hold to break free", prompt.text);
+                Assert.AreEqual("Remove Rooted", prompt.text);Assert.IsFalse(glyph.enabled);
                 Assert.Greater(interact.transform.localScale.x, 1, "The touch Interact button must be visibly emphasised.");
                 float beforeTouch = local.BreakFreeProgress;
                 interact.SetHeld(true);
@@ -365,7 +369,7 @@ namespace TumbangPreso.PlayTests
                 while (local.IsRooted && Time.time < deadline) yield return null;
                 interact.SetHeld(false); yield return null;
                 Assert.IsFalse(local.IsRooted, "Holding the prompted control must finish the escape.");
-                Assert.That(prompt.text, Does.Not.Contain("break free"));
+                Assert.That(prompt.text, Does.Not.Contain("Rooted"));
                 Assert.IsFalse(progress.transform.parent.gameObject.activeSelf);
             }
             finally
@@ -773,6 +777,138 @@ namespace TumbangPreso.PlayTests
                 TouchInput.Active = touch; SettingsStore.Current.ToggleRestore = toggle; QualitySettings.globalTextureMipmapLimit = mip;
                 typeof(LastInputDevice).GetMethod("Set", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] { device });
             }
+        }
+
+        [UnityTest,Timeout(90000)]
+        public IEnumerator RevisedHudSeparatesStatusesWarningActionAndFitsFourRounds()
+        {
+            var settings=SettingsStore.Current;float scale=settings.HudScale;var rules=SceneFlow.SelectedRules.Clone();
+            try
+            {
+                yield return Open(GameMode.HeroStrike);
+                var local=GameServices.Round.PlayerAt(GameLaunch.SoloSeat);
+                local.GetComponent<PlayerInputReader>().enabled=false;local.Intent.Clear();local.enabled=false;
+                GameServices.Round.enabled=false;
+                local.ApplyWhirled(30);local.ApplyChilled(30);local.ApplyRooted(30);
+                var idle=new float[4];idle[local.PlayerSlot]=8;GameServices.Round.ApplyNetworkTournamentState(0,idle);
+                var four=SceneFlow.SelectedRules.Clone();four.Rounds=4;SceneFlow.SetSelectedRules(four);
+                var view=Object.FindFirstObjectByType<TumpMatchReadout>();var root=(RectTransform)view.Canvas.transform;
+                foreach(float size in new[]{1f,1.2f})
+                {
+                    settings.HudScale=size;view.Tick(local,false,false,false,false);yield return null;
+                    Assert.AreEqual("DO NOT IDLE - RETRIEVE YOUR SLIPPER",view.WarningText);
+                    Assert.AreEqual(3,root.GetComponentsInChildren<RectTransform>().Count(x=>x.name.StartsWith("StatusChip")));
+                    Assert.AreEqual(106,((RectTransform)root.Find("RoundClock/RoundTrack")).rect.width,.1f);
+                    Assert.AreEqual(1.1f*size,root.Find("MatchScores").localScale.x,.001f);
+                    Assert.IsFalse(root.GetComponentsInChildren<Text>(true).First(x=>x.name=="PowerInfoBinding").enabled);
+                    foreach(var viewport in new[]{new Vector2Int(960,540),new Vector2Int(1600,680)})
+                    {
+                        var match=GameServices.Match;
+                        typeof(MatchDirector).GetMethod("PresentHostMoment",BindingFlags.Instance|BindingFlags.NonPublic)
+                            .Invoke(match,new object[]{local.PlayerSlot,MatchMomentKind.FirstKnockdown,1,0});
+                        yield return TumpUiCapture.Capture("HarryHud-states-"+size+"-"+viewport.x+"x"+viewport.y,view.Canvas,viewport.x,viewport.y,false,true,
+                            inspectViewport:()=>
+                            {
+                                var action=HudRevisionBounds(root,(RectTransform)root.Find("ContextualAction/PromptPlate"));
+                                var warning=HudRevisionBounds(root,(RectTransform)root.Find("WarningMessage"));
+                                var progress=HudRevisionBounds(root,(RectTransform)root.Find("ContextualAction/RecoveryProgress"));
+                                Assert.IsTrue(action.Contains(progress.min)&&action.Contains(progress.max),"Progress must sit inside the action background");
+                                Assert.IsFalse(action.Overlaps(warning));
+                                for(int i=0;i<3;i++)
+                                {
+                                    var chip=HudRevisionBounds(root,(RectTransform)root.Find("StatusChip"+i));
+                                    Assert.IsFalse(chip.Overlaps(action));Assert.IsFalse(chip.Overlaps(warning));
+                                    Assert.GreaterOrEqual(chip.xMin,root.rect.xMin);Assert.GreaterOrEqual(chip.yMin,root.rect.yMin);
+                                    if(i>0)Assert.IsFalse(chip.Overlaps(HudRevisionBounds(root,(RectTransform)root.Find("StatusChip"+(i-1)))));
+                                }
+                            });
+                    }
+                }
+                local.ClearStatuses();
+                GameServices.Round.ApplyNetworkTournamentState(0,new float[4]);view.Tick(local,false,false,false,false);
+                Assert.AreEqual("",view.WarningText);
+            }
+            finally{settings.HudScale=scale;SceneFlow.SetSelectedRules(rules);}
+        }
+
+        [UnityTest,Timeout(60000)]
+        public IEnumerator RequirementRefusalReachesWarningWithoutCastingAndFeedStaysSeparate()
+        {
+            float scale=SettingsStore.Current.HudScale;
+            try
+            {
+                yield return Open(GameMode.HeroStrike);
+                var round=GameServices.Round;var local=round.PlayerAt(GameLaunch.SoloSeat);
+                local.GetComponent<PlayerInputReader>().enabled=false;local.Intent.Clear();local.Intent.Parked=false;
+                local.CharacterIndex=Roster.IndexIn(Roster.HeroPeople,"rafi");
+                var powers=local.AbilitySystem;powers.BindHero("rafi");powers.enabled=false;
+                local.GetComponent<Carrier>().Held?.HostDisarm();local.GetComponent<Carrier>().enabled=false;
+                local.enabled=false;round.enabled=false;Assert.IsTrue(local.CanAct());
+                var update=typeof(HeroAbilitySystem).GetMethod("Update",BindingFlags.Instance|BindingFlags.NonPublic);
+                local.Intent.Set(Verb.Skill2,true);update.Invoke(powers,null);
+                yield return new WaitForSeconds(HeroAbilitySystem.InputBufferWindow+.05f);
+                update.Invoke(powers,null);
+                Assert.AreEqual(HeroKit.CastOutcome.CannotAct,powers.LastAnswer(HeroAbilitySystem.Slot.Skill2));
+                Assert.IsFalse(powers.Kit.Skill2.IsActive);Assert.AreEqual(0,powers.Kit.Skill2.CooldownRemaining);
+                var view=Object.FindFirstObjectByType<TumpMatchReadout>();view.Tick(local,false,false,false,false);
+                Assert.AreEqual("CANNOT CAST - ABILITY MUST MEET REQUIREMENTS",view.WarningText);
+                SettingsStore.Current.HudScale=1.2f;yield return null;
+                foreach(var size in new[]{new Vector2Int(960,540),new Vector2Int(1600,680)})
+                {
+                    // Repeating this unsuccessful input supplies a fresh real refusal after
+                    // the first view's capture, without awarding or activating anything.
+                    local.Intent.Set(Verb.Skill2,false);update.Invoke(powers,null);
+                    local.Intent.Set(Verb.Skill2,true);update.Invoke(powers,null);
+                    yield return new WaitForSeconds(HeroAbilitySystem.InputBufferWindow+.05f);update.Invoke(powers,null);
+                    Visual.MatchFlair.Play(Visual.MatchFlair.Kind.LataDown,2,-1,round.Lata.transform.position);
+                    Visual.MatchFlair.Play(Visual.MatchFlair.Kind.Tag,0,3,round.Lata.transform.position);
+                    Visual.MatchFlair.Play(Visual.MatchFlair.Kind.Block,2,1,round.Lata.transform.position);
+                    yield return TumpUiCapture.Capture("HarryHud-refusal-feed-"+size.x+"x"+size.y,view.Canvas,size.x,size.y,false,true,
+                        inspectViewport:()=>
+                        {
+                            var root=(RectTransform)view.Canvas.transform;
+                            var warning=HudRevisionBounds(root,(RectTransform)root.Find("WarningMessage"));
+                            foreach(var plate in root.Find("MatchEventFeed").GetComponentsInChildren<HudCard>())
+                                if(plate.name=="EventPlate")Assert.IsFalse(warning.Overlaps(HudRevisionBounds(root,plate.rectTransform)));
+                        });
+                }
+                local.Intent.Set(Verb.Skill2,false);update.Invoke(powers,null);
+                var shoe=Object.FindObjectsByType<Slipper>(FindObjectsInactive.Include).First(s=>s.OwnerSlot==local.PlayerSlot);
+                shoe.HostForceEquip(local);local.Intent.Set(Verb.Skill2,true);update.Invoke(powers,null);
+                Assert.AreEqual(HeroKit.CastOutcome.Cast,powers.LastAnswer(HeroAbilitySystem.Slot.Skill2));
+                view.Tick(local,false,false,false,false);Assert.AreEqual("",view.WarningText,"A successful corrected cast clears its old refusal");
+            }
+            finally{SettingsStore.Current.HudScale=scale;}
+        }
+
+        private static Rect HudRevisionBounds(RectTransform root,RectTransform target)
+        {
+            var points=new Vector3[4];target.GetWorldCorners(points);
+            Vector2 min=new Vector2(float.PositiveInfinity,float.PositiveInfinity),max=new Vector2(float.NegativeInfinity,float.NegativeInfinity);
+            foreach(var point in points){Vector2 p=root.InverseTransformPoint(point);min=Vector2.Min(min,p);max=Vector2.Max(max,p);}
+            return Rect.MinMaxRect(min.x,min.y,max.x,max.y);
+        }
+
+        [UnityTest,Timeout(60000)]
+        public IEnumerator RevisedWarningsFollowRefusedInputsAndHideForSpectators()
+        {
+            yield return Open(GameMode.Classic);yield return new WaitForSeconds(1.4f);
+            var round=GameServices.Round;round.enabled=false;
+            var local=round.PlayerAt(GameLaunch.SoloSeat);local.GetComponent<PlayerInputReader>().enabled=false;
+            local.GetComponent<Carrier>().enabled=false;local.enabled=false;local.Intent.Clear();
+            var view=Object.FindFirstObjectByType<TumpMatchReadout>();
+            local.Teleport(new Vector3(0,.1f,2));local.Intent.Set(Verb.SpecialAbility,true);
+            view.Tick(local,false,false,false,false);Assert.That(view.WarningText,Does.Contain("OUTSIDE DANGER ZONE"));
+            local.Intent.Clear();yield return new WaitForSecondsRealtime(1.3f);
+            view.Tick(local,false,false,false,false);Assert.AreEqual("",view.WarningText);
+            local.Teleport(new Vector3(0,.1f,-8));round.Lata.HostKnockDown(2);Assert.IsFalse(round.Lata.IsUpright);
+            local.Intent.Set(Verb.SpecialAbility,true);view.Tick(local,false,false,false,false);
+            Assert.AreEqual("CANNOT THROW - CAN MUST BE UPRIGHT FIRST",view.WarningText);
+            var defender=round.PlayerAt(GameServices.Match.DefenderSlot);defender.Intent.Parked=false;defender.Intent.Set(Verb.SpecialAbility,true);
+            view.Tick(defender,false,false,false,false);Assert.AreEqual("CANNOT TAG - CAN MUST BE UPRIGHT FIRST",view.WarningText);
+            local.Intent.Clear();local.Intent.Set(Verb.Sprint,true);local.Stamina.ApplyNetworkSnapshot(0,0,2.5f);
+            view.Tick(local,false,false,false,false);Assert.That(view.WarningText,Does.StartWith("CANNOT RUN"));
+            view.Tick(local,true,false,false,false);Assert.AreEqual("",view.WarningText);
         }
 
         private static IEnumerator Open(GameMode mode)
