@@ -3578,6 +3578,28 @@ native controls and no resolution evidence: do not treat those text copies as
 shipped. Pause optional Hydro polish for these newly added human defects. Native
 jobs terminal; Baha e2adf856 published/verified and same-row note written.
 
+Tagged fullEskinita baseline produces controls without the supplied textured-leaf
+artifact; this is not a fix. Its trees are the current stylized NearFade masses,
+unlike screenshot foliage. Source/candidate map/Garden/shader hashes match, so
+no stale-assets assumption. Inspect Kanto, whose foliage/civic backdrop fits the
+images, using the same one-case capture and full1.1s staged pose history. No
+product change; the capture diagnosis must establish the actual affected path.
+
+Kanto baseline hit the existing memory safety stop during scene load, no runtime
+XML. OOM/kill counters unchanged11/6. Snapshot showed1.17GB owned idle asset
+worker alongside3.46GB Editor. One bounded tooling repair uses installedUnity
+6000.5.8f1 documented AssetDatabase.DesiredWorkerCount/ForceToDesiredWorkerCount
+to release idle workers before this isolated Kanto review, restoringdesiredcount
+afterworldreset. Guardthreshold unchanged; no unrelatedprocess killed, no
+profiles/assets deleted. Repeat Kanto once; if stillblocked continueotherreport.
+
+Tagged Kanto tooling retry rejectedDesiredWorkerCount0 inthisUnitybuild; original
+countrestoredafterReset. No Kanto pixels, nofix, nosecondtoolingretry. Eskinita
+control didnotreproduce suppliedtexturedleafartifact. Precise missingfact:which
+mapisshown? AskonthesameDocrow. Private diagnosticfixture saved; shippingtest
+restoredexactHEAD ratherthancommitfailinghelper. ReleaseCatchReconstructioncode
+reservationwhileawaitingmap; retainreport/history. Continue newplayerhighlight
+flatshaderglowreport, noall-workstop. Allnativejobs terminal.
 Integrated Baha/Skim authored contributions through82400710b with Overclock
 state ef830005d; no runtime conflict,124 retained. Preserve collaborator art
 and validation limits, no own authored asset changes. Private HeroHazards alpha
@@ -3594,3 +3616,8 @@ Private HeroHazards overlay still6insertions/1change outsideindex. Next normal/
 Overclocked basic mechanics in Wiki/plans, with proposal provenance explicit;
 full Zack remains open. No optional unchanged suite or art/lighting/loading edits.
 
+Integrated Overclock ef830005 with tagged investigation c21f8a5c; current124.
+No tagged rendering fix claimed. Owner11:04Doccleanup complete:28strayDone
+labelsremoved, unfinishedAmihanunchecked, otherunfinishedrowsvisuallyunchecked,
+completedchecksretained andhumanverificationuntouched. Nativecheckboxreadability
+nowavailablethroughcloudbrowser; no archive move yet. Continueflatgroundmarkers.
