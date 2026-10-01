@@ -2722,3 +2722,13 @@ Core/native/capture receipts intact. Current118; both actual reconnect players
 remain117frozenproof. Keep new penalty row contributor-reserved ifclaimed. No
 own loading/art rewrite or unrelated dirt staged. Next refresh current Feedback
 bottom-first and continue actionable engineering work, retain honest gate limits.
+
+PENALTY-REVAMP-1001 claims Core Balance.cs, Core.Tests/BalanceTests.cs,
+Net/NetSession.cs protocol119, and new focused TournamentPenaltyTimingTests.cs.
+Current live Feedback: camping1.5m/2.0m, warning2.5s/grace5s; loose-slipper
+warning7.5s/grace15s; fatigue2.5s at.75speed. Existing incapacity pause,
+-5tick and defense-income suppression stay. Existing SlipperRecall clock already
+reads warning/grace constants; prove its7.5second countdown rather than add a
+second timer. No Tagged immunity paragraph in current Doc, so do not implement
+that removed revision. Two native scoring/pause/recall checks plus focused Core
+fatigue/boundary checks; one tooling repair maximum. Next HUD layout afterward.
