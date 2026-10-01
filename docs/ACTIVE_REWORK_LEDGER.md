@@ -2098,3 +2098,31 @@ match tested candidate. Sourcebc86453ff with overlays. No fixture repair, jobs
 retained slipper inventory to remaining planning scans; preserve every predicate,
 selection order and hero mechanics. Measure calibrated warm allocations and
 live flight/activity/ownership/lifecycle; no claimed FPS gain. No heavy job active.
+
+BOT-TAG-DEPTH0b9475534 remote verified; no owned source remains dirty. Claim
+BOT-PLANNING-INVENTORY-1001 AIController nine remaining slipper scans and existing
+BotSlipperQueryTests only. Existing retained inventory already invalidates birth/
+destroy and filters live activity. Keep every original predicate/order/kit rule;
+use calibrated seven-helper100-pass allocation plus live flight/ownership/activity/
+birth/destroy controls. Baseline2cases; final7cases with earlier inventory controls.
+One tooling repair maximum. No loading/presentation/compatibility edit.
+
+Preparation corrected a manifest prior-name typo before any engine launch.
+Allocation measurement isolates five scan helpers: flying/loose/void/thorn-count/
+thorn-aim. Glance/cover also have separate IReadOnlyList actor enumeration; do not
+misattribute those enumerator allocations to scene arrays or claim their total
+allocation is zero. All nine substitutions keep unchanged predicates and ordering.
+
+BOT-PLANNING baseline2cases: live flight/activity/ownership/replacement control
+passes; warmed five-helper100pass allocation records1400events and fails as
+expected. No fixture repair. Final source changes only nine inventory expressions;
+all predicates and hero rules retained. Baseline67198terminal. Freeze final7cases
+and verify fresh XML plus input drift; no broad gate or player rebuild.
+
+BOT-PLANNING final7/7native passes0.387s; calibrated five-helper100passes1400
+allocation events baseline to0final.659inputs no drift; two owned source files
+match candidate. Shared nine substitutions only; actor-enumerator allocations,
+structural scan rebuilds and whole-game FPS remain separate. No kit/loading/art/
+protocol change or fixture repair. Jobs67198/97546terminal. Publish exact paths,
+then inspect PeerDeparture receiver framing: unlike newer bounded carriers it
+currently accepts trailing unread bytes before advancing its notice sequence.

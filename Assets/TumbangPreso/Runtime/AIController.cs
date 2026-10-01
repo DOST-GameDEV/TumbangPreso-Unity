@@ -3688,7 +3688,7 @@ namespace TumbangPreso
             Slipper nearest = null;
             float best = float.MaxValue;
 
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var s in BotSlipperInventory.All)
             {
                 if (s.State != SlipperState.Loose && s.State != SlipperState.InFlight) continue;
 
@@ -4033,7 +4033,7 @@ namespace TumbangPreso
             bool found = false;
             float bestDistance = float.MaxValue;
 
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var s in BotSlipperInventory.All)
             {
                 if (s.State != SlipperState.Loose) continue;
 
@@ -4116,7 +4116,7 @@ namespace TumbangPreso
             Slipper best = null;
             float bestDistance = float.MaxValue;
 
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var s in BotSlipperInventory.All)
             {
                 if (s.State != SlipperState.InFlight) continue;
 
@@ -4399,7 +4399,7 @@ namespace TumbangPreso
         {
             best = from;
             int most = PaeteThornCount(from, out carriedOut);
-            foreach (var shoe in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var shoe in BotSlipperInventory.All)
             {
                 if (shoe == null || shoe.OwnerSlot == _motor.PlayerSlot) continue;
                 Vector3 at = shoe.transform.position; at.y = from.y;
@@ -4416,7 +4416,7 @@ namespace TumbangPreso
         {
             carriedOut = false;
             int count = 0;
-            foreach (var shoe in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var shoe in BotSlipperInventory.All)
             {
                 if (shoe == null || shoe.OwnerSlot == _motor.PlayerSlot) continue;
                 if (Flat(from, shoe.transform.position) > Core.PaeteRules.ThornRange - .3f) continue;
@@ -4486,7 +4486,7 @@ namespace TumbangPreso
             var lata = round?.Lata;
             if (lata != null && Flat(where, lata.transform.position) <= reach) return true;
 
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var s in BotSlipperInventory.All)
                 if (s.State == SlipperState.Loose
                     && Flat(where, s.transform.position) <= reach) return true;
 
@@ -4525,7 +4525,7 @@ namespace TumbangPreso
 
         private static bool AnyLooseSlipperInsideTheBox()
         {
-            foreach (var s in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var s in BotSlipperInventory.All)
             {
                 if (s.State != SlipperState.Loose) continue;
 
@@ -4893,7 +4893,7 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.RafiHeroKit)
                 {
-                    foreach(var shoe in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+                    foreach(var shoe in BotSlipperInventory.All)
                         if(shoe.State==SlipperState.InFlight && Flat(myPos,shoe.transform.position)<5
                             && Vector3.Dot(shoe.Velocity,myPos-shoe.transform.position)>0)
                         { Consider(intent,Verb.Skill1,dt);break; }
@@ -5299,7 +5299,7 @@ namespace TumbangPreso
 
         private bool HasRelevantVoidTarget(Vector3 center, float radius)
         {
-            foreach (var slipper in FindObjectsByType<Slipper>(FindObjectsInactive.Exclude))
+            foreach (var slipper in BotSlipperInventory.All)
             {
                 if (slipper == null || slipper.State != SlipperState.Loose) continue;
                 if (!_motor.IsDefender && slipper.OwnerSlot != _motor.PlayerSlot) continue;

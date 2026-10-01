@@ -96,6 +96,11 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   passes with fresh-observation and companion identity controls. Broader Haunted
   sensing remains open. [Evidence](reports/feedback-2026-09-30/bot-tag-depth.md).
 
+- [x] BOT-PLANNING-INVENTORY-1001: nine remaining bot slipper scans reuse the
+  existing live inventory. Five measured helpers reduce1400allocation events to0
+  across100warmed passes; seven native lifecycle/order/query checks pass. No kit
+  or loading change. [Evidence](reports/feedback-2026-09-30/bot-planning-inventory.md).
+
 Source: [TUMP Wiki](https://docs.google.com/document/d/1jvr7NLzhHrbw-wrG676AeOkoTxJf4GokkfmxpO0ddLg/edit),
 read on 2026-09-30, including ability, status and feedback tabs. The document wins
 for other characters. Paete and Phaister are finalized and governed by the

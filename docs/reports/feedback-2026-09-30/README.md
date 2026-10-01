@@ -205,3 +205,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Haunted through match menus with clear UI feedback](haunted-menu.md).
 
 [Bot tag ranking observation correction](bot-tag-depth.md).
+
+[Remaining bot planning scans and measured allocation reduction](bot-planning-inventory.md).
