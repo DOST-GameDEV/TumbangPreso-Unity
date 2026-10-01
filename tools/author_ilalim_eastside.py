@@ -1638,9 +1638,13 @@ def astral_tower(col, poly, rng):
     top = [buf.bm.verts.new((x, y, base_t + 0.02)) for x, y in offset(core, -0.01)]
     buf.face(top, "east_roof")
     buf.annulus(offset(core, 0.06), offset(core, -0.22), base_t - 0.06, base_t + 1.05, "east_astral_cream", mat_top="east_slab")
-    # Salmon fins up the podium's Taft face, one per shop bay, so the ribbons read in bays.
-    for yy in (-3.9, -0.3, 4.15, 8.6, 15.2, 20.0):
-        buf.box((FRONT + 0.72, yy, (ASTRAL_G + base_t) / 2 + 0.45), (0.5, 0.42, base_t - ASTRAL_G + 0.95),
+    # Salmon fins up the podium's Taft face, one per shop bay, so the ribbons read in bays. 0.7 m
+    # deep, so their face (x 11.37) stands 11 cm proud of the slab edges (x 11.48); at 0.5 m it sat
+    # 1 cm off them and the bevels z-fought.
+    # The first sits at -3.84, not -3.9, so its south face clears the West East Center's balcony
+    # end walls (south face y -4.11) by 5 cm instead of sharing their plane.
+    for yy in (-3.84, -0.3, 4.15, 8.6, 15.2, 20.0):
+        buf.box((FRONT + 0.72, yy, (ASTRAL_G + base_t) / 2 + 0.45), (0.7, 0.42, base_t - ASTRAL_G + 0.95),
                 "east_astral_salmon", r=0.1)
     buf.finish(col, bevel=0.05)
 

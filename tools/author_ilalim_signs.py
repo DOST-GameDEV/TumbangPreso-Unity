@@ -194,7 +194,9 @@ def fascia(buf_cls, key, spec):
     board = buf_cls(f"sign_{key}_board")
     board.extrude_y([(x, z + h / 2 + 0.13) for x, z in _rr(w / 2 + 0.02, h / 2 + 0.02, 0.04)], -0.02, 0.09,
                     "east_sign_timber")
-    _face(board, key, -w / 2, w / 2, 0.13, h + 0.13, 0.098)
+    # The painted face stands 1.5 cm proud of the board: at 6 to 8 mm it z-fought the board at the
+    # court's distance (owner, on the east row by the karinderya: "z-fighting on this section").
+    _face(board, key, -w / 2, w / 2, 0.13, h + 0.13, 0.105)
     return [(body, 0.03), (board, 0.01)]
 
 
@@ -238,7 +240,8 @@ def aboard(buf_cls, key, spec):
         body.extrude_y([(x, z + zc) for x, z in _rr(w / 2 + 0.01, h / 2 + 0.01, 0.02)],
                        -0.010, 0.010, "east_sign_timber", xform=xf)
         n = len(face.bm.verts)
-        _face(face, key, -w / 2 + 0.01, w / 2 - 0.01, zc - h / 2 + 0.01, zc + h / 2 - 0.01, 0.016 * s, back=(s < 0))
+        # 1.2 cm proud of the board, inset 2 cm so its corners stay inside the frame's rounded hole.
+        _face(face, key, -w / 2 + 0.02, w / 2 - 0.02, zc - h / 2 + 0.02, zc + h / 2 - 0.02, 0.022 * s, back=(s < 0))
         face.transform_new(n, xf)
     return [(body, 0.015), (face, 0)]
 
@@ -248,7 +251,7 @@ def placard(buf_cls, key, spec):
     w, h = spec["w"], spec["h"]
     body = buf_cls(f"sign_{key}_plate")
     body.extrude_y([(x, z + h / 2) for x, z in _rr(w / 2 + 0.02, h / 2 + 0.02, 0.05)], -0.015, 0.02, "east_sign_steel")
-    _face(body, key, -w / 2, w / 2, 0.0, h, 0.026)
+    _face(body, key, -w / 2, w / 2, 0.0, h, 0.034)  # 1.4 cm proud of the plate, never 6 mm
     return [(body, 0.008)]
 
 
@@ -298,7 +301,7 @@ def hung(buf_cls, key, spec):
                    "east_sign_steel")
     face = buf_cls(f"sign_{key}_hung_face")
     for s in (1, -1):
-        _face(face, key, -w / 2, w / 2, top - h, top, s * 0.041, back=(s < 0))
+        _face(face, key, -w / 2, w / 2, top - h, top, s * 0.048, back=(s < 0))  # 1.3 cm proud
     return [(body, 0.012), (face, 0)]
 
 
