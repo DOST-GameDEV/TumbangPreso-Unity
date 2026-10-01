@@ -903,7 +903,7 @@ namespace TumbangPreso.PlayTests
             var receive = typeof(MatchRpc).GetMethod("OnSyncUnitMsg", flags);
             var state = new VoodooBodySnapshot { Drained = 2, Hexed = 3, MarkKind = 2, MarkSource = 0,
                 MarkAge = 12, ReachKind = 1, ReachTarget = 2, ReachElapsed = 1 };
-            void Deliver(ulong serial, VoodooBodySnapshot data, long match = 123, int round = 1, int epoch = 0)
+            void Deliver(ulong serial, VoodooBodySnapshot data, long match = 123, int round = 1, int epoch = 0, float haunted = 0)
             {
                 using var writer = new FastBufferWriter(304, Allocator.Temp);
                 writer.WriteValueSafe(1);
@@ -921,9 +921,9 @@ namespace TumbangPreso.PlayTests
                 writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f);
                 writer.WriteValueSafe((byte)0); writer.WriteValueSafe((byte)0);
                 writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f);
-                writer.WriteValueSafe(Vector3.zero); writer.WriteValueSafe(0L);
+                writer.WriteValueSafe(Vector3.zero); writer.WriteValueSafe(0L); writer.WriteValueSafe(haunted);
                 writer.WriteNetworkSerializable(data); writer.WriteNetworkSerializable(default(AbilityAimSnapshot));
-                Assert.AreEqual(208 + VoodooBodySnapshot.WireBytes, writer.Length);
+                Assert.AreEqual(212 + VoodooBodySnapshot.WireBytes, writer.Length);
                 using var reader = new FastBufferReader(writer, Allocator.Temp);
                 receive.Invoke(receiver, new object[] { NetworkManager.ServerClientId, reader });
             }
@@ -953,6 +953,16 @@ namespace TumbangPreso.PlayTests
             var invalid = state; invalid.Drained = float.NaN;
             Deliver(3, invalid);
             Assert.IsFalse(body.IsDrained); Assert.AreEqual(1, ended);
+            Deliver(3, finish, haunted: 3);
+            Assert.AreEqual(3f, body.HauntedLeft, .001f);
+            Deliver(4, finish, haunted: float.NaN);
+            Deliver(4, finish, haunted: -1);
+            Deliver(4, finish, haunted: StatusRules.HauntedSeconds + .1f);
+            Assert.AreEqual(3f, body.HauntedLeft, .001f, "Invalid Haunted packets mutated current state.");
+            Deliver(4, finish, haunted: 2);
+            Assert.AreEqual(2f, body.HauntedLeft, .001f, "Invalid packets consumed the pose serial.");
+            Deliver(5, finish, haunted: 0);
+            Assert.IsFalse(body.IsHaunted);
             Object.Destroy(root);
             yield return null;
         }

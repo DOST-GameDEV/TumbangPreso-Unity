@@ -85,6 +85,13 @@ changes. Existing bound timed-kit recovery reads the corrected15second duration.
 
 ## Cosmetic Reworks
 
+Haunted status delivery appends a bounded remaining-time float to SyncUnit before
+Voodoo/Aim. The existing host/loopback/world/body/serial gates remain. Invalid
+remaining values reject before serial/state mutation. Existing status IDs and
+Voodoo semantics remain. Native receiver/actor/HUD cases pass; actual peers and
+full Haunt perception/chase remain separate.
+[Evidence](reports/feedback-2026-09-30/haunted-runtime.md).
+
 Kuro Catch protocol109: nemu_skill2d becomes a host-confirmed five-second upright-can
 protection. Lata retains the ability-owned clock independently of restoration;
 the existing clock snapshot publishes the current maximum. Shared prepared-world

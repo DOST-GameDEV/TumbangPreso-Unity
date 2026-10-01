@@ -214,6 +214,10 @@ not specifications to invent. Scope restrictions supersede cosmetic additions.
   Haunted rulebook appended with7.5-second perception/immunity policy; Core1/1
   passes. Runtime/status delivery/perception/chase remain unfinished; no whole-kit
   completion. [Current step](reports/feedback-2026-09-30/haunted-rulebook.md).
+  Haunted timer/shared delivery/local HUD marker gates now pass six distinct
+  native cases, including immunity/cleanse and real receiver invalid-state/serial
+  controls. Nearsight/audio/chase still open; no whole-Haunt completion.
+  [Runtime evidence](reports/feedback-2026-09-30/haunted-runtime.md).
 - [x] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,
   no Escape return to title, queue cancel button, hamburger background, stamina drain.
   Lighting rename/default/order reconciled with already-shipped BUGS-0926.5:

@@ -19,7 +19,9 @@ namespace TumbangPreso
     {
         // ------------------------------------------------------------------ WHIRLED and CHILLED
 
-        private float _whirledLeft, _chilledLeft;
+        private float _whirledLeft, _chilledLeft, _hauntedLeft;
+        public float HauntedLeft => _hauntedLeft;
+        public bool IsHaunted => _hauntedLeft > 0;
 
         /// <summary>Seconds of Whirled left: no slipper retrieval while it runs.</summary>
         public float WhirledLeft => _whirledLeft;
@@ -60,6 +62,7 @@ namespace TumbangPreso
                 case StatusKind.Vulnerable: return _vulnerableLeft;
                 case StatusKind.Drained: return _drainedLeft;
                 case StatusKind.Hexed: return _hexedLeft;
+                case StatusKind.Haunted: return _hauntedLeft;
                 default: return 0.0f;
             }
         }
@@ -122,6 +125,15 @@ namespace TumbangPreso
             bool fresh = _chilledLeft <= 0.0f;
             _chilledLeft = StatusRules.Refresh(_chilledLeft, seconds);
             if (fresh) StatusGained?.Invoke(this, StatusKind.Chilled);
+        }
+
+        public void ApplyHaunted(float seconds = StatusRules.HauntedSeconds)
+        {
+            if (!MayMutateGameplayState() || !float.IsFinite(seconds) || seconds <= 0) return;
+            // The current Wiki explicitly excludes Haunted from status immunity.
+            bool fresh = !IsHaunted;
+            _hauntedLeft = StatusRules.Refresh(_hauntedLeft, Mathf.Min(seconds, StatusRules.HauntedSeconds));
+            if (fresh) StatusGained?.Invoke(this, StatusKind.Haunted);
         }
 
         /// <summary>
@@ -250,6 +262,7 @@ namespace TumbangPreso
         {
             _whirledLeft = 0.0f;
             _chilledLeft = 0.0f;
+            _hauntedLeft = 0.0f;
             _carryLeft = 0.0f;
             ClearReworkStatuses();
             ClearVoodoo();
@@ -258,8 +271,11 @@ namespace TumbangPreso
         }
 
         /// <summary>The host's status timers, off the wire (`SyncUnit`).</summary>
-        public void ApplyNetworkStatuses(float whirledLeft, float chilledLeft, float rootedLeft = 0.0f)
+        public void ApplyNetworkStatuses(float whirledLeft, float chilledLeft, float rootedLeft = 0.0f, float hauntedLeft = 0.0f)
         {
+            bool haunted = !IsHaunted && hauntedLeft > 0;
+            _hauntedLeft = float.IsFinite(hauntedLeft) ? Mathf.Clamp(hauntedLeft, 0, StatusRules.HauntedSeconds) : 0;
+            if (haunted) StatusGained?.Invoke(this, StatusKind.Haunted);
             bool rooted = _rootedLeft <= 0.0f && rootedLeft > 0.0f;
             if (rootedLeft <= 0.0f && _rootedLeft > 0.0f) EndRooted();
             else if (rootedLeft > 0.0f)
@@ -280,6 +296,7 @@ namespace TumbangPreso
 
         private void StepStatuses(float dt)
         {
+            if (_hauntedLeft > 0) _hauntedLeft = Mathf.Max(0, _hauntedLeft - dt);
             if (_whirledLeft > 0.0f) _whirledLeft = Mathf.Max(0.0f, _whirledLeft - dt);
             if (_chilledLeft > 0.0f) _chilledLeft = Mathf.Max(0.0f, _chilledLeft - dt);
             if (_rootedLeft > 0.0f)
