@@ -1621,6 +1621,7 @@ namespace TumbangPreso.Tests
             var p4 = lobby.Admit(104, "token-dave", "Dave");
 
             lobby.SetPicks(102, 2, 1, 3); // Bob's picks
+            p2.Rating = 1650;
 
             Assert.AreEqual(0, p1.Seat);
             Assert.AreEqual(1, p2.Seat);
@@ -1647,9 +1648,47 @@ namespace TumbangPreso.Tests
                 var bobReconnected = lobby.Admit(newPeerId, "token-bob", "Bob");
                 Assert.AreEqual(1, bobReconnected.Seat, $"Cycle {cycle}: Bob must be restored to seat 1");
                 Assert.IsFalse(bobReconnected.Spectator, $"Cycle {cycle}: Bob must not be marked spectator");
+                Assert.AreEqual(2, bobReconnected.CharacterPick, $"Cycle {cycle}: retained character was lost");
+                Assert.AreEqual(1, bobReconnected.CanPick);
+                Assert.AreEqual(3, bobReconnected.SlipperPick);
+                Assert.AreEqual(1650, bobReconnected.Rating, "A later bot takeover must retain the original skill hint");
             }
         }
 
+        [Test] public void HeldPicksAreSnapshotsAndAccountProofIsNotInherited()
+        {
+            var lobby=NewLobby();var peer=lobby.Admit(1,"held-owner","Owner");
+            lobby.SetPicks(1,2,1,3);peer.Rating=1650;peer.AccountPlayerId="old-account-proof";
+            lobby.StartMatch();var departed=lobby.Depart(1);
+            departed.CharacterPick=0;departed.CanPick=0;departed.SlipperPick=0;departed.Rating=0;
+            var returning=lobby.Admit(2,"held-owner","Owner");
+            Assert.AreEqual(2,returning.CharacterPick);Assert.AreEqual(1,returning.CanPick);
+            Assert.AreEqual(3,returning.SlipperPick);Assert.AreEqual(1650,returning.Rating);
+            Assert.IsEmpty(returning.AccountPlayerId);Assert.AreEqual(AccountRules.HandleCheck.NotAsked,returning.HandleTrust);
+        }
+        [Test] public void AForeignTokenCannotBorrowHeldPicksOrTakeoverRating()
+        {
+            var lobby=NewLobby();lobby.Admit(1,"first-owner","First");
+            var owner=lobby.Admit(2,"held-owner","Owner");lobby.SetPicks(2,2,1,3);owner.Rating=1650;
+            lobby.StartMatch();lobby.Depart(2);
+            var stranger=lobby.Admit(3,"different-owner","Stranger");
+            Assert.AreNotEqual(1,stranger.Seat);Assert.AreEqual(-1,stranger.CharacterPick);Assert.AreEqual(0,stranger.Rating);
+            var returning=lobby.Admit(4,"held-owner","Owner");
+            Assert.AreEqual(1,returning.Seat);Assert.AreEqual(2,returning.CharacterPick);Assert.AreEqual(1650,returning.Rating);
+        }
+        [Test] public void MatchAndSessionBoundariesDiscardHeldPicks()
+        {
+            for(int boundary=0;boundary<4;boundary++)
+            {
+                var lobby=NewLobby();var peer=lobby.Admit(1,"held-owner","Owner");
+                lobby.SetPicks(1,2,1,3);peer.Rating=1650;lobby.StartMatch();lobby.Depart(1);
+                if(boundary==0)lobby.Reset();else if(boundary==1)lobby.StartMatch();
+                else if(boundary==2)lobby.ReturnToLobby();else lobby.EndMatch();
+                var arrival=lobby.Admit(2,"held-owner","Owner");
+                Assert.AreEqual(-1,arrival.CharacterPick,$"Boundary {boundary} retained the old character");
+                Assert.AreEqual(-1,arrival.CanPick);Assert.AreEqual(-1,arrival.SlipperPick);Assert.AreEqual(0,arrival.Rating);
+            }
+        }
         [Test]
         public void MidMatchArrivalRulingsExhaustiveBranchMatrix()
         {
