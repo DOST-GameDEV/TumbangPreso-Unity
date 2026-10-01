@@ -3785,3 +3785,17 @@ result boards, not active rounds. FPS59.6..59.85at640x400 only. All player jobs
 integrated9670e846e; actual126player predates those and this pause fix.
 Next independent demo/tournament reliability hunting. DOTS owns Docs queue;
 do not resume kit migration or add validation machinery. Goal stays active.
+RAFI-CAST-CLARITY-1001 claims only the Rafi condition in
+Runtime/Abilities/HeroAbilitySystem.cs and Tests/PlayMode/RafiExpansionProbe.cs.
+The previous measured Skim film showed generic blue cast particles competing
+with the actual sole-working motion and loaded meniscus. Rafi's abilities now
+have their own directed water tells; suppress only his redundant generic flash,
+retain ground-target confirmation and all other heroes. Validate an accepted
+Skim cast retains its load/coating/motion and a non-Rafi flash control. No SFX,
+kit rules, authored clips or protected characters change.
+
+RAFI-CAST-CLARITY-1001 native1/1 passes exact126 inputs: acceptedSkim retains
+loaded shoe, authored cast clip and coating; no generic burst. Factory control
+remains available. Normal exit56.54s, zero repairs/newOOM. Evidence in
+hero-quality-2026-10-01/rafi-cast-clarity; no new film/SFX/peer claim. Release
+shared confirmation path after shipment. Hydro SFX and wider feel remain open.

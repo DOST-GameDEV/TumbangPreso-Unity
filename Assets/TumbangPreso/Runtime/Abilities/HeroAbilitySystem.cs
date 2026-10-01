@@ -918,7 +918,9 @@ namespace TumbangPreso.Abilities
             // Amihan's casts carry their own tell (the heel kick, the lift ring, the gale's unroll;
             // `AmihanVfx`), so the generic flash would be a second picture of one beat.
             if (Kit != null && (Kit.HeroId == "phaister" || Kit.HeroId == "sean" || Kit.HeroId == "amihan" || Kit.HeroId == "paete")) return;
-            if (Kit == null || Kit.HeroId != "zack")
+            // Rafi's real shoe coating, water curtain and wave already carry the cast.
+            // Keep target confirmation below without adding a second generic particle burst.
+            if (Kit == null || (Kit.HeroId != "zack" && Kit.HeroId != "rafi"))
                 Visual.AbilityVfx.SpawnCastFlash(transform.position, AccentColour(), .55f);
 
             // ⚠️⚠️ THE GROUND CONFIRM EXISTS BECAUSE THE PRE-CAST RING WAS UNREACHABLE FOR EVERY
