@@ -3792,6 +3792,10 @@ namespace TumbangPreso
             {
                 if (pair.Key == _motor.PlayerSlot) continue;
                 if (now - pair.Value.At > AiTuning.ClaimTtl) continue;
+                // The board is a read of the court, not communication between
+                // bots. A hidden body cannot reveal its latest intended bearing.
+                if (_motor.Mode == GameMode.HeroStrike && _motor.IsHaunted &&
+                    !ActorIsVisible(GameServices.Round?.BodyAt(pair.Key))) continue;
 
                 found.Add(pair.Value.Bearing);
             }

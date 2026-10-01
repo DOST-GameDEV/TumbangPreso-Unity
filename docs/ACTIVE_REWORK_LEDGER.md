@@ -3047,3 +3047,25 @@ victims for Multi Catch; duplicate event IDs remain rejected. Queue banners so
 simultaneous qualifications are not silently suppressed. Protocol121 planned.
 Focused Core/native behavior, ultimate-charge invariant and replica idempotency;
 no fresh remote-peer claim. All prior jobs terminal; owner studying, no chat pings.
+
+HAUNTED-SPACING-1001 owns AIController.cs and existing BotSpacingQueryTests.cs.
+Spacing optimization ced6bf29 published through8a6f323ed. Tap investigation found
+normal action consumers in Update; no demonstrated dropped action, no speculative
+change. Shared spacing board still reveals hidden actors' new bearings while
+Haunted. One native far-actor baseline, then three new visibility/Classic/expiry
+and companion controls; preserve prior four allocation/board results. One native
+repair max; all local jobs terminal, protocol120 unchanged.
+
+
+Haunted spacing baseline1/1 fails at far live bearing .2 despite active Haunted.
+89524terminal, no fixture failure. Add existing ActorIsVisible/BodyAt gate only
+to Haunted HeroStrike claim reads. Ordinary/Classic and TTL/score formulas stay.
+Final three new cases cover far moving claim,7m boundary/recovery/Classic and
+visible/inactive companion or absent body. Reuse unchanged four spacing checks.
+
+
+Haunted spacing final3/3passes,697input hashes no drift, no native repair.
+89524/24002terminal, profiles preserved. Publish scoped sight/board fix, reuse
+prior four normal query checks without a combined-run claim. Next coherent
+network/gameplay follow-through from current queue; all local helpers terminal.
+

@@ -6,6 +6,7 @@ using NUnit.Framework;
 using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.TestTools;
+using TumbangPreso.Core;
 
 namespace TumbangPreso.PlayTests
 {
@@ -75,6 +76,50 @@ namespace TumbangPreso.PlayTests
             var first = _read(); var second = Read(Brain(2))();
             CollectionAssert.AreEquivalent(new[] { .2f, 1f }, first);
             CollectionAssert.AreEquivalent(new[] { .2f, .8f }, second);
+        }
+
+        private CharacterMotor RegisterRival(int seat, Vector3 at)
+        {
+            GameServices.Ensure();
+            var motor = Brain(seat).GetComponent<CharacterMotor>();
+            motor.Mode = GameMode.HeroStrike; motor.transform.position = at;
+            GameServices.Round.Register(motor); return motor;
+        }
+        private CharacterMotor HauntReader()
+        {
+            var reader = _brain.GetComponent<CharacterMotor>();
+            reader.Mode = GameMode.HeroStrike; reader.transform.position = Vector3.zero;
+            reader.ApplyHaunted(); Assert.IsTrue(reader.IsHaunted); return reader;
+        }
+        [Test] public void HauntedCannotReadUnseenRivalClaims()
+        {
+            RegisterRival(0, Vector3.right * 10); HauntReader();
+            Put(0, .2f);
+            Assert.IsEmpty(_read(), "A hidden actor's live spacing claim bypassed Haunted.");
+            Put(0, 1.2f);
+            Assert.IsEmpty(_read(), "Moving the invisible claim must not leak a new bearing.");
+        }
+        [Test] public void HauntedSpacingFollowsTheSameSightBoundaryAndClearsNormally()
+        {
+            var rival = RegisterRival(0, Vector3.right * 7); var reader = HauntReader();
+            Put(0, .2f); CollectionAssert.AreEqual(new[] { .2f }, _read());
+            rival.transform.position = Vector3.right * 7.01f;
+            Put(0, 1.2f); Assert.IsEmpty(_read());
+            reader.ClearStatuses(); CollectionAssert.AreEqual(new[] { 1.2f }, _read());
+            reader.ApplyHaunted(); Assert.IsEmpty(_read());
+            reader.Mode = GameMode.Classic;
+            CollectionAssert.AreEqual(new[] { 1.2f }, _read(), "Classic spacing must stay unrestricted.");
+        }
+        [Test] public void HauntedSpacingIncludesVisibleCompanionsButNotAbsentBodies()
+        {
+            RegisterRival(0, Vector3.right * 10); HauntReader();
+            var companion = Brain(4).GetComponent<CharacterMotor>();
+            companion.Mode = GameMode.HeroStrike; companion.transform.position = Vector3.right * 2;
+            Assert.IsTrue(GameServices.Round.RegisterCompanion(companion));
+            Put(4, .4f); Put(3, .3f);
+            CollectionAssert.AreEqual(new[] { .4f }, _read());
+            companion.gameObject.SetActive(false); Assert.IsEmpty(_read());
+            companion.gameObject.SetActive(true); CollectionAssert.AreEqual(new[] { .4f }, _read());
         }
     }
 }

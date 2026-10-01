@@ -233,3 +233,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Atomic bounded roster response and preserved state on rejection](roster-atomic-framing.md).
 
 [Bot spacing query allocation measurement and retained claims](bot-spacing-allocation.md).
+
+[Haunted bot spacing claims and preserved ordinary court reading](haunted-spacing.md).

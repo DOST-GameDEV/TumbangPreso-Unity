@@ -247,6 +247,11 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   self exclusion and independent brains; no measured FPS claim.
   [Evidence](reports/feedback-2026-09-30/bot-spacing-allocation.md).
 
+- [x] HAUNTED-SPACING-1001: hidden actors cannot expose new lane claims through
+  the bot spacing board. Native baseline reproduces the leak; three final cases
+  cover sight range, recovery, Classic and companion/absent-body behavior.
+  [Evidence](reports/feedback-2026-09-30/haunted-spacing.md).
+
 - [x] HELD-SEAT-PICKS-1001: matching-token reclaim retains picks and takeover
   rating; Identify cannot replace fixed match choices with local preferences.
   Five distinct native cases cover repeated cycles, fresh account state, foreign

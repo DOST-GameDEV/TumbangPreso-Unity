@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 08:38:23Z" end-time="2026-10-01 08:38:24Z" duration="0.3421606">
+  <test-suite type="TestSuite" id="2385" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1127" result="Passed" start-time="2026-10-01 08:38:23Z" end-time="2026-10-01 08:38:24Z" duration="0.342161" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2379" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1127" result="Passed" start-time="2026-10-01 08:38:23Z" end-time="2026-10-01 08:38:24Z" duration="0.329792" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="5792" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2380" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1127" result="Passed" start-time="2026-10-01 08:38:23Z" end-time="2026-10-01 08:38:24Z" duration="0.326334" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2381" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1127" result="Passed" start-time="2026-10-01 08:38:23Z" end-time="2026-10-01 08:38:24Z" duration="0.322779" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1147" name="BotSpacingQueryTests" fullname="TumbangPreso.PlayTests.BotSpacingQueryTests" classname="TumbangPreso.PlayTests.BotSpacingQueryTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-01 08:38:23Z" end-time="2026-10-01 08:38:24Z" duration="0.217695" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1152" name="HauntedCannotReadUnseenRivalClaims" fullname="TumbangPreso.PlayTests.BotSpacingQueryTests.HauntedCannotReadUnseenRivalClaims" methodname="HauntedCannotReadUnseenRivalClaims" classname="TumbangPreso.PlayTests.BotSpacingQueryTests" runstate="Runnable" seed="83680536" result="Passed" start-time="2026-10-01 08:38:23Z" end-time="2026-10-01 08:38:23Z" duration="0.102508" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1153" name="HauntedSpacingFollowsTheSameSightBoundaryAndClearsNormally" fullname="TumbangPreso.PlayTests.BotSpacingQueryTests.HauntedSpacingFollowsTheSameSightBoundaryAndClearsNormally" methodname="HauntedSpacingFollowsTheSameSightBoundaryAndClearsNormally" classname="TumbangPreso.PlayTests.BotSpacingQueryTests" runstate="Runnable" seed="343669282" result="Passed" start-time="2026-10-01 08:38:23Z" end-time="2026-10-01 08:38:23Z" duration="0.047906" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1154" name="HauntedSpacingIncludesVisibleCompanionsButNotAbsentBodies" fullname="TumbangPreso.PlayTests.BotSpacingQueryTests.HauntedSpacingIncludesVisibleCompanionsButNotAbsentBodies" methodname="HauntedSpacingIncludesVisibleCompanionsButNotAbsentBodies" classname="TumbangPreso.PlayTests.BotSpacingQueryTests" runstate="Runnable" seed="8110651" result="Passed" start-time="2026-10-01 08:38:23Z" end-time="2026-10-01 08:38:24Z" duration="0.045858" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
