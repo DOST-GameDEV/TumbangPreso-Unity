@@ -142,6 +142,36 @@ namespace TumbangPreso.Tests
             }
         }
 
+        [TestCase(false)]
+        [TestCase(true)]
+        public void CareerRefreshResponseCannotReplaceAnotherAccountCache(bool replaceAccountCache)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career refresh ownership check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                var cacheField = typeof(TumbangPreso.Net.CareerStore).GetField("_cache", flags);
+                var requestedCache = cacheField.GetValue(career);
+                if (replaceAccountCache) cacheField.SetValue(career, System.Activator.CreateInstance(requestedCache.GetType(), true));
+                career.Profile.Xp = 77;
+                var profile = new PlayerProfile { Xp = 420 };
+                // Build the endpoint's string-valued profile envelope without an extra JSON dependency.
+                string response = "{\"profile\":\"" + JsonUtility.ToJson(profile).Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"}";
+                var accepted = (bool)typeof(TumbangPreso.Net.CareerStore).GetMethod("CompleteRefresh", flags)
+                    .Invoke(career, new object[] { requestedCache, response });
+                Assert.AreEqual(replaceAccountCache ? 77 : 420, career.Profile.Xp, "An older account response overwrote the active career.");
+                Assert.AreEqual(!replaceAccountCache, accepted);
+            }
+            finally
+            {
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
         private const string AssetsRoot = "Assets/TumbangPreso";
         private const string CloudCodeRoot = "ugs/cloud-code";
 

@@ -582,6 +582,25 @@ namespace TumbangPreso.Net
         }
 
         /// <summary>Replaces the local profile with the server's.</summary>
+        private bool CompleteRefresh(Cache requestedCache, string output)
+        {
+            if (!ReferenceEquals(_cache, requestedCache)) return false;
+            var answer = JsonUtility.FromJson<SubmitResponse>(output);
+
+            if (answer != null && !string.IsNullOrWhiteSpace(answer.profile))
+            {
+                AdoptRemoteProfile(answer.profile);
+                Status = "Career synced";
+            }
+            else
+            {
+                // An empty profile is the right answer for somebody who has never finished a
+                // match, exactly as an empty `accountProfile` is in `player-account.js`.
+                Status = "No matches on this account yet";
+            }
+            return true;
+        }
+
         public async Task RefreshAsync()
         {
             // ⚠️ ONE AT A TIME. `PlayerAccount.Changed` fires more than once during a boot,
@@ -597,6 +616,7 @@ namespace TumbangPreso.Net
                 return;
             }
 
+            var requestedCache = _cache;
             _refreshing = true;
             try
             {
@@ -605,24 +625,14 @@ namespace TumbangPreso.Net
                 // clean profile and then a queue that refuses them, with nothing on screen having
                 // changed in between.
                 await ReportAbandonIfAnyAsync();
+                if (this == null || !ReferenceEquals(_cache, requestedCache)) return;
 
                 string output = await CloudCode.CallAsync(ScriptName, new { action = "load" });
-                var answer = JsonUtility.FromJson<SubmitResponse>(output);
-
-                if (answer != null && !string.IsNullOrWhiteSpace(answer.profile))
-                {
-                    AdoptRemoteProfile(answer.profile);
-                    Status = "Career synced";
-                }
-                else
-                {
-                    // An empty profile is the right answer for somebody who has never finished a
-                    // match, exactly as an empty `accountProfile` is in `player-account.js`.
-                    Status = "No matches on this account yet";
-                }
+                CompleteRefresh(requestedCache, output);
             }
             catch (Exception e)
             {
+                if (this == null || !ReferenceEquals(_cache, requestedCache)) return;
                 Status = "Showing the career saved on this machine";
                 Debug.LogWarning($"[Career] profile refresh failed; local career kept: {e.Message}");
             }

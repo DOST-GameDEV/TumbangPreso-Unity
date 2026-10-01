@@ -17,6 +17,13 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CAREER-REFRESH-OWNER-1002: reject older account refresh output
+
+Older refresh completion cannot overwrite a replacement account cache or its
+status. Native normal/stale cache cases pass2/2; no login/service call or schema
+change. Newest-account refresh scheduling remains outside this proof.
+[Evidence](reports/reliability-2026-10-02/career-refresh-owner/README.md).
+
 ### CAREER-SUBMIT-IDENTITY-1002: preserve other pending results
 
 Late upload completion now follows its captured cache/result identity, preserving

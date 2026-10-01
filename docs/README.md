@@ -97,3 +97,5 @@ Bounded shared service-request timeout: [native evidence](reports/reliability-20
 Late career submission identity and pending-result preservation: [native evidence](reports/reliability-2026-10-02/career-submit-identity/README.md).
 
 Refreshed129 Windows Classic tournament-context observations: [evidence](reports/reliability-2026-10-02/current-tournament129/README.md).
+
+Career refresh account-cache ownership: [native evidence](reports/reliability-2026-10-02/career-refresh-owner/README.md).
