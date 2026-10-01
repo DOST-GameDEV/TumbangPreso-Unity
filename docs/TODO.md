@@ -38,7 +38,8 @@ reference video access was unavailable and is not claimed.
 Crosscurrent migrates from two charges to the published35second cooldown and
 chooses the earliest swept flying-slipper contact while retaining throw credit.
 Core4cases and final native2cases pass; baseline reproduces earlier-contact
-failure. Publication pending. Other Hydro slots and presentation remain open.
+failure. Shipped ec644a4b; integrated with the incoming Haunted menu fix.
+Other Hydro slots and presentation remain open.
 [Evidence](reports/hero-quality-2026-10-01/hydro-current-checks/README.md).
 
 ### PHAISTER-HEX-1001: refine the hallucination presentation
@@ -308,6 +309,9 @@ incomplete cells still do not authorize invented specifications.
   or clocks. Actual receiver baseline reproduces snapping; final native3/3passes
   include first/new/terminal lifetimes and existing rejection/windup controls.
   [Network presentation evidence](reports/feedback-2026-09-30/familiar-network-smoothing.md).
+  Match menus no longer clear active Haunted perception; UI voices bypass the
+  world listener filter. Actual PausePanel baseline fails; native final3/3passes
+  with659unchanged inputs. [Menu evidence](reports/feedback-2026-09-30/haunted-menu.md).
   Audible mix, current actual peers and full-kit qualification remain open.
 
 - [x] F0930-13 Title Enter regression: release opening Submit before Home can queue;

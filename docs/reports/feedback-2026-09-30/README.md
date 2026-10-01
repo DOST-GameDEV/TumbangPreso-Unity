@@ -201,3 +201,5 @@ Latest ordinary5-second timing,25percent powers and Xelu retrieve/reset refineme
 [Current114player build and failed direct-peer evidence](current-player-114.md).
 
 [CLI admission handoff and actual passing114peers](cli-admission-handoff.md).
+
+[Haunted through match menus with clear UI feedback](haunted-menu.md).

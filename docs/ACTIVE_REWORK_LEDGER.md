@@ -2046,6 +2046,23 @@ no blanket cold-load/timeout cause claim. Publish only NetBootstrap waiter fix
 and scoped receipts/status. Actual all-ability/rejoin/WAN/hardware/audio remain
 separate. Full goal active; do not treat this pair as whole-feedback completion.
 
+HAUNTED-MENU-1001 owns Visual/HauntedPerception.cs panel gate, AudioDirector.cs
+UI-source listener bypass and existing HauntedPerceptionTests. Current shared
+helper drops all impairment when Panel.AnyOpen, even though base/pause backdrop
+is translucent and the live status remains. Reproduce actual PausePanel opening
+through existing gameplay view before changing it. Keep UI feedback clear via
+its existing pooled-source route, not by removing the world impairment. No
+authored sounds, visual redesign, loader or input mapping changes. Sourceed86e3b2c;
+no incoming commits/current live native job. Full goal active.
+
+HAUNTED-MENU-1001 actual PausePanel baseline1/1fails near sight; final3/3native
+D3D11 passes menu/UI-source/world-source/status controls and existing lifecycle/
+pixel checks.659inputs unchanged; three owned source files match candidate.
+Jobs56826/29674terminal, no fixture repair. Publish exact files/receipts/status;
+protocol114 unchanged, no new player or audible/physical/peer claim. Prior actual
+admission pair retains its older source boundary. Next investigate Haunted bot
+sensing and target eligibility together; do not claim fairness from Observe alone.
+
 HYDRO-CURRENT-1001 cloud unit at04:47UTC, sourceed86e3b2 clean and fetched.
 Claim Abilities/RafiHeroKit.cs, Abilities/RafiWaterField.cs, new Core/RafiRules
 and Core.Tests/RafiRulesTests, existing PlayMode/RafiExpansionProbe.cs, and
@@ -2075,3 +2092,9 @@ Hydro final2/2native and Core4/4pass; first-contact reversed-order control and
 real moving current preserve speed/credit/one-hit, cooldown spent/refused. All
 frozen inputs unchanged; OOM11/kill6unchanged. No native fixture repair. Ready
 to publish scoped115unit; new peer/player/film/audio qualification separate.
+
+Hydro ec644a4b integrated with incoming229a9aaa Haunted menu correction without
+runtime conflict; current protocol115. Owned2native/4Core receipts retain their
+pre-merge source boundary; incoming Haunted receipts remain separate. Next Hydro
+Skim replaces legacy Mirrorwake through existing held/throw/ground/snapshot
+routes; inspect exact identity/cancellation/terrain/recovery contracts first.

@@ -72,6 +72,25 @@ namespace TumbangPreso.PlayTests
             audio.enabled=true; Refresh(); Assert.IsTrue(filter.enabled);
             _rig.SetActive(false); Refresh(); Assert.IsFalse(filter.enabled); Assert.IsFalse(_grade.HauntedSight);
         }
+        [UnityTest] public IEnumerator OpeningAMatchMenuDoesNotClearVictimPerception()
+        {
+            _victim.ApplyHaunted();
+            var panel=TumbangPreso.UI.Panel.Open<TumbangPreso.UI.PausePanel>(_rig);
+            yield return null;
+            Assert.IsTrue(TumbangPreso.UI.Panel.AnyOpen);
+            Assert.IsTrue(_view.enabled);Assert.IsTrue(_rig.IsFollowing(_victim));
+            Call(_grade,"OnPreCull");Call(GameServices.Audio,"LateUpdate");
+            Assert.IsTrue(_victim.IsHaunted);
+            Assert.IsTrue(_grade.HauntedSight,"An open translucent menu bypassed active near sight.");
+            Assert.IsTrue(GameServices.Audio.HauntedMuffle,"An open menu cleared world audio impairment.");
+            var ui=(AudioSource)typeof(AudioDirector).GetMethod("TakeUiVoice",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(GameServices.Audio,null);
+            var world=(AudioSource)typeof(AudioDirector).GetMethod("TakeVoice",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(GameServices.Audio,null);
+            Assert.IsTrue(ui.bypassListenerEffects,"UI feedback inherited the world status filter.");
+            Assert.IsFalse(world.bypassListenerEffects);
+            panel.Close();yield return null;
+            Assert.IsFalse(TumbangPreso.UI.Panel.AnyOpen);Assert.IsTrue(_grade.HauntedSight);
+            _victim.ClearStatuses();Call(GameServices.Audio,"LateUpdate");Assert.IsFalse(GameServices.Audio.HauntedMuffle);
+        }
         private static GameObject WhiteBlock(Vector3 position,float size)
         {
             var obj=GameObject.CreatePrimitive(PrimitiveType.Cube); obj.layer=31;
