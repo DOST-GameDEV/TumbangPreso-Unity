@@ -1,0 +1,20 @@
+{
+  "source": "08916a9afb56292297cee6c0a9a279229c7c535d",
+  "nativeBase": "aecc0ee2cf6c03f9705249022454106620743eb4",
+  "editor": "6000.5.8f1",
+  "graphics": "D3D11",
+  "nativeDistinctCases": 4,
+  "coreCases": 2,
+  "finalInputCount": 651,
+  "drift": [],
+  "sourceMatchesNative": true,
+  "sessions": [
+    98108,
+    51440
+  ],
+  "allSessionsTerminal": true,
+  "toolingRetries": 0,
+  "protocol": 114,
+  "playerProtocol": 103,
+  "actualPeerQualification": false
+}

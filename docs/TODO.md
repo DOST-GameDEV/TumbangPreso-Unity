@@ -79,6 +79,12 @@ continuous manual bug hunting. Research, plan and critique using HERO_KIT_METHOD
 finalized Paete/Phaister character-specific work remains protected. The owner reopened remaining ability implementation on2026-10-01;
 shared/global fixes apply normally and exact concurrent claims still govern.
 
+- [x] BOT-COMPANION-OBSERVATION-1001: shared observation now includes companion
+  targets and binds cached beliefs to the actual body. Native baseline reproduces
+  both tier bypasses; final4/4passes Normal/Astig, replacement identity and self
+  controls. [Evidence](reports/feedback-2026-09-30/bot-companion-observation.md).
+  Whole-match/player checks and Haunted sensor fairness remain separate.
+
 Source: [TUMP Wiki](https://docs.google.com/document/d/1jvr7NLzhHrbw-wrG676AeOkoTxJf4GokkfmxpO0ddLg/edit),
 read on 2026-09-30, including ability, status and feedback tabs. The document wins
 for other characters. Paete and Phaister are finalized and governed by the
@@ -238,6 +244,10 @@ incomplete cells still do not authorize invented specifications.
   the can/street remain visible through the authored slabs.
   [Evidence](reports/dante-visibility-2026-09-30/result.md).
 - [x] F0930-11 Amihan: current Wiki names/rules/statuses and fast airborne Airburst.
+  Latest live Wiki1.5second/60degree contract aligned; measured court reach also
+  fixes expanded-shore misses and the old short warning. Four distinct native
+  cases/two Core cases pass; current114player/actual peers remain unqualified.
+  [Current Wiki evidence](reports/feedback-2026-09-30/airburst-current-wiki.md).
   Owner explicitly reopened this and the full remaining ability queue on2026-10-01.
   Check newest active file claims first; complete specs govern, no invented kits.
   Airburst status/airborne payload corrected: native4/4 and Core8/8pass;
@@ -256,7 +266,7 @@ incomplete cells still do not authorize invented specifications.
   Fetch delivery now leaves a loose shoe for normal pickup and no longer moves
   an already-held shoe or leaves a carried shoe floating on cancellation;9 focused
   native cases pass. [Fetch evidence](reports/feedback-2026-09-30/nemu-kuro-fetch.md).
-  Remaining Fetch eligibility, Catch and Haunt reconciliation stays open.
+  Remaining Haunt/full-kit reconciliation stays open; later checked steps are below.
   Fetch availability lookup now reuses the existing slipper inventory. Three
   native checks pass;100warmed calls reduce allocation events200to0 with live
   ownership/activity/flight/lifecycle retained. No kit-rule change.
@@ -271,8 +281,21 @@ incomplete cells still do not authorize invented specifications.
   completion. [Current step](reports/feedback-2026-09-30/haunted-rulebook.md).
   Haunted timer/shared delivery/local HUD marker gates now pass six distinct
   native cases, including immunity/cleanse and real receiver invalid-state/serial
-  controls. Nearsight/audio/chase still open; no whole-Haunt completion.
+  controls. Later chase evidence is below; nearsight/audio remain open.
   [Runtime evidence](reports/feedback-2026-09-30/haunted-runtime.md).
+  Haunt now uses15points and host-owned sequential visible-player contacts,
+  round-bounded completion and existing companion presentation. Scoped familiar
+  movement/terminal recovery rejects stale/reviving packets. Native chase/receiver
+  checks and exact limits: [Haunt evidence](reports/feedback-2026-09-30/nemu-kuro-haunt.md).
+  Haunted local near sight/listener filtering now passes two native cases,
+  including actual near/far pixels, byte-identical cleared frame, view/round/replay
+  and component cleanup. [Perception evidence](reports/feedback-2026-09-30/haunted-perception.md).
+  Repeated client Haunt poses now blend without altering authoritative ground
+  or clocks. Actual receiver baseline reproduces snapping; final native3/3passes
+  include first/new/terminal lifetimes and existing rejection/windup controls.
+  [Network presentation evidence](reports/feedback-2026-09-30/familiar-network-smoothing.md).
+  Audible mix, current actual peers and full-kit qualification remain open.
+
 - [x] F0930-13 Check already-labelled-fixed feedback against current code: any-key title,
   no Escape return to title, queue cancel button, hamburger background, stamina drain.
   Lighting rename/default/order reconciled with already-shipped BUGS-0926.5:

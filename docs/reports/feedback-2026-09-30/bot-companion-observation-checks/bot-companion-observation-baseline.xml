@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 03:15:30Z" end-time="2026-10-01 03:15:30Z" duration="0.3943672">
+  <test-suite type="TestSuite" id="2329" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1074" result="Failed" site="Child" start-time="2026-10-01 03:15:30Z" end-time="2026-10-01 03:15:30Z" duration="0.394367" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2323" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1074" result="Failed" site="Child" start-time="2026-10-01 03:15:30Z" end-time="2026-10-01 03:15:30Z" duration="0.369854" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12272" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2324" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1074" result="Failed" site="Child" start-time="2026-10-01 03:15:30Z" end-time="2026-10-01 03:15:30Z" duration="0.364831" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2325" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1074" result="Failed" site="Child" start-time="2026-10-01 03:15:30Z" end-time="2026-10-01 03:15:30Z" duration="0.360758" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1113" name="BotCompanionObservationTests" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-01 03:15:30Z" end-time="2026-10-01 03:15:30Z" duration="0.299436" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1116" name="CompanionBeliefUsesTheSameReactionLagAsPlayers" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.CompanionBeliefUsesTheSameReactionLagAsPlayers" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-01 03:15:30Z" end-time="2026-10-01 03:15:30Z" duration="0.292016" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1114" name="CompanionBeliefUsesTheSameReactionLagAsPlayers(Normal)" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.CompanionBeliefUsesTheSameReactionLagAsPlayers(Normal)" methodname="CompanionBeliefUsesTheSameReactionLagAsPlayers" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="1416956167" result="Failed" start-time="2026-10-01 03:15:30Z" end-time="2026-10-01 03:15:30Z" duration="0.206413" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Companion movement bypassed the bot's reaction-lag model.
+  Expected: 0.13113570213317871d +/- 9.9999997473787516E-05d
+  But was:  4.0d
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.BotCompanionObservationTests.CompanionBeliefUsesTheSameReactionLagAsPlayers (TumbangPreso.Core.Difficulty tier) [0x000f2] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\BotCompanionObservationTests.cs:42
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1115" name="CompanionBeliefUsesTheSameReactionLagAsPlayers(Astig)" fullname="TumbangPreso.PlayTests.BotCompanionObservationTests.CompanionBeliefUsesTheSameReactionLagAsPlayers(Astig)" methodname="CompanionBeliefUsesTheSameReactionLagAsPlayers" classname="TumbangPreso.PlayTests.BotCompanionObservationTests" runstate="Runnable" seed="1629105125" result="Failed" start-time="2026-10-01 03:15:30Z" end-time="2026-10-01 03:15:30Z" duration="0.061429" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Companion movement bypassed the bot's reaction-lag model.
+  Expected: 0.27574896812438965d +/- 9.9999997473787516E-05d
+  But was:  4.0d
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.BotCompanionObservationTests.CompanionBeliefUsesTheSameReactionLagAsPlayers (TumbangPreso.Core.Difficulty tier) [0x000f2] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\BotCompanionObservationTests.cs:42
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

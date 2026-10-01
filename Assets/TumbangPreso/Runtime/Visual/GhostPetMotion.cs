@@ -39,7 +39,7 @@ namespace TumbangPreso.Visual
                 if(!Ignore(collider,owner,actors))return false;
             return true;
         }
-        public static Vector3 Move(CharacterMotor owner,Vector3 from,Vector3 displacement)
+        public static Vector3 Move(CharacterMotor owner,Vector3 from,Vector3 displacement,RaycastHit[] sweepStorage=null)
         {
             var position=ClampToCourt(owner,from);
             var wanted=ClampToCourt(owner,position+displacement);
@@ -51,8 +51,19 @@ namespace TumbangPreso.Visual
                 Capsule(owner,ground,true,out var low,out var high,out float radius);
                 float distance=remaining.magnitude;Vector3 direction=remaining/distance;
                 float travel=distance;Vector3 normal=Vector3.zero;
-                foreach(var hit in Physics.CapsuleCastAll(low,high,radius,direction,distance,~0,QueryTriggerInteraction.Ignore))
+                var hits=sweepStorage;
+                int count;
+                if(hits==null)
+                { hits=Physics.CapsuleCastAll(low,high,radius,direction,distance,~0,QueryTriggerInteraction.Ignore);count=hits.Length; }
+                else
                 {
+                    count=Physics.CapsuleCastNonAlloc(low,high,radius,direction,hits,distance,~0,QueryTriggerInteraction.Ignore);
+                    // A full buffer may omit the closest blocker. Keep the last safe position.
+                    if(count==hits.Length)return position;
+                }
+                for(int i=0;i<count;i++)
+                {
+                    var hit=hits[i];
                     if(Ignore(hit.collider,owner,false) || hit.normal.y>.65f)continue;
                     if(hit.distance<travel){travel=Mathf.Max(0,hit.distance-.025f);normal=hit.normal;}
                 }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 02:15:49Z" end-time="2026-10-01 02:15:50Z" duration="0.9187674">
+  <test-suite type="TestSuite" id="2314" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1063" result="Passed" start-time="2026-10-01 02:15:49Z" end-time="2026-10-01 02:15:50Z" duration="0.918767" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2308" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1063" result="Passed" start-time="2026-10-01 02:15:49Z" end-time="2026-10-01 02:15:50Z" duration="0.897721" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="8808" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2309" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1063" result="Passed" start-time="2026-10-01 02:15:49Z" end-time="2026-10-01 02:15:50Z" duration="0.886342" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2310" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1063" result="Passed" start-time="2026-10-01 02:15:49Z" end-time="2026-10-01 02:15:50Z" duration="0.875237" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1678" name="NemuHauntContractTests" fullname="TumbangPreso.PlayTests.NemuHauntContractTests" classname="TumbangPreso.PlayTests.NemuHauntContractTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-01 02:15:49Z" end-time="2026-10-01 02:15:50Z" duration="0.796326" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1679" name="AUnavailableCompanionRefusesHauntWithoutSpendingItsFifteenPoints" fullname="TumbangPreso.PlayTests.NemuHauntContractTests.AUnavailableCompanionRefusesHauntWithoutSpendingItsFifteenPoints" methodname="AUnavailableCompanionRefusesHauntWithoutSpendingItsFifteenPoints" classname="TumbangPreso.PlayTests.NemuHauntContractTests" runstate="Runnable" seed="1892146949" result="Passed" start-time="2026-10-01 02:15:49Z" end-time="2026-10-01 02:15:50Z" duration="0.602688" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1680" name="HauntChasesOnePlayerAtATimeAndReturnsAfterEveryoneIncludingCaster" fullname="TumbangPreso.PlayTests.NemuHauntContractTests.HauntChasesOnePlayerAtATimeAndReturnsAfterEveryoneIncludingCaster" methodname="HauntChasesOnePlayerAtATimeAndReturnsAfterEveryoneIncludingCaster" classname="TumbangPreso.PlayTests.NemuHauntContractTests" runstate="Runnable" seed="512997895" result="Passed" start-time="2026-10-01 02:15:50Z" end-time="2026-10-01 02:15:50Z" duration="0.172146" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

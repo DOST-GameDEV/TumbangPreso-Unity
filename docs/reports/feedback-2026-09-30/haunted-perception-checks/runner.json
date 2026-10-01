@@ -1,0 +1,21 @@
+{
+  "source": "8910a50aade53522546048764c16e8efb0155c09",
+  "nativeBase": "aecc0ee2cf6c03f9705249022454106620743eb4",
+  "editor": "6000.5.8f1",
+  "graphics": "D3D11",
+  "cases": 2,
+  "passed": 2,
+  "finalInputCount": 650,
+  "drift": [],
+  "sourceMatchesNative": true,
+  "preparationRepair": "First Unity launch overlapped completed freeze by2.315s; stopped only matching task Unity process17412; guard restored preferences; no first-pass claim. All650 hashes verified before relaunch.",
+  "sessions": [
+    50235,
+    65991,
+    36162
+  ],
+  "allTerminal": true,
+  "clearedFrameMatchesBeforeSha256": "a34a7b8541b8aa65c1edd738bf6a7b403dea2ffc6fb8f51a499e259b654bae19",
+  "audibleMixQualification": false,
+  "currentPeerQualification": false
+}

@@ -445,7 +445,7 @@ namespace TumbangPreso.Visual
             go.transform.SetPositionAndRotation(VfxShapes.GroundPoint(origin) + Vector3.up * 0.03f,
                 Quaternion.LookRotation(forward.sqrMagnitude > 0.001f ? forward.normalized : Vector3.forward));
             var fx = go.AddComponent<AmihanStormFan>();
-            fx._gather = gather; fx._half = AmihanRules.StormSurgeHalfAngle; fx._range = 26.0f;
+            fx._gather = gather; fx._half = AmihanRules.StormSurgeHalfAngle; fx._range = Abilities.AmihanStorm.FanRange;
             for (int i = 0; i < Lanes; i++)
             {
                 float a0 = -fx._half + 2 * fx._half * i / Lanes + 1.2f;

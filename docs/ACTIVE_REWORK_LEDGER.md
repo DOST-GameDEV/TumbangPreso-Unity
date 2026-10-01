@@ -1767,3 +1767,209 @@ Investigate title Submit leak (existingPeriod test misses it). Claim
 UI/OwnerMenuPrompt.cs, UI/HomeCourtView.cs, Input/MenuNav.cs and
 Tests/PlayMode/FeedbackMenuRouteTests.cs for focused offline reproduction/fix.
 No new profile/room action intended; no heavy job active. Other claims unchanged.
+
+
+NEMU-HAUNT-1001 owns Runtime/Abilities/NemuHeroKit.cs, Runtime/Visual/GhostPetCompanion.cs,
+Runtime/Net/MatchRpc.FamiliarEffects.cs, NetSession protocol113, new NemuHauntContractTests
+and the existing familiar recovery contract in SkillReceiptTests. Fast-forwarded
+5cce9a552; unrelated dirty assets/HeroHazards preserved. Existing monster presentation
+is reused, no authored changes. Host sequential visible contacts,15points,
+round-bounded lifetime replace the retired pull field. Existing scoped reliable
+familiar carrier now publishes moving/terminal state with accepted-phase/clock
+ordering. Five focused native questions next: sequential contact/all-player policy,
+occlusion/persistence, observer/reset, defender reach and real receiver move/end/stale.
+No new pass claim; remaining nearsight/audio still open. No live jobs yet.
+
+NEMU-HAUNT-1001 native complete: initial5/5, terminal-windup receiver1/1,
+reused sweep/defender reach2/2, final missing-companion/refusal and full sequential
+chase2/2. Seven distinct cases across receipts, no failed native/setup cases.
+640final input hashes/no drift; eight owned runtime/test files match the native
+candidate. Jobs76734/78902/12865/67915 all terminal and named profiles/input
+preferences preserved. Source work includes GhostPetMotion's optional reusable
+sweep storage; saturation keeps the last safe position. The existing monster
+presentation is reused, no authored art/audio/animation or loading work.
+Publish explicit owned paths and same broad Nemu Feedback note; full feature
+remains open for Haunted nearsight/audio and current actual peers. Next functional
+perception should use existing ColourGrade and AudioDirector listener architecture,
+not mutate global map lighting or authored clips. Goal remains active.
+
+NEMU-HAUNT-1001 shipped b7c439e8569588bdce553ac806ec3561bc6acbad and
+remote verified. Same Nemu Feedback row appended with seven distinct native cases,
+protocol113 requirement and unfinished nearsight/audio/current-peer limits; exact
+note read back. Done/Human verified cells and human comments untouched.
+All task Unity jobs terminal, no task browser/player/temporary server left.
+Unrelated dirty roster arms, two protected UI metas, HeroHazards/QualitySettings,
+motion captures and private art/notes remain unstaged. Next continue Haunted
+functional nearsight/muffle: ColourGrade is the existing camera post-process;
+AudioDirector owns its listener on a child via BuildEars and follows the active
+camera in LateUpdate. Reuse the viewed local body's authoritative Haunted clock;
+restore on clear/reset, view exit, round exit and component teardown. Do not
+apply global map lighting, authored clip or other-character changes. No renderer,
+audible filter or current113 peer qualification yet. Full goal remains active.
+
+HAUNTED-PERCEPTION-1001 owns Visual/HauntedPerception.cs/meta, ColourGrade.cs,
+ColourGrade.Experiments.cs, Shaders/ColourGrade.shader, AudioDirector.cs and new
+AudioDirector.Haunted.cs/meta plus focused HauntedPerceptionTests. Source8910a50aa
+current, no incoming commits. Missing functional status: local-victim depth-based
+near sight and listener low-pass; shared helper gates main/active/local HeroStrike
+view, round, replay, menu and spectator. Existing grade/depth ownership reused;
+no map fog/lighting or authored clips changed. Native viewer/cleanup and actual
+near/far render questions next; no pass or audible qualification claim yet.
+
+HAUNTED-PERCEPTION-1001 final native2/2passes. Real CameraRig.Follow/grade/listener
+paths cover local victim/other seat/replay/round/clear/view/component exit; near3m
+stays readable and far10m is hidden. Cleared PNG byte-identical to before; native
+before/active960x540 inspected. Filter routing/configuration/cleanup qualified,
+not recorded audible mix. First preparation launch overlapped by2.315seconds,
+stopped only matched Unity17412; guard restored inputs. One bounded sequencing
+repair:650hashes verified before final start, no drift afterward; ten owned
+files match candidate. Jobs50235/65991/36162 terminal. No authored assets, map
+fog/lighting, loading, paid calls or other chats. Publish original same-row note
+with current-peer/audible/whole-kit limits, then continue remaining Feedback
+bottom-up and practical bugs. Current protocol113player remains unbuilt.
+
+HAUNTED-PERCEPTION-1001 shipped dad79fa70d150079cb8dda6c94155600cc02af7e,
+remote verified. Same Nemu Feedback Notes cell consolidated to two readable
+paragraphs with current chase/perception status and explicit protocol113 matching
+player/rejoin/audio-human checks. Original Report, Done/Human verified controls,
+human comments and screenshot-bearing rows preserved. Exact note read back.
+No current whole-player/live-peer or recorded audible mix claim. All jobs terminal.
+Next bottom-up Wiki reconciliation has a concrete newly adopted Amihan mismatch:
+live non-proposed Airburst cell now says1.5second delay and60degree fan; current
+AmihanRules.StormSurgeGatherSeconds is2.5 and StormSurgeHalfAngle is35(total70).
+AmihanHeroKit description and native AcceptedWindup test still assume2.5. Align
+those timing/geometry rules with focused release/boundary evidence before the
+next coherent matching-player qualification. Hydro/Zack/Pyro new cells are
+explicitly Proposed and stay design proposals pending adopted implementation
+contract; do not silently invent/ship them as already accepted behavior.
+Preserve loading reservation, private dirt and authored assets. Full goal active.
+
+AIRBURST-WIKI-1001 owns Core AmihanRules.cs, runtime AmihanHeroKit.cs, NetSession
+protocol114, existing Core status/Amihan numeric case and AmihanAirburstTests.
+Live Wiki cell reread: non-proposed1.5seconds/60degrees. Current rules now1.5/30
+half-angle; telegraph already reads shared Core half-angle. No authored assets
+changed. Exact pre-release/direct and reserved introduction paths plus real
+inside/outside body/slipper contacts are the three native questions. One focused
+Core numeric case first; no new pass yet. Main/private dirt preserved, no live
+Unity job. Host is playing VALORANT; ~2.3GiBphysical/~5.6GiBvirtual headroom, so
+keep checks small/sequential and defer full-player builds until adequate headroom.
+
+AIRBURST-WIKI-1001 first native3/3 passes direct release, reserved introduction
+and29.9/30.1degree body/slipper boundary.650hashes verified unchanged. Concrete
+map-wide defect found in actual Lagoon bounds(-16..16,-13..24): diagonal48.9m,
+old contact range40 and warning range26. Extend ownership to AmihanHazards.cs
+FanRange/InsideFan and only AmihanVfx.cs's existing fan range binding. Pure Core
+measured-court range retains40minimum and rejects malformed bounds. Existing
+fan geometry/material/density/art direction retained; this is truthful warning/
+reach bug correction. One additional expanded-court contact/warning question
+plus Core bounds case next. No map/lighting/animation/audio assets changed.
+
+AIRBURST-WIKI-1001 checks complete: native first3/3 plus expanded-court1/1,
+Core2/2TRX; four distinct native cases, no failures/repairs.650final hashes
+unchanged; six owned runtime/test inputs match native source. Direct/reserved
+release1.5s,60degree body/slipper boundary, >40mreal selection and same warning
+range binding qualified. Range helper uses measured court diagonal with40minimum
+and malformed-bound fallback. Warning binding bug fix only, no authored art
+redesign or map changes. Jobs98108/51440 terminal; profiles/preferences preserved.
+Publish explicit owned source/receipts, same Amihan Feedback short note and protocol114
+matching-player limit. No current player/actual peer/arena film qualification.
+Next coherent matching-player qualification when headroom permits, followed by
+remaining bottom-up feedback/independent engineering bugs. Full goal stays active.
+
+AIRBURST-WIKI-1001 shipped8680d9adf04243b88d6358f2178c59e3bc8c08cf,
+remote verified. Both original Amihan Feedback notes shortened with current1.5s/
+60degree/measured-reach fix,4native/2Core evidence and protocol114/human/current
+peer limits. Exact readback found commit in both rows. Reports/screenshots and
+Done/Human verified controls preserved. All native jobs terminal; unrelated
+private dirt remains unstaged. No task browser/player/server left. Full goal active.
+Next network-quality investigation before one coherent matching-player build:
+10Hz FamiliarEffect now moves Kuro, but Nemu RestoreSeance -> RestoreDevour ->
+StepTo immediately assigns target position. Check for observer pose snapping and
+reuse existing companion smoothing while preserving authoritative DevourGround,
+phase/clock/terminal rules and authored motion. Then protocol114actual peers
+when build headroom permits. Separate bot investigation: AIController.Observe
+(lines4142+) updates every actor truth without a Haunted sensor gate; At's
+unknown-target fallback also reads truth. Handle both observation and unknown
+target decisions before claiming fair reduced perception. Neither new issue is
+claimed fixed from source inspection alone. Loading remains friend's scope.
+
+NET-FAMILIAR-SMOOTH-1001 owns NemuHeroKit.cs receive/restore binding,
+GhostPetCompanion.cs live network pose presentation and new NemuFamiliarPoseTests
+with valid meta. Existing possession presentation already uses exponential18Hz
+position/yaw smoothing. First reproduce current10Hz Haunt restore snapping using
+the actual private familiar receiver and real companion, then reuse that model
+for repeated same-phase poses while first hydration/new phase stays exact.
+Keep authoritative DevourGround/clock/terminal/authority gates and authored
+transformation/return unchanged. Source47302c716, no incoming commits, no live job
+yet. No actual-peer or new interpolation pass claimed.
+
+NET-FAMILIAR-SMOOTH-1001 reproduced native1case failure: live receipt jumps drawn
+X0->2. Final3/3passes after same-phase client position/yaw blend using existing
+18Hzformula. First/new lifetimes exact, authoritative ground/time immediate,
+terminal returns from drawn pose, no resource/contact replay. Existing actual
+receiver scope/clock/terminal/windup control passes.653hashes/no drift; four owned
+files match candidate; jobs1172/59942 terminal, no tooling repair, prefs preserved.
+No authored asset/animation or packet change; protocol114current. Publish scoped
+source/receipts and short same Nemu note; actual peer/film/human checks separate.
+Next bot source review found Observe iterates Players, but TagTarget uses Bodies:
+companion positions fall through At to immediate truth, bypassing reaction lag.
+Confirm with focused native ordinary/companion/self observations before editing;
+keep protected hero mechanics/assets intact. Haunted sensor/unknown-target handling
+is still a separate unfinished investigation. Full goal remains active.
+
+NET-FAMILIAR-SMOOTH-1001 shipped0a368bcb9c5f2ef42a639c110d2e5be7b1952aae,
+remote verified. Same Nemu Feedback note updated/read back with movement fix,
+three native passes and current protocol114 requirement; native/human/peer limits
+remain explicit and controls untouched. Runtime source clean; private dirt stays
+unstaged. All jobs terminal, no task previews/player/server. Full goal active.
+Next BOT-COMPANION-OBSERVATION: confirmed source mismatch at AIController.Observe
+(Players only) versus TagTarget(Bodies incl companion). At(companion) falls back
+to live transform, bypassing its reaction-lag model. Reproduce ordinary/companion/
+self beliefs before patching, include replacement-body identity if caching expands
+to companions. RoundDirector.Bodies is cached players+companions, not an allocating
+query. Fix generic observation only, preserve Phaister/Paete mechanics/assets and
+keep Haunted sensor/unknown-target fairness as a separate remaining investigation.
+Then one coherent protocol114matching-player qualification when headroom permits.
+
+BOT-COMPANION-OBSERVATION-1001 owns AIController.cs observation/cache identity
+only and new BotCompanionObservationTests/meta. Sourcefcd3507cf, no incoming
+commits. Baseline asks Normal/Astig companion movement to use the same reaction
+lag as ordinary player movement; own feet remain exact. Final adds replacement
+body identity and companion-self control. Runtime unchanged for baseline; no
+protected hero mechanics, assets or tiers changed. No live native job yet.
+
+BOT-COMPANION-OBSERVATION-1001 baseline2fails prove immediate companion4m vs
+Normal0.131/Astig0.276m belief updates after10ms. Final4/4passes after Observe
+uses cached Bodies and position/velocity beliefs bind to actual body identity.
+Replacement seat starts fresh, ordinary/companion self stays exact.655hashes
+unchanged; three owned files match candidate. Jobs90210/82018 terminal; no
+fixture repair, preferences preserved. No protected mechanics/assets or tuning
+changes; generic host AI observation only, protocol114unchanged. Publish explicit
+source/receipts, keep report local (no unrequested Drive developer/QA uploads).
+Haunted sensor/unknown-target and actual matching-player qualification still open.
+
+BOT-COMPANION-OBSERVATION-1001 shipped239050ac60a338f88b482b8a79dec2aa4aa1321b,
+remote verified. Generic observation/cache identity fix and4native passes;
+whole-match/Haunted sensing still separate. No unrequested Drive engineering logs
+uploaded. Runtime source clean; private dirt remains unstaged.
+CURRENT-PLAYER-1001 now active: freeze job50961/Python32556 completed,15422
+Assets/Packages/ProjectSettings hashes at committed source239050ac6 recorded in
+isolated Logs/feedback-current-player-1001/build-inputs.json. Native baseaecc0ee2,
+retained imported assets/committed overlays; not pristine-source certification.
+Guarded Unity job50183 is LIVE for EditorTools.GameBuilder.BuildWindows, named
+profilefeedback-current-build-1001, batchmode/nographics(build only), explicit
+internal Builds/feedback-current-player-1001/TumbangPreso.exe. Latest log reached
+AuthoredAnimationBuildCheck; no successful build/player/peer claim yet. Preserve
+old Desktop/protocol103/98 outputs. Next poll SAME50183 until authoritative
+terminal; verify fresh executable/data/runtime hash and15422input drift(prep
+settings separately); then actual matching protocol114peers with preserved named
+profiles. One heavy job. Do not restart merely because a wait yields. Full goal
+active. No task browser/preview/player open; only this task build helper alive.
+
+Cloud integration checkpoint03:38UTC: retained Linux112 player evidence and
+title Submit regression claim alongside incoming contributor protocol114 work.
+Incoming100da2c9 includes Haunt/perception, Airburst Wiki alignment, familiar
+smoothing and bot companion observation. Their Windows build remains contributor
+owned; its recorded in-progress state is not a new success claim. Local Linux
+player remains112 and cannot qualify114 peers. Continue title-input unit only;
+no overlap with contributor build or Haunted sensor investigations.

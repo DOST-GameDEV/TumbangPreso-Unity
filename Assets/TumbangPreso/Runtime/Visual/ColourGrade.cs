@@ -204,6 +204,7 @@ namespace TumbangPreso.Visual
         }
 
         private Camera _camera;
+        public bool HauntedSight => HauntedPerception.Applies(_camera);
 
         private bool IsIdentity =>
             Mathf.Approximately(_brightness * _eventBrightness, 1.0f)
@@ -211,7 +212,8 @@ namespace TumbangPreso.Visual
             && Mathf.Approximately(_saturation * _eventSaturation, 1.0f)
             && _exposure <= 0.0f
             && EffectiveChromatic <= 0.0f
-            && BrightLookWeight <= 0.0f;
+            && BrightLookWeight <= 0.0f
+            && !HauntedSight;
 
         /// <summary>
         /// ⚠️ A NO-OP GRADE STILL COSTS A FULL-SCREEN BLIT, so it is skipped outright. This runs
@@ -258,6 +260,7 @@ namespace TumbangPreso.Visual
             _material.SetFloat(ExposureId, _exposure);
             _material.SetFloat(WhiteId, _white);
             _material.SetFloat(ChromaticId, EffectiveChromatic);
+            _material.SetFloat("_HauntedSight", HauntedSight ? 1f : 0f);
 
             // ⚠️ THE SHAPE OF THE SPLIT IS THE STYLE'S, NOT THE PULSE'S, so a hit taken in
             // Chromatic mode fringes radially like everything else in that frame: they are the

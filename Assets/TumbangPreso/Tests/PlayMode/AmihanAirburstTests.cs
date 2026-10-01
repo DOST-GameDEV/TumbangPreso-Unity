@@ -73,10 +73,10 @@ namespace TumbangPreso.PlayTests
             var ctx=new AbilityContext(_caster,_caster.GetComponent<Carrier>(),_caster.GetComponent<CombatVerbs>());
             kit.Ultimate.Activate(ctx); Assert.IsTrue(kit.Ultimate.IsWindingUp);
             var storm=Object.FindFirstObjectByType<AmihanStorm>(); Assert.IsNotNull(storm); Track(storm.gameObject);
-            kit.Ultimate.Tick(ctx,2.4f); Assert.IsFalse(storm.Released); Assert.IsFalse(_victim.IsWhirled);
+            kit.Ultimate.Tick(ctx,1.49f); Assert.IsFalse(storm.Released); Assert.IsFalse(_victim.IsWhirled);
             Assert.AreEqual(SlipperState.Held,shoe.State);
             Vector3 start=_victim.transform.position;
-            kit.Ultimate.Tick(ctx,.11f); Assert.IsTrue(storm.Released); Assert.IsTrue(_victim.IsWhirled);
+            kit.Ultimate.Tick(ctx,.02f); Assert.IsTrue(storm.Released); Assert.IsTrue(_victim.IsWhirled);
             Assert.IsNull(_victim.GetComponent<Carrier>().Held);
             Assert.AreEqual(SlipperState.InFlight,shoe.State); Assert.AreEqual(-1,shoe.ThrowerSlot);
             float high=start.y;
@@ -85,6 +85,70 @@ namespace TumbangPreso.PlayTests
             Assert.Greater(_victim.transform.position.z-start.z,5f,"The accepted carry must actually move the motor quickly.");
             yield return new WaitForSeconds(2);
             Assert.AreEqual(SlipperState.Loose,shoe.State,"Existing host flight must finish with a retrievable slipper.");
+        }
+        [UnityTest] public IEnumerator SixtyDegreeBoundaryAppliesToBodiesAndSlippers()
+        {
+            yield return Open();
+            Vector3 inside=Quaternion.AngleAxis(29.9f,Vector3.up)*Vector3.forward*6;
+            Vector3 outside=Quaternion.AngleAxis(30.1f,Vector3.up)*Vector3.forward*8;
+            Vector3 origin=_caster.transform.position;
+            _victim.Teleport(origin+inside); _outside.Teleport(origin+outside);
+            var caught=Track(new GameObject("Inside60degree slipper")).AddComponent<Slipper>();
+            caught.SeatOfOrigin=1;caught.OwnerSlot=1;caught.transform.position=origin+inside+Vector3.up*.1f;
+            var missed=Track(new GameObject("Outside60degree slipper")).AddComponent<Slipper>();
+            missed.SeatOfOrigin=2;missed.OwnerSlot=2;missed.transform.position=origin+outside+Vector3.up*.1f;
+            Physics.SyncTransforms(); var storm=Storm();storm.Release();
+            Assert.IsTrue(_victim.IsWhirled);Assert.IsFalse(_outside.IsWhirled);
+            Assert.AreEqual(SlipperState.InFlight,caught.State);Assert.AreEqual(SlipperState.Loose,missed.State);
+            Assert.IsTrue(AmihanStorm.InsideFan(origin,Vector3.forward,origin+inside));
+            Assert.IsFalse(AmihanStorm.InsideFan(origin,Vector3.forward,origin+outside));
+        }
+        [UnityTest] public IEnumerator ReservedAirburstStartsItsSameDelayOnlyAfterIntroduction()
+        {
+            yield return Open();var kit=new AmihanHeroKit();kit.AddUltimateCharge(15);
+            var ctx=new AbilityContext(_caster,_caster.GetComponent<Carrier>(),_caster.GetComponent<CombatVerbs>());
+            const System.Reflection.BindingFlags hidden=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            var result=typeof(HeroKit).GetMethod("ReserveUltimate",hidden).Invoke(kit,new object[]{ctx});
+            Assert.AreEqual(HeroKit.CastOutcome.Cast,result);Assert.AreEqual(0,kit.UltimateCharge);
+            Assert.IsTrue(kit.Ultimate.ReservedForIntroduction);Assert.IsFalse(kit.Ultimate.IsWindingUp);
+            Assert.IsNull(Object.FindFirstObjectByType<AmihanStorm>());
+            typeof(HeroAbility).GetMethod("BeginReservedActivation",hidden).Invoke(kit.Ultimate,new object[]{ctx});
+            var storm=Object.FindFirstObjectByType<AmihanStorm>();Assert.IsNotNull(storm);Track(storm.gameObject);
+            Assert.AreEqual(1.5f,kit.Ultimate.WindupRemaining,.0001f);
+            kit.Ultimate.Tick(ctx,1.49f);Assert.IsFalse(storm.Released);Assert.IsFalse(_victim.IsWhirled);
+            kit.Ultimate.Tick(ctx,.02f);Assert.IsTrue(storm.Released);Assert.IsTrue(_victim.IsWhirled);
+            Assert.AreEqual(0,kit.UltimateCharge,"Reservation spent twice.");
+        }
+        [UnityTest] public IEnumerator ExpandedCourtContactAndWarningShareTheMapWideReach()
+        {
+            yield return Open();
+            var bounds=new Vector4(AIController.PlayableMinX,AIController.PlayableMaxX,AIController.PlayableMinZ,AIController.PlayableMaxZ);
+            try
+            {
+                AIController.PlayableMinX=-16;AIController.PlayableMaxX=16;
+                AIController.PlayableMinZ=-13;AIController.PlayableMaxZ=24;
+                GameServices.Match.ApplySnapshot(new int[4],2,true);
+                GameServices.Round.ApplySnapshot(100,true,1,true);
+                Assert.IsFalse(_caster.IsDefender);Assert.IsFalse(_outside.IsDefender);
+                Vector3 origin=new Vector3(-15.6f,0,-12.6f),target=new Vector3(15.6f,0,23.6f);
+                _caster.Teleport(origin);_outside.Teleport(target);Physics.SyncTransforms();
+                Assert.Greater(Vector3.Distance(_caster.transform.position,_outside.transform.position),40f);
+                Vector3 forward=target-origin;forward.y=0;forward.Normalize();
+                var storm=AmihanStorm.Spawn(_caster.transform.position,forward,0,null);Track(storm.gameObject);
+                var fan=storm.GetComponentInChildren<Visual.AmihanStormFan>();Assert.IsNotNull(fan);
+                float displayed=(float)typeof(Visual.AmihanStormFan).GetField("_range",
+                    System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(fan);
+                Assert.AreEqual(AmihanStorm.FanRange,displayed,.001f);
+                Assert.Greater(displayed,Vector3.Distance(origin,target));
+                var shoe=Track(new GameObject("Expanded-court caught slipper")).AddComponent<Slipper>();
+                shoe.SeatOfOrigin=2;shoe.OwnerSlot=2;shoe.transform.position=_outside.transform.position+Vector3.up*.1f;
+                storm.Release();Assert.IsTrue(_outside.IsWhirled);Assert.AreEqual(SlipperState.InFlight,shoe.State);
+            }
+            finally
+            {
+                AIController.PlayableMinX=bounds.x;AIController.PlayableMaxX=bounds.y;
+                AIController.PlayableMinZ=bounds.z;AIController.PlayableMaxZ=bounds.w;
+            }
         }
         sealed class Observer : INetProvider
         {

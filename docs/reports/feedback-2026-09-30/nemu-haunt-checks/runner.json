@@ -1,0 +1,30 @@
+{
+  "source": "5cce9a552bca2d92dab323faf73f59c7287e5c36",
+  "nativeProject": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930",
+  "nativeBase": "aecc0ee2cf6c03f9705249022454106620743eb4",
+  "editor": "6000.5.8f1",
+  "graphics": "D3D11",
+  "distinctCases": 7,
+  "finalInputCount": 640,
+  "drift": [],
+  "sessions": [
+    76734,
+    78902,
+    12865,
+    67915
+  ],
+  "allSessionsTerminal": true,
+  "toolingRetries": 0,
+  "playerProtocol": 103,
+  "testedProtocol": 113,
+  "ownedHashes": {
+    "Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs": "48ce5c91814ee077570014080dd2b71d126c55ec70a574129ebda4a84423027e",
+    "Assets/TumbangPreso/Runtime/Visual/GhostPetCompanion.cs": "2b255aa2fdaeb4f45941244d2001e476e9257d2ef5b2f86e108259a868d11ad1",
+    "Assets/TumbangPreso/Runtime/Visual/GhostPetMotion.cs": "68e8b1a62b2dfefbbbf0e03c6e06747b8345598aa8702531097726d0ec916353",
+    "Assets/TumbangPreso/Runtime/Net/MatchRpc.FamiliarEffects.cs": "a511ee5c25939f9a4065aa7cb1978866de17d806e3bae8bbf3575f8d28bc29bb",
+    "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "cac93e14d5fdc36e45ef9ea6071d651a310db9d4b30cc99969cf163cd1014e7c",
+    "Assets/TumbangPreso/Tests/PlayMode/SkillReceiptTests.cs": "24602de026814e10e701abc5de04e5ac513198f1ffc80f5d1b85d4adc0fe4e1e",
+    "Assets/TumbangPreso/Tests/PlayMode/NemuHauntContractTests.cs": "da5fe079e389bb970af71d21ba3b47eae3725a920843f4b005a5c3ae772840cd",
+    "Assets/TumbangPreso/Tests/PlayMode/NemuHauntContractTests.cs.meta": "9c93359022c01a0a6990bfa704cf115e63a13f582f7d0c77010c3a3895467b5d"
+  }
+}

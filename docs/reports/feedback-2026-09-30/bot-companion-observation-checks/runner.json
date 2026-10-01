@@ -1,0 +1,21 @@
+{
+  "source": "fcd3507cf6564fdf06dedda3702cdb3ef31794d8",
+  "nativeBase": "aecc0ee2cf6c03f9705249022454106620743eb4",
+  "editor": "6000.5.8f1",
+  "graphics": "D3D11",
+  "baselineCases": 2,
+  "baselineFailed": 2,
+  "finalCases": 4,
+  "finalPassed": 4,
+  "finalInputCount": 655,
+  "drift": [],
+  "sourceMatchesNative": true,
+  "sessions": [
+    90210,
+    82018
+  ],
+  "allTerminal": true,
+  "toolingRepairs": 0,
+  "protocol": 114,
+  "wholeMatchQualification": false
+}

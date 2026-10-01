@@ -16,7 +16,7 @@ namespace TumbangPreso.Abilities
     /// | Signature | DRIFT | Propel forward in the target direction; inflicts Whirled and slightly pushes back other players. 35 s. |
     /// | Attacking | FEATHERFALL | Fly for 5 seconds; move and throw aloft, descend to retrieve. 40 s (updated owner table, 2026-09-26). |
     /// | Defending | WHIRLWIND | An arc-shaped gale that inflicts Whirled on players it hits as it swiftly moves forward. Lasts 2.5 s. 35 s. |
-    /// | Ultimate | AIRBURST | After a 2.5 s delay, a map-wide fan inflicts Whirled and sends caught players and slippers airborne toward the edge. 15 points. |
+    /// | Ultimate | AIRBURST | After a 1.5 s delay, a map-wide fan spanning60degrees inflicts Whirled and sends caught players and slippers airborne toward the edge. 15 points. |
     ///
     /// Every number is in `Core.AmihanRules`; the design, the decisions the owner left open and
     /// every moving part are in `docs/reports/amihan-kit-2026-09-25/plan.md`, and the look, the
@@ -323,18 +323,14 @@ namespace TumbangPreso.Abilities
 
             public StormSurge(AmihanHeroKit kit)
                 : base("amihan_ultimate", "AIRBURST",
-                       "After 2.5 s, unleash a map-wide fan of wind. Players caught are Whirled and thrown airborne; caught slippers fly toward the arena edge.",
+                       "After 1.5 s, unleash a 60 degree fan of wind across the map. Players caught are Whirled and thrown airborne; caught slippers fly toward the arena edge.",
                        0.0f, 0.0f, AbilityGlyph.AmihanStormSurge,
-                       summary: "After 2.5 s, a map-wide wind blows everyone to the edge.",
+                       summary: "After 1.5 s, a 60 degree wind fan blows caught players and slippers toward the edge.",
                        castAction: "hero-amihan-storm", viewmodelAction: "storm-call",
                        castCue: "sfx_cast_amihan_storm")
             {
-                // ⚠️⚠️ THE 2.5 s DELAY IS THE WIND-UP, NOT A TIMER INSIDE THE EFFECT. Owner's table:
-                // *"After a 2.5 s delay"*. `HeroAbility.Windup` is uninterruptible and roots the caster
-                // (its header has the whole argument), which is exactly this power: she plants and
-                // calls the storm, everybody else gets 2.5 s to read the fan and leave it, and she
-                // pays for the ultimate by standing still inside her own telegraph. Phaister's ritual
-                // is the precedent for a wind-up longer than the shared 0.4 s.
+                // The adopted Wiki delay is the shared ability windup. The storm's
+                // telegraph and contact boundary use the same Core rule values.
                 _kit=kit;
                 Windup = AmihanRules.StormSurgeGatherSeconds;
             }

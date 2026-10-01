@@ -50,6 +50,8 @@ Shader "TumbangPreso/ColourGrade"
 
             sampler2D _MainTex;
             sampler2D _CueMask;
+            UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
+            float _HauntedSight;
             float _CueWorld,_CueSpeed,_CueTime,_CueEdges;
             float4 _CuePixels,_CuePips[8];
             half _Brightness;
@@ -316,7 +318,14 @@ Shader "TumbangPreso/ColourGrade"
                     half value=dot(c,half3(.2126,.7152,.0722));
                     c=lerp(c,half3(value,value,value),_CueWorld*(1-keep));
                 }
-                return half4(saturate(CueEdges(i.uv,c)), source.a);
+                c=saturate(CueEdges(i.uv,c));
+                if(_HauntedSight>0.5)
+                {
+                    float eyeDepth=LinearEyeDepth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture,i.uv));
+                    // Functional near sight affects this victim camera, not scene fog or lighting.
+                    c*=1.0-smoothstep(2.5,7.0,eyeDepth);
+                }
+                return half4(c, source.a);
             }
             ENDCG
         }
