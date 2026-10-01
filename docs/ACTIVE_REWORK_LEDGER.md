@@ -3829,3 +3829,19 @@ fresh, with an acquisition episode and scoped ordered state; do not silently
 reuse a stale cast aim. Native and parser acceptance remain pending.
 
 Solo UI bindings58d309499 checked and ready to publish; next priority is independent network reliability under an existing shaped-link scenario using the exact126player. Do not take Closed Circuit paths or Docs TODO queue. Older player source04f remains the precise runtime qualification; no fresh whole-build readiness claim. All own native/player jobs currently terminal, no owned browser/preview/server remains.
+
+Solo handover58d309499 integrated/pushedf54c36281, remote verified. Native57973/47894terminal; no browser or Editor remains. Independent next run reuses existing run_demo_lan/profile preservation with the exact net_matrix five-second outage parameters (25ms delay/5ms jitter/outage20s..25s),150s sample. Temporary native tools/tmp_demo126_outage.py is task-owned and must be removed after run. Exact existing DLL2956730f..b766/source04f/protocol126; network/round/shared-phase source diff to currentHEAD is empty. No claim that later visual/UI source is in this player. Do not rerun unchanged for a green gate; inspect real transport/progress and fix actual failure. DOTS owns Docs queue.
+
+Independent outage126 actual peer case passes existing gate:25ms/5ms jitter,
+five-second blackout20s..25s,150sclient/163shost. Proxy19459forwarded/2550dropped,
+all dropped during actualoutage. Client stayedjoined; both active round2/taya1,
+structural540E76A2. No loggedexceptions. DLL2956730f..b766/source04f, matching
+unchanged network/round code throughf54c36281; later UI/art remains separate.
+Small-resolution FPS59.81/59.86, max44.95/27.62ms only. Driver96842 terminal,
+profile/input preservation good. No unchanged rerun or new framework. Remove
+ownedtmp_demo126_outage.py and verify ports8910/8911 before checkpoint.
+Next independent input-context defect: solo F-keys currently bypass menu/
+presentation input blocking. Reproduce rather than retune or broaden blindly.
+DOTS owns Docs queue; full demo/tournament readiness remains unproven/active.
+
+Outage cleanup verified: temporary runner absent; no task player/proxy or8910/8911 listener. No task browser/preview. Preserve scoped pass and old false rematch verdicts. Continue reliability fixes, no completion claim.
