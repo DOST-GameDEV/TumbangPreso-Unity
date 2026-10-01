@@ -2745,3 +2745,11 @@ loose shoe inside danger area, 11.25-second half-full recall clock and retrieval
 clear. Court image includes seeded award banner, not a clean HUD-quality proof.
 Publish protocol 119 and update same penalty row. Next Harry's HUD layout, using
 his actual mockup; no removed Tagged-immunity request or ability retune.
+
+HUD-LAYOUT-1001 claims UI/TumpMatchReadout.cs, TumpMatchReadout.CourtHud.cs,
+TumpMatchReadout.MatchBar.cs, TumpMatchReadout.Statuses.cs, new Warnings partial,
+UI/HudReadingLayout.cs, UI/MatchMomentBanner.cs, UI/MatchEventFeed.cs and focused
+HUD tests. Actual two-image mockup inspected; plan in hud-revamp-plan.md. Three
+bottom-left statuses, separate warning/action regions, in-panel progress, fitted
+round track and modest larger bar. New first/late/catch bonuses remain a separate
+scoring unit after layout; don't fake those with labels. Current protocol119.
