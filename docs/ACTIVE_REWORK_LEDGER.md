@@ -3490,3 +3490,10 @@ refraction, extra particles, lights or colliders. Other water types retain shade
 branch0. One existing focused wall motion/collapse review against changedmaterial,
 one tooling repair maximum. No generic cast changes in shared Zack-owned area.
 Current123; all earlier native jobs terminal, quiet mode and Doc edits permitted.
+
+Waterwallsurface native1/1 passes123 shippingmotion, actualinterception/collapse,
+sampledage/replay/no-collider andrunoffcontract. Owner/side60frameseachinspected:
+flowparcelsandunevencrown/baseareclearer,centrecanvisible. Notallmaps/Low/player/
+peer/humanapproval. Inputsunchanged,noOOM,norepair. Shelltransportbrieflydropped
+afterrunthenrecovered; nativeruncompleted66s. Publishsurface; sound/genericflash
+stillopen. Next inspectcurrentBaha/Crosscurrentpresentationagainstexistingplan.

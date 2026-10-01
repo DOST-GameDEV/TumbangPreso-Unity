@@ -12,7 +12,7 @@ namespace TumbangPreso.Visual
         private WorldEffectSnapshot.Field _state;
         private Mesh _mesh;
         private MeshRenderer _surface;
-        private LineRenderer _foam;
+        private LineRenderer _foam, _wallRunoff;
         private Vector3[] _vertices;
         private MaterialPropertyBlock _block;
         private float _sampleAge;
@@ -76,10 +76,19 @@ namespace TumbangPreso.Visual
             _mesh.vertices=_vertices;_mesh.colors=colours;_mesh.uv=uv;_mesh.triangles=triangles;
             var lip=new GameObject("RollingCurtainLip");lip.transform.SetParent(transform,false);
             _foam=lip.AddComponent<LineRenderer>();_foam.useWorldSpace=false;
-            _foam.positionCount=WallColumns;_foam.widthMultiplier=.026f;
+            _foam.positionCount=WallColumns;_foam.widthMultiplier=.048f;
+            _foam.widthCurve=new AnimationCurve(new Keyframe(0,.35f),new Keyframe(.17f,.9f),
+                new Keyframe(.44f,.55f),new Keyframe(.73f,1),new Keyframe(1,.28f));
             _foam.numCapVertices=1;_foam.numCornerVertices=1;
             _foam.shadowCastingMode=ShadowCastingMode.Off;_foam.receiveShadows=false;
             Paint(_foam,new Color(.63f,.88f,.91f,.75f));
+            var runoff=new GameObject("ShallowCurtainRunoff");runoff.transform.SetParent(transform,false);
+            _wallRunoff=runoff.AddComponent<LineRenderer>();_wallRunoff.useWorldSpace=false;
+            _wallRunoff.positionCount=WallColumns;_wallRunoff.widthMultiplier=.026f;
+            _wallRunoff.widthCurve=new AnimationCurve(new Keyframe(0,0),new Keyframe(.2f,.8f),
+                new Keyframe(.5f,.35f),new Keyframe(.82f,.65f),new Keyframe(1,0));
+            _wallRunoff.numCornerVertices=1;_wallRunoff.shadowCastingMode=ShadowCastingMode.Off;
+            _wallRunoff.receiveShadows=false;Paint(_wallRunoff,new Color(.49f,.79f,.78f,.65f));
         }
 
         private void Wall(float age,float fade)
@@ -91,7 +100,7 @@ namespace TumbangPreso.Visual
                 float u=x/(float)(WallColumns-1),side=u*2-1;
                 // Travelling low-amplitude folds remain inside the accepted width.
                 float wave=Mathf.Sin(age*3.1f-u*7.4f);
-                float crown=1.80f+.065f*wave+.025f*Mathf.Sin(u*17+age*1.7f);
+                float crown=1.80f+.105f*wave+.035f*Mathf.Sin(u*17+age*1.7f);
                 float edge=1-.08f*Mathf.Pow(Mathf.Abs(side),5);
                 for(int row=0;row<WallRows;row++)
                 {
@@ -103,10 +112,13 @@ namespace TumbangPreso.Visual
                     _vertices[x*WallRows+row]=new Vector3(side*_state.Radius,y,z);
                 }
                 _foam.SetPosition(x,_vertices[x*WallRows+WallRows-2]);
+                _wallRunoff.SetPosition(x,new Vector3(side*_state.Radius,.026f,
+                    -.27f-.065f*Mathf.Sin(u*9.2f+age*2.6f)));
             }
             _mesh.vertices=_vertices;_mesh.RecalculateNormals();_mesh.RecalculateBounds();
-            Tint(_surface,new Color(.16f,.60f,.77f,.27f*rise*fade*(1-drain)));
-            Tint(_foam,new Color(.63f,.88f,.91f,.75f*rise*fade*(1-drain)));
+            Tint(_surface,new Color(.18f,.64f,.69f,.27f*rise*fade*(1-drain)));
+            Tint(_foam,new Color(.63f,.88f,.85f,.75f*rise*fade*(1-drain)));
+            Tint(_wallRunoff,new Color(.49f,.79f,.78f,.65f*rise*fade*(1-drain)));
         }
 
         private void BuildCrest()

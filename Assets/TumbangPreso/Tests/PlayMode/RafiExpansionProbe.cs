@@ -424,6 +424,9 @@ namespace TumbangPreso.PlayTests
                 var field=RafiWaterField.Active.Single(f=>f.Capture().Type==WorldEffectSnapshot.Kind.Waterwall);
                 var renderer=field.GetComponentsInChildren<MeshRenderer>().Single(r=>r.sharedMaterial.HasProperty("_CurtainFlow")&&r.sharedMaterial.GetFloat("_CurtainFlow")>.5f);
                 Assert.AreEqual(1,renderer.sharedMaterial.GetFloat("_UseVertexTint"));
+                var runoff=field.GetComponentsInChildren<LineRenderer>().Single(r=>r.name=="ShallowCurtainRunoff");
+                Assert.AreEqual(13,runoff.positionCount);
+                Assert.AreEqual(0,runoff.GetComponents<Collider>().Length);
                 var stateForReplay=field.Capture();
                 for(int frame=0;frame<60;frame++)
                 {

@@ -107,7 +107,10 @@ check and a shipping clip reference; review corrected cheek crowding and a missi
 FPP route. Dedicated Skim/Water wall illustrations and job labels now pass
 native resource/live-deck binding checks (aef85a28). Settled legibility joins the
 Skim/coating review now confirms the settled Water wall icon; SFX and final
-material critique remain.
+broader presentation review remain.
+Waterwall optical uniformity now has an uneven flow/crown/runoff pass with
+one focused native motion/contact/collapse check and inspected court views.
+[Surface evidence](reports/hero-quality-2026-10-01/wall-surface-checks/README.md).
 [Motion evidence](reports/hero-quality-2026-10-01/wall-motion-checks/README.md).
 Skim now has a dedicated shipping body/FPP coating action; initial native1/1
 qualifies routing, actual motion and retained held-shoe identity. Visual capture
