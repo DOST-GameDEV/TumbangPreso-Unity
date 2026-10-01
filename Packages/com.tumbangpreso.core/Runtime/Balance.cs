@@ -74,14 +74,14 @@
         public const float ThrowRestoreCooldown = 1.25f;
 
         // Tournament Anti-Camping & Anti-Stall Penalties
-        public const float TayaCampRadius = 2.2f;
-        public const float TayaCampClearRadius = 2.8f;
-        public const float TayaCampWarningTime = 3.0f;
+        public const float TayaCampRadius = 1.5f;
+        public const float TayaCampClearRadius = 2.0f;
+        public const float TayaCampWarningTime = 2.5f;
         public const float TayaCampGracePeriod = 5.0f;
         public const int ScoreTayaCampPenalty = -5;
 
-        public const float SlipperUnretrievedWarningTime = 7.0f;
-        public const float SlipperUnretrievedGracePeriod = 10.0f;
+        public const float SlipperUnretrievedWarningTime = 7.5f;
+        public const float SlipperUnretrievedGracePeriod = 15.0f;
         public const int ScoreUnretrievedPenalty = -5;
         public const float TournamentPenaltyInterval = 1.0f;
 
@@ -360,7 +360,7 @@
         /// <summary>You cannot START a sprint below this, so the bar cannot be feathered.</summary>
         public const float StaminaSprintFloor = 7.5f;
 
-        public const float FatigueTime = 2.0f;
+        public const float FatigueTime = 2.5f;
         public const float FatigueSpeedScale = 0.75f;
 
         // -------------------------------------------------------------------

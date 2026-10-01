@@ -2747,3 +2747,21 @@ Next local independent unit: inspect OnIdentifyMsg malformed-string framing and
 actual receiver exception before changing it; preserve valid/repeated identity,
 approved-token authority and coalesced arrival. Focused native baseline/final,
 one bounded repair; no broad unchanged validation. Whole goal stillactive.
+
+Penalty baseline2/2fails at intended old-window differences: no camping warning
+at2.5seconds and slipper warning already active before7.5seconds. No fixture
+failures. Six Core constants now match current Feedback; existing pause/score/
+recall paths unchanged. Protocol119. Final same2native cases plus focused Core
+fatigue/tournament controls; no unrelated suite or Tagged immunity changes.
+
+Penalty final native 2/2 and Core 4/4 pass, frozen hashes unchanged/no new OOM.
+Controlled host time deltas cover camping warning/debt/income/pause/hysteresis,
+loose shoe inside danger area, 11.25-second half-full recall clock and retrieval
+clear. Court image includes seeded award banner, not a clean HUD-quality proof.
+Publish protocol 119 and update same penalty row. Next Harry's HUD layout, using
+his actual mockup; no removed Tagged-immunity request or ability retune.
+
+Integratedb44205147 current penalty clocks with authored2native/4Core receipts;
+current119. Local actualreconnect/Haunt players remain117/116frozen boundaries.
+Preserve next HUD work reservation. Local next unit remains bounded Identify
+receiver framing; no live native/player/hash/build jobs, and private work intact.

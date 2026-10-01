@@ -1,10 +1,10 @@
 # Networking: Where To Work
 
-Current gameplay contract is protocol118, including adopted Hydro Crosscurrent,
-Skim, Water wall and charge cancellation while the can is down/protected.
+Current gameplay contract is protocol119, including adopted Hydro Crosscurrent,
+Skim, Water wall, can-down charge cancellation and revised penalty/fatigue timings.
 Latest actual Windows direct-peer qualification is protocol114with the CLI
 admission handoff fix, through active round2with matching structural state.
-It predates Hydro115/116/117/118and the later local menu/bot/notice changes; it cannot qualify
+It predates Hydro115/116/117/118/119and the later local menu/bot/notice changes; it cannot qualify
 those integrations. [Player evidence](reports/feedback-2026-09-30/cli-admission-handoff.md).
 [Hydro evidence](reports/hero-quality-2026-10-01/hydro-current-checks/README.md).
 [Skim evidence](reports/hero-quality-2026-10-01/skim-checks/README.md).
@@ -17,7 +17,7 @@ not whole-match/rejoin/loss/other-kit qualification.
 
 Actual117crash/relaunch restores the same identity/seat and selected character on
 the changed pre-round handover candidate. Aggregate gate remains failed at the
-host's later round-boundary sample; no118or complete-round proof is claimed.
+host's later round-boundary sample; no118/119or complete-round proof is claimed.
 [Preserved results and limits](reports/feedback-2026-09-30/reconnect-actual-player.md).
 
 Departure notice payloads must end exactly after the declared name, before the

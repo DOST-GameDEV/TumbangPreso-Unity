@@ -552,7 +552,8 @@ namespace TumbangPreso.Net
         //116: Hydro Skim load and first-ground flight phase replace Mirrorwake.
         //117: Hydro Water wall uses a single-interception stationary field.
         //118: knockdown cancels charge and throws wait for can/protection reset.
-        public const int ProtocolVersion = 118;
+        //119: revised camping/slipper warning windows and2.5second fatigue.
+        public const int ProtocolVersion = 119;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

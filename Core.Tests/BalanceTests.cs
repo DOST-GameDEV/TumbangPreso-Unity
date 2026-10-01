@@ -1151,7 +1151,13 @@ namespace TumbangPreso.Core.Tests
             Assert.True(Balance.TayaCampWarningTime < Balance.TayaCampGracePeriod);
             Assert.True(Balance.TayaCampClearRadius > Balance.TayaCampRadius);
             Assert.True(Balance.SlipperUnretrievedWarningTime < Balance.SlipperUnretrievedGracePeriod);
-            Assert.Equal(10.0f, Balance.SlipperUnretrievedGracePeriod);
+            Assert.Equal(15.0f, Balance.SlipperUnretrievedGracePeriod);
+            Assert.Equal(7.5f, Balance.SlipperUnretrievedWarningTime);
+            Assert.Equal(2.5f, Balance.TayaCampWarningTime);
+            Assert.Equal(1.5f, Balance.TayaCampRadius);
+            Assert.Equal(2.0f, Balance.TayaCampClearRadius);
+            Assert.Equal(2.5f, Balance.FatigueTime);
+            Assert.Equal(.75f, Balance.FatigueSpeedScale);
         }
 
         [Fact]
