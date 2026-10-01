@@ -3505,3 +3505,19 @@ or art changes authorized by this claim alone; diagnose the weakest real beat
 before claiming implementation paths. Reuse Study for one hero only with
 TUMP_INTRO_SCENE=1. Render-only baseline is not a real accepted-cast/pause/peer
 qualification. One baseline, one bounded tooling repair maximum. Alljobs terminal.
+
+Baha baseline stops on old Study assertion requiring retained theme playback,
+while owner-approved skill sound suppression is still active. No artframes or
+audio success claimed. One bounded fixture repair adds explicit visual-only
+allowMutedTheme for the Rafi-only entry; other hero checks unchanged. Log actual
+StartSound result, never re-enable rejected audio to make a visual study green.
+Retry baseline once with explicit output folder; runtime/art unchanged.
+
+Baha baselinev2 render-only1/1 passes;28timestampedframes inspected, grounding
+within0.00011m and0shoeverticesinsidehead. Scene's wavedraw is a flat two-row
+trapezoid; double trianglewindings plus CullOff duplicate the same surface.
+Distantblackhouses also pop atsea>.01. Expand RAFI-BAHA-REVIEW-1001 to own
+HeroIntroductionScene.Rafi.cs only: rolled five-row wave/single-winding/crest,
+soft deep-teal silhouettes fading with sea. Preservebody,cameras,3.4seconds,
+pilepositions andmechanics. Plan inbaha-review; allnativejobs terminal. Onefixture
+repairusedforbaseline audioassert; noaudioenablementorlisteningclaim.
