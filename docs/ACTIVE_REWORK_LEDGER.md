@@ -1851,3 +1851,20 @@ Publish explicit owned source/receipts, same Amihan Feedback short note and prot
 matching-player limit. No current player/actual peer/arena film qualification.
 Next coherent matching-player qualification when headroom permits, followed by
 remaining bottom-up feedback/independent engineering bugs. Full goal stays active.
+
+AIRBURST-WIKI-1001 shipped8680d9adf04243b88d6358f2178c59e3bc8c08cf,
+remote verified. Both original Amihan Feedback notes shortened with current1.5s/
+60degree/measured-reach fix,4native/2Core evidence and protocol114/human/current
+peer limits. Exact readback found commit in both rows. Reports/screenshots and
+Done/Human verified controls preserved. All native jobs terminal; unrelated
+private dirt remains unstaged. No task browser/player/server left. Full goal active.
+Next network-quality investigation before one coherent matching-player build:
+10Hz FamiliarEffect now moves Kuro, but Nemu RestoreSeance -> RestoreDevour ->
+StepTo immediately assigns target position. Check for observer pose snapping and
+reuse existing companion smoothing while preserving authoritative DevourGround,
+phase/clock/terminal rules and authored motion. Then protocol114actual peers
+when build headroom permits. Separate bot investigation: AIController.Observe
+(lines4142+) updates every actor truth without a Haunted sensor gate; At's
+unknown-target fallback also reads truth. Handle both observation and unknown
+target decisions before claiming fair reduced perception. Neither new issue is
+claimed fixed from source inspection alone. Loading remains friend's scope.
