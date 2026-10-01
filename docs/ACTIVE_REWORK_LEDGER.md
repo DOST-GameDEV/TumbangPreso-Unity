@@ -2062,3 +2062,16 @@ Jobs56826/29674terminal, no fixture repair. Publish exact files/receipts/status;
 protocol114 unchanged, no new player or audible/physical/peer claim. Prior actual
 admission pair retains its older source boundary. Next investigate Haunted bot
 sensing and target eligibility together; do not claim fairness from Observe alone.
+
+HYDRO-CURRENT-1001 cloud unit at04:47UTC, sourceed86e3b2 clean and fetched.
+Claim Abilities/RafiHeroKit.cs, Abilities/RafiWaterField.cs, new Core/RafiRules
+and Core.Tests/RafiRulesTests, existing PlayMode/RafiExpansionProbe.cs, and
+Net/NetSession.cs compatibility line only. Implement published Crosscurrent
+35second cooldown and chronological first flying-slipper interception, retaining
+speed/ownership/credit and shared world/accepted-cast routes. Existing array order
+currently selects the winner when two shoes cross within one physics step.
+Use pure swept contact intervals plus native real-flight/cover/resource checks.
+No other Rafi slots or contributor network/bootstrap/bot/Haunted paths claimed.
+Presentation remains its existing authored provisional current until its own film
+pass; do not mark the whole Hydro kit complete. Protocol changes need fresh fetch
+before publication and matching-player qualification remains separate.
