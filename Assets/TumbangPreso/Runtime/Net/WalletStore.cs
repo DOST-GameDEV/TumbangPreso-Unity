@@ -315,7 +315,8 @@ namespace TumbangPreso.Net
         {
             try
             {
-                string json = SafeStore.Read(Path);
+                string json = SafeStore.Read(Path,
+                    text => JsonUtility.FromJson<Cache>(text) != null);
                 if (string.IsNullOrEmpty(json)) return;
                 var cache = JsonUtility.FromJson<Cache>(json);
                 if (cache == null) return;

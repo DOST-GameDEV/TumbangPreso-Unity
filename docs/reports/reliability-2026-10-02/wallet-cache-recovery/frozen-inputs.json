@@ -1,0 +1,24 @@
+{
+  "sourceCommit": "d92025398a058c46a744fdcba5f0e34cbbac10d9",
+  "expectedCases": 4,
+  "testFilter": "TumbangPreso.Tests.WalletCacheRecoveryTests",
+  "baselineExpected": "recover case fails;3 primary/foreign/missing controls pass",
+  "inputs": [
+    {
+      "name": "WalletCacheRecoveryTests.cs",
+      "sha256": "855744368C4019900AEEBC15207A6AC59084BDAA25116ABBF7093AA1A21EE324"
+    },
+    {
+      "name": "WalletCacheRecoveryTests.cs.meta",
+      "sha256": "27267E754A818E63B823F857F59C50A97D63E2592EBD7B557F7302DCA72A4FA8"
+    },
+    {
+      "name": "WalletStore.baseline.cs",
+      "sha256": "58B1E22EA82113E8C19BA51EB37686E2A7B11AE7940ACF82A41DC1E1E8D37970"
+    },
+    {
+      "name": "WalletStore.candidate.cs",
+      "sha256": "9FE39202F078FBE42D97CC627BDBA09F18E554B59D60470D25B552457AB8F45B"
+    }
+  ]
+}
