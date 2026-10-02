@@ -105,3 +105,5 @@ Abandon/history account-response ownership: [native evidence](reports/reliabilit
 Queued-result verification alignment after refusals: [native evidence](reports/reliability-2026-10-02/career-witness/README.md).
 
 Late history UI completion and navigation safety: [native evidence](reports/reliability-2026-10-02/history-navigation/README.md).
+
+Automatic career sync after pending older-account work: [native evidence](reports/reliability-2026-10-02/career-account-sync/README.md).
