@@ -19,7 +19,7 @@ Sean/Rafi/Baha reservations preserved. One heavy native/player job at a time16Gi
 
 ## Published fixes and current artifact
 
-Source49=4f69e0af2, source48=55f2a5f79/source47=56446ad7c; publish below.
+Verified source49=4f69e0af2 published9395414f3; source48=55f2a5f79/source47=56446ad7c.
 Protocol132/recording13 after incoming qualified Rafi4a9afbd90/integrationa67d7bc5b.
 Core704/704 proof7648 retained; no unchanged broad-suite/full8round repeat.
 
@@ -74,6 +74,14 @@ Priorh14348 PASS41fixes/protocol132/source7648b68c3 remains independent evidence
 Root framecontext8ba8fa76f FIRST2 diagnostic, not270ms cause/FPS fix.
 
 ## Current next task and precise ownership
+
+NEW root EmoteWheel lifetime investigation: owns Runtime/UI/EmoteWheel.cs +
+NEW PlayMode/EmoteWheelLifetimeTests.cs/meta only. No production change yet;
+actual gamepad selection/public Open+Close and Unity focus/bodydisable,2causal/
+1normal selected-release control. InputSystem scoped focus settings/devices restored,
+no physicalOS/animation/transport claim. qprep36021 ACTIVE/exact3 via
+MAIN Logs/emote-wheel-lifetime1002/prepare.py; no native before prep exit0.
+ONE bounded original/candidate pair/one repair limit, no overlapping worker.
 
 Prior root native/test/player handles TERMINAL. New48-source1002k build TERMINAL;
 freeze9852 TERMINAL0/18909inputs/source d09a2a4ff33867c459901263c548b39039f49325.
