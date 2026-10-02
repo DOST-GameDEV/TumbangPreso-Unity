@@ -796,3 +796,10 @@ claims only its dated plan's paths. Existing accepted Concussed shoe has no
 persistent surface cue in the native footage. Affinity survives a drop and may
 arrive from replication: bind the visual to the actual shoe, not a hero timer.
 No gameplay/wire/SFX changes, no private HeroHazards edits, no active job yet.
+
+Cloud Boulder load ready: original Normal control passes and accepted Concussed
+missing-cue failure retained. Four lifecycle cases pass serially, one per process;
+world/owner close-ups inspected. Supplemental actual-input motion1/1 passes with
+78paired frames after one recorded native Mono startup retry; no guard change.
+Same mesh/materials and payload state, no HeroHazards/gameplay/wire edits. No
+active job. Publish explicit load paths and report only scoped native evidence.

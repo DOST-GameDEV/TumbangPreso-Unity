@@ -649,6 +649,14 @@ FPP, glyph/wake/audio and actual matching peers remain open.
 [Plan](reports/hero-quality-2026-10-01/skim-implementation.md) and
 [evidence](reports/hero-quality-2026-10-01/skim-checks/README.md).
 
+### DANTE-BOULDER-LOAD-1002: visible Concussed shoe payload
+
+- [x] Surface-bound stone inlay on the real world and owner slipper. Four fresh
+  serial native cases pass: Normal control, actual activation/drop/regrab/clear,
+  replica-set affinity/disable, owner source replacement and repeated state.
+  Authored mesh/materials and gameplay unchanged. Full-map/peer/performance/SFX
+  and human approval remain open. [Evidence](reports/dante-boulder-load-2026-10-02/README.md).
+
 ### DANTE-BOULDER-MOTION-1002: weight-bearing held-shoe preparation
 
 - [x] Boulder gets its own body/FPP lift, weight catch and steady recovery.

@@ -313,6 +313,7 @@ namespace TumbangPreso.CameraSystem
 
             // The mesh changed, so the length-normalising scale has to be recomputed.
             NormaliseHeldSize();
+            Visual.DanteBoulderCoating.MatchOwner(filter, held);
             if (held.Holder != null && held.Holder.AbilitySystem?.Kit is Abilities.SeanHeroKit sean)
                 Visual.SeanIgnitionVisual.Ensure(filter, held, sean);
             else if (held.Holder != null && held.Holder.AbilitySystem?.Kit is Abilities.ZackHeroKit zack)

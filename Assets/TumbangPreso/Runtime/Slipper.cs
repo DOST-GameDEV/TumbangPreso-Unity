@@ -420,6 +420,7 @@ namespace TumbangPreso
             BotSlipperInventory.Invalidate();
             _motionAccent = GetComponent<Visual.SlipperMotionAccent>();
             if (_motionAccent == null) _motionAccent = gameObject.AddComponent<Visual.SlipperMotionAccent>();
+            Visual.DanteBoulderCoating.TrackWorld(this);
         }
 
         private void OnDestroy() => BotSlipperInventory.Invalidate();
