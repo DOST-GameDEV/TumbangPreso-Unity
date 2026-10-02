@@ -669,3 +669,14 @@ passed one per fresh Editor; final world/owner shader renders also passed and
 were inspected. Same memory guard, no PC use, no active jobs. Failed batch is
 retained. Publish this scoped cue with exact owned paths; broader body/camera
 and SFX work stays open. See result.md and final-input-sha256.json.
+
+## Cloud hero continuation, October2 15:06UTC
+
+Frostbite surface cue dc6f5d71 is verified remote, all five focused cases passed
+serially. Shared cloud folder disappeared; same desktop persists, cause not
+established. Checkout now restored under the surviving task workspace at6bae3bc45.
+Official matching editor restored; fresh native setup check is running, one
+admission repair identifies the relocated pre-existing Hub CLI exactly.
+Next CHESKA-FROSTBITE-MOTION-1002 claims only the paths in its dated plan. Keep
+Cold Feet sweep and all other animation entries unchanged. No product changes
+yet; prepare independent pose work while import runs. PC stays prohibited.
