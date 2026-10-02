@@ -50,7 +50,8 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   operations; native4/4. [Evidence](reports/reliability-2026-10-02/career-account-sync/README.md).
 - [x] RESULT-VERDICT-IDENTITY-1002: dispute copy follows displayed match ID; native2/2.
   [Evidence](reports/reliability-2026-10-02/result-verdict/README.md).
-- [ ] RESULT-LATE-ACK-1002: update an open result board when its career acknowledgement arrives.
+- [x] RESULT-LATE-ACK-1002: open details repaint on current acknowledgement;
+  native1/1 includes callback retirement. [Evidence](reports/reliability-2026-10-02/result-late-ack/README.md).
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow

@@ -131,10 +131,14 @@ namespace TumbangPreso.UI
             _canvas.gameObject.SetActive(false);
         }
 
+        private Net.CareerStore _hookedCareer;
+
         private void OnEnable()
         {
             if (GameServices.Match != null) GameServices.Match.MatchEnded += OnMatchWon;
             if (GameServices.Stats != null) GameServices.Stats.RecordReady += OnRecordReady;
+            _hookedCareer = GameServices.Career;
+            if (_hookedCareer != null) _hookedCareer.Changed += OnCareerChanged;
         }
 
         private void OnDisable()
@@ -143,6 +147,8 @@ namespace TumbangPreso.UI
             if (_nativeResult && _canvas != null) _canvas.gameObject.SetActive(false);
             if (GameServices.Match != null) GameServices.Match.MatchEnded -= OnMatchWon;
             if (GameServices.Stats != null) GameServices.Stats.RecordReady -= OnRecordReady;
+            if (_hookedCareer != null) _hookedCareer.Changed -= OnCareerChanged;
+            _hookedCareer = null;
 
             // ⚠⚠ WHOEVER STOPPED TIME RESTORES IT, ON EVERY PATH INCLUDING DEATH. This
             // board was the second class in the project to stop the clock from an instance and
@@ -152,6 +158,13 @@ namespace TumbangPreso.UI
             // `Time.timeScale` stayed 0 for the rest of the process, so the MENUS the player
             // returned to were frozen and nothing said why.
             RestoreTime();
+        }
+
+        private void OnCareerChanged()
+        {
+            if (_canvas == null || !_canvas.gameObject.activeSelf || _lastRecord == null
+                || _hookedCareer == null || _lastRecord.MatchId != GameServices.Stats?.Last?.MatchId) return;
+            ShowProgression(_hookedCareer.LastAward, _hookedCareer.Profile);
         }
 
         private void OnDestroy() { RestoreTime(); ScreenTakeover.Unregister(this); }

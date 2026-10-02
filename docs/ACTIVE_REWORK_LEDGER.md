@@ -22,33 +22,32 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Latest verified local/remote: 62afc5d6ab12051e13790316174e9087a11ea9eb.
-This resume shipped four product units: account abandon/history ownership (4/4),
-queued witness alignment (2/2), history UI completion (one native case/five states),
-and retained account sync (4/4). Coherent earlier career integration passed 43/43.
-Source-owned pending files: Diagnostics/OwnerUiPlayerReview.cs and
-Diagnostics/OwnerUiPlayerReview.WholeMatches.cs, plus this unit's reports/ledger.
-They contain a bounded diagnostic repair, not another product behavior change.
-Paths are under Assets/TumbangPreso unless prefixed docs.
-Complete pre-resume history remains in
+Latest verified local/remote7be6dab00 includes five product fix units this resume:
+account abandon/history4/4; queue witnesses2/2; history navigation one native
+case/five states; deferred account sync4/4; displayed verdict identity2/2.
+Earlier coherent career integration43/43. Result-late-ack unit is qualified and
+publishes next. Own source paths MatchResult.cs and PlayMode/TumpNativeResultTests.cs.
+All are under Assets/TumbangPreso; reports/status paths under docs.
+Complete pre-resume history preserved in
 [the archived ledger](archive/ACTIVE_REWORK_LEDGER_before_competition_resume_2026-10-02.md).
 
 ## Active job and exact next action
 
-RESULT-VERDICT-IDENTITY-1002 complete: corrected baseline1/2, native final2/2.
-Dispute warning requires submitted match ID to match displayed result. Three
-hashes unchanged; one fixture singleton repair used1/1; all original failures
-preserved. Session69002 terminal; profile/input restored. Publish next.
-Local5e9db3b49 verdict fix2/2; incoming87cf0c632 integrated without runtime
-changes. Merge publication next; five product fix units qualified this resume.
-Next RESULT-LATE-ACK-1002 baseline prepared in existing TumpNativeResultTests:
-actual native board plus Stats.Adopt synthetic payable record and production
-CompleteSubmission acknowledgement. Board lacks Career.Changed subscription,
-so late response cannot repaint already-open details. No endpoint call.
-ACTIVE native baseline session49114, named result-late-ack1002
-PlayMode/D3D11, Logs/result-late-ack1002/baseline.xml/log, one baseline/final, zero repairs planned.
-While it runs, inspect smallest owner-bound lifecycle subscription and current
-supported direct-peer match route. Do not rerun retired whole-match UI fixture.
+RESULT-LATE-ACK-1002 complete: native baseline fails1/1; final passes1/1 with actual
+late text and callback retirement. Two hashes unchanged, zero repairs, session
+39566 terminal; profile/input restored. No heavy job active. Publish this sixth
+product unit, then switch from store/UI fixes to actual match/network/performance.
+Retired legacy --whole-matches UI route after its one bounded failed repair.
+No more fixture work there. Rich diagnostic failure state is published.
+Next use current supported direct-peer player route, frozen artifact and named
+profiles. Before launch verify current actor/input/rules/map/framecap switches
+and choose full default-match liveness scope. Do not claim human play, full
+operator flow or a pristine build from that floor. Investigate270ms host frame
+using available per-frame samples, not repeated unchanged broad matrices.
+Last current build62afc5d6a plus experimental diagnostic lines, protocol129,
+Builds/competition-retry1002, Runtimea5cc4379...f5b042be. It predates verdict-ID
+and late-ack source; build a coherent refresh only if those need player proof.
+Private art/settings/metadata preserved; external presentation lane unchanged.
 
 ## Remaining readiness evidence
 
