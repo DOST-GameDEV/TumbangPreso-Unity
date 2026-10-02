@@ -701,14 +701,16 @@ def amihan():
     # Hand on her left hip, right arm flung out low and wide: the call. Her head is wide and her arms
     # short, so every arm stays below shoulder height: higher, the held slipper passes through her face
     # (UltimateIntroductionProbe measured 86 shoe vertices inside the head before this was lowered).
-    call_out = Pose(torso=(-3, -12, 4), head=(-6, 14, -4), left=(24, 58, 38), right=(5, 45, 0),
-                    legs=((6, 8), (-6, 12)))
+    # Feel pass (2026-10-02): at 45 degrees of spread her short arm never left the coat in the film; flung out to 72
+    # (still under the shoulder, the slipper well clear of the head's underside) the call reads at any size.
+    call_out = Pose(torso=(-3, -14, 5), head=(-6, 16, -4), left=(24, 58, 38), right=(18, 72, 0),
+                    legs=((6, 8), (-6, 14)))
     # The right hand snapped back to the chest; the head swings down the lane.
     call_in = Pose(torso=(2, 18, 0), head=(-8, -4, 0), left=(24, 58, 38), right=(48, 10, 55),
                    legs=((6, 8), (-6, 12)))
     # Arms open low and wide, chest and chin up: the whole street's air.
-    opened = Pose(torso=(-10, 0, 0), head=(-12, 0, 0), left=(10, 60, 10), right=(10, 60, 10),
-                  legs=((4, 12), (-4, 12)))
+    opened = Pose(torso=(-10, 0, 0), head=(-12, 0, 0), left=(22, 74, 10), right=(22, 74, 10),
+                  legs=((4, 14), (-4, 14)))
     # The arms sweeping in through the front on the way to the hip.
     sweep = Pose(torso=(4, 22, -2), head=(-4, -10, 0), left=(48, 38, 60), right=(44, 8, 15),
                  legs=((10, 10), (-8, 12)))
@@ -726,7 +728,7 @@ def amihan():
     p.key(0, rest)
     p.key(.22, call_out, punch=True).key(.36, call_out.but(torso=(-3, -14, 4)))
     p.key(.48, call_in, punch=True)
-    p.key(.70, opened).key(1.02, opened.but(torso=(-11, 2, 0)))
+    p.key(.70, opened).key(1.02, opened.but(torso=(-12, 2, 0), head=(-13, 0, 0)))
     p.key(1.22, sweep)
     p.key(1.42, cup, punch=True).key(1.6, cup)
     p.key(1.72, pack1).key(1.86, cup).key(2.06, pack2).key(2.18, pack1)
@@ -735,11 +737,13 @@ def amihan():
     p.rise(0, 0)
     # CALL: front right, a slow push in.
     p.shot(0, 1.05, (2.0, .85, 3.3), (0, 1.05, 0), 44, eye_to=(1.7, .9, 2.8), look_to=(0, 1.1, .1), fov_to=41)
-    # GATHER: low on her right, close on the cupped hands (cropped on purpose).
-    p.shot(1.05, 2.3, (2.6, .7, 1.3), (.25, .72, .1), 40, eye_to=(2.3, .75, 1.9), look_to=(.2, .78, .3), fov_to=37,
+    # GATHER: low on her right, her cupped hands low in frame and her whole face above them. The F3 film cut the top of her
+    # head off at eye level; looking at her chest instead of her hip keeps the charge in her hands AND the effort on her face.
+    p.shot(1.05, 2.3, (2.6, .72, 1.3), (.22, .98, .15), 42, eye_to=(2.35, .78, 1.85), look_to=(.18, 1.0, .3), fov_to=39,
            close=True)
-    # AIM: over the right shoulder, rising and opening so she stays lower left and the lane fills the frame.
-    p.shot(2.3, 3.6, (2.3, 1.75, -1.9), (0, .9, 3.6), 54, eye_to=(2.6, 2.25, -2.7), look_to=(-.2, .45, 6.5), fov_to=58)
+    # AIM: over the right shoulder, rising and opening so she stays lower left and the lane fills the frame. Opens further
+    # out and higher than F3, whose first frames were a wall of the back of her head.
+    p.shot(2.3, 3.6, (2.6, 2.0, -2.4), (0, .8, 4.0), 52, eye_to=(2.85, 2.4, -3.0), look_to=(-.2, .4, 7.0), fov_to=57)
     # Reduced motion: one side view with her, her hands and the lane together.
     p.locked((4.2, 1.35, 1.2), (0, .95, 1.8), 50)
     return p

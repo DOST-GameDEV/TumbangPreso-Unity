@@ -127,7 +127,7 @@ Social reply and handle lookup account ownership: [native evidence](reports/reli
 
 Sean held-shoe body preparation: [evidence](reports/sean-empowered-presentation-2026-10-02/README.md).
 
-Amihan presentation (Airburst first), Miks-referenced research and plan: [report](reports/amihan-presentation-2026-10-02/README.md).
+Amihan presentation: Airburst and cutscene, Drift, her light body and floating run: [report](reports/amihan-presentation-2026-10-02/README.md).
 
 Cheska held Frostbite surface cue and low-memory qualification: [October 2 result](reports/cheska-frostbite-load-2026-10-02/result.md).
 

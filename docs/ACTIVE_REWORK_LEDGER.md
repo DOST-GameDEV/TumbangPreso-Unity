@@ -547,6 +547,15 @@ AudioCues.cs one step_amihan row/name; NEW Resources/Sfx/step_amihan.wav(+meta),
 tools/build_amihan_steps.py; Amihan tests; docs/reports/amihan-presentation-2026-10-02.
 Offline authoring only while root tournament92385 is live; one native run later in
 Codex/work/tump-amihan1002, profile amihan-airburst1002. No mechanics/protocol.
+Amihan jobs ALL TERMINAL (23:45), no lease held. Candidate Codex/work/tump-amihan1002f
+(base6bae3bc45 + frozen overlay, Library seeded from idle tump-amihan1002), profile
+amihan-feel1002, outputs Logs/amihan-feel1002; its import churn is not published.
+E1 16/17 (release drive 1.533s) and P1 2/7 (wide release pointed sideways; light
+fixture outran stamina; skills film Featherfall refused in box) retained. Fixed:
+E3 4/4, P2 4/4 (Airburst fx/body/Low release184=1.50s peak186 0.486m; light body
+sprint0.121-0.189m, throw settle0.27s, own steps only). Results/limits:
+reports/amihan-presentation-2026-10-02/feel-pass.md. NEXT Amihan: owner review of
+clips; re-stage FilmHerSkillsInAMatch; Featherfall/Whirlwind floor baselines.
 
 PLAYER-RING-RADIUS-1002 final Low-profile native1/1 passes in3.31s, outerexit0
 and guard null40s. Both hollow-role captures inspected. First ordinary-profile

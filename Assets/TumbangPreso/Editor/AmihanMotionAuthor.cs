@@ -40,20 +40,36 @@ namespace TumbangPreso.EditorTools
             EditorApplication.Exit(0);
         }
 
+        /// <summary>
+        /// Re-bake ONLY `hero-amihan-dash` and `hero-amihan-storm` in place (the flying Drift and the readable Airburst
+        /// release, 2026-10-02). Both keep their GUIDs; the launch, hover and whirlwind clips are not rewritten.
+        /// </summary>
+        public static void BakeDashAndStormFromCommandLine()
+        {
+            var model=RosterBook.Load().FindPersonArt("amihan")?.Model;
+            var clips=Bake(model,flightOnly:false,only:new[]{"hero-amihan-dash","hero-amihan-storm"});
+            foreach(var clip in clips)AssetDatabase.SaveAssetIfDirty(clip);
+            Debug.Log("[AmihanMotionAuthor] Saved only the existing Drift and Airburst clips.");
+            EditorApplication.Exit(0);
+        }
+
         public static AnimationClip[] Bake(GameObject model)=>Bake(model,flightOnly:false);
 
-        private static AnimationClip[] Bake(GameObject model,bool flightOnly,bool stormOnly=false)
+        private static AnimationClip[] Bake(GameObject model,bool flightOnly,bool stormOnly=false,string[] only=null)
         {
             if(model==null)throw new ArgumentNullException(nameof(model));
             Directory.CreateDirectory(Folder);AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
             var copy=Object.Instantiate(model);copy.name="Amihan motion authoring copy";
             copy.hideFlags=HideFlags.HideAndDontSave;
-            AnimationClip[] generated=null;
+            AnimationClip[] generated=null,built=null;
             try
             {
                 var animator=copy.GetComponentInChildren<Animator>(true);
                 var root=animator!=null?animator.transform:copy.transform;
-                generated=stormOnly?HeroAbilityClips.BuildAmihanStormAuthored(root):flightOnly?HeroAbilityClips.BuildAmihanFlightAuthored(root):HeroAbilityClips.BuildAmihanAuthored(root);
+                built=stormOnly?HeroAbilityClips.BuildAmihanStormAuthored(root):flightOnly?HeroAbilityClips.BuildAmihanFlightAuthored(root):HeroAbilityClips.BuildAmihanAuthored(root);
+                // The clips not asked for are built and then dropped (the finally destroys any clip no asset holds).
+                generated=only==null?built:Array.FindAll(built,c=>c!=null&&Array.IndexOf(only,c.name)>=0);
+                if(only!=null&&generated.Length!=only.Length)throw new InvalidOperationException("Missing Amihan action among: "+string.Join(", ",only));
                 var saved=new AnimationClip[generated.Length];
                 for(int i=0;i<generated.Length;i++)
                 {
@@ -71,7 +87,7 @@ namespace TumbangPreso.EditorTools
             }
             finally
             {
-                if(generated!=null)foreach(var clip in generated)
+                if(built!=null)foreach(var clip in built)
                     if(clip!=null&&!AssetDatabase.Contains(clip))Object.DestroyImmediate(clip);
                 Object.DestroyImmediate(copy);
             }

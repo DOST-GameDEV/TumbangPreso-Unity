@@ -61,6 +61,8 @@ namespace TumbangPreso.Visual
                 string surface=hit.collider.name.ToLowerInvariant();
                 if(surface.Contains("deck")||surface.Contains("step")||surface.Contains("rail"))cue="sfx_step_deck";
             }
+            // Amihan steps light (owner 2026-10-02): her own airy step in place of the rubber slap, on any dry surface.
+            if(!swimming&&_animator!=null&&_animator.Style==GaitStyles.Amihan)cue="step_amihan";
             try { GameServices.Audio?.PlayAtVaried(cue,contact,.96f,1.04f,swimming?.65f:.9f); }
             finally { Random.state=randomState; } // Cosmetic contacts must not advance the AI's random stream.
         }

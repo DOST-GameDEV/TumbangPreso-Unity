@@ -131,6 +131,8 @@ namespace TumbangPreso.Audio
                 { "ui_start",       -3.0f },
                 { "land",           -6.0f },
                 { "step_rubber",   -11.0f },
+                // Amihan's own light step (owner 2026-10-02, `tools/build_amihan_steps.py`): quieter than the rubber slap.
+                { "step_amihan",   -14.0f },
                 { "slide_scrape",   -6.0f },
                 { "grab",           -6.0f },
                 { "throw_charge",   -5.0f },
@@ -199,7 +201,7 @@ namespace TumbangPreso.Audio
 
             // Bodies.
             "bump", "tag", "downed", "jump", "land", "dash", "guard_block", "respawn",
-            "step_rubber", "slide_scrape",
+            "step_rubber", "step_amihan", "slide_scrape",
             "stamina_empty",
 
             // ⚠️⚠️ EVERY HERO SKILL SOUND IS DELETED (2026-09-29), ON THE OWNER'S INSTRUCTION. 🧑: *"also all ur skill sfx

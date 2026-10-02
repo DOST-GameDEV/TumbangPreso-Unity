@@ -1,14 +1,17 @@
 # Amihan presentation, October 2
 
 Owner-authorized presentation lane for Amihan: direction, body and first-person
-motion, effects and the ultimate cutscene. No SFX work of any kind. Mechanics,
-protocol and other heroes are out of scope.
+motion, effects and the ultimate cutscene. No skill SFX; the one sound added is
+her owner-requested footstep `step_amihan` (light-body.md). Mechanics, protocol
+and other heroes are out of scope.
 
 ## Status
 
 AIRBURST implementation preserved with scoped native validation (EditMode4/4,
 final PlayMode5/5), in fixed simulation; full presentation acceptance remains
-partial. See
+partial. Feel pass (later October 2): cutscene, Airburst, Drift and her light
+body revised and natively checked (E3 4/4, P2 4/4); see [feel pass](feel-pass.md).
+See
 [evidence](evidence.md) and `clips/`. Next: the feel refinement listed in TODO
 (AMIHAN-AIRBURST-FEEL-1002), then Drift, Featherfall and Whirlwind as separate
 units. Human approval, actual peers and real-time performance remain open.
@@ -24,6 +27,10 @@ units. Human approval, actual peers and real-time performance remain open.
 5. [Plan](plan.md): owned paths, steps, validation runs and evidence limits.
 6. [Acceptance](acceptance.md): what must be shown before the unit is called done.
 7. [Evidence](evidence.md): runs, timing table, clips and limits.
+8. [Feel pass](feel-pass.md): critique of the F3 films, the cutscene, Airburst and
+   Drift revisions, and the validation plan and results.
+9. [Light body](light-body.md): her footsteps, the floating run, how high and why,
+   and how she jumps, throws, tags and moves with it.
 
 ## Evidence levels
 

@@ -1,0 +1,2 @@
+7398ae4d6bfde7902a7e90603312091c5ec4bc95af54c716401e84bb204831ca *Assets/TumbangPreso/Art/characters/amihan-motion/hero-amihan-dash.anim
+97e1189be9de711072cc73037ce62b977e16b55b8e88045b2120a9d74e149972 *Assets/TumbangPreso/Art/characters/amihan-motion/hero-amihan-storm.anim

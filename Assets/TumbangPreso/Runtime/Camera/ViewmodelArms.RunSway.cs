@@ -26,6 +26,8 @@ namespace TumbangPreso.CameraSystem
         public const float WalkPumpDegrees = 5f, RunPumpDegrees = 15f;
         /// <summary>Metres the empty hand travels forward and back with the pump.</summary>
         public const float WalkPumpReach = .012f, RunPumpReach = .040f;
+        /// <summary>Amihan's floating run: a round glide of the hands, and a small pump.</summary>
+        public const float AmihanGlideBob = .012f, AmihanRunPumpDegrees = 6f, AmihanRunPumpReach = .016f;
 
         private Visual.CharacterAnimator _gaitAnimator;
         private bool _swayApplied;
@@ -62,6 +64,14 @@ namespace TumbangPreso.CameraSystem
             float pump = Mathf.Sin(phase);
             float pumpDegrees = Mathf.Lerp(WalkPumpDegrees, RunPumpDegrees, run);
             float pumpReach = Mathf.Lerp(WalkPumpReach, RunPumpReach, run);
+            if (_gaitAnimator.Style == Visual.GaitStyles.Amihan)
+            {
+                // AMIHAN RUNS ON THE AIR (`AmihanAirStep`, owner 2026-10-02): her run has no contact to dip at, so the hands
+                // glide on a smaller round swell, and pump little because her arms ride swept back like wings.
+                bob = Mathf.Lerp(bob, (Mathf.Cos(2f * phase) - 1f) * .5f * AmihanGlideBob, run);
+                pumpDegrees = Mathf.Lerp(WalkPumpDegrees, AmihanRunPumpDegrees, run);
+                pumpReach = Mathf.Lerp(WalkPumpReach, AmihanRunPumpReach, run);
+            }
 
             _swayLeftBase = _leftPivot.localRotation; _swayLeftPosition = _leftPivot.localPosition;
             _swayRightBase = _rightPivot.localRotation; _swayRightPosition = _rightPivot.localPosition;

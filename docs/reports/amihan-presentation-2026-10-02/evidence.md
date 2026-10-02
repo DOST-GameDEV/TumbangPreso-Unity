@@ -69,3 +69,9 @@ remain conservative. Refusal/disconnect during the introduction, role changes,
 all-map readability, actual player/peer checks, physical input and human review
 are not qualified by these five cases. No SFX changes or audio evaluation.
 The earlier F2 failure and both baseline failures remain in the report.
+
+## Feel pass (later October 2)
+
+The cutscene, Airburst, Drift and light-body revisions have their own run table,
+retained failures and limits in [feel-pass.md](feel-pass.md). Evidence files are the
+`evidence/feel-*` set; clips are the `*_p2.mp4` set in `clips/`.

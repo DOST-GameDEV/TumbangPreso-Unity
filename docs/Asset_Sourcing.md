@@ -475,6 +475,8 @@ are derived from these existing roster models, not separately sourced art.
 `step_rubber` and `slide_scrape` derive from retained project recordings plus generated
 filtered noise; their reproducible recipe is `tools/author_motion_foley.py`. Existing
 recording licences and attribution continue to apply. No paid assets were acquired.
+Amihan's `step_amihan` (2026-10-02) is original seeded synthesis from
+`tools/build_amihan_steps.py`, filtered noise only, with no recordings or samples.
 
 
 ### Dante contact timing, 2026-09-14

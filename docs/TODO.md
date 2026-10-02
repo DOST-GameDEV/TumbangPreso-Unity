@@ -75,11 +75,23 @@ release front. EditMode 4/4; native fixed-simulation films and checks in the
 [evidence](reports/amihan-presentation-2026-10-02/evidence.md). Delay, fan,
 contact and protocol unchanged; no SFX. Human approval and peers remain open.
 
-- [ ] AMIHAN-AIRBURST-FEEL-1002: chevron/edge contrast on light courts (thicker,
-  darker ink), lighter capiz-lit Vigan stage, palm diamond burst at release,
-  beat glints; one native film rerun with the existing fixture.
-- [ ] Drift, Featherfall, Whirlwind presentation units (Whirlwind and Drift floor
-  pieces likely share the under-tile anchor; check with a baseline film first).
+- [x] AMIHAN-AIRBURST-FEEL-1002 (native, not human approval): ink-weighted fan
+  strokes with edges inside the true limit, sigil kept at her feet, upright lunge
+  with palms forward on the 1.5 s release, bigger CALL, GATHER keeps her face, AIM
+  opens wider, lit Vigan stage. E3 4/4, P2 Airburst films 3/3 after two retained
+  product failures. Decoration (palm diamond, glints) not added.
+  [Feel pass](reports/amihan-presentation-2026-10-02/feel-pass.md).
+- [ ] AMIHAN-LIGHT-BODY-1002 (owner): light steps and a floating run, soles 12 to
+  19 cm up with level hips, soft settles into throw/tag/jump, toe landings, her
+  own seeded `step_amihan`. Native P2 passes (sprint 0.121 to 0.189 m, throw
+  settles over 0.27 s, own steps only). Open: owner listening and taste, name tag
+  clearance in a player view. Presentation only.
+  [Heights and every verb](reports/amihan-presentation-2026-10-02/light-body.md).
+- [ ] Drift: flying launch and catching foot shipped (face stays in frame; baked
+  byte-identically twice; filmed in the skills film). Featherfall and Whirlwind
+  bodies reviewed and kept. `FilmHerSkillsInAMatch` now fails at Featherfall: its
+  two Drifts carry her, holding a slipper, inside the box where the retrieval rule
+  refuses flight. Re-stage it, then baseline their floor anchors.
 
 ### PLAYER-RING-RADIUS-1002: larger hollow circle
 
