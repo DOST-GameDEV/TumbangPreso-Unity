@@ -172,3 +172,11 @@ test and evidence; then update/strike only the resolved ambience comment in
 Feedback. No listening claim. Next: larger player highlight ring, located in
 CharacterNameplate.cs and Catchable.cs. Amihan local Claude session is confirmed
 started (Opus5.5 Extra); keep that character out of this lane.
+
+City ambience shipped5db93c97 via10028284; same Feedback note and resolved
+comment strike verified. Release city audio/test paths. PLAYER-RING-RADIUS-1002
+claims Runtime/Visual/CharacterNameplate.cs and Tests/PlayMode/SwimmingNameplateTests.cs.
+Increase the ordinary hollow circle radius from1.375 to1.75 capsule radii
+(about27percent); keep the already larger1.95 taya role and2.1 catchable brackets.
+Check actual rendered open centre, visible rim and capsule-relative sizing.
+No gameplay/contact radius change. One graphics run, one bounded repair maximum.
