@@ -115,7 +115,11 @@ completed-arrival-receipt-io retains strict+classification hashes. Diagnostic
 SHIPPEDd28770a25 (separate from46runtime fix count).
 ROOT new1002j freeze7621 TERMINAL0/18905inputs in release source
 d28770a25504c8f6a069b429d8384af0ae4ff557. Nativebuild77760 TERMINAL0/restored/free,
-build12scenes2432MB86s; finalizer17757 ACTIVE; requested3072MB+
+build12scenes2432MB86s; finalizer17757 TERMINAL strictFALSE exact2 identities,
+artifactclassificationPASS/all18903of18905 original inputs unchanged. Runtime
+d75db25d1c5e6a1eb18fee96cf03cd2b56e674e6a5912b8f38ada6522258e37e.
+Fresh actualpeer96292 ACTIVE/ports9080/1/same120s ceiling; NO liveJSON reads.
+requested3072MB+
 2048reserve/600s; frozen inputs must not mutate. Includes46runtime fixes+observer
 IO+frame-context diagnostics;
 prior i failedpeer preserved, prior h PASS independent. j helper scripts prepared
