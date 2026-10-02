@@ -473,6 +473,11 @@ namespace TumbangPreso
             return held;
         }
 
+        private void OnApplicationFocus(bool focused)
+        {
+            if (!focused) DiscardMenuButtonsUntilRelease();
+        }
+
         private void OnDisable()
         {
             _readyUseHeld = false;
