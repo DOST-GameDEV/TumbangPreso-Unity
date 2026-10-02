@@ -1,0 +1,25 @@
+{
+  "synthetic_only": true,
+  "valid_trace_accepted": true,
+  "corruptions_rejected": {
+    "refresh": [
+      "host: drop/regrab refreshed the boost"
+    ],
+    "rate": [
+      "host: invalid duration or speed scale"
+    ],
+    "movement": [
+      "Actual owner travel is not1.2x"
+    ],
+    "endpoint": [
+      "Host/observer did not adopt final movement"
+    ],
+    "seat": [
+      "owner: missing continuous attacker identity"
+    ],
+    "expiry": [
+      "owner: invalid duration or speed scale",
+      "owner: passive did not retire"
+    ]
+  }
+}

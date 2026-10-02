@@ -1,0 +1,38 @@
+{
+  "passed": false,
+  "errors": [
+    "Owner lacks stable normal/boosted travel samples",
+    "host: retrieval and drop/regrab window not exercised",
+    "observer: retrieval and drop/regrab window not exercised",
+    "owner: retrieval and drop/regrab window not exercised"
+  ],
+  "measured": {
+    "host": {
+      "rows": 541,
+      "activeSamples": 0,
+      "regrabSamples": 0,
+      "finalPassive": 0.0
+    },
+    "owner": {
+      "rows": 535,
+      "activeSamples": 0,
+      "regrabSamples": 0,
+      "finalPassive": 0.0
+    },
+    "observer": {
+      "rows": 532,
+      "activeSamples": 0,
+      "regrabSamples": 0,
+      "finalPassive": 0.0
+    },
+    "finalPositionSpread": 0.10999999195337296
+  },
+  "runtimeSha256": "c48f85cb17978d14ae283de2e6ca905105a874282933fcfea4d13c78918828bf",
+  "link": {
+    "delayMs": 0,
+    "jitterMs": 0,
+    "loss": 0,
+    "seed": 52009
+  },
+  "scope": "Three actual linux peers on Eskinita; genuine retrieval, drop/regrab, measured movement and expiry. Staged input; no WAN/device/human approval."
+}

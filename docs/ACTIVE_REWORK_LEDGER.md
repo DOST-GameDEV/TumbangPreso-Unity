@@ -444,3 +444,22 @@ Next independent unit RAFI-BACKWASH-1002 owns only the exact paths in
 reports/rafi-backwash-2026-10-02/plan.md. Reuse existing genuine retrieval episode
 and passive channel; measure real movement and host budget before peer claims.
 No implementation started. Preserve every other contributor reservation.
+
+DOTS Backwash checkpoint: native codec4/4 plus actual actions4/4 pass; matching
+protocol132 Linux candidate builds884MB247s. Source remains UNCOMMITTED/UNSHIPPED.
+First actual Lagoon peer attempt timed out during cold prewarm/admission. The
+one repaired Eskinita route joins all3 but never throws from inheritedz=-6 inside
+7m restriction; passive not exercised. Both false results retained. Peer fixture
+budget exhausted; no unchanged retry and no Done. All jobs terminal/profiles
+restored. Exact owned paths stay reserved; report
+reports/rafi-backwash-2026-10-02/README.md. Continue independent Baha gap planning
+at reports/rafi-baha-2026-10-02/gap-analysis.md before a later coherent Rafi
+integration. No Baha production paths claimed yet; preserve other agents.
+
+DOTS next coherent implementation RAFI-BAHA-1002 owns the exact paths in
+reports/rafi-baha-2026-10-02/gap-analysis.md.0.8s warning,6m front crossing actual
+bounded court along aim,3m loose-shoe carry, grounded single nudge,15point cost.
+New Baha field18/recording13 preserve legacy Breakwater. Protocol132 stays
+unpublished with Backwash; no successful peer claim from the prior two false runs.
+Core geometry first, then new product/native/replay/presentation qualification.
+All other agents' ownership remains untouched; do not modify shared artifacts.

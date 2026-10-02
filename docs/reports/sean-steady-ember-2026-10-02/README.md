@@ -30,7 +30,8 @@ RPC, maximum power, score, cooldown, SFX or authored appearance change.
   Three existing generic contracts also pass. Only the malformed permanent-byte
   fixture offset changed because the new float follows it. No failed native runs.
 - Explicit compressed12scene Linux player build SUCCEEDED884MB258s; outer320s,
-  exit0. Memory guard requested termination during teardown; guard restored the
+  exit0. Memory warning fired at55s; the observer found no owned Editor in its process
+  group to stop. The build later completed normally, and the guard restored the
   named profile and released its lease. This is not clean memory-headroom proof.
 - Three actual matching Linux players pass the first scenario in44.01seconds,
   exit0 and no guard warning. Host366, owner361, observer360 samples. Each observes
