@@ -4112,6 +4112,9 @@ namespace TumbangPreso.Net
         /// the lobby, because the ids in it are the same durable tokens seating already uses.
         /// </summary>
         public void BroadcastMatchRecord(Core.MatchRecord record)
+            => SendMatchRecord(record, null);
+
+        private void SendMatchRecord(Core.MatchRecord record, ulong? peer)
         {
             if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
             if (record == null) return;
@@ -4127,7 +4130,10 @@ namespace TumbangPreso.Net
             using var writer = new FastBufferWriter(
                 FastBufferWriter.GetWriteSize(json) + 64, Allocator.Temp);
             writer.WriteValueSafe(json);
-            _nm.CustomMessagingManager.SendNamedMessageToAll("MatchRecord", writer, RecordDelivery);
+            if (peer.HasValue)
+                _nm.CustomMessagingManager.SendNamedMessage("MatchRecord", peer.Value, writer, RecordDelivery);
+            else
+                _nm.CustomMessagingManager.SendNamedMessageToAll("MatchRecord", writer, RecordDelivery);
         }
 
         private void OnMatchRecordMsg(ulong senderClientId, FastBufferReader reader)
@@ -5373,6 +5379,13 @@ namespace TumbangPreso.Net
                                                float timeLeft, int[] scores,
                                                bool inProgress, bool roundActive)
         {
+            var match = GameServices.Match;
+            if (!Finite(timeLeft) || scores == null || scores.Length != Balance.PlayerCount ||
+                roundNumber < 0 || (match != null && roundNumber > match.TotalRounds + 1)) return;
+            bool completedArrival = NetAuthority.ShouldRequest() && !inProgress && !roundActive &&
+                NetSession.Instance?.Lobby.MatchInProgress == true &&
+                GameServices.Round?.Players.Count == Balance.PlayerCount &&
+                match != null && match.IsCompletedSnapshot(scores, roundNumber);
             // ⚠️⚠️ A PACKET THE HOST WROTE BEFORE ITS OWN ARENA LOADED IS DROPPED WHOLE.
             // `MatchDirector.IsPreStartSnapshot` carries the full account and the quote;
             // `docs/TODO.md` § 82. In one line: the host keeps streaming `SyncWorld` at 5 Hz
@@ -5384,12 +5397,12 @@ namespace TumbangPreso.Net
             // The same `inProgress` goes to `RoundDirector.ApplySnapshot` on the next line, which
             // clears `RoundActive` and with it `CanAct`. Refusing the match half and applying the
             // round half swaps a phantom result board for a body that cannot move.
-            if (GameServices.Match != null && GameServices.Match.IsPreStartSnapshot(inProgress))
+            if (match != null && match.IsPreStartSnapshot(inProgress) && !completedArrival)
                 return;
 
             bool wasRoundActive = GameServices.Round != null && GameServices.Round.RoundActive;
 
-            GameServices.Match?.ApplySnapshot(scores, roundNumber, inProgress);
+            match?.ApplySnapshot(scores, roundNumber, inProgress, completedArrival);
             GameServices.Round?.ApplySnapshot(timeLeft, roundActive, defenderSlot, inProgress);
 
             if (!NetAuthority.IsHost && GameServices.Match?.RoundNumber == roundNumber && GameServices.Round != null)
@@ -6351,6 +6364,33 @@ namespace TumbangPreso.Net
                     if (Unit(slot)?.AbilitySystem?.Kit is Abilities.AmihanHeroKit)
                         SendTimedKitSnapshot(slot,(ulong)peerId,_worldFieldGeneration);
                 }
+            var completed = RetainedCompletedRecord();
+            if (completed != null) SendMatchRecord(completed, (ulong)peerId);
+        }
+
+        private Core.MatchRecord RetainedCompletedRecord()
+        {
+            var match = GameServices.Match;
+            var record = GameServices.Stats?.Last;
+            if (_loadingOwnArena || NetSession.Instance?.Lobby.MatchInProgress != true ||
+                match == null || match.MatchInProgress || match.RoundNumber <= 0 || record == null ||
+                string.IsNullOrWhiteSpace(record.MatchId) || record.Rounds != match.TotalRounds ||
+                record.Mode != UI.SceneFlow.SelectedMode.ToString() || record.MapId != UI.SceneFlow.SelectedMap ||
+                record.Players == null || record.Players.Length != Balance.PlayerCount) return null;
+
+            var scores = new int[Balance.PlayerCount];
+            int slots = 0;
+            foreach (var line in record.Players)
+            {
+                if (line == null || !ValidSlot(line.Slot) || (slots & (1 << line.Slot)) != 0 ||
+                    line.Score != match.ScoreFor(line.Slot)) return null;
+                slots |= 1 << line.Slot;
+                scores[line.Slot] = line.Score;
+            }
+            var board = new Core.Scoreboard();
+            board.SetAll(scores);
+            return match.IsCompletedSnapshot(scores, match.RoundNumber) &&
+                   record.WinningSlot == board.WinningSlot() ? record : null;
         }
 
         /// <summary>
