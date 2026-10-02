@@ -38,6 +38,18 @@ namespace TumbangPreso.Abilities
         public bool IsFrostbiteLoaded { get; set; }
         private bool _joiningFrostbiteSettled;
 
+        private CheskaFrostbiteCoating _loadedCue;
+
+        public override void Tick(AbilityContext context, float dt)
+        {
+            base.Tick(context, dt);
+            // Equipment may hydrate after the accepted timed-kit snapshot.
+            // This only follows the existing load; it never starts or refreshes it.
+            var held = context?.Carrier?.Held;
+            if (IsFrostbiteLoaded && held != null && (_loadedCue == null || _loadedCue.Shoe != held))
+                _loadedCue = CheskaFrostbiteCoating.Ensure(held.GetComponentInChildren<MeshFilter>(), held, this);
+        }
+
         public TimedKitSnapshot CaptureTimedKit()
             => new TimedKitSnapshot(AttackingSkill, IsFrostbiteLoaded ? AttackingSkill.DurationRemaining : 0);
 

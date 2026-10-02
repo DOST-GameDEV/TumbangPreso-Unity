@@ -618,6 +618,17 @@ FPP, glyph/wake/audio and actual matching peers remain open.
 [Plan](reports/hero-quality-2026-10-01/skim-implementation.md) and
 [evidence](reports/hero-quality-2026-10-01/skim-checks/README.md).
 
+### CHESKA-FROSTBITE-LOAD-1002: loaded-shoe surface cue
+
+- [x] Reproduce missing loaded cue with a real slipper and retain inactive/material control.
+- [x] Qualify the world/owner mesh overlay and lifecycle tests.
+  All five cases passed as sequential one-test native graphics runs, retaining
+  the same memory guard. Final branching-frost world/owner renders passed and
+  were inspected. Consumption returns the inactive image exactly. The failed
+  batch remains failed evidence; broader body/camera/audio review stays open.
+  [Plan](reports/cheska-frostbite-load-2026-10-02/plan.md) and
+  [result](reports/cheska-frostbite-load-2026-10-02/result.md).
+
 ### PHAISTER-HEX-1001: refine the hallucination presentation
 
 Owner-authorized exception to finalized-kit protection. Full-size grounded copies,

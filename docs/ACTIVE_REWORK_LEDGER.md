@@ -639,5 +639,9 @@ Owner explicitly prohibits touching their PC; continue cloud-only. Current
 Cheska actual-input rear/FPP baseline passes, but one front-camera repair was
 stopped by memory guard with no frames/XML. No more unchanged heavy retries.
 Next distinct scoped unit CHESKA-FROSTBITE-LOAD-1002 claims only paths in
-reports/cheska-frostbite-load-2026-10-02/plan.md. No production edits yet. Native
-small-world visual/lifecycle coverage before publication; preserve other lanes.
+reports/cheska-frostbite-load-2026-10-02/plan.md. Missing-cue baseline confirmed.
+After the owner's explicit RAM-workaround request, all five unchanged tests
+passed one per fresh Editor; final world/owner shader renders also passed and
+were inspected. Same memory guard, no PC use, no active jobs. Failed batch is
+retained. Publish this scoped cue with exact owned paths; broader body/camera
+and SFX work stays open. See result.md and final-input-sha256.json.
