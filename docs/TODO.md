@@ -130,13 +130,14 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
-Latest checkpoint:45 root continuity fix units published through42e0d48e9.
+Latest checkpoint:46 root continuity fix units published through99f6b2994.
 ONE new Sol6.1HIGH helper +root implementation; prioragents retired. Currenth41
 protocol132/record13 build+actualWindowspeerPASS, laterSafe42/Touch43/diag not in it.
 Root1002i coherent build16487 TERMINAL0/2432MB92s; artifact classificationPASS,
 18899of18901 inputs unchanged/exact2 generated identity changes retained.
-Root slide disable lifetime original64655=1causal failure/2controls; candidate10107
-ACTIVE/exact3/no repairs after direct prep exit0. One-line source cleanup pending.
+Root slide disable lifetime shipped99f6b2994; original64655=1causal failure/
+2controls; candidate10107 PASS3/no repairs/post72297 exact3/all18868 protected.
+Fresh1002i actualpeer55528 ACTIVE, source45fixes; slide46 excluded from artifact.
 DirectHostlunge
 lifetimeproof3/3 shipped; helper candidate35856 TERMINAL PASS3 on confirmed
 SafeStore failedpromotion->laterwrite edge; original45036 had1causal failure/
@@ -169,6 +170,9 @@ failedpracticehelper never revived.
 - [x] TRAINING-PAUSE-TRANSITION-1002: shippedf33e1d8a7, native3/3 after1causal/
   2controls, zero repairs/exact3/protected12527. [Evidence](reports/reliability-2026-10-02/training-pause-transition/README.md).
 - [x] LUNGE-DISABLE-LIFETIME-1002: shipped0747f1a44, directpublicAPI native3/3 after1causal/2controls, zero repairs/protected12537. [Evidence](reports/reliability-2026-10-02/lunge-disable-lifetime/README.md).
+- [x] SLIDE-DISABLE-LIFETIME-1002: shipped99f6b2994, actualHostResolveSlide/body
+  disable native3/3 after1causal/2controls; zero repairs/exact3/all18868 protected.
+  Cooldown/clock-hold preserved. [Evidence](reports/reliability-2026-10-02/slide-disable-lifetime/README.md).
 - [ ] PRACTICE-BOT-RESUME-1002: actual operator qualification remains OPEN;
   old fixture route retired after two flaws. Underlying contact lifetime fixed by
   separately qualified LUNGE-DISABLE-LIFETIME-1002; old failed evidence retained.

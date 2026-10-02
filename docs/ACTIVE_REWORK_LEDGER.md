@@ -19,7 +19,7 @@ preserve finalized Paete/Phaister and active Sean/Rafi/Baha reservations.
 
 ## Published code and acceptance
 
-Verified remote42e0d48e9:45 root continuity runtime fix units;
+Verified remote99f6b2994:46 root continuity runtime fix units;
 protocol132/recording13 after qualified incoming Rafi4a9afbd90, integrationa67d7bc5b. Latest units:
 32chat guards3e91f02b0/native10;33scorecard owner84ddfc391/native3;34RecordChoice
 57158d1db/native3;35cold actor12a2689ff/native3;36scorecard focus7c3124886/native3;
@@ -87,7 +87,17 @@ freeze46168 TERMINAL0, build16487 TERMINAL0/2432MB92s/guardsrestored/leasefree;
 finalizer38041 TERMINAL strictFALSE: exact2 generated identities changed;
 artifact classificationPASSED/18899of18901 unchanged/no other drift.
 Runtime c25ee4446e0107ae5afa6d868ed1c595588e29b7901ea72e9fe36a7b0e95db43.
-New artifact1002i contains45fixes+diag; actualpeer pending, slide investigation
+New artifact1002i contains45fixes+diag; actualpeer55528 TERMINAL FAILED120s,
+natural hostend/clientlaterMatchSetup. Sharing violation in opt-in observer Save
+escaped Ended->MatchDirector.ApplySnapshot; particular concurrent reader unknown
+(probe reads and root live receipt inspection both present). No ordinary shipping
+transport regression claim. Raw peer-first retained; owned25072/6540 dead/input+
+seeds restored/runtime unchanged/no lease. Priorh peerPASS retained. Root owns
+NetCompletedArrivalProbe and NEW Tests/CompletedArrivalReceiptIoTests.cs/meta;
+MAIN-only candidate nonthrowIO/sharedreader fix +3 owned-temp nativecases ready.
+Actual failedWindowspeer is original causal evidence; planONE candidate3 rather
+than repeat originalpeer/broad suites. Do not qcopy/run until agent releases.
+Slide investigation
 excluded. Priorh actualpeer evidence preserved independently.
 Build requested3072MB+2048reserve/600s. One preflight --output
 file-vs-directory correction refused before launch; no native/source/build retry.
@@ -97,7 +107,9 @@ source-only active-window lifetime investigation after body disable. Production
 unchanged pending baseline. Exact3 qualification preparation15177 TERMINAL0,
 Logs/slide-disable-lifetime1002/prepare.py (MAIN) protects all other q inputs.
 Baseline64655 TERMINAL:1intended causal failure/2controls passed, guardrestored/free.
-Candidate10107 ACTIVE after prep exit0, same exact3 fixture, zero repairs;
+Candidate10107 TERMINAL PASS3/restored/free after prep exit0, same exact3 fixture,
+zero repairs; post72297 TERMINAL0/exact3/all18868 protected unchanged. Native
+component boundary qualified;46th unit SHIPPED99f6b2994/exact3 native/no repairs.
 ONE source line clears slide contact alongside lunge on body disable.
 GPU1536/reserve2048,
 450s/PlayMode-nographics/filter SlideDisableLifetimeTests/exact3 expected.
@@ -106,6 +118,13 @@ assertions or wait for expiry. Agent must not copy q assets or launch native.
 No private timer
 assignment/expirywait/travel/tag claim; preserve spent cooldown and clock-hold.
 Latest onehelper authorization persists; retiredagents neverwake.
+Helper MAIN-only next fixture Tests/TouchLayoutNullListTests.cs/meta ready,
+Runtime/Input/TouchLayoutStore.cs unchanged. Snapshot/restore exact preference
+key/cache/Revision; Tweaks:null causal probe plus2ordinary controls. No q prep
+original72038 ACTIVE after exact3prep0,CPU1536/reserve2048/450s/EditMode,
+protected12543/filter TouchLayoutNullListTests. Agent owns native/q; root source
+disjoint only. If original passes, retire
+finding without patch; NaN suspicion excluded. No new helper/extra schema.
 
 h build34064 TERMINAL0/12scenes2432MB90s. Freeze15412/post88799 TERMINAL:
 18891inputs18889unchanged/exact2generatedidentity outputs. OriginalstrictFALSE

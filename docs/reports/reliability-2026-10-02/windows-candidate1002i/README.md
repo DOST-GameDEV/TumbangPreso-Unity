@@ -24,6 +24,19 @@ manifest and Unity log remain in release Logs/competition-candidate1002i.
 
 This qualifies compilation and the frozen artifact. The previous1002h actual-peer
 acceptance remains evidence for that older artifact; new1002i peer acceptance is
-pending. SafeStore unit tests qualify Windows Editor owned temporary files;
+FAILED first55528:120-second timeout after natural end. Client log records an
+IOException sharing violation in NetCompletedArrivalProbe.Save called by Ended,
+which escaped into MatchDirector.ApplySnapshot/MatchRpc snapshot handling. Receipt
+readers use sharing modes that can reject a concurrent writer; root also inspected
+live receipts, so attribution to any particular reader is unproven. Client later
+reached MatchSetup; neither peer satisfied completed-arrival acceptance. No rerun
+of this artifact or source repair is hidden. Raw first-run receipts/logs accompany
+peer-first. Both owned players25072/6540 retired, input and two namedprofile seeds
+restored, runtime unchanged and GPU lease released.
+
+This exposes an opt-in diagnostic IO fault, not proof of ordinary shipping-mode
+match failure or transport regression. A separate observer IO correction is being
+qualified before a new artifact;1002i peer acceptance remains failed. SafeStore
+unit tests qualify Windows Editor owned temporary files;
 building this player does not execute its save recovery or real account flows.
 The subsequent slide lifetime investigation is not part of this artifact.
