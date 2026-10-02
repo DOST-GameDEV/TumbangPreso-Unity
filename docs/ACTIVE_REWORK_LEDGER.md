@@ -24,41 +24,72 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Prior engineering publication verified ece6ee930 (nine product units). Local
-source c2326d5bf includes root panel d80c4f455 and social cache c2326d5bf; both
-await integration/push. Remote c6b330963 adds contributor ring/Sean reservations.
-Social-owner4/4 is published with clean-build receipt. Core691/691 after adopted-Zapped
-assertion correction; no runtime values changed. Pre-existing PNGs preserved and
-incoming contributor work integrated intact. No resets/cross-chat/paid tools. Latest owner explicitly authorized two subagents.
+Latest verified engineering publication13c201e0a. Main qualified source70370785e
+adds hub admission/rematch ballots/friend handler; tool/checkpoint7bc205c24 adds
+capped serial job coordination (50 local tests). These await merge/push with
+remote6b4dca865 Sean refinement/reservations. No runtime ART changes authored here.
+Fourteen product fix units qualified this resume;11 confirmedpublished,3 queued.
+Core691/691 unchanged; neither narrow checks nor clean-start build are whole
+competition readiness. Latest API/UI/input candidates remain uncommitted.
 
 ## Active job and exact next action
 
-Root panel fix committed d80c4f455, not yet confirmed published; remote advanced
-with unrelated changes. Baseline0/2 reproduced; admission/cancellation final2/2.
-Unavailable final failed ONLY expected UTP log; one bounded fixture correction,
-isolated rerun1/1. Three distinct acceptance cases pass. First failed XML retained.
-Native sessions53471/22420/4875 terminal, profile/input guards restored.
+Astra ACK baseline POOL session15190 ACTIVE WAITING (ownerPython3204, job
+b04ea920f019410f91a7af9fadc266fd, guardPIDnull/native0). Expected2actualofflineUI
+button cases, unique recent-player-ack1002 profile, Logs/recent-player-ack1002/
+baseline in qualification. Foreign Amihan replaced9988 with18024/import22080;
+lastfreeRAM1.69GiB. Pooldefaultserialwait300s/timeout450, noforeignkill/parallel. Never kill/contact that lane. Check
+live process before any new native/build; named profiles do not isolate shared
+Editor input preferences while default company/product is the same.
 
-Social cache c2326d5bf committed: baseline46175 reproduced6 failures (5/11pass),
-final85162 passed8; guest3 failed ONLY absent EditMode OnEnable invocation.
-One bounded lifecycle fixture repair, retry74528 guest3/3; 11distinct acceptance
-cases across two final XMLs, not one clean combined run. Runtime hash unchanged;
-guards restored, all jobs terminal. Sol now investigates disjoint rematch/result
-recovery defects without a heavy job. Signed-in dispatch remains source-inspected.
+Published engineering through13c201e0a: root join panel d80c4f455 (3distinct cases),
+Sol social cache c2326d5bf (11distinct passing cases across2finalXMLs). Local
+qualified commits awaiting publication: Astra hub admission c63bea7b0 (1/1), Sol
+rematch departed ballot7cbc65262 (4/4), Astra friend handler70370785e (2/2).
+Friend's old row-lookup fixture was retired afteronecompilefix/twopre-dispatch
+failures; fresh direct production-handler approach proved causal0dispatch→1,
+retainedrefusal/hostedBack/cancel. No physicalclick/service-peerclaim.
 
-Astra owns product Friend JOIN fix: PlayerHub.cs, Hub/HubCustom.cs, exact
-ConvertedMatchSetup.Hub.InRoom + NetSession.IsAdmitted and new
-PlayerHubFriendJoinTests.cs/.meta. Friend action reloaded HOME without joining;
-hub auto-entered on listening before admission. Candidate/snapshots ready in main
-Logs/friend-join-1002-inputs. Astra EXCLUSIVE native slot: baseline90938 compile
-failed before XML because SceneHandle is not int. ONE bounded fixture repair:
-use inferred SceneHandle, snapshots identical; repaired baseline21838 ACTIVE,
-Logs/friend-join-admission1002 in qualification, friend-join-admission1002 profile.
-Next inspect actual3case baseline, then final exactly3cases; no extra tooling retry.
-Root may publish completed units while this frozen job runs; do not mutate checkout.
-Root owns evidence/shared ledger/publication. No diagnostic edits now.
-User requests acknowledged: Sol HIGH overrides initial ultra; Astra may code too;
-all three implement, continuous work, durable checkpoints, no validation loops.
+Latest owner correction: three agents coding separate things is the goal; parallel
+Unity is OPTIONAL. Do not spend time forcing two heavy Editors on16GB. Capped
+infra source ready: Root run_unity_guarded/playerprefs_guard +tests18pass;
+Sol NEW run_unity_job.py +tests21pass (defaultSERIAL, isolatedCPUparallelopt-in);
+Astra NEW prepare_unity_test_workers.py +tests9pass. No workers/Librarycopies or
+nativeparallelproof created. Root owns review/docs/publish, no moreframework work. ActualoutsideEditorrefusal
+provedwithoutguard/native launch (reportlocal-test-coordination); infrastructure
+commit7bc205c24. BothisolatedCPUjobsoverlaprequiresopt-in; defaultSERIAL.
+
+Next PRODUCT unit RECENT-PLAYER-ACK-1002: current result buttons claim REQUEST SENT
+or REPORTED immediately after asyncvoid call, even offline/faulted/refused.
+Root owns MatchResult.OwnerPainted.cs +NEW RecentPlayerActionTests.cs/.meta;
+baseline UI snapshot Temp/tump-recent-actions-ui1002/MatchResult.OwnerPainted.baseline.cs.txt.
+Candidate awaits bool acknowledgement, keeps pending disabled, restores retries/
+failure guidance, rejects changed-owner success. Prepare actualoffline-row2case
+baseline plusfinalcontrolledpending/ack/false/stale/destroyedcases. Do not accept
+missing newhelper as a causal baseline. Fakeaccount/currentStats/row only, noSDK.
+Sol owns SocialStore.cs REQUEST ACK API +4methods/13cases CareerAndCloudCodeTests;
+frozen baseline Temp/tump-social-ack1002-48e672e9a55d42c180b0fd97fcb29e7c;
+new RequestAsync bool requires current-owner reply confirming outgoing/friend.
+Astra owns CareerStore.cs REPORT SECTION ONLY +NEW CareerReportAcknowledgementTests
+(22parameter cases); frozen main Logs/career-report-ack1002-inputs. New ReportAsync
+bool requires exact applied:true +same account/ref/ID, signedin/nonguest. Legacy
+voidwrappers retained. API suites final-only: oldAPI absent is not product proof.
+Root/Astra coordinate actualUIbaseline2 thenjointfinal41 (UI6/API22/API13),
+ONE heavyjob afterforeignGPUidle. FinalAPIcandidates usedinBOTHphases: legacyvoid
+wrappers arecompatibleoldUI, whichstillclaimsfalse success. Do NOT restoreoldAPI
+or countmissingnewhelper asbaselineproof. Qualification11explicitACK/guardpaths
+frozen,13protectedhashesunchanged, prepareexit0; no editswhilequeued/active.
+Rootpublishespreviouslyqualified3units/toolswhileAstrawaits/nativechecks. Sol
+nowownsTumpSettingsSession.cs +focusedControllerSupportTests forCancel outcome
+Escape leak: legacyMenuNav seesEscapeafterListeningfalseandnavigatesBack. Tiny
+ConsumeEscape stamp onCancelled only, no inputbinding change; preparebaseline/
+control, no nativeuntilgrant. Allagentsgivenconcretework; do notspinemptyaudits.
+
+Release checkout advanced to13c201e0a without reset; preserved206importer/generated
+paths, CSharpdirt0, old7342 artifact intact. NEXT coherentplayer afternewsourceunits
+published: FF qualifiedcommit, freezeinputs, guarded newBuilds directory, onebuild,
+then actual supportedoperator/fullHero or failure-recovery case. No legacywholeUI
+harness repair. Private arms/Supernova/Ultra/twoUI metas remain excluded.
 
 Hero boundary reconnect run on frozen release2664 completed session96098 exit1;
 raw FALSE solely expected-seat aggregate, preserved Logs/competition-hero-rejoin1002.
@@ -211,22 +242,16 @@ Check actual rendered open centre, visible rim and capsule-relative sizing.
 No gameplay/contact radius change. One graphics run, one bounded repair maximum.
 
 
-AMIHAN-AIRBURST-PRESENTATION-1002 (owner-authorized local session for Amihan
-direction/body/FPP/VFX/cutscene only; NO SFX creation or mixing anywhere). Claims
-Airburst presentation only: HeroAbilityClips.Amihan.cs BuildAmihanStorm, baked
-Art/characters/amihan-motion/hero-amihan-storm.anim (GUID kept), Editor/
-AmihanMotionAuthor.cs storm bake entry, ViewmodelArms.cs StormCallClip and
-ViewmodelArms.CastGesture.cs storm-call entry only, AmihanVfx.cs AmihanStormFan,
-HeroIntroductionScene.Amihan.cs, tools/author_ultimate_intros.py amihan() and its
-generated Resources/UltimateIntros/amihan.txt, Editor/MapKit/AmihanReviewProbe.cs,
-new Tests/PlayMode/AmihanKitPlayProbe.AirburstFilm.cs and EditMode
-Tests/AmihanAirburstPresentationTests.cs, report
-docs/reports/amihan-presentation-2026-10-02. Keep intro 3.6s (shared phase
-timing), 1.5s delay, 60degree fan, contact and protocol unchanged. Found: live
-body/FPP release keyed at old 2.5s while gameplay releases at 1.5s; cutscene shows
-a release before the live gather. Validation in own detached worktree
-Codex/work/tump-amihan1002, profile amihan-airburst1002, after the active Hero
-reconnect job ends. Drift/Featherfall/Whirlwind not claimed yet.
+AMIHAN-AIRBURST-PRESENTATION-1002 (owner-authorized Amihan presentation lane;
+NO SFX work anywhere). Airburst unit validated and published with its owned
+paths only (see TODO entry and report evidence.md). Baseline reproduced three
+shipped defects: cutscene threw while built (never shown), windup fan drawn under
+Bayan Plaza tiles, body/FPP release 1 s late. EditMode 4/4; native films with
+fixed simulation; one bounded baseline retry and one product-fix rerun used.
+Intro 3.6 s, 1.5 s delay, 60 degree fan, contact, protocol unchanged. Validation
+worktree Codex/work/tump-amihan1002 holds import churn and logs only, never
+committed. Lane continues on another PC: next AMIHAN-AIRBURST-FEEL-1002 (TODO),
+then Drift/Featherfall/Whirlwind units, each claimed before editing.
 
 PLAYER-RING-RADIUS-1002 final Low-profile native1/1 passes in3.31s, outerexit0
 and guard null40s. Both hollow-role captures inspected. First ordinary-profile
@@ -243,3 +268,7 @@ Do not change mechanics, other clips or Amihan. Reuse actual-input capture on
 Low with fixed simulation and labelled longer film; no real-time/audio claim.
 First capture decides the narrow authored change, no decorative rewrite by default.
 
+AMIHAN-AIRBURST active 10:55: heavy job = own detached worktree Codex/work/
+tump-amihan1002 (Library seeded by copy, read-only from release checkout), profile
+amihan-airburst1002; baseline films then storm bake then final. Also claims one
+Amihan case in Tests/PlayMode/UltimateIntroductionProbe.cs. Other lanes: wait.
