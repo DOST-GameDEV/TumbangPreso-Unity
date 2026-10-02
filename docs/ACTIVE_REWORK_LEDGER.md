@@ -19,7 +19,7 @@ Sean/Rafi/Baha reservations preserved. One heavy native/player job at a time16Gi
 
 ## Published fixes and current artifact
 
-Verified remote f8ca7b72c.48 runtime fix units, source48=55f2a5f79/source47=56446ad7c.
+Verified HEAD/remote d09a2a4ff.48 runtime fix units, source48=55f2a5f79/source47=56446ad7c.
 Protocol132/recording13 after incoming qualified Rafi4a9afbd90/integrationa67d7bc5b.
 Core704/704 proof7648 retained; no unchanged broad-suite/full8round repeat.
 
@@ -75,7 +75,25 @@ Root framecontext8ba8fa76f FIRST2 diagnostic, not270ms cause/FPS fix.
 
 ## Current next task and precise ownership
 
-ALL root native/test/player handles TERMINAL, no held slot/process to resume.
+Prior root native/test/player handles TERMINAL. New48-source1002k build ACTIVE;
+freeze9852 TERMINAL0/18909inputs/source d09a2a4ff33867c459901263c548b39039f49325.
+Release C#clean beforefreeze/importer dirt preserved; no release mutations during
+build. Requested3072MB+2048reserve/600s, internalBuilds/competition-candidate1002k.
+Native58413 TERMINAL0/12scenes2432MB88s/restored/free; finalizer25532 TERMINAL:
+18909inputs18907unchanged/exact2generated identities, strictFALSE retained,
+separateartifactPASS. Runtime2c662597fd8db4916fa48b87a60d6bd2355735bf8544e667a08f37a07734a5b3.
+Current1002k contains48 fixes; priorj actualpeer/failurepath proofs stay separate.
+Root solo
+currently; helper completed latest work, no new worker/resume. Remaining queue
+reconciliation completed (stale ACTIVE records corrected). Bounded source icon
+check found declared fallback/no concrete availability defect; no art changes.
+ROOT NEW input-focus-lifetime source investigation: PlayerInputReader has no focus
+hook, toggleSprint/buffered recovery potentially survive blur. NEW PlayMode/
+InputFocusLifetimeTests.cs/meta uses actualTouchInput/reader +UnitySendMessage
+focus callback (no physicalOS claim),2causal/1normal toggle control. Production
+unchanged; qprep72054 ACTIVE exact3, no native launch before terminal0.
+MAIN Logs/input-focus-lifetime1002/prepare.py protects other q inputs; oldCarrier
+HeroKit compatibility ownership remains retained as recorded. No overlap worker.
 SOLE helper now owns ONLY new tools/run_host_loss.py +host-loss-real-peer report.
 Source reviewed, ONE native20612 TERMINAL FIRST PASS66.609s/no repairs:
 verifiedlive host25496 killed20.719s/client17.453s; client26120 exited0 after

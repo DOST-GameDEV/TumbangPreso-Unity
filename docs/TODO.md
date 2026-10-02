@@ -130,50 +130,41 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
-Latest source:48 root continuity fix units through55f2a5f79; current1002j artifact
-contains46 plusdiagnostics and predates47/48.
-ONE new Sol6.1HIGH helper +root implementation; prioragents retired. Currenth41
-protocol132/record13 build+actualWindowspeerPASS, laterSafe42/Touch43/diag not in it.
-Root1002i coherent build16487 TERMINAL0/2432MB92s; artifact classificationPASS,
-18899of18901 inputs unchanged/exact2 generated identity changes retained.
-Root slide disable lifetime shipped99f6b2994; original64655=1causal failure/
-2controls; candidate10107 PASS3/no repairs/post72297 exact3/all18868 protected.
-Fresh1002i actualpeer55528 FAILED120s, source45fixes; slide46 excluded. Original
-observer receipt-write sharing violation interrupted snapshot handler, raw retained.
-Root diagnostic IO SHIPPEDd28770a25/native99649 FIRST3; original18424 protected
-unchanged/exact3 source match plus new owned import metadata classification.
-ONE preparation coordination correction for retired helper fixture/meta.
-New1002j freeze7621 TERMINAL0/18905inputs; nativebuild77760 TERMINAL0/2432MB86s,
-46runtime fixes+diagnostics; finalizer17757 TERMINAL/artifactPASS/18903of18905
-unchanged/exact2 generated identities. Freshpeer96292 FIRST PASS/120s/no liveJSON
-read; newscene/end/record/all4 frozen/NONspectator, ownedPIDsdead/restored/free.
-Current46fix artifact acceptance: [Evidence](reports/reliability-2026-10-02/windows-candidate1002j/README.md).
-Next: sole helper lunge windup retirement original96494=2causal/1control;
-candidate64944 FIRST PASS3/+3cleanup lines/exact3/protected12547/zero repairs.
-Lunge windup47 committed56446ad7c. [Evidence](reports/reliability-2026-10-02/lunge-windup-lifetime/README.md).
-RootCarrier29117 compileFAIL/no XML due old qHeroKit API; ONE owned dependency
-compatibility repair/current base4 API members, MAIN unchanged. Corrected
-original24020=2actual causal failures/1ordinary control. Candidate93894 ACTIVE
-48Carrier committed55f2a5f79; candidate93894 FIRST PASS3 after prep0/exact4;
-OnDisable calls existingCancelAll, identicalfixture, post78275/all18428 protected.
-Native/q free. [Evidence](reports/reliability-2026-10-02/carrier-disable-lifetime/README.md).
-One new actualWindows host-loss20612 FIRST PASS66.609s on currentj46 artifact:
-livepair verified beforecapturedhostkill; clientMatchSetup/inactiveRound0/
-HostLost1of1/no fabricatedendrecord; ownedPIDsdead/restored/runtimeunchanged/free.
-Host-loss evidence/code committedb0dcee774; all12 source/raw hashes match.
-No repeat/newbuild. [Evidence](reports/reliability-2026-10-02/host-loss-real-peer/README.md).
-GPU2048/reserve2048/450s/PlayMode-nographics/exact3. Native slot root-owned.
-root disjoint Carrier retirement fixture draft/source unchanged. No reused retired
-practice fixture, private timers or unchanged full-match tests; coordinate native.
-Helper touch null-list original72038 PASS3, suspicion not reproduced; no store
-patch or repeat. Finding-only report/fixture retirement complete; native slot free
-then transferred to root. [Evidence](reports/reliability-2026-10-02/touch-layout-null-list/README.md).
-DirectHostlunge
-lifetimeproof3/3 shipped; helper candidate35856 TERMINAL PASS3 on confirmed
-SafeStore failedpromotion->laterwrite edge; original45036 had1causal failure/
-2controls pass, exact7/protected12535/zero repairs.
-Retired
-failedpracticehelper never revived.
+Latest source48=55f2a5f79,47=56446ad7c; all owned changes published through
+d09a2a4ff. The goal remains ACTIVE. Root is working solo this continuation;
+the one authorized helper completed its latest bounded work, earlier agents retired.
+
+Current tested1002j contains46 fixes+diagnostics/protocol132/recording13, source
+d28770a25504c8f6a069b429d8384af0ae4ff557. Build77760 PASS12scenes2432MB86s,
+artifact classificationPASS/18903of18905 inputs unchanged/exact2 generated IDs.
+Fresh Windowspeer96292 FIRST PASS: normal result->HOME->cold rejoin/new scene/
+same record/all4 actors frozen. Separate actual host-loss20612 FIRST PASS66.609s:
+live pair before captured hostkill, surviving client inactiveRound0/MatchSetup/
+HostLost1of1/no fabricated End/Record. All owned players retired/input+profile
+seeds restored/runtime unchanged/leasefree. No full-default/physical/WAN claim.
+[Artifact](reports/reliability-2026-10-02/windows-candidate1002j/README.md),
+[Host loss](reports/reliability-2026-10-02/host-loss-real-peer/README.md).
+
+New coherent1002k freeze9852 TERMINAL0/18909inputs/source d09a2a4ff; build58413
+ACTIVE/3072MB+2048reserve/600s, includes the two post-j fixes together. Frozen
+release inputs must not mutate; wait build terminal before finalizer/classifier.
+No unchanged Core/fulltournament/hostloss repeats required for these lifecycle fixes.
+
+47Lunge windup56446ad7c: original96494 two causal/one control;64944 FIRST PASS3,
+exact3/protected12547/no repairs. [Evidence](reports/reliability-2026-10-02/lunge-windup-lifetime/README.md).
+48Carrier55f2a5f79: original24020 two actual ghost-throw/old-tell causals/one control;
+93894 FIRST PASS3/post78275 exact4/all18428 protected. ONE qHeroKit API dependency
+repair after compile29117/noXML; MAINHeroKit unchanged, original snapshots kept.
+[Evidence](reports/reliability-2026-10-02/carrier-disable-lifetime/README.md).
+Prior1002i timeout55528 remains retained; observer diagnostic d28770a25 fixed IO
+callback escape before new1002j succeeded. Touch-null suspicion72038 passed3 on
+unchanged source, fixture retired/no patch/repeat. Prior practice fixture remains
+retired; actual SetBot operator not newlyqualified. All those jobs TERMINAL.
+
+This is competition engineering/bug-fixing; preserve contributor loading and
+finalized designs. TODO is the sole status queue; precise handles, input ownership
+and preservation rules are in ACTIVE_REWORK_LEDGER.md. Continue actual fixes and
+coherent releases, bounded checks and raw failures; no full readiness claim yet.
 
 - [x] SCORECARD-OWNER-CLOSE-1002: hide old account detail on ownership change;
   shipped84ddfc391, PlayMode3/3. [Evidence](reports/reliability-2026-10-02/playerhub-owner-detail/acceptance.md).
