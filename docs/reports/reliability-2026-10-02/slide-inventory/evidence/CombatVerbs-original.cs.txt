@@ -578,7 +578,7 @@ namespace TumbangPreso
             Slipper best = null;
             float bestDistance = float.MaxValue;
 
-            foreach (var s in BotSlipperInventory.All)
+            foreach (var s in FindObjectsByType<Slipper>(FindObjectsSortMode.None))
             {
                 if (s == null || !s.IsGrabbableIgnoringReach(_motor)) continue;
 
@@ -689,7 +689,7 @@ namespace TumbangPreso
             Slipper best = null;
             float bestDistance = float.MaxValue;
 
-            foreach (var s in BotSlipperInventory.All)
+            foreach (var s in FindObjectsByType<Slipper>(FindObjectsSortMode.None))
             {
                 if (s == null) continue;
 

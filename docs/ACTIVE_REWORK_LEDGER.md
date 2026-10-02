@@ -6,11 +6,35 @@ Previous complete checkpoint archived before_host_loss_peer_2026-10-02.
 
 ## Current scope and workers
 
+Root solo continuation: no subagents will be resumed. Current HEADdc6f5d715
+includes the incoming qualified Cheska held-shoe presentation; preserve that work.
+NEW slide-inventory1002 owns only Runtime/CombatVerbs.cs and existing
+Tests/PlayMode/RetrievalSlideTests.cs. Question: can the established slipper
+inventory remove repeated scene-query cost from slide prediction/sweep while
+preserving eligibility, birth/destruction, activation, pickup and wall refusal?
+Original and candidate each run the same six selected native PlayMode cases,
+named isolated profiles, graphics, one heavy job, at most one tooling repair.
+Prediction timing uses seven warmed5000-call batches; heap growth is an estimate,
+not exact allocation. No historical270ms-cause claim. Preparation19356 TERMINAL/exact2.
+Original93664 TERMINAL timeout450/noXML; owned25108/3816 stopped, preservation
+completed/leasefree. ONE fixture repair sets/restores solo provider/requested
+clock and bounds scaled waits10wallseconds. Same six cases/assertions, no product
+change. Corrected original7466 TERMINAL6/6; candidate15335 TERMINAL FIRST6/6,
+same corrected fixture003770be2a959b2970b36b1dff5f49d5f7eb908cfbc856cb3854e86ac060de2e.
+Two production scene queries now use BotSlipperInventory.All. Warmed prediction
+17.12962 to9.41678microseconds/call (45.03percent reduction in fixture).
+Both guards preserved profiles/input and released leases. Post snapshot18434
+protected assets unchanged/exact2 MAIN and qualification matched. No active
+native/player job. Pending exact publication; report slide-inventory. NEXT:
+coherent current candidate/readiness evidence, including incoming Cheska work;
+historical270ms cause remains open. Do not rerun this unchanged focused suite.
+All other qualification source is protected by the existing preparation snapshot.
+Private owner edits and generated churn remain excluded from publication.
+
 Make ASTRAReworks competition ready through engineering/bugs/reliability/performance/
-current UX defects. Root implements, integrates and pushes. EXACTLY ONE authorized
-GPT6.1SolHIGH helper sol_parallel_engineering completed its latest bounded unit;
-available for a concrete follow-up. Old Astra/Sol retired, never
-wake them/spawn extra without new authorization. FAST toggle absent/not claimed.
+current UX defects. Root implements, integrates and pushes solo. Previous helpers
+completed their units; the active objective prohibits resuming or spawning them.
+FAST toggle absent/not claimed.
 No cross-chat actions, reset/clean/stash/forcepush, paid services, Drive dev uploads
 or Desktop build replacement. Preserve private/user work. DOTS owns Docs feedback,
 friend broad loading; specific preview/shader availability bugs allowed. No visual/

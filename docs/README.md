@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Slide prediction and retrieval inventory optimization: [native timing and behavior evidence](reports/reliability-2026-10-02/slide-inventory/README.md).
+
 Read only the current route needed for the task. Full history is retained, but
 old prompts, counts and work orders are not current instructions.
 

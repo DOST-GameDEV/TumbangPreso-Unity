@@ -330,6 +330,12 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
 - [x] SLIDE-INTERRUPTION-1002: interrupted pickup sweep cannot resume after recovery;
   shipped3bbc90c61 native4/4 after three causal failures; pause/timing preserved.
   [Evidence](reports/reliability-2026-10-02/slide-interruption/README.md).
+- [x] SLIDE-INVENTORY-COST-1002: reuse existing slipper inventory for prediction
+  and host retrieval sweep. Same six native controls pass before/after; warmed
+  prediction median17.13 to9.42microseconds/call (45.03percent lower in fixture).
+  One original fixture timeout and one bounded clock/provider repair retained.
+  No player FPS or historical stall attribution claim.
+  [Evidence](reports/reliability-2026-10-02/slide-inventory/README.md).
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow
