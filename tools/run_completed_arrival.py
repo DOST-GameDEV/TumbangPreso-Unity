@@ -95,6 +95,7 @@ def main():
     parser.add_argument("--source-commit", required=True)
     parser.add_argument("--runtime-sha", required=True)
     parser.add_argument("--build-receipt", type=Path, required=True)
+    parser.add_argument("--chat", help="Optional local-peer UTF-16 chat marker to verify both receive callbacks")
     parser.add_argument("--graphics-api", choices=("d3d11", "default"), default="d3d11",
                         help="default leaves the packaged renderer order in charge")
     args = parser.parse_args()
@@ -130,6 +131,8 @@ def main():
               "runtimeSha256": before_hash, "sourceCommit": args.source_commit, "buildReceipt": str(args.build_receipt.resolve()),
               "graphicsApiRequested": args.graphics_api,
               "scope": "Short custom 1-round/30-second direct-peer cold completed arrival; MAIN MENU gives up the prior seat, so no retained-seat/full-default-match/physical-input claim."}
+    if args.chat:
+        result["chatRequested"] = args.chat
 
     def launch(role):
         route = ["-tp-lobby", "-tp-lobbyport", str(args.port)] if role == "host" else [
@@ -139,6 +142,8 @@ def main():
                    "-tp-framecap", "60", "-tp-profile", profiles[role]["name"], "-tp-autostart", "2",
                    "-tp-completed-arrival", str(folder), "-tp-completed-role", role, "-tp-completed-port", str(args.port),
                    "-logFile", str(folder / (role + ".log")), *route]
+        if args.chat:
+            command += ["-tp-lobbychat", args.chat + " " + role]
         startup = subprocess.STARTUPINFO(); startup.dwFlags |= subprocess.STARTF_USESHOWWINDOW; startup.wShowWindow = 0
         child = subprocess.Popen(command, cwd=project, env=guard.unity_environment(), startupinfo=startup)
         children.append(child)
@@ -178,6 +183,17 @@ def main():
         if any(child.poll() is None for child in children):
             raise TimeoutError("Actual-peer completed arrival exceeded 120 seconds")
         result["errors"] = evaluate(read(folder / "host.json"), read(folder / "client.json"))
+        if args.chat:
+            # The client's line must traverse host Chat, then client ChatLine. The
+            # host's earlier line may precede client admission, so it is not a gate.
+            received = {}
+            for role in ("host", "client"):
+                log = (folder / (role + ".log")).read_text(encoding="utf-8-sig", errors="replace")
+                received[role] = bool(re.search(r"\[Chat\] received from '[^']*': " +
+                    re.escape(args.chat + " client") + r"\s*$", log, re.MULTILINE))
+                if not received[role]:
+                    result["errors"].append(role + " did not receive the client's complete chat marker")
+            result["clientChatReceived"] = received
         result["graphicsObserved"] = {role: observed_renderer((folder / (role + ".log")).read_text(
             encoding="utf-8-sig", errors="replace")) for role in ("host", "client")}
         if any(value != "Direct3D11" for value in result["graphicsObserved"].values()):

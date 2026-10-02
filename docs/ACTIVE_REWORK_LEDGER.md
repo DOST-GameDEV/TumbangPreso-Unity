@@ -5,10 +5,11 @@ checks and publication; a progress report is not a stop. Root works SOLO.
 
 ## Current root job and next action
 
-MAIN ASTRAReworks and verified remote: ec0582e12b32a891b0778508cdb387893df7243a.
+MAIN ASTRAReworks HEAD8ef02cf75d4201e7a1bc839270a5af3309421d3d (diagnostic local).
+Verified remotec68986e71b18c4d47b1400072a48577615bd30f4 (qualified chat fix).
 LAN acceptance report7cbe176ca integrated/pushed with incoming protocol134
-timed recovery and studio intro. Last peer-qualified artifact1003a remains protocol133/source268c; new134 buildbelow.
-RELEASE detached at ec0582e12: C:/Users/matth/Documents/Codex/work/tump-competition-release1002.
+timed recovery and studio intro. Latest peer/startup-qualified artifact1003c source8ef02cf75/protocol134 (below).
+RELEASE detached at8ef02cf75: C:/Users/matth/Documents/Codex/work/tump-competition-release1002.
 QUAL dirty protected overlay: C:/Users/matth/Documents/Codex/work/tump-feedback-0930.
 Do not reset/stash/clean any checkout or copy unrelated private overlays.
 
@@ -75,10 +76,32 @@ rootplaced2-stringguard inresultcallback ratherthanChatLine. Unpublished regress
 corrected with exactmethod mapping check. Corrected49518 TERMINAL9/9; post65168
 TERMINAL/all18441protected unchanged/exact3 matchesMAIN. No furtherrepair/retry.
 Reports reliability-2026-10-03/chat-packet + windows-candidate1003b ready.
-NEXT exactcommit/push qualified chat/evidence. Commitdiagnosticroute separately as
-pendingqualification (local first), prepare/build1003c with both changes. Then
-ONE corrected menu-only runtime case; don't repeat unchangedfullClassic. No live
-native/player/snapshot jobs at last observation. Preserve ownerprivate overlays.
+Chat/evidence publishedc68986e71/remoteverified. Diagnosticroute8ef02cf75 is
+committed LOCAL, pending packagedqualification before push. Sourcechanges20lines
+onlyMenuOnly; gameUI/art/queue behavior unchanged. Corrected route usescurrenthub
+menuSettings and ModeCard/Back; introframe>=10 + playing/enabledpicture captures
+Studio-intro. Ifnotobserved, explicitlyrecords visuals unqualified ratherthanclaims.
+
+1003c source8ef02cf75 protocol134/recording13 buildartifact + correctedstartup +
+actualUnicodechat/recordpair PASS. Prepare54178/build16266/finalizer51838 terminal,
+18959inputs/18957unchanged/exact2generatedIDs/2433MB89s. RuntimeSHA256
+557bf00ce24a0e9203f9d86bf2e2a98d7f1245f2fe7efb712ebadae557f8d295.
+Startup39805 TERMINAL PASS onONE correctedMenuOnly case. Actualplayingframe>=10/
+enabledpicture beforeloading captured+inspected Studio-intro.png (midmotionmark).
+Login/Terms/Guest/title/music/motion/currentHOME/menuSettings/Credits/ModeCardBack
+allpass through realpointerraycasts/callbacks; Hub-home image inspected. No signup
+submission/queue/SDK/physical-input/tasteclaim. Old1003b false retained.
+Pair46309 TERMINAL FIRST PASS, defaultD3D11/localports9180/9181: completeclient
+Unicode chat marker inBOTH logs (hostChat->relay->clientChatLine), hostmarker also
+both. NaturalHero1/30 end, HOME/coldrejoin/same record/fourfrozenactors, both saved
+history/queue/witness1 andoneownhumanline, sameonlinerecord/scores/clearmarkers.
+Guards input/profileseeds/runtime/exits/free. No heavynative/player jobs remain.
+
+NEXT publish diagnostic8ef02cf75 + native-qualified optional --chat runner,
+1003c reports/TODO/checkpoint afterfetch/divergencecheck. Then continue remaining
+competitionengineering, e.g concrete currentmap/mode/operator gaps or a measured
+performance fix. Do not repeat theseunchangedchecks or fullClassic133; don't mark
+wholeready. Preserve privateowner overlays and contributor reservations.
 
 ## Qualified and published root changes
 

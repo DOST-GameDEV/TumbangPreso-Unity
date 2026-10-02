@@ -426,11 +426,12 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   two causals/seven controls; corrected candidate9/9 includes all result cases.
   One counter fixture repair and one unshipped guard-placement regression retained.
   [Evidence](reports/reliability-2026-10-03/chat-packet/README.md).
-- [ ] CURRENT-MENU-REVIEW-1003:134 Windows normal boot observes loading/login
-  silence, Terms agreement, Guest, title/music/motion and reaches current HOME;
-  raw route fails looking for retired ClassicButton. Diagnostic now follows the
-  hub Menu/Settings and ModeCard/Back, captures actual intro frame if observed.
-  Native verification pending on combined source; no signup/queue submission.
+- [x] CURRENT-MENU-REVIEW-1003: corrected native134 Windows normal boot passes
+  after one retired-route diagnostic repair: observed playing studio picture,
+  login/Terms/Guest, title/music/motion, currentHOME, Settings/Credits and Mode/Back.
+  First actual local Unicode chat exchange and cold completed record/save pair
+  also pass on same1003c artifact. Input/profile/Runtime preservation and exits pass.
+  [Current artifact/acceptance](reports/reliability-2026-10-03/windows-candidate1003c/README.md).
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow
