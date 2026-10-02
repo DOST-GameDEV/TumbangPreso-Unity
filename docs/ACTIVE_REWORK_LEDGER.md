@@ -99,7 +99,11 @@ Intent.Set(Lunge,true)/enabledUpdate and ApplyObservedLungeCharge plus bodydisab
 are causal paths; 2causal/1ordinary release control planned, no private writes/
 expirywait/old retired SetBot helper. Owns CombatVerbs +NEW3fixture/meta/report.
 Root j96292 terminal/released native/q to helper bounded original/candidate pair.
-Preserve contact/cooldown/pause semantics, no protocol/hero changes. Await handles.
+Helper original96494 ACTIVE after prep58552 exit0/exact3/protected12547;
+GPU2048/reserve2048/450s/PlayMode-nographics/profile lunge-windup-lifetime1002,
+filter LungeWindupLifetimeTests3. Sourceoriginal/zero repairs; root must not copy
+q assets or poll agent handle. Preserve contact/cooldown/pause semantics,
+no protocol/hero changes. Candidate not started yet.
 Retired agents neverwake.
 
 ROOT disjoint MAIN-only source investigation: Carrier has no OnDisable cancellation;
@@ -107,7 +111,9 @@ existing Update cancels only when it runs. Public SpecialAbility press starts lo
 throw charge; ApplyObservedCharge starts remote tell/spin. New
 PlayMode/CarrierDisableLifetimeTests.cs/meta drafted: actual local charge/bodyretire,
 observed tell retirement, ordinary charge/release control. No production change or
-q prep/native until helper releases. Minimal candidate should reuse existing
+q prep/native until helper releases. MAIN Logs/carrier-disable-lifetime1002/prepare.py
+ready, exact3 source/test/meta; existing Carrier meta must be present before copy.
+Minimal candidate should reuse existing
 CancelAll on disable if causal baseline qualifies; held shoe/pickup lock preserved,
 reset-channel transport not separately claimed. Actor impulse suspicion retired:
 PracticeRange.SetBot calls Teleport->BeginSpawnSettle, which already clears motion.
