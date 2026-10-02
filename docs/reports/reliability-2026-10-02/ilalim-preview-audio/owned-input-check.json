@@ -1,0 +1,10 @@
+{
+  "source": "ac54e3e61170d4db83a976a935818dba9300c3d7",
+  "checks": {
+    "Assets/TumbangPreso/Tests/PlayMode/RemadeMapPreviewTests.cs": true,
+    "Assets/TumbangPreso/Runtime/Map/SidewalkLife.cs": true,
+    "Assets/TumbangPreso/Runtime/UI/MapPreviewSurface.cs": true
+  },
+  "retry": 0,
+  "scope": "Native additive preview plus real SidewalkLife.Simulate story steps, configured enabled voices counted after Silence"
+}

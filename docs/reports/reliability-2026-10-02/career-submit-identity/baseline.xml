@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 19:43:14Z" end-time="2026-10-01 19:43:14Z" duration="0.0919657">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="797" result="Failed" site="Child" start-time="2026-10-01 19:43:14Z" end-time="2026-10-01 19:43:14Z" duration="0.091966" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1944" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="797" result="Failed" site="Child" start-time="2026-10-01 19:43:14Z" end-time="2026-10-01 19:43:14Z" duration="0.080668" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="14980" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1945" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="797" result="Failed" site="Child" start-time="2026-10-01 19:43:14Z" end-time="2026-10-01 19:43:14Z" duration="0.078929" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1946" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="797" result="Failed" site="Child" start-time="2026-10-01 19:43:14Z" end-time="2026-10-01 19:43:14Z" duration="0.077572" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1060" name="CareerAndCloudCodeTests" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="35" result="Failed" site="Child" start-time="2026-10-01 19:43:14Z" end-time="2026-10-01 19:43:14Z" duration="0.058009" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1085" name="LateSubmissionAcknowledgementCannotRemoveAnotherRecord" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.LateSubmissionAcknowledgementCannotRemoveAnotherRecord" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-01 19:43:14Z" end-time="2026-10-01 19:43:14Z" duration="0.051007" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1083" name="LateSubmissionAcknowledgementCannotRemoveAnotherRecord(False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.LateSubmissionAcknowledgementCannotRemoveAnotherRecord(False)" methodname="LateSubmissionAcknowledgementCannotRemoveAnotherRecord" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="388971685" result="Failed" start-time="2026-10-01 19:43:14Z" end-time="2026-10-01 19:43:14Z" duration="0.035885" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The late response removed a different queued result.
+  Expected: 1
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.LateSubmissionAcknowledgementCannotRemoveAnotherRecord (System.Boolean replaceAccountCache) [0x001a1] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:134
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1084" name="LateSubmissionAcknowledgementCannotRemoveAnotherRecord(True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.LateSubmissionAcknowledgementCannotRemoveAnotherRecord(True)" methodname="LateSubmissionAcknowledgementCannotRemoveAnotherRecord" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="911130694" result="Failed" start-time="2026-10-01 19:43:14Z" end-time="2026-10-01 19:43:14Z" duration="0.002359" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The late response removed a different queued result.
+  Expected: 1
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.LateSubmissionAcknowledgementCannotRemoveAnotherRecord (System.Boolean replaceAccountCache) [0x001a1] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:134
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

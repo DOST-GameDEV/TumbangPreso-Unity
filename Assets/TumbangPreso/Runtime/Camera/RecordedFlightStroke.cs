@@ -14,7 +14,7 @@ namespace TumbangPreso.CameraSystem
         public Vector3[] Points;
         public static RecordedTrail[] Capture()
         {
-            var result=new List<RecordedTrail>(12);
+            List<RecordedTrail> result=null;
             // Birth/destruction invalidate the shared inventory; flight and activity stay live.
             foreach(var shoe in BotSlipperInventory.All)
             {
@@ -32,10 +32,11 @@ namespace TumbangPreso.CameraSystem
                         float at=i*(count-1f)/(kept-1);if(reverse)at=count-1-at;
                         int left=Mathf.FloorToInt(at);points[i]=Vector3.Lerp(raw[left],raw[Mathf.Min(count-1,left+1)],at-left);
                     }
+                    result??=new List<RecordedTrail>(12);
                     result.Add(new RecordedTrail{Id=shoe.SeatOfOrigin*4+kind,Kind=kind,Width=trail.widthMultiplier*trail.widthCurve.Evaluate(0),Head=trail.startColor,Tail=trail.endColor,Points=points});
                 }
             }
-            return result.ToArray();
+            return result?.ToArray()??Array.Empty<RecordedTrail>();
         }
         public Vector3 Point(float t)
         {float at=Mathf.Clamp01(t)*(Points.Length-1);int left=Mathf.FloorToInt(at);return Vector3.Lerp(Points[left],Points[Mathf.Min(left+1,Points.Length-1)],at-left);}

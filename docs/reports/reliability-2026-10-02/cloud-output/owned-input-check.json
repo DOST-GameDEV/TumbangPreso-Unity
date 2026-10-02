@@ -1,0 +1,9 @@
+{
+  "source": "c2bb61ba56dd9144fe923f3b2570de22ab3cfd9a",
+  "checks": {
+    "Assets/TumbangPreso/Runtime/Net/CloudCode.cs": true,
+    "Assets/TumbangPreso/Tests/CareerAndCloudCodeTests.cs": true
+  },
+  "retry": 0,
+  "scope": "Actual shared production output parser, not live HTTP/UGS/deployed-service evidence"
+}

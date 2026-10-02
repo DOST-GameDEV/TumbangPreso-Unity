@@ -1,0 +1,9 @@
+{
+  "source": "f683d8ed1e28140ecbbf21eeef9fed55aa0b9adc",
+  "checks": {
+    "Assets/TumbangPreso/Tests/PlayMode/RecordedEffectsTests.cs": true,
+    "Assets/TumbangPreso/Runtime/Camera/RecordedFlightStroke.cs": true
+  },
+  "retry": 0,
+  "scope": "Actual Capture with four nonflying native Slippers; calibrated current-thread GC.Alloc recorder, not unsupported Mono allocated-bytes counter"
+}

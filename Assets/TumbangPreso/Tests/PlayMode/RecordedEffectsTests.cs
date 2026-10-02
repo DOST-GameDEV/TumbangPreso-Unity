@@ -69,6 +69,40 @@ namespace TumbangPreso.PlayTests
             yield return null;
         }
 
+        [UnityTest]
+        public IEnumerator IdleFlightCaptureDoesNotAllocateUnusedTrailStorage()
+        {
+            var roots = new System.Collections.Generic.List<GameObject>();
+            try
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    var go = new GameObject("Nonflying recorded shoe " + i); roots.Add(go);
+                    var shoe = go.AddComponent<Slipper>(); shoe.enabled = false; shoe.SeatOfOrigin = i;
+                }
+                var empty = RecordedTrail.Capture(); Assert.IsEmpty(empty);
+                for (int i = 0; i < 10; i++) RecordedTrail.Capture();
+                var options = Unity.Profiling.ProfilerRecorderOptions.CollectOnlyOnCurrentThread;
+                using (var calibration = Unity.Profiling.ProfilerRecorder.StartNew(Unity.Profiling.ProfilerCategory.Internal, "GC.Alloc", 128, options))
+                {
+                    Assert.IsTrue(calibration.Valid); System.GC.KeepAlive(new byte[4096]); calibration.Stop();
+                    Assert.Greater(calibration.Count, 0, "Allocation recording must detect a deliberate allocation.");
+                }
+                int events, trails = 0;
+                using (var recorder = Unity.Profiling.ProfilerRecorder.StartNew(Unity.Profiling.ProfilerCategory.Internal, "GC.Alloc", 2048, options))
+                {
+                    for (int i = 0; i < 500; i++) trails += RecordedTrail.Capture().Length;
+                    recorder.Stop(); events = recorder.Count;
+                }
+                Assert.Zero(trails); Assert.AreSame(empty, RecordedTrail.Capture());
+                System.IO.Directory.CreateDirectory("Logs/replay-empty-capture1002");
+                System.IO.File.WriteAllText("Logs/replay-empty-capture1002/allocations.txt", $"captures=500\ntrails={trails}\nallocationEvents={events}\n");
+                Assert.Zero(events, "An empty replay sample allocated unused trail storage.");
+            }
+            finally { foreach (var go in roots) if (go != null) Object.DestroyImmediate(go); }
+            yield return null;
+        }
+
         private static void Hero(CharacterMotor actor,string id)
         {
             actor.CharacterIndex=Roster.IndexIn(Roster.HeroPeople,id);var art=RosterBook.Load().People.First(p=>p.Id==id);

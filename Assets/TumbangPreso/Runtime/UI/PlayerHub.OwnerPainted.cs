@@ -65,8 +65,10 @@ namespace TumbangPreso.UI
         private void Show(Tab tab)
         {
             string identity=GameServices.Account?.PlayerId??"local";
-            if(_ownerDraftId!=identity){_ownerDraftId=identity;_ownerDraft.Clear();_ownerFriendSearch="";_shown.Clear();_page=0;}
-            bool arriving=_tab!=tab;_tab=tab;_deleteArmed&=tab==Tab.Account;
+            if(_ownerDraftId!=identity){++_historyRequest;_ownerDraftId=identity;_ownerDraft.Clear();_ownerFriendSearch="";_shown.Clear();_page=0;}
+            bool arriving=_tab!=tab;
+            if(arriving)++_historyRequest;
+            _tab=tab;_deleteArmed&=tab==Tab.Account;
             if(arriving && tab==Tab.Friends)GameServices.Social?.Refresh();
             OwnerOptionMenu.OpenOption?.Close();
             foreach(var pair in _tabs)

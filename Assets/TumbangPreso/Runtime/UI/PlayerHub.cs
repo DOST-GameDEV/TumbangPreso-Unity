@@ -203,6 +203,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private GameMode _mode = SceneFlow.SelectedMode;
         private int _page;
+        private int _historyRequest;
         private List<MatchRecord> _shown = new List<MatchRecord>();
         // ⚠️ `_loadoutHeroIndex` AND `_loadoutViews` LIVED HERE AND ARE DELETED WITH THE TAB
         // THEY BACKED. See the long note above `BuildAchievementsRows` for what moved where and
@@ -923,6 +924,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void Close()
         {
+            ++_historyRequest;
             _deleteArmed = false;
             _notice = "";
             if (_detail != null) _detail.SetActive(false);
@@ -2006,17 +2008,32 @@ namespace TumbangPreso.UI
             var career = GameServices.Career;
             if (career == null) return;
 
+            int request = ++_historyRequest;
+            int page = _page;
             try
             {
                 SetFooter("REFRESH", "Loading...");
-                _shown = await career.HistoryPageAsync(_page * HistoryPageSize, HistoryPageSize);
-                Show(Tab.Matches);
+                var shown = await career.HistoryPageAsync(page * HistoryPageSize, HistoryPageSize);
+                CompleteHistoryRefresh(request, page, shown);
             }
+            catch (OperationCanceledException) { }
             catch (Exception e)
             {
-                SetFooter("REFRESH", e.Message);
+                if (HistoryRequestIsCurrent(request, page)) SetFooter("REFRESH", e.Message);
             }
         }
+
+        private bool CompleteHistoryRefresh(int request, int page, List<MatchRecord> shown)
+        {
+            if (!HistoryRequestIsCurrent(request, page)) return false;
+            _shown = shown;
+            Show(Tab.Matches);
+            return true;
+        }
+
+        private bool HistoryRequestIsCurrent(int request, int page)
+            => this != null && IsOpen && _tab == Tab.Matches
+                && request == _historyRequest && page == _page;
 
         // -------------------------------------------------------------------
         // § ACCOUNT

@@ -17,6 +17,80 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### COMPETITION-READY-1002: active engineering and bug-fixing lane
+
+Owner reaffirmed2026-10-02: competition ready is the objective. Continue through
+coherent fixes and pushes; no stopping after a single passing unit. DOTS owns
+Docs feedback, friend broad loading. Preserve profiles/contributor work.
+
+- [x] CAREER-ASYNC-OWNER-1002: abandon/history account fences; native4/4.
+  [Evidence](reports/reliability-2026-10-02/career-async-owner/README.md).
+- [x] CAREER-WITNESS-1002: refused records remove matching witnesses; native2/2.
+  [Evidence](reports/reliability-2026-10-02/career-witness/README.md).
+- [x] HISTORY-NAVIGATION-1002: stale completions preserve navigation/page/close;
+  native1/1 covers five states. [Evidence](reports/reliability-2026-10-02/history-navigation/README.md).
+- [ ] Investigate recorded270.33ms host frame using existing measurements.
+- [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
+- [ ] Refresh coherent Windows candidate and exercise full tournament match flow
+  in both shipping modes, current remade maps, failure/recovery and visual availability.
+  Distinguish actual local-peer evidence from physical devices and WAN qualification.
+
+
+### CAREER-REFRESH-OWNER-1002: reject older account refresh output
+
+Older refresh completion cannot overwrite a replacement account cache or its
+status. Native normal/stale cache cases pass2/2; no login/service call or schema
+change. Newest-account refresh scheduling remains outside this proof.
+[Evidence](reports/reliability-2026-10-02/career-refresh-owner/README.md).
+
+### CAREER-SUBMIT-IDENTITY-1002: preserve other pending results
+
+Late upload completion now follows its captured cache/result identity, preserving
+other records and witnesses after head eviction or account-cache replacement.
+Native 12/12 includes existing acknowledgement controls; storage schema unchanged.
+[Evidence](reports/reliability-2026-10-02/career-submit-identity/README.md).
+
+### HTTP-TIMEOUT-1002: bound stalled service requests
+
+Shared production requests now have a 20-second timeout. Actual native loopback
+stall ends at 20.004s; normal local response succeeds. Final 2/2, no live endpoint
+or retry/UI configuration change.
+[Evidence](reports/reliability-2026-10-02/http-timeout/README.md).
+
+### CLOUD-OUTPUT-1002: reject missing service output
+
+Shared response helper no longer reports missing/null output as success. Native
+production-parser checks pass 8/8, preserving object/array/false/zero payloads.
+Existing caller failure paths retained; no live service call or configuration change.
+[Evidence](reports/reliability-2026-10-02/cloud-output/README.md).
+
+### CAREER-SUBMIT-ACK-1002: retain results without acknowledgement
+
+Missing/unknown submit verdicts no longer discard queued records or witnesses.
+Actual native completion/cache mutation checks pass 10/10, including recognized
+verdicts and duplicate applied=false responses. No backend call or schema change.
+[Evidence](reports/reliability-2026-10-02/career-submit-ack/README.md).
+
+### QUEUE-START-FAULT-1002: recover from startup dependency exceptions
+
+Actual host/join queue helpers stuck and faulted on startup errors. Native final
+4/4: active failures search again, cancelled attempts stay cancelled. Narrow
+startup catch only; existing retry/owner fences retained, no online service call.
+[Evidence](reports/reliability-2026-10-02/queue-start-fault/README.md).
+
+### REPLAY-EMPTY-CAPTURE-1002: remove unused empty-sample allocations
+
+Calibrated Unity recorder: 500 empty captures changed from 1,000 allocation
+events to 0. Native empty and actual flying-trail lifecycle cases pass 2/2.
+No new pools, wire or authored visual change.
+[Evidence](reports/reliability-2026-10-02/replay-empty-capture/README.md).
+
+### ILALIM-PREVIEW-AUDIO-1002: repaired late street voices behind menus
+
+Actual preview created 10 enabled late voices after its silence pass. Same native
+case now passes 1/1: preview 0, normal game scope 10. Authored audio/mix unchanged.
+[Evidence](reports/reliability-2026-10-02/ilalim-preview-audio/README.md).
+
 ### BOT-OVERCLOCK-1002: repaired stale area-stun victim gates
 
 Actual Zack bot ignored ready permanent Overclock for13s outside the zap radius.

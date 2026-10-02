@@ -61,3 +61,5 @@ Rules: an archived file is history, never a task source. If something here turns
 still be needed, move the live part into the owning document (TODO, NATIONALS_POLISH,
 AGENTS) and leave this copy alone.
 | (new) `CLAUDE_full_2026-09-24.md` | the whole CLAUDE.md with every incident receipt, before the owner-requested condensation | [CLAUDE.md](../../CLAUDE.md) (same rules and section numbers, receipts cut to one line) |
+
+Pre-competition engineering continuity: [complete ledger through October2](ACTIVE_REWORK_LEDGER_before_competition_resume_2026-10-02.md). Current resume stays in ../ACTIVE_REWORK_LEDGER.md.

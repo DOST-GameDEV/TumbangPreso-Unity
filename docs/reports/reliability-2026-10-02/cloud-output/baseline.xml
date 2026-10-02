@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 19:11:49Z" end-time="2026-10-01 19:11:49Z" duration="0.1742308">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="795" result="Failed" site="Child" start-time="2026-10-01 19:11:49Z" end-time="2026-10-01 19:11:49Z" duration="0.174231" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1941" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="795" result="Failed" site="Child" start-time="2026-10-01 19:11:49Z" end-time="2026-10-01 19:11:49Z" duration="0.156187" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="3608" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1942" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="795" result="Failed" site="Child" start-time="2026-10-01 19:11:49Z" end-time="2026-10-01 19:11:49Z" duration="0.149700" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1943" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="795" result="Failed" site="Child" start-time="2026-10-01 19:11:49Z" end-time="2026-10-01 19:11:49Z" duration="0.144252" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1060" name="CareerAndCloudCodeTests" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="33" result="Failed" site="Child" start-time="2026-10-01 19:11:49Z" end-time="2026-10-01 19:11:49Z" duration="0.063566" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1077" name="MissingCloudOutputCannotReportSuccessfulDelivery" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.MissingCloudOutputCannotReportSuccessfulDelivery" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-01 19:11:49Z" end-time="2026-10-01 19:11:49Z" duration="0.051112" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1073" name="MissingCloudOutputCannotReportSuccessfulDelivery(&quot;{}&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.MissingCloudOutputCannotReportSuccessfulDelivery(&quot;{}&quot;)" methodname="MissingCloudOutputCannotReportSuccessfulDelivery" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="12129185" result="Failed" start-time="2026-10-01 19:11:49Z" end-time="2026-10-01 19:11:49Z" duration="0.029389" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An absent service output was accepted as successful delivery.
+  Expected: instance of <System.InvalidOperationException>
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.MissingCloudOutputCannotReportSuccessfulDelivery (System.String response) [0x00035] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:87
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1074" name="MissingCloudOutputCannotReportSuccessfulDelivery(&quot;null&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.MissingCloudOutputCannotReportSuccessfulDelivery(&quot;null&quot;)" methodname="MissingCloudOutputCannotReportSuccessfulDelivery" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="318752681" result="Failed" start-time="2026-10-01 19:11:49Z" end-time="2026-10-01 19:11:49Z" duration="0.001006" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An absent service output was accepted as successful delivery.
+  Expected: instance of <System.InvalidOperationException>
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.MissingCloudOutputCannotReportSuccessfulDelivery (System.String response) [0x00035] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:87
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1075" name="MissingCloudOutputCannotReportSuccessfulDelivery(&quot;{\&quot;other\&quot;:{}}&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.MissingCloudOutputCannotReportSuccessfulDelivery(&quot;{\&quot;other\&quot;:{}}&quot;)" methodname="MissingCloudOutputCannotReportSuccessfulDelivery" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="545605196" result="Failed" start-time="2026-10-01 19:11:49Z" end-time="2026-10-01 19:11:49Z" duration="0.004884" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An absent service output was accepted as successful delivery.
+  Expected: instance of <System.InvalidOperationException>
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.MissingCloudOutputCannotReportSuccessfulDelivery (System.String response) [0x00035] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:87
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1076" name="MissingCloudOutputCannotReportSuccessfulDelivery(&quot;{\&quot;output\&quot;:null}&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.MissingCloudOutputCannotReportSuccessfulDelivery(&quot;{\&quot;output\&quot;:null}&quot;)" methodname="MissingCloudOutputCannotReportSuccessfulDelivery" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="682677855" result="Failed" start-time="2026-10-01 19:11:49Z" end-time="2026-10-01 19:11:49Z" duration="0.001975" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An absent service output was accepted as successful delivery.
+  Expected: instance of <System.InvalidOperationException>
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.MissingCloudOutputCannotReportSuccessfulDelivery (System.String response) [0x00035] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:87
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -19,6 +19,247 @@ namespace TumbangPreso.Tests
     /// </summary>
     public class CareerAndCloudCodeTests
     {
+        [TestCase("{}")]
+        [TestCase("null")]
+        [TestCase("{\"profile\":\"\",\"applied\":false}")]
+        [TestCase("{\"verdict\":\"\"}")]
+        [TestCase("{\"verdict\":\"unknown-server-error\"}")]
+        public void UnacknowledgedSubmissionKeepsRecordAndWitness(string output)
+            => CheckSubmissionCompletion(output, false);
+
+        [TestCase("pending")]
+        [TestCase("witnessed")]
+        [TestCase("disputed")]
+        [TestCase("impossible")]
+        [TestCase("offline")]
+        public void TerminalSubmissionVerdictRemovesOnlyAcknowledgedRecord(string verdict)
+            => CheckSubmissionCompletion("{\"verdict\":\"" + verdict + "\",\"applied\":false}", true);
+
+        private static void CheckSubmissionCompletion(string output, bool acknowledged)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"), "Career checks need an isolated profile.");
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career acknowledgement check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                var cache = typeof(TumbangPreso.Net.CareerStore).GetField("_cache", flags).GetValue(career);
+                var queue = (System.Collections.Generic.List<MatchRecord>)cache.GetType().GetField("Queue").GetValue(cache);
+                var witnesses = (System.Collections.Generic.List<string>)cache.GetType().GetField("QueueWitness").GetValue(cache);
+                queue.Clear(); witnesses.Clear();
+                var first = new MatchRecord { MatchId = "first-ack-check" };
+                var second = new MatchRecord { MatchId = "second-ack-check" };
+                queue.Add(first); queue.Add(second); witnesses.Add("first-witness"); witnesses.Add("second-witness");
+                System.Exception failure = null;
+                try { typeof(TumbangPreso.Net.CareerStore).GetMethod("CompleteSubmission", flags).Invoke(career, new object[] { cache, first, output }); }
+                catch (System.Reflection.TargetInvocationException error) { failure = error.InnerException; }
+                if (acknowledged)
+                {
+                    Assert.IsNull(failure); Assert.AreEqual(1, queue.Count); Assert.AreSame(second, queue[0]);
+                    CollectionAssert.AreEqual(new[] { "second-witness" }, witnesses);
+                }
+                else
+                {
+                    Assert.AreEqual(2, queue.Count, "Missing/unknown acknowledgement discarded a queued result.");
+                    Assert.AreSame(first, queue[0]); Assert.AreSame(second, queue[1]);
+                    CollectionAssert.AreEqual(new[] { "first-witness", "second-witness" }, witnesses);
+                    Assert.IsInstanceOf<InvalidDataException>(failure, "Invalid acknowledgement must reach the existing deferred-upload path.");
+                }
+            }
+            finally
+            {
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
+        [TestCase("{}")]
+        [TestCase("null")]
+        [TestCase("{\"other\":{}}")]
+        [TestCase("{\"output\":null}")]
+        public void MissingCloudOutputCannotReportSuccessfulDelivery(string response)
+        {
+            var read = typeof(TumbangPreso.Net.CloudCode).GetMethod("ReadOutput", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            System.Exception failure = null;
+            try { read.Invoke(null, new object[] { response }); }
+            catch (System.Reflection.TargetInvocationException error) { failure = error.InnerException; }
+            Assert.IsInstanceOf<System.InvalidOperationException>(failure, "An absent service output was accepted as successful delivery.");
+        }
+
+        [TestCase("{\"output\":{\"ok\":true}}", "{\"ok\":true}")]
+        [TestCase("{\"output\":[1,2]}", "[1,2]")]
+        [TestCase("{\"output\":false}", "false")]
+        [TestCase("{\"output\":0}", "0")]
+        public void CloudOutputKeepsCallerOwnedPayloadShape(string response, string expected)
+        {
+            var read = typeof(TumbangPreso.Net.CloudCode).GetMethod("ReadOutput", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            Assert.AreEqual(expected, read.Invoke(null, new object[] { response }));
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void LateSubmissionAcknowledgementCannotRemoveAnotherRecord(bool replaceAccountCache)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career pending identity check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                var cacheField = typeof(TumbangPreso.Net.CareerStore).GetField("_cache", flags);
+                var submittedCache = cacheField.GetValue(career);
+                var queue = (System.Collections.Generic.List<MatchRecord>)submittedCache.GetType().GetField("Queue").GetValue(submittedCache);
+                var witnesses = (System.Collections.Generic.List<string>)submittedCache.GetType().GetField("QueueWitness").GetValue(submittedCache);
+                queue.Clear(); witnesses.Clear();
+                var submitted = new MatchRecord { MatchId = "submitted-old" };
+                var remaining = new MatchRecord { MatchId = "not-submitted" };
+                queue.Add(submitted); queue.Add(remaining); witnesses.Add("old-witness"); witnesses.Add("remaining-witness");
+                if (replaceAccountCache)
+                {
+                    var nextCache = System.Activator.CreateInstance(submittedCache.GetType(), true);
+                    cacheField.SetValue(career, nextCache);
+                    queue = (System.Collections.Generic.List<MatchRecord>)nextCache.GetType().GetField("Queue").GetValue(nextCache);
+                    witnesses = (System.Collections.Generic.List<string>)nextCache.GetType().GetField("QueueWitness").GetValue(nextCache);
+                    queue.Add(remaining); witnesses.Add("remaining-witness");
+                }
+                else
+                {
+                    // Record's bounded queue can evict its oldest entry while upload awaits.
+                    queue.RemoveAt(0); witnesses.RemoveAt(0);
+                }
+                var accepted = (bool)typeof(TumbangPreso.Net.CareerStore).GetMethod("CompleteSubmission", flags)
+                    .Invoke(career, new object[] { submittedCache, submitted, "{\"verdict\":\"pending\",\"applied\":true}" });
+                Assert.AreEqual(1, queue.Count, "The late response removed a different queued result.");
+                Assert.AreSame(remaining, queue[0]); CollectionAssert.AreEqual(new[] { "remaining-witness" }, witnesses);
+                Assert.AreEqual(!replaceAccountCache, accepted, "An obsolete account upload must stop its old flush.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void CareerRefreshResponseCannotReplaceAnotherAccountCache(bool replaceAccountCache)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career refresh ownership check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                var cacheField = typeof(TumbangPreso.Net.CareerStore).GetField("_cache", flags);
+                var requestedCache = cacheField.GetValue(career);
+                if (replaceAccountCache) cacheField.SetValue(career, System.Activator.CreateInstance(requestedCache.GetType(), true));
+                career.Profile.Xp = 77;
+                var profile = new PlayerProfile { Xp = 420 };
+                // Build the endpoint's string-valued profile envelope without an extra JSON dependency.
+                string response = "{\"profile\":\"" + JsonUtility.ToJson(profile).Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"}";
+                var accepted = (bool)typeof(TumbangPreso.Net.CareerStore).GetMethod("CompleteRefresh", flags)
+                    .Invoke(career, new object[] { requestedCache, response });
+                Assert.AreEqual(replaceAccountCache ? 77 : 420, career.Profile.Xp, "An older account response overwrote the active career.");
+                Assert.AreEqual(!replaceAccountCache, accepted);
+            }
+            finally
+            {
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
+        [TestCase(false, false)]
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        [TestCase(true, true)]
+        public void RemainingCareerResponsesRespectAccountOwnership(bool historyResponse, bool replaceAccountCache)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career response ownership check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                var cacheField = typeof(TumbangPreso.Net.CareerStore).GetField("_cache", flags);
+                var requestedCache = cacheField.GetValue(career);
+                if (replaceAccountCache) cacheField.SetValue(career, System.Activator.CreateInstance(requestedCache.GetType(), true));
+                career.Profile.Xp = 77;
+                if (historyResponse)
+                {
+                    var remote = new MatchRecord { MatchId = "old-account-result" };
+                    string array = "[" + JsonUtility.ToJson(remote) + "]";
+                    string response = "{\"history\":\"" + array.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"}";
+                    System.Exception failure = null;
+                    System.Collections.Generic.List<MatchRecord> page = null;
+                    try { page = (System.Collections.Generic.List<MatchRecord>)typeof(TumbangPreso.Net.CareerStore).GetMethod("CompleteHistory", flags)
+                        .Invoke(career, new object[] { requestedCache, response, 0, 20 }); }
+                    catch (System.Reflection.TargetInvocationException error) { failure = error.InnerException; }
+                    if (replaceAccountCache)
+                        Assert.IsInstanceOf<System.OperationCanceledException>(failure, "An old account history request must cancel instead of displaying its results.");
+                    else
+                    {
+                        Assert.IsNull(failure); Assert.AreEqual(1, page.Count);
+                        Assert.AreEqual(remote.MatchId, page[0].MatchId);
+                    }
+                }
+                else
+                {
+                    var profile = new PlayerProfile { Xp = 420 };
+                    string response = "{\"profile\":\"" + JsonUtility.ToJson(profile).Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"}";
+                    typeof(TumbangPreso.Net.CareerStore).GetMethod("CompleteAbandon", flags)
+                        .Invoke(career, new object[] { requestedCache, response });
+                    Assert.AreEqual(replaceAccountCache ? 77 : 420, career.Profile.Xp,
+                        "An old abandon response replaced the active account career.");
+                }
+            }
+            finally
+            {
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void RefusedQueuedRecordsKeepRemainingWitnessesAligned(bool legacyMissingWitnesses)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career refusal witness check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                var cache = typeof(TumbangPreso.Net.CareerStore).GetField("_cache", flags).GetValue(career);
+                var queue = (System.Collections.Generic.List<MatchRecord>)cache.GetType().GetField("Queue").GetValue(cache);
+                var witnessField = cache.GetType().GetField("QueueWitness");
+                queue.Clear();
+                var remaining = new MatchRecord { MatchId = "valid-result", Players = new[] {
+                    new PlayerMatchStats { PlayerId = TumbangPreso.Net.CareerStore.LocalPlayerId, IsBot = false } } };
+                queue.Add(new MatchRecord { MatchId = "" }); queue.Add(remaining);
+                queue.Add(new MatchRecord { MatchId = "wrong-player", Players = new[] {
+                    new PlayerMatchStats { PlayerId = "another-player", IsBot = false } } });
+                witnessField.SetValue(cache, legacyMissingWitnesses ? null : new System.Collections.Generic.List<string> {
+                    "refused-first", "remaining-witness", "refused-last" });
+                int dropped = (int)typeof(TumbangPreso.Net.CareerStore).GetMethod("DropUnsubmittable", flags).Invoke(career, null);
+                Assert.AreEqual(2, dropped); Assert.AreEqual(1, queue.Count); Assert.AreSame(remaining, queue[0]);
+                var witnesses = (System.Collections.Generic.List<string>)witnessField.GetValue(cache);
+                Assert.IsNotNull(witnesses, "Legacy careers need an empty witness for their remaining record.");
+                CollectionAssert.AreEqual(new[] { legacyMissingWitnesses ? "" : "remaining-witness" }, witnesses,
+                    "The remaining result retained a different match's witness.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
         private const string AssetsRoot = "Assets/TumbangPreso";
         private const string CloudCodeRoot = "ugs/cloud-code";
 

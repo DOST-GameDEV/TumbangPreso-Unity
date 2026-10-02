@@ -357,23 +357,28 @@ namespace TumbangPreso.Net
             if (string.IsNullOrEmpty(_cache.InMatchSinceUtc)) return;
             if (!(GameServices.Account?.IsSignedIn ?? false)) return;
 
+            var requestedCache = _cache;
             _cache.InMatchSinceUtc = "";
             Save();
 
             try
             {
                 string output = await CloudCode.CallAsync(ScriptName, new { action = "abandon" });
-                var answer = JsonUtility.FromJson<SubmitResponse>(output);
-
-                if (answer != null && !string.IsNullOrWhiteSpace(answer.profile))
-                    AdoptRemoteProfile(answer.profile);
-
-                Debug.Log("[Career] reported a match left early");
+                CompleteAbandon(requestedCache, output);
             }
             catch (Exception e)
             {
                 Debug.LogWarning($"[Career] could not report an abandoned match: {e.Message}");
             }
+        }
+
+        private void CompleteAbandon(Cache requestedCache, string output)
+        {
+            if (this == null || !ReferenceEquals(_cache, requestedCache)) return;
+            var answer = JsonUtility.FromJson<SubmitResponse>(output);
+            if (answer != null && !string.IsNullOrWhiteSpace(answer.profile))
+                AdoptRemoteProfile(answer.profile);
+            Debug.Log("[Career] reported a match left early");
         }
 
         public void Record(MatchRecord record, string witnessDigest)
@@ -473,6 +478,31 @@ namespace TumbangPreso.Net
         /// a match silently deleted from a career is worse than one that never uploads: the
         /// player at least knows to say something about the second.
         /// </summary>
+        private bool CompleteSubmission(Cache submittedCache, MatchRecord submittedRecord, string output)
+        {
+            if (!ReferenceEquals(_cache, submittedCache)) return false;
+            if (string.IsNullOrWhiteSpace(output) || output.Trim() == "null")
+                throw new InvalidDataException("Career submission returned no acknowledgement.");
+            var answer = JsonUtility.FromJson<SubmitResponse>(output);
+            if (answer == null || (answer.verdict != "pending" && answer.verdict != "witnessed"
+                && answer.verdict != "disputed" && answer.verdict != "impossible" && answer.verdict != "offline"))
+                throw new InvalidDataException("Career submission returned an unknown acknowledgement.");
+            if (!string.IsNullOrWhiteSpace(answer.profile)) AdoptRemoteProfile(answer.profile);
+
+            // Known terminal verdicts also acknowledge duplicates and permanent refusals.
+            // Missing or unknown answers leave the record and its witness queued for retry.
+            LastVerdict = answer.verdict;
+            int index = submittedCache.Queue.IndexOf(submittedRecord);
+            if (index >= 0)
+            {
+                submittedCache.Queue.RemoveAt(index);
+                if (index < submittedCache.QueueWitness.Count) submittedCache.QueueWitness.RemoveAt(index);
+            }
+            Save();
+            Changed?.Invoke();
+            return true;
+        }
+
         public async Task FlushAsync()
         {
             if (_flushing || _cache.Queue.Count == 0) return;
@@ -485,7 +515,8 @@ namespace TumbangPreso.Net
 
                 while (_cache.Queue.Count > 0)
                 {
-                    var record = _cache.Queue[0];
+                    var submittedCache = _cache;
+                    var record = submittedCache.Queue[0];
                     string json = JsonUtility.ToJson(record);
 
                     PadWitnesses();
@@ -494,21 +525,7 @@ namespace TumbangPreso.Net
                     string output = await CloudCode.CallAsync(
                         ScriptName, new { action = "submit", record = json, witness = witness });
 
-                    var answer = JsonUtility.FromJson<SubmitResponse>(output);
-                    if (answer != null && !string.IsNullOrWhiteSpace(answer.profile))
-                        AdoptRemoteProfile(answer.profile);
-
-                    // ⚠️⚠️ THE VERDICT IS REPORTED AND NEVER RETRIED. A disputed match is
-                    // a finished piece of business: the career stats still applied, the ranked
-                    // rating did not, and submitting it again would produce the same answer. The
-                    // one thing that must not happen is the wedge `docs/TODO.md` § 94.1 records,
-                    // where one record that can never be accepted holds up every match behind it.
-                    LastVerdict = answer?.verdict ?? "";
-
-                    _cache.Queue.RemoveAt(0);
-                    if (_cache.QueueWitness.Count > 0) _cache.QueueWitness.RemoveAt(0);
-                    Save();
-                    Changed?.Invoke();
+                    if (!CompleteSubmission(submittedCache, record, output)) return;
                 }
 
                 Status = abandoned > 0
@@ -544,6 +561,7 @@ namespace TumbangPreso.Net
         /// </summary>
         private int DropUnsubmittable()
         {
+            PadWitnesses();
             string me = LocalPlayerId;
             int dropped = 0;
 
@@ -557,6 +575,7 @@ namespace TumbangPreso.Net
                     MatchRecordRules.SubmitRefusal(verdict));
 
                 _cache.Queue.RemoveAt(i);
+                _cache.QueueWitness.RemoveAt(i);
                 dropped++;
             }
 
@@ -570,6 +589,25 @@ namespace TumbangPreso.Net
         }
 
         /// <summary>Replaces the local profile with the server's.</summary>
+        private bool CompleteRefresh(Cache requestedCache, string output)
+        {
+            if (!ReferenceEquals(_cache, requestedCache)) return false;
+            var answer = JsonUtility.FromJson<SubmitResponse>(output);
+
+            if (answer != null && !string.IsNullOrWhiteSpace(answer.profile))
+            {
+                AdoptRemoteProfile(answer.profile);
+                Status = "Career synced";
+            }
+            else
+            {
+                // An empty profile is the right answer for somebody who has never finished a
+                // match, exactly as an empty `accountProfile` is in `player-account.js`.
+                Status = "No matches on this account yet";
+            }
+            return true;
+        }
+
         public async Task RefreshAsync()
         {
             // ⚠️ ONE AT A TIME. `PlayerAccount.Changed` fires more than once during a boot,
@@ -585,6 +623,7 @@ namespace TumbangPreso.Net
                 return;
             }
 
+            var requestedCache = _cache;
             _refreshing = true;
             try
             {
@@ -593,24 +632,14 @@ namespace TumbangPreso.Net
                 // clean profile and then a queue that refuses them, with nothing on screen having
                 // changed in between.
                 await ReportAbandonIfAnyAsync();
+                if (this == null || !ReferenceEquals(_cache, requestedCache)) return;
 
                 string output = await CloudCode.CallAsync(ScriptName, new { action = "load" });
-                var answer = JsonUtility.FromJson<SubmitResponse>(output);
-
-                if (answer != null && !string.IsNullOrWhiteSpace(answer.profile))
-                {
-                    AdoptRemoteProfile(answer.profile);
-                    Status = "Career synced";
-                }
-                else
-                {
-                    // An empty profile is the right answer for somebody who has never finished a
-                    // match, exactly as an empty `accountProfile` is in `player-account.js`.
-                    Status = "No matches on this account yet";
-                }
+                CompleteRefresh(requestedCache, output);
             }
             catch (Exception e)
             {
+                if (this == null || !ReferenceEquals(_cache, requestedCache)) return;
                 Status = "Showing the career saved on this machine";
                 Debug.LogWarning($"[Career] profile refresh failed; local career kept: {e.Message}");
             }
@@ -632,22 +661,32 @@ namespace TumbangPreso.Net
         {
             if (!(GameServices.Account?.IsSignedIn ?? false)) return LocalPage(offset, limit);
 
+            var requestedCache = _cache;
             try
             {
                 string output = await CloudCode.CallAsync(
                     ScriptName, new { action = "history", offset, limit });
 
-                var answer = JsonUtility.FromJson<HistoryResponse>(output);
-                if (answer == null || string.IsNullOrWhiteSpace(answer.history)) return LocalPage(offset, limit);
-
-                var page = JsonUtility.FromJson<RecordList>("{\"items\":" + answer.history + "}");
-                return page?.items ?? LocalPage(offset, limit);
+                return CompleteHistory(requestedCache, output, offset, limit);
             }
+            catch (OperationCanceledException) { throw; }
             catch (Exception e)
             {
+                if (this == null || !ReferenceEquals(_cache, requestedCache))
+                    throw new OperationCanceledException("The requested career account changed.", e);
                 Debug.LogWarning($"[Career] history page failed; showing local history: {e.Message}");
                 return LocalPage(offset, limit);
             }
+        }
+
+        private List<MatchRecord> CompleteHistory(Cache requestedCache, string output, int offset, int limit)
+        {
+            if (this == null || !ReferenceEquals(_cache, requestedCache))
+                throw new OperationCanceledException("The requested career account changed.");
+            var answer = JsonUtility.FromJson<HistoryResponse>(output);
+            if (answer == null || string.IsNullOrWhiteSpace(answer.history)) return LocalPage(offset, limit);
+            var page = JsonUtility.FromJson<RecordList>("{\"items\":" + answer.history + "}");
+            return page?.items ?? LocalPage(offset, limit);
         }
 
         /// <summary>⚠️ `JsonUtility` CANNOT PARSE A BARE JSON ARRAY. It needs a named field, which
