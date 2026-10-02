@@ -44,63 +44,120 @@ Report lan-receive-owner and startup report committed. No per-fix standalone reb
 
 ## Active agent job and next root action
 
-Root implements and integrates; EXACTLY ONE Sol6.1HIGH helper remains authorized.
-Verified remote5d66456e2 contains46 runtime fix units; source46 is99f6b2994.
-Do not reread old chat. Full prior checkpoint archived before_observer_io_2026-10-02.
+Verified remote448687b3b:43 root continuity runtime fix units published. Latest
+42SafeStore51994763d ownedWindowsIO4/4 after2causal/2controls; ONE prep-bookkeeping
+correction/zero fixture/native repairs/all12531 protected. WindowsPlayer samebranch
+not executed; nonWindowsWrite unchanged/unqualified, Read promotion nonatomiccopy
+leavesvalid.bak intact on refusal. h41 artifact predates it.
+43TouchHUD448687b3b native3/3 after2causal/1borrowedcontrol, ZERO repairs/all12534
+protected/exact4/guardsrestored/free. CurrentCancel->sameframe reopen/newvisibleHUD,
+borrowedgameHUD unchanged, retiredcleanup leavesreplacementinput. No hardware,
+layout/padbinding/schema/assets/newplayer claim. h predates it. ROOT directlunge0747f1a44 SHIPPED: original97501=1causal/2controls, final18842
+PASS3/exact3/protected12537/no repairs/guardrestored/free. ActualHostResolveLunge
+finiteforward/power1 openscontact, actualbodydisable/reenable retiresonlycontact,
+cooldown retained/secondhostcall refused; clockhold andunchargedcontrols pass.
+No rawinput/rig/map/range/expirywait or private-state assignment. Materiallydifferent
+component-boundaryproof; retiredPracticeBotResume helper evidence unchanged.
+Windup/slide/impulse/timing untouched, no tag/travel/actualSetBot/network claim.
+Agent candidate35856 TERMINAL; root1002i build active (details below).
+Source reports/raw counts preserved.
 
-45SafeStore failed-promotion save42e0d48e9: original45036 one causal/two controls;
-candidate35856 PASS3, exact7 MAIN/q hashes,12535 protected unchanged/zero repairs.
-Stateless3arg Windows writer retains usable backup when previous primary is bad;
-2arg API/nonWindows sequence unchanged. Four stores use existing Read predicates.
-WindowsEditor writer boundary qualified; live account flows separate. Report
-safe-store-failed-promotion retains raw originals. Both guards restored/free.
+ROOT frame-context diagnostic8ba8fa76f PUBLISHED:69846 FIRST2/2/all12532protected/
+exact4/guardrestored/no lease. Newmaxobserved state frame/time/scene/round/scale/
+focus/pause/loading/gc0total localreport only; no 270ms causality/FPS fix. Pre-native
+review corrected previousStats enable isolation, no native/fixture retry. Separate
+diagnostic from43fix count; h predates this code. UniqueBundle40f8f2474 compiledh.
 
-46Slide disable lifetime99f6b2994: original64655 one intended causal/two controls;
-candidate10107 PASS3, post72297 terminal0/exact3/all18868 other Assets/Packages/
-ProjectSettings files unchanged/zero repairs. ActualHostResolveSlide at owned loose
-shoe then actual bodydisable/reenable; public active/cooldown reads. ONE source line
-retires slide contact alongside lunge. Clock-hold/cooldown preserved. No pickup,
-travel/physics/rawinput/practiceoperator/transport claim. Report slide-disable-lifetime.
-Retired practice70621/81031 helper stays retired; contact fixed by direct44/46
-proof, actualSetBot operator remains unqualified. Earlier44 lunge0747f1a44 PASS3
-and frame-context diagnostic8ba8fa76f FIRST2 remain shipped, no unchanged reruns.
-
-1002i BUILD/artifact qualified, PEER FAILED: frozen42e0d48e9903893706e1c4a8a60724f5b2be6e8b,
-45fixes+frame-context diag/protocol132/record13. Freeze46168/build16487/finalizer38041
-terminal; build12scenes2432MB92s/guardrestored/free.18901 inputs18899 unchanged,
-exact2 generated identities; originalstrictFALSE retained, separate artifactPASS.
-One --output directory preflight correction refused before launch/no native retry.
+SOLE Sol6.1HIGH sol_parallel_engineering owns SafeStore failed-promotion save chain.
+Original45036 TERMINAL:1causal failure/2controls pass;12535 protected unchanged,
+guard restored/no lease. Candidate35856 TERMINAL PASS3: CPU1536/reserve2048/450s/EditMode,
+profile safe-store-failed-promotion1002/filter SafeStoreFailedPromotionSaveTests,
+qualification Logs/safe-store-failed-promotion1002/candidate. EXACT7 owned paths:
+SafeStore.cs, Settings/GameSettings.cs, Net/{Career,Social,Wallet}Store.cs and
+Tests/SafeStoreFailedPromotionSaveTests.cs/meta. Frozen identical fixture3; zero
+repairs. Stateless3arg Windows writer validates previous primary before backup
+rotation;2arg API and nonWindows sequence preserved. Root must not double-poll
+agent handle or copy qualification inputs. Previous42 proof remains valid.
+45 SHIPPED42e0d48e9 after exact7 MAIN/post hashes matched;12535 protected unchanged,
+guard restored/no lease/zero repairs. WindowsEditor writer boundary qualified;
+four Save callsites compile, account flows and WindowsPlayer execution separate.
+Report safe-store-failed-promotion retains raw original failure and controls.
+1002i frozen source42e0d48e9903893706e1c4a8a60724f5b2be6e8b/18901inputs:
+freeze46168 TERMINAL0, build16487 TERMINAL0/2432MB92s/guardsrestored/leasefree;
+finalizer38041 TERMINAL strictFALSE: exact2 generated identities changed;
+artifact classificationPASSED/18899of18901 unchanged/no other drift.
 Runtime c25ee4446e0107ae5afa6d868ed1c595588e29b7901ea72e9fe36a7b0e95db43.
-Release Builds/competition-candidate1002i/TumbangPreso.exe; slide46 excluded.
-Actualpeer55528 FAILED120s, match308b243702b644f983c3daddb0b74d37/scores20/0/0/150;
-host naturalend, clientlaterMatchSetup. IOException in opt-in observer Save escaped
-Ended->ApplySnapshot; particular reader unknown (probe/shared reads and root live
-receipt inspection both present). No ordinary shipping-mode regression claim.
-Raw peer-first retained; owned25072/6540 confirmed dead, input+profile seeds restored,
-runtime unchanged/leasefree. Prior1002h actualpeer14348 PASS remains independent:
-source7648b68c3/41fixes/protocol132/runtime dfb967a5ab8b79374885831866ed4d78c01e456d163094d69e63a9731115e43d.
-Incoming Rafi4a9afbd90/protocol132/record13 preserved; Core704/704 proof7648.
+New artifact1002i contains45fixes+diag; actualpeer55528 TERMINAL FAILED120s,
+natural hostend/clientlaterMatchSetup. Sharing violation in opt-in observer Save
+escaped Ended->MatchDirector.ApplySnapshot; particular concurrent reader unknown
+(probe reads and root live receipt inspection both present). No ordinary shipping
+transport regression claim. Raw peer-first retained; owned25072/6540 dead/input+
+seeds restored/runtime unchanged/no lease. Priorh peerPASS retained. Root owns
+NetCompletedArrivalProbe and NEW Tests/CompletedArrivalReceiptIoTests.cs/meta;
+MAIN-only candidate nonthrowIO/sharedreader fix +3 owned-temp nativecases ready.
+Actual failedWindowspeer is original causal evidence; planONE candidate3 rather
+than repeat originalpeer/broad suites. Do not qcopy/run until agent releases.
+Slide investigation
+excluded. Priorh actualpeer evidence preserved independently.
+Build requested3072MB+2048reserve/600s. One preflight --output
+file-vs-directory correction refused before launch; no native/source/build retry.
+Helper source-only identifies next disjoint bug; no native while root owns build.
+ROOT next owns CombatVerbs and NEW PlayMode/SlideDisableLifetimeTests.cs/meta:
+source-only active-window lifetime investigation after body disable. Production
+unchanged pending baseline. Exact3 qualification preparation15177 TERMINAL0,
+Logs/slide-disable-lifetime1002/prepare.py (MAIN) protects all other q inputs.
+Baseline64655 TERMINAL:1intended causal failure/2controls passed, guardrestored/free.
+Candidate10107 TERMINAL PASS3/restored/free after prep exit0, same exact3 fixture,
+zero repairs; post72297 TERMINAL0/exact3/all18868 protected unchanged. Native
+component boundary qualified;46th unit SHIPPED99f6b2994/exact3 native/no repairs.
+ONE source line clears slide contact alongside lunge on body disable.
+GPU1536/reserve2048,
+450s/PlayMode-nographics/filter SlideDisableLifetimeTests/exact3 expected.
+Original retired retrieval window remainedtrue after disable/re-enable. Never weaken
+assertions or wait for expiry. Agent must not copy q assets or launch native.
+No private timer
+assignment/expirywait/travel/tag claim; preserve spent cooldown and clock-hold.
+Latest onehelper authorization persists; retiredagents neverwake.
+Helper MAIN-only next fixture Tests/TouchLayoutNullListTests.cs/meta ready,
+Runtime/Input/TouchLayoutStore.cs unchanged. Snapshot/restore exact preference
+key/cache/Revision; Tweaks:null causal probe plus2ordinary controls. No q prep
+original72038 ACTIVE after exact3prep0,CPU1536/reserve2048/450s/EditMode,
+protected12543/filter TouchLayoutNullListTests. Agent owns native/q; root source
+disjoint only. If original passes, retire
+finding without patch; NaN suspicion excluded. No new helper/extra schema.
 
-SOLE helper sol_parallel_engineering CURRENT native ORIGINAL72038 ACTIVE:
-touch-layout-null-list1002/EditMode/filter TouchLayoutNullListTests3/CPU1536+
-2048reserve/450s; directprep0/exact3/protected12543. Owns only Input/TouchLayoutStore
-and NEW Tests/TouchLayoutNullListTests.cs/meta. Actual JSON Tweaks:null -> lookup/
-edit with2ordinary controls; snapshots/restores exact preference key/cache/Revision.
-Source unchanged pending causal. If original passes, retire finding without patch.
-No NaN changes/schema/bindings/assets. Agent owns qualification/native until post
-handoff; root must not copy q assets or consume agent handle. Retired agents neverwake.
+h build34064 TERMINAL0/12scenes2432MB90s. Freeze15412/post88799 TERMINAL:
+18891inputs18889unchanged/exact2generatedidentity outputs. OriginalstrictFALSE
+preserved; artifactclassificationPASSED. PrematureFileNotFound beforefinalizer
+receipt generated changednothing, no build/source retry. Subsequentclassify after
+terminal. Source7648b68c30ff9664819f8ba7d3bbc7f1cbed68ef/protocol132/recording13;
+Runtime dfb967a5ab8b79374885831866ed4d78c01e456d163094d69e63a9731115e43d.
+Internalrelease1002h/importer-meta-settings dirt retained; noC#beforefreeze.
 
-ROOT CURRENT disjoint MAIN-only diagnostic candidate ready: owns
-Runtime/Net/NetCompletedArrivalProbe.cs + NEW Tests/CompletedArrivalReceiptIoTests.cs/
-meta. Nonthrow receipt IO/warning once per consecutive failure/shared-read modes;
-existing failedWindowspeer supplies original causal evidence. Plan ONE candidate3
-owned-temp tests: locked Ended callback+save recovery, shared-writer read, ordinary
-latest counter. No replay/score/schema/protocol/gameplay changes. No q prep/native
-until helper releases. MAIN Logs/completed-arrival-receipt-io1002/prepare.py ready:
-prepare exact3/snapshot Assets/TumbangPreso other hashes, post preservation.
-After diagnostic qualification, coherent new build+ONE bounded actualpeer run is
-justified by changed observer; never rerun old i unchanged or widen120s ceiling.
-Keep current h/i receipts, goal ACTIVE, no full competition/physical/WAN claims.
+NEW hWindowspeer14348 FIRST PASS: normalresultMAINMENU->HOME->publiccoldrejoin/
+newscene/end/record, match776871900f7d49979ad7d53ff400b16e/scores20/0/0/150,
+clientSlot1 NONspectator/all4inactive/parked/move0/sprintoff. Owned20536/26044 dead,
+input+seedsrestored/runtimeunchanged/leasefree. CustomHero1round30/two humanorigins
++two bots, no AllBots/autorematch/forcefinish/physical/WAN/career settlement/full-
+8round claim. h reportpublishede0a196678. Currenth contains41fixes, later42/43/44/45/
+framecontext not included. Next coherent batch1002i prepares them together.
+
+IncomingRafi4a9afbd90/protocol132/record13/field18 preserved, contributor3Linuxpeer
+scope separate/rootONE Core704/704/no skips rawTRX7648. No unchangedCore repeat.
+
+Retired practice OPEN/unfixed:70621+81031 twice causal0.446/0.449s lungewindow
+retainedafter actualSetBot hide/readd. Firstfixture clock repairedonce; secondexact0
+expiry expectation failed on normallynegative timer, not gameplayfailure. Helper
+route retired/no patch/candidate from that fixture. Direct lifecycle fix44 above
+retires the contact; actual practice operator remains unqualified. Honest evidence
+publishedd1e090dad. NEWfailedtest/meta movedoutMAIN/qAssets with exact containment/
+hashes/protected12529. No source rollback/reset; no third helper iteration.
+
+NEXTROOT: actualimplementation of justifieddisjointbug or improved directlifecycle
+acceptance while onehelper works; no validationloops/broad audits/extra workers.
+Currentfulltournament/map/failure-recovery/visualavailability evidence remains;
+270ms aggregate stall unconfirmedculprit, nowbetterdiagnostic. Prior natural
+Classic/Hero8round ends retained; don't rerun unchanged8rounds. Goal ACTIVE.
 
 ## Preservation and recovery
 

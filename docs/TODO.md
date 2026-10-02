@@ -137,7 +137,10 @@ Root1002i coherent build16487 TERMINAL0/2432MB92s; artifact classificationPASS,
 18899of18901 inputs unchanged/exact2 generated identity changes retained.
 Root slide disable lifetime shipped99f6b2994; original64655=1causal failure/
 2controls; candidate10107 PASS3/no repairs/post72297 exact3/all18868 protected.
-Fresh1002i actualpeer55528 ACTIVE, source45fixes; slide46 excluded from artifact.
+Fresh1002i actualpeer55528 FAILED120s, source45fixes; slide46 excluded. Original
+observer receipt-write sharing violation interrupted snapshot handler, raw retained.
+Root diagnostic IO candidate+3 fixture MAIN-only; await helper native release.
+Helper touch null-list original72038 ACTIVE/exact3, source unchanged.
 DirectHostlunge
 lifetimeproof3/3 shipped; helper candidate35856 TERMINAL PASS3 on confirmed
 SafeStore failedpromotion->laterwrite edge; original45036 had1causal failure/
