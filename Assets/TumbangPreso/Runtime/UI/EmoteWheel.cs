@@ -89,7 +89,12 @@ namespace TumbangPreso.UI
             map?.Enable();
         }
 
-        private void OnDisable() => AnyOpen = false;
+        private void OnDisable() => Close(play: false);
+
+        private void OnApplicationFocus(bool focused)
+        {
+            if (!focused) Close(play: false);
+        }
 
         public void Open()
         {

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 12:27:56Z" end-time="2026-10-02 12:27:57Z" duration="0.4491619">
+  <test-suite type="TestSuite" id="2597" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1300" result="Passed" start-time="2026-10-02 12:27:56Z" end-time="2026-10-02 12:27:57Z" duration="0.449162" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2591" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1300" result="Passed" start-time="2026-10-02 12:27:56Z" end-time="2026-10-02 12:27:57Z" duration="0.436127" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="4792" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2592" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1300" result="Passed" start-time="2026-10-02 12:27:56Z" end-time="2026-10-02 12:27:57Z" duration="0.431747" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2593" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1300" result="Passed" start-time="2026-10-02 12:27:56Z" end-time="2026-10-02 12:27:57Z" duration="0.427717" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1377" name="EmoteWheelLifetimeTests" fullname="TumbangPreso.PlayTests.EmoteWheelLifetimeTests" classname="TumbangPreso.PlayTests.EmoteWheelLifetimeTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 12:27:56Z" end-time="2026-10-02 12:27:57Z" duration="0.400488" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1379" name="DisabledOwnerCannotReopenWithItsOldSelectionArmed" fullname="TumbangPreso.PlayTests.EmoteWheelLifetimeTests.DisabledOwnerCannotReopenWithItsOldSelectionArmed" methodname="DisabledOwnerCannotReopenWithItsOldSelectionArmed" classname="TumbangPreso.PlayTests.EmoteWheelLifetimeTests" runstate="Runnable" seed="885537850" result="Passed" start-time="2026-10-02 12:27:56Z" end-time="2026-10-02 12:27:57Z" duration="0.301071" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1378" name="FocusLossCancelsTheSelectedWheelBeforeALaterReleaseCanCommit" fullname="TumbangPreso.PlayTests.EmoteWheelLifetimeTests.FocusLossCancelsTheSelectedWheelBeforeALaterReleaseCanCommit" methodname="FocusLossCancelsTheSelectedWheelBeforeALaterReleaseCanCommit" classname="TumbangPreso.PlayTests.EmoteWheelLifetimeTests" runstate="Runnable" seed="1977357701" result="Passed" start-time="2026-10-02 12:27:57Z" end-time="2026-10-02 12:27:57Z" duration="0.043607" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1380" name="OrdinarySelectedReleaseStillCommitsExactlyOnce" fullname="TumbangPreso.PlayTests.EmoteWheelLifetimeTests.OrdinarySelectedReleaseStillCommitsExactlyOnce" methodname="OrdinarySelectedReleaseStillCommitsExactlyOnce" classname="TumbangPreso.PlayTests.EmoteWheelLifetimeTests" runstate="Runnable" seed="1662227390" result="Passed" start-time="2026-10-02 12:27:57Z" end-time="2026-10-02 12:27:57Z" duration="0.040476" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
