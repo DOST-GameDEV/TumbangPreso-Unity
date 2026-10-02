@@ -17,6 +17,15 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### HERO-REFERENCE-1002: visual research and implementation plans prepared
+
+All nine heroes reviewed against 16 official sources, 168 inspected captures and
+27 selected frames. [Research and production plans](reports/hero-reference-footage-2026-10-02/README.md)
+retain timecoded evidence and rejected samples. Audio unheard; no new character
+implementation, native acceptance or human taste approval implied. Next: one
+owned presentation unit with actual-cast baseline and shipping-asset checks.
+Reconcile existing kit migrations and protect finalized Paete/Phaister direction.
+
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
 Owner reaffirmed2026-10-02: competition ready is the objective. Continue through

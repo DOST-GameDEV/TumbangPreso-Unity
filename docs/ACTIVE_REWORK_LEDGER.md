@@ -92,3 +92,8 @@ All-nine-hero visual research and production plans completed and reviewed; audio
 was not heard. Publication of that evidence packet is next, then a single owned
 Feedback/presentation unit. No Cinder Gate implementation yet. Preserve the
 separate career/UI and broad-loading reservations above.
+
+HERO-REFERENCE-1002 report prepared for publication: 14 report pages, 27 selected
+frames and two evidence manifests. Audio unheard. No runtime or asset changes;
+no active heavy job. Next: actual Sean Stoke Step cast baseline, following the
+existing body-strip evidence, before deciding any authored motion change.
