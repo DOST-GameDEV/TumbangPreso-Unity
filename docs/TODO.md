@@ -130,7 +130,8 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
-Latest checkpoint:46 root continuity fix units published through99f6b2994.
+Latest source:47 root continuity fix units through56446ad7c; current1002j artifact
+contains46 plusdiagnostics and predates47.
 ONE new Sol6.1HIGH helper +root implementation; prioragents retired. Currenth41
 protocol132/record13 build+actualWindowspeerPASS, laterSafe42/Touch43/diag not in it.
 Root1002i coherent build16487 TERMINAL0/2432MB92s; artifact classificationPASS,
@@ -149,6 +150,7 @@ read; newscene/end/record/all4 frozen/NONspectator, ownedPIDsdead/restored/free.
 Current46fix artifact acceptance: [Evidence](reports/reliability-2026-10-02/windows-candidate1002j/README.md).
 Next: sole helper lunge windup retirement original96494=2causal/1control;
 candidate64944 FIRST PASS3/+3cleanup lines/exact3/protected12547/zero repairs.
+Lunge windup47 committed56446ad7c. [Evidence](reports/reliability-2026-10-02/lunge-windup-lifetime/README.md).
 RootCarrier original29117 ACTIVE after prep98288 exit0/exact3; source unchanged,
 GPU2048/reserve2048/450s/PlayMode-nographics/exact3. Native slot root-owned.
 root disjoint Carrier retirement fixture draft/source unchanged. No reused retired

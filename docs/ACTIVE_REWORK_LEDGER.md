@@ -20,7 +20,7 @@ preserve finalized Paete/Phaister and active Sean/Rafi/Baha reservations.
 
 ## Published code and acceptance
 
-Verified remote99f6b2994:46 root continuity runtime fix units;
+Current source56446ad7c:47 root continuity runtime fix units (push below).
 protocol132/recording13 after qualified incoming Rafi4a9afbd90, integrationa67d7bc5b. Latest units:
 32chat guards3e91f02b0/native10;33scorecard owner84ddfc391/native3;34RecordChoice
 57158d1db/native3;35cold actor12a2689ff/native3;36scorecard focus7c3124886/native3;
@@ -110,7 +110,8 @@ Zero repairs; root must not copy
 q assets or poll agent handle. Preserve contact/cooldown/pause semantics,
 no protocol/hero changes. Post direct0/exact3/all12547 protected unchanged;
 guardrestored/free/zero repairs, native/q released to root. Await report/hashes
-for source publication; qualified47th unit ready, not yet committed.
+report/hashes reviewed, exact3 MAIN/post matched;47th unit COMMITTED56446ad7c.
+Current1002j46 artifact predates it; no per-fix rebuild/unchanged suites.
 Retired agents neverwake.
 
 ROOT disjoint MAIN-only source investigation: Carrier has no OnDisable cancellation;
