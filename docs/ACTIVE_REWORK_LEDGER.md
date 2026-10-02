@@ -338,3 +338,12 @@ f296overlay, nofreshwholemergedreleaseclaim. Publishexplicitownedpaths, verify
 remote, updateexistingPyroFeedbacknote; doNOTmarkwholePyroorHumanverifieddone.
 ThenreleaseCinderownershipandpicknextcurrentunclaimedPyrounit fromliveWiki.
 Retainotheragentnetwork/bugs/loading/Amihanreservations; don'treimplementthem.
+
+DOTS Cinder publication verified: df022b0f integrated at68fa3a50 on ASTRAReworks.
+Same Pyro Feedback note and adopted Cinder Wiki wording read back correctly.
+The18second body/owner review was delivered. All owned jobs are terminal and
+profiles restored. Release the Cinder implementation/test/diagnostic paths.
+The remaining Pyro and Human verified controls stay open. Next inspect Steady
+Ember's genuine own-throw/manual-retrieval identity and existing charge authority
+before claiming implementation. Do not overlap the other agent's private
+Supernova opacity review or Amihan's separately preserved presentation lane.
