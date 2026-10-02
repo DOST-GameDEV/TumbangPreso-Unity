@@ -4217,7 +4217,7 @@ namespace TumbangPreso
         // retain memory outside it, but cannot sample live actors through it.
         private bool ActorIsVisible(CharacterMotor who)
         {
-            if (who == null) return false;
+            if (who == null || !who.gameObject.activeInHierarchy) return false;
             if (who == _motor || _motor.Mode != GameMode.HeroStrike || !_motor.IsHaunted) return true;
             return who.gameObject.activeInHierarchy &&
                 (who.transform.position - transform.position).sqrMagnitude <= 49f;

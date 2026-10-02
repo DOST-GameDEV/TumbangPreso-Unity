@@ -22,34 +22,35 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Latest verified local/remote f361bca7dfb3a5b3e1de7190a73b57c4764bfb85.
-Six product fix units shipped this resume: abandon/history4/4; witnesses2/2;
-history navigation one case/five states; account sync4/4; verdict identity2/2;
-late acknowledgement one native case/text plus callback retirement.
-Earlier career integration43/43. One verdict fixture singleton repair used1/1;
-other product units zero repairs. All failures retained; no live endpoint claims.
-Complete pre-resume history preserved in
-[the archived ledger](archive/ACTIVE_REWORK_LEDGER_before_competition_resume_2026-10-02.md).
+Latest verified remote8f4defeb4 includes wallet5/5 and full Classic peer evidence.
+Local717d44bcb preserves seven pre-existing reference/motion PNGs only; no runtime
+art/animation change or new art acceptance claim. Bot one-line guard qualified
+and publishes next. Eight product units qualified this resume: abandon/history,
+witness queue, history navigation, deferred account sync, displayed verdict ID,
+late result ack, wallet owner/cache/scheduling and inactive bot-body visibility.
+Evidence owns exact counts/limits. No live endpoints, purchases or paid tools.
+Own pending source AIController.cs and BotCompanionObservationTests.cs plus docs.
+Complete pre-resume history in archived ledger; keep this checkpoint concise.
 
 ## Active job and exact next action
 
-WALLET owner/cache/deferred refresh baseline2/5, native final5/5. Three defects
-fixed, normal controls preserved, two hashes unchanged. Orchestration repair1/1,
-no fixture repairs; session57393 terminal, profile/input restored. Publish next
-with full Classic evidence. Prior verified remotef361bca7d. Seven product units
-qualified this resume; no live purchase/server calls.
-FULL-CLASSIC natural8round direct peers complete with matching40/40/3580/3280,
-seat2wins; host59.85FPS/max86.06ms, client59.86/max21.60ms. Old270ms not reproduced,
-cause not attributed. Preserve raw generic evaluator expecting active HeroStrike;
-explicit completed-Classic observations separate. Player job27861 terminal and
-profiles/input restored; no own player/port remains. No full operator/WAN claim.
-Next BOT-INACTIVE-BODY-1002: exact saved AI/test baseline in main private
-Logs/bot-inactive-body1002/prepared-baseline. Copy to qualification after wallet
-publication, two-mode native cases. Then current-main one-line active-hierarchy
-guard final; existing reaction-lag/Haunted behavior preserved. One baseline/final,
-zero repairs planned. Avoid nullable At changes and Paete/Phaister mechanics.
-Clean release checkout pristine atf361bca7d, no import/Library; advance after
-qualified units publish. Retired UI whole-match runner must stay retired.
+BOT-INACTIVE baseline0/2, final2/2 in Classic/Hero with active controls and frozen
+memory. Two hashes unchanged, zero repairs; session58664 terminal, profile/input
+restored. Publish coherent unit with preserved PNGs. No heavy job active.
+FULL-CLASSIC natural8round actual peers: scores40/40/3580/3280;seat2wins;
+host59.85FPS/max86.06ms/client59.86/max21.60ms. Preserved raw active-Hero evaluator
+mismatch versus explicit completed-Classic observations; no equivalent270ms
+improvement claim. No operator/WAN/hardware/pristine certification.
+Next advance clean detached release checkout
+C:/Users/matth/Documents/Codex/work/tump-competition-release1002 to qualified
+published ASTRA revision without reset/private dirt. Inspect incoming reservations
+and final source/scene settings. One guarded clean import/build and relevant
+integration checks, then current supported Hero match/reconnect/rematch/operator
+paths, preserving existing evidence and no retired fixture loops.
+Remaining known source area: SocialStore response/cache ownership during account
+switch; inspect before edits. Broader source fixes remain authorized. Private
+Supernova opacity, four arm assets, Ultra settings and two protected UI metas
+remain excluded pending their own justified scope/evidence; no broad staging.
 
 ## Remaining readiness evidence
 
