@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="18" result="Failed(Child)" total="18" passed="7" failed="11" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.3550693">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="933" result="Failed" site="Child" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.355069" total="18" passed="7" failed="11" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2125" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="933" result="Failed" site="Child" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.334152" total="18" passed="7" failed="11" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="21108" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2126" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="933" result="Failed" site="Child" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.322389" total="18" passed="7" failed="11" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2127" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="933" result="Failed" site="Child" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.310883" total="18" passed="7" failed="11" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1063" name="BufferChatFocusTests" fullname="TumbangPreso.Tests.BufferChatFocusTests" classname="TumbangPreso.Tests.BufferChatFocusTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.206509" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1067" name="AnExistingVoteStillRetriesDuringChat" fullname="TumbangPreso.Tests.BufferChatFocusTests.AnExistingVoteStillRetriesDuringChat" methodname="AnExistingVoteStillRetriesDuringChat" classname="TumbangPreso.Tests.BufferChatFocusTests" runstate="Runnable" seed="169857757" result="Passed" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.180091" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1066" name="ChatKeyCannotAlsoSubmitABufferVote" fullname="TumbangPreso.Tests.BufferChatFocusTests.ChatKeyCannotAlsoSubmitABufferVote" classname="TumbangPreso.Tests.BufferChatFocusTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.009938" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1064" name="ChatKeyCannotAlsoSubmitABufferVote(True)" fullname="TumbangPreso.Tests.BufferChatFocusTests.ChatKeyCannotAlsoSubmitABufferVote(True)" methodname="ChatKeyCannotAlsoSubmitABufferVote" classname="TumbangPreso.Tests.BufferChatFocusTests" runstate="Runnable" seed="1986623797" result="Failed" label="Error" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.005480" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp : UnityEngine.MissingReferenceException : The object of type 'UnityEngine.InputSystem.InputSettings' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object. Parameter name: data]]></message>
+                  <stack-trace><![CDATA[--SetUp
+  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x00065] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Bindings.ThrowHelper.ThrowArgumentNullException (System.Object obj, System.String parameterName) [0x0000a] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Object.Internal_CloneSingle (UnityEngine.Object data) [0x00015] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Object.Instantiate[T] (T original) [0x00010] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at TumbangPreso.Tests.BufferChatFocusTests.Before () [0x0001f] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\BufferChatFocusTests.cs:47 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <816f70bc2a9c4332b0bd119906a8d40e>:0 ]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1065" name="ChatKeyCannotAlsoSubmitABufferVote(False)" fullname="TumbangPreso.Tests.BufferChatFocusTests.ChatKeyCannotAlsoSubmitABufferVote(False)" methodname="ChatKeyCannotAlsoSubmitABufferVote" classname="TumbangPreso.Tests.BufferChatFocusTests" runstate="Runnable" seed="666749742" result="Failed" label="Error" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.000303" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp : UnityEngine.MissingReferenceException : The object of type 'UnityEngine.InputSystem.InputSettings' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object. Parameter name: data]]></message>
+                  <stack-trace><![CDATA[--SetUp
+  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x00065] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Bindings.ThrowHelper.ThrowArgumentNullException (System.Object obj, System.String parameterName) [0x0000a] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Object.Internal_CloneSingle (UnityEngine.Object data) [0x00015] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Object.Instantiate[T] (T original) [0x00010] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at TumbangPreso.Tests.BufferChatFocusTests.Before () [0x0001f] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\BufferChatFocusTests.cs:47 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <816f70bc2a9c4332b0bd119906a8d40e>:0 ]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-case id="1068" name="SpectatorsRemainExcludedFromBufferVoting" fullname="TumbangPreso.Tests.BufferChatFocusTests.SpectatorsRemainExcludedFromBufferVoting" methodname="SpectatorsRemainExcludedFromBufferVoting" classname="TumbangPreso.Tests.BufferChatFocusTests" runstate="Runnable" seed="208441764" result="Failed" label="Error" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.000296" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[SetUp : UnityEngine.MissingReferenceException : The object of type 'UnityEngine.InputSystem.InputSettings' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object. Parameter name: data]]></message>
+                <stack-trace><![CDATA[--SetUp
+  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x00065] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Bindings.ThrowHelper.ThrowArgumentNullException (System.Object obj, System.String parameterName) [0x0000a] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Object.Internal_CloneSingle (UnityEngine.Object data) [0x00015] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Object.Instantiate[T] (T original) [0x00010] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at TumbangPreso.Tests.BufferChatFocusTests.Before () [0x0001f] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\BufferChatFocusTests.cs:47 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <816f70bc2a9c4332b0bd119906a8d40e>:0 ]]></stack-trace>
+              </failure>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1839" name="ReadyChatFocusTests" fullname="TumbangPreso.Tests.ReadyChatFocusTests" classname="TumbangPreso.Tests.ReadyChatFocusTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.004478" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1844" name="AutomaticReadyStillRetriesDuringChat" fullname="TumbangPreso.Tests.ReadyChatFocusTests.AutomaticReadyStillRetriesDuringChat" methodname="AutomaticReadyStillRetriesDuringChat" classname="TumbangPreso.Tests.ReadyChatFocusTests" runstate="Runnable" seed="278580041" result="Failed" label="Error" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.001573" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[SetUp : UnityEngine.MissingReferenceException : The object of type 'UnityEngine.InputSystem.InputSettings' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object. Parameter name: data]]></message>
+                <stack-trace><![CDATA[--SetUp
+  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x00065] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Bindings.ThrowHelper.ThrowArgumentNullException (System.Object obj, System.String parameterName) [0x0000a] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Object.Internal_CloneSingle (UnityEngine.Object data) [0x00015] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Object.Instantiate[T] (T original) [0x00010] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at TumbangPreso.Tests.ReadyChatFocusTests.Before () [0x0001f] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyChatFocusTests.cs:40 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <816f70bc2a9c4332b0bd119906a8d40e>:0 ]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1842" name="ManualReadyKeyBelongsToTheCurrentInputContext" fullname="TumbangPreso.Tests.ReadyChatFocusTests.ManualReadyKeyBelongsToTheCurrentInputContext" classname="TumbangPreso.Tests.ReadyChatFocusTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.001205" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1840" name="ManualReadyKeyBelongsToTheCurrentInputContext(True)" fullname="TumbangPreso.Tests.ReadyChatFocusTests.ManualReadyKeyBelongsToTheCurrentInputContext(True)" methodname="ManualReadyKeyBelongsToTheCurrentInputContext" classname="TumbangPreso.Tests.ReadyChatFocusTests" runstate="Runnable" seed="1339871949" result="Failed" label="Error" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.000277" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp : UnityEngine.MissingReferenceException : The object of type 'UnityEngine.InputSystem.InputSettings' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object. Parameter name: data]]></message>
+                  <stack-trace><![CDATA[--SetUp
+  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x00065] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Bindings.ThrowHelper.ThrowArgumentNullException (System.Object obj, System.String parameterName) [0x0000a] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Object.Internal_CloneSingle (UnityEngine.Object data) [0x00015] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Object.Instantiate[T] (T original) [0x00010] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at TumbangPreso.Tests.ReadyChatFocusTests.Before () [0x0001f] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyChatFocusTests.cs:40 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <816f70bc2a9c4332b0bd119906a8d40e>:0 ]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1841" name="ManualReadyKeyBelongsToTheCurrentInputContext(False)" fullname="TumbangPreso.Tests.ReadyChatFocusTests.ManualReadyKeyBelongsToTheCurrentInputContext(False)" methodname="ManualReadyKeyBelongsToTheCurrentInputContext" classname="TumbangPreso.Tests.ReadyChatFocusTests" runstate="Runnable" seed="1683232140" result="Failed" label="Error" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.000232" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp : UnityEngine.MissingReferenceException : The object of type 'UnityEngine.InputSystem.InputSettings' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object. Parameter name: data]]></message>
+                  <stack-trace><![CDATA[--SetUp
+  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x00065] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Bindings.ThrowHelper.ThrowArgumentNullException (System.Object obj, System.String parameterName) [0x0000a] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Object.Internal_CloneSingle (UnityEngine.Object data) [0x00015] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Object.Instantiate[T] (T original) [0x00010] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at TumbangPreso.Tests.ReadyChatFocusTests.Before () [0x0001f] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyChatFocusTests.cs:40 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <816f70bc2a9c4332b0bd119906a8d40e>:0 ]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-case id="1843" name="PreviouslySubmittedReadyStillRetriesDuringChat" fullname="TumbangPreso.Tests.ReadyChatFocusTests.PreviouslySubmittedReadyStillRetriesDuringChat" methodname="PreviouslySubmittedReadyStillRetriesDuringChat" classname="TumbangPreso.Tests.ReadyChatFocusTests" runstate="Runnable" seed="1605006112" result="Failed" label="Error" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.000263" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[SetUp : UnityEngine.MissingReferenceException : The object of type 'UnityEngine.InputSystem.InputSettings' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object. Parameter name: data]]></message>
+                <stack-trace><![CDATA[--SetUp
+  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x00065] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Bindings.ThrowHelper.ThrowArgumentNullException (System.Object obj, System.String parameterName) [0x0000a] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Object.Internal_CloneSingle (UnityEngine.Object data) [0x00015] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at UnityEngine.Object.Instantiate[T] (T original) [0x00010] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+  at TumbangPreso.Tests.ReadyChatFocusTests.Before () [0x0001f] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ReadyChatFocusTests.cs:40 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <816f70bc2a9c4332b0bd119906a8d40e>:0 ]]></stack-trace>
+              </failure>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1875" name="RebindActionStateTests" fullname="TumbangPreso.Tests.RebindActionStateTests" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.044113" total="10" passed="6" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1887" name="ARefusedDeviceLeavesActionStateAndBindingAlone" fullname="TumbangPreso.Tests.RebindActionStateTests.ARefusedDeviceLeavesActionStateAndBindingAlone" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.015741" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1885" name="ARefusedDeviceLeavesActionStateAndBindingAlone(False)" fullname="TumbangPreso.Tests.RebindActionStateTests.ARefusedDeviceLeavesActionStateAndBindingAlone(False)" methodname="ARefusedDeviceLeavesActionStateAndBindingAlone" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" seed="781321718" result="Passed" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.013945" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1886" name="ARefusedDeviceLeavesActionStateAndBindingAlone(True)" fullname="TumbangPreso.Tests.RebindActionStateTests.ARefusedDeviceLeavesActionStateAndBindingAlone(True)" methodname="ARefusedDeviceLeavesActionStateAndBindingAlone" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" seed="554329051" result="Passed" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.001125" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1884" name="EndingARebindRestoresTheOriginalActionState" fullname="TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.027686" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1876" name="EndingARebindRestoresTheOriginalActionState(False,&quot;cancel&quot;)" fullname="TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState(False,&quot;cancel&quot;)" methodname="EndingARebindRestoresTheOriginalActionState" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" seed="1763170034" result="Failed" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.012953" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Restore state before reporting to the settings screen.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState (System.Boolean enabled, System.String ending) [0x0020f] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RebindActionStateTests.cs:70
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1877" name="EndingARebindRestoresTheOriginalActionState(True,&quot;cancel&quot;)" fullname="TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState(True,&quot;cancel&quot;)" methodname="EndingARebindRestoresTheOriginalActionState" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" seed="1742459041" result="Passed" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.001138" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1878" name="EndingARebindRestoresTheOriginalActionState(False,&quot;dispose&quot;)" fullname="TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState(False,&quot;dispose&quot;)" methodname="EndingARebindRestoresTheOriginalActionState" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" seed="170076792" result="Failed" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.000534" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Closing must not activate a previously disabled action.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState (System.Boolean enabled, System.String ending) [0x0029f] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RebindActionStateTests.cs:75
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1879" name="EndingARebindRestoresTheOriginalActionState(True,&quot;dispose&quot;)" fullname="TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState(True,&quot;dispose&quot;)" methodname="EndingARebindRestoresTheOriginalActionState" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" seed="1956566588" result="Passed" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.000326" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1880" name="EndingARebindRestoresTheOriginalActionState(False,&quot;bound&quot;)" fullname="TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState(False,&quot;bound&quot;)" methodname="EndingARebindRestoresTheOriginalActionState" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" seed="1031958277" result="Failed" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.007896" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Restore state before reporting to the settings screen.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState (System.Boolean enabled, System.String ending) [0x0020f] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RebindActionStateTests.cs:70
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1881" name="EndingARebindRestoresTheOriginalActionState(True,&quot;bound&quot;)" fullname="TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState(True,&quot;bound&quot;)" methodname="EndingARebindRestoresTheOriginalActionState" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" seed="395602566" result="Passed" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.001480" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1882" name="EndingARebindRestoresTheOriginalActionState(False,&quot;conflict&quot;)" fullname="TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState(False,&quot;conflict&quot;)" methodname="EndingARebindRestoresTheOriginalActionState" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" seed="1173684921" result="Failed" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.000880" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Restore state before reporting to the settings screen.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState (System.Boolean enabled, System.String ending) [0x0020f] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RebindActionStateTests.cs:70
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1883" name="EndingARebindRestoresTheOriginalActionState(True,&quot;conflict&quot;)" fullname="TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState(True,&quot;conflict&quot;)" methodname="EndingARebindRestoresTheOriginalActionState" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" seed="1829157452" result="Passed" start-time="2026-10-02 05:04:50Z" end-time="2026-10-02 05:04:50Z" duration="0.000680" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

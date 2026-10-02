@@ -1,0 +1,115 @@
+using System.Linq;
+using System.Reflection;
+using NUnit.Framework;
+using TumbangPreso.UI;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
+using UnityEngine.InputSystem.LowLevel;
+
+namespace TumbangPreso.Tests
+{
+    public sealed class ReadyChatFocusTests
+    {
+        private const BindingFlags Hidden = BindingFlags.Instance | BindingFlags.NonPublic;
+        private sealed class Client : INetProvider
+        {
+            public bool IsNetworked => true;
+            public bool IsHost => false;
+            public int LocalSlot => 1;
+            public int LocalPeerId => 1;
+            public bool IsSeatlessReferee => false;
+        }
+        private INetProvider _provider;
+        private Net.MatchRpc _rpc;
+        private bool _typing, _spectator;
+        private GameObject _root;
+        private ReadyGate _gate;
+        private Keyboard _keyboard;
+        private InputActionAsset _actions;
+        private InputSettings _originalInputSettings, _inputSettings;
+        private InputAction _ready;
+        private KeyControl _key;
+        private int _gestures;
+
+        [SetUp]
+        public void Before()
+        {
+            Assert.IsFalse(UI.Hub.HubLoading.Visible, "No unrelated load may own this fixture.");
+            _originalInputSettings = InputSystem.settings;
+            _inputSettings = Object.Instantiate(_originalInputSettings);
+            _inputSettings.updateMode = InputSettings.UpdateMode.ProcessEventsInDynamicUpdate;
+            _inputSettings.SetInternalFeatureFlag("RUN_PLAYER_UPDATES_IN_EDIT_MODE", true);
+            InputSystem.settings = _inputSettings;
+            _provider = NetAuthority.Provider; NetAuthority.Provider = new Client();
+            _rpc = Net.MatchRpc.Instance; typeof(Net.MatchRpc).GetProperty("Instance").SetValue(null, null);
+            _typing = LobbyChat.AnyTyping; _spectator = GameLaunch.Spectator;
+            GameLaunch.Spectator = false; Typing(false); _gestures = 0;
+            _root = new GameObject("Dormant manual readiness"); _root.SetActive(false);
+            _gate = _root.AddComponent<ReadyGate>();
+            var motor = _root.AddComponent<CharacterMotor>();
+            Set("_local", motor); Set("_awaitingLocalReady", true);
+            _gate.ReadyGestureRequested += _ => _gestures++;
+            var shipped = Resources.Load<InputActionAsset>("TumbangPreso");
+            Assert.IsNotNull(shipped);
+            _actions = InputActionAsset.FromJson(shipped.ToJson());
+            _keyboard = InputSystem.AddDevice<Keyboard>(); InputSystem.EnableDevice(_keyboard);
+            _actions.devices = new InputDevice[] { _keyboard };
+            _ready = _actions.FindAction("Player/ReadyUp", true);
+            string path = _ready.bindings.First(binding => binding.effectivePath.StartsWith("<Keyboard>/")).effectivePath;
+            _key = (KeyControl)_keyboard[path.Substring("<Keyboard>/".Length)];
+            _ready.Enable(); Set("_readyUp", _ready);
+        }
+
+        [TearDown]
+        public void After()
+        {
+            if (_actions != null) { _actions.Disable(); Object.DestroyImmediate(_actions); }
+            if (_keyboard != null) InputSystem.RemoveDevice(_keyboard);
+            if (_root != null) Object.DestroyImmediate(_root);
+            if (_originalInputSettings != null) InputSystem.settings = _originalInputSettings;
+            if (_inputSettings != null) Object.DestroyImmediate(_inputSettings);
+            NetAuthority.Provider = _provider;
+            typeof(Net.MatchRpc).GetProperty("Instance").SetValue(null, _rpc);
+            GameLaunch.Spectator = _spectator; Typing(_typing);
+        }
+
+        private static void Typing(bool value) => typeof(LobbyChat).GetProperty("AnyTyping").SetValue(null, value);
+        private void Set(string name, object value) => typeof(ReadyGate).GetField(name, Hidden).SetValue(_gate, value);
+        private T Get<T>(string name) => (T)typeof(ReadyGate).GetField(name, Hidden).GetValue(_gate);
+        private void Tick() => typeof(ReadyGate).GetMethod("Update", Hidden).Invoke(_gate, null);
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ManualReadyKeyBelongsToTheCurrentInputContext(bool typing)
+        {
+            Typing(typing);
+            InputSystem.QueueStateEvent(_keyboard, new KeyboardState(_key.keyCode));
+            InputSystem.Update();
+            Assert.IsTrue(_ready.WasPressedThisFrame(), "The synthetic key did not reach the real ReadyUp action.");
+            Tick();
+            Assert.AreEqual(!typing, Get<bool>("_readySendPending"), "A chat letter was also submitted as READY.");
+            Assert.AreEqual(typing ? 0 : 1, _gestures);
+        }
+
+        [Test]
+        public void PreviouslySubmittedReadyStillRetriesDuringChat()
+        {
+            Typing(true); Set("_readySendPending", true); Set("_nextReadySend", -1f);
+            Tick();
+            Assert.IsTrue(Get<bool>("_readySendPending"));
+            Assert.Greater(Get<float>("_nextReadySend"), Time.unscaledTime);
+            Assert.AreEqual(0, _gestures);
+        }
+
+        [Test]
+        public void AutomaticReadyStillRetriesDuringChat()
+        {
+            Typing(true); Set("_automatic", true); Set("_introductionDone", true);
+            Set("_nextAutomaticReady", -1f);
+            Tick();
+            Assert.Greater(Get<float>("_nextAutomaticReady"), Time.time);
+            Assert.AreEqual(0, _gestures);
+        }
+    }
+}

@@ -163,13 +163,16 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   shippedd01c62a68 via7b36c1e63, candidate5/5 after four native failures.
   [Evidence](reports/reliability-2026-10-02/account-save-owner/README.md).
 - [ ] READY-CHAT-INTENT-1002: typing must not create a manual ready vote;
-  Astra preparing current-input baseline; preserve auto-ready/retransmission.
-- [ ] REBIND-ACTION-STATE-1002: restore original disabled/enabled action state;
-  Sol preparing focused actual-operation baseline.
+  candidate unqualified after bounded fixture failures; failed fixtures retired.
+  [Limits](reports/reliability-2026-10-02/ready-chat-focus/README.md).
+- [x] REBIND-ACTION-STATE-1002: restore original disabled/enabled action state;
+  shipped5acff5bfe via69e341491, native10/10 after four causal failures.
+  [Evidence](reports/reliability-2026-10-02/rebind-action-state/acceptance.md).
 - [ ] BUFFER-CHAT-INTENT-1002: typing must not submit a buffer-skip vote;
-  root four-case unit included in combined18 native baseline.
+  candidate unqualified after bounded fixture failures; failed fixtures retired.
+  [Limits](reports/reliability-2026-10-02/buffer-chat-pending/README.md).
 - [ ] EMOTE-CHAT-FOCUS-1002: typing must not open or commit the emote wheel;
-  Astra preparing three-case baseline after joint18.
+  candidate unqualified; shared faulty prelaunch fixture retired without a run.
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow
