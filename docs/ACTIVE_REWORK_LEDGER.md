@@ -94,7 +94,11 @@ focus callback (no physicalOS claim),2causal/1normal toggle control. Production
 unchanged; qprep72054 TERMINAL0/exact3, original72476 TERMINAL0butZERO tests:
 fixtureGUID33char invalid/ignored. ONE metadata-only repair to32hex, unchanged
 fixture/source, raw0test retained. Corrected original16510 ACTIVE after direct
-prep0/exact3; original-guid-inputs frozen, invalidOriginalMeta in MAINLogs.
+prep0/exact3 TERMINAL:2intended focus-retirement failures/1normal toggle control.
+Guard/restored/free. Source candidate adds OnApplicationFocus(false)=>existing
+DiscardMenuButtonsUntilRelease, preserving Parked and ordinary toggle behavior.
+Candidate52999 ACTIVE after prep0/exact3/identicalfixture; one metadata repair
+already used, no further retry budget. original-guid-inputs frozen/invalidMeta kept.
 GPU2048/reserve2048/450s/PlayMode-nographics/filter InputFocusLifetimeTests3.
 No q mutations while original active; expected2causal/1ordinary toggle control.
 MAIN Logs/input-focus-lifetime1002/prepare.py protects other q inputs; oldCarrier

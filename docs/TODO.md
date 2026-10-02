@@ -149,8 +149,9 @@ New coherent1002k freeze9852/build58413/finalizer25532 TERMINAL,48fixes included
 12scenes2432MB88s/artifactPASS/18907of18909 inputs unchanged/exact2 generated IDs.
 Native/root process slots released. [Artifact](reports/reliability-2026-10-02/windows-candidate1002k/README.md).
 New focus boundary investigation:72476 ZERO tests/invalid33GUID, not qualification;
-ONE metadata-only repair to32hex. Corrected original16510 ACTIVE after prep0/
-exact3, source/fixture unchanged. ActualTouchInput+Unity focus
+ONE metadata-only repair to32hex. Corrected16510=2causal/1ordinary control;
+candidate52999 ACTIVE after prep0/exact3/identicalfixture, sourcehookcalls existing
+inputdiscard onfocusfalse. ActualTouchInput+Unity focus
 callback,2causal/1ordinary toggle control planned; no physicalOS focus claim.
 No unchanged Core/fulltournament/hostloss repeats required for these lifecycle fixes.
 
