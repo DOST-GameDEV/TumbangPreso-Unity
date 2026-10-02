@@ -65,3 +65,6 @@ UI/AbilityIcons.cs appended SeanCinderGate glyph/job/paint only,
 Resources/Roster/person_sean.asset new clip reference only, and a new scoped
 Editor/SeanGateAuthor.cs bake/reference helper with matching metadata. These
 entries are disjoint from Amihan's StormCallClip and other existing icons.
+
+The new SeanCinderGateProbe also owns its single registration entry in
+ tools/playmode_suite.py. No other fixture grouping or suite schedule changes.
