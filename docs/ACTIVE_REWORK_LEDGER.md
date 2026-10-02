@@ -97,3 +97,10 @@ HERO-REFERENCE-1002 report prepared for publication: 14 report pages, 27 selecte
 frames and two evidence manifests. Audio unheard. No runtime or asset changes;
 no active heavy job. Next: actual Sean Stoke Step cast baseline, following the
 existing body-strip evidence, before deciding any authored motion change.
+
+SEAN-STOKE-PRESENTATION-1002 owns tools/author_hero_action.py Sean dash only,
+Assets/TumbangPreso/Art/characters/persons/team-sean.glb named dash clip only,
+and docs/reports/sean-stoke-presentation-2026-10-02. Baseline actual cast accepted
+in fixed simulation capture after one bounded fixture repair; memory warning
+preserved. Plan defines compact brace and distinct foot catch, no kit or other
+hero change. Heavy job terminal; candidate-only fixture not production code.
