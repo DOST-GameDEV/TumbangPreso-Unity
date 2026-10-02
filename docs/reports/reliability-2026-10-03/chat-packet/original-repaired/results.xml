@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="9" result="Failed(Child)" total="9" passed="7" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 20:09:28Z" end-time="2026-10-02 20:09:28Z" duration="0.1356998">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="977" result="Failed" site="Child" start-time="2026-10-02 20:09:28Z" end-time="2026-10-02 20:09:28Z" duration="0.135700" total="9" passed="7" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2183" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="977" result="Failed" site="Child" start-time="2026-10-02 20:09:28Z" end-time="2026-10-02 20:09:28Z" duration="0.123347" total="9" passed="7" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="17016" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2184" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="977" result="Failed" site="Child" start-time="2026-10-02 20:09:28Z" end-time="2026-10-02 20:09:28Z" duration="0.120081" total="9" passed="7" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2185" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="977" result="Failed" site="Child" start-time="2026-10-02 20:09:28Z" end-time="2026-10-02 20:09:28Z" duration="0.117115" total="9" passed="7" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1212" name="ChatPacketTests" fullname="TumbangPreso.Tests.ChatPacketTests" classname="TumbangPreso.Tests.ChatPacketTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-02 20:09:28Z" end-time="2026-10-02 20:09:28Z" duration="0.066641" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1217" name="RoleAndSenderGuardsStillRefuseMalformedChat" fullname="TumbangPreso.Tests.ChatPacketTests.RoleAndSenderGuardsStillRefuseMalformedChat" methodname="RoleAndSenderGuardsStillRefuseMalformedChat" classname="TumbangPreso.Tests.ChatPacketTests" runstate="Runnable" seed="1277389498" result="Passed" start-time="2026-10-02 20:09:28Z" end-time="2026-10-02 20:09:28Z" duration="0.031281" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1214" name="TruncatedClientBroadcastCannotThrowOrPublishPartialChat" fullname="TumbangPreso.Tests.ChatPacketTests.TruncatedClientBroadcastCannotThrowOrPublishPartialChat" methodname="TruncatedClientBroadcastCannotThrowOrPublishPartialChat" classname="TumbangPreso.Tests.ChatPacketTests" runstate="Runnable" seed="1715775713" result="Failed" start-time="2026-10-02 20:09:28Z" end-time="2026-10-02 20:09:28Z" duration="0.009312" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at Unity.Netcode.FastBufferReader.ReadValueSafe (System.String& s, System.Boolean oneByteChars) [0x0002c] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\FastBufferReader.cs:660 
+  at TumbangPreso.Net.MatchRpc.OnChatLineMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00011] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:1602 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.ChatPacketTests+<>c__DisplayClass13_0.<Deliver>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ChatPacketTests.cs:54 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.ChatPacketTests.Deliver (System.String method, System.Byte[] bytes, System.UInt64 sender) [0x0002a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ChatPacketTests.cs:54
+at TumbangPreso.Tests.ChatPacketTests.Refused (System.String method, System.Byte[] bytes, System.UInt64 sender) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ChatPacketTests.cs:59
+at TumbangPreso.Tests.ChatPacketTests.BadFrames (System.String method, System.Byte[] valid, System.UInt64 sender) [0x00013] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ChatPacketTests.cs:68
+at TumbangPreso.Tests.ChatPacketTests.TruncatedClientBroadcastCannotThrowOrPublishPartialChat () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ChatPacketTests.cs:76
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1213" name="TruncatedHostChatCannotThrowPublishOrConsumeRateAllowance" fullname="TumbangPreso.Tests.ChatPacketTests.TruncatedHostChatCannotThrowPublishOrConsumeRateAllowance" methodname="TruncatedHostChatCannotThrowPublishOrConsumeRateAllowance" classname="TumbangPreso.Tests.ChatPacketTests" runstate="Runnable" seed="1875782888" result="Failed" start-time="2026-10-02 20:09:28Z" end-time="2026-10-02 20:09:28Z" duration="0.000744" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at Unity.Netcode.FastBufferReader.ReadValueSafe (System.String& s, System.Boolean oneByteChars) [0x0002c] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\FastBufferReader.cs:660 
+  at TumbangPreso.Net.MatchRpc.OnChatMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00008] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:1423 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.ChatPacketTests+<>c__DisplayClass13_0.<Deliver>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ChatPacketTests.cs:54 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.ChatPacketTests.Deliver (System.String method, System.Byte[] bytes, System.UInt64 sender) [0x0002a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ChatPacketTests.cs:54
+at TumbangPreso.Tests.ChatPacketTests.Refused (System.String method, System.Byte[] bytes, System.UInt64 sender) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ChatPacketTests.cs:59
+at TumbangPreso.Tests.ChatPacketTests.BadFrames (System.String method, System.Byte[] valid, System.UInt64 sender) [0x00013] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ChatPacketTests.cs:68
+at TumbangPreso.Tests.ChatPacketTests.TruncatedHostChatCannotThrowPublishOrConsumeRateAllowance () [0x0000c] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\ChatPacketTests.cs:74
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1216" name="ValidClientBroadcastPreservesBothUnicodeFields" fullname="TumbangPreso.Tests.ChatPacketTests.ValidClientBroadcastPreservesBothUnicodeFields" methodname="ValidClientBroadcastPreservesBothUnicodeFields" classname="TumbangPreso.Tests.ChatPacketTests" runstate="Runnable" seed="1084411260" result="Passed" start-time="2026-10-02 20:09:28Z" end-time="2026-10-02 20:09:28Z" duration="0.000758" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1215" name="ValidHostMessageRetainsUnicodeAndExistingLineLimits" fullname="TumbangPreso.Tests.ChatPacketTests.ValidHostMessageRetainsUnicodeAndExistingLineLimits" methodname="ValidHostMessageRetainsUnicodeAndExistingLineLimits" classname="TumbangPreso.Tests.ChatPacketTests" runstate="Runnable" seed="672234129" result="Passed" start-time="2026-10-02 20:09:28Z" end-time="2026-10-02 20:09:28Z" duration="0.007771" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1659" name="MatchRecordPacketTests" fullname="TumbangPreso.Tests.MatchRecordPacketTests" classname="TumbangPreso.Tests.MatchRecordPacketTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-02 20:09:28Z" end-time="2026-10-02 20:09:28Z" duration="0.010611" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1661" name="InvalidJsonAndTrailingBytesCannotPublishAResult" fullname="TumbangPreso.Tests.MatchRecordPacketTests.InvalidJsonAndTrailingBytesCannotPublishAResult" methodname="InvalidJsonAndTrailingBytesCannotPublishAResult" classname="TumbangPreso.Tests.MatchRecordPacketTests" runstate="Runnable" seed="123804852" result="Passed" start-time="2026-10-02 20:09:28Z" end-time="2026-10-02 20:09:28Z" duration="0.004127" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1663" name="NonHostAndHostLoopbackCannotPublishEvenMalformedFrames" fullname="TumbangPreso.Tests.MatchRecordPacketTests.NonHostAndHostLoopbackCannotPublishEvenMalformedFrames" methodname="NonHostAndHostLoopbackCannotPublishEvenMalformedFrames" classname="TumbangPreso.Tests.MatchRecordPacketTests" runstate="Runnable" seed="310337967" result="Passed" start-time="2026-10-02 20:09:28Z" end-time="2026-10-02 20:09:28Z" duration="0.000468" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1660" name="TruncatedAndOverflowingFramesCannotThrowOrReplaceTheResult" fullname="TumbangPreso.Tests.MatchRecordPacketTests.TruncatedAndOverflowingFramesCannotThrowOrReplaceTheResult" methodname="TruncatedAndOverflowingFramesCannotThrowOrReplaceTheResult" classname="TumbangPreso.Tests.MatchRecordPacketTests" runstate="Runnable" seed="725425681" result="Passed" start-time="2026-10-02 20:09:28Z" end-time="2026-10-02 20:09:28Z" duration="0.000624" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1662" name="ValidHostRecordPreservesUnicodeAndExistingNormalisation" fullname="TumbangPreso.Tests.MatchRecordPacketTests.ValidHostRecordPreservesUnicodeAndExistingNormalisation" methodname="ValidHostRecordPreservesUnicodeAndExistingNormalisation" classname="TumbangPreso.Tests.MatchRecordPacketTests" runstate="Runnable" seed="1977534994" result="Passed" start-time="2026-10-02 20:09:28Z" end-time="2026-10-02 20:09:28Z" duration="0.003434" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

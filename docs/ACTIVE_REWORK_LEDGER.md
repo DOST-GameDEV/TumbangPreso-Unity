@@ -5,10 +5,10 @@ checks and publication; a progress report is not a stop. Root works SOLO.
 
 ## Current root job and next action
 
-MAIN ASTRAReworks and verified remote: def71d8f43d58f3516632a266eff6e0790beb7c9.
+MAIN ASTRAReworks and verified remote: ec0582e12b32a891b0778508cdb387893df7243a.
 LAN acceptance report7cbe176ca integrated/pushed with incoming protocol134
-timed recovery and studio intro. Actual running artifact remains protocol133/source268c.
-RELEASE detached at that source: C:/Users/matth/Documents/Codex/work/tump-competition-release1002.
+timed recovery and studio intro. Last peer-qualified artifact1003a remains protocol133/source268c; new134 buildbelow.
+RELEASE detached at ec0582e12: C:/Users/matth/Documents/Codex/work/tump-competition-release1002.
 QUAL dirty protected overlay: C:/Users/matth/Documents/Codex/work/tump-feedback-0930.
 Do not reset/stash/clean any checkout or copy unrelated private overlays.
 
@@ -46,9 +46,39 @@ previousLast/event0; sender and host-loopback controls retained. MAIN source use
 existing SkipWireString/reset and catches JSON ArgumentException only; downstream
 valid-record exceptions not swallowed. No new protocol/schema/authority change.
 POST11495 TERMINAL: all18439 protected unchanged/exact3 MAIN matches.
-All native/player jobs terminal, no active Editor/player. Qualified source/evidence
-publication next. Then current coherent134 Windows build + short valid-result/
-intro peer acceptance; no unchanged fullClassic retry. Preserve private overlays.
+Qualified packet fix + full Classic acceptance published ec0582e12; remoteverified.
+No source edits remain from this unit. All original/candidate/post jobs terminal.
+
+Current134 Windows1003b sourceec0582e12. Prepare24157/build54005/finalizer88234
+TERMINAL FIRST:2433MB/91s,18957 frozeninputs,18955 unchanged/exact2identityoutputs.
+Artifact classifierPASS/protocol134/Runtime SHA256
+0558bce908d7c8b62a9c0c8d3ece2524948e57625f751288bbc7893fd52c01e9.
+First actual normal-LAN pair85338 TERMINAL PASS: customHero1/30, HOME/coldrejoin,
+same record/scores110/0/0/150, fourfrozenactors, normalexits/preservationfree.
+Both savedcareers1history/queue/witness, ownhumanline, matchingrecords/no duplicate.
+This exercises packaged valid-record path after guard; no live malformed injection.
+
+Startup-menu97513 TERMINAL FAILED/PARTIAL with profiles/input/runtime preserved.
+Positive stages:1416loading/login silentframes, Terms checkbox, Guest, title/music/
+normal+reducedmotion. Preload24.29s. It reaches current MatchSetup HOME then waits
+retiredClassicButton; sourceEnterSettingsFromHome uses oldStart/Classic/Practice.
+Raw Home-960x540.png isTITLE, notnewHOME; actuallogo frame notcaptured. Report1003b
+keepsfalse result. One diagnostic route repair MAIN OwnerUiPlayerReview.MenuOnly
+now usesTitleStart->HubMenu/MenuSETTINGS->SettingsCredits/TumpSettingsBack and
+ModeCard/Back (no queueclick), plus firstrealvideo-frame capture ifobserved.
+This diagnostic change is unvalidated/pending combinedbuild; no gamebug claimed.
+
+ROOT CHAT-PACKET-FRAMING qualified. Prep16186 TERMINAL/exact3; original44592
+2causals/1counterfixturefailure. ONE SetUp reset repair, assertionsunchanged;
+correctedoriginal58898 TERMINAL2causals/7controls. Firstcandidate52815 7/9 fails:
+rootplaced2-stringguard inresultcallback ratherthanChatLine. Unpublished regression
+corrected with exactmethod mapping check. Corrected49518 TERMINAL9/9; post65168
+TERMINAL/all18441protected unchanged/exact3 matchesMAIN. No furtherrepair/retry.
+Reports reliability-2026-10-03/chat-packet + windows-candidate1003b ready.
+NEXT exactcommit/push qualified chat/evidence. Commitdiagnosticroute separately as
+pendingqualification (local first), prepare/build1003c with both changes. Then
+ONE corrected menu-only runtime case; don't repeat unchangedfullClassic. No live
+native/player/snapshot jobs at last observation. Preserve ownerprivate overlays.
 
 ## Qualified and published root changes
 

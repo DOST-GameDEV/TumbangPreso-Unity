@@ -781,6 +781,17 @@ namespace TumbangPreso.Net
             reader.Seek(reader.Position+(int)characters*sizeof(ushort));
             return true;
         }
+        private static bool ValidStringFrame(ref FastBufferReader reader, int count)
+        {
+            int start = reader.Position;
+            try
+            {
+                for (int i = 0; i < count; i++)
+                    if (!SkipWireString(ref reader)) return false;
+                return reader.Position == reader.Length;
+            }
+            finally { reader.Seek(start); }
+        }
         private static bool ValidIdentifyFrame(ref FastBufferReader reader)
         {
             int start=reader.Position;
@@ -1419,6 +1430,7 @@ namespace TumbangPreso.Net
         private void OnChatMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (!NetAuthority.IsHost) return;
+            if (!ValidStringFrame(ref reader, 1)) return;
 
             reader.ReadValueSafe(out string text);
             HostRelayChat((int)senderClientId, text);
@@ -1598,6 +1610,7 @@ namespace TumbangPreso.Net
         {
             if (NetAuthority.IsHost) return;
             if (!FromHost(senderClientId)) return;
+            if (!ValidStringFrame(ref reader, 2)) return;
 
             reader.ReadValueSafe(out string who);
             reader.ReadValueSafe(out string line);
@@ -4148,10 +4161,7 @@ namespace TumbangPreso.Net
 
             // Validate the complete UTF-16 frame before decoding or allocating from its
             // length. A damaged result must leave the previous result available.
-            int start = reader.Position;
-            bool framed = SkipWireString(ref reader) && reader.Position == reader.Length;
-            reader.Seek(start);
-            if (!framed) return;
+            if (!ValidStringFrame(ref reader, 1)) return;
 
             reader.ReadValueSafe(out string json);
             if (string.IsNullOrWhiteSpace(json)) return;

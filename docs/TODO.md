@@ -421,6 +421,16 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   Native original two causal/two controls; candidate FIRST4/4, no repairs.
   Valid Unicode/normalisation and sender/host-loopback controls preserved.
   [Evidence](reports/reliability-2026-10-03/match-record-packet/README.md).
+- [x] CHAT-PACKET-FRAMING-1003: bounded complete string framing protects host
+  and client chat callbacks, rate allowance and event state. Corrected original
+  two causals/seven controls; corrected candidate9/9 includes all result cases.
+  One counter fixture repair and one unshipped guard-placement regression retained.
+  [Evidence](reports/reliability-2026-10-03/chat-packet/README.md).
+- [ ] CURRENT-MENU-REVIEW-1003:134 Windows normal boot observes loading/login
+  silence, Terms agreement, Guest, title/music/motion and reaches current HOME;
+  raw route fails looking for retired ClassicButton. Diagnostic now follows the
+  hub Menu/Settings and ModeCard/Back, captures actual intro frame if observed.
+  Native verification pending on combined source; no signup/queue submission.
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow
