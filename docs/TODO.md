@@ -17,6 +17,7 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+
 ### AMIHAN-AIRBURST-PRESENTATION-1002: honest gather, release and cutscene
 
 Owner-authorized Amihan presentation lane (local session). Airburst first: live
@@ -26,6 +27,14 @@ gather. Re-author body/FPP timing, gather/release fan readability and the
 cutscene within 3.6 s; keep delay, 60 degree fan, contact and protocol. No SFX.
 Research, plan and evidence: [report](reports/amihan-presentation-2026-10-02/README.md).
 Drift, Featherfall and Whirlwind presentation follow as separate units.
+
+### PLAYER-RING-RADIUS-1002: larger hollow circle
+
+Ordinary player circle now uses1.75 capsule radii, about27percent larger.
+Taya/catchable sizes and gameplay unchanged. Native Low-profile1/1 passes with
+inspected role captures; first memory timeout retained.
+[Evidence](reports/feedback-2026-09-30/player-ring-radius/README.md).
+
 
 ### CITY-AMBIENCE-1002: Kanto and Ilalim gain reduction
 

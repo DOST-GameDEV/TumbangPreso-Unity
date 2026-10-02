@@ -210,6 +210,7 @@ Increase the ordinary hollow circle radius from1.375 to1.75 capsule radii
 Check actual rendered open centre, visible rim and capsule-relative sizing.
 No gameplay/contact radius change. One graphics run, one bounded repair maximum.
 
+
 AMIHAN-AIRBURST-PRESENTATION-1002 (owner-authorized local session for Amihan
 direction/body/FPP/VFX/cutscene only; NO SFX creation or mixing anywhere). Claims
 Airburst presentation only: HeroAbilityClips.Amihan.cs BuildAmihanStorm, baked
@@ -226,3 +227,19 @@ body/FPP release keyed at old 2.5s while gameplay releases at 1.5s; cutscene sho
 a release before the live gather. Validation in own detached worktree
 Codex/work/tump-amihan1002, profile amihan-airburst1002, after the active Hero
 reconnect job ends. Drift/Featherfall/Whirlwind not claimed yet.
+
+PLAYER-RING-RADIUS-1002 final Low-profile native1/1 passes in3.31s, outerexit0
+and guard null40s. Both hollow-role captures inspected. First ordinary-profile
+run timed out under memory pressure; retained, one bounded retry used. Publish
+two owned source files and evidence, then update/strike the exact radius
+comment in Feedback. No gameplay size or target-player claim.
+
+Player circle2d966482 shipped and exact Feedback note/strike verified. Release
+marker paths. Next SEAN-EMPOWERED-PRESENTATION-1002: actual held-shoe/body/FPP
+review against the researched press/check/release direction. Reserve Sean's
+hero-sean-ignite clip within tools/author_hero_action.py and team-sean.glb, and
+Runtime/Visual/SeanIgnitionVisual.cs if baseline demonstrates a visual defect.
+Do not change mechanics, other clips or Amihan. Reuse actual-input capture on
+Low with fixed simulation and labelled longer film; no real-time/audio claim.
+First capture decides the narrow authored change, no decorative rewrite by default.
+
