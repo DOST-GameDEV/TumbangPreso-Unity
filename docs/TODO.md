@@ -148,7 +148,9 @@ unchanged/exact2 generated identities. Freshpeer96292 FIRST PASS/120s/no liveJSO
 read; newscene/end/record/all4 frozen/NONspectator, ownedPIDsdead/restored/free.
 Current46fix artifact acceptance: [Evidence](reports/reliability-2026-10-02/windows-candidate1002j/README.md).
 Next: sole helper lunge windup retirement original96494=2causal/1control;
-candidate64944 ACTIVE/+3cleanup lines/exact3/protected12547/zero repairs.
+candidate64944 FIRST PASS3/+3cleanup lines/exact3/protected12547/zero repairs.
+RootCarrier original29117 ACTIVE after prep98288 exit0/exact3; source unchanged,
+GPU2048/reserve2048/450s/PlayMode-nographics/exact3. Native slot root-owned.
 root disjoint Carrier retirement fixture draft/source unchanged. No reused retired
 practice fixture, private timers or unchanged full-match tests; coordinate native.
 Helper touch null-list original72038 PASS3, suspicion not reproduced; no store

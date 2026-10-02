@@ -102,13 +102,15 @@ Root j96292 terminal/released native/q to helper bounded original/candidate pair
 Helper original96494 TERMINAL:2intended causals/1ordinary enabled-release control.
 Local retired windup spent1.5s cooldown on reactivation; observed tell returned.4
 insteadinactive. Guard19420/restored/free/exact3/protected12547/zero repairs.
-Candidate64944 ACTIVE after prep exit0/exact3/protected12547;
+Candidate64944 TERMINAL FIRST PASS3 after prep exit0/exact3/protected12547;
 GPU2048/reserve2048/450s/PlayMode-nographics/profile lunge-windup-lifetime1002,
 filter LungeWindupLifetimeTests3. Source+3lines clears local charging/charge and
 observed tell onDisable; contact/cooldown/_sentLunge/pauseUpdate unchanged.
 Zero repairs; root must not copy
 q assets or poll agent handle. Preserve contact/cooldown/pause semantics,
-no protocol/hero changes. Await candidate terminal/post/report before publication.
+no protocol/hero changes. Post direct0/exact3/all12547 protected unchanged;
+guardrestored/free/zero repairs, native/q released to root. Await report/hashes
+for source publication; qualified47th unit ready, not yet committed.
 Retired agents neverwake.
 
 ROOT disjoint MAIN-only source investigation: Carrier has no OnDisable cancellation;
@@ -116,7 +118,11 @@ existing Update cancels only when it runs. Public SpecialAbility press starts lo
 throw charge; ApplyObservedCharge starts remote tell/spin. New
 PlayMode/CarrierDisableLifetimeTests.cs/meta drafted: actual local charge/bodyretire,
 observed tell retirement, ordinary charge/release control. No production change or
-q prep/native until helper releases. MAIN Logs/carrier-disable-lifetime1002/prepare.py
+Original preparation98288 TERMINAL0/exact3; baseline29117 ACTIVE/GPU2048+
+2048reserve/450s/PlayMode-nographics/profile carrier-disable-lifetime1002,
+filter CarrierDisableLifetimeTests3. Source unchanged. No q changes while root
+owns this bounded pair. MAIN
+Logs/carrier-disable-lifetime1002/prepare.py
 ready, exact3 source/test/meta; existing Carrier meta must be present before copy.
 Minimal candidate should reuse existing
 CancelAll on disable if causal baseline qualifies; held shoe/pickup lock preserved,
