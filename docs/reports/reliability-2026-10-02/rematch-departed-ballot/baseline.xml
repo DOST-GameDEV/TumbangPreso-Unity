@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 02:43:06Z" end-time="2026-10-02 02:43:06Z" duration="0.1509767">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="831" result="Failed" site="Child" start-time="2026-10-02 02:43:06Z" end-time="2026-10-02 02:43:06Z" duration="0.150977" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1992" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="831" result="Failed" site="Child" start-time="2026-10-02 02:43:06Z" end-time="2026-10-02 02:43:06Z" duration="0.122776" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="9280" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1993" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="831" result="Failed" site="Child" start-time="2026-10-02 02:43:06Z" end-time="2026-10-02 02:43:06Z" duration="0.106948" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1994" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="831" result="Failed" site="Child" start-time="2026-10-02 02:43:06Z" end-time="2026-10-02 02:43:06Z" duration="0.093093" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1805" name="RuntimeLayerTests" fullname="TumbangPreso.Tests.RuntimeLayerTests" classname="TumbangPreso.Tests.RuntimeLayerTests" runstate="Runnable" testcasecount="28" result="Failed" site="Child" start-time="2026-10-02 02:43:06Z" end-time="2026-10-02 02:43:06Z" duration="0.073061" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1833" name="DepartedRematchMapBallotCannotChooseTheNextCourt" fullname="TumbangPreso.Tests.RuntimeLayerTests.DepartedRematchMapBallotCannotChooseTheNextCourt" classname="TumbangPreso.Tests.RuntimeLayerTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-02 02:43:06Z" end-time="2026-10-02 02:43:06Z" duration="0.065632" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1829" name="DepartedRematchMapBallotCannotChooseTheNextCourt(False,False)" fullname="TumbangPreso.Tests.RuntimeLayerTests.DepartedRematchMapBallotCannotChooseTheNextCourt(False,False)" methodname="DepartedRematchMapBallotCannotChooseTheNextCourt" classname="TumbangPreso.Tests.RuntimeLayerTests" runstate="Runnable" seed="2123152618" result="Failed" start-time="2026-10-02 02:43:06Z" end-time="2026-10-02 02:43:06Z" duration="0.049158" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  A departed player's ballot still selected the next court.
+  Expected: 1
+  But was:  3
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.RuntimeLayerTests.DepartedRematchMapBallotCannotChooseTheNextCourt (System.Boolean keepConnectedBallot, System.Boolean holdReconnectSeat) [0x00268] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RuntimeLayerTests.cs:530
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1830" name="DepartedRematchMapBallotCannotChooseTheNextCourt(False,True)" fullname="TumbangPreso.Tests.RuntimeLayerTests.DepartedRematchMapBallotCannotChooseTheNextCourt(False,True)" methodname="DepartedRematchMapBallotCannotChooseTheNextCourt" classname="TumbangPreso.Tests.RuntimeLayerTests" runstate="Runnable" seed="1627153059" result="Failed" start-time="2026-10-02 02:43:06Z" end-time="2026-10-02 02:43:06Z" duration="0.001829" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  A departed player's ballot still selected the next court.
+  Expected: 1
+  But was:  3
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.RuntimeLayerTests.DepartedRematchMapBallotCannotChooseTheNextCourt (System.Boolean keepConnectedBallot, System.Boolean holdReconnectSeat) [0x00268] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RuntimeLayerTests.cs:530
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1831" name="DepartedRematchMapBallotCannotChooseTheNextCourt(True,False)" fullname="TumbangPreso.Tests.RuntimeLayerTests.DepartedRematchMapBallotCannotChooseTheNextCourt(True,False)" methodname="DepartedRematchMapBallotCannotChooseTheNextCourt" classname="TumbangPreso.Tests.RuntimeLayerTests" runstate="Runnable" seed="767952310" result="Failed" start-time="2026-10-02 02:43:06Z" end-time="2026-10-02 02:43:06Z" duration="0.000591" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  A departed player's ballot still selected the next court.
+  Expected: 5
+  But was:  3
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.RuntimeLayerTests.DepartedRematchMapBallotCannotChooseTheNextCourt (System.Boolean keepConnectedBallot, System.Boolean holdReconnectSeat) [0x00268] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RuntimeLayerTests.cs:530
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1832" name="DepartedRematchMapBallotCannotChooseTheNextCourt(True,True)" fullname="TumbangPreso.Tests.RuntimeLayerTests.DepartedRematchMapBallotCannotChooseTheNextCourt(True,True)" methodname="DepartedRematchMapBallotCannotChooseTheNextCourt" classname="TumbangPreso.Tests.RuntimeLayerTests" runstate="Runnable" seed="1308362753" result="Failed" start-time="2026-10-02 02:43:06Z" end-time="2026-10-02 02:43:06Z" duration="0.000541" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  A departed player's ballot still selected the next court.
+  Expected: 5
+  But was:  3
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.RuntimeLayerTests.DepartedRematchMapBallotCannotChooseTheNextCourt (System.Boolean keepConnectedBallot, System.Boolean holdReconnectSeat) [0x00268] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\RuntimeLayerTests.cs:530
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

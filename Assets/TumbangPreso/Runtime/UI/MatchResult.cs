@@ -1256,6 +1256,7 @@ namespace TumbangPreso.UI
         {
             if (!NetAuthority.ShouldResolve() || !IsVisible || _rematchStarting) return;
 
+            RetireDisconnectedMapVotes();
             _rematchVotes.Remove(peerId);
             _rematchVotes.RetainEligible(EligibleRematchPeer);
 
@@ -1364,6 +1365,27 @@ namespace TumbangPreso.UI
         private void ClearMapVotes()
         {
             for (int i = 0; i < _mapVotes.Length; i++) _mapVotes[i] = Core.MapRotationRules.NoVote;
+        }
+
+        private void RetireDisconnectedMapVotes()
+        {
+            var lobby = Net.NetSession.Instance?.Lobby;
+            if (!NetAuthority.IsNetworked || lobby == null) return;
+
+            // Depart has already removed the peer. A held reconnect seat is not a live ballot.
+            bool changed = false;
+            for (int seat = 0; seat < _mapVotes.Length; seat++)
+            {
+                if (_mapVotes[seat] == Core.MapRotationRules.NoVote) continue;
+                var peer = lobby.PeerInSeat(seat);
+                if (peer != null && lobby.IsSeatedPeer(peer.PeerId)) continue;
+                _mapVotes[seat] = Core.MapRotationRules.NoVote;
+                changed = true;
+            }
+            if (!changed) return;
+
+            Net.MatchRpc.Instance?.MapVoteTallyClientRpc(_mapVotes);
+            RefreshMapVote();
         }
 
         /// <summary>
