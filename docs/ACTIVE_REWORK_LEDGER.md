@@ -22,35 +22,30 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Latest verified remote8f4defeb4 includes wallet5/5 and full Classic peer evidence.
-Local717d44bcb preserves seven pre-existing reference/motion PNGs only; no runtime
-art/animation change or new art acceptance claim. Bot one-line guard qualified
-and publishes next. Eight product units qualified this resume: abandon/history,
-witness queue, history navigation, deferred account sync, displayed verdict ID,
-late result ack, wallet owner/cache/scheduling and inactive bot-body visibility.
-Evidence owns exact counts/limits. No live endpoints, purchases or paid tools.
-Own pending source AIController.cs and BotCompanionObservationTests.cs plus docs.
-Complete pre-resume history in archived ledger; keep this checkpoint concise.
+Latest verified remote2664ad29c. Eight product units shipped; social-owner ninth
+unit qualified4/4 and publishes next. Core691/691 after documented adopted-Zapped
+assertion correction; no runtime values changed. Pre-existing PNGs preserved and
+incoming contributor work integrated intact. No resets/cross-chat/subagents/paid tools.
 
 ## Active job and exact next action
 
-BOT-INACTIVE baseline0/2, final2/2 in Classic/Hero with active controls and frozen
-memory. Two hashes unchanged, zero repairs; session58664 terminal, profile/input
-restored. Publish coherent unit with preserved PNGs. No heavy job active.
-FULL-CLASSIC natural8round actual peers: scores40/40/3580/3280;seat2wins;
-host59.85FPS/max86.06ms/client59.86/max21.60ms. Preserved raw active-Hero evaluator
-mismatch versus explicit completed-Classic observations; no equivalent270ms
-improvement claim. No operator/WAN/hardware/pristine certification.
-Next advance clean detached release checkout
-C:/Users/matth/Documents/Codex/work/tump-competition-release1002 to qualified
-published ASTRA revision without reset/private dirt. Inspect incoming reservations
-and final source/scene settings. One guarded clean import/build and relevant
-integration checks, then current supported Hero match/reconnect/rematch/operator
-paths, preserving existing evidence and no retired fixture loops.
-Remaining known source area: SocialStore response/cache ownership during account
-switch; inspect before edits. Broader source fixes remain authorized. Private
-Supernova opacity, four arm assets, Ultra settings and two protected UI metas
-remain excluded pending their own justified scope/evidence; no broad staging.
+SOCIAL owner baseline2/4, final4/4: old reply cannot replace friends/blocks; stale
+empty handle resolution cannot replace search status. Valid dispatch is fenced
+in source, not live-tested. No message/friendship/endpoint calls. Two hashes
+unchanged, zero repairs; session64773 terminal and profile/input restored. Publish
+this unit plus clean build receipt. Own SocialStore.cs/CareerAndCloudCodeTests.cs.
+Clean-start2664 release build succeeded2432MB/256s build phase, no C# drift;
+import/generated203tracked metadata/settings deltas disclosed. Fresh initial
+source/Library state, not pristine post-import working tree. Runtime7342fa1b...f8286a00,
+Builds/competition-release1002/TumbangPreso.exe in release checkout. Profile/input
+restored, native session86511 terminal. Do not stage protected importer metadata.
+Next ACTUAL current supported Hero direct-peer recovery/rematch or menu route on
+this frozen release player. Existing guarded runners, unique named profiles,
+one relevant scenario; no retired legacy whole-match UI repair loops. Artifact
+predates social source but includes the eight prior product units. While runtime
+runs inspect social cache clearing/newest-owner scheduling without a second heavy
+job. Full Classic8round evidence remains valid for unaffected core/clock behavior.
+Private Supernova/arms/Ultra/two UI metas remain excluded pending own evidence.
 
 ## Remaining readiness evidence
 
@@ -163,14 +158,6 @@ immunity/removable controls. No gameplay retune or new framework. Main+release
 same test file. One corrected Core run next; no further unchanged repeats.
 Full tracked asset manifest session28569 still hashing; do not launch Unity
 import until it completes and Core job is terminal. Native import not started.
-
-Core corrected integration691/691 passed, zero skips, current adopted status
-controls explicit. Test-only contract update publishes next; no runtime values
-changed. Source manifest completed18539 tracked non-audio/video runtime/assets/
-packages/settings hashes at087d3a36f. No Unity import started yet. Align clean
-checkout to published test correction without resetting its matching file, then
-one guarded import/build. Existing clean checkout has only this same test edit.
-
 Warning refinement shipped in 8eb83dcd via 203b8b3c; same Feedback note updated
 and two resolved warning comments struck through. Release warning/test paths.
 CITY-AMBIENCE-1002 claims Runtime/Map/KantoStreetSound.cs, SidewalkLife.cs and

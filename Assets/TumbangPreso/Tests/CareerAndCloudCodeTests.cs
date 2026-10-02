@@ -473,6 +473,66 @@ namespace TumbangPreso.Tests
             }
         }
 
+        [TestCase(false)]
+        [TestCase(true)]
+        public void SocialResponseCannotReplaceAnotherAccountsFriends(bool changeOwner)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsTrue(string.IsNullOrWhiteSpace(TumbangPreso.GameServices.Account?.PlayerId));
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var tokenField = typeof(TumbangPreso.Net.NetIdentity).GetField("_overrideTokenForTesting", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            string previousToken = (string)tokenField.GetValue(null); var previous = TumbangPreso.Net.SocialStore.Instance;
+            var owner = new GameObject("Social response ownership check"); var social = owner.AddComponent<TumbangPreso.Net.SocialStore>();
+            try
+            {
+                TumbangPreso.Net.NetIdentity.OverrideForTesting("social-owner-a");
+                string requested = TumbangPreso.Net.CareerStore.LocalPlayerId;
+                if (changeOwner) TumbangPreso.Net.NetIdentity.OverrideForTesting("social-owner-b");
+                social.List.Friends.Clear(); social.List.Friends.Add(new FriendRef { PlayerId = "current-friend", Handle = "CURRENT#4417" });
+                social.List.Blocked.Clear(); social.List.Blocked.Add("current-block");
+                var remote = new SocialList(); remote.Friends.Add(new FriendRef { PlayerId = "previous-friend", Handle = "PREVIOUS#4427" });
+                remote.Blocked.Add("previous-block"); string body = JsonUtility.ToJson(remote);
+                string response = "{\"list\":\"" + body.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"}";
+                typeof(TumbangPreso.Net.SocialStore).GetMethod("Adopt", flags).Invoke(social, new object[] { requested, response });
+                Assert.AreEqual(changeOwner ? "current-friend" : "previous-friend", social.List.Friends.Single().PlayerId,
+                    "An old account reply replaced the current friends.");
+                Assert.AreEqual(changeOwner ? "current-block" : "previous-block", social.List.Blocked.Single(),
+                    "An old account reply changed who the current account blocks.");
+            }
+            finally
+            {
+                TumbangPreso.Net.NetIdentity.OverrideForTesting(previousToken); Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.SocialStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, previous);
+            }
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void SocialHandleLookupCannotOverwriteAnotherAccountsSearch(bool changeOwner)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsTrue(string.IsNullOrWhiteSpace(TumbangPreso.GameServices.Account?.PlayerId));
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var tokenField = typeof(TumbangPreso.Net.NetIdentity).GetField("_overrideTokenForTesting", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            string previousToken = (string)tokenField.GetValue(null); var previous = TumbangPreso.Net.SocialStore.Instance;
+            var owner = new GameObject("Social handle lookup ownership check"); var social = owner.AddComponent<TumbangPreso.Net.SocialStore>();
+            try
+            {
+                TumbangPreso.Net.NetIdentity.OverrideForTesting("social-lookup-owner-a");
+                string requested = TumbangPreso.Net.CareerStore.LocalPlayerId;
+                if (changeOwner) TumbangPreso.Net.NetIdentity.OverrideForTesting("social-lookup-owner-b");
+                typeof(TumbangPreso.Net.SocialStore).GetProperty("SearchStatus").SetValue(social, "CURRENT ACCOUNT SEARCH");
+                // Empty resolution cannot dispatch a friend request or reach an endpoint.
+                typeof(TumbangPreso.Net.SocialStore).GetMethod("CompleteHandleLookup", flags).Invoke(social, new object[] { requested, "{}" });
+                Assert.AreEqual(changeOwner ? "CURRENT ACCOUNT SEARCH" : "NO ACCOUNT HAS THAT EXACT NAME AND TAG.", social.SearchStatus);
+            }
+            finally
+            {
+                TumbangPreso.Net.NetIdentity.OverrideForTesting(previousToken); Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.SocialStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, previous);
+            }
+        }
+
         private const string AssetsRoot = "Assets/TumbangPreso";
         private const string CloudCodeRoot = "ugs/cloud-code";
 

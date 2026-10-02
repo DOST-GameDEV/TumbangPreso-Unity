@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 01:58:59Z" end-time="2026-10-02 01:59:00Z" duration="0.1466285">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="820" result="Failed" site="Child" start-time="2026-10-02 01:58:59Z" end-time="2026-10-02 01:59:00Z" duration="0.146629" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1977" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="820" result="Failed" site="Child" start-time="2026-10-02 01:58:59Z" end-time="2026-10-02 01:59:00Z" duration="0.132840" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16072" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1978" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="820" result="Failed" site="Child" start-time="2026-10-02 01:58:59Z" end-time="2026-10-02 01:59:00Z" duration="0.129561" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1979" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="820" result="Failed" site="Child" start-time="2026-10-02 01:58:59Z" end-time="2026-10-02 01:59:00Z" duration="0.127279" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1060" name="CareerAndCloudCodeTests" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="58" result="Failed" site="Child" start-time="2026-10-02 01:58:59Z" end-time="2026-10-02 01:59:00Z" duration="0.080285" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1118" name="SocialHandleLookupCannotOverwriteAnotherAccountsSearch" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialHandleLookupCannotOverwriteAnotherAccountsSearch" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-02 01:58:59Z" end-time="2026-10-02 01:59:00Z" duration="0.049885" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1116" name="SocialHandleLookupCannotOverwriteAnotherAccountsSearch(False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialHandleLookupCannotOverwriteAnotherAccountsSearch(False)" methodname="SocialHandleLookupCannotOverwriteAnotherAccountsSearch" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1296725712" result="Passed" start-time="2026-10-02 01:58:59Z" end-time="2026-10-02 01:59:00Z" duration="0.025311" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1117" name="SocialHandleLookupCannotOverwriteAnotherAccountsSearch(True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialHandleLookupCannotOverwriteAnotherAccountsSearch(True)" methodname="SocialHandleLookupCannotOverwriteAnotherAccountsSearch" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1992899196" result="Failed" start-time="2026-10-02 01:59:00Z" end-time="2026-10-02 01:59:00Z" duration="0.009240" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected string length 22 but was 39. Strings differ at index 0.
+  Expected: "CURRENT ACCOUNT SEARCH"
+  But was:  "NO ACCOUNT HAS THAT EXACT NAME AND TAG."
+  -----------^
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.SocialHandleLookupCannotOverwriteAnotherAccountsSearch (System.Boolean changeOwner) [0x000d6] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:527
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1115" name="SocialResponseCannotReplaceAnotherAccountsFriends" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialResponseCannotReplaceAnotherAccountsFriends" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-02 01:59:00Z" end-time="2026-10-02 01:59:00Z" duration="0.014566" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1113" name="SocialResponseCannotReplaceAnotherAccountsFriends(False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialResponseCannotReplaceAnotherAccountsFriends(False)" methodname="SocialResponseCannotReplaceAnotherAccountsFriends" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1634952498" result="Passed" start-time="2026-10-02 01:59:00Z" end-time="2026-10-02 01:59:00Z" duration="0.010992" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1114" name="SocialResponseCannotReplaceAnotherAccountsFriends(True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialResponseCannotReplaceAnotherAccountsFriends(True)" methodname="SocialResponseCannotReplaceAnotherAccountsFriends" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="216790355" result="Failed" start-time="2026-10-02 01:59:00Z" end-time="2026-10-02 01:59:00Z" duration="0.002551" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An old account reply replaced the current friends.
+  Expected string length 14 but was 15. Strings differ at index 0.
+  Expected: "current-friend"
+  But was:  "previous-friend"
+  -----------^
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.SocialResponseCannotReplaceAnotherAccountsFriends (System.Boolean changeOwner) [0x00187] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:497
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
