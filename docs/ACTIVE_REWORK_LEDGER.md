@@ -347,3 +347,11 @@ The remaining Pyro and Human verified controls stay open. Next inspect Steady
 Ember's genuine own-throw/manual-retrieval identity and existing charge authority
 before claiming implementation. Do not overlap the other agent's private
 Supernova opacity review or Amihan's separately preserved presentation lane.
+
+DOTS next unit SEAN-STEADY-EMBER-1002: inspect-to-implementation plan and exact
+reservation in reports/sean-steady-ember-2026-10-02/plan.md. Genuine host own-throw
+plus manual retrieval grants one four-second1.25x charge-rate window, unchanged
+maximum power. Private slipper episode prevents drop/regrab farming; generic
+kit hooks and TimedKitState channel, never a Sean-only RPC. Planned protocol131
+must be reconciled against the latest shared branch before use. No code edited
+or native job started yet. Other agents' current ownership remains protected.
