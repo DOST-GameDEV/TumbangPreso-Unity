@@ -8,8 +8,8 @@ needed for one specific fact. TODO is the sole status queue. No stopping after u
 
 Make the game COMPETITION READY: engineering, bugs, reliability, performance and
 current UX defects. Root implements and integrates. Latest user explicitly asked
-EXACTLY ONE new GPT6.1 Sol HIGH helper: sol_parallel_engineering has finished
-its current bounded work and is idle, available for a concrete follow-up.
+EXACTLY ONE new GPT6.1 Sol HIGH helper: sol_parallel_engineering ACTIVE on
+concrete lunge windup retirement; root owns disjoint Carrier investigation.
 Earlier Astra and Sol retired after15:30-15:33 wrap; old ultra interrupted. Never
 resume those or spawn another helper without new authorization. FAST toggle absent,
 not claimed configured. No cross-chat actions, reset/clean/stash/forcepush, paid
@@ -92,10 +92,25 @@ or repeat.12543 protected unchanged/guardsrestored/free/zero repairs. Finding-on
 Report/fixture retirement COMPLETE; exact new fixture/meta retained outside both
 Assets with containment/hash proof. No product patch. Root native slot released.
 No NaN changes/schema/bindings/assets. Finding-only report SHIPPEDc644b475f.
-Helper finished bounded source-only replay-audio/emote check: suspected replay
-voice mute leak already handled; no qualified new defect, no files/native changes.
-Idle to avoid broad audit/usage waste; may follow up same sole helper when concrete
-work exists. No q mutations/native while root owns newj build/peer. Retired agents neverwake.
+Helper finished bounded replay-audio/emote check without a new qualified defect;
+no files/native changes from it. Sole helper resumed for NEW concrete windup unit:
+CombatVerbs.OnDisable leaves local charge and observed tell. Actual public
+Intent.Set(Lunge,true)/enabledUpdate and ApplyObservedLungeCharge plus bodydisable
+are causal paths; 2causal/1ordinary release control planned, no private writes/
+expirywait/old retired SetBot helper. Owns CombatVerbs +NEW3fixture/meta/report.
+Root j96292 terminal/released native/q to helper bounded original/candidate pair.
+Preserve contact/cooldown/pause semantics, no protocol/hero changes. Await handles.
+Retired agents neverwake.
+
+ROOT disjoint MAIN-only source investigation: Carrier has no OnDisable cancellation;
+existing Update cancels only when it runs. Public SpecialAbility press starts local
+throw charge; ApplyObservedCharge starts remote tell/spin. New
+PlayMode/CarrierDisableLifetimeTests.cs/meta drafted: actual local charge/bodyretire,
+observed tell retirement, ordinary charge/release control. No production change or
+q prep/native until helper releases. Minimal candidate should reuse existing
+CancelAll on disable if causal baseline qualifies; held shoe/pickup lock preserved,
+reset-channel transport not separately claimed. Actor impulse suspicion retired:
+PracticeRange.SetBot calls Teleport->BeginSpawnSettle, which already clears motion.
 
 ROOT CURRENT diagnostic candidate ready: owns
 Runtime/Net/NetCompletedArrivalProbe.cs + NEW Tests/CompletedArrivalReceiptIoTests.cs/

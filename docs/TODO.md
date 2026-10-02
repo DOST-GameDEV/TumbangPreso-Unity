@@ -147,6 +147,9 @@ New1002j freeze7621 TERMINAL0/18905inputs; nativebuild77760 TERMINAL0/2432MB86s,
 unchanged/exact2 generated identities. Freshpeer96292 FIRST PASS/120s/no liveJSON
 read; newscene/end/record/all4 frozen/NONspectator, ownedPIDsdead/restored/free.
 Current46fix artifact acceptance: [Evidence](reports/reliability-2026-10-02/windows-candidate1002j/README.md).
+Next: sole helper lunge windup retirement (CombatVerbs,2causal/1control planned),
+root disjoint Carrier retirement fixture draft/source unchanged. No reused retired
+practice fixture, private timers or unchanged full-match tests; coordinate native.
 Helper touch null-list original72038 PASS3, suspicion not reproduced; no store
 patch or repeat. Finding-only report/fixture retirement complete; native slot free
 then transferred to root. [Evidence](reports/reliability-2026-10-02/touch-layout-null-list/README.md).
