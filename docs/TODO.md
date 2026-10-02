@@ -432,6 +432,12 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   First actual local Unicode chat exchange and cold completed record/save pair
   also pass on same1003c artifact. Input/profile/Runtime preservation and exits pass.
   [Current artifact/acceptance](reports/reliability-2026-10-03/windows-candidate1003c/README.md).
+- [x] REPLAY-PROP-BINDING-COST-1003: reuse replay-prop scratch storage and direct
+  lookup while preserving live query/track/window lifecycle. Same four native
+  cases pass original/candidate; warmed binding median3.69 to3.16us (~14.33% lower
+  in fixture). No repairs/retries. Zero-returning allocation counter is uninformative,
+  not a measured allocation delta or FPS/stall attribution.
+  [Evidence](reports/reliability-2026-10-03/replay-prop-binding/README.md).
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow

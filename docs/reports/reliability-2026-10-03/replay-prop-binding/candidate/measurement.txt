@@ -1,0 +1,1 @@
+REPLAY_BIND median_us=3.163300; managed_bytes_per_call=0.000; calls=2000; batches=7

@@ -5,8 +5,8 @@ checks and publication; a progress report is not a stop. Root works SOLO.
 
 ## Current root job and next action
 
-MAIN ASTRAReworks HEAD8ef02cf75d4201e7a1bc839270a5af3309421d3d (diagnostic local).
-Verified remotec68986e71b18c4d47b1400072a48577615bd30f4 (qualified chat fix).
+MAIN ASTRAReworks and verified remote1d38ca4f643d432eb0c649a5da4a7cfe12def488.
+Current startup/Unicodechat qualified and published; private owner dirt preserved.
 LAN acceptance report7cbe176ca integrated/pushed with incoming protocol134
 timed recovery and studio intro. Latest peer/startup-qualified artifact1003c source8ef02cf75/protocol134 (below).
 RELEASE detached at8ef02cf75: C:/Users/matth/Documents/Codex/work/tump-competition-release1002.
@@ -97,11 +97,21 @@ both. NaturalHero1/30 end, HOME/coldrejoin/same record/fourfrozenactors, both sa
 history/queue/witness1 andoneownhumanline, sameonlinerecord/scores/clearmarkers.
 Guards input/profileseeds/runtime/exits/free. No heavynative/player jobs remain.
 
-NEXT publish diagnostic8ef02cf75 + native-qualified optional --chat runner,
-1003c reports/TODO/checkpoint afterfetch/divergencecheck. Then continue remaining
-competitionengineering, e.g concrete currentmap/mode/operator gaps or a measured
-performance fix. Do not repeat theseunchangedchecks or fullClassic133; don't mark
-wholeready. Preserve privateowner overlays and contributor reservations.
+Published1d38ca4f6 includes qualifieddiagnostic and optionalchat runner, reports
+and soleTODO updates. All previousjobs terminal; do not repeat unchangedchecks.
+
+ROOT replay-prop binding unit qualified: prep66162/original49483/candidate16571/
+post48364 TERMINAL, same4 nativecases PASS before/after, no repairs/retries.
+Stabletrack/history/safewindow, changedmodel/newtrack/unsafe and removed-returned
+can lifecycle preserved. Reusedscratch list/separateexplicitAddProp removes repeated
+list/capture sites; scratchreferencesclearaftercopy+disable. Nativequery/ordering/
+eligibility unchanged. Warmed7x2000 median3.69255->3.16330us/call (14.33% fixture).
+Thread allocationcounter0both versions uninformative; MonoBCL InternalCall hasno
+managedbody, no supportedallocationdelta or zero/FPS/historicalstallclaim. Protected
+18443 unchanged, exact3 MAIN/q match. Report reliability-2026-10-03/replay-prop-binding.
+Own Runtime/Camera/MatchReplayArchive.cs + ReplayPropBindingTests.cs/meta only.
+Source publication next; current1003c player predates optimization. No live jobs.
+Continue remaining actualengineering after publish, without repeating thesechecks.
 
 ## Qualified and published root changes
 
