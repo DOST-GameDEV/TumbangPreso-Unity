@@ -336,6 +336,16 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   One original fixture timeout and one bounded clock/provider repair retained.
   No player FPS or historical stall attribution claim.
   [Evidence](reports/reliability-2026-10-02/slide-inventory/README.md).
+- [ ] PINNED-HOME-MODE-1002: normal LAN lobby refresh replaces pinned Classic
+  tournament mode with the saved Hero card. Current1002m actual eight-round run
+  ends naturally in Hero on both peers despite explicit tournament launch.
+  Preserve pins on passive refresh while retaining explicit mode/hero selection.
+  [Failure evidence](reports/reliability-2026-10-02/windows-candidate1002m/README.md).
+- [ ] CLIENT-CAREER-DELIVERY-1002: same normal-lobby match stores one online
+  result/queue entry on host; client has no career.json after clean exit.
+  Trace record delivery, local identity and save eligibility before attributing
+  the failure or patching. No live-service or unchanged full-match retry.
+  [Failure evidence](reports/reliability-2026-10-02/windows-candidate1002m/README.md).
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow

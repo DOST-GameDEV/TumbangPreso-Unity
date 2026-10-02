@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Current Windows integration build and normal-lobby mode/client-save findings: [1002m evidence](reports/reliability-2026-10-02/windows-candidate1002m/README.md).
+
 Slide prediction and retrieval inventory optimization: [native timing and behavior evidence](reports/reliability-2026-10-02/slide-inventory/README.md).
 
 Read only the current route needed for the task. Full history is retained, but
