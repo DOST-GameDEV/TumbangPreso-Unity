@@ -112,7 +112,7 @@ namespace TumbangPreso.Diagnostics
             {
                 string dir = Application.persistentDataPath;
                 string path = Path.Combine(dir,
-                    $"tumbangpreso-bundle-{DateTime.Now:yyyyMMdd-HHmmss}.txt");
+                    $"tumbangpreso-bundle-{DateTime.Now:yyyyMMdd-HHmmss}-{Guid.NewGuid():N}.txt");
 
                 // ⚠️ THROUGH `SafeStore` LIKE EVERY OTHER WRITE, so a full disk produces a warning
                 // rather than an exception thrown out of the crash handler.

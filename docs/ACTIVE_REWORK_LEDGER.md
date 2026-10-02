@@ -19,11 +19,12 @@ preserve finalized Paete/Phaister and active Sean/Rafi/Baha reservations.
 
 ## Published code and acceptance
 
-Verified remote1dafe63c4:39 root continuity runtime fixes published. Latest units:
+Verified remotef33e1d8a7:40 root continuity runtime fixes published. Latest units:
 32chat guards3e91f02b0/native10;33scorecard owner84ddfc391/native3;34RecordChoice
 57158d1db/native3;35cold actor12a2689ff/native3;36scorecard focus7c3124886/native3;
 37Settings focusdd4712ca0/native3;38LAN startup5367390ab/native3;39LAN receive owner
-1dafe63c4/native3. Causal originals/raw failures retained. Settings hadONE metadata
+1dafe63c4/native3;40training pausef33e1d8a7/native3. Causal originals/raw failures
+retained. Settings hadONE metadata
 GUID-only repair after initial0 tests; cold actor ONE NUnit compatibility repair;
 RecordChoice ONE Start-frame fixture correction; scorecard owner ONE canvas lookup
 correction; latest LAN units ZERO repairs. Native counts do not equal full readiness.
@@ -42,29 +43,44 @@ Report lan-receive-owner and startup report committed. No per-fix standalone reb
 
 ## Active agent job and next root action
 
-Sole Sol HIGH owns ONLY GuidedTraining.cs completion coroutine pause/loading gate
-and NEW PlayMode/TrainingPauseTransitionTests.cs/.meta/report. Actual .70s realtime
-beat advanced Ready->Look behind real paused menu, bypassing Update gate.
-Original43529 TERMINAL3:2controls/1causal expectedReady/butLook; zero repairs.
-Candidate17680 RUNNING, GPU2048/reserve2048/450s, qualification
-Logs/training-pause-transition1002/final/profile same/filter TrainingPauseTransitionTests.
-Prep terminal0/exact3/all12527 protected incl freshly qualified LAN unchanged.
-Agent owns handle; DON'T poll with root write_stdin or mutate qualification.
-Candidate +3lines waits Panel.AnyOpen/loading AFTER unchanged .70 beat; identical
-fixture/meta GUID9e7100edb4b8463a9d01d4587503c233. Real SkipFromUi/currentPausePanel,
-minimal actor/Lata, ordinary advancement/repeatedskip controls. <=ONE repair; no
-map setup or input framework. Agent provides exact3 hashes/raw report and slot
-release; ROOT reviews/commits/fetches/incomingdiff/merges/pushes. Agent no shared
-ledger/TODO edits/commits/push. No other heavy native job until terminal/post release.
+Training pausef33e1d8a7 PUBLISHED: original43529=1causal/2controls, final17680
+PASS3/3, zero repairs/all12527 protected unchanged/exact3 main/q. Both guards
+terminal/restored/no lease. Owning Guided_Training.md completion-beat sentence
+updated. Loading predicate is source-shared, not independently exercised. No full
+shipping tutorial or new standalone inclusion claim.
 
-NEXT ROOT while agent tests: choose concrete disjoint engineering issue/source
-caller evidence; implement MAIN only. No broad audits, validation loops or extra
-workers. After agent3 qualified, update runtime count40 only when shipped. Current
-g artifact predates two LAN units/agent, don't overstate standalone coverage. One
-coherent future build after meaningful batch, not per-fix. Current full tournament,
-current maps/failure recovery/visual availability and original270ms host frame remain
-bounded readiness work. Prior Classic/Hero natural8-round ends retained; don't
-rerun unchanged8rounds or call frame270 fixed (not reproduced/causally attributed).
+SOLE Sol HIGH sol_parallel_engineering remains the ONLY helper, now source-only
+on a DIFFERENT concrete current practice/input lifecycle issue, proposal before edits.
+Practice stale-lunge unit NOT fixed: original70621 observed retained0.446414s active
+window, one unchargedcontrolpass, first ordinarypause setup lacked normal clock.
+ONE fixture repair added RequestScale(1). Repaired original81031 again causal
+retained0.449515s and unchargedpass; pause-preservation itself passed but final expiry
+Assert.Zero failed because normal expired timer is-0.000199 (second fixture flaw).
+Route RETIRED/unqualified, no product patch/candidate/further native retry. CombatVerbs
+UNCHANGED. Preserve OPEN repeated causal defect for later justified work; don't claim
+it fixed or dismiss it because helper gate failed.
+
+Agent cleanup verified ONLY its new PracticeBotResumeTests.cs/.meta moved from MAIN
+and qualification Assets to corresponding task Logs retired-*.txt, exact hashes/
+absolute containment/all12529 protected unchanged. Both guards terminal/restored/
+leasefree/PIDs12988+26484 dead. Honest report practice-bot-resume +cleanup.json
+READY for root publication, failed fixture excluded from live Assets/test integration.
+No active native handle; one agent source-only. Root can do disjoint implementation.
+No other agent/resume/cross-chat action. Keep bounded checks and ship qualified units.
+
+ROOT independently owns FailureBundle.cs filename collision fix ONLY: timestamp
+seconds currently overwrite a bundle generated in same second. Add full Guid:N
+suffix preserving prefix and returned path; caller search found no fixed-name parser.
+Single-line reversible naming change, no file-writing test against user's shared
+persistentDataPath. COMMITTED40f8f2474, source-reviewed/no new Unity compilation yet; keep diagnostic
+count separate from40 runtime fixes. Await meaningful integration compile/batch.
+
+NEXT ROOT continue disjoint concrete engineering while agent works; no broad audits,
+validation loops or extra workers. Current1002g contains37fixes, predates LAN38/39
+and training40. Future coherent build after meaningful batch, not per-fix. Current
+full-tournament/map/failure-recovery/visual-availability and original270ms host frame
+remain bounded readiness work. Prior natural Classic/Hero8round ends retained;
+no unchanged8round rerun or claim270ms frame causally fixed. Goal ACTIVE.
 
 ## Preservation and recovery
 

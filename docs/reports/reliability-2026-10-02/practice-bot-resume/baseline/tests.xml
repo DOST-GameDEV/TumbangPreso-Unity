@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 08:21:18Z" end-time="2026-10-02 08:21:19Z" duration="0.839288">
+  <test-suite type="TestSuite" id="2566" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1277" result="Failed" site="Child" start-time="2026-10-02 08:21:18Z" end-time="2026-10-02 08:21:19Z" duration="0.839288" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2560" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1277" result="Failed" site="Child" start-time="2026-10-02 08:21:18Z" end-time="2026-10-02 08:21:19Z" duration="0.817241" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25824" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2561" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1277" result="Failed" site="Child" start-time="2026-10-02 08:21:18Z" end-time="2026-10-02 08:21:19Z" duration="0.803606" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2562" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1277" result="Failed" site="Child" start-time="2026-10-02 08:21:18Z" end-time="2026-10-02 08:21:19Z" duration="0.790512" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1995" name="PracticeBotResumeTests" fullname="TumbangPreso.PlayTests.PracticeBotResumeTests" classname="TumbangPreso.PlayTests.PracticeBotResumeTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-02 08:21:18Z" end-time="2026-10-02 08:21:19Z" duration="0.757245" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1997" name="OrdinaryPausePreservesTheActiveLungeForResume" fullname="TumbangPreso.PlayTests.PracticeBotResumeTests.OrdinaryPausePreservesTheActiveLungeForResume" methodname="OrdinaryPausePreservesTheActiveLungeForResume" classname="TumbangPreso.PlayTests.PracticeBotResumeTests" runstate="Runnable" seed="1217559053" result="Failed" start-time="2026-10-02 08:21:18Z" end-time="2026-10-02 08:21:19Z" duration="0.484029" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[SetUp :   Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PracticeBotResumeTests+<Before>d__14.MoveNext () [0x002de] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\PracticeBotResumeTests.cs:58
+at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\EnumeratorHelper.cs:35
+at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00132] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Commands\BeforeAfterTestCommandBase.cs:155
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1996" name="RemovedAndRestoredDefenderRetiresItsOldLungeContactWindow" fullname="TumbangPreso.PlayTests.PracticeBotResumeTests.RemovedAndRestoredDefenderRetiresItsOldLungeContactWindow" methodname="RemovedAndRestoredDefenderRetiresItsOldLungeContactWindow" classname="TumbangPreso.PlayTests.PracticeBotResumeTests" runstate="Runnable" seed="1091726607" result="Failed" start-time="2026-10-02 08:21:19Z" end-time="2026-10-02 08:21:19Z" duration="0.201317" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A restored idle defender retained its pre-removal contact sweep.
+  Expected: 0
+  But was:  0.446414173f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PracticeBotResumeTests+<RemovedAndRestoredDefenderRetiresItsOldLungeContactWindow>d__18.MoveNext () [0x000fa] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\PracticeBotResumeTests.cs:100
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1998" name="UnchargedRemovalAndRestoreRemainIdleWithoutStartingALunge" fullname="TumbangPreso.PlayTests.PracticeBotResumeTests.UnchargedRemovalAndRestoreRemainIdleWithoutStartingALunge" methodname="UnchargedRemovalAndRestoreRemainIdleWithoutStartingALunge" classname="TumbangPreso.PlayTests.PracticeBotResumeTests" runstate="Runnable" seed="1548866508" result="Passed" start-time="2026-10-02 08:21:19Z" end-time="2026-10-02 08:21:19Z" duration="0.056308" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
