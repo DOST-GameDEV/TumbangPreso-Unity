@@ -463,3 +463,17 @@ New Baha field18/recording13 preserve legacy Breakwater. Protocol132 stays
 unpublished with Backwash; no successful peer claim from the prior two false runs.
 Core geometry first, then new product/native/replay/presentation qualification.
 All other agents' ownership remains untouched; do not modify shared artifacts.
+
+Baha complete recording fixture exposed a genuine shared decoder defect:
+TryDecode leaks InvalidDataException for incompatible/unsupported schemas because
+its catch filter omits that exception. Original failure retained; exact catch
+addition now passes2native rejection cases without relaxing validation. Reserve
+Tests/RecordedClipRejectionTests.cs/.meta and the isolated catch-filter hunk for
+an independent safe-refusal regression and shipment. Baha schema13 and kind18,
+Backwash132 and the unfinished field remain unpublished and must not be staged
+with this standalone decoder fix. No other contributor path is affected.
+
+DOTS decoder refusal ready: exact schema12 plus catch-filter-only fix passes
+2/2 native header tests,45s exit0/guardnull, profiles restored. Original escaped
+InvalidDataException retained. Stage only that catch hunk, independent test/meta
+and report. Keep Baha schema13/kind18, Rafi132 and all unfinished code unstaged.
