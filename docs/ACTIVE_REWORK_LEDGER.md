@@ -24,12 +24,15 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Verified remote69e3414913c3bc582b9ce5b028239f65503e62d7:23 qualified product
+Verified remotea8b662f9e262408f33fab233874a574f25b618c2:25 qualified product
 fixes published. Latest customslots e8de37021 native6/6 (four causal failures),
 hub disconnect8acbdf683 native3/3 (three causal failures), zero repairs.
 Account save d01c62a68 native5/5 (four causal failures), zero repairs, published.
 Rebind enabled-state5acff5bfe final10/10 (four causal failures/six controls),
 published via69e341491. Report explicitly separates failed joint Ready/Buffer tests.
+Force handover8d970fb06 native3/3 and wallet backup4ac37e3dc native4/4 published
+viaa8b662f9e; joint7 baseline5controls/2causal then7/7, zero repairs/1285protected.
+Actual completed-arrival peer evidence19697fea9 also published, exactscope below.
 Queue39a3bc4305/5, reporteligibility2c3eea2298/8,
 completedarrival960560b7c12/12. Preserve all raw baseline/failed receipts.
 ACKcd4a41069 native41/41; rebindcancel1f2d2bcb9 native4/4; Core691/691 unchanged.
@@ -43,13 +46,35 @@ CPU workers are implemented but no workers/parallel native proof created.
 
 ## Active job and exact next action
 
-ROOT next coherent build session88898, releaseHEAD69e3414913c3bc582b9ce5b028239f65503e62d7,
-unique1002e. Frozen23 qualified fixes +incoming protocol130/recording12/Core7,
-observer verified UInt64 schema. No Ready/Buffer/Emote candidate included. Recipe
-release Logs/competition-candidate1002e/freeze_build.py prepare then main pool build;
-finalize once terminal to verify all source inputs/Runtime/artifact/guard. Then
-tools/run_completed_arrival.py actual2native peers120sec, source/runtime/receipt
-binding; no unchanged whole8round replay or isolated observer retry.
+ROOT menu-exit lifecycle baseline61758 TERMINAL4SetUp failures: EditMode cannot
+assume Application.CanStreamedLevelBeLoaded(HOME). ONE fixture correction now
+baseline-repair93401 active/queued, qualified Logs/menu-exit-lifetime1002/
+baseline-repair, profile menu-exit-lifetime1002, serial CPU1536/reserve2048.
+Actual publicLeaveMatchToMainMenu invoked; existing duplicate-load latch suppresses
+load when available, exact expected scene-unavailable error when Editor cannot
+stream. Product assertions unchanged; no rendered HOME/physical operator claim.
+Expected3causal lifecycle failures/1real ticking control, thenonecandidatefinal4.
+Root owns SceneFlow.cs exactExit hunk (aftertelemetry/netStop End(false) break,
+Round.ResetForNewMatch, Match.ResetForNewMatch) +new MenuExitLifetimeTests.cs/.meta.
+MAIN frozenoriginal/candidate/test snapshots Logs/menu-exit-lifetime1002-inputs;
+do not mutate qualification inputs while93401 active. No further fixture repair.
+
+Native build88898 TERMINAL SUCCEEDED2432MB122s/12scenes, guard restored/lease
+released. ReleaseHEAD69e3414913c3bc582b9ce5b028239f65503e62d7, artifact1002e,
+Runtime b0bfbbaec5d5c16041f90036e33b2abad41e8029e28ae4ca3e8ef7536f1ba6c0.
+18845frozeninputs:18843unchanged, ONLYtwo GameBuilder.StampBuildIdentity writes
+changed. Original strict build-receipt FALSE preserved; separate artifact-receipt
+validates matching generatedResource/Streaming/packagedSHA+commit69/protocol130/
+Windows target, expectedstamps only. No unknown source drift ignored or rebuild.
+Source-finalizer50318 terminal refusedplayerlaunch onstrictfalse; classification
+then actualpeer49462 TERMINAL PASS/exit0 firstplayer scenario, no repair.
+Client9468 initialactualnativeHUB route/naturalHero1round30sec onEskinita,
+twohumanorigins+2ordinarybots; actualResultMainMenu onClick->HubHome->publicJoin,
+newrawscenehandle; end/recordevents1->2 each. BothmatchIDbae2163e17a74bc9a3400a8095a12f98,
+scores20/0/0/150,winner3, boardvisible; host22276remainsended, clientobservedslot1
+not spectator. No retained-seat/full-default-match/physical-input/SDK/WAN claim.
+Exact2PIDs gone, input/profile seeds restored, Runtimeunchanged/lease released.
+No taskbrowser opened. Qualified1002e predates force/Wallet latest2sourceunits.
 
 ROOT builds98535/c and72335/d TERMINAL failed compilation, guards restored/lease
 released; no new qualified player. c implicit SceneHandle->int rejected, d used
@@ -89,14 +114,17 @@ postjoin slot/spectator, no retained-seat recovery claim. Diagnostic commit066bb
 published separately, zero product-count inflation. No actual player launched yet.
 After successful build root finalize frozen receipt then tools/run_completed_arrival
 with --source-commit/--runtime-sha/--build-receipt, fresh Logs output,120sec ceiling.
-Sol rebind enabled-state completed/published; next independent gameplay issue
-read-only until exact ownership announced. Avoid Sean ownthrow/manualretrieval lane.
+Sol rebind enabled-state and Wallet backup4 completed/published. Now investigating
+TouchLayoutStore.cs null Tweaks reload +NEW JSON fixture, MAIN ONLY until native
+JsonUtility causal proof; no patch merelyfromuncertainparsebehavior. Preserve
+touch design/keys/schema and revision/cache/prefs, no input-event infrastructure.
 
-Astraxhigh hub disconnect completed/published; ReadyGate/Emote candidates pending
-with retired failed input fixtures above. Now tracing Carrier.NotifyEquipped and
-Slipper.HostForceEquip: authoritative same-shoe round handover may retain old
-throw-lock. Distinguish force handover from duplicate replicated snapshot, preserve
-manual retrieval/Sean charge/CharacterMotor. No patch/native yet; announce hunks.
+Astraxhigh hub disconnect/force handover3 completed/published; ReadyGate/Emote
+candidates pendingwithretiredfixtures. Now spectator camera-role lifetime:
+SpectatorCamera.cs OnDisable camera-off +MatchInstaller.cs reuse/enable whenwatching,
+NEW publicRebindLocalSeat/camera-state fixture; no raw-keyframework/authoredcamera
+changes. Inspect SpectatorDirector enabled-camera guard beforeclaimingthirdhunk.
+MAIN ONLY no native while rootmenu-exit4. Exact ownership announced, not yet qualified.
 Sean contributor owns SteadyEmber ownthrow/manualretrieval; preserve reservations.
 Two authorized
 current-chat agents; oldSolultra INTERRUPTED, never wake. FAST control unavailable,

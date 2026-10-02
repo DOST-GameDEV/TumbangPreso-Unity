@@ -706,6 +706,12 @@ namespace TumbangPreso.UI
 
             Net.NetSession.Instance?.Stop();
 
+            // Directors and the break presenter survive arena unload. Retire their
+            // clocks before HOME can inherit live simulation or a delayed advance.
+            HalftimePresentation.Instance?.End(false);
+            GameServices.Round?.ResetForNewMatch();
+            match?.ResetForNewMatch();
+
             // ⚠️⚠️ THE LAUNCH BLOCK IS CLEARED HERE BECAUSE THIS IS THE SINGLE EXIT, AND IT WAS
             // NOT. `docs/TODO.md` § 149.8: the remaining lifecycle risk is not the first launch,
             // it is process-wide state surviving into the NEXT match. `GameLaunch.Reset()` was

@@ -153,6 +153,8 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
 - [x] COMPLETED-ARRIVAL-1002: cold ended-match snapshot and retained-record recovery;
   shipped960560b7c via5bf65ed6a, native12/12. Actual-peer acceptance remains open.
   [Evidence](reports/reliability-2026-10-02/completed-match-arrival/README.md).
+  Actual short two-Windows-peer completed arrival now passes, evidence19697fea9;
+  new scene/end/record/visible board with same identity/scores. [Peer proof](reports/reliability-2026-10-02/completed-arrival-peer/README.md).
 - [x] CUSTOM-SLOT-RECOVERY-1002: missing saved slots preserve later characters;
   shippede8de37021 via066bb51ee, native6/6 after four reproduced failures.
   [Evidence](reports/reliability-2026-10-02/custom-slot-recovery/README.md).
@@ -173,6 +175,18 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   [Limits](reports/reliability-2026-10-02/buffer-chat-pending/README.md).
 - [ ] EMOTE-CHAT-FOCUS-1002: typing must not open or commit the emote wheel;
   candidate unqualified; shared faulty prelaunch fixture retired without a run.
+- [x] FORCE-EQUIP-LOCK-1002: round handover clears old pickup throw lock;
+  shipped8d970fb06 viaa8b662f9e, native3/3; duplicate snapshot/pickup preserved.
+  [Evidence](reports/reliability-2026-10-02/force-equip-lock/README.md).
+- [x] WALLET-CACHE-RECOVERY-1002: corrupt primary uses valid same-owner backup;
+  shipped4ac37e3dc viaa8b662f9e, native4/4; owner gate unchanged.
+  [Evidence](reports/reliability-2026-10-02/wallet-cache-recovery/acceptance.md).
+- [ ] MENU-EXIT-LIFETIME-1002: retire persistent live round/intermission on exit;
+  root four-case baseline, one scene-availability setup repair, candidate unstaged.
+- [ ] SPECTATOR-ROLE-CAMERA-1002: seat/watch transition camera lifetime;
+  Astra preparing actual camera-state baseline, no authored view changes.
+- [ ] TOUCH-LAYOUT-NULL-CACHE-1002: verify/recover null saved touch collection;
+  Sol preparing local JsonUtility reload proof, no input-event framework.
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow
