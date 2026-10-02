@@ -92,6 +92,12 @@ namespace TumbangPreso.CameraSystem
             // ---------------------------------------------------------------- DANTE: down and wide
             // SEISMIC STOMP. Fists come up short, never overhead, then hammer down and OUT to the sides
             // with the stomp; a heavy hold and a slow recovery.
+            // A small lift catches real shoe weight; the free arm counterbalances.
+            { "boulder-load", new CastPath(.32f, false,
+                Rest(0), K(.14f, .03f, .05f, .04f, -.05f, .02f, .02f),
+                K(.32f, .04f, -.10f, .08f, -.08f, .06f, .03f),
+                K(.43f, .04f, -.08f, .07f, -.07f, .05f, .03f),
+                K(.60f, .02f, -.02f, .03f, -.03f, .02f, .01f), Rest(.88f)) },
             { "stomp-heavy", new CastPath(.30f, false,
                 Rest(0), K(.18f, .06f, .22f, .02f, -.02f, .42f, .02f),
                 K(.30f, .12f, -.22f, .10f, -.14f, .02f, .10f), K(.50f, .11f, -.20f, .09f, -.13f, .03f, .09f), Rest(.75f)) },

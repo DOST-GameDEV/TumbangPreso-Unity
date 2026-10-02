@@ -109,7 +109,7 @@ namespace TumbangPreso.Abilities
                        "Imbue your held slipper. Your next throw inflicts Concussed on a player hit: 75% slower for 2.5 s.",
                        GeoRules.BoulderCooldown, 0.0f, AbilityGlyph.DanteBoulder,
                        summary: "Imbue your held slipper with Concussed.",
-                       castAction: "hero-dante-stomp", viewmodelAction: "stomp-heavy",
+                       castAction: "hero-dante-boulder", viewmodelAction: "boulder-load",
                        castCue: "sfx_cast_dante_boulder") { }
 
             public override bool CanActivate(AbilityContext ctx)

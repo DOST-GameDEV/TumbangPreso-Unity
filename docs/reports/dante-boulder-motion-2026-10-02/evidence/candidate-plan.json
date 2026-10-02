@@ -1,0 +1,17 @@
+{
+  "question": "Accepted Boulder uses distinct authored weight catch and owner gesture, same held shoe and Concussed payload",
+  "baseline": "Actual input/affinity/held checks succeeded then expected held-shoe action failed on hero-dante-stomp;78 paired frames retained",
+  "stop": "one fresh case and inspect both cast/recovery views or actionable failure",
+  "repair_count": 0,
+  "input_sha256": {
+    "Assets/TumbangPreso/Art/characters/persons/team-dante.glb": "6041ef515631fcc601e17b474ed290a414fe35412c52d662597efc888e39c9ea",
+    "Assets/TumbangPreso/Art/characters/persons/team-dante.glb.meta": "9b268aac510efb165af2a3bbe6c867631b76e48c158de6d08c2071a18bdbc31b",
+    "Assets/TumbangPreso/Resources/Roster/person_dante.asset": "8e5cb8ae44bc3d4cc099ac9c6b4f1472555fe0e01f2454ddba838251350edc8e",
+    "Assets/TumbangPreso/Runtime/Abilities/DanteHeroKit.cs": "b84c28fe703599ea374e53426f6d2544f4697603484d582b1e711dbff156f110",
+    "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.cs": "2e2f03a9e37498a1ebbe17fbb8c3b82f1f3bf2a97c8ae8e5a91829761a8d7903",
+    "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs": "c3cebc766d16fc200c434bebb4d5232f04a114eb6e48c75ff9e293216169f477",
+    "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.CastGesture.cs": "10cc7dcda88b5f4f5df2940abdda9cc87eb87f34478e0a7b9244b072516d1e9f",
+    "Assets/TumbangPreso/Tests/PlayMode/DanteBoulderMotionTests.cs": "33a4925eff427648a44515e9f8900675fd5508bc99d645f0374f595a0365bff1",
+    "Assets/TumbangPreso/Editor/DanteBoulderMotionAuthor.cs": "5fe0b021102b6e67ab15aab9b6e8b826d5e07653ba0e624e40ddb307e5da8b1f"
+  }
+}

@@ -717,6 +717,17 @@ namespace TumbangPreso.CameraSystem
             new Key(0.820f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
+        // Take the shoe's weight through the carrying shoulder, then steady it.
+        private static readonly Key[] BoulderLoadClip =
+        {
+            new Key(0, 0, 0, 0, 0, 0, 0),
+            new Key(.14f, .22f, .06f, -.08f, -.10f, -.05f, -.08f),
+            new Key(.32f, -.28f, .04f, -.12f, .14f, -.08f, -.12f, true),
+            new Key(.43f, -.20f, .04f, -.10f, .12f, -.07f, -.10f),
+            new Key(.60f, .10f, .02f, -.04f, .04f, -.02f, -.04f),
+            new Key(.88f, 0, 0, 0, 0, 0, 0),
+        };
+
         private static readonly Key[] StompHeavyClip =
         {
             new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
@@ -1147,6 +1158,7 @@ namespace TumbangPreso.CameraSystem
                   : clip == "sprint-electric" ? SprintElectricClip
                   : clip == "overcharge" ? OverchargeClip
                   : clip == "summon-lightning" ? SummonLightningClip
+                  : clip == "boulder-load" ? BoulderLoadClip
                   : clip == "stomp-heavy" || clip == "stomp" ? StompHeavyClip
                   : clip == "carapace-guard" ? CarapaceGuardClip
                   : clip == "fissure-slam" ? FissureSlamClip
