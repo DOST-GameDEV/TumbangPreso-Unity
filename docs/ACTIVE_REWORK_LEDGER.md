@@ -807,3 +807,25 @@ succeed then old-stomp assertion fails. Distinct0.88s body/FPP candidate passes
 and model binary preserved, one roster reference added. No active job. Ship
 only the claimed motion paths; larger affinity VFX/player/SFX/human work stays
 open. Preserve other reservations and generated metadata.
+
+## Cloud hero continuation: Boulder load cue
+
+Dante motionadfeb0b7 shipped via8774d5ee, exact remote verified.16s silent review
+sent; same Feedback note appended and read back. DANTE-BOULDER-LOAD-1002 next
+claims only its dated plan's paths. Existing accepted Concussed shoe has no
+persistent surface cue in the native footage. Affinity survives a drop and may
+arrive from replication: bind the visual to the actual shoe, not a hero timer.
+No gameplay/wire/SFX changes, no private HeroHazards edits, no active job yet.
+
+Cloud Boulder load ready: original Normal control passes and accepted Concussed
+missing-cue failure retained. Four lifecycle cases pass serially, one per process;
+world/owner close-ups inspected. Supplemental actual-input motion1/1 passes with
+78paired frames after one recorded native Mono startup retry; no guard change.
+Same mesh/materials and payload state, no HeroHazards/gameplay/wire edits. No
+active job. Publish explicit load paths and report only scoped native evidence.
+
+Boulder surface a9710b82 verified remote,16.2s review delivered and Feedback note
+read back; no checkbox changes. DANTE-BASTION-MOTION-1002 now claims only its
+new dated plan: distinct forward barrier brace instead of the signature roar.
+Preserve all37 prior Dante clips and existing field mechanics/visibility.
+Baseline next; no active native job and no production changes for Bastion yet.

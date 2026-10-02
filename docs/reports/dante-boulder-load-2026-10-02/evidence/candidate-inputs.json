@@ -1,0 +1,7 @@
+{
+  "Runtime/Slipper.cs": "d0463850842a36b72b54ebc30410eac360b6c2e0ec5fe85c807000e3a55ec2f8",
+  "Runtime/Visual/DanteBoulderCoating.cs": "e520466a440506798b6ba61ef42f246637fab2616732d2b82c553de11b7e2b54",
+  "Resources/Shaders/BoulderLoad.shader": "b80512ca4c6714281576af016f8f84f50c264f3f533102eb1c62e637bf6a2d16",
+  "Runtime/Camera/ViewmodelArms.cs": "bd6bafde53482c05384e2293ab7301e08095a950277a648190ca6c231b7ce440",
+  "Tests/PlayMode/DanteBoulderLoadTests.cs": "58f1d7311c64b88999db6e557b02f179dde686bda9f4b96acb1370c94c8b711c"
+}

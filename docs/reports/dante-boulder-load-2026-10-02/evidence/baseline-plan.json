@@ -1,0 +1,8 @@
+{
+  "question": "Normal control passes; accepted Concussed payload is missing a surface cue",
+  "execution": "two sequential fresh one-case graphics processes; normal control first, missing-cue causal second",
+  "source": "5d2edb663f1001788d9d1d3be93ace178d07a330",
+  "stop": "both fresh verdicts or unexpected blocker",
+  "repair_count": 0,
+  "test_sha256": "2ee84e1c4fc7b118efaffa58de7d57f55e80ddcf7f68d19ff0ba8fa608ecbc6e"
+}
