@@ -184,7 +184,8 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 Current1003a source268c1abf7/protocol133 includes LAN identity, pinned HOME mode,
 slide inventory and current contributor changes. First Windows build/artifact
 passes; first actual short LAN pair passes and both players save the same match.
-Full normal-lobby Classic8 qualification is running; whole readiness remains open.
+Full normal-lobby Classic8 passes on this artifact, both saved careers agree;
+incoming protocol134 changes need separate packaged acceptance. Whole readiness open.
 [Current artifact/evidence](reports/reliability-2026-10-03/windows-candidate1003a/README.md).
 The goal remains ACTIVE. Root is working solo this continuation;
 the one authorized helper completed its latest bounded work, earlier agents retired.
@@ -391,7 +392,9 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
 - [x] PINNED-HOME-MODE-1002: passive HOME choice now preserves pinned rules;
   explicit card/owned-hero choices retain their override behavior. Native original
   two causal failures/two controls; candidate4/4 first pass, no fixture repair.
-  Packaged normal-lobby Classic qualification remains separate.
+  Packaged normal-lobby Classic8 now passes on1003a/protocol133: natural end,
+  matching scores and both saved histories. Explicit choices retain native controls.
+  [Full match proof](reports/reliability-2026-10-03/windows-candidate1003a/README.md).
   [Fix evidence](reports/reliability-2026-10-03/hub-pinned-rules/README.md).
   Original finding: normal LAN lobby refresh replaces pinned Classic
   tournament mode with the saved Hero card. Current1002m actual eight-round run
@@ -413,6 +416,11 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   aggregate assumption repaired on the same run, no native retry.
   [Actual save proof](reports/reliability-2026-10-03/windows-candidate1003a/README.md).
   [Source evidence](reports/reliability-2026-10-03/lan-record-identity/README.md).
+- [x] MATCH-RECORD-PACKET-1003: complete string framing and JSON refusal prevent
+  malformed result callbacks from escaping or replacing the current result.
+  Native original two causal/two controls; candidate FIRST4/4, no repairs.
+  Valid Unicode/normalisation and sender/host-loopback controls preserved.
+  [Evidence](reports/reliability-2026-10-03/match-record-packet/README.md).
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow

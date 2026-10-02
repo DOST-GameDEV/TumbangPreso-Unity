@@ -5,7 +5,9 @@ checks and publication; a progress report is not a stop. Root works SOLO.
 
 ## Current root job and next action
 
-MAIN ASTRAReworks and verified remote: 268c1abf74215825161d1fd4dd428ac73f4a73d8.
+MAIN ASTRAReworks and verified remote: def71d8f43d58f3516632a266eff6e0790beb7c9.
+LAN acceptance report7cbe176ca integrated/pushed with incoming protocol134
+timed recovery and studio intro. Actual running artifact remains protocol133/source268c.
 RELEASE detached at that source: C:/Users/matth/Documents/Codex/work/tump-competition-release1002.
 QUAL dirty protected overlay: C:/Users/matth/Documents/Codex/work/tump-feedback-0930.
 Do not reset/stash/clean any checkout or copy unrelated private overlays.
@@ -26,15 +28,27 @@ still stores1. One offline aggregate assumption repair (guest cacheOwnerId empty
 by design), raw firstfalse/script retained; no player retry. Guard restored/free.
 Raw release1003a/lan-career-save; report reliability-2026-10-03/windows-candidate1003a.
 
-CURRENT full normal-lobby Classic8 run RUNNING exec18297, output1003a/default-classic,
-ports9160/9161. Existing run_default_tournament.py, same qualified artifact,
-Balanced1920x1080/60cap/default renderer. Fresh owned profiles, no AllBots or force
-end. Ceiling850s; player report/exit803host/790client. Poll SAME session and wait
-for both normal exits before reading player result/profile JSON. No other heavy
-job or release mutations. NEXT after terminal: actual mode/round8/naturalend/
-roles/twohumanorigins/equal scores/preservation check; aggregate BOTH owned
-career files privately. Retain failures, no unchanged retry. Publish evidence.
-While players run, advance independent MAIN source investigation/implementation.
+Full normal-lobby Classic8 run18297 TERMINAL FIRST PASS on1003a, Eskinita,
+Balanced1920x1080/60cap/defaultD3D11. Both round8/inactive/Classic/presetOK/noMods,
+naturalend/twohumanorigins/scores250/240/3350/3430 agree. Both normal exits,
+seed/inputrestored/runtimeunchanged/leasefree. Both careersHistory1/Queue1/Witness1/
+AppliedIds1, one own-human identity line, same onlineClassic8match/scores, abandon
+markersclear. Average59.73FPS both, p5/p1=57.97, max208.84host/212.43clientms;
+round1/focused/scale1/pause+loadingfalse contexts, no causal performance claim.
+No repeat fullClassic needed. Incoming134 changes postdateartifact133.
+
+CURRENT MATCH-RECORD-PACKET-1003: owns MatchRpc.cs + new test/meta71cede1ee7d24b089605c3c29579bf98.
+Prep46798 TERMINAL/exact3/original saved. Original27464 TERMINAL2causal/2controls:
+unchecked string frame OverflowException and invalidJSON ArgumentException.
+Candidate23704 TERMINAL FIRST4/4/no repairs. Actual dormant receiver accepts valid
+Unicode/normalised records, rejects malformed/trailing/overflow and preserves
+previousLast/event0; sender and host-loopback controls retained. MAIN source uses
+existing SkipWireString/reset and catches JSON ArgumentException only; downstream
+valid-record exceptions not swallowed. No new protocol/schema/authority change.
+POST11495 TERMINAL: all18439 protected unchanged/exact3 MAIN matches.
+All native/player jobs terminal, no active Editor/player. Qualified source/evidence
+publication next. Then current coherent134 Windows build + short valid-result/
+intro peer acceptance; no unchanged fullClassic retry. Preserve private overlays.
 
 ## Qualified and published root changes
 
@@ -48,7 +62,7 @@ reports/reliability-2026-10-03/lan-record-identity/README.md.
 Pinned HOME33873b71a integrated6c63a361e. Passive ApplyChoice preserves RulesPinned;
 explicit card/owned-hero selection passes true to override. Original two causal/
 two control results; candidate FIRST4/4/no repairs/protected18434 unchanged.
-Packaged Classic8 proof running in18297. Report reliability-2026-10-03/hub-pinned-rules.
+Packaged Classic8 proof passes in18297 on133/source268c. Report reliability-2026-10-03/hub-pinned-rules.
 
 Slide6bae3bc45 uses existing BotSlipperInventory in prediction/retrieval sweep.
 Same six native controls pass original/candidate; median prediction cost17.13

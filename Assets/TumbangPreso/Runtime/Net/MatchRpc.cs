@@ -4146,10 +4146,19 @@ namespace TumbangPreso.Net
             if (NetAuthority.IsHost) return;
             if (!FromHost(senderClientId)) return;
 
+            // Validate the complete UTF-16 frame before decoding or allocating from its
+            // length. A damaged result must leave the previous result available.
+            int start = reader.Position;
+            bool framed = SkipWireString(ref reader) && reader.Position == reader.Length;
+            reader.Seek(start);
+            if (!framed) return;
+
             reader.ReadValueSafe(out string json);
             if (string.IsNullOrWhiteSpace(json)) return;
 
-            var record = JsonUtility.FromJson<Core.MatchRecord>(json);
+            Core.MatchRecord record;
+            try { record = JsonUtility.FromJson<Core.MatchRecord>(json); }
+            catch (System.ArgumentException) { return; }
             if (record == null) return;
 
             // ⚠️ NORMALISED ON ARRIVAL, BECAUSE THIS ARRIVED FROM ANOTHER MACHINE. The host

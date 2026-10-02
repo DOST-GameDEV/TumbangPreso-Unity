@@ -46,6 +46,27 @@ restored profile seed. The initial false aggregate/script remain retained; no
 player rerun or assertion removal. Private identity/token/profile contents are
 excluded from exported aggregates.
 
-The separate full Classic8-round run is in progress on the same artifact. Short
-custom acceptance does not establish full tournament, physical-input quality,
-all maps/devices, WAN behavior or whole competition readiness.
+## Full Classic tournament acceptance
+
+First full run18297 passes on the same artifact: natural eight90-second rounds
+through the normal LAN lobby on Eskinita, two human-origin seats and two ordinary
+bots, Balanced1920x1080,60FPS cap and default Direct3D11. No AllBots, forced end
+or SDK sign-in. Both final reports retain Classic, round8/inactive, valid preset
+and no modifiers; final scores250/240/3350/3430 agree. Both processes exit normally,
+profile seed/shared input restoration and Runtime immutability pass.
+
+After terminal exits, each fresh profile has exactly one online Classic8-round
+history/queue/witness entry and one applied match ID. Each has exactly one human
+line matching its own local identity. Records and actual terminal scores agree
+across peers; abandon markers are clear. This supplies packaged acceptance for
+pinned HOME mode and the LAN save fix on source268c1abf7/protocol133.
+
+Both sampled averages59.73FPS, p5/p1=57.97FPS; host max208.84ms/client212.43ms.
+Maximum contexts are round1,focused,scale1,pause/loadingfalse. These observations
+do not identify a mechanism or attribute the historical270.33ms stall. Hero and
+Classic samples are different modes, so no comparative FPS improvement claimed.
+
+Incoming MAIN protocol134 timed recovery and studio intro postdate this frozen
+artifact, as does the new result-packet guard. They need a new coherent artifact
+for packaged acceptance. This run does not establish physical-input quality,
+all remade maps/devices, WAN behavior or whole competition readiness.
