@@ -1,0 +1,11 @@
+{
+  "question": "Compile diagnostic-only updated recovery contract, retain13 evaluator tests. No gameplay changes or new actual-peer claim.",
+  "retry_count": 0,
+  "hashes": {
+    "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.cs": "1deabca8280bea79b83f056150bcd75387bed0ede787aff98ff724f0a68c9b6b",
+    "Assets/TumbangPreso/Runtime/Diagnostics/OwnerUiPlayerReview.Gameplay.cs": "4a48f621611c094dccaad31b2509cfdecd6cf63344e4047e868633dc4cbc306d",
+    "tools/net_familiar_matrix.py": "a86323856d7ce37c9c666ef4a177ae774b7a21d2594c878c03d7cb9eed1c2170",
+    "tools/net_roof_matrix.py": "2acb3ba4b826b998756cf790ff5d2b2cb711820020ff5f900ef1c0e1889dc935",
+    "tools/test_timed_recovery_evaluators.py": "49a0f063031a05f0d089ef501e7fdeeafa07328c2964ed46d6e0a0df288e318e"
+  }
+}

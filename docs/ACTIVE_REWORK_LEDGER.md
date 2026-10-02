@@ -926,3 +926,15 @@ returned null; original preserved plus bound VP8 derivative. One focus fixture
 repair retained. No active job. Publish exact owned startup paths and update
 Feedback, then qualify a fresh isolated packaged startup. User asleep18:28UTC;
 continue cloud-only work and hold routine chat until return.
+
+Startup49e9849b is verified remote and Feedback records native completion.
+Packaged qualification in a separate49e9849b worktree stopped twice at existing
+RosterBook resolution, including one exact-asset reimport. Read-only diagnosis
+finds MonoScript present but GetClass null while the expected compiled type
+exists. No roster/animation regeneration or gate bypass. Further full builds
+stopped; see packaged-blocker. Main checkout and authored content intact.
+Timed recovery diagnostics now reject accepted presses/shortened clocks and
+require expiry;13 evaluator controls pass and native compilation passes45s.
+These are evaluator/compile evidence only, not a new actual-peer/player pass.
+No active job. Publish exact diagnostic files/report; keep user chat quiet while
+asleep, and keep live Feedback work/status truthful.

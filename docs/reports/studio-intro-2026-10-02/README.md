@@ -42,3 +42,7 @@ input behavior or assertion was relaxed. Failed results are retained.
 This is focused native editor evidence, not a fresh packaged Windows/Linux boot,
 physical-device acceptance, full regression or sound-quality approval. The fresh
 packaged startup check remains the next qualification step.
+
+The attempted isolated packaged check is now explicitly
+[blocked at roster script binding](packaged-blocker.md). No new player was
+produced; native results above are unchanged.

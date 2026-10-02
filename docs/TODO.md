@@ -24,9 +24,12 @@ Nothing was deleted or renumbered.
   ordinary jump and hold-Interact roots remain. Fifteen focused native cases pass
   separately. Protocol134; actual peers/player/human remain separate.
   [Evidence](reports/timed-recovery-2026-10-02/README.md).
+  Diagnostic contracts now require timed expiry too;13 evaluator tests and native
+  compilation pass. [Limits](reports/timed-recovery-2026-10-02/diagnostics.md).
 - [x] Same Feedback row's studio intro now precedes loading, with no skip text
   and any-input white fade. Five isolated native cases pass; original MP4 retained
-  alongside Linux-compatible VP8. Packaged startup verification remains next.
+  alongside Linux-compatible VP8. Packaged startup is blocked by the isolated
+  roster script binding, after one targeted reimport; no new player artifact.
   [Evidence](reports/studio-intro-2026-10-02/README.md).
 
 ### ROUND-TIMER-35-1002: latest ordinary break duration
