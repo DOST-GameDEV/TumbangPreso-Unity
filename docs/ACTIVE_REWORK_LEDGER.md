@@ -59,7 +59,7 @@ cooldown retained/secondhostcall refused; clockhold andunchargedcontrols pass.
 No rawinput/rig/map/range/expirywait or private-state assignment. Materiallydifferent
 component-boundaryproof; retiredPracticeBotResume helper evidence unchanged.
 Windup/slide/impulse/timing untouched, no tag/travel/actualSetBot/network claim.
-All ROOT and agent nativehandles TERMINAL, no heldUnity/player/lease toresume.
+All ROOT nativehandles TERMINAL. Agent candidate35856 ACTIVE; see below.
 Source reports/raw counts preserved.
 
 ROOT frame-context diagnostic8ba8fa76f PUBLISHED:69846 FIRST2/2/all12532protected/
@@ -68,14 +68,19 @@ focus/pause/loading/gc0total localreport only; no 270ms causality/FPS fix. Pre-n
 review corrected previousStats enable isolation, no native/fixture retry. Separate
 diagnostic from43fix count; h predates this code. UniqueBundle40f8f2474 compiledh.
 
-SOLE Sol6.1HIGH sol_parallel_engineering ACTIVE SOURCE-ONLY on new approved
-investigation (NO edits/native yet): failedSafeStore.Read promotion underlock returns
-validated.bak, afterlockrelease ordinaryWrite maystill rotatecorruptprimary over
-thatgood.bak. Inspectactualcallers/owned-temp proof andminimaltradeoff before asking
-sourceownership; no schema/framework/unboundedpathcache/extraagent. Previous42
-provenEditorIOscope remains valid, do notoverclaim failedpromotion->save chain.
-Root continues disjoint engineering. Latest onehelper authorization persists; old
-retiredagents neverwake. Native slot currentlyfree, coordinate before prep/copy.
+SOLE Sol6.1HIGH sol_parallel_engineering owns SafeStore failed-promotion save chain.
+Original45036 TERMINAL:1causal failure/2controls pass;12535 protected unchanged,
+guard restored/no lease. Candidate35856 ACTIVE: CPU1536/reserve2048/450s/EditMode,
+profile safe-store-failed-promotion1002/filter SafeStoreFailedPromotionSaveTests,
+qualification Logs/safe-store-failed-promotion1002/candidate. EXACT7 owned paths:
+SafeStore.cs, Settings/GameSettings.cs, Net/{Career,Social,Wallet}Store.cs and
+Tests/SafeStoreFailedPromotionSaveTests.cs/meta. Frozen identical fixture3; zero
+repairs. Stateless3arg Windows writer validates previous primary before backup
+rotation;2arg API and nonWindows sequence preserved. Root must not double-poll
+agent handle or copy qualification inputs. Previous42 proof remains valid;
+45 is not qualified until candidate terminal/exact counts/preservation.
+Root reviews source and prepares coherent next Windows batch while agent tests.
+Latest onehelper authorization persists; retiredagents neverwake.
 
 h build34064 TERMINAL0/12scenes2432MB90s. Freeze15412/post88799 TERMINAL:
 18891inputs18889unchanged/exact2generatedidentity outputs. OriginalstrictFALSE
@@ -99,7 +104,8 @@ scope separate/rootONE Core704/704/no skips rawTRX7648. No unchangedCore repeat.
 Retired practice OPEN/unfixed:70621+81031 twice causal0.446/0.449s lungewindow
 retainedafter actualSetBot hide/readd. Firstfixture clock repairedonce; secondexact0
 expiry expectation failed on normallynegative timer, not gameplayfailure. Helper
-route retired/no patch/candidate; CombatVerbs currentlyUNCHANGED. Honest evidence
+route retired/no patch/candidate from that fixture. Direct lifecycle fix44 above
+retires the contact; actual practice operator remains unqualified. Honest evidence
 publishedd1e090dad. NEWfailedtest/meta movedoutMAIN/qAssets with exact containment/
 hashes/protected12529. No source rollback/reset; no third helper iteration.
 
