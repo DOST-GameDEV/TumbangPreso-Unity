@@ -24,127 +24,129 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Verified remotef163882cc9ea65d6b4fb2411f2781deb2e885a1b:26 qualified product
-fixes published. Latest customslots e8de37021 native6/6 (four causal failures),
-hub disconnect8acbdf683 native3/3 (three causal failures), zero repairs.
-Account save d01c62a68 native5/5 (four causal failures), zero repairs, published.
-Rebind enabled-state5acff5bfe final10/10 (four causal failures/six controls),
-published via69e341491. Report explicitly separates failed joint Ready/Buffer tests.
-Force handover8d970fb06 native3/3 and wallet backup4ac37e3dc native4/4 published
-viaa8b662f9e; joint7 baseline5controls/2causal then7/7, zero repairs/1285protected.
-Actual completed-arrival peer evidence19697fea9 also published, exactscope below.
-Manual menu-exit f163882cc native4/4 (three causal failures/one ticking control),
-ONE scene-availability fixture correction, published. No renderedHOME claim.
-Queue39a3bc4305/5, reporteligibility2c3eea2298/8,
-completedarrival960560b7c12/12. Preserve all raw baseline/failed receipts.
-ACKcd4a41069 native41/41; rebindcancel1f2d2bcb9 native4/4; Core691/691 unchanged.
-NEW integrated Core698/698 on protocol130 after incoming Sean Core7, no skips,
-TRX Logs/competition-core1301002. Once for new Core code, no broad native rerun.
-Sean incoming df022b0f/source68fa3a509 integrated disjointly, protocol130/
-recording12/kind17. Its Linux/peer evidence is separate from our Windows candidate.
-No whole competition, physical device, WAN or Android qualification claim.
-Toolcoordination7bc205c24 has50local checks/default SERIAL. Optional two isolated
-CPU workers are implemented but no workers/parallel native proof created.
+Last verified remote3bbc90c61cf48b72ec0feeaaa113b661a8ec8ae1:29 runtime product fixes
+published. Diagnostics890656094 is a separate improvement, not a gameplay count.
+NEW chat guard3e91f02b0 COMMITTED/native10/10 (three runtime units ->32), publication
+pending integration of incoming Sean SteadyEmber/protocol131. Dirty OWN ledger/TODO
+preventedmerge, noreset/stash; commitcheckpoint thenmerge preservingappendices.
+Latest fixes: saved slots e8de37021 native6/6; hub disconnect8acbdf683 native3/3;
+account save d01c62a68 native5/5; rebind state5acff5bfe native10/10; force handover
+8d970fb06 native3/3; wallet backup4ac37e3dc native4/4; manual exitf163882cc native4/4;
+spectator lifetime d97be101d nativePlayMode3/3; hostloss5f47abc84 final6/6(new2+
+manual4controls); slide3bbc90c61 native4/4. All causal baselines/raw failures retained.
+Manual exit had ONE scene-availability fixture correction; spectator ONE tool-call
+syntax correction BEFORE execution, zero native/fixture retries. No other new
+product unit retries. Native clock/view-state proof is not rendered UI or WAN proof.
+Older19units/evidence remain in TODO/reports; do not re-read huge former chat.
+Core698/698 after incoming Sean Core7/protocol130; one integration pass, no skips.
+Sean Cinder df022b0f/68fa3a509, protocol130/recording12/kind17 integrated disjointly;
+its Linux/3-peer evidence is separate from our Windows artifact. Preserve new
+SteadyEmber ownthrow/manualretrieval contributor reservation.
+Toolcoordination7bc205c24:50local checks/defaultSERIAL; optional2CPU workers implemented,
+not created/native-parallel-proven.16GiB machine: one heavy Unity/GPU/build/player.
+No whole competition/physical-device/Android/WAN qualification claim.
 
 ## Active job and exact next action
 
-ROOT menu-exit lifecycle initial61758 TERMINAL4SetUp failures: EditMode cannot
-assume Application.CanStreamedLevelBeLoaded(HOME). ONE fixture correction then
-baseline93401 TERMINAL3causal/1control, final97844 TERMINAL4/4; guards restored.
-Actual publicLeaveMatchToMainMenu invoked; existing duplicate-load latch suppresses
-load when available, exact expected scene-unavailable error when Editor cannot
-stream. Product assertions unchanged; no rendered HOME/physical operator claim.
-SceneFlow exactExit hunk publishedf163 (aftertelemetry/netStop End(false) break,
-Round.ResetForNewMatch, Match.ResetForNewMatch), new4case fixture/meta. No further
-fixture repair or unchanged rerun. Report menu-exit-lifetime records exactscope.
+All ROOT native jobs TERMINAL. Last hostloss98447 baseline2causal then27370 final6/6,
+guards restored. Published5f47abc84: shared SceneFlow.RetireMatchSimulation retires
+break/round/match before manual HOME or unexpected empty-lobby route. MatchAbandon
+captures diagnostic before handler; nextsingleSceneLoaded.Clear cannot reviveclock.
+Native fixture uses actual API/handler with existing sameframe scene-latch or exact
+expected Editor unavailable-scene error, no actual UI/load/transport claim.
 
-ROOT next NEW host-loss lifetime unit MAIN ONLY: MatchRpc.HandleClientDisconnected
-otherwise routes emptylobby without cleanup; MatchAbandon revokes authority only
-until singleSceneLoaded.Clear, when persistentRound can tick/finish inlobby. Root
-owns SceneFlow sharedinternalRetireMatchSimulation (manualExit behavior unchanged),
-MatchRpc handlerbeforeonlineemptylobbyroute, TWO new MenuExitLifetimeTests cases:
-handler retires flags/keepsonlineentry+originalfailedRound diagnostic; authority
-restore cannot reviveoldclock. Original2source/candidate/test frozen in Logs/
-host-loss-lifetime1002-inputs. No native yet; afterAstra spectator3 terminal use
-originalbaselinefilteronlynew2 thenfinal2+existingmanual4 controls ifjustified.
-Do not mutate qualification while Astra1469protected inputs active.
+SOL owns THREE preserved chat guards ReadyGate.cs/BufferSkipVote.cs/UI/EmoteWheel.cs,
+plus NEW Tests/PlayMode/GameplayChatInputTests.cs/.meta QUALIFIED/COMMITTED3e91f02b0.
+Different useful acceptance: true playing input context; NOT another failedEditor
+fixture retry. Proposed10: Ready4(chat/normal/pendingretry/automaticretry), Buffer3
+(chat/normal/pendingretry), Emote3(chatpreventopen/ordinarycommit/focuscancel).
+Native97390 baseline4causal+6controls,41646 final10/10, ZEROrepairs/1290protected
+unchanged/5exactinputs, bothguards/restored/free. Strict WasPressed/WasReleased
+assertions; cloned SHIPPED action asset restricted to synthetickeyboard, existing
+PlayModeWorld only. NEVER clone/replace InputSettings or usefeature/updateMode
+machinery/assetsaves. Existing2 background/editorfocus scalar settings may be saved/
+restored inSAMEoriginalobject per shipped PlayMode pattern. <=ONEtoolingrepair;
+if actual playing-state press fails, STOPunqualified, no weakened assertions.
+Bothpreparations EXIT0 beforelaunch. Product candidate hunks unchanged. Different
+asset hashes MAIN79C2E5.. vsqualification983306..; BOTHdiskReadyUpF/EmoteT verified
+afterrun, resolvedsuccessfulcontrol name notseparatelylogged. EarlierR labels were
+assumptions and corrected inreport; generic action-context proof/currentMAINasset
+or hardware notexecuted. No physical-input/widget-layout/human-feel claim.
+Old Editorrawfailures neverrewritten. Report gameplay-chat-input committed3e91.
 
-Native build88898 TERMINAL SUCCEEDED2432MB122s/12scenes, guard restored/lease
-released. ReleaseHEAD69e3414913c3bc582b9ce5b028239f65503e62d7, artifact1002e,
-Runtime b0bfbbaec5d5c16041f90036e33b2abad41e8029e28ae4ca3e8ef7536f1ba6c0.
-18845frozeninputs:18843unchanged, ONLYtwo GameBuilder.StampBuildIdentity writes
-changed. Original strict build-receipt FALSE preserved; separate artifact-receipt
-validates matching generatedResource/Streaming/packagedSHA+commit69/protocol130/
-Windows target, expectedstamps only. No unknown source drift ignored or rebuild.
-Source-finalizer50318 terminal refusedplayerlaunch onstrictfalse; classification
-then actualpeer49462 TERMINAL PASS/exit0 firstplayer scenario, no repair.
-Client9468 initialactualnativeHUB route/naturalHero1round30sec onEskinita,
-twohumanorigins+2ordinarybots; actualResultMainMenu onClick->HubHome->publicJoin,
-newrawscenehandle; end/recordevents1->2 each. BothmatchIDbae2163e17a74bc9a3400a8095a12f98,
-scores20/0/0/150,winner3, boardvisible; host22276remainsended, clientobservedslot1
-not spectator. No retained-seat/full-default-match/physical-input/SDK/WAN claim.
-Exact2PIDs gone, input/profile seeds restored, Runtimeunchanged/lease released.
-No taskbrowser opened. Qualified1002e predates force/Wallet latest2sourceunits.
+ASTRA Slide interruption4 completed/published3bbc90c61: actualHostResolveSlide>
+stun/fear/roundend>recovery must not pick nearbyshoe; pause remains valid. Baseline
+30095 threecausal/onecontrol, final50273 4/4, zero repairs/1472protected unchanged,
+all jobs terminal/restored. No timing/hero/manualpickup/protocol change. Next Astra
+read-only current-phase/world-camera plan for PRIVATE Supernova .50 (players AND
+lata readability) or another higherimpact gameplay defect. No redesign/newGPU job
+while Sol10 active, no unchanged historical capture replay. Exact ownership before
+any new patch. Root implements/integrates/builds; authorized Astraxhigh/Sol6.1HIGH
+current-chat agents only. OldSolultra interrupted, never wake. FAST control absent,
+not claimed configured; no invented busywork or cross-chat messages.
 
-ROOT builds98535/c and72335/d TERMINAL failed compilation, guards restored/lease
-released; no new qualified player. c implicit SceneHandle->int rejected, d used
-GetRawData but root retained int fields incorrectly. Installed CoreModule reflection
-confirms GetRawData returns UInt64; observer fields now ulong, no truncating cast.
-Two failures/raw receipts preserved in completed-arrival-build report. Isolated
-probe build retry EXHAUSTED. Next build only after NEW qualified product batch,
-unique1002e/frozen committed source. Old1002b artifact untouched; no peer launch yet.
-Root AccountSave baseline54240/final10551 TERMINAL4causal/1control then5/5, guards
-restored, published d01c62a68. Customslots sessions98140/89495 terminal/published.
+NEXT ROOT coherent Windows candidate1002f AFTER Sol10 qualified or bounded stop:
+releaseFF exactpublished source without reset, preserve importer/generated changes,
+sourceCSharpclean, NEW internal output. New build includes latest force/wallet/exit/
+camera/hostloss/slide/diagnostics beyond1002e's23. One integration build, not perfix.
+Freeze Assets/Packages/ProjectSettings. StampBuildIdentity rewrites exactlytwo JSON
+files; classify via bothgenerated sources+PACKAGEDcopy matching commit/protocol/
+Windows target and unchanged other hashes. Preserve strict original receipt iffalse,
+separate classification receipt. No unknown drift ignored. Then bounded actual
+live-quit/host-loss operator acceptance using CURRENT UI, not retiredWholeMatches.
+No unchanged full8round rerun; previous Classic/Hero natural ends already retained.
+While build/runs, root/agents may advance DISJOINT MAIN inputs, never frozenrelease.
 
-Joint18 firstbaseline85263 TERMINAL: Rebind6pass4causal, Ready2pass2predispatch
-fixture failures, Buffer1pass3predispatch failures. ONE context repair84619 TERMINAL:
-Rebind6pass4causal, Ready0pass4SetUp failures, Buffer1pass3SetUp failures. InputSystem
-destroys replaced HideAndDontSave settings, so transient clone restore failed.
-No further fixture retry or final Ready/Buffer run. Native-route limit exhausted.
-Independent Sol final89649 TERMINAL10/10, guard restored,1290protected exact.
-All preparations exit0; no SDK. Both raw failures preserved, never called causal
-chat proof. ReadyGate/BufferSkipVote/EmoteWheel candidates remain MAIN dirty,
-UNSTAGED/UNQUALIFIED. New failed test/meta files moved byte-for-byte to task-owned
-Logs/*-inputs/retired in main; qualification4Ready/Buffer moved only after final
-terminal. No original test removed. Reports ready-chat-focus and buffer-chat-pending
-document limits; commit reports separately without product candidates. Alternative
-real-gameplay input acceptance can be useful later, no human approval gate inferred.
+## Current frozen artifact and actual peers
 
-Sol6.1HIGH owns new NetCompletedArrivalProbe.cs/.meta and tools/run_completed_arrival.py.
-Opt-in short custom Hero1round30sec actual native HUB CLI -tp-lobby/-tp-lobbyjoin,
-noautorematch/noAllBots. Host natural-end then SAME client invokes ACTUAL current
-ResultMainMenu onClick, public LeaveMatchToMainMenu/Stop/GoHome; wait actual HubHome,
-public StartClientAsync+WaitForConnection. TrustedSeating loads new arena. Require
-new scenehandle/post-rejoin MatchEnded+RecordReady, same authoritative MatchId/scores,
-host remains ended. Programmatic button, not physical input/SDK/persistence proof.
-Runner sourcecommit/Runtime/build-receipt binding and nested-finally restoration/
-release completed; sourceCommit/runtimeSha256/artifact schema consistent. Installed
-Core wire parser preflight passed. Probe immediately/sceneLoaded subscribes, records
-postjoin slot/spectator, no retained-seat recovery claim. Diagnostic commit066bb51ee
-published separately, zero product-count inflation. No actual player launched yet.
-After successful build root finalize frozen receipt then tools/run_completed_arrival
-with --source-commit/--runtime-sha/--build-receipt, fresh Logs output,120sec ceiling.
-Sol rebind enabled-state/Wallet backup4 published. Touch originalproof44506
-TERMINAL4/4: suspectednull/missing collection crash NOTreproduced, SOURCEUNCHANGED,
-1289protected unchanged/guardsrestored. Newfixture/meta retiredbyte-for-byte in
-main+qualification, no originaltestremoved, no candidate/repair/repeat. Report
-touch-layout-investigation is evidenceonly, NOTnewfix. Sol read-only hostloss
-ordering critique then bounded independent persistence issue if justified.
+Release checkout Codex/work/tump-competition-release1002 HEAD69e3414913c3bc582b9ce5b028239f65503e62d7.
+Builds/competition-candidate1002e/TumbangPreso.exe, Runtime SHA256
+b0bfbbaec5d5c16041f90036e33b2abad41e8029e28ae4ca3e8ef7536f1ba6c0.
+Native88898 SUCCEEDED2432MB122s/12scenes, guard restored/leasefree.18845frozeninputs,
+18843unchanged; ONLY Resource/Streaming buildidentity JSONs regenerated bybuilder.
+Original strict build-receipt FALSE kept; separate artifact-receipt validates exact
+packaged+source identity69/protocol130/Windows SHA. Source-finalizer50318 refused
+player launch until classification; no rebuild. Retained importer/meta/settings
+changes/treeState dirty disclosed, not pristine post-import. No CSharp drift.
 
-Astraxhigh hub disconnect/force handover3 completed/published; ReadyGate/Emote
-candidates pendingwithretiredfixtures. Now spectator camera-role lifetime:
-SpectatorCamera.cs OnDisable camera-off +MatchInstaller.cs reuse/enable whenwatching,
-NEW publicRebindLocalSeat/camera-state3 PlayMode fixture; no raw-keyframework/
-authoredcamera changes. SpectatorDirector thirdhunk deliberately excluded.
-Baseline12358 launchedafterTouch terminal/prepexit0, GPU/DX11batch960x540,
-no-nographics/no-quit, profile spectator-lifetime1002, Logs/spectator-lifetime1002/
-baseline. FOUR inputs/1469protected. It nowhasterminalguardreceipt, Astra reviewing
-XML beforecandidate; do not assume success/counts. One pre-tool-envelope syntax
-correction happened before preparation/native, no source/fixture retry.
-Sean contributor owns SteadyEmber ownthrow/manualretrieval; preserve reservations.
-Two authorized
-current-chat agents; oldSolultra INTERRUPTED, never wake. FAST control unavailable,
-not claimed configured. Keep all three on useful implementation, no invented busywork.
+FIRST actualpeer49462 TERMINAL PASS/exit0 on frozen1002e. Initial nativeHUB host/join,
+naturalHero1round30sec/Eskinita,2humanorigins+2ordinarybots, noAllBots/autorematch/
+forcedfinish/score/SDK. SAMEclient9468 actualResultMainMenu onClick->HubHome->public
+StartClientAsync+WaitForConnection; trustedSeating loadsnewarena. Scenehandlechanges,
+MatchEnded/RecordReady each1->2, actualboardvisible, host22276 remainsended.
+BothmatchIDbae2163e17a74bc9a3400a8095a12f98/scores20/0/0/150/winner3. Clientobserved
+slot1/notspectator; no retained-seat recovery claim. Exact2PIDs exited; input/profile
+seeds restored, Runtime unchanged, lease released. Report19697fea9 published.
+This short custom actual-peer proof is not full-default match/physicalclick/career
+settlement/WAN. Artifact1002e predates latest SIX runtime fixes since23. No taskbrowser.
+
+## Retired routes and preserved work
+
+Build c98535/d72335 terminal compilefailures preserved: SceneHandle int conversion
+then GetRawData UInt64 mismatch; fixedschema ulong after installedAPI reflection,
+coherent1002e passed. No isolated probe build retry left/no rerun needed.
+Legacy WholeMatches/result-end-only routes both retired beforethiscontinuation.
+JointEditor18 baseline85263: Rebind6pass4causal, Ready2pass2predispatchfixturefails,
+Buffer1pass3predispatchfails. ONE repair84619: Rebind6pass4causal, Ready0pass4SetUpfails,
+Buffer1pass3SetUpfails. InputSystem destroys replaced HideAndDontSave settings.
+Editor fixture route RETIRED; newfailed tests/meta moved byte-for-byte to taskLogs
+in main/qualification, no originaltests deleted. Sol independent89649 final10/10
+qualified rebind only. Original failures/reports retained, never called chat proof.
+Touch original44506 4/4: suspected collection crash NOTreproduced, sourceunchanged,
+1289protected/restored. Newfixture retired, no candidate/repair/repeat; noissue report
+612357037 NOTnewfix. Diagnostic bundle15524 1causal/1control then51416 2/2, zero
+repairs/1290protected/restored; output only, no normalbundlefilewritten/SDK.
+
+Private MAIN fourarms/HeroHazards .50 Supernova/Ultra/two protectedUI metas remain
+unstaged/unqualified. Full current HeroHazards seven-line delta is ONLY private
+StartAlpha default .85/support and Fire .50/comment; no unrelated hunk was found
+on current reread. Preserve WHOLEdirtyfile. Old partialSupernova evidencead37 did not prove
+opaqueCore/lata readability. Preserve private captures/plan and all other work.
+No resets/clean/forcepush/paidservices/Drive dev uploads/Desktop build replacement.
+All native via MAIN tools/run_unity_job.py ->target dynamicidentityguard, named
+isolatedprofiles; qualification worktree has imported/private overlays, never
+reset/copywholesale. Copy only exactownedinputs, freeze/hashes, prepEXIT0 thenlaunch.
+Preserve contribution appendices below, TODO the ONLY statusqueue.
 
 Frozen16-fix artifact remains releaseHEAD2c3f39dc97756b23f12239bdd7bba0429ab2e352,
 Builds/competition-candidate1002b/TumbangPreso.exe, Runtime
