@@ -887,3 +887,12 @@ Frozen four inputs unchanged. Protocol133, recording13 unchanged, no actual-peer
 or fresh-player claim. No active job. Publish exact duration/version/tests/docs
 and update/read back the Next Round Notes WIP. User reacted positively to Block
 screenshot at17:32; no blanket human verification inferred.
+
+Next Round498e0b8c verified remote and Wiki result read back. New top Feedback
+row requests mash removal plus startup refinements. Its Notes now explicitly
+say recovery work in progress, startup next, readback verified. TIMED-RECOVERY-1002
+claims the dated plan's recovery/UI/input/network surfaces and focused tests.
+Audit found trip and edge hang currently depend on press progress, so merely
+hiding prompts would strand players. Plan fixed authored trip expiry and timed
+edge phases, inactive legacy entry points, unchanged ordinary jump/root hold.
+No production changes or active native job yet; start small causal baselines.
