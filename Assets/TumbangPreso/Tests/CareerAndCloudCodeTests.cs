@@ -380,6 +380,99 @@ namespace TumbangPreso.Tests
             }
         }
 
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WalletResponseCannotBecomeAnotherAccountsBalance(bool changeOwner)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsTrue(string.IsNullOrWhiteSpace(TumbangPreso.GameServices.Account?.PlayerId), "This completion check uses isolated offline identity.");
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var tokenField = typeof(TumbangPreso.Net.NetIdentity).GetField("_overrideTokenForTesting", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            string previousToken = (string)tokenField.GetValue(null);
+            var previousWallet = TumbangPreso.Net.WalletStore.Instance;
+            var owner = new GameObject("Wallet response ownership check");
+            var wallet = owner.AddComponent<TumbangPreso.Net.WalletStore>();
+            try
+            {
+                TumbangPreso.Net.NetIdentity.OverrideForTesting("wallet-request-owner");
+                string requested = TumbangPreso.Net.CareerStore.LocalPlayerId;
+                if (changeOwner) TumbangPreso.Net.NetIdentity.OverrideForTesting("wallet-current-owner");
+                var cache = typeof(TumbangPreso.Net.WalletStore).GetField("_cache", flags).GetValue(wallet);
+                cache.GetType().GetField("Wallet").SetValue(cache, new Wallet { Balance = 77 });
+                cache.GetType().GetField("Known").SetValue(cache, true);
+                cache.GetType().GetField("OwnerId").SetValue(cache, TumbangPreso.Net.CareerStore.LocalPlayerId);
+                string body = JsonUtility.ToJson(new Wallet { Balance = 420 });
+                string response = "{\"wallet\":\"" + body.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\",\"result\":\"bought\",\"paid\":25}";
+                typeof(TumbangPreso.Net.WalletStore).GetMethod("CompleteResponse", flags).Invoke(wallet, new object[] { requested, response });
+                Assert.AreEqual(changeOwner ? 77 : 420, wallet.Balance, "An older account wallet answer replaced the current account's balance.");
+                Assert.AreEqual(changeOwner ? 0 : 25, wallet.LastPaid, "An older account's payout was adopted by the current account.");
+            }
+            finally
+            {
+                TumbangPreso.Net.NetIdentity.OverrideForTesting(previousToken);
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.WalletStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, previousWallet);
+            }
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WalletAccountNotificationRetiresOnlyAnotherOwnersCache(bool changeOwner)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsTrue(string.IsNullOrWhiteSpace(TumbangPreso.GameServices.Account?.PlayerId));
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var tokenField = typeof(TumbangPreso.Net.NetIdentity).GetField("_overrideTokenForTesting", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            string previousToken = (string)tokenField.GetValue(null);
+            var prior = TumbangPreso.Net.WalletStore.Instance;
+            var owner = new GameObject("Wallet account cache check"); var wallet = owner.AddComponent<TumbangPreso.Net.WalletStore>();
+            try
+            {
+                TumbangPreso.Net.NetIdentity.OverrideForTesting("wallet-owner-a");
+                var cache = typeof(TumbangPreso.Net.WalletStore).GetField("_cache", flags).GetValue(wallet);
+                cache.GetType().GetField("OwnerId").SetValue(cache, TumbangPreso.Net.CareerStore.LocalPlayerId);
+                cache.GetType().GetField("Known").SetValue(cache, true);
+                cache.GetType().GetField("Wallet").SetValue(cache, new Wallet { Balance = 77 });
+                typeof(TumbangPreso.Net.WalletStore).GetProperty("LastPaid").SetValue(wallet, 25);
+                if (changeOwner) TumbangPreso.Net.NetIdentity.OverrideForTesting("wallet-owner-b");
+                typeof(TumbangPreso.Net.WalletStore).GetMethod("OnAccountChanged", flags).Invoke(wallet, null);
+                Assert.AreEqual(!changeOwner, wallet.Known, "The account kept another owner's known wallet.");
+                Assert.AreEqual(changeOwner ? -1 : 77, wallet.Balance);
+                Assert.AreEqual(changeOwner ? 0 : 25, wallet.LastPaid);
+            }
+            finally
+            {
+                TumbangPreso.Net.NetIdentity.OverrideForTesting(previousToken); Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.WalletStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
+        [Test]
+        public void WalletScheduledRefreshWaitsForThePendingRequest()
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsFalse(TumbangPreso.Net.WalletStore.CanTransact, "The scheduling check must stay offline.");
+            var prior = TumbangPreso.Net.WalletStore.Instance;
+            var owner = new GameObject("Wallet deferred refresh check"); var wallet = owner.AddComponent<TumbangPreso.Net.WalletStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                var refresh = typeof(TumbangPreso.Net.WalletStore).GetField("_refreshAfter", flags);
+                refresh.SetValue(wallet, Time.unscaledTime);
+                typeof(TumbangPreso.Net.WalletStore).GetProperty("Busy").SetValue(wallet, true);
+                typeof(TumbangPreso.Net.WalletStore).GetMethod("Update", flags).Invoke(wallet, null);
+                Assert.GreaterOrEqual((float)refresh.GetValue(wallet), 0, "A busy wallet consumed its pending refresh.");
+                typeof(TumbangPreso.Net.WalletStore).GetProperty("Busy").SetValue(wallet, false);
+                typeof(TumbangPreso.Net.WalletStore).GetMethod("Update", flags).Invoke(wallet, null);
+                Assert.Less((float)refresh.GetValue(wallet), 0);
+            }
+            finally
+            {
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.WalletStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
         private const string AssetsRoot = "Assets/TumbangPreso";
         private const string CloudCodeRoot = "ugs/cloud-code";
 

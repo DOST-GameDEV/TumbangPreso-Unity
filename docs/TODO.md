@@ -52,6 +52,9 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   [Evidence](reports/reliability-2026-10-02/result-verdict/README.md).
 - [x] RESULT-LATE-ACK-1002: open details repaint on current acknowledgement;
   native1/1 includes callback retirement. [Evidence](reports/reliability-2026-10-02/result-late-ack/README.md).
+- [x] WALLET-RESPONSE-OWNER-1002: current-owner reply/cache and deferred refresh;
+  native5/5. [Evidence](reports/reliability-2026-10-02/wallet-owner/README.md).
+- [ ] BOT-INACTIVE-BODY-1002: retired companions must stop supplying live bot observations.
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow

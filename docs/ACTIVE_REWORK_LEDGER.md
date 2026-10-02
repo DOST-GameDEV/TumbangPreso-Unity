@@ -22,32 +22,34 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Latest verified local/remote7be6dab00 includes five product fix units this resume:
-account abandon/history4/4; queue witnesses2/2; history navigation one native
-case/five states; deferred account sync4/4; displayed verdict identity2/2.
-Earlier coherent career integration43/43. Result-late-ack unit is qualified and
-publishes next. Own source paths MatchResult.cs and PlayMode/TumpNativeResultTests.cs.
-All are under Assets/TumbangPreso; reports/status paths under docs.
+Latest verified local/remote f361bca7dfb3a5b3e1de7190a73b57c4764bfb85.
+Six product fix units shipped this resume: abandon/history4/4; witnesses2/2;
+history navigation one case/five states; account sync4/4; verdict identity2/2;
+late acknowledgement one native case/text plus callback retirement.
+Earlier career integration43/43. One verdict fixture singleton repair used1/1;
+other product units zero repairs. All failures retained; no live endpoint claims.
 Complete pre-resume history preserved in
 [the archived ledger](archive/ACTIVE_REWORK_LEDGER_before_competition_resume_2026-10-02.md).
 
 ## Active job and exact next action
 
-RESULT-LATE-ACK-1002 complete: native baseline fails1/1; final passes1/1 with actual
-late text and callback retirement. Two hashes unchanged, zero repairs, session
-39566 terminal; profile/input restored. No heavy job active. Publish this sixth
-product unit, then switch from store/UI fixes to actual match/network/performance.
-Retired legacy --whole-matches UI route after its one bounded failed repair.
-No more fixture work there. Rich diagnostic failure state is published.
-Next use current supported direct-peer player route, frozen artifact and named
-profiles. Before launch verify current actor/input/rules/map/framecap switches
-and choose full default-match liveness scope. Do not claim human play, full
-operator flow or a pristine build from that floor. Investigate270ms host frame
-using available per-frame samples, not repeated unchanged broad matrices.
-Last current build62afc5d6a plus experimental diagnostic lines, protocol129,
-Builds/competition-retry1002, Runtimea5cc4379...f5b042be. It predates verdict-ID
-and late-ack source; build a coherent refresh only if those need player proof.
-Private art/settings/metadata preserved; external presentation lane unchanged.
+WALLET owner/cache/deferred refresh baseline2/5, native final5/5. Three defects
+fixed, normal controls preserved, two hashes unchanged. Orchestration repair1/1,
+no fixture repairs; session57393 terminal, profile/input restored. Publish next
+with full Classic evidence. Prior verified remotef361bca7d. Seven product units
+qualified this resume; no live purchase/server calls.
+FULL-CLASSIC natural8round direct peers complete with matching40/40/3580/3280,
+seat2wins; host59.85FPS/max86.06ms, client59.86/max21.60ms. Old270ms not reproduced,
+cause not attributed. Preserve raw generic evaluator expecting active HeroStrike;
+explicit completed-Classic observations separate. Player job27861 terminal and
+profiles/input restored; no own player/port remains. No full operator/WAN claim.
+Next BOT-INACTIVE-BODY-1002: exact saved AI/test baseline in main private
+Logs/bot-inactive-body1002/prepared-baseline. Copy to qualification after wallet
+publication, two-mode native cases. Then current-main one-line active-hierarchy
+guard final; existing reaction-lag/Haunted behavior preserved. One baseline/final,
+zero repairs planned. Avoid nullable At changes and Paete/Phaister mechanics.
+Clean release checkout pristine atf361bca7d, no import/Library; advance after
+qualified units publish. Retired UI whole-match runner must stay retired.
 
 ## Remaining readiness evidence
 
