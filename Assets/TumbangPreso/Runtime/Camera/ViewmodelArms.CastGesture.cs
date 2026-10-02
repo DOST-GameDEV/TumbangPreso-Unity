@@ -101,6 +101,12 @@ namespace TumbangPreso.CameraSystem
             { "stomp-heavy", new CastPath(.30f, false,
                 Rest(0), K(.18f, .06f, .22f, .02f, -.02f, .42f, .02f),
                 K(.30f, .12f, -.22f, .10f, -.14f, .02f, .10f), K(.50f, .11f, -.20f, .09f, -.13f, .03f, .09f), Rest(.75f)) },
+            // BASTION. One shoulder leads the draw; both hands set the field low and forward.
+            { "bastion-brace", new CastPath(.28f, false,
+                Rest(0), K(.12f, .06f, -.03f, -.05f, -.03f, .16f, -.03f),
+                K(.28f, .10f, -.08f, .18f, -.12f, .23f, .20f),
+                K(.39f, .10f, -.07f, .17f, -.11f, .22f, .18f),
+                K(.58f, .04f, -.03f, .07f, -.05f, .10f, .07f), Rest(.80f)) },
             // DEMONIC CARAPACE. The flex: both fists draw in low, then out wide and up at the shoulders and
             // stay there, trembling once with the effort. He is bigger now.
             { "carapace-guard", new CastPath(.32f, false,

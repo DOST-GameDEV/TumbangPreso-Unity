@@ -809,3 +809,17 @@ read back; no checkbox changes. DANTE-BASTION-MOTION-1002 now claims only its
 new dated plan: distinct forward barrier brace instead of the signature roar.
 Preserve all37 prior Dante clips and existing field mechanics/visibility.
 Baseline next; no active native job and no production changes for Bastion yet.
+
+Cloud Bastion motion ready: actual defender baseline verifies field duration,
+follow and reset, then fails at shared roar. Distinct0.80s brace passes1/1,
+77paired frames inspected,35s outer/guard null.37old clips and source tables
+preserved; one roster reference. Field obscures some body view, preserved as-is;
+pose-only sheet checked separately. No tooling retry or active job. Publish
+only claimed paths, no field/player/peer/audio/human acceptance inference.
+
+Owner16:50UTC asks to check new Wiki Feedback edits and focus work there. Stop
+starting further hero polish. Bastion's tested unit is preserved locally while
+switching to the new attacking-tutorial barrier warning. Existing above-can
+false-hit fix already has native2/2 evidence under CAN-VERTICAL-CONTACT-1001;
+reconcile that source and Feedback note instead of rebuilding it. New warning
+source currently ignores the hidden-can tutorial exemption used by CanThrow.

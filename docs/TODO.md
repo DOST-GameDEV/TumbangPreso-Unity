@@ -649,6 +649,14 @@ FPP, glyph/wake/audio and actual matching peers remain open.
 [Plan](reports/hero-quality-2026-10-01/skim-implementation.md) and
 [evidence](reports/hero-quality-2026-10-01/skim-checks/README.md).
 
+### DANTE-BASTION-MOTION-1002: distinct following-field brace
+
+- [x] Authored body/FPP forward set replaces the personal Unstoppable roar.
+  Actual defender input, duration/cooldown, following transform and round reset
+  pass1/1;77 paired native frames reviewed. All37 prior clips and model data
+  retained. Field art/player/peer/SFX/human approval remain separate.
+  [Review and limits](reports/dante-bastion-motion-2026-10-02/README.md).
+
 ### DANTE-BOULDER-LOAD-1002: visible Concussed shoe payload
 
 - [x] Surface-bound stone inlay on the real world and owner slipper. Four fresh

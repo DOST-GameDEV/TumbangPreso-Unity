@@ -136,3 +136,5 @@ Distinct Cheska held-shoe cast: [native review and preservation proof](reports/c
 Dante Boulder weight-bearing preparation: [native review and preserved assets](reports/dante-boulder-motion-2026-10-02/README.md).
 
 - [Boulder loaded-shoe surface and lifecycle](reports/dante-boulder-load-2026-10-02/README.md): affinity-bound world/owner inlay, retained baseline and serial checks.
+
+- [Bastion forward-brace motion](reports/dante-bastion-motion-2026-10-02/README.md): distinct body/FPP action with existing field behavior preserved.

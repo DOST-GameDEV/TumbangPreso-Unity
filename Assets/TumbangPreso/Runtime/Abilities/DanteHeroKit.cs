@@ -141,7 +141,7 @@ namespace TumbangPreso.Abilities
                        "Defending. A wide stone force field in front of you for 7.5 s. It follows you, and every slipper that hits it flies back.",
                        GeoRules.BarrierCooldown, GeoRules.BarrierSeconds, AbilityGlyph.DanteBarrier,
                        summary: "A force field in front of you reflects slippers.",
-                       castAction: "hero-dante-roar", viewmodelAction: "carapace-guard",
+                       castAction: "hero-dante-bastion", viewmodelAction: "bastion-brace",
                        castCue: "sfx_cast_dante_barrier") { }
 
             protected override void OnActivate(AbilityContext ctx)

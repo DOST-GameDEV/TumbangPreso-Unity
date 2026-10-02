@@ -738,6 +738,17 @@ namespace TumbangPreso.CameraSystem
             new Key(0.580f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
+        // Set the following field ahead with the shoulders, then return to ready.
+        private static readonly Key[] BastionBraceClip =
+        {
+            new Key(0, 0, 0, 0, 0, 0, 0),
+            new Key(.12f, .12f, -.12f, .06f, .08f, .10f, -.04f),
+            new Key(.28f, -.25f, .05f, -.08f, -.18f, -.06f, .06f, true),
+            new Key(.39f, -.22f, .05f, -.07f, -.16f, -.05f, .05f),
+            new Key(.58f, -.08f, .02f, -.03f, -.06f, -.02f, .02f),
+            new Key(.80f, 0, 0, 0, 0, 0, 0),
+        };
+
         private static readonly Key[] CarapaceGuardClip =
         {
             new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
@@ -1161,6 +1172,7 @@ namespace TumbangPreso.CameraSystem
                   : clip == "summon-lightning" ? SummonLightningClip
                   : clip == "boulder-load" ? BoulderLoadClip
                   : clip == "stomp-heavy" || clip == "stomp" ? StompHeavyClip
+                  : clip == "bastion-brace" ? BastionBraceClip
                   : clip == "carapace-guard" ? CarapaceGuardClip
                   : clip == "fissure-slam" ? FissureSlamClip
                   : clip == "frost-load" ? FrostLoadClip
