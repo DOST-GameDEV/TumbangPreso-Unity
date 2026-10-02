@@ -879,3 +879,11 @@ with result/readback. Current Notes in the Next Round row now explicitly say
 working on latest3.5seconds. ROUND-TIMER-35-1002 claims only its dated plan's
 constant, protocol reason/version and focused existing test assertions. Halftime
 stays10s and replay unchanged. No live native job; baseline next.
+
+Next Round3.5s ready: baseline observes5 and fails requested3.5. Three separate
+native cases pass: shared schedule/10s halftime/final boundary, frozen actual
+input/world frame, simulated late-client deadline.45/35/30s guardnull; no repair.
+Frozen four inputs unchanged. Protocol133, recording13 unchanged, no actual-peer
+or fresh-player claim. No active job. Publish exact duration/version/tests/docs
+and update/read back the Next Round Notes WIP. User reacted positively to Block
+screenshot at17:32; no blanket human verification inferred.

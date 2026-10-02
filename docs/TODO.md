@@ -17,6 +17,15 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### ROUND-TIMER-35-1002: latest ordinary break duration
+
+- [x] Next Round is3.5seconds per latest Feedback; halftime remains10s and keeps
+  replay/fallback. Three distinct native cases pass separately: shared schedule,
+  real-input/frozen-frame behavior and late-client observation. Protocol133
+  requires matching rebuilt clients; new actual peers/player/human pending.
+  [Evidence](reports/round-timer-35-2026-10-02/README.md).
+
+
 ### TUTORIAL-BARRIER-WARNING-1002: truthful attacking practice warning
 
 - [x] Suppress and clear the false barrier refusal only for the existing offline
