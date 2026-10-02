@@ -142,3 +142,5 @@ Dante Boulder weight-bearing preparation: [native review and preserved assets](r
 - [Bastion forward-brace motion](reports/dante-bastion-motion-2026-10-02/README.md): distinct body/FPP action with existing field behavior preserved.
 
 - [Attacking tutorial barrier warning](reports/tutorial-barrier-warning-2026-10-02/README.md): one actual-route case, real throw and visible-warning control.
+
+- [Tutorial Block attacker placement](reports/tutorial-block-placement-2026-10-02/README.md): behind-centre spawn, genuine misses and player interception.

@@ -106,6 +106,60 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator BlockAttackerStandsBehindMiddleAndMissesCanButCanBeBlocked()
+        {
+            int quality=QualitySettings.GetQualityLevel(),mip=QualitySettings.globalTextureMipmapLimit;
+            try
+            {
+                QualitySettings.SetQualityLevel(0,true);QualitySettings.globalTextureMipmapLimit=2;
+                yield return LoadTraining();
+                var route=Object.FindFirstObjectByType<GuidedTraining>();
+                yield return Route(route,GuidedTraining.Lesson.Block);
+                var who=Field<CharacterMotor>(route,"_local");var can=Field<Lata>(route,"_lata");
+                var dummy=Field<CharacterMotor>(route,"_dummy");var shoe=Field<Slipper>(route,"_dummySlipper");
+                Assert.IsTrue(who.IsDefender);Assert.IsNotNull(dummy);Assert.IsNotNull(shoe);
+                var hud=Field<GuidedTrainingHud>(route,"_hud");
+                yield return TumpUiCapture.Capture("Tutorial-block-attacker-placement",hud.GetComponent<Canvas>(),960,540,false,true);
+                Assert.AreEqual(0,dummy.transform.position.x,.05f,"The Block attacker must align with the middle spawn.");
+                Assert.Greater(dummy.transform.position.z,Confinement.AttackerSpawnRing()+.5f,"Stand behind the normal attacker line.");
+                Vector3 toward=can.transform.position-dummy.transform.position;toward.y=0;
+                Assert.Greater(Vector3.Dot(dummy.transform.forward,toward.normalized),.98f,"The lane must look directed toward the can.");
+                who.Teleport(new Vector3(-3,.1f,-2));who.Intent.Clear();who.Intent.Parked=false;
+                int flights=0;bool wasFlight=false;float nearest=float.PositiveInfinity;
+                float deadline=Time.time+9;
+                while(Time.time<deadline&&flights<3)
+                {
+                    bool flying=shoe.State==SlipperState.InFlight;
+                    if(flying&&!wasFlight)flights++;
+                    wasFlight=flying;
+                    if(flying&&Mathf.Abs(shoe.transform.position.z-can.transform.position.z)<1)
+                        nearest=Mathf.Min(nearest,Flat(shoe.transform.position,can.transform.position));
+                    Assert.IsTrue(can.IsUpright,"Unblocked practice throws must not knock down the can.");
+                    yield return null;
+                }
+                // Let the third observed throw cross the can too.
+                deadline=Time.time+2;
+                while(Time.time<deadline)
+                {
+                    if(shoe.State==SlipperState.InFlight&&Mathf.Abs(shoe.transform.position.z-can.transform.position.z)<1)
+                        nearest=Mathf.Min(nearest,Flat(shoe.transform.position,can.transform.position));
+                    Assert.IsTrue(can.IsUpright);yield return null;
+                }
+                Assert.GreaterOrEqual(flights,3);Assert.IsFalse(can.IsProtected,"A shield cannot be the reason these throws miss.");
+                Assert.Greater(nearest,can.HitWindow);Assert.Less(nearest,1.75f,"The practice lane should pass near the can.");
+                float missX=Mathf.Max(1f,can.HitWindow+.5f);
+                who.Teleport(new Vector3(missX*.6f,.1f,4));who.Intent.Clear();who.Intent.Parked=false;
+                deadline=Time.time+5;
+                while(Field<int>(route,"_blocks")==0&&Time.time<deadline)yield return null;
+                Assert.Greater(Field<int>(route,"_blocks"),0,"The student must still be able to intercept the actual practice lane.");
+                Assert.IsTrue(can.IsUpright);Assert.AreEqual(GuidedTraining.Lesson.Block,route.CurrentLesson);
+                Directory.CreateDirectory("Logs/tutorial-block-placement");
+                File.WriteAllText("Logs/tutorial-block-placement/result.txt",$"spawn={dummy.transform.position}\nflights={flights}\nnearest_can={nearest}\ncan_hit_window={can.HitWindow}\nblocks={Field<int>(route,"_blocks")}\n");
+            }
+            finally {QualitySettings.SetQualityLevel(quality,true);QualitySettings.globalTextureMipmapLimit=mip;}
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator HiddenPracticeCanDoesNotShowBarrierWarning()
         {
             int quality=QualitySettings.GetQualityLevel(),mip=QualitySettings.globalTextureMipmapLimit;

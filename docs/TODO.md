@@ -24,8 +24,9 @@ Nothing was deleted or renumbered.
   control, cached-message removal, actual charge/release and another warning.
   Compilation/runtime split retained after memory stop; player/human pending.
   [Evidence](reports/tutorial-barrier-warning-2026-10-02/README.md).
-- [ ] Latest same-row request next: Block attacker behind the middle attacker
-  spawn, aimed near the can without hitting it.
+- [x] Latest Block placement request: attacker now behind the middle spawn,
+  aiming along a near-can miss lane. Native1/1 measures three genuine misses
+  and one real student block. [Evidence](reports/tutorial-block-placement-2026-10-02/README.md).
 
 
 ### RAFI-BAHA-BACKWASH-1002: qualified flood and retrieval passive

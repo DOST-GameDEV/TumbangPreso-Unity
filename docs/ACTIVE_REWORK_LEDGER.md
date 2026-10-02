@@ -865,3 +865,11 @@ TUTORIAL-BLOCK-PLACEMENT-1002 claims only GuidedTraining Block prep/target and
 one TutorialLessonHonestyProbe case. Plan dated report; no active native job.
 Bastionc9cbbfb3 is also now in remote ancestry; its review remains undelivered
 because owner switched focus to current Feedback. Do not resume hero polish.
+
+Block placement ready: actual baseline x2 failure and screenshot retained.
+Candidate1/1 passes11.627s,40s guardnull: spawnx0/z10, three real can misses
+(nearest1.081m versus0.579m hit window), one student block. Native screenshots
+inspected. Import/runtime separated up front; first import admission refusal and
+one changed-state retry retained. No active native job. Publish exact two source
+paths/evidence and replace Wiki WIP with result. Next unstruck human request is
+ordinary Next Round3.5s instead of5; halftime10s/replay stays. No new hero polish.

@@ -1,0 +1,9 @@
+{
+  "head": "32ca86887b5db038dfd6178be3e7064ed5a80022",
+  "question": "Actual tutorial Block current attacker x2 versus requested x0 behind middle spawn; real throws remain missable and blockable",
+  "expected_cases": 1,
+  "expected_baseline_failure": "Middle spawn x assertion after actual route and native capture",
+  "retry_count": 0,
+  "memory": "Import/compile in separate fresh process before graphics runtime; same guard",
+  "test_sha256": "2efed174de6ab9e4767a00d4d0f28ae2781eb6e872fffa27c5997a2bdb29db2d"
+}
