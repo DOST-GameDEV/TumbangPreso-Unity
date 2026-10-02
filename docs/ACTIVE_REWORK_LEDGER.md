@@ -295,3 +295,14 @@ jump/shoe passage and role retirement. First fixture moved in the owner's camera
 frame; one bounded repair selected movement aim and preserved normal defence
 income in the no-score assertion. Exit0, guard null55s. New Sean probe owns its
 single tools/playmode_suite.py registration entry. Visual and actual peers pending.
+
+Cinder source now incorporates published Amihan59c413347 and other incoming
+fixes, preserving both shared viewmodel entries. Core7/state3/physics2 and pure
+recording1 cases pass. First direct-kit visual1/1 bypassed animation and is not
+an actual-input claim. One actual-input capture retained38body/38owner frames
+and accepted/pushed correctly, but its expiry assertion ran at the exact4s
+held-input boundary and failed; exit2 with memory pressure. No further unchanged
+capture retry. Feature/protocol130 remain UNPUBLISHED. Next: actual-player
+qualification and evidence-backed visual review. Exact peer ownership expands
+only NetSeanProbe.cs/new cinder scenario and tools/net_sean_review.py/cinder
+evaluator as in the plan. Other network/reliability lanes remain independent.

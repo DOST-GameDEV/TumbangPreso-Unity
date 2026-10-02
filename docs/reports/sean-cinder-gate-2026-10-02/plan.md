@@ -68,3 +68,13 @@ entries are disjoint from Amihan's StormCallClip and other existing icons.
 
 The new SeanCinderGateProbe also owns its single registration entry in
  tools/playmode_suite.py. No other fixture grouping or suite schedule changes.
+
+## Actual peer qualification ownership
+
+Reserve Runtime/Diagnostics/NetSeanProbe.cs and tools/net_sean_review.py only
+for a new cinder scenario in their existing opt-in infrastructure. Host advances
+to the ordinary second-round Sean defender, owner casts through held input,
+and the observing rival walks across. Require matching identity, one consumption,
+approach-side impulse, no new status/score and expiry on three actual players.
+Preserve all existing scenarios. Candidate-only Linux build adapter may call the
+existing GameBuilder pipeline; no shipping builder/platform change is planned.
