@@ -130,8 +130,8 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
-Latest source49=4f69e0af2,48=55f2a5f79,47=56446ad7c. Currentk contains48 fixes;
-49focus callback cleanup has separate native proof and predates next build.
+Latest source50=c788c5a08,49=4f69e0af2,48=55f2a5f79. Currentk contains48 fixes;
+49/50focus and emote cancellation have separate native proof, await coherent build.
 The goal remains ACTIVE. Root is working solo this continuation;
 the one authorized helper completed its latest bounded work, earlier agents retired.
 
@@ -156,6 +156,11 @@ inputdiscard onfocusfalse. ActualTouchInput+Unity focus
 callback,2causal/1ordinary toggle control planned; no physicalOS focus claim.
 Post74047 exact3/all18431 protected unchanged/restored/free.49source4f69e0af2
 qualified and committed. [Evidence](reports/reliability-2026-10-02/input-focus-lifetime/README.md).
+50EmoteWheel lifetime c788c5a08:61530 two retired-selection commits/one ordinary
+control,89005 FIRST PASS3/post93049 exact3/all18433 protected/restored/free.
+ONE counter-init fixture repair, no assertion weakening/additionalretry. Normal
+release preserved; focusfalse/ownerdisable cancel selection. All jobs terminal.
+[Evidence](reports/reliability-2026-10-02/emote-wheel-lifetime/README.md).
 No unchanged Core/fulltournament/hostloss repeats required for these lifecycle fixes.
 
 47Lunge windup56446ad7c: original96494 two causal/one control;64944 FIRST PASS3,

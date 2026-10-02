@@ -19,7 +19,7 @@ Sean/Rafi/Baha reservations preserved. One heavy native/player job at a time16Gi
 
 ## Published fixes and current artifact
 
-Verified source49=4f69e0af2 published9395414f3; source48=55f2a5f79/source47=56446ad7c.
+Verified source50=c788c5a08 published; source49=4f69e0af2/source48=55f2a5f79.
 Protocol132/recording13 after incoming qualified Rafi4a9afbd90/integrationa67d7bc5b.
 Core704/704 proof7648 retained; no unchanged broad-suite/full8round repeat.
 
@@ -84,9 +84,13 @@ MAIN Logs/emote-wheel-lifetime1002/prepare.py; original70589 TERMINAL3failed:
 2visible retired selection commits, normalcontrol invalid (_chosen counter not
 reset per case). ONE fixture initialization repair `_chosen=0` inBefore; no
 assertion/scope change. Corrected61530 TERMINAL:2actual retired selection commits/
-1ordinary release control pass/restored/free. Candidate89005 ACTIVE after prep0/
+1ordinary release control pass/restored/free. Candidate89005 TERMINAL FIRST PASS3 after prep0/
 exact3/identical correctedfixture. OnDisable +focusfalse=>Close(false); no further
-repair/retry budget.
+repairs afterONE counter-init fixture correction. Post93049 TERMINAL0/exact3/
+all18433 protected unchanged/guardrestored/free.50sourcec788c5a08 SHIPPED;
+no native/player handle remains active. Normalselectedrelease stillfiresonce.
+Callback/publicrelease/componentstate only, not OSfocus/actualemotekey/animation/
+multiplewheels/peertransport. Currentk48 artifact predates49/50; no per-fix build.
 GPU2048/reserve2048/450s/PlayMode-nographics/filter EmoteWheelLifetimeTests3.
 ONE bounded original/candidate pair/one repair limit, no overlapping worker.
 
