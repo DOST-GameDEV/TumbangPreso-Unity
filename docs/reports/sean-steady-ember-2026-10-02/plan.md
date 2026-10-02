@@ -65,8 +65,8 @@ current protocol and ownership before changing the constant.
 - Runtime/Abilities/ITimedKitReplication.cs: optional bounded passive channel
 - Runtime/Net/TimedKitState.cs and MatchRpc.TimedKits.cs: shared channel/sequence
 - Runtime/Net/NetSession.cs: protocol constant only
-- Tests/SeanSteadyEmberTests.cs and metadata; existing TimedKitStateTests.cs only if
-  required by the shared contract; focused PlayMode/SeanSteadyEmberProbe and metadata
+- Tests/SeanSteadyEmberTests.cs and metadata; existing PlayMode/SkillReceiptTests.cs permanent-flag byte offset only,
+  because the new passive float follows that byte; focused PlayMode/SeanSteadyEmberProbe and metadata
 - Runtime/Diagnostics/NetSeanProbe.cs and tools/net_sean_review.py: new passive case
 - tools/playmode_suite.py: the new fixture's single partition entry
 - This report, live network contract, TODO and ledger

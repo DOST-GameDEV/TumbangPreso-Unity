@@ -376,3 +376,9 @@ maximum power. Private slipper episode prevents drop/regrab farming; generic
 kit hooks and TimedKitState channel, never a Sean-only RPC. Planned protocol131
 must be reconciled against the latest shared branch before use. No code edited
 or native job started yet. Other agents' current ownership remains protected.
+
+Steady Ember implementation has begun on its reserved paths. The shared timed
+state adds a bounded passive float. Extend the existing test reservation only to
+PlayMode/SkillReceiptTests.cs: its malformed permanent-flag byte moves from the
+last byte to the byte before the new float. Preserve the same rejection assertion
+and all other fixture behavior. No broad fixture repair or new transport route.
