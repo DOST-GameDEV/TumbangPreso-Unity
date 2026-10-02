@@ -510,3 +510,11 @@ DOTS decoder refusal ready: exact schema12 plus catch-filter-only fix passes
 2/2 native header tests,45s exit0/guardnull, profiles restored. Original escaped
 InvalidDataException retained. Stage only that catch hunk, independent test/meta
 and report. Keep Baha schema13/kind18, Rafi132 and all unfinished code unstaged.
+
+Baha native refined3/3 passes, but inspected owner/side frames read as a white
+sheet rather than water. RafiWater.shader's existing vertex option deliberately
+uses alpha only, so the new Baha RGB ramp was ignored. Reserve only
+Assets/TumbangPreso/Resources/Shaders/RafiWater.shader for a default-OFF vertex-RGB
+option, enabled on Baha's surface alone. Preserve all existing Water wall, Skim,
+legacy waves and introduction materials. No successful visual verdict is claimed
+for the retained blue-pane or white-sheet iterations.
