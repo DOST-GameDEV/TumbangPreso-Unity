@@ -1,0 +1,24 @@
+{
+  "sourceCommit": "94600694068552668079b1b4b3c0ca044bbfb44a",
+  "expectedCases": 3,
+  "testFilter": "TumbangPreso.PlayTests.PlayerHubOwnerDetailTests",
+  "expectedBaseline": "Ownerchangedopenmodal fails;2sameowner/nodetailcontrols pass",
+  "inputs": [
+    {
+      "name": "PlayerHub.OwnerPainted.candidate.cs",
+      "sha256": "42B88C4D97F45AA1B4A9BC9A77AC32C8CC447BEB910E84662D2E72C3471200EB"
+    },
+    {
+      "name": "PlayerHub.OwnerPainted.original.cs",
+      "sha256": "A74208D517E3D08F2AD9D8539EA3B99CFB89A23CB11B05EE828EB69790AF5F83"
+    },
+    {
+      "name": "PlayerHubOwnerDetailTests.cs",
+      "sha256": "5C083234A8BC2527898B3C5E2BDD68A0A8F25FAE94765572967FC73CA2635935"
+    },
+    {
+      "name": "PlayerHubOwnerDetailTests.cs.meta",
+      "sha256": "ABCAA775A138D2A5CCE41551A232FCC8B4AAE3626A8819BDB3970640D042515F"
+    }
+  ]
+}

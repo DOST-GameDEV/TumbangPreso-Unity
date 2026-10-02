@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 06:45:43Z" end-time="2026-10-02 06:45:44Z" duration="0.9133065">
+  <test-suite type="TestSuite" id="2539" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1257" result="Passed" start-time="2026-10-02 06:45:43Z" end-time="2026-10-02 06:45:44Z" duration="0.913307" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2533" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1257" result="Passed" start-time="2026-10-02 06:45:43Z" end-time="2026-10-02 06:45:44Z" duration="0.890977" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="21096" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2534" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1257" result="Passed" start-time="2026-10-02 06:45:43Z" end-time="2026-10-02 06:45:44Z" duration="0.877520" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2535" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1257" result="Passed" start-time="2026-10-02 06:45:43Z" end-time="2026-10-02 06:45:44Z" duration="0.864413" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1975" name="PlayerHubOwnerDetailTests" fullname="TumbangPreso.PlayTests.PlayerHubOwnerDetailTests" classname="TumbangPreso.PlayTests.PlayerHubOwnerDetailTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 06:45:43Z" end-time="2026-10-02 06:45:44Z" duration="0.831031" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1978" name="AccountChangeBeforeAnyScorecardWasOpenedKeepsTheHubUsable" fullname="TumbangPreso.PlayTests.PlayerHubOwnerDetailTests.AccountChangeBeforeAnyScorecardWasOpenedKeepsTheHubUsable" methodname="AccountChangeBeforeAnyScorecardWasOpenedKeepsTheHubUsable" classname="TumbangPreso.PlayTests.PlayerHubOwnerDetailTests" runstate="Runnable" seed="2081253403" result="Passed" start-time="2026-10-02 06:45:43Z" end-time="2026-10-02 06:45:44Z" duration="0.622802" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1976" name="AnAccountChangeClosesThePreviousOwnersActualScorecard" fullname="TumbangPreso.PlayTests.PlayerHubOwnerDetailTests.AnAccountChangeClosesThePreviousOwnersActualScorecard" methodname="AnAccountChangeClosesThePreviousOwnersActualScorecard" classname="TumbangPreso.PlayTests.PlayerHubOwnerDetailTests" runstate="Runnable" seed="1071976049" result="Passed" start-time="2026-10-02 06:45:44Z" end-time="2026-10-02 06:45:44Z" duration="0.108164" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1977" name="SameAccountDataRefreshKeepsTheCurrentScorecardOpen" fullname="TumbangPreso.PlayTests.PlayerHubOwnerDetailTests.SameAccountDataRefreshKeepsTheCurrentScorecardOpen" methodname="SameAccountDataRefreshKeepsTheCurrentScorecardOpen" classname="TumbangPreso.PlayTests.PlayerHubOwnerDetailTests" runstate="Runnable" seed="348192159" result="Passed" start-time="2026-10-02 06:45:44Z" end-time="2026-10-02 06:45:44Z" duration="0.082532" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
