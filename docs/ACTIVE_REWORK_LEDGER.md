@@ -266,3 +266,9 @@ guard request. Runtime still under development, no feature publication.
 Presentation ownership expands exactly as the plan: ViewmodelArms.cs CinderDraw
 entry only, AbilityIcons.cs new appended glyph only, person_sean.asset newclip
 reference only and new Editor/SeanGateAuthor.cs. Amihan storm entries untouched.
+
+Cinder actual native physics2/2 passes with grounded pushback, one-use, expiry,
+jump/shoe passage and role retirement. First fixture moved in the owner's camera
+frame; one bounded repair selected movement aim and preserved normal defence
+income in the no-score assertion. Exit0, guard null55s. New Sean probe owns its
+single tools/playmode_suite.py registration entry. Visual and actual peers pending.
