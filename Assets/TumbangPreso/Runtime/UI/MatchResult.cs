@@ -516,8 +516,9 @@ namespace TumbangPreso.UI
                     line += "   ·   STILL PLACING YOU";
             }
 
-            string verdict = Net.CareerStore.Instance?.LastVerdict ?? "";
-            if (verdict == "disputed")
+            var career = Net.CareerStore.Instance;
+            if (career?.LastVerdict == "disputed" && _lastRecord != null
+                && career.LastVerdictMatchId == _lastRecord.MatchId)
                 line += "\nTHIS RESULT DID NOT MATCH WHAT THE OTHER PLAYERS SAW. NO RANK CHANGE.";
 
             return line;

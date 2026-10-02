@@ -345,6 +345,41 @@ namespace TumbangPreso.Tests
             }
         }
 
+        [TestCase(false)]
+        [TestCase(true)]
+        public void ResultDisputeCopyOnlyDescribesTheDisplayedMatch(bool sameMatch)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career verdict identity check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, career);
+            var boardOwner = new GameObject("Result verdict identity check"); boardOwner.SetActive(false);
+            var board = boardOwner.AddComponent<TumbangPreso.UI.MatchResult>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                var cache = typeof(TumbangPreso.Net.CareerStore).GetField("_cache", flags).GetValue(career);
+                var submitted = new MatchRecord { MatchId = "older-queued-result" };
+                var queue = (System.Collections.Generic.List<MatchRecord>)cache.GetType().GetField("Queue").GetValue(cache);
+                var witnesses = (System.Collections.Generic.List<string>)cache.GetType().GetField("QueueWitness").GetValue(cache);
+                queue.Clear(); witnesses.Clear(); queue.Add(submitted); witnesses.Add("");
+                typeof(TumbangPreso.Net.CareerStore).GetMethod("CompleteSubmission", flags)
+                    .Invoke(career, new object[] { cache, submitted, "{\"verdict\":\"disputed\"}" });
+                typeof(TumbangPreso.UI.MatchResult).GetField("_lastRecord", flags)
+                    .SetValue(board, sameMatch ? submitted : new MatchRecord { MatchId = "current-result" });
+                string line = (string)typeof(TumbangPreso.UI.MatchResult).GetMethod("RankLine", flags)
+                    .Invoke(board, new object[] { null });
+                Assert.AreEqual(sameMatch, line.Contains("THIS RESULT DID NOT MATCH"),
+                    "An older queued result's dispute was displayed as the current match's verdict.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(boardOwner); Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
         private const string AssetsRoot = "Assets/TumbangPreso";
         private const string CloudCodeRoot = "ugs/cloud-code";
 

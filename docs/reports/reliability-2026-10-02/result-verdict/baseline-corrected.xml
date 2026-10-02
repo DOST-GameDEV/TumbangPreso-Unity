@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 00:46:29Z" end-time="2026-10-02 00:46:29Z" duration="0.1380251">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="811" result="Failed" site="Child" start-time="2026-10-02 00:46:29Z" end-time="2026-10-02 00:46:29Z" duration="0.138025" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1964" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="811" result="Failed" site="Child" start-time="2026-10-02 00:46:29Z" end-time="2026-10-02 00:46:29Z" duration="0.125944" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="20628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1965" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="811" result="Failed" site="Child" start-time="2026-10-02 00:46:29Z" end-time="2026-10-02 00:46:29Z" duration="0.122969" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1966" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="811" result="Failed" site="Child" start-time="2026-10-02 00:46:29Z" end-time="2026-10-02 00:46:29Z" duration="0.120831" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1060" name="CareerAndCloudCodeTests" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="49" result="Failed" site="Child" start-time="2026-10-02 00:46:29Z" end-time="2026-10-02 00:46:29Z" duration="0.097973" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1105" name="ResultDisputeCopyOnlyDescribesTheDisplayedMatch" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.ResultDisputeCopyOnlyDescribesTheDisplayedMatch" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-02 00:46:29Z" end-time="2026-10-02 00:46:29Z" duration="0.086501" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1103" name="ResultDisputeCopyOnlyDescribesTheDisplayedMatch(False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.ResultDisputeCopyOnlyDescribesTheDisplayedMatch(False)" methodname="ResultDisputeCopyOnlyDescribesTheDisplayedMatch" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="488440340" result="Failed" start-time="2026-10-02 00:46:29Z" end-time="2026-10-02 00:46:29Z" duration="0.067298" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An older queued result's dispute was displayed as the current match's verdict.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.ResultDisputeCopyOnlyDescribesTheDisplayedMatch (System.Boolean sameMatch) [0x00182] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:373
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1104" name="ResultDisputeCopyOnlyDescribesTheDisplayedMatch(True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.ResultDisputeCopyOnlyDescribesTheDisplayedMatch(True)" methodname="ResultDisputeCopyOnlyDescribesTheDisplayedMatch" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1725052322" result="Passed" start-time="2026-10-02 00:46:29Z" end-time="2026-10-02 00:46:29Z" duration="0.005496" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

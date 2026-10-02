@@ -22,31 +22,32 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Source/remote start:7545a974b (2026-10-02 verified fetch; no divergence).
-Last shipped unit: career refresh ownership, native2/2. Full earlier engineering
-history preserved in [the archived ledger](archive/ACTIVE_REWORK_LEDGER_before_competition_resume_2026-10-02.md).
-Current owned files: Runtime/Net/CareerStore.cs, Tests/CareerAndCloudCodeTests.cs,
-Runtime/UI/PlayerHub.cs, and this unit's TODO/evidence/index updates.
+Latest verified local/remote: 62afc5d6ab12051e13790316174e9087a11ea9eb.
+This resume shipped four product units: account abandon/history ownership (4/4),
+queued witness alignment (2/2), history UI completion (one native case/five states),
+and retained account sync (4/4). Coherent earlier career integration passed 43/43.
+Source-owned pending files: Diagnostics/OwnerUiPlayerReview.cs and
+Diagnostics/OwnerUiPlayerReview.WholeMatches.cs, plus this unit's reports/ledger.
+They contain a bounded diagnostic repair, not another product behavior change.
 Paths are under Assets/TumbangPreso unless prefixed docs.
+Complete pre-resume history remains in
+[the archived ledger](archive/ACTIVE_REWORK_LEDGER_before_competition_resume_2026-10-02.md).
 
 ## Active job and exact next action
 
-CAREER-ACCOUNT-SYNC-1002 complete: baseline 0/2, native final 4/4. Captured cache
-waiter waits for old flags, coalesces same owner and retires obsolete owners;
-new owner's waiter survives old cleanup. Two hashes unchanged, zero repairs,
-profile/input restored, session40537 terminal. Publication follows.
-Prior verified remote33443291b. Refreshed player at that source builds2432MB/106s,
-1276 hashes unchanged, but whole-match run FAILED BEFORE round1 on UI-state wait.
-Original results/logs preserved in competition-batch. Player session29332 terminal;
-no task player/Unity job active. Profile/shared input unchanged/restored.
-One bounded runner repair PREPARED in main: current hub casual stake selected;
-wait for the ready phase; failed wait includes scene/control/preview/round state.
-Owned Diagnostics/OwnerUiPlayerReview.cs and .WholeMatches.cs, six added lines.
-No product readiness/clock/loading or authored UI change. Retry count0/1.
-Next after publishing career fix: copy two diagnostic files to qualification,
-freeze updated coherent candidate, build unique internal player, retry full-match
-route once. Stop fixture repair after that; retain any new failure and pursue
-actual product evidence or another existing supported runtime route.
+RESULT-VERDICT-IDENTITY-1002 complete: corrected baseline1/2, native final2/2.
+Dispute warning requires submitted match ID to match displayed result. Three
+hashes unchanged; one fixture singleton repair used1/1; all original failures
+preserved. Session69002 terminal; profile/input restored. Publish next.
+Prior verified remote157d54ed0. Five product fix units now qualified this resume.
+Next RESULT-LATE-ACK-1002 baseline prepared in existing TumpNativeResultTests:
+actual native board plus Stats.Adopt synthetic payable record and production
+CompleteSubmission acknowledgement. Board lacks Career.Changed subscription,
+so late response cannot repaint already-open details. No endpoint call.
+Copy that one prepared test file to isolation after publication and run named
+result-late-ack1002 PlayMode/D3D11 baseline, one baseline/final, zero repairs planned.
+While it runs, inspect smallest owner-bound lifecycle subscription and current
+supported direct-peer match route. Do not rerun retired whole-match UI fixture.
 
 ## Remaining readiness evidence
 

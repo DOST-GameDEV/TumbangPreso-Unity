@@ -178,6 +178,9 @@ namespace TumbangPreso.Net
         /// </summary>
         public string LastVerdict { get; private set; } = "";
 
+        /// <summary>The submitted match named by LastVerdict, so a later board cannot inherit it.</summary>
+        public string LastVerdictMatchId { get; private set; } = "";
+
         public static string Path =>
             System.IO.Path.Combine(ProfilePaths.Root, "career.json");
 
@@ -512,6 +515,7 @@ namespace TumbangPreso.Net
             // Known terminal verdicts also acknowledge duplicates and permanent refusals.
             // Missing or unknown answers leave the record and its witness queued for retry.
             LastVerdict = answer.verdict;
+            LastVerdictMatchId = submittedRecord.MatchId;
             int index = submittedCache.Queue.IndexOf(submittedRecord);
             if (index >= 0)
             {
