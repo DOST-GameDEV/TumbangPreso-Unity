@@ -34,5 +34,41 @@
     "width": 1280,
     "height": 720,
     "audio_streams": 0
+  },
+  "airburst_feel_effects_p2.mp4": {
+    "bytes": 3192914,
+    "sha256": "cc2028880b0c984747f12f4778df5a8d77238336f4acd0ac17e793ce53b23489",
+    "duration_seconds": 29.233333,
+    "video_codec": "h264",
+    "width": 1280,
+    "height": 720,
+    "audio_streams": 0
+  },
+  "airburst_feel_body_p2.mp4": {
+    "bytes": 2958406,
+    "sha256": "b253be8c4a3d4a99b9ec0ae83ce6e28160622e7b69d0840887b878fe02d798b2",
+    "duration_seconds": 29.233333,
+    "video_codec": "h264",
+    "width": 1280,
+    "height": 720,
+    "audio_streams": 0
+  },
+  "airburst_feel_low_p2.mp4": {
+    "bytes": 2614665,
+    "sha256": "ac43594439466e924457b6c0d8f8a08fa08492a16d6ce9890524484b80abe67d",
+    "duration_seconds": 29.233333,
+    "video_codec": "h264",
+    "width": 1280,
+    "height": 720,
+    "audio_streams": 0
+  },
+  "amihan_light_body_p2.mp4": {
+    "bytes": 7001203,
+    "sha256": "89cc916787edb7f4a786f847bf794d241d97df7081197003978752ee969a5c07",
+    "duration_seconds": 30.033333,
+    "video_codec": "h264",
+    "width": 1280,
+    "height": 720,
+    "audio_streams": 1
   }
 }

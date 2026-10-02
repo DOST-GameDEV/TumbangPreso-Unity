@@ -23,3 +23,20 @@ checks but limit visual readability review. The court view is clearer. Selected
 F3 frames show faint mint fan strokes on the light court and a close introduction
 shot with some face cropping. Review both normal-speed passes before deciding
 the next feel changes; do not treat automated pass results as composition approval.
+
+## Feel pass (October 2, P2 native films)
+
+- [Airburst, effects](airburst_feel_effects_p2.mp4), [live effects hidden](airburst_feel_body_p2.mp4)
+  and [Low with reduced effects](airburst_feel_low_p2.mp4): same fixture, layout and
+  29.233 s structure as the F3 clips, silent. Compare with the F3 clips above: ink-weighted
+  fan strokes, the sigil kept at her feet, the upright lunge release, the larger call,
+  the GATHER face and the lit Vigan stage.
+- [Light steps and floating run](amihan_light_body_p2.mp4), about 30 s: three 10 s
+  views one after another (her side from a low camera, her own screen, the court),
+  WITH the game's own logged cues mixed in by `tools/stitch_ability_film.py`. The
+  track is normalised for the video, so the step's loudness is relative, not the
+  in-game level. The low side camera passes through planters and posts on this route.
+
+Fixed-simulation films at 30 frames per game second; not real-time performance,
+actual peers or human approval. The new step sound is measured and mixed from the
+log, not a listening approval.

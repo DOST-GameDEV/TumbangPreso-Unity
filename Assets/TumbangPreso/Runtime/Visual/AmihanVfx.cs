@@ -432,6 +432,11 @@ namespace TumbangPreso.Visual
     ///
     /// Negative ages draw the fan ON (edges racing out from her feet, chevrons appearing far to near) for the cutscene's
     /// last shot (`HeroIntroductionScene.Amihan.cs`), whose final frame is this fan at age 0.
+    ///
+    /// FEEL PASS (2026-10-02, the F3 films): on Bayan Plaza's light tiles the mint strokes nearly vanished, and the release
+    /// sigil grew to 6 m diamonds BEHIND her, outside the fan. The floor strokes are now ink-weighted in her darker greens
+    /// (a dark rim round a mint line, like the cast's ink outlines), the edges are thicker and set INSIDE the true limit so
+    /// their outer ink is exactly the 30 degree contact line, the meter starts brighter, and the sigil stays under her feet.
     /// </summary>
     public sealed class AmihanStormFan : MonoBehaviour, IVfxTimeline
     {
@@ -440,9 +445,11 @@ namespace TumbangPreso.Visual
         public const float WallSeconds = 0.6f;
         /// <summary>The cutscene draws the fan on over this long before age 0.</summary>
         public const float DrawOnSeconds = 1.0f;
-        private const float FirstSlot = 2.6f, SlotSpacing = 2.4f, ChevronWidth = 0.16f;
-        /// <summary>Share of the way from a chevron's apex to the fan edge that its arms reach.</summary>
-        private const float ArmReach = 0.84f;
+        private const float FirstSlot = 2.6f, SlotSpacing = 2.4f, ChevronWidth = 0.24f, EdgeWidth = 0.26f;
+        /// <summary>Share of the way from a chevron's apex to the fan edge that its arms reach (short of the thicker edge).</summary>
+        private const float ArmReach = 0.74f;
+        /// <summary>Her darker greens for strokes lying on the court: a mint line inside a wind-green body inside deep ink.</summary>
+        private static readonly Color FloorBody = new Color(0.40f, 0.66f, 0.29f, 1.0f), FloorInk = new Color(0.11f, 0.27f, 0.10f, 1.0f);
         private readonly List<WindVfx.Ribbon> _chevrons = new List<WindVfx.Ribbon>();
         private readonly List<WindVfx.Ribbon> _front = new List<WindVfx.Ribbon>();
         private readonly List<WindVfx.Ribbon> _sigil = new List<WindVfx.Ribbon>();
@@ -463,20 +470,23 @@ namespace TumbangPreso.Visual
             var fx = go.AddComponent<AmihanStormFan>();
             fx._gather = Mathf.Max(0.1f, gather); fx._half = AmihanRules.StormSurgeHalfAngle; fx._range = Abilities.AmihanStorm.FanRange;
             var left = new List<Vector3>(); var right = new List<Vector3>();
+            float half = fx._half * Mathf.Deg2Rad;
+            // Each edge's centre line sits half its width INSIDE the true limit, so the outer ink is the contact line itself.
+            var inLeft = new Vector3(Mathf.Cos(half), 0, Mathf.Sin(half)) * (EdgeWidth * 0.5f);
+            var inRight = new Vector3(-Mathf.Cos(half), 0, Mathf.Sin(half)) * (EdgeWidth * 0.5f);
             for (int i = 0; i < 24; i++)
             {
                 float r = Mathf.Lerp(0.7f, fx._range, i / 23.0f);
-                float la = -fx._half * Mathf.Deg2Rad, ra = fx._half * Mathf.Deg2Rad;
-                left.Add(new Vector3(Mathf.Sin(la) * r, 0.02f, Mathf.Cos(la) * r));
-                right.Add(new Vector3(Mathf.Sin(ra) * r, 0.02f, Mathf.Cos(ra) * r));
+                left.Add(new Vector3(-Mathf.Sin(half) * r, 0.02f, Mathf.Cos(half) * r) + inLeft);
+                right.Add(new Vector3(Mathf.Sin(half) * r, 0.02f, Mathf.Cos(half) * r) + inRight);
             }
-            fx._edgeLeft = WindVfx.Build(go.transform, "FanEdgeLeft", left, 0.16f, WindVfx.Flat(left), 12.0f, 0.5f, 20.0f);
-            fx._edgeRight = WindVfx.Build(go.transform, "FanEdgeRight", right, 0.16f, WindVfx.Flat(right), 12.0f, 0.5f, 21.0f);
+            fx._edgeLeft = Floor(WindVfx.Build(go.transform, "FanEdgeLeft", left, EdgeWidth, WindVfx.Flat(left), 12.0f, 0.3f, 20.0f));
+            fx._edgeRight = Floor(WindVfx.Build(go.transform, "FanEdgeRight", right, EdgeWidth, WindVfx.Flat(right), 12.0f, 0.3f, 21.0f));
             for (int i = 0; i < Chevrons; i++)
             {
                 var spine = Chevron(fx._half, FirstSlot + SlotSpacing * i, 0.025f);
-                fx._chevrons.Add(WindVfx.Build(go.transform, "KasikusChevron" + i, spine, ChevronWidth * (1.0f + i * 0.08f),
-                    WindVfx.Flat(spine), 3.0f, 0.34f, 60.0f + i));
+                fx._chevrons.Add(Floor(WindVfx.Build(go.transform, "KasikusChevron" + i, spine, ChevronWidth * (1.0f + i * 0.08f),
+                    WindVfx.Flat(spine), 3.0f, 0.3f, 60.0f + i)));
             }
             // The release front: a standing chevron at unit radius, scaled outward; lower at its arms.
             for (int i = 0; i < 2; i++)
@@ -489,10 +499,10 @@ namespace TumbangPreso.Visual
                 }
                 fx._front.Add(WindVfx.Build(go.transform, "AirburstFront" + i, spine, 1.2f - i * 0.45f, WindVfx.Standing, 4.0f + i * 2.0f, 0.22f, 30.0f + i));
             }
-            // The kasikus sigil under her, flashing out on the release.
-            for (int i = 0; i < 4; i++) fx._sigil.Add(Diamond(go.transform, "Kasikus" + i, 0.6f + i * 0.45f, 0.1f, 40.0f + i));
+            // The kasikus sigil under her feet, flashing on the release. Kept small: it is her mark, not an area.
+            for (int i = 0; i < 4; i++) fx._sigil.Add(Floor(Diamond(go.transform, "Kasikus" + i, 0.42f + i * 0.2f, 0.1f, 40.0f + i)));
             // Two small diamonds at her feet that tighten on the beats.
-            for (int i = 0; i < 2; i++) fx._feet.Add(Diamond(go.transform, "HeldDiamond" + i, 0.85f + i * 0.4f, 0.09f, 50.0f + i));
+            for (int i = 0; i < 2; i++) fx._feet.Add(Floor(Diamond(go.transform, "HeldDiamond" + i, 0.85f + i * 0.4f, 0.12f, 50.0f + i)));
             // Each Motif gets its own host: a Motif hands its shared tuft mesh to its parent's single
             // GeneratedMeshOwner, so two on one object throws (the shipped cutscene did, on every cast).
             fx._drawn = new WindVfx.Motif(Host(go.transform, "DrawnCotton"), 16, origin.x * 1.7f + origin.z * 0.9f, 0.5f);
@@ -513,6 +523,14 @@ namespace TumbangPreso.Visual
             float court = Slipper.GroundY(origin + Vector3.up * 0.3f);
             if (court > at.y && court < origin.y + 0.5f) at.y = court;
             return at;
+        }
+
+        /// <summary>A stroke lying on the court: her darker greens and a wide, solid ink rim so it reads on a light floor.</summary>
+        private static WindVfx.Ribbon Floor(WindVfx.Ribbon ribbon)
+        {
+            ribbon.Recolour(WindVfx.Body, FloorBody, FloorInk);
+            if (ribbon.Material != null) { ribbon.Material.SetFloat("_InkFrom", 0.45f); ribbon.Material.SetFloat("_InkAlpha", 0.95f); }
+            return ribbon;
         }
 
         private static Transform Host(Transform parent, string name)
@@ -568,7 +586,7 @@ namespace TumbangPreso.Visual
             float beat1 = g / 3.0f, beat2 = g * 2.0f / 3.0f, draw = g * 0.88f;
             float pull = 0.07f * Step(t, beat1) + 0.07f * Step(t, beat2) + 0.11f * Step(t, draw);
             float pulse = Pulse(t, beat1) + Pulse(t, beat2) + 0.8f * Pulse(t, draw);
-            float level = 0.34f + 0.12f * Step(t, beat1) + 0.12f * Step(t, beat2) + 0.14f * Step(t, draw);
+            float level = 0.5f + 0.12f * Step(t, beat1) + 0.12f * Step(t, beat2) + 0.14f * Step(t, draw);
             // A slow drift only: an outward streak rush would say the wind had already left.
             float phase = calm ? 0.0f : t * 0.8f;
             float released = after < 0 ? 0.0f : 1.0f;
@@ -615,7 +633,8 @@ namespace TumbangPreso.Visual
             for (int i = 0; i < _sigil.Count; i++)
             {
                 float flash = after < 0 ? 0.0f : WindVfx.Envelope(after, i * 0.05f, 0.06f, 0.6f + i * 0.05f, 0.35f);
-                float grow = 1.0f + Mathf.Max(0, after) * (1.5f + i * 0.8f);
+                // At most about 1.3 m from her feet: the previous growth drew 6 m diamonds behind her, outside the fan.
+                float grow = 1.0f + Mathf.Clamp01(Mathf.Max(0, after) / 0.5f) * (0.12f + i * 0.04f);
                 _sigil[i].GameObject.transform.localScale = new Vector3(grow, 1, grow);
                 _sigil[i].GameObject.transform.localRotation = Quaternion.Euler(0, 45.0f + (i % 2 == 0 ? 1 : -1) * t * 20.0f, 0);
                 _sigil[i].Set(flash, phase, 1, 0, WindVfx.Ease(0.2f, 0.6f, after));

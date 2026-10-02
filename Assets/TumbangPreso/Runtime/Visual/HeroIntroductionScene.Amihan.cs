@@ -46,15 +46,19 @@ namespace TumbangPreso.Visual
             // Calle Crisologo: a row of two-storey stone-and-capiz houses on the far wall. Blocky
             // silhouettes only (Art_Direction section 0): a lower stone storey, a wider timber upper
             // storey with a strip of lit capiz windows, a hipped roof.
-            var stone = new Color(0.16f, 0.14f, 0.12f, 1);
-            var timber = new Color(0.12f, 0.10f, 0.09f, 1);
-            var capiz = new Color(0.98f, 0.86f, 0.58f, 0.85f);
+            // FEEL PASS (2026-10-02): typed near black, the houses filmed as black slabs against the bright
+            // sky (F3). The real street is whitewashed lime plaster below, warm narra timber above, clay
+            // tile roofs and pearly capiz panes; those colours, kept a step darker than her, read as Vigan.
+            var stone = new Color(0.80f, 0.74f, 0.62f, 1);
+            var timber = new Color(0.40f, 0.26f, 0.17f, 1);
+            var roof = new Color(0.60f, 0.31f, 0.21f, 1);
+            var capiz = new Color(1.0f, 0.93f, 0.76f, 0.9f);
             for (int i = 0; i < 5; i++)
             {
                 _viganHouses.Add(AddSolid("ViganStone" + i, VfxShapes.Prism(4, 1, 1), stone));
                 _viganHouses.Add(AddSolid("ViganUpper" + i, VfxShapes.Prism(4, 1, 1), timber));
-                _viganHouses.Add(AddSolid("ViganRoof" + i, VfxShapes.Prism(4, 1, .05f), timber));
-                _viganHouses.Add(Add("ViganCapiz" + i, VfxShapes.Prism(4, 1, 1), capiz, 0.6f, plain: true));
+                _viganHouses.Add(AddSolid("ViganRoof" + i, VfxShapes.Prism(4, 1, .05f), roof));
+                _viganHouses.Add(Add("ViganCapiz" + i, VfxShapes.Prism(4, 1, 1), capiz, 0.85f, plain: true));
             }
 
             // Far sky streaks: long thin ribbons on the stage wall's inside, crossing at three heights.

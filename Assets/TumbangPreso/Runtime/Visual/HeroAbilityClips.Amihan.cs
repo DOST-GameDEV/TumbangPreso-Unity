@@ -65,17 +65,23 @@ namespace TumbangPreso.Visual
         /// Release (0.12, punch): flung forward off the back foot, the LEFT arm leading low and out,
         /// the torso unwinding, feet off the road. Hold through the slipstream. Follow-through: the
         /// torso keeps turning past centre (the spiral), then settles.
+        /// FLYING PASS (2026-10-02, owner: her run floats and *"look like she flying"*; offline witness sheets): the launch
+        /// pitched her 24 degrees, so her large head dropped over both arms and her face left the frame for the whole carry.
+        /// Now the dash is a short flight in the same language as her floating run: launched upright with the chin up and
+        /// her eyes down the line, the lead hand reaching out low, the slipper hand swept back, BOTH legs trailing behind
+        /// her off the road; the spiral keeps turning through the carry; then a light catching foot reaches forward and she
+        /// settles without a stomp (`docs/reports/hero-reference-footage-2026-10-02/amihan.md`: a catching foot).
         /// </summary>
         private static AnimationClip BuildAmihanDash(Dictionary<string, string> paths)
         {
             var b = new ClipBuilder("hero-amihan-dash", paths);
             PoseKey(b, 0, 0, V(0, 0, 0), V(0, 0, 0), V(0, 0, 15), V(0, 0, -15));
-            PoseKey(b, .09f, -.05f, V(-6, 22, 3), V(4, -16, 0), V(34, 18, 30), V(40, -12, -34), V(-10, 0, 4), V(16, 0, -4));
+            PoseKey(b, .09f, -.05f, V(-6, 22, 3), V(2, -18, 0), V(34, 18, 30), V(40, -12, -34), V(-10, 0, 4), V(16, 0, -4));
             b.PunchAt(.13f);
             b.HoldAt(.13f, .16f);
-            PoseKey(b, .13f, .05f, V(24, -20, -4), V(-10, 14, 0), V(-78, 22, 44), V(46, 16, -30), V(-34, 0, 6), V(28, 0, -8));
-            PoseKey(b, .34f, .03f, V(16, -34, -5), V(-6, 22, 0), V(-58, 30, 52), V(30, 10, -36), V(-22, 0, 6), V(20, 0, -6));
-            PoseKey(b, .48f, 0, V(6, -14, -2), V(0, 8, 0), V(-20, 16, 30), V(10, 0, -24), V(-6, 0, 3), V(6, 0, -3));
+            PoseKey(b, .13f, .06f, V(14, -18, -4), V(-20, 16, 0), V(-84, 20, 40), V(52, 10, -40), V(12, 0, 4), V(30, 0, -6));
+            PoseKey(b, .34f, .04f, V(12, -30, -5), V(-16, 24, 0), V(-62, 30, 50), V(36, 8, -40), V(6, 0, 5), V(22, 0, -6));
+            PoseKey(b, .48f, -.02f, V(6, -12, -2), V(-4, 8, 0), V(-24, 16, 34), V(12, 0, -26), V(-24, 0, 4), V(14, 0, -4));
             PoseKey(b, .66f, 0, V(0, 0, 0), V(0, 0, 0), V(0, 0, 15), V(0, 0, -15));
             return b.Build();
         }
@@ -153,11 +159,20 @@ namespace TumbangPreso.Visual
             PoseKey(b, 1.0f, -.055f, V(-7, 50, -8), V(-5, -20, 0), cupL, cupR, legL, legR);
             PoseKey(b, 1.12f, -.05f, V(-6, 47, -7), V(-4, -17, 0), cupL, cupR, legL, legR);
             PoseKey(b, 1.32f, -.065f, V(-12, 56, -8), V(-6, -22, 0), V(-40, 90, 14), V(-24, 0, 4), V(-22, 0, 10), V(20, 0, -15));
+            // FEEL PASS (2026-10-02, the F3 body film and offline witness sheets): the first release leaned the torso 26
+            // degrees, so her large head dived over both arms and from the court the push read as a bow. Now she unwinds
+            // UPRIGHT into a lunge step (front foot down the lane, rear leg long, hips sunk), chin up so her face shows, and
+            // drives both palms FORWARD at chest height, just outside her torso (measured on the glb: 0.49 and 0.42 m in
+            // front of her). A wider pose that put the hands beside her for the rear view was rejected: it threw them out
+            // to the sides, a wings-open shape that no longer pointed down the lane (the native body film caught it).
             b.PunchAt(Core.AmihanRules.StormSurgeGatherSeconds);
             b.HoldAt(Core.AmihanRules.StormSurgeGatherSeconds, .12f);
-            PoseKey(b, Core.AmihanRules.StormSurgeGatherSeconds, -.075f, V(26, -8, 0), V(-10, 6, 0), V(-96, 45, 2), V(-104, -45, -20),
-                    V(-26, 0, 12), V(26, 0, -14));
-            PoseKey(b, 1.70f, -.03f, V(14, -16, 2), V(-6, 10, 0), V(-88, -10, 48), V(-86, -10, -52), V(-14, 0, 10), V(12, 0, -10));
+            PoseKey(b, Core.AmihanRules.StormSurgeGatherSeconds, -.085f, V(16, -6, -2), V(-18, 8, 0), V(-104, 30, 20), V(-104, -30, -20),
+                    V(-42, 0, 12), V(44, 0, -10));
+            // Then the hands open wide as the wind leaves (right palm back to 0.30 m). Their forward pitch stays near the
+            // drive: a steeper pitch return bends the held contact past its own key (the hold's end tangent) and moves the
+            // full drive after 1.5 s (the first EditMode run caught that at 1.533 s).
+            PoseKey(b, 1.70f, -.04f, V(8, -12, 2), V(-10, 8, 0), V(-92, 10, 55), V(-92, -10, -55), V(-24, 0, 10), V(22, 0, -10));
             PoseKey(b, 1.95f, 0, V(0, 0, 0), V(0, 0, 0), V(0, 0, 15), V(0, 0, -15));
             return b.Build();
         }

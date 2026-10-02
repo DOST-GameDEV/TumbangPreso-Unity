@@ -312,23 +312,31 @@ namespace TumbangPreso.Visual
         /// front, and the walk SKIPS: every other step lifts higher than the one before, the uneven bounce of someone too
         /// impatient to just walk (a quirk below), head up and bobbing with it. Her run is the wind at her back: arms swept back
         /// and out like she is being pushed, a long floating stride with real air under it.
+        /// ⚠️ THIRD PASS, 2026-10-02 (owner: *"make amihans footstteps feel light and when she runs let her float a bit and make
+        /// it look like she flying"*). The walk keeps its skip with quicker, quieter feet (no nod on the contact, a little more
+        /// glide). The run FLIES: `AmihanAirStep` lifts her soles 12 to 19 cm and holds her hips level, so here the legs
+        /// scissor and trail (less reach forward, more behind, lingering at the ends like a held split), she leans into the
+        /// travel with her chin up, and her arms are swept back and out like wings in the wind, barely swinging. Hers is the
+        /// only run allowed to glide past the cast's cap (`Floats`): long, few strides, because she is not pushing off the road.
+        /// `docs/reports/amihan-presentation-2026-10-02/light-body.md` has the heights and every verb.
         /// </summary>
         public static readonly GaitStyle Amihan = new GaitStyle
         {
             Name = "amihan",
+            Floats = true,
             Walk = new Gait
             {
-                LegForward = 40, LegBack = 36, LegSnap = 1.2f, Stance = 0,
+                LegForward = 38, LegBack = 34, LegSnap = 1.3f, Stance = 0,
                 ArmSpread = 30, ArmForward = 44, ArmBack = 26, ArmCarry = 6, ArmSnap = 1.1f, ArmLag = .06f,
                 Lean = 6, Roll = 2.5f, Twist = 7,
-                HeadPitch = -5, HeadNod = 2, HeadSteady = .6f, Bounce = .07f, BounceDelay = .05f, Sway = .02f, Glide = 1.2f,
+                HeadPitch = -5, HeadNod = .5f, HeadSteady = .6f, Bounce = .07f, BounceDelay = .05f, Sway = .015f, Glide = 1.3f,
             },
             Run = new Gait
             {
-                LegForward = 60, LegBack = 58, LegSnap = 1.1f, Stance = 0,
-                ArmSpread = 34, ArmForward = 14, ArmBack = 18, ArmCarry = -42, ArmSnap = 1, ArmLag = .08f,
-                Lean = 18, Roll = 1, Twist = 5,
-                HeadPitch = -9, HeadSteady = .7f, Bounce = .1f, BounceDelay = .08f, Sway = .01f, Glide = 1.35f,
+                LegForward = 34, LegBack = 60, LegSnap = .85f, Stance = -2,
+                ArmSpread = 42, ArmForward = 7, ArmBack = 9, ArmCarry = -52, ArmSnap = 1, ArmLag = .1f,
+                Lean = 22, Roll = 3, RollDelay = .08f, Twist = 3,
+                HeadPitch = -12, HeadSteady = .8f, Bounce = .03f, BounceDelay = .1f, Sway = .01f, Glide = 1.8f,
             },
             // The skip: the rise after one foot lands higher than after the other, walking only.
             Quirk = (ref GaitPose p, in GaitMoment m) =>

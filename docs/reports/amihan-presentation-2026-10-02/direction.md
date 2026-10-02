@@ -21,8 +21,12 @@ Observable movement logic, for every action of hers:
   deliberate rather than flailing.
 - **Holding still is effort for her.** The one action that roots her, the
   Airburst windup, should look like work: a held coil that tightens in beats.
-- **Never floats for show.** Featherfall is her real flight; everything else
-  stays grounded so flight keeps meaning.
+- **Floats only where it keeps meaning.** Featherfall is her real flight. The
+  owner then asked (October 2) for light footsteps and a run that floats and looks
+  like flying: her ordinary run now skims 12 to 19 cm above the court, far below
+  a jump and Featherfall, with her shadow and ring on the court. Walking, standing,
+  throwing and every hard status stay grounded. Heights and every verb:
+  [light-body.md](light-body.md).
 
 ## Airburst in one sentence
 

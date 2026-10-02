@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 15:43:03Z" end-time="2026-10-02 15:46:19Z" duration="195.8795432">
+  <test-suite type="TestSuite" id="2630" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1328" result="Passed" start-time="2026-10-02 15:43:03Z" end-time="2026-10-02 15:46:19Z" duration="195.879543" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2624" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-amihan1002f/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1328" result="Passed" start-time="2026-10-02 15:43:03Z" end-time="2026-10-02 15:46:19Z" duration="195.866160" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="11584" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2625" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1328" result="Passed" start-time="2026-10-02 15:43:03Z" end-time="2026-10-02 15:46:19Z" duration="195.863010" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2626" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1328" result="Passed" start-time="2026-10-02 15:43:03Z" end-time="2026-10-02 15:46:19Z" duration="195.860603" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1069" name="AmihanKitPlayProbe" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-10-02 15:43:03Z" end-time="2026-10-02 15:46:19Z" duration="195.684563" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1071" name="FilmAirburstBodyOnly" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe.FilmAirburstBodyOnly" methodname="FilmAirburstBodyOnly" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" seed="707922219" result="Passed" start-time="2026-10-02 15:43:03Z" end-time="2026-10-02 15:43:58Z" duration="55.046989" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="900000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Releasing render texture that is set to be RenderTexture.active!
+[AirburstFilm] variant body; logged errors 0 (first: ); scene frames 32-138; handback 139; release 184; victim whirled 184; palm peak frame 186 (0.486 m); outsider whirled False; clock 88.600 to 88.600
+]]></output>
+            </test-case>
+            <test-case id="1072" name="FilmAirburstOnLow" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe.FilmAirburstOnLow" methodname="FilmAirburstOnLow" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" seed="2004944199" result="Passed" start-time="2026-10-02 15:43:58Z" end-time="2026-10-02 15:44:48Z" duration="49.852051" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="900000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Releasing render texture that is set to be RenderTexture.active!
+[AirburstFilm] variant low; logged errors 0 (first: ); scene frames 32-138; handback 139; release 184; victim whirled 184; palm peak frame 186 (0.486 m); outsider whirled False; clock 88.780 to 88.780
+]]></output>
+            </test-case>
+            <test-case id="1070" name="FilmAirburstWithEffects" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe.FilmAirburstWithEffects" methodname="FilmAirburstWithEffects" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" seed="2101882014" result="Passed" start-time="2026-10-02 15:44:48Z" end-time="2026-10-02 15:45:42Z" duration="53.626620" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="900000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Releasing render texture that is set to be RenderTexture.active!
+[AirburstFilm] variant fx; logged errors 0 (first: ); scene frames 32-138; handback 139; release 184; victim whirled 184; palm peak frame 186 (0.486 m); outsider whirled False; clock 88.780 to 88.780
+]]></output>
+            </test-case>
+            <test-case id="1075" name="HerRunFloatsAndEveryVerbSettlesSoftly" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe.HerRunFloatsAndEveryVerbSettlesSoftly" methodname="HerRunFloatsAndEveryVerbSettlesSoftly" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" seed="27305209" result="Passed" start-time="2026-10-02 15:45:42Z" end-time="2026-10-02 15:46:19Z" duration="37.134349" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="600000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Releasing render texture that is set to be RenderTexture.active!
+[AmihanLightBody] stand max 0.000; walk max 0.020; run 0.121 to 0.189; ever 0.190; air max 0.162; jumped True; charge at 2.63 from 0.171, settled at 2.90; threw True; steps own 5 rubber 0
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -26,6 +26,10 @@ Shader "TumbangPreso/WindRibbon"
         _Streaks ("Streaks along", Float) = 6
         _Core ("Core width", Range(0, 1)) = 0.2
         _Seed ("Seed", Float) = 0
+        // Where the ink rim begins across the half width, and how solid it is. The defaults are the original rim;
+        // Airburst's floor strokes widen and darken it so they read on a light court (2026-10-02).
+        _InkFrom ("Ink rim starts", Range(0, 0.9)) = 0.74
+        _InkAlpha ("Ink rim alpha", Range(0, 1)) = 0.75
     }
     SubShader
     {
@@ -42,7 +46,7 @@ Shader "TumbangPreso/WindRibbon"
             #include "UnityCG.cginc"
 
             fixed4 _CoreColor, _BodyColor, _InkColor;
-            float _Alpha, _Phase, _Head, _Tail, _Thin, _Streaks, _Core, _Seed;
+            float _Alpha, _Phase, _Head, _Tail, _Thin, _Streaks, _Core, _Seed, _InkFrom, _InkAlpha;
 
             struct appdata { float4 vertex:POSITION; float2 uv:TEXCOORD0; };
             struct v2f { float4 vertex:SV_POSITION; float2 uv:TEXCOORD0; UNITY_FOG_COORDS(1) };
@@ -80,7 +84,7 @@ Shader "TumbangPreso/WindRibbon"
                 float dash = step(0.32, hash(cell + lane * 17.0));
 
                 float core = 1.0 - smoothstep(0.0, _Core, x);
-                float ink = smoothstep(0.74, 0.88, x);
+                float ink = smoothstep(_InkFrom, _InkFrom + 0.14, x);
                 float body = (1.0 - x) * 0.55 * lerp(0.35, 1.0, dash);
 
                 // The ends: a soft fade in from the tail, a crisp head.
@@ -88,7 +92,7 @@ Shader "TumbangPreso/WindRibbon"
 
                 float3 colour = lerp(_BodyColor.rgb, _CoreColor.rgb, core * lerp(0.55, 1.0, dash));
                 colour = lerp(colour, _InkColor.rgb, ink);
-                float alpha = max(max(core * 0.9 * lerp(0.6, 1.0, dash), body), ink * 0.75) * ends * _Alpha;
+                float alpha = max(max(core * 0.9 * lerp(0.6, 1.0, dash), body), ink * _InkAlpha) * ends * _Alpha;
 
                 fixed4 result = fixed4(colour, alpha);
                 UNITY_APPLY_FOG(i.fogCoord, result);
