@@ -1,0 +1,12 @@
+{
+  "prepared": true,
+  "qualification": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930",
+  "protectedCount": 1469,
+  "owned": [
+    "Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs",
+    "Assets/TumbangPreso/Runtime/MatchInstaller.cs",
+    "Assets/TumbangPreso/Tests/PlayMode/SpectatorCameraLifetimeTests.cs",
+    "Assets/TumbangPreso/Tests/PlayMode/SpectatorCameraLifetimeTests.cs.meta"
+  ],
+  "baselineInstalled": true
+}

@@ -666,6 +666,9 @@ namespace TumbangPreso.CameraSystem
 
         private void OnDisable()
         {
+            // Seating the player disables this controller, not its GameObject. Retire
+            // the separate rendering component too, or its depth keeps winning the view.
+            if (_camera != null) _camera.enabled = false;
             EndReplay(showLiveToast: false);
             UnhookHighlights();
 

@@ -1171,12 +1171,14 @@ namespace TumbangPreso
                 var watchRig = UnityEngine.Object.FindFirstObjectByType<CameraSystem.CameraRig>();
                 if (watchRig != null) watchRig.SetActive(false);
 
-                if (UnityEngine.Object.FindFirstObjectByType<CameraSystem.SpectatorCamera>() == null)
+                var watcher = UnityEngine.Object.FindFirstObjectByType<CameraSystem.SpectatorCamera>();
+                if (watcher == null)
                 {
                     var watchGo = new GameObject("SpectatorCamera");
                     watchGo.tag = "MainCamera";
                     watchGo.AddComponent<CameraSystem.SpectatorCamera>();
                 }
+                else watcher.enabled = true;
 
                 UnityEngine.Object.FindFirstObjectByType<UI.Hud>()?.EnterSpectatorMode();
 
