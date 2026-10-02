@@ -1,0 +1,4144 @@
+[
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=40s",
+    "time": 40,
+    "file": "ayaka-40.png",
+    "state": {
+      "requestedCurrentTime": 40,
+      "presentedTime": 40,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "ayaka",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=40s",
+    "time": 45,
+    "file": "ayaka-45.png",
+    "state": {
+      "requestedCurrentTime": 45,
+      "presentedTime": 45,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "ayaka",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=40s",
+    "time": 50,
+    "file": "ayaka-50.png",
+    "state": {
+      "requestedCurrentTime": 50,
+      "presentedTime": 50,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "ayaka",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=40s",
+    "time": 55,
+    "file": "ayaka-55.png",
+    "state": {
+      "requestedCurrentTime": 55,
+      "presentedTime": 55,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "ayaka",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=40s",
+    "time": 60,
+    "file": "ayaka-60.png",
+    "state": {
+      "requestedCurrentTime": 60,
+      "presentedTime": 60,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "ayaka",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=40s",
+    "time": 65,
+    "file": "ayaka-65.png",
+    "state": {
+      "requestedCurrentTime": 65,
+      "presentedTime": 65,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "ayaka",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=40s",
+    "time": 70,
+    "file": "ayaka-70.png",
+    "state": {
+      "requestedCurrentTime": 70,
+      "presentedTime": 70,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "ayaka",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=40s",
+    "time": 75,
+    "file": "ayaka-75.png",
+    "state": {
+      "requestedCurrentTime": 75,
+      "presentedTime": 75,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "ayaka",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=40s",
+    "time": 80,
+    "file": "ayaka-80.png",
+    "state": {
+      "requestedCurrentTime": 80,
+      "presentedTime": 80,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "ayaka",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=40s",
+    "time": 85,
+    "file": "ayaka-85.png",
+    "state": {
+      "requestedCurrentTime": 85,
+      "presentedTime": 85,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "ayaka",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=40s",
+    "time": 90,
+    "file": "ayaka-90.png",
+    "state": {
+      "requestedCurrentTime": 90,
+      "presentedTime": 90,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "ayaka",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=40s",
+    "time": 95,
+    "file": "ayaka-95.png",
+    "state": {
+      "requestedCurrentTime": 95,
+      "presentedTime": 95,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "ayaka",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=100s",
+    "time": 100,
+    "file": "ayaka-late-100.png",
+    "state": {
+      "requestedCurrentTime": 100,
+      "presentedTime": 100,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "ayaka-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=100s",
+    "time": 105,
+    "file": "ayaka-late-105.png",
+    "state": {
+      "requestedCurrentTime": 105,
+      "presentedTime": 105,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "ayaka-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=100s",
+    "time": 110,
+    "file": "ayaka-late-110.png",
+    "state": {
+      "requestedCurrentTime": 110,
+      "presentedTime": 110,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "ayaka-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=100s",
+    "time": 115,
+    "file": "ayaka-late-115.png",
+    "state": {
+      "requestedCurrentTime": 115,
+      "presentedTime": 115,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "ayaka-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=100s",
+    "time": 120,
+    "file": "ayaka-late-120.png",
+    "state": {
+      "requestedCurrentTime": 120,
+      "presentedTime": 120,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "ayaka-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=100s",
+    "time": 125,
+    "file": "ayaka-late-125.png",
+    "state": {
+      "requestedCurrentTime": 125,
+      "presentedTime": 125,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "ayaka-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=100s",
+    "time": 130,
+    "file": "ayaka-late-130.png",
+    "state": {
+      "requestedCurrentTime": 130,
+      "presentedTime": 130,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "ayaka-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=100s",
+    "time": 135,
+    "file": "ayaka-late-135.png",
+    "state": {
+      "requestedCurrentTime": 135,
+      "presentedTime": 135,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "ayaka-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=5RCsr1Y8UZA&t=100s",
+    "time": 140,
+    "file": "ayaka-late-140.png",
+    "state": {
+      "requestedCurrentTime": 140,
+      "presentedTime": 140,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "ayaka-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/207b0ab21f8e27e98ca22f4b5546cc0963d94af6.mp4?accountingTag=VAL",
+    "time": 0.4,
+    "file": "breach-ult-0_4.png",
+    "state": {
+      "requestedCurrentTime": 0.4,
+      "presentedTime": 0.4,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "breach-ult",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/207b0ab21f8e27e98ca22f4b5546cc0963d94af6.mp4?accountingTag=VAL",
+    "time": 0.8,
+    "file": "breach-ult-0_8.png",
+    "state": {
+      "requestedCurrentTime": 0.8,
+      "presentedTime": 0.8,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "breach-ult",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/207b0ab21f8e27e98ca22f4b5546cc0963d94af6.mp4?accountingTag=VAL",
+    "time": 1.2,
+    "file": "breach-ult-1_2.png",
+    "state": {
+      "requestedCurrentTime": 1.2,
+      "presentedTime": 1.2,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "breach-ult",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/207b0ab21f8e27e98ca22f4b5546cc0963d94af6.mp4?accountingTag=VAL",
+    "time": 1.6,
+    "file": "breach-ult-1_6.png",
+    "state": {
+      "requestedCurrentTime": 1.6,
+      "presentedTime": 1.6,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "breach-ult",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/207b0ab21f8e27e98ca22f4b5546cc0963d94af6.mp4?accountingTag=VAL",
+    "time": 2,
+    "file": "breach-ult-2.png",
+    "state": {
+      "requestedCurrentTime": 2,
+      "presentedTime": 2,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "breach-ult",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/207b0ab21f8e27e98ca22f4b5546cc0963d94af6.mp4?accountingTag=VAL",
+    "time": 2.4,
+    "file": "breach-ult-2_4.png",
+    "state": {
+      "requestedCurrentTime": 2.4,
+      "presentedTime": 2.4,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "breach-ult",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/207b0ab21f8e27e98ca22f4b5546cc0963d94af6.mp4?accountingTag=VAL",
+    "time": 3,
+    "file": "breach-ult-3.png",
+    "state": {
+      "requestedCurrentTime": 3,
+      "presentedTime": 3,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "breach-ult",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/207b0ab21f8e27e98ca22f4b5546cc0963d94af6.mp4?accountingTag=VAL",
+    "time": 4,
+    "file": "breach-ult-4.png",
+    "state": {
+      "requestedCurrentTime": 4,
+      "presentedTime": 4,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "breach-ult",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data_live/207b0ab21f8e27e98ca22f4b5546cc0963d94af6.mp4?accountingTag=VAL",
+    "time": 5,
+    "file": "breach-ult-5.png",
+    "state": {
+      "requestedCurrentTime": 5,
+      "presentedTime": 5,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "breach-ult",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/1705161e278ec0d669e17e3392ece2cfb3555316.mp4?accountingTag=VAL",
+    "time": 0.4,
+    "file": "harbor-0_4.png",
+    "state": {
+      "requestedCurrentTime": 0.4,
+      "presentedTime": 0.4,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "harbor",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/1705161e278ec0d669e17e3392ece2cfb3555316.mp4?accountingTag=VAL",
+    "time": 0.8,
+    "file": "harbor-0_8.png",
+    "state": {
+      "requestedCurrentTime": 0.8,
+      "presentedTime": 0.8,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "harbor",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/1705161e278ec0d669e17e3392ece2cfb3555316.mp4?accountingTag=VAL",
+    "time": 1.2,
+    "file": "harbor-1_2.png",
+    "state": {
+      "requestedCurrentTime": 1.2,
+      "presentedTime": 1.2,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "harbor",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/1705161e278ec0d669e17e3392ece2cfb3555316.mp4?accountingTag=VAL",
+    "time": 2,
+    "file": "harbor-2.png",
+    "state": {
+      "requestedCurrentTime": 2,
+      "presentedTime": 2,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "harbor",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/1705161e278ec0d669e17e3392ece2cfb3555316.mp4?accountingTag=VAL",
+    "time": 3,
+    "file": "harbor-3.png",
+    "state": {
+      "requestedCurrentTime": 3,
+      "presentedTime": 3,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "harbor",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/1705161e278ec0d669e17e3392ece2cfb3555316.mp4?accountingTag=VAL",
+    "time": 4,
+    "file": "harbor-4.png",
+    "state": {
+      "requestedCurrentTime": 4,
+      "presentedTime": 4,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "harbor",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/1705161e278ec0d669e17e3392ece2cfb3555316.mp4?accountingTag=VAL",
+    "time": 6,
+    "file": "harbor-6.png",
+    "state": {
+      "requestedCurrentTime": 6,
+      "presentedTime": 6,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "harbor",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/news_live/1705161e278ec0d669e17e3392ece2cfb3555316.mp4?accountingTag=VAL",
+    "time": 7,
+    "file": "harbor-7.png",
+    "state": {
+      "requestedCurrentTime": 7,
+      "presentedTime": 7,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "harbor",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=iXeJ94AFZDw&t=70s",
+    "time": 70,
+    "file": "itto-70.png",
+    "state": {
+      "requestedCurrentTime": 70,
+      "presentedTime": 70,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "itto",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=iXeJ94AFZDw&t=70s",
+    "time": 75,
+    "file": "itto-75.png",
+    "state": {
+      "requestedCurrentTime": 75,
+      "presentedTime": 75,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "itto",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=iXeJ94AFZDw&t=70s",
+    "time": 80,
+    "file": "itto-80.png",
+    "state": {
+      "requestedCurrentTime": 80,
+      "presentedTime": 80,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "itto",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=iXeJ94AFZDw&t=70s",
+    "time": 85,
+    "file": "itto-85.png",
+    "state": {
+      "requestedCurrentTime": 85,
+      "presentedTime": 85,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "itto",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=iXeJ94AFZDw&t=70s",
+    "time": 90,
+    "file": "itto-90.png",
+    "state": {
+      "requestedCurrentTime": 90,
+      "presentedTime": 90,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "itto",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=iXeJ94AFZDw&t=70s",
+    "time": 95,
+    "file": "itto-95.png",
+    "state": {
+      "requestedCurrentTime": 95,
+      "presentedTime": 95,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "itto",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=iXeJ94AFZDw&t=70s",
+    "time": 100,
+    "file": "itto-100.png",
+    "state": {
+      "requestedCurrentTime": 100,
+      "presentedTime": 100,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "itto",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=iXeJ94AFZDw&t=70s",
+    "time": 105,
+    "file": "itto-105.png",
+    "state": {
+      "requestedCurrentTime": 105,
+      "presentedTime": 105,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "itto",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=iXeJ94AFZDw&t=70s",
+    "time": 110,
+    "file": "itto-110.png",
+    "state": {
+      "requestedCurrentTime": 110,
+      "presentedTime": 110,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "itto",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=iXeJ94AFZDw&t=70s",
+    "time": 115,
+    "file": "itto-115.png",
+    "state": {
+      "requestedCurrentTime": 115,
+      "presentedTime": 115,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "itto",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=iXeJ94AFZDw&t=70s",
+    "time": 120,
+    "file": "itto-120.png",
+    "state": {
+      "requestedCurrentTime": 120,
+      "presentedTime": 120,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "itto",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ec6b3cf1f8ac09d597b0193de1d7bb81335b40e4.mp4?accountingTag=VAL",
+    "time": 0.4,
+    "file": "jett-0_4.png",
+    "state": {
+      "requestedCurrentTime": 0.4,
+      "presentedTime": 0.4,
+      "ready": 4,
+      "seeking": false,
+      "width": 1920,
+      "height": 1080
+    },
+    "capture_series": "jett",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ec6b3cf1f8ac09d597b0193de1d7bb81335b40e4.mp4?accountingTag=VAL",
+    "time": 0.8,
+    "file": "jett-0_8.png",
+    "state": {
+      "requestedCurrentTime": 0.8,
+      "presentedTime": 0.8,
+      "ready": 4,
+      "seeking": false,
+      "width": 1920,
+      "height": 1080
+    },
+    "capture_series": "jett",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ec6b3cf1f8ac09d597b0193de1d7bb81335b40e4.mp4?accountingTag=VAL",
+    "time": 1.2,
+    "file": "jett-1_2.png",
+    "state": {
+      "requestedCurrentTime": 1.2,
+      "presentedTime": 1.2,
+      "ready": 4,
+      "seeking": false,
+      "width": 1920,
+      "height": 1080
+    },
+    "capture_series": "jett",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ec6b3cf1f8ac09d597b0193de1d7bb81335b40e4.mp4?accountingTag=VAL",
+    "time": 1.6,
+    "file": "jett-1_6.png",
+    "state": {
+      "requestedCurrentTime": 1.6,
+      "presentedTime": 1.6,
+      "ready": 4,
+      "seeking": false,
+      "width": 1920,
+      "height": 1080
+    },
+    "capture_series": "jett",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ec6b3cf1f8ac09d597b0193de1d7bb81335b40e4.mp4?accountingTag=VAL",
+    "time": 2,
+    "file": "jett-2.png",
+    "state": {
+      "requestedCurrentTime": 2,
+      "presentedTime": 2,
+      "ready": 4,
+      "seeking": false,
+      "width": 1920,
+      "height": 1080
+    },
+    "capture_series": "jett",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ec6b3cf1f8ac09d597b0193de1d7bb81335b40e4.mp4?accountingTag=VAL",
+    "time": 2.4,
+    "file": "jett-2_4.png",
+    "state": {
+      "requestedCurrentTime": 2.4,
+      "presentedTime": 2.4,
+      "ready": 4,
+      "seeking": false,
+      "width": 1920,
+      "height": 1080
+    },
+    "capture_series": "jett",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ec6b3cf1f8ac09d597b0193de1d7bb81335b40e4.mp4?accountingTag=VAL",
+    "time": 3,
+    "file": "jett-3.png",
+    "state": {
+      "requestedCurrentTime": 3,
+      "presentedTime": 3,
+      "ready": 4,
+      "seeking": false,
+      "width": 1920,
+      "height": 1080
+    },
+    "capture_series": "jett",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ec6b3cf1f8ac09d597b0193de1d7bb81335b40e4.mp4?accountingTag=VAL",
+    "time": 4,
+    "file": "jett-4.png",
+    "state": {
+      "requestedCurrentTime": 4,
+      "presentedTime": 4,
+      "ready": 4,
+      "seeking": false,
+      "width": 1920,
+      "height": 1080
+    },
+    "capture_series": "jett",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ec6b3cf1f8ac09d597b0193de1d7bb81335b40e4.mp4?accountingTag=VAL",
+    "time": 5,
+    "file": "jett-5.png",
+    "state": {
+      "requestedCurrentTime": 5,
+      "presentedTime": 5,
+      "ready": 4,
+      "seeking": false,
+      "width": 1920,
+      "height": 1080
+    },
+    "capture_series": "jett",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE&t=38s",
+    "time": 38,
+    "file": "keqing-detail-38.png",
+    "state": {
+      "requestedCurrentTime": 38,
+      "presentedTime": 38,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "keqing-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE&t=38s",
+    "time": 39,
+    "file": "keqing-detail-39.png",
+    "state": {
+      "requestedCurrentTime": 39,
+      "presentedTime": 39,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "keqing-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE&t=38s",
+    "time": 40,
+    "file": "keqing-detail-40.png",
+    "state": {
+      "requestedCurrentTime": 40,
+      "presentedTime": 40,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "keqing-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE&t=38s",
+    "time": 41,
+    "file": "keqing-detail-41.png",
+    "state": {
+      "requestedCurrentTime": 41,
+      "presentedTime": 41,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "keqing-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE&t=38s",
+    "time": 42,
+    "file": "keqing-detail-42.png",
+    "state": {
+      "requestedCurrentTime": 42,
+      "presentedTime": 42,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "keqing-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE&t=38s",
+    "time": 43,
+    "file": "keqing-detail-43.png",
+    "state": {
+      "requestedCurrentTime": 43,
+      "presentedTime": 43,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "keqing-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE&t=38s",
+    "time": 44,
+    "file": "keqing-detail-44.png",
+    "state": {
+      "requestedCurrentTime": 44,
+      "presentedTime": 44,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "keqing-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE&t=38s",
+    "time": 45,
+    "file": "keqing-detail-45.png",
+    "state": {
+      "requestedCurrentTime": 45,
+      "presentedTime": 45,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "keqing-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE&t=38s",
+    "time": 46,
+    "file": "keqing-detail-46.png",
+    "state": {
+      "requestedCurrentTime": 46,
+      "presentedTime": 46,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "keqing-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE&t=38s",
+    "time": 47,
+    "file": "keqing-detail-47.png",
+    "state": {
+      "requestedCurrentTime": 47,
+      "presentedTime": 47,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "keqing-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE&t=38s",
+    "time": 48,
+    "file": "keqing-detail-48.png",
+    "state": {
+      "requestedCurrentTime": 48,
+      "presentedTime": 48,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "keqing-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE&t=38s",
+    "time": 49,
+    "file": "keqing-detail-49.png",
+    "state": {
+      "requestedCurrentTime": 49,
+      "presentedTime": 49,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "keqing-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE&t=38s",
+    "time": 50,
+    "file": "keqing-detail-50.png",
+    "state": {
+      "requestedCurrentTime": 50,
+      "presentedTime": 50,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "keqing-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE",
+    "time": 10,
+    "file": "keqing-10.png",
+    "state": {
+      "requestedCurrentTime": 10,
+      "presentedTime": 10,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "keqing",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE",
+    "time": 15,
+    "file": "keqing-15.png",
+    "state": {
+      "requestedCurrentTime": 15,
+      "presentedTime": 15,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "keqing",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE",
+    "time": 20,
+    "file": "keqing-20.png",
+    "state": {
+      "requestedCurrentTime": 20,
+      "presentedTime": 20,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "keqing",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE",
+    "time": 25,
+    "file": "keqing-25.png",
+    "state": {
+      "requestedCurrentTime": 25,
+      "presentedTime": 25,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "keqing",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE",
+    "time": 30,
+    "file": "keqing-30.png",
+    "state": {
+      "requestedCurrentTime": 30,
+      "presentedTime": 30,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "keqing",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE",
+    "time": 35,
+    "file": "keqing-35.png",
+    "state": {
+      "requestedCurrentTime": 35,
+      "presentedTime": 35,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "keqing",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE",
+    "time": 40,
+    "file": "keqing-40.png",
+    "state": {
+      "requestedCurrentTime": 40,
+      "presentedTime": 40,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "keqing",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE",
+    "time": 45,
+    "file": "keqing-45.png",
+    "state": {
+      "requestedCurrentTime": 45,
+      "presentedTime": 45,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "keqing",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE",
+    "time": 50,
+    "file": "keqing-50.png",
+    "state": {
+      "requestedCurrentTime": 50,
+      "presentedTime": 50,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "keqing",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE",
+    "time": 55,
+    "file": "keqing-55.png",
+    "state": {
+      "requestedCurrentTime": 55,
+      "presentedTime": 55,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "keqing",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE",
+    "time": 60,
+    "file": "keqing-60.png",
+    "state": {
+      "requestedCurrentTime": 59.341,
+      "presentedTime": 55,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "keqing",
+    "capture_valid": false,
+    "rejection_reasons": [
+      "requested time not reached, including out-of-range end clamp",
+      "presented frame does not match requested time"
+    ],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE",
+    "time": 65,
+    "file": "keqing-65.png",
+    "state": {
+      "requestedCurrentTime": 59.341,
+      "presentedTime": 55,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "keqing",
+    "capture_valid": false,
+    "rejection_reasons": [
+      "requested time not reached, including out-of-range end clamp",
+      "presented frame does not match requested time"
+    ],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=rPLh5QAedUE",
+    "time": 70,
+    "file": "keqing-70.png",
+    "state": {
+      "requestedCurrentTime": 59.341,
+      "presentedTime": 55,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "keqing",
+    "capture_valid": false,
+    "rejection_reasons": [
+      "requested time not reached, including out-of-range end clamp",
+      "presented frame does not match requested time"
+    ],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dz0w5JRG3jY&t=40s",
+    "time": 40,
+    "file": "kinich-40.png",
+    "state": {
+      "requestedCurrentTime": 40,
+      "presentedTime": 40,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "kinich",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dz0w5JRG3jY&t=40s",
+    "time": 45,
+    "file": "kinich-45.png",
+    "state": {
+      "requestedCurrentTime": 45,
+      "presentedTime": 45,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "kinich",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dz0w5JRG3jY&t=40s",
+    "time": 50,
+    "file": "kinich-50.png",
+    "state": {
+      "requestedCurrentTime": 50,
+      "presentedTime": 50,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "kinich",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dz0w5JRG3jY&t=40s",
+    "time": 55,
+    "file": "kinich-55.png",
+    "state": {
+      "requestedCurrentTime": 55,
+      "presentedTime": 55,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "kinich",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dz0w5JRG3jY&t=40s",
+    "time": 60,
+    "file": "kinich-60.png",
+    "state": {
+      "requestedCurrentTime": 60,
+      "presentedTime": 60,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "kinich",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dz0w5JRG3jY&t=40s",
+    "time": 65,
+    "file": "kinich-65.png",
+    "state": {
+      "requestedCurrentTime": 65,
+      "presentedTime": 65,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "kinich",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dz0w5JRG3jY&t=40s",
+    "time": 70,
+    "file": "kinich-70.png",
+    "state": {
+      "requestedCurrentTime": 70,
+      "presentedTime": 70,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "kinich",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dz0w5JRG3jY&t=40s",
+    "time": 75,
+    "file": "kinich-75.png",
+    "state": {
+      "requestedCurrentTime": 75,
+      "presentedTime": 75,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "kinich",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dz0w5JRG3jY&t=40s",
+    "time": 80,
+    "file": "kinich-80.png",
+    "state": {
+      "requestedCurrentTime": 80,
+      "presentedTime": 80,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "kinich",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dz0w5JRG3jY&t=40s",
+    "time": 85,
+    "file": "kinich-85.png",
+    "state": {
+      "requestedCurrentTime": 85,
+      "presentedTime": 85,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "kinich",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dz0w5JRG3jY&t=40s",
+    "time": 90,
+    "file": "kinich-90.png",
+    "state": {
+      "requestedCurrentTime": 90,
+      "presentedTime": 90,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "kinich",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dz0w5JRG3jY&t=40s",
+    "time": 95,
+    "file": "kinich-95.png",
+    "state": {
+      "requestedCurrentTime": 95,
+      "presentedTime": 95,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "kinich",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk&t=65s",
+    "time": 65,
+    "file": "mualani-detail-65.png",
+    "state": {
+      "requestedCurrentTime": 65,
+      "presentedTime": 65,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "mualani-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk&t=65s",
+    "time": 66,
+    "file": "mualani-detail-66.png",
+    "state": {
+      "requestedCurrentTime": 66,
+      "presentedTime": 66,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "mualani-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk&t=65s",
+    "time": 67,
+    "file": "mualani-detail-67.png",
+    "state": {
+      "requestedCurrentTime": 67,
+      "presentedTime": 67,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "mualani-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk&t=65s",
+    "time": 68,
+    "file": "mualani-detail-68.png",
+    "state": {
+      "requestedCurrentTime": 68,
+      "presentedTime": 68,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "mualani-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk&t=65s",
+    "time": 69,
+    "file": "mualani-detail-69.png",
+    "state": {
+      "requestedCurrentTime": 69,
+      "presentedTime": 69,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "mualani-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk&t=65s",
+    "time": 70,
+    "file": "mualani-detail-70.png",
+    "state": {
+      "requestedCurrentTime": 70,
+      "presentedTime": 70,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "mualani-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk&t=65s",
+    "time": 71,
+    "file": "mualani-detail-71.png",
+    "state": {
+      "requestedCurrentTime": 71,
+      "presentedTime": 71,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "mualani-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk&t=65s",
+    "time": 72,
+    "file": "mualani-detail-72.png",
+    "state": {
+      "requestedCurrentTime": 72,
+      "presentedTime": 72,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "mualani-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk",
+    "time": 15,
+    "file": "mualani-15.png",
+    "state": {
+      "requestedCurrentTime": 15,
+      "presentedTime": 15,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "mualani",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk",
+    "time": 25,
+    "file": "mualani-25.png",
+    "state": {
+      "requestedCurrentTime": 25,
+      "presentedTime": 25,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "mualani",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk",
+    "time": 35,
+    "file": "mualani-35.png",
+    "state": {
+      "requestedCurrentTime": 35,
+      "presentedTime": 35,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "mualani",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk",
+    "time": 45,
+    "file": "mualani-45.png",
+    "state": {
+      "requestedCurrentTime": 45,
+      "presentedTime": 45,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "mualani",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk",
+    "time": 55,
+    "file": "mualani-55.png",
+    "state": {
+      "requestedCurrentTime": 55,
+      "presentedTime": 55,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "mualani",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk",
+    "time": 65,
+    "file": "mualani-65.png",
+    "state": {
+      "requestedCurrentTime": 0,
+      "presentedTime": 55,
+      "ready": 0,
+      "seeking": false,
+      "width": 0,
+      "height": 0
+    },
+    "capture_series": "mualani",
+    "capture_valid": false,
+    "rejection_reasons": [
+      "no decoded video dimensions",
+      "decoder not ready or seek incomplete",
+      "requested time not reached, including out-of-range end clamp",
+      "presented frame does not match requested time"
+    ],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk",
+    "time": 75,
+    "file": "mualani-75.png",
+    "state": {
+      "requestedCurrentTime": 75,
+      "presentedTime": 55,
+      "ready": 0,
+      "seeking": false,
+      "width": 0,
+      "height": 0
+    },
+    "capture_series": "mualani",
+    "capture_valid": false,
+    "rejection_reasons": [
+      "no decoded video dimensions",
+      "decoder not ready or seek incomplete",
+      "presented frame does not match requested time"
+    ],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk",
+    "time": 85,
+    "file": "mualani-85.png",
+    "state": {
+      "requestedCurrentTime": 85,
+      "presentedTime": 55,
+      "ready": 0,
+      "seeking": false,
+      "width": 0,
+      "height": 0
+    },
+    "capture_series": "mualani",
+    "capture_valid": false,
+    "rejection_reasons": [
+      "no decoded video dimensions",
+      "decoder not ready or seek incomplete",
+      "presented frame does not match requested time"
+    ],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk",
+    "time": 95,
+    "file": "mualani-95.png",
+    "state": {
+      "requestedCurrentTime": 95,
+      "presentedTime": 55,
+      "ready": 0,
+      "seeking": false,
+      "width": 0,
+      "height": 0
+    },
+    "capture_series": "mualani",
+    "capture_valid": false,
+    "rejection_reasons": [
+      "no decoded video dimensions",
+      "decoder not ready or seek incomplete",
+      "presented frame does not match requested time"
+    ],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk",
+    "time": 105,
+    "file": "mualani-105.png",
+    "state": {
+      "requestedCurrentTime": 105,
+      "presentedTime": 55,
+      "ready": 0,
+      "seeking": false,
+      "width": 0,
+      "height": 0
+    },
+    "capture_series": "mualani",
+    "capture_valid": false,
+    "rejection_reasons": [
+      "no decoded video dimensions",
+      "decoder not ready or seek incomplete",
+      "presented frame does not match requested time"
+    ],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk",
+    "time": 115,
+    "file": "mualani-115.png",
+    "state": {
+      "requestedCurrentTime": 115,
+      "presentedTime": 55,
+      "ready": 0,
+      "seeking": false,
+      "width": 0,
+      "height": 0
+    },
+    "capture_series": "mualani",
+    "capture_valid": false,
+    "rejection_reasons": [
+      "no decoded video dimensions",
+      "decoder not ready or seek incomplete",
+      "presented frame does not match requested time"
+    ],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk",
+    "time": 125,
+    "file": "mualani-125.png",
+    "state": {
+      "requestedCurrentTime": 125,
+      "presentedTime": 55,
+      "ready": 0,
+      "seeking": false,
+      "width": 0,
+      "height": 0
+    },
+    "capture_series": "mualani",
+    "capture_valid": false,
+    "rejection_reasons": [
+      "no decoded video dimensions",
+      "decoder not ready or seek incomplete",
+      "presented frame does not match requested time"
+    ],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk",
+    "time": 135,
+    "file": "mualani-135.png",
+    "state": {
+      "requestedCurrentTime": 135,
+      "presentedTime": 55,
+      "ready": 0,
+      "seeking": false,
+      "width": 0,
+      "height": 0
+    },
+    "capture_series": "mualani",
+    "capture_valid": false,
+    "rejection_reasons": [
+      "no decoded video dimensions",
+      "decoder not ready or seek incomplete",
+      "presented frame does not match requested time"
+    ],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk&t=65s",
+    "time": 65,
+    "file": "mualani-late-65.png",
+    "state": {
+      "requestedCurrentTime": 65,
+      "presentedTime": 65,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "mualani-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk&t=65s",
+    "time": 75,
+    "file": "mualani-late-75.png",
+    "state": {
+      "requestedCurrentTime": 75,
+      "presentedTime": 75,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "mualani-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk&t=65s",
+    "time": 85,
+    "file": "mualani-late-85.png",
+    "state": {
+      "requestedCurrentTime": 85,
+      "presentedTime": 85,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "mualani-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk&t=65s",
+    "time": 95,
+    "file": "mualani-late-95.png",
+    "state": {
+      "requestedCurrentTime": 95,
+      "presentedTime": 95,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "mualani-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk&t=65s",
+    "time": 105,
+    "file": "mualani-late-105.png",
+    "state": {
+      "requestedCurrentTime": 105,
+      "presentedTime": 105,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "mualani-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk&t=65s",
+    "time": 115,
+    "file": "mualani-late-115.png",
+    "state": {
+      "requestedCurrentTime": 115,
+      "presentedTime": 115,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "mualani-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk&t=65s",
+    "time": 125,
+    "file": "mualani-late-125.png",
+    "state": {
+      "requestedCurrentTime": 125,
+      "presentedTime": 125,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "mualani-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=lmZvYv-pQVk&t=65s",
+    "time": 135,
+    "file": "mualani-late-135.png",
+    "state": {
+      "requestedCurrentTime": 0,
+      "presentedTime": 125,
+      "ready": 0,
+      "seeking": false,
+      "width": 0,
+      "height": 0
+    },
+    "capture_series": "mualani-late",
+    "capture_valid": false,
+    "rejection_reasons": [
+      "no decoded video dimensions",
+      "decoder not ready or seek incomplete",
+      "requested time not reached, including out-of-range end clamp",
+      "presented frame does not match requested time"
+    ],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dpZhGzZ3hNc&t=40s",
+    "time": 40,
+    "file": "nahida-40.png",
+    "state": {
+      "requestedCurrentTime": 40,
+      "presentedTime": 40,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "nahida",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dpZhGzZ3hNc&t=40s",
+    "time": 45,
+    "file": "nahida-45.png",
+    "state": {
+      "requestedCurrentTime": 45,
+      "presentedTime": 45,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "nahida",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dpZhGzZ3hNc&t=40s",
+    "time": 50,
+    "file": "nahida-50.png",
+    "state": {
+      "requestedCurrentTime": 50,
+      "presentedTime": 50,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "nahida",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dpZhGzZ3hNc&t=40s",
+    "time": 55,
+    "file": "nahida-55.png",
+    "state": {
+      "requestedCurrentTime": 55,
+      "presentedTime": 55,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "nahida",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dpZhGzZ3hNc&t=40s",
+    "time": 60,
+    "file": "nahida-60.png",
+    "state": {
+      "requestedCurrentTime": 60,
+      "presentedTime": 60,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "nahida",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dpZhGzZ3hNc&t=40s",
+    "time": 65,
+    "file": "nahida-65.png",
+    "state": {
+      "requestedCurrentTime": 65,
+      "presentedTime": 65,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "nahida",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dpZhGzZ3hNc&t=40s",
+    "time": 70,
+    "file": "nahida-70.png",
+    "state": {
+      "requestedCurrentTime": 70,
+      "presentedTime": 70,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "nahida",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dpZhGzZ3hNc&t=40s",
+    "time": 75,
+    "file": "nahida-75.png",
+    "state": {
+      "requestedCurrentTime": 75,
+      "presentedTime": 75,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "nahida",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dpZhGzZ3hNc&t=40s",
+    "time": 80,
+    "file": "nahida-80.png",
+    "state": {
+      "requestedCurrentTime": 80,
+      "presentedTime": 80,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "nahida",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dpZhGzZ3hNc&t=40s",
+    "time": 85,
+    "file": "nahida-85.png",
+    "state": {
+      "requestedCurrentTime": 85,
+      "presentedTime": 85,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "nahida",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dpZhGzZ3hNc&t=40s",
+    "time": 90,
+    "file": "nahida-90.png",
+    "state": {
+      "requestedCurrentTime": 90,
+      "presentedTime": 90,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "nahida",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/b702ed368fd050e7cb77adf26bc55bb63c5936fb.mp4?accountingTag=VAL",
+    "time": 0.4,
+    "file": "phoenix-0_4.png",
+    "state": {
+      "requestedCurrentTime": 0.4,
+      "presentedTime": 0.4,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "phoenix",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/b702ed368fd050e7cb77adf26bc55bb63c5936fb.mp4?accountingTag=VAL",
+    "time": 0.8,
+    "file": "phoenix-0_8.png",
+    "state": {
+      "requestedCurrentTime": 0.8,
+      "presentedTime": 0.8,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "phoenix",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/b702ed368fd050e7cb77adf26bc55bb63c5936fb.mp4?accountingTag=VAL",
+    "time": 1.2,
+    "file": "phoenix-1_2.png",
+    "state": {
+      "requestedCurrentTime": 1.2,
+      "presentedTime": 1.2,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "phoenix",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/b702ed368fd050e7cb77adf26bc55bb63c5936fb.mp4?accountingTag=VAL",
+    "time": 1.6,
+    "file": "phoenix-1_6.png",
+    "state": {
+      "requestedCurrentTime": 1.6,
+      "presentedTime": 1.6,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "phoenix",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/b702ed368fd050e7cb77adf26bc55bb63c5936fb.mp4?accountingTag=VAL",
+    "time": 2,
+    "file": "phoenix-2.png",
+    "state": {
+      "requestedCurrentTime": 2,
+      "presentedTime": 2,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "phoenix",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/b702ed368fd050e7cb77adf26bc55bb63c5936fb.mp4?accountingTag=VAL",
+    "time": 3,
+    "file": "phoenix-3.png",
+    "state": {
+      "requestedCurrentTime": 3,
+      "presentedTime": 3,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "phoenix",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/b702ed368fd050e7cb77adf26bc55bb63c5936fb.mp4?accountingTag=VAL",
+    "time": 4,
+    "file": "phoenix-4.png",
+    "state": {
+      "requestedCurrentTime": 4,
+      "presentedTime": 4,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "phoenix",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/b702ed368fd050e7cb77adf26bc55bb63c5936fb.mp4?accountingTag=VAL",
+    "time": 5,
+    "file": "phoenix-5.png",
+    "state": {
+      "requestedCurrentTime": 5,
+      "presentedTime": 5,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "phoenix",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/a79b1d6838cee5572b428babd74a2db0c07f4ea5.mp4?accountingTag=VAL",
+    "time": 0.4,
+    "file": "sage-wall-0_4.png",
+    "state": {
+      "requestedCurrentTime": 0.4,
+      "presentedTime": 0.4,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "sage-wall",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/a79b1d6838cee5572b428babd74a2db0c07f4ea5.mp4?accountingTag=VAL",
+    "time": 0.8,
+    "file": "sage-wall-0_8.png",
+    "state": {
+      "requestedCurrentTime": 0.8,
+      "presentedTime": 0.8,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "sage-wall",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/a79b1d6838cee5572b428babd74a2db0c07f4ea5.mp4?accountingTag=VAL",
+    "time": 1.2,
+    "file": "sage-wall-1_2.png",
+    "state": {
+      "requestedCurrentTime": 1.2,
+      "presentedTime": 1.2,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "sage-wall",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/a79b1d6838cee5572b428babd74a2db0c07f4ea5.mp4?accountingTag=VAL",
+    "time": 1.6,
+    "file": "sage-wall-1_6.png",
+    "state": {
+      "requestedCurrentTime": 1.6,
+      "presentedTime": 1.6,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "sage-wall",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/a79b1d6838cee5572b428babd74a2db0c07f4ea5.mp4?accountingTag=VAL",
+    "time": 2,
+    "file": "sage-wall-2.png",
+    "state": {
+      "requestedCurrentTime": 2,
+      "presentedTime": 2,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "sage-wall",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/a79b1d6838cee5572b428babd74a2db0c07f4ea5.mp4?accountingTag=VAL",
+    "time": 3,
+    "file": "sage-wall-3.png",
+    "state": {
+      "requestedCurrentTime": 3,
+      "presentedTime": 3,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "sage-wall",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/a79b1d6838cee5572b428babd74a2db0c07f4ea5.mp4?accountingTag=VAL",
+    "time": 4,
+    "file": "sage-wall-4.png",
+    "state": {
+      "requestedCurrentTime": 4,
+      "presentedTime": 4,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "sage-wall",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/a79b1d6838cee5572b428babd74a2db0c07f4ea5.mp4?accountingTag=VAL",
+    "time": 5,
+    "file": "sage-wall-5.png",
+    "state": {
+      "requestedCurrentTime": 5,
+      "presentedTime": 5,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "sage-wall",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/3256cb83ad3563516497864209ea585c595cd8df.mp4?accountingTag=VAL",
+    "time": 0.4,
+    "file": "skye-0_4.png",
+    "state": {
+      "requestedCurrentTime": 0.4,
+      "presentedTime": 0.4,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "skye",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/3256cb83ad3563516497864209ea585c595cd8df.mp4?accountingTag=VAL",
+    "time": 0.8,
+    "file": "skye-0_8.png",
+    "state": {
+      "requestedCurrentTime": 0.8,
+      "presentedTime": 0.8,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "skye",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/3256cb83ad3563516497864209ea585c595cd8df.mp4?accountingTag=VAL",
+    "time": 1.2,
+    "file": "skye-1_2.png",
+    "state": {
+      "requestedCurrentTime": 1.2,
+      "presentedTime": 1.2,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "skye",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/3256cb83ad3563516497864209ea585c595cd8df.mp4?accountingTag=VAL",
+    "time": 2,
+    "file": "skye-2.png",
+    "state": {
+      "requestedCurrentTime": 2,
+      "presentedTime": 2,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "skye",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/3256cb83ad3563516497864209ea585c595cd8df.mp4?accountingTag=VAL",
+    "time": 3,
+    "file": "skye-3.png",
+    "state": {
+      "requestedCurrentTime": 3,
+      "presentedTime": 3,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "skye",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/3256cb83ad3563516497864209ea585c595cd8df.mp4?accountingTag=VAL",
+    "time": 4,
+    "file": "skye-4.png",
+    "state": {
+      "requestedCurrentTime": 4,
+      "presentedTime": 4,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "skye",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/3256cb83ad3563516497864209ea585c595cd8df.mp4?accountingTag=VAL",
+    "time": 5,
+    "file": "skye-5.png",
+    "state": {
+      "requestedCurrentTime": 5,
+      "presentedTime": 5,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "skye",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/3256cb83ad3563516497864209ea585c595cd8df.mp4?accountingTag=VAL",
+    "time": 6,
+    "file": "skye-6.png",
+    "state": {
+      "requestedCurrentTime": 6,
+      "presentedTime": 6,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "skye",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/82ab63d9255f9fbbea7c13e00cd46b09ff90d25b.mp4?accountingTag=VAL",
+    "time": 0.4,
+    "file": "skye-seekers-0_4.png",
+    "state": {
+      "requestedCurrentTime": 0.4,
+      "presentedTime": 0.4,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "skye-seekers",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/82ab63d9255f9fbbea7c13e00cd46b09ff90d25b.mp4?accountingTag=VAL",
+    "time": 0.8,
+    "file": "skye-seekers-0_8.png",
+    "state": {
+      "requestedCurrentTime": 0.8,
+      "presentedTime": 0.8,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "skye-seekers",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/82ab63d9255f9fbbea7c13e00cd46b09ff90d25b.mp4?accountingTag=VAL",
+    "time": 1.2,
+    "file": "skye-seekers-1_2.png",
+    "state": {
+      "requestedCurrentTime": 1.2,
+      "presentedTime": 1.2,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "skye-seekers",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/82ab63d9255f9fbbea7c13e00cd46b09ff90d25b.mp4?accountingTag=VAL",
+    "time": 1.6,
+    "file": "skye-seekers-1_6.png",
+    "state": {
+      "requestedCurrentTime": 1.6,
+      "presentedTime": 1.6,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "skye-seekers",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/82ab63d9255f9fbbea7c13e00cd46b09ff90d25b.mp4?accountingTag=VAL",
+    "time": 2,
+    "file": "skye-seekers-2.png",
+    "state": {
+      "requestedCurrentTime": 2,
+      "presentedTime": 2,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "skye-seekers",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/82ab63d9255f9fbbea7c13e00cd46b09ff90d25b.mp4?accountingTag=VAL",
+    "time": 3,
+    "file": "skye-seekers-3.png",
+    "state": {
+      "requestedCurrentTime": 3,
+      "presentedTime": 3,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "skye-seekers",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/82ab63d9255f9fbbea7c13e00cd46b09ff90d25b.mp4?accountingTag=VAL",
+    "time": 4,
+    "file": "skye-seekers-4.png",
+    "state": {
+      "requestedCurrentTime": 4,
+      "presentedTime": 4,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "skye-seekers",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/82ab63d9255f9fbbea7c13e00cd46b09ff90d25b.mp4?accountingTag=VAL",
+    "time": 5,
+    "file": "skye-seekers-5.png",
+    "state": {
+      "requestedCurrentTime": 5,
+      "presentedTime": 5,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "skye-seekers",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI",
+    "time": 20,
+    "file": "venti-20.png",
+    "state": {
+      "requestedCurrentTime": 20,
+      "presentedTime": 20,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "venti",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI",
+    "time": 25,
+    "file": "venti-25.png",
+    "state": {
+      "requestedCurrentTime": 25,
+      "presentedTime": 25,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "venti",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI",
+    "time": 30,
+    "file": "venti-30.png",
+    "state": {
+      "requestedCurrentTime": 30,
+      "presentedTime": 30,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "venti",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI",
+    "time": 35,
+    "file": "venti-35.png",
+    "state": {
+      "requestedCurrentTime": 35,
+      "presentedTime": 35,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "venti",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI",
+    "time": 40,
+    "file": "venti-40.png",
+    "state": {
+      "requestedCurrentTime": 40,
+      "presentedTime": 40,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "venti",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI",
+    "time": 45,
+    "file": "venti-45.png",
+    "state": {
+      "requestedCurrentTime": 45,
+      "presentedTime": 45,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "venti",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI",
+    "time": 50,
+    "file": "venti-50.png",
+    "state": {
+      "requestedCurrentTime": 50,
+      "presentedTime": 50,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "venti",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI",
+    "time": 55,
+    "file": "venti-55.png",
+    "state": {
+      "requestedCurrentTime": 55,
+      "presentedTime": 55,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "venti",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI&t=58s",
+    "time": 58,
+    "file": "venti-late-58.png",
+    "state": {
+      "requestedCurrentTime": 58,
+      "presentedTime": 58,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "venti-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI&t=58s",
+    "time": 60,
+    "file": "venti-late-60.png",
+    "state": {
+      "requestedCurrentTime": 60,
+      "presentedTime": 60,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "venti-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI&t=58s",
+    "time": 62,
+    "file": "venti-late-62.png",
+    "state": {
+      "requestedCurrentTime": 62,
+      "presentedTime": 62,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "venti-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI&t=58s",
+    "time": 64,
+    "file": "venti-late-64.png",
+    "state": {
+      "requestedCurrentTime": 64,
+      "presentedTime": 64,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "venti-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI&t=58s",
+    "time": 66,
+    "file": "venti-late-66.png",
+    "state": {
+      "requestedCurrentTime": 66,
+      "presentedTime": 66,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "venti-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI&t=58s",
+    "time": 68,
+    "file": "venti-late-68.png",
+    "state": {
+      "requestedCurrentTime": 68,
+      "presentedTime": 68,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "venti-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI&t=58s",
+    "time": 70,
+    "file": "venti-late-70.png",
+    "state": {
+      "requestedCurrentTime": 70,
+      "presentedTime": 70,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "venti-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI&t=58s",
+    "time": 72,
+    "file": "venti-late-72.png",
+    "state": {
+      "requestedCurrentTime": 72,
+      "presentedTime": 72,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "venti-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI&t=58s",
+    "time": 74,
+    "file": "venti-late-74.png",
+    "state": {
+      "requestedCurrentTime": 74,
+      "presentedTime": 74,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "venti-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI&t=58s",
+    "time": 76,
+    "file": "venti-late-76.png",
+    "state": {
+      "requestedCurrentTime": 76,
+      "presentedTime": 76,
+      "ready": 4,
+      "seeking": false,
+      "width": 640,
+      "height": 360
+    },
+    "capture_series": "venti-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI&t=58s",
+    "time": 80,
+    "file": "venti-late-80.png",
+    "state": {
+      "requestedCurrentTime": 80,
+      "presentedTime": 80,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "venti-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI&t=58s",
+    "time": 85,
+    "file": "venti-late-85.png",
+    "state": {
+      "requestedCurrentTime": 85,
+      "presentedTime": 85,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "venti-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI&t=58s",
+    "time": 90,
+    "file": "venti-late-90.png",
+    "state": {
+      "requestedCurrentTime": 90,
+      "presentedTime": 90,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "venti-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI&t=58s",
+    "time": 95,
+    "file": "venti-late-95.png",
+    "state": {
+      "requestedCurrentTime": 95,
+      "presentedTime": 95,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "venti-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=TSsWsCdiiPI&t=58s",
+    "time": 100,
+    "file": "venti-late-100.png",
+    "state": {
+      "requestedCurrentTime": 100,
+      "presentedTime": 100,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "venti-late",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 32,
+    "file": "yoimiya-detail-32.png",
+    "state": {
+      "requestedCurrentTime": 32,
+      "presentedTime": 32,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "yoimiya-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 33,
+    "file": "yoimiya-detail-33.png",
+    "state": {
+      "requestedCurrentTime": 33,
+      "presentedTime": 33,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "yoimiya-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 34,
+    "file": "yoimiya-detail-34.png",
+    "state": {
+      "requestedCurrentTime": 34,
+      "presentedTime": 34,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "yoimiya-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 35,
+    "file": "yoimiya-detail-35.png",
+    "state": {
+      "requestedCurrentTime": 35,
+      "presentedTime": 35,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "yoimiya-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 36,
+    "file": "yoimiya-detail-36.png",
+    "state": {
+      "requestedCurrentTime": 36,
+      "presentedTime": 36,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "yoimiya-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 37,
+    "file": "yoimiya-detail-37.png",
+    "state": {
+      "requestedCurrentTime": 37,
+      "presentedTime": 37,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "yoimiya-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 38,
+    "file": "yoimiya-detail-38.png",
+    "state": {
+      "requestedCurrentTime": 38,
+      "presentedTime": 38,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "yoimiya-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 39,
+    "file": "yoimiya-detail-39.png",
+    "state": {
+      "requestedCurrentTime": 39,
+      "presentedTime": 39,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "yoimiya-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 40,
+    "file": "yoimiya-detail-40.png",
+    "state": {
+      "requestedCurrentTime": 40,
+      "presentedTime": 40,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "yoimiya-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 41,
+    "file": "yoimiya-detail-41.png",
+    "state": {
+      "requestedCurrentTime": 41,
+      "presentedTime": 41,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "yoimiya-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 42,
+    "file": "yoimiya-detail-42.png",
+    "state": {
+      "requestedCurrentTime": 42,
+      "presentedTime": 42,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "yoimiya-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 43,
+    "file": "yoimiya-detail-43.png",
+    "state": {
+      "requestedCurrentTime": 43,
+      "presentedTime": 43,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "yoimiya-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 44,
+    "file": "yoimiya-detail-44.png",
+    "state": {
+      "requestedCurrentTime": 44,
+      "presentedTime": 44,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "yoimiya-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 45,
+    "file": "yoimiya-detail-45.png",
+    "state": {
+      "requestedCurrentTime": 45,
+      "presentedTime": 45,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "yoimiya-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 46,
+    "file": "yoimiya-detail-46.png",
+    "state": {
+      "requestedCurrentTime": 46,
+      "presentedTime": 46,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "yoimiya-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 47,
+    "file": "yoimiya-detail-47.png",
+    "state": {
+      "requestedCurrentTime": 47,
+      "presentedTime": 47,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "yoimiya-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 48,
+    "file": "yoimiya-detail-48.png",
+    "state": {
+      "requestedCurrentTime": 48,
+      "presentedTime": 48,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "yoimiya-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 49,
+    "file": "yoimiya-detail-49.png",
+    "state": {
+      "requestedCurrentTime": 49,
+      "presentedTime": 49,
+      "ready": 4,
+      "seeking": false,
+      "width": 854,
+      "height": 480
+    },
+    "capture_series": "yoimiya-detail",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 30,
+    "file": "yoimiya-30.png",
+    "state": {
+      "requestedCurrentTime": 30,
+      "presentedTime": 30,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "yoimiya",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 40,
+    "file": "yoimiya-40.png",
+    "state": {
+      "requestedCurrentTime": 40,
+      "presentedTime": 40,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "yoimiya",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 50,
+    "file": "yoimiya-50.png",
+    "state": {
+      "requestedCurrentTime": 50,
+      "presentedTime": 50,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "yoimiya",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 60,
+    "file": "yoimiya-60.png",
+    "state": {
+      "requestedCurrentTime": 0,
+      "presentedTime": 60,
+      "ready": 0,
+      "seeking": false,
+      "width": 0,
+      "height": 0
+    },
+    "capture_series": "yoimiya",
+    "capture_valid": false,
+    "rejection_reasons": [
+      "no decoded video dimensions",
+      "decoder not ready or seek incomplete",
+      "requested time not reached, including out-of-range end clamp"
+    ],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 70,
+    "file": "yoimiya-70.png",
+    "state": {
+      "requestedCurrentTime": 70,
+      "presentedTime": 60,
+      "ready": 0,
+      "seeking": false,
+      "width": 0,
+      "height": 0
+    },
+    "capture_series": "yoimiya",
+    "capture_valid": false,
+    "rejection_reasons": [
+      "no decoded video dimensions",
+      "decoder not ready or seek incomplete",
+      "presented frame does not match requested time"
+    ],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 80,
+    "file": "yoimiya-80.png",
+    "state": {
+      "requestedCurrentTime": 80,
+      "presentedTime": 60,
+      "ready": 0,
+      "seeking": false,
+      "width": 0,
+      "height": 0
+    },
+    "capture_series": "yoimiya",
+    "capture_valid": false,
+    "rejection_reasons": [
+      "no decoded video dimensions",
+      "decoder not ready or seek incomplete",
+      "presented frame does not match requested time"
+    ],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 90,
+    "file": "yoimiya-90.png",
+    "state": {
+      "requestedCurrentTime": 90,
+      "presentedTime": 60,
+      "ready": 0,
+      "seeking": false,
+      "width": 0,
+      "height": 0
+    },
+    "capture_series": "yoimiya",
+    "capture_valid": false,
+    "rejection_reasons": [
+      "no decoded video dimensions",
+      "decoder not ready or seek incomplete",
+      "presented frame does not match requested time"
+    ],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 100,
+    "file": "yoimiya-100.png",
+    "state": {
+      "requestedCurrentTime": 100,
+      "presentedTime": 60,
+      "ready": 0,
+      "seeking": false,
+      "width": 0,
+      "height": 0
+    },
+    "capture_series": "yoimiya",
+    "capture_valid": false,
+    "rejection_reasons": [
+      "no decoded video dimensions",
+      "decoder not ready or seek incomplete",
+      "presented frame does not match requested time"
+    ],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://www.youtube.com/watch?v=dn8etqEPtFg",
+    "time": 110,
+    "file": "yoimiya-110.png",
+    "state": {
+      "requestedCurrentTime": 110,
+      "presentedTime": 60,
+      "ready": 0,
+      "seeking": false,
+      "width": 0,
+      "height": 0
+    },
+    "capture_series": "yoimiya",
+    "capture_valid": false,
+    "rejection_reasons": [
+      "no decoded video dimensions",
+      "decoder not ready or seek incomplete",
+      "presented frame does not match requested time"
+    ],
+    "visually_inspected": false,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ef008c8e848a054f88e88f173c03279a45a1c796.mp4?accountingTag=VAL",
+    "time": 0.4,
+    "file": "yoru-fakeout-0_4.png",
+    "state": {
+      "requestedCurrentTime": 0.4,
+      "presentedTime": 0.4,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "yoru-fakeout",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ef008c8e848a054f88e88f173c03279a45a1c796.mp4?accountingTag=VAL",
+    "time": 0.8,
+    "file": "yoru-fakeout-0_8.png",
+    "state": {
+      "requestedCurrentTime": 0.8,
+      "presentedTime": 0.8,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "yoru-fakeout",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ef008c8e848a054f88e88f173c03279a45a1c796.mp4?accountingTag=VAL",
+    "time": 1.2,
+    "file": "yoru-fakeout-1_2.png",
+    "state": {
+      "requestedCurrentTime": 1.2,
+      "presentedTime": 1.2,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "yoru-fakeout",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ef008c8e848a054f88e88f173c03279a45a1c796.mp4?accountingTag=VAL",
+    "time": 2,
+    "file": "yoru-fakeout-2.png",
+    "state": {
+      "requestedCurrentTime": 2,
+      "presentedTime": 2,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "yoru-fakeout",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ef008c8e848a054f88e88f173c03279a45a1c796.mp4?accountingTag=VAL",
+    "time": 3,
+    "file": "yoru-fakeout-3.png",
+    "state": {
+      "requestedCurrentTime": 3,
+      "presentedTime": 3,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "yoru-fakeout",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": true
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ef008c8e848a054f88e88f173c03279a45a1c796.mp4?accountingTag=VAL",
+    "time": 4,
+    "file": "yoru-fakeout-4.png",
+    "state": {
+      "requestedCurrentTime": 4,
+      "presentedTime": 4,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "yoru-fakeout",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ef008c8e848a054f88e88f173c03279a45a1c796.mp4?accountingTag=VAL",
+    "time": 5,
+    "file": "yoru-fakeout-5.png",
+    "state": {
+      "requestedCurrentTime": 5,
+      "presentedTime": 5,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "yoru-fakeout",
+    "capture_valid": true,
+    "rejection_reasons": [],
+    "visually_inspected": true,
+    "retained_frame": false
+  },
+  {
+    "source": "https://cmsassets.rgpub.io/sanity/files/dsfx7636/game_data/ef008c8e848a054f88e88f173c03279a45a1c796.mp4?accountingTag=VAL",
+    "time": 6,
+    "file": "yoru-fakeout-6.png",
+    "state": {
+      "requestedCurrentTime": 5.033333,
+      "presentedTime": 5.016667,
+      "ready": 4,
+      "seeking": false,
+      "width": 1280,
+      "height": 720
+    },
+    "capture_series": "yoru-fakeout",
+    "capture_valid": false,
+    "rejection_reasons": [
+      "requested time not reached, including out-of-range end clamp",
+      "presented frame does not match requested time"
+    ],
+    "visually_inspected": false,
+    "retained_frame": false
+  }
+]

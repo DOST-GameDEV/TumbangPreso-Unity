@@ -84,3 +84,22 @@ owned files, active job/session/profile/output, observed failures, retry count,
 publication/evidence limits and exact next action. Keep previous evidence in its
 own report and history in the archive. Do not reread the entire prior chat or
 append another massive historical transcript to this live checkpoint.
+
+## Cloud Feedback and hero research lane
+
+SETUP-RECOVERY-1001: matching Unity 6000.5.8f1, Hub 3.22.0 and .NET 9.0.318
+restored; Blender 4.3.2 present. Managed 8/8 and native 2/2 passed on isolated
+9590 inputs. First import triggered the memory guard before orderly completion;
+no clean headroom or current-player claim. Subsequent Sean body strip completed
+in 30 seconds without a guard; both views inspected. Source assets preserved.
+Cloud GitHub CLI authenticated by owner on October 2; repository push permission
+and fetch verified. Integrating incoming 33443291 without changing its work.
+All-nine-hero visual research and production plans completed and reviewed; audio
+was not heard. Publication of that evidence packet is next, then a single owned
+Feedback/presentation unit. No Cinder Gate implementation yet. Preserve the
+separate career/UI and broad-loading reservations above.
+
+HERO-REFERENCE-1002 report prepared for publication: 14 report pages, 27 selected
+frames and two evidence manifests. Audio unheard. No runtime or asset changes;
+no active heavy job. Next: actual Sean Stoke Step cast baseline, following the
+existing body-strip evidence, before deciding any authored motion change.
