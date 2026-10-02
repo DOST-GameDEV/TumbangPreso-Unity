@@ -388,13 +388,22 @@ namespace TumbangPreso.Diagnostics
         {
             Stage("cold loading and login music gate");
             yield return null;
+            bool introObserved=false;
             int silentFrames=0;float until=Time.realtimeSinceStartup+80;
             while(Find("GuestAccount")==null && Find("ContinueAccount")==null && Time.realtimeSinceStartup<until)
             {
                 if(GameServices.Music!=null && GameServices.Music.Current!=null)throw new InvalidOperationException("Music began during loading.");
                 if(GameObject.Find("OwnerLoadingCanvas")!=null && BootSting.Playing)throw new InvalidOperationException("Studio cue continued into illustrated loading.");
+                var intro=GameObject.Find("StudioIntroCanvas")?.GetComponent<UnityEngine.Video.VideoPlayer>();
+                var picture=intro!=null?intro.GetComponentInChildren<RawImage>():null;
+                if(!introObserved && intro!=null && intro.isPlaying && intro.frame>=10 && picture!=null && picture.enabled)
+                {
+                    introObserved=true;Stage("studio intro rendered before loading");
+                    yield return Shot("Studio-intro");
+                }
                 silentFrames++;yield return null;
             }
+            if(!introObserved)Stage("Studio picture not observed; playback visuals remain unqualified");
             if(Find("GuestAccount")==null && Find("ContinueAccount")==null)throw new InvalidOperationException("Startup entrance did not arrive.");
             if(GameServices.Music.Current!=null)throw new InvalidOperationException("Music began before leaving startup login.");
             Stage("loading and login silent for "+silentFrames+" observed frames");
@@ -420,12 +429,19 @@ namespace TumbangPreso.Diagnostics
             yield return WaitFor(()=>Screen.width==1920&&Screen.height==1080,8);
             yield return Motion("normal",false);yield return Motion("reduced",true);
             Settings.SettingsStore.Current.ReducedUiMotion=false;
-            yield return EnterSettingsFromHome();yield return Click("SettingsCredits");
+            // The title opens the current hub. Settings belongs to its hamburger;
+            // the old Start/Classic/Practice preparation route has been retired.
+            yield return Click("StartButton");yield return WaitFor(()=>Find("MenuButton")!=null);
+            yield return Shot("Hub-home");
+            yield return Click("MenuButton");yield return Click("MenuSETTINGS");
+            yield return Click("SettingsCredits");
             yield return WaitFor(()=>GameObject.Find("OwnerCreditsCanvas")!=null);
-            yield return Click("CreditsBack");yield return ReturnHomeFromSettings();
-            yield return Click("StartButton");yield return WaitFor(()=>GameObject.Find("OwnerPlayCanvas")!=null);
+            yield return Click("CreditsBack");yield return Click("TumpSettingsBack");
+            yield return WaitFor(()=>Find("ModeCard")!=null);
+            yield return Click("ModeCard");yield return WaitFor(()=>Find("BackButton")!=null);
             yield return Click("BackButton");
-            Stage("settings credits and Play/Back remain reachable");
+            yield return WaitFor(()=>Find("ModeCard")!=null && Find("PlayButton")!=null);
+            Stage("current hub settings credits and mode selection/back remain reachable");
         }
 
         private IEnumerator RecoveryOnly()
