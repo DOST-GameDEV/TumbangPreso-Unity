@@ -57,12 +57,21 @@ namespace TumbangPreso.Net
         private float _nextPresenceChange;
         private bool _loading;
         private bool _writing;
+        private bool _refreshPending;
+        private PlayerAccount _hookedAccount;
 
         /// <summary>Raised whenever the list changes, so a rail can redraw without polling it.</summary>
         public event Action Changed;
 
         /// <summary>The list as it was last known. Never null.</summary>
-        public SocialList List => _cache.List ?? (_cache.List = new SocialList());
+        public SocialList List
+        {
+            get
+            {
+                RetireOtherOwnersCache();
+                return _cache.List ?? (_cache.List = new SocialList());
+            }
+        }
         public string SearchStatus { get; private set; } = "";
 
         [Serializable]
@@ -86,6 +95,43 @@ namespace TumbangPreso.Net
         private void OnDestroy()
         {
             if (Instance == this) Instance = null;
+        }
+
+        private void OnEnable()
+        {
+            _hookedAccount = GameServices.Account;
+            if (_hookedAccount != null) _hookedAccount.Changed += OnAccountChanged;
+            RetireOtherOwnersCache();
+        }
+
+        private void OnDisable()
+        {
+            if (_hookedAccount != null) _hookedAccount.Changed -= OnAccountChanged;
+            _hookedAccount = null;
+        }
+
+        private void OnAccountChanged()
+        {
+            RetireOtherOwnersCache();
+            if (CanUseService) _refreshPending = true;
+        }
+
+        // Tournament guests keep the primary account's underlying authentication session.
+        // That credential must never load or write social data on the guest's behalf.
+        private static bool CanUseService => GameServices.Account != null
+            && GameServices.Account.IsSignedIn && !GameServices.Account.IsGuest;
+
+        private void RetireOtherOwnersCache()
+        {
+            string owner = CareerStore.LocalPlayerId;
+            if (_cache.OwnerId == owner) return;
+
+            // A read must be safe even before the account notification reaches this component.
+            // Keep the old disk cache until this owner has a real service answer to save.
+            _cache = new Cache { OwnerId = owner };
+            SearchStatus = "";
+            _refreshPending = true;
+            Changed?.Invoke();
         }
 
         // -------------------------------------------------------------------
@@ -112,8 +158,8 @@ namespace TumbangPreso.Net
             // on one machine is the tournament-guest case (`docs/TODO.md` § 97), and merging two
             // friends lists would put one player's friends on another player's screen.
             string me = CareerStore.LocalPlayerId;
-            if (!string.IsNullOrEmpty(_cache.OwnerId) && _cache.OwnerId != me)
-                _cache = new Cache();
+            if (_cache.OwnerId != me)
+                _cache = new Cache { OwnerId = me };
 
             _cache.List = SocialRules.Normalise(_cache.List);
         }
@@ -147,8 +193,10 @@ namespace TumbangPreso.Net
         /// </summary>
         public async void Refresh()
         {
-            if (_loading) return;
+            RetireOtherOwnersCache();
+            if (_loading || (_refreshPending && _writing) || !CanUseService) return;
             string requestedOwner = CareerStore.LocalPlayerId;
+            _refreshPending = false;
             _loading = true;
 
             try
@@ -227,9 +275,17 @@ namespace TumbangPreso.Net
         /// </summary>
         public async void RequestHandle(string handle)
         {
+            RetireOtherOwnersCache();
             if (!AccountRules.TrySplitHandle(handle, out _, out _))
             {
                 SearchStatus = "ENTER A NAME AND FOUR-DIGIT TAG, LIKE MARIA#4417.";
+                Changed?.Invoke();
+                return;
+            }
+
+            if (!CanUseService)
+            {
+                SearchStatus = "SIGN IN TO ADD FRIENDS.";
                 Changed?.Invoke();
                 return;
             }
@@ -291,6 +347,13 @@ namespace TumbangPreso.Net
         /// </summary>
         private async Task Post(object parameters)
         {
+            RetireOtherOwnersCache();
+            if (!CanUseService)
+            {
+                SearchStatus = "SIGN IN TO MANAGE FRIENDS.";
+                Changed?.Invoke();
+                return;
+            }
             if (_writing) return;
             string requestedOwner = CareerStore.LocalPlayerId;
             _writing = true;
@@ -334,6 +397,10 @@ namespace TumbangPreso.Net
         /// </summary>
         private void Update()
         {
+            RetireOtherOwnersCache();
+            // Switching accounts while the old load is pending must not consume the new load.
+            if (_refreshPending && !_loading && !_writing && CanUseService) Refresh();
+
             var state = CurrentState;
 
             // ⚠️⚠️ A CHANGE IS SENT WITHOUT WAITING FOR THE HEARTBEAT, AND `PresenceState.Queued`
@@ -356,7 +423,7 @@ namespace TumbangPreso.Net
 
             _lastPresence = state;
 
-            if (!SocialRules.IsAddressable(GameServices.Account?.PlayerId)) return;
+            if (!CanUseService || !SocialRules.IsAddressable(GameServices.Account?.PlayerId)) return;
 
             SendPresence(state);
         }
