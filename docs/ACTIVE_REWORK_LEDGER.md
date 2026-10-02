@@ -773,3 +773,12 @@ succeed then old-stomp assertion fails. Distinct0.88s body/FPP candidate passes
 and model binary preserved, one roster reference added. No active job. Ship
 only the claimed motion paths; larger affinity VFX/player/SFX/human work stays
 open. Preserve other reservations and generated metadata.
+
+## Cloud hero continuation: Boulder load cue
+
+Dante motionadfeb0b7 shipped via8774d5ee, exact remote verified.16s silent review
+sent; same Feedback note appended and read back. DANTE-BOULDER-LOAD-1002 next
+claims only its dated plan's paths. Existing accepted Concussed shoe has no
+persistent surface cue in the native footage. Affinity survives a drop and may
+arrive from replication: bind the visual to the actual shoe, not a hero timer.
+No gameplay/wire/SFX changes, no private HeroHazards edits, no active job yet.
