@@ -159,13 +159,17 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
 - [x] HUB-DISCONNECT-CANCEL-1002: host loss cancels pending join and queue work;
   shipped8acbdf683 via066bb51ee, native3/3 after three reproduced failures.
   [Evidence](reports/reliability-2026-10-02/hub-disconnect/README.md).
-- [ ] ACCOUNT-SAVE-OWNER-1002: delayed save must preserve current account/edit;
-  four native failures reproduced, candidate5/5 passed; publication next.
+- [x] ACCOUNT-SAVE-OWNER-1002: delayed save must preserve current account/edit;
+  shippedd01c62a68 via7b36c1e63, candidate5/5 after four native failures.
   [Evidence](reports/reliability-2026-10-02/account-save-owner/README.md).
 - [ ] READY-CHAT-INTENT-1002: typing must not create a manual ready vote;
   Astra preparing current-input baseline; preserve auto-ready/retransmission.
 - [ ] REBIND-ACTION-STATE-1002: restore original disabled/enabled action state;
   Sol preparing focused actual-operation baseline.
+- [ ] BUFFER-CHAT-INTENT-1002: typing must not submit a buffer-skip vote;
+  root four-case unit included in combined18 native baseline.
+- [ ] EMOTE-CHAT-FOCUS-1002: typing must not open or commit the emote wheel;
+  Astra preparing three-case baseline after joint18.
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow
