@@ -133,7 +133,9 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 Latest checkpoint:45 root continuity fix units published through42e0d48e9.
 ONE new Sol6.1HIGH helper +root implementation; prioragents retired. Currenth41
 protocol132/record13 build+actualWindowspeerPASS, laterSafe42/Touch43/diag not in it.
-Root1002i coherent build ACTIVE after freeze46168 terminal0. DirectHostlunge
+Root1002i coherent build16487 TERMINAL0/2432MB92s; artifact finalizer38041 ACTIVE.
+Root slide disable lifetime original64655 ACTIVE/exact3 after prep15177 exit0.
+DirectHostlunge
 lifetimeproof3/3 shipped; helper candidate35856 TERMINAL PASS3 on confirmed
 SafeStore failedpromotion->laterwrite edge; original45036 had1causal failure/
 2controls pass, exact7/protected12535/zero repairs.

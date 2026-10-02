@@ -39,7 +39,7 @@ hashes and all12525 unrelated protected match; original12526 included now-owned
 LanBeacon. Guard terminal/restored/no lease. Real owned loopback UDP and controlled
 replacement pre-arm boundary; socket owner AsyncState/volatile current ref/rearm
 fences/queued-owner filtering. Source queue guard is not separately mid-decode
-stress-tested. All ROOT native jobs TERMINAL, no heavy root job to resume.
+stress-tested. Those LAN ROOT native jobs TERMINAL; current root job below.
 Report lan-receive-owner and startup report committed. No per-fix standalone rebuild.
 
 ## Active agent job and next root action
@@ -83,9 +83,21 @@ guard restored/no lease/zero repairs. WindowsEditor writer boundary qualified;
 four Save callsites compile, account flows and WindowsPlayer execution separate.
 Report safe-store-failed-promotion retains raw original failure and controls.
 1002i frozen source42e0d48e9903893706e1c4a8a60724f5b2be6e8b/18901inputs:
-freeze46168 TERMINAL0, build ACTIVE/3072MB+2048reserve/600s. One preflight --output
+freeze46168 TERMINAL0, build16487 TERMINAL0/2432MB92s/guardsrestored/leasefree;
+finalizer38041 ACTIVE (hashing; wait terminal before classification).
+Build requested3072MB+2048reserve/600s. One preflight --output
 file-vs-directory correction refused before launch; no native/source/build retry.
 Helper source-only identifies next disjoint bug; no native while root owns build.
+ROOT next owns CombatVerbs and NEW PlayMode/SlideDisableLifetimeTests.cs/meta:
+source-only active-window lifetime investigation after body disable. Production
+unchanged pending baseline. Exact3 qualification preparation15177 TERMINAL0,
+Logs/slide-disable-lifetime1002/prepare.py (MAIN) protects all other q inputs.
+Baseline64655 ACTIVE after prep exit0/build slot released, GPU1536/reserve2048,
+450s/PlayMode-nographics/filter SlideDisableLifetimeTests/exact3 expected.
+Source unchanged; expect1causal old retrieval window/2controls, never weaken
+assertions or wait for expiry. Agent must not copy q assets or launch native.
+No private timer
+assignment/expirywait/travel/tag claim; preserve spent cooldown and clock-hold.
 Latest onehelper authorization persists; retiredagents neverwake.
 
 h build34064 TERMINAL0/12scenes2432MB90s. Freeze15412/post88799 TERMINAL:
