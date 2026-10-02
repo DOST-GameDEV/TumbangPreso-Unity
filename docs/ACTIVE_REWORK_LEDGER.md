@@ -803,3 +803,9 @@ world/owner close-ups inspected. Supplemental actual-input motion1/1 passes with
 78paired frames after one recorded native Mono startup retry; no guard change.
 Same mesh/materials and payload state, no HeroHazards/gameplay/wire edits. No
 active job. Publish explicit load paths and report only scoped native evidence.
+
+Boulder surface a9710b82 verified remote,16.2s review delivered and Feedback note
+read back; no checkbox changes. DANTE-BASTION-MOTION-1002 now claims only its
+new dated plan: distinct forward barrier brace instead of the signature roar.
+Preserve all37 prior Dante clips and existing field mechanics/visibility.
+Baseline next; no active native job and no production changes for Bastion yet.
