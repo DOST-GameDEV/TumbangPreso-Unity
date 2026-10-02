@@ -43,6 +43,23 @@ This is focused native editor evidence, not a fresh packaged Windows/Linux boot,
 physical-device acceptance, full regression or sound-quality approval. The fresh
 packaged startup check remains the next qualification step.
 
-The attempted isolated packaged check is now explicitly
-[blocked at roster script binding](packaged-blocker.md). No new player was
-produced; native results above are unchanged.
+## Packaged Windows acceptance
+
+Windows1003c, frozen source8ef02cf75d4201e7a1bc839270a5af3309421d3d,
+protocol134, now supplies packaged startup acceptance. The corrected normal
+startup run39805 observes a playing video frame and enabled picture before
+loading, then login/Guest/title/current HOME. The actual logo screenshot was
+inspected alongside the source animation; the partial shapes are its authored
+mid-motion reveal. Existing Settings/Credits/ModeCard and Back routes pass.
+Normal exit, shared-input restoration and Runtime immutability pass.
+[Artifact, raw startup result and capture](../reliability-2026-10-03/windows-candidate1003c/README.md).
+
+The earlier1003b startup diagnostic used retired navigation and remains retained
+as failed/partial. The one diagnostic route repair is identified in the Windows
+report. This does not turn native simulated keyboard/pad/touch skip checks into
+physical-device acceptance or claim a separate Windows skip matrix. Recovery-
+specific actual-peer checks, wider maps/devices and human approval remain separate.
+
+The local isolated Linux packaged attempt remains
+[blocked at copied-cache roster script binding](packaged-blocker.md); no Linux
+player was produced. Windows acceptance does not assert that cache was repaired.

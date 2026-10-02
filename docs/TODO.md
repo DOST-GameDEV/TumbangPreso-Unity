@@ -28,8 +28,9 @@ Nothing was deleted or renumbered.
   compilation pass. [Limits](reports/timed-recovery-2026-10-02/diagnostics.md).
 - [x] Same Feedback row's studio intro now precedes loading, with no skip text
   and any-input white fade. Five isolated native cases pass; original MP4 retained
-  alongside Linux-compatible VP8. Packaged startup is blocked by the isolated
-  roster script binding, after one targeted reimport; no new player artifact.
+  alongside Linux-compatible VP8. Windows1003c/source8ef02cf7 now qualifies
+  actual visible intro and normal startup/current HOME routes. The separate
+  Linux copied-cache binding gap and physical-device skip checks remain.
   [Evidence](reports/studio-intro-2026-10-02/README.md).
 
 ### ROUND-TIMER-35-1002: latest ordinary break duration
