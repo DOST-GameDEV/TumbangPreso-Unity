@@ -233,6 +233,9 @@ namespace TumbangPreso.Net
             catch (Exception e)
             {
                 Listening = false;
+                // Bind/receive setup may fail after allocating the UDP socket.
+                try { _listener?.Close(); } catch { }
+                _listener = null;
                 Debug.LogWarning($"[Lan] could not listen on {DiscoveryPort}: {e.Message}");
             }
         }
