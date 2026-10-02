@@ -1,0 +1,42 @@
+{
+  "sourceCommit": "e8de3702119fb1a831c17f5e7bd0ebbf838ad71d",
+  "qualification": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930",
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs",
+      "variant": "baseline",
+      "sha256": "5085a5094dd88d039f56ece41d7998e39615d5cb18f8c4e81005129da5d126ae",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\hub-disconnect1002-inputs\\ConvertedMatchSetup.Hub.cs.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs",
+      "variant": "final",
+      "sha256": "b05dcf2b841ed26e2ac802705dffdef1f9561cfe68928338211bd29af1362d83",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\hub-disconnect1002-inputs\\ConvertedMatchSetup.Hub.cs.final.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/HubDisconnectCancellationTests.cs",
+      "variant": "baseline",
+      "sha256": "bbc23c0a0b9418a52b431c33473335a3534c40671040dd2d1ac2df117bacfda5",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\hub-disconnect1002-inputs\\HubDisconnectCancellationTests.cs.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/HubDisconnectCancellationTests.cs",
+      "variant": "final",
+      "sha256": "bbc23c0a0b9418a52b431c33473335a3534c40671040dd2d1ac2df117bacfda5",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\hub-disconnect1002-inputs\\HubDisconnectCancellationTests.cs.final.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/HubDisconnectCancellationTests.cs.meta",
+      "variant": "baseline",
+      "sha256": "6ef27bca15f0dcaf5765b5749d7c4dc1bebec4b8f5c149e14c738039ad807a19",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\hub-disconnect1002-inputs\\HubDisconnectCancellationTests.cs.meta.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/HubDisconnectCancellationTests.cs.meta",
+      "variant": "final",
+      "sha256": "6ef27bca15f0dcaf5765b5749d7c4dc1bebec4b8f5c149e14c738039ad807a19",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\hub-disconnect1002-inputs\\HubDisconnectCancellationTests.cs.meta.final.txt"
+    }
+  ]
+}

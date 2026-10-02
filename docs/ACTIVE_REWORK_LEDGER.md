@@ -24,8 +24,10 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Verified remote5bf65ed6a6a08a3653c1d2dd4f88bf8cb02a66d0:19 qualified product
-fixes published. Latest queue39a3bc4305/5, reporteligibility2c3eea2298/8,
+Verified remote066bb51eeb4e08ba3182955388c9e2b8715fa509:21 qualified product
+fixes published. Latest customslots e8de37021 native6/6 (four causal failures),
+hub disconnect8acbdf683 native3/3 (three causal failures), zero repairs.
+Queue39a3bc4305/5, reporteligibility2c3eea2298/8,
 completedarrival960560b7c12/12. Preserve all raw baseline/failed receipts.
 ACKcd4a41069 native41/41; rebindcancel1f2d2bcb9 native4/4; Core691/691 unchanged.
 No whole competition, physical device, WAN or Android qualification claim.
@@ -34,14 +36,17 @@ CPU workers are implemented but no workers/parallel native proof created.
 
 ## Active job and exact next action
 
-ROOT current native baseline custom-slot-recovery-baseline1002, session98140,
-qualification worktree Codex/work/tump-feedback-0930. Six focused cases: null/empty
-first/second saved custom character slot must preserve later valid slots and active
-character; complete and short profile controls. Current loader breaks at missing
-wire, so candidate proposed defaults all three then assigns nonempty wires by
-original index. Root owns CustomCharacterStore.cs +new CustomCharacterSlotRecoveryTests.
-Baseline frozen; do not modify qualification inputs until terminal. Stop criterion:
-causal four failures/two controls then one final six-case pass; no broad suites.
+ROOT build command session98535: release frozen HEAD066bb51ee, unique
+competition-candidate1002c source hash preparation then pool build (not1002b).
+Build receipt recipe release Logs/competition-candidate1002c/freeze_build.py;
+check preparation success before launch; finalize confirms inputs/artifact/guard.
+Root native AccountSaveOwnership baseline54240 terminal4causal failures/1control.
+Final session10551 queued/running via pool, profile account-save-owner1002, Logs
+account-save-owner1002/final, same5cases. Root owns PlayerAccount.cs save callback
+owner/profile/edit/request fences +new AccountSaveOwnershipTests.cs/.meta. Private
+nullable dispatch seam was added to baseline only; behavior otherwise original.
+No SDK calls. Do not mutate qualification owned inputs until final terminal.
+Customslots sessions98140/89495 terminal, guards restored, already published.
 
 Sol6.1HIGH owns new NetCompletedArrivalProbe.cs/.meta and tools/run_completed_arrival.py.
 Opt-in short custom Hero1round30sec actual native HUB CLI -tp-lobby/-tp-lobbyjoin,
@@ -50,13 +55,19 @@ ResultMainMenu onClick, public LeaveMatchToMainMenu/Stop/GoHome; wait actual Hub
 public StartClientAsync+WaitForConnection. TrustedSeating loads new arena. Require
 new scenehandle/post-rejoin MatchEnded+RecordReady, same authoritative MatchId/scores,
 host remains ended. Programmatic button, not physical input/SDK/persistence proof.
-Runner before freeze: sourcecommit/Runtime/build-receipt binding and nested-finally
-restoration/release. No player or build launched yet. Root reviews/integrates,
-commits opt-in diagnostics separately, then release FF exact committed source,
-freeze inputs and build unique competition-candidate1002c once. Do not rebuild1002b.
+Runner sourcecommit/Runtime/build-receipt binding and nested-finally restoration/
+release completed; sourceCommit/runtimeSha256/artifact schema consistent. Installed
+Core wire parser preflight passed. Probe immediately/sceneLoaded subscribes, records
+postjoin slot/spectator, no retained-seat recovery claim. Diagnostic commit066bb51ee
+published separately, zero product-count inflation. No actual player launched yet.
+After successful build root finalize frozen receipt then tools/run_completed_arrival
+with --source-commit/--runtime-sha/--build-receipt, fresh Logs output,120sec ceiling.
+Sol now owns Settings/RebindSession.cs enabled-state restoration +new focused fixture.
 
-Astraxhigh tracing UI/Hub/HubCustom.cs +ConvertedMatchSetup.Hub.cs cancellation and
-navigation for next independent concrete bug; no root/probe overlap. Two authorized
+Astraxhigh hub disconnect completed/published. Now owns ReadyGate.cs manual
+ready chat typing guard +new fixture; derive current shipped ReadyUp F key,
+preserve auto-ready and pending retransmission while typing. Four cases planned,
+no native launch yet. No root/probe overlap. Two authorized
 current-chat agents; oldSolultra INTERRUPTED, never wake. FAST control unavailable,
 not claimed configured. Keep all three on useful implementation, no invented busywork.
 

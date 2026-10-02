@@ -409,12 +409,9 @@ namespace TumbangPreso.UI
         private bool HubDisconnected(string detail)
         {
             if (_hubView == null) return false;
-            var net = NetSession.Instance;
-            if (net != null) net.Stop();
-            SceneFlow.Networked = false;
-            NetSession.ClearRoomSettings();
-            HubQueueWatch.End();
-            _localReady = false;
+            // Host loss retires the same join/queue work as an explicit exit. Otherwise
+            // its delayed completion can change the route chosen after returning HOME.
+            LeaveRoom();
             _hubView.Home();
             _hubView.Toast(string.IsNullOrWhiteSpace(detail) ? "The room closed." : detail);
             return true;

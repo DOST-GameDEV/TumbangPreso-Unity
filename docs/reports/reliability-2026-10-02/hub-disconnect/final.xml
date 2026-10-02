@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 04:51:30Z" end-time="2026-10-02 04:51:30Z" duration="0.2414014">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="910" result="Passed" start-time="2026-10-02 04:51:30Z" end-time="2026-10-02 04:51:30Z" duration="0.241401" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2094" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="910" result="Passed" start-time="2026-10-02 04:51:30Z" end-time="2026-10-02 04:51:30Z" duration="0.226993" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="3340" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2095" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="910" result="Passed" start-time="2026-10-02 04:51:30Z" end-time="2026-10-02 04:51:30Z" duration="0.221846" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2096" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="910" result="Passed" start-time="2026-10-02 04:51:30Z" end-time="2026-10-02 04:51:30Z" duration="0.217032" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1337" name="HubDisconnectCancellationTests" fullname="TumbangPreso.Tests.HubDisconnectCancellationTests" classname="TumbangPreso.Tests.HubDisconnectCancellationTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 04:51:30Z" end-time="2026-10-02 04:51:30Z" duration="0.197044" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1340" name="HostLossCancelsAnActiveQueueBeforeClearingItsPlate" fullname="TumbangPreso.Tests.HubDisconnectCancellationTests.HostLossCancelsAnActiveQueueBeforeClearingItsPlate" methodname="HostLossCancelsAnActiveQueueBeforeClearingItsPlate" classname="TumbangPreso.Tests.HubDisconnectCancellationTests" runstate="Runnable" seed="1713224258" result="Passed" start-time="2026-10-02 04:51:30Z" end-time="2026-10-02 04:51:30Z" duration="0.163236" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1338" name="HostLossCancelsThePendingNativeJoin" fullname="TumbangPreso.Tests.HubDisconnectCancellationTests.HostLossCancelsThePendingNativeJoin" methodname="HostLossCancelsThePendingNativeJoin" classname="TumbangPreso.Tests.HubDisconnectCancellationTests" runstate="Runnable" seed="1247088084" result="Passed" start-time="2026-10-02 04:51:30Z" end-time="2026-10-02 04:51:30Z" duration="0.010972" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1339" name="LateJoinFailureCannotOverwriteTheNextRoute" fullname="TumbangPreso.Tests.HubDisconnectCancellationTests.LateJoinFailureCannotOverwriteTheNextRoute" methodname="LateJoinFailureCannotOverwriteTheNextRoute" classname="TumbangPreso.Tests.HubDisconnectCancellationTests" runstate="Runnable" seed="991626009" result="Passed" start-time="2026-10-02 04:51:30Z" end-time="2026-10-02 04:51:30Z" duration="0.006069" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
