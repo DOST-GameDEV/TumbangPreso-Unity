@@ -90,8 +90,9 @@ All3 passed including null-list; source unchanged/no product patch/no candidate
 or repeat.12543 protected unchanged/guardsrestored/free/zero repairs. Finding-only
 Report/fixture retirement COMPLETE; exact new fixture/meta retained outside both
 Assets with containment/hash proof. No product patch. Root native slot released.
-No NaN changes/schema/bindings/assets. Agent owns qualification/native until post
-handoff; root must not copy q assets or consume agent handle. Retired agents neverwake.
+No NaN changes/schema/bindings/assets. Finding-only report SHIPPEDc644b475f.
+Helper now source-only on next concrete disjoint proposal; no q mutations/native
+while root owns newj build/peer. Retired agents neverwake.
 
 ROOT CURRENT diagnostic candidate ready: owns
 Runtime/Net/NetCompletedArrivalProbe.cs + NEW Tests/CompletedArrivalReceiptIoTests.cs/
@@ -102,7 +103,17 @@ latest counter. No replay/score/schema/protocol/gameplay changes. Qualification
 prep68414 TERMINAL0/exact3; reconcile89101 TERMINAL0 before native removed ONLY
 two known retired helper fixture entries from protected baseline after retained
 bytes/hash and every other input matched. Original snapshot kept;ONE preparation
-coordination correction, no source/fixture/native repair. Candidate99649 ACTIVE:
+coordination correction, no source/fixture/native repair. Candidate99649 TERMINAL
+FIRST PASS3/guardrestored/free. Post82197 strict failure retained: Unity added
+previously absent metadata for owned observer source. Separate artifact-postPASS:
+all18424 original protected inputs unchanged/exact3 MAIN/q match; valid32GUID
+owned import output only, MAIN metadata unchanged, no mutation/retry. Report
+completed-arrival-receipt-io retains strict+classification hashes. Diagnostic
+SHIPPEDd28770a25 (separate from46runtime fix count).
+ROOT new1002j freeze7621 ACTIVE in release source d28770a25; source/metadata frozen,
+no native build yet. Includes46runtime fixes+observer IO+frame-context diagnostics;
+prior i failedpeer preserved, prior h PASS independent. j helper scripts prepared
+in release Logs/competition-candidate1002j. Wait freeze terminal0 before build.
 CPU1536/reserve2048/450s/EditMode-nographics/filter CompletedArrivalReceiptIoTests3.
 MAIN Logs/completed-arrival-receipt-io1002/prepare.py:
 prepare exact3/snapshot Assets/TumbangPreso other hashes, post preservation.
