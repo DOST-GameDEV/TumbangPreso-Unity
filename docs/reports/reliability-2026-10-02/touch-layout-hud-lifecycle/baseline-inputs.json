@@ -1,0 +1,6 @@
+{
+  "Assets/TumbangPreso/Runtime/Input/TouchHud.cs": "b16d23fb8989f5cef2c887cc2c94067fb48f5458c74664cfa567242af88d46da",
+  "Assets/TumbangPreso/Runtime/UI/TumpTouchLayoutView.cs": "3624c735530604c7e42f5f59e101bd74ddc5ade01fc96807434738637e095300",
+  "Assets/TumbangPreso/Tests/PlayMode/TouchLayoutHudLifecycleTests.cs": "0568201af226daf183a85c8575168d7b76826616658d0c160f73216910b8a150",
+  "Assets/TumbangPreso/Tests/PlayMode/TouchLayoutHudLifecycleTests.cs.meta": "205e2b17418e66e1a948ffbe82e3702f498ace5689b5c3149cc02819ebcb441b"
+}
