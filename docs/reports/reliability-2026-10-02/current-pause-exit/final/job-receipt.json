@@ -1,0 +1,36 @@
+{
+  "job": {
+    "id": "23ad774ab4d74bd0bb8554ab9b8366cf",
+    "ownerPid": 21116,
+    "guardPid": null,
+    "unityPids": [],
+    "createdUtc": "2026-10-02T07:36:49Z",
+    "kind": "gpu",
+    "memoryMb": 2048,
+    "reserveMb": 2048,
+    "project": "c:\\users\\matth\\documents\\codex\\work\\tump-feedback-0930",
+    "library": "c:\\users\\matth\\documents\\codex\\work\\tump-feedback-0930\\library",
+    "profile": "current-pause-exit1002",
+    "prefHive": "software\\unity\\unityeditor\\bh studios\\tumbang preso",
+    "ports": [],
+    "worker": false,
+    "allowParallel": false,
+    "companyName": "BH Studios",
+    "productName": "Tumbang Preso"
+  },
+  "requestedUtc": "2026-10-02T07:36:49Z",
+  "status": "completed",
+  "exitCode": 0,
+  "admission": {
+    "availableMb": 8072,
+    "activeJobsBefore": 0,
+    "acquiredUtc": "2026-10-02T07:36:49Z"
+  },
+  "startedUtc": "2026-10-02T07:36:49Z",
+  "guardPid": 23688,
+  "endedUtc": "2026-10-02T07:37:36Z",
+  "guardTerminal": true,
+  "preservationCompleted": true,
+  "availableMbAtEnd": 8053,
+  "leaseHeld": false
+}
