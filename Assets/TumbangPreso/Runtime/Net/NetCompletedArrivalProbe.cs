@@ -20,6 +20,9 @@ namespace TumbangPreso.Net
             public bool passed, sawLive, originHumanSeats, admitted, hostStayedEnded = true;
             public bool recordHumanOrigins;
             public bool postJoinSpectator;
+            public bool coldActorsFrozen;
+            public bool[] actorRoundActive, actorParked, actorSprint;
+            public float[] actorMoveSquared;
             public int pid, matchEndedEvents, recordReadyEvents, beforeEndEvents, beforeRecordEvents;
             public int rounds, roundSeconds, winner;
             public ulong sceneBefore, sceneAfter;
@@ -146,7 +149,19 @@ namespace TumbangPreso.Net
             _receipt.sceneAfter = SceneManager.GetActiveScene().handle.GetRawData();
             bool same = board != null && board.IsVisible && _receipt.sceneAfter != _receipt.sceneBefore &&
                 _receipt.recordId == host.initialRecordId && _receipt.scores.SequenceEqual(host.scores);
-            if (same) Finish(true, null);
+            if (same)
+            {
+                var actors = Enumerable.Range(0, Balance.PlayerCount).Select(slot => GameServices.Round.PlayerAt(slot)).ToArray();
+                if (actors.Any(actor => actor == null)) { Finish(false, "Cold arrival did not install every actor."); return; }
+                _receipt.actorRoundActive = actors.Select(actor => actor.RoundActive).ToArray();
+                _receipt.actorParked = actors.Select(actor => actor.Intent.Parked).ToArray();
+                _receipt.actorSprint = actors.Select(actor => actor.Intent.Pressed(Verb.Sprint)).ToArray();
+                _receipt.actorMoveSquared = actors.Select(actor => actor.Intent.MoveAxis.sqrMagnitude).ToArray();
+                _receipt.coldActorsFrozen = !_receipt.actorRoundActive.Any(active => active) &&
+                    _receipt.actorParked.All(parked => parked) && !_receipt.actorSprint.Any(sprint => sprint) &&
+                    _receipt.actorMoveSquared.All(move => move == 0);
+                Finish(_receipt.coldActorsFrozen, _receipt.coldActorsFrozen ? null : "Cold arrival left an actor's gameplay input active.");
+            }
         }
 
         private async void Rejoin()

@@ -25,12 +25,15 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Verified remote7c3124886 on 2026-10-02. Root continuity runtime fixes36 published:
+Verified remote dd4712ca0; d9ddccaec current pause acceptance committed locally.
+Root continuity runtime fixes37 published:
 previous32 plus scorecard owner close84ddfc391 (native3/3,
 one canvas-lookup fixture correction) and RecordChoice focus57158d1db (native3/3,
 one normal-Start fixture correction), plus cold actor freeze12a2689ff (native3/3,
 one NUnit compatibility fixture repair), plus scorecard close focus7c3124886
-(native3/3, zero repairs). RecordChoice exact three source/test/meta
+(native3/3, zero repairs), plus root Settings focusdd4712ca0 (native3/3 after
+1 causal/2controls; ONE metadata-only repair from initial0 ignored run).
+RecordChoice exact three source/test/meta
 inputs and all1294 protected hashes retained. Diagnostic890656094 is separate.
 Incoming6dc1f065b malformed replay refusal merged without overlapping product hunks;
 contributor native3/3 evidence is separate. Sean SteadyEmber/protocol131 and Rafi
@@ -61,34 +64,39 @@ protected unchanged, PIDs23184/25400/26592 dead, no lease/tabs/servers. Sol loca
 handoff MAIN Logs/scorecard-focus1002/local-handoff.md (8D3B6417...5032E), cleanup-wrap.json.
 No remaining unpublished qualified agent source. Old ultra agent remains interrupted.
 
-ROOT Settings baseline44421 completed total0 (NOT accepted): malformed33-character
-new fixture GUID caused Unity to ignore it. ONE metadata-only repair fixed GUID,
-first XML/meta/frozen inputs preserved in qualification Logs/settings-decision-focus1002.
-Corrected ORIGINAL3 session12978 TERMINAL:2 controls PASS/1 causal KEEP EDITING
-inactive selection failure. Candidate3 now RUNNING34733, output final, profile settings-decision-focus1002,
-exclusive GPU2048/reserve2048/450s. Await candidate terminal+exact3 XML then protected-post; no additional repair. Do not weaken assertions; any second fixture/tool issue STOP this route
-unqualified. Root owns all further native jobs. CurrentPauseExitTests/meta still
-MAIN-only, changed to an arena-classified MINIMAL scene and asserts InMatch before
-leaving plus HOME pointer release; does not prove populated-map teardown.
+ROOT Settings dd4712ca0 published: initial44421 total0 invalid33-char new GUID,
+ONE metadata-only correction; corrected original12978=2 controls/1causal; final34733
+PASS3/3, all12518 protected unchanged, first/repaired manifests identical, all
+terminal/restored/no lease. Native inputs4 frozen; report settings-decision-focus.
+ROOT current Pause exit d9ddccaec committed locally:63868 PASS2/2 FIRST run,
+all12522 protected unchanged, terminal/restored/no lease. Actual LeaveMatch button
+and actual HOME load; starts arena-classified MINIMAL scene, deterministic Classic
+rules, pointer released, no deferred break advance >5s. No populated-map/transport
+claim. New fixture2/meta/report only; no additional product fix count.
 
-Owner instruction fulfilled: began wrap15:30, coherent reports/cleanup finished,
-root published qualified work then retired both. Root continues SOLO without
-replacement agents. One-time wrap heartbeat removed after completion.
+Both agents RETIRED after wrap15:30-15:33. Sol local handoff/cleanup in MAIN
+Logs/scorecard-focus1002; all qualified agent source published. No agent job handles
+remain. No replacements/resumes; old ultra interrupted. One-time heartbeat removed.
+Root continues SOLO, goal active.
 
-ROOT1002f artifact and retired Supernova evidence published1f4a8c290. ROOT owns
-settings KEEP EDITING/escape decision-close focus bug: TumpSettingsView.cs +
-TumpSettingsView.OwnerPainted.cs and NEW SettingsDecisionFocusTests/meta. Candidate
-is frozen four inputs in qualification Logs/settings-decision-focus1002/main-frozen.json;
-preparation script MAIN Logs/settings-decision-focus1002/prepare.py, ORIGINAL source
-from exact1f4a8c290. Copied and native running34733 after original3 causal reproduction; ONE metadata
-repair used. Exact four inputs stay frozen. Keep dirty values, preserve external live focus.
-NEW CurrentPauseExitTests/meta prepared MAIN only, not copied/native-run; actual
-current LeaveMatch callback->HOME plus >5s break cancellation check, two cases.
-Do not infer acceptance from these prepared tests. Root native follows agents. Existing exit4/hostloss6 checks validate clocks/API, not rendered HOME.
-Do not resume Supernova native/helpers: compile77152 failure then corrected52284
-450s setup timeout, no XML/PNG/cast proof. Qualification HeroHazards original
-1536AF restored; MAIN private5E7 unchanged, protected1535 matches. Report-only
-publication, no alpha source shipping. Preserve other private arms/Ultra/metas.
+NEXT ROOT coherent Windows1002g at newest published source including37 fixes and
+new opt-in actor observation in NetCompletedArrivalProbe/run_completed_arrival.py.
+Observer adds all4 actor RoundActive/Parked/Sprint/MoveAxis arrays and strict client
+receipt validation. Observer SOURCE NOT YET COMPILED/RUNTIME QUALIFIED; commit its
+exact2 paths with this checkpoint then freshfetch/incomingdiff/merge/push before
+release FF. New internal output, preserve release importer/meta/settings dirt.
+Freeze Assets/Packages/ProjectSettings, ONE build3072/reserve2048/600s, twelve scenes.
+Builder expectedtwo identity JSON changes only; strict false retained and separate
+artifact-classification receipt. Then ONE existing short1-round30s real two-Windows-
+peer scenario for NEW cold actor parking acceptance, not unchanged full8rounds.
+Old1002e49462 proved board/record/slot1 NONspectator, not actor state; preserve its
+original narrower contract. No physical-device/WAN/career settlement claim.
+
+Supernova native/helper route remains RETIRED: first77152 compile, corrected52284
+450s setup timeout, noXML/PNG/castproof; qualification original1536AF restored,
+MAIN private5E7 unchanged/unstaged. Evidence1f4a8c290, no alpha shipping/retry.
+Private arms/Ultra/protected2UI metas remain excluded. Main root source/diagnostic
+changes are exact scoped work only. TODO remains the sole work-status queue.
 
 ## Current frozen artifact and actual peers
 
