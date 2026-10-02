@@ -10,6 +10,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -17,6 +18,22 @@ import uuid
 import playerprefs_guard
 
 ROOT=Path(__file__).resolve().parents[1]
+PROJECT_IDENTITY_GUARD_VERSION=1
+
+def project_identity(root):
+    """Validation workers own their actual company's/product's prefs and save roots."""
+    settings=Path(root)/'ProjectSettings/ProjectSettings.asset'
+    if not settings.exists():return ('BH Studios','Tumbang Preso')
+    source=settings.read_text(encoding='utf-8-sig')
+    values=[]
+    for name in ('companyName','productName'):
+        match=re.search(r'^\s{2}'+name+r':\s*([^\r\n]*)$',source,re.MULTILINE)
+        if match is None:raise ValueError('Missing project '+name+'; cannot identify save/prefs scope')
+        value=match.group(1).strip()
+        if value.startswith('"'):value=json.loads(value)
+        elif value.startswith("'") and value.endswith("'"):value=value[1:-1].replace("''", "'")
+        values.append(playerprefs_guard.identity_component(value))
+    return tuple(values)
 
 
 def unity_executable(environment=None,platform=None):
@@ -35,7 +52,7 @@ def unity_executable(environment=None,platform=None):
     return Path("/opt/tump/unity/Editor/Unity")
 
 
-def player_profile(environment=None,platform=None):
+def player_profile(environment=None,platform=None,company='BH Studios',product='Tumbang Preso'):
     """Unity's persistentDataPath for company BH Studios, product Tumbang Preso, per OS.
 
     Windows `%USERPROFILE%/AppData/LocalLow`, macOS `~/Library/Application Support`,
@@ -44,10 +61,12 @@ def player_profile(environment=None,platform=None):
     """
     environment=os.environ if environment is None else environment
     platform=sys.platform if platform is None else platform
-    if platform.startswith("win"):return Path(environment["USERPROFILE"])/"AppData/LocalLow/BH Studios/Tumbang Preso"
-    if platform=="darwin":return Path.home()/"Library/Application Support/BH Studios/Tumbang Preso"
+    company=playerprefs_guard.identity_component(company)
+    product=playerprefs_guard.identity_component(product)
+    if platform.startswith("win"):return Path(environment["USERPROFILE"])/'AppData/LocalLow'/company/product
+    if platform=="darwin":return Path.home()/'Library/Application Support'/company/product
     config=environment.get("XDG_CONFIG_HOME") or str(Path.home()/".config")
-    return Path(config)/"unity3d/BH Studios/Tumbang Preso"
+    return Path(config)/'unity3d'/company/product
 
 
 def launch_command(unity,args,environment=None,platform=None,has_xvfb=None):
@@ -74,7 +93,9 @@ def launch_command(unity,args,environment=None,platform=None,has_xvfb=None):
 
 
 UNITY=unity_executable()
-PROFILE=player_profile()
+COMPANY,PRODUCT=project_identity(ROOT)
+PROFILE=player_profile(company=COMPANY,product=PRODUCT)
+EDITOR_PREFS_KEY=playerprefs_guard.editor_key(COMPANY,PRODUCT)
 
 
 def digest(path): return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -124,8 +145,9 @@ def run(args):
             manifest[str(relative)]=digest(source)
     (backup/"manifest.json").write_text(json.dumps(manifest,indent=2))
     (backup/"scope.json").write_text(json.dumps({"profileRoot":str(profile)},indent=2))
-    editor_prefs=playerprefs_guard.read_editor()
+    editor_prefs=playerprefs_guard.read_editor(EDITOR_PREFS_KEY)
     (backup/"editor-input-prefs.json").write_text(json.dumps(editor_prefs,indent=2))
+    (backup/'identity.json').write_text(json.dumps({'company':COMPANY,'product':PRODUCT,'editorPrefsKey':EDITOR_PREFS_KEY},indent=2))
     result=1
     try:
         result=subprocess.run(launch_command(UNITY,args),cwd=ROOT,
@@ -140,7 +162,7 @@ def run(args):
             shutil.copy2(backup/relative,destination)
             if digest(destination)!=expected:raise RuntimeError("Profile restore did not verify")
             restored+=1
-        playerprefs_guard.restore_editor(editor_prefs)
+        playerprefs_guard.restore_editor(editor_prefs,EDITOR_PREFS_KEY)
         print(f"Preserved {restored} existing profile files in {profile} and {len(editor_prefs)} shared Editor input preferences; snapshot {backup.name}",flush=True)
     return result
 
