@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 05:46:00Z" end-time="2026-10-02 05:46:01Z" duration="0.5706253">
+  <test-suite type="TestSuite" id="2522" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1244" result="Failed" site="Child" start-time="2026-10-02 05:46:00Z" end-time="2026-10-02 05:46:01Z" duration="0.570625" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2516" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1244" result="Failed" site="Child" start-time="2026-10-02 05:46:00Z" end-time="2026-10-02 05:46:01Z" duration="0.545185" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15972" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2517" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1244" result="Failed" site="Child" start-time="2026-10-02 05:46:00Z" end-time="2026-10-02 05:46:01Z" duration="0.528424" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2518" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1244" result="Failed" site="Child" start-time="2026-10-02 05:46:00Z" end-time="2026-10-02 05:46:01Z" duration="0.512019" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2270" name="SpectatorCameraLifetimeTests" fullname="TumbangPreso.PlayTests.SpectatorCameraLifetimeTests" classname="TumbangPreso.PlayTests.SpectatorCameraLifetimeTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-02 05:46:00Z" end-time="2026-10-02 05:46:01Z" duration="0.479427" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2271" name="DisabledSpectatorControllerCannotKeepRenderingOverThePlayer" fullname="TumbangPreso.PlayTests.SpectatorCameraLifetimeTests.DisabledSpectatorControllerCannotKeepRenderingOverThePlayer" methodname="DisabledSpectatorControllerCannotKeepRenderingOverThePlayer" classname="TumbangPreso.PlayTests.SpectatorCameraLifetimeTests" runstate="Runnable" seed="332954211" result="Failed" start-time="2026-10-02 05:46:00Z" end-time="2026-10-02 05:46:01Z" duration="0.384941" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Disabling the controller left its high-depth Unity Camera rendering.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SpectatorCameraLifetimeTests.DisabledSpectatorControllerCannotKeepRenderingOverThePlayer () [0x0001c] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\SpectatorCameraLifetimeTests.cs:79
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2273" name="PublicSeatChangesCompleteWatchSeatWatchWithOneCameraOwner" fullname="TumbangPreso.PlayTests.SpectatorCameraLifetimeTests.PublicSeatChangesCompleteWatchSeatWatchWithOneCameraOwner" methodname="PublicSeatChangesCompleteWatchSeatWatchWithOneCameraOwner" classname="TumbangPreso.PlayTests.SpectatorCameraLifetimeTests" runstate="Runnable" seed="643794477" result="Failed" start-time="2026-10-02 05:46:01Z" end-time="2026-10-02 05:46:01Z" duration="0.040985" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The retired spectator still owned a rendered view while seated.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SpectatorCameraLifetimeTests.PublicSeatChangesCompleteWatchSeatWatchWithOneCameraOwner () [0x00056] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\SpectatorCameraLifetimeTests.cs:102
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2272" name="WatchingAgainReusesAndEnablesTheExistingController" fullname="TumbangPreso.PlayTests.SpectatorCameraLifetimeTests.WatchingAgainReusesAndEnablesTheExistingController" methodname="WatchingAgainReusesAndEnablesTheExistingController" classname="TumbangPreso.PlayTests.SpectatorCameraLifetimeTests" runstate="Runnable" seed="1415920150" result="Failed" start-time="2026-10-02 05:46:01Z" end-time="2026-10-02 05:46:01Z" duration="0.037426" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The watcher was found but never re-enabled.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SpectatorCameraLifetimeTests.WatchingAgainReusesAndEnablesTheExistingController () [0x0002b] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\SpectatorCameraLifetimeTests.cs:90
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -191,12 +191,16 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
 - [x] WALLET-CACHE-RECOVERY-1002: corrupt primary uses valid same-owner backup;
   shipped4ac37e3dc viaa8b662f9e, native4/4; owner gate unchanged.
   [Evidence](reports/reliability-2026-10-02/wallet-cache-recovery/acceptance.md).
-- [ ] MENU-EXIT-LIFETIME-1002: retire persistent live round/intermission on exit;
-  root four-case baseline, one scene-availability setup repair, candidate unstaged.
+- [x] MENU-EXIT-LIFETIME-1002: retire persistent live round/intermission on exit;
+  shippedf163882cc native4/4 after three causal failures; one setup correction.
+  [Evidence](reports/reliability-2026-10-02/menu-exit-lifetime/README.md).
 - [ ] SPECTATOR-ROLE-CAMERA-1002: seat/watch transition camera lifetime;
   Astra preparing actual camera-state baseline, no authored view changes.
-- [ ] TOUCH-LAYOUT-NULL-CACHE-1002: verify/recover null saved touch collection;
-  Sol preparing local JsonUtility reload proof, no input-event framework.
+- [x] TOUCH-LAYOUT-NULL-CACHE-1002: investigation complete, no defect reproduced;
+  original4/4, no product patch or candidate rerun. Not counted as a shipped fix.
+  [Finding](reports/reliability-2026-10-02/touch-layout-investigation/finding.md).
+- [ ] HOST-LOSS-LIFETIME-1002: unexpected host loss retires old simulation before
+  empty lobby restores authority; root two-case baseline prepared, candidate unstaged.
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow

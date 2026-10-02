@@ -167,6 +167,8 @@ namespace TumbangPreso.Diagnostics
             sb.AppendLine($"  local slot    {NetAuthority.LocalSlot}");
             sb.AppendLine($"  local peer    {NetAuthority.LocalPeerId}");
             sb.AppendLine($"  referee       {NetAuthority.IsSeatlessReferee}");
+            if (MatchAbandon.Cause != SessionEndCause.None)
+                sb.AppendLine($"  session end   {MatchAbandon.Diagnostic}");
 
             // ⚠️ THE IDENTITY STATE, NOT THE IDENTITY. Whether sign-in succeeded is a diagnosis;
             // who signed in and with what is not this file's business.

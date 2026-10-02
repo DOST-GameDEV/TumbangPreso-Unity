@@ -279,6 +279,7 @@ namespace TumbangPreso.Net
                 return;
             }
 
+            UI.SceneFlow.RetireMatchSimulation();
             UI.SceneFlow.Networked = true;
             UI.SceneFlow.Go(UI.SceneFlow.MatchSetup);
         }

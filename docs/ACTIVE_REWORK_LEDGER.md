@@ -24,7 +24,7 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Verified remotea8b662f9e262408f33fab233874a574f25b618c2:25 qualified product
+Verified remotef163882cc9ea65d6b4fb2411f2781deb2e885a1b:26 qualified product
 fixes published. Latest customslots e8de37021 native6/6 (four causal failures),
 hub disconnect8acbdf683 native3/3 (three causal failures), zero repairs.
 Account save d01c62a68 native5/5 (four causal failures), zero repairs, published.
@@ -33,6 +33,8 @@ published via69e341491. Report explicitly separates failed joint Ready/Buffer te
 Force handover8d970fb06 native3/3 and wallet backup4ac37e3dc native4/4 published
 viaa8b662f9e; joint7 baseline5controls/2causal then7/7, zero repairs/1285protected.
 Actual completed-arrival peer evidence19697fea9 also published, exactscope below.
+Manual menu-exit f163882cc native4/4 (three causal failures/one ticking control),
+ONE scene-availability fixture correction, published. No renderedHOME claim.
 Queue39a3bc4305/5, reporteligibility2c3eea2298/8,
 completedarrival960560b7c12/12. Preserve all raw baseline/failed receipts.
 ACKcd4a41069 native41/41; rebindcancel1f2d2bcb9 native4/4; Core691/691 unchanged.
@@ -46,18 +48,26 @@ CPU workers are implemented but no workers/parallel native proof created.
 
 ## Active job and exact next action
 
-ROOT menu-exit lifecycle baseline61758 TERMINAL4SetUp failures: EditMode cannot
-assume Application.CanStreamedLevelBeLoaded(HOME). ONE fixture correction now
-baseline-repair93401 active/queued, qualified Logs/menu-exit-lifetime1002/
-baseline-repair, profile menu-exit-lifetime1002, serial CPU1536/reserve2048.
+ROOT menu-exit lifecycle initial61758 TERMINAL4SetUp failures: EditMode cannot
+assume Application.CanStreamedLevelBeLoaded(HOME). ONE fixture correction then
+baseline93401 TERMINAL3causal/1control, final97844 TERMINAL4/4; guards restored.
 Actual publicLeaveMatchToMainMenu invoked; existing duplicate-load latch suppresses
 load when available, exact expected scene-unavailable error when Editor cannot
 stream. Product assertions unchanged; no rendered HOME/physical operator claim.
-Expected3causal lifecycle failures/1real ticking control, thenonecandidatefinal4.
-Root owns SceneFlow.cs exactExit hunk (aftertelemetry/netStop End(false) break,
-Round.ResetForNewMatch, Match.ResetForNewMatch) +new MenuExitLifetimeTests.cs/.meta.
-MAIN frozenoriginal/candidate/test snapshots Logs/menu-exit-lifetime1002-inputs;
-do not mutate qualification inputs while93401 active. No further fixture repair.
+SceneFlow exactExit hunk publishedf163 (aftertelemetry/netStop End(false) break,
+Round.ResetForNewMatch, Match.ResetForNewMatch), new4case fixture/meta. No further
+fixture repair or unchanged rerun. Report menu-exit-lifetime records exactscope.
+
+ROOT next NEW host-loss lifetime unit MAIN ONLY: MatchRpc.HandleClientDisconnected
+otherwise routes emptylobby without cleanup; MatchAbandon revokes authority only
+until singleSceneLoaded.Clear, when persistentRound can tick/finish inlobby. Root
+owns SceneFlow sharedinternalRetireMatchSimulation (manualExit behavior unchanged),
+MatchRpc handlerbeforeonlineemptylobbyroute, TWO new MenuExitLifetimeTests cases:
+handler retires flags/keepsonlineentry+originalfailedRound diagnostic; authority
+restore cannot reviveoldclock. Original2source/candidate/test frozen in Logs/
+host-loss-lifetime1002-inputs. No native yet; afterAstra spectator3 terminal use
+originalbaselinefilteronlynew2 thenfinal2+existingmanual4 controls ifjustified.
+Do not mutate qualification while Astra1469protected inputs active.
 
 Native build88898 TERMINAL SUCCEEDED2432MB122s/12scenes, guard restored/lease
 released. ReleaseHEAD69e3414913c3bc582b9ce5b028239f65503e62d7, artifact1002e,
@@ -114,17 +124,23 @@ postjoin slot/spectator, no retained-seat recovery claim. Diagnostic commit066bb
 published separately, zero product-count inflation. No actual player launched yet.
 After successful build root finalize frozen receipt then tools/run_completed_arrival
 with --source-commit/--runtime-sha/--build-receipt, fresh Logs output,120sec ceiling.
-Sol rebind enabled-state and Wallet backup4 completed/published. Now investigating
-TouchLayoutStore.cs null Tweaks reload +NEW JSON fixture, MAIN ONLY until native
-JsonUtility causal proof; no patch merelyfromuncertainparsebehavior. Preserve
-touch design/keys/schema and revision/cache/prefs, no input-event infrastructure.
+Sol rebind enabled-state/Wallet backup4 published. Touch originalproof44506
+TERMINAL4/4: suspectednull/missing collection crash NOTreproduced, SOURCEUNCHANGED,
+1289protected unchanged/guardsrestored. Newfixture/meta retiredbyte-for-byte in
+main+qualification, no originaltestremoved, no candidate/repair/repeat. Report
+touch-layout-investigation is evidenceonly, NOTnewfix. Sol read-only hostloss
+ordering critique then bounded independent persistence issue if justified.
 
 Astraxhigh hub disconnect/force handover3 completed/published; ReadyGate/Emote
 candidates pendingwithretiredfixtures. Now spectator camera-role lifetime:
 SpectatorCamera.cs OnDisable camera-off +MatchInstaller.cs reuse/enable whenwatching,
-NEW publicRebindLocalSeat/camera-state fixture; no raw-keyframework/authoredcamera
-changes. Inspect SpectatorDirector enabled-camera guard beforeclaimingthirdhunk.
-MAIN ONLY no native while rootmenu-exit4. Exact ownership announced, not yet qualified.
+NEW publicRebindLocalSeat/camera-state3 PlayMode fixture; no raw-keyframework/
+authoredcamera changes. SpectatorDirector thirdhunk deliberately excluded.
+Baseline12358 launchedafterTouch terminal/prepexit0, GPU/DX11batch960x540,
+no-nographics/no-quit, profile spectator-lifetime1002, Logs/spectator-lifetime1002/
+baseline. FOUR inputs/1469protected. It nowhasterminalguardreceipt, Astra reviewing
+XML beforecandidate; do not assume success/counts. One pre-tool-envelope syntax
+correction happened before preparation/native, no source/fixture retry.
 Sean contributor owns SteadyEmber ownthrow/manualretrieval; preserve reservations.
 Two authorized
 current-chat agents; oldSolultra INTERRUPTED, never wake. FAST control unavailable,

@@ -1,0 +1,20 @@
+{
+  "sourceCommit": "a8b662f9e262408f33fab233874a574f25b618c2",
+  "expectedCases": 4,
+  "testFilter": "TumbangPreso.Tests.TouchLayoutRecoveryTests",
+  "status": "Proof fixture only; no product edit until actual JsonUtility reload reproduces",
+  "inputs": [
+    {
+      "name": "TouchLayoutRecoveryTests.cs",
+      "sha256": "35AC0B694CDA0670B4B6A43589B817DF2AE65AFBABFFA0E2CD680BEE99002354"
+    },
+    {
+      "name": "TouchLayoutRecoveryTests.cs.meta",
+      "sha256": "C50980F36004EC704E6967DD970AF39B4F41FF5F15AAEE3910D31E970553CD99"
+    },
+    {
+      "name": "TouchLayoutStore.original.cs",
+      "sha256": "14C8E77E112DA939D4BC00277D9675C0B8CBE0A64AC21A9FC2FBE4BBC4E318CE"
+    }
+  ]
+}
