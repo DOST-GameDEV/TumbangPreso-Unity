@@ -414,9 +414,15 @@ namespace TumbangPreso
         /// such beat, and charging one on the first frame of a round is the opening the game is
         /// tuned around.
         /// </summary>
-        public void NotifyEquipped(Slipper what)
+        public void NotifyEquipped(Slipper what, bool resetPickupLock = false)
         {
-            if (Held == what && what != null) return;
+            if (Held == what && what != null)
+            {
+                // A round handover can reuse the same shoe just retrieved. Repeated
+                // network snapshots remain idempotent and preserve a live pickup lock.
+                if (resetPickupLock) _throwLockLeft = 0.0f;
+                return;
+            }
 
             Diagnostics.NetThrowProbe.TraceHoldingWrite(_motor,what,"equipped");
             Held = what;

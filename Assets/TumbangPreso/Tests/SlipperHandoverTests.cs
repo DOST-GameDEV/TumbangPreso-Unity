@@ -34,6 +34,43 @@ namespace TumbangPreso.Tests
             Object.DestroyImmediate(_root);
             typeof(GameServices).GetProperty("Round").GetSetMethod(true).Invoke(null,new object[]{_oldRound});NetAuthority.Provider=_provider;
         }
+        [TestCase("round-handover", true)]
+        [TestCase("duplicate-snapshot", false)]
+        [TestCase("duplicate-pickup", false)]
+        public void OnlyForcedRoundHandoverClearsTheSameShoesPickupLock(string route, bool clearsLock)
+        {
+            var originalAudio=GameServices.Audio;
+            var originalStats=GameServices.Stats;
+            typeof(GameServices).GetProperty("Audio").SetValue(null,null);
+            typeof(GameServices).GetProperty("Stats").SetValue(null,null);
+            try
+            {
+                var player=_players[1];var shoe=_shoes[1];var carrier=player.GetComponent<Carrier>();
+                Assert.IsTrue(shoe.HostGrab(player),"The fixture must make a real pickup first.");
+                float pickupLock=carrier.ThrowLockLeft;
+                Assert.Greater(pickupLock,0,"The actual pickup did not establish its throw lock.");
+                if(route=="round-handover")
+                {
+                    var runner=_root.AddComponent<SliceRunner>();runner.AutoStart=false;
+                    runner.Seats=_players;runner.Slippers=_shoes;
+                    typeof(SliceRunner).GetMethod("EquipOwnedSlippers",Private).Invoke(runner,new object[]{0});
+                }
+                else if(route=="duplicate-snapshot")
+                    shoe.ApplySnapshotState(SlipperState.Held,player,shoe.transform.position,
+                        shoe.transform.rotation,Vector3.zero,0,SlipperAffinity.Normal,-1);
+                else carrier.NotifyHolding(shoe);
+                Assert.AreSame(shoe,carrier.Held);
+                Assert.AreSame(player,shoe.Holder);
+                Assert.IsTrue(player.HoldingSlipper);
+                Assert.AreEqual(clearsLock?0:pickupLock,carrier.ThrowLockLeft,
+                    "Only the explicit forced handover may retire the existing pickup delay.");
+            }
+            finally
+            {
+                typeof(GameServices).GetProperty("Audio").SetValue(null,originalAudio);
+                typeof(GameServices).GetProperty("Stats").SetValue(null,originalStats);
+            }
+        }
         [Test] public void ForceEquippingAnotherShoeReleasesTheDisplacedRelationship()
         {
             // Exercise displacement after an explicit ownership reassignment.

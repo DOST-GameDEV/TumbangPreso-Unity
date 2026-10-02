@@ -812,7 +812,7 @@ namespace TumbangPreso
             who.HoldingSlipper = true;
             _velocity = Vector3.zero;
 
-            who.GetComponent<Carrier>()?.NotifyEquipped(this);
+            who.GetComponent<Carrier>()?.NotifyEquipped(this, resetPickupLock: true);
             return true;
         }
 
