@@ -1,0 +1,31 @@
+{
+  "preparedAt": "2026-10-02T03:22:00.1240784Z",
+  "baseline": {
+    "filter": "TumbangPreso.Tests.RecentPlayerActionTests.OfflineRecentActionNeverClaimsDelivery",
+    "expectedCases": 2,
+    "mechanism": "Actual native AddRecentPlayer and ReportRecentPlayer onClick, dormant offline account, real service guard refusals; original UI claims success immediately."
+  },
+  "final": {
+    "filter": "TumbangPreso.Tests.RecentPlayerActionTests;TumbangPreso.Tests.CareerReportAcknowledgementTests;TumbangPreso.Tests.CareerAndCloudCodeTests.SocialRequest.*",
+    "expectedCases": 41,
+    "ui": 6,
+    "career": 22,
+    "social": 13
+  },
+  "dispatchBoundaries": [
+    "Career public API selected only for blank subjects; other report cases inject Task<string> into private dispatch seam.",
+    "Social public RequestAsync selected only for offline, guest, self, blocked or busy guards; response cases call private adoption/completion helpers.",
+    "UI offline buttons use actual refusing APIs; remaining four cases invoke actual completion helper with TaskCompletionSource<bool>."
+  ],
+  "excludedClaims": [
+    "SDK/live endpoint delivery",
+    "actual friend or report submission",
+    "physical input",
+    "layout rendering",
+    "parallel Editors"
+  ],
+  "protectedInputCount": 13,
+  "fixtureRepairBudget": 1,
+  "fixtureRepairsUsed": 0,
+  "awaitingForeignUnity": true
+}

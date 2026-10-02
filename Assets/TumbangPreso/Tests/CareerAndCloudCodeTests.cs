@@ -661,6 +661,125 @@ namespace TumbangPreso.Tests
             }
         }
 
+        private sealed class SocialAckFixture : System.IDisposable
+        {
+            internal const System.Reflection.BindingFlags Hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            internal readonly TumbangPreso.Net.SocialStore Store;
+            private readonly GameObject _accountRoot, _socialRoot;
+            private readonly TumbangPreso.Net.PlayerAccount _account;
+            private readonly TumbangPreso.Net.PlayerAccount _previousAccount = TumbangPreso.GameServices.Account;
+            private readonly TumbangPreso.Net.SocialStore _previousSocial = TumbangPreso.Net.SocialStore.Instance;
+
+            internal SocialAckFixture(bool signedIn = false, bool guest = false)
+            {
+                Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+                Assert.IsFalse(TumbangPreso.Net.NetIdentity.IsOnline, "Acknowledgement fixtures never initialize a service session.");
+                _accountRoot = new GameObject("Dormant social acknowledgement account"); _accountRoot.SetActive(false);
+                _account = _accountRoot.AddComponent<TumbangPreso.Net.PlayerAccount>();
+                SetOwner("ack-owner-a");
+                typeof(TumbangPreso.Net.PlayerAccount).GetProperty("IsSignedIn").SetValue(_account, signedIn);
+                typeof(TumbangPreso.Net.PlayerAccount).GetProperty("IsGuest").SetValue(_account, guest);
+                typeof(TumbangPreso.GameServices).GetProperty("Account").SetValue(null, _account);
+                _socialRoot = new GameObject("Dormant social acknowledgement store"); _socialRoot.SetActive(false);
+                Store = _socialRoot.AddComponent<TumbangPreso.Net.SocialStore>();
+                _ = Store.List; // Stamp the current local owner without calling an endpoint.
+            }
+
+            internal void SetOwner(string id) => typeof(TumbangPreso.Net.PlayerAccount).GetField("_profile", Hidden)
+                .SetValue(_account, new AccountProfile { PlayerId = id });
+
+            internal object Invoke(string name, params object[] arguments)
+            {
+                var method = typeof(TumbangPreso.Net.SocialStore).GetMethod(name, Hidden);
+                Assert.IsNotNull(method, "SocialStore must expose its current-owner request acknowledgement path.");
+                return method.Invoke(Store, arguments);
+            }
+
+            public void Dispose()
+            {
+                Object.DestroyImmediate(_socialRoot); Object.DestroyImmediate(_accountRoot);
+                typeof(TumbangPreso.GameServices).GetProperty("Account").SetValue(null, _previousAccount);
+                typeof(TumbangPreso.Net.SocialStore).GetProperty("Instance").SetValue(null, _previousSocial);
+            }
+        }
+
+        [TestCase("outgoing")]
+        [TestCase("friend")]
+        [TestCase("missing")]
+        public void SocialRequestAcknowledgementNeedsItsTargetInAnAcceptedReply(string outcome)
+        {
+            using (var fixture = new SocialAckFixture())
+            {
+                var list = new SocialList();
+                if (outcome == "outgoing") list.Outgoing.Add(new FriendRef { PlayerId = "ack-target" });
+                if (outcome == "friend") list.Friends.Add(new FriendRef { PlayerId = "ack-target" });
+                string body = JsonUtility.ToJson(list);
+                string reply = "{\"list\":\"" + body.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"}";
+                object adoption = fixture.Invoke("Adopt", "ack-owner-a", reply);
+                Assert.IsInstanceOf<bool>(adoption, "List adoption must report whether this response was accepted.");
+                bool confirmed = (bool)fixture.Invoke("CompleteRequest", "ack-owner-a", "ack-target", "TARGET#4417", (bool)adoption);
+                Assert.AreEqual(outcome != "missing", confirmed);
+                Assert.AreEqual(outcome != "missing" ? "REQUEST SENT TO TARGET#4417." : "REQUEST COULD NOT BE CONFIRMED. TRY AGAIN WHEN ONLINE.", fixture.Store.SearchStatus);
+            }
+        }
+
+        [TestCase(false, false)]
+        [TestCase(true, true)]
+        public void SocialRequestAcknowledgementCannotUseACachedRowOrAnotherOwnersReply(bool changeOwner, bool acceptedReply)
+        {
+            using (var fixture = new SocialAckFixture())
+            {
+                if (changeOwner) fixture.SetOwner("ack-owner-b");
+                fixture.Store.List.Outgoing.Add(new FriendRef { PlayerId = "ack-target" });
+                typeof(TumbangPreso.Net.SocialStore).GetProperty("SearchStatus").SetValue(fixture.Store, "CURRENT OWNER SEARCH");
+                bool confirmed = (bool)fixture.Invoke("CompleteRequest", "ack-owner-a", "ack-target", "TARGET#4417", acceptedReply);
+                Assert.IsFalse(confirmed, "A cached row or stale owner's answer was treated as this attempt's acknowledgement.");
+                Assert.AreEqual(changeOwner ? "CURRENT OWNER SEARCH" : "REQUEST COULD NOT BE CONFIRMED. TRY AGAIN WHEN ONLINE.", fixture.Store.SearchStatus);
+            }
+        }
+
+        [TestCase("offline")]
+        [TestCase("guest")]
+        [TestCase("self")]
+        [TestCase("blocked")]
+        [TestCase("busy")]
+        public async System.Threading.Tasks.Task SocialRequestAsyncRefusesOfflineLocalAndBusyActionsWithoutDispatch(string refusal)
+        {
+            using (var fixture = new SocialAckFixture(signedIn: refusal != "offline", guest: refusal == "guest"))
+            {
+                string target = refusal == "self" ? "ack-owner-a" : "ack-target";
+                if (refusal == "blocked") fixture.Store.List.Blocked.Add(target);
+                if (refusal == "busy") typeof(TumbangPreso.Net.SocialStore).GetField("_writing", SocialAckFixture.Hidden).SetValue(fixture.Store, true);
+                var method = typeof(TumbangPreso.Net.SocialStore).GetMethod("RequestAsync");
+                Assert.IsNotNull(method, "Callers need an awaitable acknowledgement rather than async void dispatch.");
+                bool confirmed = await (System.Threading.Tasks.Task<bool>)method.Invoke(fixture.Store, new object[] { target, "TARGET#4417" });
+                Assert.IsFalse(confirmed);
+                string expected = refusal == "self" ? "THAT IS YOU."
+                    : refusal == "blocked" ? "UNBLOCK THEM FIRST."
+                    : refusal == "busy" ? "A FRIEND UPDATE IS STILL IN PROGRESS. TRY AGAIN."
+                    : "SIGN IN TO ADD FRIENDS.";
+                Assert.AreEqual(expected, fixture.Store.SearchStatus);
+                Assert.IsFalse((bool)typeof(TumbangPreso.Net.SocialStore).GetField("_loading", SocialAckFixture.Hidden).GetValue(fixture.Store));
+                Assert.AreEqual(refusal == "busy", (bool)typeof(TumbangPreso.Net.SocialStore).GetField("_writing", SocialAckFixture.Hidden).GetValue(fixture.Store));
+            }
+        }
+
+        [TestCase(null)]
+        [TestCase("{}")]
+        [TestCase("{\"list\":\"null\"}")]
+        public void SocialRequestInvalidReplyCannotEraseOrConfirmTheExistingCache(string reply)
+        {
+            using (var fixture = new SocialAckFixture())
+            {
+                fixture.Store.List.Outgoing.Add(new FriendRef { PlayerId = "ack-target" });
+                object adoption = fixture.Invoke("Adopt", "ack-owner-a", reply);
+                Assert.IsInstanceOf<bool>(adoption);
+                Assert.IsFalse((bool)adoption);
+                Assert.AreEqual("ack-target", fixture.Store.List.Outgoing.Single().PlayerId, "An invalid reply erased the known social cache.");
+                Assert.IsFalse((bool)fixture.Invoke("CompleteRequest", "ack-owner-a", "ack-target", "TARGET#4417", (bool)adoption));
+            }
+        }
+
         private const string AssetsRoot = "Assets/TumbangPreso";
         private const string CloudCodeRoot = "ugs/cloud-code";
 

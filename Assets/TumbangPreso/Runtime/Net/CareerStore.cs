@@ -317,26 +317,49 @@ namespace TumbangPreso.Net
         /// nine hundred passive-defence ticks in it costs four calls.
         /// </summary>
         /// <summary>
-        /// File a report against another player.
-        ///
-        /// ⚠️ IT IS FIRE AND FORGET AND IT SAYS SO. The player has already been told REPORTED
-        /// by the button that called this; an error toast for a report that failed to upload would
-        /// be a second sentence about somebody else's behaviour on a screen that should be about
-        /// the match that just finished. The endpoint rate-limits at ten a day.
+        /// Compatibility entry for callers that do not display delivery feedback.
+        /// Result screens await ReportAsync before acknowledging delivery.
         /// </summary>
         public async void Report(string playerId, ReportReason reason)
-        {
-            if (string.IsNullOrWhiteSpace(playerId)) return;
-            if (!(GameServices.Account?.IsSignedIn ?? false)) return;
+            => await ReportAsync(playerId, reason);
 
+        /// <summary>True only after the report endpoint acknowledges the current account.</summary>
+        public Task<bool> ReportAsync(string playerId, ReportReason reason)
+        {
+            if (string.IsNullOrWhiteSpace(playerId)) return Task.FromResult(false);
+            var account = GameServices.Account;
+            return ReportForOwnerAsync(account, account?.PlayerId,
+                () => CloudCode.CallAsync(ScriptName,
+                    new { action = "report", playerId = playerId, reason = (int)reason }));
+        }
+
+        private bool CanReportFor(PlayerAccount account, string owner)
+            => this != null && account != null && ReferenceEquals(GameServices.Account, account)
+               && account.IsSignedIn && !account.IsGuest && !string.IsNullOrWhiteSpace(owner)
+               && account.PlayerId == owner;
+
+        private async Task<bool> ReportForOwnerAsync(PlayerAccount account, string owner,
+                                                    Func<Task<string>> dispatch)
+        {
+            // Guests retain the primary account's authentication session. Their
+            // report must never use that credential, even if IsSignedIn is still true.
+            if (!CanReportFor(account, owner)) return false;
             try
             {
-                await CloudCode.CallAsync(ScriptName,
-                    new { action = "report", playerId = playerId, reason = (int)reason });
+                string output = await dispatch();
+                if (!CanReportFor(account, owner)) return false;
+                // The existing endpoint returns applied:true only after recording
+                // the report. A completed request without that acknowledgement is not success.
+                if (string.IsNullOrWhiteSpace(output)) return false;
+                var answer = Newtonsoft.Json.Linq.JToken.Parse(output) as Newtonsoft.Json.Linq.JObject;
+                var applied = answer?["applied"];
+                return applied?.Type == Newtonsoft.Json.Linq.JTokenType.Boolean && (bool)applied;
             }
             catch (Exception e)
             {
-                Debug.LogWarning($"[Career] report not delivered: {e.Message}");
+                if (CanReportFor(account, owner))
+                    Debug.LogWarning($"[Career] report not delivered: {e.Message}");
+                return false;
             }
         }
 

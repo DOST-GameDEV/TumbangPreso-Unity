@@ -132,8 +132,44 @@ namespace TumbangPreso.UI
                 string id=person.PlayerId,handle=person.Handle;
                 var row=OwnerUiLayout.Rect(_nativePeople,"PlayerActions");row.gameObject.AddComponent<LayoutElement>().preferredHeight=72;
                 Button add=null,report=null;
-                add=OwnerTextAction.Create(row,"AddRecentPlayer","ADD FRIEND",()=>{social.Request(id,handle);add.interactable=false;add.GetComponentInChildren<Text>().text="REQUEST SENT";},0,0,350,72,29);
-                report=OwnerTextAction.Create(row,"ReportRecentPlayer","REPORT",()=>{GameServices.Career?.Report(id,ReportReason.Other);report.interactable=false;report.GetComponentInChildren<Text>().text="REPORTED";},432,0,310,72,29);
+                var friendStatus=RecentActionStatus("FriendRequestStatus");
+                var reportStatus=RecentActionStatus("ReportRequestStatus");
+                add=OwnerTextAction.Create(row,"AddRecentPlayer","ADD FRIEND",()=>{_ = CompleteRecentAction(add,friendStatus,()=>social.RequestAsync(id,handle),"SENDING...","REQUEST SENT",()=>social.SearchStatus);},0,0,350,72,29);
+                report=OwnerTextAction.Create(row,"ReportRecentPlayer","REPORT",()=>{_ = CompleteRecentAction(report,reportStatus,()=>GameServices.Career!=null?GameServices.Career.ReportAsync(id,ReportReason.Other):System.Threading.Tasks.Task.FromResult(false),"SENDING...","REPORTED",()=>GameServices.Account!=null && GameServices.Account.IsSignedIn && !GameServices.Account.IsGuest?"Report was not sent. Try again.":"Sign in to report players.");},432,0,310,72,29);
+            }
+        }
+
+        private Text RecentActionStatus(string name)
+        {
+            var status=OwnerUiLayout.Text(_nativePeople,name,"",27);
+            status.gameObject.AddComponent<TumpParagraph>();
+            status.gameObject.SetActive(false);
+            return status;
+        }
+
+        private static async System.Threading.Tasks.Task CompleteRecentAction(Button button,Text feedback,
+            System.Func<System.Threading.Tasks.Task<bool>> submit,string pending,string success,System.Func<string> failureReason)
+        {
+            if(button==null || !button.interactable)return;
+            string owner=Net.CareerStore.LocalPlayerId;
+            var label=button.GetComponentInChildren<Text>();
+            string original=label!=null?label.text:"";
+            button.interactable=false;
+            if(label!=null)label.text=pending;
+            if(feedback!=null)feedback.gameObject.SetActive(false);
+            bool accepted=false;
+            try{accepted=await submit();}
+            catch(System.Exception error){Debug.LogWarning("[RecentPlayer] Submission failed: "+error.Message);}
+            if(button==null)return;
+            bool current=owner==Net.CareerStore.LocalPlayerId;
+            accepted &= current;
+            button.interactable=!accepted;
+            if(label!=null)label.text=accepted?success:original;
+            if(feedback!=null)
+            {
+                string reason=!accepted?(current?failureReason?.Invoke():"Account changed. Try again."):"";
+                feedback.text=!accepted && string.IsNullOrWhiteSpace(reason)?"Could not send. Try again.":reason;
+                feedback.gameObject.SetActive(!accepted);
             }
         }
     }

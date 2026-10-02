@@ -1,0 +1,54 @@
+[
+  {
+    "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+    "sha256": "B486B33EE42C6D3CC6FB32582323AFD5F4541AF662253DC24C420A99C0047A1A"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs",
+    "sha256": "E56838AB85B1D88E916F5F8DFAF1208F23F3FDD5A36DA88BB1ADED562137923F"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+    "sha256": "D3C04B1BD70D334A92708047820E3629ADA8E2E08908A961EEEF253C70B51CDC"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/UI/PlayerHub.cs",
+    "sha256": "6EB745C89A949D9DEA7BE49AD7C7C336DAA78F1430FCB5B243BDF5E301613AFC"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/UI/MatchResult.cs",
+    "sha256": "640EB354BD3003B7453BEF1B5C9D3B51A1E63E41832F72B900E624EFAE04E325"
+  },
+  {
+    "path": "Assets/TumbangPreso/Runtime/Abilities/HeroHazards.cs",
+    "sha256": "1536AF5D76A4FE5753C74CA92BCA42FDF9F406937089C410EE07BA7EC501F14E"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Models/RosterArms/nemu_left.asset",
+    "sha256": "B82F2AF7DBA5E243974FEB1AF3D0E55A3637AF34C59CF44444C629E2E377AE1F"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Models/RosterArms/nemu_right.asset",
+    "sha256": "FEE1241DC7D1F00CDAA1B84664E2F5637A6ECD1A52C864DAFA8C6AE9EC7DABF4"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Models/RosterArms/rafi_left.asset",
+    "sha256": "FF64F80B90E5FF93A1AF5E498D71259154D25528137645360B9B5777A1DB6908"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/Models/RosterArms/rafi_right.asset",
+    "sha256": "6306184B1A5506DE4F8BABAA63011B9843F112B0DC53817545DB90C036A291EC"
+  },
+  {
+    "path": "ProjectSettings/QualitySettings.asset",
+    "sha256": "BBF257FF04E9C3B68401B02542F17540BDE6A828692913ADC89CBE56493E0702"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/composition-redesign/home-court.png.meta",
+    "sha256": "803347800E98B99A0867C1ECDED886C0FBE9B34708F3C096482F5D3E29001143"
+  },
+  {
+    "path": "Assets/TumbangPreso/Resources/UI/composition-redesign/loading-street.png.meta",
+    "sha256": "FF76AB3E2FEC0BD39DF869AA2C694A8E100A1701944F7102F0050DD1C8A9C190"
+  }
+]

@@ -224,21 +224,25 @@ namespace TumbangPreso.Net
         /// resurrect a friendship that was ended or drop one that was made. **The server wins,
         /// every time.**
         /// </summary>
-        private void Adopt(string requestedOwner, string json)
+        private bool Adopt(string requestedOwner, string json)
         {
-            if (this == null || requestedOwner != CareerStore.LocalPlayerId || string.IsNullOrEmpty(json)) return;
+            if (this == null || requestedOwner != CareerStore.LocalPlayerId || string.IsNullOrEmpty(json)) return false;
 
             try
             {
                 var envelope = JsonUtility.FromJson<ListEnvelope>(json);
-                if (envelope == null || string.IsNullOrEmpty(envelope.list)) return;
+                if (envelope == null || string.IsNullOrEmpty(envelope.list)) return false;
 
-                _cache.List = SocialRules.Normalise(JsonUtility.FromJson<SocialList>(envelope.list));
+                var list = JsonUtility.FromJson<SocialList>(envelope.list);
+                if (list == null) return false;
+                _cache.List = SocialRules.Normalise(list);
                 Save();
+                return true;
             }
             catch (Exception e)
             {
                 Debug.LogWarning($"[Social] could not read the endpoint's list: {e.Message}");
+                return false;
             }
         }
 
@@ -256,16 +260,60 @@ namespace TumbangPreso.Net
         /// WhyCannotRequest`), and the endpoint refuses again against the RECIPIENT's document,
         /// which is the only side that can see whether they blocked you.
         /// </summary>
-        public async void Request(string playerId, string theirHandle)
+        public async void Request(string playerId, string theirHandle) => await RequestAsync(playerId, theirHandle);
+
+        /// <summary>True only when this owner's service reply confirms an outgoing row or friendship.</summary>
+        public async Task<bool> RequestAsync(string playerId, string theirHandle)
         {
-            if (!SocialRules.CanRequest(List, CareerStore.LocalPlayerId, playerId)) return;
-            await Post(new
+            if (this == null) return false;
+            string requestedOwner = CareerStore.LocalPlayerId;
+            RetireOtherOwnersCache();
+            if (this == null || requestedOwner != CareerStore.LocalPlayerId) return false;
+            if (!CanUseService)
+            {
+                SearchStatus = "SIGN IN TO ADD FRIENDS.";
+                Changed?.Invoke();
+                return false;
+            }
+            var list = List;
+            if (this == null || requestedOwner != CareerStore.LocalPlayerId) return false;
+            string refusal = SocialRules.WhyCannotRequest(list, requestedOwner, playerId);
+            if (!string.IsNullOrEmpty(refusal))
+            {
+                SearchStatus = refusal.ToUpperInvariant() + ".";
+                Changed?.Invoke();
+                return false;
+            }
+            if (_writing)
+            {
+                SearchStatus = "A FRIEND UPDATE IS STILL IN PROGRESS. TRY AGAIN.";
+                Changed?.Invoke();
+                return false;
+            }
+            SearchStatus = "SENDING REQUEST...";
+            Changed?.Invoke();
+            if (this == null || requestedOwner != CareerStore.LocalPlayerId) return false;
+            bool acceptedReply = await Post(new
             {
                 action = "request",
                 playerId,
                 handle = MyHandle,
                 theirHandle = theirHandle ?? "",
             });
+            return CompleteRequest(requestedOwner, playerId, theirHandle, acceptedReply);
+        }
+
+        private bool CompleteRequest(string requestedOwner, string playerId, string theirHandle, bool acceptedReply)
+        {
+            if (this == null || requestedOwner != CareerStore.LocalPlayerId) return false;
+            // A previously cached row is not an acknowledgement of this attempt.
+            bool confirmed = acceptedReply && _cache.OwnerId == requestedOwner &&
+                (SocialRules.IsFriend(_cache.List, playerId) || SocialRules.Find(_cache.List?.Outgoing, playerId) != null);
+            SearchStatus = confirmed
+                ? "REQUEST SENT TO " + (theirHandle ?? "").ToUpperInvariant() + "."
+                : "REQUEST COULD NOT BE CONFIRMED. TRY AGAIN WHEN ONLINE.";
+            Changed?.Invoke();
+            return confirmed;
         }
 
         /// <summary>
@@ -320,7 +368,7 @@ namespace TumbangPreso.Net
                 return;
             }
 
-            SearchStatus = "REQUEST SENT TO " + found.handle.ToUpperInvariant() + ".";
+            SearchStatus = "SENDING REQUEST TO " + found.handle.ToUpperInvariant() + "...";
             Changed?.Invoke();
             Request(found.playerId, found.handle);
         }
@@ -345,22 +393,23 @@ namespace TumbangPreso.Net
         /// and one place that swallows a failure. Six copies of a try/catch is six chances for one
         /// of them to leave the local list ahead of the server's.
         /// </summary>
-        private async Task Post(object parameters)
+        private async Task<bool> Post(object parameters)
         {
+            string requestedOwner = CareerStore.LocalPlayerId;
             RetireOtherOwnersCache();
+            if (this == null || requestedOwner != CareerStore.LocalPlayerId) return false;
             if (!CanUseService)
             {
                 SearchStatus = "SIGN IN TO MANAGE FRIENDS.";
                 Changed?.Invoke();
-                return;
+                return false;
             }
-            if (_writing) return;
-            string requestedOwner = CareerStore.LocalPlayerId;
+            if (_writing) return false;
             _writing = true;
 
             try
             {
-                Adopt(requestedOwner, await CloudCode.CallAsync(ScriptName, parameters));
+                return Adopt(requestedOwner, await CloudCode.CallAsync(ScriptName, parameters));
             }
             catch (Exception e)
             {
@@ -370,6 +419,7 @@ namespace TumbangPreso.Net
                 // no such thing as a local one. Showing it as done and having it vanish on the
                 // next load is worse than the press appearing not to work.
                 Debug.LogWarning($"[Social] write failed: {e.Message}");
+                return false;
             }
             finally
             {

@@ -1,0 +1,11 @@
+{
+  "baselineFilter": "TumbangPreso.Tests.RecentPlayerActionTests.OfflineRecentActionNeverClaimsDelivery",
+  "baselineExpected": 2,
+  "finalFilter": "TumbangPreso.Tests.RecentPlayerActionTests;TumbangPreso.Tests.CareerReportAcknowledgementTests;TumbangPreso.Tests.CareerAndCloudCodeTests.SocialRequest.*",
+  "finalExpected": 41,
+  "uiCases": 6,
+  "careerCases": 22,
+  "socialCases": 13,
+  "mode": "EditMode",
+  "liveDispatchAllowed": false
+}
