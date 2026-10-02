@@ -175,16 +175,18 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   shippedd01c62a68 via7b36c1e63, candidate5/5 after four native failures.
   [Evidence](reports/reliability-2026-10-02/account-save-owner/README.md).
 - [ ] READY-CHAT-INTENT-1002: typing must not create a manual ready vote;
-  candidate unqualified after bounded fixture failures; failed fixtures retired.
+  committed3e91f02b0; new real PlayMode joint10/10 after four causal failures,
+  pendingpublication. Old Editor failures preserved/retired.
   [Limits](reports/reliability-2026-10-02/ready-chat-focus/README.md).
 - [x] REBIND-ACTION-STATE-1002: restore original disabled/enabled action state;
   shipped5acff5bfe via69e341491, native10/10 after four causal failures.
   [Evidence](reports/reliability-2026-10-02/rebind-action-state/acceptance.md).
 - [ ] BUFFER-CHAT-INTENT-1002: typing must not submit a buffer-skip vote;
-  candidate unqualified after bounded fixture failures; failed fixtures retired.
+  committed3e91f02b0, jointPlayMode10/10; pendingpublication.
   [Limits](reports/reliability-2026-10-02/buffer-chat-pending/README.md).
 - [ ] EMOTE-CHAT-FOCUS-1002: typing must not open or commit the emote wheel;
-  candidate unqualified; shared faulty prelaunch fixture retired without a run.
+  committed3e91f02b0, jointPlayMode10/10; pendingpublication. Old Editor route retired.
+  [Runtime proof and input-asset scope](reports/reliability-2026-10-02/gameplay-chat-input/acceptance.md).
 - [x] FORCE-EQUIP-LOCK-1002: round handover clears old pickup throw lock;
   shipped8d970fb06 viaa8b662f9e, native3/3; duplicate snapshot/pickup preserved.
   [Evidence](reports/reliability-2026-10-02/force-equip-lock/README.md).
@@ -194,13 +196,21 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
 - [x] MENU-EXIT-LIFETIME-1002: retire persistent live round/intermission on exit;
   shippedf163882cc native4/4 after three causal failures; one setup correction.
   [Evidence](reports/reliability-2026-10-02/menu-exit-lifetime/README.md).
-- [ ] SPECTATOR-ROLE-CAMERA-1002: seat/watch transition camera lifetime;
-  Astra preparing actual camera-state baseline, no authored view changes.
+- [x] SPECTATOR-ROLE-CAMERA-1002: seat/watch transition camera lifetime;
+  shippedd97be101d nativePlayMode3/3 after three causal failures, no view tuning.
+  [Evidence](reports/reliability-2026-10-02/spectator-camera-lifetime/README.md).
 - [x] TOUCH-LAYOUT-NULL-CACHE-1002: investigation complete, no defect reproduced;
   original4/4, no product patch or candidate rerun. Not counted as a shipped fix.
   [Finding](reports/reliability-2026-10-02/touch-layout-investigation/finding.md).
-- [ ] HOST-LOSS-LIFETIME-1002: unexpected host loss retires old simulation before
-  empty lobby restores authority; root two-case baseline prepared, candidate unstaged.
+- [x] HOST-LOSS-LIFETIME-1002: unexpected host loss retires old simulation before
+  empty lobby restores authority; shipped5f47abc84 final6/6 after two causal failures.
+  [Evidence](reports/reliability-2026-10-02/host-loss-lifetime/README.md).
+- [x] FAILURE-BUNDLE-ABANDONMENT-1002: retain classified disconnect cause/round;
+  diagnostic-only890656094 native2/2, not counted as a gameplay fix.
+  [Evidence](reports/reliability-2026-10-02/failure-bundle-abandonment/acceptance.md).
+- [x] SLIDE-INTERRUPTION-1002: interrupted pickup sweep cannot resume after recovery;
+  shipped3bbc90c61 native4/4 after three causal failures; pause/timing preserved.
+  [Evidence](reports/reliability-2026-10-02/slide-interruption/README.md).
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow

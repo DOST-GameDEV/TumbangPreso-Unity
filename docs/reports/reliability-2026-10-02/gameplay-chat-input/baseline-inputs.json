@@ -1,0 +1,40 @@
+{
+  "phase": "baseline",
+  "preparedUtc": "2026-10-02T06:08:47.7942718Z",
+  "expectedCases": 10,
+  "testFilter": "TumbangPreso.PlayTests.GameplayChatInputTests",
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/ReadyGate.cs",
+      "variant": "baseline",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\gameplay-chat-input1002\\frozen\\ReadyGate.cs.baseline.txt",
+      "sha256": "3158AD98B0008020B90148119DA4F739AAD311048DEA600F9C5B1E86E338954A"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/BufferSkipVote.cs",
+      "variant": "baseline",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\gameplay-chat-input1002\\frozen\\BufferSkipVote.cs.baseline.txt",
+      "sha256": "F705DFF06372950D69AACFEE0B3BD1873F2528861F60C7D7A4AD025039801D87"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/EmoteWheel.cs",
+      "variant": "baseline",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\gameplay-chat-input1002\\frozen\\EmoteWheel.cs.baseline.txt",
+      "sha256": "C67249CC7018F140D3BA153EE3DF22058FF33BC1C1F98F1835BA3C2D2758CBBA"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/GameplayChatInputTests.cs",
+      "variant": "baseline",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\gameplay-chat-input1002\\frozen\\GameplayChatInputTests.cs",
+      "sha256": "77EDDA40098968EA3379521711544DFD6DE7990D89A0A20B88883FE3E2BE6EDB"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/GameplayChatInputTests.cs.meta",
+      "variant": "baseline",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\gameplay-chat-input1002\\frozen\\GameplayChatInputTests.cs.meta",
+      "sha256": "0A7FB4904CBD7321A2E3AA5BA510362039AAD97D8B0C1F55AF17A24BE0B1807F"
+    }
+  ],
+  "protectedCount": 1290,
+  "context": "PlayMode realpress/release; sameInputSettings object/two scoped focus scalar flags only"
+}

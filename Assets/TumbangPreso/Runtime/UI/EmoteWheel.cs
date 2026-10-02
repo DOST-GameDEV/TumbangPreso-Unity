@@ -128,10 +128,9 @@ namespace TumbangPreso.UI
         /// </summary>
         private void Update()
         {
-            // ⚠️ A PAUSE CANCELS THE WHEEL RATHER THAN LEAVING IT ARMED. The emote key is held,
-            // so a player who pauses mid-pick would otherwise release it over a menu and play
-            // whatever slice the pointer happened to be nearest.
-            if (Panel.AnyOpen)
+            // A pause or chat focus cancels the wheel rather than leaving it armed. The
+            // held key must not open it while typing or commit an emote on release over chat.
+            if (Panel.AnyOpen || LobbyChat.AnyTyping)
             {
                 if (_open) Close(play: false);
                 return;
