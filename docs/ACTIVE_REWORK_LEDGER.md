@@ -80,7 +80,10 @@ NEW PlayMode/EmoteWheelLifetimeTests.cs/meta only. No production change yet;
 actual gamepad selection/public Open+Close and Unity focus/bodydisable,2causal/
 1normal selected-release control. InputSystem scoped focus settings/devices restored,
 no physicalOS/animation/transport claim. qprep36021 TERMINAL0/exact3 via
-MAIN Logs/emote-wheel-lifetime1002/prepare.py; nativeoriginal ACTIVE after prep0,
+MAIN Logs/emote-wheel-lifetime1002/prepare.py; original70589 TERMINAL3failed:
+2visible retired selection commits, normalcontrol invalid (_chosen counter not
+reset per case). ONE fixture initialization repair `_chosen=0` inBefore; no
+assertion/scope change. Corrected original61530 ACTIVE after prep0/exact3,
 GPU2048/reserve2048/450s/PlayMode-nographics/filter EmoteWheelLifetimeTests3.
 ONE bounded original/candidate pair/one repair limit, no overlapping worker.
 
