@@ -136,10 +136,13 @@ namespace TumbangPreso
 
             if (!_motor.CanAct())
             {
-                // A real interruption retires the dash's contact window. A presentation
+                // A real interruption retires the dash contact windows. A presentation
                 // hold or offline pause merely freezes it and must survive Resume.
                 if (!_motor.RoundActive || _motor.IsStunned || _motor.IsFeared)
+                {
                     _lungeActiveLeft = 0.0f;
+                    _slideActiveLeft = 0.0f;
+                }
                 _lungeCharging = false;
                 _lungeCharge = 0.0f;
                 return;

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 05:59:55Z" end-time="2026-10-02 05:59:55Z" duration="0.1549652">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="944" result="Passed" start-time="2026-10-02 05:59:55Z" end-time="2026-10-02 05:59:55Z" duration="0.154965" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2140" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="944" result="Passed" start-time="2026-10-02 05:59:55Z" end-time="2026-10-02 05:59:55Z" duration="0.131774" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24084" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2141" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="944" result="Passed" start-time="2026-10-02 05:59:55Z" end-time="2026-10-02 05:59:55Z" duration="0.117655" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2142" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="944" result="Passed" start-time="2026-10-02 05:59:55Z" end-time="2026-10-02 05:59:55Z" duration="0.103820" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2028" name="SlideInterruptionTests" fullname="TumbangPreso.Tests.SlideInterruptionTests" classname="TumbangPreso.Tests.SlideInterruptionTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-02 05:59:55Z" end-time="2026-10-02 05:59:55Z" duration="0.083661" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="2033" name="OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns" fullname="TumbangPreso.Tests.SlideInterruptionTests.OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns" classname="TumbangPreso.Tests.SlideInterruptionTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-02 05:59:55Z" end-time="2026-10-02 05:59:55Z" duration="0.078757" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2029" name="OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns(&quot;stun&quot;,True)" fullname="TumbangPreso.Tests.SlideInterruptionTests.OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns(&quot;stun&quot;,True)" methodname="OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns" classname="TumbangPreso.Tests.SlideInterruptionTests" runstate="Runnable" seed="52303318" result="Passed" start-time="2026-10-02 05:59:55Z" end-time="2026-10-02 05:59:55Z" duration="0.041435" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2030" name="OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns(&quot;fear&quot;,True)" fullname="TumbangPreso.Tests.SlideInterruptionTests.OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns(&quot;fear&quot;,True)" methodname="OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns" classname="TumbangPreso.Tests.SlideInterruptionTests" runstate="Runnable" seed="356294637" result="Passed" start-time="2026-10-02 05:59:55Z" end-time="2026-10-02 05:59:55Z" duration="0.002474" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2031" name="OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns(&quot;round-end&quot;,True)" fullname="TumbangPreso.Tests.SlideInterruptionTests.OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns(&quot;round-end&quot;,True)" methodname="OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns" classname="TumbangPreso.Tests.SlideInterruptionTests" runstate="Runnable" seed="524349471" result="Passed" start-time="2026-10-02 05:59:55Z" end-time="2026-10-02 05:59:55Z" duration="0.002587" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2032" name="OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns(&quot;pause&quot;,False)" fullname="TumbangPreso.Tests.SlideInterruptionTests.OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns(&quot;pause&quot;,False)" methodname="OnlyAnUninterruptedSlideMayRetrieveAfterControlReturns" classname="TumbangPreso.Tests.SlideInterruptionTests" runstate="Runnable" seed="332491109" result="Passed" start-time="2026-10-02 05:59:55Z" end-time="2026-10-02 05:59:55Z" duration="0.019136" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,16 @@
+{
+  "baselineExpected": {
+    "total": 4,
+    "causalFailures": 3,
+    "controls": 1
+  },
+  "finalExpected": {
+    "total": 4,
+    "passed": 4
+  },
+  "filter": "TumbangPreso.Tests.SlideInterruptionTests",
+  "platform": "EditMode",
+  "repairsUsed": 0,
+  "repairLimit": 1,
+  "scope": "Real HostResolveSlide and real interruption/recovery methods; actual unintended HostGrab after eligibility returns without new input; pause control. No input-action fixture,physics-trajectory/frame-timing,network,hero orSDK claim."
+}
