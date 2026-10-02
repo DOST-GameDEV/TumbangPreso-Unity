@@ -130,8 +130,10 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
-Latest source50=c788c5a08,49=4f69e0af2,48=55f2a5f79. Currentk contains48 fixes;
-49/50focus and emote cancellation have separate native proof, await coherent build.
+Latest source50=c788c5a08,49=4f69e0af2,48=55f2a5f79. Current1002l contains50 fixes;
+build24943/artifactPASS and default-renderer peer80018 FIRST PASS/RX6600/D3D11/
+normalexits/endHOME+publiccoldrejoin/frozen4 actors/restored profiles+inputs/free.
+[Current artifact/evidence](reports/reliability-2026-10-02/windows-candidate1002l/README.md).
 The goal remains ACTIVE. Root is working solo this continuation;
 the one authorized helper completed its latest bounded work, earlier agents retired.
 
@@ -162,6 +164,11 @@ ONE counter-init fixture repair, no assertion weakening/additionalretry. Normal
 release preserved; focusfalse/ownerdisable cancel selection. All jobs terminal.
 [Evidence](reports/reliability-2026-10-02/emote-wheel-lifetime/README.md).
 No unchanged Core/fulltournament/hostloss repeats required for these lifecycle fixes.
+1002l supersedes1002k as the latest compiled+peer-qualified artifact. Source
+3e55308a0ddfc2e07e7649a161c9da1d89e064dd/runtime
+14cbafaed8ae5f56876e0bb174abc61e44ee046ec1fae78b3aa45679028b43aa.
+Default-backend and clean-exit shutdown gate met on this machine; performance/
+otherGPU/physical/WAN/fulldefault tournament requirements stay separate.
 
 47Lunge windup56446ad7c: original96494 two causal/one control;64944 FIRST PASS3,
 exact3/protected12547/no repairs. [Evidence](reports/reliability-2026-10-02/lunge-windup-lifetime/README.md).

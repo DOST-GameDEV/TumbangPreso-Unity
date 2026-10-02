@@ -94,6 +94,14 @@ input+seedsrestored/runtimeunchanged/leasefree. Current50artifact rootdefault-ba
 and cleanexit gate met; performance/otherGPU/rootcause remain unproven.
 Current50fix artifact; source/runtime/identity bound, input+namedseed/lease
 guards unchanged. NO liveJSON reads/othernative/q mutation during player run.
+NEW CURRENT artifact1002l contains50 fixes/source3e55308a0ddfc2e07e7649a161c9da1d89e064dd,
+Runtime14cbafaed8ae5f56876e0bb174abc61e44ee046ec1fae78b3aa45679028b43aa;
+defaultpeer match44388a448bf74fa7a295eeb609a5cf0f/clientSlot1 NONspectator/
+twoEnd+twoRecord events/all4frozen. Reports published96a8e1128. All roothandles
+TERMINAL/no ownedliveUnity/player/lease, sourceownedwork published/private dirty
+work preserved. NEXT: remaining engineering requirements/performance270ms evidence
+and current-map/default-tournament scope, not unchanged reassurance tests or
+style/contributor-reserved work. Goal ACTIVE; no whole-ready/rootcause claim.
 No broader renderer/root-driver-cause/performance claim without actual evidence.
 No native/q worker other than rootbuild; current source50 fixes already qualified.
 
