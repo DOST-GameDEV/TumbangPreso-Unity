@@ -130,8 +130,8 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
-Latest source:47 root continuity fix units through56446ad7c; current1002j artifact
-contains46 plusdiagnostics and predates47.
+Latest source:48 root continuity fix units through55f2a5f79; current1002j artifact
+contains46 plusdiagnostics and predates47/48.
 ONE new Sol6.1HIGH helper +root implementation; prioragents retired. Currenth41
 protocol132/record13 build+actualWindowspeerPASS, laterSafe42/Touch43/diag not in it.
 Root1002i coherent build16487 TERMINAL0/2432MB92s; artifact classificationPASS,
@@ -154,7 +154,9 @@ Lunge windup47 committed56446ad7c. [Evidence](reports/reliability-2026-10-02/lun
 RootCarrier29117 compileFAIL/no XML due old qHeroKit API; ONE owned dependency
 compatibility repair/current base4 API members, MAIN unchanged. Corrected
 original24020=2actual causal failures/1ordinary control. Candidate93894 ACTIVE
-after prep0/exact4; OnDisable calls existingCancelAll, identicalfixture,
+48Carrier committed55f2a5f79; candidate93894 FIRST PASS3 after prep0/exact4;
+OnDisable calls existingCancelAll, identicalfixture, post78275/all18428 protected.
+Native/q free. [Evidence](reports/reliability-2026-10-02/carrier-disable-lifetime/README.md).
 GPU2048/reserve2048/450s/PlayMode-nographics/exact3. Native slot root-owned.
 root disjoint Carrier retirement fixture draft/source unchanged. No reused retired
 practice fixture, private timers or unchanged full-match tests; coordinate native.

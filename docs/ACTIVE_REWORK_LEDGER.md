@@ -20,7 +20,7 @@ preserve finalized Paete/Phaister and active Sean/Rafi/Baha reservations.
 
 ## Published code and acceptance
 
-Verified source56446ad7c published via90b1cb2a9:47 runtime fix units.
+Source55f2a5f79:48 runtime fix units; all owned code qualified (push below).
 protocol132/recording13 after qualified incoming Rafi4a9afbd90, integrationa67d7bc5b. Latest units:
 32chat guards3e91f02b0/native10;33scorecard owner84ddfc391/native3;34RecordChoice
 57158d1db/native3;35cold actor12a2689ff/native3;36scorecard focus7c3124886/native3;
@@ -128,7 +128,15 @@ to avoid a broken future qualification compile. No hero-rate coverage (Classic/
 no HeroAbility fixture). Corrected original24020 TERMINAL:2intended causals/
 1ordinary enabled-charge-release control pass. Reactivation actually threw held
 shoe; observedtell returned.159999996 instead-1. Guard/restored/free.
-Candidate93894 ACTIVE after directprep0/exact4;
+Candidate93894 TERMINAL FIRST PASS3/restored/free after directprep0/exact4;
+post78275 TERMINAL0/exact4/all18428 protected unchanged. No more native/retry
+needed. One dependency repair/no fixture repair. Source48 ready publication;
+MAINHeroKit unchanged, qAPI overlay retained with exact original backup.
+48Carrier retirement COMMITTED55f2a5f79: ONE OnDisable=>CancelAll hook after
+24020 two actual causals/one normal release control,93894 FIRST PASS3,
+post78275 exact4/all18428 protected unchanged/restored/free. ONE qAPI dependency
+repair/no fixture repair; compiler29117 noXML preserved. Native/q now free.
+Current j46 artifact predates47/48; no per-fix rebuild or unchanged suites.
 GPU2048+
 2048reserve/450s/PlayMode-nographics/profile carrier-disable-lifetime1002,
 filter CarrierDisableLifetimeTests3. Source adds OnDisable=>existingCancelAll;
