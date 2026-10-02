@@ -1,0 +1,25 @@
+{
+  "scope": "Actual direct local peers, ordinary two human-owned undriven seats plus two bot seats, Classic tournament context, natural full8round completion. Not physical input, WAN or pristine release.",
+  "actualChecks": {
+    "host": {
+      "classic": true,
+      "kanto": true,
+      "round8": true,
+      "roundInactiveAfterMatch": true,
+      "tournamentRulesetOK": true,
+      "noModifiers": true,
+      "naturalMatchEnd": true,
+      "frames": "frames=43185; seconds=721.567; avg=59.85; p50=59.70; p5=59.70; p1=57.97; max_ms=86.06"
+    },
+    "client": {
+      "classic": true,
+      "kanto": true,
+      "round8": true,
+      "roundInactiveAfterMatch": true,
+      "tournamentRulesetOK": true,
+      "noModifiers": true,
+      "naturalMatchEnd": true,
+      "frames": "frames=43155; seconds=720.956; avg=59.86; p50=59.70; p5=59.70; p1=57.97; max_ms=21.60"
+    }
+  }
+}

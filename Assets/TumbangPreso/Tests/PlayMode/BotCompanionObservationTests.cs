@@ -127,6 +127,20 @@ namespace TumbangPreso.PlayTests
             typeof(AIController).GetField("_lastTagTarget",Hidden).SetValue(_brain,null);
             Assert.AreSame(_companion,select.Invoke(_brain,null),"Fresh observation must still update target ranking.");
         }
+        [TestCase(GameMode.Classic)] [TestCase(GameMode.HeroStrike)]
+        public void InactiveCompanionsStopSupplyingLiveBotObservations(GameMode mode)
+        {
+            _observer.Mode=mode;Observe(_brain);
+            Vector3 seen=At(_brain,_companion);
+            Assert.IsTrue((bool)Read("ActorIsVisible",_companion));
+            _companion.gameObject.SetActive(false);
+            _companion.transform.position+=Vector3.right*8;
+            Observe(_brain,10);
+            Assert.IsFalse((bool)Read("ActorIsVisible",_companion),"An inactive companion remained in the bot's live target view.");
+            Assert.AreEqual(seen,At(_brain,_companion),"An inactive companion kept supplying live movement to the bot.");
+            Assert.IsTrue((bool)Read("ActorIsVisible",_owner),"An active ordinary actor must remain visible.");
+        }
+
         [Test] public void WarmPerFrameObservationDoesNotAllocateAnActorEnumerator()
         {
             var observe=(System.Action<float>)System.Delegate.CreateDelegate(typeof(System.Action<float>),_brain,

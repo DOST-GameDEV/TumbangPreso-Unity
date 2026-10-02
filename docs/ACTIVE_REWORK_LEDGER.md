@@ -22,32 +22,35 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Latest verified local/remote7be6dab00 includes five product fix units this resume:
-account abandon/history4/4; queue witnesses2/2; history navigation one native
-case/five states; deferred account sync4/4; displayed verdict identity2/2.
-Earlier coherent career integration43/43. Result-late-ack unit is qualified and
-publishes next. Own source paths MatchResult.cs and PlayMode/TumpNativeResultTests.cs.
-All are under Assets/TumbangPreso; reports/status paths under docs.
-Complete pre-resume history preserved in
-[the archived ledger](archive/ACTIVE_REWORK_LEDGER_before_competition_resume_2026-10-02.md).
+Latest verified remote8f4defeb4 includes wallet5/5 and full Classic peer evidence.
+Local717d44bcb preserves seven pre-existing reference/motion PNGs only; no runtime
+art/animation change or new art acceptance claim. Bot one-line guard qualified
+and publishes next. Eight product units qualified this resume: abandon/history,
+witness queue, history navigation, deferred account sync, displayed verdict ID,
+late result ack, wallet owner/cache/scheduling and inactive bot-body visibility.
+Evidence owns exact counts/limits. No live endpoints, purchases or paid tools.
+Own pending source AIController.cs and BotCompanionObservationTests.cs plus docs.
+Complete pre-resume history in archived ledger; keep this checkpoint concise.
 
 ## Active job and exact next action
 
-RESULT-LATE-ACK-1002 complete: native baseline fails1/1; final passes1/1 with actual
-late text and callback retirement. Two hashes unchanged, zero repairs, session
-39566 terminal; profile/input restored. No heavy job active. Publish this sixth
-product unit, then switch from store/UI fixes to actual match/network/performance.
-Retired legacy --whole-matches UI route after its one bounded failed repair.
-No more fixture work there. Rich diagnostic failure state is published.
-Next use current supported direct-peer player route, frozen artifact and named
-profiles. Before launch verify current actor/input/rules/map/framecap switches
-and choose full default-match liveness scope. Do not claim human play, full
-operator flow or a pristine build from that floor. Investigate270ms host frame
-using available per-frame samples, not repeated unchanged broad matrices.
-Last current build62afc5d6a plus experimental diagnostic lines, protocol129,
-Builds/competition-retry1002, Runtimea5cc4379...f5b042be. It predates verdict-ID
-and late-ack source; build a coherent refresh only if those need player proof.
-Private art/settings/metadata preserved; external presentation lane unchanged.
+BOT-INACTIVE baseline0/2, final2/2 in Classic/Hero with active controls and frozen
+memory. Two hashes unchanged, zero repairs; session58664 terminal, profile/input
+restored. Publish coherent unit with preserved PNGs. No heavy job active.
+FULL-CLASSIC natural8round actual peers: scores40/40/3580/3280;seat2wins;
+host59.85FPS/max86.06ms/client59.86/max21.60ms. Preserved raw active-Hero evaluator
+mismatch versus explicit completed-Classic observations; no equivalent270ms
+improvement claim. No operator/WAN/hardware/pristine certification.
+Next advance clean detached release checkout
+C:/Users/matth/Documents/Codex/work/tump-competition-release1002 to qualified
+published ASTRA revision without reset/private dirt. Inspect incoming reservations
+and final source/scene settings. One guarded clean import/build and relevant
+integration checks, then current supported Hero match/reconnect/rematch/operator
+paths, preserving existing evidence and no retired fixture loops.
+Remaining known source area: SocialStore response/cache ownership during account
+switch; inspect before edits. Broader source fixes remain authorized. Private
+Supernova opacity, four arm assets, Ultra settings and two protected UI metas
+remain excluded pending their own justified scope/evidence; no broad staging.
 
 ## Remaining readiness evidence
 
@@ -151,3 +154,19 @@ paths and update/cross out only the two resolved warning comments in Feedback.
 Next Harry priorities: Kanto/Ilalim ambience minus25percent and larger player
 ring. Claude local-session assignment pending verification, Amihan reserved for
 that potential separate lane; do not overlap.
+
+Clean release Core integration baseline690/691: status-table fixture expects12,
+while adopted Zapped is appendedID13 by ef830005d and current network contract.
+No Core runtime defect established. Updated existing assertion to13 plus stable
+Haunted12/Zapped13 IDs, Zapped5s/cast-only tooltip/neutral movement/interaction/
+immunity/removable controls. No gameplay retune or new framework. Main+release
+same test file. One corrected Core run next; no further unchanged repeats.
+Full tracked asset manifest session28569 still hashing; do not launch Unity
+import until it completes and Core job is terminal. Native import not started.
+
+Core corrected integration691/691 passed, zero skips, current adopted status
+controls explicit. Test-only contract update publishes next; no runtime values
+changed. Source manifest completed18539 tracked non-audio/video runtime/assets/
+packages/settings hashes at087d3a36f. No Unity import started yet. Align clean
+checkout to published test correction without resetting its matching file, then
+one guarded import/build. Existing clean checkout has only this same test edit.

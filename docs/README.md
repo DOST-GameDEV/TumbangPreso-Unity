@@ -112,3 +112,9 @@ All-nine-hero official footage research and implementation plans: [October 2 rev
 Displayed match and career-dispute identity: [native evidence](reports/reliability-2026-10-02/result-verdict/README.md).
 
 Late career acknowledgements refresh visible result details: [native evidence](reports/reliability-2026-10-02/result-late-ack/README.md).
+
+Wallet account ownership and deferred refresh: [native evidence](reports/reliability-2026-10-02/wallet-owner/README.md).
+
+Full current Windows Classic tournament-context match: [actual peer evidence](reports/reliability-2026-10-02/full-classic-match/README.md).
+
+Inactive bot-body observation isolation: [native evidence](reports/reliability-2026-10-02/bot-inactive-body/README.md).
