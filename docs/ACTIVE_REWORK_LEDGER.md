@@ -49,24 +49,28 @@ terminal/restored/no lease. Owning Guided_Training.md completion-beat sentence
 updated. Loading predicate is source-shared, not independently exercised. No full
 shipping tutorial or new standalone inclusion claim.
 
-SOLE Sol HIGH sol_parallel_engineering remains the ONLY helper, now source-only
-on a DIFFERENT concrete current practice/input lifecycle issue, proposal before edits.
-Practice stale-lunge unit NOT fixed: original70621 observed retained0.446414s active
-window, one unchargedcontrolpass, first ordinarypause setup lacked normal clock.
-ONE fixture repair added RequestScale(1). Repaired original81031 again causal
-retained0.449515s and unchargedpass; pause-preservation itself passed but final expiry
-Assert.Zero failed because normal expired timer is-0.000199 (second fixture flaw).
-Route RETIRED/unqualified, no product patch/candidate/further native retry. CombatVerbs
-UNCHANGED. Preserve OPEN repeated causal defect for later justified work; don't claim
-it fixed or dismiss it because helper gate failed.
+SOLE Sol HIGH sol_parallel_engineering owns CURRENT EmotePlayer.cs eligibility lock
+fix + NEW tiny TrainingEmoteEligibilityTests.cs/.meta/report (exact actual filename
+from agent handoff pending). Current guided training locks Verb.EmoteWheel until
+its lesson, but wheel callback bypasses InputIntent and CanEmote ignored Locked.
+Public CanEmote gate original6196 TERMINAL3:1causal lockedFalse expected/Trueactual,
+2controlsPASS. All12529 protected unchanged. ONE pre-execution tooling repair changed
+jobclassification CPU->GPU for PlayMode; rejected preflight never launched/touched
+profile. No native/fixture repair used. Agent applying ONE source eligibility predicate
+!_motor.Intent.Locked(Verb.EmoteWheel), then candidate3. Scope public eligibility only,
+not rendered clip/realRequest/transport/physical hardware. GPU2048/reserve2048/450s,
+profile training-emote-eligibility1002, qualification Logs same. Agent owns slot,
+root no heavyjob/qualification mutation. Need exact native handle/paths/hash/report
+then root review/commit/fetch/incomingdiff/merge/push. No further repair if fault.
 
-Agent cleanup verified ONLY its new PracticeBotResumeTests.cs/.meta moved from MAIN
-and qualification Assets to corresponding task Logs retired-*.txt, exact hashes/
-absolute containment/all12529 protected unchanged. Both guards terminal/restored/
-leasefree/PIDs12988+26484 dead. Honest report practice-bot-resume +cleanup.json
-READY for root publication, failed fixture excluded from live Assets/test integration.
-No active native handle; one agent source-only. Root can do disjoint implementation.
-No other agent/resume/cross-chat action. Keep bounded checks and ship qualified units.
+Retired practice route OPEN/no product patch:70621+81031 repeated stale lunge0.446/
+0.449s contact window after actual bot hide/readd. First clocksetup fixture corrected
+once; second fixture's exact0 expiry assumption failed on normal negative timer.
+Both raw runs/source preserved, source CombatVerbs UNCHANGED, failing new fixture/meta
+moved from MAIN/qAssets to taskLogs with exactcontainment/hashes.12529protected match,
+no active nativePIDs. Evidence publishedd1e090dad, no candidate/fix/extra retry.
+Agent must not revisit that retired helper; concrete defect stays OPEN for justified
+later work. Old callbacks report/naming source compilation limits retained.
 
 ROOT independently owns FailureBundle.cs filename collision fix ONLY: timestamp
 seconds currently overwrite a bundle generated in same second. Add full Guid:N

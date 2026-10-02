@@ -155,6 +155,7 @@ next concrete source issue. Root continues disjoint fixes; no heavy job. Preserv
 - [ ] PRACTICE-BOT-RESUME-1002: OPEN stale active window reproduced twice;
   fixture route retired after two flaws, no product fix/candidate.
   [Unqualified evidence](reports/reliability-2026-10-02/practice-bot-resume/README.md).
+- [ ] TRAINING-EMOTE-ELIGIBILITY-1002: sole Sol original6196 reproduced locked eligibility bypass/2controls, candidate3 next; one preflight GPU classification repair.
 - [ ] FAILURE-BUNDLE-UNIQUE-PATH-1002: root GUID filename suffix, source-reviewed; separate diagnostic/no Unity compile yet.
 - [x] LAN-LISTENER-START-1002: shipped5367390ab, real8911 bind cleanup/retry/
   shutdown native3/3 after1causal/2controls, zero repairs/12523 protected match.
