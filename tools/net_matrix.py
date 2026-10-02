@@ -751,14 +751,21 @@ def preserve_matrix_profiles(outdir):
     try:
         yield
     finally:
-        for source, target, expected in manifest:
-            source.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(target, source)
-            if hashlib.sha256(source.read_bytes()).hexdigest() != expected:
-                raise RuntimeError("Matrix profile restore did not verify: " + str(source))
+        changed_input = read_input is not None and read_input() != before
+        try:
+            for source, target, expected in manifest:
+                source.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(target, source)
+                if hashlib.sha256(source.read_bytes()).hexdigest() != expected:
+                    raise RuntimeError("Matrix profile restore did not verify: " + str(source))
+        finally:
+            if changed_input:
+                from run_completed_arrival import restore_input
+                restore_input(before)
         unchanged = read_input() == before if read_input else None
         (Path(outdir) / "profile-preservation.json").write_text(json.dumps(dict(
             existingFilesRestored=len(manifest), sharedInputUnchanged=unchanged,
+            sharedInputWasChanged=changed_input, sharedInputRestored=unchanged,
             scope="Only named mtxhost/mtxclient profiles; existing files hash-restored. New task-profile files retained."), indent=2))
         if unchanged is False:
             raise RuntimeError("Matrix run changed shared input preferences.")
