@@ -1,0 +1,14 @@
+{
+  "first/client-before-kill.json": "7912dd61bcfb0b2ed375f5e7c2f56a1bbbb282d3dc609adb26985025e12c7557",
+  "first/client.json": "d798e1b903c7a519721e0e5df33b7b59c220a555c89919580b0d6021f2477612",
+  "first/client.log": "c12b2f70f53e8a99a2593429a8a98b7f700a573b3a85659de81a60090f167d71",
+  "first/client.txt": "1b364ad1025e9ab00a395d4b643b8fe642c75beda3c377f57d0ce53be6a889f7",
+  "first/host-before-kill.json": "1725fd035dd5f9bfbe04cefb730bf00ddcaf96f265356d415aaa623c26d8b7d8",
+  "first/host.json": "e8039dcc3c94fc23c35a96a89d543ff8faa3dc9a0f71e9166555f0e251ab7338",
+  "first/host.log": "e28ab600b996edc52cc9105aaec97ff334f432697cb665454a2f1e6e0e2ca834",
+  "first/player-input-before.json": "7d60e51c983c17b4d40b59321401fe44203e79310fd7ef689f3e030801e0c616",
+  "first/profile-seeds.json": "7441263fb2c9856725a6556f59ffece3f7dce7d2e5571844b2df30741d217219",
+  "first/result.json": "289e6c68857c6020350c6b7c634702f7369469898e40a543d72c407b83c3f5a6",
+  "tools/run_host_loss.py": "892038eb68c74d62e0e6313139df7a749c26176c1451833e22e9a1e3cea04ee8",
+  "tools/test_run_host_loss.py": "6c0eef9617517bceaa766cb08b2506ab6f2f20176513767e81685195427aa1e4"
+}
