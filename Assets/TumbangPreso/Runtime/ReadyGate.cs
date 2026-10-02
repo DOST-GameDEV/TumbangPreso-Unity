@@ -303,6 +303,10 @@ namespace TumbangPreso
             // what keeps `-tp-autostart` working on an all-bots peer that this gate now ignores.
             if (GameLaunch.Spectator) return;
 
+            // This action bypasses PlayerInputReader, so it must respect the same chat
+            // context. Previously submitted votes and automatic readiness still run above.
+            if (UI.LobbyChat.AnyTyping) return;
+
             if (_readyUp == null || !_readyUp.WasPressedThisFrame()) return;
 
             if (_local != null) ReadyGestureRequested?.Invoke(_local);
