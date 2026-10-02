@@ -40,6 +40,11 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(90000)]
         public IEnumerator RafiStagesHisCurrentBahaPerformance()
             => Study(new[] { "rafi" }, false, false, true);
+        // AIRBURST (docs/reports/amihan-presentation-2026-10-02): grounded throughout, held shoe clear of the face.
+        // Visual and body study only; no audio acceptance.
+        [UnityTest, Timeout(90000)]
+        public IEnumerator AmihanGathersHerAirburstWithoutLeavingTheGround()
+            => Study(new[] { "amihan" }, false, false, true);
         private static IEnumerator Study(string[] heroes, bool checkFraming, bool emptyHands = false, bool allowMutedTheme = false)
         {
             yield return MapRetrievalProbe.Load("Eskinita", GameMode.HeroStrike);

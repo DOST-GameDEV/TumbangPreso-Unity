@@ -6,8 +6,12 @@ protocol and other heroes are out of scope.
 
 ## Status
 
-AIRBURST unit: research, critique, direction and plan written; implementation
-and native validation pending. Drift, Featherfall and Whirlwind are not started.
+AIRBURST implementation preserved with scoped native validation (EditMode4/4,
+final PlayMode5/5), in fixed simulation; full presentation acceptance remains
+partial. See
+[evidence](evidence.md) and `clips/`. Next: the feel refinement listed in TODO
+(AMIHAN-AIRBURST-FEEL-1002), then Drift, Featherfall and Whirlwind as separate
+units. Human approval, actual peers and real-time performance remain open.
 
 ## Read in this order
 
@@ -19,9 +23,12 @@ and native validation pending. Drift, Featherfall and Whirlwind are not started.
 4. [Beat sheet](beat-sheet.md): the 3.6 s cutscene and the live 1.5 s windup.
 5. [Plan](plan.md): owned paths, steps, validation runs and evidence limits.
 6. [Acceptance](acceptance.md): what must be shown before the unit is called done.
+7. [Evidence](evidence.md): runs, timing table, clips and limits.
 
 ## Evidence levels
 
 Footage review is still-frame inspection of decoded video with no audio. Native
 films, when added, are fixed-simulation captures, not real-time performance or
 actual-peer play. Assistant review is not human approval.
+
+[Checkpoint](checkpoint.md) lists the preserved inputs, limits and next action.

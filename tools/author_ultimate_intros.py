@@ -680,78 +680,68 @@ def rafi():
 @performance
 def amihan():
     """
-    STORM SURGE, 3.6 s (docs/reports/amihan-kit-2026-09-25/direction.md section 7, research.md).
+    AIRBURST, 3.6 s (docs/reports/amihan-presentation-2026-10-02/beat-sheet.md).
 
-    The four beats the reference research found in every good ultimate cutscene (Genshin's Venti
-    and Kazuha, Star Rail's Feixiao): WHO, INTENT, GATHER, RELEASE.
+    The length is shared phase timing on every peer, so it stays 3.6 s. The cutscene plays BEFORE
+    the live 1.5 s windup, which is the players' dodge window, so it never shows the release:
+    "She pulls the street's wind into her cupped hands, packs it tight, aims it down one lane."
+    Every shot is on her right side, so screen direction never flips.
 
-    WHO (0 to 0.62): a wide low shot. She has been waiting for this and hates waiting: weight on
-    one hip, a hand on it, and an impatient look straight down the lens ("enough"). The wind is
-    already lifting her hair and robe.
-    INTENT (0.62 to 1.32): the ONE close-up, on her face and hand. She catches a tuft of cotton out
-    of the air and BLOWS it off her palm. That is Vigan's Binatbatan (beating cotton free for the
-    loom) and it is the breath of the amihan: the cotton becomes the first wind lines.
-    GATHER (1.32 to 2.46): wide and low from her left. She sweeps her arms round in two big turns,
-    the kasikus whirlwind her family weaves blooms in diamonds on the ground under her, abel
-    threads and cotton spiral up, and the vortex lifts her off the road.
-    RELEASE (2.46 to 3.6): over her shoulder, looking down the court the way the wind will go. She
-    draws the whole storm back to her right side, then drives both palms forward. The wall of wind
-    leaves toward the far end of the map and the camera watches it go; she lands braced in the
-    push, which is the first frame of the live 2.5 s gather.
+    CALL (0 to 1.05): front right. Impatient, she flings the right hand out and snaps it back to
+    her chest (calling the wind instead of waiting), then opens her arms to the whole street.
+    GATHER (1.05 to 2.3): low right side, close on her hands. The arms sweep in and meet cupped
+    at the right hip (the charge lives in the hands, the Miks reference); two pack beats teach
+    the rhythm the live windup repeats.
+    AIM (2.3 to 3.6): over the right shoulder and rising, so every player sees which lane. She
+    holds the coil; the fan's edges race out on the real court. Her last pose here is the live
+    clip's first key (`HeroAbilityClips.Amihan.cs` BuildAmihanStorm).
     """
     p = Performance("amihan", 3.6)
-    rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
-    # Hand on her left hip, weight on the right leg, looking round at the lens (shot A is on her
-    # right, so the head turns right).
-    who = Pose(torso=(-3, 12, 4), head=(-6, 24, -6), left=(24, 58, 38), right=(6, 20, 0),
-               legs=((4, 6), (-6, 12)))
-    who_tap = who.but(head=(-2, 28, -8))
-    # A cotton tuft caught at the face: right hand up and open in front of her mouth.
-    catch = Pose(torso=(3, 4, 0), head=(6, 6, 0), left=(14, 26, 0), right=(122, 8, -34),
-                 legs=((2, 6), (-2, 6)))
-    # The blow: she leans in over the palm, and the hand opens away from her.
-    blow = catch.but(torso=(9, 2, 0), head=(14, 2, 0), right=(110, 16, -22))
-    # Two sweeping turns, arms wide, the torso twisting across the whole range the rig allows.
-    sweep_l = Pose(torso=(2, -38, -4), head=(-4, -24, 0), left=(86, 72, -10), right=(96, 62, 30),
-                   legs=((6, 10), (-6, 10)))
-    sweep_r = Pose(torso=(2, 38, 4), head=(-4, 24, 0), left=(96, 62, -30), right=(86, 72, 10),
-                   legs=((-6, 10), (6, 10)))
-    # Lifted on the vortex: arms up and open, head back, feet trailing.
-    lifted = Pose(torso=(-10, 0, 0), head=(-20, 0, 0), left=(158, 38, 0), right=(158, 38, 0),
-                  legs=((-10, 4), (8, 8)))
-    # The storm drawn back to her right side before the push.
-    load = Pose(torso=(-8, 40, -6), head=(-2, -26, 0), left=(78, 20, 46), right=(64, 58, -12),
-                legs=((16, 10), (-14, 14)))
-    # The push: both palms driven forward, low and wide, braced. Held into the handoff.
-    push = Pose(torso=(18, -4, 0), head=(-8, 0, 0), left=(94, 16, -8), right=(94, 16, 8),
-                legs=((22, 12), (-20, 14)))
+    rest = Pose(head=(0, 10, 0))
+    # Hand on her left hip, right arm flung out low and wide: the call. Her head is wide and her arms
+    # short, so every arm stays below shoulder height: higher, the held slipper passes through her face
+    # (UltimateIntroductionProbe measured 86 shoe vertices inside the head before this was lowered).
+    call_out = Pose(torso=(-3, -12, 4), head=(-6, 14, -4), left=(24, 58, 38), right=(5, 45, 0),
+                    legs=((6, 8), (-6, 12)))
+    # The right hand snapped back to the chest; the head swings down the lane.
+    call_in = Pose(torso=(2, 18, 0), head=(-8, -4, 0), left=(24, 58, 38), right=(48, 10, 55),
+                   legs=((6, 8), (-6, 12)))
+    # Arms open low and wide, chest and chin up: the whole street's air.
+    opened = Pose(torso=(-10, 0, 0), head=(-12, 0, 0), left=(10, 60, 10), right=(10, 60, 10),
+                  legs=((4, 12), (-4, 12)))
+    # The arms sweeping in through the front on the way to the hip.
+    sweep = Pose(torso=(4, 22, -2), head=(-4, -10, 0), left=(48, 38, 60), right=(44, 8, 15),
+                 legs=((10, 10), (-8, 12)))
+    # Palms meet cupped at the right hip (solved against the real glb so the hands touch); the
+    # torso coils right and the head only half follows, so the turn reads on her big head.
+    cup = Pose(torso=(-2, 34, -5), head=(-4, -14, 0), left=(48, 8, 75), right=(0, 32, 60),
+               legs=((18, 10), (-16, 14)))
+    pack1 = cup.but(torso=(-3, 38, -6), head=(-4, -15, 0))
+    pack2 = cup.but(torso=(-4, 42, -6), head=(-4, -16, 0))
+    # The held coil, front foot down the lane. set_end is the live clip's first key.
+    coil = Pose(torso=(-4, 40, -6), head=(-4, -16, 0), left=(48, 8, 75), right=(24, 20, 45),
+                legs=((20, 10), (-18, 14)))
+    set_end = coil.but(torso=(-5, 43, -7), head=(-4, -17, 0))
 
-    p.key(0, rest.but(head=(0, 10, 0)))
-    p.key(.2, who, punch=True)
-    p.hold(.2, .42, who)
-    p.key(.52, who_tap)
-    p.key(.74, catch, punch=True)
-    p.hold(.74, .98, catch)
-    p.key(1.1, blow, punch=True)
-    p.hold(1.1, 1.28, blow)
-    p.key(1.5, sweep_l).key(1.78, sweep_r).key(2.02, sweep_l)
-    p.key(2.22, lifted)
-    p.hold(2.22, 2.46, lifted)
-    p.key(2.74, load)
-    p.hold(2.74, 2.98, load)
-    p.key(3.1, push, punch=True)
-    p.hold(3.1, 3.6, push)
-    # The vortex lifts her in the gather and sets her down braced for the push.
-    p.rise(0, 0).rise(1.6, 0).rise(2.3, .38).rise(2.62, .34).rise(3.0, 0)
-    # A: WHO. Low wide three-quarter from her right, easing in a little.
-    p.shot(0, .62, (1.9, .55, 3.6), (0, 1.0, 0), 46, eye_to=(1.7, .6, 3.2))
-    # B: INTENT. The close-up: face and cotton hand, slightly below eye level.
-    p.shot(.62, 1.32, (.42, 1.42, 1.05), (0, 1.5, 0), 34, eye_to=(.34, 1.45, .92), close=True)
-    # C: GATHER. Wide and low from her left, drifting round with the turns.
-    p.shot(1.32, 2.46, (-3.1, .45, 2.7), (0, 1.25, 0), 52, eye_to=(-2.4, .55, 3.5))
-    # D: RELEASE. Over her right shoulder, down the court the wind is about to cross.
-    p.shot(2.46, 3.6, (1.05, 1.85, -2.3), (0, 1.1, 5.0), 54, eye_to=(.8, 1.65, -1.9), look_to=(0, 1.0, 7.0))
-    p.locked((1.6, 1.1, 4.2), (0, 1.15, 0), 48)
+    p.key(0, rest)
+    p.key(.22, call_out, punch=True).key(.36, call_out.but(torso=(-3, -14, 4)))
+    p.key(.48, call_in, punch=True)
+    p.key(.70, opened).key(1.02, opened.but(torso=(-11, 2, 0)))
+    p.key(1.22, sweep)
+    p.key(1.42, cup, punch=True).key(1.6, cup)
+    p.key(1.72, pack1).key(1.86, cup).key(2.06, pack2).key(2.18, pack1)
+    p.key(2.42, coil).key(3.6, set_end)
+    # Grounded throughout: no vortex lift. Featherfall is her real flight.
+    p.rise(0, 0)
+    # CALL: front right, a slow push in.
+    p.shot(0, 1.05, (2.0, .85, 3.3), (0, 1.05, 0), 44, eye_to=(1.7, .9, 2.8), look_to=(0, 1.1, .1), fov_to=41)
+    # GATHER: low on her right, close on the cupped hands (cropped on purpose).
+    p.shot(1.05, 2.3, (2.6, .7, 1.3), (.25, .72, .1), 40, eye_to=(2.3, .75, 1.9), look_to=(.2, .78, .3), fov_to=37,
+           close=True)
+    # AIM: over the right shoulder, rising and opening so she stays lower left and the lane fills the frame.
+    p.shot(2.3, 3.6, (2.3, 1.75, -1.9), (0, .9, 3.6), 54, eye_to=(2.6, 2.25, -2.7), look_to=(-.2, .45, 6.5), fov_to=58)
+    # Reduced motion: one side view with her, her hands and the lane together.
+    p.locked((4.2, 1.35, 1.2), (0, .95, 1.8), 50)
     return p
 
 @performance

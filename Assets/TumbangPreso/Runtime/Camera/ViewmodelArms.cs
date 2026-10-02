@@ -1023,11 +1023,14 @@ namespace TumbangPreso.CameraSystem
             new Key(0,0,0,0,0,0,0,true), new Key(.20f,-.18f,.40f,.08f,-.10f,.36f,.12f,true),
             new Key(.32f,-.40f,-.46f,-.10f,-.46f,-.40f,-.08f,true), new Key(.52f,-.36f,-.52f,-.10f,-.40f,-.46f,-.10f,true),
             new Key(.90f,0,0,0,0,0,0,true) };
+        // AIRBURST (2026-10-02): the same beats as the body clip, release on the 1.5 s gameplay release.
         private static readonly Key[] StormCallClip = {
-            new Key(0,-.46f,.02f,.06f,-.50f,-.02f,-.06f,true), new Key(.6f,-.48f,.04f,.07f,-.52f,-.04f,-.07f,true),
-            new Key(1.2f,-.47f,.00f,.06f,-.51f,.00f,-.06f,true), new Key(1.8f,-.50f,.04f,.08f,-.54f,-.04f,-.08f,true),
-            new Key(2.36f,-.30f,.02f,.04f,-.34f,-.02f,-.04f,true), new Key(2.5f,-.58f,.00f,.02f,-.62f,.00f,-.02f,true),
-            new Key(2.66f,-.56f,.00f,.02f,-.60f,.00f,-.02f,true), new Key(2.85f,0,0,0,0,0,0,true) };
+            new Key(0,0,0,0,0,0,0,true), new Key(.20f,-.24f,.04f,.06f,-.30f,-.08f,-.06f,true),
+            new Key(.50f,-.27f,.05f,.07f,-.33f,-.09f,-.07f,true), new Key(.62f,-.24f,.04f,.06f,-.30f,-.08f,-.06f,true),
+            new Key(1.0f,-.28f,.06f,.08f,-.34f,-.10f,-.08f,true), new Key(1.12f,-.24f,.04f,.06f,-.30f,-.08f,-.06f,true),
+            new Key(1.32f,-.08f,.02f,.03f,-.14f,-.04f,-.03f,true), new Key(1.5f,-.60f,.00f,.02f,-.64f,.00f,-.02f,true),
+            new Key(1.62f,-.58f,.00f,.02f,-.62f,.00f,-.02f,true), new Key(1.80f,-.40f,.10f,.10f,-.44f,-.10f,-.10f,true),
+            new Key(2.05f,0,0,0,0,0,0,true) };
 
         // PAETE (2026-09-25): the growth in first person. The vine reach is both hands thrown out
         // together and held while he is reeled (owner: *"his arms in tpp/fpp view both extend in

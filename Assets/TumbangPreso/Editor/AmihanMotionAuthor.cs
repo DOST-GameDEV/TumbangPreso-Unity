@@ -27,9 +27,22 @@ namespace TumbangPreso.EditorTools
             EditorApplication.Exit(0);
         }
 
+        /// <summary>
+        /// Re-bake ONLY `hero-amihan-storm` in place (Airburst presentation, 2026-10-02). The asset keeps its
+        /// GUID, so `person_amihan.asset` still ships it, and the four other baked clips are not rewritten.
+        /// </summary>
+        public static void BakeStormFromCommandLine()
+        {
+            var model=RosterBook.Load().FindPersonArt("amihan")?.Model;
+            var clips=Bake(model,flightOnly:false,stormOnly:true);
+            foreach(var clip in clips)AssetDatabase.SaveAssetIfDirty(clip);
+            Debug.Log("[AmihanMotionAuthor] Saved only the existing Airburst clip.");
+            EditorApplication.Exit(0);
+        }
+
         public static AnimationClip[] Bake(GameObject model)=>Bake(model,flightOnly:false);
 
-        private static AnimationClip[] Bake(GameObject model,bool flightOnly)
+        private static AnimationClip[] Bake(GameObject model,bool flightOnly,bool stormOnly=false)
         {
             if(model==null)throw new ArgumentNullException(nameof(model));
             Directory.CreateDirectory(Folder);AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
@@ -40,7 +53,7 @@ namespace TumbangPreso.EditorTools
             {
                 var animator=copy.GetComponentInChildren<Animator>(true);
                 var root=animator!=null?animator.transform:copy.transform;
-                generated=flightOnly?HeroAbilityClips.BuildAmihanFlightAuthored(root):HeroAbilityClips.BuildAmihanAuthored(root);
+                generated=stormOnly?HeroAbilityClips.BuildAmihanStormAuthored(root):flightOnly?HeroAbilityClips.BuildAmihanFlightAuthored(root):HeroAbilityClips.BuildAmihanAuthored(root);
                 var saved=new AnimationClip[generated.Length];
                 for(int i=0;i<generated.Length;i++)
                 {

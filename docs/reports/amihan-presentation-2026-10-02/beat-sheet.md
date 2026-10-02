@@ -13,7 +13,7 @@ derives its boundary from it on every peer.
 | 0.00 | CALL: front-right, low, eye (1.75, 0.70, 3.30) easing to (1.45, 0.78, 2.85), look at her chest, fov 44 to 42 | Light stand, weight on the right hip | Stage up (Vigan houses, dusk sky). A few threads already drifting toward her | Element already in the air (genre convention) |
 | 0.22 | | CALL OUT (punch): right hand flung low and wide to her side, left hand on hip | Threads bend toward the open hand | Her impatience: she calls the wind instead of waiting |
 | 0.48 | | CALL IN (punch): right hand snapped back to the chest; head swings to look down the lane | Threads turn and start streaming in | One sharp gesture, readable at any size |
-| 0.62 to 1.05 | | OPEN: both arms sweep out wide and back, chest open, chin up | Threads converge from the whole lane | "Takes in the street" |
+| 0.62 to 1.05 | | OPEN: arms open low and wide, chest and chin up (arms stay below the shoulder so a held slipper clears her large head) | Threads converge from the whole lane | "Takes in the street" |
 | 1.05 | GATHER: low right side, eye (2.15, 0.55, 1.00) to (1.85, 0.60, 1.70), look at her right hip, fov 42 to 40 | Arms sweep in through the front | Threads curl into her hands | Miks: the charge lives in the hands |
 | 1.42 | | CUP (punch): palms meet, cupped at the right hip; torso coiled right; head counter-turned to the lane | A cotton boll appears between the palms; kasikus diamonds bloom under her | Her motif as the charge object |
 | 1.72, 2.06 | | PACK beats: coil tightens, root sinks a little | Boll pulses brighter; kasikus steps inward on each beat | Teaches the live rhythm before it matters |

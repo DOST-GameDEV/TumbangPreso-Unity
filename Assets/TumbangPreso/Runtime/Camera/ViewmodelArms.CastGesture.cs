@@ -248,12 +248,16 @@ namespace TumbangPreso.CameraSystem
             { "gale-sweep", new CastPath(.32f, false,
                 Rest(0), K(.20f, .18f, .02f, .02f, .26f, .22f, .02f),
                 K(.32f, -.24f, .06f, .18f, -.20f, .34f, .18f), K(.52f, -.26f, .05f, .17f, -.22f, .33f, .17f), Rest(.90f)) },
-            // STORM SURGE. Both palms forward and braced through the 2.5 s gather, pressing harder as
-            // it builds, then one shove forward on the release (the key at 2.5 s is the contact).
-            { "storm-call", new CastPath(2.5f, false,
-                Rest(0), K(.25f, -.02f, .06f, .16f, .10f, .32f, .16f), K(1.2f, -.02f, .07f, .19f, .10f, .33f, .19f),
-                K(2.36f, -.01f, .08f, .12f, .09f, .34f, .12f), K(2.5f, -.02f, .10f, .36f, .10f, .36f, .36f),
-                K(2.66f, -.02f, .10f, .35f, .10f, .36f, .35f), Rest(2.85f)) },
+            // AIRBURST. The body's beats from the cutscene handback over the 1.5 s windup: both hands
+            // cupped low right of centre, pressed on the two pack beats (0.5, 1.0), drawn back and down
+            // out of the centre (1.32), then driven forward low under the reticle ON the release
+            // (1.5 s, `AmihanRules.StormSurgeGatherSeconds`), parting as the wind leaves.
+            { "storm-call", new CastPath(Core.AmihanRules.StormSurgeGatherSeconds, false,
+                Rest(0), K(.20f, .08f, -.04f, .08f, .20f, .24f, .10f), K(.50f, .07f, -.05f, .06f, .18f, .23f, .08f),
+                K(.62f, .08f, -.04f, .08f, .20f, .24f, .10f), K(1.0f, .06f, -.06f, .05f, .17f, .22f, .07f),
+                K(1.12f, .08f, -.04f, .08f, .20f, .24f, .10f), K(1.32f, .14f, -.12f, -.06f, .26f, .16f, -.04f),
+                K(1.5f, -.02f, .04f, .34f, .08f, .30f, .34f), K(1.62f, -.02f, .04f, .33f, .08f, .30f, .33f),
+                K(1.80f, .08f, .02f, .24f, -.02f, .30f, .22f), Rest(2.05f)) },
         };
 
         private bool _castApplied;

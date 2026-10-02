@@ -417,22 +417,38 @@ namespace TumbangPreso.Visual
     }
 
     /// <summary>
-    /// STORM SURGE, live. GATHER (2.5 s): the fan the wind will blow down lights up on the road,
-    /// its streaks rushing outward faster and faster, its two edges drawn as bright lines so every
-    /// player can see exactly where not to stand; pressure rings tighten round her. RELEASE: a wall
-    /// of three ribbon layers sweeps out along the fan at speed, a kasikus sigil (the binakol
-    /// whirlwind her family weaves) flashes out under her, and cotton and threads fly with it.
+    /// AIRBURST, live (`docs/reports/amihan-presentation-2026-10-02/direction.md`). The windup is the other players'
+    /// dodge window, so it reads as wind being HELD, never already blowing (the Miks reference: an outline at once,
+    /// then a floor that fills like a meter).
+    ///
+    /// GATHER: the two edges are the exact 30 degree contact limit (`AmihanStorm.InsideFan`) and stay the brightest
+    /// lines. Inside them six kasikus chevrons, the front corners of her graduated whirlwind diamonds (|x| + z = r),
+    /// contract TOWARD her in three steps that land on the body's two pack beats and its draw back, brighter on each,
+    /// so the floor says where and how soon. Their arms stop short of the edges, so nothing decorative touches or
+    /// crosses the real limit. Two small diamonds tighten at her feet; cotton and thread are drawn in to her hands.
+    /// RELEASE (the instant the host throws everyone): every chevron bursts outward at once, a standing chevron front
+    /// crosses the 14 m court within about three frames so nobody is seen flying before the wind reaches them, the
+    /// sigil flashes under her and cotton flies out. Everything thins to threads and is gone by gather + 1.0 s.
+    ///
+    /// Negative ages draw the fan ON (edges racing out from her feet, chevrons appearing far to near) for the cutscene's
+    /// last shot (`HeroIntroductionScene.Amihan.cs`), whose final frame is this fan at age 0.
     /// </summary>
     public sealed class AmihanStormFan : MonoBehaviour, IVfxTimeline
     {
-        public const int Lanes = 7;
-        public const float WallSeconds = 1.3f;
-        private readonly List<WindVfx.Ribbon> _lanes = new List<WindVfx.Ribbon>();
-        private readonly List<WindVfx.Ribbon> _walls = new List<WindVfx.Ribbon>();
+        public const int Chevrons = 6;
+        /// <summary>How long the release takes to clear; replay derives the field's life from it.</summary>
+        public const float WallSeconds = 0.6f;
+        /// <summary>The cutscene draws the fan on over this long before age 0.</summary>
+        public const float DrawOnSeconds = 1.0f;
+        private const float FirstSlot = 2.6f, SlotSpacing = 2.4f, ChevronWidth = 0.16f;
+        /// <summary>Share of the way from a chevron's apex to the fan edge that its arms reach.</summary>
+        private const float ArmReach = 0.84f;
+        private readonly List<WindVfx.Ribbon> _chevrons = new List<WindVfx.Ribbon>();
+        private readonly List<WindVfx.Ribbon> _front = new List<WindVfx.Ribbon>();
         private readonly List<WindVfx.Ribbon> _sigil = new List<WindVfx.Ribbon>();
-        private readonly List<WindVfx.Ribbon> _pressure = new List<WindVfx.Ribbon>();
+        private readonly List<WindVfx.Ribbon> _feet = new List<WindVfx.Ribbon>();
         private WindVfx.Ribbon _edgeLeft, _edgeRight;
-        private WindVfx.Motif _motif;
+        private WindVfx.Motif _drawn, _flung;
         private float _age, _gather, _half, _range;
         public float LifeSeconds => _gather + WallSeconds + 0.4f;
         public float Gather => _gather;
@@ -442,16 +458,10 @@ namespace TumbangPreso.Visual
             var go = new GameObject("AmihanStormFan");
             go.transform.SetParent(parent, false);
             forward.y = 0.0f;
-            go.transform.SetPositionAndRotation(VfxShapes.GroundPoint(origin) + Vector3.up * 0.03f,
+            go.transform.SetPositionAndRotation(CourtUnder(origin) + Vector3.up * 0.03f,
                 Quaternion.LookRotation(forward.sqrMagnitude > 0.001f ? forward.normalized : Vector3.forward));
             var fx = go.AddComponent<AmihanStormFan>();
-            fx._gather = gather; fx._half = AmihanRules.StormSurgeHalfAngle; fx._range = Abilities.AmihanStorm.FanRange;
-            for (int i = 0; i < Lanes; i++)
-            {
-                float a0 = -fx._half + 2 * fx._half * i / Lanes + 1.2f;
-                float a1 = -fx._half + 2 * fx._half * (i + 1) / Lanes - 1.2f;
-                fx._lanes.Add(WindVfx.BuildMesh(go.transform, "FanLane" + i, WindVfx.FanLane(fx._range, a0, a1, 30, 0.8f), 10.0f, 0.3f, i * 1.9f));
-            }
+            fx._gather = Mathf.Max(0.1f, gather); fx._half = AmihanRules.StormSurgeHalfAngle; fx._range = Abilities.AmihanStorm.FanRange;
             var left = new List<Vector3>(); var right = new List<Vector3>();
             for (int i = 0; i < 24; i++)
             {
@@ -462,94 +472,173 @@ namespace TumbangPreso.Visual
             }
             fx._edgeLeft = WindVfx.Build(go.transform, "FanEdgeLeft", left, 0.16f, WindVfx.Flat(left), 12.0f, 0.5f, 20.0f);
             fx._edgeRight = WindVfx.Build(go.transform, "FanEdgeRight", right, 0.16f, WindVfx.Flat(right), 12.0f, 0.5f, 21.0f);
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < Chevrons; i++)
             {
-                var arc = WindVfx.Arc(1.0f, fx._half * 2.0f + 6.0f, 32, 0.0f);
-                for (int k = 0; k < arc.Length; k++)
-                {
-                    float edge = Mathf.Abs(k / (float)(arc.Length - 1) * 2.0f - 1.0f);
-                    arc[k].y = (1.9f - i * 0.5f) * (1.0f - edge * edge * 0.4f);
-                    arc[k] = new Vector3(arc[k].x, arc[k].y + 0.2f, arc[k].z);
-                }
-                fx._walls.Add(WindVfx.Build(go.transform, "StormWall" + i, arc, 0.55f - i * 0.12f, WindVfx.Standing, 4.0f + i * 2.0f, 0.2f, 30.0f + i));
+                var spine = Chevron(fx._half, FirstSlot + SlotSpacing * i, 0.025f);
+                fx._chevrons.Add(WindVfx.Build(go.transform, "KasikusChevron" + i, spine, ChevronWidth * (1.0f + i * 0.08f),
+                    WindVfx.Flat(spine), 3.0f, 0.34f, 60.0f + i));
             }
-            // The kasikus: graduated squares turned to diamonds, radiating from her.
-            for (int i = 0; i < 4; i++)
-            {
-                float r = 0.6f + i * 0.45f;
-                var diamond = new List<Vector3>();
-                for (int k = 0; k <= 4; k++)
-                {
-                    float a = k * 90.0f * Mathf.Deg2Rad;
-                    diamond.Add(new Vector3(Mathf.Sin(a) * r, 0.03f, Mathf.Cos(a) * r));
-                }
-                var dense = new List<Vector3>();
-                for (int k = 0; k < 4; k++) for (int j = 0; j < 6; j++) dense.Add(Vector3.Lerp(diamond[k], diamond[k + 1], j / 6.0f));
-                dense.Add(diamond[4]);
-                fx._sigil.Add(WindVfx.Build(go.transform, "Kasikus" + i, dense, 0.1f, WindVfx.Flat(dense), 3.0f, 0.4f, 40.0f + i));
-            }
+            // The release front: a standing chevron at unit radius, scaled outward; lower at its arms.
             for (int i = 0; i < 2; i++)
             {
-                var ring = WindVfx.Arc(1.0f, 330.0f, 30, 1.2f + i * 0.9f);
-                fx._pressure.Add(WindVfx.Build(go.transform, "PressureRing" + i, ring, 0.12f, WindVfx.Flat(ring), 6.0f, 0.25f, 50.0f + i));
+                var spine = Chevron(fx._half, 1.0f, 0.0f);
+                for (int k = 0; k < spine.Count; k++)
+                {
+                    float edge = Mathf.Abs(k / (float)(spine.Count - 1) * 2.0f - 1.0f);
+                    spine[k] = new Vector3(spine[k].x, (0.95f - i * 0.25f) * (1.0f - edge * edge * 0.45f), spine[k].z);
+                }
+                fx._front.Add(WindVfx.Build(go.transform, "AirburstFront" + i, spine, 1.2f - i * 0.45f, WindVfx.Standing, 4.0f + i * 2.0f, 0.22f, 30.0f + i));
             }
-            fx._motif = new WindVfx.Motif(go.transform, 30, origin.x * 0.7f + origin.z * 3.3f);
+            // The kasikus sigil under her, flashing out on the release.
+            for (int i = 0; i < 4; i++) fx._sigil.Add(Diamond(go.transform, "Kasikus" + i, 0.6f + i * 0.45f, 0.1f, 40.0f + i));
+            // Two small diamonds at her feet that tighten on the beats.
+            for (int i = 0; i < 2; i++) fx._feet.Add(Diamond(go.transform, "HeldDiamond" + i, 0.85f + i * 0.4f, 0.09f, 50.0f + i));
+            // Each Motif gets its own host: a Motif hands its shared tuft mesh to its parent's single
+            // GeneratedMeshOwner, so two on one object throws (the shipped cutscene did, on every cast).
+            fx._drawn = new WindVfx.Motif(Host(go.transform, "DrawnCotton"), 16, origin.x * 1.7f + origin.z * 0.9f, 0.5f);
+            fx._flung = new WindVfx.Motif(Host(go.transform, "FlungCotton"), 26, origin.x * 0.7f + origin.z * 3.3f);
             fx.StepTo(0.0f);
             return fx;
         }
 
+        /// <summary>
+        /// The surface she and the slippers actually stand on. `VfxShapes.GroundPoint` prefers a collider classed as
+        /// court even when the visible floor is above it, and on Bayan Plaza the shipped fan's floor pieces drew under
+        /// the tiles: a native film showed no wedge at all through the windup. `Slipper.GroundY` is what Paete's and
+        /// Phaister's floor work use; a hit more than half a metre above her is a roof, not her floor.
+        /// </summary>
+        public static Vector3 CourtUnder(Vector3 origin)
+        {
+            var at = VfxShapes.GroundPoint(origin);
+            float court = Slipper.GroundY(origin + Vector3.up * 0.3f);
+            if (court > at.y && court < origin.y + 0.5f) at.y = court;
+            return at;
+        }
+
+        private static Transform Host(Transform parent, string name)
+        {
+            var host = new GameObject(name).transform;
+            host.SetParent(parent, false);
+            return host;
+        }
+
+        /// <summary>The front corner of a kasikus diamond of radius <paramref name="r"/>, inside the fan.</summary>
+        private static List<Vector3> Chevron(float halfDegrees, float r, float y)
+        {
+            float a = halfDegrees * Mathf.Deg2Rad;
+            // Where |x| + z = r meets the fan edge, and the arm stopping short of it.
+            float d = r / (Mathf.Sin(a) + Mathf.Cos(a));
+            var apex = new Vector3(0, y, r);
+            var edge = new Vector3(Mathf.Sin(a) * d, y, Mathf.Cos(a) * d);
+            var tip = Vector3.Lerp(apex, edge, ArmReach);
+            var spine = new List<Vector3>(17);
+            for (int k = 0; k <= 8; k++) spine.Add(Vector3.Lerp(new Vector3(-tip.x, y, tip.z), apex, k / 8.0f));
+            for (int k = 1; k <= 8; k++) spine.Add(Vector3.Lerp(apex, tip, k / 8.0f));
+            return spine;
+        }
+
+        private static WindVfx.Ribbon Diamond(Transform parent, string name, float r, float width, float seed)
+        {
+            var dense = new List<Vector3>();
+            for (int k = 0; k < 4; k++)
+                for (int j = 0; j < 6; j++)
+                {
+                    float a0 = k * 90.0f * Mathf.Deg2Rad, a1 = (k + 1) * 90.0f * Mathf.Deg2Rad;
+                    dense.Add(Vector3.Lerp(new Vector3(Mathf.Sin(a0), 0, Mathf.Cos(a0)), new Vector3(Mathf.Sin(a1), 0, Mathf.Cos(a1)), j / 6.0f) * r
+                              + Vector3.up * 0.03f);
+                }
+            dense.Add(dense[0]);
+            return WindVfx.Build(parent, name, dense, width, WindVfx.Flat(dense), 3.0f, 0.4f, seed);
+        }
+
         private void Update() { StepTo(_age + Time.deltaTime); if (_age >= LifeSeconds) Destroy(gameObject); }
+
+        /// <summary>A beat's step, eased in over 0.12 s from <paramref name="at"/>.</summary>
+        private static float Step(float t, float at) => WindVfx.Ease(at, at + 0.12f, t);
+
+        /// <summary>A beat's flash, up at once and decaying over 0.18 s.</summary>
+        private static float Pulse(float t, float at) => t < at ? 0.0f : 1.0f - WindVfx.Ease(at, at + 0.18f, t);
 
         public void StepTo(float seconds)
         {
-            _age = Mathf.Max(0.0f, seconds);
-            float t = _age;
+            _age = Mathf.Max(-DrawOnSeconds, seconds);
+            float t = _age, g = _gather, after = t - g;
             bool calm = WindVfx.Reduced;
-            float g = Mathf.Clamp01(t / _gather);
-            float after = t - _gather;
-            // GATHER: streaks rush outward, accelerating as the pressure builds (phase ~ t^2).
-            float phase = calm ? 0.0f : t * t * 1.6f + t * 2.0f;
-            float gatherAlpha = Mathf.Lerp(0.25f, 0.75f, g) * (1.0f - WindVfx.Ease(0.0f, 0.35f, after));
-            for (int i = 0; i < _lanes.Count; i++)
-                _lanes[i].Set(gatherAlpha * (0.8f + 0.2f * Mathf.Sin(i * 1.3f)), phase + i * 0.3f,
-                              Mathf.Lerp(0.15f, 1.0f, WindVfx.Ease(0.0f, 0.8f, g)), 0.0f, WindVfx.Ease(0.1f, 0.4f, after));
-            float edges = WindVfx.Ease(0.0f, 0.3f, t) * (1.0f - WindVfx.Ease(0.2f, 0.9f, after));
-            _edgeLeft.Set(edges, phase * 0.5f, Mathf.Lerp(0.2f, 1.0f, g), 0, 0.2f);
-            _edgeRight.Set(edges, phase * 0.5f, Mathf.Lerp(0.2f, 1.0f, g), 0, 0.2f);
-            for (int i = 0; i < _pressure.Count; i++)
+            // The beats are shares of the windup so the body (`HeroAbilityClips.Amihan.cs`) and the floor agree at 1.5 s.
+            float beat1 = g / 3.0f, beat2 = g * 2.0f / 3.0f, draw = g * 0.88f;
+            float pull = 0.07f * Step(t, beat1) + 0.07f * Step(t, beat2) + 0.11f * Step(t, draw);
+            float pulse = Pulse(t, beat1) + Pulse(t, beat2) + 0.8f * Pulse(t, draw);
+            float level = 0.34f + 0.12f * Step(t, beat1) + 0.12f * Step(t, beat2) + 0.14f * Step(t, draw);
+            // A slow drift only: an outward streak rush would say the wind had already left.
+            float phase = calm ? 0.0f : t * 0.8f;
+            float released = after < 0 ? 0.0f : 1.0f;
+
+            // The edges: drawn out from her feet in the cutscene, full through the windup, flashing then thinning away.
+            float edgeHead = t < 0 ? WindVfx.Ease(-DrawOnSeconds, -0.25f, t) : 1.0f;
+            float edgeAlpha = t < 0 ? WindVfx.Ease(-DrawOnSeconds, -0.6f, t)
+                : after < 0 ? 0.85f + 0.15f * Mathf.Clamp01(pulse) : 1.0f - WindVfx.Ease(0.05f, 0.45f, after);
+            float edgeThin = after < 0 ? 0.15f : WindVfx.Ease(0.0f, 0.4f, after);
+            _edgeLeft.Set(edgeAlpha, phase * 0.5f, edgeHead, 0, edgeThin);
+            _edgeRight.Set(edgeAlpha, phase * 0.5f, edgeHead, 0, edgeThin);
+
+            // The chevrons: contract in steps through the windup, then all burst outward together.
+            float burst = 1.0f - Mathf.Pow(1.0f - Mathf.Clamp01(after / 0.5f), 3.0f);
+            for (int i = 0; i < _chevrons.Count; i++)
             {
-                float squeeze = Mathf.Lerp(3.2f - i, 0.9f + i * 0.2f, g);
-                _pressure[i].GameObject.transform.localScale = new Vector3(squeeze, 1, squeeze);
-                _pressure[i].GameObject.transform.localRotation = Quaternion.Euler(0, (i == 0 ? 1 : -1) * t * (90 + 140 * g), 0);
-                _pressure[i].Set(0.7f * WindVfx.Ease(0.1f, 0.8f, t) * (after > 0 ? 0 : 1), phase, 1, 0, 0.1f);
+                float appear = t < 0 ? WindVfx.Ease(-0.75f + (Chevrons - 1 - i) * 0.07f, -0.35f + (Chevrons - 1 - i) * 0.05f, t) : 1.0f;
+                float scale = after < 0 ? 1.0f - pull : Mathf.Lerp(1.0f - pull, 2.2f + i * 0.1f, burst);
+                _chevrons[i].GameObject.transform.localScale = new Vector3(scale, 1.0f, scale);
+                float alpha = after < 0 ? appear * Mathf.Clamp01(level + 0.25f * pulse) : 0.95f * (1.0f - WindVfx.Ease(0.1f, 0.45f, after));
+                _chevrons[i].Set(alpha, phase + i * 0.3f, 1.0f, 0.0f, after < 0 ? 0.1f : WindVfx.Ease(0.0f, 0.4f, after));
             }
-            // RELEASE: the wall sweeps out to the whole fan in WallSeconds, easing out so the
-            // first metres are violent and the far end arrives as a blast front.
-            float sweep = after < 0 ? 0.0f : 1.0f - Mathf.Pow(1.0f - Mathf.Clamp01(after / WallSeconds), 2.2f);
-            for (int i = 0; i < _walls.Count; i++)
+
+            // The release front: past the 14 m court in about 0.1 s, out to the fan's end by WallSeconds.
+            for (int i = 0; i < _front.Count; i++)
             {
-                float lag = Mathf.Clamp01(sweep - i * 0.06f);
-                float radius = Mathf.Lerp(0.8f, _range, lag);
-                _walls[i].GameObject.transform.localScale = new Vector3(radius, 1.0f + lag * 0.6f, radius);
-                float alive = after < 0 ? 0 : (1.0f - WindVfx.Ease(WallSeconds - 0.35f, WallSeconds + 0.3f, after));
-                _walls[i].Set(alive * (1.0f - i * 0.22f), phase * (1.2f + i * 0.3f), 1, 0, WindVfx.Ease(0.5f, 1.4f, after) * 0.9f);
+                float lagged = after - i * 0.04f;
+                float u = lagged < 0 ? 0.0f : Mathf.Clamp01(lagged / WallSeconds);
+                float radius = Mathf.Lerp(1.0f, _range, 1.0f - Mathf.Pow(1.0f - u, 4.0f));
+                _front[i].GameObject.transform.localScale = new Vector3(radius, 1.0f + u * 0.4f, radius);
+                float alive = lagged < 0 ? 0.0f : (1.0f - i * 0.35f) * (1.0f - WindVfx.Ease(0.25f, WallSeconds, lagged));
+                _front[i].Set(alive, phase * 2.0f, 1.0f, 0.0f, WindVfx.Ease(0.15f, WallSeconds - 0.05f, Mathf.Max(0, lagged)));
+            }
+
+            // At her feet: two diamonds held tight through the windup; the sigil bursts out on the release.
+            for (int i = 0; i < _feet.Count; i++)
+            {
+                float s = 1.0f - pull * 1.2f;
+                _feet[i].GameObject.transform.localScale = new Vector3(s, 1, s);
+                _feet[i].GameObject.transform.localRotation = Quaternion.Euler(0, 45.0f + (i == 0 ? 1 : -1) * (t * 30.0f + pull * 90.0f), 0);
+                float on = t < 0 ? WindVfx.Ease(-0.5f, 0.0f, t) : 1.0f - WindVfx.Ease(0.0f, 0.15f, after);
+                _feet[i].Set(on * (0.45f + 0.3f * Mathf.Clamp01(pulse)), phase, 1, 0, 0.15f);
             }
             for (int i = 0; i < _sigil.Count; i++)
             {
-                float flash = after < 0 ? WindVfx.Ease(_gather - 0.6f, _gather, t) * 0.4f
-                    : WindVfx.Envelope(after, i * 0.06f, 0.08f, 0.9f + i * 0.05f, 0.5f);
+                float flash = after < 0 ? 0.0f : WindVfx.Envelope(after, i * 0.05f, 0.06f, 0.6f + i * 0.05f, 0.35f);
                 float grow = 1.0f + Mathf.Max(0, after) * (1.5f + i * 0.8f);
                 _sigil[i].GameObject.transform.localScale = new Vector3(grow, 1, grow);
                 _sigil[i].GameObject.transform.localRotation = Quaternion.Euler(0, 45.0f + (i % 2 == 0 ? 1 : -1) * t * 20.0f, 0);
-                _sigil[i].Set(flash, phase, 1, 0, WindVfx.Ease(0.3f, 0.9f, after));
+                _sigil[i].Set(flash, phase, 1, 0, WindVfx.Ease(0.2f, 0.6f, after));
             }
+
+            // Cotton and thread: drawn in to her cupped hands through the windup, flung out down the fan on the release.
             float half = _half * Mathf.Deg2Rad, range = _range;
-            _motif.Step(after < 0 ? 0 : Mathf.Clamp01(after / (WallSeconds + 0.2f)), 1.0f, (start, drift, u) =>
+            var hands = new Vector3(0.38f, 0.62f, 0.1f);
+            _drawn.Step(t <= 0 ? 0 : Mathf.Clamp01(t / g), (calm ? 0.45f : 0.85f) * (1.0f - released), (start, drift, u) =>
             {
-                float a = (start.x * 2.0f) * half;
-                float r = 0.8f + u * range * (0.4f + drift.z * 0.6f);
-                return new Vector3(Mathf.Sin(a) * r, 0.3f + start.y * 1.6f + drift.y * u * 1.2f, Mathf.Cos(a) * r);
-            }, 0.12f);
+                float a = start.x * 1.6f * half;
+                float d = 6.0f + start.z * 8.0f + start.y * 3.0f;
+                var from = new Vector3(Mathf.Sin(a) * d, 0.3f + start.y * 1.1f, Mathf.Cos(a) * d);
+                float e = u * u * (3.0f - 2.0f * u);
+                var side = Vector3.Cross(Vector3.up, hands - from);
+                return Vector3.Lerp(from, hands, e) + (side.sqrMagnitude > 1e-6f ? side.normalized : Vector3.right) * Mathf.Sin(u * Mathf.PI) * (drift.x * 0.8f);
+            }, 0.08f);
+            _flung.Step(after < 0 ? 0 : Mathf.Clamp01(after / (WallSeconds + 0.2f)), calm ? 0.5f : 1.0f, (start, drift, u) =>
+            {
+                float a = (start.x * 1.7f) * half;
+                float r = 0.8f + u * range * (0.3f + drift.z * 0.5f);
+                return new Vector3(Mathf.Sin(a) * r, 0.3f + start.y * 1.4f + drift.y * u, Mathf.Cos(a) * r);
+            }, 0.11f);
         }
     }
 

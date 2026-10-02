@@ -47,6 +47,39 @@ windup cannot be interrupted.
    side against the 30 degree contact rule.
 9. **The cutscene lifts her on a ribbon vortex.** It is the Venti cage the
    reference review rejects, and contradicts the grounded, braced final pose.
+10. **The shipped cutscene never appears: it throws while it is built.**
+    Found by the native baseline (`70370785e`, B1): `BuildAmihan` creates three
+    `WindVfx.Motif` sets on the same scene root; each hands its shared tuft mesh
+    to the root's `GeneratedMeshOwner`, which is `[DisallowMultipleComponent]`,
+    so the second `AddComponent` returns null and `VfxShapes.Own` throws. The
+    phase catches it, so the world freezes for 3.6 s with no Amihan picture. All
+    five baseline cases fail on that logged exception. The rewrite gives each
+    Motif its own host object (scene and live fan).
+11. **On Bayan Plaza the windup telegraph is not visible at all.** In the native
+    court view (B2, frames 145 to 183) and an amplified difference against a
+    pre-cast frame, no fan lanes or edges appear on the floor; only the raised
+    pressure rings and, at release, the standing wall show. The fan is anchored
+    with `VfxShapes.GroundPoint`, which prefers a court-classed collider even
+    when the visible tiled floor is above it. Paete's and Phaister's floor work
+    use `Slipper.GroundY`; the new fan does too, guarded against roofs. Other
+    Amihan floor effects (Whirlwind, Drift) likely share this and belong to
+    their own units.
+
+## Composition, from the offline pose preview
+
+`python tools/author_ultimate_intros.py --preview amihan` renders the real
+team-amihan.glb from the authored shots (silhouette and pose only, not the
+engine look). At game scale she is 1.87 m with a large head and short arms
+(palms hang at about 0.35 m), which shapes every shot:
+
+- The INTENT close-up (0.62 to 1.32 s) puts the lens inside her hair geometry:
+  the preview frames at 0.9 and 1.2 s are flat hair planes.
+- The RELEASE over-the-shoulder (2.46 to 3.6 s) is filled by the back of her
+  head; the lane it should show is hidden.
+- Hands rarely read past the head at match distance; the readable signals are
+  whole-body turn, lean and stance.
+
+These are offline findings; the native BEFORE film is the confirmation.
 
 ## Weaknesses that are not outright defects
 
