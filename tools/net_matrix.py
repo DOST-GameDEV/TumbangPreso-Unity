@@ -641,9 +641,10 @@ def judge_client(scenario, client):
     # reporting `role: CLIENT` on a live round after its host is gone is simulating a match with
     # nobody refereeing it, and every score on that screen is invented locally. Falling back to
     # its own lobby is the DEFINED correct end and is what `describe` has always called it.
-    if client["role"] == "CLIENT" and client["active"] == "True":
-        return ("the client is still a CLIENT on a live round with no host: it kept playing "
-                "against a referee that is gone, which is the outcome this row exists to catch")
+    if client.get("active") != "False":
+        return ("the surviving player did not report an inactive round after losing its host "
+                "(role %s, round active %s): changing roles cannot retire old simulation"
+                % (client.get("role"), client.get("active")))
 
     return None
 
