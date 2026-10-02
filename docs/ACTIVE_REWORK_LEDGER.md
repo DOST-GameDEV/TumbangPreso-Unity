@@ -600,3 +600,14 @@ through f33e1d8a integrated after test, not newly player-qualified. Original
 Backwash failures remain false; whole Hydro/human acceptance stay open.
 No active hero jobs. See TODO RAFI-BAHA-BACKWASH-1002 and its report. Preserve
 the independent reliability owner's active lane and all other contributor work.
+
+## Cloud Docs/hero lane: Cheska loaded-shoe cue
+
+Baha/Backwash4a9afbd9 published via58db2d8f; same Feedback note updated and
+verified after exact owner approval. Whole Hydro/human state untouched.
+Owner explicitly prohibits touching their PC; continue cloud-only. Current
+Cheska actual-input rear/FPP baseline passes, but one front-camera repair was
+stopped by memory guard with no frames/XML. No more unchanged heavy retries.
+Next distinct scoped unit CHESKA-FROSTBITE-LOAD-1002 claims only paths in
+reports/cheska-frostbite-load-2026-10-02/plan.md. No production edits yet. Native
+small-world visual/lifecycle coverage before publication; preserve other lanes.
