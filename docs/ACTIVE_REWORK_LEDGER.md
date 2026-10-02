@@ -20,7 +20,7 @@ preserve finalized Paete/Phaister and active Sean/Rafi/Baha reservations.
 
 ## Published code and acceptance
 
-Current source56446ad7c:47 root continuity runtime fix units (push below).
+Verified source56446ad7c published via90b1cb2a9:47 runtime fix units.
 protocol132/recording13 after qualified incoming Rafi4a9afbd90, integrationa67d7bc5b. Latest units:
 32chat guards3e91f02b0/native10;33scorecard owner84ddfc391/native3;34RecordChoice
 57158d1db/native3;35cold actor12a2689ff/native3;36scorecard focus7c3124886/native3;
@@ -119,12 +119,19 @@ existing Update cancels only when it runs. Public SpecialAbility press starts lo
 throw charge; ApplyObservedCharge starts remote tell/spin. New
 PlayMode/CarrierDisableLifetimeTests.cs/meta drafted: actual local charge/bodyretire,
 observed tell retirement, ordinary charge/release control. No production change or
-Original preparation98288 TERMINAL0/exact3; baseline29117 ACTIVE/GPU2048+
+Original preparation98288 TERMINAL0/exact3; baseline29117 TERMINAL compileFAIL:
+older qHeroKit lacks current Carrier.ThrowChargeRate, no XML/gameplay result.
+ONE dependency compatibility repair: exact current MAIN HeroKit differs only4
+virtual API members/5lines, unchanged MAIN/no hero tuning. q dependency now explicit
+4th owned path, original bytes/protected snapshot retained; keep aligned q API
+to avoid a broken future qualification compile. No hero-rate coverage (Classic/
+no HeroAbility fixture). Corrected original24020 ACTIVE after directprep0/exact4;
+GPU2048+
 2048reserve/450s/PlayMode-nographics/profile carrier-disable-lifetime1002,
 filter CarrierDisableLifetimeTests3. Source unchanged. No q changes while root
 owns this bounded pair. MAIN
 Logs/carrier-disable-lifetime1002/prepare.py
-ready, exact3 source/test/meta; existing Carrier meta must be present before copy.
+ready, original3+requiredHeroKit dependency; existing Carrier meta present before copy.
 Minimal candidate should reuse existing
 CancelAll on disable if causal baseline qualifies; held shoe/pickup lock preserved,
 reset-channel transport not separately claimed. Actor impulse suspicion retired:

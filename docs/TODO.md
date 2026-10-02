@@ -151,7 +151,9 @@ Current46fix artifact acceptance: [Evidence](reports/reliability-2026-10-02/wind
 Next: sole helper lunge windup retirement original96494=2causal/1control;
 candidate64944 FIRST PASS3/+3cleanup lines/exact3/protected12547/zero repairs.
 Lunge windup47 committed56446ad7c. [Evidence](reports/reliability-2026-10-02/lunge-windup-lifetime/README.md).
-RootCarrier original29117 ACTIVE after prep98288 exit0/exact3; source unchanged,
+RootCarrier29117 compileFAIL/no XML due old qHeroKit API; ONE owned dependency
+compatibility repair/current base4 API members, MAIN unchanged. Corrected
+original24020 ACTIVE after directprep0/exact4; Carrier source/fixture unchanged,
 GPU2048/reserve2048/450s/PlayMode-nographics/exact3. Native slot root-owned.
 root disjoint Carrier retirement fixture draft/source unchanged. No reused retired
 practice fixture, private timers or unchanged full-match tests; coordinate native.
