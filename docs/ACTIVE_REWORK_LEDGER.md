@@ -6,6 +6,47 @@ Previous complete checkpoint archived before_host_loss_peer_2026-10-02.
 
 ## Current scope and workers
 
+CURRENT RESUME:92385 TERMINAL/nativeFAIL expectedClassic but actualHero both.
+Natural8roundend/same40/240/3530/3300/winner2/roles+twohumanorigins/D3D11/normal
+exits; owned5356/25268/176 gone, settingsseeds+sharedinputrestored/runtimeunchanged/
+leasefree. No active native/player jobs. Fresh savedaggregate:hostHistory1/Queue1/
+OnlineHero8rounds; clientcareer.json absent. Rawresult remainsFALSE. Hostavg58.46/
+max203.13ms; client58.72/max156.45; retained slowframecontext not cause proof.
+NEXT IMPLEMENTATION: HubHome.Refresh=>ApplyChoice unconditionally discards
+SceneFlow.RulesPinned. Add passive-pin protection while preserving explicit
+HubHome.Choice and HubHero.Primary selection. Inspect exact three call sites;
+native controlled pinnedClassic/savedHero, pinnedHero/savedClassic and ordinary/
+explicit choice controls, original/candidate once. No whole13min rerun for this.
+Then trace CLIENT-CAREER-DELIVERY: actualpubliclobbyOnline hostrecord saved while
+clientabsent; inspect MatchStatsCollector sharedrecord/MatchRpc delivery + local
+CareerStore.LineFor identity/Online before edits. Source identity/transport cause
+unproven. Own newprofile aggregates only; never publish raw profile contents.
+New root runner four purecontrolsPASS/correctly rejected wrongmode on firstnative.
+Tool/source/build report publication pending; all relevant owned paths listed below.
+Preserve newly observed unrelated untracked Amihan preview_amihan_clips.py.
+Older ACTIVE/pending paragraphs below are historical superseded states.
+
+LATEST root source6bae3bc45 PUSHED and remote verified. Slide optimization passed
+same6 native controls, median45.03percent lower prediction cost; no rerun needed.
+New1002m Windows artifact source6bae3bc45312e61de6af5da7a56792dda93b1257,
+Runtime c20061ec01666af199fe708a45c923dead85c6ffcefe5a9b5f2a0bd4ace8a244.
+Freeze60051/build63266/finalizer80477 TERMINAL; first12scene2432MB91s build.
+Raw strictFALSE retained:2identity outputs plus ignored generatedwarmup. Exact
+Frostbite pass0 entry removal reproduces frozen prebuild bytes/hash; artifact
+classifierPASS/all18916 otherinputs unchanged/protocol132/record13/restored/free.
+Current1002m includes incoming Cheska and slide optimization; report windows-candidate1002m.
+ACTIVE one normal LAN-lobby default Classic8x90 actual peer run92385, parent5356,
+host25268/client176, ports9140/9141, logs release Logs/competition-candidate1002m/default-classic.
+Both PIDs observedlive; host reached round4. Native defaults1920x1080/Balanced/60cap/
+defaultAPI; no AllBots/forcefinish/SDK sign-in. Tool run_default_tournament.py+
+test_default_tournament.py are ROOT OWNED UNCOMMITTED; four purecontrolsPASS,
+native firstpass pending. No other heavy job or release mutation while live.
+Do NOT read live player JSON receipts/profiles. Poll SAME92385 handle; parent
+ceiling850s, ownedplayers selfreport/exit at803host/790clientseconds. After terminal,
+inspect fresh reports/naturalend/roles/humanorigins/equalterminalscores plus saved
+career aggregate from OWN newprofiles; retain failures, no unchanged retry.
+Then finish/publication of runner +currentbuild report/TODO/checkpoint. Goal ACTIVE.
+
 Root solo continuation: no subagents will be resumed. Current HEADdc6f5d715
 includes the incoming qualified Cheska held-shoe presentation; preserve that work.
 NEW slide-inventory1002 owns only Runtime/CombatVerbs.cs and existing
@@ -487,6 +528,25 @@ presentation acceptance remains partial; see reports/amihan-presentation-
 heavy job. Validation-only Codex/work/tump-amihan1002 retains import churn/logs,
 not published. Next owned lane AMIHAN-AIRBURST-FEEL-1002, then separately claimed
 Drift/Featherfall/Whirlwind. Preserve all other contributor reservations.
+
+AMIHAN lane resumed 2026-10-02 (Claude, Opus5.5, owner present). Owner: Amihan
+only; refine her cutscene, skills and animations; light footsteps, a floating
+run, and a NEW airy step sound (owner chose it; footstep family, not skill SFX).
+Film critique F3: faint mint fan, release sigil drawn behind her outside the fan,
+black Vigan slabs, GATHER head crop, release pose hides arms. CLAIMED exact paths:
+Resources/Shaders/WindRibbon.shader (defaulted ink properties only);
+Runtime/Visual/AmihanVfx.cs AmihanStormFan/AmihanDashWake/AmihanGaleFront/
+AmihanUpdraftLaunch only; HeroIntroductionScene.Amihan.cs; HeroAbilityClips.Amihan.cs;
+Art/characters/amihan-motion/*.anim (rebake, GUIDs kept); Editor/AmihanMotionAuthor.cs;
+ViewmodelArms.cs Amihan clips only; ViewmodelArms.CastGesture.cs Amihan paths only;
+tools/author_ultimate_intros.py amihan() and Resources/UltimateIntros/amihan.txt;
+GaitStyles.cs Amihan entry only; MotionFoley.cs Amihan step branch only;
+NEW Runtime/Visual/AmihanAirStep.cs(+meta); CharacterAnimator.LocomotionArms.cs
+one Amihan attach line in ResolveGaitStyle; ViewmodelArms.RunSway.cs Amihan bob;
+AudioCues.cs one step_amihan row/name; NEW Resources/Sfx/step_amihan.wav(+meta),
+tools/build_amihan_steps.py; Amihan tests; docs/reports/amihan-presentation-2026-10-02.
+Offline authoring only while root tournament92385 is live; one native run later in
+Codex/work/tump-amihan1002, profile amihan-airburst1002. No mechanics/protocol.
 
 PLAYER-RING-RADIUS-1002 final Low-profile native1/1 passes in3.31s, outerexit0
 and guard null40s. Both hollow-role captures inspected. First ordinary-profile

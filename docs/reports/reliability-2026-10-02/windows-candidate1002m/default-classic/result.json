@@ -1,0 +1,203 @@
+{
+  "passed": false,
+  "sourceCommit": "6bae3bc45312e61de6af5da7a56792dda93b1257",
+  "runtimeSha256": "c20061ec01666af199fe708a45c923dead85c6ffcefe5a9b5f2a0bd4ace8a244",
+  "scope": "Natural Classic eight-round tournament through LAN lobby; two undriven human seats, two ordinary bots. No AllBots, forced end, SDK or physical-input claim.",
+  "admission": {
+    "availableMb": 5826,
+    "activeJobsBefore": 0,
+    "acquiredUtc": "2026-10-02T14:36:32Z"
+  },
+  "hostPid": 25268,
+  "hostCommand": [
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Builds\\competition-candidate1002m\\TumbangPreso.exe",
+    "-batchmode",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1920",
+    "-screen-height",
+    "1080",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "default-tournament-host-75979950fc",
+    "-tp-tournament",
+    "-tp-autostart",
+    "2",
+    "-tp-netreport",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-candidate1002m\\default-classic\\host.txt",
+    "-tp-netseconds",
+    "803",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-candidate1002m\\default-classic\\host.log",
+    "-tp-lobby",
+    "-tp-lobbyport",
+    "9140"
+  ],
+  "hostProfile": "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\16794bab5e75462253d146b72c88007d75f94336003e1af231b1054b6b8aa16f",
+  "clientPid": 176,
+  "clientCommand": [
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Builds\\competition-candidate1002m\\TumbangPreso.exe",
+    "-batchmode",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1920",
+    "-screen-height",
+    "1080",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "default-tournament-client-75979950fc",
+    "-tp-tournament",
+    "-tp-autostart",
+    "2",
+    "-tp-netreport",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-candidate1002m\\default-classic\\client.txt",
+    "-tp-netseconds",
+    "790",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-candidate1002m\\default-classic\\client.log",
+    "-tp-lobbyjoin",
+    "127.0.0.1:9140",
+    "-tp-lobbyport",
+    "9141"
+  ],
+  "clientProfile": "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\0acfc0ad33b5cc49f841deba76ab0590895ad1e49e34d9cd314b4c8b005fb5f2",
+  "terminalScores": {
+    "host": [
+      40,
+      240,
+      3530,
+      3300
+    ],
+    "client": [
+      40,
+      240,
+      3530,
+      3300
+    ]
+  },
+  "reports": {
+    "host": {
+      "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-candidate1002m\\default-classic\\host.txt",
+      "seats": [
+        {
+          "seat": 0,
+          "char": 0,
+          "bot": false,
+          "origin": "Human",
+          "taya": false,
+          "score": 40,
+          "travelled": 40.1
+        },
+        {
+          "seat": 1,
+          "char": 0,
+          "bot": true,
+          "origin": "HandedToBot",
+          "taya": false,
+          "score": 240,
+          "travelled": 552.0
+        },
+        {
+          "seat": 2,
+          "char": 6,
+          "bot": true,
+          "origin": "Bot",
+          "taya": false,
+          "score": 3530,
+          "travelled": 748.4
+        },
+        {
+          "seat": 3,
+          "char": 1,
+          "bot": true,
+          "origin": "Bot",
+          "taya": true,
+          "score": 3300,
+          "travelled": 782.1
+        }
+      ],
+      "role": "HOST",
+      "networked": "True",
+      "slot": "0",
+      "protocol": "132",
+      "sampled": "803.0",
+      "round": "8",
+      "active": "False",
+      "defender": "3",
+      "mode": "HeroStrike",
+      "map": "Eskinita",
+      "structural": "504833CC",
+      "hash": "EBBE49D5"
+    },
+    "client": {
+      "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-candidate1002m\\default-classic\\client.txt",
+      "seats": [
+        {
+          "seat": 0,
+          "char": 0,
+          "bot": false,
+          "origin": "Human",
+          "taya": false,
+          "score": 40,
+          "travelled": 41.9
+        },
+        {
+          "seat": 1,
+          "char": 0,
+          "bot": false,
+          "origin": "Human",
+          "taya": false,
+          "score": 240,
+          "travelled": 50.6
+        },
+        {
+          "seat": 2,
+          "char": 6,
+          "bot": true,
+          "origin": "Bot",
+          "taya": false,
+          "score": 3530,
+          "travelled": 803.2
+        },
+        {
+          "seat": 3,
+          "char": 1,
+          "bot": true,
+          "origin": "Bot",
+          "taya": true,
+          "score": 3300,
+          "travelled": 841.5
+        }
+      ],
+      "role": "CLIENT",
+      "networked": "True",
+      "slot": "1",
+      "protocol": "132",
+      "sampled": "790.0",
+      "round": "8",
+      "active": "False",
+      "defender": "3",
+      "mode": "HeroStrike",
+      "map": "Eskinita",
+      "structural": "504833CC",
+      "hash": "F856E2C2"
+    }
+  },
+  "errors": [
+    "host lacks a completed Classic round8 report",
+    "host did not demonstrate tournament ruleset",
+    "client lacks a completed Classic round8 report",
+    "client did not demonstrate tournament ruleset"
+  ],
+  "inputRestored": true,
+  "profileSeedsRestored": true,
+  "runtimeUnchanged": true,
+  "retiredPids": [
+    25268,
+    176
+  ]
+}
