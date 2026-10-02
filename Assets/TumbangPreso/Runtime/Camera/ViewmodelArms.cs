@@ -746,6 +746,17 @@ namespace TumbangPreso.CameraSystem
             new Key(1.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
+        // The carried shoe stays presented while the free hand seals its frost.
+        private static readonly Key[] FrostLoadClip =
+        {
+            new Key(0, 0, 0, 0, 0, 0, 0),
+            new Key(.12f, .12f, .08f, -.06f, .18f, -.08f, .08f),
+            new Key(.30f, .16f, .10f, -.08f, .42f, -.18f, .18f, true),
+            new Key(.44f, .16f, .10f, -.08f, .40f, -.17f, .17f),
+            new Key(.58f, .08f, .05f, -.04f, .18f, -.08f, .08f),
+            new Key(.76f, 0, 0, 0, 0, 0, 0),
+        };
+
         private static readonly Key[] FrostSweepClip =
         {
             new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
@@ -1139,6 +1150,7 @@ namespace TumbangPreso.CameraSystem
                   : clip == "stomp-heavy" || clip == "stomp" ? StompHeavyClip
                   : clip == "carapace-guard" ? CarapaceGuardClip
                   : clip == "fissure-slam" ? FissureSlamClip
+                  : clip == "frost-load" ? FrostLoadClip
                   : clip == "frost-sweep" ? FrostSweepClip
                   : clip == "raise-barricade" ? RaiseBarricadeClip
                   : clip == "nova-burst" ? NovaBurstClip

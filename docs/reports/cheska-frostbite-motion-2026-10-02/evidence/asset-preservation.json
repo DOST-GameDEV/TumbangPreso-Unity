@@ -1,0 +1,14 @@
+{
+  "old_clips_preserved": 36,
+  "original_binary_unchanged": true,
+  "source_tables_unchanged": [
+    "nodes",
+    "skins",
+    "meshes",
+    "materials",
+    "textures",
+    "images"
+  ],
+  "old_sha256": "f64171042f14626491e3100842e750af2375aeeccb989d59ce94cfe4bd40b0d4",
+  "final_sha256": "fe571a9454e1c8ca36c0123504ae010b3e7371973ec3a47dacb89cbcab61cd80"
+}

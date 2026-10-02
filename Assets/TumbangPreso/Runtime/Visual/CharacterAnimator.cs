@@ -213,6 +213,7 @@ namespace TumbangPreso.Visual
             { "hero-dante-roar", new[] { "hero-dante-roar", "attack-melee-left", "emote-yes" } },
             { "hero-dante-fissure", new[] { "hero-dante-fissure", "attack-kick-left", PickUp } },
 
+            { "hero-cheska-frostbite", new[] { "hero-cheska-frostbite" } },
             { "hero-cheska-frostwave", new[] { "hero-cheska-frostwave", "interact-right", "attack-melee-right" } },
             { "hero-cheska-raise", new[] { "hero-cheska-raise", PickUp, Interact } },
             { "hero-cheska-nova", new[] { "hero-cheska-nova", "holding-left-shoot", Jump } },

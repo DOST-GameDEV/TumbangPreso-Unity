@@ -1,0 +1,29 @@
+wrote /workspace/scratch/0ed9da4aed7f/tump-qa/cheska-frostbite-motion/candidate.glb  (1481376 bytes)
+{
+  "file": "candidate.glb",
+  "clip": "hero-cheska-frostbite",
+  "duration": 0.76,
+  "samples": 50,
+  "authored_height": 0.792,
+  "original_clips_preserved": 36,
+  "original_binary_preserved": true,
+  "punch": 0.3,
+  "deepest_dip": 0.0,
+  "deepest_dip_at": 0.0,
+  "grounded_beats": [
+    0,
+    0.12,
+    0.3,
+    0.44,
+    0.58,
+    0.76
+  ],
+  "root_y_range": [
+    0.0,
+    0.0
+  ],
+  "largest_plant": 0.0
+}
+Blender 4.3.2
+
+Blender quit

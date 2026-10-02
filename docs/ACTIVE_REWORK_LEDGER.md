@@ -738,3 +738,31 @@ passed one per fresh Editor; final world/owner shader renders also passed and
 were inspected. Same memory guard, no PC use, no active jobs. Failed batch is
 retained. Publish this scoped cue with exact owned paths; broader body/camera
 and SFX work stays open. See result.md and final-input-sha256.json.
+
+## Cloud hero continuation, October2 15:06UTC
+
+Frostbite surface cue dc6f5d71 is verified remote, all five focused cases passed
+serially. Shared cloud folder disappeared; same desktop persists, cause not
+established. Checkout now restored under the surviving task workspace at6bae3bc45.
+Official matching editor restored; fresh native setup check is running, one
+admission repair identifies the relocated pre-existing Hub CLI exactly.
+Next CHESKA-FROSTBITE-MOTION-1002 claims only the paths in its dated plan. Keep
+Cold Feet sweep and all other animation entries unchanged. No product changes
+yet; prepare independent pose work while import runs. PC stays prohibited.
+
+Cloud Cheska motion ready: actual-input original shared-clip failure retained.
+First candidate passed but lower hand rejected visually. Refined0.76s body and
+owner gesture pass1/1,76paired frames,35s guard null. All36 previous clips and
+source model data unchanged; exactly one roster reference added. No active job.
+Ship explicit CHESKA-FROSTBITE-MOTION-1002 paths only; preserve generated metadata
+and other owners. Shared folder recovery retained independently, native warm-cache
+control passed. No new player/audio/human acceptance claim.
+
+## Cloud hero continuation: Dante Boulder
+
+Cheska surface dc6f5d71 and distinct motion278c77b2 are both verified remote;
+video delivered and the same Feedback row updated/read back, checkboxes untouched.
+DANTE-BOULDER-MOTION-1002 now claims only its dated plan's exact paths. Existing
+Boulder imbues a held shoe but requests the old ground stomp. Inspect the real
+cast before changing it; preserve all gameplay and earlier authored clips.
+Cloud-only, one small native case per process. No active job at claim time.

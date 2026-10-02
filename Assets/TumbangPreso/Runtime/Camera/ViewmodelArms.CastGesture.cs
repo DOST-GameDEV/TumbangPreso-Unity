@@ -110,6 +110,12 @@ namespace TumbangPreso.CameraSystem
             // ---------------------------------------------------------------- CHESKA: one hand, exact
             // PERMAFROST SHEET. One flat pass of the right hand, low, right to left at one height (the
             // sheet's edge), and she holds it there. The left never moves: she spends one hand.
+            // Frostbite presents the real shoe; it does not draw a lane on the floor.
+            { "frost-load", new CastPath(.30f, false,
+                Rest(0), K(.12f, .04f, .03f, .06f, .06f, .10f, .03f),
+                K(.30f, .04f, .03f, .06f, .18f, .20f, .08f),
+                K(.44f, .04f, .03f, .06f, .17f, .19f, .08f),
+                K(.58f, .02f, .02f, .03f, .07f, .08f, .03f), Rest(.76f)) },
             { "frost-sweep", new CastPath(.22f, false,
                 Rest(0), K(.10f, .12f, -.06f, .12f, 0, 0, 0),
                 K(.22f, -.24f, -.06f, .14f, 0, 0, 0), K(.42f, -.24f, -.06f, .14f, 0, 0, 0), Rest(.80f)) },
