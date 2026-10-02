@@ -125,10 +125,15 @@ ONE dependency compatibility repair: exact current MAIN HeroKit differs only4
 virtual API members/5lines, unchanged MAIN/no hero tuning. q dependency now explicit
 4th owned path, original bytes/protected snapshot retained; keep aligned q API
 to avoid a broken future qualification compile. No hero-rate coverage (Classic/
-no HeroAbility fixture). Corrected original24020 ACTIVE after directprep0/exact4;
+no HeroAbility fixture). Corrected original24020 TERMINAL:2intended causals/
+1ordinary enabled-charge-release control pass. Reactivation actually threw held
+shoe; observedtell returned.159999996 instead-1. Guard/restored/free.
+Candidate93894 ACTIVE after directprep0/exact4;
 GPU2048+
 2048reserve/450s/PlayMode-nographics/profile carrier-disable-lifetime1002,
-filter CarrierDisableLifetimeTests3. Source unchanged. No q changes while root
+filter CarrierDisableLifetimeTests3. Source adds OnDisable=>existingCancelAll;
+field cancellation/holding/throwlock behavior reused, no other production change.
+No q changes while root
 owns this bounded pair. MAIN
 Logs/carrier-disable-lifetime1002/prepare.py
 ready, original3+requiredHeroKit dependency; existing Carrier meta present before copy.

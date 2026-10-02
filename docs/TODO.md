@@ -153,7 +153,8 @@ candidate64944 FIRST PASS3/+3cleanup lines/exact3/protected12547/zero repairs.
 Lunge windup47 committed56446ad7c. [Evidence](reports/reliability-2026-10-02/lunge-windup-lifetime/README.md).
 RootCarrier29117 compileFAIL/no XML due old qHeroKit API; ONE owned dependency
 compatibility repair/current base4 API members, MAIN unchanged. Corrected
-original24020 ACTIVE after directprep0/exact4; Carrier source/fixture unchanged,
+original24020=2actual causal failures/1ordinary control. Candidate93894 ACTIVE
+after prep0/exact4; OnDisable calls existingCancelAll, identicalfixture,
 GPU2048/reserve2048/450s/PlayMode-nographics/exact3. Native slot root-owned.
 root disjoint Carrier retirement fixture draft/source unchanged. No reused retired
 practice fixture, private timers or unchanged full-match tests; coordinate native.
