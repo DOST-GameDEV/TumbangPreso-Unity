@@ -40,8 +40,17 @@ namespace TumbangPreso.Core.Tests
             Assert.False(rooted.BlocksInteraction, "Rooted players can still throw and use skills (owner).");
             Assert.True(rooted.Removable, "A hold or a tag ends Rooted.");
             Assert.Equal(PaeteRules.SentryLifeSeconds, rooted.Seconds);
-            // Haunted is appended after the eleven existing statuses; IDs are unchanged.
-            Assert.Equal(12, StatusRules.All.Count);
+            // Haunted and then Zapped were appended; existing wire IDs stay unchanged.
+            Assert.Equal(12, (int)StatusKind.Haunted);
+            Assert.Equal(13, (int)StatusKind.Zapped);
+            Assert.Equal(13, StatusRules.All.Count);
+            var zapped = StatusRules.For(StatusKind.Zapped);
+            Assert.Equal(5.0f, zapped.Seconds);
+            Assert.Equal(1.0f, zapped.SpeedScale);
+            Assert.Equal("Disabled Ability Cast", zapped.Tooltip);
+            Assert.False(zapped.BlocksMovement || zapped.BlocksInteraction
+                || zapped.BlocksSlipperRetrieval || zapped.DropsHeldSlipper);
+            Assert.True(zapped.Removable && zapped.ImmunityApplies);
         }
 
         [Fact]

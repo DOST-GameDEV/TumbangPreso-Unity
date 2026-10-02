@@ -146,3 +146,19 @@ Target a thin natural-width single line at ordinary viewports, matching the
 contextual action plate opacity. Preserve minimum font size and existing crowded
 status bounds; do not hide text merely to force one line at impossible widths.
 No active heavy job.
+
+Clean release Core integration baseline690/691: status-table fixture expects12,
+while adopted Zapped is appendedID13 by ef830005d and current network contract.
+No Core runtime defect established. Updated existing assertion to13 plus stable
+Haunted12/Zapped13 IDs, Zapped5s/cast-only tooltip/neutral movement/interaction/
+immunity/removable controls. No gameplay retune or new framework. Main+release
+same test file. One corrected Core run next; no further unchanged repeats.
+Full tracked asset manifest session28569 still hashing; do not launch Unity
+import until it completes and Core job is terminal. Native import not started.
+
+Core corrected integration691/691 passed, zero skips, current adopted status
+controls explicit. Test-only contract update publishes next; no runtime values
+changed. Source manifest completed18539 tracked non-audio/video runtime/assets/
+packages/settings hashes at087d3a36f. No Unity import started yet. Align clean
+checkout to published test correction without resetting its matching file, then
+one guarded import/build. Existing clean checkout has only this same test edit.
