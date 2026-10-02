@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "sourceCommit": "14dfe9e416f5a98698844d9da34ab3c34b849a17",
+  "runtimeSha256": "501f0a02db575003c48910f08bdd0221810031c4d30aaf499f4727bbeca0c806",
+  "profile": "map-availability1003e-2b3cacb869",
+  "scope": "Existing native graphics probe: all registered maps and graphics profiles, Classic parked actors. Staged render/availability check, not combat or physical-device/WAN qualification.",
+  "admission": {
+    "availableMb": 8849,
+    "activeJobsBefore": 0,
+    "acquiredUtc": "2026-10-02T22:51:49Z"
+  },
+  "pid": 23856,
+  "exitCode": 0,
+  "coverage": {
+    "maps": [
+      "Eskinita",
+      "BayanPlaza",
+      "IlalimNgTulay",
+      "SaBubong",
+      "LagoonCove",
+      "Kanto"
+    ],
+    "qualities": [
+      "Low",
+      "Balanced",
+      "High"
+    ]
+  },
+  "rows": 18,
+  "exactCoverage": true,
+  "renderCountersPositive": true,
+  "inputRestored": true,
+  "runtimeUnchanged": true
+}

@@ -1,0 +1,109 @@
+{
+  "passed": true,
+  "errors": [],
+  "profiles": {
+    "host": {
+      "name": "completed-arrival-host-d1c0ca0a3a",
+      "root": "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\59e8e03f503933c5e99cf3355e08202bde01310698d73def086a0dd34c19e08e",
+      "seedSha256": "de705ffa6ad2e845f33cd7af6609f9210d9a08233b6a90123288e096de5c056d"
+    },
+    "client": {
+      "name": "completed-arrival-client-d1c0ca0a3a",
+      "root": "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\8b47b144d1347fe8e14c03a8c730ab2aaa98dc0edac127e93be7b8e18be246db",
+      "seedSha256": "68f7bc90990264c972cbf1d9d9c8a33ef76d150d1266f96189ca971e0416a7ea"
+    }
+  },
+  "rules": {
+    "wire": "1|0|1|30|0|3|0|1|0|1",
+    "seconds": 30,
+    "manual": true,
+    "rounds": 1
+  },
+  "runtimeSha256": "501f0a02db575003c48910f08bdd0221810031c4d30aaf499f4727bbeca0c806",
+  "sourceCommit": "14dfe9e416f5a98698844d9da34ab3c34b849a17",
+  "buildReceipt": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-candidate1003e\\artifact-receipt.json",
+  "graphicsApiRequested": "default",
+  "scope": "Short custom 1-round/30-second direct-peer cold completed arrival; MAIN MENU gives up the prior seat, so no retained-seat/full-default-match/physical-input claim.",
+  "chatRequested": "Rebind-check \u96e8",
+  "admission": {
+    "availableMb": 8739,
+    "activeJobsBefore": 0,
+    "acquiredUtc": "2026-10-02T22:58:20Z"
+  },
+  "hostPid": 21568,
+  "hostCommand": [
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Builds\\competition-candidate1003e\\TumbangPreso.exe",
+    "-batchmode",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "640",
+    "-screen-height",
+    "360",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "completed-arrival-host-d1c0ca0a3a",
+    "-tp-autostart",
+    "2",
+    "-tp-completed-arrival",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-candidate1003e\\rebind-record-smoke",
+    "-tp-completed-role",
+    "host",
+    "-tp-completed-port",
+    "9200",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-candidate1003e\\rebind-record-smoke\\host.log",
+    "-tp-lobby",
+    "-tp-lobbyport",
+    "9200",
+    "-tp-lobbychat",
+    "Rebind-check \u96e8 host"
+  ],
+  "clientPid": 13548,
+  "clientCommand": [
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Builds\\competition-candidate1003e\\TumbangPreso.exe",
+    "-batchmode",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "640",
+    "-screen-height",
+    "360",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "completed-arrival-client-d1c0ca0a3a",
+    "-tp-autostart",
+    "2",
+    "-tp-completed-arrival",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-candidate1003e\\rebind-record-smoke",
+    "-tp-completed-role",
+    "client",
+    "-tp-completed-port",
+    "9200",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-candidate1003e\\rebind-record-smoke\\client.log",
+    "-tp-lobbyjoin",
+    "127.0.0.1:9200",
+    "-tp-lobbyport",
+    "9201",
+    "-tp-lobbychat",
+    "Rebind-check \u96e8 client"
+  ],
+  "clientChatReceived": {
+    "host": true,
+    "client": true
+  },
+  "graphicsObserved": {
+    "host": "Direct3D11",
+    "client": "Direct3D11"
+  },
+  "inputRestored": true,
+  "profileSeedsRestored": true,
+  "runtimeUnchanged": true,
+  "retiredPids": [
+    21568,
+    13548
+  ]
+}

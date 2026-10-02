@@ -5,8 +5,8 @@ checks and publication; a progress report is not a stop. Root works SOLO.
 
 ## Current root job and next action
 
-MAIN ASTRAReworks and verified remote33449ee7fefa4221c0cb209bea93b31eb7311671.
-Ruleguardfa6c82bef integrated with incomingdocs42cf840b5; no C# incoming changes.
+MAIN ASTRAReworks and verified remotea1797a1f0fba8e2b0f7d4454c04cde222be67d79.
+Includesseatguardae6b249db +fullHero83f diagnostics andacceptance. Private dirtpreserved.
 Current startup/Unicodechat qualified and published; private owner dirt preserved.
 LAN acceptance report7cbe176ca integrated/pushed with incoming protocol134
 timed recovery and studio intro. Latest peer/startup-qualified artifact1003c source8ef02cf75/protocol134 (below).
@@ -156,11 +156,37 @@ oneownhumanline/samerecord/scores/clearmarkers. Input/seeds/runtime/exits/free.
 Bothavg59.81FPS/p5p1=57.97/max89.23host/75.55client; no causalperformanceclaim.
 Report reliability-2026-10-03/windows-candidate1003d. RuntimeSHA
 940e841c113da306ef8fcef1feb91a859df6be5c1698b9a730b1ff650430098e.
-No activejobs. Mainae6b249db (rebind) and83f54e961 (validatedfullHero diagnostics)
-local pendingpublication +currentevidence. Current1003d excludesrebindfix.
-NEXT fetch/checkdivergence/integrateonlynecessaryincoming, exactpublishthen
-continue allcurrentmaps/failure/recovery/performance realdefects/gaps. Do not
-rerun this fullHeroorClassic unchanged. Goalactive, no whole-readinessclaim.
+All fullHero/evidence/source publisheda1797a1f0/remoteverified. Current1003d
+excludesseatguard; no unchangedfullHero/Classic repeatneeded.
+
+NEW all-map availability first92803 TERMINAL FAILED atIlalim: expected6maps*3
+profiles18rows, actual6(firstEskinita+BayanPlaza), positivecounters/eightcaptures,
+normalexit2/inputrestored/runtimeunchanged/free. Rootvalidatesfailure notpass.
+ActualDLL IL0x407=Component.get_transform aftergenericlookup EnvColourPass;
+currentIlalim scenehasDressing butno oldEnvColourPassGUID. One diagnosticrepair
+MAIN WorldGraphicsProbe.cs fallsbacktoactive-scene authoredDressing, refusesnone,
+exactcoverage/positivecounters unchanged. No gameart/assets ormap regeneration.
+Originaldatareport reliability-2026-10-03/map-availability. Candidateunvalidated.
+Diagnostic14dfe9e41 LOCAL committed, pendingnativequalificationbeforepush.
+RELEASEffto14dfe9e41; 1003e prepare70360 TERMINAL/18965inputs/source14dfe9e41, warmupbefore retained,
+freeze/classifier/map-wrapper copied1003d->1003e. Pollsame70360 thenONE guarded
+build3072/reserve2048/600s, finalize/classify, ONE correctedall-mapcandidate.
+No runtimeassets/style/rendererregeneration. SourceIL+scene confirmsexactcause.
+Use same run_map_availability.py copied1003d->1003e/newuniqueoutput. Build15625/finalizer57666 TERMINAL/classifierPASS: source14dfe9e41/protocol134,
+18965inputs/18963unchanged/exact2IDs/2433MB81s. RuntimeSHA256
+501f0a02db575003c48910f08bdd0221810031c4d30aaf499f4727bbeca0c806.
+Correctedallmap28332 TERMINAL FIRST PASS afterONE lookuprepair:6registeredmaps*
+3profiles18rows/positivesetpass+triangles/24captures. All6Balancedworldimages
+inspected(no empty/fallbackpinkworldobserved). Normalexit/input/runtime/free.
+Current1003e source14dfe9e41/protocol134 includesseatguard, firstcoldpeer21607
+PASS: localchatMarkerbothlogs/normalHero1/30/Naturalend/HOMEcoldrejoin/samerecord/
+fourfrozenactors/normalexits/seeds+input+runtime/free. Bothcareers1history/queue/
+witness, ownhumanline/samescores130/0/0/150/clearmarkers. Notcraftedfaultinjection,
+physicalinput, livebodyrestore matrix or allmapHero/combat/visibilityfromeveryview.
+Reports map-availability ready. Source14d local qualifiednow; exactfetch/check/
+publishowneddiagnostic/reports/TODO/checkpoint next. No activenative/player jobs.
+Next recovery-specific peer contracts/performance mechanism/currentoperator gaps,
+without repeating completedunchangedchecks. Do not markwholeready. GoalACTIVE.
 
 ## Qualified and published root changes
 

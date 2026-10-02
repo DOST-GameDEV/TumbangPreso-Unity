@@ -1,0 +1,7 @@
+map,quality,samples,mean_player_frame_ms,p95_player_frame_ms,mean_draw_calls,mean_triangles,mean_setpass,mesh_renderers,static_batched_renderers,unique_materials,world_width,world_height
+Eskinita,Low,120,4.259,5.820,-1.0,1075392,1578.7,875,717,144,1920,1080
+Eskinita,Balanced,120,5.480,6.877,-1.0,1139651,1557.9,875,717,144,1920,1080
+Eskinita,High,120,4.773,6.176,-1.0,1377189,1581.1,875,717,144,1920,1080
+BayanPlaza,Low,120,3.017,3.691,-1.0,776256,860.8,279,231,113,1920,1080
+BayanPlaza,Balanced,120,2.923,3.680,-1.0,840802,902.0,279,231,113,1920,1080
+BayanPlaza,High,120,3.167,3.838,-1.0,1005790,886.0,279,231,113,1920,1080

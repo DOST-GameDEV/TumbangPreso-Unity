@@ -449,6 +449,12 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   no repairs/retries. Valid spectator/free-roam and duplicates preserved. Native
   ownership/event boundary; packaged live-body restoration remains separate.
   [Evidence](reports/reliability-2026-10-03/rebind-seat-packet/README.md).
+- [x] ALL-MAP-AVAILABILITY-1003 (stagedClassic rendering): corrected1003e probe
+  covers all6registered maps*3profiles=18rows, positivecounters/24captures; allsix
+  Balancedworldimages inspected. ONE oldEnvColourPass lookup repair; raw Ilalim
+  failure retained. Exits/input/Runtime preservation pass. Combat/Hero interactions,
+  otherdevices/physical/WAN remain separate; no art/style/asset regeneration.
+  [Evidence](reports/reliability-2026-10-03/map-availability/README.md).
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [x] DEFAULT-HERO-FULL-MATCH-1003: current1341003d first actual LAN8x90 Hero
