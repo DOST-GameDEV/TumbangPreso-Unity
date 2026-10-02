@@ -244,6 +244,8 @@ namespace TumbangPreso.Diagnostics
                     "live frame rate : frames={0}; seconds={1:F3}; avg={2:F2}; p50={3:F2}; p5={4:F2}; p1={5:F2}; max_ms={6:F2}",
                     frames.Frames,frames.Seconds,frames.AverageFps,frames.LowFps(50),frames.LowFps(5),frames.LowFps(1),frames.MaxSeconds*1000));
             else sb.AppendLine("live frame rate : unavailable (no live sample or collection disabled)");
+            if (frames != null && frames.Frames > 0)
+                sb.AppendLine("max frame context: " + (GameServices.Stats.SlowestFrameContext ?? "unavailable for this sample"));
             sb.AppendLine($"round           : {(match != null ? match.RoundNumber : -1)}");
             sb.AppendLine($"defender        : {(match != null ? match.DefenderSlot : -1)}");
             sb.AppendLine($"round active    : {(round != null && round.RoundActive)}");
