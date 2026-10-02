@@ -1,0 +1,90 @@
+TumbangPreso.AudioDirector:Awake () (at Assets/TumbangPreso/Runtime/AudioDirector.cs:71)
+UnityEngine.GameObject:Internal_AddComponentWithType (System.Type)
+UnityEngine.GameObject:AddComponent (System.Type)
+UnityEngine.GameObject:AddComponent<TumbangPreso.AudioDirector> ()
+TumbangPreso.GameServices:Ensure () (at Assets/TumbangPreso/Runtime/GameServices.cs:180)
+TumbangPreso.UI.BootSting:Play () (at Assets/TumbangPreso/Runtime/UI/BootSting.cs:58)
+
+(Filename: Assets/TumbangPreso/Runtime/AudioDirector.cs Line: 216)
+
+[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogWarning (object)
+TumbangPreso.Net.NetIdentity:Settle (TumbangPreso.Net.OnlineState,string,System.Exception) (at Assets/TumbangPreso/Runtime/Net/NetIdentity.cs:400)
+TumbangPreso.Net.NetIdentity/<AttemptSignInAsync>d__34:MoveNext () (at Assets/TumbangPreso/Runtime/Net/NetIdentity.cs:280)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1<bool>:Start<TumbangPreso.Net.NetIdentity/<AttemptSignInAsync>d__34> (TumbangPreso.Net.NetIdentity/<AttemptSignInAsync>d__34&)
+TumbangPreso.Net.NetIdentity:AttemptSignInAsync ()
+TumbangPreso.Net.NetIdentity:EnsureSignedInAsync (string) (at Assets/TumbangPreso/Runtime/Net/NetIdentity.cs:245)
+TumbangPreso.Net.PlayerAccount/<SignInAndRefreshAsync>d__55:MoveNext () (at Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs:106)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:Start<TumbangPreso.Net.PlayerAccount/<SignInAndRefreshAsync>d__55> (TumbangPreso.Net.PlayerAccount/<SignInAndRefreshAsync>d__55&)
+TumbangPreso.Net.PlayerAccount:SignInAndRefreshAsync (TumbangPreso.Core.AccountProfile)
+TumbangPreso.Net.PlayerAccount/<InitialiseInternalAsync>d__54:MoveNext () (at Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs:85)
+System.Runtime.CompilerServices.AsyncTaskMethodBuilder:Start<TumbangPreso.Net.PlayerAccount/<InitialiseInternalAsync>d__54> (TumbangPreso.Net.PlayerAccount/<InitialiseInternalAsync>d__54&)
+TumbangPreso.Net.PlayerAccount:InitialiseInternalAsync ()
+TumbangPreso.Net.PlayerAccount:Awake () (at Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs:62)
+UnityEngine.GameObject:Internal_AddComponentWithType (System.Type)
+UnityEngine.GameObject:AddComponent (System.Type)
+UnityEngine.GameObject:AddComponent<TumbangPreso.Net.PlayerAccount> ()
+TumbangPreso.GameServices:Ensure () (at Assets/TumbangPreso/Runtime/GameServices.cs:194)
+TumbangPreso.UI.BootSting:Play () (at Assets/TumbangPreso/Runtime/UI/BootSting.cs:58)
+
+(Filename: Assets/TumbangPreso/Runtime/Net/NetIdentity.cs Line: 400)
+
+[Build] TUMBANG PRESO 1.0.0 | aecc0ee2cf6c+unverified | protocol 129 | Editor/WindowsEditor
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+TumbangPreso.BuildIdentity:AnnounceOnLaunch () (at Assets/TumbangPreso/Runtime/BuildIdentity.cs:245)
+
+(Filename: Assets/TumbangPreso/Runtime/BuildIdentity.cs Line: 245)
+
+Unloading 95 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 170 unused Assets / (125.9 KB). Loaded Objects now: 8922.
+Memory consumption went from 505.5 MB to 505.4 MB.
+Total: 14.266100 ms (FindLiveObjects: 0.586000 ms CreateObjectMapping: 1.038200 ms MarkObjects: 11.781800 ms  DeleteObjects: 0.858800 ms)
+
+Unloading 287 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.552300 ms
+Loaded scene 'Assets/TumbangPreso/Scenes/Maps/BayanPlaza.unity'
+	Deserialize:            2962.301 ms
+	Integration:            412.690 ms
+	Integration of assets:  44.056 ms
+	Thread Wait Time:       11.644 ms
+	Total Operation Time:   3430.692 ms
+[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+TumbangPreso.Visual.EnvColourPass:Apply () (at Assets/TumbangPreso/Runtime/Visual/EnvColourPass.cs:203)
+TumbangPreso.Visual.EnvColourPass:Start () (at Assets/TumbangPreso/Runtime/Visual/EnvColourPass.cs:139)
+
+(Filename: Assets/TumbangPreso/Runtime/Visual/EnvColourPass.cs Line: 203)
+
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+TumbangPreso.Visual.NearFade:Install (UnityEngine.Transform) (at Assets/TumbangPreso/Runtime/Visual/NearFade.cs:197)
+TumbangPreso.Visual.EnvColourPass:Apply () (at Assets/TumbangPreso/Runtime/Visual/EnvColourPass.cs:221)
+TumbangPreso.Visual.EnvColourPass:Start () (at Assets/TumbangPreso/Runtime/Visual/EnvColourPass.cs:139)
+
+(Filename: Assets/TumbangPreso/Runtime/Visual/NearFade.cs Line: 197)
+
+Unloading 500 unused Assets / (3.9 MB). Loaded Objects now: 18830.
+Memory consumption went from 0.84 GB to 0.84 GB.
+Total: 21.855100 ms (FindLiveObjects: 1.625800 ms CreateObjectMapping: 1.958800 ms MarkObjects: 17.167100 ms  DeleteObjects: 1.102400 ms)
+
+TrimDiskCacheJob: Current cache size 0mb

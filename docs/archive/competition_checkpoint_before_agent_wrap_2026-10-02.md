@@ -24,50 +24,78 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Verified remote cce112e9b on 2026-10-02 15:16 Manila. Root continuity runtime
-fixes 34 published: previous32 plus scorecard owner close84ddfc391 (native3/3,
-one canvas-lookup fixture correction) and RecordChoice focus57158d1db (native3/3,
-one normal-Start fixture correction). RecordChoice exact three source/test/meta
-inputs and all1294 protected hashes retained. Diagnostic890656094 is separate.
-Incoming6dc1f065b malformed replay refusal merged without overlapping product hunks;
-contributor native3/3 evidence is separate. Sean SteadyEmber/protocol131 and Rafi
-Backwash integration preserved. Core698/698 was one prior integration pass.
-Do not repeat unchanged tests or claim full readiness.
+Last verified remote3bbc90c61cf48b72ec0feeaaa113b661a8ec8ae1:29 runtime product fixes
+published. Diagnostics890656094 is a separate improvement, not a gameplay count.
+NEW chat guard3e91f02b0 COMMITTED/native10/10 (three runtime units ->32), publication
+pending integration of incoming Sean SteadyEmber/protocol131. Dirty OWN ledger/TODO
+preventedmerge, noreset/stash; commitcheckpoint thenmerge preservingappendices.
+Latest fixes: saved slots e8de37021 native6/6; hub disconnect8acbdf683 native3/3;
+account save d01c62a68 native5/5; rebind state5acff5bfe native10/10; force handover
+8d970fb06 native3/3; wallet backup4ac37e3dc native4/4; manual exitf163882cc native4/4;
+spectator lifetime d97be101d nativePlayMode3/3; hostloss5f47abc84 final6/6(new2+
+manual4controls); slide3bbc90c61 native4/4. All causal baselines/raw failures retained.
+Manual exit had ONE scene-availability fixture correction; spectator ONE tool-call
+syntax correction BEFORE execution, zero native/fixture retries. No other new
+product unit retries. Native clock/view-state proof is not rendered UI or WAN proof.
+Older19units/evidence remain in TODO/reports; do not re-read huge former chat.
+Core698/698 after incoming Sean Core7/protocol130; one integration pass, no skips.
+Sean Cinder df022b0f/68fa3a509, protocol130/recording12/kind17 integrated disjointly;
+its Linux/3-peer evidence is separate from our Windows artifact. Preserve new
+SteadyEmber ownthrow/manualretrieval contributor reservation.
+Toolcoordination7bc205c24:50local checks/defaultSERIAL; optional2CPU workers implemented,
+not created/native-parallel-proven.16GiB machine: one heavy Unity/GPU/build/player.
+No whole competition/physical-device/Android/WAN qualification claim.
 
-## Active jobs and next action
+## Active job and exact next action
 
-ROOT previous native jobs terminal. Windows1002f build88731 SUCCEEDED12scenes,
-2432MB90s, guard restored. Source freeze18861 inputs. Original strict receipt FALSE
-kept: exactly two builder-generated identity JSON changes;18859 other inputs match.
-Separate artifact-receipt PASSED including packaged identity/protocol131/Windows
-and unchanged runtime hash. Classification had ONE UTF8 local-script correction,
-original retained; no build retry. Artifact report publication pending.
+All ROOT native jobs TERMINAL. Last hostloss98447 baseline2causal then27370 final6/6,
+guards restored. Published5f47abc84: shared SceneFlow.RetireMatchSimulation retires
+break/round/match before manual HOME or unexpected empty-lobby route. MatchAbandon
+captures diagnostic before handler; nextsingleSceneLoaded.Clear cannot reviveclock.
+Native fixture uses actual API/handler with existing sameframe scene-latch or exact
+expected Editor unavailable-scene error, no actual UI/load/transport claim.
 
-SOL RecordChoice shipped. Now owns current scorecard close-focus return ONLY
-PlayerHub.OwnerHistory.cs + close/Escape hunk PlayerHub.cs + NEW ScorecardFocusTests
-and meta/report. Baseline3/candidate3 planned, <=ONE fixture/tool repair. Preserve
-unrelated live overlay selection and shipped owner-change close behavior.
-ASTRA owns early null-safe MatchEnded subscription ONLY SliceRunner.cs + NEW tiny
-cold-ended arrival actor PlayMode3 fixture/meta/report. Actual public terminal
-receiver before Begin must park all4 actors; round0 remains free and destroy
-unsubscribes. Existing peer49462 joined slot1 NONspectator and did not assert actor
-parking. No transport/body-freeze acceptance is inferred from that run.
-Coordinate ONE heavy GPU/native job at a time; implement while checks run.
+SOL owns THREE preserved chat guards ReadyGate.cs/BufferSkipVote.cs/UI/EmoteWheel.cs,
+plus NEW Tests/PlayMode/GameplayChatInputTests.cs/.meta QUALIFIED/COMMITTED3e91f02b0.
+Different useful acceptance: true playing input context; NOT another failedEditor
+fixture retry. Proposed10: Ready4(chat/normal/pendingretry/automaticretry), Buffer3
+(chat/normal/pendingretry), Emote3(chatpreventopen/ordinarycommit/focuscancel).
+Native97390 baseline4causal+6controls,41646 final10/10, ZEROrepairs/1290protected
+unchanged/5exactinputs, bothguards/restored/free. Strict WasPressed/WasReleased
+assertions; cloned SHIPPED action asset restricted to synthetickeyboard, existing
+PlayModeWorld only. NEVER clone/replace InputSettings or usefeature/updateMode
+machinery/assetsaves. Existing2 background/editorfocus scalar settings may be saved/
+restored inSAMEoriginalobject per shipped PlayMode pattern. <=ONEtoolingrepair;
+if actual playing-state press fails, STOPunqualified, no weakened assertions.
+Bothpreparations EXIT0 beforelaunch. Product candidate hunks unchanged. Different
+asset hashes MAIN79C2E5.. vsqualification983306..; BOTHdiskReadyUpF/EmoteT verified
+afterrun, resolvedsuccessfulcontrol name notseparatelylogged. EarlierR labels were
+assumptions and corrected inreport; generic action-context proof/currentMAINasset
+or hardware notexecuted. No physical-input/widget-layout/human-feel claim.
+Old Editorrawfailures neverrewritten. Report gameplay-chat-input committed3e91.
 
-Owner instruction: continue normally BEFORE15:30 Manila; around15:30 BEGIN wrapping
-both current agents, not a hard minute termination. No new units after wrap begins.
-Finish coherent work/check/cleanup, provide exact local handoff, root publishes
-qualified work then interrupts agents and continues SOLO without replacements.
-Current-thread one-time heartbeat wrap-up-game-engineering-subagents is configured.
-Old sol_social_ownership ultra remains interrupted; never resume.
+ASTRA Slide interruption4 completed/published3bbc90c61: actualHostResolveSlide>
+stun/fear/roundend>recovery must not pick nearbyshoe; pause remains valid. Baseline
+30095 threecausal/onecontrol, final50273 4/4, zero repairs/1472protected unchanged,
+all jobs terminal/restored. No timing/hero/manualpickup/protocol change. Next Astra
+read-only current-phase/world-camera plan for PRIVATE Supernova .50 (players AND
+lata readability) or another higherimpact gameplay defect. No redesign/newGPU job
+while Sol10 active, no unchanged historical capture replay. Exact ownership before
+any new patch. Root implements/integrates/builds; authorized Astraxhigh/Sol6.1HIGH
+current-chat agents only. OldSolultra interrupted, never wake. FAST control absent,
+not claimed configured; no invented busywork or cross-chat messages.
 
-ROOT next: publish1002f artifact and retired Supernova evidence, then useful current
-PausePanel LeaveMatch operator acceptance or an independently evidenced engineering
-bug. Existing exit4/hostloss6 checks validate clocks/API, not rendered HOME.
-Do not resume Supernova native/helpers: compile77152 failure then corrected52284
-450s setup timeout, no XML/PNG/cast proof. Qualification HeroHazards original
-1536AF restored; MAIN private5E7 unchanged, protected1535 matches. Report-only
-publication, no alpha source shipping. Preserve other private arms/Ultra/metas.
+NEXT ROOT coherent Windows candidate1002f AFTER Sol10 qualified or bounded stop:
+releaseFF exactpublished source without reset, preserve importer/generated changes,
+sourceCSharpclean, NEW internal output. New build includes latest force/wallet/exit/
+camera/hostloss/slide/diagnostics beyond1002e's23. One integration build, not perfix.
+Freeze Assets/Packages/ProjectSettings. StampBuildIdentity rewrites exactlytwo JSON
+files; classify via bothgenerated sources+PACKAGEDcopy matching commit/protocol/
+Windows target and unchanged other hashes. Preserve strict original receipt iffalse,
+separate classification receipt. No unknown drift ignored. Then bounded actual
+live-quit/host-loss operator acceptance using CURRENT UI, not retiredWholeMatches.
+No unchanged full8round rerun; previous Classic/Hero natural ends already retained.
+While build/runs, root/agents may advance DISJOINT MAIN inputs, never frozenrelease.
 
 ## Current frozen artifact and actual peers
 

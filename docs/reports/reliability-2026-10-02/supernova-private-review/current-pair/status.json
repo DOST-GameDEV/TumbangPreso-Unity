@@ -1,0 +1,40 @@
+{
+  "status": "unqualified_capture_route_retired",
+  "firstAttempt": "compile_failure_before_test_or_capture",
+  "firstSession": 77152,
+  "noXml": true,
+  "noImages": true,
+  "privateHeroPublished": false,
+  "oneHelperRepairUsed": true,
+  "rawLog": {
+    "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\supernova-alpha1002\\native\\unity.log",
+    "sha256": "3356bc1455fd7ace2ff8e1dd9b0c35968b3fc582314648b27e4d2c7013fe9654"
+  },
+  "remainingNativeAttempts": 0,
+  "nextAction": "No further helper/native/image repair this session. Preserve private alpha change unstaged and unqualified; future acceptance must resolve or avoid the retired setup route under a separate useful investigation.",
+  "correctedAttempt": {
+    "session": 52284,
+    "status": "timeout_guard_completed",
+    "exitCode": 124,
+    "timeoutSeconds": 450,
+    "startedUtc": "2026-10-02T06:48:55Z",
+    "endedUtc": "2026-10-02T06:56:25Z",
+    "compiled": true,
+    "xmlExists": false,
+    "pngCount": 0,
+    "captureBodyReached": false,
+    "lastLogWriteUtc": "2026-10-02T06:50:06Z",
+    "setupStallCause": "unconfirmed",
+    "guardPid": 5176,
+    "ownedUnityPidsStopped": [
+      21932,
+      23436
+    ],
+    "preservationCompleted": true,
+    "leaseHeld": false,
+    "rawLog": {
+      "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\supernova-alpha1002\\repair1\\unity.log",
+      "sha256": "375baac4df8eecab0a960b3895b273c9d24be18756a2c7ac1566430cbd36391a"
+    }
+  }
+}
