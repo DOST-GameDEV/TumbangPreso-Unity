@@ -1,0 +1,24 @@
+{
+  "sourceCommit": "d97be101d6cc08431304ba54a5f8b860ca76bb0e",
+  "expectedCases": 2,
+  "testFilter": "TumbangPreso.Tests.FailureBundleAbandonTests",
+  "baselineExpected": "1 retaineddiagnostic failure,1 no-causecontrol pass",
+  "inputs": [
+    {
+      "name": "FailureBundle.candidate.cs",
+      "sha256": "1C9B956235CD316EDC8A63326C5103013C7CD19FF91D3B36AA94DD97CB4DB2F6"
+    },
+    {
+      "name": "FailureBundle.original.cs",
+      "sha256": "DEDBD39420E518ACCFF05F5A3CC33387C0EFDAB1915F24CD4F95E30E1C038266"
+    },
+    {
+      "name": "FailureBundleAbandonTests.cs",
+      "sha256": "BD3F1BDCC0659B9CF0A3058BF1A77C66FE9917E37E18498A75786DD29ECE539A"
+    },
+    {
+      "name": "FailureBundleAbandonTests.cs.meta",
+      "sha256": "1D5529BFC8F8209E0E6DE3F6B46670D3FC9F192D6E5BEA3910FC07C2E4670A07"
+    }
+  ]
+}
