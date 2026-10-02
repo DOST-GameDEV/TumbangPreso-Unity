@@ -24,10 +24,14 @@ now supports graphics-api default, which omits the forcing flag and records exac
 commands. Its parser reads the actual Version line, not a command intention; three
 pure controls pass. Default forcedD3D11 behavior remains available.
 
-ONE actual50-fix/default-renderer peer80018 is pending: customHero1round30/two human
+ONE actual50-fix/default-renderer peer80018 FIRST PASS: customHero1round30/two human
 origins+two bots/current result->HOME->public cold rejoin/same120-second ceiling.
-Both actual renderer logs must show Direct3D11, and both owned processes must exit
-normally; input+seeds/runtime/lease preservation remains required. No live external
+Both actual Version logs show Direct3D11 on AMD Radeon RX6600. Exact commands in
+result.json contain no renderer-forcing flag; both owned processes exited normally.
+Input+two namedprofile seeds restored, runtime unchanged, owned23436/23760 confirmed
+dead/leasefree. Raw postterminal reports/logs accompany this report. No live external
 receipt reads. This does not claim internal engine/driver crash causality, other
 GPUs, performance improvement, full-default tournaments, WAN or whole competition
-readiness. Earlierj actual hostloss/peer evidence remains unchanged.
+readiness. This supplies the current-binary default-backend and clean-exit part of
+the historical shutdown gate; no performance/rootcause/otherGPU conclusion.
+Earlierj actual hostloss/peer evidence remains unchanged.

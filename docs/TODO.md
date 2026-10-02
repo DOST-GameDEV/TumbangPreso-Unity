@@ -4298,7 +4298,12 @@ This machine's checkout: `C:/Users/Matthew/dev/TumbangPreso-Unity-ASTRAReworks`.
   Windows now explicitly prefers D3D11, retaining D3D12 second. Current-source
   five-map D3D11 rendering passed1/1 and actual views/grey were inspected. This is
   a machine-supported compatibility mitigation; internal engine/driver cause is
-  unproven. P7 still owes current-player default-backend, exit and performance.
+  unproven. Current50-fix Windows1002l default-renderer80018 FIRST PASS: both
+  players selected D3D11/RX6600 withoutforcingflags, completed normal end/HOME/
+  coldrejoin/newrecord and exited0, ownedPIDsdead/inputs+seedsrestored/free.
+  The default-backend and clean-exit parts are now met on this machine. P7 still
+  owes performance/soak/otherGPU scope; this row stays open for that wider gate.
+  [Current-binary evidence](reports/reliability-2026-10-02/windows-candidate1002l/README.md).
   [Native comparison and evidence](reports/map-by-map-refinement-2026-09-23/native-shutdown/report.md).
 - [ ] **Rafi B / lagoon C expansion, final integration.** Model, kit, map, v47 to v52
   evidence and the three-peer water checks are done (see the done list). Final coherent
