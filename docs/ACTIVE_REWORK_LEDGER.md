@@ -39,13 +39,14 @@ RESULT-VERDICT-IDENTITY-1002 complete: corrected baseline1/2, native final2/2.
 Dispute warning requires submitted match ID to match displayed result. Three
 hashes unchanged; one fixture singleton repair used1/1; all original failures
 preserved. Session69002 terminal; profile/input restored. Publish next.
-Prior verified remote157d54ed0. Five product fix units now qualified this resume.
+Local5e9db3b49 verdict fix2/2; incoming87cf0c632 integrated without runtime
+changes. Merge publication next; five product fix units qualified this resume.
 Next RESULT-LATE-ACK-1002 baseline prepared in existing TumpNativeResultTests:
 actual native board plus Stats.Adopt synthetic payable record and production
 CompleteSubmission acknowledgement. Board lacks Career.Changed subscription,
 so late response cannot repaint already-open details. No endpoint call.
-Copy that one prepared test file to isolation after publication and run named
-result-late-ack1002 PlayMode/D3D11 baseline, one baseline/final, zero repairs planned.
+ACTIVE native baseline session49114, named result-late-ack1002
+PlayMode/D3D11, Logs/result-late-ack1002/baseline.xml/log, one baseline/final, zero repairs planned.
 While it runs, inspect smallest owner-bound lifecycle subscription and current
 supported direct-peer match route. Do not rerun retired whole-match UI fixture.
 
@@ -95,12 +96,18 @@ no clean headroom or current-player claim. Subsequent Sean body strip completed
 in 30 seconds without a guard; both views inspected. Source assets preserved.
 Cloud GitHub CLI authenticated by owner on October 2; repository push permission
 and fetch verified. Integrating incoming 33443291 without changing its work.
-All-nine-hero visual research and production plans completed and reviewed; audio
-was not heard. Publication of that evidence packet is next, then a single owned
-Feedback/presentation unit. No Cinder Gate implementation yet. Preserve the
+All-nine-hero visual research and production plans published at b556115a; audio
+was not heard. A single owned Sean presentation unit follows. No Cinder Gate implementation yet. Preserve the
 separate career/UI and broad-loading reservations above.
 
-HERO-REFERENCE-1002 report prepared for publication: 14 report pages, 27 selected
+HERO-REFERENCE-1002 report published at b556115a: 14 report pages, 27 selected
 frames and two evidence manifests. Audio unheard. No runtime or asset changes;
 no active heavy job. Next: actual Sean Stoke Step cast baseline, following the
 existing body-strip evidence, before deciding any authored motion change.
+
+SEAN-STOKE-PRESENTATION-1002 owns tools/author_hero_action.py Sean dash only,
+Assets/TumbangPreso/Art/characters/persons/team-sean.glb named dash clip only,
+and docs/reports/sean-stoke-presentation-2026-10-02. Baseline actual cast accepted
+in fixed simulation capture after one bounded fixture repair; memory warning
+preserved. Plan defines compact brace and distinct foot catch, no kit or other
+hero change. Heavy job terminal; candidate-only fixture not production code.
