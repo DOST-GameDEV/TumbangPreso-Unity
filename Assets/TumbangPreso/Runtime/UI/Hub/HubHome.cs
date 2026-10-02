@@ -264,7 +264,7 @@ namespace TumbangPreso.UI.Hub
             {
                 Settings.SettingsStore.Current.HubQueueChoice = Mathf.Clamp(value, 0, 2);
                 Settings.SettingsStore.Save();
-                ApplyChoice();
+                ApplyChoice(true);
             }
         }
 
@@ -272,8 +272,9 @@ namespace TumbangPreso.UI.Hub
         public static QueueStake ChoiceStake => Choice == 0 ? QueueStake.Ranked : QueueStake.Casual;
 
         /// <summary>Make the rest of the game agree with the card: the ruleset the next match uses.</summary>
-        public static void ApplyChoice()
+        public static void ApplyChoice(bool explicitSelection = false)
         {
+            if (SceneFlow.RulesPinned && !explicitSelection) return;
             if (SceneFlow.SelectedMode != ChoiceMode)
             {
                 SceneFlow.SelectedMode = ChoiceMode;

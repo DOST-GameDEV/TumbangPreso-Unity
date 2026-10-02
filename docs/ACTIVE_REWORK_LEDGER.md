@@ -6,6 +6,26 @@ Previous complete checkpoint archived before_host_loss_peer_2026-10-02.
 
 ## Current scope and workers
 
+NEW CURRENT ROOT UNIT: HubHome.ApplyChoice defaults to passive pin preservation;
+explicit HubHome.Choice setter and HubHero.Primary pass true. New HubPinnedRulesTests
+valid32GUID02857a69977b433abfa53f1dfd53b3f0. Original33345 TERMINAL2causal/2controls;
+candidate72484 TERMINAL FIRST4/4, no repairs/retries. Prep49316/post73806 TERMINAL/
+exact4/18434protected unchanged/restored/free. Source-only native state evidence,
+not rendered/physical input/owned-hero click/currentWindowsClassic pass.1002m predates
+fix; source publication next. No active native/player handles. Work SOLO, no agents.
+NEXT CLIENT SAVE: inspect actual retained hostrecord's remote human PlayerId presence
+against ownclient local identity without exposing IDs. Source: NetSession.BuildConnectionData
+AccountPlayerId is empty without SDK signin; OnClientConnected Lobby.Admit copies token/
+name/rating but not accountid; VerifyArrivalAsync returns on LAN. MatchStatsCollector
+IdentifySeats uses peer.AccountPlayerId for remote lines; CareerStore.Record refuses
+when LineFor(LocalPlayerId) is absent. Confirm evidence before changing semantics.
+Preserve identity/account/token separation and Relay handle checks; no fabricated
+authenticated IDs or SDK calls. This route may affect signed as well as offline LAN.
+Relevant functions: NetSession.cs1764/1889/2156, MatchStatsCollector.cs287/363/475,
+CareerStore.cs65/432. No repeat13minute match to establish already-observed failure.
+Many NEW unrelated Amihan/audio/gait/Shader dirty paths belong to other work; stage
+ONLY this root unit and its docs. Goal remains active; no whole-ready claim.
+
 CURRENT RESUME:92385 TERMINAL/nativeFAIL expectedClassic but actualHero both.
 Natural8roundend/same40/240/3530/3300/winner2/roles+twohumanorigins/D3D11/normal
 exits; owned5356/25268/176 gone, settingsseeds+sharedinputrestored/runtimeunchanged/
