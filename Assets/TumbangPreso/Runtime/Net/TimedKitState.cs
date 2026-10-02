@@ -8,12 +8,12 @@ namespace TumbangPreso.Net
 {
     public struct TimedKitState : INetworkSerializable
     {
-        public const int MaxWireBytes = 231;
+        public const int MaxWireBytes = 235;
         public int Seat;
         public GameplayActionScope Scope;
         public long Sequence;
         public FixedString64Bytes HeroId, PersonalId, UltimateId;
-        public float PersonalRemaining, UltimateRemaining;
+        public float PersonalRemaining, UltimateRemaining, PassiveRemaining;
         public float RoundClock;
         public bool UltimatePending;
         public bool UltimatePermanent;
@@ -28,12 +28,13 @@ namespace TumbangPreso.Net
             PersonalRemaining = state.PersonalRemaining, UltimateRemaining = state.UltimateRemaining,
             UltimatePending = state.UltimatePending,
             UltimatePermanent = state.UltimatePermanent,
+            PassiveRemaining = state.PassiveRemaining,
         };
 
         public bool IsValid => Seat >= 0 && Seat < Balance.PlayerCount && Scope.IsValid && Sequence > 0 &&
             HeroId.Length > 0 && (PersonalId.Length > 0 || UltimateId.Length > 0) &&
             (PersonalId.Length == 0 || UltimateId.Length == 0 || !PersonalId.Equals(UltimateId)) &&
-            NonNegative(PersonalRemaining) && NonNegative(UltimateRemaining) &&
+            NonNegative(PersonalRemaining) && NonNegative(UltimateRemaining) && NonNegative(PassiveRemaining) &&
             (PersonalId.Length > 0 || PersonalRemaining == 0) &&
             (UltimateId.Length > 0 || (UltimateRemaining == 0 && !UltimatePending && !UltimatePermanent)) &&
             (!UltimatePermanent || (!UltimatePending && UltimateRemaining == 0)) &&
@@ -48,7 +49,7 @@ namespace TumbangPreso.Net
             if (PersonalId.ToString() != (binding.PersonalAbility?.Id ?? "") ||
                 UltimateId.ToString() != (binding.UltimateAbility?.Id ?? "")) return false;
             return binding.TryAge(PersonalRemaining, UltimateRemaining, UltimatePending,
-                Math.Max(0, RoundClock - now), out state, UltimatePermanent);
+                Math.Max(0, RoundClock - now), out state, UltimatePermanent, PassiveRemaining);
         }
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
@@ -70,6 +71,7 @@ namespace TumbangPreso.Net
             serializer.SerializeValue(ref permanent);
             if (permanent > 1) throw new ArgumentOutOfRangeException(nameof(UltimatePermanent));
             if (serializer.IsReader) UltimatePermanent = permanent != 0;
+            serializer.SerializeValue(ref PassiveRemaining);
         }
 
         private static void SerializeId<T>(BufferSerializer<T> serializer, ref FixedString64Bytes id) where T : IReaderWriter
@@ -90,7 +92,7 @@ namespace TumbangPreso.Net
         {
             state = default;
             int bytes = reader.Length - reader.Position;
-            if (bytes < 48 || bytes > MaxWireBytes) return false;
+            if (bytes < 52 || bytes > MaxWireBytes) return false;
             try
             {
                 reader.ReadNetworkSerializable(out state);

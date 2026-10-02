@@ -21,6 +21,8 @@ namespace TumbangPreso.Diagnostics
         private bool _holdCharge;
         private bool _observeExisting;
         private bool _advancedCinderRound;
+        private float _steadyGrabAt=-1,_steadyGrantAt=-1,_steadyRegrabAt=-1,_steadyChargeAt=-1;
+        private bool _steadyDropped,_steadyRegrabbed;
         private double _next;
         private Slipper _shoe;
         private static string Argument(string key)
@@ -46,7 +48,7 @@ namespace TumbangPreso.Diagnostics
             probe._observeExisting = Environment.GetCommandLineArgs().Contains("-tp-sean-observe-existing");
             string path = Path.GetFullPath(Argument("-tp-seantrace")); Directory.CreateDirectory(Path.GetDirectoryName(path));
             probe._writer = new StreamWriter(path) { AutoFlush = true };
-            probe._writer.WriteLine("time,elapsed,local,host,sean,pick,charged,held,s2charges,ultcharge,grounded,casterY,pose,craters,craterX,craterZ,embers,fireFlight,shoeState,shoeX,shoeY,shoeZ,frontStun,chargeRemaining,wallTime,cooldown,heldAffinity,frontX,frontY,frontZ,casterX,casterZ,s1Windup,s1Remaining,s1Cooldown,canAct,canMove,fireTrails,gates,gateId,gateSpent,gateRemaining,gateZ,gateDirection,frontVelocityZ,defending,round");
+            probe._writer.WriteLine("time,elapsed,local,host,sean,pick,charged,held,s2charges,ultcharge,grounded,casterY,pose,craters,craterX,craterZ,embers,fireFlight,shoeState,shoeX,shoeY,shoeZ,frontStun,chargeRemaining,wallTime,cooldown,heldAffinity,frontX,frontY,frontZ,casterX,casterZ,s1Windup,s1Remaining,s1Cooldown,canAct,canMove,fireTrails,gates,gateId,gateSpent,gateRemaining,gateZ,gateDirection,frontVelocityZ,defending,round,passiveRemaining,chargeRate,chargePower,chargeActive,steadyRegrabbed,fullChargeTime");
         }
         private void Update()
         {
@@ -112,7 +114,7 @@ namespace TumbangPreso.Diagnostics
                 FindFirstObjectByType<CameraSystem.CameraRig>()?.SetAimSource(CameraSystem.AimSource.Movement);
                 front.Intent.Move = elapsed >= 13 && elapsed < 14 && gate != null && !gate.Spent ? Vector2.up : Vector2.zero;
             }
-            if (NetAuthority.LocalSlot == 1 && !_observeExisting)
+            if (NetAuthority.LocalSlot == 1 && !_observeExisting && _scenario != "steady")
             {
                 if (!_armed && elapsed >= 12) { kit.AddUltimateCharge(100); _armed = true; }
                 caster.Intent.Parked = false; caster.Intent.AimPoint = new Vector3(0, .15f, -2);
@@ -122,6 +124,7 @@ namespace TumbangPreso.Diagnostics
                 if ((_scenario == "ignite" || _scenario == "empowered") && !_holdCharge) caster.Intent.Set(Verb.SpecialAbility, elapsed >= 13.4f && elapsed < 14);
             }
             var carrier = caster.GetComponent<Carrier>(); if (_shoe == null) _shoe = carrier.Held;
+            if (_scenario == "steady" && _shoe != null) DriveSteady(caster,carrier,kit,elapsed);
             double now = NetworkManager.Singleton.ServerTime.Time;
             if (now < _next) return; _next = now + .05;
             var craters = FindObjectsByType<HeroHazards.SupernovaCraterComponent>(FindObjectsSortMode.None);
@@ -144,8 +147,42 @@ namespace TumbangPreso.Diagnostics
                 FindObjectsByType<HeroHazards.FireTrailComponent>().Length,
                 SeanCinderGate.Active.Count,cinderState.EventId,cinder!=null&&cinder.Spent?1:0,
                 cinder!=null?cinder.Remaining:0,cinderState.Position.z,cinderState.SecondScale,
-                front.PresentationTravelVelocity.z,caster.IsDefender?1:0,GameServices.Match.RoundNumber };
+                front.PresentationTravelVelocity.z,caster.IsDefender?1:0,GameServices.Match.RoundNumber,
+                kit.SteadyEmberRemaining,kit.ThrowChargeRate,
+                NetAuthority.LocalSlot==1?carrier.ChargeRatio:carrier.ObservedChargePower,
+                carrier.IsCharging?1:0,_steadyRegrabbed?1:0,Balance.ChargeFullTime };
             _writer.WriteLine(string.Join(",", row.Select(value => Convert.ToString(value, CultureInfo.InvariantCulture))));
+        }
+        private void DriveSteady(CharacterMotor caster,Carrier carrier,SeanHeroKit kit,float elapsed)
+        {
+            bool owns=NetAuthority.IsHost||NetAuthority.LocalSlot==1;
+            if (_steadyGrantAt<0 && _steadyGrabAt<0 && elapsed>13 && _shoe.State==SlipperState.Loose)
+            {
+                if(owns)caster.Teleport(_shoe.transform.position+Vector3.back*.3f);
+                _steadyGrabAt=elapsed+.5f;
+            }
+            if (_steadyGrantAt<0 && kit.SteadyEmberRemaining>0)_steadyGrantAt=elapsed;
+            if (NetAuthority.IsHost && !_steadyDropped && _steadyGrantAt>=0 && elapsed>=_steadyGrantAt+.5f && carrier.Held==_shoe)
+            {
+                _steadyDropped=_shoe.HostDisarm();
+                if(_steadyDropped)_shoe.transform.position=caster.transform.position+Vector3.forward*.3f;
+            }
+            if (_steadyGrantAt>=0 && !_steadyRegrabbed && _steadyRegrabAt<0 && _shoe.State==SlipperState.Loose)
+                _steadyRegrabAt=elapsed+.3f;
+            if (_steadyRegrabAt>=0 && !_steadyRegrabbed && carrier.Held==_shoe && _shoe.State==SlipperState.Held && _shoe.Holder==caster)
+            {
+                _steadyRegrabbed=true;
+                if(owns)caster.Teleport(new Vector3(0,.12f,-8));
+                _steadyChargeAt=elapsed+.4f;
+            }
+            if(NetAuthority.LocalSlot!=1)return;
+            caster.Intent.Parked=false;caster.Intent.AimPoint=new Vector3(0,.15f,-2);caster.Intent.FaceAimPoint=true;
+            bool firstGrab=_steadyGrantAt<0&&_steadyGrabAt>=0&&elapsed>=_steadyGrabAt&&elapsed<_steadyGrabAt+.3f;
+            bool regrab=_steadyRegrabAt>=0&&!_steadyRegrabbed&&elapsed>=_steadyRegrabAt&&elapsed<_steadyRegrabAt+.3f;
+            caster.Intent.Set(Verb.Grab,firstGrab||regrab);
+            bool firstThrow=elapsed>=12&&elapsed<12.3f;
+            bool boostedThrow=_steadyChargeAt>=0&&elapsed>=_steadyChargeAt&&elapsed<_steadyChargeAt+.3f;
+            caster.Intent.Set(Verb.SpecialAbility,firstThrow||boostedThrow);
         }
         private void OnDestroy() => _writer?.Dispose();
     }

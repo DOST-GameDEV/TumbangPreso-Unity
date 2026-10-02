@@ -23,6 +23,8 @@ def rows(path):
 
 def evaluate(folder, case, hold_charge=False, rejoined_seat=None, delay=0):
     data = {name: rows(folder / (name + ".csv")) for name in ("host", "owner", "observer")}
+    if case == "steady":
+        return evaluate_steady(data)
     if case == "cinder":
         return evaluate_cinder(data)
     if case == "stoke":
@@ -193,10 +195,41 @@ def evaluate_cinder(data):
     return {"ok": not errors, "errors": errors, "measurements": measurements}
 
 
+def evaluate_steady(data):
+    errors, measurements = [], {}
+    for name, records in data.items():
+        seat = {"host":0,"owner":1,"observer":2}[name]
+        if len(records)<150 or any(r["local"]!=seat or r["defending"] for r in records):
+            errors.append(name+" lacks continuous attacker-seat evidence")
+            continue
+        active=[r for r in records if r["passiveRemaining"]>0]
+        regrab=[r for r in active if r["steadyRegrabbed"]]
+        flights=sum(r["shoeState"]==2 and (i==0 or records[i-1]["shoeState"]!=2) for i,r in enumerate(records))
+        result={"samples":len(records),"active_samples":len(active),"regrab_samples":len(regrab),
+                "flight_episodes":flights,"final_passive":records[-1]["passiveRemaining"]}
+        measurements[name]=result
+        if not active or not regrab or flights<2:errors.append(name+" did not complete throw, retrieve, drop/regrab and second throw")
+        if any(r["passiveRemaining"]>4.01 or (r["passiveRemaining"]>0 and abs(r["chargeRate"]-1.25)>.001) for r in records):
+            errors.append(name+" disagrees with bounded passive rate/clock")
+        if any(b["passiveRemaining"]>a["passiveRemaining"]+.15 for a,b in zip(active,active[1:])):
+            errors.append(name+" refreshed the original window during drop/regrab")
+        if records[-1]["passiveRemaining"] or records[-1]["chargeRate"]!=1:
+            errors.append(name+" retained the boost after the accepted throw")
+        if name=="owner":
+            charging=[r for r in regrab if r["chargeActive"] and .02<r["chargePower"]<.95]
+            if len(charging)<2:errors.append("Owner has insufficient actual boosted charge samples")
+            else:
+                a,b=charging[0],charging[-1];dt=b["time"]-a["time"]
+                rate=(b["chargePower"]-a["chargePower"])*a["fullChargeTime"]/dt if dt>0 else 0
+                result["measured_charge_rate"]=rate
+                if not 1.1<rate<1.4:errors.append("Owner's real held input did not charge at the1.25x rate")
+    return {"ok":not errors,"errors":errors,"measurements":measurements}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("exe", type=Path)
-    parser.add_argument("--case", choices=["ignite", "supernova", "empowered", "stoke", "cinder"], required=True)
+    parser.add_argument("--case", choices=["ignite", "supernova", "empowered", "stoke", "cinder", "steady"], required=True)
     parser.add_argument("--delay", type=float, default=0)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--hold-charge", action="store_true")

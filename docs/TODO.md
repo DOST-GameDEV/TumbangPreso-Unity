@@ -17,6 +17,16 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### SEAN-STEADY-EMBER-1002: qualified own-retrieval charge reward
+
+One genuine own-throw/manual-retrieval grants four seconds of1.25x charge rate,
+unchanged maximum; one throw consumes, drop/regrab never refreshes. Protocol131.
+Native5codec+7action/contracts pass; first actual3Linuxpeer scenario passes,
+owner measured1.25418x. Build memory warning and audio/device limits retained.
+[Evidence](reports/sean-steady-ember-2026-10-02/README.md). Whole Pyro and human
+approval remain open; preserve other agents' Supernova/Amihan ownership.
+
+
 ### SEAN-CINDER-GATE-1002: finite grounded-crossing defender skill
 
 Cinder Gate replaces the defending placeholder. Three-metre line,0.35s warning,

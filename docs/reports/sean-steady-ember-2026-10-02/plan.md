@@ -1,6 +1,6 @@
 # Steady Ember implementation plan
 
-Status: planned, no implementation or qualification claim.
+Status: implementation and focused qualification complete; see [result](README.md).
 
 The live Pyro proposal rewards manually retrieving a genuinely thrown own slipper:
 the next throw charges25percent faster, once within4seconds, without increasing

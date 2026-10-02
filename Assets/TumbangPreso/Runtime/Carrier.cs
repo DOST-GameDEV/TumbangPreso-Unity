@@ -133,6 +133,8 @@ namespace TumbangPreso
 
         public Slipper Held { get; private set; }
         public float ChargeRatio => ThrowRules.ChargeRatio(_charge);
+        private float ChargeRate => _motor.Mode == GameMode.HeroStrike
+            ? Mathf.Clamp(_motor.AbilitySystem?.Kit?.ThrowChargeRate ?? 1f,.25f,2f) : 1f;
         public float ChannelRatio { get; private set; }
 
         private float _pektusSpin;
@@ -450,7 +452,7 @@ namespace TumbangPreso
             // The observed wind-up runs on every peer, including the ones that are not driving
             // this unit. See ObservedChargePower.
             if (_observedCharge >= 0.0f)
-                _observedCharge = Mathf.Min(_observedCharge + dt, Balance.ChargeFullTime);
+                _observedCharge = Mathf.Min(_observedCharge + dt * ChargeRate, Balance.ChargeFullTime);
 
             if (!_motor.CanAct())
             {
@@ -670,7 +672,7 @@ namespace TumbangPreso
 
             if (intent.Pressed(Verb.SpecialAbility))
             {
-                _charge = Mathf.Min(_charge + dt, Balance.ChargeFullTime);
+                _charge = Mathf.Min(_charge + dt * ChargeRate, Balance.ChargeFullTime);
                 _pektusSpin = Mathf.Clamp(intent.SpinInput, -Balance.MaxPektusSpin, Balance.MaxPektusSpin);
                 _observedSpin = _pektusSpin;
 

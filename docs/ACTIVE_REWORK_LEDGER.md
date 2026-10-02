@@ -410,3 +410,11 @@ state adds a bounded passive float. Extend the existing test reservation only to
 PlayMode/SkillReceiptTests.cs: its malformed permanent-flag byte moves from the
 last byte to the byte before the new float. Preserve the same rejection assertion
 and all other fixture behavior. No broad fixture repair or new transport route.
+
+DOTS Steady Ember terminal qualification: native5+7 and actual3Linux peers pass
+first attempt, owner measured1.25418x. Protocol131 owned optional passive float;
+build884MB258s, exit0 with memory-guard teardown warning. Peer44s exit0 guardnull,
+seven profiles restored. Source f163882c plus recorded overlay; no WAN/reconnect,
+physical control, audio or Human verified claim. Evidence in reports/sean-steady-ember-2026-10-02.
+Implementation paths are ready for publication; retain reservation until verified
+push and same-row Doc update. Other agents' ownership is unchanged.
