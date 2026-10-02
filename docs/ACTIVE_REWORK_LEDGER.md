@@ -170,3 +170,11 @@ changed. Source manifest completed18539 tracked non-audio/video runtime/assets/
 packages/settings hashes at087d3a36f. No Unity import started yet. Align clean
 checkout to published test correction without resetting its matching file, then
 one guarded import/build. Existing clean checkout has only this same test edit.
+
+Warning refinement shipped in 8eb83dcd via 203b8b3c; same Feedback note updated
+and two resolved warning comments struck through. Release warning/test paths.
+CITY-AMBIENCE-1002 claims Runtime/Map/KantoStreetSound.cs, SidewalkLife.cs and
+LrtTrainFlyby.cs, plus Tests/CityAmbienceGainTests.cs and report/TODO updates.
+Apply the explicit 25percent reduction to the existing Kanto/Ilalim city mix,
+retaining sliders, replay/preview suppression, spatial envelopes and authored
+clips. This is gain adjustment, not SFX generation or a listening-quality claim.
