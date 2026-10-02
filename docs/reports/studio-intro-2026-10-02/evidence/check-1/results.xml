@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 18:35:16Z" end-time="2026-10-02 18:35:16Z" duration="0.1542554">
+  <test-suite type="TestSuite" id="2654" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1346" result="Failed" site="Child" start-time="2026-10-02 18:35:16Z" end-time="2026-10-02 18:35:16Z" duration="0.154255" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2648" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1346" result="Failed" site="Child" start-time="2026-10-02 18:35:16Z" end-time="2026-10-02 18:35:16Z" duration="0.134775" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="168328" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2649" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1346" result="Failed" site="Child" start-time="2026-10-02 18:35:16Z" end-time="2026-10-02 18:35:16Z" duration="0.120387" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2650" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1346" result="Failed" site="Child" start-time="2026-10-02 18:35:16Z" end-time="2026-10-02 18:35:16Z" duration="0.107453" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2395" name="StudioIntroTests" fullname="TumbangPreso.PlayTests.StudioIntroTests" classname="TumbangPreso.PlayTests.StudioIntroTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-02 18:35:16Z" end-time="2026-10-02 18:35:16Z" duration="0.079544" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2396" name="AuthoredVideoPlaysBeforeLoadingAndEndsOnWhite" fullname="TumbangPreso.PlayTests.StudioIntroTests.AuthoredVideoPlaysBeforeLoadingAndEndsOnWhite" methodname="AuthoredVideoPlaysBeforeLoadingAndEndsOnWhite" classname="TumbangPreso.PlayTests.StudioIntroTests" runstate="Runnable" seed="727337340" result="Failed" start-time="2026-10-02 18:35:16Z" end-time="2026-10-02 18:35:16Z" duration="0.066764" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="20000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.StudioIntroTests.Create (System.Boolean clip) [0x0005e] in /workspace/scratch/0ed9da4aed7f/tump/Assets/TumbangPreso/Tests/PlayMode/StudioIntroTests.cs:31
+at TumbangPreso.PlayTests.StudioIntroTests+<AuthoredVideoPlaysBeforeLoadingAndEndsOnWhite>d__8.MoveNext () [0x0002d] in /workspace/scratch/0ed9da4aed7f/tump/Assets/TumbangPreso/Tests/PlayMode/StudioIntroTests.cs:40
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-X1NIqZ/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

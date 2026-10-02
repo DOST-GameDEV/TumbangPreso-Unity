@@ -201,7 +201,7 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator EscapingIceReleasesTheRestraintBeforeItsOriginalTimer()
+        public IEnumerator FrozenIgnoresRecoveryPressesAndExpiresOnItsOriginalTimer()
         {
             var victim=new GameObject("Frozen player");
             var motor=victim.AddComponent<CharacterMotor>();
@@ -214,13 +214,14 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(renderers.All(r=>r.bounds.max.y < 1.1f),"Ice hides the victim's face/eye line.");
             for (int i=0;i<12;i++)
             {
-                motor.MashOutOfStun();
+                Assert.IsFalse(motor.MashOutOfStun());
                 yield return new WaitForSeconds(.12f);
             }
-            Assert.LessOrEqual(motor.StunLeft,Balance.MinStunDown+.03f);
-            yield return new WaitForSeconds(Balance.MinStunDown+.12f);
+            Assert.Greater(motor.StunLeft,Balance.MinStunDown);
+            Assert.IsNotNull(prison,"The Frozen restraint cannot be removed by repeated input.");
+            yield return new WaitForSeconds(motor.StunLeft+.12f);
             yield return null;
-            Assert.IsTrue(prison==null,"The restraint outlives the actual ice stun after escape.");
+            Assert.IsTrue(prison==null,"The restraint outlives the actual ice stun after timed expiry.");
         }
     }
 }

@@ -451,6 +451,7 @@ namespace TumbangPreso.Diagnostics
                     jump.ApplyBindingOverride(binding,"<Gamepad>/buttonSouth");
                 InputLayer.TouchInput.ReleaseAll();InputLayer.TouchInput.Active=false;
                 who.ClearTrip();who.ClearStun();who.ApplyTrip();
+                float tripStarted=Time.time,tripDuration=who.TripTotal;
                 var pause=Panel.Open<PausePanel>(watcher);pause.Local=who;yield return null;
                 EventSystem.current.SetSelectedGameObject(Find("ResumeMatch").gameObject);yield return null;
                 UnityEngine.InputSystem.InputSystem.QueueStateEvent(pad,new UnityEngine.InputSystem.LowLevel.GamepadState().WithButton(UnityEngine.InputSystem.LowLevel.GamepadButton.South));
@@ -461,8 +462,12 @@ namespace TumbangPreso.Diagnostics
                 UnityEngine.InputSystem.InputSystem.QueueStateEvent(pad,new UnityEngine.InputSystem.LowLevel.GamepadState());yield return new WaitForSecondsRealtime(.15f);
                 UnityEngine.InputSystem.InputSystem.QueueStateEvent(pad,new UnityEngine.InputSystem.LowLevel.GamepadState().WithButton(UnityEngine.InputSystem.LowLevel.GamepadButton.South));
                 yield return new WaitForSecondsRealtime(.12f);
-                if(who.MashPresses!=1)throw new InvalidOperationException("Fresh recovery press did not arrive after menu release.");
-                Stage("native Resume consumes Submit; hold stays consumed; fresh press recovers");yield return Shot("recovery-after-menu");
+                if(who.MashPresses!=0)throw new InvalidOperationException("Fresh Submit shortened retired mash recovery.");
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(pad,new UnityEngine.InputSystem.LowLevel.GamepadState());
+                yield return WaitFor(()=>!who.IsTripped,who.TripTotal+1);
+                if(who.MashPresses!=0 || Time.time-tripStarted<tripDuration-.1f)
+                    throw new InvalidOperationException("Timed recovery accepted a press or ended early.");
+                Stage("native Resume consumes Submit; held and fresh presses leave timed recovery unchanged");yield return Shot("recovery-after-menu");
             }
             finally
             {

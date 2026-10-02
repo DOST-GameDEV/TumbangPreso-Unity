@@ -972,14 +972,7 @@ namespace TumbangPreso
             ShedCharacterPerch();
             Confine();
 
-            // ⚠⚠ THE MASH IS READ HERE, BEFORE `CommitFrame`, AND IT IS THE JUMP KEY ON
-            // PURPOSE. Jump is the one verb that is meaningless while a body is face down on the
-            // tarmac, so nothing is taken away by giving it a second job in that state, and
-            // "hammer the jump key to get up" needs no teaching. It follows the pattern `Grab`
-            // already uses: one control, one action, resolved by context. No new binding is
-            // added, so `InputMapAndAbilityTests`' one-control-one-action rule is untouched.
-            bool mashPressed = Intent.JustPressed(Verb.Jump);
-            if (mashPressed) RecoverFromInput();
+            // Status recovery is timed; Jump has no recovery side effect.
 
             // ⚠️⚠️ THE INTENT SNAPSHOT IS TAKEN HERE, AT THE END OF THE AUTHORITATIVE STEP, AND
             // NOWHERE ELSE. `JustPressed` and `JustReleased` are a diff against it, so whoever
@@ -1620,40 +1613,20 @@ namespace TumbangPreso
 
         private float _lastMashTime = -99.0f;
 
-        /// <summary>Real seconds since this fall began, and the ONLY clock left in a trip.
-        /// It drives nothing but <see cref="Balance.TripAutoRecoverSeconds"/>: the fall itself
-        /// no longer runs down with time.</summary>
+        /// <summary>Seconds elapsed in the current timed fall.</summary>
         private float _tripElapsed;
 
         private int _mashPresses;
         private float _mashRemoved;
         private float _tripImmuneUntil = -99.0f;
 
-        /// <summary>Accepted presses in the current fall, so the HUD can show it filling.</summary>
+        /// <summary>Legacy wire/readout field, always zero for current timed recovery.</summary>
         public int MashPresses => _mashPresses;
 
-        /// <summary>Seconds of the current fall that PRESSES have bought.
-        ///
-        /// ⚠️⚠️ IT IS THE GATE, NOT A READOUT, AS OF 2026-08-26. Reaching the mashable slack
-        /// (`TripTotal` - `Balance.MinTripDown`) is the only thing that puts a player back on
-        /// their feet inside `Balance.TripAutoRecoverSeconds`, and the HUD's one bar is this
-        /// number over that slack. So the bar filling and the body standing are the same event,
-        /// which is what 🧑 asked for after three passes that retuned a decay rate instead:
-        /// *"i want it so that i can only get up when ive reached the end of the mashing shit
-        /// bcz sometimes i get up with it still at middle or when i only clicked once"*.
-        ///
-        /// ⚠️ THE STRANDING GUARD CREDITS THE REST OF THE SLACK HERE RATHER THAN BYPASSING IT,
-        /// so the invariant holds with no exception: nobody ever stands up with the bar
-        /// part-full.</summary>
+        /// <summary>Legacy wire/readout field, always zero for current timed recovery.</summary>
         public float MashRemoved => _mashRemoved;
 
-        /// <summary>When the last ACCEPTED press landed, so the HUD can pop on it.
-        ///
-        /// ⚠️ A REJECTED PRESS IS A DEAD PRESS, NEVER A PENALTY, and the screen has to say so.
-        /// `Combat.MashRecover` returns `accepted: false` inside `Balance.MashCooldown` and
-        /// changes nothing, but with no feedback either way a player mashing above 10 Hz sees
-        /// most of their presses do nothing and reads the rate cap as being punished for
-        /// mashing. Popping on the accepted ones makes the cap legible as a rhythm.</summary>
+        /// <summary>Legacy readout retained for older callers; no new press is accepted.</summary>
         public float LastMashAcceptedTime => _lastMashTime;
 
         /// <summary>
@@ -1672,15 +1645,8 @@ namespace TumbangPreso
         /// </summary>
         public bool IsTripImmune => Time.time < _tripImmuneUntil;
 
-        /// <summary>
-        /// True while the player should be told to mash.
-        ///
-        /// ⚠️ IT GOES FALSE AT THE FLOOR RATHER THAN AT THE END OF THE TRIP. Once
-        /// `Balance.MinTripDown` is reached nothing further can be bought, and a prompt that
-        /// keeps asking for presses it will not honour teaches the player that mashing does not
-        /// work, which is the opposite of the intent.
-        /// </summary>
-        public bool CanMashUp => _tripLeft > Balance.MinTripDown;
+        /// <summary>No status recovery accepts mash input.</summary>
+        public bool CanMashUp => false;
 
         public void ClearStun()
         {
@@ -1751,37 +1717,11 @@ namespace TumbangPreso
             _tripElapsed = 0.0f;
         }
 
-        /// <summary>
-        /// One mash press against the current fall.
-        ///
-        /// 🧑, 2026-08-25: *"then fall down animation plays and u have to spam a button to
-        /// get back up"*.
-        ///
-        /// Trip recovery never spends time from an overlapping tag or element
-        /// hold. IsStunned includes both independent timers, and the existing
-        /// snapshot already carries each timer separately (protocol30 semantics).
-        ///
-        /// ⚠️ THE RATE CAP LIVES IN `Combat.MashRecover`, NOT HERE. A bot presses the same
-        /// buttons a human does, so both reach the cap through the same function rather than
-        /// through an input-layer check only one of them passes through.
-        /// </summary>
+        /// <summary>Deprecated recovery entry point. Trips end on their authored timer.</summary>
         public bool MashRecover()
         {
-            if (_tripLeft <= 0.0f) return false;
-
-            float since = Time.time - _lastMashTime;
-            float before = _tripLeft;
-            float after = Combat.MashRecover(_tripLeft, since, out bool accepted);
-            if (!accepted) return false;
-
-            _lastMashTime = Time.time;
-            _mashPresses++;
-
-            float removed = before - after;
-            _tripLeft = after;
-            _mashRemoved += removed;
-
-            return removed > 0.0f;
+            // Retained compatibility entry point. Recovery no longer consumes presses.
+            return false;
         }
 
         /// <summary>⚠️ Max(), NEVER additive. That is the entire bound on a stun chain in a
@@ -1876,45 +1816,20 @@ namespace TumbangPreso
         // repeatedly, and a fresh authoritative stun cannot inherit these presses.
         public bool RecoverFromInput()
         {
-            if (!IsLocallySimulated() || _pendingRecovery.Count>=32) return false;
-            bool accepted=IsTripped ? MashRecover() : MashOutOfStun();
-            if (accepted && NetAuthority.ShouldRequest() && _playerSlot==NetAuthority.LocalSlot)
-            {
-                int sequence=++_recoverySequence;
-                _pendingRecovery.Add(sequence);
-                Net.MatchRpc.Instance?.RequestMashServerRpc(_playerSlot,_recoveryEpisode,sequence);
-            }
-            return accepted;
+            // Retained compatibility entry point. Recovery no longer consumes presses.
+            return false;
         }
 
         public bool AcceptRecoveryRequest(int episode,int sequence)
         {
-            if (!NetAuthority.ShouldResolve() || episode!=_recoveryEpisode ||
-                sequence<=_recoveryAcknowledged || sequence-_recoveryAcknowledged>32) return false;
-            // A refusal is also acknowledged so it cannot remain predicted forever.
-            _recoveryAcknowledged=sequence;
-            if(IsEdgeRecovering&&PresentationClock.BlocksInput)return false;
-            return IsTripped ? MashRecover() : MashOutOfStun();
+            // Retained compatibility entry point. Recovery no longer consumes presses.
+            return false;
         }
 
         private void ReplayUnacknowledgedRecovery()
         {
-            foreach (int sequence in _pendingRecovery)
-            {
-                if (_tripLeft>0)
-                {
-                    float after=Combat.MashRecover(_tripLeft,Balance.MashCooldown,out bool accepted);
-                    if (!accepted) continue;
-                    float removed=_tripLeft-after;
-                    _tripLeft=after;_mashRemoved+=removed;_mashPresses++;
-                }
-                else if (_stunElement!=StunElement.None)
-                {
-                    _stunLeft=Combat.MashOutOfStun(_stunLeft,_stunTotal,_stunBreakPresses,
-                        Balance.MashCooldown,out bool accepted);
-                    if (accepted) _stunMashPresses++;
-                }
-            }
+            // Old buffered presses cannot alter a restored timed state.
+            _pendingRecovery.Clear();
         }
 
         /// <summary>What is holding this body, for the coat, the vignette and the card.</summary>
@@ -1954,12 +1869,12 @@ namespace TumbangPreso
             _stunTotal = Mathf.Max(_stunLeft, stunTotal);
             _stunElement = _stunLeft > 0.0f ? element : StunElement.None;
             _stunBreakPresses = Mathf.Clamp(stunBreakPresses, 1, 32);
-            _stunMashPresses = Mathf.Clamp(stunMashPresses, 0, _stunBreakPresses);
+            _stunMashPresses = 0; // Legacy wire field is no longer live recovery input.
 
             _tripLeft = Mathf.Max(0.0f, tripLeft);
             _tripTotal = Mathf.Max(_tripLeft, tripTotal);
-            _mashPresses = Mathf.Max(0, tripMashPresses);
-            _mashRemoved = Mathf.Clamp(tripMashRemoved, 0.0f, _tripTotal);
+            _mashPresses = 0;
+            _mashRemoved = 0;
 
             if (recoveryEpisode>=0 && _playerSlot==NetAuthority.LocalSlot)
                 ReplayUnacknowledgedRecovery();
@@ -1967,69 +1882,15 @@ namespace TumbangPreso
             Stamina?.ApplyNetworkSnapshot(staminaCurrent, staminaIdle, fatigueLeft);
         }
 
-        /// <summary>
-        /// True while hammering buys something.
-        ///
-        /// ⚠️ IT GOES FALSE AT THE FLOOR, exactly as `CanMashUp` does, and for the reason that
-        /// property records: a prompt that keeps demanding presses it will not honour teaches
-        /// the player that mashing does not work.
-        /// </summary>
+        /// <summary>No elemental hold accepts mash input.</summary>
         public bool CanMashOutOfStun
-            => _stunElement != StunElement.None && _stunLeft > Balance.MinStunDown;
+            => false;
 
-        /// <summary>
-        /// One press against an element stun.
-        ///
-        /// ⚠️ IT DOES NOT TOUCH `_tripLeft`, WHICH IS THE MIRROR OF THE TRAP `MashRecover`
-        /// CARRIES. There, shortening the trip without the stun left a player standing and
-        /// unable to act; here, shortening the stun without the trip would stand somebody up
-        /// mid-knockdown. A body that is BOTH tripped and element-stunned is answered by the
-        /// trip mash, which already clears both, so this returns early rather than racing it.
-        /// </summary>
+        /// <summary>Deprecated recovery entry point. Element holds keep their full timer.</summary>
         public bool MashOutOfStun()
         {
-            if (_stunElement == StunElement.None) return false;
-            if (_stunLeft <= 0.0f) return false;
-            if (_tripLeft > 0.0f) return false;
-
-            float since = Time.time - _lastStunMashTime;
-            float before = _stunLeft;
-            float after = Combat.MashOutOfStun(_stunLeft, _stunTotal, _stunBreakPresses,
-                                               since, out bool accepted);
-            if (!accepted) return false;
-
-            _lastStunMashTime = Time.time;
-            _stunMashPresses++;
-            _stunLeft = after;
-
-            // ⚠️⚠️ IT FIRES ON THE PRESS THAT REACHES THE FLOOR, NOT ON EVERY PRESS. `docs/TODO.md`
-            // § 23 ended the mash silently, so the only confirmation that the last press was the
-            // one that worked was a card the player is not looking at. One cue per BREAK is the
-            // sparse answer; one per press would be a cue at up to 10 Hz, which is the buzzsaw
-            // case `AudioCues.HeadroomDb` exists to keep out.
-            //
-            // ⚠️ AND `MinStunDown` IS THE TEST, NOT ZERO. The floor is deliberately left to run
-            // down (see the note below), so the moment the fight is WON is the moment the meter
-            // can buy nothing more, which is exactly when `CanMashOutOfStun` goes false and the
-            // card stops asking. Waiting for the stun to expire would put the sound on the clock
-            // rather than on the player.
-            if (after <= Balance.MinStunDown && before > Balance.MinStunDown && IsLocalHuman)
-            {
-                GameServices.Audio?.PlayUi("sfx_stun_break");
-            }
-
-            // ⚠️⚠️ THE FLOOR IS LEFT TO RUN DOWN AND IS NOT CLEARED HERE. Releasing the body the
-            // moment the meter fills would put a perfectly answered 3.0 s stun at **0.6 s**, six
-            // presses at the 10 Hz cap and nothing else, which is not a control ability any more
-            // and refunds the cooldown that bought it. `MinStunDown` is the part of the stun the
-            // mash CANNOT buy, exactly as `MinTripDown` is for a fall, and the honest total is
-            // the mash plus the floor: about **1.7 s** against 3.0 unanswered, because the clock
-            // is draining underneath the presses the whole time.
-            //
-            // ⚠️ AND THAT LAST 1.2 s IS WHERE THE ELEMENT COMES OFF. It is the shatter, the same
-            // way `MinTripDown` is the get-up clip: a window with a name and a picture, not dead
-            // time. `CanMashOutOfStun` goes false at its start so the card stops asking.
-            return before - after > 0.0f;
+            // Retained compatibility entry point. Recovery no longer consumes presses.
+            return false;
         }
 
         // Contact is resolved once by the host. A remote human integrates movement
@@ -2079,34 +1940,10 @@ namespace TumbangPreso
 
             if (_tripLeft > 0.0f && !IsEdgeRecovering)
             {
-                // ⚠️⚠️ ABOVE THE FLOOR NOTHING RUNS DOWN ON ITS OWN. THAT IS THE WHOLE RULE.
-                // 🧑, 2026-08-26, off the 4.70 player: *"u randomly get up after set amt of
-                // time, i dont have to actually mash it"*, and *"i want it so that i can only
-                // get up when ive reached the end of the mashing shit bcz sometimes i get up
-                // with it still at middle or when i only clicked once"*. Three previous passes
-                // answered that by retuning a decay RATE (docs/TODO.md §§ 12.1, 13.1, 14.1) and
-                // every one of them left the property he is describing in place: while a rate
-                // above zero exists, TIME ends the fall and the meter is a decoration on a
-                // countdown. `Balance.TripPassiveDecayRate` is deleted; see
-                // `Balance.TripAutoRecoverSeconds` for the whole argument.
-                //
-                // Below `MinTripDown` the get-up clip is playing, nothing can be bought, and
-                // this runs at real time so the animation and the clock agree.
-                if (_tripLeft <= Balance.MinTripDown)
-                    _tripLeft = Mathf.Max(0.0f, _tripLeft - Time.deltaTime);
-
-                // ⚠️⚠️ THE STRANDING GUARD, AND IT FILLS THE METER ON ITS WAY OUT. A fall that
-                // only a press can clear strands a player whose hands left the keyboard, so
-                // `Balance.TripAutoRecoverSeconds` releases one that nobody answered. Crediting
-                // the remaining slack to `_mashRemoved` is not cosmetic: the bar is the gate
-                // now, and standing up with it part-full is the exact frame he photographed.
+                // The authored duration now runs normally, including the existing
+                // final get-up beat. No press meter or emergency-only release gate.
                 _tripElapsed += Time.deltaTime;
-
-                if (_tripLeft > Balance.MinTripDown && _tripElapsed >= Balance.TripAutoRecoverSeconds)
-                {
-                    _mashRemoved += _tripLeft - Balance.MinTripDown;
-                    _tripLeft = Balance.MinTripDown;
-                }
+                _tripLeft = Mathf.Max(0, _tripLeft - Time.deltaTime);
 
                 if (_tripLeft <= 0.0f)
                 {

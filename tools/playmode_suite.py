@@ -151,7 +151,7 @@ GROUPS = [
         # verdict about the code, so a fixture that turns out to share a world with another one
         # should simply be moved.
         "BrandPickerTests", "BrandPreparationTests", "BrandSettingsTests", "CloseFeedbackViewProbe",
-        "ModelPreviewPixelTests", "OwnerMenuEditsTests", "OwnerMenuSkyTests", "OwnerPasswordTests",
+        "ModelPreviewPixelTests", "OwnerMenuEditsTests", "StudioIntroTests", "OwnerMenuSkyTests", "OwnerPasswordTests",
         "OwnerPlayerHubTests", "OwnerPreparationTests", "OwnerUiAuthoringTests",
         "PlayHeadingScaleTests", "ReducedActionFocusProbe", "SwimmingNameplateTests",
         "TumpNativeFrontEndTests", "TumpNativeJoinTests", "TumpNativePickerTests",
@@ -175,7 +175,7 @@ GROUPS = [
      """, [
         "AiLaneTests", "ArenaBoundsProbe", "BotMotionProbe", "CarriedSlipperSelfHideProbe",
         "CarryTests", "MapRetrievalProbe", "EmoteCameraProbe", "EmoteLifecycleProbe", "FppFrameProbe",
-        "AmihanWikiTests", "AmihanAirburstTests", "DanteDriftTests", "HexPhantomReviewTests", "DanteBoulderImbueTests", "DanteBoulderMotionTests", "DanteBastionMotionTests", "DanteBoulderLoadTests", "DanteWardRuleTests", "DanteEarthboundTests", "DanteWardBadgeTests", "DanteVisibilityTests", "CheskaFrostbiteLoadTests", "CheskaFrostbiteMotionTests", "CheskaExpiryPresentationTests", "CheskaIceContractProbe", "IceTractionProbe", "NemuKitContractProbe", "NemuHauntContractTests", "NemuFamiliarPoseTests", "BotCompanionObservationTests", "HauntedPerceptionTests", "MapRouteProbe",
+        "AmihanWikiTests", "AmihanAirburstTests", "DanteDriftTests", "HexPhantomReviewTests", "DanteBoulderImbueTests", "DanteBoulderMotionTests", "DanteBastionMotionTests", "DanteBoulderLoadTests", "TimedRecoveryTests", "DanteWardRuleTests", "DanteEarthboundTests", "DanteWardBadgeTests", "DanteVisibilityTests", "CheskaFrostbiteLoadTests", "CheskaFrostbiteMotionTests", "CheskaExpiryPresentationTests", "CheskaIceContractProbe", "IceTractionProbe", "NemuKitContractProbe", "NemuHauntContractTests", "NemuFamiliarPoseTests", "BotCompanionObservationTests", "HauntedPerceptionTests", "MapRouteProbe",
         "RetrievalSlideTests", "HitFreezeProbe", "SecondMatchLifecycleProbe",
         "AudioListenerProbe",
         "FppOccluderProbe", "LandedHighlightTests", "LataFloatProbe", "MatchRunTests",

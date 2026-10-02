@@ -205,14 +205,11 @@ namespace TumbangPreso.PlayTests
                             // real recovery state samples every approved serialized rig.
                             who.Teleport(new Vector3(0,.1f,-10));yield return new WaitForSeconds(.2f);who.ApplyFallRecovery();
                             float minimum=float.PositiveInfinity,maximum=float.NegativeInfinity;
-                            float end=Time.time+2.8f,nextMash=Time.time+.42f;bool captured=false;
+                            float end=Time.time+2.8f;bool captured=false;
                             while(Time.time<end)
                             {
                                 yield return null;
-                                // The game's down state deliberately waits for
-                                // accepted mash presses; duration is not a timer
-                                // that automatically stands the player at2.5s.
-                                if(Time.time>=nextMash&&who.CanMashUp){who.MashRecover();nextMash=Time.time+.18f;}
+                                // Recovery now advances on the authored timer without input.
                                 float bottom=float.PositiveInfinity;
                                 foreach(var skin in visual.Model.GetComponentsInChildren<SkinnedMeshRenderer>())
                                 {

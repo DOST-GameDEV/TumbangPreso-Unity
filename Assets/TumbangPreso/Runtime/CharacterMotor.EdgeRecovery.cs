@@ -16,7 +16,7 @@ namespace TumbangPreso
         public Vector3 EdgeOutward=>_edgeOutward;
         public byte EdgePhase=>_edgePhase; // 0 reach/catch, 1 effort while hanging, 2 pull over lip
         public float EdgePhaseRatio=>_edgeRatio;
-        public float EdgeMashRatio=>Mathf.Clamp01(_mashRemoved/Mathf.Max(.01f,_tripTotal-Balance.MinTripDown));
+        public float EdgeMashRatio=>Mathf.Clamp01((_tripTotal-_tripLeft)/Mathf.Max(.01f,_tripTotal-Balance.MinTripDown));
         private Vector3 HangingFeet=>_edgeGrip+_edgeOutward*(_cc.radius+.14f)-Vector3.up*1.28f;
 
         public bool BeginEdgeRecovery(MapEdgeAnchor anchor)
@@ -60,7 +60,6 @@ namespace TumbangPreso
             // resource clocks. Preserve ordinary stunned/idle stamina behavior.
             if(NetAuthority.ShouldResolve()||IsLocallySimulated())
             {Stamina.StepFatigue(dt);Stamina.Step(dt,false,false);}
-            if(IsLocallySimulated()&&Intent.JustPressed(Verb.Jump))RecoverFromInput();
             if(!NetAuthority.ShouldResolve())
             {StepNetworkReplica(dt);Intent.CommitFrame();return true;}
 
@@ -81,6 +80,8 @@ namespace TumbangPreso
             }
             else if(_edgePhase==1)
             {
+                // Hang effort advances on the host clock, never on repeated Jump.
+                _tripLeft=Mathf.Max(Balance.MinTripDown,_tripLeft-dt);
                 SetEdgePose(feet,false);_edgeRatio=EdgeMashRatio;
                 if(_tripLeft<=Balance.MinTripDown){_edgePhase=2;_edgeElapsed=0;_edgeRatio=0;}
             }

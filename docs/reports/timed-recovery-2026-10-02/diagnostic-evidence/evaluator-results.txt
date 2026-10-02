@@ -1,0 +1,18 @@
+test_accepted_roof_press_fails (test_timed_recovery_evaluators.TimedRecoveryEvaluators.test_accepted_roof_press_fails) ... ok
+test_accepted_stun_press_fails (test_timed_recovery_evaluators.TimedRecoveryEvaluators.test_accepted_stun_press_fails) ... ok
+test_full_stun_and_expiry_pass (test_timed_recovery_evaluators.TimedRecoveryEvaluators.test_full_stun_and_expiry_pass) ... ok
+test_independent_tag_remains_full_length (test_timed_recovery_evaluators.TimedRecoveryEvaluators.test_independent_tag_remains_full_length) ... ok
+test_long_stun_fails (test_timed_recovery_evaluators.TimedRecoveryEvaluators.test_long_stun_fails) ... ok
+test_no_expiry_fails (test_timed_recovery_evaluators.TimedRecoveryEvaluators.test_no_expiry_fails) ... ok
+test_no_pickup_fails (test_timed_recovery_evaluators.TimedRecoveryEvaluators.test_no_pickup_fails) ... ok
+test_no_returned_shoe_fails (test_timed_recovery_evaluators.TimedRecoveryEvaluators.test_no_returned_shoe_fails) ... ok
+test_short_roof_hold_fails (test_timed_recovery_evaluators.TimedRecoveryEvaluators.test_short_roof_hold_fails) ... ok
+test_shortened_stun_fails (test_timed_recovery_evaluators.TimedRecoveryEvaluators.test_shortened_stun_fails) ... ok
+test_timed_roof_and_stock_return_pass (test_timed_recovery_evaluators.TimedRecoveryEvaluators.test_timed_roof_and_stock_return_pass) ... ok
+test_wrong_map_fails (test_timed_recovery_evaluators.TimedRecoveryEvaluators.test_wrong_map_fails) ... ok
+test_wrong_seat_fails (test_timed_recovery_evaluators.TimedRecoveryEvaluators.test_wrong_seat_fails) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.029s
+
+OK

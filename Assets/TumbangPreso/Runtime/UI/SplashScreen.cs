@@ -8,27 +8,9 @@ using UnityEngine.Video;
 namespace TumbangPreso.UI
 {
     /// <summary>
-    /// Illustrated boot loading with an optional reading card, then the title.
-    /// The studio video remains a fallback when the illustration is unavailable.
-    ///
-    /// ⚠️ EVERY TIME IS LITERAL. There is no "seen it already" flag and no skip-on-second-launch.
-    /// It stays exactly as long as the preload takes (`LoadingPresentation.CanLeave`).
-    ///
-    /// ⚠️⚠️ THIS IS ALSO THE BOOT LOADING SCREEN, SO INPUT NEVER SKIPS IT. Earlier builds let a
-    /// buffered click jump straight to the menu while shaders, audio and both rosters were still
-    /// cold. That merely moved the wait to the first PLAY or CHARACTER press, where it looked
-    /// like the UI had frozen. The sting now stays up until both its presentation and the preload
-    /// barrier are complete.
-    ///
-    /// ⚠️⚠️ THE CLIP AND THE STING ARE ASSIGNED BY THE IMPORTER, NOT BY HAND. They are
-    /// serialised fields and for the whole first conversion nothing ever set them: the component
-    /// was attached, the coroutine ran, both references were null, and every launch showed three
-    /// seconds of black. `TscnUiImporter.BindSplash` wires them now, so the failure cannot come
-    /// back through somebody rebuilding the scene.
-    ///
-    /// ⚠️ THE MENU LOADS UNDERNEATH. `LoadSceneAsync` with activation held off runs while the
-    /// animation plays, so the handoff is instant instead of a second black frame at the end of
-    /// a three second clip.
+    /// Skippable studio intro, then work-driven loading and the existing menu barrier.
+    /// Skipping only ends the logo presentation; it never bypasses game readiness.
+    /// The importer preserves the authored clip and sting bindings.
     /// </summary>
     public sealed partial class SplashScreen : MonoBehaviour
     {
@@ -44,10 +26,8 @@ namespace TumbangPreso.UI
         [SerializeField] private VideoClip _clip;
         [SerializeField] private AudioClip _sting;
 
-        private VideoPlayer _video;
         private RawImage _surface;
 
-        private RenderTexture _target;
         private Image _fade;
         private Text _loadingLabel;
         private Image _loadingFill;
@@ -146,43 +126,16 @@ namespace TumbangPreso.UI
 
         private IEnumerator Run()
         {
-            BuildSurface();
-            // The logo may have its short studio cue. The illustrated loading
-            // screen stays quiet; the menu bed begins only on the visible home.
             GameServices.Music?.StopNow();
-            if(_ownerLoading || _illustration!=null)BootSting.Stop();
+            yield return PlayStudioIntro();
+            BuildSurface();
+            SetFadeColour(Color.white);
+            SetFade(1);
+            ReleaseStudioIntro();
+            BootSting.Stop();
             BeginPreload();
-            // ⚠️ THE MENU IS ACTIVATED ONLY AFTER THE ACCOUNT BARRIER SETTLES. There is no
-            // prompt and no account form here: a fresh player signs in anonymously while the
-            // existing studio/loading screen is already doing its work, and an unreachable
-            // service settles to the local profile inside PlayerAccount's bounded budget.
+            // Presentation skips never bypass asset, account or menu readiness.
             var accountBarrier = GameServices.Account?.InitializeAsync();
-
-            // ⚠️ ONLY IF THE EARLY HOOK DID NOT ALREADY START IT. On a normal launch the sting
-            // is already playing across the Unity logo; this is the fallback for entering the
-            // scene directly in the editor.
-            // ⚠️⚠️ ON THE 2D ROUTE, BECAUSE `AudioSource.PlayClipAtPoint` IS ALWAYS 3D. It
-            // builds a throwaway source with `spatialBlend = 1`, and firing it at `Vector3.zero`
-            // was only ever centred and full-volume because the game's one listener also sat at
-            // the origin. `AudioDirector.LateUpdate` moved the listener onto the camera on
-            // 2026-09-06 (`docs/TODO.md` § 150.7), so this is the eighth non-diegetic site and
-            // the one a `Vector3.zero` grep finds last: it never went through `AudioDirector` at
-            // all. A boot sting that pans is not a boot sting.
-            if (!_ownerLoading && _illustration==null && _sting != null && !BootSting.Started)
-            {
-                var s = Settings.SettingsStore.Current;
-                GameServices.Audio?.PlayClipUi(_sting, Mathf.Clamp01(s.SfxGain));
-            }
-
-            if (_clip != null && _video != null)
-            {
-                _video.clip = _clip;
-                _video.Play();
-            }
-            else if (!_ownerLoading && _illustration == null)
-            {
-                Debug.LogWarning("[Splash] no video clip bound; run Tumbang Preso > Import Godot UI.");
-            }
 
             // ⚠️ The original white fade avoided a black flash after the studio mark
             // (114.2). The illustrated route uses warm paper for the same quiet join.
@@ -210,17 +163,7 @@ namespace TumbangPreso.UI
                 fade = Mathf.Clamp01(_elapsed / 0.35f);
                 SetFade(1.0f - fade);
 
-                // ⚠️⚠️ NO MINIMUM ON THE ILLUSTRATED ROUTES. This held for at least half a second
-                // even when the work was already done; request, 2026-09-30: the screen lasts
-                // exactly as long as the loading does and no longer. Only the legacy studio video
-                // still waits for its own clip, because that clip IS the content.
-                bool presentationComplete = _ownerLoading || _illustration != null || _clip == null
-                    || (_video.isPrepared && !_video.isPlaying && _elapsed > 0.5f);
-
-                // ⚠️ The illustrated route and reading window were requested after
-                // the studio-only choice in 114.3. Neither route bypasses readiness;
-                // the fallback video still holds its final frame while loading finishes.
-                if (presentationComplete && LoadingPresentation.CanLeave(PreloadComplete, accountReady,
+                if (LoadingPresentation.CanLeave(PreloadComplete, accountReady,
                         _storyRoot != null && _storyRoot.activeSelf)) break;
 
                 if (!_slowLoadReported && !PreloadComplete && _elapsed >= MaxWait)
@@ -295,7 +238,7 @@ namespace TumbangPreso.UI
         /// ⚠️ THE ASSETS ARE WARMED BEFORE THE HELD MENU LOAD STARTS. Unity serialises scene
         /// operations behind a load whose activation is held at 90%, so starting the menu first
         /// deadlocks every additive arena load queued after it. The menu is deliberately the final
-        /// preload operation; only then is its activation held until the sting finishes.
+        /// preload operation; only then is its activation held until readiness finishes.
         /// </summary>
         private void BeginPreload()
         {
@@ -865,11 +808,6 @@ namespace TumbangPreso.UI
             bgImg.color = Color.white;
             Stretch(bgImg.rectTransform);
 
-            var surfaceGo = new GameObject("Video");
-            surfaceGo.transform.SetParent(canvasGo.transform, false);
-            _surface = surfaceGo.AddComponent<RawImage>();
-            Stretch(_surface.rectTransform);
-
             var fadeGo = new GameObject("Fade");
             fadeGo.transform.SetParent(canvasGo.transform, false);
             _fade = fadeGo.AddComponent<Image>();
@@ -882,23 +820,7 @@ namespace TumbangPreso.UI
 
             BuildLoadingIndicator(canvasGo.transform);
 
-            _target = new RenderTexture(1280, 720, 0);
-            _surface.texture = _target;
 
-            _video = canvasGo.AddComponent<VideoPlayer>();
-            _video.playOnAwake = false;
-            _video.isLooping = false;
-            _video.renderMode = VideoRenderMode.RenderTexture;
-            _video.targetTexture = _target;
-            _video.audioOutputMode = VideoAudioOutputMode.None; // the sting is its own cue
-
-            // ⚠️⚠️ FIT INSIDE, NOT STRETCH, AND IT WAS STRETCH TO MATCH `expand = true` ON THE
-            // .tscn. That was defensible while the letterbox was black and the difference was
-            // invisible; it is not defensible for a LOGO. `CLAUDE.md` § 6.2c question 2 is
-            // explicit: envelope a background, FIT a logo. A stretched studio mark is a distorted
-            // studio mark on every window that is not 16:9, which is the one 🧑 plays in. The
-            // white Backdrop above is what the fit leaves showing, and it is the same white.
-            _video.aspectRatio = VideoAspectRatio.FitInside;
         }
 
         private void BuildIllustratedSurface()

@@ -81,12 +81,7 @@ namespace TumbangPreso.UI
         {
             ScreenTakeover.Unregister(this);
             if (_menuCurtain == this) _menuCurtain = null;
-            if (_target != null)
-            {
-                if (_video != null) _video.targetTexture = null;
-                _target.Release();
-                Destroy(_target);
-            }
+            ReleaseStudioIntro();
             if (_canvas != null && _canvas != gameObject) Destroy(_canvas);
         }
     }

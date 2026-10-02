@@ -534,3 +534,40 @@ Frozen four inputs unchanged. Protocol133, recording13 unchanged, no actual-peer
 or fresh-player claim. No active job. Publish exact duration/version/tests/docs
 and update/read back the Next Round Notes WIP. User reacted positively to Block
 screenshot at17:32; no blanket human verification inferred.
+
+Next Round498e0b8c verified remote and Wiki result read back. New top Feedback
+row requests mash removal plus startup refinements. Its Notes now explicitly
+say recovery work in progress, startup next, readback verified. TIMED-RECOVERY-1002
+claims the dated plan's recovery/UI/input/network surfaces and focused tests.
+Audit found trip and edge hang currently depend on press progress, so merely
+hiding prompts would strand players. Plan fixed authored trip expiry and timed
+edge phases, inactive legacy entry points, unchanged ordinary jump/root hold.
+No production changes or active native job yet; start small causal baselines.
+
+Timed recovery candidate complete: fifteen isolated native cases pass, unchanged
+runtime hashes, guard null. Separate imports avoid concurrent compilation/map
+memory. Missing test using and wrong HUD Image property were corrected with
+retained failures and exact-value reruns. Protocol134, recording13 unchanged.
+No live job. Commit/publish exact owned recovery paths and evidence, update live
+Feedback Notes; then implement the same row's separate BH Studios startup flow.
+Unowned UI metadata, inday FPP assets and crash blob remain untouched.
+
+Studio intro candidate ready: real portable video before loading, no skip label,
+any-input0.22s white fade, bounded failure and target cleanup. Five isolated native
+cases pass, including unchanged real menu barrier/failure exit. Linux H264 import
+returned null; original preserved plus bound VP8 derivative. One focus fixture
+repair retained. No active job. Publish exact owned startup paths and update
+Feedback, then qualify a fresh isolated packaged startup. User asleep18:28UTC;
+continue cloud-only work and hold routine chat until return.
+
+Startup49e9849b is verified remote and Feedback records native completion.
+Packaged qualification in a separate49e9849b worktree stopped twice at existing
+RosterBook resolution, including one exact-asset reimport. Read-only diagnosis
+finds MonoScript present but GetClass null while the expected compiled type
+exists. No roster/animation regeneration or gate bypass. Further full builds
+stopped; see packaged-blocker. Main checkout and authored content intact.
+Timed recovery diagnostics now reject accepted presses/shortened clocks and
+require expiry;13 evaluator controls pass and native compilation passes45s.
+These are evaluator/compile evidence only, not a new actual-peer/player pass.
+No active job. Publish exact diagnostic files/report; keep user chat quiet while
+asleep, and keep live Feedback work/status truthful.

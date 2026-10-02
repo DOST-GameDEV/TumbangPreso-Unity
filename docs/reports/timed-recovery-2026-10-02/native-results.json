@@ -1,0 +1,152 @@
+[
+  {
+    "run": "candidate-1",
+    "case": "TumbangPreso.PlayTests.TimedRecoveryTests.FrozenRejectsLegacyRecoveryAndKeepsItsTimer",
+    "duration": "0.259695",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 30.004286037990823
+    }
+  },
+  {
+    "run": "candidate-2",
+    "case": "TumbangPreso.PlayTests.TimedRecoveryTests.TripExpiresAtItsAuthoredDurationWithoutPresses",
+    "duration": "1.345243",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 30.00268119300017
+    }
+  },
+  {
+    "run": "candidate-3",
+    "case": "TumbangPreso.PlayTests.TimedRecoveryTests.RepeatedJumpDoesNotShortenFrozenAndOrdinaryJumpStillWorks",
+    "duration": "1.650843",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 30.00549191799655
+    }
+  },
+  {
+    "run": "candidate-4",
+    "case": "TumbangPreso.PlayTests.TimedRecoveryTests.BotWaitsForTheSameFrozenClockWithoutRecoveryTaps",
+    "duration": "1.637394",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 30.00281321798684
+    }
+  },
+  {
+    "run": "candidate-5",
+    "case": "TumbangPreso.PlayTests.TimedRecoveryTests.EdgeCatchCompletesWithoutMashOrTeleportingPastItsPhases",
+    "duration": "3.078635",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 30.00532137499249
+    }
+  },
+  {
+    "run": "contracts-1",
+    "case": "TumbangPreso.PlayTests.NemuKitContractProbe.QuickKeyboardTapCannotShortenTimedStun",
+    "duration": "3.296872",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 30.006826140001067
+    }
+  },
+  {
+    "run": "contracts-2",
+    "case": "TumbangPreso.PlayTests.NemuKitContractProbe.QuickControllerTapCannotShortenTimedStun",
+    "duration": "3.185959",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 30.005318031995557
+    }
+  },
+  {
+    "run": "contracts-3",
+    "case": "TumbangPreso.PlayTests.NemuKitContractProbe.TimedStunSnapshotsCannotRestoreRetiredRecoveryInputs",
+    "duration": "2.920069",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 30.00337160700292
+    }
+  },
+  {
+    "run": "contracts-4",
+    "case": "TumbangPreso.PlayTests.NemuKitContractProbe.TripSnapshotsStayAuthoritativeWithoutRecoveryPrediction",
+    "duration": "2.942361",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 30.005326409998816
+    }
+  },
+  {
+    "run": "contracts-5",
+    "case": "TumbangPreso.PlayTests.NemuKitContractProbe.RetiredRecoveryRequestsCannotAffectAnyEpisode",
+    "duration": "3.051379",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 30.002757239999482
+    }
+  },
+  {
+    "run": "contracts-6",
+    "case": "TumbangPreso.PlayTests.RecoveryDeviceProbe.QuickTouchAndHeldInputCannotShortenTimedRecovery",
+    "duration": "13.439545",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 45.005056658003014
+    }
+  },
+  {
+    "run": "contracts-7",
+    "case": "TumbangPreso.PlayTests.RecoveryMenuBoundaryProbe.CustomJumpBindingWorksNormallyWithoutMashAfterMenuRelease",
+    "duration": "2.733483",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 30.002722849996644
+    }
+  },
+  {
+    "run": "contracts-8",
+    "case": "TumbangPreso.PlayTests.CheskaIceContractProbe.FrozenIgnoresRecoveryPressesAndExpiresOnItsOriginalTimer",
+    "duration": "2.677304",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 30.002648388996022
+    }
+  },
+  {
+    "run": "hud-final",
+    "case": "TumbangPreso.PlayTests.TumpNativeHudTests.TimedRecoveryShowsStateWithoutMashPromptsOrPressCounts",
+    "duration": "7.220125",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 35.003177783990395
+    }
+  },
+  {
+    "run": "contracts-10",
+    "case": "TumbangPreso.PlayTests.InputEdgeTests.JumpPressesCannotShortenTheAuthoredFallTimer",
+    "duration": "11.084648",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 40.00448640799732
+    }
+  }
+]
