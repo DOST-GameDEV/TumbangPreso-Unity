@@ -8,8 +8,8 @@ Make the game COMPETITION READY through real engineering and bug fixes: crashes,
 stalls, desync, lost results, bot failures, performance and UX. Keep working through
 checks, commits and pushes. Do not end a turn merely because one unit passed.
 A passing narrow test does not establish whole competition readiness.
-Latest owner authorization: root implements; Astra xhigh reviews/implements a
-disjoint issue; Sol6.1 HIGH implements social-account cache ownership. Current-chat
+Latest owner authorization: root implements; Astra xhigh and Sol6.1 HIGH each
+implement disjoint engineering bugs. Current-chat
 subagents explicitly authorized; no cross-chat actions/reset/clean/force push/paid
 services/Desktop player replacement. FAST setting is not exposed by spawn API;
 never claim it was configured. Preserve profiles/unrelated work.
@@ -24,18 +24,32 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Verified remote7b36c1e638007cf52f9e4ca3ed35ddd29bde93b5:22 qualified product
+Verified remote69e3414913c3bc582b9ce5b028239f65503e62d7:23 qualified product
 fixes published. Latest customslots e8de37021 native6/6 (four causal failures),
 hub disconnect8acbdf683 native3/3 (three causal failures), zero repairs.
 Account save d01c62a68 native5/5 (four causal failures), zero repairs, published.
+Rebind enabled-state5acff5bfe final10/10 (four causal failures/six controls),
+published via69e341491. Report explicitly separates failed joint Ready/Buffer tests.
 Queue39a3bc4305/5, reporteligibility2c3eea2298/8,
 completedarrival960560b7c12/12. Preserve all raw baseline/failed receipts.
 ACKcd4a41069 native41/41; rebindcancel1f2d2bcb9 native4/4; Core691/691 unchanged.
+NEW integrated Core698/698 on protocol130 after incoming Sean Core7, no skips,
+TRX Logs/competition-core1301002. Once for new Core code, no broad native rerun.
+Sean incoming df022b0f/source68fa3a509 integrated disjointly, protocol130/
+recording12/kind17. Its Linux/peer evidence is separate from our Windows candidate.
 No whole competition, physical device, WAN or Android qualification claim.
 Toolcoordination7bc205c24 has50local checks/default SERIAL. Optional two isolated
 CPU workers are implemented but no workers/parallel native proof created.
 
 ## Active job and exact next action
+
+ROOT next coherent build session88898, releaseHEAD69e3414913c3bc582b9ce5b028239f65503e62d7,
+unique1002e. Frozen23 qualified fixes +incoming protocol130/recording12/Core7,
+observer verified UInt64 schema. No Ready/Buffer/Emote candidate included. Recipe
+release Logs/competition-candidate1002e/freeze_build.py prepare then main pool build;
+finalize once terminal to verify all source inputs/Runtime/artifact/guard. Then
+tools/run_completed_arrival.py actual2native peers120sec, source/runtime/receipt
+binding; no unchanged whole8round replay or isolated observer retry.
 
 ROOT builds98535/c and72335/d TERMINAL failed compilation, guards restored/lease
 released; no new qualified player. c implicit SceneHandle->int rejected, d used
@@ -47,13 +61,19 @@ unique1002e/frozen committed source. Old1002b artifact untouched; no peer launch
 Root AccountSave baseline54240/final10551 TERMINAL4causal/1control then5/5, guards
 restored, published d01c62a68. Customslots sessions98140/89495 terminal/published.
 
-Sol owns native combined18 baseline session85263, qualification Logs/
-rebind-ready-buffer-chat1002/baseline, profile rebind-ready-buffer-chat1002.
-Prep exit0;9 frozen source/test/meta inputs,1284 protected hashes. Expected12pass/
-6causal fail: Rebind10 (4fails), Ready4 (1fail), Buffer4 (1fail). ONE identical
-candidate final18 after baseline. Do not mutate qualification inputs until terminal.
-Root BufferSkipVote.cs chat intent candidate/four-case fixture frozen MAIN Logs/
-buffer-chat1002-inputs/manifest.json. Sol coordinating3 exact-owned units, poolSERIAL.
+Joint18 firstbaseline85263 TERMINAL: Rebind6pass4causal, Ready2pass2predispatch
+fixture failures, Buffer1pass3predispatch failures. ONE context repair84619 TERMINAL:
+Rebind6pass4causal, Ready0pass4SetUp failures, Buffer1pass3SetUp failures. InputSystem
+destroys replaced HideAndDontSave settings, so transient clone restore failed.
+No further fixture retry or final Ready/Buffer run. Native-route limit exhausted.
+Independent Sol final89649 TERMINAL10/10, guard restored,1290protected exact.
+All preparations exit0; no SDK. Both raw failures preserved, never called causal
+chat proof. ReadyGate/BufferSkipVote/EmoteWheel candidates remain MAIN dirty,
+UNSTAGED/UNQUALIFIED. New failed test/meta files moved byte-for-byte to task-owned
+Logs/*-inputs/retired in main; qualification4Ready/Buffer moved only after final
+terminal. No original test removed. Reports ready-chat-focus and buffer-chat-pending
+document limits; commit reports separately without product candidates. Alternative
+real-gameplay input acceptance can be useful later, no human approval gate inferred.
 
 Sol6.1HIGH owns new NetCompletedArrivalProbe.cs/.meta and tools/run_completed_arrival.py.
 Opt-in short custom Hero1round30sec actual native HUB CLI -tp-lobby/-tp-lobbyjoin,
@@ -69,15 +89,16 @@ postjoin slot/spectator, no retained-seat recovery claim. Diagnostic commit066bb
 published separately, zero product-count inflation. No actual player launched yet.
 After successful build root finalize frozen receipt then tools/run_completed_arrival
 with --source-commit/--runtime-sha/--build-receipt, fresh Logs output,120sec ceiling.
-Sol now owns Settings/RebindSession.cs enabled-state restoration +new focused fixture.
+Sol rebind enabled-state completed/published; next independent gameplay issue
+read-only until exact ownership announced. Avoid Sean ownthrow/manualretrieval lane.
 
-Astraxhigh hub disconnect completed/published. Owns ReadyGate.cs manual
-ready chat typing guard +new fixture; derive current shipped ReadyUp F key,
-preserve auto-ready and pending retransmission while typing. Four cases planned,
-included joint18 above. Next MAIN ONLY UI/EmoteWheel.cs typing gate/new3case fixture:
-chat T cannot open/capture mouse, focusing chat cancels without emitting emote,
-ordinary press/release still works. Exact context hunk, no authored emote changes.
-No native/qualification mutation for emote until joint18 done. Two authorized
+Astraxhigh hub disconnect completed/published; ReadyGate/Emote candidates pending
+with retired failed input fixtures above. Now tracing Carrier.NotifyEquipped and
+Slipper.HostForceEquip: authoritative same-shoe round handover may retain old
+throw-lock. Distinguish force handover from duplicate replicated snapshot, preserve
+manual retrieval/Sean charge/CharacterMotor. No patch/native yet; announce hunks.
+Sean contributor owns SteadyEmber ownthrow/manualretrieval; preserve reservations.
+Two authorized
 current-chat agents; oldSolultra INTERRUPTED, never wake. FAST control unavailable,
 not claimed configured. Keep all three on useful implementation, no invented busywork.
 
