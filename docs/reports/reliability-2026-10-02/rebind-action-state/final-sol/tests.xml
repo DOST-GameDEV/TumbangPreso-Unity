@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Passed" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 05:06:40Z" end-time="2026-10-02 05:06:40Z" duration="0.2335543">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="933" result="Passed" start-time="2026-10-02 05:06:40Z" end-time="2026-10-02 05:06:40Z" duration="0.233554" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2125" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="933" result="Passed" start-time="2026-10-02 05:06:40Z" end-time="2026-10-02 05:06:40Z" duration="0.212511" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="20672" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2126" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="933" result="Passed" start-time="2026-10-02 05:06:40Z" end-time="2026-10-02 05:06:40Z" duration="0.200797" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2127" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="933" result="Passed" start-time="2026-10-02 05:06:40Z" end-time="2026-10-02 05:06:40Z" duration="0.189062" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1875" name="RebindActionStateTests" fullname="TumbangPreso.Tests.RebindActionStateTests" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-10-02 05:06:40Z" end-time="2026-10-02 05:06:40Z" duration="0.169591" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1887" name="ARefusedDeviceLeavesActionStateAndBindingAlone" fullname="TumbangPreso.Tests.RebindActionStateTests.ARefusedDeviceLeavesActionStateAndBindingAlone" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 05:06:40Z" end-time="2026-10-02 05:06:40Z" duration="0.060971" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1885" name="ARefusedDeviceLeavesActionStateAndBindingAlone(False)" fullname="TumbangPreso.Tests.RebindActionStateTests.ARefusedDeviceLeavesActionStateAndBindingAlone(False)" methodname="ARefusedDeviceLeavesActionStateAndBindingAlone" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" seed="1137927032" result="Passed" start-time="2026-10-02 05:06:40Z" end-time="2026-10-02 05:06:40Z" duration="0.034643" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1886" name="ARefusedDeviceLeavesActionStateAndBindingAlone(True)" fullname="TumbangPreso.Tests.RebindActionStateTests.ARefusedDeviceLeavesActionStateAndBindingAlone(True)" methodname="ARefusedDeviceLeavesActionStateAndBindingAlone" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" seed="450481623" result="Passed" start-time="2026-10-02 05:06:40Z" end-time="2026-10-02 05:06:40Z" duration="0.013951" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1884" name="EndingARebindRestoresTheOriginalActionState" fullname="TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-02 05:06:40Z" end-time="2026-10-02 05:06:40Z" duration="0.103686" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1876" name="EndingARebindRestoresTheOriginalActionState(False,&quot;cancel&quot;)" fullname="TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState(False,&quot;cancel&quot;)" methodname="EndingARebindRestoresTheOriginalActionState" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" seed="755205874" result="Passed" start-time="2026-10-02 05:06:40Z" end-time="2026-10-02 05:06:40Z" duration="0.010971" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1877" name="EndingARebindRestoresTheOriginalActionState(True,&quot;cancel&quot;)" fullname="TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState(True,&quot;cancel&quot;)" methodname="EndingARebindRestoresTheOriginalActionState" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" seed="1484284675" result="Passed" start-time="2026-10-02 05:06:40Z" end-time="2026-10-02 05:06:40Z" duration="0.000867" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1878" name="EndingARebindRestoresTheOriginalActionState(False,&quot;dispose&quot;)" fullname="TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState(False,&quot;dispose&quot;)" methodname="EndingARebindRestoresTheOriginalActionState" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" seed="1011977271" result="Passed" start-time="2026-10-02 05:06:40Z" end-time="2026-10-02 05:06:40Z" duration="0.000354" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1879" name="EndingARebindRestoresTheOriginalActionState(True,&quot;dispose&quot;)" fullname="TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState(True,&quot;dispose&quot;)" methodname="EndingARebindRestoresTheOriginalActionState" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" seed="1593678596" result="Passed" start-time="2026-10-02 05:06:40Z" end-time="2026-10-02 05:06:40Z" duration="0.000409" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1880" name="EndingARebindRestoresTheOriginalActionState(False,&quot;bound&quot;)" fullname="TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState(False,&quot;bound&quot;)" methodname="EndingARebindRestoresTheOriginalActionState" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" seed="944082115" result="Passed" start-time="2026-10-02 05:06:40Z" end-time="2026-10-02 05:06:40Z" duration="0.079303" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1881" name="EndingARebindRestoresTheOriginalActionState(True,&quot;bound&quot;)" fullname="TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState(True,&quot;bound&quot;)" methodname="EndingARebindRestoresTheOriginalActionState" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" seed="421343247" result="Passed" start-time="2026-10-02 05:06:40Z" end-time="2026-10-02 05:06:40Z" duration="0.008230" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1882" name="EndingARebindRestoresTheOriginalActionState(False,&quot;conflict&quot;)" fullname="TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState(False,&quot;conflict&quot;)" methodname="EndingARebindRestoresTheOriginalActionState" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" seed="2056023745" result="Passed" start-time="2026-10-02 05:06:40Z" end-time="2026-10-02 05:06:40Z" duration="0.000765" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1883" name="EndingARebindRestoresTheOriginalActionState(True,&quot;conflict&quot;)" fullname="TumbangPreso.Tests.RebindActionStateTests.EndingARebindRestoresTheOriginalActionState(True,&quot;conflict&quot;)" methodname="EndingARebindRestoresTheOriginalActionState" classname="TumbangPreso.Tests.RebindActionStateTests" runstate="Runnable" seed="1170158686" result="Passed" start-time="2026-10-02 05:06:40Z" end-time="2026-10-02 05:06:40Z" duration="0.000690" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

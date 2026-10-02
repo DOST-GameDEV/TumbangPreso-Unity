@@ -1,0 +1,24 @@
+{
+  "phase": "final-sol",
+  "preparedUtc": "2026-10-02T05:05:55.1815524Z",
+  "expectedCases": 10,
+  "testFilter": "TumbangPreso.Tests.RebindActionStateTests",
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Settings/RebindSession.cs",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\rebind-action-state1002\\frozen\\RebindSession.candidate.cs",
+      "sha256": "37B74BD7003B59C0DEBFB00E1A04272676174A720E145E14D8001FDCE600BB58"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/RebindActionStateTests.cs",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\rebind-action-state1002\\frozen\\RebindActionStateTests.cs",
+      "sha256": "A48D8079D0922B0D8AE663B2230701CBED85BC74903E6463F087A2BFDD8048A3"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/RebindActionStateTests.cs.meta",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\rebind-action-state1002\\frozen\\RebindActionStateTests.cs.meta",
+      "sha256": "849BEF1EDC5A401DCBFBC81D3D35FD28D90D84319123BB2A7C814FBA2EF90DB4"
+    }
+  ],
+  "protectedCount": 1290
+}

@@ -1,0 +1,26 @@
+{
+  "retiredUtc": "2026-10-02T05:07:53.8912018Z",
+  "reason": "Root-authorized retirement of only NEW failed chat fixtures after final10 terminal and protected hashes verified; no original tests removed",
+  "files": [
+    {
+      "path": "Assets/TumbangPreso/Tests/ReadyChatFocusTests.cs",
+      "sha256": "6d6ff747103ef72b58dc83a056ff40398b8761e743491fc4d112c2adfbaf7539",
+      "retiredTo": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\rebind-ready-buffer-chat1002\\retired-fixtures\\ReadyChatFocusTests.cs"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/ReadyChatFocusTests.cs.meta",
+      "sha256": "345e5d0cee58633ed7216c68b7d915d423d10664f9e86e264d048da152f66cc5",
+      "retiredTo": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\rebind-ready-buffer-chat1002\\retired-fixtures\\ReadyChatFocusTests.cs.meta"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/BufferChatFocusTests.cs",
+      "sha256": "09BC5F3C1C505C0D3E80B8539CDB9BFA882E816A2441D293DEDB2399096529AF",
+      "retiredTo": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\rebind-ready-buffer-chat1002\\retired-fixtures\\BufferChatFocusTests.cs"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/BufferChatFocusTests.cs.meta",
+      "sha256": "493330D83721EA3916A2D24D24FF01EA5BD8CD158207EBC3CBD701E67FB532DB",
+      "retiredTo": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\rebind-ready-buffer-chat1002\\retired-fixtures\\BufferChatFocusTests.cs.meta"
+    }
+  ]
+}
