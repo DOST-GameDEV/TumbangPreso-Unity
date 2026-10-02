@@ -1,0 +1,15 @@
+{
+  "question": "3.5 ordinary break shared deadline,10second halftime unchanged, frozen inputs/frame, late observer cannot restart or advance",
+  "cases": [
+    "TumbangPreso.PlayTests.ReplayRetentionTests.ScheduledBreakUsesOneDeadlineAndNeverRunsAfterTheFinalRound",
+    "TumbangPreso.PlayTests.RoundBreakFreezeTests.FinalViewAndRealInputsStayFrozenUntilTheHostDeadline",
+    "TumbangPreso.PlayTests.RoundBreakFreezeTests.LateClientSharesTheDeadlineWithoutAdvancingOrRestartingIt"
+  ],
+  "retry_count": 0,
+  "hashes": {
+    "Assets/TumbangPreso/Runtime/HalftimePresentation.cs": "07ee8c8cbc591afddc0237541decb634a45e848dbb642715737639796b36b0ec",
+    "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "754b98c557a425ff3b0945cda4488cb9638253ac375911cd3c16a92d74673796",
+    "Assets/TumbangPreso/Tests/PlayMode/ReplayRetentionTests.cs": "a35b3eec5fc16e41e34dec51de095b2538c6fb21b4f0035ab3b0170ce6ad3f0e",
+    "Assets/TumbangPreso/Tests/PlayMode/RoundBreakFreezeTests.cs": "ede821de2794839a839bfb01c79f1339610a149ab85e34fdd3f2996c7dc2fd8e"
+  }
+}

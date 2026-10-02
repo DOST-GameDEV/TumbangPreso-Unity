@@ -17,6 +17,27 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### ROUND-TIMER-35-1002: latest ordinary break duration
+
+- [x] Next Round is3.5seconds per latest Feedback; halftime remains10s and keeps
+  replay/fallback. Three distinct native cases pass separately: shared schedule,
+  real-input/frozen-frame behavior and late-client observation. Protocol133
+  requires matching rebuilt clients; new actual peers/player/human pending.
+  [Evidence](reports/round-timer-35-2026-10-02/README.md).
+
+
+### TUTORIAL-BARRIER-WARNING-1002: truthful attacking practice warning
+
+- [x] Suppress and clear the false barrier refusal only for the existing offline
+  hidden-practice-can exception. Native actual-route1/1 passes with visible-can
+  control, cached-message removal, actual charge/release and another warning.
+  Compilation/runtime split retained after memory stop; player/human pending.
+  [Evidence](reports/tutorial-barrier-warning-2026-10-02/README.md).
+- [x] Latest Block placement request: attacker now behind the middle spawn,
+  aiming along a near-can miss lane. Native1/1 measures three genuine misses
+  and one real student block. [Evidence](reports/tutorial-block-placement-2026-10-02/README.md).
+
+
 ### RAFI-BAHA-BACKWASH-1002: qualified flood and retrieval passive
 
 Baha now has the0.8second warning, bounded court-crossing front,3m loose-shoe
@@ -658,6 +679,14 @@ eight distinct native successes in total. Implemented77bf73e3. Dedicated body,
 FPP, glyph/wake/audio and actual matching peers remain open.
 [Plan](reports/hero-quality-2026-10-01/skim-implementation.md) and
 [evidence](reports/hero-quality-2026-10-01/skim-checks/README.md).
+
+### DANTE-BASTION-MOTION-1002: distinct following-field brace
+
+- [x] Authored body/FPP forward set replaces the personal Unstoppable roar.
+  Actual defender input, duration/cooldown, following transform and round reset
+  pass1/1;77 paired native frames reviewed. All37 prior clips and model data
+  retained. Field art/player/peer/SFX/human approval remain separate.
+  [Review and limits](reports/dante-bastion-motion-2026-10-02/README.md).
 
 ### DANTE-BOULDER-LOAD-1002: visible Concussed shoe payload
 

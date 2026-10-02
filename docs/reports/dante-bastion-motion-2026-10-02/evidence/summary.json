@@ -1,0 +1,29 @@
+[
+  {
+    "run": "baseline-native",
+    "exit": {
+      "exit_code": 2,
+      "guard_reason": null,
+      "seconds": 45.00409440200019
+    },
+    "peak_total_GiB": 7.587
+  },
+  {
+    "run": "wire-roster",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 45.0161434210022
+    },
+    "peak_total_GiB": 7.629
+  },
+  {
+    "run": "candidate-native",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 35.00311502200202
+    },
+    "peak_total_GiB": 6.554
+  }
+]

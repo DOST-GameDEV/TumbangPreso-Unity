@@ -694,3 +694,13 @@ Breakwater semantics are unchanged. Backwash uses the existing bounded passive
 timed-kit channel independently of Skim's one-time joining state. Genuine
 manual own-throw retrieval grants1.5seconds at1.2x movement; drop/regrab does
 not mint another reward. [Qualification](reports/rafi-baha-2026-10-02/README.md).
+
+## Next Round deadline, protocol133
+
+Ordinary Next Round is3.5seconds, replacing the earlier5second duration.
+Halftime remains10seconds with its existing replay/fallback/standings sequence.
+All peers derive the same end from the host-authored began timestamp; late
+arrivals do not restart or extend it. Protocol133 separates this timing from
+older clients that would independently wait5seconds. Break packet fields and
+recording format13 remain unchanged. Gameplay/UI input stays frozen until the
+shared boundary. Actual remote-peer qualification for this revision is separate.

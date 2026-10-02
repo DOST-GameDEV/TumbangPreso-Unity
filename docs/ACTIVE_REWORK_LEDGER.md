@@ -843,3 +843,61 @@ read back; no checkbox changes. DANTE-BASTION-MOTION-1002 now claims only its
 new dated plan: distinct forward barrier brace instead of the signature roar.
 Preserve all37 prior Dante clips and existing field mechanics/visibility.
 Baseline next; no active native job and no production changes for Bastion yet.
+
+Cloud Bastion motion ready: actual defender baseline verifies field duration,
+follow and reset, then fails at shared roar. Distinct0.80s brace passes1/1,
+77paired frames inspected,35s outer/guard null.37old clips and source tables
+preserved; one roster reference. Field obscures some body view, preserved as-is;
+pose-only sheet checked separately. No tooling retry or active job. Publish
+only claimed paths, no field/player/peer/audio/human acceptance inference.
+
+Owner16:50UTC asks to check new Wiki Feedback edits and focus work there. Stop
+starting further hero polish. Bastion's tested unit is preserved locally while
+switching to the new attacking-tutorial barrier warning. Existing above-can
+false-hit fix already has native2/2 evidence under CAN-VERTICAL-CONTACT-1001;
+reconcile that source and Feedback note instead of rebuilding it. New warning
+source currently ignores the hidden-can tutorial exemption used by CanThrow.
+
+TUTORIAL-BARRIER-WARNING-1002 owns only TumpMatchReadout.Warnings.cs and one
+TutorialLessonHonestyProbe case. False message disagrees with CanThrow's existing
+active offline hidden-can exception. Baseline next; no live native job. Bastion
+c9cbbfb3 is locally preserved and checked, not yet pushed/delivered; no further
+hero polishing while current Feedback requests take priority.
+
+Tutorial warning ready: repaired baseline reproduces false barrier text while
+CanThrowtrue. Final combined compile/map job stopped by guard; separated warm
+runtime same case passes1/1,35s guardnull. Visible-can and stamina warnings stay,
+actual charge/release works. Capture inspected; no active job. Publish two source
+paths plus evidence; update existing Wiki WIP note. User17:01 explicitly asks
+that current work be noted in Feedback. WIP note added/readback verified17:02;
+keep it current. Latest Block placement edit is next, no new hero polish.
+
+Tutorial warning4bc05f3d integrated with disjoint pinned HOME fix33873b71 at
+61fd9fbd, exact remote verified. Existing Feedback WIP replaced/read back with
+shipped warning note and Block placement working-now status; checkboxes retained.
+TUTORIAL-BLOCK-PLACEMENT-1002 claims only GuidedTraining Block prep/target and
+one TutorialLessonHonestyProbe case. Plan dated report; no active native job.
+Bastionc9cbbfb3 is also now in remote ancestry; its review remains undelivered
+because owner switched focus to current Feedback. Do not resume hero polish.
+
+Block placement ready: actual baseline x2 failure and screenshot retained.
+Candidate1/1 passes11.627s,40s guardnull: spawnx0/z10, three real can misses
+(nearest1.081m versus0.579m hit window), one student block. Native screenshots
+inspected. Import/runtime separated up front; first import admission refusal and
+one changed-state retry retained. No active native job. Publish exact two source
+paths/evidence and replace Wiki WIP with result. Next unstruck human request is
+ordinary Next Round3.5s instead of5; halftime10s/replay stays. No new hero polish.
+
+Blockf56f20c8 verified remote; actual screenshot sent and tutorial Notes updated
+with result/readback. Current Notes in the Next Round row now explicitly say
+working on latest3.5seconds. ROUND-TIMER-35-1002 claims only its dated plan's
+constant, protocol reason/version and focused existing test assertions. Halftime
+stays10s and replay unchanged. No live native job; baseline next.
+
+Next Round3.5s ready: baseline observes5 and fails requested3.5. Three separate
+native cases pass: shared schedule/10s halftime/final boundary, frozen actual
+input/world frame, simulated late-client deadline.45/35/30s guardnull; no repair.
+Frozen four inputs unchanged. Protocol133, recording13 unchanged, no actual-peer
+or fresh-player claim. No active job. Publish exact duration/version/tests/docs
+and update/read back the Next Round Notes WIP. User reacted positively to Block
+screenshot at17:32; no blanket human verification inferred.

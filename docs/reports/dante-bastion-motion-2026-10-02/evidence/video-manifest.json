@@ -1,0 +1,14 @@
+[
+  {
+    "source": "baseline-native",
+    "frames_per_view": 76,
+    "first_game_seconds": "0.0097",
+    "last_game_seconds": "3.9892"
+  },
+  {
+    "source": "candidate-native",
+    "frames_per_view": 77,
+    "first_game_seconds": "0.0113",
+    "last_game_seconds": "3.9827"
+  }
+]

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 17:17:09Z" end-time="2026-10-02 17:17:13Z" duration="4.1337437">
+  <test-suite type="TestSuite" id="2643" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1337" result="Failed" site="Child" start-time="2026-10-02 17:17:09Z" end-time="2026-10-02 17:17:13Z" duration="4.133744" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2637" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1337" result="Failed" site="Child" start-time="2026-10-02 17:17:09Z" end-time="2026-10-02 17:17:13Z" duration="4.103984" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="137267" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2638" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1337" result="Failed" site="Child" start-time="2026-10-02 17:17:09Z" end-time="2026-10-02 17:17:13Z" duration="4.082698" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2639" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1337" result="Failed" site="Child" start-time="2026-10-02 17:17:09Z" end-time="2026-10-02 17:17:13Z" duration="4.065539" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2515" name="TutorialLessonHonestyProbe" fullname="TumbangPreso.PlayTests.TutorialLessonHonestyProbe" classname="TumbangPreso.PlayTests.TutorialLessonHonestyProbe" runstate="Runnable" testcasecount="16" result="Failed" site="Child" start-time="2026-10-02 17:17:09Z" end-time="2026-10-02 17:17:13Z" duration="4.029155" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2516" name="BlockAttackerStandsBehindMiddleAndMissesCanButCanBeBlocked" fullname="TumbangPreso.PlayTests.TutorialLessonHonestyProbe.BlockAttackerStandsBehindMiddleAndMissesCanButCanBeBlocked" methodname="BlockAttackerStandsBehindMiddleAndMissesCanButCanBeBlocked" classname="TumbangPreso.PlayTests.TutorialLessonHonestyProbe" runstate="Runnable" seed="2056005861" result="Failed" start-time="2026-10-02 17:17:09Z" end-time="2026-10-02 17:17:13Z" duration="4.012058" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The Block attacker must align with the middle spawn.
+  Expected: 0.0d +/- 0.05000000074505806d
+  But was:  2.0d
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TutorialLessonHonestyProbe+<BlockAttackerStandsBehindMiddleAndMissesCanButCanBeBlocked>d__8.MoveNext () [0x00181] in /workspace/scratch/0ed9da4aed7f/tump/Assets/TumbangPreso/Tests/PlayMode/TutorialLessonHonestyProbe.cs:123
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[TumpUiCapture] Tutorial-block-attacker-placement cream source=252,211,159 pixel=194,187,222; isolated UI camera, no ColourGrade.
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-X1NIqZ/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
