@@ -120,7 +120,8 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
-Latest checkpoint:35 root continuity runtime fixes published through12a2689ff. Actual RecordChoice Career refresh3/3 and account scorecard ownership3/3
+Latest checkpoint15:33:36 root continuity runtime fixes published through7c3124886.
+Both agents retired after coherent cleanup/handoffs; root continues SOLO, no replacements. Actual RecordChoice Career refresh3/3 and account scorecard ownership3/3
 qualified; Window1002f built at946006940/protocol131, newer source is not in that
 frozen artifact. Astra cold-ended actor freeze and Sol scorecard-close focus are
 current disjoint units. At around15:30 begin agent wrap, finish coherent units then
@@ -134,9 +135,11 @@ root continues solo; no replacement agents or repeated unchanged tests.
 - [x] COLD-ENDED-ACTOR-FREEZE-1002: shipped12a2689ff, native3/3 after1 causal
   failure/2 controls, ONE NUnit fixture repair; all2656 protected hashes match.
   [Evidence](reports/reliability-2026-10-02/cold-arrival-actor-freeze/README.md).
-- [ ] SCORECARD-CLOSE-FOCUS-1002: Sol current narrow native unit.
+- [x] SCORECARD-CLOSE-FOCUS-1002: shipped7c3124886, native3/3 after1 causal
+  failure/2controls, zero repairs/1295 protected match.
+  [Evidence](reports/reliability-2026-10-02/scorecard-focus/acceptance.md).
 - [ ] CURRENT-PAUSE-EXIT-OPERATOR-1002: root current UI/lifecycle acceptance next.
-- [ ] SETTINGS-DECISION-FOCUS-1002: root KEEP EDITING/escape focus candidate; native3 pending after agent jobs.
+- [ ] SETTINGS-DECISION-FOCUS-1002: root KEEP EDITING/escape focus candidate; native repaired-original3 running12978; initial0 ignored due invalid GUID, ONE metadata repair.
 
 Owner reaffirmed2026-10-02: competition ready is the objective. Continue through
 coherent fixes and pushes; no stopping after a single passing unit. DOTS owns
