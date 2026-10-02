@@ -110,10 +110,13 @@ all18424 original protected inputs unchanged/exact3 MAIN/q match; valid32GUID
 owned import output only, MAIN metadata unchanged, no mutation/retry. Report
 completed-arrival-receipt-io retains strict+classification hashes. Diagnostic
 SHIPPEDd28770a25 (separate from46runtime fix count).
-ROOT new1002j freeze7621 ACTIVE in release source d28770a25; source/metadata frozen,
-no native build yet. Includes46runtime fixes+observer IO+frame-context diagnostics;
+ROOT new1002j freeze7621 TERMINAL0/18905inputs in release source
+d28770a25504c8f6a069b429d8384af0ae4ff557. Nativebuild77760 ACTIVE/3072MB+
+2048reserve/600s; frozen inputs must not mutate. Includes46runtime fixes+observer
+IO+frame-context diagnostics;
 prior i failedpeer preserved, prior h PASS independent. j helper scripts prepared
-in release Logs/competition-candidate1002j. Wait freeze terminal0 before build.
+in release Logs/competition-candidate1002j. Wait build terminal before finalizer,
+then finalizer terminal before classify/ONE new actualpeer120s. No liveJSON reads.
 CPU1536/reserve2048/450s/EditMode-nographics/filter CompletedArrivalReceiptIoTests3.
 MAIN Logs/completed-arrival-receipt-io1002/prepare.py:
 prepare exact3/snapshot Assets/TumbangPreso other hashes, post preservation.
