@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "path": "Assets/TumbangPreso/Resources/ShaderWarmup.shadervariants",
+  "frozenBeforeSha256": "a1d7d18b5a4a5d49459a53b92930ef1846fc6f266870548dd0b9f4062f03ba9e",
+  "currentSha256": "cbc55857a683b6bca20627c5fbd79dee77f049a7dd5c4d97bf8fad3c1ae18173",
+  "addedShaderGuid": "1c601f5005514f0185bc891447a4c45e",
+  "addedVariants": 1,
+  "proof": "Removing the exact keyword-free Boulder pass0 entry reproduces retained frozen bytes."
+}

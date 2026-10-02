@@ -166,10 +166,11 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
-Latest source50=c788c5a08,49=4f69e0af2,48=55f2a5f79. Current1002l contains50 fixes;
-build24943/artifactPASS and default-renderer peer80018 FIRST PASS/RX6600/D3D11/
-normalexits/endHOME+publiccoldrejoin/frozen4 actors/restored profiles+inputs/free.
-[Current artifact/evidence](reports/reliability-2026-10-02/windows-candidate1002l/README.md).
+Current1003a source268c1abf7/protocol133 includes LAN identity, pinned HOME mode,
+slide inventory and current contributor changes. First Windows build/artifact
+passes; first actual short LAN pair passes and both players save the same match.
+Full normal-lobby Classic8 qualification is running; whole readiness remains open.
+[Current artifact/evidence](reports/reliability-2026-10-03/windows-candidate1003a/README.md).
 The goal remains ACTIVE. Root is working solo this continuation;
 the one authorized helper completed its latest bounded work, earlier agents retired.
 
@@ -382,7 +383,7 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   ends naturally in Hero on both peers despite explicit tournament launch.
   Preserve pins on passive refresh while retaining explicit mode/hero selection.
   [Failure evidence](reports/reliability-2026-10-02/windows-candidate1002m/README.md).
-- [ ] CLIENT-CAREER-DELIVERY-1002: same normal-lobby match stores one online
+- [x] CLIENT-CAREER-DELIVERY-1002: same normal-lobby match stores one online
   result/queue entry on host; client has no career.json after clean exit.
   Trace record delivery, local identity and save eligibility before attributing
   the failure or patching. No live-service or unchanged full-match retry.
@@ -390,7 +391,12 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   Source boundary fix now qualifies4/4 native checks after two causal failures:
   LAN cached profile identity enters hello, survives admission and repeated
   introduction; handle trust and Relay signed-only behavior preserved.
-  Actual two-player saved-result acceptance remains OPEN.
+  Actual Windows LAN acceptance now passes on current1003a: both fresh profiles
+  save one history/queue/witness, same online Hero1-round match and scores, each
+  local identity has one nonbot line. Client cold rejoin receives record again
+  without duplication; both normal exits/preservation pass. One offline-owner
+  aggregate assumption repaired on the same run, no native retry.
+  [Actual save proof](reports/reliability-2026-10-03/windows-candidate1003a/README.md).
   [Source evidence](reports/reliability-2026-10-03/lan-record-identity/README.md).
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
