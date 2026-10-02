@@ -41,6 +41,8 @@ namespace TumbangPreso
     [DisallowMultipleComponent]
     public sealed class KantoStreetSound : MonoBehaviour
     {
+        // Shared city-map trim; preserve authored voice balance and the user SFX slider.
+        internal const float AmbientGainScale = .75f;
         public KantoTraffic Traffic;
         public AudioClip CityBed, EngineCar, EngineDiesel, EngineTricycle;
         public AudioClip[] HornsCar, HornsJeepney, HornsTricycle;
@@ -328,7 +330,7 @@ namespace TumbangPreso
             _bedLevel += (bedTarget - _bedLevel) * (1.0f - Mathf.Exp(-dt / Smoothing));
             // ⚠️ THE SFX SLIDER IS APPLIED AFTER THE SMOOTHING, NOT INSIDE IT, so the pause-menu
             // slider moves the street the instant it moves, like every other sound in the game.
-            float scale = sfx * fade * _mix;
+            float scale = sfx * fade * _mix * AmbientGainScale;
             if (_bed != null) _bed.volume = _bedLevel * BedGain * scale;
 
             // ---- Engines, horns, sirens ------------------------------------------------------

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 02:12:52Z" end-time="2026-10-02 02:12:52Z" duration="0.0817507">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="782" result="Passed" start-time="2026-10-02 02:12:52Z" end-time="2026-10-02 02:12:52Z" duration="0.081751" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1927" name="TumbangPreso.Tests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="782" result="Passed" start-time="2026-10-02 02:12:52Z" end-time="2026-10-02 02:12:52Z" duration="0.070950" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="49021" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1928" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="782" result="Passed" start-time="2026-10-02 02:12:52Z" end-time="2026-10-02 02:12:52Z" duration="0.069323" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1929" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="782" result="Passed" start-time="2026-10-02 02:12:52Z" end-time="2026-10-02 02:12:52Z" duration="0.066566" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1094" name="CityAmbienceGainTests" fullname="TumbangPreso.Tests.CityAmbienceGainTests" classname="TumbangPreso.Tests.CityAmbienceGainTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-02 02:12:52Z" end-time="2026-10-02 02:12:52Z" duration="0.051754" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1097" name="CityBedAppliesThreeQuartersOfItsPreviousLevel" fullname="TumbangPreso.Tests.CityAmbienceGainTests.CityBedAppliesThreeQuartersOfItsPreviousLevel" classname="TumbangPreso.Tests.CityAmbienceGainTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 02:12:52Z" end-time="2026-10-02 02:12:52Z" duration="0.036495" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1095" name="CityBedAppliesThreeQuartersOfItsPreviousLevel(0.4f)" fullname="TumbangPreso.Tests.CityAmbienceGainTests.CityBedAppliesThreeQuartersOfItsPreviousLevel(0.4f)" methodname="CityBedAppliesThreeQuartersOfItsPreviousLevel" classname="TumbangPreso.Tests.CityAmbienceGainTests" runstate="Runnable" seed="197272972" result="Passed" start-time="2026-10-02 02:12:52Z" end-time="2026-10-02 02:12:52Z" duration="0.029551" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1096" name="CityBedAppliesThreeQuartersOfItsPreviousLevel(0.8f)" fullname="TumbangPreso.Tests.CityAmbienceGainTests.CityBedAppliesThreeQuartersOfItsPreviousLevel(0.8f)" methodname="CityBedAppliesThreeQuartersOfItsPreviousLevel" classname="TumbangPreso.Tests.CityAmbienceGainTests" runstate="Runnable" seed="339556367" result="Passed" start-time="2026-10-02 02:12:52Z" end-time="2026-10-02 02:12:52Z" duration="0.000487" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1100" name="PassingTrainAppliesTheSameReductionWithoutChangingItsClipGain" fullname="TumbangPreso.Tests.CityAmbienceGainTests.PassingTrainAppliesTheSameReductionWithoutChangingItsClipGain" classname="TumbangPreso.Tests.CityAmbienceGainTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 02:12:52Z" end-time="2026-10-02 02:12:52Z" duration="0.003634" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1098" name="PassingTrainAppliesTheSameReductionWithoutChangingItsClipGain(0.4f)" fullname="TumbangPreso.Tests.CityAmbienceGainTests.PassingTrainAppliesTheSameReductionWithoutChangingItsClipGain(0.4f)" methodname="PassingTrainAppliesTheSameReductionWithoutChangingItsClipGain" classname="TumbangPreso.Tests.CityAmbienceGainTests" runstate="Runnable" seed="1998750420" result="Passed" start-time="2026-10-02 02:12:52Z" end-time="2026-10-02 02:12:52Z" duration="0.002193" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1099" name="PassingTrainAppliesTheSameReductionWithoutChangingItsClipGain(0.8f)" fullname="TumbangPreso.Tests.CityAmbienceGainTests.PassingTrainAppliesTheSameReductionWithoutChangingItsClipGain(0.8f)" methodname="PassingTrainAppliesTheSameReductionWithoutChangingItsClipGain" classname="TumbangPreso.Tests.CityAmbienceGainTests" runstate="Runnable" seed="1996475222" result="Passed" start-time="2026-10-02 02:12:52Z" end-time="2026-10-02 02:12:52Z" duration="0.000287" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1101" name="SidewalkVoicesUseTheReducedLiveMix" fullname="TumbangPreso.Tests.CityAmbienceGainTests.SidewalkVoicesUseTheReducedLiveMix" methodname="SidewalkVoicesUseTheReducedLiveMix" classname="TumbangPreso.Tests.CityAmbienceGainTests" runstate="Runnable" seed="368832935" result="Passed" start-time="2026-10-02 02:12:52Z" end-time="2026-10-02 02:12:52Z" duration="0.000973" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-X1NIqZ/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

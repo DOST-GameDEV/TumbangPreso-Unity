@@ -17,6 +17,13 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CITY-AMBIENCE-1002: Kanto and Ilalim gain reduction
+
+Existing city/traffic, sidewalk and train mix now applies a shared 0.75 gain.
+Five native gain cases reproduce baseline and pass after the change; no clip,
+slider or timing edits. [Evidence](reports/feedback-2026-09-30/city-ambience/README.md).
+Listening and human approval remain separate.
+
 ### WARNING-STRIP-1002: thinner line and action-matched opacity
 
 48-unit base warning strip, natural line width and existing action-plate alpha.

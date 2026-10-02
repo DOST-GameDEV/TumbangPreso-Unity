@@ -178,3 +178,10 @@ LrtTrainFlyby.cs, plus Tests/CityAmbienceGainTests.cs and report/TODO updates.
 Apply the explicit 25percent reduction to the existing Kanto/Ilalim city mix,
 retaining sliders, replay/preview suppression, spatial envelopes and authored
 clips. This is gain adjustment, not SFX generation or a listening-quality claim.
+
+CITY-AMBIENCE-1002 native final5/5 passed, exit0, guard null40s. Baseline5/5
+failed only expected gain assertions. Publish three runtime files, one focused
+test and evidence; then update/strike only the resolved ambience comment in
+Feedback. No listening claim. Next: larger player highlight ring, located in
+CharacterNameplate.cs and Catchable.cs. Amihan local Claude session is confirmed
+started (Opus5.5 Extra); keep that character out of this lane.
