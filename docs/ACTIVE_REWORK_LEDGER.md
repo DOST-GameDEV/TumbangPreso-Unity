@@ -75,6 +75,16 @@ Root framecontext8ba8fa76f FIRST2 diagnostic, not270ms cause/FPS fix.
 
 ## Current next task and precise ownership
 
+NEW root50-source1002l integration: freeze24519 TERMINAL0/18913inputs,
+source3e55308a0ddfc2e07e7649a161c9da1d89e064dd, build24943 ACTIVE/3072MB+
+2048reserve/600s. Release C#clean/private importer dirt retained; freeze must
+not mutate. One default-renderer peer/exit qualification planned after terminal
+build+finalizer+classifier, current shutdown P7 gap: earlierj peers forcedD3D11.
+Root tools/run_completed_arrival.py now optional --graphics-api default omits
+forcing flags and records exact commands, default d3d11 behavior remains.
+No broader renderer/root-driver-cause/performance claim without actual evidence.
+No native/q worker other than rootbuild; current source50 fixes already qualified.
+
 NEW root EmoteWheel lifetime investigation: owns Runtime/UI/EmoteWheel.cs +
 NEW PlayMode/EmoteWheelLifetimeTests.cs/meta only. No production change yet;
 actual gamepad selection/public Open+Close and Unity focus/bodydisable,2causal/
