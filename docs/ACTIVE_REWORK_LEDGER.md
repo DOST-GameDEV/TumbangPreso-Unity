@@ -1,6 +1,6 @@
 # Active Rework Checkpoint
 
-Updated 2026-10-02. Branch ASTRAReworks. Protocol130. Competition readiness goal ACTIVE.
+Updated 2026-10-02. Branch ASTRAReworks. Protocol131. Competition readiness goal ACTIVE.
 
 ## Owner objective and boundaries
 
