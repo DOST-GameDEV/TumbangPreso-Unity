@@ -873,3 +873,9 @@ inspected. Import/runtime separated up front; first import admission refusal and
 one changed-state retry retained. No active native job. Publish exact two source
 paths/evidence and replace Wiki WIP with result. Next unstruck human request is
 ordinary Next Round3.5s instead of5; halftime10s/replay stays. No new hero polish.
+
+Blockf56f20c8 verified remote; actual screenshot sent and tutorial Notes updated
+with result/readback. Current Notes in the Next Round row now explicitly say
+working on latest3.5seconds. ROUND-TIMER-35-1002 claims only its dated plan's
+constant, protocol reason/version and focused existing test assertions. Halftime
+stays10s and replay unchanged. No live native job; baseline next.
