@@ -1,0 +1,26 @@
+{
+  "retiredUtc": "2026-10-02T05:43:56.4957618Z",
+  "reason": "Original proof4 passed; root-directed retirement of only NEW fixture/meta files, no product patch or repeat",
+  "files": [
+    {
+      "source": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Assets\\TumbangPreso\\Tests\\TouchLayoutRecoveryTests.cs",
+      "retiredTo": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\touch-layout-recovery1002\\retired-fixture\\TouchLayoutRecoveryTests.cs",
+      "sha256": "35AC0B694CDA0670B4B6A43589B817DF2AE65AFBABFFA0E2CD680BEE99002354"
+    },
+    {
+      "source": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Assets\\TumbangPreso\\Tests\\TouchLayoutRecoveryTests.cs.meta",
+      "retiredTo": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\touch-layout-recovery1002\\retired-fixture\\TouchLayoutRecoveryTests.cs.meta",
+      "sha256": "C50980F36004EC704E6967DD970AF39B4F41FF5F15AAEE3910D31E970553CD99"
+    },
+    {
+      "source": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Assets\\TumbangPreso\\Tests\\TouchLayoutRecoveryTests.cs",
+      "retiredTo": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\touch-layout-recovery1002\\retired-fixture\\TouchLayoutRecoveryTests.cs",
+      "sha256": "35AC0B694CDA0670B4B6A43589B817DF2AE65AFBABFFA0E2CD680BEE99002354"
+    },
+    {
+      "source": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Assets\\TumbangPreso\\Tests\\TouchLayoutRecoveryTests.cs.meta",
+      "retiredTo": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\touch-layout-recovery1002\\retired-fixture\\TouchLayoutRecoveryTests.cs.meta",
+      "sha256": "C50980F36004EC704E6967DD970AF39B4F41FF5F15AAEE3910D31E970553CD99"
+    }
+  ]
+}
