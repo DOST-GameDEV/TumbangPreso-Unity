@@ -648,3 +648,11 @@ require expiry;13 evaluator controls pass and native compilation passes45s.
 These are evaluator/compile evidence only, not a new actual-peer/player pass.
 No active job. Publish exact diagnostic files/report; keep user chat quiet while
 asleep, and keep live Feedback work/status truthful.
+
+Studio startup packaged follow-through: Windows1003c source8ef02cf7/protocol134
+passes corrected actual startup run39805 with video frame/picture before loading,
+Guest/title/current HOME and real Settings/Credits/ModeCard/Back. Native player
+logo capture inspected against the authored reveal. Normal exit/input restoration/
+Runtime immutability pass. Linked in startup report/TODO. Separate Linux copied-
+cache failure remains; no Windows physical-device skip matrix or recovery-peer
+claim. User asleep; Feedback note updated, routine chat held. No root native job.

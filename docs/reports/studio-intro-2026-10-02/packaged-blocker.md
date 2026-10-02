@@ -1,4 +1,4 @@
-# Packaged startup qualification blocked
+# Isolated Linux packaged startup qualification blocked
 
 Source49e9849b was checked out in a detached isolated worktree with a physically
 copied idle Library, unique profile/output and unchanged guards. Main workspace,
@@ -23,3 +23,10 @@ qualification workspace, not evidence that authored roster content is absent.
 Do not regenerate roster/models/animations or call the published native checks
 packaged acceptance. Stop repeated full builds at this boundary. A future recovery
 must establish correct script binding before another expensive build attempt.
+
+## Later packaged evidence
+
+Windows1003c now qualifies actual visible studio playback before loading and
+normal startup/menu navigation for source8ef02cf7/protocol134. See the parent
+report. This earlier local Linux binding failure remains unresolved; it is no
+longer a statement that packaged startup has no acceptance on any platform.
