@@ -1,0 +1,42 @@
+{
+  "sourceCommit": "5f47abc848512d73df488ebd5147666b5f5a211f",
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/CombatVerbs.cs",
+      "variant": "baseline",
+      "sha256": "cef6b83445a236c585d3494ce112d774c8d977cdfced5f80c2478670b4c06978",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\slide-interruption1002-inputs\\CombatVerbs.cs.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/CombatVerbs.cs",
+      "variant": "final",
+      "sha256": "b32674b97b79ab2e729aec1722e4de301bba991f1257ab49dfa45f969cbba92b",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\slide-interruption1002-inputs\\CombatVerbs.cs.final.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/SlideInterruptionTests.cs",
+      "variant": "baseline",
+      "sha256": "ca6fede8031831fefc45873da97a89134c07c965209257cddc58d16df4fc2735",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\slide-interruption1002-inputs\\SlideInterruptionTests.cs.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/SlideInterruptionTests.cs",
+      "variant": "final",
+      "sha256": "ca6fede8031831fefc45873da97a89134c07c965209257cddc58d16df4fc2735",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\slide-interruption1002-inputs\\SlideInterruptionTests.cs.final.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/SlideInterruptionTests.cs.meta",
+      "variant": "baseline",
+      "sha256": "dca35024f84003b957286e494aaa7fba38fcdcaaedcf89852ea8779c6ad02763",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\slide-interruption1002-inputs\\SlideInterruptionTests.cs.meta.baseline.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/SlideInterruptionTests.cs.meta",
+      "variant": "final",
+      "sha256": "dca35024f84003b957286e494aaa7fba38fcdcaaedcf89852ea8779c6ad02763",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\slide-interruption1002-inputs\\SlideInterruptionTests.cs.meta.final.txt"
+    }
+  ],
+  "qualificationInstalled": false
+}
