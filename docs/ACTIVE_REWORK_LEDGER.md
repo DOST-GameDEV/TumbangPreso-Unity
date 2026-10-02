@@ -19,7 +19,7 @@ preserve finalized Paete/Phaister and active Sean/Rafi/Baha reservations.
 
 ## Published code and acceptance
 
-Verified remote448687b3b:43 root continuity runtime fix units;
+Verified remote0747f1a44:44 root continuity runtime fix units;
 protocol132/recording13 after qualified incoming Rafi4a9afbd90, integrationa67d7bc5b. Latest units:
 32chat guards3e91f02b0/native10;33scorecard owner84ddfc391/native3;34RecordChoice
 57158d1db/native3;35cold actor12a2689ff/native3;36scorecard focus7c3124886/native3;
@@ -52,8 +52,15 @@ leavesvalid.bak intact on refusal. h41 artifact predates it.
 43TouchHUD448687b3b native3/3 after2causal/1borrowedcontrol, ZERO repairs/all12534
 protected/exact4/guardsrestored/free. CurrentCancel->sameframe reopen/newvisibleHUD,
 borrowedgameHUD unchanged, retiredcleanup leavesreplacementinput. No hardware,
-layout/padbinding/schema/assets/newplayer claim. h predates it. All nativehandles
-are terminal, no root/agent job to resume. Source reports/raw counts preserved.
+layout/padbinding/schema/assets/newplayer claim. h predates it. ROOT directlunge0747f1a44 SHIPPED: original97501=1causal/2controls, final18842
+PASS3/exact3/protected12537/no repairs/guardrestored/free. ActualHostResolveLunge
+finiteforward/power1 openscontact, actualbodydisable/reenable retiresonlycontact,
+cooldown retained/secondhostcall refused; clockhold andunchargedcontrols pass.
+No rawinput/rig/map/range/expirywait or private-state assignment. Materiallydifferent
+component-boundaryproof; retiredPracticeBotResume helper evidence unchanged.
+Windup/slide/impulse/timing untouched, no tag/travel/actualSetBot/network claim.
+All ROOT and agent nativehandles TERMINAL, no heldUnity/player/lease toresume.
+Source reports/raw counts preserved.
 
 ROOT frame-context diagnostic8ba8fa76f PUBLISHED:69846 FIRST2/2/all12532protected/
 exact4/guardrestored/no lease. Newmaxobserved state frame/time/scene/round/scale/
@@ -61,14 +68,14 @@ focus/pause/loading/gc0total localreport only; no 270ms causality/FPS fix. Pre-n
 review corrected previousStats enable isolation, no native/fixture retry. Separate
 diagnostic from43fix count; h predates this code. UniqueBundle40f8f2474 compiledh.
 
-SOLE Sol6.1HIGH sol_parallel_engineering ACTIVE SOURCE-ONLY helping root assess
-NEW/Different authoritative HostResolveLunge->actual bodydisable/reenable acceptance
-for OPEN stale contact window. Root reserves CombatVerbs.cs/potential NEW direct
-lifecycle fixture; agent inspect dependencies/guards/cooldown pitfalls, NO edits/
-native until ownershipcoord. Do NOT revive failed PracticeBotResume helper or raw
-input/expiry assertion route. New proof only if materially different actualpublic
-API/lifecycle; not fake transient fields. Then agent chooses a different concrete
-non-hero current bug/ownershipfirst. No extra agents, old retired agents neverwake.
+SOLE Sol6.1HIGH sol_parallel_engineering ACTIVE SOURCE-ONLY on new approved
+investigation (NO edits/native yet): failedSafeStore.Read promotion underlock returns
+validated.bak, afterlockrelease ordinaryWrite maystill rotatecorruptprimary over
+thatgood.bak. Inspectactualcallers/owned-temp proof andminimaltradeoff before asking
+sourceownership; no schema/framework/unboundedpathcache/extraagent. Previous42
+provenEditorIOscope remains valid, do notoverclaim failedpromotion->save chain.
+Root continues disjoint engineering. Latest onehelper authorization persists; old
+retiredagents neverwake. Native slot currentlyfree, coordinate before prep/copy.
 
 h build34064 TERMINAL0/12scenes2432MB90s. Freeze15412/post88799 TERMINAL:
 18891inputs18889unchanged/exact2generatedidentity outputs. OriginalstrictFALSE

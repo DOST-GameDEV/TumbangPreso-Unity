@@ -130,11 +130,12 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
-Latest checkpoint:43 root continuity fix units published through448687b3b.
+Latest checkpoint:44 root continuity fix units published through0747f1a44.
 ONE new Sol6.1HIGH helper +root implementation; prioragents retired. Currenth41
 protocol132/record13 build+actualWindowspeerPASS, laterSafe42/Touch43/diag not in it.
-All nativejobs terminal. Helper source-only review of materiallydifferent public
-hostlunge lifecycle acceptance; retired failedpracticehelper never revived.
+All nativejobs terminal. NewdirectHostlunge lifetimeproof3/3 shipped; helper
+source-only investigates SafeStore failedpromotion->laterwrite edge. Retired
+failedpracticehelper never revived.
 
 - [x] SCORECARD-OWNER-CLOSE-1002: hide old account detail on ownership change;
   shipped84ddfc391, PlayMode3/3. [Evidence](reports/reliability-2026-10-02/playerhub-owner-detail/acceptance.md).
@@ -160,6 +161,7 @@ hostlunge lifecycle acceptance; retired failedpracticehelper never revived.
   zero repairs/12525 unrelated protected match. [Evidence](reports/reliability-2026-10-02/lan-receive-owner/README.md).
 - [x] TRAINING-PAUSE-TRANSITION-1002: shippedf33e1d8a7, native3/3 after1causal/
   2controls, zero repairs/exact3/protected12527. [Evidence](reports/reliability-2026-10-02/training-pause-transition/README.md).
+- [x] LUNGE-DISABLE-LIFETIME-1002: shipped0747f1a44, directpublicAPI native3/3 after1causal/2controls, zero repairs/protected12537. [Evidence](reports/reliability-2026-10-02/lunge-disable-lifetime/README.md).
 - [ ] PRACTICE-BOT-RESUME-1002: OPEN stale active window reproduced twice;
   fixture route retired after two flaws, no product fix/candidate.
   [Unqualified evidence](reports/reliability-2026-10-02/practice-bot-resume/README.md).
