@@ -75,6 +75,8 @@ def evaluate(host, client):
         errors.append("Actual terminal record identity/scores differ")
     if client.get("sceneBefore") == client.get("sceneAfter") or client.get("matchEndedEvents", 0) <= client.get("beforeEndEvents", 0) or client.get("recordReadyEvents", 0) <= client.get("beforeRecordEvents", 0):
         errors.append("Client reused old scene/event/record state rather than recovering after cold arrival")
+    if not client.get("coldActorsFrozen") or client.get("actorRoundActive") != [False] * 4 or client.get("actorParked") != [True] * 4 or client.get("actorSprint") != [False] * 4 or client.get("actorMoveSquared") != [0] * 4:
+        errors.append("Cold-arrival actors were not all present, frozen and released from gameplay input")
     return errors
 
 

@@ -64,6 +64,12 @@ namespace TumbangPreso.UI
             if (_openList == null || !InputLayer.MenuNav.CancelPressed) return;
             ScreenTakeover.ConsumeEscape(); Hide();
         }
+        public override void Select()
+        {
+            // A value callback can rebuild this row before Dropdown.Hide selects it.
+            if (!isActiveAndEnabled || !IsInteractable()) return;
+            base.Select();
+        }
         protected override void OnDestroy() { ScreenTakeover.Unregister(this); base.OnDestroy(); }
     }
 }

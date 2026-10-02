@@ -273,7 +273,7 @@ namespace TumbangPreso.UI
 
             if (_detail != null && _detail.activeSelf)
             {
-                _detail.SetActive(false);
+                CloseDetail();
                 MenuSfx.Back();
                 return;
             }

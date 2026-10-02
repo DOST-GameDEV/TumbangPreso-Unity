@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 07:23:35Z" end-time="2026-10-02 07:23:36Z" duration="0.9357442">
+  <test-suite type="TestSuite" id="2551" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1266" result="Failed" site="Child" start-time="2026-10-02 07:23:35Z" end-time="2026-10-02 07:23:36Z" duration="0.935744" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2545" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1266" result="Failed" site="Child" start-time="2026-10-02 07:23:35Z" end-time="2026-10-02 07:23:36Z" duration="0.911347" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15912" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2546" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1266" result="Failed" site="Child" start-time="2026-10-02 07:23:35Z" end-time="2026-10-02 07:23:36Z" duration="0.896118" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2547" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1266" result="Failed" site="Child" start-time="2026-10-02 07:23:35Z" end-time="2026-10-02 07:23:36Z" duration="0.881032" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2170" name="ScorecardFocusTests" fullname="TumbangPreso.PlayTests.ScorecardFocusTests" classname="TumbangPreso.PlayTests.ScorecardFocusTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-02 07:23:35Z" end-time="2026-10-02 07:23:36Z" duration="0.847644" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2173" name="ClosingAgainKeepsTheCurrentHistoryPageAndSelection" fullname="TumbangPreso.PlayTests.ScorecardFocusTests.ClosingAgainKeepsTheCurrentHistoryPageAndSelection" methodname="ClosingAgainKeepsTheCurrentHistoryPageAndSelection" classname="TumbangPreso.PlayTests.ScorecardFocusTests" runstate="Runnable" seed="734349618" result="Passed" start-time="2026-10-02 07:23:35Z" end-time="2026-10-02 07:23:36Z" duration="0.663025" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2172" name="ClosingDoesNotStealSelectionFromAnotherLiveScreen" fullname="TumbangPreso.PlayTests.ScorecardFocusTests.ClosingDoesNotStealSelectionFromAnotherLiveScreen" methodname="ClosingDoesNotStealSelectionFromAnotherLiveScreen" classname="TumbangPreso.PlayTests.ScorecardFocusTests" runstate="Runnable" seed="1550744577" result="Passed" start-time="2026-10-02 07:23:36Z" end-time="2026-10-02 07:23:36Z" duration="0.079194" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2171" name="ClosingTheSelectedScorecardControlReturnsUsableHubFocus" fullname="TumbangPreso.PlayTests.ScorecardFocusTests.ClosingTheSelectedScorecardControlReturnsUsableHubFocus" methodname="ClosingTheSelectedScorecardControlReturnsUsableHubFocus" classname="TumbangPreso.PlayTests.ScorecardFocusTests" runstate="Runnable" seed="1793404968" result="Failed" start-time="2026-10-02 07:23:36Z" end-time="2026-10-02 07:23:36Z" duration="0.089821" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Closing the scorecard left navigation inside the inactive modal.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ScorecardFocusTests+<ClosingTheSelectedScorecardControlReturnsUsableHubFocus>d__13.MoveNext () [0x0009a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\ScorecardFocusTests.cs:65
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

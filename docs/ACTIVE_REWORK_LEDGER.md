@@ -8,9 +8,10 @@ Make the game COMPETITION READY through real engineering and bug fixes: crashes,
 stalls, desync, lost results, bot failures, performance and UX. Keep working through
 checks, commits and pushes. Do not end a turn merely because one unit passed.
 A passing narrow test does not establish whole competition readiness.
-Latest owner authorization: root implements; Astra xhigh and Sol6.1 HIGH each
-implement disjoint engineering bugs. Current-chat
-subagents explicitly authorized; no cross-chat actions/reset/clean/force push/paid
+Latest owner authorization: ROOT CONTINUES SOLO after agent wrap around15:30.
+Astra completed and retired15:30; Sol completed cleanup/handoff and interrupted15:33.
+No replacements/resumes. Earlier current-chat agents were explicitly authorized.
+No cross-chat actions/reset/clean/force push/paid
 services/Desktop player replacement. FAST setting is not exposed by spawn API;
 never claim it was configured. Preserve profiles/unrelated work.
 
@@ -24,82 +25,92 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Last verified remote3bbc90c61cf48b72ec0feeaaa113b661a8ec8ae1:29 runtime product fixes
-published. Diagnostics890656094 is a separate improvement, not a gameplay count.
-NEW chat guard3e91f02b0 COMMITTED/native10/10 (three runtime units ->32), publication
-pending integration of incoming Sean SteadyEmber/protocol131. Dirty OWN ledger/TODO
-preventedmerge, noreset/stash; commitcheckpoint thenmerge preservingappendices.
-Latest fixes: saved slots e8de37021 native6/6; hub disconnect8acbdf683 native3/3;
-account save d01c62a68 native5/5; rebind state5acff5bfe native10/10; force handover
-8d970fb06 native3/3; wallet backup4ac37e3dc native4/4; manual exitf163882cc native4/4;
-spectator lifetime d97be101d nativePlayMode3/3; hostloss5f47abc84 final6/6(new2+
-manual4controls); slide3bbc90c61 native4/4. All causal baselines/raw failures retained.
-Manual exit had ONE scene-availability fixture correction; spectator ONE tool-call
-syntax correction BEFORE execution, zero native/fixture retries. No other new
-product unit retries. Native clock/view-state proof is not rendered UI or WAN proof.
-Older19units/evidence remain in TODO/reports; do not re-read huge former chat.
-Core698/698 after incoming Sean Core7/protocol130; one integration pass, no skips.
-Sean Cinder df022b0f/68fa3a509, protocol130/recording12/kind17 integrated disjointly;
-its Linux/3-peer evidence is separate from our Windows artifact. Preserve new
-SteadyEmber ownthrow/manualretrieval contributor reservation.
-Toolcoordination7bc205c24:50local checks/defaultSERIAL; optional2CPU workers implemented,
-not created/native-parallel-proven.16GiB machine: one heavy Unity/GPU/build/player.
-No whole competition/physical-device/Android/WAN qualification claim.
+Verified remote dd4712ca0; d9ddccaec current pause acceptance committed locally.
+Root continuity runtime fixes37 published:
+previous32 plus scorecard owner close84ddfc391 (native3/3,
+one canvas-lookup fixture correction) and RecordChoice focus57158d1db (native3/3,
+one normal-Start fixture correction), plus cold actor freeze12a2689ff (native3/3,
+one NUnit compatibility fixture repair), plus scorecard close focus7c3124886
+(native3/3, zero repairs), plus root Settings focusdd4712ca0 (native3/3 after
+1 causal/2controls; ONE metadata-only repair from initial0 ignored run).
+RecordChoice exact three source/test/meta
+inputs and all1294 protected hashes retained. Diagnostic890656094 is separate.
+Incoming6dc1f065b malformed replay refusal merged without overlapping product hunks;
+contributor native3/3 evidence is separate. Sean SteadyEmber/protocol131 and Rafi
+Backwash integration preserved. Core698/698 was one prior integration pass.
+Do not repeat unchanged tests or claim full readiness.
 
-## Active job and exact next action
+ROOT opt-in NetCompletedArrivalProbe + tools/run_completed_arrival.py candidate now
+adds explicit all4 actor RoundActive/Parked/Sprint/MoveAxis receipt assertions. It
+is not compiled/run/published yet. Next coherent Windows candidate1002g AFTER new
+qualified units are committed should include this observer, then ONE existing
+short1-round30-second real two-peer scenario qualifies cold actor parking. Old
+1002e49462 receipts remain valid under their original narrow contract; do not
+reinterpret them as this stronger proof. No unchanged full8round rerun.
 
-All ROOT native jobs TERMINAL. Last hostloss98447 baseline2causal then27370 final6/6,
-guards restored. Published5f47abc84: shared SceneFlow.RetireMatchSimulation retires
-break/round/match before manual HOME or unexpected empty-lobby route. MatchAbandon
-captures diagnostic before handler; nextsingleSceneLoaded.Clear cannot reviveclock.
-Native fixture uses actual API/handler with existing sameframe scene-latch or exact
-expected Editor unavailable-scene error, no actual UI/load/transport claim.
+## Active jobs and next action
 
-SOL owns THREE preserved chat guards ReadyGate.cs/BufferSkipVote.cs/UI/EmoteWheel.cs,
-plus NEW Tests/PlayMode/GameplayChatInputTests.cs/.meta QUALIFIED/COMMITTED3e91f02b0.
-Different useful acceptance: true playing input context; NOT another failedEditor
-fixture retry. Proposed10: Ready4(chat/normal/pendingretry/automaticretry), Buffer3
-(chat/normal/pendingretry), Emote3(chatpreventopen/ordinarycommit/focuscancel).
-Native97390 baseline4causal+6controls,41646 final10/10, ZEROrepairs/1290protected
-unchanged/5exactinputs, bothguards/restored/free. Strict WasPressed/WasReleased
-assertions; cloned SHIPPED action asset restricted to synthetickeyboard, existing
-PlayModeWorld only. NEVER clone/replace InputSettings or usefeature/updateMode
-machinery/assetsaves. Existing2 background/editorfocus scalar settings may be saved/
-restored inSAMEoriginalobject per shipped PlayMode pattern. <=ONEtoolingrepair;
-if actual playing-state press fails, STOPunqualified, no weakened assertions.
-Bothpreparations EXIT0 beforelaunch. Product candidate hunks unchanged. Different
-asset hashes MAIN79C2E5.. vsqualification983306..; BOTHdiskReadyUpF/EmoteT verified
-afterrun, resolvedsuccessfulcontrol name notseparatelylogged. EarlierR labels were
-assumptions and corrected inreport; generic action-context proof/currentMAINasset
-or hardware notexecuted. No physical-input/widget-layout/human-feel claim.
-Old Editorrawfailures neverrewritten. Report gameplay-chat-input committed3e91.
+ROOT previous native jobs terminal. Windows1002f build88731 SUCCEEDED12scenes,
+2432MB90s, guard restored. Source freeze18861 inputs. Original strict receipt FALSE
+kept: exactly two builder-generated identity JSON changes;18859 other inputs match.
+Separate artifact-receipt PASSED including packaged identity/protocol131/Windows
+and unchanged runtime hash. Classification had ONE UTF8 local-script correction,
+original retained; no build retry. Artifact report publication pending.
 
-ASTRA Slide interruption4 completed/published3bbc90c61: actualHostResolveSlide>
-stun/fear/roundend>recovery must not pick nearbyshoe; pause remains valid. Baseline
-30095 threecausal/onecontrol, final50273 4/4, zero repairs/1472protected unchanged,
-all jobs terminal/restored. No timing/hero/manualpickup/protocol change. Next Astra
-read-only current-phase/world-camera plan for PRIVATE Supernova .50 (players AND
-lata readability) or another higherimpact gameplay defect. No redesign/newGPU job
-while Sol10 active, no unchanged historical capture replay. Exact ownership before
-any new patch. Root implements/integrates/builds; authorized Astraxhigh/Sol6.1HIGH
-current-chat agents only. OldSolultra interrupted, never wake. FAST control absent,
-not claimed configured; no invented busywork or cross-chat messages.
+Both agents RETIRED. Sol RecordChoice57158d1db and scorecard close7c3124886
+published; cold actor freeze12a2689ff published. Exact reports/native raw counts
+retained. Astra jobs terminal/2656 protected unchanged; Sol jobs terminal/1295
+protected unchanged, PIDs23184/25400/26592 dead, no lease/tabs/servers. Sol local
+handoff MAIN Logs/scorecard-focus1002/local-handoff.md (8D3B6417...5032E), cleanup-wrap.json.
+No remaining unpublished qualified agent source. Old ultra agent remains interrupted.
 
-NEXT ROOT coherent Windows candidate1002f AFTER Sol10 qualified or bounded stop:
-releaseFF exactpublished source without reset, preserve importer/generated changes,
-sourceCSharpclean, NEW internal output. New build includes latest force/wallet/exit/
-camera/hostloss/slide/diagnostics beyond1002e's23. One integration build, not perfix.
-Freeze Assets/Packages/ProjectSettings. StampBuildIdentity rewrites exactlytwo JSON
-files; classify via bothgenerated sources+PACKAGEDcopy matching commit/protocol/
-Windows target and unchanged other hashes. Preserve strict original receipt iffalse,
-separate classification receipt. No unknown drift ignored. Then bounded actual
-live-quit/host-loss operator acceptance using CURRENT UI, not retiredWholeMatches.
-No unchanged full8round rerun; previous Classic/Hero natural ends already retained.
-While build/runs, root/agents may advance DISJOINT MAIN inputs, never frozenrelease.
+ROOT Settings dd4712ca0 published: initial44421 total0 invalid33-char new GUID,
+ONE metadata-only correction; corrected original12978=2 controls/1causal; final34733
+PASS3/3, all12518 protected unchanged, first/repaired manifests identical, all
+terminal/restored/no lease. Native inputs4 frozen; report settings-decision-focus.
+ROOT current Pause exit d9ddccaec committed locally:63868 PASS2/2 FIRST run,
+all12522 protected unchanged, terminal/restored/no lease. Actual LeaveMatch button
+and actual HOME load; starts arena-classified MINIMAL scene, deterministic Classic
+rules, pointer released, no deferred break advance >5s. No populated-map/transport
+claim. New fixture2/meta/report only; no additional product fix count.
+
+Both agents RETIRED after wrap15:30-15:33. Sol local handoff/cleanup in MAIN
+Logs/scorecard-focus1002; all qualified agent source published. No agent job handles
+remain. No replacements/resumes; old ultra interrupted. One-time heartbeat removed.
+Root continues SOLO, goal active.
+
+NEXT ROOT coherent Windows1002g at newest published source including37 fixes and
+new opt-in actor observation in NetCompletedArrivalProbe/run_completed_arrival.py.
+Observer adds all4 actor RoundActive/Parked/Sprint/MoveAxis arrays and strict client
+receipt validation. Observer SOURCE NOT YET COMPILED/RUNTIME QUALIFIED; commit its
+exact2 paths with this checkpoint then freshfetch/incomingdiff/merge/push before
+release FF. New internal output, preserve release importer/meta/settings dirt.
+Freeze Assets/Packages/ProjectSettings, ONE build3072/reserve2048/600s, twelve scenes.
+Builder expectedtwo identity JSON changes only; strict false retained and separate
+artifact-classification receipt. Then ONE existing short1-round30s real two-Windows-
+peer scenario for NEW cold actor parking acceptance, not unchanged full8rounds.
+Old1002e49462 proved board/record/slot1 NONspectator, not actor state; preserve its
+original narrower contract. No physical-device/WAN/career settlement claim.
+
+Supernova native/helper route remains RETIRED: first77152 compile, corrected52284
+450s setup timeout, noXML/PNG/castproof; qualification original1536AF restored,
+MAIN private5E7 unchanged/unstaged. Evidence1f4a8c290, no alpha shipping/retry.
+Private arms/Ultra/protected2UI metas remain excluded. Main root source/diagnostic
+changes are exact scoped work only. TODO remains the sole work-status queue.
 
 ## Current frozen artifact and actual peers
 
-Release checkout Codex/work/tump-competition-release1002 HEAD69e3414913c3bc582b9ce5b028239f65503e62d7.
+Current1002f: release HEAD94600694068552668079b1b4b3c0ca044bbfb44a, protocol131,
+Builds/competition-candidate1002f/TumbangPreso.exe; runtimeSHA256
+c1c5278195df8ae516e06c3a05c34d8f75b4ebb21e9bd5ede63b64b8f8841701.
+Native88731 success2432MB90s/12scenes, restored/free; artifact-receipt passed, strict
+false preserved for exactlytwo generated identity outputs. Source18859/18861 stable.
+Evidence1f4a8c290 in reports/reliability-2026-10-02/windows-candidate1002f. No player
+run on1002f yet. Newer MAIN fixes are not in this frozen artifact.
+
+### Previous1002e and its completed-arrival peer acceptance
+
+Previous1002e source69e3414913c3bc582b9ce5b028239f65503e62d7.
 Builds/competition-candidate1002e/TumbangPreso.exe, Runtime SHA256
 b0bfbbaec5d5c16041f90036e33b2abad41e8029e28ae4ca3e8ef7536f1ba6c0.
 Native88898 SUCCEEDED2432MB122s/12scenes, guard restored/leasefree.18845frozeninputs,

@@ -120,6 +120,32 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
+Latest checkpoint:37 root continuity runtime fixes published throughdd4712ca0.
+Both agents retired after coherent cleanup/handoffs; root continues SOLO, no replacements. Actual RecordChoice Career refresh3/3 and account scorecard ownership3/3
+qualified; Window1002f built at946006940/protocol131, newer source is not in that
+frozen artifact. Astra cold-ended actor freeze and Sol scorecard-close focus are
+current disjoint units. At around15:30 begin agent wrap, finish coherent units then
+root continues solo; no replacement agents or repeated unchanged tests.
+
+- [x] SCORECARD-OWNER-CLOSE-1002: hide old account detail on ownership change;
+  shipped84ddfc391, PlayMode3/3. [Evidence](reports/reliability-2026-10-02/playerhub-owner-detail/acceptance.md).
+- [x] RECORD-CHOICE-FOCUS-1002: Career mode refresh retains active navigation;
+  shipped57158d1db, PlayMode3/3 after one causal failure and two controls.
+  [Evidence](reports/reliability-2026-10-02/record-choice-focus/acceptance.md).
+- [x] COLD-ENDED-ACTOR-FREEZE-1002: shipped12a2689ff, native3/3 after1 causal
+  failure/2 controls, ONE NUnit fixture repair; all2656 protected hashes match.
+  [Evidence](reports/reliability-2026-10-02/cold-arrival-actor-freeze/README.md).
+- [x] SCORECARD-CLOSE-FOCUS-1002: shipped7c3124886, native3/3 after1 causal
+  failure/2controls, zero repairs/1295 protected match.
+  [Evidence](reports/reliability-2026-10-02/scorecard-focus/acceptance.md).
+- [x] CURRENT-PAUSE-EXIT-OPERATOR-1002: native2/2 first run63868, exact current
+  button->HOME load/clock/cursor/deferred-break acceptance in minimal arena scene.
+  [Evidence](reports/reliability-2026-10-02/current-pause-exit/acceptance.md).
+- [x] SETTINGS-DECISION-FOCUS-1002: shippeddd4712ca0, native3/3 after1causal/2controls;
+  initial0 ignored due invalid GUID, ONE metadata-only repair.
+  [Evidence](reports/reliability-2026-10-02/settings-decision-focus/acceptance.md).
+- [ ] COLD-ACTOR-PEER-1002: root NEW four-actor observation/source pending fresh1002g build and one short peer scenario.
+
 Owner reaffirmed2026-10-02: competition ready is the objective. Continue through
 coherent fixes and pushes; no stopping after a single passing unit. DOTS owns
 Docs feedback, friend broad loading. Preserve profiles/contributor work.
@@ -182,18 +208,18 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
 - [x] ACCOUNT-SAVE-OWNER-1002: delayed save must preserve current account/edit;
   shippedd01c62a68 via7b36c1e63, candidate5/5 after four native failures.
   [Evidence](reports/reliability-2026-10-02/account-save-owner/README.md).
-- [ ] READY-CHAT-INTENT-1002: typing must not create a manual ready vote;
+- [x] READY-CHAT-INTENT-1002: typing must not create a manual ready vote;
   committed3e91f02b0; new real PlayMode joint10/10 after four causal failures,
-  pendingpublication. Old Editor failures preserved/retired.
+  published via946006940. Old Editor failures preserved/retired.
   [Limits](reports/reliability-2026-10-02/ready-chat-focus/README.md).
 - [x] REBIND-ACTION-STATE-1002: restore original disabled/enabled action state;
   shipped5acff5bfe via69e341491, native10/10 after four causal failures.
   [Evidence](reports/reliability-2026-10-02/rebind-action-state/acceptance.md).
-- [ ] BUFFER-CHAT-INTENT-1002: typing must not submit a buffer-skip vote;
-  committed3e91f02b0, jointPlayMode10/10; pendingpublication.
+- [x] BUFFER-CHAT-INTENT-1002: typing must not submit a buffer-skip vote;
+  committed3e91f02b0, jointPlayMode10/10; published via946006940.
   [Limits](reports/reliability-2026-10-02/buffer-chat-pending/README.md).
-- [ ] EMOTE-CHAT-FOCUS-1002: typing must not open or commit the emote wheel;
-  committed3e91f02b0, jointPlayMode10/10; pendingpublication. Old Editor route retired.
+- [x] EMOTE-CHAT-FOCUS-1002: typing must not open or commit the emote wheel;
+  committed3e91f02b0, jointPlayMode10/10; published via946006940. Old Editor route retired.
   [Runtime proof and input-asset scope](reports/reliability-2026-10-02/gameplay-chat-input/acceptance.md).
 - [x] FORCE-EQUIP-LOCK-1002: round handover clears old pickup throw lock;
   shipped8d970fb06 viaa8b662f9e, native3/3; duplicate snapshot/pickup preserved.

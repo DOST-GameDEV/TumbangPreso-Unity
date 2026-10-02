@@ -237,7 +237,7 @@ namespace TumbangPreso.UI
             var discard=SettingsWorkspaceRows.Action(paper.transform,"DiscardAndBack","DISCARD CHANGES",()=>{_session.Discard();_decision.SetActive(false);Back();},560);
             OwnerUiLayout.Place((RectTransform)discard.transform,195,326,560,88);
             SettingsWorkspaceRows.Slab(discard,false);
-            var keep=SettingsWorkspaceRows.Action(paper.transform,"KeepEditing","KEEP EDITING",()=>_decision.SetActive(false),560);
+            var keep=SettingsWorkspaceRows.Action(paper.transform,"KeepEditing","KEEP EDITING",CloseDecision,560);
             OwnerUiLayout.Place((RectTransform)keep.transform,195,444,560,88);
             SettingsWorkspaceRows.Slab(keep,false);
             ScreenFocus.Install(root.gameObject).Rebuild();

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 07:20:03Z" end-time="2026-10-02 07:20:03Z" duration="0.2364205">
+  <test-suite type="TestSuite" id="2547" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1263" result="Failed" site="Child" start-time="2026-10-02 07:20:03Z" end-time="2026-10-02 07:20:03Z" duration="0.236421" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2541" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1263" result="Failed" site="Child" start-time="2026-10-02 07:20:03Z" end-time="2026-10-02 07:20:03Z" duration="0.223020" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23776" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2542" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1263" result="Failed" site="Child" start-time="2026-10-02 07:20:03Z" end-time="2026-10-02 07:20:03Z" duration="0.218132" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2543" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1263" result="Failed" site="Child" start-time="2026-10-02 07:20:03Z" end-time="2026-10-02 07:20:03Z" duration="0.213542" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1293" name="ColdArrivalActorFreezeTests" fullname="TumbangPreso.PlayTests.ColdArrivalActorFreezeTests" classname="TumbangPreso.PlayTests.ColdArrivalActorFreezeTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-02 07:20:03Z" end-time="2026-10-02 07:20:03Z" duration="0.179850" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1294" name="CompletedSnapshotBeforeBeginFreezesAllFourActors" fullname="TumbangPreso.PlayTests.ColdArrivalActorFreezeTests.CompletedSnapshotBeforeBeginFreezesAllFourActors" methodname="CompletedSnapshotBeforeBeginFreezesAllFourActors" classname="TumbangPreso.PlayTests.ColdArrivalActorFreezeTests" runstate="Runnable" seed="559215883" result="Failed" start-time="2026-10-02 07:20:03Z" end-time="2026-10-02 07:20:03Z" duration="0.089869" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Actor 0 can still act.
+Actor 0 was never parked.
+Actor 0 movement was not released.
+Actor 0 is still sprinting.
+Actor 1 can still act.
+Actor 1 was never parked.
+Actor 1 movement was not released.
+Actor 1 is still sprinting.
+Actor 2 can still act.
+Actor 2 was never parked.
+Actor 2 movement was not released.
+Actor 2 is still sprinting.
+Actor 3 can still act.
+Actor 3 was never parked.
+Actor 3 movement was not released.
+Actor 3 is still sprinting.
+  Expected: <empty>
+  But was:  < "Actor 0 can still act.", "Actor 0 was never parked.", "Actor 0 movement was not released.", "Actor 0 is still sprinting.", "Actor 1 can still act.", "Actor 1 was never parked.", "Actor 1 movement was not released.", "Actor 1 is still sprinting.", "Actor 2 can still act.", "Actor 2 was never parked."... >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ColdArrivalActorFreezeTests.CompletedSnapshotBeforeBeginFreezesAllFourActors () [0x00140] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\ColdArrivalActorFreezeTests.cs:130
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1296" name="DestroyedRunnerCannotFreezeActorsFromALaterCompletedSnapshot" fullname="TumbangPreso.PlayTests.ColdArrivalActorFreezeTests.DestroyedRunnerCannotFreezeActorsFromALaterCompletedSnapshot" methodname="DestroyedRunnerCannotFreezeActorsFromALaterCompletedSnapshot" classname="TumbangPreso.PlayTests.ColdArrivalActorFreezeTests" runstate="Runnable" seed="1178789794" result="Passed" start-time="2026-10-02 07:20:03Z" end-time="2026-10-02 07:20:03Z" duration="0.036317" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1295" name="PrestartSnapshotKeepsAllFourActorsAvailableForFreeRoam" fullname="TumbangPreso.PlayTests.ColdArrivalActorFreezeTests.PrestartSnapshotKeepsAllFourActorsAvailableForFreeRoam" methodname="PrestartSnapshotKeepsAllFourActorsAvailableForFreeRoam" classname="TumbangPreso.PlayTests.ColdArrivalActorFreezeTests" runstate="Runnable" seed="84370070" result="Passed" start-time="2026-10-02 07:20:03Z" end-time="2026-10-02 07:20:03Z" duration="0.037742" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

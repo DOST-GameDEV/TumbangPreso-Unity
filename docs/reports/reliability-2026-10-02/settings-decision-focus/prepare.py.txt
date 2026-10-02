@@ -1,0 +1,35 @@
+from pathlib import Path
+import hashlib,json,subprocess,sys
+main=Path(r'C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks')
+qual=Path(r'C:/Users/matth/Documents/Codex/work/tump-feedback-0930')
+out=qual/'Logs/settings-decision-focus1002';out.mkdir(parents=True,exist_ok=True)
+owned=['Assets/TumbangPreso/Runtime/UI/TumpSettingsView.cs','Assets/TumbangPreso/Runtime/UI/TumpSettingsView.OwnerPainted.cs','Assets/TumbangPreso/Tests/PlayMode/SettingsDecisionFocusTests.cs','Assets/TumbangPreso/Tests/PlayMode/SettingsDecisionFocusTests.cs.meta']
+sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+phase=sys.argv[1]
+if phase=='freeze':
+ frozen={rel:sha(main/rel) for rel in owned};(out/'main-frozen.json').write_text(json.dumps(frozen,indent=2))
+ print(json.dumps({'frozen':len(frozen),'sourceCommit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=main,text=True).strip()}));sys.exit()
+frozen=json.loads((out/'main-frozen.json').read_text())
+assert all(sha(main/rel)==expected for rel,expected in frozen.items()),'Owned MAIN source changed after freeze'
+if phase=='baseline':
+ backup=out/'qualification-before';backup.mkdir(exist_ok=True)
+ protected={str(p.relative_to(qual)).replace('\\','/'):sha(p) for folder in ('Assets/TumbangPreso','Packages','ProjectSettings') for p in (qual/folder).rglob('*') if p.is_file() and (p.suffix in ('.cs','.meta','.json','.asmdef','.asset')) and str(p.relative_to(qual)).replace('\\','/') not in owned}
+ (out/'protected-before.json').write_text(json.dumps(protected,indent=2))
+ for rel in owned:
+  p=qual/rel
+  if p.exists():
+   dst=backup/rel;dst.parent.mkdir(parents=True,exist_ok=True);dst.write_bytes(p.read_bytes())
+  if rel.endswith('TumpSettingsView.cs') or rel.endswith('TumpSettingsView.OwnerPainted.cs'):
+   data=subprocess.check_output(['git','show','1f4a8c290591fc06c677206425ad43767dc6992f:'+rel],cwd=main)
+  else:data=(main/rel).read_bytes()
+  p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(data)
+elif phase=='candidate':
+ protected=json.loads((out/'protected-before.json').read_text())
+ assert all((qual/rel).exists() and sha(qual/rel)==expected for rel,expected in protected.items()),'Protected qualification drift'
+ for rel in owned:(qual/rel).write_bytes((main/rel).read_bytes())
+elif phase=='post':
+ protected=json.loads((out/'protected-before.json').read_text())
+ changed=[rel for rel,expected in protected.items() if not (qual/rel).exists() or sha(qual/rel)!=expected]
+ (out/'protected-post.json').write_text(json.dumps({'count':len(protected),'changed':changed},indent=2));assert not changed,changed
+else:raise ValueError(phase)
+receipt={rel:sha(qual/rel) for rel in owned};(out/(phase+'-inputs.json')).write_text(json.dumps(receipt,indent=2));print(json.dumps({'phase':phase,'owned':len(receipt)}))
