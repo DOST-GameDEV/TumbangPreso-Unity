@@ -502,6 +502,7 @@ namespace TumbangPreso.Net
                         // ⚠️ THE QUEUE KEEPS LOOKING RATHER THAN DYING. A machine with no route to
                         // Relay can still be found by somebody else on its LAN, and the search
                         // costs nothing while it waits.
+                        _reevaluateAt = Time.unscaledTime + (float)MatchmakingCandidateCache.RetrySeconds;
                         State = QueueState.Searching;
                         Raise();
                         return;

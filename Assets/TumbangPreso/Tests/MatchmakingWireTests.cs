@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System.Linq;
 using TumbangPreso.Core;
 using TumbangPreso.Net;
 using UnityEngine;
@@ -15,6 +16,75 @@ namespace TumbangPreso.Tests
     /// </summary>
     public class MatchmakingWireTests
     {
+        [TestCase("refused")]
+        [TestCase("fault")]
+        [TestCase("accepted")]
+        [TestCase("cancelled")]
+        [TestCase("replaced")]
+        public async System.Threading.Tasks.Task QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket(string outcome)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsFalse(NetIdentity.IsOnline, "This queue recovery check never initializes a service session.");
+            const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var type = typeof(Matchmaker);
+            var originalAccount = GameServices.Account;
+            var accountRoot = new GameObject("Dormant queue recovery account"); accountRoot.SetActive(false);
+            var account = accountRoot.AddComponent<PlayerAccount>();
+            typeof(PlayerAccount).GetField("_profile", hidden).SetValue(account, new AccountProfile { PlayerId = "queue-retry-local" });
+            typeof(GameServices).GetProperty("Account").SetValue(null, account);
+            var owner = new GameObject("Dormant queue recovery session"); owner.SetActive(false);
+            var net = owner.AddComponent<NetSession>(); var queue = owner.AddComponent<Matchmaker>();
+            var pending = new System.Threading.Tasks.TaskCompletionSource<bool>();
+            System.Threading.Tasks.Task attempt = null;
+            try
+            {
+                type.GetField("_net", hidden).SetValue(queue, net);
+                type.GetProperty("Elapsed").SetValue(queue, MatchmakingRules.SecondsToWidest + 1);
+                var deadlineField = type.GetField("_reevaluateAt", hidden);
+                var busyField = type.GetField("_busy", hidden);
+                System.Func<System.Threading.Tasks.Task<bool>> start = () => outcome == "fault"
+                    ? System.Threading.Tasks.Task.FromException<bool>(new System.InvalidOperationException("simulated host startup failure"))
+                    : outcome == "accepted" || outcome == "refused"
+                        ? System.Threading.Tasks.Task.FromResult(outcome == "accepted") : pending.Task;
+                float before = Time.unscaledTime;
+                attempt = (System.Threading.Tasks.Task)type.GetMethod("HostAsync", hidden).Invoke(queue, new object[] { start });
+                float replacementDeadline = before + 123;
+                if (outcome == "cancelled")
+                {
+                    Assert.AreEqual(QueueState.Hosting, queue.State); queue.Cancel(); pending.SetResult(false);
+                }
+                else if (outcome == "replaced")
+                {
+                    Assert.AreEqual(QueueState.Hosting, queue.State);
+                    ((JoinAttemptGate)type.GetField("_queueAttempts", hidden).GetValue(queue)).Begin();
+                    type.GetProperty("State").SetValue(queue, QueueState.Searching);
+                    deadlineField.SetValue(queue, replacementDeadline); busyField.SetValue(queue, true);
+                    pending.SetResult(false);
+                }
+                await attempt;
+                float deadline = (float)deadlineField.GetValue(queue);
+                if (outcome == "refused" || outcome == "fault")
+                {
+                    Assert.AreEqual(QueueState.Searching, queue.State);
+                    Assert.IsFalse(float.IsInfinity(deadline), "A stable maximum-width queue has no event left to recover from this hosting failure.");
+                    Assert.GreaterOrEqual(deadline, before + (float)MatchmakingCandidateCache.RetrySeconds);
+                    Assert.LessOrEqual(deadline, Time.unscaledTime + (float)MatchmakingCandidateCache.RetrySeconds);
+                }
+                else if (outcome == "replaced")
+                    Assert.AreEqual(replacementDeadline, deadline, "An obsolete host completion changed the replacement ticket's deadline.");
+                else Assert.IsTrue(float.IsPositiveInfinity(deadline), "A successful/cancelled ticket acquired an unsolicited retry.");
+                Assert.AreEqual(outcome == "cancelled" ? QueueState.Cancelled : QueueState.Searching, queue.State);
+                Assert.AreEqual(outcome == "replaced", (bool)busyField.GetValue(queue), "An old request changed the current ticket's busy ownership.");
+            }
+            finally
+            {
+                if (!pending.Task.IsCompleted) pending.SetResult(false);
+                if (attempt != null) await attempt;
+                Object.DestroyImmediate(owner); Object.DestroyImmediate(accountRoot);
+                typeof(GameServices).GetProperty("Account").SetValue(null, originalAccount);
+            }
+        }
+
         [TestCase(QueueStake.Casual)]
         [TestCase(QueueStake.Ranked)]
         public void QueueCandidatesNeedMatchingSkillDataWithoutChangingTheirPoolRules(QueueStake stake)

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 03:49:31Z" end-time="2026-10-02 03:49:31Z" duration="0.1280572">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="881" result="Failed" site="Child" start-time="2026-10-02 03:49:31Z" end-time="2026-10-02 03:49:31Z" duration="0.128057" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2056" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="881" result="Failed" site="Child" start-time="2026-10-02 03:49:31Z" end-time="2026-10-02 03:49:31Z" duration="0.109248" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22224" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2057" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="881" result="Failed" site="Child" start-time="2026-10-02 03:49:31Z" end-time="2026-10-02 03:49:31Z" duration="0.099876" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2058" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="881" result="Failed" site="Child" start-time="2026-10-02 03:49:31Z" end-time="2026-10-02 03:49:31Z" duration="0.090738" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1615" name="MatchmakingWireTests" fullname="TumbangPreso.Tests.MatchmakingWireTests" classname="TumbangPreso.Tests.MatchmakingWireTests" runstate="Runnable" testcasecount="16" result="Failed" site="Child" start-time="2026-10-02 03:49:31Z" end-time="2026-10-02 03:49:31Z" duration="0.070142" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1621" name="QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket" fullname="TumbangPreso.Tests.MatchmakingWireTests.QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket" classname="TumbangPreso.Tests.MatchmakingWireTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-02 03:49:31Z" end-time="2026-10-02 03:49:31Z" duration="0.064419" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1616" name="QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket(&quot;refused&quot;)" fullname="TumbangPreso.Tests.MatchmakingWireTests.QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket(&quot;refused&quot;)" methodname="QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket" classname="TumbangPreso.Tests.MatchmakingWireTests" runstate="Runnable" seed="593785480" result="Failed" start-time="2026-10-02 03:49:31Z" end-time="2026-10-02 03:49:31Z" duration="0.040739" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  A stable maximum-width queue has no event left to recover from this hosting failure.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.MatchmakingWireTests.QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket (System.String outcome) [0x003d9] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\MatchmakingWireTests.cs:69
+at TumbangPreso.Tests.MatchmakingWireTests.QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket (System.String outcome) [0x005bf] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\MatchmakingWireTests.cs:84
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1617" name="QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket(&quot;fault&quot;)" fullname="TumbangPreso.Tests.MatchmakingWireTests.QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket(&quot;fault&quot;)" methodname="QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket" classname="TumbangPreso.Tests.MatchmakingWireTests" runstate="Runnable" seed="701263343" result="Failed" start-time="2026-10-02 03:49:31Z" end-time="2026-10-02 03:49:31Z" duration="0.003342" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  A stable maximum-width queue has no event left to recover from this hosting failure.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.MatchmakingWireTests.QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket (System.String outcome) [0x003d9] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\MatchmakingWireTests.cs:69
+at TumbangPreso.Tests.MatchmakingWireTests.QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket (System.String outcome) [0x005bf] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\MatchmakingWireTests.cs:84
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Queue] connection startup failed: simulated host startup failure
+]]></output>
+              </test-case>
+              <test-case id="1618" name="QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket(&quot;accepted&quot;)" fullname="TumbangPreso.Tests.MatchmakingWireTests.QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket(&quot;accepted&quot;)" methodname="QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket" classname="TumbangPreso.Tests.MatchmakingWireTests" runstate="Runnable" seed="1405394128" result="Passed" start-time="2026-10-02 03:49:31Z" end-time="2026-10-02 03:49:31Z" duration="0.002684" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1619" name="QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket(&quot;cancelled&quot;)" fullname="TumbangPreso.Tests.MatchmakingWireTests.QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket(&quot;cancelled&quot;)" methodname="QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket" classname="TumbangPreso.Tests.MatchmakingWireTests" runstate="Runnable" seed="430604836" result="Passed" start-time="2026-10-02 03:49:31Z" end-time="2026-10-02 03:49:31Z" duration="0.003176" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1620" name="QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket(&quot;replaced&quot;)" fullname="TumbangPreso.Tests.MatchmakingWireTests.QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket(&quot;replaced&quot;)" methodname="QueueHostFailureReconsidersTheCachedListWithoutRevivingAnOldTicket" classname="TumbangPreso.Tests.MatchmakingWireTests" runstate="Runnable" seed="1650979424" result="Passed" start-time="2026-10-02 03:49:31Z" end-time="2026-10-02 03:49:31Z" duration="0.002033" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
