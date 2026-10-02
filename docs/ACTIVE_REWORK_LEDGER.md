@@ -857,3 +857,11 @@ actual charge/release works. Capture inspected; no active job. Publish two sourc
 paths plus evidence; update existing Wiki WIP note. User17:01 explicitly asks
 that current work be noted in Feedback. WIP note added/readback verified17:02;
 keep it current. Latest Block placement edit is next, no new hero polish.
+
+Tutorial warning4bc05f3d integrated with disjoint pinned HOME fix33873b71 at
+61fd9fbd, exact remote verified. Existing Feedback WIP replaced/read back with
+shipped warning note and Block placement working-now status; checkboxes retained.
+TUTORIAL-BLOCK-PLACEMENT-1002 claims only GuidedTraining Block prep/target and
+one TutorialLessonHonestyProbe case. Plan dated report; no active native job.
+Bastionc9cbbfb3 is also now in remote ancestry; its review remains undelivered
+because owner switched focus to current Feedback. Do not resume hero polish.
