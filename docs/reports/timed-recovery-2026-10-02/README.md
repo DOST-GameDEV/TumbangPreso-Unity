@@ -46,3 +46,11 @@ Windows player validation or human approval. Existing saved profiles, unrelated
 asset-import changes and reserved source remain untouched.
 
 The BH Studios intro/skip-label/white-fade request is a separate next unit.
+
+## Integrated publication candidate
+
+Remote advanced to268c1abf with LAN identity retention. Integrated it without
+conflicts; its NetSession changes are separate from the protocol134 version
+change. Separate native import and the timed snapshot restoration case pass
+after integration (40/35seconds, guard null). All recovery bodies are unchanged.
+The contributor's retained identity evidence remains in its own report.

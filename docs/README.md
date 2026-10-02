@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+LAN participant identity and missing client result: [native boundary evidence](reports/reliability-2026-10-03/lan-record-identity/README.md).
+
 HOME pinned-rules preservation: [native causal and control evidence](reports/reliability-2026-10-03/hub-pinned-rules/README.md).
 
 Current Windows integration build and normal-lobby mode/client-save findings: [1002m evidence](reports/reliability-2026-10-02/windows-candidate1002m/README.md).

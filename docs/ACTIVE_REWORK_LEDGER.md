@@ -6,6 +6,20 @@ Previous complete checkpoint archived before_host_loss_peer_2026-10-02.
 
 ## Current scope and workers
 
+CURRENT ROOT LAN identity fix qualified: original60319 TERMINAL2causal/2controls;
+candidate51489 TERMINAL FIRST4/4/no repairs. Post28952 handle unavailable on resume,
+but authoritative protected-post exists/count18436/changed[] and exact4 inputs
+match MAIN. No native/player process remains. NetSession hello includes cached
+LAN profile identity (Relay still signed-only), admission capturesclaim, Lobby
+readmit retainsidentity without grantingtrust. Dormant serializer/admit evidence,
+not fulltransport/save proof yet. Actual retained m identity-presence: remote
+humanIdEMPTY/clientlocalIdPRESENT/nonbot/recordOnline8rounds; values never exposed.
+SOURCE publication now; then combined player incl pinnedHOME and new published
+Boulder/current source. Use unique1003a artifact, freeze before build including
+generatedwarmup BEFORE BYTES. Check short normal-lobby career history on BOTH
+actual players after terminal exits, original result m remainsFAILED. No agents/
+resets/paidservices/overlapfeedback or contributor loading/art redesign. Goal ACTIVE.
+
 NEW CURRENT ROOT UNIT: HubHome.ApplyChoice defaults to passive pin preservation;
 explicit HubHome.Choice setter and HubHero.Primary pass true. New HubPinnedRulesTests
 valid32GUID02857a69977b433abfa53f1dfd53b3f0. Original33345 TERMINAL2causal/2controls;

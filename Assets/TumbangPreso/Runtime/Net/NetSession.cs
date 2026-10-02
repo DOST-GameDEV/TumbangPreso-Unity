@@ -1774,7 +1774,9 @@ namespace TumbangPreso.Net
                 // every start path including the two LAN ones, and `FUTURE.md` § 0.5 rule 7 says
                 // a LAN match may never sit behind a login. `PrimeHandleProofAsync` fetches one
                 // on the relay paths, before this; empty here is a normal, playable state.
-                AccountPlayerId = account != null && account.IsSignedIn ? account.PlayerId : "",
+                // LAN records need this peer's cached local profile identity too. This
+                // is an identity claim, not a verified handle or an authenticated session.
+                AccountPlayerId = account != null && (account.IsSignedIn || !IsRelay) ? account.PlayerId : "",
                 HandleProof = account?.HandleProof ?? "",
 
                 // ⚠️ THE SAME DERIVATION THE QUEUE USES, ASKED ONCE. `Matchmaker.LocalLadderRating`
@@ -2179,6 +2181,7 @@ namespace TumbangPreso.Net
 
             var record = Lobby.Admit((int)clientId, hello.Token, hello.Name,
                                      out int replacedPeerId);
+            record.AccountPlayerId = hello.AccountPlayerId ?? "";
             Debug.Log($"[NetArrival] peer={clientId} seat={record.Seat} replaces={replacedPeerId}");
 
             // ⚠️ AFTER `Admit`, NOT THROUGH IT. `Admit` has five callers and a widened signature
