@@ -130,12 +130,13 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
-Latest checkpoint:44 root continuity fix units published through0747f1a44.
+Latest checkpoint:45 root continuity fix units published through42e0d48e9.
 ONE new Sol6.1HIGH helper +root implementation; prioragents retired. Currenth41
 protocol132/record13 build+actualWindowspeerPASS, laterSafe42/Touch43/diag not in it.
-Root nativejobs terminal. NewdirectHostlunge lifetimeproof3/3 shipped; helper
-candidate35856 ACTIVE on confirmed SafeStore failedpromotion->laterwrite edge;
-original45036 had1causal failure/2controls pass, exact7/protected12535/zero repairs.
+Root1002i coherent build ACTIVE after freeze46168 terminal0. DirectHostlunge
+lifetimeproof3/3 shipped; helper candidate35856 TERMINAL PASS3 on confirmed
+SafeStore failedpromotion->laterwrite edge; original45036 had1causal failure/
+2controls pass, exact7/protected12535/zero repairs.
 Retired
 failedpracticehelper never revived.
 
@@ -164,16 +165,18 @@ failedpracticehelper never revived.
 - [x] TRAINING-PAUSE-TRANSITION-1002: shippedf33e1d8a7, native3/3 after1causal/
   2controls, zero repairs/exact3/protected12527. [Evidence](reports/reliability-2026-10-02/training-pause-transition/README.md).
 - [x] LUNGE-DISABLE-LIFETIME-1002: shipped0747f1a44, directpublicAPI native3/3 after1causal/2controls, zero repairs/protected12537. [Evidence](reports/reliability-2026-10-02/lunge-disable-lifetime/README.md).
-- [ ] PRACTICE-BOT-RESUME-1002: OPEN stale active window reproduced twice;
-  fixture route retired after two flaws, no product fix/candidate.
+- [ ] PRACTICE-BOT-RESUME-1002: actual operator qualification remains OPEN;
+  old fixture route retired after two flaws. Underlying contact lifetime fixed by
+  separately qualified LUNGE-DISABLE-LIFETIME-1002; old failed evidence retained.
   [Unqualified evidence](reports/reliability-2026-10-02/practice-bot-resume/README.md).
 - [x] TRAINING-EMOTE-ELIGIBILITY-1002: committed212cae991, nativeeligibility3/3
   after1causal/2controls, ONE preflight classification repair/zero fixture repairs.
   [Evidence](reports/reliability-2026-10-02/training-emote-eligibility/README.md).
 - [x] SAFE-STORE-RECOVERY-CHAIN-1002: shipped51994763d, native4/4 owned Windows files. [Evidence](reports/reliability-2026-10-02/safe-store-recovery-chain/README.md).
-- [ ] SAFE-STORE-FAILED-PROMOTION-SAVE-1002: sole Sol candidate35856 ACTIVE,
+- [x] SAFE-STORE-FAILED-PROMOTION-SAVE-1002: shipped42e0d48e9, candidate35856 PASS3,
   original45036 reproduced good-backup loss after lock-release-save;2controls pass.
-  Exact7 owned inputs/protected12535/zero repairs; native slot owned by helper.
+  Exact7 owned inputs/protected12535/zero repairs; native slot released.
+  [Evidence](reports/reliability-2026-10-02/safe-store-failed-promotion/README.md).
 - [x] FAILURE-BUNDLE-UNIQUE-PATH-1002: committed40f8f2474, GUID filename suffix; now compiled in1002h, no shared-userpath write test.
 - [x] LAN-LISTENER-START-1002: shipped5367390ab, real8911 bind cleanup/retry/
   shutdown native3/3 after1causal/2controls, zero repairs/12523 protected match.

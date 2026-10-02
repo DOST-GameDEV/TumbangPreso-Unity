@@ -19,7 +19,7 @@ preserve finalized Paete/Phaister and active Sean/Rafi/Baha reservations.
 
 ## Published code and acceptance
 
-Verified remote0747f1a44:44 root continuity runtime fix units;
+Verified remote42e0d48e9:45 root continuity runtime fix units;
 protocol132/recording13 after qualified incoming Rafi4a9afbd90, integrationa67d7bc5b. Latest units:
 32chat guards3e91f02b0/native10;33scorecard owner84ddfc391/native3;34RecordChoice
 57158d1db/native3;35cold actor12a2689ff/native3;36scorecard focus7c3124886/native3;
@@ -59,7 +59,7 @@ cooldown retained/secondhostcall refused; clockhold andunchargedcontrols pass.
 No rawinput/rig/map/range/expirywait or private-state assignment. Materiallydifferent
 component-boundaryproof; retiredPracticeBotResume helper evidence unchanged.
 Windup/slide/impulse/timing untouched, no tag/travel/actualSetBot/network claim.
-All ROOT nativehandles TERMINAL. Agent candidate35856 ACTIVE; see below.
+Agent candidate35856 TERMINAL; root1002i build active (details below).
 Source reports/raw counts preserved.
 
 ROOT frame-context diagnostic8ba8fa76f PUBLISHED:69846 FIRST2/2/all12532protected/
@@ -70,16 +70,22 @@ diagnostic from43fix count; h predates this code. UniqueBundle40f8f2474 compiled
 
 SOLE Sol6.1HIGH sol_parallel_engineering owns SafeStore failed-promotion save chain.
 Original45036 TERMINAL:1causal failure/2controls pass;12535 protected unchanged,
-guard restored/no lease. Candidate35856 ACTIVE: CPU1536/reserve2048/450s/EditMode,
+guard restored/no lease. Candidate35856 TERMINAL PASS3: CPU1536/reserve2048/450s/EditMode,
 profile safe-store-failed-promotion1002/filter SafeStoreFailedPromotionSaveTests,
 qualification Logs/safe-store-failed-promotion1002/candidate. EXACT7 owned paths:
 SafeStore.cs, Settings/GameSettings.cs, Net/{Career,Social,Wallet}Store.cs and
 Tests/SafeStoreFailedPromotionSaveTests.cs/meta. Frozen identical fixture3; zero
 repairs. Stateless3arg Windows writer validates previous primary before backup
 rotation;2arg API and nonWindows sequence preserved. Root must not double-poll
-agent handle or copy qualification inputs. Previous42 proof remains valid;
-45 is not qualified until candidate terminal/exact counts/preservation.
-Root reviews source and prepares coherent next Windows batch while agent tests.
+agent handle or copy qualification inputs. Previous42 proof remains valid.
+45 SHIPPED42e0d48e9 after exact7 MAIN/post hashes matched;12535 protected unchanged,
+guard restored/no lease/zero repairs. WindowsEditor writer boundary qualified;
+four Save callsites compile, account flows and WindowsPlayer execution separate.
+Report safe-store-failed-promotion retains raw original failure and controls.
+1002i frozen source42e0d48e9903893706e1c4a8a60724f5b2be6e8b/18901inputs:
+freeze46168 TERMINAL0, build ACTIVE/3072MB+2048reserve/600s. One preflight --output
+file-vs-directory correction refused before launch; no native/source/build retry.
+Helper source-only identifies next disjoint bug; no native while root owns build.
 Latest onehelper authorization persists; retiredagents neverwake.
 
 h build34064 TERMINAL0/12scenes2432MB90s. Freeze15412/post88799 TERMINAL:
@@ -95,8 +101,8 @@ newscene/end/record, match776871900f7d49979ad7d53ff400b16e/scores20/0/0/150,
 clientSlot1 NONspectator/all4inactive/parked/move0/sprintoff. Owned20536/26044 dead,
 input+seedsrestored/runtimeunchanged/leasefree. CustomHero1round30/two humanorigins
 +two bots, no AllBots/autorematch/forcefinish/physical/WAN/career settlement/full-
-8round claim. h reportpublishede0a196678. Currenth contains41fixes, later42/43/
-framecontext not included. No per-fix rebuild; futurecoherentbatch if needed.
+8round claim. h reportpublishede0a196678. Currenth contains41fixes, later42/43/44/45/
+framecontext not included. Next coherent batch1002i prepares them together.
 
 IncomingRafi4a9afbd90/protocol132/record13/field18 preserved, contributor3Linuxpeer
 scope separate/rootONE Core704/704/no skips rawTRX7648. No unchangedCore repeat.
