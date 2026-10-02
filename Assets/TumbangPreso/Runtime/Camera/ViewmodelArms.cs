@@ -656,6 +656,15 @@ namespace TumbangPreso.CameraSystem
             new Key(0.580f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
+        private static readonly Key[] CinderDrawClip =
+        {
+            new Key(0f,0,0,0,0,0,0),
+            new Key(.12f,.28f,.16f,-.12f,.12f,-.10f,.08f),
+            new Key(.35f,.55f,-.24f,.16f,.18f,.12f,-.08f,true),
+            new Key(.46f,.47f,-.22f,.12f,.14f,.10f,-.06f),
+            new Key(.75f,0,0,0,0,0,0),
+        };
+
         private static readonly Key[] IgniteClip =
         {
             new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
@@ -1119,6 +1128,7 @@ namespace TumbangPreso.CameraSystem
                   : clip == "slam" ? SlamClip
                   : clip == "cast" || clip == "thrust" || clip == "dash" ? ThrustClip
                   : clip == "thrust-fire" ? ThrustFireClip
+                  : clip == "cinder-draw" ? CinderDrawClip
                   : clip == "ignite" ? IgniteClip
                   : clip == "supernova-slam" ? SupernovaSlamClip
                   : clip == "sprint-electric" ? SprintElectricClip

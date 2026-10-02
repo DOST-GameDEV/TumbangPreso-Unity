@@ -56,6 +56,9 @@ namespace TumbangPreso.CameraSystem
             { "thrust-fire", new CastPath(.22f, false,
                 Rest(0), K(.12f, .03f, -.10f, -.14f, .06f, .12f, -.10f),
                 K(.22f, -.05f, .02f, .30f, .06f, .16f, -.12f), K(.37f, -.05f, .02f, .28f, .06f, .15f, -.10f), Rest(.70f)) },
+            { "cinder-draw", new CastPath(.35f, false,
+                Rest(0), K(.12f,.20f,-.06f,.04f,-.04f,.12f,-.03f),
+                K(.35f,-.16f,-.10f,.28f,.06f,.18f,-.08f), K(.46f,-.14f,-.09f,.24f,.06f,.16f,-.06f), Rest(.75f)) },
             // IGNITION CANNON. Loading the throw: the slipper comes back to the shoulder and the free hand
             // comes across and cups over it, his lantern maker's care; held while it catches, then released.
             { "ignite", new CastPath(.28f, false,

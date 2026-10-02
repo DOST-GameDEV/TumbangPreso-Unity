@@ -654,3 +654,20 @@ round and accepted-cast checks remain. Incompatible older clients must not join.
 Native6distinct checks pass across4+2receipts. A fresh full129Linux player and
 three actual peers pass1.8916m travel with zero lateral drift, held recovery,
 no fire/stagger and released gates. WAN/reconnect/device checks remain separate.
+
+## Cinder Gate compatibility
+
+Protocol130 appends CinderGate field kind17. The existing
+reliable dynamic-field route now accepts its positive event identity and empty
+path, alongside unchanged bounded Rafi water geometry. Host owns accepted cast,
+finite crossing, consumption and ordinary resolved impulse. Epoch/round/source
+checks and adopted server age remain on the shared receiver. Repeated older
+updates cannot rewind a live clock or revive a consumed seam. Prepared snapshots
+bind the same field clock to Sean's defending slot without recasting.
+
+Recording schema12 includes this appended field; schemas10/11 remain accepted,
+and version11 water data keeps its old meaning. Recorded Cinder views instantiate
+only presentation, with no collider or gameplay field. Matching clients are
+required for the new gameplay state. Focused native and three actual local Linux peer checks are recorded in the
+[Cinder report](reports/sean-cinder-gate-2026-10-02/README.md). WAN, reconnect and
+cross-platform qualification remain separate.

@@ -1,0 +1,8 @@
+{
+  "state": "Prepared source only; candidate and active player build are unchanged",
+  "question": "Close remaining native cover/refusal, immunity and round-retirement branches, plus correct actual-input capture lifetime",
+  "cases": ["CoverRefusesPlacementAndImmuneCrossingConsumesBeforeRoundCleanup", "ActualCastShowsAuthoredBodyAndFieldWithoutReplayGameplay"],
+  "capture_correction": "4s from recording start is the cast+3.35s exact boundary after .65s release; use4.6s so destruction has occurred. Retain original0/1 failure. This is a corrected lifetime premise, not increased effect duration.",
+  "stopping": "One final integration pass after the matching player build; no unchanged fixture loop",
+  "unchanged_evidence": "Reuse previous Core7/state3/physics2/recording results; do not rerun them"
+}

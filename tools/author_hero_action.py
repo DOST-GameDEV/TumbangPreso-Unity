@@ -705,6 +705,21 @@ HEROES["sean"]["hero-sean-ignite"] = {
 }
 
 
+# Cinder Gate: brace, draw a low lateral seam, hold the armed beat, release.
+HEROES["sean"]["hero-sean-gate"] = {
+    "punch": .35,
+    "beats": [
+        (0.00,1.,0.,0., 0,0,0, 0,0, 0,0, 0,0, 0,0, 0,0),
+        (0.12,1.,0.,-.015, 9,-12,-2, -6,8, -9,-3, 6,3, 12,9, -48,-24),
+        (0.35,1.,0.,.025, 14,12,2, -10,-8, 8,-3, -7,3, 18,13, -74,28),
+        (0.46,1.,0.,.02, 12,10,2, -8,-7, 6,-2, -5,2, 14,11, -68,25),
+        (0.60,1.,0.,.005, 5,3,1, -3,-2, 2,-1, -2,1, 5,4, -28,10),
+        (0.75,1.,0.,0., 0,0,0, 0,0, 0,0, 0,0, 0,0, 0,0),
+    ],
+    "grounded": (0.,.12,.35,.46,.60,.75),
+}
+
+
 # ⚠️⚠️ THE SILHOUETTE BOUND, 2026-09-24 (SKILL-FX-1). Nine casts were measured on their pose sheets
 # (`docs/reports/skill-performances-2026-09-24/sheets/`) folding these big-headed rigs until the face
 # pointed at the road (Titan Fissure: torso 56 plus head 34, 90 degrees; Supernova 100) or at the sky

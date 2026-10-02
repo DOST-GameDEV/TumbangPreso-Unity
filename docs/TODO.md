@@ -17,6 +17,17 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### SEAN-CINDER-GATE-1002: finite grounded-crossing defender skill
+
+Cinder Gate replaces the defending placeholder. Three-metre line,0.35s warning,
+three armed seconds, first grounded crossing consumes/pushes toward approach;
+jumps/shoes pass.35s cooldown; no damage/stun/score. Core7, nine distinct native
+cases across focused runs and three actual matching Linux peers qualify the unit.
+Protocol130, recording12. Authored Sean body/FPP and18s review included; no SFX
+or human approval. Build/memory/disk/fixture failures remain in the
+[evidence](reports/sean-cinder-gate-2026-10-02/README.md). Broader Pyro work remains.
+
+
 ### SEAN-EMPOWERED-PRESENTATION-1002: clearer held-shoe preparation
 
 Authored body opens the carrying arm, gathers/releases with the free hand and
