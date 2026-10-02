@@ -884,7 +884,8 @@ namespace TumbangPreso.UI
 
                 bool connected = await _net.StartClientAsync(typed, cancellationToken: cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
-                if (connected) return true;
+                if (connected && await _net.WaitForConnectionAsync(cancellationToken)) return true;
+                cancellationToken.ThrowIfCancellationRequested();
 
                 Report(Reason($"Could not reach {typed}."));
                 return false;
@@ -923,7 +924,8 @@ namespace TumbangPreso.UI
 
                 bool connected = await _net.StartClientAsync(match.Address, match.Port, cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
-                if (connected) return true;
+                if (connected && await _net.WaitForConnectionAsync(cancellationToken)) return true;
+                cancellationToken.ThrowIfCancellationRequested();
 
                 Report(Reason($"Could not reach {match.HostName} at {match.Address}:{match.Port}."));
                 return false;
@@ -933,7 +935,8 @@ namespace TumbangPreso.UI
 
             bool relayConnected = await _net.StartRelayClient(match.RelayCode, cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
-            if (relayConnected) return true;
+            if (relayConnected && await _net.WaitForConnectionAsync(cancellationToken)) return true;
+            cancellationToken.ThrowIfCancellationRequested();
 
             // ⚠️ `docs/TODO.md` § 65.4 IS OPEN AND THIS IS WHERE IT SURFACES: the online browser
             // can offer a lobby whose Relay allocation is already gone. Moving the browser onto

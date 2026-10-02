@@ -57,6 +57,72 @@ namespace TumbangPreso.PlayTests
 
         [UnitySetUp] public IEnumerator Before() => PlayModeWorld.Reset();
         [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
+        private static string UnusedLocalAddress()
+        {
+            using var socket = new System.Net.Sockets.UdpClient(0);
+            int port = ((System.Net.IPEndPoint)socket.Client.LocalEndPoint).Port;
+            return "127.0.0.1:" + port;
+        }
+
+        [UnityTest, Timeout(45000)]
+        public IEnumerator NativeUnreachableJoinKeepsPanelOpenAndReportsFailure()
+        {
+            var owner = new GameObject("UnreachableJoinOwner");
+            var net = NetSession.Ensure();
+            try
+            {
+                net.Stop();
+                var panel = LobbyJoinPanel.Build(owner.transform, net);
+                int joined = 0; string status = "";
+                panel.Joined += () => joined++;
+                panel.Status += value => status = value;
+                panel.Open();
+                var request = panel.AutomationJoin(UnusedLocalAddress());
+                if (!request.IsCompleted)
+                    LogAssert.Expect(LogType.Error, "Failed to connect to server.");
+                float deadline = Time.realtimeSinceStartup + 35f;
+                while (!request.IsCompleted && Time.realtimeSinceStartup < deadline) yield return null;
+                Assert.IsTrue(request.IsCompleted, "Unavailable room did not finish within its transport timeout.");
+                Assert.IsFalse(request.Result, "Starting an unanswered transport was reported as a joined room.");
+                Assert.AreEqual(0, joined);
+                Assert.IsTrue(panel.IsOpen, "Failed admission closed the retry controls.");
+                Assert.IsFalse(net.IsNetworked, "Failed admission retained its listening transport.");
+                Assert.That(status, Does.Contain("timed out").Or.Contain("reach").Or.Contain("failed"));
+            }
+            finally { net.Stop(); Object.DestroyImmediate(owner); }
+        }
+
+        [UnityTest, Timeout(15000)]
+        public IEnumerator NativeJoinCompletesOnlyAfterConnectionAndSeatAdmission()
+        {
+            var owner = new GameObject("AdmittedJoinOwner");
+            var net = NetSession.Ensure();
+            try
+            {
+                net.Stop();
+                var panel = LobbyJoinPanel.Build(owner.transform, net);
+                int joined = 0; panel.Joined += () => joined++;
+                panel.Open();
+                var request = panel.AutomationJoin(UnusedLocalAddress());
+                float deadline = Time.realtimeSinceStartup + 5f;
+                while (!net.IsNetworked && !request.IsCompleted && Time.realtimeSinceStartup < deadline) yield return null;
+                Assert.IsTrue(net.IsNetworked, "The actual local client transport did not start.");
+                Assert.IsFalse(request.IsCompleted, "Transport startup prematurely completed room admission.");
+                Assert.IsTrue(panel.IsOpen); Assert.AreEqual(0, joined);
+                // Supply the independent connection and seating notifications after real transport startup.
+                typeof(NetSession).GetField("_everConnected", BindingFlags.Instance | BindingFlags.NonPublic)
+                    .SetValue(net, true);
+                yield return null;
+                Assert.IsFalse(request.IsCompleted, "Connection without seating completed the join.");
+                net.ApplyAssignedSeat(1);
+                deadline = Time.realtimeSinceStartup + 2f;
+                while (!request.IsCompleted && Time.realtimeSinceStartup < deadline) yield return null;
+                Assert.IsTrue(request.IsCompleted); Assert.IsTrue(request.Result);
+                Assert.AreEqual(1, joined); Assert.IsFalse(panel.IsOpen); Assert.AreEqual(1, net.LocalSlot);
+            }
+            finally { net.Stop(); Object.DestroyImmediate(owner); }
+        }
+
         [UnityTest]
         public IEnumerator NativeJoinShowsSourceListsErrorsAndAnActualBackPath()
         {

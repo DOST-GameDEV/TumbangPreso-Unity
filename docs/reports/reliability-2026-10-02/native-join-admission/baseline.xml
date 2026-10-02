@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 02:26:14Z" end-time="2026-10-02 02:26:15Z" duration="1.0603064">
+  <test-suite type="TestSuite" id="2511" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1236" result="Failed" site="Child" start-time="2026-10-02 02:26:14Z" end-time="2026-10-02 02:26:15Z" duration="1.060306" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2505" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1236" result="Failed" site="Child" start-time="2026-10-02 02:26:14Z" end-time="2026-10-02 02:26:15Z" duration="1.030763" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="21308" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2506" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1236" result="Failed" site="Child" start-time="2026-10-02 02:26:14Z" end-time="2026-10-02 02:26:15Z" duration="1.009791" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2507" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1236" result="Failed" site="Child" start-time="2026-10-02 02:26:14Z" end-time="2026-10-02 02:26:15Z" duration="0.989357" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2347" name="TumpNativeJoinTests" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-02 02:26:14Z" end-time="2026-10-02 02:26:15Z" duration="0.916498" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2349" name="NativeJoinCompletesOnlyAfterConnectionAndSeatAdmission" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.NativeJoinCompletesOnlyAfterConnectionAndSeatAdmission" methodname="NativeJoinCompletesOnlyAfterConnectionAndSeatAdmission" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="851095742" result="Failed" start-time="2026-10-02 02:26:14Z" end-time="2026-10-02 02:26:15Z" duration="0.840166" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="15000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Transport startup prematurely completed room admission.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpNativeJoinTests+<NativeJoinCompletesOnlyAfterConnectionAndSeatAdmission>d__7.MoveNext () [0x0013a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\TumpNativeJoinTests.cs:108
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] offline
+[Net] connecting to 127.0.0.1:57372
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="2348" name="NativeUnreachableJoinKeepsPanelOpenAndReportsFailure" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.NativeUnreachableJoinKeepsPanelOpenAndReportsFailure" methodname="NativeUnreachableJoinKeepsPanelOpenAndReportsFailure" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="566918064" result="Failed" start-time="2026-10-02 02:26:15Z" end-time="2026-10-02 02:26:15Z" duration="0.058373" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="45000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Starting an unanswered transport was reported as a joined room.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TumpNativeJoinTests+<NativeUnreachableJoinKeepsPanelOpenAndReportsFailure>d__6.MoveNext () [0x0014d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\TumpNativeJoinTests.cs:84
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] offline
+[Net] connecting to 127.0.0.1:54318
+[Net] offline
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
