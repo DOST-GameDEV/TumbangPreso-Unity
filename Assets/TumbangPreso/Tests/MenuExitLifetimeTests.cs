@@ -27,6 +27,7 @@ namespace TumbangPreso.Tests
         private HubEntry _entry;
         private object _lobbyMode;
         private readonly Dictionary<FieldInfo, object> _launch = new Dictionary<FieldInfo, object>();
+        private readonly Dictionary<PropertyInfo, object> _abandon = new Dictionary<PropertyInfo, object>();
         private static void Property(System.Type type, string name, object value) => type.GetProperty(name).SetValue(null, value);
         private static void Value(object target, string name, object value) => target.GetType().GetProperty(name).SetValue(target, value);
         private static void Clock(string name) => typeof(PresentationClock).GetMethod(name, BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, null);
@@ -47,6 +48,9 @@ namespace TumbangPreso.Tests
             _launch.Clear();
             foreach (var field in typeof(GameLaunch).GetFields(BindingFlags.Static | BindingFlags.Public))
                 if (!field.IsInitOnly && !field.IsLiteral) _launch[field] = field.GetValue(null);
+            _abandon.Clear();
+            foreach (var property in typeof(MatchAbandon).GetProperties(BindingFlags.Static | BindingFlags.Public))
+                if (property.GetSetMethod(true) != null) _abandon[property] = property.GetValue(null);
             _root = new GameObject("Dormant menu lifetime"); _root.SetActive(false);
             _match = _root.AddComponent<MatchDirector>(); _round = _root.AddComponent<RoundDirector>();
             _break = _root.AddComponent<HalftimePresentation>();
@@ -66,6 +70,7 @@ namespace TumbangPreso.Tests
             typeof(SceneFlow).GetField("_pendingScene", StaticHidden).SetValue(null, _pendingScene);
             typeof(SceneFlow).GetField("_pendingFrame", StaticHidden).SetValue(null, _pendingFrame);
             foreach (var saved in _launch) saved.Key.SetValue(null, saved.Value);
+            foreach (var saved in _abandon) saved.Key.SetValue(null, saved.Value);
             SceneFlow.Networked = _networked; TumpHub.PendingEntry = _entry;
             typeof(PlaySelectionScreen).GetField("RequestedLobbyMode").SetValue(null, _lobbyMode);
             PresentationClock.RequestScale(_scale); Cursor.lockState = _cursor; Cursor.visible = _visible;
@@ -112,6 +117,31 @@ namespace TumbangPreso.Tests
             float remaining = _round.TimeLeft;
             typeof(RoundDirector).GetMethod("FixedUpdate", Hidden).Invoke(_round, null);
             Assert.Less(_round.TimeLeft, remaining); Assert.IsTrue(_round.RoundActive);
+        }
+        private void HostLoss()
+        {
+            Assert.AreNotEqual(SceneFlow.MatchSetup, UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+            MatchAbandon.Note("timeout", false);
+            typeof(SceneFlow).GetField("_pendingScene", StaticHidden).SetValue(null, SceneFlow.MatchSetup);
+            typeof(SceneFlow).GetField("_pendingFrame", StaticHidden).SetValue(null, Time.frameCount);
+            if (!Application.CanStreamedLevelBeLoaded(SceneFlow.MatchSetup))
+                LogAssert.Expect(LogType.Error, "[Flow] scene '" + SceneFlow.MatchSetup + "' is not in the build settings. Add it, or the button that asked for it will do nothing in a build.");
+            var rpc = _root.AddComponent<Net.MatchRpc>();
+            typeof(Net.MatchRpc).GetMethod("HandleClientDisconnected", Hidden).Invoke(rpc, new object[] { "Host lost." });
+        }
+        [Test] public void HostLossRetiresSimulationBeforeReturningToTheLobby()
+        {
+            HostLoss();
+            Assert.IsFalse(_round.RoundActive); Assert.IsFalse(_match.MatchInProgress);
+            Assert.IsTrue(SceneFlow.Networked, "The existing empty online-lobby route must remain available.");
+            Assert.AreEqual(1, MatchAbandon.RoundNumber, "Capture the failed round before retiring its state.");
+        }
+        [Test] public void LobbyAuthorityRestorationCannotReviveTheAbandonedClock()
+        {
+            HostLoss(); MatchAbandon.Clear();
+            float remaining = _round.TimeLeft;
+            typeof(RoundDirector).GetMethod("FixedUpdate", Hidden).Invoke(_round, null);
+            Assert.AreEqual(remaining, _round.TimeLeft); Assert.IsFalse(_round.RoundActive);
         }
     }
 }

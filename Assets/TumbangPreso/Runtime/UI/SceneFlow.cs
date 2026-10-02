@@ -706,11 +706,7 @@ namespace TumbangPreso.UI
 
             Net.NetSession.Instance?.Stop();
 
-            // Directors and the break presenter survive arena unload. Retire their
-            // clocks before HOME can inherit live simulation or a delayed advance.
-            HalftimePresentation.Instance?.End(false);
-            GameServices.Round?.ResetForNewMatch();
-            match?.ResetForNewMatch();
+            RetireMatchSimulation();
 
             // ⚠️⚠️ THE LAUNCH BLOCK IS CLEARED HERE BECAUSE THIS IS THE SINGLE EXIT, AND IT WAS
             // NOT. `docs/TODO.md` § 149.8: the remaining lifecycle risk is not the first launch,
@@ -739,6 +735,15 @@ namespace TumbangPreso.UI
             // (TAP TO START and nothing else), so landing there after a match cost a press that
             // led straight back to HOME. The session is stopped above either way.
             GoHome();
+        }
+
+        internal static void RetireMatchSimulation()
+        {
+            // Also used on unexpected host loss before the empty lobby restores
+            // offline authority. No completed result is manufactured by retirement.
+            HalftimePresentation.Instance?.End(false);
+            GameServices.Round?.ResetForNewMatch();
+            GameServices.Match?.ResetForNewMatch();
         }
 
         public static void Quit()
