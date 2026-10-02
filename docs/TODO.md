@@ -120,13 +120,12 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
-Latest checkpoint:38 root continuity runtime fixes published through5367390ab.
-Earlier two agents retired after cleanup/handoffs. Latest owner authorized exactly
-one NEW Sol6.1HIGH helper; root still implements, no other agents. Actual RecordChoice Career refresh3/3 and account scorecard ownership3/3
-qualified; Window1002f built at946006940/protocol131, newer source is not in that
-frozen artifact. Astra cold-ended actor freeze and Sol scorecard-close focus are
-current disjoint units. At around15:30 begin agent wrap, finish coherent units then
-root continues solo; no replacement agents or repeated unchanged tests.
+Latest checkpoint:39 root continuity fixes published through1dafe63c4. Earlier
+agents retired; latest owner authorized EXACTLY ONE new Sol6.1HIGH helper plus
+root implementation. Windows1002g/source248836d1e contains37fixes, twelve scenes
+built and fresh actual peer cold4actor state PASS; later LAN fixes not in it.
+Sole Sol training candidate3 running17680 after1causal/2control original; no other
+heavy job. Preserve contributor/private work and raw acceptance limits.
 
 - [x] SCORECARD-OWNER-CLOSE-1002: hide old account detail on ownership change;
   shipped84ddfc391, PlayMode3/3. [Evidence](reports/reliability-2026-10-02/playerhub-owner-detail/acceptance.md).
@@ -148,8 +147,9 @@ root continues solo; no replacement agents or repeated unchanged tests.
 - [x] COLD-ACTOR-PEER-1002: fresh1002g build/source248836d1e, first actualWindows
   peer48099 PASS all4 actor inactive/parked/movement0/sprintfalse after cold rejoin.
   [Evidence](reports/reliability-2026-10-02/cold-actor-peer/README.md).
-- [ ] LAN-RECEIVE-OWNER-1002: root original3 reproduced stale callback ownership; candidate3 running10754.
-- [ ] TRAINING-PAUSE-TRANSITION-1002: new sole Sol HIGH approved unit/fixture MAIN; native waits root slot.
+- [x] LAN-RECEIVE-OWNER-1002: shipped1dafe63c4, native3/3 after1causal/2controls,
+  zero repairs/12525 unrelated protected match. [Evidence](reports/reliability-2026-10-02/lan-receive-owner/README.md).
+- [ ] TRAINING-PAUSE-TRANSITION-1002: sole Sol HIGH candidate3 running17680; original43529 reproduced1causal/2controls, zero repairs/exact3/protected12527.
 - [x] LAN-LISTENER-START-1002: shipped5367390ab, real8911 bind cleanup/retry/
   shutdown native3/3 after1causal/2controls, zero repairs/12523 protected match.
   [Evidence](reports/reliability-2026-10-02/lan-listener-start/README.md).

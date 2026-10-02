@@ -1,86 +1,147 @@
 # Active Rework Checkpoint
 
-Updated2026-10-02. ASTRAReworks/protocol131. Competition engineering goal ACTIVE.
-Read this compact checkpoint and current TODO; skip old259MB chat/archives unless
-needed for one specific fact. TODO is the sole status queue. No stopping after units.
+Updated 2026-10-02. Branch ASTRAReworks. Protocol131. Competition readiness goal ACTIVE.
 
-## Owner scope and current workers
+## Owner objective and boundaries
 
-Make the game COMPETITION READY: engineering, bugs, reliability, performance and
-current UX defects. Root implements and integrates. Latest user explicitly asked
-EXACTLY ONE new GPT6.1 Sol HIGH helper: sol_parallel_engineering is ACTIVE.
-Earlier Astra and Sol retired after15:30-15:33 wrap; old ultra interrupted. Never
-resume those or spawn another helper without new authorization. FAST toggle absent,
-not claimed configured. No cross-chat actions, reset/clean/stash/forcepush, paid
-services, Drive dev uploads or Desktop build replacement. Preserve profiles/private
-work. DOTS owns Docs feedback; friend broad loading; specific remade-map preview/
-shader availability BUG fixes allowed. No visual/animation/map/model/VFX/SFX redesign;
-preserve finalized Paete/Phaister and active Sean/Rafi/Baha reservations.
+Make the game COMPETITION READY through real engineering and bug fixes: crashes,
+stalls, desync, lost results, bot failures, performance and UX. Keep working through
+checks, commits and pushes. Do not end a turn merely because one unit passed.
+A passing narrow test does not establish whole competition readiness.
+Latest owner authorization AFTER completed15:30 wrap: root + EXACTLY ONE new
+GPT6.1 Sol HIGH current-chat agent sol_parallel_engineering. Root implements too.
+Earlier Astra completed/retired15:30 and Sol interrupted15:33; old ultra interrupted.
+Never resume those retired agents. Latest user request explicitly authorizes the
+new single helper; no additional agents. FAST toggle absent, not claimed.
+No cross-chat actions/reset/clean/force push/paid
+services/Desktop player replacement. FAST setting is not exposed by spawn API;
+never claim it was configured. Preserve profiles/unrelated work.
 
-## Published code and acceptance
+Latest prior-chat scope: DOTS owns the Docs feedback/TODO work. Friend owns broad
+loading; specific remade-map preview and shader/effect availability BUG fixes are
+authorized here. No visual redesign, animation, map, models, VFX or SFX work except
+demonstrated bugs. Preserve finalized Paete/Phaister kits. Latest owner asks to
+finish and push relevant unpublished work too, after ownership/diff review.
+Read AGENTS, TODO current queue and relevant method; skip giant archived history
+unless needed for a specific unresolved fact. TODO is the only work-status queue.
 
-Verified remote1dafe63c4:39 root continuity runtime fixes published. Latest units:
-32chat guards3e91f02b0/native10;33scorecard owner84ddfc391/native3;34RecordChoice
-57158d1db/native3;35cold actor12a2689ff/native3;36scorecard focus7c3124886/native3;
-37Settings focusdd4712ca0/native3;38LAN startup5367390ab/native3;39LAN receive owner
-1dafe63c4/native3. Causal originals/raw failures retained. Settings hadONE metadata
-GUID-only repair after initial0 tests; cold actor ONE NUnit compatibility repair;
-RecordChoice ONE Start-frame fixture correction; scorecard owner ONE canvas lookup
-correction; latest LAN units ZERO repairs. Native counts do not equal full readiness.
-Diagnostics890656094 separate; currentPause actual button/HOME acceptance d9ddccaec
-native2 FIRST run, minimal arena-classified world/clock/cursor/>5s break cancellation,
-not populated-map/transport. Core698/698 was ONE prior integration pass; don't repeat
-unchanged suites. Incoming replay refusal6dc1f065b native3 separate contributor proof.
+## Current source and publication
 
-ROOT LAN receive original55558=1causal/2controls; final10754 PASS3, exact3 main/q
-hashes and all12525 unrelated protected match; original12526 included now-owned
-LanBeacon. Guard terminal/restored/no lease. Real owned loopback UDP and controlled
-replacement pre-arm boundary; socket owner AsyncState/volatile current ref/rearm
-fences/queued-owner filtering. Source queue guard is not separately mid-decode
-stress-tested. All ROOT native jobs TERMINAL, no heavy root job to resume.
-Report lan-receive-owner and startup report committed. No per-fix standalone rebuild.
+Verified remote5367390ab; refreshed artifact/peer evidence via d6cbe7502.
+Root continuity runtime fixes38 published:
+previous32 plus scorecard owner close84ddfc391 (native3/3,
+one canvas-lookup fixture correction) and RecordChoice focus57158d1db (native3/3,
+one normal-Start fixture correction), plus cold actor freeze12a2689ff (native3/3,
+one NUnit compatibility fixture repair), plus scorecard close focus7c3124886
+(native3/3, zero repairs), plus root Settings focusdd4712ca0 (native3/3 after
+1 causal/2controls; ONE metadata-only repair from initial0 ignored run).
+LAN startup5367390ab native3/3 after1causal/2controls, zero repairs.
+RecordChoice exact three source/test/meta
+inputs and all1294 protected hashes retained. Diagnostic890656094 is separate.
+Incoming6dc1f065b malformed replay refusal merged without overlapping product hunks;
+contributor native3/3 evidence is separate. Sean SteadyEmber/protocol131 and Rafi
+Backwash integration preserved. Core698/698 was one prior integration pass.
+Do not repeat unchanged tests or claim full readiness.
 
-## Active agent job and next root action
+ROOT opt-in NetCompletedArrivalProbe + tools/run_completed_arrival.py candidate now
+adds explicit all4 actor RoundActive/Parked/Sprint/MoveAxis receipt assertions. It
+is not compiled/run/published yet. Next coherent Windows candidate1002g AFTER new
+qualified units are committed should include this observer, then ONE existing
+short1-round30-second real two-peer scenario qualifies cold actor parking. Old
+1002e49462 receipts remain valid under their original narrow contract; do not
+reinterpret them as this stronger proof. No unchanged full8round rerun.
 
-Sole Sol HIGH owns ONLY GuidedTraining.cs completion coroutine pause/loading gate
-and NEW PlayMode/TrainingPauseTransitionTests.cs/.meta/report. Actual .70s realtime
-beat advanced Ready->Look behind real paused menu, bypassing Update gate.
-Original43529 TERMINAL3:2controls/1causal expectedReady/butLook; zero repairs.
-Candidate17680 RUNNING, GPU2048/reserve2048/450s, qualification
-Logs/training-pause-transition1002/final/profile same/filter TrainingPauseTransitionTests.
-Prep terminal0/exact3/all12527 protected incl freshly qualified LAN unchanged.
-Agent owns handle; DON'T poll with root write_stdin or mutate qualification.
-Candidate +3lines waits Panel.AnyOpen/loading AFTER unchanged .70 beat; identical
-fixture/meta GUID9e7100edb4b8463a9d01d4587503c233. Real SkipFromUi/currentPausePanel,
-minimal actor/Lata, ordinary advancement/repeatedskip controls. <=ONE repair; no
-map setup or input framework. Agent provides exact3 hashes/raw report and slot
-release; ROOT reviews/commits/fetches/incomingdiff/merges/pushes. Agent no shared
-ledger/TODO edits/commits/push. No other heavy native job until terminal/post release.
+## Active jobs and next action
 
-NEXT ROOT while agent tests: choose concrete disjoint engineering issue/source
-caller evidence; implement MAIN only. No broad audits, validation loops or extra
-workers. After agent3 qualified, update runtime count40 only when shipped. Current
-g artifact predates two LAN units/agent, don't overstate standalone coverage. One
-coherent future build after meaningful batch, not per-fix. Current full tournament,
-current maps/failure recovery/visual availability and original270ms host frame remain
-bounded readiness work. Prior Classic/Hero natural8-round ends retained; don't
-rerun unchanged8rounds or call frame270 fixed (not reproduced/causally attributed).
+ROOT previous native jobs terminal. Windows1002f build88731 SUCCEEDED12scenes,
+2432MB90s, guard restored. Source freeze18861 inputs. Original strict receipt FALSE
+kept: exactly two builder-generated identity JSON changes;18859 other inputs match.
+Separate artifact-receipt PASSED including packaged identity/protocol131/Windows
+and unchanged runtime hash. Classification had ONE UTF8 local-script correction,
+original retained; no build retry. Artifact report publication pending.
 
-## Preservation and recovery
+Both agents RETIRED. Sol RecordChoice57158d1db and scorecard close7c3124886
+published; cold actor freeze12a2689ff published. Exact reports/native raw counts
+retained. Astra jobs terminal/2656 protected unchanged; Sol jobs terminal/1295
+protected unchanged, PIDs23184/25400/26592 dead, no lease/tabs/servers. Sol local
+handoff MAIN Logs/scorecard-focus1002/local-handoff.md (8D3B6417...5032E), cleanup-wrap.json.
+No remaining unpublished qualified agent source. Old ultra agent remains interrupted.
 
-MAIN C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks,
-remoteDOST-GameDEV/TumbangPreso-Unity. Qualification Codex/work/tump-feedback-0930
-is dirty detached overlay: exact owned files ONLY, snapshot first, never reset/clean.
-Unity6000.5.8f1. ONE heavy native at a time on16GiB; named guarded profiles, prep
-exit0 before dependent launch, fresh nonzero XML count,450s test ceiling/600s build.
-Root/agent can advance DISJOINT MAIN during native; never frozen release inputs.
+ROOT Settings dd4712ca0 published: initial44421 total0 invalid33-char new GUID,
+ONE metadata-only correction; corrected original12978=2 controls/1causal; final34733
+PASS3/3, all12518 protected unchanged, first/repaired manifests identical, all
+terminal/restored/no lease. Native inputs4 frozen; report settings-decision-focus.
+ROOT current Pause exit d9ddccaec committed locally:63868 PASS2/2 FIRST run,
+all12522 protected unchanged, terminal/restored/no lease. Actual LeaveMatch button
+and actual HOME load; starts arena-classified MINIMAL scene, deterministic Classic
+rules, pointer released, no deferred break advance >5s. No populated-map/transport
+claim. New fixture2/meta/report only; no additional product fix count.
 
-Preserve unstaged4RosterArms nemu/rafi assets, private HeroHazards .50 shell,
-QualitySettings Ultra, protected home-court/loading-street UI metas and oldSupernova
-plan/captures. Private HeroHazards SHA5E7D...577F1E; qualification original1536AF...
-1F14E restored. Supernova helper route RETIRED after compile77152 then corrected52284
-450s setup timeout, no XML/PNG/castproof. Evidence1f4a8c290, no source alpha shipping
-or retry. No unused task browser tabs/servers. Old wrap heartbeat deleted.
+Both agents RETIRED after wrap15:30-15:33. Sol local handoff/cleanup in MAIN
+Logs/scorecard-focus1002; all qualified agent source published. No agent job handles
+remain. No replacements/resumes; old ultra interrupted. One-time heartbeat removed.
+Root continues SOLO, goal active.
+
+ROOT Windows1002g build95607 TERMINAL0/12scenes2432MB122s, guard restored/free.
+Freeze84029/post53093 TERMINAL:18875 inputs,18873 unchanged, exactlytwo generated
+identity JSON changes. Strict false preserved; classify PASSED/source+packaged
+identities/protocol131/Windows match. RuntimeSHA256
+421af2276ca14c6a304890062fefacfe22974ef83bc3d4b397b8c0e32d444755.
+Release HEAD248836d1e1ccf367a76abdb7d45df0474d8ccb11, internal1002g output,
+importer/meta/settings dirt retained. No build repair. Actor observer compiled.
+ROOT NEW actual Windows-peer actor acceptance48099 TERMINAL PASSexit0 FIRST run,
+zero repairs. Current board MAIN MENU->HOME->public ordinary rejoin/new64bit scene,
+fresh end/record events, same match655365ef8b7546a89bcab286ff2af6a3/scores100/0/0/150.
+Actual client slot1 NONspectator; all4RoundActivefalse/Parkedtrue/Sprintfalse/Move0.
+Host stayed ended. Owned players18264/24636 retired, seeds/input restored, runtime
+unchanged, lease released. NEW report cold-actor-peer prepared for publication.
+No full-default8round/physical/WAN/career settlement claim or repeated short run.
+
+ROOT LAN startup5367390ab PUBLISHED. Original77407 2controls/1causal, final16368
+PASS3/3; zero repairs. Prep3555 terminal0 before launch; all12523 protected unchanged,
+exact3 source/fixture/meta frozen. Native guards terminal/restored/no lease, port8911
+released. All root jobs terminal; no active Unity/player process/job to resume.
+Artifact1002g has37 fixes; this later LAN38 source is not in it. No per-fix rebuild.
+Source closure disposes/nulls partial UDP listener on actual bind refusal, preserves
+retry and normal StopAll. Report lan-listener-start. No memory/FPS/WAN claim.
+
+ROOT LAN receive-owner ORIGINAL55558 TERMINAL:1causal/2controls, zero repairs.
+Real retired socket completion armed and consumed replacement's first real packet
+at controlled valid pre-arm boundary. Current receive/rearm and post-stop controls
+passed. Root candidate captures initiating UdpClient in AsyncState, volatile current
+owner reference, guards rearm/error ownership, tags queued entry with socket owner
+and ignores retired entries on main-thread drain. No packet format/timing change.
+Candidate3 NOW RUNNING10754, CPU1536/reserve2048/450s, profile lan-receive-owner1002,
+qualification Logs/lan-receive-owner1002/final. Prep terminal0/exact3/12525 protected.
+Baseline protected12526 INCLUDED LanBeacon; candidate explicitly removes that sole
+owned source from protected set. Fixture/meta unchanged, original source in MAIN
+Logs/lan-receive-owner1002/LanBeacon-original.cs.txt. Await terminal3 XML then protect
+post/exactinputs/guard restoration, report and exact scoped commit/push. No repair
+used; at mostONE permitted. Do not launch next native or mutate qualification until
+this coherent unit terminal/post verified.
+
+NEW sole Sol HIGH agent sol_parallel_engineering APPROVED disjoint GuidedTraining.cs
+AdvanceAfterBeat pause/loading gate: real .70s WaitForSecondsRealtime completion
+currently EnterLesson behind real paused menu despite Update gate. Own NEW
+PlayMode/TrainingPauseTransitionTests.cs/.meta + report. Fixture MAIN authored/meta
+GUID9e7100edb4b8463a9d01d4587503c233, production still ORIGINAL for baseline.
+No qualification/native mutation yet. Root10754 owns slot. After root coherent
+terminal/post release, agent may snapshot exact3/protected prep then original3/
+candidate3 PlayMode2048/D3D11/450s, <=ONE fixture/tool repair. Real SkipFromUi,
+minimal actor/Lata/currentPausePanel; Ready->Look must wait while paused, ordinary
+beat and repeatedskip dedup controls. Preserve .70 behavior/hints/hero; no shipping
+map setup or framework. Root integrates agent qualified paths/report; no shared
+ledger/TODO or commit/push by agent. No further subagents/chats/delegation.
+
+Goal remains active. Current published38 fixes; next root39 and guided unit remain
+unqualified until native acceptance. Original270ms frame unattributed; don't retune
+without evidence. No per-fix standalone rebuild; current1002g remains37fix source.
+
+Supernova native/helper route remains RETIRED: first77152 compile, corrected52284
+450s setup timeout, noXML/PNG/castproof; qualification original1536AF restored,
+MAIN private5E7 unchanged/unstaged. Evidence1f4a8c290, no alpha shipping/retry.
+Private arms/Ultra/protected2UI metas remain excluded. Main root source/diagnostic
+changes are exact scoped work only. TODO remains the sole work-status queue.
 
 ## Current frozen artifact and actual peers
 
