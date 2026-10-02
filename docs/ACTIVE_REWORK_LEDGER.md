@@ -748,3 +748,12 @@ source model data unchanged; exactly one roster reference added. No active job.
 Ship explicit CHESKA-FROSTBITE-MOTION-1002 paths only; preserve generated metadata
 and other owners. Shared folder recovery retained independently, native warm-cache
 control passed. No new player/audio/human acceptance claim.
+
+## Cloud hero continuation: Dante Boulder
+
+Cheska surface dc6f5d71 and distinct motion278c77b2 are both verified remote;
+video delivered and the same Feedback row updated/read back, checkboxes untouched.
+DANTE-BOULDER-MOTION-1002 now claims only its dated plan's exact paths. Existing
+Boulder imbues a held shoe but requests the old ground stomp. Inspect the real
+cast before changing it; preserve all gameplay and earlier authored clips.
+Cloud-only, one small native case per process. No active job at claim time.
