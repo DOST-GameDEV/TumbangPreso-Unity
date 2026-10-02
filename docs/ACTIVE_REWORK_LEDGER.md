@@ -434,3 +434,11 @@ seven profiles restored. Source f163882c plus recorded overlay; no WAN/reconnect
 physical control, audio or Human verified claim. Evidence in reports/sean-steady-ember-2026-10-02.
 Implementation paths are ready for publication; retain reservation until verified
 push and same-row Doc update. Other agents' ownership is unchanged.
+
+DOTS Steady Ember487666f8 published and remote verified42a8ffdb. Same Pyro
+Feedback shipped note and adopted Wiki wording read back correctly. Release its
+implementation/test paths; all jobs terminal and seven player profiles restored.
+Next independent unit RAFI-BACKWASH-1002 owns only the exact paths in
+reports/rafi-backwash-2026-10-02/plan.md. Reuse existing genuine retrieval episode
+and passive channel; measure real movement and host budget before peer claims.
+No implementation started. Preserve every other contributor reservation.
