@@ -17,6 +17,14 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### REPLAY-DECODER-REFUSAL-1002: safely reject malformed recordings
+
+TryDecode now catches its own InvalidDataException and returns false/reason.
+Reproduced native escaped exception retained; exact shipping schema12 decoder
+passes2/2 malformed-header checks. No format/protocol change or unfinished Rafi
+shipment. [Evidence](reports/replay-decoder-refusal-2026-10-02/README.md).
+
+
 ### SEAN-STEADY-EMBER-1002: qualified own-retrieval charge reward
 
 One genuine own-throw/manual-retrieval grants four seconds of1.25x charge rate,

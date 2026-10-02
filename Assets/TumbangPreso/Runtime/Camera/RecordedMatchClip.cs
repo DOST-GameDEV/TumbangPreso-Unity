@@ -187,7 +187,7 @@ namespace TumbangPreso.CameraSystem
                 if(raw.Position!=raw.Length)throw new InvalidDataException("Unexpected trailing clip data");
                 clip=result;return true;
             }
-            catch(Exception failure) when(failure is IOException||failure is ArgumentException||failure is OverflowException)
+            catch(Exception failure) when(failure is InvalidDataException||failure is IOException||failure is ArgumentException||failure is OverflowException)
             {error=failure.Message;return false;}
         }
         private static bool Finite(float n)=>!float.IsNaN(n)&&!float.IsInfinity(n);

@@ -472,3 +472,8 @@ Tests/RecordedClipRejectionTests.cs/.meta and the isolated catch-filter hunk for
 an independent safe-refusal regression and shipment. Baha schema13 and kind18,
 Backwash132 and the unfinished field remain unpublished and must not be staged
 with this standalone decoder fix. No other contributor path is affected.
+
+DOTS decoder refusal ready: exact schema12 plus catch-filter-only fix passes
+2/2 native header tests,45s exit0/guardnull, profiles restored. Original escaped
+InvalidDataException retained. Stage only that catch hunk, independent test/meta
+and report. Keep Baha schema13/kind18, Rafi132 and all unfinished code unstaged.
