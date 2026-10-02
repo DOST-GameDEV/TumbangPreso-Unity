@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using NUnit.Framework;
 using TumbangPreso.Core;
 using UnityEngine;
@@ -376,114 +377,32 @@ namespace TumbangPreso.PlayTests
         /// every step would measure the cap rather than the mash.
         /// </summary>
         [UnityTest]
-        public IEnumerator MashingShortensAFallByWhatBalanceSays()
+        public IEnumerator JumpPressesCannotShortenTheAuthoredFallTimer()
         {
             yield return LoadArena();
-
-            CharacterMotor faller = null;
-
-            foreach (var m in Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None))
+            var faller=Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).First(m=>m.IsPerson);
+            Silence(faller);for(int i=0;i<10;i++)yield return new WaitForFixedUpdate();
+            const float duration=2.5f;
+            float[] elapsed=new float[2];
+            for(int run=0;run<2;run++)
             {
-                if (!m.IsPerson) continue;
-                faller = m;
-                break;
+                faller.ClearTrip();faller.ApplyTrip(duration);Assert.IsTrue(faller.IsTripped);
+                float began=Time.time;
+                while(faller.IsTripped&&Time.time-began<duration+1)
+                {
+                    if(run==1)
+                    {
+                        faller.Intent.Set(Verb.Jump,true);faller.Intent.BufferPress(Verb.Jump);
+                        Assert.IsFalse(faller.MashRecover());
+                    }
+                    yield return new WaitForFixedUpdate();faller.Intent.Set(Verb.Jump,false);
+                }
+                elapsed[run]=Time.time-began;
+                Assert.IsFalse(faller.IsTripped);Assert.That(elapsed[run],Is.InRange(duration-.08f,duration+.25f));
+                Assert.AreEqual(0,faller.MashPresses);Assert.AreEqual(0,faller.MashRemoved);
+                yield return new WaitForSeconds(Balance.TripGraceAfterGetUp+.05f);
             }
-
-            Assert.IsNotNull(faller, "no Person in the arena to trip");
-            Silence(faller);
-
-            for (int i = 0; i < 10; i++) yield return new WaitForFixedUpdate();
-
-            const float Trip = 2.5f;
-
-            // ---- part one: does a press reach the motor at all? ----
-            //
-            // ⚠️⚠️ ASSERTED SEPARATELY FROM WHAT IT IS WORTH, BECAUSE THE TWO FAIL FOR
-            // COMPLETELY DIFFERENT REASONS. A dead Jump edge and a mis-tuned constant both come
-            // back as "the fall was too long"; only one of them is a bug. The first version of
-            // this test measured them together, went red, and could not say which.
-            faller.ClearTrip();
-            faller.ApplyTrip(Trip);
-
-            faller.Intent.Set(Verb.Jump, true);
-            yield return new WaitForFixedUpdate();
-            faller.Intent.Set(Verb.Jump, false);
-            yield return new WaitForFixedUpdate();
-
-            Assert.AreEqual(1, faller.MashPresses,
-                "a held Jump did not reach CharacterMotor.MashRecover through the physics step. " +
-                "The read is in FixedUpdate BEFORE Intent.CommitFrame; if the snapshot moves " +
-                "ahead of it, JustPressed is false for every verb the physics step resolves. " +
-                "See PlayerInputReader.Update.");
-
-            Assert.Greater(faller.MashRemoved, 0.0f,
-                "the press was counted but bought nothing, so Combat.MashRecover accepted it " +
-                "and then clamped it away. Check MinTripDown against the trip length.");
-
-            // ---- part two: what is answering a fall actually worth? ----
-            //
-            // ⚠️ THE RATE CAP IS LEFT TO DO ITS JOB. `Combat.MashRecover` refuses anything inside
-            // `Balance.MashCooldown` and changes nothing, so pressing on every physics step
-            // measures the cap rather than beating it, and it takes the input timing out of a
-            // question that is about the two balance constants.
-            faller.ClearTrip();
-            faller.ApplyTrip(Trip);
-
-            float ignored = 0.0f;
-            while (faller.IsTripped && ignored < 12.0f)
-            {
-                yield return new WaitForFixedUpdate();
-                ignored += Time.fixedDeltaTime;
-            }
-
-            Assert.False(faller.IsTripped, $"an unanswered {Trip:0.00} s fall never ended: it was " +
-                                           $"still running after {ignored:0.00} s");
-
-            // ⚠️⚠️ AND IT LASTED THE GUARD, NOT A DECAY. Nothing bleeds a fall away any more, so
-            // an unanswered one has to sit at its starting length until
-            // `Balance.TripAutoRecoverSeconds` releases it. A shorter reading here means some
-            // clock has been reintroduced above `MinTripDown`, which is the defect this whole
-            // rework removes.
-            Assert.Greater(ignored, Balance.TripAutoRecoverSeconds * 0.9f,
-                $"an unanswered fall ended after {ignored:0.00} s, well inside the " +
-                $"{Balance.TripAutoRecoverSeconds:0.00} s guard: something is still running the " +
-                "trip down on its own.");
-
-            // ⚠️⚠️ THE BAR IS THE GATE, SO IT MUST READ FULL AT THE MOMENT OF STANDING, INCLUDING
-            // ON THE PATH NOBODY PRESSED. 🧑: *"sometimes i get up with it still at middle or
-            // when i only clicked once"*. `Hud.UpdateGetUpPrompt` draws `MashRemoved` over the
-            // mashable slack, so this is that frame measured rather than looked at.
-            float slack = Trip - Balance.MinTripDown;
-            Assert.GreaterOrEqual(faller.MashRemoved, slack - 0.01f,
-                $"the fall ended with the get-up meter at {faller.MashRemoved / slack:P0}, which is " +
-                "the exact frame the report was about.");
-
-            faller.ClearTrip();
-            faller.ApplyTrip(Trip);
-
-            float mashed = 0.0f;
-            while (faller.IsTripped && mashed < 12.0f)
-            {
-                faller.MashRecover();
-                yield return new WaitForFixedUpdate();
-                mashed += Time.fixedDeltaTime;
-            }
-
-            Assert.False(faller.IsTripped,
-                $"a mashed fall never ended: still down after {mashed:0.00} s with " +
-                $"{faller.MashPresses} accepted presses");
-
-            Assert.GreaterOrEqual(faller.MashRemoved, slack - 0.01f,
-                $"a mashed fall ended with the meter at {faller.MashRemoved / slack:P0}.");
-
-            // ⚠️ THE BOUND IS A RATIO, NOT A TIME. `TripAutoRecoverSeconds` and
-            // `MashRecoverPerPress` are both open balance numbers; what must never regress is
-            // that pressing is worth substantially more than waiting. The arithmetic on those
-            // two constants says 4.0x today, and 1.6x is a floor a real defect falls through
-            // while a tuning pass does not.
-            Assert.Greater(ignored / mashed, 1.6f,
-                $"mashing bought almost nothing: an ignored fall ran {ignored:0.00} s and a " +
-                $"mashed one {mashed:0.00} s over {faller.MashPresses} accepted presses.");
+            Assert.AreEqual(elapsed[0],elapsed[1],.12f,"Repeated input must not shorten timed recovery.");
         }
 
         private static void Silence(CharacterMotor motor)

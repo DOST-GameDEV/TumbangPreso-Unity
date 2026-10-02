@@ -1,5 +1,15 @@
 # Skill Networking Contract
 
+## Timed status recovery, protocol134
+
+Recovery presses are retired. Frozen/stuns expire on authored timers, trips
+count down TripTotal, and edge catch/hang/pull-over phases advance autonomously.
+Host authority and existing snapshot ordering remain. Legacy mash fields stay in
+the wire layout but restore as zero; buffered presses are discarded and recovery
+requests are refused. Recording format13 is unchanged. Matching rebuilt clients
+are required; focused native tests do not establish actual-peer qualification.
+[Evidence](reports/timed-recovery-2026-10-02/README.md).
+
 Presentation is replaceable. Stable ability IDs and shared gameplay state are the
 network boundary, not model files,effect class names,clips,palettes or cue names.
 Only Paete currently has substantial VFX; other presentation remains provisional.

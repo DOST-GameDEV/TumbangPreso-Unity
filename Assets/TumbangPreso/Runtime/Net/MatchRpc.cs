@@ -3946,7 +3946,7 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int sequence);
             if (!SenderOwnsClaimedSeat(senderClientId, claimedSlot, out var unit)) return;
 
-            unit.AcceptRecoveryRequest(episode,sequence);
+            if (!unit.AcceptRecoveryRequest(episode,sequence)) return;
 
             SyncUnitTransformClientRpc(claimedSlot, unit.transform.position,
                                        unit.transform.eulerAngles.y, unit.Velocity);

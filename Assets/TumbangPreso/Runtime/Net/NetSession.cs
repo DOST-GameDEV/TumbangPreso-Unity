@@ -557,7 +557,8 @@ namespace TumbangPreso.Net
         //123: authoritative objective cooldown grants reach predicted owners.
         //124: match-long Overclock uses an explicit bounded permanent-state bit.
         //133: ordinary Next Round uses the shared3.5second deadline; halftime stays10.
-        public const int ProtocolVersion = 133;
+        //134: trip, elemental stun and edge recovery no longer accept mash input.
+        public const int ProtocolVersion = 134;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

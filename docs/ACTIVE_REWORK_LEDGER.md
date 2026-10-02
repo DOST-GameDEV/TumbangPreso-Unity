@@ -896,3 +896,11 @@ Audit found trip and edge hang currently depend on press progress, so merely
 hiding prompts would strand players. Plan fixed authored trip expiry and timed
 edge phases, inactive legacy entry points, unchanged ordinary jump/root hold.
 No production changes or active native job yet; start small causal baselines.
+
+Timed recovery candidate complete: fifteen isolated native cases pass, unchanged
+runtime hashes, guard null. Separate imports avoid concurrent compilation/map
+memory. Missing test using and wrong HUD Image property were corrected with
+retained failures and exact-value reruns. Protocol134, recording13 unchanged.
+No live job. Commit/publish exact owned recovery paths and evidence, update live
+Feedback Notes; then implement the same row's separate BH Studios startup flow.
+Unowned UI metadata, inday FPP assets and crash blob remain untouched.

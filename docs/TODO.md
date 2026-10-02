@@ -17,6 +17,16 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### TIMED-RECOVERY-1002: retire mash-to-escape
+
+- [x] Frozen/stuns, trips and edge recovery use their authored clocks. Humans
+  and bots cannot shorten them with presses. Live HUD has state/timed progress;
+  ordinary jump and hold-Interact roots remain. Fifteen focused native cases pass
+  separately. Protocol134; actual peers/player/human remain separate.
+  [Evidence](reports/timed-recovery-2026-10-02/README.md).
+- [ ] Continue the same Feedback row's BH Studios intro before loading, removal
+  of skip text and any-input white fade while preserving readiness barriers.
+
 ### ROUND-TIMER-35-1002: latest ordinary break duration
 
 - [x] Next Round is3.5seconds per latest Feedback; halftime remains10s and keeps
