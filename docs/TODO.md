@@ -169,7 +169,8 @@ next concrete source issue. Root continues disjoint fixes; no heavy job. Preserv
 - [x] TRAINING-EMOTE-ELIGIBILITY-1002: committed212cae991, nativeeligibility3/3
   after1causal/2controls, ONE preflight classification repair/zero fixture repairs.
   [Evidence](reports/reliability-2026-10-02/training-emote-eligibility/README.md).
-- [ ] FAILURE-BUNDLE-UNIQUE-PATH-1002: root GUID filename suffix, source-reviewed; separate diagnostic/no Unity compile yet.
+- [ ] SAFE-STORE-RECOVERY-CHAIN-1002: sole Sol approved4 owned-temp native cases; rootengine slot free, sends pendinghandles.
+- [x] FAILURE-BUNDLE-UNIQUE-PATH-1002: committed40f8f2474, GUID filename suffix; now compiled in1002h, no shared-userpath write test.
 - [x] LAN-LISTENER-START-1002: shipped5367390ab, real8911 bind cleanup/retry/
   shutdown native3/3 after1causal/2controls, zero repairs/12523 protected match.
   [Evidence](reports/reliability-2026-10-02/lan-listener-start/README.md).
