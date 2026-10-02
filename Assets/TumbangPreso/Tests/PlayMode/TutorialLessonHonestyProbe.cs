@@ -106,6 +106,42 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
+        public IEnumerator HiddenPracticeCanDoesNotShowBarrierWarning()
+        {
+            int quality=QualitySettings.GetQualityLevel(),mip=QualitySettings.globalTextureMipmapLimit;
+            try
+            {
+                QualitySettings.SetQualityLevel(0,true);QualitySettings.globalTextureMipmapLimit=2;
+                yield return LoadTraining();
+                var route=Object.FindFirstObjectByType<GuidedTraining>();
+                yield return Route(route,GuidedTraining.Lesson.Throw);
+                var who=Field<CharacterMotor>(route,"_local");var can=Field<Lata>(route,"_lata");
+                var carrier=who.GetComponent<Carrier>();carrier.enabled=false;who.enabled=false;who.Intent.Parked=false;
+                var view=Object.FindFirstObjectByType<TumbangPreso.UI.TumpMatchReadout>();Assert.IsNotNull(view);
+                who.Teleport(new Vector3(0,.1f,-8));who.Intent.Set(Verb.SpecialAbility,true);
+                can.gameObject.SetActive(true);can.HostRestore();can.gameObject.SetActive(false);
+                // Restoration also starts the shared round cooldown. Let that real clock
+                // elapse while the hidden can's own protection remains frozen.
+                yield return new WaitForSeconds(1.4f);
+                can.gameObject.SetActive(true);Assert.IsTrue(can.IsProtected);
+                view.Tick(who,false,false,false,false);
+                Assert.AreEqual("CANNOT THROW - WAIT FOR CAN BARRIER",view.WarningText,"Visible protection still needs its real warning.");
+                can.gameObject.SetActive(false);Assert.IsTrue(GameServices.Round.CanThrow(who));
+                view.Tick(who,false,false,false,false);
+                Assert.AreEqual("",view.WarningText,"The active offline hidden practice can cannot refuse an allowed throw, even with a cached warning.");
+                yield return TumpUiCapture.Capture("Tutorial-hidden-can-no-barrier-warning",view.Canvas,960,540,false,true);
+                var step=typeof(Carrier).GetMethod("StepAttacker",BindingFlags.Instance|BindingFlags.NonPublic);
+                step.Invoke(carrier,new object[]{0f});step.Invoke(carrier,new object[]{Balance.ChargeFullTime});
+                Assert.IsTrue(carrier.IsCharging);
+                who.Intent.Set(Verb.SpecialAbility,false);step.Invoke(carrier,new object[]{.02f});
+                Assert.IsFalse(who.HoldingSlipper,"The valid tutorial charge/release still launches its real shoe.");
+                who.Intent.Clear();who.Intent.Set(Verb.Sprint,true);who.Stamina.ApplyNetworkSnapshot(0,0,2.5f);
+                view.Tick(who,false,false,false,false);Assert.That(view.WarningText,Does.StartWith("CANNOT RUN"));
+            }
+            finally {QualitySettings.SetQualityLevel(quality,true);QualitySettings.globalTextureMipmapLimit=mip;}
+        }
+
+        [UnityTest, Timeout(90000)]
         public IEnumerator HiddenCanDoesNotBlockTheTutorialThrowInput()
         {
             yield return LoadTraining();

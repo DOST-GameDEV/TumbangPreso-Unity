@@ -17,6 +17,17 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### TUTORIAL-BARRIER-WARNING-1002: truthful attacking practice warning
+
+- [x] Suppress and clear the false barrier refusal only for the existing offline
+  hidden-practice-can exception. Native actual-route1/1 passes with visible-can
+  control, cached-message removal, actual charge/release and another warning.
+  Compilation/runtime split retained after memory stop; player/human pending.
+  [Evidence](reports/tutorial-barrier-warning-2026-10-02/README.md).
+- [ ] Latest same-row request next: Block attacker behind the middle attacker
+  spawn, aimed near the can without hitting it.
+
+
 ### RAFI-BAHA-BACKWASH-1002: qualified flood and retrieval passive
 
 Baha now has the0.8second warning, bounded court-crossing front,3m loose-shoe

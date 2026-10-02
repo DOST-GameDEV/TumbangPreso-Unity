@@ -829,3 +829,11 @@ TutorialLessonHonestyProbe case. False message disagrees with CanThrow's existin
 active offline hidden-can exception. Baseline next; no live native job. Bastion
 c9cbbfb3 is locally preserved and checked, not yet pushed/delivered; no further
 hero polishing while current Feedback requests take priority.
+
+Tutorial warning ready: repaired baseline reproduces false barrier text while
+CanThrowtrue. Final combined compile/map job stopped by guard; separated warm
+runtime same case passes1/1,35s guardnull. Visible-can and stamina warnings stay,
+actual charge/release works. Capture inspected; no active job. Publish two source
+paths plus evidence; update existing Wiki WIP note. User17:01 explicitly asks
+that current work be noted in Feedback. WIP note added/readback verified17:02;
+keep it current. Latest Block placement edit is next, no new hero polish.

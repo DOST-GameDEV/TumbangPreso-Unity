@@ -138,3 +138,5 @@ Dante Boulder weight-bearing preparation: [native review and preserved assets](r
 - [Boulder loaded-shoe surface and lifecycle](reports/dante-boulder-load-2026-10-02/README.md): affinity-bound world/owner inlay, retained baseline and serial checks.
 
 - [Bastion forward-brace motion](reports/dante-bastion-motion-2026-10-02/README.md): distinct body/FPP action with existing field behavior preserved.
+
+- [Attacking tutorial barrier warning](reports/tutorial-barrier-warning-2026-10-02/README.md): one actual-route case, real throw and visible-warning control.
