@@ -416,7 +416,8 @@ namespace TumbangPreso.Visual
             if (_performance.Shots[index].Fit) FitBodies(ref position, ref focus, fov, aspect, seconds);
         }
 
-        private Vector3 Shake(float t) => _hero == "paete" ? PaeteShake(t / PaeteStretch) : _hero == "phaister" ? PhaisterShake(t) : Vector3.zero;
+        private Vector3 Shake(float t) => _hero == "paete" ? PaeteShake(t / PaeteStretch) : _hero == "phaister" ? PhaisterShake(t)
+            : _hero == "amihan" ? AmihanShake(t) : Vector3.zero;
 
         /// <summary>
         /// ⚠️ THE STAGE'S OWN GRADE ON THE PHASE CAMERA (v6, 2026-09-27): a whole-frame brightness and saturation multiplier for this
@@ -429,6 +430,7 @@ namespace TumbangPreso.Visual
             brightness = 1f; saturation = 1f;
             if (_hero == "paete") PaeteGrade(Local(seconds) / PaeteStretch, out brightness, out saturation);
             if (_hero == "phaister") PhaisterGrade(Local(seconds), out brightness, out saturation);
+            if (_hero == "amihan") AmihanGrade(Local(seconds), out brightness, out saturation);
         }
 
         /// <summary>
