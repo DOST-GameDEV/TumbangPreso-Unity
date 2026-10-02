@@ -19,7 +19,7 @@ Sean/Rafi/Baha reservations preserved. One heavy native/player job at a time16Gi
 
 ## Published fixes and current artifact
 
-Verified HEAD/remote d09a2a4ff.48 runtime fix units, source48=55f2a5f79/source47=56446ad7c.
+Source49=4f69e0af2, source48=55f2a5f79/source47=56446ad7c; publish below.
 Protocol132/recording13 after incoming qualified Rafi4a9afbd90/integrationa67d7bc5b.
 Core704/704 proof7648 retained; no unchanged broad-suite/full8round repeat.
 
@@ -97,8 +97,13 @@ fixture/source, raw0test retained. Corrected original16510 ACTIVE after direct
 prep0/exact3 TERMINAL:2intended focus-retirement failures/1normal toggle control.
 Guard/restored/free. Source candidate adds OnApplicationFocus(false)=>existing
 DiscardMenuButtonsUntilRelease, preserving Parked and ordinary toggle behavior.
-Candidate52999 ACTIVE after prep0/exact3/identicalfixture; one metadata repair
-already used, no further retry budget. original-guid-inputs frozen/invalidMeta kept.
+Candidate52999 TERMINAL FIRST PASS3 after prep0/exact3/identicalfixture; one metadata repair
+only/no further repairs. Post74047 TERMINAL0/exact3/all18431 protected unchanged/
+guardrestored/free. Focus49 COMMITTED4f69e0af2,5line hook to existingdiscard.
+Currentk48 artifact predates49; no per-fix rebuild. All root jobhandles terminal,
+owned source/tests qualified, no temporary players/browser/server to resume.
+original-guid-inputs frozen/invalidMeta kept. Source callback/message qualification
+only, not physicalOS focus or background-device sampling/Android suspension.
 GPU2048/reserve2048/450s/PlayMode-nographics/filter InputFocusLifetimeTests3.
 No q mutations while original active; expected2causal/1ordinary toggle control.
 MAIN Logs/input-focus-lifetime1002/prepare.py protects other q inputs; oldCarrier

@@ -130,8 +130,9 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
-Latest source48=55f2a5f79,47=56446ad7c; all owned changes published through
-d09a2a4ff. The goal remains ACTIVE. Root is working solo this continuation;
+Latest source49=4f69e0af2,48=55f2a5f79,47=56446ad7c. Currentk contains48 fixes;
+49focus callback cleanup has separate native proof and predates next build.
+The goal remains ACTIVE. Root is working solo this continuation;
 the one authorized helper completed its latest bounded work, earlier agents retired.
 
 Current tested1002j contains46 fixes+diagnostics/protocol132/recording13, source
@@ -150,9 +151,11 @@ New coherent1002k freeze9852/build58413/finalizer25532 TERMINAL,48fixes included
 Native/root process slots released. [Artifact](reports/reliability-2026-10-02/windows-candidate1002k/README.md).
 New focus boundary investigation:72476 ZERO tests/invalid33GUID, not qualification;
 ONE metadata-only repair to32hex. Corrected16510=2causal/1ordinary control;
-candidate52999 ACTIVE after prep0/exact3/identicalfixture, sourcehookcalls existing
+candidate52999 FIRST PASS3 after prep0/exact3/identicalfixture, sourcehookcalls existing
 inputdiscard onfocusfalse. ActualTouchInput+Unity focus
 callback,2causal/1ordinary toggle control planned; no physicalOS focus claim.
+Post74047 exact3/all18431 protected unchanged/restored/free.49source4f69e0af2
+qualified and committed. [Evidence](reports/reliability-2026-10-02/input-focus-lifetime/README.md).
 No unchanged Core/fulltournament/hostloss repeats required for these lifecycle fixes.
 
 47Lunge windup56446ad7c: original96494 two causal/one control;64944 FIRST PASS3,
