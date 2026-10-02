@@ -218,6 +218,8 @@ namespace TumbangPreso
 
         private void Awake() => _motor = GetComponent<CharacterMotor>();
 
+        private void OnDisable() => CancelAll();
+
         /// <summary>
         /// HOST-SIDE pickup, shared by the solo path and the networked request.
         ///

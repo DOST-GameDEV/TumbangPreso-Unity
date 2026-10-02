@@ -1,0 +1,8 @@
+{
+  "path": "Assets/TumbangPreso/Runtime/Abilities/HeroKit.cs",
+  "beforeSha256": "b4fb5cafa14268767c9e3485e5e79d0dce949bb31c69e8954eb84285c01a2af3",
+  "overlaySha256": "fbf5202471c3e41a07524164ed367b0fddc6831176bb7be04f807d23b1ab94d3",
+  "mainSha256": "fbf5202471c3e41a07524164ed367b0fddc6831176bb7be04f807d23b1ab94d3",
+  "repairCount": 1,
+  "reason": "Old qualification HeroKit lacks current Carrier ThrowChargeRate API. Exact current base adds four virtual members only. Fixture runs Classic/no HeroAbility; not hero-rate coverage."
+}
