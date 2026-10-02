@@ -92,6 +92,9 @@ contact and protocol unchanged; no SFX. Human approval and peers remain open.
   bodies reviewed and kept. `FilmHerSkillsInAMatch` now fails at Featherfall: its
   two Drifts carry her, holding a slipper, inside the box where the retrieval rule
   refuses flight. Re-stage it, then baseline their floor anchors.
+- [ ] AMIHAN-AIRBURST-V3 (owner Oct3: revamp cutscene, ult VFX and SFX, lighter):
+  direction in [airburst-v3](reports/amihan-presentation-2026-10-02/airburst-v3.md);
+  unbuildable WIP on branch `amihan-airburst-v3-wip`. Not shipped.
 
 ### PLAYER-RING-RADIUS-1002: larger hollow circle
 

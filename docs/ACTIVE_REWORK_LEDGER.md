@@ -557,6 +557,20 @@ sprint0.121-0.189m, throw settle0.27s, own steps only). Results/limits:
 reports/amihan-presentation-2026-10-02/feel-pass.md. NEXT Amihan: owner review of
 clips; re-stage FilmHerSkillsInAMatch; Featherfall/Whirlwind floor baselines.
 
+AMIHAN AIRBURST v3 (owner Oct3: revamp cutscene, ult VFX and SFX; lighter body).
+Direction reports/amihan-presentation-2026-10-02/airburst-v3.md. Cutscene 3.6 to 5.6s
+changes SkillContractFingerprint (old/new builds refuse each other; no other rule).
+CLAIMS added: HeroIntroductionScene.cs Amihan branches only (frame/shake/grade);
+NEW HeroIntroductionScene.AmihanBurst.cs and .AmihanLane.cs (+meta); AudioCues.cs
+four named Amihan ult cues released from the skill switch plus their rows; NEW
+tools/build_amihan_ult_audio.py and those four Resources/Sfx wavs(+meta); the
+earlier Amihan paths. Other heroes' sounds stay off. No mechanics/protocol constant.
+PAUSED Oct3 on owner request (usage). Unbuildable WIP on branch amihan-airburst-v3-wip
+(d52d306da): new 5.6s amihan() table, rewritten HeroIntroductionScene.Amihan.cs, grade/
+shake hooks. Missing: AmihanBurst/AmihanLane partials, amihan.txt regen, live fan warp/
+fronts, four ult sounds + allowlist, lighter float, test length 5.6, native films.
+ASTRAReworks keeps the shipped feel-pass. No Amihan job or lease active.
+
 PLAYER-RING-RADIUS-1002 final Low-profile native1/1 passes in3.31s, outerexit0
 and guard null40s. Both hollow-role captures inspected. First ordinary-profile
 run timed out under memory pressure; retained, one bounded retry used. Publish
