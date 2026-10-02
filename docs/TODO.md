@@ -142,8 +142,8 @@ observer receipt-write sharing violation interrupted snapshot handler, raw retai
 Root diagnostic IO SHIPPEDd28770a25/native99649 FIRST3; original18424 protected
 unchanged/exact3 source match plus new owned import metadata classification.
 ONE preparation coordination correction for retired helper fixture/meta.
-New1002j freeze7621 TERMINAL0/18905inputs; nativebuild77760 ACTIVE,
-46runtime fixes+diagnostics; wait terminal before finalizer/classify/onepeer.
+New1002j freeze7621 TERMINAL0/18905inputs; nativebuild77760 TERMINAL0/2432MB86s,
+46runtime fixes+diagnostics; finalizer17757 ACTIVE, then classify/onepeer.
 Helper touch null-list original72038 PASS3, suspicion not reproduced; no store
 patch or repeat. Finding-only report/fixture retirement complete; native slot free
 then transferred to root. [Evidence](reports/reliability-2026-10-02/touch-layout-null-list/README.md).

@@ -8,7 +8,8 @@ needed for one specific fact. TODO is the sole status queue. No stopping after u
 
 Make the game COMPETITION READY: engineering, bugs, reliability, performance and
 current UX defects. Root implements and integrates. Latest user explicitly asked
-EXACTLY ONE new GPT6.1 Sol HIGH helper: sol_parallel_engineering is ACTIVE.
+EXACTLY ONE new GPT6.1 Sol HIGH helper: sol_parallel_engineering has finished
+its current bounded work and is idle, available for a concrete follow-up.
 Earlier Astra and Sol retired after15:30-15:33 wrap; old ultra interrupted. Never
 resume those or spawn another helper without new authorization. FAST toggle absent,
 not claimed configured. No cross-chat actions, reset/clean/stash/forcepush, paid
@@ -91,8 +92,10 @@ or repeat.12543 protected unchanged/guardsrestored/free/zero repairs. Finding-on
 Report/fixture retirement COMPLETE; exact new fixture/meta retained outside both
 Assets with containment/hash proof. No product patch. Root native slot released.
 No NaN changes/schema/bindings/assets. Finding-only report SHIPPEDc644b475f.
-Helper now source-only on next concrete disjoint proposal; no q mutations/native
-while root owns newj build/peer. Retired agents neverwake.
+Helper finished bounded source-only replay-audio/emote check: suspected replay
+voice mute leak already handled; no qualified new defect, no files/native changes.
+Idle to avoid broad audit/usage waste; may follow up same sole helper when concrete
+work exists. No q mutations/native while root owns newj build/peer. Retired agents neverwake.
 
 ROOT CURRENT diagnostic candidate ready: owns
 Runtime/Net/NetCompletedArrivalProbe.cs + NEW Tests/CompletedArrivalReceiptIoTests.cs/
@@ -111,7 +114,8 @@ owned import output only, MAIN metadata unchanged, no mutation/retry. Report
 completed-arrival-receipt-io retains strict+classification hashes. Diagnostic
 SHIPPEDd28770a25 (separate from46runtime fix count).
 ROOT new1002j freeze7621 TERMINAL0/18905inputs in release source
-d28770a25504c8f6a069b429d8384af0ae4ff557. Nativebuild77760 ACTIVE/3072MB+
+d28770a25504c8f6a069b429d8384af0ae4ff557. Nativebuild77760 TERMINAL0/restored/free,
+build12scenes2432MB86s; finalizer17757 ACTIVE; requested3072MB+
 2048reserve/600s; frozen inputs must not mutate. Includes46runtime fixes+observer
 IO+frame-context diagnostics;
 prior i failedpeer preserved, prior h PASS independent. j helper scripts prepared
