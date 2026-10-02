@@ -75,7 +75,7 @@ Root framecontext8ba8fa76f FIRST2 diagnostic, not270ms cause/FPS fix.
 
 ## Current next task and precise ownership
 
-Prior root native/test/player handles TERMINAL. New48-source1002k build ACTIVE;
+Prior root native/test/player handles TERMINAL. New48-source1002k build TERMINAL;
 freeze9852 TERMINAL0/18909inputs/source d09a2a4ff33867c459901263c548b39039f49325.
 Release C#clean beforefreeze/importer dirt preserved; no release mutations during
 build. Requested3072MB+2048reserve/600s, internalBuilds/competition-candidate1002k.
@@ -91,7 +91,9 @@ ROOT NEW input-focus-lifetime source investigation: PlayerInputReader has no foc
 hook, toggleSprint/buffered recovery potentially survive blur. NEW PlayMode/
 InputFocusLifetimeTests.cs/meta uses actualTouchInput/reader +UnitySendMessage
 focus callback (no physicalOS claim),2causal/1normal toggle control. Production
-unchanged; qprep72054 ACTIVE exact3, no native launch before terminal0.
+unchanged; qprep72054 TERMINAL0/exact3, nativeoriginal72476 ACTIVE,
+GPU2048/reserve2048/450s/PlayMode-nographics/filter InputFocusLifetimeTests3.
+No q mutations while original active; expected2causal/1ordinary toggle control.
 MAIN Logs/input-focus-lifetime1002/prepare.py protects other q inputs; oldCarrier
 HeroKit compatibility ownership remains retained as recorded. No overlap worker.
 SOLE helper now owns ONLY new tools/run_host_loss.py +host-loss-real-peer report.

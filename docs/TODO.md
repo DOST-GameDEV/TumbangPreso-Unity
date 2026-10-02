@@ -145,9 +145,12 @@ seeds restored/runtime unchanged/leasefree. No full-default/physical/WAN claim.
 [Artifact](reports/reliability-2026-10-02/windows-candidate1002j/README.md),
 [Host loss](reports/reliability-2026-10-02/host-loss-real-peer/README.md).
 
-New coherent1002k freeze9852 TERMINAL0/18909inputs/source d09a2a4ff; build58413
-ACTIVE/3072MB+2048reserve/600s, includes the two post-j fixes together. Frozen
-release inputs must not mutate; wait build terminal before finalizer/classifier.
+New coherent1002k freeze9852/build58413/finalizer25532 TERMINAL,48fixes included;
+12scenes2432MB88s/artifactPASS/18907of18909 inputs unchanged/exact2 generated IDs.
+Native/root process slots released. [Artifact](reports/reliability-2026-10-02/windows-candidate1002k/README.md).
+New source-only focus boundary investigation: original72476 ACTIVE after prep72054
+exit0/exact3; PlayerInputReader production unchanged. ActualTouchInput+Unity focus
+callback,2causal/1ordinary toggle control planned; no physicalOS focus claim.
 No unchanged Core/fulltournament/hostloss repeats required for these lifecycle fixes.
 
 47Lunge windup56446ad7c: original96494 two causal/one control;64944 FIRST PASS3,
