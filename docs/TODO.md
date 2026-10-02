@@ -157,6 +157,11 @@ original24020=2actual causal failures/1ordinary control. Candidate93894 ACTIVE
 48Carrier committed55f2a5f79; candidate93894 FIRST PASS3 after prep0/exact4;
 OnDisable calls existingCancelAll, identicalfixture, post78275/all18428 protected.
 Native/q free. [Evidence](reports/reliability-2026-10-02/carrier-disable-lifetime/README.md).
+One new actualWindows host-loss20612 FIRST PASS66.609s on currentj46 artifact:
+livepair verified beforecapturedhostkill; clientMatchSetup/inactiveRound0/
+HostLost1of1/no fabricatedendrecord; ownedPIDsdead/restored/runtimeunchanged/free.
+Host-loss evidence/code committedb0dcee774; all12 source/raw hashes match.
+No repeat/newbuild. [Evidence](reports/reliability-2026-10-02/host-loss-real-peer/README.md).
 GPU2048/reserve2048/450s/PlayMode-nographics/exact3. Native slot root-owned.
 root disjoint Carrier retirement fixture draft/source unchanged. No reused retired
 practice fixture, private timers or unchanged full-match tests; coordinate native.
