@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace TumbangPreso.UI
 {
     // One earned central phrase. The side feed keeps parallel ordinary events;
-    // valid same-round qualifications queue for their full display interval.
+    // unrelated qualifications queue; a higher catch supersedes its lower recognition.
     public sealed class MatchMomentBanner : MonoBehaviour
     {
         private RectTransform _rect;
@@ -77,8 +77,49 @@ namespace TumbangPreso.UI
         {
             if (_group == null || !moment.IsValid || !isActiveAndEnabled) return;
             if (_duration > 0 && (_moment.MatchId != moment.MatchId || _moment.Round != moment.Round)) Hide();
-            if (_duration > 0) { _pending.Enqueue(moment); return; }
+            if (_duration > 0)
+            {
+                if (SupersedesCatch(moment, _moment))
+                {
+                    ReplaceQueuedCatch(moment, false);
+                    Begin(moment);
+                    return;
+                }
+                if (!ReplaceQueuedCatch(moment, true)) _pending.Enqueue(moment);
+                return;
+            }
             Begin(moment);
+        }
+        private static int CatchSize(MatchMoment moment)
+        {
+            switch (moment.Kind)
+            {
+                case MatchMomentKind.SingleCatch: return 1;
+                case MatchMomentKind.DoubleCatch: return 2;
+                case MatchMomentKind.TripleCatch: return 3;
+                case MatchMomentKind.MultiCatch: return Mathf.Max(4, moment.Count);
+                default: return 0;
+            }
+        }
+        private static bool SupersedesCatch(MatchMoment newer, MatchMoment older)
+            => newer.MatchId == older.MatchId && newer.Round == older.Round
+                && newer.Actor == older.Actor && newer.Sequence > older.Sequence
+                && CatchSize(older) > 0 && CatchSize(newer) > CatchSize(older);
+        private bool ReplaceQueuedCatch(MatchMoment newer, bool keepQueued)
+        {
+            bool replaced = false;
+            int count = _pending.Count;
+            for (int i = 0; i < count; i++)
+            {
+                var queued = _pending.Dequeue();
+                if (!SupersedesCatch(newer, queued)) _pending.Enqueue(queued);
+                else
+                {
+                    if (keepQueued && !replaced) _pending.Enqueue(newer);
+                    replaced = true;
+                }
+            }
+            return replaced;
         }
         private void Begin(MatchMoment moment)
         {

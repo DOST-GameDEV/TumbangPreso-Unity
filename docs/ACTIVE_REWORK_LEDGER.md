@@ -118,3 +118,30 @@ Sean refinement final native fixed-simulation capture 1/1 passes, 33 body and
 original mesh/rig/material/binary data. Blender standalone name-resolution check
 failed and is recorded as a limitation. Publish explicit owned clip/tool/report
 paths, then release this reservation. No gameplay/FPP/SFX changes.
+
+Sean body refinement shipped in 0a69c266 via 4817d170; owner says it looks better
+and asks for longer review clips. Preserve this version. Release Sean-only
+source reservation; human final approval remains separate.
+
+CATCH-BANNER-UPGRADE-1002 claims Runtime/UI/MatchMomentBanner.cs and
+Tests/PlayMode/MatchMomentTests.cs, plus its report/TODO updates. Live Feedback
+explicitly requests Single Catch to be superseded by Double Catch immediately.
+Reproduce current queuing, then replace only newer higher catch recognition for
+the same actor/match/round; preserve unrelated queue entries and scoring.
+No other UI/presentation paths claimed.
+
+CATCH-BANNER-UPGRADE-1002 ready to publish: new actual-event case passes; retained
+queue/stale/rematch case passes at 960x540 after one bounded capture-size retry.
+Full-HD timeout and memory warnings retained. Two distinct cases, no clean
+combined-suite/performance/player claim. Publish the two owned source paths and
+report/TODO/checkpoint, then update and strike only the resolved catch comment
+in Feedback. Next prioritize Harry's remaining comments before character work.
+
+Catch refinement shipped and remote verified at 5e0897f4; same Feedback note
+updated and only the resolved catch comment struck through. Release its files.
+WARNING-STRIP-1002 next owns Runtime/UI/TumpMatchReadout.Warnings.cs and one
+focused case in Tests/PlayMode/TumpNativeHudTests.cs, plus report/TODO updates.
+Target a thin natural-width single line at ordinary viewports, matching the
+contextual action plate opacity. Preserve minimum font size and existing crowded
+status bounds; do not hide text merely to force one line at impossible widths.
+No active heavy job.

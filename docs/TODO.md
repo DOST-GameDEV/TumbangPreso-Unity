@@ -17,6 +17,14 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CATCH-BANNER-UPGRADE-1002: immediate higher-catch recognition
+
+Same-player higher catches supersede current/queued lower catches, preserving
+unrelated order and score. Native baseline reproduced; two distinct cases pass
+with retained full-HD timeout/memory limits.
+[Evidence](reports/feedback-2026-09-30/catch-banner-upgrade/README.md).
+Warning styling and other new Feedback remain open.
+
 ### SEAN-STOKE-PRESENTATION-1002: authored body refinement validated
 
 Sean dash now uses a compact brace, opposing limbs and a distinct foot catch.
