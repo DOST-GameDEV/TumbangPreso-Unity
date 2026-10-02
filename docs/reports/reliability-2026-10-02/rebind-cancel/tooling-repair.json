@@ -1,0 +1,9 @@
+{
+  "kind": "Launcher path repair before native launch",
+  "productionChanged": false,
+  "repairCount": 1,
+  "original": "python tools/run_unity_job.py in qualification",
+  "nativeStartedFromFailedCommand": false,
+  "failure": "Qualification has no run_unity_job.py; process exited before creating any lease/guard/Unity",
+  "corrected": "Use main absolute run_unity_job.py with explicit --project qualification"
+}

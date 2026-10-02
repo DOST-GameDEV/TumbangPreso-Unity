@@ -27,6 +27,65 @@ namespace TumbangPreso.Tests
     /// </summary>
     public class ControllerSupportTests
     {
+        [TestCase(InputDeviceKind.KeyboardMouse, "cancel")]
+        [TestCase(InputDeviceKind.Gamepad, "cancel")]
+        [TestCase(InputDeviceKind.KeyboardMouse, "bound")]
+        [TestCase(InputDeviceKind.KeyboardMouse, "dispose")]
+        public void SettingsRebindOnlyCancellationConsumesTheMenuBackPress(InputDeviceKind device, string outcome)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsFalse(ScreenTakeover.AnyOpen, "This isolated callback check requires no unrelated open screen.");
+            const System.Reflection.BindingFlags hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var escapeFrame = typeof(ScreenTakeover).GetField("_escapeFrame", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            int originalEscape = (int)escapeFrame.GetValue(null);
+            var actions = LoadAsset(); string originalBindings = actions.SaveBindingOverridesAsJson();
+            const string bindingKey = "tumbangpreso.bindings";
+            bool hadBindings = PlayerPrefs.HasKey(bindingKey); string savedBindings = PlayerPrefs.GetString(bindingKey, "");
+            var jump = actions.FindActionMap("Player").FindAction("Jump"); bool wasEnabled = jump.enabled;
+            TumpSettingsSession session = null; Keyboard keyboard = null; string chosenKey = null;
+            try
+            {
+                // Preserve the previous stamp; give this fixture a fresh current-frame context.
+                escapeFrame.SetValue(null, Time.frameCount - 1);
+                session = new TumpSettingsSession();
+                string beforeRebind = actions.SaveBindingOverridesAsJson();
+                jump.Enable(); session.BeginRebind("Jump", device);
+                Assert.IsTrue(session.Listening); Assert.IsFalse(jump.enabled);
+                var rebind = (RebindSession)typeof(TumpSettingsSession).GetField("_rebind", hidden).GetValue(session);
+                var operation = (InputActionRebindingExtensions.RebindingOperation)typeof(RebindSession).GetField("_operation", hidden).GetValue(rebind);
+                Assert.IsNotNull(operation);
+                if (outcome == "cancel") operation.Cancel();
+                else if (outcome == "dispose") session.Dispose();
+                else
+                {
+                    keyboard = InputSystem.AddDevice<Keyboard>(); InputSystem.EnableDevice(keyboard);
+                    var usedPaths = new HashSet<string>(actions.actionMaps.SelectMany(map => map.bindings).Select(binding => binding.effectivePath), System.StringComparer.OrdinalIgnoreCase);
+                    var control = keyboard.allKeys.FirstOrDefault(key => key.name.StartsWith("f", System.StringComparison.OrdinalIgnoreCase)
+                        && int.TryParse(key.name.Substring(1), out _) && !usedPaths.Contains("<Keyboard>/" + key.name));
+                    Assert.IsNotNull(control, "The fixture needs one unbound function key for a successful completion.");
+                    chosenKey = control.name;
+                    InputSystem.QueueStateEvent(keyboard, new UnityEngine.InputSystem.LowLevel.KeyboardState(control.keyCode));
+                    InputSystem.Update();
+                    if (session.Listening) operation.Complete();
+                }
+                Assert.IsFalse(session.Listening); Assert.IsTrue(jump.enabled, "The real target remained disabled after the operation ended.");
+                Assert.AreEqual(outcome == "cancel", (int)escapeFrame.GetValue(null) == Time.frameCount,
+                    "Only a consumed rebind-cancel press should block the view's Back handler on this frame.");
+                Assert.AreEqual(outcome == "cancel", ScreenTakeover.EscapeIsSpoken);
+                if (outcome != "bound") Assert.AreEqual(beforeRebind, actions.SaveBindingOverridesAsJson(), "Cancel/dispose changed the player's binding.");
+                else StringAssert.Contains(chosenKey, Rebinding.PathFor(actions, "Jump", InputDeviceKind.KeyboardMouse).ToLowerInvariant());
+            }
+            finally
+            {
+                session?.Dispose();
+                if (keyboard != null) InputSystem.RemoveDevice(keyboard);
+                actions.RemoveAllBindingOverrides(); actions.LoadBindingOverridesFromJson(originalBindings);
+                if (wasEnabled) jump.Enable(); else jump.Disable();
+                if (hadBindings) PlayerPrefs.SetString(bindingKey, savedBindings); else PlayerPrefs.DeleteKey(bindingKey);
+                PlayerPrefs.Save(); Rebinding.Invalidate(); escapeFrame.SetValue(null, originalEscape);
+            }
+        }
+
         private static InputActionAsset LoadAsset()
         {
             var asset = Resources.Load<InputActionAsset>("TumbangPreso");

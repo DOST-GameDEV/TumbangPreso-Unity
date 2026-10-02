@@ -1,0 +1,13 @@
+{
+  "timeoutSeconds": 450,
+  "stoppingCondition": "Baseline4 and final4 nonzeroXML, unchanged frozen fixture, terminal guarded jobs",
+  "question": "Does automatic rebind cancellation consume the same-frame legacy Back press without changing completed/disposed behavior?",
+  "reserveMb": 2048,
+  "copyAuthorization": "Only after root explicitly releases ACK validation slot",
+  "memoryMb": 1536,
+  "poolKind": "cpu",
+  "retryCount": 0,
+  "profile": "rebind-cancel1002",
+  "expectedCases": 4,
+  "filter": "TumbangPreso.Tests.ControllerSupportTests.SettingsRebindOnlyCancellationConsumesTheMenuBackPress"
+}
