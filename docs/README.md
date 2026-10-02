@@ -101,3 +101,5 @@ Refreshed129 Windows Classic tournament-context observations: [evidence](reports
 Career refresh account-cache ownership: [native evidence](reports/reliability-2026-10-02/career-refresh-owner/README.md).
 
 Abandon/history account-response ownership: [native evidence](reports/reliability-2026-10-02/career-async-owner/README.md).
+
+Queued-result verification alignment after refusals: [native evidence](reports/reliability-2026-10-02/career-witness/README.md).

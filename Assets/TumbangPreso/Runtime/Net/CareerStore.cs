@@ -561,6 +561,7 @@ namespace TumbangPreso.Net
         /// </summary>
         private int DropUnsubmittable()
         {
+            PadWitnesses();
             string me = LocalPlayerId;
             int dropped = 0;
 
@@ -574,6 +575,7 @@ namespace TumbangPreso.Net
                     MatchRecordRules.SubmitRefusal(verdict));
 
                 _cache.Queue.RemoveAt(i);
+                _cache.QueueWitness.RemoveAt(i);
                 dropped++;
             }
 

@@ -224,6 +224,42 @@ namespace TumbangPreso.Tests
             }
         }
 
+        [TestCase(false)]
+        [TestCase(true)]
+        public void RefusedQueuedRecordsKeepRemainingWitnessesAligned(bool legacyMissingWitnesses)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career refusal witness check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                var cache = typeof(TumbangPreso.Net.CareerStore).GetField("_cache", flags).GetValue(career);
+                var queue = (System.Collections.Generic.List<MatchRecord>)cache.GetType().GetField("Queue").GetValue(cache);
+                var witnessField = cache.GetType().GetField("QueueWitness");
+                queue.Clear();
+                var remaining = new MatchRecord { MatchId = "valid-result", Players = new[] {
+                    new PlayerMatchStats { PlayerId = TumbangPreso.Net.CareerStore.LocalPlayerId, IsBot = false } } };
+                queue.Add(new MatchRecord { MatchId = "" }); queue.Add(remaining);
+                queue.Add(new MatchRecord { MatchId = "wrong-player", Players = new[] {
+                    new PlayerMatchStats { PlayerId = "another-player", IsBot = false } } });
+                witnessField.SetValue(cache, legacyMissingWitnesses ? null : new System.Collections.Generic.List<string> {
+                    "refused-first", "remaining-witness", "refused-last" });
+                int dropped = (int)typeof(TumbangPreso.Net.CareerStore).GetMethod("DropUnsubmittable", flags).Invoke(career, null);
+                Assert.AreEqual(2, dropped); Assert.AreEqual(1, queue.Count); Assert.AreSame(remaining, queue[0]);
+                var witnesses = (System.Collections.Generic.List<string>)witnessField.GetValue(cache);
+                Assert.IsNotNull(witnesses, "Legacy careers need an empty witness for their remaining record.");
+                CollectionAssert.AreEqual(new[] { legacyMissingWitnesses ? "" : "remaining-witness" }, witnesses,
+                    "The remaining result retained a different match's witness.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
         private const string AssetsRoot = "Assets/TumbangPreso";
         private const string CloudCodeRoot = "ugs/cloud-code";
 

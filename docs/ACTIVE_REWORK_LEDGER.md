@@ -31,16 +31,16 @@ Paths are under Assets/TumbangPreso unless prefixed docs.
 
 ## Active job and exact next action
 
-CAREER-ASYNC-OWNER-1002 complete: baseline 2/4, final 4/4 native cases.
-Current responses still apply; stale abandon leaves the new profile unchanged;
-stale history cancels and its UI consumer ignores expected cancellation.
-Three hashes unchanged, zero fixture repairs. Native session 91845 terminal;
-guard restored named profile and shared input. No heavy job active.
-Evidence: reports/reliability-2026-10-02/career-async-owner/README.md.
-Next: DropUnsubmittable removes queued records but not same-index witnesses.
-Reproduce actual queue/witness mismatch with mixed valid/refused records and
-an old cache with missing witness list. Use existing CareerAndCloudCodeTests;
-one baseline/final, no paid/live services. Publish from main ASTRAReworks only.
+CAREER-WITNESS-1002 complete: baseline 0/2, final 2/2 native cases.
+Existing PadWitnesses before filtering and same-index removal preserve remaining
+verification data, including legacy cache. Two hashes unchanged, zero fixture
+repairs; native session 3666 terminal, guarded profile/input restored.
+Publication follows; prior published HEAD 4b35cbe12. No heavy job active.
+Next: history screen RefreshMatches unconditionally calls Show(Matches) after
+await even when the user closed/navigated elsewhere or requested another page.
+Use existing OwnerPlayerHubTests for focused native navigation/completion proof,
+one baseline/final. Current account cache cancellation is already covered.
+No service calls, new UI framework or visual redesign.
 
 ## Remaining readiness evidence
 

@@ -25,7 +25,8 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
 
 - [x] CAREER-ASYNC-OWNER-1002: abandon/history account fences; native4/4.
   [Evidence](reports/reliability-2026-10-02/career-async-owner/README.md).
-- [ ] CAREER-WITNESS-1002: investigate queued-record/witness removal correlation.
+- [x] CAREER-WITNESS-1002: refused records remove matching witnesses; native2/2.
+  [Evidence](reports/reliability-2026-10-02/career-witness/README.md).
 - [ ] Inspect current history-screen completion/navigation/account-change races.
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
