@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 03:07:10Z" end-time="2026-10-02 03:07:11Z" duration="0.1194045">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="785" result="Passed" start-time="2026-10-02 03:07:10Z" end-time="2026-10-02 03:07:11Z" duration="0.119405" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1931" name="TumbangPreso.Tests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="785" result="Passed" start-time="2026-10-02 03:07:11Z" end-time="2026-10-02 03:07:11Z" duration="0.105963" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="58377" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1932" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="785" result="Passed" start-time="2026-10-02 03:07:11Z" end-time="2026-10-02 03:07:11Z" duration="0.099254" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1933" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="785" result="Passed" start-time="2026-10-02 03:07:11Z" end-time="2026-10-02 03:07:11Z" duration="0.092928" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1781" name="SeanCinderGateTests" fullname="TumbangPreso.Tests.SeanCinderGateTests" classname="TumbangPreso.Tests.SeanCinderGateTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 03:07:11Z" end-time="2026-10-02 03:07:11Z" duration="0.082042" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1782" name="ConcreteDefendingSlotUsesOneWarningAndSharedFieldIdentity" fullname="TumbangPreso.Tests.SeanCinderGateTests.ConcreteDefendingSlotUsesOneWarningAndSharedFieldIdentity" methodname="ConcreteDefendingSlotUsesOneWarningAndSharedFieldIdentity" classname="TumbangPreso.Tests.SeanCinderGateTests" runstate="Runnable" seed="1066498476" result="Passed" start-time="2026-10-02 03:07:11Z" end-time="2026-10-02 03:07:11Z" duration="0.016712" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1783" name="FieldValidationRejectsMalformedOrUntruthfulState" fullname="TumbangPreso.Tests.SeanCinderGateTests.FieldValidationRejectsMalformedOrUntruthfulState" methodname="FieldValidationRejectsMalformedOrUntruthfulState" classname="TumbangPreso.Tests.SeanCinderGateTests" runstate="Runnable" seed="1890256480" result="Passed" start-time="2026-10-02 03:07:11Z" end-time="2026-10-02 03:07:11Z" duration="0.001462" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1784" name="RepeatedOrOlderFieldUpdatesCannotRewindOrReviveConsumedGate" fullname="TumbangPreso.Tests.SeanCinderGateTests.RepeatedOrOlderFieldUpdatesCannotRewindOrReviveConsumedGate" methodname="RepeatedOrOlderFieldUpdatesCannotRewindOrReviveConsumedGate" classname="TumbangPreso.Tests.SeanCinderGateTests" runstate="Runnable" seed="180359565" result="Passed" start-time="2026-10-02 03:07:11Z" end-time="2026-10-02 03:07:11Z" duration="0.051817" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-X1NIqZ/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,6 +1,6 @@
 # Active Rework Checkpoint
 
-Updated 2026-10-02. Branch ASTRAReworks. Protocol129. Competition readiness goal ACTIVE.
+Updated 2026-10-02. Branch ASTRAReworks. Protocol130. Competition readiness goal ACTIVE.
 
 ## Owner objective and boundaries
 
@@ -324,3 +324,17 @@ capture retry. Feature/protocol130 remain UNPUBLISHED. Next: actual-player
 qualification and evidence-backed visual review. Exact peer ownership expands
 only NetSeanProbe.cs/new cinder scenario and tools/net_sean_review.py/cinder
 evaluator as in the plan. Other network/reliability lanes remain independent.
+
+SEAN-CINDER-GATE-1002 qualified for publication: Core7, nine distinct focused
+native cases and first actual3Linuxpeer run pass. Newdefendingslot/sharedfield
+kind17, protocol130, recording12; no newRPC. All peers agree oneconsumedidentity
+and expiry; actualtargetowner receives-5.128m/s return,0.679..0.707m sampledpush.
+Finalnative2/2 closescoverrefusal/immunity/round and actual-input/replay checks;
+45body/45ownerframes,18sreview. Originalfailures/memorywarningsretained. Compressed
+12sceneLinuxplayer884MB/247s; nativeexit0withmemoryguardrequest, notcleanheadroom.
+Runtime43431cd948ed9a3195768e539243e8808a2dc4c56fc1d4c01731f3234975b5ca.
+Alljobs terminal/restored. Incominge8de3702 integrateddisjointly; evidencepinned
+f296overlay, nofreshwholemergedreleaseclaim. Publishexplicitownedpaths, verify
+remote, updateexistingPyroFeedbacknote; doNOTmarkwholePyroorHumanverifieddone.
+ThenreleaseCinderownershipandpicknextcurrentunclaimedPyrounit fromliveWiki.
+Retainotheragentnetwork/bugs/loading/Amihanreservations; don'treimplementthem.

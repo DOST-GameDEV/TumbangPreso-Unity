@@ -23,6 +23,8 @@ def rows(path):
 
 def evaluate(folder, case, hold_charge=False, rejoined_seat=None, delay=0):
     data = {name: rows(folder / (name + ".csv")) for name in ("host", "owner", "observer")}
+    if case == "cinder":
+        return evaluate_cinder(data)
     if case == "stoke":
         return evaluate_stoke(data)
     if case == "empowered":
@@ -157,10 +159,44 @@ def evaluate_stoke(data):
     return {"ok": not errors, "errors": errors, "measurements": measurements}
 
 
+def evaluate_cinder(data):
+    errors, measurements, identities = [], {}, set()
+    for name, records in data.items():
+        seat = {"host": 0, "owner": 1, "observer": 2}[name]
+        if len(records) < 150 or any(r["local"] != seat or r["round"] != 2 or not r["defending"] for r in records):
+            errors.append(name + " lacks continuous second-round client-defender evidence")
+            continue
+        live = [r for r in records if r["gates"]]
+        spent = [r for r in live if r["gateSpent"]]
+        active_ids = {r["gateId"] for r in live}
+        identities.update(active_ids)
+        tail = records[-1]
+        result = {"samples":len(records), "live_samples":len(live), "spent_samples":len(spent),
+                  "identities":sorted(active_ids), "final_target_z":tail["frontZ"],
+                  "minimum_target_velocity_z":min(r["frontVelocityZ"] for r in records),
+                  "final_cooldown":tail["cooldown"], "final_gates":tail["gates"]}
+        measurements[name] = result
+        if len(active_ids) != 1 or not live or not spent or any(r["gates"] != 1 for r in live):
+            errors.append(name + " missed or duplicated the one crossing field")
+        if spent and (any(r["gateDirection"] != -1 for r in spent) or tail["frontZ"] >= spent[0]["gateZ"]):
+            errors.append(name + " did not retain approach-side pushback")
+        if name == "observer" and result["minimum_target_velocity_z"] >= -1:
+            errors.append("The actual target owner did not receive the authoritative impulse")
+        if any(r["frontStun"] > 0 or r["craters"] or r["fireTrails"] for r in records):
+            errors.append(name + " added an unrelated status or field")
+        if tail["gates"] or tail["chargeRemaining"] or not 22 < tail["cooldown"] < 25:
+            errors.append(name + " leaked the gate clock or changed the one-cast cooldown")
+        if spent:
+            after = [r for r in live if r["time"] >= spent[0]["time"]]
+            if any(not r["gateSpent"] for r in after): errors.append(name + " revived a consumed field")
+    if len(identities) != 1: errors.append("Peers disagreed about the dynamic field identity")
+    return {"ok": not errors, "errors": errors, "measurements": measurements}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("exe", type=Path)
-    parser.add_argument("--case", choices=["ignite", "supernova", "empowered", "stoke"], required=True)
+    parser.add_argument("--case", choices=["ignite", "supernova", "empowered", "stoke", "cinder"], required=True)
     parser.add_argument("--delay", type=float, default=0)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--hold-charge", action="store_true")

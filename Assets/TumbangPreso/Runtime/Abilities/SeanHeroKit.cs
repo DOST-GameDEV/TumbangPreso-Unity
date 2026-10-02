@@ -11,6 +11,9 @@ namespace TumbangPreso.Abilities
     public sealed class SeanHeroKit : HeroKit, ITimedKitReplication, IWorldEffectBinding
     {
         public bool IsIgnitionCannonActive { get; set; }
+        private SeanCinderGate _gate;
+        public void AdoptGate(SeanCinderGate gate)
+        { _gate = gate; ((CinderGateAbility)DefendingSkill).SyncField(gate); }
         public override bool BlocksOwnLocomotion => Skill1.IsWindingUp || Skill1.IsActive;
         public override bool BlocksOwnActions => BlocksOwnLocomotion;
         public const float StokeDistance = 2f, StokeAnticipation = .18f, StokeRecovery = .25f;
@@ -30,7 +33,14 @@ namespace TumbangPreso.Abilities
                 new AbilityContext(motor,motor.GetComponent<Carrier>(),motor.GetComponent<CombatVerbs>()),state,age);
         public void AdoptMovementFields(int owner) { } // Stoke Step creates no recoverable fire fields.
         public void RebindWorldEffects(CharacterMotor motor)
-        { if (motor != null) AdoptMovementFields(motor.PlayerSlot); }
+        {
+            if (motor == null) return;
+            AdoptMovementFields(motor.PlayerSlot);
+            SeanCinderGate found = null;
+            foreach (var gate in SeanCinderGate.Active)
+                if (gate != null && gate.Owner == motor.PlayerSlot) { found = gate; break; }
+            AdoptGate(found);
+        }
 
         public bool RestoreJoiningIgnition(CharacterMotor motor, float remaining)
         {
@@ -62,9 +72,9 @@ namespace TumbangPreso.Abilities
         public SeanHeroKit() : base("sean", "SEAN")
         {
             Skill1 = new StokeStepAbility();
-            // ABILITY-2: the four-slot shape; the defending slot waits for the owner's Pyro design.
+            // Attacking load and defending crossing seam keep separate cooldowns.
             AttackingSkill = new IgnitionCannonAbility(this);
-            DefendingSkill = new PlaceholderRoleAbility("sean_skill2d", "Sean", AbilityGlyph.SeanIgnite);
+            DefendingSkill = new CinderGateAbility(this);
             Ultimate = new SupernovaSmashdownAbility(this);
         }
 
@@ -145,6 +155,33 @@ namespace TumbangPreso.Abilities
             protected override void OnCancelled(AbilityContext ctx) => ReleaseAura();
             public override void Reset()
             { ReleaseAura(); base.Reset(); _movementKnown = _movementRestored = false; }
+        }
+
+        private sealed class CinderGateAbility : HeroAbility
+        {
+            private readonly SeanHeroKit _kit;
+            public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.HostConfirmed;
+            public CinderGateAbility(SeanHeroKit kit)
+                : base("sean_skill2d", "CINDER GATE",
+                    "Place a three-metre ember line. After a short warning, the first grounded rival crossing is pushed back and extinguishes it. Jump over; throws pass through.",
+                    SeanGateRules.Cooldown, SeanGateRules.TotalSeconds, AbilityGlyph.SeanCinderGate,
+                    summary: "One grounded crossing. Jump or go around the ends.",
+                    telegraphRadius: SeanGateRules.HalfWidth, telegraphRange: SeanGateRules.PlacementRange,
+                    castAction: "hero-sean-gate", viewmodelAction: "cinder-draw", castCue: null)
+            { _kit = kit; AimByHolding(.75f, SeanGateRules.PlacementRange, .4f, 0, whereLooking: true); }
+            public override bool CanActivate(AbilityContext context)
+                => base.CanActivate(context) && context?.Motor != null && context.Motor.IsDefender
+                    && SeanCinderGate.CanPlace(context, AimedDestination(context));
+            protected override void OnActivate(AbilityContext context)
+            {
+                if (NetAuthority.ShouldResolve()) _kit.AdoptGate(SeanCinderGate.Cast(context, AimedDestination(context)));
+                else if (_kit._gate != null) SyncField(_kit._gate);
+            }
+            public void SyncField(SeanCinderGate gate) => RestoreLiveClock(gate != null ? gate.ActiveRemaining : 0);
+            protected override void OnTick(AbilityContext context, float dt)
+            {
+                if (_kit._gate != null) SyncField(_kit._gate);
+            }
         }
 
         private sealed class IgnitionCannonAbility : HeroAbility

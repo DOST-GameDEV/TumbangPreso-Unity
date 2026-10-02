@@ -5013,6 +5013,20 @@ namespace TumbangPreso
                         Consider(intent,Verb.Skill2,dt);
                     }
                 }
+                else if (kit is Abilities.SeanHeroKit && _motor.IsDefender)
+                {
+                    if (target != null && !target.IsTagged && target.IsGrounded && targetDistance > 1 && targetDistance < 6)
+                    {
+                        var approach = target.transform.position - myPos; approach.y = 0;
+                        if (approach.sqrMagnitude > .01f)
+                        {
+                            var at = myPos + approach.normalized * Mathf.Clamp(targetDistance * .55f, 1f, 3.5f);
+                            at.y = Slipper.FindGroundY(at, .5f);
+                            intent.AimPoint = at;
+                            Consider(intent, Verb.Skill2, dt);
+                        }
+                    }
+                }
                 else if (kit is Abilities.SeanHeroKit || kit is Abilities.ZackHeroKit)
                 {
                     // ⚠️⚠️ THESE TWO WERE THE ONE PLACE A BOT SPENT A POWER WITH NO OPPORTUNITY
