@@ -3,7 +3,9 @@
 Unity6000.5.8f1 built twelve scenes successfully:2432MB in90s, native session88731,
 exit0. Frozen source94600694068552668079b1b4b3c0ca044bbfb44a, protocol131,
 StandaloneWindows64. Includes32 root continuity runtime fixes plus integrated Sean
-SteadyEmber. Later scorecard/RecordChoice/replay/Rafi source is not included.
+SteadyEmber. Later scorecard, RecordChoice, replay-refusal, cold-arrival and Settings fixes
+are not included. There is no Abilities source delta from946006940 to248836d1e;
+the earlier Rafi exclusion was a timeline inference and is corrected here.
 
 Artifact: C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Builds/competition-candidate1002f/TumbangPreso.exe
 Runtime SHA256:c1c5278195df8ae516e06c3a05c34d8f75b4ebb21e9bd5ede63b64b8f8841701.

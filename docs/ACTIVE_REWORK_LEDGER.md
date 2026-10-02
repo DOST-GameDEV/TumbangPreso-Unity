@@ -79,18 +79,38 @@ Logs/scorecard-focus1002; all qualified agent source published. No agent job han
 remain. No replacements/resumes; old ultra interrupted. One-time heartbeat removed.
 Root continues SOLO, goal active.
 
-NEXT ROOT coherent Windows1002g at newest published source including37 fixes and
-new opt-in actor observation in NetCompletedArrivalProbe/run_completed_arrival.py.
-Observer adds all4 actor RoundActive/Parked/Sprint/MoveAxis arrays and strict client
-receipt validation. Observer SOURCE NOT YET COMPILED/RUNTIME QUALIFIED; commit its
-exact2 paths with this checkpoint then freshfetch/incomingdiff/merge/push before
-release FF. New internal output, preserve release importer/meta/settings dirt.
-Freeze Assets/Packages/ProjectSettings, ONE build3072/reserve2048/600s, twelve scenes.
-Builder expectedtwo identity JSON changes only; strict false retained and separate
-artifact-classification receipt. Then ONE existing short1-round30s real two-Windows-
-peer scenario for NEW cold actor parking acceptance, not unchanged full8rounds.
-Old1002e49462 proved board/record/slot1 NONspectator, not actor state; preserve its
-original narrower contract. No physical-device/WAN/career settlement claim.
+ROOT Windows1002g build95607 TERMINAL0/12scenes2432MB122s, guard restored/free.
+Freeze84029/post53093 TERMINAL:18875 inputs,18873 unchanged, exactlytwo generated
+identity JSON changes. Strict false preserved; classify PASSED/source+packaged
+identities/protocol131/Windows match. RuntimeSHA256
+421af2276ca14c6a304890062fefacfe22974ef83bc3d4b397b8c0e32d444755.
+Release HEAD248836d1e1ccf367a76abdb7d45df0474d8ccb11, internal1002g output,
+importer/meta/settings dirt retained. No build repair. Actor observer compiled.
+ROOT NEW actual Windows-peer actor acceptance48099 TERMINAL PASSexit0 FIRST run,
+zero repairs. Current board MAIN MENU->HOME->public ordinary rejoin/new64bit scene,
+fresh end/record events, same match655365ef8b7546a89bcab286ff2af6a3/scores100/0/0/150.
+Actual client slot1 NONspectator; all4RoundActivefalse/Parkedtrue/Sprintfalse/Move0.
+Host stayed ended. Owned players18264/24636 retired, seeds/input restored, runtime
+unchanged, lease released. NEW report cold-actor-peer prepared for publication.
+No full-default8round/physical/WAN/career settlement claim or repeated short run.
+
+ROOT LAN original preparation3555 RUNNING; main Logs/lan-listener-start1002/prepare.py
+baseline snapshots protected inputs then copies exact3 files to qualification.
+Await terminal exit0 BEFORE any native launch. Planned EditMode original3 then
+candidate3 CPU1536/reserve2048/450s/--ports8911/profile lan-listener-start1002.
+No second agent; both retired. No other heavy job active after48099 completion.
+
+ROOT independent MAIN-only LAN startup candidate prepared while build ran:
+LanBeacon.cs exact3-line catch cleanup closes/nulls partially allocated UDP socket
+when Bind/BeginReceive setup fails. NEW Tests/LanListenerStartTests.cs/.meta3 cases
+use actual local exclusive port8911 bind refusal, retry after release, normal
+owned StopAll disposal. Original source MAIN Logs/lan-listener-start1002/LanBeacon-original.cs.txt,
+three frozen inputs in frozen.json. NOT copied/compiled/native-run/published yet.
+After g artifact+one new actor peer proof, run original3/candidate3 EditMode CPU1536,
+port8911 exclusive job claim; <=ONE fixture/tool repair. Do not mix with running
+players (they can use discovery8911). Preserve original failures; no UDP packet
+schema or discovery timing change. A separate receive-callback ownership race is
+only a source suspicion, unconfirmed/not patched; don't infer it fixed by cleanup.
 
 Supernova native/helper route remains RETIRED: first77152 compile, corrected52284
 450s setup timeout, noXML/PNG/castproof; qualification original1536AF restored,
@@ -100,13 +120,15 @@ changes are exact scoped work only. TODO remains the sole work-status queue.
 
 ## Current frozen artifact and actual peers
 
-Current1002f: release HEAD94600694068552668079b1b4b3c0ca044bbfb44a, protocol131,
-Builds/competition-candidate1002f/TumbangPreso.exe; runtimeSHA256
-c1c5278195df8ae516e06c3a05c34d8f75b4ebb21e9bd5ede63b64b8f8841701.
-Native88731 success2432MB90s/12scenes, restored/free; artifact-receipt passed, strict
-false preserved for exactlytwo generated identity outputs. Source18859/18861 stable.
-Evidence1f4a8c290 in reports/reliability-2026-10-02/windows-candidate1002f. No player
-run on1002f yet. Newer MAIN fixes are not in this frozen artifact.
+Current1002g: releaseHEAD248836d1e1ccf367a76abdb7d45df0474d8ccb11/protocol131,
+Builds/competition-candidate1002g/TumbangPreso.exe; RuntimeSHA256
+421af2276ca14c6a304890062fefacfe22974ef83bc3d4b397b8c0e32d444755.
+Native95607 success2432MB122s/12scenes, restored/free; artifact classificationpassed,
+strict false preserved for exactlytwo generated identities.18873/18875 inputs stable.
+Fresh48099 actualpeer cold4actor checkPASS, raw report cold-actor-peer. No build/run
+repair or rerun. Contains37fixes; later unqualified LAN source is not included.
+1002f/source946006940/runtimec1c5278195df8ae516e06c3a05c34d8f75b4ebb21e9bd5ede63b64b8f8841701
+remains previous32fix artifact; evidence1f4a8c290, no source Rafi delta to g.
 
 ### Previous1002e and its completed-arrival peer acceptance
 

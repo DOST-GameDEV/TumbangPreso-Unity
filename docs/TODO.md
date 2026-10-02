@@ -144,7 +144,10 @@ root continues solo; no replacement agents or repeated unchanged tests.
 - [x] SETTINGS-DECISION-FOCUS-1002: shippeddd4712ca0, native3/3 after1causal/2controls;
   initial0 ignored due invalid GUID, ONE metadata-only repair.
   [Evidence](reports/reliability-2026-10-02/settings-decision-focus/acceptance.md).
-- [ ] COLD-ACTOR-PEER-1002: root NEW four-actor observation/source pending fresh1002g build and one short peer scenario.
+- [x] COLD-ACTOR-PEER-1002: fresh1002g build/source248836d1e, first actualWindows
+  peer48099 PASS all4 actor inactive/parked/movement0/sprintfalse after cold rejoin.
+  [Evidence](reports/reliability-2026-10-02/cold-actor-peer/README.md).
+- [ ] LAN-LISTENER-START-1002: root socket-cleanup candidate + NEW native3 fixture prepared MAIN-only; real8911 bind failure/retry acceptance pending after g peer job.
 
 Owner reaffirmed2026-10-02: competition ready is the objective. Continue through
 coherent fixes and pushes; no stopping after a single passing unit. DOTS owns
