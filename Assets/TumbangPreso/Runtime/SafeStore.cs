@@ -26,6 +26,9 @@ namespace TumbangPreso
     ///     2. move the current `path` to `path.bak`, replacing any previous backup
     ///     3. move `path.tmp` onto `path`
     ///
+    /// Windows combines the last two steps with File.Replace so a refused replacement
+    /// cannot delete the previous usable backup. Other platforms retain the move sequence.
+    ///
     /// A crash at any point leaves either the old file or the new one, whole, plus a backup.
     /// ⚠️ **Step 3 is a MOVE rather than a copy on purpose**: a move within one directory is the
     /// closest thing to atomic the filesystem offers, and a copy has the same truncation window
@@ -70,6 +73,12 @@ namespace TumbangPreso
 
                 if (File.Exists(path))
                 {
+                    if (Application.platform == RuntimePlatform.WindowsEditor
+                        || Application.platform == RuntimePlatform.WindowsPlayer)
+                    {
+                        File.Replace(temp, path, backup);
+                        return true;
+                    }
                     if (File.Exists(backup)) File.Delete(backup);
                     File.Move(path, backup);
                 }
@@ -109,11 +118,17 @@ namespace TumbangPreso
             string fallback = TryRead(backup);
             if (fallback != null && (valid == null || SafeValid(valid, fallback)))
             {
+                // Restore the validated copy without rotating the bad primary over it.
+                // An interrupted or refused copy leaves the usable backup untouched.
+                string restoreFailure = "";
+                try { File.Copy(backup, path, overwrite: true); }
+                catch (Exception e) { restoreFailure = $" Primary could not be restored: {e.Message}"; }
+
                 // ⚠️⚠️ IT SAYS SO LOUDLY. A silent recovery is a corruption nobody investigates,
                 // and the second time it happens there is no backup left to recover from.
                 Debug.LogWarning($"[SafeStore] {Path.GetFileName(path)} was unreadable or invalid; " +
                                  $"recovered the previous version from {BackupSuffix}. Something " +
-                                 $"interrupted a save.");
+                                 $"interrupted a save." + restoreFailure);
                 return fallback;
             }
 
