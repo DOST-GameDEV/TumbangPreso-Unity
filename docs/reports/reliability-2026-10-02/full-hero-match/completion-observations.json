@@ -1,0 +1,168 @@
+{
+  "contract": {
+    "sourceCommit": "2c3f39dc97756b23f12239bdd7bba0429ab2e352",
+    "runtimeSha256": "539deda0cc4e225dcf653c55eacf70e5af4218bca12e9ff34f8d2eebea1ead74",
+    "buildReceipt": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-candidate1002b\\build-receipt.json",
+    "buildReceiptSha256": "cffd3c0f551956e6ac10016647bfecd8badeb6a6dcc5c2fa6d45756fa3e3b375",
+    "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Builds\\competition-candidate1002b\\TumbangPreso.exe",
+    "mode": "HeroStrike",
+    "map": "IlalimNgTulay",
+    "rounds": 8,
+    "roundSeconds": 90,
+    "clientReportSeconds": 900,
+    "hostReportSeconds": 913,
+    "graphics": "D3D11/Balanced/1920x1080/60FPS cap",
+    "membership": "two human-owned seats with no scripted gameplay input; two ordinary bots",
+    "profilePrefix": "competition-fullhero1002b",
+    "scope": "Natural default finish; no rematch, shortened rules, tournament preset or staged gameplay"
+  },
+  "rawHarnessExitCode": 1,
+  "rawHarnessPassed": false,
+  "rawHarnessFaults": [
+    "host: the host stopped refereeing before it sampled (round active False). A host that freezes when a peer leaves is exactly what this row is looking for",
+    "client: the client was not in a live round at exit (round active False)"
+  ],
+  "rawResultSha256": "4c2c13218b563f6fa4d793abb7e30f4bb6e5546a868d2b93d3369bc5691d2ba4",
+  "players": {
+    "host": {
+      "report": {
+        "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-fullhero1002b\\demo-clean-direct\\host.txt",
+        "seats": [
+          {
+            "seat": 0,
+            "char": 0,
+            "bot": false,
+            "origin": "Human",
+            "taya": false,
+            "score": 40,
+            "travelled": 38.9
+          },
+          {
+            "seat": 1,
+            "char": 0,
+            "bot": true,
+            "origin": "HandedToBot",
+            "taya": false,
+            "score": 40,
+            "travelled": 623.1
+          },
+          {
+            "seat": 2,
+            "char": 6,
+            "bot": true,
+            "origin": "Bot",
+            "taya": false,
+            "score": 3500,
+            "travelled": 770.0
+          },
+          {
+            "seat": 3,
+            "char": 0,
+            "bot": true,
+            "origin": "Bot",
+            "taya": true,
+            "score": 3035,
+            "travelled": 741.5
+          }
+        ],
+        "role": "HOST",
+        "networked": "True",
+        "slot": "0",
+        "protocol": "129",
+        "sampled": "913.0",
+        "round": "8",
+        "active": "False",
+        "defender": "3",
+        "mode": "HeroStrike",
+        "map": "IlalimNgTulay",
+        "structural": "D2F4FB7D",
+        "hash": "549A2C1D"
+      },
+      "graphics": "Balanced; 1920x1080; vsync=0; target=60",
+      "modifiers": "none",
+      "hostRoundStarts": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "careerSha256": "0ece14f82dc3fba3c12627610544b0c94e8b0ea7313731db226543a773132a3a"
+    },
+    "client": {
+      "report": {
+        "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-fullhero1002b\\demo-clean-direct\\client.txt",
+        "seats": [
+          {
+            "seat": 0,
+            "char": 0,
+            "bot": false,
+            "origin": "Human",
+            "taya": false,
+            "score": 40,
+            "travelled": 41.7
+          },
+          {
+            "seat": 1,
+            "char": 0,
+            "bot": false,
+            "origin": "Human",
+            "taya": false,
+            "score": 40,
+            "travelled": 49.0
+          },
+          {
+            "seat": 2,
+            "char": 6,
+            "bot": true,
+            "origin": "Bot",
+            "taya": false,
+            "score": 3500,
+            "travelled": 820.8
+          },
+          {
+            "seat": 3,
+            "char": 0,
+            "bot": true,
+            "origin": "Bot",
+            "taya": true,
+            "score": 3035,
+            "travelled": 793.9
+          }
+        ],
+        "role": "CLIENT",
+        "networked": "True",
+        "slot": "1",
+        "protocol": "129",
+        "sampled": "900.0",
+        "round": "8",
+        "active": "False",
+        "defender": "3",
+        "mode": "HeroStrike",
+        "map": "IlalimNgTulay",
+        "structural": "D2F4FB7D",
+        "hash": "E9EFAE92"
+      },
+      "graphics": "Balanced; 1920x1080; vsync=0; target=60",
+      "modifiers": "none",
+      "hostRoundStarts": [
+        1
+      ],
+      "careerSha256": null
+    }
+  },
+  "issues": [
+    "host: no naturally completed career record in its fresh named profile",
+    "client: no naturally completed career record in its fresh named profile",
+    "Peers do not retain the same completed match, winner, scores and membership"
+  ],
+  "ownedPidsRetired": [
+    21364,
+    5612
+  ],
+  "defaultHeroCompletionObserved": false,
+  "limits": "Separate terminal observations; raw live-round harness verdict unchanged. No full menu, rematch, WAN, physical-input, visual-taste or performance-comparison claim."
+}

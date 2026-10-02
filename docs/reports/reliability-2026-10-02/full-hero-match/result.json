@@ -1,0 +1,119 @@
+{
+  "passed": false,
+  "faults": [
+    "host: the host stopped refereeing before it sampled (round active False). A host that freezes when a peer leaves is exactly what this row is looking for",
+    "client: the client was not in a live round at exit (round active False)"
+  ],
+  "host": {
+    "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-fullhero1002b\\demo-clean-direct\\host.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": false,
+        "score": 40,
+        "travelled": 38.9
+      },
+      {
+        "seat": 1,
+        "char": 0,
+        "bot": true,
+        "origin": "HandedToBot",
+        "taya": false,
+        "score": 40,
+        "travelled": 623.1
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 3500,
+        "travelled": 770.0
+      },
+      {
+        "seat": 3,
+        "char": 0,
+        "bot": true,
+        "origin": "Bot",
+        "taya": true,
+        "score": 3035,
+        "travelled": 741.5
+      }
+    ],
+    "role": "HOST",
+    "networked": "True",
+    "slot": "0",
+    "protocol": "129",
+    "sampled": "913.0",
+    "round": "8",
+    "active": "False",
+    "defender": "3",
+    "mode": "HeroStrike",
+    "map": "IlalimNgTulay",
+    "structural": "D2F4FB7D",
+    "hash": "549A2C1D"
+  },
+  "client": {
+    "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-fullhero1002b\\demo-clean-direct\\client.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": false,
+        "score": 40,
+        "travelled": 41.7
+      },
+      {
+        "seat": 1,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": false,
+        "score": 40,
+        "travelled": 49.0
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 3500,
+        "travelled": 820.8
+      },
+      {
+        "seat": 3,
+        "char": 0,
+        "bot": true,
+        "origin": "Bot",
+        "taya": true,
+        "score": 3035,
+        "travelled": 793.9
+      }
+    ],
+    "role": "CLIENT",
+    "networked": "True",
+    "slot": "1",
+    "protocol": "129",
+    "sampled": "900.0",
+    "round": "8",
+    "active": "False",
+    "defender": "3",
+    "mode": "HeroStrike",
+    "map": "IlalimNgTulay",
+    "structural": "D2F4FB7D",
+    "hash": "E9EFAE92"
+  },
+  "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Builds\\competition-candidate1002b\\TumbangPreso.exe",
+  "clientArtifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Builds\\competition-candidate1002b\\TumbangPreso.exe",
+  "expectedProtocolRefusal": false,
+  "runtimeSha256": "539deda0cc4e225dcf653c55eacf70e5af4218bca12e9ff34f8d2eebea1ead74",
+  "clientRuntimeSha256": "539deda0cc4e225dcf653c55eacf70e5af4218bca12e9ff34f8d2eebea1ead74",
+  "sharedInputUnchanged": true
+}

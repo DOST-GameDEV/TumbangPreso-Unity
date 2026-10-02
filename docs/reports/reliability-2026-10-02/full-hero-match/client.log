@@ -1,0 +1,116 @@
+Mono path[0] = 'C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Builds/competition-candidate1002b/TumbangPreso_Data/Managed'
+Mono config path = 'C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Builds/competition-candidate1002b/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.5.8f1 (5cb7df797b7d)
+[Subsystems] Discovering subsystems at path C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Builds/competition-candidate1002b/TumbangPreso_Data/UnitySubsystems
+Forcing GfxDevice: Direct3D 11
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: AMD Radeon RX 6600 (ID=0x73ff)
+    Vendor:   ATI
+    VRAM:     8147 MB
+    Driver:   32.0.21043.19003
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.282 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+D3D11 device created for Microsoft Media Foundation video decoding.
+[Audio] loaded 64 of 64 cues.
+[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+UnloadTime: 3.038000 ms
+[Build] TUMBANG PRESO 1.0.0 | 2c3f39dc9775+dirty | protocol 129 | StandaloneWindows64
+[NetReport] writing C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-fullhero1002b\demo-clean-direct\client.txt after 900 s.
+[Net] connecting to 127.0.0.1:8910
+[NetBoot] join requested to 127.0.0.1:8910: connecting
+[SplashShaders] shaders=72 variants=135 warmed=135 complete=True calls=135 frames=31 budget_ms=2.0 elapsed_ms=507.166 max_slice_ms=11.231
+[Net] connected
+[Net] connected as seat 2
+[NetBoot] join admission: seat assigned
+[Link] Poor at 202 ms round trip (client).
+[Splash] preload exceeded six seconds; keeping the loading screen visible until it is ready.
+[Link] Bad at 5091 ms round trip (client).
+Unloading 7 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 3.412800 ms
+[NetSeat] arena installed: LocalSlot=1 spectator=False host=False allBots=False | s0:-+live+act | s1:reader+sim+live+act | s2:-+bot+live+act | s3:-+bot+live+act
+Unloading 105 unused Assets to reduce memory usage. Loaded Objects now: 22377.
+Total: 7.426800 ms (FindLiveObjects: 1.311700 ms CreateObjectMapping: 1.143700 ms MarkObjects: 3.382800 ms  DeleteObjects: 1.588400 ms)
+
+[NetAuto] READY submitted from a client peer.
+[Link] Poor at 326 ms round trip (client).
+[ArenaPrewarm] drew 20 views in 0.80 s.
+[HubLoading] IlalimNgTulay ready after 2.99 s.
+[Slice] round 1 begins, taya is seat 0
+[Link] Good at 39 ms round trip (client).
+[Slice] match over. scores: 40 / 40 / 3500 / 3035. seat 2 wins
+[NetReport] wrote C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-fullhero1002b\demo-clean-direct\client.txt
+TUMBANG PRESO NETWORK STATE REPORT
+
+role            : CLIENT
+networked       : True
+local slot      : 1
+protocol        : 129
+mode            : HeroStrike
+map             : IlalimNgTulay
+sampled         : 900.0 s
+graphics        : Balanced; 1920x1080; vsync=0; target=60
+hardware        : AMD Ryzen 5 2600 Six-Core Processor ; AMD Radeon RX 6600; RAM=16335 MB
+live frame rate : frames=43196; seconds=724.109; avg=59.65; p50=59.70; p5=57.97; p1=57.97; max_ms=109.43
+round           : 8
+defender        : 3
+round active    : False
+hub lobby seen  : False
+arrival seen    : False
+auto count seen : False
+lata upright    : True   flips: 12
+tournament ruleset : the rule set is not the tournament one: mode is HeroStrike, tournament is Classic
+tournament modifiers : none
+build identity  : TUMBANG PRESO 1.0.0 | 2c3f39dc9775+dirty | protocol 129 | StandaloneWindows64
+
+seat   char   bot      origin  taya   score  travelled  skills  ults
+--------------------------------------------------------------------------
+0         0 False       Human False      40       41.7       0     0
+1         0 False       Human False      40       49.0       0     0
+2         6  True         Bot False    3500      820.8      16     1
+3         0  True         Bot  True    3035      793.9       3     0
+
+slipper    on  state  owner  holder  changes
+---------------------------------------------
+0           y      1      0       0        3
+1           y      1      1       1        5
+2           y      1      2       2       65
+3           n      0     -1      -1       62
+
+structural state hash : D2F4FB7D
+discrete state hash : E9EFAE92
+
+⚠️ THE DISCRETE HASH COVERS ONLY DISCRETE STATE. Two peers cannot agree bit
+for bit on a position or a clock; they must agree on who is who, who is
+taya, what each tsinelas is doing and what the score is.
+
+⚠️⚠️ AND IT IS NOT AN EQUALITY GATE ACROSS PEERS, WHICH THE STRUCTURAL HASH
+IS. Discrete is not the same as CONSTANT: the score, the slipper states and
+the defender all move during a match, and two reports stop at two different
+instants by construction (a referee has to outlive its clients). Comparing
+the discrete hash between peers therefore fails on a working link roughly
+whenever anything happens. The structural hash covers only what CANNOT
+change while a match runs: which character sits in which seat, which seats
+are bots, and the protocol. Two peers disagreeing on that are playing two
+different matches, whenever you look.
+[NetDisconnect] peer=1 local=1 server=False connected=True
+[Net] disconnected: [Disconnect Event][Client-1][TransportClientId-4294967296][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.
+[Abandon] HostLost: ABANDONED at round 8 of 8; this peer may no longer resolve anything
+UnloadTime: 21.344200 ms
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+CodeReloadManager destroyed
