@@ -1,0 +1,13 @@
+{
+  "question": "Authored intro before heavy loading; fresh input white fade; failure cleanup; unchanged menu barrier",
+  "retry_count": 0,
+  "sha256": {
+    "Runtime/UI/SplashScreen.cs": "beffbe71a460122d1a5a982e89e238f25ce5cb49dc972437aea5fb0fd2bbffd6",
+    "Runtime/UI/SplashScreen.StudioIntro.cs": "2b7dba9b968265afad90111d8fef5642407802cfc7c40b95204463b32a75430b",
+    "Runtime/UI/SplashScreen.MenuActivation.cs": "58cb651dadaaf01761cb8b2504dee72bf433d59801ffd7536d50cb8135daf8f7",
+    "Runtime/Input/MenuNav.cs": "ed9d986279ad580d98ddb207418da9749c85e41dde795457ef97e717348e00a7",
+    "Editor/MapKit/TscnUiImporter.cs": "3d50ca8d009af9c8ac3d9f76680c130f64210fb3c4fd9f1b878d71bdf569f3b0",
+    "Scenes/Ui/SplashScreen.unity": "e8497425d81501f03f1ea3e7c29133290650b47a5a83ad0c0afa7434284d569d",
+    "Tests/PlayMode/StudioIntroTests.cs": "604a327931c644bbc2a4c216e316d31b442ca9638928a9d47eb0470332144d25"
+  }
+}

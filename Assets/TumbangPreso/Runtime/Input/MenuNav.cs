@@ -138,6 +138,27 @@ namespace TumbangPreso.InputLayer
         /// records, where nine spectator keys sat outside the input map and
         /// nothing in the project could see them.
         /// </summary>
+        public static bool StudioSkipPressed
+        {
+            get
+            {
+                var keys = Keyboard.current;
+                if (keys != null && keys.anyKey.wasPressedThisFrame) return true;
+                var mouse = Mouse.current;
+                if (mouse != null && (mouse.leftButton.wasPressedThisFrame ||
+                    mouse.rightButton.wasPressedThisFrame || mouse.middleButton.wasPressedThisFrame ||
+                    mouse.forwardButton.wasPressedThisFrame || mouse.backButton.wasPressedThisFrame)) return true;
+                var touch = Touchscreen.current;
+                if (touch != null)
+                    foreach (var finger in touch.touches) if (finger.press.wasPressedThisFrame) return true;
+                var pad = Gamepad.current;
+                if (pad != null)
+                    foreach (var control in pad.allControls)
+                        if (control is UnityEngine.InputSystem.Controls.ButtonControl button && button.wasPressedThisFrame) return true;
+                return false;
+            }
+        }
+
         public static bool PadAnyPressed
         {
             get

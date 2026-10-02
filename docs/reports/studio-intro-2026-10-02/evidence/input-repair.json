@@ -1,0 +1,5 @@
+{
+  "reason": "Synthetic keyboard event was filtered by background editor input. Reuse existing FeedbackMenuRouteTests IgnoreFocus/AllDeviceInputAlwaysGoesToGameView/EnableDevice fixture, restore settings finally. No production changes or weaker assertions.",
+  "retry_count": 1,
+  "sha256": "66db0898586ae1a9e671c85eb589db264509d292bd47509eb79ff3d65a118cc5"
+}

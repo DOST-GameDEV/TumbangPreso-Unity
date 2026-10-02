@@ -150,3 +150,5 @@ Dante Boulder weight-bearing preparation: [native review and preserved assets](r
 - [Latest3.5second Next Round timing](reports/round-timer-35-2026-10-02/README.md): shared ordinary deadline and unchanged10second halftime.
 
 Timed status recovery without mashing: [native evidence](reports/timed-recovery-2026-10-02/README.md).
+
+Studio intro before loading: [native evidence](reports/studio-intro-2026-10-02/README.md).

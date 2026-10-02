@@ -18,3 +18,9 @@ routes, white fade, missing/failed media fallback and destruction cleanup; reuse
 existing menu barrier controls. One isolated native case per process, separate
 import, unchanged memory guard. Native checks do not qualify a fresh player or
 sound quality. Do not alter unrelated engineering lanes or use the personal PC.
+
+Native first check found that Linux does not import the bound H264 MP4 as a
+VideoClip. Preserve that source and binding; add a high-quality VP8 WebM
+derivative of the same92frames for Linux and missing-original fallback. Bind
+it explicitly in the scene/importer and qualify this actual shipped derivative.
+This is codec compatibility, not reauthoring the intro.

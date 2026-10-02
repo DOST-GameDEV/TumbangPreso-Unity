@@ -1,0 +1,14 @@
+{
+  "question": "Authored intro before heavy loading; fresh input white fade; failure cleanup; unchanged menu barrier",
+  "retry_count": 1,
+  "sha256": {
+    "Runtime/UI/SplashScreen.cs": "beffbe71a460122d1a5a982e89e238f25ce5cb49dc972437aea5fb0fd2bbffd6",
+    "Runtime/UI/SplashScreen.StudioIntro.cs": "4647196f61ec3fe1117292233c446d5ea352091da53c9aa1ced1d944ebba1cd3",
+    "Runtime/UI/SplashScreen.MenuActivation.cs": "58cb651dadaaf01761cb8b2504dee72bf433d59801ffd7536d50cb8135daf8f7",
+    "Runtime/Input/MenuNav.cs": "ed9d986279ad580d98ddb207418da9749c85e41dde795457ef97e717348e00a7",
+    "Editor/MapKit/TscnUiImporter.cs": "c7a90ee24988ecaa7c92faf0061065462fc25e27ee8b9662e44374af94df2aad",
+    "Scenes/Ui/SplashScreen.unity": "1023325557018a3068a71a4ec30eb6551e6193e5592182c35e3128bfb13b27b3",
+    "Tests/PlayMode/StudioIntroTests.cs": "c14b6a4e89c25aa0dfb03339bf2d82b89546338b10576a6b3a134d576c222a24"
+  },
+  "reason": "Linux cannot import original H264 VideoClip; retain original and add bound VP8 derivative"
+}

@@ -1935,6 +1935,9 @@ namespace TumbangPreso.EditorTools.MapKit
             // ⚠️ FULLY QUALIFIED: UnityEngine has a SplashScreen too, and with both namespaces
             // in scope the short name is ambiguous rather than merely surprising.
             var splash = canvasGo.AddComponent<TumbangPreso.UI.SplashScreen>();
+            foreach (var label in canvasGo.GetComponentsInChildren<UnityEngine.UI.Text>(true))
+                if (label.name == "SkipHint") { label.text = ""; label.gameObject.SetActive(false); }
+
 
             var clip = AssetDatabase.LoadAssetAtPath<VideoClip>(
                 $"{ArtRoot}/video/opening_animation.mp4");
@@ -1944,6 +1947,8 @@ namespace TumbangPreso.EditorTools.MapKit
 
             var so = new SerializedObject(splash);
             so.FindProperty("_clip").objectReferenceValue = clip;
+            so.FindProperty("_portableClip").objectReferenceValue = AssetDatabase.LoadAssetAtPath<VideoClip>(
+                $"{ArtRoot}/video/opening_animation_portable.webm");
             so.FindProperty("_sting").objectReferenceValue = sting;
             so.ApplyModifiedPropertiesWithoutUndo();
 

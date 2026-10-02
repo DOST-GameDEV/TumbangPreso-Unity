@@ -918,3 +918,11 @@ retained failures and exact-value reruns. Protocol134, recording13 unchanged.
 No live job. Commit/publish exact owned recovery paths and evidence, update live
 Feedback Notes; then implement the same row's separate BH Studios startup flow.
 Unowned UI metadata, inday FPP assets and crash blob remain untouched.
+
+Studio intro candidate ready: real portable video before loading, no skip label,
+any-input0.22s white fade, bounded failure and target cleanup. Five isolated native
+cases pass, including unchanged real menu barrier/failure exit. Linux H264 import
+returned null; original preserved plus bound VP8 derivative. One focus fixture
+repair retained. No active job. Publish exact owned startup paths and update
+Feedback, then qualify a fresh isolated packaged startup. User asleep18:28UTC;
+continue cloud-only work and hold routine chat until return.

@@ -151,7 +151,7 @@ GROUPS = [
         # verdict about the code, so a fixture that turns out to share a world with another one
         # should simply be moved.
         "BrandPickerTests", "BrandPreparationTests", "BrandSettingsTests", "CloseFeedbackViewProbe",
-        "ModelPreviewPixelTests", "OwnerMenuEditsTests", "OwnerMenuSkyTests", "OwnerPasswordTests",
+        "ModelPreviewPixelTests", "OwnerMenuEditsTests", "StudioIntroTests", "OwnerMenuSkyTests", "OwnerPasswordTests",
         "OwnerPlayerHubTests", "OwnerPreparationTests", "OwnerUiAuthoringTests",
         "PlayHeadingScaleTests", "ReducedActionFocusProbe", "SwimmingNameplateTests",
         "TumpNativeFrontEndTests", "TumpNativeJoinTests", "TumpNativePickerTests",
