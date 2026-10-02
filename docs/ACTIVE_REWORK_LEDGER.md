@@ -134,3 +134,12 @@ Full-HD timeout and memory warnings retained. Two distinct cases, no clean
 combined-suite/performance/player claim. Publish the two owned source paths and
 report/TODO/checkpoint, then update and strike only the resolved catch comment
 in Feedback. Next prioritize Harry's remaining comments before character work.
+
+Catch refinement shipped and remote verified at 5e0897f4; same Feedback note
+updated and only the resolved catch comment struck through. Release its files.
+WARNING-STRIP-1002 next owns Runtime/UI/TumpMatchReadout.Warnings.cs and one
+focused case in Tests/PlayMode/TumpNativeHudTests.cs, plus report/TODO updates.
+Target a thin natural-width single line at ordinary viewports, matching the
+contextual action plate opacity. Preserve minimum font size and existing crowded
+status bounds; do not hide text merely to force one line at impossible widths.
+No active heavy job.
