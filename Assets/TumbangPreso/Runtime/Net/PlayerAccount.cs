@@ -26,6 +26,8 @@ namespace TumbangPreso.Net
         private Task _initialiseTask;
         private AccountProfile _profile;
         private AccountProfile _primaryProfile;
+        private Func<string, Task<string>> _saveProfileDispatch;
+        private long _saveProfileRequest;
 
         [Serializable]
         private sealed class CloudProfileResponse
@@ -821,13 +823,25 @@ namespace TumbangPreso.Net
 
         private async Task SaveCloudProfileAsync()
         {
+            var requestedProfile = Profile;
+            string requestedOwner = requestedProfile.PlayerId;
+            string profileJson = JsonUtility.ToJson(requestedProfile);
+            long request = ++_saveProfileRequest;
             try
             {
-                var response = await CallCloudAsync("save", JsonUtility.ToJson(Profile));
+                var response = _saveProfileDispatch == null
+                    ? await CallCloudAsync("save", profileJson)
+                    : JsonUtility.FromJson<CloudProfileResponse>(await _saveProfileDispatch(profileJson));
+                // A canonical reply belongs to the submitted profile and edit, not the
+                // account or newer local changes selected while the request was pending.
+                if (this == null || IsGuest || !IsSignedIn || request != _saveProfileRequest ||
+                    !ReferenceEquals(_profile, requestedProfile) || PlayerId != requestedOwner ||
+                    JsonUtility.ToJson(requestedProfile) != profileJson) return;
                 if (response != null && !string.IsNullOrWhiteSpace(response.profile))
                 {
                     var canonical = JsonUtility.FromJson<AccountProfile>(response.profile);
-                    if (canonical != null) _profile = AccountRules.Resolve(Profile, canonical, true);
+                    if (canonical == null || canonical.PlayerId != requestedOwner) return;
+                    _profile = AccountRules.Resolve(requestedProfile, canonical, true);
                     Persist();
                 }
             }

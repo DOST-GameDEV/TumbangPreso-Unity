@@ -142,9 +142,19 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
 - [x] COMPLETED-ARRIVAL-1002: cold ended-match snapshot and retained-record recovery;
   shipped960560b7c via5bf65ed6a, native12/12. Actual-peer acceptance remains open.
   [Evidence](reports/reliability-2026-10-02/completed-match-arrival/README.md).
-- [ ] CUSTOM-SLOT-RECOVERY-1002: missing saved slots preserve later characters;
-  qualified native6/6 after four reproduced failures; publication next.
+- [x] CUSTOM-SLOT-RECOVERY-1002: missing saved slots preserve later characters;
+  shippede8de37021 via066bb51ee, native6/6 after four reproduced failures.
   [Evidence](reports/reliability-2026-10-02/custom-slot-recovery/README.md).
+- [x] HUB-DISCONNECT-CANCEL-1002: host loss cancels pending join and queue work;
+  shipped8acbdf683 via066bb51ee, native3/3 after three reproduced failures.
+  [Evidence](reports/reliability-2026-10-02/hub-disconnect/README.md).
+- [ ] ACCOUNT-SAVE-OWNER-1002: delayed save must preserve current account/edit;
+  four native failures reproduced, candidate5/5 passed; publication next.
+  [Evidence](reports/reliability-2026-10-02/account-save-owner/README.md).
+- [ ] READY-CHAT-INTENT-1002: typing must not create a manual ready vote;
+  Astra preparing current-input baseline; preserve auto-ready/retransmission.
+- [ ] REBIND-ACTION-STATE-1002: restore original disabled/enabled action state;
+  Sol preparing focused actual-operation baseline.
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow
