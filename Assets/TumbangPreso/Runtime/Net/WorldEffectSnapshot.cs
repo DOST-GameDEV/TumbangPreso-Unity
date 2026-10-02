@@ -14,7 +14,7 @@ namespace TumbangPreso.Net
             // ⚠️ APPEND ONLY (protocol 53): Amihan's Whirlwind gale, a travelling front.
             Gale = 11,
             // ⚠️ APPEND ONLY (protocol 55, HERO-9): Paete's seedling, his thorn construct and his sentry.
-            Plant = 12, Thorns = 13, Sentry = 14, Drift = 15, Waterwall = 16, CinderGate = 17 }
+            Plant = 12, Thorns = 13, Sentry = 14, Drift = 15, Waterwall = 16, CinderGate = 17, Baha = 18 }
         public static bool UsesDynamicIdentity(Kind kind) => RafiWaterField.IsWater(kind) || kind == Kind.CinderGate;
         public struct Field
         {

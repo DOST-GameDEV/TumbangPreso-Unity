@@ -2,6 +2,7 @@ Shader "TumbangPreso/RafiWater"
 {
     Properties { _Color ("Water tint", Color) = (.16,.60,.77,.36)
         _UseVertexTint ("Authored sheet opacity", Float) = 0
+        _UseVertexColour ("Baha authored water colour", Float) = 0
         _CurtainFlow ("Waterwall rivulets", Float) = 0
         _FlowAge ("Sampled age", Float) = 0 }
     SubShader
@@ -18,7 +19,7 @@ Shader "TumbangPreso/RafiWater"
             #pragma multi_compile_fog
             #include "UnityCG.cginc"
             fixed4 _Color;
-            float _UseVertexTint, _CurtainFlow, _FlowAge;
+            float _UseVertexTint, _UseVertexColour, _CurtainFlow, _FlowAge;
             struct appdata { float4 vertex:POSITION; float3 normal:NORMAL; fixed4 colour:COLOR; float2 uv:TEXCOORD0; };
             struct v2f
             {
@@ -53,7 +54,8 @@ Shader "TumbangPreso/RafiWater"
                 float3 n=i.normal*rsqrt(max(dot(i.normal,i.normal),.0001));
                 float3 view=i.view*rsqrt(max(dot(i.view,i.view),.0001));
                 float rim=pow(1-saturate(abs(dot(n,view))),3);
-                fixed4 colour=fixed4(lerp(_Color.rgb,_Color.rgb*.65+.35,rim*.32),_Color.a*i.colour.a);
+                float3 tint=_Color.rgb*lerp(float3(1,1,1),i.colour.rgb,saturate(_UseVertexColour));
+                fixed4 colour=fixed4(lerp(tint,tint*.65+.35,rim*.32),_Color.a*i.colour.a);
                 // Four authored streams at the sides, never a uniform scrolling pane.
                 // Field age drives them, so replay/rejoin sampling has no global-time drift.
                 float water=saturate(_CurtainFlow)*(rivulet(i.uv,.075,.2,6.1,.009)

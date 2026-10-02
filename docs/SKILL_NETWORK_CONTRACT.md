@@ -682,3 +682,15 @@ clock age subtracts from both channels. Positive inactive-round passive rejects,
 and newer zero clears without rewarding retrieval. Grant/accepted throw use the
 existing reliable timed-state broadcast. No character-specific RPC is added.
 See [Steady Ember evidence](reports/sean-steady-ember-2026-10-02/README.md).
+
+
+## Rafi Baha and Backwash, protocol132
+
+Baha is dynamic field kind18, with authoritative map/cover-bounded nine-point
+path,0.8second warning,5m/s front and0.6second carry retirement. Clients and
+recordings render it without resolving contact. Recording13 accepts Baha;
+schemas10/11/12 remain readable with their original allowed fields. Kind10
+Breakwater semantics are unchanged. Backwash uses the existing bounded passive
+timed-kit channel independently of Skim's one-time joining state. Genuine
+manual own-throw retrieval grants1.5seconds at1.2x movement; drop/regrab does
+not mint another reward. [Qualification](reports/rafi-baha-2026-10-02/README.md).

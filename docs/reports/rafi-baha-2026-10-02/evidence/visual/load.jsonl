@@ -1,0 +1,14 @@
+{"seconds": 0.0, "total": 3863113728, "anon_shmem": 1798705152}
+{"seconds": 5.0, "total": 4476239872, "anon_shmem": 2403557376}
+{"seconds": 10.0, "total": 5032828928, "anon_shmem": 2959523840}
+{"seconds": 15.0, "total": 5382459392, "anon_shmem": 3307298816}
+{"seconds": 20.0, "total": 6019665920, "anon_shmem": 3936833536}
+{"seconds": 25.0, "total": 7821217792, "anon_shmem": 5728600064}
+{"seconds": 30.0, "total": 8571404288, "anon_shmem": 6982103040}
+{"stop": "memory guard"}
+{"seconds": 35.0, "total": 8589832192, "anon_shmem": 7151706112}
+{"seconds": 40.0, "total": 8582770688, "anon_shmem": 7182110720}
+{"seconds": 45.0, "total": 8340652032, "anon_shmem": 6926024704}
+{"seconds": 50.0, "total": 8354091008, "anon_shmem": 6926065664}
+{"seconds": 55.0, "total": 6608117760, "anon_shmem": 5067595776}
+{"seconds": 60.0, "total": 6350946304, "anon_shmem": 4812185600}
