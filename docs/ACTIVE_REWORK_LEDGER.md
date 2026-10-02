@@ -186,3 +186,12 @@ and guard null40s. Both hollow-role captures inspected. First ordinary-profile
 run timed out under memory pressure; retained, one bounded retry used. Publish
 two owned source files and evidence, then update/strike the exact radius
 comment in Feedback. No gameplay size or target-player claim.
+
+Player circle2d966482 shipped and exact Feedback note/strike verified. Release
+marker paths. Next SEAN-EMPOWERED-PRESENTATION-1002: actual held-shoe/body/FPP
+review against the researched press/check/release direction. Reserve Sean's
+hero-sean-ignite clip within tools/author_hero_action.py and team-sean.glb, and
+Runtime/Visual/SeanIgnitionVisual.cs if baseline demonstrates a visual defect.
+Do not change mechanics, other clips or Amihan. Reuse actual-input capture on
+Low with fixed simulation and labelled longer film; no real-time/audio claim.
+First capture decides the narrow authored change, no decorative rewrite by default.
