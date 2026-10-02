@@ -139,8 +139,11 @@ Root slide disable lifetime shipped99f6b2994; original64655=1causal failure/
 2controls; candidate10107 PASS3/no repairs/post72297 exact3/all18868 protected.
 Fresh1002i actualpeer55528 FAILED120s, source45fixes; slide46 excluded. Original
 observer receipt-write sharing violation interrupted snapshot handler, raw retained.
-Root diagnostic IO candidate+3 fixture MAIN-only; await helper native release.
-Helper touch null-list original72038 ACTIVE/exact3, source unchanged.
+Root diagnostic IO candidate99649 ACTIVE/exact3 after prep68414/reconcile89101
+exit0;ONE preparation coordination correction for retired helper fixture/meta.
+Helper touch null-list original72038 PASS3, suspicion not reproduced; no store
+patch or repeat. Finding-only report/fixture retirement complete; native slot free
+then transferred to root. [Evidence](reports/reliability-2026-10-02/touch-layout-null-list/README.md).
 DirectHostlunge
 lifetimeproof3/3 shipped; helper candidate35856 TERMINAL PASS3 on confirmed
 SafeStore failedpromotion->laterwrite edge; original45036 had1causal failure/

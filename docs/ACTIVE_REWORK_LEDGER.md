@@ -81,22 +81,30 @@ runtime unchanged/leasefree. Prior1002h actualpeer14348 PASS remains independent
 source7648b68c3/41fixes/protocol132/runtime dfb967a5ab8b79374885831866ed4d78c01e456d163094d69e63a9731115e43d.
 Incoming Rafi4a9afbd90/protocol132/record13 preserved; Core704/704 proof7648.
 
-SOLE helper sol_parallel_engineering CURRENT native ORIGINAL72038 ACTIVE:
+SOLE helper sol_parallel_engineering ORIGINAL72038 TERMINAL PASS3:
 touch-layout-null-list1002/EditMode/filter TouchLayoutNullListTests3/CPU1536+
 2048reserve/450s; directprep0/exact3/protected12543. Owns only Input/TouchLayoutStore
 and NEW Tests/TouchLayoutNullListTests.cs/meta. Actual JSON Tweaks:null -> lookup/
 edit with2ordinary controls; snapshots/restores exact preference key/cache/Revision.
-Source unchanged pending causal. If original passes, retire finding without patch.
+All3 passed including null-list; source unchanged/no product patch/no candidate
+or repeat.12543 protected unchanged/guardsrestored/free/zero repairs. Finding-only
+Report/fixture retirement COMPLETE; exact new fixture/meta retained outside both
+Assets with containment/hash proof. No product patch. Root native slot released.
 No NaN changes/schema/bindings/assets. Agent owns qualification/native until post
 handoff; root must not copy q assets or consume agent handle. Retired agents neverwake.
 
-ROOT CURRENT disjoint MAIN-only diagnostic candidate ready: owns
+ROOT CURRENT diagnostic candidate ready: owns
 Runtime/Net/NetCompletedArrivalProbe.cs + NEW Tests/CompletedArrivalReceiptIoTests.cs/
 meta. Nonthrow receipt IO/warning once per consecutive failure/shared-read modes;
 existing failedWindowspeer supplies original causal evidence. Plan ONE candidate3
 owned-temp tests: locked Ended callback+save recovery, shared-writer read, ordinary
-latest counter. No replay/score/schema/protocol/gameplay changes. No q prep/native
-until helper releases. MAIN Logs/completed-arrival-receipt-io1002/prepare.py ready:
+latest counter. No replay/score/schema/protocol/gameplay changes. Qualification
+prep68414 TERMINAL0/exact3; reconcile89101 TERMINAL0 before native removed ONLY
+two known retired helper fixture entries from protected baseline after retained
+bytes/hash and every other input matched. Original snapshot kept;ONE preparation
+coordination correction, no source/fixture/native repair. Candidate99649 ACTIVE:
+CPU1536/reserve2048/450s/EditMode-nographics/filter CompletedArrivalReceiptIoTests3.
+MAIN Logs/completed-arrival-receipt-io1002/prepare.py:
 prepare exact3/snapshot Assets/TumbangPreso other hashes, post preservation.
 After diagnostic qualification, coherent new build+ONE bounded actualpeer run is
 justified by changed observer; never rerun old i unchanged or widen120s ceiling.

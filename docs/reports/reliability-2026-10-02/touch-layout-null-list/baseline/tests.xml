@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 10:28:42Z" end-time="2026-10-02 10:28:42Z" duration="0.3349384">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="960" result="Passed" start-time="2026-10-02 10:28:42Z" end-time="2026-10-02 10:28:42Z" duration="0.334938" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2161" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="960" result="Passed" start-time="2026-10-02 10:28:42Z" end-time="2026-10-02 10:28:42Z" duration="0.259730" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="6952" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2162" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="960" result="Passed" start-time="2026-10-02 10:28:42Z" end-time="2026-10-02 10:28:42Z" duration="0.198368" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2163" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="960" result="Passed" start-time="2026-10-02 10:28:42Z" end-time="2026-10-02 10:28:42Z" duration="0.138413" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2104" name="TouchLayoutNullListTests" fullname="TumbangPreso.Tests.TouchLayoutNullListTests" classname="TumbangPreso.Tests.TouchLayoutNullListTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 10:28:42Z" end-time="2026-10-02 10:28:42Z" duration="0.047119" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2106" name="MissingPreferenceStillProvidesDefaultsAndAcceptsAnEdit" fullname="TumbangPreso.Tests.TouchLayoutNullListTests.MissingPreferenceStillProvidesDefaultsAndAcceptsAnEdit" methodname="MissingPreferenceStillProvidesDefaultsAndAcceptsAnEdit" classname="TumbangPreso.Tests.TouchLayoutNullListTests" runstate="Runnable" seed="21672115" result="Passed" start-time="2026-10-02 10:28:42Z" end-time="2026-10-02 10:28:42Z" duration="0.027293" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2107" name="OrdinarySavedListRetainsItsAuthoredTweakAndCanUpdateIt" fullname="TumbangPreso.Tests.TouchLayoutNullListTests.OrdinarySavedListRetainsItsAuthoredTweakAndCanUpdateIt" methodname="OrdinarySavedListRetainsItsAuthoredTweakAndCanUpdateIt" classname="TumbangPreso.Tests.TouchLayoutNullListTests" runstate="Runnable" seed="1283888295" result="Passed" start-time="2026-10-02 10:28:42Z" end-time="2026-10-02 10:28:42Z" duration="0.001193" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2105" name="ParsedNullTweakListStillSupportsTheLiveHudLookupAndLayoutEdit" fullname="TumbangPreso.Tests.TouchLayoutNullListTests.ParsedNullTweakListStillSupportsTheLiveHudLookupAndLayoutEdit" methodname="ParsedNullTweakListStillSupportsTheLiveHudLookupAndLayoutEdit" classname="TumbangPreso.Tests.TouchLayoutNullListTests" runstate="Runnable" seed="1719765186" result="Passed" start-time="2026-10-02 10:28:42Z" end-time="2026-10-02 10:28:42Z" duration="0.001061" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
