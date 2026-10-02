@@ -455,3 +455,11 @@ restored. Exact owned paths stay reserved; report
 reports/rafi-backwash-2026-10-02/README.md. Continue independent Baha gap planning
 at reports/rafi-baha-2026-10-02/gap-analysis.md before a later coherent Rafi
 integration. No Baha production paths claimed yet; preserve other agents.
+
+DOTS next coherent implementation RAFI-BAHA-1002 owns the exact paths in
+reports/rafi-baha-2026-10-02/gap-analysis.md.0.8s warning,6m front crossing actual
+bounded court along aim,3m loose-shoe carry, grounded single nudge,15point cost.
+New Baha field18/recording13 preserve legacy Breakwater. Protocol132 stays
+unpublished with Backwash; no successful peer claim from the prior two false runs.
+Core geometry first, then new product/native/replay/presentation qualification.
+All other agents' ownership remains untouched; do not modify shared artifacts.

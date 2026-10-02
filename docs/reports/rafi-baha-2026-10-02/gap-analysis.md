@@ -75,3 +75,39 @@ and measure grant/movement/expiry. Do not repeat the old unchanged failed fixtur
 No production paths are reserved by this planning document alone. Publish exact
 ownership before implementation, reconcile other agents' latest ledger, and retain
 all old Rafi authored assets and unrelated work.
+
+## Selected implementation decision and reservation
+
+Keep the existing6m front width and5m/s speed. Interpret crossing the court as
+reaching the actual far playable boundary along aim; preserve sidestepping as a
+counter instead of inventing a map-wide blanket. Compute each of nine lanes'
+rectangle-exit distance, then clip it by current cover. Maximum range64m is a
+serialization safety bound, not a promised map size. The actual longest clear lane
+sets travel duration, preceded by0.8s warning and followed by at most0.6s shoe-carry
+retirement. Grounded rivals receive the existing4.8m/s nudge once. Shoes get3m of
+collision-clamped travel; the can and held objects are untouched.
+
+Append Baha as field kind18 rather than reinterpret historical Breakwater kind10.
+Preserve old visual/recorded timings. New recording schema13 admits Baha while
+still reading schemas10/11/12. Protocol132 is the current unpublished Rafi batch;
+reconcile the latest remote constant before any publication.
+
+Claim these exact paths for the new coherent Baha unit, plus existing Backwash
+ownership, before editing production:
+- Packages/com.tumbangpreso.core/Runtime/RafiRules.cs
+- Core.Tests/RafiRulesTests.cs
+- Assets/TumbangPreso/Runtime/Abilities/RafiHeroKit.cs
+- Assets/TumbangPreso/Runtime/Abilities/RafiWaterField.cs
+- Assets/TumbangPreso/Runtime/Visual/RafiWaterVisual.cs
+- Assets/TumbangPreso/Runtime/Net/WorldEffectSnapshot.cs
+- Assets/TumbangPreso/Runtime/Camera/RecordedMatchClip.cs
+- Assets/TumbangPreso/Tests/RafiBahaTests.cs and metadata
+- Assets/TumbangPreso/Tests/PlayMode/RafiBahaProbe.cs and metadata
+- Assets/TumbangPreso/Runtime/Diagnostics/NetRafiProbe.cs and tools/net_rafi_review.py
+- tools/playmode_suite.py; network contract, TODO, ledger and this report
+
+The existing dynamic-field sender and render-only view already dispatch through
+RafiWaterField.IsWater; inspect them but do not add an unnecessary new branch.
+Existing authored models/clips, Amihan, Sean, other contributors and live profiles
+remain outside this reservation. Backwash's failed standalone fixture stays false;
+new integration acceptance is justified only after this genuinely new product unit.
