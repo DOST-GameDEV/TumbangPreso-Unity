@@ -120,7 +120,7 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
-Latest checkpoint:37 root continuity runtime fixes published throughdd4712ca0.
+Latest checkpoint:38 root continuity runtime fixes published through5367390ab.
 Both agents retired after coherent cleanup/handoffs; root continues SOLO, no replacements. Actual RecordChoice Career refresh3/3 and account scorecard ownership3/3
 qualified; Window1002f built at946006940/protocol131, newer source is not in that
 frozen artifact. Astra cold-ended actor freeze and Sol scorecard-close focus are
@@ -147,7 +147,9 @@ root continues solo; no replacement agents or repeated unchanged tests.
 - [x] COLD-ACTOR-PEER-1002: fresh1002g build/source248836d1e, first actualWindows
   peer48099 PASS all4 actor inactive/parked/movement0/sprintfalse after cold rejoin.
   [Evidence](reports/reliability-2026-10-02/cold-actor-peer/README.md).
-- [ ] LAN-LISTENER-START-1002: root socket-cleanup candidate + NEW native3 fixture prepared MAIN-only; real8911 bind failure/retry acceptance pending after g peer job.
+- [x] LAN-LISTENER-START-1002: shipped5367390ab, real8911 bind cleanup/retry/
+  shutdown native3/3 after1causal/2controls, zero repairs/12523 protected match.
+  [Evidence](reports/reliability-2026-10-02/lan-listener-start/README.md).
 
 Owner reaffirmed2026-10-02: competition ready is the objective. Continue through
 coherent fixes and pushes; no stopping after a single passing unit. DOTS owns

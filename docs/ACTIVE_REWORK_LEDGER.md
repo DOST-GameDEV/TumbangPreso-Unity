@@ -25,14 +25,15 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Verified remote dd4712ca0; d9ddccaec current pause acceptance committed locally.
-Root continuity runtime fixes37 published:
+Verified remote5367390ab; refreshed artifact/peer evidence via d6cbe7502.
+Root continuity runtime fixes38 published:
 previous32 plus scorecard owner close84ddfc391 (native3/3,
 one canvas-lookup fixture correction) and RecordChoice focus57158d1db (native3/3,
 one normal-Start fixture correction), plus cold actor freeze12a2689ff (native3/3,
 one NUnit compatibility fixture repair), plus scorecard close focus7c3124886
 (native3/3, zero repairs), plus root Settings focusdd4712ca0 (native3/3 after
 1 causal/2controls; ONE metadata-only repair from initial0 ignored run).
+LAN startup5367390ab native3/3 after1causal/2controls, zero repairs.
 RecordChoice exact three source/test/meta
 inputs and all1294 protected hashes retained. Diagnostic890656094 is separate.
 Incoming6dc1f065b malformed replay refusal merged without overlapping product hunks;
@@ -94,23 +95,25 @@ Host stayed ended. Owned players18264/24636 retired, seeds/input restored, runti
 unchanged, lease released. NEW report cold-actor-peer prepared for publication.
 No full-default8round/physical/WAN/career settlement claim or repeated short run.
 
-ROOT LAN original preparation3555 RUNNING; main Logs/lan-listener-start1002/prepare.py
-baseline snapshots protected inputs then copies exact3 files to qualification.
-Await terminal exit0 BEFORE any native launch. Planned EditMode original3 then
-candidate3 CPU1536/reserve2048/450s/--ports8911/profile lan-listener-start1002.
-No second agent; both retired. No other heavy job active after48099 completion.
+ROOT LAN startup5367390ab PUBLISHED. Original77407 2controls/1causal, final16368
+PASS3/3; zero repairs. Prep3555 terminal0 before launch; all12523 protected unchanged,
+exact3 source/fixture/meta frozen. Native guards terminal/restored/no lease, port8911
+released. All root jobs terminal; no active Unity/player process/job to resume.
+Artifact1002g has37 fixes; this later LAN38 source is not in it. No per-fix rebuild.
+Source closure disposes/nulls partial UDP listener on actual bind refusal, preserves
+retry and normal StopAll. Report lan-listener-start. No memory/FPS/WAN claim.
 
-ROOT independent MAIN-only LAN startup candidate prepared while build ran:
-LanBeacon.cs exact3-line catch cleanup closes/nulls partially allocated UDP socket
-when Bind/BeginReceive setup fails. NEW Tests/LanListenerStartTests.cs/.meta3 cases
-use actual local exclusive port8911 bind refusal, retry after release, normal
-owned StopAll disposal. Original source MAIN Logs/lan-listener-start1002/LanBeacon-original.cs.txt,
-three frozen inputs in frozen.json. NOT copied/compiled/native-run/published yet.
-After g artifact+one new actor peer proof, run original3/candidate3 EditMode CPU1536,
-port8911 exclusive job claim; <=ONE fixture/tool repair. Do not mix with running
-players (they can use discovery8911). Preserve original failures; no UDP packet
-schema or discovery timing change. A separate receive-callback ownership race is
-only a source suspicion, unconfirmed/not patched; don't infer it fixed by cleanup.
+NEXT ROOT: bounded source-only investigation of LAN receive callback ownership.
+OnReceive currently captures mutable _listener rather than the socket which began
+its IAsyncResult; BeginReceive passes null AsyncState. A callback from a retired
+browse session could touch/rearm its replacement. THIS IS ONLY A SOURCE SUSPICION;
+no claim/prod patch/new native fixture yet. Reproduce via real owned loopback UDP
+result and replacement-listener pre-arm state, with current-receive and stopped-
+listener controls. If original3 passes, stop/finding-only; no forced defect claim.
+Avoid framework/metadata rewrites, <=ONE fixture/tool repair, main only then owned
+qualification exact paths. Continue independent higherimpact engineering if not
+reproduced. Original270ms frame remains unattributed; no blind performance retune.
+Both agents retired, no replacements/resumes; root SOLO. Goal active.
 
 Supernova native/helper route remains RETIRED: first77152 compile, corrected52284
 450s setup timeout, noXML/PNG/castproof; qualification original1536AF restored,
