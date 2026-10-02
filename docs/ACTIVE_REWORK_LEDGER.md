@@ -143,3 +143,11 @@ Target a thin natural-width single line at ordinary viewports, matching the
 contextual action plate opacity. Preserve minimum font size and existing crowded
 status bounds; do not hide text merely to force one line at impossible widths.
 No active heavy job.
+
+WARNING-STRIP-1002 final Low-profile native1/1 passes with four inspected UI-only
+captures. Original final launch failed under memory pressure; one bounded Low
+retry passed but retained a guard warning. Publish owned warning/test/report
+paths and update/cross out only the two resolved warning comments in Feedback.
+Next Harry priorities: Kanto/Ilalim ambience minus25percent and larger player
+ring. Claude local-session assignment pending verification, Amihan reserved for
+that potential separate lane; do not overlap.

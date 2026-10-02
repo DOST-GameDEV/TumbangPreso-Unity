@@ -1004,6 +1004,54 @@ namespace TumbangPreso.PlayTests
             return Rect.MinMaxRect(min.x,min.y,max.x,max.y);
         }
 
+        [UnityTest, Timeout(90000)]
+        public IEnumerator WarningStripIsThinSingleLineAndMatchesActionOpacity()
+        {
+            float oldScale = SettingsStore.Current.HudScale;
+            try
+            {
+                yield return Open(GameMode.Classic);
+                yield return new WaitForSeconds(1.4f);
+                var round = GameServices.Round; round.enabled = false;
+                var local = round.PlayerAt(GameLaunch.SoloSeat);
+                local.GetComponent<PlayerInputReader>().enabled = false;
+                local.GetComponent<Carrier>().enabled = false;
+                local.enabled = false; local.Intent.Clear();
+                local.Teleport(new Vector3(0, .1f, 2));
+                local.Intent.Set(Verb.SpecialAbility, true);
+                var view = Object.FindFirstObjectByType<TumpMatchReadout>();
+                var root = (RectTransform)view.Canvas.transform;
+                foreach (float scale in new[] { 1f, 1.2f })
+                {
+                    SettingsStore.Current.HudScale = scale;
+                    view.Tick(local, false, false, false, false);
+                    Assert.That(view.WarningText, Does.Contain("OUTSIDE DANGER ZONE"));
+                    foreach (var size in new[] { new Vector2Int(960, 540), new Vector2Int(1600, 680) })
+                    {
+                        Canvas.ForceUpdateCanvases();
+                        var warning = (RectTransform)root.Find("WarningMessage");
+                        Assert.LessOrEqual(warning.rect.height, 64, "Ordinary warnings should be a thin strip.");
+                        yield return TumpUiCapture.Capture("Warning-strip-" + scale + "-" + size.x,
+                            view.Canvas, size.x, size.y, false, false, inspectViewport: () =>
+                            {
+                                var text = warning.GetComponentInChildren<Text>();
+                                Assert.AreEqual(1, text.cachedTextGenerator.lineCount, "The warning should fit one readable line.");
+                                Assert.GreaterOrEqual(text.fontSize, 28);
+                                Assert.LessOrEqual(text.preferredWidth, text.rectTransform.rect.width + 1);
+                                var action = root.Find("ContextualAction/PromptPlate").GetComponent<HudCard>();
+                                Assert.AreEqual(action.color.a, warning.GetComponent<HudCard>().color.a, .001f);
+                                var bounds = HudRevisionBounds(root, warning);
+                                Assert.GreaterOrEqual(bounds.xMin, root.rect.xMin);
+                                Assert.LessOrEqual(bounds.xMax, root.rect.xMax);
+                            });
+                    }
+                }
+                view.Tick(local, true, false, false, false);
+                Assert.AreEqual("", view.WarningText);
+            }
+            finally { SettingsStore.Current.HudScale = oldScale; }
+        }
+
         [UnityTest,Timeout(60000)]
         public IEnumerator RevisedWarningsFollowRefusedInputsAndHideForSpectators()
         {

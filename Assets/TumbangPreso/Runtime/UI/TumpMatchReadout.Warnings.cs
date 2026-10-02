@@ -19,12 +19,13 @@ namespace TumbangPreso.UI
         private void BuildWarnings()
         {
             _warningRoot=OwnerUiLayout.Rect(_root,"WarningMessage");
-            Pin(_warningRoot,new Vector2(.5f,.66f),Vector2.zero,new Vector2(620,90));
+            Pin(_warningRoot,new Vector2(.5f,.66f),Vector2.zero,new Vector2(900,48));
             _warningPlate=_warningRoot.gameObject.AddComponent<HudCard>();
-            _warningPlate.color=CourtPresentationPalette.DeepRed;_warningPlate.Radius=18;_warningPlate.raycastTarget=false;
+            var warningFill = CourtPresentationPalette.DeepRed; warningFill.a = HudDraw.Plate.a;
+            _warningPlate.color=warningFill;_warningPlate.Radius=12;_warningPlate.raycastTarget=false;
             _warningText=Ink(_warningRoot,"WarningText","",28,true);
             _warningText.horizontalOverflow=HorizontalWrapMode.Wrap;
-            OwnerUiLayout.Place(_warningText.rectTransform,24,8,572,74);
+            OwnerUiLayout.Place(_warningText.rectTransform,16,4,868,40);
             _warningRoot.gameObject.SetActive(false);
         }
 
@@ -83,12 +84,12 @@ namespace TumbangPreso.UI
             _warningRoot.gameObject.SetActive(show);
             if(!show)return;
             _warningText.text=text;
-            float width=Mathf.Min(_statusPromptMaxWidth,Mathf.Clamp(_warningText.preferredWidth+48,400,620));
-            _warningRoot.sizeDelta=new Vector2(width,90);
-            OwnerUiLayout.Place(_warningText.rectTransform,24,8,width-48,74);
-            float height=Mathf.Max(90,_warningText.preferredHeight+16);
+            float width=Mathf.Min(_statusPromptMaxWidth,Mathf.Clamp(_warningText.preferredWidth+32,360,1100));
+            _warningRoot.sizeDelta=new Vector2(width,48);
+            OwnerUiLayout.Place(_warningText.rectTransform,16,4,width-32,40);
+            float height=Mathf.Max(48,_warningText.preferredHeight+8);
             _warningRoot.sizeDelta=new Vector2(width,height);
-            _warningText.rectTransform.sizeDelta=new Vector2(width-48,height-16);
+            _warningText.rectTransform.sizeDelta=new Vector2(width-32,height-8);
         }
     }
 }

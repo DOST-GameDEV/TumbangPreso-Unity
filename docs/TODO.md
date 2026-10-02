@@ -17,6 +17,13 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### WARNING-STRIP-1002: thinner line and action-matched opacity
+
+48-unit base warning strip, natural line width and existing action-plate alpha.
+Native Low-profile case passes across two window shapes and two HUD scales;
+four UI captures inspected. Existing font floor/crowded wrapping preserved.
+[Evidence and memory limits](reports/feedback-2026-09-30/warning-strip/README.md).
+
 ### CATCH-BANNER-UPGRADE-1002: immediate higher-catch recognition
 
 Same-player higher catches supersede current/queued lower catches, preserving
