@@ -120,8 +120,7 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
-Latest checkpoint15:16 Manila:34 root continuity runtime fixes published through
-cce112e9b. Actual RecordChoice Career refresh3/3 and account scorecard ownership3/3
+Latest checkpoint:35 root continuity runtime fixes published through12a2689ff. Actual RecordChoice Career refresh3/3 and account scorecard ownership3/3
 qualified; Window1002f built at946006940/protocol131, newer source is not in that
 frozen artifact. Astra cold-ended actor freeze and Sol scorecard-close focus are
 current disjoint units. At around15:30 begin agent wrap, finish coherent units then
@@ -132,9 +131,12 @@ root continues solo; no replacement agents or repeated unchanged tests.
 - [x] RECORD-CHOICE-FOCUS-1002: Career mode refresh retains active navigation;
   shipped57158d1db, PlayMode3/3 after one causal failure and two controls.
   [Evidence](reports/reliability-2026-10-02/record-choice-focus/acceptance.md).
-- [ ] COLD-ENDED-ACTOR-FREEZE-1002: Astra current narrow native unit.
+- [x] COLD-ENDED-ACTOR-FREEZE-1002: shipped12a2689ff, native3/3 after1 causal
+  failure/2 controls, ONE NUnit fixture repair; all2656 protected hashes match.
+  [Evidence](reports/reliability-2026-10-02/cold-arrival-actor-freeze/README.md).
 - [ ] SCORECARD-CLOSE-FOCUS-1002: Sol current narrow native unit.
 - [ ] CURRENT-PAUSE-EXIT-OPERATOR-1002: root current UI/lifecycle acceptance next.
+- [ ] SETTINGS-DECISION-FOCUS-1002: root KEEP EDITING/escape focus candidate; native3 pending after agent jobs.
 
 Owner reaffirmed2026-10-02: competition ready is the objective. Continue through
 coherent fixes and pushes; no stopping after a single passing unit. DOTS owns

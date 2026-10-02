@@ -24,15 +24,24 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Verified remote cce112e9b on 2026-10-02 15:16 Manila. Root continuity runtime
-fixes 34 published: previous32 plus scorecard owner close84ddfc391 (native3/3,
+Verified remote12a2689ff on 2026-10-02. Root continuity runtime fixes35 published:
+previous32 plus scorecard owner close84ddfc391 (native3/3,
 one canvas-lookup fixture correction) and RecordChoice focus57158d1db (native3/3,
-one normal-Start fixture correction). RecordChoice exact three source/test/meta
+one normal-Start fixture correction), plus cold actor freeze12a2689ff (native3/3,
+one NUnit compatibility fixture repair). RecordChoice exact three source/test/meta
 inputs and all1294 protected hashes retained. Diagnostic890656094 is separate.
 Incoming6dc1f065b malformed replay refusal merged without overlapping product hunks;
 contributor native3/3 evidence is separate. Sean SteadyEmber/protocol131 and Rafi
 Backwash integration preserved. Core698/698 was one prior integration pass.
 Do not repeat unchanged tests or claim full readiness.
+
+ROOT opt-in NetCompletedArrivalProbe + tools/run_completed_arrival.py candidate now
+adds explicit all4 actor RoundActive/Parked/Sprint/MoveAxis receipt assertions. It
+is not compiled/run/published yet. Next coherent Windows candidate1002g AFTER new
+qualified units are committed should include this observer, then ONE existing
+short1-round30-second real two-peer scenario qualifies cold actor parking. Old
+1002e49462 receipts remain valid under their original narrow contract; do not
+reinterpret them as this stronger proof. No unchanged full8round rerun.
 
 ## Active jobs and next action
 
@@ -47,6 +56,10 @@ SOL RecordChoice shipped. Now owns current scorecard close-focus return ONLY
 PlayerHub.OwnerHistory.cs + close/Escape hunk PlayerHub.cs + NEW ScorecardFocusTests
 and meta/report. Baseline3/candidate3 planned, <=ONE fixture/tool repair. Preserve
 unrelated live overlay selection and shipped owner-change close behavior.
+ASTRA completed native3/3 cold arrival, original1causal/2controls, exactlyONE NUnit
+fixture compatibility repair preserved; all2656 protected match/guard restored.
+Exact3 source/test/meta and cold-arrival-actor-freeze report published12a2689ff.
+Source-only review of root exit2/settings3 pending before15:30 wrap.
 ASTRA owns early null-safe MatchEnded subscription ONLY SliceRunner.cs + NEW tiny
 cold-ended arrival actor PlayMode3 fixture/meta/report. Actual public terminal
 receiver before Begin must park all4 actors; round0 remains free and destroy
@@ -61,9 +74,16 @@ qualified work then interrupts agents and continues SOLO without replacements.
 Current-thread one-time heartbeat wrap-up-game-engineering-subagents is configured.
 Old sol_social_ownership ultra remains interrupted; never resume.
 
-ROOT next: publish1002f artifact and retired Supernova evidence, then useful current
-PausePanel LeaveMatch operator acceptance or an independently evidenced engineering
-bug. Existing exit4/hostloss6 checks validate clocks/API, not rendered HOME.
+ROOT1002f artifact and retired Supernova evidence published1f4a8c290. ROOT owns
+settings KEEP EDITING/escape decision-close focus bug: TumpSettingsView.cs +
+TumpSettingsView.OwnerPainted.cs and NEW SettingsDecisionFocusTests/meta. Candidate
+is frozen four inputs in qualification Logs/settings-decision-focus1002/main-frozen.json;
+preparation script MAIN Logs/settings-decision-focus1002/prepare.py, ORIGINAL source
+from exact1f4a8c290. NOT copied/native-run yet; wait Astra/Sol GPU release. Original3
+then candidate3, <=ONE repair. Keep dirty values, preserve external live focus.
+NEW CurrentPauseExitTests/meta prepared MAIN only, not copied/native-run; actual
+current LeaveMatch callback->HOME plus >5s break cancellation check, two cases.
+Do not infer acceptance from these prepared tests. Root native follows agents. Existing exit4/hostloss6 checks validate clocks/API, not rendered HOME.
 Do not resume Supernova native/helpers: compile77152 failure then corrected52284
 450s setup timeout, no XML/PNG/cast proof. Qualification HeroHazards original
 1536AF restored; MAIN private5E7 unchanged, protected1535 matches. Report-only
@@ -71,7 +91,17 @@ publication, no alpha source shipping. Preserve other private arms/Ultra/metas.
 
 ## Current frozen artifact and actual peers
 
-Release checkout Codex/work/tump-competition-release1002 HEAD69e3414913c3bc582b9ce5b028239f65503e62d7.
+Current1002f: release HEAD94600694068552668079b1b4b3c0ca044bbfb44a, protocol131,
+Builds/competition-candidate1002f/TumbangPreso.exe; runtimeSHA256
+c1c5278195df8ae516e06c3a05c34d8f75b4ebb21e9bd5ede63b64b8f8841701.
+Native88731 success2432MB90s/12scenes, restored/free; artifact-receipt passed, strict
+false preserved for exactlytwo generated identity outputs. Source18859/18861 stable.
+Evidence1f4a8c290 in reports/reliability-2026-10-02/windows-candidate1002f. No player
+run on1002f yet. Newer MAIN fixes are not in this frozen artifact.
+
+### Previous1002e and its completed-arrival peer acceptance
+
+Previous1002e source69e3414913c3bc582b9ce5b028239f65503e62d7.
 Builds/competition-candidate1002e/TumbangPreso.exe, Runtime SHA256
 b0bfbbaec5d5c16041f90036e33b2abad41e8029e28ae4ca3e8ef7536f1ba6c0.
 Native88898 SUCCEEDED2432MB122s/12scenes, guard restored/leasefree.18845frozeninputs,
