@@ -1,0 +1,5 @@
+Get-FileHash:
+Line |
+   2 |  … uts[$path]=(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash}; …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Could not find file 'C:\Users\matth\Documents\Codex\work\tump-feedback-0930\.meta'.

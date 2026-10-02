@@ -128,13 +128,20 @@ namespace TumbangPreso.UI
                 {
                     var line=MatchRecordRules.LineFor(record,candidate.PlayerId);if(line!=null && line.Slot==slot){person=candidate;break;}
                 }
-                if(social==null || person==null)continue;
-                string id=person.PlayerId,handle=person.Handle;
+                PlayerMatchStats opponent=null;
+                if(record?.Players!=null)foreach(var line in record.Players)
+                    if(line!=null && line.Slot==slot && !line.IsBot && SocialRules.IsAddressable(line.PlayerId)
+                        && line.PlayerId!=Net.CareerStore.LocalPlayerId){opponent=line;break;}
+                if(opponent==null)continue;
+                string id=opponent.PlayerId,handle=opponent.Handle;
                 var row=OwnerUiLayout.Rect(_nativePeople,"PlayerActions");row.gameObject.AddComponent<LayoutElement>().preferredHeight=72;
                 Button add=null,report=null;
-                var friendStatus=RecentActionStatus("FriendRequestStatus");
                 var reportStatus=RecentActionStatus("ReportRequestStatus");
-                add=OwnerTextAction.Create(row,"AddRecentPlayer","ADD FRIEND",()=>{_ = CompleteRecentAction(add,friendStatus,()=>social.RequestAsync(id,handle),"SENDING...","REQUEST SENT",()=>social.SearchStatus);},0,0,350,72,29);
+                if(social!=null && person!=null)
+                {
+                    var friendStatus=RecentActionStatus("FriendRequestStatus");
+                    add=OwnerTextAction.Create(row,"AddRecentPlayer","ADD FRIEND",()=>{_ = CompleteRecentAction(add,friendStatus,()=>social.RequestAsync(id,handle),"SENDING...","REQUEST SENT",()=>social.SearchStatus);},0,0,350,72,29);
+                }
                 report=OwnerTextAction.Create(row,"ReportRecentPlayer","REPORT",()=>{_ = CompleteRecentAction(report,reportStatus,()=>GameServices.Career!=null?GameServices.Career.ReportAsync(id,ReportReason.Other):System.Threading.Tasks.Task.FromResult(false),"SENDING...","REPORTED",()=>GameServices.Account!=null && GameServices.Account.IsSignedIn && !GameServices.Account.IsGuest?"Report was not sent. Try again.":"Sign in to report players.");},432,0,310,72,29);
             }
         }
