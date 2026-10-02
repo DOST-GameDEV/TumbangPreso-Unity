@@ -259,3 +259,10 @@ shared dynamic-field delivery only, no Sean-only RPC. NetSession ProtocolVersion
 constant only; no overlap with local IsAdmitted/Friend JOIN reservations. Sean
 only, Amihan storm-call and all other character-owned entries preserved. No
 heavy job or feature completion yet. First: finite crossing Core rules/tests.
+
+Cinder Core finite crossing7/7 passed. Native initial compile found missing
+IVfxTimeline.LifeSeconds; corrected state/identity3/3 passes, exit0 with memory
+guard request. Runtime still under development, no feature publication.
+Presentation ownership expands exactly as the plan: ViewmodelArms.cs CinderDraw
+entry only, AbilityIcons.cs new appended glyph only, person_sean.asset newclip
+reference only and new Editor/SeanGateAuthor.cs. Amihan storm entries untouched.

@@ -57,3 +57,11 @@ role/round cleanup, aged/duplicate/consumed restore and render-only replay.
 Finally matching host/owner/observer players before claiming network-qualified
 completion. Use one focused pass and one bounded tooling repair per coherent
 validation unit; record failures and limits rather than looping unchanged.
+
+## Presentation wiring ownership extension
+
+Also claim ViewmodelArms.cs new CinderDrawClip and lookup entry only,
+UI/AbilityIcons.cs appended SeanCinderGate glyph/job/paint only,
+Resources/Roster/person_sean.asset new clip reference only, and a new scoped
+Editor/SeanGateAuthor.cs bake/reference helper with matching metadata. These
+entries are disjoint from Amihan's StormCallClip and other existing icons.
