@@ -131,7 +131,7 @@ namespace TumbangPreso.Net
                 if (buttons.Length != 1) { Finish(false, "Expected exactly one current ResultMainMenu action."); return; }
                 _returning = true; _receipt.initialRecordId = _receipt.recordId;
                 _receipt.beforeEndEvents = _receipt.matchEndedEvents; _receipt.beforeRecordEvents = _receipt.recordReadyEvents;
-                _receipt.sceneBefore = SceneManager.GetActiveScene().handle;
+                _receipt.sceneBefore = SceneManager.GetActiveScene().handle.GetRawData();
                 _receipt.phase = "operator_return_home"; Save();
                 // The actual current result action owns Stop and home navigation.
                 buttons[0].onClick.Invoke();
@@ -142,7 +142,7 @@ namespace TumbangPreso.Net
             if (!_receipt.admitted || _match.MatchInProgress || _receipt.matchEndedEvents <= _receipt.beforeEndEvents ||
                 _receipt.recordReadyEvents <= _receipt.beforeRecordEvents || !CaptureRecord()) return;
             var board = FindFirstObjectByType<MatchResult>();
-            _receipt.sceneAfter = SceneManager.GetActiveScene().handle;
+            _receipt.sceneAfter = SceneManager.GetActiveScene().handle.GetRawData();
             bool same = board != null && board.IsVisible && _receipt.sceneAfter != _receipt.sceneBefore &&
                 _receipt.recordId == host.initialRecordId && _receipt.scores.SequenceEqual(host.scores);
             if (same) Finish(true, null);
