@@ -1,0 +1,32 @@
+{
+  "sourceCommit": "1f4a8c290591fc06c677206425ad43767dc6992f",
+  "expectedCases": 3,
+  "testFilter": "TumbangPreso.PlayTests.ScorecardFocusTests",
+  "expectedBaseline": "1 selectedmodalclose causal failure,2unrelatedselection/idempotence controls pass",
+  "inputs": [
+    {
+      "name": "PlayerHub.candidate.cs",
+      "sha256": "6EB28EF0A3C0129EB6BD9C88033DA0E134D4ABA051711A82DF20A63B3E63488F"
+    },
+    {
+      "name": "PlayerHub.original.cs",
+      "sha256": "6EB745C89A949D9DEA7BE49AD7C7C336DAA78F1430FCB5B243BDF5E301613AFC"
+    },
+    {
+      "name": "PlayerHub.OwnerHistory.candidate.cs",
+      "sha256": "AAF8D7C145837FA0AC10432F7997E7596EA6834C90F69EF5EF81C4A52EA6E366"
+    },
+    {
+      "name": "PlayerHub.OwnerHistory.original.cs",
+      "sha256": "BC4C5925C97527E4409A032C5A436875FB8415AE43D3062911B22294A4BB0C39"
+    },
+    {
+      "name": "ScorecardFocusTests.cs",
+      "sha256": "EA08C1A60A5169A7DD373C6616D4C383BBED66762A62DE29F1309C62F38E0710"
+    },
+    {
+      "name": "ScorecardFocusTests.cs.meta",
+      "sha256": "6E458830A9DCFCA3ED72FFD3E4552BB327477E188FF0A22820164250AF684C57"
+    }
+  ]
+}
