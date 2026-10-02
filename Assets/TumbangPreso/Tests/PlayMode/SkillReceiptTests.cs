@@ -273,7 +273,7 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(Reads(truncated));
             var trailing = new byte[bytes.Length + 1]; System.Array.Copy(bytes, trailing, bytes.Length);
             Assert.IsFalse(Reads(trailing));
-            var invalidBoolean = (byte[])bytes.Clone(); invalidBoolean[invalidBoolean.Length - 1] = 2;
+            var invalidBoolean = (byte[])bytes.Clone(); invalidBoolean[invalidBoolean.Length - 5] = 2; // Permanent flag, before the passive float.
             Assert.IsFalse(Reads(invalidBoolean));
             var maximum = state;
             maximum.HeroId = new FixedString64Bytes(new string('h', 61));
@@ -576,7 +576,7 @@ namespace TumbangPreso.PlayTests
             bad = state; bad.UltimatePending = true; Assert.IsFalse(bad.IsValid);
             var other = new TimedProbeKit(); bad = TimedKitState.Capture(other, other.CaptureTimedKit(), 1, state.Scope, 2, 100);
             bad.UltimateRemaining = 0; bad.UltimatePermanent = true; Assert.IsFalse(bad.TryResolve(other, 98, out _));
-            bytes[bytes.Length - 1] = 2;
+            bytes[bytes.Length - 5] = 2; // Permanent flag precedes the appended passive float.
             var malformed = new FastBufferReader(bytes, Allocator.Temp);
             try { Assert.IsFalse(TimedKitState.TryRead(ref malformed, out _)); }
             finally { malformed.Dispose(); }

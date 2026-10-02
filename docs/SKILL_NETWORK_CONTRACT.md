@@ -671,3 +671,14 @@ only presentation, with no collider or gameplay field. Matching clients are
 required for the new gameplay state. Focused native and three actual local Linux peer checks are recorded in the
 [Cinder report](reports/sean-cinder-gate-2026-10-02/README.md). WAN, reconnect and
 cross-platform qualification remain separate.
+
+## Protocol131: optional retrieval-passive clock
+
+TimedKitState appends one float PassiveRemaining, raising MaxWireBytes to235.
+TimedKitSnapshot binds a finite passive capacity from the current kit, zero for
+existing neutral channels. Sean binds four seconds independently of its loaded
+slipper clock. Existing match/round/movement epoch/sequence gates apply; round
+clock age subtracts from both channels. Positive inactive-round passive rejects,
+and newer zero clears without rewarding retrieval. Grant/accepted throw use the
+existing reliable timed-state broadcast. No character-specific RPC is added.
+See [Steady Ember evidence](reports/sean-steady-ember-2026-10-02/README.md).

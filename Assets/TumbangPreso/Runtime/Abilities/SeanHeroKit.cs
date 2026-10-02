@@ -10,6 +10,34 @@ namespace TumbangPreso.Abilities
 {
     public sealed class SeanHeroKit : HeroKit, ITimedKitReplication, IWorldEffectBinding
     {
+        public const float SteadyEmberSeconds=4f, SteadyEmberRate=1.25f;
+        private float _steadyEmberRemaining;
+        public float SteadyEmberRemaining => _steadyEmberRemaining;
+        public override float PassiveDuration => SteadyEmberSeconds;
+        public override float ThrowChargeRate => !IsDefending && _steadyEmberRemaining>0 ? SteadyEmberRate : 1f;
+        public override void OnManualOwnThrowRetrieved(AbilityContext context)
+        {
+            if (!NetAuthority.ShouldResolve() || context?.Motor == null || context.Motor.IsDefender
+                || context.Motor.Mode != GameMode.HeroStrike || GameServices.Round?.RoundActive != true) return;
+            _steadyEmberRemaining=SteadyEmberSeconds;
+            Net.MatchRpc.Instance?.BroadcastTimedKitState(context.Motor.PlayerSlot);
+        }
+        public override void OnAuthoritativeThrow(AbilityContext context)
+        {
+            if (!NetAuthority.ShouldResolve() || context?.Motor == null || _steadyEmberRemaining<=0) return;
+            _steadyEmberRemaining=0;
+            Net.MatchRpc.Instance?.BroadcastTimedKitState(context.Motor.PlayerSlot);
+        }
+        public override void Tick(AbilityContext context,float dt)
+        {
+            base.Tick(context,dt);
+            if (context?.Motor == null || context.Motor.IsDefender || GameServices.Round?.RoundActive != true)
+                _steadyEmberRemaining=0;
+            else if (float.IsFinite(dt) && dt>0) _steadyEmberRemaining=Mathf.Max(0,_steadyEmberRemaining-dt);
+        }
+        public override void Reset(){_steadyEmberRemaining=0;base.Reset();}
+        public override void ResetForRound(AbilityContext context){_steadyEmberRemaining=0;base.ResetForRound(context);}
+
         public bool IsIgnitionCannonActive { get; set; }
         private SeanCinderGate _gate;
         public void AdoptGate(SeanCinderGate gate)
@@ -22,10 +50,17 @@ namespace TumbangPreso.Abilities
         public bool IsEmpoweredThrowLoadedFor(Slipper shoe) => ((IgnitionCannonAbility)AttackingSkill).LoadedFor(shoe);
         private bool _joinChargeStateSettled;
         public TimedKitSnapshot CaptureTimedKit()
-            => new TimedKitSnapshot(AttackingSkill, IsIgnitionCannonActive ? AttackingSkill.DurationRemaining : 0);
+            => new TimedKitSnapshot(AttackingSkill, IsIgnitionCannonActive ? AttackingSkill.DurationRemaining : 0,
+                passiveRemaining:_steadyEmberRemaining,passiveCapacity:PassiveDuration);
 
         public bool RestoreTimedKit(CharacterMotor motor, TimedKitSnapshot state)
-            => RestoreJoiningIgnition(motor, state.PersonalRemaining);
+        {
+            if (motor == null) return false;
+            bool changed=RestoreJoiningIgnition(motor,state.PersonalRemaining);
+            float remaining=motor.IsDefender?0:Mathf.Clamp(state.PassiveRemaining,0,SteadyEmberSeconds);
+            changed |= remaining != _steadyEmberRemaining;_steadyEmberRemaining=remaining;
+            return changed;
+        }
 
         public HeroMovementState CaptureMovementState()=>((StokeStepAbility)Skill1).CaptureMovement();
         public bool RestoreJoiningMovement(CharacterMotor motor,HeroMovementState state,float age)

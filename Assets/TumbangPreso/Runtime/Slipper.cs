@@ -152,6 +152,8 @@ namespace TumbangPreso
             if (State == SlipperState.InFlight && next != SlipperState.InFlight) FinishChain(ThrowChainEnd.Miss);
 
             State = next;
+            // HostGrab captures eligibility first; other Held routes consume it without a reward.
+            if (next == SlipperState.Held) ClearRetrievalEpisode();
             if (next != SlipperState.InFlight) { _skimLeft = 0; _skimStarted = false; }
             if (next != SlipperState.InFlight && _motionAccent != null) _motionAccent.ClearFlight();
             if (next != SlipperState.Loose) SetLandedHighlight(false);
@@ -176,6 +178,19 @@ namespace TumbangPreso
         /// reset. See <see cref="Balance.MaxAirborneTime"/>.</summary>
         private float _airborneTotal;
         private int _throwerSlot = -1;
+        private CharacterMotor _retrievalActor;
+        private MatchDirector _retrievalMatch;
+        private long _retrievalEpoch;
+        private int _retrievalRound;
+        private bool IsQualifiedOwnRetrieval(CharacterMotor who)
+            => State == SlipperState.Loose && who != null && who == _retrievalActor
+                && OwnerSlot == who.PlayerSlot && GameServices.Round?.RoundActive == true
+                && _retrievalMatch != null && _retrievalMatch == GameServices.Match
+                && _retrievalEpoch == _retrievalMatch.HostChainEpoch
+                && _retrievalRound == _retrievalMatch.RoundNumber;
+        private void ClearRetrievalEpisode()
+        { _retrievalActor=null;_retrievalMatch=null;_retrievalEpoch=0;_retrievalRound=0; }
+
         private float _throwerIgnoreLeft;
         // Contact episodes, not a timed immunity: separation re-arms this body.
         private int _bodyContacts;
@@ -738,6 +753,7 @@ namespace TumbangPreso
             if (!NetAuthority.ShouldResolve()) return false;
             if (!CanBeGrabbedBy(who)) return false;
 
+            bool retrievedOwnThrow = IsQualifiedOwnRetrieval(who);
             ReleasePreviousHolder(who);
             SetState(SlipperState.Held);
             Holder = who;
@@ -745,6 +761,9 @@ namespace TumbangPreso
             _velocity = Vector3.zero;
 
             who.GetComponent<Carrier>()?.NotifyHolding(this);
+            if (retrievedOwnThrow && who.Mode == GameMode.HeroStrike)
+                who.AbilitySystem?.Kit?.OnManualOwnThrowRetrieved(new Abilities.AbilityContext(
+                    who,who.GetComponent<Carrier>(),who.GetComponent<CombatVerbs>()));
 
             // ⚠️⚠️ THE RETRIEVAL IS RECORDED HERE BECAUSE THIS IS THE ONE PLACE ONE HAPPENS.
             // `docs/VISION.md` § 0: *"the tension is the retrieval, not the throw"*, and until
@@ -1095,6 +1114,19 @@ namespace TumbangPreso
             // Null identifies an environmental ability displacement, which may
             // move any loose shoe without granting somebody else's shot credit.
             if (thrower != null && !OwnershipAllows(thrower)) return;
+            bool heldRelease = thrower != null && State == SlipperState.Held && Holder == thrower;
+            if (heldRelease)
+            {
+                ClearRetrievalEpisode();
+                if (OwnerSlot == thrower.PlayerSlot && GameServices.Round?.RoundActive == true && GameServices.Match != null)
+                {
+                    _retrievalActor=thrower;_retrievalMatch=GameServices.Match;
+                    _retrievalEpoch=_retrievalMatch.HostChainEpoch;_retrievalRound=_retrievalMatch.RoundNumber;
+                }
+                if (thrower.Mode == GameMode.HeroStrike)
+                    thrower.AbilitySystem?.Kit?.OnAuthoritativeThrow(new Abilities.AbilityContext(
+                        thrower,thrower.GetComponent<Carrier>(),thrower.GetComponent<CombatVerbs>()));
+            }
             if (_motionAccent != null) _motionAccent.ClearFlight();
             FinishChain(ThrowChainEnd.Miss); // A credited flight replaced by a new launch has ended.
             _skimLeft = 0; _skimStarted = false;

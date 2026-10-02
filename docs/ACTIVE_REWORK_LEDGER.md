@@ -1,6 +1,6 @@
 # Active Rework Checkpoint
 
-Updated 2026-10-02. Branch ASTRAReworks. Protocol130. Competition readiness goal ACTIVE.
+Updated 2026-10-02. Branch ASTRAReworks. Protocol131. Competition readiness goal ACTIVE.
 
 ## Owner objective and boundaries
 
@@ -428,3 +428,19 @@ state adds a bounded passive float. Extend the existing test reservation only to
 PlayMode/SkillReceiptTests.cs: its malformed permanent-flag byte moves from the
 last byte to the byte before the new float. Preserve the same rejection assertion
 and all other fixture behavior. No broad fixture repair or new transport route.
+
+DOTS Steady Ember terminal qualification: native5+7 and actual3Linux peers pass
+first attempt, owner measured1.25418x. Protocol131 owned optional passive float;
+build884MB258s, exit0 with memory-guard teardown warning. Peer44s exit0 guardnull,
+seven profiles restored. Source f163882c plus recorded overlay; no WAN/reconnect,
+physical control, audio or Human verified claim. Evidence in reports/sean-steady-ember-2026-10-02.
+Implementation paths are ready for publication; retain reservation until verified
+push and same-row Doc update. Other agents' ownership is unchanged.
+
+DOTS Steady Ember487666f8 published and remote verified42a8ffdb. Same Pyro
+Feedback shipped note and adopted Wiki wording read back correctly. Release its
+implementation/test paths; all jobs terminal and seven player profiles restored.
+Next independent unit RAFI-BACKWASH-1002 owns only the exact paths in
+reports/rafi-backwash-2026-10-02/plan.md. Reuse existing genuine retrieval episode
+and passive channel; measure real movement and host budget before peer claims.
+No implementation started. Preserve every other contributor reservation.

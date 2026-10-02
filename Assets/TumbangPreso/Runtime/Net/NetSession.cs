@@ -556,7 +556,7 @@ namespace TumbangPreso.Net
         //122: live Frostbite load uses the existing scoped timed-kit recovery.
         //123: authoritative objective cooldown grants reach predicted owners.
         //124: match-long Overclock uses an explicit bounded permanent-state bit.
-        public const int ProtocolVersion = 130;
+        public const int ProtocolVersion = 131;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
