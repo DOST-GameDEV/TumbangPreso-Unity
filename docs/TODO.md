@@ -438,6 +438,11 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   in fixture). No repairs/retries. Zero-returning allocation counter is uninformative,
   not a measured allocation delta or FPS/stall attribution.
   [Evidence](reports/reliability-2026-10-03/replay-prop-binding/README.md).
+- [x] LOBBY-RULE-PACKET-1003: refuse incomplete/overflow/trailing rule frames
+  and wide sender aliasing before leader configuration. Native original three
+  causals/three controls; candidate FIRST6/6, no repairs/retries. Supported custom
+  wire/events and role/leader/loopback controls preserved.
+  [Evidence](reports/reliability-2026-10-03/lobby-rule-packet/README.md).
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow

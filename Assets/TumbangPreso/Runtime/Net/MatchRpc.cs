@@ -458,7 +458,7 @@ namespace TumbangPreso.Net
 
         private bool SenderMayConfigureLobby(ulong senderClientId)
         {
-            if (!NetAuthority.IsHost) return false;
+            if (!NetAuthority.IsHost || senderClientId > int.MaxValue) return false;
             var lobby = NetSession.Instance?.Lobby;
             return lobby != null && lobby.IsLeader((int)senderClientId);
         }
@@ -4620,6 +4620,7 @@ namespace TumbangPreso.Net
         {
             if (!NetAuthority.IsHost) return;
             if (!SenderMayConfigureLobby(senderClientId)) return;
+            if (!ValidStringFrame(ref reader, 1)) return;
             reader.ReadValueSafe(out string wire);
             SyncRulesClientRpc(wire);
         }
@@ -4651,6 +4652,7 @@ namespace TumbangPreso.Net
             if (!FromHost(senderClientId)) return;
             // ⚠️ See `OnSyncDiffMsg`: the host is its own client and a broadcast loops back.
             if (NetAuthority.IsHost) return;
+            if (!ValidStringFrame(ref reader, 1)) return;
 
             reader.ReadValueSafe(out string wire);
 

@@ -5,7 +5,7 @@ checks and publication; a progress report is not a stop. Root works SOLO.
 
 ## Current root job and next action
 
-MAIN ASTRAReworks and verified remote1d38ca4f643d432eb0c649a5da4a7cfe12def488.
+MAIN ASTRAReworks and verified remote80294eeae4237821ede22ac14df7b1071304b06b.
 Current startup/Unicodechat qualified and published; private owner dirt preserved.
 LAN acceptance report7cbe176ca integrated/pushed with incoming protocol134
 timed recovery and studio intro. Latest peer/startup-qualified artifact1003c source8ef02cf75/protocol134 (below).
@@ -110,8 +110,15 @@ Thread allocationcounter0both versions uninformative; MonoBCL InternalCall hasno
 managedbody, no supportedallocationdelta or zero/FPS/historicalstallclaim. Protected
 18443 unchanged, exact3 MAIN/q match. Report reliability-2026-10-03/replay-prop-binding.
 Own Runtime/Camera/MatchReplayArchive.cs + ReplayPropBindingTests.cs/meta only.
-Source publication next; current1003c player predates optimization. No live jobs.
-Continue remaining actualengineering after publish, without repeating thesechecks.
+Published80294eeae/remoteverified; current1003c player predates optimization.
+
+Lobbyruleunit prep77892/original30474/candidate15396/post58447 TERMINAL.
+Original3causal/3controls, candidateFIRST6/6/no repairs/retries. Sourceguards2string
+callbacks + wide senderID beforeintleader key. Protected18445 unchanged/
+exact3match, guardsrestored/free. OwnMatchRpc.cs + LobbyRulesPacketTests.cs/meta.
+Report reliability-2026-10-03/lobby-rule-packet; exactsourcepublicationnext.
+No activejobs. Current1003c player predates replay binding + ruleguard units.
+Continue remaining actualengineering, no unchangednativechecks orfullClassic loop.
 
 ## Qualified and published root changes
 
