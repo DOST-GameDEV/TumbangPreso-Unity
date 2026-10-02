@@ -49,24 +49,30 @@ terminal/restored/no lease. Owning Guided_Training.md completion-beat sentence
 updated. Loading predicate is source-shared, not independently exercised. No full
 shipping tutorial or new standalone inclusion claim.
 
-SOLE Sol HIGH sol_parallel_engineering now owns approved disjoint CombatVerbs.cs
-OnDisable contact-windup cleanup + NEW PlayMode/PracticeBotResumeTests.cs/.meta/report.
-Current PracticeRange.SetBot hide setsRoundActive=false then immediately deactivates;
-readd restores true/teleports without letting Update retire an active lunge contact
-window. After pause ends the old sweep may resume from pre-removal position.
-REFINED cause: pause already cancels charging, so test active _lungeActiveLeft,
-which existing code deliberately preserves across pause. Actual input charge/release,
-real PausePanel, actual SetBot hide/show; pause-without-removal and uncharged-readd
-controls. Source/fixture prep IN PROGRESS MAIN only, no native handle yet. Exact
-ownership approved; preserve slide interruption and cooldown/timing. <=ONE fixture
-repair, no InputSettings clone/new raw framework. Coordinate before qualification
-prep/native. Root no heavy job currently. Never wake retired agents/spawn extras.
+SOLE Sol HIGH sol_parallel_engineering remains the ONLY helper, now source-only
+on a DIFFERENT concrete current practice/input lifecycle issue, proposal before edits.
+Practice stale-lunge unit NOT fixed: original70621 observed retained0.446414s active
+window, one unchargedcontrolpass, first ordinarypause setup lacked normal clock.
+ONE fixture repair added RequestScale(1). Repaired original81031 again causal
+retained0.449515s and unchargedpass; pause-preservation itself passed but final expiry
+Assert.Zero failed because normal expired timer is-0.000199 (second fixture flaw).
+Route RETIRED/unqualified, no product patch/candidate/further native retry. CombatVerbs
+UNCHANGED. Preserve OPEN repeated causal defect for later justified work; don't claim
+it fixed or dismiss it because helper gate failed.
+
+Agent cleanup verified ONLY its new PracticeBotResumeTests.cs/.meta moved from MAIN
+and qualification Assets to corresponding task Logs retired-*.txt, exact hashes/
+absolute containment/all12529 protected unchanged. Both guards terminal/restored/
+leasefree/PIDs12988+26484 dead. Honest report practice-bot-resume +cleanup.json
+READY for root publication, failed fixture excluded from live Assets/test integration.
+No active native handle; one agent source-only. Root can do disjoint implementation.
+No other agent/resume/cross-chat action. Keep bounded checks and ship qualified units.
 
 ROOT independently owns FailureBundle.cs filename collision fix ONLY: timestamp
 seconds currently overwrite a bundle generated in same second. Add full Guid:N
 suffix preserving prefix and returned path; caller search found no fixed-name parser.
 Single-line reversible naming change, no file-writing test against user's shared
-persistentDataPath. SOURCE REVIEW ONLY/no new Unity compilation yet; keep diagnostic
+persistentDataPath. COMMITTED40f8f2474, source-reviewed/no new Unity compilation yet; keep diagnostic
 count separate from40 runtime fixes. Await meaningful integration compile/batch.
 
 NEXT ROOT continue disjoint concrete engineering while agent works; no broad audits,

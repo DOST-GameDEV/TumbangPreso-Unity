@@ -124,8 +124,9 @@ Latest checkpoint:40 root continuity fixes published throughf33e1d8a7. Earlier
 agents retired; latest owner authorized EXACTLY ONE new Sol6.1HIGH helper plus
 root implementation. Windows1002g/source248836d1e contains37fixes, twelve scenes
 built and fresh actual peer cold4actor state PASS; later LAN fixes not in it.
-Sole Sol training3/3 published; new approved practice body-removal/lunge lifecycle
-unit preparing MAIN only. Root continues disjoint fixes; no heavy job. Preserve contributor/private work and raw acceptance limits.
+Sole Sol training3/3 published; practice stale-window investigation retained causal evidence but exhausted fixture
+repair gate and retired attempted test without product fix. Helper seeks disjoint
+next concrete source issue. Root continues disjoint fixes; no heavy job. Preserve contributor/private work and raw acceptance limits.
 
 - [x] SCORECARD-OWNER-CLOSE-1002: hide old account detail on ownership change;
   shipped84ddfc391, PlayMode3/3. [Evidence](reports/reliability-2026-10-02/playerhub-owner-detail/acceptance.md).
@@ -151,7 +152,9 @@ unit preparing MAIN only. Root continues disjoint fixes; no heavy job. Preserve 
   zero repairs/12525 unrelated protected match. [Evidence](reports/reliability-2026-10-02/lan-receive-owner/README.md).
 - [x] TRAINING-PAUSE-TRANSITION-1002: shippedf33e1d8a7, native3/3 after1causal/
   2controls, zero repairs/exact3/protected12527. [Evidence](reports/reliability-2026-10-02/training-pause-transition/README.md).
-- [ ] PRACTICE-BOT-RESUME-1002: sole Sol active lunge-window retirement on actual hide/readd; baseline fixture preparing.
+- [ ] PRACTICE-BOT-RESUME-1002: OPEN stale active window reproduced twice;
+  fixture route retired after two flaws, no product fix/candidate.
+  [Unqualified evidence](reports/reliability-2026-10-02/practice-bot-resume/README.md).
 - [ ] FAILURE-BUNDLE-UNIQUE-PATH-1002: root GUID filename suffix, source-reviewed; separate diagnostic/no Unity compile yet.
 - [x] LAN-LISTENER-START-1002: shipped5367390ab, real8911 bind cleanup/retry/
   shutdown native3/3 after1causal/2controls, zero repairs/12523 protected match.
