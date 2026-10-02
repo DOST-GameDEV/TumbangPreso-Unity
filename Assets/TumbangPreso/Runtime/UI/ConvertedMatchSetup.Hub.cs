@@ -219,7 +219,7 @@ namespace TumbangPreso.UI
             if (_chat != null) _chat.SetPresented(false);
         }
 
-        public bool InRoom => IsLive;
+        public bool InRoom => NetSession.Instance != null && NetSession.Instance.IsAdmitted;
         public bool IsHost => IsLive && NetAuthority.IsHost;
         public bool LocalReady => _localReady;
         public string RoomCode => NetSession.Instance?.Lobby?.JoinCode ?? "";

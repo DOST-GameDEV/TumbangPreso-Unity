@@ -28,13 +28,19 @@ retained; no player/audio/human approval claim.
 
 ### AMIHAN-AIRBURST-PRESENTATION-1002: honest gather, release and cutscene
 
-Owner-authorized Amihan presentation lane (local session). Airburst first: live
-body and first-person release still key the old 2.5 s delay while gameplay
-releases at 1.5 s, and the 3.6 s cutscene shows a wind release before the live
-gather. Re-author body/FPP timing, gather/release fan readability and the
-cutscene within 3.6 s; keep delay, 60 degree fan, contact and protocol. No SFX.
-Research, plan and evidence: [report](reports/amihan-presentation-2026-10-02/README.md).
-Drift, Featherfall and Whirlwind presentation follow as separate units.
+Native baseline found the shipped cutscene threw while built (never shown), the
+windup fan drew under Bayan Plaza's tiles, and body/FPP released 1 s late. Now:
+3.6 s CALL/GATHER/AIM cutscene with no pre-release, live body and FPP drive on
+the 1.5 s release, kasikus-chevron fan on the visible court with a simultaneous
+release front. EditMode 4/4; native fixed-simulation films and checks in the
+[evidence](reports/amihan-presentation-2026-10-02/evidence.md). Delay, fan,
+contact and protocol unchanged; no SFX. Human approval and peers remain open.
+
+- [ ] AMIHAN-AIRBURST-FEEL-1002: chevron/edge contrast on light courts (thicker,
+  darker ink), lighter capiz-lit Vigan stage, palm diamond burst at release,
+  beat glints; one native film rerun with the existing fixture.
+- [ ] Drift, Featherfall, Whirlwind presentation units (Whirlwind and Drift floor
+  pieces likely share the under-tile anchor; check with a baseline film first).
 
 ### PLAYER-RING-RADIUS-1002: larger hollow circle
 
@@ -107,14 +113,24 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   native2/2 both modes. [Evidence](reports/reliability-2026-10-02/bot-inactive-body/README.md).
 - [x] SOCIAL-RESPONSE-OWNER-1002: reply and lookup state owned by requesting account;
   native4/4. [Evidence](reports/reliability-2026-10-02/social-owner/README.md).
-- [ ] JOIN-ADMISSION-1002: panel waits for connection/seat, unavailable room stays
-  actionable; committed d80c4f455, native3distinct cases pass, publication pending.
+- [x] JOIN-ADMISSION-1002: panel waits for connection/seat, unavailable room stays
+  actionable; shipped d80c4f455 via13c201e0a, native3distinct cases pass.
   [Evidence](reports/reliability-2026-10-02/native-join-admission/README.md).
-- [ ] SOCIAL-CACHE-OWNER-1002: retire old-account rail, defer new refresh, guest
-  service guard; committed c2326d5bf, native11distinct cases pass across two final
-  XMLs, publication pending. [Evidence](reports/reliability-2026-10-02/social-cache-owner/README.md).
-- [ ] FRIEND-JOIN-1002: fix HOME/hosted-room route and automatic lobby admission;
-  Astra candidate in focused native baseline/final validation.
+- [x] SOCIAL-CACHE-OWNER-1002: retire old-account rail, defer new refresh, guest
+  service guard; shipped c2326d5bf via13c201e0a, native11distinct cases pass across
+  two final XMLs. [Evidence](reports/reliability-2026-10-02/social-cache-owner/README.md).
+- [ ] HUB-ADMISSION-1002: client room entry waits for admission; committedc63bea7b0,
+  native1/1, publication pending. [Evidence](reports/reliability-2026-10-02/friend-join/README.md).
+- [ ] FRIEND-JOIN-1002: existing hub handler serves HOME/hosted friend action;
+  committed70370785e, native2/2, publication pending.
+  [Evidence](reports/reliability-2026-10-02/friend-join-handler/README.md).
+- [ ] REMATCH-DEPARTED-BALLOT-1002: departing/held-seat players stop choosing maps;
+  committed7cbc65262, native4/4, publication pending.
+  [Evidence](reports/reliability-2026-10-02/rematch-departed-ballot/README.md).
+- [ ] RECENT-PLAYER-ACK-1002: await friend/report acknowledgement before success
+  labels; source candidate in joint focused native acceptance.
+- [ ] REBIND-CANCEL-1002: consume same-frame Escape when cancelling settings input
+  listening; Sol is preparing a causal candidate/control.
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow

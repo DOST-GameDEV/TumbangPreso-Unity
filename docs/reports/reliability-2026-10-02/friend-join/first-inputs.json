@@ -1,0 +1,62 @@
+[
+  {
+    "variant": "baseline",
+    "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+    "sha256": "3EA73A5BE788D28CE2C36D0021E4FFBCF590877CF80FDE7F0466C39A3DF0362B"
+  },
+  {
+    "variant": "baseline",
+    "path": "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs",
+    "sha256": "DB487BF7ECA2EBF3652EB523878CF0A959E668EA8EDE6E4DE596660503DCEFDF"
+  },
+  {
+    "variant": "baseline",
+    "path": "Assets/TumbangPreso/Runtime/UI/PlayerHub.cs",
+    "sha256": "0C7592076FE2105789DFB5CB1E834A4809BD2D681157975ECC37039BDF1DC4ED"
+  },
+  {
+    "variant": "baseline",
+    "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+    "sha256": "DEB5ECEB2BE8A956A47E7C8902B1C6707D0CDC576FFB14FF49B7417783B38705"
+  },
+  {
+    "variant": "baseline",
+    "path": "Assets/TumbangPreso/Tests/PlayMode/PlayerHubFriendJoinTests.cs",
+    "sha256": "C4DAF2AC494675EDAC7CA0FADE8B13AFB384CB1D21BE44E7D07C1E4E82E08999"
+  },
+  {
+    "variant": "baseline",
+    "path": "Assets/TumbangPreso/Tests/PlayMode/PlayerHubFriendJoinTests.cs.meta",
+    "sha256": "A80E7777D2D038743789E364A4CAAFEDD2DF03EB1CCC3454B9A29943D35D71C2"
+  },
+  {
+    "variant": "final",
+    "path": "Assets/TumbangPreso/Runtime/Net/NetSession.cs",
+    "sha256": "B486B33EE42C6D3CC6FB32582323AFD5F4541AF662253DC24C420A99C0047A1A"
+  },
+  {
+    "variant": "final",
+    "path": "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs",
+    "sha256": "E56838AB85B1D88E916F5F8DFAF1208F23F3FDD5A36DA88BB1ADED562137923F"
+  },
+  {
+    "variant": "final",
+    "path": "Assets/TumbangPreso/Runtime/UI/PlayerHub.cs",
+    "sha256": "D035A0EC0FF99DC406F8539094637042CB38488633BB60E9CCE1B37752B7122B"
+  },
+  {
+    "variant": "final",
+    "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+    "sha256": "D3C04B1BD70D334A92708047820E3629ADA8E2E08908A961EEEF253C70B51CDC"
+  },
+  {
+    "variant": "final",
+    "path": "Assets/TumbangPreso/Tests/PlayMode/PlayerHubFriendJoinTests.cs",
+    "sha256": "C4DAF2AC494675EDAC7CA0FADE8B13AFB384CB1D21BE44E7D07C1E4E82E08999"
+  },
+  {
+    "variant": "final",
+    "path": "Assets/TumbangPreso/Tests/PlayMode/PlayerHubFriendJoinTests.cs.meta",
+    "sha256": "A80E7777D2D038743789E364A4CAAFEDD2DF03EB1CCC3454B9A29943D35D71C2"
+  }
+]

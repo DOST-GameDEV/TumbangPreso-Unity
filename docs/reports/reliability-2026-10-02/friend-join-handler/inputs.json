@@ -1,0 +1,42 @@
+[
+  {
+    "variant": "baseline",
+    "path": "Assets/TumbangPreso/Runtime/UI/PlayerHub.cs",
+    "sha256": "0C7592076FE2105789DFB5CB1E834A4809BD2D681157975ECC37039BDF1DC4ED"
+  },
+  {
+    "variant": "baseline",
+    "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+    "sha256": "DEB5ECEB2BE8A956A47E7C8902B1C6707D0CDC576FFB14FF49B7417783B38705"
+  },
+  {
+    "variant": "baseline",
+    "path": "Assets/TumbangPreso/Tests/PlayMode/PlayerHubFriendJoinHandlerTests.cs",
+    "sha256": "DE3D587FC1E53E0136DEAF6922C5101904E7F1B0EA3D25EDFB99CD57CC9777FB"
+  },
+  {
+    "variant": "baseline",
+    "path": "Assets/TumbangPreso/Tests/PlayMode/PlayerHubFriendJoinHandlerTests.cs.meta",
+    "sha256": "99D68ED77CF5ADCAC2120C4551B4AD4080D361952FF00E93C93277AC2D7D278D"
+  },
+  {
+    "variant": "final",
+    "path": "Assets/TumbangPreso/Runtime/UI/PlayerHub.cs",
+    "sha256": "6EB745C89A949D9DEA7BE49AD7C7C336DAA78F1430FCB5B243BDF5E301613AFC"
+  },
+  {
+    "variant": "final",
+    "path": "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs",
+    "sha256": "D3C04B1BD70D334A92708047820E3629ADA8E2E08908A961EEEF253C70B51CDC"
+  },
+  {
+    "variant": "final",
+    "path": "Assets/TumbangPreso/Tests/PlayMode/PlayerHubFriendJoinHandlerTests.cs",
+    "sha256": "DE3D587FC1E53E0136DEAF6922C5101904E7F1B0EA3D25EDFB99CD57CC9777FB"
+  },
+  {
+    "variant": "final",
+    "path": "Assets/TumbangPreso/Tests/PlayMode/PlayerHubFriendJoinHandlerTests.cs.meta",
+    "sha256": "99D68ED77CF5ADCAC2120C4551B4AD4080D361952FF00E93C93277AC2D7D278D"
+  }
+]

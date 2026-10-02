@@ -595,6 +595,8 @@ namespace TumbangPreso.Net
         // INetProvider
         public bool IsHost => _nm == null || !_nm.IsListening || _nm.IsServer;
         public bool IsNetworked => _nm != null && _nm.IsListening;
+        /// <summary>A hosted room or a client whose connection and seat were admitted.</summary>
+        public bool IsAdmitted => IsNetworked && (IsHost || _everConnected && _seatApplied);
         public int LocalSlot { get; private set; }
 
         /// <summary>

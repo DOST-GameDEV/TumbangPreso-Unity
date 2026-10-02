@@ -1,0 +1,8 @@
+{
+  "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs": true,
+  "Assets/TumbangPreso/Runtime/UI/LobbyJoinPanel.cs": true,
+  "Assets/TumbangPreso/Runtime/Net/SocialStore.cs": true,
+  "Assets/TumbangPreso/Runtime/UI/PlayerHub.cs": true,
+  "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs": true,
+  "Assets/TumbangPreso/Runtime/Net/NetSession.cs": true
+}

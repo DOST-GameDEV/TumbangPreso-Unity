@@ -13,6 +13,35 @@ condition and tooling retry count. Freeze that candidate. Use an isolated checko
 with separate writable Assets/Library/Temp/obj, a named profile, and unique Logs/
 Builds outputs. One heavy job; work independently while it runs.
 
+Three implementation agents can work on disjoint files while native validation
+runs sequentially. On the owner's16GB PC, scene-heavy Editors have left about
+1.6GB physical memory free. More simultaneous Editors are optional; shipped fixes
+take priority over forcing parallel tests.
+
+`tools/run_unity_job.py` coordinates cooperating jobs and defaults to SERIAL.
+It delegates profile restoration to this checkout's guard, claims project,
+physical Library, named profile, Editor preference hive and declared ports,
+checks memory reserve, and waits for outside Unity/game-player processes. GPU and
+build jobs remain exclusive. Timeout handling only stops verified owned Editors
+and lets their guard restore data; it preserves a lease if restoration is pending.
+Use a dedicated output and inspect fresh XML as usual; a scheduler receipt alone
+is not a test pass.
+
+`tools/prepare_unity_test_workers.py` prepares new validation-only worktrees with
+separate physical caches and company/product identities. This matters because
+named profiles alone do not separate the Editor PlayerPrefs registry. Unity keys
+that registry by company/product. [Unity's PlayerPrefs reference](https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/playerprefs).
+Existing worker directories are refused and Library copying is explicitly opt-in
+from an idle matching Editor cache. These workers must never build shipping
+players. The updated guard derives both save and preference roots from the actual
+ProjectSettings identity; older guards cannot support this worker isolation.
+
+CPU overlap requires TWO prepared isolated workers and explicit
+`--allow-parallel` on BOTH jobs, at most two jobs and sufficient memory. This is
+available infrastructure, not a validated simultaneous-Editor setup: no workers,
+cache clones or native parallel proof have been created. Arbitrary raw/older
+launchers cannot be made safe by this pool; they are treated as outside workloads.
+
 Use `tools/run_unity_guarded.py`, never a raw Unity launch for a diagnostic.
 The guard chooses this checkout's editor and preserves named-profile files/shared
 input preferences. It is a pass-through runner: **do not call it with --help**.

@@ -472,6 +472,79 @@ namespace TumbangPreso.Tests
             Assert.AreEqual("2 / 3 WANT A REMATCH", UI.MatchResult.TallyLine(2, 3));
         }
 
+        private sealed class RematchBallotHost : INetProvider
+        {
+            public bool IsHost => true;
+            public bool IsNetworked => true;
+            public int LocalSlot => 0;
+            public int LocalPeerId => 0;
+            public bool IsSeatlessReferee => false;
+        }
+
+        [TestCase(false, false)]
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        [TestCase(true, true)]
+        public void DepartedRematchMapBallotCannotChooseTheNextCourt(bool keepConnectedBallot, bool holdReconnectSeat)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            const BindingFlags hidden = BindingFlags.Instance | BindingFlags.NonPublic;
+            var previousProvider = NetAuthority.Provider;
+            string previousMap = UI.SceneFlow.SelectedMap;
+            bool previousRevocation = MatchAbandon.AuthorityRevoked;
+            var sessionInstance = typeof(Net.NetSession).GetProperty("Instance"); var previousSession = sessionInstance.GetValue(null);
+            var rpcInstance = typeof(Net.MatchRpc).GetProperty("Instance"); var previousRpc = rpcInstance.GetValue(null);
+            var sessionRoot = new GameObject("Dormant rematch ballot lobby"); sessionRoot.SetActive(false);
+            var session = sessionRoot.AddComponent<Net.NetSession>();
+            var resultRoot = new GameObject("Dormant rematch ballot result"); resultRoot.SetActive(false);
+            var result = resultRoot.AddComponent<UI.MatchResult>();
+            var canvasRoot = new GameObject("Visible rematch ballot fixture"); var canvas = canvasRoot.AddComponent<Canvas>();
+            var resultType = typeof(UI.MatchResult);
+            try
+            {
+                // Exercise result logic without building UI, starting transport or loading an arena.
+                NetAuthority.Provider = new RematchBallotHost(); sessionInstance.SetValue(null, session); rpcInstance.SetValue(null, null);
+                typeof(MatchAbandon).GetProperty("AuthorityRevoked").SetValue(null, false);
+                resultType.GetField("_canvas", hidden).SetValue(result, canvas);
+                resultType.GetMethod("ClearMapVotes", hidden).Invoke(result, null);
+                UI.SceneFlow.SelectedMap = UI.SceneFlow.Maps[0];
+                Assert.Greater(UI.SceneFlow.Maps.Length, 5);
+                session.Lobby.OpenLobby(new System.Random(42));
+                session.Lobby.Admit(0, "rematch-host", "Host");
+                var departing = session.Lobby.Admit(7, "rematch-departing", "Departing");
+                var connected = session.Lobby.Admit(19, "rematch-connected", "Connected");
+                result.HostReceiveMapVote(departing.Seat, 3);
+                if (keepConnectedBallot) result.HostReceiveMapVote(connected.Seat, 5);
+                result.HostReceiveVote(departing.PeerId);
+                Assert.AreEqual(1, result.VoteCount);
+                session.Lobby.MatchInProgress = holdReconnectSeat;
+
+                // This is the real router's ordering: Depart first, result notification second.
+                var removed = session.Lobby.Depart(departing.PeerId);
+                Assert.AreSame(departing, removed);
+                Assert.AreEqual(holdReconnectSeat, session.Lobby.IsSeatOccupied(departing.Seat));
+                result.OnPeerLeft(departing.PeerId);
+
+                int projected = (int)resultType.GetMethod("ProjectedNextMap", hidden).Invoke(result, null);
+                int expected = keepConnectedBallot ? 5 : 1;
+                Assert.AreEqual(expected, projected, "A departed player's ballot still selected the next court.");
+                var votes = (int[])resultType.GetField("_mapVotes", hidden).GetValue(result);
+                UI.SceneFlow.AdvanceMapRotation(votes);
+                Assert.AreEqual(UI.SceneFlow.Maps[expected], UI.SceneFlow.SelectedMap, "The actual rematch route retained a disconnected ballot.");
+                Assert.AreEqual(keepConnectedBallot ? 5 : MapRotationRules.NoVote, votes[connected.Seat], "A live player's ballot was discarded.");
+                Assert.AreEqual(0, result.VoteCount, "The departed player's rematch consent survived.");
+                Assert.AreEqual(2, result.ExpectedVotes());
+                Assert.IsTrue(result.IsVisible, "Removing a map ballot started an unconsented rematch.");
+            }
+            finally
+            {
+                NetAuthority.Provider = previousProvider; sessionInstance.SetValue(null, previousSession); rpcInstance.SetValue(null, previousRpc);
+                UI.SceneFlow.SelectedMap = previousMap;
+                typeof(MatchAbandon).GetProperty("AuthorityRevoked").SetValue(null, previousRevocation);
+                Object.DestroyImmediate(resultRoot); Object.DestroyImmediate(canvasRoot); Object.DestroyImmediate(sessionRoot);
+            }
+        }
+
         /// <summary>
         /// ⚠️⚠️ THIS TEST ASSERTED THE OPPOSITE UNTIL 2026-08-27, AND THE THING IT PROTECTED WAS
         /// THE BUG. It required a spawnable `Net/MatchRpc` prefab carrying a `NetworkObject` and a

@@ -95,6 +95,28 @@ class MachineResolutionTests(unittest.TestCase):
         self.assertEqual(guard.player_profile({"USERPROFILE":"/u"},"win32"),
                          Path("/u/AppData/LocalLow/BH Studios/Tumbang Preso"))
 
+    def test_validation_identity_scopes_both_saves_and_editor_preferences(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);(root/'ProjectSettings').mkdir()
+            settings=root/'ProjectSettings/ProjectSettings.asset'
+            settings.write_text('PlayerSettings:\n  companyName: "BH Studios Validation"\n  productName: TumpWorker-a1002\n')
+            company,product=guard.project_identity(root)
+            self.assertEqual((company,product),('BH Studios Validation','TumpWorker-a1002'))
+            self.assertEqual(guard.player_profile({'USERPROFILE':'/u'},'win32',company,product),
+                Path('/u/AppData/LocalLow/BH Studios Validation/TumpWorker-a1002'))
+            self.assertEqual(guard.playerprefs_guard.editor_key(company,product),
+                r'Software\Unity\UnityEditor\BH Studios Validation\TumpWorker-a1002')
+            self.assertNotEqual(guard.playerprefs_guard.editor_key(company,product),guard.playerprefs_guard.EDITOR_KEY)
+
+    def test_malformed_existing_identity_never_falls_back_to_player_data(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);(root/'ProjectSettings').mkdir()
+            settings=root/'ProjectSettings/ProjectSettings.asset'
+            for text in ('  companyName: Test\n', '  companyName: ../player\n  productName: Test\n',
+                         '  companyName: Test\n  productName: ""\n'):
+                settings.write_text(text)
+                with self.subTest(text=text),self.assertRaises(ValueError):guard.project_identity(root)
+
     def test_headless_linux_gets_a_virtual_display_and_a_linux_target(self):
         command=guard.launch_command("/u/Unity",["-batchmode","-runTests"],{},"linux",has_xvfb=True)
         self.assertEqual(command[:4],["xvfb-run","-a","-s","-screen 0 1920x1080x24"])
