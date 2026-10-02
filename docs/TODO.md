@@ -17,6 +17,23 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### COMPETITION-READY-1002: active engineering and bug-fixing lane
+
+Owner reaffirmed2026-10-02: competition ready is the objective. Continue through
+coherent fixes and pushes; no stopping after a single passing unit. DOTS owns
+Docs feedback, friend broad loading. Preserve profiles/contributor work.
+
+- [x] CAREER-ASYNC-OWNER-1002: abandon/history account fences; native4/4.
+  [Evidence](reports/reliability-2026-10-02/career-async-owner/README.md).
+- [ ] CAREER-WITNESS-1002: investigate queued-record/witness removal correlation.
+- [ ] Inspect current history-screen completion/navigation/account-change races.
+- [ ] Investigate recorded270.33ms host frame using existing measurements.
+- [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
+- [ ] Refresh coherent Windows candidate and exercise full tournament match flow
+  in both shipping modes, current remade maps, failure/recovery and visual availability.
+  Distinguish actual local-peer evidence from physical devices and WAN qualification.
+
+
 ### CAREER-REFRESH-OWNER-1002: reject older account refresh output
 
 Older refresh completion cannot overwrite a replacement account cache or its

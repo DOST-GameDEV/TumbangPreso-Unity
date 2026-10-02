@@ -357,23 +357,28 @@ namespace TumbangPreso.Net
             if (string.IsNullOrEmpty(_cache.InMatchSinceUtc)) return;
             if (!(GameServices.Account?.IsSignedIn ?? false)) return;
 
+            var requestedCache = _cache;
             _cache.InMatchSinceUtc = "";
             Save();
 
             try
             {
                 string output = await CloudCode.CallAsync(ScriptName, new { action = "abandon" });
-                var answer = JsonUtility.FromJson<SubmitResponse>(output);
-
-                if (answer != null && !string.IsNullOrWhiteSpace(answer.profile))
-                    AdoptRemoteProfile(answer.profile);
-
-                Debug.Log("[Career] reported a match left early");
+                CompleteAbandon(requestedCache, output);
             }
             catch (Exception e)
             {
                 Debug.LogWarning($"[Career] could not report an abandoned match: {e.Message}");
             }
+        }
+
+        private void CompleteAbandon(Cache requestedCache, string output)
+        {
+            if (this == null || !ReferenceEquals(_cache, requestedCache)) return;
+            var answer = JsonUtility.FromJson<SubmitResponse>(output);
+            if (answer != null && !string.IsNullOrWhiteSpace(answer.profile))
+                AdoptRemoteProfile(answer.profile);
+            Debug.Log("[Career] reported a match left early");
         }
 
         public void Record(MatchRecord record, string witnessDigest)
@@ -654,22 +659,32 @@ namespace TumbangPreso.Net
         {
             if (!(GameServices.Account?.IsSignedIn ?? false)) return LocalPage(offset, limit);
 
+            var requestedCache = _cache;
             try
             {
                 string output = await CloudCode.CallAsync(
                     ScriptName, new { action = "history", offset, limit });
 
-                var answer = JsonUtility.FromJson<HistoryResponse>(output);
-                if (answer == null || string.IsNullOrWhiteSpace(answer.history)) return LocalPage(offset, limit);
-
-                var page = JsonUtility.FromJson<RecordList>("{\"items\":" + answer.history + "}");
-                return page?.items ?? LocalPage(offset, limit);
+                return CompleteHistory(requestedCache, output, offset, limit);
             }
+            catch (OperationCanceledException) { throw; }
             catch (Exception e)
             {
+                if (this == null || !ReferenceEquals(_cache, requestedCache))
+                    throw new OperationCanceledException("The requested career account changed.", e);
                 Debug.LogWarning($"[Career] history page failed; showing local history: {e.Message}");
                 return LocalPage(offset, limit);
             }
+        }
+
+        private List<MatchRecord> CompleteHistory(Cache requestedCache, string output, int offset, int limit)
+        {
+            if (this == null || !ReferenceEquals(_cache, requestedCache))
+                throw new OperationCanceledException("The requested career account changed.");
+            var answer = JsonUtility.FromJson<HistoryResponse>(output);
+            if (answer == null || string.IsNullOrWhiteSpace(answer.history)) return LocalPage(offset, limit);
+            var page = JsonUtility.FromJson<RecordList>("{\"items\":" + answer.history + "}");
+            return page?.items ?? LocalPage(offset, limit);
         }
 
         /// <summary>⚠️ `JsonUtility` CANNOT PARSE A BARE JSON ARRAY. It needs a named field, which

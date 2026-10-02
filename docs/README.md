@@ -99,3 +99,5 @@ Late career submission identity and pending-result preservation: [native evidenc
 Refreshed129 Windows Classic tournament-context observations: [evidence](reports/reliability-2026-10-02/current-tournament129/README.md).
 
 Career refresh account-cache ownership: [native evidence](reports/reliability-2026-10-02/career-refresh-owner/README.md).
+
+Abandon/history account-response ownership: [native evidence](reports/reliability-2026-10-02/career-async-owner/README.md).

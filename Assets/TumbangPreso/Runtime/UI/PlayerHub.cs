@@ -2012,6 +2012,7 @@ namespace TumbangPreso.UI
                 _shown = await career.HistoryPageAsync(_page * HistoryPageSize, HistoryPageSize);
                 Show(Tab.Matches);
             }
+            catch (OperationCanceledException) { }
             catch (Exception e)
             {
                 SetFooter("REFRESH", e.Message);

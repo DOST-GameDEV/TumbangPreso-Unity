@@ -172,6 +172,58 @@ namespace TumbangPreso.Tests
             }
         }
 
+        [TestCase(false, false)]
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        [TestCase(true, true)]
+        public void RemainingCareerResponsesRespectAccountOwnership(bool historyResponse, bool replaceAccountCache)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career response ownership check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                var cacheField = typeof(TumbangPreso.Net.CareerStore).GetField("_cache", flags);
+                var requestedCache = cacheField.GetValue(career);
+                if (replaceAccountCache) cacheField.SetValue(career, System.Activator.CreateInstance(requestedCache.GetType(), true));
+                career.Profile.Xp = 77;
+                if (historyResponse)
+                {
+                    var remote = new MatchRecord { MatchId = "old-account-result" };
+                    string array = "[" + JsonUtility.ToJson(remote) + "]";
+                    string response = "{\"history\":\"" + array.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"}";
+                    System.Exception failure = null;
+                    System.Collections.Generic.List<MatchRecord> page = null;
+                    try { page = (System.Collections.Generic.List<MatchRecord>)typeof(TumbangPreso.Net.CareerStore).GetMethod("CompleteHistory", flags)
+                        .Invoke(career, new object[] { requestedCache, response, 0, 20 }); }
+                    catch (System.Reflection.TargetInvocationException error) { failure = error.InnerException; }
+                    if (replaceAccountCache)
+                        Assert.IsInstanceOf<System.OperationCanceledException>(failure, "An old account history request must cancel instead of displaying its results.");
+                    else
+                    {
+                        Assert.IsNull(failure); Assert.AreEqual(1, page.Count);
+                        Assert.AreEqual(remote.MatchId, page[0].MatchId);
+                    }
+                }
+                else
+                {
+                    var profile = new PlayerProfile { Xp = 420 };
+                    string response = "{\"profile\":\"" + JsonUtility.ToJson(profile).Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"}";
+                    typeof(TumbangPreso.Net.CareerStore).GetMethod("CompleteAbandon", flags)
+                        .Invoke(career, new object[] { requestedCache, response });
+                    Assert.AreEqual(replaceAccountCache ? 77 : 420, career.Profile.Xp,
+                        "An old abandon response replaced the active account career.");
+                }
+            }
+            finally
+            {
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
         private const string AssetsRoot = "Assets/TumbangPreso";
         private const string CloudCodeRoot = "ugs/cloud-code";
 
