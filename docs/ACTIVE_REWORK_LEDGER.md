@@ -195,3 +195,10 @@ Runtime/Visual/SeanIgnitionVisual.cs if baseline demonstrates a visual defect.
 Do not change mechanics, other clips or Amihan. Reuse actual-input capture on
 Low with fixed simulation and labelled longer film; no real-time/audio claim.
 First capture decides the narrow authored change, no decorative rewrite by default.
+
+SEAN-EMPOWERED-PRESENTATION-1002 final actual Skill2 capture1/1 passes95body+95
+owner frames. Rejected first centred-palm pose because the shoe crowded the
+chest; final open carrying arm makes it visible. Same0.66s,45samples, floor0,
+35otheranimations/mesh/rig preserved. All capture launches retained memory
+guard requests despite exit0. Publish explicit namedclip/tool/report; no
+mechanic/FPP/VFX/SFX or whole-Pyro completion claim. Longer23.5s review next.

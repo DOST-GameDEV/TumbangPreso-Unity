@@ -120,3 +120,5 @@ Full current Windows Classic tournament-context match: [actual peer evidence](re
 Inactive bot-body observation isolation: [native evidence](reports/reliability-2026-10-02/bot-inactive-body/README.md).
 
 Social reply and handle lookup account ownership: [native evidence](reports/reliability-2026-10-02/social-owner/README.md).
+
+Sean held-shoe body preparation: [evidence](reports/sean-empowered-presentation-2026-10-02/README.md).
