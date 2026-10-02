@@ -35,6 +35,7 @@ namespace TumbangPreso.Net
         private string _folder;
         private float _began, _next;
         private bool _returning, _rejoining, _done;
+        private bool _saveWarning;
         private MatchDirector _match;
         private MatchStatsCollector _stats;
 
@@ -206,13 +207,33 @@ namespace TumbangPreso.Net
         private void Record(MatchRecord record) { _receipt.recordReadyEvents++; Save(); }
         private Receipt Read(string role)
         {
-            try { return JsonUtility.FromJson<Receipt>(File.ReadAllText(Path.Combine(_folder, role + ".json"))); }
+            try
+            {
+                using var stream = new FileStream(Path.Combine(_folder, role + ".json"),
+                    FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+                using var reader = new StreamReader(stream);
+                return JsonUtility.FromJson<Receipt>(reader.ReadToEnd());
+            }
             catch (Exception) { return null; }
         }
         private void Save()
         {
             _receipt.scene = SceneManager.GetActiveScene().name;
-            File.WriteAllText(Path.Combine(_folder, _receipt.role + ".json"), JsonUtility.ToJson(_receipt, true));
+            try
+            {
+                File.WriteAllText(Path.Combine(_folder, _receipt.role + ".json"), JsonUtility.ToJson(_receipt, true));
+                _saveWarning = false;
+            }
+            catch (IOException error) { ReportSaveFailure(error); }
+            catch (UnauthorizedAccessException error) { ReportSaveFailure(error); }
+        }
+        private void ReportSaveFailure(Exception error)
+        {
+            // Diagnostic IO must never interrupt match-end or snapshot subscribers.
+            // Update retries the latest receipt; do not flood the log while a reader holds it.
+            if (_saveWarning) return;
+            _saveWarning = true;
+            Debug.LogWarning("[CompletedArrival] receipt not written: " + error.Message);
         }
         private void Finish(bool passed, string error)
         {
