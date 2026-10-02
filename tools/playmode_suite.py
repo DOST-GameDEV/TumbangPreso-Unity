@@ -228,7 +228,7 @@ GROUPS = [
         "SharedUltimatePhaseTests",
         "SkillReceiptTests",
         "RafiExpansionProbe",
-        "SeanCinderGateProbe", "SeanSteadyEmberProbe",
+        "SeanCinderGateProbe", "SeanSteadyEmberProbe", "RafiBackwashProbe", "RafiBahaProbe",
         "SpectatorExchangeTests",
         # Placed 2026-09-24: both load an arena (Eskinita for the bot's chase clock, the Lagoon
         # for its swim-and-climb recovery) and run bodies inside it.

@@ -4,6 +4,35 @@ namespace TumbangPreso.Core
 {
     public static class RafiRules
     {
+        public const float BahaWarning=.8f, BahaHalfWidth=3f, BahaSpeed=5f;
+        public const float BahaCarryDistance=3f, BahaCarryTail=BahaCarryDistance/BahaSpeed;
+        public const float BahaMaximumRange=64f, BahaCost=15f;
+        public static float BahaDuration(float distance) => BahaWarning+distance/BahaSpeed+BahaCarryTail;
+
+        // Distance until this lane leaves a finite, potentially asymmetric court.
+        // Out-of-court side lanes are closed, not extended through scenery.
+        public static float BahaLaneExit(float x,float z,float dx,float dz,
+            float minX,float maxX,float minZ,float maxZ)
+        {
+            if(!float.IsFinite(x)||!float.IsFinite(z)||!float.IsFinite(dx)||!float.IsFinite(dz)
+                ||!float.IsFinite(minX)||!float.IsFinite(maxX)||!float.IsFinite(minZ)||!float.IsFinite(maxZ)
+                ||minX>=maxX||minZ>=maxZ||x<minX||x>maxX||z<minZ||z>maxZ
+                ||Math.Abs(dx*dx+dz*dz-1)>.001f)return 0;
+            float tx=Math.Abs(dx)<.00001f?float.PositiveInfinity:(dx>0?(maxX-x)/dx:(minX-x)/dx);
+            float tz=Math.Abs(dz)<.00001f?float.PositiveInfinity:(dz>0?(maxZ-z)/dz:(minZ-z)/dz);
+            return Math.Clamp(Math.Min(tx,tz),0,BahaMaximumRange);
+        }
+
+        public static bool BahaCrosses(float side,float height,float forward,
+            float previous,float current,float laneLimit,bool grounded)
+        {
+            return grounded&&float.IsFinite(side)&&float.IsFinite(height)&&float.IsFinite(forward)
+                &&float.IsFinite(previous)&&float.IsFinite(current)&&float.IsFinite(laneLimit)
+                &&previous>=0&&current>=previous&&laneLimit>=0&&laneLimit<=BahaMaximumRange
+                &&Math.Abs(side)<=BahaHalfWidth&&height>=-.4f&&height<=.7f
+                &&forward>=0&&forward<=laneLimit&&forward>=previous-.45f&&forward<=current+.45f;
+        }
+
         // Published Hydro design, October 1: replace two charges with 35 seconds.
         public const float SkimCooldown = 35f;
         public const float SkimLoadSeconds = 8f;

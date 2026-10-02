@@ -17,6 +17,16 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### RAFI-BAHA-BACKWASH-1002: qualified flood and retrieval passive
+
+Baha now has the0.8second warning, bounded court-crossing front,3m loose-shoe
+carry, one grounded nudge and15point fee. Backwash grants1.5seconds of1.2x
+movement from genuine own retrieval without drop/regrab refresh. Protocol132,
+recording13; legacy replay behavior preserved. Core/native and first coherent
+three actual Linux peers qualify these units. Whole Hydro, SFX, hardware and
+human approval remain open. [Acceptance and film](reports/rafi-baha-2026-10-02/README.md).
+
+
 ### REPLAY-DECODER-REFUSAL-1002: safely reject malformed recordings
 
 TryDecode now catches its own InvalidDataException and returns false/reason.

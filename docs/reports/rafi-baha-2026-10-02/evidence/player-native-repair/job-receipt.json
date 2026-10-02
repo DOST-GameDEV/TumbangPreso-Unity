@@ -1,0 +1,36 @@
+{
+  "job": {
+    "id": "8c5e986a663a42f9ae89b4ad05902a26",
+    "ownerPid": 95468,
+    "guardPid": null,
+    "unityPids": [],
+    "createdUtc": "2026-10-02T08:15:26Z",
+    "kind": "build",
+    "memoryMb": 3072,
+    "reserveMb": 2048,
+    "project": "/workspace/shared/tump-validation",
+    "library": "/workspace/shared/tump-validation/Library",
+    "profile": "cloud-baha-player",
+    "prefHive": "software\\unity\\unityeditor\\bh studios\\tumbang preso",
+    "ports": [],
+    "worker": false,
+    "allowParallel": false,
+    "companyName": "BH Studios",
+    "productName": "Tumbang Preso"
+  },
+  "requestedUtc": "2026-10-02T08:15:26Z",
+  "status": "completed",
+  "exitCode": 0,
+  "admission": {
+    "availableMb": 7181,
+    "activeJobsBefore": 0,
+    "acquiredUtc": "2026-10-02T08:15:26Z"
+  },
+  "startedUtc": "2026-10-02T08:15:26Z",
+  "guardPid": 95469,
+  "endedUtc": "2026-10-02T08:20:32Z",
+  "guardTerminal": true,
+  "preservationCompleted": true,
+  "availableMbAtEnd": 6905,
+  "leaseHeld": false
+}

@@ -1,0 +1,2 @@
+MSBUILD : error MSB1009: Project file does not exist.
+Switch: /workspace/shared/TumbangPreso-Unity/Core.Tests/Core.Tests.csproj

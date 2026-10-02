@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 07:38:48Z" end-time="2026-10-02 07:39:12Z" duration="23.7242066">
+  <test-suite type="TestSuite" id="2542" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1261" result="Passed" start-time="2026-10-02 07:38:48Z" end-time="2026-10-02 07:39:12Z" duration="23.724207" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2536" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1261" result="Passed" start-time="2026-10-02 07:38:48Z" end-time="2026-10-02 07:39:12Z" duration="23.701886" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="92641" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2537" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1261" result="Passed" start-time="2026-10-02 07:38:48Z" end-time="2026-10-02 07:39:12Z" duration="23.691727" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2538" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1261" result="Passed" start-time="2026-10-02 07:38:48Z" end-time="2026-10-02 07:39:12Z" duration="23.682374" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2007" name="RafiBahaProbe" fullname="TumbangPreso.PlayTests.RafiBahaProbe" classname="TumbangPreso.PlayTests.RafiBahaProbe" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 07:38:48Z" end-time="2026-10-02 07:39:12Z" duration="23.660563" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2009" name="ActualJumpAndNarrowCoverAvoidTheFront" fullname="TumbangPreso.PlayTests.RafiBahaProbe.ActualJumpAndNarrowCoverAvoidTheFront" methodname="ActualJumpAndNarrowCoverAvoidTheFront" classname="TumbangPreso.PlayTests.RafiBahaProbe" runstate="Runnable" seed="1300141906" result="Passed" start-time="2026-10-02 07:38:48Z" end-time="2026-10-02 07:38:48Z" duration="0.340713" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2010" name="ActualUltimateShowsWarningFrontAndRetirementOnTheCourt" fullname="TumbangPreso.PlayTests.RafiBahaProbe.ActualUltimateShowsWarningFrontAndRetirementOnTheCourt" methodname="ActualUltimateShowsWarningFrontAndRetirementOnTheCourt" classname="TumbangPreso.PlayTests.RafiBahaProbe" runstate="Runnable" seed="386755326" result="Passed" start-time="2026-10-02 07:38:48Z" end-time="2026-10-02 07:39:11Z" duration="23.085042" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="2008" name="WarnsBeforeOneGroundedNudgeAndCarriesOnlyLooseShoes" fullname="TumbangPreso.PlayTests.RafiBahaProbe.WarnsBeforeOneGroundedNudgeAndCarriesOnlyLooseShoes" methodname="WarnsBeforeOneGroundedNudgeAndCarriesOnlyLooseShoes" classname="TumbangPreso.PlayTests.RafiBahaProbe" runstate="Runnable" seed="918865322" result="Passed" start-time="2026-10-02 07:39:11Z" end-time="2026-10-02 07:39:12Z" duration="0.220811" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-X1NIqZ/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

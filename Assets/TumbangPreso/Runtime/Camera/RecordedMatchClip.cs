@@ -20,7 +20,7 @@ namespace TumbangPreso.CameraSystem
     { public float Time,Pitch,Gain;public Vector3 Position;public string Id; }
     public sealed class RecordedMatchClip
     {
-        public const int WireVersion=12;
+        public const int WireVersion=13;
         public const int ByteLimit=2*1024*1024;
         public const int RawByteLimit=12*1024*1024;
         public long MatchId,Id;
@@ -103,7 +103,7 @@ namespace TumbangPreso.CameraSystem
                 int version=reader.ReadInt32();
                 // Version10 has the identical layout for pre-water fields. Keep
                 // those saved clips readable; live network admission still requires49.
-                if(version!=WireVersion&&version!=11&&version!=10)throw new InvalidDataException("Unsupported clip schema");
+                if(version!=WireVersion&&version!=12&&version!=11&&version!=10)throw new InvalidDataException("Unsupported clip schema");
                 var result=new RecordedMatchClip{MatchId=reader.ReadInt64(),Id=reader.ReadInt64(),Round=reader.ReadInt32(),Actor=reader.ReadInt32(),Subject=reader.ReadInt32(),Mode=(GameMode)reader.ReadByte()};
                 result.Map=ReadText(reader,64);result.Reason=ReadText(reader,96);
                 result.Start=reader.ReadSingle();result.End=reader.ReadSingle();result.Contact=reader.ReadSingle();
@@ -165,7 +165,7 @@ namespace TumbangPreso.CameraSystem
                             Duration=reader.ReadSingle(),Remaining=reader.ReadSingle(),Radius=reader.ReadSingle(),FirstScale=reader.ReadSingle(),SecondScale=reader.ReadSingle(),Owner=reader.ReadInt32(),Split=reader.ReadBoolean()};
                         if(WorldEffectSnapshot.UsesDynamicIdentity(kind))
                         {
-                            if(version<11 || (kind==WorldEffectSnapshot.Kind.CinderGate && version<12))throw new InvalidDataException("Dynamic field in an incompatible clip");
+                            if(version<11 || (kind==WorldEffectSnapshot.Kind.CinderGate && version<12) || (kind==WorldEffectSnapshot.Kind.Baha && version<13))throw new InvalidDataException("Dynamic field in an incompatible clip");
                             f.EventId=reader.ReadInt32();int points=Count(reader,0,Abilities.RafiWaterField.MaxPathPoints);
                             f.Path=new Vector3[points];for(int p=0;p<points;p++)f.Path[p]=ReadVector(reader,10000);
                         }

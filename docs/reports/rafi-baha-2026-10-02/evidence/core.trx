@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="efee126c-15d9-4ca1-84ea-a919fcc4af4d" name="@5dbb90ac801b 2026-10-02 14:48:36" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-02T14:48:36.3189173+08:00" queuing="2026-10-02T14:48:36.3189173+08:00" start="2026-10-02T14:48:35.6953168+08:00" finish="2026-10-02T14:48:36.3451489+08:00" />
+  <TestSettings name="default" id="1b6d06c1-feb6-4aba-bfb8-73b9600f6bd7">
+    <Deployment runDeploymentRoot="_5dbb90ac801b_2026-10-02_14_48_36" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="aaa855e4-192c-4bc9-b669-49f903ad91f4" testId="834baf7e-0fff-8a27-b0e3-36ba8ed6faea" testName="TumbangPreso.Core.Tests.RafiRulesTests.BahaReachesAsymmetricCourtEdgesAlongActualAim" computerName="5dbb90ac801b" duration="00:00:00.0000735" startTime="2026-10-02T14:48:36.2742214+08:00" endTime="2026-10-02T14:48:36.2742214+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aaa855e4-192c-4bc9-b669-49f903ad91f4" />
+    <UnitTestResult executionId="d1df4a6e-c10e-4a37-a950-da5535c5c266" testId="a0138576-0243-56d5-20d8-87f1d8f94345" testName="TumbangPreso.Core.Tests.RafiRulesTests.FirstEntryPrecedesClosestApproachAndIsOrderable" computerName="5dbb90ac801b" duration="00:00:00.0000781" startTime="2026-10-02T14:48:36.2514296+08:00" endTime="2026-10-02T14:48:36.2514296+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d1df4a6e-c10e-4a37-a950-da5535c5c266" />
+    <UnitTestResult executionId="c94fa9c9-37da-4b1a-b0a6-012bd2126335" testId="bbb97537-db65-16b8-65e7-7d8a3e663a79" testName="TumbangPreso.Core.Tests.RafiRulesTests.SkimHasOneBoundedLoadAndGroundTravel" computerName="5dbb90ac801b" duration="00:00:00.0000861" startTime="2026-10-02T14:48:36.2740319+08:00" endTime="2026-10-02T14:48:36.2740321+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c94fa9c9-37da-4b1a-b0a6-012bd2126335" />
+    <UnitTestResult executionId="b7f6a7c8-bb07-4f26-baf2-b70e4c511362" testId="8906aae6-5f5a-3a3e-8840-6a43e9eb6c4e" testName="TumbangPreso.Core.Tests.RafiRulesTests.BahaRejectsMalformedGeometryAndCapsHugeMaps" computerName="5dbb90ac801b" duration="00:00:00.0001101" startTime="2026-10-02T14:48:36.2514538+08:00" endTime="2026-10-02T14:48:36.2514539+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b7f6a7c8-bb07-4f26-baf2-b70e4c511362" />
+    <UnitTestResult executionId="a76f115b-574b-4b8a-937a-d1722bc99958" testId="62454a03-c247-fea8-88c7-34d5e8cca4f4" testName="TumbangPreso.Core.Tests.RafiRulesTests.InsideStationaryAndInvalidInputsHaveExplicitOutcomes" computerName="5dbb90ac801b" duration="00:00:00.0004876" startTime="2026-10-02T14:48:36.2510694+08:00" endTime="2026-10-02T14:48:36.2510695+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a76f115b-574b-4b8a-937a-d1722bc99958" />
+    <UnitTestResult executionId="9ab48f0b-adb7-47c1-bfc5-c0a81f6982c9" testId="76ec0b28-069b-1523-db59-2df287ff89f9" testName="TumbangPreso.Core.Tests.RafiRulesTests.WaterwallCrossingIsBoundedAndWorksFromEitherSide" computerName="5dbb90ac801b" duration="00:00:00.0002589" startTime="2026-10-02T14:48:36.2514773+08:00" endTime="2026-10-02T14:48:36.2514773+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9ab48f0b-adb7-47c1-bfc5-c0a81f6982c9" />
+    <UnitTestResult executionId="631662b1-8438-4fe5-bf04-e42d3731ade2" testId="f14f7fe1-123a-5474-c8b1-8eb8e2892112" testName="TumbangPreso.Core.Tests.RafiRulesTests.BahaKeepsTheAdoptedWarningCarryAndCost" computerName="5dbb90ac801b" duration="00:00:00.0001151" startTime="2026-10-02T14:48:36.2514034+08:00" endTime="2026-10-02T14:48:36.2514035+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="631662b1-8438-4fe5-bf04-e42d3731ade2" />
+    <UnitTestResult executionId="8e51dda7-4a2b-428c-93e5-876dd8fbd6c0" testId="76c55892-b417-3a48-7c7c-4b31284050d5" testName="TumbangPreso.Core.Tests.RafiRulesTests.CurrentUsesThePublishedCooldownAndExistingBoundedFootprint" computerName="5dbb90ac801b" duration="00:00:00.0001611" startTime="2026-10-02T14:48:36.2513791+08:00" endTime="2026-10-02T14:48:36.2513791+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8e51dda7-4a2b-428c-93e5-876dd8fbd6c0" />
+    <UnitTestResult executionId="c53982b9-071a-4c6e-8985-b27f8c67f333" testId="57bc9dc0-0716-4205-9502-2cfc917c6c8a" testName="TumbangPreso.Core.Tests.RafiRulesTests.BahaSweepRejectsBacktrackingAndBadNumbers" computerName="5dbb90ac801b" duration="00:00:00.0000637" startTime="2026-10-02T14:48:36.2513479+08:00" endTime="2026-10-02T14:48:36.2513479+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c53982b9-071a-4c6e-8985-b27f8c67f333" />
+    <UnitTestResult executionId="7edcf0cd-0600-46fd-b91b-06364ccfc60b" testId="a66f61b7-ba95-4d12-1274-0fbe4cec38f4" testName="TumbangPreso.Core.Tests.RafiRulesTests.BahaGroundedSweepDoesNotHitAirborneOrBeyondCover" computerName="5dbb90ac801b" duration="00:00:00.0002221" startTime="2026-10-02T14:48:36.2513189+08:00" endTime="2026-10-02T14:48:36.2513190+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7edcf0cd-0600-46fd-b91b-06364ccfc60b" />
+    <UnitTestResult executionId="1b66c512-fd74-4be6-95b2-61ed0447d49c" testId="214726b4-c959-3988-2826-7e1d9016a0f6" testName="TumbangPreso.Core.Tests.RafiRulesTests.BahaDiagonalEndsAtTheFirstBoundary" computerName="5dbb90ac801b" duration="00:00:00.0057930" startTime="2026-10-02T14:48:36.2480805+08:00" endTime="2026-10-02T14:48:36.2480931+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1b66c512-fd74-4be6-95b2-61ed0447d49c" />
+    <UnitTestResult executionId="ba75d423-8212-47a0-ac25-80a2bfaaa755" testId="31592331-fd01-710e-46a3-4393f81b117a" testName="TumbangPreso.Core.Tests.RafiRulesTests.VerticalAndHorizontalWindowsMustOverlap" computerName="5dbb90ac801b" duration="00:00:00.0000592" startTime="2026-10-02T14:48:36.2741863+08:00" endTime="2026-10-02T14:48:36.2741865+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ba75d423-8212-47a0-ac25-80a2bfaaa755" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="TumbangPreso.Core.Tests.RafiRulesTests.BahaDiagonalEndsAtTheFirstBoundary" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="214726b4-c959-3988-2826-7e1d9016a0f6">
+      <Execution id="1b66c512-fd74-4be6-95b2-61ed0447d49c" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RafiRulesTests" name="BahaDiagonalEndsAtTheFirstBoundary" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RafiRulesTests.BahaReachesAsymmetricCourtEdgesAlongActualAim" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="834baf7e-0fff-8a27-b0e3-36ba8ed6faea">
+      <Execution id="aaa855e4-192c-4bc9-b669-49f903ad91f4" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RafiRulesTests" name="BahaReachesAsymmetricCourtEdgesAlongActualAim" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RafiRulesTests.FirstEntryPrecedesClosestApproachAndIsOrderable" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="a0138576-0243-56d5-20d8-87f1d8f94345">
+      <Execution id="d1df4a6e-c10e-4a37-a950-da5535c5c266" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RafiRulesTests" name="FirstEntryPrecedesClosestApproachAndIsOrderable" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RafiRulesTests.BahaGroundedSweepDoesNotHitAirborneOrBeyondCover" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="a66f61b7-ba95-4d12-1274-0fbe4cec38f4">
+      <Execution id="7edcf0cd-0600-46fd-b91b-06364ccfc60b" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RafiRulesTests" name="BahaGroundedSweepDoesNotHitAirborneOrBeyondCover" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RafiRulesTests.VerticalAndHorizontalWindowsMustOverlap" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="31592331-fd01-710e-46a3-4393f81b117a">
+      <Execution id="ba75d423-8212-47a0-ac25-80a2bfaaa755" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RafiRulesTests" name="VerticalAndHorizontalWindowsMustOverlap" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RafiRulesTests.BahaSweepRejectsBacktrackingAndBadNumbers" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="57bc9dc0-0716-4205-9502-2cfc917c6c8a">
+      <Execution id="c53982b9-071a-4c6e-8985-b27f8c67f333" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RafiRulesTests" name="BahaSweepRejectsBacktrackingAndBadNumbers" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RafiRulesTests.BahaKeepsTheAdoptedWarningCarryAndCost" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="f14f7fe1-123a-5474-c8b1-8eb8e2892112">
+      <Execution id="631662b1-8438-4fe5-bf04-e42d3731ade2" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RafiRulesTests" name="BahaKeepsTheAdoptedWarningCarryAndCost" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RafiRulesTests.CurrentUsesThePublishedCooldownAndExistingBoundedFootprint" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="76c55892-b417-3a48-7c7c-4b31284050d5">
+      <Execution id="8e51dda7-4a2b-428c-93e5-876dd8fbd6c0" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RafiRulesTests" name="CurrentUsesThePublishedCooldownAndExistingBoundedFootprint" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RafiRulesTests.WaterwallCrossingIsBoundedAndWorksFromEitherSide" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="76ec0b28-069b-1523-db59-2df287ff89f9">
+      <Execution id="9ab48f0b-adb7-47c1-bfc5-c0a81f6982c9" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RafiRulesTests" name="WaterwallCrossingIsBoundedAndWorksFromEitherSide" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RafiRulesTests.BahaRejectsMalformedGeometryAndCapsHugeMaps" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="8906aae6-5f5a-3a3e-8840-6a43e9eb6c4e">
+      <Execution id="b7f6a7c8-bb07-4f26-baf2-b70e4c511362" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RafiRulesTests" name="BahaRejectsMalformedGeometryAndCapsHugeMaps" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RafiRulesTests.InsideStationaryAndInvalidInputsHaveExplicitOutcomes" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="62454a03-c247-fea8-88c7-34d5e8cca4f4">
+      <Execution id="a76f115b-574b-4b8a-937a-d1722bc99958" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RafiRulesTests" name="InsideStationaryAndInvalidInputsHaveExplicitOutcomes" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.RafiRulesTests.SkimHasOneBoundedLoadAndGroundTravel" storage="/workspace/shared/tumbangpreso-unity/core.tests/bin/debug/net9.0/tumbangpreso.core.tests.dll" id="bbb97537-db65-16b8-65e7-7d8a3e663a79">
+      <Execution id="c94fa9c9-37da-4b1a-b0a6-012bd2126335" />
+      <TestMethod codeBase="/workspace/shared/TumbangPreso-Unity/Core.Tests/bin/Debug/net9.0/TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.RafiRulesTests" name="SkimHasOneBoundedLoadAndGroundTravel" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="834baf7e-0fff-8a27-b0e3-36ba8ed6faea" executionId="aaa855e4-192c-4bc9-b669-49f903ad91f4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a0138576-0243-56d5-20d8-87f1d8f94345" executionId="d1df4a6e-c10e-4a37-a950-da5535c5c266" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bbb97537-db65-16b8-65e7-7d8a3e663a79" executionId="c94fa9c9-37da-4b1a-b0a6-012bd2126335" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8906aae6-5f5a-3a3e-8840-6a43e9eb6c4e" executionId="b7f6a7c8-bb07-4f26-baf2-b70e4c511362" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="62454a03-c247-fea8-88c7-34d5e8cca4f4" executionId="a76f115b-574b-4b8a-937a-d1722bc99958" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="76ec0b28-069b-1523-db59-2df287ff89f9" executionId="9ab48f0b-adb7-47c1-bfc5-c0a81f6982c9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f14f7fe1-123a-5474-c8b1-8eb8e2892112" executionId="631662b1-8438-4fe5-bf04-e42d3731ade2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="76c55892-b417-3a48-7c7c-4b31284050d5" executionId="8e51dda7-4a2b-428c-93e5-876dd8fbd6c0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="57bc9dc0-0716-4205-9502-2cfc917c6c8a" executionId="c53982b9-071a-4c6e-8985-b27f8c67f333" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a66f61b7-ba95-4d12-1274-0fbe4cec38f4" executionId="7edcf0cd-0600-46fd-b91b-06364ccfc60b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="214726b4-c959-3988-2826-7e1d9016a0f6" executionId="1b66c512-fd74-4be6-95b2-61ed0447d49c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="31592331-fd01-710e-46a3-4393f81b117a" executionId="ba75d423-8212-47a0-ac25-80a2bfaaa755" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="12" executed="12" passed="12" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.20)
+[xUnit.net 00:00:00.05]   Discovering: TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.16]   Discovered:  TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.16]   Starting:    TumbangPreso.Core.Tests
+[xUnit.net 00:00:00.23]   Finished:    TumbangPreso.Core.Tests
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

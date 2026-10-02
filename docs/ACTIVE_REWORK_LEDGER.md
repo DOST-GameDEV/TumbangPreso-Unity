@@ -502,3 +502,16 @@ Assets/TumbangPreso/Resources/Shaders/RafiWater.shader for a default-OFF vertex-
 option, enabled on Baha's surface alone. Preserve all existing Water wall, Skim,
 legacy waves and introduction materials. No successful visual verdict is claimed
 for the retained blue-pane or white-sheet iterations.
+
+
+## Separate Docs/hero contributor checkpoint, October2 08:24UTC
+
+Baha/Backwash qualified as a coherent protocol132 batch. First actual3Linux
+peers PASS54.022s,guard null; source e4d6ee6b plus frozen owned overlay, runtime
+2b2f0da847692986b4c0a041bf430d70bcc117518d7c2abafda55ecfb93a7e70.
+All809 frozen inputs identical. Build succeeds883MB253s with retained TypeDb
+OOM and memory-observer warning; no clean-headroom claim. Incoming reliability
+through f33e1d8a integrated after test, not newly player-qualified. Original
+Backwash failures remain false; whole Hydro/human acceptance stay open.
+No active hero jobs. See TODO RAFI-BAHA-BACKWASH-1002 and its report. Preserve
+the independent reliability owner's active lane and all other contributor work.

@@ -1,7 +1,8 @@
 # Backwash qualification checkpoint
 
-NOT SHIPPED. The implementation is native-qualified but actual-peer acceptance is
-incomplete. Do not mark Hydro or Backwash Done from this checkpoint.
+Historical standalone checkpoint below. Backwash now passes the new coherent
+Baha integration with three actual players; see [current acceptance](../rafi-baha-2026-10-02/README.md).
+Both original failures remain false. Whole Hydro and human approval stay open.
 
 Four native codec checks pass at06:14:14UTC and four actual-action checks pass at
 06:17:48UTC. The latter measures real1.2x travel, genuine own throw/manual pickup,
