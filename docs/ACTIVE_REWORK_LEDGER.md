@@ -127,3 +127,10 @@ explicitly requests Single Catch to be superseded by Double Catch immediately.
 Reproduce current queuing, then replace only newer higher catch recognition for
 the same actor/match/round; preserve unrelated queue entries and scoring.
 No other UI/presentation paths claimed.
+
+CATCH-BANNER-UPGRADE-1002 ready to publish: new actual-event case passes; retained
+queue/stale/rematch case passes at 960x540 after one bounded capture-size retry.
+Full-HD timeout and memory warnings retained. Two distinct cases, no clean
+combined-suite/performance/player claim. Publish the two owned source paths and
+report/TODO/checkpoint, then update and strike only the resolved catch comment
+in Feedback. Next prioritize Harry's remaining comments before character work.

@@ -19,6 +19,47 @@ namespace TumbangPreso.PlayTests
         }
         [UnitySetUp] public IEnumerator Before() { _provider = NetAuthority.Provider; yield return PlayModeWorld.Reset(); }
         [UnityTearDown] public IEnumerator After() { NetAuthority.Provider = _provider; yield return PlayModeWorld.Reset(); }
+        [UnityTest]
+        public IEnumerator HigherCatchImmediatelyReplacesItsActorWithoutDroppingUnrelatedMoments()
+        {
+            yield return MapRetrievalProbe.Load("Eskinita");
+            Hud.Instance.ShowReadyPrompt(false);
+            var match = GameServices.Match;
+            var banner = Object.FindAnyObjectByType<MatchMomentBanner>();
+            Assert.IsNotNull(banner);
+            int score = match.ScoreFor(1);
+            long id = match.PresentationMatchId;
+            int round = match.RoundNumber;
+            NetAuthority.Provider = new Client();
+            Assert.IsTrue(match.ApplyNetworkMoment(new MatchMoment(id, 1, round, 1, MatchMomentKind.SingleCatch, 1)));
+            Assert.AreEqual("SINGLE CATCH", banner.Phrase);
+            Assert.IsTrue(match.ApplyNetworkMoment(new MatchMoment(id, 2, round, 2, MatchMomentKind.FirstKnockdown, 1, 50)));
+            Assert.IsTrue(match.ApplyNetworkMoment(new MatchMoment(id, 3, round, 2, MatchMomentKind.SingleCatch, 1)));
+            Assert.IsTrue(match.ApplyNetworkMoment(new MatchMoment(id, 4, round, 1, MatchMomentKind.DoubleCatch, 2, 25)));
+            Assert.AreEqual("DOUBLE CATCH", banner.Phrase, "A higher catch must replace the current catch immediately.");
+            Assert.IsTrue(match.ApplyNetworkMoment(new MatchMoment(id, 5, round, 1, MatchMomentKind.TripleCatch, 3, 25)));
+            Assert.AreEqual("TRIPLE CATCH", banner.Phrase);
+            Assert.IsTrue(match.ApplyNetworkMoment(new MatchMoment(id, 6, round, 3, MatchMomentKind.SingleCatch, 1)));
+            Assert.IsTrue(match.ApplyNetworkMoment(new MatchMoment(id, 7, round, 3, MatchMomentKind.DoubleCatch, 2, 25)));
+            Assert.AreEqual("TRIPLE CATCH", banner.Phrase, "Another actor cannot interrupt this catch.");
+            yield return null;
+            Canvas.ForceUpdateCanvases();
+            var title = banner.GetComponentsInChildren<Text>().First(t => t.name == "MomentTitle");
+            Assert.Greater(title.cachedTextGenerator.vertexCount, 0);
+            var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var began = typeof(MatchMomentBanner).GetField("_began", flags);
+            var paint = typeof(MatchMomentBanner).GetMethod("Paint", flags);
+            began.SetValue(banner, Time.unscaledTime - 2.49f); paint.Invoke(banner, null);
+            Assert.AreEqual("TRIPLE CATCH", banner.Phrase, "Upgrade retains its complete display interval.");
+            began.SetValue(banner, Time.unscaledTime - 2.51f); paint.Invoke(banner, null);
+            Assert.AreEqual("FIRST KNOCKDOWN", banner.Phrase, "Unrelated recognition stays in order.");
+            began.SetValue(banner, Time.unscaledTime - 2.51f); paint.Invoke(banner, null);
+            Assert.AreEqual("SINGLE CATCH", banner.Phrase, "Another actor's catch must survive.");
+            began.SetValue(banner, Time.unscaledTime - 2.51f); paint.Invoke(banner, null);
+            Assert.AreEqual("DOUBLE CATCH", banner.Phrase, "A queued upgrade replaces its lower catch in place.");
+            Assert.AreEqual(score, match.ScoreFor(1), "Presentation upgrades cannot award score.");
+        }
+
         [UnityTest] public IEnumerator DuplicateStaleAndQueuedMomentsCannotChangeScoresOrReplayRecognition()
         {
             yield return MapRetrievalProbe.Load("Eskinita");
