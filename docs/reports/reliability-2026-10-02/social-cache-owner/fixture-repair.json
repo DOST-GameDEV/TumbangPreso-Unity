@@ -1,0 +1,7 @@
+{
+  "productionChanged": false,
+  "kind": "Fixture lifecycle repair",
+  "change": "Explicitly drive SocialStore.OnEnable/OnDisable in ordinary EditMode; keep PlayerAccount.Awake dormant",
+  "originalResult": "final.xml retained11total8passed3failed at event notification only",
+  "retryCount": 1
+}

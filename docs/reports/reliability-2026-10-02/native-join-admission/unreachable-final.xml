@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 02:29:08Z" end-time="2026-10-02 02:29:33Z" duration="24.9617992">
+  <test-suite type="TestSuite" id="2511" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1236" result="Passed" start-time="2026-10-02 02:29:08Z" end-time="2026-10-02 02:29:33Z" duration="24.961799" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2505" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1236" result="Passed" start-time="2026-10-02 02:29:08Z" end-time="2026-10-02 02:29:33Z" duration="24.919213" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23168" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2506" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1236" result="Passed" start-time="2026-10-02 02:29:08Z" end-time="2026-10-02 02:29:33Z" duration="24.889066" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2507" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1236" result="Passed" start-time="2026-10-02 02:29:08Z" end-time="2026-10-02 02:29:33Z" duration="24.853007" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2347" name="TumpNativeJoinTests" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-02 02:29:08Z" end-time="2026-10-02 02:29:33Z" duration="24.799595" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2348" name="NativeUnreachableJoinKeepsPanelOpenAndReportsFailure" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.NativeUnreachableJoinKeepsPanelOpenAndReportsFailure" methodname="NativeUnreachableJoinKeepsPanelOpenAndReportsFailure" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="1474899340" result="Passed" start-time="2026-10-02 02:29:08Z" end-time="2026-10-02 02:29:33Z" duration="24.780065" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="45000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] connecting to 127.0.0.1:57191
+Failed to connect to server.
+[NetDisconnect] peer=0 local=0 server=False connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-4294967296][MaxConnectionAttempts] Connection closed due to maximum connection attempts reached.
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-4294967296][MaxConnectionAttempts] Connection closed due to maximum connection attempts reached.
+[Net] offline
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

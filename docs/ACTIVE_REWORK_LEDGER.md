@@ -8,9 +8,11 @@ Make the game COMPETITION READY through real engineering and bug fixes: crashes,
 stalls, desync, lost results, bot failures, performance and UX. Keep working through
 checks, commits and pushes. Do not end a turn merely because one unit passed.
 A passing narrow test does not establish whole competition readiness.
-Work alone in this conversation. No subagents, cross-chat actions, reset/clean,
-force push, paid services or Desktop player replacement. Preserve profiles and
-unrelated work. Ask before new credit-consuming services.
+Latest owner authorization: root implements; Astra xhigh reviews/implements a
+disjoint issue; Sol6.1 HIGH implements social-account cache ownership. Current-chat
+subagents explicitly authorized; no cross-chat actions/reset/clean/force push/paid
+services/Desktop player replacement. FAST setting is not exposed by spawn API;
+never claim it was configured. Preserve profiles/unrelated work.
 
 Latest prior-chat scope: DOTS owns the Docs feedback/TODO work. Friend owns broad
 loading; specific remade-map preview and shader/effect availability BUG fixes are
@@ -22,29 +24,56 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Latest verified remote2664ad29c. Eight product units shipped; social-owner ninth
-unit qualified4/4 and publishes next. Core691/691 after documented adopted-Zapped
+Prior engineering publication verified ece6ee930 (nine product units). Local
+source c2326d5bf includes root panel d80c4f455 and social cache c2326d5bf; both
+await integration/push. Remote c6b330963 adds contributor ring/Sean reservations.
+Social-owner4/4 is published with clean-build receipt. Core691/691 after adopted-Zapped
 assertion correction; no runtime values changed. Pre-existing PNGs preserved and
-incoming contributor work integrated intact. No resets/cross-chat/subagents/paid tools.
+incoming contributor work integrated intact. No resets/cross-chat/paid tools. Latest owner explicitly authorized two subagents.
 
 ## Active job and exact next action
 
-SOCIAL owner baseline2/4, final4/4: old reply cannot replace friends/blocks; stale
-empty handle resolution cannot replace search status. Valid dispatch is fenced
-in source, not live-tested. No message/friendship/endpoint calls. Two hashes
-unchanged, zero repairs; session64773 terminal and profile/input restored. Publish
-this unit plus clean build receipt. Own SocialStore.cs/CareerAndCloudCodeTests.cs.
+Root panel fix committed d80c4f455, not yet confirmed published; remote advanced
+with unrelated changes. Baseline0/2 reproduced; admission/cancellation final2/2.
+Unavailable final failed ONLY expected UTP log; one bounded fixture correction,
+isolated rerun1/1. Three distinct acceptance cases pass. First failed XML retained.
+Native sessions53471/22420/4875 terminal, profile/input guards restored.
+
+Social cache c2326d5bf committed: baseline46175 reproduced6 failures (5/11pass),
+final85162 passed8; guest3 failed ONLY absent EditMode OnEnable invocation.
+One bounded lifecycle fixture repair, retry74528 guest3/3; 11distinct acceptance
+cases across two final XMLs, not one clean combined run. Runtime hash unchanged;
+guards restored, all jobs terminal. Sol now investigates disjoint rematch/result
+recovery defects without a heavy job. Signed-in dispatch remains source-inspected.
+
+Astra owns product Friend JOIN fix: PlayerHub.cs, Hub/HubCustom.cs, exact
+ConvertedMatchSetup.Hub.InRoom + NetSession.IsAdmitted and new
+PlayerHubFriendJoinTests.cs/.meta. Friend action reloaded HOME without joining;
+hub auto-entered on listening before admission. Candidate/snapshots ready in main
+Logs/friend-join-1002-inputs. Astra EXCLUSIVE native slot: baseline90938 compile
+failed before XML because SceneHandle is not int. ONE bounded fixture repair:
+use inferred SceneHandle, snapshots identical; repaired baseline21838 ACTIVE,
+Logs/friend-join-admission1002 in qualification, friend-join-admission1002 profile.
+Next inspect actual3case baseline, then final exactly3cases; no extra tooling retry.
+Root may publish completed units while this frozen job runs; do not mutate checkout.
+Root owns evidence/shared ledger/publication. No diagnostic edits now.
+User requests acknowledged: Sol HIGH overrides initial ultra; Astra may code too;
+all three implement, continuous work, durable checkpoints, no validation loops.
+
+Hero boundary reconnect run on frozen release2664 completed session96098 exit1;
+raw FALSE solely expected-seat aggregate, preserved Logs/competition-hero-rejoin1002.
+Both advanced round2 with clean buffer timing. One live client slot0 row combines
+old round references with transport reset during probe Rejoin(); production seat
+arrival applies seat before arena. Probe bypasses actual LobbyJoinPanel. Do NOT
+repeat unchanged probe expecting panel fix to green its verdict. Original result
+and traced classification must be published; no host seating corruption claim.
+
 Clean-start2664 release build succeeded2432MB/256s build phase, no C# drift;
-import/generated203tracked metadata/settings deltas disclosed. Fresh initial
-source/Library state, not pristine post-import working tree. Runtime7342fa1b...f8286a00,
-Builds/competition-release1002/TumbangPreso.exe in release checkout. Profile/input
-restored, native session86511 terminal. Do not stage protected importer metadata.
-Next ACTUAL current supported Hero direct-peer recovery/rematch or menu route on
-this frozen release player. Existing guarded runners, unique named profiles,
-one relevant scenario; no retired legacy whole-match UI repair loops. Artifact
-predates social source but includes the eight prior product units. While runtime
-runs inspect social cache clearing/newest-owner scheduling without a second heavy
-job. Full Classic8round evidence remains valid for unaffected core/clock behavior.
+import/generated203 tracked metadata/settings deltas disclosed. Fresh INITIAL
+source/Library state, not pristine POST-import tree. Runtime7342fa1b...f8286a00,
+Builds/competition-release1002/TumbangPreso.exe in release checkout. Guards restored.
+Frozen artifact predates social/panel fixes and incoming ambience. Protected metas
+never stage. Full Classic8-round outcome remains valid for unaffected clock/core.
 Private Supernova/arms/Ultra/two UI metas remain excluded pending own evidence.
 
 ## Remaining readiness evidence
@@ -181,6 +210,24 @@ Increase the ordinary hollow circle radius from1.375 to1.75 capsule radii
 Check actual rendered open centre, visible rim and capsule-relative sizing.
 No gameplay/contact radius change. One graphics run, one bounded repair maximum.
 
+
+AMIHAN-AIRBURST-PRESENTATION-1002 (owner-authorized local session for Amihan
+direction/body/FPP/VFX/cutscene only; NO SFX creation or mixing anywhere). Claims
+Airburst presentation only: HeroAbilityClips.Amihan.cs BuildAmihanStorm, baked
+Art/characters/amihan-motion/hero-amihan-storm.anim (GUID kept), Editor/
+AmihanMotionAuthor.cs storm bake entry, ViewmodelArms.cs StormCallClip and
+ViewmodelArms.CastGesture.cs storm-call entry only, AmihanVfx.cs AmihanStormFan,
+HeroIntroductionScene.Amihan.cs, tools/author_ultimate_intros.py amihan() and its
+generated Resources/UltimateIntros/amihan.txt, Editor/MapKit/AmihanReviewProbe.cs,
+new Tests/PlayMode/AmihanKitPlayProbe.AirburstFilm.cs and EditMode
+Tests/AmihanAirburstPresentationTests.cs, report
+docs/reports/amihan-presentation-2026-10-02. Keep intro 3.6s (shared phase
+timing), 1.5s delay, 60degree fan, contact and protocol unchanged. Found: live
+body/FPP release keyed at old 2.5s while gameplay releases at 1.5s; cutscene shows
+a release before the live gather. Validation in own detached worktree
+Codex/work/tump-amihan1002, profile amihan-airburst1002, after the active Hero
+reconnect job ends. Drift/Featherfall/Whirlwind not claimed yet.
+
 PLAYER-RING-RADIUS-1002 final Low-profile native1/1 passes in3.31s, outerexit0
 and guard null40s. Both hollow-role captures inspected. First ordinary-profile
 run timed out under memory pressure; retained, one bounded retry used. Publish
@@ -202,3 +249,4 @@ chest; final open carrying arm makes it visible. Same0.66s,45samples, floor0,
 35otheranimations/mesh/rig preserved. All capture launches retained memory
 guard requests despite exit0. Publish explicit namedclip/tool/report; no
 mechanic/FPP/VFX/SFX or whole-Pyro completion claim. Longer23.5s review next.
+

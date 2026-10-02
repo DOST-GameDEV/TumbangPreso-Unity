@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 02:34:40Z" end-time="2026-10-02 02:34:40Z" duration="0.1048281">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="827" result="Passed" start-time="2026-10-02 02:34:40Z" end-time="2026-10-02 02:34:40Z" duration="0.104828" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1987" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="827" result="Passed" start-time="2026-10-02 02:34:40Z" end-time="2026-10-02 02:34:40Z" duration="0.092807" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22612" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1988" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="827" result="Passed" start-time="2026-10-02 02:34:40Z" end-time="2026-10-02 02:34:40Z" duration="0.090336" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1989" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="827" result="Passed" start-time="2026-10-02 02:34:40Z" end-time="2026-10-02 02:34:40Z" duration="0.088133" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1060" name="CareerAndCloudCodeTests" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="65" result="Passed" start-time="2026-10-02 02:34:40Z" end-time="2026-10-02 02:34:40Z" duration="0.065707" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1128" name="SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 02:34:40Z" end-time="2026-10-02 02:34:40Z" duration="0.055908" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1125" name="SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession(False,False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession(False,False)" methodname="SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1512889123" result="Passed" start-time="2026-10-02 02:34:40Z" end-time="2026-10-02 02:34:40Z" duration="0.038188" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1126" name="SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession(True,False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession(True,False)" methodname="SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="856020532" result="Passed" start-time="2026-10-02 02:34:40Z" end-time="2026-10-02 02:34:40Z" duration="0.001118" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1127" name="SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession(True,True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession(True,True)" methodname="SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1820943432" result="Passed" start-time="2026-10-02 02:34:40Z" end-time="2026-10-02 02:34:40Z" duration="0.000643" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

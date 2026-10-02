@@ -25,12 +25,24 @@ pose rejected after review. Original35otherclips/mesh preserved. Memory warnings
 retained; no player/audio/human approval claim.
 [Evidence](reports/sean-empowered-presentation-2026-10-02/README.md).
 
+
+### AMIHAN-AIRBURST-PRESENTATION-1002: honest gather, release and cutscene
+
+Owner-authorized Amihan presentation lane (local session). Airburst first: live
+body and first-person release still key the old 2.5 s delay while gameplay
+releases at 1.5 s, and the 3.6 s cutscene shows a wind release before the live
+gather. Re-author body/FPP timing, gather/release fan readability and the
+cutscene within 3.6 s; keep delay, 60 degree fan, contact and protocol. No SFX.
+Research, plan and evidence: [report](reports/amihan-presentation-2026-10-02/README.md).
+Drift, Featherfall and Whirlwind presentation follow as separate units.
+
 ### PLAYER-RING-RADIUS-1002: larger hollow circle
 
 Ordinary player circle now uses1.75 capsule radii, about27percent larger.
 Taya/catchable sizes and gameplay unchanged. Native Low-profile1/1 passes with
 inspected role captures; first memory timeout retained.
 [Evidence](reports/feedback-2026-09-30/player-ring-radius/README.md).
+
 
 ### CITY-AMBIENCE-1002: Kanto and Ilalim gain reduction
 
@@ -95,6 +107,14 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   native2/2 both modes. [Evidence](reports/reliability-2026-10-02/bot-inactive-body/README.md).
 - [x] SOCIAL-RESPONSE-OWNER-1002: reply and lookup state owned by requesting account;
   native4/4. [Evidence](reports/reliability-2026-10-02/social-owner/README.md).
+- [ ] JOIN-ADMISSION-1002: panel waits for connection/seat, unavailable room stays
+  actionable; committed d80c4f455, native3distinct cases pass, publication pending.
+  [Evidence](reports/reliability-2026-10-02/native-join-admission/README.md).
+- [ ] SOCIAL-CACHE-OWNER-1002: retire old-account rail, defer new refresh, guest
+  service guard; committed c2326d5bf, native11distinct cases pass across two final
+  XMLs, publication pending. [Evidence](reports/reliability-2026-10-02/social-cache-owner/README.md).
+- [ ] FRIEND-JOIN-1002: fix HOME/hosted-room route and automatic lobby admission;
+  Astra candidate in focused native baseline/final validation.
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow

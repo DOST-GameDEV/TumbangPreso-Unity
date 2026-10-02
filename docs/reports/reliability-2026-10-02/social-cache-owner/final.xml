@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="11" result="Failed(Child)" total="11" passed="8" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.2380528">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="827" result="Failed" site="Child" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.238053" total="11" passed="8" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1987" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="827" result="Failed" site="Child" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.222786" total="11" passed="8" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="21492" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1988" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="827" result="Failed" site="Child" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.220354" total="11" passed="8" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1989" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="827" result="Failed" site="Child" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.218284" total="11" passed="8" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1060" name="CareerAndCloudCodeTests" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="65" result="Failed" site="Child" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.116315" total="11" passed="8" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1124" name="SocialAccountRefreshSurvivesThePreviousOwnersPendingOperation" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialAccountRefreshSurvivesThePreviousOwnersPendingOperation" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.042616" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1122" name="SocialAccountRefreshSurvivesThePreviousOwnersPendingOperation(&quot;_loading&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialAccountRefreshSurvivesThePreviousOwnersPendingOperation(&quot;_loading&quot;)" methodname="SocialAccountRefreshSurvivesThePreviousOwnersPendingOperation" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1992742829" result="Passed" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.028272" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1123" name="SocialAccountRefreshSurvivesThePreviousOwnersPendingOperation(&quot;_writing&quot;)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialAccountRefreshSurvivesThePreviousOwnersPendingOperation(&quot;_writing&quot;)" methodname="SocialAccountRefreshSurvivesThePreviousOwnersPendingOperation" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1747086566" result="Passed" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.000412" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1121" name="SocialCacheReadsRetireOnlyAnotherOwnersFriendsAndBlocks" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialCacheReadsRetireOnlyAnotherOwnersFriendsAndBlocks" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.010024" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1119" name="SocialCacheReadsRetireOnlyAnotherOwnersFriendsAndBlocks(False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialCacheReadsRetireOnlyAnotherOwnersFriendsAndBlocks(False)" methodname="SocialCacheReadsRetireOnlyAnotherOwnersFriendsAndBlocks" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="2045830946" result="Passed" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.007839" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1120" name="SocialCacheReadsRetireOnlyAnotherOwnersFriendsAndBlocks(True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialCacheReadsRetireOnlyAnotherOwnersFriendsAndBlocks(True)" methodname="SocialCacheReadsRetireOnlyAnotherOwnersFriendsAndBlocks" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1816765794" result="Passed" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.000569" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1118" name="SocialHandleLookupCannotOverwriteAnotherAccountsSearch" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialHandleLookupCannotOverwriteAnotherAccountsSearch" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.002935" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1116" name="SocialHandleLookupCannotOverwriteAnotherAccountsSearch(False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialHandleLookupCannotOverwriteAnotherAccountsSearch(False)" methodname="SocialHandleLookupCannotOverwriteAnotherAccountsSearch" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1103572201" result="Passed" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.001465" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1117" name="SocialHandleLookupCannotOverwriteAnotherAccountsSearch(True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialHandleLookupCannotOverwriteAnotherAccountsSearch(True)" methodname="SocialHandleLookupCannotOverwriteAnotherAccountsSearch" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="966958748" result="Passed" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.000288" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1128" name="SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.025088" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1125" name="SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession(False,False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession(False,False)" methodname="SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1948156575" result="Failed" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.019751" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The account notification left the previous rail visible until a later read.
+  Expected: <empty>
+  But was:  < <TumbangPreso.Core.FriendRef> >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession (System.Boolean guest, System.Boolean reportedSignedIn) [0x0039d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:649
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1126" name="SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession(True,False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession(True,False)" methodname="SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="821740307" result="Failed" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.001627" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The account notification left the previous rail visible until a later read.
+  Expected: <empty>
+  But was:  < <TumbangPreso.Core.FriendRef> >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession (System.Boolean guest, System.Boolean reportedSignedIn) [0x0039d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:649
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1127" name="SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession(True,True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession(True,True)" methodname="SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="323450924" result="Failed" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.001212" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The account notification left the previous rail visible until a later read.
+  Expected: <empty>
+  But was:  < <TumbangPreso.Core.FriendRef> >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession (System.Boolean guest, System.Boolean reportedSignedIn) [0x0039d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:649
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1115" name="SocialResponseCannotReplaceAnotherAccountsFriends" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialResponseCannotReplaceAnotherAccountsFriends" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.012070" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1113" name="SocialResponseCannotReplaceAnotherAccountsFriends(False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialResponseCannotReplaceAnotherAccountsFriends(False)" methodname="SocialResponseCannotReplaceAnotherAccountsFriends" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="640116611" result="Passed" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.011180" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1114" name="SocialResponseCannotReplaceAnotherAccountsFriends(True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialResponseCannotReplaceAnotherAccountsFriends(True)" methodname="SocialResponseCannotReplaceAnotherAccountsFriends" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="834957785" result="Passed" start-time="2026-10-02 02:33:12Z" end-time="2026-10-02 02:33:12Z" duration="0.000325" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

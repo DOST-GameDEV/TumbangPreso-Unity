@@ -533,6 +533,134 @@ namespace TumbangPreso.Tests
             }
         }
 
+        [TestCase(false)]
+        [TestCase(true)]
+        public void SocialCacheReadsRetireOnlyAnotherOwnersFriendsAndBlocks(bool changeOwner)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsTrue(string.IsNullOrWhiteSpace(TumbangPreso.GameServices.Account?.PlayerId));
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var type = typeof(TumbangPreso.Net.SocialStore);
+            var tokenField = typeof(TumbangPreso.Net.NetIdentity).GetField("_overrideTokenForTesting", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            string previousToken = (string)tokenField.GetValue(null); var previous = TumbangPreso.Net.SocialStore.Instance;
+            TumbangPreso.Net.NetIdentity.OverrideForTesting("social-cache-owner-a");
+            var owner = new GameObject("Social cache account switch check"); var social = owner.AddComponent<TumbangPreso.Net.SocialStore>();
+            try
+            {
+                var cache = type.GetField("_cache", flags).GetValue(social);
+                cache.GetType().GetField("OwnerId").SetValue(cache, TumbangPreso.Net.CareerStore.LocalPlayerId);
+                var list = new SocialList(); list.Friends.Add(new FriendRef { PlayerId = "old-friend", Handle = "OLD#4417" }); list.Blocked.Add("old-block");
+                cache.GetType().GetField("List").SetValue(cache, list);
+                type.GetProperty("SearchStatus").SetValue(social, "OLD ACCOUNT SEARCH");
+                int notifications = 0; social.Changed += () => notifications++;
+                if (changeOwner) TumbangPreso.Net.NetIdentity.OverrideForTesting("social-cache-owner-b");
+                var visible = social.List;
+                Assert.AreEqual(changeOwner ? 0 : 1, visible.Friends.Count, "The friends rail exposed another account's cached friend.");
+                Assert.AreEqual(changeOwner ? 0 : 1, visible.Blocked.Count, "Lobby admission inherited another account's blocks.");
+                Assert.AreEqual(changeOwner ? "" : "OLD ACCOUNT SEARCH", social.SearchStatus);
+                Assert.AreEqual(changeOwner ? 1 : 0, notifications, "An ownership change should redraw once; ordinary reads should not notify.");
+                Assert.AreSame(visible, social.List, "Repeated reads discarded the current owner's list.");
+                Assert.AreEqual(changeOwner ? 1 : 0, notifications);
+                if (!changeOwner) Assert.AreSame(list, visible, "A same-account notification discarded its offline list.");
+            }
+            finally
+            {
+                TumbangPreso.Net.NetIdentity.OverrideForTesting(previousToken); Object.DestroyImmediate(owner);
+                type.GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, previous);
+            }
+        }
+
+        [TestCase("_loading")]
+        [TestCase("_writing")]
+        public void SocialAccountRefreshSurvivesThePreviousOwnersPendingOperation(string pendingOperation)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsTrue(string.IsNullOrWhiteSpace(TumbangPreso.GameServices.Account?.PlayerId));
+            Assert.IsFalse(TumbangPreso.Net.NetIdentity.IsOnline, "The scheduling check must stay offline.");
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var type = typeof(TumbangPreso.Net.SocialStore);
+            var tokenField = typeof(TumbangPreso.Net.NetIdentity).GetField("_overrideTokenForTesting", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            string previousToken = (string)tokenField.GetValue(null); var previous = TumbangPreso.Net.SocialStore.Instance;
+            TumbangPreso.Net.NetIdentity.OverrideForTesting("social-pending-owner-a");
+            var owner = new GameObject("Social deferred account refresh check"); var social = owner.AddComponent<TumbangPreso.Net.SocialStore>();
+            try
+            {
+                var cache = type.GetField("_cache", flags).GetValue(social);
+                cache.GetType().GetField("OwnerId").SetValue(cache, TumbangPreso.Net.CareerStore.LocalPlayerId);
+                type.GetField("_nextPresence", flags).SetValue(social, float.PositiveInfinity);
+                type.GetField("_nextPresenceChange", flags).SetValue(social, float.PositiveInfinity);
+                var busy = type.GetField(pendingOperation, flags); busy.SetValue(social, true);
+                TumbangPreso.Net.NetIdentity.OverrideForTesting("social-pending-owner-b");
+                social.Refresh();
+                var refresh = type.GetField("_refreshPending", flags);
+                Assert.IsNotNull(refresh, "The new account's refresh needs to survive the previous account's pending operation.");
+                Assert.IsTrue((bool)refresh.GetValue(social));
+                type.GetMethod("Update", flags).Invoke(social, null);
+                Assert.IsTrue((bool)refresh.GetValue(social), "A busy request consumed the new account's refresh.");
+                busy.SetValue(social, false);
+                // An offline new owner keeps the request until its own sign-in notification.
+                type.GetMethod("Update", flags).Invoke(social, null);
+                Assert.IsTrue((bool)refresh.GetValue(social), "An offline account consumed the refresh before it could use its own session.");
+                Assert.IsFalse((bool)type.GetField("_loading", flags).GetValue(social));
+            }
+            finally
+            {
+                TumbangPreso.Net.NetIdentity.OverrideForTesting(previousToken); Object.DestroyImmediate(owner);
+                type.GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, previous);
+            }
+        }
+
+        [TestCase(false, false)]
+        [TestCase(true, false)]
+        [TestCase(true, true)]
+        public async System.Threading.Tasks.Task SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession(bool guest, bool reportedSignedIn)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsFalse(TumbangPreso.Net.NetIdentity.IsOnline);
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var accountProperty = typeof(TumbangPreso.GameServices).GetProperty("Account");
+            var priorAccount = TumbangPreso.GameServices.Account; var priorSocial = TumbangPreso.Net.SocialStore.Instance;
+            var accountOwner = new GameObject("Inactive offline social account"); accountOwner.SetActive(false);
+            var account = accountOwner.AddComponent<TumbangPreso.Net.PlayerAccount>();
+            // Keep Awake dormant: this fixture has no authentication initialization or credential access.
+            typeof(TumbangPreso.Net.PlayerAccount).GetField("_profile", flags).SetValue(account, new AccountProfile { PlayerId = guest ? "guest-social-test" : "offline-social-test" });
+            typeof(TumbangPreso.Net.PlayerAccount).GetProperty("IsGuest").SetValue(account, guest);
+            typeof(TumbangPreso.Net.PlayerAccount).GetProperty("IsSignedIn").SetValue(account, reportedSignedIn);
+            accountProperty.SetValue(null, account);
+            var owner = new GameObject("Social offline service guard check"); var social = owner.AddComponent<TumbangPreso.Net.SocialStore>();
+            var type = typeof(TumbangPreso.Net.SocialStore);
+            try
+            {
+                // Ordinary EditMode components do not receive runtime lifecycle callbacks.
+                // Drive the enable hook explicitly while keeping PlayerAccount.Awake dormant.
+                type.GetMethod("OnEnable", flags)?.Invoke(social, null);
+                social.Refresh();
+                Assert.IsFalse((bool)type.GetField("_loading", flags).GetValue(social));
+                social.RequestHandle("MARIA#4417");
+                Assert.AreEqual("SIGN IN TO ADD FRIENDS.", social.SearchStatus, "The offline/guest lookup attempted to use a primary-account credential.");
+                await (System.Threading.Tasks.Task)type.GetMethod("Post", flags).Invoke(social, new object[] { new { action = "block", playerId = "someone-else" } });
+                Assert.AreEqual("SIGN IN TO MANAGE FRIENDS.", social.SearchStatus);
+                Assert.IsFalse((bool)type.GetField("_writing", flags).GetValue(social));
+                type.GetMethod("Update", flags).Invoke(social, null);
+                Assert.IsNull(type.GetField("_lastPresenceFault", flags).GetValue(social), "Offline/guest presence reached the service helper.");
+                social.List.Friends.Add(new FriendRef { PlayerId = "prior-account-friend" });
+                typeof(TumbangPreso.Net.PlayerAccount).GetField("_profile", flags).SetValue(account, new AccountProfile { PlayerId = "guest-next-social-test" });
+                var changed = typeof(TumbangPreso.Net.PlayerAccount).GetField("Changed", flags | System.Reflection.BindingFlags.Public).GetValue(account) as System.Action;
+                changed?.Invoke();
+                var cache = type.GetField("_cache", flags).GetValue(social);
+                var notifiedList = (SocialList)cache.GetType().GetField("List").GetValue(cache);
+                Assert.IsEmpty(notifiedList.Friends, "The account notification left the previous rail visible until a later read.");
+                Assert.AreEqual("", social.SearchStatus);
+            }
+            finally
+            {
+                type.GetMethod("OnDisable", flags)?.Invoke(social, null);
+                Object.DestroyImmediate(owner); Object.DestroyImmediate(accountOwner);
+                accountProperty.SetValue(null, priorAccount);
+                type.GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, priorSocial);
+            }
+        }
+
         private const string AssetsRoot = "Assets/TumbangPreso";
         private const string CloudCodeRoot = "ugs/cloud-code";
 
