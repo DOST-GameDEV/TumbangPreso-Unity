@@ -38,6 +38,8 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   [Evidence](reports/reliability-2026-10-02/career-witness/README.md).
 - [x] HISTORY-NAVIGATION-1002: stale completions preserve navigation/page/close;
   native1/1 covers five states. [Evidence](reports/reliability-2026-10-02/history-navigation/README.md).
+- [x] CAREER-ACCOUNT-SYNC-1002: retain/coalesce current-account sync after older busy
+  operations; native4/4. [Evidence](reports/reliability-2026-10-02/career-account-sync/README.md).
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow

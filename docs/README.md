@@ -106,4 +106,5 @@ Queued-result verification alignment after refusals: [native evidence](reports/r
 
 Late history UI completion and navigation safety: [native evidence](reports/reliability-2026-10-02/history-navigation/README.md).
 
+Automatic career sync after pending older-account work: [native evidence](reports/reliability-2026-10-02/career-account-sync/README.md).
 All-nine-hero official footage research and implementation plans: [October 2 review](reports/hero-reference-footage-2026-10-02/README.md).

@@ -260,6 +260,91 @@ namespace TumbangPreso.Tests
             }
         }
 
+        [TestCase(false)]
+        [TestCase(true)]
+        public async System.Threading.Tasks.Task AccountSyncWaitsForThePreviousAccountOperation(bool pendingFlush)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsFalse(TumbangPreso.GameServices.Account?.IsSignedIn ?? false, "This scheduling check must stay offline.");
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career account sync scheduling check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var busyField = typeof(TumbangPreso.Net.CareerStore).GetField(pendingFlush ? "_flushing" : "_refreshing", flags);
+            System.Threading.Tasks.Task sync = null;
+            try
+            {
+                var cache = typeof(TumbangPreso.Net.CareerStore).GetField("_cache", flags).GetValue(career);
+                busyField.SetValue(career, true);
+                sync = (System.Threading.Tasks.Task)typeof(TumbangPreso.Net.CareerStore).GetMethod("SyncAfterPendingWorkAsync", flags)
+                    .Invoke(career, new object[] { cache });
+                await System.Threading.Tasks.Task.Delay(20);
+                Assert.IsFalse(sync.IsCompleted, "The newly selected account sync was skipped while the previous request was busy.");
+                busyField.SetValue(career, false);
+                Assert.AreSame(sync, await System.Threading.Tasks.Task.WhenAny(sync, System.Threading.Tasks.Task.Delay(1000)),
+                    "The current account sync did not resume after the previous request finished.");
+                await sync;
+                Assert.AreEqual("Local career", career.Status, "The resumed current-account sync did not reach its offline refresh path.");
+            }
+            finally
+            {
+                busyField.SetValue(career, false);
+                if (sync != null) await System.Threading.Tasks.Task.WhenAny(sync, System.Threading.Tasks.Task.Delay(1000));
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public async System.Threading.Tasks.Task AccountSyncCoalescesItsOwnerAndDropsObsoleteWaiters(bool replaceAccountCache)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsFalse(TumbangPreso.GameServices.Account?.IsSignedIn ?? false);
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career account waiter ownership check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var type = typeof(TumbangPreso.Net.CareerStore);
+            var busy = type.GetField("_refreshing", flags);
+            var cacheField = type.GetField("_cache", flags);
+            var syncMethod = type.GetMethod("SyncAfterPendingWorkAsync", flags);
+            System.Threading.Tasks.Task first = null, next = null;
+            try
+            {
+                var cache = cacheField.GetValue(career); busy.SetValue(career, true);
+                first = (System.Threading.Tasks.Task)syncMethod.Invoke(career, new object[] { cache });
+                if (replaceAccountCache)
+                {
+                    var replacement = System.Activator.CreateInstance(cache.GetType(), true);
+                    cacheField.SetValue(career, replacement);
+                    next = (System.Threading.Tasks.Task)syncMethod.Invoke(career, new object[] { replacement });
+                    Assert.AreSame(first, await System.Threading.Tasks.Task.WhenAny(first, System.Threading.Tasks.Task.Delay(1000)));
+                    Assert.IsFalse(next.IsCompleted, "The new account waiter must survive the old waiter's cleanup.");
+                    Assert.AreSame(replacement, type.GetField("_accountSyncOwner", flags).GetValue(career));
+                }
+                else
+                {
+                    next = (System.Threading.Tasks.Task)syncMethod.Invoke(career, new object[] { cache });
+                    Assert.IsTrue(next.IsCompleted, "Repeated notifications must coalesce behind one pending sync.");
+                    Assert.IsFalse(first.IsCompleted);
+                }
+                busy.SetValue(career, false);
+                var pending = replaceAccountCache ? next : first;
+                Assert.AreSame(pending, await System.Threading.Tasks.Task.WhenAny(pending, System.Threading.Tasks.Task.Delay(1000)));
+                await pending;
+                Assert.IsNull(type.GetField("_accountSyncOwner", flags).GetValue(career));
+            }
+            finally
+            {
+                busy.SetValue(career, false);
+                if (first != null) await System.Threading.Tasks.Task.WhenAny(first, System.Threading.Tasks.Task.Delay(1000));
+                if (next != null) await System.Threading.Tasks.Task.WhenAny(next, System.Threading.Tasks.Task.Delay(1000));
+                Object.DestroyImmediate(owner);
+                type.GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
         private const string AssetsRoot = "Assets/TumbangPreso";
         private const string CloudCodeRoot = "ugs/cloud-code";
 

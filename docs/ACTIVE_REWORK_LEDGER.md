@@ -31,16 +31,22 @@ Paths are under Assets/TumbangPreso unless prefixed docs.
 
 ## Active job and exact next action
 
-HISTORY-NAVIGATION-1002 complete: baseline failed four stale states; final 1/1
-native PlayMode case covers five states, including current-response control.
-Three frozen hashes unchanged, zero fixture repairs, session 4256 terminal and
-profile/input restored. Publish next; prior verified remote 77d699419.
-This resume shipped career abandon/history cache safety and queued witness repair;
-current source is also ready to publish menu completion ownership.
-No heavy job active. Next run a coherent integration check for these career/UI
-changes, then refresh internal Windows player. Inspect source/build identity and
-preserve pre-existing private dirt. Full match/readiness gaps remain below.
-No repeated unchanged matrices, live/paid services or authored visual redesign.
+CAREER-ACCOUNT-SYNC-1002 complete: baseline 0/2, native final 4/4. Captured cache
+waiter waits for old flags, coalesces same owner and retires obsolete owners;
+new owner's waiter survives old cleanup. Two hashes unchanged, zero repairs,
+profile/input restored, session40537 terminal. Publication follows.
+Prior verified remote33443291b. Refreshed player at that source builds2432MB/106s,
+1276 hashes unchanged, but whole-match run FAILED BEFORE round1 on UI-state wait.
+Original results/logs preserved in competition-batch. Player session29332 terminal;
+no task player/Unity job active. Profile/shared input unchanged/restored.
+One bounded runner repair PREPARED in main: current hub casual stake selected;
+wait for the ready phase; failed wait includes scene/control/preview/round state.
+Owned Diagnostics/OwnerUiPlayerReview.cs and .WholeMatches.cs, six added lines.
+No product readiness/clock/loading or authored UI change. Retry count0/1.
+Next after publishing career fix: copy two diagnostic files to qualification,
+freeze updated coherent candidate, build unique internal player, retry full-match
+route once. Stop fixture repair after that; retain any new failure and pursue
+actual product evidence or another existing supported runtime route.
 
 ## Remaining readiness evidence
 
@@ -88,12 +94,11 @@ no clean headroom or current-player claim. Subsequent Sean body strip completed
 in 30 seconds without a guard; both views inspected. Source assets preserved.
 Cloud GitHub CLI authenticated by owner on October 2; repository push permission
 and fetch verified. Integrating incoming 33443291 without changing its work.
-All-nine-hero visual research and production plans completed and reviewed; audio
-was not heard. Publication of that evidence packet is next, then a single owned
-Feedback/presentation unit. No Cinder Gate implementation yet. Preserve the
+All-nine-hero visual research and production plans published at b556115a; audio
+was not heard. A single owned Sean presentation unit follows. No Cinder Gate implementation yet. Preserve the
 separate career/UI and broad-loading reservations above.
 
-HERO-REFERENCE-1002 report prepared for publication: 14 report pages, 27 selected
+HERO-REFERENCE-1002 report published at b556115a: 14 report pages, 27 selected
 frames and two evidence manifests. Audio unheard. No runtime or asset changes;
 no active heavy job. Next: actual Sean Stoke Step cast baseline, following the
 existing body-strip evidence, before deciding any authored motion change.

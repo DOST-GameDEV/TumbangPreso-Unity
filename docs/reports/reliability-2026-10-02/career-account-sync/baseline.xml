@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 00:32:36Z" end-time="2026-10-02 00:32:36Z" duration="0.197748">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="807" result="Failed" site="Child" start-time="2026-10-02 00:32:36Z" end-time="2026-10-02 00:32:36Z" duration="0.197748" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1958" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="807" result="Failed" site="Child" start-time="2026-10-02 00:32:36Z" end-time="2026-10-02 00:32:36Z" duration="0.186943" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="18916" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1959" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="807" result="Failed" site="Child" start-time="2026-10-02 00:32:36Z" end-time="2026-10-02 00:32:36Z" duration="0.185406" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1960" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="807" result="Failed" site="Child" start-time="2026-10-02 00:32:36Z" end-time="2026-10-02 00:32:36Z" duration="0.184213" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1060" name="CareerAndCloudCodeTests" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="45" result="Failed" site="Child" start-time="2026-10-02 00:32:36Z" end-time="2026-10-02 00:32:36Z" duration="0.165472" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1099" name="AccountSyncWaitsForThePreviousAccountOperation" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.AccountSyncWaitsForThePreviousAccountOperation" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-02 00:32:36Z" end-time="2026-10-02 00:32:36Z" duration="0.157963" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1097" name="AccountSyncWaitsForThePreviousAccountOperation(False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.AccountSyncWaitsForThePreviousAccountOperation(False)" methodname="AccountSyncWaitsForThePreviousAccountOperation" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="108542430" result="Failed" start-time="2026-10-02 00:32:36Z" end-time="2026-10-02 00:32:36Z" duration="0.114548" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The newly selected account sync was skipped while the previous request was busy.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.AccountSyncWaitsForThePreviousAccountOperation (System.Boolean pendingFlush) [0x00193] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:282
+at TumbangPreso.Tests.CareerAndCloudCodeTests.AccountSyncWaitsForThePreviousAccountOperation (System.Boolean pendingFlush) [0x003b5] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:294
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1098" name="AccountSyncWaitsForThePreviousAccountOperation(True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.AccountSyncWaitsForThePreviousAccountOperation(True)" methodname="AccountSyncWaitsForThePreviousAccountOperation" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1389892117" result="Failed" start-time="2026-10-02 00:32:36Z" end-time="2026-10-02 00:32:36Z" duration="0.030784" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The newly selected account sync was skipped while the previous request was busy.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.AccountSyncWaitsForThePreviousAccountOperation (System.Boolean pendingFlush) [0x00193] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:282
+at TumbangPreso.Tests.CareerAndCloudCodeTests.AccountSyncWaitsForThePreviousAccountOperation (System.Boolean pendingFlush) [0x003b5] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:294
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

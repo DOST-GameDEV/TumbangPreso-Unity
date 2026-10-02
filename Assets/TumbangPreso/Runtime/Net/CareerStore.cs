@@ -138,6 +138,7 @@ namespace TumbangPreso.Net
         private Cache _cache = new Cache();
         private bool _flushing;
         private bool _refreshing;
+        private Cache _accountSyncOwner;
 
         /// <summary>Raised whenever the profile or the history changed, from any cause.</summary>
         public event Action Changed;
@@ -270,7 +271,26 @@ namespace TumbangPreso.Net
                 Changed?.Invoke();
             }
 
-            _ = SyncAsync();
+            _ = SyncAfterPendingWorkAsync(_cache);
+        }
+
+        private async Task SyncAfterPendingWorkAsync(Cache requestedCache)
+        {
+            if (ReferenceEquals(_accountSyncOwner, requestedCache)) return;
+            _accountSyncOwner = requestedCache;
+            try
+            {
+                while (_flushing || _refreshing)
+                {
+                    if (this == null || !ReferenceEquals(_cache, requestedCache)) return;
+                    await Task.Delay(100);
+                }
+                if (this != null && ReferenceEquals(_cache, requestedCache)) await SyncAsync();
+            }
+            finally
+            {
+                if (ReferenceEquals(_accountSyncOwner, requestedCache)) _accountSyncOwner = null;
+            }
         }
 
         // -------------------------------------------------------------------

@@ -1,0 +1,12 @@
+{
+  "sourceOverlay": "33443291baf53b9bbe0801cebef52a37d9816872",
+  "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Builds\\competition-batch1002\\TumbangPreso.exe",
+  "runtimeSha256": "d61563a4788e80770146de9fe3cf52fdbe3effb8dc4086ed4f6e7d2ed84bf900",
+  "frozenInputs": 1276,
+  "inputDrift": [],
+  "scope": "All main C# text matches qualification except preserved private HeroHazards delta excluded from this build. Inherited qualification assets reused; not pristine release certification.",
+  "buildLines": [
+    "[Build] identity aecc0ee2cf6c03f9705249022454106620743eb4, tree dirty, protocol 129, StandaloneWindows64",
+    "[Build] SUCCEEDED. 2432 MB, 106s -> Builds/competition-batch1002/TumbangPreso.exe"
+  ]
+}
