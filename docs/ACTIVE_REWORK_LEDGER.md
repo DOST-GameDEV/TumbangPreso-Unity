@@ -8,9 +8,11 @@ Make the game COMPETITION READY through real engineering and bug fixes: crashes,
 stalls, desync, lost results, bot failures, performance and UX. Keep working through
 checks, commits and pushes. Do not end a turn merely because one unit passed.
 A passing narrow test does not establish whole competition readiness.
-Latest owner authorization: ROOT CONTINUES SOLO after agent wrap around15:30.
-Astra completed and retired15:30; Sol completed cleanup/handoff and interrupted15:33.
-No replacements/resumes. Earlier current-chat agents were explicitly authorized.
+Latest owner authorization AFTER completed15:30 wrap: root + EXACTLY ONE new
+GPT6.1 Sol HIGH current-chat agent sol_parallel_engineering. Root implements too.
+Earlier Astra completed/retired15:30 and Sol interrupted15:33; old ultra interrupted.
+Never resume those retired agents. Latest user request explicitly authorizes the
+new single helper; no additional agents. FAST toggle absent, not claimed.
 No cross-chat actions/reset/clean/force push/paid
 services/Desktop player replacement. FAST setting is not exposed by spawn API;
 never claim it was configured. Preserve profiles/unrelated work.
@@ -103,17 +105,37 @@ Artifact1002g has37 fixes; this later LAN38 source is not in it. No per-fix rebu
 Source closure disposes/nulls partial UDP listener on actual bind refusal, preserves
 retry and normal StopAll. Report lan-listener-start. No memory/FPS/WAN claim.
 
-NEXT ROOT: bounded source-only investigation of LAN receive callback ownership.
-OnReceive currently captures mutable _listener rather than the socket which began
-its IAsyncResult; BeginReceive passes null AsyncState. A callback from a retired
-browse session could touch/rearm its replacement. THIS IS ONLY A SOURCE SUSPICION;
-no claim/prod patch/new native fixture yet. Reproduce via real owned loopback UDP
-result and replacement-listener pre-arm state, with current-receive and stopped-
-listener controls. If original3 passes, stop/finding-only; no forced defect claim.
-Avoid framework/metadata rewrites, <=ONE fixture/tool repair, main only then owned
-qualification exact paths. Continue independent higherimpact engineering if not
-reproduced. Original270ms frame remains unattributed; no blind performance retune.
-Both agents retired, no replacements/resumes; root SOLO. Goal active.
+ROOT LAN receive-owner ORIGINAL55558 TERMINAL:1causal/2controls, zero repairs.
+Real retired socket completion armed and consumed replacement's first real packet
+at controlled valid pre-arm boundary. Current receive/rearm and post-stop controls
+passed. Root candidate captures initiating UdpClient in AsyncState, volatile current
+owner reference, guards rearm/error ownership, tags queued entry with socket owner
+and ignores retired entries on main-thread drain. No packet format/timing change.
+Candidate3 NOW RUNNING10754, CPU1536/reserve2048/450s, profile lan-receive-owner1002,
+qualification Logs/lan-receive-owner1002/final. Prep terminal0/exact3/12525 protected.
+Baseline protected12526 INCLUDED LanBeacon; candidate explicitly removes that sole
+owned source from protected set. Fixture/meta unchanged, original source in MAIN
+Logs/lan-receive-owner1002/LanBeacon-original.cs.txt. Await terminal3 XML then protect
+post/exactinputs/guard restoration, report and exact scoped commit/push. No repair
+used; at mostONE permitted. Do not launch next native or mutate qualification until
+this coherent unit terminal/post verified.
+
+NEW sole Sol HIGH agent sol_parallel_engineering APPROVED disjoint GuidedTraining.cs
+AdvanceAfterBeat pause/loading gate: real .70s WaitForSecondsRealtime completion
+currently EnterLesson behind real paused menu despite Update gate. Own NEW
+PlayMode/TrainingPauseTransitionTests.cs/.meta + report. Fixture MAIN authored/meta
+GUID9e7100edb4b8463a9d01d4587503c233, production still ORIGINAL for baseline.
+No qualification/native mutation yet. Root10754 owns slot. After root coherent
+terminal/post release, agent may snapshot exact3/protected prep then original3/
+candidate3 PlayMode2048/D3D11/450s, <=ONE fixture/tool repair. Real SkipFromUi,
+minimal actor/Lata/currentPausePanel; Ready->Look must wait while paused, ordinary
+beat and repeatedskip dedup controls. Preserve .70 behavior/hints/hero; no shipping
+map setup or framework. Root integrates agent qualified paths/report; no shared
+ledger/TODO or commit/push by agent. No further subagents/chats/delegation.
+
+Goal remains active. Current published38 fixes; next root39 and guided unit remain
+unqualified until native acceptance. Original270ms frame unattributed; don't retune
+without evidence. No per-fix standalone rebuild; current1002g remains37fix source.
 
 Supernova native/helper route remains RETIRED: first77152 compile, corrected52284
 450s setup timeout, noXML/PNG/castproof; qualification original1536AF restored,
