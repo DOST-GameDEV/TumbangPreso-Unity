@@ -119,18 +119,20 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
 - [x] SOCIAL-CACHE-OWNER-1002: retire old-account rail, defer new refresh, guest
   service guard; shipped c2326d5bf via13c201e0a, native11distinct cases pass across
   two final XMLs. [Evidence](reports/reliability-2026-10-02/social-cache-owner/README.md).
-- [ ] HUB-ADMISSION-1002: client room entry waits for admission; committedc63bea7b0,
-  native1/1, publication pending. [Evidence](reports/reliability-2026-10-02/friend-join/README.md).
-- [ ] FRIEND-JOIN-1002: existing hub handler serves HOME/hosted friend action;
-  committed70370785e, native2/2, publication pending.
+- [x] HUB-ADMISSION-1002: client room entry waits for admission; shippedc63bea7b0
+  via45aa5dc62, native1/1. [Evidence](reports/reliability-2026-10-02/friend-join/README.md).
+- [x] FRIEND-JOIN-1002: existing hub handler serves HOME/hosted friend action;
+  shipped70370785e via45aa5dc62, native2/2.
   [Evidence](reports/reliability-2026-10-02/friend-join-handler/README.md).
-- [ ] REMATCH-DEPARTED-BALLOT-1002: departing/held-seat players stop choosing maps;
-  committed7cbc65262, native4/4, publication pending.
+- [x] REMATCH-DEPARTED-BALLOT-1002: departing/held-seat players stop choosing maps;
+  shipped7cbc65262 via45aa5dc62, native4/4.
   [Evidence](reports/reliability-2026-10-02/rematch-departed-ballot/README.md).
 - [ ] RECENT-PLAYER-ACK-1002: await friend/report acknowledgement before success
-  labels; source candidate in joint focused native acceptance.
+  labels; qualifiedcd4a41069 native41/41, publication pending.
+  [Evidence](reports/reliability-2026-10-02/recent-player-ack/README.md).
 - [ ] REBIND-CANCEL-1002: consume same-frame Escape when cancelling settings input
-  listening; Sol is preparing a causal candidate/control.
+  listening; qualified1f2d2bcb9 native4/4, publication pending.
+  [Evidence](reports/reliability-2026-10-02/rebind-cancel/README.md).
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow

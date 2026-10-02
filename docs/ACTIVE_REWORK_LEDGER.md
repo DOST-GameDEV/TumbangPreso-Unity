@@ -24,72 +24,65 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Latest verified engineering publication13c201e0a. Main qualified source70370785e
-adds hub admission/rematch ballots/friend handler; tool/checkpoint7bc205c24 adds
-capped serial job coordination (50 local tests). These await merge/push with
-remote6b4dca865 Sean refinement/reservations. No runtime ART changes authored here.
-Fourteen product fix units qualified this resume;11 confirmedpublished,3 queued.
-Core691/691 unchanged; neither narrow checks nor clean-start build are whole
-competition readiness. Latest API/UI/input candidates remain uncommitted.
+Verified local/remote45aa5dc62133145b81289ba64371522ce0725ad3:14productfixunits
+published. Includes hub admissionc63bea7b0, rematchballots7cbc65262 and friend
+handler70370785e; reports keep exact1/1,4/4,2/2 scopes. Toolcoordination7bc205c24
+published with50localchecks/defaultSERIAL; no nativeparallelproof/workerscreated.
+QualifiedlocalACK commitcd4a41069: baseline2actualofflineUIfalse-successfailures,
+final41/41 (UI6/report22/social13),0fixture repairs, noSDK/endpoints.
+Rebindcancel sourcequalified4/4 final, report/commitpending. Core691/691 unchanged.
+ReadinessobjectiveACTIVE; no wholecompetition/physical/WAN/Android claim.
 
 ## Active job and exact next action
 
-Astra ACK baseline POOL session15190 ACTIVE WAITING (ownerPython3204, job
-b04ea920f019410f91a7af9fadc266fd, guardPIDnull/native0). Expected2actualofflineUI
-button cases, unique recent-player-ack1002 profile, Logs/recent-player-ack1002/
-baseline in qualification. Foreign Amihan replaced9988 with18024/import22080;
-lastfreeRAM1.69GiB. Pooldefaultserialwait300s/timeout450, noforeignkill/parallel. Never kill/contact that lane. Check
-live process before any new native/build; named profiles do not isolate shared
-Editor input preferences while default company/product is the same.
+AllRoot/Astra/Sol nativejobs TERMINAL. ACK pool15190 baseline2/2causalfail,
+72241 final41/41; profiles/inputrestored,11inputs/13protectedunchanged. UI/helper,
+Career.ReportAsync andSocial.RequestAsync frozen/committedcd4a41069; doNOTrepeat.
+Nativecapsule reportrecent-player-ack. Sol rebindpool57334 baseline2pass2cancel
+fails;26377 final4/4,0fixturerepairs; oneprelaunchPATHrepair (poolscript absentin
+qualification, invokeMAINabsolute instead). Protected24checks/20uniquepaths
+unchanged, profiles/inputrestored, noleaseheld. Next: Solreportrebind-cancel ready,
+explicitstageONLYTumpSettingsSession.cs+ControllerSupportTests.cs+itsreport;
+commit/pushACK+cancel pluscheckpoint afterincomingbranchreview.
 
-Published engineering through13c201e0a: root join panel d80c4f455 (3distinct cases),
-Sol social cache c2326d5bf (11distinct passing cases across2finalXMLs). Local
-qualified commits awaiting publication: Astra hub admission c63bea7b0 (1/1), Sol
-rematch departed ballot7cbc65262 (4/4), Astra friend handler70370785e (2/2).
-Friend's old row-lookup fixture was retired afteronecompilefix/twopre-dispatch
-failures; fresh direct production-handler approach proved causal0dispatch→1,
-retainedrefusal/hostedBack/cancel. No physicalclick/service-peerclaim.
+Sourceownership: Root integrates/publishes/builds; Astra acknowledgedreportAPI,
+recentUI6casefixture/evidence completed and preparesnaturalHerooperatorplan;
+Sol socialACK/API +rebindcancel implemented/qualified, reportthenindependentfix.
+Twoactiveauthorizedsubagents: Astraxhigh, Sol6.1HIGH. OldSolultra INTERRUPTED;
+neverwakeit. FASTswitch absentfromspawnAPI, acknowledgednotverified. Latestowner
+wantsALLthree constantlyproducehelpfulgameoutput; boundedvalidationperunit,
+noidleagentaftertask/noinventedbusywork. ParallelUnityOPTIONAL; keepmemorysafe.
 
-Latest owner correction: three agents coding separate things is the goal; parallel
-Unity is OPTIONAL. Do not spend time forcing two heavy Editors on16GB. Capped
-infra source ready: Root run_unity_guarded/playerprefs_guard +tests18pass;
-Sol NEW run_unity_job.py +tests21pass (defaultSERIAL, isolatedCPUparallelopt-in);
-Astra NEW prepare_unity_test_workers.py +tests9pass. No workers/Librarycopies or
-nativeparallelproof created. Root owns review/docs/publish, no moreframework work. ActualoutsideEditorrefusal
-provedwithoutguard/native launch (reportlocal-test-coordination); infrastructure
-commit7bc205c24. BothisolatedCPUjobsoverlaprequiresopt-in; defaultSERIAL.
+Qualification absolute Codex/work/tump-feedback-0930 importedoverlays; doNOT
+reset/clean/copywholesale. Poolrunscript MAINtools/run_unity_job.py takes--project
+qualification, delegatesitsdynamicidentityguard. Serializegraphics/build/player,
+current13+ACKprivate inputs intact. Runonlychangedbehavior; no broadrepeatedsuite.
+ForeignAmihan/Cinderlanes maystartnewjobs; checkliveUnity/playersbeforeheavywork,
+neverkill/contacttheirlane. Poolwait/refusal isn't approvaltoforceparallel.
 
-Next PRODUCT unit RECENT-PLAYER-ACK-1002: current result buttons claim REQUEST SENT
-or REPORTED immediately after asyncvoid call, even offline/faulted/refused.
-Root owns MatchResult.OwnerPainted.cs +NEW RecentPlayerActionTests.cs/.meta;
-baseline UI snapshot Temp/tump-recent-actions-ui1002/MatchResult.OwnerPainted.baseline.cs.txt.
-Candidate awaits bool acknowledgement, keeps pending disabled, restores retries/
-failure guidance, rejects changed-owner success. Prepare actualoffline-row2case
-baseline plusfinalcontrolledpending/ack/false/stale/destroyedcases. Do not accept
-missing newhelper as a causal baseline. Fakeaccount/currentStats/row only, noSDK.
-Sol owns SocialStore.cs REQUEST ACK API +4methods/13cases CareerAndCloudCodeTests;
-frozen baseline Temp/tump-social-ack1002-48e672e9a55d42c180b0fd97fcb29e7c;
-new RequestAsync bool requires current-owner reply confirming outgoing/friend.
-Astra owns CareerStore.cs REPORT SECTION ONLY +NEW CareerReportAcknowledgementTests
-(22parameter cases); frozen main Logs/career-report-ack1002-inputs. New ReportAsync
-bool requires exact applied:true +same account/ref/ID, signedin/nonguest. Legacy
-voidwrappers retained. API suites final-only: oldAPI absent is not product proof.
-Root/Astra coordinate actualUIbaseline2 thenjointfinal41 (UI6/API22/API13),
-ONE heavyjob afterforeignGPUidle. FinalAPIcandidates usedinBOTHphases: legacyvoid
-wrappers arecompatibleoldUI, whichstillclaimsfalse success. Do NOT restoreoldAPI
-or countmissingnewhelper asbaselineproof. Qualification11explicitACK/guardpaths
-frozen,13protectedhashesunchanged, prepareexit0; no editswhilequeued/active.
-Rootpublishespreviouslyqualified3units/toolswhileAstrawaits/nativechecks. Sol
-nowownsTumpSettingsSession.cs +focusedControllerSupportTests forCancel outcome
-Escape leak: legacyMenuNav seesEscapeafterListeningfalseandnavigatesBack. Tiny
-ConsumeEscape stamp onCancelled only, no inputbinding change; preparebaseline/
-control, no nativeuntilgrant. Allagentsgivenconcretework; do notspinemptyaudits.
+Release checkout Codex/work/tump-competition-release1002 FF45aa5dc62,206preserved
+importer/generatedtrackedpaths,0CSharpdirt; oldBuilds/competition-release1002
+artifact7342... intact/frozen(source2664). No pristinePOSTimportclaim.
+NEXTnewbuildafterACK/cancelpush: FFqualifiedcommitwithoutreset, freezealltracked
+source/assets/settings (disclose206importerdeltas), unique
+Builds/competition-candidate1002b/TumbangPreso.exe +Logs/competition-candidate1002b.
+Use MAINpool --projectrelease --kindbuild memory3072/reserve2048 wait300 timeout600,
+profilecompetition-candidate1002b, -batchmode -nographics -executeMethod
+TumbangPreso.EditorTools.GameBuilder.BuildWindows -buildOutput UNIQUEabsoluteEXE.
+BuilderpurgesONLYnewverifiedoutputfolder; neverDesktop/oldartifact. Ownnativejobs
+only. Onecoherentbuild thennaturalHero8rounddefault90sec match, --seconds900,
+DX11/Balanced1920x1080 Ilalimremademap,2humanundriven+2ordinarybots, noAllBots,
+NOtournament(Classic-onlypreset). Existingguardedrun_demo_lan temporaryownedLogs
+wrapperlikepriorClassic. PreservegenericrawFALSEifinactiveatnaturalend; separate
+actualobservations requirebothround8/inactive/naturalend/membership/mode/map/
+matchingwinner+scores/noexceptions. No retiredOwnerUiWholeMatches fixture repair.
+Astra preparesexactsource-groundedwrapper/fields; Root launchesafterbuild+slot.
+FullClassic8round onf361 differentartifact retained, nounchangedrerunneeded.
+Whilebuild/matchruns, allthreecanfixdisjointsource withoutmutatingfrozeninputs.
 
-Release checkout advanced to13c201e0a without reset; preserved206importer/generated
-paths, CSharpdirt0, old7342 artifact intact. NEXT coherentplayer afternewsourceunits
-published: FF qualifiedcommit, freezeinputs, guarded newBuilds directory, onebuild,
-then actual supportedoperator/fullHero or failure-recovery case. No legacywholeUI
-harness repair. Private arms/Supernova/Ultra/twoUI metas remain excluded.
+Privatebaselinearms4/HeroHazardsSupernovaopacity/Ultra/twoUI metas remain
+UNQUALIFIED/excluded, neverstage; unrelatedAmihan/Sean sourceactivepreserve.
+No newpaidservices/otherchats/resets/forcepush. No taskbrowser opened.
 
 Hero boundary reconnect run on frozen release2664 completed session96098 exit1;
 raw FALSE solely expected-seat aggregate, preserved Logs/competition-hero-rejoin1002.
@@ -242,16 +235,17 @@ Check actual rendered open centre, visible rim and capsule-relative sizing.
 No gameplay/contact radius change. One graphics run, one bounded repair maximum.
 
 
-AMIHAN-AIRBURST-PRESENTATION-1002 (owner-authorized Amihan presentation lane;
-NO SFX work anywhere). Airburst unit validated and published with its owned
-paths only (see TODO entry and report evidence.md). Baseline reproduced three
-shipped defects: cutscene threw while built (never shown), windup fan drawn under
-Bayan Plaza tiles, body/FPP release 1 s late. EditMode 4/4; native films with
-fixed simulation; one bounded baseline retry and one product-fix rerun used.
-Intro 3.6 s, 1.5 s delay, 60 degree fan, contact, protocol unchanged. Validation
-worktree Codex/work/tump-amihan1002 holds import churn and logs only, never
-committed. Lane continues on another PC: next AMIHAN-AIRBURST-FEEL-1002 (TODO),
-then Drift/Featherfall/Whirlwind units, each claimed before editing.
+AMIHAN-AIRBURST-PRESENTATION-1002 checkpoint: owned implementation preserved;
+NO SFX. Plan099039c18 already published; later source/assets/tests now prepared
+for publication with final F3 native5/5 and EditMode4/4 receipts. Baselines0/5,
+1/4 and first final4/5 failures retained. Fixes: missing cutscene from Motif
+mesh-owner exception, under-tile fan, body/FPP1s-late release, held-shoe/head
+overlap. Intro3.6s,delay1.5s,60degree fan/contact/protocol unchanged. Full
+presentation acceptance remains partial; see reports/amihan-presentation-
+2026-10-02/checkpoint.md and evidence.md. Authoring paused; no active Amihan
+heavy job. Validation-only Codex/work/tump-amihan1002 retains import churn/logs,
+not published. Next owned lane AMIHAN-AIRBURST-FEEL-1002, then separately claimed
+Drift/Featherfall/Whirlwind. Preserve all other contributor reservations.
 
 PLAYER-RING-RADIUS-1002 final Low-profile native1/1 passes in3.31s, outerexit0
 and guard null40s. Both hollow-role captures inspected. First ordinary-profile
@@ -269,10 +263,8 @@ Low with fixed simulation and labelled longer film; no real-time/audio claim.
 First capture decides the narrow authored change, no decorative rewrite by default.
 
 
-AMIHAN-AIRBURST active 10:55: heavy job = own detached worktree Codex/work/
-tump-amihan1002 (Library seeded by copy, read-only from release checkout), profile
-amihan-airburst1002; baseline films then storm bake then final. Also claims one
-Amihan case in Tests/PlayMode/UltimateIntroductionProbe.cs. Other lanes: wait.
+AMIHAN-AIRBURST job terminal: F3 ended03:21:25UTC,5/5,owned guard exit0.
+Release the stale active-job wait; verify actual shared-PC jobs before a new run.
 
 SEAN-EMPOWERED-PRESENTATION-1002 final actual Skill2 capture1/1 passes95body+95
 owner frames. Rejected first centred-palm pose because the shoe crowded the
