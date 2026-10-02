@@ -17,6 +17,14 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### SEAN-STOKE-PRESENTATION-1002: authored body refinement validated
+
+Sean dash now uses a compact brace, opposing limbs and a distinct foot catch.
+Actual imported Skill1 capture passes 1/1 in fixed simulation; original geometry,
+rig, materials and 35 other clips preserved. No mechanics/FPP/SFX changes.
+[Result and limits](reports/sean-stoke-presentation-2026-10-02/result.md).
+Human approval and target-player full-speed qualification remain separate.
+
 ### HERO-REFERENCE-1002: visual research and implementation plans prepared
 
 All nine heroes reviewed against 16 official sources, 168 inspected captures and

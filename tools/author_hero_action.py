@@ -665,6 +665,27 @@ for actions in HEROES.values():
             readable(spec, *READABILITY[name])
 
 
+# October 2: Stoke Step replaced the long Flame Rush. Author its final timings
+# after the legacy retiming/readability passes so a held 65-degree wing pose
+# cannot silently return. The motor owns the two-metre impulse; this clip owns
+# the brace, opposing limbs and leading-foot catch on the knee-less rig.
+HEROES["sean"]["hero-sean-dash"] = {
+    "punch": .18,
+    "beats": [
+        (0.00, 1., 0., 0.00,  4,  0,  0,   2,  0,   0,  0,   0,  0,    0,  0,    0,  0),
+        (0.08, 1., 0., -.02, 18, -5, -2,  -8,  3, -12, -2,  10,  2,  -24,  8,   12, -5),
+        (0.16, 1., 0., -.03, 26, -8, -3, -16,  4, -20, -2,  14,  2,  -38, 10,   22, -8),
+        (0.18, 1., 0., 0.04, 34,  5,  2, -24, -3, -24, -2,  22,  2,   18, 12,  -24, -8),
+        (0.27, 1., 0., 0.05, 30,  4,  2, -21, -2, -16, -2,  18,  2,   24, 10,  -16, -6),
+        (0.43, 1., 0., 0.02, 21, -5, -2, -12,  3,  18, -2, -12,  2,  -24,  9,   16, -6),
+        (0.55, 1., 0., -.01, 13, -3, -1,  -5,  2,  10, -1,  -6,  1,  -14,  6,    8, -4),
+        (0.70, 1., 0., 0.00,  6,  1,  0,   0, -1,   3,  0,  -2,  0,   -4,  2,    3, -2),
+        (0.80, 1., 0., 0.00,  4,  0,  0,   2,  0,   0,  0,   0,  0,    0,  0,    0,  0),
+    ],
+    "grounded": (0., .08, .16, .18, .27, .43, .55, .70, .80),
+}
+
+
 # ⚠️⚠️ THE SILHOUETTE BOUND, 2026-09-24 (SKILL-FX-1). Nine casts were measured on their pose sheets
 # (`docs/reports/skill-performances-2026-09-24/sheets/`) folding these big-headed rigs until the face
 # pointed at the road (Titan Fissure: torso 56 plus head 34, 90 degrees; Supernova 100) or at the sky
