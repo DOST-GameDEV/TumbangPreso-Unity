@@ -17,6 +17,16 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### AMIHAN-AIRBURST-PRESENTATION-1002: honest gather, release and cutscene
+
+Owner-authorized Amihan presentation lane (local session). Airburst first: live
+body and first-person release still key the old 2.5 s delay while gameplay
+releases at 1.5 s, and the 3.6 s cutscene shows a wind release before the live
+gather. Re-author body/FPP timing, gather/release fan readability and the
+cutscene within 3.6 s; keep delay, 60 degree fan, contact and protocol. No SFX.
+Research, plan and evidence: [report](reports/amihan-presentation-2026-10-02/README.md).
+Drift, Featherfall and Whirlwind presentation follow as separate units.
+
 ### CITY-AMBIENCE-1002: Kanto and Ilalim gain reduction
 
 Existing city/traffic, sidewalk and train mix now applies a shared 0.75 gain.

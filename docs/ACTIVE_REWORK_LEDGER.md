@@ -180,3 +180,20 @@ Increase the ordinary hollow circle radius from1.375 to1.75 capsule radii
 (about27percent); keep the already larger1.95 taya role and2.1 catchable brackets.
 Check actual rendered open centre, visible rim and capsule-relative sizing.
 No gameplay/contact radius change. One graphics run, one bounded repair maximum.
+
+AMIHAN-AIRBURST-PRESENTATION-1002 (owner-authorized local session for Amihan
+direction/body/FPP/VFX/cutscene only; NO SFX creation or mixing anywhere). Claims
+Airburst presentation only: HeroAbilityClips.Amihan.cs BuildAmihanStorm, baked
+Art/characters/amihan-motion/hero-amihan-storm.anim (GUID kept), Editor/
+AmihanMotionAuthor.cs storm bake entry, ViewmodelArms.cs StormCallClip and
+ViewmodelArms.CastGesture.cs storm-call entry only, AmihanVfx.cs AmihanStormFan,
+HeroIntroductionScene.Amihan.cs, tools/author_ultimate_intros.py amihan() and its
+generated Resources/UltimateIntros/amihan.txt, Editor/MapKit/AmihanReviewProbe.cs,
+new Tests/PlayMode/AmihanKitPlayProbe.AirburstFilm.cs and EditMode
+Tests/AmihanAirburstPresentationTests.cs, report
+docs/reports/amihan-presentation-2026-10-02. Keep intro 3.6s (shared phase
+timing), 1.5s delay, 60degree fan, contact and protocol unchanged. Found: live
+body/FPP release keyed at old 2.5s while gameplay releases at 1.5s; cutscene shows
+a release before the live gather. Validation in own detached worktree
+Codex/work/tump-amihan1002, profile amihan-airburst1002, after the active Hero
+reconnect job ends. Drift/Featherfall/Whirlwind not claimed yet.
