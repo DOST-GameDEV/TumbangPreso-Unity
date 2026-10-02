@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 08:10:27Z" end-time="2026-10-02 08:10:27Z" duration="0.2545616">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="950" result="Passed" start-time="2026-10-02 08:10:27Z" end-time="2026-10-02 08:10:27Z" duration="0.254562" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2148" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="950" result="Passed" start-time="2026-10-02 08:10:27Z" end-time="2026-10-02 08:10:27Z" duration="0.238081" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="21960" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2149" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="950" result="Passed" start-time="2026-10-02 08:10:27Z" end-time="2026-10-02 08:10:27Z" duration="0.230940" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2150" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="950" result="Passed" start-time="2026-10-02 08:10:27Z" end-time="2026-10-02 08:10:27Z" duration="0.224337" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1479" name="LanReceiveOwnershipTests" fullname="TumbangPreso.Tests.LanReceiveOwnershipTests" classname="TumbangPreso.Tests.LanReceiveOwnershipTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 08:10:27Z" end-time="2026-10-02 08:10:27Z" duration="0.203099" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1482" name="CompletionAfterStopCannotRestoreDiscoveryOrEntries" fullname="TumbangPreso.Tests.LanReceiveOwnershipTests.CompletionAfterStopCannotRestoreDiscoveryOrEntries" methodname="CompletionAfterStopCannotRestoreDiscoveryOrEntries" classname="TumbangPreso.Tests.LanReceiveOwnershipTests" runstate="Runnable" seed="615298998" result="Passed" start-time="2026-10-02 08:10:27Z" end-time="2026-10-02 08:10:27Z" duration="0.037170" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1481" name="CurrentReceiveParsesAndRearmsForTheNextRealPacket" fullname="TumbangPreso.Tests.LanReceiveOwnershipTests.CurrentReceiveParsesAndRearmsForTheNextRealPacket" methodname="CurrentReceiveParsesAndRearmsForTheNextRealPacket" classname="TumbangPreso.Tests.LanReceiveOwnershipTests" runstate="Runnable" seed="1588265059" result="Passed" start-time="2026-10-02 08:10:27Z" end-time="2026-10-02 08:10:27Z" duration="0.007679" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1480" name="RetiredCompletionCannotArmTheReplacementBeforeItsOwnReceiveStarts" fullname="TumbangPreso.Tests.LanReceiveOwnershipTests.RetiredCompletionCannotArmTheReplacementBeforeItsOwnReceiveStarts" methodname="RetiredCompletionCannotArmTheReplacementBeforeItsOwnReceiveStarts" classname="TumbangPreso.Tests.LanReceiveOwnershipTests" runstate="Runnable" seed="1318469025" result="Passed" start-time="2026-10-02 08:10:27Z" end-time="2026-10-02 08:10:27Z" duration="0.141016" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
