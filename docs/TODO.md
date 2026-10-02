@@ -130,7 +130,8 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
-Latest checkpoint:40 root continuity fixes published throughf33e1d8a7. Earlier
+Latest checkpoint:41 root continuity fixes committed through212cae991; incoming
+Rafi protocol132/recording13 merged, Core704/704 first integration pass. Earlier
 agents retired; latest owner authorized EXACTLY ONE new Sol6.1HIGH helper plus
 root implementation. Windows1002g/source248836d1e contains37fixes, twelve scenes
 built and fresh actual peer cold4actor state PASS; later LAN fixes not in it.
@@ -165,7 +166,9 @@ next concrete source issue. Root continues disjoint fixes; no heavy job. Preserv
 - [ ] PRACTICE-BOT-RESUME-1002: OPEN stale active window reproduced twice;
   fixture route retired after two flaws, no product fix/candidate.
   [Unqualified evidence](reports/reliability-2026-10-02/practice-bot-resume/README.md).
-- [ ] TRAINING-EMOTE-ELIGIBILITY-1002: sole Sol original6196 reproduced locked eligibility bypass/2controls, candidate3 next; one preflight GPU classification repair.
+- [x] TRAINING-EMOTE-ELIGIBILITY-1002: committed212cae991, nativeeligibility3/3
+  after1causal/2controls, ONE preflight classification repair/zero fixture repairs.
+  [Evidence](reports/reliability-2026-10-02/training-emote-eligibility/README.md).
 - [ ] FAILURE-BUNDLE-UNIQUE-PATH-1002: root GUID filename suffix, source-reviewed; separate diagnostic/no Unity compile yet.
 - [x] LAN-LISTENER-START-1002: shipped5367390ab, real8911 bind cleanup/retry/
   shutdown native3/3 after1causal/2controls, zero repairs/12523 protected match.

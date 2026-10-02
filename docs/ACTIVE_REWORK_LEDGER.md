@@ -1,6 +1,6 @@
 # Active Rework Checkpoint
 
-Updated2026-10-02. ASTRAReworks/protocol131. Competition engineering goal ACTIVE.
+Updated2026-10-02. ASTRAReworks/protocol132. Competition engineering goal ACTIVE.
 Read this compact checkpoint and current TODO; skip old259MB chat/archives unless
 needed for one specific fact. TODO is the sole status queue. No stopping after units.
 
@@ -19,11 +19,12 @@ preserve finalized Paete/Phaister and active Sean/Rafi/Baha reservations.
 
 ## Published code and acceptance
 
-Verified remotef33e1d8a7:40 root continuity runtime fixes published. Latest units:
+Source212cae991 committed, ready for push:41 root continuity runtime fixes;
+protocol132/recording13 after qualified incoming Rafi4a9afbd90, integrationa67d7bc5b. Latest units:
 32chat guards3e91f02b0/native10;33scorecard owner84ddfc391/native3;34RecordChoice
 57158d1db/native3;35cold actor12a2689ff/native3;36scorecard focus7c3124886/native3;
 37Settings focusdd4712ca0/native3;38LAN startup5367390ab/native3;39LAN receive owner
-1dafe63c4/native3;40training pausef33e1d8a7/native3. Causal originals/raw failures
+1dafe63c4/native3;40training pausef33e1d8a7/native3;41emote gate212cae991/native3. Causal originals/raw failures
 retained. Settings hadONE metadata
 GUID-only repair after initial0 tests; cold actor ONE NUnit compatibility repair;
 RecordChoice ONE Start-frame fixture correction; scorecard owner ONE canvas lookup
@@ -49,19 +50,22 @@ terminal/restored/no lease. Owning Guided_Training.md completion-beat sentence
 updated. Loading predicate is source-shared, not independently exercised. No full
 shipping tutorial or new standalone inclusion claim.
 
-SOLE Sol HIGH sol_parallel_engineering owns CURRENT EmotePlayer.cs eligibility lock
-fix + NEW tiny TrainingEmoteEligibilityTests.cs/.meta/report (exact actual filename
-from agent handoff pending). Current guided training locks Verb.EmoteWheel until
-its lesson, but wheel callback bypasses InputIntent and CanEmote ignored Locked.
-Public CanEmote gate original6196 TERMINAL3:1causal lockedFalse expected/Trueactual,
-2controlsPASS. All12529 protected unchanged. ONE pre-execution tooling repair changed
-jobclassification CPU->GPU for PlayMode; rejected preflight never launched/touched
-profile. No native/fixture repair used. Agent applying ONE source eligibility predicate
-!_motor.Intent.Locked(Verb.EmoteWheel), then candidate3. Scope public eligibility only,
-not rendered clip/realRequest/transport/physical hardware. GPU2048/reserve2048/450s,
-profile training-emote-eligibility1002, qualification Logs same. Agent owns slot,
-root no heavyjob/qualification mutation. Need exact native handle/paths/hash/report
-then root review/commit/fetch/incomingdiff/merge/push. No further repair if fault.
+SOLE Sol HIGH remains active on next DIFFERENT concrete non-hero input/menu or
+service/lifecycle issue, ownership proposal before edit. Previous emote212cae991
+qualified original6196=1causal/2controls; final8973 PASS3, all12529 protected/exact3
+unchanged. ONE scheduler preflight CPU->GPU classification repair (no launch), zero
+native/fixture repairs. Public eligibility scope only, no realRequest/render/transport.
+Root committed exact3/report +guided ownership doc, nativePIDs26332/24832 dead/leasefree.
+No active agent/root native handle. Never revisit retired practice helper or spawn
+additional agents; exactlyONE Sol6.1HIGH +root implementation per latest request.
+
+INCOMING Rafi qualified batch4a9afbd90/sourceownering preserved: Baha appends kind18,
+protocol132, recording13 reads10/11/12. Finite warning/front/cover/shoe3m carry and
+Backwash1.5s/1.2x own retrieval. Native/3Linuxpeer evidence is contributor scope;
+build memory/helper failures retained, no human/WAN/whole Hydro claim. Root ONE
+merged Core suite passed704/704/no skips (6new geometry cases), rawTRX MAIN
+Logs/core-integration132. New Windows compile/network-schema coverage still pending.
+Existing1002g remains protocol131; do not mix player versions or overwrite it.
 
 Retired practice route OPEN/no product patch:70621+81031 repeated stale lunge0.446/
 0.449s contact window after actual bot hide/readd. First clocksetup fixture corrected
@@ -81,7 +85,11 @@ count separate from40 runtime fixes. Await meaningful integration compile/batch.
 
 NEXT ROOT continue disjoint concrete engineering while agent works; no broad audits,
 validation loops or extra workers. Current1002g contains37fixes, predates LAN38/39
-and training40. Future coherent build after meaningful batch, not per-fix. Current
+and training40. NEXT ROOT ONE coherent Windows1002h at newest published41fix source/protocol132.
+Include both LAN units/training/emote/naming/Rafi; releaseFF after incomingreview,
+no C#dirty, freeze allinputs, uniqueinternaloutput, guard3072/2048reserve/600s.
+Strict2 identity outputs classified separately, no unknown drift/player beforepass.
+Agent advances disjointMAIN; no native during rootfreeze/build. Not per-fix. Current
 full-tournament/map/failure-recovery/visual-availability and original270ms host frame
 remain bounded readiness work. Prior natural Classic/Hero8round ends retained;
 no unchanged8round rerun or claim270ms frame causally fixed. Goal ACTIVE.
