@@ -126,7 +126,7 @@ namespace TumbangPreso.Abilities
                        "Attacking. Frost your slipper for 10 s. The next player it hits is Frozen: no moving, no grabbing, for 2.5 s.",
                        CryoRules.FrostbiteCooldown, CryoRules.FrostbiteLoadSeconds, AbilityGlyph.CheskaFrostbite,
                        summary: "Frost your slipper. Whoever it hits is Frozen.",
-                       castAction: "hero-cheska-frostwave", viewmodelAction: "frost-sweep",
+                       castAction: "hero-cheska-frostbite", viewmodelAction: "frost-load",
                        castCue: "sfx_cast_cheska_frostbite")
             {
                 _kit = kit;

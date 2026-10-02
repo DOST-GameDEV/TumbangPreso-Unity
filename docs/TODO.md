@@ -634,6 +634,13 @@ FPP, glyph/wake/audio and actual matching peers remain open.
 [Plan](reports/hero-quality-2026-10-01/skim-implementation.md) and
 [evidence](reports/hero-quality-2026-10-01/skim-checks/README.md).
 
+### CHESKA-FROSTBITE-MOTION-1002: distinct held-shoe cast
+
+- [x] Replace only Frostbite's borrowed ground sweep with authored body and owner
+  preparation. Final actual-input1/1 passes,76 paired frames, no guard request.
+  All36 old clips and original model data preserved. Full-map/player, SFX and
+  human approval remain open. [Review and limits](reports/cheska-frostbite-motion-2026-10-02/README.md).
+
 ### CHESKA-FROSTBITE-LOAD-1002: loaded-shoe surface cue
 
 - [x] Reproduce missing loaded cue with a real slipper and retain inactive/material control.

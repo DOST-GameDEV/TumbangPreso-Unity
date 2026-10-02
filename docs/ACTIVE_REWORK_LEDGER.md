@@ -740,3 +740,11 @@ admission repair identifies the relocated pre-existing Hub CLI exactly.
 Next CHESKA-FROSTBITE-MOTION-1002 claims only the paths in its dated plan. Keep
 Cold Feet sweep and all other animation entries unchanged. No product changes
 yet; prepare independent pose work while import runs. PC stays prohibited.
+
+Cloud Cheska motion ready: actual-input original shared-clip failure retained.
+First candidate passed but lower hand rejected visually. Refined0.76s body and
+owner gesture pass1/1,76paired frames,35s guard null. All36 previous clips and
+source model data unchanged; exactly one roster reference added. No active job.
+Ship explicit CHESKA-FROSTBITE-MOTION-1002 paths only; preserve generated metadata
+and other owners. Shared folder recovery retained independently, native warm-cache
+control passed. No new player/audio/human acceptance claim.
