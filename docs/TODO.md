@@ -351,7 +351,12 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   One original fixture timeout and one bounded clock/provider repair retained.
   No player FPS or historical stall attribution claim.
   [Evidence](reports/reliability-2026-10-02/slide-inventory/README.md).
-- [ ] PINNED-HOME-MODE-1002: normal LAN lobby refresh replaces pinned Classic
+- [x] PINNED-HOME-MODE-1002: passive HOME choice now preserves pinned rules;
+  explicit card/owned-hero choices retain their override behavior. Native original
+  two causal failures/two controls; candidate4/4 first pass, no fixture repair.
+  Packaged normal-lobby Classic qualification remains separate.
+  [Fix evidence](reports/reliability-2026-10-03/hub-pinned-rules/README.md).
+  Original finding: normal LAN lobby refresh replaces pinned Classic
   tournament mode with the saved Hero card. Current1002m actual eight-round run
   ends naturally in Hero on both peers despite explicit tournament launch.
   Preserve pins on passive refresh while retaining explicit mode/hero selection.

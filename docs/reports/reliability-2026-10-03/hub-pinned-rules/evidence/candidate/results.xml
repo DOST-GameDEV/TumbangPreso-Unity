@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 16:17:51Z" end-time="2026-10-02 16:17:51Z" duration="0.1236006">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="964" result="Passed" start-time="2026-10-02 16:17:51Z" end-time="2026-10-02 16:17:51Z" duration="0.123601" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2167" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="964" result="Passed" start-time="2026-10-02 16:17:51Z" end-time="2026-10-02 16:17:51Z" duration="0.108838" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27764" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2168" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="964" result="Passed" start-time="2026-10-02 16:17:51Z" end-time="2026-10-02 16:17:51Z" duration="0.103493" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2169" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="964" result="Passed" start-time="2026-10-02 16:17:51Z" end-time="2026-10-02 16:17:51Z" duration="0.098217" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1358" name="HubPinnedRulesTests" fullname="TumbangPreso.Tests.HubPinnedRulesTests" classname="TumbangPreso.Tests.HubPinnedRulesTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-02 16:17:51Z" end-time="2026-10-02 16:17:51Z" duration="0.076442" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1363" name="ExplicitCardChoiceCanReplacePinnedMode" fullname="TumbangPreso.Tests.HubPinnedRulesTests.ExplicitCardChoiceCanReplacePinnedMode" methodname="ExplicitCardChoiceCanReplacePinnedMode" classname="TumbangPreso.Tests.HubPinnedRulesTests" runstate="Runnable" seed="1421242299" result="Passed" start-time="2026-10-02 16:17:51Z" end-time="2026-10-02 16:17:51Z" duration="0.056627" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1362" name="OrdinaryUnpinnedHomeStillFollowsTheSavedCard" fullname="TumbangPreso.Tests.HubPinnedRulesTests.OrdinaryUnpinnedHomeStillFollowsTheSavedCard" methodname="OrdinaryUnpinnedHomeStillFollowsTheSavedCard" classname="TumbangPreso.Tests.HubPinnedRulesTests" runstate="Runnable" seed="113542467" result="Passed" start-time="2026-10-02 16:17:51Z" end-time="2026-10-02 16:17:51Z" duration="0.000465" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1361" name="PassiveHomeChoicePreservesDeliberatelyPinnedRules" fullname="TumbangPreso.Tests.HubPinnedRulesTests.PassiveHomeChoicePreservesDeliberatelyPinnedRules" classname="TumbangPreso.Tests.HubPinnedRulesTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 16:17:51Z" end-time="2026-10-02 16:17:51Z" duration="0.003927" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1359" name="PassiveHomeChoicePreservesDeliberatelyPinnedRules(Classic,2)" fullname="TumbangPreso.Tests.HubPinnedRulesTests.PassiveHomeChoicePreservesDeliberatelyPinnedRules(Classic,2)" methodname="PassiveHomeChoicePreservesDeliberatelyPinnedRules" classname="TumbangPreso.Tests.HubPinnedRulesTests" runstate="Runnable" seed="1896126269" result="Passed" start-time="2026-10-02 16:17:51Z" end-time="2026-10-02 16:17:51Z" duration="0.001017" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1360" name="PassiveHomeChoicePreservesDeliberatelyPinnedRules(HeroStrike,1)" fullname="TumbangPreso.Tests.HubPinnedRulesTests.PassiveHomeChoicePreservesDeliberatelyPinnedRules(HeroStrike,1)" methodname="PassiveHomeChoicePreservesDeliberatelyPinnedRules" classname="TumbangPreso.Tests.HubPinnedRulesTests" runstate="Runnable" seed="255047185" result="Passed" start-time="2026-10-02 16:17:51Z" end-time="2026-10-02 16:17:51Z" duration="0.000257" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
