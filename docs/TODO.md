@@ -90,6 +90,14 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   native2/2 both modes. [Evidence](reports/reliability-2026-10-02/bot-inactive-body/README.md).
 - [x] SOCIAL-RESPONSE-OWNER-1002: reply and lookup state owned by requesting account;
   native4/4. [Evidence](reports/reliability-2026-10-02/social-owner/README.md).
+- [ ] JOIN-ADMISSION-1002: panel waits for connection/seat, unavailable room stays
+  actionable; committed d80c4f455, native3distinct cases pass, publication pending.
+  [Evidence](reports/reliability-2026-10-02/native-join-admission/README.md).
+- [ ] SOCIAL-CACHE-OWNER-1002: retire old-account rail, defer new refresh, guest
+  service guard; committed c2326d5bf, native11distinct cases pass across two final
+  XMLs, publication pending. [Evidence](reports/reliability-2026-10-02/social-cache-owner/README.md).
+- [ ] FRIEND-JOIN-1002: fix HOME/hosted-room route and automatic lobby admission;
+  Astra candidate in focused native baseline/final validation.
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow
