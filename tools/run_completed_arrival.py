@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import shutil
 import socket
@@ -19,6 +20,11 @@ from run_ui_player_review import read_input_preferences, PLAYER_KEY
 
 ROOT = Path(__file__).resolve().parents[1]
 WIRE = "1|0|1|30|0|3|0|1|0|1"
+
+
+def observed_renderer(log):
+    match = re.search(r"Version:\s*Direct3D (11|12)\b", log)
+    return "Direct3D" + match.group(1) if match else None
 
 
 def read(path):
@@ -89,6 +95,8 @@ def main():
     parser.add_argument("--source-commit", required=True)
     parser.add_argument("--runtime-sha", required=True)
     parser.add_argument("--build-receipt", type=Path, required=True)
+    parser.add_argument("--graphics-api", choices=("d3d11", "default"), default="d3d11",
+                        help="default leaves the packaged renderer order in charge")
     args = parser.parse_args()
     project, exe, folder = args.project.resolve(), args.exe.resolve(), args.out.resolve()
     if not exe.is_file() or not exe.is_relative_to(project / "Builds") or not folder.is_relative_to(project / "Logs"):
@@ -120,12 +128,14 @@ def main():
     children = []
     result = {"passed": False, "errors": ["Scenario did not complete"], "profiles": profiles, "rules": rules,
               "runtimeSha256": before_hash, "sourceCommit": args.source_commit, "buildReceipt": str(args.build_receipt.resolve()),
+              "graphicsApiRequested": args.graphics_api,
               "scope": "Short custom 1-round/30-second direct-peer cold completed arrival; MAIN MENU gives up the prior seat, so no retained-seat/full-default-match/physical-input claim."}
 
     def launch(role):
         route = ["-tp-lobby", "-tp-lobbyport", str(args.port)] if role == "host" else [
             "-tp-lobbyjoin", "127.0.0.1:" + str(args.port), "-tp-lobbyport", str(args.port + 1)]
-        command = [str(exe), "-batchmode", "-force-d3d11", "-screen-fullscreen", "0", "-screen-width", "640", "-screen-height", "360",
+        graphics = ["-force-d3d11"] if args.graphics_api == "d3d11" else []
+        command = [str(exe), "-batchmode", *graphics, "-screen-fullscreen", "0", "-screen-width", "640", "-screen-height", "360",
                    "-tp-framecap", "60", "-tp-profile", profiles[role]["name"], "-tp-autostart", "2",
                    "-tp-completed-arrival", str(folder), "-tp-completed-role", role, "-tp-completed-port", str(args.port),
                    "-logFile", str(folder / (role + ".log")), *route]
@@ -133,6 +143,7 @@ def main():
         child = subprocess.Popen(command, cwd=project, env=guard.unity_environment(), startupinfo=startup)
         children.append(child)
         result[role + "Pid"] = child.pid
+        result[role + "Command"] = command
         return child
 
     try:
@@ -167,6 +178,10 @@ def main():
         if any(child.poll() is None for child in children):
             raise TimeoutError("Actual-peer completed arrival exceeded 120 seconds")
         result["errors"] = evaluate(read(folder / "host.json"), read(folder / "client.json"))
+        result["graphicsObserved"] = {role: observed_renderer((folder / (role + ".log")).read_text(
+            encoding="utf-8-sig", errors="replace")) for role in ("host", "client")}
+        if any(value != "Direct3D11" for value in result["graphicsObserved"].values()):
+            result["errors"].append("Both peers did not demonstrate the compatible Direct3D11 backend")
         if any(child.returncode != 0 for child in children):
             result["errors"].append("A task-owned player exited unsuccessfully")
         result["passed"] = not result["errors"]
