@@ -99,11 +99,16 @@ Intent.Set(Lunge,true)/enabledUpdate and ApplyObservedLungeCharge plus bodydisab
 are causal paths; 2causal/1ordinary release control planned, no private writes/
 expirywait/old retired SetBot helper. Owns CombatVerbs +NEW3fixture/meta/report.
 Root j96292 terminal/released native/q to helper bounded original/candidate pair.
-Helper original96494 ACTIVE after prep58552 exit0/exact3/protected12547;
+Helper original96494 TERMINAL:2intended causals/1ordinary enabled-release control.
+Local retired windup spent1.5s cooldown on reactivation; observed tell returned.4
+insteadinactive. Guard19420/restored/free/exact3/protected12547/zero repairs.
+Candidate64944 ACTIVE after prep exit0/exact3/protected12547;
 GPU2048/reserve2048/450s/PlayMode-nographics/profile lunge-windup-lifetime1002,
-filter LungeWindupLifetimeTests3. Sourceoriginal/zero repairs; root must not copy
+filter LungeWindupLifetimeTests3. Source+3lines clears local charging/charge and
+observed tell onDisable; contact/cooldown/_sentLunge/pauseUpdate unchanged.
+Zero repairs; root must not copy
 q assets or poll agent handle. Preserve contact/cooldown/pause semantics,
-no protocol/hero changes. Candidate not started yet.
+no protocol/hero changes. Await candidate terminal/post/report before publication.
 Retired agents neverwake.
 
 ROOT disjoint MAIN-only source investigation: Carrier has no OnDisable cancellation;
