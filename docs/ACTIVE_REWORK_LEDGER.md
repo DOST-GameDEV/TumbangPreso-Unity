@@ -158,3 +158,11 @@ immunity/removable controls. No gameplay retune or new framework. Main+release
 same test file. One corrected Core run next; no further unchanged repeats.
 Full tracked asset manifest session28569 still hashing; do not launch Unity
 import until it completes and Core job is terminal. Native import not started.
+Warning refinement shipped in 8eb83dcd via 203b8b3c; same Feedback note updated
+and two resolved warning comments struck through. Release warning/test paths.
+CITY-AMBIENCE-1002 claims Runtime/Map/KantoStreetSound.cs, SidewalkLife.cs and
+LrtTrainFlyby.cs, plus Tests/CityAmbienceGainTests.cs and report/TODO updates.
+Apply the explicit 25percent reduction to the existing Kanto/Ilalim city mix,
+retaining sliders, replay/preview suppression, spatial envelopes and authored
+clips. This is gain adjustment, not SFX generation or a listening-quality claim.
+
