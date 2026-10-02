@@ -1,0 +1,6 @@
+{
+  "repairCount": 1,
+  "reason": "Wait one real playing frame after UI creation for UGUI Dropdown.Start fade runner; no assertions/source changed",
+  "originalFixture": "A688D2A50A7E41BE2FB2DF9883FF9304FDA0D9FE0B6B490C953D9091D4B6255D",
+  "repairedFixture": "406FDCD5897E56B4428A9810CFD5059D7DCCDABB9E47B61662ECFF61C453904A"
+}
