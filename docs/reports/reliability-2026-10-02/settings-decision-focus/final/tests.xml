@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 07:34:52Z" end-time="2026-10-02 07:34:53Z" duration="0.7509716">
+  <test-suite type="TestSuite" id="2555" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1269" result="Passed" start-time="2026-10-02 07:34:52Z" end-time="2026-10-02 07:34:53Z" duration="0.750972" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2549" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1269" result="Passed" start-time="2026-10-02 07:34:52Z" end-time="2026-10-02 07:34:53Z" duration="0.725927" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="19892" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2550" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1269" result="Passed" start-time="2026-10-02 07:34:52Z" end-time="2026-10-02 07:34:53Z" duration="0.709036" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2551" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1269" result="Passed" start-time="2026-10-02 07:34:52Z" end-time="2026-10-02 07:34:53Z" duration="0.692444" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2227" name="SettingsDecisionFocusTests" fullname="TumbangPreso.PlayTests.SettingsDecisionFocusTests" classname="TumbangPreso.PlayTests.SettingsDecisionFocusTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 07:34:52Z" end-time="2026-10-02 07:34:53Z" duration="0.658643" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2230" name="CleanBackRetainsItsExistingCallbackWithoutOpeningTheDecision" fullname="TumbangPreso.PlayTests.SettingsDecisionFocusTests.CleanBackRetainsItsExistingCallbackWithoutOpeningTheDecision" methodname="CleanBackRetainsItsExistingCallbackWithoutOpeningTheDecision" classname="TumbangPreso.PlayTests.SettingsDecisionFocusTests" runstate="Runnable" seed="1682587189" result="Passed" start-time="2026-10-02 07:34:52Z" end-time="2026-10-02 07:34:52Z" duration="0.452917" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2229" name="ClosingTheDecisionPreservesAnotherLiveScreensSelection" fullname="TumbangPreso.PlayTests.SettingsDecisionFocusTests.ClosingTheDecisionPreservesAnotherLiveScreensSelection" methodname="ClosingTheDecisionPreservesAnotherLiveScreensSelection" classname="TumbangPreso.PlayTests.SettingsDecisionFocusTests" runstate="Runnable" seed="1622742447" result="Passed" start-time="2026-10-02 07:34:52Z" end-time="2026-10-02 07:34:52Z" duration="0.097441" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2228" name="KeepEditingReturnsFocusToLiveSettingsAndKeepsUnsavedChanges" fullname="TumbangPreso.PlayTests.SettingsDecisionFocusTests.KeepEditingReturnsFocusToLiveSettingsAndKeepsUnsavedChanges" methodname="KeepEditingReturnsFocusToLiveSettingsAndKeepsUnsavedChanges" classname="TumbangPreso.PlayTests.SettingsDecisionFocusTests" runstate="Runnable" seed="1980032587" result="Passed" start-time="2026-10-02 07:34:52Z" end-time="2026-10-02 07:34:53Z" duration="0.092799" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
