@@ -366,6 +366,11 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   Trace record delivery, local identity and save eligibility before attributing
   the failure or patching. No live-service or unchanged full-match retry.
   [Failure evidence](reports/reliability-2026-10-02/windows-candidate1002m/README.md).
+  Source boundary fix now qualifies4/4 native checks after two causal failures:
+  LAN cached profile identity enters hello, survives admission and repeated
+  introduction; handle trust and Relay signed-only behavior preserved.
+  Actual two-player saved-result acceptance remains OPEN.
+  [Source evidence](reports/reliability-2026-10-03/lan-record-identity/README.md).
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow

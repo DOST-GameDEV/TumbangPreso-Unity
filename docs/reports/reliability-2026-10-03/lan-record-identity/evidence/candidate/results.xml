@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 17:46:28Z" end-time="2026-10-02 17:46:28Z" duration="0.2663352">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="968" result="Passed" start-time="2026-10-02 17:46:28Z" end-time="2026-10-02 17:46:28Z" duration="0.266335" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2172" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="968" result="Passed" start-time="2026-10-02 17:46:28Z" end-time="2026-10-02 17:46:28Z" duration="0.250029" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25656" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2173" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="968" result="Passed" start-time="2026-10-02 17:46:28Z" end-time="2026-10-02 17:46:28Z" duration="0.243080" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2174" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="968" result="Passed" start-time="2026-10-02 17:46:28Z" end-time="2026-10-02 17:46:28Z" duration="0.236333" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1493" name="LanRecordIdentityTests" fullname="TumbangPreso.Tests.LanRecordIdentityTests" classname="TumbangPreso.Tests.LanRecordIdentityTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-02 17:46:28Z" end-time="2026-10-02 17:46:28Z" duration="0.215025" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1494" name="LanHelloCarriesTheCachedLocalProfileWithoutSigningIn" fullname="TumbangPreso.Tests.LanRecordIdentityTests.LanHelloCarriesTheCachedLocalProfileWithoutSigningIn" methodname="LanHelloCarriesTheCachedLocalProfileWithoutSigningIn" classname="TumbangPreso.Tests.LanRecordIdentityTests" runstate="Runnable" seed="1361091844" result="Passed" start-time="2026-10-02 17:46:28Z" end-time="2026-10-02 17:46:28Z" duration="0.189434" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1497" name="RepeatedIntroductionRetainsIdentityWithoutGrantingHandleTrust" fullname="TumbangPreso.Tests.LanRecordIdentityTests.RepeatedIntroductionRetainsIdentityWithoutGrantingHandleTrust" methodname="RepeatedIntroductionRetainsIdentityWithoutGrantingHandleTrust" classname="TumbangPreso.Tests.LanRecordIdentityTests" runstate="Runnable" seed="2110284771" result="Passed" start-time="2026-10-02 17:46:28Z" end-time="2026-10-02 17:46:28Z" duration="0.007285" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1496" name="SignedRelayKeepsItsAccountIdentity" fullname="TumbangPreso.Tests.LanRecordIdentityTests.SignedRelayKeepsItsAccountIdentity" methodname="SignedRelayKeepsItsAccountIdentity" classname="TumbangPreso.Tests.LanRecordIdentityTests" runstate="Runnable" seed="1807143702" result="Passed" start-time="2026-10-02 17:46:28Z" end-time="2026-10-02 17:46:28Z" duration="0.000714" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1495" name="UnsignedRelayDoesNotClaimACachedAccount" fullname="TumbangPreso.Tests.LanRecordIdentityTests.UnsignedRelayDoesNotClaimACachedAccount" methodname="UnsignedRelayDoesNotClaimACachedAccount" classname="TumbangPreso.Tests.LanRecordIdentityTests" runstate="Runnable" seed="2017892510" result="Passed" start-time="2026-10-02 17:46:28Z" end-time="2026-10-02 17:46:28Z" duration="0.000597" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
