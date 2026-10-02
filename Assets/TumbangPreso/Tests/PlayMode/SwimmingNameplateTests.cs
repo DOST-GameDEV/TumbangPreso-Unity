@@ -59,6 +59,10 @@ namespace TumbangPreso.PlayTests
                 for(int role=0;role<2;role++)
                 {
                     actor.IsDefender=role==1;plate.Refresh();
+                    var capsule=actor.GetComponent<CharacterController>();
+                    float expectedRadius=capsule.radius*(role==0?1.75f:1.95f);
+                    Assert.AreEqual(expectedRadius,ring.localScale.x,.001f,"Role ring follows the requested capsule-relative radius.");
+                    Assert.AreEqual(expectedRadius,ring.localScale.z,.001f);
                     var block=new MaterialPropertyBlock();renderer.GetPropertyBlock(block);Assert.AreEqual(role,block.GetFloat("_Shape"));
                     camera.transform.position=ring.position+Vector3.up*3;camera.transform.rotation=Quaternion.Euler(90,0,0);
                     camera.Render();var old=RenderTexture.active;RenderTexture.active=rt;

@@ -180,3 +180,9 @@ Increase the ordinary hollow circle radius from1.375 to1.75 capsule radii
 (about27percent); keep the already larger1.95 taya role and2.1 catchable brackets.
 Check actual rendered open centre, visible rim and capsule-relative sizing.
 No gameplay/contact radius change. One graphics run, one bounded repair maximum.
+
+PLAYER-RING-RADIUS-1002 final Low-profile native1/1 passes in3.31s, outerexit0
+and guard null40s. Both hollow-role captures inspected. First ordinary-profile
+run timed out under memory pressure; retained, one bounded retry used. Publish
+two owned source files and evidence, then update/strike the exact radius
+comment in Feedback. No gameplay size or target-player claim.

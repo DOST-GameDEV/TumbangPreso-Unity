@@ -17,6 +17,13 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### PLAYER-RING-RADIUS-1002: larger hollow circle
+
+Ordinary player circle now uses1.75 capsule radii, about27percent larger.
+Taya/catchable sizes and gameplay unchanged. Native Low-profile1/1 passes with
+inspected role captures; first memory timeout retained.
+[Evidence](reports/feedback-2026-09-30/player-ring-radius/README.md).
+
 ### CITY-AMBIENCE-1002: Kanto and Ilalim gain reduction
 
 Existing city/traffic, sidewalk and train mix now applies a shared 0.75 gain.
