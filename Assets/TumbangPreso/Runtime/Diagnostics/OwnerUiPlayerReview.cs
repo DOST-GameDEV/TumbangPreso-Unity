@@ -165,7 +165,10 @@ namespace TumbangPreso.Diagnostics
         {
             float until=Time.realtimeSinceStartup+seconds;
             while(!ready() && Time.realtimeSinceStartup<until)yield return null;
-            if(!ready())throw new InvalidOperationException("Expected UI state did not arrive.");
+            if(!ready())throw new InvalidOperationException("Expected UI state did not arrive. Scene="+
+                UnityEngine.SceneManagement.SceneManager.GetActiveScene().name+"; controls="+
+                string.Join(",",UnityEngine.Object.FindObjectsByType<Selectable>().Where(s=>s.isActiveAndEnabled).Select(s=>s.name))+
+                "; preview="+MatchInstaller.PreviewOnly+"; roundActive="+(GameServices.Round?.RoundActive??false));
         }
         private static Selectable Find(string name)=>UnityEngine.Object.FindObjectsByType<Selectable>().FirstOrDefault(s=>s.name==name && s.isActiveAndEnabled && s.IsInteractable());
         private static PointerEventData Pointer(Selectable control)

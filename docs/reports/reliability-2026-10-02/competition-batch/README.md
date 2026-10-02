@@ -15,3 +15,10 @@ it must not be misreported as a gameplay fix or a passing tournament check.
 
 Current newer career-account-sync fix has separate native evidence and is not in
 this frozen player. Whole competition readiness remains open in TODO.
+
+The one bounded retry also failed before round1. Its richer error confirms current
+HOME controls in MatchSetup, preview False, roundActive False. The legacy runner
+waits for old preparation controls. Both attempts are preserved; no more fixture
+repair. Speculative stake/ready-wait changes removed; retain rich failure-state
+logging only. See legacy-route-retry/README.md. Another supported direct-peer
+route will provide match liveness evidence, with its own explicit input limits.
