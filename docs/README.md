@@ -121,4 +121,6 @@ Inactive bot-body observation isolation: [native evidence](reports/reliability-2
 
 Social reply and handle lookup account ownership: [native evidence](reports/reliability-2026-10-02/social-owner/README.md).
 
+Sean held-shoe body preparation: [evidence](reports/sean-empowered-presentation-2026-10-02/README.md).
+
 Amihan presentation (Airburst first), Miks-referenced research and plan: [report](reports/amihan-presentation-2026-10-02/README.md).

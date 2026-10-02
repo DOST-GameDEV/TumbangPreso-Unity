@@ -268,7 +268,32 @@ Do not change mechanics, other clips or Amihan. Reuse actual-input capture on
 Low with fixed simulation and labelled longer film; no real-time/audio claim.
 First capture decides the narrow authored change, no decorative rewrite by default.
 
+
 AMIHAN-AIRBURST active 10:55: heavy job = own detached worktree Codex/work/
 tump-amihan1002 (Library seeded by copy, read-only from release checkout), profile
 amihan-airburst1002; baseline films then storm bake then final. Also claims one
 Amihan case in Tests/PlayMode/UltimateIntroductionProbe.cs. Other lanes: wait.
+
+SEAN-EMPOWERED-PRESENTATION-1002 final actual Skill2 capture1/1 passes95body+95
+owner frames. Rejected first centred-palm pose because the shoe crowded the
+chest; final open carrying arm makes it visible. Same0.66s,45samples, floor0,
+35otheranimations/mesh/rig preserved. All capture launches retained memory
+guard requests despite exit0. Publish explicit namedclip/tool/report; no
+mechanic/FPP/VFX/SFX or whole-Pyro completion claim. Longer23.5s review next.
+
+
+Sean Empowered body901aa24b shipped via cf35ce4a; same Feedback note verified,
+23.5s comparison delivered. Release its previous clip-only claim.
+SEAN-CINDER-GATE-1002 begins the remaining proposed defending skill, exact paths
+and acceptance in reports/sean-cinder-gate-2026-10-02/plan.md. New kind appended;
+shared dynamic-field delivery only, no Sean-only RPC. NetSession ProtocolVersion
+constant only; no overlap with local IsAdmitted/Friend JOIN reservations. Sean
+only, Amihan storm-call and all other character-owned entries preserved. No
+heavy job or feature completion yet. First: finite crossing Core rules/tests.
+
+Cinder Core finite crossing7/7 passed. Native initial compile found missing
+IVfxTimeline.LifeSeconds; corrected state/identity3/3 passes, exit0 with memory
+guard request. Runtime still under development, no feature publication.
+Presentation ownership expands exactly as the plan: ViewmodelArms.cs CinderDraw
+entry only, AbilityIcons.cs new appended glyph only, person_sean.asset newclip
+reference only and new Editor/SeanGateAuthor.cs. Amihan storm entries untouched.

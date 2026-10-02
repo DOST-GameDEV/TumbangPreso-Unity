@@ -686,6 +686,25 @@ HEROES["sean"]["hero-sean-dash"] = {
 }
 
 
+# Empowered Throw kindles the actual held shoe. Keep the carrying arm forward
+# and outside the bulky chest; the free hand gathers then releases toward it.
+# A two-palm centre pose was rejected because Sean's short rigid arms buried the
+# prop against his torso. Preserve the open face and a distinct checking beat.
+HEROES["sean"]["hero-sean-ignite"] = {
+    "punch": .22,
+    "beats": [
+        (0.00, 1., 0., 0.00,  0,  0,  0,   0,  0,   0,  0,   0,  0,    0,   0,    0,  0),
+        (0.10, 1., 0., -.01,  5, -3, -1,  -1,  2,  -4, -2,   3,  2, -105, -18,  -68, 16),
+        (0.22, 1., 0., -.01,  8, -2, -1,  -3,  8,  -6, -2,   4,  2,  -78, -45,  -90, 24),
+        (0.34, 1., 0., -.01,  8, -2, -1,  -3,  8,  -6, -2,   4,  2,  -78, -45,  -90, 24),
+        (0.46, 1., 0., 0.00,  4,  2,  1,  -1, 10,  -3, -1,   2,  1,  -51, -28,  -83, 18),
+        (0.57, 1., 0., 0.00,  1,  1,  0,   0,  2,  -1,  0,   1,  0,  -21, -10,  -37,  8),
+        (0.66, 1., 0., 0.00,  0,  0,  0,   0,  0,   0,  0,   0,  0,    0,   0,    0,  0),
+    ],
+    "grounded": (0., .10, .22, .34, .46, .57, .66),
+}
+
+
 # ⚠️⚠️ THE SILHOUETTE BOUND, 2026-09-24 (SKILL-FX-1). Nine casts were measured on their pose sheets
 # (`docs/reports/skill-performances-2026-09-24/sheets/`) folding these big-headed rigs until the face
 # pointed at the road (Titan Fissure: torso 56 plus head 34, 90 degrees; Supernova 100) or at the sky

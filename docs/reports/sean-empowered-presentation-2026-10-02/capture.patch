@@ -1,0 +1,83 @@
+diff --git a/Assets/TumbangPreso/Tests/PlayMode/ImprovementEvidenceProbe.cs b/Assets/TumbangPreso/Tests/PlayMode/ImprovementEvidenceProbe.cs
+index 40443261..71409ee8 100644
+--- a/Assets/TumbangPreso/Tests/PlayMode/ImprovementEvidenceProbe.cs
++++ b/Assets/TumbangPreso/Tests/PlayMode/ImprovementEvidenceProbe.cs
+@@ -28,16 +28,21 @@ namespace TumbangPreso.PlayTests
+         private int _soloSeat;
+         private CustomRules _rules;
+         private bool _pinned;
++        private int _reviewQuality;
+         [UnitySetUp] public IEnumerator Before()
+         {
+             _allBots=GameLaunch.AllBots;_spectator=GameLaunch.Spectator;_soloSeat=GameLaunch.SoloSeat;
+             _rules=SceneFlow.SelectedRules.Clone();
+             _pinned=SceneFlow.RulesPinned;
++            _reviewQuality=QualitySettings.GetQualityLevel();
++            int low=Array.IndexOf(QualitySettings.names,"Low");
++            if(low>=0)QualitySettings.SetQualityLevel(low,true);
+             yield return PlayModeWorld.Reset();
+         }
+         [UnityTearDown] public IEnumerator After()
+         {
+             yield return PlayModeWorld.Reset();
++            QualitySettings.SetQualityLevel(_reviewQuality,true);
+             GameLaunch.AllBots=_allBots;GameLaunch.Spectator=_spectator;GameLaunch.SoloSeat=_soloSeat;
+             SceneFlow.AdoptRemoteRules(_rules);
+             if (_pinned) SceneFlow.PinSelectedRules(_rules); else SceneFlow.UnpinSelectedRules();
+@@ -474,6 +479,10 @@ namespace TumbangPreso.PlayTests
+             var pixels = new Texture2D(960, 540, TextureFormat.RGB24, false);
+             var log = new StringBuilder("frame,real_seconds,game_seconds,speed,held,leg_angle,action,charge,spin,torso_x,arm_x,hand_y,hand_forward,hand_side,body_y\n");
+             var field = typeof(CharacterAnimator).GetField("_current", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
++            // Optional offline review advances fixed simulation time; never a performance capture.
++            bool fixedReview = Environment.GetEnvironmentVariable("TUMP_CAPTURE_FIXED_REVIEW") == "1";
++            int previousCaptureRate = Time.captureFramerate;
++            if (fixedReview) Time.captureFramerate = 20;
+             float start = Time.realtimeSinceStartup, gameStart = Time.time, next = 0;
+             int frame = 0;
+             var late=camera.gameObject.AddComponent<LateMotionCapture>();
+@@ -481,9 +490,9 @@ namespace TumbangPreso.PlayTests
+             var previousActive = RenderTexture.active;
+             try
+             {
+-                while (Time.realtimeSinceStartup - start < seconds)
++                while ((fixedReview ? Time.time - gameStart : Time.realtimeSinceStartup - start) < seconds)
+                 {
+-                    float t = Time.realtimeSinceStartup - start;
++                    float t = fixedReview ? Time.time - gameStart : Time.realtimeSinceStartup - start;
+                     drive?.Invoke(t);
+                     yield return null;
+                     if (t < next) continue;
+@@ -525,6 +534,16 @@ namespace TumbangPreso.PlayTests
+                             var held = subject != null ? subject.GetComponent<Carrier>()?.Held : null;
+                             if (held != null) renderers = renderers.Concat(held.GetComponentsInChildren<Renderer>()).Distinct().ToArray();
+                             var shadow = renderers.Select(r => r.shadowCastingMode).ToArray();
++                            var witnessEnabled=renderers.Select(r=>r.enabled).ToArray();
++                            if(held!=null)foreach(var rr in held.GetComponentsInChildren<Renderer>(true))rr.enabled=true;
++                            if(frame==5&&held!=null)
++                            {
++                                var detail=new StringBuilder();
++                                foreach(var rr in held.GetComponentsInChildren<Renderer>(true))
++                                    detail.AppendLine(rr.name+" active="+rr.gameObject.activeInHierarchy+" enabled="+rr.enabled+" layer="+rr.gameObject.layer+" centre="+rr.bounds.center+" size="+rr.bounds.size+" shadow="+rr.shadowCastingMode+" off="+rr.forceRenderingOff);
++                                File.WriteAllText(Path.Combine(Output,"held-renderers.txt"),detail.ToString());
++                            }
++
+                             var privateArms = Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None)
+                                 .SelectMany(a=>a.GetComponentsInChildren<Renderer>()).ToArray();
+                             var privateEnabled = privateArms.Select(r=>r.enabled).ToArray();
+@@ -547,7 +566,7 @@ namespace TumbangPreso.PlayTests
+                             finally
+                             {
+                                 for(int i=0;i<occluders.Length;i++)if(occluders[i]!=null)occluders[i].enabled=occluderEnabled[i];
+-                                for (int i = 0; i < renderers.Length; i++) if(renderers[i]!=null) renderers[i].shadowCastingMode = shadow[i];
++                                for (int i = 0; i < renderers.Length; i++) if(renderers[i]!=null) {renderers[i].shadowCastingMode = shadow[i];renderers[i].enabled=witnessEnabled[i];}
+                                 for (int i = 0; i < privateArms.Length; i++) if(privateArms[i]!=null) privateArms[i].enabled = privateEnabled[i];
+                             }
+                             SaveFrame(rt,ldr,pixels,Path.Combine(folder,$"{frame:D5}.jpg"));
+@@ -573,6 +592,7 @@ namespace TumbangPreso.PlayTests
+             }
+             finally
+             {
++                Time.captureFramerate = previousCaptureRate;
+                 if(late!=null){late.Draw=null;Object.Destroy(late);}
+                 camera.targetTexture = previous;
+                 RenderTexture.active = previousActive;
