@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 02:00:52Z" end-time="2026-10-02 02:00:52Z" duration="0.1336915">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="820" result="Passed" start-time="2026-10-02 02:00:52Z" end-time="2026-10-02 02:00:52Z" duration="0.133692" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1977" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="820" result="Passed" start-time="2026-10-02 02:00:52Z" end-time="2026-10-02 02:00:52Z" duration="0.119659" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16524" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1978" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="820" result="Passed" start-time="2026-10-02 02:00:52Z" end-time="2026-10-02 02:00:52Z" duration="0.117030" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1979" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="820" result="Passed" start-time="2026-10-02 02:00:52Z" end-time="2026-10-02 02:00:52Z" duration="0.114832" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1060" name="CareerAndCloudCodeTests" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="58" result="Passed" start-time="2026-10-02 02:00:52Z" end-time="2026-10-02 02:00:52Z" duration="0.072743" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1118" name="SocialHandleLookupCannotOverwriteAnotherAccountsSearch" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialHandleLookupCannotOverwriteAnotherAccountsSearch" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 02:00:52Z" end-time="2026-10-02 02:00:52Z" duration="0.041459" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1116" name="SocialHandleLookupCannotOverwriteAnotherAccountsSearch(False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialHandleLookupCannotOverwriteAnotherAccountsSearch(False)" methodname="SocialHandleLookupCannotOverwriteAnotherAccountsSearch" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="555462474" result="Passed" start-time="2026-10-02 02:00:52Z" end-time="2026-10-02 02:00:52Z" duration="0.026190" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1117" name="SocialHandleLookupCannotOverwriteAnotherAccountsSearch(True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialHandleLookupCannotOverwriteAnotherAccountsSearch(True)" methodname="SocialHandleLookupCannotOverwriteAnotherAccountsSearch" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="560146752" result="Passed" start-time="2026-10-02 02:00:52Z" end-time="2026-10-02 02:00:52Z" duration="0.000364" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1115" name="SocialResponseCannotReplaceAnotherAccountsFriends" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialResponseCannotReplaceAnotherAccountsFriends" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-02 02:00:52Z" end-time="2026-10-02 02:00:52Z" duration="0.014786" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1113" name="SocialResponseCannotReplaceAnotherAccountsFriends(False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialResponseCannotReplaceAnotherAccountsFriends(False)" methodname="SocialResponseCannotReplaceAnotherAccountsFriends" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1853329622" result="Passed" start-time="2026-10-02 02:00:52Z" end-time="2026-10-02 02:00:52Z" duration="0.013305" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1114" name="SocialResponseCannotReplaceAnotherAccountsFriends(True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.SocialResponseCannotReplaceAnotherAccountsFriends(True)" methodname="SocialResponseCannotReplaceAnotherAccountsFriends" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="524174831" result="Passed" start-time="2026-10-02 02:00:52Z" end-time="2026-10-02 02:00:52Z" duration="0.000406" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

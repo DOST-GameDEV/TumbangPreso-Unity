@@ -118,3 +118,5 @@ Wallet account ownership and deferred refresh: [native evidence](reports/reliabi
 Full current Windows Classic tournament-context match: [actual peer evidence](reports/reliability-2026-10-02/full-classic-match/README.md).
 
 Inactive bot-body observation isolation: [native evidence](reports/reliability-2026-10-02/bot-inactive-body/README.md).
+
+Social reply and handle lookup account ownership: [native evidence](reports/reliability-2026-10-02/social-owner/README.md).

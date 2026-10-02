@@ -71,6 +71,8 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   native5/5. [Evidence](reports/reliability-2026-10-02/wallet-owner/README.md).
 - [x] BOT-INACTIVE-BODY-1002: inactive actors stop supplying live observations;
   native2/2 both modes. [Evidence](reports/reliability-2026-10-02/bot-inactive-body/README.md).
+- [x] SOCIAL-RESPONSE-OWNER-1002: reply and lookup state owned by requesting account;
+  native4/4. [Evidence](reports/reliability-2026-10-02/social-owner/README.md).
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow

@@ -148,12 +148,13 @@ namespace TumbangPreso.Net
         public async void Refresh()
         {
             if (_loading) return;
+            string requestedOwner = CareerStore.LocalPlayerId;
             _loading = true;
 
             try
             {
                 string output = await CloudCode.CallAsync(ScriptName, new { action = "load" });
-                Adopt(output);
+                Adopt(requestedOwner, output);
             }
             catch (Exception e)
             {
@@ -175,9 +176,9 @@ namespace TumbangPreso.Net
         /// resurrect a friendship that was ended or drop one that was made. **The server wins,
         /// every time.**
         /// </summary>
-        private void Adopt(string json)
+        private void Adopt(string requestedOwner, string json)
         {
-            if (string.IsNullOrEmpty(json)) return;
+            if (this == null || requestedOwner != CareerStore.LocalPlayerId || string.IsNullOrEmpty(json)) return;
 
             try
             {
@@ -233,31 +234,39 @@ namespace TumbangPreso.Net
                 return;
             }
 
+            string requestedOwner = CareerStore.LocalPlayerId;
             SearchStatus = "LOOKING FOR " + handle.ToUpperInvariant() + "...";
             Changed?.Invoke();
             try
             {
                 string output = await CloudCode.CallAsync("player-account",
                     new { action = "resolve", handle });
-                var found = string.IsNullOrWhiteSpace(output)
-                    ? null : JsonUtility.FromJson<HandleResolution>(output);
-                if (found == null || string.IsNullOrEmpty(found.playerId))
-                {
-                    SearchStatus = "NO ACCOUNT HAS THAT EXACT NAME AND TAG.";
-                    Changed?.Invoke();
-                    return;
-                }
-
-                SearchStatus = "REQUEST SENT TO " + found.handle.ToUpperInvariant() + ".";
-                Changed?.Invoke();
-                Request(found.playerId, found.handle);
+                CompleteHandleLookup(requestedOwner, output);
             }
             catch (Exception e)
             {
+                if (this == null || requestedOwner != CareerStore.LocalPlayerId) return;
                 SearchStatus = "SEARCH IS UNAVAILABLE. TRY AGAIN WHEN ONLINE.";
                 Debug.LogWarning($"[Social] handle lookup failed: {e.Message}");
                 Changed?.Invoke();
             }
+        }
+
+        private void CompleteHandleLookup(string requestedOwner, string output)
+        {
+            if (this == null || requestedOwner != CareerStore.LocalPlayerId) return;
+            var found = string.IsNullOrWhiteSpace(output)
+                ? null : JsonUtility.FromJson<HandleResolution>(output);
+            if (found == null || string.IsNullOrEmpty(found.playerId))
+            {
+                SearchStatus = "NO ACCOUNT HAS THAT EXACT NAME AND TAG.";
+                Changed?.Invoke();
+                return;
+            }
+
+            SearchStatus = "REQUEST SENT TO " + found.handle.ToUpperInvariant() + ".";
+            Changed?.Invoke();
+            Request(found.playerId, found.handle);
         }
 
         public async void Accept(string playerId)
@@ -283,11 +292,12 @@ namespace TumbangPreso.Net
         private async Task Post(object parameters)
         {
             if (_writing) return;
+            string requestedOwner = CareerStore.LocalPlayerId;
             _writing = true;
 
             try
             {
-                Adopt(await CloudCode.CallAsync(ScriptName, parameters));
+                Adopt(requestedOwner, await CloudCode.CallAsync(ScriptName, parameters));
             }
             catch (Exception e)
             {
