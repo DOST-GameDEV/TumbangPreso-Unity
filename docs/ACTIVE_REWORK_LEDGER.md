@@ -87,7 +87,11 @@ Root tools/run_completed_arrival.py now optional --graphics-api default omits
 forcing flags and records exact commands, default d3d11 behavior remains. Actual
 Version line parsing requires both peersDirect3D11, not justforcingflag;3pure
 parser controlsPASS, no player/registry touches. Toolschange2b62d4197 committed.
-ONE defaultAPI peer80018 ACTIVE after allreceipts terminal/classifierPASS.
+ONE defaultAPI peer80018 TERMINAL FIRST PASS after allreceipts terminal/classifierPASS:
+both actualVersionDirect3D11/RX6600/no forcingflag, normal process exits, same
+endHOME/coldrejoin/newscene/record/frozen4actors. Owned23436/23760 confirmeddead,
+input+seedsrestored/runtimeunchanged/leasefree. Current50artifact rootdefault-backend
+and cleanexit gate met; performance/otherGPU/rootcause remain unproven.
 Current50fix artifact; source/runtime/identity bound, input+namedseed/lease
 guards unchanged. NO liveJSON reads/othernative/q mutation during player run.
 No broader renderer/root-driver-cause/performance claim without actual evidence.
