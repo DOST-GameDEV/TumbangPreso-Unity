@@ -31,16 +31,16 @@ Paths are under Assets/TumbangPreso unless prefixed docs.
 
 ## Active job and exact next action
 
-CAREER-WITNESS-1002 complete: baseline 0/2, final 2/2 native cases.
-Existing PadWitnesses before filtering and same-index removal preserve remaining
-verification data, including legacy cache. Two hashes unchanged, zero fixture
-repairs; native session 3666 terminal, guarded profile/input restored.
-Publication follows; prior published HEAD 4b35cbe12. No heavy job active.
-Next: history screen RefreshMatches unconditionally calls Show(Matches) after
-await even when the user closed/navigated elsewhere or requested another page.
-Use existing OwnerPlayerHubTests for focused native navigation/completion proof,
-one baseline/final. Current account cache cancellation is already covered.
-No service calls, new UI framework or visual redesign.
+HISTORY-NAVIGATION-1002 complete: baseline failed four stale states; final 1/1
+native PlayMode case covers five states, including current-response control.
+Three frozen hashes unchanged, zero fixture repairs, session 4256 terminal and
+profile/input restored. Publish next; prior verified remote 77d699419.
+This resume shipped career abandon/history cache safety and queued witness repair;
+current source is also ready to publish menu completion ownership.
+No heavy job active. Next run a coherent integration check for these career/UI
+changes, then refresh internal Windows player. Inspect source/build identity and
+preserve pre-existing private dirt. Full match/readiness gaps remain below.
+No repeated unchanged matrices, live/paid services or authored visual redesign.
 
 ## Remaining readiness evidence
 

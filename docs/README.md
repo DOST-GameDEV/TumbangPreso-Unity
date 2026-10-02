@@ -103,3 +103,5 @@ Career refresh account-cache ownership: [native evidence](reports/reliability-20
 Abandon/history account-response ownership: [native evidence](reports/reliability-2026-10-02/career-async-owner/README.md).
 
 Queued-result verification alignment after refusals: [native evidence](reports/reliability-2026-10-02/career-witness/README.md).
+
+Late history UI completion and navigation safety: [native evidence](reports/reliability-2026-10-02/history-navigation/README.md).
