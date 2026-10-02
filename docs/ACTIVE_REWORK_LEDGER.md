@@ -83,7 +83,10 @@ no physicalOS/animation/transport claim. qprep36021 TERMINAL0/exact3 via
 MAIN Logs/emote-wheel-lifetime1002/prepare.py; original70589 TERMINAL3failed:
 2visible retired selection commits, normalcontrol invalid (_chosen counter not
 reset per case). ONE fixture initialization repair `_chosen=0` inBefore; no
-assertion/scope change. Corrected original61530 ACTIVE after prep0/exact3,
+assertion/scope change. Corrected61530 TERMINAL:2actual retired selection commits/
+1ordinary release control pass/restored/free. Candidate89005 ACTIVE after prep0/
+exact3/identical correctedfixture. OnDisable +focusfalse=>Close(false); no further
+repair/retry budget.
 GPU2048/reserve2048/450s/PlayMode-nographics/filter EmoteWheelLifetimeTests3.
 ONE bounded original/candidate pair/one repair limit, no overlapping worker.
 
