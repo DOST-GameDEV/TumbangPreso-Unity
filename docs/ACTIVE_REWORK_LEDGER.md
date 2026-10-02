@@ -5,7 +5,8 @@ checks and publication; a progress report is not a stop. Root works SOLO.
 
 ## Current root job and next action
 
-MAIN ASTRAReworks and verified remote80294eeae4237821ede22ac14df7b1071304b06b.
+MAIN ASTRAReworks and verified remote33449ee7fefa4221c0cb209bea93b31eb7311671.
+Ruleguardfa6c82bef integrated with incomingdocs42cf840b5; no C# incoming changes.
 Current startup/Unicodechat qualified and published; private owner dirt preserved.
 LAN acceptance report7cbe176ca integrated/pushed with incoming protocol134
 timed recovery and studio intro. Latest peer/startup-qualified artifact1003c source8ef02cf75/protocol134 (below).
@@ -116,9 +117,44 @@ Lobbyruleunit prep77892/original30474/candidate15396/post58447 TERMINAL.
 Original3causal/3controls, candidateFIRST6/6/no repairs/retries. Sourceguards2string
 callbacks + wide senderID beforeintleader key. Protected18445 unchanged/
 exact3match, guardsrestored/free. OwnMatchRpc.cs + LobbyRulesPacketTests.cs/meta.
-Report reliability-2026-10-03/lobby-rule-packet; exactsourcepublicationnext.
+Report reliability-2026-10-03/lobby-rule-packet; published33449ee7f/remoteverified.
 No activejobs. Current1003c player predates replay binding + ruleguard units.
-Continue remaining actualengineering, no unchangednativechecks orfullClassic loop.
+NEXT current fullHero default gate, ratherthananotherfullClassic repeat.
+MAIN pending owned: Diagnostics/NetStateReport.cs one selected-rules-wire line;
+tools/run_default_tournament.py --modeClassic/HeroStrike, validatesactualmode +
+actualselectedrules against packagedCore empty-wire defaults, seeds supported
+HubQueueChoice1/2 (removed ignored GameMode key), Classicalonegets-tp-tournament.
+Fivepureparser controls pass inclHeromode/wire/missingreport refusal. PackagedCore
+read via existing emptywireParse verified: Classic0|0|8|90|0|3|0|1|0|1,
+Hero1|0|8|90|0|3|0|1|0|1. InitialdirectDefaults-probe childlaunchWinError5 retained
+as tooling limitation; existingparser route succeeds, no permissions/securitychange.
+Commitdiagnostic/driver LOCAL pendingnative, merge torelease, unique1003d frozen
+buildincludingreplay+rule fixes; onefullHero8x90 normalLAN run --modeHeroStrike,
+currentreportwire required. No AllBots/forcefinish/SDK. While13minrun progresses,
+advance independent implementation; oneheavyjob. Bothownsavedcareersafterterminal.
+1003d prepare80860/build83395/finalizer9348 TERMINAL FIRST/classifierPASS.
+Runtime940e841c113da306ef8fcef1feb91a859df6be5c1698b9a730b1ff650430098e,
+protocol134/source83f54e961,18963inputs/18961unchanged/exact2identityoutputs,
+2433MB84s. FullHero8 nativejobhandlefromlatestcall queuedbehindcandidate50085,
+projectrelease/output1003d/default-hero/ports9190/9191, --modeHeroStrike. Packaged
+Core expectedwire1|0|8|90|0|3|0|1|0|1. Onefull850s ceiling/profilepreservation.
+No liveJSON/profile reads orreleaseinputmutations untilterminal. No SDK/AllBots.
+Source83f54e961 LOCAL diagnosticcommit; releasefrozen. 18963inputs. Afterfinalize
+artifactclassifier exactgeneratedoutputs thenlaunchFULLHero8withcurrentdriver,
+--modeHeroStrike/ports9190/9191/output1003d/default-hero. Keep13minplayergatebounded.
+Do notmutatereleaseorreadliveplayerJSON. Independent MAIN seatfix below. GoalACTIVE.
+
+Seat-rebind unit prep35739/original41278/candidate50085/post9971 TERMINAL.
+Original4causal/2controls, candidateFIRST6/6/no repairs/retries. Header/boolean/
+seat+defender bounds(-1..3)/nameframe validation beforeownership. Samevalidsentinel/
+idempotency/sourceguards; DormantNetSession/Roundnull, notfulllivebody restoration.
+Protected18447 unchanged/exact3 MAINq matches/guardsrestoredfree. Report
+reliability-2026-10-03/rebind-seat-packet; exactsourcepublicationnext. Currentfull
+Hero37622 ACTIVE, python24432/host21648/client24948 at lastobservation, ports9190/
+9191/release1003d/default-hero. No release mutations/liveprofileJSONreads. Native
+report expectedwire1|0|8|90|0|3|0|1|0|1/source83f54e961/protocol134. Source83f local
+commit pendingfullHeroacceptance; mainseatpatch maycommit/pushsourceguardseparately.
+Do not rerun completedchecks or claimwholeready; continueindependentworkwhilematchruns.
 
 ## Qualified and published root changes
 

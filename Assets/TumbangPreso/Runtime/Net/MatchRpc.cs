@@ -6733,12 +6733,30 @@ namespace TumbangPreso.Net
         private void OnRebindSeatMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
+            if (!ValidRebindSeatFrame(ref reader)) return;
             reader.ReadValueSafe(out int seat);
             reader.ReadValueSafe(out int defenderSlot);
             reader.ReadValueSafe(out bool roundActive);
             reader.ReadValueSafe(out string playerName);
 
             ApplyRebindLocalSeat(seat, defenderSlot, roundActive, playerName);
+        }
+
+        private static bool ValidRebindSeatFrame(ref FastBufferReader reader)
+        {
+            int start = reader.Position;
+            try
+            {
+                if (!reader.TryBeginRead(sizeof(int) * 2 + 1)) return false;
+                reader.ReadValueSafe(out int seat);
+                reader.ReadValueSafe(out int defender);
+                reader.ReadValueSafe(out byte active);
+                // -1 is the spectator seat and the pre-round "no defender" state.
+                if (seat < -1 || seat >= Balance.PlayerCount ||
+                    defender < -1 || defender >= Balance.PlayerCount || active > 1) return false;
+                return ValidStringFrame(ref reader, 1);
+            }
+            finally { reader.Seek(start); }
         }
 
         private void ApplyRebindLocalSeat(int seat, int defenderSlot, bool roundActive,
