@@ -780,3 +780,10 @@ DANTE-BOULDER-MOTION-1002 now claims only its dated plan's exact paths. Existing
 Boulder imbues a held shoe but requests the old ground stomp. Inspect the real
 cast before changing it; preserve all gameplay and earlier authored clips.
 Cloud-only, one small native case per process. No active job at claim time.
+
+Cloud Dante Boulder motion ready: original actual-input/affinity/held checks
+succeed then old-stomp assertion fails. Distinct0.88s body/FPP candidate passes
+1/1,78paired frames inspected,40s outer/guard null/no repairs. All36 prior clips
+and model binary preserved, one roster reference added. No active job. Ship
+only the claimed motion paths; larger affinity VFX/player/SFX/human work stays
+open. Preserve other reservations and generated metadata.

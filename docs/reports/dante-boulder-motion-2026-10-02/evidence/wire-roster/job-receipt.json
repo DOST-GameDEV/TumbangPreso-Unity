@@ -1,0 +1,36 @@
+{
+  "job": {
+    "id": "cdf660b2ff074c7181a659bd9c53f977",
+    "ownerPid": 124417,
+    "guardPid": null,
+    "unityPids": [],
+    "createdUtc": "2026-10-02T15:55:28Z",
+    "kind": "gpu",
+    "memoryMb": 3072,
+    "reserveMb": 2048,
+    "project": "/workspace/scratch/0ed9da4aed7f/tump",
+    "library": "/workspace/scratch/0ed9da4aed7f/tump/Library",
+    "profile": "cloud-dante-motion",
+    "prefHive": "software\\unity\\unityeditor\\bh studios\\tumbang preso",
+    "ports": [],
+    "worker": false,
+    "allowParallel": false,
+    "companyName": "BH Studios",
+    "productName": "Tumbang Preso"
+  },
+  "requestedUtc": "2026-10-02T15:55:28Z",
+  "status": "completed",
+  "exitCode": 0,
+  "admission": {
+    "availableMb": 7337,
+    "activeJobsBefore": 0,
+    "acquiredUtc": "2026-10-02T15:55:28Z"
+  },
+  "startedUtc": "2026-10-02T15:55:28Z",
+  "guardPid": 124418,
+  "endedUtc": "2026-10-02T15:56:09Z",
+  "guardTerminal": true,
+  "preservationCompleted": true,
+  "availableMbAtEnd": 6886,
+  "leaseHeld": false
+}
