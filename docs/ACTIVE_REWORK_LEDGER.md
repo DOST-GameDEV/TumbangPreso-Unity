@@ -149,12 +149,18 @@ Original4causal/2controls, candidateFIRST6/6/no repairs/retries. Header/boolean/
 seat+defender bounds(-1..3)/nameframe validation beforeownership. Samevalidsentinel/
 idempotency/sourceguards; DormantNetSession/Roundnull, notfulllivebody restoration.
 Protected18447 unchanged/exact3 MAINq matches/guardsrestoredfree. Report
-reliability-2026-10-03/rebind-seat-packet; exactsourcepublicationnext. Currentfull
-Hero37622 ACTIVE, python24432/host21648/client24948 at lastobservation, ports9190/
-9191/release1003d/default-hero. No release mutations/liveprofileJSONreads. Native
-report expectedwire1|0|8|90|0|3|0|1|0|1/source83f54e961/protocol134. Source83f local
-commit pendingfullHeroacceptance; mainseatpatch maycommit/pushsourceguardseparately.
-Do not rerun completedchecks or claimwholeready; continueindependentworkwhilematchruns.
+reliability-2026-10-03/rebind-seat-packet; exactsourcepublicationnext. FullHero37622 TERMINAL FIRST PASS on1003d/source83f54e961/protocol134.
+Both8inactive/Hero/exactpackageddefaultwire1|0|8|90|0|3|0|1|0|1/noMods/lobbyseen/
+naturalend/scores40/150/3450/3380. Bothowncareershistory/queue/witness/applied1,
+oneownhumanline/samerecord/scores/clearmarkers. Input/seeds/runtime/exits/free.
+Bothavg59.81FPS/p5p1=57.97/max89.23host/75.55client; no causalperformanceclaim.
+Report reliability-2026-10-03/windows-candidate1003d. RuntimeSHA
+940e841c113da306ef8fcef1feb91a859df6be5c1698b9a730b1ff650430098e.
+No activejobs. Mainae6b249db (rebind) and83f54e961 (validatedfullHero diagnostics)
+local pendingpublication +currentevidence. Current1003d excludesrebindfix.
+NEXT fetch/checkdivergence/integrateonlynecessaryincoming, exactpublishthen
+continue allcurrentmaps/failure/recovery/performance realdefects/gaps. Do not
+rerun this fullHeroorClassic unchanged. Goalactive, no whole-readinessclaim.
 
 ## Qualified and published root changes
 

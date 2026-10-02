@@ -182,12 +182,12 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
-Current1003a source268c1abf7/protocol133 includes LAN identity, pinned HOME mode,
-slide inventory and current contributor changes. First Windows build/artifact
-passes; first actual short LAN pair passes and both players save the same match.
-Full normal-lobby Classic8 passes on this artifact, both saved careers agree;
-incoming protocol134 changes need separate packaged acceptance. Whole readiness open.
-[Current artifact/evidence](reports/reliability-2026-10-03/windows-candidate1003a/README.md).
+Current1003d source83f54e961/protocol134 includes rule/replay/chat/result/LAN/HOME
+fixes and contributor startup/recovery changes. First full default Hero8 passes
+exact packaged rules and both savedcareers; fullClassic133 passed separately on
+1003a. Native reconnect guard is qualified but postdates1003d. Current allmap,
+physical-input/device/WAN/performance-cause and recovery-specific gates remain open.
+[Current artifact/evidence](reports/reliability-2026-10-03/windows-candidate1003d/README.md).
 The goal remains ACTIVE. Root is working solo this continuation;
 the one authorized helper completed its latest bounded work, earlier agents retired.
 
@@ -451,6 +451,11 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   [Evidence](reports/reliability-2026-10-03/rebind-seat-packet/README.md).
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
+- [x] DEFAULT-HERO-FULL-MATCH-1003: current1341003d first actual LAN8x90 Hero
+  passes exact packaged default wire, naturalend/equalscore/twohumanorigins and
+  both own savedcareers1history/queue/witness/appliedID. Normalexits/preservation
+  pass; physical input/allmaps/WAN/recovery contracts remain separate.
+  [Evidence](reports/reliability-2026-10-03/windows-candidate1003d/README.md).
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow
   in both shipping modes, current remade maps, failure/recovery and visual availability.
   Distinguish actual local-peer evidence from physical devices and WAN qualification.
