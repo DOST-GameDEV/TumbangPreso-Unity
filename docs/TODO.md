@@ -120,12 +120,12 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
-Latest checkpoint:39 root continuity fixes published through1dafe63c4. Earlier
+Latest checkpoint:40 root continuity fixes published throughf33e1d8a7. Earlier
 agents retired; latest owner authorized EXACTLY ONE new Sol6.1HIGH helper plus
 root implementation. Windows1002g/source248836d1e contains37fixes, twelve scenes
 built and fresh actual peer cold4actor state PASS; later LAN fixes not in it.
-Sole Sol training candidate3 running17680 after1causal/2control original; no other
-heavy job. Preserve contributor/private work and raw acceptance limits.
+Sole Sol training3/3 published; new approved practice body-removal/lunge lifecycle
+unit preparing MAIN only. Root continues disjoint fixes; no heavy job. Preserve contributor/private work and raw acceptance limits.
 
 - [x] SCORECARD-OWNER-CLOSE-1002: hide old account detail on ownership change;
   shipped84ddfc391, PlayMode3/3. [Evidence](reports/reliability-2026-10-02/playerhub-owner-detail/acceptance.md).
@@ -149,7 +149,10 @@ heavy job. Preserve contributor/private work and raw acceptance limits.
   [Evidence](reports/reliability-2026-10-02/cold-actor-peer/README.md).
 - [x] LAN-RECEIVE-OWNER-1002: shipped1dafe63c4, native3/3 after1causal/2controls,
   zero repairs/12525 unrelated protected match. [Evidence](reports/reliability-2026-10-02/lan-receive-owner/README.md).
-- [ ] TRAINING-PAUSE-TRANSITION-1002: sole Sol HIGH candidate3 running17680; original43529 reproduced1causal/2controls, zero repairs/exact3/protected12527.
+- [x] TRAINING-PAUSE-TRANSITION-1002: shippedf33e1d8a7, native3/3 after1causal/
+  2controls, zero repairs/exact3/protected12527. [Evidence](reports/reliability-2026-10-02/training-pause-transition/README.md).
+- [ ] PRACTICE-BOT-RESUME-1002: sole Sol active lunge-window retirement on actual hide/readd; baseline fixture preparing.
+- [ ] FAILURE-BUNDLE-UNIQUE-PATH-1002: root GUID filename suffix, source-reviewed; separate diagnostic/no Unity compile yet.
 - [x] LAN-LISTENER-START-1002: shipped5367390ab, real8911 bind cleanup/retry/
   shutdown native3/3 after1causal/2controls, zero repairs/12523 protected match.
   [Evidence](reports/reliability-2026-10-02/lan-listener-start/README.md).
