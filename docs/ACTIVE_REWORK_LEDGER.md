@@ -24,8 +24,8 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Verified local/remote45aa5dc62133145b81289ba64371522ce0725ad3:14productfixunits
-published. Includes hub admissionc63bea7b0, rematchballots7cbc65262 and friend
+Verified local/remote2c3f39dc97756b23f12239bdd7bba0429ab2e352:16productfixunits
+published. ACKcd4a41069 andrebind1f2d2bcb9 both shipped. Includes hub admissionc63bea7b0, rematchballots7cbc65262 and friend
 handler70370785e; reports keep exact1/1,4/4,2/2 scopes. Toolcoordination7bc205c24
 published with50localchecks/defaultSERIAL; no nativeparallelproof/workerscreated.
 QualifiedlocalACK commitcd4a41069: baseline2actualofflineUIfalse-successfailures,
@@ -35,15 +35,48 @@ ReadinessobjectiveACTIVE; no wholecompetition/physical/WAN/Android claim.
 
 ## Active job and exact next action
 
-AllRoot/Astra/Sol nativejobs TERMINAL. ACK pool15190 baseline2/2causalfail,
-72241 final41/41; profiles/inputrestored,11inputs/13protectedunchanged. UI/helper,
-Career.ReportAsync andSocial.RequestAsync frozen/committedcd4a41069; doNOTrepeat.
-Nativecapsule reportrecent-player-ack. Sol rebindpool57334 baseline2pass2cancel
-fails;26377 final4/4,0fixturerepairs; oneprelaunchPATHrepair (poolscript absentin
-qualification, invokeMAINabsolute instead). Protected24checks/20uniquepaths
-unchanged, profiles/inputrestored, noleaseheld. Next: Solreportrebind-cancel ready,
-explicitstageONLYTumpSettingsSession.cs+ControllerSupportTests.cs+itsreport;
-commit/pushACK+cancel pluscheckpoint afterincomingbranchreview.
+AllROOT/Astra/Sol native/playerjobs TERMINAL. Hero37561completed900/913s,
+actualbothSliceRunnernatural-endlogsRound8inactive/winner2/scores40/40/3500/3035,
+HeroIlalimDX11HD/Balanced/noAllBots, host59.63FPSmax107.07ms/client59.65max109.43ms.
+Ownedplayers21364/5612gone; profile/inputguardrestored. BOTHoriginalJSONverdicts
+FALSE preserved: genericcheckerrequiresactive;wrapperwronglyexpectedCareerHistory
+fromdirectCLI. SeparateaddendumactualnaturalendObservedTRUE frombothlogs/rounds.
+DirectNetBootstrapdoesnotsetSceneFlow.Networked=>record.Online=false=>Career
+intentionallydoesnotpersist. PlayerAccount.ReadLocalUSESlocalTokenfallback;
+NO normalUIidentitylossinferred. Operatorresults/career/rematchunqualified.
+FullHeroreportad37d6dc6, freshbuildreport21e2000e1; artifact16fixes2c3/539dunchanged.
+No8roundrerun. OldfullClassicdifferentf361artifact8roundsevidenceunchanged.
+
+QualifiedNEWunits beyondartifact: queue39a3bc4305/5 (ONEfixtureLinqimportfix),
+reporteligibility2c3eea2298/8 (4actualbaselinefails,0fixture/native retry;
+finalmanifestprepfailedyetlaunchproceeded, immediatebytesvalidation/afterlaunch
+manifestrepairdisclosed), completedcoldarrival960560b7c12/12 (2causal/5controls
+baseline,0repairs/1462protectedunchanged). All3COMMITTEDawaitpush; don'tretest.
+RootreviewMatchRpcSyncWorldexistingreliablemessage/presentationmatchfence retained;
+clientMatchEndedwon'tauthorrecord; record.Roundsmax(TotalRounds,roundsSeen)matches
+retainedeligibilityevenearlyscoretarget. No newwire/protocol/Cinderoverlap.
+
+NEXT actualpeer acceptance forcompletedarrival: Sol ownsNEW opt-in
+NetCompletedArrivalProbe.cs/.meta +tinytools/run_completed_arrival.py, PREPARING
+(notnative/buildqualifiedyet). UseCURRENTnativeHUB CLI -tp-lobby/-tp-lobbyjoin,
+freshnamedSettings.CustomRulesWire Hero1round30sec (notdefaultqualification),
+noautorematch/noAllBots. RequirehostnaturalendthenSAMEclientusesACTUALresult
+MAINMENUbutton→publicLeaveMatchToMainMenu/Stop/GoHome; waitHOME thenpublic
+StartClientAsync+WaitForConnection. TrustedSeatingownsnewarena; no directscene
+mutation/reset/forcefinish/scorewrite. Stop/rejoinfromsamearenaalone DOESNOTload
+newarena(OnSeating onlyloadsifscenediff), so operatorbutton isrequired honestcold
+arrival. CapturepostjoinnewMatchEnded+RecordReady sameMatchId/scores/scenehandle;
+hoststaysended;120secceiling/profileinputguard/own2PIDcleanup. Programmaticbutton,
+NO physicalinput/SDK/persistenceclaim. One currentprobe +actualnewcandidate run,
+no retiredWholeMatches/result-end-only route (bothretired).
+Root publishes3units/evidence thenonce-coherentNEW19fixbuild+optinprobe forpeer
+acceptance (newoutputname notexisting1002b/old7342). Freezequalifiedsource+probe
+compile/fingerprint/matchingRuntime; don'tcompileartifactfromdirtyMainprivateart.
+Astra ownscompletedarrivalqualifiedfilesreleased; preparespeeracceptancefield
+critique/nextactualsourceissue; Solprobeimplementation, Rootintegration/build.
+PrivateSupernovapartialhistoricalaftervisreview inreportad37: playerscontrast
+betterbutopaqueCorestillhideslata; no .50opacitystaged/claimedcomplete. Current
+phasealignedbaseline/candidatecapturefutureGPUonlyifneeded, no visualretune.
 
 Sourceownership: Root integrates/publishes/builds; Astra acknowledgedreportAPI,
 recentUI6casefixture/evidence completed and preparesnaturalHerooperatorplan;
@@ -60,7 +93,7 @@ current13+ACKprivate inputs intact. Runonlychangedbehavior; no broadrepeatedsuit
 ForeignAmihan/Cinderlanes maystartnewjobs; checkliveUnity/playersbeforeheavywork,
 neverkill/contacttheirlane. Poolwait/refusal isn't approvaltoforceparallel.
 
-Release checkout Codex/work/tump-competition-release1002 FF45aa5dc62,206preserved
+Release checkout Codex/work/tump-competition-release1002 FF2c3f39dc9,206preserved
 importer/generatedtrackedpaths,0CSharpdirt; oldBuilds/competition-release1002
 artifact7342... intact/frozen(source2664). No pristinePOSTimportclaim.
 NEXTnewbuildafterACK/cancelpush: FFqualifiedcommitwithoutreset, freezealltracked

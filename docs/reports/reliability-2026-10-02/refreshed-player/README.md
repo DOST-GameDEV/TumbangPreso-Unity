@@ -2,7 +2,7 @@
 
 Committed source2c3f39dc97756b23f12239bdd7bba0429ab2e352 includes16 product
 fix units from this continuation. Unity6000.5.8f1 built12shipping scenes:
-2432MB/127s, internal Build/competition-candidate1002b output, no Desktop change.
+2432MB/127s, internal Builds/competition-candidate1002b output, no Desktop change.
 Runtime SHA256539deda0cc4e225dcf653c55eacf70e5af4218bca12e9ff34f8d2eebea1ead74.
 
 All18,809 frozen tracked Assets/Packages/Settings inputs remained unchanged.

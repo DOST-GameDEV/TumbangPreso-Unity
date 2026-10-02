@@ -127,12 +127,21 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
 - [x] REMATCH-DEPARTED-BALLOT-1002: departing/held-seat players stop choosing maps;
   shipped7cbc65262 via45aa5dc62, native4/4.
   [Evidence](reports/reliability-2026-10-02/rematch-departed-ballot/README.md).
-- [ ] RECENT-PLAYER-ACK-1002: await friend/report acknowledgement before success
-  labels; qualifiedcd4a41069 native41/41, publication pending.
+- [x] RECENT-PLAYER-ACK-1002: await friend/report acknowledgement before success
+  labels; shippedcd4a41069 via2c3f39dc9, native41/41.
   [Evidence](reports/reliability-2026-10-02/recent-player-ack/README.md).
-- [ ] REBIND-CANCEL-1002: consume same-frame Escape when cancelling settings input
-  listening; qualified1f2d2bcb9 native4/4, publication pending.
+- [x] REBIND-CANCEL-1002: consume same-frame Escape when cancelling settings input
+  listening; shipped1f2d2bcb9 via2c3f39dc9, native4/4.
   [Evidence](reports/reliability-2026-10-02/rebind-cancel/README.md).
+- [ ] QUEUE-HOST-RETRY-1002: retry cached evaluation after transient host failures;
+  qualified39a3bc430 native5/5, publication pending.
+  [Evidence](reports/reliability-2026-10-02/queue-host-retry/README.md).
+- [ ] REPORT-ELIGIBILITY-1002: reports remain available independently of friends;
+  qualified2c3eea229 native8/8, publication pending.
+  [Evidence](reports/reliability-2026-10-02/report-eligibility/README.md).
+- [ ] COMPLETED-ARRIVAL-1002: cold ended-match snapshot and retained-record recovery;
+  qualified960560b7c native12/12, publication pending; actual peer next.
+  [Evidence](reports/reliability-2026-10-02/completed-match-arrival/README.md).
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow
