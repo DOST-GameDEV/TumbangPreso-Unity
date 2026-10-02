@@ -110,3 +110,5 @@ Automatic career sync after pending older-account work: [native evidence](report
 All-nine-hero official footage research and implementation plans: [October 2 review](reports/hero-reference-footage-2026-10-02/README.md).
 
 Displayed match and career-dispute identity: [native evidence](reports/reliability-2026-10-02/result-verdict/README.md).
+
+Late career acknowledgements refresh visible result details: [native evidence](reports/reliability-2026-10-02/result-late-ack/README.md).

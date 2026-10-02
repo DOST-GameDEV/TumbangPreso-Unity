@@ -184,6 +184,46 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual("", MatchResult.UploadCopyFor(null, priorOnlineQueue.Count));
         }
 
+        [UnityTest, Timeout(90000)]
+        public IEnumerator LateCareerAcknowledgementUpdatesTheOpenResultDetails()
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            SceneFlow.Networked = false;
+            SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
+            yield return SceneManager.LoadSceneAsync(SceneFlow.Eskinita);
+            yield return new WaitForSecondsRealtime(.4f);
+            var result = Object.FindFirstObjectByType<MatchResult>(); Assert.IsNotNull(result);
+            var career = GameServices.Career; Assert.IsNotNull(career);
+            Assert.IsFalse(GameServices.Account?.IsSignedIn ?? false, "This result check stays offline.");
+            result.OnMatchWon(1); yield return null;
+            var record = new MatchRecord {
+                MatchId = System.Guid.NewGuid().ToString("N"), Online = true,
+                Mode = "Classic", MapId = SceneFlow.Eskinita, Rounds = 8,
+                DurationSeconds = 720, WinningSlot = 1, PlayedUtc = "2026-10-02T00:00:00Z",
+                Players = new PlayerMatchStats[4] };
+            for (int seat = 0; seat < 4; seat++) record.Players[seat] = new PlayerMatchStats {
+                Slot = seat, PlayerId = seat == 1 ? TumbangPreso.Net.CareerStore.LocalPlayerId : "result-only-" + seat,
+                IsBot = seat != 1, Placement = seat == 1 ? 1 : seat + 1,
+                ActiveRounds = 8, Throws = 3, Tags = 2, Score = seat == 1 ? 500 : 100 };
+            GameServices.Stats.Adopt(record); yield return null;
+            Assert.IsNotNull(career.LastAward, "The local record must have a payable line before testing its UI acknowledgement.");
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var detail = (Text)typeof(MatchResult).GetField("_xpDetail", flags).GetValue(result);
+            Assert.IsNotNull(detail); StringAssert.DoesNotContain("THIS RESULT DID NOT MATCH", detail.text);
+            var cache = typeof(TumbangPreso.Net.CareerStore).GetField("_cache", flags).GetValue(career);
+            typeof(TumbangPreso.Net.CareerStore).GetMethod("CompleteSubmission", flags)
+                .Invoke(career, new object[] { cache, record, "{\"verdict\":\"disputed\"}" });
+            yield return null;
+            StringAssert.Contains("THIS RESULT DID NOT MATCH", detail.text,
+                "The current match acknowledgement never reached the already-open result details.");
+            var changed = (System.Delegate)typeof(TumbangPreso.Net.CareerStore).GetField("Changed", flags).GetValue(career);
+            Assert.AreEqual(1, changed.GetInvocationList().Count(handler => ReferenceEquals(handler.Target, result)));
+            result.enabled = false; yield return null;
+            changed = (System.Delegate)typeof(TumbangPreso.Net.CareerStore).GetField("Changed", flags).GetValue(career);
+            Assert.AreEqual(0, changed?.GetInvocationList().Count(handler => ReferenceEquals(handler.Target, result)) ?? 0,
+                "The retired result board retained its career callback.");
+        }
+
         private static IEnumerator ReviewResults(GameMode mode)
         {
             SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode));
