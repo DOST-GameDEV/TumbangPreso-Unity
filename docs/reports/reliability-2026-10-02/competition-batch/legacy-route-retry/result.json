@@ -1,0 +1,8 @@
+{
+    "passed": false,
+    "error": "System.InvalidOperationException: Expected UI state did not arrive. Scene=MatchSetup; controls=ShopButton,MenuButton,ChatHistoryButton,LoadoutButton,PlayButton,CloseChatButton,ModeCard,TaskButton,NamePlate,HeroButton,EarnButton,AvatarButton,ChatInput; preview=False; roundActive=False\r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<WaitFor>d__83.MoveNext () [0x0012a] in <d0af52d4aa2143ff87c90bab49306200>:0 \r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__76.MoveNext () [0x00054] in <d0af52d4aa2143ff87c90bab49306200>:0 ",
+    "stages": [
+        "Classic complete default match, four active input writers"
+    ],
+    "frameWindows": []
+}
