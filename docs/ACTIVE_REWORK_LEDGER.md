@@ -109,3 +109,9 @@ and docs/reports/sean-stoke-presentation-2026-10-02. Baseline actual cast accept
 in fixed simulation capture after one bounded fixture repair; memory warning
 preserved. Plan defines compact brace and distinct foot catch, no kit or other
 hero change. Heavy job terminal; candidate-only fixture not production code.
+
+Sean refinement final native fixed-simulation capture 1/1 passes, 33 body and
+33 owner frames; exit 0, guard null. Authored GLB retains 35 other animations and
+original mesh/rig/material/binary data. Blender standalone name-resolution check
+failed and is recorded as a limitation. Publish explicit owned clip/tool/report
+paths, then release this reservation. No gameplay/FPP/SFX changes.

@@ -1,0 +1,5 @@
+wrote Assets/TumbangPreso/Art/characters/persons/team-sean.glb  (1380916 bytes)
+HERO_ACTION {"file": "team-sean.glb", "clip": "hero-sean-dash", "duration": 0.8, "samples": 54, "authored_height": 0.848, "original_clips_preserved": 35, "original_binary_preserved": true, "punch": 0.18, "deepest_dip": 0.0, "deepest_dip_at": 0.0, "grounded_beats": [0.0, 0.08, 0.16, 0.18, 0.27, 0.43, 0.55, 0.7, 0.8], "root_y_range": [0.0, 0.05557], "largest_plant": 0.05557}
+Blender 4.3.2
+
+Blender quit

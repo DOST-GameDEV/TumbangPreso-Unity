@@ -1,0 +1,16 @@
+Extensions: writing cache failed ([Errno 30] Read-only file system: '/home/agent/.config/blender').
+08:49:41 | INFO: Data are loaded, start creating Blender stuff
+08:49:41 | INFO: Blender create Mesh node body-mesh
+08:49:41 | INFO: Blender create Mesh node head-mesh
+08:49:41 | INFO: glTF import finished in 0.09s
+Traceback (most recent call last):
+  File "/workspace/shared/TumbangPreso-Unity/tools/verify_hero_action.py", line 190, in <module>
+    print("HERO_VERIFIED " + json.dumps(measure(path, name, spec)))
+                                        ~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/workspace/shared/TumbangPreso-Unity/tools/verify_hero_action.py", line 72, in measure
+    assert clip is not None, f"{Path(path).name} has no action named exactly '{name}'"
+           ^^^^^^^^^^^^^^^^
+AssertionError: team-sean.glb has no action named exactly 'hero-sean-dash'
+Blender 4.3.2
+
+Blender quit
