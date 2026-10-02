@@ -65,7 +65,11 @@ namespace TumbangPreso.UI
         private void Show(Tab tab)
         {
             string identity=GameServices.Account?.PlayerId??"local";
-            if(_ownerDraftId!=identity){++_historyRequest;_ownerDraftId=identity;_ownerDraft.Clear();_ownerFriendSearch="";_shown.Clear();_page=0;}
+            if(_ownerDraftId!=identity)
+            {
+                ++_historyRequest;_ownerDraftId=identity;_ownerDraft.Clear();_ownerFriendSearch="";_shown.Clear();_page=0;
+                if(_detail!=null)_detail.SetActive(false);
+            }
             bool arriving=_tab!=tab;
             if(arriving)++_historyRequest;
             _tab=tab;_deleteArmed&=tab==Tab.Account;
