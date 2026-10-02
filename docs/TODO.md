@@ -48,6 +48,9 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   native1/1 covers five states. [Evidence](reports/reliability-2026-10-02/history-navigation/README.md).
 - [x] CAREER-ACCOUNT-SYNC-1002: retain/coalesce current-account sync after older busy
   operations; native4/4. [Evidence](reports/reliability-2026-10-02/career-account-sync/README.md).
+- [x] RESULT-VERDICT-IDENTITY-1002: dispute copy follows displayed match ID; native2/2.
+  [Evidence](reports/reliability-2026-10-02/result-verdict/README.md).
+- [ ] RESULT-LATE-ACK-1002: update an open result board when its career acknowledgement arrives.
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow
