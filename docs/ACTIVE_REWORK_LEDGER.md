@@ -24,9 +24,10 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Verified remote066bb51eeb4e08ba3182955388c9e2b8715fa509:21 qualified product
+Verified remote7b36c1e638007cf52f9e4ca3ed35ddd29bde93b5:22 qualified product
 fixes published. Latest customslots e8de37021 native6/6 (four causal failures),
 hub disconnect8acbdf683 native3/3 (three causal failures), zero repairs.
+Account save d01c62a68 native5/5 (four causal failures), zero repairs, published.
 Queue39a3bc4305/5, reporteligibility2c3eea2298/8,
 completedarrival960560b7c12/12. Preserve all raw baseline/failed receipts.
 ACKcd4a41069 native41/41; rebindcancel1f2d2bcb9 native4/4; Core691/691 unchanged.
@@ -36,17 +37,23 @@ CPU workers are implemented but no workers/parallel native proof created.
 
 ## Active job and exact next action
 
-ROOT build command session98535: release frozen HEAD066bb51ee, unique
-competition-candidate1002c source hash preparation then pool build (not1002b).
-Build receipt recipe release Logs/competition-candidate1002c/freeze_build.py;
-check preparation success before launch; finalize confirms inputs/artifact/guard.
-Root native AccountSaveOwnership baseline54240 terminal4causal failures/1control.
-Final session10551 queued/running via pool, profile account-save-owner1002, Logs
-account-save-owner1002/final, same5cases. Root owns PlayerAccount.cs save callback
-owner/profile/edit/request fences +new AccountSaveOwnershipTests.cs/.meta. Private
-nullable dispatch seam was added to baseline only; behavior otherwise original.
-No SDK calls. Do not mutate qualification owned inputs until final terminal.
-Customslots sessions98140/89495 terminal, guards restored, already published.
+ROOT builds98535/c and72335/d TERMINAL failed compilation, guards restored/lease
+released; no new qualified player. c implicit SceneHandle->int rejected, d used
+GetRawData but root retained int fields incorrectly. Installed CoreModule reflection
+confirms GetRawData returns UInt64; observer fields now ulong, no truncating cast.
+Two failures/raw receipts preserved in completed-arrival-build report. Isolated
+probe build retry EXHAUSTED. Next build only after NEW qualified product batch,
+unique1002e/frozen committed source. Old1002b artifact untouched; no peer launch yet.
+Root AccountSave baseline54240/final10551 TERMINAL4causal/1control then5/5, guards
+restored, published d01c62a68. Customslots sessions98140/89495 terminal/published.
+
+Sol owns native combined18 baseline session85263, qualification Logs/
+rebind-ready-buffer-chat1002/baseline, profile rebind-ready-buffer-chat1002.
+Prep exit0;9 frozen source/test/meta inputs,1284 protected hashes. Expected12pass/
+6causal fail: Rebind10 (4fails), Ready4 (1fail), Buffer4 (1fail). ONE identical
+candidate final18 after baseline. Do not mutate qualification inputs until terminal.
+Root BufferSkipVote.cs chat intent candidate/four-case fixture frozen MAIN Logs/
+buffer-chat1002-inputs/manifest.json. Sol coordinating3 exact-owned units, poolSERIAL.
 
 Sol6.1HIGH owns new NetCompletedArrivalProbe.cs/.meta and tools/run_completed_arrival.py.
 Opt-in short custom Hero1round30sec actual native HUB CLI -tp-lobby/-tp-lobbyjoin,
@@ -64,10 +71,13 @@ After successful build root finalize frozen receipt then tools/run_completed_arr
 with --source-commit/--runtime-sha/--build-receipt, fresh Logs output,120sec ceiling.
 Sol now owns Settings/RebindSession.cs enabled-state restoration +new focused fixture.
 
-Astraxhigh hub disconnect completed/published. Now owns ReadyGate.cs manual
+Astraxhigh hub disconnect completed/published. Owns ReadyGate.cs manual
 ready chat typing guard +new fixture; derive current shipped ReadyUp F key,
 preserve auto-ready and pending retransmission while typing. Four cases planned,
-no native launch yet. No root/probe overlap. Two authorized
+included joint18 above. Next MAIN ONLY UI/EmoteWheel.cs typing gate/new3case fixture:
+chat T cannot open/capture mouse, focusing chat cancels without emitting emote,
+ordinary press/release still works. Exact context hunk, no authored emote changes.
+No native/qualification mutation for emote until joint18 done. Two authorized
 current-chat agents; oldSolultra INTERRUPTED, never wake. FAST control unavailable,
 not claimed configured. Keep all three on useful implementation, no invented busywork.
 

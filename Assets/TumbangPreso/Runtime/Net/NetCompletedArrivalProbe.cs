@@ -21,7 +21,8 @@ namespace TumbangPreso.Net
             public bool recordHumanOrigins;
             public bool postJoinSpectator;
             public int pid, matchEndedEvents, recordReadyEvents, beforeEndEvents, beforeRecordEvents;
-            public int sceneBefore, sceneAfter, rounds, roundSeconds, winner;
+            public int rounds, roundSeconds, winner;
+            public ulong sceneBefore, sceneAfter;
             public int postJoinSlot = -1;
             public long presentationMatch;
             public int[] scores, recordScores;
