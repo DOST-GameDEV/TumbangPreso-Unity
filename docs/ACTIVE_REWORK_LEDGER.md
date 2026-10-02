@@ -19,7 +19,7 @@ preserve finalized Paete/Phaister and active Sean/Rafi/Baha reservations.
 
 ## Published code and acceptance
 
-Source212cae991 committed, ready for push:41 root continuity runtime fixes;
+Verified remote448687b3b:43 root continuity runtime fix units;
 protocol132/recording13 after qualified incoming Rafi4a9afbd90, integrationa67d7bc5b. Latest units:
 32chat guards3e91f02b0/native10;33scorecard owner84ddfc391/native3;34RecordChoice
 57158d1db/native3;35cold actor12a2689ff/native3;36scorecard focus7c3124886/native3;
@@ -44,70 +44,63 @@ Report lan-receive-owner and startup report committed. No per-fix standalone reb
 
 ## Active agent job and next root action
 
-Training pausef33e1d8a7 PUBLISHED: original43529=1causal/2controls, final17680
-PASS3/3, zero repairs/all12527 protected unchanged/exact3 main/q. Both guards
-terminal/restored/no lease. Owning Guided_Training.md completion-beat sentence
-updated. Loading predicate is source-shared, not independently exercised. No full
-shipping tutorial or new standalone inclusion claim.
+Verified remote448687b3b:43 root continuity runtime fix units published. Latest
+42SafeStore51994763d ownedWindowsIO4/4 after2causal/2controls; ONE prep-bookkeeping
+correction/zero fixture/native repairs/all12531 protected. WindowsPlayer samebranch
+not executed; nonWindowsWrite unchanged/unqualified, Read promotion nonatomiccopy
+leavesvalid.bak intact on refusal. h41 artifact predates it.
+43TouchHUD448687b3b native3/3 after2causal/1borrowedcontrol, ZERO repairs/all12534
+protected/exact4/guardsrestored/free. CurrentCancel->sameframe reopen/newvisibleHUD,
+borrowedgameHUD unchanged, retiredcleanup leavesreplacementinput. No hardware,
+layout/padbinding/schema/assets/newplayer claim. h predates it. All nativehandles
+are terminal, no root/agent job to resume. Source reports/raw counts preserved.
 
-Emote212cae991 PUBLISHED via7648b68c3: original6196 1causal/2controls, final8973
-PASS3/all12529protected/exact3/guardrestored/free. ONE preflight classification
-repair, zero fixture/native repairs; eligibility only, not clip/Request/transport.
+ROOT frame-context diagnostic8ba8fa76f PUBLISHED:69846 FIRST2/2/all12532protected/
+exact4/guardrestored/no lease. Newmaxobserved state frame/time/scene/round/scale/
+focus/pause/loading/gc0total localreport only; no 270ms causality/FPS fix. Pre-native
+review corrected previousStats enable isolation, no native/fixture retry. Separate
+diagnostic from43fix count; h predates this code. UniqueBundle40f8f2474 compiledh.
 
-SOLE Sol HIGH owns ONLY SafeStore.cs + NEW SafeStoreRecoveryChainTests.cs/.meta/
-report. MAIN fixture ready/GUIDfabcf601e931419b9ddb3006eccdad9a, source unchanged
-until native baseline. Approved FOUR owned-temp cases: corrupt-primary recovery->
-normal save preserves usable backup; ordinary rotation; real FileShare.Read blocks
-promotion but Read still returns intact.bak; actual refusedWrite preserves existing
-.bak. Agent OS-only probe showed current backup deletion BEFORE failedprimarymove
-losesgood.bak; SafeStore execution still pending. Candidate must avoid bad rotation,
-keep nonthrowingAPI and crossplatform support. EditorNetStandard2.1 supports
-File.Replace3/4 +File.Copyoverwrite but NOT3argFile.Move. No schema/framework/userfile
-ops. Original4/candidate4 ONEpair, <=ONE repair, prep0/freshXML/exact3/protect receipts.
-Root released engine slot afterh34064; agent may prep/native qualification now.
-Send nativehandles; ROOT NO player/heavyjob until agent coherent unit releases.
+SOLE Sol6.1HIGH sol_parallel_engineering ACTIVE SOURCE-ONLY helping root assess
+NEW/Different authoritative HostResolveLunge->actual bodydisable/reenable acceptance
+for OPEN stale contact window. Root reserves CombatVerbs.cs/potential NEW direct
+lifecycle fixture; agent inspect dependencies/guards/cooldown pitfalls, NO edits/
+native until ownershipcoord. Do NOT revive failed PracticeBotResume helper or raw
+input/expiry assertion route. New proof only if materially different actualpublic
+API/lifecycle; not fake transient fields. Then agent chooses a different concrete
+non-hero current bug/ownershipfirst. No extra agents, old retired agents neverwake.
 
-ROOT h build34064 TERMINAL0/12scenes2432MB90s, guardrestored/leasefree. Freeze15412
-TERMINAL0/18891inputs/source7648b68c30ff9664819f8ba7d3bbc7f1cbed68ef,
-protocol132/recording13, noC#dirty. Release internal1002h path/profile/Logs same.
-ROOT post-hash finalizer88799 RUNNING (read-only releaseInputs); awaitTERMINAL
-BEFORE classification. One premature classify read failed because receipt not yet
-written; no mutation/source repair/build retry/player launch. Do NOT repeat before
-finalizer ends. Then classify onlyexpected2 generatedidentity outputs, preserve
-strictfalse and confirm packagedsource/protocol/target/runtime. No playeruntilpass.
-Newh includes41runtimefixes +uniqueBundle40f8f2474 now compilationaccepted +incoming
-Rafi; sourceversion132 players cannotmix with oldg131. Agent temp tests separateq.
+h build34064 TERMINAL0/12scenes2432MB90s. Freeze15412/post88799 TERMINAL:
+18891inputs18889unchanged/exact2generatedidentity outputs. OriginalstrictFALSE
+preserved; artifactclassificationPASSED. PrematureFileNotFound beforefinalizer
+receipt generated changednothing, no build/source retry. Subsequentclassify after
+terminal. Source7648b68c30ff9664819f8ba7d3bbc7f1cbed68ef/protocol132/recording13;
+Runtime dfb967a5ab8b79374885831866ed4d78c01e456d163094d69e63a9731115e43d.
+Internalrelease1002h/importer-meta-settings dirt retained; noC#beforefreeze.
 
-IncomingRafi4a9afbd90/a67d7bc5b preserved: Baha kind18/recording13 reads10/11/12,
-Core704/704 ONE mergedpass/rawTRX published7648. Contributor3Linuxpeer evidence,
-retained memory/helper warnings separate, no newWindowsphysics/human/WAN claim.
+NEW hWindowspeer14348 FIRST PASS: normalresultMAINMENU->HOME->publiccoldrejoin/
+newscene/end/record, match776871900f7d49979ad7d53ff400b16e/scores20/0/0/150,
+clientSlot1 NONspectator/all4inactive/parked/move0/sprintoff. Owned20536/26044 dead,
+input+seedsrestored/runtimeunchanged/leasefree. CustomHero1round30/two humanorigins
++two bots, no AllBots/autorematch/forcefinish/physical/WAN/career settlement/full-
+8round claim. h reportpublishede0a196678. Currenth contains41fixes, later42/43/
+framecontext not included. No per-fix rebuild; futurecoherentbatch if needed.
 
-Retired practice route OPEN/no product patch:70621+81031 repeated stale lunge0.446/
-0.449s contact window after actual bot hide/readd. First clocksetup fixture corrected
-once; second fixture's exact0 expiry assumption failed on normal negative timer.
-Both raw runs/source preserved, source CombatVerbs UNCHANGED, failing new fixture/meta
-moved from MAIN/qAssets to taskLogs with exactcontainment/hashes.12529protected match,
-no active nativePIDs. Evidence publishedd1e090dad, no candidate/fix/extra retry.
-Agent must not revisit that retired helper; concrete defect stays OPEN for justified
-later work. Old callbacks report/naming source compilation limits retained.
+IncomingRafi4a9afbd90/protocol132/record13/field18 preserved, contributor3Linuxpeer
+scope separate/rootONE Core704/704/no skips rawTRX7648. No unchangedCore repeat.
 
-ROOT independently owns FailureBundle.cs filename collision fix ONLY: timestamp
-seconds currently overwrite a bundle generated in same second. Add full Guid:N
-suffix preserving prefix and returned path; caller search found no fixed-name parser.
-Single-line reversible naming change, no file-writing test against user's shared
-persistentDataPath. COMMITTED40f8f2474, source-reviewed/no new Unity compilation yet; keep diagnostic
-count separate from40 runtime fixes. Await meaningful integration compile/batch.
+Retired practice OPEN/unfixed:70621+81031 twice causal0.446/0.449s lungewindow
+retainedafter actualSetBot hide/readd. Firstfixture clock repairedonce; secondexact0
+expiry expectation failed on normallynegative timer, not gameplayfailure. Helper
+route retired/no patch/candidate; CombatVerbs currentlyUNCHANGED. Honest evidence
+publishedd1e090dad. NEWfailedtest/meta movedoutMAIN/qAssets with exact containment/
+hashes/protected12529. No source rollback/reset; no third helper iteration.
 
-NEXT ROOT continue disjoint concrete engineering while agent works; no broad audits,
-validation loops or extra workers. Current1002g contains37fixes, predates LAN38/39
-and training40. NEXT ROOT ONE coherent Windows1002h at newest published41fix source/protocol132.
-Include both LAN units/training/emote/naming/Rafi; releaseFF after incomingreview,
-no C#dirty, freeze allinputs, uniqueinternaloutput, guard3072/2048reserve/600s.
-Strict2 identity outputs classified separately, no unknown drift/player beforepass.
-Agent advances disjointMAIN; no native during rootfreeze/build. Not per-fix. Current
-full-tournament/map/failure-recovery/visual-availability and original270ms host frame
-remain bounded readiness work. Prior natural Classic/Hero8round ends retained;
-no unchanged8round rerun or claim270ms frame causally fixed. Goal ACTIVE.
+NEXTROOT: actualimplementation of justifieddisjointbug or improved directlifecycle
+acceptance while onehelper works; no validationloops/broad audits/extra workers.
+Currentfulltournament/map/failure-recovery/visualavailability evidence remains;
+270ms aggregate stall unconfirmedculprit, nowbetterdiagnostic. Prior natural
+Classic/Hero8round ends retained; don't rerun unchanged8rounds. Goal ACTIVE.
 
 ## Preservation and recovery
 
@@ -127,7 +120,12 @@ or retry. No unused task browser tabs/servers. Old wrap heartbeat deleted.
 
 ## Current frozen artifact and actual peers
 
-Current1002g: releaseHEAD248836d1e1ccf367a76abdb7d45df0474d8ccb11/protocol131,
+Current1002h source7648b68c3/protocol132/record13/41fixes, Runtime
+dfb967a5ab8b79374885831866ed4d78c01e456d163094d69e63a9731115e43d, internal
+Builds/competition-candidate1002h/TumbangPreso.exe; artifact+actualpeer14348PASS,
+evidencee0a196678. Later42/43/diag excluded.
+
+Previous1002g: releaseHEAD248836d1e1ccf367a76abdb7d45df0474d8ccb11/protocol131,
 Builds/competition-candidate1002g/TumbangPreso.exe; RuntimeSHA256
 421af2276ca14c6a304890062fefacfe22974ef83bc3d4b397b8c0e32d444755.
 Native95607 success2432MB122s/12scenes, restored/free; artifact classificationpassed,

@@ -130,14 +130,11 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
-Latest checkpoint:41 root continuity fixes committed through212cae991; incoming
-Rafi protocol132/recording13 merged, Core704/704 first integration pass. Earlier
-agents retired; latest owner authorized EXACTLY ONE new Sol6.1HIGH helper plus
-root implementation. Windows1002g/source248836d1e contains37fixes, twelve scenes
-built and fresh actual peer cold4actor state PASS; later LAN fixes not in it.
-Sole Sol training3/3 published; practice stale-window investigation retained causal evidence but exhausted fixture
-repair gate and retired attempted test without product fix. Helper seeks disjoint
-next concrete source issue. Root continues disjoint fixes; no heavy job. Preserve contributor/private work and raw acceptance limits.
+Latest checkpoint:43 root continuity fix units published through448687b3b.
+ONE new Sol6.1HIGH helper +root implementation; prioragents retired. Currenth41
+protocol132/record13 build+actualWindowspeerPASS, laterSafe42/Touch43/diag not in it.
+All nativejobs terminal. Helper source-only review of materiallydifferent public
+hostlunge lifecycle acceptance; retired failedpracticehelper never revived.
 
 - [x] SCORECARD-OWNER-CLOSE-1002: hide old account detail on ownership change;
   shipped84ddfc391, PlayMode3/3. [Evidence](reports/reliability-2026-10-02/playerhub-owner-detail/acceptance.md).
