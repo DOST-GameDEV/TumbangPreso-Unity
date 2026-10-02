@@ -823,3 +823,9 @@ switching to the new attacking-tutorial barrier warning. Existing above-can
 false-hit fix already has native2/2 evidence under CAN-VERTICAL-CONTACT-1001;
 reconcile that source and Feedback note instead of rebuilding it. New warning
 source currently ignores the hidden-can tutorial exemption used by CanThrow.
+
+TUTORIAL-BARRIER-WARNING-1002 owns only TumpMatchReadout.Warnings.cs and one
+TutorialLessonHonestyProbe case. False message disagrees with CanThrow's existing
+active offline hidden-can exception. Baseline next; no live native job. Bastion
+c9cbbfb3 is locally preserved and checked, not yet pushed/delivered; no further
+hero polishing while current Feedback requests take priority.
