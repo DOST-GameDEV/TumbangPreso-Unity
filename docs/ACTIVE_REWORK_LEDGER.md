@@ -250,3 +250,12 @@ chest; final open carrying arm makes it visible. Same0.66s,45samples, floor0,
 guard requests despite exit0. Publish explicit namedclip/tool/report; no
 mechanic/FPP/VFX/SFX or whole-Pyro completion claim. Longer23.5s review next.
 
+
+Sean Empowered body901aa24b shipped via cf35ce4a; same Feedback note verified,
+23.5s comparison delivered. Release its previous clip-only claim.
+SEAN-CINDER-GATE-1002 begins the remaining proposed defending skill, exact paths
+and acceptance in reports/sean-cinder-gate-2026-10-02/plan.md. New kind appended;
+shared dynamic-field delivery only, no Sean-only RPC. NetSession ProtocolVersion
+constant only; no overlap with local IsAdmitted/Friend JOIN reservations. Sean
+only, Amihan storm-call and all other character-owned entries preserved. No
+heavy job or feature completion yet. First: finite crossing Core rules/tests.
