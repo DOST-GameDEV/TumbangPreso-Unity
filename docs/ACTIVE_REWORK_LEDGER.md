@@ -117,3 +117,14 @@ Sean refinement final native fixed-simulation capture 1/1 passes, 33 body and
 original mesh/rig/material/binary data. Blender standalone name-resolution check
 failed and is recorded as a limitation. Publish explicit owned clip/tool/report
 paths, then release this reservation. No gameplay/FPP/SFX changes.
+
+Sean body refinement shipped in 0a69c266 via 4817d170; owner says it looks better
+and asks for longer review clips. Preserve this version. Release Sean-only
+source reservation; human final approval remains separate.
+
+CATCH-BANNER-UPGRADE-1002 claims Runtime/UI/MatchMomentBanner.cs and
+Tests/PlayMode/MatchMomentTests.cs, plus its report/TODO updates. Live Feedback
+explicitly requests Single Catch to be superseded by Double Catch immediately.
+Reproduce current queuing, then replace only newer higher catch recognition for
+the same actor/match/round; preserve unrelated queue entries and scoring.
+No other UI/presentation paths claimed.
