@@ -1929,6 +1929,15 @@ namespace TumbangPreso.UI
 
             MenuSfx.Click();
             Close();
+            var hub = Hub.TumpHub.Current;
+            if (hub != null)
+            {
+                // HOME and an existing room both already own a join controller.
+                // Reloading this scene only consumed the code after a new auto-host.
+                hub.Home();
+                hub.Push<Hub.HubJoin>(screen => screen.JoinCodeOnOpen = joinCode);
+                return;
+            }
             SceneFlow.PendingJoinCode = joinCode;
             SceneFlow.Go(SceneFlow.MatchSetup);
         }

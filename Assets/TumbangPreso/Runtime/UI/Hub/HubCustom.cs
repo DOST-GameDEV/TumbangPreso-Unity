@@ -141,6 +141,7 @@ namespace TumbangPreso.UI.Hub
     public sealed class HubJoin : HubScreen
     {
         public override float CourtShade => 0.9f;
+        public string JoinCodeOnOpen { get; set; }
         private int _source;     // 0 internet, 1 LAN, 2 code
         private HubButton[] _sources;
         private RectTransform _list, _code;
@@ -224,10 +225,20 @@ namespace TumbangPreso.UI.Hub
             HubScenery.Tape(right, "TapeLeft", new Vector2(0, 1), new Vector2(60, -4), 12, 140);
             HubScenery.Tape(right, "TapeRight", new Vector2(1, 1), new Vector2(-60, -4), -9, 140);
 
-            Hub.Host.Browse();
-            Source(0);
             HubSlap.On(left, 0, -1);
             HubSlap.On(right, 0.06f, 1);
+            if (!string.IsNullOrWhiteSpace(JoinCodeOnOpen))
+            {
+                string code = JoinCodeOnOpen;
+                JoinCodeOnOpen = null;
+                Source(2);
+                _codeField.SetTextWithoutNotify(code);
+                Join(code);
+            }
+            else
+            {
+                Source(0);
+            }
         }
 
         private static void Column(RectTransform parent, string words, float x)
@@ -241,6 +252,7 @@ namespace TumbangPreso.UI.Hub
             _source = index;
             for (int i = 0; i < _sources.Length; i++) HubKit.SetFill(_sources[i], i == index ? HubStyle.Persimmon : HubStyle.Honey);
             bool code = index == 2;
+            if (!code) Hub.Host.Browse();
             _code.gameObject.SetActive(code);
             _list.gameObject.SetActive(!code);
             _list.parent.Find("Columns").gameObject.SetActive(!code);

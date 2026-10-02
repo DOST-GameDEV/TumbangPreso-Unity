@@ -36,6 +36,8 @@ controller, refusal and Back handling. This avoids the old scene request that
 only ran after AutoHost, which skips ordinary HOME and an already-live room.
 This friend route is pending separate supported handler/operator acceptance.
 Its physical click, button layout, service join and actual peers are unqualified.
+The subsequent [direct handler acceptance](../friend-join-handler/README.md)
+qualifies the action separately while retaining these original fixture failures.
 
 All runs used the isolated tump-feedback-0930 checkout and named
 friend-join-admission1002 profile, D3D11, requested960x540window and Low graphics.
