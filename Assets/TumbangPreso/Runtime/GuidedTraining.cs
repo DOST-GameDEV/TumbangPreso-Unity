@@ -666,6 +666,9 @@ namespace TumbangPreso
         private IEnumerator AdvanceAfterBeat()
         {
             yield return new WaitForSecondsRealtime(0.70f);
+            // The completion beat uses real time, but entering a lesson changes the
+            // world. Give pause/loading the same ownership as the ordinary update.
+            while (Panel.AnyOpen || UI.Hub.HubLoading.Visible) yield return null;
             EnterLesson((Lesson)((int)_lesson + 1));
         }
 
