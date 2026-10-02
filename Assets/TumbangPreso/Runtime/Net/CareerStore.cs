@@ -253,7 +253,9 @@ namespace TumbangPreso.Net
         {
             // ⚠️ SEE `SafeStore`. A career file is the one player file that cannot be
             // regenerated from anything, so a truncated save costs a real history.
-            SafeStore.Write(Path, JsonUtility.ToJson(_cache));
+            string path = Path;
+            SafeStore.Write(path, JsonUtility.ToJson(_cache),
+                text => JsonUtility.FromJson<Cache>(text) != null);
         }
 
         private void OnAccountChanged()

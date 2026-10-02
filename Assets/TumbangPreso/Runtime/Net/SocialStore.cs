@@ -170,7 +170,9 @@ namespace TumbangPreso.Net
             {
                 _cache.OwnerId = CareerStore.LocalPlayerId;
                 _cache.List = SocialRules.Normalise(_cache.List);
-                SafeStore.Write(Path, JsonUtility.ToJson(_cache, prettyPrint: true));
+                string path = Path;
+                SafeStore.Write(path, JsonUtility.ToJson(_cache, prettyPrint: true),
+                    text => JsonUtility.FromJson<Cache>(text) != null);
             }
             catch (Exception e)
             {

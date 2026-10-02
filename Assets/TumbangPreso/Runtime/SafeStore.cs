@@ -53,6 +53,10 @@ namespace TumbangPreso
         /// version as a backup. Returns false and logs rather than throwing.
         /// </summary>
         public static bool Write(string path, string contents)
+            => Write(path, contents, null);
+
+        /// <summary>Only a usable previous primary replaces the recovery backup on Windows.</summary>
+        public static bool Write(string path, string contents, Func<string, bool> validPrevious)
         {
             if (string.IsNullOrEmpty(path)) return false;
 
@@ -76,7 +80,10 @@ namespace TumbangPreso
                     if (Application.platform == RuntimePlatform.WindowsEditor
                         || Application.platform == RuntimePlatform.WindowsPlayer)
                     {
-                        File.Replace(temp, path, backup);
+                        string previous = validPrevious != null ? TryRead(path) : null;
+                        bool usablePrevious = validPrevious == null
+                            || (previous != null && SafeValid(validPrevious, previous));
+                        File.Replace(temp, path, usablePrevious ? backup : null);
                         return true;
                     }
                     if (File.Exists(backup)) File.Delete(backup);

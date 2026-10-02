@@ -989,7 +989,9 @@ namespace TumbangPreso.Settings
             // onto the live file truncates it first, so a crash mid-save left a fragment that
             // `Load` correctly rejected and the player lost every rebind they had ever set. The
             // fallback below was always right; what was missing was a second copy to fall back TO.
-            SafeStore.Write(Path, JsonUtility.ToJson(_current, prettyPrint: true));
+            string path = Path;
+            SafeStore.Write(path, JsonUtility.ToJson(_current, prettyPrint: true),
+                text => JsonUtility.FromJson<GameSettings>(text) != null);
         }
 
         /// <summary>Test seam, so a suite does not read or write the real user file.</summary>

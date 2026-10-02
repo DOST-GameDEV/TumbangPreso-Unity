@@ -335,7 +335,12 @@ namespace TumbangPreso.Net
 
         private void Save()
         {
-            try { SafeStore.Write(Path, JsonUtility.ToJson(_cache)); }
+            try
+            {
+                string path = Path;
+                SafeStore.Write(path, JsonUtility.ToJson(_cache),
+                    text => JsonUtility.FromJson<Cache>(text) != null);
+            }
             catch (Exception e) { Debug.LogWarning($"[Wallet] cache not written: {e.Message}"); }
         }
     }
