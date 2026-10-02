@@ -24,114 +24,78 @@ unless needed for a specific unresolved fact. TODO is the only work-status queue
 
 ## Current source and publication
 
-Verified local/remote2c3f39dc97756b23f12239bdd7bba0429ab2e352:16productfixunits
-published. ACKcd4a41069 andrebind1f2d2bcb9 both shipped. Includes hub admissionc63bea7b0, rematchballots7cbc65262 and friend
-handler70370785e; reports keep exact1/1,4/4,2/2 scopes. Toolcoordination7bc205c24
-published with50localchecks/defaultSERIAL; no nativeparallelproof/workerscreated.
-QualifiedlocalACK commitcd4a41069: baseline2actualofflineUIfalse-successfailures,
-final41/41 (UI6/report22/social13),0fixture repairs, noSDK/endpoints.
-Rebindcancel sourcequalified4/4 final, report/commitpending. Core691/691 unchanged.
-ReadinessobjectiveACTIVE; no wholecompetition/physical/WAN/Android claim.
+Verified remote5bf65ed6a6a08a3653c1d2dd4f88bf8cb02a66d0:19 qualified product
+fixes published. Latest queue39a3bc4305/5, reporteligibility2c3eea2298/8,
+completedarrival960560b7c12/12. Preserve all raw baseline/failed receipts.
+ACKcd4a41069 native41/41; rebindcancel1f2d2bcb9 native4/4; Core691/691 unchanged.
+No whole competition, physical device, WAN or Android qualification claim.
+Toolcoordination7bc205c24 has50local checks/default SERIAL. Optional two isolated
+CPU workers are implemented but no workers/parallel native proof created.
 
 ## Active job and exact next action
 
-AllROOT/Astra/Sol native/playerjobs TERMINAL. Hero37561completed900/913s,
-actualbothSliceRunnernatural-endlogsRound8inactive/winner2/scores40/40/3500/3035,
-HeroIlalimDX11HD/Balanced/noAllBots, host59.63FPSmax107.07ms/client59.65max109.43ms.
-Ownedplayers21364/5612gone; profile/inputguardrestored. BOTHoriginalJSONverdicts
-FALSE preserved: genericcheckerrequiresactive;wrapperwronglyexpectedCareerHistory
-fromdirectCLI. SeparateaddendumactualnaturalendObservedTRUE frombothlogs/rounds.
-DirectNetBootstrapdoesnotsetSceneFlow.Networked=>record.Online=false=>Career
-intentionallydoesnotpersist. PlayerAccount.ReadLocalUSESlocalTokenfallback;
-NO normalUIidentitylossinferred. Operatorresults/career/rematchunqualified.
-FullHeroreportad37d6dc6, freshbuildreport21e2000e1; artifact16fixes2c3/539dunchanged.
-No8roundrerun. OldfullClassicdifferentf361artifact8roundsevidenceunchanged.
+ROOT current native baseline custom-slot-recovery-baseline1002, session98140,
+qualification worktree Codex/work/tump-feedback-0930. Six focused cases: null/empty
+first/second saved custom character slot must preserve later valid slots and active
+character; complete and short profile controls. Current loader breaks at missing
+wire, so candidate proposed defaults all three then assigns nonempty wires by
+original index. Root owns CustomCharacterStore.cs +new CustomCharacterSlotRecoveryTests.
+Baseline frozen; do not modify qualification inputs until terminal. Stop criterion:
+causal four failures/two controls then one final six-case pass; no broad suites.
 
-QualifiedNEWunits beyondartifact: queue39a3bc4305/5 (ONEfixtureLinqimportfix),
-reporteligibility2c3eea2298/8 (4actualbaselinefails,0fixture/native retry;
-finalmanifestprepfailedyetlaunchproceeded, immediatebytesvalidation/afterlaunch
-manifestrepairdisclosed), completedcoldarrival960560b7c12/12 (2causal/5controls
-baseline,0repairs/1462protectedunchanged). All3COMMITTEDawaitpush; don'tretest.
-RootreviewMatchRpcSyncWorldexistingreliablemessage/presentationmatchfence retained;
-clientMatchEndedwon'tauthorrecord; record.Roundsmax(TotalRounds,roundsSeen)matches
-retainedeligibilityevenearlyscoretarget. No newwire/protocol/Cinderoverlap.
+Sol6.1HIGH owns new NetCompletedArrivalProbe.cs/.meta and tools/run_completed_arrival.py.
+Opt-in short custom Hero1round30sec actual native HUB CLI -tp-lobby/-tp-lobbyjoin,
+noautorematch/noAllBots. Host natural-end then SAME client invokes ACTUAL current
+ResultMainMenu onClick, public LeaveMatchToMainMenu/Stop/GoHome; wait actual HubHome,
+public StartClientAsync+WaitForConnection. TrustedSeating loads new arena. Require
+new scenehandle/post-rejoin MatchEnded+RecordReady, same authoritative MatchId/scores,
+host remains ended. Programmatic button, not physical input/SDK/persistence proof.
+Runner before freeze: sourcecommit/Runtime/build-receipt binding and nested-finally
+restoration/release. No player or build launched yet. Root reviews/integrates,
+commits opt-in diagnostics separately, then release FF exact committed source,
+freeze inputs and build unique competition-candidate1002c once. Do not rebuild1002b.
 
-NEXT actualpeer acceptance forcompletedarrival: Sol ownsNEW opt-in
-NetCompletedArrivalProbe.cs/.meta +tinytools/run_completed_arrival.py, PREPARING
-(notnative/buildqualifiedyet). UseCURRENTnativeHUB CLI -tp-lobby/-tp-lobbyjoin,
-freshnamedSettings.CustomRulesWire Hero1round30sec (notdefaultqualification),
-noautorematch/noAllBots. RequirehostnaturalendthenSAMEclientusesACTUALresult
-MAINMENUbutton→publicLeaveMatchToMainMenu/Stop/GoHome; waitHOME thenpublic
-StartClientAsync+WaitForConnection. TrustedSeatingownsnewarena; no directscene
-mutation/reset/forcefinish/scorewrite. Stop/rejoinfromsamearenaalone DOESNOTload
-newarena(OnSeating onlyloadsifscenediff), so operatorbutton isrequired honestcold
-arrival. CapturepostjoinnewMatchEnded+RecordReady sameMatchId/scores/scenehandle;
-hoststaysended;120secceiling/profileinputguard/own2PIDcleanup. Programmaticbutton,
-NO physicalinput/SDK/persistenceclaim. One currentprobe +actualnewcandidate run,
-no retiredWholeMatches/result-end-only route (bothretired).
-Root publishes3units/evidence thenonce-coherentNEW19fixbuild+optinprobe forpeer
-acceptance (newoutputname notexisting1002b/old7342). Freezequalifiedsource+probe
-compile/fingerprint/matchingRuntime; don'tcompileartifactfromdirtyMainprivateart.
-Astra ownscompletedarrivalqualifiedfilesreleased; preparespeeracceptancefield
-critique/nextactualsourceissue; Solprobeimplementation, Rootintegration/build.
-PrivateSupernovapartialhistoricalaftervisreview inreportad37: playerscontrast
-betterbutopaqueCorestillhideslata; no .50opacitystaged/claimedcomplete. Current
-phasealignedbaseline/candidatecapturefutureGPUonlyifneeded, no visualretune.
+Astraxhigh tracing UI/Hub/HubCustom.cs +ConvertedMatchSetup.Hub.cs cancellation and
+navigation for next independent concrete bug; no root/probe overlap. Two authorized
+current-chat agents; oldSolultra INTERRUPTED, never wake. FAST control unavailable,
+not claimed configured. Keep all three on useful implementation, no invented busywork.
 
-Sourceownership: Root integrates/publishes/builds; Astra acknowledgedreportAPI,
-recentUI6casefixture/evidence completed and preparesnaturalHerooperatorplan;
-Sol socialACK/API +rebindcancel implemented/qualified, reportthenindependentfix.
-Twoactiveauthorizedsubagents: Astraxhigh, Sol6.1HIGH. OldSolultra INTERRUPTED;
-neverwakeit. FASTswitch absentfromspawnAPI, acknowledgednotverified. Latestowner
-wantsALLthree constantlyproducehelpfulgameoutput; boundedvalidationperunit,
-noidleagentaftertask/noinventedbusywork. ParallelUnityOPTIONAL; keepmemorysafe.
+Frozen16-fix artifact remains releaseHEAD2c3f39dc97756b23f12239bdd7bba0429ab2e352,
+Builds/competition-candidate1002b/TumbangPreso.exe, Runtime
+539deda0cc4e225dcf653c55eacf70e5af4218bca12e9ff34f8d2eebea1ead74.
+Build succeeded2432MB127s;18809frozen inputs unchanged,206retained generated/importer
+tracked deltas,0CSharp dirt. Fresh committed source before build, not pristine
+post-import. Old competition-release1002 player7342... remains intact. Release
+Codex/work/tump-competition-release1002 never reset/clean/stage importer metas.
 
-Qualification absolute Codex/work/tump-feedback-0930 importedoverlays; doNOT
-reset/clean/copywholesale. Poolrunscript MAINtools/run_unity_job.py takes--project
-qualification, delegatesitsdynamicidentityguard. Serializegraphics/build/player,
-current13+ACKprivate inputs intact. Runonlychangedbehavior; no broadrepeatedsuite.
-ForeignAmihan/Cinderlanes maystartnewjobs; checkliveUnity/playersbeforeheavywork,
-neverkill/contacttheirlane. Poolwait/refusal isn't approvaltoforceparallel.
+Hero session37561 terminalexit1 after900/913s; actual both natural end logs,
+round8inactive/winner2/scores40/40/3500/3035, HeroIlalimDX11HD/Balanced/noAllBots.
+Host59.63FPS max107.07ms/client59.65 max109.43ms, no causal performance claim.
+Owned players21364/5612 gone; input restored. BOTH original JSON verdicts FALSE
+preserved: generic requires active; wrapper expected CareerHistory from direct CLI.
+Direct NetBootstrap does not set SceneFlow.Networked=>record.Online=false=>Career
+intentionally skips persistence. ReadLocal DOES use NetIdentity.LocalToken fallback;
+no normalUI identity loss inferred. Separate addendum proves natural end only.
+Reports ad37d6dc6/21e2000e1; no unchanged full8round rerun. Operator results/rematch,
+all maps/effects, physical input and WAN remain separate evidence gaps.
+Old boundary rejoin rawFALSE expected-seat/old-round sample preserved; do not replay
+unchanged probe. Old fullClassic8round on f361 different artifact unchanged.
 
-Release checkout Codex/work/tump-competition-release1002 FF2c3f39dc9,206preserved
-importer/generatedtrackedpaths,0CSharpdirt; oldBuilds/competition-release1002
-artifact7342... intact/frozen(source2664). No pristinePOSTimportclaim.
-NEXTnewbuildafterACK/cancelpush: FFqualifiedcommitwithoutreset, freezealltracked
-source/assets/settings (disclose206importerdeltas), unique
-Builds/competition-candidate1002b/TumbangPreso.exe +Logs/competition-candidate1002b.
-Use MAINpool --projectrelease --kindbuild memory3072/reserve2048 wait300 timeout600,
-profilecompetition-candidate1002b, -batchmode -nographics -executeMethod
-TumbangPreso.EditorTools.GameBuilder.BuildWindows -buildOutput UNIQUEabsoluteEXE.
-BuilderpurgesONLYnewverifiedoutputfolder; neverDesktop/oldartifact. Ownnativejobs
-only. Onecoherentbuild thennaturalHero8rounddefault90sec match, --seconds900,
-DX11/Balanced1920x1080 Ilalimremademap,2humanundriven+2ordinarybots, noAllBots,
-NOtournament(Classic-onlypreset). Existingguardedrun_demo_lan temporaryownedLogs
-wrapperlikepriorClassic. PreservegenericrawFALSEifinactiveatnaturalend; separate
-actualobservations requirebothround8/inactive/naturalend/membership/mode/map/
-matchingwinner+scores/noexceptions. No retiredOwnerUiWholeMatches fixture repair.
-Astra preparesexactsource-groundedwrapper/fields; Root launchesafterbuild+slot.
-FullClassic8round onf361 differentartifact retained, nounchangedrerunneeded.
-Whilebuild/matchruns, allthreecanfixdisjointsource withoutmutatingfrozeninputs.
+Pool MAIN tools/run_unity_job.py ->target dynamic identity guard; one heavy native/
+GPU/build/player. Test qualification checkout has imported overlays/private fixtures;
+copy only exact owned files, never reset/clean/copy wholesale. Build release via
+pool kindbuild memory3072/reserve2048 wait300 timeout600, named isolated profile,
+executeMethod TumbangPreso.EditorTools.GameBuilder.BuildWindows with UNIQUE internal
+Builds path. Check preparation success BEFORE dependent launch. Freeze source and
+keep root/agents implementing disjoint inputs during long checks. Foreign contributor
+Editor jobs may appear; pool waits/refuses, never kill/contact their lane.
 
-Privatebaselinearms4/HeroHazardsSupernovaopacity/Ultra/twoUI metas remain
-UNQUALIFIED/excluded, neverstage; unrelatedAmihan/Sean sourceactivepreserve.
-No newpaidservices/otherchats/resets/forcepush. No taskbrowser opened.
-
-Hero boundary reconnect run on frozen release2664 completed session96098 exit1;
-raw FALSE solely expected-seat aggregate, preserved Logs/competition-hero-rejoin1002.
-Both advanced round2 with clean buffer timing. One live client slot0 row combines
-old round references with transport reset during probe Rejoin(); production seat
-arrival applies seat before arena. Probe bypasses actual LobbyJoinPanel. Do NOT
-repeat unchanged probe expecting panel fix to green its verdict. Original result
-and traced classification must be published; no host seating corruption claim.
-
-Clean-start2664 release build succeeded2432MB/256s build phase, no C# drift;
-import/generated203 tracked metadata/settings deltas disclosed. Fresh INITIAL
-source/Library state, not pristine POST-import tree. Runtime7342fa1b...f8286a00,
-Builds/competition-release1002/TumbangPreso.exe in release checkout. Guards restored.
-Frozen artifact predates social/panel fixes and incoming ambience. Protected metas
-never stage. Full Classic8-round outcome remains valid for unaffected clock/core.
-Private Supernova/arms/Ultra/two UI metas remain excluded pending own evidence.
+Private main fourarms/HeroHazards .50 Supernova opacity/Ultra/two protectedUI metas
+remain unstaged/unqualified. Historical .50 improved player contrast but opaqueCore
+still hides lata; partial report ad37 does not qualify shipping. Current phased
+camera-aligned comparison remains future GPU check only if useful. Preserve original
+private captures/plan. No new paid services/cross-chat/reset/forcepush/Desktop replace.
+No task browser tabs opened; no task-owned player alive before current baseline.
 
 ## Remaining readiness evidence
 

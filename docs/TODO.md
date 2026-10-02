@@ -133,15 +133,18 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
 - [x] REBIND-CANCEL-1002: consume same-frame Escape when cancelling settings input
   listening; shipped1f2d2bcb9 via2c3f39dc9, native4/4.
   [Evidence](reports/reliability-2026-10-02/rebind-cancel/README.md).
-- [ ] QUEUE-HOST-RETRY-1002: retry cached evaluation after transient host failures;
-  qualified39a3bc430 native5/5, publication pending.
+- [x] QUEUE-HOST-RETRY-1002: retry cached evaluation after transient host failures;
+  shipped39a3bc430 via5bf65ed6a, native5/5.
   [Evidence](reports/reliability-2026-10-02/queue-host-retry/README.md).
-- [ ] REPORT-ELIGIBILITY-1002: reports remain available independently of friends;
-  qualified2c3eea229 native8/8, publication pending.
+- [x] REPORT-ELIGIBILITY-1002: reports remain available independently of friends;
+  shipped2c3eea229 via5bf65ed6a, native8/8.
   [Evidence](reports/reliability-2026-10-02/report-eligibility/README.md).
-- [ ] COMPLETED-ARRIVAL-1002: cold ended-match snapshot and retained-record recovery;
-  qualified960560b7c native12/12, publication pending; actual peer next.
+- [x] COMPLETED-ARRIVAL-1002: cold ended-match snapshot and retained-record recovery;
+  shipped960560b7c via5bf65ed6a, native12/12. Actual-peer acceptance remains open.
   [Evidence](reports/reliability-2026-10-02/completed-match-arrival/README.md).
+- [ ] CUSTOM-SLOT-RECOVERY-1002: missing saved slots preserve later characters;
+  qualified native6/6 after four reproduced failures; publication next.
+  [Evidence](reports/reliability-2026-10-02/custom-slot-recovery/README.md).
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow
