@@ -12,10 +12,12 @@ namespace TumbangPreso.UI
             var root = OwnerUiLayout.Rect(parent, name); root.gameObject.AddComponent<LayoutElement>().preferredHeight = 104;
             var text = OwnerUiLayout.Text(root, "Label", label, 31, OwnerUiLayout.TypeRole.Reading);
             OwnerUiLayout.Place(text.rectTransform, 3, 9, 585, 78); text.color = SettingsPalette.Ink;
+            // 2 units, not 1: a 1-unit rule at 12% fell between device pixels on some rows and
+            // vanished (the Sound effects and Music rows had no divider).
             var line = OwnerUiLayout.Rect(root, "RowRule").gameObject.AddComponent<Image>();
             line.rectTransform.anchorMin = new Vector2(0, 0); line.rectTransform.anchorMax = new Vector2(1, 0);
-            line.rectTransform.offsetMin = new Vector2(0, 0); line.rectTransform.offsetMax = new Vector2(-15, 1);
-            line.color = new Color(1, 1, 1, .12f); line.raycastTarget = false;
+            line.rectTransform.offsetMin = new Vector2(0, 0); line.rectTransform.offsetMax = new Vector2(-15, 2);
+            line.color = new Color(1, 1, 1, .16f); line.raycastTarget = false;
             var control = OwnerUiLayout.Rect(root, "Control");
             control.anchorMin = control.anchorMax = control.pivot = new Vector2(1, .5f);
             control.anchoredPosition = new Vector2(-20, 0); control.sizeDelta = new Vector2(533, 78);
