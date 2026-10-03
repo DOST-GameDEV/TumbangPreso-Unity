@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="11" result="Failed(Child)" total="11" passed="2" failed="9" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 08:12:33Z" end-time="2026-10-03 08:12:33Z" duration="0.2153319">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-codex-slot1003" fullname="TumpWorker-codex-slot1003" runstate="Runnable" testcasecount="1146" result="Failed" site="Child" start-time="2026-10-03 08:12:33Z" end-time="2026-10-03 08:12:33Z" duration="0.215332" total="11" passed="2" failed="9" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2397" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-codex-slot1003/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1146" result="Failed" site="Child" start-time="2026-10-03 08:12:33Z" end-time="2026-10-03 08:12:33Z" duration="0.181968" total="11" passed="2" failed="9" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27812" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2398" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1146" result="Failed" site="Child" start-time="2026-10-03 08:12:33Z" end-time="2026-10-03 08:12:33Z" duration="0.161093" total="11" passed="2" failed="9" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2399" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1146" result="Failed" site="Child" start-time="2026-10-03 08:12:33Z" end-time="2026-10-03 08:12:33Z" duration="0.135727" total="11" passed="2" failed="9" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2336" name="TutorialRosterUniquenessTests" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" testcasecount="11" result="Failed" site="Child" start-time="2026-10-03 08:12:33Z" end-time="2026-10-03 08:12:33Z" duration="0.103700" total="11" passed="2" failed="9" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2348" name="ClassicTutorialPartnersRemainDistinct" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.ClassicTutorialPartnersRemainDistinct" methodname="ClassicTutorialPartnersRemainDistinct" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="1313105751" result="Passed" start-time="2026-10-03 08:12:33Z" end-time="2026-10-03 08:12:33Z" duration="0.060016" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2346" name="EveryTutorialStudentGetsThreeDistinctHeroPartners" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-03 08:12:33Z" end-time="2026-10-03 08:12:33Z" duration="0.019421" total="9" passed="0" failed="9" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2337" name="EveryTutorialStudentGetsThreeDistinctHeroPartners(0)" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners(0)" methodname="EveryTutorialStudentGetsThreeDistinctHeroPartners" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="1117756385" result="Failed" start-time="2026-10-03 08:12:33Z" end-time="2026-10-03 08:12:33Z" duration="0.011771" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Student 0 at seat 1 repeats a tutorial partner at 3
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners (System.Int32 pick) [0x00047] in C:\Users\matth\Documents\Codex\work\tump-codex-slot1003\Assets\TumbangPreso\Tests\TutorialRosterUniquenessTests.cs:55
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2338" name="EveryTutorialStudentGetsThreeDistinctHeroPartners(1)" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners(1)" methodname="EveryTutorialStudentGetsThreeDistinctHeroPartners" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="1459606260" result="Failed" start-time="2026-10-03 08:12:33Z" end-time="2026-10-03 08:12:33Z" duration="0.000592" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Student 1 at seat 1 repeats a tutorial partner at 3
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners (System.Int32 pick) [0x00047] in C:\Users\matth\Documents\Codex\work\tump-codex-slot1003\Assets\TumbangPreso\Tests\TutorialRosterUniquenessTests.cs:55
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2339" name="EveryTutorialStudentGetsThreeDistinctHeroPartners(2)" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners(2)" methodname="EveryTutorialStudentGetsThreeDistinctHeroPartners" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="1746204553" result="Failed" start-time="2026-10-03 08:12:33Z" end-time="2026-10-03 08:12:33Z" duration="0.000416" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Student 2 at seat 1 repeats a tutorial partner at 3
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners (System.Int32 pick) [0x00047] in C:\Users\matth\Documents\Codex\work\tump-codex-slot1003\Assets\TumbangPreso\Tests\TutorialRosterUniquenessTests.cs:55
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2340" name="EveryTutorialStudentGetsThreeDistinctHeroPartners(3)" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners(3)" methodname="EveryTutorialStudentGetsThreeDistinctHeroPartners" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="898135087" result="Failed" start-time="2026-10-03 08:12:33Z" end-time="2026-10-03 08:12:33Z" duration="0.000409" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Student 3 at seat 1 repeats a tutorial partner at 3
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners (System.Int32 pick) [0x00047] in C:\Users\matth\Documents\Codex\work\tump-codex-slot1003\Assets\TumbangPreso\Tests\TutorialRosterUniquenessTests.cs:55
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2341" name="EveryTutorialStudentGetsThreeDistinctHeroPartners(4)" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners(4)" methodname="EveryTutorialStudentGetsThreeDistinctHeroPartners" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="1322837668" result="Failed" start-time="2026-10-03 08:12:33Z" end-time="2026-10-03 08:12:33Z" duration="0.000391" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Student 4 at seat 1 repeats a tutorial partner at 3
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners (System.Int32 pick) [0x00047] in C:\Users\matth\Documents\Codex\work\tump-codex-slot1003\Assets\TumbangPreso\Tests\TutorialRosterUniquenessTests.cs:55
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2342" name="EveryTutorialStudentGetsThreeDistinctHeroPartners(5)" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners(5)" methodname="EveryTutorialStudentGetsThreeDistinctHeroPartners" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="567611204" result="Failed" start-time="2026-10-03 08:12:33Z" end-time="2026-10-03 08:12:33Z" duration="0.000405" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Student 5 at seat 1 repeats a tutorial partner at 3
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners (System.Int32 pick) [0x00047] in C:\Users\matth\Documents\Codex\work\tump-codex-slot1003\Assets\TumbangPreso\Tests\TutorialRosterUniquenessTests.cs:55
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2343" name="EveryTutorialStudentGetsThreeDistinctHeroPartners(6)" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners(6)" methodname="EveryTutorialStudentGetsThreeDistinctHeroPartners" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="547729370" result="Failed" start-time="2026-10-03 08:12:33Z" end-time="2026-10-03 08:12:33Z" duration="0.000451" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Student 6 at seat 1 repeats a tutorial partner at 3
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners (System.Int32 pick) [0x00047] in C:\Users\matth\Documents\Codex\work\tump-codex-slot1003\Assets\TumbangPreso\Tests\TutorialRosterUniquenessTests.cs:55
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2344" name="EveryTutorialStudentGetsThreeDistinctHeroPartners(7)" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners(7)" methodname="EveryTutorialStudentGetsThreeDistinctHeroPartners" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="1504192433" result="Failed" start-time="2026-10-03 08:12:33Z" end-time="2026-10-03 08:12:33Z" duration="0.000435" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Student 7 at seat 1 repeats a tutorial partner at 3
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners (System.Int32 pick) [0x00047] in C:\Users\matth\Documents\Codex\work\tump-codex-slot1003\Assets\TumbangPreso\Tests\TutorialRosterUniquenessTests.cs:55
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2345" name="EveryTutorialStudentGetsThreeDistinctHeroPartners(8)" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners(8)" methodname="EveryTutorialStudentGetsThreeDistinctHeroPartners" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="1368929507" result="Failed" start-time="2026-10-03 08:12:33Z" end-time="2026-10-03 08:12:33Z" duration="0.000394" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Student 8 at seat 1 repeats a tutorial partner at 3
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.TutorialRosterUniquenessTests.EveryTutorialStudentGetsThreeDistinctHeroPartners (System.Int32 pick) [0x00047] in C:\Users\matth\Documents\Codex\work\tump-codex-slot1003\Assets\TumbangPreso\Tests\TutorialRosterUniquenessTests.cs:55
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-case id="2347" name="OrdinaryHeroMatchKeepsItsExistingSelectionPolicy" fullname="TumbangPreso.Tests.TutorialRosterUniquenessTests.OrdinaryHeroMatchKeepsItsExistingSelectionPolicy" methodname="OrdinaryHeroMatchKeepsItsExistingSelectionPolicy" classname="TumbangPreso.Tests.TutorialRosterUniquenessTests" runstate="Runnable" seed="792919985" result="Passed" start-time="2026-10-03 08:12:33Z" end-time="2026-10-03 08:12:33Z" duration="0.005734" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios Validation/TumpWorker-codex-slot1003\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

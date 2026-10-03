@@ -2,6 +2,13 @@
 
 ## PC root latest checkpoint: October 3, Unity slot isolation
 
+Root continuation update: slot-native1003a completed1/1, normal exit/restored/free.
+No simultaneous native proof because Claude had exited. Tutorial roster baseline
+11 had9causal/2controls afterONE missing-namespace fixture repair; first candidate
+11/11. Source MatchInstaller/test overlay frozen, report curated and publishing.
+Current next unit: tutorial bots' shared-ultimate admission, avoiding laptop-owned
+AIController/PracticeRange and Claude-owned Amihan files. No new outgoing messages.
+
 Competition goal is ACTIVE (confirmed tool). Owner requests continuing work after
 every answer and compaction. Latest request: second Unity slot alongside Claude.
 Claude owns MAIN graphics/filming and Amihan presentation files; never stop its

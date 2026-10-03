@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 08:03:44Z" end-time="2026-10-03 08:03:44Z" duration="0.1580495">
+  <test-suite type="TestSuite" id="2786" name="TumpWorker-qa-d-dddaa72bc5b9" fullname="TumpWorker-qa-d-dddaa72bc5b9" runstate="Runnable" testcasecount="1455" result="Passed" start-time="2026-10-03 08:03:44Z" end-time="2026-10-03 08:03:44Z" duration="0.158050" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2780" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-d/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1455" result="Passed" start-time="2026-10-03 08:03:44Z" end-time="2026-10-03 08:03:44Z" duration="0.143249" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10612" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2781" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1455" result="Passed" start-time="2026-10-03 08:03:44Z" end-time="2026-10-03 08:03:44Z" duration="0.133939" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2782" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1455" result="Passed" start-time="2026-10-03 08:03:44Z" end-time="2026-10-03 08:03:44Z" duration="0.124837" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2133" name="PracticeProducerResetLifetimeTests" fullname="TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests" classname="TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 08:03:44Z" end-time="2026-10-03 08:03:44Z" duration="0.099737" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2139" name="PublicResetPreservesHumanKeysOnADisabledAttachedBrain" fullname="TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests.PublicResetPreservesHumanKeysOnADisabledAttachedBrain" methodname="PublicResetPreservesHumanKeysOnADisabledAttachedBrain" classname="TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests" runstate="Runnable" seed="215731362" result="Passed" start-time="2026-10-03 08:03:44Z" end-time="2026-10-03 08:03:44Z" duration="0.086536" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-d-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

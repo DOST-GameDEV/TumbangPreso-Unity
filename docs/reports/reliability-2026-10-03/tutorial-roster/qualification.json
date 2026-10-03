@@ -1,0 +1,24 @@
+{
+  "original": {
+    "passed": 2,
+    "failed": 9,
+    "xmlSha256": "3c05fd8ac83f2fd79058376bdbeba542ace75c087ca27ee1d6027a036f88e22e",
+    "guardRestored": true
+  },
+  "candidate": {
+    "passed": 11,
+    "failed": 0,
+    "xmlSha256": "fd417b9beccd16fa5434066053b99a2b1e0e72fe0c0149f290e4e582cdcf308b",
+    "guardRestored": true
+  },
+  "source": {
+    "Assets/TumbangPreso/Runtime/MatchInstaller.cs": "422c540ed14475076d934835db1b1e0629b38d5fb45fab3882c3679e171e3f9e",
+    "Assets/TumbangPreso/Tests/TutorialRosterUniquenessTests.cs": "d6f94d68bba4e942bdf5c47b9089c2d1f09dc0f2665b6715f17f6abd01f3826f"
+  },
+  "fixtureRepair": {
+    "count": 1,
+    "reason": "Missing TumbangPreso.UI namespace for SceneFlow",
+    "firstLog": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-codex-slot1003\\Logs\\tutorial-roster-original1003\\unity.log",
+    "firstLogSha256": "b8abe8a9e6cf12d6cb8dcbf7beff81cd1bed8fbd2a7bfd0e5aa5e3b80e0d2cfa"
+  }
+}
