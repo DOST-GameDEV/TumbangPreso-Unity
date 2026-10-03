@@ -8,6 +8,42 @@ namespace TumbangPreso.Net
     public sealed partial class MatchRpc
     {
         public const float QueueVoteSeconds = 12;
+        public const float CharacterSelectionSeconds = 30;
+        private bool _characterSelecting;
+        private float _characterSelectEnds;
+        public bool CharacterSelecting => _characterSelecting;
+        public float CharacterSelectSecondsLeft => Mathf.Max(0, _characterSelectEnds - Time.unscaledTime);
+
+        public void HostBeginCharacterSelection()
+        {
+            if (!NetAuthority.IsHost || _characterSelecting || _queueMapVoting || !InPreparationScene()) return;
+            var lobby = NetSession.Instance?.Lobby;
+            if (lobby == null || lobby.MatchInProgress) return;
+            _characterSelecting = true;
+            _characterSelectEnds = Time.unscaledTime + CharacterSelectionSeconds;
+            _queueVoteSerial++;
+            _lobbyReady.Clear();
+            BroadcastReadyTally();
+            BroadcastLobbyPicks();
+            SendQueueVoteState();
+        }
+        public void HostCompleteCharacterSelection()
+        {
+            if (!NetAuthority.IsHost || !_characterSelecting || !InPreparationScene()) return;
+            var lobby = NetSession.Instance?.Lobby;
+            if (lobby == null || lobby.MatchInProgress) return;
+            if (!AIController.BotsEnabled && lobby.OccupiedSeatCount() < Balance.PlayerCount)
+            {
+                _characterSelecting = false; _queueVoteSerial++;
+                _lobbyReady.Clear(); BroadcastReadyTally(); BroadcastLobbyPicks();
+                SendQueueVoteState();
+                return;
+            }
+            _characterSelecting = false;
+            if (UI.SceneFlow.SelectedRules.MapVote) HostBeginQueueMapVote();
+            else HostStartMatch();
+        }
+
         private readonly int[] _queueMapVotes = { -1, -1, -1, -1 };
         private bool _queueMapVoting;
         private float _queueVoteEnds, _queueVoteOpened, _queueVoteNextState, _queueVoteRevealEnds;
@@ -24,6 +60,7 @@ namespace TumbangPreso.Net
             if (!NetAuthority.IsHost || _queueMapVoting || !InPreparationScene()) return;
             var lobby = NetSession.Instance?.Lobby;
             if (lobby == null || lobby.MatchInProgress) return;
+            _characterSelecting = false;
             _queueMapVoting = true;
             _queueVoteSerial++;
             _queueMapWinner = -1;
@@ -41,6 +78,7 @@ namespace TumbangPreso.Net
 
         private void ResetQueueArrival()
         {
+            _characterSelecting = false;
             _queueMapVoting = false;
             _queueMapWinner = -1;
             _queueVoteSerial = 0;
@@ -67,13 +105,20 @@ namespace TumbangPreso.Net
 
         private void TickQueueArrival()
         {
-            if (!_queueMapVoting) return;
+            if (!_queueMapVoting && !_characterSelecting) return;
             if (!InPreparationScene() || _nm == null || !_nm.IsListening)
             {
                 _queueMapVoting = false;
+                _characterSelecting = false;
                 return;
             }
             if (!NetAuthority.IsHost) return;
+            if (_characterSelecting)
+            {
+                if (CharacterSelectSecondsLeft <= 0) HostCompleteCharacterSelection();
+                else if (Time.unscaledTime >= _queueVoteNextState) SendQueueVoteState();
+                return;
+            }
             if (_queueMapWinner >= 0)
             {
                 if (Time.unscaledTime >= _queueVoteRevealEnds)

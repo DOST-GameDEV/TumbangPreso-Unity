@@ -5,6 +5,24 @@ correction: login and the title screen stay untouched, HOME opens from TAP TO ST
 eleven sketches under `ArtSource/front-end-flow-20260923/`, and a read of the current
 front end. `docs/TODO.md` UX-1 is the status queue; this file is the design it points at.
 
+## Current match entry, October 3
+
+Queued play keeps character selection followed by map voting. Custom START GAME
+opens character selection for the room. Under RULES / THE ROOM, MAP VOTE defaults
+to OFF: after lock-in, the host-selected court loads. When ON, the players vote
+before loading. The host owns selection deadlines, ballot results and match start.
+
+Normal arena arrival automatically shows the slow court overview, four player
+pose introductions, then 5 / 4 / 3 / 2 / 1 / START. There is no second in-match
+READY prompt or manual-ready option. The internal seated-peer loaded barrier is
+retained; bots and spectators do not vote as ready players. Gameplay stays held
+through the introduction and countdown, with camera, pose and input cleanup on
+interruption. Practice and tutorial entry retain their dedicated routes.
+
+Protocol 142 carries custom preparation phases and the optional map-vote rule.
+All peers must rebuild together. This supersedes the historical three-second
+countdown and custom manual-ready option described below.
+
 ## Owner additions during completion,2026-09-23
 
 [Completion plan](completion-plan.md) extends the existing design with UX-1.12:

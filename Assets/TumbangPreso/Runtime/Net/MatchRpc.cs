@@ -1810,7 +1810,8 @@ namespace TumbangPreso.Net
             _queueVoteNextState = Time.unscaledTime + 1;
             using var writer = new FastBufferWriter(32, Allocator.Temp);
             writer.WriteValueSafe(_queueVoteSerial);
-            writer.WriteValueSafe(QueueMapSecondsLeft);
+            writer.WriteValueSafe(_characterSelecting ? CharacterSelectSecondsLeft : _queueMapVoting ? QueueMapSecondsLeft : 0);
+            writer.WriteValueSafe(_characterSelecting ? 0 : _queueMapVoting ? 1 : 2);
             writer.WriteValueSafe(_queueMapWinner);
             for (int i = 0; i < Balance.PlayerCount; i++) writer.WriteValueSafe(_queueMapVotes[i]);
             _nm.CustomMessagingManager.SendNamedMessageToAll("QueueVoteState", writer);
@@ -1819,12 +1820,14 @@ namespace TumbangPreso.Net
         private void OnQueueVoteStateMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (NetAuthority.IsHost || !FromHost(senderClientId) || !InPreparationScene()) return;
-            int bytes = 12 + Balance.PlayerCount * 4;
+            int bytes = 16 + Balance.PlayerCount * 4;
             if (reader.Length - reader.Position != bytes || !reader.TryBeginRead(bytes)) return;
             reader.ReadValueSafe(out int serial);
             reader.ReadValueSafe(out float remaining);
+            reader.ReadValueSafe(out int phase);
             reader.ReadValueSafe(out int winner);
-            if (!Finite(remaining) || remaining < 0 || remaining > QueueVoteSeconds) return;
+            if (phase < 0 || phase > 2 || (phase == 2 && remaining != 0) || !Finite(remaining) || remaining < 0 ||
+                remaining > (phase == 0 ? CharacterSelectionSeconds : QueueVoteSeconds)) return;
             if (serial <= 0 || serial < _queueVoteSerial || winner < -1 || winner >= UI.SceneFlow.Maps.Length) return;
             var votes = new int[Balance.PlayerCount];
             for (int i = 0; i < votes.Length; i++)
@@ -1835,8 +1838,10 @@ namespace TumbangPreso.Net
             }
             _queueVoteSerial = serial;
             _queueVoteEnds = Time.unscaledTime + remaining;
+            _characterSelectEnds = Time.unscaledTime + remaining;
+            _characterSelecting = phase == 0;
             _queueMapWinner = winner;
-            _queueMapVoting = true;
+            _queueMapVoting = phase == 1;
             ApplyQueueMapVotes(votes);
         }
 

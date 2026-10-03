@@ -418,7 +418,8 @@ namespace TumbangPreso.Core
                 r.Bots.ToString(),
                 r.BotDifficulty.ToString(),
                 r.Private ? "1" : "0",
-                r.ManualReady ? "1" : "0");
+                r.ManualReady ? "1" : "0",
+                r.MapVote ? "1" : "0");
         }
 
         public static CustomRules Parse(string wire, GameMode fallback)
@@ -450,6 +451,7 @@ namespace TumbangPreso.Core
             if (parts.Length > 8) rules.Private = parts[8] == "1";
             // An absent suffix preserves the older room's explicit ready gate.
             if (parts.Length > 9) rules.ManualReady = parts[9] != "0";
+            if (parts.Length > 10) rules.MapVote = parts[10] == "1";
 
             // ⚠️ THE PASSWORD IS NOT ON THE WIRE AND MUST NEVER BE. A lobby advert is readable by
             // everybody in the pool; a password in it is a lock with the key taped to the door.
@@ -480,8 +482,11 @@ namespace TumbangPreso.Core
         public int BotDifficulty = (int)Difficulty.Normal;
         public bool Private;
 
-        /// <summary>Custom-room warm-up requires READY. Queued games force automatic arrival.</summary>
-        public bool ManualReady = true;
+        /// <summary>Legacy wire field, retained for reading older rule records.</summary>
+        public bool ManualReady = false; // Arena arrival is automatic.
+
+        /// <summary>Custom rooms may vote after character selection; otherwise the host chooses.</summary>
+        public bool MapVote;
 
         /// <summary>⚠️ HOST-ONLY. Never serialised onto the wire. See `CustomGameRules.Parse`.</summary>
         public string Password = "";
@@ -498,6 +503,7 @@ namespace TumbangPreso.Core
             BotDifficulty = BotDifficulty,
             Private = Private,
             ManualReady = ManualReady,
+            MapVote = MapVote,
             Password = Password,
         };
     }
