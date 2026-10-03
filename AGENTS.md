@@ -56,6 +56,18 @@ Do not present amplitude measurements or silent film as listening approval.
 
 ## Autonomy And Continuity
 
+- Keep one concrete next action in the active checkpoint. After inspecting a
+  result, either implement, run the next justified command or give a concise
+  blocker update. Do not repeatedly rewrite plans, generate abstract internal
+  filler or reread entire histories. Repetition is wasted usage, not work.
+- Answer owner questions promptly, then return to the authorized assignment.
+  Keep a visible update at least once per minute during active work; never end
+  merely because a batch passed. While a bounded job runs, do independent useful
+  work or wait briefly. Do not invent validation activity to remain busy.
+- Before compaction, save exact refs, dirty work, jobs/session IDs, evidence limits
+  and the next command. On return, read that short checkpoint and inspect live
+  state. Resume the command rather than rebuilding the plan from full history.
+
 - Continue assigned independent work through questions, checkpoints, passing
   tests, commits and pushes. A progress report is not a stop. Stop only when the
   assignment is complete, the owner stops it, or no authorized work can progress

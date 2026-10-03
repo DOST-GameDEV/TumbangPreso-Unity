@@ -75,8 +75,12 @@ Nothing was deleted or renumbered.
 - [x] Normal tutorial entry already resets the complete rules to Standard via
   SceneFlow.StartTraining before loading; stale Mirror settings are not retained.
   Source reconciliation only; no new rendered/operator claim.
-- [ ] Investigate translucent ultimate-screen composition; match tag-replay clarity.
-- [ ] Make Haunted nearsight radial and dark purple rather than flat black.
+- [x] Shared ultimate camera frames are opaque without changing authored fades:
+  original2pixel failures/1control, final3/3. Full player/hero film remains open.
+  [Evidence](reports/ultimate-opacity-2026-10-03/README.md).
+- [x] Haunted sight uses radial distance and existing Nemu purple ink, preserving
+  range/expiry/isolation. Native4/4 with retained guarded-shutdown limitation.
+  [Evidence](reports/haunt-sight-2026-10-03/README.md).
 
 ### TWO-MACHINE-NETWORK-1003: paired baseline complete, new source and online open
 
@@ -90,7 +94,7 @@ Nothing was deleted or renumbered.
   input failure plus separate accepted post-import classification and full manifest.
   [Artifact and limits](reports/reliability-2026-10-03/windows-candidate1003g/README.md).
 - [ ] Matching-artifact peer checks and actual Frozen effects; online/Relay remain
-  separate. Current Main137 is incompatible with frozen1003g134. Do not repeat
+  separate. Current Main139 is incompatible with frozen1003g134. Do not repeat
   the unchanged baseline merely to produce more activity.
 
 ### SPECTATOR-MATCH-LIFETIME-1003: retire old footage and markers
