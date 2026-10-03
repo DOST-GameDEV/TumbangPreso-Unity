@@ -1176,6 +1176,7 @@ namespace TumbangPreso.CameraSystem
                   : clip == "ignite" ? IgniteClip
                   : clip == "supernova-slam" ? SupernovaSlamClip
                   : clip == "sprint-electric" ? SprintElectricClip
+                  : clip == "bank-load" ? BankLoadClip
                   : clip == "overcharge" ? OverchargeClip
                   : clip == "summon-lightning" ? SummonLightningClip
                   : clip == "boulder-load" ? BoulderLoadClip

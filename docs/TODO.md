@@ -1141,11 +1141,12 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   protocol128. Other Pyro slots and full presentation remain open.
   [Evidence](reports/hero-quality-2026-10-01/empowered-throw/README.md).
 
-- [ ] BANK-SHOT-LOAD-MOTION-1003: scoped replacement of the stale magnet-recall
-  body/owner gesture with loading the already-held slipper. Preserve mechanics,
-  descriptions, assets outside the appended clip and existing sound. Reserved
-  bank-only authoring/dispatch/test paths and acceptance in
-  [plan](reports/zack-bank-load-2026-10-03/plan.md).
+- [x] BANK-SHOT-LOAD-MOTION-1003 source: dedicated0.64s body/owner load of the
+  already-held slipper, preserving mechanics/copy/SFX and original37 clips.
+  Edit3/3, current headless13/13 guard-free, body-film1/1 with measured cadence.
+  [Implementation and retained failures](reports/zack-bank-load-2026-10-03/implementation.md).
+- [ ] BANK-SHOT-LOAD-MOTION-1003 visual acceptance: owner/walking graphics
+  blocked by8GiB container headroom; real-map/peer/player/human review still open.
 
 - [x] CLOSED-CIRCUIT-1001: cancellable6m/.4s defending acquisition,2s host
   Zapped,35s commitment cooldown and Overclock different-target follow-up.
