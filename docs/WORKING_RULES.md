@@ -41,6 +41,9 @@ and [earlier full rules](archive/CLAUDE_full_2026-09-24.md). New owner instructi
 - Reader withdrawal and parked control zero a controlled familiar's cached
   movement while keeping its accepted possession. Retain explicit zero input
   and local/offline custody; do not fall back to body AI or clear another seat.
+- A withdrawn reader retires local throw/lunge windup after losing its network
+  seat. Preserve newly received tells; clear its old local tell when no received
+  refresh replaced it. Keep committed contact and spent cooldowns.
 - Practice world reset retires active enabled bot input before teleporting.
   Disabled brains retained on human seats do not own that seat's input; leave
   its held controls intact. Preserve the existing shared human hero-key branch.
