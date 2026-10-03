@@ -57,7 +57,11 @@ namespace TumbangPreso.UI
         {
             var theme=OwnerUiTheme.Current;var text=Rect(parent,name).gameObject.AddComponent<UnityEngine.UI.Text>();
             text.text=words;text.font=role==TypeRole.Display?theme.Display:role==TypeRole.Accent?theme.Accent:theme.Reading;
-            text.fontSize=size;text.fontStyle=FontStyle.Normal;text.color=theme.ActionInk;
+            // Temporary Nunito replacement reads heavier/larger than the old Lydian.
+            // Owner requested a smaller reading size; keep the established small-window
+            // reading floor without enlarging labels authored below it. Display/accent stay intact.
+            text.fontSize=role==TypeRole.Reading?Mathf.Max(Mathf.Min(size,28),Mathf.RoundToInt(size*.85f)):size;
+            text.fontStyle=FontStyle.Normal;text.color=theme.ActionInk;
             text.alignment=TextAnchor.MiddleLeft;text.alignByGeometry=true;text.raycastTarget=false;
             text.horizontalOverflow=HorizontalWrapMode.Wrap;text.verticalOverflow=VerticalWrapMode.Truncate;
             text.supportRichText=false;return text;

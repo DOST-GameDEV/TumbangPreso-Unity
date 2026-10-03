@@ -17,6 +17,31 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### ARRIVAL-CAMERA-CLEARANCE-1004: near walls cannot push the eye beyond collision
+
+- [x] Replace unsafe0.8m minimum with nonzero0.01m floor. Original two failures/
+  four controls, candidate6/6; root inspected3400 maps with one source delta,
+  immutable fixture and restored/free guards. Existing radius/stand-off retained.
+  [Evidence](reports/laptop-validation-2026-10-04/arrival-camera-clearance/README.md).
+  Actual full-pan framing and current player/peers remain open.
+
+
+### READING-FONT-1003: temporary Nunito Bold replacement
+
+- [x] Replace active Lydian Regular theme/fallback/regeneration references with
+  Nunito Bold, retaining original assets. Native3/3 and actual tutorial image
+  inspected; [evidence and limits](reports/reading-font-2026-10-03/README.md).
+
+
+### OPENING-HANDOFF-1003: prepare the shot under loading
+
+- [x] Keep entry covered, prepare the opening before loading fades away, resolve
+  the return eye from the actual player rig and hide overhead introduction names.
+  Native7/7 handoff/countdown controls pass, guard-free; settings restored.
+  [Evidence](reports/opening-handoff-2026-10-03/README.md).
+- [ ] Local player/full-court visual acceptance of the reported startup transition.
+
+
 ### OPENING-CAMERA-1003: deliberate arena and character reveals
 
 - [x] Implement objective-centred opening, obstacle-aware body framing, individual

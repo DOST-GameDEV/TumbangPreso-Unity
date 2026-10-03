@@ -726,6 +726,15 @@ namespace TumbangPreso.CameraSystem
             _viewmodel = go.transform;
         }
 
+        /// <summary>Resolve the gameplay eye under loading, even when world presentation is held.</summary>
+        public bool PrepareArrivalReturnView()
+        {
+            if (_character == null || !_active) return false;
+            ApplyLens();
+            if (_mode == CameraMode.Fpp) ApplyFpp(); else ApplyTpp();
+            return true;
+        }
+
         public void SetActive(bool active)
         {
             _active = active;

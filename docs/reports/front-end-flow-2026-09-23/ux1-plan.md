@@ -25,6 +25,11 @@ handoff to the saved gameplay view. Map-authored height/distance remain intact;
 portraits choose clearer front angles, introduce their own pose, and cut through
 brief ink fades without retaining a previous frame. Reduced motion uses a stable
 map shot. [Refinement evidence and limits](../opening-camera-2026-10-03/README.md).
+The opening is prepared under the loading curtain, then fades in over0.5s.
+Its return view comes from the followed-player rig, even while world time is
+held. Overhead nameplates stay hidden until the introduction finishes or is
+cancelled; the title card supplies the character identity during those shots.
+[Handoff correction](../opening-handoff-2026-10-03/README.md).
 
 Protocol143 retains custom preparation phases and optional map voting while
 requiring matching three-second countdown builds. All peers must rebuild

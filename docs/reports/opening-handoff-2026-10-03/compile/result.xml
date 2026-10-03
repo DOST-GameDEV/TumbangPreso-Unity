@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 16:17:11Z" end-time="2026-10-03 16:17:11Z" duration="0.4232338">
+  <test-suite type="TestSuite" id="2770" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1440" result="Passed" start-time="2026-10-03 16:17:11Z" end-time="2026-10-03 16:17:11Z" duration="0.423234" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2764" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1440" result="Passed" start-time="2026-10-03 16:17:11Z" end-time="2026-10-03 16:17:11Z" duration="0.412843" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="123280" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2765" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1440" result="Passed" start-time="2026-10-03 16:17:11Z" end-time="2026-10-03 16:17:11Z" duration="0.411448" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2766" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1440" result="Passed" start-time="2026-10-03 16:17:11Z" end-time="2026-10-03 16:17:11Z" duration="0.410288" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1101" name="ArrivalHandoffTests" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-03 16:17:11Z" end-time="2026-10-03 16:17:11Z" duration="0.386399" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1102" name="EntryIsOpaqueBeforeTheFirstYieldAndCancellationClearsIt" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.EntryIsOpaqueBeforeTheFirstYieldAndCancellationClearsIt" methodname="EntryIsOpaqueBeforeTheFirstYieldAndCancellationClearsIt" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="728378188" result="Passed" start-time="2026-10-03 16:17:11Z" end-time="2026-10-03 16:17:11Z" duration="0.160987" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1104" name="HeldRigResolvesPlayerEyeInsteadOfInheritedUnderMapPose" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.HeldRigResolvesPlayerEyeInsteadOfInheritedUnderMapPose" methodname="HeldRigResolvesPlayerEyeInsteadOfInheritedUnderMapPose" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="1953081715" result="Passed" start-time="2026-10-03 16:17:11Z" end-time="2026-10-03 16:17:11Z" duration="0.087309" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Flow] unknown map 'PlayModeWorldReset_20', falling back to 'Eskinita'.
+]]></output>
+            </test-case>
+            <test-case id="1105" name="NameplatesHideDuringIntroductionAndReturnAfterCancellation" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.NameplatesHideDuringIntroductionAndReturnAfterCancellation" methodname="NameplatesHideDuringIntroductionAndReturnAfterCancellation" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="1248032389" result="Passed" start-time="2026-10-03 16:17:11Z" end-time="2026-10-03 16:17:11Z" duration="0.084940" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1103" name="OpeningTakesCameraBeforeLoadingCurtainDisappears" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.OpeningTakesCameraBeforeLoadingCurtainDisappears" methodname="OpeningTakesCameraBeforeLoadingCurtainDisappears" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="658192088" result="Passed" start-time="2026-10-03 16:17:11Z" end-time="2026-10-03 16:17:11Z" duration="0.041132" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Flow] unknown map 'PlayModeWorldReset_43', falling back to 'Eskinita'.
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

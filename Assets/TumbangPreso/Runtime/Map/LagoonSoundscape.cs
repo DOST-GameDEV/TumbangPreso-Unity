@@ -169,7 +169,7 @@ namespace TumbangPreso
             fade = fade * fade * (3.0f - 2.0f * fade);
 
             var director = GameServices.Audio;
-            float sfx = director != null ? director.SfxVolume : 1.0f;
+            float sfx = director != null ? director.AmbienceVolume : 1.0f;
             // ⚠️ `IsInReplayMix` IS THE HOOK THE REPLAY LEASE EXPOSES (`AudioDirector.CourtDanger.cs`),
             // the same one `WorldContactPresentation` and `ColourGrade` read. The lease itself only
             // mutes the director's own pooled voices, so a component driving its own sources has to
