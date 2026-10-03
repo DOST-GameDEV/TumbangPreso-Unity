@@ -18,5 +18,14 @@ This demonstrates private camera-clearance geometry only. Actual full-court
 pan images, framing, reduced motion, Cinematic camera movement OFF, introduction/
 countdown timing, interruption restoration, current player and real peers remain
 open. No visible black-frame, human feel, camera art or hero direction approval
-is claimed. PC owns the production presentation fix; candidate validation is
-pending. All source and private artwork are preserved, no PC Unity job.
+is claimed. PC owns the production presentation fix; the focused candidate is checked below. All source and private artwork are preserved, no PC Unity job.
+
+Candidate cfff8c772bce3d1194462c24ed293924b2f5ad99 passes6/6 on the same
+immutable fixture/meta. Only the production ClearEye floor changes from.8 to.01,
+with its two comment lines. Sphere radius.2, stand-off.3, direction, poses, timing,
+far-wall/unobstructed paths and protocol142 remain unchanged. All3400 candidate
+input hashes match after the job; the maps differ only in MatchArrivalPresentation.
+Exit0, terminal/restored/free. No original repetition, repair or retry. Candidate
+raw XML, map and receipt are preserved exactly. This is still geometry acceptance,
+not close-up framing or full-court images; the small nonzero eye distance needs
+actual rendered inspection. Camera movement OFF remains separate and unqualified.
