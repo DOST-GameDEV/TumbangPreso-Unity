@@ -11,3 +11,9 @@ Limits: no real signed-in reward/audio playback acceptance or physical device te
 ## Additional input coverage
 
 Fresh headless8/8 at18:04:34–35 UTC (0.8023294s), guard-free with both settings restored. Adds synthetic touch swipes, rejection of tiny pointer drags and ambiguous simultaneous directions. Original keyboard/D-pad/mouse/lifecycle cases retained. This is device-event testing, not physical touchscreen acceptance.
+
+## Pending and unsuccessful reward feedback
+
+The Credits screen now acknowledges the request immediately with “Claiming +5,000 Tansan...” while the authoritative award is pending. Busy/offline/account-change outcomes use explicit retry/sign-in text, so a stale success status from another wallet action cannot appear as a new bonus confirmation. Existing request timeout20s was already present in CloudCode and was not changed. Reward amount, deduplication and Victory success gate remain unchanged.
+
+Fresh native headless13/13 (original8 input/lifecycle cases plus5 failure-message cases) at18:53:24–25 UTC,1.0329521s; exit0/guard-free. Peak tree3,339,427,840/cgroup6,391,848,960. Both settings restored and six inputs verified. Initial compile-heavy run hit the unchanged headroom guard after compilation, before XML; retained separately. Live server activation is still blocked403 and has not been claimed.

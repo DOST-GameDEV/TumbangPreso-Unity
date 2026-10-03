@@ -60,5 +60,12 @@ namespace TumbangPreso.PlayTests
         { foreach(var direction in new[]{Vector2.up,Vector2.up,Vector2.down,Vector2.down,Vector2.left,Vector2.right,Vector2.left,Vector2.right}){InputSystem.QueueStateEvent(_mouse,new MouseState{position=new Vector2(400,400),buttons=1});Tick();InputSystem.QueueStateEvent(_mouse,new MouseState{position=new Vector2(400,400)+direction*10});Tick();}Assert.IsNull(Request); }
         [Test] public void AmbiguousTwoDirectionPressResetsPartialEntry()
         { KeyPress(Key.UpArrow);KeyPress(Key.UpArrow);InputSystem.QueueStateEvent(_keys,new KeyboardState(Key.LeftArrow,Key.RightArrow));Tick();InputSystem.QueueStateEvent(_keys,new KeyboardState());Tick();for(int i=2;i<8;i++)KeyPress(Keys[i]);Assert.IsNull(Request); }
+        [TestCase("busy","Yours now.","Wallet busy. Try the code again in a moment.")]
+        [TestCase("offline","Credits bonus confirmed.","Sign in to claim the Credits bonus.")]
+        [TestCase("cancelled","+5,000 Tansan!","Account changed. Enter the code again.")]
+        [TestCase("error","","Could not confirm the bonus. Try the code again.")]
+        [TestCase("wallet-full","The wallet is full.","The wallet is full.")]
+        public void FailedClaimCannotShowStaleWalletSuccess(string result,string previous,string expected)
+        { var method=typeof(OwnerCreditsView).GetMethod("BonusFailureMessage",BindingFlags.Static|BindingFlags.NonPublic);Assert.AreEqual(expected,method.Invoke(null,new object[]{result,previous})); }
     }
 }
