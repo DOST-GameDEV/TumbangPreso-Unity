@@ -128,5 +128,22 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(DebugPlayerSwitcher.FallbackSlot, DebugPlayerSwitcher.DefaultSlot);
             Switcher(); Press(Key.F6); Assert.AreEqual(DebugPlayerSwitcher.FallbackSlot, _switcher.DrivenSlot);
         }
+        [Test] public void FirstF6KeepsTheHumanWhenAnEarlierPracticeBotIsIdle()
+        {
+            Seats(); _bot.GetComponent<AIController>().enabled = false; _bot.Intent.Parked = true;
+            Assert.IsTrue(_human.GetComponent<PlayerInputReader>().enabled);
+            Press(Key.F6);
+            Assert.AreEqual(1, _switcher.DrivenSlot, "An idle bot was mistaken for the original input owner.");
+            Claimed(_human);
+        }
+        [Test] public void FirstF6KeepsTheHumanWithTemporaryBodyAI()
+        {
+            Seats(); var temporaryBrain = _human.gameObject.AddComponent<AIController>();
+            temporaryBrain.AbilitiesEnabled = false;
+            Assert.IsTrue(temporaryBrain.enabled); Assert.IsTrue(_human.GetComponent<PlayerInputReader>().enabled);
+            Press(Key.F6);
+            Assert.AreEqual(1, _switcher.DrivenSlot, "Temporary body AI hid the actual human input owner.");
+            Claimed(_human);
+        }
     }
 }

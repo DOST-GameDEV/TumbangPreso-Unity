@@ -33,8 +33,8 @@ namespace TumbangPreso
         /// <summary>
         /// The seat the PLAYER is driving, discovered rather than declared.
         ///
-        /// ⚠️ THE HUMAN'S UNIT IS EXACTLY THE ONE WITH NO AI ON IT, which this can read off the
-        /// seats directly and needs no cooperation from gameplay. `debug_player_switcher.gd`
+        /// The enabled input reader identifies the human even when a practice bot
+        /// is idle or possession adds temporary AI to the human body. `debug_player_switcher.gd`
         /// records what the hardcoded version cost there: a player who picked a different seat
         /// got, one frame into the match, their own character parked, the camera snapped
         /// elsewhere, and the unit they chose handed to a bot.
@@ -43,7 +43,14 @@ namespace TumbangPreso
         {
             get
             {
-                foreach (var unit in FindObjectsByType<CharacterMotor>(FindObjectsInactive.Exclude))
+                var units = FindObjectsByType<CharacterMotor>(FindObjectsInactive.Exclude);
+                foreach (var unit in units)
+                {
+                    var reader = unit.GetComponent<PlayerInputReader>();
+                    if (reader != null && reader.enabled) return unit.PlayerSlot;
+                }
+
+                foreach (var unit in units)
                 {
                     var ai = unit.GetComponent<AIController>();
                     if (ai == null || !ai.enabled) return unit.PlayerSlot;
