@@ -30,9 +30,9 @@ namespace TumbangPreso.Tests
             Assert.IsEmpty(Object.FindObjectsByType<CharacterMotor>(FindObjectsInactive.Exclude),
                 "Use an empty isolated EditMode scene; unrelated actors must not decide this result.");
             _previous = NetAuthority.Provider;
-            _tutorial = UI.GameLaunch.GuidedTutorial;
+            _tutorial = GameLaunch.GuidedTutorial;
             NetAuthority.Provider = _provider = new Provider();
-            UI.GameLaunch.GuidedTutorial = false;
+            GameLaunch.GuidedTutorial = false;
             _root = new GameObject("Emote ownership seats");
             for (int slot = 0; slot < _actors.Length; slot++)
             {
@@ -48,7 +48,7 @@ namespace TumbangPreso.Tests
         [TearDown] public void After()
         {
             if (_root != null) Object.DestroyImmediate(_root);
-            UI.GameLaunch.GuidedTutorial = _tutorial;
+            GameLaunch.GuidedTutorial = _tutorial;
             NetAuthority.Provider = _previous;
         }
         private CharacterMotor Target(CharacterMotor fallback)
@@ -98,7 +98,7 @@ namespace TumbangPreso.Tests
         }
         [Test] public void GuidedTutorialStillTargetsItsStudentFallback()
         {
-            UI.GameLaunch.GuidedTutorial = true;
+            GameLaunch.GuidedTutorial = true;
             Drive(0);
             Assert.AreSame(_actors[2], Target(_actors[2]));
         }
