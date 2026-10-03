@@ -1,0 +1,8 @@
+{
+  "reason": "Only orphaned idle compiler/shutdown helpers from this task-owned Unity SDK; no active owned Editor. No files removed.",
+  "beforeCgroup": 4726407168,
+  "afterCgroup": 4726407168,
+  "rssRetiredBytes": 0,
+  "processes": [],
+  "completedCompileReceipt": "/workspace/scratch/0ed9da4aed7f/tump-qa/zack-circuit-motion-1003/wire/resources.json"
+}
