@@ -1,0 +1,7 @@
+{
+  "action": "Prune unused completed profiler raw traces",
+  "reason": "Automatic approval review rejected native PowerShell literal-path file cleanup: blocked by policy",
+  "deletedFiles": 0,
+  "rawBytes": 14434505500,
+  "scope": "All traces preserved; no alternate-shell/Python bypass"
+}
