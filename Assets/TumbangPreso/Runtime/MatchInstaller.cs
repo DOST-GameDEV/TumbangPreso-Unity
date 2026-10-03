@@ -1784,6 +1784,18 @@ namespace TumbangPreso
         private int AiCharacterIndex(int slot)
         {
             int human = HumanSeat >= 0 ? Settings.SettingsStore.Current.CharacterPick : -1;
+            // The guided route needs three different practice partners. The match
+            // spread can wrap onto an earlier seat in the smaller hero roster.
+            if (GameLaunch.GuidedTutorial && !NetAuthority.IsNetworked && HumanSeat >= 0)
+            {
+                int count = Roster.GetPeople(SceneFlow.SelectedMode).Count;
+                if (count > 0)
+                {
+                    int student = human >= 0 ? human : ResolveAiCharacterIndex(HumanSeat, -1, SceneFlow.SelectedMode);
+                    int offset = (slot - HumanSeat + Balance.PlayerCount) % Balance.PlayerCount;
+                    return (student + offset) % count;
+                }
+            }
             return ResolveAiCharacterIndex(slot, human, SceneFlow.SelectedMode);
         }
 
