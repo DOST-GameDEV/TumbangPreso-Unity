@@ -753,7 +753,8 @@ def amihan():
     # C THE BIRD: low and wide from her left front, her and the sky above her; the bird's swoop passes close to this lens.
     p.shot(2.75, 3.62, (-3.0, .7, 4.6), (0, 2.4, -.5), 60, eye_to=(-2.6, .8, 4.0), look_to=(0, 2.0, -.3), fov_to=56)
     # D WIND-UP: behind her right shoulder, high and wide: her coiling and the bird over her with its wings raised.
-    p.shot(3.62, 4.55, (2.8, 2.2, -4.2), (0, 2.2, 2.5), 62, eye_to=(3.0, 2.5, -4.6), look_to=(0, 1.6, 4.5), fov_to=62)
+    # (v7 r2: the raised wings were cropped at the top; aimed higher.)
+    p.shot(3.62, 4.55, (2.8, 2.2, -4.2), (0, 2.8, 3.0), 62, eye_to=(3.0, 2.5, -4.6), look_to=(0, 2.2, 5.0), fov_to=62)
     # E HANG: cut on the drive to her right side, wide enough for the wingbeat over the lane: her in the left third.
     p.shot(4.55, 5.18, (5.2, 1.6, .6), (0, 1.5, 1.2), 66, eye_to=(4.8, 1.6, .9), look_to=(0, 1.45, 1.6), fov_to=62)
     # F FINISH (computed: high in front of her right side, her wink in the middle, the thrown bodies blowing away).

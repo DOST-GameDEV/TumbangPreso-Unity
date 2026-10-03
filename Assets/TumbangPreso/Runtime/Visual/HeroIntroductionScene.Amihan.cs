@@ -40,6 +40,8 @@ namespace TumbangPreso.Visual
         // =========================================================================================
         private const float AmReadAt = .78f, AmLeafFrom = .62f, AmLeafTo = 1.72f, AmWhistleAt = 1.78f, AmArriveAt = 1.92f,
             AmGatherFrom = 1.95f, AmFormAt = 2.75f, AmSwoopAt = 2.95f, AmSwoopEnd = 3.55f, AmWindAt = 3.80f, AmBraceAt = 4.05f,
+            // The cut in on its face (`AmihanFrame`).
+            AmEyesFrom = 3.10f, AmEyesTo = 3.34f,
             // THE RELEASE. Play resumes after `AmRealTail` real seconds, `AmihanStorm.CutsceneTail` story seconds after it.
             AmReleaseAt = 4.55f, AmFinishAt = 5.34f;
 
@@ -53,9 +55,11 @@ namespace TumbangPreso.Visual
 
         // Where the vortex closes and the bird forms: above and behind her.
         private static readonly Vector3 AmBirdBorn = new Vector3(0f, 5.0f, -1.5f);
-        // Where it hovers through the wind-up.
-        private static readonly Vector3 AmBirdHover = new Vector3(0f, 3.1f, -2.4f);
-        private const float AmBirdScale = 1.0f, AmSwoopRadius = 3.5f;
+        // Where it hovers through the wind-up: above and ahead of her, its back to her, so it reads from behind her and its
+        // wingbeat goes straight down the lane (v7 r1: hovering behind her it sat over the lens, out of frame).
+        private static readonly Vector3 AmBirdHover = new Vector3(0f, 3.7f, 1.9f);
+        // v7 r1: at a 7 m span drawn in hair-lines it read as a doodle in the sky; about 12 m, bolder, with wing masses.
+        private const float AmBirdScale = 1.7f, AmSwoopRadius = 4.0f;
 
         // ------------------------------------------------------------------ pieces
         private const int AmStrokeSamples = 10;
@@ -70,6 +74,9 @@ namespace TumbangPreso.Visual
         private readonly Vector3[][] _amBirdLocal = new Vector3[AmBirdStrokes][];
         private readonly float[] _amBirdWidth = new float[AmBirdStrokes], _amBirdReveal = new float[AmBirdStrokes];
         private int _amEyeL = -1, _amEyeR = -1, _amHeart = -1;
+        // Its masses: a translucent band under each wing's feathers, the body and the tail, so it has volume, not only lines.
+        private readonly LineRenderer[] _amBirdMass = new LineRenderer[4];
+        private readonly Vector3[] _amMassPoints = new Vector3[AmStrokeSamples];
         // THE MONSOON: great translucent wind sheets circling the plaza, closing on her and rising into the sky.
         private const int AmSheets = 12;
         private readonly List<WindVfx.Ribbon> _amSheet = new List<WindVfx.Ribbon>();
@@ -78,8 +85,8 @@ namespace TumbangPreso.Visual
         private const int AmRingSamples = 18;
         private readonly LineRenderer[] _amRing = new LineRenderer[5];
         private readonly Vector3[] _amRingPoints = new Vector3[AmRingSamples];
-        // THE LEAVES: 0 the lone leaf; 1 to 40 torn up by the monsoon; the feather at the end.
-        private const int AmLeaves = 41;
+        // THE LEAVES: 0 the lone leaf; 1 to 60 torn up by the monsoon; the feather at the end.
+        private const int AmLeaves = 61;
         private readonly int[] _amLeaf = new int[AmLeaves];
         private readonly Vector3[] _amLeafSeed = new Vector3[AmLeaves];
         private int _amFeather = -1;
@@ -132,9 +139,10 @@ namespace TumbangPreso.Visual
             for (int k = 0; k < AmSheets; k++)
             {
                 _amSheetSeed[k] = new Vector3(AmHash(k * 5 + 11), AmHash(k * 5 + 12), AmHash(k * 5 + 13));
-                var arc = WindVfx.Arc(1f, 70f + 50f * _amSheetSeed[k].x, 22, 0f);
-                var sheet = WindVfx.Build(_root.transform, "AmihanMonsoon" + k, arc, .35f + .3f * _amSheetSeed[k].y, WindVfx.Standing, 5f, .25f, 400f + k);
-                AmBrightRim(sheet, .55f);
+                // v7 r2: 22 points scaled to 13 m drew jagged polylines, and the bright-rim look drew them hollow; smooth and filled.
+                var arc = WindVfx.Arc(1f, 70f + 50f * _amSheetSeed[k].x, 48, 0f);
+                var sheet = WindVfx.Build(_root.transform, "AmihanMonsoon" + k, arc, 1.3f + .8f * _amSheetSeed[k].y, WindVfx.Standing, 5f, .45f, 400f + k);
+                sheet.Recolour(WindVfx.Core, AmSheetBody, WindVfx.Body);
                 _amSheet.Add(sheet);
             }
 
@@ -362,8 +370,8 @@ namespace TumbangPreso.Visual
             {
                 var seed = _amSheetSeed[k];
                 if (on <= .002f) { _amSheet[k].Set(0f, 0f); continue; }
-                float r = Mathf.Lerp(7f + 6f * seed.x, .8f + .6f * seed.z, close * close);
-                float h = Mathf.Lerp(.5f + 4.5f * seed.y, -.6f + 1.2f * seed.y, close);
+                float r = Mathf.Lerp(4.5f + 5.5f * seed.x, .8f + .6f * seed.z, close * close);
+                float h = Mathf.Lerp(.6f + 3.2f * seed.y, -.6f + 1.2f * seed.y, close);
                 // Faster as they close: the angle is the integral of a speed that rises with the closing.
                 float spin = calm ? 0f : -(s * 40f + s * s * 70f) * (.8f + .4f * seed.z);
                 var tf = _amSheet[k].GameObject.transform;
@@ -371,7 +379,7 @@ namespace TumbangPreso.Visual
                 tf.localRotation = Quaternion.Euler(0f, seed.x * 360f + spin, (seed.y - .5f) * 14f);
                 tf.localScale = new Vector3(r, 1f + 1.2f * (1f - close), r);
                 float sweep = Mathf.Repeat(s * (.7f + .5f * seed.z) + seed.x, 1f);
-                _amSheet[k].Set((.5f + .3f * seed.y) * on * light, calm ? 0f : -t * 6f, Mathf.Clamp01(sweep * 1.6f + .3f), Mathf.Clamp01(sweep * 1.6f - .5f), .2f);
+                _amSheet[k].Set((.8f + .2f * seed.y) * on * light, calm ? 0f : -t * 6f, Mathf.Clamp01(sweep * 1.6f + .3f), Mathf.Clamp01(sweep * 1.6f - .5f), .2f);
             }
         }
 
@@ -389,6 +397,12 @@ namespace TumbangPreso.Visual
             _amEyeL = AddGlow("AmihanBirdEyeL", AmEye, falloff: 2.2f, core: 1.0f);
             _amEyeR = AddGlow("AmihanBirdEyeR", AmEye, falloff: 2.2f, core: 1.0f);
             _amHeart = AddGlow("AmihanBirdHeart", new Color(0.80f, 1.0f, 0.86f, 1f), falloff: 1.4f, core: 0f);
+            var mass = new AnimationCurve(new Keyframe(0f, .5f), new Keyframe(.4f, 1f), new Keyframe(1f, .25f));
+            for (int i = 0; i < _amBirdMass.Length; i++)
+            {
+                _amBirdMass[i] = Line("AmihanBirdMass" + i, AmStrokeSamples, 1f, new Color(0.80f, 0.97f, 0.80f, .32f));
+                _amBirdMass[i].widthCurve = mass; _amBirdMass[i].sortingOrder = 1; _amBirdMass[i].enabled = false;
+            }
         }
 
         /// <summary>
@@ -408,16 +422,17 @@ namespace TumbangPreso.Visual
             }
             else if (story < AmSwoopEnd + .2f)
             {
-                // One circle round her, from behind, down her left, across her front past the lens, up her right, behind.
+                // Half a circle round her, from behind her, low down her left side and close past the lens at her left front,
+                // rising to above and ahead of her (v7 r1: a full circle ended behind her, over the wind-up's lens).
                 float u = Ease(AmSwoopAt, AmSwoopEnd, story);
-                float a = (180f + 360f * u) * Mathf.Deg2Rad;
-                float h = Mathf.Lerp(AmBirdBorn.y, 2.3f, Mathf.Sin(u * Mathf.PI)) * (1f - u) + AmBirdHover.y * u * u;
-                at = new Vector3(Mathf.Sin(a) * AmSwoopRadius * (1f - .3f * u), h + court, Mathf.Cos(a) * AmSwoopRadius * Mathf.Lerp(1f, .7f, u));
+                float a = (180f + 180f * u) * Mathf.Deg2Rad;
+                float h = Mathf.Lerp(Mathf.Lerp(AmBirdBorn.y, 2.2f, Mathf.Sin(u * Mathf.PI * .8f)), AmBirdHover.y, u * u * u);
+                at = new Vector3(Mathf.Sin(a) * AmSwoopRadius, h + court, Mathf.Cos(a) * AmSwoopRadius * Mathf.Lerp(1f, .5f, u * u));
                 var tangent = new Vector3(Mathf.Cos(a), 0f, -Mathf.Sin(a));
                 float settle = Ease(AmSwoopEnd - .1f, AmSwoopEnd + .2f, story);
                 var facing = Vector3.Slerp(tangent, Vector3.forward, settle);
                 // Banked into the turn, its inner wing down.
-                turn = Quaternion.LookRotation(facing, Vector3.up) * Quaternion.Euler(0f, 0f, 32f * (1f - settle));
+                turn = Quaternion.LookRotation(facing, Vector3.up) * Quaternion.Euler(0f, 0f, -32f * (1f - settle));
                 at = Vector3.Lerp(at, AmBirdHover + Vector3.up * court, settle);
                 flap = calm ? 10f : (u > .3f && u < .6f ? 12f + 6f * Mathf.Sin(story * 9f) : 25f + 45f * Mathf.Sin(story * 15f));
             }
@@ -450,7 +465,7 @@ namespace TumbangPreso.Visual
 
         private void SampleAmihanBird(float story, bool calm, Vector3 at, Quaternion turn, float flap, float on)
         {
-            float scale = AmBirdScale;
+            float scale = AmBirdScale, bold = 1.25f;
             int n = 0;
             // THE WINGS: a leading edge in two bones (the tip lagging the arm through each stroke) and nine feathers off it,
             // raked further out the further along, longest at the tip.
@@ -522,7 +537,7 @@ namespace TumbangPreso.Visual
             for (int k = 0; k < AmBirdStrokes; k++)
             {
                 float reveal = _amBirdReveal[k];
-                float width = _amBirdWidth[k] * scale * on;
+                float width = _amBirdWidth[k] * scale * bold * on;
                 if (reveal <= .02f || width <= .004f) { _amBirdCore[k].enabled = false; _amBirdInk[k].enabled = false; continue; }
                 var local = _amBirdLocal[k];
                 for (int i = 0; i < AmStrokeSamples; i++)
@@ -537,14 +552,43 @@ namespace TumbangPreso.Visual
                 _amBirdCore[k].enabled = true; _amBirdInk[k].enabled = true;
             }
 
+            // THE MASSES: under each wing a translucent band through its feathers' middles, one along the body, one in the tail.
+            float massOn = on * Ease(AmFormAt + .1f, AmFormAt + .3f, story) * (calm ? .7f : 1f);
+            for (int w = 0; w < 2; w++)
+            {
+                int first = w * (AmFeathers + 1) + 1;
+                for (int i = 0; i < AmStrokeSamples; i++)
+                {
+                    float f = i / (AmStrokeSamples - 1f) * (AmFeathers - 1);
+                    int a = Mathf.Min((int)f, AmFeathers - 2);
+                    var mid = Vector3.Lerp(_amBirdLocal[first + a][AmStrokeSamples / 2], _amBirdLocal[first + a + 1][AmStrokeSamples / 2], f - a);
+                    _amMassPoints[i] = at + turn * (mid * scale);
+                }
+                AmMass(_amBirdMass[w], .95f * scale * massOn);
+            }
+            for (int i = 0; i < AmStrokeSamples; i++)
+                _amMassPoints[i] = at + turn * (Vector3.Lerp(new Vector3(0f, .25f, 1.2f), new Vector3(0f, .05f, -1.0f), i / (AmStrokeSamples - 1f)) * scale);
+            AmMass(_amBirdMass[2], .7f * scale * massOn);
+            for (int i = 0; i < AmStrokeSamples; i++)
+                _amMassPoints[i] = at + turn * (Vector3.Lerp(new Vector3(0f, 0f, -1.0f), new Vector3(0f, .05f, -2.6f), i / (AmStrokeSamples - 1f)) * scale);
+            AmMass(_amBirdMass[3], .8f * scale * massOn);
+
             // THE EYES, the climax as in Paete's tree and Phaister's doll: alight as it forms, blazing as it passes the lens and
             // as it raises its wings over her; its heart a soft glow inside the strokes.
             float blaze = 1f + 1.6f * Mathf.Max(AmBeat(story, 3.18f, .35f) * Ease(3.05f, 3.18f, story), Ease(AmWindAt, AmWindAt + .3f, story) * .8f);
             float eyes = on * Ease(AmFormAt + .12f, AmFormAt + .3f, story) * blaze * (calm ? .6f : 1f);
-            var eyeSize = Vector3.one * .26f * scale * Mathf.Min(blaze, 1.8f);
+            var eyeSize = Vector3.one * .2f * scale * Mathf.Min(blaze, 1.3f);
             PlaceGlow(_amEyeL, at + turn * (new Vector3(-.17f, .4f, 1.3f) * scale), eyeSize, Quaternion.identity, eyes);
             PlaceGlow(_amEyeR, at + turn * (new Vector3(.17f, .4f, 1.3f) * scale), eyeSize, Quaternion.identity, eyes);
-            PlaceGlow(_amHeart, at + turn * (new Vector3(0f, .15f, .1f) * scale), Vector3.one * 1.6f * scale, Quaternion.identity, .35f * on * (calm ? .5f : 1f));
+            PlaceGlow(_amHeart, at + turn * (new Vector3(0f, .15f, .1f) * scale), Vector3.one * 2.2f * scale, Quaternion.identity, .5f * on * (calm ? .5f : 1f));
+        }
+
+        private void AmMass(LineRenderer line, float width)
+        {
+            if (width <= .01f) { line.enabled = false; return; }
+            line.SetPositions(_amMassPoints);
+            line.widthMultiplier = width;
+            line.enabled = true;
         }
 
         // ------------------------------------------------------------------ the burst
@@ -623,7 +667,7 @@ namespace TumbangPreso.Visual
                 }
                 if (!on) { Place(_amLeaf[i], Vector3.zero, Vector3.one * .001f, Quaternion.identity, 0f); continue; }
                 var spin = Quaternion.Euler(tumble * (190f + 120f * seed.x) + i * 37f, tumble * (260f + 90f * seed.y) + i * 53f, tumble * 140f + i * 11f);
-                Place(_amLeaf[i], at, new Vector3(.08f, .013f, .12f) * (.85f + .35f * seed.z), spin, 1f);
+                Place(_amLeaf[i], at, new Vector3(.1f, .016f, .15f) * (.85f + .35f * seed.z), spin, 1f);
             }
 
             // THE FEATHER: after the bird has gone down the lane, one feather drifts down past her, rocking.
@@ -641,6 +685,19 @@ namespace TumbangPreso.Visual
         /// bodies blowing away down the lane past her left (v4 r1 to r3), with a slow push in.</summary>
         private void AmihanFrame(int index, float t, ref Vector3 eye, ref Vector3 look, ref float fov)
         {
+            if (index == AmShotBird && t >= AmEyesFrom && t < AmEyesTo)
+            {
+                // THE CLIMAX (as Paete's tree's eyes and Phaister's doll's): a cut in close on the bird's face as it swoops past
+                // her, the lens riding ahead of it and a little below, its eyes blazing.
+                AmBirdPose(t, _reducedEffects, out var at, out var turn, out _, out _);
+                // v7 r2: level with it the lens sank to the court and the eyes bloomed over the face; below it, looking up.
+                var head = at + turn * (new Vector3(0f, .35f, 1.3f) * AmBirdScale);
+                var ahead = turn * Vector3.forward; ahead.y = 0f; ahead = ahead.sqrMagnitude > 1e-4f ? ahead.normalized : Vector3.forward;
+                eye = head + ahead * (2.3f * AmBirdScale) + Vector3.down * 1.7f + Vector3.Cross(Vector3.up, ahead) * .8f;
+                look = head + Vector3.down * .2f;
+                fov = 48f;
+                return;
+            }
             if (index != AmShotHit) return;
             float u = Ease(AmReleaseAt + AmHangTo, Seconds, t);
             float a = 33f * Mathf.Deg2Rad, r = Mathf.Lerp(5.4f, 4.8f, u);
