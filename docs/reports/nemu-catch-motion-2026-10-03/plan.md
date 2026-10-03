@@ -22,6 +22,7 @@ seconds, and Kuro moves under its existing task clock.
   existing clip, geometry table and binary byte
 - Runtime/Abilities/NemuHeroKit.cs: only KuroGuard's body/FPP action names
 - Runtime/Visual/CharacterAnimator.cs: register only the new named guard action
+- Runtime/Camera/ViewmodelArms.cs: only KuroGuardClip and its named dispatch
 - Runtime/Camera/ViewmodelArms.CastGesture.cs: new kuro-guard gesture
 - Resources/Roster/person_nemu.asset: add only that imported clip reference
 - Editor/NemuGuardMotionAuthor.cs/meta: existing narrow importer pattern
@@ -48,3 +49,12 @@ chain registry; the new authored clip had not been registered. Add the one named
 chain and require observed live playback in the same test. Preserve the passing
 but visually rejected candidate. This is a product integration correction, not
 an unchanged tooling retry or a reason to weaken an assertion.
+
+## First-person dispatch correction
+
+A later routing audit found that a CastPath alone does not admit a viewmodel
+clip. The earlier stage's empty-hand frames did not establish gesture playback.
+Add the explicit .76s KuroGuardClip dispatch and require both actual clip-player
+admission and a measured free-hand pivot offset, without changing the body or
+protection rules. Preserve the earlier body-only qualification and correct the
+first-person acceptance limit explicitly.

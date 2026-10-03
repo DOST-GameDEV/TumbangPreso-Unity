@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 05:56:52Z" end-time="2026-10-03 05:56:55Z" duration="3.2504802">
+  <test-suite type="TestSuite" id="2712" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1393" result="Passed" start-time="2026-10-03 05:56:52Z" end-time="2026-10-03 05:56:55Z" duration="3.250480" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2706" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1393" result="Passed" start-time="2026-10-03 05:56:52Z" end-time="2026-10-03 05:56:55Z" duration="3.228318" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="35242" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2707" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1393" result="Passed" start-time="2026-10-03 05:56:52Z" end-time="2026-10-03 05:56:55Z" duration="3.215322" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2708" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1393" result="Passed" start-time="2026-10-03 05:56:52Z" end-time="2026-10-03 05:56:55Z" duration="3.202854" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1856" name="NemuGuardMotionTests" fullname="TumbangPreso.PlayTests.NemuGuardMotionTests" classname="TumbangPreso.PlayTests.NemuGuardMotionTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 05:56:52Z" end-time="2026-10-03 05:56:55Z" duration="3.164363" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1858" name="SmallStagePlaysRegisteredGuardAndKeepsProtection" fullname="TumbangPreso.PlayTests.NemuGuardMotionTests.SmallStagePlaysRegisteredGuardAndKeepsProtection" methodname="SmallStagePlaysRegisteredGuardAndKeepsProtection" classname="TumbangPreso.PlayTests.NemuGuardMotionTests" runstate="Runnable" seed="952568942" result="Passed" start-time="2026-10-03 05:56:52Z" end-time="2026-10-03 05:56:55Z" duration="3.144759" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-000.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-000.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-001.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-001.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-002.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-002.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-003.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-003.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-004.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-004.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-005.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-005.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-006.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-006.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-007.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-007.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-008.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-008.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-009.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-009.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-010.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-010.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-011.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-011.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-012.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-012.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-013.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-013.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-014.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-014.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-015.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-015.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-016.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-016.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-017.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-017.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-018.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-018.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-019.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-019.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-020.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-020.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-021.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-021.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-022.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-022.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/owner-023.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/nemu-hand-dispatch-1003/runtime/frames/observer-023.png
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

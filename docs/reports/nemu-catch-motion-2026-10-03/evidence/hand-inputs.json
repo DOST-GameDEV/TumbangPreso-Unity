@@ -1,0 +1,12 @@
+{
+  "Assets/TumbangPreso/Art/characters/persons/team-nemu.glb": "7faf5e6eaef910479d7994c1481bfcb653afacd08f25130de523da3d907084fc",
+  "Assets/TumbangPreso/Runtime/Abilities/NemuHeroKit.cs": "5719848182af8106f1fac6218e79809907399f4a1b452fd2e8ed5aa49c247426",
+  "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.CastGesture.cs": "0e86dc7db69b52100677003e49c6356feaec235f008ba66a1203131120235005",
+  "Assets/TumbangPreso/Resources/Roster/person_nemu.asset": "e1a57a8a10766c69d3497119165a2bab2d16ca5f47f80909a894ef4073ac2af2",
+  "Assets/TumbangPreso/Editor/NemuGuardMotionAuthor.cs": "c8ad5b9457b41db40002228c2c6f02ce138178ed8fac8e8451e2af3730dd7191",
+  "Assets/TumbangPreso/Editor/NemuGuardMotionAuthor.cs.meta": "158d8130265309ff8a82f20888ca71bb2398f2d7a8e604e7a01de366ca78556a",
+  "Assets/TumbangPreso/Tests/PlayMode/NemuGuardMotionTests.cs": "8bfd3f19575deca9a1a5b89eb723918e8c126a6af8061b7141e994dc373be1a0",
+  "Assets/TumbangPreso/Tests/PlayMode/NemuGuardMotionTests.cs.meta": "f2eb700cd6718a044e6da550c37d16825023750b98ab80ca38a1a5862258191c",
+  "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.cs": "b600b45d2aae96974ee011434065f3f554a25f16535b4bfc0cef6ea6e0fd0570",
+  "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs": "2c98703aee8ee8f6d0f3e279b308179762490d2f56c1a0acb40bdea43365729a"
+}

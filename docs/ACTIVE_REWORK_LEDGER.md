@@ -683,3 +683,11 @@ cgroup headroom without file deletion or weakened guards. Prior full-map/stage
 failures remain. No corrected full-court/player/peer/SFX/human claim. Publish
 only the scoped Nemu paths and this qualified-but-limited evidence; next inspect
 Zack Closed Circuit's currently unregistered literal cast action before changing it.
+
+Nemu FPP follow-through: CastPath was present but ViewmodelArms.Play lacked the
+named Key[] dispatch. Fixed only KuroGuardClip and mapping; strengthened native
+stage observes actual FPP admission and>0.1m pivot movement with prior body/can
+controls.1/1 in3.145s,48frames inspected,4.580GB tree/7.129GB cgroup/no guard;
+input/config/profile restoration verified. Earlier body-only acceptance retained,
+not relabelled as hand playback. Same review updated; corrected full court remains
+open. No active Editor. Next source question remains Zack's missing body cast key.

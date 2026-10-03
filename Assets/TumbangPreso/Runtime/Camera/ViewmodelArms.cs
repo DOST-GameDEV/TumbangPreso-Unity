@@ -817,6 +817,17 @@ namespace TumbangPreso.CameraSystem
             new Key(0.550f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
+        // KURO: CATCH. Keep the carrying wrist quiet while the free hand gives the command.
+        private static readonly Key[] KuroGuardClip =
+        {
+            new Key(0, 0, 0, 0, 0, 0, 0),
+            new Key(.10f, 0, -.01f, 0, -.10f, .04f, -.05f),
+            new Key(.22f, .02f, -.02f, 0, -.32f, .08f, -.10f),
+            new Key(.38f, .02f, -.02f, 0, -.31f, .08f, -.10f),
+            new Key(.54f, .01f, -.01f, 0, -.16f, .04f, -.05f),
+            new Key(.76f, 0, 0, 0, 0, 0, 0),
+        };
+
         private static readonly Key[] ProjectSpiritClip =
         {
             new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
@@ -1176,6 +1187,7 @@ namespace TumbangPreso.CameraSystem
                   : clip == "raise-barricade" ? RaiseBarricadeClip
                   : clip == "nova-burst" ? NovaBurstClip
                   : clip == "ghost-step" ? GhostStepClip
+                  : clip == "kuro-guard" ? KuroGuardClip
                   : clip == "project-spirit" ? ProjectSpiritClip
                   : clip == "seance-channel" ? SeanceChannelClip
                   : clip == "cast-hex" ? CastHexClip
