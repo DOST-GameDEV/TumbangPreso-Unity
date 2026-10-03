@@ -32,3 +32,10 @@ that all its assets are raw Git bytes. The exact fixture bytes are committed her
 Coverage is one actual OFF introduction/runtime route and saved-camera/clock
 behavior. It is not all maps, complete Classic gameplay, mid-match recovery,
 physical input, a packaged player, two-machine timing or full tournament readiness.
+
+Exact fixture reconciliation: the tested flow file raw SHA2fec02b6 differs from
+published Git SHA f31ee01c because the tested file mixes CRLF and LF lines.
+After LF normalization the entire code byte stream is identical. The exact tested
+file is retained as tested-MatchArrivalFlowTests.fixture with raw attributes;
+fixture-byte-reconciliation.json enumerates every original line ending and SHA.
+No source logic changed or Unity check was repeated for this metadata audit.
