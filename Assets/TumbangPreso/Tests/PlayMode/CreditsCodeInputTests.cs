@@ -17,6 +17,7 @@ namespace TumbangPreso.PlayTests
         private Keyboard _keys;
         private Gamepad _pad;
         private Mouse _mouse;
+        private Touchscreen _touch;
         private InputSettings.BackgroundBehavior _background;
         private InputSettings.EditorInputBehaviorInPlayMode _editor;
         private static readonly Key[] Keys={Key.UpArrow,Key.UpArrow,Key.DownArrow,Key.DownArrow,Key.LeftArrow,Key.RightArrow,Key.LeftArrow,Key.RightArrow};
@@ -28,7 +29,7 @@ namespace TumbangPreso.PlayTests
             _background=InputSystem.settings.backgroundBehavior;_editor=InputSystem.settings.editorInputBehaviorInPlayMode;
             InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
             InputSystem.settings.editorInputBehaviorInPlayMode=InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
-            _keys=InputSystem.AddDevice<Keyboard>();_pad=InputSystem.AddDevice<Gamepad>();_mouse=InputSystem.AddDevice<Mouse>();
+            _keys=InputSystem.AddDevice<Keyboard>();_pad=InputSystem.AddDevice<Gamepad>();_mouse=InputSystem.AddDevice<Mouse>();_touch=InputSystem.AddDevice<Touchscreen>();
             _owner=new GameObject("Credits code input check");_view=_owner.AddComponent<OwnerCreditsView>();_view.Open(_owner.transform,()=>{});
         }
         [UnityTearDown] public IEnumerator After()
@@ -36,7 +37,7 @@ namespace TumbangPreso.PlayTests
             var canvas=(Canvas)typeof(OwnerCreditsView).GetField("_canvas",Private).GetValue(_view);
             if(canvas!=null)Object.DestroyImmediate(canvas.gameObject);
             Object.DestroyImmediate(_owner);
-            InputSystem.RemoveDevice(_keys);InputSystem.RemoveDevice(_pad);InputSystem.RemoveDevice(_mouse);
+            InputSystem.RemoveDevice(_keys);InputSystem.RemoveDevice(_pad);InputSystem.RemoveDevice(_mouse);InputSystem.RemoveDevice(_touch);
             InputSystem.settings.backgroundBehavior=_background;InputSystem.settings.editorInputBehaviorInPlayMode=_editor;
             yield return PlayModeWorld.Reset();
         }
@@ -53,5 +54,11 @@ namespace TumbangPreso.PlayTests
         { _view.SendMessage("Close");foreach(var key in Keys)KeyPress(key);Assert.IsNull(Request); }
         [Test] public void MouseDirectionalDragsRecognizeTheSameCode()
         { foreach(var direction in new[]{Vector2.up,Vector2.up,Vector2.down,Vector2.down,Vector2.left,Vector2.right,Vector2.left,Vector2.right}){InputSystem.QueueStateEvent(_mouse,new MouseState{position=new Vector2(400,400),buttons=1});Tick();InputSystem.QueueStateEvent(_mouse,new MouseState{position=new Vector2(400,400)+direction*100});Tick();}Assert.NotNull(Request); }
+        [Test] public void TouchDirectionalDragsRecognizeTheSameCode()
+        { int id=0;foreach(var direction in new[]{Vector2.up,Vector2.up,Vector2.down,Vector2.down,Vector2.left,Vector2.right,Vector2.left,Vector2.right}){id++;InputSystem.QueueStateEvent(_touch,new TouchState{touchId=id,phase=UnityEngine.InputSystem.TouchPhase.Began,position=new Vector2(400,400)});Tick();InputSystem.QueueStateEvent(_touch,new TouchState{touchId=id,phase=UnityEngine.InputSystem.TouchPhase.Ended,position=new Vector2(400,400)+direction*100});Tick();}Assert.NotNull(Request); }
+        [Test] public void TinyPointerDragsCannotBecomeASecretSequence()
+        { foreach(var direction in new[]{Vector2.up,Vector2.up,Vector2.down,Vector2.down,Vector2.left,Vector2.right,Vector2.left,Vector2.right}){InputSystem.QueueStateEvent(_mouse,new MouseState{position=new Vector2(400,400),buttons=1});Tick();InputSystem.QueueStateEvent(_mouse,new MouseState{position=new Vector2(400,400)+direction*10});Tick();}Assert.IsNull(Request); }
+        [Test] public void AmbiguousTwoDirectionPressResetsPartialEntry()
+        { KeyPress(Key.UpArrow);KeyPress(Key.UpArrow);InputSystem.QueueStateEvent(_keys,new KeyboardState(Key.LeftArrow,Key.RightArrow));Tick();InputSystem.QueueStateEvent(_keys,new KeyboardState());Tick();for(int i=2;i<8;i++)KeyPress(Keys[i]);Assert.IsNull(Request); }
     }
 }
