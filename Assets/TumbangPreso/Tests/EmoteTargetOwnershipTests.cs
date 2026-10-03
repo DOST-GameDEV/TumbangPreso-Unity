@@ -70,6 +70,16 @@ namespace TumbangPreso.Tests
                 Assert.AreSame(_actors[slot], Target(_actors[0]), "Emote ownership disagrees at seat " + slot);
             }
         }
+        [Test] public void EnabledReadersOnOtherNetworkSeatsCannotWinTheLocalWheel()
+        {
+            _provider.Networked = true;
+            foreach (var reader in _readers) reader.enabled = true;
+            for (int slot = 0; slot < _actors.Length; slot++)
+            {
+                _provider.Slot = slot;
+                Assert.AreSame(_actors[slot], Target(_actors[0]));
+            }
+        }
         [Test] public void NoActiveReaderCannotEmoteOnTheRetiredFallback()
         {
             _provider.Slot = -1;
