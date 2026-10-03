@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 07:29:12Z" end-time="2026-10-03 07:29:12Z" duration="0.4530759">
+  <test-suite type="TestSuite" id="2779" name="TumpWorker-qa-d-dddaa72bc5b9" fullname="TumpWorker-qa-d-dddaa72bc5b9" runstate="Runnable" testcasecount="1449" result="Failed" site="Child" start-time="2026-10-03 07:29:12Z" end-time="2026-10-03 07:29:12Z" duration="0.453076" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2773" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-d/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1449" result="Failed" site="Child" start-time="2026-10-03 07:29:12Z" end-time="2026-10-03 07:29:12Z" duration="0.442232" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24304" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2774" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1449" result="Failed" site="Child" start-time="2026-10-03 07:29:12Z" end-time="2026-10-03 07:29:12Z" duration="0.436637" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2775" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1449" result="Failed" site="Child" start-time="2026-10-03 07:29:12Z" end-time="2026-10-03 07:29:12Z" duration="0.431417" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1645" name="KuroPauseContactLifetimeTests" fullname="TumbangPreso.PlayTests.KuroPauseContactLifetimeTests" classname="TumbangPreso.PlayTests.KuroPauseContactLifetimeTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-03 07:29:12Z" end-time="2026-10-03 07:29:12Z" duration="0.409737" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1647" name="LivePossessionContactStillStaggersANearbyPlayer" fullname="TumbangPreso.PlayTests.KuroPauseContactLifetimeTests.LivePossessionContactStillStaggersANearbyPlayer" methodname="LivePossessionContactStillStaggersANearbyPlayer" classname="TumbangPreso.PlayTests.KuroPauseContactLifetimeTests" runstate="Runnable" seed="844080559" result="Passed" start-time="2026-10-03 07:29:12Z" end-time="2026-10-03 07:29:12Z" duration="0.313481" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1646" name="OrdinaryPauseCannotApplyANewPossessionContactStagger" fullname="TumbangPreso.PlayTests.KuroPauseContactLifetimeTests.OrdinaryPauseCannotApplyANewPossessionContactStagger" methodname="OrdinaryPauseCannotApplyANewPossessionContactStagger" classname="TumbangPreso.PlayTests.KuroPauseContactLifetimeTests" runstate="Runnable" seed="1476430063" result="Failed" start-time="2026-10-03 07:29:12Z" end-time="2026-10-03 07:29:12Z" duration="0.048727" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A zero-speed possession tick applied new gameplay stagger during an ordinary pause.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.KuroPauseContactLifetimeTests+<OrdinaryPauseCannotApplyANewPossessionContactStagger>d__21.MoveNext () [0x00089] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\KuroPauseContactLifetimeTests.cs:91
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1648" name="ResumeKeepsThePossessionAndAllowsItsFirstLiveContact" fullname="TumbangPreso.PlayTests.KuroPauseContactLifetimeTests.ResumeKeepsThePossessionAndAllowsItsFirstLiveContact" methodname="ResumeKeepsThePossessionAndAllowsItsFirstLiveContact" classname="TumbangPreso.PlayTests.KuroPauseContactLifetimeTests" runstate="Runnable" seed="1394254183" result="Passed" start-time="2026-10-03 07:29:12Z" end-time="2026-10-03 07:29:12Z" duration="0.034676" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-d-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
