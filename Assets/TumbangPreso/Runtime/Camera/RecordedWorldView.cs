@@ -29,6 +29,7 @@ namespace TumbangPreso.CameraSystem
         private Material _sky;
         private Light _skyFill;
         private RenderTexture _target;
+        private Material _frameMaterial;
         private Text _state;
         private readonly Dictionary<int,RecordedFieldView> _fields=new Dictionary<int,RecordedFieldView>();
         private readonly Dictionary<int,RecordedFlightStroke> _trails=new Dictionary<int,RecordedFlightStroke>();
@@ -114,6 +115,14 @@ namespace TumbangPreso.CameraSystem
                 var input=_canvas.GetComponent<InputLayer.ScreenFocus>();if(input!=null)input.enabled=false;
                 var picture=OwnerUiLayout.Rect(_canvas.transform,"RecordedWorldFrame").gameObject.AddComponent<RawImage>();
                 OwnerUiLayout.Fill(picture.rectTransform);picture.texture=_target;picture.raycastTarget=false;
+                // The camera has already composited the recorded world into RGB.
+                // Its residual texture alpha must not blend present-time gameplay in.
+                var frameShader=Resources.Load<Shader>("UI/OpaqueCameraFrame");
+                if(frameShader!=null)
+                {
+                    _frameMaterial=new Material(frameShader){name="Opaque recorded camera frame",hideFlags=HideFlags.DontSave};
+                    picture.material=_frameMaterial;
+                }
                 var band=OwnerUiLayout.Rect(_canvas.transform,"ReplayIdentity");band.anchorMin=band.anchorMax=new Vector2(0,1);band.pivot=new Vector2(0,1);
                 band.anchoredPosition=new Vector2(42,-28);band.sizeDelta=new Vector2(426,62);
                 var plate=band.gameObject.AddComponent<CourtPopupGraphic>();plate.Brush=true;plate.color=CourtPresentationPalette.Red;plate.raycastTarget=false;
@@ -324,6 +333,7 @@ namespace TumbangPreso.CameraSystem
             if(_camera!=null)_camera.targetTexture=null;
             if(_target!=null){_target.Release();Object.Destroy(_target);}_target=null;
             if(_canvas!=null)Object.Destroy(_canvas.gameObject);_canvas=null;
+            if(_frameMaterial!=null)Object.Destroy(_frameMaterial);_frameMaterial=null;
             if(_sky!=null)Object.Destroy(_sky);_sky=null;
             if(_stage!=null)Object.Destroy(_stage);_stage=null;
             foreach(var trail in _trails.Values)trail.Dispose();_trails.Clear();
