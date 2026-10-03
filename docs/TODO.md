@@ -17,6 +17,17 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### OPENING-CAMERA-PREFERENCE-1004: camera motion OFF retains the saved view
+
+- [x] Opening sampler preserves saved position/rotation/FOV and suppresses ink
+  when Cinematic camera movement is OFF; ON travel/return remains. Original two
+  OFF failures/one ON control, current candidate3/3. Root inspected immutable
+  fixture/source bytes, XML, restored/free guards and explicit quality delta/
+  restoration. Not an immutable-quality or rendered-performance pass.
+  [Evidence](reports/laptop-validation-2026-10-04/opening-camera-preference/README.md).
+- [ ] Actual Run/clock/input/viewmodel handback and full-court normal/reduced/OFF
+  motion, current143 player and peers; sampler acceptance does not replace them.
+
 ### ARRIVAL-CAMERA-CLEARANCE-1004: near walls cannot push the eye beyond collision
 
 - [x] Replace unsafe0.8m minimum with nonzero0.01m floor. Original two failures/

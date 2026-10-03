@@ -1,5 +1,32 @@
 # Active Rework Checkpoint
 
+## Resume first: owner opening-pan check, source fixes checked, visual gate open
+
+Current opening is8.6s/latest shots/loading curtain/return-view prep plus
+3/2/1/GO!, protocol143. Preserve these author updates; never overlay old8sec file.
+Near-wall clearance integratedb40bac26a: original2/4, oldcandidate6/6 and current
+a6536/6; root inspected3408 maps/matchingmethod/fixtures and restored/free guards.
+Camera preference10291 current3/3 after original2OFFfails/1ONctrl is inspected
+and integrated: saved pose/FOV/noinkOFF, ON unchanged, rig disable gate source-
+reviewed. ActualRun/clock/viewmodel/visualhandback remain open.
+
+Original preference3410 had ONEQualitySettings mutation from settings init,
+retained delta;3409other files exact. Current3414 matched AFTERexplicit terminal
+quality restoration, postbytes preserved. Do notclaimqualityimmutable/rendered
+orFPS acceptance. Native sampler evidence at laptop-validation-2026-10-04.
+Root VIEWEDONEpublished Eskinita establishingPNG: readablecourt/fourchars/caption;
+notportraitsequence/motion/return/allmaps. FullpanGPUplan5120+1024/360s/captures
+hasnotlaunched onlaptop: fresh4975MiBfree<6144. Ownerquestion requestingONEidlePC
+graphics slot is PENDING; no reply is no permission. Do NOTstartPCUnity meanwhile.
+
+PC workerpreparedcurrenta004/143 atf1c63e4c8, uniquecompany/product/profile/cache,
+Runtime/Tests/Packages diffempty. NoEditorlaunched. Root latestworkingcheckout
+tump-competition-candidate1003i; pendingquestiondoesnotpause sourcework. Laptop
+currentlypreparingordinary14GPUintegration onchanged5493MiBheadroom while full
+panrequires6GiB; those tests cannot substitute forseeingpan. Noagents.
+NEXT: sendcheckedpublicationref, inspectactualRun/fullcourt feasibility and
+continue independent useful fixes; keepuserinformed and do notstopafteronepass.
+
 ## Resume first: owner opening-pan check continues
 
 Checked current near-wall geometry a6536c7c8 is published with rawa2e12b10 proof.
