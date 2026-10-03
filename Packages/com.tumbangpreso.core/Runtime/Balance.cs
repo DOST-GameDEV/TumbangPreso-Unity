@@ -132,19 +132,19 @@
         // The previous 3*dt impulse was erased by ordinary movement friction.
         public const float NemuPhaseSpeedScale = 1.20f;
 
-        // Explicit role speeds in metres per second, identical across character
+        // October 3 playtest revision: explicit role speeds, identical across character
         // picks and both modes. Active statuses, abilities and terrain remain separate.
-        public const float AttackerWalkSpeed = 3.75f;
-        public const float DefenderWalkSpeed = 5.0f;
-        public const float AttackerRunSpeed = 5.625f;
+        public const float AttackerWalkSpeed = 2.5f;
+        public const float DefenderWalkSpeed = 3.75f;
+        public const float AttackerRunSpeed = 5.0f;
         public const float DefenderRunSpeed = 7.5f;
 
         public const float SprintScale = 1.50f;
         public const float Friction = 30.0f;
         public const float Gravity = 20.0f; // Slipper/projectile gravity is unchanged.
-        public const float CharacterGravity = 128.0f / 9.0f;
+        public const float CharacterGravity = 32.0f;
         public const float MaxFallSpeed = 26.0f;
-        public const float JumpVelocity = 16.0f / 3.0f;
+        public const float JumpVelocity = 8.0f;
 
         /// <summary>
         /// ⚠️ A SQUARE, NOT A CIRCLE. Both the chalk the map builders draw and the clamp
@@ -192,7 +192,7 @@
         // against. Port_Plan.md §7.1 carries the reconciliation as a Phase 1 blocker.
         // -------------------------------------------------------------------
 
-        public const float StaminaMax = 100.0f;
+        public const float StaminaMax = 250.0f;
         /// <summary>
         /// Stamina spent per second of sprinting.
         ///
@@ -232,12 +232,12 @@
         /// DISTANCE against `ConfinementRadius`, so the next person to move the speed, the bar,
         /// the drain or the box gets told rather than finding out from a playtest.
         /// </summary>
-        public const float StaminaDrainRate = 40.0f;
-        public const float StaminaRegenRate = 40.0f;
+        public const float StaminaDrainRate = 100.0f;
+        public const float StaminaRegenRate = 100.0f;
         public const float StaminaRegenDelay = 1.0f;
 
         /// <summary>You cannot START a sprint below this, so the bar cannot be feathered.</summary>
-        public const float StaminaSprintFloor = 20.0f;
+        public const float StaminaSprintFloor = 50.0f;
 
         public const float FatigueTime = 2.5f;
         public const float FatigueSpeedScale = 1.0f;
@@ -254,7 +254,7 @@
         public const float ShoveSpeed = 12.247f;
         public const float ShoveLift = 2.2f;
         public const float ShoveStun = 1.25f;
-        public const float ShoveStaminaCost = 25.0f;
+        public const float ShoveStaminaCost = 0.0f;
         public const float ShoveCooldown = 7.5f;
         public const float ShoveMissCooldown = 2.0f;
         public const float ShoveRange = 1.6f;
@@ -379,16 +379,10 @@
         public const float SlideCooldown = 2.45f;
 
         /// <summary>
-        /// What a slide costs in stamina.
-        ///
-        /// ⚠️⚠️ IT IS `ShoveStaminaCost`, WHICH IS THE ATTACKER'S OTHER COMMITTED VERB, and the
-        /// parity is the point rather than laziness. `docs/VISION.md` § 1.1 forbids Classic
-        /// another resource bar and `CLAUDE.md` § 6.2 forbids another thing to hold in the head;
-        /// pricing this against a bar the player already watches means the decision is one they
-        /// already know how to make. It also makes the slide compete with SPRINTING AWAY, which is
-        /// the counterplay the taya gets for free: an attacker who slid cannot also run.
+        /// Retrieval slide keeps its explicit 25-point price. It no longer aliases
+        /// ShoveStaminaCost, because the owner removed shove/lunge costs after playtesting.
         /// </summary>
-        public const float SlideStaminaCost = ShoveStaminaCost;
+        public const float SlideStaminaCost = 25.0f;
 
         public const float PunchRange = 1.7f;
         public const float PunchArcDeg = 75.0f;

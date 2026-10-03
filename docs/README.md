@@ -1,6 +1,7 @@
 # Documentation: Start Here
 
-Explicit movement revision: [measured Unity speeds and jump](reports/movement-2026-10-03/README.md).
+Latest playtested movement revision: [measured speeds, jump and free shove/lunge](reports/movement-playtest-2026-10-03/README.md).
+Earlier same-day movement values are superseded; their evidence remains historical.
 
 Objective income revision: [rules and four-case native evidence](reports/feedback-2026-10-03/objective-economy/README.md).
 

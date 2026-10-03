@@ -1445,16 +1445,9 @@ namespace TumbangPreso
             var round = GameServices.Round;
             if (round == null) { AbandonSabotage(cool: false); return null; }
 
-            // ⚠️ THE VERB'S OWN GATES FIRST. A shove on cooldown or one the bar cannot pay for is
-            // not an opportunity, it is a walk toward a press that will not fire.
+            // The shove cooldown still gates an opportunity; stamina no longer does.
             var myVerbs = GetComponent<CombatVerbs>();
             if (myVerbs != null && myVerbs.ShoveCooldownLeft > 0.0f)
-            {
-                AbandonSabotage(cool: false);
-                return null;
-            }
-
-            if (_motor.Stamina.Current < Balance.ShoveStaminaCost + 2.0f)
             {
                 AbandonSabotage(cool: false);
                 return null;

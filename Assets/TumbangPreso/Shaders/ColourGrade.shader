@@ -52,6 +52,7 @@ Shader "TumbangPreso/ColourGrade"
             sampler2D _CueMask;
             UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
             float _HauntedSight;
+            float4 _HauntedViewScale;
             float _CueWorld,_CueSpeed,_CueTime,_CueEdges;
             float4 _CuePixels,_CuePips[8];
             half _Brightness;
@@ -322,8 +323,13 @@ Shader "TumbangPreso/ColourGrade"
                 if(_HauntedSight>0.5)
                 {
                     float eyeDepth=LinearEyeDepth(SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture,i.uv));
-                    // Functional near sight affects this victim camera, not scene fog or lighting.
-                    c*=1.0-smoothstep(2.5,7.0,eyeDepth);
+                    // Eye depth alone creates a flat slice through the street. Reconstruct
+                    // the view ray so equal distances fade equally around the victim.
+                    float2 viewXY=(i.uv*2.0-1.0+_HauntedViewScale.zw)*_HauntedViewScale.xy;
+                    float radialDistance=eyeDepth*sqrt(1.0+dot(viewXY,viewXY));
+                    half obscured=smoothstep(2.5,7.0,radialDistance);
+                    // Nemu's existing deep-purple ink, not a black world-wide fog.
+                    c=lerp(c,half3(.05,.02,.08),obscured);
                 }
                 return half4(c, source.a);
             }

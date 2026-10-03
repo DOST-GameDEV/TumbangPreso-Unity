@@ -561,7 +561,8 @@ namespace TumbangPreso.Net
         //135: Absolute Zero excludes its own caster from Frozen and thaw Chilled.
         //136: objective income is knockdown/tag plus one defender-round grant.
         //137: explicit movement speeds, stamina, jump and charged lunge recovery.
-        public const int ProtocolVersion = 137;
+        //138: playtested movement revision and stamina-free shove/lunge.
+        public const int ProtocolVersion = 138;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

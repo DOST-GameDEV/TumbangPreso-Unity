@@ -251,7 +251,7 @@ namespace TumbangPreso.Core.Tests
         {
             float seconds = Balance.StaminaMax / Balance.StaminaDrainRate;
             Assert.Equal(2.5f, seconds, 4);
-            Assert.Equal(14.0625f, Balance.AttackerRunSpeed * seconds, 4);
+            Assert.Equal(12.5f, Balance.AttackerRunSpeed * seconds, 4);
         }
 
         /// <summary>

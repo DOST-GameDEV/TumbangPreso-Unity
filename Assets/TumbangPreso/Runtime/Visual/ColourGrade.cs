@@ -260,7 +260,16 @@ namespace TumbangPreso.Visual
             _material.SetFloat(ExposureId, _exposure);
             _material.SetFloat(WhiteId, _white);
             _material.SetFloat(ChromaticId, EffectiveChromatic);
-            _material.SetFloat("_HauntedSight", HauntedSight ? 1f : 0f);
+            bool haunted = HauntedSight;
+            _material.SetFloat("_HauntedSight", haunted ? 1f : 0f);
+            if (haunted)
+            {
+                // Use this camera's projection, including its current aspect/FOV and lens
+                // shift. A full-screen Blit must not inherit another camera's view globals.
+                var projection = _camera.projectionMatrix;
+                _material.SetVector("_HauntedViewScale", _camera.orthographic ? Vector4.zero :
+                    new Vector4(1f / projection.m00, 1f / projection.m11, projection.m02, projection.m12));
+            }
 
             // ⚠️ THE SHAPE OF THE SPLIT IS THE STYLE'S, NOT THE PULSE'S, so a hit taken in
             // Chromatic mode fringes radially like everything else in that frame: they are the
