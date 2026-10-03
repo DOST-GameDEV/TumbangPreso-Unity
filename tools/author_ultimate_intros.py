@@ -757,8 +757,9 @@ def amihan():
     # C WIND-UP: behind her right shoulder and high, the lane ahead (v6 r1: from 2 m her head filled a third of the frame).
     p.shot(3.62, 4.55, (2.4, 2.3, -3.2), (0, 1.15, 3.0), 52, eye_to=(2.7, 2.6, -3.7), look_to=(0, 1.0, 4.5), fov_to=56)
     # D HANG: cut on the drive to her right side, low, the lunge in profile and the blast crossing the frame, creeping in.
-    # (v6 r1: looking 1.6 m ahead of her left her half out of frame; on her, a little wider.)
-    p.shot(4.55, 5.18, (3.6, 1.0, 1.0), (-.1, .95, 1.0), 50, eye_to=(3.2, 1.0, 1.3), look_to=(-.2, .95, 1.4), fov_to=46)
+    # (v6 r1 and r3: looking 1 to 1.6 m ahead of her cut her off at the left edge, head clipped. From her right the lane runs
+    # to screen right: aim just ahead of her so she holds the left third and the blast fills the rest.)
+    p.shot(4.55, 5.18, (4.3, 1.15, .7), (0, 1.0, .35), 56, eye_to=(3.9, 1.15, .9), look_to=(0, 1.0, .55), fov_to=52)
     # E FINISH (computed: high in front of her right side, her wink in the middle, the thrown bodies blowing away).
     p.shot(5.18, 5.6, (3.0, 3.0, 3.8), (0, 1.0, .6), 46, eye_to=(2.8, 2.8, 3.5), look_to=(0, 1.0, .6), fov_to=42)
     p.locked((3.4, 1.5, 3.4), (0, 1.0, 1.5), 50)
