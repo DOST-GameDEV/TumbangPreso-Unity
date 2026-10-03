@@ -17,6 +17,13 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### OFFLINE-BOT-ROSTER-1003: full character coverage
+
+- [x] Rotate offline bots against the full roster instead of four seat offsets.
+  Original2causal/2network controls, candidate4/4; Ate Girlie/Phaister coverage
+  restored. No kit/timing change, network defaults unchanged.
+  [Evidence](reports/reliability-2026-10-03/offline-bot-roster/README.md).
+
 ### NETWORK-BOT-ROSTER-1003: shared empty-seat kits
 
 - [x] Network empty bot seats use shared selection instead of each viewer's local

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 09:32:01Z" end-time="2026-10-03 09:32:01Z" duration="0.2035028">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-codex-slot1003" fullname="TumpWorker-codex-slot1003" runstate="Runnable" testcasecount="1154" result="Failed" site="Child" start-time="2026-10-03 09:32:01Z" end-time="2026-10-03 09:32:01Z" duration="0.203503" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2411" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-codex-slot1003/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1154" result="Failed" site="Child" start-time="2026-10-03 09:32:01Z" end-time="2026-10-03 09:32:01Z" duration="0.130682" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="9876" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2412" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1154" result="Failed" site="Child" start-time="2026-10-03 09:32:01Z" end-time="2026-10-03 09:32:01Z" duration="0.087768" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2413" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1154" result="Failed" site="Child" start-time="2026-10-03 09:32:01Z" end-time="2026-10-03 09:32:01Z" duration="0.072096" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1969" name="OfflineBotRosterCoverageTests" fullname="TumbangPreso.Tests.OfflineBotRosterCoverageTests" classname="TumbangPreso.Tests.OfflineBotRosterCoverageTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-03 09:32:01Z" end-time="2026-10-03 09:32:01Z" duration="0.047089" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1972" name="OrdinarySoloBotsCanReachEveryCharacterAsTheHumanChangesPick" fullname="TumbangPreso.Tests.OfflineBotRosterCoverageTests.OrdinarySoloBotsCanReachEveryCharacterAsTheHumanChangesPick" classname="TumbangPreso.Tests.OfflineBotRosterCoverageTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-03 09:32:01Z" end-time="2026-10-03 09:32:01Z" duration="0.033573" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1970" name="OrdinarySoloBotsCanReachEveryCharacterAsTheHumanChangesPick(Classic)" fullname="TumbangPreso.Tests.OfflineBotRosterCoverageTests.OrdinarySoloBotsCanReachEveryCharacterAsTheHumanChangesPick(Classic)" methodname="OrdinarySoloBotsCanReachEveryCharacterAsTheHumanChangesPick" classname="TumbangPreso.Tests.OfflineBotRosterCoverageTests" runstate="Runnable" seed="144811456" result="Failed" start-time="2026-10-03 09:32:01Z" end-time="2026-10-03 09:32:01Z" duration="0.021163" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  ate_girlie never appears as a bot in ordinary solo Classic
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.OfflineBotRosterCoverageTests.OrdinarySoloBotsCanReachEveryCharacterAsTheHumanChangesPick (TumbangPreso.Core.GameMode mode) [0x0005a] in C:\Users\matth\Documents\Codex\work\tump-codex-slot1003\Assets\TumbangPreso\Tests\OfflineBotRosterCoverageTests.cs:18
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1971" name="OrdinarySoloBotsCanReachEveryCharacterAsTheHumanChangesPick(HeroStrike)" fullname="TumbangPreso.Tests.OfflineBotRosterCoverageTests.OrdinarySoloBotsCanReachEveryCharacterAsTheHumanChangesPick(HeroStrike)" methodname="OrdinarySoloBotsCanReachEveryCharacterAsTheHumanChangesPick" classname="TumbangPreso.Tests.OfflineBotRosterCoverageTests" runstate="Runnable" seed="836967125" result="Failed" start-time="2026-10-03 09:32:01Z" end-time="2026-10-03 09:32:01Z" duration="0.000343" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  phaister never appears as a bot in ordinary solo HeroStrike
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.OfflineBotRosterCoverageTests.OrdinarySoloBotsCanReachEveryCharacterAsTheHumanChangesPick (TumbangPreso.Core.GameMode mode) [0x0005a] in C:\Users\matth\Documents\Codex\work\tump-codex-slot1003\Assets\TumbangPreso\Tests\OfflineBotRosterCoverageTests.cs:18
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1975" name="SharedNetworkDefaultSelectionIsUnchanged" fullname="TumbangPreso.Tests.OfflineBotRosterCoverageTests.SharedNetworkDefaultSelectionIsUnchanged" classname="TumbangPreso.Tests.OfflineBotRosterCoverageTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 09:32:01Z" end-time="2026-10-03 09:32:01Z" duration="0.008707" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1973" name="SharedNetworkDefaultSelectionIsUnchanged(Classic)" fullname="TumbangPreso.Tests.OfflineBotRosterCoverageTests.SharedNetworkDefaultSelectionIsUnchanged(Classic)" methodname="SharedNetworkDefaultSelectionIsUnchanged" classname="TumbangPreso.Tests.OfflineBotRosterCoverageTests" runstate="Runnable" seed="1471090614" result="Passed" start-time="2026-10-03 09:32:01Z" end-time="2026-10-03 09:32:01Z" duration="0.007852" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1974" name="SharedNetworkDefaultSelectionIsUnchanged(HeroStrike)" fullname="TumbangPreso.Tests.OfflineBotRosterCoverageTests.SharedNetworkDefaultSelectionIsUnchanged(HeroStrike)" methodname="SharedNetworkDefaultSelectionIsUnchanged" classname="TumbangPreso.Tests.OfflineBotRosterCoverageTests" runstate="Runnable" seed="2028932092" result="Passed" start-time="2026-10-03 09:32:01Z" end-time="2026-10-03 09:32:01Z" duration="0.000131" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios Validation/TumpWorker-codex-slot1003\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
