@@ -482,8 +482,20 @@ namespace TumbangPreso
                 return;
             }
 
-            if (_motor.IsDefender) StepDefender(dt);
-            else StepAttacker(dt);
+            // A pending verb belongs to the role that started it.
+            if (_motor.IsDefender)
+            {
+                CancelCharge();
+                ApplyObservedCharge(false);
+                StepDefender(dt);
+            }
+            else
+            {
+                if (_channel > 0.0f) ReportResetPhase(Net.MatchRpc.ResetPhase.Cancel);
+                _channel = 0.0f;
+                ChannelRatio = 0.0f;
+                StepAttacker(dt);
+            }
         }
 
         /// <summary>
