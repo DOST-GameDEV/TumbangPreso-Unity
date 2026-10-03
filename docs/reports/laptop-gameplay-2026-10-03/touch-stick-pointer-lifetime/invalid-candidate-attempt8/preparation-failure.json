@@ -1,0 +1,9 @@
+{
+  "reason": "Main launched job while preparation process92434 was still hashing. Runner created evidence folder first, preparation then failed atmkdir before runtime write. Source stayed original792; no candidate acceptance. One bounded scheduling repair follows.",
+  "nativeSource": "9bcb original withfixture7dac",
+  "verifiedAfterAgainstOriginalMap": 3396,
+  "observedTotal": 8,
+  "observedPassed": 6,
+  "observedFailed": 2,
+  "sourceWasUnchanged": true
+}
