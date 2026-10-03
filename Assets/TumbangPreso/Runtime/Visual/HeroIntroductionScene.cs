@@ -410,6 +410,8 @@ namespace TumbangPreso.Visual
             if (_hero == "paete") PaeteFrame(index, Local(seconds), ref eye, ref look, ref fov);
             // Phaister's THROW and MARK are computed from where she aimed and who is marked (`HeroIntroductionScene.PhaisterMark.cs`).
             if (_hero == "phaister") PhaisterFrame(index, Local(seconds), ref eye, ref look, ref fov);
+            // Amihan's ANSWER orbit, CUP close-up and RIDE down the warp are computed from her palms and the real lane (`HeroIntroductionScene.Amihan.cs`).
+            if (_hero == "amihan") AmihanFrame(index, Local(seconds), ref eye, ref look, ref fov);
             // A hero's own blows shake the lens (Paete's palm and eruption); reduced effects keep it still.
             if (!_reducedEffects) { var shake = Shake(Local(seconds)); eye += shake; look += shake * .5f; }
             position = _ground + _facing * eye; focus = _ground + _facing * look;

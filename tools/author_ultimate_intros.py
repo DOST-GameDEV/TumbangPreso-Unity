@@ -732,13 +732,24 @@ def amihan():
     p.key(4.15, coil).key(5.6, set_end)
     # Grounded throughout: no vortex lift. Featherfall is her real flight.
     p.rise(0, 0)
-    # CALL: front right, low, a slow push in that leaves room round her for the arriving wind.
-    p.shot(0, 1.7, (2.1, .8, 3.4), (0, 1.05, 0), 46, eye_to=(1.75, .88, 2.9), look_to=(0, 1.15, .1), fov_to=42)
-    # WEAVE: low on her right, cupped hands low in frame and her whole face above them.
-    p.shot(1.7, 3.7, (2.6, .72, 1.3), (.22, .98, .15), 42, eye_to=(2.3, .8, 1.8), look_to=(.18, 1.02, .3), fov_to=38,
+    # v3.1 (owner, 2026-10-03: "it looks so bad compared to paete and phasiter"): three slow pushes became SEVEN shots, cut on
+    # her beats, two of them computed from the scene (`AmihanFrame` in HeroIntroductionScene.Amihan.cs): the ANSWER's orbit
+    # and the RIDE down the warp to the real players. Paete cuts six and Phaister seven; neither holds a shot for two seconds.
+    # A CALL: front right, low, the flung hand reaching toward the lens side.
+    p.shot(0, .55, (2.0, .75, 3.3), (0, 1.1, 0), 44, eye_to=(1.85, .82, 3.0), look_to=(0, 1.15, .05), fov_to=42)
+    # B ANSWER (computed: an orbit round her right side, rising, as the six sheets curl round her). The row is its fallback.
+    p.shot(.55, 1.7, (3.4, .9, 2.4), (0, 1.2, 0), 52, eye_to=(4.0, 1.6, -.6), look_to=(0, 1.25, 0), fov_to=48)
+    # C WEAVE: low on her right, face and hands, as her arms sweep in.
+    p.shot(1.7, 2.15, (2.4, .7, 1.4), (.2, 1.0, .2), 40, eye_to=(2.05, .78, 1.55), look_to=(.22, .98, .2), fov_to=38, close=True)
+    # D CUP (computed: an extreme close-up on her real palms, punching in on the cup and the first pack). Fallback row.
+    p.shot(2.15, 2.95, (1.25, .8, .95), (.35, .64, .12), 32, eye_to=(1.15, .78, .85), look_to=(.35, .64, .12), fov_to=30,
            close=True)
-    # WARP: over the right shoulder, rising and pulling back so the lane and everyone standing in it fill the frame.
-    p.shot(3.7, 5.6, (2.5, 1.9, -2.3), (0, .8, 4.0), 50, eye_to=(3.1, 2.9, -3.6), look_to=(0, .3, 8.5), fov_to=56)
+    # E PACK and DRAW: a high crane coming down onto her and the floor kasikus, cut on the second pack.
+    p.shot(2.95, 3.7, (2.6, 3.4, 2.2), (0, .4, 0), 54, eye_to=(1.9, 2.2, 1.6), look_to=(.1, .8, .1), fov_to=46)
+    # F RIDE (computed: chasing the warp threads down the lane to the nearest player in it, arriving as they brace). Fallback.
+    p.shot(3.7, 4.45, (.9, 1.2, .2), (0, .8, 3.0), 56, eye_to=(1.5, 1.3, 5.6), look_to=(0, 1.0, 8.0), fov_to=50)
+    # G REVEAL: high over her right shoulder, the whole lane and everyone in it, the live fan drawn on under them.
+    p.shot(4.45, 5.6, (2.9, 2.9, -3.0), (0, .4, 6.0), 54, eye_to=(3.2, 3.3, -3.7), look_to=(0, .3, 7.5), fov_to=56)
     # Reduced motion: one side view with her, her hands and the lane together.
     p.locked((4.4, 1.6, 1.0), (0, .95, 2.5), 52)
     return p

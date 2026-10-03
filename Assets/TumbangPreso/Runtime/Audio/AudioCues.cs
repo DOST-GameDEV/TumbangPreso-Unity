@@ -133,6 +133,11 @@ namespace TumbangPreso.Audio
                 { "step_rubber",   -11.0f },
                 // Amihan's own light step (owner 2026-10-02, `tools/build_amihan_steps.py`): quieter than the rubber slap.
                 { "step_amihan",   -14.0f },
+                // AIRBURST v3's four, the only skill sounds back (2026-10-03, `tools/build_amihan_ult_audio.py`, `ReworkedSkillSfx`).
+                // The theme is a bed under the cutscene like every theme; the gather is 1.5 s of telegraph under play and mixed as
+                // a bed; the release is the loudest moment of her kit and mixed as an ultimate payload. Provisional until heard.
+                { "sfx_ult_theme_amihan", -14.0f }, { "sfx_cast_amihan_storm", -6.0f },
+                { "sfx_amihan_storm_gather", -9.0f }, { "sfx_amihan_storm_release", -3.0f },
                 { "slide_scrape",   -6.0f },
                 { "grab",           -6.0f },
                 { "throw_charge",   -5.0f },
@@ -212,6 +217,8 @@ namespace TumbangPreso.Audio
             // The generators that made them (`tools/generate_*_audio.py`, `tools/build_*_audio.py`) are kept for that rework;
             // do not rerun them into `Resources/Sfx` until the owner asks for skill sounds back.
             "sfx_hitmarker", "sfx_super_ready",
+            // AIRBURST v3 (2026-10-03): the first reworked skill sounds, Amihan's ultimate only (`ReworkedSkillSfx`).
+            "sfx_ult_theme_amihan", "sfx_cast_amihan_storm", "sfx_amihan_storm_gather", "sfx_amihan_storm_release",
 
             // ⚠️ THE MAP EVENT. `LrtTrainFlyby` called `ui_move` for two months and there has
             // never been a `ui_move.wav`, so every pass wrote `[Audio] no cue registered` to the
@@ -396,8 +403,20 @@ namespace TumbangPreso.Audio
             return false;
         }
 
-        /// <summary>False for a skill sound while they are switched off (<see cref="SkillSfxOn"/>).</summary>
-        public static bool Audible(string cue) => SkillSfxOn || !IsSkillSfx(cue);
+        /// <summary>
+        /// ⚠️ THE REWORKED SKILL SOUNDS, released from the switch one by one as each is rebuilt. AIRBURST v3 (2026-10-03,
+        /// `docs/reports/amihan-presentation-2026-10-02/airburst-v3.md`, `tools/build_amihan_ult_audio.py`): Amihan's ultimate
+        /// only. Every other hero's skill sounds, and her other skills, stay off.
+        /// </summary>
+        private static readonly HashSet<string> ReworkedSkillSfx = new HashSet<string>
+        {
+            "sfx_ult_theme_amihan", "sfx_cast_amihan_storm", "sfx_amihan_storm_gather", "sfx_amihan_storm_release",
+        };
+
+        public static bool IsReworkedSkillSfx(string cue) => !string.IsNullOrEmpty(cue) && ReworkedSkillSfx.Contains(cue);
+
+        /// <summary>False for a skill sound while they are switched off (<see cref="SkillSfxOn"/>), unless it was reworked.</summary>
+        public static bool Audible(string cue) => SkillSfxOn || !IsSkillSfx(cue) || IsReworkedSkillSfx(cue);
 
         public static bool IsKnown(string cue) => !string.IsNullOrEmpty(cue) && KnownNames.Contains(cue);
 

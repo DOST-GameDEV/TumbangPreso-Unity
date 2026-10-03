@@ -96,7 +96,7 @@ namespace TumbangPreso.PlayTests
 
         /// <summary>
         /// The whole Airburst on every view at true game speed (30 frames per game second, the phase on the film clock):
-        /// lead-in, the 3.6 s cutscene on her screen, the 1.5 s windup, the release, recovery and aftermath.
+        /// lead-in, the 5.6 s cutscene on her screen, the 1.5 s windup, the release, recovery and aftermath.
         /// Variants: "fx", "body" (live effects hidden, for judging the body alone) and "low" (Low profile plus
         /// reduced effects). Runs only with TUMP_AIRBURST_FILM=1; frames under TUMP_EVIDENCE/airburst-&lt;variant&gt;,
         /// with timing.csv carrying every measured frame.
@@ -148,7 +148,8 @@ namespace TumbangPreso.PlayTests
                         var storm = Object.FindFirstObjectByType<AmihanStorm>();
                         if (overlay != null)
                         {
-                            if (sceneFirst < 0) { sceneFirst = f; clockAtScene = round.TimeLeft; }
+                            // The theme plays from the introduction's own source, not `AudioDirector`, so the film logs it (Paete's and Phaister's rule).
+                            if (sceneFirst < 0) { sceneFirst = f; clockAtScene = round.TimeLeft; film.Cues.AppendLine(FormattableString.Invariant($"{f / 30.0:F3},sfx_ult_theme_amihan,1,0.2")); }
                             sceneLast = f; clockAtSceneEnd = round.TimeLeft;
                         }
                         if (inPhase) sawPhase = true;

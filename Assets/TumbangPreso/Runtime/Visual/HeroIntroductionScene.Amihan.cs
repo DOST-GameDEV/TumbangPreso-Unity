@@ -352,9 +352,7 @@ namespace TumbangPreso.Visual
             }
 
             // THE EMBLEM: drawn on at the cup, facing the lens, turning slowly; it swells on each beat and unravels into the warp.
-            int shot = ShotIndexAt(t);
-            Vector3 eye = new Vector3(2.5f, 1f, 1.5f);
-            if (shot >= 0) _performance.Shot(shot, t, out eye, out _, out _);
+            AmLens(t, out int shot, out var eye, out var lensLook, out _);
             var emblemAt = cup + new Vector3(0f, .03f, .05f);
             _amEmblemHost.localPosition = emblemAt;
             var toEye = eye - emblemAt; toEye.y *= .3f;
@@ -417,8 +415,8 @@ namespace TumbangPreso.Visual
             // The near layer: cotton and thread drifting from the lens toward her (in the WARP, down the lane), on every shot.
             if (shot >= 0)
             {
-                _performance.Shot(shot, t, out var nearEye, out var nearLook, out _);
-                var toward = shot == 2 ? new Vector3(0f, .8f, 9f) : cup;
+                var nearEye = eye; var nearLook = lensLook;
+                var toward = shot >= AmShotRide ? new Vector3(0f, .8f, 9f) : cup;
                 _amihanNear.Step(Mathf.Repeat(t / 1.4f, 1.0f), (calm ? .4f : .85f) * Ease(0, .2f, t) * leave, (start, drift, u) =>
                     Vector3.Lerp(Vector3.Lerp(nearEye, nearLook, .2f + start.y * .2f) + new Vector3(start.x, start.z * .6f, 0) * 1.1f, toward, u * .6f), .07f);
             }
@@ -428,6 +426,67 @@ namespace TumbangPreso.Visual
 
             // WARP: the live fan draws on along the flick; at 5.6 s it is exactly the live fan at age 0.
             _amihanFan.StepTo(t - Seconds);
+        }
+
+        // The seven shots (`tools/author_ultimate_intros.py` amihan()): CALL, ANSWER, WEAVE, CUP, PACK, RIDE, REVEAL.
+        private const int AmShotAnswer = 1, AmShotCup = 3, AmShotRide = 5;
+
+        /// <summary>The lens at this moment in scene space, computed shots included (no shake).</summary>
+        private bool AmLens(float t, out int shot, out Vector3 eye, out Vector3 look, out float fov)
+        {
+            shot = ShotIndexAt(t); eye = new Vector3(2.5f, 1f, 1.5f); look = Vector3.up; fov = 50f;
+            if (shot < 0) return false;
+            _performance.Shot(shot, t, out eye, out look, out fov);
+            AmihanFrame(shot, t, ref eye, ref look, ref fov);
+            return true;
+        }
+
+        /// <summary>
+        /// ⚠️ v3.1, THE COMPUTED SHOTS (owner, 2026-10-03: *"thoroughly think abt how to improve vfx as well as cutscene direciton
+        /// bcz it looks so bad compared to paete and phasiter"*). What Paete's and Phaister's cutscenes have that hers did not is a
+        /// camera that ANSWERS the action: Paete's rides his limb out to the players it takes, Phaister's pushes in on the doll's
+        /// face as it turns. Hers held three slow pushes. Now:
+        ///  * ANSWER: the lens orbits round her right side, rising, as the six sheets curl round her, so the wind reads as 3D
+        ///    sweeping arcs and not flat lines across the frame (Jean's wide).
+        ///  * CUP: in close on her REAL palms (the rig's, not a typed point), her face kept in the top of the frame (the owner's
+        ///    feel-pass note), punching in on the cup and the first pack (Venti's draw: the charge lives in the hands).
+        ///  * RIDE: the lens chases the warp threads down the lane to the nearest player standing in it, arriving beside them
+        ///    as they brace (`HeroIntroductionScene.AmihanLane.cs`); nobody in it, it rides to the middle of the lane.
+        /// </summary>
+        private void AmihanFrame(int index, float t, ref Vector3 eye, ref Vector3 look, ref float fov)
+        {
+            if (index == AmShotAnswer)
+            {
+                float u = Ease(AmAnswerAt, AmWeaveAt, t);
+                float a = Mathf.Lerp(35f, 105f, u) * Mathf.Deg2Rad, r = Mathf.Lerp(3.9f, 4.3f, u);
+                eye = new Vector3(Mathf.Sin(a) * r, Mathf.Lerp(.8f, 1.7f, u) + _amCourt, Mathf.Cos(a) * r);
+                look = new Vector3(0f, 1.2f + .1f * u + _amCourt, 0f);
+                fov = Mathf.Lerp(52f, 48f, u);
+            }
+            else if (index == AmShotCup)
+            {
+                var palms = BothPalms;
+                float u = Ease(AmCupAt, AmPack2At, t);
+                look = Vector3.Lerp(palms, HeadPoint, .42f);
+                var dir = new Vector3(1.0f, .06f, .62f).normalized;
+                eye = look + dir * Mathf.Lerp(1.65f, 1.45f, u);
+                fov = 34f - 5f * Decay(t - AmCupAt, .18f) - 3f * Decay(t - AmPack1At, .15f);
+            }
+            else if (index == AmShotRide)
+            {
+                var lead = AlLead();
+                var flat = new Vector3(lead.x, 0f, lead.z);
+                var dir = flat.sqrMagnitude > 1e-3f ? flat.normalized : Vector3.forward;
+                var side = Vector3.Cross(Vector3.up, dir);
+                var from = new Vector3(.85f, 1.15f + _amCourt, .35f);
+                var to = lead - dir * 2.3f + side * 1.25f + Vector3.up * .25f;
+                float chase = Ease(AmWarpAt, AmBraceAt + .2f, t);
+                eye = Vector3.Lerp(from, to, Mathf.Pow(chase, .8f)) + Vector3.up * .25f * Mathf.Sin(Mathf.PI * chase);
+                // Creep in on them as they brace.
+                eye += dir * .25f * Ease(AmBraceAt + .2f, AmBraceAt + .35f + .3f, t);
+                look = Vector3.Lerp(new Vector3(0f, .8f + _amCourt, 3f), lead, Ease(AmWarpAt, AmBraceAt, t));
+                fov = Mathf.Lerp(56f, 48f, chase);
+            }
         }
 
         /// <summary>The world steps back while the power is on screen and returns for the real lane (Paete's grade, her numbers).</summary>
