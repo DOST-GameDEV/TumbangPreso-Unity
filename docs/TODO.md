@@ -698,14 +698,17 @@ a reproduced baseline failure. Protocol118, no fresh player/peer claim.
 
 ### HERO-QUALITY-1001: full-roster research and durable plans
 
-DANTE-HANDBACK-1003 is investigating/refining the duplicated intro-to-live strike.
-The actual fixed-clock baseline is observed; keep all warning and phase timing.
-[Scoped plan](reports/dante-handoff-2026-10-03/plan.md).
+DANTE-HANDBACK-1003 replaces the duplicate live windup with planted follow-through
+and low owner hands. Native actual-route1/1, imported-pose continuity and all
+five bands pass; before/after body and owner views inspected. All37otherclips
+and geometry remain intact. Warning/phase timing unchanged; player/SFX/human
+acceptance remains separate. [Evidence](reports/dante-handoff-2026-10-03/README.md).
 
-DANTE-DRIFT-FRACTURES-1003 is the current cloud presentation unit: irregular
+DANTE-DRIFT-FRACTURES-1003 shipped irregular
 ground art only, preserving five authoritative bands. Shipped4da1fb62 with
 four distinct focused presentation checks covered; final Low court/overlap views
-inspected. Owner-camera acceptance and broader Dante polish remain open.
+inspected. Subsequent actual-owner handoff views show the faults clearly;
+broader Dante polish and player/peer/human acceptance remain open.
 [Evidence](reports/dante-drift-fractures-2026-10-03/README.md).
 
 

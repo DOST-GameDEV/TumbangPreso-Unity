@@ -113,11 +113,14 @@ namespace TumbangPreso.CameraSystem
                 Rest(0), K(.15f, -.08f, -.04f, .04f, .10f, .20f, .04f),
                 K(.32f, .16f, .10f, .04f, -.16f, .32f, .04f), K(.44f, .17f, .10f, .04f, -.17f, .32f, .04f),
                 K(.56f, .16f, .11f, .04f, -.16f, .33f, .04f), K(.70f, .16f, .10f, .04f, -.16f, .32f, .04f), Rest(1.08f)) },
-            // TITAN FISSURE. Arms rise short of vertical and the weight hangs, then both drive down and
-            // FORWARD into the road ahead, where the split will open.
+            // CONTINENTAL DRIFT. Continue the introduction's planted strike low.
+            // Pressure releases at the unchanged .40s warning; no second overhead windup.
             { "fissure-slam", new CastPath(.40f, false,
-                Rest(0), K(.22f, .02f, .34f, .00f, .02f, .54f, .00f), K(.30f, .02f, .35f, .00f, .02f, .55f, .00f),
-                K(.40f, -.06f, -.20f, .26f, .12f, .04f, .26f), K(.62f, -.05f, -.18f, .24f, .11f, .05f, .24f), Rest(.95f)) },
+                K(0, -.05f, -.17f, .22f, .11f, .02f, .22f),
+                K(.16f, -.05f, -.18f, .23f, .11f, .01f, .23f),
+                K(.40f, -.06f, -.21f, .26f, .12f, -.02f, .26f),
+                K(.54f, -.05f, -.20f, .24f, .11f, -.01f, .24f),
+                K(.76f, -.02f, -.08f, .10f, .04f, .00f, .10f), Rest(1.00f)) },
 
             // ---------------------------------------------------------------- CHESKA: one hand, exact
             // PERMAFROST SHEET. One flat pass of the right hand, low, right to left at one height (the
