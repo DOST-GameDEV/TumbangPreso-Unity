@@ -1,6 +1,39 @@
 # Active Rework Checkpoint
 
-## Resume first: reported144 follow-up passes, capture fixture identity unresolved
+## Resume first:144 OFF and Classic/leave inspected, next player and peer gates
+
+PC checkout tump-competition-candidate1003i has normally integrated012b43595.
+No PC Unity/player or subagents launched. Preserve Claude/private Main dirt,
+all importer baselines and authored contributor work. Existing laptop pairing is
+explicitly authorized by the owner; do not resurrect the stale generic ban.
+
+Fixture identity is RESOLVED, without another Unity run. Proof027f1790 retains
+tested-MatchArrivalFlowTests.fixture at exact SHA2562fec02b61...; all bytes
+LF-normalize to the published16de43a7 file (f31ee01c...). The test used375 CRLF
+and24 LF lines. Root verified raw fixture against both declared map and Git,
+complete normalized code equality, observer source identity, XML1/1, receipts
+terminal/restored/free and all34 camera/phase artifact hashes. The prior open
+identity block below is historical and must not trigger another investigation.
+
+Actual144 Hero camera-OFF route preserves saved pose/rotation/FOV through >10
+held LateUpdate samples and reaches GO/clock release. One144 Classic/reduced
+scene-leave case also passes1/1. OFF19174 declared inputs unchanged; Classic
+retains two arm tangent imports. Root inspected both reports and scoped receipts.
+These close those runtime cases only; all maps, actual overlay pixels, physical
+devices, complete Classic gameplay and matching packaged/current peers remain.
+
+Laptop reports no heavy job active at its checkpoint, reserves tests/capture and
+replay-budget source and plans reader/practice/font14 then ONE current144 Windows
+artifact. Build admission6144+1536MiB must have actual headroom. Do not run old143
+players or call their peer evidence current. Ask actual availability/roles/source
+and artifact identities before any joint LAN/online job; PC native slot remains
+Claude's unless the owner releases it. Root owns Net/presentation/account/docs.
+
+NEXT: continue an independent concrete source fix in root-owned files while the
+laptop prepares its coherent build. Reuse these completed tests; inspect actual
+new failures and arrange matching144 peer timing/recovery when PC is available.
+
+## Historical fixture identity gate, resolved by027f1790 above
 
 PC checkout tump-competition-candidate1003i is clean at203b9466c after normal
 fast-forward; contributor Credits, typography and Bank Shot changes preserved.
