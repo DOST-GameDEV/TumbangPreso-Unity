@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Failed(Child)" total="8" passed="3" failed="5" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 14:39:05Z" end-time="2026-10-03 14:39:05Z" duration="0.0751863">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1219" result="Failed" site="Child" start-time="2026-10-03 14:39:05Z" end-time="2026-10-03 14:39:05Z" duration="0.075186" total="8" passed="3" failed="5" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2495" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1219" result="Failed" site="Child" start-time="2026-10-03 14:39:05Z" end-time="2026-10-03 14:39:05Z" duration="0.066447" total="8" passed="3" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="6396" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2496" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1219" result="Failed" site="Child" start-time="2026-10-03 14:39:05Z" end-time="2026-10-03 14:39:05Z" duration="0.063561" total="8" passed="3" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2497" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1219" result="Failed" site="Child" start-time="2026-10-03 14:39:05Z" end-time="2026-10-03 14:39:05Z" duration="0.060709" total="8" passed="3" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1383" name="EmoteTargetOwnershipTests" fullname="TumbangPreso.Tests.EmoteTargetOwnershipTests" classname="TumbangPreso.Tests.EmoteTargetOwnershipTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-03 14:39:05Z" end-time="2026-10-03 14:39:05Z" duration="0.047249" total="8" passed="3" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1386" name="AllHumanSeatsFollowTheActualReaderWithoutRelyingOnDiscoveryOrder" fullname="TumbangPreso.Tests.EmoteTargetOwnershipTests.AllHumanSeatsFollowTheActualReaderWithoutRelyingOnDiscoveryOrder" classname="TumbangPreso.Tests.EmoteTargetOwnershipTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-03 14:39:05Z" end-time="2026-10-03 14:39:05Z" duration="0.030430" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1384" name="AllHumanSeatsFollowTheActualReaderWithoutRelyingOnDiscoveryOrder(False)" fullname="TumbangPreso.Tests.EmoteTargetOwnershipTests.AllHumanSeatsFollowTheActualReaderWithoutRelyingOnDiscoveryOrder(False)" methodname="AllHumanSeatsFollowTheActualReaderWithoutRelyingOnDiscoveryOrder" classname="TumbangPreso.Tests.EmoteTargetOwnershipTests" runstate="Runnable" seed="1836745230" result="Failed" start-time="2026-10-03 14:39:05Z" end-time="2026-10-03 14:39:05Z" duration="0.025148" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Emote ownership disagrees at seat 0
+  Expected: same as <Emote seat 0 (TumbangPreso.CharacterMotor)>
+  But was:  <Emote seat 1 (TumbangPreso.CharacterMotor)>
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.EmoteTargetOwnershipTests.AllHumanSeatsFollowTheActualReaderWithoutRelyingOnDiscoveryOrder (System.Boolean networked) [0x00017] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\EmoteTargetOwnershipTests.cs:70
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1385" name="AllHumanSeatsFollowTheActualReaderWithoutRelyingOnDiscoveryOrder(True)" fullname="TumbangPreso.Tests.EmoteTargetOwnershipTests.AllHumanSeatsFollowTheActualReaderWithoutRelyingOnDiscoveryOrder(True)" methodname="AllHumanSeatsFollowTheActualReaderWithoutRelyingOnDiscoveryOrder" classname="TumbangPreso.Tests.EmoteTargetOwnershipTests" runstate="Runnable" seed="77911374" result="Failed" start-time="2026-10-03 14:39:05Z" end-time="2026-10-03 14:39:05Z" duration="0.000848" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Emote ownership disagrees at seat 0
+  Expected: same as <Emote seat 0 (TumbangPreso.CharacterMotor)>
+  But was:  <Emote seat 2 (TumbangPreso.CharacterMotor)>
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.EmoteTargetOwnershipTests.AllHumanSeatsFollowTheActualReaderWithoutRelyingOnDiscoveryOrder (System.Boolean networked) [0x00017] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\EmoteTargetOwnershipTests.cs:70
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-case id="1387" name="EnabledReadersOnOtherNetworkSeatsCannotWinTheLocalWheel" fullname="TumbangPreso.Tests.EmoteTargetOwnershipTests.EnabledReadersOnOtherNetworkSeatsCannotWinTheLocalWheel" methodname="EnabledReadersOnOtherNetworkSeatsCannotWinTheLocalWheel" classname="TumbangPreso.Tests.EmoteTargetOwnershipTests" runstate="Runnable" seed="516029504" result="Failed" start-time="2026-10-03 14:39:05Z" end-time="2026-10-03 14:39:05Z" duration="0.000843" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: same as <Emote seat 0 (TumbangPreso.CharacterMotor)>
+  But was:  <Emote seat 2 (TumbangPreso.CharacterMotor)>
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.EmoteTargetOwnershipTests.EnabledReadersOnOtherNetworkSeatsCannotWinTheLocalWheel () [0x0003a] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\EmoteTargetOwnershipTests.cs:80
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1390" name="EnabledReplacementReaderSurvivesAnOlderDisabledReader" fullname="TumbangPreso.Tests.EmoteTargetOwnershipTests.EnabledReplacementReaderSurvivesAnOlderDisabledReader" methodname="EnabledReplacementReaderSurvivesAnOlderDisabledReader" classname="TumbangPreso.Tests.EmoteTargetOwnershipTests" runstate="Runnable" seed="1935454823" result="Passed" start-time="2026-10-03 14:39:05Z" end-time="2026-10-03 14:39:05Z" duration="0.004233" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1392" name="GuidedTutorialStillTargetsItsStudentFallback" fullname="TumbangPreso.Tests.EmoteTargetOwnershipTests.GuidedTutorialStillTargetsItsStudentFallback" methodname="GuidedTutorialStillTargetsItsStudentFallback" classname="TumbangPreso.Tests.EmoteTargetOwnershipTests" runstate="Runnable" seed="2093647978" result="Passed" start-time="2026-10-03 14:39:05Z" end-time="2026-10-03 14:39:05Z" duration="0.000634" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1388" name="NoActiveReaderCannotEmoteOnTheRetiredFallback" fullname="TumbangPreso.Tests.EmoteTargetOwnershipTests.NoActiveReaderCannotEmoteOnTheRetiredFallback" methodname="NoActiveReaderCannotEmoteOnTheRetiredFallback" classname="TumbangPreso.Tests.EmoteTargetOwnershipTests" runstate="Runnable" seed="267492893" result="Failed" start-time="2026-10-03 14:39:05Z" end-time="2026-10-03 14:39:05Z" duration="0.001211" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: null
+  But was:  <Emote seat 1 (TumbangPreso.CharacterMotor)>
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.EmoteTargetOwnershipTests.NoActiveReaderCannotEmoteOnTheRetiredFallback () [0x0000c] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\EmoteTargetOwnershipTests.cs:86
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1389" name="ParkedInputOwnerCannotReceiveAWheelChoice" fullname="TumbangPreso.Tests.EmoteTargetOwnershipTests.ParkedInputOwnerCannotReceiveAWheelChoice" methodname="ParkedInputOwnerCannotReceiveAWheelChoice" classname="TumbangPreso.Tests.EmoteTargetOwnershipTests" runstate="Runnable" seed="1673915996" result="Failed" start-time="2026-10-03 14:39:05Z" end-time="2026-10-03 14:39:05Z" duration="0.000714" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: null
+  But was:  <Emote seat 2 (TumbangPreso.CharacterMotor)>
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.EmoteTargetOwnershipTests.ParkedInputOwnerCannotReceiveAWheelChoice () [0x0001a] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\EmoteTargetOwnershipTests.cs:92
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1391" name="TemporaryAiWithHumanHeroInputKeepsTheSameFallbackOwner" fullname="TumbangPreso.Tests.EmoteTargetOwnershipTests.TemporaryAiWithHumanHeroInputKeepsTheSameFallbackOwner" methodname="TemporaryAiWithHumanHeroInputKeepsTheSameFallbackOwner" classname="TumbangPreso.Tests.EmoteTargetOwnershipTests" runstate="Runnable" seed="1396976886" result="Passed" start-time="2026-10-03 14:39:05Z" end-time="2026-10-03 14:39:05Z" duration="0.000767" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
