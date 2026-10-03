@@ -1,7 +1,7 @@
 # Enabled practice producer state at public world reset
 
-Date: 2026-10-03. Baseline `65acbd3d3`. Five-case fixture authored; review and
-native original proof completed after the sole fixture repair: three causal
+Date: 2026-10-03. Baseline `65acbd3d3`. Original five-case native proof
+completed after the sole fixture repair: three causal
 failures and two passing controls. The additional original custody control
 passes, and the first composite candidate passes all six. Main audited the
 exact source pair/fixture and terminal preservation before publication. Main
@@ -100,8 +100,8 @@ the exact three reset failures: enabled and shared-key producer clocks retain
 Uninterrupted hold and refused reset controls pass.
 [Corrected original XML](native-original/tests.xml) and
 [receipt](native-original/job-receipt.json) retain exit2, terminal state,
-preservation completed and no lease held. The repaired fixture remains unchanged
-for the candidate. The earlier five setup failures remain separate evidence;
+preservation completed and no lease held. The repaired five test bodies, setup
+and assertions remain unchanged in the six-case candidate. The earlier five setup failures remain separate evidence;
 they are not counted as causes or overwritten.
 
 ## Pending composite correction
