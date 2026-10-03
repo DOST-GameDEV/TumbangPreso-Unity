@@ -1,0 +1,51 @@
+{
+  "job": {
+    "id": "d3c0caf4a4d2492b962c2211213f28d7",
+    "ownerPid": 14996,
+    "guardPid": null,
+    "unityPids": [],
+    "createdUtc": "2026-10-03T10:09:21Z",
+    "kind": "build",
+    "memoryMb": 4096,
+    "reserveMb": 1536,
+    "project": "c:\\users\\matth\\documents\\codex\\work\\tump-competition-candidate1003h",
+    "library": "c:\\users\\matth\\documents\\codex\\work\\tump-competition-candidate1003h\\library",
+    "profile": "competition-candidate1003h",
+    "prefHive": "software\\unity\\unityeditor\\bh studios\\tumbang preso",
+    "ports": [],
+    "worker": false,
+    "allowParallel": false,
+    "maxParallelJobs": 2,
+    "allowGpuParallel": false,
+    "companyName": "BH Studios",
+    "productName": "Tumbang Preso"
+  },
+  "requestedUtc": "2026-10-03T10:09:21Z",
+  "status": "interrupted_guard_completed",
+  "exitCode": 125,
+  "admission": {
+    "availableMb": 8060,
+    "activeJobsBefore": 0,
+    "outsideEditors": [],
+    "outsideReserveMb": 0,
+    "acquiredUtc": "2026-10-03T10:09:21Z"
+  },
+  "startedUtc": "2026-10-03T10:09:21Z",
+  "guardPid": 19448,
+  "interruptionReason": "Physical memory below runtime reserve: 1525 MB available, 1536 MB required",
+  "guardExitCode": 124,
+  "unityPids": [
+    17384,
+    17460
+  ],
+  "stoppedUnityPids": [
+    17384,
+    17460
+  ],
+  "reason": "Only verified owned Editors may be stopped; the guard was not terminated. A pending guard retains its lease.",
+  "endedUtc": "2026-10-03T10:14:17Z",
+  "guardTerminal": true,
+  "preservationCompleted": true,
+  "availableMbAtEnd": 6529,
+  "leaseHeld": false
+}

@@ -431,6 +431,9 @@ namespace TumbangPreso.UI
             SetLoadingStage("loading characters", 0.24f);
             yield return null;
 
+            SetLoadingStage("preparing nameplate text", 0.24f);
+            yield return Visual.CharacterNameplate.WarmupFont();
+
             // 3. Load clip references AND short-cue sample data before first playback.
             yield return WarmAudioAssets();
 
