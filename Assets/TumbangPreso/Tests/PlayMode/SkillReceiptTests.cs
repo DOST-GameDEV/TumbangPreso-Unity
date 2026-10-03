@@ -411,11 +411,11 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(15, kit.Skill1.CooldownRemaining, .001f, "The awarded objective point never reached Amped-Up.");
             Assert.AreEqual(1, kit.UltimateCharge);
             system.OnThrowReleased();
-            Assert.AreEqual(14.25f, kit.Skill1.CooldownRemaining, .001f);
+            Assert.AreEqual(15f, kit.Skill1.CooldownRemaining, .001f, "Throws no longer grant objective income.");
             system.OnOwnSlipperRetrieved();
-            Assert.AreEqual(11.75f, kit.Skill1.CooldownRemaining, .001f);
+            Assert.AreEqual(15f, kit.Skill1.CooldownRemaining, .001f, "Retrieval no longer grants objective income.");
             kit.AddUltimateCharge(kit.UltimateCost);
-            Assert.AreEqual(11.75f, kit.Skill1.CooldownRemaining, .001f, "A non-objective practice/refill changed cooldowns.");
+            Assert.AreEqual(15f, kit.Skill1.CooldownRemaining, .001f, "A non-objective practice/refill changed cooldowns.");
         }
 
         private MatchRpc ObjectiveReceiver(out HeroAbilitySystem system, out GameplayActionScope scope)

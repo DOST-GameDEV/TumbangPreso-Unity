@@ -17,6 +17,13 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### OBJECTIVE-ECONOMY-1003: latest owner revision
+
+- [x] Can knockdown +1, successful tag +1, and one defender-round start grant +1.
+  Throw and own-retrieval income become zero. Costs and charge carry remain.
+  Four focused native cases pass; protocol 136 requires matching rebuilt clients.
+  [Evidence and limits](reports/feedback-2026-10-03/objective-economy/README.md).
+
 ### HUMAN-NOTES-1003: current Feedback corrections
 
 - [x] Absolute Zero excludes its caster from Frozen and thaw Chilled. Original
@@ -27,6 +34,8 @@ Nothing was deleted or renumbered.
   Focused original failure and candidate 1/1 plus UI capture retained.
   [Evidence](reports/feedback-2026-10-03/status-action-bar.md).
 - [ ] Unique tutorial attacker characters and no tutorial AI ultimates.
+- [ ] Investigate translucent ultimate-screen composition; match tag-replay clarity.
+- [ ] Make Haunted nearsight radial and dark purple rather than flat black.
 
 ### TWO-MACHINE-NETWORK-1003: paired baseline complete, new source and online open
 

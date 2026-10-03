@@ -559,7 +559,8 @@ namespace TumbangPreso.Net
         //133: ordinary Next Round uses the shared3.5second deadline; halftime stays10.
         //134: trip, elemental stun and edge recovery no longer accept mash input.
         //135: Absolute Zero excludes its own caster from Frozen and thaw Chilled.
-        public const int ProtocolVersion = 135;
+        //136: objective income is knockdown/tag plus one defender-round grant.
+        public const int ProtocolVersion = 136;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
