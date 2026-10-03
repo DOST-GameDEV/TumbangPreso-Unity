@@ -1774,7 +1774,21 @@ namespace TumbangPreso
 
         private int AiCharacterIndex(int slot)
         {
-            int human = HumanSeat >= 0 ? Settings.SettingsStore.Current.CharacterPick : -1;
+            int humanSeat = HumanSeat;
+            int human = humanSeat >= 0 ? Settings.SettingsStore.Current.CharacterPick : -1;
+            if (GameLaunch.GuidedTutorial && humanSeat >= 0)
+            {
+                int size = Roster.GetPeople(SceneFlow.SelectedMode).Count;
+                if (size > 0)
+                {
+                    int chosen = human >= 0 ? human : ResolveAiCharacterIndex(humanSeat, -1, SceneFlow.SelectedMode);
+                    if (slot == humanSeat) return chosen;
+                    // Give each other seat its own offset after the student. The
+                    // normal 0/3/6/9 spread collides in the nine-hero roster.
+                    int ordinal = slot < humanSeat ? slot : slot - 1;
+                    return (chosen + 1 + ordinal) % size;
+                }
+            }
             return ResolveAiCharacterIndex(slot, human, SceneFlow.SelectedMode);
         }
 

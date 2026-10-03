@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 07:07:05Z" end-time="2026-10-03 07:07:05Z" duration="0.2744683">
+  <test-suite type="TestSuite" id="2726" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1405" result="Failed" site="Child" start-time="2026-10-03 07:07:05Z" end-time="2026-10-03 07:07:05Z" duration="0.274468" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2720" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1405" result="Failed" site="Child" start-time="2026-10-03 07:07:05Z" end-time="2026-10-03 07:07:05Z" duration="0.254437" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="47968" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2721" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1405" result="Failed" site="Child" start-time="2026-10-03 07:07:05Z" end-time="2026-10-03 07:07:05Z" duration="0.240845" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2722" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1405" result="Failed" site="Child" start-time="2026-10-03 07:07:05Z" end-time="2026-10-03 07:07:05Z" duration="0.228369" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2590" name="TutorialBotPolicyTests" fullname="TumbangPreso.PlayTests.TutorialBotPolicyTests" classname="TumbangPreso.PlayTests.TutorialBotPolicyTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-03 07:07:05Z" end-time="2026-10-03 07:07:05Z" duration="0.203758" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2593" name="NormalMatchSelectionAndUltimateInputAreUnchanged" fullname="TumbangPreso.PlayTests.TutorialBotPolicyTests.NormalMatchSelectionAndUltimateInputAreUnchanged" methodname="NormalMatchSelectionAndUltimateInputAreUnchanged" classname="TumbangPreso.PlayTests.TutorialBotPolicyTests" runstate="Runnable" seed="953415601" result="Passed" start-time="2026-10-03 07:07:05Z" end-time="2026-10-03 07:07:05Z" duration="0.069341" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2592" name="TutorialBotsCannotPressUltimateButRetainOrdinarySkills" fullname="TumbangPreso.PlayTests.TutorialBotPolicyTests.TutorialBotsCannotPressUltimateButRetainOrdinarySkills" methodname="TutorialBotsCannotPressUltimateButRetainOrdinarySkills" classname="TumbangPreso.PlayTests.TutorialBotPolicyTests" runstate="Runnable" seed="1404554683" result="Failed" start-time="2026-10-03 07:07:05Z" end-time="2026-10-03 07:07:05Z" duration="0.045967" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TutorialBotPolicyTests.TutorialBotsCannotPressUltimateButRetainOrdinarySkills () [0x0000e] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/PlayMode/TutorialBotPolicyTests.cs:69
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2594" name="TutorialStudentUltimateInputIsNotSuppressed" fullname="TumbangPreso.PlayTests.TutorialBotPolicyTests.TutorialStudentUltimateInputIsNotSuppressed" methodname="TutorialStudentUltimateInputIsNotSuppressed" classname="TumbangPreso.PlayTests.TutorialBotPolicyTests" runstate="Runnable" seed="1466679271" result="Passed" start-time="2026-10-03 07:07:05Z" end-time="2026-10-03 07:07:05Z" duration="0.036694" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2591" name="TutorialUsesDistinctCharactersForEveryHumanPickAndSeat" fullname="TumbangPreso.PlayTests.TutorialBotPolicyTests.TutorialUsesDistinctCharactersForEveryHumanPickAndSeat" methodname="TutorialUsesDistinctCharactersForEveryHumanPickAndSeat" classname="TumbangPreso.PlayTests.TutorialBotPolicyTests" runstate="Runnable" seed="1344766189" result="Failed" start-time="2026-10-03 07:07:05Z" end-time="2026-10-03 07:07:05Z" duration="0.039256" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Duplicate tutorial character 0: HeroStrike, human seat 0, pick -1.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TutorialBotPolicyTests.TutorialUsesDistinctCharactersForEveryHumanPickAndSeat () [0x0006c] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/PlayMode/TutorialBotPolicyTests.cs:61
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

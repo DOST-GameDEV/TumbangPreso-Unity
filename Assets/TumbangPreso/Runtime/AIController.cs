@@ -4260,6 +4260,9 @@ namespace TumbangPreso
 
         private void Press(InputIntent intent, Verb verb, bool pressed)
         {
+            // Tutorial partners may demonstrate ordinary play without launching
+            // an ultimate over the student's lesson or completed practice range.
+            if (verb == Verb.Ultimate && GameLaunch.GuidedTutorial && _motor.IsBot) pressed = false;
             intent.Set(verb, pressed);
 
             if (pressed) _pressed.Add(verb);
