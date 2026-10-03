@@ -1,5 +1,14 @@
 # Skill Networking Contract
 
+## Objective economy, protocol136
+
+Can knockdowns and successful tags each grant one objective point. Throws and
+retrievals grant zero. BeginRound grants the defender one point once per
+match/round, on the authority only; hydration never repeats the award. Existing
+bank snapshots and Zack objective-cooldown receipts carry the results unchanged.
+Matching rebuilt clients are required for the changed income contract.
+[Four focused native cases and limits](reports/feedback-2026-10-03/objective-economy/README.md).
+
 ## Absolute Zero caster exclusion, protocol135
 
 The owner correction excludes the casting motor from its own Frozen and thaw

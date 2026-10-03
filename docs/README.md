@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Objective income revision: [rules and four-case native evidence](reports/feedback-2026-10-03/objective-economy/README.md).
+
 Latest human Feedback: [Cheska caster exclusion](reports/feedback-2026-10-03/cheska-caster.md).
 
 LAN participant identity and missing client result: [native boundary evidence](reports/reliability-2026-10-03/lan-record-identity/README.md).

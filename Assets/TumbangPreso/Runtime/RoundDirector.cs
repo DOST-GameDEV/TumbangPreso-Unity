@@ -371,6 +371,9 @@ namespace TumbangPreso
             _shoveCredit.Clear();
 
             foreach (var p in _players) p.RoundActive = true;
+            // One host-resolved grant per match/round, independent of reset or
+            // rejoin hydration. The ability system fences repeated BeginRound calls.
+            PlayerAt(GameServices.Match?.DefenderSlot ?? -1)?.AbilitySystem?.OnDefenderRoundStarted();
         }
 
         /// <summary>⚠️ ANY LIVE FRAME CLEARS THE FREEZE. See Hitstop: no instance owns it, so
