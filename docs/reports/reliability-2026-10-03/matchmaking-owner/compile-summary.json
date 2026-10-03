@@ -1,0 +1,9 @@
+{
+  "runtime": 0,
+  "tests": 0,
+  "scope": "Compile only;9cases nativepending",
+  "inputs": {
+    "Assets/TumbangPreso/Runtime/Net/Matchmaker.cs": "a74e6fa58762ec37c699021bd573f9541373892cc86323e800224a2968b38548",
+    "Assets/TumbangPreso/Tests/MatchmakingOwnerLifetimeTests.cs": "c6337936163b825837484087d7aab11980ffc44d4d7b6c76e699f16180f87e3d"
+  }
+}

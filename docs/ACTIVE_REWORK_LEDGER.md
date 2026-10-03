@@ -72,10 +72,37 @@ Logs/cross-machine-peer1003/host-02,180s normalplayer budget onceadmitted.
 NewotherEditor5652 usesAmihanfilms-r2; preserve it. Do notstartanotherhost.
 Laptopclientmustwaitactualhostlistening and its ownnativejobterminal.
 LANhelper --wait-seconds change is owned/uncommitted; source8accountunits committed.
-Next: publish reviewed candidate branch with pending-native labels and helper,
-prepare laptop native52 cases via manual handoff; review/integrate checked88dba66a;
-launch gamepair only once both guarded slots are free. Do not qualify current
-sourcefixes from the older1003e artifact. Preserve user-private overlays throughout.
+Latest owner steering: LET AMIHAN FILMING FINISH FIRST. Hold jointLAN until its
+whole filming lane completes, not momentary gaps. Do not kill Amihan processes.
+Host04 acquired gap04:01:11UTC despite queued wait, then anotherAmihanEditor10000
+appeared. Root retired only verified ownedplayer23588(parent12344), windowclose
+unavailable, termination tohonorownerpriority. Host04 TERMINAL26458 false/no
+case; input/profile/Runtime restored, lease free. Host02 normalexit0/nopeer/no
+career is schedulingfailure; host01/03 prelaunchforeignrefusals. No LANbug/pass
+inferred. All ownedgameplayers/helpers/server terminal; no furtherhostqueued.
+Laptopclient01 terminalnormal/noadmission/input/profile/Runtime restored/free;
+laptopclient02 mustnotlaunchuntilfutureactualhostlistening+nativejobterminal.
+
+Current MAINHEAD bf99ef5f85080b6d88723a08a731b6735ebe1a50, candidatebranchsame
+verified atlastpush; ASTRAremote57739c4ab includespublishedDantefracture work,
+merged locallybf99. Checkedlaptop19nativecases integrated00f03d911 plusinput12
+ff17. Rootarrivalcandidatea5db552ee includedbf99:6EditMode compile/staticPASS,
+nativepending. Source52+arrival6=58 pending-nativecases. Earlier account52
+exacthandoff paths/filters recorded inchat; user does NOT needcopypasteoract on
+it. Keep detailed technicalcoordination outofuser'sway. No outboundotherchattools.
+
+Rootproducer tool data: artifactsame1003e258files/manifestalreadyonlaptop;
+server14876STOPPED. run_lan_peer.py independentroles, guardedfreshprofiles,
+normalHero1/30/ready/end/savedownrecord andpeerhash/score gates. Native PClicensing
+errors retained; no more accountcandidate localretry. Laptop warmed nativeworker
+can qualify immutable PC-owned overlay whenfree; sourcebranch ownership unchanged.
+
+Parallelbulk agent activelyimplements nextindependentengineering. Arrival6 ready/
+committed. Matchmaker9 source/fixtures nowstaticreviewPASS, nativepending/notyet
+compiled/published. It advances round lifecycle next. Do not freeze/mutate its inputs
+midwrite. Root nextaction: compileandpublish reviewedMatchmaker candidate, update
+candidatebranchHEAD; retain explicitpendingacceptance. Resume LANonlyafterowner
+Amihanpriority isfulfilled andbothsidesackready. Continue code/merges meanwhile.
 
 ## Freeze peer gate: stop unchanged retries
 
