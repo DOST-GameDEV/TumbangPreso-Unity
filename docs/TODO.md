@@ -681,6 +681,10 @@ a reproduced baseline failure. Protocol118, no fresh player/peer claim.
 
 ### HERO-QUALITY-1001: full-roster research and durable plans
 
+DANTE-HANDBACK-1003 is investigating/refining the duplicated intro-to-live strike.
+The actual fixed-clock baseline is observed; keep all warning and phase timing.
+[Scoped plan](reports/dante-handoff-2026-10-03/plan.md).
+
 DANTE-DRIFT-FRACTURES-1003 is the current cloud presentation unit: irregular
 ground art only, preserving five authoritative bands. Shipped4da1fb62 with
 four distinct focused presentation checks covered; final Low court/overlap views

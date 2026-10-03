@@ -676,3 +676,9 @@ Editor. Next source question: Dante's3.8s intro shows a stamp at3.18s, then the
 real0.4s warning starts its separate fissure-slam from rest. Inspect accepted
 shared handoff through real CameraRig before treating this as a double-hit
 presentation defect. Offline pose sketch inspected; no new behavior change yet.
+
+DANTE-HANDBACK-1003 now owns only the new dated plan's scoped paths. Fixed-clock
+actual shared-route baseline passes73.623s/no guard and visibly confirms the
+intro stamp followed by another live overhead raise/strike. Keep0.4s warning and
+all mechanics; author a grounded follow-through in the existing named clip and
+its FPP entry. No active Editor, no runtime fix yet. Main57739c4a is published.
