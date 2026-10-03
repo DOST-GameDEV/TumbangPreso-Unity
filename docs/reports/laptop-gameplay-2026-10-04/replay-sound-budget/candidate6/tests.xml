@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 16:47:26Z" end-time="2026-10-03 16:47:26Z" duration="0.0967445">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1262" result="Passed" start-time="2026-10-03 16:47:26Z" end-time="2026-10-03 16:47:26Z" duration="0.096745" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2549" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1262" result="Passed" start-time="2026-10-03 16:47:26Z" end-time="2026-10-03 16:47:26Z" duration="0.080347" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="29240" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2550" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1262" result="Passed" start-time="2026-10-03 16:47:26Z" end-time="2026-10-03 16:47:26Z" duration="0.072388" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2551" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1262" result="Passed" start-time="2026-10-03 16:47:26Z" end-time="2026-10-03 16:47:26Z" duration="0.064586" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2193" name="RecordedClipSoundBudgetTests" fullname="TumbangPreso.Tests.RecordedClipSoundBudgetTests" classname="TumbangPreso.Tests.RecordedClipSoundBudgetTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 16:47:26Z" end-time="2026-10-03 16:47:26Z" duration="0.050744" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2200" name="AClipBeyondTheExistingRecorderBudgetStillRefusesCleanly" fullname="TumbangPreso.Tests.RecordedClipSoundBudgetTests.AClipBeyondTheExistingRecorderBudgetStillRefusesCleanly" methodname="AClipBeyondTheExistingRecorderBudgetStillRefusesCleanly" classname="TumbangPreso.Tests.RecordedClipSoundBudgetTests" runstate="Runnable" seed="890382642" result="Passed" start-time="2026-10-03 16:47:26Z" end-time="2026-10-03 16:47:26Z" duration="0.021372" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2199" name="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget" fullname="TumbangPreso.Tests.RecordedClipSoundBudgetTests.EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget" classname="TumbangPreso.Tests.RecordedClipSoundBudgetTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-03 16:47:26Z" end-time="2026-10-03 16:47:26Z" duration="0.018374" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2194" name="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget(0)" fullname="TumbangPreso.Tests.RecordedClipSoundBudgetTests.EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget(0)" methodname="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget" classname="TumbangPreso.Tests.RecordedClipSoundBudgetTests" runstate="Runnable" seed="1177917580" result="Passed" start-time="2026-10-03 16:47:26Z" end-time="2026-10-03 16:47:26Z" duration="0.004983" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2195" name="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget(1)" fullname="TumbangPreso.Tests.RecordedClipSoundBudgetTests.EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget(1)" methodname="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget" classname="TumbangPreso.Tests.RecordedClipSoundBudgetTests" runstate="Runnable" seed="111946127" result="Passed" start-time="2026-10-03 16:47:26Z" end-time="2026-10-03 16:47:26Z" duration="0.001869" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2196" name="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget(256)" fullname="TumbangPreso.Tests.RecordedClipSoundBudgetTests.EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget(256)" methodname="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget" classname="TumbangPreso.Tests.RecordedClipSoundBudgetTests" runstate="Runnable" seed="1089323486" result="Passed" start-time="2026-10-03 16:47:26Z" end-time="2026-10-03 16:47:26Z" duration="0.002431" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2197" name="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget(257)" fullname="TumbangPreso.Tests.RecordedClipSoundBudgetTests.EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget(257)" methodname="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget" classname="TumbangPreso.Tests.RecordedClipSoundBudgetTests" runstate="Runnable" seed="676107673" result="Passed" start-time="2026-10-03 16:47:26Z" end-time="2026-10-03 16:47:26Z" duration="0.002386" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2198" name="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget(512)" fullname="TumbangPreso.Tests.RecordedClipSoundBudgetTests.EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget(512)" methodname="EncoderAndDecoderAgreeWithinTheExistingRecorderSoundBudget" classname="TumbangPreso.Tests.RecordedClipSoundBudgetTests" runstate="Runnable" seed="1317527727" result="Passed" start-time="2026-10-03 16:47:26Z" end-time="2026-10-03 16:47:26Z" duration="0.004468" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

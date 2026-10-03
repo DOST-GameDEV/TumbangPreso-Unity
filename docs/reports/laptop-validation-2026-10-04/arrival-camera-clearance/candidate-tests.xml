@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 16:12:02Z" end-time="2026-10-03 16:12:02Z" duration="0.1228289">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1248" result="Passed" start-time="2026-10-03 16:12:02Z" end-time="2026-10-03 16:12:02Z" duration="0.122829" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2530" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1248" result="Passed" start-time="2026-10-03 16:12:02Z" end-time="2026-10-03 16:12:02Z" duration="0.108271" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27560" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2531" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1248" result="Passed" start-time="2026-10-03 16:12:02Z" end-time="2026-10-03 16:12:02Z" duration="0.100429" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2532" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1248" result="Passed" start-time="2026-10-03 16:12:02Z" end-time="2026-10-03 16:12:02Z" duration="0.083467" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1814" name="MatchArrivalCameraClearanceTests" fullname="TumbangPreso.Tests.MatchArrivalCameraClearanceTests" classname="TumbangPreso.Tests.MatchArrivalCameraClearanceTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 16:12:02Z" end-time="2026-10-03 16:12:02Z" duration="0.044614" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1817" name="ACloseWallCannotLeaveTheCameraBeyondItsCollisionClearance" fullname="TumbangPreso.Tests.MatchArrivalCameraClearanceTests.ACloseWallCannotLeaveTheCameraBeyondItsCollisionClearance" classname="TumbangPreso.Tests.MatchArrivalCameraClearanceTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 16:12:02Z" end-time="2026-10-03 16:12:02Z" duration="0.034259" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1815" name="ACloseWallCannotLeaveTheCameraBeyondItsCollisionClearance(0.55f)" fullname="TumbangPreso.Tests.MatchArrivalCameraClearanceTests.ACloseWallCannotLeaveTheCameraBeyondItsCollisionClearance(0.55f)" methodname="ACloseWallCannotLeaveTheCameraBeyondItsCollisionClearance" classname="TumbangPreso.Tests.MatchArrivalCameraClearanceTests" runstate="Runnable" seed="711467888" result="Passed" start-time="2026-10-03 16:12:02Z" end-time="2026-10-03 16:12:02Z" duration="0.029254" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1816" name="ACloseWallCannotLeaveTheCameraBeyondItsCollisionClearance(0.95f)" fullname="TumbangPreso.Tests.MatchArrivalCameraClearanceTests.ACloseWallCannotLeaveTheCameraBeyondItsCollisionClearance(0.95f)" methodname="ACloseWallCannotLeaveTheCameraBeyondItsCollisionClearance" classname="TumbangPreso.Tests.MatchArrivalCameraClearanceTests" runstate="Runnable" seed="543401721" result="Passed" start-time="2026-10-03 16:12:02Z" end-time="2026-10-03 16:12:02Z" duration="0.000458" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1820" name="AnObstacleBehindTheFocusCannotShortenTheShot" fullname="TumbangPreso.Tests.MatchArrivalCameraClearanceTests.AnObstacleBehindTheFocusCannotShortenTheShot" methodname="AnObstacleBehindTheFocusCannotShortenTheShot" classname="TumbangPreso.Tests.MatchArrivalCameraClearanceTests" runstate="Runnable" seed="2116806606" result="Passed" start-time="2026-10-03 16:12:02Z" end-time="2026-10-03 16:12:02Z" duration="0.000757" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1819" name="AnUnobstructedShotKeepsTheDesiredEye" fullname="TumbangPreso.Tests.MatchArrivalCameraClearanceTests.AnUnobstructedShotKeepsTheDesiredEye" methodname="AnUnobstructedShotKeepsTheDesiredEye" classname="TumbangPreso.Tests.MatchArrivalCameraClearanceTests" runstate="Runnable" seed="238688173" result="Passed" start-time="2026-10-03 16:12:02Z" end-time="2026-10-03 16:12:02Z" duration="0.000443" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1818" name="ARemoteWallStillShortensTheEyeBeforeTheWall" fullname="TumbangPreso.Tests.MatchArrivalCameraClearanceTests.ARemoteWallStillShortensTheEyeBeforeTheWall" methodname="ARemoteWallStillShortensTheEyeBeforeTheWall" classname="TumbangPreso.Tests.MatchArrivalCameraClearanceTests" runstate="Runnable" seed="1370167187" result="Passed" start-time="2026-10-03 16:12:02Z" end-time="2026-10-03 16:12:02Z" duration="0.000581" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1821" name="ATriggerInFrontOfTheFocusDoesNotOccludeTheShot" fullname="TumbangPreso.Tests.MatchArrivalCameraClearanceTests.ATriggerInFrontOfTheFocusDoesNotOccludeTheShot" methodname="ATriggerInFrontOfTheFocusDoesNotOccludeTheShot" classname="TumbangPreso.Tests.MatchArrivalCameraClearanceTests" runstate="Runnable" seed="1040375086" result="Passed" start-time="2026-10-03 16:12:02Z" end-time="2026-10-03 16:12:02Z" duration="0.000738" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

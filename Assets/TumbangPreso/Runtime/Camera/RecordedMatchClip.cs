@@ -23,6 +23,7 @@ namespace TumbangPreso.CameraSystem
         public const int WireVersion=13;
         public const int ByteLimit=2*1024*1024;
         public const int RawByteLimit=12*1024*1024;
+        public const int SoundCueLimit=512;
         public long MatchId,Id;
         public int Round,Actor,Subject;
         public GameMode Mode;
@@ -175,7 +176,7 @@ namespace TumbangPreso.CameraSystem
                     result.FieldFrames[n]=frame;
                 }
                 if(fieldFrameCount>0&&(result.FieldFrames[0].Time>result.Start+.001f||result.FieldFrames[fieldFrameCount-1].Time<result.End-.001f))throw new InvalidDataException("Incomplete field coverage");
-                int soundCount=Count(reader,0,256);result.Sounds=new RecordedWorldCue[soundCount];
+                int soundCount=Count(reader,0,SoundCueLimit);result.Sounds=new RecordedWorldCue[soundCount];
                 float soundTime=float.NegativeInfinity;
                 for(int i=0;i<soundCount;i++)
                 {

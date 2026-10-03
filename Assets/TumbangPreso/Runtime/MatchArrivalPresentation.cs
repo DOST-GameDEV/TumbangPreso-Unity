@@ -77,7 +77,7 @@ namespace TumbangPreso
             _rigActive = _rig != null && _camera.enabled && (_spectator == null || !_spectator.enabled);
             if (_rigActive) _rig.PrepareArrivalReturnView();
             _position = _camera.transform.position; _rotation = _camera.transform.rotation; _fov = _camera.fieldOfView;
-            if (_rigActive) _rig.SetActive(false);
+            if (_rigActive && Settings.SettingsStore.Current.CinematicCameraMotion) _rig.SetActive(false);
             // SpectatorCamera already respects PresentationClock.Held. Disabling it would
             // unhook its highlight subscriptions, which a temporary shot must never do.
             _camera.enabled = true;
@@ -212,6 +212,8 @@ namespace TumbangPreso
                 }
                 if (handoff >= .7f && _rigActive && _rig != null) _rig.SetActive(true);
             }
+            bool cameraMotion = Settings.SettingsStore.Current.CinematicCameraMotion;
+            if (!cameraMotion) { eye = _position; rotation = _rotation; fov = _fov; }
             _camera.transform.SetPositionAndRotation(eye, rotation); _camera.fieldOfView = fov;
             float ink = 1 - Mathf.SmoothStep(0, 1, age / .5f);
             if (!reduced)
@@ -219,6 +221,7 @@ namespace TumbangPreso
                     ink = Mathf.Max(ink, 1 - Mathf.Clamp01(Mathf.Abs(age - EstablishSeconds - cut * PortraitSeconds) / .12f));
             else if (age >= HandoffStart)
                 ink = 1 - Mathf.Clamp01(Mathf.Abs(handoff - .5f) / .22f);
+            if (!cameraMotion) ink = 0;
             if (_ink != null) _ink.color = new Color(HubStyle.Ink.r, HubStyle.Ink.g, HubStyle.Ink.b, ink);
             if (_captionGroup != null) _captionGroup.alpha = (1 - ink) * (1 - handoff);
             Caption(beat, map);
@@ -235,7 +238,9 @@ namespace TumbangPreso
                 var collider = _hits[i].collider;
                 if (collider == null || collider.GetComponentInParent<CharacterMotor>() != null ||
                     collider.GetComponentInParent<Slipper>() != null || collider.GetComponentInParent<Lata>() != null) continue;
-                clear = Mathf.Min(clear, Mathf.Max(.8f, _hits[i].distance - .3f));
+                // A framing minimum must not push the eye through a closer wall.
+                // Retain a nonzero look vector while honoring the actual clearance.
+                clear = Mathf.Min(clear, Mathf.Max(.01f, _hits[i].distance - .3f));
             }
             return focus + ray.normalized * clear;
         }

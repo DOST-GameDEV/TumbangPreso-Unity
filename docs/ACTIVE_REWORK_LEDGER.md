@@ -1,5 +1,75 @@
 # Active Rework Checkpoint
 
+## LIVE OWNER PAN VALIDATION: laptop full-court graphics launched
+
+Laptop reported fresh6.57GiB RAM, above5120+1024MiB admission. ONE wrapper
+session29765 running run_arrival_pan_full.py on source1c18b88e4/protocol143,
+19176 frozen Assets/Packages/ProjectSettings inputs, shippingidentity+independent
+warmcache. PathC:/Users/Matthew/dev/tump-laptop-player1003i/Logs/
+arrival-pan1004-hero-host-selected/job-receipt.json. Profile
+laptop-arrival-pan1004-hero-host-selected, realD3D11 GPU5120+1024/timeout360.
+CaseMatchArrivalFlowTests.CustomHostSelectedCourtSkipsVotingAndBeginsWithoutSecondReady.
+TUMP_ARRIVAL_CAPTURE frames640x360 every.75s in sameoutput/frames.
+
+No other laptop Unity job in parallel. Root must NOTduplicate it or use Claude's
+PCslot. Earlier PCslotquestion no longerneeded for thisrun; neverassumeapproval.
+Latestcamera policy+geometry checked, published1c18; prioroneestablishingimage
+viewed but fullmotion/portrait/handoff/GO/runtime stillunproven until thisrun.
+Wrapper preservespost-quality, restorespre afterterminal and audits source/
+importerdeltas. Capture images omit overlayUI, ticks assertions/logs separate.
+NEXT: follow THIShandle/source/output; get terminalresult/XML/frames andinspect
+actualfailure or full sequence. Do notrestartonobservationtimeout, no.large.raw.
+Continue after ownerquestions and throughcompaction. Goal remains active.
+
+## Resume first: owner opening-pan check, source fixes checked, visual gate open
+
+Current opening is8.6s/latest shots/loading curtain/return-view prep plus
+3/2/1/GO!, protocol143. Preserve these author updates; never overlay old8sec file.
+Near-wall clearance integratedb40bac26a: original2/4, oldcandidate6/6 and current
+a6536/6; root inspected3408 maps/matchingmethod/fixtures and restored/free guards.
+Camera preference10291 current3/3 after original2OFFfails/1ONctrl is inspected
+and integrated: saved pose/FOV/noinkOFF, ON unchanged, rig disable gate source-
+reviewed. ActualRun/clock/viewmodel/visualhandback remain open.
+
+Original preference3410 had ONEQualitySettings mutation from settings init,
+retained delta;3409other files exact. Current3414 matched AFTERexplicit terminal
+quality restoration, postbytes preserved. Do notclaimqualityimmutable/rendered
+orFPS acceptance. Native sampler evidence at laptop-validation-2026-10-04.
+Root VIEWEDONEpublished Eskinita establishingPNG: readablecourt/fourchars/caption;
+notportraitsequence/motion/return/allmaps. FullpanGPUplan5120+1024/360s/captures
+hasnotlaunched onlaptop: fresh4975MiBfree<6144. Ownerquestion requestingONEidlePC
+graphics slot is PENDING; no reply is no permission. Do NOTstartPCUnity meanwhile.
+
+PC workerpreparedcurrenta004/143 atf1c63e4c8, uniquecompany/product/profile/cache,
+Runtime/Tests/Packages diffempty. NoEditorlaunched. Root latestworkingcheckout
+tump-competition-candidate1003i; pendingquestiondoesnotpause sourcework. Laptop
+currentlypreparingordinary14GPUintegration onchanged5493MiBheadroom while full
+panrequires6GiB; those tests cannot substitute forseeingpan. Noagents.
+NEXT: sendcheckedpublicationref, inspectactualRun/fullcourt feasibility and
+continue independent useful fixes; keepuserinformed and do notstopafteronepass.
+
+## Resume first: owner opening-pan check continues
+
+Checked current near-wall geometry a6536c7c8 is published with rawa2e12b10 proof.
+Original2fail/4controls -> oldcandidate6/6 plus currentrefined6/6;3408 inputs matched,
+fixture/meta frozen and both guards terminal/restored/free. Radius.2/stand-off.3
+unchanged; floor.8 -> .01 keeps the eye before near walls and look vector nonzero.
+This is physics geometry acceptance, not full-court visual direction.
+
+Current motion preference original4c2dae922 / candidate464de0b91 on
+competition-pc-opening-preference-current1004 remains outsideASTRA. Three native
+EditMode sampler cases await validation: OFF preserves saved view across beats,
+ON establishes/restores. Old63f coroutine branch is retained, superseded.
+Root owns presentation production; laptop owns tests and its device lane.
+Full-court plan Hero/custom realGraphics5120MiB+1024 reserve/360s/640x360 captures
+has NOT launched because ~4.6GiB free is below6GiB admission. Do not lower the
+guard or count scoped physics/old30 as seeing fullpan. New8.6s shots/3..GO and protocol143 are preserved. Classic/Hero/reduced/OFF/
+leave restoration/current143 player/peers remain open. PCUnity remains Claude's.
+NEXT: test motion preference and actual full-court capture on changed headroom;
+continue source fixes while preserving authored camera/hero direction. No agents.
+Older checkpoint sections below are historical. Goal stays active.
+
+
 ## Opening refinement and latest countdown integrated
 
 Cloud camera unit a7f6faa8e implements the owner's direct refinement request:
