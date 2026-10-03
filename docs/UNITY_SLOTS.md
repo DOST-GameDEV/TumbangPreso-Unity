@@ -21,7 +21,7 @@ Always target tools by explicit project path. Do not install another MCP bridge
 to obtain another Editor slot. Close only owned Editors after a test; retain the
 worker only while it is used and prune obsolete derived outputs after completion.
 
-Runner qualification: 29 local safety/lifecycle cases pass, including coexistence,
+Runner qualification: 30 local safety/lifecycle cases pass, including coexistence,
 project/preferences collision, graphics/network refusal and extra memory reserve.
 This is runner qualification; simultaneous native execution needs its own receipt.
 

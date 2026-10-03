@@ -6794,7 +6794,7 @@ namespace TumbangPreso.Net
                 // and carries the `matchInProgress` gate that makes it agree with the host. A
                 // second writer for one fact is what produced §§ 53.1, 57.1, 60 and 62.1 as well;
                 // this is the fifth time in one evening and the answer is the same every time.
-                var reader = unit.GetComponent<PlayerInputReader>();
+                var readers = unit.GetComponents<PlayerInputReader>();
                 if (unit.PlayerSlot == seat)
                 {
                     local = unit;
@@ -6816,21 +6816,29 @@ namespace TumbangPreso.Net
                     // `docs/TODO.md` § 145.4b.
                     unit.NoteSeatClaimedByAPerson(MatchIsUnderway());
 
-                    var ai = unit.GetComponent<AIController>();
-                    if (ai != null)
+                    foreach (var ai in unit.GetComponents<AIController>())
                     {
                         ai.enabled = false;
                         Destroy(ai);
                     }
 
-                    if (reader == null) unit.gameObject.AddComponent<PlayerInputReader>();
-                    else reader.enabled = true;
+                    bool hasReader = false;
+                    foreach (var reader in readers)
+                    {
+                        if (reader.enabled) hasReader = true;
+                        else Destroy(reader);
+                    }
+                    if (!hasReader) unit.gameObject.AddComponent<PlayerInputReader>();
                 }
-                else if (reader != null)
+                else
                 {
-                    reader.enabled = false;
-                    Destroy(reader);
+                    foreach (var reader in readers)
+                    {
+                        reader.enabled = false;
+                        Destroy(reader);
+                    }
                 }
+                unit.ForgetInputSource();
 
                 unit.GetComponentInChildren<Visual.CharacterNameplate>()?.Refresh();
             }
