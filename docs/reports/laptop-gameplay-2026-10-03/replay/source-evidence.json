@@ -1,0 +1,81 @@
+{
+  "baseline_head": "f9552d58a4d59ecdc87a15a2203d82893e3aa5a3",
+  "evidence_level": "source-bound transform algebra and callback inspection only; no Unity execution",
+  "question": "Does the retained world stage inherit overlay owner transforms, and does disabled AI retire its private action clocks?",
+  "stopping_condition": "Baseline contract failures and candidate source mechanisms established; no native claim.",
+  "retry_count": 1,
+  "initial_evidence_script_failure": "Default Windows cp1252 could not decode existing AI source; bounded retry reads Git UTF-8 bytes.",
+  "replay_baseline_sha256": "8d79784734458357717369c7310383c5399feeb26e0b9b8cefea26815d6299af",
+  "replay_candidate_sha256": "8e9b2a4e52a707d001b80308a8fb572c86c14965448986bdbbea9289415c3ad0",
+  "replay_geometry_cases": [
+    {
+      "owner_position": [
+        8.0,
+        2.0,
+        -4.0
+      ],
+      "owner_yaw_degrees": 65,
+      "owner_scale": [
+        2.0,
+        3.0,
+        4.0
+      ],
+      "recorded_root_world_position": [
+        2.5,
+        1.0,
+        3.0
+      ],
+      "original_parented_world_position": [
+        20.988784753143296,
+        5.0,
+        -3.4601197942948563
+      ],
+      "original_world_position_error_metres": 19.989204821720755,
+      "candidate_detached_world_position": [
+        2.5,
+        1.0,
+        3.0
+      ],
+      "original_satisfies_world_pose": false,
+      "candidate_satisfies_world_pose": true
+    },
+    {
+      "owner_position": [
+        8.0,
+        2.0,
+        -4.0
+      ],
+      "owner_yaw_degrees": 65,
+      "owner_scale": [
+        0.0,
+        2.0,
+        3.0
+      ],
+      "recorded_root_world_position": [
+        2.5,
+        1.0,
+        3.0
+      ],
+      "original_parented_world_position": [
+        16.15677008332985,
+        4.0,
+        -0.1964356443337052
+      ],
+      "original_world_position_error_metres": 14.343101824127869,
+      "candidate_detached_world_position": [
+        2.5,
+        1.0,
+        3.0
+      ],
+      "original_satisfies_world_pose": false,
+      "candidate_satisfies_world_pose": true
+    }
+  ],
+  "ai_original_disable_resets_action_state": false,
+  "ai_candidate_disable_resets_action_state": true,
+  "ai_candidate_disable_mutates_shared_intent": false,
+  "native_tests_authored_not_run": [
+    "TumbangPreso.PlayTests.RecordedWorldOwnerSpaceTests.TransformedAndCollapsedOwnersCannotChangeRetainedWorldPoses",
+    "TumbangPreso.PlayTests.BotProducerLifetimeTests.DisablingProducerRetiresOldWindupsWithoutClearingSharedHeroInput"
+  ]
+}

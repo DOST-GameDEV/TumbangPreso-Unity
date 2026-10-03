@@ -1,0 +1,46 @@
+{
+  "original": {
+    "result": "Failed(Child)",
+    "passed": 0,
+    "failed": 2,
+    "duration_seconds": 13.1249904,
+    "job_id": "ba684c19870f466d827714fcde4a9d42",
+    "guardTerminal": true,
+    "preservationCompleted": true,
+    "leaseHeld": false,
+    "tests": [
+      {
+        "name": "TumbangPreso.PlayTests.BotProducerLifetimeTests.DisablingProducerRetiresOldWindupsWithoutClearingSharedHeroInput",
+        "result": "Failed",
+        "failure": "  Old throw windup survived producer disable.\n  Expected: False\n  But was:  True\n"
+      },
+      {
+        "name": "TumbangPreso.PlayTests.RecordedWorldOwnerSpaceTests.TransformedAndCollapsedOwnersCannotChangeRetainedWorldPoses",
+        "result": "Failed",
+        "failure": "  Recorded roots require a world-identity stage.\n  Expected: null\n  But was:  < < <empty>, <empty>, <empty>, < < < <empty>, <empty>, < <empty>, < <empty> >, <empty> > >, <empty>, <empty> > >, <empty>, < <empty> >, <empty>, <empty>, <empty> > >\n"
+      }
+    ]
+  },
+  "candidate": {
+    "result": "Passed",
+    "passed": 2,
+    "failed": 0,
+    "duration_seconds": 15.6372783,
+    "job_id": "9febb8a115174c83bc4098eb5684889a",
+    "guardTerminal": true,
+    "preservationCompleted": true,
+    "leaseHeld": false,
+    "tests": [
+      {
+        "name": "TumbangPreso.PlayTests.BotProducerLifetimeTests.DisablingProducerRetiresOldWindupsWithoutClearingSharedHeroInput",
+        "result": "Passed",
+        "failure": null
+      },
+      {
+        "name": "TumbangPreso.PlayTests.RecordedWorldOwnerSpaceTests.TransformedAndCollapsedOwnersCannotChangeRetainedWorldPoses",
+        "result": "Passed",
+        "failure": null
+      }
+    ]
+  }
+}

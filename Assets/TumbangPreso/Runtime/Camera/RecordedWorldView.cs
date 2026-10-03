@@ -52,7 +52,9 @@ namespace TumbangPreso.CameraSystem
             {
                 if(SystemInfo.graphicsDeviceType==UnityEngine.Rendering.GraphicsDeviceType.Null){UnavailableReason="No rendering device";return;}
                 if(Camera.main==null||clip.Map!=UnityEngine.SceneManagement.SceneManager.GetActiveScene().name){UnavailableReason="Camera or map not ready: camera="+(Camera.main!=null)+" scene="+UnityEngine.SceneManagement.SceneManager.GetActiveScene().name+" clip="+clip.Map;return;}
-                _stage=new GameObject("~RecordedWorld");_stage.transform.SetParent(owner,false);_stage.SetActive(false);
+                // Root pose samples and fields use world coordinates. Keep this owned
+                // stage at world identity even when the overlay owner is transformed.
+                _stage=new GameObject("~RecordedWorld");_stage.SetActive(false);
                 _court=CourtBoundaryPresentation.CreateRecorded(_stage.transform,GameServices.Round?.Lata);
                 _lataClock=LataClockPresentation.Install(_stage.transform,null,true);_lataClock.ShowForCapture(false);
                 _canLanding=new GroundContactVisual(_stage.transform,"Recorded can footprint",true);
