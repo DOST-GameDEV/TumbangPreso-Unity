@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 10:09:31Z" end-time="2026-10-03 10:09:32Z" duration="0.2734662">
+  <test-suite type="TestSuite" id="2857" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1511" result="Failed" site="Child" start-time="2026-10-03 10:09:31Z" end-time="2026-10-03 10:09:32Z" duration="0.273466" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2851" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1511" result="Failed" site="Child" start-time="2026-10-03 10:09:31Z" end-time="2026-10-03 10:09:32Z" duration="0.257691" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="20604" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2852" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1511" result="Failed" site="Child" start-time="2026-10-03 10:09:31Z" end-time="2026-10-03 10:09:32Z" duration="0.247746" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2853" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1511" result="Failed" site="Child" start-time="2026-10-03 10:09:31Z" end-time="2026-10-03 10:09:32Z" duration="0.238241" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2486" name="ShoveSlidePressRecoveryTests" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-03 10:09:31Z" end-time="2026-10-03 10:09:32Z" duration="0.217430" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2492" name="AnInitiallyBlockedShoveDoesNotSpendItsInputEdge" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.AnInitiallyBlockedShoveDoesNotSpendItsInputEdge" methodname="AnInitiallyBlockedShoveDoesNotSpendItsInputEdge" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" seed="177766358" result="Passed" start-time="2026-10-03 10:09:31Z" end-time="2026-10-03 10:09:31Z" duration="0.075678" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2490" name="OrdinaryShoveReleaseAndFreshPressStillWork" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.OrdinaryShoveReleaseAndFreshPressStillWork" methodname="OrdinaryShoveReleaseAndFreshPressStillWork" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" seed="464528917" result="Passed" start-time="2026-10-03 10:09:31Z" end-time="2026-10-03 10:09:31Z" duration="0.024442" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2491" name="OrdinarySlideReleaseAndFreshPressPreserveTheCost" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.OrdinarySlideReleaseAndFreshPressPreserveTheCost" methodname="OrdinarySlideReleaseAndFreshPressPreserveTheCost" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" seed="1750245006" result="Passed" start-time="2026-10-03 10:09:31Z" end-time="2026-10-03 10:09:31Z" duration="0.033022" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2488" name="ShoveReleaseDuringDefenderRoleRearmsTheFreshAttackerPress" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.ShoveReleaseDuringDefenderRoleRearmsTheFreshAttackerPress" methodname="ShoveReleaseDuringDefenderRoleRearmsTheFreshAttackerPress" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" seed="472213872" result="Failed" start-time="2026-10-03 10:09:31Z" end-time="2026-10-03 10:09:31Z" duration="0.024953" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: greater than 0.0f
+  But was:  0.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.PredictShove () [0x0003e] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\ShoveSlidePressRecoveryTests.cs:78
+at TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.ShoveReleaseDuringDefenderRoleRearmsTheFreshAttackerPress () [0x00040] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\ShoveSlidePressRecoveryTests.cs:116
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2487" name="ShoveReleaseDuringStunRearmsTheFreshAttackerPress" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.ShoveReleaseDuringStunRearmsTheFreshAttackerPress" methodname="ShoveReleaseDuringStunRearmsTheFreshAttackerPress" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" seed="198092017" result="Failed" start-time="2026-10-03 10:09:31Z" end-time="2026-10-03 10:09:31Z" duration="0.025491" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: greater than 0.0f
+  But was:  0.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.PredictShove () [0x0003e] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\ShoveSlidePressRecoveryTests.cs:78
+at TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.ShoveReleaseDuringStunRearmsTheFreshAttackerPress () [0x0004d] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\ShoveSlidePressRecoveryTests.cs:111
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2489" name="SlideReleaseDuringStunRearmsTheFreshRetrievalPress" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.SlideReleaseDuringStunRearmsTheFreshRetrievalPress" methodname="SlideReleaseDuringStunRearmsTheFreshRetrievalPress" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" seed="972256575" result="Failed" start-time="2026-10-03 10:09:31Z" end-time="2026-10-03 10:09:31Z" duration="0.023323" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: greater than 0.0f
+  But was:  0.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.PredictSlide () [0x0003e] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\ShoveSlidePressRecoveryTests.cs:101
+at TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.SlideReleaseDuringStunRearmsTheFreshRetrievalPress () [0x00053] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\ShoveSlidePressRecoveryTests.cs:121
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

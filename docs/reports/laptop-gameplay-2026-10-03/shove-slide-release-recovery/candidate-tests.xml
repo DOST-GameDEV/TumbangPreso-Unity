@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 10:13:22Z" end-time="2026-10-03 10:13:22Z" duration="0.2740839">
+  <test-suite type="TestSuite" id="2857" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1511" result="Passed" start-time="2026-10-03 10:13:22Z" end-time="2026-10-03 10:13:22Z" duration="0.274084" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2851" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1511" result="Passed" start-time="2026-10-03 10:13:22Z" end-time="2026-10-03 10:13:22Z" duration="0.257723" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="1696" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2852" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1511" result="Passed" start-time="2026-10-03 10:13:22Z" end-time="2026-10-03 10:13:22Z" duration="0.246976" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2853" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1511" result="Passed" start-time="2026-10-03 10:13:22Z" end-time="2026-10-03 10:13:22Z" duration="0.235407" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2486" name="ShoveSlidePressRecoveryTests" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 10:13:22Z" end-time="2026-10-03 10:13:22Z" duration="0.210587" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2492" name="AnInitiallyBlockedShoveDoesNotSpendItsInputEdge" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.AnInitiallyBlockedShoveDoesNotSpendItsInputEdge" methodname="AnInitiallyBlockedShoveDoesNotSpendItsInputEdge" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" seed="1884705850" result="Passed" start-time="2026-10-03 10:13:22Z" end-time="2026-10-03 10:13:22Z" duration="0.071251" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2490" name="OrdinaryShoveReleaseAndFreshPressStillWork" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.OrdinaryShoveReleaseAndFreshPressStillWork" methodname="OrdinaryShoveReleaseAndFreshPressStillWork" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" seed="2051339177" result="Passed" start-time="2026-10-03 10:13:22Z" end-time="2026-10-03 10:13:22Z" duration="0.024294" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2491" name="OrdinarySlideReleaseAndFreshPressPreserveTheCost" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.OrdinarySlideReleaseAndFreshPressPreserveTheCost" methodname="OrdinarySlideReleaseAndFreshPressPreserveTheCost" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" seed="2058235871" result="Passed" start-time="2026-10-03 10:13:22Z" end-time="2026-10-03 10:13:22Z" duration="0.032075" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2488" name="ShoveReleaseDuringDefenderRoleRearmsTheFreshAttackerPress" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.ShoveReleaseDuringDefenderRoleRearmsTheFreshAttackerPress" methodname="ShoveReleaseDuringDefenderRoleRearmsTheFreshAttackerPress" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" seed="1684746952" result="Passed" start-time="2026-10-03 10:13:22Z" end-time="2026-10-03 10:13:22Z" duration="0.024442" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2487" name="ShoveReleaseDuringStunRearmsTheFreshAttackerPress" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.ShoveReleaseDuringStunRearmsTheFreshAttackerPress" methodname="ShoveReleaseDuringStunRearmsTheFreshAttackerPress" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" seed="807420316" result="Passed" start-time="2026-10-03 10:13:22Z" end-time="2026-10-03 10:13:22Z" duration="0.023316" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2489" name="SlideReleaseDuringStunRearmsTheFreshRetrievalPress" fullname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests.SlideReleaseDuringStunRearmsTheFreshRetrievalPress" methodname="SlideReleaseDuringStunRearmsTheFreshRetrievalPress" classname="TumbangPreso.PlayTests.ShoveSlidePressRecoveryTests" runstate="Runnable" seed="479312422" result="Passed" start-time="2026-10-03 10:13:22Z" end-time="2026-10-03 10:13:22Z" duration="0.024009" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
