@@ -241,8 +241,9 @@ namespace TumbangPreso.Visual
 
         private void Rise(string name, Vector3 start, Vector3 bend, Vector3 top, float width, float delay, float seed)
         {
-            // Film r2: at 1.3 times they still barely showed from the court; twice the authored width.
-            var streak = WindVfx.Build(transform, name, new[] { start, bend, top }, width * 0.9f, _ => Vector3.right, 3, .2f, seed);
+            // Film r2: at 1.3 times they still barely showed from the court. v5 (owner: *"doesnt feel like she has air pushing her
+            // up"*): 1.5 times and brighter, so the take-off is a blast of air carrying her, not a few threads.
+            var streak = WindVfx.Build(transform, name, new[] { start, bend, top }, width * 1.5f, _ => Vector3.right, 3, .25f, seed);
             _column.Add(name.EndsWith("Thread") ? WindVfx.Thread(streak, (int)seed) : streak);
             _delays.Add(delay);
         }
@@ -257,15 +258,15 @@ namespace TumbangPreso.Visual
             for (int i = 0; i < _column.Count; i++)
             {
                 float age = t - _delays[i];
-                _column[i].Set(WindVfx.Reduced ? .25f : .45f, -phase, WindVfx.Ease(0, .34f, age), WindVfx.Ease(.23f, .74f, age), WindVfx.Ease(.42f, .82f, age));
+                _column[i].Set(WindVfx.Reduced ? .3f : .65f, -phase, WindVfx.Ease(0, .34f, age), WindVfx.Ease(.23f, .74f, age), WindVfx.Ease(.42f, .82f, age));
             }
-            _spiral.Set(WindVfx.Reduced ? .18f : .32f, phase, WindVfx.Ease(.04f, .45f, t), WindVfx.Ease(.28f, .93f, t), WindVfx.Ease(.55f, 1, t));
+            _spiral.Set(WindVfx.Reduced ? .22f : .45f, phase, WindVfx.Ease(.04f, .45f, t), WindVfx.Ease(.28f, .93f, t), WindVfx.Ease(.55f, 1, t));
             _burst.GameObject.transform.localScale = Vector3.one * Mathf.Lerp(0.5f, 2.6f, WindVfx.Ease(0.0f, 0.45f, t));
             _burst.GameObject.transform.localRotation = Quaternion.Euler(0, 45.0f * WindVfx.Ease(0.0f, 0.6f, t), 0);
             _burstOuter.GameObject.transform.localRotation = Quaternion.Euler(0, -30.0f * WindVfx.Ease(0.0f, 0.6f, t), 0);
-            _burst.Set(0.3f * (1.0f - WindVfx.Ease(0.3f, 0.75f, t)), phase, 1, 0, WindVfx.Ease(0.1f, 0.6f, t));
+            _burst.Set(0.5f * (1.0f - WindVfx.Ease(0.3f, 0.75f, t)), phase, 1, 0, WindVfx.Ease(0.1f, 0.6f, t));
             _burstOuter.GameObject.transform.localScale = Vector3.one * Mathf.Lerp(0.6f, 3.4f, WindVfx.Ease(0.05f, 0.6f, t));
-            _burstOuter.Set(0.2f * (1.0f - WindVfx.Ease(0.35f, 0.85f, t)), phase * 1.4f, 1, 0, WindVfx.Ease(0.15f, 0.7f, t));
+            _burstOuter.Set(0.35f * (1.0f - WindVfx.Ease(0.35f, 0.85f, t)), phase * 1.4f, 1, 0, WindVfx.Ease(0.15f, 0.7f, t));
             float h = _height;
             _motif.Step(t, 0.9f, (start, drift, u) =>
             {
@@ -277,23 +278,33 @@ namespace TumbangPreso.Visual
     }
 
     /// <summary>
-    /// FEATHERFALL support: the cotton breeze she rides (owner, 2026-10-03: *"add vfx that she's being brought up by wind"*,
-    /// *"dont copy wanderer completley give her her own version"*). Abel threads rise from under her and trail away behind,
-    /// a loose cotton-white swirl holds her soles and cotton lifts past her. Air and thread only, never an object; the legacy
-    /// component name is retained.
+    /// FEATHERFALL support: the updraft she rides. The owner on v4 (2026-10-03): *"doesnt feel like she's flyying and doesnt
+    /// feel like she has air pushing her up"*. The v4 support was a faint swirl at her soles and three thin helixes round her
+    /// body, so nothing connected the court to her. Now the cause is drawn: a column of streaks races up from the court under
+    /// her and narrows into her soles, a gust ring rises through it every <see cref="GustPeriod"/> s and presses into her feet
+    /// (<see cref="Push"/>, which <see cref="AmihanFlightPose"/> answers with a lift of her whole body), and the down-blast
+    /// spreads court dust outward under her. Air and dust only, never an object; the legacy component name is retained.
     /// </summary>
     public sealed class AmihanHoverRing : MonoBehaviour
     {
+        /// <summary>One gust each period: it rises from the court for <see cref="GustRise"/> s, then presses into her soles.</summary>
+        public const float GustPeriod = .95f, GustRise = .5f;
+        private const int JetStreaks = 6;
         private CharacterMotor _body;
         private Abilities.HeroKit _kit;
         private AmihanFlightPose _pose;
-        private WindVfx.Ribbon _cushion, _liftA, _liftB, _liftC;
-        private WindVfx.Ribbon _dustA, _dustB, _dustC;
+        private WindVfx.Ribbon _cushion;
+        private readonly WindVfx.Ribbon[] _jet = new WindVfx.Ribbon[JetStreaks];
+        private readonly WindVfx.Ribbon[] _gust = new WindVfx.Ribbon[2];
+        private readonly WindVfx.Ribbon[] _dust = new WindVfx.Ribbon[3];
         private WindVfx.Motif _cotton;
-        private Transform _groundAnchor;
-        private float _age, _fade, _landing = -1;
+        private Transform _groundAnchor, _column;
+        private float _age, _fade, _landing = -1, _strength;
         private bool _descending, _cancelled;
         private int _movementEpoch;
+
+        /// <summary>0 to 1: how hard the latest gust is pressing up into her soles this frame (none while she descends).</summary>
+        public float Push { get; private set; }
 
         public static AmihanHoverRing Attach(CharacterMotor body, AmihanFlightPose pose = null)
         {
@@ -311,35 +322,53 @@ namespace TumbangPreso.Visual
             var fx = go.AddComponent<AmihanHoverRing>(); fx._body = body; fx._kit = body.AbilitySystem?.Kit;
             fx._movementEpoch = body.MovementEpoch;
             fx._pose = pose != null ? pose : body.GetComponent<AmihanFlightPose>();
-            // The seat of air: one loose open swirl just under her soles, widening downward, laid nearly flat, cotton white.
-            var cushion = WindVfx.Helix(new Vector3(0, -.04f, -.05f), new Vector3(0, -.24f, -.1f), .24f, 1.1f, 22, 0, 1.6f);
-            fx._cushion = WindVfx.Build(go.transform, "FeetCushion", cushion, .075f, WindVfx.Flat(cushion), 4, .2f, 3);
+            // The seat of air: one loose open swirl just under her soles, where the column arrives.
+            var cushion = WindVfx.Helix(new Vector3(0, -.02f, -.03f), new Vector3(0, -.16f, -.05f), .2f, 1.1f, 22, 0, 1.9f);
+            fx._cushion = WindVfx.Build(go.transform, "FeetCushion", cushion, .08f, WindVfx.Flat(cushion), 4, .25f, 3);
             fx._cushion.Recolour(WindVfx.Cotton, WindVfx.Cotton, WindVfx.SheetBody);
-            // Her updraft: rising from below her feet, half a turn round her, leaving behind her at the shoulders; two
-            // threads in her abel colours and one pale breath.
-            fx._liftA = WindVfx.Thread(Rise(go.transform, "UpdraftLeft", new Vector3(-.46f, -1.05f, .1f), new Vector3(-.3f, 1.15f, -.45f), .2f, .55f, 200, .13f, 15), 1);
-            fx._liftB = Rise(go.transform, "UpdraftRight", new Vector3(.46f, -.9f, .05f), new Vector3(.28f, .95f, -.5f), .18f, .5f, 20, .12f, 21);
-            fx._liftC = WindVfx.Thread(Rise(go.transform, "UpdraftThread", new Vector3(.05f, -1.25f, .25f), new Vector3(-.05f, 1.4f, -.35f), .32f, .8f, 290, .09f, 28), 3);
-            fx._cotton = new WindVfx.Motif(go.transform, 7, body.transform.position.x * 1.7f + 4.1f, .15f);
+
+            // THE COLUMN, from the court (local y 0) to her soles (local y 1): the transform is stretched to the real gap each
+            // frame. Each streak leans in from a wide foot to a narrow top with a quarter turn, so it reads as air funnelled
+            // up into her; its width runs round the column, so the ring of streaks shows from any side.
+            var column = new GameObject("UpdraftColumn").transform; column.SetParent(go.transform, false);
+            fx._column = column;
+            for (int i = 0; i < JetStreaks; i++)
+            {
+                float a0 = (i * 60f + (i % 2) * 17f) * Mathf.Deg2Rad;
+                float r0 = .62f + .12f * (i % 3), r1 = .16f + .03f * (i % 2);
+                var spine = new Vector3[12];
+                for (int k = 0; k < spine.Length; k++)
+                {
+                    float u = k / (spine.Length - 1f);
+                    float a = a0 + u * .45f;
+                    float r = Mathf.Lerp(r0, r1, u * u * (3 - 2 * u));
+                    spine[k] = new Vector3(Mathf.Cos(a) * r, u, Mathf.Sin(a) * r);
+                }
+                var streak = WindVfx.Build(column, "UpdraftStreak" + i, spine, .07f + .02f * (i % 2),
+                    k => { float a = a0 + k / 11f * .45f; return new Vector3(-Mathf.Sin(a), 0, Mathf.Cos(a)); }, 3, .3f, 40 + i);
+                streak.Recolour(WindVfx.Core, WindVfx.SheetBody, WindVfx.Body);
+                fx._jet[i] = streak;
+            }
+            // THE GUSTS: open rings that rise up the column, narrowing, and break against her soles.
+            for (int i = 0; i < fx._gust.Length; i++)
+            {
+                var ring = WindVfx.Arc(1, 290, 30, 0, i * 160f);
+                fx._gust[i] = WindVfx.Build(column, "UpdraftGust" + i, ring, .1f, WindVfx.Flat(ring), 4, .3f, 60 + i);
+                fx._gust[i].Recolour(WindVfx.Core, WindVfx.Cotton, WindVfx.SheetBody);
+            }
+            fx._cotton = new WindVfx.Motif(go.transform, 9, body.transform.position.x * 1.7f + 4.1f, .15f);
+
+            // THE DOWN-BLAST on the court: dust arcs always spreading outward from under her.
             var anchor = new GameObject("GroundMark").transform; anchor.SetParent(go.transform, false);
             fx._groundAnchor = anchor;
-            var dustA = WindVfx.Arc(.62f, 115, 14, .02f, 15);
-            var dustB = WindVfx.Arc(.87f, 82, 11, .035f, 176);
-            var dustC = WindVfx.Arc(.48f, 68, 10, .045f, 282);
-            fx._dustA = WindVfx.Build(anchor, "CourtDustLeft", dustA, .065f, WindVfx.Flat(dustA), 4, .12f, 5);
-            fx._dustB = WindVfx.Build(anchor, "CourtDustBack", dustB, .04f, WindVfx.Flat(dustB), 3, .10f, 7);
-            fx._dustC = WindVfx.Build(anchor, "CourtDustNear", dustC, .05f, WindVfx.Flat(dustC), 3, .10f, 9);
-            var dust = new Color(.50f, .52f, .39f, 1);
-            fx._dustA.Recolour(WindVfx.Cotton, dust, WindVfx.Ink);
-            fx._dustB.Recolour(WindVfx.Cotton, dust, WindVfx.Ink);
-            fx._dustC.Recolour(WindVfx.Cotton, dust, WindVfx.Ink);
+            var dustColour = new Color(.50f, .52f, .39f, 1);
+            for (int i = 0; i < fx._dust.Length; i++)
+            {
+                var arc = WindVfx.Arc(1, 100 - 12 * i, 14, .02f, i * 125f);
+                fx._dust[i] = WindVfx.Build(anchor, "CourtDust" + i, arc, .07f, WindVfx.Flat(arc), 4, .12f, 5 + 2 * i);
+                fx._dust[i].Recolour(WindVfx.Cotton, dustColour, WindVfx.Ink);
+            }
             return fx;
-        }
-
-        private static WindVfx.Ribbon Rise(Transform parent, string name, Vector3 from, Vector3 to, float radius, float turns, float phase, float width, float seed)
-        {
-            var spine = WindVfx.Helix(from, to, radius, turns, 16, phase, .45f);
-            return WindVfx.Build(parent, name, spine, width, WindVfx.AroundAxis(spine, Vector3.up), 3, .22f, seed);
         }
 
         public void Cancel() { _cancelled = true; _landing = -1; }
@@ -361,37 +390,76 @@ namespace TumbangPreso.Visual
             _descending = !_cancelled && _body.IsFlying && !_body.IsAloft;
             if (_landing >= 0) _landing += dt;
             _fade = Mathf.Clamp01(_fade + (flying ? dt * 4 : -dt * 4));
-            if (!flying && _fade <= 0 && (_landing < 0 || _landing > .45f)) { Destroy(gameObject); return; }
-            float phase = WindVfx.Reduced ? 0.0f : _age * 3.0f;
-            float a = _fade * (WindVfx.Reduced ? .55f : 1);
-            float breathe = 0.5f + 0.5f * Mathf.Sin(_age * 2.2f);
-            // Faint and moving: each strand travels up its own length and thins at both ends.
-            _cushion.GameObject.transform.localRotation = Quaternion.Euler(0, WindVfx.Reduced ? 0 : _age * 70, 0);
-            _cushion.Set(.4f * a * Mathf.Lerp(.75f, 1, breathe), phase, 1, 0, .3f);
-            _liftA.Set(.6f * a, -phase * 1.3f, 1, 0, .3f);
-            _liftB.Set(.5f * a, -phase * 1.1f + 2, 1, 0, .35f);
-            _liftC.Set(.55f * a, -phase * 1.5f + 4, 1, 0, .3f);
-            // Cotton lifted from under her, drifting up past her and back; one cycle every two seconds, starting and ending unseen.
-            float cotton = WindVfx.Reduced ? 0 : Mathf.Repeat(_age * .5f, 1) * 1.45f;
-            _cotton.Step(cotton, WindVfx.Reduced ? 0 : .8f * a, (start, drift, u) =>
-            {
-                float turn = start.x * 9 + u * 2.4f;
-                float r = .3f + start.z * .25f + u * .12f;
-                return new Vector3(Mathf.Cos(turn) * r, -.9f + u * (2.1f + drift.y * .5f), Mathf.Sin(turn) * r * .6f - u * (.35f + drift.z * .2f));
-            }, .07f);
+            // The updraft holds her while she is aloft and lets her down when she descends: the column thins as she sinks.
+            _strength = Mathf.MoveTowards(_strength, flying && !_descending ? 1 : .3f, dt * 3);
+            if (!flying && _fade <= 0 && (_landing < 0 || _landing > .45f)) { Push = 0; Destroy(gameObject); return; }
+            bool calm = WindVfx.Reduced;
+            float phase = calm ? 0.0f : _age * 3.0f;
+            float a = _fade * (calm ? .55f : 1);
 
-            // The road mark: straight down from her, on whatever surface is under her.
+            // Straight down from her, on whatever surface is under her.
             Vector3 feet = _body.transform.position;
-            float ground = VfxShapes.GroundAt(feet, feet.y - 3.0f, 5.0f);
+            float ground = VfxShapes.GroundAt(feet, feet.y - 4.0f, 5.0f);
             float gap = Mathf.Max(0.0f, feet.y - ground);
             _groundAnchor.position = new Vector3(feet.x, ground + 0.03f, feet.z);
             _groundAnchor.rotation = Quaternion.identity;
+            _column.position = new Vector3(feet.x, ground, feet.z);
+            _column.rotation = Quaternion.identity;
+            _column.localScale = new Vector3(1, Mathf.Max(.05f, gap), 1);
+            float high = Mathf.Clamp01(gap / .6f);
+
+            // THE COLUMN: every streak racing up, its head always ahead of its tail, so the air is seen to travel.
+            float jet = a * high * Mathf.Lerp(.25f, 1, _strength);
+            for (int i = 0; i < _jet.Length; i++)
+            {
+                float run = calm ? .5f : Mathf.Repeat(_age * 1.6f + i * .37f, 1);
+                _jet[i].Set(.55f * jet, -phase * 2.2f - i, Mathf.Clamp01(run * 1.6f), Mathf.Clamp01(run * 1.6f - .75f), .25f);
+            }
+
+            // THE GUSTS, one each GustPeriod, taking turns: each rises in GustRise s, narrowing from 1.1 m to her soles, then
+            // breaks against them, which is the Push her body answers.
+            float push = 0;
+            for (int i = 0; i < _gust.Length; i++)
+            {
+                float since = Mathf.Repeat(_age - i * GustPeriod, GustPeriod * _gust.Length);
+                float u = Mathf.Clamp01(since / GustRise);
+                float after = since - GustRise;
+                var ring = _gust[i].GameObject.transform;
+                ring.localPosition = new Vector3(0, u * .97f, 0);
+                float width = Mathf.Lerp(1.1f, .3f, u * u) + (after > 0 ? after * 1.2f : 0);
+                ring.localScale = new Vector3(width, 1, width);
+                ring.localRotation = Quaternion.Euler(0, calm ? 0 : _age * 160 + i * 90, 0);
+                float alpha = after < 0 ? WindVfx.Ease(0, .12f, since) : 1 - WindVfx.Ease(0, .3f, after);
+                _gust[i].Set(.6f * jet * alpha, phase * 1.5f, 1, 0, after > 0 ? .3f + after * 2 : .2f);
+                if (after >= 0 && after < .6f) push = Mathf.Max(push, Mathf.Exp(-after * 6) * (1 - Mathf.Exp(-after * 60)));
+            }
+            Push = (calm ? .5f : 1) * push * _strength * _fade * high;
+
+            _cushion.GameObject.transform.localRotation = Quaternion.Euler(0, calm ? 0 : _age * 110, 0);
+            _cushion.GameObject.transform.localScale = Vector3.one * (1 + .35f * Push);
+            _cushion.Set((.45f + .35f * Push) * a, phase, 1, 0, .25f);
+
+            // Cotton swept up the column from the court, past her and on above her head.
+            float cotton = calm ? 0 : Mathf.Repeat(_age * .7f, 1) * 1.4f;
+            float floor = -gap;
+            _cotton.Step(cotton, calm ? 0 : .85f * jet, (start, drift, u) =>
+            {
+                float turn = start.x * 9 + u * 3f;
+                float r = Mathf.Lerp(.7f + start.z * .3f, .28f + start.z * .2f, Mathf.Clamp01(u * 1.6f));
+                return new Vector3(Mathf.Cos(turn) * r, Mathf.Lerp(floor + .1f, 1.9f + drift.y * .5f, u), Mathf.Sin(turn) * r);
+            }, .07f);
+
+            // THE DOWN-BLAST: court dust spreading outward from under her, stronger the lower she flies; a burst as she lands.
             float landing = _landing >= 0 ? 1 - Mathf.Clamp01(_landing / .45f) : 0;
-            float dust = Mathf.Clamp01(gap / 1.2f) * .23f * a + landing * .5f;
-            _groundAnchor.localScale = Vector3.one * (1 + (_landing >= 0 ? Mathf.Clamp01(_landing / .45f) * .65f : gap * .08f));
-            _dustA.Set(dust, phase * .6f, 1, 0, .4f + .5f * (1 - _fade));
-            _dustB.Set(dust * .65f, phase * .45f + 1, 1, 0, .5f);
-            _dustC.Set(dust * .8f, phase * .7f + 2, 1, 0, .45f);
+            float blast = a * _strength * Mathf.Clamp01(1.4f - gap / 4f) * .5f + landing * .55f;
+            for (int i = 0; i < _dust.Length; i++)
+            {
+                float u = _landing >= 0 ? Mathf.Clamp01(_landing / .45f) : Mathf.Repeat(_age * .9f + i / 3f, 1);
+                var arc = _dust[i].GameObject.transform;
+                arc.localScale = Vector3.one * Mathf.Lerp(.45f, 1.7f, u);
+                arc.localRotation = Quaternion.Euler(0, i * 120 + (calm ? 0 : _age * 25), 0);
+                _dust[i].Set(blast * Mathf.Sin(u * Mathf.PI), phase * .6f + i, 1, 0, .3f + .5f * u);
+            }
         }
     }
 
