@@ -126,7 +126,9 @@ namespace TumbangPreso
             _carrier = GetComponent<Carrier>();
         }
 
-        private void OnDisable()
+        private void OnDisable() => RetireActions();
+
+        internal void RetireActions()
         {
             // A retired body must not resume a contact sweep from its old position.
             // Keep the spent cooldown; an ordinary clock hold leaves this component enabled.

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 03:32:16Z" end-time="2026-10-03 03:32:16Z" duration="0.3273322">
+  <test-suite type="TestSuite" id="2677" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1365" result="Failed" site="Child" start-time="2026-10-03 03:32:16Z" end-time="2026-10-03 03:32:16Z" duration="0.327332" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2671" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-laptop-native1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1365" result="Failed" site="Child" start-time="2026-10-03 03:32:16Z" end-time="2026-10-03 03:32:16Z" duration="0.314400" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="6668" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2672" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1365" result="Failed" site="Child" start-time="2026-10-03 03:32:16Z" end-time="2026-10-03 03:32:16Z" duration="0.306756" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2673" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1365" result="Failed" site="Child" start-time="2026-10-03 03:32:16Z" end-time="2026-10-03 03:32:16Z" duration="0.299595" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2057" name="PracticeResetCombatLifetimeTests" fullname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" classname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-03 03:32:16Z" end-time="2026-10-03 03:32:16Z" duration="0.279614" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2062" name="InvalidDefenderChoiceLeavesTheExistingContactUntouched" fullname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests.InvalidDefenderChoiceLeavesTheExistingContactUntouched" methodname="InvalidDefenderChoiceLeavesTheExistingContactUntouched" classname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" runstate="Runnable" seed="64190706" result="Passed" start-time="2026-10-03 03:32:16Z" end-time="2026-10-03 03:32:16Z" duration="0.067448" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2061" name="OrdinaryPausePreservesTheCommittedContactAndCooldown" fullname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests.OrdinaryPausePreservesTheCommittedContactAndCooldown" methodname="OrdinaryPausePreservesTheCommittedContactAndCooldown" classname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" runstate="Runnable" seed="1982580269" result="Passed" start-time="2026-10-03 03:32:16Z" end-time="2026-10-03 03:32:16Z" duration="0.125908" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2060" name="ResetRangeCancelsPendingLungeWindupBeforeMovingTheBody" fullname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests.ResetRangeCancelsPendingLungeWindupBeforeMovingTheBody" methodname="ResetRangeCancelsPendingLungeWindupBeforeMovingTheBody" classname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" runstate="Runnable" seed="879482959" result="Failed" start-time="2026-10-03 03:32:16Z" end-time="2026-10-03 03:32:16Z" duration="0.031141" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Reset retained the old lunge windup.
+  Expected: -1
+  But was:  0.00255700108f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests+<ResetRangeCancelsPendingLungeWindupBeforeMovingTheBody>d__23.MoveNext () [0x0009e] in C:\Users\Matthew\dev\tump-laptop-native1003\Assets\TumbangPreso\Tests\PlayMode\PracticeResetCombatLifetimeTests.cs:115
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2058" name="ResetRangeRetiresPreTeleportContactWithoutRefundingCooldown" fullname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests.ResetRangeRetiresPreTeleportContactWithoutRefundingCooldown" methodname="ResetRangeRetiresPreTeleportContactWithoutRefundingCooldown" classname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" runstate="Runnable" seed="684181761" result="Failed" start-time="2026-10-03 03:32:16Z" end-time="2026-10-03 03:32:16Z" duration="0.022208" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Range reset retained the pre-teleport lunge segment.
+  Expected: less than or equal to 0.0f
+  But was:  0.449999988f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests+<ResetRangeRetiresPreTeleportContactWithoutRefundingCooldown>d__21.MoveNext () [0x00071] in C:\Users\Matthew\dev\tump-laptop-native1003\Assets\TumbangPreso\Tests\PlayMode\PracticeResetCombatLifetimeTests.cs:93
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2059" name="SetDefenderRetiresThePreviousRoleContact" fullname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests.SetDefenderRetiresThePreviousRoleContact" methodname="SetDefenderRetiresThePreviousRoleContact" classname="TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests" runstate="Runnable" seed="1395066558" result="Failed" start-time="2026-10-03 03:32:16Z" end-time="2026-10-03 03:32:16Z" duration="0.022330" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Changing the practice defender retained the prior role's lunge.
+  Expected: less than or equal to 0.0f
+  But was:  0.449999988f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PracticeResetCombatLifetimeTests+<SetDefenderRetiresThePreviousRoleContact>d__22.MoveNext () [0x00050] in C:\Users\Matthew\dev\tump-laptop-native1003\Assets\TumbangPreso\Tests\PlayMode\PracticeResetCombatLifetimeTests.cs:103
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

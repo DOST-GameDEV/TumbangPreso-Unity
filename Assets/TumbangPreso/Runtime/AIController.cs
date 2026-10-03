@@ -262,7 +262,13 @@ namespace TumbangPreso
 
         private void OnEnable() => Subscribe();
 
-        private void OnDisable() => Unsubscribe();
+        private void OnDisable()
+        {
+            Unsubscribe();
+            // A parked or removed practice seat must start fresh when its producer resumes.
+            // Input and consumer cancellation belongs to the transition that parks the seat.
+            ResetActionState();
+        }
 
         // -------------------------------------------------------------------
         // § WHAT THIS BOT IS LISTENING TO
@@ -5372,6 +5378,32 @@ namespace TumbangPreso
         /// </summary>
         private void ReleaseAll(InputIntent intent)
         {
+            ResetActionState();
+
+            // ⚠️⚠️ A SUPPRESSED CONTROLLER CLEARS THE LEGS AND LEAVES THE HERO KEYS ALONE.
+            // `intent.Clear()` empties the whole table, and during a possession the player is
+            // holding Skill2 to come home: wiping it because NEMU'S BODY got stunned would strand
+            // the player inside the pet with no way back, which is the same fault
+            // `AbilitiesEnabled` exists for, reached through the stun branch instead.
+            if (AbilitiesEnabled)
+            {
+                intent.Clear();
+            }
+            else
+            {
+                intent.Move = Vector2.zero;
+                Press(intent, Verb.Sprint, false);
+                Press(intent, Verb.Jump, false);
+                Press(intent, Verb.Grab, false);
+                Press(intent, Verb.Lunge, false);
+                Press(intent, Verb.SpecialAbility, false);
+            }
+
+            _pressed.Clear();
+        }
+
+        private void ResetActionState()
+        {
             _windup = false;
             _lungeHeld = -1.0f;
             _goalValid = false;
@@ -5402,25 +5434,6 @@ namespace TumbangPreso
             // fires a blink the instant it recovers, in the direction it was facing before it
             // was hit, which is a teleport nobody saw wind up.
             _aimHeld.Clear();
-
-            // ⚠️⚠️ A SUPPRESSED CONTROLLER CLEARS THE LEGS AND LEAVES THE HERO KEYS ALONE.
-            // `intent.Clear()` empties the whole table, and during a possession the player is
-            // holding Skill2 to come home: wiping it because NEMU'S BODY got stunned would strand
-            // the player inside the pet with no way back, which is the same fault
-            // `AbilitiesEnabled` exists for, reached through the stun branch instead.
-            if (AbilitiesEnabled)
-            {
-                intent.Clear();
-            }
-            else
-            {
-                intent.Move = Vector2.zero;
-                Press(intent, Verb.Sprint, false);
-                Press(intent, Verb.Jump, false);
-                Press(intent, Verb.Grab, false);
-                Press(intent, Verb.Lunge, false);
-                Press(intent, Verb.SpecialAbility, false);
-            }
 
             _pressed.Clear();
         }
