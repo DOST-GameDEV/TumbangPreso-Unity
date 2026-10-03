@@ -27,7 +27,7 @@ namespace TumbangPreso.PlayTests
         private TaskCompletionSource<bool> _answer;
         private static void Service(string name, object value) => typeof(GameServices).GetProperty(name).SetValue(null, value);
         private void Field(string name, object value) => typeof(PlayerAccount).GetField(name, Hidden).SetValue(_account, value);
-        private string Notice => _hub.GetComponentsInChildren<Text>(true).Single(t => t.name == "HubNotice").text;
+        private string Notice => ((Text)typeof(PlayerHub).GetField("_footerNote", Hidden).GetValue(_hub)).text;
         [UnitySetUp] public IEnumerator Before()
         {
             yield return PlayModeWorld.Reset();
@@ -65,7 +65,7 @@ namespace TumbangPreso.PlayTests
         }
         [UnityTest] public IEnumerator CompletedDeletionCannotRepaintAReopenedSheet()
         {
-            StartDelete(); _hub.GetComponentsInChildren<Button>(true).Single(b => b.name == "ClosePlayerHub").onClick.Invoke();
+            StartDelete(); typeof(PlayerHub).GetMethod("Close", Hidden).Invoke(_hub, null);
             _hub.Open(true);
             _answer.SetResult(true); yield return null; yield return null;
             Assert.IsTrue(_hub.IsOpen); Assert.AreNotEqual("Account deleted.", Notice);

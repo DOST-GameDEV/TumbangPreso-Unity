@@ -333,7 +333,8 @@ namespace TumbangPreso.Visual
                 host.localRotation = Quaternion.Euler(0f, AmSheetRows[i, 8] * Mathf.Max(0f, s) * (1f + 1.5f * pour), 0f);
                 host.localPosition = Vector3.Lerp(Vector3.zero, cup - Vector3.up * .5f, pour);
                 host.localScale = Vector3.one * Mathf.Lerp(1f, .18f, pour);
-                float alpha = (.62f + .1f * (i % 3)) * Ease(-.05f, .12f, s) * (1f - Ease(AmCupAt - .1f, AmCupAt + .1f, t)) * light;
+                // // SUBTLE (owner, on v3.6: *"make her vfx in ult as well a bit more subtle"*, *"it looks like shapes are floating"*). 
+                float alpha = (.42f + .08f * (i % 3)) * Ease(-.05f, .12f, s) * (1f - Ease(AmCupAt - .1f, AmCupAt + .1f, t)) * light;
                 _amSheets[i].Set(alpha * leave, phase * (1.2f + .15f * i), head, tail, Ease(AmWeaveAt + .1f, AmCupAt, t) * .8f);
             }
 
@@ -343,7 +344,7 @@ namespace TumbangPreso.Visual
                 float s = t - AmCurtainRows[i, 2];
                 if (s < 0f || s > 1.2f) { _amCurtain[i].Set(0f, 0f); continue; }
                 float stageLight = 1f - Ease(3.4f, 3.75f, t);
-                _amCurtain[i].Set(.55f * light * stageLight, -phase * 2f, Ease(0f, .5f, s), Ease(.3f, 1.1f, s), Ease(.6f, 1.2f, s) * .7f);
+                _amCurtain[i].Set(.32f * light * stageLight, -phase * 2f, Ease(0f, .5f, s), Ease(.3f, 1.1f, s), Ease(.6f, 1.2f, s) * .7f);
             }
 
             // THE THREADS: answering the call, streaming in and packed into her hands by the second beat; nothing left once she aims.
@@ -370,9 +371,9 @@ namespace TumbangPreso.Visual
             {
                 float on = Ease(AmCupAt + i * .05f, AmCupAt + .18f + i * .05f, t);
                 float alpha = Ease(AmCupAt - .02f, AmCupAt + .05f, t) * (1f - unravel) * (.85f + .15f * packs);
-                _amEmblem[i].Set(alpha * leave, phase * (i % 2 == 0 ? 1f : -1f), on, 0f, unravel * .8f);
+                _amEmblem[i].Set(.6f * alpha * leave, phase * (i % 2 == 0 ? 1f : -1f), on, 0f, unravel * .8f);
             }
-            float glow = t < AmCupAt ? 0f : (1.2f + 1.1f * packs + 1.4f * AmBeat(t, AmCupAt, .25f)) * (1f - unravel) * light;
+            float glow = t < AmCupAt ? 0f : (.6f + .5f * packs + .7f * AmBeat(t, AmCupAt, .25f)) * (1f - unravel) * light;
             PlaceGlow(_amEmblemGlow, emblemAt, Vector3.one * (.42f + .18f * packs), Quaternion.identity, glow * leave);
 
             // THE FLOOR KASIKUS: blooms out of the court at the cup, steps inward on each beat, and gives way to the live fan's own
@@ -386,7 +387,7 @@ namespace TumbangPreso.Visual
                 float grow = Mathf.Lerp(.3f, 1f, bloom) * (1f - step) * (diamond ? 1f : Mathf.Lerp(.6f, 1f, bloom));
                 _amFloor[i].GameObject.transform.localScale = new Vector3(Mathf.Max(.001f, grow), 1f, Mathf.Max(.001f, grow));
                 _amFloor[i].GameObject.transform.localRotation = Quaternion.Euler(0f, diamond ? (i % 2 == 0 ? 1f : -1f) * (calm ? 0f : t * 9f) : 45f, 0f);
-                float a = floorAlpha * (diamond ? .9f - i * .08f : .55f) * (1f + .3f * packs);
+                float a = floorAlpha * (diamond ? .9f - i * .08f : .55f) * (1f + .3f * packs) * .4f;
                 _amFloor[i].Set(Mathf.Clamp01(a) * leave, phase * .4f, 1f, 0f, Ease(AmWarpAt, AmBraceAt + .2f, t) * .7f);
             }
 

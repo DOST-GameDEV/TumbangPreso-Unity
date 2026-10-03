@@ -38,6 +38,10 @@ namespace TumbangPreso.Net
         private Func<Task> _deleteRestartDispatch;
         private Func<AccountProfile, Task> _initialiseDispatch;
         private Func<Task> _initialiseDelayDispatch;
+        private Func<(string PlayerId, string Username)> _refreshIdentityDispatch;
+        private Func<Task<string>> _refreshNameDispatch;
+        private Func<Task<string>> _refreshLoadDispatch;
+        private long _refreshRequest;
         private long _saveProfileRequest;
 
         [Serializable]
@@ -138,6 +142,7 @@ namespace TumbangPreso.Net
                 return;
             }
 
+            if (this == null || (IsGuest ? _primaryProfile : _profile)?.PlayerId != requestedProfile.PlayerId) return;
             await RefreshFromAuthenticationAsync(local);
         }
 
@@ -164,17 +169,27 @@ namespace TumbangPreso.Net
 
         private async Task RefreshFromAuthenticationAsync(AccountProfile local)
         {
-            var auth = AuthenticationService.Instance;
+            var requestedProfile = IsGuest ? _primaryProfile : Profile;
+            var auth = _refreshIdentityDispatch == null ? AuthenticationService.Instance : null;
+            (string PlayerId, string Username) identity = _refreshIdentityDispatch == null
+                ? (auth.PlayerId ?? "", auth.PlayerInfo?.Username ?? "")
+                : _refreshIdentityDispatch();
+            string owner = identity.PlayerId;
+            long request = ++_refreshRequest;
+            if (!OwnsRefreshRequest(requestedProfile, local, owner, request)) return;
             var remote = new AccountProfile
             {
-                PlayerId = auth.PlayerId ?? "",
-                Username = auth.PlayerInfo?.Username ?? "",
+                PlayerId = owner,
+                Username = identity.Username,
                 CreatedUtc = local.CreatedUtc,
             };
 
             try
             {
-                string fullName = await auth.GetPlayerNameAsync(autoGenerate: false);
+                string fullName = _refreshNameDispatch == null
+                    ? await auth.GetPlayerNameAsync(autoGenerate: false)
+                    : await _refreshNameDispatch();
+                if (!OwnsRefreshRequest(requestedProfile, local, owner, request)) return;
                 if (AccountRules.TrySplitHandle(fullName, out string name, out _))
                 {
                     remote.DisplayName = name;
@@ -183,8 +198,11 @@ namespace TumbangPreso.Net
                 {
                     string seed = AccountRules.TryDisplayName(local.DisplayName, out string clean)
                         ? clean
-                        : $"Player{ShortId(auth.PlayerId)}";
-                    fullName = await auth.UpdatePlayerNameAsync(seed.Replace(" ", "_"));
+                        : $"Player{ShortId(owner)}";
+                    fullName = _updateNameDispatch == null
+                        ? await auth.UpdatePlayerNameAsync(seed.Replace(" ", "_"))
+                        : await _updateNameDispatch(seed.Replace(" ", "_"));
+                    if (!OwnsRefreshRequest(requestedProfile, local, owner, request)) return;
                     if (AccountRules.TrySplitHandle(fullName, out name, out _))
                         remote.DisplayName = name.Replace('_', ' ');
                 }
@@ -202,6 +220,7 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
+                if (!OwnsRefreshRequest(requestedProfile, local, owner, request)) return;
                 // Authentication succeeded, so Relay may still be used. Player Names is a
                 // separate endpoint and its outage must only cost the remote profile refresh.
                 Debug.LogWarning($"[PlayerAccount] player-name refresh failed: {e.Message}");
@@ -211,7 +230,7 @@ namespace TumbangPreso.Net
             // needs no service at all, so a Player Names outage must not leave the account
             // carrying whatever tag happened to be on disk. That is the one case where the
             // client and the server would compute different handles for the same account.
-            remote.Discriminator = AccountRules.DerivedTag(auth.PlayerId);
+            remote.Discriminator = AccountRules.DerivedTag(owner);
 
             remote.Bio = local.Bio;
             remote.Country = local.Country;
@@ -220,14 +239,17 @@ namespace TumbangPreso.Net
             bool cloudHoldsAProfile = false;
             try
             {
-                var response = await CallCloudAsync("load");
+                var response = _refreshLoadDispatch == null
+                    ? await CallCloudAsync("load")
+                    : JsonUtility.FromJson<CloudProfileResponse>(await _refreshLoadDispatch());
+                if (!OwnsRefreshRequest(requestedProfile, local, owner, request)) return;
                 if (response != null && !string.IsNullOrWhiteSpace(response.profile))
                 {
                     var cloud = JsonUtility.FromJson<AccountProfile>(response.profile);
                     if (cloud != null)
                     {
                         cloudHoldsAProfile = true;
-                        cloud.PlayerId = auth.PlayerId;
+                        cloud.PlayerId = owner;
                         cloud.Username = remote.Username;
                         remote = AccountRules.Resolve(remote, cloud, remoteAvailable: true);
                     }
@@ -235,9 +257,11 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
+                if (!OwnsRefreshRequest(requestedProfile, local, owner, request)) return;
                 Debug.LogWarning($"[PlayerAccount] Cloud Save profile load failed; local profile kept: {e.Message}");
                 cloudHoldsAProfile = true;
             }
+            if (!OwnsRefreshRequest(requestedProfile, local, owner, request)) return;
             AccountProfile resolved = AccountRules.Resolve(local, remote, remoteAvailable: true);
 
             // ⚠️ A GUEST SESSION OWNS THE VISIBLE PROFILE UNTIL IT LEAVES. This can land after
@@ -265,8 +289,18 @@ namespace TumbangPreso.Net
             // same way an empty profile does, and writing on that branch would overwrite a real
             // stored profile with whatever this machine had on disk the moment the network
             // wobbled. Missing a first write costs one boot; the other way round costs an account.
-            if (!cloudHoldsAProfile) await SaveCloudProfileAsync();
+            if (!cloudHoldsAProfile && request == _refreshRequest && !IsGuest &&
+                PlayerId == owner && CurrentRefreshOwner() == owner) await SaveCloudProfileAsync();
         }
+
+        private string CurrentRefreshOwner()
+            => _refreshIdentityDispatch == null ? AuthenticationService.Instance.PlayerId : _refreshIdentityDispatch().PlayerId;
+
+        private bool OwnsRefreshRequest(AccountProfile requestedProfile, AccountProfile local, string owner, long request)
+            => this != null && requestedProfile != null && !string.IsNullOrEmpty(owner) &&
+                request == _refreshRequest && (ReferenceEquals(IsGuest ? _primaryProfile : _profile, requestedProfile) ||
+                    ReferenceEquals(IsGuest ? _primaryProfile : _profile, local)) &&
+                CurrentRefreshOwner() == owner;
 
         // -------------------------------------------------------------------
         // HANDLE PROOFS. `docs/TODO.md` § 88.1c and § 90.

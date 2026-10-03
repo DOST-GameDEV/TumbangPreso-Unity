@@ -5,105 +5,91 @@ focused qualification and publication. Do not stop at a progress report or compa
 
 ## Current work and next action
 
-MAIN: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Local HEADff17e33b3fc9a96c2888e1c2231cea3ce409635f; candidate branch same verified.
-ASTRA remote remainsf955 pending account acceptance; last verified remote
-f9552d58a4d59ecdc87a15a2203d82893e3aa5a3. Fetch and inspect before each push.
-RELEASE: C:/Users/matth/Documents/Codex/work/tump-competition-release1002,
-detached05b2ee156. QUAL: C:/Users/matth/Documents/Codex/work/tump-feedback-0930,
-protected dirty validation overlay. Never reset, stash, clean or discard any checkout.
+Owner corrections on October 3: Amihan is finished; this PC can use Unity again.
+The owner explicitly removed the stale absolute cross-chat ban from
+C:/Users/matth/AGENTS.md and authorized coordination with the existing laptop
+chat. Do not resurrect that ban from old memory or historical instructions.
+Ask the laptop's current task and ownership BEFORE changing its assignment.
+Coordinate active work, publication, LAN and online tests without duplicating
+its coherent task. Never replace current work with a guessed assignment.
 
-Owner now authorizes two same-conversation GPT6.1 Sol High agents: value_review
-reviews usefulness/correctness; parallel_fix owns CareerStore guest-cache isolation
-and CareerGuestIsolationTests. Root implements PlayerAccount rename-response ownership
-and AccountRenameOwnershipTests. Heavy Unity jobs remain serialized on this16GB PC.
-No other-chat creation/messaging. Second laptop receives a manual chat handoff for
-gameplay/input/practice/carrier/combat/replay lane on a separate branch. It avoids
-Net/account/lobby UI, the root ledger/TODO and release integration. Its setup is
-prepared, not connected or running proof.
+MAIN C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks,
+last observed published HEAD6317f6b04 before this SafeStore batch. Preserve concurrent writers and private Nemu/Rafi
+arms, two protected UI PNG metadata files, HeroHazards Supernova, QualitySettings,
+private overlap reports and deleted owner_rock_edges_paintover.webp. No reset,
+stash, clean, force-push or paid services. Fetch/check divergence before pushing.
 
-Reviewed account/UI source candidate is ready for a separate validation branch.
-Owned8 runtime files+8fixtures/metas=24paths;52 cases total. Rename7/career6/wallet7/
-social7/proof9 EditMode=36; PlayerHub6/password4/signin6 PlayMode=16. All static
-reviews PASS, all8GUIDs valid. Frozen Runtime+36EditModefixtures+16PlayModefixtures
-RoslyncompilePASS against existing Unity refs. One compiler harness repair includes
-existing PlayModeWorld omitted from narrow source list; raw failure retained. No
-import/IL-postprocessing or native claim. See account-candidate report/originals.
+Laptop: Fix gameplay interruption recovery, chat
+01a0ffab-10a0-70d0-9270-07e171c1613b, host
+remote-control:env_e_6aa6c4fde2dc83218a0722e34ac3face. Direct messages sent that
+PC Unity is available; requested its current task/worker/job/next-action snapshot.
+Last compact cursor 5d691ff0-eb40-4482-94c4-06aad356c20a:8.
+Received laptop acceptance: pinned bf99 Edit42 and UI16 passed, the latter after
+one fixture canvas lookup repair; matchmaking original6causal/3control and
+candidate9 pass. Practice-menu operator2 pass. Laptop's hero-input original
+7causal/6control, candidate pending. Reuse this evidence, do not rerun it here.
+Current laptop branch origin/competition-laptop-gameplay ends2c0eab380; review
+75de68446 replay highlights and2c0eab380 practice operator contributions before
+normal integration. Laptop's current assignment response is still pending.
 
-Original native13(rename/career) after one explicit dormant lifecycle fixture repair:
-10causals/3controls. QUALcandidate31094 and RELEASEcandidate25155 both TERMINAL
-450s timeout before cases; repeated assembly/license problems, noXML. Both own
-Editors stopped/profilepreserved/leasesfree. QUALpost34966 PASS18448protected;
-RELEASEpost24319 PASS18516protected, exact6 source matches before proof extension.
-No more local retries. Reports reliability-2026-10-03/account-handover retained.
+Root owns PlayerAccount canonical online refresh and AccountRefreshOwnershipTests.
+Three private SDK dispatch seams, immutable SDK owner, latest refresh request and
+active/guest-primary reference checks fence name/cloud replies and stale failures.
+Retain boot timeout local snapshot adoption, legitimate new authenticated IDs
+and late guest-primary parking. Reviewer value_review is checking actual diff13
+cases. parallel_fix resumed independent non-network gameplay/persistence defect
+work, no Unity launch; source reservation response pending. No new agents.
 
-Parallel bulk source queue completed six reviewed units. Root finished rename and
-proof ownership, recovered password guard, and owns integration/validation. Agent
-checkpoint Logs/account-ui-bulk1003/checkpoint.json contains exact19agent paths,
-source/baseline hashes and filters. Root source receipts account-candidate. Neither
-agent launched native/service/browser/helper; agents available for focused nextwork.
+Local native25 qualified: first Edit21 passed15, six deletion exact-type assertion
+failures; one fixture-only InstanceOf cancellation correction, deletion8 passed.
+Hosted7, fallback3 and Ready3 were first-pass and not repeated. Graphics deletion
+UI4 first passed. Reports/reliability-2026-10-03/local-resume-qualification retains
+first failures, terminal receipts and scoped source identities. No live SDK/peer
+claim. All these jobs terminal/restored/lease free.
 
-Laptop branch competition-laptop-gameplay now has checked88dba66a1cc1b40379240a232bbe3b4283dd47e7,
-fetched locally. Input producer cancellation four paths+12fixture: original9causal/
-3controls, candidateFIRST12/12 on laptop warmed nativeworker; reviewed and merged locallyff17e33b3, then pushed verified candidate branch.
-ASTRA remote stillheld. Review later67cfe70a4/f9f7ecdfd checked units next. Laptop has more disk/RAM now,
-full native worker working. AdjacentAI/replay two-case candidate underway there.
-No outgoing cross-chat tools; facts/commands stay in this chat for manual relay.
+Canonical refresh13 now native-qualified: original9causal/4control, first
+candidate13/13, same fixture. Independent review PASS. Both jobs terminal,
+profiles/preferences restored, leases free. Source hashes and raw original/
+seam-only original retained in reports/reliability-2026-10-03/account-refresh-ownership.
+Root local heavy slot free. Next: publish exact source/tests/report batch and
+review incoming laptop task/ownership reply. Worker proposes MatchPoseHistory.cs
+and MatchReplayArchive.cs same-round new-match isolation; laptop conflict query
+sent before joint source work. Preserve within-match history and retained clips.
 
-Two-machine LAN setup: same1003e artifact fully SHA256 verified258files on laptop,
-source14dfe9e416f5a98698844d9da34ab3c34b849a17/protocol134/recording13,
-Runtime501f0a02db575003c48910f08bdd0221810031c4d30aaf499f4727bbeca0c806.
-ManifestSHA79d2e77c5b993ec6d7268b7e15767c81a7823e3597bc5a7f71b813da5a9004e8,
-2551734579bytes. PC192.168.1.7/laptop192.168.1.144. Temporaryread-onlyserver14876
-STOPPED after complete transfer verified. No taskowned browser tabs/servers remain.
-Hostslot currently blocked by unrelated AmihanEditor8092 in tump-amihan1002f;
-never kill it. Laptop native jobs also must be terminal before localplayer launch.
+Replay match-identity6 now qualified: original2causal/4control, first
+candidate6/6, independent review PASS, both jobs terminal/restored/free.
+Root local native total44 unique cases this resumption:25 priorpending+13refresh+6replay.
+SafeStore6 now qualified: original4causal/2control, first candidate6/6,
+independent review PASS, both guards terminal/restored/lease free. Exact portable
+file I/O branch ran on Windows tempfiles; no hardware/crash claim. Root local
+unique native total50 this resumption. Local release worker slot free, all prior
+jobs terminal; scoped validation overlays retained separately from shipping.
+Worker next reservation SpectatorCamera.cs pixel replay match boundary; no edits
+to frozen replay/archive/SafeStore inputs. Reviewer owns SafeStore source check.
 
-New tools/run_lan_peer.py prepares each side independently via existing scheduler,
-fresh profile, customHero1/30, ready/naturalend/normalexit + terminalcareer aggregate.
-PCport49153, client-ownlobby49154; host180s/client120s; noAllBots/autorematch/forcedend.
-Each side exports identity-free hashed matchID/scores, Runtime/exe/Core hashes;
-BOTH passed receipts must match. Existing CompletedArrivalProbe cannot be reused
-unchanged across machines: sharedreceiptfolder and hardcodedloopback coldrejoin.
-Wrapper syntax/staticreviewPASS, cleanup fixes applied. Host01 failed PRELAUNCH
-foreign-editoradmission only; profile/input/Runtime preserved, no game. Host02
-RUNNING queued in36992 with wait600s, profilepc-lan1003e-host-02, output
-Logs/cross-machine-peer1003/host-02,180s normalplayer budget onceadmitted.
-NewotherEditor5652 usesAmihanfilms-r2; preserve it. Do notstartanotherhost.
-Laptopclientmustwaitactualhostlistening and its ownnativejobterminal.
-LANhelper --wait-seconds change is owned/uncommitted; source8accountunits committed.
-Latest owner steering: LET AMIHAN FILMING FINISH FIRST. Hold jointLAN until its
-whole filming lane completes, not momentary gaps. Do not kill Amihan processes.
-Host04 acquired gap04:01:11UTC despite queued wait, then anotherAmihanEditor10000
-appeared. Root retired only verified ownedplayer23588(parent12344), windowclose
-unavailable, termination tohonorownerpriority. Host04 TERMINAL26458 false/no
-case; input/profile/Runtime restored, lease free. Host02 normalexit0/nopeer/no
-career is schedulingfailure; host01/03 prelaunchforeignrefusals. No LANbug/pass
-inferred. All ownedgameplayers/helpers/server terminal; no furtherhostqueued.
-Laptopclient01 terminalnormal/noadmission/input/profile/Runtime restored/free;
-laptopclient02 mustnotlaunchuntilfutureactualhostlistening+nativejobterminal.
+Owner wants both sides autonomous, but joint network requests take priority:
+checkpoint/finish coherent unit, coordinate LAN/online, then resume saved task.
+Persistent directives docs/COMPETITION_COORDINATION.md linked by AGENTS. User-wide
+AGENTS and authorized memory extension record revocation of stale chat ban.
+Laptop confirmed protocol and current ownership. It is integrating qualified
+hero13/58PCnative/UIfixture anchors and operator2, then will send exact ASTRAref.
+Root will build one shared Windows1003g artifact; laptop is NOT building. New
+isolated worktree C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003g
+created at948398fa2, cache empty, no Unity job yet; idle-cache copy can proceed now. Fast-forward it normally to
+agreed integration ref, copy idle matching cache independently, freeze inputs,
+one build, verify exactartifact and transfer before joint test. Do not mutate
+old release worker while its store test runs or copy its live Library.
 
-Current MAINHEAD5d847538bed7815428ec6cdc7408f2f003fb8cfd, candidatebranchsame
-verified atlastpush; ASTRAremote57739c4ab includespublishedDantefracture work,
-merged locallybf99. Checkedlaptop19nativecases integrated00f03d911 plusinput12
-ff17. Rootarrivalcandidatea5db552ee includedbf99:6EditMode compile/staticPASS,
-nativepending. Source52+arrival6+Matchmaker9=67 pending-nativecases; Matchmakercompiledand
-published51ea2747d. Touch6b273a49e reviewed/merged5d847538b; checkedlaptop
-total24cases. No jointLANacceptance. Earlier account52
-exacthandoff paths/filters recorded inchat; user does NOT needcopypasteoract on
-it. Keep detailed technicalcoordination outofuser'sway. No outboundotherchattools.
+LAN pair is not active. Older1003e artifact is source14dfe9e41, protocol134,
+recording13,258files/2551734579bytes. Runtime501f0a02db575003c48910f08bdd0221810031c4d30aaf499f4727bbeca0c806.
+PC192.168.1.7 and laptop192.168.1.144. Prior paired launch attempts failed
+scheduling, not network behavior. Task-owned transfer server is stopped. Agree
+current tasks, same artifact, profiles/ports and actual availability before pair;
+confirm host listening before client. Existing online setup only; ask before
+paid services or extra credits. Goal ACTIVE, full competition readiness open.
 
-Rootproducer tool data: artifactsame1003e258files/manifestalreadyonlaptop;
-server14876STOPPED. run_lan_peer.py independentroles, guardedfreshprofiles,
-normalHero1/30/ready/end/savedownrecord andpeerhash/score gates. Native PClicensing
-errors retained; no more accountcandidate localretry. Laptop warmed nativeworker
-can qualify immutable PC-owned overlay whenfree; sourcebranch ownership unchanged.
-
-Parallelbulk agent activelyimplements nextindependentengineering. Arrival6 ready/
-committed. Matchmaker9 source/fixtures staticreview/compilePASS, nativepending/published. It advances round lifecycle next. Do not freeze/mutate its inputs
-midwrite. Root nextaction: compileandpublish reviewedMatchmaker candidate, update
-candidatebranchHEAD; retain explicitpendingacceptance. Resume LANonlyafterowner
-Amihanpriority isfulfilled andbothsidesackready. Continue code/merges meanwhile.
+Continue implementation through passing tests, pushes, progress reports and
+compaction. Keep this checkpoint concise and record exact next command/jobs.
 
 ## Freeze peer gate: stop unchanged retries
 
@@ -699,3 +685,25 @@ follow-throughb6e41456 is remote and review delivered. Next inspect Nemu's actua
 Catch: it shares the legacy Haunt seance motion. Preserve Nemu model/cowl and
 other-owner RosterArms, all gameplay clocks and independent companion behavior.
 No production change or active Editor at claim time.
+
+Nemu Catch implementation remains LOCAL/PARTIAL. Original actual court case
+reproduces shared seance; first imported candidate passes state but visual review
+rejects idle body. One named action registration is corrected and now asserted.
+Corrected native verification is blocked: full-map signal9/noXML, smaller stage
+stopped at stronger cgroup reserve after compile, then warm runtime stalled even
+with lower measured admission use. All guards restored profiles, no active job.
+No unchanged repeat. Authored GLB pose inspected offline only; preserve scoped
+assets and all36oldclips. See dated README for exact unsuccessful attempts.
+Continue independent useful work while diagnosing a genuinely different safe
+validation path; do not mark this animation done from the earlier green result.
+
+Nemu final lightweight-stage qualification now passes1/1 in3.099s with48paired
+frames; live registered body action, companion and protection/reset confirmed.
+Inspected small gesture/recovery and empty-hand owner view. Original36clips,
+geometry and binary prefix preserved. Peak4.432GB tree/7.068GB cgroup, no guard;
+profile and original validation EditorSettings restored. Recovery found10owned
+orphan compiler-shutdown helpers (833MB RSS); retiring them recovered691MB
+cgroup headroom without file deletion or weakened guards. Prior full-map/stage
+failures remain. No corrected full-court/player/peer/SFX/human claim. Publish
+only the scoped Nemu paths and this qualified-but-limited evidence; next inspect
+Zack Closed Circuit's currently unregistered literal cast action before changing it.

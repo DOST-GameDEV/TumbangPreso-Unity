@@ -55,8 +55,12 @@ namespace TumbangPreso
         public static bool Write(string path, string contents)
             => Write(path, contents, null);
 
-        /// <summary>Only a usable previous primary replaces the recovery backup on Windows.</summary>
+        /// <summary>Only a usable previous primary replaces the recovery backup.</summary>
         public static bool Write(string path, string contents, Func<string, bool> validPrevious)
+            => WriteAtPlatform(path, contents, validPrevious, Application.platform);
+
+        private static bool WriteAtPlatform(string path, string contents, Func<string, bool> validPrevious,
+                                            RuntimePlatform platform)
         {
             if (string.IsNullOrEmpty(path)) return false;
 
@@ -77,17 +81,21 @@ namespace TumbangPreso
 
                 if (File.Exists(path))
                 {
-                    if (Application.platform == RuntimePlatform.WindowsEditor
-                        || Application.platform == RuntimePlatform.WindowsPlayer)
+                    string previous = validPrevious != null ? TryRead(path) : null;
+                    bool usablePrevious = validPrevious == null
+                        || (previous != null && SafeValid(validPrevious, previous));
+                    if (platform == RuntimePlatform.WindowsEditor
+                        || platform == RuntimePlatform.WindowsPlayer)
                     {
-                        string previous = validPrevious != null ? TryRead(path) : null;
-                        bool usablePrevious = validPrevious == null
-                            || (previous != null && SafeValid(validPrevious, previous));
                         File.Replace(temp, path, usablePrevious ? backup : null);
                         return true;
                     }
-                    if (File.Exists(backup)) File.Delete(backup);
-                    File.Move(path, backup);
+                    if (usablePrevious)
+                    {
+                        if (File.Exists(backup)) File.Delete(backup);
+                        File.Move(path, backup);
+                    }
+                    else File.Delete(path);
                 }
 
                 File.Move(temp, path);

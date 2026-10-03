@@ -57,8 +57,9 @@ namespace TumbangPreso.CameraSystem
         {
             var match=GameServices.Match;
             long identity=match!=null&&(match.MatchInProgress||match.RoundNumber>0)?match.PresentationMatchId:0;int round=match!=null?match.RoundNumber:0;
-            if(identity!=_match){_match=identity;_sequence=0;_clips.Clear();_pending.Clear();_sounds.Clear();}
-            if(round!=_round){_round=round;_props.Clear();_pending.Clear();_sounds.Clear();_unsafeAt=-100;_fieldIds.Clear();_fields.Clear();_fieldSequence=0;}
+            bool changedMatch=identity!=_match;
+            if(changedMatch){_match=identity;_sequence=0;_clips.Clear();}
+            if(changedMatch||round!=_round){_round=round;_props.Clear();_desiredProps.Clear();_pending.Clear();_sounds.Clear();_unsafeAt=-100;_propsScanAt=0;_fieldIds.Clear();_fields.Clear();_fieldSequence=0;}
         }
         private void RecordSound(string id,Vector3 position,float pitch,float gain)
         {

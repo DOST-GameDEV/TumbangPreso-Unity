@@ -17,6 +17,22 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### PORTABLE-STORE-BACKUP-1003: retain recovery after corrupt primary
+
+- [x] Portable saves keep a usable backup when the previous primary or its
+  validator is invalid. Original4 causal failures/2 controls, candidate6/6.
+  Valid and legacy saves still rotate; native cases verify ordinary read recovery.
+  [Evidence](reports/reliability-2026-10-03/portable-store-backup/README.md).
+  Actual device filesystems and crash atomicity remain separate.
+
+### REPLAY-MATCH-IDENTITY-1003: prevent previous-match highlight lead-in
+
+- [x] Fresh same-scene match identity retires body, prop and field history even
+  at the same round number. Original2 causal failures/4 controls, candidate6/6.
+  Ordinary rounds preserve completed highlights and detached bytes.
+  [Evidence](reports/reliability-2026-10-03/replay-match-identity/README.md).
+  Rendered/operator pixel replay and physical acceptance remain separate.
+
 ### INPUT-PRODUCER-LIFETIME-1003: checked laptop integration
 
 - [x] Focus/disable/Idle retire pending throw/lunge/reset before a release is read;
@@ -34,17 +50,21 @@ Nothing was deleted or renumbered.
 
 ### ACCOUNT-OWNERSHIP-CANDIDATE-1003: source ready, native acceptance open
 
-Eight reviewed fixes preserve primary guest career/wallet/social caches, bind name
-and proof replies to their owner, retire stale profile/login/password UI callbacks
-and reset inherited deletion confirmation.52 focused cases compile with refreshed
-Runtime; static review and script metadata pass. Original13 shows10causals/3controls
-after one lifecycle fixture repair. Both PC candidate environments timed out before
-cases with retained licensing/reload failures. No more local retries; functioning
-laptop worker and candidate branch are the next qualification route. Two further
-reviewed arrival6 and matchmaking9 candidates compile, bringing pending native
-checks to67; actual Relay and peer checks remain separate. No source
-completion/readiness claim yet. [Evidence](reports/reliability-2026-10-03/account-candidate/README.md).
+Account/UI ownership and arrival now have laptop native58 acceptance: Edit42
+first pass and UI16 after one fixture-only canvas correction. Matchmaking9 passed
+against six original causal failures and three controls. Local pending25 passed:
+hosted7, fallback3, countdown3, deletion8 and deletionUI4. Six initial deletion
+failures came from an exact NUnit exception-type assertion; one cancellation
+subclass repair retained all side-effect assertions and passed8/8. These are
+scoped native checks, not live SDK/Relay or whole-release acceptance.
+[Local evidence](reports/reliability-2026-10-03/local-resume-qualification/README.md).
 
+Canonical online refresh ownership is qualified: original9 causal failures and
+four legitimate controls; first candidate13/13. Captured SDK owner and current
+profile/request guards fence name/cloud responses and failures while preserving
+new authenticated-ID adoption and late primary guest return. Actual SDK and
+online-peer acceptance remain separate.
+[Evidence](reports/reliability-2026-10-03/account-refresh-ownership/README.md).
 
 ### TIMED-RECOVERY-1002: retire mash-to-escape
 
@@ -698,9 +718,11 @@ a reproduced baseline failure. Protocol118, no fresh player/peer claim.
 
 ### HERO-QUALITY-1001: full-roster research and durable plans
 
-NEMU-CATCH-MOTION-1003 is the next scoped presentation unit: inspect and replace
-Catch's shared seance with a distinct small companion command, preserving model,
-all other clips and mechanics. [Plan](reports/nemu-catch-motion-2026-10-03/plan.md).
+NEMU-CATCH-MOTION-1003 implements a distinct small companion command instead
+of Catch's shared seance. Native lightweight-stage actual input/live clip/can
+protection/reset passes1/1;48 paired frames inspected. Model and36 old actions
+preserved. Corrected full-court film, player/peer/SFX/human acceptance remain
+open. [Evidence](reports/nemu-catch-motion-2026-10-03/README.md).
 
 DANTE-HANDBACK-1003 replaces the duplicate live windup with planted follow-through
 and low owner hands. Native actual-route1/1, imported-pose continuity and all
