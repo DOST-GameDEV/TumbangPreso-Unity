@@ -1,5 +1,23 @@
 # Active Rework Checkpoint
 
+## Current PC unit: emote owner candidate and laptop packet results
+
+Emote original fixturebfe2c2fab, candidateb5fabf6a6 on remote branch
+competition-pc-emote-owner1003. Only production delta from that original is
+MatchInstaller.Driven: unparked active-reader ownership, network LocalSlot fence,
+all reader components inspected, null without an owner; tutorial fallback kept.
+Eight cases compiled with full runtime/test assemblies. Native validation queued
+to laptop; no emote pass claimed. Exact fixture/meta unchanged across refs.
+
+Laptop reports PacketBounds original10: seven failures/three controls, frozen
+inputs unchanged; candidate10 is next. TimingCapture1 is reported passed after
+one stale worker-source cleanup; await published raw evidence before accepting.
+Root has no PC Unity/player job. Claude owns PC Unity and is publishing Amihan
+changes, latest fetched ASTRAReworksdc6b791fa. Preserve those during integration.
+NEXT: inspect laptop's published XML/receipts and source hashes, integrate checked
+packet/emote fixes normally with current ASTRAReworks, then publish acceptance.
+Do not repeat unchanged compiles, launch PC Unity or reopen old139 captures.
+
 ## Current PC unit: packet framing candidate awaits laptop validation
 
 Original fixture8f0b34054, candidate088ae2aee, remote branch
