@@ -159,6 +159,9 @@ namespace TumbangPreso
             if (!_motor.Intent.Pressed(Verb.SpecialAbility) && !_motor.Intent.JustPressed(Verb.SpecialAbility))
                 _punchPressSpent = false;
 
+            // Shared-button release also rearms while stun or a role change defers its verb.
+            if (!_motor.Intent.Pressed(Verb.Lunge)) _shoveLungePressSpent = false;
+
             if (!_motor.CanAct())
             {
                 // A real interruption retires the dash contact windows. A presentation
@@ -192,8 +195,7 @@ namespace TumbangPreso
                 // refuse and the SAME press fell through to a shove: a 25-stamina shove stacked on
                 // every slide (`RetrievalSlideTests.ARefusedSlideHandsBackTheCooldownTheStaminaAndTheCommitment`
                 // read 35 against 60). Whichever verb took the press owns it until the button is up.
-                if (!_motor.Intent.Pressed(Verb.Lunge)) _shoveLungePressSpent = false;
-                else if (!_shoveLungePressSpent)
+                if (_motor.Intent.Pressed(Verb.Lunge) && !_shoveLungePressSpent)
                 {
                     float shoveBefore = _shoveCooldown;
                     if (StepSlide(dt)) _shoveLungePressSpent = true;

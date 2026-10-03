@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 09:57:24Z" end-time="2026-10-03 09:57:24Z" duration="0.2487211">
+  <test-suite type="TestSuite" id="2856" name="TumpWorker-qa-d-dddaa72bc5b9" fullname="TumpWorker-qa-d-dddaa72bc5b9" runstate="Runnable" testcasecount="1510" result="Failed" site="Child" start-time="2026-10-03 09:57:24Z" end-time="2026-10-03 09:57:24Z" duration="0.248721" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2850" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-d/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1510" result="Failed" site="Child" start-time="2026-10-03 09:57:24Z" end-time="2026-10-03 09:57:24Z" duration="0.241369" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="18956" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2851" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1510" result="Failed" site="Child" start-time="2026-10-03 09:57:24Z" end-time="2026-10-03 09:57:24Z" duration="0.238756" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2852" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1510" result="Failed" site="Child" start-time="2026-10-03 09:57:24Z" end-time="2026-10-03 09:57:24Z" duration="0.236838" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1211" name="CarrierRoleInputLifetimeTests" fullname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" classname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-03 09:57:24Z" end-time="2026-10-03 09:57:24Z" duration="0.216662" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1213" name="BecomingAttackerRetiresTheOldDefenderResetChannel" fullname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests.BecomingAttackerRetiresTheOldDefenderResetChannel" methodname="BecomingAttackerRetiresTheOldDefenderResetChannel" classname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" runstate="Runnable" seed="1631546304" result="Failed" start-time="2026-10-03 09:57:24Z" end-time="2026-10-03 09:57:24Z" duration="0.107171" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  An active attacker snapshot retained the defender's reset progress.
+  Expected: 0
+  But was:  0.0178542007f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests.BecomingAttackerRetiresTheOldDefenderResetChannel () [0x00035] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\CarrierRoleInputLifetimeTests.cs:106
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1212" name="BecomingDefenderRetiresTheOldAttackerThrowCharge" fullname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests.BecomingDefenderRetiresTheOldAttackerThrowCharge" methodname="BecomingDefenderRetiresTheOldAttackerThrowCharge" classname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" runstate="Runnable" seed="844500515" result="Failed" start-time="2026-10-03 09:57:24Z" end-time="2026-10-03 09:57:24Z" duration="0.025542" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  An active defender snapshot retained the attacker's throw windup.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests.BecomingDefenderRetiresTheOldAttackerThrowCharge () [0x00013] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\CarrierRoleInputLifetimeTests.cs:97
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1216" name="OrdinaryAttackerReleaseStillThrowsTheOwnedShoe" fullname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests.OrdinaryAttackerReleaseStillThrowsTheOwnedShoe" methodname="OrdinaryAttackerReleaseStillThrowsTheOwnedShoe" classname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" runstate="Runnable" seed="945346759" result="Passed" start-time="2026-10-03 09:57:24Z" end-time="2026-10-03 09:57:24Z" duration="0.028389" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1214" name="SameAttackerSnapshotPreservesTheHeldThrowCharge" fullname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests.SameAttackerSnapshotPreservesTheHeldThrowCharge" methodname="SameAttackerSnapshotPreservesTheHeldThrowCharge" classname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" runstate="Runnable" seed="1992403553" result="Passed" start-time="2026-10-03 09:57:24Z" end-time="2026-10-03 09:57:24Z" duration="0.021735" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1215" name="SameDefenderSnapshotPreservesTheHeldResetChannel" fullname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests.SameDefenderSnapshotPreservesTheHeldResetChannel" methodname="SameDefenderSnapshotPreservesTheHeldResetChannel" classname="TumbangPreso.PlayTests.CarrierRoleInputLifetimeTests" runstate="Runnable" seed="162315702" result="Passed" start-time="2026-10-03 09:57:24Z" end-time="2026-10-03 09:57:24Z" duration="0.023298" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-d-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

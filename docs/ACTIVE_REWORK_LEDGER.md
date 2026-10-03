@@ -2,6 +2,40 @@
 
 ## PC root latest checkpoint: October 3, Unity slot isolation
 
+BUILD update: first1003h Development graphics attempt interrupted at physical
+1525MB <1536MB reserve. Only owned Editors17384/17460 stopped; guard returned/
+restored/free. No SUCCEEDED message; partial artifact is NOT accepted. Strict
+receipt false,217 import/generated deltas retained. No orphan owned compilers
+found; unrelated dotnet536MB preserved. First attempt logs/receipt remain intact.
+
+One distinct lower-memory attempt is ACTIVE session55569 in same shipping
+checkout/source9d21820c3/139: outputBuilds/competition-candidate1003h-lowmem,
+profilecompetition-candidate1003h-lowmem,19120 frozen post-import inputs,
+6144MB budget/1536MB reserve/900s deadline. Uses -nographics, -job-worker-count1,
+-gc-helper-count1, Development options unchanged; no authored-quality cut.
+At last check shader compilation/free3.4GB, no outside Editor. Do not repeat this
+strategy if it hits the same reserve. Next inspect terminal guard/Build SUCCEEDED,
+freeze finalize, actual delta classification and packaged identity before claims.
+AGENTS now includes concise one-next-action/no internal filler/history reread
+rules. Pending publication with TODO reconciliation of already-shipped ultimate
+opacity3/3 and Haunted4/4 (guarded shutdown retained).
+
+Current shipping preparation: new detached checkout
+C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003h pinned
+9d21820c32503fd2af6bfc23829fd794243c97bb/protocol139. Derived idle Library moved
+from1003g to1003h after literal boundary/reparse/process checks; no extra9GB copy.
+Old1003g source and packaged134 artifact preserved; old cache no longer present.
+Receipt MAIN Logs/unity-slot1003/shipping-cache-reallocation.json.
+Freeze preparation21773 completed19108 inputs/clean source. One exclusive guarded
+Development Windows build ACTIVE session10865, worker
+Logs/competition-candidate1003h/job-receipt.json, profilecompetition-candidate1003h,
+4096MB budget/1536MB reserve/900s deadline, -developmentBuild and fresh -buildOutput.
+Do not change frozen checkout inputs during run. Next inspect terminal receipt,
+run retained freeze_build.py finalize and classify actual import deltas before
+manifest/player/peer claims. Runtime supervision39checks protects
+Claude: external Editor or crossed reserve interrupts only owned build. Do not
+retry unchanged contention or claim release/peer/performance acceptance from build.
+
 Current root source: published70a9ede94072d2fc45de55c0b1244bbdf360b056, protocol139.
 Reusable isolated worker now normal mergeca95f6e22 of that source plus validation
 company/product identity. Current C#/Packages match published code; no extra cache
