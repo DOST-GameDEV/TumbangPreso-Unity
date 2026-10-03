@@ -34,17 +34,19 @@ Nothing was deleted or renumbered.
 
 ### ACCOUNT-OWNERSHIP-CANDIDATE-1003: source ready, native acceptance open
 
-Eight reviewed fixes preserve primary guest career/wallet/social caches, bind name
-and proof replies to their owner, retire stale profile/login/password UI callbacks
-and reset inherited deletion confirmation.52 focused cases compile with refreshed
-Runtime; static review and script metadata pass. Original13 shows10causals/3controls
-after one lifecycle fixture repair. Both PC candidate environments timed out before
-cases with retained licensing/reload failures. No more local retries; functioning
-laptop worker and candidate branch are the next qualification route. Two further
-reviewed arrival6 and matchmaking9 candidates compile, bringing pending native
-checks to67; actual Relay and peer checks remain separate. No source
-completion/readiness claim yet. [Evidence](reports/reliability-2026-10-03/account-candidate/README.md).
+Account/UI ownership and arrival now have laptop native58 acceptance: Edit42
+first pass and UI16 after one fixture-only canvas correction. Matchmaking9 passed
+against six original causal failures and three controls. Local pending25 passed:
+hosted7, fallback3, countdown3, deletion8 and deletionUI4. Six initial deletion
+failures came from an exact NUnit exception-type assertion; one cancellation
+subclass repair retained all side-effect assertions and passed8/8. These are
+scoped native checks, not live SDK/Relay or whole-release acceptance.
+[Local evidence](reports/reliability-2026-10-03/local-resume-qualification/README.md).
 
+Canonical online refresh ownership remains in progress: stale Player Names and
+Cloud Save replies must not replace another account or follow a changed SDK
+owner. Preserve legitimate authenticated-ID adoption and late primary guest
+return. Root owns source and13 causal/control checks; original run in progress.
 
 ### TIMED-RECOVERY-1002: retire mash-to-escape
 

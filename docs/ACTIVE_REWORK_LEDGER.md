@@ -5,92 +5,68 @@ focused qualification and publication. Do not stop at a progress report or compa
 
 ## Current work and next action
 
-Updated latestownersteering: LAPTOP IS MAIN TEST/INTEGRATION/MERGE OWNER. This PC
-implementswithsame-conversationSolHighworker+SolHighreviewer; bothpushASTRAReworks.
-Do NOT run PCUnity/player tests while owner does Amihan withClaude. LetAmihan
-filming fullyfinish first; jointLANheld. Noownedtest/player/helper/serverlive here.
-Latesthumanexplicitlyauthorized direct replies to laptopchat; oldercrosschatban
-is superseded ONLYforcurrent shared engineering/testcoordination, nototherchats.
-Root has sentdirectpull/validation requests successfully. Nohand-copypaste task
-requiredfromhuman; keepdetailedtechnicalhandoffsbetweenworkstreams.
+Owner corrections on October 3: Amihan is finished; this PC can use Unity again.
+The owner explicitly removed the stale absolute cross-chat ban from
+C:/Users/matth/AGENTS.md and authorized coordination with the existing laptop
+chat. Do not resurrect that ban from old memory or historical instructions.
+Ask the laptop's current task and ownership BEFORE changing its assignment.
+Coordinate active work, publication, LAN and online tests without duplicating
+its coherent task. Never replace current work with a guessed assignment.
 
-MAIN C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks ASTRAReworks.
-Lastrootpush/verifiedremoted2e9ac55af10966a19873a1e45280b6924f744aa; otherauthorized
-writers/Claude may advanceHEAD. Always inspectstatus, fetch, checkdivergence and
-mergeincomingbeforepush; neverreset/stash/clean/forcepush. Stageownedpathsonly.
-Current unrelateddirt: Nemu/Rafiarmassets,2protectedUIpngmetas,HeroHazardsprivate
-Supernova,QualitySettings,privateoverlapreports; anunrelatedtracked
-Logs/lagoon-blender/owner_rock_edges_paintover.webp deletion was observed. Preserveall.
+MAIN C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks,
+last observed HEAD 5e74518c6. Preserve concurrent writers and private Nemu/Rafi
+arms, two protected UI PNG metadata files, HeroHazards Supernova, QualitySettings,
+private overlap reports and deleted owner_rock_edges_paintover.webp. No reset,
+stash, clean, force-push or paid services. Fetch/check divergence before pushing.
 
-Laptop chat Fix gameplay interruption recovery, id01a0ffab-10a0-70d0-9270-07e171c1613b,
-hostremote-control:env_e_6aa6c4fde2dc83218a0722e34ac3face. Sendcurrentworkcoordination
-throughsend_message_to_thread, keepitscurrentmodel/settings. Readcompactwait_threads
-snapshot, notfullturn dump; read_thread shouldparse/filteronlylastitems inexec.
-Laptophostnamegamergmae,Win11/i5-13420H/RTX4050+UHD/15.71GiBRAM, amplediskafter
-ownercleanup(~218GiBreported). MatchingUnity6000.5.8f1, warmednativeworkerworking.
-Laptopsisolatedsource C:/Users/Matthew/dev/tump-laptop1003 andnativeworker
-C:/Users/Matthew/dev/tump-laptop-native1003; rootmustnotmodifytheseexceptagreed
-testcoordination. Laptopownsfixtures/nativefailures/merges/feedback; rootfixescode.
+Laptop: Fix gameplay interruption recovery, chat
+01a0ffab-10a0-70d0-9270-07e171c1613b, host
+remote-control:env_e_6aa6c4fde2dc83218a0722e34ac3face. Direct messages sent that
+PC Unity is available; requested its current task/worker/job/next-action snapshot.
+Last compact cursor 5d691ff0-eb40-4482-94c4-06aad356c20a:8.
+Received laptop acceptance: pinned bf99 Edit42 and UI16 passed, the latter after
+one fixture canvas lookup repair; matchmaking original6causal/3control and
+candidate9 pass. Practice-menu operator2 pass. Laptop's hero-input original
+7causal/6control, candidate pending. Reuse this evidence, do not rerun it here.
+Current laptop branch origin/competition-laptop-gameplay ends2c0eab380; review
+75de68446 replay highlights and2c0eab380 practice operator contributions before
+normal integration. Laptop's current assignment response is still pending.
 
-Pushedsourcecandidatebatches, compile/staticPASS ONLYunlessnativeevidenceexplicit:
--3c0a1988a account/UI52 (Rename7,Proof9,Career6,Wallet7,Social7,Hub6,Password4,Signin6).
--a5db552ee arrival6;51ea2747d matchmaking9. Original/seam-onlysourcesandreceiptsin
- reports/reliability-2026-10-03. Total67beforefollowingbatches.
--2bd1e4e4a HostedLobby7: capturedcreationcompletion/generation preventstaleDelete/
- Create targetingnewlobby; latestcountcontrols preserved. Message/laptopqueue sent.
--e88921e96 Delete8+InitFallback3+DeletionUI4=15, noactualdeletion/services. Guards
- everydestructiveawaitboundary, actualSDKowner, restartgen+guest; validself-delete
- newIDallowed. Fallbackonlyparksprimary/ignoresreplaced/deadprofile; CANONICAL
- ONLINERefreshownershipoutsideunit. UIviewgen/guest/Close/Destroy fence, oldnotice
- clearedonaccountchange. OneDoor.Account fixturecompiletypo correctedOpen(true);
- rawfailure retained, finalRuntime/Edit/PlaycompilePASS/staticreviewPASS.
--d2e9ac55a ReadyGate3: realIEnumerator acceptedhost-loss latch checksbeforeoldscene
- emitsroundbegin; normalcountdowncontrol. Native/slow-scene/peerspending.
-ThesearePUSHEDDIRECTLYASTRAperlatestownerrequest, NOTcompletedreadiness. Laptop
-ownsacceptance. Sendexactref/paths/filter/count/baselineaftereachbatch. Do not
-expandtheirfrozenjobinputsorclaimolder1003eartifactcontainsthesefixes.
+Root owns PlayerAccount canonical online refresh and AccountRefreshOwnershipTests.
+Three private SDK dispatch seams, immutable SDK owner, latest refresh request and
+active/guest-primary reference checks fence name/cloud replies and stale failures.
+Retain boot timeout local snapshot adoption, legitimate new authenticated IDs
+and late guest-primary parking. Reviewer value_review is checking actual diff13
+cases. parallel_fix resumed independent non-network gameplay/persistence defect
+work, no Unity launch; source reservation response pending. No new agents.
 
-Root checked/integratedlaptop commits88dba66a1/67cfe70a4/f9f7ecdfd/6b273a49e:
-24nativecases (12+2+5+5), firstcandidatepasses aftercausaloriginals, unchanged
-casecounts/controls. Pixel/hardware/livepeer/fullpractice gatesremainseparate.
-Laptopreported3replayhighlightcases additionallychecked, total27, awaitingtheir
-publishedhash/integrationbylaptop. Do notduplicatemergeworknowlaptopownsmerges.
-PublishedDantecontributions4da1fb624/57739c4ab/84fca284d/b6e414564 preservedthrough
-normalmerges; otherClaudeAmihanwriteradvancedlocalHEAD17e9336af betweenrootcalls.
-ObserveactualHEAD ratherthanassumingsolewriter. PreservefinalizedPaete/Phaister.
+Local native25 qualified: first Edit21 passed15, six deletion exact-type assertion
+failures; one fixture-only InstanceOf cancellation correction, deletion8 passed.
+Hosted7, fallback3 and Ready3 were first-pass and not repeated. Graphics deletion
+UI4 first passed. Reports/reliability-2026-10-03/local-resume-qualification retains
+first failures, terminal receipts and scoped source identities. No live SDK/peer
+claim. All these jobs terminal/restored/lease free.
 
-PCnative13(rename/career) baseline10causals/3controls afterONEexplicitdormant
-Awake/OnDestroyfixturerepair. QUALcandidate31094/RELEASEcandidate25155 bothtimeout
-beforecaseswithlicensing/reloadissues; guardsstoppedonlyownededitors/restored/free.
-QUALpost18448/RELEASEpost18516protectedunchanged. No furtherlocalretry. Roslyn
-source/targetfixturecompilationusescachedUnityrefs, NOTimport/ILpostprocess/native.
+ACTIVE ROOT JOB: canonical refresh original13 on isolated release worker
+C:/Users/matth/Documents/Codex/work/tump-competition-release1002.
+Logs/competition-resume1003/refresh/original, profile
+competition-resume1003-refresh-original, deadline240 seconds, session96501.
+Frozen seam-only original5e74518 and candidate/source/test hashes retained under
+Logs/competition-resume1003/refresh. Do not mutate frozen worker until terminal.
+Next: inspect fresh XML/receipt, then copy frozen candidate via
+python Logs/competition-resume1003/refresh_prepare.py candidate and run the same13
+cases once. Preserve original failures; no unchanged validation loops.
 
-LAN: same1003eartifact258files/2551734579bytes fullySHAverifiedonbothmachines.
-Source14dfe9e416f5a98698844d9da34ab3c34b849a17/proto134/recording13.
-Runtime501f0a02db575003c48910f08bdd0221810031c4d30aaf499f4727bbeca0c806.
-Manifest79d2e77c5b993ec6d7268b7e15767c81a7823e3597bc5a7f71b813da5a9004e8.
-PC192.168.1.7/laptop192.168.1.144, UDP49153host/49154clientownlobby.
-RoottransferHTTPserver14876STOPPEDaftercomplete. run_lan_peer.py single-sided
-freshprofiles, Hero1/30/automaticready/naturalend/terminalsave+hash/scoregates.
-Host01/03prelaunchforeigneditorrefusals. Host02 normalquitwithoutclient;
-client01arrivedafterexpiry, noadmission. Host04queued26458 acquired04:01:11UTC,
-thenownerAmihanpriorityarrived; rootretiredOWN23588(parent12344), Windowclosefalse,
-profile/input/Runtime restored/free. ALLARE SCHEDULINGFAILURES, NOLANBUG/PASS.
-Nohost05queued. FuturecohortONLY afterAmihanfullyfinish +laptopnativejobterminal/
-explicitready; thenconfirmedlisteningwith>=90sremaining, clientpromptly. Laptop
-handlesacceptanceandcomparesbothpassedreceipts/hashmatch/scores/normalexits.
+LAN pair is not active. Older1003e artifact is source14dfe9e41, protocol134,
+recording13,258files/2551734579bytes. Runtime501f0a02db575003c48910f08bdd0221810031c4d30aaf499f4727bbeca0c806.
+PC192.168.1.7 and laptop192.168.1.144. Prior paired launch attempts failed
+scheduling, not network behavior. Task-owned transfer server is stopped. Agree
+current tasks, same artifact, profiles/ports and actual availability before pair;
+confirm host listening before client. Existing online setup only; ask before
+paid services or extra credits. Goal ACTIVE, full competition readiness open.
 
-Agents: parallel_fixbulk completedaccount/UI6units +arrival/queue/hosted/countdown
-4units, staticreviewPASS/compiled/pushed. TheircheckpointsLogs/account-ui-bulk1003
-andLogs/network-lifecycle-bulk1003, notadditionalbacklog. Do notletthemidleafter
-batch: assignconcreteindependentengineeringorfeedbackwhilelaptoptests. Reviewer
-value_review reviewsvalue/correctness, noNative/services/broadhistoryloops. No
-newagentswithoutownerrequest. Rootalsoimplements(Delete/Name/Proof/UIguard).
-
-NEXTACTION: await/readlaptopcompactvalidationfeedbackandfixactualfailures; send
-latestrefconfirmationifneeded. Continueindependentsourcebugfixeswithworker;
-updateTODO+ledgerbatchesandpushASTRA, noPCnative/player. Do notstartjointLAN
-orblockwholegoalwhileAmihanruns. GoalACTIVE; fullcompetitionreadinessNOTproven.
+Continue implementation through passing tests, pushes, progress reports and
+compaction. Keep this checkpoint concise and record exact next command/jobs.
 
 ## Freeze peer gate: stop unchanged retries
 
