@@ -1180,9 +1180,9 @@ namespace TumbangPreso.Visual
     }
 
     /// <summary>
-    /// The WHIRLED body tell (owner's status table, 2026-09-25): a kasikus diamond turning at the
-    /// waist and a small spiral strand round the slipper hand's side, for as long as the status
-    /// runs, thinning as it runs out. It reads without the icon, which is the direction's rule for
+    /// The WHIRLED body tell (owner's status table, 2026-09-25): two wind spirals wrapping the body
+    /// the opposite ways (v15: the turning diamond is gone) and a ring at the feet, for as long as
+    /// the status runs, thinning as it runs out. It reads without the icon, which is the direction's rule for
     /// every status (§ 6). Attached by `StatusBodyMarks` on every peer.
     /// </summary>
     public sealed class WhirledMark : MonoBehaviour
@@ -1196,16 +1196,10 @@ namespace TumbangPreso.Visual
             var go = new GameObject("WhirledMark");
             go.transform.SetParent(body.transform, false);
             var mark = go.AddComponent<WhirledMark>(); mark._body = body;
-            var diamond = new List<Vector3>();
-            for (int k = 0; k < 4; k++)
-                for (int j = 0; j < 5; j++)
-                {
-                    float a0 = k * 90.0f * Mathf.Deg2Rad, a1 = (k + 1) * 90.0f * Mathf.Deg2Rad;
-                    Vector3 p0 = new Vector3(Mathf.Sin(a0), 0, Mathf.Cos(a0)) * 0.5f, p1 = new Vector3(Mathf.Sin(a1), 0, Mathf.Cos(a1)) * 0.5f;
-                    diamond.Add(Vector3.Lerp(p0, p1, j / 5.0f) + Vector3.up * 0.95f);
-                }
-            diamond.Add(diamond[0]);
-            mark._diamond = WindVfx.Build(go.transform, "WhirledDiamond", diamond, 0.09f, WindVfx.Standing, 4.0f, 0.35f, 1.0f);
+            // v15 (owner, 2026-10-03: "communicate wind and whirling better"; and of every outline shape: they read as shapes,
+            // not wind): the turning kasikus diamond is gone. A second wind spiral, the other way round, wraps the body instead.
+            var counter = WindVfx.Helix(Vector3.up * 0.2f, Vector3.up * 1.7f, 0.55f, -1.3f, 26, 140, 0.75f);
+            mark._diamond = WindVfx.Build(go.transform, "WhirledCounterSpiral", counter, 0.08f, WindVfx.AroundAxis(counter, Vector3.up), 5.0f, 0.3f, 1.0f);
             var spiral = WindVfx.Helix(Vector3.up * 0.4f, Vector3.up * 1.4f, 0.42f, 1.6f, 26, 0, 0.6f);
             mark._spiral = WindVfx.Build(go.transform, "WhirledSpiral", spiral, 0.07f, WindVfx.AroundAxis(spiral, Vector3.up), 5.0f, 0.3f, 2.0f);
             var ring = WindVfx.Arc(0.4f, 300.0f, 22, 0.03f);
@@ -1220,9 +1214,9 @@ namespace TumbangPreso.Visual
             float left = Mathf.Clamp01(_body.WhirledLeft / StatusRules.WhirledSeconds);
             float arrive = WindVfx.Ease(0.0f, 0.12f, _age);
             float phase = WindVfx.Reduced ? 0.0f : _age * 5.0f;
-            _diamond.GameObject.transform.localRotation = Quaternion.Euler(0, _age * 300.0f, 0);
-            _diamond.GameObject.transform.localScale = Vector3.one * Mathf.Lerp(1.6f, 1.0f, arrive);
-            _diamond.Set(0.9f * arrive, phase, 1, 0, 1 - left);
+            _diamond.GameObject.transform.localRotation = Quaternion.Euler(0, _age * 360.0f, 0);
+            _diamond.GameObject.transform.localScale = Vector3.one * Mathf.Lerp(1.5f, 1.0f, arrive);
+            _diamond.Set(0.75f * arrive * left, -phase, 1, 0, 0.2f + (1 - left) * 0.6f);
             _spiral.GameObject.transform.localRotation = Quaternion.Euler(0, -_age * 420.0f, 0);
             _spiral.Set(0.7f * arrive * left, phase, 1, 0, 0.2f + (1 - left) * 0.6f);
             _ring.GameObject.transform.localRotation = Quaternion.Euler(0, _age * 200.0f, 0);
