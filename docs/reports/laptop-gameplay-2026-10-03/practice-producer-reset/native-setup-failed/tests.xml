@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 07:46:38Z" end-time="2026-10-03 07:46:39Z" duration="0.2467319">
+  <test-suite type="TestSuite" id="2785" name="TumpWorker-qa-d-dddaa72bc5b9" fullname="TumpWorker-qa-d-dddaa72bc5b9" runstate="Runnable" testcasecount="1454" result="Failed" site="Child" start-time="2026-10-03 07:46:38Z" end-time="2026-10-03 07:46:39Z" duration="0.246732" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2779" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-d/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1454" result="Failed" site="Child" start-time="2026-10-03 07:46:38Z" end-time="2026-10-03 07:46:39Z" duration="0.233168" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="18072" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2780" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1454" result="Failed" site="Child" start-time="2026-10-03 07:46:38Z" end-time="2026-10-03 07:46:39Z" duration="0.224592" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2781" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1454" result="Failed" site="Child" start-time="2026-10-03 07:46:38Z" end-time="2026-10-03 07:46:39Z" duration="0.216730" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2133" name="PracticeProducerResetLifetimeTests" fullname="TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests" classname="TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-03 07:46:38Z" end-time="2026-10-03 07:46:39Z" duration="0.196239" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2137" name="AnUninterruptedProducerContinuesItsExistingHold" fullname="TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests.AnUninterruptedProducerContinuesItsExistingHold" methodname="AnUninterruptedProducerContinuesItsExistingHold" classname="TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests" runstate="Runnable" seed="852207983" result="Failed" start-time="2026-10-03 07:46:38Z" end-time="2026-10-03 07:46:39Z" duration="0.091729" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 0.20000000298023224d +/- 9.9999997473787516E-05d
+  But was:  -1.0d
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests.Hold () [0x0006f] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\PracticeProducerResetLifetimeTests.cs:99
+at TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests.AnUninterruptedProducerContinuesItsExistingHold () [0x00000] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\PracticeProducerResetLifetimeTests.cs:128
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2135" name="APostResetLungeStartsWithAFreshProducerClock" fullname="TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests.APostResetLungeStartsWithAFreshProducerClock" methodname="APostResetLungeStartsWithAFreshProducerClock" classname="TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests" runstate="Runnable" seed="877546549" result="Failed" start-time="2026-10-03 07:46:39Z" end-time="2026-10-03 07:46:39Z" duration="0.024702" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 0.20000000298023224d +/- 9.9999997473787516E-05d
+  But was:  -1.0d
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests.Hold () [0x0006f] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\PracticeProducerResetLifetimeTests.cs:99
+at TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests.APostResetLungeStartsWithAFreshProducerClock () [0x00000] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\PracticeProducerResetLifetimeTests.cs:114
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2138" name="ARefusedResetDoesNotRetireTheLiveProducer" fullname="TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests.ARefusedResetDoesNotRetireTheLiveProducer" methodname="ARefusedResetDoesNotRetireTheLiveProducer" classname="TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests" runstate="Runnable" seed="545425694" result="Failed" start-time="2026-10-03 07:46:39Z" end-time="2026-10-03 07:46:39Z" duration="0.022818" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 0.20000000298023224d +/- 9.9999997473787516E-05d
+  But was:  -1.0d
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests.Hold () [0x0006f] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\PracticeProducerResetLifetimeTests.cs:99
+at TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests.ARefusedResetDoesNotRetireTheLiveProducer () [0x00000] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\PracticeProducerResetLifetimeTests.cs:133
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2134" name="PublicResetRetiresTheEnabledBotsOldLungeHold" fullname="TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests.PublicResetRetiresTheEnabledBotsOldLungeHold" methodname="PublicResetRetiresTheEnabledBotsOldLungeHold" classname="TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests" runstate="Runnable" seed="22097538" result="Failed" start-time="2026-10-03 07:46:39Z" end-time="2026-10-03 07:46:39Z" duration="0.023203" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 0.20000000298023224d +/- 9.9999997473787516E-05d
+  But was:  -1.0d
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests.Hold () [0x0006f] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\PracticeProducerResetLifetimeTests.cs:99
+at TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests.PublicResetRetiresTheEnabledBotsOldLungeHold () [0x00000] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\PracticeProducerResetLifetimeTests.cs:109
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2136" name="SharedHumanHeroKeysSurviveRetirementOfTheBodyProducer" fullname="TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests.SharedHumanHeroKeysSurviveRetirementOfTheBodyProducer" methodname="SharedHumanHeroKeysSurviveRetirementOfTheBodyProducer" classname="TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests" runstate="Runnable" seed="1572394095" result="Failed" start-time="2026-10-03 07:46:39Z" end-time="2026-10-03 07:46:39Z" duration="0.023429" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 0.20000000298023224d +/- 9.9999997473787516E-05d
+  But was:  -1.0d
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests.Hold () [0x0006f] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\PracticeProducerResetLifetimeTests.cs:99
+at TumbangPreso.PlayTests.PracticeProducerResetLifetimeTests.SharedHumanHeroKeysSurviveRetirementOfTheBodyProducer () [0x0000c] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\PracticeProducerResetLifetimeTests.cs:120
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-d-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
