@@ -633,11 +633,12 @@ namespace TumbangPreso
             // First refusal: a tap with something grabbable at your feet is a pickup, and
             // nothing else gets to see that press.
             //
-            // ⚠️ THE FLAG IS SET AFTER THE PICKUP IS ALREADY COMMITTED, NOT AS A GATE ABOVE.
+            // A consumed press cannot retrieve again after same-frame hand loss.
+            // The flag is set only after the pickup is already committed.
             // `carrier.gd::_step_grab` is emphatic about the ordering for the same reason: a
             // grab that did NOT connect must still fall through to the shove, so only a
             // CONNECTING grab may mark the press spent.
-            if (intent.JustPressed(Verb.Grab) && Held == null && TryPickup())
+            if (!_grabPressConsumed && intent.JustPressed(Verb.Grab) && Held == null && TryPickup())
             {
                 _grabPressConsumed = true;
                 return;
