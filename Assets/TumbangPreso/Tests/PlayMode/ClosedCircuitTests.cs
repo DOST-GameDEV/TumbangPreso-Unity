@@ -128,6 +128,42 @@ namespace TumbangPreso.PlayTests
             => ReviewCast(false);
         [UnityTest, Timeout(120000)] public IEnumerator OwnerGestureActuallyMovesAndTellUsesTheVisiblePalm()
             => ReviewCast(true);
+
+        [UnityTest, Timeout(120000)] public IEnumerator WalkingDuringAcquisitionKeepsTheLegGaitActive()
+        {
+            var ctx = Stage(out var kit, out var target);
+            var motor = ctx.Motor; motor.Mode = GameMode.HeroStrike;
+            motor.CharacterIndex = Roster.IndexIn(Roster.HeroPeople, "zack");
+            var art = Resources.Load<RosterEntryAsset>("Roster/person_zack");
+            var visual = motor.gameObject.AddComponent<CharacterVisual>();
+            visual.ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
+            motor.enabled = true;
+            for (int step = 0; step < 25 && !motor.IsGrounded; step++) yield return new WaitForFixedUpdate();
+            Assert.IsTrue(motor.IsGrounded, "The physical walking fixture never reached its floor.");
+            var body = motor.GetComponent<CharacterAnimator>();
+            var gait = typeof(CharacterAnimator).GetField("_gaitWeight", BindingFlags.Instance | BindingFlags.NonPublic);
+            var leg = System.Array.Find(visual.Model.GetComponentsInChildren<Transform>(true), t => t.name == "leg-left");
+            var start = motor.transform.position; var rest = leg.localRotation;
+            motor.Intent.Move = Vector2.right;
+            Assert.AreEqual(HeroKit.CastOutcome.Cast, motor.AbilitySystem.ApplyNetworkCast(HeroAbilitySystem.Slot.Skill2,
+                motor.transform.position, motor.transform.forward, motor.Intent.AimPoint, 0, true));
+            float maxGait = 0, maxLeg = 0; bool observedCast = false;
+            for (int step = 0; step < 25; step++)
+            {
+                yield return new WaitForFixedUpdate();
+                kit.Skill2.Tick(ctx, Time.fixedDeltaTime);
+                if (body.CurrentClipName != "hero-zack-circuit" || !body.IsPlayingAction) continue;
+                observedCast = true;
+                maxGait = Mathf.Max(maxGait, (float)gait.GetValue(body));
+                maxLeg = Mathf.Max(maxLeg, Quaternion.Angle(rest, leg.localRotation));
+            }
+            motor.Intent.Move = Vector2.zero;
+            Assert.IsTrue(observedCast);
+            Assert.Greater(Vector3.Distance(start, motor.transform.position), .5f, "The caster did not actually walk.");
+            Assert.Greater(maxGait, .8f, "An aiming-only gesture suppressed walking legs while the motor kept moving.");
+            Assert.Greater(maxLeg, 10, "The active gait layer did not animate the actual leg.");
+        }
+
         private IEnumerator ReviewCast(bool ownerView)
         {
             var ctx = Stage(out var kit, out var target);

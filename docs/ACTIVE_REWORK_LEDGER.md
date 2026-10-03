@@ -1,22 +1,24 @@
 # Active Rework Checkpoint
 
-## Current PC unit: emote owner candidate and laptop packet results
+## Latest source and acceptance checkpoint
 
-Emote original fixturebfe2c2fab, candidateb5fabf6a6 on remote branch
-competition-pc-emote-owner1003. Only production delta from that original is
-MatchInstaller.Driven: unparked active-reader ownership, network LocalSlot fence,
-all reader components inspected, null without an owner; tutorial fallback kept.
-Eight cases compiled with full runtime/test assemblies. Native validation queued
-to laptop; no emote pass claimed. Exact fixture/meta unchanged across refs.
+ASTRAReworks67d57b118 contains the checked cast-preparation guard, preserving
+current Amihan, match-entry and Closed Circuit walking work. Root inspected
+original7/3 and candidate10/10 XML,3388-input maps differing in one source file,
+immutable fixture/meta and terminal/restored/free guards. Canonical3be659 matches.
+Default timing native1/1 export/noRaw proof is also inspected; intermediate
+result.json is not a whole-route pass. Binary512MiB interruption and player open.
 
-Laptop reports PacketBounds original10: seven failures/three controls, frozen
-inputs unchanged; candidate10 is next. TimingCapture1 is reported passed after
-one stale worker-source cleanup; await published raw evidence before accepting.
-Root has no PC Unity/player job. Claude owns PC Unity and is publishing Amihan
-changes, latest fetched ASTRAReworksdc6b791fa. Preserve those during integration.
-NEXT: inspect laptop's published XML/receipts and source hashes, integrate checked
-packet/emote fixes normally with current ASTRAReworks, then publish acceptance.
-Do not repeat unchanged compiles, launch PC Unity or reopen old139 captures.
+Root emote originalbfe2/candidateb5fa selects an unparked active-reader owner,
+fences network LocalSlot and preserves tutorial/replacement/temporaryAI controls.
+Eight-case fixture is frozen. Laptop reports originalfive failures/three controls
+and candidate8/8; raw published evidence is still pending root inspection.
+This branch retains emote candidate; ASTRA excludes it until acceptance inspection.
+
+Laptop owns all tests/builds while Claude owns PC Unity. No PC Unity/player job.
+Earlier sections below are historical; do not resume their old pending sessions.
+NEXT: inspect published Emote8 XML,3390-input maps and restored/free receipts,
+then publish checked selector with current source. Current player/peer gate open.
 
 ## Current PC unit: packet framing candidate awaits laptop validation
 

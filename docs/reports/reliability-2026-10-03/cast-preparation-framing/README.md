@@ -1,22 +1,21 @@
 # Bound cast preparation decoding
 
-OnCastPreparationMsg directly decoded a fixed header, UTF16 hero string and
-52-byte tail without preflighting available payload bytes. Truncated host
-messages could throw from FastBufferReader rather than being rejected. Whole
-player crash, corrupt transport traffic and live-peer impact are not established.
+Truncated host cast-preparation messages threw OverflowException from the
+unchecked header/string/tail reads. A trailing byte also advanced decoding
+instead of rejecting the frame. The handler now reuses SkipWireString to
+preflight its fixed header, UTF16 hero name and exact52-byte tail, restoring the
+decode position before reading. Wire layout, protocol, kits and timings remain.
 
-Candidate088ae2aee reuses SkipWireString to validate the complete frame and
-restores the decode position before reading. Extra trailing bytes are rejected.
-Payload layout, protocol141, host authority, kit behavior and timings are unchanged.
+Original8f0b34054 reproduced seven causal failures and passed three controls.
+Candidate088ae2aee passed10/10 on the identical fixture. Root independently read
+the raw XML, receipts and full3388-input maps published at a80acb40b. The only
+declared input change was MatchRpc.Preparations.cs. Committed candidate SHA256
+3be659f077b32a8e3ca02ff57de0766c575f66594bff79900671ca8628255a54 matches the
+tested code. Fixture/meta remain unchanged; native line-ending conversions were
+checked against the original and candidate Git blobs. Both guards completed
+profile preservation and released their leases. There was no fixture repair.
 
-Original with the identical regression fixture is8f0b34054. Ten native cases
-cover six truncated boundaries, trailing bytes, two full UTF16 frames and a
-non-host empty-payload control. Source expects seven causal failures and three
-controls, but no native outcome is claimed before the laptop runs them.
-Runtime and test assemblies compiled against the installed Unity references.
-Compilation does not establish imports, native decoding, player or peer acceptance.
-
-Validation is assigned to the existing laptop chat while Claude owns PC Unity.
-Candidate is pushed on competition-pc-cast-preparation-bounds1003 and is not
-integrated into ASTRAReworks. Merge only after focused original/candidate evidence
-and unchanged fixture hashes are inspected. No PC Unity run was started.
+[Raw evidence](../../laptop-validation-2026-10-03/cast-preparation-packet-bounds/README.md).
+This qualifies native packet framing and decode position, not actual routing,
+ability execution, whole-player crash, peer/Relay or current player acceptance.
+The laptop ran the tests; Claude's PC Unity slot remained untouched.
