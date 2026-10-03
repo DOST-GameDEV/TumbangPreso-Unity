@@ -17,6 +17,14 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### EDGE-CLIMB-FRAME-1003: reject malformed client requests
+
+- [x] Require exactly eight unread bytes before reading slot/epoch. Original
+  four failures/two controls, candidate6/6; root inspected unchanged fixture,
+ 3396-input maps with one source delta and terminal/restored/free receipts.
+  [Evidence](reports/reliability-2026-10-03/edge-climb-framing/README.md).
+  Ownership/epoch/geometry remain; live climb/player/peer gates are separate.
+
 ### TOUCH-BUTTON-POINTER-1003: retain an action until the last finger lifts
 
 - [x] Multiple captured pointers retain button holds until the last owner lifts;

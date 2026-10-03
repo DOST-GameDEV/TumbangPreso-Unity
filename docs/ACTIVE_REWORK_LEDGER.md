@@ -1,23 +1,28 @@
 # Active Rework Checkpoint
 
-## Current root unit: edge request framing awaits laptop validation
+## Resume first: edge request framing checked and integrated
 
-Edge original3ead4fc27 / candidatec856dfe25 pushed on
-competition-pc-edge-climb-bounds1003. Only production delta is two-line exact
-eight-byte/TryBeginRead gate in MatchRpc.EdgeRecovery.cs; ownership/epoch/geometry
-unchanged, still142. Six immutable fixture cases are queued after laptop Stick8.
-Direct compilation against the older isolated worker references is limited to
-candidate syntax/API; native/current-player acceptance is not claimed.
+Edge original3ead4fc27 produced4fail/2controls; candidatec856dfe25 passed6/6.
+Root inspected published46782a7c8 XML, immutable fixture/meta, full3396 maps
+with ONLYEdgeRecovery changed and both terminal/restored/free guards. Exact
+8-byte gate preserves seat ownership, epoch, geometry and protocol142. Source
+is integrated with current Amihan and touch contributions. No PC Unity job.
 
-TouchButton669a19227 is integrated and root inspected original2/6 -> candidate8/8,
-3392 unchanged input maps, immutable repaired fixture and restored/free guards.
-First SendMessage assertion/one fixture repair retained. Supplied pointer handlers
-only, no physical routing/gameplay claim. Laptop Stick8 original is reported2/6;
-its candidate and device-loss work remain laptop-owned. No PC Unity/player job.
-Root owns Net/account/lobby source; preserve other reservations and Amihan work.
-NEXT: inspect laptop published Edge6 evidence, then integrate the checked guard.
-Continue useful source fixes while laptop validates; do not repeat unchanged
-packet/emote/timing proofs or start PC Unity. Matching142 player/peers still open.
+TouchButton8 proof inspected; TouchStick8 is published7ffe72675 with its wrong-
+source attempt retained/excluded, root raw audit still pending. Laptop owns
+all tests/builds, TouchStick/device loss; Claude owns PC Unity. Earlier packet10,
+emote8 and defaultCSV1 acceptance remain valid; do not repeat unchanged proofs.
+Current14/F6 graphics integration, matching142 Windows player, physical-device
+and real-peer gates remain open. Declared graphics/build memory admission has
+not cleared; do not silently lower guards or kill unrelated work.
+
+Root checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i
+is current. Main private/index work preserved. Superseded owned compiler outputs
+were pruned:10files/15682048bytes, source/rsp/log evidence kept. Old large raw/build
+cleanup policy blocks remain, no bypass or claim of deleting those files.
+NEXT: send laptop checked publication ref and pull request for its eventual
+build, inspect TouchStick raw proof and continue one disjoint source defect.
+Goal remains active; whole competition readiness and current peers unproven.
 
 ## Resume first: checked packet and emote fixes published together
 
