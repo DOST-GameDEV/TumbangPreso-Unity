@@ -162,7 +162,8 @@ namespace TumbangPreso.Visual
                 float r = reach >= 0f ? reach * grow : -reach * (1f - grow) + .25f;
                 var at = AbAnchor((int)AbRingRows[i, 1]); at.y = court + .03f + .004f * (i % 5);
                 float strength = reach >= 0f ? Mathf.Pow(1f - u, 1.3f) : Mathf.Sin(Mathf.PI * u);
-                PlaceGlow(_abRings[i], at, new Vector3(r, r, 1f), Quaternion.Euler(90f, 0f, 0f), 1.7f * strength * light * leave);
+                // Film v3.5: beside the abel the full-strength line diamonds read as stamped UI; a lighter echo of each beat.
+                PlaceGlow(_abRings[i], at, new Vector3(r, r, 1f), Quaternion.Euler(90f, 0f, 0f), .8f * strength * light * leave);
             }
             for (int i = 0; i < _abFlashes.Count; i++)
             {
