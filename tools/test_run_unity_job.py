@@ -175,6 +175,53 @@ class JobTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "cannot be verified"):
             job.read_pool(self.pool)
 
+    def coexist_claim(self):
+        return dict(self.claim(), coexistEditorProject=str(self.source), coexistReserveMb=1024)
+
+    def test_explicit_outside_editor_can_coexist_with_isolated_cpu_worker(self):
+        command = f'Unity.exe -projectPath "{self.source}" -batchmode -runTests -testPlatform PlayMode'
+        foreign, accepted = job.coexistence(self.coexist_claim(), [55], [(55, command)])
+        self.assertEqual([], foreign)
+        self.assertEqual([{"pid": 55, "project": job.canonical(self.source)}], accepted)
+
+    def test_outside_editor_permission_does_not_allow_other_projects_or_players(self):
+        claim = self.coexist_claim()
+        for command in (None, "Unity.exe", f'Unity.exe -projectPath "{self.second}"',
+                        f'Unity.exe -projectPath "{self.source}" -projectPath "{self.second}"'):
+            with self.subTest(command=command), self.assertRaises(ValueError):
+                job.coexistence(claim, [55], [(55, command)])
+        with self.assertRaises(ValueError):
+            job.coexistence(claim, [55, 56], [(55, f'Unity.exe -projectPath "{self.source}"')])
+
+    def test_outside_editor_requires_separate_project_library_and_preferences(self):
+        claim = self.coexist_claim()
+        for field, value in (("project", job.canonical(self.source)),
+                             ("library", job.canonical(self.source / "Library")),
+                             ("prefHive", job.playerprefs_guard.editor_key("BH Studios", "Tumbang Preso").casefold())):
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                job.coexistence(dict(claim, **{field: value}), [55], [])
+
+    def test_outside_editor_cannot_enable_build_graphics_network_or_unisolated_jobs(self):
+        claim = self.coexist_claim()
+        for fields in ({"kind": "build"}, {"kind": "gpu"}, {"worker": False},
+                       {"allowParallel": False}, {"ports": [49153]}):
+            with self.subTest(fields=fields), self.assertRaises(ValueError):
+                job.coexistence(dict(claim, **fields), [55], [])
+
+    def test_outside_editor_consumes_slot_and_extra_memory_reserve(self):
+        claim = self.coexist_claim()
+        with patch.object(job, "pid_alive", return_value=True), \
+             patch.object(job, "processes", return_value=[]), \
+             patch.object(job, "free_memory_mb", return_value=3583), \
+             patch.object(job, "coexistence", return_value=([], [{"pid": 55, "project": str(self.source)}])):
+            with self.assertRaisesRegex(TimeoutError, "memory"):
+                job.acquire(self.pool, claim, 0)
+            with patch.object(job, "free_memory_mb", return_value=3584):
+                result = job.acquire(self.pool, claim, 0)
+            self.assertEqual(1024, result["outsideReserveMb"])
+            with self.assertRaisesRegex(ValueError, "two slots"):
+                job.acquire(self.pool, self.claim(self.second, profile="two"), 0)
+
     def test_foreign_inventory_recognizes_guard_and_editor_descendants(self):
         lease = dict(self.claim(), ownerPid=10, guardPid=20)
         rows = [{"pid": 20, "parent": 10, "name": "python.exe"},
