@@ -52,7 +52,7 @@ namespace TumbangPreso.Visual
                 var strand = WindVfx.Build(go.transform, "SlipstreamStrand" + i, spine, 0.2f - i * 0.035f,
                                            WindVfx.AroundAxis(spine, axis), 5.0f, 0.18f, i * 3.1f);
                 // v3 language (2026-10-03): the slipstream is SHEETS of air, bright rims and clear middles, like her Airburst.
-                wake._strands.Add(WindVfx.Sheet(strand, 0.55f + i * 0.04f));
+                wake._strands.Add(WindVfx.InkSheet(strand, 0.55f + i * 0.04f));
             }
             var road = new List<Vector3>();
             for (int i = 0; i < 16; i++) road.Add(Vector3.Lerp(Vector3.zero, wake._to, i / 15.0f) + Vector3.up * 0.04f);
@@ -145,7 +145,7 @@ namespace TumbangPreso.Visual
             var hit = go.AddComponent<AmihanWindHit>();
             var arc = WindVfx.Arc(0.55f, 250.0f, 26, 1.0f, -200.0f);
             for (int i = 0; i < arc.Length; i++) arc[i].y = 0.7f + i / (float)arc.Length * 0.6f;
-            hit._crescent = WindVfx.Sheet(WindVfx.Build(go.transform, "WrapCrescent", arc, 0.26f, WindVfx.Standing, 4.0f, 0.2f, 1.0f));
+            hit._crescent = WindVfx.InkSheet(WindVfx.Build(go.transform, "WrapCrescent", arc, 0.26f, WindVfx.Standing, 4.0f, 0.2f, 1.0f));
             var inner = WindVfx.Arc(0.42f, 200.0f, 22, 0.5f, -150.0f);
             hit._inner = WindVfx.Thread(WindVfx.Build(go.transform, "WrapInner", inner, 0.06f, WindVfx.Standing, 3.0f, 0.3f, 2.0f), 1);
             var ring = WindVfx.Kasikus(0.42f, 0.04f);
@@ -200,7 +200,7 @@ namespace TumbangPreso.Visual
             fx.Rise("RightThread", new Vector3(.81f,.02f,-.13f), new Vector3(.88f,height*.52f,-.25f), new Vector3(.62f,height+.39f,-.38f), .041f, .11f, 25);
             fx.Rise("InnerLift", new Vector3(-.07f,.03f,-.35f), new Vector3(.14f,height*.46f,-.49f), new Vector3(-.02f,height+.51f,-.31f), .046f, .03f, 31);
             var spiral = WindVfx.Helix(Vector3.up * .04f, Vector3.up * (height + .42f), .69f, .83f, 28, 24, .57f);
-            fx._spiral = WindVfx.Sheet(WindVfx.Build(go.transform, "ClimbingGust", spiral, .11f, WindVfx.AroundAxis(spiral, Vector3.up), 4, .16f, 35), .55f);
+            fx._spiral = WindVfx.InkSheet(WindVfx.Build(go.transform, "ClimbingGust", spiral, .11f, WindVfx.AroundAxis(spiral, Vector3.up), 4, .16f, 35), .55f);
             // Her kasikus pressed into the court as she leaves it (v3 language: diamonds, ink-weighted to read on light tiles).
             var ring = WindVfx.Kasikus(0.58f, 0.05f, 8);
             fx._burst = WindVfx.Floor(WindVfx.Build(go.transform, "LiftRing", ring, 0.15f, WindVfx.Flat(ring), 6.0f, 0.2f, 3.0f));
@@ -213,8 +213,9 @@ namespace TumbangPreso.Visual
 
         private void Rise(string name, Vector3 start, Vector3 bend, Vector3 top, float width, float delay, float seed)
         {
-            var streak = WindVfx.Build(transform, name, new[] { start, bend, top }, width * 1.3f, _ => Vector3.right, 3, .18f, seed);
-            _column.Add(name.EndsWith("Thread") ? WindVfx.Thread(streak, (int)seed) : WindVfx.Sheet(streak, .5f));
+            // Film r2: at 1.3 times they still barely showed from the court; twice the authored width.
+            var streak = WindVfx.Build(transform, name, new[] { start, bend, top }, width * 2.0f, _ => Vector3.right, 3, .18f, seed);
+            _column.Add(name.EndsWith("Thread") ? WindVfx.Thread(streak, (int)seed) : WindVfx.InkSheet(streak, .5f));
             _delays.Add(delay);
         }
 
@@ -228,7 +229,7 @@ namespace TumbangPreso.Visual
             for (int i = 0; i < _column.Count; i++)
             {
                 float age = t - _delays[i];
-                _column[i].Set(WindVfx.Reduced ? .38f : .72f, -phase, WindVfx.Ease(0, .34f, age), WindVfx.Ease(.23f, .74f, age), WindVfx.Ease(.42f, .82f, age));
+                _column[i].Set(WindVfx.Reduced ? .45f : .88f, -phase, WindVfx.Ease(0, .34f, age), WindVfx.Ease(.23f, .74f, age), WindVfx.Ease(.42f, .82f, age));
             }
             _spiral.Set(WindVfx.Reduced ? .32f : .6f, phase, WindVfx.Ease(.04f, .45f, t), WindVfx.Ease(.28f, .93f, t), WindVfx.Ease(.55f, 1, t));
             _burst.GameObject.transform.localScale = Vector3.one * Mathf.Lerp(0.5f, 2.6f, WindVfx.Ease(0.0f, 0.45f, t));
@@ -394,12 +395,13 @@ namespace TumbangPreso.Visual
                 var arc = WindVfx.Arc(radius + i * 0.05f, degrees * (1.0f + i * 0.06f), 26, 0.0f);
                 for (int k = 0; k < arc.Length; k++)
                 {
-                    arc[k] += new Vector3(0, 0.25f + (4 - i) * 0.22f, -radius + bow - i * 0.28f);
+                    // Film r2: inked it read, but as a low sickle under 1.1 m; a wall, the leading sheet to 1.6 m.
+                    arc[k] += new Vector3(0, 0.3f + (4 - i) * 0.33f, -radius + bow - i * 0.28f);
                     float edge = Mathf.Abs(k / (float)(arc.Length - 1) * 2.0f - 1.0f);
                     arc[k].y *= 1.0f - edge * edge * 0.55f; // the ends of the front sit lower
                 }
                 // v3 language: each layer a SHEET, its rim bright and its middle clear, the leading edge brightest.
-                fx._layers.Add(WindVfx.Sheet(WindVfx.Build(go.transform, "GaleLayer" + i, arc, 0.4f - i * 0.045f, WindVfx.Standing, 5.0f + i,
+                fx._layers.Add(WindVfx.InkSheet(WindVfx.Build(go.transform, "GaleLayer" + i, arc, 0.55f - i * 0.06f, WindVfx.Standing, 5.0f + i,
                     i == 0 ? 0.22f : 0.14f, i * 2.3f), 0.5f + i * 0.05f));
             }
             var skirt = WindVfx.Arc(radius, degrees * 1.08f, 26, 0.04f);
@@ -518,9 +520,10 @@ namespace TumbangPreso.Visual
         // GATHERING SHEETS: radius, low and high height, start angle, sweep (degrees), width, tilt (degrees), orbit (degrees/s).
         private static readonly float[,] SheetRows =
         {
-            { 1.05f, 0.35f, 1.25f,   0.0f, 150.0f, 0.42f,  22.0f,  130.0f },
-            { 1.25f, 1.30f, 0.45f, 120.0f, 135.0f, 0.36f, -18.0f, -110.0f },
-            { 1.15f, 0.55f, 1.55f, 240.0f, 160.0f, 0.32f,  14.0f,  150.0f },
+            // Under her eyes (film r1: at 1.25 to 1.55 m they swept across her own first-person view and her aim).
+            { 1.05f, 0.30f, 0.95f,   0.0f, 150.0f, 0.36f,  22.0f,  130.0f },
+            { 1.25f, 0.95f, 0.40f, 120.0f, 135.0f, 0.30f, -18.0f, -110.0f },
+            { 1.15f, 0.45f, 1.05f, 240.0f, 160.0f, 0.28f,  14.0f,  150.0f },
         };
         private float _age, _gather, _half, _range;
         public float LifeSeconds => _gather + WallSeconds + 0.4f;
@@ -564,8 +567,12 @@ namespace TumbangPreso.Visual
                     float edge = Mathf.Abs(k / (float)(spine.Count - 1) * 2.0f - 1.0f);
                     spine[k] = new Vector3(spine[k].x, (1.05f - i * 0.28f) * (1.0f - edge * edge * 0.45f), spine[k].z);
                 }
-                fx._front.Add(Sheet(WindVfx.Build(go.transform, "AirburstFront" + i, spine, 1.5f - i * 0.4f, WindVfx.Standing,
-                    3.0f + i * 2.0f, 0.16f, 30.0f + i), 0.6f));
+                var front = WindVfx.Build(go.transform, "AirburstFront" + i, spine, 1.5f - i * 0.4f, WindVfx.Standing, 3.0f + i * 2.0f, 0.16f, 30.0f + i);
+                // Film r1: a bright rim over Bayan Plaza's light tiles was invisible from the court view. The front's rim is her ink,
+                // its middle mint you can see through: it reads on a light court and on a dark one.
+                front.Recolour(WindVfx.Core, WindVfx.SheetBody, WindVfx.FloorInk);
+                if (front.Material != null) { front.Material.SetFloat("_InkFrom", 0.55f); front.Material.SetFloat("_InkAlpha", 0.95f); }
+                fx._front.Add(front);
             }
             // THE WARP: nine threads from her hands to the far end, sagging to the court, each in an abel colour; their far
             // ends sit at 92 percent of the half angle, so nothing touches the real limit.
@@ -581,9 +588,12 @@ namespace TumbangPreso.Visual
                     float u = k / 27.0f;
                     spine.Add(Vector3.Lerp(Vector3.Lerp(Hands, control, u), Vector3.Lerp(control, far, u), u));
                 }
-                var thread = WindVfx.Build(go.transform, "WarpThread" + i, spine, 0.055f - 0.008f * (i % 2), WarpSide(spine), 8.0f, 0.35f, 90.0f + i);
-                var colour = WindVfx.Threads[i % WindVfx.Threads.Length];
-                thread.Recolour(Color.Lerp(colour, WindVfx.Core, 0.5f), colour, colour * 0.5f);
+                // 9 to 11 cm: film r1's 5 cm read as hairlines at the far end of the lane.
+                var thread = WindVfx.Build(go.transform, "WarpThread" + i, spine, 0.11f - 0.02f * (i % 2), WarpSide(spine), 8.0f, 0.35f, 90.0f + i);
+                // Film r1 (the court view): the cream thread vanished on Bayan Plaza's cream tiles. Teal, rust and gold, inked.
+                var colour = WindVfx.Threads[1 + i % 3];
+                thread.Recolour(Color.Lerp(colour, WindVfx.Core, 0.45f), colour, WindVfx.FloorInk);
+                if (thread.Material != null) { thread.Material.SetFloat("_InkFrom", 0.55f); thread.Material.SetFloat("_InkAlpha", 0.9f); }
                 fx._warp.Add(thread);
             }
             // THE COMB: ten streaks lying on the court, racing outward on the release.
@@ -670,7 +680,7 @@ namespace TumbangPreso.Visual
             return host;
         }
 
-        private static WindVfx.Ribbon Sheet(WindVfx.Ribbon ribbon, float rimFrom) => WindVfx.Sheet(ribbon, rimFrom);
+        private static WindVfx.Ribbon Sheet(WindVfx.Ribbon ribbon, float rimFrom) => WindVfx.InkSheet(ribbon, rimFrom);
 
         /// <summary>A thread's width half flat, half standing, so it reads from her own camera and from over her shoulder.</summary>
         private static System.Func<int, Vector3> WarpSide(IList<Vector3> spine)
@@ -812,9 +822,12 @@ namespace TumbangPreso.Visual
                 float head = t < 0 ? WindVfx.Ease(-DrawOnSeconds + lag, -DrawOnSeconds + 0.6f + lag, t) : 1.0f;
                 float tail = after < 0 ? 0.0f : WindVfx.Ease(0.0f, 0.32f + lag, after);
                 float on = t < 0 ? WindVfx.Ease(-DrawOnSeconds, -DrawOnSeconds + 0.15f, t) : 1.0f;
-                float alpha = on * (after < 0 ? 0.6f + 0.25f * Mathf.Clamp01(pulse) + 0.15f * Step(t, draw) : 1.0f - WindVfx.Ease(0.15f, 0.5f, after));
+                // Film r4: in the cutscene's REVEAL the warp read as faint lines. Strung (the draw-on) it is at full strength and
+                // full width, settling to the windup's held level by age 0.
+                float strung = t < 0 ? 1.0f - WindVfx.Ease(-0.4f, 0.0f, t) : 0.0f;
+                float alpha = on * (after < 0 ? Mathf.Lerp(0.6f + 0.25f * Mathf.Clamp01(pulse) + 0.15f * Step(t, draw), 1.0f, strung) : 1.0f - WindVfx.Ease(0.15f, 0.5f, after));
                 // Taut on each beat: drawn finer and brighter (the ends never move, so the threads stay in her hands).
-                _warp[i].Set(alpha, (calm ? 0.0f : t * 1.4f) + i * 0.4f, head, tail, after < 0 ? 0.25f - 0.6f * pull : WindVfx.Ease(0.0f, 0.4f, after));
+                _warp[i].Set(alpha, (calm ? 0.0f : t * 1.4f) + i * 0.4f, head, tail, after < 0 ? (0.25f - 0.6f * pull) * (1.0f - strung) : WindVfx.Ease(0.0f, 0.4f, after));
             }
 
             // THE GATHERING SHEETS: orbiting close round her through the windup, quickening on the beats, diving into her hands

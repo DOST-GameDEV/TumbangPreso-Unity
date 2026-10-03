@@ -391,6 +391,17 @@ namespace TumbangPreso.Visual
             return ribbon;
         }
 
+        /// <summary>
+        /// A LIVE wind sheet: a mint middle you can see through inside her deep ink rim. Film r1 on Bayan Plaza's light tiles: the
+        /// bright-rimmed sheets (right for the cutscene's dimmed stage) vanished from every court view; an ink rim reads on any floor.
+        /// </summary>
+        public static Ribbon InkSheet(Ribbon ribbon, float rimFrom = 0.55f)
+        {
+            ribbon.Recolour(Core, SheetBody, FloorInk);
+            if (ribbon.Material != null) { ribbon.Material.SetFloat("_InkFrom", rimFrom); ribbon.Material.SetFloat("_InkAlpha", 0.95f); }
+            return ribbon;
+        }
+
         /// <summary>A stroke lying on the court: her darker greens and a wide solid ink rim, so it reads on a light floor.</summary>
         public static Ribbon Floor(Ribbon ribbon)
         {

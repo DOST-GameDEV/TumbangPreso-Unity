@@ -176,12 +176,13 @@ namespace TumbangPreso.Visual
                 else
                 {
                     AmLens(t, out _, out var eye, out _, out _);
-                    var centre = new Vector3(0f, court + 1.25f, 0f);
+                    // Film r1: 1.1 m behind her at 2.3 m it crossed her face. 2.4 m behind, smaller, fainter, round her head.
+                    var centre = new Vector3(0f, court + 1.45f, 0f);
                     var away = centre - eye; away.y = 0f;
-                    centre += (away.sqrMagnitude > 1e-4f ? away.normalized : Vector3.forward) * 1.1f;
-                    float grow = answer >= weave ? Mathf.Lerp(1.4f, 2.3f, Ease(AmAnswerAt, 1.2f, t)) : 1.9f + .25f * beats;
-                    PlaceGlow(_abGlory[0], centre, Vector3.one * grow, Quaternion.identity, (1.1f + .6f * beats) * strength * light * leave);
-                    PlaceGlow(_abGlory[1], centre, Vector3.one * grow * .62f, Quaternion.identity, (.9f + .7f * beats) * strength * light * leave);
+                    centre += (away.sqrMagnitude > 1e-4f ? away.normalized : Vector3.forward) * 2.4f;
+                    float grow = answer >= weave ? Mathf.Lerp(1.2f, 1.8f, Ease(AmAnswerAt, 1.2f, t)) : 1.55f + .18f * beats;
+                    PlaceGlow(_abGlory[0], centre, Vector3.one * grow, Quaternion.identity, (.7f + .45f * beats) * strength * light * leave);
+                    PlaceGlow(_abGlory[1], centre, Vector3.one * grow * .62f, Quaternion.identity, (.6f + .5f * beats) * strength * light * leave);
                 }
             }
 

@@ -749,7 +749,9 @@ def amihan():
     # F RIDE (computed: chasing the warp threads down the lane to the nearest player in it, arriving as they brace). Fallback.
     p.shot(3.7, 4.45, (.9, 1.2, .2), (0, .8, 3.0), 56, eye_to=(1.5, 1.3, 5.6), look_to=(0, 1.0, 8.0), fov_to=50)
     # G REVEAL: high over her right shoulder, the whole lane and everyone in it, the live fan drawn on under them.
-    p.shot(4.45, 5.6, (2.9, 2.9, -3.0), (0, .4, 6.0), 54, eye_to=(3.2, 3.3, -3.7), look_to=(0, .3, 7.5), fov_to=56)
+    # (film r1: from 2.9 m up behind her shoulder her large head filled the bottom left; higher and further out to her right.)
+    # (film r3: aimed down the lane, she was cut off at the frame's bottom-left edge; aimed between her and the lane, wider.)
+    p.shot(4.45, 5.6, (4.6, 3.3, -.6), (.2, .5, 3.4), 58, eye_to=(5.0, 3.7, -1.1), look_to=(.2, .4, 4.2), fov_to=60)
     # Reduced motion: one side view with her, her hands and the lane together.
     p.locked((4.4, 1.6, 1.0), (0, .95, 2.5), 52)
     return p

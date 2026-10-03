@@ -93,7 +93,11 @@ namespace TumbangPreso.Visual
                 }
                 var host = new GameObject(i == 0 ? "HeelCurlLeft" : "HeelCurlRight").transform;
                 host.SetParent(_curlHost, false);
-                _curls[i] = WindVfx.Build(host, "HeelCurl", spine, .05f, WindVfx.Flat(spine), 3.0f, .3f, 230f + i);
+                // Film r1: a 5 cm mint curl never showed on the light court. 8 cm, her teal thread inside her ink.
+                var curl = WindVfx.Build(host, "HeelCurl", spine, .08f, WindVfx.Flat(spine), 3.0f, .3f, 230f + i);
+                curl.Recolour(Color.Lerp(WindVfx.Threads[1], WindVfx.Core, .5f), WindVfx.SheetBody, WindVfx.FloorInk);
+                if (curl.Material != null) { curl.Material.SetFloat("_InkFrom", .5f); curl.Material.SetFloat("_InkAlpha", .9f); }
+                _curls[i] = curl;
             }
         }
 
@@ -114,7 +118,7 @@ namespace TumbangPreso.Visual
                 var host = _curls[i].GameObject.transform.parent;
                 host.SetPositionAndRotation(transform.position + face * new Vector3(i == 0 ? -.1f : .1f, lift + .04f, -.12f), face);
                 float calm = WindVfx.Reduced ? .6f : 1f;
-                _curls[i].Set(.55f * amount * behind * calm, WindVfx.Reduced ? 0 : _curlClock * 6f, Mathf.Lerp(.35f, 1f, behind), 0, .3f + .5f * (1 - behind));
+                _curls[i].Set(.8f * amount * behind * calm, WindVfx.Reduced ? 0 : _curlClock * 6f, Mathf.Lerp(.35f, 1f, behind), 0, .3f + .5f * (1 - behind));
             }
         }
 

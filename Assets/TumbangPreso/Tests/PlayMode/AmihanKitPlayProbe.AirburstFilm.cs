@@ -120,7 +120,7 @@ namespace TumbangPreso.PlayTests
             bool reduced = Settings.SettingsStore.Current.ReducedEffects;
             int graphics = Settings.GraphicsProfiles.Current;
             if (low) { Settings.SettingsStore.Current.ReducedEffects = true; Settings.GraphicsProfiles.Apply(0); }
-            var timing = new StringBuilder().AppendLine("frame,seconds,phase,overlay,winding,released,victim_whirled,outsider_whirled,palm_forward_m,clock,action,fans");
+            var timing = new StringBuilder().AppendLine("frame,seconds,phase,overlay,winding,released,victim_whirled,outsider_whirled,palm_forward_m,clock,action,fans,phase_age,phase_shot,eye");
             int sceneFirst = -1, sceneLast = -1, handback = -1, release = -1, whirledAt = -1, peakFrame = -1;
             float peak = float.MinValue, clockAtScene = -1, clockAtSceneEnd = -1;
             bool outsiderWhirled = false, sawPhase = false;
@@ -162,7 +162,7 @@ namespace TumbangPreso.PlayTests
                         int fans = Object.FindObjectsByType<AmihanStormFan>(FindObjectsSortMode.None).Length;
                         var animator = caster.GetComponentInChildren<CharacterAnimator>();
                         timing.AppendLine(FormattableString.Invariant(
-                            $"{f},{t:F3},{inPhase},{overlay != null},{ult.IsWindingUp},{storm != null && storm.Released},{stage.Victim != null && stage.Victim.IsWhirled},{stage.Outsider != null && stage.Outsider.IsWhirled},{forward:F3},{round.TimeLeft:F3},{animator?.CurrentClipName},{fans}"));
+                            $"{f},{t:F3},{inPhase},{overlay != null},{ult.IsWindingUp},{storm != null && storm.Released},{stage.Victim != null && stage.Victim.IsWhirled},{stage.Outsider != null && stage.Outsider.IsWhirled},{forward:F3},{round.TimeLeft:F3},{animator?.CurrentClipName},{fans},{UltimatePhaseView.LastAge:F3},{UltimatePhaseView.LastShot},{UltimatePhaseView.LastEye.x:F2} {UltimatePhaseView.LastEye.y:F2} {UltimatePhaseView.LastEye.z:F2}"));
 
                         if (bodyOnly)
                             foreach (var fan in Object.FindObjectsByType<AmihanStormFan>(FindObjectsSortMode.None))

@@ -458,7 +458,8 @@ namespace TumbangPreso.Visual
             if (index == AmShotAnswer)
             {
                 float u = Ease(AmAnswerAt, AmWeaveAt, t);
-                float a = Mathf.Lerp(35f, 105f, u) * Mathf.Deg2Rad, r = Mathf.Lerp(3.9f, 4.3f, u);
+                // To her right side and no further: film r1's 105 degrees ended on the back of her head.
+                float a = Mathf.Lerp(30f, 80f, u) * Mathf.Deg2Rad, r = Mathf.Lerp(3.9f, 4.2f, u);
                 eye = new Vector3(Mathf.Sin(a) * r, Mathf.Lerp(.8f, 1.7f, u) + _amCourt, Mathf.Cos(a) * r);
                 look = new Vector3(0f, 1.2f + .1f * u + _amCourt, 0f);
                 fov = Mathf.Lerp(52f, 48f, u);
@@ -467,10 +468,11 @@ namespace TumbangPreso.Visual
             {
                 var palms = BothPalms;
                 float u = Ease(AmCupAt, AmPack2At, t);
-                look = Vector3.Lerp(palms, HeadPoint, .42f);
-                var dir = new Vector3(1.0f, .06f, .62f).normalized;
-                eye = look + dir * Mathf.Lerp(1.65f, 1.45f, u);
-                fov = 34f - 5f * Decay(t - AmCupAt, .18f) - 3f * Decay(t - AmPack1At, .15f);
+                // Film r1 at 1.5 m and 34 degrees cropped her eyes off: her head is large. Her whole face over her hands.
+                look = Vector3.Lerp(palms, HeadPoint, .5f);
+                var dir = new Vector3(1.0f, .12f, .7f).normalized;
+                eye = look + dir * Mathf.Lerp(2.5f, 2.25f, u);
+                fov = 40f - 4f * Decay(t - AmCupAt, .18f) - 2.5f * Decay(t - AmPack1At, .15f);
             }
             else if (index == AmShotRide)
             {
@@ -479,13 +481,14 @@ namespace TumbangPreso.Visual
                 var dir = flat.sqrMagnitude > 1e-3f ? flat.normalized : Vector3.forward;
                 var side = Vector3.Cross(Vector3.up, dir);
                 var from = new Vector3(.85f, 1.15f + _amCourt, .35f);
-                var to = lead - dir * 2.3f + side * 1.25f + Vector3.up * .25f;
+                // Film r1 ended 2.3 m off them on a face filling the frame: back and up, their whole body, the lane and the warp.
+                var to = lead - dir * 3.8f + side * 1.6f + Vector3.up * .9f;
                 float chase = Ease(AmWarpAt, AmBraceAt + .2f, t);
                 eye = Vector3.Lerp(from, to, Mathf.Pow(chase, .8f)) + Vector3.up * .25f * Mathf.Sin(Mathf.PI * chase);
                 // Creep in on them as they brace.
                 eye += dir * .25f * Ease(AmBraceAt + .2f, AmBraceAt + .35f + .3f, t);
-                look = Vector3.Lerp(new Vector3(0f, .8f + _amCourt, 3f), lead, Ease(AmWarpAt, AmBraceAt, t));
-                fov = Mathf.Lerp(56f, 48f, chase);
+                look = Vector3.Lerp(new Vector3(0f, .8f + _amCourt, 3f), lead - Vector3.up * .35f, Ease(AmWarpAt, AmBraceAt, t));
+                fov = Mathf.Lerp(56f, 50f, chase);
             }
         }
 

@@ -43,6 +43,7 @@ namespace TumbangPreso.Visual
             public Quaternion[] RestRot, TmpRot;
             public Vector3[] RestPos, TmpPos;
             public AnimationClip Brace;
+            public Transform ArmLeft, ArmRight, Head;
             public WindVfx.Motif Breath;
         }
 
@@ -107,13 +108,20 @@ namespace TumbangPreso.Visual
             c.Bones = copy.Bones;
             int n = c.Bones.Length;
             c.RestRot = new Quaternion[n]; c.TmpRot = new Quaternion[n]; c.RestPos = new Vector3[n]; c.TmpPos = new Vector3[n];
-            for (int i = 0; i < n; i++) { c.RestRot[i] = c.Bones[i].localRotation; c.RestPos[i] = c.Bones[i].localPosition; }
+            for (int i = 0; i < n; i++)
+            {
+                c.RestRot[i] = c.Bones[i].localRotation; c.RestPos[i] = c.Bones[i].localPosition;
+                if (c.Bones[i].name == "arm-left") c.ArmLeft = c.Bones[i];
+                else if (c.Bones[i].name == "arm-right") c.ArmRight = c.Bones[i];
+                else if (c.Bones[i].name == "head") c.Head = c.Bones[i];
+            }
             if (inside)
             {
                 // Its own host: a Motif hands its shared tuft mesh to its parent's single GeneratedMeshOwner.
                 var host = new GameObject("AmihanLaneBreath-P" + (p.PlayerSlot + 1)).transform;
                 host.SetParent(_root.transform, false);
-                c.Breath = new WindVfx.Motif(host, 7, 31.7f + p.PlayerSlot * 5.3f, .45f);
+                // 14 pieces (film r4: 7 small ones vanished at the REVEAL's distance).
+                c.Breath = new WindVfx.Motif(host, 14, 31.7f + p.PlayerSlot * 5.3f, .45f);
             }
             // ⚠️ HIDDEN BY SWITCHING THE HOLDER OFF, NOT BY `forceRenderingOff` (`SetVisibleForCapture` turns every renderer under
             // the root on for each capture, which would stand them in her CALL and WEAVE). They step in on the cut to the WARP.
@@ -141,7 +149,7 @@ namespace TumbangPreso.Visual
                 var feet = c.Feet;
                 c.Breath.Step(s <= 0f ? 0f : Mathf.Repeat(s / 1.1f, 1f), (_reducedEffects ? .45f : .85f) * Ease(0f, .15f, s) * leave,
                     (start, drift, u) => feet - away * 1.1f + away * (2.4f * u) + side * (start.x * 1.3f) + Vector3.up * (.35f + start.y * 1.5f + drift.y * .3f * u),
-                    .075f * light + .035f);
+                    .11f * light + .05f);
             }
         }
 
@@ -155,14 +163,25 @@ namespace TumbangPreso.Visual
                 yaw = Mathf.LerpAngle(c.Yaw, c.ToHer, Ease(c.BraceAt - .06f, c.BraceAt + .22f, t));
                 // Leaning into the wind, a little more on each gust, trembling as it presses on them.
                 float gust = .5f + .5f * Mathf.Sin((t - c.BraceAt) * 7.0f);
-                lean = brace * (11f + 3f * gust) + (_reducedEffects ? 0f : brace * .8f * Mathf.Sin(t * 37f + c.Feet.x * 3f));
-                // ARMS UP OVER THE FACE: the break-out's flung-open moment at half weight, so the forearms come up without the chest
-                // being thrown back against the lean.
-                if (c.Brace != null && brace > 0f) AlBlend(c, c.Brace, .12f + .012f * Mathf.Sin(t * 41f), .55f * brace);
+                lean = brace * (15f + 4f * gust) + (_reducedEffects ? 0f : brace * .8f * Mathf.Sin(t * 37f + c.Feet.x * 3f));
+                // ARMS UP OVER THE FACE: the break-out's flung-open moment at most of its weight (r1's half weight barely read), the
+                // forward lean holding the chest in against it.
+                if (c.Brace != null && brace > 0f) AlBlend(c, c.Brace, .12f + .012f * Mathf.Sin(t * 41f), .45f * brace);
+                // ⚠️ FOREARMS UP ACROSS THE FACE (film r2: they face her, so the lean points straight down the lens and the brace
+                // never read; the arms must). The authoring tool's convention (`arm_raw`): pitch -raise, roll (80 - spread) on the
+                // left and its negative on the right. Raised 140 degrees (film r3: at 112 their short arms stayed at the chest),
+                // spread 36, turned in 26, so on these big-headed bodies the forearms come up in front of the face.
+                float shiver = _reducedEffects ? 0f : 3f * Mathf.Sin(t * 33f + c.Feet.z);
+                if (c.ArmLeft != null) c.ArmLeft.localRotation = Quaternion.Slerp(c.ArmLeft.localRotation, Quaternion.Euler(-142f + shiver, 26f, 44f), brace);
+                if (c.ArmRight != null) c.ArmRight.localRotation = Quaternion.Slerp(c.ArmRight.localRotation, Quaternion.Euler(-136f - shiver, -26f, -44f), brace);
+                // The head ducks behind them, chin in.
+                if (c.Head != null) c.Head.localRotation = Quaternion.Slerp(c.Head.localRotation, c.Head.localRotation * Quaternion.Euler(14f, 0f, 0f), brace);
             }
             var turn = Quaternion.Euler(0f, yaw, 0f);
             // The lean pivots at the feet, toward the way they face (into the wind).
-            var tilt = turn * Quaternion.Euler(lean, 0f, 0f);
+            // Film r3: they face her, so the forward lean points down the lens; a sideways buffet, gust by gust, reads from the front.
+            float buffet = c.Inside ? Ease(c.BraceAt - .04f, c.BraceAt + .16f, t) * (5f + 3f * Mathf.Sin((t - c.BraceAt) * 9f + c.Feet.x)) * (c.Feet.x >= 0f ? 1f : -1f) : 0f;
+            var tilt = turn * Quaternion.Euler(lean, 0f, buffet);
             c.Model.localPosition = c.Feet + tilt * c.ModelOffset;
             c.Model.localRotation = tilt * c.ModelTilt;
         }
