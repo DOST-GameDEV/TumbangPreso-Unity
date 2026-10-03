@@ -1,0 +1,22 @@
+{
+  "online-pause-original6": {
+    "total": 6,
+    "passed": 2,
+    "failed": 4,
+    "endedUtc": "2026-10-03T06:14:05Z"
+  },
+  "online-pause-original6-repair": {
+    "total": 6,
+    "passed": 3,
+    "failed": 3,
+    "endedUtc": "2026-10-03T06:15:30Z"
+  },
+  "online-pause-candidate6": {
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "endedUtc": "2026-10-03T06:16:33Z"
+  },
+  "Assets/TumbangPreso/Runtime/UI/PausePanel.cs": "5d689f6e4effb72d4ef6f767a2fe0b85815b8949f49a25c4f0774601e28dc6fe",
+  "Assets/TumbangPreso/Tests/PlayMode/OnlinePauseActionLifetimeTests.cs": "cece126de140cab0c749b69fcea614858e93dbe28cf9a8b8e7f76bbea3b27009"
+}

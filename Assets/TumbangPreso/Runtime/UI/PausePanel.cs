@@ -104,7 +104,18 @@ namespace TumbangPreso.UI
             if (_title != null)
                 _title.text = PracticeRange.Active ? "TRAINING" : GameLaunch.Spectator ? "BROADCAST MENU" : "MATCH MENU";
 
-            if (Local != null) Local.Intent.Parked = true;
+            if (Local != null)
+            {
+                // A live match still ticks behind this menu. Withdraw pending actions
+                // before parking makes held input look like a deliberate release.
+                if (!NetAuthority.IsNetworked || Local.PlayerSlot == NetAuthority.LocalSlot)
+                {
+                    Local.GetComponent<Carrier>()?.CancelPendingInput();
+                    Local.GetComponent<CombatVerbs>()?.CancelPendingInput();
+                    Local.AbilitySystem?.ClearPresentationInput();
+                }
+                Local.Intent.Parked = true;
+            }
 
             CursorMode.Release();
         }

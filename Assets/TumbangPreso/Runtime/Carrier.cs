@@ -346,6 +346,14 @@ namespace TumbangPreso
             // sound plays twice on the same frame and the grab clip restarts on its second frame.
             if (Held == what && what != null) return;
 
+            // Charge belongs to one possession, even if the same shoe is immediately
+            // re-equipped. Empty-hand keepalives do not interrupt the reset channel.
+            if (Held != what)
+            {
+                CancelCharge();
+                ApplyObservedCharge(false);
+            }
+
             Diagnostics.NetThrowProbe.TraceHoldingWrite(_motor,what,"holding");
             Held = what;
             _motor.HoldingSlipper = what != null;
@@ -432,6 +440,12 @@ namespace TumbangPreso
                 // network snapshots remain idempotent and preserve a live pickup lock.
                 if (resetPickupLock) _throwLockLeft = 0.0f;
                 return;
+            }
+
+            if (Held != what)
+            {
+                CancelCharge();
+                ApplyObservedCharge(false);
             }
 
             Diagnostics.NetThrowProbe.TraceHoldingWrite(_motor,what,"equipped");
@@ -619,11 +633,12 @@ namespace TumbangPreso
             // First refusal: a tap with something grabbable at your feet is a pickup, and
             // nothing else gets to see that press.
             //
-            // ⚠️ THE FLAG IS SET AFTER THE PICKUP IS ALREADY COMMITTED, NOT AS A GATE ABOVE.
+            // A consumed press cannot retrieve again after same-frame hand loss.
+            // The flag is set only after the pickup is already committed.
             // `carrier.gd::_step_grab` is emphatic about the ordering for the same reason: a
             // grab that did NOT connect must still fall through to the shove, so only a
             // CONNECTING grab may mark the press spent.
-            if (intent.JustPressed(Verb.Grab) && Held == null && TryPickup())
+            if (!_grabPressConsumed && intent.JustPressed(Verb.Grab) && Held == null && TryPickup())
             {
                 _grabPressConsumed = true;
                 return;

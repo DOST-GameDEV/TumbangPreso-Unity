@@ -46,13 +46,17 @@ def main():
     if sha(runtime) != expected:
         raise RuntimeError('Runtime does not match the pinned shared artifact.')
     arrival.validate_rules(exe.parent / (exe.stem + '_Data/Managed/TumbangPreso.Core.dll'))
+    identity_path = exe.parent / (exe.stem + '_Data/StreamingAssets/build-identity.json')
+    source_commit = json.loads(identity_path.read_text(encoding='utf-8-sig')).get('sha', 'unknown')
+    if re.fullmatch(r'[0-9a-fA-F]{40}', source_commit) is None:
+        source_commit = 'unknown'
     out.mkdir(parents=True, exist_ok=False)
     profile = guard.player_profile() / 'profiles' / hashlib.sha256(args.profile.encode()).hexdigest()
     if profile.exists():
         raise RuntimeError('Require a fresh task-owned profile, never replace an existing one.')
     port = args.port if args.role == 'host' else args.port + 1
     claim = jobs.make_claim(ROOT, 'gpu', 1536, 1024, args.profile, [port], [])
-    result = dict(passed=False, role=args.role, sourceCommit='14dfe9e416f5a98698844d9da34ab3c34b849a17',
+    result = dict(passed=False, role=args.role, sourceCommit=source_commit,
                   protocol=134, runtimeSha256=expected, exeSha256=sha(exe),
                   coreSha256=sha(runtime.with_name('TumbangPreso.Core.dll')),
                   scope='Normal LAN lobby, ready, natural Hero1/30 completion and own saved career; no physical-input or current source-fix acceptance.')
