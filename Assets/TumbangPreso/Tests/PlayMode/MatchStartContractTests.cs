@@ -99,7 +99,7 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(15000)]
-        public IEnumerator FiveSecondCountdownHoldsGameplayStartsOnceAndReleases()
+        public IEnumerator ThreeSecondCountdownHoldsGameplayStartsOnceAndReleases()
         {
             var gate = Make("Automatic start").AddComponent<ReadyGate>();
             var ticks = new List<string>(); int starts = 0;
@@ -108,7 +108,7 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(PresentationClock.Held); Assert.AreEqual(0, Time.timeScale);
             float until = Time.realtimeSinceStartup + 8;
             while (starts == 0 && Time.realtimeSinceStartup < until) yield return null;
-            CollectionAssert.AreEqual(new[] { "5", "4", "3", "2", "1", "START!" }, ticks);
+            CollectionAssert.AreEqual(new[] { "3", "2", "1", "GO!" }, ticks);
             Assert.AreEqual(1, starts); Assert.IsFalse(PresentationClock.Held);
             gate.StartLocalCountdown(); yield return null; Assert.AreEqual(1, starts);
         }

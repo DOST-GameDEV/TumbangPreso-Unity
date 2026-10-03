@@ -1,0 +1,8 @@
+{
+  "Assets/TumbangPreso/Tests/PlayMode/OpeningCameraReviewTests.cs": "c31b8df6100b853e318c383059eaeb878ce19510a6755cb9c77c8538abbf4c50",
+  "Assets/TumbangPreso/Tests/PlayMode/OpeningCameraReviewTests.cs.meta": "48b53e3ed8254b380cdf57d4ce8220eb3919a6222b672651a1dd758295965345",
+  "Assets/TumbangPreso/Runtime/MatchArrivalPresentation.cs": "42b97f2bf9e7722ad4c214516628a1e0a2d02fa8efb2856255bee6b5e33c388c",
+  "Assets/TumbangPreso/Runtime/ReadyGate.cs": "d021abbfdaade434f479b78672fe5557429ed943175dd36c7b72cd70f3f9c2f2",
+  "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.cs": "cbdbeb9b7aab82c8311124a94ee988c32dd4564952383cf44ad351a82def3e2a",
+  "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.Arrival.cs": "c2c789bf54a28b777f3cb69c95892e791100e78f4331605f864fc21eb3937810"
+}
