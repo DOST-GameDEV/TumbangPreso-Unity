@@ -120,3 +120,35 @@ The delivered silent11-second review is explicitly labelled lightweight test
 stage and empty-hand owner view, with normal repeats and a labelled slow segment.
 It is a motion review, not a packaged-game or court-lighting comparison. The
 corrected full-court, actual-peer/player, sound and human checks remain open.
+
+## First-person dispatch follow-through
+
+Routing review after publication found a second missing registration: the
+viewmodel's clip player did not admit `kuro-guard`, so its positional CastPath
+was skipped. The shipped body qualification remains valid; the prior static
+empty-hand images do not establish the custom hand gesture. A dedicated wrist
+clip and dispatch now accompany the existing path. The strengthened case must
+observe actual FPP clip admission and more than0.1m free-hand pivot movement.
+No model, body, protection or timing changes are part of this correction.
+
+Compilation is separated from rendering. Its first run hit the preserved whole-
+cgroup reserve. Before readmission, exact idle compiler cleanup recovered0.885GB
+and read-only Git-pack clean-page eviction recovered another1.594GB, lowering
+measured cgroup use from5.756GB to3.274GB. These are memory/cache operations on
+this task's helpers and files, not file deletion or weaker safety thresholds.
+
+
+First-person correction now passes the strengthened native stage case in3.145s:
+real clip admission, more than0.1m free-hand path movement, live body command,
+companion identity and can protection/reset all pass together.48 frames retained;
+owner0.2s/0.4s/recovery samples inspected. Right hand stays low, left gives the
+command and returns. Peak4.580GB tree/7.129GB cgroup, no guard; profile and exact
+EditorSettings bytes restored, frozen source unchanged. Body mesh/clip data did
+not change. The same labelled11-second review is updated to these corrected
+frames. This still does not qualify a refreshed full-court/player/peer/audio pass.
+
+Authoring lesson: a serialized GLB clip, body action-chain entry, FPP Key[] dispatch
+and CastPath are separate admissions. Verify observed playback and pivot motion,
+not only the configured names or roster reference. The static CastPath-to-dispatch
+audit now finds no missing literal entries; dynamic/runtime behavior still needs
+the real control path.

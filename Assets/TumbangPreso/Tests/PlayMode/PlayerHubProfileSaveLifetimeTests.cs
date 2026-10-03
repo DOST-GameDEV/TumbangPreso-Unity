@@ -19,6 +19,7 @@ namespace TumbangPreso.PlayTests
     public sealed class PlayerHubProfileSaveLifetimeTests
     {
         private const BindingFlags Hidden = BindingFlags.Instance | BindingFlags.NonPublic;
+        private Canvas Surface => (Canvas)typeof(PlayerHub).GetField("_canvas", Hidden).GetValue(_hub);
         private PlayerAccount _previousAccount, _account;
         private CareerStore _previousCareer;
         private SocialStore _previousSocial;
@@ -76,10 +77,10 @@ namespace TumbangPreso.PlayTests
         }
 
         private static void Service(string name, object value) => typeof(GameServices).GetProperty(name).SetValue(null, value);
-        private InputField NameField => _hub.GetComponentsInChildren<InputField>(true)
+        private InputField NameField => Surface.GetComponentsInChildren<InputField>(true)
             .Single(field => field.name == "PlayerNameEdit" && field.gameObject.activeInHierarchy);
-        private Button Footer => _hub.GetComponentsInChildren<Button>(true).Single(button => button.name == "HubPrimary");
-        private string Notice => _hub.GetComponentsInChildren<Text>(true).Single(text => text.name == "HubNotice").text;
+        private Button Footer => Surface.GetComponentsInChildren<Button>(true).Single(button => button.name == "HubPrimary");
+        private string Notice => Surface.GetComponentsInChildren<Text>(true).Single(text => text.name == "HubNotice").text;
         private bool Saving => (bool)typeof(PlayerHub).GetField("_ownerSaving", Hidden).GetValue(_hub);
         private Dictionary<string, string> Draft => (Dictionary<string, string>)typeof(PlayerHub).GetField("_ownerDraft", Hidden).GetValue(_hub);
         private void StartSave(string name)
@@ -91,7 +92,7 @@ namespace TumbangPreso.PlayTests
         }
         private void CloseAndReopen()
         {
-            _hub.GetComponentsInChildren<Button>(true).Single(button => button.name == "ClosePlayerHub").onClick.Invoke();
+            Surface.GetComponentsInChildren<Button>(true).Single(button => button.name == "ClosePlayerHub").onClick.Invoke();
             Assert.IsFalse(_hub.IsOpen);
             _hub.OpenTab(PlayerHub.Door.Profile);
         }
@@ -172,24 +173,24 @@ namespace TumbangPreso.PlayTests
         {
             _hub.Open(true);
             yield return null;
-            _hub.GetComponentsInChildren<Button>(true)
+            Surface.GetComponentsInChildren<Button>(true)
                 .Single(button => button.transform.parent.name == "Group_Delete account" && button.isActiveAndEnabled)
                 .onClick.Invoke();
             yield return null;
-            var delete = _hub.GetComponentsInChildren<Button>(true)
+            var delete = Surface.GetComponentsInChildren<Button>(true)
                 .Single(button => button.name == "DeleteAccount" && button.isActiveAndEnabled);
             Assert.AreEqual("DELETE", delete.GetComponentInChildren<Text>().text);
             delete.onClick.Invoke(); // First press only arms the UI; never calls DeleteAsync.
             yield return null;
             Assert.IsTrue((bool)typeof(PlayerHub).GetField("_deleteArmed", Hidden).GetValue(_hub));
-            Assert.AreEqual("PRESS AGAIN TO DELETE", _hub.GetComponentsInChildren<Button>(true)
+            Assert.AreEqual("PRESS AGAIN TO DELETE", Surface.GetComponentsInChildren<Button>(true)
                 .Single(button => button.name == "DeleteAccount" && button.isActiveAndEnabled)
                 .GetComponentInChildren<Text>().text);
             _account.SignInAsGuest("TournamentGuest");
             yield return null;
             Assert.IsFalse((bool)typeof(PlayerHub).GetField("_deleteArmed", Hidden).GetValue(_hub),
                 "The guest inherited another account's destructive confirmation.");
-            Assert.IsFalse(_hub.GetComponentsInChildren<Button>(true)
+            Assert.IsFalse(Surface.GetComponentsInChildren<Button>(true)
                 .Any(button => button.name == "DeleteAccount" && button.isActiveAndEnabled
                     && button.GetComponentInChildren<Text>().text == "PRESS AGAIN TO DELETE"));
             _account.LeaveGuest();

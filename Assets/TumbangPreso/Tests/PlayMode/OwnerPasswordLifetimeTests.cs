@@ -17,6 +17,7 @@ namespace TumbangPreso.PlayTests
     public sealed class OwnerPasswordLifetimeTests
     {
         private const BindingFlags Hidden = BindingFlags.Instance | BindingFlags.NonPublic;
+        private Canvas Surface => (Canvas)typeof(OwnerPasswordView).GetField("_canvas", Hidden).GetValue(_view);
         private PlayerAccount _previousAccount, _account;
         private GameObject _accountObject, _ownerObject;
         private OwnerPasswordView _view, _replacement;
@@ -42,7 +43,7 @@ namespace TumbangPreso.PlayTests
             _view = OwnerPasswordView.Open(_ownerObject.transform, () =>
             {
                 _closed++;
-                _closedNotice = _view.GetComponentsInChildren<Text>(true)
+                _closedNotice = Surface.GetComponentsInChildren<Text>(true)
                     .Single(text => text.name == "PasswordStatus").text;
             });
             _answer = new TaskCompletionSource<bool>();
@@ -71,7 +72,7 @@ namespace TumbangPreso.PlayTests
         }
 
         private T Named<T>(string name) where T : Component
-            => _view.GetComponentsInChildren<T>(true).Single(component => component.name == name);
+            => Surface.GetComponentsInChildren<T>(true).Single(component => component.name == name);
         private void BeginSave()
         {
             Named<InputField>("CurrentPassword").text = "synthetic-current";

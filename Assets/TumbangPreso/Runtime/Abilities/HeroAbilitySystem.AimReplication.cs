@@ -138,7 +138,7 @@ namespace TumbangPreso.Abilities
             EndBodyAim();
         }
 
-        private void OnDisable() => ClearAimPresentation();
+        private void OnDisable() => ClearPresentationInput();
         private void OnDestroy() => ClearAimPresentation();
 
         private void ResetNetworkAimTransport()

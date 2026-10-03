@@ -485,11 +485,15 @@ namespace TumbangPreso
 
         private void CancelPendingInput()
         {
-            // Losing a producer is cancellation, not a deliberate throw or lunge release.
+            // Losing a producer is cancellation, not a deliberate release.
             _motor?.GetComponent<Carrier>()?.CancelPendingInput();
             _motor?.GetComponent<CombatVerbs>()?.CancelPendingInput();
             if (_motor != null && (!NetAuthority.IsNetworked || _motor.PlayerSlot == NetAuthority.LocalSlot))
+            {
+                // An obsolete reader must not close another body's received aim tell.
+                _motor.AbilitySystem?.ClearPresentationInput();
                 InputLayer.TouchInput.Move = Vector2.zero;
+            }
         }
 
         private void OnDisable()

@@ -139,6 +139,26 @@ class JobTests(unittest.TestCase):
             self.assertIn("exclusive", job.refusal(second, [dict(first, kind=kind)], 8192, []))
         self.assertIn("restoration", job.refusal(second, [dict(first, awaitingRestoration=True)], 8192, []))
 
+    def test_larger_pool_requires_a_shared_opt_in_limit_and_keeps_memory_reserve(self):
+        first = dict(self.claim(), maxParallelJobs=3)
+        second = dict(self.claim(self.second, profile="two"), maxParallelJobs=3)
+        third = dict(second, id="third", project="third", library="third-lib", profile="three", prefHive="third-hive")
+        self.assertIsNone(job.refusal(third, [first, second], 8192, []))
+        self.assertIn("memory", job.refusal(third, [first, second], 3583, []))
+        self.assertIn("Two CPU", job.refusal(third, [dict(first, maxParallelJobs=2), second], 8192, []))
+        fourth = dict(third, id="fourth", project="fourth", library="fourth-lib", profile="four", prefHive="four-hive")
+        self.assertIn("3-job", job.refusal(fourth, [first, second, third], 8192, []))
+
+    def test_graphics_overlap_requires_every_isolated_worker_to_opt_in(self):
+        first = dict(self.claim(), kind="gpu", allowGpuParallel=True)
+        second = dict(self.claim(self.second, profile="two"), kind="gpu", allowGpuParallel=True)
+        self.assertIsNone(job.refusal(second, [first], 8192, []))
+        self.assertIn("exclusive", job.refusal(dict(second, allowGpuParallel=False), [first], 8192, []))
+        self.assertIn("exclusive", job.refusal(second, [dict(first, allowGpuParallel=False)], 8192, []))
+        self.assertIn("isolated", job.refusal(dict(second, worker=False), [first], 8192, []))
+        self.assertIn("already leased", job.refusal(dict(second, prefHive=first["prefHive"]), [first], 8192, []))
+        self.assertIn("exclusive", job.refusal(dict(second, kind="build"), [first], 8192, []))
+
     def test_memory_reserve_and_foreign_unity_refuse_admission(self):
         first = self.claim(); second = self.claim(self.second, profile="two")
         self.assertIn("memory", job.refusal(first, [], 2559, []))

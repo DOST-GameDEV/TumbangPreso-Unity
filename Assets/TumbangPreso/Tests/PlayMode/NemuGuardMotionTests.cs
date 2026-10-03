@@ -16,10 +16,11 @@ namespace TumbangPreso.PlayTests
 {
     public sealed class NemuGuardMotionTests
     {
-        int _quality,_seat,_captureRate;bool _bots,_spectator,_pinned;
+        int _quality,_seat,_captureRate;bool _bots,_spectator,_pinned,_reduced;
         CustomRules _rules;Camera _observer;INetProvider _provider;Color _ambient;
         [UnitySetUp] public IEnumerator Before()
         {
+            _reduced=Settings.SettingsStore.Current.ReducedUiMotion;
             _provider=NetAuthority.Provider;_ambient=RenderSettings.ambientLight;
             _quality=QualitySettings.GetQualityLevel();_seat=GameLaunch.SoloSeat;
             _captureRate=Time.captureFramerate;_bots=GameLaunch.AllBots;_spectator=GameLaunch.Spectator;
@@ -31,6 +32,7 @@ namespace TumbangPreso.PlayTests
             Time.captureFramerate=_captureRate;
             if(_observer!=null)Object.Destroy(_observer.gameObject);
             yield return PlayModeWorld.Reset();
+            Settings.SettingsStore.Current.ReducedUiMotion=_reduced;
             NetAuthority.Provider=_provider;RenderSettings.ambientLight=_ambient;
             QualitySettings.SetQualityLevel(_quality,true);GameLaunch.SoloSeat=_seat;
             GameLaunch.AllBots=_bots;GameLaunch.Spectator=_spectator;
@@ -84,6 +86,13 @@ namespace TumbangPreso.PlayTests
             _observer.transform.position=actor.transform.position+new Vector3(4,2.1f,4);
             _observer.transform.LookAt(actor.transform.position+new Vector3(0,.9f,1));
             string directory=System.Environment.GetEnvironmentVariable("TUMP_EVIDENCE")??"Logs/nemu-catch-review";
+            Settings.SettingsStore.Current.ReducedUiMotion=false;
+            var arms=Object.FindFirstObjectByType<ViewmodelArms>();Assert.IsNotNull(arms);
+            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            var handClip=typeof(ViewmodelArms).GetField("_clip",flags);
+            var handAction=typeof(ViewmodelArms).GetField("_actionName",flags);
+            var handOffset=typeof(ViewmodelArms).GetField("_castLeft",flags);
+            bool sawOwnerGesture=false;float largestOwnerOffset=0;
             Time.captureFramerate=60;
             actor.Intent.Set(Verb.Skill2,true);actor.Intent.BufferPress(Verb.Skill2);yield return null;
             actor.Intent.Set(Verb.Skill2,false);bool protectedCan=false,sawGuardMotion=false;
@@ -91,6 +100,8 @@ namespace TumbangPreso.PlayTests
             {
                 actor.Intent.AimPoint=can.transform.position;actor.Intent.FaceAimPoint=true;
                 protectedCan|=can.IsProtected;
+                sawOwnerGesture|=(string)handAction.GetValue(arms)=="kuro-guard"&&handClip.GetValue(arms)!=null;
+                largestOwnerOffset=Mathf.Max(largestOwnerOffset,((Vector3)handOffset.GetValue(arms)).magnitude);
                 sawGuardMotion|=actor.GetComponentInChildren<CharacterAnimator>().CurrentClipName=="hero-nemu-guard";
                 yield return GameplayShots.Render(Camera.main,"owner-"+frame.ToString("D3"),false,directory,null,960,540);
                 yield return GameplayShots.Render(_observer,"observer-"+frame.ToString("D3"),false,directory,actor,960,540);
@@ -105,6 +116,8 @@ namespace TumbangPreso.PlayTests
                 (smallStage?"Lightweight stage":"Eskinita")+"; actual accepted defender input and can protection/reset; fixed 60Hz paired body and real owner views. Not a player/peer/device/audio verdict.\n");
             Assert.AreEqual("hero-nemu-guard",kit.DefendingSkill.CastAction,"Catch still borrows Haunt's large seance.");
             Assert.AreEqual("kuro-guard",kit.DefendingSkill.ViewmodelAction);
+            Assert.IsTrue(sawOwnerGesture,"The first-person command was never admitted to the real clip player.");
+            Assert.Greater(largestOwnerOffset,.1f,"The authored free-hand path never moved the actual pivot.");
             Assert.IsTrue(sawGuardMotion,"Registered guard action never reached the live animator.");
             Assert.IsTrue(art.Clips.Any(c=>c!=null&&c.name=="hero-nemu-guard"&&c.length>.5f),"Shipping roster must bind the authored guard clip.");
         }

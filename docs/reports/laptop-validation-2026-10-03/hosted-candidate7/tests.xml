@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 05:27:11Z" end-time="2026-10-03 05:27:12Z" duration="0.6777092">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-c-dddaa72bc5b9" fullname="TumpWorker-qa-c-dddaa72bc5b9" runstate="Runnable" testcasecount="1082" result="Passed" start-time="2026-10-03 05:27:11Z" end-time="2026-10-03 05:27:12Z" duration="0.677709" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2316" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-c/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1082" result="Passed" start-time="2026-10-03 05:27:11Z" end-time="2026-10-03 05:27:12Z" duration="0.666645" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12168" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2317" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1082" result="Passed" start-time="2026-10-03 05:27:11Z" end-time="2026-10-03 05:27:12Z" duration="0.662576" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2318" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1082" result="Passed" start-time="2026-10-03 05:27:11Z" end-time="2026-10-03 05:27:12Z" duration="0.657893" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1397" name="HostedLobbyLifetimeTests" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-03 05:27:11Z" end-time="2026-10-03 05:27:12Z" duration="0.643040" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1403" name="ADeletionAlreadySentToTheOldIdDoesNotClearTheNewLobbyWhenItCompletes" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.ADeletionAlreadySentToTheOldIdDoesNotClearTheNewLobbyWhenItCompletes" methodname="ADeletionAlreadySentToTheOldIdDoesNotClearTheNewLobbyWhenItCompletes" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="1037895562" result="Passed" start-time="2026-10-03 05:27:11Z" end-time="2026-10-03 05:27:11Z" duration="0.137440" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Query] Created UGS Lobby lobby-first with JoinCode First
+[Query] Created UGS Lobby lobby-second with JoinCode Second
+[Query] Deleted UGS Lobby lobby-first
+[Query] Deleted UGS Lobby lobby-second
+]]></output>
+            </test-case>
+            <test-case id="1400" name="AStoppedAuthenticationWaitCannotStartAnObsoleteLobbyAllocation" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.AStoppedAuthenticationWaitCannotStartAnObsoleteLobbyAllocation" methodname="AStoppedAuthenticationWaitCannotStartAnObsoleteLobbyAllocation" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="1123599168" result="Passed" start-time="2026-10-03 05:27:12Z" end-time="2026-10-03 05:27:12Z" duration="0.092910" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1404" name="AuthenticationRefusalSettlesBothCreationAndItsRequestedCleanup" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.AuthenticationRefusalSettlesBothCreationAndItsRequestedCleanup" methodname="AuthenticationRefusalSettlesBothCreationAndItsRequestedCleanup" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="1397696513" result="Passed" start-time="2026-10-03 05:27:12Z" end-time="2026-10-03 05:27:12Z" duration="0.001520" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1401" name="CurrentCreationAppliesTheLatestBufferedCountsOnlyOnce" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.CurrentCreationAppliesTheLatestBufferedCountsOnlyOnce" methodname="CurrentCreationAppliesTheLatestBufferedCountsOnlyOnce" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="899585590" result="Passed" start-time="2026-10-03 05:27:12Z" end-time="2026-10-03 05:27:12Z" duration="0.006063" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Query] Created UGS Lobby lobby-current with JoinCode Current
+[Query] Deleted UGS Lobby lobby-current
+]]></output>
+            </test-case>
+            <test-case id="1402" name="CurrentSuccessfulCreateAndDeleteStillUseTheirOwnLobbyId" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.CurrentSuccessfulCreateAndDeleteStillUseTheirOwnLobbyId" methodname="CurrentSuccessfulCreateAndDeleteStillUseTheirOwnLobbyId" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="308926376" result="Passed" start-time="2026-10-03 05:27:12Z" end-time="2026-10-03 05:27:12Z" duration="0.002672" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Query] Created UGS Lobby lobby-current with JoinCode Current
+[Query] Deleted UGS Lobby lobby-current
+]]></output>
+            </test-case>
+            <test-case id="1398" name="OldStopCannotDeleteTheNewLobbyWhenItsCreationFinishesFirst" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.OldStopCannotDeleteTheNewLobbyWhenItsCreationFinishesFirst" methodname="OldStopCannotDeleteTheNewLobbyWhenItsCreationFinishesFirst" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="1985376575" result="Passed" start-time="2026-10-03 05:27:12Z" end-time="2026-10-03 05:27:12Z" duration="0.189038" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Query] Created UGS Lobby lobby-second with JoinCode Second
+[Query] Deleted UGS Lobby lobby-first
+[Query] Deleted UGS Lobby lobby-second
+]]></output>
+            </test-case>
+            <test-case id="1399" name="RetiredCreationCannotAdoptItsIdOrClearTheNewCreationFlag" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.RetiredCreationCannotAdoptItsIdOrClearTheNewCreationFlag" methodname="RetiredCreationCannotAdoptItsIdOrClearTheNewCreationFlag" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="1187914589" result="Passed" start-time="2026-10-03 05:27:12Z" end-time="2026-10-03 05:27:12Z" duration="0.199974" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Query] Deleted UGS Lobby lobby-first
+[Query] Created UGS Lobby lobby-second with JoinCode Second
+[Query] Deleted UGS Lobby lobby-second
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-c-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

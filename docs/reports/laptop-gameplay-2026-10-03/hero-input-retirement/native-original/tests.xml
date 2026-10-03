@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="13" result="Failed(Child)" total="13" passed="6" failed="7" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 05:15:23Z" end-time="2026-10-03 05:15:24Z" duration="0.6942928">
+  <test-suite type="TestSuite" id="2727" name="TumpWorker-qa-d-dddaa72bc5b9" fullname="TumpWorker-qa-d-dddaa72bc5b9" runstate="Runnable" testcasecount="1407" result="Failed" site="Child" start-time="2026-10-03 05:15:23Z" end-time="2026-10-03 05:15:24Z" duration="0.694293" total="13" passed="6" failed="7" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2721" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-d/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1407" result="Failed" site="Child" start-time="2026-10-03 05:15:23Z" end-time="2026-10-03 05:15:24Z" duration="0.684338" total="13" passed="6" failed="7" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="17172" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2722" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1407" result="Failed" site="Child" start-time="2026-10-03 05:15:23Z" end-time="2026-10-03 05:15:24Z" duration="0.679946" total="13" passed="6" failed="7" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2723" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1407" result="Failed" site="Child" start-time="2026-10-03 05:15:23Z" end-time="2026-10-03 05:15:24Z" duration="0.675742" total="13" passed="6" failed="7" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1506" name="HeroInputRetirementTests" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" testcasecount="13" result="Failed" site="Child" start-time="2026-10-03 05:15:23Z" end-time="2026-10-03 05:15:24Z" duration="0.654082" total="13" passed="6" failed="7" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1507" name="FocusLossCancelsPendingHeroAim" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.FocusLossCancelsPendingHeroAim" methodname="FocusLossCancelsPendingHeroAim" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="1332885112" result="Failed" start-time="2026-10-03 05:15:23Z" end-time="2026-10-03 05:15:24Z" duration="0.203850" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Producer retirement was interpreted as a hero release.
+  Expected: 0
+  But was:  1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.HeroInputRetirementTests.CancelAim (TumbangPreso.PlayTests.HeroInputRetirementTests+Exit exit) [0x0001f] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\HeroInputRetirementTests.cs:139
+at TumbangPreso.PlayTests.HeroInputRetirementTests.FocusLossCancelsPendingHeroAim () [0x00000] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\HeroInputRetirementTests.cs:150
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1510" name="FocusLossDiscardsPendingHeroBuffer" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.FocusLossDiscardsPendingHeroBuffer" methodname="FocusLossDiscardsPendingHeroBuffer" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="1591384402" result="Failed" start-time="2026-10-03 05:15:24Z" end-time="2026-10-03 05:15:24Z" duration="0.040079" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A retired buffered hero press cast after recovery.
+  Expected: 0
+  But was:  1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.HeroInputRetirementTests.CancelBuffer (TumbangPreso.PlayTests.HeroInputRetirementTests+Exit exit) [0x0001e] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\HeroInputRetirementTests.cs:146
+at TumbangPreso.PlayTests.HeroInputRetirementTests.FocusLossDiscardsPendingHeroBuffer () [0x00000] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\HeroInputRetirementTests.cs:153
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1516" name="FocusLossPreservesAnActivatedAbilityAndResources" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.FocusLossPreservesAnActivatedAbilityAndResources" methodname="FocusLossPreservesAnActivatedAbilityAndResources" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="2017609691" result="Passed" start-time="2026-10-03 05:15:24Z" end-time="2026-10-03 05:15:24Z" duration="0.027326" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1513" name="HeroComponentDisableDiscardsPendingHeroBuffer" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.HeroComponentDisableDiscardsPendingHeroBuffer" methodname="HeroComponentDisableDiscardsPendingHeroBuffer" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="243437291" result="Failed" start-time="2026-10-03 05:15:24Z" end-time="2026-10-03 05:15:24Z" duration="0.042714" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A hero component retained its buffered press across disable/re-enable.
+  Expected: 0
+  But was:  1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.HeroInputRetirementTests.HeroComponentDisableDiscardsPendingHeroBuffer () [0x0002f] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\HeroInputRetirementTests.cs:160
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1515" name="OrdinaryStunBufferSurvivesUntilTheActorCanAct" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.OrdinaryStunBufferSurvivesUntilTheActorCanAct" methodname="OrdinaryStunBufferSurvivesUntilTheActorCanAct" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="1710348655" result="Passed" start-time="2026-10-03 05:15:24Z" end-time="2026-10-03 05:15:24Z" duration="0.045332" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1514" name="OrdinaryTouchReleaseStillCastsOnceAndSpendsOneCharge" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.OrdinaryTouchReleaseStillCastsOnceAndSpendsOneCharge" methodname="OrdinaryTouchReleaseStillCastsOnceAndSpendsOneCharge" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="1826122315" result="Passed" start-time="2026-10-03 05:15:24Z" end-time="2026-10-03 05:15:24Z" duration="0.039165" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1509" name="PracticeIdleCancelsPendingHeroAim" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.PracticeIdleCancelsPendingHeroAim" methodname="PracticeIdleCancelsPendingHeroAim" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="2113868463" result="Failed" start-time="2026-10-03 05:15:24Z" end-time="2026-10-03 05:15:24Z" duration="0.048707" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Producer retirement was interpreted as a hero release.
+  Expected: 0
+  But was:  1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.HeroInputRetirementTests.CancelAim (TumbangPreso.PlayTests.HeroInputRetirementTests+Exit exit) [0x0001f] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\HeroInputRetirementTests.cs:139
+at TumbangPreso.PlayTests.HeroInputRetirementTests.PracticeIdleCancelsPendingHeroAim () [0x00000] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\HeroInputRetirementTests.cs:152
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1512" name="PracticeIdleDiscardsPendingHeroBuffer" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.PracticeIdleDiscardsPendingHeroBuffer" methodname="PracticeIdleDiscardsPendingHeroBuffer" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="451947016" result="Failed" start-time="2026-10-03 05:15:24Z" end-time="2026-10-03 05:15:24Z" duration="0.043545" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A retired buffered hero press cast after recovery.
+  Expected: 0
+  But was:  1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.HeroInputRetirementTests.CancelBuffer (TumbangPreso.PlayTests.HeroInputRetirementTests+Exit exit) [0x0001e] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\HeroInputRetirementTests.cs:146
+at TumbangPreso.PlayTests.HeroInputRetirementTests.PracticeIdleDiscardsPendingHeroBuffer () [0x00000] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\HeroInputRetirementTests.cs:155
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1508" name="ReaderDisableCancelsPendingHeroAim" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.ReaderDisableCancelsPendingHeroAim" methodname="ReaderDisableCancelsPendingHeroAim" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="1192053924" result="Failed" start-time="2026-10-03 05:15:24Z" end-time="2026-10-03 05:15:24Z" duration="0.039802" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Producer retirement was interpreted as a hero release.
+  Expected: 0
+  But was:  1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.HeroInputRetirementTests.CancelAim (TumbangPreso.PlayTests.HeroInputRetirementTests+Exit exit) [0x0001f] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\HeroInputRetirementTests.cs:139
+at TumbangPreso.PlayTests.HeroInputRetirementTests.ReaderDisableCancelsPendingHeroAim () [0x00000] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\HeroInputRetirementTests.cs:151
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1511" name="ReaderDisableDiscardsPendingHeroBuffer" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.ReaderDisableDiscardsPendingHeroBuffer" methodname="ReaderDisableDiscardsPendingHeroBuffer" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="1181855993" result="Failed" start-time="2026-10-03 05:15:24Z" end-time="2026-10-03 05:15:24Z" duration="0.034955" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A retired buffered hero press cast after recovery.
+  Expected: 0
+  But was:  1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.HeroInputRetirementTests.CancelBuffer (TumbangPreso.PlayTests.HeroInputRetirementTests+Exit exit) [0x0001e] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\HeroInputRetirementTests.cs:146
+at TumbangPreso.PlayTests.HeroInputRetirementTests.ReaderDisableDiscardsPendingHeroBuffer () [0x00000] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\HeroInputRetirementTests.cs:154
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1517" name="ReaderDisablePreservesAnActivatedAbilityAndResources" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.ReaderDisablePreservesAnActivatedAbilityAndResources" methodname="ReaderDisablePreservesAnActivatedAbilityAndResources" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="1569034513" result="Passed" start-time="2026-10-03 05:15:24Z" end-time="2026-10-03 05:15:24Z" duration="0.024432" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1519" name="RemoteReaderDisablePreservesReceivedAimAndRenewal" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.RemoteReaderDisablePreservesReceivedAimAndRenewal" methodname="RemoteReaderDisablePreservesReceivedAimAndRenewal" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="673638210" result="Passed" start-time="2026-10-03 05:15:24Z" end-time="2026-10-03 05:15:24Z" duration="0.028446" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1518" name="RemoteReaderFocusLossPreservesReceivedAimAndRenewal" fullname="TumbangPreso.PlayTests.HeroInputRetirementTests.RemoteReaderFocusLossPreservesReceivedAimAndRenewal" methodname="RemoteReaderFocusLossPreservesReceivedAimAndRenewal" classname="TumbangPreso.PlayTests.HeroInputRetirementTests" runstate="Runnable" seed="1039769050" result="Passed" start-time="2026-10-03 05:15:24Z" end-time="2026-10-03 05:15:24Z" duration="0.023157" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-d-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
