@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 09:13:12Z" end-time="2026-10-03 09:13:12Z" duration="0.2225097">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-codex-slot1003" fullname="TumpWorker-codex-slot1003" runstate="Runnable" testcasecount="1150" result="Passed" start-time="2026-10-03 09:13:12Z" end-time="2026-10-03 09:13:12Z" duration="0.222510" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2404" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-codex-slot1003/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1150" result="Passed" start-time="2026-10-03 09:13:12Z" end-time="2026-10-03 09:13:12Z" duration="0.176487" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="30524" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2405" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1150" result="Passed" start-time="2026-10-03 09:13:12Z" end-time="2026-10-03 09:13:12Z" duration="0.157057" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2406" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1150" result="Passed" start-time="2026-10-03 09:13:12Z" end-time="2026-10-03 09:13:12Z" duration="0.138279" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1942" name="NetworkBotRosterConsistencyTests" fullname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests" classname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-03 09:13:12Z" end-time="2026-10-03 09:13:12Z" duration="0.097902" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1945" name="HostAndClientChooseTheSameEmptySeatDespiteDifferentLocalPicks" fullname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests.HostAndClientChooseTheSameEmptySeatDespiteDifferentLocalPicks" classname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 09:13:12Z" end-time="2026-10-03 09:13:12Z" duration="0.087632" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1943" name="HostAndClientChooseTheSameEmptySeatDespiteDifferentLocalPicks(Classic)" fullname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests.HostAndClientChooseTheSameEmptySeatDespiteDifferentLocalPicks(Classic)" methodname="HostAndClientChooseTheSameEmptySeatDespiteDifferentLocalPicks" classname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests" runstate="Runnable" seed="1302341798" result="Passed" start-time="2026-10-03 09:13:12Z" end-time="2026-10-03 09:13:12Z" duration="0.067146" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1944" name="HostAndClientChooseTheSameEmptySeatDespiteDifferentLocalPicks(HeroStrike)" fullname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests.HostAndClientChooseTheSameEmptySeatDespiteDifferentLocalPicks(HeroStrike)" methodname="HostAndClientChooseTheSameEmptySeatDespiteDifferentLocalPicks" classname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests" runstate="Runnable" seed="563300391" result="Passed" start-time="2026-10-03 09:13:12Z" end-time="2026-10-03 09:13:12Z" duration="0.000882" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1948" name="OfflineBotsKeepTheSavedHumanPickRotation" fullname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests.OfflineBotsKeepTheSavedHumanPickRotation" classname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 09:13:12Z" end-time="2026-10-03 09:13:12Z" duration="0.003597" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1946" name="OfflineBotsKeepTheSavedHumanPickRotation(Classic)" fullname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests.OfflineBotsKeepTheSavedHumanPickRotation(Classic)" methodname="OfflineBotsKeepTheSavedHumanPickRotation" classname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests" runstate="Runnable" seed="1482940257" result="Passed" start-time="2026-10-03 09:13:12Z" end-time="2026-10-03 09:13:12Z" duration="0.001362" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1947" name="OfflineBotsKeepTheSavedHumanPickRotation(HeroStrike)" fullname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests.OfflineBotsKeepTheSavedHumanPickRotation(HeroStrike)" methodname="OfflineBotsKeepTheSavedHumanPickRotation" classname="TumbangPreso.Tests.NetworkBotRosterConsistencyTests" runstate="Runnable" seed="509666288" result="Passed" start-time="2026-10-03 09:13:12Z" end-time="2026-10-03 09:13:12Z" duration="0.000480" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios Validation/TumpWorker-codex-slot1003\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

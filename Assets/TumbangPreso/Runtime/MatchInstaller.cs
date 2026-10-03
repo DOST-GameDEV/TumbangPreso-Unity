@@ -1783,6 +1783,10 @@ namespace TumbangPreso
 
         private int AiCharacterIndex(int slot)
         {
+            // Empty network seats have no replicated character pick. Their kit
+            // must be identical on every peer, independent of local preferences.
+            if (NetAuthority.IsNetworked)
+                return ResolveAiCharacterIndex(slot, -1, SceneFlow.SelectedMode);
             int humanSeat = HumanSeat;
             int human = humanSeat >= 0 ? Settings.SettingsStore.Current.CharacterPick : -1;
             if (GameLaunch.GuidedTutorial && humanSeat >= 0)
