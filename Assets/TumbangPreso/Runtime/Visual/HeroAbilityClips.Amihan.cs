@@ -142,14 +142,15 @@ namespace TumbangPreso.Visual
         /// AIRBURST, v3.2 (owner, 2026-10-03: *"show the ult actually hitting and knocking abck ppl already in the cutscene"*, *"no
         /// need to reshow it in fpp"*). The shared cutscene now shows the windup AND the release (v4: her drive at 3.85 s of 4.4,
         /// `HeroIntroductionScene.Amihan.cs`), and play resumes on the hit (`AmihanRules.StormSurgeDelaySeconds`, 0). So this
-        /// clip only SETTLES: it starts in the pose the cutscene ends on (v4: her hands-on-hips finish), so the hand-back does not jump, and she is back to her stand and free to run by 0.45 s.
+        /// clip only SETTLES: it starts in the pose the cutscene ends on (v8: her cute finish), so the hand-back does not jump, and she is back to her stand and free to run by 0.45 s.
         /// </summary>
         private static AnimationClip BuildAmihanStorm(Dictionary<string, string> paths)
         {
             var b = new ClipBuilder("hero-amihan-storm", paths);
-            // v4: the cutscene ends on her finish (hands on hips, chest out, chin up, head tipped: `tools/author_ultimate_intros.py`).
-            PoseKey(b, 0, 0, V(-8, 4, -3), V(-14, -8, 9), V(-16, 38, 58), V(-16, 38, -58), V(-4, 0, 14), V(4, 0, -14));
-            PoseKey(b, .2f, 0, V(-3, 2, -1), V(-6, -3, 4), V(-8, 16, 36), V(-8, 16, -36), V(-2, 0, 8), V(2, 0, -8));
+            // v8: the cutscene ends on her cute pose (leaning in, hands behind her back, a foot kicked up behind her, a wink:
+            // `tools/author_ultimate_intros.py` amihan() finish), and she drops out of it into her stand.
+            PoseKey(b, 0, 0, V(10, 6, 8), V(-10, -6, 16), V(40, 0, 14), V(40, 0, -14), V(-4, 0, 8), V(40, 0, -10));
+            PoseKey(b, .2f, 0, V(4, 2, 3), V(-4, -2, 6), V(15, 0, 30), V(15, 0, -30), V(-2, 0, 6), V(14, 0, -6));
             PoseKey(b, .45f, 0, V(0, 0, 0), V(0, 0, 0), V(0, 0, 15), V(0, 0, -15));
             return b.Build();
         }
