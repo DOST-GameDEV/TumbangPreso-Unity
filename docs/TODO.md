@@ -17,6 +17,20 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### REPLAY-SHORTLIST-QUEUE-1004: deliver current retained footage
+
+- [x] Replace obsolete transfer entries with the authoritative archive shortlist,
+  keep begun still-retained send objects/offsets, update waiting priority and skip
+  acknowledged/prior-match clips. Archive policy, wire/protocol144 and bandwidth
+  limits unchanged. Original4 causal failures/3controls -> candidate7/7; root
+  inspected3430 maps with one production delta, exact tested code/fixture and
+  terminal/restored/free receipts. All18 raw Git blobs match their manifest after
+  one explanatory-text line-ending correction; no extra native run.
+  [Evidence](reports/laptop-validation-2026-10-04/replay-shortlist-queue/README.md).
+- [ ] Matching players under slow transfer: verify actual selected clip delivery,
+  interruption/replacement and rendered playback. Supplied queue tests do not
+  establish capture, physical peers or packaged performance.
+
 ### CLIENT-MOVEMENT-FRAME-1004: reject malformed client movement effects
 
 - [x] Preflight exact unread payloads before decoding: Impact20, Carry24 and

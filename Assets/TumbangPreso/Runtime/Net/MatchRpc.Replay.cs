@@ -32,7 +32,12 @@ namespace TumbangPreso.Net
         {
             if(!NetAuthority.IsHost||_nm?.CustomMessagingManager==null||retained.Clip.MatchId!=PresentationMatchId)return;
             if(_clipEpoch!=PresentationMatchId)ClearReplayTransfer();
-            foreach(ulong peer in _nm.ConnectedClientsIds)if(peer!=NetworkManager.ServerClientId)QueueReplay(peer,retained);
+            var archive=FindAnyObjectByType<MatchReplayArchive>();
+            foreach(ulong peer in _nm.ConnectedClientsIds)if(peer!=NetworkManager.ServerClientId)
+            {
+                if(archive!=null)RefreshReplayShortlist(peer,archive.Clips);
+                else QueueReplay(peer,retained);
+            }
         }
         private void QueueReplay(ulong peer,MatchReplayArchive.Retained retained)
         {
@@ -45,7 +50,27 @@ namespace TumbangPreso.Net
         {
             if(_clipEpoch!=PresentationMatchId)ClearReplayTransfer();
             var archive=FindAnyObjectByType<MatchReplayArchive>();if(archive==null)return;
-            foreach(var retained in archive.Clips)QueueReplay(peer,retained);
+            RefreshReplayShortlist(peer,archive.Clips);
+        }
+        private void RefreshReplayShortlist(ulong peer,IReadOnlyList<MatchReplayArchive.Retained> shortlist)
+        {
+            if(!_clipSends.TryGetValue(peer,out var queue))_clipSends[peer]=queue=new Queue<ClipSend>();
+            var previous=queue.ToArray();queue.Clear();
+            // Keep progress only for footage the authoritative archive still retains.
+            // A replacement ReplayBegin already replaces an obsolete partial receive.
+            var active=previous.FirstOrDefault(send=>send.Began&&send.Retained.Clip.MatchId==PresentationMatchId&&
+                shortlist.Any(retained=>retained.Clip.MatchId==PresentationMatchId&&retained.Clip.Id==send.Retained.Clip.Id));
+            if(active!=null)queue.Enqueue(active);
+            foreach(var retained in shortlist)
+            {
+                if(queue.Count>=MatchReplayArchive.Capacity)break;
+                if(retained.Clip.MatchId!=PresentationMatchId||
+                    (_clipReady.TryGetValue(peer,out var ready)&&ready.Contains(retained.Clip.Id))||
+                    queue.Any(send=>send.Retained.Clip.Id==retained.Clip.Id))continue;
+                var waiting=previous.FirstOrDefault(send=>send.Retained.Clip.MatchId==PresentationMatchId&&send.Retained.Clip.Id==retained.Clip.Id);
+                if(waiting!=null)queue.Enqueue(waiting);
+                else QueueReplay(peer,retained);
+            }
         }
         private void TickReplayTransfer()
         {

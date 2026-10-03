@@ -32,34 +32,28 @@ TODO is the only status queue. Reports hold evidence; this file holds execution.
 ## Exact source and outstanding unit
 
 Root checkout: C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
-Published sourcedd3c45636, protocol144, clean detached HEAD before this checkpoint.
+Source5a6dcf8c2 normally merged the checked replay candidate, protocol144,
+clean detached HEAD before this checkpoint. Publish this coherent checked batch.
 Dirty Main is C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks;
 never overwrite/stage its private Amihan/artwork/input metadata. No root Editor.
 
-Root current unit: replay send queues can retain obsolete footage and drop the
-current preferred clip when three slots are full. Existing archive priority is
-authoritative; no Camera/MatchReplayArchive or authored-policy change is allowed.
-Original7b5f5b7a8a3ed7f1d91a30fce5ad236185289ad0 on
-competition-pc-replay-shortlist1004 adds ONLY ReplayShortlistQueueTests.cs/meta.
-FilterTumbangPreso.Tests.ReplayShortlistQueueTests,7 EditMode cases, expected4
-causal/3controls. Existing SendReplayShortlist/QueueReplay are exercised through
-queued IDs/objects/offsets, no live transport or captured clip claim.
-Candidate6150b473c7b0063fec74d8d9cdae754f95ff6e65 on
-competition-pc-replay-shortlist-candidate1004 changes ONLY MatchRpc.Replay.cs.
-It reconciles queues to current archive priority, preserves still-retained begun
-progress, drops obsolete/prior-match entries and skips acknowledged IDs. Same
-fixture/meta; no tick/chunk/rate/wire/protocol change. Both refs are pushed and
-outside ASTRA pending native original/candidate. No PC native job is authorized.
-Original93299 is CLOSED, actual4 causal failures/3controls,3430 unchanged inputs,
-terminal/restored/free. One omitted-nographics prelaunch refusal was retained and
-corrected before that sole native run; fixture/meta unchanged. Candidate8148 is
-reported RUNNING atqa-a/Logs/replay-shortlist-candidate7-1004, source6150,
-CPU2048+1024MiB/300seconds. Follow THIS handle; do not start another candidate.
-Prelaunch newline assertion was reconciled with unchanged raw fixture bytes and
-identical Git originals/candidates, not a fixture repair or native rerun.
-NEXT: inspect candidate7 actual XML/maps/receipt and integrate the checked queue
-change if it fixes the four failures with controls/progress intact. Keep scope
-to queue reconciliation; actual capture/transport/peers remain separate.
+Replay queue unit is CHECKED: original7b5/93299 CLOSED4 causal failures/3controls,
+candidate6150/8148 CLOSED7/7,3430 unchanged inputs and terminal/restored/free.
+Root inspected XML/maps/receipts, exact raw tested fixture/meta/code, one-only
+MatchRpc.Replay.cs delta and all18 raw Git hashes against the manifest. Proof
+52b5/5b6 plus explanatory-text preservation repairb028 is under
+reports/laptop-validation-2026-10-04/replay-shortlist-queue. No repeated native job.
+The merged Runtime and fixture/meta bytes exactly equal checked6150. Queue uses
+existing archive priority, preserves still-retained begun progress, drops obsolete/
+prior-match entries and skips acknowledged IDs. No Camera/archive-policy or
+tick/chunk/rate/wire/protocol change. No PC native job is authorized.
+One prelaunch-nographics refusal and newline preparation assertion were retained;
+fixture unchanged, no extra native retry. The sole explanatory .txt Git formatting
+correction is complete and all18 hashes now match. Do not reopen these audits.
+NEXT: arrange current matching-artifact slow-transfer/playback and necessary
+LAN/online recovery once actual PC availability is released. Meanwhile continue
+a separate demonstrated source defect in root-owned Net/account paths, preserving
+the laptop's reader/carrier/device-loss and debug-switcher reservations.
 Laptop own F6 is shipped a516409c5 + dd3c45636 proof, original1fail5controls ->6/6.
 Its device-loss5 original reported3fail2controls: driving-pad throw/lunge failures
 and an unused-pad control needing isolation. Reader/carrier/debug-switcher remain
