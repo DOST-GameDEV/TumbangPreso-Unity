@@ -699,3 +699,25 @@ follow-throughb6e41456 is remote and review delivered. Next inspect Nemu's actua
 Catch: it shares the legacy Haunt seance motion. Preserve Nemu model/cowl and
 other-owner RosterArms, all gameplay clocks and independent companion behavior.
 No production change or active Editor at claim time.
+
+Nemu Catch implementation remains LOCAL/PARTIAL. Original actual court case
+reproduces shared seance; first imported candidate passes state but visual review
+rejects idle body. One named action registration is corrected and now asserted.
+Corrected native verification is blocked: full-map signal9/noXML, smaller stage
+stopped at stronger cgroup reserve after compile, then warm runtime stalled even
+with lower measured admission use. All guards restored profiles, no active job.
+No unchanged repeat. Authored GLB pose inspected offline only; preserve scoped
+assets and all36oldclips. See dated README for exact unsuccessful attempts.
+Continue independent useful work while diagnosing a genuinely different safe
+validation path; do not mark this animation done from the earlier green result.
+
+Nemu final lightweight-stage qualification now passes1/1 in3.099s with48paired
+frames; live registered body action, companion and protection/reset confirmed.
+Inspected small gesture/recovery and empty-hand owner view. Original36clips,
+geometry and binary prefix preserved. Peak4.432GB tree/7.068GB cgroup, no guard;
+profile and original validation EditorSettings restored. Recovery found10owned
+orphan compiler-shutdown helpers (833MB RSS); retiring them recovered691MB
+cgroup headroom without file deletion or weakened guards. Prior full-map/stage
+failures remain. No corrected full-court/player/peer/SFX/human claim. Publish
+only the scoped Nemu paths and this qualified-but-limited evidence; next inspect
+Zack Closed Circuit's currently unregistered literal cast action before changing it.

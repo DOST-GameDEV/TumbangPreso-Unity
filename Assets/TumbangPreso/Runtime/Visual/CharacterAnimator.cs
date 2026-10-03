@@ -220,6 +220,7 @@ namespace TumbangPreso.Visual
             { "hero-cheska-raise", new[] { "hero-cheska-raise", PickUp, Interact } },
             { "hero-cheska-nova", new[] { "hero-cheska-nova", "holding-left-shoot", Jump } },
 
+            { "hero-nemu-guard", new[] { "hero-nemu-guard" } },
             { "hero-nemu-ghoststep", new[] { "hero-nemu-ghoststep", Sprint, Walk } },
             { "hero-nemu-project", new[] { "hero-nemu-project", "interact-left", "attack-melee-left" } },
             { "hero-nemu-seance", new[] { "hero-nemu-seance", "emote-yes", Interact } },

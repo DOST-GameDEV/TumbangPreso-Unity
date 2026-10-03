@@ -21,6 +21,7 @@ seconds, and Kuro moves under its existing task clock.
 - Art/characters/persons/team-nemu.glb: append hero-nemu-guard, preserve every
   existing clip, geometry table and binary byte
 - Runtime/Abilities/NemuHeroKit.cs: only KuroGuard's body/FPP action names
+- Runtime/Visual/CharacterAnimator.cs: register only the new named guard action
 - Runtime/Camera/ViewmodelArms.CastGesture.cs: new kuro-guard gesture
 - Resources/Roster/person_nemu.asset: add only that imported clip reference
 - Editor/NemuGuardMotionAuthor.cs/meta: existing narrow importer pattern
@@ -38,3 +39,12 @@ clock, and cancellation retires that protection. Held prop and face stay clear.
 Check clip/binary preservation and imported roster binding. Use one guarded
 native job at a time; no broad unchanged regression. Do not claim player, peer,
 physical-device, listening or human approval from this presentation check.
+
+## Native visual correction
+
+The first candidate passed import, roster and ability contracts but its inspected
+world frames remained idle. CharacterAnimator resolves actions through its named
+chain registry; the new authored clip had not been registered. Add the one named
+chain and require observed live playback in the same test. Preserve the passing
+but visually rejected candidate. This is a product integration correction, not
+an unchanged tooling retry or a reason to weaken an assertion.
