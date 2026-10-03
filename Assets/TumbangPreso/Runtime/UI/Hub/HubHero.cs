@@ -260,7 +260,7 @@ namespace TumbangPreso.UI.Hub
             {
                 var settings = Settings.SettingsStore.Current;
                 if (HubHome.Choice == 1) HubHome.Choice = 2;   // a hero is a Hero Strike pick
-                HubHome.ApplyChoice();
+                HubHome.ApplyChoice(true);
                 settings.CharacterPick = _index;
                 Settings.SettingsStore.Save();
                 Hub.Host.PublishPicks();

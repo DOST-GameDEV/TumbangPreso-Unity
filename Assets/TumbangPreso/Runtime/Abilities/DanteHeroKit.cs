@@ -109,7 +109,7 @@ namespace TumbangPreso.Abilities
                        "Imbue your held slipper. Your next throw inflicts Concussed on a player hit: 75% slower for 2.5 s.",
                        GeoRules.BoulderCooldown, 0.0f, AbilityGlyph.DanteBoulder,
                        summary: "Imbue your held slipper with Concussed.",
-                       castAction: "hero-dante-stomp", viewmodelAction: "stomp-heavy",
+                       castAction: "hero-dante-boulder", viewmodelAction: "boulder-load",
                        castCue: "sfx_cast_dante_boulder") { }
 
             public override bool CanActivate(AbilityContext ctx)
@@ -141,7 +141,7 @@ namespace TumbangPreso.Abilities
                        "Defending. A wide stone force field in front of you for 7.5 s. It follows you, and every slipper that hits it flies back.",
                        GeoRules.BarrierCooldown, GeoRules.BarrierSeconds, AbilityGlyph.DanteBarrier,
                        summary: "A force field in front of you reflects slippers.",
-                       castAction: "hero-dante-roar", viewmodelAction: "carapace-guard",
+                       castAction: "hero-dante-bastion", viewmodelAction: "bastion-brace",
                        castCue: "sfx_cast_dante_barrier") { }
 
             protected override void OnActivate(AbilityContext ctx)

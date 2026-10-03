@@ -32,6 +32,7 @@ namespace TumbangPreso.CameraSystem
         }
         private MatchPoseHistory _history;
         private readonly List<Prop> _props=new List<Prop>(9);
+        private readonly List<Prop> _desiredProps=new List<Prop>(13);
         private readonly List<Retained> _clips=new List<Retained>(Capacity);
         private readonly List<Pending> _pending=new List<Pending>(Capacity);
         private readonly List<RecordedWorldCue> _sounds=new List<RecordedWorldCue>(256);
@@ -50,7 +51,7 @@ namespace TumbangPreso.CameraSystem
             _history=history;if(_history!=null)_history.Sampled+=Sample;
         }
         private void OnEnable(){MatchFlair.Presented+=Moment;AudioDirector.WorldCuePlayed+=RecordSound;}
-        private void OnDisable(){MatchFlair.Presented-=Moment;AudioDirector.WorldCuePlayed-=RecordSound;Bind(null);_props.Clear();_pending.Clear();_clips.Clear();}
+        private void OnDisable(){MatchFlair.Presented-=Moment;AudioDirector.WorldCuePlayed-=RecordSound;Bind(null);_props.Clear();_desiredProps.Clear();_pending.Clear();_clips.Clear();}
         private void Update()=>CheckIdentity();
         private void CheckIdentity()
         {
@@ -119,23 +120,26 @@ namespace TumbangPreso.CameraSystem
         }
         private void BindProps()
         {
-            var round=GameServices.Round;var desired=new List<Prop>(13);bool changed=false;
-            void Add(GameObject source,RecordedObjectKind kind,int seat,int skin,string person,GameObject model)
-            {
-                var entry=_props.FirstOrDefault(p=>p.Source==source&&p.Track.Source==model);
-                if(entry==null){changed=true;entry=new Prop{Source=source,Kind=kind,Seat=seat,Skin=skin,Person=person,
-                    Track=new MatchPoseHistory.Track(round.PlayerAt(Mathf.Clamp(seat,0,3)),model)};}
-                desired.Add(entry);
-            }
-            foreach(var shoe in FindObjectsByType<Slipper>())Add(shoe.gameObject,RecordedObjectKind.Slipper,shoe.SeatOfOrigin,shoe.SkinIndex,null,PropModel(shoe.gameObject));
-            if(round.Lata!=null)Add(round.Lata.gameObject,RecordedObjectKind.Can,-1,round.Lata.SkinIndex,null,PropModel(round.Lata.gameObject));
+            var round=GameServices.Round;_desiredProps.Clear();bool changed=false;
+            foreach(var shoe in FindObjectsByType<Slipper>())AddProp(round,shoe.gameObject,RecordedObjectKind.Slipper,shoe.SeatOfOrigin,shoe.SkinIndex,null,PropModel(shoe.gameObject),ref changed);
+            if(round.Lata!=null)AddProp(round,round.Lata.gameObject,RecordedObjectKind.Can,-1,round.Lata.SkinIndex,null,PropModel(round.Lata.gameObject),ref changed);
             foreach(var actor in round.Players)
             {
                 var pet=actor.GetComponent<CharacterVisual>()?.Companion;if(pet==null)continue;
-                Add(pet.gameObject,RecordedObjectKind.Familiar,actor.PlayerSlot,0,actor.AbilitySystem?.HeroId,pet.gameObject);
+                AddProp(round,pet.gameObject,RecordedObjectKind.Familiar,actor.PlayerSlot,0,actor.AbilitySystem?.HeroId,pet.gameObject,ref changed);
             }
-            if(_props.Count>0&&(changed||desired.Count!=_props.Count))_unsafeAt=Time.time;
-            _props.Clear();_props.AddRange(desired);
+            if(_props.Count>0&&(changed||_desiredProps.Count!=_props.Count))_unsafeAt=Time.time;
+            _props.Clear();_props.AddRange(_desiredProps);
+            _desiredProps.Clear();
+        }
+        private void AddProp(RoundDirector round,GameObject source,RecordedObjectKind kind,int seat,int skin,string person,GameObject model,ref bool changed)
+        {
+            Prop entry=null;
+            for(int i=0;i<_props.Count;i++)
+                if(_props[i].Source==source&&_props[i].Track.Source==model){entry=_props[i];break;}
+            if(entry==null){changed=true;entry=new Prop{Source=source,Kind=kind,Seat=seat,Skin=skin,Person=person,
+                Track=new MatchPoseHistory.Track(round.PlayerAt(Mathf.Clamp(seat,0,3)),model)};}
+            _desiredProps.Add(entry);
         }
         private void Moment(MatchFlair.Kind kind,int actor,int subject,Vector3 at,float strength)
         {

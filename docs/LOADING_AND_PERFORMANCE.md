@@ -5,6 +5,15 @@ work-driven loading,not on the next click/cast. Respect memory and authored asse
 Read the current queue,[loading evidence](reports/stability-2026-09-27/loading-audit.md),
 [working rules](WORKING_RULES.md) and current source before changing a stage.
 
+## Studio intro before boot work
+
+SplashScreen first plays the existing BH Studios clip on a lightweight surface.
+Fresh keyboard/mouse/controller/touch input skips only that clip through white;
+the usual loading UI, asset/account work and menu-ready barrier follow unchanged.
+Linux uses an explicitly bound VP8 derivative because H264 VideoClip import is
+unsupported there; the original MP4 and authored sequence remain. Missing/failed
+media has a bounded fallback. [Native evidence](reports/studio-intro-2026-10-02/README.md).
+
 ## Current Entry Points
 
 Bot rival-spacing queries reuse per-brain scratch storage. A calibrated native

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 21:51:44Z" end-time="2026-10-02 21:51:44Z" duration="0.1545437">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="993" result="Passed" start-time="2026-10-02 21:51:44Z" end-time="2026-10-02 21:51:44Z" duration="0.154544" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2202" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="993" result="Passed" start-time="2026-10-02 21:51:44Z" end-time="2026-10-02 21:51:44Z" duration="0.132450" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16560" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2203" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="993" result="Passed" start-time="2026-10-02 21:51:44Z" end-time="2026-10-02 21:51:44Z" duration="0.119804" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2204" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="993" result="Passed" start-time="2026-10-02 21:51:44Z" end-time="2026-10-02 21:51:44Z" duration="0.107466" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1928" name="RebindSeatPacketTests" fullname="TumbangPreso.Tests.RebindSeatPacketTests" classname="TumbangPreso.Tests.RebindSeatPacketTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-02 21:51:44Z" end-time="2026-10-02 21:51:44Z" duration="0.085427" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1931" name="ImpossibleDefenderCannotReplaceLocalOwnership" fullname="TumbangPreso.Tests.RebindSeatPacketTests.ImpossibleDefenderCannotReplaceLocalOwnership" methodname="ImpossibleDefenderCannotReplaceLocalOwnership" classname="TumbangPreso.Tests.RebindSeatPacketTests" runstate="Runnable" seed="1878195794" result="Passed" start-time="2026-10-02 21:51:44Z" end-time="2026-10-02 21:51:44Z" duration="0.038450" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] connected as seat 2
+]]></output>
+            </test-case>
+            <test-case id="1930" name="ImpossibleSeatCannotReplaceLocalOwnership" fullname="TumbangPreso.Tests.RebindSeatPacketTests.ImpossibleSeatCannotReplaceLocalOwnership" methodname="ImpossibleSeatCannotReplaceLocalOwnership" classname="TumbangPreso.Tests.RebindSeatPacketTests" runstate="Runnable" seed="461753097" result="Passed" start-time="2026-10-02 21:51:44Z" end-time="2026-10-02 21:51:44Z" duration="0.001297" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] connected as seat 2
+]]></output>
+            </test-case>
+            <test-case id="1929" name="IncompleteFramesCannotThrowOrRebindLocalOwnership" fullname="TumbangPreso.Tests.RebindSeatPacketTests.IncompleteFramesCannotThrowOrRebindLocalOwnership" methodname="IncompleteFramesCannotThrowOrRebindLocalOwnership" classname="TumbangPreso.Tests.RebindSeatPacketTests" runstate="Runnable" seed="1787653485" result="Passed" start-time="2026-10-02 21:51:44Z" end-time="2026-10-02 21:51:44Z" duration="0.001875" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] connected as seat 2
+]]></output>
+            </test-case>
+            <test-case id="1932" name="NonBooleanOrTrailingDataCannotRebindTheSeat" fullname="TumbangPreso.Tests.RebindSeatPacketTests.NonBooleanOrTrailingDataCannotRebindTheSeat" methodname="NonBooleanOrTrailingDataCannotRebindTheSeat" classname="TumbangPreso.Tests.RebindSeatPacketTests" runstate="Runnable" seed="1059200846" result="Passed" start-time="2026-10-02 21:51:44Z" end-time="2026-10-02 21:51:44Z" duration="0.001221" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] connected as seat 2
+]]></output>
+            </test-case>
+            <test-case id="1934" name="NonHostAndHostLoopbackCannotRebindMalformedFrames" fullname="TumbangPreso.Tests.RebindSeatPacketTests.NonHostAndHostLoopbackCannotRebindMalformedFrames" methodname="NonHostAndHostLoopbackCannotRebindMalformedFrames" classname="TumbangPreso.Tests.RebindSeatPacketTests" runstate="Runnable" seed="2351596" result="Passed" start-time="2026-10-02 21:51:44Z" end-time="2026-10-02 21:51:44Z" duration="0.000969" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] connected as seat 2
+]]></output>
+            </test-case>
+            <test-case id="1933" name="ValidSeatsSpectatorAndFreeRoamDefenderRetainIdempotentRebind" fullname="TumbangPreso.Tests.RebindSeatPacketTests.ValidSeatsSpectatorAndFreeRoamDefenderRetainIdempotentRebind" methodname="ValidSeatsSpectatorAndFreeRoamDefenderRetainIdempotentRebind" classname="TumbangPreso.Tests.RebindSeatPacketTests" runstate="Runnable" seed="1426044605" result="Passed" start-time="2026-10-02 21:51:44Z" end-time="2026-10-02 21:51:44Z" duration="0.024434" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] connected as seat 2
+[Net] connected as spectator
+[Net] connected as seat 2
+[Net] connected as spectator
+[Net] connected as seat 2
+[Net] connected as spectator
+[Net] connected as seat 2
+[Net] connected as spectator
+[Net] connected as seat 2
+[Net] connected as seat 1
+[Net] connected as seat 2
+[Net] connected as seat 1
+[Net] connected as seat 2
+[Net] connected as seat 1
+[Net] connected as seat 2
+[Net] connected as seat 1
+[Net] connected as seat 2
+[Net] connected as seat 3
+[Net] connected as seat 2
+[Net] connected as seat 3
+[Net] connected as seat 2
+[Net] connected as seat 3
+[Net] connected as seat 2
+[Net] connected as seat 3
+[Net] connected as seat 2
+[Net] connected as seat 4
+[Net] connected as seat 2
+[Net] connected as seat 4
+[Net] connected as seat 2
+[Net] connected as seat 4
+[Net] connected as seat 2
+[Net] connected as seat 4
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1074,6 +1074,45 @@ namespace TumbangPreso.PlayTests
             view.Tick(local,true,false,false,false);Assert.AreEqual("",view.WarningText);
         }
 
+        [UnityTest,Timeout(90000)]
+        public IEnumerator TimedRecoveryShowsStateWithoutMashPromptsOrPressCounts()
+        {
+            int quality=QualitySettings.GetQualityLevel(),mip=QualitySettings.globalTextureMipmapLimit;
+            try
+            {
+                QualitySettings.SetQualityLevel(0,true);QualitySettings.globalTextureMipmapLimit=2;
+                yield return Open(GameMode.HeroStrike);
+                var local=GameServices.Round.PlayerAt(GameLaunch.SoloSeat);
+                local.GetComponent<PlayerInputReader>().enabled=false;local.enabled=false;local.Intent.Clear();
+                var view=Object.FindFirstObjectByType<TumpMatchReadout>();Assert.IsNotNull(view);
+                local.ApplyStagger(2.5f,StunElement.Ice,9);view.Tick(local,false,false,false,false);
+                Assert.IsTrue(local.IsFrozen);Assert.IsFalse(local.CanAct());
+                Assert.IsTrue(view.Canvas.GetComponentsInChildren<Text>().Any(t=>t.isActiveAndEnabled&&t.text=="Frozen"));
+                NoMashText(view);
+                yield return TumpUiCapture.Capture("Timed-recovery-Frozen",view.Canvas,960,540,false,true);
+                local.ClearStun();local.ApplyTrip(2.5f);view.Tick(local,false,false,false,false);
+                Assert.IsTrue(view.Canvas.GetComponentsInChildren<Text>().Any(t=>t.isActiveAndEnabled&&t.text=="Getting up"));
+                NoMashText(view);
+                local.ApplyNetworkState(0,0,StunElement.None,6,9,1.25f,2.5f,9,1.7f,100,0,0);
+                view.Tick(local,false,false,false,false);
+                var progress=(Image)typeof(TumpMatchReadout).GetField("_progress",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(view);
+                Assert.AreEqual(.5f,progress.rectTransform.anchorMax.x,.001f,"The recovery bar measures time, never old press counts.");
+                Assert.AreEqual(0,local.MashPresses);NoMashText(view);
+                yield return TumpUiCapture.Capture("Timed-recovery-get-up",view.Canvas,960,540,false,true);
+            }
+            finally {QualitySettings.SetQualityLevel(quality,true);QualitySettings.globalTextureMipmapLimit=mip;}
+        }
+
+        private static void NoMashText(TumpMatchReadout view)
+        {
+            foreach(var text in view.Canvas.GetComponentsInChildren<Text>())
+            {
+                if(!text.isActiveAndEnabled)continue;
+                string value=text.text.ToLowerInvariant();
+                Assert.IsFalse(value.Contains("mash")||value.Contains("presses")||value.Contains("shatter the ice"),text.name+": "+text.text);
+            }
+        }
+
         private static IEnumerator Open(GameMode mode)
         {
             SceneFlow.Networked = false; SceneFlow.SetSelectedRules(CustomGameRules.Defaults(mode));

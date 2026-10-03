@@ -351,6 +351,9 @@ namespace TumbangPreso.Net
                 // peer's own introduction, and the field would read 0 for every peer that ever
                 // completed a join. `docs/TODO.md` § 144.7.
                 record.Rating = replaced.Rating;
+                // The ordinary Identify introduction must not erase the identity
+                // received with approval. Handle verification remains independent.
+                record.AccountPlayerId = replaced.AccountPlayerId;
                 _peers.Remove(replaced.PeerId);
 
                 if (LeaderPeerId == replaced.PeerId)

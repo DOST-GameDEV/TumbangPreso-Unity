@@ -458,7 +458,7 @@ namespace TumbangPreso.Net
 
         private bool SenderMayConfigureLobby(ulong senderClientId)
         {
-            if (!NetAuthority.IsHost) return false;
+            if (!NetAuthority.IsHost || senderClientId > int.MaxValue) return false;
             var lobby = NetSession.Instance?.Lobby;
             return lobby != null && lobby.IsLeader((int)senderClientId);
         }
@@ -780,6 +780,17 @@ namespace TumbangPreso.Net
             if (characters > (uint)(available/sizeof(ushort))) return false;
             reader.Seek(reader.Position+(int)characters*sizeof(ushort));
             return true;
+        }
+        private static bool ValidStringFrame(ref FastBufferReader reader, int count)
+        {
+            int start = reader.Position;
+            try
+            {
+                for (int i = 0; i < count; i++)
+                    if (!SkipWireString(ref reader)) return false;
+                return reader.Position == reader.Length;
+            }
+            finally { reader.Seek(start); }
         }
         private static bool ValidIdentifyFrame(ref FastBufferReader reader)
         {
@@ -1419,6 +1430,7 @@ namespace TumbangPreso.Net
         private void OnChatMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (!NetAuthority.IsHost) return;
+            if (!ValidStringFrame(ref reader, 1)) return;
 
             reader.ReadValueSafe(out string text);
             HostRelayChat((int)senderClientId, text);
@@ -1598,6 +1610,7 @@ namespace TumbangPreso.Net
         {
             if (NetAuthority.IsHost) return;
             if (!FromHost(senderClientId)) return;
+            if (!ValidStringFrame(ref reader, 2)) return;
 
             reader.ReadValueSafe(out string who);
             reader.ReadValueSafe(out string line);
@@ -3946,7 +3959,7 @@ namespace TumbangPreso.Net
             reader.ReadValueSafe(out int sequence);
             if (!SenderOwnsClaimedSeat(senderClientId, claimedSlot, out var unit)) return;
 
-            unit.AcceptRecoveryRequest(episode,sequence);
+            if (!unit.AcceptRecoveryRequest(episode,sequence)) return;
 
             SyncUnitTransformClientRpc(claimedSlot, unit.transform.position,
                                        unit.transform.eulerAngles.y, unit.Velocity);
@@ -4146,10 +4159,16 @@ namespace TumbangPreso.Net
             if (NetAuthority.IsHost) return;
             if (!FromHost(senderClientId)) return;
 
+            // Validate the complete UTF-16 frame before decoding or allocating from its
+            // length. A damaged result must leave the previous result available.
+            if (!ValidStringFrame(ref reader, 1)) return;
+
             reader.ReadValueSafe(out string json);
             if (string.IsNullOrWhiteSpace(json)) return;
 
-            var record = JsonUtility.FromJson<Core.MatchRecord>(json);
+            Core.MatchRecord record;
+            try { record = JsonUtility.FromJson<Core.MatchRecord>(json); }
+            catch (System.ArgumentException) { return; }
             if (record == null) return;
 
             // ⚠️ NORMALISED ON ARRIVAL, BECAUSE THIS ARRIVED FROM ANOTHER MACHINE. The host
@@ -4601,6 +4620,7 @@ namespace TumbangPreso.Net
         {
             if (!NetAuthority.IsHost) return;
             if (!SenderMayConfigureLobby(senderClientId)) return;
+            if (!ValidStringFrame(ref reader, 1)) return;
             reader.ReadValueSafe(out string wire);
             SyncRulesClientRpc(wire);
         }
@@ -4632,6 +4652,7 @@ namespace TumbangPreso.Net
             if (!FromHost(senderClientId)) return;
             // ⚠️ See `OnSyncDiffMsg`: the host is its own client and a broadcast loops back.
             if (NetAuthority.IsHost) return;
+            if (!ValidStringFrame(ref reader, 1)) return;
 
             reader.ReadValueSafe(out string wire);
 
@@ -6712,12 +6733,30 @@ namespace TumbangPreso.Net
         private void OnRebindSeatMsg(ulong senderClientId, FastBufferReader reader)
         {
             if (NetAuthority.IsHost || !FromHost(senderClientId)) return;
+            if (!ValidRebindSeatFrame(ref reader)) return;
             reader.ReadValueSafe(out int seat);
             reader.ReadValueSafe(out int defenderSlot);
             reader.ReadValueSafe(out bool roundActive);
             reader.ReadValueSafe(out string playerName);
 
             ApplyRebindLocalSeat(seat, defenderSlot, roundActive, playerName);
+        }
+
+        private static bool ValidRebindSeatFrame(ref FastBufferReader reader)
+        {
+            int start = reader.Position;
+            try
+            {
+                if (!reader.TryBeginRead(sizeof(int) * 2 + 1)) return false;
+                reader.ReadValueSafe(out int seat);
+                reader.ReadValueSafe(out int defender);
+                reader.ReadValueSafe(out byte active);
+                // -1 is the spectator seat and the pre-round "no defender" state.
+                if (seat < -1 || seat >= Balance.PlayerCount ||
+                    defender < -1 || defender >= Balance.PlayerCount || active > 1) return false;
+                return ValidStringFrame(ref reader, 1);
+            }
+            finally { reader.Seek(start); }
         }
 
         private void ApplyRebindLocalSeat(int seat, int defenderSlot, bool roundActive,

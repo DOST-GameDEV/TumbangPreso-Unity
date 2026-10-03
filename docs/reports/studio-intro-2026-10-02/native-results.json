@@ -1,0 +1,52 @@
+[
+  {
+    "run": "portable-check",
+    "case": "TumbangPreso.PlayTests.StudioIntroTests.AuthoredVideoPlaysBeforeLoadingAndEndsOnWhite",
+    "duration": "3.851241",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 35.00306959799491
+    }
+  },
+  {
+    "run": "input-check",
+    "case": "TumbangPreso.PlayTests.StudioIntroTests.KeyboardMousePadAndTouchSkipOnlyTheIntroThroughWhite",
+    "duration": "1.106884",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 30.003922212999896
+    }
+  },
+  {
+    "run": "check-3",
+    "case": "TumbangPreso.PlayTests.StudioIntroTests.MissingFailedAndDestroyedIntroReleaseWithoutClaimingReadiness",
+    "duration": "0.285020",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 30.0046776090021
+    }
+  },
+  {
+    "run": "check-4",
+    "case": "TumbangPreso.PlayTests.OwnerMenuEditsTests.BootActivationRetainsCurtainAndDefersInputAndLoginUntilMenuIsPrepared",
+    "duration": "0.824786",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 30.0043506410002
+    }
+  },
+  {
+    "run": "check-5",
+    "case": "TumbangPreso.PlayTests.OwnerMenuEditsTests.FailedBootMenuOffersOneFocusablePointerExitWithoutReleasingTheCurtain",
+    "duration": "0.215513",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 30.003408935997868
+    }
+  }
+]

@@ -1,0 +1,14 @@
+{
+    "passed": false,
+    "error": "System.InvalidOperationException: Expected UI state did not arrive. Scene=MatchSetup; controls=CloseChatButton,ChatInput,ChatHistoryButton,ShopButton,NamePlate,EarnButton,HeroButton,LoadoutButton,AvatarButton,PlayButton,ModeCard,MenuButton,TaskButton; preview=False; roundActive=False\r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<WaitFor>d__83.MoveNext () [0x0012f] in <9cef61934459458cabc509b6e39f607c>:0 \r\n  at TumbangPreso.Diagnostics.OwnerUiPlayerReview+<Guard>d__76.MoveNext () [0x00054] in <9cef61934459458cabc509b6e39f607c>:0 ",
+    "stages": [
+        "cold loading and login music gate",
+        "loading and login silent for 1416 observed frames",
+        "Terms agreement visibly checks the signup box",
+        "Both supplied login layouts, Terms and Guest recorded",
+        "menu music begins on revealed home",
+        "current title cloud/shadow/dust motion verified",
+        "reduced current title layers verified"
+    ],
+    "frameWindows": []
+}

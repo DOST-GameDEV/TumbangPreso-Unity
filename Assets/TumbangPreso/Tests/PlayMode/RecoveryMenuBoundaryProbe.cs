@@ -15,8 +15,18 @@ namespace TumbangPreso.PlayTests
 {
     public sealed class RecoveryMenuBoundaryProbe
     {
-        [UnitySetUp]public IEnumerator Before()=>PlayModeWorld.Reset();
-        [UnityTearDown]public IEnumerator After()=>PlayModeWorld.Reset();
+        private int _qualityBefore,_mipBefore;
+        [UnitySetUp] public IEnumerator Before()
+        {
+            _qualityBefore=QualitySettings.GetQualityLevel();_mipBefore=QualitySettings.globalTextureMipmapLimit;
+            QualitySettings.SetQualityLevel(0,true);QualitySettings.globalTextureMipmapLimit=2;
+            yield return PlayModeWorld.Reset();
+        }
+        [UnityTearDown] public IEnumerator After()
+        {
+            yield return PlayModeWorld.Reset();QualitySettings.SetQualityLevel(_qualityBefore,true);
+            QualitySettings.globalTextureMipmapLimit=_mipBefore;
+        }
         [UnityTest,Timeout(60000)]
         public IEnumerator MenuResumeSubmitDoesNotAlsoMashRecovery()
         {
@@ -51,7 +61,7 @@ namespace TumbangPreso.PlayTests
                 yield return new WaitForSeconds(.15f);
                 InputSystem.QueueStateEvent(pad,new GamepadState().WithButton(GamepadButton.South));
                 yield return null;yield return new WaitForFixedUpdate();
-                Assert.AreEqual(1,who.MashPresses,"Fresh gameplay input after release must still recover");
+                Assert.AreEqual(0,who.MashPresses,"Fresh gameplay input must not revive retired recovery");
             }
             finally
             {
@@ -104,7 +114,7 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest,Timeout(60000)]
-        public IEnumerator CustomJumpBindingStillRecoversAfterMenuRelease()
+        public IEnumerator CustomJumpBindingWorksNormallyWithoutMashAfterMenuRelease()
         {
             var settings=InputSystem.settings;var background=settings.backgroundBehavior;var editor=settings.editorInputBehaviorInPlayMode;
             settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
@@ -132,7 +142,12 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(0,who.MashPresses,"Configured key held across menu close must stay consumed");
                 InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;yield return new WaitForFixedUpdate();
                 InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.J));yield return null;yield return new WaitForFixedUpdate();
-                Assert.AreEqual(1,who.MashPresses,"A fresh configured key must recover once");
+                Assert.AreEqual(0,who.MashPresses,"A custom key must not shorten a timed trip");
+                who.ClearTrip();who.Intent.Clear();
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;
+                for(int i=0;i<5;i++)yield return new WaitForFixedUpdate();
+                InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.J));yield return null;yield return new WaitForFixedUpdate();
+                Assert.Greater(who.Velocity.y,0,"The custom binding must still perform ordinary Jump after recovery");
             }
             finally
             {

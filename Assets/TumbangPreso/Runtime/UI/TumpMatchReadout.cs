@@ -370,15 +370,14 @@ namespace TumbangPreso.UI
             var carrier = local.GetComponent<Carrier>(); var round = GameServices.Round;
             if (local.IsTripped)
             {
-                _prompt.text = local.CanMashUp ? Hud.MashVerb("Jump") + (local.IsEdgeRecovering?" to climb":" to get up") : local.IsEdgeRecovering?"Climbing up":"Getting up";
-                float ratio = local.MashRemoved / Mathf.Max(.01f, local.TripTotal - Balance.MinTripDown); Progress(ratio);
-                if (local.CanMashUp && Hud.OnTouch) TouchHud.Emphasise(Verb.Jump); return;
+                _prompt.text = local.IsEdgeRecovering ? "Climbing up" : "Getting up";
+                Progress(1-Mathf.Clamp01(local.TripLeft/Mathf.Max(.01f,local.TripTotal)));
+                return;
             }
             if (local.StunElement != StunElement.None)
             {
-                _prompt.text = local.CanMashOutOfStun ? Visual.StunCoat.For(local.StunElement).Verb + " " + Hud.PressCue("Jump") : "Breaking free";
-                _context.text = local.StunMashPresses + " / " + local.StunBreakPresses + " presses";
-                if (local.CanMashOutOfStun && Hud.OnTouch) TouchHud.Emphasise(Verb.Jump); return;
+                _prompt.text = local.IsFrozen ? "Frozen" : "Stunned";
+                return;
             }
             // The native HUD bypasses Hud.UpdateInteractPrompt, so recovery from
             // Paete's roots must be represented on this live action surface too.

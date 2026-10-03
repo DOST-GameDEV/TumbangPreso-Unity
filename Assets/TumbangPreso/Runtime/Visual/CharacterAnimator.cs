@@ -209,6 +209,8 @@ namespace TumbangPreso.Visual
             { "hero-zack-charge", new[] { "hero-zack-charge", "emote-no", "attack-melee-right" } },
             { "hero-zack-summon", new[] { "hero-zack-summon", "holding-both-shoot", Jump } },
 
+            { "hero-dante-boulder", new[] { "hero-dante-boulder" } },
+            { "hero-dante-bastion", new[] { "hero-dante-bastion" } },
             { "hero-dante-stomp", new[] { "hero-dante-stomp", PickUp, "attack-kick-right" } },
             { "hero-dante-roar", new[] { "hero-dante-roar", "attack-melee-left", "emote-yes" } },
             { "hero-dante-fissure", new[] { "hero-dante-fissure", "attack-kick-left", PickUp } },

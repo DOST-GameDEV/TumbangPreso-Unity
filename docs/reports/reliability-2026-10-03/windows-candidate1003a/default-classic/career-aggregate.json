@@ -1,0 +1,50 @@
+{
+  "passed": true,
+  "roles": {
+    "host": {
+      "fileExists": true,
+      "historyCount": 1,
+      "queueCount": 1,
+      "witnessCount": 1,
+      "localHumanLines": 1,
+      "online": true,
+      "rounds": 8,
+      "mode": "Classic",
+      "scores": [
+        250,
+        240,
+        3350,
+        3430
+      ],
+      "actualScoresMatch": true,
+      "queueMatchesHistory": true,
+      "abandonMarkerCleared": true,
+      "appliedMatchCount": 1,
+      "passed": true
+    },
+    "client": {
+      "fileExists": true,
+      "historyCount": 1,
+      "queueCount": 1,
+      "witnessCount": 1,
+      "localHumanLines": 1,
+      "online": true,
+      "rounds": 8,
+      "mode": "Classic",
+      "scores": [
+        250,
+        240,
+        3350,
+        3430
+      ],
+      "actualScoresMatch": true,
+      "queueMatchesHistory": true,
+      "abandonMarkerCleared": true,
+      "appliedMatchCount": 1,
+      "passed": true
+    }
+  },
+  "sameSavedMatch": true,
+  "sameSavedScores": true,
+  "scope": "After terminal exits, compare task-owned fresh Classic8 career files and actual peer scores; private account IDs, handles, tokens and profile contents excluded."
+}

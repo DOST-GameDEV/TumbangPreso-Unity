@@ -149,16 +149,17 @@ namespace TumbangPreso.Diagnostics
                 Keys(Key.Space); yield return new WaitForSecondsRealtime(.15f);
                 if (who.transform.position.y < grounded + .1f) throw new InvalidOperationException("Space did not jump");
                 Keys(); yield return new WaitForSecondsRealtime(.8f);
-                Stage(label + " direct get-up presses");
+                Stage(label + " timed get-up ignores repeated Space");
                 who.ApplyTrip();
-                int maxMash = 0;
+                int maxMash = 0; float recoveryBegan = Time.time, authoredDuration = who.TripTotal;
                 for (int i = 0; i < 24 && who.IsTripped; i++)
                 {
                     Keys(Key.Space); yield return new WaitForSecondsRealtime(.08f);
                     maxMash = Mathf.Max(maxMash, who.MashPresses);
                     Keys(); yield return new WaitForSecondsRealtime(.09f);
                 }
-                if (who.IsTripped || maxMash == 0) throw new InvalidOperationException("Fresh Space presses did not complete get-up");
+                if (who.IsTripped || maxMash != 0 || Time.time-recoveryBegan < authoredDuration-.1f)
+                    throw new InvalidOperationException("Repeated Space changed timed recovery or its timer did not expire");
                 yield return Shot(label + "-direct-recovered");
 
                 Place(new Vector3(0, .12f, -12), Vector3.forward);

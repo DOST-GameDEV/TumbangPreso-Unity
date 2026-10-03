@@ -36,6 +36,11 @@ namespace TumbangPreso.UI
             var round=GameServices.Round;
             if(local==null||spectating||round==null||!round.RoundActive||ReadyWindow||ScreenTakeover.AnyOpen)
             {_warningRoot.gameObject.SetActive(false);_warningUntil=0;return;}
+            bool hiddenPracticeCan=GuidedTraining.HasHiddenPracticeCan(local,round.Lata);
+            // The same offline exception already permits the throw. Do not report a
+            // barrier refusal for that hidden target, including a previously cached one.
+            if(hiddenPracticeCan&&_recentWarning=="CANNOT THROW - WAIT FOR CAN BARRIER")
+            {_recentWarning=null;_warningUntil=0;}
             string text=null;
             if(local.IsDefender&&round.IsTayaCampWarningActive)
                 text=round.IsTayaCampPenaltyActive&&local.CanAct()
@@ -55,7 +60,7 @@ namespace TumbangPreso.UI
                         if(Confinement.IsInsideBox(local.transform.position.x,local.transform.position.z,Balance.ConfinementRadius))
                             refusal="CANNOT THROW - MUST BE OUTSIDE DANGER ZONE";
                         else if(can!=null&&!can.IsUpright)refusal="CANNOT THROW - CAN MUST BE UPRIGHT FIRST";
-                        else if(can!=null&&can.IsProtected)refusal="CANNOT THROW - WAIT FOR CAN BARRIER";
+                        else if(can!=null&&can.IsProtected&&!hiddenPracticeCan)refusal="CANNOT THROW - WAIT FOR CAN BARRIER";
                     }
                 }
                 if(refusal==null&&local.IsDefender&&local.Intent.Pressed(Verb.Lunge)&&can!=null&&!can.IsUpright)

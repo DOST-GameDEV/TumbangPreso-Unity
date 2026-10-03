@@ -1,5 +1,9 @@
 # Documentation: Start Here
 
+LAN participant identity and missing client result: [native boundary evidence](reports/reliability-2026-10-03/lan-record-identity/README.md).
+
+HOME pinned-rules preservation: [native causal and control evidence](reports/reliability-2026-10-03/hub-pinned-rules/README.md).
+
 Current Windows integration build and normal-lobby mode/client-save findings: [1002m evidence](reports/reliability-2026-10-02/windows-candidate1002m/README.md).
 
 Slide prediction and retrieval inventory optimization: [native timing and behavior evidence](reports/reliability-2026-10-02/slide-inventory/README.md).
@@ -132,3 +136,19 @@ Amihan presentation: Airburst and cutscene, Drift, her light body and floating r
 Cheska held Frostbite surface cue and low-memory qualification: [October 2 result](reports/cheska-frostbite-load-2026-10-02/result.md).
 
 Distinct Cheska held-shoe cast: [native review and preservation proof](reports/cheska-frostbite-motion-2026-10-02/README.md).
+
+Dante Boulder weight-bearing preparation: [native review and preserved assets](reports/dante-boulder-motion-2026-10-02/README.md).
+
+- [Boulder loaded-shoe surface and lifecycle](reports/dante-boulder-load-2026-10-02/README.md): affinity-bound world/owner inlay, retained baseline and serial checks.
+
+- [Bastion forward-brace motion](reports/dante-bastion-motion-2026-10-02/README.md): distinct body/FPP action with existing field behavior preserved.
+
+- [Attacking tutorial barrier warning](reports/tutorial-barrier-warning-2026-10-02/README.md): one actual-route case, real throw and visible-warning control.
+
+- [Tutorial Block attacker placement](reports/tutorial-block-placement-2026-10-02/README.md): behind-centre spawn, genuine misses and player interception.
+
+- [Latest3.5second Next Round timing](reports/round-timer-35-2026-10-02/README.md): shared ordinary deadline and unchanged10second halftime.
+
+Timed status recovery without mashing: [native evidence](reports/timed-recovery-2026-10-02/README.md).
+
+Studio intro before loading: [native evidence](reports/studio-intro-2026-10-02/README.md).

@@ -30,6 +30,17 @@ class CompletedTournamentEvidenceTests(unittest.TestCase):
         self.report['seats'][1]['origin'] = 'Bot'
         self.assertTrue(validate('host', self.report, self.text, self.log, 132))
 
+    def test_hero_default_requires_its_actual_mode_and_packaged_default_wire(self):
+        wire = '1|0|8|90|0|3|0|1|0|0'
+        self.report['mode'] = 'HeroStrike'
+        text = self.text.replace('tournament ruleset : OK', 'tournament ruleset : Classic required')
+        text += 'selected rules : ' + wire + '\n'
+        self.assertEqual([], validate('host', self.report, text, self.log, 132, 'HeroStrike', wire))
+        self.assertTrue(validate('host', self.report, text, self.log, 132, 'Classic', wire))
+        self.assertTrue(validate('host', self.report, text.replace(wire, '1|0|1|30|0|3|0|1|0|1'),
+                                 self.log, 132, 'HeroStrike', wire))
+        self.assertTrue(validate('host', self.report, self.text, self.log, 132, 'HeroStrike', wire))
+
 
 if __name__ == '__main__':
     unittest.main()

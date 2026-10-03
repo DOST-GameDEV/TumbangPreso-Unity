@@ -234,6 +234,7 @@ namespace TumbangPreso.Diagnostics
             sb.AppendLine($"local slot      : {NetAuthority.LocalSlot}");
             sb.AppendLine($"protocol        : {Net.NetSession.ProtocolVersion}");
             sb.AppendLine($"mode            : {UI.SceneFlow.SelectedMode}");
+            sb.AppendLine($"selected rules  : {Core.CustomGameRules.ToWire(UI.SceneFlow.SelectedRules)}");
             sb.AppendLine($"map             : {UnityEngine.SceneManagement.SceneManager.GetActiveScene().name}");
             sb.AppendLine($"sampled         : {_elapsed:F1} s");
             sb.AppendLine($"graphics        : {Settings.GraphicsProfiles.Of(Settings.GraphicsProfiles.Current).Label}; {Screen.width}x{Screen.height}; vsync={QualitySettings.vSyncCount}; target={Application.targetFrameRate}");

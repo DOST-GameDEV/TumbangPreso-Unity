@@ -17,6 +17,43 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### TIMED-RECOVERY-1002: retire mash-to-escape
+
+- [x] Frozen/stuns, trips and edge recovery use their authored clocks. Humans
+  and bots cannot shorten them with presses. Live HUD has state/timed progress;
+  ordinary jump and hold-Interact roots remain. Fifteen focused native cases pass
+  separately. Protocol134; actual peers/player/human remain separate.
+  [Evidence](reports/timed-recovery-2026-10-02/README.md).
+  Diagnostic contracts now require timed expiry too;13 evaluator tests and native
+  compilation pass. [Limits](reports/timed-recovery-2026-10-02/diagnostics.md).
+- [x] Same Feedback row's studio intro now precedes loading, with no skip text
+  and any-input white fade. Five isolated native cases pass; original MP4 retained
+  alongside Linux-compatible VP8. Windows1003c/source8ef02cf7 now qualifies
+  actual visible intro and normal startup/current HOME routes. The separate
+  Linux copied-cache binding gap and physical-device skip checks remain.
+  [Evidence](reports/studio-intro-2026-10-02/README.md).
+
+### ROUND-TIMER-35-1002: latest ordinary break duration
+
+- [x] Next Round is3.5seconds per latest Feedback; halftime remains10s and keeps
+  replay/fallback. Three distinct native cases pass separately: shared schedule,
+  real-input/frozen-frame behavior and late-client observation. Protocol133
+  requires matching rebuilt clients; new actual peers/player/human pending.
+  [Evidence](reports/round-timer-35-2026-10-02/README.md).
+
+
+### TUTORIAL-BARRIER-WARNING-1002: truthful attacking practice warning
+
+- [x] Suppress and clear the false barrier refusal only for the existing offline
+  hidden-practice-can exception. Native actual-route1/1 passes with visible-can
+  control, cached-message removal, actual charge/release and another warning.
+  Compilation/runtime split retained after memory stop; player/human pending.
+  [Evidence](reports/tutorial-barrier-warning-2026-10-02/README.md).
+- [x] Latest Block placement request: attacker now behind the middle spawn,
+  aiming along a near-can miss lane. Native1/1 measures three genuine misses
+  and one real student block. [Evidence](reports/tutorial-block-placement-2026-10-02/README.md).
+
+
 ### RAFI-BAHA-BACKWASH-1002: qualified flood and retrieval passive
 
 Baha now has the0.8second warning, bounded court-crossing front,3m loose-shoe
@@ -92,6 +129,9 @@ contact and protocol unchanged; no SFX. Human approval and peers remain open.
   bodies reviewed and kept. `FilmHerSkillsInAMatch` now fails at Featherfall: its
   two Drifts carry her, holding a slipper, inside the box where the retrieval rule
   refuses flight. Re-stage it, then baseline their floor anchors.
+- [ ] AMIHAN-AIRBURST-V3 (owner Oct3: revamp cutscene, ult VFX and SFX, lighter):
+  direction in [airburst-v3](reports/amihan-presentation-2026-10-02/airburst-v3.md);
+  unbuildable WIP on branch `amihan-airburst-v3-wip`. Not shipped.
 
 ### PLAYER-RING-RADIUS-1002: larger hollow circle
 
@@ -142,10 +182,12 @@ Reconcile existing kit migrations and protect finalized Paete/Phaister direction
 
 ### COMPETITION-READY-1002: active engineering and bug-fixing lane
 
-Latest source50=c788c5a08,49=4f69e0af2,48=55f2a5f79. Current1002l contains50 fixes;
-build24943/artifactPASS and default-renderer peer80018 FIRST PASS/RX6600/D3D11/
-normalexits/endHOME+publiccoldrejoin/frozen4 actors/restored profiles+inputs/free.
-[Current artifact/evidence](reports/reliability-2026-10-02/windows-candidate1002l/README.md).
+Current1003d source83f54e961/protocol134 includes rule/replay/chat/result/LAN/HOME
+fixes and contributor startup/recovery changes. First full default Hero8 passes
+exact packaged rules and both savedcareers; fullClassic133 passed separately on
+1003a. Native reconnect guard is qualified but postdates1003d. Current allmap,
+physical-input/device/WAN/performance-cause and recovery-specific gates remain open.
+[Current artifact/evidence](reports/reliability-2026-10-03/windows-candidate1003d/README.md).
 The goal remains ACTIVE. Root is working solo this continuation;
 the one authorized helper completed its latest bounded work, earlier agents retired.
 
@@ -348,18 +390,78 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   One original fixture timeout and one bounded clock/provider repair retained.
   No player FPS or historical stall attribution claim.
   [Evidence](reports/reliability-2026-10-02/slide-inventory/README.md).
-- [ ] PINNED-HOME-MODE-1002: normal LAN lobby refresh replaces pinned Classic
+- [x] PINNED-HOME-MODE-1002: passive HOME choice now preserves pinned rules;
+  explicit card/owned-hero choices retain their override behavior. Native original
+  two causal failures/two controls; candidate4/4 first pass, no fixture repair.
+  Packaged normal-lobby Classic8 now passes on1003a/protocol133: natural end,
+  matching scores and both saved histories. Explicit choices retain native controls.
+  [Full match proof](reports/reliability-2026-10-03/windows-candidate1003a/README.md).
+  [Fix evidence](reports/reliability-2026-10-03/hub-pinned-rules/README.md).
+  Original finding: normal LAN lobby refresh replaces pinned Classic
   tournament mode with the saved Hero card. Current1002m actual eight-round run
   ends naturally in Hero on both peers despite explicit tournament launch.
   Preserve pins on passive refresh while retaining explicit mode/hero selection.
   [Failure evidence](reports/reliability-2026-10-02/windows-candidate1002m/README.md).
-- [ ] CLIENT-CAREER-DELIVERY-1002: same normal-lobby match stores one online
+- [x] CLIENT-CAREER-DELIVERY-1002: same normal-lobby match stores one online
   result/queue entry on host; client has no career.json after clean exit.
   Trace record delivery, local identity and save eligibility before attributing
   the failure or patching. No live-service or unchanged full-match retry.
   [Failure evidence](reports/reliability-2026-10-02/windows-candidate1002m/README.md).
+  Source boundary fix now qualifies4/4 native checks after two causal failures:
+  LAN cached profile identity enters hello, survives admission and repeated
+  introduction; handle trust and Relay signed-only behavior preserved.
+  Actual Windows LAN acceptance now passes on current1003a: both fresh profiles
+  save one history/queue/witness, same online Hero1-round match and scores, each
+  local identity has one nonbot line. Client cold rejoin receives record again
+  without duplication; both normal exits/preservation pass. One offline-owner
+  aggregate assumption repaired on the same run, no native retry.
+  [Actual save proof](reports/reliability-2026-10-03/windows-candidate1003a/README.md).
+  [Source evidence](reports/reliability-2026-10-03/lan-record-identity/README.md).
+- [x] MATCH-RECORD-PACKET-1003: complete string framing and JSON refusal prevent
+  malformed result callbacks from escaping or replacing the current result.
+  Native original two causal/two controls; candidate FIRST4/4, no repairs.
+  Valid Unicode/normalisation and sender/host-loopback controls preserved.
+  [Evidence](reports/reliability-2026-10-03/match-record-packet/README.md).
+- [x] CHAT-PACKET-FRAMING-1003: bounded complete string framing protects host
+  and client chat callbacks, rate allowance and event state. Corrected original
+  two causals/seven controls; corrected candidate9/9 includes all result cases.
+  One counter fixture repair and one unshipped guard-placement regression retained.
+  [Evidence](reports/reliability-2026-10-03/chat-packet/README.md).
+- [x] CURRENT-MENU-REVIEW-1003: corrected native134 Windows normal boot passes
+  after one retired-route diagnostic repair: observed playing studio picture,
+  login/Terms/Guest, title/music/motion, currentHOME, Settings/Credits and Mode/Back.
+  First actual local Unicode chat exchange and cold completed record/save pair
+  also pass on same1003c artifact. Input/profile/Runtime preservation and exits pass.
+  [Current artifact/acceptance](reports/reliability-2026-10-03/windows-candidate1003c/README.md).
+- [x] REPLAY-PROP-BINDING-COST-1003: reuse replay-prop scratch storage and direct
+  lookup while preserving live query/track/window lifecycle. Same four native
+  cases pass original/candidate; warmed binding median3.69 to3.16us (~14.33% lower
+  in fixture). No repairs/retries. Zero-returning allocation counter is uninformative,
+  not a measured allocation delta or FPS/stall attribution.
+  [Evidence](reports/reliability-2026-10-03/replay-prop-binding/README.md).
+- [x] LOBBY-RULE-PACKET-1003: refuse incomplete/overflow/trailing rule frames
+  and wide sender aliasing before leader configuration. Native original three
+  causals/three controls; candidate FIRST6/6, no repairs/retries. Supported custom
+  wire/events and role/leader/loopback controls preserved.
+  [Evidence](reports/reliability-2026-10-03/lobby-rule-packet/README.md).
+- [x] REBIND-SEAT-PACKET-1003: validate whole header/slots/boolean/name before
+  local ownership change. Original four causals/two controls; candidate FIRST6/6,
+  no repairs/retries. Valid spectator/free-roam and duplicates preserved. Native
+  ownership/event boundary; packaged live-body restoration remains separate.
+  [Evidence](reports/reliability-2026-10-03/rebind-seat-packet/README.md).
+- [x] ALL-MAP-AVAILABILITY-1003 (stagedClassic rendering): corrected1003e probe
+  covers all6registered maps*3profiles=18rows, positivecounters/24captures; allsix
+  Balancedworldimages inspected. ONE oldEnvColourPass lookup repair; raw Ilalim
+  failure retained. Exits/input/Runtime preservation pass. Combat/Hero interactions,
+  otherdevices/physical/WAN remain separate; no art/style/asset regeneration.
+  [Evidence](reports/reliability-2026-10-03/map-availability/README.md).
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
+- [x] DEFAULT-HERO-FULL-MATCH-1003: current1341003d first actual LAN8x90 Hero
+  passes exact packaged default wire, naturalend/equalscore/twohumanorigins and
+  both own savedcareers1history/queue/witness/appliedID. Normalexits/preservation
+  pass; physical input/allmaps/WAN/recovery contracts remain separate.
+  [Evidence](reports/reliability-2026-10-03/windows-candidate1003d/README.md).
 - [ ] Refresh coherent Windows candidate and exercise full tournament match flow
   in both shipping modes, current remade maps, failure/recovery and visual availability.
   Distinguish actual local-peer evidence from physical devices and WAN qualification.
@@ -645,6 +747,30 @@ eight distinct native successes in total. Implemented77bf73e3. Dedicated body,
 FPP, glyph/wake/audio and actual matching peers remain open.
 [Plan](reports/hero-quality-2026-10-01/skim-implementation.md) and
 [evidence](reports/hero-quality-2026-10-01/skim-checks/README.md).
+
+### DANTE-BASTION-MOTION-1002: distinct following-field brace
+
+- [x] Authored body/FPP forward set replaces the personal Unstoppable roar.
+  Actual defender input, duration/cooldown, following transform and round reset
+  pass1/1;77 paired native frames reviewed. All37 prior clips and model data
+  retained. Field art/player/peer/SFX/human approval remain separate.
+  [Review and limits](reports/dante-bastion-motion-2026-10-02/README.md).
+
+### DANTE-BOULDER-LOAD-1002: visible Concussed shoe payload
+
+- [x] Surface-bound stone inlay on the real world and owner slipper. Four fresh
+  serial native cases pass: Normal control, actual activation/drop/regrab/clear,
+  replica-set affinity/disable, owner source replacement and repeated state.
+  Authored mesh/materials and gameplay unchanged. Full-map/peer/performance/SFX
+  and human approval remain open. [Evidence](reports/dante-boulder-load-2026-10-02/README.md).
+
+### DANTE-BOULDER-MOTION-1002: weight-bearing held-shoe preparation
+
+- [x] Boulder gets its own body/FPP lift, weight catch and steady recovery.
+  Actual-input1/1 passes with78 paired frames; Concussed affinity and the same
+  held shoe are retained. All36 earlier clips and model data preserved. No new
+  player/peer, SFX, movement-combination or human acceptance claim.
+  [Review and scope](reports/dante-boulder-motion-2026-10-02/README.md).
 
 ### CHESKA-FROSTBITE-MOTION-1002: distinct held-shoe cast
 

@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "profile": "startup-menu1003c-32dc1c7507",
+  "sourceCommit": "8ef02cf75d4201e7a1bc839270a5af3309421d3d",
+  "runtimeSha256": "557bf00ce24a0e9203f9d86bf2e2a98d7f1245f2fe7efb712ebadae557f8d295",
+  "scope": "Existing native menu-only route on fresh task-owned profile; no dedicated-session/lobby boot bypass, signup submission, SDK login or physical-input claim.",
+  "admission": {
+    "availableMb": 8084,
+    "activeJobsBefore": 0,
+    "acquiredUtc": "2026-10-02T20:33:11Z"
+  },
+  "exitCode": 0,
+  "reviewPassed": true,
+  "inputRestored": true,
+  "runtimeUnchanged": true
+}

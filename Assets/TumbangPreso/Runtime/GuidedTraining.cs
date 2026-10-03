@@ -474,11 +474,15 @@ namespace TumbangPreso
         private void PrepareBlockExercise()
         {
             PrepareMovingAttacker(); if (_dummy == null) return;
-            // A fixed lane crosses the middle beside the can rather than targeting it.
-            _dummy.Teleport(new Vector3(2, 0, Confinement.AttackerSpawnRing()));
-            Face(_dummy, new Vector3(2, 0, -3));
+            // Start behind the middle attacker mark, looking down a near-can lane.
+            // Its lateral clearance preserves a real miss, not an invulnerable can.
+            _dummy.Teleport(new Vector3(0, 0, Confinement.AttackerSpawnRing()+1f));
+            Face(_dummy, BlockExerciseTarget());
             _dummy.Intent.Parked = true; _marker?.Bind(null);
         }
+
+        private Vector3 BlockExerciseTarget()
+            => _lata.transform.position + new Vector3(Mathf.Max(1f,_lata.HitWindow+.5f),.25f,0);
 
         private void PrepareAbilityGround(bool preserveExisting = false)
         {
@@ -568,7 +572,7 @@ namespace TumbangPreso
                 {
                     _nextDummyThrow = Time.time + 2.5f;
                     _dummy.GetComponent<Carrier>()?.HostThrowAt(_dummy.transform.position + Vector3.up * .9f,
-                        new Vector3(2, .25f, 0), 1f);
+                        BlockExerciseTarget(), 1f);
                 }
                 return;
             }

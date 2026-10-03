@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 16:22:09Z" end-time="2026-10-02 16:22:10Z" duration="0.3530999">
+  <test-suite type="TestSuite" id="2639" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1334" result="Failed" site="Child" start-time="2026-10-02 16:22:09Z" end-time="2026-10-02 16:22:10Z" duration="0.353100" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2633" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1334" result="Failed" site="Child" start-time="2026-10-02 16:22:09Z" end-time="2026-10-02 16:22:10Z" duration="0.342519" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="127437" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2634" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1334" result="Failed" site="Child" start-time="2026-10-02 16:22:09Z" end-time="2026-10-02 16:22:10Z" duration="0.338798" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2635" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1334" result="Failed" site="Child" start-time="2026-10-02 16:22:09Z" end-time="2026-10-02 16:22:10Z" duration="0.335415" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1340" name="DanteBoulderLoadTests" fullname="TumbangPreso.PlayTests.DanteBoulderLoadTests" classname="TumbangPreso.PlayTests.DanteBoulderLoadTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-02 16:22:09Z" end-time="2026-10-02 16:22:10Z" duration="0.310845" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1342" name="AcceptedLoadSurvivesDropAndRetiresOnClear" fullname="TumbangPreso.PlayTests.DanteBoulderLoadTests.AcceptedLoadSurvivesDropAndRetiresOnClear" methodname="AcceptedLoadSurvivesDropAndRetiresOnClear" classname="TumbangPreso.PlayTests.DanteBoulderLoadTests" runstate="Runnable" seed="728875652" result="Failed" start-time="2026-10-02 16:22:09Z" end-time="2026-10-02 16:22:10Z" duration="0.298210" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Accepted Boulder has no visible shoe payload cue.
+  Expected: not null
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DanteBoulderLoadTests+<AcceptedLoadSurvivesDropAndRetiresOnClear>d__17.MoveNext () [0x00111] in /workspace/scratch/0ed9da4aed7f/tump/Assets/TumbangPreso/Tests/PlayMode/DanteBoulderLoadTests.cs:61
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-X1NIqZ/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
