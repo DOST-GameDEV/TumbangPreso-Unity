@@ -7,6 +7,9 @@
 2. Choose the task's route in [docs/README](docs/README.md). Read its live method
    and the relevant [working rules](docs/WORKING_RULES.md), not every historical report.
 3. Inspect actual source, branch, dirty state and evidence before changing anything.
+4. For competition work, read [the coordination directives](docs/COMPETITION_COORDINATION.md)
+   and the short active ledger before resuming. These owner directives persist
+   through compaction and supersede stale chat-coordination bans.
 
 New owner instructions and current adopted designs override old schedules,
 archived prompts and earlier scope statements. TODO is the ONLY work-status queue.

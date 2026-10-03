@@ -14,7 +14,7 @@ Coordinate active work, publication, LAN and online tests without duplicating
 its coherent task. Never replace current work with a guessed assignment.
 
 MAIN C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks,
-last observed HEAD 5e74518c6. Preserve concurrent writers and private Nemu/Rafi
+last observed published HEAD6317f6b04 before this SafeStore batch. Preserve concurrent writers and private Nemu/Rafi
 arms, two protected UI PNG metadata files, HeroHazards Supernova, QualitySettings,
 private overlap reports and deleted owner_rock_edges_paintover.webp. No reset,
 stash, clean, force-push or paid services. Fetch/check divergence before pushing.
@@ -55,6 +55,30 @@ Root local heavy slot free. Next: publish exact source/tests/report batch and
 review incoming laptop task/ownership reply. Worker proposes MatchPoseHistory.cs
 and MatchReplayArchive.cs same-round new-match isolation; laptop conflict query
 sent before joint source work. Preserve within-match history and retained clips.
+
+Replay match-identity6 now qualified: original2causal/4control, first
+candidate6/6, independent review PASS, both jobs terminal/restored/free.
+Root local native total44 unique cases this resumption:25 priorpending+13refresh+6replay.
+SafeStore6 now qualified: original4causal/2control, first candidate6/6,
+independent review PASS, both guards terminal/restored/lease free. Exact portable
+file I/O branch ran on Windows tempfiles; no hardware/crash claim. Root local
+unique native total50 this resumption. Local release worker slot free, all prior
+jobs terminal; scoped validation overlays retained separately from shipping.
+Worker next reservation SpectatorCamera.cs pixel replay match boundary; no edits
+to frozen replay/archive/SafeStore inputs. Reviewer owns SafeStore source check.
+
+Owner wants both sides autonomous, but joint network requests take priority:
+checkpoint/finish coherent unit, coordinate LAN/online, then resume saved task.
+Persistent directives docs/COMPETITION_COORDINATION.md linked by AGENTS. User-wide
+AGENTS and authorized memory extension record revocation of stale chat ban.
+Laptop confirmed protocol and current ownership. It is integrating qualified
+hero13/58PCnative/UIfixture anchors and operator2, then will send exact ASTRAref.
+Root will build one shared Windows1003g artifact; laptop is NOT building. New
+isolated worktree C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003g
+created at948398fa2, cache empty, no Unity job yet; idle-cache copy can proceed now. Fast-forward it normally to
+agreed integration ref, copy idle matching cache independently, freeze inputs,
+one build, verify exactartifact and transfer before joint test. Do not mutate
+old release worker while its store test runs or copy its live Library.
 
 LAN pair is not active. Older1003e artifact is source14dfe9e41, protocol134,
 recording13,258files/2551734579bytes. Runtime501f0a02db575003c48910f08bdd0221810031c4d30aaf499f4727bbeca0c806.
