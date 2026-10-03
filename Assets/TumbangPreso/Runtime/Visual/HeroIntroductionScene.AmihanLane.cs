@@ -46,7 +46,7 @@ namespace TumbangPreso.Visual
             public Quaternion[] RestRot, TmpRot;
             public Vector3[] RestPos, TmpPos;
             public AnimationClip Brace;
-            public Transform ArmLeft, ArmRight, Head;
+            public Transform ArmLeft, ArmRight, Head, Root, Torso, LegLeft, LegRight;
             public WindVfx.Motif Breath;
         }
 
@@ -121,6 +121,10 @@ namespace TumbangPreso.Visual
                 if (c.Bones[i].name == "arm-left") c.ArmLeft = c.Bones[i];
                 else if (c.Bones[i].name == "arm-right") c.ArmRight = c.Bones[i];
                 else if (c.Bones[i].name == "head") c.Head = c.Bones[i];
+                else if (c.Bones[i].name == "root") c.Root = c.Bones[i];
+                else if (c.Bones[i].name == "torso") c.Torso = c.Bones[i];
+                else if (c.Bones[i].name == "leg-left") c.LegLeft = c.Bones[i];
+                else if (c.Bones[i].name == "leg-right") c.LegRight = c.Bones[i];
             }
             if (inside)
             {
@@ -193,9 +197,9 @@ namespace TumbangPreso.Visual
             {
                 float speed = Core.AmihanRules.StormSurgeSpeed, lift = Core.AmihanRules.StormSurgeLift;
                 feet += c.Blow * speed * flown + Vector3.up * Mathf.Max(0f, lift * flown - 10f * flown * flown);
-                yaw = Mathf.Atan2(-c.Blow.x, -c.Blow.z) * Mathf.Rad2Deg + 620f * flown;
-                lean = -Mathf.Lerp(0f, 38f, Ease(0f, .18f, flown));
-                if (c.Brace != null) AlBlend(c, c.Brace, .12f, 1f);
+                // Facing her as the wind takes them; the tumble (`WindTumble.Pose`, the same as in play) does the rest.
+                yaw = Mathf.Atan2(-c.Blow.x, -c.Blow.z) * Mathf.Rad2Deg;
+                lean = 0f;
             }
             var turn = Quaternion.Euler(0f, yaw, 0f);
             // The lean pivots at the feet, toward the way they face (into the wind).
@@ -204,6 +208,14 @@ namespace TumbangPreso.Visual
             var tilt = turn * Quaternion.Euler(lean, 0f, buffet);
             c.Model.localPosition = feet + tilt * c.ModelOffset;
             c.Model.localRotation = tilt * c.ModelTilt;
+            if (flown > 0f && c.Root != null)
+            {
+                // The way the wind carries them, in the root bone's parent's frame.
+                var parent = c.Root.parent != null ? c.Root.parent : c.Model;
+                var travel = parent.InverseTransformDirection(_root.transform.TransformDirection(c.Blow));
+                float amount = Ease(0f, .08f, flown);
+                WindTumble.Pose(c.Root, c.Torso, c.Head, c.ArmLeft, c.ArmRight, c.LegLeft, c.LegRight, travel, amount, flown, 540f * flown, _reducedEffects);
+            }
         }
 
         /// <summary>Lay <paramref name="clip"/> at <paramref name="time"/> over the current pose by <paramref name="weight"/>.</summary>

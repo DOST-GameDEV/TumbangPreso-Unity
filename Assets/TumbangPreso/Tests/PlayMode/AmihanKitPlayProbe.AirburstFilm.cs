@@ -30,7 +30,8 @@ namespace TumbangPreso.PlayTests
         {
             var round = GameServices.Round;
             var can = Flat(round.Lata.transform.position);
-            var origin = can + new Vector3(0, .12f, -8.5f);
+            // v3.2: 2 m short of the can, so the court has room behind her for a player beyond the 10 m ring.
+            var origin = can + new Vector3(0, .12f, -2.0f);
             var caster = Amihan(GameLaunch.SoloSeat, origin);
             caster.transform.rotation = Quaternion.identity;
             var stage = new AirburstStage { Caster = caster, Origin = origin, Forward = Vector3.forward };
@@ -53,7 +54,8 @@ namespace TumbangPreso.PlayTests
             }
             // Inside: 5.5 m down the lane, 1.2 m off its axis (12 degrees). Outside: 62 degrees off the axis.
             Put(stage.Victim, new Vector3(1.2f, 0, 5.5f));
-            Put(stage.Outsider, new Vector3(6.2f, 0, 3.3f));
+            // v3.2: outside is behind her beyond the ring round her; the half map in front and the ring are all caught.
+            Put(stage.Outsider, new Vector3(-8.0f, 0, -9.5f));
             Put(stage.Behind, new Vector3(-1.5f, 0, -3.0f));
             caster.AbilitySystem.Kit.AddUltimateCharge(100);
             Camera.main.GetComponent<CameraRig>().Follow(caster);
@@ -218,7 +220,7 @@ namespace TumbangPreso.PlayTests
             // v3.2: the release is in the cutscene and lands in play on the hand-back; the body only settles after it.
             Assert.That(release - handback, Is.InRange(-1, 2), "The release lands on the hand-back.");
             Assert.GreaterOrEqual(whirledAt, 0); Assert.LessOrEqual(whirledAt - release, 1);
-            Assert.IsFalse(outsiderWhirled, "A player outside the 60 degree fan was caught.");
+            Assert.IsFalse(outsiderWhirled, "A player outside the blast was caught.");
         }
 
         /// <summary>

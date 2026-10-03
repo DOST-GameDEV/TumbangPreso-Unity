@@ -160,6 +160,8 @@ namespace TumbangPreso.Abilities
             Vector3 d = point - origin; d.y = 0.0f;
             if (d.sqrMagnitude < 0.04f) return false; // her own spot
             if (d.magnitude > FanRange) return false;
+            // v3.2: everyone close round her is taken too, whichever way they stand.
+            if (d.magnitude <= AmihanRules.StormSurgeAroundRadius) return true;
             return Vector3.Angle(forward, d) <= AmihanRules.StormSurgeHalfAngle;
         }
 
@@ -171,7 +173,9 @@ namespace TumbangPreso.Abilities
         {
             Vector3 d = point - origin; d.y = 0.0f;
             Vector3 radial = d.sqrMagnitude > 0.01f ? d.normalized : forward;
-            Vector3 dir = (radial * 0.6f + forward * 0.4f);
+            // v3.2: in front it leans on her facing; caught BEHIND her (the ring round her) it blows straight out, away from her.
+            float ahead = Mathf.Clamp01(Vector3.Dot(radial, forward) * 2.0f);
+            Vector3 dir = radial * (1.0f - 0.4f * ahead) + forward * (0.4f * ahead);
             return dir.sqrMagnitude > 0.001f ? dir.normalized : forward;
         }
 

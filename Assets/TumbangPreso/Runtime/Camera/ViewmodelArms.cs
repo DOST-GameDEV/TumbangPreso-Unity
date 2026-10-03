@@ -1621,8 +1621,10 @@ namespace TumbangPreso.CameraSystem
             // Rafi has simple source hands/sleeves. Keep their exact palette and
             // geometry instead of giving this new hero the generic wrist kit.
             if(characterId=="rafi" && UseRosterArms(characterId))return;
-            // Amihan's wide cream sleeves and banded cuffs are her own; show them, not the kit.
-            if(characterId=="amihan" && UseRosterArms(characterId))return;
+            // ⚠️ AMIHAN IS ON THE SHARED BLOCK ARM NOW (owner, 2026-10-03: *"why does amihan's fyp arms look so diff from everyone
+            // else"*). Her arms were cut from her body mesh and squeezed to 0.34 m across, so they read as long thin tubes beside
+            // everyone's solid block hands. Like Cheska (the reference), the shared arm wears her own sleeve boxes
+            // (`BuildAmihanAccessories`, transcribed from `tools/build_amihan_voxel.py` ARM_LEFT).
             // Paete's arms are bark and tangled vines ending in points; the generic wrist kit would hide them.
             // ⚠️ AND THEY ARE BULKY (owner, 2026-09-26: *"make his fpp arms loook BULKIER bcz he is QUITE bulky as
             // a character"*). This early return skipped the thickness below, so his arms were never widened
@@ -1822,6 +1824,9 @@ namespace TumbangPreso.CameraSystem
                     break;
                 case "cheska":
                     BuildCheskaAccessories(arm, isRight);
+                    break;
+                case "amihan":
+                    BuildAmihanAccessories(arm, isRight);
                     break;
                 case "nemu":
                     BuildNemuAccessories(arm, isRight, parent);
@@ -2229,6 +2234,35 @@ namespace TumbangPreso.CameraSystem
                 AddBoxAccessory(arm, "WhiteBandStripe", new Vector3(0.315f, 0.025f, 0.305f),
                     new Vector3(0.0f, 0.50f, 0.0f), Quaternion.identity, white);
             }
+        }
+
+        private static void BuildAmihanAccessories(Transform arm, bool isRight)
+        {
+            // `tools/build_amihan_voxel.py` ARM_LEFT, v6: a wide teal sleeve (CAPE 2E8C86) to past the elbow, a gold edge (E8B64A),
+            // a cream abel cuff (F1E4C8) proud of the sleeve, bare forearm and hand (skin D59A6E). Wider than Cheska's short sleeve:
+            // hers is a wrap robe's, and it is the piece of her a player looks at longest.
+            var teal = new Color32(0x2E, 0x8C, 0x86, 255);
+            var tealShade = new Color32(0x1F, 0x62, 0x5E, 255);
+            var gold = new Color32(0xE8, 0xB6, 0x4A, 255);
+            var cream = new Color32(0xF1, 0xE4, 0xC8, 255);
+            var rust = new Color32(0xA8, 0x50, 0x2E, 255);
+            // Film v3.3: with the sleeve stopping near the shoulder (as on the body) first person only showed a bare forearm. Her
+            // robe's wide sleeve reaches the wrist here, flaring, so the gold edge and the cream cuff sit in view over the hand.
+            AddBoxAccessory(arm, "AmihanTealSleeve", new Vector3(0.36f, 0.50f, 0.36f),
+                new Vector3(0.0f, 0.25f, 0.0f), Quaternion.identity, teal);
+            AddBoxAccessory(arm, "AmihanSleeveFlare", new Vector3(0.42f, 0.10f, 0.42f),
+                new Vector3(0.0f, 0.47f, 0.0f), Quaternion.identity, teal);
+            // The sleeve's inner shade along its underside, so it reads as cloth and not a block.
+            AddBoxAccessory(arm, "AmihanSleeveShade", new Vector3(0.365f, 0.44f, 0.06f),
+                new Vector3(0.0f, 0.24f, 0.155f), Quaternion.identity, tealShade);
+            AddBoxAccessory(arm, "AmihanCuffGold", new Vector3(0.435f, 0.03f, 0.435f),
+                new Vector3(0.0f, 0.535f, 0.0f), Quaternion.identity, gold);
+            AddBoxAccessory(arm, "AmihanCuffCream", new Vector3(0.44f, 0.06f, 0.44f),
+                new Vector3(0.0f, 0.58f, 0.0f), Quaternion.identity, cream);
+            // Her sash's rust thread on the right wrist only (the slipper hand), a small asymmetry like Cheska's band.
+            if (isRight)
+                AddBoxAccessory(arm, "AmihanWristThread", new Vector3(0.315f, 0.03f, 0.31f),
+                    new Vector3(0.0f, 0.64f, 0.0f), Quaternion.identity, rust);
         }
 
         private static void BuildNemuAccessories(Transform arm, bool isRight, ViewmodelArms parent = null)
