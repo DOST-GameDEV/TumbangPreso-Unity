@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="40" result="Passed" total="40" passed="40" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 10:05:52Z" end-time="2026-10-03 10:05:53Z" duration="0.3127606">
+  <test-suite type="TestSuite" id="1000" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1105" result="Passed" start-time="2026-10-03 10:05:52Z" end-time="2026-10-03 10:05:53Z" duration="0.312761" total="40" passed="40" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2348" name="TumbangPreso.Tests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1105" result="Passed" start-time="2026-10-03 10:05:52Z" end-time="2026-10-03 10:05:53Z" duration="0.298581" total="40" passed="40" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="75914" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2349" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1105" result="Passed" start-time="2026-10-03 10:05:52Z" end-time="2026-10-03 10:05:53Z" duration="0.291365" total="40" passed="40" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2350" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1105" result="Passed" start-time="2026-10-03 10:05:52Z" end-time="2026-10-03 10:05:53Z" duration="0.285129" total="40" passed="40" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1401" name="HubLobbySeatControlsTests" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 10:05:52Z" end-time="2026-10-03 10:05:53Z" duration="0.196403" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1404" name="ANewHumanOccupantStillUsesTheAuthoritativeRequestRoute" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.ANewHumanOccupantStillUsesTheAuthoritativeRequestRoute" methodname="ANewHumanOccupantStillUsesTheAuthoritativeRequestRoute" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="172481674" result="Passed" start-time="2026-10-03 10:05:52Z" end-time="2026-10-03 10:05:53Z" duration="0.124791" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1408" name="HumanSlotOffersSwitchAndOwnSlotHasNoAction" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.HumanSlotOffersSwitchAndOwnSlotHasNoAction" methodname="HumanSlotOffersSwitchAndOwnSlotHasNoAction" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="1814539162" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.008416" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1402" name="OpenAndBotSlotsExposeRealSeatActions" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.OpenAndBotSlotsExposeRealSeatActions" methodname="OpenAndBotSlotsExposeRealSeatActions" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="292943007" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.009273" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1407" name="RecipientPopupSendsTheChosenAnswerExactlyOnce" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.RecipientPopupSendsTheChosenAnswerExactlyOnce" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.032330" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1405" name="RecipientPopupSendsTheChosenAnswerExactlyOnce(True)" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.RecipientPopupSendsTheChosenAnswerExactlyOnce(True)" methodname="RecipientPopupSendsTheChosenAnswerExactlyOnce" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="588817041" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.016018" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1406" name="RecipientPopupSendsTheChosenAnswerExactlyOnce(False)" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.RecipientPopupSendsTheChosenAnswerExactlyOnce(False)" methodname="RecipientPopupSendsTheChosenAnswerExactlyOnce" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="805607508" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.011714" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1403" name="StaleRoomStateIsRecheckedBeforeSendingASeatRequest" fullname="TumbangPreso.Tests.HubLobbySeatControlsTests.StaleRoomStateIsRecheckedBeforeSendingASeatRequest" methodname="StaleRoomStateIsRecheckedBeforeSendingASeatRequest" classname="TumbangPreso.Tests.HubLobbySeatControlsTests" runstate="Runnable" seed="453039019" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.008783" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1702" name="LobbySeatSwapTests" fullname="TumbangPreso.Tests.LobbySeatSwapTests" classname="TumbangPreso.Tests.LobbySeatSwapTests" runstate="Runnable" testcasecount="11" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.013660" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1703" name="BotSlotMovesImmediatelyWithoutConsent" fullname="TumbangPreso.Tests.LobbySeatSwapTests.BotSlotMovesImmediatelyWithoutConsent" methodname="BotSlotMovesImmediatelyWithoutConsent" classname="TumbangPreso.Tests.LobbySeatSwapTests" runstate="Runnable" seed="444690864" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.004628" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1705" name="DeclineKeepsBothSeatsAndEndsTheRequest" fullname="TumbangPreso.Tests.LobbySeatSwapTests.DeclineKeepsBothSeatsAndEndsTheRequest" methodname="DeclineKeepsBothSeatsAndEndsTheRequest" classname="TumbangPreso.Tests.LobbySeatSwapTests" runstate="Runnable" seed="811854865" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.002433" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1704" name="HumanOnlyMovesAfterRecipientAcceptsAndKeepsIdentityAndPicks" fullname="TumbangPreso.Tests.LobbySeatSwapTests.HumanOnlyMovesAfterRecipientAcceptsAndKeepsIdentityAndPicks" methodname="HumanOnlyMovesAfterRecipientAcceptsAndKeepsIdentityAndPicks" classname="TumbangPreso.Tests.LobbySeatSwapTests" runstate="Runnable" seed="1134035048" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000612" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1714" name="InvalidAndSpectatorRequestsAreRefused" fullname="TumbangPreso.Tests.LobbySeatSwapTests.InvalidAndSpectatorRequestsAreRefused" methodname="InvalidAndSpectatorRequestsAreRefused" classname="TumbangPreso.Tests.LobbySeatSwapTests" runstate="Runnable" seed="87288671" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000428" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1713" name="PendingRequestsAreBoundedPerParticipantAndExpire" fullname="TumbangPreso.Tests.LobbySeatSwapTests.PendingRequestsAreBoundedPerParticipantAndExpire" methodname="PendingRequestsAreBoundedPerParticipantAndExpire" classname="TumbangPreso.Tests.LobbySeatSwapTests" runstate="Runnable" seed="656026489" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000787" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1712" name="StaleConsentCannotMovePeople" fullname="TumbangPreso.Tests.LobbySeatSwapTests.StaleConsentCannotMovePeople" classname="TumbangPreso.Tests.LobbySeatSwapTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.002421" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1706" name="StaleConsentCannotMovePeople(&quot;expiry&quot;)" fullname="TumbangPreso.Tests.LobbySeatSwapTests.StaleConsentCannotMovePeople(&quot;expiry&quot;)" methodname="StaleConsentCannotMovePeople" classname="TumbangPreso.Tests.LobbySeatSwapTests" runstate="Runnable" seed="470681529" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000468" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1707" name="StaleConsentCannotMovePeople(&quot;requester moved&quot;)" fullname="TumbangPreso.Tests.LobbySeatSwapTests.StaleConsentCannotMovePeople(&quot;requester moved&quot;)" methodname="StaleConsentCannotMovePeople" classname="TumbangPreso.Tests.LobbySeatSwapTests" runstate="Runnable" seed="1035173016" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000113" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1708" name="StaleConsentCannotMovePeople(&quot;recipient moved&quot;)" fullname="TumbangPreso.Tests.LobbySeatSwapTests.StaleConsentCannotMovePeople(&quot;recipient moved&quot;)" methodname="StaleConsentCannotMovePeople" classname="TumbangPreso.Tests.LobbySeatSwapTests" runstate="Runnable" seed="2080573915" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000088" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1709" name="StaleConsentCannotMovePeople(&quot;match started&quot;)" fullname="TumbangPreso.Tests.LobbySeatSwapTests.StaleConsentCannotMovePeople(&quot;match started&quot;)" methodname="StaleConsentCannotMovePeople" classname="TumbangPreso.Tests.LobbySeatSwapTests" runstate="Runnable" seed="1759833841" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000071" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1710" name="StaleConsentCannotMovePeople(&quot;disconnect&quot;)" fullname="TumbangPreso.Tests.LobbySeatSwapTests.StaleConsentCannotMovePeople(&quot;disconnect&quot;)" methodname="StaleConsentCannotMovePeople" classname="TumbangPreso.Tests.LobbySeatSwapTests" runstate="Runnable" seed="281669832" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000479" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1711" name="StaleConsentCannotMovePeople(&quot;reset&quot;)" fullname="TumbangPreso.Tests.LobbySeatSwapTests.StaleConsentCannotMovePeople(&quot;reset&quot;)" methodname="StaleConsentCannotMovePeople" classname="TumbangPreso.Tests.LobbySeatSwapTests" runstate="Runnable" seed="1263156196" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000117" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="2174" name="SeatRequestPacketTests" fullname="TumbangPreso.Tests.SeatRequestPacketTests" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.030731" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2202" name="AClientCannotHandleSeatRequests" fullname="TumbangPreso.Tests.SeatRequestPacketTests.AClientCannotHandleSeatRequests" methodname="AClientCannotHandleSeatRequests" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="864443423" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.008606" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2196" name="AnActualSeatChangeClearsOnlyTheChangingGuestsReady" fullname="TumbangPreso.Tests.SeatRequestPacketTests.AnActualSeatChangeClearsOnlyTheChangingGuestsReady" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.006113" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2194" name="AnActualSeatChangeClearsOnlyTheChangingGuestsReady(2)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.AnActualSeatChangeClearsOnlyTheChangingGuestsReady(2)" methodname="AnActualSeatChangeClearsOnlyTheChangingGuestsReady" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="1594843526" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.004754" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2195" name="AnActualSeatChangeClearsOnlyTheChangingGuestsReady(-1)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.AnActualSeatChangeClearsOnlyTheChangingGuestsReady(-1)" methodname="AnActualSeatChangeClearsOnlyTheChangingGuestsReady" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="1837028113" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000422" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2175" name="HumanRequestWaitsForRecipientThenClearsBothReadyStates" fullname="TumbangPreso.Tests.SeatRequestPacketTests.HumanRequestWaitsForRecipientThenClearsBothReadyStates" methodname="HumanRequestWaitsForRecipientThenClearsBothReadyStates" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="1186032306" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.002838" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2199" name="InvalidSeatsCannotChangeReadiness" fullname="TumbangPreso.Tests.SeatRequestPacketTests.InvalidSeatsCannotChangeReadiness" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.001754" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2197" name="InvalidSeatsCannotChangeReadiness(-2)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.InvalidSeatsCannotChangeReadiness(-2)" methodname="InvalidSeatsCannotChangeReadiness" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="1458268851" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000497" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2198" name="InvalidSeatsCannotChangeReadiness(4)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.InvalidSeatsCannotChangeReadiness(4)" methodname="InvalidSeatsCannotChangeReadiness" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="348125946" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000297" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2201" name="LiveMatchCannotChangeSeats" fullname="TumbangPreso.Tests.SeatRequestPacketTests.LiveMatchCannotChangeSeats" methodname="LiveMatchCannotChangeSeats" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="707114608" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000356" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2188" name="MalformedRequestsCannotThrowOrMoveAReadyGuest" fullname="TumbangPreso.Tests.SeatRequestPacketTests.MalformedRequestsCannotThrowOrMoveAReadyGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.003065" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2182" name="MalformedRequestsCannotThrowOrMoveAReadyGuest(0)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.MalformedRequestsCannotThrowOrMoveAReadyGuest(0)" methodname="MalformedRequestsCannotThrowOrMoveAReadyGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="750271214" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000394" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2183" name="MalformedRequestsCannotThrowOrMoveAReadyGuest(1)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.MalformedRequestsCannotThrowOrMoveAReadyGuest(1)" methodname="MalformedRequestsCannotThrowOrMoveAReadyGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="2027117342" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000277" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2184" name="MalformedRequestsCannotThrowOrMoveAReadyGuest(2)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.MalformedRequestsCannotThrowOrMoveAReadyGuest(2)" methodname="MalformedRequestsCannotThrowOrMoveAReadyGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="1755305631" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000268" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2185" name="MalformedRequestsCannotThrowOrMoveAReadyGuest(3)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.MalformedRequestsCannotThrowOrMoveAReadyGuest(3)" methodname="MalformedRequestsCannotThrowOrMoveAReadyGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="200835421" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000290" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2186" name="MalformedRequestsCannotThrowOrMoveAReadyGuest(5)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.MalformedRequestsCannotThrowOrMoveAReadyGuest(5)" methodname="MalformedRequestsCannotThrowOrMoveAReadyGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="1000683660" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000304" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2187" name="MalformedRequestsCannotThrowOrMoveAReadyGuest(8)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.MalformedRequestsCannotThrowOrMoveAReadyGuest(8)" methodname="MalformedRequestsCannotThrowOrMoveAReadyGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="1612137733" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000256" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2180" name="MalformedSwapRepliesDoNotConsumeConsent" fullname="TumbangPreso.Tests.SeatRequestPacketTests.MalformedSwapRepliesDoNotConsumeConsent" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.001818" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2177" name="MalformedSwapRepliesDoNotConsumeConsent(0)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.MalformedSwapRepliesDoNotConsumeConsent(0)" methodname="MalformedSwapRepliesDoNotConsumeConsent" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="62217892" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000518" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2178" name="MalformedSwapRepliesDoNotConsumeConsent(8)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.MalformedSwapRepliesDoNotConsumeConsent(8)" methodname="MalformedSwapRepliesDoNotConsumeConsent" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="103403280" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000307" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2179" name="MalformedSwapRepliesDoNotConsumeConsent(10)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.MalformedSwapRepliesDoNotConsumeConsent(10)" methodname="MalformedSwapRepliesDoNotConsumeConsent" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="209976067" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000290" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2200" name="OccupiedSeatCannotDisplaceItsOwner" fullname="TumbangPreso.Tests.SeatRequestPacketTests.OccupiedSeatCannotDisplaceItsOwner" methodname="OccupiedSeatCannotDisplaceItsOwner" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="1653821190" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000329" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2176" name="RecipientDeclineKeepsSeatsAndReadiness" fullname="TumbangPreso.Tests.SeatRequestPacketTests.RecipientDeclineKeepsSeatsAndReadiness" methodname="RecipientDeclineKeepsSeatsAndReadiness" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="390099001" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000409" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2193" name="RepeatingTheCurrentSeatPreservesReadyAndDoesNotPublishAChange" fullname="TumbangPreso.Tests.SeatRequestPacketTests.RepeatingTheCurrentSeatPreservesReadyAndDoesNotPublishAChange" methodname="RepeatingTheCurrentSeatPreservesReadyAndDoesNotPublishAChange" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="1912930505" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000361" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2181" name="WideSwapSenderCannotImpersonateTheRecipient" fullname="TumbangPreso.Tests.SeatRequestPacketTests.WideSwapSenderCannotImpersonateTheRecipient" methodname="WideSwapSenderCannotImpersonateTheRecipient" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="239710741" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000442" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2192" name="WideTransportIdsCannotWrapIntoTheHostOrGuest" fullname="TumbangPreso.Tests.SeatRequestPacketTests.WideTransportIdsCannotWrapIntoTheHostOrGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.001737" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2189" name="WideTransportIdsCannotWrapIntoTheHostOrGuest(4294967296UL)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.WideTransportIdsCannotWrapIntoTheHostOrGuest(4294967296UL)" methodname="WideTransportIdsCannotWrapIntoTheHostOrGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="842387238" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000422" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2190" name="WideTransportIdsCannotWrapIntoTheHostOrGuest(4294967297UL)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.WideTransportIdsCannotWrapIntoTheHostOrGuest(4294967297UL)" methodname="WideTransportIdsCannotWrapIntoTheHostOrGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="526878198" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000302" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2191" name="WideTransportIdsCannotWrapIntoTheHostOrGuest(ulong.MaxValue)" fullname="TumbangPreso.Tests.SeatRequestPacketTests.WideTransportIdsCannotWrapIntoTheHostOrGuest(ulong.MaxValue)" methodname="WideTransportIdsCannotWrapIntoTheHostOrGuest" classname="TumbangPreso.Tests.SeatRequestPacketTests" runstate="Runnable" seed="1467744880" result="Passed" start-time="2026-10-03 10:05:53Z" end-time="2026-10-03 10:05:53Z" duration="0.000264" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

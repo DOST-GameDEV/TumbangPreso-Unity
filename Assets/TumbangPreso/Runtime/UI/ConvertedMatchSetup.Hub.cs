@@ -274,6 +274,25 @@ namespace TumbangPreso.UI
             return seats;
         }
 
+        public LobbySeatSwapOffer SeatSwapOffer => MatchRpc.Instance?.SeatSwapOffer;
+        public string SeatSwapResult => MatchRpc.Instance?.SeatSwapResult ?? "";
+        public void RespondToSeatSwap(long requestId, bool accept) => MatchRpc.Instance?.RespondToSeatSwap(requestId, accept);
+        bool IHubHost.CanTakeSeat(int seat) => CanTakeLobbySeat(seat);
+        void IHubHost.TakeSeat(int seat)
+        {
+            if (CanTakeLobbySeat(seat)) TakeSeat(seat);
+        }
+        private bool CanTakeLobbySeat(int seat)
+        {
+            if (seat < 0 || seat >= Balance.PlayerCount || !InRoom || MatchInProgress || HubQueueWatch.QueueRoom || SeatSwapOffer != null)
+                return false;
+            var info = MatchRpc.Instance?.GetSeatInfo(seat);
+            if (info == null || seat == NetAuthority.LocalSlot) return false;
+            if (info.Occupied) return !Spectating && NetAuthority.LocalSlot >= 0;
+            // A host can also see reconnect reservations absent from the ordinary roster.
+            return !NetAuthority.IsHost || NetSession.Instance?.Lobby?.IsSeatOccupied(seat) == false;
+        }
+
         public void StartGame()
         {
             var net = NetSession.Instance;

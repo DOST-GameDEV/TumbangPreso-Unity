@@ -488,8 +488,8 @@ namespace TumbangPreso.UI.Hub
             }
 
             var seats = host.Seats();
-            string key = host.RoomTitle + host.RoomCode + host.IsHost + host.LocalReady + SceneFlow.SelectedMap + SceneFlow.SelectedMode + host.Spectating;
-            foreach (var s in seats) key += s.Occupied + ":" + s.Name + ":" + s.CharacterPick + ":" + s.Ready + ":" + s.Bot + "|";
+            string key = host.RoomTitle + host.RoomCode + host.IsHost + host.LocalReady + SceneFlow.SelectedMap + SceneFlow.SelectedMode + host.Spectating + host.MatchInProgress + host.SeatSwapOffer?.Id + host.SeatSwapResult;
+            foreach (var s in seats) key += s.Occupied + ":" + s.Name + ":" + s.CharacterPick + ":" + s.Ready + ":" + s.Bot + ":" + host.CanTakeSeat(s.Slot) + "|";
             if (!force && key == _drawn) return;
             _drawn = key;
 
@@ -528,17 +528,28 @@ namespace TumbangPreso.UI.Hub
                 }
                 Color ink = seat.Mine ? HubStyle.Ink : HubStyle.Honey;
                 string name = seat.Occupied ? (seat.Mine ? "YOU" : seat.Name) : seat.Bot ? "BOT" : "OPEN";
-                var label = HubKit.Text(row, "Name", name, HubStyle.Label, true, ink, TextAnchor.MiddleLeft);
-                HubKit.Place(label.rectTransform, HubKit.Left, new Vector2(122, 0), new Vector2(420, 70));
-                HubKit.Fit(label, 420);
+                var label = HubKit.Text(row, "Name", "P" + (seat.Slot + 1) + " · " + name, HubStyle.Label, true, ink, TextAnchor.MiddleLeft);
+                HubKit.Place(label.rectTransform, HubKit.Left, new Vector2(122, 15), new Vector2(410, 50));
+                HubKit.Fit(label, 410);
                 if (seat.Host)
                 {
                     var crown = HubKit.Glyph(row, "HostMark", HubGlyph.Mark.Crown, HubStyle.Golden);
-                    HubKit.Place(crown.rectTransform, HubKit.Right, new Vector2(-150, 0), new Vector2(54, 54));
+                    HubKit.Place(crown.rectTransform, HubKit.Right, new Vector2(-280, 0), new Vector2(36, 36));
                 }
                 string state = seat.Host ? "HOST" : seat.Ready ? "READY" : seat.Occupied ? "" : "";
-                var tag = HubKit.Text(row, "State", state, HubStyle.Floor, true, seat.Ready ? HubStyle.Chartreuse : ink, TextAnchor.MiddleRight);
-                HubKit.Place(tag.rectTransform, HubKit.Right, new Vector2(-24, 0), new Vector2(120, 50));
+                var tag = HubKit.Text(row, "State", state, HubStyle.Floor, true, seat.Ready ? HubStyle.Chartreuse : ink, TextAnchor.MiddleLeft);
+                HubKit.Place(tag.rectTransform, HubKit.Left, new Vector2(122, -26), new Vector2(340, 38));
+                if (!seat.Mine)
+                {
+                    int destination = seat.Slot;
+                    var take = HubKit.Button(row, "TakeSeat" + destination, seat.Occupied ? "SWITCH" : "SIT HERE", HubStyle.Honey, () =>
+                    {
+                        // Re-check after drawing: the host may have filled or started the room.
+                        if (Hub.Host.CanTakeSeat(destination)) Hub.Host.TakeSeat(destination);
+                    }, HubStyle.Floor, 980 + destination);
+                    HubKit.Place((RectTransform)take.transform, HubKit.Right, new Vector2(-12, 0), new Vector2(240, 88));
+                    take.interactable = host.CanTakeSeat(destination);
+                }
             }
 
             if (host.IsHost)
@@ -553,6 +564,9 @@ namespace TumbangPreso.UI.Hub
                 _primary.interactable = true;
                 _status.text = host.LocalReady ? "Waiting for the host." : "The host starts the match.";
             }
+            if (host.SeatSwapOffer != null && !host.SeatSwapOffer.Incoming)
+                _status.text = "Waiting for the other player to accept the seat switch.";
+            else if (!string.IsNullOrEmpty(host.SeatSwapResult)) _status.text = host.SeatSwapResult;
             _map.gameObject.SetActive(host.IsHost);
             Hub.RefreshFocus();
         }

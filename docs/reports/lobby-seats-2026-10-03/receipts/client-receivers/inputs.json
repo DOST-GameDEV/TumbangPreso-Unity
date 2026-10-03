@@ -1,0 +1,21 @@
+{
+  "Assets/TumbangPreso/Runtime/Net/LobbySession.cs": "ef88830e7e616f655de773e454bb147ea2a2ba41439a8c56ed749c8581cb05d9",
+  "Assets/TumbangPreso/Runtime/Net/LobbySeatSwapRequests.cs": "8362383f066ffbff61f1f291dc8c221686a90034d082ed81689874dbdef7a413",
+  "Assets/TumbangPreso/Runtime/Net/LobbySeatSwapRequests.cs.meta": "23961c8f6c4ae437d44d4303110890c455c4e9cdfdb47cfd6071de1137c9d4cc",
+  "Assets/TumbangPreso/Runtime/Net/MatchRpc.SeatSwap.cs": "09af93b8d9b8d36648c76c04b9b1657c962579ec0e67d39f5b7443c6853ec40d",
+  "Assets/TumbangPreso/Runtime/Net/MatchRpc.SeatSwap.cs.meta": "bc639af4ce5374100bc392bf4d4f2d419e9e1811a5319732b15d7bd8be13c471",
+  "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs": "ef35aa4b1583ad62d6216ce8d133e32b7b2a351311bdae0e094f4ee8dbe7a2df",
+  "Assets/TumbangPreso/Runtime/Net/MatchRpc.Moments.cs": "90e581b060ab0df722e335a948c5134457e7c2dcca9ead0f1fa7e252f1bfdf86",
+  "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "2cfb3763dbaf638fac553d9c01b75192fcca3b415ada060ea295047d43ed2fda",
+  "Assets/TumbangPreso/Runtime/UI/ConvertedMatchSetup.Hub.cs": "3e05cad06f52c34034d3b0ac7dac24faf3e5737712553cfed0e511b5a98d4aa8",
+  "Assets/TumbangPreso/Runtime/UI/Hub/IHubHost.cs": "386d84d600fc8420a9beb871a8c1f467c5439b8562de2593dc77cf9096d1d286",
+  "Assets/TumbangPreso/Runtime/UI/Hub/TumpHub.cs": "be95ab63650c156556cebc2bde951142ab0fa88c1f32909027a49cf20c0616e7",
+  "Assets/TumbangPreso/Runtime/UI/Hub/HubCustom.cs": "6744c07aecbb94a5c2a3f5e8a537ecb41e60f1d1854cee234fdac2ee6d08e835",
+  "Assets/TumbangPreso/Runtime/UI/Hub/HubSeatSwapPopup.cs": "b0d74e9998200dca82f52f4d69ac2c3d21faf599ccb5ec2f93512c63ca4da81c",
+  "Assets/TumbangPreso/Runtime/UI/Hub/HubSeatSwapPopup.cs.meta": "4dda91939aeb9b61630c5eedcf98be9ce66cdc8ed9472985d4320db873f52730",
+  "Assets/TumbangPreso/Tests/LobbySeatSwapTests.cs": "8863c488a9b6ed8c5b335426f370a6879e10d11a9ea155578d3dd9f62e155c61",
+  "Assets/TumbangPreso/Tests/LobbySeatSwapTests.cs.meta": "2045de811e74f966cf0d896916a150d74468765f53f8fa121d3659ffe9935c0f",
+  "Assets/TumbangPreso/Tests/HubLobbySeatControlsTests.cs": "fe6f653ed187e0a2a007c186b6361dbb556090a01e5c717a921793e27f063c7c",
+  "Assets/TumbangPreso/Tests/HubLobbySeatControlsTests.cs.meta": "490dd688143a7753daffc332ecb8a04130fc6fcd22d95c3adf13e3fc481f70d1",
+  "Assets/TumbangPreso/Tests/SeatRequestPacketTests.cs": "ec5ec6b24958a2c33517df61e89fdb4c4e7bed61ac8830dbf02cfae59ecad81a"
+}

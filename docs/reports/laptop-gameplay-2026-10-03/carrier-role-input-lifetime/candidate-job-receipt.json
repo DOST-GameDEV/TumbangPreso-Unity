@@ -1,0 +1,38 @@
+{
+  "job": {
+    "id": "aa9a5f43ed57450eb5ab6e3027151c4a",
+    "ownerPid": 12508,
+    "guardPid": null,
+    "unityPids": [],
+    "createdUtc": "2026-10-03T10:01:44Z",
+    "kind": "gpu",
+    "memoryMb": 4096,
+    "reserveMb": 1024,
+    "project": "c:\\users\\matthew\\dev\\tump-workers1003-extra\\qa-d",
+    "library": "c:\\users\\matthew\\dev\\tump-workers1003-extra\\qa-d\\library",
+    "profile": "validation-qa-d-dddaa72bc5b9",
+    "prefHive": "software\\unity\\unityeditor\\bh studios validation\\tumpworker-qa-d-dddaa72bc5b9",
+    "ports": [],
+    "worker": true,
+    "allowParallel": true,
+    "maxParallelJobs": 2,
+    "allowGpuParallel": true,
+    "companyName": "BH Studios Validation",
+    "productName": "TumpWorker-qa-d-dddaa72bc5b9"
+  },
+  "requestedUtc": "2026-10-03T10:01:44Z",
+  "status": "completed",
+  "exitCode": 0,
+  "admission": {
+    "availableMb": 7503,
+    "activeJobsBefore": 0,
+    "acquiredUtc": "2026-10-03T10:01:44Z"
+  },
+  "startedUtc": "2026-10-03T10:01:44Z",
+  "guardPid": 23476,
+  "endedUtc": "2026-10-03T10:02:16Z",
+  "guardTerminal": true,
+  "preservationCompleted": true,
+  "availableMbAtEnd": 7505,
+  "leaseHeld": false
+}

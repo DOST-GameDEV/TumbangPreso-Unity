@@ -563,7 +563,8 @@ namespace TumbangPreso.Net
         //137: explicit movement speeds, stamina, jump and charged lunge recovery.
         //138: playtested movement revision and stamina-free shove/lunge.
         // 139: empty network bot seats use shared, unrotated character/kit selection.
-        public const int ProtocolVersion = 139;
+        // 140: occupied lobby seats require recipient consent before an atomic swap.
+        public const int ProtocolVersion = 140;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

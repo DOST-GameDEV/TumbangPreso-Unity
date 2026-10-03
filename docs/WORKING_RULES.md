@@ -23,6 +23,8 @@ and [earlier full rules](archive/CLAUDE_full_2026-09-24.md). New owner instructi
   `distance = speed * speed / (2 * friction)`. Neutral prop stays at index0.
 - Possession contact outcomes freeze at requested game speed zero. Keep the
   accepted possession and its live contact behavior when the user resumes.
+- Carrier retires the opposite role's pending throw or can reset before consuming
+  the current role. Preserve held shoes and same-role charge/channel progress.
 - People use first person,props third person; local emotes temporarily change view.
   Spectators have separate free/follow/POV rigs. Emotes end through EmotePlayer.Stop
   on interruption,not a new arbitrary timer that bypasses view cleanup.

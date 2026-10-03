@@ -50,6 +50,7 @@ namespace TumbangPreso.Net
         private void Update()
         {
             TickQueueArrival();
+            TickSeatSwaps();
             TickReplayTransfer();
             FlushPendingSkills();
             for (int i = 0; i < _pendingMoments.Count;)
