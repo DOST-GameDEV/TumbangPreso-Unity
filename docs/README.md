@@ -174,3 +174,5 @@ Spectator footage and local match identity: [native prerequisite and boundary ev
 First PC/laptop LAN match: [actual paired baseline evidence](reports/reliability-2026-10-03/two-machine-lan/README.md).
 
 Ice diagnostic admission timing: [native setup evidence](reports/reliability-2026-10-03/ice-admission-role/README.md).
+
+Current full managed Core integration: [704-case gate and retained contract failure](reports/reliability-2026-10-03/managed-integration/README.md).

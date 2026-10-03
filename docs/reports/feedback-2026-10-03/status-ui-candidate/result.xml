@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 06:40:19Z" end-time="2026-10-03 06:40:20Z" duration="0.7644623">
+  <test-suite type="TestSuite" id="2714" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1395" result="Passed" start-time="2026-10-03 06:40:19Z" end-time="2026-10-03 06:40:20Z" duration="0.764462" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2708" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1395" result="Passed" start-time="2026-10-03 06:40:19Z" end-time="2026-10-03 06:40:20Z" duration="0.743280" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="42216" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2709" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1395" result="Passed" start-time="2026-10-03 06:40:19Z" end-time="2026-10-03 06:40:20Z" duration="0.727118" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2710" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1395" result="Passed" start-time="2026-10-03 06:40:19Z" end-time="2026-10-03 06:40:20Z" duration="0.712477" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2485" name="TimedRecoveryTests" fullname="TumbangPreso.PlayTests.TimedRecoveryTests" classname="TumbangPreso.PlayTests.TimedRecoveryTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-03 06:40:19Z" end-time="2026-10-03 06:40:20Z" duration="0.684034" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2487" name="FrozenOnlyUsesStatusIndicatorsAndKeepsRootInteraction" fullname="TumbangPreso.PlayTests.TimedRecoveryTests.FrozenOnlyUsesStatusIndicatorsAndKeepsRootInteraction" methodname="FrozenOnlyUsesStatusIndicatorsAndKeepsRootInteraction" classname="TumbangPreso.PlayTests.TimedRecoveryTests" runstate="Runnable" seed="95476020" result="Passed" start-time="2026-10-03 06:40:19Z" end-time="2026-10-03 06:40:20Z" duration="0.672454" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpUiCapture] Frozen-status-only cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

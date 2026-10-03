@@ -113,3 +113,10 @@ penalties and short input refusals no longer replace the action instruction.
 Rooted keeps its actual Interact hold and saved glyph; no recovery remapping.
 Round backing follows pip count. See the current HUD report for native checks
 and the separate pending announcement-scoring work.
+
+## Timed incapacity readout
+
+Frozen and elemental stuns use their existing status indicators without a
+duplicate action bar. Genuine hold-Interact Rooted removal remains actionable.
+Trip and edge recovery are unchanged.
+[Native status-only check](reports/feedback-2026-10-03/status-action-bar.md).

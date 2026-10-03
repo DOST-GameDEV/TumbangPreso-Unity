@@ -129,6 +129,30 @@ revieweractive newlaptoppossession/pickup/chat/pause source andrunnerhasharg rev
 Laptopresumes owncheckedsource54c0e and nextgameplay units; pause/source work
 checkpointed. Sharedlatestdirectives remain docs/COMPETITION_COORDINATION.md.
 
+CURRENT ACTIVE BUILD: one Windows1003g job session85181, isolated worktree
+C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003g, frozenHEAD
+e3ddc2f2d9eca1a8fcc4b3bfefeef31497badda9. Exact19047Asset/Package/Settings inputs
+hashed beforelaunch; cleantrackedsource, independentcopiedcache. Profile
+competition-candidate1003g, deadline900sec, memory4096/reserve1536. Output
+Logs/competition-candidate1003g, artifactBuilds/competition-candidate1003g/
+TumbangPreso.exe. DoNOTmutateinputs/startanotherheavyPCjob. Import/shader progress
+observed, no terminalverdictyet. Sourceincludes54/556qualified22laptopunits plus
+7501/f251rootfixes; earlierf251proposalwasneverfrozen, final e3 agreedbeforemanifest.
+Afterterminal: pythonLogs/competition-candidate1003g/freeze_build.py post,
+retainstrictreceiptfalseifdeclaredidentityoutputschange, runclassify_artifact.py
+onlyforverifiedexact2identityoutputs, thenhashfullimmutableartifact/transfer.
+
+Full managed704 first703pass/1staleAmihan60degreeassert; approvedv3.2owner area180,
+oneCore.Testscontractcorrection, second704/704pass. BothTRXretained. NoCoreproduction
+or frozenWindowsinputchange. This is managed-only evidence. Ownerlatest requests
+allavailablemeaningfultests/bugfixes/hitchmeasurementandproperpreload; directives
+persistCOMPETITION_COORDINATION.md. Laptop owns broad e3 gameplay/input/replay
+nativecoverage onisolatedworker; don'tduplicateitsfilters. Root builds/measures
+newplayer/startup/modes/maps, coordinatesjointLAN/onlinewithprioritythenresume.
+Rootworker reservedMatchInstaller.cs/CharacterMotor.cs/MatchRpc.cs ONLYlocal-seat
+producertransferloop; laptopexplicitlyconfirmed free, candidateUNQUALIFIEDand
+EXCLUDEDfrozen1003g. Nextreview/nativeafterbuildslot. PreserveprivateMain dirt.
+
 ## Freeze peer gate: stop unchanged retries
 
 1003e/direct45141 and1003f/normal-lobby56995 both FAILED with zero actor/effect

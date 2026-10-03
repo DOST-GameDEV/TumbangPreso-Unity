@@ -162,7 +162,8 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(40.0f, AmihanRules.UpdraftCooldown);
             Assert.Equal(15.0f, AmihanRules.StormSurgeCost);
             Assert.Equal(1.5f, AmihanRules.StormSurgeGatherSeconds);
-            Assert.Equal(60.0f, AmihanRules.StormSurgeHalfAngle * 2);
+            // AIRBURST v3.2 expands the owner's attack to the whole frontal half-plane.
+            Assert.Equal(180.0f, AmihanRules.StormSurgeHalfAngle * 2);
 
             // Every held speed is under the single-impulse cap, so a clamp never shortens a move.
             Assert.True(AmihanRules.QuickDashSpeed <= Balance.MaxKnockbackSpeed);

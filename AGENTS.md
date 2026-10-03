@@ -114,6 +114,12 @@ Do not present amplitude measurements or silent film as listening approval.
   actual tests/build state, changed behavior and the next TODO pointer.
 - Stop only task-owned helpers and close task-owned previews. Never kill unrelated
   apps or delete a managed worktree as ordinary cleanup.
+- Prune obsolete task-owned internal builds, superseded temporary outputs and
+  unused helpers regularly during long runs and before ending. Verify jobs are
+  terminal and resolved absolute targets remain inside the intended workspace
+  before recursive deletion. Keep active/shared test builds, source, private or
+  unfinished work, profiles/saves and essential acceptance/failure evidence.
+  Preserve the Desktop release. Do not accumulate weeks of stale artifacts.
 
 ## Engineering And Evidence
 
