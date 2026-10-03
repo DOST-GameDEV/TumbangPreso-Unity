@@ -14,3 +14,9 @@ GLB preservation: original37animations, existing geometry/material/skin data and
 Current owner/walking graphics attempt hit the unchanged cgroup headroom guard before frames; after closing the task-started Hub and splitting to owner-only, graphics was still blocked. Effective container memory.max is8GiB (reserve1GiB); no guard weakened. Native shutdown produced SIGSEGV in those interrupted processes. No owner/walking film claimed. Alternate headless test qualified logic instead of repeatedly retrying graphics. Isolated native checkout uses explicit overlays, not whole-current-branch acceptance.
 
 Body view reads as a short chest-level cross-hand load with stable feet and intact grip; it is not a large electrical spectacle. Owner-view composition, real map/multiplayer view and human taste remain open. No new audio or listening claim.
+
+## Lower-memory owner composition study
+
+A different validation route now inspects the actual ViewmodelArms renderer and bank-load path directly in EditMode, without starting the match. Uses CameraRig's shipping95-degree lens, .05m near clip, .72 mount scale/seat and actual loafers mesh/material; no alternate artwork or pose implementation. Six authored checkpoints keep the shoe center within the real lens. Native1/1 at18:22:40–47 UTC,6.9689808s; exit0/guard-free, peak tree4,486,008,832 and cgroup7,297,150,976. Both settings restored. The initial compilation-heavy pose run was guarded; the one cached single-case run passes, with failure retained.
+
+Inspected six native pose images: free hand comes toward the held shoe, both stay in the lower frame, and the resting grip returns. This closes static owner composition inspection. It does not close real-time first-person animation, walking graphics, live court/peers, lighting/quality comparisons or human taste. The earlier headless accepted-cast checks remain separate behavioral evidence.
