@@ -1,5 +1,23 @@
 # Active Rework Checkpoint
 
+## Current PC unit: packet framing candidate awaits laptop validation
+
+Original fixture8f0b34054, candidate088ae2aee, remote branch
+competition-pc-cast-preparation-bounds1003. CastPreparation preflights its fixed
+header, bounded UTF16 name and52-byte tail before any value decoding. Still141;
+no wire/kit change. Runtime and test Roslyn assemblies compile. Ten native cases
+queued to laptop; expected seven causes/three controls are NOT observed results.
+Fixture/meta unchanged between original and candidate. No PC Unity run.
+
+Laptop has explicitly accepted all testing ownership; its TimingCapture1 job was
+reported launched headless onqa-a, exact result still pending. Current gameplay
+reservations remain its; Root owns MatchInstaller emote targeting investigation.
+NEXT: inspect actual enabled input ownership at MatchInstaller.Driven, whose AI
+absence scan can select a remote human or retired original human. Preserve
+tutorial and possession controls. Do not modify laptop's DebugPlayerSwitcher or
+Reader/Carrier/Combat reservations. Candidate framing publication awaits native
+feedback; do independent source work instead of repeating compilation/tests.
+
 ## Latest owner steering: laptop owns testing while Claude edits Amihan
 
 October3 owner explicitly asks the existing laptop chat to do all PC testing
