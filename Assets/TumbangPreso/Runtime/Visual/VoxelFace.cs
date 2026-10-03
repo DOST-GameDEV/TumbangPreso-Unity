@@ -50,13 +50,13 @@ namespace TumbangPreso.Visual
                 { -.034f, .030f, .008f, .022f }, { -.024f, .018f, .000f, .008f },
             },
             // TEEHEE (owner, 2026-10-03: "TEEHEE pose", "make the pose cuter"): both eyes squeezed shut into > < chevrons pointing
-            // in to the nose, and a little cat mouth, an omega. Her finish.
+            // in to the nose, and a little open mouth: >v<. Her finish (eight blocks: the head has corners for no more).
             [Look.Teehee] = new float[,]
             {
-                { .083f, .099f, .082f, .094f }, { .067f, .083f, .070f, .082f }, { .083f, .099f, .058f, .070f },
-                { -.099f, -.083f, .082f, .094f }, { -.083f, -.067f, .070f, .082f }, { -.099f, -.083f, .058f, .070f },
-                { -.032f, -.024f, .008f, .020f }, { -.024f, -.006f, .000f, .008f }, { -.006f, .006f, .008f, .020f },
-                { .006f, .024f, .000f, .008f }, { .024f, .032f, .008f, .020f },
+                // (v11: at 16 mm the chevrons broke up into specks in the close-up; as bold as her other eyes.)
+                { .074f, .101f, .080f, .096f }, { .056f, .082f, .066f, .082f }, { .074f, .101f, .052f, .068f },
+                { -.101f, -.074f, .080f, .096f }, { -.082f, -.056f, .066f, .082f }, { -.101f, -.074f, .052f, .068f },
+                { -.030f, .030f, .012f, .024f }, { -.016f, .016f, .000f, .013f },
             },
         };
 

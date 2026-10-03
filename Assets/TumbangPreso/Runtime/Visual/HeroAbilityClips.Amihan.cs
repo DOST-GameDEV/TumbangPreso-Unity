@@ -149,7 +149,7 @@ namespace TumbangPreso.Visual
             var b = new ClipBuilder("hero-amihan-storm", paths);
             // v8: the cutscene ends on her cute pose (leaning in, hands behind her back, a foot kicked up behind her, a wink:
             // `tools/author_ultimate_intros.py` amihan() finish), and she drops out of it into her stand.
-            PoseKey(b, 0, 0, V(12, 4, 12), V(-12, -8, 24), V(46, 0, 10), V(46, 0, -10), V(-2, 0, 6), V(55, 0, -8));
+            PoseKey(b, 0, 0, V(8, 4, 6), V(-12, -6, 14), V(46, 0, 10), V(46, 0, -10), V(-2, 0, 6), V(55, 0, -8));
             PoseKey(b, .2f, 0, V(5, 2, 4), V(-5, -3, 8), V(16, 0, 30), V(16, 0, -30), V(-1, 0, 6), V(18, 0, -6));
             PoseKey(b, .45f, 0, V(0, 0, 0), V(0, 0, 0), V(0, 0, 15), V(0, 0, -15));
             return b.Build();
