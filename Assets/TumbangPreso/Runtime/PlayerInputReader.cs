@@ -70,8 +70,24 @@ namespace TumbangPreso
         {
             if(RawButton(action,verb))_menuButtons.Add(verb);
         }
-        private static bool RawButton(InputAction action,Verb verb)
-            =>(action!=null && action.IsPressed()) || InputLayer.TouchInput.Pressed(verb);
+        private bool RawButton(InputAction action,Verb verb)
+        {
+            bool down = action != null && action.IsPressed();
+            bool charge = verb == Verb.SpecialAbility || verb == Verb.Lunge;
+            if (charge && !down && action != null && action.enabled && action.activeValueType == typeof(float))
+            {
+                // Re-resolution retains the processed value of a surviving control
+                // but can lose IsPressed. Preserve its normal press/release hysteresis.
+                bool held = verb == Verb.SpecialAbility ? _throwHardwareHeld : _lungeHardwareHeld;
+                float point = action.activeControl is UnityEngine.InputSystem.Controls.ButtonControl button
+                    ? button.pressPointOrDefault : InputSystem.settings.defaultButtonPressPoint;
+                float value = action.ReadValue<float>();
+                down = held ? value > point * InputSystem.settings.buttonReleaseThreshold : value >= point;
+            }
+            if (verb == Verb.SpecialAbility) _throwHardwareHeld = down;
+            else if (verb == Verb.Lunge) _lungeHardwareHeld = down;
+            return down || InputLayer.TouchInput.Pressed(verb);
+        }
         private bool ReadButton(InputAction action,Verb verb)
         {
             bool down=RawButton(action,verb);
@@ -91,6 +107,7 @@ namespace TumbangPreso
         private InputAction _move, _sprint, _jump, _special, _grab, _lunge, _emote, _skill1, _skill2, _ultimate, _interact;
         private InputDevice _throwDevice, _lungeDevice;
         private bool _throwDeviceLost, _lungeDeviceLost;
+        private bool _throwHardwareHeld, _lungeHardwareHeld;
 
         private void OnEnable() => InputSystem.onDeviceChange += DeviceChanged;
 
@@ -108,13 +125,15 @@ namespace TumbangPreso
             // Check aggregate input after the Input System update, when surviving
             // bindings have been resolved. Never read a removed device's controls.
             bool ownsSeat = !NetAuthority.IsNetworked || _motor.PlayerSlot == NetAuthority.LocalSlot;
-            if (_throwDeviceLost && !RawButton(_special, Verb.SpecialAbility))
+            bool throwing = RawButton(_special, Verb.SpecialAbility);
+            bool lunging = RawButton(_lunge, Verb.Lunge);
+            if (_throwDeviceLost && !throwing)
                 _motor.GetComponent<Carrier>()?.RetireThrowInput(ownsSeat);
-            if (_lungeDeviceLost && !RawButton(_lunge, Verb.Lunge))
+            if (_lungeDeviceLost && !lunging)
                 _motor.GetComponent<CombatVerbs>()?.RetireProducerInput(ownsSeat);
             _throwDeviceLost = _lungeDeviceLost = false;
-            _throwDevice = _special != null && _special.IsPressed() ? _special.activeControl?.device : null;
-            _lungeDevice = _lunge != null && _lunge.IsPressed() ? _lunge.activeControl?.device : null;
+            _throwDevice = _throwHardwareHeld ? _special.activeControl?.device : null;
+            _lungeDevice = _lungeHardwareHeld ? _lunge.activeControl?.device : null;
         }
 
         /// <summary>
@@ -547,6 +566,7 @@ namespace TumbangPreso
             // ⚠️ RELEASE EVERYTHING ON THE WAY OUT. A verb held across a disable stays held
             // in the intent table forever, and the player walks back in already sprinting.
             DiscardMenuButtonsUntilRelease();
+            _throwHardwareHeld = _lungeHardwareHeld = false;
         }
     }
 }
