@@ -104,6 +104,7 @@ namespace TumbangPreso.UI
         private async System.Threading.Tasks.Task RedeemCode()
         {
             _claiming=true;
+            _bonus.text="Claiming +5,000 Tansan...";
             _rewardRequest??=Guid.NewGuid().ToString("N");
             try
             {
@@ -116,10 +117,15 @@ namespace TumbangPreso.UI
                     _rewardRequest=null;_bonus.text="+5,000 TANSAN!";
                     GameServices.Audio?.PlayUi("match_win");
                 }
-                else _bonus.text=wallet.Status;
+                else _bonus.text=BonusFailureMessage(result,wallet.Status);
             }
             finally{if(this!=null)_claiming=false;}
         }
+        private static string BonusFailureMessage(string result,string fallback)
+            => result=="busy"?"Wallet busy. Try the code again in a moment."
+             : result=="offline"?"Sign in to claim the Credits bonus."
+             : result=="cancelled"?"Account changed. Enter the code again."
+             : string.IsNullOrEmpty(fallback)?"Could not confirm the bonus. Try the code again.":fallback;
         private void OnDisable(){_code.Reset();_dragging=false;if(_canvas!=null)_canvas.gameObject.SetActive(false);}
     }
 }
