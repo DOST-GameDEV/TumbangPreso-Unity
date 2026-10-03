@@ -1,0 +1,4 @@
+{
+  "operation": "Read-only wait for exact orphaned task SDK compiler/shutdown helpers to reach the existing 60-second retirement threshold. No processes stopped or files removed by this wait.",
+  "waitSeconds": 0.015
+}

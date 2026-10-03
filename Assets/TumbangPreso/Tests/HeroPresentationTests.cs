@@ -519,16 +519,23 @@ namespace TumbangPreso.Tests
 
         /// <summary>
         /// ⚠️ EVERY HERO ABILITY HAS A BESPOKE 3RD-PERSON BODY ACTION AND 1ST-PERSON VIEWMODEL ACTION.
-        /// Generic fallback clips ("dash"/"shove"/"jump") are forbidden on hero abilities.
+        /// Names alone are insufficient: each live action must be registered, serialized
+        /// on its own shipping roster, and bound to real model paths.
         /// </summary>
-        [Test]
-        public void EveryHeroAbilityHasBespokeCastAndViewModelActions()
+        [TestCaseSource(nameof(Heroes))]
+        public void EveryHeroAbilityHasBespokeCastAndViewModelActions(string hero)
         {
-            var vm = new GameObject("TestVM").AddComponent<CameraSystem.ViewmodelArms>();
-
-            foreach (string hero in Heroes)
+            var go = new GameObject("Hero action dispatcher probe");
+            go.SetActive(false); // Dispatch coverage needs no arm geometry or scene ownership.
+            try
             {
+                var vm = go.AddComponent<CameraSystem.ViewmodelArms>();
                 var kit = HeroAbilitySystem.CreateKitFor(hero);
+                var art = Resources.Load<RosterEntryAsset>("Roster/person_" + hero);
+                Assert.IsNotNull(art, $"{hero}: missing shipping roster entry");
+                Assert.IsNotNull(art.Model, $"{hero}: missing shipping model");
+                Assert.IsNotNull(art.Clips, $"{hero}: missing serialized clip list");
+                var rigRoot = art.Model.GetComponentInChildren<Animator>(true)?.transform ?? art.Model.transform;
 
                 foreach (var ability in kit.AllAbilities)
                 {
@@ -541,15 +548,28 @@ namespace TumbangPreso.Tests
                     Assert.IsFalse(string.IsNullOrEmpty(ability.ViewmodelAction),
                         $"{hero}: {ability.Name} is missing a ViewmodelAction");
 
-                    Assert.IsFalse(ability.CastAction == "dash" || ability.CastAction == "shove" || ability.CastAction == "jump",
-                        $"{hero}: {ability.Name} still uses generic fallback CastAction '{ability.CastAction}'");
+                    Assert.IsTrue(ability.CastAction.StartsWith("hero-"),
+                        $"{hero}: {ability.Name} still uses a generic body action '{ability.CastAction}'");
+                    Assert.IsTrue(Visual.CharacterAnimator.ActionChains.TryGetValue(ability.CastAction, out var chain),
+                        $"{hero}: {ability.Name} requests an unregistered body action '{ability.CastAction}'");
+                    Assert.AreEqual(ability.CastAction, chain[0],
+                        $"{hero}: {ability.Name} must try its own action before any fallback");
+                    var clip = art.Clips.FirstOrDefault(c => c != null && c.name == ability.CastAction);
+                    Assert.IsNotNull(clip,
+                        $"{hero}: {ability.Name} has no serialized own clip; Editor-generated or generic fallbacks can mask this");
+                    Assert.Greater(clip.length, 0, $"{hero}: {clip.name} has no duration");
+                    var bindings = UnityEditor.AnimationUtility.GetCurveBindings(clip);
+                    Assert.IsNotEmpty(bindings, $"{hero}: {clip.name} has no authored curves");
+                    foreach (var binding in bindings)
+                        if (!string.IsNullOrEmpty(binding.path))
+                            Assert.IsNotNull(rigRoot.Find(binding.path),
+                                $"{hero}: {clip.name} binds a missing model path '{binding.path}'");
 
                     Assert.IsTrue(vm.PlayAction(ability.ViewmodelAction),
                         $"{hero}: {ability.Name} ViewmodelAction '{ability.ViewmodelAction}' is not supported by ViewmodelArms");
                 }
             }
-
-            Object.DestroyImmediate(vm.gameObject);
+            finally { Object.DestroyImmediate(go); }
         }
 
         /// <summary>
@@ -933,16 +953,23 @@ namespace TumbangPreso.Tests
         }
 
         /// <summary>
-        /// ⚠️ EVERY CHAIN NEEDS A SECOND AND A THIRD NAME. The first is aspirational, so a chain
-        /// of length one is a cast that silently does nothing at all on every rig that ships.
+        /// A serialized own hero clip can be a single-entry chain. An aspirational
+        /// name with no shipping asset still needs the original fallback protection.
         /// </summary>
         [Test]
-        public void EveryActionChainHasAFallbackBehindTheAspirationalClip()
+        public void EveryActionChainHasAShippedOwnClipOrFallback()
         {
+            var shippedHeroClips = new HashSet<string>(Heroes
+                .Select(hero => Resources.Load<RosterEntryAsset>("Roster/person_" + hero))
+                .Where(art => art != null && art.Clips != null)
+                .SelectMany(art => art.Clips).Where(clip => clip != null && clip.length > 0)
+                .Select(clip => clip.name));
             foreach (var pair in Visual.CharacterAnimator.ActionChains)
             {
-                Assert.GreaterOrEqual(pair.Value.Length, 2,
-                    $"'{pair.Key}' has no fallback, so it animates nothing on a rig without it");
+                Assert.IsNotEmpty(pair.Value, $"'{pair.Key}' has no action candidates");
+                Assert.IsTrue(pair.Value.Length >= 2 ||
+                    (pair.Key.StartsWith("hero-") && shippedHeroClips.Contains(pair.Value[0])),
+                    $"'{pair.Key}' has neither a serialized own hero clip nor a fallback");
 
                 foreach (string clip in pair.Value)
                     Assert.IsFalse(string.IsNullOrWhiteSpace(clip), $"'{pair.Key}' has a blank entry");
@@ -951,4 +978,3 @@ namespace TumbangPreso.Tests
 
     }
 }
-
