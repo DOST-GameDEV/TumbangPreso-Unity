@@ -32,12 +32,6 @@ namespace TumbangPreso.Net
         private Func<Task<string>> _proofDispatch;
         private string _proofOwner = "";
         private long _proofRequest;
-        private long _deleteRequest;
-        private Func<Task> _deleteCloudDispatch;
-        private Func<string, Task> _deleteAuthDispatch;
-        private Func<Task> _deleteRestartDispatch;
-        private Func<AccountProfile, Task> _initialiseDispatch;
-        private Func<Task> _initialiseDelayDispatch;
         private long _saveProfileRequest;
 
         [Serializable]
@@ -92,15 +86,13 @@ namespace TumbangPreso.Net
         /// </summary>
         private async Task InitialiseInternalAsync()
         {
-            var requestedProfile = Profile;
             AccountProfile local = ReadLocal();
-            Task remote = _initialiseDispatch == null ? SignInAndRefreshAsync(local, requestedProfile) : _initialiseDispatch(local);
-            Task delay = _initialiseDelayDispatch == null ? Task.Delay(BootNetworkBudgetMs) : _initialiseDelayDispatch();
-            Task winner = await Task.WhenAny(remote, delay);
+            Task remote = SignInAndRefreshAsync(local);
+            Task winner = await Task.WhenAny(remote, Task.Delay(BootNetworkBudgetMs));
 
             if (winner != remote)
             {
-                ApplyInitialFallback(requestedProfile, local, "UGS did not answer before the menu. Using local profile.");
+                Apply(local, signedIn: false, "UGS did not answer before the menu. Using local profile.");
                 _ = AwaitLateAnswerAsync(remote);
                 return;
             }
@@ -109,24 +101,11 @@ namespace TumbangPreso.Net
             catch (Exception e)
             {
                 Debug.LogWarning($"[PlayerAccount] sign-in failed; local profile kept: {e.Message}");
-                ApplyInitialFallback(requestedProfile, local, NetIdentity.StateReason);
+                Apply(local, signedIn: false, NetIdentity.StateReason);
             }
         }
 
-        private void ApplyInitialFallback(AccountProfile requestedProfile, AccountProfile local, string status)
-        {
-            if (this == null) return;
-            if (IsGuest)
-            {
-                if (ReferenceEquals(_primaryProfile, requestedProfile))
-                    _primaryProfile = AccountRules.Normalise(local);
-                return;
-            }
-            if (!ReferenceEquals(_profile, requestedProfile)) return;
-            Apply(local, signedIn: false, status);
-        }
-
-        private async Task SignInAndRefreshAsync(AccountProfile local, AccountProfile requestedProfile)
+        private async Task SignInAndRefreshAsync(AccountProfile local)
         {
             bool online;
             try { online = await NetIdentity.EnsureSignedInAsync(); }
@@ -134,7 +113,7 @@ namespace TumbangPreso.Net
 
             if (!online)
             {
-                ApplyInitialFallback(requestedProfile, local, NetIdentity.StateReason);
+                Apply(local, signedIn: false, NetIdentity.StateReason);
                 return;
             }
 
@@ -687,30 +666,20 @@ namespace TumbangPreso.Net
                 throw new InvalidOperationException(
                     "Leave the guest session before deleting an account; a guest has nothing to delete.");
 
-            string owner = PlayerId;
-            long request = ++_deleteRequest;
             await InitializeAsync();
-            RequireDeleteOwner(owner, request);
             if (IsSignedIn)
             {
-                RequireAuthenticatedDeleteOwner(owner);
                 try
                 {
-                    if (_deleteCloudDispatch == null) await CallCloudAsync("delete");
-                    else await _deleteCloudDispatch();
+                    await CallCloudAsync("delete");
                 }
                 catch (Exception e)
                 {
-                    RequireDeleteOwner(owner, request);
                     Debug.LogWarning($"[PlayerAccount] profile clear failed before deletion: {e.Message}");
                 }
-                RequireDeleteOwner(owner, request);
-                RequireAuthenticatedDeleteOwner(owner);
-                if (_deleteAuthDispatch == null) await AuthenticationService.Instance.DeleteAccountAsync();
-                else await _deleteAuthDispatch(owner);
+                await AuthenticationService.Instance.DeleteAccountAsync();
             }
 
-            RequireDeleteOwner(owner, request);
             var settings = SettingsStore.Current;
             settings.AccountPlayerId = "";
             settings.AccountUsername = "";
@@ -734,22 +703,8 @@ namespace TumbangPreso.Net
             _proof = "";
             _proofExpiresUtc = DateTime.MinValue;
             _profile = ReadLocal();
-            _initialiseTask = _deleteRestartDispatch == null ? InitialiseInternalAsync() : _deleteRestartDispatch();
+            _initialiseTask = InitialiseInternalAsync();
             await _initialiseTask;
-            if (this == null || IsGuest || request != _deleteRequest)
-                throw new OperationCanceledException("The deletion view changed while the local account restarted.");
-        }
-
-        private void RequireDeleteOwner(string owner, long request)
-        {
-            if (this == null || IsGuest || PlayerId != owner || request != _deleteRequest)
-                throw new OperationCanceledException("The account selected for deletion is no longer active.");
-        }
-
-        private void RequireAuthenticatedDeleteOwner(string owner)
-        {
-            if (_deleteAuthDispatch == null && AuthenticationService.Instance.PlayerId != owner)
-                throw new OperationCanceledException("The authenticated account selected for deletion changed.");
         }
 
         /// <summary>
@@ -764,7 +719,6 @@ namespace TumbangPreso.Net
 
             ++_renameRequest;
             ++_proofRequest;
-            ++_deleteRequest;
             if (!IsGuest) _primaryProfile = Profile;
             string id = "guest-" + Guid.NewGuid().ToString("N");
             _profile = AccountRules.Normalise(new AccountProfile
@@ -786,7 +740,6 @@ namespace TumbangPreso.Net
             if (!IsGuest) return;
             ++_renameRequest;
             ++_proofRequest;
-            ++_deleteRequest;
             IsGuest = false;
             _profile = _primaryProfile ?? ReadLocal();
             _primaryProfile = null;

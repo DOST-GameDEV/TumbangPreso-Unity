@@ -1,0 +1,15 @@
+{
+  "compilation": {
+    "Runtime": 0,
+    "Tests": 0,
+    "PlayTests": 1
+  },
+  "scope": "Compile only;8delete+3fallback+3UI cases nativepending",
+  "inputs": {
+    "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs": "f2cb1c21918b19bd04d1e985f6dd098756482e490e094a9a716e7d297beed25c",
+    "Assets/TumbangPreso/Runtime/UI/PlayerHub.cs": "981087faf128ff100d1c88fb2b17ca5a880e3b41b3aa502eb3be11cc45db995b",
+    "Assets/TumbangPreso/Tests/AccountDeleteLifetimeTests.cs": "10971690ac8e1401ac40e93d4f834d1a171b8e6af35f0406762d6c88ac03b1bd",
+    "Assets/TumbangPreso/Tests/AccountInitializationOwnerTests.cs": "a0e4f458e671ac40b49b63e3851c35168de52378e79bb2f4b3ab8a6c9370abb0",
+    "Assets/TumbangPreso/Tests/PlayMode/PlayerHubDeletionLifetimeTests.cs": "733c2acb7d8be89002f2dfda99f981d8a6ae19fd635898791cd05d2dd5725c3d"
+  }
+}
