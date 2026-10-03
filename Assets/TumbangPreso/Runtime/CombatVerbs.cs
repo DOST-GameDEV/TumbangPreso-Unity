@@ -28,6 +28,7 @@ namespace TumbangPreso
         private float _shoveCooldown;
         private float _punchCooldown;
         private float _lungeCooldown;
+        private bool _punchPressSpent;
 
         private float _lungeCharge;
         private bool _lungeCharging;
@@ -152,6 +153,11 @@ namespace TumbangPreso
             Tick(ref _punchCooldown, dt);
             Tick(ref _lungeCooldown, dt);
             Tick(ref _slideCooldown, dt);
+
+            // A refused prediction refunds cooldown, not ownership of its input edge.
+            // Observe release even when interruption or role change skips the punch path.
+            if (!_motor.Intent.Pressed(Verb.SpecialAbility) && !_motor.Intent.JustPressed(Verb.SpecialAbility))
+                _punchPressSpent = false;
 
             if (!_motor.CanAct())
             {
@@ -299,10 +305,11 @@ namespace TumbangPreso
         /// </summary>
         private void StepPunch()
         {
-            if (_punchCooldown > 0.0f) return;
+            if (_punchCooldown > 0.0f || _punchPressSpent) return;
             if (!_motor.Intent.JustPressed(Verb.SpecialAbility)) return;
 
             _punchCooldown = Balance.PunchCooldown;
+            _punchPressSpent = true;
 
             // Same rule as the shove: the jab reads on the swing, in both views, and it asks for
             // its own view kick rather than relying on the fallback the new `punch` clip has now
