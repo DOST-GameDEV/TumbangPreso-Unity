@@ -2,6 +2,19 @@
 
 ## PC root latest checkpoint: October 3, Unity slot isolation
 
+Current root source: published70a9ede94072d2fc45de55c0b1244bbdf360b056, protocol139.
+Reusable isolated worker now normal mergeca95f6e22 of that source plus validation
+company/product identity. Current C#/Packages match published code; no extra cache
+copy or source reset. Focused integration19/19 (network4/offline4/tutorial11),
+normal exit/restored/free, session3459 terminal. Report current-integration139
+pending publication. All root jobs are terminal; no owned server or browser.
+Remaining gates: current139 player build and real matching peers; safe headless
+overlap; measured first-use/hitches; broader hero/status combinations. Preserve
+old1003g134 artifact/receipts and all Claude/contributor/private dirt.
+Next concrete action: publish current-integration139 report; then prepare a clean
+current shipping candidate or a disjoint reproducible defect while Claude uses
+MAIN. Never rerun the unchanged19-case cohort without a new reason.
+
 Latest root publication: f0e277429 includes offline roster4/4 (original2failures/
 2controls), network roster7b3214e34/139 (original2failures/2controls,candidate4/4),
 runner bounds69c18b86b/38checks and prior seat8. Incoming laptop104213d46 checked
