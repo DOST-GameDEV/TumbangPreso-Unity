@@ -1033,6 +1033,12 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   protocol128. Other Pyro slots and full presentation remain open.
   [Evidence](reports/hero-quality-2026-10-01/empowered-throw/README.md).
 
+- [ ] BANK-SHOT-LOAD-MOTION-1003: scoped replacement of the stale magnet-recall
+  body/owner gesture with loading the already-held slipper. Preserve mechanics,
+  descriptions, assets outside the appended clip and existing sound. Reserved
+  bank-only authoring/dispatch/test paths and acceptance in
+  [plan](reports/zack-bank-load-2026-10-03/plan.md).
+
 - [x] CLOSED-CIRCUIT-1001: cancellable6m/.4s defending acquisition,2s host
   Zapped,35s commitment cooldown and Overclock different-target follow-up.
   Fourteen distinct focused native checks and actual Linux host/owner/observer
