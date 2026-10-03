@@ -173,7 +173,7 @@ namespace TumbangPreso
             StartCoroutine(RunReadyCountdown());
         }
 
-        /// <summary>Starts the 5, 4, 3, 2, 1, START countdown locally on clients.</summary>
+        /// <summary>Starts the 3, 2, 1, GO countdown locally on clients.</summary>
         public void StartLocalCountdown()
         {
             if (_countingDown || _countdownConsumed) return;
@@ -362,7 +362,7 @@ namespace TumbangPreso
             _countingDown = true;
             ReadyPromptChanged?.Invoke(false);
 
-            foreach (var tick in new[] { "5", "4", "3", "2", "1" })
+            foreach (var tick in new[] { "3", "2", "1" })
             {
                 if (MatchAbandon.AuthorityRevoked) { CancelAbandonedCountdown(); yield break; }
                 CountdownTick?.Invoke(tick);
@@ -370,7 +370,7 @@ namespace TumbangPreso
             }
 
             if (MatchAbandon.AuthorityRevoked) { CancelAbandonedCountdown(); yield break; }
-            CountdownTick?.Invoke("START!");
+            CountdownTick?.Invoke("GO!");
             yield return new WaitForSecondsRealtime(GoSeconds);
 
             if (MatchAbandon.AuthorityRevoked) { CancelAbandonedCountdown(); yield break; }

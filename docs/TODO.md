@@ -17,6 +17,16 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### OPENING-CAMERA-1003: deliberate arena and character reveals
+
+- [x] Implement objective-centred opening, obstacle-aware body framing, individual
+  pose reveals, compact captions and direct gameplay handoff. Owner's latest
+  countdown is3/2/1/GO!, protocol143. Camera7/7 and countdown3/3 native checks;
+  actual Eskinita establishing frame inspected. [Evidence and limits](reports/opening-camera-2026-10-03/README.md).
+- [ ] Full normal-speed portrait/handoff visual review, all-map composition and
+  matching packaged/live-peer acceptance. Graphics capture hit RAM after one frame.
+
+
 ### EMOTE-TARGET-OWNER-1003: the wheel follows local input
 
 - [x] Active-reader ownership replaces ambiguous AI-absence discovery. Network

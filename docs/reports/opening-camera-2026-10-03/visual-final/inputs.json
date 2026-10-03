@@ -1,0 +1,11 @@
+{
+  "Assets/TumbangPreso/Runtime/MatchArrivalPresentation.cs": "99a4bb503ab8650a0d480cf7481bef72f2b8301beebbc7481d883d211a6374c6",
+  "Assets/TumbangPreso/Runtime/MatchArrivalPresentation.cs.meta": "23ee1c2ffdcb78a4b6e4e9976519a0b0a5679f52e94793c7ef7e189a45be7225",
+  "Assets/TumbangPreso/Runtime/ReadyGate.cs": "22eae1fd4d5b24228c205e527417ab9120fc3cef5c599aed98bc1f2b253ffd0e",
+  "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "1be94e59b1d2dcee0139ccab16011152c04e3bc8c55a04a1bf2a4b7693d8d070",
+  "Assets/TumbangPreso/Tests/OpeningCameraTests.cs": "3b6df899995bf967feb147cf5f017247461b7715fff66806d636489975b56866",
+  "Assets/TumbangPreso/Tests/OpeningCameraTests.cs.meta": "f17aa58503fed61f986c91af4965314d13844803994141bf3ef79dcba639e706",
+  "Assets/TumbangPreso/Tests/OpeningCameraCompositionTests.cs": "1e23f4fc44c0d42b8604354b51f8572ee5b1e6e671c5f74635ee533f99574564",
+  "Assets/TumbangPreso/Tests/OpeningCameraCompositionTests.cs.meta": "7756b73321796a4b9532e18431a2fbeea72359928e114f7be99b8ae28d664c14",
+  "Assets/TumbangPreso/Tests/PlayMode/MatchStartContractTests.cs": "3e82a42a1e1f374dc7669324f4c477e0ff4d33167d5a38656143474d2aaddd3c"
+}
