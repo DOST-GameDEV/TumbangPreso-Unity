@@ -488,6 +488,8 @@ namespace TumbangPreso
             // Losing a producer is cancellation, not a deliberate throw or lunge release.
             _motor?.GetComponent<Carrier>()?.CancelPendingInput();
             _motor?.GetComponent<CombatVerbs>()?.CancelPendingInput();
+            if (_motor != null && (!NetAuthority.IsNetworked || _motor.PlayerSlot == NetAuthority.LocalSlot))
+                InputLayer.TouchInput.Move = Vector2.zero;
         }
 
         private void OnDisable()
