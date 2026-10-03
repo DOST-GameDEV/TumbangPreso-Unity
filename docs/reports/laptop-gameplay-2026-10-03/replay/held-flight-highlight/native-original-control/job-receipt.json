@@ -1,0 +1,36 @@
+{
+  "job": {
+    "id": "9a5c0c1467f34ae2a9e2bee0ff84a504",
+    "ownerPid": 12376,
+    "guardPid": null,
+    "unityPids": [],
+    "createdUtc": "2026-10-03T03:58:43Z",
+    "kind": "gpu",
+    "memoryMb": 2048,
+    "reserveMb": 1024,
+    "project": "c:\\users\\matthew\\dev\\tump-laptop-native1003",
+    "library": "c:\\users\\matthew\\dev\\tump-laptop-native1003\\library",
+    "profile": "laptop-slipper-highlight-original-control1003",
+    "prefHive": "software\\unity\\unityeditor\\bh studios\\tumbang preso",
+    "ports": [],
+    "worker": false,
+    "allowParallel": false,
+    "companyName": "BH Studios",
+    "productName": "Tumbang Preso"
+  },
+  "requestedUtc": "2026-10-03T03:58:43Z",
+  "status": "completed",
+  "exitCode": 0,
+  "admission": {
+    "availableMb": 5454,
+    "activeJobsBefore": 0,
+    "acquiredUtc": "2026-10-03T03:58:43Z"
+  },
+  "startedUtc": "2026-10-03T03:58:43Z",
+  "guardPid": 948,
+  "endedUtc": "2026-10-03T03:59:16Z",
+  "guardTerminal": true,
+  "preservationCompleted": true,
+  "availableMbAtEnd": 5485,
+  "leaseHeld": false
+}
