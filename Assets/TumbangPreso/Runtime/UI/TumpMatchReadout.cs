@@ -376,7 +376,9 @@ namespace TumbangPreso.UI
             }
             if (local.StunElement != StunElement.None)
             {
-                _prompt.text = local.IsFrozen ? "Frozen" : "Stunned";
+                // Timed incapacity is shown by status indicators, not an action
+                // the player could perform. Keep genuine root interaction below.
+                _promptRoot.gameObject.SetActive(false);
                 return;
             }
             // The native HUD bypasses Hud.UpdateInteractPrompt, so recovery from

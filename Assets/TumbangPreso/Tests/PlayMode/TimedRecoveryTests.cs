@@ -60,6 +60,30 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(_actor.IsChilled, "The caster must not receive her own thaw slow.");
             yield return null;
         }
+        [UnityTest] public IEnumerator FrozenOnlyUsesStatusIndicatorsAndKeepsRootInteraction()
+        {
+            _actor.enabled = false;
+            var owner = Keep(new GameObject("Status-only HUD"));
+            var view = owner.AddComponent<UI.TumpMatchReadout>(); view.Build(owner.transform);
+            var hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var prompt = (RectTransform)typeof(UI.TumpMatchReadout).GetField("_promptRoot", hidden).GetValue(view);
+            _actor.ApplyStagger(2.5f, StunElement.Ice, 9);
+            view.Tick(_actor, false, false, false, false);
+            bool frozenChip = false;
+            foreach (var label in view.Canvas.GetComponentsInChildren<UnityEngine.UI.Text>())
+                frozenChip |= label.name == "StatusName" && label.text == UI.StatusIcons.Name(StatusKind.Frozen) && label.isActiveAndEnabled;
+            Assert.IsTrue(frozenChip, "The existing Frozen status indicator must remain visible.");
+            yield return TumpUiCapture.Capture("Frozen-status-only", view.Canvas, 960, 540, false, true);
+            Assert.IsFalse(prompt.gameObject.activeSelf, "Timed Frozen must not duplicate its status as an action bar.");
+            _actor.ClearStun(); _actor.ApplyStagger(2.5f, StunElement.Shock, 9);
+            view.Tick(_actor, false, false, false, false);
+            Assert.IsFalse(prompt.gameObject.activeSelf, "Timed elemental stun needs no action bar.");
+            _actor.ClearStun(); _actor.ApplyRooted(3);
+            view.Tick(_actor, false, false, false, false);
+            Assert.IsTrue(prompt.gameObject.activeSelf, "Rooted still needs its genuine Interact action.");
+            var text = (UnityEngine.UI.Text)typeof(UI.TumpMatchReadout).GetField("_prompt", hidden).GetValue(view);
+            Assert.That(text.text, Does.Contain("Rooted"));
+        }
         [UnityTest] public IEnumerator FrozenRejectsLegacyRecoveryAndKeepsItsTimer()
         {
             _actor.ApplyStagger(3,StunElement.Ice,8);_actor.enabled=false;
