@@ -9,10 +9,12 @@ restored/free guards. Reports at laptop-validation-2026-10-03, refsa80acb40b and
 99ae1469f. Default timing export1/1/noRaw proof inspected too; no FPS/whole-route
 claim. Current source preserves latest Amihan/match-entry/Closed Circuit work.
 Neither fix changes the protocol or wire layout. No PC Unity/player job.
+Current NetSession.ProtocolVersion is142, verified directly in source. Older
+141/139/134 references below describe their original candidates, not this gate.
 
 LAPTOP owns all pending native tests/builds/players while CLAUDE owns PC Unity.
 Laptop has touch-button8/device-loss work underway. Current14-case integration,
-matching141 Windows build, startup/menu/entry timing and actual peers remain
+matching142 Windows build, startup/menu/entry timing and actual peers remain
 open. Binary512MiB interruption is unqualified; never use old139 player to claim
 new CSV defaults. Do not repeat unchanged packet/emote/timing cases.
 

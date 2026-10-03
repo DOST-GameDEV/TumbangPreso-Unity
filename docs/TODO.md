@@ -67,7 +67,7 @@ Nothing was deleted or renumbered.
 - [x] Network empty bot seats use shared selection instead of each viewer's local
   character preference. Original2causal/2controls, first candidate4/4. Protocol139.
   [Evidence](reports/reliability-2026-10-03/network-bot-roster/README.md).
-- [ ] Rebuilt matching139 host/client with different human picks: verify bot
+- [ ] Rebuilt matching142 host/client with different human picks: verify bot
   characters/kits and replicated effects. Frozen1003g134 is excluded.
 
 ### SEAT-PRODUCER-TRANSFER-1003: rapid role changes retain controls
@@ -134,7 +134,7 @@ Nothing was deleted or renumbered.
   input failure plus separate accepted post-import classification and full manifest.
   [Artifact and limits](reports/reliability-2026-10-03/windows-candidate1003g/README.md).
 - [ ] Matching-artifact peer checks and actual Frozen effects; online/Relay remain
-  separate. Current Main139 is incompatible with frozen1003g134. Do not repeat
+  separate. Current Main142 is incompatible with frozen1003g134. Do not repeat
   the unchanged baseline merely to produce more activity.
 
 ### SPECTATOR-MATCH-LIFETIME-1003: retire old footage and markers
