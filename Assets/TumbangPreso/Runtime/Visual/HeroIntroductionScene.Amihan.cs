@@ -328,15 +328,16 @@ namespace TumbangPreso.Visual
                 AmStroke(_amGatherCore[i], _amGatherInk[i], from, bend, birdAt, side, .3f, Ease(0f, .36f, s), Ease(.16f, .5f, s), .07f * light);
             }
 
-            SampleAmihanBurst(since, calm);
+            SampleAmihanBurst(since, calm, 1f - Ease(AmReleaseAt + AmHangTo - .1f, AmReleaseAt + AmHangTo - .04f, t));
             SampleAmihanLeaves(t, story, calm);
 
-            // THE SPEED STREAKS race down the lane on the release (story time: they hang with everything else).
+            // THE SPEED STREAKS race down the lane on the release (story time: they hang with everything else). v15: gone before
+            // the finish close-up, whose lens stands in their lane (they drew bands across her face).
             for (int i = 0; i < _amSpeed.Count; i++)
             {
                 float s = since - AmSpeedRows[i, 4] * .4f;
                 if (s < 0f || s > .5f) { _amSpeed[i].Set(0f, 0f); continue; }
-                _amSpeed[i].Set(.75f * light * leave, calm ? 0f : story * 9f, Ease(0f, .18f, s), Ease(.1f, .45f, s), Ease(.2f, .5f, s) * .7f);
+                _amSpeed[i].Set(.75f * light * leave * (1f - Ease(AmReleaseAt + AmHangTo - .1f, AmReleaseAt + AmHangTo - .04f, t)), calm ? 0f : story * 9f, Ease(0f, .18f, s), Ease(.1f, .45f, s), Ease(.2f, .5f, s) * .7f);
             }
 
             // COURT DUST rolling round her in the monsoon's ring, closing with it.
@@ -687,7 +688,8 @@ namespace TumbangPreso.Visual
                 at += Vector3.down * (.9f * down) + Vector3.forward * (since * 14f);
                 turn = Quaternion.Euler(-40f + 50f * down, 0f, 0f);
                 flap = Mathf.Lerp(flap, -42f, down) + 10f * Ease(.2f, .5f, since);
-                on *= 1f - Ease(.25f, .6f, since);
+                // v15: gone before the finish close-up (its trails swept across her face as the lens cut in).
+                on *= 1f - Ease(.2f, .36f, since);
             }
         }
 
@@ -820,7 +822,7 @@ namespace TumbangPreso.Visual
         // ------------------------------------------------------------------ the burst
 
         /// <summary>On the drive: arcs racing down the lane off her palms (story time, so they hang in the slow motion).</summary>
-        private void SampleAmihanBurst(float since, bool calm)
+        private void SampleAmihanBurst(float since, bool calm, float keep)
         {
             var palms = FreePalm;
             for (int j = 0; j < _amRing.Length; j++)
@@ -835,7 +837,8 @@ namespace TumbangPreso.Visual
                     _amRingPoints[i] = centre + new Vector3(Mathf.Sin(a) * r, 0f, Mathf.Cos(a) * r * .45f);
                 }
                 line.SetPositions(_amRingPoints);
-                line.widthMultiplier = .09f * (1f - Ease(.08f, .55f, since)) * (calm ? .7f : 1f);
+                // v15: `keep` clears them before the finish close-up, whose lens stands in their path (bands across her face).
+                line.widthMultiplier = .09f * (1f - Ease(.08f, .55f, since)) * (calm ? .7f : 1f) * keep;
                 line.enabled = line.widthMultiplier > .001f;
             }
         }
@@ -902,7 +905,9 @@ namespace TumbangPreso.Visual
                     // Blown out from before her palms down the lane, not off the bird.
                     var origin = new Vector3(0f, 1.1f + LiftAt(t) + _amCourt, 1.2f) + new Vector3(seed.y - .5f, (seed.z - .5f) * .8f, seed.x * .8f);
                     at = origin + dir * (speed * since) + Vector3.down * (3.5f * since * since);
-                    on = since < 1.4f && at.y > _amCourt - .05f;
+                    // v15 (owner: "what are those blockss"): flung past the lens in the hang the leaves read as blocks. None in the
+                    // throw: the streaks, the wingbeat and the thrown players carry it.
+                    on = false;
                     tumble += since * 4f;
                 }
                 if (!on) { Place(_amLeaf[i], Vector3.zero, Vector3.one * .001f, Quaternion.identity, 0f); continue; }

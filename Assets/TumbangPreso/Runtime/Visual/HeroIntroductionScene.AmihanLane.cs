@@ -28,7 +28,8 @@ namespace TumbangPreso.Visual
         // resumes on it with no dodge window, so it is never a promise the rules break. ⚠️ Nothing here changes a rule, a number or a byte on the wire. Posed from the scene clock only; no `Random`.
         // =========================================================================================
 
-        private const int AlMax = 9;
+        private const int AlMax = 9, AlSwirlSamples = 22;
+        private readonly Vector3[] _alSwirlPoints = new Vector3[AlSwirlSamples];
         // The stagger of the brace, so a lane of players is a ripple outward from her and not one switch.
         private const float AlStaggerPerMetre = .018f;
 
@@ -48,6 +49,7 @@ namespace TumbangPreso.Visual
             public AnimationClip Brace;
             public Transform ArmLeft, ArmRight, Head, Root, Torso, LegLeft, LegRight;
             public WindVfx.Motif Breath;
+            public LineRenderer[] Swirl;
         }
 
         private readonly List<AlBody> _alBodies = new List<AlBody>(AlMax);
@@ -133,6 +135,14 @@ namespace TumbangPreso.Visual
                 host.SetParent(_root.transform, false);
                 // 14 pieces (film r4: 7 small ones vanished at the REVEAL's distance).
                 c.Breath = new WindVfx.Motif(host, 14, 31.7f + p.PlayerSlot * 5.3f, .45f);
+                // v15 (owner: "communicate wind and whirling better"): the wind that throws them wraps them as they tumble.
+                c.Swirl = new LineRenderer[2];
+                var taper = new AnimationCurve(new Keyframe(0f, 0f), new Keyframe(.4f, 1f), new Keyframe(1f, .1f));
+                for (int k = 0; k < 2; k++)
+                {
+                    c.Swirl[k] = Line("AmihanLaneSwirl-P" + (p.PlayerSlot + 1) + "-" + k, AlSwirlSamples, .05f, k == 0 ? WindVfx.Core : WindVfx.SheetBody);
+                    c.Swirl[k].widthCurve = taper; c.Swirl[k].numCapVertices = 0; c.Swirl[k].numCornerVertices = 3; c.Swirl[k].enabled = false;
+                }
             }
             // ⚠️ HIDDEN BY SWITCHING THE HOLDER OFF, NOT BY `forceRenderingOff` (`SetVisibleForCapture` turns every renderer under
             // the root on for each capture). `SampleAmihanLane` switches them on.
@@ -155,6 +165,7 @@ namespace TumbangPreso.Visual
                 if (c.Holder != null && c.Holder.activeSelf != on) c.Holder.SetActive(on);
                 if (!on) { c.Breath?.Step(0f, 0f, (_, __, ___) => Vector3.zero); continue; }
                 AlPose(c, story);
+                AlSwirl(c, story);
                 if (c.Breath == null) continue;
                 // A breath of cotton streaming past them, down the lane away from her, from the moment the wind reaches them.
                 float s = story - c.BraceAt;
@@ -165,6 +176,38 @@ namespace TumbangPreso.Visual
                 c.Breath.Step(s <= 0f ? 0f : Mathf.Repeat(s / 1.1f, 1f), (_reducedEffects ? .45f : .85f) * Ease(0f, .15f, s) * leave,
                     (start, drift, u) => feet - away * 1.1f + away * (2.4f * u) + side * (start.x * 1.3f) + Vector3.up * (.35f + start.y * 1.5f + drift.y * .3f * u),
                     .11f * light + .05f);
+            }
+        }
+
+        /// <summary>THE WIND ROUND A THROWN BODY: two open spirals whirling round it the opposite ways as it tumbles away, gone
+        /// as it lands. Story time, so they whirl slowly through the hang.</summary>
+        private void AlSwirl(AlBody c, float story)
+        {
+            if (c.Swirl == null) return;
+            float flown = c.Inside ? story - c.HitAt : -1f;
+            float on = flown <= 0f ? 0f : Mathf.Clamp01(flown / .06f) * (1f - Mathf.Clamp01((flown - .9f) / .3f));
+            var feet = c.Feet;
+            if (flown > 0f)
+            {
+                float speed = Core.AmihanRules.StormSurgeSpeed, lift = Core.AmihanRules.StormSurgeLift;
+                feet += c.Blow * speed * flown + Vector3.up * Mathf.Max(0f, lift * flown - 10f * flown * flown);
+            }
+            for (int k = 0; k < c.Swirl.Length; k++)
+            {
+                var line = c.Swirl[k];
+                if (on <= .01f) { line.enabled = false; continue; }
+                float dir = k == 0 ? 1f : -1f;
+                float spin = (_reducedEffects ? 0f : flown * 9f) * dir + k * 2.2f;
+                for (int i = 0; i < AlSwirlSamples; i++)
+                {
+                    float u = i / (AlSwirlSamples - 1f);
+                    float a = spin + dir * u * Mathf.PI * 3f;
+                    float rad = .5f + .15f * Mathf.Sin(u * Mathf.PI);
+                    _alSwirlPoints[i] = feet + new Vector3(Mathf.Sin(a) * rad, .1f + u * 1.5f, Mathf.Cos(a) * rad);
+                }
+                line.SetPositions(_alSwirlPoints);
+                line.widthMultiplier = .05f * on;
+                line.enabled = true;
             }
         }
 
