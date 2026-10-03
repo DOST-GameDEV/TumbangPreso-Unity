@@ -34,8 +34,13 @@ Nothing was deleted or renumbered.
   fixture/source bytes, XML, restored/free guards and explicit quality delta/
   restoration. Not an immutable-quality or rendered-performance pass.
   [Evidence](reports/laptop-validation-2026-10-04/opening-camera-preference/README.md).
-- [ ] Actual Run/clock/input/viewmodel handback and full-court normal/reduced/OFF
-  motion, current143 player and peers; sampler acceptance does not replace them.
+- [x] One actual Hero/custom-host-selected Eskinita route on143 reaches GO,
+  releases the clock and returns to first-person view. Native1/1;17 camera
+  images retained, hashes inspected. Overlay UI and perceived motion remain
+  unqualified. [Evidence](reports/laptop-validation-2026-10-04/fullcourt-hero-arrival/README.md).
+- [ ] Reduced/OFF, Classic, interruption and all-map visual acceptance plus
+  current144 packaged players and matching peers. First pre-pan camera-only
+  obstruction needs phase/overlay evidence before a visible-defect claim.
 
 ### ARRIVAL-CAMERA-CLEARANCE-1004: near walls cannot push the eye beyond collision
 
@@ -59,7 +64,9 @@ Nothing was deleted or renumbered.
   the return eye from the actual player rig and hide overhead introduction names.
   Native7/7 handoff/countdown controls pass, guard-free; settings restored.
   [Evidence](reports/opening-handoff-2026-10-03/README.md).
-- [ ] Local player/full-court visual acceptance of the reported startup transition.
+- [ ] Packaged player and actual loading-overlay acceptance of startup transition.
+  One143 Hero full-court runtime route now passes; its camera-only snapshots
+  omit the loading curtain and cannot settle the first pre-pan obstruction.
 
 
 ### OPENING-CAMERA-1003: deliberate arena and character reveals
@@ -68,8 +75,9 @@ Nothing was deleted or renumbered.
   pose reveals, compact captions and direct gameplay handoff. Owner's latest
   countdown is3/2/1/GO!, protocol143. Camera7/7 and countdown3/3 native checks;
   actual Eskinita establishing frame inspected. [Evidence and limits](reports/opening-camera-2026-10-03/README.md).
-- [ ] Full normal-speed portrait/handoff visual review, all-map composition and
-  matching packaged/live-peer acceptance. Graphics capture hit RAM after one frame.
+- [ ] Perceived normal-speed motion, all-map composition and matching144
+  packaged/live-peer acceptance. One143 Hero full-court route now passes with
+ 17 retained camera images showing overview, reveals and settled return.
 
 ### TOUCH-STICK-POINTER-1003: retain the controlling finger
 
@@ -1133,11 +1141,12 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   protocol128. Other Pyro slots and full presentation remain open.
   [Evidence](reports/hero-quality-2026-10-01/empowered-throw/README.md).
 
-- [ ] BANK-SHOT-LOAD-MOTION-1003: scoped replacement of the stale magnet-recall
-  body/owner gesture with loading the already-held slipper. Preserve mechanics,
-  descriptions, assets outside the appended clip and existing sound. Reserved
-  bank-only authoring/dispatch/test paths and acceptance in
-  [plan](reports/zack-bank-load-2026-10-03/plan.md).
+- [x] BANK-SHOT-LOAD-MOTION-1003 source: dedicated0.64s body/owner load of the
+  already-held slipper, preserving mechanics/copy/SFX and original37 clips.
+  Edit3/3, current headless13/13 guard-free, body-film1/1 with measured cadence.
+  [Implementation and retained failures](reports/zack-bank-load-2026-10-03/implementation.md).
+- [ ] BANK-SHOT-LOAD-MOTION-1003 visual acceptance: owner/walking graphics
+  blocked by8GiB container headroom; real-map/peer/player/human review still open.
 
 - [x] CLOSED-CIRCUIT-1001: cancellable6m/.4s defending acquisition,2s host
   Zapped,35s commitment cooldown and Overclock different-target follow-up.

@@ -1,0 +1,5 @@
+{
+  "reason": "Close the task-started Hub after blocked read-only deployment check; native tests need the RAM. No installed tools or credentials removed.",
+  "pid": 139047,
+  "exited": true
+}

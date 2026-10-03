@@ -257,6 +257,10 @@ namespace TumbangPreso.Net
 
         public static bool CanTransact => GameServices.Account != null && GameServices.Account.IsSignedIn;
 
+        /// <summary>Ask the protected wallet writer for the owner's Credits-code reward.</summary>
+        public async Task<string> ClaimCreditsCodeAsync(string request) =>
+            await CallAsync(new { action = "credits-code", request });
+
         public async Task RefreshAsync() => await CallAsync(new { action = "load" });
 
         /// <summary>Ask the server to sell <paramref name="id"/>. Returns the server's verdict.</summary>
@@ -323,6 +327,9 @@ namespace TumbangPreso.Net
 
         public static string Sentence(string result) => result switch
         {
+            "credits-code-granted" => "+5,000 Tansan!",
+            "credits-code-already" => "Credits bonus confirmed.",
+            "wallet-full" => "The wallet is full.",
             "bought" => "Yours now.",
             "owned" => "You already own that.",
             "poor" => "Not enough " + EconomyRules.CurrencyName + " yet. Tasks pay the most.",

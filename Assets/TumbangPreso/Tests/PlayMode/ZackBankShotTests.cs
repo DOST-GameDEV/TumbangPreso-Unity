@@ -4,11 +4,33 @@ using System.Reflection;
 using NUnit.Framework;
 using TumbangPreso.Abilities;
 using TumbangPreso.Core;
+using TumbangPreso.Visual;
+using TumbangPreso.Net;
 using UnityEngine;
 using UnityEngine.TestTools;
 
 namespace TumbangPreso.PlayTests
 {
+    [DefaultExecutionOrder(10000)]
+    public sealed class BankLoadGripObserver : MonoBehaviour
+    {
+        public CharacterVisual Visual;
+        public Slipper Shoe;
+        public Carrier Carrier;
+        public CharacterMotor Motor;
+        public bool Measuring, BrokenGrip;
+        public float MaximumSlack;
+        private void LateUpdate()
+        {
+            if (!Measuring) return;
+            var anchor = Visual != null ? Visual.HandAnchor : null;
+            if (anchor == null || Shoe == null || Carrier.Held != Shoe || Shoe.Holder != Motor)
+            { BrokenGrip = true; return; }
+            MaximumSlack = Mathf.Max(MaximumSlack, Vector3.Distance(Shoe.transform.position + Shoe.DrawnCentreOffset,
+                anchor.position + anchor.up * Shoe.CarrySupportExtent(anchor.up)));
+        }
+    }
+
     public sealed class ZackBankShotTests
     {
         readonly List<GameObject> _built = new List<GameObject>();
@@ -21,8 +43,9 @@ namespace TumbangPreso.PlayTests
         {
             var go = Track(new GameObject("Bank owner"));
             var body = go.AddComponent<CharacterMotor>(); body.PlayerSlot = 1; body.enabled = false;
-            var system = go.AddComponent<HeroAbilitySystem>(); system.enabled = false; system.BindHero("zack");
+            // The ability system caches its Carrier in Awake, as at the real spawn site.
             var carrier = go.AddComponent<Carrier>(); carrier.enabled = false;
+            var system = go.AddComponent<HeroAbilitySystem>(); system.enabled = false; system.BindHero("zack");
             GameServices.Ensure(); GameServices.Round.Clear(); GameServices.Round.Register(body);
             GameServices.Match.ApplySnapshot(new int[4], 1, true);
             GameServices.Round.ApplySnapshot(100, true, 0, true);
@@ -82,6 +105,137 @@ namespace TumbangPreso.PlayTests
             using (NetCue.SuppressRelay()) kit.AttackingSkill.Activate(ctx);
             kit.ResetForRound(ctx); Assert.IsFalse(kit.IsBankShotLoadedFor(replacement));
         }
+        [UnityTest, Timeout(120000)] public IEnumerator AcceptedLoadAnimatesTheHeldShoeWithoutARecall()
+            => ReviewLoad(false, false);
+        [UnityTest, Timeout(120000)] public IEnumerator OwnerLoadUsesTheNewVisibleHandGesture()
+            => ReviewLoad(true, false);
+        [UnityTest, Timeout(120000)] public IEnumerator WalkingLoadKeepsItsLegsAndShoeAttached()
+            => ReviewLoad(false, true);
+
+        private IEnumerator ReviewLoad(bool ownerView, bool walking)
+        {
+            var provider = NetAuthority.Provider; NetAuthority.Provider = null;
+            var priorRate = Time.captureFramerate; var priorSeat = GameLaunch.SoloSeat;
+            var priorBots = GameLaunch.AllBots; var priorSpectator = GameLaunch.Spectator;
+            var priorReduced = Settings.SettingsStore.Current.ReducedUiMotion;
+            var ambient = RenderSettings.ambientLight;
+            try
+            {
+                Time.captureFramerate = 60;
+                var ctx = Actor(out var kit); var motor = ctx.Motor;
+                motor.Mode = GameMode.HeroStrike; motor.CharacterIndex = Roster.IndexIn(Roster.HeroPeople, "zack");
+                kit.SetRole(false, ctx);
+                var capsule = motor.GetComponent<CharacterController>();
+                capsule.height = 1.6f; capsule.radius = .35f; capsule.center = Vector3.up * .8f;
+                capsule.slopeLimit = 45; capsule.stepOffset = .3f;
+                var visual = motor.gameObject.AddComponent<CharacterVisual>();
+                var visualRoot = new GameObject("Visual").transform; visualRoot.SetParent(motor.transform, false);
+                visual.SetModelRoot(visualRoot);
+                var art = Resources.Load<RosterEntryAsset>("Roster/person_zack");
+                visual.ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
+                var shoe = Shoe(ctx);
+                var shoeArt = Resources.Load<RosterEntryAsset>("Roster/slipper_loafers");
+                var shoeModel = Object.Instantiate(shoeArt.Model, shoe.transform);
+                foreach (var collider in shoeModel.GetComponentsInChildren<Collider>()) Object.DestroyImmediate(collider);
+                ToonSkin.ApplySlipper(shoeModel, ToonSkin.PropOutlineWidth);
+                ctx.Carrier.enabled = true;
+                var floor = Track(GameObject.CreatePrimitive(PrimitiveType.Cube));
+                floor.transform.position = Vector3.down * .5f; floor.transform.localScale = new Vector3(20, 1, 20);
+                motor.Teleport(Vector3.up * .1f); motor.enabled = true;
+                for (int i = 0; i < 25 && !motor.IsGrounded; i++) yield return new WaitForFixedUpdate();
+                Assert.IsTrue(motor.IsGrounded);
+                GameLaunch.SoloSeat = motor.PlayerSlot; GameLaunch.AllBots = false; GameLaunch.Spectator = false;
+                Settings.SettingsStore.Current.ReducedUiMotion = false;
+                Camera ownerCamera = null;
+                if (ownerView)
+                {
+                    var owner = Track(new GameObject("Bank owner camera")); owner.tag = "MainCamera";
+                    var rig = owner.AddComponent<CameraSystem.CameraRig>(); rig.Follow(motor, true);
+                    rig.SetAimSource(CameraSystem.AimSource.Movement); ownerCamera = owner.GetComponent<Camera>();
+                }
+                var camera = Track(new GameObject("Bank body observer")).AddComponent<Camera>();
+                camera.enabled = false; camera.fieldOfView = 42;
+                camera.transform.position = motor.transform.position + new Vector3(2.3f, 1.45f, 3.3f);
+                camera.transform.LookAt(motor.transform.position + Vector3.up * .85f);
+                var sun = Track(new GameObject("Bank key light")).AddComponent<Light>();
+                sun.type = LightType.Directional; sun.transform.rotation = Quaternion.Euler(40, -30, 0);
+                RenderSettings.ambientLight = new Color(.55f, .57f, .62f);
+                yield return null; yield return null; yield return null;
+                var body = motor.GetComponent<CharacterAnimator>();
+                var arm = System.Array.Find(visual.Model.GetComponentsInChildren<Transform>(true), t => t.name == "arm-left");
+                var leg = System.Array.Find(visual.Model.GetComponentsInChildren<Transform>(true), t => t.name == "leg-left");
+                var neutralArm = arm.localRotation; var neutralLeg = leg.localRotation;
+                var ownerArms = ownerView ? Object.FindFirstObjectByType<CameraSystem.ViewmodelArms>() : null;
+                if (ownerView) { Assert.IsNotNull(ownerArms); Assert.AreSame(motor, ownerArms.BoundCharacter); }
+                var ownerHand = ownerArms != null ? ownerArms.LeftHandForProps() : null;
+                var ownerNeutral = ownerHand != null ? ownerHand.localRotation : Quaternion.identity;
+                const BindingFlags hidden = BindingFlags.Instance | BindingFlags.NonPublic;
+                var action = typeof(CameraSystem.ViewmodelArms).GetField("_actionName", hidden);
+                var gait = typeof(CharacterAnimator).GetField("_gaitWeight", hidden);
+                var grip = motor.gameObject.AddComponent<BankLoadGripObserver>();
+                grip.Visual = visual; grip.Shoe = shoe; grip.Carrier = ctx.Carrier; grip.Motor = motor;
+                var start = motor.transform.position;
+                motor.Intent.Move = walking ? Vector2.right : Vector2.zero;
+                Assert.AreSame(ctx.Carrier, typeof(HeroAbilitySystem).GetField("_carrier", hidden).GetValue(motor.AbilitySystem));
+                Assert.IsTrue(motor.CanAct(), "The staged body must be able to act before the load request.");
+                Assert.AreEqual(HeroKit.CastOutcome.Cast, motor.AbilitySystem.ApplyNetworkCast(HeroAbilitySystem.Slot.Skill2,
+                    motor.transform.position, motor.transform.forward, motor.transform.position + Vector3.forward * 5, 0, true));
+                Assert.IsTrue(kit.IsBankShotLoadedFor(shoe), "Cosmetic preparation must not delay the real load.");
+                bool sawBody = false, sawOwner = false; float maxArm = 0, maxOwner = 0, maxLeg = 0, maxGait = 0;
+                grip.Measuring = true;
+                string capture = System.Environment.GetEnvironmentVariable("TUMP_BANK_CAPTURE");
+                var times = new List<string> { "frame,simulation_seconds" }; float began = Time.time;
+                for (int frame = 0; frame < 48; frame++)
+                {
+                    sawBody |= body.CurrentClipName == "hero-zack-bankshot" && body.IsPlayingAction;
+                    maxArm = Mathf.Max(maxArm, Quaternion.Angle(neutralArm, arm.localRotation));
+                    if (ownerView)
+                    {
+                        sawOwner |= (string)action.GetValue(ownerArms) == "bank-load";
+                        maxOwner = Mathf.Max(maxOwner, Quaternion.Angle(ownerNeutral, ownerHand.localRotation));
+                    }
+                    if (body.CurrentClipName == "hero-zack-bankshot" && body.IsPlayingAction)
+                    {
+                        maxGait = Mathf.Max(maxGait, (float)gait.GetValue(body));
+                        maxLeg = Mathf.Max(maxLeg, Quaternion.Angle(neutralLeg, leg.localRotation));
+                    }
+                    kit.AttackingSkill.Tick(ctx, 1f / 60);
+                    if (!string.IsNullOrEmpty(capture) && SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null)
+                    {
+                        string kind = ownerView ? "owner" : walking ? "walking" : "body";
+                        yield return GameplayShots.Render(ownerView ? ownerCamera : camera, kind + "-" + frame.ToString("D3"), false, capture, motor, 640, 360);
+                        times.Add(frame + "," + (Time.time - began).ToString("F6", System.Globalization.CultureInfo.InvariantCulture));
+                    }
+                    else yield return null;
+                }
+                if (!string.IsNullOrEmpty(capture))
+                    System.IO.File.WriteAllLines(System.IO.Path.Combine(capture, (ownerView ? "owner" : walking ? "walking" : "body") + "-times.csv"), times);
+                motor.Intent.Move = Vector2.zero;
+                Assert.IsTrue(sawBody); Assert.Greater(maxArm, 25);
+                grip.Measuring = false;
+                Assert.IsFalse(grip.BrokenGrip, "The accepted load changed its held-shoe relationship.");
+                Assert.Less(grip.MaximumSlack, .05f, "The loaded slipper detached from its moving grip.");
+                if (ownerView) { Assert.IsTrue(sawOwner); Assert.Greater(maxOwner, 10); }
+                if (walking)
+                {
+                    Assert.Greater(Vector3.Distance(start, motor.transform.position), .5f);
+                    Assert.Greater(maxGait, .8f); Assert.Greater(maxLeg, 10);
+                }
+                Assert.IsTrue(kit.IsBankShotLoadedFor(shoe));
+                Assert.That(kit.AttackingSkill.DurationRemaining, Is.EqualTo(7.2f).Within(.02f));
+                using (NetCue.SuppressRelay()) ctx.Carrier.HostThrowAt(motor.transform.position + Vector3.up, Vector3.forward * 5, 1);
+                Assert.AreEqual(SlipperAffinity.BankShot, shoe.Affinity);
+                Assert.IsNull(ctx.Carrier.Held); Assert.IsFalse(kit.IsOverchargeThrowActive);
+            }
+            finally
+            {
+                Time.captureFramerate = priorRate; GameLaunch.SoloSeat = priorSeat;
+                GameLaunch.AllBots = priorBots; GameLaunch.Spectator = priorSpectator;
+                Settings.SettingsStore.Current.ReducedUiMotion = priorReduced;
+                RenderSettings.ambientLight = ambient; NetAuthority.Provider = provider;
+            }
+        }
+
         static readonly MethodInfo Bounds = typeof(Slipper).GetMethod("BounceOffBounds", BindingFlags.Instance | BindingFlags.NonPublic);
         void Bank(Slipper shoe, bool corner = false)
         {

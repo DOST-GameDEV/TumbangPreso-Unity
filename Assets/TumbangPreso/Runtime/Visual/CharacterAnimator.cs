@@ -208,6 +208,7 @@ namespace TumbangPreso.Visual
             { "hero-zack-sprint", new[] { "hero-zack-sprint", Sprint, "attack-kick-right" } },
             { "hero-zack-charge", new[] { "hero-zack-charge", "emote-no", "attack-melee-right" } },
             { "hero-zack-circuit", new[] { "hero-zack-circuit" } },
+            { "hero-zack-bankshot", new[] { "hero-zack-bankshot" } },
             { "hero-zack-summon", new[] { "hero-zack-summon", "holding-both-shoot", Jump } },
 
             { "hero-dante-boulder", new[] { "hero-dante-boulder" } },
@@ -718,7 +719,8 @@ namespace TumbangPreso.Visual
             _running = speed > OrdinaryWalkSpeed * (_running ? 1.10f : 1.22f);
             if (!_gait.IsValid()) return;
             // These upper-body actions permit movement; their legs must follow the motor.
-            bool mobileUpperBody = _current == "hero-dante-roar" || _current == "hero-zack-circuit";
+            bool mobileUpperBody = _current == "hero-dante-roar" || _current == "hero-zack-circuit"
+                || _current == "hero-zack-bankshot";
             bool movingAction = _throwReleaseTime >= 0 || mobileUpperBody;
             bool layered = _motor.IsGrounded && !_motor.IsTripped && (_oneShotLeft <= 0 || movingAction)
                 && (_emote == null || !_emote.IsEmoting)

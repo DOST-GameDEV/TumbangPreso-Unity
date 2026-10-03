@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 16:56:31Z" end-time="2026-10-03 16:56:56Z" duration="24.1447422">
+  <test-suite type="TestSuite" id="2777" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1446" result="Passed" start-time="2026-10-03 16:56:31Z" end-time="2026-10-03 16:56:56Z" duration="24.144742" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2771" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1446" result="Passed" start-time="2026-10-03 16:56:31Z" end-time="2026-10-03 16:56:56Z" duration="24.122435" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="131774" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2772" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1446" result="Passed" start-time="2026-10-03 16:56:31Z" end-time="2026-10-03 16:56:56Z" duration="24.106508" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2773" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1446" result="Passed" start-time="2026-10-03 16:56:32Z" end-time="2026-10-03 16:56:56Z" duration="24.091341" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2741" name="ZackBankShotTests" fullname="TumbangPreso.PlayTests.ZackBankShotTests" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-10-03 16:56:32Z" end-time="2026-10-03 16:56:56Z" duration="24.065233" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2746" name="AcceptedLoadAnimatesTheHeldShoeWithoutARecall" fullname="TumbangPreso.PlayTests.ZackBankShotTests.AcceptedLoadAnimatesTheHeldShoeWithoutARecall" methodname="AcceptedLoadAnimatesTheHeldShoeWithoutARecall" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="1314195121" result="Passed" start-time="2026-10-03 16:56:32Z" end-time="2026-10-03 16:56:56Z" duration="24.052989" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-000.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-001.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-002.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-003.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-004.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-005.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-006.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-007.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-008.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-009.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-010.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-011.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-012.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-013.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-014.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-015.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-016.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-017.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-018.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-019.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-020.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-021.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-022.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-023.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-024.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-025.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-026.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-027.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-028.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-029.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-030.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-031.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-032.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-033.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-034.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-035.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-036.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-037.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-038.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-039.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-040.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-041.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-042.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-043.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-044.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-045.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-046.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/zack-bank-shot-1003/body-film-cached/frames/body-047.png
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
