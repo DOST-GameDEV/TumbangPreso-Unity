@@ -398,7 +398,7 @@ class JobInterrupted(RuntimeError):
     """Our workload must yield; the outside application remains untouched."""
 
 
-def monitor_running_job(claim):
+def _monitor_running_job(claim):
     with pool_lock(POOL):
         active = live_leases(read_pool(POOL))
     foreign = foreign_unity(processes(), active)
@@ -414,6 +414,13 @@ def monitor_running_job(claim):
     available = free_memory_mb()
     if available < minimum:
         raise JobInterrupted(f"Physical memory below runtime reserve: {available} MB available, {minimum} MB required")
+
+
+def monitor_running_job(claim):
+    try:
+        _monitor_running_job(claim)
+    except (OSError, ValueError, KeyError, subprocess.SubprocessError) as error:
+        raise JobInterrupted(f"Cannot verify runtime workload: {error}") from error
 
 
 def wait_for_guard(child, claim, timeout_seconds):
@@ -482,7 +489,13 @@ def run(options):
                 owned = descendants(rows, {child.pid})
                 unity = [row["pid"] for row in rows if row["pid"] in owned and row["name"].casefold() in ("unity.exe", "unity")]
                 update_lease(POOL, claim["id"], {"unityPids": unity, "awaitingRestoration": True})
-                stopped = stop_owned_editors(child)
+                try:
+                    stopped = stop_owned_editors(child)
+                except (OSError, ValueError, subprocess.SubprocessError) as error:
+                    # Unknown ownership must never become permission to kill.
+                    # Keep waiting for restoration and retain the lease if pending.
+                    stopped = []
+                    receipt["stopVerificationError"] = str(error)
                 try:
                     receipt["guardExitCode"] = child.wait(timeout=30)
                     receipt["status"] = prefix + "_guard_completed"

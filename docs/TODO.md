@@ -17,6 +17,14 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### NETWORK-BOT-ROSTER-1003: shared empty-seat kits
+
+- [x] Network empty bot seats use shared selection instead of each viewer's local
+  character preference. Original2causal/2controls, first candidate4/4. Protocol139.
+  [Evidence](reports/reliability-2026-10-03/network-bot-roster/README.md).
+- [ ] Rebuilt matching139 host/client with different human picks: verify bot
+  characters/kits and replicated effects. Frozen1003g134 is excluded.
+
 ### SEAT-PRODUCER-TRANSFER-1003: rapid role changes retain controls
 
 - [x] Retire deferred readers/brains and bind the surviving producer during rapid

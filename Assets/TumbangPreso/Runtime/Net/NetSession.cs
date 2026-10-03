@@ -562,7 +562,8 @@ namespace TumbangPreso.Net
         //136: objective income is knockdown/tag plus one defender-round grant.
         //137: explicit movement speeds, stamina, jump and charged lunge recovery.
         //138: playtested movement revision and stamina-free shove/lunge.
-        public const int ProtocolVersion = 138;
+        // 139: empty network bot seats use shared, unrotated character/kit selection.
+        public const int ProtocolVersion = 139;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

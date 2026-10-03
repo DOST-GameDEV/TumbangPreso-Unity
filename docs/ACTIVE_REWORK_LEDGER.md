@@ -31,7 +31,24 @@ different bot visuals/kits. Prepared NetworkBotRosterConsistencyTests4 cases
 (two network scenarios/two offline controls); no runtime change yet. Source/test
 overlay copied to worker. Original launch Logs/network-roster-original1003 was
 REFUSED for memory while Claude ran; no Unity launch, no behavioral result.
-Next native original4 once memory/availability genuinely changes; preserve refusal.
+Native original4 completed2causal/2controls after headroom changed; first candidate
+4/4, unchanged fixture. Exact candidate installer/test hashes retained in report.
+Network bots now use canonical unrotated selection, offline behavior unchanged.
+Main protocol139 staged; requires matching rebuilt actual peers. Native policy
+scope only on isolated dependency tree. Both guards terminal/restored/free.
+Next publish exact network-roster batch, then fix incoming concrete runner review:
+inventory/memory OSError and CIM subprocess failures must become bounded
+interruption with owned stopping or explicit pending restoration. CIM inventory
+needs a timeout so supervision cannot hang. No active root jobs.
+
+Network batch committed7b3214e34, initial push raced incoming ultimate-frame2450;
+normal merge/push next. Runner feedback repro5fails (2assertions/3errors) with
+33controls; fixed first candidate38/38, worker preparation10/10. Inventory now
+5s bounded; all inspection errors interrupt our workload. Unknown stop ownership
+stops nothing and preserves pending restoration/lease. Exact logs in
+Logs/unity-slot1003/supervision-errors-{original,candidate}.txt. This safety batch
+is pending commit. Current next: publish, then offline hero-bot reachability or
+genuinely free graphics hero-recovery check. No idle Unity jobs or servers kept.
 
 During wait, runtime runner supervision implemented from observed memory event:
 check every2s, yield ONLY owned Editor when foreign exclusive work appears or
