@@ -1,0 +1,80 @@
+using System.Collections;
+using System.IO;
+using System.Linq;
+using NUnit.Framework;
+using TumbangPreso.CameraSystem;
+using TumbangPreso.Abilities;
+using TumbangPreso.Core;
+using TumbangPreso.UI;
+using TumbangPreso.Visual;
+using UnityEngine;
+using UnityEngine.TestTools;
+using UnityEngine.UI;
+using Object = UnityEngine.Object;
+namespace TumbangPreso.PlayTests
+{
+    public sealed class UltimateOpacityProbe
+    {
+        INetProvider _provider; CustomRules _rules; bool _pinned,_spectator,_bots,_motion,_reduced;int _seat;
+        [UnitySetUp] public IEnumerator Before()
+        {
+            _provider=NetAuthority.Provider;_rules=SceneFlow.SelectedRules.Clone();_pinned=SceneFlow.RulesPinned;
+            _spectator=GameLaunch.Spectator;_bots=GameLaunch.AllBots;_seat=GameLaunch.SoloSeat;
+            _motion=Settings.SettingsStore.Current.CinematicCameraMotion;_reduced=Settings.SettingsStore.Current.ReducedUiMotion;
+            yield return PlayModeWorld.Reset();
+        }
+        [UnityTearDown] public IEnumerator After()
+        {
+            yield return PlayModeWorld.Reset();NetAuthority.Provider=_provider;
+            GameLaunch.Spectator=_spectator;GameLaunch.AllBots=_bots;GameLaunch.SoloSeat=_seat;
+            SceneFlow.AdoptRemoteRules(_rules);if(_pinned)SceneFlow.PinSelectedRules(_rules);else SceneFlow.UnpinSelectedRules();
+            Settings.SettingsStore.Current.CinematicCameraMotion=_motion;Settings.SettingsStore.Current.ReducedUiMotion=_reduced;
+        }
+        [UnityTest,Timeout(90000)] public IEnumerator InspectActualSharedSceneAlphaAndComposite()
+        {
+            NetAuthority.Provider=new SoloProvider();GameLaunch.SoloSeat=1;GameLaunch.Spectator=GameLaunch.AllBots=false;
+            SceneFlow.AdoptRemoteRules(CustomGameRules.Defaults(GameMode.HeroStrike));GameServices.Ensure();GameServices.Round.Clear();
+            var floor=GameObject.CreatePrimitive(PrimitiveType.Cube);floor.transform.position=Vector3.down*.5f;floor.transform.localScale=new Vector3(24,1,24);
+            GameServices.Round.Lata=new GameObject("Opacity stage can").AddComponent<Lata>();
+            var root=new GameObject("Opacity stage actor",typeof(CharacterController));
+            var cc=root.GetComponent<CharacterController>();cc.height=1.6f;cc.radius=.35f;cc.center=Vector3.up*.8f;
+            var actor=root.AddComponent<CharacterMotor>();actor.PlayerSlot=1;actor.Mode=GameMode.HeroStrike;actor.IsBot=false;
+            root.AddComponent<Carrier>();root.AddComponent<CombatVerbs>();root.AddComponent<HeroAbilitySystem>().BindHero("nemu");
+            root.AddComponent<CharacterVisual>();GameServices.Round.Register(actor);
+            GameServices.Match.StartMatch();GameServices.Round.BeginRound();
+            var owner=new GameObject("Opacity stage owner");owner.tag="MainCamera";owner.AddComponent<CameraRig>();
+            var sun=new GameObject("Opacity stage light").AddComponent<Light>();sun.type=LightType.Directional;sun.intensity=1.1f;sun.transform.rotation=Quaternion.Euler(40,-30,0);
+            yield return null;
+            var art=RosterBook.Load().FindPersonArt("nemu");
+            actor.CharacterIndex=Roster.IndexIn(Roster.HeroPeople,"nemu");
+            actor.GetComponent<CharacterVisual>().ApplyModel(art.Model,art.Tint,art.Clips,art.Palette,art.PetModel);
+            actor.AbilitySystem.BindHero("nemu");actor.Teleport(new Vector3(0,.18f,-3));actor.Intent.Clear();actor.Intent.Parked=true;
+            var camera=Camera.main;camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=new Color(.05f,.3f,.1f,1);
+            camera.GetComponent<CameraRig>().Follow(actor,true);
+            Settings.SettingsStore.Current.CinematicCameraMotion=true;Settings.SettingsStore.Current.ReducedUiMotion=false;
+            while(UltimateIntroductionCache.WarmOne(actor))yield return null;
+            Assert.IsNotNull(UltimateIntroductionCache.Find(actor,false));
+            var commit=new UltimateCommit(1,1,actor.transform.position,actor.transform.forward,Vector3.forward,0)
+                .WithIdentity(actor.AbilitySystem.Kit);
+            string folder=System.Environment.GetEnvironmentVariable("TUMP_OPACITY_CAPTURE");Assert.IsNotEmpty(folder);
+            using(var view=new UltimatePhaseView(root.transform,new[]{commit},3))
+            {
+                view.Draw(1.2f);
+                var canvas=Object.FindObjectsByType<Canvas>().Single(c=>c.name=="SharedUltimateCanvas");
+                var picture=canvas.GetComponentsInChildren<RawImage>().Single();Assert.IsTrue(picture.enabled);
+                Assert.That(canvas.GetComponent<CanvasGroup>().alpha,Is.EqualTo(1).Within(.001f));
+                var target=(RenderTexture)picture.texture;
+                var previous=RenderTexture.active;var image=new Texture2D(target.width,target.height,TextureFormat.RGBA32,false);
+                try
+                {
+                    RenderTexture.active=target;image.ReadPixels(new Rect(0,0,target.width,target.height),0,0);image.Apply();
+                    var pixels=image.GetPixels32();int partial=pixels.Count(p=>p.a<250);byte minimum=pixels.Min(p=>p.a);
+                    File.WriteAllText(Path.Combine(folder,"alpha.txt"),$"Canvas alpha={canvas.GetComponent<CanvasGroup>().alpha}; texture format={target.format}; minimum alpha={minimum}; partial pixels={partial}/{pixels.Length}\n");
+                    File.WriteAllBytes(Path.Combine(folder,"scene-texture.png"),image.EncodeToPNG());
+                }
+                finally{RenderTexture.active=previous;Object.Destroy(image);}
+                yield return GameplayShots.Render(camera,"composite",true,folder,actor,960,540);
+            }
+        }
+    }
+}
