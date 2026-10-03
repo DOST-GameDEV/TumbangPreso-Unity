@@ -727,8 +727,13 @@ def amihan():
     # slipper), head tipped, one foot kicked up behind her, a wink.
     # v10 ("make the pose cuter"): shoulders scrunched up as she leans in, her head tipped further, her hands tucked tighter
     # behind her, the foot kicked up higher, and the teehee face (`VoxelFace.Look.Teehee`).
-    # (v11: tipped 24 degrees she looked as if she were falling over; half that.)
-    finish = Pose(torso=(8, 4, 6), head=(-12, -6, 14), left=(-46, 10, 0), right=(-46, 10, 0), legs=((2, 6), (-55, 8)))
+    # v12 (owner: "doesnt look cute", "weird af expression"): with her rigid arms, hands behind her back read as two stiff
+    # arms sticking out. A happy wave up beside her face instead, the slipper hand on her hip, her head tipped, a foot kicked
+    # up behind her, and her happy closed-eyed grin (^v^), the face the owner liked.
+    finish = Pose(torso=(6, -6, 8), head=(-8, -10, 12), left=(112, 20, 40), right=(16, 58, -38), legs=((4, 10), (-50, 8)))
+    # v13: held out to her side her rigid arm only twisted, so the wave never showed. A GIGGLE instead (the classic teehee):
+    # her hand up by her chin, eyes shut in her grin, shoulders and head bobbing with it.
+    wave = finish.but(torso=(9, -6, 11), head=(-6, -12, 16), left=(116, 20, 40))
 
     p.key(0, idle).hold(.32, .55, idle_b)
     # (owner on v7: "the leg tapping dont make sense": she was tapping her feet in the air. The taps are gone: she floats,
@@ -746,7 +751,8 @@ def amihan():
     p.key(5.20, follow)
     # (v9, owner: "hold the end pose a bit more": held 0.6 s, swaying a little through it and ending exactly on it,
     # which the live clip starts from.)
-    p.key(5.30, finish, punch=True).key(5.62, finish.but(torso=(9, 2, 8), head=(-13, -4, 17))).key(5.9, finish)
+    # The hold: the hand waving twice, ending exactly on the finish the live clip starts from.
+    p.key(5.30, finish, punch=True).key(5.44, wave).key(5.58, finish).key(5.72, wave).key(5.9, finish)
     # THE FLOAT (owner: "make her fly higher here like gojo when he was enlightened", "js a bite higher tho"): as she closes
     # her eyes and feels for the wind she lifts, calm and weightless, about 0.37 m, and settles back onto her first tap.
     # v10 (owner: "she should stay floating too during her ult why does she even do this if she immediately falls back
@@ -769,8 +775,9 @@ def amihan():
     p.shot(3.62, 4.55, (2.8, 2.2, -4.2), (0, 2.8, 3.0), 62, eye_to=(3.0, 2.5, -4.6), look_to=(0, 2.2, 5.0), fov_to=62)
     # E HANG: cut on the drive to her right side, wide enough for the wingbeat over the lane: her in the left third.
     p.shot(4.55, 5.18, (5.2, 1.6, .6), (0, 1.5, 1.2), 66, eye_to=(4.8, 1.6, .9), look_to=(0, 1.45, 1.6), fov_to=62)
-    # F FINISH: a close-up of her, low in front of her, as she leans in with her wink, a slow push in.
-    p.shot(5.18, 5.9, (.55, 1.15, 3.4), (0, 1.2, 0), 42, eye_to=(.45, 1.2, 2.9), look_to=(0, 1.22, 0), fov_to=38)
+    # F FINISH: a close-up of her at her left front (v14: the side of the hand at her chin; from her right her head hid
+    # it), as she giggles, a slow push in.
+    p.shot(5.18, 5.9, (-.7, 1.15, 3.3), (-.05, 1.2, 0), 42, eye_to=(-.6, 1.2, 2.85), look_to=(-.05, 1.22, 0), fov_to=38)
     p.locked((3.4, 1.5, 3.4), (0, 1.0, 1.5), 50)
     return p
 

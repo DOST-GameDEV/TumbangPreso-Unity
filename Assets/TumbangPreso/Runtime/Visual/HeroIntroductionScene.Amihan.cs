@@ -275,7 +275,8 @@ namespace TumbangPreso.Visual
 
         private VoxelFace.Look AmLook(float t)
         {
-            if (t >= AmFinishAt - .04f) return VoxelFace.Look.Teehee;
+            // v12 (owner on the teehee chevrons: "weird af expression"): her happy closed-eyed grin.
+            if (t >= AmFinishAt - .04f) return VoxelFace.Look.Grin;
             if (t >= AmReleaseAt - .02f) return VoxelFace.Look.Grin;
             if (t >= AmWindAt - .05f) return VoxelFace.Look.Squint;
             if (t >= 2.84f) return VoxelFace.Look.Grin;
@@ -887,13 +888,10 @@ namespace TumbangPreso.Visual
                 }
                 else if (since < 0f)
                 {
-                    // TRAILING THE BIRD through its swoop, then wheeling round it as it hovers.
-                    float lag = .05f + .45f * seed.x;
-                    AmBirdPose(Mathf.Max(AmSwoopAt, story - lag), calm, out var trail, out _, out _, out _);
-                    var scatter = new Vector3(seed.y - .5f, seed.z - .5f, seed.x - .5f) * 1.6f;
-                    float swirl = (calm ? 0f : story * 4f) + seed.z * 6.28f;
-                    at = trail + scatter + new Vector3(Mathf.Sin(swirl), 0f, Mathf.Cos(swirl)) * .4f;
-                    on = true;
+                    // v11 (owner: "what are those blocks on the phoneix"): wheeling round the bird the leaves read as blocks stuck
+                    // to it. From the swoop to the drive they are gone: the bird is clean.
+                    at = Vector3.zero;
+                    on = false;
                 }
                 else
                 {
@@ -901,7 +899,8 @@ namespace TumbangPreso.Visual
                     float yaw = (seed.x - .5f) * 60f * Mathf.Deg2Rad;
                     var dir = new Vector3(Mathf.Sin(yaw), .1f + .3f * seed.y, Mathf.Cos(yaw));
                     float speed = 8f + 7f * seed.z;
-                    var origin = AmBirdHover + Vector3.up * _amCourt + new Vector3(seed.y - .5f, seed.z - .5f, seed.x - .5f) * 2f;
+                    // Blown out from before her palms down the lane, not off the bird.
+                    var origin = new Vector3(0f, 1.1f + LiftAt(t) + _amCourt, 1.2f) + new Vector3(seed.y - .5f, (seed.z - .5f) * .8f, seed.x * .8f);
                     at = origin + dir * (speed * since) + Vector3.down * (3.5f * since * since);
                     on = since < 1.4f && at.y > _amCourt - .05f;
                     tumble += since * 4f;
