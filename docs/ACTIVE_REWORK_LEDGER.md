@@ -2,6 +2,43 @@
 
 ## PC root latest checkpoint: October 3, Unity slot isolation
 
+LATEST RESUME FIRST (October3,20:04 Manila): Main9ccf6145d published/protocol141.
+Nameplate preloade95069a2c pushed with nativewarmup1+loadinghook1; unchanged fonts/
+appearance, numeric refreshed-player reduction remains open. Old sections below
+describe terminal jobs, not active work. No task-owned Editor/player/server/browser
+is running. Do not reread whole history or regenerate internal metadata filler.
+
+Accepted development artifact: C:/Users/matth/Documents/Codex/work/
+tump-competition-candidate1003h/Builds/competition-candidate1003h-lowmem/
+TumbangPreso.exe. Frozen9d21820c3/protocol139, Development|ConnectWithProfiler,
+full manifest400files/2628366970bytes/SHA90d1e910b71591e3c51173e2b087c49aee56ecaac5ed48750543d120a1284273.
+Runtime520ec9902719ee7381ac70d2111bcb3dbb88a2cad19d73d7a42f56f83b0d2ac8.
+Build98s/2506MB, normalguard/restored/free; strictretryFALSE (twoidentity changes,
+four performance-package cleanup files) independently classified; initial213
+import/generated deltas verified, no C#/Package drift. Startup/menuPASS,2722
+silentframes, input restored/runtime same, nativeHub visually inspected.
+Current141/lobby/jump/later input/font fixes are EXCLUDED, not peer-qualified.
+
+Performance partial127windows/14.43GBraw at quality2/windowed1280x720 with dev/
+profiler overhead. Copied outer450s wrapper timed out; ownedplayer10256 stopped
+and no process remains; guardinput restored/runtime unchanged. No whole-route
+pass. Native raw-profile read: Nemu multi-second peaks dominated profiler2D
+collection; realfirstMap font-cache2.57s is the nameplate preload source evidence.
+Temporary profiler reader removed, savedsource/sampleJSON retained in workerLogs.
+Raw pruning was AUTOMATICALLY BLOCKED by policy;0deleted, no bypass. Both old
+12.6GB build cleanup and newraw cleanup blockers retained in reports.
+
+Reusable validation worker tump-codex-slot1003 atca95f6e22 retains unique company/
+product/cache/profile and frozen9d/139 overlay scopes; runner39/workerprep10 pass.
+No newagents/outgoing chats/resets/services. Preserve ALL Mainprivate/contributor
+dirt (arms/PNGmeta/HeroHazards/Quality/Amihan/intro clips/authoring helpers).
+NEXT CONCRETE ACTION: inspect relevant current TODO gate and choose ONE disjoint
+fix or accepted-artifact test. No repeated unchanged validation; no broad.raw
+capture. Corrected narrowhelper exists at1003h/Logs/competition-candidate1003h-lowmem/
+run_performance_narrow.py (Phaister/1900s), but has NOT run. Avoid moretracegrowth
+until budget/pruning policy resolves. Matching-packet141 player/actual peers still
+needed; keep accepted139 andold134 binaries/receipts isolated.
+
 BUILD update: first1003h Development graphics attempt interrupted at physical
 1525MB <1536MB reserve. Only owned Editors17384/17460 stopped; guard returned/
 restored/free. No SUCCEEDED message; partial artifact is NOT accepted. Strict
