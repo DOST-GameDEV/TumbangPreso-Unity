@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 15:47:52Z" end-time="2026-10-03 15:47:52Z" duration="0.1564252">
+  <test-suite type="TestSuite" id="1000" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1129" result="Passed" start-time="2026-10-03 15:47:52Z" end-time="2026-10-03 15:47:52Z" duration="0.156425" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2377" name="TumbangPreso.Tests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1129" result="Passed" start-time="2026-10-03 15:47:52Z" end-time="2026-10-03 15:47:52Z" duration="0.140256" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="117935" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2378" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1129" result="Passed" start-time="2026-10-03 15:47:52Z" end-time="2026-10-03 15:47:52Z" duration="0.131951" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2379" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1129" result="Passed" start-time="2026-10-03 15:47:52Z" end-time="2026-10-03 15:47:52Z" duration="0.123911" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1953" name="OpeningCameraTests" fullname="TumbangPreso.Tests.OpeningCameraTests" classname="TumbangPreso.Tests.OpeningCameraTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-03 15:47:52Z" end-time="2026-10-03 15:47:52Z" duration="0.107192" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1954" name="EstablishingMoveIsSlowAndEndsBeforeFourDistinctPortraits" fullname="TumbangPreso.Tests.OpeningCameraTests.EstablishingMoveIsSlowAndEndsBeforeFourDistinctPortraits" methodname="EstablishingMoveIsSlowAndEndsBeforeFourDistinctPortraits" classname="TumbangPreso.Tests.OpeningCameraTests" runstate="Runnable" seed="707158105" result="Passed" start-time="2026-10-03 15:47:52Z" end-time="2026-10-03 15:47:52Z" duration="0.080928" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1958" name="FinalSampleExactlyRestoresTheSavedView" fullname="TumbangPreso.Tests.OpeningCameraTests.FinalSampleExactlyRestoresTheSavedView" classname="TumbangPreso.Tests.OpeningCameraTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 15:47:52Z" end-time="2026-10-03 15:47:52Z" duration="0.006706" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1956" name="FinalSampleExactlyRestoresTheSavedView(False)" fullname="TumbangPreso.Tests.OpeningCameraTests.FinalSampleExactlyRestoresTheSavedView(False)" methodname="FinalSampleExactlyRestoresTheSavedView" classname="TumbangPreso.Tests.OpeningCameraTests" runstate="Runnable" seed="1625378631" result="Passed" start-time="2026-10-03 15:47:52Z" end-time="2026-10-03 15:47:52Z" duration="0.002222" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1957" name="FinalSampleExactlyRestoresTheSavedView(True)" fullname="TumbangPreso.Tests.OpeningCameraTests.FinalSampleExactlyRestoresTheSavedView(True)" methodname="FinalSampleExactlyRestoresTheSavedView" classname="TumbangPreso.Tests.OpeningCameraTests" runstate="Runnable" seed="920458482" result="Passed" start-time="2026-10-03 15:47:52Z" end-time="2026-10-03 15:47:52Z" duration="0.000514" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1960" name="InterruptionRestoresTheViewAndIsIdempotent" fullname="TumbangPreso.Tests.OpeningCameraTests.InterruptionRestoresTheViewAndIsIdempotent" methodname="InterruptionRestoresTheViewAndIsIdempotent" classname="TumbangPreso.Tests.OpeningCameraTests" runstate="Runnable" seed="2063855842" result="Passed" start-time="2026-10-03 15:47:52Z" end-time="2026-10-03 15:47:52Z" duration="0.002266" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1955" name="LastPortraitDoesNotDetourBackToTheMap" fullname="TumbangPreso.Tests.OpeningCameraTests.LastPortraitDoesNotDetourBackToTheMap" methodname="LastPortraitDoesNotDetourBackToTheMap" classname="TumbangPreso.Tests.OpeningCameraTests" runstate="Runnable" seed="440749602" result="Passed" start-time="2026-10-03 15:47:52Z" end-time="2026-10-03 15:47:52Z" duration="0.000738" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1961" name="ObstructionClipsTheShotBeforeAWall" fullname="TumbangPreso.Tests.OpeningCameraTests.ObstructionClipsTheShotBeforeAWall" methodname="ObstructionClipsTheShotBeforeAWall" classname="TumbangPreso.Tests.OpeningCameraTests" runstate="Runnable" seed="1543509596" result="Passed" start-time="2026-10-03 15:47:52Z" end-time="2026-10-03 15:47:52Z" duration="0.003045" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1959" name="ReducedMotionHasOneStationaryMapViewBeforeHandoff" fullname="TumbangPreso.Tests.OpeningCameraTests.ReducedMotionHasOneStationaryMapViewBeforeHandoff" methodname="ReducedMotionHasOneStationaryMapViewBeforeHandoff" classname="TumbangPreso.Tests.OpeningCameraTests" runstate="Runnable" seed="39131880" result="Passed" start-time="2026-10-03 15:47:52Z" end-time="2026-10-03 15:47:52Z" duration="0.001070" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
