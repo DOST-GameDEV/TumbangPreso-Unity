@@ -17,6 +17,15 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### NAMEPLATE-FIRST-USE-1003: font work behind loading
+
+- [x] Existing loading primes first native TextMesh/font initialization and96px
+  nameplate glyphs; original player trace attributes2.57s to font caching at spawn.
+  Native warmup1/1 plus loading-hook integration1/1; authored appearance retained.
+  [Evidence](reports/reliability-2026-10-03/nameplate-font-warmup/README.md).
+- [ ] Refreshed player first-entry timing; development/profiler overhead and
+  numeric improvement remain separate. Frozen1003h139 excludes this newer fix.
+
 ### OFFLINE-BOT-ROSTER-1003: full character coverage
 
 - [x] Rotate offline bots against the full roster instead of four seat offsets.
