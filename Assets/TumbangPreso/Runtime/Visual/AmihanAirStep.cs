@@ -8,10 +8,12 @@ namespace TumbangPreso.Visual
     /// shhe would jump tag throw etc and move"*). The numbers and every verb's answer are in
     /// `docs/reports/amihan-presentation-2026-10-02/light-body.md`.
     ///
-    /// Her ordinary run lifts her soles 12 to 19 cm off the court. The shared foot plant drops the hips about 7 cm when her
-    /// legs are furthest apart; this lifts them by the same amount at the same moments, so her hips and head glide level
-    /// while the legs scissor in the air beneath: flying, not bouncing. 19 cm is under a quarter of a jump's apex and far
-    /// below Featherfall's 2.8 m, the one height at which she cannot be tagged, and her shadow and ring stay on the court.
+    /// Her ordinary run lifts her soles 15 to 23 cm off the court (AIRBURST v3, 2026-10-03, the owner: *"make her shit feel
+    /// lighter"*; it was 12 to 19), and walking 3 cm. The shared foot plant drops the hips about 7 cm when her legs are
+    /// furthest apart; this lifts them by the same amount at the same moments, so her hips and head glide level while the
+    /// legs scissor in the air beneath: flying, not bouncing. 23 cm is under a third of a jump's 0.84 m apex, under the 25 cm
+    /// at which the gap reads as a jump, and far below Featherfall's 2.8 m, the one height at which she cannot be tagged; her
+    /// shadow and ring stay on the court. Small curls of wind trail from her heels while she runs.
     ///
     /// The float keeps its OWN clock. The gait hands over to any action in 0.08 s; a float that rode the gait would drop her
     /// 19 cm in two frames at the start of every throw, tag and jump. So it rises over 0.22 s and settles over 0.2 s: she
@@ -26,11 +28,13 @@ namespace TumbangPreso.Visual
     public sealed class AmihanAirStep : MonoBehaviour
     {
         /// <summary>Metres her soles clear the court walking; her feet still touch, the steps are just quick and quiet.</summary>
-        public const float WalkLift = .02f;
+        public const float WalkLift = .03f;
         /// <summary>Metres her soles clear the court running, as the passing foot goes under her.</summary>
-        public const float RunLow = .12f;
+        public const float RunLow = .15f;
         /// <summary>Metres her soles clear the court running, with the legs furthest apart.</summary>
-        public const float RunHigh = .19f;
+        public const float RunHigh = .23f;
+        /// <summary>A heel curl's length, metres, trailing back and up from the lifting heel.</summary>
+        private const float CurlLength = .34f;
         public const float RiseSeconds = .22f, SettleSeconds = .2f, AirSettleSeconds = .35f, StatusSettleSeconds = .1f;
         /// <summary>Her landing squash. The shared landing squashes every body 12 to 30 percent; she lands on her toes.</summary>
         public const float LandingSquash = .06f;
@@ -43,7 +47,9 @@ namespace TumbangPreso.Visual
         private Vector3 _rootPosition;
         private Quaternion _torsoRotation, _legLeftRotation, _legRightRotation;
         private bool _applied, _wasGrounded = true;
-        private float _run, _walk, _air, _fall;
+        private float _run, _walk, _air, _fall, _curlClock;
+        private readonly WindVfx.Ribbon[] _curls = new WindVfx.Ribbon[2];
+        private Transform _curlHost;
 
         /// <summary>Lift above the court this frame, metres (probes and films).</summary>
         public float Lift { get; private set; }
@@ -63,7 +69,58 @@ namespace TumbangPreso.Visual
         }
 
         private void Update() => Restore();
-        private void OnDisable() { Restore(); _run = _walk = _air = _fall = 0; Lift = 0; }
+        private void OnDisable() { Restore(); _run = _walk = _air = _fall = 0; Lift = 0; HideCurls(); }
+        private void OnDestroy() { if (_curlHost != null) { if (Application.isPlaying) Destroy(_curlHost.gameObject); else DestroyImmediate(_curlHost.gameObject); } }
+
+        private void HideCurls() { foreach (var curl in _curls) curl?.Set(0, 0); }
+
+        /// <summary>
+        /// Her two heel curls: a short open hook of wind each, curling back and up off the heel, on their own host under the body
+        /// (never the skinned bones, which the body re-poses every frame). Built on her first run; nobody else carries them.
+        /// </summary>
+        private void BuildCurls()
+        {
+            _curlHost = new GameObject("AmihanHeelCurls").transform;
+            _curlHost.SetParent(transform, false);
+            for (int i = 0; i < 2; i++)
+            {
+                var spine = new Vector3[12];
+                for (int k = 0; k < spine.Length; k++)
+                {
+                    float u = k / (spine.Length - 1f), a = u * 1.5f * Mathf.PI;
+                    // Back along the travel and up, hooking over at the end: an open curl, never a closed ring.
+                    spine[k] = new Vector3(0, .05f * (1 - Mathf.Cos(a)) + .06f * u, -CurlLength * u + .05f * Mathf.Sin(a));
+                }
+                var host = new GameObject(i == 0 ? "HeelCurlLeft" : "HeelCurlRight").transform;
+                host.SetParent(_curlHost, false);
+                // Film r1: a 5 cm mint curl never showed on the light court. 8 cm, her teal thread inside her ink.
+                var curl = WindVfx.Build(host, "HeelCurl", spine, .08f, WindVfx.Flat(spine), 3.0f, .3f, 230f + i);
+                curl.Recolour(Color.Lerp(WindVfx.Threads[1], WindVfx.Core, .5f), WindVfx.SheetBody, WindVfx.FloorInk);
+                if (curl.Material != null) { curl.Material.SetFloat("_InkFrom", .5f); curl.Material.SetFloat("_InkAlpha", .9f); }
+                _curls[i] = curl;
+            }
+        }
+
+        /// <summary>Pose the curls: each trails from its heel as that foot lifts behind her, while she runs.</summary>
+        private void StepCurls(float lift, float dt)
+        {
+            float amount = _run * (1 - _air);
+            if (amount <= .01f || _body.Velocity.sqrMagnitude < .5f) { HideCurls(); return; }
+            if (_curlHost == null) BuildCurls();
+            _curlClock += dt;
+            var travel = _body.Velocity; travel.y = 0;
+            var face = travel.sqrMagnitude > .01f ? Quaternion.LookRotation(travel.normalized) : transform.rotation;
+            float phase = _animator.GaitPhase * 2f * Mathf.PI;
+            for (int i = 0; i < 2; i++)
+            {
+                // The foot behind her is the one lifting off: left in one half of the cycle, right in the other.
+                float behind = Mathf.Clamp01((i == 0 ? Mathf.Sin(phase) : -Mathf.Sin(phase)) * 1.6f);
+                var host = _curls[i].GameObject.transform.parent;
+                host.SetPositionAndRotation(transform.position + face * new Vector3(i == 0 ? -.1f : .1f, lift + .04f, -.12f), face);
+                float calm = WindVfx.Reduced ? .6f : 1f;
+                _curls[i].Set(.8f * amount * behind * calm, WindVfx.Reduced ? 0 : _curlClock * 6f, Mathf.Lerp(.35f, 1f, behind), 0, .3f + .5f * (1 - behind));
+            }
+        }
 
         private void Restore()
         {
@@ -143,7 +200,7 @@ namespace TumbangPreso.Visual
             bool jumping = !grounded && !held && !_animator.IsPlayingAction && (clip == "jump" || clip == "fall");
             _air = Approach(_air, jumping ? 1 : 0, jumping ? .12f : .1f, dt);
 
-            if (_run <= .001f && _walk <= .001f && _air <= .001f) return;
+            if (_run <= .001f && _walk <= .001f && _air <= .001f) { HideCurls(); return; }
 
             _rootPosition = _root.localPosition;
             if (_torso != null) _torsoRotation = _torso.localRotation;
@@ -158,6 +215,7 @@ namespace TumbangPreso.Visual
             float lift = _run * Mathf.Lerp(RunLow, RunHigh, apart) + _walk * WalkLift;
             if (lift > 0) _root.position += transform.up * lift;
             Lift = lift;
+            StepCurls(lift, dt);
 
             if (_air > .001f)
             {

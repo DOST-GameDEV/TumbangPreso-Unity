@@ -186,6 +186,7 @@ namespace TumbangPreso.CameraSystem
                 if(_stillMirror)eye=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
             }
             _camera.transform.position=eye; _camera.transform.LookAt(target); _camera.fieldOfView=fov;
+            LastAge=age;LastShot=moving?_primary.Scene.ShotIndexAt(age):-2;LastEye=eye;
             _hidden.Clear();_wasHidden.Clear();_seen.Clear();
             foreach(var actor in GameServices.Round.Players)
             {
@@ -277,6 +278,8 @@ namespace TumbangPreso.CameraSystem
         /// a borrowed shot is invisible in a green test and costs the cutscene its payoff.
         /// </summary>
         public static string LastShotReport{get;private set;}=string.Empty;
+        /// <summary>For films: the phase's own clock, the authored shot it drew and the lens, on the last drawn frame.</summary>
+        public static float LastAge{get;private set;}public static int LastShot{get;private set;}public static Vector3 LastEye{get;private set;}
         private string _lastBlocker="";
         // The clear distance from the focus toward the eye on the last blocked test, less a margin for the lens.
         private float _lastRoom;

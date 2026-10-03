@@ -96,7 +96,7 @@ namespace TumbangPreso.PlayTests
 
         /// <summary>
         /// The whole Airburst on every view at true game speed (30 frames per game second, the phase on the film clock):
-        /// lead-in, the 3.6 s cutscene on her screen, the 1.5 s windup, the release, recovery and aftermath.
+        /// lead-in, the 5.6 s cutscene on her screen, the 1.5 s windup, the release, recovery and aftermath.
         /// Variants: "fx", "body" (live effects hidden, for judging the body alone) and "low" (Low profile plus
         /// reduced effects). Runs only with TUMP_AIRBURST_FILM=1; frames under TUMP_EVIDENCE/airburst-&lt;variant&gt;,
         /// with timing.csv carrying every measured frame.
@@ -120,7 +120,7 @@ namespace TumbangPreso.PlayTests
             bool reduced = Settings.SettingsStore.Current.ReducedEffects;
             int graphics = Settings.GraphicsProfiles.Current;
             if (low) { Settings.SettingsStore.Current.ReducedEffects = true; Settings.GraphicsProfiles.Apply(0); }
-            var timing = new StringBuilder().AppendLine("frame,seconds,phase,overlay,winding,released,victim_whirled,outsider_whirled,palm_forward_m,clock,action,fans");
+            var timing = new StringBuilder().AppendLine("frame,seconds,phase,overlay,winding,released,victim_whirled,outsider_whirled,palm_forward_m,clock,action,fans,phase_age,phase_shot,eye");
             int sceneFirst = -1, sceneLast = -1, handback = -1, release = -1, whirledAt = -1, peakFrame = -1;
             float peak = float.MinValue, clockAtScene = -1, clockAtSceneEnd = -1;
             bool outsiderWhirled = false, sawPhase = false;
@@ -148,7 +148,8 @@ namespace TumbangPreso.PlayTests
                         var storm = Object.FindFirstObjectByType<AmihanStorm>();
                         if (overlay != null)
                         {
-                            if (sceneFirst < 0) { sceneFirst = f; clockAtScene = round.TimeLeft; }
+                            // The theme plays from the introduction's own source, not `AudioDirector`, so the film logs it (Paete's and Phaister's rule).
+                            if (sceneFirst < 0) { sceneFirst = f; clockAtScene = round.TimeLeft; film.Cues.AppendLine(FormattableString.Invariant($"{f / 30.0:F3},sfx_ult_theme_amihan,1,0.2")); }
                             sceneLast = f; clockAtSceneEnd = round.TimeLeft;
                         }
                         if (inPhase) sawPhase = true;
@@ -161,7 +162,7 @@ namespace TumbangPreso.PlayTests
                         int fans = Object.FindObjectsByType<AmihanStormFan>(FindObjectsSortMode.None).Length;
                         var animator = caster.GetComponentInChildren<CharacterAnimator>();
                         timing.AppendLine(FormattableString.Invariant(
-                            $"{f},{t:F3},{inPhase},{overlay != null},{ult.IsWindingUp},{storm != null && storm.Released},{stage.Victim != null && stage.Victim.IsWhirled},{stage.Outsider != null && stage.Outsider.IsWhirled},{forward:F3},{round.TimeLeft:F3},{animator?.CurrentClipName},{fans}"));
+                            $"{f},{t:F3},{inPhase},{overlay != null},{ult.IsWindingUp},{storm != null && storm.Released},{stage.Victim != null && stage.Victim.IsWhirled},{stage.Outsider != null && stage.Outsider.IsWhirled},{forward:F3},{round.TimeLeft:F3},{animator?.CurrentClipName},{fans},{UltimatePhaseView.LastAge:F3},{UltimatePhaseView.LastShot},{UltimatePhaseView.LastEye.x:F2} {UltimatePhaseView.LastEye.y:F2} {UltimatePhaseView.LastEye.z:F2}"));
 
                         if (bodyOnly)
                             foreach (var fan in Object.FindObjectsByType<AmihanStormFan>(FindObjectsSortMode.None))
@@ -214,18 +215,19 @@ namespace TumbangPreso.PlayTests
             Assert.GreaterOrEqual(sceneFirst, 0, "The cutscene never came up.");
             Assert.AreEqual(clockAtScene, clockAtSceneEnd, 1e-4f, "The round clock ran under the cutscene.");
             Assert.GreaterOrEqual(release, 0, "Airburst never released.");
-            Assert.That(release - handback, Is.InRange(42, 48), "The release is 1.5 s after the handback.");
-            Assert.That(peakFrame - release, Is.InRange(-2, 5), "The body's forward drive must land on the gameplay release.");
+            // v3.2: the release is in the cutscene and lands in play on the hand-back; the body only settles after it.
+            Assert.That(release - handback, Is.InRange(-1, 2), "The release lands on the hand-back.");
             Assert.GreaterOrEqual(whirledAt, 0); Assert.LessOrEqual(whirledAt - release, 1);
             Assert.IsFalse(outsiderWhirled, "A player outside the 60 degree fan was caught.");
         }
 
         /// <summary>
-        /// A round boundary during the live windup takes the gathering fan with it: no storm, no fan pieces and no
-        /// release afterwards, and nobody in the lane is thrown.
+        /// v3.2 (owner, 2026-10-03: *"show the ult actually hitting and knocking abck ppl already in the cutscene"*): there is no
+        /// live windup. The release lands on the hand-back, and a round boundary right after it leaves no fan behind once its
+        /// short tail (`AmihanStormFan.LifeSeconds` from `AmihanStorm.CutsceneTail`) has played.
         /// </summary>
         [UnityTest, Timeout(120000)]
-        public IEnumerator AirburstWindupRetiresAtTheRoundBoundary()
+        public IEnumerator AirburstReleasesOnTheHandBackAndLeavesNoFan()
         {
             var stage = StageAirburst();
             var caster = stage.Caster;
@@ -233,35 +235,31 @@ namespace TumbangPreso.PlayTests
             int frame = 0; double clockBase = Time.realtimeSinceStartupAsDouble;
             int previous = Time.captureFramerate; Time.captureFramerate = 30;
             SharedUltimatePhase.FilmClock = () => clockBase + frame / 30.0;
-            bool sawWindup = false, sawFan = false, released = false;
-            int endedAt = -1, fansAfter = -1, stormsAfter = -1;
+            bool sawPhase = false, sawWindup = false;
+            int handback = -1, releasedAt = -1, endedAt = -1, fansAfter = -1;
             var logged = new LoggedExceptions();
             try
             {
-                for (int f = 0; f < 30 * 9; f++)
+                for (int f = 0; f < 30 * 11; f++)
                 {
                     frame = f;
                     caster.Intent.Set(Verb.Ultimate, f < 6);
                     yield return null;
-                    var ult = caster.AbilitySystem.Kit.Ultimate;
+                    var phase = SharedUltimatePhase.Instance;
+                    bool inPhase = phase != null && phase.Active;
+                    sawPhase |= inPhase;
+                    if (handback < 0 && sawPhase && !inPhase) handback = f;
+                    sawWindup |= caster.AbilitySystem.Kit.Ultimate.IsWindingUp;
                     var storm = Object.FindFirstObjectByType<AmihanStorm>();
-                    released |= storm != null && storm.Released;
-                    sawFan |= Object.FindFirstObjectByType<AmihanStormFan>() != null;
-                    if (endedAt < 0 && ult.IsWindingUp && ult.WindupRemaining < .8f)
+                    if (releasedAt < 0 && storm != null && storm.Released)
                     {
-                        sawWindup = true;
-                        // The real boundary: the round ends and the next begins, which resets every kit
-                        // (`HeroAbilitySystem.ResetKit`). EndRound alone only clears the live flag.
+                        releasedAt = f;
                         GameServices.Round.EndRound();
                         GameServices.Match.AdvanceRound();
                         endedAt = f;
                     }
-                    if (endedAt >= 0 && f == endedAt + 3)
-                    {
-                        fansAfter = Object.FindObjectsByType<AmihanStormFan>(FindObjectsSortMode.None).Length;
-                        stormsAfter = Object.FindObjectsByType<AmihanStorm>(FindObjectsSortMode.None).Length;
-                    }
-                    if (endedAt >= 0 && f > endedAt + 60) break;
+                    if (endedAt >= 0 && f == endedAt + 45) fansAfter = Object.FindObjectsByType<AmihanStormFan>(FindObjectsSortMode.None).Length;
+                    if (endedAt >= 0 && f > endedAt + 46) break;
                 }
             }
             finally
@@ -269,14 +267,13 @@ namespace TumbangPreso.PlayTests
                 logged.Dispose();
                 SharedUltimatePhase.FilmClock = null; Time.captureFramerate = previous; caster.Intent.Clear();
             }
+            Note("airburst_handback_release_frames", releasedAt - handback);
             Note("airburst_round_end_fans_after", fansAfter);
-            Note("airburst_round_end_logged_errors", logged.Count + " " + logged.First);
-            Assert.IsTrue(sawWindup, "The live windup never started.");
-            Assert.IsTrue(sawFan, "The live fan never appeared.");
-            Assert.AreEqual(0, stormsAfter, "The storm outlived its round.");
-            Assert.AreEqual(0, fansAfter, "Fan pieces outlived the round.");
-            Assert.IsFalse(released, "A storm released after its round ended.");
-            Assert.IsFalse(stage.Victim != null && stage.Victim.IsWhirled, "Someone was thrown by a retired storm.");
+            Assert.IsFalse(sawWindup, "There is no live windup after the cutscene any more.");
+            Assert.GreaterOrEqual(handback, 0, "The cutscene never handed back.");
+            Assert.That(releasedAt - handback, Is.InRange(-1, 2), "The release lands on the hand-back.");
+            Assert.AreEqual(0, fansAfter, "The fan outlived its tail after a round boundary.");
+            Assert.AreEqual(0, logged.Count, logged.First);
         }
     }
 }

@@ -410,13 +410,16 @@ namespace TumbangPreso.Visual
             if (_hero == "paete") PaeteFrame(index, Local(seconds), ref eye, ref look, ref fov);
             // Phaister's THROW and MARK are computed from where she aimed and who is marked (`HeroIntroductionScene.PhaisterMark.cs`).
             if (_hero == "phaister") PhaisterFrame(index, Local(seconds), ref eye, ref look, ref fov);
+            // Amihan's ANSWER orbit, CUP close-up and RIDE down the warp are computed from her palms and the real lane (`HeroIntroductionScene.Amihan.cs`).
+            if (_hero == "amihan") AmihanFrame(index, Local(seconds), ref eye, ref look, ref fov);
             // A hero's own blows shake the lens (Paete's palm and eruption); reduced effects keep it still.
             if (!_reducedEffects) { var shake = Shake(Local(seconds)); eye += shake; look += shake * .5f; }
             position = _ground + _facing * eye; focus = _ground + _facing * look;
             if (_performance.Shots[index].Fit) FitBodies(ref position, ref focus, fov, aspect, seconds);
         }
 
-        private Vector3 Shake(float t) => _hero == "paete" ? PaeteShake(t / PaeteStretch) : _hero == "phaister" ? PhaisterShake(t) : Vector3.zero;
+        private Vector3 Shake(float t) => _hero == "paete" ? PaeteShake(t / PaeteStretch) : _hero == "phaister" ? PhaisterShake(t)
+            : _hero == "amihan" ? AmihanShake(t) : Vector3.zero;
 
         /// <summary>
         /// ⚠️ THE STAGE'S OWN GRADE ON THE PHASE CAMERA (v6, 2026-09-27): a whole-frame brightness and saturation multiplier for this
@@ -429,6 +432,7 @@ namespace TumbangPreso.Visual
             brightness = 1f; saturation = 1f;
             if (_hero == "paete") PaeteGrade(Local(seconds) / PaeteStretch, out brightness, out saturation);
             if (_hero == "phaister") PhaisterGrade(Local(seconds), out brightness, out saturation);
+            if (_hero == "amihan") AmihanGrade(Local(seconds), out brightness, out saturation);
         }
 
         /// <summary>

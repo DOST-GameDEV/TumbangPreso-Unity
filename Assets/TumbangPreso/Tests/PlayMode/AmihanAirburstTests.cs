@@ -64,19 +64,18 @@ namespace TumbangPreso.PlayTests
             for(int i=0;i<15;i++) { yield return new WaitForFixedUpdate(); high=Mathf.Max(high,shoe.transform.position.y); }
             Assert.Greater(high-start,.25f,"Airburst must lift the slipper instead of sliding it on the road.");
         }
-        [UnityTest] public IEnumerator AcceptedWindupDropsAndLiftsOnlyAtRelease()
+        // v3.2: the cutscene shows the windup and the release; the accepted cast releases at once in play.
+        [UnityTest] public IEnumerator AcceptedCastReleasesAtOnceAndLifts()
         {
             yield return Open();
             var shoe=Track(new GameObject("Airburst held slipper")).AddComponent<Slipper>();
             shoe.SeatOfOrigin=1; shoe.OwnerSlot=1; Assert.IsTrue(shoe.HostForceEquip(_victim));
             var kit=new AmihanHeroKit();
             var ctx=new AbilityContext(_caster,_caster.GetComponent<Carrier>(),_caster.GetComponent<CombatVerbs>());
-            kit.Ultimate.Activate(ctx); Assert.IsTrue(kit.Ultimate.IsWindingUp);
-            var storm=Object.FindFirstObjectByType<AmihanStorm>(); Assert.IsNotNull(storm); Track(storm.gameObject);
-            kit.Ultimate.Tick(ctx,1.49f); Assert.IsFalse(storm.Released); Assert.IsFalse(_victim.IsWhirled);
-            Assert.AreEqual(SlipperState.Held,shoe.State);
             Vector3 start=_victim.transform.position;
-            kit.Ultimate.Tick(ctx,.02f); Assert.IsTrue(storm.Released); Assert.IsTrue(_victim.IsWhirled);
+            kit.Ultimate.Activate(ctx); Assert.IsFalse(kit.Ultimate.IsWindingUp);
+            var storm=Object.FindFirstObjectByType<AmihanStorm>(); Assert.IsNotNull(storm); Track(storm.gameObject);
+            Assert.IsTrue(storm.Released); Assert.IsTrue(_victim.IsWhirled);
             Assert.IsNull(_victim.GetComponent<Carrier>().Held);
             Assert.AreEqual(SlipperState.InFlight,shoe.State); Assert.AreEqual(-1,shoe.ThrowerSlot);
             float high=start.y;
@@ -103,7 +102,7 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(AmihanStorm.InsideFan(origin,Vector3.forward,origin+inside));
             Assert.IsFalse(AmihanStorm.InsideFan(origin,Vector3.forward,origin+outside));
         }
-        [UnityTest] public IEnumerator ReservedAirburstStartsItsSameDelayOnlyAfterIntroduction()
+        [UnityTest] public IEnumerator ReservedAirburstReleasesOnlyAfterIntroduction()
         {
             yield return Open();var kit=new AmihanHeroKit();kit.AddUltimateCharge(15);
             var ctx=new AbilityContext(_caster,_caster.GetComponent<Carrier>(),_caster.GetComponent<CombatVerbs>());
@@ -114,9 +113,8 @@ namespace TumbangPreso.PlayTests
             Assert.IsNull(Object.FindFirstObjectByType<AmihanStorm>());
             typeof(HeroAbility).GetMethod("BeginReservedActivation",hidden).Invoke(kit.Ultimate,new object[]{ctx});
             var storm=Object.FindFirstObjectByType<AmihanStorm>();Assert.IsNotNull(storm);Track(storm.gameObject);
-            Assert.AreEqual(1.5f,kit.Ultimate.WindupRemaining,.0001f);
-            kit.Ultimate.Tick(ctx,1.49f);Assert.IsFalse(storm.Released);Assert.IsFalse(_victim.IsWhirled);
-            kit.Ultimate.Tick(ctx,.02f);Assert.IsTrue(storm.Released);Assert.IsTrue(_victim.IsWhirled);
+            // v3.2: no live delay after the cutscene (`AmihanRules.StormSurgeDelaySeconds`).
+            Assert.IsFalse(kit.Ultimate.IsWindingUp);Assert.IsTrue(storm.Released);Assert.IsTrue(_victim.IsWhirled);
             Assert.AreEqual(0,kit.UltimateCharge,"Reservation spent twice.");
         }
         [UnityTest] public IEnumerator ExpandedCourtContactAndWarningShareTheMapWideReach()
