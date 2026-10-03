@@ -84,6 +84,70 @@ namespace TumbangPreso.PlayTests
             var text = (UnityEngine.UI.Text)typeof(UI.TumpMatchReadout).GetField("_prompt", hidden).GetValue(view);
             Assert.That(text.text, Does.Contain("Rooted"));
         }
+        [UnityTest] public IEnumerator BotResumesARealThrowAfterFrozenExpires()
+            => BotResumesThrowAfterStatus(false);
+        [UnityTest] public IEnumerator BotResumesARealThrowAfterTaggedExpires()
+            => BotResumesThrowAfterStatus(true);
+        private IEnumerator BotResumesThrowAfterStatus(bool tagged)
+        {
+            var carrier = _actor.gameObject.AddComponent<Carrier>();
+            _actor.gameObject.AddComponent<CombatVerbs>();
+            _actor.IsBot = true; _actor.IsDefender = false; _actor.Intent.Parked = false;
+            var shoe = Keep(new GameObject("Recovery bot owned slipper")).AddComponent<Slipper>();
+            shoe.OwnerSlot = shoe.SeatOfOrigin = _actor.PlayerSlot;
+            Assert.IsTrue(shoe.HostForceEquip(_actor));
+            _actor.gameObject.AddComponent<AIController>();
+            float until = Time.time + 12;
+            while (!carrier.IsCharging && Time.time < until) yield return null;
+            Assert.IsTrue(carrier.IsCharging, "Control: this bot must actually play before the interruption.");
+            if (tagged) _actor.ApplyTagged(); else _actor.ApplyStagger(1.2f, StunElement.Ice, 9);
+            Assert.IsFalse(_actor.CanAct());
+            yield return new WaitForSeconds(tagged ? StatusRules.TaggedSeconds + .3f : 1.5f);
+            Assert.IsTrue(_actor.CanAct(), "The status clock must release the bot without intervention.");
+            until = Time.time + 12;
+            bool released = false;
+            while (Time.time < until)
+            {
+                if (shoe.State == SlipperState.InFlight && carrier.Held == null) { released = true; break; }
+                yield return null;
+            }
+            Assert.IsTrue(released, "Recovered bot must resume and release a real throw in the same round.");
+        }
+        [UnityTest] public IEnumerator SeanBotResumesAfterActualAbsoluteZeroWithAbilitiesEnabled()
+            => ActiveHeroBotAfterAbsoluteZero("sean");
+        [UnityTest] public IEnumerator NemuBotResumesAfterActualAbsoluteZeroWithAbilitiesEnabled()
+            => ActiveHeroBotAfterAbsoluteZero("nemu");
+        private IEnumerator ActiveHeroBotAfterAbsoluteZero(string hero)
+        {
+            var carrier=_actor.gameObject.AddComponent<Carrier>(); _actor.gameObject.AddComponent<CombatVerbs>();
+            var abilities=_actor.gameObject.AddComponent<TumbangPreso.Abilities.HeroAbilitySystem>();abilities.BindHero(hero);
+            _actor.IsBot=true;_actor.IsDefender=false;_actor.Intent.Parked=false;
+            var shoe=Keep(new GameObject("Hero recovery owned slipper")).AddComponent<Slipper>();
+            shoe.OwnerSlot=shoe.SeatOfOrigin=_actor.PlayerSlot;Assert.IsTrue(shoe.HostForceEquip(_actor));
+            var brain=_actor.gameObject.AddComponent<AIController>();Assert.IsTrue(brain.AbilitiesEnabled);
+            float deadline=Time.time+12;
+            while(!carrier.IsCharging&&Time.time<deadline)yield return null;
+            Assert.IsTrue(carrier.IsCharging,"The real hero AI must reach an actual throw windup before interruption.");
+            var caster=Actor("Actual Absolute Zero caster",2,new Vector3(3,.13f,-8));caster.RoundActive=true;
+            var kit=new TumbangPreso.Abilities.CheskaHeroKit();
+            var context=new TumbangPreso.Abilities.AbilityContext(caster,null,null);
+            using(NetCue.SuppressRelay()){kit.Ultimate.Activate(context);kit.Ultimate.Tick(context,1.51f);}
+            Assert.IsTrue(_actor.IsFrozen);Assert.IsTrue(_actor.IsChilled);Assert.IsFalse(caster.IsFrozen);
+            deadline=Time.time+StatusRules.FrozenSeconds+1;
+            while(_actor.IsFrozen&&Time.time<deadline)yield return null;
+            Assert.IsFalse(_actor.IsFrozen,"Natural Frozen expiry must complete.");
+            Assert.IsTrue(_actor.IsChilled,"The real ultimate's thaw slow remains while recovery begins.");
+            Vector3 resumedAt=_actor.transform.position;deadline=Time.time+12;bool resumed=false;
+            while(Time.time<deadline)
+            {
+                if(shoe.State==SlipperState.InFlight&&carrier.Held==null || Vector3.Distance(resumedAt,_actor.transform.position)>.65f)
+                {resumed=true;break;}
+                yield return null;
+            }
+            Assert.IsTrue(brain.AbilitiesEnabled);Assert.IsTrue(brain.enabled);
+            Assert.IsTrue(resumed,$"{hero} stalled after actual Absolute Zero: plan={brain.Plan}, canAct={_actor.CanAct()}, "
+                +$"parked={_actor.Intent.Parked}, frozen={_actor.IsFrozen}, chilled={_actor.IsChilled}, ownBlock={abilities.Kit.BlocksOwnActions}");
+        }
         [UnityTest] public IEnumerator FrozenRejectsLegacyRecoveryAndKeepsItsTimer()
         {
             _actor.ApplyStagger(3,StunElement.Ice,8);_actor.enabled=false;
