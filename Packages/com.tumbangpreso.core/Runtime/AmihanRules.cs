@@ -103,8 +103,16 @@ namespace TumbangPreso.Core
         /// </summary>
         public const float StormSurgeDelaySeconds = 0.0f;
 
-        /// <summary>Half the current Wiki 60 degree fan, shared by contact and telegraph.</summary>
-        public const float StormSurgeHalfAngle = 30.0f;
+        /// <summary>
+        /// Half the fan, shared by contact and telegraph. v3.2 (owner, 2026-10-03: *"i want tis ult to have a bigger space"*,
+        /// *"its supposed to push back everyone in a big area not js small area"*, then *"WAYYY BIgger and affect a very large
+        /// area"*): 180 degrees, everything in front of her across the whole map (it was the Wiki's 60), and everyone close round
+        /// her as well (<see cref="StormSurgeAroundRadius"/>).
+        /// </summary>
+        public const float StormSurgeHalfAngle = 90.0f;
+
+        /// <summary>v3.2: the blast also takes everyone within this many metres of her, behind her included.</summary>
+        public const float StormSurgeAroundRadius = 10.0f;
 
         /// <summary>Minimum reach; expanded courts use their measured diagonal below.</summary>
         public const float StormSurgeRange = 40.0f;

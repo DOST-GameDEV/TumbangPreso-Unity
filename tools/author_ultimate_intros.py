@@ -763,7 +763,9 @@ def amihan():
     # (film r1: from 2.9 m up behind her shoulder her large head filled the bottom left; higher and further out to her right.)
     # (film r3: aimed down the lane, she was cut off at the frame's bottom-left edge; aimed between her and the lane, wider.)
     # v3.2: and it holds the hit: her lunge at the left, the lane, and the players thrown back down it.
-    p.shot(4.45, 5.6, (4.6, 3.3, -.6), (.2, .5, 3.6), 58, eye_to=(5.6, 4.2, -1.6), look_to=(.2, .6, 7.0), fov_to=64)
+    # v3.2 (owner: "WAYYY BIgger and affect a very large area"): it rises into a high wide on the release, the whole half
+    # map in front of her and the ring round her, everyone in them thrown.
+    p.shot(4.45, 5.6, (4.6, 3.6, -.8), (.2, .4, 4.0), 60, eye_to=(7.5, 8.5, -7.0), look_to=(0, 0, 5.5), fov_to=72)
     # Reduced motion: one side view with her, her hands and the lane together.
     p.locked((4.4, 1.6, 1.0), (0, .95, 2.5), 52)
     return p

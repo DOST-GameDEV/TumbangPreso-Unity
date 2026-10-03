@@ -36,7 +36,8 @@ namespace TumbangPreso.PlayTests
             var can=Track(new GameObject("Airburst can")); can.transform.position=new Vector3(6,0,6);
             GameServices.Round.Lata=can.AddComponent<Lata>();
             _caster=Seat(0,new Vector3(0,0,-4)); _victim=Seat(1,Vector3.zero);
-            _outside=Seat(2,new Vector3(5,0,-4));
+            // v3.2: outside means behind her AND beyond the ring round her (`StormSurgeAroundRadius`), on the court (x 8.6, z 13).
+            _outside=Seat(2,new Vector3(-8.4f,0,-12));
             GameServices.Match.StartMatch(); GameServices.Round.BeginRound();
             Physics.SyncTransforms(); yield return new WaitForSeconds(.2f);
         }
@@ -85,22 +86,27 @@ namespace TumbangPreso.PlayTests
             yield return new WaitForSeconds(2);
             Assert.AreEqual(SlipperState.Loose,shoe.State,"Existing host flight must finish with a retrievable slipper.");
         }
-        [UnityTest] public IEnumerator SixtyDegreeBoundaryAppliesToBodiesAndSlippers()
+        // v3.2 (owner: "WAYYY BIgger and affect a very large area"): the half map in front of her, and a ring round her.
+        [UnityTest] public IEnumerator HalfMapAndRingBoundaryAppliesToBodiesAndSlippers()
         {
             yield return Open();
-            Vector3 inside=Quaternion.AngleAxis(29.9f,Vector3.up)*Vector3.forward*6;
-            Vector3 outside=Quaternion.AngleAxis(30.1f,Vector3.up)*Vector3.forward*8;
+            Vector3 inside=Quaternion.AngleAxis(89.9f,Vector3.up)*Vector3.forward*12;
+            Vector3 outside=Quaternion.AngleAxis(90.1f,Vector3.up)*Vector3.forward*12;
             Vector3 origin=_caster.transform.position;
-            _victim.Teleport(origin+inside); _outside.Teleport(origin+outside);
+            // Bodies: the court cannot hold 12 m to her side (x 8.6), so the outside body stands behind her beyond the ring;
+            // the exact 90 degree line is checked on the rule itself below.
+            _victim.Teleport(origin+Quaternion.AngleAxis(89.9f,Vector3.up)*Vector3.forward*8); _outside.Teleport(new Vector3(-8.4f,0,-12));
             var caught=Track(new GameObject("Inside60degree slipper")).AddComponent<Slipper>();
-            caught.SeatOfOrigin=1;caught.OwnerSlot=1;caught.transform.position=origin+inside+Vector3.up*.1f;
+            caught.SeatOfOrigin=1;caught.OwnerSlot=1;caught.transform.position=_victim.transform.position+Vector3.up*.1f;
             var missed=Track(new GameObject("Outside60degree slipper")).AddComponent<Slipper>();
-            missed.SeatOfOrigin=2;missed.OwnerSlot=2;missed.transform.position=origin+outside+Vector3.up*.1f;
+            missed.SeatOfOrigin=2;missed.OwnerSlot=2;missed.transform.position=_outside.transform.position+Vector3.up*.1f;
             Physics.SyncTransforms(); var storm=Storm();storm.Release();
             Assert.IsTrue(_victim.IsWhirled);Assert.IsFalse(_outside.IsWhirled);
             Assert.AreEqual(SlipperState.InFlight,caught.State);Assert.AreEqual(SlipperState.Loose,missed.State);
             Assert.IsTrue(AmihanStorm.InsideFan(origin,Vector3.forward,origin+inside));
             Assert.IsFalse(AmihanStorm.InsideFan(origin,Vector3.forward,origin+outside));
+            Assert.IsTrue(AmihanStorm.InsideFan(origin,Vector3.forward,origin+Vector3.back*9.9f),"The ring round her takes those just behind.");
+            Assert.IsFalse(AmihanStorm.InsideFan(origin,Vector3.forward,origin+Vector3.back*10.1f));
         }
         [UnityTest] public IEnumerator ReservedAirburstReleasesOnlyAfterIntroduction()
         {
