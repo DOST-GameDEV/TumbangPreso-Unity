@@ -6,69 +6,82 @@ namespace TumbangPreso.Visual
     public sealed partial class HeroIntroductionScene
     {
         // =========================================================================================
-        // AMIHAN, AIRBURST v5, 4.4 s (`docs/reports/amihan-presentation-2026-10-02/cutscene-v4-plan.md`, "v5"). The owner on v4
-        // (2026-10-03): *"i like the expression she makes and her relaxing feel but the vfx and the shit thhat show up in the
-        // back dont make sense"*, *"i also dont like the ranodm blue background saying the name of her skill"*.
+        // AMIHAN, AIRBURST v6, 5.6 s (`docs/reports/amihan-presentation-2026-10-02/cutscene-v4-plan.md`, "v6"). The owner on
+        // v4: *"i like the expression she makes and her relaxing feel but the vfx and the shit thhat show up in the back dont
+        // make sense"*, *"i also dont like the ranodm blue background"*; then *"thoroughly rethhink how to execute her
+        // cutscenes as well as throoughly figure out hwo to make her vfx there better"*, *"give her time to breathe bcz
+        // cutscene feels too fast"*, *"the part where she like lies down or smth should be where it slows down for a brief
+        // moment"*.
         //
-        // KEPT: her body, timing and faces (the run-in and skid, the read with the squint, the foot taps and shrug, the whistle,
-        // the grin, the hands-on-hips wink). GONE: the stage that rose behind her (lime walls, timber houses, a clothesline with
-        // a cloth on it), the AIRBURST card and its letterbox, and the gust that wound round the old cloth path. She performs on
-        // the real court she cast from, among the real players, so everything behind her is the match.
+        // THE IDEA: she does not chase the wind. She waits for it, gets bored, whistles, and it comes to her. Twelve quick
+        // actions in 4.4 s became six beats in 5.6 s, on the real court she cast from, among the real players.
         //
-        // ONE CAUSE AND EFFECT FOR THE WIND: she whistles, it answers. Streaks race in from upwind and feed into her free palm,
-        // where they wind into a small spinning ball of air. She keeps it on her hand (caught high, whirled over her head, held
-        // as she points down the lane, swung back behind her head while more air is drawn in) and on the drive it unrolls into
-        // the jet down the lane that the live fan takes over.
+        //   BORED   0.00  easy, hip cocked; her arm out to feel the wind (squint): ONE LEAF falls straight down past her
+        //                 palm. No wind. Two foot taps, a shrug.
+        //   CALL    1.78  the two-finger whistle. The wind answers: curled streaks race in from upwind carrying leaves and
+        //                 court dust, and wind into A LITTLE WHIRLWIND on her palm, which she holds up and admires (grin).
+        //   LOOK    3.30  over her shoulder at the lens, grin, the whirlwind on her hand.
+        //   WIND-UP 3.85  swung back over her head; more air and leaves drawn in from behind; it grows.
+        //   DRIVE   4.55  the release. THE HANG: the scene clock slows to about a fifth while she hangs in the low lunge,
+        //                 the whirlwind burst into arcs racing down the lane, its leaves and the thrown players suspended.
+        //   FINISH  5.34  hands on hips, a wink. Hand-back at 5.6.
         //
-        //   OPEN   0.00  a pan across the court onto her running in; the skid.
-        //   READ   0.50  her free arm out feeling for the wind (squint); two foot taps, a shrug. Nothing comes.
-        //   CALL   1.30  the two-finger whistle: the wind answers, streaks and court dust racing in at her.
-        //   CATCH  1.85  the air wound into a ball on her palm and whirled over her head.
-        //   POINT  2.50  down the lane, a grin, the ball on her hand.
-        //   COMMIT 2.95  from behind her: wound up, the ball swung back over her head and fed, the drive at 3.85 (the release).
-        //   HIT    3.85  the thrown players blown away, her in the middle, hands on hips, a wink.
+        // ⚠️ THE STORY CLOCK (`AmStory`): before the release it is the scene clock; after it, it runs slow through the hang
+        // and normal again for the finish, scaled so it has advanced exactly `AmihanStorm.CutsceneTail` at the hand-back.
+        // Everything the game continues (the live fan, the thrown players) is posed on it, so play resumes where the
+        // last frame drew. The body keys are authored on the scene clock (the hang is a held drive).
         //
-        // ⚠️ Every effect has a source and a direction: air travels from upwind to her hand, and from her hand down the lane.
-        // No outline shapes, glints, rings, emblems, veils, cards or scenery. A warm grade, never darker. Every piece is posed
-        // from the scene clock; nothing on `Update`. ⚠️ Reduced effects keeps every shape, stills the spin and halves the light.
+        // ⚠️ THE VFX LANGUAGE: wind is shown by what it carries and by curled streaks that always travel from a source to a
+        // destination: upwind to her palm, her palm down the lane. Three materials: air (curled streaks with a dark ink line
+        // under a bright core, so they read on the light tiles), leaves (torn off the plaza's trees), court dust. Nothing
+        // floats without a cause: no cards, emblems, outline shapes or scenery. A warm grade, never darker. Every piece is
+        // posed from the clock; nothing on `Update`. ⚠️ Reduced effects keeps every shape, stills the spin and the curls'
+        // motion, and halves the light.
         // =========================================================================================
-        private const float AmSkidAt = .50f, AmReadAt = .74f, AmWhistleAt = 1.30f, AmArriveAt = 1.42f, AmFormAt = 1.57f,
-            AmCatchAt = 1.85f, AmPointAt = 2.50f, AmWarpAt = 2.95f, AmWindAt = 3.10f, AmBraceAt = 3.20f,
-            // THE RELEASE. Play resumes `AmihanStorm.CutsceneTail` (0.55 s) after it, on the hit, with no live delay.
-            AmReleaseAt = 3.85f, AmFinishAt = 4.24f;
+        private const float AmReadAt = .78f, AmLeafFrom = .62f, AmLeafTo = 1.72f, AmWhistleAt = 1.78f, AmArriveAt = 1.92f,
+            AmFormAt = 2.10f, AmCatchAt = 2.42f, AmLookAt = 3.30f, AmWindAt = 3.80f, AmBraceAt = 4.05f,
+            // THE RELEASE. Play resumes after `AmRealTail` real seconds, `AmihanStorm.CutsceneTail` story seconds after it.
+            AmReleaseAt = 4.55f, AmFinishAt = 5.34f;
+
+        /// <summary>Real seconds from the release to the hand-back (5.6 - 4.55).</summary>
+        public const float AmRealTail = 1.05f;
+        // THE HANG: from 0.10 to 0.62 real seconds after the release, eased over 0.06 at each end, the clock at 18 per cent.
+        private const float AmHangFrom = .10f, AmHangTo = .62f, AmHangEdge = .06f, AmHangSpeed = .18f;
 
         // The shots (`tools/author_ultimate_intros.py` amihan()).
-        private const int AmShotOpen = 0, AmShotCall = 2, AmShotCatch = 3, AmShotCommit = 5, AmShotHit = 6;
+        private const int AmShotBored = 0, AmShotCall = 1, AmShotCommit = 2, AmShotHang = 3, AmShotHit = 4;
 
-        // THE BALL: three open strands of air spun round her palm, which unroll into the jet on the release.
-        private readonly LineRenderer[] _amGust = new LineRenderer[3];
-        private readonly Vector3[] _amGustPoints = new Vector3[AmGustSamples];
-        private readonly Vector3[] _amGustFrom = new Vector3[AmGustSamples];
-        private Vector3[] _amJetCentre, _amJetAcross;
-        private const int AmGustSamples = 28;
-        // The air feeding it: streaks drawn each frame from upwind into her moving hand.
-        private readonly LineRenderer[] _amArrive = new LineRenderer[8];
-        private readonly LineRenderer[] _amGather = new LineRenderer[4];
-        private readonly Vector3[] _amFeedPoints = new Vector3[AmFeedSamples];
-        private const int AmFeedSamples = 14;
+        // THE AIR: each streak an ink line under a bright core, posed every frame along its curled path.
+        private const int AmStreakSamples = 18;
+        private readonly LineRenderer[] _amArriveCore = new LineRenderer[8], _amArriveInk = new LineRenderer[8];
+        private readonly LineRenderer[] _amGatherCore = new LineRenderer[4], _amGatherInk = new LineRenderer[4];
+        private readonly Vector3[] _amStreakPoints = new Vector3[AmStreakSamples];
+        // THE WHIRLWIND: five open rings, narrow at her palm and wide at the top, and two strands spiralling up it.
+        private const int AmRingSamples = 18, AmHelixSamples = 22;
+        private readonly LineRenderer[] _amRing = new LineRenderer[5];
+        private readonly LineRenderer[] _amHelix = new LineRenderer[2];
+        private readonly Vector3[] _amRingPoints = new Vector3[AmRingSamples];
+        private readonly Vector3[] _amHelixPoints = new Vector3[AmHelixSamples];
+        // THE LEAVES: 0 the lone leaf; 1 to 14 carried in on the arrival; 15 to 22 drawn in on the wind-up.
+        private const int AmLeaves = 23;
+        private readonly int[] _amLeaf = new int[AmLeaves];
+        private readonly Vector3[] _amLeafSeed = new Vector3[AmLeaves];
         private readonly List<WindVfx.Ribbon> _amSpeed = new List<WindVfx.Ribbon>();
-        private WindVfx.Motif _amihanNear, _amDust, _amLift;
+        private WindVfx.Motif _amDust, _amSpin;
         private AmihanStormFan _amihanFan;
         private VoxelFace _amFace;
         private float _amCourt;
 
-        // Where the wind comes from (her left, behind), and where the open pans across the court from.
+        // Where the wind comes from: her left, behind.
         private static readonly Vector3 AmWindFrom = new Vector3(-8.5f, 1.0f, -5.5f);
-        private static readonly Vector3 AmOpenFrom = new Vector3(-1.7f, 1.4f, -.8f);
 
-        // THE ARRIVAL: streaks racing in at her hand on the whistle. Start (scene x, height, z), the side they swing round on
-        // (+1 her right), unused, delay, width.
+        // THE ARRIVAL: start (scene x, height, z), the side its curl turns to (+1 her right), curl radius, delay, width.
         private static readonly float[,] AmArriveRows =
         {
-            { -9.0f, .30f, -6.2f,  .7f, .35f, .00f, .050f }, { -8.2f, 1.10f, -4.4f, -.6f, 1.20f, .04f, .060f },
-            { -9.6f, .70f, -3.1f,  .9f, .80f, .08f, .045f }, { -7.4f, 1.60f, -6.8f, -.9f, 1.70f, .10f, .050f },
-            { -8.8f, .20f, -2.2f, -.5f, .25f, .13f, .055f }, { -9.9f, 1.30f, -5.0f,  .6f, 1.45f, .16f, .045f },
-            { -7.9f, .50f, -7.6f,  .8f, .55f, .19f, .050f }, { -9.3f, 1.90f, -3.8f, -.7f, 1.95f, .22f, .040f },
+            { -9.0f, .30f, -6.2f,  1f, .22f, .00f, .060f }, { -8.2f, 1.10f, -4.4f, -1f, .28f, .05f, .070f },
+            { -9.6f, .70f, -3.1f,  1f, .20f, .10f, .055f }, { -7.4f, 1.60f, -6.8f, -1f, .26f, .13f, .060f },
+            { -8.8f, .20f, -2.2f, -1f, .24f, .17f, .065f }, { -9.9f, 1.30f, -5.0f,  1f, .30f, .21f, .055f },
+            { -7.9f, .50f, -7.6f,  1f, .22f, .25f, .060f }, { -9.3f, 1.90f, -3.8f, -1f, .26f, .29f, .050f },
         };
 
         // THE SPEED STREAKS down the lane on the release: x, height, start z, end z, delay, width.
@@ -80,30 +93,43 @@ namespace TumbangPreso.Visual
         };
 
         private static readonly Color AmSheetBody = new Color(0.78f, 0.96f, 0.72f, 1f);
+        private static readonly Color AmInk = new Color(0.16f, 0.36f, 0.20f, .55f);
+        private static readonly Color[] AmLeafColours =
+        {
+            new Color(0.33f, 0.58f, 0.24f, 1f), new Color(0.47f, 0.68f, 0.26f, 1f), new Color(0.26f, 0.48f, 0.22f, 1f),
+            new Color(0.80f, 0.70f, 0.30f, 1f),
+        };
 
         private void BuildAmihan()
         {
             // The court she stands on, not the classed ground under it (Bayan Plaza's tiles sit above it).
             _amCourt = Mathf.Clamp(AmihanStormFan.CourtUnder(_root.transform.position).y - _root.transform.position.y, 0f, .4f);
 
-            _amJetCentre = new Vector3[AmGustSamples]; _amJetAcross = new Vector3[AmGustSamples];
-            for (int k = 0; k < _amGust.Length; k++)
+            var taper = new AnimationCurve(new Keyframe(0f, .1f), new Keyframe(.5f, 1f), new Keyframe(1f, .35f));
+            for (int i = 0; i < _amArriveCore.Length; i++)
+                AmStreakPair("AmihanArrive" + i, i % 3 == 0 ? WindVfx.Core : AmSheetBody, taper, out _amArriveCore[i], out _amArriveInk[i]);
+            for (int i = 0; i < _amGatherCore.Length; i++)
+                AmStreakPair("AmihanGather" + i, i % 2 == 0 ? WindVfx.Core : AmSheetBody, taper, out _amGatherCore[i], out _amGatherInk[i]);
+
+            var ring = new AnimationCurve(new Keyframe(0f, .2f), new Keyframe(.3f, 1f), new Keyframe(.8f, 1f), new Keyframe(1f, .1f));
+            for (int j = 0; j < _amRing.Length; j++)
             {
-                _amGust[k] = Line("AmihanGust" + k, AmGustSamples, .05f, k == 1 ? WindVfx.Core : AmSheetBody);
-                _amGust[k].widthCurve = new AnimationCurve(new Keyframe(0f, .35f), new Keyframe(.25f, 1f), new Keyframe(.75f, .7f), new Keyframe(1f, 0f));
-                _amGust[k].enabled = false;
+                _amRing[j] = Line("AmihanWhirlRing" + j, AmRingSamples, .02f, j % 2 == 0 ? WindVfx.Core : AmSheetBody);
+                _amRing[j].widthCurve = ring; _amRing[j].sortingOrder = 2; _amRing[j].enabled = false;
             }
-            // The feeding streaks: a thin tail, a full middle, a fine head where the air arrives.
-            var taper = new AnimationCurve(new Keyframe(0f, .1f), new Keyframe(.55f, 1f), new Keyframe(1f, .3f));
-            for (int i = 0; i < _amArrive.Length; i++)
+            for (int k = 0; k < _amHelix.Length; k++)
             {
-                _amArrive[i] = Line("AmihanArrive" + i, AmFeedSamples, AmArriveRows[i, 6], i % 3 == 0 ? WindVfx.Core : AmSheetBody);
-                _amArrive[i].widthCurve = taper; _amArrive[i].enabled = false;
+                _amHelix[k] = Line("AmihanWhirlStrand" + k, AmHelixSamples, .02f, WindVfx.Core);
+                _amHelix[k].widthCurve = taper; _amHelix[k].sortingOrder = 2; _amHelix[k].enabled = false;
             }
-            for (int i = 0; i < _amGather.Length; i++)
+
+            // THE LEAVES: thin lit slabs, each with its own seed for its path, its tumble and its colour.
+            var leaf = VfxShapes.Prism(4, 1, 1);
+            for (int i = 0; i < AmLeaves; i++)
             {
-                _amGather[i] = Line("AmihanGather" + i, AmFeedSamples, .05f, i % 2 == 0 ? WindVfx.Core : AmSheetBody);
-                _amGather[i].widthCurve = taper; _amGather[i].enabled = false;
+                _amLeafSeed[i] = new Vector3(AmHash(i * 3 + 1), AmHash(i * 3 + 2), AmHash(i * 3 + 3));
+                _amLeaf[i] = AddSolid("AmihanLeaf" + i, leaf, AmLeafColours[i % AmLeafColours.Length]);
+                Place(_amLeaf[i], Vector3.zero, Vector3.one * .001f, Quaternion.identity, 0f);
             }
 
             // THE SPEED STREAKS down the lane on the release.
@@ -117,13 +143,12 @@ namespace TumbangPreso.Visual
                 _amSpeed.Add(streak);
             }
 
-            // Dust and cotton: the court's dust running at her when the wind answers; cotton sucked into the ball as it forms;
-            // and the near layer at the lens. Each Motif gets its own host (a Motif hands its tuft mesh to its parent's owner).
+            // Court dust running at her when the wind answers, and dust spun up inside the whirlwind. Each Motif gets its own
+            // host (a Motif hands its tuft mesh to its parent's single owner).
             _amDust = new WindVfx.Motif(AmHost("AmihanCourtDust"), 22, 17.1f, .3f);
-            _amLift = new WindVfx.Motif(AmHost("AmihanDrawnCotton"), 14, 21.3f, .35f);
-            _amihanNear = new WindVfx.Motif(AmHost("AmihanNearLayer"), 12, 13.7f, .5f);
+            _amSpin = new WindVfx.Motif(AmHost("AmihanWhirlDust"), 12, 21.3f, .2f);
 
-            // The live fan itself, posed from this scene's clock (never its own Update) and only from the release on: at the
+            // The live fan itself, posed from the story clock (never its own Update) and only from the release on: at the
             // hand-back it is the live fan `AmihanStorm.CutsceneTail` after its release, on the same court.
             _amihanFan = AmihanStormFan.Build(_root.transform, _root.transform.position, _root.transform.forward,
                 Core.AmihanRules.StormSurgeGatherSeconds);
@@ -135,11 +160,21 @@ namespace TumbangPreso.Visual
             BuildAmihanLane();
         }
 
+        private void AmStreakPair(string name, Color core, AnimationCurve taper, out LineRenderer bright, out LineRenderer ink)
+        {
+            ink = Line(name + "Ink", AmStreakSamples, .1f, AmInk);
+            ink.widthCurve = taper; ink.sortingOrder = 0; ink.enabled = false;
+            bright = Line(name, AmStreakSamples, .06f, core);
+            bright.widthCurve = taper; bright.sortingOrder = 1; bright.enabled = false;
+        }
+
         private Transform AmHost(string name)
         {
             var host = new GameObject(name).transform; host.SetParent(_root.transform, false);
             return host;
         }
+
+        private static float AmHash(int n) => Mathf.Repeat(Mathf.Sin(n * 12.9898f + 4.1f) * 43758.5453f, 1f);
 
         /// <summary>`WindRibbon`'s ink band turned to a bright rim: the swept-air look (bright edges, a middle you see through).</summary>
         private static void AmBrightRim(WindVfx.Ribbon ribbon, float rimFrom)
@@ -154,70 +189,112 @@ namespace TumbangPreso.Visual
         /// <summary>A beat's swell: up at once, gone by <paramref name="width"/>.</summary>
         private static float AmBeat(float t, float at, float width = .22f) => t < at ? 0f : Mathf.Clamp01(1f - (t - at) / width);
 
+        // ------------------------------------------------------------------ the story clock
+
+        private static float AmHangRaw(float real)
+        {
+            // The clock's speed, integrated: 1 everywhere but the hang, AmHangSpeed inside it, eased at its edges.
+            const int steps = 48;
+            float s = Mathf.Clamp(real, 0f, AmRealTail), h = s / steps, sum = 0f;
+            for (int i = 0; i < steps; i++)
+            {
+                float x = (i + .5f) * h;
+                float inside = Ease(AmHangFrom - AmHangEdge, AmHangFrom, x) * (1f - Ease(AmHangTo, AmHangTo + AmHangEdge, x));
+                sum += (1f - (1f - AmHangSpeed) * inside) * h;
+            }
+            return sum + Mathf.Max(0f, real - AmRealTail);
+        }
+
+        /// <summary>
+        /// Story seconds after the release for <paramref name="real"/> scene seconds after it: slowed through the hang, and
+        /// scaled so the hand-back (<see cref="AmRealTail"/>) lands exactly on <c>AmihanStorm.CutsceneTail</c>.
+        /// </summary>
+        public static float AmihanStoryAfterRelease(float real)
+            => real <= 0f ? real : AmHangRaw(real) * (Abilities.AmihanStorm.CutsceneTail / AmHangRaw(AmRealTail));
+
+        private static float AmStory(float t) => t <= AmReleaseAt ? t : AmReleaseAt + AmihanStoryAfterRelease(t - AmReleaseAt);
+
         private VoxelFace.Look AmLook(float t)
         {
             if (t >= AmFinishAt - .04f) return VoxelFace.Look.Wink;
             if (t >= AmReleaseAt - .02f) return VoxelFace.Look.Grin;
-            if (t >= AmWindAt - .1f) return VoxelFace.Look.Squint;
-            if (t >= AmCatchAt - .03f) return VoxelFace.Look.Grin;
-            if (t >= AmWhistleAt - .05f && t < AmFormAt + .01f) return VoxelFace.Look.Whistle;
-            if (t >= AmReadAt - .06f && t < AmWhistleAt - .05f) return VoxelFace.Look.Squint;
+            if (t >= AmWindAt - .05f) return VoxelFace.Look.Squint;
+            if (t >= AmCatchAt - .2f) return VoxelFace.Look.Grin;
+            if (t >= AmWhistleAt - .05f) return VoxelFace.Look.Whistle;
+            if (t >= AmReadAt - .08f && t < 1.62f) return VoxelFace.Look.Squint;
             return VoxelFace.Look.Rest;
         }
 
-        /// <summary>Where the ball sits: just off her free palm.</summary>
-        private Vector3 AmBallAt => FreePalm + new Vector3(0f, .06f, .04f);
+        // ------------------------------------------------------------------ the whirlwind's shape
 
-        /// <summary>The ball's radius: nothing, wound up on the catch, fed bigger on the wind-up.</summary>
-        private static float AmBallRadius(float t, bool calm)
+        /// <summary>Where the whirlwind stands: on her free palm.</summary>
+        private Vector3 AmBallAt => FreePalm + new Vector3(0f, .03f, .02f);
+
+        /// <summary>Its size: nothing, wound up as the air arrives, fed bigger on the wind-up.</summary>
+        private static float AmWhirlSize(float t)
+            => Ease(AmFormAt - .1f, AmCatchAt, t) + .55f * Ease(AmWindAt, AmReleaseAt - .05f, t);
+
+        private static float AmWhirlHeight(float size) => .46f * size;
+
+        /// <summary>Its radius at height fraction <paramref name="v"/> (0 at her palm, 1 at the top).</summary>
+        private static float AmWhirlRadius(float size, float v) => (.035f + .2f * Mathf.Pow(Mathf.Clamp01(v), 1.3f)) * size;
+
+        /// <summary>A point inside the whirlwind: height fraction, angle, how far out (1 its wall).</summary>
+        private Vector3 AmWhirlPoint(Vector3 ball, float size, float v, float angle, float out_, float t, bool calm)
         {
-            float r = .2f * Ease(AmFormAt, AmCatchAt, t) + .14f * Ease(AmWindAt, AmReleaseAt - .05f, t);
-            return r * (1f + (calm ? 0f : .06f * Mathf.Sin(t * 23f)));
+            float r = AmWhirlRadius(size, v) * out_;
+            // The top wanders: a dust devil is never a rigid cone.
+            float sway = calm ? 0f : .03f * size * v;
+            var lean = new Vector3(Mathf.Sin(t * 7f) * sway, 0f, Mathf.Cos(t * 6f) * sway);
+            return ball + lean + new Vector3(Mathf.Cos(angle) * r, v * AmWhirlHeight(size), Mathf.Sin(angle) * r);
         }
+
+        // ------------------------------------------------------------------ the sample
 
         private void SampleAmihan(float t)
         {
             bool calm = _reducedEffects;
-            float phase = calm ? 0.0f : t * 3.0f;
+            float story = AmStory(t);
             float light = calm ? .55f : 1f;
             float leave = 1 - Ease(Seconds - .30f, Seconds, t);
             _amFace?.Show(AmLook(t));
             var ball = AmBallAt;
+            float size = AmWhirlSize(t);
+            float sinceRelease = story - AmReleaseAt;
 
-            SampleAmihanGust(t, calm, ball);
+            SampleAmihanWhirl(t, story, calm, ball, size);
 
-            // THE ARRIVAL: the wind racing at her on the whistle, each streak swinging round on its side and into her hand.
-            for (int i = 0; i < _amArrive.Length; i++)
+            // THE ARRIVAL: the wind answering the whistle, each streak curling once on its way and into her palm.
+            for (int i = 0; i < _amArriveCore.Length; i++)
             {
                 float s = t - AmArriveAt - AmArriveRows[i, 5];
-                var from = new Vector3(AmArriveRows[i, 0], AmArriveRows[i, 1] + _amCourt, AmArriveRows[i, 2]);
-                var toHer = ball - from; toHer.y = 0f;
-                var bend = Vector3.Lerp(from, ball, .6f) + Vector3.Cross(Vector3.up, toHer.normalized) * (AmArriveRows[i, 3] * 1.1f) + Vector3.up * .3f;
-                AmFeed(_amArrive[i], from, bend, ball, Ease(0f, .32f, s), Ease(.14f, .46f, s), AmArriveRows[i, 6] * light);
+                AmArrivePath(i, ball, out var from, out var bend, out var side);
+                AmStreak(_amArriveCore[i], _amArriveInk[i], from, bend, ball, side, AmArriveRows[i, 4],
+                    Ease(0f, .42f, s), Ease(.16f, .56f, s), AmArriveRows[i, 6] * light);
             }
 
-            // THE GATHER: more air drawn in from behind her into the ball over her head through the wind-up.
-            for (int i = 0; i < _amGather.Length; i++)
+            // THE GATHER: more air drawn in from behind her into the whirlwind over her head through the wind-up.
+            for (int i = 0; i < _amGatherCore.Length; i++)
             {
                 float s = t - AmWindAt - .1f * i;
-                float a = (150f + 22f * i) * Mathf.Deg2Rad;
-                var from = new Vector3(Mathf.Sin(a) * 4.5f, .5f + .45f * i + _amCourt, Mathf.Cos(a) * 4.5f);
-                var bend = Vector3.Lerp(from, ball, .5f) + Vector3.up * .6f;
-                AmFeed(_amGather[i], from, bend, ball, Ease(0f, .3f, s), Ease(.16f, .5f, s), .05f * light);
+                AmGatherPath(i, ball, out var from, out var bend, out var side);
+                AmStreak(_amGatherCore[i], _amGatherInk[i], from, bend, ball, side, .22f, Ease(0f, .36f, s), Ease(.16f, .5f, s), .055f * light);
             }
 
-            // THE SPEED STREAKS race down the lane on the release.
+            SampleAmihanLeaves(t, story, calm, ball, size);
+
+            // THE SPEED STREAKS race down the lane on the release (story time: they hang with everything else).
             for (int i = 0; i < _amSpeed.Count; i++)
             {
-                float s = t - AmReleaseAt - AmSpeedRows[i, 4];
+                float s = sinceRelease - AmSpeedRows[i, 4] * .4f;
                 if (s < 0f || s > .5f) { _amSpeed[i].Set(0f, 0f); continue; }
-                _amSpeed[i].Set(.75f * light * leave, phase * 3f, Ease(0f, .18f, s), Ease(.1f, .45f, s), Ease(.2f, .5f, s) * .7f);
+                _amSpeed[i].Set(.75f * light * leave, calm ? 0f : story * 9f, Ease(0f, .18f, s), Ease(.1f, .45f, s), Ease(.2f, .5f, s) * .7f);
             }
 
             // COURT DUST: skimming the tiles at her when the wind answers, passing her and on toward the lane.
-            float dustOn = Ease(AmArriveAt, AmArriveAt + .1f, t) * (1f - Ease(AmCatchAt + .2f, AmPointAt, t));
+            float dustOn = Ease(AmArriveAt, AmArriveAt + .1f, t) * (1f - Ease(AmCatchAt, AmCatchAt + .4f, t));
             float dustFloor = _amCourt;
-            _amDust.Step(Mathf.Clamp01((t - AmArriveAt) / 1.1f) * 1.3f, (calm ? .4f : .9f) * dustOn, (start, drift, u) =>
+            _amDust.Step(Mathf.Clamp01((t - AmArriveAt) / 1.2f) * 1.3f, (calm ? .4f : .9f) * dustOn, (start, drift, u) =>
             {
                 var from = AmWindFrom + new Vector3(start.x * 3f, 0, start.z * 3f);
                 from.y = dustFloor + .05f + start.y * .5f;
@@ -225,161 +302,207 @@ namespace TumbangPreso.Visual
                 return Vector3.Lerp(from, to, u) + Vector3.up * Mathf.Sin(u * Mathf.PI) * (.3f + drift.x * .4f);
             }, .08f);
 
-            // COTTON sucked into the ball as it winds up, spiralling in round her hand.
-            float liftOn = Ease(AmFormAt, AmFormAt + .1f, t) * (1f - Ease(AmPointAt - .2f, AmPointAt, t));
-            _amLift.Step(Mathf.Clamp01((t - AmFormAt) / .8f) * 1.4f, (calm ? .4f : .85f) * liftOn, (start, drift, u) =>
-            {
-                float a = start.x * 9f + u * 6f, r = Mathf.Lerp(.9f + start.z * .4f, .12f, u);
-                return ball + new Vector3(Mathf.Sin(a) * r, (start.y - .5f) * .6f * (1f - u) + drift.y * .1f, Mathf.Cos(a) * r);
-            }, .07f);
+            // DUST spun up inside the whirlwind while it stands on her palm.
+            float spinOn = Ease(AmFormAt, AmCatchAt, t) * (1f - Ease(AmReleaseAt - .02f, AmReleaseAt + .05f, t));
+            _amSpin.Step(Mathf.Repeat(t * .9f, 1f), (calm ? .4f : .8f) * spinOn, (start, drift, u) =>
+                AmWhirlPoint(ball, size, u, start.x * 9f + t * (calm ? 0f : 11f), .7f + .3f * start.z, t, calm), .035f * Mathf.Max(.6f, size));
 
-            // The near layer: cotton drifting across the lens on the wind's way, down the lane once she commits.
-            AmLens(t, out int shot, out var eye, out var lensLook, out _);
-            if (shot >= 0)
-            {
-                var nearEye = eye; var nearLook = lensLook;
-                var toward = shot >= AmShotCommit ? new Vector3(0f, .8f, 9f) : new Vector3(1.5f, 1.2f, 2.5f);
-                float nearOn = Ease(AmArriveAt - .1f, AmArriveAt + .15f, t);
-                _amihanNear.Step(Mathf.Repeat(t / 1.2f, 1.0f), (calm ? .4f : .8f) * nearOn * leave, (start, drift, u) =>
-                    Vector3.Lerp(Vector3.Lerp(nearEye, nearLook, .3f + start.y * .2f) + new Vector3(start.x, start.z * .6f, 0) * 1.1f, toward, u * .6f), .035f);
-            }
+            SampleAmihanLane(t, story);
 
-            SampleAmihanLane(t);
-
-            // THE RELEASE: the live fan's own clock, hidden until the drive and released ON it; at 4.4 s it is the live fan
-            // `AmihanStorm.CutsceneTail` after its release.
+            // THE RELEASE: the live fan's own clock on the story clock, hidden until the drive and released ON it; at the
+            // hand-back it is the live fan `AmihanStorm.CutsceneTail` after its release.
             float gather = Core.AmihanRules.StormSurgeGatherSeconds;
-            _amihanFan.StepTo(t < AmReleaseAt ? -AmihanStormFan.DrawOnSeconds : gather + (t - AmReleaseAt));
+            _amihanFan.StepTo(t < AmReleaseAt ? -AmihanStormFan.DrawOnSeconds : gather + sinceRelease);
         }
 
-        /// <summary>One feeding streak: the stretch of its curve between <paramref name="tail"/> and <paramref name="head"/>.</summary>
-        private void AmFeed(LineRenderer line, Vector3 from, Vector3 bend, Vector3 to, float head, float tail, float width)
+        private void AmArrivePath(int i, Vector3 ball, out Vector3 from, out Vector3 bend, out Vector3 side)
         {
-            if (head - tail < .02f || width <= 0f) { line.enabled = false; return; }
-            for (int i = 0; i < AmFeedSamples; i++)
-                _amFeedPoints[i] = AmBezier(from, bend, to, Mathf.Lerp(tail, head, i / (AmFeedSamples - 1f)));
-            line.SetPositions(_amFeedPoints);
-            line.widthMultiplier = width;
-            line.enabled = true;
+            from = new Vector3(AmArriveRows[i, 0], AmArriveRows[i, 1] + _amCourt, AmArriveRows[i, 2]);
+            var toHer = ball - from; toHer.y = 0f;
+            side = Vector3.Cross(Vector3.up, toHer.normalized) * AmArriveRows[i, 3];
+            bend = Vector3.Lerp(from, ball, .55f) + side * 1.1f + Vector3.up * .35f;
         }
 
-        // ------------------------------------------------------------------ the ball and the jet
+        private void AmGatherPath(int i, Vector3 ball, out Vector3 from, out Vector3 bend, out Vector3 side)
+        {
+            float a = (150f + 22f * i) * Mathf.Deg2Rad;
+            from = new Vector3(Mathf.Sin(a) * 4.5f, .5f + .45f * i + _amCourt, Mathf.Cos(a) * 4.5f);
+            var toHer = ball - from; toHer.y = 0f;
+            side = Vector3.Cross(Vector3.up, toHer.normalized) * (i % 2 == 0 ? 1f : -1f);
+            bend = Vector3.Lerp(from, ball, .5f) + Vector3.up * .6f;
+        }
 
         /// <summary>
-        /// THE BALL on her palm from the moment the air reaches it, three open strands spinning round it in tilted planes and
-        /// spiralling in; on the release it unrolls over 0.14 s into the jet cracked down the lane, and fades as the fan takes over.
+        /// A streak's path at <paramref name="u"/>: a curve from its source to her palm with ONE CURL in it (a full loop
+        /// between 0.48 and 0.72 of the way, turning to <paramref name="side"/> and up), the classic drawn gust.
         /// </summary>
-        private void SampleAmihanGust(float t, bool calm, Vector3 ball)
+        private static Vector3 AmPath(Vector3 from, Vector3 bend, Vector3 to, Vector3 side, float curl, float u)
         {
-            float radius = AmBallRadius(t, calm);
-            float fade = 1f - Ease(AmReleaseAt + .15f, AmReleaseAt + .45f, t);
-            if (t < AmFormAt || fade <= .01f) { foreach (var line in _amGust) line.enabled = false; return; }
-            bool released = t >= AmReleaseAt;
-            if (released) AmJet(t, calm, ball);
-            float unroll = released ? Ease(AmReleaseAt, AmReleaseAt + .14f, t) : 0f;
-            float spin = calm ? 0f : t * 14f;
-            for (int k = 0; k < _amGust.Length; k++)
+            var p = AmBezier(from, bend, to, u);
+            float k = Mathf.Clamp01((u - .48f) / .24f);
+            if (k <= 0f || k >= 1f) return p;
+            float a = k * k * (3f - 2f * k) * Mathf.PI * 2f;
+            return p + (side * Mathf.Sin(a) + Vector3.up * (1f - Mathf.Cos(a))) * curl;
+        }
+
+        /// <summary>One streak: its ink line and bright core along the stretch of its path between tail and head.</summary>
+        private void AmStreak(LineRenderer core, LineRenderer ink, Vector3 from, Vector3 bend, Vector3 to, Vector3 side, float curl,
+            float head, float tail, float width)
+        {
+            if (head - tail < .02f || width <= 0f) { core.enabled = false; ink.enabled = false; return; }
+            for (int i = 0; i < AmStreakSamples; i++)
+                _amStreakPoints[i] = AmPath(from, bend, to, side, curl, Mathf.Lerp(tail, head, i / (AmStreakSamples - 1f)));
+            core.SetPositions(_amStreakPoints); ink.SetPositions(_amStreakPoints);
+            core.widthMultiplier = width; ink.widthMultiplier = width * 1.9f;
+            core.enabled = true; ink.enabled = true;
+        }
+
+        // ------------------------------------------------------------------ the whirlwind
+
+        /// <summary>
+        /// THE WHIRLWIND on her palm from the moment the air reaches it until the drive; on the drive its rings burst into
+        /// arcs racing down the lane (story time, so they hang in the slow-motion) while the live fan takes over.
+        /// </summary>
+        private void SampleAmihanWhirl(float t, float story, bool calm, Vector3 ball, float size)
+        {
+            float since = story - AmReleaseAt;
+            bool standing = t >= AmFormAt - .1f && t < AmReleaseAt && size > .02f;
+            for (int k = 0; k < _amHelix.Length; k++)
             {
-                var line = _amGust[k];
-                var plane = Quaternion.Euler(-55f + 55f * k, 35f * k, 20f);
-                for (int i = 0; i < AmGustSamples; i++)
+                if (!standing) { _amHelix[k].enabled = false; continue; }
+                float spin = calm ? 0f : t * 13f;
+                for (int i = 0; i < AmHelixSamples; i++)
                 {
-                    float s = i / (AmGustSamples - 1f);
-                    float a = spin * (1f + .2f * k) + k * 2.1f + s * 5.0f;
-                    float r = radius * (1f - .35f * s);
-                    _amGustFrom[i] = ball + plane * new Vector3(Mathf.Cos(a) * r, (s - .5f) * radius * .3f, Mathf.Sin(a) * r);
+                    float v = i / (AmHelixSamples - 1f);
+                    _amHelixPoints[i] = AmWhirlPoint(ball, size, v, spin + k * Mathf.PI + v * Mathf.PI * 4f, 1.02f, t, calm);
                 }
-                if (released)
+                _amHelix[k].SetPositions(_amHelixPoints);
+                _amHelix[k].widthMultiplier = .022f * Mathf.Min(1.3f, size) * (calm ? .7f : 1f);
+                _amHelix[k].enabled = true;
+            }
+            for (int j = 0; j < _amRing.Length; j++)
+            {
+                var line = _amRing[j];
+                float v = j / (_amRing.Length - 1f);
+                if (standing)
                 {
-                    for (int i = 0; i < AmGustSamples; i++)
+                    float spin = (calm ? 0f : t * (15f + 3f * j)) + j * 1.3f;
+                    for (int i = 0; i < AmRingSamples; i++)
+                        _amRingPoints[i] = AmWhirlPoint(ball, size, v, spin + i / (AmRingSamples - 1f) * 5.2f, 1f, t, calm);
+                    line.widthMultiplier = (.016f + .01f * v) * Mathf.Min(1.4f, size + .2f) * (calm ? .7f : 1f);
+                }
+                else if (since >= 0f && since < .55f)
+                {
+                    // THE BURST: each ring thrown forward down the lane as a widening arc, the upper ones faster and higher.
+                    var centre = ball + Vector3.forward * (since * (9f + 2.5f * j)) + Vector3.up * (since * (.4f * j - .6f));
+                    float r = .3f + since * (4.5f + j);
+                    for (int i = 0; i < AmRingSamples; i++)
                     {
-                        float s = i / (AmGustSamples - 1f);
-                        // The three strands wind round the jet's spine, so it reads as turning air, not a flat band.
-                        float turn = spin * .65f + s * 7f + k * 2.1f;
-                        var side = _amJetAcross[i] * (1.1f * Mathf.Cos(turn));
-                        var lift = Vector3.Cross(_amJetAcross[i], (_amJetCentre[Mathf.Min(i + 1, AmGustSamples - 1)] - _amJetCentre[Mathf.Max(i - 1, 0)]).normalized) * Mathf.Sin(turn);
-                        _amGustPoints[i] = Vector3.Lerp(_amGustFrom[i], _amJetCentre[i] + side + lift, unroll);
+                        float a = Mathf.Lerp(-55f, 55f, i / (AmRingSamples - 1f)) * Mathf.Deg2Rad;
+                        _amRingPoints[i] = centre + new Vector3(Mathf.Sin(a) * r, 0f, Mathf.Cos(a) * r * .45f);
                     }
-                    line.SetPositions(_amGustPoints);
+                    line.widthMultiplier = .06f * (1f - Ease(.08f, .55f, since)) * (calm ? .7f : 1f);
                 }
-                else line.SetPositions(_amGustFrom);
-                float grow = Ease(AmFormAt, AmFormAt + .12f, t);
-                line.widthMultiplier = Mathf.Lerp(.05f - .01f * k, .07f - .015f * k, unroll) * grow * fade * (calm ? .7f : 1f);
-                line.enabled = true;
+                else { line.enabled = false; continue; }
+                line.SetPositions(_amRingPoints);
+                line.enabled = line.widthMultiplier > .001f;
             }
         }
 
-        /// <summary>The jet: it unfurls forward off her palms, whipping, lifting, and races out down the lane.</summary>
-        private void AmJet(float t, bool calm, Vector3 palm)
+        // ------------------------------------------------------------------ the leaves
+
+        private void SampleAmihanLeaves(float t, float story, bool calm, Vector3 ball, float size)
         {
-            float wob = calm ? 0f : 1f;
-            float u = Ease(AmReleaseAt, AmReleaseAt + .3f, t);
-            float length = Mathf.Lerp(1.7f, 8.5f, u);
-            for (int i = 0; i < AmGustSamples; i++)
+            float since = story - AmReleaseAt;
+            for (int i = 0; i < AmLeaves; i++)
             {
-                float s = i / (AmGustSamples - 1f);
-                float crack = wob * Mathf.Sin(s * 10f - (t - AmReleaseAt) * 30f) * (.1f + .5f * s) * (1f - .5f * u);
-                _amJetCentre[i] = palm + Vector3.forward * (length * s) + Vector3.right * crack + Vector3.up * (1.0f * Mathf.Sin(s * Mathf.PI * .8f) * u);
-                float twist = wob * (s * 3f - (t - AmReleaseAt) * 8f);
-                _amJetAcross[i] = (Vector3.up * Mathf.Cos(twist) + Vector3.right * Mathf.Sin(twist)) * (.26f * (1f - .3f * s));
+                var seed = _amLeafSeed[i];
+                Vector3 at; bool on = true;
+                float tumble = calm ? 0f : story;
+                if (i == 0)
+                {
+                    // THE LONE LEAF: falling straight down past her open palm. No wind.
+                    float u = Mathf.InverseLerp(AmLeafFrom, AmLeafTo, t);
+                    on = t > AmLeafFrom && t < AmLeafTo;
+                    at = new Vector3(-.78f + .1f * Mathf.Sin(t * 5.5f), Mathf.Lerp(2.5f, .03f, u) + _amCourt, .42f + .06f * Mathf.Cos(t * 4.2f));
+                    // It rocks side to side as a leaf falls in still air, rather than tumbling.
+                    Place(_amLeaf[i], at, new Vector3(.075f, .012f, .11f), Quaternion.Euler(18f * Mathf.Sin(t * 5.5f), 30f, 24f * Mathf.Cos(t * 5.5f)), on ? 1f : 0f);
+                    continue;
+                }
+                bool arrival = i <= 14;
+                // Carried in: riding just behind the head of its streak.
+                float joined;
+                if (arrival)
+                {
+                    int s = (i - 1) % _amArriveCore.Length;
+                    float start = AmArriveAt + AmArriveRows[s, 5] + .03f * ((i - 1) / _amArriveCore.Length);
+                    float u = Ease(0f, .5f, t - start) - .05f - .04f * seed.x;
+                    joined = start + .5f;
+                    AmArrivePath(s, ball, out var from, out var bend, out var side);
+                    at = AmPath(from, bend, ball, side, AmArriveRows[s, 4], Mathf.Clamp01(u));
+                    on = u > 0f;
+                }
+                else
+                {
+                    int s = (i - 15) % _amGatherCore.Length;
+                    float start = AmWindAt + .1f * s + .04f * ((i - 15) / _amGatherCore.Length);
+                    float u = Ease(0f, .42f, t - start) - .05f - .04f * seed.x;
+                    joined = start + .42f;
+                    AmGatherPath(s, ball, out var from, out var bend, out var side);
+                    at = AmPath(from, bend, ball, side, .22f, Mathf.Clamp01(u));
+                    on = u > 0f;
+                }
+                // Then round and round inside the whirlwind.
+                float circle = Ease(joined - .08f, joined + .12f, t);
+                if (circle > 0f && t < AmReleaseAt)
+                {
+                    var inside = AmWhirlPoint(ball, Mathf.Max(size, .3f), .2f + .7f * seed.y, seed.z * 6.28f + t * (calm ? 0f : 10f + 3f * seed.x), 1.15f, t, calm);
+                    at = Vector3.Lerp(at, inside, circle);
+                }
+                if (since >= 0f)
+                {
+                    // FLUNG down the lane with the burst, fanned across its 60 degrees, rising, then falling; slow in the hang.
+                    float yaw = (seed.x - .5f) * 60f * Mathf.Deg2Rad;
+                    var dir = new Vector3(Mathf.Sin(yaw), .25f + .35f * seed.y, Mathf.Cos(yaw));
+                    float speed = 6f + 6f * seed.z;
+                    var origin = AmWhirlPoint(ball, Mathf.Max(size, .3f), .2f + .7f * seed.y, seed.z * 6.28f, 1.15f, AmReleaseAt, calm);
+                    at = origin + dir * (speed * since) + Vector3.down * (3.5f * since * since);
+                    on = since < 1.4f && at.y > _amCourt - .05f;
+                    tumble += since * 4f;
+                }
+                if (!on) { Place(_amLeaf[i], Vector3.zero, Vector3.one * .001f, Quaternion.identity, 0f); continue; }
+                var spinRot = Quaternion.Euler(tumble * (190f + 120f * seed.x) + i * 37f, tumble * (260f + 90f * seed.y) + i * 53f, tumble * 140f + i * 11f);
+                Place(_amLeaf[i], at, new Vector3(.07f, .012f, .1f) * (.85f + .3f * seed.z), spinRot, 1f);
             }
         }
 
         // ------------------------------------------------------------------ the lens
 
-        /// <summary>The lens at this moment in scene space, computed shots included (no shake).</summary>
-        private bool AmLens(float t, out int shot, out Vector3 eye, out Vector3 look, out float fov)
-        {
-            shot = ShotIndexAt(t); eye = new Vector3(2.5f, 1f, 1.5f); look = Vector3.up; fov = 50f;
-            if (shot < 0) return false;
-            _performance.Shot(shot, t, out eye, out look, out fov);
-            AmihanFrame(shot, t, ref eye, ref look, ref fov);
-            return true;
-        }
-
-        /// <summary>
-        /// THE COMPUTED SHOTS. OPEN pans fast across the court onto her as she skids in. CATCH orbits low round her as the ball
-        /// winds up on her hand. HIT stands high in front of her right side, her finish in the middle, the thrown bodies blowing
-        /// away down the lane past her left.
-        /// </summary>
+        /// <summary>THE COMPUTED SHOT: FINISH stands high in front of her right side, her wink in the middle, the thrown
+        /// bodies blowing away down the lane past her left (v4 r1 to r3), with a slow push in.</summary>
         private void AmihanFrame(int index, float t, ref Vector3 eye, ref Vector3 look, ref float fov)
         {
-            if (index == AmShotOpen)
-            {
-                // The pan: held on the court upwind of her, then fast (0.14 s) onto her as she arrives.
-                var her = new Vector3(0, 1.15f + _amCourt, 0);
-                look = Vector3.Lerp(AmOpenFrom + Vector3.up * _amCourt, her, Ease(.30f, .44f, t));
-            }
-            else if (index == AmShotCatch)
-            {
-                float u = Ease(AmCatchAt, AmPointAt, t);
-                float a = Mathf.Lerp(55f, -25f, u) * Mathf.Deg2Rad, r = Mathf.Lerp(3.4f, 3.1f, u);
-                eye = new Vector3(Mathf.Sin(a) * r, .62f + .25f * u + _amCourt, Mathf.Cos(a) * r);
-                look = new Vector3(0f, 1.35f + _amCourt, 0f);
-                fov = 52f;
-            }
-            else if (index == AmShotHit)
-            {
-                // v4 r1 to r3: in front of her right side, 3 m up, 33 degrees round, so the thrown bodies blow away past her
-                // and the fan radiates out under the lens; a slow push in lands on her wink.
-                float u = Ease(AmReleaseAt + .1f, Seconds, t);
-                float a = 33f * Mathf.Deg2Rad, r = Mathf.Lerp(5.4f, 4.8f, u);
-                eye = new Vector3(Mathf.Sin(a) * r, 3.3f - .25f * u + _amCourt, Mathf.Cos(a) * r);
-                look = new Vector3(-.2f, .95f + _amCourt, .7f);
-                fov = Mathf.Lerp(46f, 42f, u);
-            }
+            if (index != AmShotHit) return;
+            float u = Ease(AmReleaseAt + AmHangTo, Seconds, t);
+            float a = 33f * Mathf.Deg2Rad, r = Mathf.Lerp(5.4f, 4.8f, u);
+            eye = new Vector3(Mathf.Sin(a) * r, 3.3f - .25f * u + _amCourt, Mathf.Cos(a) * r);
+            look = new Vector3(-.2f, .95f + _amCourt, .7f);
+            fov = Mathf.Lerp(46f, 42f, u);
         }
 
-        /// <summary>A warm afternoon: the light lifts a little warmer while she plays with the wind; the release flares.</summary>
+        /// <summary>A warm afternoon: the light lifts a little while she plays with the wind; the release flares and the hang
+        /// is a touch richer, so the held moment feels held.</summary>
         private void AmihanGrade(float t, out float brightness, out float saturation)
         {
-            float warm = Ease(.1f, .4f, t) * (1f - Ease(AmWarpAt, AmWarpAt + .5f, t));
-            float beat = Mathf.Max(AmBeat(t, AmReleaseAt, .35f), .6f * AmBeat(t, AmWhistleAt, .25f));
-            brightness = 1f + .04f * warm + .08f * beat;
-            saturation = 1f + .10f * warm;
+            float warm = Ease(.1f, .5f, t) * (1f - Ease(AmWindAt, AmWindAt + .5f, t));
+            float beat = Mathf.Max(AmBeat(t, AmReleaseAt, .3f), .6f * AmBeat(t, AmWhistleAt, .25f));
+            float hang = Ease(AmReleaseAt + AmHangFrom - .05f, AmReleaseAt + AmHangFrom + .05f, t)
+                * (1f - Ease(AmReleaseAt + AmHangTo, AmReleaseAt + AmHangTo + .1f, t));
+            brightness = 1f + .04f * warm + .08f * beat + .03f * hang;
+            saturation = 1f + .10f * warm + .14f * hang;
         }
 
-        /// <summary>The lens takes the skid, the wind's arrival, the catch and the release, small and quickly gone.</summary>
+        /// <summary>The lens takes the whistle's answer, the catch and the release, small and quickly gone.</summary>
         private static Vector3 AmihanShake(float t)
         {
             Vector3 Kick(float at, float size, float hz)
@@ -389,7 +512,7 @@ namespace TumbangPreso.Visual
                 float fall = Mathf.Exp(-s * 14f) * size;
                 return new Vector3(Mathf.Sin(s * hz) * fall, Mathf.Sin(s * hz * 1.3f + 1.1f) * fall * .6f, 0f);
             }
-            return Kick(AmSkidAt, .02f, 70f) + Kick(AmArriveAt + .1f, .025f, 64f) + Kick(AmCatchAt, .02f, 64f) + Kick(AmReleaseAt, .08f, 46f);
+            return Kick(AmArriveAt + .1f, .02f, 64f) + Kick(AmReleaseAt, .08f, 46f);
         }
     }
 }

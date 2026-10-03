@@ -140,7 +140,9 @@ namespace TumbangPreso.Visual
             return c;
         }
 
-        private void SampleAmihanLane(float t)
+        /// <summary>Posed on <paramref name="story"/>, the story clock (`AmStory`): they brace, are thrown and hang in the
+        /// slow-motion with everything else; only their fade at the hand-back keeps the scene clock <paramref name="t"/>.</summary>
+        private void SampleAmihanLane(float t, float story)
         {
             // v5: she performs on the real court from the first frame (the street stage is gone), so the players stand where
             // they are from the first frame too; an empty court that fills at the commit would not make sense.
@@ -152,10 +154,10 @@ namespace TumbangPreso.Visual
                 var c = _alBodies[i];
                 if (c.Holder != null && c.Holder.activeSelf != on) c.Holder.SetActive(on);
                 if (!on) { c.Breath?.Step(0f, 0f, (_, __, ___) => Vector3.zero); continue; }
-                AlPose(c, t);
+                AlPose(c, story);
                 if (c.Breath == null) continue;
                 // A breath of cotton streaming past them, down the lane away from her, from the moment the wind reaches them.
-                float s = t - c.BraceAt;
+                float s = story - c.BraceAt;
                 var flat = new Vector3(c.Feet.x, 0f, c.Feet.z);
                 var away = flat.sqrMagnitude > 1e-4f ? flat.normalized : Vector3.forward;
                 var side = Vector3.Cross(Vector3.up, away);
