@@ -23,14 +23,19 @@ namespace TumbangPreso.Visual
         //   WARP  3.70 to 5.60  over the shoulder, rising down the lane. A flick (3.78) unravels the kasikus into the warp; the
         //                       live fan draws on along it; the REAL players in the lane brace (`HeroIntroductionScene.AmihanLane.cs`).
         //
-        // It plays BEFORE the live 1.5 s dodge window, so it never shows the release. Its last frame IS the live fan at age 0.
+        // v3.2: it SHOWS the release (5.05) and the real players in the fan thrown; play resumes on the hit, the live fan taking
+        // up at the age this cutscene's last frame drew (`AmihanStorm.CutsceneTail`).
         // The density layer (glints, kasikus rings, flashes, the veil) is `HeroIntroductionScene.AmihanBurst.cs`.
         // ⚠️ Nothing here runs on `Update`; every piece is posed from the scene clock. Every row is typed, each its own place,
         // time, size and colour. Her colours only (wind green, cream, abel teal and rust, brooch gold), never white.
         // ⚠️ Reduced effects keeps every shape, stills the streak motion and halves the light.
         // =========================================================================================
         private const float AmCallOutAt = .25f, AmAnswerAt = .55f, AmWeaveAt = 1.70f, AmCupAt = 2.15f, AmPack1At = 2.50f,
-            AmPack2At = 2.95f, AmDrawAt = 3.30f, AmWarpAt = 3.70f, AmFlickAt = 3.78f, AmBraceAt = 4.10f;
+            AmPack2At = 2.95f, AmDrawAt = 3.30f, AmWarpAt = 3.70f, AmFlickAt = 3.78f, AmBraceAt = 4.10f,
+            // v3.2 (owner: *"show the ult actually hitting and knocking abck ppl already in the cutscene"*): THE BEATER. She drives
+            // both palms, the fan releases, and the real players in it are thrown; play resumes on the hit 0.55 s later
+            // (`AmihanStorm.CutsceneTail`, `AmihanRules.StormSurgeDelaySeconds` 0).
+            AmReleaseAt = 5.05f;
 
         private int _amihanSky, _amihanDusk, _amihanGround;
         private readonly List<int> _viganHouses = new List<int>(20);
@@ -424,8 +429,13 @@ namespace TumbangPreso.Visual
             SampleAmihanBurst(t, leave);
             SampleAmihanLane(t);
 
-            // WARP: the live fan draws on along the flick; at 5.6 s it is exactly the live fan at age 0.
-            _amihanFan.StepTo(t - Seconds);
+            // WARP and RELEASE: the live fan's own clock, strung over the flick (its draw-on and gather pressed into 3.78 to 5.05)
+            // and released ON the beater; at 5.6 s it is the live fan `AmihanStorm.CutsceneTail` after its release.
+            float gather = Core.AmihanRules.StormSurgeGatherSeconds;
+            float fanAge = t < AmFlickAt ? -AmihanStormFan.DrawOnSeconds - 1f
+                : t < AmReleaseAt ? Mathf.Lerp(-AmihanStormFan.DrawOnSeconds, gather, (t - AmFlickAt) / (AmReleaseAt - AmFlickAt))
+                : gather + (t - AmReleaseAt);
+            _amihanFan.StepTo(fanAge);
         }
 
         // The seven shots (`tools/author_ultimate_intros.py` amihan()): CALL, ANSWER, WEAVE, CUP, PACK, RIDE, REVEAL.
@@ -497,7 +507,7 @@ namespace TumbangPreso.Visual
         {
             float away = Ease(.1f, .55f, t) * (1f - Ease(AmWarpAt, AmWarpAt + .7f, t));
             float deep = Ease(AmWeaveAt, AmCupAt, t) * (1f - Ease(AmDrawAt + .2f, AmWarpAt, t));
-            float beat = Mathf.Max(AmBeat(t, AmCupAt, .3f), Mathf.Max(AmBeat(t, AmPack1At), AmBeat(t, AmPack2At)));
+            float beat = Mathf.Max(Mathf.Max(AmBeat(t, AmCupAt, .3f), AmBeat(t, AmReleaseAt, .35f)), Mathf.Max(AmBeat(t, AmPack1At), AmBeat(t, AmPack2At)));
             brightness = 1f - .24f * away - .06f * deep + .08f * beat;
             saturation = 1f - .16f * away - .06f * deep;
         }
@@ -512,7 +522,7 @@ namespace TumbangPreso.Visual
                 float fall = Mathf.Exp(-s * 14f) * size;
                 return new Vector3(Mathf.Sin(s * hz) * fall, Mathf.Sin(s * hz * 1.3f + 1.1f) * fall * .6f, 0f);
             }
-            return Kick(AmAnswerAt, .025f, 70f) + Kick(AmCupAt, .03f, 64f) + Kick(AmFlickAt, .045f, 58f);
+            return Kick(AmAnswerAt, .025f, 70f) + Kick(AmCupAt, .03f, 64f) + Kick(AmFlickAt, .045f, 58f) + Kick(AmReleaseAt, .08f, 46f);
         }
     }
 }

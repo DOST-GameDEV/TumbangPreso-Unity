@@ -127,6 +127,9 @@ namespace TumbangPreso.Abilities
             AIController.PlayableMinX, AIController.PlayableMaxX,
             AIController.PlayableMinZ, AIController.PlayableMaxZ);
         public bool Released => _released;
+        /// <summary>How long after the release the shared cutscene ends (`HeroIntroductionScene.Amihan.cs` AmReleaseAt to 5.6 s):
+        /// the live fan picks up from that age, so the hand-back never replays the release.</summary>
+        public const float CutsceneTail = 0.55f;
 
         private float _age;
         private bool _released;
@@ -143,7 +146,8 @@ namespace TumbangPreso.Abilities
             storm._fan = AmihanStormFan.Build(go.transform, origin, forward, AmihanRules.StormSurgeGatherSeconds);
             storm._age = Mathf.Max(0.0f, age);
             storm._fan.StepTo(storm._age);
-            GameServices.Audio?.PlayAt("sfx_amihan_storm_gather", origin);
+            // The gather is heard only while it is still gathering (v3.2 spawns it already released, after the cutscene).
+            if (storm._age < AmihanRules.StormSurgeGatherSeconds) GameServices.Audio?.PlayAt("sfx_amihan_storm_gather", origin);
             return storm;
         }
 
@@ -177,6 +181,7 @@ namespace TumbangPreso.Abilities
             if (_released) return;
             _released = true;
             _age = Mathf.Max(_age, AmihanRules.StormSurgeGatherSeconds);
+            _fan?.StepTo(_age);
             GameServices.Audio?.PlayAt("sfx_amihan_storm_release", Origin);
             PunchNearbyCamera();
             if (!NetAuthority.ShouldResolve()) return;

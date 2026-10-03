@@ -719,6 +719,16 @@ def amihan():
     coil = Pose(torso=(-4, 40, -6), head=(-4, -16, 0), left=(48, 8, 75), right=(24, 20, 45),
                 legs=((20, 10), (-18, 14)))
     set_end = coil.but(torso=(-5, 43, -7), head=(-4, -17, 0))
+    # v3.2 THE BEATER (owner: "show the ult actually hitting and knocking abck ppl already in the cutscene"). The deepest draw,
+    # then the live clip's own release pose (HeroAbilityClips.Amihan.cs, BuildAmihanStorm's drive at the old 1.5 s: torso
+    # 16 -6 -2, head -18 8 0, both arms raised 104 and turned 30, the lunge), then its follow-through, which is now the live
+    # clip's first key: play resumes on the hit, so after the hand-back the body only settles.
+    # In the authoring terms (arm: raise, spread, twist; leg: swing, spread), converted from PoseKey's V() (left arm roll is
+    # 80 - z, right -80 - z, leg roll negated): the EditMode pose test caught a 30 degree roll when they were typed raw.
+    draw_deep = coil.but(torso=(-12, 56, -8), head=(-6, -22, 0), left=(40, 14, 90), right=(24, 4, 0),
+                         legs=((22, 10), (-20, 15)))
+    drive = Pose(torso=(16, -6, -2), head=(-18, 8, 0), left=(104, 20, 30), right=(104, 20, 30), legs=((42, 12), (-44, 10)))
+    follow = Pose(torso=(8, -12, 2), head=(-10, 8, 0), left=(92, 55, 10), right=(92, 55, 10), legs=((24, 10), (-22, 10)))
 
     p.key(0, rest)
     p.key(.25, call_out, punch=True).key(.40, call_out.but(torso=(-3, -16, 5)))
@@ -729,7 +739,8 @@ def amihan():
     p.key(2.50, pack1).key(2.65, cup).key(2.95, pack2).key(3.10, pack1)
     p.key(3.30, draw).key(3.55, draw.but(torso=(-6, 48, -7)))
     p.key(3.78, flick, punch=True)
-    p.key(4.15, coil).key(5.6, set_end)
+    p.key(4.15, coil).key(4.75, set_end).key(4.95, draw_deep)
+    p.key(5.05, drive, punch=True).key(5.17, drive).key(5.45, follow).key(5.6, follow)
     # Grounded throughout: no vortex lift. Featherfall is her real flight.
     p.rise(0, 0)
     # v3.1 (owner, 2026-10-03: "it looks so bad compared to paete and phasiter"): three slow pushes became SEVEN shots, cut on
@@ -751,7 +762,8 @@ def amihan():
     # G REVEAL: high over her right shoulder, the whole lane and everyone in it, the live fan drawn on under them.
     # (film r1: from 2.9 m up behind her shoulder her large head filled the bottom left; higher and further out to her right.)
     # (film r3: aimed down the lane, she was cut off at the frame's bottom-left edge; aimed between her and the lane, wider.)
-    p.shot(4.45, 5.6, (4.6, 3.3, -.6), (.2, .5, 3.4), 58, eye_to=(5.0, 3.7, -1.1), look_to=(.2, .4, 4.2), fov_to=60)
+    # v3.2: and it holds the hit: her lunge at the left, the lane, and the players thrown back down it.
+    p.shot(4.45, 5.6, (4.6, 3.3, -.6), (.2, .5, 3.6), 58, eye_to=(5.6, 4.2, -1.6), look_to=(.2, .6, 7.0), fov_to=64)
     # Reduced motion: one side view with her, her hands and the lane together.
     p.locked((4.4, 1.6, 1.0), (0, .95, 2.5), 52)
     return p

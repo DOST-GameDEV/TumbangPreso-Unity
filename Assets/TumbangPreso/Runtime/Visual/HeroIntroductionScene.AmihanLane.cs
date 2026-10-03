@@ -20,10 +20,12 @@ namespace TumbangPreso.Visual
         //   4.10        the first breath of wind passes them. Those INSIDE the fan turn to her and brace: leaning in, arms up
         //               over the face (the break-out's flung-open arms laid at half weight over a forward lean), trembling, and a
         //               breath of cotton streams past each of them. Those OUTSIDE stand still: that is the read.
-        //   5.60        hand-back. In play they still have the whole 1.5 s windup to run.
+        //   5.05        v3.2 THE HIT (owner: *"show the ult actually hitting and knocking abck ppl already in the cutscene"*): those
+        //               inside are thrown by the live rule's numbers, Whirled round, arms flung; those outside stand untouched.
+        //   5.60        hand-back ON the hit: the host throws them for real from where they stand (no live delay).
         //
-        // ⚠️ It never shows a hit: the cutscene plays BEFORE the dodge window, and a hit staged here is a promise the rules may not
-        // keep. ⚠️ Nothing here changes a rule, a number or a byte on the wire. Posed from the scene clock only; no `Random`.
+        // ⚠️ The hit it shows is the rule's own: who (`InsideFan`), which way (`BlowDirection`), how fast and how high, and play
+        // resumes on it with no dodge window, so it is never a promise the rules break. ⚠️ Nothing here changes a rule, a number or a byte on the wire. Posed from the scene clock only; no `Random`.
         // =========================================================================================
 
         private const int AlMax = 9;
@@ -37,7 +39,8 @@ namespace TumbangPreso.Visual
             public Transform Model, AnimRoot;
             public Vector3 Feet, ModelOffset;
             public Quaternion ModelTilt;
-            public float Yaw, ToHer, BraceAt;
+            public float Yaw, ToHer, BraceAt, HitAt;
+            public Vector3 Blow;
             public bool Inside;
             public Transform[] Bones;
             public Quaternion[] RestRot, TmpRot;
@@ -95,6 +98,10 @@ namespace TumbangPreso.Visual
                 // Facing her: the way back along the lane to her feet.
                 ToHer = flat.sqrMagnitude > 1e-4f ? Mathf.Atan2(-flat.x, -flat.z) * Mathf.Rad2Deg : 180f,
                 BraceAt = AmBraceAt + flat.magnitude * AlStaggerPerMetre,
+                // The front crosses the court in about four frames: each is hit a hundredth of a second per metre out.
+                HitAt = AmReleaseAt + flat.magnitude * .01f,
+                // The live rule's direction (`AmihanStorm.BlowDirection`), in the scene's frame: out along the fan, leaning on it.
+                Blow = Abilities.AmihanStorm.BlowDirection(Vector3.zero, Vector3.forward, flat),
             };
             c.Model.localScale = model.lossyScale;
             var animator = visual.Model.GetComponentInChildren<Animator>();
@@ -177,12 +184,25 @@ namespace TumbangPreso.Visual
                 // The head ducks behind them, chin in.
                 if (c.Head != null) c.Head.localRotation = Quaternion.Slerp(c.Head.localRotation, c.Head.localRotation * Quaternion.Euler(14f, 0f, 0f), brace);
             }
+            // ⚠️ THE HIT (v3.2): thrown by the live rule's numbers (`AmihanRules.StormSurgeSpeed` out along the blow, `StormSurgeLift`
+            // up, the court's 20 m/s2 down), Whirled round as they go, arms flung, falling back. Play takes over 0.55 s in; the live
+            // throw is the host's, from where they really stand.
+            var feet = c.Feet;
+            float flown = c.Inside ? t - c.HitAt : -1f;
+            if (flown > 0f)
+            {
+                float speed = Core.AmihanRules.StormSurgeSpeed, lift = Core.AmihanRules.StormSurgeLift;
+                feet += c.Blow * speed * flown + Vector3.up * Mathf.Max(0f, lift * flown - 10f * flown * flown);
+                yaw = Mathf.Atan2(-c.Blow.x, -c.Blow.z) * Mathf.Rad2Deg + 620f * flown;
+                lean = -Mathf.Lerp(0f, 38f, Ease(0f, .18f, flown));
+                if (c.Brace != null) AlBlend(c, c.Brace, .12f, 1f);
+            }
             var turn = Quaternion.Euler(0f, yaw, 0f);
             // The lean pivots at the feet, toward the way they face (into the wind).
             // Film r3: they face her, so the forward lean points down the lens; a sideways buffet, gust by gust, reads from the front.
             float buffet = c.Inside ? Ease(c.BraceAt - .04f, c.BraceAt + .16f, t) * (5f + 3f * Mathf.Sin((t - c.BraceAt) * 9f + c.Feet.x)) * (c.Feet.x >= 0f ? 1f : -1f) : 0f;
             var tilt = turn * Quaternion.Euler(lean, 0f, buffet);
-            c.Model.localPosition = c.Feet + tilt * c.ModelOffset;
+            c.Model.localPosition = feet + tilt * c.ModelOffset;
             c.Model.localRotation = tilt * c.ModelTilt;
         }
 

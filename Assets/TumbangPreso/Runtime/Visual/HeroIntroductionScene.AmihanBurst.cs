@@ -77,7 +77,11 @@ namespace TumbangPreso.Visual
             { 4.10f, .36f, 0, 2.30f, .40f, 9.60f, .28f, 1 }, { 4.14f, .36f, 0, -2.50f, .50f, 10.80f, .30f, 0 },
             // The held lane: the warp shimmering over the players standing in it.
             { 4.40f, .44f, 0, .50f, .70f, 5.20f, .20f, 0 }, { 4.62f, .40f, 0, -1.10f, .50f, 7.60f, .22f, 3 }, { 4.84f, .42f, 0, 1.40f, .60f, 9.00f, .22f, 1 },
-            { 5.06f, .40f, 0, -.20f, .80f, 6.40f, .20f, 0 },
+            { 4.84f, .40f, 0, -.20f, .80f, 6.40f, .20f, 0 },
+            // THE BEATER (v3.2): a burst at her driven palms, then glints racing down the lane with the fronts.
+            { 5.05f, .34f, 1, .10f, .05f, .45f, .40f, 1 }, { 5.05f, .30f, 1, -.30f, .20f, .50f, .28f, 2 }, { 5.06f, .30f, 1, .35f, -.10f, .55f, .26f, 0 },
+            { 5.07f, .30f, 0, .40f, 1.10f, 2.80f, .30f, 1 }, { 5.09f, .30f, 0, -.90f, .70f, 4.60f, .30f, 3 }, { 5.11f, .30f, 0, 1.30f, .90f, 6.40f, .32f, 1 },
+            { 5.13f, .32f, 0, -1.60f, .60f, 8.20f, .34f, 0 }, { 5.15f, .32f, 0, .60f, 1.20f, 10.0f, .34f, 2 }, { 5.17f, .34f, 0, 2.40f, .50f, 11.6f, .36f, 1 },
         };
 
         // DIAMOND RINGS on the court: time, anchor, radius reached (negative: drawn INWARD from that radius), life, colour.
@@ -89,9 +93,11 @@ namespace TumbangPreso.Visual
             { 2.50f, 0, 2.2f, .32f, 0 }, { 2.95f, 0, 2.5f, .32f, 3 },
             { 3.30f, 0, -3.4f, .40f, 0 },
             { 3.78f, 0, 3.0f, .36f, 1 },
+            // THE BEATER: the biggest ring of the cutscene, and a second behind it.
+            { 5.05f, 0, 7.5f, .50f, 1 }, { 5.08f, 0, 4.8f, .44f, 0 },
         };
         // FLASHES flat on the court under the three biggest beats: time, size, life.
-        private static readonly float[,] AbFlashRows = { { .55f, 2.6f, .20f }, { 2.15f, 3.0f, .22f }, { 3.78f, 2.4f, .18f } };
+        private static readonly float[,] AbFlashRows = { { .55f, 2.6f, .20f }, { 2.15f, 3.0f, .22f }, { 3.78f, 2.4f, .18f }, { 5.05f, 4.2f, .24f } };
 
         private readonly List<int> _abGlints = new List<int>(64), _abRings = new List<int>(10), _abFlashes = new List<int>(3);
         private int _abVeil = -1;

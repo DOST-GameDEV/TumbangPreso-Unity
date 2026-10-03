@@ -113,8 +113,20 @@ def theme():
     # 4.10 to 5.20 low wind pressure over the lane, and the motif once more, low; 5.20 to 5.60 cut dead into the live gather.
     pressure = svf(white(n, 13701), sweep(np.maximum(0, t - 4.0), 300, 900, 1.2), .8, "low") * window(t, 4.00, 5.58, .25, .02) * .75
     rumble = one_pole_low(white(n, 13702), 80) * window(t, 4.05, 5.58, .3, .02) * .7
-    last = sum(flute_note(t, a, l, p, 13800 + i) for i, (a, l, p) in enumerate([(4.40, .22, 293.7), (4.66, .22, 440.0), (4.92, .32, 392.0)])) * 1.4
-    mix = cut + flute + rise + swell + answer + inhale + knocks + motif + drone + weave_air + hold + strings + whoosh + pressure + rumble + last
+    last = sum(flute_note(t, a, l, p, 13800 + i) for i, (a, l, p) in enumerate([(4.30, .2, 293.7), (4.52, .22, 440.0)])) * 1.4
+    # v3.2 THE BEATER, in the cutscene (owner: "show the ult actually hitting and knocking abck ppl already in the cutscene"):
+    # a held breath (4.80) with the pressure dropping out, then at 5.05 the batten's crack, the low thud, the lane-long whoosh
+    # going away, a fabric snap, cut dead at the hand-back where the live release cue lands as play throws them.
+    pressure *= np.where(t < 4.80, 1.0, np.where(t < 5.05, .25, .6))
+    held = breath_in(t, 4.78, .27, 13901, 1.6)
+    s0 = np.maximum(0, t - 5.05)
+    beat = (t >= 5.05)
+    crack = beater(t, 5.05, 3.4, 31) + svf(white(n, 13902), 2200, .9, "high") * np.exp(-s0 / .016) * beat * 3.6
+    thud = thump(t, 5.05, 46, .3) * 3.0
+    away = band(white(n, 13903), sweep(s0, 1400, 220, .55, .6), 1.1) * env_ar(s0, .015, .3, .04) * beat * 9.0
+    snap = cloth_snap(t, 5.09, 13904, 2.0)
+    mix = (cut + flute + rise + swell + answer + inhale + knocks + motif + drone + weave_air + hold + strings + whoosh + pressure + rumble
+           + last + held + crack + thud + away + snap)
     return finish("sfx_ult_theme_amihan", mix, s, .66)
 
 
@@ -162,7 +174,8 @@ def release():
 
 
 if __name__ == "__main__":
-    rows = [theme(), cast(), gather(), release()]
+    # v3.2: the press and the gather have no moment any more (the cutscene shows the windup; play resumes on the hit).
+    rows = [theme(), release()]
     report = {
         "provenance": "Original deterministic synthesis (numpy only); no external samples, voices or paid API.",
         "listening": "Not yet heard by the owner in the game mix. Peak and RMS are measurements, not approval.",

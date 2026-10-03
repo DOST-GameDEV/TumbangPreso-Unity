@@ -136,8 +136,8 @@ namespace TumbangPreso.Audio
                 // AIRBURST v3's four, the only skill sounds back (2026-10-03, `tools/build_amihan_ult_audio.py`, `ReworkedSkillSfx`).
                 // The theme is a bed under the cutscene like every theme; the gather is 1.5 s of telegraph under play and mixed as
                 // a bed; the release is the loudest moment of her kit and mixed as an ultimate payload. Provisional until heard.
-                { "sfx_ult_theme_amihan", -14.0f }, { "sfx_cast_amihan_storm", -6.0f },
-                { "sfx_amihan_storm_gather", -9.0f }, { "sfx_amihan_storm_release", -3.0f },
+                // v3.2: the press and the gather went with the live windup; the release is the hit as play resumes.
+                { "sfx_ult_theme_amihan", -14.0f }, { "sfx_amihan_storm_release", -3.0f },
                 { "slide_scrape",   -6.0f },
                 { "grab",           -6.0f },
                 { "throw_charge",   -5.0f },
@@ -218,7 +218,7 @@ namespace TumbangPreso.Audio
             // do not rerun them into `Resources/Sfx` until the owner asks for skill sounds back.
             "sfx_hitmarker", "sfx_super_ready",
             // AIRBURST v3 (2026-10-03): the first reworked skill sounds, Amihan's ultimate only (`ReworkedSkillSfx`).
-            "sfx_ult_theme_amihan", "sfx_cast_amihan_storm", "sfx_amihan_storm_gather", "sfx_amihan_storm_release",
+            "sfx_ult_theme_amihan", "sfx_amihan_storm_release",
 
             // ⚠️ THE MAP EVENT. `LrtTrainFlyby` called `ui_move` for two months and there has
             // never been a `ui_move.wav`, so every pass wrote `[Audio] no cue registered` to the
@@ -410,7 +410,7 @@ namespace TumbangPreso.Audio
         /// </summary>
         private static readonly HashSet<string> ReworkedSkillSfx = new HashSet<string>
         {
-            "sfx_ult_theme_amihan", "sfx_cast_amihan_storm", "sfx_amihan_storm_gather", "sfx_amihan_storm_release",
+            "sfx_ult_theme_amihan", "sfx_amihan_storm_release",
         };
 
         public static bool IsReworkedSkillSfx(string cue) => !string.IsNullOrEmpty(cue) && ReworkedSkillSfx.Contains(cue);

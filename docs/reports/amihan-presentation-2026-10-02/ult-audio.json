@@ -6,22 +6,8 @@
       "cue": "sfx_ult_theme_amihan",
       "seconds": 5.6,
       "peak": 0.66,
-      "rms": 0.07222004835240478,
-      "sha256": "83a5eb2808d9565b5b177dd2ad898834b502178c8a2ab55f7c81b343b1cb1cb8"
-    },
-    {
-      "cue": "sfx_cast_amihan_storm",
-      "seconds": 0.55,
-      "peak": 0.7,
-      "rms": 0.0761596319465317,
-      "sha256": "fd7f35b9d8f86b0f287716cc6a1b47ea72bc3c4521dfebfaa99eb13acec47379"
-    },
-    {
-      "cue": "sfx_amihan_storm_gather",
-      "seconds": 1.5,
-      "peak": 0.62,
-      "rms": 0.08606331191923498,
-      "sha256": "fdf8c128333ca11e548b69997bfb08f1118ede28ede8fd624154f8cc05ee24f6"
+      "rms": 0.07395113463817794,
+      "sha256": "0fe40b5320a59986cb58969ea0767a339b178071841f8661c00eb38ac5a6ba9b"
     },
     {
       "cue": "sfx_amihan_storm_release",
