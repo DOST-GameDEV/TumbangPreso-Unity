@@ -1,2 +1,2 @@
-*.xml -text whitespace=cr-at-eol
+*.xml -text -whitespace
 *.json -text whitespace=cr-at-eol
