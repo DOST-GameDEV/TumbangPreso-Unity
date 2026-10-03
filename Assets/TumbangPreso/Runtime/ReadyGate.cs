@@ -340,18 +340,30 @@ namespace TumbangPreso
 
             foreach (var tick in new[] { "3", "2", "1" })
             {
+                if (MatchAbandon.AuthorityRevoked) { CancelAbandonedCountdown(); yield break; }
                 CountdownTick?.Invoke(tick);
                 yield return new WaitForSeconds(TickSeconds);
             }
 
+            if (MatchAbandon.AuthorityRevoked) { CancelAbandonedCountdown(); yield break; }
             CountdownTick?.Invoke(_automatic ? "START!" : "GO!");
             yield return new WaitForSeconds(GoSeconds);
 
+            if (MatchAbandon.AuthorityRevoked) { CancelAbandonedCountdown(); yield break; }
             CountdownHidden?.Invoke();
             _awaitingLocalReady = false;
             _countingDown = false;
 
             RoundShouldBegin?.Invoke();
+        }
+
+        private void CancelAbandonedCountdown()
+        {
+            _readySendPending = false;
+            _awaitingLocalReady = false;
+            AwaitingNetReady = false;
+            _countingDown = false;
+            CountdownHidden?.Invoke();
         }
     }
 }
