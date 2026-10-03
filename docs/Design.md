@@ -298,12 +298,17 @@ lunge on the other mouse button, so each mouse button is one verb by role.
 
 | Press | Condition | Result |
 |---|---|---|
-| **F tap** | Attacker, loose slipper within `PICKUP_RADIUS` | **pick up** |
+| **F tap** | Attacker, loose slipper within `PICKUP_RADIUS` with clear street reach | **pick up** |
 | **F hold** | Defender, in the lata's ring, lata down | **reset the lata** |
 | **Right click** | Attacker, loose slipper in slide reach ahead | **retrieval slide** |
 | **Right click** | Attacker, anything else | **shove**, instantly |
 | **Right click hold 0.5 s** | Defender | charge, release to **lunge** and tag |
 | **Left click** | Defender | **punch**, a quick close-range tag |
+
+Pickup and retrieval slide refuse a shoe through solid street geometry. The
+shared reach query ignores triggers, players and slippers, while checking for
+a solid blocker behind them. Ownership, status, empty-hand and range rules
+still apply; forced round equipment does not use the loose-shoe reach gate.
 
 ⚠️⚠️ **THE TAYA HAS TWO TAG VERBS SINCE 2026-08-01**, on human instruction: *"Melee
 Punch Tag (Left-Click) ... a quick close-range punch"* and *"Lunge Tag (Hold E for

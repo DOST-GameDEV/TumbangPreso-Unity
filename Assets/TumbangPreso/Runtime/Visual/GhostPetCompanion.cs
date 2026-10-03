@@ -1788,6 +1788,8 @@ namespace TumbangPreso.Visual
 
         private void ResolvePossessionContacts()
         {
+            // Ordinary pause freezes gameplay contacts while keeping the accepted possession.
+            if (PresentationClock.RequestedScale <= 0) return;
             var round = GameServices.Round;
             if (round != null && _nemuMotor != null)
             {

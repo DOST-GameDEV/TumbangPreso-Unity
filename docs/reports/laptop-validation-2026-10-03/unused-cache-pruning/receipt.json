@@ -1,0 +1,18 @@
+[
+  {
+    "Path": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-b\\Library",
+    "Bytes": 5245813421.0,
+    "ValidationOnly": true,
+    "ProcessFree": true,
+    "ReparseFree": true,
+    "Removed": true
+  },
+  {
+    "Path": "C:\\Users\\Matthew\\dev\\tump-workers1003-extra\\qa-c\\Library",
+    "Bytes": 5245728540.0,
+    "ValidationOnly": true,
+    "ProcessFree": true,
+    "ReparseFree": true,
+    "Removed": true
+  }
+]

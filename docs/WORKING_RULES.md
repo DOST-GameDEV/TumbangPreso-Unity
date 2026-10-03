@@ -21,6 +21,8 @@ and [earlier full rules](archive/CLAUDE_full_2026-09-24.md). New owner instructi
   clamps X/Z independently. Bots submit the same InputIntent as humans.
 - Stuns overlap with Max,never addition. Impulses derive from friction using
   `distance = speed * speed / (2 * friction)`. Neutral prop stays at index0.
+- Possession contact outcomes freeze at requested game speed zero. Keep the
+  accepted possession and its live contact behavior when the user resumes.
 - People use first person,props third person; local emotes temporarily change view.
   Spectators have separate free/follow/POV rigs. Emotes end through EmotePlayer.Stop
   on interruption,not a new arbitrary timer that bypasses view cleanup.
@@ -32,6 +34,9 @@ and [earlier full rules](archive/CLAUDE_full_2026-09-24.md). New owner instructi
 
 - Mouse/keyboard,controller and touch are required for every feature. Gameplay and
   spectating are different contexts; one control does one action within each.
+- Reader withdrawal and parked control zero a controlled familiar's cached
+  movement while keeping its accepted possession. Retain explicit zero input
+  and local/offline custody; do not fall back to body AI or clear another seat.
 - Preserve GenericPadBridge,MenuNav,controller mappings and the input backend.
   `InputCatalogue.For` is exhaustive: no discard arm; keep CS8509 as an error.
   Add pad/thumb mapping with a Verb and run the existing InputAssetSync regeneration.

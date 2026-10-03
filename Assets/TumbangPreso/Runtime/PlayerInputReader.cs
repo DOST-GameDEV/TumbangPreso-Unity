@@ -275,8 +275,8 @@ namespace TumbangPreso
                 // before the ordinary read, so every device added below has to be added here as
                 // well or possession is the one place in the game that is keyboard-only.
                 // `StepCompanionLook` reads the same `Intent.LookAxis` the main rig does.
-                var petMove = _move.ReadValue<Vector2>();
-                if (InputLayer.TouchInput.Active && InputLayer.TouchInput.Move.sqrMagnitude > 0.0001f)
+                var petMove = intent.Parked ? Vector2.zero : _move.ReadValue<Vector2>();
+                if (!intent.Parked && InputLayer.TouchInput.Active && InputLayer.TouchInput.Move.sqrMagnitude > 0.0001f)
                     petMove = InputLayer.TouchInput.Move;
 
                 visual.Companion.SetPlayerInput(petMove);
@@ -495,6 +495,9 @@ namespace TumbangPreso
             {
                 // An obsolete reader must not close another body's received aim tell.
                 _motor.AbilitySystem?.ClearPresentationInput();
+                var companion = _motor.GetComponent<Visual.CharacterVisual>()?.Companion;
+                // Retain an explicit zero so the body AI cannot become the pet's input fallback.
+                if (companion != null && companion.IsPossessed) companion.SetPlayerInput(Vector2.zero);
                 InputLayer.TouchInput.Move = Vector2.zero;
             }
         }

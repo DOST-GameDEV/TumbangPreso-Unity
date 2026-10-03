@@ -757,19 +757,7 @@ namespace TumbangPreso
         /// about a position up to `IntentPoseLeeway` away from the one being asked about.
         /// </summary>
         private bool ReachableThroughTheStreet(Vector3 from, Vector3 target)
-        {
-            Vector3 eye = from + Vector3.up * 0.5f;
-            Vector3 toward = (target + Vector3.up * 0.1f) - eye;
-
-            float distance = toward.magnitude;
-            if (distance < 0.05f) return true;
-
-            return !Physics.Raycast(eye, toward / distance, out var hit, distance,
-                                    ~0, QueryTriggerInteraction.Ignore)
-                   || hit.collider == null
-                   || hit.collider.GetComponentInParent<CharacterMotor>() != null
-                   || hit.collider.GetComponentInParent<Slipper>() != null;
-        }
+            => Slipper.ReachableThroughTheStreet(from, target);
 
         // -------------------------------------------------------------------
         // HOST-SIDE RESOLUTION.

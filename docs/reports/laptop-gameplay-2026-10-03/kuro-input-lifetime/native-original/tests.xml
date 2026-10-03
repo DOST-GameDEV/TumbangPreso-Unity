@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Failed(Child)" total="8" passed="3" failed="5" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 07:13:19Z" end-time="2026-10-03 07:13:20Z" duration="0.6385193">
+  <test-suite type="TestSuite" id="2775" name="TumpWorker-qa-d-dddaa72bc5b9" fullname="TumpWorker-qa-d-dddaa72bc5b9" runstate="Runnable" testcasecount="1446" result="Failed" site="Child" start-time="2026-10-03 07:13:19Z" end-time="2026-10-03 07:13:20Z" duration="0.638519" total="8" passed="3" failed="5" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2769" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-d/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1446" result="Failed" site="Child" start-time="2026-10-03 07:13:19Z" end-time="2026-10-03 07:13:20Z" duration="0.627027" total="8" passed="3" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23112" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2770" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1446" result="Failed" site="Child" start-time="2026-10-03 07:13:19Z" end-time="2026-10-03 07:13:20Z" duration="0.622060" total="8" passed="3" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2771" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1446" result="Failed" site="Child" start-time="2026-10-03 07:13:19Z" end-time="2026-10-03 07:13:20Z" duration="0.616995" total="8" passed="3" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1634" name="KuroInputProducerLifetimeTests" fullname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests" classname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-03 07:13:19Z" end-time="2026-10-03 07:13:20Z" duration="0.597083" total="8" passed="3" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1642" name="AnObsoleteReaderCannotClearAnotherSeatsFamiliarCache" fullname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.AnObsoleteReaderCannotClearAnotherSeatsFamiliarCache" methodname="AnObsoleteReaderCannotClearAnotherSeatsFamiliarCache" classname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests" runstate="Runnable" seed="1387599113" result="Passed" start-time="2026-10-03 07:13:19Z" end-time="2026-10-03 07:13:20Z" duration="0.262947" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1635" name="ChatWithdrawalRetiresPossessedMovement" fullname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.ChatWithdrawalRetiresPossessedMovement" methodname="ChatWithdrawalRetiresPossessedMovement" classname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests" runstate="Runnable" seed="957399672" result="Failed" start-time="2026-10-03 07:13:20Z" end-time="2026-10-03 07:13:20Z" duration="0.031578" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The withdrawn or parked reader left Kuro moving on cached player input.
+  Expected: less than 9.99999975E-05f
+  But was:  0.391000003f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.Stopped () [0x00000] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\KuroInputProducerLifetimeTests.cs:98
+at TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.ChatWithdrawalRetiresPossessedMovement () [0x00012] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\KuroInputProducerLifetimeTests.cs:103
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1638" name="FocusLossRetiresPossessedMovement" fullname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.FocusLossRetiresPossessedMovement" methodname="FocusLossRetiresPossessedMovement" classname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests" runstate="Runnable" seed="2092756761" result="Failed" start-time="2026-10-03 07:13:20Z" end-time="2026-10-03 07:13:20Z" duration="0.028594" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The withdrawn or parked reader left Kuro moving on cached player input.
+  Expected: less than 9.99999975E-05f
+  But was:  0.391000003f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.Stopped () [0x00000] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\KuroInputProducerLifetimeTests.cs:98
+at TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.FocusLossRetiresPossessedMovement () [0x0001d] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\KuroInputProducerLifetimeTests.cs:116
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1641" name="FreshMovementAfterChatStillDrivesTheSamePossession" fullname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.FreshMovementAfterChatStillDrivesTheSamePossession" methodname="FreshMovementAfterChatStillDrivesTheSamePossession" classname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests" runstate="Runnable" seed="1783623377" result="Passed" start-time="2026-10-03 07:13:20Z" end-time="2026-10-03 07:13:20Z" duration="0.031025" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1636" name="LoadingWithdrawalRetiresPossessedMovement" fullname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.LoadingWithdrawalRetiresPossessedMovement" methodname="LoadingWithdrawalRetiresPossessedMovement" classname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests" runstate="Runnable" seed="535751883" result="Failed" start-time="2026-10-03 07:13:20Z" end-time="2026-10-03 07:13:20Z" duration="0.145137" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The withdrawn or parked reader left Kuro moving on cached player input.
+  Expected: less than 9.99999975E-05f
+  But was:  0.391000003f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.Stopped () [0x00000] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\KuroInputProducerLifetimeTests.cs:98
+at TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.LoadingWithdrawalRetiresPossessedMovement () [0x00026] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\KuroInputProducerLifetimeTests.cs:108
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1640" name="OrdinaryTouchMovementStillDrivesThePossessedFamiliar" fullname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.OrdinaryTouchMovementStillDrivesThePossessedFamiliar" methodname="OrdinaryTouchMovementStillDrivesThePossessedFamiliar" classname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests" runstate="Runnable" seed="1122476887" result="Passed" start-time="2026-10-03 07:13:20Z" end-time="2026-10-03 07:13:20Z" duration="0.030941" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1639" name="ParkedReaderDoesNotDriveThePossessedFamiliar" fullname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.ParkedReaderDoesNotDriveThePossessedFamiliar" methodname="ParkedReaderDoesNotDriveThePossessedFamiliar" classname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests" runstate="Runnable" seed="1838938411" result="Failed" start-time="2026-10-03 07:13:20Z" end-time="2026-10-03 07:13:20Z" duration="0.028857" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The withdrawn or parked reader left Kuro moving on cached player input.
+  Expected: less than 9.99999975E-05f
+  But was:  0.391000003f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.Stopped () [0x00000] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\KuroInputProducerLifetimeTests.cs:98
+at TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.ParkedReaderDoesNotDriveThePossessedFamiliar () [0x0001d] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\KuroInputProducerLifetimeTests.cs:120
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1637" name="ReaderDisableRetiresPossessedMovement" fullname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.ReaderDisableRetiresPossessedMovement" methodname="ReaderDisableRetiresPossessedMovement" classname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests" runstate="Runnable" seed="1972835677" result="Failed" start-time="2026-10-03 07:13:20Z" end-time="2026-10-03 07:13:20Z" duration="0.026688" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The withdrawn or parked reader left Kuro moving on cached player input.
+  Expected: less than 9.99999975E-05f
+  But was:  0.391000003f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.Stopped () [0x00000] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\KuroInputProducerLifetimeTests.cs:98
+at TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.ReaderDisableRetiresPossessedMovement () [0x00012] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\KuroInputProducerLifetimeTests.cs:112
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-d-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
