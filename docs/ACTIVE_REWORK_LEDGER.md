@@ -49,6 +49,13 @@ TryBeginRead checks20/24/25, fixture/meta unchanged. Both refs were sent to lapt
 NEXT: inspect one original and one candidate18-case native result on the same
 frozen fixture, then integrate only after causal failures and controls reconcile.
 Neither unqualified branch is merged into ASTRA. No PC native job is authorized.
+Laptop reports original18 LAUNCHED atqa-a/Logs/client-movement-original18,
+3428 frozen inputs, CPU2048+1024MiB/300seconds/profilevalidation-qa-a-be075dcdfa07.
+Follow this run to actual XML/terminal/restored/free receipts; session ID not yet
+reported. Do not infer termination from elapsed time or start another original.
+Its14 preparation stopped on three retired slide-test inventory entries and was
+checkpointed; those sources/metas were preserved outside compilation. Resume14
+and current144 build after the one original/candidate pair, not another audit.
 Preserve authority/slot/epoch/finite checks and wire/protocol. Follow actual failure,
 not speculative refactoring. No overlapping Unity jobs or unchanged repetitions.
 
