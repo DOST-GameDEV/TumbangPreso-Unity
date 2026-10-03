@@ -118,6 +118,7 @@ namespace TumbangPreso
                 // Retire windups before parking publishes a release to their consumers.
                 body.GetComponent<Carrier>()?.CancelPendingInput();
                 body.GetComponent<CombatVerbs>()?.CancelPendingInput();
+                body.AbilitySystem?.ClearPresentationInput();
             }
             _idle[seat] = idle;
             var brain = body.GetComponent<AIController>();
