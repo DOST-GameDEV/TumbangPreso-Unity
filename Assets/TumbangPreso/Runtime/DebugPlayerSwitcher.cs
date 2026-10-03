@@ -63,6 +63,7 @@ namespace TumbangPreso
         /// gets the same guarantee without a deferred call.
         /// </summary>
         private bool _resolved;
+        private int _defaultSlot = FallbackSlot;
 
         private UI.DebugBar _bar;
 
@@ -111,13 +112,15 @@ namespace TumbangPreso
 
             // The player's own seat, before any key is read, so a cycle starts from where they
             // actually are rather than from slot 0.
-            if (!_resolved) { DrivenSlot = DefaultSlot; _resolved = true; }
+            // A claimed bot has disabled AI too; discovery after handover cannot
+            // distinguish it from the original human. Retain the initial seat.
+            if (!_resolved) { _defaultSlot = DefaultSlot; DrivenSlot = _defaultSlot; _resolved = true; }
 
             if (kb.f1Key.wasPressedThisFrame) Assign(0);
             else if (kb.f2Key.wasPressedThisFrame) Assign(1);
             else if (kb.f3Key.wasPressedThisFrame) Assign(2);
             else if (kb.f4Key.wasPressedThisFrame) Assign(3);
-            else if (kb.f6Key.wasPressedThisFrame) Assign(DefaultSlot);
+            else if (kb.f6Key.wasPressedThisFrame) Assign(_defaultSlot);
             else if (kb.f5Key.wasPressedThisFrame) Cycle();
 
             // ⚠️ CYCLE MOVED OFF TAB ON 2026-08-23. Tab is the hold-to-read ability panel now
