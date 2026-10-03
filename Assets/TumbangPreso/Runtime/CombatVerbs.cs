@@ -26,7 +26,9 @@ namespace TumbangPreso
         private Carrier _carrier;
 
         private float _shoveCooldown;
+        private float _shoveCooldownTotal = Balance.ShoveCooldown;
         private float _punchCooldown;
+        private float _punchCooldownTotal = Balance.PunchCooldown;
         private float _lungeCooldown;
         private bool _punchPressSpent;
 
@@ -38,21 +40,33 @@ namespace TumbangPreso
         private float _lungeActiveLeft;
         private Vector3 _lungeFrom;
 
-        private float _slideCooldown;
-        /// <summary>An attacker's Shove / Lunge press already became a slide or a shove (see `Update`).</summary>
+        /// <summary>An attacker's Shove / Lunge press already became a shove.</summary>
         private bool _shoveLungePressSpent;
-        private float _slideActiveLeft;
-        private Vector3 _slideFrom;
 
         public float ShoveCooldownLeft => _shoveCooldown;
+        public float ShoveCooldownDuration => _shoveCooldownTotal;
+        public void ConfirmShoveResult(bool hit)
+        {
+            float elapsed = Mathf.Max(0, _shoveCooldownTotal - _shoveCooldown);
+            _shoveCooldownTotal = hit ? Balance.ShoveCooldown : Balance.ShoveMissCooldown;
+            _shoveCooldown = Mathf.Max(0, _shoveCooldownTotal - elapsed);
+        }
         public float PunchCooldownLeft => _punchCooldown;
+        public float PunchCooldownDuration => _punchCooldownTotal;
+
+        public void ConfirmPunchResult(bool hit)
+        {
+            float elapsed = Mathf.Max(0, _punchCooldownTotal - _punchCooldown);
+            _punchCooldownTotal = hit ? Balance.PunchHitCooldown : Balance.PunchCooldown;
+            _punchCooldown = Mathf.Max(0, _punchCooldownTotal - elapsed);
+        }
         public float LungeCooldownLeft => _lungeCooldown;
 
-        /// <summary>How long before this attacker may commit to another retrieval slide.</summary>
-        public float SlideCooldownLeft => _slideCooldown;
+        /// <summary>Legacy diagnostic surface for the removed retrieval slide.</summary>
+        public float SlideCooldownLeft => 0;
 
-        /// <summary>True while the slide is live and its sweep is looking for a tsinelas.</summary>
-        public bool SlideActive => _slideActiveLeft > 0.0f;
+        /// <summary>The removed retrieval slide never owns an active window.</summary>
+        public bool SlideActive => false;
         public float LungeChargeRatio => Mathf.Clamp01(_lungeCharge / Balance.LungeChargeTime);
 
         /// <summary>
@@ -139,7 +153,6 @@ namespace TumbangPreso
             // A retired body must not resume a contact sweep from its old position.
             // Keep the spent cooldown; an ordinary clock hold leaves this component enabled.
             _lungeActiveLeft = 0.0f;
-            _slideActiveLeft = 0.0f;
             CancelPendingInput();
         }
 
@@ -163,7 +176,6 @@ namespace TumbangPreso
             Tick(ref _shoveCooldown, dt);
             Tick(ref _punchCooldown, dt);
             Tick(ref _lungeCooldown, dt);
-            Tick(ref _slideCooldown, dt);
 
             // A refused prediction refunds cooldown, not ownership of its input edge.
             // Observe release even when interruption or role change skips the punch path.
@@ -180,8 +192,7 @@ namespace TumbangPreso
                 if (!_motor.RoundActive || _motor.IsStunned || _motor.IsFeared)
                 {
                     _lungeActiveLeft = 0.0f;
-                    _slideActiveLeft = 0.0f;
-                }
+                        }
                 _lungeCharging = false;
                 _lungeCharge = 0.0f;
                 return;
@@ -196,23 +207,13 @@ namespace TumbangPreso
             {
                 // A defender windup cannot follow this body into its attacker role.
                 CancelPendingInput();
-                // ⚠️ ONE BUTTON, SHOVE / LUNGE (the owner's default layout, 2026-09-27: *"Shove /
-                // Lunge - Right Click"*, beside *"Throw / Tag - Left Click"*). The taya lunges on it;
-                // an attacker slides when a loose tsinelas lies in reach ahead (the retrieval slide
-                // this button already carried) and shoves otherwise. The slide asks first because
-                // its predicate is narrow and refuses without spending the press.
-                //
-                // ⚠️⚠️ ONE PRESS, ONE VERB. A press edge stays readable for every Update before the
-                // next physics commit (`PickupPressOwnershipProbe` measures the same thing on the
-                // pickup key), so the frame after a slide started, the slide's own cooldown made it
-                // refuse and the SAME press fell through to a shove: a 25-stamina shove stacked on
-                // every slide (`RetrievalSlideTests.ARefusedSlideHandsBackTheCooldownTheStaminaAndTheCommitment`
-                // read 35 against 60). Whichever verb took the press owns it until the button is up.
+                // Retrieval slide was removed by the owner. This press only shoves;
+                // ordinary pickup keeps its separate input and press ownership.
                 if (_motor.Intent.Pressed(Verb.Lunge) && !_shoveLungePressSpent)
                 {
-                    float shoveBefore = _shoveCooldown;
-                    if (StepSlide(dt)) _shoveLungePressSpent = true;
-                    else { StepShove(); if (_shoveCooldown > shoveBefore) _shoveLungePressSpent = true; }
+                    float before = _shoveCooldown;
+                    StepShove();
+                    if (_shoveCooldown > before) _shoveLungePressSpent = true;
                 }
             }
 
@@ -222,11 +223,7 @@ namespace TumbangPreso
                 SweepLungeTag();
             }
 
-            if (_slideActiveLeft > 0.0f)
-            {
-                _slideActiveLeft -= dt;
-                SweepSlideRetrieval();
-            }
+
         }
 
         private static void Tick(ref float t, float dt)
@@ -278,7 +275,7 @@ namespace TumbangPreso
 
             if (NetAuthority.ShouldRequest())
             {
-                _shoveCooldown = Balance.ShoveCooldown;
+                _shoveCooldown = _shoveCooldownTotal = Balance.ShoveCooldown;
                 Net.MatchRpc.Instance?.RequestShoveServerRpc(
                     _motor.PlayerSlot, transform.position, transform.forward);
                 return;
@@ -304,7 +301,7 @@ namespace TumbangPreso
 
             if (victim == null)
             {
-                _shoveCooldown = Balance.ShoveMissCooldown;
+                _shoveCooldown = _shoveCooldownTotal = Balance.ShoveMissCooldown;
                 return;
             }
 
@@ -323,7 +320,7 @@ namespace TumbangPreso
             if (_punchCooldown > 0.0f || _punchPressSpent) return;
             if (!_motor.Intent.JustPressed(Verb.SpecialAbility)) return;
 
-            _punchCooldown = Balance.PunchCooldown;
+            _punchCooldown = _punchCooldownTotal = Balance.PunchCooldown;
             _punchPressSpent = true;
 
             // Same rule as the shove: the jab reads on the swing, in both views, and it asks for
@@ -347,7 +344,7 @@ namespace TumbangPreso
                 Net.MatchRpc.Instance?.BroadcastAction(_motor.PlayerSlot, "punch");
 
             var victim = FindInCone(Balance.PunchRange, Balance.PunchArcDeg, requireTaggable: true);
-            if (victim != null) GameServices.Round?.ResolveTag(_motor, victim);
+            if (victim != null && GameServices.Round?.TryResolveTag(_motor, victim) == true) ConfirmPunchResult(true);
         }
 
         /// <summary>
@@ -472,307 +469,10 @@ namespace TumbangPreso
         }
 
         // -------------------------------------------------------------------
-        // § THE ATTACKER'S RETRIEVAL SLIDE
-        //
-        // ⚠️⚠️ IT IS THE SAME PRESS AS THE TAYA'S LUNGE AND IT REPLACES NOTHING. `Verb.Lunge` is
-        // read here only behind `if (_motor.IsDefender)`, so on the three attackers in every
-        // round the key, the pad's left trigger and the touch layer's LUNGE button all did
-        // literally nothing. This is that dead control given the one job an attacker actually
-        // has: `docs/VISION.md` § 0, *"the tension is the retrieval, not the throw"*.
-        //
-        // ⚠️⚠️ IT ADDS NO METER, NO WINDOW AND NO TIMING. `docs/VISION.md` § 1.1 forbids Classic
-        // a power and `CLAUDE.md` § 6.2 forbids anything else to hold in the head. The decision
-        // it creates is one sentence long: *I can walk up and pick this up safely, or I can commit
-        // and get there a third of a second sooner.* Everything that makes it a decision rather
-        // than a free buff is COMMITMENT, reduced steering, a recovery, a cooldown and a stamina
-        // price, rather than a status effect, because a commitment is something the taya can see
-        // and read and a status effect is something that happens to somebody.
-        //
-        // ⚠️ THE PICKUP RULE IS NOT RESTATED HERE. `Slipper.CanBeGrabbedBy` decides eligibility
-        // and `Slipper.HostGrab` performs it, exactly as a walking pickup does, so a slide cannot
-        // collect anything a walk-up could not: not the taya's parked shoe, not one in flight,
-        // not one somebody else is holding. `docs/VISION.md` § 4's *"the host decides everything
-        // that scores"* is unchanged, and so is § 4's *"contact resolves by DISTANCE on the
-        // host"*.
-        // -------------------------------------------------------------------
-
-        private bool StepSlide(float dt)
-        {
-            if (_slideCooldown > 0.0f) return false;
-
-            // ⚠️⚠️ IT IS AN EDGE, NOT A HOLD, AND THAT IS THE DIFFERENCE FROM THE LUNGE. The taya
-            // charges because the charge is *"exactly long enough for them to leave"*, it is
-            // aimed at a moving person. A retrieval is aimed at an object lying on the ground that
-            // is not going anywhere, so a wind-up would only tell the taya what is coming without
-            // asking the attacker for anything in return. The commitment is spent AFTER the press
-            // instead of before it.
-            if (!_motor.Intent.JustPressed(Verb.Lunge)) return false;
-
-            // ⚠⚠ THE PREDICATE IS THE HOST'S OWN, ASKED FROM THIS BODY'S CURRENT POSE. Every
-            // reason a slide may not start lives in one method now (`SlideMayStartFrom`), so the
-            // local prediction and the authoritative resolution cannot answer differently. Until
-            // 2026-09-05 they were two lists and the host's was the shorter one.
-            //
-            // ⚠️ NOTHING TO FETCH MEANS NOTHING HAPPENS, AND THE PRESS IS NOT SPENT. A slide with
-            // no tsinelas in front of it is a free 1.75 m dash, which is the mobility buff this
-            // verb must not be. `CLAUDE.md` § 6.3: a control that does nothing must not look
-            // pressable, and the HUD prompt is what says when it will work.
-            //
-            // ⚠️ FATIGUE REFUSES IT, LIKE THE SHOVE, and that clause is inside the shared rule
-            // too. `HostResolveShove` opens with `_motor.Stamina.IsFatigued` for the same reason:
-            // a bar that has bottomed out is the one moment the game already says you have
-            // overcommitted, and letting a commitment verb through it would make the bar advisory.
-            if (!SlideMayStartFrom(transform.position, transform.forward, out _)) return false;
-
-            if (!_motor.Stamina.Spend(Balance.SlideStaminaCost)) return false;
-
-            ReleaseSlide();
-            return true;
-        }
-
-        /// <summary>
-        /// THE one rule for whether a retrieval slide may start, from a given pose.
-        ///
-        /// ⚠⚠ IT IS ONE RULE BECAUSE TWO OF THEM WAS A COMPETITIVE HOLE, AND THE HOST HELD THE
-        /// SHORTER LIST. `StepSlide` refused a press with no retrievable tsinelas ahead;
-        /// `HostResolveSlide` checked the role, the cooldown, the stamina, the fatigue and the
-        /// hand, and **never asked whether there was anything to retrieve at all**. So the local
-        /// path could not dash for free and a modified client asking over the wire could: the
-        /// host applied `SlideSpeed` down the requested facing on request, which is 1.75 m of
-        /// host-authoritative mobility with nothing to collect. `docs/VISION.md` § 1.1 forbids
-        /// Classic a power, and a networked-only free dash is a power that only cheats have.
-        /// `docs/TODO.md` § 145.11.
-        ///
-        /// ⚠⚠ IT DOES NOT RESTATE THE PICKUP RULE AND MUST NOT START.
-        /// `Slipper.IsGrabbableIgnoringReach` owns the state, the role and the ability to act;
-        /// this widens ONLY the reach, from a radius around the body to the same radius around
-        /// the ground the slide covers. `Slipper.HostGrab` still performs the pickup and
-        /// re-checks `CanBeGrabbedBy` when the sweep lands, so a slide can never collect
-        /// something a walk-up could not. `docs/TODO.md` § 94.1 is what a second answer to
-        /// "whose shoe is this" costs.
-        ///
-        /// ⚠⚠ AND LINE OF SIGHT IS IN THE PREDICATE, WHICH IT WAS NOT. The sweep raycasted and
-        /// the predicate did not, so a player standing on the wrong side of a jeepney predicted a
-        /// slide, spent the stamina, narrowed their own steering for most of a second and
-        /// collected nothing. That is not a fairness bug, it is the verb feeling broken: the
-        /// local path promised something the host was always going to refuse.
-        ///
-        /// ⚠️ THE POSE IS A PARAMETER RATHER THAN `transform`. The host has to ask this question
-        /// about the pose the CLIENT claimed, which `PlausibleIntentPose` has already bounded, and
-        /// asking it about the host's own copy of the body would answer a different question by a
-        /// round trip.
-        /// </summary>
+        // Retained query for tooling compatibility; no player or bot can start a slide.
         public bool SlideMayStartFrom(Vector3 from, Vector3 facing, out Slipper target)
-        {
-            target = null;
+        { target = null; return false; }
 
-            if (_slideCooldown > 0.0f) return false;
-            if (_motor == null || _motor.IsDefender || !_motor.CanAct()) return false;
-            if (_motor.Stamina.IsFatigued) return false;
-            if (_carrier != null && _carrier.Held != null) return false;
-
-            target = FindSlideTarget(from, facing);
-            return target != null;
-        }
-
-        /// <summary>
-        /// The tsinelas a slide from here would legally reach, or null.
-        ///
-        /// ⚠️ IT PROJECTS THE SEGMENT THE SLIDE WOULD COVER; `SweepSlideRetrieval` measures the
-        /// one it ACTUALLY covered. The two are deliberately different: this decides whether to
-        /// commit and that decides what was collected, and a body that is blocked passes the
-        /// first and correctly fails the second.
-        /// </summary>
-        private Slipper FindSlideTarget(Vector3 from, Vector3 facing)
-        {
-            if (GameServices.Round == null) return null;
-
-            Vector3 forward = facing;
-            forward.y = 0.0f;
-            if (forward.sqrMagnitude < 0.0001f) forward = transform.forward;
-            forward.y = 0.0f;
-            if (forward.sqrMagnitude < 0.0001f) return null;
-
-            Vector3 a = Flat(from);
-            Vector3 b = a + forward.normalized * Balance.SlideDistance;
-
-            Slipper best = null;
-            float bestDistance = float.MaxValue;
-
-            foreach (var s in BotSlipperInventory.All)
-            {
-                if (s == null || !s.IsGrabbableIgnoringReach(_motor)) continue;
-
-                float d = DistanceToSegment(Flat(s.transform.position), a, b);
-                if (d > Balance.PickupRadius || d >= bestDistance) continue;
-                if (!ReachableThroughTheStreet(from, s.transform.position)) continue;
-
-                bestDistance = d;
-                best = s;
-            }
-
-            return best;
-        }
-
-        private void ReleaseSlide()
-        {
-            _slideCooldown = Balance.SlideCooldown;
-            _slideActiveLeft = Balance.SlideActiveTime;
-            _slideFrom = transform.position;
-
-            // ⚠️⚠️ THE COMMITMENT COVERS THE SLIDE **AND** THE RECOVERY, and the recovery is the
-            // half that makes it punishable. During the slide the attacker is moving fast and is
-            // hard to catch; the 0.61 s afterwards is when a taya who read it arrives. Committing
-            // only for the dash would be committing for the part that is already an advantage.
-            _motor.Commit(Balance.SlideActiveTime + Balance.SlideRecoveryTime);
-
-            // ⚠️ IT ASKS FOR ITS OWN ACTION AND STILL GETS THE LUNGE'S CLIP, WHICH IS THE SAME
-            // DELIBERATE ANSWER ONE INDIRECTION LATER. Both are a body-led dash and the rig has
-            // one, so `CharacterAnimator`'s `"slide"` chain falls through to exactly the clip
-            // this line used to name. What the name buys is that `docs/TODO.md` § 146.6's art
-            // work is now a clip drop with no code change, instead of a hunt for which two of the
-            // four `PlayAction("lunge")` calls in this file belong to the slide. `ASTRA.md` § 3.
-            Animator?.PlayAction("slide");
-            Rig?.ViewmodelKick(Vector3.forward, 1.1f);
-
-            Vector3 forward = transform.forward;
-            forward.y = 0.0f;
-            _motor.ApplyImpulse(forward.normalized * Balance.SlideSpeed);
-
-            // ⚠️⚠️ THROUGH `NetCue`, BECAUSE THREE PLAYERS OUT OF FOUR COULD NOT HEAR A SLIDE.
-            // `StepSlide` reads `_motor.Intent`, so it runs only on the peer that owns the seat,
-            // and `HostResolveSlide` plays no cue at all: the one player who already knew they
-            // had committed was the only one told about it. **The taya is who that sound is
-            // for.** `docs/VISION.md` § 0 is the argument: the run back in is the moment worth
-            // reading, and an attacker committing is the loudest thing that happens during it.
-            //
-            // ⚠️ THE SAME SHAPE `bump_swing` ALREADY HAS, and `tools/audit_cue_relay.py` carries
-            // an `OWNER_DRIVEN` row for each: input-driven, played once locally, relayed once.
-            //
-            // ⚠️ A REFUSED SLIDE HAS ALREADY MADE ITS SOUND, AND THAT TRADE IS THE SHOVE'S.
-            // `StepShove` plays before the host resolves too. Waiting for the host would put the
-            // sound a round trip after the press on every client, which is worse for the one verb
-            // this is trying to make legible.
-            //
-            // ⚠️ AND IT IS VARIED NOW. `AudioDirector.PlayAtVaried`: *"Repeated slippers,
-            // footsteps and impacts otherwise expose that they are the exact same recording
-            // within seconds."* ⚠️⚠️ `dash` is ALSO what `bump_swing` aliases to, so a shove and
-            // a committed slide are the same recording; that is a sound-source call rather than
-            // an engineering one and it is `Attention.md` § 18.1.
-            NetCue.PlayVaried("slide_scrape", transform.position);
-
-            if (NetAuthority.ShouldRequest())
-            {
-                Net.MatchRpc.Instance?.RequestSlideServerRpc(
-                    _motor.PlayerSlot, _slideFrom, forward);
-            }
-            else if (NetAuthority.IsNetworked)
-            {
-                // ⚠️⚠️ `"slide"`, MATCHING THE `PlayAction` ABOVE. This said `"lunge"`, so the
-                // peer that slid asked for one clip and the three watching it were told another.
-                // § 150.8 renamed the two `PlayAction` sites and not the two BROADCAST sites, and
-                // it is invisible today only because both names resolve to `attack-kick-right` on
-                // the CC0 rig. **The day `ASTRA.md` task 3 lands, the owner would see the slide
-                // and everybody else a kick**, which is the hardest class of animation bug to
-                // attribute: the clip works, on one machine.
-                Net.MatchRpc.Instance?.BroadcastAction(_motor.PlayerSlot, "slide");
-            }
-        }
-
-        /// <summary>
-        /// Collects an eligible tsinelas anywhere along the slide, host-side.
-        ///
-        /// ⚠️⚠️ ALONG THE SEGMENT AND EVERY FRAME, FOR `SweepLungeTag`'S REASON. A dash sampled
-        /// only where it stops passes straight over anything in the middle of it at 60 Hz, and
-        /// the whole point of this verb is to arrive AT the shoe rather than past it.
-        ///
-        /// ⚠️⚠️ AND IT CHECKS LINE OF SIGHT, WHICH THE TAG SWEEP DOES NOT NEED TO. A tag is
-        /// resolved between two bodies that are both being pushed out of geometry by the physics
-        /// engine, so a segment between them is a segment through open street. A tsinelas is not:
-        /// `Slipper` comes to rest wherever it lands, including hard against the far side of a
-        /// wall or a jeepney, and a radius around a segment does not know a wall is there. Without
-        /// this an attacker could stand against a wall and slide a shoe through it.
-        ///
-        /// ⚠️ ONE PER SLIDE. `_slideActiveLeft` is cleared on the first success, so a slide that
-        /// passes two loose tsinelas takes one, exactly as a walk-up would.
-        /// </summary>
-        private void SweepSlideRetrieval()
-        {
-            if (!NetAuthority.ShouldResolve()) return;
-            if (_carrier == null || _carrier.Held != null) return;
-
-            var round = GameServices.Round;
-            if (round == null) return;
-
-            Vector3 a = Flat(_slideFrom);
-            Vector3 b = Flat(transform.position);
-
-            Slipper best = null;
-            float bestDistance = float.MaxValue;
-
-            foreach (var s in BotSlipperInventory.All)
-            {
-                if (s == null) continue;
-
-                // ⚠️ THE ELIGIBILITY GATE IS THE PICKUP'S OWN, ASKED UNCHANGED. The only thing
-                // the slide relaxes is WHERE the attacker has to be standing, so the radius test
-                // is re-done against the segment below and everything else in that method still
-                // applies exactly as it does to a walk-up.
-                if (!s.IsGrabbableIgnoringReach(_motor)) continue;
-
-                Vector3 at = Flat(s.transform.position);
-                float d = DistanceToSegment(at, a, b);
-                if (d > Balance.PickupRadius || d >= bestDistance) continue;
-                if (!ReachableThroughTheStreet(transform.position, s.transform.position)) continue;
-
-                bestDistance = d;
-                best = s;
-            }
-
-            if (best == null) return;
-            if (!best.HostGrab(_motor)) return;
-
-            _slideActiveLeft = 0.0f;
-
-            // ⚠️⚠️ THERE IS NO STYLE AWARD HERE AND THE FIRST VERSION HAD ONE, WHICH
-            // `tools/audit_presentation_reach.py` CAUGHT ON THE RUN IT WAS WRITTEN. It reported
-            // the only HOST-ONLY presentation call site in the whole game (98 sites, 97
-            // reachable), and it was right twice over:
-            //
-            //  1. **The pickup already reports style.** `Slipper.HostGrab` calls
-            //     `Carrier.NotifyHolding`, which fires `ReportStyle` on EVERY peer for every
-            //     pickup however it happened. A second award here is the same retrieval paid
-            //     twice, which is `docs/TODO.md` § 57.3's fault in the cosmetic bar.
-            //  2. **A call inside a `ShouldResolve()` gate is one player's.** `Hud.ReportStyle`
-            //     does relay by default, so it would in fact have reached the seat's owner, but
-            //     an audit that has to know that about every call site is an audit nobody can
-            //     read, and the correct call site is the one that already runs everywhere.
-            //
-            // ⚠️ THE CALLOUT STILL NAMES THE SLIDE, in `Carrier.NotifyHolding`, off
-            // `CharacterMotor.IsCommitted`. One award, one funnel, and the word says which
-            // retrieval it was.
-        }
-
-        /// <summary>
-        /// Whether a straight line from this body to that point crosses the world.
-        ///
-        /// ⚠️ IT IS A RAYCAST AND IT IS THE ONE IN THIS FILE, which is worth saying out loud
-        /// because `CLAUDE.md` § 4 says contact resolves by DISTANCE and never by a trigger. That
-        /// rule is about who a verb REACHES; this is about whether a wall is in the way, which a
-        /// distance cannot answer and a trigger volume never could either.
-        ///
-        /// ⚠️ IT IGNORES TRIGGERS AND THE BODIES. A player standing between an attacker and their
-        /// tsinelas is not a wall, and a hazard zone is not either; the shoe under a jeepney is.
-        ///
-        /// ⚠⚠ THE ORIGIN IS A PARAMETER AND IT USED TO BE `transform.position`, WHICH MADE THE
-        /// PREDICATE AND THE HOST ASK DIFFERENT QUESTIONS. The host resolves a slide from the
-        /// pose the CLIENT claimed; casting from the host's own copy of the body would answer
-        /// about a position up to `IntentPoseLeeway` away from the one being asked about.
-        /// </summary>
-        private bool ReachableThroughTheStreet(Vector3 from, Vector3 target)
-            => Slipper.ReachableThroughTheStreet(from, target);
-
-        // -------------------------------------------------------------------
         // HOST-SIDE RESOLUTION.
         //
         // ⚠️⚠️ THESE ARE THE ONLY PLACES A VERB LANDS, AND BOTH PATHS COME THROUGH THEM. The
@@ -787,13 +487,13 @@ namespace TumbangPreso
             if (!NetAuthority.ShouldResolve() || _punchCooldown > 0.0f ||
                 !_motor.IsDefender || !_motor.CanAct()) return false;
 
-            _punchCooldown = Balance.PunchCooldown;
+            _punchCooldown = _punchCooldownTotal = Balance.PunchCooldown;
             Animator?.PlayAction("punch");
 
             var victim = FindInCone(from, facing, Balance.PunchRange, Balance.PunchArcDeg,
                                     requireTaggable: true);
 
-            if (victim != null) GameServices.Round?.ResolveTag(_motor, victim);
+            if (victim != null && GameServices.Round?.TryResolveTag(_motor, victim) == true) ConfirmPunchResult(true);
             return true;
         }
 
@@ -820,51 +520,8 @@ namespace TumbangPreso
             return true;
         }
 
-        /// <summary>
-        /// An attacker's retrieval slide, resolved from the sender's own frame.
-        ///
-        /// ⚠️⚠️ IT RE-CHECKS EVERYTHING AND TAKES THE STAMINA HERE, which is `HostResolveShove`'s
-        /// shape and not an accident. A client that has predicted the dash has also predicted the
-        /// cost; if the host refuses, `RefuseVerb` hands the local prediction back. A host that
-        /// applied the impulse without spending would let a client slide for free by lying about
-        /// its own bar.
-        ///
-        /// ⚠️ THE SWEEP FOLLOWS THE HOST'S OWN IMPULSE, so a slide cannot collect from a position
-        /// the dash never actually reached. Same guarantee `HostResolveLunge` states for the tag.
-        /// </summary>
-        public bool HostResolveSlide(Vector3 from, Vector3 facing)
-        {
-            // ⚠⚠ THE SAME PREDICATE THE PRESS USED, AND ITS ABSENCE HERE WAS THE HOLE. This
-            // guard used to list the role, the cooldown, the hand, the fatigue and the bar and
-            // stop, so the one thing that makes this verb a RETRIEVAL rather than a dash, that
-            // there is something ahead to retrieve, was checked only on the peer that could
-            // choose not to check it. See `SlideMayStartFrom`.
-            //
-            // ⚠️ THE STAMINA IS SPENT AFTER THE PREDICATE AND THE ORDER IS LOAD-BEARING. A
-            // refusal must cost nothing, because `RollBackRefusedVerb` is what hands a refused
-            // prediction back and there is nothing on the wire that would correct a bar the host
-            // took for a verb it never ran.
-            if (!NetAuthority.ShouldResolve()) return false;
-            if (!SlideMayStartFrom(from, facing, out _)) return false;
-            if (!_motor.Stamina.Spend(Balance.SlideStaminaCost)) return false;
-
-            _slideCooldown = Balance.SlideCooldown;
-            _slideActiveLeft = Balance.SlideActiveTime;
-            _slideFrom = from;
-
-            _motor.Commit(Balance.SlideActiveTime + Balance.SlideRecoveryTime);
-
-            Vector3 flat = facing;
-            flat.y = 0.0f;
-            if (flat.sqrMagnitude < 0.0001f) flat = transform.forward;
-
-            _motor.ApplyImpulse(flat.normalized * Balance.SlideSpeed);
-
-            // ⚠️ THE SLIDE'S OWN ACTION NAME, MATCHING `ReleaseSlide`. See that method for why
-            // the clip behind it is still the lunge's today and what changes when it is not.
-            Animator?.PlayAction("slide");
-            return true;
-        }
+        /// <summary>Refuse the retired wire verb without spending or moving anything.</summary>
+        public bool HostResolveSlide(Vector3 from, Vector3 facing) => false;
 
         /// <summary>An attacker shoving a rival, resolved from the sender's own frame.</summary>
         public bool HostResolveShove(Vector3 from, Vector3 facing)
@@ -882,7 +539,7 @@ namespace TumbangPreso
 
             if (victim == null)
             {
-                _shoveCooldown = Balance.ShoveMissCooldown;
+                _shoveCooldown = _shoveCooldownTotal = Balance.ShoveMissCooldown;
                 return true;
             }
 
@@ -955,16 +612,7 @@ namespace TumbangPreso
                     break;
 
                 case Net.MatchRpc.DeniedVerb.Slide:
-                    _slideCooldown = 0.0f;
-                    _slideActiveLeft = 0.0f;
-                    if (refundResources) _motor.Stamina.Refund(Balance.SlideStaminaCost);
-
-                    // ⚠️⚠️ THE COMMITMENT IS RETURNED TOO, AND IT IS THE ONE A PLAYER WOULD
-                    // ACTUALLY NOTICE. The other two refusals hand back a cooldown and a bar;
-                    // this one has also narrowed the player's steering to 0.35 for most of a
-                    // second, so a refusal that left it running would leave somebody wading
-                    // through a commitment they were told they never made.
-                    _motor.ReleaseCommitment();
+                    // Retired verb: it spends nothing and cannot refund a current action.
                     break;
             }
         }
@@ -1012,7 +660,7 @@ namespace TumbangPreso
             Visual.ComicPopup.Bonk(victim.transform.position);
 
             GameServices.Round?.NoteShove(victim.PlayerSlot, _motor.PlayerSlot);
-            _shoveCooldown = Balance.ShoveCooldown;
+            _shoveCooldown = _shoveCooldownTotal = Balance.ShoveCooldown;
         }
 
         // -------------------------------------------------------------------

@@ -17,6 +17,16 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### ACTION-TIMINGS-1003: revised charge/contact recovery, no retrieval slide
+
+- [x] Throw charge1.5s, tag0.25hit/0.5miss, shove7.5hit/0.5miss, existing lunge
+  timings retained, retrieval slide removed from inputs/bots/host execution.
+  Scoped owner recovery receipts and protocol144. Native25/25 guard-free,
+  full managed709/709.
+  [Evidence and retained failures](reports/action-timings-2026-10-03/README.md).
+- [ ] Matching rebuilt player/live-peer timing acceptance.
+
+
 ### READING-FONT-1003: temporary Nunito Bold replacement
 
 - [x] Replace active Lydian Regular theme/fallback/regeneration references with

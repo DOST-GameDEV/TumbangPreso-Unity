@@ -566,7 +566,8 @@ namespace TumbangPreso.Net
         // 140: occupied lobby seats require recipient consent before an atomic swap.
         // 141: owner restores near-original jump launch, gravity and fall-speed cap.
         // Three-second entry countdown: mixed clients must not release their hold two seconds apart.
-        public const int ProtocolVersion = 143;
+        // Revised throw/contact timings, hit-confirmed punch recovery and retired retrieval slide.
+        public const int ProtocolVersion = 144;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

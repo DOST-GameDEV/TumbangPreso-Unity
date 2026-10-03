@@ -18,15 +18,18 @@ namespace TumbangPreso.Core.Tests
         }
 
         [Fact]
-        public void OlderWireRetainsManualReadyAndItsOriginalRulePrefix()
+        public void OlderWireKeepsAutomaticEntryAndItsOriginalRulePrefix()
         {
             const string old = "0|0|8|90|0|3|0|1|0";
             var rules = CustomGameRules.Parse(old, GameMode.HeroStrike);
-            Assert.True(rules.ManualReady);
+            Assert.False(rules.ManualReady);
             rules.ManualReady = false;
             string wire = CustomGameRules.ToWire(rules);
-            Assert.Equal(old, wire.Substring(0, wire.LastIndexOf('|')));
+            Assert.StartsWith(old + "|", wire);
+            Assert.Equal(11, wire.Split('|').Length);
+            Assert.False(rules.MapVote);
             Assert.False(CustomGameRules.Parse(wire, GameMode.HeroStrike).ManualReady);
+            // Explicit legacy non-zero fields retain their original decoding; the ready gate ignores this flag.
             Assert.True(CustomGameRules.Parse(old + "|unrecognised", GameMode.Classic).ManualReady);
         }
     }
