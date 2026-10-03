@@ -32,38 +32,32 @@ TODO is the only status queue. Reports hold evidence; this file holds execution.
 ## Exact source and outstanding unit
 
 Root checkout: C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
-Published source6c6d8eb36, protocol144, clean detached HEAD before this checkpoint.
+Published sourcedd3c45636, protocol144, clean detached HEAD before this checkpoint.
 Dirty Main is C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks;
 never overwrite/stage its private Amihan/artwork/input metadata. No root Editor.
 
-Root fixture-only branch competition-pc-client-movement-frames1004 is preserved
-and pushed at02128d51b45fe3b0a94db0840aa38d831fd60c3b, base446598a35. It adds only
-Tests/ClientMovementEffectPacketBoundsTests.cs/meta (GUID798008c0282f4f3486890f357e468054).
-FilterTumbangPreso.Tests.ClientMovementEffectPacketBoundsTests,18 EditMode cases.
-OnImpactMsg/OnCarryMsg/OnSyncFamiliarMsg currently read before length preflight.
-Expected original6 short-frame exceptions plus3 trailing partial-decode failures;
-9 complete-frame/foreign-sender/host-loopback controls. Static risk, not yet native
-confirmed. Candidate branch competition-pc-client-movement-frames-candidate1004
-is pushed atfb33fac570140624c3bf8c26f7b93a01c7142e83: only three exact unread-byte/
-TryBeginRead checks20/24/25, fixture/meta unchanged. Both refs were sent to laptop.
-The matching-byte three-guard candidate was normally merged atc63ee80a0 after
-laptop reported the causal baseline and18/18 candidate. Protocol144/wire intact.
-Only MatchRpc.cs and the unchanged18-case fixture/meta entered this code merge.
-No PC native job is authorized.
-Laptop reports original11310 CLOSED9 causal failures/9 controls/end19:57:11UTC
-and candidate70323 CLOSED18/18/end20:20:57UTC. Both3428 post hashes unchanged,
-terminal/restored/free, no repair/retry. Outputsqa-a/Logs/client-movement-original18
-andclient-movement-candidate18, CPU2048+1024MiB/300/profilevalidation-qa-a-be075dcdfa07.
-Root independently matched reported runtimea1fbce62 and fixture054387a8/meta6c69cc75
-to exact candidate Git/Windows newline variants. Raw evidence is being curated;
-NEXT: inspect its published XML/maps/receipts once and record the evidence ref.
-Do not repeat the completed packet runs. This qualifies framing, not effects,
-peers or full gameplay. Pull checked source before freezing14/build inputs.
-Its14 preparation stopped on three retired slide-test inventory entries and was
-checkpointed; those sources/metas were preserved outside compilation. Resume14
-and current144 build after the one original/candidate pair, not another audit.
-Preserve authority/slot/epoch/finite checks and wire/protocol. Follow actual failure,
-not speculative refactoring. No overlapping Unity jobs or unchanged repetitions.
+Root current unit: replay send queues can retain obsolete footage and drop the
+current preferred clip when three slots are full. Existing archive priority is
+authoritative; no Camera/MatchReplayArchive or authored-policy change is allowed.
+Original7b5f5b7a8a3ed7f1d91a30fce5ad236185289ad0 on
+competition-pc-replay-shortlist1004 adds ONLY ReplayShortlistQueueTests.cs/meta.
+FilterTumbangPreso.Tests.ReplayShortlistQueueTests,7 EditMode cases, expected4
+causal/3controls. Existing SendReplayShortlist/QueueReplay are exercised through
+queued IDs/objects/offsets, no live transport or captured clip claim.
+Candidate6150b473c7b0063fec74d8d9cdae754f95ff6e65 on
+competition-pc-replay-shortlist-candidate1004 changes ONLY MatchRpc.Replay.cs.
+It reconciles queues to current archive priority, preserves still-retained begun
+progress, drops obsolete/prior-match entries and skips acknowledged IDs. Same
+fixture/meta; no tick/chunk/rate/wire/protocol change. Both refs are pushed and
+outside ASTRA pending native original/candidate. No PC native job is authorized.
+NEXT: follow laptop's original7 actual handle once launched, then ONE candidate7
+on the unchanged fixture. Inspect actual failures/controls and terminal receipts.
+Do not restart because observation timed out. Laptop reported CPU preparation;
+no wrapper/session ID reported yet. Keep updates short, no speculative refactor.
+Laptop own F6 is shipped a516409c5 + dd3c45636 proof, original1fail5controls ->6/6.
+Its device-loss5 original reported3fail2controls: driving-pad throw/lunge failures
+and an unused-pad control needing isolation. Reader/carrier/debug-switcher remain
+laptop-owned. Root owns Net replay, new queue fixture, account and shared docs.
 
 ## Completed evidence and next integration gates
 
@@ -82,7 +76,12 @@ not speculative refactoring. No overlapping Unity jobs or unchanged repetitions.
   edge-climb6/6 and touch button/stick8/8 each have distinct native evidence in TODO.
 - Latest contact timing/no slide144 native25/25 and managed709/709 are separate.
   Matching packaged144 players/live-peer contact recovery and interruption remain.
-- Laptop plans reader/practice/font14 then ONE current144 Windows artifact;
+- Current144 reader/practice/font14 passed14/14, source d81f, proofb1774dae2,
+  terminal/restored/free and3428 unchanged after exact quality restoration.
+  Packet guards shipped8ea; root inspected six exact raw blobs75cd/d81f, XML
+ 9malformed failures/9controls ->18/18, one Runtime delta and frozen fixture/meta.
+  Framing only; no repeated packet or14 tests. Prior wrappers are CLOSED.
+- Laptop plans ONE current144 Windows artifact after its current source unit;
   build admission6144+1536MiB needs actual headroom. Ask compact live status before
   assuming that plan launched. No duplicate PC job or old143 build qualification.
 - All-map composition, actual overlay/motion/audio, full Classic gameplay,
