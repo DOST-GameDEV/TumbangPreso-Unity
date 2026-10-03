@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Passed" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 12:27:32Z" end-time="2026-10-03 12:27:34Z" duration="1.245365">
+  <test-suite type="TestSuite" id="2747" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1421" result="Passed" start-time="2026-10-03 12:27:32Z" end-time="2026-10-03 12:27:34Z" duration="1.245365" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2741" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1421" result="Passed" start-time="2026-10-03 12:27:32Z" end-time="2026-10-03 12:27:34Z" duration="1.236053" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="97794" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2742" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1421" result="Passed" start-time="2026-10-03 12:27:32Z" end-time="2026-10-03 12:27:34Z" duration="1.232793" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2743" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1421" result="Passed" start-time="2026-10-03 12:27:32Z" end-time="2026-10-03 12:27:34Z" duration="1.230033" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1290" name="ClosedCircuitTests" fullname="TumbangPreso.PlayTests.ClosedCircuitTests" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-10-03 12:27:32Z" end-time="2026-10-03 12:27:34Z" duration="1.205446" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1299" name="AcceptedCastPlaysAuthoredBodyAndPreservesContactTiming" fullname="TumbangPreso.PlayTests.ClosedCircuitTests.AcceptedCastPlaysAuthoredBodyAndPreservesContactTiming" methodname="AcceptedCastPlaysAuthoredBodyAndPreservesContactTiming" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" seed="618267029" result="Passed" start-time="2026-10-03 12:27:33Z" end-time="2026-10-03 12:27:33Z" duration="0.524332" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1292" name="BrokenAimAndNewWallCancelWithoutSpendingCooldown" fullname="TumbangPreso.PlayTests.ClosedCircuitTests.BrokenAimAndNewWallCancelWithoutSpendingCooldown" methodname="BrokenAimAndNewWallCancelWithoutSpendingCooldown" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" seed="846145649" result="Passed" start-time="2026-10-03 12:27:33Z" end-time="2026-10-03 12:27:33Z" duration="0.038986" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1291" name="LockCommitsOnlyAfterMaintainedAimWithoutRooting" fullname="TumbangPreso.PlayTests.ClosedCircuitTests.LockCommitsOnlyAfterMaintainedAimWithoutRooting" methodname="LockCommitsOnlyAfterMaintainedAimWithoutRooting" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" seed="1877199524" result="Passed" start-time="2026-10-03 12:27:33Z" end-time="2026-10-03 12:27:33Z" duration="0.036687" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1294" name="OverclockRequiresDifferentTargetAndCannotRefillAThirdCast" fullname="TumbangPreso.PlayTests.ClosedCircuitTests.OverclockRequiresDifferentTargetAndCannotRefillAThirdCast" methodname="OverclockRequiresDifferentTargetAndCannotRefillAThirdCast" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" seed="1153018050" result="Passed" start-time="2026-10-03 12:27:33Z" end-time="2026-10-03 12:27:33Z" duration="0.037228" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1300" name="OwnerGestureActuallyMovesAndTellUsesTheVisiblePalm" fullname="TumbangPreso.PlayTests.ClosedCircuitTests.OwnerGestureActuallyMovesAndTellUsesTheVisiblePalm" methodname="OwnerGestureActuallyMovesAndTellUsesTheVisiblePalm" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" seed="255173673" result="Passed" start-time="2026-10-03 12:27:33Z" end-time="2026-10-03 12:27:33Z" duration="0.321807" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1293" name="RangeBehindAndRoundEndCannotCompleteALock" fullname="TumbangPreso.PlayTests.ClosedCircuitTests.RangeBehindAndRoundEndCannotCompleteALock" methodname="RangeBehindAndRoundEndCannotCompleteALock" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" seed="1797092586" result="Passed" start-time="2026-10-03 12:27:33Z" end-time="2026-10-03 12:27:34Z" duration="0.046759" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1297" name="RecoveryAgesTheTellWithoutApplyingAHitOrReopeningAnExpiredWindow" fullname="TumbangPreso.PlayTests.ClosedCircuitTests.RecoveryAgesTheTellWithoutApplyingAHitOrReopeningAnExpiredWindow" methodname="RecoveryAgesTheTellWithoutApplyingAHitOrReopeningAnExpiredWindow" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" seed="1769249950" result="Passed" start-time="2026-10-03 12:27:34Z" end-time="2026-10-03 12:27:34Z" duration="0.044510" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1296" name="RemoteAimMustBeFreshScopedToTheAcquisitionAndActuallyMaintained" fullname="TumbangPreso.PlayTests.ClosedCircuitTests.RemoteAimMustBeFreshScopedToTheAcquisitionAndActuallyMaintained" methodname="RemoteAimMustBeFreshScopedToTheAcquisitionAndActuallyMaintained" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" seed="1830948799" result="Passed" start-time="2026-10-03 12:27:34Z" end-time="2026-10-03 12:27:34Z" duration="0.043224" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1295" name="RepeatingTheFirstVictimEndsTheOptionalWindow" fullname="TumbangPreso.PlayTests.ClosedCircuitTests.RepeatingTheFirstVictimEndsTheOptionalWindow" methodname="RepeatingTheFirstVictimEndsTheOptionalWindow" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" seed="2058394510" result="Passed" start-time="2026-10-03 12:27:34Z" end-time="2026-10-03 12:27:34Z" duration="0.039519" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1298" name="TellIsVisibleWhileAcquiringAndDisappearsOnCancellation" fullname="TumbangPreso.PlayTests.ClosedCircuitTests.TellIsVisibleWhileAcquiringAndDisappearsOnCancellation" methodname="TellIsVisibleWhileAcquiringAndDisappearsOnCancellation" classname="TumbangPreso.PlayTests.ClosedCircuitTests" runstate="Runnable" seed="1902583584" result="Passed" start-time="2026-10-03 12:27:34Z" end-time="2026-10-03 12:27:34Z" duration="0.057590" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -125,6 +125,10 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(120000)] public IEnumerator AcceptedCastPlaysAuthoredBodyAndPreservesContactTiming()
+            => ReviewCast(false);
+        [UnityTest, Timeout(120000)] public IEnumerator OwnerGestureActuallyMovesAndTellUsesTheVisiblePalm()
+            => ReviewCast(true);
+        private IEnumerator ReviewCast(bool ownerView)
         {
             var ctx = Stage(out var kit, out var target);
             var motor = ctx.Motor; motor.Mode = GameMode.HeroStrike;
@@ -134,9 +138,22 @@ namespace TumbangPreso.PlayTests
             visual.ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
             var priorRate = Time.captureFramerate;
             var priorAmbient = RenderSettings.ambientLight;
+            var priorSeat = GameLaunch.SoloSeat; var priorBots = GameLaunch.AllBots;
+            var priorSpectator = GameLaunch.Spectator;
+            var priorReduced = Settings.SettingsStore.Current.ReducedUiMotion;
             try
             {
                 Time.captureFramerate = 60;
+                GameLaunch.SoloSeat = motor.PlayerSlot; GameLaunch.AllBots = false; GameLaunch.Spectator = false;
+                Settings.SettingsStore.Current.ReducedUiMotion = false;
+                if (ownerView)
+                {
+                    var owner = Track(new GameObject("Circuit owner camera")); owner.tag = "MainCamera";
+                    var rig = owner.AddComponent<CameraSystem.CameraRig>();
+                    rig.Follow(motor, true);
+                    rig.SetAimSource(CameraSystem.AimSource.Movement);
+                }
+                yield return null; yield return null;
                 yield return null;
                 var body = motor.GetComponentInChildren<CharacterAnimator>();
                 Assert.IsNotNull(body);
@@ -146,6 +163,17 @@ namespace TumbangPreso.PlayTests
                 var skin = visual.Model.GetComponentInChildren<SkinnedMeshRenderer>();
                 int armIndex = System.Array.FindIndex(skin.bones, b => b == arm);
                 Assert.IsTrue(CharacterVisual.PalmCentre(skin, armIndex, out var palm));
+                var ownerArms = ownerView ? Object.FindFirstObjectByType<CameraSystem.ViewmodelArms>() : null;
+                if (ownerView)
+                {
+                    Assert.IsNotNull(ownerArms);
+                    Assert.AreSame(motor, ownerArms.BoundCharacter);
+                }
+                var ownerHand = ownerArms != null ? ownerArms.LeftHandForProps() : null;
+                if (ownerView) Assert.IsNotNull(ownerHand);
+                var ownerNeutral = ownerHand != null ? ownerHand.localRotation : Quaternion.identity;
+                float largestOwnerAngle = 0; bool sawOwnerAction = false;
+                var actionField = typeof(CameraSystem.ViewmodelArms).GetField("_actionName", BindingFlags.Instance | BindingFlags.NonPublic);
                 var camera = Track(new GameObject("Circuit body observer")).AddComponent<Camera>();
                 camera.enabled = false; camera.fieldOfView = 42;
                 camera.transform.position = motor.transform.position + new Vector3(2.4f, 1.5f, 3.3f);
@@ -163,11 +191,17 @@ namespace TumbangPreso.PlayTests
                 {
                     sawAction |= body.CurrentClipName == "hero-zack-circuit";
                     largestAngle = Mathf.Max(largestAngle, Quaternion.Angle(neutral, arm.localRotation));
+                    if (ownerView)
+                    {
+                        largestOwnerAngle = Mathf.Max(largestOwnerAngle, Quaternion.Angle(ownerNeutral, ownerHand.localRotation));
+                        sawOwnerAction |= (string)actionField.GetValue(ownerArms) == "closed-circuit";
+                    }
                     var tell = motor.GetComponentInChildren<ZackCircuitTell>()?.GetComponent<LineRenderer>();
                     if (frame > 1 && tell != null && tell.enabled)
                     {
                         sawHandTell = true;
-                        largestHandGap = Mathf.Max(largestHandGap, Vector3.Distance(tell.GetPosition(0), arm.TransformPoint(palm)));
+                        var expectedPalm = ownerView ? ownerHand.TransformPoint(ownerArms.LeftPalmOffset()) : arm.TransformPoint(palm);
+                        largestHandGap = Mathf.Max(largestHandGap, Vector3.Distance(tell.GetPosition(0), expectedPalm));
                     }
                     if (frame == 22) Assert.IsFalse(target.IsZapped, "Contact happened before acquisition completed.");
                     kit.Skill2.Tick(ctx, 1f / 60);
@@ -176,6 +210,11 @@ namespace TumbangPreso.PlayTests
                     else yield return null;
                 }
                 Assert.IsTrue(sawAction, "Accepted cast never reached the registered body clip.");
+                if (ownerView)
+                {
+                    Assert.IsTrue(sawOwnerAction, "The confirmation bridge did not dispatch the dedicated owner gesture.");
+                    Assert.Greater(largestOwnerAngle, 10, "The visible owner hand did not actually perform its gesture.");
+                }
                 Assert.IsTrue(sawHandTell, "No active hand-attached acquisition tell was observed.");
                 Assert.Less(largestHandGap, .08f, "The acquisition line must follow the moving casting palm.");
                 Assert.Greater(largestAngle, 30, "The registered action did not actually animate its arm.");
@@ -184,7 +223,12 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(motor.CanAct(), "Presentation must not add a movement lock.");
                 Assert.IsFalse(body.IsPlayingAction, "Acquisition gesture did not recover.");
             }
-            finally { Time.captureFramerate = priorRate; RenderSettings.ambientLight = priorAmbient; }
+            finally
+            {
+                Time.captureFramerate = priorRate; RenderSettings.ambientLight = priorAmbient;
+                GameLaunch.SoloSeat = priorSeat; GameLaunch.AllBots = priorBots; GameLaunch.Spectator = priorSpectator;
+                Settings.SettingsStore.Current.ReducedUiMotion = priorReduced;
+            }
         }
     }
 }
