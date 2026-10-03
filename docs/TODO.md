@@ -17,6 +17,15 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### EMOTE-TARGET-OWNER-1003: the wheel follows local input
+
+- [x] Active-reader ownership replaces ambiguous AI-absence discovery. Network
+  LocalSlot and parked-state fences preserve tutorial, replacement-reader and
+  temporary-AI controls. Original five failures/three controls, candidate8/8;
+  root inspected XML, unchanged fixture and3390-input maps plus restored guards.
+  [Evidence](reports/reliability-2026-10-03/emote-target-ownership/README.md).
+  Actual wheel/device/possession/live-peer acceptance remains separate.
+
 ### CAST-PREPARATION-FRAME-1003: reject incomplete host payloads
 
 - [x] Preflight fixed header, bounded UTF16 name and exact52-byte tail before

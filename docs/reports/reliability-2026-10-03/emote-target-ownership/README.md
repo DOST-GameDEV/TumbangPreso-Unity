@@ -17,13 +17,19 @@ no-reader and parked-owner cases, replacement reader, temporary active AI with
 human hero input and tutorial fallback. No discovery order is imposed. An empty
 isolated scene is required so unrelated actors cannot determine the result.
 
-Runtime and test assemblies compile against installed Unity references. Native
-original/candidate validation is queued to the laptop; no native outcome is
-claimed yet. The fixture namespace was corrected during source preflight before
-any native run. This checks the exact selector used by the wheel callback, not
-whole device, wheel UI, RPC or possession playback. Actual multiplayer emotes
-remain part of the matching-player gate.
+Original8 reproduced five causal failures and passed three controls. Candidate8
+passed8/8. Root inspected raw XML, terminal/restored/free receipts and full3390
+input maps published at99ae1469f: only MatchInstaller.cs changed. The fixture and
+meta remained identical, with native line-ending conversions checked against
+the immutable Git refs. There was no native repair or repeated run. Runtime and
+test assemblies compile too. The fixture namespace was corrected during source
+preflight before any native run.
 
-Candidate is pushed on competition-pc-emote-owner1003, not ASTRAReworks. It
-descends from the separately queued cast-preparation framing candidate. Inspect
-both units' evidence before integrating the combined branch. No PC Unity run.
+[Raw evidence](../../laptop-validation-2026-10-03/emote-target-ownership/README.md).
+This checks the exact selector used by the wheel callback, not whole device,
+wheel UI, RPC or possession playback. Actual multiplayer emotes remain part of
+the matching-player gate.
+
+The checked selector is integrated with current ASTRAReworks and the independently
+checked cast-preparation guard. The laptop performed native validation while
+Claude owned PC Unity. No PC Unity run was started.
