@@ -135,14 +135,18 @@ namespace TumbangPreso.Visual
                 c.Breath = new WindVfx.Motif(host, 14, 31.7f + p.PlayerSlot * 5.3f, .45f);
             }
             // ⚠️ HIDDEN BY SWITCHING THE HOLDER OFF, NOT BY `forceRenderingOff` (`SetVisibleForCapture` turns every renderer under
-            // the root on for each capture, which would stand them in her CALL and WEAVE). They step in on the cut to the WARP.
+            // the root on for each capture). `SampleAmihanLane` switches them on.
             holder.SetActive(false);
             return c;
         }
 
-        private void SampleAmihanLane(float t)
+        /// <summary>Posed on <paramref name="story"/>, the story clock (`AmStory`): they brace, are thrown and hang in the
+        /// slow-motion with everything else; only their fade at the hand-back keeps the scene clock <paramref name="t"/>.</summary>
+        private void SampleAmihanLane(float t, float story)
         {
-            bool on = t >= AmWarpAt - .005f;
+            // v5: she performs on the real court from the first frame (the street stage is gone), so the players stand where
+            // they are from the first frame too; an empty court that fills at the commit would not make sense.
+            bool on = t >= 0f;
             float light = _reducedEffects ? .5f : 1f;
             float leave = 1 - Ease(Seconds - .30f, Seconds, t);
             for (int i = 0; i < _alBodies.Count; i++)
@@ -150,10 +154,10 @@ namespace TumbangPreso.Visual
                 var c = _alBodies[i];
                 if (c.Holder != null && c.Holder.activeSelf != on) c.Holder.SetActive(on);
                 if (!on) { c.Breath?.Step(0f, 0f, (_, __, ___) => Vector3.zero); continue; }
-                AlPose(c, t);
+                AlPose(c, story);
                 if (c.Breath == null) continue;
                 // A breath of cotton streaming past them, down the lane away from her, from the moment the wind reaches them.
-                float s = t - c.BraceAt;
+                float s = story - c.BraceAt;
                 var flat = new Vector3(c.Feet.x, 0f, c.Feet.z);
                 var away = flat.sqrMagnitude > 1e-4f ? flat.normalized : Vector3.forward;
                 var side = Vector3.Cross(Vector3.up, away);

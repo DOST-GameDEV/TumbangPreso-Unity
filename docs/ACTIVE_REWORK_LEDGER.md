@@ -1,6 +1,97 @@
 # Active Rework Checkpoint
 
+## Latest owner steering: laptop owns testing while Claude edits Amihan
+
+October3 owner explicitly asks the existing laptop chat to do all PC testing
+again. Message sent to Fix gameplay interruption recovery, thread
+01a0ffab-10a0-70d0-9270-07e171c1613b on its connected laptop host. Current source
+2a50f2532/protocol141 is pushed. Laptop asked to finish/checkpoint its current
+F6/default-seat unit, confirm reservations/jobs and take the full test queue:
+14-case reader/practice/font integration, new1-case PerformanceTimingCaptureTests,
+ONE matching141 Windows build plus exact-player startup/entry/CSV timing checks,
+then coordinated matching LAN/online cases when the PC is actually available.
+Request delivered; acceptance/results are not yet confirmed. Old139 capture and
+134 LAN passes do not qualify141. No paid service or extra-credit authorization.
+
+PC continues source fixes/publication; do not start PC Unity tests/builds/players
+while Claude owns the slot. Preserve laptop gameplay and Claude/private Amihan
+reservations. This new direct owner request authorizes messages to that existing
+laptop chat despite the earlier stale ban. No unrelated chats/new agents.
+NEXT: get one compact laptop acknowledgement/status, then continue a disjoint
+PC source task and use its concrete validation feedback. Do not repeat interrupted
+PC tests or recreate large binary traces.
+
+## Resume here: October 3, current source and bounded capture
+
+Publication2e4e0615e/protocol141 includes current laptop fixes and compact
+performance timing. Binary profiler capture is now explicit, selected-hero only
+in the launcher and stopped at a sampled512MiB output threshold. Python and full
+runtime Roslyn compilation pass; two invalid requests reject before launch.
+New default timing native case has NO pass: admission refused a GPU lease,
+bounded retry interrupted at1002MiB/1024 reserve after Main began another run.
+Only owned19552/1960 stopped; guard restored/free. No further retry at unchanged
+headroom and no new second-slot overlap qualification.
+
+Main checkout remains5805d85f6 with private staged Amihan deletions and owner
+overlays. Its merge refused; nothing was reset or unstaged. A conflict-free Git
+tree merge published a8b05b103 without changing private files, then the new
+capture fix published2e4e0615e from clean shipping checkout1003i.
+
+Isolated worker1003 at670d9c851 contains matching141 production source with its
+validation identity. New14-case input/font integration INTERRUPTED before tests:
+memory1529MiB below1536 reserve, only owned Editors2000/32236 stopped. Guard
+terminal/restored/free; no XML pass. Evidence in workerLogs/current-integration141-input-font.
+
+Shipping checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i
+owns the reused Library moved from idle1003h. Old1003h source and accepted139
+player remain intact; its Library is now absent. No extra cache copy, deletion,
+new agent or outgoing conversation was started. Workflow13696 is TERMINAL:
+19148 tracked source inputs frozen, build admission REFUSED after120s by an
+occupied project/Library/profile/preference-hive lease. No build Editor/artifact.
+Native attempt10898 is terminal/interrupted/restored, without test XML or raw
+traces. NEXT: continue a disjoint source fix while Main's Amihan work runs.
+Revisit pending default timing and141 player only after an actual slot/headroom
+change; default timing's bounded repair was already used. Old139
+startup and134 LAN evidence cannot qualify the141 artifact.
+
 ## PC root latest checkpoint: October 3, Unity slot isolation
+
+LATEST RESUME FIRST (October3,20:04 Manila): Main9ccf6145d published/protocol141.
+Nameplate preloade95069a2c pushed with nativewarmup1+loadinghook1; unchanged fonts/
+appearance, numeric refreshed-player reduction remains open. Old sections below
+describe terminal jobs, not active work. No task-owned Editor/player/server/browser
+is running. Do not reread whole history or regenerate internal metadata filler.
+
+Accepted development artifact: C:/Users/matth/Documents/Codex/work/
+tump-competition-candidate1003h/Builds/competition-candidate1003h-lowmem/
+TumbangPreso.exe. Frozen9d21820c3/protocol139, Development|ConnectWithProfiler,
+full manifest400files/2628366970bytes/SHA90d1e910b71591e3c51173e2b087c49aee56ecaac5ed48750543d120a1284273.
+Runtime520ec9902719ee7381ac70d2111bcb3dbb88a2cad19d73d7a42f56f83b0d2ac8.
+Build98s/2506MB, normalguard/restored/free; strictretryFALSE (twoidentity changes,
+four performance-package cleanup files) independently classified; initial213
+import/generated deltas verified, no C#/Package drift. Startup/menuPASS,2722
+silentframes, input restored/runtime same, nativeHub visually inspected.
+Current141/lobby/jump/later input/font fixes are EXCLUDED, not peer-qualified.
+
+Performance partial127windows/14.43GBraw at quality2/windowed1280x720 with dev/
+profiler overhead. Copied outer450s wrapper timed out; ownedplayer10256 stopped
+and no process remains; guardinput restored/runtime unchanged. No whole-route
+pass. Native raw-profile read: Nemu multi-second peaks dominated profiler2D
+collection; realfirstMap font-cache2.57s is the nameplate preload source evidence.
+Temporary profiler reader removed, savedsource/sampleJSON retained in workerLogs.
+Raw pruning was AUTOMATICALLY BLOCKED by policy;0deleted, no bypass. Both old
+12.6GB build cleanup and newraw cleanup blockers retained in reports.
+
+Reusable validation worker tump-codex-slot1003 atca95f6e22 retains unique company/
+product/cache/profile and frozen9d/139 overlay scopes; runner39/workerprep10 pass.
+No newagents/outgoing chats/resets/services. Preserve ALL Mainprivate/contributor
+dirt (arms/PNGmeta/HeroHazards/Quality/Amihan/intro clips/authoring helpers).
+NEXT CONCRETE ACTION: inspect relevant current TODO gate and choose ONE disjoint
+fix or accepted-artifact test. No repeated unchanged validation; no broad.raw
+capture. Corrected narrowhelper exists at1003h/Logs/competition-candidate1003h-lowmem/
+run_performance_narrow.py (Phaister/1900s), but has NOT run. Avoid moretracegrowth
+until budget/pruning policy resolves. Matching-packet141 player/actual peers still
+needed; keep accepted139 andold134 binaries/receipts isolated.
 
 BUILD update: first1003h Development graphics attempt interrupted at physical
 1525MB <1536MB reserve. Only owned Editors17384/17460 stopped; guard returned/

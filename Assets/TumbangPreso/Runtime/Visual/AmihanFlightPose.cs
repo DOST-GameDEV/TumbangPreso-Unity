@@ -11,6 +11,8 @@ namespace TumbangPreso.Visual
         private CharacterVisual _visual;
         private CharacterAnimator _animator;
         private Abilities.HeroKit _kit;
+        private AmihanHoverRing _ring;
+        private Vector2 _legLeft, _legLeftSpeed, _legRight, _legRightSpeed;
         private int _movementEpoch;
         private GameObject _model;
         private readonly Transform[] _bones = new Transform[7];
@@ -137,29 +139,54 @@ namespace TumbangPreso.Visual
             _applied = true;
 
             float land = _landing >= 0 ? Mathf.Sin(Mathf.Clamp01(_landing / .28f) * Mathf.PI) : 0;
-            // HER OWN FLOAT (owner, 2026-10-03: *"make her legs/body look like theyre floating"*, *"dont copy wanderer
-            // completley"*): she sits on the breeze rather than diving through it. A slight easy lean, knees together and
-            // carried a little forward, one foot tucked behind the other, everything swaying slowly; reaching down to land.
+            // RIDING THE UPDRAFT. The owner on v4 (2026-10-03): *"doesnt feel like she's flyying and doesnt feel like she has
+            // air pushing her up"*. v4 sat her on the breeze (knees forward, arms at her sides), which read as a chair in the
+            // sky. Now the air under her carries her body: legs hang loose and trail with a lazy kick, chest up, arms spread
+            // wide palms down as if leaning on the air, and each gust that breaks against her soles (`AmihanHoverRing.Push`)
+            // lifts her, opens her arms and swings her legs, then she settles back onto it. She reaches down to land.
+            if (_ring == null) _ring = GetComponentInChildren<AmihanHoverRing>();
+            float push = _ring != null ? _ring.Push : 0;
             float rest = flying ? 1 - .7f * _descent : 0;
             _clock += dt; // the presentation clock: a held match holds the sway too
-            float sway = Mathf.Sin(_clock * 1.7f), drift = Mathf.Sin(_clock * 1.1f + 1.3f);
-            Turn(1, new Vector3(_lean.x + 5 * land + 6 * rest, 0, _lean.y + 2.5f * drift * rest));
-            Turn(2, new Vector3(-_lean.x * .45f - 3 * land - 4 * rest, 0, -_lean.y * .4f - 1.5f * drift * rest));
+            float drift = Mathf.Sin(_clock * 1.1f + 1.3f);
+            Turn(1, new Vector3(_lean.x + 5 * land - 5 * rest - 4 * push, 0, _lean.y + 2.5f * drift * rest));
+            Turn(2, new Vector3(-_lean.x * .45f - 3 * land - 6 * rest - 3 * push, 0, -_lean.y * .4f - 1.5f * drift * rest));
             bool launch = _animator != null && _animator.CurrentClipName == "hero-amihan-updraft" && _animator.IsPlayingAction;
             if (!launch)
             {
                 // A charge/throw owns the arms; its standing clip must not straighten the airborne legs.
                 float reach = 6 * _descent;
-                Turn(3, new Vector3(-17 * rest - 3 * sway * rest + reach - 8 * land, 0, 4 * rest + _lean.y * .25f + 3 * land));
-                Turn(4, new Vector3(-6 * rest + 3 * sway * rest - reach + 6 * land, 0, -4 * rest + _lean.y * .15f - 3 * land));
+                Dangle(ref _legLeft, ref _legLeftSpeed, velocity, push, 38, 1.3f, 0f, dt);
+                Dangle(ref _legRight, ref _legRightSpeed, velocity, push, 31, 1.75f, 2.1f, dt);
+                Turn(3, new Vector3((8 + _legLeft.x) * rest - reach - 8 * land, 0, (-5 + _legLeft.y) * rest + 3 * land));
+                Turn(4, new Vector3((4 + _legRight.x) * rest + reach + 6 * land, 0, (5 + _legRight.y) * rest - 3 * land));
                 if (_animator == null || !_animator.IsPlayingAction)
                 {
-                    // Arms a little away from her sides, drifting as if resting on the air.
-                    Turn(5, new Vector3(-4 * rest, 0, -(9 + 3 * drift) * rest));
-                    Turn(6, new Vector3(-4 * rest, 0, (9 - 3 * drift) * rest));
+                    // Arms spread wide on the air, rising with each gust and sinking back onto it.
+                    float spread = (38 + 4 * drift + 14 * push) * rest;
+                    Turn(5, new Vector3(-6 * rest, 0, -spread));
+                    Turn(6, new Vector3(-6 * rest, 0, spread));
                 }
             }
-            if (_bones[0] != null) _bones[0].localPosition += Vector3.down * (.025f * land);
+            // Carried: a slow bob on the column, a lift on every gust.
+            float carried = (.03f * Mathf.Sin(_clock * 2.0f) + .07f * push) * rest;
+            if (_bones[0] != null) _bones[0].localPosition += Vector3.up * carried + Vector3.down * (.025f * land);
+        }
+
+        /// <summary>
+        /// DANGLING (owner: *"make her legs feel like theyre dangling"*, *"she looks like she is RIGIDLy flying"*): each leg is a
+        /// loose, under-damped pendulum. It trails behind her travel (x back, y to the side), swings past when she stops, is
+        /// kicked by each gust and drifts on its own slow rhythm, the two legs at different rates so they never move as one.
+        /// </summary>
+        private void Dangle(ref Vector2 angle, ref Vector2 speed, Vector3 velocity, float push, float stiffness, float rate, float offset, float dt)
+        {
+            dt = Mathf.Min(dt, 1f / 30f);
+            var target = new Vector2(Mathf.Clamp(velocity.z * 3.5f, -8, 16) + 6 * Mathf.Sin(_clock * rate + offset),
+                Mathf.Clamp(-velocity.x * 2.5f, -9, 9) + 3 * Mathf.Sin(_clock * rate * .7f + offset + 1));
+            speed += (stiffness * (target - angle) - 3.2f * speed) * dt;
+            speed.x += push * 140 * dt;
+            angle += speed * dt;
+            angle = Vector2.ClampMagnitude(angle, 30);
         }
 
         private void Turn(int index, Vector3 angles)

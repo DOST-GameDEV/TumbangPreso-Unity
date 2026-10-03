@@ -138,6 +138,9 @@ namespace TumbangPreso.Audio
                 // a bed; the release is the loudest moment of her kit and mixed as an ultimate payload. Provisional until heard.
                 // v3.2: the press and the gather went with the live windup; the release is the hit as play resumes.
                 { "sfx_ult_theme_amihan", -14.0f }, { "sfx_amihan_storm_release", -3.0f },
+                // FEATHERFALL (owner 2026-10-03, *"u can give it sfx already"*): the take-off, each gust of the updraft under her
+                // (about once a second, so the quietest), and the landing. Provisional until heard.
+                { "sfx_cast_amihan_updraft", -8.0f }, { "sfx_amihan_updraft_gust", -18.0f }, { "sfx_amihan_updraft_settle", -10.0f },
                 { "slide_scrape",   -6.0f },
                 { "grab",           -6.0f },
                 { "throw_charge",   -5.0f },
@@ -219,6 +222,8 @@ namespace TumbangPreso.Audio
             "sfx_hitmarker", "sfx_super_ready",
             // AIRBURST v3 (2026-10-03): the first reworked skill sounds, Amihan's ultimate only (`ReworkedSkillSfx`).
             "sfx_ult_theme_amihan", "sfx_amihan_storm_release",
+            // FEATHERFALL (2026-10-03): her flight's three.
+            "sfx_cast_amihan_updraft", "sfx_amihan_updraft_gust", "sfx_amihan_updraft_settle",
 
             // ⚠️ THE MAP EVENT. `LrtTrainFlyby` called `ui_move` for two months and there has
             // never been a `ui_move.wav`, so every pass wrote `[Audio] no cue registered` to the
@@ -411,6 +416,8 @@ namespace TumbangPreso.Audio
         private static readonly HashSet<string> ReworkedSkillSfx = new HashSet<string>
         {
             "sfx_ult_theme_amihan", "sfx_amihan_storm_release",
+            // FEATHERFALL (owner, 2026-10-03: *"u can give it sfx already"*).
+            "sfx_cast_amihan_updraft", "sfx_amihan_updraft_gust", "sfx_amihan_updraft_settle",
         };
 
         public static bool IsReworkedSkillSfx(string cue) => !string.IsNullOrEmpty(cue) && ReworkedSkillSfx.Contains(cue);

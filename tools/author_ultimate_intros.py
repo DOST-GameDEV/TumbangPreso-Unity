@@ -680,49 +680,45 @@ def rafi():
 @performance
 def amihan():
     """
-    AIRBURST v4, 4.4 s (docs/reports/amihan-presentation-2026-10-02/cutscene-v4-plan.md). The owner on v3.7: "thoroughly
-    revise cutscene i want her personality to show in it as well as give it its own feel". v3 was a solemn ritual; she is
-    a bright, impatient street kid from Vigan who reads the wind off the abel hung out to air and commits before the play
-    is ready ("Reads the wind. Gets there first.").
+    AIRBURST v7, THE BIRD AMIHAN, 5.6 s (docs/reports/amihan-presentation-2026-10-02/cutscene-v4-plan.md, "v7"). The owner on
+    v6: "it doesnt look as good as paete's or phaisters"; "their ults look really good and have really cool beats and show off
+    story of their character"; "i want amihan to have hher own ult that doesnt jsut copy someone elses but it has to have the
+    same feel or impact"; "make it look like wind was slowly gathering around her and in the background"; and of the read,
+    "make her fly higher here like gojo when he was enlightened".
 
-    "Amihan cannot wait: she whistles the monsoon down like calling a teammate, it arrives as her family's abel cloth, and
-    she lets it fly before anyone is ready."
+    Paete's has Makiling and a tree with a face rising from the court; Phaister's opens an eye in the sky and lowers her doll.
+    Hers is her name: in the Tagalog creation story Amihan is the first bird, the one that pecked open the bamboo. The
+    monsoon answers her whistle across the whole plaza and gathers into that bird, made of wind; it swoops round her, rises
+    behind her as she winds up, and on her drive it beats its wings down the lane: the fan.
 
-    OPEN (0 to .5): the abel on the line snapping, a whip pan onto her running in; she skids to a stop.
-    READ (.5 to 1.3): a licked finger up to the wind (the cutscene face set squints), the line goes slack; two impatient
-    foot taps and a shrug.
-    CALL (1.3 to 1.85): the two-finger whistle; the wind answers down the street and the cloth tears off the line to her.
-    CATCH (1.85 to 2.5): she catches it in her free hand and whirls it round her once.
-    CARD (2.5 to 2.95): AIRBURST, her point down the lane, a grin; the card is blown away before it has finished.
-    COMMIT (2.95 to 3.85): wound up, the cloth swung back over her head, then both palms driven: the release at 3.85.
-    HIT (3.85 to 4.4): from down the lane, the players blown past the lens and her standing in the middle, hands on hips.
-    Play resumes 0.55 s after the release (`AmihanStorm.CutsceneTail`); the live clip starts in the last pose.
+    STILL (0 to 1.66): bored, eyes closed, she floats calmly reading the wind; one leaf falls straight down; taps, a shrug.
+    CALL (1.66 to 2.75): the whistle; the monsoon answers across the plaza, gathering round her into the sky; she looks up.
+    THE BIRD (2.75 to 3.62): it forms above her, cries, swoops round her past the lens; she reaches up to it, grinning; then
+    a glance into the lens.
+    WIND-UP (3.62 to 4.55): the bird behind her, wings raised, as she coils. DRIVE (4.55): both palms, the wingbeat. HANG
+    (4.55 to 5.18): the story clock at about a fifth (`HeroIntroductionScene.Amihan.cs` AmStory). FINISH: hands on hips, a
+    wink, one feather drifting down.
     The free (left) hand does the gestures: the right hand holds the slipper, which passes through her large head higher.
     """
-    p = Performance("amihan", 4.4)
-    run_a = Pose(torso=(16, -8, 0), head=(-14, 8, 0), left=(58, 22, 0), right=(-30, 22, 0), legs=((36, 4), (-32, 4)))
-    run_b = Pose(torso=(16, 8, 0), head=(-14, -8, 0), left=(-30, 22, 0), right=(58, 22, 0), legs=((-32, 4), (36, 4)))
-    # The skid: weight thrown back over the planted front foot, arms flung back for balance.
-    skid = Pose(torso=(-16, -4, 6), head=(-4, 4, -4), left=(-22, 58, 0), right=(-18, 50, 0), legs=((42, 8), (-14, 14)))
-    stand = Pose(torso=(-3, -4, 2), head=(-6, 4, 0), left=(10, 30, 0), right=(8, 28, 0), legs=((4, 8), (-2, 12)))
-    # The read: her free arm out straight to her side, palm up, feeling for the wind (v4 r2: a finger raised over her head
-    # hid behind her large head); leaning into it, head cocked toward it, chin up, the slipper hand on her hip.
+    p = Performance("amihan", 5.6)
+    # Easy, hip cocked, the slipper hand on her hip, head tipped: waiting for the wind.
+    idle = Pose(torso=(-3, -6, 4), head=(-6, 10, 8), left=(8, 24, 0), right=(14, 62, -38), legs=((2, 10), (-6, 16)))
+    idle_b = idle.but(torso=(-4, -4, 5), head=(-8, 12, 10))
+    # The read: her free arm out straight to her side, palm up, feeling for the wind; leaning into it, head cocked, chin up.
     read = Pose(torso=(-6, -8, 10), head=(-14, -16, 14), left=(70, 88, -10), right=(14, 62, -38), legs=((4, 10), (-2, 14)))
     tap_up = read.but(legs=((4, 10), (-2, 14)), torso=(-6, -10, 3))
     tap = lambda lift: read.but(legs=((4, 10), (lift, 16)))
     shrug = Pose(torso=(-8, 0, 0), head=(-10, 0, -10), left=(34, 62, 0), right=(30, 58, 0), legs=((4, 10), (-2, 14)))
     # The whistle: two fingers of the free hand at her mouth, chest up, feet planted wide.
     whistle = Pose(torso=(-10, 6, 0), head=(-12, 6, 0), left=(118, 6, 46), right=(12, 60, -38), legs=((6, 16), (-4, 16)))
-    # The wind arrives: she leans into it, arms open to take it.
-    meet = Pose(torso=(8, -12, 0), head=(-14, -10, 0), left=(70, 74, 0), right=(54, 64, 0), legs=((18, 12), (-16, 16)))
-    # The catch: free hand snapped high and out, twisted toward the line.
-    catch = Pose(torso=(-4, -30, 6), head=(-14, -22, 4), left=(132, 58, 0), right=(30, 50, 0), legs=((10, 12), (-10, 16)))
-    # The whirl overhead: the free arm sweeps round, the torso turning under it.
-    whirl_a = Pose(torso=(-6, 22, -4), head=(-12, 14, 0), left=(146, 40, 40), right=(24, 54, 0), legs=((-8, 12), (12, 16)))
-    whirl_b = Pose(torso=(-8, -18, 4), head=(-14, -10, 0), left=(146, 52, -40), right=(26, 56, 0), legs=((10, 12), (-10, 16)))
-    # The card: pointing down the lane with the free hand, slipper hand on the hip, hip cocked, head tipped, cocky.
-    point = Pose(torso=(-5, -14, 6), head=(-8, 10, -8), left=(96, 18, 6), right=(14, 62, -38), legs=((8, 8), (-6, 18)))
-    # The wind-up: coiled hard right, the free arm and the cloth swung back over and behind her head.
+    # The monsoon answers: she leans back and looks up at it gathering over the plaza, her free arm opening.
+    sky = Pose(torso=(-12, -6, 0), head=(-32, -8, 4), left=(44, 66, 0), right=(14, 62, -38), legs=((4, 12), (-4, 14)))
+    # Reaching up to the bird as it swoops round her, grinning.
+    reach = Pose(torso=(-12, -10, 6), head=(-28, -18, 8), left=(150, 40, 0), right=(14, 62, -38), legs=((4, 10), (-4, 14)))
+    reach_b = reach.but(left=(158, 46, 0), torso=(-13, -14, 6), head=(-26, -24, 8))
+    # The glance into the lens at her left front, chin tipped.
+    look = Pose(torso=(-4, -10, 4), head=(-10, -30, 10), left=(96, 48, -10), right=(14, 62, -38), legs=((4, 10), (-2, 14)))
+    # The wind-up: coiled hard right, the free arm swung back over and behind her head.
     windup = Pose(torso=(-12, 48, -6), head=(-8, -22, 0), left=(-48, 44, 0), right=(30, 30, 30), legs=((24, 10), (-22, 14)))
     windup_deep = windup.but(torso=(-15, 58, -8), head=(-9, -26, 0), left=(-58, 46, 0))
     # The release keeps v3.2's drive (both palms forward, the lunge): the gameplay contract is pinned to it.
@@ -731,40 +727,38 @@ def amihan():
     # The finish: hands on hips, chest out, chin up, head tipped. Gets there first.
     finish = Pose(torso=(-8, 4, -3), head=(-14, -8, 9), left=(16, 58, 38), right=(16, 58, -38), legs=((4, 14), (-4, 14)))
 
-    p.key(0, run_a).key(.16, run_b).key(.32, run_a)
-    p.key(.50, skid, punch=True).key(.62, stand)
-    p.key(.74, read).key(.82, tap_up)
-    p.key(.88, tap(14)).key(.94, tap(-2), punch=True).key(1.00, tap(14)).key(1.06, tap(-2), punch=True)
-    p.key(1.18, shrug)
-    p.key(1.30, whistle, punch=True).key(1.47, whistle.but(head=(-13, 6, 0)))
-    p.key(1.62, meet)
-    p.key(1.85, catch, punch=True)
-    p.key(2.05, whirl_a).key(2.27, whirl_b).key(2.42, whirl_a.but(torso=(-6, 10, -2)))
-    p.hold(2.52, 2.94, point)
-    p.key(3.10, windup).key(3.55, windup_deep).key(3.68, windup_deep.but(torso=(-16, 60, -8)))
-    p.key(3.85, drive, punch=True).key(3.95, drive)
-    p.key(4.08, follow)
-    p.key(4.24, finish, punch=True).key(4.4, finish)
-    p.rise(0, 0)
+    p.key(0, idle).hold(.32, .55, idle_b)
+    p.hold(.78, 1.08, read)
+    p.key(1.13, tap_up)
+    p.key(1.19, tap(14)).key(1.25, tap(-2), punch=True).key(1.32, tap(14)).key(1.38, tap(-2), punch=True)
+    p.hold(1.52, 1.66, shrug)
+    p.key(1.78, whistle, punch=True).key(1.98, whistle.but(head=(-13, 6, 0)))
+    p.hold(2.20, 2.70, sky)
+    p.key(2.92, reach, punch=True).key(3.12, reach_b).key(3.24, reach)
+    p.hold(3.36, 3.62, look)
+    p.key(3.85, windup).key(4.28, windup_deep).key(4.40, windup_deep.but(torso=(-16, 60, -8)))
+    # THE DRIVE, then the hang: held while the clock slows (a moving hold, so even slowed she is never a statue).
+    p.hold(4.55, 5.08, drive)
+    p.punches.append(4.55)
+    p.key(5.20, follow)
+    p.key(5.34, finish, punch=True).key(5.6, finish)
+    # THE FLOAT (owner: "make her fly higher here like gojo when he was enlightened", "js a bite higher tho"): as she closes
+    # her eyes and feels for the wind she lifts, calm and weightless, about 0.37 m, and settles back onto her first tap.
+    p.rise(0, 0).rise(.60, 0).rise(.78, .2).rise(.98, .36).rise(1.06, .37).rise(1.16, .14).rise(1.24, 0)
 
-    # A OPEN: on the line's abel to her left, whip-panning to her as she skids in (`AmihanFrame` adds the pan).
-    p.shot(0, .5, (1.6, 1.0, 2.6), (-1.2, 1.5, -.6), 46, eye_to=(1.9, .95, 3.0), look_to=(0, 1.15, 0), fov_to=44)
-    # B READ: medium, face, the arm feeling for the wind and both feet in frame, creeping in.
-    # (v4 r3: from her right her out-flung free arm was on the far side of her; from the front, a little to her left.)
-    p.shot(.5, 1.3, (-.5, 1.05, 3.3), (0, 1.15, 0), 40, eye_to=(-.4, 1.1, 2.9), look_to=(0, 1.2, 0), fov_to=38)
-    # C CALL: punched in on the whistle, then pulled back as the street's wind arrives behind her.
-    p.shot(1.3, 1.85, (.9, 1.35, 1.9), (0, 1.45, 0), 34, eye_to=(2.4, 1.3, 3.6), look_to=(-.3, 1.2, 0), fov_to=48)
-    # D CATCH (computed: a low orbit round her as the cloth whirls). Fallback row.
-    p.shot(1.85, 2.5, (2.8, .7, 2.0), (0, 1.3, 0), 50, eye_to=(-.6, .8, 3.3), look_to=(0, 1.3, 0), fov_to=50)
-    # E CARD (computed: square on her, the backdrop behind). Fallback row.
-    # (v4 r1: at 3.1 m the letterbox cut her head off; back to 4.3 m, her whole upper body framed under the bars.)
-    p.shot(2.5, 2.95, (.45, 1.25, 4.4), (0, 1.0, 0), 40, eye_to=(.4, 1.25, 4.2), look_to=(0, 1.0, 0), fov_to=39)
-    # F COMMIT: behind her right shoulder, high and wide enough for her whole wind-up, the cloth over her head and the lane
-    # ahead; it holds through the drive and the cloth bursting off her (v4 r1: from 1.6 m her head filled a third of the
-    # frame; v4 r4: cut at 3.95 the released cloth still filled the next lens).
-    p.shot(2.95, 4.08, (2.3, 2.1, -3.2), (-.2, 1.1, 3.5), 54, eye_to=(2.6, 2.5, -3.6), look_to=(0, 1.0, 4.5), fov_to=56)
-    # G HIT (computed: high in front of her right side, her finish in the middle, the cloth radiating out under the lens).
-    p.shot(4.08, 4.4, (3.0, 3.0, 3.8), (0, 1.0, .6), 46, eye_to=(2.8, 2.8, 3.5), look_to=(0, 1.0, .6), fov_to=42)
+    # A STILL: from her left front, all of her and the falling leaf, a slow push in.
+    p.shot(0, 1.66, (-.9, 1.05, 4.3), (-.2, 1.0, 0), 42, eye_to=(-.75, 1.05, 3.7), look_to=(-.2, 1.05, 0), fov_to=40)
+    # B CALL: close on the whistle, then pulled back low and wide, looking up past her at the monsoon gathering in the sky.
+    p.shot(1.66, 2.75, (-.6, 1.4, 1.6), (0, 1.45, 0), 34, eye_to=(-2.4, .55, 3.4), look_to=(0, 2.3, -1.5), fov_to=62)
+    # C THE BIRD: low and wide from her left front, her and the sky above her; the bird's swoop passes close to this lens.
+    p.shot(2.75, 3.62, (-3.0, .7, 4.6), (0, 2.4, -.5), 60, eye_to=(-2.6, .8, 4.0), look_to=(0, 2.0, -.3), fov_to=56)
+    # D WIND-UP: behind her right shoulder, high and wide: her coiling and the bird over her with its wings raised.
+    # (v7 r2: the raised wings were cropped at the top; aimed higher.)
+    p.shot(3.62, 4.55, (2.8, 2.2, -4.2), (0, 2.8, 3.0), 62, eye_to=(3.0, 2.5, -4.6), look_to=(0, 2.2, 5.0), fov_to=62)
+    # E HANG: cut on the drive to her right side, wide enough for the wingbeat over the lane: her in the left third.
+    p.shot(4.55, 5.18, (5.2, 1.6, .6), (0, 1.5, 1.2), 66, eye_to=(4.8, 1.6, .9), look_to=(0, 1.45, 1.6), fov_to=62)
+    # F FINISH (computed: high in front of her right side, her wink in the middle, the thrown bodies blowing away).
+    p.shot(5.18, 5.6, (3.0, 3.0, 3.8), (0, 1.0, .6), 46, eye_to=(2.8, 2.8, 3.5), look_to=(0, 1.0, .6), fov_to=42)
     p.locked((3.4, 1.5, 3.4), (0, 1.0, 1.5), 50)
     return p
 

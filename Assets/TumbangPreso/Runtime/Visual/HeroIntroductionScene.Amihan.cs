@@ -6,71 +6,103 @@ namespace TumbangPreso.Visual
     public sealed partial class HeroIntroductionScene
     {
         // =========================================================================================
-        // AMIHAN, AIRBURST v4, 4.4 s (`docs/reports/amihan-presentation-2026-10-02/cutscene-v4-plan.md`). The owner on v3.7:
-        // *"thoroughly revise cutscene i want her personality to show in it as well as give it its own feel"*, *"it looks like
-        // shapes are floating and not vfx"*. v3 was a solemn ritual (cupped hands, a woven emblem, a darkened world, glyphs in
-        // the air). She is a bright, impatient street kid from Vigan who reads the wind off the abel hung out to air and commits
-        // before the play is ready: *Reads the wind. Gets there first.*
+        // AMIHAN, AIRBURST v7: THE BIRD AMIHAN, 5.6 s (`docs/reports/amihan-presentation-2026-10-02/cutscene-v4-plan.md`, "v7").
+        // The owner on v6: *"it doesnt look as good as paete's or phaisters"*, *"their ults look really good and have really cool
+        // beats and show off story of their character"*, *"i want amihan to have hher own ult that doesnt jsut copy someone elses
+        // but it has to have the same feel or impact"*, *"make it look like wind was slowly gathering around her and in the
+        // background"*, *"everything in the bg is just blank"*.
         //
-        // ONE SENTENCE: Amihan cannot wait: she whistles the monsoon down like calling a teammate, it arrives as her family's
-        // abel cloth, and she lets it fly before anyone is ready. ONE COMPANION: the cloth off the line, which she catches,
-        // whirls, swings back over her head and cracks down the lane, where the live fan's own cloth takes over.
+        // WHAT THE TWO APPROVED ONES SHARE (filmed side by side, `Logs/ult-reference-1003`): the WORLD changes (Paete's court
+        // sprouts and a tree rises; Phaister's sky turns and an eye opens); a GIANT manifestation from the hero's own myth
+        // (Makiling and the tree with a face; the puppeteer's hands and the doll); a CLOSE-UP of its eyes as the climax; then
+        // the victims. HERS IS HER NAME: in the Tagalog creation story Amihan is the first bird, the one that pecked open the
+        // bamboo. The monsoon answers her whistle across the whole plaza, gathers into that bird made of wind, the bird swoops
+        // round her and past the lens with its eyes alight, rises behind her as she winds up, and on her drive beats its wings
+        // down the lane: the fan. Not a tree from the ground, not an eye in the sky: a creature of the air that flies.
         //
-        //   OPEN   0.00  the abel on the line snapping in a warm afternoon street; a whip pan onto her running in; the skid.
-        //   READ   0.50  a licked finger up (squint), the line goes slack; two foot taps, a shrug. Nothing comes.
-        //   CALL   1.30  the two-finger whistle: the wind answers down the street, dust and cotton running at her; the cloth
-        //                tears off the line (1.60) and flies to her free hand.
-        //   CATCH  1.85  caught, whirled once round her with the street's wind wrapping it.
-        //   CARD   2.50  AIRBURST (`HeroIntroductionScene.AmihanBurst.cs`): her point down the lane, a grin; blown away at 2.86.
-        //   COMMIT 2.95  the real lane; wound up, the cloth swung back over her head, the drive at 3.85 (the release).
-        //   HIT    3.85  from down the lane: the thrown players past the lens, her in the middle, hands on hips, a wink.
+        //   STILL    0.00  bored, eyes closed, she floats (the authored lift); ONE LEAF falls straight down: no wind. Taps, shrug.
+        //   CALL     1.78  the whistle. THE MONSOON ANSWERS: great wind sheets sweep round the plaza behind her, leaves torn into
+        //                  a wide ring and court dust rolling, all circling her and closing, spiralling up into the sky.
+        //   THE BIRD 2.75  it forms out of the vortex above her, swoops one circle round her and close past the lens, eyes
+        //                  alight, leaves trailing it; she reaches up to it, grinning, then glances into the lens.
+        //   WIND-UP  3.62  the bird behind and above her, wings raised, fed by more air, as she coils.
+        //   DRIVE    4.55  her palms and its wings come down together. THE HANG: the story clock at about a fifth.
+        //   FINISH   5.34  the bird gone down the lane; a single feather drifts down; hands on hips, a wink.
         //
-        // ⚠️ The VFX language (the plan's rules): three materials only, abel cloth, air streaks that always travel, and cotton and
-        // dust pushed by the air. No outline shapes, glints, rings, emblems or veils in the scene; her graphic language is the
-        // card, in front of the lens. A warm grade, never darker. Every piece is posed from the scene clock; nothing on `Update`.
-        // ⚠️ Reduced effects keeps every shape, stills the streak motion and halves the light.
+        // ⚠️ THE STORY CLOCK (`AmStory`): before the release it is the scene clock; after it, it runs slow through the hang and
+        // normal again for the finish, scaled so it has advanced exactly `AmihanStorm.CutsceneTail` at the hand-back. The live
+        // fan and the thrown players are posed on it, so play resumes where the last frame drew.
+        //
+        // ⚠️ THE VFX LANGUAGE: wind drawn as bold brushed strokes (a dark ink line under a bright core, so they read on the light
+        // tiles and the sky), sweeping translucent sheets, leaves and court dust. Every piece travels from a source to a
+        // destination. The bird is drawn in the same strokes. Posed from the clock; nothing on `Update`. ⚠️ Reduced effects
+        // keeps every shape, stills the spin and the flutter, and halves the light.
         // =========================================================================================
-        private const float AmSkidAt = .50f, AmReadAt = .74f, AmWhistleAt = 1.30f, AmArriveAt = 1.42f, AmTearAt = 1.60f,
-            AmCatchAt = 1.85f, AmCardAt = 2.50f, AmCardGoneAt = 2.86f, AmWarpAt = 2.95f, AmWindAt = 3.10f, AmBraceAt = 3.20f,
-            // THE RELEASE. Play resumes `AmihanStorm.CutsceneTail` (0.55 s) after it, on the hit, with no live delay.
-            AmReleaseAt = 3.85f, AmFinishAt = 4.24f;
+        private const float AmReadAt = .78f, AmLeafFrom = .62f, AmLeafTo = 1.72f, AmWhistleAt = 1.78f, AmArriveAt = 1.92f,
+            AmGatherFrom = 1.95f, AmFormAt = 2.75f, AmSwoopAt = 2.95f, AmSwoopEnd = 3.55f, AmWindAt = 3.80f, AmBraceAt = 4.05f,
+            // The cut in on its face (`AmihanFrame`).
+            AmEyesFrom = 3.10f, AmEyesTo = 3.34f,
+            // THE RELEASE. Play resumes after `AmRealTail` real seconds, `AmihanStorm.CutsceneTail` story seconds after it.
+            AmReleaseAt = 4.55f, AmFinishAt = 5.34f;
+
+        /// <summary>Real seconds from the release to the hand-back (5.6 - 4.55).</summary>
+        public const float AmRealTail = 1.05f;
+        // THE HANG: from 0.10 to 0.62 real seconds after the release, eased over 0.06 at each end, the clock at 18 per cent.
+        private const float AmHangFrom = .10f, AmHangTo = .62f, AmHangEdge = .06f, AmHangSpeed = .18f;
 
         // The shots (`tools/author_ultimate_intros.py` amihan()).
-        private const int AmShotOpen = 0, AmShotCall = 2, AmShotCatch = 3, AmShotCard = 4, AmShotCommit = 5, AmShotHit = 6;
+        private const int AmShotStill = 0, AmShotCall = 1, AmShotBird = 2, AmShotWindup = 3, AmShotHang = 4, AmShotHit = 5;
 
-        private int _amihanSky, _amihanDusk, _amihanGround;
-        private readonly List<int> _viganHouses = new List<int>(20);
-        private int _amPostA, _amPostB, _amRope;
-        private AbelCloth _amCloth;
-        // THE GUST (v4 r5, owner on the woven bands: *"not a fan of the sash shit"*, *"refine her vfx in a diff way"*): what she
-        // catches, whirls and cracks down the lane is the wind itself, three bright strands, not cloth.
-        private readonly LineRenderer[] _amGust = new LineRenderer[3];
-        private readonly Vector3[] _amGustPoints = new Vector3[AmClothSamples];
-        private Vector3[] _amClothCentre, _amClothAcross, _amClothFrom, _amClothFromAcross;
-        private const int AmClothSamples = 28;
-        private readonly List<WindVfx.Ribbon> _amArrive = new List<WindVfx.Ribbon>();
-        private readonly List<WindVfx.Ribbon> _amBreeze = new List<WindVfx.Ribbon>();
-        private readonly List<WindVfx.Ribbon> _amWrap = new List<WindVfx.Ribbon>();
-        private readonly List<WindVfx.Ribbon> _amGather = new List<WindVfx.Ribbon>();
+        // Where the vortex closes and the bird forms: above and behind her.
+        private static readonly Vector3 AmBirdBorn = new Vector3(0f, 5.0f, -1.5f);
+        // Where it hovers through the wind-up: above and ahead of her, its back to her, so it reads from behind her and its
+        // wingbeat goes straight down the lane (v7 r1: hovering behind her it sat over the lens, out of frame).
+        private static readonly Vector3 AmBirdHover = new Vector3(0f, 3.7f, 1.9f);
+        // v7 r1: at a 7 m span drawn in hair-lines it read as a doodle in the sky; about 12 m, bolder, with wing masses.
+        private const float AmBirdScale = 1.7f, AmSwoopRadius = 4.0f;
+
+        // ------------------------------------------------------------------ pieces
+        private const int AmStrokeSamples = 10;
+        private readonly Vector3[] _amStrokePoints = new Vector3[AmStrokeSamples];
+        // The arrival: streaks racing in from upwind toward where the vortex closes.
+        private readonly LineRenderer[] _amArriveCore = new LineRenderer[8], _amArriveInk = new LineRenderer[8];
+        // The gather: more air drawn into the bird through the wind-up.
+        private readonly LineRenderer[] _amGatherCore = new LineRenderer[4], _amGatherInk = new LineRenderer[4];
+        // THE BIRD: 9 feathers and a leading edge per wing, three body strokes, the beak, three crest strokes, five tail feathers.
+        private const int AmFeathers = 9, AmBirdStrokes = 2 * (AmFeathers + 1) + 3 + 1 + 3 + 5;
+        private readonly LineRenderer[] _amBirdCore = new LineRenderer[AmBirdStrokes], _amBirdInk = new LineRenderer[AmBirdStrokes];
+        private readonly Vector3[][] _amBirdLocal = new Vector3[AmBirdStrokes][];
+        private readonly float[] _amBirdWidth = new float[AmBirdStrokes], _amBirdReveal = new float[AmBirdStrokes];
+        private int _amEyeL = -1, _amEyeR = -1, _amHeart = -1;
+        // Its masses: a translucent band under each wing's feathers, the body and the tail, so it has volume, not only lines.
+        private readonly LineRenderer[] _amBirdMass = new LineRenderer[4];
+        private readonly Vector3[] _amMassPoints = new Vector3[AmStrokeSamples];
+        // THE MONSOON: great translucent wind sheets circling the plaza, closing on her and rising into the sky.
+        private const int AmSheets = 12;
+        private readonly List<WindVfx.Ribbon> _amSheet = new List<WindVfx.Ribbon>();
+        private readonly Vector3[] _amSheetSeed = new Vector3[AmSheets];
+        // The burst on the drive: arcs racing down the lane off her palms.
+        private const int AmRingSamples = 18;
+        private readonly LineRenderer[] _amRing = new LineRenderer[5];
+        private readonly Vector3[] _amRingPoints = new Vector3[AmRingSamples];
+        // THE LEAVES: 0 the lone leaf; 1 to 60 torn up by the monsoon; the feather at the end.
+        private const int AmLeaves = 61;
+        private readonly int[] _amLeaf = new int[AmLeaves];
+        private readonly Vector3[] _amLeafSeed = new Vector3[AmLeaves];
+        private int _amFeather = -1;
         private readonly List<WindVfx.Ribbon> _amSpeed = new List<WindVfx.Ribbon>();
-        private WindVfx.Motif _amihanNear, _amDust, _amLift;
+        private WindVfx.Motif _amDust;
         private AmihanStormFan _amihanFan;
         private VoxelFace _amFace;
         private float _amCourt;
 
-        // The line in the street, to her left and behind her, upwind: the abel hung out to air.
-        private static readonly Vector3 AmLineA = new Vector3(-2.5f, 2.15f, -.1f), AmLineB = new Vector3(-.9f, 2.15f, -1.45f);
-        // Where the street's wind comes from (her left, behind), and the way it blows (past her, toward the lane).
-        private static readonly Vector3 AmWindFrom = new Vector3(-8.5f, 1.0f, -5.5f);
-
-        // THE ARRIVAL: streaks racing down the street at her on the whistle. Start (scene), the side they pass her on (+1 her
-        // right), height at her, delay, width.
+        // THE ARRIVAL: start (scene x, height, z), the side its curl turns to (+1 her right), curl radius, delay, width.
         private static readonly float[,] AmArriveRows =
         {
-            { -9.0f, .30f, -6.2f,  .7f, .35f, .00f, .07f }, { -8.2f, 1.10f, -4.4f, -.6f, 1.20f, .04f, .09f },
-            { -9.6f, .70f, -3.1f,  .9f, .80f, .08f, .06f }, { -7.4f, 1.60f, -6.8f, -.9f, 1.70f, .10f, .07f },
-            { -8.8f, .20f, -2.2f, -.5f, .25f, .13f, .08f }, { -9.9f, 1.30f, -5.0f,  .6f, 1.45f, .16f, .06f },
-            { -7.9f, .50f, -7.6f,  .8f, .55f, .19f, .07f }, { -9.3f, 1.90f, -3.8f, -.7f, 1.95f, .22f, .05f },
+            { -9.0f, .30f, -6.2f,  1f, .30f, .00f, .080f }, { -8.2f, 1.10f, -4.4f, -1f, .36f, .06f, .090f },
+            { -9.6f, .70f, -3.1f,  1f, .28f, .12f, .075f }, { -7.4f, 1.60f, -6.8f, -1f, .34f, .17f, .080f },
+            {  8.8f, .40f, -4.2f, -1f, .32f, .22f, .085f }, {  9.9f, 1.30f, -2.0f,  1f, .38f, .27f, .075f },
+            {  7.9f, .50f, -7.6f,  1f, .30f, .32f, .080f }, {  6.3f, 1.90f,  5.8f, -1f, .34f, .37f, .070f },
         };
 
         // THE SPEED STREAKS down the lane on the release: x, height, start z, end z, delay, width.
@@ -82,94 +114,55 @@ namespace TumbangPreso.Visual
         };
 
         private static readonly Color AmSheetBody = new Color(0.78f, 0.96f, 0.72f, 1f);
+        private static readonly Color AmInk = new Color(0.14f, 0.34f, 0.22f, .6f);
+        private static readonly Color AmEye = new Color(1.0f, 0.93f, 0.62f, 1f);
+        private static readonly Color[] AmLeafColours =
+        {
+            new Color(0.33f, 0.58f, 0.24f, 1f), new Color(0.47f, 0.68f, 0.26f, 1f), new Color(0.26f, 0.48f, 0.22f, 1f),
+            new Color(0.80f, 0.70f, 0.30f, 1f),
+        };
 
         private void BuildAmihan()
         {
-            // The stage: Calle Hangin on a warm afternoon. Warm cobbles, a golden band, a pale warm sky (never the dusk-dark of v3).
-            _amihanGround = Wall("AmihanGround", 0, 0.9f, new Color(0.46f, 0.37f, 0.28f, 0.80f), emission: 0.20f);
-            _amihanDusk = Wall("AmihanDusk", 0.9f, 2.4f, new Color(0.96f, 0.82f, 0.58f, 0.62f), emission: 0.40f);
-            _amihanSky = Wall("AmihanSky", 2.4f, 12, new Color(0.80f, 0.90f, 0.96f, 0.55f), emission: 0.45f, cap: true);
-
-            // Calle Crisologo: whitewashed lime plaster below, warm narra timber above, clay roofs, pearly capiz panes lit.
-            var stone = new Color(0.86f, 0.80f, 0.68f, 1);
-            var timber = new Color(0.44f, 0.29f, 0.18f, 1);
-            var roof = new Color(0.66f, 0.33f, 0.22f, 1);
-            var capiz = new Color(1.0f, 0.93f, 0.76f, 0.9f);
-            for (int i = 0; i < 5; i++)
-            {
-                _viganHouses.Add(AddSolid("ViganStone" + i, VfxShapes.Prism(4, 1, 1), stone));
-                _viganHouses.Add(AddSolid("ViganUpper" + i, VfxShapes.Prism(4, 1, 1), timber));
-                _viganHouses.Add(AddSolid("ViganRoof" + i, VfxShapes.Prism(4, 1, .05f), roof));
-                _viganHouses.Add(Add("ViganCapiz" + i, VfxShapes.Prism(4, 1, 1), capiz, 0.85f, plain: true));
-            }
-
             // The court she stands on, not the classed ground under it (Bayan Plaza's tiles sit above it).
             _amCourt = Mathf.Clamp(AmihanStormFan.CourtUnder(_root.transform.position).y - _root.transform.position.y, 0f, .4f);
 
-            // THE LINE: two narra posts and a rope, the abel hung over it.
-            _amPostA = AddSolid("AmihanLinePostA", VfxShapes.Prism(4, 1, 1), timber);
-            _amPostB = AddSolid("AmihanLinePostB", VfxShapes.Prism(4, 1, 1), timber);
-            _amRope = AddSolid("AmihanLineRope", VfxShapes.Prism(4, 1, 1), new Color(0.78f, 0.70f, 0.55f, 1));
-            _amCloth = new AbelCloth(_root.transform, "AmihanCompanionCloth", AmClothSamples, 1.5f);
-            _amClothCentre = new Vector3[AmClothSamples]; _amClothAcross = new Vector3[AmClothSamples];
-            _amClothFrom = new Vector3[AmClothSamples]; _amClothFromAcross = new Vector3[AmClothSamples];
-            for (int k = 0; k < _amGust.Length; k++)
+            var taper = new AnimationCurve(new Keyframe(0f, .1f), new Keyframe(.5f, 1f), new Keyframe(1f, .35f));
+            for (int i = 0; i < _amArriveCore.Length; i++)
+                AmStrokePair("AmihanArrive" + i, i % 3 == 0 ? WindVfx.Core : AmSheetBody, taper, out _amArriveCore[i], out _amArriveInk[i]);
+            for (int i = 0; i < _amGatherCore.Length; i++)
+                AmStrokePair("AmihanGather" + i, i % 2 == 0 ? WindVfx.Core : AmSheetBody, taper, out _amGatherCore[i], out _amGatherInk[i]);
+
+            BuildAmihanBird();
+
+            // THE MONSOON SHEETS: each a standing arc of the wind ribbon, posed every frame round a moving centre.
+            for (int k = 0; k < AmSheets; k++)
             {
-                _amGust[k] = Line("AmihanGust" + k, AmClothSamples, .07f - .015f * k, k == 1 ? WindVfx.Core : AmSheetBody);
-                _amGust[k].widthCurve = new AnimationCurve(new Keyframe(0f, .35f), new Keyframe(.25f, 1f), new Keyframe(.75f, .7f), new Keyframe(1f, 0f));
-                _amGust[k].enabled = false;
+                _amSheetSeed[k] = new Vector3(AmHash(k * 5 + 11), AmHash(k * 5 + 12), AmHash(k * 5 + 13));
+                // v7 r2: 22 points scaled to 13 m drew jagged polylines, and the bright-rim look drew them hollow; smooth and filled.
+                var arc = WindVfx.Arc(1f, 70f + 50f * _amSheetSeed[k].x, 48, 0f);
+                var sheet = WindVfx.Build(_root.transform, "AmihanMonsoon" + k, arc, 1.3f + .8f * _amSheetSeed[k].y, WindVfx.Standing, 5f, .45f, 400f + k);
+                sheet.Recolour(WindVfx.Core, AmSheetBody, WindVfx.Body);
+                _amSheet.Add(sheet);
             }
 
-            // THE BREEZE before she calls: three thin streaks drifting across the line, so the cloth's flapping has a cause.
-            for (int i = 0; i < 3; i++)
+            var burst = new AnimationCurve(new Keyframe(0f, .2f), new Keyframe(.3f, 1f), new Keyframe(.8f, 1f), new Keyframe(1f, .1f));
+            for (int j = 0; j < _amRing.Length; j++)
             {
-                var from = new Vector3(-5.5f, 1.7f + .25f * i, -2.6f + .5f * i);
-                var to = new Vector3(1.5f, 2.0f + .15f * i, 1.2f + .4f * i);
-                var mid = Vector3.Lerp(from, to, .5f) + new Vector3(0, .35f - .2f * i, -.3f);
-                var streak = WindVfx.Build(_root.transform, "AmihanBreeze" + i, AmCurve(from, mid, to, 16), .035f - .006f * i, WindVfx.Standing, 2.5f, .3f, 300f + i);
-                AmBrightRim(streak, .6f);
-                _amBreeze.Add(streak);
+                _amRing[j] = Line("AmihanBurst" + j, AmRingSamples, .05f, j % 2 == 0 ? WindVfx.Core : AmSheetBody);
+                _amRing[j].widthCurve = burst; _amRing[j].sortingOrder = 2; _amRing[j].enabled = false;
             }
 
-            // THE ARRIVAL: each streak runs from the street, bends round her on its side, and leaves toward the lane.
-            for (int i = 0; i < AmArriveRows.GetLength(0); i++)
+            // THE LEAVES: thin lit slabs, each with its own seed for its path, its tumble and its colour.
+            var leaf = VfxShapes.Prism(4, 1, 1);
+            for (int i = 0; i < AmLeaves; i++)
             {
-                var from = new Vector3(AmArriveRows[i, 0], AmArriveRows[i, 1] + _amCourt, AmArriveRows[i, 2]);
-                float side = AmArriveRows[i, 3], h = AmArriveRows[i, 4] + _amCourt;
-                var past = new Vector3(side * .75f, h, -.2f);
-                var leave = new Vector3(side * 1.6f, h + .35f, 3.4f);
-                var spine = new List<Vector3>(26);
-                for (int k = 0; k < 26; k++)
-                {
-                    float u = k / 25f;
-                    spine.Add(u < .62f ? AmBezier(from, Vector3.Lerp(from, past, .6f) + new Vector3(0, .2f, 0), past, u / .62f)
-                                       : Vector3.Lerp(past, leave, (u - .62f) / .38f) + Vector3.up * .25f * Mathf.Sin((u - .62f) / .38f * Mathf.PI));
-                }
-                var streak = WindVfx.Build(_root.transform, "AmihanArrive" + i, spine, AmArriveRows[i, 6], WindVfx.Standing, 3.0f, .25f, 310f + i);
-                AmBrightRim(streak, .58f);
-                _amArrive.Add(streak);
+                _amLeafSeed[i] = new Vector3(AmHash(i * 3 + 1), AmHash(i * 3 + 2), AmHash(i * 3 + 3));
+                _amLeaf[i] = AddSolid("AmihanLeaf" + i, leaf, AmLeafColours[i % AmLeafColours.Length]);
+                Place(_amLeaf[i], Vector3.zero, Vector3.one * .001f, Quaternion.identity, 0f);
             }
-
-            // THE WRAP while she whirls the cloth: three open, rising strands round her (never a closed cage).
-            for (int i = 0; i < 3; i++)
-            {
-                var spine = WindVfx.Helix(Vector3.up * (.3f + .25f * i + _amCourt), Vector3.up * (1.6f + .2f * i + _amCourt), .95f + .15f * i, .7f, 24, i * 120f, .8f);
-                var strand = WindVfx.Build(_root.transform, "AmihanWrap" + i, spine, .06f - .01f * i, WindVfx.AroundAxis(spine, Vector3.up), 3.0f, .3f, 330f + i);
-                AmBrightRim(strand, .6f);
-                _amWrap.Add(strand);
-            }
-
-            // THE GATHER on the wind-up: four streaks drawn in from behind her into the cloth over her head.
-            for (int i = 0; i < 4; i++)
-            {
-                float a = (150f + 22f * i) * Mathf.Deg2Rad;
-                var from = new Vector3(Mathf.Sin(a) * 4.5f, .5f + .45f * i + _amCourt, Mathf.Cos(a) * 4.5f);
-                var to = new Vector3(.2f, 2.0f + _amCourt, -.5f);
-                var streak = WindVfx.Build(_root.transform, "AmihanGather" + i, AmCurve(from, Vector3.Lerp(from, to, .5f) + Vector3.up * .6f, to, 18),
-                    .05f, WindVfx.Standing, 3.0f, .3f, 340f + i);
-                AmBrightRim(streak, .6f);
-                _amGather.Add(streak);
-            }
+            _amFeather = AddSolid("AmihanFeather", leaf, new Color(0.96f, 1.0f, 0.93f, 1f));
+            Place(_amFeather, Vector3.zero, Vector3.one * .001f, Quaternion.identity, 0f);
 
             // THE SPEED STREAKS down the lane on the release.
             for (int i = 0; i < AmSpeedRows.GetLength(0); i++)
@@ -182,14 +175,11 @@ namespace TumbangPreso.Visual
                 _amSpeed.Add(streak);
             }
 
-            // Dust and cotton: the street's dust running at her when the wind answers; cotton lifted round her as she whirls; and
-            // the near layer at the lens. Each Motif gets its own host (a Motif hands its tuft mesh to its parent's single owner).
-            _amDust = new WindVfx.Motif(AmHost("AmihanStreetDust"), 22, 17.1f, .3f);
-            _amLift = new WindVfx.Motif(AmHost("AmihanLiftedCotton"), 14, 21.3f, .35f);
-            _amihanNear = new WindVfx.Motif(AmHost("AmihanNearLayer"), 12, 13.7f, .5f);
+            // Court dust rolling round her in the monsoon's ring (its own host: a Motif hands its tuft mesh to its parent's owner).
+            _amDust = new WindVfx.Motif(AmHost("AmihanCourtDust"), 28, 17.1f, .3f);
 
-            // The live fan itself, posed from this scene's clock (never its own Update) and only from the release on: at the
-            // hand-back it is the live fan `AmihanStorm.CutsceneTail` after its release, on the same court.
+            // The live fan itself, posed from the story clock and only from the release on: at the hand-back it is the live
+            // fan `AmihanStorm.CutsceneTail` after its release, on the same court.
             _amihanFan = AmihanStormFan.Build(_root.transform, _root.transform.position, _root.transform.forward,
                 Core.AmihanRules.StormSurgeGatherSeconds);
             _amihanFan.enabled = false;
@@ -197,8 +187,15 @@ namespace TumbangPreso.Visual
             // Her cutscene faces (squint, whistle, grin, wink) on the copied body's own head.
             _amFace = VoxelFace.Attach(_bodyRenderers);
 
-            BuildAmihanBurst();
             BuildAmihanLane();
+        }
+
+        private void AmStrokePair(string name, Color core, AnimationCurve taper, out LineRenderer bright, out LineRenderer ink)
+        {
+            ink = Line(name + "Ink", AmStrokeSamples, .1f, AmInk);
+            ink.widthCurve = taper; ink.sortingOrder = 0; ink.enabled = false;
+            bright = Line(name, AmStrokeSamples, .06f, core);
+            bright.widthCurve = taper; bright.sortingOrder = 1; bright.enabled = false;
         }
 
         private Transform AmHost(string name)
@@ -206,6 +203,8 @@ namespace TumbangPreso.Visual
             var host = new GameObject(name).transform; host.SetParent(_root.transform, false);
             return host;
         }
+
+        private static float AmHash(int n) => Mathf.Repeat(Mathf.Sin(n * 12.9898f + 4.1f) * 43758.5453f, 1f);
 
         /// <summary>`WindRibbon`'s ink band turned to a bright rim: the swept-air look (bright edges, a middle you see through).</summary>
         private static void AmBrightRim(WindVfx.Ribbon ribbon, float rimFrom)
@@ -217,330 +216,509 @@ namespace TumbangPreso.Visual
         private static Vector3 AmBezier(Vector3 a, Vector3 b, Vector3 c, float u)
             => Vector3.Lerp(Vector3.Lerp(a, b, u), Vector3.Lerp(b, c, u), u);
 
-        private static List<Vector3> AmCurve(Vector3 a, Vector3 b, Vector3 c, int points)
-        {
-            var spine = new List<Vector3>(points);
-            for (int k = 0; k < points; k++) spine.Add(AmBezier(a, b, c, k / (points - 1f)));
-            return spine;
-        }
-
         /// <summary>A beat's swell: up at once, gone by <paramref name="width"/>.</summary>
         private static float AmBeat(float t, float at, float width = .22f) => t < at ? 0f : Mathf.Clamp01(1f - (t - at) / width);
+
+        // ------------------------------------------------------------------ the story clock
+
+        private static float AmHangRaw(float real)
+        {
+            // The clock's speed, integrated: 1 everywhere but the hang, AmHangSpeed inside it, eased at its edges.
+            const int steps = 48;
+            float s = Mathf.Clamp(real, 0f, AmRealTail), h = s / steps, sum = 0f;
+            for (int i = 0; i < steps; i++)
+            {
+                float x = (i + .5f) * h;
+                float inside = Ease(AmHangFrom - AmHangEdge, AmHangFrom, x) * (1f - Ease(AmHangTo, AmHangTo + AmHangEdge, x));
+                sum += (1f - (1f - AmHangSpeed) * inside) * h;
+            }
+            return sum + Mathf.Max(0f, real - AmRealTail);
+        }
+
+        /// <summary>
+        /// Story seconds after the release for <paramref name="real"/> scene seconds after it: slowed through the hang, and
+        /// scaled so the hand-back (<see cref="AmRealTail"/>) lands exactly on <c>AmihanStorm.CutsceneTail</c>.
+        /// </summary>
+        public static float AmihanStoryAfterRelease(float real)
+            => real <= 0f ? real : AmHangRaw(real) * (Abilities.AmihanStorm.CutsceneTail / AmHangRaw(AmRealTail));
+
+        private static float AmStory(float t) => t <= AmReleaseAt ? t : AmReleaseAt + AmihanStoryAfterRelease(t - AmReleaseAt);
 
         private VoxelFace.Look AmLook(float t)
         {
             if (t >= AmFinishAt - .04f) return VoxelFace.Look.Wink;
             if (t >= AmReleaseAt - .02f) return VoxelFace.Look.Grin;
-            if (t >= AmWindAt - .1f) return VoxelFace.Look.Squint;
-            if (t >= AmCardAt - .04f) return VoxelFace.Look.Grin;
-            if (t >= AmCatchAt - .03f) return VoxelFace.Look.Grin;
-            if (t >= AmWhistleAt - .05f && t < AmTearAt - .02f) return VoxelFace.Look.Whistle;
-            if (t >= AmReadAt - .06f && t < AmWhistleAt - .05f) return VoxelFace.Look.Squint;
+            if (t >= AmWindAt - .05f) return VoxelFace.Look.Squint;
+            if (t >= 2.84f) return VoxelFace.Look.Grin;
+            if (t >= AmWhistleAt - .05f && t < 2.12f) return VoxelFace.Look.Whistle;
+            if (t >= AmReadAt - .08f && t < 1.62f) return VoxelFace.Look.Squint;
             return VoxelFace.Look.Rest;
         }
+
+        // ------------------------------------------------------------------ the sample
 
         private void SampleAmihan(float t)
         {
             bool calm = _reducedEffects;
-            float phase = calm ? 0.0f : t * 3.0f;
+            float story = AmStory(t);
             float light = calm ? .55f : 1f;
             float leave = 1 - Ease(Seconds - .30f, Seconds, t);
+            float since = story - AmReleaseAt;
             _amFace?.Show(AmLook(t));
 
-            // The street stands up at once and steps back to the real court as she commits to the lane.
-            float stage = Ease(0, .25f, t) * (1 - Ease(AmWarpAt - .05f, AmWarpAt + .35f, t));
-            Tint(_amihanGround, stage); Tint(_amihanDusk, stage); Tint(_amihanSky, stage);
-            for (int i = 0; i < 5; i++)
-            {
-                float angle = (180 - 58 + i * 29) * Mathf.Deg2Rad;
-                var at = new Vector3(Mathf.Sin(angle) * 7.4f, 0, Mathf.Cos(angle) * 7.4f);
-                var face = Quaternion.LookRotation(-at.normalized, Vector3.up);
-                float width = 1.25f + (i % 2) * .25f;
-                float rise = Ease(.0f, .2f + i * .03f, t) * (1 - Ease(AmWarpAt - .05f + i * .03f, AmWarpAt + .35f + i * .03f, t));
-                float on = rise > .01f ? 1 : 0;
-                Place(_viganHouses[i * 4], at, new Vector3(width, 1.2f * rise, .7f), face, on);
-                Place(_viganHouses[i * 4 + 1], at + Vector3.up * 1.2f * rise, new Vector3(width * 1.12f, 1.0f * rise, .82f), face, on);
-                Place(_viganHouses[i * 4 + 2], at + Vector3.up * 2.2f * rise, new Vector3(width * 1.3f, .55f * rise, 1.0f), face * Quaternion.Euler(0, 45, 0), on);
-                Place(_viganHouses[i * 4 + 3], at + face * Vector3.forward * .43f + Vector3.up * 1.62f * rise, new Vector3(width * .9f, .22f * rise, .05f), face, rise);
-            }
+            AmBirdPose(story, calm, out var birdAt, out var birdTurn, out float flap, out float birdOn);
+            SampleAmihanBird(story, calm, birdAt, birdTurn, flap, birdOn);
+            SampleAmihanMonsoon(t, calm, light);
 
-            // THE LINE: posts and rope stand with the street.
-            float lineOn = stage > .01f ? 1f : 0f;
-            var court = Vector3.up * _amCourt;
-            Place(_amPostA, new Vector3(AmLineA.x, 0, AmLineA.z) + court, new Vector3(.07f, AmLineA.y + .05f, .07f), Quaternion.identity, lineOn);
-            Place(_amPostB, new Vector3(AmLineB.x, 0, AmLineB.z) + court, new Vector3(.07f, AmLineB.y + .05f, .07f), Quaternion.identity, lineOn);
-            var rope = AmLineB - AmLineA;
-            Place(_amRope, AmLineA + court, new Vector3(.015f, rope.magnitude, .015f), Quaternion.FromToRotation(Vector3.up, rope), lineOn);
-
-            SampleAmihanCloth(t, calm);
-
-            // THE BREEZE: drifting across the line before she calls, gone once she reads it (the wind drops).
-            for (int i = 0; i < _amBreeze.Count; i++)
-            {
-                float s = (t + i * .17f) / .9f;
-                float alpha = .28f * (1f - Ease(AmSkidAt + .1f, AmReadAt + .1f, t)) * light;
-                _amBreeze[i].Set(alpha, -phase * 2f, Ease(0f, .5f, s), Ease(.35f, 1f, s), .4f);
-            }
-
-            // THE ARRIVAL: the street's wind racing at her on the whistle, each streak's head running ahead of its tail.
-            for (int i = 0; i < _amArrive.Count; i++)
+            // THE ARRIVAL: the wind answering the whistle from every side of the plaza, each streak curling once on its way to
+            // where the vortex closes over her.
+            for (int i = 0; i < _amArriveCore.Length; i++)
             {
                 float s = t - AmArriveAt - AmArriveRows[i, 5];
-                if (s < 0f || s > .9f) { _amArrive[i].Set(0f, 0f); continue; }
-                _amArrive[i].Set((.62f + .08f * (i % 3)) * light * leave, -phase * 2.5f, Ease(0f, .38f, s), Ease(.22f, .85f, s), Ease(.45f, .9f, s) * .7f);
+                var from = new Vector3(AmArriveRows[i, 0], AmArriveRows[i, 1] + _amCourt, AmArriveRows[i, 2]);
+                var to = AmBirdBorn + Vector3.up * _amCourt;
+                var flat = to - from; flat.y = 0f;
+                var side = Vector3.Cross(Vector3.up, flat.normalized) * AmArriveRows[i, 3];
+                var bend = Vector3.Lerp(from, to, .5f) + side * 2.2f + Vector3.down * 1.2f;
+                AmStroke(_amArriveCore[i], _amArriveInk[i], from, bend, to, side, AmArriveRows[i, 4],
+                    Ease(0f, .55f, s), Ease(.22f, .72f, s), AmArriveRows[i, 6] * light);
             }
 
-            // THE WRAP: open strands rising round her as she whirls the cloth, turning with it.
-            for (int i = 0; i < _amWrap.Count; i++)
+            // THE GATHER: more air drawn in from behind her into the bird through the wind-up.
+            for (int i = 0; i < _amGatherCore.Length; i++)
             {
-                float s = t - AmCatchAt - .05f * i;
-                if (s < 0f || s > .75f) { _amWrap[i].Set(0f, 0f); continue; }
-                _amWrap[i].GameObject.transform.localRotation = Quaternion.Euler(0f, calm ? 0f : -s * 420f, 0f);
-                _amWrap[i].Set(.5f * light, -phase * 2f, Ease(0f, .3f, s), Ease(.25f, .75f, s), Ease(.4f, .75f, s) * .7f);
+                float s = t - AmWindAt - .1f * i;
+                float a = (130f + 33f * i) * Mathf.Deg2Rad;
+                var from = new Vector3(Mathf.Sin(a) * 6f, .6f + .5f * i + _amCourt, Mathf.Cos(a) * 6f);
+                var flat = birdAt - from; flat.y = 0f;
+                var side = Vector3.Cross(Vector3.up, flat.normalized) * (i % 2 == 0 ? 1f : -1f);
+                var bend = Vector3.Lerp(from, birdAt, .5f) + Vector3.up * .8f;
+                AmStroke(_amGatherCore[i], _amGatherInk[i], from, bend, birdAt, side, .3f, Ease(0f, .36f, s), Ease(.16f, .5f, s), .07f * light);
             }
 
-            // THE GATHER: streaks drawn in from behind her into the cloth over her head through the wind-up.
-            for (int i = 0; i < _amGather.Count; i++)
-            {
-                float s = t - AmWindAt - .08f * i;
-                if (s < 0f || s > .75f) { _amGather[i].Set(0f, 0f); continue; }
-                _amGather[i].Set(.5f * light, -phase * 2f, Ease(0f, .4f, s), Ease(.3f, .75f, s), Ease(.45f, .75f, s) * .7f);
-            }
+            SampleAmihanBurst(since, calm);
+            SampleAmihanLeaves(t, story, calm);
 
-            // THE SPEED STREAKS race down the lane on the release.
+            // THE SPEED STREAKS race down the lane on the release (story time: they hang with everything else).
             for (int i = 0; i < _amSpeed.Count; i++)
             {
-                float s = t - AmReleaseAt - AmSpeedRows[i, 4];
+                float s = since - AmSpeedRows[i, 4] * .4f;
                 if (s < 0f || s > .5f) { _amSpeed[i].Set(0f, 0f); continue; }
-                _amSpeed[i].Set(.75f * light * leave, phase * 3f, Ease(0f, .18f, s), Ease(.1f, .45f, s), Ease(.2f, .5f, s) * .7f);
+                _amSpeed[i].Set(.75f * light * leave, calm ? 0f : story * 9f, Ease(0f, .18f, s), Ease(.1f, .45f, s), Ease(.2f, .5f, s) * .7f);
             }
 
-            // STREET DUST: skimming the cobbles at her when the wind answers, passing her and on toward the lane.
-            float dustOn = Ease(AmArriveAt, AmArriveAt + .1f, t) * (1f - Ease(AmCatchAt + .2f, AmCardAt, t));
+            // COURT DUST rolling round her in the monsoon's ring, closing with it.
+            float dustOn = Ease(AmGatherFrom, AmGatherFrom + .3f, t) * (1f - Ease(AmFormAt, AmSwoopAt + .2f, t));
             float dustFloor = _amCourt;
-            _amDust.Step(Mathf.Clamp01((t - AmArriveAt) / 1.1f) * 1.3f, (calm ? .4f : .9f) * dustOn, (start, drift, u) =>
+            float close = Ease(AmGatherFrom, AmFormAt, t);
+            _amDust.Step(Mathf.Repeat(t * .6f, 1f), (calm ? .4f : .9f) * dustOn, (start, drift, u) =>
             {
-                var from = AmWindFrom + new Vector3(start.x * 3f, 0, start.z * 3f);
-                from.y = dustFloor + .05f + start.y * .5f;
-                var to = new Vector3(start.x * 2.5f, dustFloor + .15f + start.y * .9f + drift.y * .4f, 3.5f + start.z * 2f);
-                return Vector3.Lerp(from, to, u) + Vector3.up * Mathf.Sin(u * Mathf.PI) * (.3f + drift.x * .4f);
-            }, .08f);
+                float r = Mathf.Lerp(4f + 4f * start.z, 1.6f + start.z, close);
+                float a = start.x * 6.28f - (t - AmGatherFrom) * (1.2f + 2.4f * close) - u * 1.5f;
+                return new Vector3(Mathf.Sin(a) * r, dustFloor + .05f + u * (.6f + start.y) + drift.y * .2f, Mathf.Cos(a) * r);
+            }, .1f);
 
-            // COTTON lifted round her as she whirls the cloth.
-            float liftOn = Ease(AmCatchAt, AmCatchAt + .1f, t) * (1f - Ease(AmCardAt - .1f, AmCardAt, t));
-            _amLift.Step(Mathf.Clamp01((t - AmCatchAt) / .7f) * 1.4f, (calm ? .4f : .85f) * liftOn, (start, drift, u) =>
-            {
-                float a = start.x * 9f - u * 4f, r = .8f + start.z * .6f + u * .4f;
-                return new Vector3(Mathf.Sin(a) * r, dustFloor + .3f + u * (1.6f + drift.y), Mathf.Cos(a) * r);
-            }, .08f);
+            SampleAmihanLane(t, story);
 
-            // The near layer: cotton drifting across the lens on the wind's way, down the lane once she commits.
-            AmLens(t, out int shot, out var eye, out var lensLook, out _);
-            if (shot >= 0)
-            {
-                var nearEye = eye; var nearLook = lensLook;
-                var toward = shot >= AmShotCommit ? new Vector3(0f, .8f, 9f) : new Vector3(1.5f, 1.2f, 2.5f);
-                float nearOn = Ease(AmArriveAt - .1f, AmArriveAt + .15f, t) * (shot == AmShotCard ? 0f : 1f);
-                _amihanNear.Step(Mathf.Repeat(t / 1.2f, 1.0f), (calm ? .4f : .8f) * nearOn * leave, (start, drift, u) =>
-                    Vector3.Lerp(Vector3.Lerp(nearEye, nearLook, .3f + start.y * .2f) + new Vector3(start.x, start.z * .6f, 0) * 1.1f, toward, u * .6f), .035f);
-            }
-
-            SampleAmihanBurst(t, leave);
-            SampleAmihanLane(t);
-
-            // THE RELEASE: the live fan's own clock, hidden until the drive and released ON it; at 4.4 s it is the live fan
-            // `AmihanStorm.CutsceneTail` after its release.
+            // THE RELEASE: the live fan's own clock on the story clock, hidden until the drive and released ON it; at the
+            // hand-back it is the live fan `AmihanStorm.CutsceneTail` after its release.
             float gather = Core.AmihanRules.StormSurgeGatherSeconds;
-            _amihanFan.StepTo(t < AmReleaseAt ? -AmihanStormFan.DrawOnSeconds : gather + (t - AmReleaseAt));
+            _amihanFan.StepTo(t < AmReleaseAt ? -AmihanStormFan.DrawOnSeconds : gather + since);
         }
-
-        // ------------------------------------------------------------------ the companion cloth
 
         /// <summary>
-        /// THE COMPANION: the abel off the line, posed from the clock in one of six states (hanging, torn off and flying to her,
-        /// whirled, held at the card, swung back over her head, cracked down the lane), each eased in from the one before over
-        /// 0.14 s, so it never jumps. s 0 is the end in her hand (or the line), s 1 its free end.
+        /// A stroke's path at <paramref name="u"/>: a curve with ONE CURL in it (a full loop between 0.48 and 0.72 of the
+        /// way, turning to <paramref name="side"/> and up), the classic drawn gust.
         /// </summary>
-        private void SampleAmihanCloth(float t, bool calm)
+        private static Vector3 AmPath(Vector3 from, Vector3 bend, Vector3 to, Vector3 side, float curl, float u)
         {
-            // THE CLOTH stays on the line, a prop of her street, snapping harder as her wind arrives and again on the release.
-            AmClothState(0, t, calm, _amClothCentre, _amClothAcross);
-            _amCloth.Pose(_amClothCentre, _amClothAcross, 0f);
-            if (t >= AmWarpAt) _amCloth.Hide();
+            var p = AmBezier(from, bend, to, u);
+            float k = Mathf.Clamp01((u - .48f) / .24f);
+            if (k <= 0f || k >= 1f) return p;
+            float a = k * k * (3f - 2f * k) * Mathf.PI * 2f;
+            return p + (side * Mathf.Sin(a) + Vector3.up * (1f - Mathf.Cos(a))) * curl;
+        }
 
-            // THE GUST: off the line to her hand, whirled, held, swung back and cracked down the lane, each state eased in
-            // from the one before over 0.14 s.
-            float[] starts = { 0f, AmTearAt, AmCatchAt, AmCardAt, AmWarpAt, AmReleaseAt };
-            int state = 0;
-            for (int i = starts.Length - 1; i >= 0; i--) if (t >= starts[i]) { state = i; break; }
-            float fade = 1f - Ease(AmReleaseAt + .15f, AmReleaseAt + .45f, t);
-            if (state == 0 || fade <= .01f) { foreach (var line in _amGust) line.enabled = false; return; }
-            AmClothState(state, t, calm, _amClothCentre, _amClothAcross);
-            float blend = state == 1 ? 1f : Ease(starts[state], starts[state] + .14f, t);
-            if (blend < .999f)
+        /// <summary>One curled stroke: its ink line and bright core along the stretch of its path between tail and head.</summary>
+        private void AmStroke(LineRenderer core, LineRenderer ink, Vector3 from, Vector3 bend, Vector3 to, Vector3 side, float curl,
+            float head, float tail, float width)
+        {
+            if (head - tail < .02f || width <= 0f) { core.enabled = false; ink.enabled = false; return; }
+            for (int i = 0; i < AmStrokeSamples; i++)
+                _amStrokePoints[i] = AmPath(from, bend, to, side, curl, Mathf.Lerp(tail, head, i / (AmStrokeSamples - 1f)));
+            core.SetPositions(_amStrokePoints); ink.SetPositions(_amStrokePoints);
+            core.widthMultiplier = width; ink.widthMultiplier = width * 1.9f;
+            core.enabled = true; ink.enabled = true;
+        }
+
+        // ------------------------------------------------------------------ the monsoon
+
+        /// <summary>Where the vortex turns about: on her, rising toward where the bird forms.</summary>
+        private Vector3 AmVortexCentre(float t) => Vector3.Lerp(Vector3.up * _amCourt, AmBirdBorn + Vector3.up * _amCourt, Ease(2.35f, AmFormAt + .1f, t));
+
+        /// <summary>
+        /// THE MONSOON: twelve great sheets of wind sweeping round the plaza behind her from the whistle, slow at first and
+        /// faster as they close, rising and narrowing into a funnel over her that becomes the bird.
+        /// </summary>
+        private void SampleAmihanMonsoon(float t, bool calm, float light)
+        {
+            var centre = AmVortexCentre(t);
+            float on = Ease(AmGatherFrom, AmGatherFrom + .35f, t) * (1f - Ease(AmFormAt - .05f, AmFormAt + .2f, t));
+            float close = Ease(AmGatherFrom + .1f, AmFormAt + .1f, t);
+            float s = Mathf.Max(0f, t - AmGatherFrom);
+            for (int k = 0; k < _amSheet.Count; k++)
             {
-                AmClothState(state - 1, t, calm, _amClothFrom, _amClothFromAcross);
-                for (int i = 0; i < AmClothSamples; i++)
-                {
-                    _amClothCentre[i] = Vector3.Lerp(_amClothFrom[i], _amClothCentre[i], blend);
-                    _amClothAcross[i] = Vector3.Lerp(_amClothFromAcross[i], _amClothAcross[i], blend);
-                }
-            }
-            float grow = state == 1 ? Ease(AmTearAt, AmTearAt + .12f, t) : 1f;
-            for (int k = 0; k < _amGust.Length; k++)
-            {
-                var line = _amGust[k];
-                for (int i = 0; i < AmClothSamples; i++)
-                {
-                    float s = i / (AmClothSamples - 1f);
-                    // The three strands wind round the gust's spine, so it reads as turning air, not a flat band.
-                    float turn = (calm ? 0f : t * 9f) + s * 7f + k * 2.1f;
-                    var side = _amClothAcross[i] * (1.1f * Mathf.Cos(turn));
-                    var lift = Vector3.Cross(_amClothAcross[i], (_amClothCentre[Mathf.Min(i + 1, AmClothSamples - 1)] - _amClothCentre[Mathf.Max(i - 1, 0)]).normalized) * Mathf.Sin(turn);
-                    _amGustPoints[i] = _amClothCentre[i] + side + lift;
-                }
-                line.SetPositions(_amGustPoints);
-                line.widthMultiplier = (.07f - .015f * k) * grow * fade * (calm ? .7f : 1f);
-                line.enabled = true;
+                var seed = _amSheetSeed[k];
+                if (on <= .002f) { _amSheet[k].Set(0f, 0f); continue; }
+                float r = Mathf.Lerp(4.5f + 5.5f * seed.x, .8f + .6f * seed.z, close * close);
+                float h = Mathf.Lerp(.6f + 3.2f * seed.y, -.6f + 1.2f * seed.y, close);
+                // Faster as they close: the angle is the integral of a speed that rises with the closing.
+                float spin = calm ? 0f : -(s * 40f + s * s * 70f) * (.8f + .4f * seed.z);
+                var tf = _amSheet[k].GameObject.transform;
+                tf.localPosition = centre + Vector3.up * h;
+                tf.localRotation = Quaternion.Euler(0f, seed.x * 360f + spin, (seed.y - .5f) * 14f);
+                tf.localScale = new Vector3(r, 1f + 1.2f * (1f - close), r);
+                float sweep = Mathf.Repeat(s * (.7f + .5f * seed.z) + seed.x, 1f);
+                _amSheet[k].Set((.8f + .2f * seed.y) * on * light, calm ? 0f : -t * 6f, Mathf.Clamp01(sweep * 1.6f + .3f), Mathf.Clamp01(sweep * 1.6f - .5f), .2f);
             }
         }
 
-        private void AmClothState(int state, float t, bool calm, Vector3[] centre, Vector3[] across)
+        // ------------------------------------------------------------------ the bird
+
+        private void BuildAmihanBird()
         {
-            float wob = calm ? 0f : 1f;
-            var palm = FreePalm;
-            var wind = (new Vector3(0f, 0f, 0f) - AmWindFrom); wind.y = 0f; wind.Normalize();
-            for (int i = 0; i < AmClothSamples; i++)
+            var feather = new AnimationCurve(new Keyframe(0f, .55f), new Keyframe(.35f, 1f), new Keyframe(1f, .05f));
+            for (int i = 0; i < AmBirdStrokes; i++)
             {
-                float s = i / (AmClothSamples - 1f);
-                Vector3 c, a;
-                switch (state)
+                AmStrokePair("AmihanBird" + i, i % 3 == 1 ? AmSheetBody : WindVfx.Core, feather, out _amBirdCore[i], out _amBirdInk[i]);
+                _amBirdCore[i].sortingOrder = 3; _amBirdInk[i].sortingOrder = 2;
+                _amBirdLocal[i] = new Vector3[AmStrokeSamples];
+            }
+            _amEyeL = AddGlow("AmihanBirdEyeL", AmEye, falloff: 2.2f, core: 1.0f);
+            _amEyeR = AddGlow("AmihanBirdEyeR", AmEye, falloff: 2.2f, core: 1.0f);
+            _amHeart = AddGlow("AmihanBirdHeart", new Color(0.80f, 1.0f, 0.86f, 1f), falloff: 1.4f, core: 0f);
+            var mass = new AnimationCurve(new Keyframe(0f, .5f), new Keyframe(.4f, 1f), new Keyframe(1f, .25f));
+            for (int i = 0; i < _amBirdMass.Length; i++)
+            {
+                _amBirdMass[i] = Line("AmihanBirdMass" + i, AmStrokeSamples, 1f, new Color(0.80f, 0.97f, 0.80f, .32f));
+                _amBirdMass[i].widthCurve = mass; _amBirdMass[i].sortingOrder = 1; _amBirdMass[i].enabled = false;
+            }
+        }
+
+        /// <summary>
+        /// THE BIRD'S FLIGHT on the story clock: born above her, one swoop round her (close past the lens on her left front),
+        /// hovering behind and above her with its wings raised through the wind-up, then the wingbeat and away down the lane.
+        /// </summary>
+        private void AmBirdPose(float story, bool calm, out Vector3 at, out Quaternion turn, out float flap, out float on)
+        {
+            float court = _amCourt;
+            on = Ease(AmFormAt, AmFormAt + .2f, story);
+            float since = story - AmReleaseAt;
+            if (story < AmSwoopAt)
+            {
+                at = AmBirdBorn + Vector3.up * court + Vector3.up * (.3f * Mathf.Sin(story * 3f));
+                turn = Quaternion.Euler(-8f, 0f, 0f);
+                flap = calm ? 20f : 30f + 40f * Mathf.Sin(story * 13f);
+            }
+            else if (story < AmSwoopEnd + .2f)
+            {
+                // Half a circle round her, from behind her, low down her left side and close past the lens at her left front,
+                // rising to above and ahead of her (v7 r1: a full circle ended behind her, over the wind-up's lens).
+                float u = Ease(AmSwoopAt, AmSwoopEnd, story);
+                float a = (180f + 180f * u) * Mathf.Deg2Rad;
+                float h = Mathf.Lerp(Mathf.Lerp(AmBirdBorn.y, 2.2f, Mathf.Sin(u * Mathf.PI * .8f)), AmBirdHover.y, u * u * u);
+                at = new Vector3(Mathf.Sin(a) * AmSwoopRadius, h + court, Mathf.Cos(a) * AmSwoopRadius * Mathf.Lerp(1f, .5f, u * u));
+                var tangent = new Vector3(Mathf.Cos(a), 0f, -Mathf.Sin(a));
+                float settle = Ease(AmSwoopEnd - .1f, AmSwoopEnd + .2f, story);
+                var facing = Vector3.Slerp(tangent, Vector3.forward, settle);
+                // Banked into the turn, its inner wing down.
+                turn = Quaternion.LookRotation(facing, Vector3.up) * Quaternion.Euler(0f, 0f, -32f * (1f - settle));
+                at = Vector3.Lerp(at, AmBirdHover + Vector3.up * court, settle);
+                flap = calm ? 10f : (u > .3f && u < .6f ? 12f + 6f * Mathf.Sin(story * 9f) : 25f + 45f * Mathf.Sin(story * 15f));
+            }
+            else if (since < 0f)
+            {
+                // Hovering behind and above her: slow strong strokes, then the wings drawn up and held trembling as she coils.
+                float raise = Ease(AmWindAt, AmWindAt + .35f, story);
+                at = AmBirdHover + Vector3.up * (court + .35f * raise + .12f * Mathf.Sin(story * 8.8f) * (1f - raise));
+                turn = Quaternion.Euler(-6f - 10f * raise, 0f, 0f);
+                float stroke = calm ? 15f : 20f + 45f * Mathf.Sin(story * 9f);
+                flap = Mathf.Lerp(stroke, 78f + (calm ? 0f : 3f * Mathf.Sin(story * 40f)), raise);
+            }
+            else
+            {
+                // THE WINGBEAT on her drive, then on down the lane over the fan, dissolving.
+                float down = Ease(0f, .12f, since);
+                at = AmBirdHover + Vector3.up * (court + .35f - .9f * down) + Vector3.forward * (since * 14f);
+                turn = Quaternion.Euler(-16f + 26f * down, 0f, 0f);
+                flap = Mathf.Lerp(78f, -42f, down) + 10f * Ease(.2f, .5f, since);
+                on *= 1f - Ease(.25f, .6f, since);
+            }
+        }
+
+        /// <summary>A wing point: <paramref name="x"/> out along the wing, <paramref name="z"/> back, raised by the flap.</summary>
+        private static Vector3 AmWing(float side, float raise, Vector3 shoulder, float x, float y, float z)
+        {
+            float r = raise * Mathf.Deg2Rad;
+            return shoulder + new Vector3(side * x * Mathf.Cos(r) - side * y * Mathf.Sin(r), x * Mathf.Sin(r) + y * Mathf.Cos(r), z);
+        }
+
+        private void SampleAmihanBird(float story, bool calm, Vector3 at, Quaternion turn, float flap, float on)
+        {
+            float scale = AmBirdScale, bold = 1.25f;
+            int n = 0;
+            // THE WINGS: a leading edge in two bones (the tip lagging the arm through each stroke) and nine feathers off it,
+            // raked further out the further along, longest at the tip.
+            for (int side = -1; side <= 1; side += 2)
+            {
+                var shoulder = new Vector3(side * .3f, .12f, .2f);
+                float arm = flap, hand = flap * 1.3f;
+                Vector3 Edge(float f)
                 {
-                    case 0:
-                    {
-                        // HANGING over the rope: snapping in the breeze, going slack as she reads it, lifting on the whistle.
-                        var top = Vector3.Lerp(AmLineA, AmLineB, Mathf.Lerp(.18f, .82f, s)) + Vector3.up * _amCourt;
-                        float breeze = 1f - Ease(AmSkidAt, AmReadAt + .15f, t);
-                        float call = Ease(AmWhistleAt + .1f, AmTearAt, t) * (1f - .4f * Ease(AmCatchAt, AmCardAt, t));
-                        float flap = wob * (breeze * .22f * Mathf.Sin(s * 9f - t * 15f) + call * .3f * Mathf.Sin(s * 11f - t * 24f));
-                        var blow = wind * (.15f + .35f * breeze + .9f * call) + Vector3.up * (.35f * call);
-                        var hang = Vector3.down * .5f + blow * .5f + wind * flap;
-                        c = top + hang * .5f; a = hang * .5f;
-                        break;
-                    }
-                    case 1:
-                    {
-                        // TORN OFF and flying to her: the near end races to her free hand, the rest streaming behind it downwind.
-                        float u = Ease(AmTearAt, AmCatchAt, t);
-                        var lead = Vector3.Lerp(Vector3.Lerp(AmLineA, AmLineB, .5f) + Vector3.up * _amCourt, palm, u) + Vector3.up * Mathf.Sin(u * Mathf.PI) * .6f;
-                        c = lead - wind * (s * 1.6f) + Vector3.up * (.25f * Mathf.Sin(s * 5f - t * 18f) * wob);
-                        a = Quaternion.AngleAxis((s * 140f + t * 300f) * wob, wind) * Vector3.up * .22f;
-                        break;
-                    }
-                    case 2:
-                    {
-                        // WHIRLED round her once, rising off her hand in a widening spiral.
-                        float spin = (t - AmCatchAt) / .62f * 360f * (calm ? .3f : 1f);
-                        float r = .35f + 1.05f * s, ang = (spin - 165f * s) * Mathf.Deg2Rad;
-                        var ring = new Vector3(Mathf.Sin(ang) * r, .2f * s + .12f * Mathf.Sin(s * 6f - t * 14f) * wob, Mathf.Cos(ang) * r);
-                        var start = new Vector3(Mathf.Sin(spin * Mathf.Deg2Rad) * .35f, 0, Mathf.Cos(spin * Mathf.Deg2Rad) * .35f);
-                        c = palm + ring - start;
-                        a = Vector3.up * (.24f * (1f - .35f * s));
-                        break;
-                    }
-                    case 3:
-                    {
-                        // AT THE CARD: hanging off her pointing hand, streaming back over her shoulder in the wind.
-                        var back = new Vector3(.35f, .1f, -1f).normalized;
-                        c = palm + back * (1.5f * s) + Vector3.down * (.35f * s * s) + Vector3.up * (.12f * Mathf.Sin(s * 8f - t * 16f) * wob);
-                        a = Vector3.up * (.22f * (1f - .3f * s));
-                        break;
-                    }
-                    case 4:
-                    {
-                        // SWUNG BACK over her head on the wind-up, rippling, held taut on the anticipation.
-                        float up = Ease(AmWarpAt, AmWindAt + .2f, t);
-                        var arc = Vector3.Lerp(new Vector3(.3f, .05f, -1f), new Vector3(.15f, .9f, -.55f), up).normalized;
-                        c = palm + arc * (1.7f * s) + Vector3.down * (.5f * s * s * (1f - up)) + Vector3.right * (.15f * Mathf.Sin(s * 7f - t * 20f) * wob);
-                        a = Vector3.Cross(arc, Vector3.right).normalized * (.24f * (1f - .3f * s));
-                        break;
-                    }
-                    default:
-                    {
-                        // CRACKED down the lane: it unfurls forward off her palms, whipping, lifting, and races out.
-                        float u = Ease(AmReleaseAt, AmReleaseAt + .3f, t);
-                        float length = Mathf.Lerp(1.7f, 8.5f, u);
-                        float crack = wob * Mathf.Sin(s * 10f - (t - AmReleaseAt) * 30f) * (.1f + .5f * s) * (1f - .5f * u);
-                        c = palm + Vector3.forward * (length * s) + Vector3.right * crack + Vector3.up * (1.0f * Mathf.Sin(s * Mathf.PI * .8f) * u);
-                        float twist = wob * (s * 3f - (t - AmReleaseAt) * 8f);
-                        a = (Vector3.up * Mathf.Cos(twist) + Vector3.right * Mathf.Sin(twist)) * (.26f * (1f - .3f * s));
-                        break;
-                    }
+                    if (f < .45f) return AmWing(side, arm, shoulder, f / .45f * 1.5f, 0f, -.15f * f / .45f);
+                    var wrist = AmWing(side, arm, shoulder, 1.5f, 0f, -.15f);
+                    float g = (f - .45f) / .55f;
+                    return AmWing(side, hand, wrist, g * 1.9f, 0f, -.55f * g);
                 }
-                centre[i] = c; across[i] = a;
+                for (int i = 0; i < AmStrokeSamples; i++) _amBirdLocal[n][i] = Edge(i / (AmStrokeSamples - 1f));
+                _amBirdWidth[n] = .16f; _amBirdReveal[n] = Ease(AmFormAt + .02f, AmFormAt + .18f, story); n++;
+                for (int fth = 0; fth < AmFeathers; fth++)
+                {
+                    float f = .12f + .88f * fth / (AmFeathers - 1f);
+                    var root = Edge(f);
+                    float rake = Mathf.Lerp(5f, 62f, f) * Mathf.Deg2Rad, length = Mathf.Lerp(.85f, 1.55f, f * f);
+                    float raise = (f < .45f ? arm : hand) - 8f;
+                    for (int i = 0; i < AmStrokeSamples; i++)
+                    {
+                        float u = i / (AmStrokeSamples - 1f);
+                        _amBirdLocal[n][i] = AmWing(side, raise, root, Mathf.Sin(rake) * length * u, -.1f * Mathf.Sin(u * Mathf.PI), -Mathf.Cos(rake) * length * u);
+                    }
+                    _amBirdWidth[n] = .11f + .03f * f;
+                    _amBirdReveal[n] = Ease(AmFormAt + .05f + .015f * fth, AmFormAt + .22f + .015f * fth, story);
+                    n++;
+                }
+            }
+            // THE BODY: three strokes from the head to the root of the tail, bowed out.
+            var head = new Vector3(0f, .32f, 1.15f); var tailRoot = new Vector3(0f, 0f, -1.05f);
+            Vector3[] bows = { new Vector3(-.34f, .06f, 0f), new Vector3(.34f, .06f, 0f), new Vector3(0f, .42f, .05f) };
+            foreach (var bow in bows)
+            {
+                for (int i = 0; i < AmStrokeSamples; i++) _amBirdLocal[n][i] = AmBezier(head, bow, tailRoot, i / (AmStrokeSamples - 1f));
+                _amBirdWidth[n] = .14f; _amBirdReveal[n] = Ease(AmFormAt, AmFormAt + .14f, story); n++;
+            }
+            // THE BEAK, hooked a little.
+            for (int i = 0; i < AmStrokeSamples; i++)
+                _amBirdLocal[n][i] = AmBezier(new Vector3(0f, .34f, 1.3f), new Vector3(0f, .34f, 1.65f), new Vector3(0f, .16f, 1.82f), i / (AmStrokeSamples - 1f));
+            _amBirdWidth[n] = .12f; _amBirdReveal[n] = Ease(AmFormAt + .08f, AmFormAt + .2f, story); n++;
+            // THE CREST: three strokes swept back off the head and curling up, streaming in the air it rides.
+            for (int c = 0; c < 3; c++)
+            {
+                float stream = calm ? 0f : .06f * Mathf.Sin(story * 11f + c);
+                for (int i = 0; i < AmStrokeSamples; i++)
+                {
+                    float u = i / (AmStrokeSamples - 1f);
+                    _amBirdLocal[n][i] = new Vector3((c - 1) * .1f, .46f + .32f * u * u + stream * u, 1.1f - .75f * u);
+                }
+                _amBirdWidth[n] = .07f; _amBirdReveal[n] = Ease(AmFormAt + .1f, AmFormAt + .25f, story); n++;
+            }
+            // THE TAIL: five long feathers fanned out behind.
+            for (int c = 0; c < 5; c++)
+            {
+                float x = (c - 2) * .26f, sway = calm ? 0f : .08f * Mathf.Sin(story * 7f + c);
+                for (int i = 0; i < AmStrokeSamples; i++)
+                {
+                    float u = i / (AmStrokeSamples - 1f);
+                    _amBirdLocal[n][i] = tailRoot + new Vector3(x * u * 1.8f + sway * u, -.08f * u + .12f * u * u, -1.6f * u);
+                }
+                _amBirdWidth[n] = .11f; _amBirdReveal[n] = Ease(AmFormAt + .06f, AmFormAt + .22f, story); n++;
+            }
+
+            // Draw: each stroke revealed from its root as the vortex pours into it, posed into the scene.
+            for (int k = 0; k < AmBirdStrokes; k++)
+            {
+                float reveal = _amBirdReveal[k];
+                float width = _amBirdWidth[k] * scale * bold * on;
+                if (reveal <= .02f || width <= .004f) { _amBirdCore[k].enabled = false; _amBirdInk[k].enabled = false; continue; }
+                var local = _amBirdLocal[k];
+                for (int i = 0; i < AmStrokeSamples; i++)
+                {
+                    float u = reveal * i;
+                    int a = Mathf.Min((int)u, AmStrokeSamples - 2);
+                    var p = Vector3.Lerp(local[a], local[a + 1], u - a);
+                    _amStrokePoints[i] = at + turn * (p * scale);
+                }
+                _amBirdCore[k].SetPositions(_amStrokePoints); _amBirdInk[k].SetPositions(_amStrokePoints);
+                _amBirdCore[k].widthMultiplier = width; _amBirdInk[k].widthMultiplier = width * 1.7f;
+                _amBirdCore[k].enabled = true; _amBirdInk[k].enabled = true;
+            }
+
+            // THE MASSES: under each wing a translucent band through its feathers' middles, one along the body, one in the tail.
+            float massOn = on * Ease(AmFormAt + .1f, AmFormAt + .3f, story) * (calm ? .7f : 1f);
+            for (int w = 0; w < 2; w++)
+            {
+                int first = w * (AmFeathers + 1) + 1;
+                for (int i = 0; i < AmStrokeSamples; i++)
+                {
+                    float f = i / (AmStrokeSamples - 1f) * (AmFeathers - 1);
+                    int a = Mathf.Min((int)f, AmFeathers - 2);
+                    var mid = Vector3.Lerp(_amBirdLocal[first + a][AmStrokeSamples / 2], _amBirdLocal[first + a + 1][AmStrokeSamples / 2], f - a);
+                    _amMassPoints[i] = at + turn * (mid * scale);
+                }
+                AmMass(_amBirdMass[w], .95f * scale * massOn);
+            }
+            for (int i = 0; i < AmStrokeSamples; i++)
+                _amMassPoints[i] = at + turn * (Vector3.Lerp(new Vector3(0f, .25f, 1.2f), new Vector3(0f, .05f, -1.0f), i / (AmStrokeSamples - 1f)) * scale);
+            AmMass(_amBirdMass[2], .7f * scale * massOn);
+            for (int i = 0; i < AmStrokeSamples; i++)
+                _amMassPoints[i] = at + turn * (Vector3.Lerp(new Vector3(0f, 0f, -1.0f), new Vector3(0f, .05f, -2.6f), i / (AmStrokeSamples - 1f)) * scale);
+            AmMass(_amBirdMass[3], .8f * scale * massOn);
+
+            // THE EYES, the climax as in Paete's tree and Phaister's doll: alight as it forms, blazing as it passes the lens and
+            // as it raises its wings over her; its heart a soft glow inside the strokes.
+            float blaze = 1f + 1.6f * Mathf.Max(AmBeat(story, 3.18f, .35f) * Ease(3.05f, 3.18f, story), Ease(AmWindAt, AmWindAt + .3f, story) * .8f);
+            float eyes = on * Ease(AmFormAt + .12f, AmFormAt + .3f, story) * blaze * (calm ? .6f : 1f);
+            var eyeSize = Vector3.one * .2f * scale * Mathf.Min(blaze, 1.3f);
+            PlaceGlow(_amEyeL, at + turn * (new Vector3(-.17f, .4f, 1.3f) * scale), eyeSize, Quaternion.identity, eyes);
+            PlaceGlow(_amEyeR, at + turn * (new Vector3(.17f, .4f, 1.3f) * scale), eyeSize, Quaternion.identity, eyes);
+            PlaceGlow(_amHeart, at + turn * (new Vector3(0f, .15f, .1f) * scale), Vector3.one * 2.2f * scale, Quaternion.identity, .5f * on * (calm ? .5f : 1f));
+        }
+
+        private void AmMass(LineRenderer line, float width)
+        {
+            if (width <= .01f) { line.enabled = false; return; }
+            line.SetPositions(_amMassPoints);
+            line.widthMultiplier = width;
+            line.enabled = true;
+        }
+
+        // ------------------------------------------------------------------ the burst
+
+        /// <summary>On the drive: arcs racing down the lane off her palms (story time, so they hang in the slow motion).</summary>
+        private void SampleAmihanBurst(float since, bool calm)
+        {
+            var palms = FreePalm;
+            for (int j = 0; j < _amRing.Length; j++)
+            {
+                var line = _amRing[j];
+                if (since < 0f || since >= .55f) { line.enabled = false; continue; }
+                var centre = palms + Vector3.forward * (since * (9f + 2.5f * j)) + Vector3.up * (since * (.4f * j - .6f));
+                float r = .3f + since * (4.5f + j);
+                for (int i = 0; i < AmRingSamples; i++)
+                {
+                    float a = Mathf.Lerp(-55f, 55f, i / (AmRingSamples - 1f)) * Mathf.Deg2Rad;
+                    _amRingPoints[i] = centre + new Vector3(Mathf.Sin(a) * r, 0f, Mathf.Cos(a) * r * .45f);
+                }
+                line.SetPositions(_amRingPoints);
+                line.widthMultiplier = .09f * (1f - Ease(.08f, .55f, since)) * (calm ? .7f : 1f);
+                line.enabled = line.widthMultiplier > .001f;
+            }
+        }
+
+        // ------------------------------------------------------------------ the leaves
+
+        private void SampleAmihanLeaves(float t, float story, bool calm)
+        {
+            float since = story - AmReleaseAt;
+            float tumble0 = calm ? 0f : story;
+            // THE LONE LEAF: falling straight down past her open palm. No wind. It rocks as a leaf falls in still air.
+            {
+                float u = Mathf.InverseLerp(AmLeafFrom, AmLeafTo, t);
+                bool on = t > AmLeafFrom && t < AmLeafTo;
+                var at = new Vector3(-.78f + .1f * Mathf.Sin(t * 5.5f), Mathf.Lerp(2.5f, .03f, u) + _amCourt, .42f + .06f * Mathf.Cos(t * 4.2f));
+                Place(_amLeaf[0], at, new Vector3(.075f, .012f, .11f), Quaternion.Euler(18f * Mathf.Sin(t * 5.5f), 30f, 24f * Mathf.Cos(t * 5.5f)), on ? 1f : 0f);
+            }
+            var centre = AmVortexCentre(t);
+            float close = Ease(AmGatherFrom + .1f, AmFormAt + .1f, t);
+            for (int i = 1; i < AmLeaves; i++)
+            {
+                var seed = _amLeafSeed[i];
+                Vector3 at; bool on;
+                float tumble = tumble0;
+                if (story < AmSwoopAt)
+                {
+                    // TORN UP BY THE MONSOON: circling the plaza in its ring, closing and rising into the vortex.
+                    float s = Mathf.Max(0f, t - AmGatherFrom - .25f * seed.x);
+                    float r = Mathf.Lerp(3.5f + 7f * seed.z, .6f + .8f * seed.y, close * close);
+                    float a = seed.x * 6.28f - (calm ? 0f : s * 1.3f + s * s * 1.6f);
+                    float h = Mathf.Lerp(.2f + 3.5f * seed.y, -.5f + 1.5f * seed.y, close);
+                    at = centre + new Vector3(Mathf.Sin(a) * r, h, Mathf.Cos(a) * r);
+                    on = t > AmGatherFrom + .25f * seed.x;
+                }
+                else if (since < 0f)
+                {
+                    // TRAILING THE BIRD through its swoop, then wheeling round it as it hovers.
+                    float lag = .05f + .45f * seed.x;
+                    AmBirdPose(Mathf.Max(AmSwoopAt, story - lag), calm, out var trail, out _, out _, out _);
+                    var scatter = new Vector3(seed.y - .5f, seed.z - .5f, seed.x - .5f) * 1.6f;
+                    float swirl = (calm ? 0f : story * 4f) + seed.z * 6.28f;
+                    at = trail + scatter + new Vector3(Mathf.Sin(swirl), 0f, Mathf.Cos(swirl)) * .4f;
+                    on = true;
+                }
+                else
+                {
+                    // FLUNG down the lane by the wingbeat, fanned across its 60 degrees, rising, then falling; slow in the hang.
+                    float yaw = (seed.x - .5f) * 60f * Mathf.Deg2Rad;
+                    var dir = new Vector3(Mathf.Sin(yaw), .1f + .3f * seed.y, Mathf.Cos(yaw));
+                    float speed = 8f + 7f * seed.z;
+                    var origin = AmBirdHover + Vector3.up * _amCourt + new Vector3(seed.y - .5f, seed.z - .5f, seed.x - .5f) * 2f;
+                    at = origin + dir * (speed * since) + Vector3.down * (3.5f * since * since);
+                    on = since < 1.4f && at.y > _amCourt - .05f;
+                    tumble += since * 4f;
+                }
+                if (!on) { Place(_amLeaf[i], Vector3.zero, Vector3.one * .001f, Quaternion.identity, 0f); continue; }
+                var spin = Quaternion.Euler(tumble * (190f + 120f * seed.x) + i * 37f, tumble * (260f + 90f * seed.y) + i * 53f, tumble * 140f + i * 11f);
+                Place(_amLeaf[i], at, new Vector3(.1f, .016f, .15f) * (.85f + .35f * seed.z), spin, 1f);
+            }
+
+            // THE FEATHER: after the bird has gone down the lane, one feather drifts down past her, rocking.
+            {
+                bool on = t > AmReleaseAt + AmHangTo - .05f;
+                float u = Mathf.InverseLerp(AmReleaseAt + AmHangTo - .05f, Seconds + .4f, t);
+                var at = new Vector3(.55f + .18f * Mathf.Sin(t * 5f), Mathf.Lerp(2.6f, 1.2f, u) + _amCourt, .55f + .1f * Mathf.Cos(t * 4f));
+                Place(_amFeather, at, new Vector3(.07f, .012f, .22f), Quaternion.Euler(20f * Mathf.Sin(t * 5f), 40f, 28f * Mathf.Cos(t * 5f)), on ? 1f : 0f);
             }
         }
 
         // ------------------------------------------------------------------ the lens
 
-        /// <summary>The lens at this moment in scene space, computed shots included (no shake).</summary>
-        private bool AmLens(float t, out int shot, out Vector3 eye, out Vector3 look, out float fov)
-        {
-            shot = ShotIndexAt(t); eye = new Vector3(2.5f, 1f, 1.5f); look = Vector3.up; fov = 50f;
-            if (shot < 0) return false;
-            _performance.Shot(shot, t, out eye, out look, out fov);
-            AmihanFrame(shot, t, ref eye, ref look, ref fov);
-            return true;
-        }
-
-        /// <summary>
-        /// THE COMPUTED SHOTS. OPEN whip-pans off the cloth onto her as she skids in. CATCH orbits low round her with the
-        /// whirling cloth. HIT stands down the lane behind the nearest player she throws, looking back at her, so the thrown
-        /// bodies pass the lens and she stands in the middle of it, hands on hips.
-        /// </summary>
+        /// <summary>THE COMPUTED SHOT: FINISH stands high in front of her right side, her wink in the middle, the thrown
+        /// bodies blowing away down the lane past her left (v4 r1 to r3), with a slow push in.</summary>
         private void AmihanFrame(int index, float t, ref Vector3 eye, ref Vector3 look, ref float fov)
         {
-            if (index == AmShotOpen)
+            if (index == AmShotBird && t >= AmEyesFrom && t < AmEyesTo)
             {
-                // The whip: held on the snapping cloth, then a fast pan (0.12 s) onto her as she arrives.
-                var cloth = Vector3.Lerp(AmLineA, AmLineB, .5f) + new Vector3(0, -.3f + _amCourt, 0);
-                var her = new Vector3(0, 1.15f + _amCourt, 0);
-                look = Vector3.Lerp(cloth, her, Ease(.30f, .44f, t));
+                // THE CLIMAX (as Paete's tree's eyes and Phaister's doll's): a cut in close on the bird's face as it swoops past
+                // her, the lens riding ahead of it and a little below, its eyes blazing.
+                AmBirdPose(t, _reducedEffects, out var at, out var turn, out _, out _);
+                // v7 r2: level with it the lens sank to the court and the eyes bloomed over the face; below it, looking up.
+                var head = at + turn * (new Vector3(0f, .35f, 1.3f) * AmBirdScale);
+                var ahead = turn * Vector3.forward; ahead.y = 0f; ahead = ahead.sqrMagnitude > 1e-4f ? ahead.normalized : Vector3.forward;
+                eye = head + ahead * (2.3f * AmBirdScale) + Vector3.down * 1.7f + Vector3.Cross(Vector3.up, ahead) * .8f;
+                look = head + Vector3.down * .2f;
+                fov = 48f;
+                return;
             }
-            else if (index == AmShotCatch)
-            {
-                float u = Ease(AmCatchAt, AmCardAt, t);
-                float a = Mathf.Lerp(55f, -25f, u) * Mathf.Deg2Rad, r = Mathf.Lerp(3.4f, 3.1f, u);
-                eye = new Vector3(Mathf.Sin(a) * r, .62f + .25f * u + _amCourt, Mathf.Cos(a) * r);
-                look = new Vector3(0f, 1.35f + _amCourt, 0f);
-                fov = 52f;
-            }
-            else if (index == AmShotHit)
-            {
-                // v4 r1: from down the lane the nearest thrown player stood between the lens and her. In front of her right side
-                // instead, her finish in the middle of the frame and the lane opening past her left; the bodies blow away
-                // down it, and a slow push in lands on her wink.
-                float u = Ease(AmReleaseAt + .1f, Seconds, t);
-                // v4 r2: at eye height the fan's cloth swept through the lens and filled the frame; from 3 m up the cloth radiates
-                // out under the lens round her instead.
-                // v4 r3: at 40 degrees the fan's 50 degree sash flew through the lens; 33 lies between the sashes at 20 and 50.
-                float a = 33f * Mathf.Deg2Rad, r = Mathf.Lerp(5.4f, 4.8f, u);
-                eye = new Vector3(Mathf.Sin(a) * r, 3.3f - .25f * u + _amCourt, Mathf.Cos(a) * r);
-                look = new Vector3(-.2f, .95f + _amCourt, .7f);
-                fov = Mathf.Lerp(46f, 42f, u);
-            }
+            if (index != AmShotHit) return;
+            float u = Ease(AmReleaseAt + AmHangTo, Seconds, t);
+            float a = 33f * Mathf.Deg2Rad, r = Mathf.Lerp(5.4f, 4.8f, u);
+            eye = new Vector3(Mathf.Sin(a) * r, 3.3f - .25f * u + _amCourt, Mathf.Cos(a) * r);
+            look = new Vector3(-.2f, .95f + _amCourt, .7f);
+            fov = Mathf.Lerp(46f, 42f, u);
         }
 
-        /// <summary>A warm afternoon: the street lifts a little warmer and brighter while it stands; the release flares.</summary>
+        /// <summary>A warm afternoon that turns bright and cool-vivid as the monsoon answers, flares as the bird passes and on the
+        /// drive, and is richer through the hang, so the held moment feels held. Never darker.</summary>
         private void AmihanGrade(float t, out float brightness, out float saturation)
         {
-            float street = Ease(.1f, .4f, t) * (1f - Ease(AmWarpAt, AmWarpAt + .5f, t));
-            float beat = Mathf.Max(AmBeat(t, AmReleaseAt, .35f), .6f * AmBeat(t, AmWhistleAt, .25f));
-            brightness = 1f + .04f * street + .08f * beat;
-            saturation = 1f + .10f * street;
+            float monsoon = Ease(AmGatherFrom, AmFormAt, t) * (1f - Ease(AmReleaseAt + AmHangTo, Seconds, t));
+            float beat = Mathf.Max(AmBeat(t, AmReleaseAt, .3f), Mathf.Max(.6f * AmBeat(t, AmWhistleAt, .25f), .5f * AmBeat(t, 3.18f, .3f)));
+            float hang = Ease(AmReleaseAt + AmHangFrom - .05f, AmReleaseAt + AmHangFrom + .05f, t)
+                * (1f - Ease(AmReleaseAt + AmHangTo, AmReleaseAt + AmHangTo + .1f, t));
+            brightness = 1f + .05f * monsoon + .08f * beat + .03f * hang;
+            saturation = 1f + .14f * monsoon + .12f * hang;
         }
 
-        /// <summary>The lens takes the skid, the whistle, the catch and the release, small and quickly gone.</summary>
+        /// <summary>The lens takes the monsoon's arrival, the bird's pass, the wingbeat and the release, small and quickly gone.</summary>
         private static Vector3 AmihanShake(float t)
         {
             Vector3 Kick(float at, float size, float hz)
@@ -550,7 +728,7 @@ namespace TumbangPreso.Visual
                 float fall = Mathf.Exp(-s * 14f) * size;
                 return new Vector3(Mathf.Sin(s * hz) * fall, Mathf.Sin(s * hz * 1.3f + 1.1f) * fall * .6f, 0f);
             }
-            return Kick(AmSkidAt, .02f, 70f) + Kick(AmArriveAt + .1f, .025f, 64f) + Kick(AmCatchAt, .02f, 64f) + Kick(AmReleaseAt, .08f, 46f);
+            return Kick(AmArriveAt + .3f, .02f, 64f) + Kick(3.2f, .035f, 52f) + Kick(AmReleaseAt, .09f, 46f);
         }
     }
 }

@@ -50,12 +50,14 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(0f, AmihanRules.StormSurgeDelaySeconds, 1e-6f);
             var performance = UltimatePerformance.For("amihan");
             Assert.IsNotNull(performance);
-            const float drive = 3.85f;
+            const float drive = 4.55f;
             Assert.IsTrue(performance.Punches.Any(p => Mathf.Abs(p - drive) < 1e-3f), "The drive is a punch.");
             var key = performance.Keys.First(k => Mathf.Abs(k.Time - drive) < 1e-3f);
             Assert.AreEqual(-104f, key.ArmRight.x, .5f, "Both palms driven forward on the release.");
             Assert.AreEqual(-104f, key.ArmLeft.x, .5f);
-            Assert.AreEqual(performance.Seconds - drive, Abilities.AmihanStorm.CutsceneTail, 1e-3f,
+            // v6: the hang slows the story clock after the drive; at the hand-back it has advanced exactly the tail.
+            Assert.AreEqual(HeroIntroductionScene.AmRealTail, performance.Seconds - drive, 1e-3f, "The scene's hang is timed to this length.");
+            Assert.AreEqual(Abilities.AmihanStorm.CutsceneTail, HeroIntroductionScene.AmihanStoryAfterRelease(performance.Seconds - drive), 1e-3f,
                 "The live fan picks up at the age the cutscene's last frame drew.");
             Assert.Less(Shipped().length, .6f, "After the hand-back the body only settles.");
         }
@@ -66,7 +68,7 @@ namespace TumbangPreso.Tests
             var clip = Shipped();
             var performance = UltimatePerformance.For("amihan");
             Assert.IsNotNull(performance);
-            Assert.AreEqual(4.4f, performance.Seconds, 1e-4f, "The shared phase derives its boundary from this length.");
+            Assert.AreEqual(5.6f, performance.Seconds, 1e-4f, "The shared phase derives its boundary from this length.");
             var last = performance.Keys[performance.Keys.Count - 1];
             void Same(string bone, Vector3 intro)
             {

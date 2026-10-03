@@ -164,3 +164,58 @@ The owner has not watched v4 yet.
 
 Open: the face blocks are small at mid distance; the read pose's out-flung arm is short on her body; Drift and Whirlwind
 were not refilmed after their cloth was hidden; the victim's own blown camera is still unfilmed.
+
+## v5 (October 3, owner review of v4)
+
+Owner on the cutscene: *"i like the expression she makes and her relaxing feel but the vfx and the shit thhat show
+up in the back dont make sense"*, *"i also dont like the ranodm blue background saying the name of her skill"*. On
+Featherfall: *"doesnt feel like she's flyying and doesnt feel like she has air pushing her up"*, *"make her legs feel
+like theyre dangling"*, *"she looks like she is RIGIDLy flying"*.
+
+Diagnosis from the v4r11 frames: behind her a stage rose from the court (lime walls, five timber houses, posts and a
+clothesline) that was not the match; the green gust followed the old cloth path and its three strands looped round
+her a metre wide, with three helixes on top, so nothing had a readable source; the teal card cut in and the scene then
+jumped to the real plaza. Featherfall sat her upright with knees forward and arms 9 degrees off her sides above a
+faint swirl and thin helixes: nothing joined the court to her and her body never answered the air.
+
+* **Cutscene** (`HeroIntroductionScene.Amihan.cs`): kept every pose, time and face. Removed the stage, the clothesline
+  and its cloth, the card and letterbox (`HeroIntroductionScene.AmihanBurst.cs`, `Shaders/AmihanCardText.shader`
+  deleted). She performs on the real court; the real players' copies stand where they are from the first frame. The
+  wind has one path: streaks drawn each frame from upwind into her moving free palm, where three open strands spin
+  into a ball of air that she carries through the catch, the whirl, the point and the wind-up (fed by four more
+  streaks from behind) and that unrolls into the jet down the lane on the release. Speed streaks, court dust, the live
+  fan and the lane hit are unchanged.
+* **Featherfall** (`AmihanHoverRing` in `AmihanVfx.cs`, `AmihanFlightPose.cs`): a column of six streaks races from the
+  court up into her soles, stretched to the real gap; a gust ring rises through it every 0.95 s and breaks against her
+  soles; court dust spreads outward from under her; the take-off streaks are 1.5 times wider and brighter. Her body
+  rides it: each leg is its own under-damped pendulum (trailing her travel, swinging past when she stops, kicked by
+  each gust, drifting at its own rate), arms spread about 38 degrees palms down, chest and chin up, and a lift of her
+  whole body on every gust (`AmihanHoverRing.Push`). The column thins while she descends.
+
+## v6 (October 3): room to breathe and a slow hang
+
+Owner: *"thoroughly rethhink how to execute her cutscenes as well as throoughly figure out hwo to make her vfx there
+better"*, *"give her time to breathe bcz cutscene feels too fast"*, *"the part where she like lies down or smth should be
+where it slows down for a brief moment"* (the low lunge of the drive), *"u can give it sfx already"*.
+
+Rethink: v4 crammed twelve actions into 4.4 s (run, skid, read, taps, shrug, whistle, meet, catch, whirl, point, wind-up,
+drive), about 0.35 s each, which read as frantic and fought the relaxed attitude the owner liked. v6 is six beats in 5.6 s:
+BORED (easy hip-cocked stand, the read, one leaf falling straight down past her palm because there is no wind, taps, a
+shrug), CALL (the whistle; curled streaks race in carrying leaves and dust and wind into a little whirlwind on her palm,
+which she holds up and admires), LOOK (over her shoulder at the lens), WIND-UP (fed bigger), DRIVE and HANG (a cut to her
+side; the story clock runs at 18 per cent from 0.10 to 0.62 s after the drive), FINISH (the wink).
+
+The story clock (`HeroIntroductionScene.AmihanStoryAfterRelease`) is scaled so it still advances exactly
+`AmihanStorm.CutsceneTail` (0.55 s) by the hand-back; the live fan and the thrown players are posed on it, so play resumes
+where the last frame drew. `AmihanAirburstPresentationTests` checks that through the story clock.
+
+VFX: three materials, each with a source and a direction. Air: curled streaks (one loop each) with a dark ink line under a
+bright core, so they read on the light tiles. Leaves: the lone leaf, fourteen carried in on the arrival, eight drawn in on
+the wind-up, all circling inside the whirlwind, then flung across the fan's 60 degrees and suspended in the hang. Dust: the
+court's dust racing in, dust spun inside the whirlwind. The whirlwind is five open rings (narrow at her palm, wide at the
+top, the top wandering) and two strands spiralling up; on the drive its rings burst into arcs racing down the lane.
+
+Sound (`tools/build_amihan_ult_audio.py`): the theme retimed to v6 (near silence and two lazy notes, the leaf's tick, taps,
+the whistle, the wind's answer and its curls arriving, the whirlwind, her phrase, the look-back motif, the wind-up, the
+crack, a low stretched whoom under a held flute note through the hang, the rush returning, the finish note). Featherfall's
+three: the take-off rush, a soft puff on every gust, the landing sigh and step. Provisional: not heard.
