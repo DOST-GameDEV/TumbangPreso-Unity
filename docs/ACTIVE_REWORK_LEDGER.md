@@ -50,14 +50,23 @@ tick/chunk/rate/wire/protocol change. No PC native job is authorized.
 One prelaunch-nographics refusal and newline preparation assertion were retained;
 fixture unchanged, no extra native retry. The sole explanatory .txt Git formatting
 correction is complete and all18 hashes now match. Do not reopen these audits.
-NEXT: arrange current matching-artifact slow-transfer/playback and necessary
-LAN/online recovery once actual PC availability is released. Meanwhile continue
-a separate demonstrated source defect in root-owned Net/account paths, preserving
-the laptop's reader/carrier/device-loss and debug-switcher reservations.
+NEXT: build ONE coherent current144 Windows release after the laptop's device-loss
+fix is checked/published. Headless recipe is prepared, NOT launched, at
+Logs/arrival-pan-review1004/current144-build-plan.json: GameBuilder.BuildWindows,
+nographics/one job worker,6144+1536MiB/600s,new isolated profile/internal Builds.
+Old139 graphics build crossed reserve; same-source headless succeeded without
+quality reduction. This does NOT establish a lower safe build budget. Keep guards.
+PC measured16GiB/~9.3GiB free/no Editor; laptop16GiB/~6787MiB free, no current144
+artifact/build peak evidence. Owner release of isolated PC build slot is PENDING
+in async question; no answer is no approval. Inspect only task-owned stale helpers
+to recover laptop headroom, never terminate unrelated processes. Then verify full
+artifact/Runtime/Core hashes and actual startup before matching LAN/online checks.
 Laptop own F6 is shipped a516409c5 + dd3c45636 proof, original1fail5controls ->6/6.
-Its device-loss5 original reported3fail2controls: driving-pad throw/lunge failures
-and an unused-pad control needing isolation. Reader/carrier/debug-switcher remain
-laptop-owned. Root owns Net replay, new queue fixture, account and shared docs.
+Its device-loss5 original3fail2controls -> first candidate4/5 -> scoped candidate5/5
+reported,3432 unchanged/restored/free. New surviving-input/hysteresis/touch/committed
+contact controls plus existing reader7 are planned before publication; do not treat
+local unpublished code as a release source. Reader/carrier/debug-switcher remain
+laptop-owned. Root owns Net/account and shared docs; no new agents.
 
 ## Completed evidence and next integration gates
 
