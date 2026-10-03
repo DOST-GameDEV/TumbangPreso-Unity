@@ -37,6 +37,9 @@ and [earlier full rules](archive/CLAUDE_full_2026-09-24.md). New owner instructi
 - Reader withdrawal and parked control zero a controlled familiar's cached
   movement while keeping its accepted possession. Retain explicit zero input
   and local/offline custody; do not fall back to body AI or clear another seat.
+- Practice world reset retires active enabled bot input before teleporting.
+  Disabled brains retained on human seats do not own that seat's input; leave
+  its held controls intact. Preserve the existing shared human hero-key branch.
 - Preserve GenericPadBridge,MenuNav,controller mappings and the input backend.
   `InputCatalogue.For` is exhaustive: no discard arm; keep CS8509 as an error.
   Add pad/thumb mapping with a Verb and run the existing InputAssetSync regeneration.
