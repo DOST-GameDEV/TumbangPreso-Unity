@@ -17,6 +17,21 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### SEAT-PRODUCER-TRANSFER-1003: rapid role changes retain controls
+
+- [x] Retire deferred readers/brains and bind the surviving producer during rapid
+  player/spectator switches. Original8: four causal failures/four controls;
+  first candidate8/8, exact published source hashes checked. No protocol change.
+  [Evidence](reports/reliability-2026-10-03/seat-producer-transfer/README.md).
+  Live-peer/physical acceptance and frozen1003g inclusion remain separate.
+
+### EXPLICIT-MOVEMENT-1003: final owner numbers
+
+- [x] Explicit role walk/run speeds without character scaling, new jump and
+  stamina, charge-dependent defender lunge cooldown and preserved slide rules.
+  Managed 708/708; four distinct native physical cases qualified. Protocol 137.
+  [Result, scope and remaining limits](reports/movement-2026-10-03/README.md).
+
 ### OBJECTIVE-ECONOMY-1003: latest owner revision
 
 - [x] Can knockdown +1, successful tag +1, and one defender-round start grant +1.
@@ -45,9 +60,12 @@ Nothing was deleted or renumbered.
 - [x] Ice probe waits for intended client admission instead of consuming its
   pick at temporary seat0. Native original2causal/3control, candidate5/5.
   [Scope](reports/reliability-2026-10-03/ice-admission-role/README.md).
-- [ ] Shared new1003g build and matching-source peer checks; actual Frozen
-  effects and online/Relay remain separate. Resume paused build after priority
-  pair, do not repeat the unchanged baseline merely to produce more activity.
+- [x] Shared1003g build and startup/menu check completed with retained strict
+  input failure plus separate accepted post-import classification and full manifest.
+  [Artifact and limits](reports/reliability-2026-10-03/windows-candidate1003g/README.md).
+- [ ] Matching-artifact peer checks and actual Frozen effects; online/Relay remain
+  separate. Current Main137 is incompatible with frozen1003g134. Do not repeat
+  the unchanged baseline merely to produce more activity.
 
 ### SPECTATOR-MATCH-LIFETIME-1003: retire old footage and markers
 

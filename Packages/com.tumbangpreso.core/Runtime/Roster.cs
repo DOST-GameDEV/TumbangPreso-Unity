@@ -354,8 +354,8 @@ namespace TumbangPreso.Core
         // change movement or contact; equipment handling remains independent.
         public static float PersonSpeedScale(int index) => PersonSpeedScale(index, GameMode.Classic);
 
-        public static float PersonSpeedScale(int index, GameMode mode) =>
-            mode == GameMode.Classic ? 1.0f : TraitScale(PersonTrait(index, Trait.Bilis, mode), Balance.TraitSpeedPerPoint);
+        // Character traits no longer change base walking/running in either mode.
+        public static float PersonSpeedScale(int index, GameMode mode) => 1.0f;
 
         public static float PersonPowerScale(int index) => PersonPowerScale(index, GameMode.Classic);
 

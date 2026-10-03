@@ -1,5 +1,14 @@
 # Skill Networking Contract
 
+## Explicit movement, protocol137
+
+Both modes use absolute role walk/run speeds without innate character scaling.
+Body jump gravity is separate from unchanged projectile gravity. Stamina and
+power-dependent lunge recovery follow the new owner values; local and host paths
+use the same cooldown function. No new packet fields are added. The existing
+movement budget retains its impulse margin at 30 m/s. Matching rebuilt clients
+are required. [Native physics evidence](reports/movement-2026-10-03/README.md).
+
 ## Objective economy, protocol136
 
 Can knockdowns and successful tags each grant one objective point. Throws and

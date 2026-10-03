@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "validationOnly": true,
+  "workerId": "codex-slot1003",
+  "projectRoot": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-codex-slot1003",
+  "sourceProject": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks",
+  "sourceCommit": "d786404c8912cdb22425317cb39a9bf19782eaf8",
+  "companyName": "BH Studios Validation",
+  "productName": "TumpWorker-codex-slot1003",
+  "editorVersion": "6000.5.8f1",
+  "requiredProfile": "validation-codex-slot1003",
+  "shippingBuildsAllowed": false,
+  "state": "ready",
+  "editorValidation": "not_run",
+  "libraryCopy": {
+    "files": 56549,
+    "bytes": 9364660560,
+    "verification": "independent copies; size checked; source size/mtime unchanged"
+  },
+  "preparationRetry": 1,
+  "originalFailure": "Outside Unity command line unavailable during copy; no Editor launched"
+}

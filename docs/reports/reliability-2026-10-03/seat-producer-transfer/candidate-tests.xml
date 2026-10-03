@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 07:15:51Z" end-time="2026-10-03 07:15:52Z" duration="0.8161929">
+  <test-suite type="TestSuite" id="2668" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1358" result="Passed" start-time="2026-10-03 07:15:51Z" end-time="2026-10-03 07:15:52Z" duration="0.816193" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2662" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1358" result="Passed" start-time="2026-10-03 07:15:51Z" end-time="2026-10-03 07:15:52Z" duration="0.785998" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28768" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2663" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1358" result="Passed" start-time="2026-10-03 07:15:51Z" end-time="2026-10-03 07:15:52Z" duration="0.766332" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2664" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1358" result="Passed" start-time="2026-10-03 07:15:51Z" end-time="2026-10-03 07:15:52Z" duration="0.749218" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2269" name="SeatProducerTransferLifetimeTests" fullname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests" classname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-03 07:15:52Z" end-time="2026-10-03 07:15:52Z" duration="0.710660" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2270" name="ClientPlayerWatchPlayerKeepsItsFinalReader" fullname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests.ClientPlayerWatchPlayerKeepsItsFinalReader" methodname="ClientPlayerWatchPlayerKeepsItsFinalReader" classname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests" runstate="Runnable" seed="421283885" result="Passed" start-time="2026-10-03 07:15:52Z" end-time="2026-10-03 07:15:52Z" duration="0.356883" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2276" name="DisabledBotStillRetainsTheHostsExistingSimulationOwnership" fullname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests.DisabledBotStillRetainsTheHostsExistingSimulationOwnership" methodname="DisabledBotStillRetainsTheHostsExistingSimulationOwnership" classname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests" runstate="Runnable" seed="1782061144" result="Passed" start-time="2026-10-03 07:15:52Z" end-time="2026-10-03 07:15:52Z" duration="0.050904" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2275" name="FinalWatchRetiresEveryReaderFromRapidRoleChanges" fullname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests.FinalWatchRetiresEveryReaderFromRapidRoleChanges" methodname="FinalWatchRetiresEveryReaderFromRapidRoleChanges" classname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests" runstate="Runnable" seed="617129778" result="Passed" start-time="2026-10-03 07:15:52Z" end-time="2026-10-03 07:15:52Z" duration="0.043882" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2272" name="HostBotPlayerWatchKeepsTheFinalBotAndSimulation" fullname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests.HostBotPlayerWatchKeepsTheFinalBotAndSimulation" methodname="HostBotPlayerWatchKeepsTheFinalBotAndSimulation" classname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests" runstate="Runnable" seed="1007848431" result="Passed" start-time="2026-10-03 07:15:52Z" end-time="2026-10-03 07:15:52Z" duration="0.065967" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2271" name="HostPlayerWatchPlayerKeepsItsFinalReaderAndSimulation" fullname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests.HostPlayerWatchPlayerKeepsItsFinalReaderAndSimulation" methodname="HostPlayerWatchPlayerKeepsItsFinalReaderAndSimulation" classname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests" runstate="Runnable" seed="880438196" result="Passed" start-time="2026-10-03 07:15:52Z" end-time="2026-10-03 07:15:52Z" duration="0.042309" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2277" name="OnlineRebindCannotReactivateTheRetiredReaderAfterInstallerHandover" fullname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests.OnlineRebindCannotReactivateTheRetiredReaderAfterInstallerHandover" methodname="OnlineRebindCannotReactivateTheRetiredReaderAfterInstallerHandover" classname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests" runstate="Runnable" seed="339124868" result="Passed" start-time="2026-10-03 07:15:52Z" end-time="2026-10-03 07:15:52Z" duration="0.046630" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2273" name="RepeatingTheCurrentPlayerSeatKeepsOneExistingReader" fullname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests.RepeatingTheCurrentPlayerSeatKeepsOneExistingReader" methodname="RepeatingTheCurrentPlayerSeatKeepsOneExistingReader" classname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests" runstate="Runnable" seed="38491985" result="Passed" start-time="2026-10-03 07:15:52Z" end-time="2026-10-03 07:15:52Z" duration="0.043480" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+]]></output>
+            </test-case>
+            <test-case id="2274" name="RepeatingWatchKeepsOneHostBot" fullname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests.RepeatingWatchKeepsOneHostBot" methodname="RepeatingWatchKeepsOneHostBot" classname="TumbangPreso.PlayTests.SeatProducerTransferLifetimeTests" runstate="Runnable" seed="1050584608" result="Passed" start-time="2026-10-03 07:15:52Z" end-time="2026-10-03 07:15:52Z" duration="0.041723" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Replay] this device cannot asynchronously read the replay format; the capture is the old synchronous copy, which is slower and correct.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

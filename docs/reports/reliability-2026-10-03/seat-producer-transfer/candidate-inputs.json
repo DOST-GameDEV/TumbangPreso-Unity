@@ -1,0 +1,7 @@
+{
+  "Assets/TumbangPreso/Runtime/MatchInstaller.cs": "429919e1d516a6f9ed98040cce455fd94a1d3589bbb7cefa10f018715b9b02fa",
+  "Assets/TumbangPreso/Runtime/CharacterMotor.cs": "ba1e4804b0f4fb0f44799628ae4a794e0b8c54da74df2d6eefae26397b3618fb",
+  "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs": "7b1191ecd0914bdbd0ac8cb82d78ad17fea781e63a6dc25e5929b11f24bbae39",
+  "Assets/TumbangPreso/Tests/PlayMode/SeatProducerTransferLifetimeTests.cs": "55542233eb6ee69ef8f40381e31916f75747dab4fbcad8b9a36b9cbc4b8e1a1c",
+  "Assets/TumbangPreso/Tests/PlayMode/SeatProducerTransferLifetimeTests.cs.meta": "48e9522f30153fa0ba842f01749de3052ffb5e92ef559726191e89eb0ac5adad"
+}

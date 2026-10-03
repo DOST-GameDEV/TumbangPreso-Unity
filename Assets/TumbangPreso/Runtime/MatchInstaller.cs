@@ -1311,7 +1311,7 @@ namespace TumbangPreso
                 if (body == null) continue;
 
                 bool shouldDrive = !nobodyDrives && slot == seat;
-                var reader = body.GetComponent<PlayerInputReader>();
+                var readers = body.GetComponents<PlayerInputReader>();
 
                 if (shouldDrive)
                 {
@@ -1320,32 +1320,41 @@ namespace TumbangPreso
                     // write `InputIntent` every step, so the player and the bot fight over the
                     // same character and the result reads as unresponsive controls rather than as
                     // two drivers.
-                    var ai = body.GetComponent<AIController>();
-                    if (ai != null)
+                    foreach (var ai in body.GetComponents<AIController>())
                     {
                         ai.enabled = false;
                         Destroy(ai);
                         body.ForgetInputSource();
                     }
 
-                    if (reader != null) continue;
+                    bool hasReader = false;
+                    foreach (var reader in readers)
+                    {
+                        if (reader.enabled) hasReader = true;
+                        else Destroy(reader); // A disabled retired reader may still await Destroy.
+                    }
+                    if (hasReader) continue;
 
                     body.gameObject.AddComponent<PlayerInputReader>();
                     body.ForgetInputSource();
                     continue;
                 }
 
-                if (reader == null) continue;
+                if (readers.Length == 0) continue;
 
                 // ⚠️ DISABLED FIRST, THEN DESTROYED. `Destroy` is deferred to the end of the
                 // frame, so without this the seat being left and the seat being taken would both
                 // write `InputIntent` for the rest of the current frame and one keypress would
                 // drive two bodies. `MatchRpc.ApplyRebindLocalSeat` carries the same pair.
-                reader.enabled = false;
-                Destroy(reader);
+                foreach (var reader in readers)
+                {
+                    reader.enabled = false;
+                    Destroy(reader);
+                }
 
-                if (AIController.BotsEnabled && NetAuthority.IsHost &&
-                    body.GetComponent<AIController>() == null)
+                bool hasBrain = false;
+                foreach (var ai in body.GetComponents<AIController>()) if (ai.enabled) hasBrain = true;
+                if (AIController.BotsEnabled && NetAuthority.IsHost && !hasBrain)
                     body.gameObject.AddComponent<AIController>();
 
                 body.ForgetInputSource();
@@ -1774,7 +1783,21 @@ namespace TumbangPreso
 
         private int AiCharacterIndex(int slot)
         {
-            int human = HumanSeat >= 0 ? Settings.SettingsStore.Current.CharacterPick : -1;
+            int humanSeat = HumanSeat;
+            int human = humanSeat >= 0 ? Settings.SettingsStore.Current.CharacterPick : -1;
+            if (GameLaunch.GuidedTutorial && humanSeat >= 0)
+            {
+                int size = Roster.GetPeople(SceneFlow.SelectedMode).Count;
+                if (size > 0)
+                {
+                    int chosen = human >= 0 ? human : ResolveAiCharacterIndex(humanSeat, -1, SceneFlow.SelectedMode);
+                    if (slot == humanSeat) return chosen;
+                    // Give each other seat its own offset after the student. The
+                    // normal 0/3/6/9 spread collides in the nine-hero roster.
+                    int ordinal = slot < humanSeat ? slot : slot - 1;
+                    return (chosen + 1 + ordinal) % size;
+                }
+            }
             return ResolveAiCharacterIndex(slot, human, SceneFlow.SelectedMode);
         }
 

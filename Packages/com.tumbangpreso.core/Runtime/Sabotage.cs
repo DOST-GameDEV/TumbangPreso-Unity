@@ -226,7 +226,7 @@ namespace TumbangPreso.Core
         /// </summary>
         public static float DangerRadius =>
             ActionableReach
-            + Balance.Speed * Balance.DefenderSpeedScale
+            + Balance.DefenderWalkSpeed
               * Balance.ShoveStun * TayaResponseShare;
 
         /// <summary>
@@ -273,7 +273,7 @@ namespace TumbangPreso.Core
         /// and a pursuit with no clock is a tail however good its entry condition is.
         /// </summary>
         public static float MaxPursuitSeconds =>
-            MaxApproachRange / (Balance.Speed * Balance.AttackerSpeedScale) * 1.5f;
+            MaxApproachRange / (Balance.AttackerWalkSpeed) * 1.5f;
 
         /// <summary>
         /// How long a bot leaves a failed victim alone: 3.00 s.

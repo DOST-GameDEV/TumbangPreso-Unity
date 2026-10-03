@@ -703,8 +703,7 @@ namespace TumbangPreso.Visual
             _runCycleMetres=_runReference*run.length;
         }
 
-        private float OrdinaryWalkSpeed => Core.Balance.Speed * Core.Stamina.RoleSpeedScale(_motor.IsDefender)
-            * Core.Roster.PersonSpeedScale(_motor.CharacterIndex, _motor.Mode)
+        private float OrdinaryWalkSpeed => Core.Stamina.MovementSpeed(_motor.IsDefender, false)
             * Mathf.Max(.1f, _motor.Stamina.SpeedZones.Value);
 
         private void StepGait()=>AdvanceGait(Time.deltaTime);

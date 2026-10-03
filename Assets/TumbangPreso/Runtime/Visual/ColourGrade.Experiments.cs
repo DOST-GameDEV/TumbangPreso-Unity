@@ -71,7 +71,7 @@ namespace TumbangPreso.Visual
             if(PersonalCueCamera)
             {
                 var actor=CourtBoundaryPresentation.Viewer(_camera);Vector3 velocity=actor.PresentationTravelVelocity;velocity.y=0;
-                float walk=Balance.Speed*Stamina.RoleSpeedScale(actor.IsDefender)*Roster.PersonSpeedScale(actor.CharacterIndex,actor.Mode);
+                float walk=Stamina.MovementSpeed(actor.IsDefender, false);
                 bool fast=actor.Stamina.IsSprinting || velocity.magnitude>walk*1.4f;
                 if(fast && !settings.ReducedUiMotion && !settings.ReducedEffects)
                     _cueSpeed=profile.SpeedLines*Mathf.InverseLerp(walk,walk*2,velocity.magnitude);

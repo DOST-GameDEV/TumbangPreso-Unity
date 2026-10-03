@@ -65,7 +65,7 @@ namespace TumbangPreso.Core.Tests
             Assert.True(SabotageRules.ActionableReach >= Balance.PunchRange);
 
             // Reach plus half a stun's worth of closing at the taya's own speed.
-            float closing = Balance.Speed * Balance.DefenderSpeedScale
+            float closing = Balance.DefenderWalkSpeed
                             * Balance.ShoveStun * SabotageRules.TayaResponseShare;
             Assert.Equal(SabotageRules.ActionableReach + closing, SabotageRules.DangerRadius, 4);
 

@@ -1,5 +1,47 @@
 # Active Rework Checkpoint
 
+## PC root latest checkpoint: October 3, Unity slot isolation
+
+Competition goal is ACTIVE (confirmed tool). Owner requests continuing work after
+every answer and compaction. Latest request: second Unity slot alongside Claude.
+Claude owns MAIN graphics/filming and Amihan presentation files; never stop its
+processes or change its files. Detected Amihan v38 job on MAIN; it subsequently
+exited naturally. No outgoing chat messages or new agents in this resumption.
+
+Published root tooling d786404c8 plus 228a06f59 allows one explicitly verified
+outside Editor and its import children beside one isolated headless EditMode
+worker. Thirty safety/lifecycle cases pass. Builds/graphics/ports, unknown outside
+processes, shared preferences/cache and insufficient memory stay refused.
+
+Separate worker C:/Users/matth/Documents/Codex/work/tump-codex-slot1003 at
+d786404c8, with current runner overlay only; independent Library 56,549 files /
+9,364,660,560 bytes copied from idle1003g. Unique validation company/product and
+profile validation-codex-slot1003. First copy refused unreadable outside process;
+one checked copy resume completed. Never reset this or shipping worktrees.
+Native slot probe session5631: Logs/slot-native1003a, one existing account control,
+4096MB worker/1536MB reserve plus1024MB outside growth reserve. Inspect terminal
+receipt/XML before claiming native success; no simultaneous Editor proof yet.
+
+Seat producer fix70a08af7a is committed and merged/pushed with incoming movement
+as b7269335c. Original8 had4causal/4controls; candidate8/8, exact5 source/test hashes
+match qualified files. Preserve other owners' dirty arms/PNG metas/HeroHazards,
+QualitySettings, Amihan files and new importer metadata dirt. Current Main protocol
+137; frozen1003g protocol134 is intentionally separate.
+
+1003g full manifest completed:258files/2,551,899,275bytes, SHA256
+222703b59537b8e41394d8aba4e4962015b5d3508db36d7adbefd18765a3e0eb.
+Startup/menu passed, guard exited/restored/runtime unchanged. Strict frozen
+receipt remainsFALSE; separate213-delta import classification accepted. Curated
+docs/reports/reliability-2026-10-03/windows-candidate1003g pending publication.
+No HTTP share server started. Performance-only requires Development build;1003g
+is BuildOptions.None. Preserve this artifact and baseline1003e.
+
+Next: inspect slot-native1003a; publish retained artifact/startup receipts and
+slot result; continue an unreserved engineering defect while Claude uses MAIN.
+Reuse Seat8/account13 evidence, do not repeat it to create activity. Cleanup of
+obsolete PC builds was automatically blocked by policy; nothing deleted or bypassed.
+Read this block first; older blocks below are historical/contributor checkpoints.
+
 Updated 2026-10-03. Competition goal ACTIVE. Continue through coherent source fixes,
 focused qualification and publication. Do not stop at a progress report or compaction.
 

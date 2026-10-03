@@ -119,6 +119,8 @@
         // MOVEMENT AND THE ARENA — character_base.gd
         // -------------------------------------------------------------------
 
+        // Legacy non-locomotion reference for companion flight and throw presentation.
+        // Player walking/running uses the explicit role speeds below.
         public const float Speed = 4.6f;
 
         // Bolt Sprint promises sustained skating speed. Its old 4 m/s² per-tick
@@ -130,74 +132,19 @@
         // The previous 3*dt impulse was erased by ordinary movement friction.
         public const float NemuPhaseSpeedScale = 1.20f;
 
-        /// <summary>
-        /// ⚠️⚠️ 0.45, DOWN FROM 0.75, AND IT IS A 40% CUT HE ASKED FOR BY NAME. 🧑 2026-08-29,
-        /// after playing the 8-round Hero Strike build: *"defender kinda hard now so can we slow
-        /// down all attackers as well as bot, even when they sprint, by 40%"*, and separately
-        /// *"feels like shit get past defender very easily"*.
-        ///
-        /// ⚠️⚠️ 0.55 SINCE LATER THE SAME DAY, AND THE NERF STAYS. 🧑, after playing the 40%:
-        /// *"my speed reduction might have been too harsh, u can increase a bit ... js a bit ...
-        /// but i want the nerf to stay for attackers"*.
-        ///
-        /// 0.45 → **0.55**, which is a **27% cut** from the original 0.75 rather than 40%.
-        /// **Walk 2.53 m/s, sprint 3.79 m/s**, against 3.45 and 5.18 before any of this.
-        ///
-        /// | scale | walk | sprint | cut |
-        /// |---|---|---|---|
-        /// | 0.75, original | 3.45 | 5.18 | — |
-        /// | 0.45, first pass | 2.07 | 3.11 | 40% |
-        /// | **0.55, shipped** | **2.53** | **3.79** | **27%** |
-        ///
-        /// ⚠️ THE TAYA IS STILL THE FASTER ROLE BY A WIDE MARGIN: 5.06 m/s walking against an
-        /// attacker's 3.79 m/s SPRINTING. That is the thing he asked for and it is untouched.
-        ///
-        /// ⚠️ AND `StaminaDrainRate` MOVED WITH IT, AGAIN. § 83.1b: the bar buys a DISTANCE, so a
-        /// speed change is a drain change or the interlock breaks. 29 at 0.55, where it was 24 at
-        /// 0.45 and 40 at 0.75, and `ASprintBuysOneCrossingOfTheDangerZone` is what says so
-        /// without anybody having to remember.
-        ///
-        /// ⚠️ THE SPRINT IS CUT BY THE SAME 40% WITHOUT TOUCHING `SprintScale`, WHICH IS WHY IT
-        /// IS THIS CONSTANT THAT MOVED. `CharacterMotor` composes speed as
-        /// `Speed * RoleSpeedScale * PersonSpeedScale * sprint * SpeedZones`, all multiplicative,
-        /// so scaling the role term scales every state an attacker can be in — walking, sprinting,
-        /// fatigued and inside a hazard zone — by exactly 0.60. Cutting `SprintScale` instead
-        /// would have slowed the sprint and left the walk untouched, and would have hit the TAYA's
-        /// sprint too, which is the opposite of the ask.
-        ///
-        /// ⚠️ IT REACHES THE BOTS FOR FREE. `AIController` drives the same `InputIntent` through
-        /// the same motor; there is no second speed path to change. The second half of the quote
-        /// is therefore satisfied by this line and not by anything in `AIController`.
-        ///
-        /// ⚠️⚠️ AND IT MOVES THE INTERLOCKED SET. `Stamina`'s header names StaminaMax,
-        /// StaminaDrainRate, SprintScale and ConfinementRadius as one set dimensioned so the bar
-        /// buys roughly one crossing of the danger zone. A 40% slower attacker covers 40% less
-        /// ground on the same bar, so **a sprint no longer buys a full crossing** — that is a
-        /// deliberate consequence of the ask, not an oversight, and it is what makes the taya
-        /// stronger. `TripGraceAfterGetUp` was re-solved against the new speed; nothing else in
-        /// the set was, and re-measuring it is `docs/TODO.md` § 83.1.
-        /// </summary>
-        public const float AttackerSpeedScale = 0.55f;
-
-        /// <summary>
-        /// The taya's own multiplier, which used to be a literal 1.0 inside `RoleSpeedScale`.
-        ///
-        /// ⚠️ 🧑 2026-08-29, in the same breath as widening the block: *"make them a bit faster
-        /// too"*. 4.6 x 1.10 = **5.06 m/s**. "A bit" is taken at its word: the taya was already
-        /// the faster role and the attacker cut above is doing most of the work.
-        ///
-        /// ⚠️ IT IS A NAMED CONSTANT RATHER THAN A NUMBER IN THE EXPRESSION, because the two role
-        /// scales are read against each other constantly — the ratio is the whole balance of
-        /// chase versus escape — and one of them being invisible is how it stayed at 1.0 through
-        /// every retune of the other.
-        /// </summary>
-        public const float DefenderSpeedScale = 1.10f;
+        // Explicit role speeds in metres per second, identical across character
+        // picks and both modes. Active statuses, abilities and terrain remain separate.
+        public const float AttackerWalkSpeed = 3.75f;
+        public const float DefenderWalkSpeed = 5.0f;
+        public const float AttackerRunSpeed = 5.625f;
+        public const float DefenderRunSpeed = 7.5f;
 
         public const float SprintScale = 1.50f;
         public const float Friction = 30.0f;
-        public const float Gravity = 20.0f;
+        public const float Gravity = 20.0f; // Slipper/projectile gravity is unchanged.
+        public const float CharacterGravity = 128.0f / 9.0f;
         public const float MaxFallSpeed = 26.0f;
-        public const float JumpVelocity = 5.8f;
+        public const float JumpVelocity = 16.0f / 3.0f;
 
         /// <summary>
         /// ⚠️ A SQUARE, NOT A CIRCLE. Both the chalk the map builders draw and the clamp
@@ -245,7 +192,7 @@
         // against. Port_Plan.md §7.1 carries the reconciliation as a Phase 1 blocker.
         // -------------------------------------------------------------------
 
-        public const float StaminaMax = 60.0f;
+        public const float StaminaMax = 100.0f;
         /// <summary>
         /// Stamina spent per second of sprinting.
         ///
@@ -285,15 +232,15 @@
         /// DISTANCE against `ConfinementRadius`, so the next person to move the speed, the bar,
         /// the drain or the box gets told rather than finding out from a playtest.
         /// </summary>
-        public const float StaminaDrainRate = 29.0f;
-        public const float StaminaRegenRate = 20.0f;
+        public const float StaminaDrainRate = 40.0f;
+        public const float StaminaRegenRate = 40.0f;
         public const float StaminaRegenDelay = 1.0f;
 
         /// <summary>You cannot START a sprint below this, so the bar cannot be feathered.</summary>
-        public const float StaminaSprintFloor = 7.5f;
+        public const float StaminaSprintFloor = 20.0f;
 
         public const float FatigueTime = 2.5f;
-        public const float FatigueSpeedScale = 0.75f;
+        public const float FatigueSpeedScale = 1.0f;
 
         // -------------------------------------------------------------------
         // THE SHOVE — character_base.gd. Attackers shove Attackers.
@@ -325,12 +272,13 @@
         public const float LungeChargeTime = 0.5f;
         // Owner feedback, 2026-09-30: a faster, farther defender commitment.
         // Solve the impulse from travel so friction and all derived reach stay coherent.
-        public const float LungeDistance = 3.0f;
+        public const float LungeDistance = 3.5f;
         public static readonly float LungeSpeed =
             (float)System.Math.Sqrt(2.0 * Friction * LungeDistance);
         public const float LungeTagRadius = 1.3f;
-        public const float LungeActiveTime = 0.45f;
-        public const float LungeCooldown = 1.5f;
+        public static readonly float LungeActiveTime = LungeSpeed / Friction;
+        public const float LungeCooldown = 2.5f;
+        public const float LungeTapCooldown = 0.5f;
         public const float LungeMinPower = 0.35f;
 
         // -------------------------------------------------------------------
@@ -401,7 +349,7 @@
         /// So the committed window is that number: the slide's own 0.34 s plus this.
         /// </summary>
         public static readonly float SlideRecoveryTime =
-            (LungeChargeTime + LungeActiveTime) - SlideActiveTime;
+            0.95f - SlideActiveTime;
 
         /// <summary>
         /// How much of their steering an attacker keeps while committed.
@@ -428,8 +376,7 @@
         /// would have no such property, and "cannot instantly chain another lunge" is exactly what
         /// the brief asks the commitment to cost.
         /// </summary>
-        public static readonly float SlideCooldown =
-            LungeChargeTime + LungeActiveTime + LungeCooldown;
+        public const float SlideCooldown = 2.45f;
 
         /// <summary>
         /// What a slide costs in stamina.

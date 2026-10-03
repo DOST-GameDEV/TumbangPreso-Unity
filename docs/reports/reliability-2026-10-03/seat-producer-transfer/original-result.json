@@ -1,0 +1,31 @@
+{
+  "failed": 4,
+  "total": 8,
+  "leaseHeld": false,
+  "xmlSha256": "54f43cf8f733ccc45e6f5ffcab0d378bd7e6c5fd7eaf6c298dc5a37d36381146",
+  "failures": [
+    {
+      "name": "ClientPlayerWatchPlayerKeepsItsFinalReader",
+      "message": "  The final player reused a reader already queued for destruction\n  Expected: 1\n  But was:  0\n"
+    },
+    {
+      "name": "HostBotPlayerWatchKeepsTheFinalBotAndSimulation",
+      "message": "  Returning to watch skipped the replacement bot because the doomed one still existed\n  Expected: 1\n  But was:  0\n"
+    },
+    {
+      "name": "HostPlayerWatchPlayerKeepsItsFinalReaderAndSimulation",
+      "message": "  The final player reused a reader already queued for destruction\n  Expected: 1\n  But was:  0\n"
+    },
+    {
+      "name": "OnlineRebindCannotReactivateTheRetiredReaderAfterInstallerHandover",
+      "message": "  Expected: 1\n  But was:  0\n"
+    }
+  ],
+  "phase": "original",
+  "guardTerminal": true,
+  "receiptSha256": "4f408594cb2a7a3180b470f9da02b21a61c4e19ec01723d0edbb0711cde9bcb3",
+  "skipped": 0,
+  "passed": 4,
+  "preservationCompleted": true,
+  "xml": "Logs/seat-producer-transfer1003/native-original/tests.xml"
+}

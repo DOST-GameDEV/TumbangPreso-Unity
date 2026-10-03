@@ -382,7 +382,7 @@ namespace TumbangPreso.UI
             if (string.IsNullOrEmpty(label)) return null;
 
             string key = label.Trim().ToUpperInvariant();
-            var authored = XeluSprite(key, onDark, family ?? CurrentFamily);
+            var authored = ScrollSprite(key) ?? XeluSprite(key, onDark, family ?? CurrentFamily);
             if (authored != null) return authored;
 
             // ⚠️ THE PAD IS ASKED FIRST. Nothing is in both tables today, and if a keyboard row
@@ -454,6 +454,27 @@ namespace TumbangPreso.UI
 
             string key = label.Trim().ToUpperInvariant();
             return key == "MOUSE" || PadColumns.ContainsKey(key) || Table.ContainsKey(key);
+        }
+
+        // Owner-supplied October 3 replacement. Both directions share one cleaned sheet,
+        // equal optical height/padding and the normal binding-label lookup. Normalized
+        // rectangles survive the existing 512px prompt import budget without distortion.
+        private static Sprite ScrollSprite(string key)
+        {
+            if (key != "WHEEL UP" && key != "WHEEL DOWN") return null;
+            string id = "owner-scroll:" + key;
+            if (Sprites.TryGetValue(id, out var cached)) return cached;
+            var texture = Resources.Load<Texture2D>("UI/input/xelu/scroll_pair_v1");
+            if (texture == null) return null; // Preserve the established text/pixel fallback.
+            float x = key == "WHEEL UP" ? 172f : 982f;
+            var rect = new Rect(x / 1774f * texture.width, 93f / 887f * texture.height,
+                640f / 1774f * texture.width, 640f / 887f * texture.height);
+            var sprite = Sprite.Create(texture, rect, Vector2.one * .5f, rect.height,
+                0, SpriteMeshType.FullRect);
+            sprite.name = id;
+            sprite.hideFlags = HideFlags.DontSave;
+            Sprites[id] = sprite;
+            return sprite;
         }
 
         private static Sprite XeluSprite(string key, bool onDark, PadFamily family)
