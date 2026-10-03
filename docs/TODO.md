@@ -24,7 +24,8 @@ Nothing was deleted or renumbered.
   wire/protocol144. Laptop native original9 causal failures/9 controls ->18/18
   on the unchanged fixture, both3428 inputs unchanged and terminal/restored/free.
   Root verified tested runtime/fixture/meta hashes against candidate Git bytes.
-  Raw publication and direct XML/map inspection remain pending in the checkpoint.
+  Root inspected all six exact raw blobs, XML/maps and restored/free receipts.
+  [Evidence](reports/laptop-validation-2026-10-04/client-movement-packet-bounds/README.md).
 - [ ] Actual effect/body movement and current packaged/live-peer qualification.
   Supplied packet tests establish framing and rejection, not complete gameplay.
 
