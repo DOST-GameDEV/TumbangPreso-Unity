@@ -760,7 +760,7 @@ def amihan():
     # E HANG: cut on the drive to her right side, wide enough for the wingbeat over the lane: her in the left third.
     p.shot(4.55, 5.18, (5.2, 1.6, .6), (0, 1.5, 1.2), 66, eye_to=(4.8, 1.6, .9), look_to=(0, 1.45, 1.6), fov_to=62)
     # F FINISH: a close-up of her, low in front of her, as she leans in with her wink, a slow push in.
-    p.shot(5.18, 5.6, (.5, .95, 2.6), (0, 1.1, 0), 38, eye_to=(.4, 1.0, 2.2), look_to=(0, 1.15, 0), fov_to=34)
+    p.shot(5.18, 5.6, (.55, 1.0, 3.3), (0, 1.0, 0), 42, eye_to=(.45, 1.05, 2.9), look_to=(0, 1.05, 0), fov_to=38)
     p.locked((3.4, 1.5, 3.4), (0, 1.0, 1.5), 50)
     return p
 
