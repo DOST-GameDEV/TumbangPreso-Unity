@@ -201,7 +201,7 @@ namespace TumbangPreso.UI
 
         private async Task SaveAsync()
         {
-            if (_busy || !IsOpen) return;
+            if (_busy) return;
 
             _currentFault.text = _current.text.Length == 0 ? "Enter your current password." : "";
             _nextFault.text = AccountRules.PasswordFault(_next.text) ?? "";
@@ -215,15 +215,13 @@ namespace TumbangPreso.UI
             _busy = true; _save.interactable = false;
             _status.text = "Changing your password...";
             _status.color = OwnerUiTheme.Current.EnteredInk;
-            var account = GameServices.Account;
-            string owner = account?.PlayerId ?? "";
             try
             {
+                var account = GameServices.Account;
                 if (account == null) throw new InvalidOperationException("The account service is not available here.");
                 await (_changePasswordDispatch == null
                     ? account.ChangePasswordAsync(_current.text, _next.text)
                     : _changePasswordDispatch(_current.text, _next.text));
-                if (!CanCompleteSave(account, owner)) return;
                 _status.text = "Password changed.";
                 _status.color = OwnerUiTheme.Current.Green;
                 MenuSfx.Valid();
@@ -231,7 +229,6 @@ namespace TumbangPreso.UI
             }
             catch (Exception e)
             {
-                if (!CanCompleteSave(account, owner)) return;
                 // ⚠️⚠️ A WRONG CURRENT PASSWORD IS THE ONLY LIKELY FAILURE AND IT GOES UNDER THAT
                 // FIELD. UGS answers a wrong one with its own wording about credentials, which
                 // names nothing a player can act on; the field it is about is the whole answer.
@@ -256,10 +253,6 @@ namespace TumbangPreso.UI
                 if (_save != null) _save.interactable = true;
             }
         }
-
-        private bool CanCompleteSave(Net.PlayerAccount account, string owner)
-            => this != null && IsOpen && ReferenceEquals(GameServices.Account, account)
-               && (account?.PlayerId ?? "") == owner;
 
         private void Update()
         {

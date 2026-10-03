@@ -1,0 +1,44 @@
+{
+  "job": {
+    "id": "151aecfcbc2045679b1899ae8b9ac535",
+    "ownerPid": 21936,
+    "guardPid": null,
+    "unityPids": [],
+    "createdUtc": "2026-10-03T02:50:31Z",
+    "kind": "cpu",
+    "memoryMb": 1536,
+    "reserveMb": 2048,
+    "project": "c:\\users\\matth\\documents\\codex\\work\\tump-feedback-0930",
+    "library": "c:\\users\\matth\\documents\\codex\\work\\tump-feedback-0930\\library",
+    "profile": "account-handover1003-candidate",
+    "prefHive": "software\\unity\\unityeditor\\bh studios\\tumbang preso",
+    "ports": [],
+    "worker": false,
+    "allowParallel": false,
+    "companyName": "BH Studios",
+    "productName": "Tumbang Preso"
+  },
+  "requestedUtc": "2026-10-03T02:50:31Z",
+  "status": "timeout_guard_completed",
+  "exitCode": 124,
+  "admission": {
+    "availableMb": 4354,
+    "activeJobsBefore": 0,
+    "acquiredUtc": "2026-10-03T02:50:31Z"
+  },
+  "startedUtc": "2026-10-03T02:50:31Z",
+  "guardPid": 9004,
+  "guardExitCode": 124,
+  "unityPids": [
+    13776
+  ],
+  "stoppedUnityPids": [
+    13776
+  ],
+  "reason": "Only verified owned Editors may be stopped; the guard was not terminated. A pending guard retains its lease.",
+  "endedUtc": "2026-10-03T02:58:01Z",
+  "guardTerminal": true,
+  "preservationCompleted": true,
+  "availableMbAtEnd": 4745,
+  "leaseHeld": false
+}

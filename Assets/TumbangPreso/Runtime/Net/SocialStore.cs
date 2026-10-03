@@ -48,6 +48,7 @@ namespace TumbangPreso.Net
         }
 
         private Cache _cache = new Cache();
+        private Cache _primaryCache;
         private float _nextPresence;
 
         /// <summary>The state the last write carried, so a CHANGE can be noticed. See `Update`.</summary>
@@ -124,7 +125,25 @@ namespace TumbangPreso.Net
         private void RetireOtherOwnersCache()
         {
             string owner = CareerStore.LocalPlayerId;
-            if (_cache.OwnerId == owner) return;
+            bool restoredPrimary = false;
+            if (GameServices.Account?.IsGuest ?? false)
+                _primaryCache ??= _cache;
+            else if (_primaryCache != null)
+            {
+                _cache = _primaryCache;
+                _primaryCache = null;
+                restoredPrimary = true;
+            }
+            if (_cache.OwnerId == owner)
+            {
+                if (restoredPrimary)
+                {
+                    SearchStatus = "";
+                    _refreshPending = true;
+                    Changed?.Invoke();
+                }
+                return;
+            }
 
             // A read must be safe even before the account notification reaches this component.
             // Keep the old disk cache until this owner has a real service answer to save.
@@ -158,7 +177,13 @@ namespace TumbangPreso.Net
             // on one machine is the tournament-guest case (`docs/TODO.md` § 97), and merging two
             // friends lists would put one player's friends on another player's screen.
             string me = CareerStore.LocalPlayerId;
-            if (_cache.OwnerId != me)
+            if (GameServices.Account?.IsGuest ?? false)
+            {
+                _primaryCache = _cache;
+                _primaryCache.List = SocialRules.Normalise(_primaryCache.List);
+                _cache = new Cache { OwnerId = me };
+            }
+            else if (_cache.OwnerId != me)
                 _cache = new Cache { OwnerId = me };
 
             _cache.List = SocialRules.Normalise(_cache.List);
@@ -166,6 +191,7 @@ namespace TumbangPreso.Net
 
         private void Save()
         {
+            if (_primaryCache != null || (GameServices.Account?.IsGuest ?? false)) return;
             try
             {
                 _cache.OwnerId = CareerStore.LocalPlayerId;

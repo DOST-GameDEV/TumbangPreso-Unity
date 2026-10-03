@@ -1,0 +1,19 @@
+{
+  "TumbangPreso.Runtime": {
+    "exitCode": 0,
+    "passed": true
+  },
+  "TumbangPreso.Tests": {
+    "exitCode": 0,
+    "passed": true
+  },
+  "TumbangPreso.PlayTests": {
+    "exitCode": 1,
+    "passed": false
+  },
+  "PlayTestsRepair": {
+    "exitCode": 0,
+    "passed": true,
+    "reason": "Targeted compile omitted existing same-assembly PlayModeWorld helper; original failure retained."
+  }
+}

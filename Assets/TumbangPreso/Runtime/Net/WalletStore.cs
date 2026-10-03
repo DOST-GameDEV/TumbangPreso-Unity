@@ -87,6 +87,7 @@ namespace TumbangPreso.Net
         public bool Busy { get; private set; }
 
         private Cache _cache = new Cache();
+        private Cache _primaryCache;
 
         public static string Path => System.IO.Path.Combine(ProfilePaths.Root, "wallet.json");
 
@@ -105,6 +106,7 @@ namespace TumbangPreso.Net
             if (GameServices.Career != null) GameServices.Career.Changed += OnCareerChanged;
             _hookedAccount = GameServices.Account;
             if (_hookedAccount != null) _hookedAccount.Changed += OnAccountChanged;
+            if ((_hookedAccount?.IsGuest ?? false) || _primaryCache != null) OnAccountChanged();
         }
 
         private void OnDisable()
@@ -117,6 +119,28 @@ namespace TumbangPreso.Net
         private void OnAccountChanged()
         {
             string owner = CareerStore.LocalPlayerId;
+            if (GameServices.Account?.IsGuest ?? false)
+            {
+                _primaryCache ??= _cache;
+                if (_cache.OwnerId != owner)
+                {
+                    _cache = new Cache { OwnerId = owner };
+                    LastPaid = 0;
+                    Status = "";
+                    Changed?.Invoke();
+                }
+                _refreshAfter = -1;
+                return;
+            }
+
+            bool restoredPrimary = _primaryCache != null;
+            if (restoredPrimary)
+            {
+                _cache = _primaryCache;
+                _primaryCache = null;
+                LastPaid = 0;
+                Status = "";
+            }
             if (!string.IsNullOrEmpty(_cache.OwnerId) && _cache.OwnerId != owner)
             {
                 _cache = new Cache { OwnerId = owner };
@@ -125,6 +149,7 @@ namespace TumbangPreso.Net
                 Save();
                 Changed?.Invoke();
             }
+            else if (restoredPrimary) Changed?.Invoke();
             _refreshAfter = Time.unscaledTime;
         }
 
@@ -323,7 +348,10 @@ namespace TumbangPreso.Net
 
                 // ⚠️ A CACHE FROM A DIFFERENT ACCOUNT IS NOT THIS ACCOUNT'S WALLET. Two people
                 // sharing one machine must not see each other's balance while offline.
-                if (!string.IsNullOrEmpty(cache.OwnerId) && cache.OwnerId != CareerStore.LocalPlayerId) return;
+                // Keep the primary cache private until a temporary guest hands back the device.
+                // OnEnable installs the guest view; return validates this owner's identity again.
+                if (!(GameServices.Account?.IsGuest ?? false)
+                    && !string.IsNullOrEmpty(cache.OwnerId) && cache.OwnerId != CareerStore.LocalPlayerId) return;
                 _cache = cache;
                 _cache.Wallet ??= new Wallet();
             }
@@ -335,6 +363,7 @@ namespace TumbangPreso.Net
 
         private void Save()
         {
+            if (_primaryCache != null || (GameServices.Account?.IsGuest ?? false)) return;
             try
             {
                 string path = Path;

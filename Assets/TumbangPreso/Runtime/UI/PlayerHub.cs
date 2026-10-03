@@ -436,6 +436,7 @@ namespace TumbangPreso.UI
 
         private void OnDestroy()
         {
+            RetireProfileSave();
             ScreenTakeover.Unregister(this);
             if (GameServices.Account != null) GameServices.Account.Changed -= OnDataChanged;
             if (GameServices.Career != null) GameServices.Career.Changed -= OnDataChanged;
@@ -924,6 +925,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private void Close()
         {
+            RetireProfileSave();
             ++_historyRequest;
             _deleteArmed = false;
             _notice = "";
@@ -1337,6 +1339,10 @@ namespace TumbangPreso.UI
         private async void SaveProfile()
         {
             if(_ownerSaving)return;
+            var a = GameServices.Account;
+            string owner = a?.PlayerId ?? "";
+            bool signedIn = a?.IsSignedIn ?? false;
+            int request = ++_profileSaveRequest;
             OwnerProfileSaving(true);
             try
             {
@@ -1346,7 +1352,6 @@ namespace TumbangPreso.UI
                 // ANYTHING NOT ON SCREEN. `SetProfileAsync` takes all four at once, so reading a
                 // destroyed `InputField` would throw, and defaulting one to "" would silently
                 // WIPE a bio the player had written just because they had the group shut.
-                var a = GameServices.Account;
                 string name = OwnerDraftValue("PlayerNameEdit",_displayName != null ? _displayName.text : a?.DisplayName ?? "");
 
                 // ⚠️⚠️ SIGNED OUT, THE NAME STILL SAVES. Without this the whole method threw a
@@ -1370,16 +1375,27 @@ namespace TumbangPreso.UI
                 string pronouns = OwnerDraftValue("ProfilePronouns",_pronouns != null ? _pronouns.text : a.Pronouns);
 
                 await a.SetProfileAsync(name, bio, country, pronouns);
+                if (!ProfileSaveIsCurrent(request, a, owner, signedIn)) return;
                 _notice = "Saved.";
                 OwnerProfileSaved();
             }
             catch (Exception e)
             {
+                if (!ProfileSaveIsCurrent(request, a, owner, signedIn)) return;
                 _notice = e.Message;
                 if(_tab==Tab.Profile && IsOpen)SetFooter("SAVE", _notice);
             }
-            finally{OwnerProfileSaving(false);}
+            finally
+            {
+                if (this != null && request == _profileSaveRequest) OwnerProfileSaving(false);
+            }
         }
+
+        private bool ProfileSaveIsCurrent(int request, Net.PlayerAccount account, string owner, bool signedIn)
+            => this != null && request == _profileSaveRequest
+               && ReferenceEquals(GameServices.Account, account)
+               && (account?.PlayerId ?? "") == owner
+               && (account?.IsSignedIn ?? false) == signedIn;
 
         // -------------------------------------------------------------------
         // § CAREER

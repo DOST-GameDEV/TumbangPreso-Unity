@@ -13,6 +13,7 @@ namespace TumbangPreso.UI
         private readonly Dictionary<string,string> _ownerDraft=new Dictionary<string,string>();
         private string _ownerDraftId,_ownerFriendSearch="";
         private bool _ownerSaving;
+        private int _profileSaveRequest;
         private RectTransform _ownerDetailList;
 
         private void InstallPreviousPaintedHub()
@@ -67,6 +68,8 @@ namespace TumbangPreso.UI
             string identity=GameServices.Account?.PlayerId??"local";
             if(_ownerDraftId!=identity)
             {
+                RetireProfileSave();
+                _deleteArmed = false;
                 ++_historyRequest;_ownerDraftId=identity;_ownerDraft.Clear();_ownerFriendSearch="";_shown.Clear();_page=0;
                 if(_detail!=null)_detail.SetActive(false);
             }
@@ -146,6 +149,11 @@ namespace TumbangPreso.UI
             _ownerSaving=saving;
             foreach(var field in new[]{_displayName,_country,_pronouns,_bio})if(field!=null)field.interactable=!saving;
             if(_footerAction!=null)_footerAction.interactable=!saving;
+        }
+        private void RetireProfileSave()
+        {
+            ++_profileSaveRequest;
+            OwnerProfileSaving(false);
         }
         private void OwnerProfileSaved()
         {

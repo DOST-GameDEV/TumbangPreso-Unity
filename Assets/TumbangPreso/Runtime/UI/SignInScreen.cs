@@ -91,6 +91,10 @@ namespace TumbangPreso.UI
         private Text _error, _primaryLabel;
         private Button _signInTab, _createTab;
         private Button _guest, _back;
+        private Func<bool, string, string, System.Threading.Tasks.Task> _credentialDispatch;
+        private Func<bool, System.Threading.Tasks.Task> _googleDispatch;
+        private int _authViewRequest;
+        private bool _authOperationPending;
 
         /// <summary>
         /// True while this screen is the first thing the game showed, rather than something the
@@ -236,7 +240,11 @@ namespace TumbangPreso.UI
         /// </summary>
         public event Action<bool> Opened;
 
-        private void OnDestroy() => ScreenTakeover.Unregister(this);
+        private void OnDestroy()
+        {
+            ++_authViewRequest;
+            ScreenTakeover.Unregister(this);
+        }
 
         public void Install()
         {
@@ -1535,6 +1543,7 @@ namespace TumbangPreso.UI
 
         public void Open()
         {
+            RetireAuthView();
             // ⚠️⚠️ THE FIELDS ARE CLEARED BEFORE THE MODE IS SET, NOT AFTER, AND THE FIRST
             // RENDER OF THIS SCREEN IS WHY. `SetMode` writes the line explaining what CREATE
             // ACTUALLY DOES ("keeps everything you have played on this machine"), and clearing
@@ -1634,6 +1643,7 @@ namespace TumbangPreso.UI
         /// </summary>
         public void OpenAtBoot()
         {
+            RetireAuthView();
             _username.text = "";
             _password.text = "";
             _error.text = "";
@@ -1703,11 +1713,29 @@ namespace TumbangPreso.UI
 
         private void Close()
         {
+            RetireAuthView();
             _root.SetActive(false);
             if(_nativeForm){_password.text="";_ownerConfirm.text="";ClearOwnerFaults();}
             Opened?.Invoke(false);
             Closed?.Invoke();
         }
+
+        private void RetireAuthView()
+        {
+            ++_authViewRequest;
+            NativeBusy(false);
+            // Keep browser/SDK authentication single-flight while a hidden view waits.
+            if (_authOperationPending)
+            {
+                if (_nativeSubmit != null) _nativeSubmit.interactable = false;
+                if (_googleButton != null) _googleButton.interactable = false;
+                if (_guest != null) _guest.interactable = false;
+            }
+        }
+
+        private bool AuthViewIsCurrent(int request, Net.PlayerAccount account)
+            => this != null && IsOpen && request == _authViewRequest
+               && ReferenceEquals(GameServices.Account, account);
 
         /// <summary>
         /// ⚠️⚠️ CREATE AND SIGN IN ARE DIFFERENT CALLS AND THE DIFFERENCE MATTERS TO THE PLAYER'S
@@ -1866,7 +1894,7 @@ namespace TumbangPreso.UI
         /// </summary>
         private async void Submit()
         {
-            if (_nativeBusy) return;
+            if (_nativeBusy || _authOperationPending || !IsOpen) return;
             string username = _username.text?.Trim() ?? "";
             string password = _password.text ?? "";
 
@@ -1883,23 +1911,35 @@ namespace TumbangPreso.UI
             var account = GameServices.Account;
             if (account == null) { Fail("Accounts are not available right now."); return; }
 
+            int request = ++_authViewRequest;
+            _authOperationPending = true;
             NativeBusy(true);
             try
             {
                 _error.color = _nativeForm ? OwnerUiTheme.Current.EnteredInk : UiTheme.PaperInkSoft;
                 _error.text = _creating ? "Creating your account..." : "Signing in...";
 
-                if (_creating) await account.UpgradeAsync(username, password);
+                if (_credentialDispatch != null) await _credentialDispatch(_creating, username, password);
+                else if (_creating) await account.UpgradeAsync(username, password);
                 else await account.SignInAsync(username, password);
 
+                if (!AuthViewIsCurrent(request, account)) return;
                 RememberTheChoiceWasMade();
                 Close();
             }
             catch (Exception e)
             {
+                if (!AuthViewIsCurrent(request, account)) return;
                 Fail(e.Message);
             }
-            finally { NativeBusy(false); }
+            finally
+            {
+                if (this != null)
+                {
+                    _authOperationPending = false;
+                    NativeBusy(false);
+                }
+            }
         }
 
         /// <summary>
@@ -1916,11 +1956,13 @@ namespace TumbangPreso.UI
         /// </summary>
         private async void GooglePressed()
         {
-            if (_nativeBusy) return;
+            if (_nativeBusy || _authOperationPending || !IsOpen) return;
             var account = GameServices.Account;
             if (account == null) { Fail("Accounts are not available right now."); return; }
 
             if (_googleButton != null) _googleButton.interactable = false;
+            int request = ++_authViewRequest;
+            _authOperationPending = true;
             NativeBusy(true);
 
             try
@@ -1928,25 +1970,33 @@ namespace TumbangPreso.UI
                 _error.color = _nativeForm ? OwnerUiTheme.Current.EnteredInk : UiTheme.PaperInkSoft;
                 _error.text = "Finish signing in on the browser window.";
 
-                if (_creating) await account.LinkGoogleAsync();
+                if (_googleDispatch != null) await _googleDispatch(_creating);
+                else if (_creating) await account.LinkGoogleAsync();
                 else await account.SignInWithGoogleAsync();
 
+                if (!AuthViewIsCurrent(request, account)) return;
                 RememberTheChoiceWasMade();
                 Close();
             }
             catch (Exception e)
             {
+                if (!AuthViewIsCurrent(request, account)) return;
                 Fail(e.Message);
             }
             finally
             {
-                NativeBusy(false);
-                if (_googleButton != null) _googleButton.interactable = true;
+                if (this != null)
+                {
+                    _authOperationPending = false;
+                    NativeBusy(false);
+                    if (_googleButton != null) _googleButton.interactable = true;
+                }
             }
         }
 
         private void GuestPressed()
         {
+            if (_authOperationPending) return;
             if (_atBoot) BootGuest();
             else Guest();
         }

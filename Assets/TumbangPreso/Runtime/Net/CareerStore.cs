@@ -136,6 +136,7 @@ namespace TumbangPreso.Net
         }
 
         private Cache _cache = new Cache();
+        private Cache _primaryCache;
         private bool _flushing;
         private bool _refreshing;
         private Cache _accountSyncOwner;
@@ -190,7 +191,11 @@ namespace TumbangPreso.Net
             Load();
 
             var account = GameServices.Account;
-            if (account != null) account.Changed += OnAccountChanged;
+            if (account != null)
+            {
+                account.Changed += OnAccountChanged;
+                if (account.IsGuest) OnAccountChanged();
+            }
         }
 
         private void OnDestroy()
@@ -251,6 +256,8 @@ namespace TumbangPreso.Net
 
         private void Save()
         {
+            // A tournament guest borrows the device, not the primary career file.
+            if (_primaryCache != null || (GameServices.Account?.IsGuest ?? false)) return;
             // ⚠️ SEE `SafeStore`. A career file is the one player file that cannot be
             // regenerated from anything, so a truncated save costs a real history.
             string path = Path;
@@ -260,13 +267,36 @@ namespace TumbangPreso.Net
 
         private void OnAccountChanged()
         {
-            string id = GameServices.Account?.PlayerId ?? "";
+            var account = GameServices.Account;
+            string id = account?.PlayerId ?? "";
             if (string.IsNullOrEmpty(id)) return;
+
+            if (account.IsGuest)
+            {
+                // Repeated guest handovers retain the same primary cache and queue.
+                _primaryCache ??= _cache;
+                if (_cache.OwnerId != id)
+                {
+                    _cache = new Cache { OwnerId = id };
+                    Status = "Local guest career";
+                    Changed?.Invoke();
+                }
+                return;
+            }
+
+            bool restoredPrimary = _primaryCache != null;
+            if (restoredPrimary)
+            {
+                _cache = _primaryCache;
+                _primaryCache = null;
+                Status = "Local career";
+            }
 
             if (string.IsNullOrEmpty(_cache.OwnerId))
             {
                 _cache.OwnerId = id;
                 Save();
+                if (restoredPrimary) Changed?.Invoke();
             }
             else if (_cache.OwnerId != id)
             {
@@ -275,6 +305,7 @@ namespace TumbangPreso.Net
                 Save();
                 Changed?.Invoke();
             }
+            else if (restoredPrimary) Changed?.Invoke();
 
             _ = SyncAfterPendingWorkAsync(_cache);
         }

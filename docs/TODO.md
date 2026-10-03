@@ -17,6 +17,18 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### ACCOUNT-OWNERSHIP-CANDIDATE-1003: source ready, native acceptance open
+
+Eight reviewed fixes preserve primary guest career/wallet/social caches, bind name
+and proof replies to their owner, retire stale profile/login/password UI callbacks
+and reset inherited deletion confirmation.52 focused cases compile with refreshed
+Runtime; static review and script metadata pass. Original13 shows10causals/3controls
+after one lifecycle fixture repair. Both PC candidate environments timed out before
+cases with retained licensing/reload failures. No more local retries; functioning
+laptop worker and candidate branch are the next qualification route. No source
+completion/readiness claim yet. [Evidence](reports/reliability-2026-10-03/account-candidate/README.md).
+
+
 ### TIMED-RECOVERY-1002: retire mash-to-escape
 
 - [x] Frozen/stuns, trips and edge recovery use their authored clocks. Humans
@@ -455,6 +467,17 @@ Docs feedback, friend broad loading. Preserve profiles/contributor work.
   failure retained. Exits/input/Runtime preservation pass. Combat/Hero interactions,
   otherdevices/physical/WAN remain separate; no art/style/asset regeneration.
   [Evidence](reports/reliability-2026-10-03/map-availability/README.md).
+- [ ] TIMED-FROZEN-PEERS-1003: existing two-peer Cheska/Sean probe produced no
+  required actor/effect rows on both direct45141 and normal-lobby56995 setup.
+  Raw failures retained; the single setup repair did not resolve actor confirmation.
+  Stop unchanged builds/retries. Same freeze/phase/thaw/movement gates remain;
+  no game recovery defect or hero retuning attributed from absent effect data.
+  [Evidence](reports/reliability-2026-10-03/timed-freeze-peers/README.md).
+- [ ] CROSS-MACHINE-PEERS-1003: coordinate matching players on this PC and the
+  second laptop for real host/client tests. Owner confirms laptop Codex connection
+  to this PC; execute client/tests on laptop LOCAL host for separate compute.
+  Existing lobby commands and guarded per-machine runs are the starting point.
+  Builds/addresses/access on laptop and actual peer acceptance remain unverified.
 - [ ] Investigate recorded270.33ms host frame using existing measurements.
 - [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
 - [x] DEFAULT-HERO-FULL-MATCH-1003: current1341003d first actual LAN8x90 Hero

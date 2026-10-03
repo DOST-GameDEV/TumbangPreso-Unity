@@ -30,8 +30,6 @@ namespace TumbangPreso.Net
         private Func<string, Task<string>> _updateNameDispatch;
         private long _renameRequest;
         private Func<Task<string>> _proofDispatch;
-        private string _proofOwner = "";
-        private long _proofRequest;
         private long _saveProfileRequest;
 
         [Serializable]
@@ -268,7 +266,7 @@ namespace TumbangPreso.Net
         /// endpoint whether the handle it is claiming is really its own. Empty means "no proof",
         /// which is a normal state: offline, LAN, a guest, or an account with nothing stored yet.
         /// </summary>
-        public string HandleProof => !IsGuest && IsSignedIn && _proofOwner == PlayerId ? _proof : "";
+        public string HandleProof => _proof;
 
         /// <summary>
         /// Mints a handle proof if there is not already a live one, and answers with it.
@@ -285,24 +283,19 @@ namespace TumbangPreso.Net
         public async Task<string> EnsureHandleProofAsync()
         {
             if (IsGuest || !IsSignedIn) return "";
-            if (!string.IsNullOrEmpty(HandleProof) && DateTime.UtcNow < _proofExpiresUtc.AddMinutes(-1))
-                return HandleProof;
-
-            string owner = PlayerId;
-            long request = ++_proofRequest;
+            if (!string.IsNullOrEmpty(_proof) && DateTime.UtcNow < _proofExpiresUtc.AddMinutes(-1))
+                return _proof;
 
             try
             {
                 string output = _proofDispatch == null
                     ? await CloudCode.CallAsync("player-account", new { action = "attest" })
                     : await _proofDispatch();
-                if (!OwnsProofRequest(owner, request)) return "";
                 var response = string.IsNullOrWhiteSpace(output)
                     ? null
                     : JsonUtility.FromJson<HandleProofResponse>(output);
 
                 _proof = response?.proof ?? "";
-                _proofOwner = owner;
                 _proofExpiresUtc = DateTime.TryParse(
                     response?.expires, null,
                     System.Globalization.DateTimeStyles.AdjustToUniversal |
@@ -313,18 +306,13 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
-                if (!OwnsProofRequest(owner, request)) return "";
                 Debug.LogWarning($"[PlayerAccount] handle proof unavailable; arriving unverified: {e.Message}");
                 _proof = "";
-                _proofOwner = "";
                 _proofExpiresUtc = DateTime.MinValue;
             }
 
-            return HandleProof;
+            return _proof;
         }
-
-        private bool OwnsProofRequest(string owner, long request)
-            => this != null && !IsGuest && IsSignedIn && PlayerId == owner && request == _proofRequest;
 
         /// <summary>
         /// The host half: asks the endpoint whether <paramref name="playerId"/> minted
@@ -718,7 +706,6 @@ namespace TumbangPreso.Net
                 throw new ArgumentException($"Guest name must be {AccountRules.DisplayNameMin} to {AccountRules.DisplayNameMax} letters or numbers.");
 
             ++_renameRequest;
-            ++_proofRequest;
             if (!IsGuest) _primaryProfile = Profile;
             string id = "guest-" + Guid.NewGuid().ToString("N");
             _profile = AccountRules.Normalise(new AccountProfile
@@ -739,7 +726,6 @@ namespace TumbangPreso.Net
         {
             if (!IsGuest) return;
             ++_renameRequest;
-            ++_proofRequest;
             IsGuest = false;
             _profile = _primaryProfile ?? ReadLocal();
             _primaryProfile = null;

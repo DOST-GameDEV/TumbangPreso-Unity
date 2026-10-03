@@ -1,0 +1,130 @@
+{
+  "Units": [
+    {
+      "StaticReview": "PASS",
+      "Filter": "TumbangPreso.Tests.CareerGuestIsolationTests",
+      "Original": "Logs/career-guest-isolation1003/original-source/CareerStore.cs",
+      "Paths": [
+        "Assets/TumbangPreso/Runtime/Net/CareerStore.cs",
+        "Assets/TumbangPreso/Tests/CareerGuestIsolationTests.cs",
+        "Assets/TumbangPreso/Tests/CareerGuestIsolationTests.cs.meta"
+      ],
+      "Sha256": {
+        "Assets/TumbangPreso/Runtime/Net/CareerStore.cs": "ebbf5726bc471706f3f31c2a48928852f435df62ff65a6cb5097e704a9a4c9d0",
+        "Assets/TumbangPreso/Tests/CareerGuestIsolationTests.cs": "c8028fe638c2e2e748c64a493488d21481db1c96d47b77ca7f5ca4ee99e218a3",
+        "Assets/TumbangPreso/Tests/CareerGuestIsolationTests.cs.meta": "e51b817a9463673644d83416a230ec5bfc75436f4fe7cc5b20b19531ed58e4f2"
+      },
+      "Name": "career guest preservation",
+      "NativeAcceptance": "Root-owned; do not infer a pass from this source checkpoint",
+      "Cases": 6,
+      "Mode": "EditMode"
+    },
+    {
+      "StaticReview": "PASS",
+      "Filter": "TumbangPreso.Tests.WalletGuestIsolationTests",
+      "Original": "Logs/wallet-guest-isolation1003/original-source/WalletStore.cs",
+      "Paths": [
+        "Assets/TumbangPreso/Runtime/Net/WalletStore.cs",
+        "Assets/TumbangPreso/Tests/WalletGuestIsolationTests.cs",
+        "Assets/TumbangPreso/Tests/WalletGuestIsolationTests.cs.meta"
+      ],
+      "Sha256": {
+        "Assets/TumbangPreso/Runtime/Net/WalletStore.cs": "55c0b2ea387df860a86aed6d037d62845f4ea5cf822b3b8bfae5e2c03cbd092d",
+        "Assets/TumbangPreso/Tests/WalletGuestIsolationTests.cs": "df1f028825432750f062f483b5679b2dc1d566b26cded49fa4647f5a559f19c4",
+        "Assets/TumbangPreso/Tests/WalletGuestIsolationTests.cs.meta": "15fcf3c309c0b8876784b1a82763646fcfd2008cb4ba365582079802bbe36948"
+      },
+      "Name": "wallet guest preservation",
+      "NativeAcceptance": "Root-owned; do not infer a pass from this source checkpoint",
+      "Cases": 7,
+      "Mode": "EditMode"
+    },
+    {
+      "StaticReview": "PASS",
+      "Filter": "TumbangPreso.Tests.SocialGuestIsolationTests",
+      "Original": "Logs/social-guest-isolation1003/original-source/SocialStore.cs",
+      "Paths": [
+        "Assets/TumbangPreso/Runtime/Net/SocialStore.cs",
+        "Assets/TumbangPreso/Tests/SocialGuestIsolationTests.cs",
+        "Assets/TumbangPreso/Tests/SocialGuestIsolationTests.cs.meta"
+      ],
+      "Sha256": {
+        "Assets/TumbangPreso/Tests/SocialGuestIsolationTests.cs": "5f12a40533252b20c652e775139cbf8a57f29146629bd8f6084c90f628df7c2a",
+        "Assets/TumbangPreso/Tests/SocialGuestIsolationTests.cs.meta": "597fd458bd7c4e884e4845e89b312bbe89012799782db5d639e87f53a2cdd3c2",
+        "Assets/TumbangPreso/Runtime/Net/SocialStore.cs": "de6c028b2b552afc0d2c7c08b1a9556f250f8554cd7839527e005535e8eab1e8"
+      },
+      "Name": "social guest restoration",
+      "NativeAcceptance": "Root-owned; do not infer a pass from this source checkpoint",
+      "Cases": 7,
+      "Mode": "EditMode"
+    },
+    {
+      "StaticReview": "PASS",
+      "Filter": "TumbangPreso.PlayTests.PlayerHubProfileSaveLifetimeTests",
+      "Original": [
+        "Logs/playerhub-profile-save-lifetime1003/original-source/PlayerHub.cs",
+        "Logs/playerhub-profile-save-lifetime1003/original-source/PlayerHub.OwnerPainted.cs"
+      ],
+      "Paths": [
+        "Assets/TumbangPreso/Runtime/UI/PlayerHub.cs",
+        "Assets/TumbangPreso/Runtime/UI/PlayerHub.OwnerPainted.cs",
+        "Assets/TumbangPreso/Tests/PlayMode/PlayerHubProfileSaveLifetimeTests.cs",
+        "Assets/TumbangPreso/Tests/PlayMode/PlayerHubProfileSaveLifetimeTests.cs.meta"
+      ],
+      "Sha256": {
+        "Assets/TumbangPreso/Tests/PlayMode/PlayerHubProfileSaveLifetimeTests.cs": "2b300598cdfdff2249c5cf1804f683b2265469b88ffbc03b531d8eb383561269",
+        "Assets/TumbangPreso/Runtime/UI/PlayerHub.OwnerPainted.cs": "a1b1c8beeb6636e87ad8146619e03d0377ffea15b5baf66e287625595d718292",
+        "Assets/TumbangPreso/Runtime/UI/PlayerHub.cs": "242d13f56e5ac797a862b1897bebdbbeac484e3e42633f2bd20853b61619be8b",
+        "Assets/TumbangPreso/Tests/PlayMode/PlayerHubProfileSaveLifetimeTests.cs.meta": "a0e5f1fc65a9a2c8c24f3473a6e5316e4d9a06bb01f5714fdaad7608fc22c144"
+      },
+      "Name": "profile save lifetime and delete confirmation ownership",
+      "NativeAcceptance": "Root-owned; do not infer a pass from this source checkpoint",
+      "Cases": 6,
+      "Mode": "PlayMode"
+    },
+    {
+      "StaticReview": "PASS",
+      "Filter": "TumbangPreso.PlayTests.OwnerPasswordLifetimeTests",
+      "Original": "Logs/password-view-lifetime1003/original-source/OwnerPasswordView.cs",
+      "NativeBaseline": "Logs/password-view-lifetime1003/original-source/OwnerPasswordView.seam-only.cs",
+      "Paths": [
+        "Assets/TumbangPreso/Runtime/UI/OwnerPasswordView.cs",
+        "Assets/TumbangPreso/Tests/PlayMode/OwnerPasswordLifetimeTests.cs",
+        "Assets/TumbangPreso/Tests/PlayMode/OwnerPasswordLifetimeTests.cs.meta"
+      ],
+      "Sha256": {
+        "Assets/TumbangPreso/Tests/PlayMode/OwnerPasswordLifetimeTests.cs": "6114e13afc6b98b70d0a106d0fce9e8f640a9c2439c2575a834b9cc9969d9e64",
+        "Assets/TumbangPreso/Tests/PlayMode/OwnerPasswordLifetimeTests.cs.meta": "f9a3958f008a509fa32ff155deca722629cc9b93d42d1b9a524d3c563ede25cc",
+        "Assets/TumbangPreso/Runtime/UI/OwnerPasswordView.cs": "51cb6dfbf078bd3c662dadaf3505b38c0c34e43690b1449ac78d6e804d55051a"
+      },
+      "Name": "cancelled password form lifetime",
+      "NativeAcceptance": "Root-owned; do not infer a pass from this source checkpoint",
+      "Cases": 4,
+      "Mode": "PlayMode"
+    },
+    {
+      "StaticReview": "PASS",
+      "Filter": "TumbangPreso.PlayTests.SignInViewLifetimeTests",
+      "Original": "Logs/signin-view-lifetime1003/original-source/SignInScreen.cs",
+      "NativeBaseline": "Logs/signin-view-lifetime1003/original-source/SignInScreen.seam-only.cs",
+      "Paths": [
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs",
+        "Assets/TumbangPreso/Tests/PlayMode/SignInViewLifetimeTests.cs",
+        "Assets/TumbangPreso/Tests/PlayMode/SignInViewLifetimeTests.cs.meta"
+      ],
+      "Sha256": {
+        "Assets/TumbangPreso/Tests/PlayMode/SignInViewLifetimeTests.cs.meta": "1efe12b95284397019612fa74cd5f3e8809f089504429fab47b4dbe28a666cbb",
+        "Assets/TumbangPreso/Tests/PlayMode/SignInViewLifetimeTests.cs": "211aaf0f14074d684d5b92347bc8ed96fbd063e1e39f3000823df96d8c107a02",
+        "Assets/TumbangPreso/Runtime/UI/SignInScreen.cs": "8f76c08ac48339c051e840ab4dbb6fd90d47d1dfbe06397d513d894efb72d4a2"
+      },
+      "Name": "sign-in form lifetime with single-flight retained",
+      "NativeAcceptance": "Root-owned; do not infer a pass from this source checkpoint",
+      "Cases": 6,
+      "Mode": "PlayMode"
+    }
+  ],
+  "Updated": "2026-10-03T11:23:56.7082699+08:00",
+  "PreservedFailures": "Career fixture one explicit dormant Awake/OnDestroy repair after original public-route subscription gap. Password apply_patch write failed twice; root recovered guard through SHA-checked Python edit. Raw/seam-only originals retained.",
+  "Repository": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks",
+  "Cleanup": "No browser, preview, Unity, player or helper launched by this worker. Own shell read session71995 is terminal.",
+  "RootControls": "Only root copies frozen inputs, launches native jobs, integrates and publishes. No independent commit or push."
+}
