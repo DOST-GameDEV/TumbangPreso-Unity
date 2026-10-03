@@ -765,3 +765,11 @@ actual shared-route baseline passes73.623s/no guard and visibly confirms the
 intro stamp followed by another live overhead raise/strike. Keep0.4s warning and
 all mechanics; author a grounded follow-through in the existing named clip and
 its FPP entry. No active Editor, no runtime fix yet. Main57739c4a is published.
+
+Dante handoff candidate now passes actual native route1/1 in72.843s,5.279GBpeak,
+no guard/profile restored. Exact imported first pose matches introduction;
+38clips/37otherclips and geometry/binaryprefix preserved. Observer and realowner
+views inspected: planted follow-through, low hands, unchanged0.4s/fivebands.
+No active Editor; no source-input changes after test. No player/peer/SFX/human
+claim. See reports/dante-handoff-2026-10-03/README.md. Publish checked owned paths
+then continue the remaining unreserved hero presentation work.
