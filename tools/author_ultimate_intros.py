@@ -700,7 +700,7 @@ def amihan():
     cute pose (leaning in, hands behind her back, a foot kicked up, a wink), one feather drifting down.
     The free (left) hand does the gestures: the right hand holds the slipper, which passes through her large head higher.
     """
-    p = Performance("amihan", 5.6)
+    p = Performance("amihan", 5.9)
     # Easy, hip cocked, the slipper hand on her hip, head tipped: waiting for the wind.
     idle = Pose(torso=(-3, -6, 4), head=(-6, 10, 8), left=(8, 24, 0), right=(14, 62, -38), legs=((2, 10), (-6, 16)))
     idle_b = idle.but(torso=(-4, -4, 5), head=(-8, 12, 10))
@@ -725,7 +725,9 @@ def amihan():
     # THE FINISH (owner: "end of ult cutscene should be her posing or looking cute", "TEEHEE pose", "close up of her"): leaning
     # in to the lens, hands clasped behind her back (her rigid arms cannot reach her head; behind her they read and hide the
     # slipper), head tipped, one foot kicked up behind her, a wink.
-    finish = Pose(torso=(10, 6, 8), head=(-10, -6, 16), left=(-40, 14, 0), right=(-40, 14, 0), legs=((4, 8), (-40, 10)))
+    # v10 ("make the pose cuter"): shoulders scrunched up as she leans in, her head tipped further, her hands tucked tighter
+    # behind her, the foot kicked up higher, and the teehee face (`VoxelFace.Look.Teehee`).
+    finish = Pose(torso=(12, 4, 12), head=(-12, -8, 24), left=(-46, 10, 0), right=(-46, 10, 0), legs=((2, 6), (-55, 8)))
 
     p.key(0, idle).hold(.32, .55, idle_b)
     # (owner on v7: "the leg tapping dont make sense": she was tapping her feet in the air. The taps are gone: she floats,
@@ -741,11 +743,18 @@ def amihan():
     p.hold(4.55, 5.08, drive)
     p.punches.append(4.55)
     p.key(5.20, follow)
-    p.key(5.30, finish, punch=True).key(5.6, finish)
+    # (v9, owner: "hold the end pose a bit more": held 0.6 s, swaying a little through it and ending exactly on it,
+    # which the live clip starts from.)
+    p.key(5.30, finish, punch=True).key(5.62, finish.but(torso=(13, 2, 14), head=(-13, -5, 27))).key(5.9, finish)
     # THE FLOAT (owner: "make her fly higher here like gojo when he was enlightened", "js a bite higher tho"): as she closes
     # her eyes and feels for the wind she lifts, calm and weightless, about 0.37 m, and settles back onto her first tap.
-    # (v8: the float now has its breeze, `HeroIntroductionScene.Amihan.cs` AmFloat, and lasts until she settles at 1.46.)
-    p.rise(0, 0).rise(.60, 0).rise(.80, .2).rise(1.0, .36).rise(1.24, .38).rise(1.38, .12).rise(1.46, 0)
+    # v10 (owner: "she should stay floating too during her ult why does she even do this if she immediately falls back
+    # donw"): she rises on her breeze and STAYS up, bobbing gently on it through the whistle, the bird, the wind-up and the
+    # drive, and only touches down softly into her finish (play resumes with her on the court).
+    p.rise(0, 0).rise(.60, 0).rise(.80, .2).rise(1.0, .36).rise(1.3, .42)
+    for i, t in enumerate([1.7, 2.1, 2.5, 2.9, 3.3, 3.7, 4.1, 4.5, 4.9]):
+        p.rise(t, .36 if i % 2 == 0 else .44)
+    p.rise(5.2, .38).rise(5.32, .12).rise(5.42, 0)
 
     # A STILL: from her left front, all of her and the falling leaf, a slow push in.
     p.shot(0, 1.66, (-.9, 1.05, 4.3), (-.2, 1.0, 0), 42, eye_to=(-.75, 1.05, 3.7), look_to=(-.2, 1.05, 0), fov_to=40)
@@ -760,7 +769,7 @@ def amihan():
     # E HANG: cut on the drive to her right side, wide enough for the wingbeat over the lane: her in the left third.
     p.shot(4.55, 5.18, (5.2, 1.6, .6), (0, 1.5, 1.2), 66, eye_to=(4.8, 1.6, .9), look_to=(0, 1.45, 1.6), fov_to=62)
     # F FINISH: a close-up of her, low in front of her, as she leans in with her wink, a slow push in.
-    p.shot(5.18, 5.6, (.55, 1.0, 3.3), (0, 1.0, 0), 42, eye_to=(.45, 1.05, 2.9), look_to=(0, 1.05, 0), fov_to=38)
+    p.shot(5.18, 5.9, (.55, 1.0, 3.3), (0, 1.0, 0), 42, eye_to=(.45, 1.05, 2.8), look_to=(0, 1.05, 0), fov_to=37)
     p.locked((3.4, 1.5, 3.4), (0, 1.0, 1.5), 50)
     return p
 

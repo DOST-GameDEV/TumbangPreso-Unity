@@ -12,7 +12,7 @@ namespace TumbangPreso.Visual
     /// </summary>
     public sealed class VoxelFace
     {
-        public enum Look { Rest, Squint, Whistle, Grin, Wink }
+        public enum Look { Rest, Squint, Whistle, Grin, Wink, Teehee }
 
         public const string ResourceFolder = "Models/AmihanFace";
         public static string MeshName(Look look) => "amihan-face-" + look.ToString().ToLowerInvariant();
@@ -48,6 +48,15 @@ namespace TumbangPreso.Visual
                 { -.099f, -.053f, .041f, .099f },
                 {  .053f,  .065f, .056f, .068f }, {  .065f,  .087f, .068f, .080f }, {  .087f,  .099f, .056f, .068f },
                 { -.034f, .030f, .008f, .022f }, { -.024f, .018f, .000f, .008f },
+            },
+            // TEEHEE (owner, 2026-10-03: "TEEHEE pose", "make the pose cuter"): both eyes squeezed shut into > < chevrons pointing
+            // in to the nose, and a little cat mouth, an omega. Her finish.
+            [Look.Teehee] = new float[,]
+            {
+                { .083f, .099f, .082f, .094f }, { .067f, .083f, .070f, .082f }, { .083f, .099f, .058f, .070f },
+                { -.099f, -.083f, .082f, .094f }, { -.083f, -.067f, .070f, .082f }, { -.099f, -.083f, .058f, .070f },
+                { -.032f, -.024f, .008f, .020f }, { -.024f, -.006f, .000f, .008f }, { -.006f, .006f, .008f, .020f },
+                { .006f, .024f, .000f, .008f }, { .024f, .032f, .008f, .020f },
             },
         };
 
