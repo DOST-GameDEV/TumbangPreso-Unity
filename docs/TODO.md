@@ -659,9 +659,9 @@ a reproduced baseline failure. Protocol118, no fresh player/peer claim.
 ### HERO-QUALITY-1001: full-roster research and durable plans
 
 DANTE-DRIFT-FRACTURES-1003 is the current cloud presentation unit: irregular
-ground art only, preserving five authoritative bands. Locally implemented and
+ground art only, preserving five authoritative bands. Shipped4da1fb62 with
 four distinct focused presentation checks covered; final Low court/overlap views
-inspected. Push authentication and owner-camera acceptance remain open.
+inspected. Owner-camera acceptance and broader Dante polish remain open.
 [Evidence](reports/dante-drift-fractures-2026-10-03/README.md).
 
 

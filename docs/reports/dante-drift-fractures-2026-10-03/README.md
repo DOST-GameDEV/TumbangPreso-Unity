@@ -1,6 +1,6 @@
 # Continental Drift fracture presentation
 
-## Implemented locally
+## Shipped in 4da1fb62
 
 Five individually drawn branching faults replace five repeats of the same long
 lateral stamp. A connected central break gives the cascade a forward direction;
@@ -54,8 +54,13 @@ Owner-camera qualification, bespoke body/cinematic follow-through, actual sound
 listening, player/peer/device and human taste approval remain open. This is a
 focused fracture-art improvement, not completion of Dante or tournament QA.
 
-Publication is pending restoration of Git push authentication. Both ordinary
+Publication initially waited for restoration of Git push authentication. Both ordinary
 shell/native pushes requested a username; the connected repository integration
 reads successfully but denied tree creation. No credentials were created,
 extracted or copied, and the existing remote remains intact. Local commits and
 review artifacts preserve the work while authorized alternatives are resolved.
+
+Update03:45UTC: native GitHub CLI authorization was restored with the owner's
+explicit approval. Fetch confirmed no incoming commits, both local commits were
+pushed, and exact remote4da1fb624a7b77619f8b89ea4229e86c0d3bfb03 was verified.
+The review and a verified Git bundle were delivered before publication.

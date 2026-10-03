@@ -751,3 +751,11 @@ views inspected; in-eye witness shots rejected, no owner-view claim. No active
 Editor. Publication remains blocked by absent native gh login and connector
 write403; remote source remains intact. See dated README. Preserve local commits
 and deliver the observer review while resolving authorized publication access.
+
+Cloud publication03:45UTC: GitHub CLI restored with explicit owner approval,
+fetch confirmed no incoming work, and exact remote4da1fb624a7b77619f8b89ea4229e86c0d3bfb03
+verified. Recovery and fracture commits are published; main clean, no active
+Editor. Next source question: Dante's3.8s intro shows a stamp at3.18s, then the
+real0.4s warning starts its separate fissure-slam from rest. Inspect accepted
+shared handoff through real CameraRig before treating this as a double-hit
+presentation defect. Offline pose sketch inspected; no new behavior change yet.
