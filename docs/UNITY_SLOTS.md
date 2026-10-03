@@ -25,11 +25,18 @@ Always target tools by explicit project path. Do not install another MCP bridge
 to obtain another Editor slot. Close only owned Editors after a test; retain the
 worker only while it is used and prune obsolete derived outputs after completion.
 
-Runner qualification: 33 local safety/lifecycle cases pass, including coexistence,
+Runner qualification: 38 local safety/lifecycle cases pass, including coexistence,
 project/preferences collision, graphics/network refusal and extra memory reserve.
 This includes monitored interruption with restoration and preserved outside
 applications. Independent native slot smoke passed1/1; safe simultaneous
 headless/graphics execution still needs its own accepted overlap receipt.
+
+Inventory calls have a five-second deadline. Process/memory/CIM failures become
+interruption rather than abandoning supervision. If stopping cannot verify
+ownership, it stops nothing, waits for the guard and retains a pending-restoration
+lease when necessary. Five original error-path regressions are retained locally;
+the corrected runner38/38 and worker preparation10/10 pass without real Editor
+or live-profile modification.
 
 Unity documents explicit project and log targeting in its
 [Editor command-line reference](https://docs.unity.com/en-us/engine/6000.5/manual/unity-editor/command-line-arguments/editor).

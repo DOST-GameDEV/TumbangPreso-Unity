@@ -348,6 +348,43 @@ class JobTests(unittest.TestCase):
         child.wait(timeout=10)
         self.assertFalse(job.pid_alive(child.pid))
 
+    def test_process_inventory_failure_is_an_interruption(self):
+        with patch.object(job, "POOL", self.pool), patch.object(job, "processes", side_effect=OSError("inventory denied")):
+            with self.assertRaises(job.JobInterrupted):
+                job.monitor_running_job(self.claim())
+
+    def test_memory_inventory_failure_is_an_interruption(self):
+        with patch.object(job, "POOL", self.pool), patch.object(job, "processes", return_value=[]), \
+                patch.object(job, "free_memory_mb", side_effect=OSError("memory unavailable")):
+            with self.assertRaises(job.JobInterrupted):
+                job.monitor_running_job(self.claim())
+
+    def test_cim_failure_is_an_interruption(self):
+        with patch.object(job, "POOL", self.pool), patch.object(job, "processes", return_value=[]), \
+                patch.object(job, "coexistence", side_effect=subprocess.CalledProcessError(1, "powershell")):
+            with self.assertRaises(job.JobInterrupted):
+                job.monitor_running_job(self.claim())
+
+    @unittest.skipUnless(os.name == "nt", "Windows CIM inventory")
+    def test_cim_inventory_has_a_bounded_timeout(self):
+        with patch.object(job.workers.subprocess, "run", return_value=Mock(stdout="[]")) as inventory:
+            self.assertEqual([], job.workers.unity_processes())
+        self.assertEqual(5, inventory.call_args.kwargs.get("timeout"))
+
+    def test_unknown_stop_ownership_retains_pending_restoration_without_terminating_guard(self):
+        child = Mock(pid=999001); child.poll.return_value = None
+        child.wait.side_effect = subprocess.TimeoutExpired("guard", 2)
+        options = self.options(); options.timeout_seconds = 60
+        runtime, launch = self.runtime(child)
+        with runtime, launch, patch.object(job, "monitor_running_job", side_effect=job.JobInterrupted("inventory unavailable")), \
+                patch.object(job, "stop_owned_editors", side_effect=OSError("ownership unavailable")):
+            self.assertEqual(125, job.run(options))
+        receipt = json.loads((self.root / "output/job-receipt.json").read_text())
+        self.assertEqual("interrupted_awaiting_guard", receipt["status"])
+        self.assertIn("ownership unavailable", receipt["stopVerificationError"])
+        self.assertTrue(receipt["leaseHeld"])
+        child.terminate.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -41,6 +41,15 @@ inventory/memory OSError and CIM subprocess failures must become bounded
 interruption with owned stopping or explicit pending restoration. CIM inventory
 needs a timeout so supervision cannot hang. No active root jobs.
 
+Network batch committed7b3214e34, initial push raced incoming ultimate-frame2450;
+normal merge/push next. Runner feedback repro5fails (2assertions/3errors) with
+33controls; fixed first candidate38/38, worker preparation10/10. Inventory now
+5s bounded; all inspection errors interrupt our workload. Unknown stop ownership
+stops nothing and preserves pending restoration/lease. Exact logs in
+Logs/unity-slot1003/supervision-errors-{original,candidate}.txt. This safety batch
+is pending commit. Current next: publish, then offline hero-bot reachability or
+genuinely free graphics hero-recovery check. No idle Unity jobs or servers kept.
+
 During wait, runtime runner supervision implemented from observed memory event:
 check every2s, yield ONLY owned Editor when foreign exclusive work appears or
 reserve crossed, await guard restoration, markinterrupted/125.33 local safety
