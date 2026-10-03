@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="13" result="Failed(Child)" total="13" passed="4" failed="9" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 05:34:29Z" end-time="2026-10-03 05:34:30Z" duration="0.2920167">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1071" result="Failed" site="Child" start-time="2026-10-03 05:34:29Z" end-time="2026-10-03 05:34:30Z" duration="0.292017" total="13" passed="4" failed="9" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2301" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1071" result="Failed" site="Child" start-time="2026-10-03 05:34:29Z" end-time="2026-10-03 05:34:30Z" duration="0.281628" total="13" passed="4" failed="9" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="31472" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2302" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1071" result="Failed" site="Child" start-time="2026-10-03 05:34:29Z" end-time="2026-10-03 05:34:30Z" duration="0.280559" total="13" passed="4" failed="9" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2303" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1071" result="Failed" site="Child" start-time="2026-10-03 05:34:29Z" end-time="2026-10-03 05:34:30Z" duration="0.279869" total="13" passed="4" failed="9" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1028" name="AccountRefreshOwnershipTests" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" testcasecount="13" result="Failed" site="Child" start-time="2026-10-03 05:34:29Z" end-time="2026-10-03 05:34:30Z" duration="0.255849" total="13" passed="4" failed="9" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1039" name="ActiveGuestKeepsItsIdentityAndReturnsToCanonicalPrimary" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.ActiveGuestKeepsItsIdentityAndReturnsToCanonicalPrimary" methodname="ActiveGuestKeepsItsIdentityAndReturnsToCanonicalPrimary" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="858157248" result="Passed" start-time="2026-10-03 05:34:29Z" end-time="2026-10-03 05:34:29Z" duration="0.052896" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1040" name="BootTimeoutLocalSnapshotStillAcceptsLateCanonicalReply" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.BootTimeoutLocalSnapshotStillAcceptsLateCanonicalReply" methodname="BootTimeoutLocalSnapshotStillAcceptsLateCanonicalReply" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="79084843" result="Passed" start-time="2026-10-03 05:34:29Z" end-time="2026-10-03 05:34:29Z" duration="0.024462" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1032" name="ChangedServiceOwnerCannotApplyCloudReply" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.ChangedServiceOwnerCannotApplyCloudReply" methodname="ChangedServiceOwnerCannotApplyCloudReply" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="424653878" result="Failed" start-time="2026-10-03 05:34:29Z" end-time="2026-10-03 05:34:29Z" duration="0.020592" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  String lengths are both 7. Strings differ at index 6.
+  Expected: "owner-a"
+  But was:  "owner-b"
+  -----------------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountRefreshOwnershipTests.Unchanged (System.String id, System.String name) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountRefreshOwnershipTests.cs:49
+at TumbangPreso.Tests.AccountRefreshOwnershipTests.ChangedServiceOwnerCannotApplyCloudReply () [0x000a7] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountRefreshOwnershipTests.cs:97
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1030" name="ChangedServiceOwnerCannotContinueNameReply" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.ChangedServiceOwnerCannotContinueNameReply" methodname="ChangedServiceOwnerCannotContinueNameReply" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="1004419818" result="Failed" start-time="2026-10-03 05:34:29Z" end-time="2026-10-03 05:34:29Z" duration="0.011566" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  String lengths are both 7. Strings differ at index 6.
+  Expected: "owner-a"
+  But was:  "owner-b"
+  -----------------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountRefreshOwnershipTests.Unchanged (System.String id, System.String name) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountRefreshOwnershipTests.cs:49
+at TumbangPreso.Tests.AccountRefreshOwnershipTests.ChangedServiceOwnerCannotContinueNameReply () [0x000d4] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountRefreshOwnershipTests.cs:87
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1038" name="CurrentOwnerStillAdoptsCanonicalProfile" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.CurrentOwnerStillAdoptsCanonicalProfile" methodname="CurrentOwnerStillAdoptsCanonicalProfile" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="218343890" result="Passed" start-time="2026-10-03 05:34:29Z" end-time="2026-10-03 05:34:29Z" duration="0.013803" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1037" name="DestroyedAccountCannotPersistPendingCloudReply" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.DestroyedAccountCannotPersistPendingCloudReply" methodname="DestroyedAccountCannotPersistPendingCloudReply" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="550968773" result="Failed" start-time="2026-10-03 05:34:29Z" end-time="2026-10-03 05:34:29Z" duration="0.012207" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 8 but was 6. Strings differ at index 0.
+  Expected: "Original"
+  But was:  "Remote"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountRefreshOwnershipTests.DestroyedAccountCannotPersistPendingCloudReply () [0x000a5] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountRefreshOwnershipTests.cs:129
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1036" name="EarlierRefreshCannotOverwriteNewerAcceptedRefresh" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.EarlierRefreshCannotOverwriteNewerAcceptedRefresh" methodname="EarlierRefreshCannotOverwriteNewerAcceptedRefresh" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="233532492" result="Failed" start-time="2026-10-03 05:34:29Z" end-time="2026-10-03 05:34:29Z" duration="0.022141" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 6 but was 5. Strings differ at index 0.
+  Expected: "Second"
+  But was:  "First"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountRefreshOwnershipTests.EarlierRefreshCannotOverwriteNewerAcceptedRefresh () [0x00163] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountRefreshOwnershipTests.cs:123
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1041" name="LegitimateSignInStillAdoptsDifferentAuthenticatedId" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.LegitimateSignInStillAdoptsDifferentAuthenticatedId" methodname="LegitimateSignInStillAdoptsDifferentAuthenticatedId" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="1117547901" result="Passed" start-time="2026-10-03 05:34:29Z" end-time="2026-10-03 05:34:29Z" duration="0.012459" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1031" name="ReplacementDuringCloudLoadCannotBeOverwritten" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.ReplacementDuringCloudLoadCannotBeOverwritten" methodname="ReplacementDuringCloudLoadCannotBeOverwritten" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="1633064468" result="Failed" start-time="2026-10-03 05:34:29Z" end-time="2026-10-03 05:34:29Z" duration="0.012572" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  String lengths are both 7. Strings differ at index 6.
+  Expected: "owner-b"
+  But was:  "owner-a"
+  -----------------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountRefreshOwnershipTests.Unchanged (System.String id, System.String name) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountRefreshOwnershipTests.cs:49
+at TumbangPreso.Tests.AccountRefreshOwnershipTests.ReplacementDuringCloudLoadCannotBeOverwritten () [0x000b9] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountRefreshOwnershipTests.cs:92
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1033" name="ReplacementDuringGeneratedNameCannotStartCloudLoad" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.ReplacementDuringGeneratedNameCannotStartCloudLoad" methodname="ReplacementDuringGeneratedNameCannotStartCloudLoad" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="522257731" result="Failed" start-time="2026-10-03 05:34:29Z" end-time="2026-10-03 05:34:29Z" duration="0.012471" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  String lengths are both 7. Strings differ at index 6.
+  Expected: "owner-b"
+  But was:  "owner-a"
+  -----------------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountRefreshOwnershipTests.Unchanged (System.String id, System.String name) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountRefreshOwnershipTests.cs:49
+at TumbangPreso.Tests.AccountRefreshOwnershipTests.ReplacementDuringGeneratedNameCannotStartCloudLoad () [0x00100] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountRefreshOwnershipTests.cs:104
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1029" name="ReplacementDuringPlayerNameCannotStartCloudLoad" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.ReplacementDuringPlayerNameCannotStartCloudLoad" methodname="ReplacementDuringPlayerNameCannotStartCloudLoad" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="423935598" result="Failed" start-time="2026-10-03 05:34:29Z" end-time="2026-10-03 05:34:29Z" duration="0.011384" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  String lengths are both 7. Strings differ at index 6.
+  Expected: "owner-b"
+  But was:  "owner-a"
+  -----------------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountRefreshOwnershipTests.Unchanged (System.String id, System.String name) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountRefreshOwnershipTests.cs:49
+at TumbangPreso.Tests.AccountRefreshOwnershipTests.ReplacementDuringPlayerNameCannotStartCloudLoad () [0x000cf] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountRefreshOwnershipTests.cs:81
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1035" name="StaleCloudFailureCannotApplyLocalFallback" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.StaleCloudFailureCannotApplyLocalFallback" methodname="StaleCloudFailureCannotApplyLocalFallback" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="1372596367" result="Failed" start-time="2026-10-03 05:34:29Z" end-time="2026-10-03 05:34:30Z" duration="0.014588" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  String lengths are both 7. Strings differ at index 6.
+  Expected: "owner-b"
+  But was:  "owner-a"
+  -----------------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountRefreshOwnershipTests.Unchanged (System.String id, System.String name) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountRefreshOwnershipTests.cs:49
+at TumbangPreso.Tests.AccountRefreshOwnershipTests.StaleCloudFailureCannotApplyLocalFallback () [0x000a2] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountRefreshOwnershipTests.cs:115
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[PlayerAccount] Cloud Save profile load failed; local profile kept: Synthetic old cloud failure
+]]></output>
+            </test-case>
+            <test-case id="1034" name="StaleNameFailureCannotLoadAnotherOwnersProfile" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.StaleNameFailureCannotLoadAnotherOwnersProfile" methodname="StaleNameFailureCannotLoadAnotherOwnersProfile" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="2076141183" result="Failed" start-time="2026-10-03 05:34:30Z" end-time="2026-10-03 05:34:30Z" duration="0.014605" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  String lengths are both 7. Strings differ at index 6.
+  Expected: "owner-b"
+  But was:  "owner-a"
+  -----------------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountRefreshOwnershipTests.Unchanged (System.String id, System.String name) [0x00000] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountRefreshOwnershipTests.cs:49
+at TumbangPreso.Tests.AccountRefreshOwnershipTests.StaleNameFailureCannotLoadAnotherOwnersProfile () [0x000d4] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountRefreshOwnershipTests.cs:110
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[PlayerAccount] player-name refresh failed: Synthetic old name failure
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,16 @@
+{
+  "staticReview": "PASS",
+  "dispatchLimit": "Synthetic identity, name, update, load and save only; no SDK calls",
+  "original": {
+    "total": "13",
+    "passed": "4",
+    "failed": "9",
+    "skipped": "0"
+  },
+  "candidate": {
+    "total": "13",
+    "passed": "13",
+    "failed": "0",
+    "skipped": "0"
+  }
+}
