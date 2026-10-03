@@ -17,6 +17,20 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CREDITS-CODE-1003: eight directions grant5000 Tansan
+
+- [x] Client and authoritative wallet source; keyboard/D-pad/mouse/touch input,
+  retry receipts and success-only Victory cue. Managed715/715, Node wallet
+  checks and native8/8 controls; [evidence](reports/credits-code-2026-10-03/README.md).
+- [ ] Publish and verify production wallet, then actual signed-in reward/audio.
+  Cloud session returned403 Not authorized. [Deployment scope](reports/credits-code-2026-10-03/deployment.md).
+
+### STATUS-TYPOGRAPHY-1003: readable description wrapping
+
+- [x] Chilled one-line body, longer two-line bodies with title separation;
+  native2/2 and actual960x540 images reviewed at HUD1.0/1.2.
+  [Evidence](reports/status-typography-2026-10-03/README.md).
+
 ### ACTION-TIMINGS-1003: revised charge/contact recovery, no retrieval slide
 
 - [x] Throw charge1.5s, tag0.25hit/0.5miss, shove7.5hit/0.5miss, existing lunge
@@ -1143,10 +1157,12 @@ shared/global fixes apply normally and exact concurrent claims still govern.
 
 - [x] BANK-SHOT-LOAD-MOTION-1003 source: dedicated0.64s body/owner load of the
   already-held slipper, preserving mechanics/copy/SFX and original37 clips.
-  Edit3/3, current headless13/13 guard-free, body-film1/1 with measured cadence.
+  Edit3/3, current headless13/13 guard-free, body-film1/1 with measured cadence;
+  separate owner composition1/1 and six actual hand-renderer poses inspected.
   [Implementation and retained failures](reports/zack-bank-load-2026-10-03/implementation.md).
 - [ ] BANK-SHOT-LOAD-MOTION-1003 visual acceptance: owner/walking graphics
-  blocked by8GiB container headroom; real-map/peer/player/human review still open.
+  runtime film blocked by8GiB container headroom; static owner poses now checked
+  by a lighter Editor route. Real-map/peer/player/human review still open.
 
 - [x] CLOSED-CIRCUIT-1001: cancellable6m/.4s defending acquisition,2s host
   Zapped,35s commitment cooldown and Overclock different-target follow-up.

@@ -7,3 +7,7 @@ The client never fabricates a balance. Offline/request errors show the wallet st
 Evidence: managed715/715 (six sequence cases plus existing suite), Node wallet checks including exact amount, duplicate/case-normalized retry, repeated new request, invalid request, cross-player receipt separation, task-claim preservation and integer cap. Native5/5, 0.5057942s, keyboard/D-pad/mouse, close/reopen and closed-screen controls; synthetic offline fixtures never credit a live profile. Exit0 with shutdown cgroup guard, both project settings restored.
 
 Limits: no real signed-in reward/audio playback acceptance or physical device test. Backend publication must be separately verified; source push alone does not activate the server action.
+
+## Additional input coverage
+
+Fresh headless8/8 at18:04:34–35 UTC (0.8023294s), guard-free with both settings restored. Adds synthetic touch swipes, rejection of tiny pointer drags and ambiguous simultaneous directions. Original keyboard/D-pad/mouse/lifecycle cases retained. This is device-event testing, not physical touchscreen acceptance.
