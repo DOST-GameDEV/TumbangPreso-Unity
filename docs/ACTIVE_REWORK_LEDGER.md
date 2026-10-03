@@ -1,5 +1,31 @@
 # Active Rework Checkpoint
 
+## Resume first: edge request framing checked and integrated
+
+Edge original3ead4fc27 produced4fail/2controls; candidatec856dfe25 passed6/6.
+Root inspected published46782a7c8 XML, immutable fixture/meta, full3396 maps
+with ONLYEdgeRecovery changed and both terminal/restored/free guards. Exact
+8-byte gate preserves seat ownership, epoch, geometry and protocol142. Source
+is integrated with current Amihan and touch contributions. No PC Unity job.
+
+TouchButton8 and TouchStick8 raw proofs inspected. Stick7ffe72675 original2/6
+and correctly prepared candidate8/8,3396 maps with one runtime delta, immutable
+fixture/meta and restored/free guards. Wrong-source2/6 attempt retained/excluded.
+Native supplied handlers only; no physical device/routing claim. Laptop owns
+all tests/builds, TouchStick/device loss; Claude owns PC Unity. Earlier packet10,
+emote8 and defaultCSV1 acceptance remain valid; do not repeat unchanged proofs.
+Current14/F6 graphics integration, matching142 Windows player, physical-device
+and real-peer gates remain open. Declared graphics/build memory admission has
+not cleared; do not silently lower guards or kill unrelated work.
+
+Root checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i
+is current. Main private/index work preserved. Superseded owned compiler outputs
+were pruned:10files/15682048bytes, source/rsp/log evidence kept. Old large raw/build
+cleanup policy blocks remain, no bypass or claim of deleting those files.
+NEXT: use laptop concrete device feedback or continue one disjoint source
+defect. It has the checked publication ref for its eventual matching142 build.
+Goal remains active; whole competition readiness and current peers unproven.
+
 ## Resume first: checked packet and emote fixes published together
 
 ASTRAReworksf39c13321 includes packet original7/3 -> candidate10/10 and emote

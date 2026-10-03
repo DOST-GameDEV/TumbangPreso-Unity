@@ -518,6 +518,7 @@ namespace TumbangPreso.InputLayer
         private RectTransform _knob;
         private float _radius;
         private CanvasGroup _group;
+        private (int Id, PointerEventData.InputButton Button)? _pointerOwner;
 
         public Vector2 Value { get; private set; }
 
@@ -530,16 +531,32 @@ namespace TumbangPreso.InputLayer
             _group = group;
         }
 
-        public void OnPointerDown(PointerEventData eventData) => Move(eventData);
+        private bool OwnsPointer(PointerEventData eventData)
+            => _pointerOwner.HasValue && _pointerOwner.Value.Id == eventData.pointerId
+               && _pointerOwner.Value.Button == eventData.button;
 
-        public void OnDrag(PointerEventData eventData) => Move(eventData);
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            if (_pointerOwner.HasValue && !OwnsPointer(eventData)) return;
+            _pointerOwner = (eventData.pointerId, eventData.button);
+            Move(eventData);
+        }
 
-        public void OnPointerUp(PointerEventData eventData) => Release();
+        public void OnDrag(PointerEventData eventData)
+        {
+            if (OwnsPointer(eventData)) Move(eventData);
+        }
+
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            if (OwnsPointer(eventData)) Release();
+        }
 
         private void OnDisable() => Release();
 
         private void Release()
         {
+            _pointerOwner = null;
             Value = Vector2.zero;
             TouchInput.Move = Vector2.zero;
             if (_knob != null) _knob.anchoredPosition = Vector2.zero;
@@ -593,6 +610,7 @@ namespace TumbangPreso.InputLayer
         /// <summary>Pushes the stick as a thumb does, in -1..1. The probe's only entry point.</summary>
         public void SetValue(Vector2 value)
         {
+            if (value.x == 0.0f && value.y == 0.0f) _pointerOwner = null;
             Value = Vector2.ClampMagnitude(value, 1.0f);
             TouchInput.Move = Value;
 
