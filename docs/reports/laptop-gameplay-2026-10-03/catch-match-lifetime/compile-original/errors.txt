@@ -1,0 +1,4 @@
+Assets\TumbangPreso\Tests\PlayMode\CatchMatchLifetimeTests.cs(98,13): error CS0103: The name 'MatchFlair' does not exist in the current context
+Assets\TumbangPreso\Tests\PlayMode\CatchMatchLifetimeTests.cs(98,29): error CS0103: The name 'MatchFlair' does not exist in the current context
+Assets\TumbangPreso\Tests\PlayMode\CatchMatchLifetimeTests.cs(118,13): error CS0103: The name 'MatchFlair' does not exist in the current context
+Assets\TumbangPreso\Tests\PlayMode\CatchMatchLifetimeTests.cs(118,29): error CS0103: The name 'MatchFlair' does not exist in the current context

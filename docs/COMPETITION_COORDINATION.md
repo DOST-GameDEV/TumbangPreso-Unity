@@ -72,3 +72,12 @@ one compact status snapshot from the laptop when needed. Do not reread whole
 chat histories or revive old tasks. Both sides maintain their own local job
 checkpoint and share concise changes; root updates the shared ledger. Never
 mark completion merely to stop a turn or because context is nearly full.
+
+## Current test and hitch directive
+
+The owner requests every available meaningful check on the coherent integration
+and fixes for any demonstrated bugs, freezes or lag. Split coverage explicitly
+between machines. Measure player first-use/frame behavior, identify the expensive
+work, and move appropriate assets/shaders into existing loading/prewarm hooks.
+Do not lower authored quality or invent preload work without evidence. Keep
+tests/builds/real peers/physical devices separate and record unavailable gates.

@@ -46,8 +46,13 @@ messages or qualify physical hardware.
 Fixture SHA256:
 `151764a65624aed250ab1e3313612b6d21789913ce6da5319287f341b1b8c643`.
 Metadata GUID: `bace5a7b37304e5898f3150a5b28a946`.
-Original reader SHA256:
+Original working-copy reader SHA256 recorded before the chat patch:
 `19ad79886800c852dba12a715b34eddf3407ae2db460e4eb293dba6c7a0cab98`.
+The canonical LF-only Git blob in `0368f56f1` and `fa21c8af4` hashes to
+`960d81ed43ad9e7578f61caeb1a8ac81b8214768ec830db17f678f05ef27dd2d`.
+These are byte-format identities; use the exact Git blob when preparing a new
+original gate. The [loading gate provenance](../reader-loading-lifetime/README.md)
+records why the earlier mixed-line-ending working hash is not a Git byte hash.
 
 Main owns frozen worker inputs and all executions. Stop at fresh expected
 five-case XML and a terminal guard receipt. No source correction before the
