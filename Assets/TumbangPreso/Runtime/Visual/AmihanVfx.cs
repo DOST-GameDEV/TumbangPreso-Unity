@@ -131,7 +131,8 @@ namespace TumbangPreso.Visual
                     float twist = ripple * (s * 3.0f - t * 7.0f);
                     _sashAcross[i] = (side * Mathf.Cos(twist) + Vector3.up * Mathf.Sin(twist)) * 0.26f * (0.6f + 0.4f * s);
                 }
-                if (sHead - sTail < 0.02f) _sash.Hide(); else _sash.Pose(_sashCentre, _sashAcross, WindVfx.Ease(0.55f, 1.0f, t));
+                // v4: no cloth on her Drift (owner: *"not a fan of the sash shit"*); the strands and cotton carry the wake.
+                _sash.Hide();
             }
             Vector3 to = _to;
             _motif.Step(WindVfx.Ease(0.02f, 1.0f, t), calm ? 0.5f : 0.9f, (start, drift, u) =>
@@ -225,11 +226,14 @@ namespace TumbangPreso.Visual
             // SUBTLE (owner, 2026-10-03, on v3.6: *"i want her flight to have subtle vfx"*, *"it looks like shapes are floating and not
             // vfx"*): the flight is air lifting her, not objects. Thin, light, see-through streaks and threads; no ink rim.
             fx._spiral = WindVfx.Build(go.transform, "ClimbingGust", spiral, .05f, WindVfx.AroundAxis(spiral, Vector3.up), 4, .2f, 35);
-            // Her kasikus pressed into the court as she leaves it (v3 language: diamonds, ink-weighted to read on light tiles).
-            var ring = WindVfx.Kasikus(0.58f, 0.05f, 8);
-            fx._burst = WindVfx.Floor(WindVfx.Build(go.transform, "LiftRing", ring, 0.15f, WindVfx.Flat(ring), 6.0f, 0.2f, 3.0f));
-            var outer = WindVfx.Kasikus(0.9f, 0.03f, 8);
-            fx._burstOuter = WindVfx.Floor(WindVfx.Build(go.transform, "LiftRingOuter", outer, 0.09f, WindVfx.Flat(outer), 8.0f, 0.15f, 4.0f));
+            // The take-off pushes court dust out from under her: two soft open arcs, not a pressed diamond (owner on v3.7).
+            var ring = WindVfx.Arc(0.5f, 140, 16, 0.03f, 20);
+            fx._burst = WindVfx.Build(go.transform, "LiftDust", ring, 0.07f, WindVfx.Flat(ring), 3.0f, 0.15f, 3.0f);
+            var outer = WindVfx.Arc(0.75f, 110, 14, 0.03f, 200);
+            fx._burstOuter = WindVfx.Build(go.transform, "LiftDustOuter", outer, 0.05f, WindVfx.Flat(outer), 3.0f, 0.12f, 4.0f);
+            var dust = new Color(.50f, .52f, .39f, 1);
+            fx._burst.Recolour(WindVfx.Cotton, dust, WindVfx.Ink);
+            fx._burstOuter.Recolour(WindVfx.Cotton, dust, WindVfx.Ink);
             fx._motif = new WindVfx.Motif(go.transform, 12, at.x * 2.9f + at.z * 0.3f, 0.3f);
             fx.StepTo(0.0f);
             return fx;
@@ -259,9 +263,9 @@ namespace TumbangPreso.Visual
             _burst.GameObject.transform.localScale = Vector3.one * Mathf.Lerp(0.5f, 2.6f, WindVfx.Ease(0.0f, 0.45f, t));
             _burst.GameObject.transform.localRotation = Quaternion.Euler(0, 45.0f * WindVfx.Ease(0.0f, 0.6f, t), 0);
             _burstOuter.GameObject.transform.localRotation = Quaternion.Euler(0, -30.0f * WindVfx.Ease(0.0f, 0.6f, t), 0);
-            _burst.Set(0.5f * (1.0f - WindVfx.Ease(0.3f, 0.75f, t)), phase, 1, 0, WindVfx.Ease(0.1f, 0.6f, t));
+            _burst.Set(0.3f * (1.0f - WindVfx.Ease(0.3f, 0.75f, t)), phase, 1, 0, WindVfx.Ease(0.1f, 0.6f, t));
             _burstOuter.GameObject.transform.localScale = Vector3.one * Mathf.Lerp(0.6f, 3.4f, WindVfx.Ease(0.05f, 0.6f, t));
-            _burstOuter.Set(0.35f * (1.0f - WindVfx.Ease(0.35f, 0.85f, t)), phase * 1.4f, 1, 0, WindVfx.Ease(0.15f, 0.7f, t));
+            _burstOuter.Set(0.2f * (1.0f - WindVfx.Ease(0.35f, 0.85f, t)), phase * 1.4f, 1, 0, WindVfx.Ease(0.15f, 0.7f, t));
             float h = _height;
             _motif.Step(t, 0.9f, (start, drift, u) =>
             {
@@ -273,16 +277,19 @@ namespace TumbangPreso.Visual
     }
 
     /// <summary>
-    /// FEATHERFALL support: open curls at the limbs and air rising beside the body.
-    /// The legacy component name is retained, but no flat ring travels with her feet.
+    /// FEATHERFALL support: the cotton breeze she rides (owner, 2026-10-03: *"add vfx that she's being brought up by wind"*,
+    /// *"dont copy wanderer completley give her her own version"*). Abel threads rise from under her and trail away behind,
+    /// a loose cotton-white swirl holds her soles and cotton lifts past her. Air and thread only, never an object; the legacy
+    /// component name is retained.
     /// </summary>
     public sealed class AmihanHoverRing : MonoBehaviour
     {
         private CharacterMotor _body;
         private Abilities.HeroKit _kit;
         private AmihanFlightPose _pose;
-        private WindVfx.Ribbon _legA, _legB, _handA, _handB, _liftA, _liftB, _liftC;
+        private WindVfx.Ribbon _cushion, _liftA, _liftB, _liftC;
         private WindVfx.Ribbon _dustA, _dustB, _dustC;
+        private WindVfx.Motif _cotton;
         private Transform _groundAnchor;
         private float _age, _fade, _landing = -1;
         private bool _descending, _cancelled;
@@ -304,13 +311,16 @@ namespace TumbangPreso.Visual
             var fx = go.AddComponent<AmihanHoverRing>(); fx._body = body; fx._kit = body.AbilitySystem?.Kit;
             fx._movementEpoch = body.MovementEpoch;
             fx._pose = pose != null ? pose : body.GetComponent<AmihanFlightPose>();
-            fx._legA = Curl(go.transform, "LeftShinCurl", new Vector3(-.16f, -.06f, .08f), new Vector3(-.16f, .58f, .08f), .20f, .72f, .055f, 3);
-            fx._legB = Curl(go.transform, "RightShinCurl", new Vector3(.16f, .02f, -.06f), new Vector3(.16f, .76f, -.06f), .17f, .91f, .045f, 4);
-            fx._handA = Curl(go.transform, "LeftWristCurl", Vector3.down * .10f, Vector3.up * .13f, .12f, .64f, .035f, 8);
-            fx._handB = Curl(go.transform, "RightWristCurl", Vector3.down * .08f, Vector3.up * .17f, .10f, .79f, .030f, 12);
-            fx._liftA = WindVfx.Build(go.transform, "RisingAirLeft", new[] { new Vector3(-.58f,-.75f,-.08f), new Vector3(-.64f,.18f,-.02f), new Vector3(-.48f,1.35f,.16f) }, .045f, _ => Vector3.right, 3, .22f, 15);
-            fx._liftB = WindVfx.Build(go.transform, "RisingAirBack", new[] { new Vector3(.24f,-.55f,-.52f), new Vector3(.34f,.42f,-.58f), new Vector3(.18f,1.65f,-.36f) }, .032f, _ => Vector3.right, 4, .18f, 21);
-            fx._liftC = WindVfx.Build(go.transform, "RisingAirRight", new[] { new Vector3(.51f,-.92f,.18f), new Vector3(.65f,.08f,.23f), new Vector3(.46f,1.02f,.35f) }, .038f, _ => Vector3.forward, 3, .20f, 28);
+            // The seat of air: one loose open swirl just under her soles, widening downward, laid nearly flat, cotton white.
+            var cushion = WindVfx.Helix(new Vector3(0, -.04f, -.05f), new Vector3(0, -.24f, -.1f), .24f, 1.1f, 22, 0, 1.6f);
+            fx._cushion = WindVfx.Build(go.transform, "FeetCushion", cushion, .075f, WindVfx.Flat(cushion), 4, .2f, 3);
+            fx._cushion.Recolour(WindVfx.Cotton, WindVfx.Cotton, WindVfx.SheetBody);
+            // Her updraft: rising from below her feet, half a turn round her, leaving behind her at the shoulders; two
+            // threads in her abel colours and one pale breath.
+            fx._liftA = WindVfx.Thread(Rise(go.transform, "UpdraftLeft", new Vector3(-.46f, -1.05f, .1f), new Vector3(-.3f, 1.15f, -.45f), .2f, .55f, 200, .13f, 15), 1);
+            fx._liftB = Rise(go.transform, "UpdraftRight", new Vector3(.46f, -.9f, .05f), new Vector3(.28f, .95f, -.5f), .18f, .5f, 20, .12f, 21);
+            fx._liftC = WindVfx.Thread(Rise(go.transform, "UpdraftThread", new Vector3(.05f, -1.25f, .25f), new Vector3(-.05f, 1.4f, -.35f), .32f, .8f, 290, .09f, 28), 3);
+            fx._cotton = new WindVfx.Motif(go.transform, 7, body.transform.position.x * 1.7f + 4.1f, .15f);
             var anchor = new GameObject("GroundMark").transform; anchor.SetParent(go.transform, false);
             fx._groundAnchor = anchor;
             var dustA = WindVfx.Arc(.62f, 115, 14, .02f, 15);
@@ -326,10 +336,10 @@ namespace TumbangPreso.Visual
             return fx;
         }
 
-        private static WindVfx.Ribbon Curl(Transform parent, string name, Vector3 from, Vector3 to, float radius, float turns, float width, float seed)
+        private static WindVfx.Ribbon Rise(Transform parent, string name, Vector3 from, Vector3 to, float radius, float turns, float phase, float width, float seed)
         {
-            var spine = WindVfx.Helix(from, to, radius, turns, 18, seed * 31, .65f);
-            return WindVfx.Build(parent, name, spine, width, WindVfx.AroundAxis(spine, Vector3.up), 4, .20f, seed);
+            var spine = WindVfx.Helix(from, to, radius, turns, 16, phase, .45f);
+            return WindVfx.Build(parent, name, spine, width, WindVfx.AroundAxis(spine, Vector3.up), 3, .22f, seed);
         }
 
         public void Cancel() { _cancelled = true; _landing = -1; }
@@ -355,13 +365,20 @@ namespace TumbangPreso.Visual
             float phase = WindVfx.Reduced ? 0.0f : _age * 3.0f;
             float a = _fade * (WindVfx.Reduced ? .55f : 1);
             float breathe = 0.5f + 0.5f * Mathf.Sin(_age * 2.2f);
-            _legA.Set(.32f * a, phase, Mathf.Lerp(.66f, 1, breathe), 0, .3f);
-            _legB.Set(.25f * a, phase + 1, 1, Mathf.Lerp(0, .22f, breathe), .35f);
-            Wrist(_handA, _pose != null ? _pose.LeftPalm : null, .28f * a, phase);
-            Wrist(_handB, _pose != null ? _pose.RightPalm : null, .22f * a, phase + 1.1f);
-            _liftA.Set(.24f * a, -phase * 1.3f, 1, 0, .35f);
-            _liftB.Set(.16f * a, -phase * 1.1f + 2, 1, 0, .45f);
-            _liftC.Set(.2f * a, -phase * 1.5f + 4, 1, 0, .4f);
+            // Faint and moving: each strand travels up its own length and thins at both ends.
+            _cushion.GameObject.transform.localRotation = Quaternion.Euler(0, WindVfx.Reduced ? 0 : _age * 70, 0);
+            _cushion.Set(.4f * a * Mathf.Lerp(.75f, 1, breathe), phase, 1, 0, .3f);
+            _liftA.Set(.6f * a, -phase * 1.3f, 1, 0, .3f);
+            _liftB.Set(.5f * a, -phase * 1.1f + 2, 1, 0, .35f);
+            _liftC.Set(.55f * a, -phase * 1.5f + 4, 1, 0, .3f);
+            // Cotton lifted from under her, drifting up past her and back; one cycle every two seconds, starting and ending unseen.
+            float cotton = WindVfx.Reduced ? 0 : Mathf.Repeat(_age * .5f, 1) * 1.45f;
+            _cotton.Step(cotton, WindVfx.Reduced ? 0 : .8f * a, (start, drift, u) =>
+            {
+                float turn = start.x * 9 + u * 2.4f;
+                float r = .3f + start.z * .25f + u * .12f;
+                return new Vector3(Mathf.Cos(turn) * r, -.9f + u * (2.1f + drift.y * .5f), Mathf.Sin(turn) * r * .6f - u * (.35f + drift.z * .2f));
+            }, .07f);
 
             // The road mark: straight down from her, on whatever surface is under her.
             Vector3 feet = _body.transform.position;
@@ -375,13 +392,6 @@ namespace TumbangPreso.Visual
             _dustA.Set(dust, phase * .6f, 1, 0, .4f + .5f * (1 - _fade));
             _dustB.Set(dust * .65f, phase * .45f + 1, 1, 0, .5f);
             _dustC.Set(dust * .8f, phase * .7f + 2, 1, 0, .45f);
-        }
-
-        private static void Wrist(WindVfx.Ribbon ribbon, Transform palm, float alpha, float phase)
-        {
-            if (palm == null) { ribbon.Set(0, 0); return; }
-            ribbon.GameObject.transform.SetPositionAndRotation(palm.position, palm.rotation);
-            ribbon.Set(alpha, phase, 1, 0, .3f);
         }
     }
 
@@ -501,7 +511,8 @@ namespace TumbangPreso.Visual
                     _wallCentre[i] = (bottom + top) * 0.5f + Vector3.forward * (ripple * 0.12f * Mathf.Sin(s * 7.0f + t * 12.0f));
                     _wallAcross[i] = (top - bottom) * 0.5f;
                 }
-                _wall.Pose(_wallCentre, _wallAcross, fray);
+                // v4: no woven wall (owner: *"not a fan of the sash shit"*); the crest, spray, skirt and cotton are the gale.
+                _wall.Hide();
             }
             for (int i = 0; i < _crest.Count; i++)
                 _crest[i].Set((0.85f - i * 0.15f) * (1.0f - fray), phase * 1.8f + i, 0.5f + open * 0.5f, 0.5f - open * 0.5f, 0.2f + fray * 0.7f);
@@ -583,7 +594,7 @@ namespace TumbangPreso.Visual
         private readonly List<WindVfx.Ribbon> _comb = new List<WindVfx.Ribbon>();
         private Transform _emblemHost;
         private WindVfx.Ribbon _edgeLeft, _edgeRight;
-        private WindVfx.Motif _drawn, _flung, _scraps;
+        private WindVfx.Motif _drawn, _flung, _scraps, _dustWave;
         /// <summary>Her cupped hands at the hip, in the fan's frame (the windup body's coil).</summary>
         private static readonly Vector3 Hands = new Vector3(0.38f, 0.62f, 0.1f);
         // GATHERING SHEETS: radius, low and high height, start angle, sweep (degrees), width, tilt (degrees), orbit (degrees/s).
@@ -729,6 +740,9 @@ namespace TumbangPreso.Visual
             for (int i = 0; i < SashRows.GetLength(0); i++) fx._sashes.Add(new AbelCloth(go.transform, "AbelSash" + i, SashSamples, 1.8f));
             fx._clothCentre = new Vector3[ClothFrontSamples]; fx._clothAcross = new Vector3[ClothFrontSamples];
             fx._flung = new WindVfx.Motif(Host(go.transform, "FlungCotton"), 40, origin.x * 0.7f + origin.z * 3.3f);
+            // v4 (owner, 2026-10-03, on the woven bands: *"not a fan of the sash shit"*, *"refine her vfx in a diff way"*): the
+            // blast's mass is the court's own dust and cotton rolled up along the wind's front, not cloth.
+            fx._dustWave = new WindVfx.Motif(Host(go.transform, "DustWave"), 44, origin.x * 1.9f + origin.z * 0.6f, 0.0f);
             fx._scraps = new WindVfx.Motif(Host(go.transform, "FlungScraps"), 24, origin.x * 2.3f + origin.z * 0.4f, 0.7f);
             fx.StepTo(0.0f);
             return fx;
@@ -946,7 +960,9 @@ namespace TumbangPreso.Visual
                 float appear = t < 0 ? WindVfx.Ease(-0.75f + (Chevrons - 1 - i) * 0.07f, -0.35f + (Chevrons - 1 - i) * 0.05f, t) : 1.0f;
                 float scale = after < 0 ? 1.0f - pull : Mathf.Lerp(1.0f - pull, 2.2f + i * 0.1f, burst);
                 _chevrons[i].GameObject.transform.localScale = new Vector3(scale, 1.0f, scale);
-                float alpha = after < 0 ? appear * Mathf.Clamp01(level + 0.25f * pulse) : 0.95f * (1.0f - WindVfx.Ease(0.1f, 0.45f, after));
+                // v4 (owner on v3.7: *"it looks like shapes are floating and not vfx"*): the floor chevrons no longer burst out on the
+                // release; the cloth, the fronts and the comb carry it.
+                float alpha = after < 0 ? appear * Mathf.Clamp01(level + 0.25f * pulse) : 0.0f;
                 _chevrons[i].Set(alpha, phase + i * 0.3f, 1.0f, 0.0f, after < 0 ? 0.1f : WindVfx.Ease(0.0f, 0.4f, after));
             }
 
@@ -978,7 +994,19 @@ namespace TumbangPreso.Visual
                 }
             }
 
-            StepCloth(after, calm);
+            // v4: no woven cloth in the blast (owner: *"not a fan of the sash shit"*); the dust wave below carries its mass.
+            StepCloth(-1f, calm);
+            {
+                float wave = after < 0 ? 0f : Mathf.Clamp01(after / 0.75f);
+                float reach = Mathf.Lerp(1.0f, _range * 0.9f, 1.0f - Mathf.Pow(1.0f - wave, 3.0f));
+                float halfRad = _half * Mathf.Deg2Rad;
+                _dustWave.Step(after < 0 ? 0f : Mathf.Clamp01(after / 0.9f) * 1.4f, calm ? 0.45f : 0.95f, (start, drift, u) =>
+                {
+                    float a = (start.x * 1.9f) * halfRad;
+                    float r = reach * (0.82f + 0.18f * start.z) - 0.6f * u;
+                    return new Vector3(Mathf.Sin(a) * r, 0.08f + start.y * 0.55f + 0.5f * u * drift.y, Mathf.Cos(a) * r);
+                }, 0.16f);
+            }
 
             // At her feet: two diamonds held tight through the windup; the sigil bursts out on the release.
             for (int i = 0; i < _feet.Count; i++)
@@ -991,7 +1019,8 @@ namespace TumbangPreso.Visual
             }
             for (int i = 0; i < _sigil.Count; i++)
             {
-                float flash = after < 0 ? 0.0f : WindVfx.Envelope(after, i * 0.05f, 0.06f, 0.6f + i * 0.05f, 0.35f);
+                // v4: the kasikus sigil no longer flashes under her feet (a stamped shape, not air).
+                float flash = 0.0f;
                 // At most about 1.3 m from her feet: the previous growth drew 6 m diamonds behind her, outside the fan.
                 float grow = 1.0f + Mathf.Clamp01(Mathf.Max(0, after) / 0.5f) * (0.12f + i * 0.04f);
                 _sigil[i].GameObject.transform.localScale = new Vector3(grow, 1, grow);

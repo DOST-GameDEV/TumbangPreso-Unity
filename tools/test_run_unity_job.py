@@ -306,6 +306,40 @@ class JobTests(unittest.TestCase):
             with self.assertRaises(FileExistsError):
                 job.run(self.options())
 
+    def test_runtime_memory_pressure_stops_only_owned_editor_and_restores_guard(self):
+        child = Mock(pid=999001)
+        child.wait.side_effect = [subprocess.TimeoutExpired("guard", 2), 0]
+        child.poll.return_value = 0
+        options = self.options(); options.timeout_seconds = 60
+        runtime, launch = self.runtime(child)
+        with runtime, launch, patch.object(job, "monitor_running_job", side_effect=job.JobInterrupted("memory reserve crossed")), \
+                patch.object(job, "stop_owned_editors", return_value=[999002]) as stop:
+            self.assertEqual(125, job.run(options))
+        receipt = json.loads((self.root / "output/job-receipt.json").read_text())
+        self.assertEqual("interrupted_guard_completed", receipt["status"])
+        self.assertEqual("memory reserve crossed", receipt["interruptionReason"])
+        self.assertEqual([], job.read_pool(self.pool))
+        stop.assert_called_once_with(child); child.terminate.assert_not_called()
+
+    def test_runtime_monitor_detects_foreign_editor_and_memory_growth_reserve(self):
+        claim = self.coexist_claim()
+        with patch.object(job, "POOL", self.pool), patch.object(job, "processes", return_value=[]), \
+                patch.object(job, "coexistence", return_value=([], [{"pid": 55}])), \
+                patch.object(job, "free_memory_mb", return_value=3071):
+            with self.assertRaisesRegex(job.JobInterrupted, "runtime reserve"):
+                job.monitor_running_job(claim)
+            with patch.object(job, "free_memory_mb", return_value=3072):
+                job.monitor_running_job(claim)
+            with patch.object(job, "coexistence", return_value=([55], [])):
+                with self.assertRaisesRegex(job.JobInterrupted, "exclusive"):
+                    job.monitor_running_job(claim)
+
+    def test_runtime_monitor_rejects_an_unknown_outside_editor_without_adopting_it(self):
+        with patch.object(job, "POOL", self.pool), patch.object(job, "processes", return_value=[]), \
+                patch.object(job, "coexistence", side_effect=ValueError("unverified outside project")):
+            with self.assertRaisesRegex(job.JobInterrupted, "unverified outside project"):
+                job.monitor_running_job(self.coexist_claim())
+
     @unittest.skipUnless(os.name == "nt", "Windows process handles")
     def test_windows_process_inventory_and_verified_dead_child(self):
         self.assertTrue(job.pid_alive(os.getpid()))

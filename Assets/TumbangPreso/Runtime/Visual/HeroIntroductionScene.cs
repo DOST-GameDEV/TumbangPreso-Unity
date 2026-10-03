@@ -101,6 +101,8 @@ namespace TumbangPreso.Visual
                     default: throw new ArgumentOutOfRangeException(nameof(hero));
                 }
                 _renderers = _root.GetComponentsInChildren<Renderer>(true);
+                // Amihan's cutscene faces are look renderers beside the copied head, outside the root: captured with the scene.
+                if (_amFace != null) { var all = new List<Renderer>(_renderers); all.AddRange(_amFace.Renderers); _renderers = all.ToArray(); }
                 SetVisibleForCapture(false);
                 Sample(0);
             }
@@ -410,7 +412,7 @@ namespace TumbangPreso.Visual
             if (_hero == "paete") PaeteFrame(index, Local(seconds), ref eye, ref look, ref fov);
             // Phaister's THROW and MARK are computed from where she aimed and who is marked (`HeroIntroductionScene.PhaisterMark.cs`).
             if (_hero == "phaister") PhaisterFrame(index, Local(seconds), ref eye, ref look, ref fov);
-            // Amihan's ANSWER orbit, CUP close-up and RIDE down the warp are computed from her palms and the real lane (`HeroIntroductionScene.Amihan.cs`).
+            // Amihan's OPEN whip pan, CATCH orbit and high HIT finish are computed from the scene (`HeroIntroductionScene.Amihan.cs`).
             if (_hero == "amihan") AmihanFrame(index, Local(seconds), ref eye, ref look, ref fov);
             // A hero's own blows shake the lens (Paete's palm and eruption); reduced effects keep it still.
             if (!_reducedEffects) { var shake = Shake(Local(seconds)); eye += shake; look += shake * .5f; }
@@ -506,6 +508,7 @@ namespace TumbangPreso.Visual
             if (_sound != null) _sound.Stop();
             if (_voice != null) _voice.Stop();
             _rage?.Dispose(); _rage = null;
+            _amFace?.Dispose(); _amFace = null;
             if (_heldItem != null) { _heldItem.SetActive(false); ObjectDestroy(_heldItem); }
             if (_root != null) { _root.SetActive(false); ObjectDestroy(_root); }
         }

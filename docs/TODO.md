@@ -45,6 +45,9 @@ Nothing was deleted or renumbered.
   native failure and candidate1/1 retained; protocol135, current player/peer and
   human verification remain open. [Evidence](reports/feedback-2026-10-03/cheska-caster.md).
 - [ ] Investigate bots remaining inactive after status expiry; reproduce before fixing.
+  Real Classic Frozen/Tagged expiry probe2/2 resumes bot input; no generic timer
+  stall reproduced. Hero/status combinations and peers remain open.
+  [Scoped evidence](reports/reliability-2026-10-03/bot-status-expiry/README.md).
 - [x] Remove Frozen/Stunned action bar while preserving status indicators.
   Focused original failure and candidate 1/1 plus UI capture retained.
   [Evidence](reports/feedback-2026-10-03/status-action-bar.md).
@@ -54,7 +57,9 @@ Nothing was deleted or renumbered.
 - [x] Tutorial bots suppress Ultimate input while student/ordinary skills remain:
   contributor native4/4 includes roster92 combinations and producer controls.
   [Evidence](reports/feedback-2026-10-03/tutorial-policy/README.md).
-- [ ] Verify tutorial Mirror override separately.
+- [x] Normal tutorial entry already resets the complete rules to Standard via
+  SceneFlow.StartTraining before loading; stale Mirror settings are not retained.
+  Source reconciliation only; no new rendered/operator claim.
 - [ ] Investigate translucent ultimate-screen composition; match tag-replay clarity.
 - [ ] Make Haunted nearsight radial and dark purple rather than flat black.
 

@@ -5,9 +5,39 @@
 Root continuation update: slot-native1003a completed1/1, normal exit/restored/free.
 No simultaneous native proof because Claude had exited. Tutorial roster baseline
 11 had9causal/2controls afterONE missing-namespace fixture repair; first candidate
-11/11. Source MatchInstaller/test overlay frozen, report curated and publishing.
-Current next unit: tutorial bots' shared-ultimate admission, avoiding laptop-owned
-AIController/PracticeRange and Claude-owned Amihan files. No new outgoing messages.
+11/11. Root29faee43b was superseded in production by checked contributor7c6c08e97:
+92 roster combinations and bot Ultimate suppression,4/4. Both sets of evidence
+retained; normal merges published85485c1c9 with laptop practice-retirement6/6.
+Mirror concern reconciled: real StartTraining resets full rules to Standard.
+No new outgoing messages or agents. Preserve Claude's expanding Amihan private dirt.
+
+BotStatusExpiryProbe completed2/2 on actual Classic arena/natural Frozen/Tagged
+timers and resumed armed-bot input. Worker overlay source hashes/report retained.
+No generic timer stall reproduced; hero/combinations/peer complaint remains open.
+Session31078 terminal/restored/free. MAIN launched concurrently, physical memory
+dropped below1GiB; own stop verification found own Editor already completed, so
+NO process stopped. Preserve Claude. Serialize graphics/build work. A subsequent
+headless control session91598 passed1/1/exit0/restored, but Claude had exited before
+admission, so outsideEditors is empty: this is not a CPU-overlap qualification.
+No active root jobs or preview servers. Worker is retained for active engineering.
+Next root unit: hero-specific status recovery using the existing real scene probe
+when graphics is genuinely free, or independent source work while Claude runs.
+
+Root task changed to confirmed source concern: AiCharacterIndex uses each peer's
+local saved human pick for EMPTY network bot seats, even though replicated empty
+rows carryCharacterPick=-1 and multiprocess probes expect the unrotated shared
+ResolveAiCharacterIndex(slot) policy. Host/client different picks can create
+different bot visuals/kits. Prepared NetworkBotRosterConsistencyTests4 cases
+(two network scenarios/two offline controls); no runtime change yet. Source/test
+overlay copied to worker. Original launch Logs/network-roster-original1003 was
+REFUSED for memory while Claude ran; no Unity launch, no behavioral result.
+Next native original4 once memory/availability genuinely changes; preserve refusal.
+
+During wait, runtime runner supervision implemented from observed memory event:
+check every2s, yield ONLY owned Editor when foreign exclusive work appears or
+reserve crossed, await guard restoration, markinterrupted/125.33 local safety
+cases pass. Tools runner/test/docs pending publication. Never treat this as
+validated native CPU-overlap yet. No outgoing chats/agents/reset/services launched.
 
 Competition goal is ACTIVE (confirmed tool). Owner requests continuing work after
 every answer and compaction. Latest request: second Unity slot alongside Claude.

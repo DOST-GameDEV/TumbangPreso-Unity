@@ -6,7 +6,7 @@ switch (`AudioCues.ReworkedSkillSfx`). Direction: docs/reports/amihan-presentati
 
 Her family of instruments: AIR through moving filters (the 2026-09-25 recipes in `build_amihan_audio.py`, whose helpers this
 reuses), a BAMBOO FLUTE for her theme, and the LOOM: a struck wooden beater (the batten knocking the weft home) and a plucked
-warp thread (Karplus-Strong). The theme is timed beat for beat to the 5.6 s cutscene; the gather to the live 1.5 s windup
+warp thread (Karplus-Strong). The theme is timed beat for beat to the v4 4.4 s cutscene (a whistle, foot taps, cloth snaps); the gather to the live 1.5 s windup
 (`AmihanRules.StormSurgeGatherSeconds`, its pack beats at a third and two thirds, the draw at 0.88), cut dead at the release.
 
 Every noise source is seeded, so a rebuild writes identical bytes. Not heard by the owner yet: provisional.
@@ -78,55 +78,75 @@ def window(t, start, end, rise=.02, fall=.02):
 
 # ------------------------------------------------------------------ the four cues
 
+def whistle(t, at, length, seed, weight=1.0):
+    """A TWO-FINGER WHISTLE: a bright sine that scoops up into its note with a little vibrato, breath noise riding it."""
+    local = t - at
+    on = (local >= 0) & (local < length)
+    u = np.clip(local / length, 0, 1)
+    f = 2350 + 650 * (1 - np.exp(-np.maximum(0, local) / .035)) + 40 * np.sin(2 * np.pi * 7 * np.maximum(0, local))
+    f = f - 500 * np.clip((u - .78) / .22, 0, 1) ** 2
+    phase = 2 * np.pi * np.cumsum(np.where(on, f, 0)) / RATE
+    level = np.clip(local / .012, 0, 1) * np.clip((length - local) / .05, 0, 1)
+    tone = np.sin(phase) + .18 * np.sin(2 * phase)
+    breath = band(white(len(t), seed), f, 6.0) * .35
+    return (tone + breath) * level * on * weight
+
+
+def tap(t, at, seed, weight=1.0):
+    """A slipper tapping the cobbles: a short dry knock and a click."""
+    local = np.maximum(0, t - at)
+    on = t >= at
+    knock = np.sin(2 * np.pi * 190 * local) * np.exp(-local / .018)
+    click = svf(white(len(t), seed), 3000, 1.5) * np.exp(-local / .004) * .8
+    return (knock + click) * on * weight
+
+
 def theme():
-    """HER THEME, 5.6 s, the beat sheet beat for beat (CALL 0 to 1.7, WEAVE 1.7 to 3.7, WARP 3.7 to 5.6)."""
-    s = 5.6
+    """HER THEME, 4.4 s, v4 beat for beat (`HeroIntroductionScene.Amihan.cs`): OPEN 0, the skid .50, the read .74, two taps
+    .94 and 1.06, the WHISTLE 1.30, the wind answering 1.42, the tear 1.60, the catch 1.85, the CARD 2.50 torn off 2.86, the
+    wind-up 2.95, the RELEASE 3.85, the finish 4.24. Quick, bright and cheeky: her, not a ritual."""
+    s = 4.4
     t = times(s)
     n = len(t)
-    # 0.00 the cut-in: a cloth snap and a breath of wind already moving.
-    cut = cloth_snap(t, .0, 13001, 2.6) + thump(t, .0, 84, .06) * 1.2 + band(white(n, 13002), sweep(t, 700, 380, .6), 1.4) * env_ar(t, .03, .35, .06) * 3.0
-    # 0.25 the flute's first note, on the call out. 0.90 to 1.60 its phrase over the swell (D E G, then A held).
-    notes = [(.25, .32, 587.3), (.92, .22, 659.3), (1.16, .24, 784.0), (1.42, .30, 880.0)]
-    flute = sum(flute_note(t, a, l, p, 13100 + i) for i, (a, l, p) in enumerate(notes)) * 2.4
-    # 0.55 THE MONSOON ANSWERS: a wind swell rising INTO her from 0.30, cut on the snap of her hand to her chest; then the
-    # swell it left carries under the phrase until the weave.
-    rise = band(white(n, 13201), sweep(t, 300, 1500, .55, 1.6), 1.3) * np.clip((t - .30) / .25, 0, 1) ** 2 * (t < .55) * 6.5
-    swell = band(white(n, 13202), 600 + 260 * np.sin(2 * np.pi * .9 * t), 1.2) * window(t, .55, 1.75, .02, .15) * (1.2 + 2.6 * np.exp(-np.maximum(0, t - .55) / .35)) * 1.6
-    answer = thump(t, .55, 70, .14) * 2.0 + cloth_snap(t, .55, 13203, 1.8)
-    # 1.70 the breath drawn in, into the cup.
-    inhale = breath_in(t, 1.70, .45, 13301, 1.6)
-    # 2.15 THE LOOM KNOCK and the motif's three notes (D, A, G); 2.50 and 2.95 knock, knock; the drone steps up each time.
-    knocks = (beater(t, 2.15, 1.2, 1) + beater(t, 2.50, .9, 2) + beater(t, 2.95, 1.0, 3)) * 2.6
-    motif = sum(flute_note(t, a, l, p, 13400 + i) for i, (a, l, p) in enumerate([(2.17, .16, 587.3), (2.33, .14, 880.0), (2.47, .22, 784.0)])) * 1.8
-    step = np.where(t < 2.50, 0, np.where(t < 2.95, 1, 2))
-    root = 98.0 * 2 ** (step * 2 / 12)
-    drone_on = window(t, 2.15, 3.72, .08, .03)
-    phase = 2 * np.pi * np.cumsum(root) / RATE
-    drone = (np.sin(phase) + .5 * np.sin(2 * phase * 1.003) + .25 * np.sin(3 * phase)) * drone_on * .32
-    weave_air = band(white(n, 13501), 900, 1.1) * window(t, 2.15, 3.30, .05, .1) * .7
-    # 3.30 a held breath: everything quiet but the drone (the drone swells a little into the flick).
-    hold = drone * np.clip((t - 3.30) / .4, 0, 1) * .5
-    # 3.70 THE WARP: a plucked run outward, nine notes up her pentatonic, a speed whoosh down the lane under it.
-    run = [587.3, 659.3, 784.0, 880.0, 987.8, 1174.7, 1318.5, 1568.0, 1760.0]
-    strings = sum(pluck(t, 3.72 + i * .045, p, .9, i, .55 - .03 * i) * (1 - .05 * i) for i, p in enumerate(run)) * 2.4
-    whoosh = band(white(n, 13601), sweep(np.maximum(0, t - 3.72), 2400, 380, .6, .7), 1.2) * env_ar(np.maximum(0, t - 3.72), .03, .25, .05) * (t >= 3.72) * 4.0
-    # 4.10 to 5.20 low wind pressure over the lane, and the motif once more, low; 5.20 to 5.60 cut dead into the live gather.
-    pressure = svf(white(n, 13701), sweep(np.maximum(0, t - 4.0), 300, 900, 1.2), .8, "low") * window(t, 4.00, 5.58, .25, .02) * .75
-    rumble = one_pole_low(white(n, 13702), 80) * window(t, 4.05, 5.58, .3, .02) * .7
-    last = sum(flute_note(t, a, l, p, 13800 + i) for i, (a, l, p) in enumerate([(4.30, .2, 293.7), (4.52, .22, 440.0)])) * 1.4
-    # v3.2 THE BEATER, in the cutscene (owner: "show the ult actually hitting and knocking abck ppl already in the cutscene"):
-    # a held breath (4.80) with the pressure dropping out, then at 5.05 the batten's crack, the low thud, the lane-long whoosh
-    # going away, a fabric snap, cut dead at the hand-back where the live release cue lands as play throws them.
-    pressure *= np.where(t < 4.80, 1.0, np.where(t < 5.05, .25, .6))
-    held = breath_in(t, 4.78, .27, 13901, 1.6)
-    s0 = np.maximum(0, t - 5.05)
-    beat = (t >= 5.05)
-    crack = beater(t, 5.05, 3.4, 31) + svf(white(n, 13902), 2200, .9, "high") * np.exp(-s0 / .016) * beat * 3.6
-    thud = thump(t, 5.05, 46, .3) * 3.0
-    away = band(white(n, 13903), sweep(s0, 1400, 220, .55, .6), 1.1) * env_ar(s0, .015, .3, .04) * beat * 9.0
-    snap = cloth_snap(t, 5.09, 13904, 2.0)
-    mix = (cut + flute + rise + swell + answer + inhale + knocks + motif + drone + weave_air + hold + strings + whoosh + pressure + rumble
-           + last + held + crack + thud + away + snap)
+    # OPEN: a breeze in the street, the abel snapping on the line, her running steps; the skid on the cobbles.
+    breeze = band(white(n, 13001), 700 + 200 * np.sin(2 * np.pi * 1.3 * t), 1.3) * window(t, 0, .78, .02, .25) * 1.6
+    flaps = sum(cloth_snap(t, a, 13010 + i, .9) for i, a in enumerate([.02, .19, .36]))
+    steps = sum(tap(t, a, 13020 + i, .9) for i, a in enumerate([.0, .16, .32]))
+    s0 = np.maximum(0, t - .50)
+    skid = band(white(n, 13030), sweep(s0, 2600, 900, .18), 1.6) * env_ar(s0, .01, .16, .04) * (t >= .50) * 3.2 + tap(t, .50, 13031, 1.4)
+    pickup = sum(flute_note(t, a, l, p, 13100 + i) for i, (a, l, p) in enumerate([(.04, .12, 587.3), (.18, .12, 659.3), (.32, .16, 784.0)])) * 1.6
+    # READ: the street goes quiet; her two impatient taps; a shrug's rustle.
+    taps = tap(t, .94, 13040, 2.2) + tap(t, 1.06, 13041, 2.2)
+    rustle = svf(white(n, 13042), 1800, 1.2) * env_ar(np.maximum(0, t - 1.16), .02, .1, .03) * (t >= 1.16) * .6
+    # 1.30 THE WHISTLE; 1.42 the street answers, a swell racing at her; 1.60 the abel tears off the line.
+    call = whistle(t, 1.30, .26, 13050, 2.0)
+    answer = band(white(n, 13060), sweep(np.maximum(0, t - 1.40), 280, 1500, .35, 1.4), 1.2) * np.clip((t - 1.40) / .22, 0, 1) ** 2 * window(t, 1.40, 2.45, .02, .3) * 5.0
+    tear = cloth_snap(t, 1.60, 13061, 2.4) + thump(t, 1.60, 90, .05) * .8
+    # 1.85 THE CATCH: a snap and the loom's knock; the whirl's air circling; her phrase over it (D E G A).
+    catch = cloth_snap(t, 1.85, 13070, 2.0) + beater(t, 1.85, 1.0, 1) * 2.2
+    whirl = band(white(n, 13071), 900 + 500 * np.sin(2 * np.pi * 1.6 * (t - 1.85)), 2.0) * window(t, 1.86, 2.48, .05, .1) * 1.8
+    phrase = sum(flute_note(t, a, l, p, 13200 + i) for i, (a, l, p) in enumerate([(1.88, .14, 587.3), (2.03, .14, 659.3), (2.18, .14, 784.0), (2.32, .2, 880.0)])) * 2.2
+    # 2.50 THE CARD: a knock and the motif struck bright (D A G) over plucked threads; 2.86 the wind rips it off.
+    card = beater(t, 2.50, 1.2, 2) * 2.4 + sum(pluck(t, 2.50 + i * .03, p, .8, i, .6) for i, p in enumerate([587.3, 880.0, 1174.7])) * 1.6
+    motif = sum(flute_note(t, a, l, p, 13300 + i) for i, (a, l, p) in enumerate([(2.52, .1, 1174.7), (2.63, .1, 1760.0), (2.74, .14, 1568.0)])) * 1.8
+    s1 = np.maximum(0, t - 2.86)
+    rip = band(white(n, 13310), sweep(s1, 3200, 700, .2), 1.4) * env_ar(s1, .01, .14, .04) * (t >= 2.86) * 5.0 + cloth_snap(t, 2.87, 13311, 1.6)
+    # THE WIND-UP: pressure gathering behind her, the drone rising, a breath drawn in, held still before the drive.
+    pressure = svf(white(n, 13400), sweep(np.maximum(0, t - 2.95), 300, 1400, .7), .8, "low") * window(t, 2.95, 3.68, .1, .05) * 1.2
+    phase = 2 * np.pi * np.cumsum(98.0 * 2 ** (np.clip((t - 2.95) / .7, 0, 1) * 5 / 12)) / RATE
+    drone = (np.sin(phase) + .5 * np.sin(2 * phase * 1.003)) * window(t, 2.95, 3.84, .1, .02) * .35
+    held = breath_in(t, 3.50, .33, 13410, 1.6)
+    # 3.85 THE RELEASE: the batten's crack, the low thud, the whoosh going away down the lane, a fabric snap.
+    s2 = np.maximum(0, t - 3.85)
+    beat = (t >= 3.85)
+    crack = beater(t, 3.85, 3.4, 31) + svf(white(n, 13500), 2200, .9, "high") * np.exp(-s2 / .016) * beat * 3.6
+    thud = thump(t, 3.85, 46, .3) * 3.0
+    away = band(white(n, 13501), sweep(s2, 1400, 220, .55, .6), 1.1) * env_ar(s2, .015, .3, .04) * beat * 9.0
+    snap = cloth_snap(t, 3.89, 13502, 2.0)
+    # 4.24 THE FINISH: one bright high flute note, cheeky, as she sets her hands on her hips.
+    finish_note = flute_note(t, 4.24, .14, 1174.7, 13600) * 2.0
+    mix = (breeze + flaps + steps + skid + pickup + taps + rustle + call + answer + tear + catch + whirl + phrase + card + motif
+           + rip + pressure + drone + held + crack + thud + away + snap + finish_note)
     return finish("sfx_ult_theme_amihan", mix, s, .66)
 
 

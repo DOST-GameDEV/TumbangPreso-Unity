@@ -13,11 +13,11 @@ namespace TumbangPreso.Visual
         private Abilities.HeroKit _kit;
         private int _movementEpoch;
         private GameObject _model;
-        private readonly Transform[] _bones = new Transform[5];
-        private readonly Quaternion[] _rotations = new Quaternion[5];
+        private readonly Transform[] _bones = new Transform[7];
+        private readonly Quaternion[] _rotations = new Quaternion[7];
         private Vector3 _rootPosition;
         private Vector2 _lean;
-        private float _descent, _landing = -1;
+        private float _descent, _clock, _landing = -1;
         private bool _applied, _wasDescending;
         public Transform LeftPalm { get; private set; }
         public Transform RightPalm { get; private set; }
@@ -137,17 +137,27 @@ namespace TumbangPreso.Visual
             _applied = true;
 
             float land = _landing >= 0 ? Mathf.Sin(Mathf.Clamp01(_landing / .28f) * Mathf.PI) : 0;
-            Turn(1, new Vector3(_lean.x + 5 * land, 0, _lean.y));
-            Turn(2, new Vector3(-_lean.x * .45f - 3 * land, 0, -_lean.y * .4f));
-            bool hoverClip = _animator != null && _animator.CurrentClipName == CharacterAnimator.AmihanHover;
+            // HER OWN FLOAT (owner, 2026-10-03: *"make her legs/body look like theyre floating"*, *"dont copy wanderer
+            // completley"*): she sits on the breeze rather than diving through it. A slight easy lean, knees together and
+            // carried a little forward, one foot tucked behind the other, everything swaying slowly; reaching down to land.
+            float rest = flying ? 1 - .7f * _descent : 0;
+            _clock += dt; // the presentation clock: a held match holds the sway too
+            float sway = Mathf.Sin(_clock * 1.7f), drift = Mathf.Sin(_clock * 1.1f + 1.3f);
+            Turn(1, new Vector3(_lean.x + 5 * land + 6 * rest, 0, _lean.y + 2.5f * drift * rest));
+            Turn(2, new Vector3(-_lean.x * .45f - 3 * land - 4 * rest, 0, -_lean.y * .4f - 1.5f * drift * rest));
             bool launch = _animator != null && _animator.CurrentClipName == "hero-amihan-updraft" && _animator.IsPlayingAction;
             if (!launch)
             {
                 // A charge/throw owns the arms; its standing clip must not straighten the airborne legs.
-                float left = hoverClip ? 18 * _descent : -18 * (1 - _descent);
-                float right = hoverClip ? -12 * _descent : 12 * (1 - _descent);
-                Turn(3, new Vector3(left - 8 * land, 0, _lean.y * .25f + 3 * land));
-                Turn(4, new Vector3(right + 6 * land, 0, _lean.y * .15f - 3 * land));
+                float reach = 6 * _descent;
+                Turn(3, new Vector3(-17 * rest - 3 * sway * rest + reach - 8 * land, 0, 4 * rest + _lean.y * .25f + 3 * land));
+                Turn(4, new Vector3(-6 * rest + 3 * sway * rest - reach + 6 * land, 0, -4 * rest + _lean.y * .15f - 3 * land));
+                if (_animator == null || !_animator.IsPlayingAction)
+                {
+                    // Arms a little away from her sides, drifting as if resting on the air.
+                    Turn(5, new Vector3(-4 * rest, 0, -(9 + 3 * drift) * rest));
+                    Turn(6, new Vector3(-4 * rest, 0, (9 - 3 * drift) * rest));
+                }
             }
             if (_bones[0] != null) _bones[0].localPosition += Vector3.down * (.025f * land);
         }

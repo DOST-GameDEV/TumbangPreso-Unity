@@ -394,6 +394,42 @@ def stop_owned_editors(child):
     return stopped
 
 
+class JobInterrupted(RuntimeError):
+    """Our workload must yield; the outside application remains untouched."""
+
+
+def monitor_running_job(claim):
+    with pool_lock(POOL):
+        active = live_leases(read_pool(POOL))
+    foreign = foreign_unity(processes(), active)
+    try:
+        foreign, external = coexistence(claim, foreign)
+    except (OSError, ValueError) as error:
+        raise JobInterrupted(f"Outside workload changed: {error}") from error
+    if foreign:
+        raise JobInterrupted("An outside Unity/player workload started; yielding our exclusive job")
+    if external and any(lease["id"] != claim["id"] for lease in active):
+        raise JobInterrupted("An outside Editor would create a third active slot")
+    minimum = claim["reserveMb"] + (claim.get("coexistReserveMb", 0) if external else 0)
+    available = free_memory_mb()
+    if available < minimum:
+        raise JobInterrupted(f"Physical memory below runtime reserve: {available} MB available, {minimum} MB required")
+
+
+def wait_for_guard(child, claim, timeout_seconds):
+    deadline = time.monotonic() + timeout_seconds
+    while True:
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise subprocess.TimeoutExpired("Unity guard", timeout_seconds)
+        try:
+            return child.wait(timeout=min(2, remaining))
+        except subprocess.TimeoutExpired:
+            if remaining <= 2:
+                raise
+            monitor_running_job(claim)
+
+
 def run(options):
     project, output = Path(options.project).resolve(), Path(options.output).resolve()
     ports = [int(value) for value in options.ports.split(",") if value]
@@ -434,9 +470,13 @@ def run(options):
             update_lease(POOL, claim["id"], {"guardPid": child.pid})
             receipt_path.write_text(json.dumps(receipt, indent=2), encoding="utf-8")
             try:
-                receipt["exitCode"] = child.wait(timeout=options.timeout_seconds)
+                receipt["exitCode"] = wait_for_guard(child, claim, options.timeout_seconds)
                 receipt["status"] = "completed" if receipt["exitCode"] == 0 else "failed"
-            except subprocess.TimeoutExpired:
+            except (subprocess.TimeoutExpired, JobInterrupted) as interruption:
+                interrupted = isinstance(interruption, JobInterrupted)
+                prefix = "interrupted" if interrupted else "timeout"
+                if interrupted:
+                    receipt["interruptionReason"] = str(interruption)
                 # Let the guard's finally block restore state after its owned Editor exits.
                 rows = processes()
                 owned = descendants(rows, {child.pid})
@@ -445,11 +485,11 @@ def run(options):
                 stopped = stop_owned_editors(child)
                 try:
                     receipt["guardExitCode"] = child.wait(timeout=30)
-                    receipt["status"] = "timeout_guard_completed"
+                    receipt["status"] = prefix + "_guard_completed"
                 except subprocess.TimeoutExpired:
                     terminal = False
-                    receipt["status"] = "timeout_awaiting_guard"
-                receipt.update(exitCode=124, unityPids=unity, stoppedUnityPids=stopped,
+                    receipt["status"] = prefix + "_awaiting_guard"
+                receipt.update(exitCode=125 if interrupted else 124, unityPids=unity, stoppedUnityPids=stopped,
                                reason="Only verified owned Editors may be stopped; the guard was not terminated. A pending guard retains its lease.")
         return receipt["exitCode"]
     except (OSError, ValueError, TimeoutError) as error:
