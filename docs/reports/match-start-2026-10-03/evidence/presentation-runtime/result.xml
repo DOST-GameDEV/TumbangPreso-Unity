@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 13:55:48Z" end-time="2026-10-03 13:55:49Z" duration="1.4672238">
+  <test-suite type="TestSuite" id="2760" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1432" result="Failed" site="Child" start-time="2026-10-03 13:55:48Z" end-time="2026-10-03 13:55:49Z" duration="1.467224" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2754" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1432" result="Failed" site="Child" start-time="2026-10-03 13:55:48Z" end-time="2026-10-03 13:55:49Z" duration="1.451577" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="107012" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2755" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1432" result="Failed" site="Child" start-time="2026-10-03 13:55:48Z" end-time="2026-10-03 13:55:49Z" duration="1.442767" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2756" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1432" result="Failed" site="Child" start-time="2026-10-03 13:55:48Z" end-time="2026-10-03 13:55:49Z" duration="1.431785" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1819" name="MatchStartContractTests" fullname="TumbangPreso.PlayTests.MatchStartContractTests" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-03 13:55:48Z" end-time="2026-10-03 13:55:49Z" duration="1.373878" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1821" name="CustomMapVoteToggleChangesTheRuleAndManualReadyIsAbsent" fullname="TumbangPreso.PlayTests.MatchStartContractTests.CustomMapVoteToggleChangesTheRuleAndManualReadyIsAbsent" methodname="CustomMapVoteToggleChangesTheRuleAndManualReadyIsAbsent" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" seed="1245666515" result="Failed" label="Error" start-time="2026-10-03 13:55:48Z" end-time="2026-10-03 13:55:48Z" duration="0.200266" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.InvalidOperationException : Sequence contains no matching element]]></message>
+                <stack-trace><![CDATA[  at System.Linq.Enumerable.Single[TSource] (System.Collections.Generic.IEnumerable`1[T] source, System.Func`2[T,TResult] predicate) [0x00070] in <bfb69b1d338d4d9fb894a658731311b9>:0 
+  at TumbangPreso.PlayTests.MatchStartContractTests+<CustomMapVoteToggleChangesTheRuleAndManualReadyIsAbsent>d__8.MoveNext () [0x000b5] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/PlayMode/MatchStartContractTests.cs:86 
+  at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44 ]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1825" name="FourArrivalPosesDifferAndClearWithoutMovingThePhysicalRoot" fullname="TumbangPreso.PlayTests.MatchStartContractTests.FourArrivalPosesDifferAndClearWithoutMovingThePhysicalRoot" methodname="FourArrivalPosesDifferAndClearWithoutMovingThePhysicalRoot" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" seed="639801320" result="Passed" start-time="2026-10-03 13:55:48Z" end-time="2026-10-03 13:55:49Z" duration="1.160766" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

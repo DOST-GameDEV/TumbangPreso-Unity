@@ -266,6 +266,9 @@ namespace TumbangPreso.PlayTests
                 Assert.IsFalse(gate.CountingDown);
                 loadingInstance.SetValue(null, previousLoading);
                 typeof(ReadyGate).GetMethod("Update", Hidden).Invoke(gate, null);
+                Assert.IsFalse(gate.CountingDown, "Loading completion cannot skip the court introduction.");
+                typeof(ReadyGate).GetField("_introductionDone", Hidden).SetValue(gate, true);
+                typeof(ReadyGate).GetMethod("Update", Hidden).Invoke(gate, null);
                 Assert.IsTrue(gate.CountingDown, "Stored valid votes were lost when loading finished.");
                 Assert.IsFalse((bool)typeof(ReadyGate).GetField("_readySendPending", Hidden).GetValue(gate));
 
@@ -309,9 +312,9 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(gate.CountingDown); Assert.AreEqual(1, ticks);
                 float deadline = Time.realtimeSinceStartup + 6;
                 while (gate.CountingDown && Time.realtimeSinceStartup < deadline) yield return null;
-                Assert.IsFalse(gate.CountingDown); Assert.AreEqual(1, starts); Assert.AreEqual(4, ticks);
+                Assert.IsFalse(gate.CountingDown); Assert.AreEqual(1, starts); Assert.AreEqual(6, ticks);
                 Deliver(rpc, "OnBeginCountdownMsg", 0, 123); gate.StartLocalCountdown();
-                Assert.IsFalse(gate.CountingDown); Assert.AreEqual(1, starts); Assert.AreEqual(4, ticks);
+                Assert.IsFalse(gate.CountingDown); Assert.AreEqual(1, starts); Assert.AreEqual(6, ticks);
                 gate.Open(null); Deliver(rpc, "OnBeginCountdownMsg", 0, 123);
                 Assert.IsTrue(gate.CountingDown, "Explicitly reopening the gate must reset its one-time lifecycle.");
             }

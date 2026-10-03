@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Failed(Child)" total="10" passed="3" failed="7" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 14:11:45Z" end-time="2026-10-03 14:11:45Z" duration="0.0766582">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1211" result="Failed" site="Child" start-time="2026-10-03 14:11:45Z" end-time="2026-10-03 14:11:45Z" duration="0.076658" total="10" passed="3" failed="7" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2485" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1211" result="Failed" site="Child" start-time="2026-10-03 14:11:45Z" end-time="2026-10-03 14:11:45Z" duration="0.068484" total="10" passed="3" failed="7" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="5132" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2486" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1211" result="Failed" site="Child" start-time="2026-10-03 14:11:45Z" end-time="2026-10-03 14:11:45Z" duration="0.065243" total="10" passed="3" failed="7" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2487" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1211" result="Failed" site="Child" start-time="2026-10-03 14:11:45Z" end-time="2026-10-03 14:11:45Z" duration="0.063310" total="10" passed="3" failed="7" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1264" name="CastPreparationPacketBoundsTests" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-10-03 14:11:45Z" end-time="2026-10-03 14:11:45Z" duration="0.048465" total="10" passed="3" failed="7" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1275" name="CompleteUtf16FrameStillDecodesBeforeDepartedSeatRejection" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.CompleteUtf16FrameStillDecodesBeforeDepartedSeatRejection" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 14:11:45Z" end-time="2026-10-03 14:11:45Z" duration="0.031206" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1273" name="CompleteUtf16FrameStillDecodesBeforeDepartedSeatRejection(&quot;sean&quot;)" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.CompleteUtf16FrameStillDecodesBeforeDepartedSeatRejection(&quot;sean&quot;)" methodname="CompleteUtf16FrameStillDecodesBeforeDepartedSeatRejection" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" seed="807086591" result="Passed" start-time="2026-10-03 14:11:45Z" end-time="2026-10-03 14:11:45Z" duration="0.026407" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1274" name="CompleteUtf16FrameStillDecodesBeforeDepartedSeatRejection(&quot;雨&quot;)" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.CompleteUtf16FrameStillDecodesBeforeDepartedSeatRejection(&quot;雨&quot;)" methodname="CompleteUtf16FrameStillDecodesBeforeDepartedSeatRejection" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" seed="1937323522" result="Passed" start-time="2026-10-03 14:11:45Z" end-time="2026-10-03 14:11:45Z" duration="0.000402" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1276" name="NonHostCannotDecodeEvenAnEmptyPayload" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.NonHostCannotDecodeEvenAnEmptyPayload" methodname="NonHostCannotDecodeEvenAnEmptyPayload" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" seed="497658349" result="Passed" start-time="2026-10-03 14:11:45Z" end-time="2026-10-03 14:11:45Z" duration="0.000692" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1272" name="TrailingBytesRejectTheWholePreparation" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.TrailingBytesRejectTheWholePreparation" methodname="TrailingBytesRejectTheWholePreparation" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" seed="424619097" result="Failed" start-time="2026-10-03 14:11:45Z" end-time="2026-10-03 14:11:45Z" duration="0.004754" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 8
+  But was:  80
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.CastPreparationPacketBoundsTests.TrailingBytesRejectTheWholePreparation () [0x0005e] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\CastPreparationPacketBoundsTests.cs:76
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1271" name="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.TruncatedHostPreparationDoesNotThrowOrAdvanceDecode" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-03 14:11:45Z" end-time="2026-10-03 14:11:45Z" duration="0.004737" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1265" name="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(8)" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(8)" methodname="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" seed="99388027" result="Failed" start-time="2026-10-03 14:11:45Z" end-time="2026-10-03 14:11:45Z" duration="0.001831" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnCastPreparationMsg (System.UInt64 sender, Unity.Netcode.FastBufferReader reader) [0x0023d] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Net\MatchRpc.Preparations.cs:97 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.CastPreparationPacketBoundsTests+<>c__DisplayClass8_0.<TruncatedHostPreparationDoesNotThrowOrAdvanceDecode>b__0 () [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\CastPreparationPacketBoundsTests.cs:65 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CastPreparationPacketBoundsTests.TruncatedHostPreparationDoesNotThrowOrAdvanceDecode (System.Int32 bytes) [0x00065] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\CastPreparationPacketBoundsTests.cs:65
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1266" name="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(12)" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(12)" methodname="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" seed="38690074" result="Failed" start-time="2026-10-03 14:11:45Z" end-time="2026-10-03 14:11:45Z" duration="0.000442" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnCastPreparationMsg (System.UInt64 sender, Unity.Netcode.FastBufferReader reader) [0x0023d] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Net\MatchRpc.Preparations.cs:97 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.CastPreparationPacketBoundsTests+<>c__DisplayClass8_0.<TruncatedHostPreparationDoesNotThrowOrAdvanceDecode>b__0 () [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\CastPreparationPacketBoundsTests.cs:65 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CastPreparationPacketBoundsTests.TruncatedHostPreparationDoesNotThrowOrAdvanceDecode (System.Int32 bytes) [0x00065] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\CastPreparationPacketBoundsTests.cs:65
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1267" name="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(18)" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(18)" methodname="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" seed="109519351" result="Failed" start-time="2026-10-03 14:11:45Z" end-time="2026-10-03 14:11:45Z" duration="0.000379" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at Unity.Netcode.FastBufferReader.ReadValueSafe (System.String& s, System.Boolean oneByteChars) [0x0002c] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\FastBufferReader.cs:660 
+  at TumbangPreso.Net.MatchRpc.OnCastPreparationMsg (System.UInt64 sender, Unity.Netcode.FastBufferReader reader) [0x00036] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Net\MatchRpc.Preparations.cs:78 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.CastPreparationPacketBoundsTests+<>c__DisplayClass8_0.<TruncatedHostPreparationDoesNotThrowOrAdvanceDecode>b__0 () [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\CastPreparationPacketBoundsTests.cs:65 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CastPreparationPacketBoundsTests.TruncatedHostPreparationDoesNotThrowOrAdvanceDecode (System.Int32 bytes) [0x00065] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\CastPreparationPacketBoundsTests.cs:65
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1268" name="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(23)" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(23)" methodname="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" seed="684823341" result="Failed" start-time="2026-10-03 14:11:45Z" end-time="2026-10-03 14:11:45Z" duration="0.000354" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at Unity.Netcode.FastBufferReader.ReadValueSafe (System.String& s, System.Boolean oneByteChars) [0x0002c] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\FastBufferReader.cs:660 
+  at TumbangPreso.Net.MatchRpc.OnCastPreparationMsg (System.UInt64 sender, Unity.Netcode.FastBufferReader reader) [0x00036] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Net\MatchRpc.Preparations.cs:78 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.CastPreparationPacketBoundsTests+<>c__DisplayClass8_0.<TruncatedHostPreparationDoesNotThrowOrAdvanceDecode>b__0 () [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\CastPreparationPacketBoundsTests.cs:65 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CastPreparationPacketBoundsTests.TruncatedHostPreparationDoesNotThrowOrAdvanceDecode (System.Int32 bytes) [0x00065] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\CastPreparationPacketBoundsTests.cs:65
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1269" name="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(31)" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(31)" methodname="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" seed="1813855246" result="Failed" start-time="2026-10-03 14:11:45Z" end-time="2026-10-03 14:11:45Z" duration="0.000336" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnCastPreparationMsg (System.UInt64 sender, Unity.Netcode.FastBufferReader reader) [0x0023d] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Net\MatchRpc.Preparations.cs:97 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.CastPreparationPacketBoundsTests+<>c__DisplayClass8_0.<TruncatedHostPreparationDoesNotThrowOrAdvanceDecode>b__0 () [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\CastPreparationPacketBoundsTests.cs:65 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CastPreparationPacketBoundsTests.TruncatedHostPreparationDoesNotThrowOrAdvanceDecode (System.Int32 bytes) [0x00065] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\CastPreparationPacketBoundsTests.cs:65
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1270" name="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(79)" fullname="TumbangPreso.Tests.CastPreparationPacketBoundsTests.TruncatedHostPreparationDoesNotThrowOrAdvanceDecode(79)" methodname="TruncatedHostPreparationDoesNotThrowOrAdvanceDecode" classname="TumbangPreso.Tests.CastPreparationPacketBoundsTests" runstate="Runnable" seed="1930067252" result="Failed" start-time="2026-10-03 14:11:45Z" end-time="2026-10-03 14:11:45Z" duration="0.000328" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at TumbangPreso.Net.MatchRpc.OnCastPreparationMsg (System.UInt64 sender, Unity.Netcode.FastBufferReader reader) [0x0023d] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Runtime\Net\MatchRpc.Preparations.cs:97 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.CastPreparationPacketBoundsTests+<>c__DisplayClass8_0.<TruncatedHostPreparationDoesNotThrowOrAdvanceDecode>b__0 () [0x00000] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\CastPreparationPacketBoundsTests.cs:65 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CastPreparationPacketBoundsTests.TruncatedHostPreparationDoesNotThrowOrAdvanceDecode (System.Int32 bytes) [0x00065] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\CastPreparationPacketBoundsTests.cs:65
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

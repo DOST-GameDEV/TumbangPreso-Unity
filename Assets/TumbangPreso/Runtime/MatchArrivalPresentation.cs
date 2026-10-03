@@ -25,6 +25,7 @@ namespace TumbangPreso
         private Canvas _canvas;
         private Text _title, _detail;
         private readonly CharacterMotor[] _players = new CharacterMotor[Core.Balance.PlayerCount];
+        private readonly Visual.CharacterAnimator[] _poses = new Visual.CharacterAnimator[Core.Balance.PlayerCount];
         private readonly RaycastHit[] _hits = new RaycastHit[32];
         private int _shownBeat = -2;
         private int _runGeneration;
@@ -68,6 +69,8 @@ namespace TumbangPreso
             foreach (var player in FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None))
                 if (player.PlayerSlot >= 0 && player.PlayerSlot < _players.Length) _players[player.PlayerSlot] = player;
             FreshInput();
+            for (int i = 0; i < _players.Length; i++)
+                _poses[i] = _players[i] != null ? _players[i].GetComponent<Visual.CharacterAnimator>() : null;
             BuildCaption();
             var map = SceneFlow.PreviewFor(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
             Vector3 centre = Vector3.zero; int count = 0;
@@ -79,6 +82,9 @@ namespace TumbangPreso
             {
                 if (!Current(generation)) yield break;
                 float t = Mathf.Clamp01(age / Seconds);
+                for (int i = 0; i < _poses.Length; i++)
+                    if (_poses[i] != null) _poses[i].SetArrivalPose(i, reduced ? 1 :
+                        Mathf.SmoothStep(0, 1, Mathf.Min(age / .35f, (Seconds - age) / .35f)));
                 int beat = age < 2.4f || age >= 6.8f ? -1 : Mathf.Clamp((int)((age - 2.4f) / 1.1f), 0, 3);
                 Vector3 focus = centre;
                 Vector3 offset = Quaternion.Euler(0, map.Yaw + (reduced ? 0 : Mathf.Lerp(-5, 5, t)), 0)
@@ -152,6 +158,11 @@ namespace TumbangPreso
 
         private void Finish()
         {
+            for (int i = 0; i < _poses.Length; i++)
+            {
+                if (_poses[i] != null) _poses[i].SetArrivalPose(i, 0);
+                _poses[i] = null;
+            }
             if (_canvas != null) { Destroy(_canvas.gameObject); _canvas = null; }
             if (_camera != null)
             {
