@@ -1,24 +1,27 @@
 # Active Rework Checkpoint
 
-## Latest source and acceptance checkpoint
+## Resume first: checked packet and emote fixes published together
 
-ASTRAReworks67d57b118 contains the checked cast-preparation guard, preserving
-current Amihan, match-entry and Closed Circuit walking work. Root inspected
-original7/3 and candidate10/10 XML,3388-input maps differing in one source file,
-immutable fixture/meta and terminal/restored/free guards. Canonical3be659 matches.
-Default timing native1/1 export/noRaw proof is also inspected; intermediate
-result.json is not a whole-route pass. Binary512MiB interruption and player open.
+ASTRAReworksf39c13321 includes packet original7/3 -> candidate10/10 and emote
+original5/3 -> candidate8/8. Root independently inspected XML, immutable
+fixture/meta, full3388/3390 maps with one owned production delta and terminal/
+restored/free guards. Reports at laptop-validation-2026-10-03, refsa80acb40b and
+99ae1469f. Default timing export1/1/noRaw proof inspected too; no FPS/whole-route
+claim. Current source preserves latest Amihan/match-entry/Closed Circuit work.
+Neither fix changes the protocol or wire layout. No PC Unity/player job.
 
-Root emote originalbfe2/candidateb5fa selects an unparked active-reader owner,
-fences network LocalSlot and preserves tutorial/replacement/temporaryAI controls.
-Eight-case fixture is frozen. Laptop reports originalfive failures/three controls
-and candidate8/8; raw published evidence is still pending root inspection.
-This branch retains emote candidate; ASTRA excludes it until acceptance inspection.
+LAPTOP owns all pending native tests/builds/players while CLAUDE owns PC Unity.
+Laptop has touch-button8/device-loss work underway. Current14-case integration,
+matching141 Windows build, startup/menu/entry timing and actual peers remain
+open. Binary512MiB interruption is unqualified; never use old139 player to claim
+new CSV defaults. Do not repeat unchanged packet/emote/timing cases.
 
-Laptop owns all tests/builds while Claude owns PC Unity. No PC Unity/player job.
-Earlier sections below are historical; do not resume their old pending sessions.
-NEXT: inspect published Emote8 XML,3390-input maps and restored/free receipts,
-then publish checked selector with current source. Current player/peer gate open.
+Root checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i
+is current and clean; Main private Amihan/owner index and worktree are preserved.
+Old139 artifact1003h remains, its former cache reused at1003i. Earlier sections
+below are historical. NEXT: send laptop publication ref and ask it to pull
+before the matching build; then use touch/device feedback and select a disjoint
+PC source fix. Full competition readiness is unproven; goal remains active.
 
 ## Current PC unit: packet framing candidate awaits laptop validation
 
