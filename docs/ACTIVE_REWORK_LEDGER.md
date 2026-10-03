@@ -742,3 +742,12 @@ crossed the disk guard before orderly exit; duplicate test-only reference files
 were excluded afterward. See reports/cloud-recovery-2026-10-03/README.md. During import, the existing court/reference frames were inspected
 and the next fracture-only unit planned. Production art remains unchanged.
 See reports/dante-drift-fractures-2026-10-03/plan.md. Preserve every other lane.
+
+Cloud Dante fracture implementation is locally qualified: original5-shape check
+fails at1; candidate distinct geometry and cleanup pass; visible-state rewind
+recheck passes after one retained fixture correction. Final darker-basalt Low
+court case passes11.903s,37frames,5.035GB peak, no guard. Observer/four-wave
+views inspected; in-eye witness shots rejected, no owner-view claim. No active
+Editor. Publication remains blocked by absent native gh login and connector
+write403; remote source remains intact. See dated README. Preserve local commits
+and deliver the observer review while resolving authorized publication access.

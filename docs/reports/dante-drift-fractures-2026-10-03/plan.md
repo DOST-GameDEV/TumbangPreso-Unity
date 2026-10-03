@@ -63,3 +63,5 @@ human approval. Preserve initial failures and one bounded tooling repair.
 Current status: researched and scoped; recovery smoke passes 8 managed and
 2 native cases, with retained disk warning. Production implementation is next;
 no new visual acceptance yet.
+
+Implementation and exact partial acceptance are recorded in [the result](README.md).

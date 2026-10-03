@@ -6,7 +6,7 @@ namespace TumbangPreso.Visual
     /// <summary>Render-only sequencing of Dante's authored seismic fracture vocabulary.</summary>
     public sealed class DanteDriftVisual : MonoBehaviour, IVfxTimeline
     {
-        readonly DanteSeismicVisual[] _bands = new DanteSeismicVisual[GeoRules.DriftBlasts];
+        readonly DanteDriftFault[] _bands = new DanteDriftFault[GeoRules.DriftBlasts];
         public float LifeSeconds => GeoRules.DriftSeconds;
         public static DanteDriftVisual Build(Transform parent, Vector3 origin, Vector3 forward, float halfWidth, float reach)
         {
@@ -15,11 +15,8 @@ namespace TumbangPreso.Visual
             float depth = reach / GeoRules.DriftBlasts;
             for (int i = 0; i < view._bands.Length; i++)
             {
-                var fx = DanteSeismicVisual.Recorded(origin + forward * (i * depth),
-                    Vector3.forward, 6, true, false, false, GeoRules.DriftVisualTail);
-                fx.transform.SetParent(root.transform, true);
-                fx.transform.rotation = Quaternion.LookRotation(forward);
-                fx.transform.localScale = new Vector3(halfWidth / 6, 1, depth / 6.6f);
+                var fx = DanteDriftFault.Build(root.transform, origin + forward * (i * depth),
+                    forward, halfWidth, depth, i);
                 fx.gameObject.SetActive(false); view._bands[i] = fx;
             }
             view.StepTo(0); return view;
