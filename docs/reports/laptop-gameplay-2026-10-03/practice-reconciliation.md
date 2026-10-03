@@ -19,7 +19,16 @@ qualify the full PracticeRange menu operator, physical tag or bot planner.
 The actual removal branch of `PracticeRange.SetBot` disables the body, so it
 reaches those existing lifecycle hooks. This work does not revive the retired
 helper or reinterpret its original failures as a passing operator gate.
-PRACTICE-BOT-RESUME-1002 operator acceptance remains open.
+That operator gate was open at this report's initial checkpoint. The separate
+[current menu acceptance](practice-menu-operator/README.md) now qualifies exactly
+two cases on source `75de68446`: Classic pointer callbacks and Hero Strike
+programmatic submit callbacks both pass on the first native run. The actual
+prepared menu selects a non-default seat, changes behaviour, removes/restores
+the same attacker and defender bodies with correct shoe state, preserves the
+untouched seat, and resumes its clock, input and bounded bot-planner liveness.
+No new SetBot correction was required. The original retired fixture remains
+retired; physical device navigation, victim contact and broader competition
+acceptance are separate limits.
 
 ## Separate pending-action defect
 
@@ -134,7 +143,8 @@ seeded-state failure and first passing candidate, including shared human hero
 input preservation. Fresh planner gameplay cadence after resumption remains
 unqualified. Physical alt-tab, OS suspension,
 keyboard/controller/touch hardware, live peer reset cancellation, new player
-builds and the full practice-menu acceptance remain unverified.
+builds and wider practice/device qualification remain unverified. The narrow
+two-mode menu callback acceptance above is now qualified separately.
 
 A proposed replay camera-marker fix was rejected during review:
 WorldLookPresentation.HandlesCamera already explicitly recognizes the shipping
