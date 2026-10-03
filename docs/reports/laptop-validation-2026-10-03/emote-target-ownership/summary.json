@@ -1,0 +1,21 @@
+{
+  "original": {
+    "sourceCommit": "bfe2c2fab1554fd229d04ca306aaf829f2c9a5f5",
+    "total": 8,
+    "passed": 3,
+    "failed": 5,
+    "endedUtc": "2026-10-03T14:39:09Z",
+    "frozenInputs": 3390
+  },
+  "candidate": {
+    "sourceCommit": "b5fabf6a6300e4a3f788b95c4869c2f19f9322e5",
+    "total": 8,
+    "passed": 8,
+    "failed": 0,
+    "endedUtc": "2026-10-03T14:40:47Z",
+    "frozenInputs": 3390
+  },
+  "inputDelta": [
+    "Assets/TumbangPreso/Runtime/MatchInstaller.cs"
+  ]
+}
