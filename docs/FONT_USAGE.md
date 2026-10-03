@@ -6,12 +6,20 @@ The supplied TUMP idea board names three faces. Their jobs are distinct.
 |---|---|---|
 | Darumadrop One | Screen headings, mode names and a few large display moments | Short phrases, generous space, no outline added to every word |
 | Kawit Extended | Primary action, short navigation and section accents | Brush lettering used sparingly; never a paragraph or a dense row of numbers |
-| Lydian | Descriptions, instructions, profile text and other reading | Sentence case, deliberate leading, enough size for its finer letterforms |
+| Nunito Bold | Temporarily replaces Lydian Regular for descriptions, instructions, profile text and other owner-theme reading | Sentence case; use the real bold face and retain readable leading |
 
 Back, Close, previous/next and other familiar controls use actual icons instead
 of relying on a special character in a display font. Meaningful choices such as
 Ranked, Custom Room, abilities and their consequences keep words. UI copy is
 English; place and character proper names retain their identity.
+
+## October3 temporary reading-font override
+
+The owner requested all current Lydian Regular usage become Nunito Bold for now.
+OwnerUiTheme's serialized reference and missing-theme fallback use Nunito Bold;
+OwnerUiArtAuthor preserves that choice when rebuilding the theme. Loading tips
+already used Nunito Bold through HubStyle. Existing Work Sans reading routes,
+display/accent fonts, source Lydian files, GUIDs and permission records remain.
 
 ## Sources and permission
 

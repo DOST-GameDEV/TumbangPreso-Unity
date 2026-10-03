@@ -49,7 +49,7 @@ namespace TumbangPreso.UI
         // ⚠️ KAWIT IS KEPT ON DISK AND UNREFERENCED, which is `docs/TODO.md` § 68.3's
         // keep-the-old-chrome rule: going back is this one line.
         public Font Accent=>AccentFont!=null?AccentFont:Resources.Load<Font>("UI/fonts/PaalalabasDisplayWide");
-        public Font Reading=>ReadingFont!=null?ReadingFont:Resources.Load<Font>("UI/fonts/Lydian-Regular");
+        public Font Reading=>ReadingFont!=null?ReadingFont:Resources.Load<Font>("UI/fonts/Nunito-Bold");
         public Texture2D Background=>Pattern!=null?Pattern:Resources.Load<Texture2D>("UI/owner-painted/background");
         public Sprite Art(Piece piece)
         {

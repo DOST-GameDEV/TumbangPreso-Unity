@@ -17,6 +17,13 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### READING-FONT-1003: temporary Nunito Bold replacement
+
+- [x] Replace active Lydian Regular theme/fallback/regeneration references with
+  Nunito Bold, retaining original assets. Native3/3 and actual tutorial image
+  inspected; [evidence and limits](reports/reading-font-2026-10-03/README.md).
+
+
 ### OPENING-HANDOFF-1003: prepare the shot under loading
 
 - [x] Keep entry covered, prepare the opening before loading fades away, resolve
