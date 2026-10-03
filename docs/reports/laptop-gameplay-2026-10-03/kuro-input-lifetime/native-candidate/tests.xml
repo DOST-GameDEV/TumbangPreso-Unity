@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 07:17:07Z" end-time="2026-10-03 07:17:08Z" duration="0.5995251">
+  <test-suite type="TestSuite" id="2775" name="TumpWorker-qa-d-dddaa72bc5b9" fullname="TumpWorker-qa-d-dddaa72bc5b9" runstate="Runnable" testcasecount="1446" result="Passed" start-time="2026-10-03 07:17:07Z" end-time="2026-10-03 07:17:08Z" duration="0.599525" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2769" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-d/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1446" result="Passed" start-time="2026-10-03 07:17:07Z" end-time="2026-10-03 07:17:08Z" duration="0.589333" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="3608" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2770" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1446" result="Passed" start-time="2026-10-03 07:17:07Z" end-time="2026-10-03 07:17:08Z" duration="0.584446" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2771" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1446" result="Passed" start-time="2026-10-03 07:17:07Z" end-time="2026-10-03 07:17:08Z" duration="0.579780" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1634" name="KuroInputProducerLifetimeTests" fullname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests" classname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-03 07:17:07Z" end-time="2026-10-03 07:17:08Z" duration="0.559957" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1642" name="AnObsoleteReaderCannotClearAnotherSeatsFamiliarCache" fullname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.AnObsoleteReaderCannotClearAnotherSeatsFamiliarCache" methodname="AnObsoleteReaderCannotClearAnotherSeatsFamiliarCache" classname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests" runstate="Runnable" seed="2088034825" result="Passed" start-time="2026-10-03 07:17:07Z" end-time="2026-10-03 07:17:07Z" duration="0.258026" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1635" name="ChatWithdrawalRetiresPossessedMovement" fullname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.ChatWithdrawalRetiresPossessedMovement" methodname="ChatWithdrawalRetiresPossessedMovement" classname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests" runstate="Runnable" seed="1413154526" result="Passed" start-time="2026-10-03 07:17:07Z" end-time="2026-10-03 07:17:07Z" duration="0.027108" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1638" name="FocusLossRetiresPossessedMovement" fullname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.FocusLossRetiresPossessedMovement" methodname="FocusLossRetiresPossessedMovement" classname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests" runstate="Runnable" seed="1365625394" result="Passed" start-time="2026-10-03 07:17:07Z" end-time="2026-10-03 07:17:07Z" duration="0.028028" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1641" name="FreshMovementAfterChatStillDrivesTheSamePossession" fullname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.FreshMovementAfterChatStillDrivesTheSamePossession" methodname="FreshMovementAfterChatStillDrivesTheSamePossession" classname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests" runstate="Runnable" seed="1282007422" result="Passed" start-time="2026-10-03 07:17:07Z" end-time="2026-10-03 07:17:07Z" duration="0.027151" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1636" name="LoadingWithdrawalRetiresPossessedMovement" fullname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.LoadingWithdrawalRetiresPossessedMovement" methodname="LoadingWithdrawalRetiresPossessedMovement" classname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests" runstate="Runnable" seed="632810965" result="Passed" start-time="2026-10-03 07:17:07Z" end-time="2026-10-03 07:17:07Z" duration="0.119891" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1640" name="OrdinaryTouchMovementStillDrivesThePossessedFamiliar" fullname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.OrdinaryTouchMovementStillDrivesThePossessedFamiliar" methodname="OrdinaryTouchMovementStillDrivesThePossessedFamiliar" classname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests" runstate="Runnable" seed="186864903" result="Passed" start-time="2026-10-03 07:17:07Z" end-time="2026-10-03 07:17:07Z" duration="0.027914" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1639" name="ParkedReaderDoesNotDriveThePossessedFamiliar" fullname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.ParkedReaderDoesNotDriveThePossessedFamiliar" methodname="ParkedReaderDoesNotDriveThePossessedFamiliar" classname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests" runstate="Runnable" seed="1186252083" result="Passed" start-time="2026-10-03 07:17:07Z" end-time="2026-10-03 07:17:08Z" duration="0.030219" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1637" name="ReaderDisableRetiresPossessedMovement" fullname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests.ReaderDisableRetiresPossessedMovement" methodname="ReaderDisableRetiresPossessedMovement" classname="TumbangPreso.PlayTests.KuroInputProducerLifetimeTests" runstate="Runnable" seed="1003581730" result="Passed" start-time="2026-10-03 07:17:08Z" end-time="2026-10-03 07:17:08Z" duration="0.030077" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-d-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
