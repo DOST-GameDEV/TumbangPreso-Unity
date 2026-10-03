@@ -1818,6 +1818,7 @@ namespace TumbangPreso.Net
         /// </summary>
         private readonly Dictionary<string, (Core.AccountRules.HandleCheck Check, string Handle)>
             _handleChecks = new Dictionary<string, (Core.AccountRules.HandleCheck, string)>();
+        private Func<string, string, Task<(Core.AccountRules.HandleCheck Check, string Handle)>> _verifyHandleDispatch;
 
         /// <summary>
         /// The host side of `docs/TODO.md` § 88.1c: asks the account endpoint whether an arriving
@@ -1900,6 +1901,13 @@ namespace TumbangPreso.Net
             // of machines joining off the beacon.
             if (!IsRelay) return;
 
+            var peer = Lobby?.PeerById(peerId);
+            if (peer == null) return;
+            string token = peer.Token;
+            var network = _nm;
+            int session = _joinAttempts.Version;
+            _helloByClient.TryGetValue((ulong)peerId, out var approved);
+
             // ⚠️⚠️ THE WHOLE BODY IS GUARDED BECAUSE THIS IS `async void`. Nothing awaits it, so
             // an exception escaping here has no caller to land in and takes the process with it.
             // A guard that fails must cost a name, never a match.
@@ -1908,12 +1916,15 @@ namespace TumbangPreso.Net
                 string key = accountPlayerId + "|" + proof;
                 if (!_handleChecks.TryGetValue(key, out var answer))
                 {
-                    answer = await PlayerAccount.VerifyHandleAsync(accountPlayerId, proof);
+                    answer = _verifyHandleDispatch == null
+                        ? await PlayerAccount.VerifyHandleAsync(accountPlayerId, proof)
+                        : await _verifyHandleDispatch(accountPlayerId, proof);
+                    if (!OwnsArrivalVerification(peerId, accountPlayerId, token, network, session, approved)) return;
                     if (answer.Check != Core.AccountRules.HandleCheck.Unreachable)
                         _handleChecks[key] = answer;
                 }
 
-                if (Lobby == null) return;
+                if (!OwnsArrivalVerification(peerId, accountPlayerId, token, network, session, approved)) return;
                 if (!Lobby.ApplyHandleCheck(peerId, accountPlayerId, answer.Check, answer.Handle)) return;
 
                 if (answer.Check == Core.AccountRules.HandleCheck.NotOwned)
@@ -1931,6 +1942,19 @@ namespace TumbangPreso.Net
                 Debug.LogWarning($"[Net] handle verification for peer {peerId} failed; " +
                                  $"the claimed name stands: {e.Message}");
             }
+        }
+
+        private bool OwnsArrivalVerification(int peerId, string accountPlayerId, string token,
+                                            NetworkManager network, int session, ConnectionHello approved)
+        {
+            if (this == null || !IsHost || !IsRelay || !ReferenceEquals(_nm, network)
+                || _joinAttempts.Version != session) return false;
+            var current = Lobby?.PeerById(peerId);
+            if (current == null || current.Token != token || (!string.IsNullOrEmpty(current.AccountPlayerId)
+                && current.AccountPlayerId != accountPlayerId)) return false;
+            // Identify rebuilds the peer record, so bind to approval rather than that temporary record.
+            _helloByClient.TryGetValue((ulong)peerId, out var currentApproved);
+            return ReferenceEquals(currentApproved, approved);
         }
 
         private void ApproveConnection(NetworkManager.ConnectionApprovalRequest request,
