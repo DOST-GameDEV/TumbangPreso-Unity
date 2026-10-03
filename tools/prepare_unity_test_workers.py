@@ -117,13 +117,13 @@ def unity_processes():
                   "-Filter \"Name = 'Unity.exe'\" | "
                   "Select-Object ProcessId,CommandLine | ConvertTo-Json -Compress")
         result = subprocess.run(["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", script],
-                                capture_output=True, text=True, check=True)
+                                capture_output=True, text=True, check=True, timeout=5)
         rows = json.loads(result.stdout) if result.stdout.strip() else []
         if isinstance(rows, dict):
             rows = [rows]
         return [(row["ProcessId"], row.get("CommandLine")) for row in rows]
     result = subprocess.run(["ps", "-eo", "pid=,comm=,args="],
-                            capture_output=True, text=True, check=True)
+                            capture_output=True, text=True, check=True, timeout=5)
     rows = [line.strip().split(None, 2) for line in result.stdout.splitlines()]
     return [(int(row[0]), row[2] if len(row) > 2 else None) for row in rows
             if len(row) > 1 and Path(row[1]).name.lower() in ("unity", "unity.exe")]

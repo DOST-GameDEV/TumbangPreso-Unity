@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 09:34:36Z" end-time="2026-10-03 09:34:51Z" duration="14.9791939">
+  <test-suite type="TestSuite" id="2841" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1498" result="Failed" site="Child" start-time="2026-10-03 09:34:36Z" end-time="2026-10-03 09:34:51Z" duration="14.979194" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2835" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1498" result="Failed" site="Child" start-time="2026-10-03 09:34:36Z" end-time="2026-10-03 09:34:51Z" duration="14.962387" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15180" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2836" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1498" result="Failed" site="Child" start-time="2026-10-03 09:34:36Z" end-time="2026-10-03 09:34:51Z" duration="14.953379" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2837" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1498" result="Failed" site="Child" start-time="2026-10-03 09:34:37Z" end-time="2026-10-03 09:34:51Z" duration="14.944309" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2262" name="RecordedFrameCompositionTests" fullname="TumbangPreso.PlayTests.RecordedFrameCompositionTests" classname="TumbangPreso.PlayTests.RecordedFrameCompositionTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-03 09:34:37Z" end-time="2026-10-03 09:34:51Z" duration="14.923831" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2265" name="OpaqueCameraInputAndIntentionalUiFadeStillCompose" fullname="TumbangPreso.PlayTests.RecordedFrameCompositionTests.OpaqueCameraInputAndIntentionalUiFadeStillCompose" methodname="OpaqueCameraInputAndIntentionalUiFadeStillCompose" classname="TumbangPreso.PlayTests.RecordedFrameCompositionTests" runstate="Runnable" seed="50348052" result="Passed" start-time="2026-10-03 09:34:37Z" end-time="2026-10-03 09:34:49Z" duration="12.400571" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+camera alpha=1; full=RGBA(0.000, 0.000, 0.996, 1.000)
+intentional UI fade=RGBA(0.733, 0.000, 0.733, 1.000)
+]]></output>
+            </test-case>
+            <test-case id="2264" name="PartialCameraAlphaCannotMixTheLiveViewIntoPlayback" fullname="TumbangPreso.PlayTests.RecordedFrameCompositionTests.PartialCameraAlphaCannotMixTheLiveViewIntoPlayback" methodname="PartialCameraAlphaCannotMixTheLiveViewIntoPlayback" classname="TumbangPreso.PlayTests.RecordedFrameCompositionTests" runstate="Runnable" seed="1966134307" result="Failed" start-time="2026-10-03 09:34:49Z" end-time="2026-10-03 09:34:50Z" duration="1.259655" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The recorded RGB frame must remain visible independently of camera alpha.
+  Expected: greater than 0.899999976f
+  But was:  0.53725493f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RecordedFrameCompositionTests+<Compose>d__10.MoveNext () [0x00424] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\RecordedFrameCompositionTests.cs:80
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+camera alpha=0.25; full=RGBA(0.878, 0.000, 0.537, 1.000)
+]]></output>
+            </test-case>
+            <test-case id="2263" name="TransparentCameraAlphaCannotRevealTheLiveView" fullname="TumbangPreso.PlayTests.RecordedFrameCompositionTests.TransparentCameraAlphaCannotRevealTheLiveView" methodname="TransparentCameraAlphaCannotRevealTheLiveView" classname="TumbangPreso.PlayTests.RecordedFrameCompositionTests" runstate="Runnable" seed="1411509991" result="Failed" start-time="2026-10-03 09:34:50Z" end-time="2026-10-03 09:34:51Z" duration="1.253047" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The recorded RGB frame must remain visible independently of camera alpha.
+  Expected: greater than 0.899999976f
+  But was:  0.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RecordedFrameCompositionTests+<Compose>d__10.MoveNext () [0x00424] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\RecordedFrameCompositionTests.cs:80
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+camera alpha=0; full=RGBA(1.000, 0.000, 0.000, 1.000)
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
