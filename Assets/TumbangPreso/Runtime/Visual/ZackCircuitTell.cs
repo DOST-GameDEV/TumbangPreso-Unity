@@ -46,13 +46,12 @@ namespace TumbangPreso.Visual
                         && CharacterVisual.PalmCentre(skin,i,out var palm))
                     { _leftArm=skin.bones[i];_leftPalm=palm;break; }
             // Resolve once per acquisition, never a scene search in LateUpdate.
-            if(ViewmodelArms.IsFirstPersonFor(_caster))
-                foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))
-                    if(arms.BoundCharacter==_caster){_ownerArms=arms;break;}
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))
+                if(arms.isActiveAndEnabled && arms.BoundCharacter==_caster){_ownerArms=arms;break;}
         }
         private Vector3 CastingHand()
         {
-            if(_ownerArms!=null && ViewmodelArms.IsFirstPersonFor(_caster))
+            if(_ownerArms!=null && _ownerArms.isActiveAndEnabled && _ownerArms.BoundCharacter==_caster)
             {
                 var hand=_ownerArms.LeftHandForProps();
                 if(hand!=null)return hand.TransformPoint(_ownerArms.LeftPalmOffset());

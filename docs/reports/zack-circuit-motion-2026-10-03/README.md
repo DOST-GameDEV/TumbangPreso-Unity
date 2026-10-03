@@ -60,3 +60,24 @@ review still outstanding. The whole Zack presentation is not marked complete.
 
 Failures, XML, frozen hashes and resource receipts are retained under evidence.
 The native-motion text and PNGs are the final authored clip review.
+
+## Owner-hand follow-through
+
+The next focused stage instantiates the actual CameraRig and ViewmodelArms,
+follows the caster, and confirms the accepted action reaches `closed-circuit`,
+rotates the visible left hand by more than10degrees and attaches the tell to that
+visible palm. The body-only control and eight authority/timing cases remain.
+All10 PlayMode cases pass in1.245365s; exit0/no guard, peak tree3,349,143,552 and
+container7,336,460,288bytes. Settings/profile and all13 frozen inputs verify.
+
+Source follow-through found that the shared IsFirstPersonFor helper performs a
+scene search. The tell now checks its cached arm's active state and bound character
+directly each frame, retaining the one acquisition-time lookup. No visual keys,
+model, mechanics or protocol changed. This removes that search; no frame-time
+improvement is claimed without a performance measurement.
+
+The first owner fixture omitted CameraRig.Follow and failed before creating arms
+(nine other cases passed). One fixture correction connected the real camera.
+Compile/import memory stops and the original fixture failure remain in evidence.
+This is actual owner-transform/dispatch evidence, not an owner-view pixel or film
+verdict. Those visual/player/peer/audio/human limits above remain open.
