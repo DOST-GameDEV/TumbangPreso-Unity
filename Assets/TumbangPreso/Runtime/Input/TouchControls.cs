@@ -204,6 +204,7 @@ namespace TumbangPreso.InputLayer
 
         public bool IsHeld { get; private set; }
 
+        private readonly System.Collections.Generic.HashSet<(int Id, PointerEventData.InputButton Button)> _pointerOwners = new();
         private CanvasGroup _group;
         private WoodCraft.Surface _surface;
         private TumpSurface _nativeSurface;
@@ -371,13 +372,29 @@ namespace TumbangPreso.InputLayer
             _group.alpha = IsHeld ? Mathf.Max(0.45f, _opacity) : _opacity;
         }
 
+        private void SynchronizePointerOwners()
+        {
+            // Global release (including customization) invalidates captured fingers.
+            // Synchronize lifts too, so an old lift cannot restore another old hold.
+            if (!Customising && TouchInput.Pressed(Entry.Verb)) return;
+            _pointerOwners.Clear();
+            if (IsHeld) SetHeld(false);
+        }
+
         public void OnPointerDown(PointerEventData eventData)
         {
+            SynchronizePointerOwners();
             if (Customising) return;
+            _pointerOwners.Add((eventData.pointerId, eventData.button));
             SetHeld(true);
         }
 
-        public void OnPointerUp(PointerEventData eventData) => SetHeld(false);
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            SynchronizePointerOwners();
+            if (_pointerOwners.Count > 0 && !_pointerOwners.Remove((eventData.pointerId, eventData.button))) return;
+            SetHeld(_pointerOwners.Count > 0);
+        }
 
         /// <summary>
         /// Moves this control and records where the player put it.
@@ -474,6 +491,7 @@ namespace TumbangPreso.InputLayer
         /// <summary>Presses this control exactly as a finger does. The probe's only entry point.</summary>
         public void SetHeld(bool held)
         {
+            if (!held) _pointerOwners.Clear();
             IsHeld = held;
             TouchInput.Set(Entry.Verb, held);
             Repaint();
