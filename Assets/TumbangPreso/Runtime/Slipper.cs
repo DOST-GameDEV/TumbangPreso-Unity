@@ -324,30 +324,6 @@ namespace TumbangPreso
                           && Settings.SlipperHighlights.Enabled(
                                  Settings.SettingsStore.Current.SlipperHighlight);
 
-            float rim;
-            Color rimColour;
-            Color outline;
-
-            if (landed)
-            {
-                rim = Balance.LandedRimStrength;
-                rimColour = Settings.SlipperHighlights.ColourOf(
-                                Settings.SettingsStore.Current.SlipperHighlight);
-                outline = rimColour;
-            }
-            else if (_glowOn)
-            {
-                rim = Balance.OwnerRimStrength;
-                rimColour = OwnerRimColour;
-                outline = Visual.ToonSkin.Ink;
-            }
-            else
-            {
-                rim = 0.0f;
-                rimColour = OwnerRimColour;
-                outline = Visual.ToonSkin.Ink;
-            }
-
             foreach (var r in GetComponentsInChildren<Renderer>())
             {
                 // ⚠️⚠️ AN EFFECT PARENTED TO THIS PROP IS NOT PART OF THIS PROP, AND THE RIM PASS
@@ -362,9 +338,7 @@ namespace TumbangPreso
                 var block = new MaterialPropertyBlock();
                 r.GetPropertyBlock(block);
 
-                block.SetFloat(RimStrengthId, rim);
-                block.SetColor(RimColorId, rimColour);
-                block.SetColor(OutlineColorId, outline);
+                WriteHighlight(block, _glowOn, landed);
 
                 r.SetPropertyBlock(block);
             }
@@ -372,6 +346,35 @@ namespace TumbangPreso
             // Every input the beam reads has just been re-decided, so it follows from here as
             // well as from the state. See `RefreshBeam`.
             RefreshBeam();
+        }
+
+        internal static void ApplyRecordedNonLooseHighlight(MaterialPropertyBlock block, Slipper liveSource)
+        {
+            // Ownership remains this viewer's existing local choice. A held or flying
+            // recorded shoe cannot inherit its source's present-time landing cue.
+            WriteHighlight(block, liveSource != null && liveSource._glowOn, false);
+        }
+
+        private static void WriteHighlight(MaterialPropertyBlock block, bool ownerGlow, bool landed)
+        {
+            float rim;
+            Color rimColour;
+            Color outline;
+            if (landed)
+            {
+                rim = Balance.LandedRimStrength;
+                rimColour = Settings.SlipperHighlights.ColourOf(Settings.SettingsStore.Current.SlipperHighlight);
+                outline = rimColour;
+            }
+            else
+            {
+                rim = ownerGlow ? Balance.OwnerRimStrength : 0.0f;
+                rimColour = OwnerRimColour;
+                outline = Visual.ToonSkin.Ink;
+            }
+            block.SetFloat(RimStrengthId, rim);
+            block.SetColor(RimColorId, rimColour);
+            block.SetColor(OutlineColorId, outline);
         }
 
         /// <summary>
