@@ -1,5 +1,41 @@
 # Active Rework Checkpoint
 
+## Latest publication: checked packet guard, emote validation pending
+
+Packet088ae2aee is integrated with current published Amihan/match-entry work.
+Root inspected laptop original7/3 and candidate10/10 XML,3388-input maps with
+only one production delta, immutable fixture/meta and terminal/restored/free
+guards. Canonical runtime3be659f0 matches. Reports at laptop-validation-2026-10-03.
+Default timing export native1/1 also inspected: CSV sample/context/result with
+no binary capture. Its result.json is an intermediate window export, not a
+whole performance pass; actual512MiB interruption and rebuilt player remain open.
+
+Emote source stays on competition-pc-emote-owner1003: originalbfe2/candidateb5fa,
+eight-case selector/ownership fixture, compiled, native laptop queue pending.
+It is NOT included in this packet publication. Laptop owns all tests/builds while
+Claude owns PC Unity. No PC Unity/player job. Main private work remains intact.
+NEXT: inspect laptop Emote8 original/candidate evidence, then integrate checked
+source; no unchanged repeat or broad profiler trace. Current141 player/peers open.
+
+
+## Current PC unit: packet framing candidate awaits laptop validation
+
+Original fixture8f0b34054, candidate088ae2aee, remote branch
+competition-pc-cast-preparation-bounds1003. CastPreparation preflights its fixed
+header, bounded UTF16 name and52-byte tail before any value decoding. Still141;
+no wire/kit change. Runtime and test Roslyn assemblies compile. Ten native cases
+queued to laptop; expected seven causes/three controls are NOT observed results.
+Fixture/meta unchanged between original and candidate. No PC Unity run.
+
+Laptop has explicitly accepted all testing ownership; its TimingCapture1 job was
+reported launched headless onqa-a, exact result still pending. Current gameplay
+reservations remain its; Root owns MatchInstaller emote targeting investigation.
+NEXT: inspect actual enabled input ownership at MatchInstaller.Driven, whose AI
+absence scan can select a remote human or retired original human. Preserve
+tutorial and possession controls. Do not modify laptop's DebugPlayerSwitcher or
+Reader/Carrier/Combat reservations. Candidate framing publication awaits native
+feedback; do independent source work instead of repeating compilation/tests.
+
 ## Latest owner steering: laptop owns testing while Claude edits Amihan
 
 October3 owner explicitly asks the existing laptop chat to do all PC testing
