@@ -225,7 +225,9 @@ namespace TumbangPreso
                 var collider = _hits[i].collider;
                 if (collider == null || collider.GetComponentInParent<CharacterMotor>() != null ||
                     collider.GetComponentInParent<Slipper>() != null || collider.GetComponentInParent<Lata>() != null) continue;
-                clear = Mathf.Min(clear, Mathf.Max(.8f, _hits[i].distance - .3f));
+                // A framing minimum must not push the eye through a closer wall.
+                // Retain a nonzero look vector while honoring the actual clearance.
+                clear = Mathf.Min(clear, Mathf.Max(.01f, _hits[i].distance - .3f));
             }
             return focus + ray.normalized * clear;
         }
