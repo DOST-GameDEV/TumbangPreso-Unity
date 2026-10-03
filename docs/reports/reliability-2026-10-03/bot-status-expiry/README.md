@@ -1,5 +1,12 @@
 # Common status expiry: real bot recovery
 
+Additional Hero Strike check:1/1 passed on the actual constructed Phaister bot
+after the offline roster coverage fix made it reachable. Natural Ice/Frozen
+expiry restores ordinary bot input with self-casts suppressed to isolate recovery.
+Its real kit is asserted; no kit or model is changed. Terminal exit/restoration/
+lease release verified. Raw result/receipt are in hero-phaister. Active self-casts,
+all other heroes/status combinations and live peers remain separate.
+
 Two focused graphics PlayMode cases passed on a real Eskinita Classic arena.
 An armed bot stops its input while Frozen/Tagged is active, waits for the actual
 timer to expire and resumes real movement/throw/grab/lunge input within four

@@ -11,6 +11,7 @@ namespace TumbangPreso.PlayTests
     {
         private bool _allBots, _spectator, _tutorial, _botsEnabled, _pinned;
         private int _seat;
+        private int _pick;
         private CustomRules _rules;
         private CharacterMotor _actor;
         private AIController _brain;
@@ -19,6 +20,7 @@ namespace TumbangPreso.PlayTests
         {
             _allBots = GameLaunch.AllBots; _spectator = GameLaunch.Spectator;
             _tutorial = GameLaunch.GuidedTutorial; _seat = GameLaunch.SoloSeat;
+            _pick = Settings.SettingsStore.Current.CharacterPick;
             _botsEnabled = AIController.BotsEnabled; _pinned = SceneFlow.RulesPinned;
             _rules = SceneFlow.SelectedRules.Clone();
             yield return PlayModeWorld.Reset();
@@ -37,6 +39,7 @@ namespace TumbangPreso.PlayTests
             yield return PlayModeWorld.Reset();
             GameLaunch.AllBots = _allBots; GameLaunch.Spectator = _spectator;
             GameLaunch.GuidedTutorial = _tutorial; GameLaunch.SoloSeat = _seat;
+            Settings.SettingsStore.Current.CharacterPick = _pick;
             AIController.BotsEnabled = _botsEnabled;
             SceneFlow.AdoptRemoteRules(_rules);
             if (_pinned) SceneFlow.PinSelectedRules(_rules); else SceneFlow.UnpinSelectedRules();
@@ -69,6 +72,23 @@ namespace TumbangPreso.PlayTests
             }
             Assert.Fail($"Expired status but no resumed bot input: plan={_brain.Plan}, parked={_actor.Intent.Parked}, " +
                 $"stun={_actor.StunLeft}, round={_actor.RoundActive}, throwLock={_actor.GetComponent<Carrier>().ThrowLockLeft}");
+        }
+
+        [UnityTest, Timeout(60000)] public IEnumerator PhaisterBotReturnsToInputAfterFrozenExpires()
+        {
+            // Paete student selection gives the formerly unreachable Phaister bot
+            // at seat2 with the real Hero Strike construction path and kit.
+            Settings.SettingsStore.Current.CharacterPick = Roster.IndexIn(Roster.HeroPeople, "paete");
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita, GameMode.HeroStrike);
+            _actor = GameServices.Round.PlayerAt(2); _brain = _actor.GetComponent<AIController>();
+            Assert.IsNotNull(_brain); Assert.IsNotNull(_actor.AbilitySystem);
+            Assert.AreEqual("phaister", _actor.AbilitySystem.Kit.HeroId);
+            Assert.IsNotNull(_actor.GetComponent<Carrier>().Held);
+            // Isolate status recovery from voluntarily stopping for a new cast.
+            _brain.AbilitiesEnabled = false; _actor.Intent.Parked = false; _brain.enabled = true;
+            _actor.ApplyStagger(Mathf.Max(.4f, Balance.MinStunDown + .1f), StunElement.Ice, Balance.StunBreakPressesDefault);
+            Assert.IsTrue(_actor.IsFrozen);
+            yield return Recovery();
         }
     }
 }
