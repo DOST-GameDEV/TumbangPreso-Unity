@@ -17,6 +17,24 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### EMOTE-TARGET-OWNER-1003: the wheel follows local input
+
+- [x] Active-reader ownership replaces ambiguous AI-absence discovery. Network
+  LocalSlot and parked-state fences preserve tutorial, replacement-reader and
+  temporary-AI controls. Original five failures/three controls, candidate8/8;
+  root inspected XML, unchanged fixture and3390-input maps plus restored guards.
+  [Evidence](reports/reliability-2026-10-03/emote-target-ownership/README.md).
+  Actual wheel/device/possession/live-peer acceptance remains separate.
+
+### CAST-PREPARATION-FRAME-1003: reject incomplete host payloads
+
+- [x] Preflight fixed header, bounded UTF16 name and exact52-byte tail before
+  decoding. Original seven causal failures/three controls, candidate10/10 on
+  unchanged fixture; root inspected XML, hashes and restored/free guard state.
+  [Evidence](reports/reliability-2026-10-03/cast-preparation-framing/README.md).
+  Wire layout unchanged; player/peer/ability acceptance remains separate.
+
+
 ### MATCH-ENTRY-1003: automatic arrival and custom map choice
 
 - [x] Custom rooms open character select; MAP VOTE is optional and OFF by default.
@@ -49,7 +67,7 @@ Nothing was deleted or renumbered.
 - [x] Network empty bot seats use shared selection instead of each viewer's local
   character preference. Original2causal/2controls, first candidate4/4. Protocol139.
   [Evidence](reports/reliability-2026-10-03/network-bot-roster/README.md).
-- [ ] Rebuilt matching139 host/client with different human picks: verify bot
+- [ ] Rebuilt matching142 host/client with different human picks: verify bot
   characters/kits and replicated effects. Frozen1003g134 is excluded.
 
 ### SEAT-PRODUCER-TRANSFER-1003: rapid role changes retain controls
@@ -116,7 +134,7 @@ Nothing was deleted or renumbered.
   input failure plus separate accepted post-import classification and full manifest.
   [Artifact and limits](reports/reliability-2026-10-03/windows-candidate1003g/README.md).
 - [ ] Matching-artifact peer checks and actual Frozen effects; online/Relay remain
-  separate. Current Main139 is incompatible with frozen1003g134. Do not repeat
+  separate. Current Main142 is incompatible with frozen1003g134. Do not repeat
   the unchanged baseline merely to produce more activity.
 
 ### SPECTATOR-MATCH-LIFETIME-1003: retire old footage and markers
@@ -1033,6 +1051,12 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   protocol128. Other Pyro slots and full presentation remain open.
   [Evidence](reports/hero-quality-2026-10-01/empowered-throw/README.md).
 
+- [ ] BANK-SHOT-LOAD-MOTION-1003: scoped replacement of the stale magnet-recall
+  body/owner gesture with loading the already-held slipper. Preserve mechanics,
+  descriptions, assets outside the appended clip and existing sound. Reserved
+  bank-only authoring/dispatch/test paths and acceptance in
+  [plan](reports/zack-bank-load-2026-10-03/plan.md).
+
 - [x] CLOSED-CIRCUIT-1001: cancellable6m/.4s defending acquisition,2s host
   Zapped,35s commitment cooldown and Overclock different-target follow-up.
   Fourteen distinct focused native checks and actual Linux host/owner/observer
@@ -1047,6 +1071,10 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   retained. Full-court film, live owner appearance, peers and human approval stay
   open. No mechanics/protocol change.
   [Evidence](reports/zack-circuit-motion-2026-10-03/README.md).
+- [x] CLOSED-CIRCUIT-WALK-1003: retain walking legs during mobile acquisition.
+  Original real-motor regression failed; candidate11/11 plus six motion/asset
+  controls pass. Standing/owner behavior preserved; moving-film and peer
+  acceptance remain separate. [Evidence](reports/zack-moving-cast-2026-10-03/README.md).
 
 - [x] BOT-COMPANION-OBSERVATION-1001: shared observation now includes companion
   targets and binds cached beliefs to the actual body. Native baseline reproduces

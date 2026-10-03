@@ -1,5 +1,48 @@
 # Active Rework Checkpoint
 
+## Resume first: checked packet and emote fixes published together
+
+ASTRAReworksf39c13321 includes packet original7/3 -> candidate10/10 and emote
+original5/3 -> candidate8/8. Root independently inspected XML, immutable
+fixture/meta, full3388/3390 maps with one owned production delta and terminal/
+restored/free guards. Reports at laptop-validation-2026-10-03, refsa80acb40b and
+99ae1469f. Default timing export1/1/noRaw proof inspected too; no FPS/whole-route
+claim. Current source preserves latest Amihan/match-entry/Closed Circuit work.
+Neither fix changes the protocol or wire layout. No PC Unity/player job.
+Current NetSession.ProtocolVersion is142, verified directly in source. Older
+141/139/134 references below describe their original candidates, not this gate.
+
+LAPTOP owns all pending native tests/builds/players while CLAUDE owns PC Unity.
+Laptop has touch-button8/device-loss work underway. Current14-case integration,
+matching142 Windows build, startup/menu/entry timing and actual peers remain
+open. Binary512MiB interruption is unqualified; never use old139 player to claim
+new CSV defaults. Do not repeat unchanged packet/emote/timing cases.
+
+Root checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i
+is current and clean; Main private Amihan/owner index and worktree are preserved.
+Old139 artifact1003h remains, its former cache reused at1003i. Earlier sections
+below are historical. NEXT: send laptop publication ref and ask it to pull
+before the matching build; then use touch/device feedback and select a disjoint
+PC source fix. Full competition readiness is unproven; goal remains active.
+
+## Current PC unit: packet framing candidate awaits laptop validation
+
+Original fixture8f0b34054, candidate088ae2aee, remote branch
+competition-pc-cast-preparation-bounds1003. CastPreparation preflights its fixed
+header, bounded UTF16 name and52-byte tail before any value decoding. Still141;
+no wire/kit change. Runtime and test Roslyn assemblies compile. Ten native cases
+queued to laptop; expected seven causes/three controls are NOT observed results.
+Fixture/meta unchanged between original and candidate. No PC Unity run.
+
+Laptop has explicitly accepted all testing ownership; its TimingCapture1 job was
+reported launched headless onqa-a, exact result still pending. Current gameplay
+reservations remain its; Root owns MatchInstaller emote targeting investigation.
+NEXT: inspect actual enabled input ownership at MatchInstaller.Driven, whose AI
+absence scan can select a remote human or retired original human. Preserve
+tutorial and possession controls. Do not modify laptop's DebugPlayerSwitcher or
+Reader/Carrier/Combat reservations. Candidate framing publication awaits native
+feedback; do independent source work instead of repeating compilation/tests.
+
 ## Latest owner steering: laptop owns testing while Claude edits Amihan
 
 October3 owner explicitly asks the existing laptop chat to do all PC testing
