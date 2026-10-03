@@ -40,6 +40,26 @@ namespace TumbangPreso.PlayTests
             NetAuthority.Provider=_provider;GameLaunch.SoloSeat=_seat;UI.SceneFlow.AdoptRemoteRules(_rules);
             if(_pinned)UI.SceneFlow.PinSelectedRules(_rules);else UI.SceneFlow.UnpinSelectedRules();
         }
+        [UnityTest] public IEnumerator AbsoluteZeroFreezesRivalsButNeverItsCaster()
+        {
+            var rival = Actor("Absolute Zero rival", 2, new Vector3(3, .13f, -8));
+            _actor.enabled = false; rival.enabled = false;
+            var kit = new TumbangPreso.Abilities.CheskaHeroKit();
+            var context = new TumbangPreso.Abilities.AbilityContext(_actor, null, null);
+            using (NetCue.SuppressRelay())
+            {
+                kit.Ultimate.Activate(context);
+                kit.Ultimate.Tick(context, 1.49f);
+                Assert.IsFalse(rival.IsFrozen, "The existing windup must remain.");
+                kit.Ultimate.Tick(context, .02f);
+            }
+            Assert.IsTrue(rival.IsFrozen, "A rival must still receive Frozen.");
+            Assert.AreEqual(StatusRules.FrozenSeconds, rival.StunLeft, .001f);
+            Assert.AreEqual(StatusRules.FrozenSeconds + StatusRules.ChilledSeconds, rival.ChilledLeft, .001f);
+            Assert.IsFalse(_actor.IsFrozen, "The caster must not freeze herself.");
+            Assert.IsFalse(_actor.IsChilled, "The caster must not receive her own thaw slow.");
+            yield return null;
+        }
         [UnityTest] public IEnumerator FrozenRejectsLegacyRecoveryAndKeepsItsTimer()
         {
             _actor.ApplyStagger(3,StunElement.Ice,8);_actor.enabled=false;

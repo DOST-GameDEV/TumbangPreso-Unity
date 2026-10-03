@@ -1,5 +1,12 @@
 # Skill Networking Contract
 
+## Absolute Zero caster exclusion, protocol135
+
+The owner correction excludes the casting motor from its own Frozen and thaw
+Chilled. Other players remain valid targets, with existing timing and host
+authority. No packet fields change. Matching rebuilt clients are required.
+[Focused native failure and fix](reports/feedback-2026-10-03/cheska-caster.md).
+
 ## Timed status recovery, protocol134
 
 Recovery presses are retired. Frozen/stuns expire on authored timers, trips

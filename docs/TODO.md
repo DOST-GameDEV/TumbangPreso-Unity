@@ -17,6 +17,15 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### HUMAN-NOTES-1003: current Feedback corrections
+
+- [x] Absolute Zero excludes its caster from Frozen and thaw Chilled. Original
+  native failure and candidate1/1 retained; protocol135, current player/peer and
+  human verification remain open. [Evidence](reports/feedback-2026-10-03/cheska-caster.md).
+- [ ] Investigate bots remaining inactive after status expiry; reproduce before fixing.
+- [ ] Remove Frozen/Stunned action bar while preserving status indicators.
+- [ ] Unique tutorial attacker characters and no tutorial AI ultimates.
+
 ### SPECTATOR-MATCH-LIFETIME-1003: retire old footage and markers
 
 - [x] Local starts advance identity despite clock resolution/backsteps; native3

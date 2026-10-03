@@ -558,7 +558,8 @@ namespace TumbangPreso.Net
         //124: match-long Overclock uses an explicit bounded permanent-state bit.
         //133: ordinary Next Round uses the shared3.5second deadline; halftime stays10.
         //134: trip, elemental stun and edge recovery no longer accept mash input.
-        public const int ProtocolVersion = 134;
+        //135: Absolute Zero excludes its own caster from Frozen and thaw Chilled.
+        public const int ProtocolVersion = 135;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
