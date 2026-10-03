@@ -37,3 +37,10 @@ qualify the frozen1003g protocol134 player, new peer/recovery behavior, complete
 replay footage, physical input or player first-use/frame performance. A matching
 rebuilt player and operator acceptance remain separate. No speculative capture
 exception or preload change was shipped.
+
+Publication precision: the committed RecordedWorldView canonical SHA256 is
+8ec0a8d05593aba68dbb61a335699bff76af496e358702f5b644fce2cf7e52de.
+It equals the checked working file after CRLF normalization; no source statement
+changed during Git integration. The fixture canonical SHA remains1a863edd above.
+Incoming PC protocol139 and the punch unit are normally merged; this focused
+consumer proof is reused without claiming a new whole-integration native pass.
