@@ -9,6 +9,11 @@ This file is intentionally a short compatibility entry point. Standing contracts
 live once in [WORKING_RULES](docs/WORKING_RULES.md), not in two competing instruction
 files. New owner instructions win; old prompts and dated schedules do not assign work.
 
+## Commits
+
+- Every change gets its own commit. Do not leave work uncommitted or stack unrelated changes in one commit.
+- No agent is ever a co-author. Never add `Co-Authored-By` lines (or any other agent attribution) to commit messages.
+
 ## Important Routes
 
 | Work | Read first |
