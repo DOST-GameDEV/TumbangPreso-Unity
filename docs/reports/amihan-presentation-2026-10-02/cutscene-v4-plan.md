@@ -191,3 +191,31 @@ faint swirl and thin helixes: nothing joined the court to her and her body never
   rides it: each leg is its own under-damped pendulum (trailing her travel, swinging past when she stops, kicked by
   each gust, drifting at its own rate), arms spread about 38 degrees palms down, chest and chin up, and a lift of her
   whole body on every gust (`AmihanHoverRing.Push`). The column thins while she descends.
+
+## v6 (October 3): room to breathe and a slow hang
+
+Owner: *"thoroughly rethhink how to execute her cutscenes as well as throoughly figure out hwo to make her vfx there
+better"*, *"give her time to breathe bcz cutscene feels too fast"*, *"the part where she like lies down or smth should be
+where it slows down for a brief moment"* (the low lunge of the drive), *"u can give it sfx already"*.
+
+Rethink: v4 crammed twelve actions into 4.4 s (run, skid, read, taps, shrug, whistle, meet, catch, whirl, point, wind-up,
+drive), about 0.35 s each, which read as frantic and fought the relaxed attitude the owner liked. v6 is six beats in 5.6 s:
+BORED (easy hip-cocked stand, the read, one leaf falling straight down past her palm because there is no wind, taps, a
+shrug), CALL (the whistle; curled streaks race in carrying leaves and dust and wind into a little whirlwind on her palm,
+which she holds up and admires), LOOK (over her shoulder at the lens), WIND-UP (fed bigger), DRIVE and HANG (a cut to her
+side; the story clock runs at 18 per cent from 0.10 to 0.62 s after the drive), FINISH (the wink).
+
+The story clock (`HeroIntroductionScene.AmihanStoryAfterRelease`) is scaled so it still advances exactly
+`AmihanStorm.CutsceneTail` (0.55 s) by the hand-back; the live fan and the thrown players are posed on it, so play resumes
+where the last frame drew. `AmihanAirburstPresentationTests` checks that through the story clock.
+
+VFX: three materials, each with a source and a direction. Air: curled streaks (one loop each) with a dark ink line under a
+bright core, so they read on the light tiles. Leaves: the lone leaf, fourteen carried in on the arrival, eight drawn in on
+the wind-up, all circling inside the whirlwind, then flung across the fan's 60 degrees and suspended in the hang. Dust: the
+court's dust racing in, dust spun inside the whirlwind. The whirlwind is five open rings (narrow at her palm, wide at the
+top, the top wandering) and two strands spiralling up; on the drive its rings burst into arcs racing down the lane.
+
+Sound (`tools/build_amihan_ult_audio.py`): the theme retimed to v6 (near silence and two lazy notes, the leaf's tick, taps,
+the whistle, the wind's answer and its curls arriving, the whirlwind, her phrase, the look-back motif, the wind-up, the
+crack, a low stretched whoom under a held flute note through the hang, the rush returning, the finish note). Featherfall's
+three: the take-off rush, a soft puff on every gust, the landing sigh and step. Provisional: not heard.

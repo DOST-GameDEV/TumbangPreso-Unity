@@ -692,7 +692,7 @@ def amihan():
     leaf falls straight down past her (no wind); two foot taps and a shrug.
     CALL (1.66 to 3.2): the two-finger whistle; the wind answers, streaks and leaves racing in to her hand, where they
     wind into a little whirlwind she holds up and admires (grin), with a small toss.
-    LOOK (3.2 to 3.7): over her shoulder at the lens, grin, the whirlwind on her palm.
+    LOOK (3.3 to 3.62): a glance into the lens, grin, the whirlwind on her palm.
     WIND-UP (3.7 to 4.55): wound up, the whirlwind swung back over her head and fed until it is bigger.
     DRIVE (4.55): both palms driven, the low lunge. HANG (4.55 to 5.18): the scene clock slows to about a fifth while she
     hangs in the lunge, leaves and players suspended in the blast (`HeroIntroductionScene.Amihan.cs` AmStory: the story
@@ -717,8 +717,9 @@ def amihan():
     # Holding it up: the free palm up at her shoulder, the whirlwind on it, her head turned to it.
     offer = Pose(torso=(-6, -10, 4), head=(-16, -20, 10), left=(98, 44, -10), right=(14, 62, -38), legs=((4, 10), (-4, 14)))
     toss = offer.but(left=(110, 42, -10), torso=(-8, -10, 4))
-    # The look back: over her right shoulder at the lens behind her, the whirlwind still up on her free palm.
-    look = Pose(torso=(-4, 14, 2), head=(-8, 38, -4), left=(96, 48, -10), right=(14, 62, -38), legs=((4, 10), (-2, 14)))
+    # The look: v6 r1 shot it from behind and it read as the back of her head. Now a glance straight into the lens at her
+    # left front, chin tipped, the whirlwind still up on her free palm.
+    look = Pose(torso=(-4, -10, 4), head=(-10, -30, 10), left=(96, 48, -10), right=(14, 62, -38), legs=((4, 10), (-2, 14)))
     # The wind-up: coiled hard right, the free arm and the whirlwind swung back over and behind her head.
     windup = Pose(torso=(-12, 48, -6), head=(-8, -22, 0), left=(-48, 44, 0), right=(30, 30, 30), legs=((24, 10), (-22, 14)))
     windup_deep = windup.but(torso=(-15, 58, -8), head=(-9, -26, 0), left=(-58, 46, 0))
@@ -748,14 +749,16 @@ def amihan():
 
     # A BORED: from the front, a little to her left (v4 r3: from her right her out-flung free arm was on the far side),
     # medium, a slow push in. Nothing happens, and the lens lets it.
-    p.shot(0, 1.66, (-.6, 1.0, 3.2), (0, 1.1, 0), 40, eye_to=(-.45, 1.05, 2.6), look_to=(0, 1.15, 0), fov_to=37)
-    # B CALL: close on the whistle, then pulled back to her right as the wind arrives from behind her and winds onto her palm.
-    p.shot(1.66, 3.2, (.7, 1.4, 1.6), (0, 1.45, 0), 34, eye_to=(2.0, 1.3, 2.9), look_to=(-.4, 1.3, -.2), fov_to=48)
-    # C LOOK and WIND-UP: behind her right shoulder, close enough for her face as she looks back, rising and pulling wide
-    # for the wind-up with the lane ahead.
-    p.shot(3.2, 4.55, (1.5, 1.6, -2.0), (0, 1.25, .6), 44, eye_to=(2.5, 2.4, -3.5), look_to=(0, 1.0, 4.5), fov_to=56)
+    # (v6 r1: from 3.2 m her out-flung arm and her feet were cut; 4.3 m, the whole of her and the falling leaf.)
+    p.shot(0, 1.66, (-.9, 1.05, 4.3), (-.2, 1.0, 0), 42, eye_to=(-.75, 1.05, 3.7), look_to=(-.2, 1.05, 0), fov_to=40)
+    # B CALL and LOOK: close on the whistle, then pulled back to her LEFT front, the side of her free palm (v6 r1: from her
+    # right the whirlwind was hidden behind her), as the wind arrives from behind her, winds onto her palm and she looks at us.
+    p.shot(1.66, 3.62, (-.6, 1.4, 1.6), (0, 1.45, 0), 34, eye_to=(-2.1, 1.35, 2.9), look_to=(-.3, 1.35, 0), fov_to=46)
+    # C WIND-UP: behind her right shoulder and high, the lane ahead (v6 r1: from 2 m her head filled a third of the frame).
+    p.shot(3.62, 4.55, (2.4, 2.3, -3.2), (0, 1.15, 3.0), 52, eye_to=(2.7, 2.6, -3.7), look_to=(0, 1.0, 4.5), fov_to=56)
     # D HANG: cut on the drive to her right side, low, the lunge in profile and the blast crossing the frame, creeping in.
-    p.shot(4.55, 5.18, (3.1, .85, 1.5), (-.3, .9, 1.6), 48, eye_to=(2.7, .9, 1.8), look_to=(-.4, .9, 1.9), fov_to=43)
+    # (v6 r1: looking 1.6 m ahead of her left her half out of frame; on her, a little wider.)
+    p.shot(4.55, 5.18, (3.6, 1.0, 1.0), (-.1, .95, 1.0), 50, eye_to=(3.2, 1.0, 1.3), look_to=(-.2, .95, 1.4), fov_to=46)
     # E FINISH (computed: high in front of her right side, her wink in the middle, the thrown bodies blowing away).
     p.shot(5.18, 5.6, (3.0, 3.0, 3.8), (0, 1.0, .6), 46, eye_to=(2.8, 2.8, 3.5), look_to=(0, 1.0, .6), fov_to=42)
     p.locked((3.4, 1.5, 3.4), (0, 1.0, 1.5), 50)

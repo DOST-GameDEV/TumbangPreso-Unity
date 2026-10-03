@@ -344,16 +344,18 @@ namespace TumbangPreso.Visual
                     float r = Mathf.Lerp(r0, r1, u * u * (3 - 2 * u));
                     spine[k] = new Vector3(Mathf.Cos(a) * r, u, Mathf.Sin(a) * r);
                 }
-                var streak = WindVfx.Build(column, "UpdraftStreak" + i, spine, .07f + .02f * (i % 2),
+                // v6 r1: at 7 cm pale on pale they were hair-lines over the plaza; wider, with a dark rim to hold them.
+                var streak = WindVfx.Build(column, "UpdraftStreak" + i, spine, .12f + .03f * (i % 2),
                     k => { float a = a0 + k / 11f * .45f; return new Vector3(-Mathf.Sin(a), 0, Mathf.Cos(a)); }, 3, .3f, 40 + i);
-                streak.Recolour(WindVfx.Core, WindVfx.SheetBody, WindVfx.Body);
+                streak.Recolour(WindVfx.Core, WindVfx.SheetBody, WindVfx.Ink);
+                if (streak.Material != null) { streak.Material.SetFloat("_InkFrom", .62f); streak.Material.SetFloat("_InkAlpha", .7f); }
                 fx._jet[i] = streak;
             }
             // THE GUSTS: open rings that rise up the column, narrowing, and break against her soles.
             for (int i = 0; i < fx._gust.Length; i++)
             {
                 var ring = WindVfx.Arc(1, 290, 30, 0, i * 160f);
-                fx._gust[i] = WindVfx.Build(column, "UpdraftGust" + i, ring, .1f, WindVfx.Flat(ring), 4, .3f, 60 + i);
+                fx._gust[i] = WindVfx.Build(column, "UpdraftGust" + i, ring, .15f, WindVfx.Flat(ring), 4, .3f, 60 + i);
                 fx._gust[i].Recolour(WindVfx.Core, WindVfx.Cotton, WindVfx.SheetBody);
             }
             fx._cotton = new WindVfx.Motif(go.transform, 9, body.transform.position.x * 1.7f + 4.1f, .15f);
@@ -413,7 +415,7 @@ namespace TumbangPreso.Visual
             for (int i = 0; i < _jet.Length; i++)
             {
                 float run = calm ? .5f : Mathf.Repeat(_age * 1.6f + i * .37f, 1);
-                _jet[i].Set(.55f * jet, -phase * 2.2f - i, Mathf.Clamp01(run * 1.6f), Mathf.Clamp01(run * 1.6f - .75f), .25f);
+                _jet[i].Set(.78f * jet, -phase * 2.2f - i, Mathf.Clamp01(run * 1.6f), Mathf.Clamp01(run * 1.6f - .75f), .25f);
             }
 
             // THE GUSTS, one each GustPeriod, taking turns: each rises in GustRise s, narrowing from 1.1 m to her soles, then
@@ -430,7 +432,7 @@ namespace TumbangPreso.Visual
                 ring.localScale = new Vector3(width, 1, width);
                 ring.localRotation = Quaternion.Euler(0, calm ? 0 : _age * 160 + i * 90, 0);
                 float alpha = after < 0 ? WindVfx.Ease(0, .12f, since) : 1 - WindVfx.Ease(0, .3f, after);
-                _gust[i].Set(.6f * jet * alpha, phase * 1.5f, 1, 0, after > 0 ? .3f + after * 2 : .2f);
+                _gust[i].Set(.8f * jet * alpha, phase * 1.5f, 1, 0, after > 0 ? .3f + after * 2 : .2f);
                 if (after >= 0 && after < .6f) push = Mathf.Max(push, Mathf.Exp(-after * 6) * (1 - Mathf.Exp(-after * 60)));
                 // The gust's sound as it breaks under her (every peer hears its own presentation; never relayed).
                 if (flying && !_descending && after >= 0 && after < dt && _age > GustRise)

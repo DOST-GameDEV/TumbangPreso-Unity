@@ -234,10 +234,11 @@ namespace TumbangPreso.Visual
         private static float AmWhirlSize(float t)
             => Ease(AmFormAt - .1f, AmCatchAt, t) + .55f * Ease(AmWindAt, AmReleaseAt - .05f, t);
 
-        private static float AmWhirlHeight(float size) => .46f * size;
+        // v6 r1: at 0.46 m with 2 cm lines it was lost against her coat; taller, wider and drawn bolder.
+        private static float AmWhirlHeight(float size) => .62f * size;
 
         /// <summary>Its radius at height fraction <paramref name="v"/> (0 at her palm, 1 at the top).</summary>
-        private static float AmWhirlRadius(float size, float v) => (.035f + .2f * Mathf.Pow(Mathf.Clamp01(v), 1.3f)) * size;
+        private static float AmWhirlRadius(float size, float v) => (.045f + .27f * Mathf.Pow(Mathf.Clamp01(v), 1.3f)) * size;
 
         /// <summary>A point inside the whirlwind: height fraction, angle, how far out (1 its wall).</summary>
         private Vector3 AmWhirlPoint(Vector3 ball, float size, float v, float angle, float out_, float t, bool calm)
@@ -377,7 +378,7 @@ namespace TumbangPreso.Visual
                     _amHelixPoints[i] = AmWhirlPoint(ball, size, v, spin + k * Mathf.PI + v * Mathf.PI * 4f, 1.02f, t, calm);
                 }
                 _amHelix[k].SetPositions(_amHelixPoints);
-                _amHelix[k].widthMultiplier = .022f * Mathf.Min(1.3f, size) * (calm ? .7f : 1f);
+                _amHelix[k].widthMultiplier = .036f * Mathf.Min(1.3f, size) * (calm ? .7f : 1f);
                 _amHelix[k].enabled = true;
             }
             for (int j = 0; j < _amRing.Length; j++)
@@ -389,7 +390,7 @@ namespace TumbangPreso.Visual
                     float spin = (calm ? 0f : t * (15f + 3f * j)) + j * 1.3f;
                     for (int i = 0; i < AmRingSamples; i++)
                         _amRingPoints[i] = AmWhirlPoint(ball, size, v, spin + i / (AmRingSamples - 1f) * 5.2f, 1f, t, calm);
-                    line.widthMultiplier = (.016f + .01f * v) * Mathf.Min(1.4f, size + .2f) * (calm ? .7f : 1f);
+                    line.widthMultiplier = (.03f + .016f * v) * Mathf.Min(1.4f, size + .2f) * (calm ? .7f : 1f);
                 }
                 else if (since >= 0f && since < .55f)
                 {
@@ -401,7 +402,7 @@ namespace TumbangPreso.Visual
                         float a = Mathf.Lerp(-55f, 55f, i / (AmRingSamples - 1f)) * Mathf.Deg2Rad;
                         _amRingPoints[i] = centre + new Vector3(Mathf.Sin(a) * r, 0f, Mathf.Cos(a) * r * .45f);
                     }
-                    line.widthMultiplier = .06f * (1f - Ease(.08f, .55f, since)) * (calm ? .7f : 1f);
+                    line.widthMultiplier = .09f * (1f - Ease(.08f, .55f, since)) * (calm ? .7f : 1f);
                 }
                 else { line.enabled = false; continue; }
                 line.SetPositions(_amRingPoints);
