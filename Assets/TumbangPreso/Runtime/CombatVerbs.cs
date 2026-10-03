@@ -132,6 +132,12 @@ namespace TumbangPreso
             // Keep the spent cooldown; an ordinary clock hold leaves this component enabled.
             _lungeActiveLeft = 0.0f;
             _slideActiveLeft = 0.0f;
+            CancelPendingInput();
+        }
+
+        internal void CancelPendingInput()
+        {
+            // Input retirement cancels the windup, not an already committed contact window.
             _lungeCharging = false;
             _lungeCharge = 0.0f;
             _observedLunge = -1.0f;

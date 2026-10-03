@@ -218,7 +218,13 @@ namespace TumbangPreso
 
         private void Awake() => _motor = GetComponent<CharacterMotor>();
 
-        private void OnDisable() => CancelAll();
+        private void OnDisable() => CancelPendingInput();
+
+        internal void CancelPendingInput()
+        {
+            if (_channel > 0.0f) ReportResetPhase(Net.MatchRpc.ResetPhase.Cancel);
+            CancelAll();
+        }
 
         /// <summary>
         /// HOST-SIDE pickup, shared by the solo path and the networked request.
