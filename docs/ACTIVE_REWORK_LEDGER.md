@@ -1,5 +1,71 @@
 # Active Rework Checkpoint
 
+## Opening refinement and latest countdown integrated
+
+Cloud camera unit a7f6faa8e implements the owner's direct refinement request:
+objective-centred8.6s opening, fitted character reveals, compact caption and
+direct handoff. Latest owner corrections are3/2/1/GO!, protocol143. Native
+camera7/7 and countdown3/3; actual Eskinita establishing frame inspected.
+Full portrait/handoff footage remains unqualified after graphics RAM guard.
+[Evidence](reports/opening-camera-2026-10-03/README.md).
+
+Incoming73d3d3bfb was inspected before integration; its camera/ReadyGate source
+was unchanged, and all nine qualified cloud inputs remain byte-identical.
+PC/laptop ownership of camera-motionOFF and near-wall defect investigation is
+preserved; do not overwrite their pending work or repeat unchanged full captures.
+The earlier five-second notes below are history. Matching143 player/peer checks
+and full normal-speed visual acceptance remain open.
+
+## OWNER PRIORITY: inspect and test the new opening camera pan
+
+Owner asks both primary chats to check the pan pushed within3hours and to keep
+working after questions. Identified4ae2e3076 at22:22Manila: eight-second map
+overview, four player greetings, camera return then5..1START; protocol142.
+Existing30 scoped tests and two repeated small-stage graphics cases are not
+full-court/player/peer visual acceptance. Prior full-route attempts failed.
+
+Laptop has accepted pan priority. PC owns MatchArrivalPresentation production
+and source review; laptop prepares full-court graphics capture, reduced motion,
+camera-motionOFF, cancellation/leave, gameplay/input hold and release, then
+Classic/Hero/custom/queued routes where feasible. No broad.raw capture or
+unchanged30-case repetition. Native graphics requires actual admitted headroom;
+PC Unity remains Claude's. No new/restarted subagents.
+
+Source leads, NOT yet qualified defects: presentation ignores exposed
+CinematicCameraMotion flag; laptop's ClearEye near-wall Physics fixture checks
+whether the0.8m minimum can put the camera beyond a closer obstacle. Laptop owns
+that fixture only; root retains presentation source. No speculative design/
+timing/hero change. Test original collision plus controls before altering clamp.
+Current isolated root pulled33c3602f3 with latest Amihan changes preserved.
+NEXT: inspect laptop near-wall original proof and full-court capture feasibility;
+implement a justified camera fix and test it. Do not stop after status/one pass.
+
+## Resume first: edge request framing checked and integrated
+
+Edge original3ead4fc27 produced4fail/2controls; candidatec856dfe25 passed6/6.
+Root inspected published46782a7c8 XML, immutable fixture/meta, full3396 maps
+with ONLYEdgeRecovery changed and both terminal/restored/free guards. Exact
+8-byte gate preserves seat ownership, epoch, geometry and protocol142. Source
+is integrated with current Amihan and touch contributions. No PC Unity job.
+
+TouchButton8 and TouchStick8 raw proofs inspected. Stick7ffe72675 original2/6
+and correctly prepared candidate8/8,3396 maps with one runtime delta, immutable
+fixture/meta and restored/free guards. Wrong-source2/6 attempt retained/excluded.
+Native supplied handlers only; no physical device/routing claim. Laptop owns
+all tests/builds, TouchStick/device loss; Claude owns PC Unity. Earlier packet10,
+emote8 and defaultCSV1 acceptance remain valid; do not repeat unchanged proofs.
+Current14/F6 graphics integration, matching142 Windows player, physical-device
+and real-peer gates remain open. Declared graphics/build memory admission has
+not cleared; do not silently lower guards or kill unrelated work.
+
+Root checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i
+is current. Main private/index work preserved. Superseded owned compiler outputs
+were pruned:10files/15682048bytes, source/rsp/log evidence kept. Old large raw/build
+cleanup policy blocks remain, no bypass or claim of deleting those files.
+NEXT: use laptop concrete device feedback or continue one disjoint source
+defect. It has the checked publication ref for its eventual matching142 build.
+Goal remains active; whole competition readiness and current peers unproven.
+
 ## Resume first: checked packet and emote fixes published together
 
 ASTRAReworksf39c13321 includes packet original7/3 -> candidate10/10 and emote
@@ -9,10 +75,12 @@ restored/free guards. Reports at laptop-validation-2026-10-03, refsa80acb40b and
 99ae1469f. Default timing export1/1/noRaw proof inspected too; no FPS/whole-route
 claim. Current source preserves latest Amihan/match-entry/Closed Circuit work.
 Neither fix changes the protocol or wire layout. No PC Unity/player job.
+Current NetSession.ProtocolVersion is142, verified directly in source. Older
+141/139/134 references below describe their original candidates, not this gate.
 
 LAPTOP owns all pending native tests/builds/players while CLAUDE owns PC Unity.
 Laptop has touch-button8/device-loss work underway. Current14-case integration,
-matching141 Windows build, startup/menu/entry timing and actual peers remain
+matching142 Windows build, startup/menu/entry timing and actual peers remain
 open. Binary512MiB interruption is unqualified; never use old139 player to claim
 new CSV defaults. Do not repeat unchanged packet/emote/timing cases.
 

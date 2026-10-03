@@ -1,0 +1,105 @@
+using NUnit.Framework;
+using TumbangPreso.InputLayer;
+using TumbangPreso.UI;
+using UnityEngine;
+using UnityEngine.EventSystems;
+
+namespace TumbangPreso.Tests
+{
+    public sealed class TouchButtonPointerLifetimeTests
+    {
+        private GameObject _root;
+        private TouchButton _button;
+        private EventSystem _events;
+        private bool _active, _customising;
+        private PointerEventData Pointer(int id) => new(_events) { pointerId = id };
+        [SetUp] public void Before()
+        {
+            _active = TouchInput.Active; _customising = TouchButton.Customising;
+            TouchButton.Customising = false; TouchInput.ReleaseAll(); TouchInput.Active = true;
+            // Prepared disabled canvas: no raycast/module/render step is invoked.
+            // Public pointer handlers and shipping pressed-state publication are tested.
+            _root = new GameObject("Touch pointer lifetime", typeof(RectTransform), typeof(Canvas));
+            _root.GetComponent<Canvas>().enabled = false;
+            _root.AddComponent<UnityEngine.UI.GraphicRaycaster>().enabled = false;
+            _events = _root.AddComponent<EventSystem>(); _events.enabled = false;
+            var face = new GameObject("Held throw button", typeof(RectTransform), typeof(CanvasGroup));
+            face.transform.SetParent(_root.transform, false);
+            ((RectTransform)face.transform).sizeDelta = new Vector2(180, 180);
+            var painter = face.AddComponent<OwnerTouchSurface>(); painter.raycastTarget = true;
+            _button = face.AddComponent<TouchButton>();
+            _button.BindOwnerPresentation(InputCatalogue.For(Verb.SpecialAbility),
+                face.GetComponent<CanvasGroup>(), painter, null, null);
+        }
+        [TearDown] public void After()
+        {
+            Object.DestroyImmediate(_root);
+            TouchButton.Customising = _customising; TouchInput.ReleaseAll(); TouchInput.Active = _active;
+        }
+        private void Held()
+        {
+            Assert.IsTrue(_button.IsHeld); Assert.IsTrue(TouchInput.Pressed(Verb.SpecialAbility));
+        }
+        private void Released()
+        {
+            Assert.IsFalse(_button.IsHeld); Assert.IsFalse(TouchInput.Pressed(Verb.SpecialAbility));
+        }
+        [Test] public void LiftingTheSecondPointerDoesNotReleaseTheFirstPointer()
+        {
+            var first = Pointer(101); var second = Pointer(202);
+            _button.OnPointerDown(first); Held(); _button.OnPointerDown(second); Held();
+            _button.OnPointerUp(second);
+            Assert.IsTrue(TouchInput.Pressed(Verb.SpecialAbility), "A second finger's lift released the first finger's held action.");
+            Held(); _button.OnPointerUp(first); Released();
+        }
+        [Test] public void LiftingTheFirstPointerDoesNotReleaseTheRemainingPointer()
+        {
+            var first = Pointer(101); var second = Pointer(202);
+            _button.OnPointerDown(first); _button.OnPointerDown(second); Held();
+            _button.OnPointerUp(first);
+            Assert.IsTrue(TouchInput.Pressed(Verb.SpecialAbility), "The action released while another captured finger remained down.");
+            Held(); _button.OnPointerUp(second); Released();
+        }
+        [Test] public void ASinglePointerStillReleasesItsAction()
+        {
+            var first = Pointer(101); _button.OnPointerDown(first); Held(); _button.OnPointerUp(first); Released();
+        }
+        [Test] public void AFreshPointerWorksAfterAllEarlierPointersRelease()
+        {
+            var first = Pointer(101); var second = Pointer(202);
+            _button.OnPointerDown(first); _button.OnPointerDown(second);
+            _button.OnPointerUp(first); _button.OnPointerUp(second); Released();
+            var fresh = Pointer(303); _button.OnPointerDown(fresh); Held(); _button.OnPointerUp(fresh); Released();
+        }
+        [Test] public void TheDisableCallbackReleasesAndAllowsAFreshPointer()
+        {
+            _button.OnPointerDown(Pointer(101)); _button.OnPointerDown(Pointer(202)); Held();
+            // EditMode explicitly invokes the shipping callback, not a player lifecycle.
+            _button.SendMessage("OnDisable"); Released();
+            var fresh = Pointer(303); _button.OnPointerDown(fresh); Held(); _button.OnPointerUp(fresh); Released();
+        }
+        [Test] public void DirectSetHeldReleaseAllowsAFreshPointer()
+        {
+            _button.OnPointerDown(Pointer(101)); _button.OnPointerDown(Pointer(202)); Held();
+            _button.SetHeld(false); Released();
+            _button.SetHeld(true); Held(); _button.SetHeld(false); Released();
+            var fresh = Pointer(303); _button.OnPointerDown(fresh); Held(); _button.OnPointerUp(fresh); Released();
+        }
+        [Test] public void CustomisationDoesNotRestoreAnOldPointerIntoANewHold()
+        {
+            _button.OnPointerDown(Pointer(101)); Held();
+            TouchButton.Customising = true; Assert.IsFalse(TouchInput.Pressed(Verb.SpecialAbility));
+            TouchButton.Customising = false;
+            var fresh = Pointer(303); _button.OnPointerDown(fresh); Held(); _button.OnPointerUp(fresh); Released();
+        }
+        [Test] public void ALiftDuringCustomisationCannotRestoreAnotherOldPointer()
+        {
+            var first = Pointer(101); var second = Pointer(202);
+            _button.OnPointerDown(first); _button.OnPointerDown(second); Held();
+            TouchButton.Customising = true; Assert.IsFalse(TouchInput.Pressed(Verb.SpecialAbility));
+            _button.OnPointerUp(first);
+            Assert.IsFalse(TouchInput.Pressed(Verb.SpecialAbility), "A lift during customization restored another obsolete held pointer.");
+            Released(); TouchButton.Customising = false;
+        }
+    }
+}

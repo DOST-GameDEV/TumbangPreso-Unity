@@ -26,6 +26,33 @@ Nothing was deleted or renumbered.
 - [ ] Full normal-speed portrait/handoff visual review, all-map composition and
   matching packaged/live-peer acceptance. Graphics capture hit RAM after one frame.
 
+### TOUCH-STICK-POINTER-1003: retain the controlling finger
+
+- [x] A second pointer cannot replace or release the captured stick owner.
+  Root inspected original two failures/six controls and candidate8/8, immutable
+  fixture/meta,3396 maps with only TouchControls changed and restored/free guards.
+  One wrong-source attempt is retained and excluded; corrected candidate source
+  was verified before its bounded run.
+  [Evidence](reports/laptop-gameplay-2026-10-03/touch-stick-pointer-lifetime/README.md).
+  Native supplied handlers qualify; physical routing/device/player gates remain.
+
+### EDGE-CLIMB-FRAME-1003: reject malformed client requests
+
+- [x] Require exactly eight unread bytes before reading slot/epoch. Original
+  four failures/two controls, candidate6/6; root inspected unchanged fixture,
+ 3396-input maps with one source delta and terminal/restored/free receipts.
+  [Evidence](reports/reliability-2026-10-03/edge-climb-framing/README.md).
+  Ownership/epoch/geometry remain; live climb/player/peer gates are separate.
+
+### TOUCH-BUTTON-POINTER-1003: retain an action until the last finger lifts
+
+- [x] Multiple captured pointers retain button holds until the last owner lifts;
+  global release/customization boundaries retire stale owners. Root inspected
+  corrected original two failures/six controls and candidate8/8, immutable
+  fixture and3392 maps with only TouchControls changed. One initial native
+  SendMessage fixture assertion was preserved and repaired before baseline.
+  [Evidence](reports/laptop-gameplay-2026-10-03/touch-button-pointer-lifetime/README.md).
+  Supplied native handlers qualify; physical touch/routing/gameplay remain open.
 
 ### EMOTE-TARGET-OWNER-1003: the wheel follows local input
 
@@ -77,7 +104,7 @@ Nothing was deleted or renumbered.
 - [x] Network empty bot seats use shared selection instead of each viewer's local
   character preference. Original2causal/2controls, first candidate4/4. Protocol139.
   [Evidence](reports/reliability-2026-10-03/network-bot-roster/README.md).
-- [ ] Rebuilt matching139 host/client with different human picks: verify bot
+- [ ] Rebuilt matching142 host/client with different human picks: verify bot
   characters/kits and replicated effects. Frozen1003g134 is excluded.
 
 ### SEAT-PRODUCER-TRANSFER-1003: rapid role changes retain controls
@@ -144,7 +171,7 @@ Nothing was deleted or renumbered.
   input failure plus separate accepted post-import classification and full manifest.
   [Artifact and limits](reports/reliability-2026-10-03/windows-candidate1003g/README.md).
 - [ ] Matching-artifact peer checks and actual Frozen effects; online/Relay remain
-  separate. Current Main139 is incompatible with frozen1003g134. Do not repeat
+  separate. Current Main142 is incompatible with frozen1003g134. Do not repeat
   the unchanged baseline merely to produce more activity.
 
 ### SPECTATOR-MATCH-LIFETIME-1003: retire old footage and markers

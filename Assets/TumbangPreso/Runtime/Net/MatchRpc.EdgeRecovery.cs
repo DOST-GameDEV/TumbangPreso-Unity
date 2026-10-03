@@ -26,7 +26,8 @@ namespace TumbangPreso.Net
 
         private void OnReqEdgeClimbMsg(ulong sender,FastBufferReader reader)
         {
-            if(!NetAuthority.IsHost)return;
+            if(!NetAuthority.IsHost || reader.Length-reader.Position!=sizeof(int)*2
+                || !reader.TryBeginRead(sizeof(int)*2))return;
             reader.ReadValueSafe(out int slot);reader.ReadValueSafe(out int epoch);
             if(!SenderOwnsClaimedSeat(sender,slot,out var unit)||epoch!=_movementEpochs[slot])return;
             // The client supplies no anchor or landing point. Current host-side

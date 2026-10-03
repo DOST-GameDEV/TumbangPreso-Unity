@@ -219,3 +219,33 @@ Sound (`tools/build_amihan_ult_audio.py`): the theme retimed to v6 (near silence
 the whistle, the wind's answer and its curls arriving, the whirlwind, her phrase, the look-back motif, the wind-up, the
 crack, a low stretched whoom under a held flute note through the hang, the rush returning, the finish note). Featherfall's
 three: the take-off rush, a soft puff on every gust, the landing sigh and step. Provisional: not heard.
+
+## v7 to v14 (October 3): the bird Amihan, her breeze, the giggle
+
+Owner after comparing v6 with Paete's and Phaister's: her own ult with the same impact. Both approved ones change the
+world, raise a giant manifestation from the hero's myth and climax on it (films side by side: `Logs/ult-reference-1003`).
+Hers is her name, the first bird of the Tagalog creation story.
+
+As built (`HeroIntroductionScene.Amihan.cs`, `tools/author_ultimate_intros.py` amihan(), 5.9 s, release 4.55):
+
+* STILL: eyes closed she rises on her own breeze and stays floating for the whole ult (authored lift about 0.4 m,
+  bobbing; she touches down at 5.42 into her finish). Her breeze while she gathers it: curled streaks drifting in,
+  wisps up her body, rings under her feet (these stay while she floats), dust drawn in, a leaf circling her that drops
+  when the breeze dies. A shrug (no foot taps: owner, they made no sense in the air).
+* CALL 1.78: the whistle leaves her lips as a curl for the sky; the monsoon answers in great filled wind sheets circling
+  the plaza with 60 leaves and court dust, closing and rising into the sky.
+* THE BIRD 2.75: born in a swell of light; teal glowing wings with scalloped feather edges and white leading edges, a
+  body, a small glowing beak, white crest, tail streamers and wing-tip trails that follow its real path. One continuous
+  flight: half a circle down her left past the lens, then above and ahead of her. The climax shot is a low lens beside
+  her with its whole silhouette crossing over her (a tight face shot fell apart). No leaves on it (owner: they read as
+  blocks).
+* WIND-UP 3.62: the bird rears with its wings in a wide V, its heart charging brighter, court dust spiralling up into it.
+* DRIVE 4.55 and THE HANG: light at its wings, the wingbeat down the lane, leaves blown from before her palms; the story
+  clock at 18 per cent from 0.10 to 0.62 s after the release, scaled so it still reaches `AmihanStorm.CutsceneTail`.
+* FINISH 5.30 to 5.9, a close-up from her left front: a giggle (her hand up by her chin, the grin with happy shut eyes,
+  head tipped, a foot kicked up behind her), bobbing twice. The live `hero-amihan-storm` clip starts in it.
+
+Removed: all of Amihan's skill sounds (owner: "remove all sfx"); `tools/build_amihan_ult_audio.py` keeps the recipes.
+The `Teehee` face (`VoxelFace.Look.Teehee`, chevron eyes) is baked but unused: the owner found it weird.
+Evidence: `Logs/amihan-v14r1` (films 3/3, EditMode 4/4) and `Logs/amihan-v14r2` (finish reframed, 2/2); videos in
+`Logs/amihan-v6-share`. Human taste is the open gate; the owner has not approved v14.

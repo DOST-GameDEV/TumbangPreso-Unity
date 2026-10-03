@@ -1,7 +1,7 @@
 # Opening camera refinement
 
-Owner-directed camera polish. Current local candidate; publication and visual
-acceptance are pending. [Source critique and direction](plan.md).
+Owner-directed camera polish. Implementation and focused checks are complete;
+full-sequence visual acceptance remains pending. [Source critique and direction](plan.md).
 
 ## Implemented
 
