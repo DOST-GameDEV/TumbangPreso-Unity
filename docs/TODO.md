@@ -17,6 +17,21 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### INPUT-PRODUCER-LIFETIME-1003: checked laptop integration
+
+- [x] Focus/disable/Idle retire pending throw/lunge/reset before a release is read;
+  preserve committed contact and spent cooldown. Native original9causals/3controls,
+  firstcandidate12/12. [Evidence](reports/laptop-gameplay-2026-10-03/practice-reconciliation.md).
+- [x] Retire private bot planner clocks and preserve recorded world coordinates
+  under transformed owners. Original2causals, candidate2/2; disposal retained.
+  [Evidence](reports/laptop-gameplay-2026-10-03/replay/README.md).
+- [x] ResetRange/SetDefender retire live contact/windup before teleport. Original
+  3causals/2controls, firstcandidate5/5; pause/cooldown preserved. Full practice
+  operator/physical acceptance stays separate.
+- [x] Clear cached touch movement only for local input retirement. Original
+  2causals/3controls, firstcandidate5/5; remote-reader ownership retained.
+  [Evidence](reports/laptop-gameplay-2026-10-03/touch-movement-retirement.md).
+
 ### ACCOUNT-OWNERSHIP-CANDIDATE-1003: source ready, native acceptance open
 
 Eight reviewed fixes preserve primary guest career/wallet/social caches, bind name
@@ -25,7 +40,9 @@ and reset inherited deletion confirmation.52 focused cases compile with refreshe
 Runtime; static review and script metadata pass. Original13 shows10causals/3controls
 after one lifecycle fixture repair. Both PC candidate environments timed out before
 cases with retained licensing/reload failures. No more local retries; functioning
-laptop worker and candidate branch are the next qualification route. No source
+laptop worker and candidate branch are the next qualification route. Two further
+reviewed arrival6 and matchmaking9 candidates compile, bringing pending native
+checks to67; actual Relay and peer checks remain separate. No source
 completion/readiness claim yet. [Evidence](reports/reliability-2026-10-03/account-candidate/README.md).
 
 

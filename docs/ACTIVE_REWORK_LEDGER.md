@@ -83,11 +83,13 @@ inferred. All ownedgameplayers/helpers/server terminal; no furtherhostqueued.
 Laptopclient01 terminalnormal/noadmission/input/profile/Runtime restored/free;
 laptopclient02 mustnotlaunchuntilfutureactualhostlistening+nativejobterminal.
 
-Current MAINHEAD bf99ef5f85080b6d88723a08a731b6735ebe1a50, candidatebranchsame
+Current MAINHEAD5d847538bed7815428ec6cdc7408f2f003fb8cfd, candidatebranchsame
 verified atlastpush; ASTRAremote57739c4ab includespublishedDantefracture work,
 merged locallybf99. Checkedlaptop19nativecases integrated00f03d911 plusinput12
 ff17. Rootarrivalcandidatea5db552ee includedbf99:6EditMode compile/staticPASS,
-nativepending. Source52+arrival6=58 pending-nativecases. Earlier account52
+nativepending. Source52+arrival6+Matchmaker9=67 pending-nativecases; Matchmakercompiledand
+published51ea2747d. Touch6b273a49e reviewed/merged5d847538b; checkedlaptop
+total24cases. No jointLANacceptance. Earlier account52
 exacthandoff paths/filters recorded inchat; user does NOT needcopypasteoract on
 it. Keep detailed technicalcoordination outofuser'sway. No outboundotherchattools.
 
@@ -98,8 +100,7 @@ errors retained; no more accountcandidate localretry. Laptop warmed nativeworker
 can qualify immutable PC-owned overlay whenfree; sourcebranch ownership unchanged.
 
 Parallelbulk agent activelyimplements nextindependentengineering. Arrival6 ready/
-committed. Matchmaker9 source/fixtures nowstaticreviewPASS, nativepending/notyet
-compiled/published. It advances round lifecycle next. Do not freeze/mutate its inputs
+committed. Matchmaker9 source/fixtures staticreview/compilePASS, nativepending/published. It advances round lifecycle next. Do not freeze/mutate its inputs
 midwrite. Root nextaction: compileandpublish reviewedMatchmaker candidate, update
 candidatebranchHEAD; retain explicitpendingacceptance. Resume LANonlyafterowner
 Amihanpriority isfulfilled andbothsidesackready. Continue code/merges meanwhile.
