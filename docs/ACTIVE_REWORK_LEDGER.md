@@ -1,5 +1,43 @@
 # Active Rework Checkpoint
 
+## Latest source and acceptance checkpoint
+
+ASTRAReworks67d57b118 contains the checked cast-preparation guard, preserving
+current Amihan, match-entry and Closed Circuit walking work. Root inspected
+original7/3 and candidate10/10 XML,3388-input maps differing in one source file,
+immutable fixture/meta and terminal/restored/free guards. Canonical3be659 matches.
+Default timing native1/1 export/noRaw proof is also inspected; intermediate
+result.json is not a whole-route pass. Binary512MiB interruption and player open.
+
+Root emote originalbfe2/candidateb5fa selects an unparked active-reader owner,
+fences network LocalSlot and preserves tutorial/replacement/temporaryAI controls.
+Eight-case fixture is frozen. Laptop reports originalfive failures/three controls
+and candidate8/8; raw published evidence is still pending root inspection.
+This branch retains emote candidate; ASTRA excludes it until acceptance inspection.
+
+Laptop owns all tests/builds while Claude owns PC Unity. No PC Unity/player job.
+Earlier sections below are historical; do not resume their old pending sessions.
+NEXT: inspect published Emote8 XML,3390-input maps and restored/free receipts,
+then publish checked selector with current source. Current player/peer gate open.
+
+## Current PC unit: packet framing candidate awaits laptop validation
+
+Original fixture8f0b34054, candidate088ae2aee, remote branch
+competition-pc-cast-preparation-bounds1003. CastPreparation preflights its fixed
+header, bounded UTF16 name and52-byte tail before any value decoding. Still141;
+no wire/kit change. Runtime and test Roslyn assemblies compile. Ten native cases
+queued to laptop; expected seven causes/three controls are NOT observed results.
+Fixture/meta unchanged between original and candidate. No PC Unity run.
+
+Laptop has explicitly accepted all testing ownership; its TimingCapture1 job was
+reported launched headless onqa-a, exact result still pending. Current gameplay
+reservations remain its; Root owns MatchInstaller emote targeting investigation.
+NEXT: inspect actual enabled input ownership at MatchInstaller.Driven, whose AI
+absence scan can select a remote human or retired original human. Preserve
+tutorial and possession controls. Do not modify laptop's DebugPlayerSwitcher or
+Reader/Carrier/Combat reservations. Candidate framing publication awaits native
+feedback; do independent source work instead of repeating compilation/tests.
+
 ## Latest owner steering: laptop owns testing while Claude edits Amihan
 
 October3 owner explicitly asks the existing laptop chat to do all PC testing
