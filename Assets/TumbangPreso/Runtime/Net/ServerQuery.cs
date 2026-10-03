@@ -166,6 +166,12 @@ namespace TumbangPreso.Net
         private bool _pendingInProgress;
         private HostedAdvert _pendingAdvert;
         private bool _creatingLobby;
+        private Func<Task<bool>> _hostAuthDispatch;
+        private Func<string, int, CreateLobbyOptions, Task<string>> _createHostedIdDispatch;
+        private Func<string, UpdateLobbyOptions, Task> _updateHostedDispatch;
+        private Func<string, Task> _deleteHostedDispatch;
+        private long _hostLobbyRequest;
+        private TaskCompletionSource<string> _hostLobbyCreation;
 
         public IEnumerable<Entry> Servers => _seen.Values;
 
@@ -466,11 +472,18 @@ namespace TumbangPreso.Net
         public async Task<string> CreateHostedLobbyAsync(string hostName, string joinCode, string relayCode,
                                                          int seated, int occupied, HostedAdvert advert)
         {
+            if (_hostLobbyCreation != null || !string.IsNullOrEmpty(_activeHostLobbyId))
+                _ = DeleteHostedLobbyAsync();
+            long request = ++_hostLobbyRequest;
+            var completion = new TaskCompletionSource<string>();
+            _hostLobbyCreation = completion;
+            string createdId = null;
             _creatingLobby = true;
             try
             {
-                bool authOk = await NetIdentity.EnsureSignedInAsync();
-                if (!authOk) return null;
+                bool authOk = _hostAuthDispatch == null
+                    ? await NetIdentity.EnsureSignedInAsync() : await _hostAuthDispatch();
+                if (!authOk || this == null || request != _hostLobbyRequest) return null;
 
                 string lobbyName = string.IsNullOrWhiteSpace(hostName) ? "Tumbang Preso Lobby" : hostName.Trim();
 
@@ -517,10 +530,14 @@ namespace TumbangPreso.Net
                 // `MaxConnections` (12) so spectators can attend a full match; a UGS lobby whose
                 // `MaxPlayers` was also 12 would advertise "2/12" in the browser and would keep
                 // answering the AvailableSlots filter long after all four chairs were taken.
-                Lobby lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, LobbySession.MaxPlayers, options);
-                _activeHostLobbyId = lobby.Id;
+                string lobbyId = _createHostedIdDispatch == null
+                    ? (await LobbyService.Instance.CreateLobbyAsync(lobbyName, LobbySession.MaxPlayers, options)).Id
+                    : await _createHostedIdDispatch(lobbyName, LobbySession.MaxPlayers, options);
+                createdId = lobbyId;
+                if (this == null || request != _hostLobbyRequest) return null;
+                _activeHostLobbyId = lobbyId;
                 _sinceHeartbeat = 0.0f;
-                Debug.Log($"[Query] Created UGS Lobby {lobby.Id} with JoinCode {joinCode}");
+                Debug.Log($"[Query] Created UGS Lobby {lobbyId} with JoinCode {joinCode}");
 
                 // Anything that happened while the round trip was in flight is applied now.
                 if (_hasPendingCounts)
@@ -530,7 +547,7 @@ namespace TumbangPreso.Net
                                                  _pendingAdvert);
                 }
 
-                return lobby.Id;
+                return this != null && request == _hostLobbyRequest ? lobbyId : null;
             }
             catch (Exception e)
             {
@@ -539,7 +556,8 @@ namespace TumbangPreso.Net
             }
             finally
             {
-                _creatingLobby = false;
+                if (this != null && request == _hostLobbyRequest) _creatingLobby = false;
+                completion.TrySetResult(createdId);
             }
         }
 
@@ -595,7 +613,9 @@ namespace TumbangPreso.Net
                     }
                 };
 
-                await LobbyService.Instance.UpdateLobbyAsync(_activeHostLobbyId, options);
+                await (_updateHostedDispatch == null
+                    ? LobbyService.Instance.UpdateLobbyAsync(_activeHostLobbyId, options)
+                    : _updateHostedDispatch(_activeHostLobbyId, options));
             }
             catch (Exception e)
             {
@@ -627,17 +647,20 @@ namespace TumbangPreso.Net
             // nobody behind it, which the browser then advertised until the 30 second heartbeat
             // expiry retired it. Waiting for the creation to settle is what makes the delete
             // reach the id that is about to exist.
-            while (_creatingLobby) await Task.Yield();
-
-            if (string.IsNullOrEmpty(_activeHostLobbyId)) return;
-
+            var creation = _hostLobbyCreation;
             string id = _activeHostLobbyId;
+            ++_hostLobbyRequest;
+            _hostLobbyCreation = null;
             _activeHostLobbyId = null;
+            _creatingLobby = false;
             _hasPendingCounts = false;
+            if (string.IsNullOrEmpty(id) && creation != null) id = await creation.Task;
+            if (string.IsNullOrEmpty(id)) return;
 
             try
             {
-                await LobbyService.Instance.DeleteLobbyAsync(id);
+                await (_deleteHostedDispatch == null
+                    ? LobbyService.Instance.DeleteLobbyAsync(id) : _deleteHostedDispatch(id));
                 Debug.Log($"[Query] Deleted UGS Lobby {id}");
             }
             catch (Exception e)
