@@ -1,5 +1,36 @@
 # Active Rework Checkpoint
 
+## Resume first: reported144 follow-up passes, capture fixture identity unresolved
+
+PC checkout tump-competition-candidate1003i is clean at203b9466c after normal
+fast-forward; contributor Credits, typography and Bank Shot changes preserved.
+No PC Unity/player or subagents launched. Do not duplicate laptop jobs.
+
+Laptop published Classic/reduced/leave2ec8191 and actual camera-OFF16de43a7:
+each XML1/1 and guards exit0, terminal, preferences restored and leases free.
+Root inspected the actual OFF LateUpdate observer requiring >10 held samples.
+It compares saved camera pose/rotation/FOV through the real host-selected route.
+Both reports qualify baselineb257/protocol144, not later gameplay/art changes.
+
+Root verified all34 OFF PNG/phase manifest hashes and sizes. Frame00 metadata
+has loadingVisible/preparing true, clockHeld false and camera at origin;
+frame05 has saved eye(0,1.25,-2.5)/FOV95 during the held greeting. Camera-only
+capture still omits overlay UI and cannot prove visible curtain coverage.
+OFF post audit has no declared-input changes; Classic retains two arm-mesh
+importer deltas. No source or art has been discarded.
+
+Evidence identity gate: OpeningCameraFullRouteTests.cs matches its frozen map,
+but published MatchArrivalFlowTests.cs does NOT match its recorded SHA256
+2fec02b61af66ec3c83fee935f7092a97295106747d1ad01f8fe974ce116b728 under
+Git/LF/CRLF variants. Published Git blob hash isf31ee01c5ad6756bdecab11b3c211017f47ea4ec6b60cbe90a04ff824eb5d56d.
+Do not mark the current published full-route fixture independently accepted or
+repeat Unity to hide this discrepancy. Preserve raw XML/maps and both fixtures.
+Root script Logs/arrival-pan-review1004/inspect_published.py stops at this exact
+assertion after the other cohort checks pass. NEXT: resolve the exact tested
+MatchArrivalFlowTests bytes against the published capture addition; if only
+formatting, demonstrate the exact hash. Otherwise retain the tested fixture and
+scope acceptance to it. No repeated unchanged runs or speculative product fix.
+
 ## Resume first: full-court arrival finished, protocol144 integration now current
 
 PC source checkout is tump-competition-candidate1003i at b257493950a2630d59ff879f1ed09b1c758f0084.
