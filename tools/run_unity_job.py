@@ -147,6 +147,7 @@ def coexistence(claim, foreign, editors=None):
         raise ValueError("Outside Editor must use separate input preferences")
     records = dict(workers.unity_processes() if editors is None else editors)
     accepted = []
+    import_workers = []
     for pid in foreign:
         command = records.get(pid)
         if not command:
@@ -156,9 +157,18 @@ def coexistence(claim, foreign, editors=None):
         targets += [arg.split("=", 1)[1] for arg in args if arg.casefold().startswith("-projectpath=")]
         if len(targets) != 1 or canonical(targets[0]) != canonical(project):
             raise ValueError("Outside Editor does not match the reserved project")
-        accepted.append({"pid": pid, "project": canonical(project)})
+        parents = [args[i + 1] for i, arg in enumerate(args[:-1]) if arg.casefold() == "-parentpid"]
+        if parents:
+            if len(parents) != 1 or not parents[0].isdecimal() or int(parents[0]) not in foreign:
+                raise ValueError("Outside import worker has no verified parent Editor")
+            import_workers.append((pid, int(parents[0])))
+        else:
+            accepted.append({"pid": pid, "project": canonical(project)})
     if len(accepted) != 1:
         raise ValueError("Editor coexistence supports exactly one outside Editor")
+    if any(parent != accepted[0]["pid"] for _, parent in import_workers):
+        raise ValueError("Outside import workers must belong to the reserved Editor")
+    accepted[0]["importWorkerPids"] = [pid for pid, _ in import_workers]
     return [], accepted
 
 

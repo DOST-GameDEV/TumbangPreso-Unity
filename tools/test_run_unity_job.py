@@ -182,7 +182,16 @@ class JobTests(unittest.TestCase):
         command = f'Unity.exe -projectPath "{self.source}" -batchmode -runTests -testPlatform PlayMode'
         foreign, accepted = job.coexistence(self.coexist_claim(), [55], [(55, command)])
         self.assertEqual([], foreign)
-        self.assertEqual([{"pid": 55, "project": job.canonical(self.source)}], accepted)
+        self.assertEqual([{"pid": 55, "project": job.canonical(self.source), "importWorkerPids": []}], accepted)
+
+    def test_outside_editor_import_children_do_not_consume_an_extra_editor_slot(self):
+        command = f'Unity.exe -projectPath "{self.source}"'
+        foreign, accepted = job.coexistence(self.coexist_claim(), [55, 56],
+                                          [(55, command), (56, command + ' -parentPid 55 -name AssetImport')])
+        self.assertEqual([], foreign)
+        self.assertEqual([56], accepted[0]["importWorkerPids"])
+        with self.assertRaises(ValueError):
+            job.coexistence(self.coexist_claim(), [55, 56], [(55, command), (56, command)])
 
     def test_outside_editor_permission_does_not_allow_other_projects_or_players(self):
         claim = self.coexist_claim()
