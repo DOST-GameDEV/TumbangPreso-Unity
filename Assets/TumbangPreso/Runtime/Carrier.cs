@@ -141,6 +141,7 @@ namespace TumbangPreso
         public float CurrentPektusSpin => _charging ? _pektusSpin : 0.0f;
         public float ObservedPektusSpin => _observedCharge >= 0 ? _observedSpin : 0;
         private float _observedSpin;
+        private bool _observedChargeFromInput;
         private float _chargeSyncLeft,_lastSentSpin;
 
         /// <summary>True while this unit is winding a throw up. Read by the aim arc and by the
@@ -220,10 +221,12 @@ namespace TumbangPreso
 
         private void OnDisable() => CancelPendingInput();
 
-        internal void CancelPendingInput()
+        internal void CancelPendingInput() => RetireProducerInput(true);
+
+        internal void RetireProducerInput(bool clearReceivedPresentation)
         {
             if (_channel > 0.0f) ReportResetPhase(Net.MatchRpc.ResetPhase.Cancel);
-            CancelAll();
+            ClearPendingState(clearReceivedPresentation);
         }
 
         /// <summary>
@@ -710,6 +713,7 @@ namespace TumbangPreso
                 _charge = Mathf.Min(_charge + dt * ChargeRate, Balance.ChargeFullTime);
                 _pektusSpin = Mathf.Clamp(intent.SpinInput, -Balance.MaxPektusSpin, Balance.MaxPektusSpin);
                 _observedSpin = _pektusSpin;
+                _observedChargeFromInput = true;
 
                 // The current rule also cancels on can knockdown/protection, so
                 // a previously full charge cannot be banked across the reset.
@@ -738,14 +742,16 @@ namespace TumbangPreso
         /// hands, the round reset. An arc left on screen after the throw has gone is worse than
         /// one that never appeared, so the clear belongs with the cancel and not at each site.
         /// </summary>
-        private void CancelCharge()
+        private void CancelCharge() => RetireLocalCharge(true);
+
+        private void RetireLocalCharge(bool publish)
         {
             if (!_charging) return;
 
             _charging = false;
             _charge = 0.0f;
             _pektusSpin = 0.0f;
-            BroadcastCharge(false);
+            if (publish) BroadcastCharge(false);
         }
 
         /// <summary>
@@ -759,12 +765,16 @@ namespace TumbangPreso
             _lastSentSpin=_pektusSpin;_chargeSyncLeft=.1f;
             if (NetAuthority.IsNetworked)
                 Net.MatchRpc.Instance?.SetThrowCharge(_motor.PlayerSlot, active,_charge,_pektusSpin);
+            // Mark after the synchronous listen-host echo has applied the same sample.
+            _observedChargeFromInput = active;
         }
 
         /// <summary>Applies another peer's visible throw wind-up without touching local input.</summary>
         public void ApplyObservedCharge(bool active,float seconds=0,float spin=0)
         {
             if(float.IsNaN(seconds) || float.IsInfinity(seconds) || float.IsNaN(spin) || float.IsInfinity(spin))return;
+            _observedChargeFromInput = active && _observedChargeFromInput && NetAuthority.IsHost
+                                       && (_motor.PlayerSlot == NetAuthority.LocalSlot || _motor.IsBot);
             _observedCharge = active ? Mathf.Clamp(seconds,0,Balance.ChargeFullTime) : -1.0f;
             _observedSpin=active ? Mathf.Clamp(spin,-Balance.MaxPektusSpin,Balance.MaxPektusSpin) : 0;
         }
@@ -1066,10 +1076,13 @@ namespace TumbangPreso
             Net.MatchRpc.Instance?.RequestLataResetServerRpc(_motor.PlayerSlot, phase);
         }
 
-        private void CancelAll()
+        private void CancelAll() => ClearPendingState(true);
+
+        private void ClearPendingState(bool clearReceivedPresentation)
         {
-            CancelCharge();
-            ApplyObservedCharge(false);
+            bool clearTell = clearReceivedPresentation || _observedChargeFromInput;
+            RetireLocalCharge(clearReceivedPresentation);
+            if (clearTell) ApplyObservedCharge(false);
             _channel = 0.0f;
             ChannelRatio = 0.0f;
         }

@@ -1029,6 +1029,14 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   whole Zack presentation and WAN/device coverage remain open.
   [Evidence](reports/feedback-2026-09-30/closed-circuit/README.md).
 
+- [x] CLOSED-CIRCUIT-MOTION-1003: serialized dedicated acquisition body action,
+  distinct owner-hand dispatcher and measured casting-palm tell replace missing
+  body cast/generic thrust/face-origin line. Three Editor and nine PlayMode checks
+  pass; six native poses from two views inspected, with graphical resource stops
+  retained. Full-court film, live owner appearance, peers and human approval stay
+  open. No mechanics/protocol change.
+  [Evidence](reports/zack-circuit-motion-2026-10-03/README.md).
+
 - [x] BOT-COMPANION-OBSERVATION-1001: shared observation now includes companion
   targets and binds cached beliefs to the actual body. Native baseline reproduces
   both tier bypasses; final4/4passes Normal/Astig, replacement identity and self

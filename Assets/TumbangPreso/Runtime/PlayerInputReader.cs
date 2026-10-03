@@ -489,9 +489,10 @@ namespace TumbangPreso
         private void CancelPendingInput()
         {
             // Losing a producer is cancellation, not a deliberate release.
-            _motor?.GetComponent<Carrier>()?.CancelPendingInput();
-            _motor?.GetComponent<CombatVerbs>()?.CancelPendingInput();
-            if (_motor != null && (!NetAuthority.IsNetworked || _motor.PlayerSlot == NetAuthority.LocalSlot))
+            bool ownsSeat = _motor != null && (!NetAuthority.IsNetworked || _motor.PlayerSlot == NetAuthority.LocalSlot);
+            _motor?.GetComponent<Carrier>()?.RetireProducerInput(ownsSeat);
+            _motor?.GetComponent<CombatVerbs>()?.RetireProducerInput(ownsSeat);
+            if (ownsSeat)
             {
                 // An obsolete reader must not close another body's received aim tell.
                 _motor.AbilitySystem?.ClearPresentationInput();
