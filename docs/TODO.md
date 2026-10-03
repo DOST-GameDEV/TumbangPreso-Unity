@@ -17,6 +17,16 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### TOUCH-STICK-POINTER-1003: retain the controlling finger
+
+- [x] A second pointer cannot replace or release the captured stick owner.
+  Root inspected original two failures/six controls and candidate8/8, immutable
+  fixture/meta,3396 maps with only TouchControls changed and restored/free guards.
+  One wrong-source attempt is retained and excluded; corrected candidate source
+  was verified before its bounded run.
+  [Evidence](reports/laptop-gameplay-2026-10-03/touch-stick-pointer-lifetime/README.md).
+  Native supplied handlers qualify; physical routing/device/player gates remain.
+
 ### EDGE-CLIMB-FRAME-1003: reject malformed client requests
 
 - [x] Require exactly eight unread bytes before reading slot/epoch. Original
