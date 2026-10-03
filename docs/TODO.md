@@ -17,6 +17,16 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### TOUCH-BUTTON-POINTER-1003: retain an action until the last finger lifts
+
+- [x] Multiple captured pointers retain button holds until the last owner lifts;
+  global release/customization boundaries retire stale owners. Root inspected
+  corrected original two failures/six controls and candidate8/8, immutable
+  fixture and3392 maps with only TouchControls changed. One initial native
+  SendMessage fixture assertion was preserved and repaired before baseline.
+  [Evidence](reports/laptop-gameplay-2026-10-03/touch-button-pointer-lifetime/README.md).
+  Supplied native handlers qualify; physical touch/routing/gameplay remain open.
+
 ### EMOTE-TARGET-OWNER-1003: the wheel follows local input
 
 - [x] Active-reader ownership replaces ambiguous AI-absence discovery. Network

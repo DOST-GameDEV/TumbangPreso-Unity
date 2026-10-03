@@ -1,5 +1,24 @@
 # Active Rework Checkpoint
 
+## Current root unit: edge request framing awaits laptop validation
+
+Edge original3ead4fc27 / candidatec856dfe25 pushed on
+competition-pc-edge-climb-bounds1003. Only production delta is two-line exact
+eight-byte/TryBeginRead gate in MatchRpc.EdgeRecovery.cs; ownership/epoch/geometry
+unchanged, still142. Six immutable fixture cases are queued after laptop Stick8.
+Direct compilation against the older isolated worker references is limited to
+candidate syntax/API; native/current-player acceptance is not claimed.
+
+TouchButton669a19227 is integrated and root inspected original2/6 -> candidate8/8,
+3392 unchanged input maps, immutable repaired fixture and restored/free guards.
+First SendMessage assertion/one fixture repair retained. Supplied pointer handlers
+only, no physical routing/gameplay claim. Laptop Stick8 original is reported2/6;
+its candidate and device-loss work remain laptop-owned. No PC Unity/player job.
+Root owns Net/account/lobby source; preserve other reservations and Amihan work.
+NEXT: inspect laptop published Edge6 evidence, then integrate the checked guard.
+Continue useful source fixes while laptop validates; do not repeat unchanged
+packet/emote/timing proofs or start PC Unity. Matching142 player/peers still open.
+
 ## Resume first: checked packet and emote fixes published together
 
 ASTRAReworksf39c13321 includes packet original7/3 -> candidate10/10 and emote
