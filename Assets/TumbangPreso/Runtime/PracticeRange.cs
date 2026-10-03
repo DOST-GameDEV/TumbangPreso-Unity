@@ -112,7 +112,14 @@ namespace TumbangPreso
         public bool SetBot(int seat, bool present, bool idle)
         {
             if (!CanEdit || !IsBotSeat(seat)) return false;
-            var body = _seats[seat]; _idle[seat] = idle;
+            var body = _seats[seat];
+            if (present && idle && !_idle[seat] && body.gameObject.activeSelf)
+            {
+                // Retire windups before parking publishes a release to their consumers.
+                body.GetComponent<Carrier>()?.CancelPendingInput();
+                body.GetComponent<CombatVerbs>()?.CancelPendingInput();
+            }
+            _idle[seat] = idle;
             var brain = body.GetComponent<AIController>();
             if (brain != null) brain.enabled = present && !idle;
             body.Intent.Parked = idle || !present;

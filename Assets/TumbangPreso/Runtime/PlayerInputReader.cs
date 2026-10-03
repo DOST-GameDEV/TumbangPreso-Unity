@@ -61,6 +61,7 @@ namespace TumbangPreso
             CaptureMenuButton(_grab,Verb.Grab);CaptureMenuButton(_lunge,Verb.Lunge);
             CaptureMenuButton(_sprint,Verb.Sprint);CaptureMenuButton(_emote,Verb.EmoteWheel);
             CaptureMenuButton(_skill1,Verb.Skill1);CaptureMenuButton(_skill2,Verb.Skill2);CaptureMenuButton(_ultimate,Verb.Ultimate);
+            CaptureMenuButton(_interact,Verb.Interact);
             InputLayer.TouchInput.ConsumeRecoveryPress();
             InputLayer.TouchInput.LookDelta = Vector2.zero;
             _motor?.Intent.Clear();_motor?.Intent.CommitFrame();
@@ -475,18 +476,28 @@ namespace TumbangPreso
 
         private void OnApplicationFocus(bool focused)
         {
-            if (!focused) DiscardMenuButtonsUntilRelease();
+            if (!focused)
+            {
+                CancelPendingInput();
+                DiscardMenuButtonsUntilRelease();
+            }
+        }
+
+        private void CancelPendingInput()
+        {
+            // Losing a producer is cancellation, not a deliberate throw or lunge release.
+            _motor?.GetComponent<Carrier>()?.CancelPendingInput();
+            _motor?.GetComponent<CombatVerbs>()?.CancelPendingInput();
         }
 
         private void OnDisable()
         {
+            CancelPendingInput();
             _readyUseHeld = false;
             _readyInteractHeld = false;
-            ResetToggleControls();
             // ⚠️ RELEASE EVERYTHING ON THE WAY OUT. A verb held across a disable stays held
             // in the intent table forever, and the player walks back in already sprinting.
-            _motor?.Intent.Clear();
-            _motor?.Intent.CommitFrame();
+            DiscardMenuButtonsUntilRelease();
         }
     }
 }

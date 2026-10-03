@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="12" result="Passed" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 03:24:10Z" end-time="2026-10-03 03:24:11Z" duration="0.5899284">
+  <test-suite type="TestSuite" id="2671" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1360" result="Passed" start-time="2026-10-03 03:24:10Z" end-time="2026-10-03 03:24:11Z" duration="0.589928" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2665" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-laptop-native1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1360" result="Passed" start-time="2026-10-03 03:24:10Z" end-time="2026-10-03 03:24:11Z" duration="0.572347" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="17756" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2666" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1360" result="Passed" start-time="2026-10-03 03:24:10Z" end-time="2026-10-03 03:24:11Z" duration="0.560042" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2667" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1360" result="Passed" start-time="2026-10-03 03:24:10Z" end-time="2026-10-03 03:24:11Z" duration="0.553063" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1572" name="InputProducerCancellationTests" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-10-03 03:24:10Z" end-time="2026-10-03 03:24:11Z" duration="0.528351" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1581" name="ActualLungeReleaseStillSpendsCooldownAndOpensContact" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.ActualLungeReleaseStillSpendsCooldownAndOpensContact" methodname="ActualLungeReleaseStillSpendsCooldownAndOpensContact" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="1083535977" result="Passed" start-time="2026-10-03 03:24:10Z" end-time="2026-10-03 03:24:10Z" duration="0.130286" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1580" name="ActualThrowReleaseStillLaunchesTheOwnedShoe" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.ActualThrowReleaseStillLaunchesTheOwnedShoe" methodname="ActualThrowReleaseStillLaunchesTheOwnedShoe" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="793916206" result="Passed" start-time="2026-10-03 03:24:10Z" end-time="2026-10-03 03:24:10Z" duration="0.043202" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1574" name="FocusLossCancelsPendingLunge" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.FocusLossCancelsPendingLunge" methodname="FocusLossCancelsPendingLunge" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="546818652" result="Passed" start-time="2026-10-03 03:24:10Z" end-time="2026-10-03 03:24:10Z" duration="0.034238" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1573" name="FocusLossCancelsPendingThrow" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.FocusLossCancelsPendingThrow" methodname="FocusLossCancelsPendingThrow" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="1354973614" result="Passed" start-time="2026-10-03 03:24:10Z" end-time="2026-10-03 03:24:10Z" duration="0.032671" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1582" name="FocusLossKeepsAnAlreadyCommittedLungeAndItsCooldown" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.FocusLossKeepsAnAlreadyCommittedLungeAndItsCooldown" methodname="FocusLossKeepsAnAlreadyCommittedLungeAndItsCooldown" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="1673891682" result="Passed" start-time="2026-10-03 03:24:10Z" end-time="2026-10-03 03:24:10Z" duration="0.038335" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1578" name="FocusLossRequiresAFreshInteractPress" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.FocusLossRequiresAFreshInteractPress" methodname="FocusLossRequiresAFreshInteractPress" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="449741502" result="Passed" start-time="2026-10-03 03:24:10Z" end-time="2026-10-03 03:24:10Z" duration="0.034864" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1584" name="PracticeIdleCancelsPendingLunge" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.PracticeIdleCancelsPendingLunge" methodname="PracticeIdleCancelsPendingLunge" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="828989206" result="Passed" start-time="2026-10-03 03:24:10Z" end-time="2026-10-03 03:24:11Z" duration="0.041724" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1583" name="PracticeIdleCancelsPendingThrow" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.PracticeIdleCancelsPendingThrow" methodname="PracticeIdleCancelsPendingThrow" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="1763133858" result="Passed" start-time="2026-10-03 03:24:11Z" end-time="2026-10-03 03:24:11Z" duration="0.033045" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1576" name="ReaderDisableCancelsPendingLunge" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.ReaderDisableCancelsPendingLunge" methodname="ReaderDisableCancelsPendingLunge" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="2144260267" result="Passed" start-time="2026-10-03 03:24:11Z" end-time="2026-10-03 03:24:11Z" duration="0.031605" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1575" name="ReaderDisableCancelsPendingThrow" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.ReaderDisableCancelsPendingThrow" methodname="ReaderDisableCancelsPendingThrow" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="1402845792" result="Passed" start-time="2026-10-03 03:24:11Z" end-time="2026-10-03 03:24:11Z" duration="0.028743" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1579" name="ReaderReenableRequiresAFreshInteractPress" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.ReaderReenableRequiresAFreshInteractPress" methodname="ReaderReenableRequiresAFreshInteractPress" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="382505346" result="Passed" start-time="2026-10-03 03:24:11Z" end-time="2026-10-03 03:24:11Z" duration="0.030285" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1577" name="ReaderReenableRequiresReleaseBeforeASecondThrowWindup" fullname="TumbangPreso.PlayTests.InputProducerCancellationTests.ReaderReenableRequiresReleaseBeforeASecondThrowWindup" methodname="ReaderReenableRequiresReleaseBeforeASecondThrowWindup" classname="TumbangPreso.PlayTests.InputProducerCancellationTests" runstate="Runnable" seed="1897254680" result="Passed" start-time="2026-10-03 03:24:11Z" end-time="2026-10-03 03:24:11Z" duration="0.031653" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

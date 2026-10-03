@@ -1,0 +1,32 @@
+{
+  "baseline": "f9552d58a4d59ecdc87a15a2203d82893e3aa5a3",
+  "evidence": "source-bound managed invocation with supplied engine/hardware seams",
+  "runs": {
+    "original": {
+      "exit": 2,
+      "cases": [
+        "focus_pending_lunge=FAIL releaseCalls=1",
+        "reader_disable_pending_lunge=FAIL releaseCalls=1",
+        "ordinary_release=PASS",
+        "committed_contact_preserved=PASS"
+      ],
+      "sources": {
+        "Assets/TumbangPreso/Runtime/CombatVerbs.cs": "16d02231bd398f8163fbe1cf1db041e345f7653d4ce335825b454592b7123fa0",
+        "Assets/TumbangPreso/Runtime/PlayerInputReader.cs": "125d81d0ef569537adf5a76719e47806f0f4ab8c27699bce907a06b7fd5f7579"
+      }
+    },
+    "candidate": {
+      "exit": 0,
+      "cases": [
+        "focus_pending_lunge=PASS releaseCalls=0",
+        "reader_disable_pending_lunge=PASS releaseCalls=0",
+        "ordinary_release=PASS",
+        "committed_contact_preserved=PASS"
+      ],
+      "sources": {
+        "Assets/TumbangPreso/Runtime/CombatVerbs.cs": "1425d0ff734e61751619200adaf0bc66ba4d85c0414fd55db198a6fd337cc180",
+        "Assets/TumbangPreso/Runtime/PlayerInputReader.cs": "489572bfb0f65342dcfda789e24c79f076bdfd172bf70c7c8237fa99ac43476c"
+      }
+    }
+  }
+}
