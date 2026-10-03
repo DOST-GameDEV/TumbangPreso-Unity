@@ -1,5 +1,27 @@
 # Active Rework Checkpoint
 
+## Resume first: owner opening-pan check continues
+
+Checked current near-wall geometry a6536c7c8 is published with rawa2e12b10 proof.
+Original2fail/4controls -> oldcandidate6/6 plus currentrefined6/6;3408 inputs matched,
+fixture/meta frozen and both guards terminal/restored/free. Radius.2/stand-off.3
+unchanged; floor.8 -> .01 keeps the eye before near walls and look vector nonzero.
+This is physics geometry acceptance, not full-court visual direction.
+
+Current motion preference original4c2dae922 / candidate464de0b91 on
+competition-pc-opening-preference-current1004 remains outsideASTRA. Three native
+EditMode sampler cases await validation: OFF preserves saved view across beats,
+ON establishes/restores. Old63f coroutine branch is retained, superseded.
+Root owns presentation production; laptop owns tests and its device lane.
+Full-court plan Hero/custom realGraphics5120MiB+1024 reserve/360s/640x360 captures
+has NOT launched because ~4.6GiB free is below6GiB admission. Do not lower the
+guard or count scoped physics/old30 as seeing fullpan. New8.6s shots/3..GO and protocol143 are preserved. Classic/Hero/reduced/OFF/
+leave restoration/current143 player/peers remain open. PCUnity remains Claude's.
+NEXT: test motion preference and actual full-court capture on changed headroom;
+continue source fixes while preserving authored camera/hero direction. No agents.
+Older checkpoint sections below are historical. Goal stays active.
+
+
 ## Opening refinement and latest countdown integrated
 
 Cloud camera unit a7f6faa8e implements the owner's direct refinement request:

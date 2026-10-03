@@ -17,6 +17,15 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### ARRIVAL-CAMERA-CLEARANCE-1004: near walls cannot push the eye beyond collision
+
+- [x] Replace unsafe0.8m minimum with nonzero0.01m floor. Original two failures/
+  four controls, candidate6/6; root inspected3400 maps with one source delta,
+  immutable fixture and restored/free guards. Existing radius/stand-off retained.
+  [Evidence](reports/laptop-validation-2026-10-04/arrival-camera-clearance/README.md).
+  Actual full-pan framing and current player/peers remain open.
+
+
 ### READING-FONT-1003: temporary Nunito Bold replacement
 
 - [x] Replace active Lydian Regular theme/fallback/regeneration references with

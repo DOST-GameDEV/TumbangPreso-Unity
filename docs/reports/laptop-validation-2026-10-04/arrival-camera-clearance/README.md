@@ -29,3 +29,22 @@ Exit0, terminal/restored/free. No original repetition, repair or retry. Candidat
 raw XML, map and receipt are preserved exactly. This is still geometry acceptance,
 not close-up framing or full-court images; the small nonzero eye distance needs
 actual rendered inspection. Camera movement OFF remains separate and unqualified.
+
+The later owner revision introduced8.6s shots/ink and3/2/1/GO under protocol143.
+The old whole-file candidate was held; current candidate
+ a6536c7c84403cf23db96f2b2b3467b7eff5616f preserves that revised presentation
+and ports only the clearance hunk. One justified current-source geometry check
+passes6/6 with the same a439/c343 fixture/meta. All3408 inputs remain unchanged,
+exit0 and guard terminal/restored/free. Current raw XML/map/receipt are retained.
+No original repetition was needed: its unsafe literal method was unchanged.
+This still does not validate the revised pan's images, framing or motion policy.
+
+Root independently inspected both XML cohorts, terminal/restored/free receipts
+and3400-input maps. Only MatchArrivalPresentation changed; immutable fixture/meta
+and candidate bytes matched their Git refs with native line-ending conversion.
+Current refined candidate a6536c7c8 passed6/6 without repair; root inspected
+current3408-input map and terminal/restored/free receipt in addition to old proof. Its nonzero.01m floor replaces the
+unsafe.8m minimum while retaining the existing collision radius and stand-off.
+This geometry fix is integrated into ASTRAReworks; subsequent loading-curtain
+and return-view changes outside ClearEye are preserved, not covered by the geometry test. Full-pan near framing and the
+separate Cinematic camera motion preference candidate remain unqualified.

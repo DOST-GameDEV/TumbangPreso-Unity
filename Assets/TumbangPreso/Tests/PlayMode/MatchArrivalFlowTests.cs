@@ -305,7 +305,7 @@ namespace TumbangPreso.PlayTests
             }
             gate.CountdownTick -= ticks.Add;
             Assert.IsTrue(GameServices.Round.RoundActive, "No key was pressed: the queued match must start itself.");
-            CollectionAssert.AreEqual(new[] { "5", "4", "3", "2", "1", "START!" }, ticks);
+            CollectionAssert.AreEqual(new[] { "3", "2", "1", "GO!" }, ticks);
             Assert.IsFalse(PresentationClock.Held);
             Assert.IsFalse(HubLoading.Visible);
         }
