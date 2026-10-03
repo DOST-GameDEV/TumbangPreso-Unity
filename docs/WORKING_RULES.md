@@ -47,6 +47,9 @@ and [earlier full rules](archive/CLAUDE_full_2026-09-24.md). New owner instructi
 - Practice world reset retires active enabled bot input before teleporting.
   Disabled brains retained on human seats do not own that seat's input; leave
   its held controls intact. Preserve the existing shared human hero-key branch.
+- Active practice bots release producer-owned raw controls before entering idle,
+  so resume waits for a fresh command. Preserve disabled-brain custody and the
+  shared human hero-key branch.
 - A predicted punch owns its press until observed release, including after a
   host refusal refunds cooldown. A cooldown-blocked initial edge is unspent;
   observe release before interruption or role returns skip the punch path.
