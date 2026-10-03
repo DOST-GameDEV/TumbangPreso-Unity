@@ -56,6 +56,9 @@ and [earlier full rules](archive/CLAUDE_full_2026-09-24.md). New owner instructi
 - Touch buttons remain held until their last captured pointer/button releases.
   Global release and customization invalidate old ownership before presses or
   lifts; explicit release and disable clear it without changing visuals.
+- The touch stick keeps its first pointer/button owner until release, including
+  while centered. Disable or explicit SetValue zero retires ownership; preserve
+  nonzero overrides, coordinates, radius, clamping and knob behavior.
 - Preserve GenericPadBridge,MenuNav,controller mappings and the input backend.
   `InputCatalogue.For` is exhaustive: no discard arm; keep CS8509 as an error.
   Add pad/thumb mapping with a Verb and run the existing InputAssetSync regeneration.

@@ -45,8 +45,8 @@ namespace TumbangPreso.Visual
             // THE RELEASE. Play resumes after `AmRealTail` real seconds, `AmihanStorm.CutsceneTail` story seconds after it.
             AmReleaseAt = 4.55f, AmFinishAt = 5.30f;
 
-        /// <summary>Real seconds from the release to the hand-back (5.6 - 4.55).</summary>
-        public const float AmRealTail = 1.05f;
+        /// <summary>Real seconds from the release to the hand-back (5.9 - 4.55; v9 holds her finish longer).</summary>
+        public const float AmRealTail = 1.35f;
         // THE HANG: from 0.10 to 0.62 real seconds after the release, eased over 0.06 at each end, the clock at 18 per cent.
         private const float AmHangFrom = .10f, AmHangTo = .62f, AmHangEdge = .06f, AmHangSpeed = .18f;
 
@@ -62,7 +62,8 @@ namespace TumbangPreso.Visual
         private const float AmBirdScale = 1.7f, AmSwoopRadius = 4.0f;
 
         // ------------------------------------------------------------------ pieces
-        private const int AmStrokeSamples = 10;
+        // v9 (owner: "this shit looks like lighting"): ten points round a curl drew zigzags; smooth now.
+        private const int AmStrokeSamples = 28;
         private readonly Vector3[] _amStrokePoints = new Vector3[AmStrokeSamples];
         // THE FLOAT'S BREEZE (owner on v7.8: *"shes js floating randomly"*, *"add more vfx here make it look like wind is
         // gathering"*): curled streaks drifting in to her from all round, wisps spiralling up her, rings of air under her feet.
@@ -122,7 +123,8 @@ namespace TumbangPreso.Visual
         };
 
         private static readonly Color AmSheetBody = new Color(0.78f, 0.96f, 0.72f, 1f);
-        private static readonly Color AmInk = new Color(0.14f, 0.34f, 0.22f, .6f);
+        // v9: a dark ink line under a white core read as a lightning bolt; a soft pale teal edge reads as air.
+        private static readonly Color AmInk = new Color(0.50f, 0.80f, 0.68f, .3f);
         private static readonly Color AmEye = new Color(1.0f, 0.93f, 0.62f, 1f);
         private static readonly Color[] AmLeafColours =
         {
@@ -220,9 +222,9 @@ namespace TumbangPreso.Visual
         private void AmStrokePair(string name, Color core, AnimationCurve taper, out LineRenderer bright, out LineRenderer ink)
         {
             ink = Line(name + "Ink", AmStrokeSamples, .1f, AmInk);
-            ink.widthCurve = taper; ink.sortingOrder = 0; ink.enabled = false;
-            bright = Line(name, AmStrokeSamples, .06f, core);
-            bright.widthCurve = taper; bright.sortingOrder = 1; bright.enabled = false;
+            ink.widthCurve = taper; ink.sortingOrder = 0; ink.enabled = false; ink.numCornerVertices = 4;
+            bright = Line(name, AmStrokeSamples, .06f, new Color(core.r, core.g, core.b, .85f));
+            bright.widthCurve = taper; bright.sortingOrder = 1; bright.enabled = false; bright.numCornerVertices = 4;
         }
 
         private Transform AmHost(string name)
@@ -273,7 +275,7 @@ namespace TumbangPreso.Visual
 
         private VoxelFace.Look AmLook(float t)
         {
-            if (t >= AmFinishAt - .04f) return VoxelFace.Look.Wink;
+            if (t >= AmFinishAt - .04f) return VoxelFace.Look.Teehee;
             if (t >= AmReleaseAt - .02f) return VoxelFace.Look.Grin;
             if (t >= AmWindAt - .05f) return VoxelFace.Look.Squint;
             if (t >= 2.84f) return VoxelFace.Look.Grin;
@@ -390,7 +392,7 @@ namespace TumbangPreso.Visual
             for (int i = 0; i < AmStrokeSamples; i++)
                 _amStrokePoints[i] = AmPath(from, bend, to, side, curl, Mathf.Lerp(tail, head, i / (AmStrokeSamples - 1f)));
             core.SetPositions(_amStrokePoints); ink.SetPositions(_amStrokePoints);
-            core.widthMultiplier = width; ink.widthMultiplier = width * 1.9f;
+            core.widthMultiplier = width; ink.widthMultiplier = width * 2.4f;
             core.enabled = true; ink.enabled = true;
         }
 
@@ -435,11 +437,13 @@ namespace TumbangPreso.Visual
                 line.widthMultiplier = .045f * gather * light;
                 line.enabled = true;
             }
-            // Under her feet: rings of air pulsing outward, the cushion she floats on.
+            // Under her feet: rings of air pulsing outward, the cushion she floats on, for as long as she floats (v10: the whole
+            // ult, owner: "she should stay floating too during her ult").
+            float cushion = Mathf.Clamp01(lift / .2f);
             for (int i = 0; i < _amFloatRing.Length; i++)
             {
                 var line = _amFloatRing[i];
-                if (gather <= .01f) { line.enabled = false; continue; }
+                if (cushion <= .01f) { line.enabled = false; continue; }
                 float pulse = calm ? .5f : Mathf.Repeat((t - AmFloatFrom) * 1.6f + i * .5f, 1f);
                 float r = Mathf.Lerp(.3f, .85f, pulse);
                 for (int k = 0; k < AmFloatRingSamples; k++)
@@ -448,7 +452,7 @@ namespace TumbangPreso.Visual
                     _amFloatRingPoints[k] = new Vector3(Mathf.Sin(ang) * r, _amCourt + lift - .03f - .1f * pulse, Mathf.Cos(ang) * r);
                 }
                 line.SetPositions(_amFloatRingPoints);
-                line.widthMultiplier = .05f * gather * light * Mathf.Sin(pulse * Mathf.PI);
+                line.widthMultiplier = .05f * cushion * light * Mathf.Sin(pulse * Mathf.PI);
                 line.enabled = true;
             }
         }
@@ -549,7 +553,7 @@ namespace TumbangPreso.Visual
         // v7 r5: near-white against the pale sky it faded to a haze; her teal-green, with the white kept for its edges.
         private static readonly Color AmBirdFill = new Color(0.42f, 0.86f, 0.72f, .62f);
         private static readonly Color AmBirdBody = new Color(0.50f, 0.90f, 0.78f, .8f);
-        private static readonly Color AmBeak = new Color(0.98f, 0.88f, 0.55f, 1f);
+        private static readonly Color AmBeak = new Color(0.96f, 1.0f, 0.88f, .85f);
         private const int AmEdgeSamples = 17, AmTrailSamples = 12;
         private readonly int[] _amWing = new int[2];
         private readonly Mesh[] _amWingMesh = new Mesh[2];
@@ -579,7 +583,9 @@ namespace TumbangPreso.Visual
                 _amWing[w] = Add("AmihanBirdWing" + w, mesh, AmBirdFill, .55f, plain: true);
             }
             _amBody = Add("AmihanBirdBody", AmBodyMesh(), AmBirdBody, .55f, plain: true);
-            _amBeakPiece = AddSolid("AmihanBirdBeak", VfxShapes.Prism(4, 1f, .05f), AmBeak);
+            // v9 (owner on the close-up: "tf is that haha"): a solid orange pyramid read as a paper plane; a small round beak
+            // glowing like the rest of its spirit body.
+            _amBeakPiece = Add("AmihanBirdBeak", VfxShapes.Prism(8, 1f, 0f), AmBeak, .7f, plain: true);
 
             var edge = new AnimationCurve(new Keyframe(0f, .6f), new Keyframe(.5f, 1f), new Keyframe(1f, .15f));
             var trail = new AnimationCurve(new Keyframe(0f, 1f), new Keyframe(.6f, .55f), new Keyframe(1f, 0f));
@@ -602,7 +608,7 @@ namespace TumbangPreso.Visual
             }
             for (int c = 0; c < _amCrest.Length; c++)
             {
-                _amCrest[c] = Line("AmihanBirdCrest" + c, AmStrokeSamples, .09f, Color.white);
+                _amCrest[c] = Line("AmihanBirdCrest" + c, AmStrokeSamples, .09f, AmSheetBody);
                 _amCrest[c].widthCurve = trail; _amCrest[c].sortingOrder = 4; _amCrest[c].numCapVertices = 0;
             }
             _amEyeL = AddGlow("AmihanBirdEyeL", AmEye, falloff: 2.2f, core: 1.0f);
@@ -750,8 +756,8 @@ namespace TumbangPreso.Visual
                 }
             }
             Place(_amBody, at, Vector3.one * scale, turn, body);
-            Place(_amBeakPiece, at + turn * (new Vector3(0f, .3f, 1.5f) * scale), new Vector3(.08f, .26f, .08f) * scale,
-                turn * Quaternion.Euler(100f, 0f, 0f), body > .05f ? 1f : 0f);
+            Place(_amBeakPiece, at + turn * (new Vector3(0f, .3f, 1.42f) * scale), new Vector3(.07f, .2f, .07f) * scale,
+                turn * Quaternion.Euler(95f, 0f, 0f), body);
 
             // THE TAIL STREAMERS and THE WING-TIP TRAILS follow the path it really flew, a few hundredths of a second at a time.
             for (int k = 0; k < _amTail.Length; k++)
@@ -921,14 +927,14 @@ namespace TumbangPreso.Visual
         {
             if (index == AmShotBird && t >= AmEyesFrom && t < AmEyesTo)
             {
-                // THE CLIMAX (as Paete's tree's eyes and Phaister's doll's): a cut in close on the bird's face as it swoops down
-                // her left. v7 r4: a lens riding with the bird went black for a frame; now a steady low lens at her left front
-                // that turns to follow its head across the sky, tight, its eyes blazing.
-                AmBirdPose(t, _reducedEffects, out var at, out var turn, out _, out _);
-                var head = at + turn * (new Vector3(0f, .4f, 1.25f) * AmBirdScale);
-                eye = new Vector3(-2.4f, .9f + _amCourt, 3.4f);
-                look = head + Vector3.down * .15f;
-                fov = 34f;
+                // THE CLIMAX: it sweeps across the sky right over her. v9 (owner on the tight face shot: "tf is that haha refione
+                // that"): at that range its simple head fell apart. Now a low lens beside her at her left front, her in the
+                // lower frame reaching up and the whole bird crossing above her, its eyes blazing: the silhouette is the moment.
+                AmBirdPose(t, _reducedEffects, out var at, out _, out _, out _);
+                var her = new Vector3(0f, 1.2f + _amCourt, 0f);
+                eye = new Vector3(-1.5f, .55f + _amCourt, 2.4f);
+                look = Vector3.Lerp(her, at, .62f);
+                fov = 62f;
                 return;
             }
             // v8 (owner: "close up of her"): the finish is the authored close-up row, her cute pose, not a computed wide.
