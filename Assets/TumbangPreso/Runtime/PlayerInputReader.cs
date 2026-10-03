@@ -44,7 +44,7 @@ namespace TumbangPreso
     {
         private readonly HashSet<Verb> _menuButtons=new HashSet<Verb>();
         private int _menuClosedFrame=-1;
-        private bool _loadingInputHeld;
+        private bool _loadingInputHeld, _chatInputHeld;
         private readonly Core.ToggleControl _sprintToggle = new();
         private readonly Core.ToggleControl _restoreToggle = new();
         private Carrier _carrier;
@@ -215,8 +215,10 @@ namespace TumbangPreso
             if (_motor == null) return;
 
             bool loading = UI.Hub.HubLoading.Visible;
-            if (_loadingInputHeld && !loading) DiscardMenuButtonsUntilRelease();
+            bool typing = UI.LobbyChat.AnyTyping;
+            if ((_loadingInputHeld && !loading) || (_chatInputHeld && !typing)) DiscardMenuButtonsUntilRelease();
             _loadingInputHeld = loading;
+            _chatInputHeld = typing;
 
             var intent = _motor.Intent;
             int roundNumber = GameServices.Match != null ? GameServices.Match.RoundNumber : 0;
@@ -241,8 +243,9 @@ namespace TumbangPreso
             // ⚠️ AND CHAT IS THE THIRD INPUT CONTEXT, per `CLAUDE.md` § 4. A player who is typing
             // has no verbs and a player who has verbs is not typing, so the two sets can never
             // both fire, which is the same narrowing `Rebinding.SpectatorContext` records.
-            if (UI.LobbyChat.AnyTyping || loading)
+            if (typing || loading)
             {
+                CancelPendingInput();
                 ResetToggleControls();
                 InputLayer.TouchInput.ConsumeRecoveryPress();
                 intent.Clear();
