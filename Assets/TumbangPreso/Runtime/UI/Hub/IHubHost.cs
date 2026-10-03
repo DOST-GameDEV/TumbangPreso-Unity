@@ -72,6 +72,12 @@ namespace TumbangPreso.UI.Hub
         bool MatchInProgress { get; }
 
         HubSeat[] Seats();
+        /// <summary>Choose a vacant/bot slot through the existing host-authoritative seat route.</summary>
+        bool CanTakeSeat(int seat);
+        void TakeSeat(int seat);
+        Net.LobbySeatSwapOffer SeatSwapOffer { get; }
+        string SeatSwapResult { get; }
+        void RespondToSeatSwap(long requestId, bool accept);
 
         void StartGame();
         void ToggleReady();

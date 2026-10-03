@@ -330,6 +330,10 @@ namespace TumbangPreso.UI.Hub
                 Home();
                 Push<HubMapVote>();
             }
+            var seatOffer = Host.SeatSwapOffer;
+            if (seatOffer != null && seatOffer.Incoming && !QueuedRoom && Host.InRoom && !Host.MatchInProgress
+                && !(Top is HubSeatSwapPopup))
+                Push<HubSeatSwapPopup>(popup => popup.Offer = seatOffer);
             Top?.Tick();
         }
 

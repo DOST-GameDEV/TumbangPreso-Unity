@@ -294,6 +294,7 @@ namespace TumbangPreso.Net
             if (!ReferenceEquals(_nm, nm)) CancelSnapshotRefreshWork();
             _nm = nm;
             ResetQueueArrival();
+            ResetSeatSwapTransport();
             RegisterHandlers();
 
             // ⚠️ A CLIENT ASKS FOR THE WORLD ONCE ITS ARENA EXISTS, rather than trusting the
@@ -335,6 +336,9 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("PeerDeparture", OnPeerDepartureMsg);
             cm.RegisterNamedMessageHandler("Seating", OnSeatingMsg);
             cm.RegisterNamedMessageHandler("ReqSeat", OnReqSeatMsg);
+            cm.RegisterNamedMessageHandler("SeatSwapOffer", OnSeatSwapOfferMsg);
+            cm.RegisterNamedMessageHandler("SeatSwapReply", OnSeatSwapReplyMsg);
+            cm.RegisterNamedMessageHandler("SeatSwapEnd", OnSeatSwapEndMsg);
             cm.RegisterNamedMessageHandler("DeclareReady", OnDeclareReadyMsg);
             cm.RegisterNamedMessageHandler("ReadyTally", OnReadyTallyMsg);
             cm.RegisterNamedMessageHandler("BeginCountdown", OnBeginCountdownMsg);
@@ -1073,7 +1077,10 @@ namespace TumbangPreso.Net
                 SendSeating(peerId);
                 return;
             }
+            if (seat >= 0 && lobby.PeerInSeat(seat) != null)
+            { HostRequestSeatSwap(peerId, seat); return; }
             if (!lobby.TryTakeSeat(peerId, seat)) return;
+            TickSeatSwaps();
 
             // ⚠️ MOVING SEATS CLEARS YOUR READY. The arrangement you agreed to is not the one
             // on screen any more, and a tick left standing would count towards a gate that has
