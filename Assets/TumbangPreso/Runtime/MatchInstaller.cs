@@ -1769,7 +1769,7 @@ namespace TumbangPreso
             int size = people.Count;
             if (size <= 0) return 0;
 
-            int rotation = humanPick >= 0 ? humanPick % AiPersonSpread.Length : 0;
+            int rotation = humanPick >= 0 ? humanPick % size : 0;
             int start = (AiPersonSpread[slot % AiPersonSpread.Length] + rotation) % size;
 
             for (int step = 0; step < size; step++)
