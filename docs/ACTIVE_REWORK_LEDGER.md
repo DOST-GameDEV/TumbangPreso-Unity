@@ -49,10 +49,14 @@ TryBeginRead checks20/24/25, fixture/meta unchanged. Both refs were sent to lapt
 NEXT: inspect one original and one candidate18-case native result on the same
 frozen fixture, then integrate only after causal failures and controls reconcile.
 Neither unqualified branch is merged into ASTRA. No PC native job is authorized.
-Laptop reports original18 LAUNCHED atqa-a/Logs/client-movement-original18,
-3428 frozen inputs, CPU2048+1024MiB/300seconds/profilevalidation-qa-a-be075dcdfa07.
-Follow this run to actual XML/terminal/restored/free receipts; session ID not yet
-reported. Do not infer termination from elapsed time or start another original.
+Laptop reports original11310 CLOSED9 causal failures/9 controls/end19:57:11UTC
+and candidate70323 CLOSED18/18/end20:20:57UTC. Both3428 post hashes unchanged,
+terminal/restored/free, no repair/retry. Outputsqa-a/Logs/client-movement-original18
+andclient-movement-candidate18, CPU2048+1024MiB/300/profilevalidation-qa-a-be075dcdfa07.
+Root independently matched reported runtimea1fbce62 and fixture054387a8/meta6c69cc75
+to exact candidate Git/Windows newline variants. Raw evidence is being curated;
+NEXT: inspect its published XML/maps/receipts, then normally mergefb33. No more
+packet run. This qualifies framing, not effects, peers or full gameplay.
 Its14 preparation stopped on three retired slide-test inventory entries and was
 checkpointed; those sources/metas were preserved outside compilation. Resume14
 and current144 build after the one original/candidate pair, not another audit.
