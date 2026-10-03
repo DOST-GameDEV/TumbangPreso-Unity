@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="42" result="Passed" total="42" passed="42" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 04:21:18Z" end-time="2026-10-03 04:21:20Z" duration="1.4866643">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1066" result="Passed" start-time="2026-10-03 04:21:18Z" end-time="2026-10-03 04:21:20Z" duration="1.486664" total="42" passed="42" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2296" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-laptop-native1003/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1066" result="Passed" start-time="2026-10-03 04:21:18Z" end-time="2026-10-03 04:21:20Z" duration="1.477244" total="42" passed="42" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="7500" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2297" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1066" result="Passed" start-time="2026-10-03 04:21:18Z" end-time="2026-10-03 04:21:20Z" duration="1.476530" total="42" passed="42" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2298" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1066" result="Passed" start-time="2026-10-03 04:21:18Z" end-time="2026-10-03 04:21:20Z" duration="1.476013" total="42" passed="42" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1014" name="AccountProofOwnershipTests" fullname="TumbangPreso.Tests.AccountProofOwnershipTests" classname="TumbangPreso.Tests.AccountProofOwnershipTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.075777" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1015" name="CachedPrimaryProofIsHiddenFromGuest" fullname="TumbangPreso.Tests.AccountProofOwnershipTests.CachedPrimaryProofIsHiddenFromGuest" methodname="CachedPrimaryProofIsHiddenFromGuest" classname="TumbangPreso.Tests.AccountProofOwnershipTests" runstate="Runnable" seed="745226741" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.031358" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1016" name="CachedPrimaryProofIsHiddenFromReplacementOwner" fullname="TumbangPreso.Tests.AccountProofOwnershipTests.CachedPrimaryProofIsHiddenFromReplacementOwner" methodname="CachedPrimaryProofIsHiddenFromReplacementOwner" classname="TumbangPreso.Tests.AccountProofOwnershipTests" runstate="Runnable" seed="859115395" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.000598" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1023" name="CurrentOwnerAttestStillPublishesProof" fullname="TumbangPreso.Tests.AccountProofOwnershipTests.CurrentOwnerAttestStillPublishesProof" methodname="CurrentOwnerAttestStillPublishesProof" classname="TumbangPreso.Tests.AccountProofOwnershipTests" runstate="Runnable" seed="619666926" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.016866" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1017" name="CurrentOwnerCachedProofStillReusesWithoutDispatch" fullname="TumbangPreso.Tests.AccountProofOwnershipTests.CurrentOwnerCachedProofStillReusesWithoutDispatch" methodname="CurrentOwnerCachedProofStillReusesWithoutDispatch" classname="TumbangPreso.Tests.AccountProofOwnershipTests" runstate="Runnable" seed="1063506225" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.003004" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1019" name="DelayedAttestCannotPublishToGuest" fullname="TumbangPreso.Tests.AccountProofOwnershipTests.DelayedAttestCannotPublishToGuest" methodname="DelayedAttestCannotPublishToGuest" classname="TumbangPreso.Tests.AccountProofOwnershipTests" runstate="Runnable" seed="47949792" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.001529" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1020" name="DelayedAttestCannotPublishToReplacementOwner" fullname="TumbangPreso.Tests.AccountProofOwnershipTests.DelayedAttestCannotPublishToReplacementOwner" methodname="DelayedAttestCannotPublishToReplacementOwner" classname="TumbangPreso.Tests.AccountProofOwnershipTests" runstate="Runnable" seed="1610534883" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.001488" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1022" name="EarlierFailureCannotClearNewerAcceptedProof" fullname="TumbangPreso.Tests.AccountProofOwnershipTests.EarlierFailureCannotClearNewerAcceptedProof" methodname="EarlierFailureCannotClearNewerAcceptedProof" classname="TumbangPreso.Tests.AccountProofOwnershipTests" runstate="Runnable" seed="1364425983" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.002101" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1021" name="GuestRoundTripRetiresThePendingAttest" fullname="TumbangPreso.Tests.AccountProofOwnershipTests.GuestRoundTripRetiresThePendingAttest" methodname="GuestRoundTripRetiresThePendingAttest" classname="TumbangPreso.Tests.AccountProofOwnershipTests" runstate="Runnable" seed="1749020922" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.001734" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1018" name="ReplacementOwnerRequestsItsOwnProof" fullname="TumbangPreso.Tests.AccountProofOwnershipTests.ReplacementOwnerRequestsItsOwnProof" methodname="ReplacementOwnerRequestsItsOwnProof" classname="TumbangPreso.Tests.AccountProofOwnershipTests" runstate="Runnable" seed="675272324" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.001675" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1024" name="AccountRenameOwnershipTests" fullname="TumbangPreso.Tests.AccountRenameOwnershipTests" classname="TumbangPreso.Tests.AccountRenameOwnershipTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.074126" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1030" name="CurrentOwnerRenameStillApplies" fullname="TumbangPreso.Tests.AccountRenameOwnershipTests.CurrentOwnerRenameStillApplies" methodname="CurrentOwnerRenameStillApplies" classname="TumbangPreso.Tests.AccountRenameOwnershipTests" runstate="Runnable" seed="509621421" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.029908" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1025" name="DelayedRenameCannotChangeGuestIdentity" fullname="TumbangPreso.Tests.AccountRenameOwnershipTests.DelayedRenameCannotChangeGuestIdentity" methodname="DelayedRenameCannotChangeGuestIdentity" classname="TumbangPreso.Tests.AccountRenameOwnershipTests" runstate="Runnable" seed="1099076045" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.003308" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1026" name="DelayedRenameCannotChangeReplacementAccount" fullname="TumbangPreso.Tests.AccountRenameOwnershipTests.DelayedRenameCannotChangeReplacementAccount" methodname="DelayedRenameCannotChangeReplacementAccount" classname="TumbangPreso.Tests.AccountRenameOwnershipTests" runstate="Runnable" seed="155117535" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.001721" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1028" name="EarlierRenameCannotOverwriteLaterAcceptedRename" fullname="TumbangPreso.Tests.AccountRenameOwnershipTests.EarlierRenameCannotOverwriteLaterAcceptedRename" methodname="EarlierRenameCannotOverwriteLaterAcceptedRename" classname="TumbangPreso.Tests.AccountRenameOwnershipTests" runstate="Runnable" seed="1854642321" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.016995" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1027" name="GuestRoundTripRetiresThePrimaryPendingRename" fullname="TumbangPreso.Tests.AccountRenameOwnershipTests.GuestRoundTripRetiresThePrimaryPendingRename" methodname="GuestRoundTripRetiresThePrimaryPendingRename" classname="TumbangPreso.Tests.AccountRenameOwnershipTests" runstate="Runnable" seed="79291472" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.002635" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1031" name="OfflineRenameStillAppliesWithoutDispatch" fullname="TumbangPreso.Tests.AccountRenameOwnershipTests.OfflineRenameStillAppliesWithoutDispatch" methodname="OfflineRenameStillAppliesWithoutDispatch" classname="TumbangPreso.Tests.AccountRenameOwnershipTests" runstate="Runnable" seed="1965864075" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.014274" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1029" name="SignedOutOwnerDoesNotApplyDelayedRemoteRename" fullname="TumbangPreso.Tests.AccountRenameOwnershipTests.SignedOutOwnerDoesNotApplyDelayedRemoteRename" methodname="SignedOutOwnerDoesNotApplyDelayedRemoteRename" classname="TumbangPreso.Tests.AccountRenameOwnershipTests" runstate="Runnable" seed="1614806088" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.001803" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1190" name="CareerGuestIsolationTests" fullname="TumbangPreso.Tests.CareerGuestIsolationTests" classname="TumbangPreso.Tests.CareerGuestIsolationTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.116703" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1198" name="ARealAccountReplacementStillRetiresThePreviousCareer" fullname="TumbangPreso.Tests.CareerGuestIsolationTests.ARealAccountReplacementStillRetiresThePreviousCareer" methodname="ARealAccountReplacementStillRetiresThePreviousCareer" classname="TumbangPreso.Tests.CareerGuestIsolationTests" runstate="Runnable" seed="1519013618" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.047896" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Career] the cached career belongs to another account; starting a fresh one.
+]]></output>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1193" name="EnteringATemporaryGuestPreservesThePrimaryCareerFile" fullname="TumbangPreso.Tests.CareerGuestIsolationTests.EnteringATemporaryGuestPreservesThePrimaryCareerFile" classname="TumbangPreso.Tests.CareerGuestIsolationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.030311" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1191" name="EnteringATemporaryGuestPreservesThePrimaryCareerFile(False)" fullname="TumbangPreso.Tests.CareerGuestIsolationTests.EnteringATemporaryGuestPreservesThePrimaryCareerFile(False)" methodname="EnteringATemporaryGuestPreservesThePrimaryCareerFile" classname="TumbangPreso.Tests.CareerGuestIsolationTests" runstate="Runnable" seed="1990822139" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.005644" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1192" name="EnteringATemporaryGuestPreservesThePrimaryCareerFile(True)" fullname="TumbangPreso.Tests.CareerGuestIsolationTests.EnteringATemporaryGuestPreservesThePrimaryCareerFile(True)" methodname="EnteringATemporaryGuestPreservesThePrimaryCareerFile" classname="TumbangPreso.Tests.CareerGuestIsolationTests" runstate="Runnable" seed="135401524" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.022986" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1197" name="GuestMatchWritesLeaveThePrimaryCareerFileUntouched" fullname="TumbangPreso.Tests.CareerGuestIsolationTests.GuestMatchWritesLeaveThePrimaryCareerFileUntouched" methodname="GuestMatchWritesLeaveThePrimaryCareerFileUntouched" classname="TumbangPreso.Tests.CareerGuestIsolationTests" runstate="Runnable" seed="656346594" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.014075" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1196" name="TakingBackTheDeviceRestoresPrimaryHistoryAndPendingUploads" fullname="TumbangPreso.Tests.CareerGuestIsolationTests.TakingBackTheDeviceRestoresPrimaryHistoryAndPendingUploads" classname="TumbangPreso.Tests.CareerGuestIsolationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.022553" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1194" name="TakingBackTheDeviceRestoresPrimaryHistoryAndPendingUploads(False)" fullname="TumbangPreso.Tests.CareerGuestIsolationTests.TakingBackTheDeviceRestoresPrimaryHistoryAndPendingUploads(False)" methodname="TakingBackTheDeviceRestoresPrimaryHistoryAndPendingUploads" classname="TumbangPreso.Tests.CareerGuestIsolationTests" runstate="Runnable" seed="1724522558" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.008402" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1195" name="TakingBackTheDeviceRestoresPrimaryHistoryAndPendingUploads(True)" fullname="TumbangPreso.Tests.CareerGuestIsolationTests.TakingBackTheDeviceRestoresPrimaryHistoryAndPendingUploads(True)" methodname="TakingBackTheDeviceRestoresPrimaryHistoryAndPendingUploads" classname="TumbangPreso.Tests.CareerGuestIsolationTests" runstate="Runnable" seed="1458941803" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.013096" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="1876" name="NetArrivalVerificationLifetimeTests" fullname="TumbangPreso.Tests.NetArrivalVerificationLifetimeTests" classname="TumbangPreso.Tests.NetArrivalVerificationLifetimeTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:20Z" duration="0.902988" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1880" name="ADepartedPeerDoesNotPopulateTheCurrentVerificationCache" fullname="TumbangPreso.Tests.NetArrivalVerificationLifetimeTests.ADepartedPeerDoesNotPopulateTheCurrentVerificationCache" methodname="ADepartedPeerDoesNotPopulateTheCurrentVerificationCache" classname="TumbangPreso.Tests.NetArrivalVerificationLifetimeTests" runstate="Runnable" seed="1369267937" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.149897" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1878" name="ANewHostSessionDoesNotInheritThePreviousLocalPeerReply" fullname="TumbangPreso.Tests.NetArrivalVerificationLifetimeTests.ANewHostSessionDoesNotInheritThePreviousLocalPeerReply" methodname="ANewHostSessionDoesNotInheritThePreviousLocalPeerReply" classname="TumbangPreso.Tests.NetArrivalVerificationLifetimeTests" runstate="Runnable" seed="1608256202" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.149906" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1879" name="ARelayReplyCannotUpgradeAReplacementLanArrival" fullname="TumbangPreso.Tests.NetArrivalVerificationLifetimeTests.ARelayReplyCannotUpgradeAReplacementLanArrival" methodname="ARelayReplyCannotUpgradeAReplacementLanArrival" classname="TumbangPreso.Tests.NetArrivalVerificationLifetimeTests" runstate="Runnable" seed="1802707437" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.149960" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1881" name="NormalReidentificationKeepsTheApprovedConnectionVerification" fullname="TumbangPreso.Tests.NetArrivalVerificationLifetimeTests.NormalReidentificationKeepsTheApprovedConnectionVerification" methodname="NormalReidentificationKeepsTheApprovedConnectionVerification" classname="TumbangPreso.Tests.NetArrivalVerificationLifetimeTests" runstate="Runnable" seed="1836512727" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:19Z" duration="0.149918" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1877" name="ReusedPeerAndAccountIdsDoNotAcceptThePreviousApprovalReply" fullname="TumbangPreso.Tests.NetArrivalVerificationLifetimeTests.ReusedPeerAndAccountIdsDoNotAcceptThePreviousApprovalReply" methodname="ReusedPeerAndAccountIdsDoNotAcceptThePreviousApprovalReply" classname="TumbangPreso.Tests.NetArrivalVerificationLifetimeTests" runstate="Runnable" seed="1192706697" result="Passed" start-time="2026-10-03 04:21:19Z" end-time="2026-10-03 04:21:20Z" duration="0.149951" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1882" name="TheCurrentArrivalStillAppliesAndReusesItsCompletedProofAnswer" fullname="TumbangPreso.Tests.NetArrivalVerificationLifetimeTests.TheCurrentArrivalStillAppliesAndReusesItsCompletedProofAnswer" methodname="TheCurrentArrivalStillAppliesAndReusesItsCompletedProofAnswer" classname="TumbangPreso.Tests.NetArrivalVerificationLifetimeTests" runstate="Runnable" seed="90771441" result="Passed" start-time="2026-10-03 04:21:20Z" end-time="2026-10-03 04:21:20Z" duration="0.149907" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2186" name="SocialGuestIsolationTests" fullname="TumbangPreso.Tests.SocialGuestIsolationTests" classname="TumbangPreso.Tests.SocialGuestIsolationTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-03 04:21:20Z" end-time="2026-10-03 04:21:20Z" duration="0.072256" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2194" name="ARealAccountReplacementStillRetiresThePreviousFriendsAndBlocks" fullname="TumbangPreso.Tests.SocialGuestIsolationTests.ARealAccountReplacementStillRetiresThePreviousFriendsAndBlocks" methodname="ARealAccountReplacementStillRetiresThePreviousFriendsAndBlocks" classname="TumbangPreso.Tests.SocialGuestIsolationTests" runstate="Runnable" seed="929078198" result="Passed" start-time="2026-10-03 04:21:20Z" end-time="2026-10-03 04:21:20Z" duration="0.015719" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2192" name="AStoreCreatedDuringGuestPlayRestoresOnlyTheExactPrimaryOwner" fullname="TumbangPreso.Tests.SocialGuestIsolationTests.AStoreCreatedDuringGuestPlayRestoresOnlyTheExactPrimaryOwner" classname="TumbangPreso.Tests.SocialGuestIsolationTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 04:21:20Z" end-time="2026-10-03 04:21:20Z" duration="0.042189" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2189" name="AStoreCreatedDuringGuestPlayRestoresOnlyTheExactPrimaryOwner(&quot;matching&quot;)" fullname="TumbangPreso.Tests.SocialGuestIsolationTests.AStoreCreatedDuringGuestPlayRestoresOnlyTheExactPrimaryOwner(&quot;matching&quot;)" methodname="AStoreCreatedDuringGuestPlayRestoresOnlyTheExactPrimaryOwner" classname="TumbangPreso.Tests.SocialGuestIsolationTests" runstate="Runnable" seed="1545630665" result="Passed" start-time="2026-10-03 04:21:20Z" end-time="2026-10-03 04:21:20Z" duration="0.005486" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2190" name="AStoreCreatedDuringGuestPlayRestoresOnlyTheExactPrimaryOwner(&quot;foreign&quot;)" fullname="TumbangPreso.Tests.SocialGuestIsolationTests.AStoreCreatedDuringGuestPlayRestoresOnlyTheExactPrimaryOwner(&quot;foreign&quot;)" methodname="AStoreCreatedDuringGuestPlayRestoresOnlyTheExactPrimaryOwner" classname="TumbangPreso.Tests.SocialGuestIsolationTests" runstate="Runnable" seed="2026239422" result="Passed" start-time="2026-10-03 04:21:20Z" end-time="2026-10-03 04:21:20Z" duration="0.019330" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2191" name="AStoreCreatedDuringGuestPlayRestoresOnlyTheExactPrimaryOwner(&quot;unclaimed&quot;)" fullname="TumbangPreso.Tests.SocialGuestIsolationTests.AStoreCreatedDuringGuestPlayRestoresOnlyTheExactPrimaryOwner(&quot;unclaimed&quot;)" methodname="AStoreCreatedDuringGuestPlayRestoresOnlyTheExactPrimaryOwner" classname="TumbangPreso.Tests.SocialGuestIsolationTests" runstate="Runnable" seed="881588435" result="Passed" start-time="2026-10-03 04:21:20Z" end-time="2026-10-03 04:21:20Z" duration="0.015655" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2187" name="GuestEntryHidesThePrimaryFriendsAndBlocksWithoutRewritingTheirFiles" fullname="TumbangPreso.Tests.SocialGuestIsolationTests.GuestEntryHidesThePrimaryFriendsAndBlocksWithoutRewritingTheirFiles" methodname="GuestEntryHidesThePrimaryFriendsAndBlocksWithoutRewritingTheirFiles" classname="TumbangPreso.Tests.SocialGuestIsolationTests" runstate="Runnable" seed="638340654" result="Passed" start-time="2026-10-03 04:21:20Z" end-time="2026-10-03 04:21:20Z" duration="0.003775" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2188" name="ReturningFromRepeatedGuestsRestoresPrimaryFriendsAndBlocks" fullname="TumbangPreso.Tests.SocialGuestIsolationTests.ReturningFromRepeatedGuestsRestoresPrimaryFriendsAndBlocks" methodname="ReturningFromRepeatedGuestsRestoresPrimaryFriendsAndBlocks" classname="TumbangPreso.Tests.SocialGuestIsolationTests" runstate="Runnable" seed="936007548" result="Passed" start-time="2026-10-03 04:21:20Z" end-time="2026-10-03 04:21:20Z" duration="0.004105" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2193" name="TheFirstListReadRestoresPrimaryAfterAMissedGuestReturnNotification" fullname="TumbangPreso.Tests.SocialGuestIsolationTests.TheFirstListReadRestoresPrimaryAfterAMissedGuestReturnNotification" methodname="TheFirstListReadRestoresPrimaryAfterAMissedGuestReturnNotification" classname="TumbangPreso.Tests.SocialGuestIsolationTests" runstate="Runnable" seed="434056518" result="Passed" start-time="2026-10-03 04:21:20Z" end-time="2026-10-03 04:21:20Z" duration="0.003964" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2273" name="WalletGuestIsolationTests" fullname="TumbangPreso.Tests.WalletGuestIsolationTests" classname="TumbangPreso.Tests.WalletGuestIsolationTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-03 04:21:20Z" end-time="2026-10-03 04:21:20Z" duration="0.114800" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2282" name="ARealAccountReplacementStillRetiresThePreviousWallet" fullname="TumbangPreso.Tests.WalletGuestIsolationTests.ARealAccountReplacementStillRetiresThePreviousWallet" methodname="ARealAccountReplacementStillRetiresThePreviousWallet" classname="TumbangPreso.Tests.WalletGuestIsolationTests" runstate="Runnable" seed="1952049804" result="Passed" start-time="2026-10-03 04:21:20Z" end-time="2026-10-03 04:21:20Z" duration="0.036579" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="2280" name="AWalletCreatedDuringGuestPlayRestoresOnlyTheMatchingPrimary" fullname="TumbangPreso.Tests.WalletGuestIsolationTests.AWalletCreatedDuringGuestPlayRestoresOnlyTheMatchingPrimary" classname="TumbangPreso.Tests.WalletGuestIsolationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 04:21:20Z" end-time="2026-10-03 04:21:20Z" duration="0.040938" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2278" name="AWalletCreatedDuringGuestPlayRestoresOnlyTheMatchingPrimary(False)" fullname="TumbangPreso.Tests.WalletGuestIsolationTests.AWalletCreatedDuringGuestPlayRestoresOnlyTheMatchingPrimary(False)" methodname="AWalletCreatedDuringGuestPlayRestoresOnlyTheMatchingPrimary" classname="TumbangPreso.Tests.WalletGuestIsolationTests" runstate="Runnable" seed="2019827492" result="Passed" start-time="2026-10-03 04:21:20Z" end-time="2026-10-03 04:21:20Z" duration="0.004934" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2279" name="AWalletCreatedDuringGuestPlayRestoresOnlyTheMatchingPrimary(True)" fullname="TumbangPreso.Tests.WalletGuestIsolationTests.AWalletCreatedDuringGuestPlayRestoresOnlyTheMatchingPrimary(True)" methodname="AWalletCreatedDuringGuestPlayRestoresOnlyTheMatchingPrimary" classname="TumbangPreso.Tests.WalletGuestIsolationTests" runstate="Runnable" seed="1986233223" result="Passed" start-time="2026-10-03 04:21:20Z" end-time="2026-10-03 04:21:20Z" duration="0.034781" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2276" name="GuestEntryHidesThePrimaryWalletAndPreservesItsFiles" fullname="TumbangPreso.Tests.WalletGuestIsolationTests.GuestEntryHidesThePrimaryWalletAndPreservesItsFiles" classname="TumbangPreso.Tests.WalletGuestIsolationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 04:21:20Z" end-time="2026-10-03 04:21:20Z" duration="0.026961" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2274" name="GuestEntryHidesThePrimaryWalletAndPreservesItsFiles(False)" fullname="TumbangPreso.Tests.WalletGuestIsolationTests.GuestEntryHidesThePrimaryWalletAndPreservesItsFiles(False)" methodname="GuestEntryHidesThePrimaryWalletAndPreservesItsFiles" classname="TumbangPreso.Tests.WalletGuestIsolationTests" runstate="Runnable" seed="980995961" result="Passed" start-time="2026-10-03 04:21:20Z" end-time="2026-10-03 04:21:20Z" duration="0.003862" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2275" name="GuestEntryHidesThePrimaryWalletAndPreservesItsFiles(True)" fullname="TumbangPreso.Tests.WalletGuestIsolationTests.GuestEntryHidesThePrimaryWalletAndPreservesItsFiles(True)" methodname="GuestEntryHidesThePrimaryWalletAndPreservesItsFiles" classname="TumbangPreso.Tests.WalletGuestIsolationTests" runstate="Runnable" seed="1512683942" result="Passed" start-time="2026-10-03 04:21:20Z" end-time="2026-10-03 04:21:20Z" duration="0.021643" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2281" name="ReenablingAfterTheGuestHandsBackReconcilesThePrimaryWallet" fullname="TumbangPreso.Tests.WalletGuestIsolationTests.ReenablingAfterTheGuestHandsBackReconcilesThePrimaryWallet" methodname="ReenablingAfterTheGuestHandsBackReconcilesThePrimaryWallet" classname="TumbangPreso.Tests.WalletGuestIsolationTests" runstate="Runnable" seed="1982946921" result="Passed" start-time="2026-10-03 04:21:20Z" end-time="2026-10-03 04:21:20Z" duration="0.004504" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2277" name="ReturningFromRepeatedGuestsRestoresThePrimaryWalletAndNotifiesSubscribers" fullname="TumbangPreso.Tests.WalletGuestIsolationTests.ReturningFromRepeatedGuestsRestoresThePrimaryWalletAndNotifiesSubscribers" methodname="ReturningFromRepeatedGuestsRestoresThePrimaryWalletAndNotifiesSubscribers" classname="TumbangPreso.Tests.WalletGuestIsolationTests" runstate="Runnable" seed="422900129" result="Passed" start-time="2026-10-03 04:21:20Z" end-time="2026-10-03 04:21:20Z" duration="0.003515" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

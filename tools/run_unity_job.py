@@ -154,7 +154,7 @@ def identity_guard_version(project):
             and type(declarations[0].value) is int and declarations[0].value == 1)
 
 
-def make_claim(project, kind, memory_mb, reserve_mb, profile, ports, args, allow_parallel=False):
+def make_claim(project, kind, memory_mb, reserve_mb, profile, ports, args, allow_parallel=False, max_parallel_jobs=2, allow_gpu_parallel=False):
     project = Path(project).resolve()
     if not (project / "ProjectSettings/ProjectSettings.asset").is_file() or not (project / "tools/run_unity_guarded.py").is_file():
         raise ValueError("Target must be an existing Unity project with its guarded runner")
@@ -189,6 +189,7 @@ def make_claim(project, kind, memory_mb, reserve_mb, profile, ports, args, allow
             "project": canonical(project), "library": canonical(project / "Library"),
             "profile": profile.strip().casefold(), "prefHive": playerprefs_guard.editor_key(company, product).casefold(),
             "ports": sorted(set(ports)), "worker": worker, "allowParallel": allow_parallel,
+            "maxParallelJobs": max_parallel_jobs, "allowGpuParallel": allow_gpu_parallel,
             "companyName": company, "productName": product}
 
 
@@ -209,14 +210,18 @@ def refusal(claim, active, available_mb, foreign):
             return "Project, Library, profile or preference hive is already leased"
         if set(claim["ports"]) & set(lease["ports"]):
             return "A declared port is already leased"
+    if active and (claim["kind"] == "build" or any(lease["kind"] == "build" for lease in active)):
+        return "Build jobs require the exclusive pool"
     if active and (claim["kind"] != "cpu" or any(lease["kind"] != "cpu" for lease in active)):
-        return "GPU/build jobs require the exclusive pool"
+        if not claim.get("allowGpuParallel") or any(not lease.get("allowGpuParallel") for lease in active):
+            return "GPU jobs require the exclusive pool unless every worker opts in"
     if active and (not claim["worker"] or any(not lease["worker"] for lease in active)):
         return "CPU overlap requires isolated validation workers on both jobs"
     if active and (not claim.get("allowParallel") or any(not lease.get("allowParallel") for lease in active)):
         return "CPU overlap requires explicit --allow-parallel on both jobs"
-    if len(active) >= 2:
-        return "Two CPU jobs are already active"
+    limit = min([claim.get("maxParallelJobs", 2)] + [lease.get("maxParallelJobs", 2) for lease in active])
+    if len(active) >= limit:
+        return "Two CPU jobs are already active" if limit == 2 else f"The declared {limit}-job parallel pool is full"
     reserved = sum(lease["memoryMb"] for lease in active)
     if available_mb < claim["reserveMb"] + claim["memoryMb"] + reserved:
         return "Available physical memory is below the reserve plus job budgets"
@@ -349,7 +354,9 @@ def run(options):
     if "-runtests" in [arg.casefold() for arg in args] and "-quit" in [arg.casefold() for arg in args]:
         raise ValueError("Test jobs must finish their XML; do not pass -quit")
     claim = make_claim(project, options.kind, options.memory_mb, options.reserve_mb, options.profile, ports, args,
-                       getattr(options, "allow_parallel", False))
+                       getattr(options, "allow_parallel", False),
+                       getattr(options, "max_parallel_jobs", 2),
+                       getattr(options, "allow_gpu_parallel", False))
     args = output_arguments(project, output, args)
     output.mkdir(parents=True, exist_ok=True)
     receipt = {"job": claim, "requestedUtc": now(), "status": "waiting", "exitCode": None}
@@ -426,11 +433,15 @@ def main():
     parser.add_argument("--profile", required=True)
     parser.add_argument("--output", required=True)
     parser.add_argument("--ports", default="", help="Comma-separated exclusive TCP/UDP port claims")
-    parser.add_argument("--allow-parallel", action="store_true", help="Opt in to at most two isolated CPU workers; default is serialized")
+    parser.add_argument("--allow-parallel", action="store_true", help="Opt in to isolated worker overlap; default is serialized")
+    parser.add_argument("--max-parallel-jobs", type=int, default=2, help="Shared opt-in worker limit; admission still reserves every memory budget")
+    parser.add_argument("--allow-gpu-parallel", action="store_true", help="Allow isolated graphics test workers to overlap; shipping builds remain exclusive")
     parser.add_argument("unity_args", nargs=argparse.REMAINDER)
     options = parser.parse_args()
     if options.wait_seconds < 0 or options.timeout_seconds <= 0:
         parser.error("Wait must be nonnegative and timeout positive")
+    if not 1 <= options.max_parallel_jobs <= 8:
+        parser.error("Parallel worker limit must be1..8")
     try:
         return run(options)
     except (OSError, ValueError, KeyError) as error:

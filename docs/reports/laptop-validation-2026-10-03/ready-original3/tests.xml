@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 05:27:31Z" end-time="2026-10-03 05:27:31Z" duration="0.0748103">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-b-be075dcdfa07" fullname="TumpWorker-qa-b-be075dcdfa07" runstate="Runnable" testcasecount="1078" result="Failed" site="Child" start-time="2026-10-03 05:27:31Z" end-time="2026-10-03 05:27:31Z" duration="0.074810" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2313" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-b/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1078" result="Failed" site="Child" start-time="2026-10-03 05:27:31Z" end-time="2026-10-03 05:27:31Z" duration="0.062385" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="17796" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2314" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1078" result="Failed" site="Child" start-time="2026-10-03 05:27:31Z" end-time="2026-10-03 05:27:31Z" duration="0.056106" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2315" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1078" result="Failed" site="Child" start-time="2026-10-03 05:27:31Z" end-time="2026-10-03 05:27:31Z" duration="0.049708" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1956" name="ReadyCountdownAbandonTests" fullname="TumbangPreso.Tests.ReadyCountdownAbandonTests" classname="TumbangPreso.Tests.ReadyCountdownAbandonTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-03 05:27:31Z" end-time="2026-10-03 05:27:31Z" duration="0.037332" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1959" name="AcceptedHostLossRetiresTheCountdownBeforeAnotherCueOrRoundStart" fullname="TumbangPreso.Tests.ReadyCountdownAbandonTests.AcceptedHostLossRetiresTheCountdownBeforeAnotherCueOrRoundStart" classname="TumbangPreso.Tests.ReadyCountdownAbandonTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-03 05:27:31Z" end-time="2026-10-03 05:27:31Z" duration="0.027455" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1957" name="AcceptedHostLossRetiresTheCountdownBeforeAnotherCueOrRoundStart(1)" fullname="TumbangPreso.Tests.ReadyCountdownAbandonTests.AcceptedHostLossRetiresTheCountdownBeforeAnotherCueOrRoundStart(1)" methodname="AcceptedHostLossRetiresTheCountdownBeforeAnotherCueOrRoundStart" classname="TumbangPreso.Tests.ReadyCountdownAbandonTests" runstate="Runnable" seed="1554447860" result="Failed" start-time="2026-10-03 05:27:31Z" end-time="2026-10-03 05:27:31Z" duration="0.021763" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The revoked countdown emitted the runner's new-match start event.
+  Expected: 0
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReadyCountdownAbandonTests.AcceptedHostLossRetiresTheCountdownBeforeAnotherCueOrRoundStart (System.Int32 completedYields) [0x00057] in C:\Users\Matthew\dev\tump-workers1003\qa-b\Assets\TumbangPreso\Tests\ReadyCountdownAbandonTests.cs:60
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Abandon] HostLost: ABANDONED at round 0 of 0; this peer may no longer resolve anything
+]]></output>
+              </test-case>
+              <test-case id="1958" name="AcceptedHostLossRetiresTheCountdownBeforeAnotherCueOrRoundStart(4)" fullname="TumbangPreso.Tests.ReadyCountdownAbandonTests.AcceptedHostLossRetiresTheCountdownBeforeAnotherCueOrRoundStart(4)" methodname="AcceptedHostLossRetiresTheCountdownBeforeAnotherCueOrRoundStart" classname="TumbangPreso.Tests.ReadyCountdownAbandonTests" runstate="Runnable" seed="21485067" result="Failed" start-time="2026-10-03 05:27:31Z" end-time="2026-10-03 05:27:31Z" duration="0.001096" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The revoked countdown emitted the runner's new-match start event.
+  Expected: 0
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.ReadyCountdownAbandonTests.AcceptedHostLossRetiresTheCountdownBeforeAnotherCueOrRoundStart (System.Int32 completedYields) [0x00057] in C:\Users\Matthew\dev\tump-workers1003\qa-b\Assets\TumbangPreso\Tests\ReadyCountdownAbandonTests.cs:60
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Abandon] HostLost: ABANDONED at round 0 of 0; this peer may no longer resolve anything
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-case id="1960" name="AnUninterruptedCountdownStillPresentsEveryCueAndStartsOnce" fullname="TumbangPreso.Tests.ReadyCountdownAbandonTests.AnUninterruptedCountdownStillPresentsEveryCueAndStartsOnce" methodname="AnUninterruptedCountdownStillPresentsEveryCueAndStartsOnce" classname="TumbangPreso.Tests.ReadyCountdownAbandonTests" runstate="Runnable" seed="2147152091" result="Passed" start-time="2026-10-03 05:27:31Z" end-time="2026-10-03 05:27:31Z" duration="0.003421" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-b-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
