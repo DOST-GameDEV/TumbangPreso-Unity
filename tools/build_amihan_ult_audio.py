@@ -1,4 +1,4 @@
-"""AIRBURST v3's four sounds: original, deterministic, numpy only. Writes ONLY these four files.
+"""AIRBURST's two sounds and FEATHERFALL's three: original, deterministic, numpy only. Writes ONLY these files.
 
 Owner, 2026-10-03, on the feel-pass films: "throoughly revamp her cutscene ... as well as the vfx sfx an of her ult".
 Every hero's skill sounds were deleted on 2026-09-29 (`AudioCues.IsSkillSfx`); these four are the first released from that
@@ -195,9 +195,44 @@ def release():
     return finish("sfx_amihan_storm_release", crack + sub + away + lane + snap + cotton, s, .8)
 
 
+# ------------------------------------------------------------------ FEATHERFALL (owner, 2026-10-03: "u can give it sfx already")
+
+def updraft_cast():
+    """THE TAKE-OFF: the court's air thumped down under her, then a rush sweeping UP past her as she rises (0.45 s),
+    a light flutter at the top. Air pushing her up, not a jet."""
+    s = 1.0
+    t = times(s)
+    n = len(t)
+    push = thump(t, .0, 70, .12) * 1.6 + svf(white(n, 17001), 400, .9, "low") * env_ar(t, .005, .08, .02) * 2.4
+    rise = band(white(n, 17002), sweep(t, 300, 2400, .5, 1.3), 1.1) * env_ar(t, .03, .38, .25) * 5.0
+    sheen = band(white(n, 17003), sweep(t, 2600, 5200, .5), 1.6) * env_ar(np.maximum(0, t - .12), .05, .25, .2) * (t >= .12) * 1.2
+    flutter = band(white(n, 17004), 1300 + 400 * np.sin(2 * np.pi * 14 * t), 2.0) * window(t, .35, .8, .05, .2) * .9
+    return finish("sfx_cast_amihan_updraft", push + rise + sheen + flutter, s, .6)
+
+
+def updraft_gust():
+    """ONE GUST of the updraft pressing into her soles (`AmihanHoverRing.GustPeriod`): a soft low puff of air rising
+    under her, with a breathy top. Quiet: it repeats about once a second while she flies."""
+    s = .55
+    t = times(s)
+    n = len(t)
+    puff = svf(white(n, 17101), sweep(t, 220, 900, .25), .9, "low") * env_ar(t, .06, .14, .25) * 2.4
+    breath = band(white(n, 17102), sweep(t, 900, 1700, .3), 1.2) * env_ar(t, .08, .1, .2) * 1.1
+    return finish("sfx_amihan_updraft_gust", puff + breath, s, .45)
+
+
+def updraft_settle():
+    """THE LANDING: the air under her letting go, a falling sigh, and her light step on the court."""
+    s = .5
+    t = times(s)
+    n = len(t)
+    sigh = band(white(n, 17201), sweep(t, 1600, 300, .35), 1.1) * env_ar(t, .02, .22, .15) * 3.0
+    step = tap(t, .05, 17202, 1.0) + thump(t, .05, 80, .06) * .6
+    return finish("sfx_amihan_updraft_settle", sigh + step, s, .5)
+
 if __name__ == "__main__":
     # v3.2: the press and the gather have no moment any more (the cutscene shows the windup; play resumes on the hit).
-    rows = [theme(), release()]
+    rows = [theme(), release(), updraft_cast(), updraft_gust(), updraft_settle()]
     report = {
         "provenance": "Original deterministic synthesis (numpy only); no external samples, voices or paid API.",
         "listening": "Not yet heard by the owner in the game mix. Peak and RMS are measurements, not approval.",
@@ -205,4 +240,4 @@ if __name__ == "__main__":
     }
     out = ROOT / "docs/reports/amihan-presentation-2026-10-02/ult-audio.json"
     out.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
-    print(f"Authored {len(rows)} Airburst cues; nothing else touched.")
+    print(f"Authored {len(rows)} Airburst and Featherfall cues; nothing else touched.")

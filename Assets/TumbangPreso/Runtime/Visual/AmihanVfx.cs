@@ -432,6 +432,9 @@ namespace TumbangPreso.Visual
                 float alpha = after < 0 ? WindVfx.Ease(0, .12f, since) : 1 - WindVfx.Ease(0, .3f, after);
                 _gust[i].Set(.6f * jet * alpha, phase * 1.5f, 1, 0, after > 0 ? .3f + after * 2 : .2f);
                 if (after >= 0 && after < .6f) push = Mathf.Max(push, Mathf.Exp(-after * 6) * (1 - Mathf.Exp(-after * 60)));
+                // The gust's sound as it breaks under her (every peer hears its own presentation; never relayed).
+                if (flying && !_descending && after >= 0 && after < dt && _age > GustRise)
+                    using (NetCue.SuppressRelay()) NetCue.PlayVaried("sfx_amihan_updraft_gust", _body.transform.position, .92f, 1.08f, .6f);
             }
             Push = (calm ? .5f : 1) * push * _strength * _fade * high;
 
