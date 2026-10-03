@@ -20,9 +20,16 @@ and paid services are outside this authorization.
 
 ## Work split
 
-Both machines autonomously work on separate meaningful source tasks. The PC has
-Unity available again because Amihan filming is finished. The laptop keeps its
-existing gameplay worker and testing/integration tasks. Existing PC implementation
+Both machines autonomously work on separate meaningful source tasks. Latest
+October 3 owner directive: Claude is doing Amihan changes on the PC again. The
+existing laptop chat owns the PC's pending native tests, builds and player checks
+until the owner releases the PC slot. PC engineering continues source fixes and
+publication without starting PC Unity tests, builds or players. Laptop preserves
+its existing gameplay unit and reservations, then incorporates the test queue;
+return concrete failures and implementation feedback to the PC. This expressly
+authorizes coordination with that existing laptop chat, not unrelated chats or
+new agents. Joint network checks still require actual PC availability first.
+The laptop keeps its existing gameplay worker and testing/integration tasks. Existing PC implementation
 and value-review workers help within this chat; avoid idle workers and usage spent
 on speculative audits or overengineering. Do not create additional agents merely
 because a slot is available. The owner turned Fast off; do not claim a speed

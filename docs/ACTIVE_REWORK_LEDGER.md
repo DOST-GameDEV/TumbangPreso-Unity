@@ -1,5 +1,26 @@
 # Active Rework Checkpoint
 
+## Latest owner steering: laptop owns testing while Claude edits Amihan
+
+October3 owner explicitly asks the existing laptop chat to do all PC testing
+again. Message sent to Fix gameplay interruption recovery, thread
+01a0ffab-10a0-70d0-9270-07e171c1613b on its connected laptop host. Current source
+2a50f2532/protocol141 is pushed. Laptop asked to finish/checkpoint its current
+F6/default-seat unit, confirm reservations/jobs and take the full test queue:
+14-case reader/practice/font integration, new1-case PerformanceTimingCaptureTests,
+ONE matching141 Windows build plus exact-player startup/entry/CSV timing checks,
+then coordinated matching LAN/online cases when the PC is actually available.
+Request delivered; acceptance/results are not yet confirmed. Old139 capture and
+134 LAN passes do not qualify141. No paid service or extra-credit authorization.
+
+PC continues source fixes/publication; do not start PC Unity tests/builds/players
+while Claude owns the slot. Preserve laptop gameplay and Claude/private Amihan
+reservations. This new direct owner request authorizes messages to that existing
+laptop chat despite the earlier stale ban. No unrelated chats/new agents.
+NEXT: get one compact laptop acknowledgement/status, then continue a disjoint
+PC source task and use its concrete validation feedback. Do not repeat interrupted
+PC tests or recreate large binary traces.
+
 ## Resume here: October 3, current source and bounded capture
 
 Publication2e4e0615e/protocol141 includes current laptop fixes and compact
