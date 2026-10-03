@@ -1,0 +1,20 @@
+{
+  "original-tests.xml": "4d4eab27a35336da5e7be355034a51af5630eb44b80ab1d497427022393757ba",
+  "original-job-receipt.json": "efd41e58fb3e5b1c517c25f97054db1cda35f241cb00bbe9fe459cfb3a43ee7d",
+  "original-qualified-source.json": "c87871ddd952eeba9696d95281ed06745f90277be0dd2a3a33c189fd867d722d",
+  "original-post-input-audit.json": "75507202be948d2abbb6baec2542e4ae759c8a39f8fcf8baf6d410cb740cb913",
+  "original-prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "original-post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "candidate-tests.xml": "9675b2a9c71ef4d9cac36a44bb6739a4d00089100651dc63698de5781b328509",
+  "candidate-job-receipt.json": "7a70030dc18ca989fa4ec562ffe84fc720476b6bd70e791612f0f42bd7e5653d",
+  "candidate-qualified-source.json": "46449ec122821d260f302a0645902558551742ae77bd24580cd95e15cffaefd1",
+  "candidate-post-input-audit.json": "75507202be948d2abbb6baec2542e4ae759c8a39f8fcf8baf6d410cb740cb913",
+  "candidate-prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "candidate-post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "prelaunch-tooling-refusal.txt": "033799c7e11b4a77830405e1986be1902bf730563294c3f11fe5ca8e1cc9ab7f",
+  "preparation-identity-note.json": "ec30bab28a61abaf34ffd6450051dbf77a2756b120ce1d0a27444b43e4dbd736",
+  "original-MatchRpc.Replay.fixture": "625bb2a7f8544d7f96bceb635d094daec4445224c3546df397c80543e4d01af6",
+  "candidate-MatchRpc.Replay.fixture": "0aaac00981b7b617ad2918a2da4f3c85df6faee7b78c26901fd058891ea658bb",
+  "tested-ReplayShortlistQueueTests.fixture": "ff42b1fcdad73b5678379f7699ff7014ca032b7e10e26ec5de5cf85866c7b657",
+  "tested-ReplayShortlistQueueTests.meta.fixture": "238ecfac9a31f66c3574bc4477930e24c0eb7733b9b7527bac8b35c81a16935f"
+}
