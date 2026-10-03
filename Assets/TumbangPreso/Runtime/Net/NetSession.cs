@@ -565,7 +565,7 @@ namespace TumbangPreso.Net
         // 139: empty network bot seats use shared, unrotated character/kit selection.
         // 140: occupied lobby seats require recipient consent before an atomic swap.
         // 141: owner restores near-original jump launch, gravity and fall-speed cap.
-        public const int ProtocolVersion = 141;
+        public const int ProtocolVersion = 142;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

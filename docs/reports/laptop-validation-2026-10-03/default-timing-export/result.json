@@ -1,0 +1,43 @@
+{
+    "passed": false,
+    "error": "",
+    "stages": [],
+    "frameWindows": [
+        {
+            "mode": "routine",
+            "gpu": "Null Device",
+            "cpu": "13th Gen Intel(R) Core(TM) i5-13420H",
+            "width": 640,
+            "height": 480,
+            "samples": 1,
+            "framesOver33Ms": 0,
+            "resultPolls": 0,
+            "gc0": 0,
+            "gc1": 0,
+            "gc2": 0,
+            "pollEveryFrame": false,
+            "duration": 0.0031653998885303737,
+            "averageFps": 477.0537109375,
+            "medianMs": 2.0961999893188478,
+            "p95Ms": 2.0961999893188478,
+            "p99Ms": 2.0961999893188478,
+            "maxMs": 2.0961999893188478,
+            "realtimeAtStart": 0.3896469175815582,
+            "realtimeAtEnd": 0.3934735953807831,
+            "framesOver50Ms": 0,
+            "framesOver100Ms": 0,
+            "histogramMaxMs": 2.0962,
+            "includesMenus": true,
+            "elapsedMs": 3.1654,
+            "managedBytesBefore": 954208256,
+            "managedBytesAfter": 954212352,
+            "mainThreadAllocatedBytes": 0,
+            "graphicsApi": "Null",
+            "quality": "Balanced",
+            "unityQuality": "Ultra",
+            "targetFrameRate": -1,
+            "vSyncCount": 1,
+            "unfocusedFrames": 1
+        }
+    ]
+}

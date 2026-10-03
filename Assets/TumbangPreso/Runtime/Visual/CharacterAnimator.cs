@@ -516,6 +516,7 @@ namespace TumbangPreso.Visual
 
         private void ReleaseGraph()
         {
+            RestoreArrivalPose(); _arrivalWeight = 0; _arrivalBones = null;
             ClearIntroductionPose();
             ClearTagBody();
             ClearResetRaise();
@@ -552,6 +553,7 @@ namespace TumbangPreso.Visual
 
         private void Update()
         {
+            RestoreArrivalPose();
             RestoreEdgeRecoveryPose();
             RestoreIntroductionPose();
             RestoreTagBody();
@@ -560,6 +562,7 @@ namespace TumbangPreso.Visual
             RestoreThrowBody();
             RestoreLocomotionWeight();
             if (!_graph.IsValid()) return;
+            if (_arrivalWeight > 0) return; // The held arrival owns the neutral base pose.
 
             RestoreChargeOffsets();
             if (_throwCancelTime >= 0)
@@ -996,6 +999,7 @@ namespace TumbangPreso.Visual
 
         private void LateUpdate()
         {
+            RestoreArrivalPose();
             RestoreEdgeRecoveryPose();
             RestoreIntroductionPose();
             RestoreTagBody();
@@ -1003,6 +1007,12 @@ namespace TumbangPreso.Visual
             RestoreLocomotionArms();
             RestoreThrowBody();
             RestoreLocomotionWeight();
+            if (_arrivalWeight > 0)
+            {
+                RestoreChargeOffsets();
+                ApplyArrivalPose();
+                return;
+            }
             try
             {
                 // Remove last frame's offsets even when the graph is paused or a clip
@@ -1037,7 +1047,7 @@ namespace TumbangPreso.Visual
                 _chargeOffsetsApplied=true;_lastThrowPose=pose;
                 ApplyThrowBody(throwing);
             }
-            finally { ApplyLocomotionWeight(); ApplyLocomotionArms(); ApplyResetRaise(); ApplyTagBody(); ApplyIntroductionPose(); ApplyEdgeRecoveryPose(); }
+            finally { ApplyLocomotionWeight(); ApplyLocomotionArms(); ApplyResetRaise(); ApplyTagBody(); ApplyIntroductionPose(); ApplyEdgeRecoveryPose(); ApplyArrivalPose(); }
         }
 
         private void RestoreChargeOffsets()

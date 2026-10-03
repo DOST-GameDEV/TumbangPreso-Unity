@@ -932,7 +932,8 @@ namespace TumbangPreso.PlayTests
                 // ⚠️ The landing cue was this test's other witness, and every hero skill sound is deleted (2026-09-29, the owner:
                 // *"can we delete all skill abilities sfx"*, `AudioCues.IsSkillSfx`). The landing is proved by the body above; the
                 // cue must stay silent until the sounds are reworked.
-                Assert.AreEqual(Audio.AudioCues.SkillSfxOn ? 1 : 0, settles);
+                // 2026-10-03: Featherfall's sounds are reworked (`ReworkedSkillSfx`), so the landing is heard again.
+                Assert.AreEqual(Audio.AudioCues.Audible("sfx_amihan_updraft_settle") ? 1 : 0, settles);
                 Assert.IsTrue(soundedOnGround);
                 Assert.IsNull(actor.GetComponent<AmihanFlightPose>());
                 Assert.IsNull(actor.GetComponentInChildren<AmihanHoverRing>());

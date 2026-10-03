@@ -313,7 +313,7 @@ namespace TumbangPreso.UI
             // ⚠️ NO SECOND `SceneFlow.StartMatch()`: `HostStartMatch` fires `OnMatchStarted`, which
             // this screen answers with the load (`HandleMatchStarted`).
             if (HubQueueWatch.QueueRoom) MatchRpc.Instance?.HostBeginQueueMapVote();
-            else MatchRpc.Instance?.HostStartMatch();
+            else MatchRpc.Instance?.HostBeginCharacterSelection();
         }
 
         public bool MapVoting => MatchRpc.Instance != null && MatchRpc.Instance.QueueMapVoting;

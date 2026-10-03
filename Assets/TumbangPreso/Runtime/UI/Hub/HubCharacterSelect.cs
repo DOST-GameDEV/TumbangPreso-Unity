@@ -347,7 +347,8 @@ namespace TumbangPreso.UI.Hub
                 StackAbilityText();
             if (!Timed) return;
 
-            float left = Mathf.Max(0, _endsAt - Time.unscaledTime);
+            float left = Net.MatchRpc.Instance != null && Net.MatchRpc.Instance.CharacterSelecting
+                ? Net.MatchRpc.Instance.CharacterSelectSecondsLeft : Mathf.Max(0, _endsAt - Time.unscaledTime);
             _clock.text = Mathf.CeilToInt(left).ToString();
             _clock.color = left < 6 ? HubStyle.Persimmon : HubStyle.Honey;
 
@@ -362,7 +363,11 @@ namespace TumbangPreso.UI.Hub
             if (everyone || left <= 0)
             {
                 _started = true;
-                Hub.Host.StartGame();
+                // Completion belongs to this locked selection screen. Repeated START GAME
+                // clicks in the lobby can only open the stage, never skip its lock-in.
+                if (Net.MatchRpc.Instance != null && Net.MatchRpc.Instance.CharacterSelecting)
+                    Net.MatchRpc.Instance.HostCompleteCharacterSelection();
+                else Hub.Host.StartGame();
             }
         }
 
