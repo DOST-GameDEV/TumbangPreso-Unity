@@ -2241,7 +2241,7 @@ namespace TumbangPreso.Net
 
         private void OnSyncFamiliarMsg(ulong senderClientId,FastBufferReader reader)
         {
-            if(NetAuthority.IsHost || !FromHost(senderClientId))return;
+            if(NetAuthority.IsHost || !FromHost(senderClientId) || reader.Length-reader.Position!=25 || !reader.TryBeginRead(25))return;
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out int round);
             reader.ReadValueSafe(out Vector3 position);
@@ -2269,7 +2269,7 @@ namespace TumbangPreso.Net
 
         private void OnImpactMsg(ulong senderClientId,FastBufferReader reader)
         {
-            if(NetAuthority.IsHost || !FromHost(senderClientId))return;
+            if(NetAuthority.IsHost || !FromHost(senderClientId) || reader.Length-reader.Position!=20 || !reader.TryBeginRead(20))return;
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out int epoch);
             reader.ReadValueSafe(out Vector3 impulse);
@@ -2299,7 +2299,7 @@ namespace TumbangPreso.Net
 
         private void OnCarryMsg(ulong senderClientId,FastBufferReader reader)
         {
-            if(NetAuthority.IsHost || !FromHost(senderClientId))return;
+            if(NetAuthority.IsHost || !FromHost(senderClientId) || reader.Length-reader.Position!=24 || !reader.TryBeginRead(24))return;
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out int epoch);
             reader.ReadValueSafe(out Vector3 velocity);

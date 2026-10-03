@@ -17,6 +17,17 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CLIENT-MOVEMENT-FRAME-1004: reject malformed client movement effects
+
+- [x] Preflight exact unread payloads before decoding: Impact20, Carry24 and
+  familiar flight pose25 bytes. Preserve authority/seat/epoch/finite guards and
+  wire/protocol144. Laptop native original9 causal failures/9 controls ->18/18
+  on the unchanged fixture, both3428 inputs unchanged and terminal/restored/free.
+  Root verified tested runtime/fixture/meta hashes against candidate Git bytes.
+  Raw publication and direct XML/map inspection remain pending in the checkpoint.
+- [ ] Actual effect/body movement and current packaged/live-peer qualification.
+  Supplied packet tests establish framing and rejection, not complete gameplay.
+
 ### CREDITS-CODE-1003: eight directions grant5000 Tansan
 
 - [x] Client and authoritative wallet source; keyboard/D-pad/mouse/touch input,
@@ -52,9 +63,17 @@ Nothing was deleted or renumbered.
   releases the clock and returns to first-person view. Native1/1;17 camera
   images retained, hashes inspected. Overlay UI and perceived motion remain
   unqualified. [Evidence](reports/laptop-validation-2026-10-04/fullcourt-hero-arrival/README.md).
-- [ ] Reduced/OFF, Classic, interruption and all-map visual acceptance plus
-  current144 packaged players and matching peers. First pre-pan camera-only
-  obstruction needs phase/overlay evidence before a visible-defect claim.
+- [x] Actual144 Hero route with camera movement OFF preserves the saved
+  pose/rotation/FOV through >10 late-frame observations, reaches GO and releases
+  the clock. Native1/1;17 phase/image pairs verified. Exact mixed-line-ending
+  tested fixture retained and root verified its full normalized code equality.
+  [Evidence](reports/laptop-validation-2026-10-04/fullroute-camera-motion-off/README.md).
+- [x] One actual144 Classic/reduced-motion scene-leave case resumes cleanup;
+  native1/1 with terminal/restored/free guard. Controlled arm tangent import
+  deltas retained. [Evidence](reports/laptop-validation-2026-10-04/classic-reduced-leave/README.md).
+- [ ] All-map composition, full Classic gameplay, actual overlay/motion review
+  and current144 packaged players/matching peers. Phase metadata places the
+  first camera-only obstruction during prewarming; overlay pixels remain unseen.
 
 ### ARRIVAL-CAMERA-CLEARANCE-1004: near walls cannot push the eye beyond collision
 
@@ -1154,6 +1173,13 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   distinct native behavior checks plus actual Linux host/owner/observer pass;
   protocol128. Other Pyro slots and full presentation remain open.
   [Evidence](reports/hero-quality-2026-10-01/empowered-throw/README.md).
+
+- [x] BANK-CEILING-CREDIT-1003: powered safety-ceiling return preserves Zack's
+  remaining wall-bank credit, matching its retained affinity; ordinary throws
+  and extra-bank retirement remain. Baseline2/2 reproduced; candidate9/9 native
+  assertions pass with shutdown resource guard retained, settings restored.
+  Protocol145; packaged/player/peer acceptance remains separate.
+  [Evidence](reports/bank-ceiling-2026-10-03/README.md).
 
 - [x] BANK-SHOT-LOAD-MOTION-1003 source: dedicated0.64s body/owner load of the
   already-held slipper, preserving mechanics/copy/SFX and original37 clips.

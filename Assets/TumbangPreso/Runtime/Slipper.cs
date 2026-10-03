@@ -1800,10 +1800,13 @@ namespace TumbangPreso
             if (Affinity == SlipperAffinity.FireExplosive) TriggerAffinityImpact();
             if (sideBank && powered) _velocity *= .85f;
             if (sideBank) Affinity = ConsumePoweredBank(Affinity);
-            _bankCount++;
+            // A safety-ceiling return does not spend Zack's promised wall bank.
+            // Keep ordinary throws' existing bounded-contact credit rule.
+            bool spendsBank = sideBank || !powered;
+            if (spendsBank) _bankCount++;
             NetCue.PlayVaried("slipper_land", transform.position, 0.88f, 1.08f, 0.85f);
 
-            if (_bankCount == 1 && Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold)
+            if (spendsBank && _bankCount == 1 && Mathf.Abs(PektusSpin) >= Balance.PektusBankSpinThreshold)
             {
                 // ⚠️ RELAYED. `FixedUpdate` is host-gated, so the popup and the style award were
                 // drawn on one screen. See `Visual.MatchFlair`.

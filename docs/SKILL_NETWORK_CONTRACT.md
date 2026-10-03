@@ -1,5 +1,13 @@
 # Skill Networking Contract
 
+## Powered ceiling credit, protocol145
+
+Zack's powered ceiling-only safety-bound return preserves the remaining wall-bank
+credit as well as its affinity. Side/corner contacts still count once; ordinary
+throws keep their existing bank limit. Shared prediction follows the same policy.
+No packet layout changes. Matching rebuilt clients are required.
+[Reproduction and qualification](reports/bank-ceiling-2026-10-03/README.md).
+
 ## Explicit movement, protocol137
 
 Both modes use absolute role walk/run speeds without innate character scaling.

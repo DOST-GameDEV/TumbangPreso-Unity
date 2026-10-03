@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 19:27:14Z" end-time="2026-10-03 19:27:14Z" duration="0.284008">
+  <test-suite type="TestSuite" id="2805" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1467" result="Failed" site="Child" start-time="2026-10-03 19:27:14Z" end-time="2026-10-03 19:27:14Z" duration="0.284008" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2799" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1467" result="Failed" site="Child" start-time="2026-10-03 19:27:14Z" end-time="2026-10-03 19:27:14Z" duration="0.253530" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="146992" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2800" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1467" result="Failed" site="Child" start-time="2026-10-03 19:27:14Z" end-time="2026-10-03 19:27:14Z" duration="0.235930" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2801" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1467" result="Failed" site="Child" start-time="2026-10-03 19:27:14Z" end-time="2026-10-03 19:27:14Z" duration="0.217859" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2766" name="ZackBankShotTests" fullname="TumbangPreso.PlayTests.ZackBankShotTests" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" testcasecount="15" result="Failed" site="Child" start-time="2026-10-03 19:27:14Z" end-time="2026-10-03 19:27:14Z" duration="0.189560" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="2776" name="CeilingDoesNotSpendTheRemainingPoweredWallCredit" fullname="TumbangPreso.PlayTests.ZackBankShotTests.CeilingDoesNotSpendTheRemainingPoweredWallCredit" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-03 19:27:14Z" end-time="2026-10-03 19:27:14Z" duration="0.181458" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2774" name="CeilingDoesNotSpendTheRemainingPoweredWallCredit(False)" fullname="TumbangPreso.PlayTests.ZackBankShotTests.CeilingDoesNotSpendTheRemainingPoweredWallCredit(False)" methodname="CeilingDoesNotSpendTheRemainingPoweredWallCredit" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="466868998" result="Failed" start-time="2026-10-03 19:27:14Z" end-time="2026-10-03 19:27:14Z" duration="0.128626" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  All promised powered wall banks must retain the thrower's can credit after a ceiling contact.
+  Expected: 1
+  But was:  -1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ZackBankShotTests.CeilingDoesNotSpendTheRemainingPoweredWallCredit (System.Boolean overclock) [0x000df] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/PlayMode/ZackBankShotTests.cs:257
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2775" name="CeilingDoesNotSpendTheRemainingPoweredWallCredit(True)" fullname="TumbangPreso.PlayTests.ZackBankShotTests.CeilingDoesNotSpendTheRemainingPoweredWallCredit(True)" methodname="CeilingDoesNotSpendTheRemainingPoweredWallCredit" classname="TumbangPreso.PlayTests.ZackBankShotTests" runstate="Runnable" seed="137848540" result="Failed" start-time="2026-10-03 19:27:14Z" end-time="2026-10-03 19:27:14Z" duration="0.040823" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  All promised powered wall banks must retain the thrower's can credit after a ceiling contact.
+  Expected: 1
+  But was:  -1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.ZackBankShotTests.CeilingDoesNotSpendTheRemainingPoweredWallCredit (System.Boolean overclock) [0x000df] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/PlayMode/ZackBankShotTests.cs:257
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
