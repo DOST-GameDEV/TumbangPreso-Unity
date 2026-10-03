@@ -32,7 +32,7 @@ namespace TumbangPreso.UI
             for (int i = 0; i < StatusChips; i++)
             {
                 var chip = OwnerUiLayout.Rect(_root, "StatusChip" + i);
-                Pin(chip, new Vector2(0, 0), new Vector2(230, 75 + i * 120), new Vector2(420, 110));
+                Pin(chip, new Vector2(0, 0), new Vector2(230, 75 + i * 128), new Vector2(500, 118));
                 var plate = OwnerUiLayout.Rect(chip, "StatusPlate").gameObject.AddComponent<HudCard>();
                 plate.color = HudDraw.Plate; plate.Radius = 22; plate.raycastTarget = false;
                 OwnerUiLayout.Fill(plate.rectTransform);
@@ -43,10 +43,12 @@ namespace TumbangPreso.UI
                 _chipIcon[i].raycastTarget = false; _chipIcon[i].preserveAspect = true;
                 Pin(_chipIcon[i].rectTransform, new Vector2(0, .5f), new Vector2(50, 0), new Vector2(66, 66));
                 _chipName[i] = Ink(chip, "StatusName", "", 30, true); _chipName[i].alignment = TextAnchor.MiddleLeft;
-                Pin(_chipName[i].rectTransform, new Vector2(0, .5f), new Vector2(260, 28), new Vector2(300, 38));
+                Pin(_chipName[i].rectTransform, new Vector2(0, .5f), new Vector2(296, 30), new Vector2(372, 34));
                 _chipTip[i] = Ink(chip, "StatusTooltip", "", 28, false); _chipTip[i].alignment = TextAnchor.MiddleLeft;
-                Pin(_chipTip[i].rectTransform, new Vector2(0, .5f), new Vector2(260, -18), new Vector2(300, 60));
+                Pin(_chipTip[i].rectTransform, new Vector2(0, .5f), new Vector2(296, -23), new Vector2(372, 66));
                 _chipTip[i].horizontalOverflow = HorizontalWrapMode.Wrap;
+                _chipTip[i].alignment = TextAnchor.UpperLeft;
+                _chipTip[i].lineSpacing = .9f;
                 _chip[i] = chip; chip.gameObject.SetActive(false);
             }
         }
@@ -57,9 +59,9 @@ namespace TumbangPreso.UI
             StatusIcons.Live(show ? local : null, _liveStatuses);
             var settings = Settings.SettingsStore.Current;
             float scale = Mathf.Max(Settings.GameSettings.ValidHudScale(settings.HudScale), settings.LargerText ? 1.2f : 1f);
-            int rows = Mathf.Max(1, Mathf.FloorToInt((_root.rect.height - 180 * scale) / (120 * scale)));
+            int rows = Mathf.Max(1, Mathf.FloorToInt((_root.rect.height - 180 * scale) / (128 * scale)));
             int columns = Mathf.Max(1, Mathf.CeilToInt(_liveStatuses.Count / (float)rows));
-            float occupied = 20 + columns * 440 * scale;
+            float occupied = 20 + columns * 520 * scale;
             float centre = columns == 1 ? .5f : Mathf.Clamp01((occupied + _root.rect.width - 20) * .5f / _root.rect.width);
             _statusPromptMaxWidth = columns == 1 ? 1100 : Mathf.Max(240, (_root.rect.width - occupied - 40) / scale);
             if (_promptRoot != null) _promptRoot.anchorMin = _promptRoot.anchorMax = new Vector2(centre, columns == 1 ? .28f : .36f);
@@ -74,8 +76,8 @@ namespace TumbangPreso.UI
                 bool entered = on && !_chip[i].gameObject.activeSelf;
                 if (_chip[i].gameObject.activeSelf != on) _chip[i].gameObject.SetActive(on);
                 if (!on) continue;
-                var target = new Vector2(20 + (210 + order / rows * 440) * scale,
-                    (75 + order % rows * 120) * scale);
+                var target = new Vector2(20 + (250 + order / rows * 520) * scale,
+                    (75 + order % rows * 128) * scale);
                 _chip[i].localScale = Vector3.one * scale;
                 if (entered || Vector2.SqrMagnitude(_chipTarget[i] - target) > .01f)
                 {
