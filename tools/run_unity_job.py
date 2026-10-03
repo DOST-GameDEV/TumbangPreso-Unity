@@ -485,12 +485,18 @@ def run(options):
                 if interrupted:
                     receipt["interruptionReason"] = str(interruption)
                 # Let the guard's finally block restore state after its owned Editor exits.
-                rows = processes()
-                owned = descendants(rows, {child.pid})
-                unity = [row["pid"] for row in rows if row["pid"] in owned and row["name"].casefold() in ("unity.exe", "unity")]
+                inventory_verified = False
+                unity = []
+                try:
+                    rows = processes()
+                    owned = descendants(rows, {child.pid})
+                    unity = [row["pid"] for row in rows if row["pid"] in owned and row["name"].casefold() in ("unity.exe", "unity")]
+                    inventory_verified = True
+                except (OSError, ValueError, subprocess.SubprocessError) as error:
+                    receipt["stopVerificationError"] = str(error)
                 update_lease(POOL, claim["id"], {"unityPids": unity, "awaitingRestoration": True})
                 try:
-                    stopped = stop_owned_editors(child)
+                    stopped = stop_owned_editors(child) if inventory_verified else []
                 except (OSError, ValueError, subprocess.SubprocessError) as error:
                     # Unknown ownership must never become permission to kill.
                     # Keep waiting for restoration and retain the lease if pending.
