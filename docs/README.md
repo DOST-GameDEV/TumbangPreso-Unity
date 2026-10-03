@@ -164,3 +164,5 @@ Local account/lobby resumption qualification: [25 unique native checks](reports/
 Competition work continuity: [persistent coordination directives](COMPETITION_COORDINATION.md).
 
 Replay new-match history isolation: [native boundary evidence](reports/reliability-2026-10-03/replay-match-identity/README.md).
+
+Portable save backup preservation: [native file I/O evidence](reports/reliability-2026-10-03/portable-store-backup/README.md).

@@ -55,7 +55,7 @@ namespace TumbangPreso
         public static bool Write(string path, string contents)
             => Write(path, contents, null);
 
-        /// <summary>Only a usable previous primary replaces the recovery backup.</summary>
+        /// <summary>Only a usable previous primary replaces the recovery backup on Windows.</summary>
         public static bool Write(string path, string contents, Func<string, bool> validPrevious)
             => WriteAtPlatform(path, contents, validPrevious, Application.platform);
 
@@ -81,21 +81,17 @@ namespace TumbangPreso
 
                 if (File.Exists(path))
                 {
-                    string previous = validPrevious != null ? TryRead(path) : null;
-                    bool usablePrevious = validPrevious == null
-                        || (previous != null && SafeValid(validPrevious, previous));
                     if (platform == RuntimePlatform.WindowsEditor
                         || platform == RuntimePlatform.WindowsPlayer)
                     {
+                        string previous = validPrevious != null ? TryRead(path) : null;
+                        bool usablePrevious = validPrevious == null
+                            || (previous != null && SafeValid(validPrevious, previous));
                         File.Replace(temp, path, usablePrevious ? backup : null);
                         return true;
                     }
-                    if (usablePrevious)
-                    {
-                        if (File.Exists(backup)) File.Delete(backup);
-                        File.Move(path, backup);
-                    }
-                    else File.Delete(path);
+                    if (File.Exists(backup)) File.Delete(backup);
+                    File.Move(path, backup);
                 }
 
                 File.Move(temp, path);
