@@ -51,7 +51,10 @@ Nothing was deleted or renumbered.
 - [x] Distinct offline tutorial partners across all current hero picks/seats:
   original9causal failures/2controls, candidate11/11.
   [Evidence](reports/reliability-2026-10-03/tutorial-roster/README.md).
-- [ ] No tutorial AI ultimates; verify tutorial Mirror override separately.
+- [x] Tutorial bots suppress Ultimate input while student/ordinary skills remain:
+  contributor native4/4 includes roster92 combinations and producer controls.
+  [Evidence](reports/feedback-2026-10-03/tutorial-policy/README.md).
+- [ ] Verify tutorial Mirror override separately.
 - [ ] Investigate translucent ultimate-screen composition; match tag-replay clarity.
 - [ ] Make Haunted nearsight radial and dark purple rather than flat black.
 

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 07:20:37Z" end-time="2026-10-03 07:20:38Z" duration="0.3116275">
+  <test-suite type="TestSuite" id="2726" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1405" result="Passed" start-time="2026-10-03 07:20:37Z" end-time="2026-10-03 07:20:38Z" duration="0.311628" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2720" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1405" result="Passed" start-time="2026-10-03 07:20:37Z" end-time="2026-10-03 07:20:38Z" duration="0.288666" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="49724" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2721" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1405" result="Passed" start-time="2026-10-03 07:20:37Z" end-time="2026-10-03 07:20:38Z" duration="0.272260" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2722" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1405" result="Passed" start-time="2026-10-03 07:20:37Z" end-time="2026-10-03 07:20:38Z" duration="0.255345" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2590" name="TutorialBotPolicyTests" fullname="TumbangPreso.PlayTests.TutorialBotPolicyTests" classname="TumbangPreso.PlayTests.TutorialBotPolicyTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-03 07:20:37Z" end-time="2026-10-03 07:20:38Z" duration="0.227451" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2593" name="NormalMatchSelectionAndUltimateInputAreUnchanged" fullname="TumbangPreso.PlayTests.TutorialBotPolicyTests.NormalMatchSelectionAndUltimateInputAreUnchanged" methodname="NormalMatchSelectionAndUltimateInputAreUnchanged" classname="TumbangPreso.PlayTests.TutorialBotPolicyTests" runstate="Runnable" seed="1346659091" result="Passed" start-time="2026-10-03 07:20:37Z" end-time="2026-10-03 07:20:37Z" duration="0.088381" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2592" name="TutorialBotsCannotPressUltimateButRetainOrdinarySkills" fullname="TumbangPreso.PlayTests.TutorialBotPolicyTests.TutorialBotsCannotPressUltimateButRetainOrdinarySkills" methodname="TutorialBotsCannotPressUltimateButRetainOrdinarySkills" classname="TumbangPreso.PlayTests.TutorialBotPolicyTests" runstate="Runnable" seed="266954928" result="Passed" start-time="2026-10-03 07:20:37Z" end-time="2026-10-03 07:20:37Z" duration="0.038649" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2594" name="TutorialStudentUltimateInputIsNotSuppressed" fullname="TumbangPreso.PlayTests.TutorialBotPolicyTests.TutorialStudentUltimateInputIsNotSuppressed" methodname="TutorialStudentUltimateInputIsNotSuppressed" classname="TumbangPreso.PlayTests.TutorialBotPolicyTests" runstate="Runnable" seed="591147146" result="Passed" start-time="2026-10-03 07:20:37Z" end-time="2026-10-03 07:20:38Z" duration="0.040146" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2591" name="TutorialUsesDistinctCharactersForEveryHumanPickAndSeat" fullname="TumbangPreso.PlayTests.TutorialBotPolicyTests.TutorialUsesDistinctCharactersForEveryHumanPickAndSeat" methodname="TutorialUsesDistinctCharactersForEveryHumanPickAndSeat" classname="TumbangPreso.PlayTests.TutorialBotPolicyTests" runstate="Runnable" seed="162020138" result="Passed" start-time="2026-10-03 07:20:38Z" end-time="2026-10-03 07:20:38Z" duration="0.045349" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,5 +1,11 @@
 # Distinct guided-tutorial partners
 
+Integration note: concurrent checked7c6c08e97 supplied a different deterministic
+partner ordering plus bot Ultimate suppression, with92 roster combinations and
+native4/4. Integration adopts that production implementation and retains these
+regression cases. Qualification hashes below describe the earlier root candidate,
+not the later merged source. See the separate tutorial-policy contributor report.
+
 The ordinary bot spread wraps seats0 and3 onto the same pick with the current
 nine-entry hero roster. When a student occupies another seat, their tutorial
 partners can repeat. The guided offline installer now picks the other three
