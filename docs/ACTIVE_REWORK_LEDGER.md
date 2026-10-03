@@ -1,5 +1,29 @@
 # Active Rework Checkpoint
 
+## OWNER PRIORITY: inspect and test the new opening camera pan
+
+Owner asks both primary chats to check the pan pushed within3hours and to keep
+working after questions. Identified4ae2e3076 at22:22Manila: eight-second map
+overview, four player greetings, camera return then5..1START; protocol142.
+Existing30 scoped tests and two repeated small-stage graphics cases are not
+full-court/player/peer visual acceptance. Prior full-route attempts failed.
+
+Laptop has accepted pan priority. PC owns MatchArrivalPresentation production
+and source review; laptop prepares full-court graphics capture, reduced motion,
+camera-motionOFF, cancellation/leave, gameplay/input hold and release, then
+Classic/Hero/custom/queued routes where feasible. No broad.raw capture or
+unchanged30-case repetition. Native graphics requires actual admitted headroom;
+PC Unity remains Claude's. No new/restarted subagents.
+
+Source leads, NOT yet qualified defects: presentation ignores exposed
+CinematicCameraMotion flag; laptop's ClearEye near-wall Physics fixture checks
+whether the0.8m minimum can put the camera beyond a closer obstacle. Laptop owns
+that fixture only; root retains presentation source. No speculative design/
+timing/hero change. Test original collision plus controls before altering clamp.
+Current isolated root pulled33c3602f3 with latest Amihan changes preserved.
+NEXT: inspect laptop near-wall original proof and full-court capture feasibility;
+implement a justified camera fix and test it. Do not stop after status/one pass.
+
 ## Resume first: edge request framing checked and integrated
 
 Edge original3ead4fc27 produced4fail/2controls; candidatec856dfe25 passed6/6.
