@@ -64,7 +64,7 @@ namespace TumbangPreso
                     if (powered) velocity *= .85f;
                     bankAffinity = Slipper.ConsumePoweredBank(bankAffinity);
                 }
-                if (bounded) banks++;
+                if (bounded && (sideBank || !powered)) banks++;
                 var support = next; support.y = Mathf.Max(point.y, next.y);
                 float ground = Slipper.FindGroundY(support, Balance.SlipperRestHeight);
                 path?.Add(next);

@@ -242,6 +242,52 @@ namespace TumbangPreso.PlayTests
             shoe.transform.position = new Vector3(AIController.PlayableMaxX + 1, 1, corner ? AIController.PlayableMaxZ + 1 : 0);
             using (NetCue.SuppressRelay()) Bounds.Invoke(shoe, null);
         }
+        [TestCase(false)] [TestCase(true)]
+        public void CeilingDoesNotSpendTheRemainingPoweredWallCredit(bool overclock)
+        {
+            var ctx = Actor(out _); var shoe = Shoe(ctx);
+            var affinity = overclock ? SlipperAffinity.OverclockBank : SlipperAffinity.BankShot;
+            shoe.HostThrow(ctx.Motor, Vector3.up, new Vector3(10, 8, 2), affinity);
+            shoe.transform.position = new Vector3(0, AIController.PlayableCeilingY + 1, 0);
+            using (NetCue.SuppressRelay()) Bounds.Invoke(shoe, null);
+            Assert.AreEqual(affinity, shoe.Affinity, "A ceiling does not consume a powered side-wall bank.");
+            Assert.Less(shoe.Velocity.y, 0, "The ceiling must still return the shoe to court.");
+            Bank(shoe);
+            if (overclock) Bank(shoe);
+            Assert.AreEqual(1, shoe.ThrowerSlot, "All promised powered wall banks must retain the thrower's can credit after a ceiling contact.");
+            Assert.AreEqual(SlipperAffinity.Normal, shoe.Affinity);
+            Bank(shoe);
+            Assert.AreEqual(-1, shoe.ThrowerSlot, "The next unpowered wall must still retire scoring credit.");
+        }
+        [Test] public void CeilingBetweenOverclockBanksDoesNotReplayBankFlairOrSpendCredit()
+        {
+            var ctx = Actor(out _); var shoe = Shoe(ctx);
+            shoe.HostThrow(ctx.Motor, Vector3.up, new Vector3(10, 8, 2), SlipperAffinity.OverclockBank, .9f);
+            int flairs = 0;
+            void Observe(MatchFlair.Kind kind, int actor, int subject, Vector3 at, float strength)
+            { if (kind == MatchFlair.Kind.BankShot) flairs++; }
+            MatchFlair.Presented += Observe;
+            try
+            {
+                Bank(shoe); Assert.AreEqual(1, flairs);
+                shoe.transform.position = new Vector3(0, AIController.PlayableCeilingY + 1, 0);
+                using (NetCue.SuppressRelay()) Bounds.Invoke(shoe, null);
+                Assert.AreEqual(1, shoe.BankCount); Assert.AreEqual(1, flairs);
+                Assert.AreEqual(SlipperAffinity.BankShot, shoe.Affinity);
+                Bank(shoe); Assert.AreEqual(1, shoe.ThrowerSlot);
+                Assert.AreEqual(2, shoe.BankCount); Assert.AreEqual(1, flairs);
+            }
+            finally { MatchFlair.Presented -= Observe; }
+        }
+        [Test] public void OrdinaryCeilingContactRetainsExistingBankLimit()
+        {
+            var ctx = Actor(out _); var shoe = Shoe(ctx);
+            shoe.HostThrow(ctx.Motor, Vector3.up, new Vector3(10, 8, 2));
+            shoe.transform.position = new Vector3(0, AIController.PlayableCeilingY + 1, 0);
+            using (NetCue.SuppressRelay()) Bounds.Invoke(shoe, null);
+            Assert.AreEqual(1, shoe.BankCount); Assert.AreEqual(1, shoe.ThrowerSlot);
+            Bank(shoe); Assert.AreEqual(-1, shoe.ThrowerSlot);
+        }
         [Test] public void PoweredCornerCountsOnceAndSecondNormalBankLosesCredit()
         {
             var ctx = Actor(out _); var shoe = Shoe(ctx);
