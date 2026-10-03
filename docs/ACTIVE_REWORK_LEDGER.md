@@ -32,7 +32,7 @@ TODO is the only status queue. Reports hold evidence; this file holds execution.
 ## Exact source and outstanding unit
 
 Root checkout: C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
-Published source446598a35, protocol144, clean detached HEAD before this checkpoint.
+Published source6c6d8eb36, protocol144, clean detached HEAD before this checkpoint.
 Dirty Main is C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks;
 never overwrite/stage its private Amihan/artwork/input metadata. No root Editor.
 
@@ -43,10 +43,12 @@ FilterTumbangPreso.Tests.ClientMovementEffectPacketBoundsTests,18 EditMode cases
 OnImpactMsg/OnCarryMsg/OnSyncFamiliarMsg currently read before length preflight.
 Expected original6 short-frame exceptions plus3 trailing partial-decode failures;
 9 complete-frame/foreign-sender/host-loopback controls. Static risk, not yet native
-confirmed. Laptop received exact original ref and reservation request; no new
-production change yet. Do not merge this failing fixture to ASTRA before the fix.
-NEXT: get original native result, then add only exact unread-byte/TryBeginRead
-checks20/24/25 in those handlers. Freeze the same fixture for one candidate run.
+confirmed. Candidate branch competition-pc-client-movement-frames-candidate1004
+is pushed atfb33fac570140624c3bf8c26f7b93a01c7142e83: only three exact unread-byte/
+TryBeginRead checks20/24/25, fixture/meta unchanged. Both refs were sent to laptop.
+NEXT: inspect one original and one candidate18-case native result on the same
+frozen fixture, then integrate only after causal failures and controls reconcile.
+Neither unqualified branch is merged into ASTRA. No PC native job is authorized.
 Preserve authority/slot/epoch/finite checks and wire/protocol. Follow actual failure,
 not speculative refactoring. No overlapping Unity jobs or unchanged repetitions.
 
