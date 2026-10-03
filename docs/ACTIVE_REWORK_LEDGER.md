@@ -2,6 +2,19 @@
 
 ## PC root latest checkpoint: October 3, Unity slot isolation
 
+Latest root publication: f0e277429 includes offline roster4/4 (original2failures/
+2controls), network roster7b3214e34/139 (original2failures/2controls,candidate4/4),
+runner bounds69c18b86b/38checks and prior seat8. Incoming laptop104213d46 checked
+replay opacity3/punch6 is next normal integration; preserve source reservations.
+Phaister real Hero Strike Frozen-recovery1/1 passed with self-casts suppressed,
+guard terminal/restored/free. New probe/report pending publication. No kit change.
+Cleanup-inventory safety regression original1failure/38controls, candidate39/39;
+pending source/docs publication. Logs/unity-slot1003/cleanup-inventory-*.txt.
+No root Editor/player/server active; Claude owns MAIN. Safe simultaneous CPU/GUI
+acceptance still pending, never launch graphics alongside an outside Editor.
+Next: publish these coherent batches, normal merge/push, then prepare current139
+integration validation without private Amihan/arms/Supernova/metadata overlays.
+
 Root continuation update: slot-native1003a completed1/1, normal exit/restored/free.
 No simultaneous native proof because Claude had exited. Tutorial roster baseline
 11 had9causal/2controls afterONE missing-namespace fixture repair; first candidate

@@ -385,6 +385,21 @@ class JobTests(unittest.TestCase):
         self.assertTrue(receipt["leaseHeld"])
         child.terminate.assert_not_called()
 
+    def test_cleanup_inventory_failure_retains_guard_without_stopping_any_process(self):
+        child = Mock(pid=999001); child.poll.return_value = None
+        child.wait.side_effect = subprocess.TimeoutExpired("guard", 2)
+        options = self.options(); options.timeout_seconds = 60
+        runtime, launch = self.runtime(child)
+        with runtime, launch, \
+                patch.object(job, "processes", side_effect=[[], OSError("monitor inventory unavailable"), OSError("cleanup inventory unavailable")]), \
+                patch.object(job, "stop_owned_editors") as stop:
+            self.assertEqual(125, job.run(options))
+        receipt = json.loads((self.root / "output/job-receipt.json").read_text())
+        self.assertEqual("interrupted_awaiting_guard", receipt["status"])
+        self.assertIn("cleanup inventory unavailable", receipt["stopVerificationError"])
+        self.assertTrue(receipt["leaseHeld"])
+        stop.assert_not_called(); child.terminate.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()
