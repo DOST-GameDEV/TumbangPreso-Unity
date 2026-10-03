@@ -38,3 +38,11 @@ controls. Peak process tree4535787520bytes, container7342993408bytes. Six frozen
 changed inputs match both source and native checkout; both isolated project
 settings restored exactly. Initial compile run passed4/4 but hit the memory
 guard during shutdown; its evidence is retained and not labelled guard-free.
+
+Remote advanced with the contributor-owned WhirledView hook in CameraRig.Awake
+and LateUpdate. Those additions were preserved byte-for-byte from published
+a8b33d3da; the arrival helper remains unchanged. The integrated camera and new
+WhirledView were copied into the isolated native checkout and the same seven
+checks passed in4.1362556s at16:22:28–32UTC. Compilation succeeded; this combined
+compile/test process hit the memory guard during shutdown. Do not describe the
+integrated run as guard-free. Eight frozen integrated inputs are unchanged.
