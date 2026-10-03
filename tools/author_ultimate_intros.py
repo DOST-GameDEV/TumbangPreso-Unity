@@ -691,13 +691,13 @@ def amihan():
     monsoon answers her whistle across the whole plaza and gathers into that bird, made of wind; it swoops round her, rises
     behind her as she winds up, and on her drive it beats its wings down the lane: the fan.
 
-    STILL (0 to 1.66): bored, eyes closed, she floats calmly reading the wind; one leaf falls straight down; taps, a shrug.
+    STILL (0 to 1.66): eyes closed, she floats calmly on a breeze of her own, a leaf circling her; she settles and shrugs.
     CALL (1.66 to 2.75): the whistle; the monsoon answers across the plaza, gathering round her into the sky; she looks up.
     THE BIRD (2.75 to 3.62): it forms above her, cries, swoops round her past the lens; she reaches up to it, grinning; then
     a glance into the lens.
     WIND-UP (3.62 to 4.55): the bird behind her, wings raised, as she coils. DRIVE (4.55): both palms, the wingbeat. HANG
-    (4.55 to 5.18): the story clock at about a fifth (`HeroIntroductionScene.Amihan.cs` AmStory). FINISH: hands on hips, a
-    wink, one feather drifting down.
+    (4.55 to 5.18): the story clock at about a fifth (`HeroIntroductionScene.Amihan.cs` AmStory). FINISH: a close-up, her
+    cute pose (leaning in, hands behind her back, a foot kicked up, a wink), one feather drifting down.
     The free (left) hand does the gestures: the right hand holds the slipper, which passes through her large head higher.
     """
     p = Performance("amihan", 5.6)
@@ -706,8 +706,6 @@ def amihan():
     idle_b = idle.but(torso=(-4, -4, 5), head=(-8, 12, 10))
     # The read: her free arm out straight to her side, palm up, feeling for the wind; leaning into it, head cocked, chin up.
     read = Pose(torso=(-6, -8, 10), head=(-14, -16, 14), left=(70, 88, -10), right=(14, 62, -38), legs=((4, 10), (-2, 14)))
-    tap_up = read.but(legs=((4, 10), (-2, 14)), torso=(-6, -10, 3))
-    tap = lambda lift: read.but(legs=((4, 10), (lift, 16)))
     shrug = Pose(torso=(-8, 0, 0), head=(-10, 0, -10), left=(34, 62, 0), right=(30, 58, 0), legs=((4, 10), (-2, 14)))
     # The whistle: two fingers of the free hand at her mouth, chest up, feet planted wide.
     whistle = Pose(torso=(-10, 6, 0), head=(-12, 6, 0), left=(118, 6, 46), right=(12, 60, -38), legs=((6, 16), (-4, 16)))
@@ -724,13 +722,15 @@ def amihan():
     # The release keeps v3.2's drive (both palms forward, the lunge): the gameplay contract is pinned to it.
     drive = Pose(torso=(16, -6, -2), head=(-18, 8, 0), left=(104, 20, 30), right=(104, 20, 30), legs=((42, 12), (-44, 10)))
     follow = Pose(torso=(6, -8, 2), head=(-10, 6, 0), left=(70, 46, 10), right=(70, 46, 10), legs=((22, 10), (-18, 10)))
-    # The finish: hands on hips, chest out, chin up, head tipped. Gets there first.
-    finish = Pose(torso=(-8, 4, -3), head=(-14, -8, 9), left=(16, 58, 38), right=(16, 58, -38), legs=((4, 14), (-4, 14)))
+    # THE FINISH (owner: "end of ult cutscene should be her posing or looking cute", "TEEHEE pose", "close up of her"): leaning
+    # in to the lens, hands clasped behind her back (her rigid arms cannot reach her head; behind her they read and hide the
+    # slipper), head tipped, one foot kicked up behind her, a wink.
+    finish = Pose(torso=(10, 6, 8), head=(-10, -6, 16), left=(-40, 14, 0), right=(-40, 14, 0), legs=((4, 8), (-40, 10)))
 
     p.key(0, idle).hold(.32, .55, idle_b)
-    p.hold(.78, 1.08, read)
-    p.key(1.13, tap_up)
-    p.key(1.19, tap(14)).key(1.25, tap(-2), punch=True).key(1.32, tap(14)).key(1.38, tap(-2), punch=True)
+    # (owner on v7: "the leg tapping dont make sense": she was tapping her feet in the air. The taps are gone: she floats,
+    # settles, and shrugs.)
+    p.hold(.78, 1.34, read)
     p.hold(1.52, 1.66, shrug)
     p.key(1.78, whistle, punch=True).key(1.98, whistle.but(head=(-13, 6, 0)))
     p.hold(2.20, 2.70, sky)
@@ -741,10 +741,11 @@ def amihan():
     p.hold(4.55, 5.08, drive)
     p.punches.append(4.55)
     p.key(5.20, follow)
-    p.key(5.34, finish, punch=True).key(5.6, finish)
+    p.key(5.30, finish, punch=True).key(5.6, finish)
     # THE FLOAT (owner: "make her fly higher here like gojo when he was enlightened", "js a bite higher tho"): as she closes
     # her eyes and feels for the wind she lifts, calm and weightless, about 0.37 m, and settles back onto her first tap.
-    p.rise(0, 0).rise(.60, 0).rise(.78, .2).rise(.98, .36).rise(1.06, .37).rise(1.16, .14).rise(1.24, 0)
+    # (v8: the float now has its breeze, `HeroIntroductionScene.Amihan.cs` AmFloat, and lasts until she settles at 1.46.)
+    p.rise(0, 0).rise(.60, 0).rise(.80, .2).rise(1.0, .36).rise(1.24, .38).rise(1.38, .12).rise(1.46, 0)
 
     # A STILL: from her left front, all of her and the falling leaf, a slow push in.
     p.shot(0, 1.66, (-.9, 1.05, 4.3), (-.2, 1.0, 0), 42, eye_to=(-.75, 1.05, 3.7), look_to=(-.2, 1.05, 0), fov_to=40)
@@ -758,8 +759,8 @@ def amihan():
     p.shot(3.62, 4.55, (2.8, 2.2, -4.2), (0, 2.8, 3.0), 62, eye_to=(3.0, 2.5, -4.6), look_to=(0, 2.2, 5.0), fov_to=62)
     # E HANG: cut on the drive to her right side, wide enough for the wingbeat over the lane: her in the left third.
     p.shot(4.55, 5.18, (5.2, 1.6, .6), (0, 1.5, 1.2), 66, eye_to=(4.8, 1.6, .9), look_to=(0, 1.45, 1.6), fov_to=62)
-    # F FINISH (computed: high in front of her right side, her wink in the middle, the thrown bodies blowing away).
-    p.shot(5.18, 5.6, (3.0, 3.0, 3.8), (0, 1.0, .6), 46, eye_to=(2.8, 2.8, 3.5), look_to=(0, 1.0, .6), fov_to=42)
+    # F FINISH: a close-up of her, low in front of her, as she leans in with her wink, a slow push in.
+    p.shot(5.18, 5.6, (.5, .95, 2.6), (0, 1.1, 0), 38, eye_to=(.4, 1.0, 2.2), look_to=(0, 1.15, 0), fov_to=34)
     p.locked((3.4, 1.5, 3.4), (0, 1.0, 1.5), 50)
     return p
 
