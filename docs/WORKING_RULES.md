@@ -53,6 +53,9 @@ and [earlier full rules](archive/CLAUDE_full_2026-09-24.md). New owner instructi
 - A predicted punch owns its press until observed release, including after a
   host refusal refunds cooldown. A cooldown-blocked initial edge is unspent;
   observe release before interruption or role returns skip the punch path.
+- Touch buttons remain held until their last captured pointer/button releases.
+  Global release and customization invalidate old ownership before presses or
+  lifts; explicit release and disable clear it without changing visuals.
 - Preserve GenericPadBridge,MenuNav,controller mappings and the input backend.
   `InputCatalogue.For` is exhaustive: no discard arm; keep CS8509 as an error.
   Add pad/thumb mapping with a Verb and run the existing InputAssetSync regeneration.
