@@ -29,5 +29,5 @@ asset reference, dispatch, actual playback, neutral recovery and preserved gamep
 Inspect motion visually before publication; structural checks alone do not accept
 the pose. No new SFX or listening claim belongs to this unit.
 
-Status: implemented and narrowly qualified; publication pending. See README for
+Status: implemented and narrowly qualified. See README for
 native evidence, retained failures and owner-view/player/peer review limits.
