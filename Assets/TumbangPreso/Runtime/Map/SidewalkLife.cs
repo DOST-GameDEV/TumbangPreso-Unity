@@ -2658,7 +2658,7 @@ namespace TumbangPreso
         {
             var director = GameServices.Audio;
             if (director == null) return KantoStreetSound.AmbientGainScale;
-            return director.IsInReplayMix ? 0f : director.SfxVolume * KantoStreetSound.AmbientGainScale;
+            return director.IsInReplayMix ? 0f : director.AmbienceVolume * KantoStreetSound.AmbientGainScale;
         }
 
         private void BuildVoices()

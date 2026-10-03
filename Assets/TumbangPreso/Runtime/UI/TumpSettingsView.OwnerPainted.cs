@@ -94,9 +94,10 @@ namespace TumbangPreso.UI
         {
             var s=SettingsStore.Current;
             AudioSlider("MasterVolume","Master volume",s.MasterVolume,v=>s.MasterVolume=v);
-            AudioSlider("SoundVolume","Sound effects",s.SfxVolume,v=>s.SfxVolume=v);
-            AudioSlider("MusicVolume","Music",s.MusicVolume,v=>s.MusicVolume=v);
-            AudioSlider("AnnouncerVolume","Announcer",s.AnnouncerVolume,v=>s.AnnouncerVolume=v);
+            AudioSlider("SoundVolume","Sound effects volume",s.SfxVolume,v=>s.SfxVolume=v);
+            AudioSlider("MusicVolume","Music volume",s.MusicVolume,v=>s.MusicVolume=v);
+            AudioSlider("AnnouncerVolume","Voice over volume",s.AnnouncerVolume,v=>s.AnnouncerVolume=v);
+            AudioSlider("AmbienceVolume","Ambience volume",s.AmbienceVolume,v=>s.AmbienceVolume=v);
         }
         private void AudioSlider(string name,string label,float value,Action<float> set)
             =>SettingsWorkspaceRows.Slider(Row(name,label),name+"Value",value,0,1,v=>{set(v);_session.Preview();},v=>Mathf.RoundToInt(v*100)+"%");

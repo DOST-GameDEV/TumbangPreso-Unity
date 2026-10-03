@@ -305,7 +305,7 @@ namespace TumbangPreso
             fade = fade * fade * (3.0f - 2.0f * fade);
 
             var director = GameServices.Audio;
-            float sfx = director != null ? director.SfxVolume : 1.0f;
+            float sfx = director != null ? director.AmbienceVolume : 1.0f;
             // ⚠️ `IsInReplayMix` IS THE HOOK THE REPLAY LEASE EXPOSES, the one `LagoonSoundscape`,
             // `WorldContactPresentation` and `ColourGrade` read. The lease only mutes the director's
             // own pooled voices, so a component driving its own sources has to ask. Everything here
