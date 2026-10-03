@@ -725,7 +725,41 @@ namespace TumbangPreso
             if (!IsGrabbableIgnoringReach(who)) return false;
 
             float d = Vector3.Distance(who.transform.position, transform.position);
-            return d <= Balance.PickupRadius;
+            return d <= Balance.PickupRadius && ReachableThroughTheStreet(who.transform.position, transform.position);
+        }
+
+        private static readonly RaycastHit[] StreetReachHits = new RaycastHit[32];
+
+        /// <summary>Pickup and slide share the same short reach through street geometry.
+        /// Bodies, shoes and triggers do not hide a solid wall farther along that reach.</summary>
+        internal static bool ReachableThroughTheStreet(Vector3 from, Vector3 target)
+        {
+            Vector3 eye = from + Vector3.up * 0.5f;
+            Vector3 toward = (target + Vector3.up * 0.1f) - eye;
+            float distance = toward.magnitude;
+            if (distance < 0.05f) return true;
+
+            var hits = StreetReachHits;
+            int count = Physics.RaycastNonAlloc(eye, toward / distance, hits, distance, ~0, QueryTriggerInteraction.Ignore);
+            try
+            {
+                // A full buffer may omit the wall behind ignored bodies or shoes.
+                if (count == hits.Length)
+                {
+                    hits = Physics.RaycastAll(eye, toward / distance, distance, ~0, QueryTriggerInteraction.Ignore);
+                    count = hits.Length;
+                }
+
+                for (int i = 0; i < count; i++)
+                {
+                    var collider = hits[i].collider;
+                    if (collider == null || collider.GetComponentInParent<CharacterMotor>() != null ||
+                        collider.GetComponentInParent<Slipper>() != null) continue;
+                    return false;
+                }
+                return true;
+            }
+            finally { Array.Clear(StreetReachHits, 0, StreetReachHits.Length); }
         }
 
         /// <summary>
