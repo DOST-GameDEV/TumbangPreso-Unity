@@ -183,6 +183,8 @@ namespace TumbangPreso
             }
             else
             {
+                // A defender windup cannot follow this body into its attacker role.
+                CancelPendingInput();
                 // ⚠️ ONE BUTTON, SHOVE / LUNGE (the owner's default layout, 2026-09-27: *"Shove /
                 // Lunge - Right Click"*, beside *"Throw / Tag - Left Click"*). The taya lunges on it;
                 // an attacker slides when a loose tsinelas lies in reach ahead (the retrieval slide

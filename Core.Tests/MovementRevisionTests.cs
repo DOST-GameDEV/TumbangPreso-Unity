@@ -15,12 +15,13 @@ namespace TumbangPreso.Core.Tests
                 for (int i = 0; i < Roster.GetPeople(mode).Count; i++)
                     Assert.Equal(1f, Roster.PersonSpeedScale(i, mode));
         }
-        [Fact] public void JumpMatchesOneMetreAndHalfSecondWithoutChangingProjectiles()
+        [Fact] public void JumpUsesTheRestoredLaunchGravityAndFallCap()
         {
-            Assert.Equal(1f, Balance.JumpVelocity * Balance.JumpVelocity / (2 * Balance.CharacterGravity), 5);
-            Assert.Equal(.5f, 2 * Balance.JumpVelocity / Balance.CharacterGravity, 5);
+            Assert.Equal(5.75f, Balance.JumpVelocity); Assert.Equal(20f, Balance.CharacterGravity);
+            Assert.Equal(.8265625f, Balance.JumpVelocity * Balance.JumpVelocity / (2 * Balance.CharacterGravity), 5);
+            Assert.Equal(.575f, 2 * Balance.JumpVelocity / Balance.CharacterGravity, 5);
             Assert.Equal(20f, Balance.Gravity);
-            Assert.Equal(26f, Balance.MaxFallSpeed);
+            Assert.Equal(25f, Balance.MaxFallSpeed);
         }
         [Fact] public void StaminaMatchesTheOwnerValuesAndFatigueDoesNotSlowWalking()
         {

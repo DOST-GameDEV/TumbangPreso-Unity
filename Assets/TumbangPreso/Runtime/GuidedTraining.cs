@@ -1954,7 +1954,7 @@ namespace TumbangPreso
                 // `LEFT SHIFT`'s picture to nine characters wide. **The sheets already solve the
                 // long-name problem**, which is most of why they are worth having.
                 var square = go.AddComponent<LayoutElement>();
-                square.preferredWidth = GlyphSize;
+                square.preferredWidth = UI.InputGlyphs.PromptWidth(glyph, GlyphSize);
                 square.preferredHeight = GlyphSize;
                 square.minHeight = GlyphSize;
                 return;

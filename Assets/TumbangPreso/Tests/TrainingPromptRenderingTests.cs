@@ -50,6 +50,7 @@ namespace TumbangPreso.Tests
                     Assert.IsTrue(glyph.preserveAspect);
                     Assert.IsFalse(glyph.raycastTarget);
                     Assert.AreEqual(72, glyph.GetComponent<LayoutElement>().preferredHeight);
+                    Assert.AreEqual(wheel ? 97.2f : 72f, glyph.GetComponent<LayoutElement>().preferredWidth, .001f);
                 }
                 CollectionAssert.AreEqual(new[] { "CURVE" }, row.GetComponentsInChildren<Text>().Select(t => t.text).ToArray());
                 // Structural consumer checks also run on the bounded headless lane.
