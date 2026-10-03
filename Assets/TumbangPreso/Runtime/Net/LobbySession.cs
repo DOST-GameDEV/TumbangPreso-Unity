@@ -599,6 +599,18 @@ namespace TumbangPreso.Net
             return true;
         }
 
+        internal bool TrySwapSeats(PeerRecord from, PeerRecord to, int fromSeat, int toSeat)
+        {
+            if (MatchInProgress || from == null || to == null || ReferenceEquals(from, to)
+                || fromSeat < 0 || toSeat < 0 || fromSeat >= MaxPlayers || toSeat >= MaxPlayers
+                || from.Spectator || to.Spectator || IsSeatlessReferee(from.PeerId) || IsSeatlessReferee(to.PeerId)
+                || !ReferenceEquals(PeerInSeat(fromSeat), from) || !ReferenceEquals(PeerInSeat(toSeat), to)
+                || !ReferenceEquals(PeerById(from.PeerId), from) || !ReferenceEquals(PeerById(to.PeerId), to)
+                || _heldSeats.ContainsKey(fromSeat) || _heldSeats.ContainsKey(toSeat)) return false;
+            from.Seat = toSeat; to.Seat = fromSeat;
+            return true;
+        }
+
         // -------------------------------------------------------------------
 
         /// <summary>

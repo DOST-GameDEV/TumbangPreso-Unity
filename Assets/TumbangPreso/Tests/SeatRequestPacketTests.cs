@@ -67,6 +67,72 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(1, _session.Lobby.PeerById(1).Seat);
             Assert.IsTrue(_ready.Contains(1)); Assert.AreEqual(0, _events);
         }
+        private LobbySeatSwapRequests Swaps => (LobbySeatSwapRequests)typeof(MatchRpc).GetField("_seatSwaps", Hidden).GetValue(_rpc);
+        private LobbySeatSwapRequest PendingSwap()
+        {
+            var pending = (Dictionary<long,LobbySeatSwapRequest>)typeof(LobbySeatSwapRequests).GetField("_pending", Hidden).GetValue(Swaps);
+            foreach (var request in pending.Values) return request;
+            return null;
+        }
+        private void Reply(ulong sender, long id, bool accept, int length = 9)
+        {
+            var bytes = new byte[length]; Array.Copy(BitConverter.GetBytes(id), bytes, Math.Min(8,length));
+            if(length>8)bytes[8]=accept?(byte)1:(byte)0;
+            using var reader=new FastBufferReader(bytes,Allocator.Temp);
+            Assert.DoesNotThrow(()=>typeof(MatchRpc).GetMethod("OnSeatSwapReplyMsg",Hidden).Invoke(_rpc,new object[]{sender,reader}));
+        }
+        [Test] public void HumanRequestWaitsForRecipientThenClearsBothReadyStates()
+        {
+            _ready.Add(0); Receive(1,0); Unchanged();
+            var request=PendingSwap(); Assert.IsNotNull(request);
+            Reply(1,request.Id,true);Unchanged();Assert.AreEqual(1,Swaps.Count);
+            Reply(0,request.Id,true);
+            Assert.AreEqual(1,_session.Lobby.PeerById(0).Seat);Assert.AreEqual(0,_session.Lobby.PeerById(1).Seat);
+            Assert.IsFalse(_ready.Contains(0));Assert.IsFalse(_ready.Contains(1));Assert.AreEqual(1,_events);
+            Reply(0,request.Id,true);Assert.AreEqual(1,_events);Assert.AreEqual(0,Swaps.Count);
+        }
+        [Test] public void RecipientDeclineKeepsSeatsAndReadiness()
+        {
+            Receive(1,0);var request=PendingSwap();Reply(0,request.Id,false);Unchanged();Assert.AreEqual(0,Swaps.Count);
+        }
+        [TestCase(0),TestCase(8),TestCase(10)] public void MalformedSwapRepliesDoNotConsumeConsent(int length)
+        {
+            Receive(1,0);var request=PendingSwap();Reply(0,request.Id,true,length);Unchanged();Assert.AreEqual(1,Swaps.Count);
+        }
+        [Test] public void WideSwapSenderCannotImpersonateTheRecipient()
+        {
+            Receive(1,0);var request=PendingSwap();Reply(4294967296UL,request.Id,true);Unchanged();Assert.AreEqual(1,Swaps.Count);
+        }
+
+        private void Offer(ulong sender, long id, int from, int to, float seconds, bool trailing = false)
+        {
+            using var writer=new FastBufferWriter(256,Allocator.Temp);
+            writer.WriteValueSafe(id);writer.WriteValueSafe(from);writer.WriteValueSafe(to);writer.WriteValueSafe(true);
+            writer.WriteValueSafe(seconds);writer.WriteValueSafe("Guest");if(trailing)writer.WriteValueSafe((byte)5);
+            using var reader=new FastBufferReader(writer,Allocator.Temp);
+            Assert.DoesNotThrow(()=>typeof(MatchRpc).GetMethod("OnSeatSwapOfferMsg",Hidden).Invoke(_rpc,new object[]{sender,reader}));
+        }
+        [Test] public void ClientOfferAndEndPacketsRequireHostAndKeepTheCurrentRequest()
+        {
+            _peer.Host=false;Offer(1,31,1,0,20);Assert.IsNull(_rpc.SeatSwapOffer);
+            Offer(0,31,1,0,20);Assert.AreEqual(31,_rpc.SeatSwapOffer.Id);
+            Assert.IsTrue(_rpc.SeatSwapOffer.Incoming);Assert.AreEqual("Guest",_rpc.SeatSwapOffer.RequesterName);
+            Offer(0,30,2,0,20);Assert.AreEqual(31,_rpc.SeatSwapOffer.Id);
+            using var writer=new FastBufferWriter(16,Allocator.Temp);writer.WriteValueSafe(31L);writer.WriteValueSafe((byte)1);
+            var method=typeof(MatchRpc).GetMethod("OnSeatSwapEndMsg",Hidden);
+            using(var reader=new FastBufferReader(writer,Allocator.Temp))method.Invoke(_rpc,new object[]{1UL,reader});
+            Assert.IsNotNull(_rpc.SeatSwapOffer);
+            using(var reader=new FastBufferReader(writer,Allocator.Temp))method.Invoke(_rpc,new object[]{0UL,reader});
+            Assert.IsNull(_rpc.SeatSwapOffer);Assert.AreEqual("Seats switched.",_rpc.SeatSwapResult);
+        }
+        [Test] public void InvalidClientOffersCannotReplaceTheCurrentConsentPrompt()
+        {
+            _peer.Host=false;Offer(0,31,1,0,20);Assert.IsNotNull(_rpc.SeatSwapOffer);
+            Offer(0,32,1,0,float.NaN);Offer(0,32,1,0,21);Offer(0,32,1,0,0);
+            Offer(0,32,1,1,20);Offer(0,32,4,0,20);Offer(0,32,1,0,20,true);
+            Assert.AreEqual(31,_rpc.SeatSwapOffer.Id);
+        }
+
         [TestCase(0), TestCase(1), TestCase(2), TestCase(3), TestCase(5), TestCase(8)]
         public void MalformedRequestsCannotThrowOrMoveAReadyGuest(int length)
         {
