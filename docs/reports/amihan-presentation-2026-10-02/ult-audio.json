@@ -4,10 +4,10 @@
   "cues": [
     {
       "cue": "sfx_ult_theme_amihan",
-      "seconds": 5.6,
+      "seconds": 4.4,
       "peak": 0.66,
-      "rms": 0.07395113463817794,
-      "sha256": "0fe40b5320a59986cb58969ea0767a339b178071841f8661c00eb38ac5a6ba9b"
+      "rms": 0.07341700526944414,
+      "sha256": "1fb5fc13be93917facb22fb08996470e63c609ff12c322536fde196fab954466"
     },
     {
       "cue": "sfx_amihan_storm_release",

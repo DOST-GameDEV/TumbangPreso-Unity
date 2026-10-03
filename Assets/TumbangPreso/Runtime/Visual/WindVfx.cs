@@ -311,7 +311,8 @@ namespace TumbangPreso.Visual
                 _pieces = new Transform[count]; _renderers = new Renderer[count]; _materials = new Material[count];
                 _from = new Vector3[count]; _drift = new Vector3[count];
                 _spin = new float[count]; _delay = new float[count]; _life = new float[count]; _thread = new bool[count];
-                var tuft = VfxShapes.TwoSided(VfxShapes.Star(7, 0.55f, (int)(seed * 7) & 1023));
+                // v4 (owner: *"it looks like shapes are floating"*): a soft, nearly round puff of cotton, not a seven-point star.
+                var tuft = VfxShapes.TwoSided(VfxShapes.Star(11, 0.84f, (int)(seed * 7) & 1023));
                 for (int i = 0; i < count; i++)
                 {
                     float h(float k) => Mathf.Repeat(Mathf.Sin((i + 1) * 12.9898f + seed * 7.13f + k * 78.233f) * 43758.5453f, 1.0f);

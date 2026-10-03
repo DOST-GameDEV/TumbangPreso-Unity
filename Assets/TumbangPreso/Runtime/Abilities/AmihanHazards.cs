@@ -127,7 +127,7 @@ namespace TumbangPreso.Abilities
             AIController.PlayableMinX, AIController.PlayableMaxX,
             AIController.PlayableMinZ, AIController.PlayableMaxZ);
         public bool Released => _released;
-        /// <summary>How long after the release the shared cutscene ends (`HeroIntroductionScene.Amihan.cs` AmReleaseAt to 5.6 s):
+        /// <summary>How long after the release the shared cutscene ends (`HeroIntroductionScene.Amihan.cs` AmReleaseAt, 3.85, to 4.4 s):
         /// the live fan picks up from that age, so the hand-back never replays the release.</summary>
         public const float CutsceneTail = 0.55f;
 

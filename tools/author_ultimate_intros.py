@@ -680,94 +680,92 @@ def rafi():
 @performance
 def amihan():
     """
-    AIRBURST v3, 5.6 s (docs/reports/amihan-presentation-2026-10-02/airburst-v3.md). The owner on the 3.6 s version:
-    "throoughly revamp her cutscene what the fuck is that it sucsk", "it doesnt feel the same as paete and phaisters".
+    AIRBURST v4, 4.4 s (docs/reports/amihan-presentation-2026-10-02/cutscene-v4-plan.md). The owner on v3.7: "thoroughly
+    revise cutscene i want her personality to show in it as well as give it its own feel". v3 was a solemn ritual; she is
+    a bright, impatient street kid from Vigan who reads the wind off the abel hung out to air and commits before the play
+    is ready ("Reads the wind. Gets there first.").
 
-    "Amihan calls the monsoon down into her hands, weaves it into her family's kasikus, and strings the whole lane like
-    a loom; everyone standing in it feels it coming." It plays BEFORE the live 1.5 s dodge window, so it never shows the
-    release: it ends on the real players in her lane bracing (`HeroIntroductionScene.AmihanLane.cs`). Every shot is on her
-    right side, so screen direction never flips.
+    "Amihan cannot wait: she whistles the monsoon down like calling a teammate, it arrives as her family's abel cloth, and
+    she lets it fly before anyone is ready."
 
-    CALL (0 to 1.7): front right, low. She flings the right hand out and snaps it to her chest, and the monsoon answers.
-    WEAVE (1.7 to 3.7): low on her right, hands and face. Palms meet at the right hip and the kasikus forms between them;
-    two pack beats; the draw.
-    WARP (3.7 to 5.6): over the right shoulder, rising and pulling back down the lane. A small flick of the cupped hands
-    casts the warp threads, then the coil she hands back in (`HeroAbilityClips.Amihan.cs` BuildAmihanStorm's first key).
+    OPEN (0 to .5): the abel on the line snapping, a whip pan onto her running in; she skids to a stop.
+    READ (.5 to 1.3): a licked finger up to the wind (the cutscene face set squints), the line goes slack; two impatient
+    foot taps and a shrug.
+    CALL (1.3 to 1.85): the two-finger whistle; the wind answers down the street and the cloth tears off the line to her.
+    CATCH (1.85 to 2.5): she catches it in her free hand and whirls it round her once.
+    CARD (2.5 to 2.95): AIRBURST, her point down the lane, a grin; the card is blown away before it has finished.
+    COMMIT (2.95 to 3.85): wound up, the cloth swung back over her head, then both palms driven: the release at 3.85.
+    HIT (3.85 to 4.4): from down the lane, the players blown past the lens and her standing in the middle, hands on hips.
+    Play resumes 0.55 s after the release (`AmihanStorm.CutsceneTail`); the live clip starts in the last pose.
+    The free (left) hand does the gestures: the right hand holds the slipper, which passes through her large head higher.
     """
-    p = Performance("amihan", 5.6)
-    rest = Pose(head=(0, 10, 0))
-    # Arms stay under the shoulder: her head is wide and her arms short, and higher the held slipper passes through her face
-    # (UltimateIntroductionProbe measured 86 shoe vertices inside the head before this rule).
-    call_out = Pose(torso=(-3, -14, 5), head=(-6, 16, -4), left=(24, 58, 38), right=(18, 72, 0),
-                    legs=((6, 8), (-6, 14)))
-    call_in = Pose(torso=(2, 18, 0), head=(-8, -4, 0), left=(24, 58, 38), right=(48, 10, 55),
-                   legs=((6, 8), (-6, 12)))
-    # Arms open low and wide, chest and chin up: she takes in the whole street's air as it arrives.
-    opened = Pose(torso=(-10, 0, 0), head=(-13, 0, 0), left=(22, 74, 10), right=(22, 74, 10),
-                  legs=((4, 14), (-4, 14)))
-    sweep = Pose(torso=(4, 22, -2), head=(-4, -10, 0), left=(48, 38, 60), right=(44, 8, 15),
-                 legs=((10, 10), (-8, 12)))
-    # Palms meet cupped at the right hip; the torso coils right and the head only half follows.
-    cup = Pose(torso=(-2, 34, -5), head=(-4, -14, 0), left=(48, 8, 75), right=(0, 32, 60),
-               legs=((18, 10), (-16, 14)))
-    pack1 = cup.but(torso=(-3, 38, -6), head=(-4, -15, 0))
-    pack2 = cup.but(torso=(-4, 42, -6), head=(-4, -16, 0))
-    draw = cup.but(torso=(-6, 47, -7), head=(-5, -19, 0), legs=((20, 10), (-18, 14)))
-    # The warp: a small flick of the cupped hands toward the lane, low, then straight back into the coil.
-    flick = Pose(torso=(5, 18, -4), head=(-7, -6, 0), left=(52, 22, 48), right=(40, 26, 34),
-                 legs=((22, 10), (-20, 14)))
-    coil = Pose(torso=(-4, 40, -6), head=(-4, -16, 0), left=(48, 8, 75), right=(24, 20, 45),
-                legs=((20, 10), (-18, 14)))
-    set_end = coil.but(torso=(-5, 43, -7), head=(-4, -17, 0))
-    # v3.2 THE BEATER (owner: "show the ult actually hitting and knocking abck ppl already in the cutscene"). The deepest draw,
-    # then the live clip's own release pose (HeroAbilityClips.Amihan.cs, BuildAmihanStorm's drive at the old 1.5 s: torso
-    # 16 -6 -2, head -18 8 0, both arms raised 104 and turned 30, the lunge), then its follow-through, which is now the live
-    # clip's first key: play resumes on the hit, so after the hand-back the body only settles.
-    # In the authoring terms (arm: raise, spread, twist; leg: swing, spread), converted from PoseKey's V() (left arm roll is
-    # 80 - z, right -80 - z, leg roll negated): the EditMode pose test caught a 30 degree roll when they were typed raw.
-    draw_deep = coil.but(torso=(-12, 56, -8), head=(-6, -22, 0), left=(40, 14, 90), right=(24, 4, 0),
-                         legs=((22, 10), (-20, 15)))
+    p = Performance("amihan", 4.4)
+    run_a = Pose(torso=(16, -8, 0), head=(-14, 8, 0), left=(58, 22, 0), right=(-30, 22, 0), legs=((36, 4), (-32, 4)))
+    run_b = Pose(torso=(16, 8, 0), head=(-14, -8, 0), left=(-30, 22, 0), right=(58, 22, 0), legs=((-32, 4), (36, 4)))
+    # The skid: weight thrown back over the planted front foot, arms flung back for balance.
+    skid = Pose(torso=(-16, -4, 6), head=(-4, 4, -4), left=(-22, 58, 0), right=(-18, 50, 0), legs=((42, 8), (-14, 14)))
+    stand = Pose(torso=(-3, -4, 2), head=(-6, 4, 0), left=(10, 30, 0), right=(8, 28, 0), legs=((4, 8), (-2, 12)))
+    # The read: her free arm out straight to her side, palm up, feeling for the wind (v4 r2: a finger raised over her head
+    # hid behind her large head); leaning into it, head cocked toward it, chin up, the slipper hand on her hip.
+    read = Pose(torso=(-6, -8, 10), head=(-14, -16, 14), left=(70, 88, -10), right=(14, 62, -38), legs=((4, 10), (-2, 14)))
+    tap_up = read.but(legs=((4, 10), (-2, 14)), torso=(-6, -10, 3))
+    tap = lambda lift: read.but(legs=((4, 10), (lift, 16)))
+    shrug = Pose(torso=(-8, 0, 0), head=(-10, 0, -10), left=(34, 62, 0), right=(30, 58, 0), legs=((4, 10), (-2, 14)))
+    # The whistle: two fingers of the free hand at her mouth, chest up, feet planted wide.
+    whistle = Pose(torso=(-10, 6, 0), head=(-12, 6, 0), left=(118, 6, 46), right=(12, 60, -38), legs=((6, 16), (-4, 16)))
+    # The wind arrives: she leans into it, arms open to take it.
+    meet = Pose(torso=(8, -12, 0), head=(-14, -10, 0), left=(70, 74, 0), right=(54, 64, 0), legs=((18, 12), (-16, 16)))
+    # The catch: free hand snapped high and out, twisted toward the line.
+    catch = Pose(torso=(-4, -30, 6), head=(-14, -22, 4), left=(132, 58, 0), right=(30, 50, 0), legs=((10, 12), (-10, 16)))
+    # The whirl overhead: the free arm sweeps round, the torso turning under it.
+    whirl_a = Pose(torso=(-6, 22, -4), head=(-12, 14, 0), left=(146, 40, 40), right=(24, 54, 0), legs=((-8, 12), (12, 16)))
+    whirl_b = Pose(torso=(-8, -18, 4), head=(-14, -10, 0), left=(146, 52, -40), right=(26, 56, 0), legs=((10, 12), (-10, 16)))
+    # The card: pointing down the lane with the free hand, slipper hand on the hip, hip cocked, head tipped, cocky.
+    point = Pose(torso=(-5, -14, 6), head=(-8, 10, -8), left=(96, 18, 6), right=(14, 62, -38), legs=((8, 8), (-6, 18)))
+    # The wind-up: coiled hard right, the free arm and the cloth swung back over and behind her head.
+    windup = Pose(torso=(-12, 48, -6), head=(-8, -22, 0), left=(-48, 44, 0), right=(30, 30, 30), legs=((24, 10), (-22, 14)))
+    windup_deep = windup.but(torso=(-15, 58, -8), head=(-9, -26, 0), left=(-58, 46, 0))
+    # The release keeps v3.2's drive (both palms forward, the lunge): the gameplay contract is pinned to it.
     drive = Pose(torso=(16, -6, -2), head=(-18, 8, 0), left=(104, 20, 30), right=(104, 20, 30), legs=((42, 12), (-44, 10)))
-    follow = Pose(torso=(8, -12, 2), head=(-10, 8, 0), left=(92, 55, 10), right=(92, 55, 10), legs=((24, 10), (-22, 10)))
+    follow = Pose(torso=(6, -8, 2), head=(-10, 6, 0), left=(70, 46, 10), right=(70, 46, 10), legs=((22, 10), (-18, 10)))
+    # The finish: hands on hips, chest out, chin up, head tipped. Gets there first.
+    finish = Pose(torso=(-8, 4, -3), head=(-14, -8, 9), left=(16, 58, 38), right=(16, 58, -38), legs=((4, 14), (-4, 14)))
 
-    p.key(0, rest)
-    p.key(.25, call_out, punch=True).key(.40, call_out.but(torso=(-3, -16, 5)))
-    p.key(.55, call_in, punch=True)
-    p.key(.90, opened).key(1.55, opened.but(torso=(-12, 2, 0), head=(-14, 0, 0)))
-    p.key(1.95, sweep)
-    p.key(2.15, cup, punch=True).key(2.30, cup)
-    p.key(2.50, pack1).key(2.65, cup).key(2.95, pack2).key(3.10, pack1)
-    p.key(3.30, draw).key(3.55, draw.but(torso=(-6, 48, -7)))
-    p.key(3.78, flick, punch=True)
-    p.key(4.15, coil).key(4.75, set_end).key(4.95, draw_deep)
-    p.key(5.05, drive, punch=True).key(5.17, drive).key(5.45, follow).key(5.6, follow)
-    # Grounded throughout: no vortex lift. Featherfall is her real flight.
+    p.key(0, run_a).key(.16, run_b).key(.32, run_a)
+    p.key(.50, skid, punch=True).key(.62, stand)
+    p.key(.74, read).key(.82, tap_up)
+    p.key(.88, tap(14)).key(.94, tap(-2), punch=True).key(1.00, tap(14)).key(1.06, tap(-2), punch=True)
+    p.key(1.18, shrug)
+    p.key(1.30, whistle, punch=True).key(1.47, whistle.but(head=(-13, 6, 0)))
+    p.key(1.62, meet)
+    p.key(1.85, catch, punch=True)
+    p.key(2.05, whirl_a).key(2.27, whirl_b).key(2.42, whirl_a.but(torso=(-6, 10, -2)))
+    p.hold(2.52, 2.94, point)
+    p.key(3.10, windup).key(3.55, windup_deep).key(3.68, windup_deep.but(torso=(-16, 60, -8)))
+    p.key(3.85, drive, punch=True).key(3.95, drive)
+    p.key(4.08, follow)
+    p.key(4.24, finish, punch=True).key(4.4, finish)
     p.rise(0, 0)
-    # v3.1 (owner, 2026-10-03: "it looks so bad compared to paete and phasiter"): three slow pushes became SEVEN shots, cut on
-    # her beats, two of them computed from the scene (`AmihanFrame` in HeroIntroductionScene.Amihan.cs): the ANSWER's orbit
-    # and the RIDE down the warp to the real players. Paete cuts six and Phaister seven; neither holds a shot for two seconds.
-    # A CALL: front right, low, the flung hand reaching toward the lens side.
-    p.shot(0, .55, (2.0, .75, 3.3), (0, 1.1, 0), 44, eye_to=(1.85, .82, 3.0), look_to=(0, 1.15, .05), fov_to=42)
-    # B ANSWER (computed: an orbit round her right side, rising, as the six sheets curl round her). The row is its fallback.
-    p.shot(.55, 1.7, (3.4, .9, 2.4), (0, 1.2, 0), 52, eye_to=(4.0, 1.6, -.6), look_to=(0, 1.25, 0), fov_to=48)
-    # C WEAVE: low on her right, face and hands, as her arms sweep in.
-    p.shot(1.7, 2.15, (2.4, .7, 1.4), (.2, 1.0, .2), 40, eye_to=(2.05, .78, 1.55), look_to=(.22, .98, .2), fov_to=38, close=True)
-    # D CUP (computed: an extreme close-up on her real palms, punching in on the cup and the first pack). Fallback row.
-    p.shot(2.15, 2.95, (1.25, .8, .95), (.35, .64, .12), 32, eye_to=(1.15, .78, .85), look_to=(.35, .64, .12), fov_to=30,
-           close=True)
-    # E PACK and DRAW: a high crane coming down onto her and the floor kasikus, cut on the second pack.
-    p.shot(2.95, 3.7, (2.6, 3.4, 2.2), (0, .4, 0), 54, eye_to=(1.9, 2.2, 1.6), look_to=(.1, .8, .1), fov_to=46)
-    # F RIDE (computed: chasing the warp threads down the lane to the nearest player in it, arriving as they brace). Fallback.
-    p.shot(3.7, 4.45, (.9, 1.2, .2), (0, .8, 3.0), 56, eye_to=(1.5, 1.3, 5.6), look_to=(0, 1.0, 8.0), fov_to=50)
-    # G REVEAL: high over her right shoulder, the whole lane and everyone in it, the live fan drawn on under them.
-    # (film r1: from 2.9 m up behind her shoulder her large head filled the bottom left; higher and further out to her right.)
-    # (film r3: aimed down the lane, she was cut off at the frame's bottom-left edge; aimed between her and the lane, wider.)
-    # v3.2: and it holds the hit: her lunge at the left, the lane, and the players thrown back down it.
-    # v3.2 (owner: "WAYYY BIgger and affect a very large area"): it rises into a high wide on the release, the whole half
-    # map in front of her and the ring round her, everyone in them thrown.
-    p.shot(4.45, 5.6, (4.6, 3.6, -.8), (.2, .4, 4.0), 60, eye_to=(7.5, 8.5, -7.0), look_to=(0, 0, 5.5), fov_to=72)
-    # Reduced motion: one side view with her, her hands and the lane together.
-    p.locked((4.4, 1.6, 1.0), (0, .95, 2.5), 52)
+
+    # A OPEN: on the line's abel to her left, whip-panning to her as she skids in (`AmihanFrame` adds the pan).
+    p.shot(0, .5, (1.6, 1.0, 2.6), (-1.2, 1.5, -.6), 46, eye_to=(1.9, .95, 3.0), look_to=(0, 1.15, 0), fov_to=44)
+    # B READ: medium, face, the arm feeling for the wind and both feet in frame, creeping in.
+    # (v4 r3: from her right her out-flung free arm was on the far side of her; from the front, a little to her left.)
+    p.shot(.5, 1.3, (-.5, 1.05, 3.3), (0, 1.15, 0), 40, eye_to=(-.4, 1.1, 2.9), look_to=(0, 1.2, 0), fov_to=38)
+    # C CALL: punched in on the whistle, then pulled back as the street's wind arrives behind her.
+    p.shot(1.3, 1.85, (.9, 1.35, 1.9), (0, 1.45, 0), 34, eye_to=(2.4, 1.3, 3.6), look_to=(-.3, 1.2, 0), fov_to=48)
+    # D CATCH (computed: a low orbit round her as the cloth whirls). Fallback row.
+    p.shot(1.85, 2.5, (2.8, .7, 2.0), (0, 1.3, 0), 50, eye_to=(-.6, .8, 3.3), look_to=(0, 1.3, 0), fov_to=50)
+    # E CARD (computed: square on her, the backdrop behind). Fallback row.
+    # (v4 r1: at 3.1 m the letterbox cut her head off; back to 4.3 m, her whole upper body framed under the bars.)
+    p.shot(2.5, 2.95, (.45, 1.25, 4.4), (0, 1.0, 0), 40, eye_to=(.4, 1.25, 4.2), look_to=(0, 1.0, 0), fov_to=39)
+    # F COMMIT: behind her right shoulder, high and wide enough for her whole wind-up, the cloth over her head and the lane
+    # ahead; it holds through the drive and the cloth bursting off her (v4 r1: from 1.6 m her head filled a third of the
+    # frame; v4 r4: cut at 3.95 the released cloth still filled the next lens).
+    p.shot(2.95, 4.08, (2.3, 2.1, -3.2), (-.2, 1.1, 3.5), 54, eye_to=(2.6, 2.5, -3.6), look_to=(0, 1.0, 4.5), fov_to=56)
+    # G HIT (computed: high in front of her right side, her finish in the middle, the cloth radiating out under the lens).
+    p.shot(4.08, 4.4, (3.0, 3.0, 3.8), (0, 1.0, .6), 46, eye_to=(2.8, 2.8, 3.5), look_to=(0, 1.0, .6), fov_to=42)
+    p.locked((3.4, 1.5, 3.4), (0, 1.0, 1.5), 50)
     return p
 
 @performance

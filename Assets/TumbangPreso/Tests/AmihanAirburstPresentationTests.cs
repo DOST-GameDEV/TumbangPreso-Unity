@@ -50,7 +50,7 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(0f, AmihanRules.StormSurgeDelaySeconds, 1e-6f);
             var performance = UltimatePerformance.For("amihan");
             Assert.IsNotNull(performance);
-            const float drive = 5.05f;
+            const float drive = 3.85f;
             Assert.IsTrue(performance.Punches.Any(p => Mathf.Abs(p - drive) < 1e-3f), "The drive is a punch.");
             var key = performance.Keys.First(k => Mathf.Abs(k.Time - drive) < 1e-3f);
             Assert.AreEqual(-104f, key.ArmRight.x, .5f, "Both palms driven forward on the release.");
@@ -66,7 +66,7 @@ namespace TumbangPreso.Tests
             var clip = Shipped();
             var performance = UltimatePerformance.For("amihan");
             Assert.IsNotNull(performance);
-            Assert.AreEqual(5.6f, performance.Seconds, 1e-4f, "The shared phase derives its boundary from this length.");
+            Assert.AreEqual(4.4f, performance.Seconds, 1e-4f, "The shared phase derives its boundary from this length.");
             var last = performance.Keys[performance.Keys.Count - 1];
             void Same(string bone, Vector3 intro)
             {
