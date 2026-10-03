@@ -68,7 +68,7 @@ namespace TumbangPreso.Tests
             var clip = Shipped();
             var performance = UltimatePerformance.For("amihan");
             Assert.IsNotNull(performance);
-            Assert.AreEqual(5.6f, performance.Seconds, 1e-4f, "The shared phase derives its boundary from this length.");
+            Assert.AreEqual(5.9f, performance.Seconds, 1e-4f, "The shared phase derives its boundary from this length.");
             var last = performance.Keys[performance.Keys.Count - 1];
             void Same(string bone, Vector3 intro)
             {

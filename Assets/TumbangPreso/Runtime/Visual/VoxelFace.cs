@@ -12,7 +12,7 @@ namespace TumbangPreso.Visual
     /// </summary>
     public sealed class VoxelFace
     {
-        public enum Look { Rest, Squint, Whistle, Grin, Wink }
+        public enum Look { Rest, Squint, Whistle, Grin, Wink, Teehee }
 
         public const string ResourceFolder = "Models/AmihanFace";
         public static string MeshName(Look look) => "amihan-face-" + look.ToString().ToLowerInvariant();
@@ -48,6 +48,15 @@ namespace TumbangPreso.Visual
                 { -.099f, -.053f, .041f, .099f },
                 {  .053f,  .065f, .056f, .068f }, {  .065f,  .087f, .068f, .080f }, {  .087f,  .099f, .056f, .068f },
                 { -.034f, .030f, .008f, .022f }, { -.024f, .018f, .000f, .008f },
+            },
+            // TEEHEE (owner, 2026-10-03: "TEEHEE pose", "make the pose cuter"): both eyes squeezed shut into > < chevrons pointing
+            // in to the nose, and a little open mouth: >v<. Her finish (eight blocks: the head has corners for no more).
+            [Look.Teehee] = new float[,]
+            {
+                // (v11: at 16 mm the chevrons broke up into specks in the close-up; as bold as her other eyes.)
+                { .074f, .101f, .080f, .096f }, { .056f, .082f, .066f, .082f }, { .074f, .101f, .052f, .068f },
+                { -.101f, -.074f, .080f, .096f }, { -.082f, -.056f, .066f, .082f }, { -.101f, -.074f, .052f, .068f },
+                { -.030f, .030f, .012f, .024f }, { -.016f, .016f, .000f, .013f },
             },
         };
 
