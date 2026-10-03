@@ -164,3 +164,30 @@ The owner has not watched v4 yet.
 
 Open: the face blocks are small at mid distance; the read pose's out-flung arm is short on her body; Drift and Whirlwind
 were not refilmed after their cloth was hidden; the victim's own blown camera is still unfilmed.
+
+## v5 (October 3, owner review of v4)
+
+Owner on the cutscene: *"i like the expression she makes and her relaxing feel but the vfx and the shit thhat show
+up in the back dont make sense"*, *"i also dont like the ranodm blue background saying the name of her skill"*. On
+Featherfall: *"doesnt feel like she's flyying and doesnt feel like she has air pushing her up"*, *"make her legs feel
+like theyre dangling"*, *"she looks like she is RIGIDLy flying"*.
+
+Diagnosis from the v4r11 frames: behind her a stage rose from the court (lime walls, five timber houses, posts and a
+clothesline) that was not the match; the green gust followed the old cloth path and its three strands looped round
+her a metre wide, with three helixes on top, so nothing had a readable source; the teal card cut in and the scene then
+jumped to the real plaza. Featherfall sat her upright with knees forward and arms 9 degrees off her sides above a
+faint swirl and thin helixes: nothing joined the court to her and her body never answered the air.
+
+* **Cutscene** (`HeroIntroductionScene.Amihan.cs`): kept every pose, time and face. Removed the stage, the clothesline
+  and its cloth, the card and letterbox (`HeroIntroductionScene.AmihanBurst.cs`, `Shaders/AmihanCardText.shader`
+  deleted). She performs on the real court; the real players' copies stand where they are from the first frame. The
+  wind has one path: streaks drawn each frame from upwind into her moving free palm, where three open strands spin
+  into a ball of air that she carries through the catch, the whirl, the point and the wind-up (fed by four more
+  streaks from behind) and that unrolls into the jet down the lane on the release. Speed streaks, court dust, the live
+  fan and the lane hit are unchanged.
+* **Featherfall** (`AmihanHoverRing` in `AmihanVfx.cs`, `AmihanFlightPose.cs`): a column of six streaks races from the
+  court up into her soles, stretched to the real gap; a gust ring rises through it every 0.95 s and breaks against her
+  soles; court dust spreads outward from under her; the take-off streaks are 1.5 times wider and brighter. Her body
+  rides it: each leg is its own under-damped pendulum (trailing her travel, swinging past when she stops, kicked by
+  each gust, drifting at its own rate), arms spread about 38 degrees palms down, chest and chin up, and a lift of her
+  whole body on every gust (`AmihanHoverRing.Push`). The column thins while she descends.

@@ -680,22 +680,20 @@ def rafi():
 @performance
 def amihan():
     """
-    AIRBURST v4, 4.4 s (docs/reports/amihan-presentation-2026-10-02/cutscene-v4-plan.md). The owner on v3.7: "thoroughly
-    revise cutscene i want her personality to show in it as well as give it its own feel". v3 was a solemn ritual; she is
-    a bright, impatient street kid from Vigan who reads the wind off the abel hung out to air and commits before the play
-    is ready ("Reads the wind. Gets there first.").
+    AIRBURST v5, 4.4 s (docs/reports/amihan-presentation-2026-10-02/cutscene-v4-plan.md, "v5"). The owner on v4 kept
+    her expressions and her relaxed feel, and cut what did not make sense: the stage that rose behind her (walls,
+    houses, a clothesline) and the AIRBURST card. She performs on the real court among the real players.
 
-    "Amihan cannot wait: she whistles the monsoon down like calling a teammate, it arrives as her family's abel cloth, and
-    she lets it fly before anyone is ready."
+    "She whistles, the wind answers: it winds into a ball on her palm, and she throws it down the lane."
 
-    OPEN (0 to .5): the abel on the line snapping, a whip pan onto her running in; she skids to a stop.
-    READ (.5 to 1.3): a licked finger up to the wind (the cutscene face set squints), the line goes slack; two impatient
-    foot taps and a shrug.
-    CALL (1.3 to 1.85): the two-finger whistle; the wind answers down the street and the cloth tears off the line to her.
-    CATCH (1.85 to 2.5): she catches it in her free hand and whirls it round her once.
-    CARD (2.5 to 2.95): AIRBURST, her point down the lane, a grin; the card is blown away before it has finished.
-    COMMIT (2.95 to 3.85): wound up, the cloth swung back over her head, then both palms driven: the release at 3.85.
-    HIT (3.85 to 4.4): from down the lane, the players blown past the lens and her standing in the middle, hands on hips.
+    OPEN (0 to .5): a pan across the court onto her running in; she skids to a stop.
+    READ (.5 to 1.3): her free arm out to feel the wind (the cutscene face set squints); two impatient foot taps and
+    a shrug.
+    CALL (1.3 to 1.85): the two-finger whistle; the wind answers, streaks racing in from upwind to her hand.
+    CATCH (1.85 to 2.5): the air wound into a ball on her palm, whirled over her head.
+    POINT (2.5 to 2.95): her point down the lane, a grin, the ball on her hand.
+    COMMIT (2.95 to 3.85): wound up, the ball swung back over her head and fed, then both palms driven: the release.
+    HIT (3.85 to 4.4): the players blown away, her standing in the middle, hands on hips, a wink.
     Play resumes 0.55 s after the release (`AmihanStorm.CutsceneTail`); the live clip starts in the last pose.
     The free (left) hand does the gestures: the right hand holds the slipper, which passes through her large head higher.
     """
@@ -747,16 +745,16 @@ def amihan():
     p.key(4.24, finish, punch=True).key(4.4, finish)
     p.rise(0, 0)
 
-    # A OPEN: on the line's abel to her left, whip-panning to her as she skids in (`AmihanFrame` adds the pan).
+    # A OPEN: across the court upwind of her, panning to her as she skids in (`AmihanFrame` adds the pan).
     p.shot(0, .5, (1.6, 1.0, 2.6), (-1.2, 1.5, -.6), 46, eye_to=(1.9, .95, 3.0), look_to=(0, 1.15, 0), fov_to=44)
     # B READ: medium, face, the arm feeling for the wind and both feet in frame, creeping in.
     # (v4 r3: from her right her out-flung free arm was on the far side of her; from the front, a little to her left.)
     p.shot(.5, 1.3, (-.5, 1.05, 3.3), (0, 1.15, 0), 40, eye_to=(-.4, 1.1, 2.9), look_to=(0, 1.2, 0), fov_to=38)
-    # C CALL: punched in on the whistle, then pulled back as the street's wind arrives behind her.
+    # C CALL: punched in on the whistle, then pulled back as the wind arrives behind her.
     p.shot(1.3, 1.85, (.9, 1.35, 1.9), (0, 1.45, 0), 34, eye_to=(2.4, 1.3, 3.6), look_to=(-.3, 1.2, 0), fov_to=48)
-    # D CATCH (computed: a low orbit round her as the cloth whirls). Fallback row.
+    # D CATCH (computed: a low orbit round her as the ball winds up). Fallback row.
     p.shot(1.85, 2.5, (2.8, .7, 2.0), (0, 1.3, 0), 50, eye_to=(-.6, .8, 3.3), look_to=(0, 1.3, 0), fov_to=50)
-    # E CARD (computed: square on her, the backdrop behind). Fallback row.
+    # E POINT: square on her pointing down the lane (v5: the card behind her is gone).
     # (v4 r1: at 3.1 m the letterbox cut her head off; back to 4.3 m, her whole upper body framed under the bars.)
     p.shot(2.5, 2.95, (.45, 1.25, 4.4), (0, 1.0, 0), 40, eye_to=(.4, 1.25, 4.2), look_to=(0, 1.0, 0), fov_to=39)
     # F COMMIT: behind her right shoulder, high and wide enough for her whole wind-up, the cloth over her head and the lane
