@@ -17,7 +17,12 @@ English; place and character proper names retain their identity.
 
 The owner requested all current Lydian Regular usage become Nunito Bold for now.
 OwnerUiTheme's serialized reference and missing-theme fallback use Nunito Bold;
-OwnerUiArtAuthor preserves that choice when rebuilding the theme. Loading tips
+OwnerUiArtAuthor preserves that choice when rebuilding the theme. A later
+owner correction reduces these newly replaced reading labels to85percent of
+their authored size, preserving the28-unit small-window reading floor without
+enlarging already-smaller labels (tutorial30 becomes28). Display/accent sizes
+stay intact.
+Loading tips
 already used Nunito Bold through HubStyle. Existing Work Sans reading routes,
 display/accent fonts, source Lydian files, GUIDs and permission records remain.
 

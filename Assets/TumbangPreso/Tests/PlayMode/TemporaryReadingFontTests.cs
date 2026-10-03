@@ -47,13 +47,14 @@ namespace TumbangPreso.PlayTests
                     var card = hud.GetComponentsInChildren<RectTransform>(true).Single(t => t.name == "ObjectiveCard");
                     LayoutRebuilder.ForceRebuildLayoutImmediate(card);
                     Assert.AreSame(Resources.Load<Font>("UI/fonts/Nunito-Bold"), body.font);
+                    Assert.AreEqual(28, body.fontSize, "Owner requested smaller replacement reading text.");
                     Assert.AreEqual(FontStyle.Normal, body.fontStyle, "Use authored bold glyphs, not synthetic bold.");
                     Assert.AreEqual(words, body.text);
                     Assert.LessOrEqual(body.preferredHeight, body.rectTransform.rect.height + 2, "Tutorial paragraph clips after font replacement.");
                     Assert.AreSame(OwnerUiTheme.Current.Display, hud.GetComponentsInChildren<Text>(true).Single(t => t.name == "LessonTitle").font);
                 }
                 if (SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null)
-                    yield return TumpUiCapture.Capture("Temporary-Nunito-tutorial", hud.GetComponent<Canvas>(), 960, 540, false, false, checkActionBounds: true);
+                    yield return TumpUiCapture.Capture("Temporary-Nunito-smaller-tutorial", hud.GetComponent<Canvas>(), 960, 540, false, false, checkActionBounds: true);
             }
             finally { Object.DestroyImmediate(owner); }
         }
