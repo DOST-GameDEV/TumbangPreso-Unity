@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 12:39:33Z" end-time="2026-10-03 12:39:33Z" duration="0.284697">
+  <test-suite type="TestSuite" id="2896" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1542" result="Passed" start-time="2026-10-03 12:39:33Z" end-time="2026-10-03 12:39:33Z" duration="0.284697" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2890" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1542" result="Passed" start-time="2026-10-03 12:39:33Z" end-time="2026-10-03 12:39:33Z" duration="0.269903" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12912" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2891" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1542" result="Passed" start-time="2026-10-03 12:39:33Z" end-time="2026-10-03 12:39:33Z" duration="0.259464" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2892" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1542" result="Passed" start-time="2026-10-03 12:39:33Z" end-time="2026-10-03 12:39:33Z" duration="0.248653" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2180" name="PracticeBotResumeInputLifetimeTests" fullname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests" classname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 12:39:33Z" end-time="2026-10-03 12:39:33Z" duration="0.218959" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2186" name="AnAlreadyDisabledAttachedBrainDoesNotOwnHeldHumanKeys" fullname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests.AnAlreadyDisabledAttachedBrainDoesNotOwnHeldHumanKeys" methodname="AnAlreadyDisabledAttachedBrainDoesNotOwnHeldHumanKeys" classname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests" runstate="Runnable" seed="730039276" result="Passed" start-time="2026-10-03 12:39:33Z" end-time="2026-10-03 12:39:33Z" duration="0.081939" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2184" name="ANewProducerCommandStillMovesAfterIdleResume" fullname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests.ANewProducerCommandStillMovesAfterIdleResume" methodname="ANewProducerCommandStillMovesAfterIdleResume" classname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests" runstate="Runnable" seed="2011040251" result="Passed" start-time="2026-10-03 12:39:33Z" end-time="2026-10-03 12:39:33Z" duration="0.032110" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2182" name="FirstResumedMotorStepDoesNotSteerFromTheOldCommand" fullname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests.FirstResumedMotorStepDoesNotSteerFromTheOldCommand" methodname="FirstResumedMotorStepDoesNotSteerFromTheOldCommand" classname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests" runstate="Runnable" seed="1045197374" result="Passed" start-time="2026-10-03 12:39:33Z" end-time="2026-10-03 12:39:33Z" duration="0.023450" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2185" name="ProducerWithSuppressedAbilitiesKeepsSharedHumanHeroKeys" fullname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests.ProducerWithSuppressedAbilitiesKeepsSharedHumanHeroKeys" methodname="ProducerWithSuppressedAbilitiesKeepsSharedHumanHeroKeys" classname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests" runstate="Runnable" seed="1504160913" result="Passed" start-time="2026-10-03 12:39:33Z" end-time="2026-10-03 12:39:33Z" duration="0.022109" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2181" name="PublicIdleResumeDoesNotRestoreTheOldProducerMove" fullname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests.PublicIdleResumeDoesNotRestoreTheOldProducerMove" methodname="PublicIdleResumeDoesNotRestoreTheOldProducerMove" classname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests" runstate="Runnable" seed="966093094" result="Passed" start-time="2026-10-03 12:39:33Z" end-time="2026-10-03 12:39:33Z" duration="0.023186" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2183" name="RepeatingActivePreservesTheCurrentProducerCommand" fullname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests.RepeatingActivePreservesTheCurrentProducerCommand" methodname="RepeatingActivePreservesTheCurrentProducerCommand" classname="TumbangPreso.PlayTests.PracticeBotResumeInputLifetimeTests" runstate="Runnable" seed="1721117280" result="Passed" start-time="2026-10-03 12:39:33Z" end-time="2026-10-03 12:39:33Z" duration="0.023085" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -40,7 +40,7 @@ namespace TumbangPreso.Abilities
                     "Keep a visible rival within six metres in your aim for 0.4 seconds to Zap them for two seconds. Losing aim or sight cancels. Overclock offers one different target within one second.",
                     35,FollowupSeconds,AbilityGlyph.ZackOvercharge,
                     summary:"Maintain a visible lock; Zapped blocks abilities only.",
-                    castAction:"cast",viewmodelAction:"cast",castCue:"") { _kit=kit; }
+                    castAction:"hero-zack-circuit",viewmodelAction:"closed-circuit",castCue:"") { _kit=kit; }
 
             public override bool CanActivate(AbilityContext ctx)
                 =>base.CanActivate(ctx) && Phase==CircuitPhase.Idle && ctx.Motor.IsDefender

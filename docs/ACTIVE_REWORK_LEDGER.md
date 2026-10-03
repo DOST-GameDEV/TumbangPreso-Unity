@@ -1,5 +1,59 @@
 # Active Rework Checkpoint
 
+## Latest owner steering: laptop owns testing while Claude edits Amihan
+
+October3 owner explicitly asks the existing laptop chat to do all PC testing
+again. Message sent to Fix gameplay interruption recovery, thread
+01a0ffab-10a0-70d0-9270-07e171c1613b on its connected laptop host. Current source
+2a50f2532/protocol141 is pushed. Laptop asked to finish/checkpoint its current
+F6/default-seat unit, confirm reservations/jobs and take the full test queue:
+14-case reader/practice/font integration, new1-case PerformanceTimingCaptureTests,
+ONE matching141 Windows build plus exact-player startup/entry/CSV timing checks,
+then coordinated matching LAN/online cases when the PC is actually available.
+Request delivered; acceptance/results are not yet confirmed. Old139 capture and
+134 LAN passes do not qualify141. No paid service or extra-credit authorization.
+
+PC continues source fixes/publication; do not start PC Unity tests/builds/players
+while Claude owns the slot. Preserve laptop gameplay and Claude/private Amihan
+reservations. This new direct owner request authorizes messages to that existing
+laptop chat despite the earlier stale ban. No unrelated chats/new agents.
+NEXT: get one compact laptop acknowledgement/status, then continue a disjoint
+PC source task and use its concrete validation feedback. Do not repeat interrupted
+PC tests or recreate large binary traces.
+
+## Resume here: October 3, current source and bounded capture
+
+Publication2e4e0615e/protocol141 includes current laptop fixes and compact
+performance timing. Binary profiler capture is now explicit, selected-hero only
+in the launcher and stopped at a sampled512MiB output threshold. Python and full
+runtime Roslyn compilation pass; two invalid requests reject before launch.
+New default timing native case has NO pass: admission refused a GPU lease,
+bounded retry interrupted at1002MiB/1024 reserve after Main began another run.
+Only owned19552/1960 stopped; guard restored/free. No further retry at unchanged
+headroom and no new second-slot overlap qualification.
+
+Main checkout remains5805d85f6 with private staged Amihan deletions and owner
+overlays. Its merge refused; nothing was reset or unstaged. A conflict-free Git
+tree merge published a8b05b103 without changing private files, then the new
+capture fix published2e4e0615e from clean shipping checkout1003i.
+
+Isolated worker1003 at670d9c851 contains matching141 production source with its
+validation identity. New14-case input/font integration INTERRUPTED before tests:
+memory1529MiB below1536 reserve, only owned Editors2000/32236 stopped. Guard
+terminal/restored/free; no XML pass. Evidence in workerLogs/current-integration141-input-font.
+
+Shipping checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i
+owns the reused Library moved from idle1003h. Old1003h source and accepted139
+player remain intact; its Library is now absent. No extra cache copy, deletion,
+new agent or outgoing conversation was started. Workflow13696 is TERMINAL:
+19148 tracked source inputs frozen, build admission REFUSED after120s by an
+occupied project/Library/profile/preference-hive lease. No build Editor/artifact.
+Native attempt10898 is terminal/interrupted/restored, without test XML or raw
+traces. NEXT: continue a disjoint source fix while Main's Amihan work runs.
+Revisit pending default timing and141 player only after an actual slot/headroom
+change; default timing's bounded repair was already used. Old139
+startup and134 LAN evidence cannot qualify the141 artifact.
+
 ## PC root latest checkpoint: October 3, Unity slot isolation
 
 LATEST RESUME FIRST (October3,20:04 Manila): Main9ccf6145d published/protocol141.

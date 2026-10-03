@@ -1169,6 +1169,7 @@ namespace TumbangPreso.CameraSystem
                   : clip == "slide" ? SlideClip
                   : clip == "shove" ? ShoveClip
                   : clip == "slam" ? SlamClip
+                  : clip == "closed-circuit" ? ClosedCircuitClip
                   : clip == "cast" || clip == "thrust" || clip == "dash" ? ThrustClip
                   : clip == "thrust-fire" ? ThrustFireClip
                   : clip == "cinder-draw" ? CinderDrawClip

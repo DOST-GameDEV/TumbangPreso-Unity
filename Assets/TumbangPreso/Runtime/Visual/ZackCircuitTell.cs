@@ -1,16 +1,21 @@
 using TumbangPreso.Abilities;
 using TumbangPreso.Net;
+using TumbangPreso.CameraSystem;
 using UnityEngine;
 
 namespace TumbangPreso.Visual
 {
     // A target-facing acquisition tell, never a hit or a gameplay collider.
+    [DefaultExecutionOrder(1100)]
     public sealed class ZackCircuitTell : MonoBehaviour
     {
         private CharacterMotor _caster;
         private ZackHeroKit _kit;
         private LineRenderer _line;
         private Material _material;
+        private Transform _leftArm;
+        private Vector3 _leftPalm;
+        private ViewmodelArms _ownerArms;
         public static void Ensure(CharacterMotor caster,ZackHeroKit kit)
         {
             if(caster==null || kit==null)return;
@@ -27,6 +32,32 @@ namespace TumbangPreso.Visual
                 tell._line.sharedMaterial=tell._material;tell._line.enabled=false;
             }
             tell._caster=caster;tell._kit=kit;
+            tell.BindCastingHand();
+        }
+        private void BindCastingHand()
+        {
+            _leftArm=null;_ownerArms=null;
+            var visual=_caster.GetComponent<CharacterVisual>();
+            var skin=visual!=null && visual.Model!=null
+                ? visual.Model.GetComponentInChildren<SkinnedMeshRenderer>() : null;
+            if(skin!=null)
+                for(int i=0;i<skin.bones.Length;i++)
+                    if(skin.bones[i]!=null && skin.bones[i].name=="arm-left"
+                        && CharacterVisual.PalmCentre(skin,i,out var palm))
+                    { _leftArm=skin.bones[i];_leftPalm=palm;break; }
+            // Resolve once per acquisition, never a scene search in LateUpdate.
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>(FindObjectsSortMode.None))
+                if(arms.isActiveAndEnabled && arms.BoundCharacter==_caster){_ownerArms=arms;break;}
+        }
+        private Vector3 CastingHand()
+        {
+            if(_ownerArms!=null && _ownerArms.isActiveAndEnabled && _ownerArms.BoundCharacter==_caster)
+            {
+                var hand=_ownerArms.LeftHandForProps();
+                if(hand!=null)return hand.TransformPoint(_ownerArms.LeftPalmOffset());
+            }
+            return _leftArm!=null ? _leftArm.TransformPoint(_leftPalm)
+                : _caster.transform.position+Vector3.up*1.05f+_caster.transform.right*.14f;
         }
         private void LateUpdate()
         {
@@ -35,7 +66,7 @@ namespace TumbangPreso.Visual
             bool visible=_kit.CircuitStage==CircuitPhase.Acquiring && _kit.CircuitRemaining>0
                 && target!=null && GameServices.Round?.RoundActive==true;
             _line.enabled=visible;if(!visible)return;
-            Vector3 from=_caster.transform.position+Vector3.up*1.05f+_caster.transform.right*.14f;
+            Vector3 from=CastingHand();
             var capsule=target.GetComponent<CharacterController>();
             Vector3 to=target.transform.position+(capsule!=null?capsule.center:Vector3.up*.8f);
             Vector3 side=Vector3.Cross((to-from).normalized,Vector3.up);

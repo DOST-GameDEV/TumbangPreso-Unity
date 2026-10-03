@@ -33,6 +33,7 @@ namespace TumbangPreso
         private float _lungeCharge;
         private bool _lungeCharging;
         private float _observedLunge=-1,_observedLungeAt=-100,_lungeSyncAt;
+        private bool _observedLungeFromInput;
         private bool _sentLunge;
         private float _lungeActiveLeft;
         private Vector3 _lungeFrom;
@@ -82,6 +83,8 @@ namespace TumbangPreso
         public void ApplyObservedLungeCharge(bool active,float seconds=0)
         {
             if(float.IsNaN(seconds) || float.IsInfinity(seconds))return;
+            _observedLungeFromInput = active && _observedLungeFromInput && NetAuthority.IsHost
+                                      && (_motor.PlayerSlot == NetAuthority.LocalSlot || _motor.IsBot);
             _observedLunge=active?Mathf.Clamp(seconds,0,Balance.LungeChargeTime):-1;
             _observedLungeAt=Time.time;
         }
@@ -97,6 +100,8 @@ namespace TumbangPreso
             {
                 _sentLunge=active;_lungeSyncAt=Time.time+.12f;
                 if(NetAuthority.IsNetworked)Net.MatchRpc.Instance?.SetThrowCharge(_motor.PlayerSlot,active,_lungeCharge,0,true);
+                // The host may synchronously apply its own published sample.
+                _observedLungeFromInput = active;
             }
         }
 
@@ -138,12 +143,18 @@ namespace TumbangPreso
             CancelPendingInput();
         }
 
-        internal void CancelPendingInput()
+        internal void CancelPendingInput() => RetireProducerInput(true);
+
+        internal void RetireProducerInput(bool clearReceivedPresentation)
         {
             // Input retirement cancels the windup, not an already committed contact window.
             _lungeCharging = false;
             _lungeCharge = 0.0f;
-            _observedLunge = -1.0f;
+            if (clearReceivedPresentation || _observedLungeFromInput)
+            {
+                _observedLunge = -1.0f;
+                _observedLungeFromInput = false;
+            }
         }
 
         private void Update()
