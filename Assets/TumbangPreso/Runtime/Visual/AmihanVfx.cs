@@ -507,6 +507,22 @@ namespace TumbangPreso.Visual
         private readonly List<WindVfx.Ribbon> _front = new List<WindVfx.Ribbon>();
         private readonly List<WindVfx.Ribbon> _sigil = new List<WindVfx.Ribbon>();
         private readonly List<WindVfx.Ribbon> _feet = new List<WindVfx.Ribbon>();
+        // v3.2 THE RING: the blast round her (`AmihanRules.StormSurgeAroundRadius`): her kasikus on the court at its edge, and two
+        // standing rings of wind racing out to it on the release, so the players behind her see what took them.
+        private WindVfx.Ribbon _aroundEdge;
+        // THE ABEL (`abel-cloth-direction.md`): the blast is cloth off her loom. A standing woven curtain racing out across the
+        // half map, a cloth skirt snapping out to the ring, and six long sashes flung off her palms down the blast.
+        private AbelCloth _clothFront, _clothSkirt;
+        private readonly System.Collections.Generic.List<AbelCloth> _sashes = new System.Collections.Generic.List<AbelCloth>();
+        private Vector3[] _clothCentre, _clothAcross;
+        private const int ClothFrontSamples = 72, ClothSkirtSamples = 64, SashSamples = 26;
+        // THE SASHES: direction (share of the half angle), length, width, launch delay, whip frequency, lift.
+        private static readonly float[,] SashRows =
+        {
+            { -0.08f, 13.0f, 0.55f, 0.00f, 2.2f, 1.1f }, { 0.22f, 10.5f, 0.45f, 0.03f, 2.7f, 1.6f }, { -0.45f, 9.0f, 0.42f, 0.05f, 2.4f, 0.8f },
+            { 0.55f, 11.5f, 0.50f, 0.02f, 2.0f, 1.3f }, { -0.78f, 8.0f, 0.38f, 0.07f, 3.0f, 1.0f }, { 0.82f, 8.5f, 0.40f, 0.06f, 2.6f, 1.4f },
+        };
+        private readonly List<WindVfx.Ribbon> _ringFront = new List<WindVfx.Ribbon>();
         private readonly List<WindVfx.Ribbon> _warp = new List<WindVfx.Ribbon>();
         private readonly List<WindVfx.Ribbon> _sheets = new List<WindVfx.Ribbon>();
         private readonly List<Transform> _sheetHosts = new List<Transform>();
@@ -642,9 +658,23 @@ namespace TumbangPreso.Visual
             for (int i = 0; i < 4; i++) fx._sigil.Add(Floor(Diamond(go.transform, "Kasikus" + i, 0.42f + i * 0.2f, 0.1f, 40.0f + i)));
             // Two small diamonds at her feet that tighten on the beats.
             for (int i = 0; i < 2; i++) fx._feet.Add(Floor(Diamond(go.transform, "HeldDiamond" + i, 0.85f + i * 0.4f, 0.12f, 50.0f + i)));
+            // The ring's limit on the court: a circle at its exact radius (the contact line), her ink outside, as the fan's edges are.
+            var aroundEdge = WindVfx.Arc(AmihanRules.StormSurgeAroundRadius - 0.13f, 360.0f, 72, 0.025f);
+            fx._aroundEdge = Floor(WindVfx.Build(go.transform, "AroundEdge", aroundEdge, 0.26f, WindVfx.Flat(aroundEdge), 24.0f, 0.3f, 22.0f));
+            for (int i = 0; i < 2; i++)
+            {
+                var ring = WindVfx.Arc(1.0f, 360.0f, 64, 0.0f);
+                fx._ringFront.Add(WindVfx.Build(go.transform, "RingFront" + i, ring, 1.3f - i * 0.45f, WindVfx.Standing, 6.0f + i * 3.0f, 0.16f, 34.0f + i));
+                fx._ringFront[i].Recolour(WindVfx.Core, WindVfx.SheetBody, WindVfx.FloorInk);
+                if (fx._ringFront[i].Material != null) { fx._ringFront[i].Material.SetFloat("_InkFrom", 0.55f); fx._ringFront[i].Material.SetFloat("_InkAlpha", 0.95f); }
+            }
             // Each Motif gets its own host: a Motif hands its shared tuft mesh to its parent's single
             // GeneratedMeshOwner, so two on one object throws (the shipped cutscene did, on every cast).
             fx._drawn = new WindVfx.Motif(Host(go.transform, "DrawnCotton"), 16, origin.x * 1.7f + origin.z * 0.9f, 0.5f);
+            fx._clothFront = new AbelCloth(go.transform, "AbelFront", ClothFrontSamples, 0.9f);
+            fx._clothSkirt = new AbelCloth(go.transform, "AbelSkirt", ClothSkirtSamples, 1.2f);
+            for (int i = 0; i < SashRows.GetLength(0); i++) fx._sashes.Add(new AbelCloth(go.transform, "AbelSash" + i, SashSamples, 1.8f));
+            fx._clothCentre = new Vector3[ClothFrontSamples]; fx._clothAcross = new Vector3[ClothFrontSamples];
             fx._flung = new WindVfx.Motif(Host(go.transform, "FlungCotton"), 40, origin.x * 0.7f + origin.z * 3.3f);
             fx._scraps = new WindVfx.Motif(Host(go.transform, "FlungScraps"), 24, origin.x * 2.3f + origin.z * 0.4f, 0.7f);
             fx.StepTo(0.0f);
@@ -745,6 +775,89 @@ namespace TumbangPreso.Visual
 
         private void Update() { StepTo(_age + Time.deltaTime); if (_age >= LifeSeconds) Destroy(gameObject); }
 
+        /// <summary>
+        /// THE ABEL, posed from the age after the release. The front: a standing woven curtain across the whole half angle,
+        /// racing out to the fan's reach, billowing (a travelling ripple along it) with its top edge whipping forward, fraying
+        /// as it goes. The skirt: a cloth band snapping out round her to `StormSurgeAroundRadius`. The sashes: unfurling off
+        /// her palms down the blast, whipping, fraying away.
+        /// </summary>
+        private void StepCloth(float after, bool calm)
+        {
+            if (after < 0) { _clothFront.Hide(); _clothSkirt.Hide(); foreach (var sash in _sashes) sash.Hide(); return; }
+            float half = _half * Mathf.Deg2Rad;
+            float ripple = calm ? 0.0f : 1.0f;
+            // THE FRONT.
+            {
+                float u = Mathf.Clamp01(after / 0.7f);
+                float r = Mathf.Lerp(1.2f, _range, 1.0f - Mathf.Pow(1.0f - u, 3.2f));
+                float height = Mathf.Lerp(1.9f, 1.2f, u);
+                for (int i = 0; i < ClothFrontSamples; i++)
+                {
+                    float s = i / (ClothFrontSamples - 1.0f);
+                    float a = Mathf.Lerp(-half, half, s) * 0.985f;
+                    var outward = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a));
+                    // Billow: the cloth bellies out between its ends and ripples along its length.
+                    float belly = 0.9f * Mathf.Sin(s * Mathf.PI) + ripple * 0.35f * Mathf.Sin(s * 22.0f - after * 26.0f);
+                    float rr = r + belly * (0.4f + u);
+                    var bottom = outward * rr + Vector3.up * 0.12f;
+                    // The top edge whips forward and back as it races.
+                    var top = outward * (rr + (0.6f + ripple * 0.35f * Mathf.Sin(s * 13.0f - after * 31.0f)) * (1.0f - u * 0.5f)) + Vector3.up * height;
+                    _clothCentre[i] = (bottom + top) * 0.5f; _clothAcross[i] = (top - bottom) * 0.5f;
+                }
+                _clothFront.Pose(_clothCentre, _clothAcross, WindVfx.Ease(0.35f, 0.75f, after));
+            }
+            // THE SKIRT round her.
+            {
+                float u = Mathf.Clamp01(after / 0.38f);
+                float r = Mathf.Lerp(0.6f, AmihanRules.StormSurgeAroundRadius, 1.0f - Mathf.Pow(1.0f - u, 3.0f));
+                for (int i = 0; i < ClothSkirtSamples; i++)
+                {
+                    float s = i / (ClothSkirtSamples - 1.0f), a = s * Mathf.PI * 2.0f;
+                    var outward = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a));
+                    float wave = ripple * 0.3f * Mathf.Sin(a * 9.0f + after * 24.0f);
+                    var bottom = outward * r + Vector3.up * 0.08f;
+                    var top = outward * (r + 0.7f + wave) + Vector3.up * (1.0f + wave);
+                    _clothCentre[i] = (bottom + top) * 0.5f; _clothAcross[i] = (top - bottom) * 0.5f;
+                }
+                _clothSkirt.Pose(Trim(_clothCentre, ClothSkirtSamples), Trim(_clothAcross, ClothSkirtSamples), WindVfx.Ease(0.25f, 0.6f, after));
+            }
+            // THE SASHES off her palms.
+            for (int k = 0; k < _sashes.Count; k++)
+            {
+                float t = after - SashRows[k, 3];
+                if (t <= 0) { _sashes[k].Hide(); continue; }
+                float a = SashRows[k, 0] * half;
+                var dir = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a));
+                var side = Vector3.Cross(Vector3.up, dir);
+                float length = SashRows[k, 1] * WindVfx.Ease(0.0f, 0.35f, t);
+                float travel = 14.0f * Mathf.Max(0, t - 0.25f);
+                float width = SashRows[k, 2], freq = SashRows[k, 4], lift = SashRows[k, 5];
+                for (int i = 0; i < SashSamples; i++)
+                {
+                    float s = i / (SashSamples - 1.0f);
+                    // From her palms (s 0) out to its free end (s 1), lifting off the court and whipping side to side.
+                    float whip = ripple * Mathf.Sin(s * freq * 6.0f - t * 22.0f) * (0.15f + 0.85f * s) * 0.9f;
+                    var c = Hands + dir * (travel + length * s) + side * whip + Vector3.up * (lift * Mathf.Sin(s * Mathf.PI * 0.8f) * (0.6f + 0.4f * s));
+                    _clothCentre[i] = c;
+                    // Twisting as it flies, so its weave turns to the light and back.
+                    float twist = ripple * (s * 4.0f - t * 9.0f + k);
+                    _clothAcross[i] = (side * Mathf.Cos(twist) + Vector3.up * Mathf.Sin(twist)) * width * 0.5f * (1.0f - 0.4f * s);
+                }
+                _sashes[k].Pose(Trim(_clothCentre, SashSamples), Trim(_clothAcross, SashSamples), WindVfx.Ease(0.45f, 0.95f, t));
+            }
+        }
+
+        private readonly System.Collections.Generic.Dictionary<int, Vector3[]> _trims = new System.Collections.Generic.Dictionary<int, Vector3[]>();
+        private int _trimFlip;
+        /// <summary>The first <paramref name="n"/> of a pose buffer as an array of exactly that length (two kept per length).</summary>
+        private Vector3[] Trim(Vector3[] source, int n)
+        {
+            int key = n * 2 + (_trimFlip++ & 1);
+            if (!_trims.TryGetValue(key, out var buffer)) { buffer = new Vector3[n]; _trims[key] = buffer; }
+            System.Array.Copy(source, buffer, n);
+            return buffer;
+        }
+
         /// <summary>A beat's step, eased in over 0.12 s from <paramref name="at"/>.</summary>
         private static float Step(float t, float at) => WindVfx.Ease(at, at + 0.12f, t);
 
@@ -791,9 +904,28 @@ namespace TumbangPreso.Visual
                 float u = lagged < 0 ? 0.0f : Mathf.Clamp01(lagged / WallSeconds);
                 float radius = Mathf.Lerp(1.0f, _range, 1.0f - Mathf.Pow(1.0f - u, 4.0f));
                 _front[i].GameObject.transform.localScale = new Vector3(radius, 1.0f + u * 0.4f, radius);
-                float alive = lagged < 0 ? 0.0f : (0.95f - i * 0.22f) * (1.0f - WindVfx.Ease(0.25f, WallSeconds, lagged));
+                // The cloth carries the blast's mass now; the fronts are the wind round it, lighter.
+                float alive = lagged < 0 ? 0.0f : (0.6f - i * 0.15f) * (1.0f - WindVfx.Ease(0.25f, WallSeconds, lagged));
                 _front[i].Set(alive, phase * 2.0f, 1.0f, 0.0f, WindVfx.Ease(0.15f, WallSeconds - 0.05f, Mathf.Max(0, lagged)));
             }
+
+            // THE RING: its edge drawn on with the fan's, held through the windup; on the release two rings of wind race out to it.
+            {
+                float on = t < 0 ? WindVfx.Ease(-DrawOnSeconds * 0.6f, -0.2f, t) : 1.0f;
+                _aroundEdge.Set(on * (after < 0 ? 0.75f + 0.2f * Mathf.Clamp01(pulse) : 1.0f - WindVfx.Ease(0.05f, 0.45f, after)), phase * 0.5f,
+                                t < 0 ? WindVfx.Ease(-DrawOnSeconds * 0.6f, -0.1f, t) : 1.0f, 0.0f, after < 0 ? 0.15f : WindVfx.Ease(0.0f, 0.4f, after));
+                float around = AmihanRules.StormSurgeAroundRadius;
+                for (int i = 0; i < _ringFront.Count; i++)
+                {
+                    float lagged = after - i * 0.04f;
+                    float u = lagged < 0 ? 0.0f : Mathf.Clamp01(lagged / 0.35f);
+                    float radius = Mathf.Lerp(0.6f, around, 1.0f - Mathf.Pow(1.0f - u, 3.0f));
+                    _ringFront[i].GameObject.transform.localScale = new Vector3(radius, 1.0f + u * 0.3f, radius);
+                    _ringFront[i].Set(lagged < 0 ? 0.0f : (0.95f - i * 0.3f) * (1.0f - WindVfx.Ease(0.2f, 0.45f, lagged)), phase * 2.0f, 1.0f, 0.0f, WindVfx.Ease(0.1f, 0.4f, Mathf.Max(0, lagged)));
+                }
+            }
+
+            StepCloth(after, calm);
 
             // At her feet: two diamonds held tight through the windup; the sigil bursts out on the release.
             for (int i = 0; i < _feet.Count; i++)
@@ -1064,6 +1196,8 @@ namespace TumbangPreso.Visual
             if (_body.IsWhirled && _whirled == null)
             {
                 _whirled = WhirledMark.Attach(_body);
+                // v3.2: thrown by the wind, the body loses itself to it (`WindTumble`), on every peer.
+                WindTumble.Attach(_body);
                 // ⚠️ LOCAL, NOT `NetCue`: this runs on EVERY peer off the replicated timer, so each
                 // plays it once; relaying as well would be a flam of four (`audit_cue_relay.py`).
                 GameServices.Audio?.PlayAtVaried("sfx_status_whirled", _body.transform.position, 0.95f, 1.05f, 0.8f);
