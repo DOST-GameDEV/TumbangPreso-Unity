@@ -24,8 +24,7 @@ become the familiar's movement fallback and would not satisfy this contract.
 
 The ordinary pause-movement suspicion was rejected before implementation:
 LateUpdate passes scaled `Time.deltaTime` to UpdatePossession. Its separate
-unscaled follow/fidget fallback does not advance possessed movement. Possible
-dt0 contact resolution is a separate lead, outside this input cache fixture.
+unscaled follow/fidget fallback does not advance possessed movement.
 
 ## Frozen original gate
 
