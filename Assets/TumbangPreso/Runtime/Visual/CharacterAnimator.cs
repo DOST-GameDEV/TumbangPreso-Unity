@@ -207,6 +207,7 @@ namespace TumbangPreso.Visual
 
             { "hero-zack-sprint", new[] { "hero-zack-sprint", Sprint, "attack-kick-right" } },
             { "hero-zack-charge", new[] { "hero-zack-charge", "emote-no", "attack-melee-right" } },
+            { "hero-zack-circuit", new[] { "hero-zack-circuit" } },
             { "hero-zack-summon", new[] { "hero-zack-summon", "holding-both-shoot", Jump } },
 
             { "hero-dante-boulder", new[] { "hero-dante-boulder" } },

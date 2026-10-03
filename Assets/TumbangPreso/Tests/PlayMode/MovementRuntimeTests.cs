@@ -84,13 +84,29 @@ namespace TumbangPreso.PlayTests
             yield return new WaitForFixedUpdate(); _actor.Intent.Set(Verb.Jump, false);
             float began = Time.fixedTime, peak = _actor.transform.position.y, until = Time.time + 2;
             Assert.IsFalse(_actor.IsGrounded, "The real jump input must leave the floor.");
+            Assert.That(_actor.Velocity.y, Is.InRange(5.30f, 5.76f), "First launch sample allows one physics gravity step.");
             while (!_actor.IsGrounded && Time.time < until)
             {
                 peak = Mathf.Max(peak, _actor.transform.position.y); yield return new WaitForFixedUpdate();
             }
             float air = Time.fixedTime - began;
             TestContext.WriteLine($"Actual jump height {peak - ground:F4} m, airborne {air:F4} s.");
-            Assert.IsTrue(_actor.IsGrounded); Assert.That(peak - ground, Is.InRange(.92f, 1.12f)); Assert.That(air, Is.InRange(.46f, .56f));
+            Assert.IsTrue(_actor.IsGrounded); Assert.That(peak - ground, Is.InRange(.78f, .96f)); Assert.That(air, Is.InRange(.54f, .64f));
+        }
+        [UnityTest] public IEnumerator ActualMotorFallSpeedCapsAtTwentyFive()
+        {
+            _actor.Intent.Clear();_actor.Teleport(new Vector3(0,100,-2));Physics.SyncTransforms();
+            float until=Time.time+2.5f;bool reached=false;
+            while(Time.time<until)
+            {
+                yield return new WaitForFixedUpdate();
+                Assert.GreaterOrEqual(_actor.Velocity.y,-25.001f,"Ordinary falling must never exceed the configured cap.");
+                if(_actor.Velocity.y<=-24.99f){reached=true;break;}
+            }
+            Assert.IsTrue(reached,"The real motor must reach terminal falling speed during a sufficiently long fall.");
+            for(int i=0;i<8;i++)
+            {yield return new WaitForFixedUpdate();Assert.AreEqual(-25,_actor.Velocity.y,.001f);}
+            TestContext.WriteLine($"Actual terminal fall speed {-_actor.Velocity.y:F4} m/s.");
         }
         [UnityTest] public IEnumerator FatigueKeepsWalkSpeedWithoutSprintOrRegeneration()
         {

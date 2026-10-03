@@ -17,6 +17,15 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### NAMEPLATE-FIRST-USE-1003: font work behind loading
+
+- [x] Existing loading primes first native TextMesh/font initialization and96px
+  nameplate glyphs; original player trace attributes2.57s to font caching at spawn.
+  Native warmup1/1 plus loading-hook integration1/1; authored appearance retained.
+  [Evidence](reports/reliability-2026-10-03/nameplate-font-warmup/README.md).
+- [ ] Refreshed player first-entry timing; development/profiler overhead and
+  numeric improvement remain separate. Frozen1003h139 excludes this newer fix.
+
 ### OFFLINE-BOT-ROSTER-1003: full character coverage
 
 - [x] Rotate offline bots against the full roster instead of four seat offsets.
@@ -40,12 +49,14 @@ Nothing was deleted or renumbered.
   [Evidence](reports/reliability-2026-10-03/seat-producer-transfer/README.md).
   Live-peer/physical acceptance and frozen1003g inclusion remain separate.
 
-### EXPLICIT-MOVEMENT-1003: final owner numbers
+### EXPLICIT-MOVEMENT-1003: latest owner numbers
 
-- [x] Explicit role walk/run speeds without character scaling, new jump and
-  stamina, charge-dependent defender lunge cooldown and preserved slide rules.
-  Managed 708/708; four distinct native physical cases qualified. Protocol 137.
-  [Result, scope and remaining limits](reports/movement-2026-10-03/README.md).
+- [x] Explicit role walk/run speeds, stamina and free shove/lunge retain the
+  playtested revision. Latest jump is5.75m/s launch,20m/s² gravity,25m/s fall cap;
+  protocol141. Four focused managed contracts and three native physical cases
+  pass, including all eight unchanged mode/role/run speed samples.
+  [Latest jump evidence and limits](reports/jump-restore-2026-10-03/README.md).
+  [Earlier stamina/lunge qualification](reports/movement-playtest-2026-10-03/README.md).
 
 ### OBJECTIVE-ECONOMY-1003: latest owner revision
 
@@ -1017,6 +1028,14 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   traces pass with documented fixture/evaluator corrections. Protocol127;
   whole Zack presentation and WAN/device coverage remain open.
   [Evidence](reports/feedback-2026-09-30/closed-circuit/README.md).
+
+- [x] CLOSED-CIRCUIT-MOTION-1003: serialized dedicated acquisition body action,
+  distinct owner-hand dispatcher and measured casting-palm tell replace missing
+  body cast/generic thrust/face-origin line. Three Editor and nine PlayMode checks
+  pass; six native poses from two views inspected, with graphical resource stops
+  retained. Full-court film, live owner appearance, peers and human approval stay
+  open. No mechanics/protocol change.
+  [Evidence](reports/zack-circuit-motion-2026-10-03/README.md).
 
 - [x] BOT-COMPANION-OBSERVATION-1001: shared observation now includes companion
   targets and binds cached beliefs to the actual body. Native baseline reproduces

@@ -142,9 +142,9 @@
         public const float SprintScale = 1.50f;
         public const float Friction = 30.0f;
         public const float Gravity = 20.0f; // Slipper/projectile gravity is unchanged.
-        public const float CharacterGravity = 32.0f;
-        public const float MaxFallSpeed = 26.0f;
-        public const float JumpVelocity = 8.0f;
+        public const float CharacterGravity = 20.0f;
+        public const float MaxFallSpeed = 25.0f;
+        public const float JumpVelocity = 5.75f;
 
         /// <summary>
         /// ⚠️ A SQUARE, NOT A CIRCLE. Both the chalk the map builders draw and the clamp

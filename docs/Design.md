@@ -6,7 +6,9 @@ In both modes, attackers walk at 2.5 m/s and run at 5 m/s; defenders walk at
 3.75 m/s and run at 7.5 m/s. No innate role/hero speed multipliers. Stamina
 capacity is 250, drain/regen 100 per second, sprint start floor 50, regen delay
 1 second. Fatigue lasts 2.5 seconds with no walking penalty and no sprint/regen.
-Ideal jump is 1 m high and 0.5 s airborne (launch 8 m/s, character gravity 32).
+Jump launch is 5.75 m/s, character gravity 20 m/s², maximum falling speed 25 m/s.
+Ideal flat-ground jump is about 0.827 m high and 0.575 s airborne; physics steps
+and collision affect actual measurements. This supersedes the earlier 1 m / 0.5 s revision.
 Shove and defender lunge cost no stamina and are usable during fatigue.
 Separate retrieval slide remains 1.75 m / 25 stamina / 2.45 s cooldown.
 Defender lunge remains 3.5 m with 0.5 s tap / 2.5 s full-hold cooldown.
