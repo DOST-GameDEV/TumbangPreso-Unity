@@ -691,3 +691,11 @@ views inspected: planted follow-through, low hands, unchanged0.4s/fivebands.
 No active Editor; no source-input changes after test. No player/peer/SFX/human
 claim. See reports/dante-handoff-2026-10-03/README.md. Publish checked owned paths
 then continue the remaining unreserved hero presentation work.
+
+Cloud NEMU-CATCH-MOTION-1003 claims only its dated plan's paths. Main7f2f9bdc
+integrates incoming checked input/bot/practice fixes and separately unqualified
+account/matchmaking candidates, without claiming those native passes. Dante
+follow-throughb6e41456 is remote and review delivered. Next inspect Nemu's actual
+Catch: it shares the legacy Haunt seance motion. Preserve Nemu model/cowl and
+other-owner RosterArms, all gameplay clocks and independent companion behavior.
+No production change or active Editor at claim time.

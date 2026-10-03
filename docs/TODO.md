@@ -698,6 +698,10 @@ a reproduced baseline failure. Protocol118, no fresh player/peer claim.
 
 ### HERO-QUALITY-1001: full-roster research and durable plans
 
+NEMU-CATCH-MOTION-1003 is the next scoped presentation unit: inspect and replace
+Catch's shared seance with a distinct small companion command, preserving model,
+all other clips and mechanics. [Plan](reports/nemu-catch-motion-2026-10-03/plan.md).
+
 DANTE-HANDBACK-1003 replaces the duplicate live windup with planted follow-through
 and low owner hands. Native actual-route1/1, imported-pose continuity and all
 five bands pass; before/after body and owner views inspected. All37otherclips
