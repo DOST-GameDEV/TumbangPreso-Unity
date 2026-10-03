@@ -971,7 +971,7 @@ namespace TumbangPreso
                 case Lesson.Pektus:
                     PrepareAttackerThrow(); title = "CURVE THROW";
                     body = "Scroll the mouse wheel to curve the throw. Use this to make the throw harder to block.";
-                    action = Key("CurveLeft") + " / " + Key("CurveRight") + " CURVE"; break;
+                    action = CurvePrompt(); break;
                 case Lesson.ThrowAndRetrieve:
                     PrepareAttackerThrow(); title = "THROW AND RETRIEVE";
                     body = "The ultimate test in attacking. Throw your slipper at the can to hit it. Retrieve your slipper and run back to the safe zone afterwards.";
@@ -1226,6 +1226,9 @@ namespace TumbangPreso
         /// because it is not a `Verb`; the stick is the only control on the layer nobody has to
         /// be taught.
         /// </summary>
+        private static string CurvePrompt()
+            => Key("CurveLeft") + " " + Key("CurveRight") + " CURVE";
+
         private static string Key(string action)
         {
             if (Hud.OnTouch)
