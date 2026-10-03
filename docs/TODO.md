@@ -1155,6 +1155,13 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   protocol128. Other Pyro slots and full presentation remain open.
   [Evidence](reports/hero-quality-2026-10-01/empowered-throw/README.md).
 
+- [x] BANK-CEILING-CREDIT-1003: powered safety-ceiling return preserves Zack's
+  remaining wall-bank credit, matching its retained affinity; ordinary throws
+  and extra-bank retirement remain. Baseline2/2 reproduced; candidate9/9 native
+  assertions pass with shutdown resource guard retained, settings restored.
+  Protocol145; packaged/player/peer acceptance remains separate.
+  [Evidence](reports/bank-ceiling-2026-10-03/README.md).
+
 - [x] BANK-SHOT-LOAD-MOTION-1003 source: dedicated0.64s body/owner load of the
   already-held slipper, preserving mechanics/copy/SFX and original37 clips.
   Edit3/3, current headless13/13 guard-free, body-film1/1 with measured cadence;
