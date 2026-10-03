@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="21" result="Failed(Child)" total="21" passed="15" failed="6" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:18Z" duration="1.1207274">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1058" result="Failed" site="Child" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:18Z" duration="1.120727" total="21" passed="15" failed="6" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2287" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1058" result="Failed" site="Child" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:18Z" duration="1.109842" total="21" passed="15" failed="6" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27804" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2288" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1058" result="Failed" site="Child" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:18Z" duration="1.108914" total="21" passed="15" failed="6" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2289" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1058" result="Failed" site="Child" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:18Z" duration="1.108376" total="21" passed="15" failed="6" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1014" name="AccountDeleteLifetimeTests" fullname="TumbangPreso.Tests.AccountDeleteLifetimeTests" classname="TumbangPreso.Tests.AccountDeleteLifetimeTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:17Z" duration="0.205865" total="8" passed="2" failed="6" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1019" name="CurrentOwnerDeletionStillClearsAndRestarts" fullname="TumbangPreso.Tests.AccountDeleteLifetimeTests.CurrentOwnerDeletionStillClearsAndRestarts" methodname="CurrentOwnerDeletionStillClearsAndRestarts" classname="TumbangPreso.Tests.AccountDeleteLifetimeTests" runstate="Runnable" seed="896383522" result="Passed" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:17Z" duration="0.074058" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1017" name="GuestDuringAuthDeletionCannotClearPrimarySettings" fullname="TumbangPreso.Tests.AccountDeleteLifetimeTests.GuestDuringAuthDeletionCannotClearPrimarySettings" methodname="GuestDuringAuthDeletionCannotClearPrimarySettings" classname="TumbangPreso.Tests.AccountDeleteLifetimeTests" runstate="Runnable" seed="1844693983" result="Failed" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:17Z" duration="0.023045" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: <System.OperationCanceledException>
+  But was:  <System.Threading.Tasks.TaskCanceledException: A task was canceled.
+  at NUnit.Framework.Internal.ExceptionHelper.Rethrow (System.Exception exception) [0x0000d] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Internal.AsyncInvocationRegion+AsyncTaskInvocationRegion.WaitForPendingOperationsToComplete (System.Object invocationResult) [0x00038] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Assert.ThrowsAsync (NUnit.Framework.Constraints.IResolveConstraint expression, NUnit.Framework.AsyncTestDelegate code, System.String message, System.Object[] args) [0x00013] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountDeleteLifetimeTests.GuestDuringAuthDeletionCannotClearPrimarySettings () [0x0006f] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountDeleteLifetimeTests.cs:76
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1015" name="GuestDuringInitializationCannotReachDeletion" fullname="TumbangPreso.Tests.AccountDeleteLifetimeTests.GuestDuringInitializationCannotReachDeletion" methodname="GuestDuringInitializationCannotReachDeletion" classname="TumbangPreso.Tests.AccountDeleteLifetimeTests" runstate="Runnable" seed="1361039687" result="Failed" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:17Z" duration="0.006761" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: <System.OperationCanceledException>
+  But was:  <System.Threading.Tasks.TaskCanceledException: A task was canceled.
+  at NUnit.Framework.Internal.ExceptionHelper.Rethrow (System.Exception exception) [0x0000d] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Internal.AsyncInvocationRegion+AsyncTaskInvocationRegion.WaitForPendingOperationsToComplete (System.Object invocationResult) [0x00038] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Assert.ThrowsAsync (NUnit.Framework.Constraints.IResolveConstraint expression, NUnit.Framework.AsyncTestDelegate code, System.String message, System.Object[] args) [0x00013] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountDeleteLifetimeTests.GuestDuringInitializationCannotReachDeletion () [0x00041] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountDeleteLifetimeTests.cs:60
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1023" name="GuestDuringRestartRetiresDeletionCompletion" fullname="TumbangPreso.Tests.AccountDeleteLifetimeTests.GuestDuringRestartRetiresDeletionCompletion" classname="TumbangPreso.Tests.AccountDeleteLifetimeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:17Z" duration="0.046896" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1021" name="GuestDuringRestartRetiresDeletionCompletion(False)" fullname="TumbangPreso.Tests.AccountDeleteLifetimeTests.GuestDuringRestartRetiresDeletionCompletion(False)" methodname="GuestDuringRestartRetiresDeletionCompletion" classname="TumbangPreso.Tests.AccountDeleteLifetimeTests" runstate="Runnable" seed="598616379" result="Failed" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:17Z" duration="0.020524" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: <System.OperationCanceledException>
+  But was:  <System.Threading.Tasks.TaskCanceledException: A task was canceled.
+  at NUnit.Framework.Internal.ExceptionHelper.Rethrow (System.Exception exception) [0x0000d] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Internal.AsyncInvocationRegion+AsyncTaskInvocationRegion.WaitForPendingOperationsToComplete (System.Object invocationResult) [0x00038] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Assert.ThrowsAsync (NUnit.Framework.Constraints.IResolveConstraint expression, NUnit.Framework.AsyncTestDelegate code, System.String message, System.Object[] args) [0x00013] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.AccountDeleteLifetimeTests.GuestDuringRestartRetiresDeletionCompletion (System.Boolean returnToPrimary) [0x000c3] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountDeleteLifetimeTests.cs:111
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1022" name="GuestDuringRestartRetiresDeletionCompletion(True)" fullname="TumbangPreso.Tests.AccountDeleteLifetimeTests.GuestDuringRestartRetiresDeletionCompletion(True)" methodname="GuestDuringRestartRetiresDeletionCompletion" classname="TumbangPreso.Tests.AccountDeleteLifetimeTests" runstate="Runnable" seed="1369900892" result="Failed" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:17Z" duration="0.018538" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: <System.OperationCanceledException>
+  But was:  <System.Threading.Tasks.TaskCanceledException: A task was canceled.
+  at NUnit.Framework.Internal.ExceptionHelper.Rethrow (System.Exception exception) [0x0000d] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Internal.AsyncInvocationRegion+AsyncTaskInvocationRegion.WaitForPendingOperationsToComplete (System.Object invocationResult) [0x00038] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Assert.ThrowsAsync (NUnit.Framework.Constraints.IResolveConstraint expression, NUnit.Framework.AsyncTestDelegate code, System.String message, System.Object[] args) [0x00013] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.AccountDeleteLifetimeTests.GuestDuringRestartRetiresDeletionCompletion (System.Boolean returnToPrimary) [0x000c3] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountDeleteLifetimeTests.cs:111
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-case id="1018" name="GuestRoundTripRetiresPendingCloudDeletion" fullname="TumbangPreso.Tests.AccountDeleteLifetimeTests.GuestRoundTripRetiresPendingCloudDeletion" methodname="GuestRoundTripRetiresPendingCloudDeletion" classname="TumbangPreso.Tests.AccountDeleteLifetimeTests" runstate="Runnable" seed="2089753865" result="Failed" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:17Z" duration="0.007737" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: <System.OperationCanceledException>
+  But was:  <System.Threading.Tasks.TaskCanceledException: A task was canceled.
+  at NUnit.Framework.Internal.ExceptionHelper.Rethrow (System.Exception exception) [0x0000d] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Internal.AsyncInvocationRegion+AsyncTaskInvocationRegion.WaitForPendingOperationsToComplete (System.Object invocationResult) [0x00038] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Assert.ThrowsAsync (NUnit.Framework.Constraints.IResolveConstraint expression, NUnit.Framework.AsyncTestDelegate code, System.String message, System.Object[] args) [0x00013] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountDeleteLifetimeTests.GuestRoundTripRetiresPendingCloudDeletion () [0x0006b] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountDeleteLifetimeTests.cs:83
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1020" name="LocalOnlyDeletionDoesNotDispatchRemoteOperations" fullname="TumbangPreso.Tests.AccountDeleteLifetimeTests.LocalOnlyDeletionDoesNotDispatchRemoteOperations" methodname="LocalOnlyDeletionDoesNotDispatchRemoteOperations" classname="TumbangPreso.Tests.AccountDeleteLifetimeTests" runstate="Runnable" seed="1214866648" result="Passed" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:17Z" duration="0.018080" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1016" name="ReplacementDuringCloudClearCannotReachAuthDeletion" fullname="TumbangPreso.Tests.AccountDeleteLifetimeTests.ReplacementDuringCloudClearCannotReachAuthDeletion" methodname="ReplacementDuringCloudClearCannotReachAuthDeletion" classname="TumbangPreso.Tests.AccountDeleteLifetimeTests" runstate="Runnable" seed="1214914108" result="Failed" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:17Z" duration="0.007700" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: <System.OperationCanceledException>
+  But was:  <System.Threading.Tasks.TaskCanceledException: A task was canceled.
+  at NUnit.Framework.Internal.ExceptionHelper.Rethrow (System.Exception exception) [0x0000d] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Internal.AsyncInvocationRegion+AsyncTaskInvocationRegion.WaitForPendingOperationsToComplete (System.Object invocationResult) [0x00038] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Assert.ThrowsAsync (NUnit.Framework.Constraints.IResolveConstraint expression, NUnit.Framework.AsyncTestDelegate code, System.String message, System.Object[] args) [0x00013] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountDeleteLifetimeTests.ReplacementDuringCloudClearCannotReachAuthDeletion () [0x0004f] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\AccountDeleteLifetimeTests.cs:67
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1024" name="AccountInitializationOwnerTests" fullname="TumbangPreso.Tests.AccountInitializationOwnerTests" classname="TumbangPreso.Tests.AccountInitializationOwnerTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:17Z" duration="0.047209" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1027" name="CurrentOwnerTimeoutStillUsesLocalProfile" fullname="TumbangPreso.Tests.AccountInitializationOwnerTests.CurrentOwnerTimeoutStillUsesLocalProfile" methodname="CurrentOwnerTimeoutStillUsesLocalProfile" classname="TumbangPreso.Tests.AccountInitializationOwnerTests" runstate="Runnable" seed="1142597647" result="Passed" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:17Z" duration="0.024352" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1026" name="FailedInitializationDoesNotReplaceAnotherAccount" fullname="TumbangPreso.Tests.AccountInitializationOwnerTests.FailedInitializationDoesNotReplaceAnotherAccount" methodname="FailedInitializationDoesNotReplaceAnotherAccount" classname="TumbangPreso.Tests.AccountInitializationOwnerTests" runstate="Runnable" seed="1777976679" result="Passed" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:17Z" duration="0.008955" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[PlayerAccount] sign-in failed; local profile kept: Synthetic initialization failure
+]]></output>
+            </test-case>
+            <test-case id="1025" name="TimeoutFallbackPreservesActiveGuestAndPrimaryReturn" fullname="TumbangPreso.Tests.AccountInitializationOwnerTests.TimeoutFallbackPreservesActiveGuestAndPrimaryReturn" methodname="TimeoutFallbackPreservesActiveGuestAndPrimaryReturn" classname="TumbangPreso.Tests.AccountInitializationOwnerTests" runstate="Runnable" seed="1097585777" result="Passed" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:17Z" duration="0.005819" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1401" name="HostedLobbyLifetimeTests" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:18Z" duration="0.734766" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1407" name="ADeletionAlreadySentToTheOldIdDoesNotClearTheNewLobbyWhenItCompletes" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.ADeletionAlreadySentToTheOldIdDoesNotClearTheNewLobbyWhenItCompletes" methodname="ADeletionAlreadySentToTheOldIdDoesNotClearTheNewLobbyWhenItCompletes" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="1428802336" result="Passed" start-time="2026-10-03 05:29:17Z" end-time="2026-10-03 05:29:18Z" duration="0.201138" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Query] Created UGS Lobby lobby-first with JoinCode First
+[Query] Created UGS Lobby lobby-second with JoinCode Second
+[Query] Deleted UGS Lobby lobby-first
+[Query] Deleted UGS Lobby lobby-second
+]]></output>
+            </test-case>
+            <test-case id="1404" name="AStoppedAuthenticationWaitCannotStartAnObsoleteLobbyAllocation" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.AStoppedAuthenticationWaitCannotStartAnObsoleteLobbyAllocation" methodname="AStoppedAuthenticationWaitCannotStartAnObsoleteLobbyAllocation" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="333116088" result="Passed" start-time="2026-10-03 05:29:18Z" end-time="2026-10-03 05:29:18Z" duration="0.098880" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1408" name="AuthenticationRefusalSettlesBothCreationAndItsRequestedCleanup" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.AuthenticationRefusalSettlesBothCreationAndItsRequestedCleanup" methodname="AuthenticationRefusalSettlesBothCreationAndItsRequestedCleanup" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="1024468238" result="Passed" start-time="2026-10-03 05:29:18Z" end-time="2026-10-03 05:29:18Z" duration="0.002100" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1405" name="CurrentCreationAppliesTheLatestBufferedCountsOnlyOnce" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.CurrentCreationAppliesTheLatestBufferedCountsOnlyOnce" methodname="CurrentCreationAppliesTheLatestBufferedCountsOnlyOnce" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="806324349" result="Passed" start-time="2026-10-03 05:29:18Z" end-time="2026-10-03 05:29:18Z" duration="0.006463" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Query] Created UGS Lobby lobby-current with JoinCode Current
+[Query] Deleted UGS Lobby lobby-current
+]]></output>
+            </test-case>
+            <test-case id="1406" name="CurrentSuccessfulCreateAndDeleteStillUseTheirOwnLobbyId" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.CurrentSuccessfulCreateAndDeleteStillUseTheirOwnLobbyId" methodname="CurrentSuccessfulCreateAndDeleteStillUseTheirOwnLobbyId" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="587462609" result="Passed" start-time="2026-10-03 05:29:18Z" end-time="2026-10-03 05:29:18Z" duration="0.003481" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Query] Created UGS Lobby lobby-current with JoinCode Current
+[Query] Deleted UGS Lobby lobby-current
+]]></output>
+            </test-case>
+            <test-case id="1402" name="OldStopCannotDeleteTheNewLobbyWhenItsCreationFinishesFirst" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.OldStopCannotDeleteTheNewLobbyWhenItsCreationFinishesFirst" methodname="OldStopCannotDeleteTheNewLobbyWhenItsCreationFinishesFirst" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="1326748781" result="Passed" start-time="2026-10-03 05:29:18Z" end-time="2026-10-03 05:29:18Z" duration="0.187476" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Query] Created UGS Lobby lobby-second with JoinCode Second
+[Query] Deleted UGS Lobby lobby-first
+[Query] Deleted UGS Lobby lobby-second
+]]></output>
+            </test-case>
+            <test-case id="1403" name="RetiredCreationCannotAdoptItsIdOrClearTheNewCreationFlag" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.RetiredCreationCannotAdoptItsIdOrClearTheNewCreationFlag" methodname="RetiredCreationCannotAdoptItsIdOrClearTheNewCreationFlag" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="711541265" result="Passed" start-time="2026-10-03 05:29:18Z" end-time="2026-10-03 05:29:18Z" duration="0.199843" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Query] Deleted UGS Lobby lobby-first
+[Query] Created UGS Lobby lobby-second with JoinCode Second
+[Query] Deleted UGS Lobby lobby-second
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1949" name="ReadyCountdownAbandonTests" fullname="TumbangPreso.Tests.ReadyCountdownAbandonTests" classname="TumbangPreso.Tests.ReadyCountdownAbandonTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 05:29:18Z" end-time="2026-10-03 05:29:18Z" duration="0.014223" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="1952" name="AcceptedHostLossRetiresTheCountdownBeforeAnotherCueOrRoundStart" fullname="TumbangPreso.Tests.ReadyCountdownAbandonTests.AcceptedHostLossRetiresTheCountdownBeforeAnotherCueOrRoundStart" classname="TumbangPreso.Tests.ReadyCountdownAbandonTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 05:29:18Z" end-time="2026-10-03 05:29:18Z" duration="0.011287" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1950" name="AcceptedHostLossRetiresTheCountdownBeforeAnotherCueOrRoundStart(1)" fullname="TumbangPreso.Tests.ReadyCountdownAbandonTests.AcceptedHostLossRetiresTheCountdownBeforeAnotherCueOrRoundStart(1)" methodname="AcceptedHostLossRetiresTheCountdownBeforeAnotherCueOrRoundStart" classname="TumbangPreso.Tests.ReadyCountdownAbandonTests" runstate="Runnable" seed="12119665" result="Passed" start-time="2026-10-03 05:29:18Z" end-time="2026-10-03 05:29:18Z" duration="0.008840" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Abandon] HostLost: ABANDONED at round 0 of 0; this peer may no longer resolve anything
+]]></output>
+              </test-case>
+              <test-case id="1951" name="AcceptedHostLossRetiresTheCountdownBeforeAnotherCueOrRoundStart(4)" fullname="TumbangPreso.Tests.ReadyCountdownAbandonTests.AcceptedHostLossRetiresTheCountdownBeforeAnotherCueOrRoundStart(4)" methodname="AcceptedHostLossRetiresTheCountdownBeforeAnotherCueOrRoundStart" classname="TumbangPreso.Tests.ReadyCountdownAbandonTests" runstate="Runnable" seed="892288162" result="Passed" start-time="2026-10-03 05:29:18Z" end-time="2026-10-03 05:29:18Z" duration="0.001299" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Abandon] HostLost: ABANDONED at round 0 of 0; this peer may no longer resolve anything
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-case id="1953" name="AnUninterruptedCountdownStillPresentsEveryCueAndStartsOnce" fullname="TumbangPreso.Tests.ReadyCountdownAbandonTests.AnUninterruptedCountdownStillPresentsEveryCueAndStartsOnce" methodname="AnUninterruptedCountdownStillPresentsEveryCueAndStartsOnce" classname="TumbangPreso.Tests.ReadyCountdownAbandonTests" runstate="Runnable" seed="1447778809" result="Passed" start-time="2026-10-03 05:29:18Z" end-time="2026-10-03 05:29:18Z" duration="0.000718" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

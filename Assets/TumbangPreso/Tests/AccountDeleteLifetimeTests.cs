@@ -57,14 +57,14 @@ namespace TumbangPreso.Tests
         [Test] public async Task GuestDuringInitializationCannotReachDeletion()
         {
             _pending = _account.DeleteAsync(); _account.SignInAsGuest("Guest"); _initialise.SetResult(true);
-            Assert.ThrowsAsync<OperationCanceledException>(async () => await _pending);
+            Assert.ThrowsAsync(Is.InstanceOf<OperationCanceledException>(), async () => await _pending);
             Assert.AreEqual(0, _cloudCalls); Assert.AreEqual(0, _authCalls); AssertPrimaryUntouched();
             await Task.CompletedTask;
         }
         [Test] public async Task ReplacementDuringCloudClearCannotReachAuthDeletion()
         {
             _initialise.SetResult(true); _auth.SetResult(true); _pending = _account.DeleteAsync(); ReplaceOwner(); _cloud.SetResult(true);
-            Assert.ThrowsAsync<OperationCanceledException>(async () => await _pending);
+            Assert.ThrowsAsync(Is.InstanceOf<OperationCanceledException>(), async () => await _pending);
             Assert.AreEqual(0, _authCalls); Assert.AreEqual("owner-b", SettingsStore.Current.AccountPlayerId);
             Assert.AreEqual("Replacement", SettingsStore.Current.PlayerName); Assert.AreEqual(0, _restarts);
             await Task.CompletedTask;
@@ -73,14 +73,14 @@ namespace TumbangPreso.Tests
         {
             _initialise.SetResult(true); _cloud.SetResult(true); _pending = _account.DeleteAsync();
             Assert.AreEqual(1, _authCalls); _account.SignInAsGuest("Guest"); _auth.SetResult(true);
-            Assert.ThrowsAsync<OperationCanceledException>(async () => await _pending); AssertPrimaryUntouched();
+            Assert.ThrowsAsync(Is.InstanceOf<OperationCanceledException>(), async () => await _pending); AssertPrimaryUntouched();
             await Task.CompletedTask;
         }
         [Test] public async Task GuestRoundTripRetiresPendingCloudDeletion()
         {
             _initialise.SetResult(true); _auth.SetResult(true); _pending = _account.DeleteAsync();
             _account.SignInAsGuest("Guest"); _account.LeaveGuest(); Signed(true); _cloud.SetResult(true);
-            Assert.ThrowsAsync<OperationCanceledException>(async () => await _pending);
+            Assert.ThrowsAsync(Is.InstanceOf<OperationCanceledException>(), async () => await _pending);
             Assert.AreEqual(0, _authCalls); AssertPrimaryUntouched(); await Task.CompletedTask;
         }
         [Test] public async Task CurrentOwnerDeletionStillClearsAndRestarts()
@@ -108,7 +108,7 @@ namespace TumbangPreso.Tests
             _account.SignInAsGuest("Guest");
             if (returnToPrimary) { _account.LeaveGuest(); Signed(true); }
             restart.SetResult(true);
-            Assert.ThrowsAsync<OperationCanceledException>(async () => await _pending);
+            Assert.ThrowsAsync(Is.InstanceOf<OperationCanceledException>(), async () => await _pending);
             await Task.CompletedTask;
         }
     }
