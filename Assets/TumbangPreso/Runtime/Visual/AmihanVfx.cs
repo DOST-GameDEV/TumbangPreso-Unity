@@ -26,6 +26,10 @@ namespace TumbangPreso.Visual
         public const float Life = 1.05f;
         private readonly List<WindVfx.Ribbon> _strands = new List<WindVfx.Ribbon>();
         private WindVfx.Ribbon _road, _heel, _curlA, _curlB, _land;
+        // Her sash (`abel-cloth-direction.md`): a long woven abel streaming along her line behind her, whipping and twisting.
+        private AbelCloth _sash;
+        private Vector3[] _sashCentre, _sashAcross;
+        private const int SashPoints = 28;
         private readonly List<WindVfx.Ribbon> _threads = new List<WindVfx.Ribbon>();
         private WindVfx.Motif _motif;
         private Vector3 _from, _to;
@@ -75,6 +79,8 @@ namespace TumbangPreso.Visual
             var curlB = WindVfx.Helix(wake._to + lift * 0.6f, wake._to + dir * 0.9f + lift * 0.5f - right * 0.45f, 0.3f, 0.9f, 18, 180, 0.3f);
             wake._curlA = WindVfx.Build(go.transform, "WakeCurlA", curlA, 0.1f, WindVfx.AroundAxis(curlA, dir), 3.0f, 0.3f, 4.0f);
             wake._curlB = WindVfx.Build(go.transform, "WakeCurlB", curlB, 0.08f, WindVfx.AroundAxis(curlB, dir), 3.0f, 0.3f, 5.0f);
+            wake._sash = new AbelCloth(go.transform, "DriftSash", SashPoints, 2.0f);
+            wake._sashCentre = new Vector3[SashPoints]; wake._sashAcross = new Vector3[SashPoints];
             wake._motif = new WindVfx.Motif(go.transform, 14, from.x * 3.1f + from.z * 1.7f);
             wake.StepTo(0.0f);
             return wake;
@@ -111,6 +117,22 @@ namespace TumbangPreso.Visual
             float curl = WindVfx.Envelope(t, 0.28f, 0.15f, 1.0f, 0.4f);
             _curlA.Set(curl * 0.8f, phase, WindVfx.Ease(0.28f, 0.55f, t), WindVfx.Ease(0.55f, 1.0f, t), thin);
             _curlB.Set(curl * 0.7f, phase + 1, WindVfx.Ease(0.32f, 0.6f, t), WindVfx.Ease(0.6f, 1.0f, t), thin);
+            // THE SASH: its head rides with her down the line, its tail following, rippling and twisting, fraying as it settles.
+            {
+                float sHead = WindVfx.Ease(0.0f, 0.42f, t), sTail = WindVfx.Ease(0.12f, 0.8f, t) * 0.85f;
+                var dir = _to.sqrMagnitude > 0.01f ? _to.normalized : Vector3.forward;
+                var side = Vector3.Cross(Vector3.up, dir);
+                float ripple = calm ? 0.0f : 1.0f;
+                for (int i = 0; i < SashPoints; i++)
+                {
+                    float s = i / (SashPoints - 1.0f), along = Mathf.Lerp(sTail, sHead, s);
+                    float wave = ripple * Mathf.Sin(s * 9.0f - t * 18.0f) * (1.0f - s) * 0.45f;
+                    _sashCentre[i] = _to * along + side * wave + Vector3.up * (0.75f + 0.35f * Mathf.Sin(s * Mathf.PI) + 0.25f * wave);
+                    float twist = ripple * (s * 3.0f - t * 7.0f);
+                    _sashAcross[i] = (side * Mathf.Cos(twist) + Vector3.up * Mathf.Sin(twist)) * 0.26f * (0.6f + 0.4f * s);
+                }
+                if (sHead - sTail < 0.02f) _sash.Hide(); else _sash.Pose(_sashCentre, _sashAcross, WindVfx.Ease(0.55f, 1.0f, t));
+            }
             Vector3 to = _to;
             _motif.Step(WindVfx.Ease(0.02f, 1.0f, t), calm ? 0.5f : 0.9f, (start, drift, u) =>
             {
@@ -372,6 +394,11 @@ namespace TumbangPreso.Visual
         private readonly List<WindVfx.Ribbon> _layers = new List<WindVfx.Ribbon>();
         private WindVfx.Ribbon _skirt, _spray;
         private readonly List<WindVfx.Ribbon> _crest = new List<WindVfx.Ribbon>();
+        // The gale is a rolling wall of woven abel (`abel-cloth-direction.md`), its top curling forward over itself.
+        private AbelCloth _wall;
+        private Vector3[] _wallCentre, _wallAcross;
+        private float _radius, _degrees, _bow;
+        private const int WallPoints = 34;
         private WindVfx.Motif _motif;
         private Vector3 _origin, _forward;
         private float _age, _life, _speed, _start;
@@ -407,6 +434,9 @@ namespace TumbangPreso.Visual
             var skirt = WindVfx.Arc(radius, degrees * 1.08f, 26, 0.04f);
             for (int k = 0; k < skirt.Length; k++) skirt[k] += new Vector3(0, 0, -radius + bow - 0.35f);
             fx._skirt = WindVfx.Floor(WindVfx.Build(go.transform, "GaleSkirt", skirt, 0.7f, WindVfx.Flat(skirt), 8.0f, 0.1f, 11.0f));
+            fx._wall = new AbelCloth(go.transform, "GaleAbelWall", WallPoints, 1.4f);
+            fx._wallCentre = new Vector3[WallPoints]; fx._wallAcross = new Vector3[WallPoints];
+            fx._radius = radius; fx._degrees = degrees; fx._bow = bow;
             // Three abel threads riding the crest: the gale carries her loom's thread like everything she makes.
             for (int i = 0; i < 3; i++)
             {
@@ -451,6 +481,26 @@ namespace TumbangPreso.Visual
                 _layers[i].Set(alpha, phase * (1.0f + i * 0.15f), headroom, 0.5f - open * 0.5f, fray * (0.6f + i * 0.08f));
             }
             _skirt.Set(0.6f * (1.0f - fray), phase * 1.5f, 1, 0, fray);
+            // THE WALL: unrolls from the middle out with the front, billows along its length, its top edge rolling forward
+            // over itself (the gale turning), fraying with the front.
+            {
+                float ripple = WindVfx.Reduced ? 0.0f : 1.0f;
+                for (int i = 0; i < WallPoints; i++)
+                {
+                    float s = i / (WallPoints - 1.0f);
+                    float spread = (s - 0.5f) * (0.25f + 0.75f * open);
+                    float a = spread * _degrees * Mathf.Deg2Rad;
+                    float edge = Mathf.Abs(spread * 2.0f);
+                    var foot = new Vector3(Mathf.Sin(a) * _radius, 0, Mathf.Cos(a) * _radius - _radius + _bow);
+                    float tall = 1.55f * (1.0f - edge * edge * 0.5f);
+                    float roll = 0.45f + ripple * 0.18f * Mathf.Sin(s * 11.0f - t * 16.0f);
+                    var bottom = foot + Vector3.up * 0.1f;
+                    var top = foot + Vector3.up * tall + Vector3.forward * roll;
+                    _wallCentre[i] = (bottom + top) * 0.5f + Vector3.forward * (ripple * 0.12f * Mathf.Sin(s * 7.0f + t * 12.0f));
+                    _wallAcross[i] = (top - bottom) * 0.5f;
+                }
+                _wall.Pose(_wallCentre, _wallAcross, fray);
+            }
             for (int i = 0; i < _crest.Count; i++)
                 _crest[i].Set((0.85f - i * 0.15f) * (1.0f - fray), phase * 1.8f + i, 0.5f + open * 0.5f, 0.5f - open * 0.5f, 0.2f + fray * 0.7f);
             _spray.Set(0.7f * open * (1.0f - fray), phase * 2.0f, 1, 0, 0.3f + fray * 0.7f);
@@ -519,8 +569,9 @@ namespace TumbangPreso.Visual
         // THE SASHES: direction (share of the half angle), length, width, launch delay, whip frequency, lift.
         private static readonly float[,] SashRows =
         {
-            { -0.08f, 13.0f, 0.55f, 0.00f, 2.2f, 1.1f }, { 0.22f, 10.5f, 0.45f, 0.03f, 2.7f, 1.6f }, { -0.45f, 9.0f, 0.42f, 0.05f, 2.4f, 0.8f },
-            { 0.55f, 11.5f, 0.50f, 0.02f, 2.0f, 1.3f }, { -0.78f, 8.0f, 0.38f, 0.07f, 3.0f, 1.0f }, { 0.82f, 8.5f, 0.40f, 0.06f, 2.6f, 1.4f },
+            // Film v3.5: at half these widths they read as squiggles from the cutscene's high wide.
+            { -0.08f, 13.0f, 1.10f, 0.00f, 2.2f, 1.9f }, { 0.22f, 10.5f, 0.95f, 0.03f, 2.7f, 2.4f }, { -0.45f, 9.0f, 0.85f, 0.05f, 2.4f, 1.6f },
+            { 0.55f, 11.5f, 1.00f, 0.02f, 2.0f, 2.1f }, { -0.78f, 8.0f, 0.80f, 0.07f, 3.0f, 1.7f }, { 0.82f, 8.5f, 0.85f, 0.06f, 2.6f, 2.2f },
         };
         private readonly List<WindVfx.Ribbon> _ringFront = new List<WindVfx.Ribbon>();
         private readonly List<WindVfx.Ribbon> _warp = new List<WindVfx.Ribbon>();
