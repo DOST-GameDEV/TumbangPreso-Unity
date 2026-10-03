@@ -1676,8 +1676,7 @@ namespace TumbangPreso
             // OPENED ON. It captured `local` in a lambda, so after Tab handed the player a
             // different body the wheel still emoted on the seat they had LEFT: the emote played
             // correctly, on a character somewhere else on the street, and read as *"emotes dont
-            // work at all"*. `Driven()` answers the same question the switcher does, off the
-            // scene, so the two cannot disagree.
+            // work at all"*. `Driven()` follows the active local input producer.
             //
             // ⚠️ AND NOT AT ALL FOR A SPECTATOR. A watcher has no body (§ SpectatorCamera), so
             // wiring the wheel to a seat would let them puppet a bot's emotes from a camera
@@ -1712,10 +1711,8 @@ namespace TumbangPreso
         /// The unit the human is actually driving right now.
         ///
         /// ⚠️ DISCOVERED, NOT REMEMBERED. Tab moves the player between bodies mid-match, so any
-        /// reference captured at install time is stale the moment they use it. The human's unit
-        /// is exactly the one with no active AI on it, which is the same fact
-        /// <see cref="DebugPlayerSwitcher.DefaultSlot"/> reads and needs no cooperation from
-        /// gameplay to stay true.
+        /// reference captured at install time is stale the moment they use it. Remote humans
+        /// and retired solo bodies can also have no AI; the active local reader owns the wheel.
         /// </summary>
         private static CharacterMotor Driven(CharacterMotor fallback)
         {
@@ -1724,11 +1721,12 @@ namespace TumbangPreso
             if (GameLaunch.GuidedTutorial) return fallback;
             foreach (var unit in FindObjectsByType<CharacterMotor>(FindObjectsInactive.Exclude))
             {
-                var ai = unit.GetComponent<AIController>();
-                if (ai == null || !ai.enabled) return unit;
+                if (unit.Intent.Parked || (NetAuthority.IsNetworked && unit.PlayerSlot != NetAuthority.LocalSlot)) continue;
+                foreach (var reader in unit.GetComponents<PlayerInputReader>())
+                    if (reader.isActiveAndEnabled) return unit;
             }
 
-            return fallback;
+            return null;
         }
 
         /// <summary>
