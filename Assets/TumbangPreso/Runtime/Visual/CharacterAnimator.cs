@@ -717,8 +717,9 @@ namespace TumbangPreso.Visual
             float speed = FlatSpeed;
             _running = speed > OrdinaryWalkSpeed * (_running ? 1.10f : 1.22f);
             if (!_gait.IsValid()) return;
-            bool mobileGuard = _current == "hero-dante-roar";
-            bool movingAction = _throwReleaseTime >= 0 || mobileGuard;
+            // These upper-body actions permit movement; their legs must follow the motor.
+            bool mobileUpperBody = _current == "hero-dante-roar" || _current == "hero-zack-circuit";
+            bool movingAction = _throwReleaseTime >= 0 || mobileUpperBody;
             bool layered = _motor.IsGrounded && !_motor.IsTripped && (_oneShotLeft <= 0 || movingAction)
                 && (_emote == null || !_emote.IsEmoting)
                 && (_carrier == null || _carrier.ChannelRatio <= 0)

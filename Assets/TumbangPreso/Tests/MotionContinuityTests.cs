@@ -87,6 +87,20 @@ namespace TumbangPreso.Tests
             Assert.Less(Quaternion.Angle(grip, arm.localRotation), .1f, "The gait mask reaches the carrying arm.");
         }
 
+        [Test]
+        public void CommittedSlideKeepsItsAuthoredLegsInsteadOfTheWalkingLayer()
+        {
+            Set(_motor, "_grounded", true);
+            Set(_motor, "_velocity", new Vector3(0, 0, 2.4f));
+            _motor.HoldingSlipper = true;
+            _driver.PlayAction("slide");
+            Assert.IsTrue(_driver.IsPlayingAction);
+            Set(_driver, "_gaitWeight", 1f);
+            Invoke(_driver, "AdvanceGait", .1f);
+            Assert.AreEqual(0, Get<float>(_driver, "_gaitWeight"),
+                "Mobile upper-body exceptions must not erase the slide's authored support pose.");
+        }
+
         [TestCase(true)]
         [TestCase(false)]
         public void MobileCarapaceCastKeepsTheFeetWalkingAndTheUpperBodyCasting(bool holding)
