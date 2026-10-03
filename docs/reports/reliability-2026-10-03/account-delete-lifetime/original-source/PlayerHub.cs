@@ -209,7 +209,6 @@ namespace TumbangPreso.UI
         // THEY BACKED. See the long note above `BuildAchievementsRows` for what moved where and
         // for the one behaviour (browsing a locked variant) that deliberately did not come with it.
         private bool _deleteArmed;
-        private int _deleteViewRequest;
         private string _notice = "";
 
         private SignInScreen _signIn;
@@ -437,7 +436,6 @@ namespace TumbangPreso.UI
 
         private void OnDestroy()
         {
-            ++_deleteViewRequest;
             RetireProfileSave();
             ScreenTakeover.Unregister(this);
             if (GameServices.Account != null) GameServices.Account.Changed -= OnDataChanged;
@@ -927,7 +925,6 @@ namespace TumbangPreso.UI
         /// </summary>
         private void Close()
         {
-            ++_deleteViewRequest;
             RetireProfileSave();
             ++_historyRequest;
             _deleteArmed = false;
@@ -945,11 +942,6 @@ namespace TumbangPreso.UI
 
         private void OnDataChanged()
         {
-            if (_ownerDraftId != (GameServices.Account?.PlayerId ?? "local"))
-            {
-                _notice = "";
-                if (GameServices.Account?.IsGuest == true) ++_deleteViewRequest;
-            }
             if (_root != null && _root.activeSelf) Show(_tab);
         }
 
@@ -2240,31 +2232,21 @@ namespace TumbangPreso.UI
                 return;
             }
 
-            var account = GameServices.Account;
-            string owner = account?.PlayerId ?? "";
-            int request = ++_deleteViewRequest;
             try
             {
                 _notice = "Deleting...";
                 SetFooter("", _notice);
-                await account.DeleteAsync();
-                // A valid deletion creates a fresh identity. Keep the view and
-                // account component fence without requiring the removed ID.
-                if (!CanCompleteDeletionView(account, request) || account.IsGuest) return;
+                await GameServices.Account.DeleteAsync();
                 _deleteArmed = false;
                 _notice = "Account deleted.";
                 Show(Tab.Account);
             }
             catch (Exception e)
             {
-                if (!CanCompleteDeletionView(account, request) || (account?.PlayerId ?? "") != owner) return;
                 _notice = e.Message;
                 SetFooter("", _notice);
             }
         }
-
-        private bool CanCompleteDeletionView(Net.PlayerAccount account, int request)
-            => this != null && IsOpen && request == _deleteViewRequest && ReferenceEquals(GameServices.Account, account);
 
         // -------------------------------------------------------------------
         // § THE FOOTER

@@ -5,105 +5,92 @@ focused qualification and publication. Do not stop at a progress report or compa
 
 ## Current work and next action
 
-MAIN: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Local HEADff17e33b3fc9a96c2888e1c2231cea3ce409635f; candidate branch same verified.
-ASTRA remote remainsf955 pending account acceptance; last verified remote
-f9552d58a4d59ecdc87a15a2203d82893e3aa5a3. Fetch and inspect before each push.
-RELEASE: C:/Users/matth/Documents/Codex/work/tump-competition-release1002,
-detached05b2ee156. QUAL: C:/Users/matth/Documents/Codex/work/tump-feedback-0930,
-protected dirty validation overlay. Never reset, stash, clean or discard any checkout.
+Updated latestownersteering: LAPTOP IS MAIN TEST/INTEGRATION/MERGE OWNER. This PC
+implementswithsame-conversationSolHighworker+SolHighreviewer; bothpushASTRAReworks.
+Do NOT run PCUnity/player tests while owner does Amihan withClaude. LetAmihan
+filming fullyfinish first; jointLANheld. Noownedtest/player/helper/serverlive here.
+Latesthumanexplicitlyauthorized direct replies to laptopchat; oldercrosschatban
+is superseded ONLYforcurrent shared engineering/testcoordination, nototherchats.
+Root has sentdirectpull/validation requests successfully. Nohand-copypaste task
+requiredfromhuman; keepdetailedtechnicalhandoffsbetweenworkstreams.
 
-Owner now authorizes two same-conversation GPT6.1 Sol High agents: value_review
-reviews usefulness/correctness; parallel_fix owns CareerStore guest-cache isolation
-and CareerGuestIsolationTests. Root implements PlayerAccount rename-response ownership
-and AccountRenameOwnershipTests. Heavy Unity jobs remain serialized on this16GB PC.
-No other-chat creation/messaging. Second laptop receives a manual chat handoff for
-gameplay/input/practice/carrier/combat/replay lane on a separate branch. It avoids
-Net/account/lobby UI, the root ledger/TODO and release integration. Its setup is
-prepared, not connected or running proof.
+MAIN C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks ASTRAReworks.
+Lastrootpush/verifiedremoted2e9ac55af10966a19873a1e45280b6924f744aa; otherauthorized
+writers/Claude may advanceHEAD. Always inspectstatus, fetch, checkdivergence and
+mergeincomingbeforepush; neverreset/stash/clean/forcepush. Stageownedpathsonly.
+Current unrelateddirt: Nemu/Rafiarmassets,2protectedUIpngmetas,HeroHazardsprivate
+Supernova,QualitySettings,privateoverlapreports; anunrelatedtracked
+Logs/lagoon-blender/owner_rock_edges_paintover.webp deletion was observed. Preserveall.
 
-Reviewed account/UI source candidate is ready for a separate validation branch.
-Owned8 runtime files+8fixtures/metas=24paths;52 cases total. Rename7/career6/wallet7/
-social7/proof9 EditMode=36; PlayerHub6/password4/signin6 PlayMode=16. All static
-reviews PASS, all8GUIDs valid. Frozen Runtime+36EditModefixtures+16PlayModefixtures
-RoslyncompilePASS against existing Unity refs. One compiler harness repair includes
-existing PlayModeWorld omitted from narrow source list; raw failure retained. No
-import/IL-postprocessing or native claim. See account-candidate report/originals.
+Laptop chat Fix gameplay interruption recovery, id01a0ffab-10a0-70d0-9270-07e171c1613b,
+hostremote-control:env_e_6aa6c4fde2dc83218a0722e34ac3face. Sendcurrentworkcoordination
+throughsend_message_to_thread, keepitscurrentmodel/settings. Readcompactwait_threads
+snapshot, notfullturn dump; read_thread shouldparse/filteronlylastitems inexec.
+Laptophostnamegamergmae,Win11/i5-13420H/RTX4050+UHD/15.71GiBRAM, amplediskafter
+ownercleanup(~218GiBreported). MatchingUnity6000.5.8f1, warmednativeworkerworking.
+Laptopsisolatedsource C:/Users/Matthew/dev/tump-laptop1003 andnativeworker
+C:/Users/Matthew/dev/tump-laptop-native1003; rootmustnotmodifytheseexceptagreed
+testcoordination. Laptopownsfixtures/nativefailures/merges/feedback; rootfixescode.
 
-Original native13(rename/career) after one explicit dormant lifecycle fixture repair:
-10causals/3controls. QUALcandidate31094 and RELEASEcandidate25155 both TERMINAL
-450s timeout before cases; repeated assembly/license problems, noXML. Both own
-Editors stopped/profilepreserved/leasesfree. QUALpost34966 PASS18448protected;
-RELEASEpost24319 PASS18516protected, exact6 source matches before proof extension.
-No more local retries. Reports reliability-2026-10-03/account-handover retained.
+Pushedsourcecandidatebatches, compile/staticPASS ONLYunlessnativeevidenceexplicit:
+-3c0a1988a account/UI52 (Rename7,Proof9,Career6,Wallet7,Social7,Hub6,Password4,Signin6).
+-a5db552ee arrival6;51ea2747d matchmaking9. Original/seam-onlysourcesandreceiptsin
+ reports/reliability-2026-10-03. Total67beforefollowingbatches.
+-2bd1e4e4a HostedLobby7: capturedcreationcompletion/generation preventstaleDelete/
+ Create targetingnewlobby; latestcountcontrols preserved. Message/laptopqueue sent.
+-e88921e96 Delete8+InitFallback3+DeletionUI4=15, noactualdeletion/services. Guards
+ everydestructiveawaitboundary, actualSDKowner, restartgen+guest; validself-delete
+ newIDallowed. Fallbackonlyparksprimary/ignoresreplaced/deadprofile; CANONICAL
+ ONLINERefreshownershipoutsideunit. UIviewgen/guest/Close/Destroy fence, oldnotice
+ clearedonaccountchange. OneDoor.Account fixturecompiletypo correctedOpen(true);
+ rawfailure retained, finalRuntime/Edit/PlaycompilePASS/staticreviewPASS.
+-d2e9ac55a ReadyGate3: realIEnumerator acceptedhost-loss latch checksbeforeoldscene
+ emitsroundbegin; normalcountdowncontrol. Native/slow-scene/peerspending.
+ThesearePUSHEDDIRECTLYASTRAperlatestownerrequest, NOTcompletedreadiness. Laptop
+ownsacceptance. Sendexactref/paths/filter/count/baselineaftereachbatch. Do not
+expandtheirfrozenjobinputsorclaimolder1003eartifactcontainsthesefixes.
 
-Parallel bulk source queue completed six reviewed units. Root finished rename and
-proof ownership, recovered password guard, and owns integration/validation. Agent
-checkpoint Logs/account-ui-bulk1003/checkpoint.json contains exact19agent paths,
-source/baseline hashes and filters. Root source receipts account-candidate. Neither
-agent launched native/service/browser/helper; agents available for focused nextwork.
+Root checked/integratedlaptop commits88dba66a1/67cfe70a4/f9f7ecdfd/6b273a49e:
+24nativecases (12+2+5+5), firstcandidatepasses aftercausaloriginals, unchanged
+casecounts/controls. Pixel/hardware/livepeer/fullpractice gatesremainseparate.
+Laptopreported3replayhighlightcases additionallychecked, total27, awaitingtheir
+publishedhash/integrationbylaptop. Do notduplicatemergeworknowlaptopownsmerges.
+PublishedDantecontributions4da1fb624/57739c4ab/84fca284d/b6e414564 preservedthrough
+normalmerges; otherClaudeAmihanwriteradvancedlocalHEAD17e9336af betweenrootcalls.
+ObserveactualHEAD ratherthanassumingsolewriter. PreservefinalizedPaete/Phaister.
 
-Laptop branch competition-laptop-gameplay now has checked88dba66a1cc1b40379240a232bbe3b4283dd47e7,
-fetched locally. Input producer cancellation four paths+12fixture: original9causal/
-3controls, candidateFIRST12/12 on laptop warmed nativeworker; reviewed and merged locallyff17e33b3, then pushed verified candidate branch.
-ASTRA remote stillheld. Review later67cfe70a4/f9f7ecdfd checked units next. Laptop has more disk/RAM now,
-full native worker working. AdjacentAI/replay two-case candidate underway there.
-No outgoing cross-chat tools; facts/commands stay in this chat for manual relay.
+PCnative13(rename/career) baseline10causals/3controls afterONEexplicitdormant
+Awake/OnDestroyfixturerepair. QUALcandidate31094/RELEASEcandidate25155 bothtimeout
+beforecaseswithlicensing/reloadissues; guardsstoppedonlyownededitors/restored/free.
+QUALpost18448/RELEASEpost18516protectedunchanged. No furtherlocalretry. Roslyn
+source/targetfixturecompilationusescachedUnityrefs, NOTimport/ILpostprocess/native.
 
-Two-machine LAN setup: same1003e artifact fully SHA256 verified258files on laptop,
-source14dfe9e416f5a98698844d9da34ab3c34b849a17/protocol134/recording13,
+LAN: same1003eartifact258files/2551734579bytes fullySHAverifiedonbothmachines.
+Source14dfe9e416f5a98698844d9da34ab3c34b849a17/proto134/recording13.
 Runtime501f0a02db575003c48910f08bdd0221810031c4d30aaf499f4727bbeca0c806.
-ManifestSHA79d2e77c5b993ec6d7268b7e15767c81a7823e3597bc5a7f71b813da5a9004e8,
-2551734579bytes. PC192.168.1.7/laptop192.168.1.144. Temporaryread-onlyserver14876
-STOPPED after complete transfer verified. No taskowned browser tabs/servers remain.
-Hostslot currently blocked by unrelated AmihanEditor8092 in tump-amihan1002f;
-never kill it. Laptop native jobs also must be terminal before localplayer launch.
+Manifest79d2e77c5b993ec6d7268b7e15767c81a7823e3597bc5a7f71b813da5a9004e8.
+PC192.168.1.7/laptop192.168.1.144, UDP49153host/49154clientownlobby.
+RoottransferHTTPserver14876STOPPEDaftercomplete. run_lan_peer.py single-sided
+freshprofiles, Hero1/30/automaticready/naturalend/terminalsave+hash/scoregates.
+Host01/03prelaunchforeigneditorrefusals. Host02 normalquitwithoutclient;
+client01arrivedafterexpiry, noadmission. Host04queued26458 acquired04:01:11UTC,
+thenownerAmihanpriorityarrived; rootretiredOWN23588(parent12344), Windowclosefalse,
+profile/input/Runtime restored/free. ALLARE SCHEDULINGFAILURES, NOLANBUG/PASS.
+Nohost05queued. FuturecohortONLY afterAmihanfullyfinish +laptopnativejobterminal/
+explicitready; thenconfirmedlisteningwith>=90sremaining, clientpromptly. Laptop
+handlesacceptanceandcomparesbothpassedreceipts/hashmatch/scores/normalexits.
 
-New tools/run_lan_peer.py prepares each side independently via existing scheduler,
-fresh profile, customHero1/30, ready/naturalend/normalexit + terminalcareer aggregate.
-PCport49153, client-ownlobby49154; host180s/client120s; noAllBots/autorematch/forcedend.
-Each side exports identity-free hashed matchID/scores, Runtime/exe/Core hashes;
-BOTH passed receipts must match. Existing CompletedArrivalProbe cannot be reused
-unchanged across machines: sharedreceiptfolder and hardcodedloopback coldrejoin.
-Wrapper syntax/staticreviewPASS, cleanup fixes applied. Host01 failed PRELAUNCH
-foreign-editoradmission only; profile/input/Runtime preserved, no game. Host02
-RUNNING queued in36992 with wait600s, profilepc-lan1003e-host-02, output
-Logs/cross-machine-peer1003/host-02,180s normalplayer budget onceadmitted.
-NewotherEditor5652 usesAmihanfilms-r2; preserve it. Do notstartanotherhost.
-Laptopclientmustwaitactualhostlistening and its ownnativejobterminal.
-LANhelper --wait-seconds change is owned/uncommitted; source8accountunits committed.
-Latest owner steering: LET AMIHAN FILMING FINISH FIRST. Hold jointLAN until its
-whole filming lane completes, not momentary gaps. Do not kill Amihan processes.
-Host04 acquired gap04:01:11UTC despite queued wait, then anotherAmihanEditor10000
-appeared. Root retired only verified ownedplayer23588(parent12344), windowclose
-unavailable, termination tohonorownerpriority. Host04 TERMINAL26458 false/no
-case; input/profile/Runtime restored, lease free. Host02 normalexit0/nopeer/no
-career is schedulingfailure; host01/03 prelaunchforeignrefusals. No LANbug/pass
-inferred. All ownedgameplayers/helpers/server terminal; no furtherhostqueued.
-Laptopclient01 terminalnormal/noadmission/input/profile/Runtime restored/free;
-laptopclient02 mustnotlaunchuntilfutureactualhostlistening+nativejobterminal.
+Agents: parallel_fixbulk completedaccount/UI6units +arrival/queue/hosted/countdown
+4units, staticreviewPASS/compiled/pushed. TheircheckpointsLogs/account-ui-bulk1003
+andLogs/network-lifecycle-bulk1003, notadditionalbacklog. Do notletthemidleafter
+batch: assignconcreteindependentengineeringorfeedbackwhilelaptoptests. Reviewer
+value_review reviewsvalue/correctness, noNative/services/broadhistoryloops. No
+newagentswithoutownerrequest. Rootalsoimplements(Delete/Name/Proof/UIguard).
 
-Current MAINHEAD5d847538bed7815428ec6cdc7408f2f003fb8cfd, candidatebranchsame
-verified atlastpush; ASTRAremote57739c4ab includespublishedDantefracture work,
-merged locallybf99. Checkedlaptop19nativecases integrated00f03d911 plusinput12
-ff17. Rootarrivalcandidatea5db552ee includedbf99:6EditMode compile/staticPASS,
-nativepending. Source52+arrival6+Matchmaker9=67 pending-nativecases; Matchmakercompiledand
-published51ea2747d. Touch6b273a49e reviewed/merged5d847538b; checkedlaptop
-total24cases. No jointLANacceptance. Earlier account52
-exacthandoff paths/filters recorded inchat; user does NOT needcopypasteoract on
-it. Keep detailed technicalcoordination outofuser'sway. No outboundotherchattools.
-
-Rootproducer tool data: artifactsame1003e258files/manifestalreadyonlaptop;
-server14876STOPPED. run_lan_peer.py independentroles, guardedfreshprofiles,
-normalHero1/30/ready/end/savedownrecord andpeerhash/score gates. Native PClicensing
-errors retained; no more accountcandidate localretry. Laptop warmed nativeworker
-can qualify immutable PC-owned overlay whenfree; sourcebranch ownership unchanged.
-
-Parallelbulk agent activelyimplements nextindependentengineering. Arrival6 ready/
-committed. Matchmaker9 source/fixtures staticreview/compilePASS, nativepending/published. It advances round lifecycle next. Do not freeze/mutate its inputs
-midwrite. Root nextaction: compileandpublish reviewedMatchmaker candidate, update
-candidatebranchHEAD; retain explicitpendingacceptance. Resume LANonlyafterowner
-Amihanpriority isfulfilled andbothsidesackready. Continue code/merges meanwhile.
+NEXTACTION: await/readlaptopcompactvalidationfeedbackandfixactualfailures; send
+latestrefconfirmationifneeded. Continueindependentsourcebugfixeswithworker;
+updateTODO+ledgerbatchesandpushASTRA, noPCnative/player. Do notstartjointLAN
+orblockwholegoalwhileAmihanruns. GoalACTIVE; fullcompetitionreadinessNOTproven.
 
 ## Freeze peer gate: stop unchanged retries
 

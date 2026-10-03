@@ -1,0 +1,2 @@
+C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Logs\account-delete-candidate-compile1003\source\Assets\TumbangPreso\Tests\PlayMode\PlayerHubDeletionLifetimeTests.cs(48,57): error CS0117: 'PlayerHub.Door' does not contain a definition for 'Account'
+C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\Logs\account-delete-candidate-compile1003\source\Assets\TumbangPreso\Tests\PlayMode\PlayerHubDeletionLifetimeTests.cs(69,41): error CS0117: 'PlayerHub.Door' does not contain a definition for 'Account'

@@ -323,9 +323,9 @@ namespace TumbangPreso.Abilities
 
             public StormSurge(AmihanHeroKit kit)
                 : base("amihan_ultimate", "AIRBURST",
-                       "Unleash a 60 degree fan of wind across the map. Players caught are Whirled and thrown airborne; caught slippers fly toward the arena edge.",
+                       "Unleash a monsoon across the whole court in front of you and everyone close around you. Players caught are Whirled and thrown airborne; caught slippers fly toward the arena edge.",
                        0.0f, 0.0f, AbilityGlyph.AmihanStormSurge,
-                       summary: "A 60 degree wind fan blows caught players and slippers toward the edge.",
+                       summary: "A monsoon blows everyone in front of you, and around you, toward the edge.",
                        // v3.2: no press sound; the cutscene's theme carries the call and the release cue lands on the hit.
                        castAction: "hero-amihan-storm", viewmodelAction: "storm-call")
             {
