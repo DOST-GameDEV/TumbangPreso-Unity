@@ -172,6 +172,10 @@ namespace TumbangPreso
                     // Reset teleports a live body, so its old contact origin is no longer valid.
                     body.GetComponent<Carrier>()?.CancelPendingInput();
                     body.GetComponent<CombatVerbs>()?.RetireActions();
+                    // The enabled bot must begin a new action after the world reset,
+                    // rather than restoring a hold from its pre-teleport planner state.
+                    var brain = body.GetComponent<AIController>();
+                    if (brain != null && brain.isActiveAndEnabled) brain.RetirePendingInput();
                 }
                 _runner.ResetWorld(GameServices.Match.DefenderSlot);
                 foreach (var body in _runner.Seats)
