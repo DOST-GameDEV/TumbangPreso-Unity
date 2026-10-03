@@ -3837,14 +3837,11 @@ namespace TumbangPreso.UI
         /// </summary>
         private void UpdateStunBreakPrompt()
         {
-            if (_stunCard == null) return;
-            bool active = _local != null && _local.StunElement != StunElement.None;
-            _stunCard.gameObject.SetActive(active);
+            // Frozen and elemental stuns expire automatically. Their existing
+            // status indicators replace this retired recovery action surface.
+            if (_stunCard != null) _stunCard.gameObject.SetActive(false);
             foreach (var pip in _stunPips) if (pip != null) pip.gameObject.SetActive(false);
-            if (!active) { _stunShown = ""; return; }
-            string text = _local.IsFrozen ? "FROZEN" : "STUNNED";
-            if (text != _stunShown) { _stunShown = text; _stunLabel.text = text; }
-            _stunLabel.color = UiTheme.Cream;
+            _stunShown = "";
         }
 
         private void BuildStatusStacks()

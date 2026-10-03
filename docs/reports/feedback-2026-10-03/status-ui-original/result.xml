@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 06:38:34Z" end-time="2026-10-03 06:38:35Z" duration="0.9928803">
+  <test-suite type="TestSuite" id="2714" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1395" result="Failed" site="Child" start-time="2026-10-03 06:38:34Z" end-time="2026-10-03 06:38:35Z" duration="0.992880" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2708" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1395" result="Failed" site="Child" start-time="2026-10-03 06:38:34Z" end-time="2026-10-03 06:38:35Z" duration="0.972558" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="41287" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2709" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1395" result="Failed" site="Child" start-time="2026-10-03 06:38:34Z" end-time="2026-10-03 06:38:35Z" duration="0.958995" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2710" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1395" result="Failed" site="Child" start-time="2026-10-03 06:38:34Z" end-time="2026-10-03 06:38:35Z" duration="0.945983" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2485" name="TimedRecoveryTests" fullname="TumbangPreso.PlayTests.TimedRecoveryTests" classname="TumbangPreso.PlayTests.TimedRecoveryTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-03 06:38:34Z" end-time="2026-10-03 06:38:35Z" duration="0.920557" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2487" name="FrozenOnlyUsesStatusIndicatorsAndKeepsRootInteraction" fullname="TumbangPreso.PlayTests.TimedRecoveryTests.FrozenOnlyUsesStatusIndicatorsAndKeepsRootInteraction" methodname="FrozenOnlyUsesStatusIndicatorsAndKeepsRootInteraction" classname="TumbangPreso.PlayTests.TimedRecoveryTests" runstate="Runnable" seed="1794954475" result="Failed" start-time="2026-10-03 06:38:34Z" end-time="2026-10-03 06:38:35Z" duration="0.908047" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Timed Frozen must not duplicate its status as an action bar.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TimedRecoveryTests+<FrozenOnlyUsesStatusIndicatorsAndKeepsRootInteraction>d__11.MoveNext () [0x00167] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/PlayMode/TimedRecoveryTests.cs:77
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[TumpUiCapture] Frozen-status-only cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

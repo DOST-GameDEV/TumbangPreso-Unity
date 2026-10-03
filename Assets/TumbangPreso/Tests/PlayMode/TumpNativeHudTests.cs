@@ -1087,7 +1087,9 @@ namespace TumbangPreso.PlayTests
                 var view=Object.FindFirstObjectByType<TumpMatchReadout>();Assert.IsNotNull(view);
                 local.ApplyStagger(2.5f,StunElement.Ice,9);view.Tick(local,false,false,false,false);
                 Assert.IsTrue(local.IsFrozen);Assert.IsFalse(local.CanAct());
-                Assert.IsTrue(view.Canvas.GetComponentsInChildren<Text>().Any(t=>t.isActiveAndEnabled&&t.text=="Frozen"));
+                Assert.IsTrue(view.Canvas.GetComponentsInChildren<Text>().Any(t=>t.isActiveAndEnabled&&t.name=="StatusName"&&t.text==StatusIcons.Name(StatusKind.Frozen)));
+                var actionRoot=(RectTransform)typeof(TumpMatchReadout).GetField("_promptRoot",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(view);
+                Assert.IsFalse(actionRoot.gameObject.activeSelf,"Timed Frozen is represented by its status indicator only.");
                 NoMashText(view);
                 yield return TumpUiCapture.Capture("Timed-recovery-Frozen",view.Canvas,960,540,false,true);
                 local.ClearStun();local.ApplyTrip(2.5f);view.Tick(local,false,false,false,false);

@@ -23,7 +23,9 @@ Nothing was deleted or renumbered.
   native failure and candidate1/1 retained; protocol135, current player/peer and
   human verification remain open. [Evidence](reports/feedback-2026-10-03/cheska-caster.md).
 - [ ] Investigate bots remaining inactive after status expiry; reproduce before fixing.
-- [ ] Remove Frozen/Stunned action bar while preserving status indicators.
+- [x] Remove Frozen/Stunned action bar while preserving status indicators.
+  Focused original failure and candidate 1/1 plus UI capture retained.
+  [Evidence](reports/feedback-2026-10-03/status-action-bar.md).
 - [ ] Unique tutorial attacker characters and no tutorial AI ultimates.
 
 ### TWO-MACHINE-NETWORK-1003: paired baseline complete, new source and online open
