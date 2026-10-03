@@ -34,7 +34,8 @@ namespace TumbangPreso.Diagnostics
             if(!_enabled)return;
             UI.SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
             bool sean=Argument("-tp-icecase")=="cheska-sean";
-            bool joining=Environment.GetCommandLineArgs().Contains("-tp-join");
+            bool joining=Environment.GetCommandLineArgs().Contains("-tp-join") ||
+                !string.IsNullOrEmpty(Argument("-tp-lobbyjoin"));
             Settings.SettingsStore.Current.CharacterPick=Roster.IndexIn(Roster.HeroPeople,
                 sean && joining ? "sean" : "cheska");
         }
