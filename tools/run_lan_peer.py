@@ -31,9 +31,10 @@ def main():
     parser.add_argument('--host', default='192.168.1.7')
     parser.add_argument('--port', type=int, default=49153)
     parser.add_argument('--seconds', type=int, required=True)
+    parser.add_argument('--wait-seconds', type=int, default=0)
     args = parser.parse_args()
-    if not 1 <= args.port < 65535 or not 90 <= args.seconds <= 240:
-        parser.error('Require port1..65534 and90..240 seconds.')
+    if not 1 <= args.port < 65535 or not 90 <= args.seconds <= 240 or not 0 <= args.wait_seconds <= 600:
+        parser.error('Require port1..65534,90..240 seconds and0..600 pool wait seconds.')
     exe = args.exe.resolve(); out = args.out.resolve()
     runtime = exe.parent / (exe.stem + '_Data/Managed/TumbangPreso.Runtime.dll')
     sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
@@ -57,7 +58,7 @@ def main():
                            CustomRulesWire=WIRE, HubQueueChoice=2,
                            GraphicsQuality=0, MatchDefaultsRevision=1)).encode()
     try:
-        result['admission'] = jobs.acquire(jobs.POOL, claim, 0); acquired = True
+        result['admission'] = jobs.acquire(jobs.POOL, claim, args.wait_seconds); acquired = True
         before = read_input_preferences()
         profile.mkdir(parents=True, exist_ok=False); profile_created = True
         (profile / 'settings.json').write_bytes(seed)

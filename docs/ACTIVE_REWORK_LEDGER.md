@@ -6,7 +6,8 @@ focused qualification and publication. Do not stop at a progress report or compa
 ## Current work and next action
 
 MAIN: C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks, ASTRAReworks.
-Local HEAD05b2ee1563fc16879631aa481e9b34ac7591f271; last verified remote
+Local HEADff17e33b3fc9a96c2888e1c2231cea3ce409635f; candidate branch same verified.
+ASTRA remote remainsf955 pending account acceptance; last verified remote
 f9552d58a4d59ecdc87a15a2203d82893e3aa5a3. Fetch and inspect before each push.
 RELEASE: C:/Users/matth/Documents/Codex/work/tump-competition-release1002,
 detached05b2ee156. QUAL: C:/Users/matth/Documents/Codex/work/tump-feedback-0930,
@@ -44,8 +45,8 @@ agent launched native/service/browser/helper; agents available for focused nextw
 
 Laptop branch competition-laptop-gameplay now has checked88dba66a1cc1b40379240a232bbe3b4283dd47e7,
 fetched locally. Input producer cancellation four paths+12fixture: original9causal/
-3controls, candidateFIRST12/12 on laptop warmed nativeworker; not merged yet. Review
-actual diff and retained evidence before integration. Laptop has more disk/RAM now,
+3controls, candidateFIRST12/12 on laptop warmed nativeworker; reviewed and merged locallyff17e33b3, then pushed verified candidate branch.
+ASTRA remote stillheld. Review later67cfe70a4/f9f7ecdfd checked units next. Laptop has more disk/RAM now,
 full native worker working. AdjacentAI/replay two-case candidate underway there.
 No outgoing cross-chat tools; facts/commands stay in this chat for manual relay.
 
@@ -64,7 +65,13 @@ PCport49153, client-ownlobby49154; host180s/client120s; noAllBots/autorematch/fo
 Each side exports identity-free hashed matchID/scores, Runtime/exe/Core hashes;
 BOTH passed receipts must match. Existing CompletedArrivalProbe cannot be reused
 unchanged across machines: sharedreceiptfolder and hardcodedloopback coldrejoin.
-Wrapper syntax checked, reviewcleanup fixes applied; actualgamepair NOT launched.
+Wrapper syntax/staticreviewPASS, cleanup fixes applied. Host01 failed PRELAUNCH
+foreign-editoradmission only; profile/input/Runtime preserved, no game. Host02
+RUNNING queued in36992 with wait600s, profilepc-lan1003e-host-02, output
+Logs/cross-machine-peer1003/host-02,180s normalplayer budget onceadmitted.
+NewotherEditor5652 usesAmihanfilms-r2; preserve it. Do notstartanotherhost.
+Laptopclientmustwaitactualhostlistening and its ownnativejobterminal.
+LANhelper --wait-seconds change is owned/uncommitted; source8accountunits committed.
 Next: publish reviewed candidate branch with pending-native labels and helper,
 prepare laptop native52 cases via manual handoff; review/integrate checked88dba66a;
 launch gamepair only once both guarded slots are free. Do not qualify current
