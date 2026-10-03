@@ -26,7 +26,11 @@ Git/LF/CRLF variants. Published Git blob hash isf31ee01c5ad6756bdecab11b3c211017
 Do not mark the current published full-route fixture independently accepted or
 repeat Unity to hide this discrepancy. Preserve raw XML/maps and both fixtures.
 Root script Logs/arrival-pan-review1004/inspect_published.py stops at this exact
-assertion after the other cohort checks pass. NEXT: resolve the exact tested
+assertion after the other cohort checks pass. The owner-authorized existing
+laptop chat has been sent the exact mismatch and asked to retain the tested
+bytes without a redundant Unity run. Generic cross-chat bans are stale for
+this explicitly authorized competition pair; no unrelated chats or agents.
+NEXT: resolve the exact tested
 MatchArrivalFlowTests bytes against the published capture addition; if only
 formatting, demonstrate the exact hash. Otherwise retain the tested fixture and
 scope acceptance to it. No repeated unchanged runs or speculative product fix.
@@ -66,8 +70,8 @@ Actual capture/playback/audio/player/peer acceptance remains separate.
 
 NEXT: inspect current144 combat request/recovery and interruption source for a
 concrete uncovered defect while the separate laptop route runs. Preserve exact
-source ownership; do not contact other chats under the latest supplied user-wide
-instructions. Continue useful local source work after owner status questions.
+source ownership and coordinate with the existing laptop as expressly directed
+by the owner. Continue useful local source work after owner status questions.
 
 ## Historical job launch, superseded by the terminal result above
 
