@@ -17,6 +17,17 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CLIENT-MOVEMENT-FRAME-1004: reject malformed client movement effects
+
+- [x] Preflight exact unread payloads before decoding: Impact20, Carry24 and
+  familiar flight pose25 bytes. Preserve authority/seat/epoch/finite guards and
+  wire/protocol144. Laptop native original9 causal failures/9 controls ->18/18
+  on the unchanged fixture, both3428 inputs unchanged and terminal/restored/free.
+  Root verified tested runtime/fixture/meta hashes against candidate Git bytes.
+  Raw publication and direct XML/map inspection remain pending in the checkpoint.
+- [ ] Actual effect/body movement and current packaged/live-peer qualification.
+  Supplied packet tests establish framing and rejection, not complete gameplay.
+
 ### CREDITS-CODE-1003: eight directions grant5000 Tansan
 
 - [x] Client and authoritative wallet source; keyboard/D-pad/mouse/touch input,

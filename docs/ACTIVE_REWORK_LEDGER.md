@@ -46,17 +46,19 @@ Expected original6 short-frame exceptions plus3 trailing partial-decode failures
 confirmed. Candidate branch competition-pc-client-movement-frames-candidate1004
 is pushed atfb33fac570140624c3bf8c26f7b93a01c7142e83: only three exact unread-byte/
 TryBeginRead checks20/24/25, fixture/meta unchanged. Both refs were sent to laptop.
-NEXT: inspect one original and one candidate18-case native result on the same
-frozen fixture, then integrate only after causal failures and controls reconcile.
-Neither unqualified branch is merged into ASTRA. No PC native job is authorized.
+The matching-byte three-guard candidate was normally merged atc63ee80a0 after
+laptop reported the causal baseline and18/18 candidate. Protocol144/wire intact.
+Only MatchRpc.cs and the unchanged18-case fixture/meta entered this code merge.
+No PC native job is authorized.
 Laptop reports original11310 CLOSED9 causal failures/9 controls/end19:57:11UTC
 and candidate70323 CLOSED18/18/end20:20:57UTC. Both3428 post hashes unchanged,
 terminal/restored/free, no repair/retry. Outputsqa-a/Logs/client-movement-original18
 andclient-movement-candidate18, CPU2048+1024MiB/300/profilevalidation-qa-a-be075dcdfa07.
 Root independently matched reported runtimea1fbce62 and fixture054387a8/meta6c69cc75
 to exact candidate Git/Windows newline variants. Raw evidence is being curated;
-NEXT: inspect its published XML/maps/receipts, then normally mergefb33. No more
-packet run. This qualifies framing, not effects, peers or full gameplay.
+NEXT: inspect its published XML/maps/receipts once and record the evidence ref.
+Do not repeat the completed packet runs. This qualifies framing, not effects,
+peers or full gameplay. Pull checked source before freezing14/build inputs.
 Its14 preparation stopped on three retired slide-test inventory entries and was
 checkpointed; those sources/metas were preserved outside compilation. Resume14
 and current144 build after the one original/candidate pair, not another audit.
