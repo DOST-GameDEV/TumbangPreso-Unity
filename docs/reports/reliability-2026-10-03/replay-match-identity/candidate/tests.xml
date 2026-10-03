@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 05:42:12Z" end-time="2026-10-03 05:42:12Z" duration="0.1479845">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1077" result="Passed" start-time="2026-10-03 05:42:12Z" end-time="2026-10-03 05:42:12Z" duration="0.147985" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2310" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1077" result="Passed" start-time="2026-10-03 05:42:12Z" end-time="2026-10-03 05:42:12Z" duration="0.124355" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16344" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2311" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1077" result="Passed" start-time="2026-10-03 05:42:12Z" end-time="2026-10-03 05:42:12Z" duration="0.110351" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2312" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1077" result="Passed" start-time="2026-10-03 05:42:12Z" end-time="2026-10-03 05:42:12Z" duration="0.096474" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2041" name="ReplayMatchIdentityTests" fullname="TumbangPreso.Tests.ReplayMatchIdentityTests" classname="TumbangPreso.Tests.ReplayMatchIdentityTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 05:42:12Z" end-time="2026-10-03 05:42:12Z" duration="0.072286" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="2045" name="BodyHistoryFollowsMatchAndRoundBoundary" fullname="TumbangPreso.Tests.ReplayMatchIdentityTests.BodyHistoryFollowsMatchAndRoundBoundary" classname="TumbangPreso.Tests.ReplayMatchIdentityTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 05:42:12Z" end-time="2026-10-03 05:42:12Z" duration="0.055607" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2042" name="BodyHistoryFollowsMatchAndRoundBoundary(True,False)" fullname="TumbangPreso.Tests.ReplayMatchIdentityTests.BodyHistoryFollowsMatchAndRoundBoundary(True,False)" methodname="BodyHistoryFollowsMatchAndRoundBoundary" classname="TumbangPreso.Tests.ReplayMatchIdentityTests" runstate="Runnable" seed="652859295" result="Passed" start-time="2026-10-03 05:42:12Z" end-time="2026-10-03 05:42:12Z" duration="0.040560" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2043" name="BodyHistoryFollowsMatchAndRoundBoundary(False,True)" fullname="TumbangPreso.Tests.ReplayMatchIdentityTests.BodyHistoryFollowsMatchAndRoundBoundary(False,True)" methodname="BodyHistoryFollowsMatchAndRoundBoundary" classname="TumbangPreso.Tests.ReplayMatchIdentityTests" runstate="Runnable" seed="1824532827" result="Passed" start-time="2026-10-03 05:42:12Z" end-time="2026-10-03 05:42:12Z" duration="0.000753" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2044" name="BodyHistoryFollowsMatchAndRoundBoundary(False,False)" fullname="TumbangPreso.Tests.ReplayMatchIdentityTests.BodyHistoryFollowsMatchAndRoundBoundary(False,False)" methodname="BodyHistoryFollowsMatchAndRoundBoundary" classname="TumbangPreso.Tests.ReplayMatchIdentityTests" runstate="Runnable" seed="1087886403" result="Passed" start-time="2026-10-03 05:42:12Z" end-time="2026-10-03 05:42:12Z" duration="0.001619" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="2049" name="LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds" fullname="TumbangPreso.Tests.ReplayMatchIdentityTests.LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds" classname="TumbangPreso.Tests.ReplayMatchIdentityTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 05:42:12Z" end-time="2026-10-03 05:42:12Z" duration="0.011383" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2046" name="LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds(True,False)" fullname="TumbangPreso.Tests.ReplayMatchIdentityTests.LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds(True,False)" methodname="LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds" classname="TumbangPreso.Tests.ReplayMatchIdentityTests" runstate="Runnable" seed="1147930090" result="Passed" start-time="2026-10-03 05:42:12Z" end-time="2026-10-03 05:42:12Z" duration="0.008148" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2047" name="LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds(False,True)" fullname="TumbangPreso.Tests.ReplayMatchIdentityTests.LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds(False,True)" methodname="LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds" classname="TumbangPreso.Tests.ReplayMatchIdentityTests" runstate="Runnable" seed="410801838" result="Passed" start-time="2026-10-03 05:42:12Z" end-time="2026-10-03 05:42:12Z" duration="0.000780" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2048" name="LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds(False,False)" fullname="TumbangPreso.Tests.ReplayMatchIdentityTests.LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds(False,False)" methodname="LiveArchiveHistoryResetsButSameMatchShortlistSurvivesRounds" classname="TumbangPreso.Tests.ReplayMatchIdentityTests" runstate="Runnable" seed="91713808" result="Passed" start-time="2026-10-03 05:42:12Z" end-time="2026-10-03 05:42:12Z" duration="0.001269" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

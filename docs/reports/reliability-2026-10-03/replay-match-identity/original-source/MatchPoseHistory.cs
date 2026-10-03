@@ -13,7 +13,6 @@ namespace TumbangPreso.CameraSystem
         public const int TransformLimit = 256;
         private readonly Track[] _tracks = new Track[Core.Balance.PlayerCount];
         private float _next;
-        private long _match;
         private int _round;
         public event System.Action<float> Sampled;
         public Track ForSeat(int seat) => seat >= 0 && seat < _tracks.Length ? _tracks[seat] : null;
@@ -22,11 +21,7 @@ namespace TumbangPreso.CameraSystem
         {
             var round = GameServices.Round; var match = GameServices.Match;
             if (round == null || match == null) return;
-            if (_match != match.PresentationMatchId || _round != match.RoundNumber)
-            {
-                System.Array.Clear(_tracks, 0, _tracks.Length);
-                _match = match.PresentationMatchId; _round = match.RoundNumber; _next = 0;
-            }
+            if (_round != match.RoundNumber) { System.Array.Clear(_tracks, 0, _tracks.Length); _round = match.RoundNumber; }
             if (!round.RoundActive || Time.time < _next) return;
             _next = Time.time + Interval;
             for (int i = 0; i < _tracks.Length; i++)

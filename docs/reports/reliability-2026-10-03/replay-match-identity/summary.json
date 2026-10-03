@@ -1,0 +1,15 @@
+{
+  "staticReview": "PASS",
+  "original": {
+    "total": "6",
+    "passed": "4",
+    "failed": "2",
+    "skipped": "0"
+  },
+  "candidate": {
+    "total": "6",
+    "passed": "6",
+    "failed": "0",
+    "skipped": "0"
+  }
+}

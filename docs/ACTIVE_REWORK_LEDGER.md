@@ -56,6 +56,31 @@ review incoming laptop task/ownership reply. Worker proposes MatchPoseHistory.cs
 and MatchReplayArchive.cs same-round new-match isolation; laptop conflict query
 sent before joint source work. Preserve within-match history and retained clips.
 
+Replay match-identity6 now qualified: original2causal/4control, first
+candidate6/6, independent review PASS, both jobs terminal/restored/free.
+Root local native total44 unique cases this resumption:25 priorpending+13refresh+6replay.
+SafeStore6 active original session49675, output release worker
+Logs/competition-resume1003/portable-store/original, profile
+competition-resume1003-store-original, deadline240. Frozen source/checkpoint at
+MAIN Logs/replay-match-identity1003/bulk-checkpoint.json; helper dispatch tests
+exact portable fileIO, not Android hardware. After terminal inspect XML, run
+python Logs/competition-resume1003/store_prepare.py candidate then same6 once.
+Worker next reservation SpectatorCamera.cs pixel replay match boundary; no edits
+to frozen replay/archive/SafeStore inputs. Reviewer owns SafeStore source check.
+
+Owner wants both sides autonomous, but joint network requests take priority:
+checkpoint/finish coherent unit, coordinate LAN/online, then resume saved task.
+Persistent directives docs/COMPETITION_COORDINATION.md linked by AGENTS. User-wide
+AGENTS and authorized memory extension record revocation of stale chat ban.
+Laptop confirmed protocol and current ownership. It is integrating qualified
+hero13/58PCnative/UIfixture anchors and operator2, then will send exact ASTRAref.
+Root will build one shared Windows1003g artifact; laptop is NOT building. New
+isolated worktree C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003g
+created at948398fa2, cache empty, no Unity job yet. Fast-forward it normally to
+agreed integration ref, copy idle matching cache independently, freeze inputs,
+one build, verify exactartifact and transfer before joint test. Do not mutate
+old release worker while its store test runs or copy its live Library.
+
 LAN pair is not active. Older1003e artifact is source14dfe9e41, protocol134,
 recording13,258files/2551734579bytes. Runtime501f0a02db575003c48910f08bdd0221810031c4d30aaf499f4727bbeca0c806.
 PC192.168.1.7 and laptop192.168.1.144. Prior paired launch attempts failed

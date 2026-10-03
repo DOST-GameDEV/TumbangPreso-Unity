@@ -160,3 +160,7 @@ Continental Drift irregular-fracture unit: [scoped plan](reports/dante-drift-fra
 Account canonical refresh ownership: [native causal and control evidence](reports/reliability-2026-10-03/account-refresh-ownership/README.md).
 
 Local account/lobby resumption qualification: [25 unique native checks](reports/reliability-2026-10-03/local-resume-qualification/README.md).
+
+Competition work continuity: [persistent coordination directives](COMPETITION_COORDINATION.md).
+
+Replay new-match history isolation: [native boundary evidence](reports/reliability-2026-10-03/replay-match-identity/README.md).

@@ -17,6 +17,14 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### REPLAY-MATCH-IDENTITY-1003: prevent previous-match highlight lead-in
+
+- [x] Fresh same-scene match identity retires body, prop and field history even
+  at the same round number. Original2 causal failures/4 controls, candidate6/6.
+  Ordinary rounds preserve completed highlights and detached bytes.
+  [Evidence](reports/reliability-2026-10-03/replay-match-identity/README.md).
+  Rendered/operator pixel replay and physical acceptance remain separate.
+
 ### INPUT-PRODUCER-LIFETIME-1003: checked laptop integration
 
 - [x] Focus/disable/Idle retire pending throw/lunge/reset before a release is read;
