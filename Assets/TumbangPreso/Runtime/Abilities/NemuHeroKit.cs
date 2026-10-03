@@ -309,7 +309,7 @@ namespace TumbangPreso.Abilities
                        "Defending. Command Kuro to protect the upright can from knockdown for 5 s.",
                        NecroRules.GuardCooldown, NecroRules.GuardSeconds, AbilityGlyph.NemuKuroGuard,
                        summary: "Protect the upright can for 5 s.",
-                       castAction: "hero-nemu-seance", viewmodelAction: "seance-channel",
+                       castAction: "hero-nemu-guard", viewmodelAction: "kuro-guard",
                        castCue: "sfx_cast_nemu_guard") { _kit = kit; }
 
             public override bool CanActivate(AbilityContext ctx)

@@ -1,0 +1,68 @@
+{
+  "reason": "Only orphaned idle compiler/shutdown helpers from this task-owned Unity SDK; no active owned Editor. No files removed.",
+  "beforeCgroup": 3964264448,
+  "afterCgroup": 3273605120,
+  "rssRetiredBytes": 833069056,
+  "processes": [
+    {
+      "pid": 12573,
+      "kind": "shutdown",
+      "ageSeconds": 9206.1,
+      "rssBytes": 83111936
+    },
+    {
+      "pid": 13805,
+      "kind": "shutdown",
+      "ageSeconds": 8421.5,
+      "rssBytes": 86192128
+    },
+    {
+      "pid": 14572,
+      "kind": "shutdown",
+      "ageSeconds": 8289.9,
+      "rssBytes": 77959168
+    },
+    {
+      "pid": 15212,
+      "kind": "shutdown",
+      "ageSeconds": 8177.4,
+      "rssBytes": 90255360
+    },
+    {
+      "pid": 17434,
+      "kind": "shutdown",
+      "ageSeconds": 7648.6,
+      "rssBytes": 85041152
+    },
+    {
+      "pid": 20298,
+      "kind": "shutdown",
+      "ageSeconds": 5669.5,
+      "rssBytes": 80265216
+    },
+    {
+      "pid": 21134,
+      "kind": "shutdown",
+      "ageSeconds": 5311.0,
+      "rssBytes": 81317888
+    },
+    {
+      "pid": 22599,
+      "kind": "shutdown",
+      "ageSeconds": 4207.2,
+      "rssBytes": 81571840
+    },
+    {
+      "pid": 25368,
+      "kind": "shutdown",
+      "ageSeconds": 3113.6,
+      "rssBytes": 81395712
+    },
+    {
+      "pid": 26381,
+      "kind": "shutdown",
+      "ageSeconds": 2916.5,
+      "rssBytes": 85958656
+    }
+  ]
+}

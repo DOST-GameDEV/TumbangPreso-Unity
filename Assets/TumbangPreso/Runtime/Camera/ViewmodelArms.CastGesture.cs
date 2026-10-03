@@ -155,6 +155,13 @@ namespace TumbangPreso.CameraSystem
             { "project-spirit", new CastPath(.25f, true,
                 Rest(0), K(.12f, .02f, .02f, .06f, .10f, .24f, .00f),
                 K(.25f, .14f, .12f, .26f, .20f, .34f, -.02f), K(.45f, .12f, .10f, .22f, .20f, .33f, -.02f), Rest(.75f)) },
+            // KURO: CATCH. A small off-hand instruction; the carrying hand stays low.
+            // Kuro performs the world action independently, without a new windup.
+            { "kuro-guard", new CastPath(.22f, true,
+                Rest(0), K(.10f, -.01f, -.02f, -.02f, .03f, .14f, .04f),
+                K(.22f, -.02f, -.04f, -.02f, .08f, .29f, .19f),
+                K(.38f, -.02f, -.04f, -.02f, .08f, .28f, .18f),
+                K(.54f, -.01f, -.02f, -.01f, .04f, .14f, .09f), Rest(.76f)) },
             // DEVOURING SEANCE. Arms wide as she rises, then dragged IN to the centre and down: the only
             // ultimate that collapses rather than strikes.
             { "seance-channel", new CastPath(.40f, true,
