@@ -1056,6 +1056,10 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   retained. Full-court film, live owner appearance, peers and human approval stay
   open. No mechanics/protocol change.
   [Evidence](reports/zack-circuit-motion-2026-10-03/README.md).
+- [x] CLOSED-CIRCUIT-WALK-1003: retain walking legs during mobile acquisition.
+  Original real-motor regression failed; candidate11/11 plus six motion/asset
+  controls pass. Standing/owner behavior preserved; moving-film and peer
+  acceptance remain separate. [Evidence](reports/zack-moving-cast-2026-10-03/README.md).
 
 - [x] BOT-COMPANION-OBSERVATION-1001: shared observation now includes companion
   targets and binds cached beliefs to the actual body. Native baseline reproduces
