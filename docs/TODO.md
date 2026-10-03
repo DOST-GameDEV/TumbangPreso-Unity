@@ -40,12 +40,14 @@ Nothing was deleted or renumbered.
   [Evidence](reports/reliability-2026-10-03/seat-producer-transfer/README.md).
   Live-peer/physical acceptance and frozen1003g inclusion remain separate.
 
-### EXPLICIT-MOVEMENT-1003: final owner numbers
+### EXPLICIT-MOVEMENT-1003: latest owner numbers
 
-- [x] Explicit role walk/run speeds without character scaling, new jump and
-  stamina, charge-dependent defender lunge cooldown and preserved slide rules.
-  Managed 708/708; four distinct native physical cases qualified. Protocol 137.
-  [Result, scope and remaining limits](reports/movement-2026-10-03/README.md).
+- [x] Explicit role walk/run speeds, stamina and free shove/lunge retain the
+  playtested revision. Latest jump is5.75m/s launch,20m/s² gravity,25m/s fall cap;
+  protocol141. Four focused managed contracts and three native physical cases
+  pass, including all eight unchanged mode/role/run speed samples.
+  [Latest jump evidence and limits](reports/jump-restore-2026-10-03/README.md).
+  [Earlier stamina/lunge qualification](reports/movement-playtest-2026-10-03/README.md).
 
 ### OBJECTIVE-ECONOMY-1003: latest owner revision
 
