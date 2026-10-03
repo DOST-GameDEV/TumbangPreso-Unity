@@ -61,8 +61,9 @@ namespace TumbangPreso
             _position = _camera.transform.position; _rotation = _camera.transform.rotation; _fov = _camera.fieldOfView;
             _rig = _camera.GetComponent<CameraRig>();
             _spectator = _camera.GetComponent<SpectatorCamera>();
+            bool cameraMotion = Settings.SettingsStore.Current.CinematicCameraMotion;
             _rigActive = _rig != null && _camera.enabled && (_spectator == null || !_spectator.enabled);
-            if (_rigActive) _rig.SetActive(false);
+            if (_rigActive && cameraMotion) _rig.SetActive(false);
             // SpectatorCamera already respects PresentationClock.Held. Disabling it would
             // unhook its highlight subscriptions, which a temporary shot must never do.
             _camera.enabled = true;
@@ -96,15 +97,18 @@ namespace TumbangPreso
                     float local = Mathf.Repeat((age - 2.4f) / 1.1f, 1);
                     offset = Quaternion.Euler(0, Mathf.Lerp(-7, 7, local), 0) * actor.forward * 4.6f + Vector3.up * .65f;
                 }
-                Vector3 eye = ClearEye(focus, focus + offset);
-                _camera.transform.SetPositionAndRotation(eye, Quaternion.LookRotation(focus - eye, Vector3.up));
-                _camera.fieldOfView = 55;
-                if (!reduced && age > 7.35f)
+                if (cameraMotion)
                 {
-                    float returnT = Mathf.SmoothStep(0, 1, (age - 7.35f) / .65f);
-                    _camera.transform.position = Vector3.Lerp(eye, _position, returnT);
-                    _camera.transform.rotation = Quaternion.Slerp(_camera.transform.rotation, _rotation, returnT);
-                    _camera.fieldOfView = Mathf.Lerp(55, _fov, returnT);
+                    Vector3 eye = ClearEye(focus, focus + offset);
+                    _camera.transform.SetPositionAndRotation(eye, Quaternion.LookRotation(focus - eye, Vector3.up));
+                    _camera.fieldOfView = 55;
+                    if (!reduced && age > 7.35f)
+                    {
+                        float returnT = Mathf.SmoothStep(0, 1, (age - 7.35f) / .65f);
+                        _camera.transform.position = Vector3.Lerp(eye, _position, returnT);
+                        _camera.transform.rotation = Quaternion.Slerp(_camera.transform.rotation, _rotation, returnT);
+                        _camera.fieldOfView = Mathf.Lerp(55, _fov, returnT);
+                    }
                 }
                 Caption(beat, map);
                 yield return null;
