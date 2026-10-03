@@ -270,6 +270,8 @@ namespace TumbangPreso
             ResetActionState();
         }
 
+        internal void RetirePendingInput() => ReleaseAll(_motor.Intent);
+
         // -------------------------------------------------------------------
         // § WHAT THIS BOT IS LISTENING TO
         //
