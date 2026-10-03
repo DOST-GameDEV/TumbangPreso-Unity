@@ -712,18 +712,11 @@ namespace TumbangPreso.Tests
         public void TheCommittedWindowIsExactlyTheTayasPunishCycle()
         {
             float committed = Balance.SlideActiveTime + Balance.SlideRecoveryTime;
-            float punish = Balance.LungeChargeTime + Balance.LungeActiveTime;
-
-            Assert.AreEqual(punish, committed, 0.001f);
-
-            // ⚠️ AND THE COOLDOWN CARRIES THE TAYA'S OWN COOLDOWN ON TOP, so an attacker cannot
-            // slide back out of the consequence the first slide invited: by the time the second
-            // is available, the taya who spent a lunge has theirs back.
-            Assert.AreEqual(punish + Balance.LungeCooldown, Balance.SlideCooldown, 0.001f);
-
-            Assert.AreEqual(Balance.ShoveStaminaCost, Balance.SlideStaminaCost,
-                "It is priced against the attacker's other committed verb, out of a bar the " +
-                "player already watches. docs/VISION.md § 1.1 forbids Classic another one.");
+            // Slide timing remains explicit after the independently retuned defender lunge.
+            Assert.AreEqual(.95f, committed, .001f);
+            Assert.AreEqual(2.45f, Balance.SlideCooldown, .001f);
+            Assert.AreEqual(0f, Balance.ShoveStaminaCost);
+            Assert.AreEqual(25f, Balance.SlideStaminaCost);
 
             Assert.AreEqual(Balance.LungeMinPower, Balance.SlideSteerScale,
                 "The game already had an answer to 'how much of a committed move is still " +

@@ -229,17 +229,8 @@ namespace TumbangPreso
             if (_carrier != null && _carrier.IsBusy) return;
             if (!_motor.Intent.JustPressed(Verb.Lunge)) return;
 
-            // ⚠️⚠️ FATIGUE REFUSES THE SHOVE OUTRIGHT, AND THAT CHECK WAS MISSING.
-            // `character_base.gd::_step_shove` is `if _stamina < SHOVE_STAMINA_COST or
-            // _fatigue_left > 0.0: return` — two conditions, and only the first was ported.
-            // Fatigue is the lockout you earn by emptying the bar, so a shove that still fired
-            // during it let a player spend the one resource the lockout exists to withhold, and
-            // did it at the moment they were meant to be recovering.
-            if (_motor.Stamina.IsFatigued) return;
-
-            // ⚠️ THE REAL PRICE IS THE SPRINT, NOT THE POINTS. That half-bar is the same bar
-            // that gets you back out of the box, so a shove is paid for in escape distance.
-            if (!_motor.Stamina.Spend(Balance.ShoveStaminaCost)) return;
+            // Owner playtest revision: shove is free even with an empty/fatigued bar.
+            // Cooldown, role, action and carrier/channel gates still apply.
 
             // ⚠️ THE READ PLAYS ON THE SWING, NOT ON THE HIT. A shove that only animates when
             // it connects gives the other three players no warning it happened, and a miss
@@ -285,7 +276,7 @@ namespace TumbangPreso
             // twice for every client in the room.
             //
             // ⚠️ EVERYTHING THAT CAN REFUSE THE VERB IS ABOVE THIS LINE: the cooldown, being
-            // the taya, a fatigued bar and the stamina spend. A press that never became a
+            // the taya and the action/channel gates. A press that never became a
             // shove is not a miss, and counting it as one makes the hit rate a measure of how
             // often somebody mashed.
             GameServices.Stats?.NoteShoveAttempt(_motor.PlayerSlot, victim != null);
@@ -857,8 +848,7 @@ namespace TumbangPreso
         public bool HostResolveShove(Vector3 from, Vector3 facing)
         {
             if (!NetAuthority.ShouldResolve() || _shoveCooldown > 0.0f ||
-                _motor.IsDefender || !_motor.CanAct() || _motor.Stamina.IsFatigued ||
-                !_motor.Stamina.Spend(Balance.ShoveStaminaCost)) return false;
+                _motor.IsDefender || !_motor.CanAct()) return false;
 
             Animator?.PlayAction("shove");
 
@@ -939,7 +929,7 @@ namespace TumbangPreso
                     // shove is the sprint it costs, so a refusal that returned only the cooldown
                     // would still have taken the escape distance and the player would never know
                     // why they could not get out of the box.
-                    if (refundResources) _motor.Stamina.Refund(Balance.ShoveStaminaCost);
+                    // Shoves spend no stamina, so a refusal must not credit any.
                     break;
 
                 case Net.MatchRpc.DeniedVerb.Slide:
