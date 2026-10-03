@@ -17,6 +17,14 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### SEAT-PRODUCER-TRANSFER-1003: rapid role changes retain controls
+
+- [x] Retire deferred readers/brains and bind the surviving producer during rapid
+  player/spectator switches. Original8: four causal failures/four controls;
+  first candidate8/8, exact published source hashes checked. No protocol change.
+  [Evidence](reports/reliability-2026-10-03/seat-producer-transfer/README.md).
+  Live-peer/physical acceptance and frozen1003g inclusion remain separate.
+
 ### OBJECTIVE-ECONOMY-1003: latest owner revision
 
 - [x] Can knockdown +1, successful tag +1, and one defender-round start grant +1.

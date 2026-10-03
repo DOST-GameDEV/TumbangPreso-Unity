@@ -1073,8 +1073,14 @@ namespace TumbangPreso
         {
             if (!_inputSourceKnown)
             {
+                // Prefer the replacement producer while the retired one awaits Destroy.
+                // Without a replacement, preserve a surviving paused producer's ownership.
                 _hostReader = GetComponent<PlayerInputReader>();
+                foreach (var reader in GetComponents<PlayerInputReader>())
+                    if (reader.enabled) { _hostReader = reader; break; }
                 _hostBrain = GetComponent<AIController>();
+                foreach (var brain in GetComponents<AIController>())
+                    if (brain.enabled) { _hostBrain = brain; break; }
                 _inputSourceKnown = true;
             }
 

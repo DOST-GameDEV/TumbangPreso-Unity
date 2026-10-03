@@ -1,0 +1,49 @@
+{
+  "cases": [
+    {
+      "name": "ClientPlayerWatchPlayerKeepsItsFinalReader",
+      "result": "Passed"
+    },
+    {
+      "name": "DisabledBotStillRetainsTheHostsExistingSimulationOwnership",
+      "result": "Passed"
+    },
+    {
+      "name": "FinalWatchRetiresEveryReaderFromRapidRoleChanges",
+      "result": "Passed"
+    },
+    {
+      "name": "HostBotPlayerWatchKeepsTheFinalBotAndSimulation",
+      "result": "Passed"
+    },
+    {
+      "name": "HostPlayerWatchPlayerKeepsItsFinalReaderAndSimulation",
+      "result": "Passed"
+    },
+    {
+      "name": "OnlineRebindCannotReactivateTheRetiredReaderAfterInstallerHandover",
+      "result": "Passed"
+    },
+    {
+      "name": "RepeatingTheCurrentPlayerSeatKeepsOneExistingReader",
+      "result": "Passed"
+    },
+    {
+      "name": "RepeatingWatchKeepsOneHostBot",
+      "result": "Passed"
+    }
+  ],
+  "preservationCompleted": true,
+  "phase": "candidate",
+  "retryCount": 0,
+  "leaseHeld": false,
+  "failed": 0,
+  "passed": 8,
+  "guardTerminal": true,
+  "receiptSha256": "9bfdb6d4f656eba86d63026f1e2125d206f4cfd3f0c3034ec908d20e89f7598a",
+  "skipped": 0,
+  "workerRestoration": "Logs/seat-producer-transfer1003/worker-restoration.json",
+  "xml": "Logs/seat-producer-transfer1003/native-candidate/tests.xml",
+  "xmlSha256": "ec359b3cae3ae8409dca09f8d1bd247af031ec94cb3306af44fd4c82a5e69e29",
+  "total": 8
+}
