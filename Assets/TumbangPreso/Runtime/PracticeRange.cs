@@ -165,6 +165,13 @@ namespace TumbangPreso
             _resetting = true;
             try
             {
+                foreach (var body in _runner.Seats)
+                {
+                    if (body == null) continue;
+                    // Reset teleports a live body, so its old contact origin is no longer valid.
+                    body.GetComponent<Carrier>()?.CancelPendingInput();
+                    body.GetComponent<CombatVerbs>()?.RetireActions();
+                }
                 _runner.ResetWorld(GameServices.Match.DefenderSlot);
                 foreach (var body in _runner.Seats)
                 {
