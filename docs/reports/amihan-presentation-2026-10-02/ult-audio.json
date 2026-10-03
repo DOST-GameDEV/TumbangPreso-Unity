@@ -1,0 +1,20 @@
+{
+  "provenance": "Original deterministic synthesis (numpy only); no external samples, voices or paid API.",
+  "listening": "Not yet heard by the owner in the game mix. Peak and RMS are measurements, not approval.",
+  "cues": [
+    {
+      "cue": "sfx_ult_theme_amihan",
+      "seconds": 5.6,
+      "peak": 0.66,
+      "rms": 0.07395113463817794,
+      "sha256": "0fe40b5320a59986cb58969ea0767a339b178071841f8661c00eb38ac5a6ba9b"
+    },
+    {
+      "cue": "sfx_amihan_storm_release",
+      "seconds": 2.0,
+      "peak": 0.8,
+      "rms": 0.06573509184533338,
+      "sha256": "9fc3183bf86020dadce8073f563c1572e32848c83db6d1edabf096ae6705a993"
+    }
+  ]
+}

@@ -139,41 +139,18 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>
-        /// AIRBURST, 2.07 s, played from the shared cutscene's handback over the live windup
-        /// (`AmihanRules.StormSurgeGatherSeconds`, 1.5 s; `docs/reports/amihan-presentation-2026-10-02/beat-sheet.md`).
-        /// It STARTS in the coil the introduction ends on (palms cupped at the right hip, torso turned
-        /// away, head half following), so the handback does not jump. The windup is the dodge window,
-        /// so the body only holds and packs: two tightening beats (0.5, 1.0) that the fan's chevrons
-        /// step on, a deeper draw back (1.32), then the release ON the gameplay release (punch, 1.5):
-        /// she unwinds to face the lane, leaning hard into both palms. The old clip pushed at 2.5 s,
-        /// a full second after the host had already thrown everyone. Short recovery: she is free to run.
+        /// AIRBURST, v3.2 (owner, 2026-10-03: *"show the ult actually hitting and knocking abck ppl already in the cutscene"*, *"no
+        /// need to reshow it in fpp"*). The shared cutscene now shows the windup AND the release (her drive at 5.05 s,
+        /// `HeroIntroductionScene.Amihan.cs`), and play resumes on the hit (`AmihanRules.StormSurgeDelaySeconds`, 0). So this
+        /// clip only SETTLES: it starts in the follow-through the cutscene ends on (hands parting, torso turning back, the lunge
+        /// easing), so the hand-back does not jump, and she is back to her stand and free to run by 0.45 s.
         /// </summary>
         private static AnimationClip BuildAmihanStorm(Dictionary<string, string> paths)
         {
             var b = new ClipBuilder("hero-amihan-storm", paths);
-            var cupL = V(-48, 75, 8); var cupR = V(-24, -45, -20);
-            var legL = V(-20, 0, 10); var legR = V(18, 0, -14);
-            PoseKey(b, 0, -.03f, V(-5, 43, -7), V(-4, -17, 0), cupL, cupR, legL, legR);
-            PoseKey(b, .5f, -.045f, V(-6, 47, -7), V(-4, -18, 0), cupL, cupR, legL, legR);
-            PoseKey(b, .62f, -.04f, V(-5, 44, -7), V(-4, -17, 0), cupL, cupR, legL, legR);
-            PoseKey(b, 1.0f, -.055f, V(-7, 50, -8), V(-5, -20, 0), cupL, cupR, legL, legR);
-            PoseKey(b, 1.12f, -.05f, V(-6, 47, -7), V(-4, -17, 0), cupL, cupR, legL, legR);
-            PoseKey(b, 1.32f, -.065f, V(-12, 56, -8), V(-6, -22, 0), V(-40, 90, 14), V(-24, 0, 4), V(-22, 0, 10), V(20, 0, -15));
-            // FEEL PASS (2026-10-02, the F3 body film and offline witness sheets): the first release leaned the torso 26
-            // degrees, so her large head dived over both arms and from the court the push read as a bow. Now she unwinds
-            // UPRIGHT into a lunge step (front foot down the lane, rear leg long, hips sunk), chin up so her face shows, and
-            // drives both palms FORWARD at chest height, just outside her torso (measured on the glb: 0.49 and 0.42 m in
-            // front of her). A wider pose that put the hands beside her for the rear view was rejected: it threw them out
-            // to the sides, a wings-open shape that no longer pointed down the lane (the native body film caught it).
-            b.PunchAt(Core.AmihanRules.StormSurgeGatherSeconds);
-            b.HoldAt(Core.AmihanRules.StormSurgeGatherSeconds, .12f);
-            PoseKey(b, Core.AmihanRules.StormSurgeGatherSeconds, -.085f, V(16, -6, -2), V(-18, 8, 0), V(-104, 30, 20), V(-104, -30, -20),
-                    V(-42, 0, 12), V(44, 0, -10));
-            // Then the hands open wide as the wind leaves (right palm back to 0.30 m). Their forward pitch stays near the
-            // drive: a steeper pitch return bends the held contact past its own key (the hold's end tangent) and moves the
-            // full drive after 1.5 s (the first EditMode run caught that at 1.533 s).
-            PoseKey(b, 1.70f, -.04f, V(8, -12, 2), V(-10, 8, 0), V(-92, 10, 55), V(-92, -10, -55), V(-24, 0, 10), V(22, 0, -10));
-            PoseKey(b, 1.95f, 0, V(0, 0, 0), V(0, 0, 0), V(0, 0, 15), V(0, 0, -15));
+            PoseKey(b, 0, 0, V(8, -12, 2), V(-10, 8, 0), V(-92, 10, 55), V(-92, -10, -55), V(-24, 0, 10), V(22, 0, -10));
+            PoseKey(b, .2f, 0, V(3, -5, 1), V(-4, 3, 0), V(-40, 4, 40), V(-40, -4, -40), V(-8, 0, 4), V(8, 0, -4));
+            PoseKey(b, .45f, 0, V(0, 0, 0), V(0, 0, 0), V(0, 0, 15), V(0, 0, -15));
             return b.Build();
         }
     }

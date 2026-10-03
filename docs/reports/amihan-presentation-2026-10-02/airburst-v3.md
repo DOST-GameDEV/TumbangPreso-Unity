@@ -103,3 +103,52 @@ named cues are released from it. They are provisional until heard in play.
 Soles 15 to 23 cm off the court when she runs (was 12 to 19), still under a third
 of a jump and far below Featherfall; 3 cm walking; small curls of wind trail from her
 heels as she runs; landings unchanged (her toes, a small squash).
+
+## v3.1: the direction re-cut (October 3)
+
+Owner, mid-build: *"thoroughly think abt how to improve vfx as well as cutscene direciton bcz it looks so bad
+compared to paete and phasiter"*.
+
+**What the comparison shows.** Shot tables side by side: Paete cuts 6 shots in 6.5 s and Phaister 7 in 6.0 s, and
+both have cameras COMPUTED from the action (Paete's TAKE rides the limb out to the real players; Phaister's push
+holds the doll's turning face). v3 as drafted still cut only 3 shots in 5.6 s, each a slow linear push of about
+two seconds: the wind moved, the lens did not. That is the larger gap, more than the effect count.
+
+**The re-cut, 7 shots on the same beats** (all on her right side, so screen direction never flips):
+
+| t | Shot | Lens |
+|---|---|---|
+| 0.00 to 0.55 | A CALL | low front right, the flung hand |
+| 0.55 to 1.70 | B ANSWER | computed orbit round her right side, 35 to 105 degrees, rising 0.8 to 1.7 m, as the six sheets curl round her (Jean's wide) |
+| 1.70 to 2.15 | C WEAVE | low, face and hands, arms sweeping in |
+| 2.15 to 2.95 | D CUP | computed close-up on her real palms with her face in the top of frame, punch-ins on the cup and the first pack (Venti's draw) |
+| 2.95 to 3.70 | E PACK and DRAW | high crane coming down onto her and the floor kasikus, cut on the second pack |
+| 3.70 to 4.45 | F RIDE | computed: chases the warp threads down the lane to the nearest player in it, arriving beside them as they brace (Paete's ride, in her language) |
+| 4.45 to 5.60 | G REVEAL | high over her right shoulder: the whole lane, everyone in it, the live fan drawing on |
+
+**Added effect: the GLORY.** Her kasikus as light behind her, two diamond outlines (mint outside gold), always
+placed behind her from the lens, on the answer and through the weave, throbbing on the cup and both packs (the
+cut-in glory behind every Genshin caster in the research sheets).
+
+## v3.2: the hit is in the cutscene (October 3)
+
+Owner: *"i want u to show the ult actually hitting and knocking abck ppl already in the cutscene"*, *"no need to reshow
+it in fpp"*, *"i want them to already know what hit them"*.
+
+This reverses the v3 rule above ("the cutscene cannot show the hit"). That rule existed only because play then gave a
+1.5 s dodge window; the owner removed the window, so the cutscene can show the real outcome.
+
+* **Rule.** `AmihanRules.StormSurgeDelaySeconds` = 0: the shared cutscene shows the windup and the release, and play
+  resumes ON the hit. The host throws everyone in the 60 degree fan at the hand-back, with the same reach, direction,
+  speed, lift and hold. `StormSurgeGatherSeconds` (1.5) stays as the fan's drawn gather. The windup is part of the skill
+  contract fingerprint, so mismatched builds refuse each other without a protocol bump.
+* **Cutscene, 5.6 s.** The beats to 4.75 are unchanged. A deep draw at 4.95, then THE BEATER at 5.05 (punch): the live
+  clip's own release pose. The fan's clock is strung over the flick (its draw-on and gather pressed into 3.78 to
+  5.05) and releases on the beat. The biggest diamond ring, a flash, glints at the palms and down the lane, a lens kick
+  and a grade throb. The copies of the real players inside the fan are thrown by the rule's own numbers
+  (`BlowDirection`, `StormSurgeSpeed`, `StormSurgeLift`), Whirled round, arms flung; the players outside stand untouched.
+  The REVEAL holds her lunge, the lane, and them flying back down it. The theme carries a held breath, then the beater's
+  crack, the thud and the whoosh going away.
+* **Hand-back.** The live fan picks up `AmihanStorm.CutsceneTail` (0.55 s) after its release, so nothing replays. The
+  body clip only settles from the cutscene's last pose (0.45 s), and the first-person hands only follow through (0.5 s).
+  The press and gather sounds are retired; the release cue lands as play throws them.

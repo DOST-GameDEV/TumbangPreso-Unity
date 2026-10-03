@@ -272,16 +272,11 @@ namespace TumbangPreso.CameraSystem
             { "gale-sweep", new CastPath(.32f, false,
                 Rest(0), K(.20f, .18f, .02f, .02f, .26f, .22f, .02f),
                 K(.32f, -.24f, .06f, .18f, -.20f, .34f, .18f), K(.52f, -.26f, .05f, .17f, -.22f, .33f, .17f), Rest(.90f)) },
-            // AIRBURST. The body's beats from the cutscene handback over the 1.5 s windup: both hands
-            // cupped low right of centre, pressed on the two pack beats (0.5, 1.0), drawn back and down
-            // out of the centre (1.32), then driven forward low under the reticle ON the release
-            // (1.5 s, `AmihanRules.StormSurgeGatherSeconds`), parting as the wind leaves.
-            { "storm-call", new CastPath(Core.AmihanRules.StormSurgeGatherSeconds, false,
-                Rest(0), K(.20f, .08f, -.04f, .08f, .20f, .24f, .10f), K(.50f, .07f, -.05f, .06f, .18f, .23f, .08f),
-                K(.62f, .08f, -.04f, .08f, .20f, .24f, .10f), K(1.0f, .06f, -.06f, .05f, .17f, .22f, .07f),
-                K(1.12f, .08f, -.04f, .08f, .20f, .24f, .10f), K(1.32f, .14f, -.12f, -.06f, .26f, .16f, -.04f),
-                K(1.5f, -.02f, .04f, .34f, .08f, .30f, .34f), K(1.62f, -.02f, .04f, .33f, .08f, .30f, .33f),
-                K(1.80f, .08f, .02f, .24f, -.02f, .30f, .22f), Rest(2.05f)) },
+            // AIRBURST, v3.2: the cutscene shows the windup and the release, and play resumes on the hit (owner: *"no need to
+            // reshow it in fpp"*). Only the follow-through: both hands still out low under the reticle as play returns, parting
+            // and settling by 0.5 s. Contact at 0: the release already happened, on screen, in the cutscene.
+            { "storm-call", new CastPath(0f, false,
+                K(0f, -.02f, .04f, .33f, .08f, .30f, .33f), K(.18f, .08f, .02f, .24f, -.02f, .30f, .22f), Rest(.5f)) },
         };
 
         private bool _castApplied;

@@ -43,21 +43,21 @@ namespace TumbangPreso.Tests
         }
 
         [Test]
-        public void TheBodyDrivesBothPalmsOnTheGameplayRelease()
+        public void TheCutsceneDrivesBothPalmsAndPlayResumesOnTheHit()
         {
-            var clip = Shipped();
-            float release = AmihanRules.StormSurgeGatherSeconds;
-            // Right arm pitch: most negative is the furthest forward drive.
-            var pitch = Curve(clip, "arm-right", "x");
-            float deepest = float.MaxValue, first = -1;
-            for (float t = 0; t <= clip.length; t += Frame) deepest = Mathf.Min(deepest, pitch.Evaluate(t));
-            for (float t = 0; t <= clip.length; t += Frame)
-                if (pitch.Evaluate(t) <= deepest + 1.0f) { first = t; break; }
-            Assert.That(first, Is.InRange(release - 2 * Frame, release + Frame),
-                "The full forward drive must land on the gameplay release, not before or after it.");
-            // A quarter second before, the hands are still drawn back at the hip, not already pushed.
-            Assert.Greater(pitch.Evaluate(release - .25f), deepest + 45.0f, "The body must not spend its release pose during the dodge window.");
-            Assert.Less(clip.length, release + 0.8f, "A long tail after the release would fight her running.");
+            // v3.2 (owner: "show the ult actually hitting and knocking abck ppl already in the cutscene"): the drive is in the
+            // cutscene, on its own punch, and play resumes on the hit with no live delay.
+            Assert.AreEqual(0f, AmihanRules.StormSurgeDelaySeconds, 1e-6f);
+            var performance = UltimatePerformance.For("amihan");
+            Assert.IsNotNull(performance);
+            const float drive = 5.05f;
+            Assert.IsTrue(performance.Punches.Any(p => Mathf.Abs(p - drive) < 1e-3f), "The drive is a punch.");
+            var key = performance.Keys.First(k => Mathf.Abs(k.Time - drive) < 1e-3f);
+            Assert.AreEqual(-104f, key.ArmRight.x, .5f, "Both palms driven forward on the release.");
+            Assert.AreEqual(-104f, key.ArmLeft.x, .5f);
+            Assert.AreEqual(performance.Seconds - drive, Abilities.AmihanStorm.CutsceneTail, 1e-3f,
+                "The live fan picks up at the age the cutscene's last frame drew.");
+            Assert.Less(Shipped().length, .6f, "After the hand-back the body only settles.");
         }
 
         [Test]
@@ -66,7 +66,7 @@ namespace TumbangPreso.Tests
             var clip = Shipped();
             var performance = UltimatePerformance.For("amihan");
             Assert.IsNotNull(performance);
-            Assert.AreEqual(3.6f, performance.Seconds, 1e-4f, "The shared phase derives its boundary from this length.");
+            Assert.AreEqual(5.6f, performance.Seconds, 1e-4f, "The shared phase derives its boundary from this length.");
             var last = performance.Keys[performance.Keys.Count - 1];
             void Same(string bone, Vector3 intro)
             {
@@ -82,23 +82,17 @@ namespace TumbangPreso.Tests
         }
 
         [Test]
-        public void TheFirstPersonHandsDriveOnTheGameplayRelease()
+        public void TheFirstPersonHandsOnlyFollowThrough()
         {
-            float release = AmihanRules.StormSurgeGatherSeconds;
+            // v3.2: "no need to reshow it in fpp". The storm-call path starts in the drive (contact 0) and settles.
             var arms = typeof(CameraSystem.ViewmodelArms);
             var paths = (IDictionary)arms.GetField("CastPaths", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
             var path = paths["storm-call"];
-            float contact = (float)path.GetType().GetField("Contact").GetValue(path);
-            Assert.AreEqual(release, contact, 1e-4f, "The storm-call path's contact key is the release.");
+            Assert.AreEqual(0f, (float)path.GetType().GetField("Contact").GetValue(path), 1e-4f);
             var keys = (System.Array)arms.GetField("StormCallClip", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-            float deepest = float.MaxValue, at = -1;
-            foreach (var key in keys)
-            {
-                float t = (float)key.GetType().GetField("T").GetValue(key);
-                var euler = (Vector3)key.GetType().GetField("Godot").GetValue(key);
-                if (euler.x < deepest) { deepest = euler.x; at = t; }
-            }
-            Assert.AreEqual(release, at, 1e-4f, "The first-person shove must be the release key.");
+            float last = 0;
+            foreach (var key in keys) last = Mathf.Max(last, (float)key.GetType().GetField("T").GetValue(key));
+            Assert.LessOrEqual(last, .5f + 1e-4f, "First person settles within half a second.");
         }
     }
 }

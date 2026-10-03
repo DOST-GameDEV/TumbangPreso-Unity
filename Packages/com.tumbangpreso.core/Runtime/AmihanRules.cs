@@ -91,8 +91,17 @@ namespace TumbangPreso.Core
         /// <summary>Owner's table: *"15 objective points"*.</summary>
         public const float StormSurgeCost = 15.0f;
 
-        /// <summary>Current Wiki: release after a 1.5 second delay.</summary>
+        /// <summary>The fan's own gather, as drawn (the meter's length, replays, the cutscene's strung warp). Not a live delay since
+        /// AIRBURST v3.2: see <see cref="StormSurgeDelaySeconds"/>.</summary>
         public const float StormSurgeGatherSeconds = 1.5f;
+
+        /// <summary>
+        /// ⚠️ AIRBURST v3.2 (owner, 2026-10-03): *"i want u to show the ult actually hitting and knocking abck ppl already in the
+        /// cutscene"*, *"no need to reshow it in fpp"*, *"i want them to already know what hit them"*. The cutscene shows the
+        /// release and the real players in the fan being thrown; play resumes ON the hit, so the live delay after the shared
+        /// cutscene is zero (it was the 1.5 s Wiki dodge window). The fan, its reach, the throw and the hold are unchanged.
+        /// </summary>
+        public const float StormSurgeDelaySeconds = 0.0f;
 
         /// <summary>Half the current Wiki 60 degree fan, shared by contact and telegraph.</summary>
         public const float StormSurgeHalfAngle = 30.0f;
