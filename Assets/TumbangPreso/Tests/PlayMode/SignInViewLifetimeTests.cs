@@ -19,6 +19,7 @@ namespace TumbangPreso.PlayTests
     public sealed class SignInViewLifetimeTests
     {
         private const BindingFlags Hidden = BindingFlags.Instance | BindingFlags.NonPublic;
+        private Canvas Surface => (Canvas)typeof(SignInScreen).GetField("_canvas", Hidden).GetValue(_screen);
         private PlayerAccount _previousAccount, _account;
         private GameSettings _previousSettings;
         private GameObject _accountObject, _screenObject;
@@ -77,7 +78,7 @@ namespace TumbangPreso.PlayTests
             var answer = new TaskCompletionSource<bool>(); _answers.Add(answer); return answer.Task;
         }
         private T Named<T>(string name) where T : Component
-            => _screen.GetComponentsInChildren<T>(true).Single(component => component.name == name);
+            => Surface.GetComponentsInChildren<T>(true).Single(component => component.name == name);
         private void BeginCredentials()
         {
             Named<InputField>("Username").text = "requested.user";
