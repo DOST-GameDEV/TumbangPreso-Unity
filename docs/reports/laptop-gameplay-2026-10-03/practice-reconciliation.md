@@ -70,6 +70,14 @@ source hashes live in local `Logs/laptop-source-lunge-cancellation1003-runtime9`
 The checker requires the exact expected case names and outcomes as well as exit
 codes. No source-unchanged Unity/tournament gate was repeated.
 
+The reusable checker now defaults to original `f9552d58a` and qualified candidate
+`88dba66a1`, with explicit revision overrides. This preserves reproduction of the
+recorded lunge-only mechanism after later reader changes add unrelated touch
+dependencies. The stored result reflects the same first candidate source read
+from the checkout at execution; the native qualification below is stronger
+evidence. Pinning the reusable witness is not a new execution or a claim about
+later source.
+
 ## Native regression qualification
 
 `InputProducerCancellationTests.cs` has twelve focused cases: four pending
@@ -121,8 +129,10 @@ The same review found AIController.OnDisable previously only unsubscribed, so
 private planner windup accumulators could survive Idle-to-Active. A separate
 adjacent fix extracts the existing ReleaseAll private accumulator reset into
 ResetActionState and calls it on disable, preserving shared human hero input.
-Its authored seeded-state native test is unrun; fresh planner gameplay cadence
-after resumption remains unqualified. Physical alt-tab, OS suspension,
+The adjacent [bot/replay native report](replay/README.md) now records its original
+seeded-state failure and first passing candidate, including shared human hero
+input preservation. Fresh planner gameplay cadence after resumption remains
+unqualified. Physical alt-tab, OS suspension,
 keyboard/controller/touch hardware, live peer reset cancellation, new player
 builds and the full practice-menu acceptance remain unverified.
 

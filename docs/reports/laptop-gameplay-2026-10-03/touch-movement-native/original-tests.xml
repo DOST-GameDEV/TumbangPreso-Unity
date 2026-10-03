@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 03:45:06Z" end-time="2026-10-03 03:45:06Z" duration="0.231892">
+  <test-suite type="TestSuite" id="2686" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1372" result="Failed" site="Child" start-time="2026-10-03 03:45:06Z" end-time="2026-10-03 03:45:06Z" duration="0.231892" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2680" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-laptop-native1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1372" result="Failed" site="Child" start-time="2026-10-03 03:45:06Z" end-time="2026-10-03 03:45:06Z" duration="0.216653" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10648" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2681" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1372" result="Failed" site="Child" start-time="2026-10-03 03:45:06Z" end-time="2026-10-03 03:45:06Z" duration="0.204898" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2682" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1372" result="Failed" site="Child" start-time="2026-10-03 03:45:06Z" end-time="2026-10-03 03:45:06Z" duration="0.194529" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2471" name="TouchMovementRetirementTests" fullname="TumbangPreso.PlayTests.TouchMovementRetirementTests" classname="TumbangPreso.PlayTests.TouchMovementRetirementTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-03 03:45:06Z" end-time="2026-10-03 03:45:06Z" duration="0.175212" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2475" name="ANewTouchAxisAfterFocusRecoveryStillReachesTheReader" fullname="TumbangPreso.PlayTests.TouchMovementRetirementTests.ANewTouchAxisAfterFocusRecoveryStillReachesTheReader" methodname="ANewTouchAxisAfterFocusRecoveryStillReachesTheReader" classname="TumbangPreso.PlayTests.TouchMovementRetirementTests" runstate="Runnable" seed="82927545" result="Passed" start-time="2026-10-03 03:45:06Z" end-time="2026-10-03 03:45:06Z" duration="0.068162" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2472" name="FocusLossRetiresTheCachedTouchAxis" fullname="TumbangPreso.PlayTests.TouchMovementRetirementTests.FocusLossRetiresTheCachedTouchAxis" methodname="FocusLossRetiresTheCachedTouchAxis" classname="TumbangPreso.PlayTests.TouchMovementRetirementTests" runstate="Runnable" seed="1679488446" result="Failed" start-time="2026-10-03 03:45:06Z" end-time="2026-10-03 03:45:06Z" duration="0.028242" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Focus loss retained the static touch stick value.
+  Expected: (0.00, 0.00)
+  But was:  (0.00, 1.00)
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TouchMovementRetirementTests+<FocusLossRetiresTheCachedTouchAxis>d__9.MoveNext () [0x0005c] in C:\Users\Matthew\dev\tump-laptop-native1003\Assets\TumbangPreso\Tests\PlayMode\TouchMovementRetirementTests.cs:59
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2474" name="OrdinarySustainedTouchMovementStaysHeld" fullname="TumbangPreso.PlayTests.TouchMovementRetirementTests.OrdinarySustainedTouchMovementStaysHeld" methodname="OrdinarySustainedTouchMovementStaysHeld" classname="TumbangPreso.PlayTests.TouchMovementRetirementTests" runstate="Runnable" seed="443774913" result="Passed" start-time="2026-10-03 03:45:06Z" end-time="2026-10-03 03:45:06Z" duration="0.022028" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2473" name="ReaderReenableCannotReuseTheCachedTouchAxis" fullname="TumbangPreso.PlayTests.TouchMovementRetirementTests.ReaderReenableCannotReuseTheCachedTouchAxis" methodname="ReaderReenableCannotReuseTheCachedTouchAxis" classname="TumbangPreso.PlayTests.TouchMovementRetirementTests" runstate="Runnable" seed="729914577" result="Failed" start-time="2026-10-03 03:45:06Z" end-time="2026-10-03 03:45:06Z" duration="0.024004" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Reader disable retained the static touch stick value.
+  Expected: (0.00, 0.00)
+  But was:  (0.00, 1.00)
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.TouchMovementRetirementTests+<ReaderReenableCannotReuseTheCachedTouchAxis>d__10.MoveNext () [0x0005d] in C:\Users\Matthew\dev\tump-laptop-native1003\Assets\TumbangPreso\Tests\PlayMode\TouchMovementRetirementTests.cs:68
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2476" name="RemoteReaderRetirementPreservesTheLocalTouchAxis" fullname="TumbangPreso.PlayTests.TouchMovementRetirementTests.RemoteReaderRetirementPreservesTheLocalTouchAxis" methodname="RemoteReaderRetirementPreservesTheLocalTouchAxis" classname="TumbangPreso.PlayTests.TouchMovementRetirementTests" runstate="Runnable" seed="1773741449" result="Passed" start-time="2026-10-03 03:45:06Z" end-time="2026-10-03 03:45:06Z" duration="0.022215" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

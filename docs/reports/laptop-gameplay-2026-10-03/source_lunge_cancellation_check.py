@@ -1,7 +1,7 @@
 """Source-bound managed branch check; deliberately not Unity or operator acceptance.
 
-Extracts shipping StepLunge and reader retirement callbacks from Git HEAD and the
-current checkout. Hardware-discard and engine release side effects are supplied
+Extracts shipping StepLunge and reader retirement callbacks from the fetched base
+and qualified input-cancellation commit. Hardware-discard and engine release side effects are supplied
 seams. The assertion is whether the real StepLunge calls ReleaseLunge after the
 real reader callback; no physics, Unity lifecycle, input device or peer is run.
 """
@@ -88,14 +88,16 @@ def main():
     args.add_argument("--repo", required=True, type=pathlib.Path)
     args.add_argument("--output", required=True, type=pathlib.Path)
     args.add_argument("--baseline", default="f9552d58a4d59ecdc87a15a2203d82893e3aa5a3")
+    args.add_argument("--candidate-ref", default="88dba66a1")
     opts = args.parse_args()
     opts.output.mkdir(parents=True, exist_ok=False)
     identity = subprocess.check_output(["git", "rev-parse", opts.baseline], cwd=opts.repo, text=True).strip()
+    candidate_identity = subprocess.check_output(["git", "rev-parse", opts.candidate_ref], cwd=opts.repo, text=True).strip()
     sources = ["Assets/TumbangPreso/Runtime/CombatVerbs.cs", "Assets/TumbangPreso/Runtime/PlayerInputReader.cs"]
-    report = {"baseline": identity, "evidence": "source-bound managed invocation with supplied engine/hardware seams", "runs": {}}
+    report = {"baseline": identity, "candidate": candidate_identity, "evidence": "source-bound managed invocation with supplied engine/hardware seams", "runs": {}}
     for label in ("original", "candidate"):
-        texts = [(subprocess.check_output(["git", "show", identity + ":" + p], cwd=opts.repo).decode("utf-8")
-                  if label == "original" else (opts.repo / p).read_text(encoding="utf-8")) for p in sources]
+        revision = identity if label == "original" else candidate_identity
+        texts = [subprocess.check_output(["git", "show", revision + ":" + p], cwd=opts.repo).decode("utf-8") for p in sources]
         folder = opts.output / label
         folder.mkdir()
         (folder / "Program.cs").write_text(generate(*texts), encoding="utf-8")
