@@ -346,6 +346,14 @@ namespace TumbangPreso
             // sound plays twice on the same frame and the grab clip restarts on its second frame.
             if (Held == what && what != null) return;
 
+            // Charge belongs to one possession, even if the same shoe is immediately
+            // re-equipped. Empty-hand keepalives do not interrupt the reset channel.
+            if (Held != what)
+            {
+                CancelCharge();
+                ApplyObservedCharge(false);
+            }
+
             Diagnostics.NetThrowProbe.TraceHoldingWrite(_motor,what,"holding");
             Held = what;
             _motor.HoldingSlipper = what != null;
@@ -432,6 +440,12 @@ namespace TumbangPreso
                 // network snapshots remain idempotent and preserve a live pickup lock.
                 if (resetPickupLock) _throwLockLeft = 0.0f;
                 return;
+            }
+
+            if (Held != what)
+            {
+                CancelCharge();
+                ApplyObservedCharge(false);
             }
 
             Diagnostics.NetThrowProbe.TraceHoldingWrite(_motor,what,"equipped");

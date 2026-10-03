@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 05:52:42Z" end-time="2026-10-03 05:52:42Z" duration="0.2566277">
+  <test-suite type="TestSuite" id="2733" name="TumpWorker-qa-d-dddaa72bc5b9" fullname="TumpWorker-qa-d-dddaa72bc5b9" runstate="Runnable" testcasecount="1412" result="Failed" site="Child" start-time="2026-10-03 05:52:42Z" end-time="2026-10-03 05:52:42Z" duration="0.256628" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2727" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-d/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1412" result="Failed" site="Child" start-time="2026-10-03 05:52:42Z" end-time="2026-10-03 05:52:42Z" duration="0.249074" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="9436" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2728" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1412" result="Failed" site="Child" start-time="2026-10-03 05:52:42Z" end-time="2026-10-03 05:52:42Z" duration="0.247242" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2729" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1412" result="Failed" site="Child" start-time="2026-10-03 05:52:42Z" end-time="2026-10-03 05:52:42Z" duration="0.245402" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1197" name="CarrierPossessionLifetimeTests" fullname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests" classname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-03 05:52:42Z" end-time="2026-10-03 05:52:42Z" duration="0.226445" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1198" name="DisarmAndImmediateReequipRetireTheOldThrowCharge" fullname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests.DisarmAndImmediateReequipRetireTheOldThrowCharge" methodname="DisarmAndImmediateReequipRetireTheOldThrowCharge" classname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests" runstate="Runnable" seed="1002205568" result="Failed" start-time="2026-10-03 05:52:42Z" end-time="2026-10-03 05:52:42Z" duration="0.085142" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The old shoe's pending throw charge survived a possession transition.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CarrierPossessionLifetimeTests.Retired () [0x00000] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\CarrierPossessionLifetimeTests.cs:78
+at TumbangPreso.PlayTests.CarrierPossessionLifetimeTests.DisarmAndImmediateReequipRetireTheOldThrowCharge () [0x00042] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\CarrierPossessionLifetimeTests.cs:86
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1200" name="DisarmRetiresAnObservedTellWithoutALocalCharge" fullname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests.DisarmRetiresAnObservedTellWithoutALocalCharge" methodname="DisarmRetiresAnObservedTellWithoutALocalCharge" classname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests" runstate="Runnable" seed="1815749779" result="Failed" start-time="2026-10-03 05:52:42Z" end-time="2026-10-03 05:52:42Z" duration="0.026601" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The detached shoe left an observer-only throw tell active.
+  Expected: -1
+  But was:  0.560000002f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CarrierPossessionLifetimeTests.DisarmRetiresAnObservedTellWithoutALocalCharge () [0x00060] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\CarrierPossessionLifetimeTests.cs:106
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1202" name="EmptyHandNotificationsPreserveAnUnrelatedDefenderResetChannel" fullname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests.EmptyHandNotificationsPreserveAnUnrelatedDefenderResetChannel" methodname="EmptyHandNotificationsPreserveAnUnrelatedDefenderResetChannel" classname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests" runstate="Runnable" seed="1297212578" result="Passed" start-time="2026-10-03 05:52:42Z" end-time="2026-10-03 05:52:42Z" duration="0.057023" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1199" name="ForceEquippingAReplacementRetiresTheDisplacedShoeCharge" fullname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests.ForceEquippingAReplacementRetiresTheDisplacedShoeCharge" methodname="ForceEquippingAReplacementRetiresTheDisplacedShoeCharge" classname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests" runstate="Runnable" seed="924649342" result="Failed" start-time="2026-10-03 05:52:42Z" end-time="2026-10-03 05:52:42Z" duration="0.024513" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The old shoe's pending throw charge survived a possession transition.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CarrierPossessionLifetimeTests.Retired () [0x00000] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\CarrierPossessionLifetimeTests.cs:78
+at TumbangPreso.PlayTests.CarrierPossessionLifetimeTests.ForceEquippingAReplacementRetiresTheDisplacedShoeCharge () [0x00086] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\CarrierPossessionLifetimeTests.cs:97
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1201" name="SameHeldNotificationsPreserveTheExistingCharge" fullname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests.SameHeldNotificationsPreserveTheExistingCharge" methodname="SameHeldNotificationsPreserveTheExistingCharge" classname="TumbangPreso.PlayTests.CarrierPossessionLifetimeTests" runstate="Runnable" seed="409620021" result="Passed" start-time="2026-10-03 05:52:42Z" end-time="2026-10-03 05:52:42Z" duration="0.022733" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-d-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
