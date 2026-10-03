@@ -1,0 +1,9 @@
+{
+  "question": "Can a late name/cloud reply replace another owner or cross an SDK owner transition?",
+  "expectedCases": 13,
+  "retryCount": 0,
+  "originalSourceCommit": "5e74518c6",
+  "candidateSha256": "eecde2beb83b83dab37425c21b643bc26c26975f3b48023cd0c54471737f6d43",
+  "seamOriginalSha256": "c89a9d9181e83647bd04e57745fa53d1208d1fb3a904dfa60362124b8cf5a100",
+  "fixtureSha256": "0ec9ff101ab6cd7f3abc396443f8e98a6412718a727088f1ef68ef088d4e0121"
+}

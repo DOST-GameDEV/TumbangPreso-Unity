@@ -43,10 +43,12 @@ subclass repair retained all side-effect assertions and passed8/8. These are
 scoped native checks, not live SDK/Relay or whole-release acceptance.
 [Local evidence](reports/reliability-2026-10-03/local-resume-qualification/README.md).
 
-Canonical online refresh ownership remains in progress: stale Player Names and
-Cloud Save replies must not replace another account or follow a changed SDK
-owner. Preserve legitimate authenticated-ID adoption and late primary guest
-return. Root owns source and13 causal/control checks; original run in progress.
+Canonical online refresh ownership is qualified: original9 causal failures and
+four legitimate controls; first candidate13/13. Captured SDK owner and current
+profile/request guards fence name/cloud responses and failures while preserving
+new authenticated-ID adoption and late primary guest return. Actual SDK and
+online-peer acceptance remain separate.
+[Evidence](reports/reliability-2026-10-03/account-refresh-ownership/README.md).
 
 ### TIMED-RECOVERY-1002: retire mash-to-escape
 

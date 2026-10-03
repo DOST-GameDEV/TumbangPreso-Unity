@@ -47,15 +47,14 @@ UI4 first passed. Reports/reliability-2026-10-03/local-resume-qualification reta
 first failures, terminal receipts and scoped source identities. No live SDK/peer
 claim. All these jobs terminal/restored/lease free.
 
-ACTIVE ROOT JOB: canonical refresh original13 on isolated release worker
-C:/Users/matth/Documents/Codex/work/tump-competition-release1002.
-Logs/competition-resume1003/refresh/original, profile
-competition-resume1003-refresh-original, deadline240 seconds, session96501.
-Frozen seam-only original5e74518 and candidate/source/test hashes retained under
-Logs/competition-resume1003/refresh. Do not mutate frozen worker until terminal.
-Next: inspect fresh XML/receipt, then copy frozen candidate via
-python Logs/competition-resume1003/refresh_prepare.py candidate and run the same13
-cases once. Preserve original failures; no unchanged validation loops.
+Canonical refresh13 now native-qualified: original9causal/4control, first
+candidate13/13, same fixture. Independent review PASS. Both jobs terminal,
+profiles/preferences restored, leases free. Source hashes and raw original/
+seam-only original retained in reports/reliability-2026-10-03/account-refresh-ownership.
+Root local heavy slot free. Next: publish exact source/tests/report batch and
+review incoming laptop task/ownership reply. Worker proposes MatchPoseHistory.cs
+and MatchReplayArchive.cs same-round new-match isolation; laptop conflict query
+sent before joint source work. Preserve within-match history and retained clips.
 
 LAN pair is not active. Older1003e artifact is source14dfe9e41, protocol134,
 recording13,258files/2551734579bytes. Runtime501f0a02db575003c48910f08bdd0221810031c4d30aaf499f4727bbeca0c806.
