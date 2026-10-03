@@ -15,6 +15,7 @@ import uuid
 
 import run_unity_guarded as guard
 import playerprefs_guard
+import prepare_unity_test_workers as workers
 
 POOL = Path(tempfile.gettempdir()) / "tump-unity-job-pool"
 
@@ -127,6 +128,38 @@ def foreign_unity(rows, leases):
     owned = descendants(rows, roots)
     return [row["pid"] for row in rows if row["name"].casefold() in
             ("unity.exe", "unity", "tumbangpreso.exe", "tumbangpreso") and row["pid"] not in owned]
+
+
+def coexistence(claim, foreign, editors=None):
+    """Inspect an explicitly reserved outside Editor; never adopt or stop it."""
+    project = claim.get("coexistEditorProject")
+    if not project or not foreign:
+        return foreign, []
+    if claim["kind"] != "cpu" or not claim["worker"] or not claim["allowParallel"]:
+        raise ValueError("Editor coexistence requires an isolated, opted-in CPU test worker")
+    if claim["ports"]:
+        raise ValueError("Headless coexistence tests must not reserve network ports")
+    project = workers.physical_path(project)
+    if canonical(project) == claim["project"] or canonical(project / "Library") == claim["library"]:
+        raise ValueError("Outside Editor must use a separate project and Library")
+    company, product = guard.project_identity(project)
+    if playerprefs_guard.editor_key(company, product).casefold() == claim["prefHive"]:
+        raise ValueError("Outside Editor must use separate input preferences")
+    records = dict(workers.unity_processes() if editors is None else editors)
+    accepted = []
+    for pid in foreign:
+        command = records.get(pid)
+        if not command:
+            raise ValueError("Outside process is not a verified Unity Editor")
+        args = workers.command_arguments(command)
+        targets = [args[i + 1] for i, arg in enumerate(args[:-1]) if arg.casefold() == "-projectpath"]
+        targets += [arg.split("=", 1)[1] for arg in args if arg.casefold().startswith("-projectpath=")]
+        if len(targets) != 1 or canonical(targets[0]) != canonical(project):
+            raise ValueError("Outside Editor does not match the reserved project")
+        accepted.append({"pid": pid, "project": canonical(project)})
+    if len(accepted) != 1:
+        raise ValueError("Editor coexistence supports exactly one outside Editor")
+    return [], accepted
 
 
 def classify(args):
@@ -289,12 +322,18 @@ def acquire(pool, claim, wait_seconds):
             jobs = live_leases(read_pool(pool))
             available = free_memory_mb()
             foreign = foreign_unity(processes(), jobs)
-            reason = refusal(claim, jobs, available, foreign)
+            foreign, external = coexistence(claim, foreign)
+            if external and jobs:
+                raise ValueError("Outside Editor already occupies the first of two slots")
+            available_for_job = available - (claim.get("coexistReserveMb", 0) if external else 0)
+            reason = refusal(claim, jobs, available_for_job, foreign)
             if reason is None:
                 jobs.append(claim)
             write_pool(pool, jobs)
         if reason is None:
-            return {"availableMb": available, "activeJobsBefore": len(jobs) - 1, "acquiredUtc": now()}
+            return {"availableMb": available, "activeJobsBefore": len(jobs) - 1,
+                    "outsideEditors": external, "outsideReserveMb": claim.get("coexistReserveMb", 0) if external else 0,
+                    "acquiredUtc": now()}
         if time.monotonic() >= until:
             raise TimeoutError(reason)
         time.sleep(min(1, max(0, until - time.monotonic())))
@@ -357,6 +396,14 @@ def run(options):
                        getattr(options, "allow_parallel", False),
                        getattr(options, "max_parallel_jobs", 2),
                        getattr(options, "allow_gpu_parallel", False))
+    coexist_project = getattr(options, "coexist_editor_project", None)
+    if coexist_project:
+        if claim["kind"] != "cpu" or not claim["worker"] or not claim["allowParallel"] or ports:
+            raise ValueError("Editor coexistence requires isolated opted-in headless CPU tests without ports")
+        reserve = getattr(options, "coexist_reserve_mb", 1024)
+        if reserve < 1024:
+            raise ValueError("Outside Editor requires at least 1024 MB of additional growth reserve")
+        claim.update(coexistEditorProject=str(workers.physical_path(coexist_project)), coexistReserveMb=reserve)
     args = output_arguments(project, output, args)
     output.mkdir(parents=True, exist_ok=True)
     receipt = {"job": claim, "requestedUtc": now(), "status": "waiting", "exitCode": None}
@@ -436,6 +483,8 @@ def main():
     parser.add_argument("--allow-parallel", action="store_true", help="Opt in to isolated worker overlap; default is serialized")
     parser.add_argument("--max-parallel-jobs", type=int, default=2, help="Shared opt-in worker limit; admission still reserves every memory budget")
     parser.add_argument("--allow-gpu-parallel", action="store_true", help="Allow isolated graphics test workers to overlap; shipping builds remain exclusive")
+    parser.add_argument("--coexist-editor-project", help="Permit one verified outside Editor beside an isolated headless EditMode worker")
+    parser.add_argument("--coexist-reserve-mb", type=int, default=1024, help="Additional free memory retained for outside Editor growth")
     parser.add_argument("unity_args", nargs=argparse.REMAINDER)
     options = parser.parse_args()
     if options.wait_seconds < 0 or options.timeout_seconds <= 0:
