@@ -4970,6 +4970,7 @@ namespace TumbangPreso.UI
             if (sprite != null && card.KeyGlyph != null)
             {
                 card.KeyGlyph.sprite = sprite;
+                card.KeyGlyph.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, InputGlyphs.PromptWidth(sprite, 20));
                 card.KeyGlyph.enabled = true;
                 card.Key.text = string.Empty;
                 return;

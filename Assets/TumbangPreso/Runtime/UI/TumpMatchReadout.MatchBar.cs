@@ -52,15 +52,17 @@ namespace TumbangPreso.UI
             _promptPlate.enabled = show;
             bool glyph = _bindingGlyph != null && _bindingGlyph.enabled;
             bool progress = _progress != null && _progress.transform.parent.gameObject.activeSelf;
-            float words = Mathf.Min(glyph ? 820 : 900, _prompt.preferredWidth);
-            float width = Mathf.Min(_statusPromptMaxWidth, Mathf.Max(300, words + (glyph ? 136 : 56)));
+            float glyphWidth = glyph ? InputGlyphs.PromptWidth(_bindingGlyph.sprite, 64) : 0;
+            float glyphExtra = glyph ? glyphWidth - 64 : 0;
+            float words = Mathf.Min(glyph ? 820 - glyphExtra : 900, _prompt.preferredWidth);
+            float width = Mathf.Min(_statusPromptMaxWidth, Mathf.Max(300, words + (glyph ? 136 + glyphExtra : 56)));
             _prompt.horizontalOverflow = HorizontalWrapMode.Wrap;
             float left = (1100 - width) * .5f;
             OwnerUiLayout.Place(_promptPlate.rectTransform, left, 0, width, progress ? 102 : 74);
             if(glyph)
             {
-                OwnerUiLayout.Place(_bindingGlyph.rectTransform, left + 28, 5, 64, 64);
-                OwnerUiLayout.Place(_prompt.rectTransform, left + 108, 0, width - 136, 74);
+                OwnerUiLayout.Place(_bindingGlyph.rectTransform, left + 28, 5, glyphWidth, 64);
+                OwnerUiLayout.Place(_prompt.rectTransform, left + 108 + glyphExtra, 0, width - 136 - glyphExtra, 74);
             }
             else OwnerUiLayout.Place(_prompt.rectTransform, left + 28, 0, width - 56, 74);
             float textHeight = Mathf.Max(74, _prompt.preferredHeight + 12);

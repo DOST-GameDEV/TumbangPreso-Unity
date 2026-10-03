@@ -102,7 +102,7 @@ namespace TumbangPreso
             if(sprite!=null)
             {
                 var image=root.gameObject.AddComponent<Image>();image.sprite=sprite;image.preserveAspect=true;image.raycastTarget=false;
-                layout.preferredWidth=layout.preferredHeight=72;return;
+                layout.preferredHeight=72;layout.preferredWidth=InputGlyphs.PromptWidth(sprite,72);return;
             }
             var face=root.gameObject.AddComponent<Image>();face.color=TrainingTrack;face.raycastTarget=false;
             var text=OwnerUiLayout.Text(root,"Cap",key,30,OwnerUiLayout.TypeRole.Display);text.alignment=TextAnchor.MiddleCenter;text.color=TrainingInk;
