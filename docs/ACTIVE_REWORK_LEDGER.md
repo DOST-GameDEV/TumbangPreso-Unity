@@ -50,10 +50,16 @@ It reconciles queues to current archive priority, preserves still-retained begun
 progress, drops obsolete/prior-match entries and skips acknowledged IDs. Same
 fixture/meta; no tick/chunk/rate/wire/protocol change. Both refs are pushed and
 outside ASTRA pending native original/candidate. No PC native job is authorized.
-NEXT: follow laptop's original7 actual handle once launched, then ONE candidate7
-on the unchanged fixture. Inspect actual failures/controls and terminal receipts.
-Do not restart because observation timed out. Laptop reported CPU preparation;
-no wrapper/session ID reported yet. Keep updates short, no speculative refactor.
+Original93299 is CLOSED, actual4 causal failures/3controls,3430 unchanged inputs,
+terminal/restored/free. One omitted-nographics prelaunch refusal was retained and
+corrected before that sole native run; fixture/meta unchanged. Candidate8148 is
+reported RUNNING atqa-a/Logs/replay-shortlist-candidate7-1004, source6150,
+CPU2048+1024MiB/300seconds. Follow THIS handle; do not start another candidate.
+Prelaunch newline assertion was reconciled with unchanged raw fixture bytes and
+identical Git originals/candidates, not a fixture repair or native rerun.
+NEXT: inspect candidate7 actual XML/maps/receipt and integrate the checked queue
+change if it fixes the four failures with controls/progress intact. Keep scope
+to queue reconciliation; actual capture/transport/peers remain separate.
 Laptop own F6 is shipped a516409c5 + dd3c45636 proof, original1fail5controls ->6/6.
 Its device-loss5 original reported3fail2controls: driving-pad throw/lunge failures
 and an unused-pad control needing isolation. Reader/carrier/debug-switcher remain
