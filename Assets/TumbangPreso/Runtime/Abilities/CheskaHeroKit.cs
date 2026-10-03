@@ -213,7 +213,7 @@ namespace TumbangPreso.Abilities
                 {
                     foreach (var p in round.Players)
                     {
-                        if (p == null) continue;
+                        if (p == null || p == ctx.Motor) continue;
                         // Frozen now; Chilled for the 5 s after the thaw (the timer runs through the
                         // freeze, where a slow changes nothing, so it is the thaw's 5 s exactly).
                         p.ApplyStagger(StatusRules.FrozenSeconds, StunElement.Ice, 9);
