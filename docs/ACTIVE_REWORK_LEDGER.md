@@ -80,6 +80,27 @@ agreed integration ref, copy idle matching cache independently, freeze inputs,
 one build, verify exactartifact and transfer before joint test. Do not mutate
 old release worker while its store test runs or copy its live Library.
 
+Local identity3 and Spectator6 now qualified. First Spectator runs contained
+same-timestamp identity precondition failures and are retained as invalid gates.
+Root offline identity fix mirrors existing network monotonic UTC/previous+1.
+Corrected-identity3 passed in mixed original9 cohort; oldSpectator4 causal failures/
+2controls remained as expected. FinalSpectator6 passed unchanged assertions.
+Source reviews PASS, all guards terminal/restored/free. Resumption native59 unique
+cases now qualified, not full readiness or actual GPU settlement.
+
+Build1003g cache copy completed from idle MAIN:53968files/7544780352bytes each
+side. Source and candidate physical caches independent; robocopy1 was success.
+Laptop replied after its human restarted the stalled chat: integration checkout
+tump-integration1003 at863d604cd includes checked hero0368/operator2c0 and rootbe2.
+It is committing UI canvas3 fixture repair, tested parallel runner2files and
+curated native feedback, then will send exact immutable source. Root awaits
+thatref, fast-forwards1003g normally, includes this checked identity/spectatorbatch,
+freezes and builds one Windows artifact for both peers. No1003gUnity job yet.
+Rootworker active targeted existing freeze-peer staging cause investigation,
+reviewer active incoming laptophero/highlight/operator integration review. Don't
+leave them idle after batches or give speculative scans; concrete useful tasks.
+Read-only release logs paths given worker; no unchanged freeze-player retry.
+
 LAN pair is not active. Older1003e artifact is source14dfe9e41, protocol134,
 recording13,258files/2551734579bytes. Runtime501f0a02db575003c48910f08bdd0221810031c4d30aaf499f4727bbeca0c806.
 PC192.168.1.7 and laptop192.168.1.144. Prior paired launch attempts failed

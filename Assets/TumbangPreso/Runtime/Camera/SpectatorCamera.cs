@@ -481,6 +481,8 @@ namespace TumbangPreso.CameraSystem
         private bool _scoreStateKnown;
         private readonly int[] _lastScores = new int[Balance.PlayerCount];
         private MatchDirector _highlightMatch;
+        private MatchDirector _replayMatch;
+        private long _replayMatchId;
 
         private bool _broadcastPaused;
         private float _selectedTimeScale = 1.0f;
@@ -688,6 +690,7 @@ namespace TumbangPreso.CameraSystem
 
         private void Update()
         {
+            CheckReplayMatch();
             // ⚠️⚠️ NOT WHILE AN OVERLAY IS UP. The pause card releases the cursor so its buttons
             // can be clicked, and `Time.timeScale = 0` does not stop an Update — so without this
             // the wheel still retuned the fly speed, Tab still cycled the follow target, and
@@ -1147,6 +1150,7 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         internal void CaptureReplayFrame(RenderTexture source)
         {
+            CheckReplayMatch();
             if (!_captureReplayFrame) return;
             _captureReplayFrame = false;
 
@@ -1411,6 +1415,7 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void StartReplay(string reason)
         {
+            CheckReplayMatch();
             if (PresentationClock.Held) return;
             if (_replaying) return;
 
@@ -1987,6 +1992,7 @@ namespace TumbangPreso.CameraSystem
 
         private void PollHighlights()
         {
+            CheckReplayMatch();
             TryHookHighlights();
 
             bool lataKnockedNow = false;
@@ -2029,6 +2035,23 @@ namespace TumbangPreso.CameraSystem
                 _lastScores[slot] = score;
             }
             _scoreStateKnown = true;
+        }
+
+        private void CheckReplayMatch()
+        {
+            var match = GameServices.Match;
+            long identity = match != null ? match.PresentationMatchId : 0;
+            if (_replayMatch == match && _replayMatchId == identity) return;
+            _replayMatch = match; _replayMatchId = identity;
+            EndReplay(showLiveToast: false);
+            foreach (var frame in _replayFrames) RecycleFrame(frame);
+            _replayFrames.Clear();
+            // In-flight readbacks still settle their accounting, then reject these
+            // retired frame objects through the existing ring-membership guard.
+            _captureReplayFrame = false; _replayRecordAccum = 0;
+            _pendingHighlight = null; _pendingHighlightAt = -100;
+            _pendingMarkAt = -1; _pendingMarkReason = null; _pendingMarkSlot = -1; _pendingMarkFrame = -1;
+            _scoreStateKnown = _lataStateKnown = _underPressure = false;
         }
 
         private void TryHookHighlights()
@@ -2190,6 +2213,7 @@ namespace TumbangPreso.CameraSystem
         /// </summary>
         private void QueueHighlight(string reason, int slot)
         {
+            CheckReplayMatch();
             // A coarse state/score poll can observe the same event after Scored supplied
             // its real actor. Do not replace that same-frame identity with an unknown one.
             if (slot < 0 && _pendingMarkSlot >= 0 && _pendingMarkFrame == Time.frameCount &&

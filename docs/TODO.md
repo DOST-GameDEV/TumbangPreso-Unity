@@ -17,6 +17,15 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### SPECTATOR-MATCH-LIFETIME-1003: retire old footage and markers
+
+- [x] Local starts advance identity despite clock resolution/backsteps; native3
+  pass against two original failures/one control. Spectator ring, clip and marker
+  lifetime then passes6 against four causal originals/two controls. Retain both
+  first runs with identity-precondition failures. Same-match rounds and readback
+  accounting remain. [Evidence](reports/reliability-2026-10-03/spectator-match-lifetime/README.md).
+  Actual GPU completion and rendered/operator acceptance remain separate.
+
 ### PORTABLE-STORE-BACKUP-1003: retain recovery after corrupt primary
 
 - [x] Portable saves keep a usable backup when the previous primary or its

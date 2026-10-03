@@ -1,0 +1,17 @@
+{
+  "staticReview": "PASS",
+  "localIdentityCandidate": {
+    "passed": 3,
+    "total": 3
+  },
+  "spectatorCorrectedOriginal": {
+    "failed": 4,
+    "passed": 2
+  },
+  "spectatorFinalCandidate": {
+    "passed": 6,
+    "total": 6
+  },
+  "mixedCohortStatus": "Expected failure: corrected identity3 pass while old spectator4 causal failures remain",
+  "priorGateLimit": "First original2 stale replay failures plus2 identity-precondition failures; first candidate4 passed and2 identity-precondition failures"
+}

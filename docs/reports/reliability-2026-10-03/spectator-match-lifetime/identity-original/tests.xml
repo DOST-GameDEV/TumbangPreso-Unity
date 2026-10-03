@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 05:56:51Z" end-time="2026-10-03 05:56:51Z" duration="0.134599">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1092" result="Failed" site="Child" start-time="2026-10-03 05:56:51Z" end-time="2026-10-03 05:56:51Z" duration="0.134599" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2329" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1092" result="Failed" site="Child" start-time="2026-10-03 05:56:51Z" end-time="2026-10-03 05:56:51Z" duration="0.113834" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27584" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2330" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1092" result="Failed" site="Child" start-time="2026-10-03 05:56:51Z" end-time="2026-10-03 05:56:51Z" duration="0.101844" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2331" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1092" result="Failed" site="Child" start-time="2026-10-03 05:56:51Z" end-time="2026-10-03 05:56:51Z" duration="0.090035" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1717" name="LocalPresentationIdentityTests" fullname="TumbangPreso.Tests.LocalPresentationIdentityTests" classname="TumbangPreso.Tests.LocalPresentationIdentityTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-03 05:56:51Z" end-time="2026-10-03 05:56:51Z" duration="0.058632" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1720" name="CurrentLocalStartStillResetsMomentBookkeeping" fullname="TumbangPreso.Tests.LocalPresentationIdentityTests.CurrentLocalStartStillResetsMomentBookkeeping" methodname="CurrentLocalStartStillResetsMomentBookkeeping" classname="TumbangPreso.Tests.LocalPresentationIdentityTests" runstate="Runnable" seed="409778772" result="Passed" start-time="2026-10-03 05:56:51Z" end-time="2026-10-03 05:56:51Z" duration="0.033069" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1718" name="LocalRestartAdvancesEvenWhenWallClockIsBehindPreviousIdentity" fullname="TumbangPreso.Tests.LocalPresentationIdentityTests.LocalRestartAdvancesEvenWhenWallClockIsBehindPreviousIdentity" methodname="LocalRestartAdvancesEvenWhenWallClockIsBehindPreviousIdentity" classname="TumbangPreso.Tests.LocalPresentationIdentityTests" runstate="Runnable" seed="1586730195" result="Failed" start-time="2026-10-03 05:56:51Z" end-time="2026-10-03 05:56:51Z" duration="0.005946" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: greater than 639266038715137415
+  But was:  639266038115137415
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.LocalPresentationIdentityTests.LocalRestartAdvancesEvenWhenWallClockIsBehindPreviousIdentity () [0x0004f] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\LocalPresentationIdentityTests.cs:28
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1719" name="RapidRepeatedLocalStartsAlwaysHaveDistinctIdentities" fullname="TumbangPreso.Tests.LocalPresentationIdentityTests.RapidRepeatedLocalStartsAlwaysHaveDistinctIdentities" methodname="RapidRepeatedLocalStartsAlwaysHaveDistinctIdentities" classname="TumbangPreso.Tests.LocalPresentationIdentityTests" runstate="Runnable" seed="951083057" result="Failed" start-time="2026-10-03 05:56:51Z" end-time="2026-10-03 05:56:51Z" duration="0.000662" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: greater than 639266038115193527
+  But was:  639266038115193527
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.LocalPresentationIdentityTests.RapidRepeatedLocalStartsAlwaysHaveDistinctIdentities () [0x00026] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\LocalPresentationIdentityTests.cs:35
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,12 @@
+{
+  "expectedCases": 6,
+  "expectedOriginalCauses": 4,
+  "controls": 2,
+  "retryCount": 0,
+  "question": "Does fresh match identity retire old operator replay while same-match footage and readback accounting remain?",
+  "candidate": {
+    "Assets/TumbangPreso/Runtime/Camera/SpectatorCamera.cs": "2302d5e5a066204508a2ed90fd7683f1d8402cd421ae47803ac2037e24dbb2f9",
+    "Assets/TumbangPreso/Tests/SpectatorReplayMatchLifetimeTests.cs": "fe1bdd46672f7b7028855b3870247787cab1731d2b5fa31c349e59f0ecab19e3",
+    "Assets/TumbangPreso/Tests/SpectatorReplayMatchLifetimeTests.cs.meta": "b496d2c421697d0974d40a986db171b60b9eb6af54c8cb4da4aaeee9e4274080"
+  }
+}

@@ -166,3 +166,5 @@ Competition work continuity: [persistent coordination directives](COMPETITION_CO
 Replay new-match history isolation: [native boundary evidence](reports/reliability-2026-10-03/replay-match-identity/README.md).
 
 Portable save backup preservation: [native file I/O evidence](reports/reliability-2026-10-03/portable-store-backup/README.md).
+
+Spectator footage and local match identity: [native prerequisite and boundary evidence](reports/reliability-2026-10-03/spectator-match-lifetime/README.md).
