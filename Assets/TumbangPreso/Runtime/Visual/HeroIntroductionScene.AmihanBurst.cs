@@ -148,7 +148,8 @@ namespace TumbangPreso.Visual
                 float twinkle = .72f + .28f * Mathf.Sin(t * 36f + i * 1.9f);
                 // Each turns a little as it twinkles, so a field of them never reads as stamped.
                 var turn = Quaternion.Euler(0f, 0f, (i % 2 == 0 ? 1f : -1f) * (_reducedEffects ? 0f : 40f * s) + 7f * i);
-                PlaceGlow(_abGlints[i], at, Vector3.one * AbGlintRows[i, 6] * pop * (.55f + .45f * fade), turn, 1.8f * fade * twinkle * light * leave);
+                // SUBTLE (owner, on v3.6: *"make her vfx in ult as well a bit more subtle"*, *"it looks like shapes are floating"*). Smaller, dimmer glints.
+                PlaceGlow(_abGlints[i], at, Vector3.one * AbGlintRows[i, 6] * .6f * pop * (.55f + .45f * fade), turn, 1.0f * fade * twinkle * light * leave);
             }
 
             // ---------------------------------------------------------------- DIAMOND RINGS and FLASHES on the court.
@@ -163,14 +164,14 @@ namespace TumbangPreso.Visual
                 var at = AbAnchor((int)AbRingRows[i, 1]); at.y = court + .03f + .004f * (i % 5);
                 float strength = reach >= 0f ? Mathf.Pow(1f - u, 1.3f) : Mathf.Sin(Mathf.PI * u);
                 // Film v3.5: beside the abel the full-strength line diamonds read as stamped UI; a lighter echo of each beat.
-                PlaceGlow(_abRings[i], at, new Vector3(r, r, 1f), Quaternion.Euler(90f, 0f, 0f), .8f * strength * light * leave);
+                PlaceGlow(_abRings[i], at, new Vector3(r, r, 1f), Quaternion.Euler(90f, 0f, 0f), .35f * strength * light * leave);
             }
             for (int i = 0; i < _abFlashes.Count; i++)
             {
                 float s = t - AbFlashRows[i, 0], life = AbFlashRows[i, 2];
                 if (s < 0f || s > life || _reducedEffects) { PvHide(_abFlashes[i]); continue; }
                 float u = s / life, size = AbFlashRows[i, 1] * (.6f + .4f * u);
-                PlaceGlow(_abFlashes[i], Vector3.up * (court + .05f), new Vector3(size, size, 1f), Quaternion.Euler(90f, 45f, 0f), 1.2f * (1f - u) * (1f - u) * leave);
+                PlaceGlow(_abFlashes[i], Vector3.up * (court + .05f), new Vector3(size, size, 1f), Quaternion.Euler(90f, 45f, 0f), .6f * (1f - u) * (1f - u) * leave);
             }
 
             // ---------------------------------------------------------------- THE GLORY behind her.
@@ -188,8 +189,8 @@ namespace TumbangPreso.Visual
                     var away = centre - eye; away.y = 0f;
                     centre += (away.sqrMagnitude > 1e-4f ? away.normalized : Vector3.forward) * 2.4f;
                     float grow = answer >= weave ? Mathf.Lerp(1.2f, 1.8f, Ease(AmAnswerAt, 1.2f, t)) : 1.55f + .18f * beats;
-                    PlaceGlow(_abGlory[0], centre, Vector3.one * grow, Quaternion.identity, (.7f + .45f * beats) * strength * light * leave);
-                    PlaceGlow(_abGlory[1], centre, Vector3.one * grow * .62f, Quaternion.identity, (.6f + .5f * beats) * strength * light * leave);
+                    PlaceGlow(_abGlory[0], centre, Vector3.one * grow, Quaternion.identity, (.35f + .25f * beats) * strength * light * leave);
+                    PlaceGlow(_abGlory[1], centre, Vector3.one * grow * .62f, Quaternion.identity, (.3f + .25f * beats) * strength * light * leave);
                 }
             }
 

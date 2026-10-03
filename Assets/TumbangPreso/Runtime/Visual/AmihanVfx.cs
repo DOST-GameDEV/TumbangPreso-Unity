@@ -222,7 +222,9 @@ namespace TumbangPreso.Visual
             fx.Rise("RightThread", new Vector3(.81f,.02f,-.13f), new Vector3(.88f,height*.52f,-.25f), new Vector3(.62f,height+.39f,-.38f), .041f, .11f, 25);
             fx.Rise("InnerLift", new Vector3(-.07f,.03f,-.35f), new Vector3(.14f,height*.46f,-.49f), new Vector3(-.02f,height+.51f,-.31f), .046f, .03f, 31);
             var spiral = WindVfx.Helix(Vector3.up * .04f, Vector3.up * (height + .42f), .69f, .83f, 28, 24, .57f);
-            fx._spiral = WindVfx.InkSheet(WindVfx.Build(go.transform, "ClimbingGust", spiral, .11f, WindVfx.AroundAxis(spiral, Vector3.up), 4, .16f, 35), .55f);
+            // SUBTLE (owner, 2026-10-03, on v3.6: *"i want her flight to have subtle vfx"*, *"it looks like shapes are floating and not
+            // vfx"*): the flight is air lifting her, not objects. Thin, light, see-through streaks and threads; no ink rim.
+            fx._spiral = WindVfx.Build(go.transform, "ClimbingGust", spiral, .05f, WindVfx.AroundAxis(spiral, Vector3.up), 4, .2f, 35);
             // Her kasikus pressed into the court as she leaves it (v3 language: diamonds, ink-weighted to read on light tiles).
             var ring = WindVfx.Kasikus(0.58f, 0.05f, 8);
             fx._burst = WindVfx.Floor(WindVfx.Build(go.transform, "LiftRing", ring, 0.15f, WindVfx.Flat(ring), 6.0f, 0.2f, 3.0f));
@@ -236,8 +238,8 @@ namespace TumbangPreso.Visual
         private void Rise(string name, Vector3 start, Vector3 bend, Vector3 top, float width, float delay, float seed)
         {
             // Film r2: at 1.3 times they still barely showed from the court; twice the authored width.
-            var streak = WindVfx.Build(transform, name, new[] { start, bend, top }, width * 2.0f, _ => Vector3.right, 3, .18f, seed);
-            _column.Add(name.EndsWith("Thread") ? WindVfx.Thread(streak, (int)seed) : WindVfx.InkSheet(streak, .5f));
+            var streak = WindVfx.Build(transform, name, new[] { start, bend, top }, width * 0.9f, _ => Vector3.right, 3, .2f, seed);
+            _column.Add(name.EndsWith("Thread") ? WindVfx.Thread(streak, (int)seed) : streak);
             _delays.Add(delay);
         }
 
@@ -251,15 +253,15 @@ namespace TumbangPreso.Visual
             for (int i = 0; i < _column.Count; i++)
             {
                 float age = t - _delays[i];
-                _column[i].Set(WindVfx.Reduced ? .45f : .88f, -phase, WindVfx.Ease(0, .34f, age), WindVfx.Ease(.23f, .74f, age), WindVfx.Ease(.42f, .82f, age));
+                _column[i].Set(WindVfx.Reduced ? .25f : .45f, -phase, WindVfx.Ease(0, .34f, age), WindVfx.Ease(.23f, .74f, age), WindVfx.Ease(.42f, .82f, age));
             }
-            _spiral.Set(WindVfx.Reduced ? .32f : .6f, phase, WindVfx.Ease(.04f, .45f, t), WindVfx.Ease(.28f, .93f, t), WindVfx.Ease(.55f, 1, t));
+            _spiral.Set(WindVfx.Reduced ? .18f : .32f, phase, WindVfx.Ease(.04f, .45f, t), WindVfx.Ease(.28f, .93f, t), WindVfx.Ease(.55f, 1, t));
             _burst.GameObject.transform.localScale = Vector3.one * Mathf.Lerp(0.5f, 2.6f, WindVfx.Ease(0.0f, 0.45f, t));
             _burst.GameObject.transform.localRotation = Quaternion.Euler(0, 45.0f * WindVfx.Ease(0.0f, 0.6f, t), 0);
             _burstOuter.GameObject.transform.localRotation = Quaternion.Euler(0, -30.0f * WindVfx.Ease(0.0f, 0.6f, t), 0);
-            _burst.Set(1.0f - WindVfx.Ease(0.3f, 0.75f, t), phase, 1, 0, WindVfx.Ease(0.1f, 0.6f, t));
+            _burst.Set(0.5f * (1.0f - WindVfx.Ease(0.3f, 0.75f, t)), phase, 1, 0, WindVfx.Ease(0.1f, 0.6f, t));
             _burstOuter.GameObject.transform.localScale = Vector3.one * Mathf.Lerp(0.6f, 3.4f, WindVfx.Ease(0.05f, 0.6f, t));
-            _burstOuter.Set(0.7f * (1.0f - WindVfx.Ease(0.35f, 0.85f, t)), phase * 1.4f, 1, 0, WindVfx.Ease(0.15f, 0.7f, t));
+            _burstOuter.Set(0.35f * (1.0f - WindVfx.Ease(0.35f, 0.85f, t)), phase * 1.4f, 1, 0, WindVfx.Ease(0.15f, 0.7f, t));
             float h = _height;
             _motif.Step(t, 0.9f, (start, drift, u) =>
             {
@@ -353,13 +355,13 @@ namespace TumbangPreso.Visual
             float phase = WindVfx.Reduced ? 0.0f : _age * 3.0f;
             float a = _fade * (WindVfx.Reduced ? .55f : 1);
             float breathe = 0.5f + 0.5f * Mathf.Sin(_age * 2.2f);
-            _legA.Set(.55f * a, phase, Mathf.Lerp(.66f, 1, breathe), 0, .3f);
-            _legB.Set(.43f * a, phase + 1, 1, Mathf.Lerp(0, .22f, breathe), .35f);
-            Wrist(_handA, _pose != null ? _pose.LeftPalm : null, .48f * a, phase);
-            Wrist(_handB, _pose != null ? _pose.RightPalm : null, .37f * a, phase + 1.1f);
-            _liftA.Set(.38f * a, -phase * 1.3f, 1, 0, .35f);
-            _liftB.Set(.26f * a, -phase * 1.1f + 2, 1, 0, .45f);
-            _liftC.Set(.31f * a, -phase * 1.5f + 4, 1, 0, .4f);
+            _legA.Set(.32f * a, phase, Mathf.Lerp(.66f, 1, breathe), 0, .3f);
+            _legB.Set(.25f * a, phase + 1, 1, Mathf.Lerp(0, .22f, breathe), .35f);
+            Wrist(_handA, _pose != null ? _pose.LeftPalm : null, .28f * a, phase);
+            Wrist(_handB, _pose != null ? _pose.RightPalm : null, .22f * a, phase + 1.1f);
+            _liftA.Set(.24f * a, -phase * 1.3f, 1, 0, .35f);
+            _liftB.Set(.16f * a, -phase * 1.1f + 2, 1, 0, .45f);
+            _liftC.Set(.2f * a, -phase * 1.5f + 4, 1, 0, .4f);
 
             // The road mark: straight down from her, on whatever surface is under her.
             Vector3 feet = _body.transform.position;
