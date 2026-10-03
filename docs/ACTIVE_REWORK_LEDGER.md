@@ -731,3 +731,14 @@ logo capture inspected against the authored reveal. Normal exit/input restoratio
 Runtime immutability pass. Linked in startup report/TODO. Separate Linux copied-
 cache failure remains; no Windows physical-device skip matrix or recovery-peer
 claim. User asleep; Feedback note updated, routine chat held. No root native job.
+
+## Cloud continuation: Continental Drift fracture art, October 3
+
+DANTE-DRIFT-FRACTURES-1003 scopes only the dated plan's visual/test/docs paths.
+Published Bastion motion review is delivered. Current Feedback reread shows no
+new actionable text. Native cloud recovery is complete on isolated f9552d58a;
+.NET smoke checks pass 8/8 and native role-change cases pass 2/2. The first import
+crossed the disk guard before orderly exit; duplicate test-only reference files
+were excluded afterward. See reports/cloud-recovery-2026-10-03/README.md. During import, the existing court/reference frames were inspected
+and the next fracture-only unit planned. Production art remains unchanged.
+See reports/dante-drift-fractures-2026-10-03/plan.md. Preserve every other lane.

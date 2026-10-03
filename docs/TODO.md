@@ -658,6 +658,10 @@ a reproduced baseline failure. Protocol118, no fresh player/peer claim.
 
 ### HERO-QUALITY-1001: full-roster research and durable plans
 
+DANTE-DRIFT-FRACTURES-1003 is the current cloud presentation unit: irregular
+ground art only, preserving five authoritative bands. [Plan](reports/dante-drift-fractures-2026-10-03/plan.md).
+
+
 Owner priority October1: finish the current Continental Drift unit, then thoroughly
 research and plan every hero's skills, cutscenes, animation, VFX, SFX and UI before
 resuming other feedback/manual hunt. Analyze finalized Paete/Phaister as quality

@@ -152,3 +152,7 @@ Dante Boulder weight-bearing preparation: [native review and preserved assets](r
 Timed status recovery without mashing: [native evidence](reports/timed-recovery-2026-10-02/README.md).
 
 Studio intro before loading: [native evidence](reports/studio-intro-2026-10-02/README.md).
+
+Cloud tool recovery and bounded smoke results: [October3 evidence](reports/cloud-recovery-2026-10-03/README.md).
+
+Continental Drift irregular-fracture unit: [scoped plan](reports/dante-drift-fractures-2026-10-03/plan.md).
