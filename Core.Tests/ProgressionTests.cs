@@ -209,7 +209,7 @@ namespace TumbangPreso.Core.Tests
         [Fact]
         public void TheAfkMovementBarIsDerivedAndIsFarBelowAPlayedRound()
         {
-            Assert.Equal(Balance.Speed * Balance.AttackerSpeedScale * ProgressionRules.AfkActiveSeconds,
+            Assert.Equal(Balance.AttackerWalkSpeed * ProgressionRules.AfkActiveSeconds,
                          ProgressionRules.AfkRoundMetres, 4);
 
             // `BotBehaviourProbe` measures live seats at roughly 130 m a round. The bar has to

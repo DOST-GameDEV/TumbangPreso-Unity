@@ -694,7 +694,7 @@ namespace TumbangPreso.Tests
             // ⚠️ THE ADVANTAGE IS ABOUT A THIRD OF A SECOND, AND IT IS BOUNDED BY BEING LESS
             // THAN ONE TAYA DECISION. Walking the same ground at the attacker's speed is 0.69 s.
             float walking = Balance.SlideDistance
-                            / (Balance.Speed * Balance.AttackerSpeedScale);
+                            / (Balance.AttackerWalkSpeed);
 
             Assert.Greater(walking - Balance.SlideActiveTime, 0.2f,
                 "The slide has to be worth pressing.");

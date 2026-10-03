@@ -1,0 +1,23 @@
+{
+  "Assets/TumbangPreso/Runtime/AIController.cs": "6379b74273aeeaf5566113cdac4a52714e970a1a4b6208ee6ebe7897922a11fe",
+  "Assets/TumbangPreso/Runtime/CharacterMotor.cs": "dc29547f5f7942a486cc4958fd93e64ff89393fe34d505ab7b3fdde4518ac182",
+  "Assets/TumbangPreso/Runtime/CombatVerbs.cs": "8967b13af75abee126b8d2eba9ed961a00922dc5e5e30bfc06734082294d919c",
+  "Assets/TumbangPreso/Runtime/GuidedTraining.cs": "d1b53f69f378091a7f5a408291c605c75af669cdcbe7bc59f2cb6a40160f8691",
+  "Assets/TumbangPreso/Runtime/MatchInstaller.cs": "b5d5ff2eb566e445797f5c43a19108e8b5aa91ef5d4c6682e6df1ca0b07f0e5a",
+  "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "6ed36c79f543e1d62737b3a196fabc48fbd9e14093bfe2ac235e4161dff2f974",
+  "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.cs": "70db1b5b365a15be9c85bb0985fb824505553870a942ddf89b40d664f9de8dc1",
+  "Assets/TumbangPreso/Runtime/Visual/ColourGrade.Experiments.cs": "bb498963ac93d76bf93a1536b61d0d5f478b05b55f29144f83249c5a7c4008f8",
+  "Assets/TumbangPreso/Tests/NationalsHardeningTests.cs": "b3d3009693b85c43f67f9a3c8a4a45e4f40c16469372e1c9c1806972ce0c96bc",
+  "Assets/TumbangPreso/Tests/PlayMode/TimedRecoveryTests.cs": "5f9e175112546200071f6298535eae02b9bf95a18d484b997047d912af004dc7",
+  "Assets/TumbangPreso/Tests/RoleSpeedTests.cs": "a3ffe5f77376ebf15407d78666e6dda4b38925b77628dcf78b4e92bc6a923233",
+  "Packages/com.tumbangpreso.core/Runtime/Balance.cs": "271f3cd51134a226f1f5ec48191c5a004536dc4b82a204ace19c092ce1035e52",
+  "Packages/com.tumbangpreso.core/Runtime/Combat.cs": "8c35804f912f407de2ec8e0f3b6ae5936f8594cff3b6a1f74a8c322af9da1329",
+  "Packages/com.tumbangpreso.core/Runtime/Integrity.cs": "592cc26c71034e0bac0d860eb3ff807f3cf68d38ea2e86786839f7e2551f60b6",
+  "Packages/com.tumbangpreso.core/Runtime/MoveBudget.cs": "24576adc21244fd7b48b4873bcd857496eba64f1c1c17f7ca5d2686160c94447",
+  "Packages/com.tumbangpreso.core/Runtime/Progression.cs": "3f3bd84daa1ec12f5c95f24d114c43feaded8201413076e177ad0dccfc84a508",
+  "Packages/com.tumbangpreso.core/Runtime/Roster.cs": "f4353a0b60c5bf637b5473281f44388cf985086be2b38ee804968be95bc32a0f",
+  "Packages/com.tumbangpreso.core/Runtime/Sabotage.cs": "ef6b30288ac8a6a3d66d4d18df92989f9195e1cb4e355362b1dc95bfd598129f",
+  "Packages/com.tumbangpreso.core/Runtime/Stamina.cs": "2a0dd94f544038fd5a7b9ec56b272096317d33ccfb354d696fc296cab6a38bb1",
+  "Assets/TumbangPreso/Tests/PlayMode/MovementRuntimeTests.cs": "90d1346efcf95fe1862ba8af89d957308705d4a6adcec083c6b12e9e6af93faa",
+  "Assets/TumbangPreso/Tests/PlayMode/MovementRuntimeTests.cs.meta": "8c0dc48f64544ec54eb84f9a45ef01c7dca7631762724fe92b94b3b1b6c48dc1"
+}

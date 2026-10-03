@@ -1,5 +1,17 @@
 # Design — the rules, and every number that decides them
 
+## Current movement values, October 3 owner revision
+
+In both modes, attackers walk at 3.75 m/s and run at 5.625 m/s; defenders walk at
+5 m/s and run at 7.5 m/s. Character picks do not scale those base speeds. Stamina
+is 100, drains/regenerates at 40/s, requires 20 to begin a sprint, and retains a
+1s regeneration delay. Fatigue lasts 2.5s without a walking slow. The nominal
+jump is 1m high and 0.75s airborne. Defender full lunge travel is 3.5m, with
+0.5s tap to 2.5s full-hold cooldown. Slide remains 1.75m/25 stamina/2.45s cooldown.
+These values supersede older tuning prose below.
+[Complete rules and measured native result](reports/movement-2026-10-03/README.md).
+
+
 **Model/art requirement:** new and reworked models must belong to TUMP's cute
 blocky visual language and avoid unnecessary detail. Gameplay changes and stronger
 motion do not waive that requirement. See

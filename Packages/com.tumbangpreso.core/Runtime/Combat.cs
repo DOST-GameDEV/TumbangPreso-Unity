@@ -58,6 +58,15 @@ namespace TumbangPreso.Core
         public static float LungeReach(float power = 1.0f) =>
             LungeDash(power) + Balance.LungeTagRadius;
 
+        /// <summary>Tap recovery at minimum power, linearly rising to full-hold recovery.</summary>
+        public static float LungeCooldownFor(float power)
+        {
+            float p = power < Balance.LungeMinPower ? Balance.LungeMinPower : (power > 1 ? 1 : power);
+            float held = (p - Balance.LungeMinPower) / (1 - Balance.LungeMinPower);
+            return Balance.LungeTapCooldown + (Balance.LungeCooldown - Balance.LungeTapCooldown) * held;
+        }
+
+
         // -------------------------------------------------------------------
         // GEOMETRY — the shove and the punch are both a range plus an arc.
         // -------------------------------------------------------------------

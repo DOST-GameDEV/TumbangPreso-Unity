@@ -560,7 +560,8 @@ namespace TumbangPreso.Net
         //134: trip, elemental stun and edge recovery no longer accept mash input.
         //135: Absolute Zero excludes its own caster from Frozen and thaw Chilled.
         //136: objective income is knockdown/tag plus one defender-round grant.
-        public const int ProtocolVersion = 136;
+        //137: explicit movement speeds, stamina, jump and charged lunge recovery.
+        public const int ProtocolVersion = 137;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

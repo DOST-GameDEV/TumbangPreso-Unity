@@ -864,7 +864,7 @@ namespace TumbangPreso
             // The sprint multiplier. Fatigue is NOT in this value: it rides the speed-zone
             // stack so it composes with a hazard zone rather than one silently winning.
             // HERO-10 (plan 9.5): Phaister walks while she reaches for someone with a curse, but she cannot sprint.
-            float sprint = Stamina.Step(dt, moving, canSteer && !IsConcussed && !IsFeared && !IsVoodooReaching
+            Stamina.Step(dt, moving, canSteer && !IsConcussed && !IsFeared && !IsVoodooReaching
                                                    && Intent.Pressed(Verb.Sprint));
 
             // ⚠️⚠️ THE FATIGUE CUE, WHICH SHIPPED REGISTERED AND WAS NEVER FIRED ONCE.
@@ -898,10 +898,7 @@ namespace TumbangPreso
             // the taya can read where it is going to come out. `docs/TODO.md` § 146.
             if (CommitLeft > 0.0f) CommitLeft = Mathf.Max(0.0f, CommitLeft - dt);
 
-            float speed = Balance.Speed
-                          * Stamina.RoleSpeedScale(_isDefender)
-                          * Roster.PersonSpeedScale(_characterIndex, Mode)
-                          * sprint
+            float speed = Stamina.MovementSpeed(_isDefender, Stamina.IsSprinting)
                           * Stamina.SpeedZones.Value
                           * (AbilitySystem?.Kit?.MovementSpeedScale ?? 1.0f)
                           * (CommitLeft > 0.0f ? Balance.SlideSteerScale : 1.0f)
@@ -1354,7 +1351,7 @@ namespace TumbangPreso
             }
             else
             {
-                _velocity.y -= Balance.Gravity * dt;
+                _velocity.y -= Balance.CharacterGravity * dt;
                 if (_velocity.y < -Balance.MaxFallSpeed) _velocity.y = -Balance.MaxFallSpeed;
             }
         }

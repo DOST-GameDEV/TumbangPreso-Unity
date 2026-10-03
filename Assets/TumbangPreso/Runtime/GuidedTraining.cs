@@ -535,7 +535,7 @@ namespace TumbangPreso
         {
             if (_orbitActor == _dummy) return;
             StopOrbit(); _orbitActor = _dummy;
-            float walking = Balance.Speed * Stamina.RoleSpeedScale(false) * Roster.PersonSpeedScale(_dummy.CharacterIndex, _dummy.Mode);
+            float walking = Stamina.MovementSpeed(false, false);
             _orbitSlow = Mathf.Min(1, OrbitRadius * OrbitAngularSpeed / Mathf.Max(.1f, walking));
             _orbitActor.EnterSpeedZone(_orbitSlow);
         }
