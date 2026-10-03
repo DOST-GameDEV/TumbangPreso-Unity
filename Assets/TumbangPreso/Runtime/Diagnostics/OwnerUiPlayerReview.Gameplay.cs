@@ -206,21 +206,10 @@ namespace TumbangPreso.Diagnostics
                 victim.Teleport(new Vector3(6, .12f, 8));
                 yield return new WaitForSecondsRealtime(.3f);
 
-                Stage(label + " direct right-mouse retrieval slide");
-                if (!carrier.Held.HostDisarm()) throw new InvalidOperationException("Could not stage the loose slide target");
-                Place(new Vector3(0, .12f, -10), Vector3.forward);
-                // Slipper owns its own flight/loose simulation; HostDisarm already clears
-                // velocity. Use its actual support height instead of inventing a Rigidbody.
-                var slideTarget = new Vector3(0, 0, -8);
-                slideTarget.y = Slipper.GroundY(slideTarget) + shoe.RestHeight;
-                shoe.transform.position = slideTarget;
-                yield return new WaitForSecondsRealtime(.3f);
-                if (!combat.SlideMayStartFrom(who.transform.position, Vector3.forward, out var target) || target != shoe)
-                    throw new InvalidOperationException("Staged own slipper is not a legal slide target");
-                Buttons(2); yield return new WaitForSecondsRealtime(.06f); Buttons(0);
-                yield return WaitFor(() => carrier.Held == shoe, 2);
-                if (combat.SlideCooldownLeft <= 0) throw new InvalidOperationException("Pickup did not use the retrieval slide");
-                yield return Shot(label + "-direct-slide");
+                Stage(label + " retired retrieval slide remains unavailable");
+                if (combat.SlideMayStartFrom(who.transform.position, Vector3.forward, out _) ||
+                    combat.HostResolveSlide(who.transform.position, Vector3.forward) || combat.SlideActive)
+                    throw new InvalidOperationException("Removed retrieval slide still accepts an entry");
 
                 Stage(label + " switch fixture to the defender role");
                 GameServices.Round.EndRound(); GameServices.Match.AdvanceRound();

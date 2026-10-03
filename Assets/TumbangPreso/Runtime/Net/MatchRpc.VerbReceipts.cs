@@ -1,5 +1,6 @@
 using TumbangPreso.Core;
 using Unity.Netcode;
+using Unity.Collections;
 
 namespace TumbangPreso.Net
 {
@@ -41,5 +42,30 @@ namespace TumbangPreso.Net
         private bool TakeVerbDenial(int seat, DeniedVerb verb, long request, GameplayActionScope scope) =>
             seat == _localVerbSeat && _localVerbScope.Matches(scope.Match, scope.Round, scope.Epoch)
                 && _verbPredictions.TryDeny((int)verb, request);
+        private void SendContactRecovery(ulong client, int seat, long request, GameplayActionScope scope, DeniedVerb verb, bool hit)
+        {
+            if (_nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(14 + GameplayActionScope.WireBytes, Allocator.Temp);
+            writer.WriteValueSafe(seat); writer.WriteValueSafe(request); writer.WriteValueSafe((byte)verb); writer.WriteValueSafe((byte)(hit ? 1 : 0));
+            writer.WriteNetworkSerializable(scope);
+            _nm.CustomMessagingManager.SendNamedMessage("ContactRecovery", client, writer);
+        }
+
+        private void OnContactRecoveryMsg(ulong sender, FastBufferReader reader)
+        {
+            if (NetAuthority.IsHost || !FromHost(sender)
+                || reader.Length - reader.Position != 14 + GameplayActionScope.WireBytes
+                || !reader.TryBeginRead(14 + GameplayActionScope.WireBytes)) return;
+            reader.ReadValueSafe(out int seat); reader.ReadValueSafe(out long request); reader.ReadValueSafe(out byte verb); reader.ReadValueSafe(out byte hit);
+            if (!ValidSlot(seat) || seat != NetAuthority.LocalSlot || hit > 1
+                || (verb != (byte)DeniedVerb.Punch && verb != (byte)DeniedVerb.Shove)) return;
+            var actor = Unit(seat);
+            if (!ReadCurrentActionScope(ref reader, actor, out var scope)
+                || !TakeVerbDenial(seat, (DeniedVerb)verb, request, scope)) return;
+            var combat = actor.GetComponent<CombatVerbs>();
+            if (verb == (byte)DeniedVerb.Punch) combat?.ConfirmPunchResult(hit == 1);
+            else combat?.ConfirmShoveResult(hit == 1);
+        }
+
     }
 }

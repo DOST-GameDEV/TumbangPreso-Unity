@@ -1,5 +1,26 @@
 # Active Rework Checkpoint
 
+## LIVE OWNER PAN VALIDATION: laptop full-court graphics launched
+
+Laptop reported fresh6.57GiB RAM, above5120+1024MiB admission. ONE wrapper
+session29765 running run_arrival_pan_full.py on source1c18b88e4/protocol143,
+19176 frozen Assets/Packages/ProjectSettings inputs, shippingidentity+independent
+warmcache. PathC:/Users/Matthew/dev/tump-laptop-player1003i/Logs/
+arrival-pan1004-hero-host-selected/job-receipt.json. Profile
+laptop-arrival-pan1004-hero-host-selected, realD3D11 GPU5120+1024/timeout360.
+CaseMatchArrivalFlowTests.CustomHostSelectedCourtSkipsVotingAndBeginsWithoutSecondReady.
+TUMP_ARRIVAL_CAPTURE frames640x360 every.75s in sameoutput/frames.
+
+No other laptop Unity job in parallel. Root must NOTduplicate it or use Claude's
+PCslot. Earlier PCslotquestion no longerneeded for thisrun; neverassumeapproval.
+Latestcamera policy+geometry checked, published1c18; prioroneestablishingimage
+viewed but fullmotion/portrait/handoff/GO/runtime stillunproven until thisrun.
+Wrapper preservespost-quality, restorespre afterterminal and audits source/
+importerdeltas. Capture images omit overlayUI, ticks assertions/logs separate.
+NEXT: follow THIShandle/source/output; get terminalresult/XML/frames andinspect
+actualfailure or full sequence. Do notrestartonobservationtimeout, no.large.raw.
+Continue after ownerquestions and throughcompaction. Goal remains active.
+
 ## Resume first: owner opening-pan check, source fixes checked, visual gate open
 
 Current opening is8.6s/latest shots/loading curtain/return-view prep plus

@@ -83,28 +83,6 @@ namespace TumbangPreso.PlayTests
             _verbs.RollBackRefusedVerb(MatchRpc.DeniedVerb.Shove); Assert.Zero(_verbs.ShoveCooldownLeft);
         }
         private void Release() { _motor.Intent.Set(Verb.Lunge, false); Step(); _motor.Intent.CommitFrame(); }
-        private void LooseShoe()
-        {
-            _shoeBody = new GameObject("Retrievable shared-button recovery shoe");
-            var shoe = _shoeBody.AddComponent<Slipper>(); shoe.enabled = false;
-            shoe.OwnerSlot = shoe.SeatOfOrigin = 0;
-            var at = _body.transform.position + Vector3.forward * (Balance.SlideDistance + Balance.PickupRadius * .5f);
-            shoe.ApplySnapshotState(SlipperState.Loose, null, at, Quaternion.identity, Vector3.zero,
-                0, SlipperAffinity.Normal, 0); Physics.SyncTransforms();
-            Assert.IsTrue(_verbs.SlideMayStartFrom(_body.transform.position, Vector3.forward, out var target));
-            Assert.AreSame(shoe, target);
-        }
-        private void PredictSlide()
-        {
-            float stamina = _motor.Stamina.Current;
-            _motor.Intent.Set(Verb.Lunge, true); Assert.IsTrue(_motor.Intent.JustPressed(Verb.Lunge)); Step();
-            Assert.Greater(_verbs.SlideCooldownLeft, 0); Assert.Zero(_verbs.ShoveCooldownLeft);
-            Assert.AreEqual(stamina - Balance.SlideStaminaCost, _motor.Stamina.Current, .001f);
-        }
-        private void RefuseSlide()
-        {
-            _verbs.RollBackRefusedVerb(MatchRpc.DeniedVerb.Slide); Assert.Zero(_verbs.SlideCooldownLeft);
-        }
         [Test] public void ShoveReleaseDuringStunRearmsTheFreshAttackerPress()
         {
             PredictShove(); RefuseShove(); _motor.ApplyStagger(.5f); Assert.IsFalse(_motor.CanAct());
@@ -115,15 +93,8 @@ namespace TumbangPreso.PlayTests
             PredictShove(); RefuseShove(); Role(1); Assert.IsTrue(_motor.IsDefender);
             Release(); Role(2); Assert.IsFalse(_motor.IsDefender); PredictShove();
         }
-        [Test] public void SlideReleaseDuringStunRearmsTheFreshRetrievalPress()
-        {
-            LooseShoe(); PredictSlide(); RefuseSlide(); _motor.ApplyStagger(.5f); Assert.IsFalse(_motor.CanAct());
-            Release(); _motor.ClearStun(); Assert.IsTrue(_motor.CanAct()); PredictSlide();
-        }
         [Test] public void OrdinaryShoveReleaseAndFreshPressStillWork()
         { PredictShove(); RefuseShove(); Release(); PredictShove(); }
-        [Test] public void OrdinarySlideReleaseAndFreshPressPreserveTheCost()
-        { LooseShoe(); PredictSlide(); RefuseSlide(); Release(); PredictSlide(); }
         [Test] public void AnInitiallyBlockedShoveDoesNotSpendItsInputEdge()
         {
             NetAuthority.Provider = new Solo(); _verbs.HostResolveShove(_body.transform.position, Vector3.forward);

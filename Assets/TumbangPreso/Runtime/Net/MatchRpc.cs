@@ -411,6 +411,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("CastDenied", OnCastDeniedMsg);
             cm.RegisterNamedMessageHandler("CastAccepted", OnCastAccepted);
             cm.RegisterNamedMessageHandler("VerbDenied", OnVerbDeniedMsg);
+            cm.RegisterNamedMessageHandler("ContactRecovery", OnContactRecoveryMsg);
             cm.RegisterNamedMessageHandler("ReqMash", OnReqMashMsg);
             cm.RegisterNamedMessageHandler("ReqEdgeClimb", OnReqEdgeClimbMsg);
             cm.RegisterNamedMessageHandler("ThrowCharge", OnThrowChargeMsg);
@@ -2726,6 +2727,8 @@ namespace TumbangPreso.Net
                 return;
             }
 
+            SendContactRecovery(senderClientId, slot, request, scope, DeniedVerb.Punch,
+                who.GetComponent<CombatVerbs>().PunchCooldownDuration == Balance.PunchHitCooldown);
             BroadcastAction(slot, "punch", senderClientId, scope);
         }
 
@@ -2896,6 +2899,8 @@ namespace TumbangPreso.Net
                 return;
             }
 
+            SendContactRecovery(senderClientId, slot, request, scope, DeniedVerb.Shove,
+                who.GetComponent<CombatVerbs>().ShoveCooldownDuration == Balance.ShoveCooldown);
             BroadcastAction(slot, "shove", senderClientId, scope);
         }
 

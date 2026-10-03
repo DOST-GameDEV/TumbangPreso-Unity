@@ -136,7 +136,7 @@ namespace TumbangPreso
                     {
                         Label = "SHOVE CD",
                         Remaining = verbs.ShoveCooldownLeft,
-                        Total = Balance.ShoveCooldown,
+                        Total = verbs.ShoveCooldownDuration,
                         Timed = true,
                     });
 
@@ -157,7 +157,7 @@ namespace TumbangPreso
                         // the cooldown label names the game action the role is trying to land.
                         Label = "TAG CD",
                         Remaining = verbs.PunchCooldownLeft,
-                        Total = Balance.PunchCooldown,
+                        Total = verbs.PunchCooldownDuration,
                         Timed = true,
                     });
             }

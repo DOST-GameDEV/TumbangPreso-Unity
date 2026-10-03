@@ -1,3 +1,12 @@
+## Current basic-action revision, October 3
+
+Full throw charge is1.5s. Normal tag/punch recovery is0.25s on an authoritative
+hit and0.5s on a miss. Defender lunge remains0.5s full charge with0.5s tap to2.5s
+full-charge recovery. Attacker shove is7.5s hit/0.5s miss. Retrieval slide is
+removed; attackers approach and pick up normally, and right-click only shoves.
+This supersedes historical slide/timing descriptions below. Protocol144.
+[Checks](reports/action-timings-2026-10-03/README.md).
+
 # Design — the rules, and every number that decides them
 
 ## Current movement values, October 3 owner revision
