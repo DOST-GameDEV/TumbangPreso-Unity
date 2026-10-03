@@ -17,6 +17,13 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### EXPLICIT-MOVEMENT-1003: final owner numbers
+
+- [x] Explicit role walk/run speeds without character scaling, new jump and
+  stamina, charge-dependent defender lunge cooldown and preserved slide rules.
+  Managed 708/708; four distinct native physical cases qualified. Protocol 137.
+  [Result, scope and remaining limits](reports/movement-2026-10-03/README.md).
+
 ### OBJECTIVE-ECONOMY-1003: latest owner revision
 
 - [x] Can knockdown +1, successful tag +1, and one defender-round start grant +1.

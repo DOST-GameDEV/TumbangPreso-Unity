@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Explicit movement revision: [measured Unity speeds and jump](reports/movement-2026-10-03/README.md).
+
 Objective income revision: [rules and four-case native evidence](reports/feedback-2026-10-03/objective-economy/README.md).
 
 Latest human Feedback: [Cheska caster exclusion](reports/feedback-2026-10-03/cheska-caster.md).

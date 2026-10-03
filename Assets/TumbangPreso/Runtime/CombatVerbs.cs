@@ -376,7 +376,7 @@ namespace TumbangPreso
 
         private void ReleaseLunge(float power)
         {
-            _lungeCooldown = Balance.LungeCooldown;
+            _lungeCooldown = Combat.LungeCooldownFor(power);
 
             // ⚠️ THE SAME TWO-SITE PAIRING THE SHOVE ABOVE EXPLAINS. This is the host's own
             // body and the solo game; `HostResolveLunge` is a client's, resolved on the host.
@@ -805,7 +805,7 @@ namespace TumbangPreso
             if (!NetAuthority.ShouldResolve() || _lungeCooldown > 0.0f ||
                 !_motor.IsDefender || !_motor.CanAct()) return false;
 
-            _lungeCooldown = Balance.LungeCooldown;
+            _lungeCooldown = Combat.LungeCooldownFor(power);
             _lungeActiveLeft = Balance.LungeActiveTime;
             _lungeFrom = from;
 

@@ -242,7 +242,7 @@ namespace TumbangPreso.Core
         /// there is a player who moves.
         /// </summary>
         public const float AfkRoundMetres =
-            Balance.Speed * Balance.AttackerSpeedScale * AfkActiveSeconds;
+            Balance.AttackerWalkSpeed * AfkActiveSeconds;
 
         /// <summary>Two seconds of the 90-second round. See <see cref="AfkRoundMetres"/>.</summary>
         public const float AfkActiveSeconds = 2.0f;

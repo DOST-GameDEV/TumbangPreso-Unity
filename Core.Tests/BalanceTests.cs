@@ -68,7 +68,7 @@ namespace TumbangPreso.Core.Tests
             // This one says what that formula currently WORKS OUT TO, which is the number a
             // player experiences. `ASprintBuysOneCrossingOfTheDangerZone` holds the invariant
             // that says whether it is the right number.
-            Assert.Equal(2.1f, elapsed, 1);
+            Assert.Equal(2.5f, elapsed, 1);
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace TumbangPreso.Core.Tests
             // delay on top here was wrong, and Design.md's measured 2.97 s says so: the
             // pool over the rate is 3.0 s, and it lands there directly.
             Assert.Equal(Balance.StaminaMax / Balance.StaminaRegenRate, refill, 1);
-            Assert.Equal(3.0f, refill, 1);
+            Assert.Equal(2.5f, refill, 1);
         }
 
         /// <summary>
@@ -247,21 +247,11 @@ namespace TumbangPreso.Core.Tests
         /// radius and twice it is a design decision, and anything outside is an accident.
         /// </summary>
         [Fact]
-        public void ASprintBuysOneCrossingOfTheDangerZone()
+        public void OwnerSprintBarProvidesTwoPointFiveSecondsAtExplicitRunSpeed()
         {
-            float sprintSpeed = Balance.Speed * Balance.AttackerSpeedScale * Balance.SprintScale;
             float seconds = Balance.StaminaMax / Balance.StaminaDrainRate;
-            float distance = sprintSpeed * seconds;
-
-            Assert.True(distance >= Balance.ConfinementRadius,
-                $"a full bar sprints {distance:0.00} m and the danger zone is "
-                + $"{Balance.ConfinementRadius:0.00} m across. An attacker who can sprint in and "
-                + "not out cannot retrieve, which is the game.");
-
-            Assert.True(distance <= Balance.ConfinementRadius * 2.0f,
-                $"a full bar sprints {distance:0.00} m, which is more than twice the "
-                + $"{Balance.ConfinementRadius:0.00} m zone. A sprint that crosses it twice over "
-                + "makes the taya's positioning free to ignore.");
+            Assert.Equal(2.5f, seconds, 4);
+            Assert.Equal(14.0625f, Balance.AttackerRunSpeed * seconds, 4);
         }
 
         /// <summary>
@@ -280,10 +270,10 @@ namespace TumbangPreso.Core.Tests
             Assert.True(s.Spend(Balance.ShoveStaminaCost));
             Assert.Equal(Balance.StaminaMax - Balance.ShoveStaminaCost, s.Current, 3);
 
-            Assert.Equal(Balance.DefenderSpeedScale, Stamina.RoleSpeedScale(isDefender: true), 3);
-            Assert.Equal(Balance.AttackerSpeedScale, Stamina.RoleSpeedScale(isDefender: false), 3);
+            Assert.Equal(Balance.DefenderWalkSpeed, Stamina.MovementSpeed(isDefender: true, running: false), 3);
+            Assert.Equal(Balance.AttackerWalkSpeed, Stamina.MovementSpeed(isDefender: false, running: false), 3);
 
-            Assert.True(Balance.DefenderSpeedScale > Balance.AttackerSpeedScale,
+            Assert.True(Balance.DefenderWalkSpeed > Balance.AttackerWalkSpeed,
                         "the taya must stay the faster role");
         }
 
@@ -305,11 +295,11 @@ namespace TumbangPreso.Core.Tests
         [Fact]
         public void LungeReach_IsDashPlusSweepRadius()
         {
-            Assert.Equal(3.00f, Combat.LungeDash(), 2);
-            Assert.Equal(3.00f + Balance.LungeTagRadius, Combat.LungeReach(), 2);
-            Assert.Equal(4.30f, Combat.LungeReach(), 2);
+            Assert.Equal(3.50f, Combat.LungeDash(), 2);
+            Assert.Equal(3.50f + Balance.LungeTagRadius, Combat.LungeReach(), 2);
+            Assert.Equal(4.80f, Combat.LungeReach(), 2);
             Assert.True(Balance.LungeSpeed / Balance.Friction <= Balance.LungeActiveTime);
-            Assert.Equal(3.0f * Balance.LungeMinPower * Balance.LungeMinPower,
+            Assert.Equal(3.5f * Balance.LungeMinPower * Balance.LungeMinPower,
                 Combat.LungeDash(0), 3);
         }
 
@@ -664,7 +654,7 @@ namespace TumbangPreso.Core.Tests
         {
             const float widestHazardFootprint = 2.6f;
 
-            float attackerSpeed = Balance.Speed * Balance.AttackerSpeedScale;
+            float attackerSpeed = Balance.AttackerWalkSpeed;
             float carried = attackerSpeed * Balance.TripGraceAfterGetUp;
 
             Assert.True(carried > widestHazardFootprint,
@@ -1157,7 +1147,7 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(1.5f, Balance.TayaCampRadius);
             Assert.Equal(2.0f, Balance.TayaCampClearRadius);
             Assert.Equal(2.5f, Balance.FatigueTime);
-            Assert.Equal(.75f, Balance.FatigueSpeedScale);
+            Assert.Equal(1f, Balance.FatigueSpeedScale);
         }
 
         [Fact]
@@ -1184,35 +1174,13 @@ namespace TumbangPreso.Core.Tests
         /// cannot be satisfied by a bad constant the way a 10-second window could.
         /// </summary>
         [Fact]
-        public void HeroUltimateEconomy_FavorsObjectivesOverWaiting()
+        public void HeroUltimateEconomy_UsesOnlyTheOwnersThreeIncomeSources()
         {
-            // The risky act must out-earn the safe one. VISION.md § 0: throwing is safe and
-            // free, and the retrieval is the only moment you can be caught.
-            Assert.True(Balance.UltimateChargeOwnSlipperRetrieved > Balance.UltimateChargeLegalThrow);
-
-            // The objective must out-earn both.
-            Assert.True(Balance.UltimateChargeLataKnock > Balance.UltimateChargeOwnSlipperRetrieved);
-            Assert.True(Balance.UltimateChargeTag > Balance.UltimateChargeOwnSlipperRetrieved);
-
-            // Everything still pays something. A round where nobody throws is not a round.
-            Assert.True(Balance.UltimateChargeLegalThrow > 0.0f);
-
-            // ⚠️ THE WHOLE-ROUND BOUND, which is what the old assertion should have been. The
-            // cheapest ultimate in the game costs 10 (`NemuHeroKit.UltimateCost`). Nothing may
-            // accrue on a timer, so a player who acts zero times must earn zero, and there is no
-            // longer any per-second term for this to be written against. If a passive term is
-            // ever reintroduced, 90 seconds of it must not approach the cheapest cost.
-            //
-            // ⚠️⚠️ THE METER COUNTS EVENTS, AND THESE FOUR NUMBERS ARE THAT RULE. 🧑 2026-08-27:
-            // *"i want downing can and tayaing to only give one point for the charges"*. A
-            // knockdown was 25 and a tag 20 against costs of 90 to 150; both objectives are worth
-            // exactly one charge now and an ultimate costs 10 to 20. `Balance`'s ultimate economy
-            // block has the rescale, the one deliberate change inside it (the tag, from 0.8 of a
-            // knockdown to a full 1.0) and the pacing arithmetic.
-            Assert.Equal(0.15f, Balance.UltimateChargeLegalThrow);
-            Assert.Equal(0.5f, Balance.UltimateChargeOwnSlipperRetrieved);
-            Assert.Equal(1.0f, Balance.UltimateChargeLataKnock);
-            Assert.Equal(1.0f, Balance.UltimateChargeTag);
+            Assert.Equal(0f, Balance.UltimateChargeLegalThrow);
+            Assert.Equal(0f, Balance.UltimateChargeOwnSlipperRetrieved);
+            Assert.Equal(1f, Balance.UltimateChargeLataKnock);
+            Assert.Equal(1f, Balance.UltimateChargeTag);
+            Assert.Equal(1f, Balance.UltimateChargeDefenderRound);
         }
 
         /// <summary>
@@ -1230,7 +1198,8 @@ namespace TumbangPreso.Core.Tests
 
             // A fraction of the objective, both of them, and in the order VISION.md § 0 sets.
             Assert.True(Balance.UltimateChargeOwnSlipperRetrieved < Balance.UltimateChargeLataKnock);
-            Assert.True(Balance.UltimateChargeLegalThrow < Balance.UltimateChargeOwnSlipperRetrieved);
+            Assert.Equal(0f, Balance.UltimateChargeLegalThrow);
+            Assert.Equal(0f, Balance.UltimateChargeOwnSlipperRetrieved);
         }
 
         [Fact]
