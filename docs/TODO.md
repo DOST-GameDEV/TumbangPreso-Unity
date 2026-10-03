@@ -17,6 +17,17 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### MATCH-ENTRY-1003: automatic arrival and custom map choice
+
+- [x] Custom rooms open character select; MAP VOTE is optional and OFF by default.
+  Queued play retains its ballot. Arena arrival uses four poses and5/4/3/2/1/START,
+  with no second READY prompt. Protocol142; repeated start and cancellation guards.
+  Native30/30 plus two repeated graphics cases; four standing poses inspected.
+  [Evidence and limits](reports/match-start-2026-10-03/README.md).
+- [ ] Full-scene startup, rebuilt matching peers and packaged player acceptance.
+  Full-route attempts were blocked by the null renderer or memory guard; focused
+  component/packet checks do not close those gates.
+
 ### NAMEPLATE-FIRST-USE-1003: font work behind loading
 
 - [x] Existing loading primes first native TextMesh/font initialization and96px

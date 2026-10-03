@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="30" result="Passed" total="30" passed="30" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 14:17:22Z" end-time="2026-10-03 14:17:35Z" duration="12.9169404">
+  <test-suite type="TestSuite" id="2762" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1434" result="Passed" start-time="2026-10-03 14:17:22Z" end-time="2026-10-03 14:17:35Z" duration="12.916940" total="30" passed="30" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2756" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1434" result="Passed" start-time="2026-10-03 14:17:22Z" end-time="2026-10-03 14:17:35Z" duration="12.902960" total="30" passed="30" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="111251" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2757" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1434" result="Passed" start-time="2026-10-03 14:17:22Z" end-time="2026-10-03 14:17:35Z" duration="12.895864" total="30" passed="30" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2758" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1434" result="Passed" start-time="2026-10-03 14:17:22Z" end-time="2026-10-03 14:17:35Z" duration="12.889089" total="30" passed="30" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1752" name="MapVotePacketTests" fullname="TumbangPreso.PlayTests.MapVotePacketTests" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-10-03 14:17:22Z" end-time="2026-10-03 14:17:23Z" duration="0.993894" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1767" name="CustomStartSelectsCharactersBeforeOpeningTheBallot" fullname="TumbangPreso.PlayTests.MapVotePacketTests.CustomStartSelectsCharactersBeforeOpeningTheBallot" methodname="CustomStartSelectsCharactersBeforeOpeningTheBallot" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="1853089055" result="Passed" start-time="2026-10-03 14:17:22Z" end-time="2026-10-03 14:17:22Z" duration="0.165936" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1759" name="ExactGuestVoteUsesItsAuthenticatedSeat" fullname="TumbangPreso.PlayTests.MapVotePacketTests.ExactGuestVoteUsesItsAuthenticatedSeat" methodname="ExactGuestVoteUsesItsAuthenticatedSeat" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="1108748698" result="Passed" start-time="2026-10-03 14:17:22Z" end-time="2026-10-03 14:17:23Z" duration="0.051902" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1766" name="ExactHostTallyStillReplacesTheBallot" fullname="TumbangPreso.PlayTests.MapVotePacketTests.ExactHostTallyStillReplacesTheBallot" methodname="ExactHostTallyStillReplacesTheBallot" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="2084077024" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.046802" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1772" name="HostCancellationClearsTheObserversPreparationPhase" fullname="TumbangPreso.PlayTests.MapVotePacketTests.HostCancellationClearsTheObserversPreparationPhase" methodname="HostCancellationClearsTheObserversPreparationPhase" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="1294586414" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.046507" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1765" name="InvalidOrTrailingTallyCannotPartiallyReplaceTheBallot" fullname="TumbangPreso.PlayTests.MapVotePacketTests.InvalidOrTrailingTallyCannotPartiallyReplaceTheBallot" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.093143" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1763" name="InvalidOrTrailingTallyCannotPartiallyReplaceTheBallot(False)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.InvalidOrTrailingTallyCannotPartiallyReplaceTheBallot(False)" methodname="InvalidOrTrailingTallyCannotPartiallyReplaceTheBallot" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="925232925" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.044859" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1764" name="InvalidOrTrailingTallyCannotPartiallyReplaceTheBallot(True)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.InvalidOrTrailingTallyCannotPartiallyReplaceTheBallot(True)" methodname="InvalidOrTrailingTallyCannotPartiallyReplaceTheBallot" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="1539861614" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.045502" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1768" name="MissingRequiredPlayerCancelsSelectionInsteadOfStrandingTheRoom" fullname="TumbangPreso.PlayTests.MapVotePacketTests.MissingRequiredPlayerCancelsSelectionInsteadOfStrandingTheRoom" methodname="MissingRequiredPlayerCancelsSelectionInsteadOfStrandingTheRoom" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="1996282646" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.045908" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1771" name="ObserverReceivesPreparationPhaseWithoutAcceptingGuestsOrOlderPhases" fullname="TumbangPreso.PlayTests.MapVotePacketTests.ObserverReceivesPreparationPhaseWithoutAcceptingGuestsOrOlderPhases" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.087952" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1769" name="ObserverReceivesPreparationPhaseWithoutAcceptingGuestsOrOlderPhases(0,True)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.ObserverReceivesPreparationPhaseWithoutAcceptingGuestsOrOlderPhases(0,True)" methodname="ObserverReceivesPreparationPhaseWithoutAcceptingGuestsOrOlderPhases" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="2071163943" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.047023" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1770" name="ObserverReceivesPreparationPhaseWithoutAcceptingGuestsOrOlderPhases(1,False)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.ObserverReceivesPreparationPhaseWithoutAcceptingGuestsOrOlderPhases(1,False)" methodname="ObserverReceivesPreparationPhaseWithoutAcceptingGuestsOrOlderPhases" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="1429020819" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.039610" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1758" name="OversizedSenderCannotWrapIntoAnExistingGuest" fullname="TumbangPreso.PlayTests.MapVotePacketTests.OversizedSenderCannotWrapIntoAnExistingGuest" methodname="OversizedSenderCannotWrapIntoAnExistingGuest" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="475037469" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.041045" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1775" name="QueueStateRequiresExactlyItsPublishedWireLength" fullname="TumbangPreso.PlayTests.MapVotePacketTests.QueueStateRequiresExactlyItsPublishedWireLength" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.085140" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1773" name="QueueStateRequiresExactlyItsPublishedWireLength(False)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.QueueStateRequiresExactlyItsPublishedWireLength(False)" methodname="QueueStateRequiresExactlyItsPublishedWireLength" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="622661346" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.043605" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1774" name="QueueStateRequiresExactlyItsPublishedWireLength(True)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.QueueStateRequiresExactlyItsPublishedWireLength(True)" methodname="QueueStateRequiresExactlyItsPublishedWireLength" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="451401734" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.040356" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1757" name="TrailingGuestDataCannotCastABallot" fullname="TumbangPreso.PlayTests.MapVotePacketTests.TrailingGuestDataCannotCastABallot" methodname="TrailingGuestDataCannotCastABallot" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="118055277" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.041998" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1756" name="TruncatedGuestVoteIsIgnoredWithoutAReaderException" fullname="TumbangPreso.PlayTests.MapVotePacketTests.TruncatedGuestVoteIsIgnoredWithoutAReaderException" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.146228" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1753" name="TruncatedGuestVoteIsIgnoredWithoutAReaderException(0)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.TruncatedGuestVoteIsIgnoredWithoutAReaderException(0)" methodname="TruncatedGuestVoteIsIgnoredWithoutAReaderException" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="2070109511" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.042997" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1754" name="TruncatedGuestVoteIsIgnoredWithoutAReaderException(1)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.TruncatedGuestVoteIsIgnoredWithoutAReaderException(1)" methodname="TruncatedGuestVoteIsIgnoredWithoutAReaderException" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="374786172" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.040978" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1755" name="TruncatedGuestVoteIsIgnoredWithoutAReaderException(3)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.TruncatedGuestVoteIsIgnoredWithoutAReaderException(3)" methodname="TruncatedGuestVoteIsIgnoredWithoutAReaderException" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="742966289" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.060516" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1762" name="TruncatedHostTallyCannotThrow" fullname="TumbangPreso.PlayTests.MapVotePacketTests.TruncatedHostTallyCannotThrow" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.127412" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1760" name="TruncatedHostTallyCannotThrow(False)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.TruncatedHostTallyCannotThrow(False)" methodname="TruncatedHostTallyCannotThrow" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="661892367" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.079458" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1761" name="TruncatedHostTallyCannotThrow(True)" fullname="TumbangPreso.PlayTests.MapVotePacketTests.TruncatedHostTallyCannotThrow(True)" methodname="TruncatedHostTallyCannotThrow" classname="TumbangPreso.PlayTests.MapVotePacketTests" runstate="Runnable" seed="1060313371" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.042476" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+          <test-suite type="TestFixture" id="1821" name="MatchStartContractTests" fullname="TumbangPreso.PlayTests.MatchStartContractTests" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:29Z" duration="6.064634" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1823" name="CustomMapVoteToggleChangesTheRuleAndManualReadyIsAbsent" fullname="TumbangPreso.PlayTests.MatchStartContractTests.CustomMapVoteToggleChangesTheRuleAndManualReadyIsAbsent" methodname="CustomMapVoteToggleChangesTheRuleAndManualReadyIsAbsent" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" seed="423322617" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.096496" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1825" name="DisablingCountdownReleasesItsHoldAndCannotStartLater" fullname="TumbangPreso.PlayTests.MatchStartContractTests.DisablingCountdownReleasesItsHoldAndCannotStartLater" methodname="DisablingCountdownReleasesItsHoldAndCannotStartLater" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" seed="1176540524" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:23Z" duration="0.039198" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1824" name="FiveSecondCountdownHoldsGameplayStartsOnceAndReleases" fullname="TumbangPreso.PlayTests.MatchStartContractTests.FiveSecondCountdownHoldsGameplayStartsOnceAndReleases" methodname="FiveSecondCountdownHoldsGameplayStartsOnceAndReleases" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" seed="545160344" result="Passed" start-time="2026-10-03 14:17:23Z" end-time="2026-10-03 14:17:29Z" duration="5.540356" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="15000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1827" name="FourArrivalPosesDifferAndClearWithoutMovingThePhysicalRoot" fullname="TumbangPreso.PlayTests.MatchStartContractTests.FourArrivalPosesDifferAndClearWithoutMovingThePhysicalRoot" methodname="FourArrivalPosesDifferAndClearWithoutMovingThePhysicalRoot" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" seed="1347129786" result="Passed" start-time="2026-10-03 14:17:29Z" end-time="2026-10-03 14:17:29Z" duration="0.295379" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1826" name="LegacyManualRuleCannotShowAnotherReadyPrompt" fullname="TumbangPreso.PlayTests.MatchStartContractTests.LegacyManualRuleCannotShowAnotherReadyPrompt" methodname="LegacyManualRuleCannotShowAnotherReadyPrompt" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" seed="1377162567" result="Passed" start-time="2026-10-03 14:17:29Z" end-time="2026-10-03 14:17:29Z" duration="0.056132" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1822" name="MapVotingIsOptionalAndSurvivesCloningAndWireReplication" fullname="TumbangPreso.PlayTests.MatchStartContractTests.MapVotingIsOptionalAndSurvivesCloningAndWireReplication" methodname="MapVotingIsOptionalAndSurvivesCloningAndWireReplication" classname="TumbangPreso.PlayTests.MatchStartContractTests" runstate="Runnable" seed="1799556854" result="Passed" start-time="2026-10-03 14:17:29Z" end-time="2026-10-03 14:17:29Z" duration="0.033985" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2177" name="ReadyGateNetworkTests" fullname="TumbangPreso.PlayTests.ReadyGateNetworkTests" classname="TumbangPreso.PlayTests.ReadyGateNetworkTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 14:17:29Z" end-time="2026-10-03 14:17:35Z" duration="5.763749" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2181" name="BufferObserverMirrorsTallyAndAcknowledgementWithoutRoundEvents" fullname="TumbangPreso.PlayTests.ReadyGateNetworkTests.BufferObserverMirrorsTallyAndAcknowledgementWithoutRoundEvents" methodname="BufferObserverMirrorsTallyAndAcknowledgementWithoutRoundEvents" classname="TumbangPreso.PlayTests.ReadyGateNetworkTests" runstate="Runnable" seed="1749401136" result="Passed" start-time="2026-10-03 14:17:29Z" end-time="2026-10-03 14:17:29Z" duration="0.041026" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2180" name="BufferVotesAcceptSeatedClientsAndRejectOldBreaks" fullname="TumbangPreso.PlayTests.ReadyGateNetworkTests.BufferVotesAcceptSeatedClientsAndRejectOldBreaks" methodname="BufferVotesAcceptSeatedClientsAndRejectOldBreaks" classname="TumbangPreso.PlayTests.ReadyGateNetworkTests" runstate="Runnable" seed="1945629873" result="Passed" start-time="2026-10-03 14:17:29Z" end-time="2026-10-03 14:17:29Z" duration="0.041755" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2182" name="ReadyVotesRequireCurrentMatchSeatedSendersAndLoadedHost" fullname="TumbangPreso.PlayTests.ReadyGateNetworkTests.ReadyVotesRequireCurrentMatchSeatedSendersAndLoadedHost" methodname="ReadyVotesRequireCurrentMatchSeatedSendersAndLoadedHost" classname="TumbangPreso.PlayTests.ReadyGateNetworkTests" runstate="Runnable" seed="1684572806" result="Passed" start-time="2026-10-03 14:17:29Z" end-time="2026-10-03 14:17:29Z" duration="0.041041" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetReady] peer 1 seat 1 ready=True -> 1 of 1
+]]></output>
+            </test-case>
+            <test-case id="2178" name="RematchRotatesWorldIdentityOnceAndRejectsOldAnnouncements" fullname="TumbangPreso.PlayTests.ReadyGateNetworkTests.RematchRotatesWorldIdentityOnceAndRejectsOldAnnouncements" methodname="RematchRotatesWorldIdentityOnceAndRejectsOldAnnouncements" classname="TumbangPreso.PlayTests.ReadyGateNetworkTests" runstate="Runnable" seed="1368552928" result="Passed" start-time="2026-10-03 14:17:29Z" end-time="2026-10-03 14:17:30Z" duration="0.041608" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2179" name="RematchVotesRequireCurrentMembershipAndAcknowledgeTheLocalSeat" fullname="TumbangPreso.PlayTests.ReadyGateNetworkTests.RematchVotesRequireCurrentMembershipAndAcknowledgeTheLocalSeat" methodname="RematchVotesRequireCurrentMembershipAndAcknowledgeTheLocalSeat" classname="TumbangPreso.PlayTests.ReadyGateNetworkTests" runstate="Runnable" seed="1799684157" result="Passed" start-time="2026-10-03 14:17:30Z" end-time="2026-10-03 14:17:30Z" duration="0.055205" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2183" name="ScopedCountdownRejectsOldWorldAndRemainsConsumedAfterCompletion" fullname="TumbangPreso.PlayTests.ReadyGateNetworkTests.ScopedCountdownRejectsOldWorldAndRemainsConsumedAfterCompletion" methodname="ScopedCountdownRejectsOldWorldAndRemainsConsumedAfterCompletion" classname="TumbangPreso.PlayTests.ReadyGateNetworkTests" runstate="Runnable" seed="1119278215" result="Passed" start-time="2026-10-03 14:17:30Z" end-time="2026-10-03 14:17:35Z" duration="5.539479" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
