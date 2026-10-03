@@ -223,6 +223,13 @@ namespace TumbangPreso
 
         internal void CancelPendingInput() => RetireProducerInput(true);
 
+        internal void RetireThrowInput(bool clearReceivedPresentation)
+        {
+            bool clearTell = clearReceivedPresentation || _observedChargeFromInput;
+            RetireLocalCharge(clearReceivedPresentation);
+            if (clearTell) ApplyObservedCharge(false);
+        }
+
         internal void RetireProducerInput(bool clearReceivedPresentation)
         {
             if (_channel > 0.0f) ReportResetPhase(Net.MatchRpc.ResetPhase.Cancel);

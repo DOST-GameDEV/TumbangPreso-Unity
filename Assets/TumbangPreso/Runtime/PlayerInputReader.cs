@@ -89,6 +89,33 @@ namespace TumbangPreso
         [SerializeField] private Camera _aimCamera;
 
         private InputAction _move, _sprint, _jump, _special, _grab, _lunge, _emote, _skill1, _skill2, _ultimate, _interact;
+        private InputDevice _throwDevice, _lungeDevice;
+        private bool _throwDeviceLost, _lungeDeviceLost;
+
+        private void OnEnable() => InputSystem.onDeviceChange += DeviceChanged;
+
+        private void DeviceChanged(InputDevice device, InputDeviceChange change)
+        {
+            if (change != InputDeviceChange.Removed && change != InputDeviceChange.Disconnected
+                && change != InputDeviceChange.Disabled && change != InputDeviceChange.SoftReset
+                && change != InputDeviceChange.HardReset) return;
+            if (_throwDevice == device) _throwDeviceLost = true;
+            if (_lungeDevice == device) _lungeDeviceLost = true;
+        }
+
+        private void ReconcileDeviceInput()
+        {
+            // Check aggregate input after the Input System update, when surviving
+            // bindings have been resolved. Never read a removed device's controls.
+            bool ownsSeat = !NetAuthority.IsNetworked || _motor.PlayerSlot == NetAuthority.LocalSlot;
+            if (_throwDeviceLost && !RawButton(_special, Verb.SpecialAbility))
+                _motor.GetComponent<Carrier>()?.RetireThrowInput(ownsSeat);
+            if (_lungeDeviceLost && !RawButton(_lunge, Verb.Lunge))
+                _motor.GetComponent<CombatVerbs>()?.RetireProducerInput(ownsSeat);
+            _throwDeviceLost = _lungeDeviceLost = false;
+            _throwDevice = _special != null && _special.IsPressed() ? _special.activeControl?.device : null;
+            _lungeDevice = _lunge != null && _lunge.IsPressed() ? _lunge.activeControl?.device : null;
+        }
 
         /// <summary>
         /// The pektus curve, left and right.
@@ -196,6 +223,11 @@ namespace TumbangPreso
             // rather than throwing on every seat in every match.
             _look = map.FindAction("Look", false);
 
+            // Button bindings otherwise lose their held phase during a device
+            // re-resolution until another hardware event arrives.
+            _special.wantsInitialStateCheck = true;
+            _lunge.wantsInitialStateCheck = true;
+
             map.Enable();
         }
 
@@ -213,6 +245,7 @@ namespace TumbangPreso
             // sampling twice in a frame is harmless but it hides which one is the real one.
 
             if (_motor == null) return;
+            ReconcileDeviceInput();
 
             bool loading = UI.Hub.HubLoading.Visible;
             bool typing = UI.LobbyChat.AnyTyping;
@@ -505,6 +538,9 @@ namespace TumbangPreso
 
         private void OnDisable()
         {
+            InputSystem.onDeviceChange -= DeviceChanged;
+            _throwDevice = _lungeDevice = null;
+            _throwDeviceLost = _lungeDeviceLost = false;
             CancelPendingInput();
             _readyUseHeld = false;
             _readyInteractHeld = false;
