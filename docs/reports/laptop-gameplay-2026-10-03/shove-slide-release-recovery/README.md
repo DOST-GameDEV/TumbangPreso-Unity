@@ -39,3 +39,10 @@ physical operator input, full match play or current packaged-player acceptance.
 The fabricated unheld buffered-lunge hypothesis was rejected: shipping producers
 supply held input, and the existing unheld dispatch behavior is preserved.
 Frozen1003g134 and earlier broad61 evidence do not qualify this newer source.
+
+Committed canonical CombatVerbs SHA256 is
+0d93959e5510cd7ddb886fd642bb59220b10b57a8d4df6b295c7d654af7fb9b4.
+It equals the checked603983 working file afterCRLF normalization. Publication
+also normally integrates the separately checked Carrier role cleanup and incoming
+PC lobby protocol140. This reuses the focused source proof without claiming a new
+whole-integration, wire or packaged-player pass.
