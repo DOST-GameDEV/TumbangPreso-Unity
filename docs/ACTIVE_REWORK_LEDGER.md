@@ -101,16 +101,33 @@ reviewer active incoming laptophero/highlight/operator integration review. Don't
 leave them idle after batches or give speculative scans; concrete useful tasks.
 Read-only release logs paths given worker; no unchanged freeze-player retry.
 
-LAN pair is not active. Older1003e artifact is source14dfe9e41, protocol134,
-recording13,258files/2551734579bytes. Runtime501f0a02db575003c48910f08bdd0221810031c4d30aaf499f4727bbeca0c806.
-PC192.168.1.7 and laptop192.168.1.144. Prior paired launch attempts failed
-scheduling, not network behavior. Task-owned transfer server is stopped. Agree
-current tasks, same artifact, profiles/ports and actual availability before pair;
-confirm host listening before client. Existing online setup only; ask before
-paid services or extra credits. Goal ACTIVE, full competition readiness open.
+FIRST PC/laptop LAN pair now PASS on old1003e, actual normal admission/ready/
+natural Hero1/30 end. PC host05session69071 and laptopclient05session24585 both
+terminal exit0, noerrors, ownhistory/queue/witness1, twohumanorigins/clearedmarker,
+allseeds/input/runtime restored andleasefree. Same matchIdSHA
+3d6b47a6df93c82259fc211d5290c3493cf1ea560ea2f6f8dd2d588f7f3770eb,
+scores130/0/0/150. Root rawhostreport stored reports/reliability-2026-10-03/
+two-machine-lan; laptop publishing rawclient. Old source14dfe9e41/proto134 only,
+NOT currentfix/physicalinput/recovery/Frozen/Relay/WAN qualification.
+Networkpriority was honored by pausing1003g build and both checkpointing units.
+Nowresume source/build, heavy slotsfree. No second unchanged oldpair required.
 
-Continue implementation through passing tests, pushes, progress reports and
-compaction. Keep this checkpoint concise and record exact next command/jobs.
+Ice admission5 now qualified diagnostic setup: original2causal3controls,
+firstcandidate5/5, staticPASS. Wrong rootprep path+zero-testfirstXML retainedINVALID,
+onehelperpathrepair. Source/clientactor admission remains actualpeer gate. Frozen
+inputs in Logs/net-ice-admission-role1003 and releaseLogs/.../ice-admission.
+Root current64unique native cases include5diagnostic cases; no whole-readiness.
+Rootmodifiedrun_lan_peer onlyaddsvalidated64hex runtime-sha256 pin argument for
+nextsharedartifact; defaultoldpin/assertions/cleanup unchanged, syntaxchecked.
+
+Next publish checkedice/helper/hostreceipt, normalmergeincoming54c laptopbranch
+withoutdiscardingprivatework. Build1003g canpin7501+thischeckedprobe asagreed,
+thenoneexplicit internalWindowsbuild/immutablemanifest. Cachecopycomplete,
+no1003gUnityyet. Existingoldpairedartifactremainsunchanged. Workeractive disjoint
+spectator/controltransfer lifecycle investigation (announceexactpaths beforeedit),
+revieweractive newlaptoppossession/pickup/chat/pause source andrunnerhasharg review.
+Laptopresumes owncheckedsource54c0e and nextgameplay units; pause/source work
+checkpointed. Sharedlatestdirectives remain docs/COMPETITION_COORDINATION.md.
 
 ## Freeze peer gate: stop unchanged retries
 

@@ -32,23 +32,31 @@ def main():
     parser.add_argument('--port', type=int, default=49153)
     parser.add_argument('--seconds', type=int, required=True)
     parser.add_argument('--wait-seconds', type=int, default=0)
+    parser.add_argument('--runtime-sha256', default='501f0a02db575003c48910f08bdd0221810031c4d30aaf499f4727bbeca0c806',
+                        help='Pinned Runtime hash from the checked shared artifact receipt')
     args = parser.parse_args()
     if not 1 <= args.port < 65535 or not 90 <= args.seconds <= 240 or not 0 <= args.wait_seconds <= 600:
         parser.error('Require port1..65534,90..240 seconds and0..600 pool wait seconds.')
     exe = args.exe.resolve(); out = args.out.resolve()
     runtime = exe.parent / (exe.stem + '_Data/Managed/TumbangPreso.Runtime.dll')
     sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
-    expected = '501f0a02db575003c48910f08bdd0221810031c4d30aaf499f4727bbeca0c806'
+    expected = args.runtime_sha256.lower()
+    if re.fullmatch(r'[0-9a-f]{64}', expected) is None:
+        parser.error('Require the checked artifact Runtime SHA256.')
     if sha(runtime) != expected:
-        raise RuntimeError('This bounded case requires the verified1003e Runtime.')
+        raise RuntimeError('Runtime does not match the pinned shared artifact.')
     arrival.validate_rules(exe.parent / (exe.stem + '_Data/Managed/TumbangPreso.Core.dll'))
+    identity_path = exe.parent / (exe.stem + '_Data/StreamingAssets/build-identity.json')
+    source_commit = json.loads(identity_path.read_text(encoding='utf-8-sig')).get('sha', 'unknown')
+    if re.fullmatch(r'[0-9a-fA-F]{40}', source_commit) is None:
+        source_commit = 'unknown'
     out.mkdir(parents=True, exist_ok=False)
     profile = guard.player_profile() / 'profiles' / hashlib.sha256(args.profile.encode()).hexdigest()
     if profile.exists():
         raise RuntimeError('Require a fresh task-owned profile, never replace an existing one.')
     port = args.port if args.role == 'host' else args.port + 1
     claim = jobs.make_claim(ROOT, 'gpu', 1536, 1024, args.profile, [port], [])
-    result = dict(passed=False, role=args.role, sourceCommit='14dfe9e416f5a98698844d9da34ab3c34b849a17',
+    result = dict(passed=False, role=args.role, sourceCommit=source_commit,
                   protocol=134, runtimeSha256=expected, exeSha256=sha(exe),
                   coreSha256=sha(runtime.with_name('TumbangPreso.Core.dll')),
                   scope='Normal LAN lobby, ready, natural Hero1/30 completion and own saved career; no physical-input or current source-fix acceptance.')

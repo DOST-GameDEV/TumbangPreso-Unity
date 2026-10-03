@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 06:09:22Z" end-time="2026-10-03 06:09:22Z" duration="0.2343553">
+  <test-suite type="TestSuite" id="2717" name="TumpWorker-qa-c-dddaa72bc5b9" fullname="TumpWorker-qa-c-dddaa72bc5b9" runstate="Runnable" testcasecount="1397" result="Failed" site="Child" start-time="2026-10-03 06:09:22Z" end-time="2026-10-03 06:09:22Z" duration="0.234355" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2711" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-c/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1397" result="Failed" site="Child" start-time="2026-10-03 06:09:22Z" end-time="2026-10-03 06:09:22Z" duration="0.224349" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="6660" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2712" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1397" result="Failed" site="Child" start-time="2026-10-03 06:09:22Z" end-time="2026-10-03 06:09:22Z" duration="0.218927" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2713" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1397" result="Failed" site="Child" start-time="2026-10-03 06:09:22Z" end-time="2026-10-03 06:09:22Z" duration="0.215197" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1197" name="CarrierPickupPressLifetimeTests" fullname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests" classname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-03 06:09:22Z" end-time="2026-10-03 06:09:22Z" duration="0.190598" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1200" name="ARefusedPickupDoesNotConsumeThePressBeforeAnEligibleTargetArrives" fullname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests.ARefusedPickupDoesNotConsumeThePressBeforeAnEligibleTargetArrives" methodname="ARefusedPickupDoesNotConsumeThePressBeforeAnEligibleTargetArrives" classname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests" runstate="Runnable" seed="446724836" result="Passed" start-time="2026-10-03 06:09:22Z" end-time="2026-10-03 06:09:22Z" duration="0.088697" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1199" name="AReleaseAndFreshPressCanRetrieveTheDisarmedShoe" fullname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests.AReleaseAndFreshPressCanRetrieveTheDisarmedShoe" methodname="AReleaseAndFreshPressCanRetrieveTheDisarmedShoe" classname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests" runstate="Runnable" seed="1590365715" result="Passed" start-time="2026-10-03 06:09:22Z" end-time="2026-10-03 06:09:22Z" duration="0.039244" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1198" name="ASuccessfulPickupCannotReuseItsPressAfterSameFrameHandLoss" fullname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests.ASuccessfulPickupCannotReuseItsPressAfterSameFrameHandLoss" methodname="ASuccessfulPickupCannotReuseItsPressAfterSameFrameHandLoss" classname="TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests" runstate="Runnable" seed="1660373551" result="Failed" start-time="2026-10-03 06:09:22Z" end-time="2026-10-03 06:09:22Z" duration="0.047372" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  One successful pickup edge was reused after synchronous hand loss.
+  Expected: null
+  But was:  <Pickup press owned shoe (TumbangPreso.Slipper)>
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CarrierPickupPressLifetimeTests.ASuccessfulPickupCannotReuseItsPressAfterSameFrameHandLoss () [0x0000c] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-c\Assets\TumbangPreso\Tests\PlayMode\CarrierPickupPressLifetimeTests.cs:70
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-c-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

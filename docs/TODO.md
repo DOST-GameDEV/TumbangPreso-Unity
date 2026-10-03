@@ -26,6 +26,18 @@ Nothing was deleted or renumbered.
 - [ ] Remove Frozen/Stunned action bar while preserving status indicators.
 - [ ] Unique tutorial attacker characters and no tutorial AI ultimates.
 
+### TWO-MACHINE-NETWORK-1003: paired baseline complete, new source and online open
+
+- [x] PC/laptop1003e normal LAN Hero1/30: actual join/ready/natural end, same
+  record/scores and both own saved histories/queues, normal exits/restoration.
+  [Evidence](reports/reliability-2026-10-03/two-machine-lan/README.md).
+- [x] Ice probe waits for intended client admission instead of consuming its
+  pick at temporary seat0. Native original2causal/3control, candidate5/5.
+  [Scope](reports/reliability-2026-10-03/ice-admission-role/README.md).
+- [ ] Shared new1003g build and matching-source peer checks; actual Frozen
+  effects and online/Relay remain separate. Resume paused build after priority
+  pair, do not repeat the unchanged baseline merely to produce more activity.
+
 ### SPECTATOR-MATCH-LIFETIME-1003: retire old footage and markers
 
 - [x] Local starts advance identity despite clock resolution/backsteps; native3
