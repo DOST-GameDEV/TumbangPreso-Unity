@@ -1,4 +1,1 @@
-*.xml -text -whitespace
-*.json -text whitespace=cr-at-eol
-*.asset -text whitespace=cr-at-eol
-*.png -text
+*.fixture -text -whitespace

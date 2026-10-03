@@ -52,9 +52,17 @@ Nothing was deleted or renumbered.
   releases the clock and returns to first-person view. Native1/1;17 camera
   images retained, hashes inspected. Overlay UI and perceived motion remain
   unqualified. [Evidence](reports/laptop-validation-2026-10-04/fullcourt-hero-arrival/README.md).
-- [ ] Reduced/OFF, Classic, interruption and all-map visual acceptance plus
-  current144 packaged players and matching peers. First pre-pan camera-only
-  obstruction needs phase/overlay evidence before a visible-defect claim.
+- [x] Actual144 Hero route with camera movement OFF preserves the saved
+  pose/rotation/FOV through >10 late-frame observations, reaches GO and releases
+  the clock. Native1/1;17 phase/image pairs verified. Exact mixed-line-ending
+  tested fixture retained and root verified its full normalized code equality.
+  [Evidence](reports/laptop-validation-2026-10-04/fullroute-camera-motion-off/README.md).
+- [x] One actual144 Classic/reduced-motion scene-leave case resumes cleanup;
+  native1/1 with terminal/restored/free guard. Controlled arm tangent import
+  deltas retained. [Evidence](reports/laptop-validation-2026-10-04/classic-reduced-leave/README.md).
+- [ ] All-map composition, full Classic gameplay, actual overlay/motion review
+  and current144 packaged players/matching peers. Phase metadata places the
+  first camera-only obstruction during prewarming; overlay pixels remain unseen.
 
 ### ARRIVAL-CAMERA-CLEARANCE-1004: near walls cannot push the eye beyond collision
 
