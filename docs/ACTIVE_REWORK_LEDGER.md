@@ -1,6 +1,44 @@
 # Active Rework Checkpoint
 
-## LIVE OWNER PAN VALIDATION: laptop full-court graphics launched
+## Resume first: full-court arrival finished, protocol144 integration now current
+
+PC source checkout is tump-competition-candidate1003i at b257493950a2630d59ff879f1ed09b1c758f0084.
+It is clean after a normal fast-forward. Preserve the dirty Main checkout and
+Claude's Amihan work. PC Unity remains reserved; no PC Editor/player was launched.
+No subagents, resets, paid services or duplicate heavy jobs.
+
+Laptop wrapper29765 is CLOSED. Actual Hero/custom-host-selected Eskinita route
+on source1c18/protocol143 passed1/1 in20.2427032s. Guard exit0, terminal,
+profile/preferences restored and lease free. Root independently parsed XML and
+receipt and verified all17 PNG hashes/byte counts; viewed pre-pan, greeting and
+settled first-person return. Raw proof140fec2bb is published under
+reports/laptop-validation-2026-10-04/fullcourt-hero-arrival.
+
+The first camera-only image is obstructed before the pan is known to run.
+Loading/caption overlays are omitted by Camera.Render, so player-visible failure
+is unproven. Do not patch camera/geometry or rerun the same route merely for this
+image. The next visual question needs actual phase/overlay evidence. All runtime,
+editor, test and package source stayed unchanged;206 importer/settings deltas
+were retained. This is controlled-import evidence, not immutable-assets proof.
+
+New owner action-timing sourcee17c86ae7 is integrated: protocol144, revised
+contact recovery and no retrieval slide. Its25/25 native and709/709 managed
+results are separate from the earlier143 arrival route. Matching144 packaged
+players/live peers and physical input remain open. No stale143 build qualifies
+the new combat revision. Laptop reports its next separate Classic/reduced-motion
+and leave-recovery route; no duplicate PC job.
+
+Root independently inspected replay sound-budget XML/receipts and baseline to
+candidate maps: corrected original2 failures/4 controls -> candidate6/6, only
+RecordedMatchClip and MatchReplayArchive changed, all guards restored/free.
+Actual capture/playback/audio/player/peer acceptance remains separate.
+
+NEXT: inspect current144 combat request/recovery and interruption source for a
+concrete uncovered defect while the separate laptop route runs. Preserve exact
+source ownership; do not contact other chats under the latest supplied user-wide
+instructions. Continue useful local source work after owner status questions.
+
+## Historical job launch, superseded by the terminal result above
 
 Laptop reported fresh6.57GiB RAM, above5120+1024MiB admission. ONE wrapper
 session29765 running run_arrival_pan_full.py on source1c18b88e4/protocol143,
