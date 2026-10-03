@@ -621,3 +621,31 @@ logo capture inspected against the authored reveal. Normal exit/input restoratio
 Runtime immutability pass. Linked in startup report/TODO. Separate Linux copied-
 cache failure remains; no Windows physical-device skip matrix or recovery-peer
 claim. User asleep; Feedback note updated, routine chat held. No root native job.
+
+## Cloud continuation: Continental Drift fracture art, October 3
+
+DANTE-DRIFT-FRACTURES-1003 scopes only the dated plan's visual/test/docs paths.
+Published Bastion motion review is delivered. Current Feedback reread shows no
+new actionable text. Native cloud recovery is complete on isolated f9552d58a;
+.NET smoke checks pass 8/8 and native role-change cases pass 2/2. The first import
+crossed the disk guard before orderly exit; duplicate test-only reference files
+were excluded afterward. See reports/cloud-recovery-2026-10-03/README.md. During import, the existing court/reference frames were inspected
+and the next fracture-only unit planned. Production art remains unchanged.
+See reports/dante-drift-fractures-2026-10-03/plan.md. Preserve every other lane.
+
+Cloud Dante fracture implementation is locally qualified: original5-shape check
+fails at1; candidate distinct geometry and cleanup pass; visible-state rewind
+recheck passes after one retained fixture correction. Final darker-basalt Low
+court case passes11.903s,37frames,5.035GB peak, no guard. Observer/four-wave
+views inspected; in-eye witness shots rejected, no owner-view claim. No active
+Editor. Publication remains blocked by absent native gh login and connector
+write403; remote source remains intact. See dated README. Preserve local commits
+and deliver the observer review while resolving authorized publication access.
+
+Cloud publication03:45UTC: GitHub CLI restored with explicit owner approval,
+fetch confirmed no incoming work, and exact remote4da1fb624a7b77619f8b89ea4229e86c0d3bfb03
+verified. Recovery and fracture commits are published; main clean, no active
+Editor. Next source question: Dante's3.8s intro shows a stamp at3.18s, then the
+real0.4s warning starts its separate fissure-slam from rest. Inspect accepted
+shared handoff through real CameraRig before treating this as a double-hit
+presentation defect. Offline pose sketch inspected; no new behavior change yet.
