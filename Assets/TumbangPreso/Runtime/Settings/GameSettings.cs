@@ -235,6 +235,8 @@ namespace TumbangPreso.Settings
         public float SfxVolume = DefaultVolume;
         public float MusicVolume = DefaultVolume;
         public float AnnouncerVolume = DefaultVolume;
+        /// <summary>Slider position for ambient beds (street, lagoon, sidewalk life, trains).</summary>
+        public float AmbienceVolume = DefaultVolume;
 
         public const float DefaultVolume = 0.8f;
 
@@ -285,6 +287,9 @@ namespace TumbangPreso.Settings
         /// <summary>The music bed's amplitude, on the same rule as <see cref="SfxGain"/>.</summary>
         public float MusicGain => Gain(MusicVolume) * Gain(MasterVolume);
         public float AnnouncerGain => Gain(AnnouncerVolume) * Gain(MasterVolume);
+        /// <summary>Voice over is the announcer and hero voice bus; this is its readable name.</summary>
+        public float VoiceOverGain => AnnouncerGain;
+        public float AmbienceGain => Gain(AmbienceVolume) * Gain(MasterVolume);
 
         // -------------------------------------------------------------------
         // CAMERA
@@ -661,6 +666,7 @@ namespace TumbangPreso.Settings
             SfxVolume = Mathf.Clamp01(SfxVolume);
             MusicVolume = Mathf.Clamp01(MusicVolume);
             AnnouncerVolume = Mathf.Clamp01(AnnouncerVolume);
+            AmbienceVolume = Mathf.Clamp01(AmbienceVolume);
             CameraShake = Mathf.Clamp01(CameraShake);
             FlashIntensity = Mathf.Clamp01(FlashIntensity);
             MouseSensitivity = Mathf.Clamp(MouseSensitivity, 0.1f, 5.0f);

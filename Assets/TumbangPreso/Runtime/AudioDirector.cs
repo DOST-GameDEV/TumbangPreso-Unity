@@ -324,6 +324,9 @@ namespace TumbangPreso
         /// <summary>The player's SFX slider, for a caller driving its own source.</summary>
         public float SfxVolume => SfxScale();
 
+        /// <summary>The player's Ambience slider under Master, for ambient beds driving their own sources.</summary>
+        public float AmbienceVolume => Settings.SettingsStore.Current.AmbienceGain;
+
         /// <summary>
         /// Plays a world cue with a small pitch window. Repeated slippers, footsteps and
         /// impacts otherwise expose that they are the exact same recording within seconds.
