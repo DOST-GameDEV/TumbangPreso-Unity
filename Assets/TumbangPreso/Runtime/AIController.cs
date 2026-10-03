@@ -5383,18 +5383,23 @@ namespace TumbangPreso
             // holding Skill2 to come home: wiping it because NEMU'S BODY got stunned would strand
             // the player inside the pet with no way back, which is the same fault
             // `AbilitiesEnabled` exists for, reached through the stun branch instead.
+            // A bot's decision to stop is its real button release. Clear() alone
+            // empties held input but deliberately preserves the human release gate
+            // installed by an ultimate. A defender then holds Grab forever while
+            // resetting the can, so that gate can never rearm without Set(false).
+            intent.Move = Vector2.zero;
+            Press(intent, Verb.Sprint, false);
+            Press(intent, Verb.Jump, false);
+            Press(intent, Verb.Grab, false);
+            Press(intent, Verb.Lunge, false);
+            Press(intent, Verb.SpecialAbility, false);
+            Press(intent, Verb.Interact, false);
             if (AbilitiesEnabled)
             {
+                Press(intent, Verb.Skill1, false);
+                Press(intent, Verb.Skill2, false);
+                Press(intent, Verb.Ultimate, false);
                 intent.Clear();
-            }
-            else
-            {
-                intent.Move = Vector2.zero;
-                Press(intent, Verb.Sprint, false);
-                Press(intent, Verb.Jump, false);
-                Press(intent, Verb.Grab, false);
-                Press(intent, Verb.Lunge, false);
-                Press(intent, Verb.SpecialAbility, false);
             }
 
             _pressed.Clear();

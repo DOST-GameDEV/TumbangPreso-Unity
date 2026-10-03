@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 11:02:02Z" end-time="2026-10-03 11:02:08Z" duration="5.1472745">
+  <test-suite type="TestSuite" id="2744" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1418" result="Passed" start-time="2026-10-03 11:02:02Z" end-time="2026-10-03 11:02:08Z" duration="5.147275" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2738" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1418" result="Passed" start-time="2026-10-03 11:02:02Z" end-time="2026-10-03 11:02:08Z" duration="5.137249" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="85492" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2739" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1418" result="Passed" start-time="2026-10-03 11:02:02Z" end-time="2026-10-03 11:02:08Z" duration="5.133495" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2740" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1418" result="Passed" start-time="2026-10-03 11:02:02Z" end-time="2026-10-03 11:02:08Z" duration="5.130139" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1400" name="DefenderUltimateResetRecoveryTests" fullname="TumbangPreso.PlayTests.DefenderUltimateResetRecoveryTests" classname="TumbangPreso.PlayTests.DefenderUltimateResetRecoveryTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-03 11:02:02Z" end-time="2026-10-03 11:02:08Z" duration="5.105111" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1401" name="DefenderFinishesItsResetAndMovesAfterAnAcceptedUltimate" fullname="TumbangPreso.PlayTests.DefenderUltimateResetRecoveryTests.DefenderFinishesItsResetAndMovesAfterAnAcceptedUltimate" methodname="DefenderFinishesItsResetAndMovesAfterAnAcceptedUltimate" classname="TumbangPreso.PlayTests.DefenderUltimateResetRecoveryTests" runstate="Runnable" seed="729101409" result="Passed" start-time="2026-10-03 11:02:02Z" end-time="2026-10-03 11:02:08Z" duration="5.093886" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="45000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
