@@ -149,6 +149,40 @@ namespace TumbangPreso.PlayTests
             Assert.IsEmpty(SeanCinderGate.Active,"Round retirement must remove the live field.");
             Assert.IsTrue(gate==null||!gate.gameObject.activeInHierarchy);
         }
+        [UnityTest] public IEnumerator CinderVisualKeepsBoundaryAndDeterministicRetirement()
+        {
+            var root=new GameObject("Cinder visual contract");
+            var state=new WorldEffectSnapshot.Field {Type=WorldEffectSnapshot.Kind.CinderGate,
+                Owner=0,EventId=1,Position=Vector3.zero,Forward=Vector3.forward,
+                Radius=SeanGateRules.HalfWidth,Duration=SeanGateRules.TotalSeconds,
+                Remaining=SeanGateRules.TotalSeconds,Path=System.Array.Empty<Vector3>()};
+            try
+            {
+                var view=SeanCinderVisual.Build(root.transform,state);
+                var renderers=view.GetComponentsInChildren<Renderer>();
+                Assert.AreEqual(5,renderers.Length,"Keep the same bounded five-renderer footprint.");
+                Assert.IsEmpty(root.GetComponentsInChildren<Collider>());
+                var seam=view.transform.Find("Charcoal footprint");
+                var mesh=seam.GetComponent<MeshFilter>().sharedMesh;
+                Assert.AreEqual(-1,mesh.bounds.min.x,.0001f);Assert.AreEqual(1,mesh.bounds.max.x,.0001f);
+                float age=SeanGateRules.WarningSeconds+.2f;view.StepTo(age);
+                Assert.AreEqual(SeanGateRules.HalfWidth,seam.localScale.x,.0001f);
+                var teeth=Enumerable.Range(0,3).Select(i=>view.transform.Find("Cinder pressure tooth "+i)).ToArray();
+                var scales=teeth.Select(t=>t.localScale).ToArray();
+                foreach(var tooth in teeth)Assert.Greater(tooth.GetComponent<Renderer>().bounds.size.x,.06f,
+                    "Armed flames must have a readable silhouette rather than a needle-thin edge.");
+                yield return null;view.StepTo(age);
+                for(int i=0;i<teeth.Length;i++)Assert.AreEqual(scales[i],teeth[i].localScale);
+                Assert.AreSame(mesh,seam.GetComponent<MeshFilter>().sharedMesh);
+                state.Split=true;state.FirstScale=age;state.SecondScale=1;view.SetState(state);
+                view.StepTo(age+.1f);Assert.Less(Mathf.DeltaAngle(0,teeth[1].localEulerAngles.x),0);
+                view.StepTo(age+.2f);var block=new MaterialPropertyBlock();
+                foreach(var renderer in renderers){renderer.GetPropertyBlock(block);Assert.Zero(block.GetColor("_Color").a);}
+                Assert.IsEmpty(root.GetComponentsInChildren<SeanCinderGate>());
+            }
+            finally{Object.Destroy(root);}
+        }
+
         [UnityTest,Timeout(180000)] public IEnumerator ActualCastShowsAuthoredBodyAndFieldWithoutReplayGameplay()
         {
             yield return Start();var caster=GameServices.Round.Players.First(p=>p.IsDefender);
