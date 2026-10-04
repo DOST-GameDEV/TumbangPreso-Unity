@@ -596,13 +596,19 @@ namespace TumbangPreso.EditorTools.MapKit
             var go = new GameObject("LrtTrainSystem");
             go.transform.SetParent(Group(dressing, "Tulay"), false);
             float trackX = -g.trackX;
-            go.transform.position = new Vector3(trackX, g.railHead, -48f);
+            // The stations stand at z +/-94.03..185.2 (author_ilalim_stations.py): the consist waits
+            // at a platform's middle and shuttles between the two (LrtTrainFlyby.Shuttle).
+            const float stationZ = 139.6f;
+            go.transform.position = new Vector3(Mathf.Abs(trackX), g.railHead, -stationZ);
             var flyby = go.AddComponent<LrtTrainFlyby>();
             flyby.TrackX = trackX;
             flyby.TrackY = g.railHead;
             flyby.Speed = 18f;
             flyby.Interval = 150f;
             flyby.InitialDelay = 6f;
+            flyby.Shuttle = true;
+            flyby.StartZ = -stationZ;
+            flyby.EndZ = stationZ;
             flyby.OverheadHalfZ = g.wallZ + IlalimNgTulayBuilder.TrainConsistHalfLength;
             AirborneByDesign.Attach(go, $"The LRT-1 consist on the westbound rail head at y = {g.railHead:F3}; " +
                                         "the Blender train's origin is on the rail head and its wheels sit 5 mm into the rail.");

@@ -93,6 +93,36 @@ namespace TumbangPreso
         /// <summary>Seconds of warning before the consist reaches the overhead window.</summary>
         public float WarningLead = 3.0f;
 
+        /// <summary>
+        /// STATION TO STATION (owner, 2026-10-04, from a jump pad: "make it so the train actually
+        /// comes from pedro gil station going to UN. when its not moving its just in the middle
+        /// of the track"). Off, the consist runs `StartZ` to `EndZ` and is put back at `StartZ`,
+        /// which on the rebuilt Ilalim left it parked on the open viaduct. On, `StartZ` and `EndZ`
+        /// are the two STATIONS: it waits inside one, eases out, crosses the court, brakes into
+        /// the other, waits there, and comes back on the other track, so it is never parked or
+        /// moved in sight. `_currentZ` is then the distance along the run and the world z is
+        /// `_dir * _currentZ`; trains keep right, so the run toward +z is on x = +|TrackX|.
+        /// </summary>
+        public bool Shuttle;
+
+        /// <summary>Metres over which a shuttle run gathers speed out of a station and sheds it
+        /// into the next.</summary>
+        public float StationEase = 45.0f;
+
+        /// <summary>Half-length of the stretch round the court where the pass sounds. 48 keeps
+        /// the recording's arithmetic (§ THE PASS): its peak lands with the consist overhead.</summary>
+        public float SoundHalfZ = 48.0f;
+
+        private int _dir = 1;
+        private float RunX => Shuttle ? _dir * Mathf.Abs(TrackX) : TrackX;
+        private Vector3 RunPosition(float along) => new Vector3(RunX, TrackY, Shuttle ? _dir * along : along);
+
+        private void Place(float along)
+        {
+            transform.position = RunPosition(along);
+            if (Shuttle) transform.rotation = Quaternion.Euler(0.0f, _dir > 0 ? 0.0f : 180.0f, 0.0f);
+        }
+
         private float _timer;
         private bool _isRunning;
         private float _currentZ;
@@ -119,7 +149,7 @@ namespace TumbangPreso
             if (_trollClip != null) { Interval = TrollInterval; InitialDelay = Mathf.Min(InitialDelay, 4.0f); }
             _timer = Interval - InitialDelay;
             _isRunning = false;
-            transform.position = new Vector3(TrackX, TrackY, StartZ);
+            Place(StartZ);
             OverheadPassWindow.Clear();
         }
 
@@ -149,8 +179,16 @@ namespace TumbangPreso
                 return;
             }
 
-            _currentZ += Speed * Time.deltaTime;
-            transform.position = new Vector3(TrackX, TrackY, _currentZ);
+            float speed = Speed;
+            if (Shuttle)
+            {
+                // Out of one station and into the next: a quarter speed at the platform, full
+                // speed `StationEase` metres out. Never zero, or it would not leave.
+                float fromEnds = Mathf.Min(_currentZ - StartZ, EndZ - _currentZ);
+                speed *= Mathf.Lerp(0.25f, 1.0f, Mathf.Clamp01(fromEnds / Mathf.Max(1.0f, StationEase)));
+            }
+            _currentZ += speed * Time.deltaTime;
+            Place(_currentZ);
 
             float warnAt = -OverheadHalfZ - Speed * WarningLead;
 
@@ -184,10 +222,13 @@ namespace TumbangPreso
             if (!_whooshPlayed && _currentZ >= -18.0f)
             {
                 _whooshPlayed = true;
-                ImpactBurst.SpawnAt(new Vector3(TrackX, TrackY - 0.5f, _currentZ));
+                ImpactBurst.SpawnAt(RunPosition(_currentZ) + Vector3.down * 0.5f);
             }
 
-            DriveRumble();
+            // A shuttle run is 280 m, most of it out of earshot: the pass (and the troll music)
+            // plays only across the court, so the clip still starts 48 m out.
+            if (!Shuttle || Mathf.Abs(_currentZ) <= SoundHalfZ) DriveRumble();
+            else if (_rumbleStarted) StopRumble();
 
             if (_currentZ < EndZ) return;
 
@@ -196,7 +237,10 @@ namespace TumbangPreso
             OverheadPassWindow.SetOverhead(false);
             OverheadPassWindow.SetWarning(false);
             StopRumble();
-            transform.position = new Vector3(TrackX, TrackY, StartZ);
+            // It has arrived in the far station: the next run starts from there, the other way,
+            // on the other track. Without Shuttle it is put back where it started.
+            if (Shuttle) _dir = -_dir;
+            Place(StartZ);
         }
 
         // ------------------------------------------------------------------ § THE PASS
