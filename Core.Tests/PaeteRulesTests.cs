@@ -18,7 +18,7 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(7.0f, PaeteRules.BreakFreeHoldSeconds);    // "hold for like 7 seconds"
             Assert.Equal(16.0f, PaeteRules.SentryCost);             // "yes" to 16
             Assert.Equal(15.0f, PaeteRules.PlantRootedSeconds);     // "invincible for the first 15 seconds"
-            Assert.InRange(PaeteRules.PlantReloadSeconds, 10.0f, 20.0f); // "a cooldown of 10-20 seconds"
+            Assert.Equal(5.0f, PaeteRules.PlantReloadSeconds); // October 4: automatic lob every five seconds.
         }
 
         [Fact]
@@ -91,7 +91,7 @@ namespace TumbangPreso.Core.Tests
             // Rooted first, then pullable, then gone on its own; never a whole round of free throws.
             Assert.True(PaeteRules.PlantRootedSeconds < PaeteRules.PlantLifeSeconds);
             int shots = 1 + (int)((PaeteRules.PlantLifeSeconds - PaeteRules.PlantFirstShotSeconds) / PaeteRules.PlantReloadSeconds);
-            Assert.True(shots <= 3, $"{shots} wooden throws from one plant.");
+            Assert.Equal(8, shots); // Mature at3s, then every5s within the unchanged40s lifetime.
         }
 
         [Fact]

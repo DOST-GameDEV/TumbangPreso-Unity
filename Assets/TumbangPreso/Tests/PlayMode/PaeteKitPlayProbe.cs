@@ -93,6 +93,100 @@ namespace TumbangPreso.PlayTests
             who.Intent.Set(verb, false);
         }
 
+        private static PaeteWoodenSlipper[] WoodenShots()
+            => Object.FindObjectsByType<PaeteWoodenSlipper>(FindObjectsSortMode.None);
+
+        [UnityTest]
+        public IEnumerator AutonomousBakyaLobNeedsNoSecondPress()
+        {
+            var who = Paete(1, new Vector3(0, .12f, -9));
+            who.Intent.AimPoint = who.transform.position + Vector3.forward * 4f;
+            yield return Press(who, Verb.Skill2);
+            var plant = PaetePlant.OwnedBy(1); Assert.IsNotNull(plant);
+            Vector3 muzzle = plant.Muzzle;
+            yield return new WaitForSeconds(PaeteRules.PlantFirstShotSeconds + .5f);
+            var shots = WoodenShots();
+            Assert.AreEqual(1, shots.Length, "The grown plant must lob at the upright can without another Skill2 press.");
+            Assert.Greater(Vector3.Distance(Flat(muzzle), Flat(shots[0].transform.position)), 2f);
+            Assert.IsFalse(plant.ShotReady, "The automatic lob must consume the grown slipper.");
+        }
+
+        [UnityTest]
+        public IEnumerator AutonomousLobsWaitForMaturityAndRepeatAtFiveSeconds()
+        {
+            // A long clear lane keeps this cadence check independent of can knockdown.
+            var plant = PaetePlant.Spawn(new Vector3(0, 1, -25), new Vector3(0, 0, -25), 1, 0f);
+            yield return new WaitForSeconds(PaeteRules.PlantFirstShotSeconds - .25f);
+            Assert.AreEqual(0, WoodenShots().Length, "The seedling fired before maturity.");
+            yield return new WaitForSeconds(.4f);
+            Assert.AreEqual(1, WoodenShots().Length, "A mature plant did not automatically fire.");
+            Assert.IsFalse(plant.ShotReady);
+            yield return new WaitForSeconds(4.5f);
+            Assert.AreEqual(0, WoodenShots().Length, "The next lob fired before its five-second interval.");
+            yield return new WaitForSeconds(.5f);
+            Assert.AreEqual(1, WoodenShots().Length, "The plant did not make its next lob after five seconds.");
+        }
+
+        [UnityTest]
+        public IEnumerator NoUprightTargetKeepsTheGrownSlipperReady()
+        {
+            var can = GameServices.Round.Lata;
+            can.ApplySnapshotState(can.transform.position, can.transform.rotation, false, can.SkinIndex);
+            var plant = PaetePlant.Spawn(new Vector3(0, 1, -25), new Vector3(0, 0, -25), 1, 0f);
+            yield return new WaitForSeconds(PaeteRules.PlantFirstShotSeconds + .25f);
+            Assert.AreEqual(0, WoodenShots().Length);
+            Assert.IsTrue(plant.ShotReady, "No target must not consume the grown slipper.");
+            can.ApplySnapshotState(can.transform.position, Quaternion.identity, true, can.SkinIndex);
+            yield return new WaitForSeconds(.15f);
+            Assert.AreEqual(1, WoodenShots().Length, "The waiting mature plant did not fire when a valid target returned.");
+        }
+
+        [UnityTest]
+        public IEnumerator PausedAndRetiringPlantsNeverAutomaticallyFire()
+        {
+            var plant = PaetePlant.Spawn(new Vector3(0, 1, -25), new Vector3(0, 0, -25), 1, 0f);
+            yield return new WaitForSeconds(1f);
+            float age = plant.Age, previous = Time.timeScale;
+            try
+            {
+                Time.timeScale = 0;
+                for (int i = 0; i < 12; i++) yield return null;
+                Assert.AreEqual(age, plant.Age, .0001f);
+                Assert.AreEqual(0, WoodenShots().Length);
+            }
+            finally { Time.timeScale = previous; }
+            plant.Wither();
+            yield return new WaitForSeconds(.2f);
+            Assert.AreEqual(0, WoodenShots().Length, "A withering plant fired a new slipper.");
+        }
+
+        private sealed class PlantReplicaProvider : INetProvider
+        {
+            public bool IsHost => false;
+            public bool IsNetworked => true;
+            public int LocalSlot => 1;
+            public int LocalPeerId => 1;
+            public bool IsSeatlessReferee => false;
+        }
+
+        [UnityTest]
+        public IEnumerator ReplicaWaitsForTheMatchingAcceptedAutomaticShot()
+        {
+            NetAuthority.Provider = new PlantReplicaProvider();
+            var plant = PaetePlant.Spawn(new Vector3(0, 1, -25), new Vector3(0, 0, -25), 1, 0f);
+            plant.AdoptInstance(901);
+            yield return new WaitForSeconds(PaeteRules.PlantFirstShotSeconds + .2f);
+            Assert.AreEqual(0, WoodenShots().Length, "A nonhost must not invent autonomous shots.");
+            var method = typeof(PaetePlant).GetMethod("ApplyAutomaticShot");
+            Assert.IsNotNull(method, "The accepted automatic-shot delivery path is missing.");
+            Vector3 target = GameServices.Round.Lata.transform.position;
+            Assert.IsFalse((bool)method.Invoke(null, new object[] { 1, 900L, target }));
+            Assert.AreEqual(0, WoodenShots().Length);
+            Assert.IsTrue((bool)method.Invoke(null, new object[] { 1, 901L, target }));
+            Assert.AreEqual(1, WoodenShots().Length);
+            Assert.IsFalse(plant.ShotReady);
+        }
+
         [UnityTest]
         public IEnumerator WoodenSlipperLeavesTheMuzzleAtAuthoredSpeed()
         {
@@ -111,6 +205,9 @@ namespace TumbangPreso.PlayTests
         [UnityTest]
         public IEnumerator ReadyBakyaRecastThrowsAVisibleMovingSlipper()
         {
+            // Keep the autonomous target unavailable while exercising the retained manual command.
+            var target = GameServices.Round.Lata;
+            target.ApplySnapshotState(target.transform.position, target.transform.rotation, false, target.SkinIndex);
             var paete = Paete(1, new Vector3(0, .12f, -9));
             Assert.IsFalse(paete.IsDefender, "This reproduction requires the attacking kit.");
             paete.Intent.AimPoint = paete.transform.position + Vector3.forward * 4f;
@@ -162,6 +259,9 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(90000)]
         public IEnumerator TheSeedlingGrowsFiresAndComesOutOnlyWhenLoose()
         {
+            // A down can leaves the grown slipper waiting for this explicit manual command.
+            var target = GameServices.Round.Lata;
+            target.ApplySnapshotState(target.transform.position, target.transform.rotation, false, target.SkinIndex);
             var paete = Paete(1, new Vector3(0, .12f, -9));
             paete.Intent.AimPoint = paete.transform.position + new Vector3(0, 0, 4f);
             yield return Press(paete, Verb.Skill2);

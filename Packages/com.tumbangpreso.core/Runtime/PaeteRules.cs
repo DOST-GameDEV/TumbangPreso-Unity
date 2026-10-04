@@ -54,10 +54,9 @@ namespace TumbangPreso.Core
         public const float PlantFirstShotSeconds = 3.0f;
 
         /// <summary>
-        /// Owner's table: *"a cooldown of 10-20 seconds"*, read as the time between shots and
-        /// accepted at the middle of his range (plan § 7, question 2).
+        /// Owner, October 4: the mature plant automatically lobs a slipper every five seconds.
         /// </summary>
-        public const float PlantReloadSeconds = 15.0f;
+        public const float PlantReloadSeconds = 5.0f;
 
         /// <summary>
         /// Owner, 2026-09-25: *"invincible for the first 15 seconds but after that make a visual
@@ -67,8 +66,8 @@ namespace TumbangPreso.Core
 
         /// <summary>
         /// ⚠️ NOT GIVEN BY THE OWNER. How long it lives in all. After its 15 rooted seconds it
-        /// loosens visibly for 25 more and then withers on its own, so a plant nobody pulls cannot
-        /// fire every 15 s for a whole 90 s round (that would be six wooden throws from one cast).
+        /// loosens visibly for 25 more and then withers on its own. The October 4 automatic
+        /// five-second lob directive preserves this existing forty-second lifetime.
         /// </summary>
         public const float PlantLifeSeconds = 40.0f;
 

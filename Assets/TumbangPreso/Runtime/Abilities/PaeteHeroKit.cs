@@ -129,14 +129,15 @@ namespace TumbangPreso.Abilities
 
             public PunlangTsinelas()
                 : base("paete_skill2", "BAKYA BLOOM",
-                       "Attacking. Plant a sapling that grows bakya, wooden slippers. Press again: it hurls one where you aim. Uprootable after 15 s.",
+                       "Attacking. Plant a sapling that automatically lobs wooden slippers at the upright lata every 5 s after growing. Uprootable after 15 s.",
                        PaeteRules.PlantCooldown, PaeteRules.PlantLifeSeconds, AbilityGlyph.PaeteSprout,
                        summary: "A sapling grows wooden slippers and throws them for you.",
                        telegraphRadius: 0.6f, telegraphRange: PaeteRules.PlantThrowRange,
                        castAction: "hero-paete-sprout", viewmodelAction: "seed-toss",
                        castCue: "sfx_cast_paete_sprout") { }
 
-            // The second press is the command to throw (owner: *"he can control when they shoot"*).
+            // The original manual command remains available; the October 4 automatic
+            // cadence means the player no longer needs a second press to fire.
             public override bool CanReactivate => true;
 
             // ⚠️⚠️ TWO PRESSES, TWO BODIES (owner, 2026-09-26: *"i want each of his skill to have their
@@ -171,7 +172,7 @@ namespace TumbangPreso.Abilities
             }
 
             // ⚠️⚠️ THE COMMAND WAITS FOR A CLOG (owner, 2026-09-26: *"bug found unli cast for e, supposed to have cooldown"*). The
-            // pod only ever threw a grown clog (`PaetePlant.Fire` checks `ShotReady`, 15 s between clogs), but every press while it
+            // pod only ever threw a grown clog (`PaetePlant.Fire` checks `ShotReady`, now 5 s between clogs), but every press while it
             // lived played the command gesture and its sound, so spamming E looked and sounded like casting without a cooldown.
             // Now a press with no clog is refused as NOT YET (`HeroAbility.ReactivateReady`), and the deck counts down to the next
             // clog instead of saying "Again". With no plant left the press still ends the ability, as before.

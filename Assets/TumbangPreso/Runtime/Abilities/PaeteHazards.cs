@@ -108,6 +108,8 @@ namespace TumbangPreso.Abilities
 
         public int OwnerSlot { get; private set; } = -1;
         public long InstanceId { get; private set; }
+        // The transport relays successful autonomous shots without replaying a player cast.
+        public static event System.Action<PaetePlant, Vector3> AutomaticShotFired;
         private static readonly long[] RetiredInstances = new long[Balance.PlayerCount];
         private static long _retiredMatch = -1;
         private static int _retiredRound = -1;
@@ -197,6 +199,27 @@ namespace TumbangPreso.Abilities
             PaeteWoodenSlipper.Spawn(Muzzle, target, OwnerSlot);
             GameServices.Audio?.PlayAt("sfx_paete_sprout_fire", transform.position);
             return true;
+        }
+
+        public static bool ApplyAutomaticShot(int ownerSlot, long instanceId, Vector3 aimPoint)
+        {
+            if (!NetAuthority.IsNetworked || NetAuthority.IsHost || instanceId <= 0) return false;
+            var plant = OwnedBy(ownerSlot);
+            if (plant == null || plant.InstanceId != instanceId) return false;
+            return plant.Fire(aimPoint, approvedReplay: true);
+        }
+
+        private void StepAutomaticShot()
+        {
+            if (!NetAuthority.ShouldResolve() || !ShotReady || PresentationClock.Held
+                || PresentationClock.BlocksInput || Time.deltaTime <= 0f) return;
+            var round = GameServices.Round;
+            var lata = round?.Lata;
+            if (round == null || !round.RoundActive || lata == null || !lata.IsUpright) return;
+            // This attacking construct keeps its existing objective: knocking down the lata.
+            // Waiting for a valid upright can does not consume the grown slipper.
+            Vector3 target = lata.transform.position;
+            if (Fire(target)) AutomaticShotFired?.Invoke(this, target);
         }
 
         public void Wither()
@@ -295,7 +318,7 @@ namespace TumbangPreso.Abilities
 
         private void Update()
         {
-            float dt = Time.deltaTime;
+            float dt = PresentationClock.Held ? 0f : Time.deltaTime;
             if (_age < 0f && _age + dt >= 0f) Visual.PaeteGroundBreak.Spawn(transform.position, 0.7f);
             _age += dt;
             _recoil += dt;
@@ -307,6 +330,7 @@ namespace TumbangPreso.Abilities
                 return;
             }
             if (_age >= PaeteRules.PlantLifeSeconds) { Destroy(gameObject); return; }
+            StepAutomaticShot();
             // The shot has grown: a soft pod pop, so its owner hears it is loaded (direction.md section 5.3).
             // Local on every peer off the same clock, like the fire.
             if (_age >= _nextShot && _age - dt < _nextShot && _age > 0.5f)
