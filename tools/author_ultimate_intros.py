@@ -357,8 +357,7 @@ def phaister():
     return p
 
 
-@performance
-def sean():
+def _sean(held):
     """
     SUPERNOVA, 3.4 s. Patience turning into commitment (plan.md section 1): "Waits for one
     opening. Makes it count." He is a lantern maker, so the fire is ASSEMBLED, not summoned:
@@ -367,7 +366,7 @@ def sean():
     that is the first frame of the live leap.
     Measured on his real mesh: twist 38 brings both hands together in front of the chest.
     """
-    p = Performance("sean", 3.4)
+    p = Performance("sean-held" if held else "sean", 3.4)
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
     plant = Pose(torso=(6, 8, 0), head=(16, -4, 0), left=(6, 18, 0), right=(6, 18, 0),
                  legs=((4, 7), (-4, 7)))
@@ -375,13 +374,20 @@ def sean():
     # Cupped hands at the chest, head bowed over them: the craftsman.
     cup = Pose(torso=(10, 0, 0), head=(24, 0, 0), left=(75, 5, 38), right=(75, 5, 38),
                legs=((4, 7), (-4, 7)))
+    if held:
+        # The free hand forges the parol; the carrying hand keeps its slipper low.
+        cup = cup.but(left=(75, 24, 20), right=(18, 28, -6))
+        plant = plant.but(right=(18, 28, -6))
+        roll = roll.but(right=(18, 28, -6))
     inspect_ = cup.but(head=(22, 0, -6), torso=(12, 0, 0))
     inspect2 = cup.but(head=(22, 0, 5), torso=(11, 0, 0))
     # The opening: the head snaps up to the target, hands still cupped. Held.
     look = cup.but(torso=(4, 0, 0), head=(-6, 0, 0))
-    # The coil: chest down over the front leg, arms swept back, the lantern pulled in.
-    coil = Pose(torso=(30, 0, 0), head=(-14, 0, 0), left=(-42, 22, 0), right=(-42, 22, 0),
+    # The coil: chest down over the front leg, hands compressing the lantern in front of the chest.
+    coil = Pose(torso=(30, 0, 0), head=(-14, 0, 0), left=(55, 25, 24), right=(55, 25, 24),
                 legs=((18, 5), (-22, 5)))
+    if held:
+        coil = coil.but(left=(60, 30, 4), right=(8, 28, -4))
     # The rise: arms driving up, onto the toes, the first frame of the leap.
     rise = Pose(torso=(-8, 0, 0), head=(-14, 0, 0), left=(165, 22, 0), right=(165, 22, 0),
                 legs=((-4, 3), (-10, 3)))
@@ -398,15 +404,23 @@ def sean():
     p.hold(2.98, 3.4, rise)
     p.rise(0, 0).rise(2.9, 0).rise(3.1, .12).rise(3.4, .14)
 
+    side = -1 if held else 1
     # A: three-quarter front medium while he plants and builds the lantern.
-    p.shot(0, 1.75, (1.9, 1.35, 4.1), (0, 1.0, 0), 44, eye_to=(1.6, 1.3, 3.6))
+    p.shot(0, 1.75, (side * 1.9, 1.35, 4.1), (0, 1.0, 0), 44, eye_to=(side * 1.6, 1.3, 3.6))
     # B: close on the lantern and his face as the head snaps up.
-    p.shot(1.75, 2.3, (1.1, 1.45, 3.1), (0, 1.25, .2), 40, eye_to=(1.0, 1.45, 2.85), close=True)
-    # C: low and to his side, so the arms swept back in the coil read, then the rise.
+    p.shot(1.75, 2.3, (side * 1.1, 1.45, 3.1), (0, 1.25, .2), 40, eye_to=(side * 1.0, 1.45, 2.85), close=True)
+    # C: low and to his side, so the compressed coil reads, then the rise.
     p.shot(2.3, 3.4, (-2.9, .5, 3.3), (0, 1.0, 0), 50, eye_to=(-2.6, .55, 3.4), look_to=(0, 1.35, 0))
     p.locked((1.7, 1.15, 4.8), (0, 1.05, 0), 46)
     return p
 
+
+@performance
+def sean():
+    return _sean(False)
+
+HELD["sean"] = lambda: _sean(True)
+HOLD_DRIFT["sean-held"] = HOLD_DRIFT["sean"]
 
 @performance
 def zack():

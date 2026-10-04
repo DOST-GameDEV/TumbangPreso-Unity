@@ -42,7 +42,10 @@ reference characters are quality examples, not a new redesign assignment.
 - [ ] Yasmin: Absolute Zero crystal/hand connection and framing refined; held and
   empty-hand native studies pass2/2. Full kit/player/SFX review remains open.
   [Evidence](reports/yasmin-crystal-2026-10-04/README.md).
-- [ ] Rago, Basilio, Nemu and Ilyas: finish their remaining presentation passes.
+- [ ] Rago: Supernova parol handoff and held-equipment staging refined; native
+  held/empty studies pass2/2. Full kit/player/SFX review remains open.
+  [Evidence](reports/rago-supernova-2026-10-04/README.md).
+- [ ] Basilio, Nemu and Ilyas: finish their remaining presentation passes.
 - [ ] Real-game film/listening review and multiplayer/player qualification.
 
 **How this file is organised (docs cleanup, 2026-09-23).** This file is the ONE status

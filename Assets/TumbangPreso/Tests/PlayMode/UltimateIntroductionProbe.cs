@@ -56,6 +56,13 @@ namespace TumbangPreso.PlayTests
         public IEnumerator YasminEmptyHandsVisualReview()
             => Study(new[] { "cheska" }, false, true, true);
 
+        [UnityTest, Timeout(90000)]
+        public IEnumerator RagoSupernovaVisualReview()
+            => Study(new[] { "sean" }, false, false, true);
+        [UnityTest, Timeout(90000)]
+        public IEnumerator RagoEmptyHandsVisualReview()
+            => Study(new[] { "sean" }, false, true, true);
+
         private static IEnumerator BuildHeroArtStage(string hero)
         {
             GameServices.Ensure(); GameServices.Round.Clear();
@@ -94,7 +101,7 @@ namespace TumbangPreso.PlayTests
         {
             // These focused render-copy reviews need their actual rig/equipment, not an entire
             // populated court. Keep other established court probes unchanged.
-            if (heroes.Length == 1 && (heroes[0] == "zack" || heroes[0] == "cheska")) yield return BuildHeroArtStage(heroes[0]);
+            if (heroes.Length == 1 && (heroes[0] == "zack" || heroes[0] == "cheska" || heroes[0] == "sean")) yield return BuildHeroArtStage(heroes[0]);
             else yield return MapRetrievalProbe.Load("Eskinita", GameMode.HeroStrike);
             var actor = GameServices.Round.PlayerAt(1);
             var visual = actor.GetComponent<CharacterVisual>();
@@ -108,7 +115,7 @@ namespace TumbangPreso.PlayTests
                 }
                 Assert.IsNull(actor.GetComponent<Carrier>().Held);
             }
-            else if (heroes.Length == 1 && (heroes[0] == "zack" || heroes[0] == "cheska"))
+            else if (heroes.Length == 1 && (heroes[0] == "zack" || heroes[0] == "cheska" || heroes[0] == "sean"))
                 Assert.IsNotNull(actor.GetComponent<Carrier>().Held, "Held-shoe review cannot silently become empty-handed.");
             foreach (var other in GameServices.Round.Players)
                 if (other != actor) other.Teleport(new Vector3(-9, other.transform.position.y, 8 + other.PlayerSlot * 3));
@@ -147,6 +154,8 @@ namespace TumbangPreso.PlayTests
                     // REFINE-2.11: each hero's introduction has its own authored length and lift.
                     var performance = UltimatePerformance.For(hero, actor.GetComponent<Carrier>().Held != null);
                     Assert.IsNotNull(performance, hero + " has no authored introduction table.");
+                    if(hero=="sean"&&!emptyHands)
+                        Assert.AreNotSame(UltimatePerformance.For(hero,false),performance,"Rago needs his actual held-equipment performance.");
                     float seconds = performance.Seconds;
                     Assert.IsNotNull(clip); Assert.IsTrue(clip.legacy, "Runtime-authored sampling must work in the native player."); Assert.AreEqual(seconds, clip.length, .01f);
                     int score = GameServices.Match.ScoreFor(1); Vector3 at = actor.transform.position;
@@ -210,10 +219,11 @@ namespace TumbangPreso.PlayTests
                             }
                             scene.SetVisibleForCapture(true);
                         }
-                        if ((hero == "zack" || hero == "cheska") && scene != null)
+                        if ((hero == "zack" || hero == "cheska" || hero == "sean") && scene != null)
                         {
                             // Warm all three authored shots before starting a wall-clock film.
-                            foreach (float warm in new[] { 0f, .9f, 1.1f, 1.6f, 1.95f, 2.5f, 2.9f, 0f })
+                            foreach (float warm in hero == "sean" ? new[] { 0f, .9f, 1.6f, 1.95f, 2.5f, 2.97f, 3.15f, 0f }
+                                : new[] { 0f, .9f, 1.1f, 1.6f, 1.95f, 2.5f, 2.9f, 0f })
                             {
                                 clip.SampleAnimation(copy.Root, warm); scene.Sample(warm);
                                 scene.Shot(warm, out var eye, out var target, out var lens, camera.aspect);
@@ -225,6 +235,16 @@ namespace TumbangPreso.PlayTests
                                     float contact = bolt.sharedMesh.vertices.Min(v => Vector3.Distance(bolt.transform.TransformPoint(v), headPoint));
                                     Assert.Less(contact, .15f, "Overclock's bolt must reach Zack, not an old distant target.");
                                 }
+                                if(hero=="sean"&&Mathf.Abs(warm-2.5f)<.001f)
+                                {
+                                    var palm=(Vector3)typeof(HeroIntroductionScene).GetProperty(emptyHands ? "BothPalms" : "FreePalm",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(scene);
+                                    var flame=scene.Root.transform.Find("ParolFlame");
+                                    Assert.Less(Vector3.Distance(flame.position,scene.Root.transform.TransformPoint(palm)),.34f,
+                                        "The parol must stay in front of its gathering hand through the coil.");
+                                }
+                                if(hero=="sean"&&Mathf.Abs(warm-2.97f)<.001f)
+                                    Assert.Less(Vector3.Distance(scene.Root.transform.Find("RiseSpark0").position,
+                                        scene.Root.transform.Find("ParolFlame").position),.02f,"The burst must start at the parol.");
                                 if (hero == "cheska" && Mathf.Abs(warm-1.1f)<.001f)
                                 {
                                     var palm=(Vector3)typeof(HeroIntroductionScene).GetProperty(emptyHands ? "RightPalm" : "FreePalm",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(scene);
