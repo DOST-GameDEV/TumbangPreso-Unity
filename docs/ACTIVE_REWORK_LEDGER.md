@@ -264,3 +264,19 @@ statusbeforeclosing; no new145player. LPTreplay repairedfixtureoriginalUnity1231
 session38246 source130696 actualRenderfault/control; RuntimeCameraunchanged.
 Nextpushmapfix/proof thenfresh146combinedbuild, exactmanifest/storypeer prep;
 LPTarmer18055/49160 notlaunched. No newagent/reset/paidservices.
+
+
+## Actual Classic Kanto pair and next true Hero
+
+Both19684/93277 HOST and30144CLIENT nowTERMINAL0/restored/fullartifactunchanged.
+ActualtournamentClassicKanto8*90 naturalend130/50/3450/2545 seat2; fullrecordSHA
+ d27f0b9246d44696bdda5aa1e5c212336f7a75d8ef9ff78a8ef26e7bde4d09f9 matches,
+queue==historyboth/witnessc9f645728c718e75/clearmarkers. RootactualClassic default
+reportvalidatorzero faults. OriginalHero-labelled expectedcheck failed retained,
+not relaxed; canonicalMapIdKanto. TrueHerogateOPEN. Clientrawnextintegration and
+postreportownquitHostLost orderingnotphysical/midmatchfailure. Hostproof report
+classic-kanto146. NoRootplayer/helper/Unitylive. LPTclose18055thenARM18058 fresh
+trueHero scripts no-tournament/HQ2/empty8*90/source23168/146/49161→49162. Root
+hero8-casual-host-direct.py preparednotlaunched waitingrealarm. Skipdoc/auditdelay
+whenreceipts preserved; launchtest first andpublishraw duringlongrun. Cleanup3old
+builds policyrejected/no delete/nobypass; standingcleanupcontinueswhenallowed.
