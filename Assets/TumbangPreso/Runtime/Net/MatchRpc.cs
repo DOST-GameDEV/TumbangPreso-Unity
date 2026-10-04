@@ -207,11 +207,16 @@ namespace TumbangPreso.Net
         /// </summary>
         private const NetworkDelivery RecordDelivery = NetworkDelivery.ReliableFragmentedSequenced;
 
-        private void OnEnable() => NetSession.ClientDisconnected += HandleClientDisconnected;
+        private void OnEnable()
+        {
+            NetSession.ClientDisconnected += HandleClientDisconnected;
+            Abilities.PaetePlant.AutomaticShotFired += BroadcastAutomaticPlantShot;
+        }
 
         private void OnDisable()
         {
             NetSession.ClientDisconnected -= HandleClientDisconnected;
+            Abilities.PaetePlant.AutomaticShotFired -= BroadcastAutomaticPlantShot;
             CancelSnapshotRefreshWork(clearSnapshotTimes: false);
             _pendingSkillCasts.Clear();
         }
@@ -388,6 +393,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("ReqBreakFree", OnReqBreakFreeMsg);
             cm.RegisterNamedMessageHandler("ReqUproot", OnReqUprootMsg);
             cm.RegisterNamedMessageHandler("PlantPulled", OnPlantPulledMsg);
+            cm.RegisterNamedMessageHandler("AutomaticPlantShot", OnAutomaticPlantShotMsg);
             cm.RegisterNamedMessageHandler("SentryTargets", OnSentryTargetsMsg);
             cm.RegisterNamedMessageHandler("ReqPunch", OnReqPunchMsg);
             cm.RegisterNamedMessageHandler("ReqLunge", OnReqLungeMsg);
