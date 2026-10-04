@@ -1,0 +1,156 @@
+{
+  "source": "C:\\Users\\matth\\Downloads\\TUMP (11).png",
+  "sourceSha256": "f4b6ec1d17939d01a2eeca60dc67d14b1297cbb53e3fb4ef1421ee5b24bacdb0",
+  "variants": [
+    {
+      "name": "tump-logo-colour",
+      "sheetRegion": [
+        230,
+        70,
+        1100,
+        655
+      ],
+      "inkBounds": [
+        33,
+        24,
+        847,
+        559
+      ],
+      "viewBox": [
+        -2,
+        -2,
+        818,
+        539
+      ],
+      "exportSize": [
+        2048,
+        1349
+      ],
+      "pathCount": 46,
+      "embeddedImages": 0,
+      "svgSha256": "3e56bfb743095c821f8d51dc15b1bf86739a99f82c3fdaf8b6f25827e11eb9ba",
+      "pngSha256": "0d456a404ad69e017d0866fd1889968649699701eba822e9cd77eb411ec6d975",
+      "cornersTransparent": true
+    },
+    {
+      "name": "tsinelas-mark",
+      "sheetRegion": [
+        1300,
+        70,
+        1690,
+        540
+      ],
+      "inkBounds": [
+        37,
+        27,
+        359,
+        451
+      ],
+      "viewBox": [
+        -2,
+        -2,
+        326,
+        428
+      ],
+      "exportSize": [
+        1560,
+        2048
+      ],
+      "pathCount": 20,
+      "embeddedImages": 0,
+      "svgSha256": "dc9609801c6428c777f03e854c966a1a6c7a5147d9100e03d245035c54624f8c",
+      "pngSha256": "a490b1368c74e9b66f03cfb7566b4d15565a7fb77aa17f84d90fb3ae8aac0b7e",
+      "cornersTransparent": true
+    },
+    {
+      "name": "tsinelas-hit",
+      "sheetRegion": [
+        1510,
+        545,
+        1880,
+        970
+      ],
+      "inkBounds": [
+        23,
+        17,
+        343,
+        396
+      ],
+      "viewBox": [
+        -2,
+        -2,
+        324,
+        383
+      ],
+      "exportSize": [
+        1733,
+        2048
+      ],
+      "pathCount": 32,
+      "embeddedImages": 0,
+      "svgSha256": "d04daf1d4621a69645b870033fb5fa007bfeec1a6d561d36ccc0ac76df749982",
+      "pngSha256": "a1e50fdbf6192d3e18109e31206228f05d445f4fe142ce447e1647e378a5cea1",
+      "cornersTransparent": true
+    },
+    {
+      "name": "tump-logo-outline",
+      "sheetRegion": [
+        70,
+        695,
+        575,
+        1040
+      ],
+      "inkBounds": [
+        32,
+        28,
+        470,
+        316
+      ],
+      "viewBox": [
+        -2,
+        -2,
+        442,
+        292
+      ],
+      "exportSize": [
+        2048,
+        1353
+      ],
+      "pathCount": 2,
+      "embeddedImages": 0,
+      "svgSha256": "80ec708742eeb855f3b6ac864838e571b1f9650ca50c3d4a17df24f350e3c220",
+      "pngSha256": "0f3391986ca45ceacc596f7701ffef2d308e6741ee5586b8569dc0c10cf66019",
+      "cornersTransparent": true
+    },
+    {
+      "name": "tump-logo-textured",
+      "sheetRegion": [
+        675,
+        710,
+        1170,
+        1050
+      ],
+      "inkBounds": [
+        21,
+        26,
+        467,
+        320
+      ],
+      "viewBox": [
+        -2,
+        -2,
+        450,
+        298
+      ],
+      "exportSize": [
+        2048,
+        1356
+      ],
+      "pathCount": 17,
+      "embeddedImages": 0,
+      "svgSha256": "30b14cbe673841b6a7d4e241832b749916c5fb2a5bd884224c00da79d059a2e0",
+      "pngSha256": "6d5989aeeab9a599127e86b602ec4532f1e0ef7dcfd6a515b810e5a61623eb2f",
+      "cornersTransparent": true
+    }
+  ]
+}

@@ -23,7 +23,7 @@ namespace TumbangPreso.PlayTests
             Assert.AreSame(sprite,OwnerUiTheme.Current.Art(OwnerUiTheme.Piece.Logo));
             Assert.AreSame(sprite,OwnerMenuArt.Piece("login3-logo"));
             // Tight transparent viewBox of the owner's full-resolution traced logo.
-            Assert.AreEqual(1294f/852f,sprite.rect.width/sprite.rect.height,.003f);
+            Assert.AreEqual(818f/539f,sprite.rect.width/sprite.rect.height,.003f);
             Assert.AreEqual(sprite.texture.width,sprite.rect.width,"The original export must remain fully visible.");
             Assert.AreEqual(sprite.texture.height,sprite.rect.height);
             var owner=new GameObject("OriginalLogoReview");
@@ -36,7 +36,44 @@ namespace TumbangPreso.PlayTests
             var hans=canvas.GetComponentsInChildren<Text>().Single(t=>t.text=="HANS XAVIER LAO");
             Assert.LessOrEqual(hans.preferredWidth,hans.rectTransform.rect.width,"The full credit name must fit.");
             yield return TumpUiCapture.Capture("Vector-TUMP-logo-credits",canvas,960,540,false);
+            var review=OwnerUiLayout.Canvas(owner.transform,"VectorBrandReview",101);
+            var design=OwnerUiLayout.DesignArea(review.transform,"Design");
+            var resources=new[]{"tump_logo","tsinelas_mark","tsinelas_hit","tump_wordmark_ink","tump_wordmark_login"};
+            var aspects=new[]{818f/539f,326f/428f,324f/383f,442f/292f,450f/298f};
+            for(int row=0;row<2;row++)
+            {
+                var ground=OwnerUiLayout.Rect(design,"Ground"+row).gameObject.AddComponent<Image>();
+                OwnerUiLayout.Place(ground.rectTransform,0,row*540,1920,540);
+                ground.color=row==0?new Color32(102,42,48,255):new Color32(223,212,215,255);
+                for(int i=0;i<resources.Length;i++)
+                {
+                    var mark=TumpUiFactory.Sprite("UI/brand/"+resources[i]);Assert.IsNotNull(mark);
+                    Assert.AreEqual(aspects[i],mark.rect.width/mark.rect.height,.003f,"Importer stretched "+resources[i]);
+                    AssertTransparentCorners(mark.texture,resources[i]);
+                    var image=TumpUiFactory.Art(design,resources[i]+row,mark);
+                    OwnerUiLayout.Place(image.rectTransform,25+i*380,row*540+70,330,400);
+                    Assert.IsTrue(image.preserveAspect);
+                }
+            }
+            yield return TumpUiCapture.Capture("Vector-brand-five-variants",review,1920,1080,false);
             Object.Destroy(owner);
+        }
+
+        private static void AssertTransparentCorners(Texture2D texture,string name)
+        {
+            var target=RenderTexture.GetTemporary(texture.width,texture.height,0,RenderTextureFormat.ARGB32);
+            var previous=RenderTexture.active;var pixel=new Texture2D(1,1,TextureFormat.RGBA32,false);
+            try
+            {
+                Graphics.Blit(texture,target);RenderTexture.active=target;
+                foreach(var corner in new[]{Vector2.zero,new Vector2(texture.width-1,0),
+                    new Vector2(0,texture.height-1),new Vector2(texture.width-1,texture.height-1)})
+                {
+                    pixel.ReadPixels(new Rect(corner.x,corner.y,1,1),0,0);pixel.Apply();
+                    Assert.Less(pixel.GetPixel(0,0).a,.01f,name+" imported an opaque background corner");
+                }
+            }
+            finally{RenderTexture.active=previous;RenderTexture.ReleaseTemporary(target);Object.DestroyImmediate(pixel);}
         }
 
         [UnityTest]
