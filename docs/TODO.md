@@ -1,5 +1,11 @@
 # TODO: Tumbang Preso Unity
 
+### SLIPPER-CIRCLE-1004: ground-only recall circle
+
+- [x] Hide during held/flight states; show only after landing, retaining normal
+  owner/range restrictions. Native real-flight/landing and snapshot/pickup
+  transitions pass. [Evidence](reports/slipper-circle-2026-10-04/README.md).
+
 ### THROW-RESTORE-1004: can-state throw freedom and smooth return
 
 - [x] Can-down and barrier no longer refuse throws. Actual restoration lowers an
