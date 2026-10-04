@@ -19,7 +19,7 @@ import run_unity_job as jobs
 from run_ui_player_review import read_input_preferences
 
 ROOT = Path(__file__).resolve().parents[1]
-WIRE = arrival.WIRE
+WIRE = arrival.WIRE + '|0'  # Current canonical wire explicitly disables map voting.
 
 
 def file_sha256(path):
@@ -100,7 +100,7 @@ def main():
     if re.fullmatch(r'[0-9a-f]{64}', expected) is None:
         parser.error('Require the checked artifact Runtime SHA256.')
     artifact = checked_artifact(exe, args.artifact_manifest.resolve(), args.protocol, expected)
-    arrival.validate_rules(exe.parent / (exe.stem + '_Data/Managed/TumbangPreso.Core.dll'))
+    arrival.validate_rules(exe.parent / (exe.stem + '_Data/Managed/TumbangPreso.Core.dll'), wire=WIRE)
     source_commit = artifact['sourceCommit']
     out.mkdir(parents=True, exist_ok=False)
     profile = guard.player_profile() / 'profiles' / hashlib.sha256(args.profile.encode()).hexdigest()

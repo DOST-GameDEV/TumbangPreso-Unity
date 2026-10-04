@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest import mock
 
 import run_lan_peer as peer
 
@@ -95,6 +96,24 @@ class ArtifactChecks(unittest.TestCase):
             self.assertEqual(pick, seed['CharacterPick'])
             self.assertEqual(peer.WIRE, seed['CustomRulesWire'])
             self.assertEqual('LAN' + role, seed['PlayerName'])
+
+    def test_current_rules_are_validated_against_the_full_canonical_wire(self):
+        wire = peer.WIRE
+        self.assertEqual(11, len(wire.split('|')))
+        self.assertEqual('0', wire.split('|')[10])
+        answer = json.dumps(dict(wire=wire, rounds=1, seconds=30, manual=True))
+        with mock.patch.object(peer.arrival.shutil, 'which', return_value='pwsh'), mock.patch.object(
+                peer.arrival.subprocess, 'run', return_value=mock.Mock(stdout=answer)) as run:
+            self.assertEqual(wire, peer.arrival.validate_rules(self.core, wire=wire)['wire'])
+            self.assertEqual(wire, run.call_args.kwargs['env']['TUMP_COMPLETED_WIRE'])
+            self.assertTrue(run.call_args.kwargs['check'])
+
+    def test_old_canonical_output_cannot_masquerade_as_current_rules(self):
+        answer = json.dumps(dict(wire=peer.arrival.WIRE, rounds=1, seconds=30, manual=True))
+        with mock.patch.object(peer.arrival.shutil, 'which', return_value='pwsh'), mock.patch.object(
+                peer.arrival.subprocess, 'run', return_value=mock.Mock(stdout=answer)):
+            with self.assertRaisesRegex(RuntimeError, 'parser rejected'):
+                peer.arrival.validate_rules(self.core, wire=peer.WIRE)
 
 
 if __name__ == '__main__':

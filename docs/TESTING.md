@@ -135,8 +135,12 @@ SAME accepted player and full artifact manifest. Pass the agreed `--protocol`,
 `--artifact-manifest` and `--runtime-sha256` explicitly; there is no legacy Runtime
 or protocol default. `--character-pick` defaults to Hero index0 and may differ by
 peer using valid picks from that artifact's roster. The fresh profile seed includes
-the pick so the normal lobby can pass character selection. Ready, natural match
-end, terminal standings and each peer's own saved history/witness checks remain.
+the pick so the normal lobby can pass character selection.
+The current LAN scenario uses the canonical eleven-field rules wire with map
+voting explicitly disabled. Its strict Core parser check receives that same wire;
+the completed-arrival helper retains its legacy default for historical scenarios.
+Ready, natural match end, terminal standings and each peer's own saved
+history/witness checks remain.
 Before launch and after termination the runner checks every packaged file against
 the manifest, source/build identity and executable/Runtime/Core hashes. It also
 checks that the manifest itself stayed unchanged. Agree host availability/listening

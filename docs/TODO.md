@@ -23,7 +23,10 @@ Nothing was deleted or renumbered.
   Runtime hash plus accepted full artifact manifest, seed CharacterPick and
   preserve ready/natural-end/standings/history/witness acceptance. Check all files,
   source identity and executable/Runtime/Core before and after the owned player;
-  reject a changed manifest. Nine local deterministic runner checks pass.
+  reject a changed manifest. Eleven local deterministic runner checks pass.
+  Actual current engine-free Core assembly rejects the original ten-field wire
+  and accepts the corrected canonical eleven-field wire with map voting disabled;
+  zero-warning Core build. Historical completed-arrival default remains available.
 - [ ] Actual matching current144 host/client player pair, completed normal lobby
   route, saved results and necessary recovery/slow-replay acceptance. Tool checks
   and old134 peer evidence do not satisfy this gate.

@@ -78,7 +78,11 @@ deployed SDK/service and packaged delivery remain open.
 LAN runner correction is checked: explicit protocol/runtime pin/accepted full
 manifest, valid character seed and pre/post full artifact/source/exeRuntimeCore
 verification. Original ready/natural-end/standings/history/witness gates intact;
-9/9 local deterministic checks, no Unity/player/peer launch. See TESTING and TODO.
+11/11 local deterministic checks, no Unity/player/peer launch. Current Core was
+compiled engine-free with zero warnings/errors; actual strict parser reproduced
+ten-field rejection and accepted canonical11-field1/30 wire, mapVote0. The LAN
+validator receives its exact scenario wire; old arrival-helper default is retained.
+Logs/lan-rules-core1004 and arrival-pan-review1004 preserve build/parser evidence.
 NEXT: produce the coherent current144 release on an admitted owned slot, freeze
 the same accepted artifact/manifest on both machines and coordinate host listen
 then client join. Do not use old134 Runtime/protocol or skip character selection.
