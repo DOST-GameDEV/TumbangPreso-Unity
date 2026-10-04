@@ -1,0 +1,35 @@
+{
+  "rawGitHashes": {
+    "launch.json": true,
+    "direct-result.json": true,
+    "player.log": true,
+    "replay.csv": true,
+    "replay.png": true,
+    "pre-input-prefs.json": true,
+    "artifact-manifest.json": true,
+    "artifact-receipt.json": true,
+    "driver.py": true,
+    "scenario.json": true,
+    "peer-comparison.json": true
+  },
+  "source": "f4890bdd43ae8b0129be6ebb9499eb7a54de2d01",
+  "epoch": [
+    "639267125897668305"
+  ],
+  "clip": [
+    "1"
+  ],
+  "allScores": [
+    [
+      "170",
+      "0",
+      "0",
+      "0"
+    ]
+  ],
+  "clientViewSamples": 91,
+  "hostViewSamples": 100,
+  "eachLocalSimulationFrozen": true,
+  "clientTerminalRestoredArtifactUnchanged": true,
+  "actualClientPngInspected": true
+}

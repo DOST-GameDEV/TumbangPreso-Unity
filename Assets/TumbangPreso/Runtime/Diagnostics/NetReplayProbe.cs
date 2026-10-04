@@ -13,7 +13,7 @@ namespace TumbangPreso.Diagnostics
     {
         private StreamWriter _trace;
         private float _started,_next,_finished=-1;
-        private bool _running,_shot,_faultInjected;
+        private bool _running,_shot,_faultInjected,_arcClipLogged,_arcViewLogged;
         private static string Argument(string key)
         {var args=Environment.GetCommandLineArgs();int i=Array.IndexOf(args,key);return i>=0&&i+1<args.Length?args[i+1]:null;}
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -63,6 +63,7 @@ namespace TumbangPreso.Diagnostics
             if(_trace==null||Time.realtimeSinceStartup<_next)return;_next=Time.realtimeSinceStartup+.05f;
             var archive=FindAnyObjectByType<MatchReplayArchive>();long clip=phase?.ClipId??0;
             if(clip==0&&archive?.Clips.Count>0)clip=archive.Clips[0].Clip.Id;
+            if(Argument("-tp-replay-glacial")=="1")InspectArc(archive,clip,phase);
             _trace.WriteLine(FormattableString.Invariant($"{Time.realtimeSinceStartup-_started:F3},{NetAuthority.LocalSlot},{match.RoundNumber},{match.PresentationMatchId},{match.ScoreFor(1)},{archive?.Clips.Count??0},{clip},{Net.MatchRpc.Instance.ReplayReadyCount(clip)},{(HalftimePresentation.Playing?1:0)},{(phase?.HasReplay==true?1:0)},{phase?.Remaining??0:F3},{(PresentationClock.Held?1:0)},{Time.time:F4},{(phase?.FallbackReason!=null?1:0)},{(_faultInjected?1:0)},{Net.WorldEffectSnapshot.Capture().Count},{match.ScoreFor(0)},{match.ScoreFor(2)},{match.ScoreFor(3)}"));
         }
         private IEnumerator Shot()
@@ -81,6 +82,14 @@ namespace TumbangPreso.Diagnostics
                 Abilities.HeroHazards.SpawnIceSheet(new Vector3(3,0,2),1.2f,30,1,1,silent:true);
                 Abilities.HeroHazards.SpawnHexSigil(new Vector3(-3,0,2),1.2f,30,2,1,silent:true);
                 Visual.DanteFissurePillar.Create(new Vector3(4,0,4),Vector3.forward,1,30);
+                if(Argument("-tp-replay-glacial")=="1")
+                {
+                    var wall=Abilities.HeroHazards.SpawnIceBarricade(new Vector3(3,0,-1),Vector3.forward,30,
+                        silent:true,arcLength:5,arcRadius:3).GetComponent<Abilities.HeroHazards.IceBarricadeComponent>();
+                    wall.HitsToShatter=3;wall.HostSlipperHit();
+                    Debug.Log("[ReplayProbeArc] live slabs="+wall.GetComponentsInChildren<MeshCollider>().Length+
+                        " radius="+wall.ArcRadius+" length="+wall.ArcLength+" hits="+wall.RemainingHits);
+                }
                 Net.MatchRpc.Instance.BroadcastWorldSnapshot();
                 var send=typeof(Net.MatchRpc).GetMethod("SendWorldFieldSnapshot",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
                 foreach(var peer in Unity.Netcode.NetworkManager.Singleton.ConnectedClientsIds)
@@ -125,6 +134,30 @@ namespace TumbangPreso.Diagnostics
         {
             var defender=round.PlayerAt(0);
             return defender.GetComponent<CombatVerbs>().HostResolvePunch(defender.transform.position,defender.transform.forward);
+        }
+
+        private void InspectArc(MatchReplayArchive archive,long clip,HalftimePresentation phase)
+        {
+            if(!_arcClipLogged&&clip>0)
+            {
+                var recorded=archive?.Clips.FirstOrDefault(c=>c.Clip.Id==clip)?.Clip??Net.MatchRpc.Instance.ReceivedReplay(clip);
+                if(recorded!=null)
+                {
+                    var fields=recorded.FieldFrames.SelectMany(f=>f.Fields).Select(f=>f.State)
+                        .Where(f=>f.Type==Net.WorldEffectSnapshot.Kind.Barricade&&f.Radius>0).ToArray();
+                    Debug.Log("[ReplayProbeArc] clip="+clip+" arcSamples="+fields.Length+" radius="+
+                        string.Join(",",fields.Select(f=>f.Radius).Distinct())+" length="+
+                        string.Join(",",fields.Select(f=>f.FirstScale).Distinct())+" hits="+
+                        string.Join(",",fields.Select(f=>f.SecondScale).Distinct()));_arcClipLogged=true;
+                }
+            }
+            if(!_arcViewLogged&&phase?.HasReplay==true)
+            {
+                var roots=FindObjectsByType<Transform>().Where(t=>t.name=="RecordedField-Barricade").ToArray();
+                if(roots.Length==0)return;
+                Debug.Log("[ReplayProbeArc] view slabs="+roots.Sum(r=>r.GetComponentsInChildren<MeshFilter>().Length)+
+                    " colliders="+roots.Sum(r=>r.GetComponentsInChildren<Collider>().Length));_arcViewLogged=true;
+            }
         }
     }
 }

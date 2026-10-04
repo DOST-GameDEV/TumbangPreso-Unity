@@ -23,6 +23,7 @@
   "pngInspected": true,
   "normalRound5Release": true,
   "terminalExit": 0,
-  "clientRawCorrelationPending": true,
-  "scope": "Diagnostic retained catch clip, two physical machines; explicit intermediate-round advances, no natural complete match, slow-peer or fault-injection claim"
+  "clientRawCorrelationPending": false,
+  "scope": "Diagnostic retained catch clip, two physical machines; explicit intermediate-round advances, no natural complete match, slow-peer or fault-injection claim",
+  "clientRawGitHashesVerified": 11
 }
