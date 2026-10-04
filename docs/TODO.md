@@ -140,6 +140,10 @@ Nothing was deleted or renumbered.
 
 ### OWNER-MULTIPLAYER-FEEDBACK-1004: current live-test reports
 
+- [x] Menu-close look cannot leak late touch drag or held stick navigation into
+  camera input in that frame; normal look resumes next frame. Two native causal
+  failures plus ordinary control become3/3. Packaged pointer/relock review stays open.
+  [Evidence](reports/reliability-2026-10-05/menu-look-boundary/README.md).
 - [x] Preserve quick E/Q/X skill press/release before input polling. Native
   three causal failures plus held/menu controls -> same five passes. Updated
   packaged skill/operator acceptance remains open. [Evidence](reports/reliability-2026-10-05/hero-quicktap/README.md).
@@ -163,6 +167,12 @@ Nothing was deleted or renumbered.
   Protocol150 public JOIN/start/manual host draft also passed; clean non-host
   held movement and current151 Windows/WAN acceptance remain open.
   [Visible peer evidence](reports/laptop-validation-2026-10-05/visible-online148-client/README.md).
+- [x] Protocol150 normal public JOIN and natural four-round completion have
+  identical full2430-byte saved records on PC/laptop, independently compared.
+  [Client evidence](reports/laptop-validation-2026-10-05/online150-client/README.md).
+- [ ] After that completed match, host departure was wrongly reported as
+  ABANDONED4of8 on the client. Preserve terminal-match state during disconnect;
+  genuine mid-match host loss must still revoke authority and report failure.
 - [ ] First-time Home entrance animation does not play; inspect hidden loading/
   login timing and start the entrance on actual visible reveal.
 - [x] Failed hidden Home-video preload no longer permanently parks first Home
@@ -179,6 +189,9 @@ Nothing was deleted or renumbered.
   finds no editor-opening code.
 - [x] Paete ready-recast slipper flight: authored 13m/s speed restored, ba1a02554;
   two causal native failures plus ungrown control -> same three passes on laptop.
+- [x] Basilio boulder restores authored14m/s rather than unit-direction speed.
+  Original real flight0.0888m becomes1.2434m with native2/2 including cast control.
+  [Evidence](reports/laptop-validation-2026-10-05/boulder-flight/README.md).
 - [x] Owner override: mature Paete plant automatically lobs a slipper at a valid
   target every five seconds. Initial growth stays3s; host-approved shot delivery
   is identity-scoped. Laptop auto5/Core/native and Root replication checks pass.

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 21:39:04Z" end-time="2026-10-04 21:39:05Z" duration="0.5730604">
+  <test-suite type="TestSuite" id="3125" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1736" result="Passed" start-time="2026-10-04 21:39:04Z" end-time="2026-10-04 21:39:05Z" duration="0.573060" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3117" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1736" result="Passed" start-time="2026-10-04 21:39:04Z" end-time="2026-10-04 21:39:05Z" duration="0.554027" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="9168" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3118" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1736" result="Passed" start-time="2026-10-04 21:39:04Z" end-time="2026-10-04 21:39:05Z" duration="0.543459" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3121" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1734" result="Passed" start-time="2026-10-04 21:39:04Z" end-time="2026-10-04 21:39:05Z" duration="0.533105" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1633" name="HeroQuickTapTests" fullname="TumbangPreso.PlayTests.HeroQuickTapTests" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-04 21:39:05Z" end-time="2026-10-04 21:39:05Z" duration="0.389394" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1638" name="MenuClosureDefersHeldStickLookForOnlyItsFrame" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.MenuClosureDefersHeldStickLookForOnlyItsFrame" methodname="MenuClosureDefersHeldStickLookForOnlyItsFrame" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="887385239" result="Passed" start-time="2026-10-04 21:39:05Z" end-time="2026-10-04 21:39:05Z" duration="0.298202" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1637" name="MenuClosureDiscardsLateTouchLookInItsFrame" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.MenuClosureDiscardsLateTouchLookInItsFrame" methodname="MenuClosureDiscardsLateTouchLookInItsFrame" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="634882512" result="Passed" start-time="2026-10-04 21:39:05Z" end-time="2026-10-04 21:39:05Z" duration="0.035546" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1639" name="OrdinaryTouchLookStillReachesGameplay" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.OrdinaryTouchLookStillReachesGameplay" methodname="OrdinaryTouchLookStillReachesGameplay" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="1364994383" result="Passed" start-time="2026-10-04 21:39:05Z" end-time="2026-10-04 21:39:05Z" duration="0.036080" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

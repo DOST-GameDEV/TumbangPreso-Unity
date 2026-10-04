@@ -455,6 +455,13 @@ namespace TumbangPreso
         /// </summary>
         private Vector2 ReadLookDelta()
         {
+            // Menu close and pointer relock can still carry the menu's last
+            // movement in this frame. Fresh gameplay look resumes next frame.
+            if (Time.frameCount == _menuClosedFrame)
+            {
+                InputLayer.TouchInput.LookDelta = Vector2.zero;
+                return Vector2.zero;
+            }
             // The mouse, in the raw units every sensitivity number in this game is written
             // against. Legacy axes are live because `activeInputHandler` is Both.
             var delta = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));

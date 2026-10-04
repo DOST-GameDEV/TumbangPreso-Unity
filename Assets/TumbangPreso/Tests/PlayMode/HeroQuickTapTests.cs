@@ -76,6 +76,56 @@ namespace TumbangPreso.PlayTests
         [UnityTest] public IEnumerator UltimateQuickTapSurvivesUntilGameplayConsumesIt() => QuickTap(Key.X, Verb.Ultimate);
 
         [UnityTest]
+        public IEnumerator MenuClosureDiscardsLateTouchLookInItsFrame()
+        {
+            _reader.DiscardMenuButtonsUntilRelease();
+            TouchInput.Active = true;
+            TouchInput.LookDelta = new Vector2(40, -15);
+            _reader.SendMessage("Update");
+            Assert.AreEqual(Vector2.zero, _motor.Intent.LookDelta,
+                "A menu's final pointer/drag movement rotated the gameplay camera.");
+            Assert.AreEqual(Vector2.zero, TouchInput.LookDelta,
+                "Suppressed look must be consumed rather than replayed next frame.");
+            yield return null;
+            TouchInput.LookDelta = new Vector2(2, 3);
+            _reader.SendMessage("Update");
+            Assert.AreEqual(new Vector2(2, 3), _motor.Intent.LookDelta,
+                "Fresh gameplay look was still blocked after the closing frame.");
+        }
+
+        [UnityTest]
+        public IEnumerator MenuClosureDefersHeldStickLookForOnlyItsFrame()
+        {
+            var pad = InputSystem.AddDevice<Gamepad>();
+            try
+            {
+                InputSystem.EnableDevice(pad);
+                InputSystem.QueueStateEvent(pad, new GamepadState { rightStick = Vector2.right });
+                InputSystem.Update();
+                _reader.DiscardMenuButtonsUntilRelease();
+                _reader.SendMessage("Update");
+                Assert.AreEqual(Vector2.zero, _motor.Intent.LookDelta,
+                    "Held menu navigation leaked into gameplay look before the frame ended.");
+                yield return null;
+                _reader.SendMessage("Update");
+                Assert.Greater(_motor.Intent.LookDelta.x, 0,
+                    "Held gameplay stick should resume on the next frame.");
+            }
+            finally { InputSystem.RemoveDevice(pad); }
+        }
+
+        [UnityTest]
+        public IEnumerator OrdinaryTouchLookStillReachesGameplay()
+        {
+            TouchInput.Active = true;
+            TouchInput.LookDelta = new Vector2(2, 3);
+            _reader.SendMessage("Update");
+            Assert.AreEqual(new Vector2(2, 3), _motor.Intent.LookDelta);
+            Assert.AreEqual(Vector2.zero, TouchInput.LookDelta);
+            yield return null;
+        }
+
+        [UnityTest]
         public IEnumerator OrdinaryHeldSignatureStillProducesOneEdge()
         {
             Hardware(Key.E, false);

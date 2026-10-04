@@ -22,40 +22,42 @@ explicitly authorized; unnecessary AGENTS feature entry was removed at owner req
 ## Current source and live work
 
 Root checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
-Current source dcaa39abf/protocol151; accepted shared Windows artifact remains
-9226f4f78/protocol150/recording14. Contributor Paete151 and slow-frame contact
-fixes are pulled and preserved but absent from that artifact. Pre-existing
-ProjectAuditorSettings dirt and untracked Yasmin voxel draft remain protected.
+Source10ceb58ff includes integrated laptop boulder and full online150 result proof,
+current Paete palm placement and shared tag ink. Protocol151/recording14.
+Accepted full Windows artifact remains89cc9f295/protocol151 and predates the
+boulder, palm, tag and current menu-look fix. Preserve pre-existing Auditor dirt
+and untracked Yasmin wardrobe script. No Root game/Unity/share/recorder active.
 
-Root owns Net/UI/input/docs/release. Laptop owns Paete auto-lob and reserved
-Basilio/Dante boulder speed fix; emote CharacterVisual observed, unedited.
-Laptop chat Fix gameplay interruption recovery: thread01a0ffab-10a0-70d0-
-9270-07e171c1613b, host remote-control:env_e_6aa6c4fde2dc83218a0722e34ac3face.
-Root192.168.1.7 and laptop192.168.1.144. Ask current files/jobs before reassignment.
-Existing Sol6.1 High review helper finished local operator checks and Home-video
-source review; naming helper is naming-only. Do not launch idle extra workers.
+Latest owner instruction: laptop is off; PC continues ALONE. Laptop goal was
+explicitly paused. Do not wake/message it, wait for a pair or reuse obsolete
+coordination schedules. Current PC source/testing work remains authorized.
+The local Sol6.1 High helper finished its bounded tasks; no active worker.
+Source/current jobs: Logs/arrival-pan-review1004/current-resume.json.
 
-Root normal GUI150 host3344/session7674 closed normally with exit0 and input/
-settings restored. Actual Guest/title/Home/Custom/ONLINE-PUBLIC room WAD6,
-peer admission, rules Hero4x90, Host START and manual draft SELECT completed.
-Natural online record f4d8c6f59e9d43d898438e7088a773b9,359.969574s,
-scores20/110/1725/1700. Host full canonical2430bytes SHA256
-99d32afbddb8813d05a135af4e2b9370cd5d4442c43f3f0250e4117bdf63356b.
-Laptop36344/session42614/profilelpt-q150-ui1005a admitted via actual public JOIN;
-client full result and clean non-host motion receipt still pending. One rematch
-vote correctly required peer1/2; Root then used Main Menu->Practice->Training.
-Local held W2000ms/A1200ms and E150ms visibly responded, retained images35-38.
-Do not claim Training proves online motion or rubberbanding resolved.
+Laptop departure branch b1486856d was fetched and normally merged/pushed10ceb.
+Independent Root review verified8 boulder,7 online150 and18 Practice raw Git
+hashes. COMPLETE online150 canonical2430-byte record equals Root's object and
+hash99d32afbddb8813d05a135af4e2b9370cd5d4442c43f3f0250e4117bdf63356b.
+This is successful admission/completion/result consistency, not non-host motion.
+The same client log confirms a NEW DEFECT: after Slice reports match over, later
+host departure logs ABANDONED round4of8 and moves back to an own lobby. Preserve
+completion during session teardown; keep genuine host-loss authority revocation.
 
-NEXT Native tag replacement7724/session7855 passed2/2 and parent/restoration
-68549 are terminal with202 GUI metadata restored and no frozen source deltas.
-New TagContactAccent/MatchFlair hook replaces only tag ImpactBurst; source staged
-and report prepared. Publish explicit source/test/TODO/evidence paths normally.
-Current full15189cc9f295 package passed normal GUI Guest/title/Home animation and
-expired code recovery, player20584/session3874 exited0 with prefs/settings restored.
-This artifact predates the new tag effect. No Root active player/Unity/share.
-Laptop still has no new concrete tool output after Rules; queued requests ask
-full150 saved result/ownership and resumed boulder work. Do not fake a peer pass.
+Menu-look source is natively complete and pending publication: original23460 /
+2621 late touch(40,-15) and held stick(0.22,0) leak closing frame;1 control PASS.
+Candidate9168/22252 same3/3 PASS with next-frame look resumption. Both terminal,
+202 owned UI importers restored per run, prefs/Quality restored, no frozen deltas.
+ReadLookDelta adds only the existing menu-close-frame guard; backend/bindings
+unchanged. NEXT publish explicit Reader/test/report/TODO paths, then reproduce
+completed-match disconnect before implementing its smallest fix.
+
+Normal Windows151 Guest/title/Home animated in real controls and expired-code
+join recovered to usable browser. Paete HERO->TRY IN PRACTICE, one held Q150ms,
+recorded plant mouth/release, wooden slipper in flight and can knockdown score100
+without a second press. Film uses fresh exact-window DESKTOP crop: GDI window-title
+capture returned stale frames, so two failed clips are not acceptance. All player/
+recorder parents exited normally; input/profile settings restored. Proofe9be is
+integrated; no repeated5s interval/remote/audio or mouse-relock film claim.
 
 ## Shipped fixes and evidence limits
 
