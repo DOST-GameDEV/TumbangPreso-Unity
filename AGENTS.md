@@ -121,6 +121,26 @@ back an implementable problem or repeatedly restating it.
 - Keep updates concise and useful. Prefer actual fixes to planning, audit,
   diagnostic, fixture or capture-framework churn.
 
+### October 4 owner directive: recurring task cleanup
+
+Track task-owned tabs, helpers, processes, internal builds, temporary files and
+branch references. Clean obsolete task outputs after coherent units and regularly
+during long runs, rather than leaving stale processes or branches behind.
+
+- Preserve active jobs and their inputs, the current shared artifact, source,
+  profiles, saves, essential acceptance/failure evidence, private artwork and
+  unrelated work. Verify ownership and terminal state before cleanup.
+- Stop only verified task-owned idle helpers. Close only task-owned previews.
+  Do not interrupt another contributor's process or remove an artifact still
+  being shared or tested.
+- Delete branch references only after checking ancestry, active worktrees and
+  whether unmerged or unfinished work needs them. Do not recreate obsolete
+  references already removed by the coordinating engineer.
+- Check resolved absolute paths before deleting obsolete task files. Archive
+  managed worktrees through the Codex app so their recoverable work is retained.
+- Reuse an existing matching cleanup automation. The PC owns the current shared
+  cleanup heartbeat; do not create duplicate automations or new agents.
+
 ## Approved Cloud Setup Recovery
 
 - The owner explicitly authorizes restoring the existing TUMP cloud setup when
