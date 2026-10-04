@@ -35,7 +35,7 @@ namespace TumbangPreso.Diagnostics
             _enabled=Argument("-tp-personaltrace")!=null && !Environment.GetCommandLineArgs().Contains("-tp-tournament");
             if(!_enabled)return;
             _scenario=Argument("-tp-personalcase")??"ward";
-            _hero=_scenario=="veil" || _scenario=="fade"?"nemu":"dante";
+            _hero=_scenario=="vine"?"paete":_scenario=="veil" || _scenario=="fade"?"nemu":"dante";
             UI.SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
             Settings.SettingsStore.Current.CharacterPick=Roster.IndexIn(Roster.HeroPeople,_hero);
             var target=Settings.SettingsStore.HeroBuildFor(_hero);var build=FixtureBuild();
@@ -56,7 +56,7 @@ namespace TumbangPreso.Diagnostics
             var probe=root.AddComponent<NetPersonalBuffProbe>();
             string path=Path.GetFullPath(Argument("-tp-personaltrace"));Directory.CreateDirectory(Path.GetDirectoryName(path));
             probe._writer=new StreamWriter(path){AutoFlush=true};
-            probe._writer.WriteLine("wallTime,elapsed,local,active,remaining,cooldown,visuals,orbit,slow,immune,held,refreshed,x,y,z,ultcharge,variant");
+            probe._writer.WriteLine("wallTime,elapsed,local,active,remaining,cooldown,visuals,orbit,slow,immune,held,refreshed,x,y,z,ultcharge,variant,targetX,targetZ,pullActive");
         }
         private void Update()
         {
@@ -79,7 +79,7 @@ namespace TumbangPreso.Diagnostics
             if(caster?.AbilitySystem?.Kit==null || caster.AbilitySystem.Kit.HeroId!=_hero)return;
             foreach(var brain in FindObjectsByType<AIController>(FindObjectsSortMode.None))brain.enabled=false;
             foreach(var input in FindObjectsByType<PlayerInputReader>(FindObjectsSortMode.None))input.enabled=false;
-            foreach(var player in round.Players)if(player!=null){player.Intent.Clear();player.Intent.Parked=player!=caster;}
+            foreach(var player in round.Players)if(player!=null){player.Intent.Clear();player.Intent.Parked=player!=caster&& !(_scenario=="vine"&&player.PlayerSlot==0);}
             float elapsed=UI.SceneFlow.SelectedRoundSeconds-round.TimeLeft;
             if(elapsed>21){_writer.Flush();Application.Quit();return;}
             if(!_prepared)
@@ -91,15 +91,16 @@ namespace TumbangPreso.Diagnostics
                     caster.ClearStun();caster.ClearTrip();
                 }
                 if(NetAuthority.IsHost)
-                    foreach(var player in round.Players)if(player!=caster)player.Teleport(new Vector3(-9,.12f,-12+player.PlayerSlot*4));
+                    foreach(var player in round.Players)if(player!=caster)player.Teleport(_scenario=="vine"&&player.PlayerSlot==0?new Vector3(0,.12f,-2):new Vector3(-9,.12f,-12+player.PlayerSlot*4));
             }
             if(NetAuthority.LocalSlot==1)
             {
                 caster.Intent.Parked=false;caster.Intent.FaceAimPoint=true;caster.Intent.AimPoint=new Vector3(0,.2f,-2);
-                caster.Intent.Set(_hero=="nemu"?Verb.Skill1:Verb.Skill2,elapsed>=12 && elapsed<12.3f);
+                if(_scenario=="vine")caster.Intent.AimPoint=round.PlayerAt(0).transform.position+Vector3.up*.9f;
+                caster.Intent.Set(_hero=="nemu"||_scenario=="vine"?Verb.Skill1:Verb.Skill2,elapsed>=12 && elapsed<12.3f);
             }
             var ability=caster.AbilitySystem;
-            var skill=_hero=="nemu"?ability.Kit.Skill1:ability.Kit.Skill2;
+            var skill=_hero=="nemu"||_scenario=="vine"?ability.Kit.Skill1:ability.Kit.Skill2;
             if(NetAuthority.LocalSlot==2 && !_refreshed)
             {
                 if(skill.IsActive && _refreshAt<0)_refreshAt=Time.realtimeSinceStartup+.25f;
@@ -108,18 +109,20 @@ namespace TumbangPreso.Diagnostics
                     _refreshed=true;
                     ability.BindHero(_hero,FixtureBuild());
                     MatchRpc.Instance.RequestWorldSnapshot();
-                    skill=_hero=="nemu"?ability.Kit.Skill1:ability.Kit.Skill2;
+                    skill=_hero=="nemu"||_scenario=="vine"?ability.Kit.Skill1:ability.Kit.Skill2;
                 }
             }
             if(Time.realtimeSinceStartup<_next)return;_next=Time.realtimeSinceStartup+.025f;
             var orbit=caster.transform.Find("DanteOrbitingWard");var at=caster.transform.position;
-            int visuals=_hero=="nemu"?caster.GetComponentsInChildren<NemuVeilPresentation>().Length
+            int visuals=_scenario=="vine"?FindObjectsByType<PaeteVineReach>(FindObjectsSortMode.None).Length:_hero=="nemu"?caster.GetComponentsInChildren<NemuVeilPresentation>().Length
                 :caster.GetComponentsInChildren<DanteCarapaceVisual>().Length;
             object[] row={DateTime.UtcNow.Ticks/(double)TimeSpan.TicksPerSecond,elapsed,NetAuthority.LocalSlot,
                 skill.IsActive?1:0,skill.DurationRemaining,skill.CooldownRemaining,visuals,orbit!=null?orbit.childCount:0,
                 caster.SpeedMultiplier,(_hero=="nemu"?ability.IsImmuneToTags:ability.IsImmuneToStuns)?1:0,
                 caster.HoldingSlipper?1:0,_refreshed?1:0,at.x,at.y,at.z,ability.Kit.UltimateCharge,
-                ability.HasVariant(_hero=="nemu"?"nemu.1.fade":"dante.2.plating")?1:0};
+                ability.HasVariant(_hero=="nemu"?"nemu.1.fade":"dante.2.plating")?1:0,
+                round.PlayerAt(0).transform.position.x,round.PlayerAt(0).transform.position.z,
+                FindObjectsByType<PaetePlayerPull>(FindObjectsSortMode.None).Count(p=>p.Active)};
             _writer.WriteLine(string.Join(",",row.Select(value=>Convert.ToString(value,CultureInfo.InvariantCulture))));
         }
         private void OnDestroy()=>_writer?.Dispose();

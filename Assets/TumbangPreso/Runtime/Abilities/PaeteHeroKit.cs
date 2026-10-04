@@ -156,7 +156,9 @@ namespace TumbangPreso.Abilities
                                    PaeteRules.VineHoldSeconds(d.magnitude));
             }
 
-            protected override void OnEnd(AbilityContext ctx) { _playerPull?.Stop("ability ended");_playerPull=null;_caster = null; }
+            // The bounded constraint owns completion and cancellation. A UI ability
+            // timer must not cut short an acknowledged remote motor still arriving.
+            protected override void OnEnd(AbilityContext ctx) { _playerPull=null;_caster = null; }
 
             private static Vector3 Flat(Vector3 v) => new Vector3(v.x, 0.0f, v.z);
         }

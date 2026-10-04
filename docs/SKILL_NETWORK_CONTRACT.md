@@ -1,5 +1,18 @@
 # Skill Networking Contract
 
+## Paete delayed player vine, protocol151
+
+The player-pull lifetime includes bounded measured-RTT allowance for remote
+replica updates. Local collision stalls still stop promptly. Restored travel
+speed is derived from the remaining endpoint distance, independently of the
+network grace deadline. The integrated protocol150 explicit owner-pose
+acknowledgement contract handles ordinary delayed echoes; the temporary
+Paete-specific recent-pose workaround was removed. Genuine host corrections
+still interrupt the active constraint.
+The ability presentation timer cannot cancel the live
+constraint prematurely. Matching rebuilt peers are required because earlier149
+clients interpreted the entire deadline as travel time.
+
 ## Paete player vine, protocol149
 
 Liana Leap keeps its predicted tell and cooldown, but only the host chooses the

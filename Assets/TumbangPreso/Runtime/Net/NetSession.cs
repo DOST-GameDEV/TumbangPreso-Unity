@@ -571,7 +571,8 @@ namespace TumbangPreso.Net
         //147: revised Cryo placement and fifteen-second all-throw Frostbite; timed Boulder.
         //148: arc-wall snapshots preserve radius, length and remaining hit budget.
         //150: owner pose acknowledgements are distinct from authoritative corrections.
-        public const int ProtocolVersion = 150;
+        //151: bounded remote vine completion; deadline grace is separate from reel speed.
+        public const int ProtocolVersion = 151;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

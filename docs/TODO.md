@@ -9,7 +9,11 @@
 - [x] Review actual plant/defense and player-latch film. Final focused teleport
   correction and input/receiver controls pass3/3 after the retained10/11 sweep.
   [Evidence](reports/paete-refinement-2026-10-04/README.md).
-- [ ] Matching protocol149 live peers, Windows player and human visual acceptance.
+- [x] Integrate automatic five-second lobs and explicit owner acknowledgements;
+  preserve a0.6s charge window and add bounded remote grace. Protocol151 has
+  Core20/20, native14/14+5/5 and matching three-process direct/delayed passes.
+  The150ms one-way case agrees on4.176m/1.044m travel and0.78m final gap.
+- [ ] Windows/WAN/loss/disconnect, replay/SFX and human visual acceptance.
 
 ### LINUX-SMOKE-1004: integrated build and offline startup
 

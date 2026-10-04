@@ -1142,6 +1142,7 @@ namespace TumbangPreso
             float error = Vector3.Distance(transform.position, position);
             if(reconcileLocal && !force && _awaitingTeleport)return;
             if (reconcileLocal && !force && error < 1.25f) return;
+            if(reconcileLocal&&(force||error>3f))_paetePull?.Stop("host correction");
 
             // ⚠️⚠️ THE VELOCITY IS TAKEN WITH THE POSITION OR NOT AT ALL, AND IT USED TO BE
             // TAKEN ON THE LINE ABOVE `_networkGrounded`, UNCONDITIONALLY. 🧑 2026-08-30, of an

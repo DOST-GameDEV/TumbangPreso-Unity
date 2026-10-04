@@ -895,7 +895,8 @@ namespace TumbangPreso.Visual
             // Store the wind-up as the bakya finishes growing, BEFORE the command
             // launches it. The old recoil curve wound up after the projectile left.
             float grown = Mathf.Clamp01(shotGrowth);
-            float charge = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(.96f, 1f, grown));
+            float chargeStart = Mathf.Max(0f, 1f - .6f / PaeteRules.PlantReloadSeconds);
+            float charge = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(chargeStart, 1f, grown));
             float release = sinceShot < .38f ? 1f - Mathf.SmoothStep(0f, 1f, sinceShot / .38f) : 0f;
             squash *= 1f + .10f * charge - .05f * release;
             _stem.localScale = new Vector3(squash, 1f / squash, squash);

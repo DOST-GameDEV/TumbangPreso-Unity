@@ -1,0 +1,15 @@
+{
+  "protocol": 150,
+  "baseSource": "1ca81f8ed7a68040e30a7979eb6fcf9f0104c793",
+  "sourceDelta": "Experimental scoped echo workaround, superseded by upstream explicit acknowledgements before publication",
+  "runtime": {
+    "path": "TumpQA_Data/Managed/TumbangPreso.Runtime.dll",
+    "bytes": 3937792,
+    "sha256": "a9d80c79797ec879e979f8eb88bc2890a78f331832266f4c4908c967a9727182"
+  },
+  "fileCount": 254,
+  "bytes": 2601720046,
+  "buildSeconds": 95.4,
+  "buildExit": 0,
+  "linkOneWayDelayMs": 150
+}

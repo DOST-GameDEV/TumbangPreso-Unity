@@ -17,7 +17,7 @@ namespace TumbangPreso.Abilities
         private float _age, _gap, _casterSpeed, _targetSpeed, _duration;
         private bool _stopped, _casterRole, _targetRole;
         private HeroKit _casterKit, _targetKit;
-        private float _casterStalled, _targetStalled;
+        private float _casterStalled, _targetStalled, _remoteGrace;
         private PaeteVineReach _visual;
         private bool _publishEnd;
         public Vector3 CasterEnd => _casterEnd;
@@ -46,7 +46,8 @@ namespace TumbangPreso.Abilities
             pull._targetEnd=target.transform.position-direction*b;
             float travel=Mathf.Max(.12f,a/PaeteRules.VineReelSpeed);
             pull._casterSpeed=a/travel; pull._targetSpeed=b/travel;
-            pull._duration=PaeteRules.VineReachSeconds+travel+.3f;
+            pull._remoteGrace=NetworkGrace(caster,target);
+            pull._duration=PaeteRules.VineReachSeconds+travel+.3f+pull._remoteGrace;
             pull._casterEpoch=caster.MovementEpoch; pull._targetEpoch=target.MovementEpoch;
             pull._round=GameServices.Match?.RoundNumber??0;
             pull._match=GameServices.Match?.PresentationMatchId??0;
@@ -65,7 +66,9 @@ namespace TumbangPreso.Abilities
             pull._casterEnd=state.CasterEnd;pull._targetEnd=state.TargetEnd;
             pull._gap=caster.PaeteBodyRadius+target.PaeteBodyRadius+.08f;
             pull._duration=state.Duration;pull._age=Mathf.Max(0,age);
-            float remaining=Mathf.Max(.02f,state.Duration-Mathf.Max(PaeteRules.VineReachSeconds,age)-.3f);
+            // Network grace extends only the deadline, never slows the reel.
+            pull._remoteGrace=NetworkGrace(caster,target);
+            float remaining=Mathf.Max(.12f,Flat(state.CasterEnd-caster.transform.position).magnitude/PaeteRules.VineReelSpeed);
             pull._casterSpeed=Mathf.Min(PaeteRules.VineReelSpeed,Flat(state.CasterEnd-caster.transform.position).magnitude/remaining);
             pull._targetSpeed=Mathf.Min(PaeteRules.VineReelSpeed,Flat(state.TargetEnd-target.transform.position).magnitude/remaining);
             pull._casterEpoch=caster.MovementEpoch;pull._targetEpoch=target.MovementEpoch;
@@ -76,6 +79,9 @@ namespace TumbangPreso.Abilities
             caster.AttachPaetePull(pull);target.AttachPaetePull(pull);
             return pull;
         }
+        private static float NetworkGrace(CharacterMotor caster,CharacterMotor target)
+            => NetAuthority.IsNetworked&&(!caster.IsLocallySimulated()||!target.IsLocallySimulated())
+                ?Mathf.Clamp(NetSession.LinkRttMs*.001f+.1f,.1f,.8f):0;
         private static bool Eligible(CharacterMotor who) => who!=null && who.isActiveAndEnabled
             && who.gameObject.activeInHierarchy && who.RoundActive && !who.IsTagged
             && !who.IsStunned && !who.IsRooted && !who.IsFlying
@@ -100,7 +106,8 @@ namespace TumbangPreso.Abilities
                     &&Flat(_caster.transform.position-_casterLast).magnitude<.001f?_casterStalled+Time.fixedDeltaTime:0;
                 _targetStalled=Flat(_targetEnd-_target.transform.position).magnitude>.05f
                     &&Flat(_target.transform.position-_targetLast).magnitude<.001f?_targetStalled+Time.fixedDeltaTime:0;
-                if(_casterStalled>.16f||_targetStalled>.16f){Stop("blocked");return;}
+                if(_casterStalled>.16f+(_caster.IsLocallySimulated()?0:_remoteGrace)
+                    ||_targetStalled>.16f+(_target.IsLocallySimulated()?0:_remoteGrace)){Stop("blocked");return;}
             }
             _casterLast=_caster.transform.position;_targetLast=_target.transform.position;
         }

@@ -6,6 +6,29 @@ The [research and preservation plan](plan.md) records the source/reference revie
 This work preserves the existing plant, authored braided vines, character models,
 palette, attack cooldown and13m/s wooden-slipper launch.
 
+## Current integrated candidate
+
+Protocol151 integrates the shared explicit owner-acknowledgement fix and mature
+five-second automatic lobs. The earlier experimental recent-pose trail is removed;
+there is only one acknowledgement/correction path. Remote replica grace is bounded
+and separate from movement speed. Plant charging retains a0.6s window independent
+of the shorter reload.
+
+Final source has14/14 headless packet/input checks,5/5 graphics gameplay/animation
+checks and20/20 Core cases. The combined attempt first hit OOM with no result XML;
+that failed run is retained, its orphan compiler was retired, and the split runs
+passed without another OOM. The internal Linux build passes130.6s and packages
+254files/2601722190bytes. Its QA checkout has no Git stamp, so the external manifest
+and source delta identify it; it is not a certified release package.
+
+Three matching151 processes pass the150ms one-way delayed case:4.176m caster,
+1.044m target,0.78m final separation on all peers, zero backwards steps on the
+controlling peer, and observer refresh. [Final delayed evidence](peer151-delay150/evaluation.json).
+The [final direct control](peer151-direct/evaluation.json) also passes with the
+same4.176m/1.044m travel and0.78m stop gap. All final traces reach their bounded
+observation window; cleanup/exit receipts are retained. Windows, WAN/loss/disconnect, replay, sound
+and human acceptance remain separate.
+
 ## Behavior
 
 - Bakya Bloom stores its windup before the wooden slipper actually launches,
@@ -52,8 +75,45 @@ cancellation defect. Offline Teleport does not change movement epoch, so epoch-o
 cleanup was insufficient. Teleport now cancels immediately, and epoch adoption
 also cancels before replacement. The original failed test plus actual input and
 receiver controls then passed3/3 on final source. Core Paete rules passed20/20.
-No new OOM occurred. These focused passes are not a full-game regression pass.
+No new OOM occurred in those initial runs. These focused passes are not a full-game regression pass.
 
-Matching protocol149 live peers,
-Windows player, latency/loss/reconnect scenarios and human visual acceptance remain
-unqualified. The earlier protocol148 two-machine result does not qualify this change.
+At this initial checkpoint, matching protocol149 live peers, Windows player,
+latency/loss/reconnect scenarios and human visual acceptance were unqualified. The earlier protocol148 two-machine result does not qualify this change.
+
+
+## Actual peer follow-up
+
+A Linux player build passed with the shipped gameplay source and an opt-in
+extension to the existing personal-state probe. Three separate processes on
+loopback (host target, remote controlling caster, observer) passed:
+[direct result](peer-direct/evaluation.json). All three agree on4.176m caster
+travel, approximately0.98m target travel and0.844m final separation. Observer
+kit replacement was followed by a live restored constraint. All processes exited0.
+This is actual transport delivery, not separate hardware or WAN certification.
+
+Adding150ms one-way delay on the controlling client's link reproduced a real
+failure: the host mistook delayed replica updates for a collision stall. The
+caster stopped at2.8m, leaving2.36m between the bodies on all peers. The original
+[failed evaluation](peer-delay150-before/evaluation.json) is retained.
+
+The correction gives remote replicas bounded measured-RTT grace while retaining
+immediate local obstacle checks and the same velocity/distance rules. Grace
+extends the deadline, not travel speed. The short ability presentation timer no
+longer owns cancellation of the independently bounded movement constraint.
+Four native input, obstacle, teleport/kit and receiver checks pass. The subsequent packaged results and final integration are recorded above.
+
+
+The first grace-only protocol150 retest revealed a second defect rather than
+passing: ordinary delayed own-position echoes rewound the controlling caster.
+Its final travel was0.28m while the target reached1.044m; the
+[failed three-process traces](peer-delay150-echo-before/evaluation.json) retain
+the repeated reversals. A scoped recent-pose trail now distinguishes those
+known echoes during an approved tether from genuine corrections. A new native
+case proves delayed matching positions do not rewind the pull while off-trail
+and forced corrections still win. That case plus input/receiver controls pass3/3.
+That experimental workaround passed matching delayed peers, but was superseded
+by the shared explicit acknowledgement fix before this follow-up was published.
+
+The broad gameplay-clock audit reports13 findings in six other source files.
+Those findings were in unchanged baseline files at the time of that audit.
+This is not a full-project audit pass; no audit exemption was added for this change.

@@ -1,0 +1,13 @@
+{
+  "commit": "1ca81f8ed7a68040e30a7979eb6fcf9f0104c793",
+  "checkRuns": {
+    "check_runs": [],
+    "total_count": 0
+  },
+  "statuses": {
+    "state": "pending",
+    "statuses": [],
+    "total_count": 0
+  },
+  "interpretation": "No remote check runs or statuses registered; not CI success."
+}

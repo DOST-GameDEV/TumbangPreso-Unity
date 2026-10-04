@@ -25,6 +25,9 @@ namespace TumbangPreso.PlayTests
                 var rest = Read<Quaternion>(body,"_podRest");
                 var shoe = Read<Transform>(body,"_shoe");
                 var meshes = body.GetComponentsInChildren<MeshFilter>(true).Select(f=>f.sharedMesh).ToArray();
+                body.Pose(5,0,false,1f-.3f/TumbangPreso.Core.PaeteRules.PlantReloadSeconds,99);
+                Assert.Less(Mathf.DeltaAngle(0,(Quaternion.Inverse(rest)*pod.localRotation).eulerAngles.x),-5,
+                    "Shorter automatic reload must retain a readable pre-launch charge window.");
                 body.Pose(5,0,false,1,99);
                 float prepared = Mathf.DeltaAngle(0,(Quaternion.Inverse(rest)*pod.localRotation).eulerAngles.x);
                 Assert.Less(prepared,-17,"Loaded pitcher must store its wind-up before the shot command.");

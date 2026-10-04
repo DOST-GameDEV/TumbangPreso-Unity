@@ -473,6 +473,44 @@ namespace TumbangPreso.PlayTests
             yield return new WaitForFixedUpdate();Assert.IsTrue(pull==null||!pull.Active,"A replacement kit inherited the old hook.");
         }
 
+        private sealed class VineCasterPeer : INetProvider
+        { public bool IsHost=>false;public bool IsNetworked=>true;public int LocalSlot=>1;public int LocalPeerId=>7;public bool IsSeatlessReferee=>false; }
+        [UnityTest, Timeout(60000)]
+        public IEnumerator ConfirmedVineHonoursExplicitAcknowledgementsAndCorrections()
+        {
+            var caster=Paete(1,new Vector3(-5,.12f,-6));
+            var target=GameServices.Round.PlayerAt(2);target.Teleport(new Vector3(-5,.12f,0));
+            caster.Intent.Parked=target.Intent.Parked=false;yield return null;
+            var rtt=typeof(TumbangPreso.Net.NetSession).GetProperty("LinkRttMs");long previous=(long)rtt.GetValue(null);
+            int rate=Time.captureFramerate;Time.captureFramerate=60;
+            try
+            {
+                rtt.SetValue(null,700L);NetAuthority.Provider=new VineCasterPeer();
+                Vector3 start=caster.transform.position;
+                var state=new TumbangPreso.Net.PaeteVineState {Scope=new TumbangPreso.Net.GameplayActionScope {
+                    Match=GameServices.Match.PresentationMatchId,Round=GameServices.Match.RoundNumber,Epoch=caster.MovementEpoch},
+                    Sequence=1,Owner=1,Target=2,TargetEpoch=target.MovementEpoch,Phase=TumbangPreso.Net.PaeteVinePhase.Player,
+                    Anchor=target.transform.position+Vector3.up*.9f,CasterEnd=start+Vector3.forward*4.176f,
+                    TargetEnd=target.transform.position-Vector3.forward*1.044f,Duration=1.5f,RoundClock=GameServices.Round.TimeLeft};
+                var pull=PaetePlayerPull.Restore(caster,target,state,0);Assert.IsNotNull(pull);
+                yield return new WaitForSeconds(.48f);
+                Vector3 advanced=caster.transform.position;Assert.Greater(Flat(advanced-start).magnitude,3);
+                caster.ApplyNetworkTransform(start,0,Vector3.zero,true,true,acceptedOwnerPose:true);
+                Assert.Less(Vector3.Distance(advanced,caster.transform.position),.01f,"An old echoed position rewound the approved pull.");
+                Vector3 correction=start+Vector3.right*3;
+                caster.ApplyNetworkTransform(correction,0,Vector3.zero,true,true);
+                Assert.Less(Vector3.Distance(correction,caster.transform.position),.01f,"Off-trail correction was suppressed.");
+                Assert.IsFalse(pull.Active);
+                caster.Teleport(start);yield return null;
+                pull=PaetePlayerPull.Restore(caster,target,state,0);Assert.IsNotNull(pull);
+                yield return new WaitForSeconds(.48f);
+                caster.ApplyNetworkTransform(start,0,Vector3.zero,true,true,true,acceptedOwnerPose:true);
+                Assert.Less(Vector3.Distance(start,caster.transform.position),.01f,"Forced correction must override even a known old position.");
+                Assert.IsFalse(pull.Active);
+            }
+            finally{Time.captureFramerate=rate;rtt.SetValue(null,previous);NetAuthority.Provider=new SoloProvider();}
+        }
+
         private sealed class VineOwnerPeer : INetProvider
         { public bool IsHost=>false;public bool IsNetworked=>true;public int LocalSlot=>2;public int LocalPeerId=>7;public bool IsSeatlessReferee=>false; }
 
