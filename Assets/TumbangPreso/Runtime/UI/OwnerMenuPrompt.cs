@@ -107,9 +107,9 @@ namespace TumbangPreso.UI
         /// </summary>
         private static string Words(InputDeviceKind kind) => kind switch
         {
-            InputDeviceKind.Touch => "Tap anywhere to continue.",
-            InputDeviceKind.Gamepad => "Press any button to continue.",
-            _ => "Click anywhere to continue.",
+            InputDeviceKind.Touch => "Tap to continue.",
+            InputDeviceKind.Gamepad => "Press a button to continue.",
+            _ => "Click to continue.",
         };
     }
 }
