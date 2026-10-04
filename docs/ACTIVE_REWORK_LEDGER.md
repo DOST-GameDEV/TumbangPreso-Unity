@@ -32,7 +32,7 @@ TODO is the only status queue. Reports hold evidence; this file holds execution.
 ## Exact source and outstanding unit
 
 Root checkout: C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
-Source73ef60af32 includes checked replay/input/F6/career and current LAN runner,
+Source67d0980dd8 includes checked replay/input/F6/career, LAN runner and server speed,
 protocol144, clean detached HEAD before this checkpoint. Build remains unlaunched.
 Dirty Main is C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks;
 never overwrite/stage its private Amihan/artwork/input metadata. No root Editor.
@@ -101,8 +101,13 @@ Root server travel-bound unit: current actual Core accepts1656/1700/1800 but old
 Cloud Code rejects them. Corrected legacy6.9 bound to DefenderRunSpeed7.5 only;
 original3failures/3controls ->6/6 with actual Core answers and digest unchanged.
 No service deployment/native launch. Evidence:reliability-2026-10-04/cloud-travel-bound.
-NEXT: publish the coherent server correction, then continue independent source
-work or launch the prepared release only after an actual owned-slot gate changes.
+Root next server unit: baseline67d exported submit endpoint loses history when
+profile succeeds/history fails, then retry sees applied id and skips history.
+History-before-profile correction: original1failure/4controls ->5/5. Travel6/6 and
+digest still pass. No deployed/transaction/concurrent-write or old-loss recovery
+claim. Evidence:reliability-2026-10-04/cloud-history-write. No owned native job.
+NEXT: publish this checked write-order correction and continue independent source
+work; release launch still requires an actual owned-slot gate change.
 Owner last-five-hours question was answered; do not replay it after compaction.
 
 ## Completed evidence and next integration gates

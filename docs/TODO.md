@@ -17,6 +17,16 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CLOUD-HISTORY-WRITE-1004: failed writes retain retryable history
+
+- [x] Save match history before the profile's applied-id marker. A failed history
+  write then remains retryable; a failed profile write deduplicates history on
+  retry. Actual exported endpoint with local one-shot storage failures:
+  original1failure/4controls -> corrected5/5, preserving duplicate/offline paths.
+  [Evidence](reports/reliability-2026-10-04/cloud-history-write/README.md).
+- [ ] Service deployment and real SDK/packaged acceptance. This does not restore
+  historical entries already missing behind persisted applied markers.
+
 ### CLOUD-TRAVEL-BOUND-1004: server matches the current defender speed
 
 - [x] Mirror DefenderRunSpeed7.5 in the Cloud Code travel sanity bound. Actual
