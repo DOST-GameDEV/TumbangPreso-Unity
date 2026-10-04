@@ -21,3 +21,5 @@ The correction computes the texel-space UV footprint and selects its logarithmic
 Actual screenshots inspected: Sa Bubong buildings and Eskinita pots/roofs are corrected; the post remains solid/dithered/cleared at the sampled approach distances. Kanto still has black/white roadside planter artifacts and remains open; its capture case passing does not assert visual correctness. The existing aerial fixture includes an opt-in fixed Sa Bubong region check, enabled with TUMP_MAP_SURFACE_CHECK=1. This is a narrow image regression, not a general proof that every map or renderer is defect-free.
 
 Runtime: Unity 6000.5.8f1, Linux OpenGL/llvmpipe. One native job at a time, separate validation project/profile, actual resource monitoring and settings restoration. Windows/player/GPU acceptance remains separate. The earlier exact red/cyan foliage Feedback screenshot remains open.
+
+Integrated contributor Carrier ownership correction at92733918: current Unity compile and all4 ReaderRestoreChargeOwnershipTests pass in0.099s (exit0). This is a separate lifecycle regression, not additional map visual coverage.
