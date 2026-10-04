@@ -177,7 +177,10 @@ namespace TumbangPreso.CameraSystem
             // no camera move, faded in rather than cut in; the scene itself drops its flashes.
             bool moving=Settings.SettingsStore.Current.CinematicCameraMotion && !Settings.SettingsStore.Current.ReducedUiMotion && !Settings.SettingsStore.Current.ReducedEffects;
             _fade.alpha=returnBlend*(moving?1:Mathf.SmoothStep(0,1,Mathf.Clamp01(age/.3f)));
-            _picture.enabled=(moving?_safeShot:_stillSafe) && _camera!=null && _primary?.Scene!=null;
+            // Keep phase timing, sampled poses and handoff in headless simulation,
+            // but never submit an off-screen render to Unity's null device.
+            _picture.enabled=SystemInfo.graphicsDeviceType!=GraphicsDeviceType.Null &&
+                (moving?_safeShot:_stillSafe) && _camera!=null && _primary?.Scene!=null;
             if (!_picture.enabled) return;
             Vector3 eye, target; float fov;
             if(moving)

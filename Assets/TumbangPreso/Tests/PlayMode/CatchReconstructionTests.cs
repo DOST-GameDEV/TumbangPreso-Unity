@@ -48,6 +48,35 @@ namespace TumbangPreso.PlayTests
             for (int i = 2; i < 4; i++) round.PlayerAt(i).Teleport(can + new Vector3(-5, 0, i * 2));
         }
         [UnityTest]
+        public IEnumerator HeadlessTagKeepsRecoveryWithoutAllocatingReplayCamera()
+        {
+            if (SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null)
+                Assert.Ignore("Run with -nographics to exercise the real null graphics device.");
+            yield return Open(); Stage(); yield return new WaitForSeconds(1.1f);
+            var settings = Settings.SettingsStore.Current;
+            bool reduced = settings.ReducedUiMotion, cinematic = settings.CinematicCameraMotion;
+            settings.ReducedUiMotion = false; settings.CinematicCameraMotion = true;
+            try
+            {
+                var actor = GameServices.Round.PlayerAt(0);
+                var victim = GameServices.Round.PlayerAt(1);
+                var view = Object.FindAnyObjectByType<CatchReconstruction>();
+                Assert.IsNotNull(view);
+                Assert.IsTrue(actor.GetComponent<CombatVerbs>().HostResolvePunch(actor.transform.position, actor.transform.forward));
+                float recovery = victim.StunLeft;
+                Assert.Greater(recovery, .3f);
+                yield return new WaitForSeconds(.2f);
+                Assert.IsFalse(view.Playing);
+                Assert.IsNull(GameObject.Find("~CatchPlaybackCamera"));
+                Assert.Greater(victim.StunLeft, 0);
+                Assert.Less(victim.StunLeft, recovery, "Skipping presentation must not pause tag recovery.");
+                Assert.IsNotNull(view.GetComponent<MatchPoseHistory>());
+                Assert.IsNotNull(view.GetComponent<MatchReplayArchive>());
+            }
+            finally { settings.ReducedUiMotion = reduced; settings.CinematicCameraMotion = cinematic; }
+        }
+
+        [UnityTest]
         public IEnumerator IlalimOverlayTexturesRetainTheirAuthoredRange()
         {
 #if UNITY_EDITOR

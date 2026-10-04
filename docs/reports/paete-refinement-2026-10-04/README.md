@@ -117,3 +117,43 @@ by the shared explicit acknowledgement fix before this follow-up was published.
 The broad gameplay-clock audit reports13 findings in six other source files.
 Those findings were in unchanged baseline files at the time of that audit.
 This is not a full-project audit pass; no audit exemption was added for this change.
+
+## Post-publication stress and presentation checks
+
+The exact published protocol151 skill-film fixture passed1/1 (native307.902s,
+process336.4s). Its13.5s silent capture covers the current automatic plant
+windup/release and defensive tendril reach/pull. This is rendered evidence, not
+sound/listening acceptance.
+
+The subsequent existing `PaeteBotsUseEveryAbility` fixture, launched with
+`-nographics`, exited245 after40.2s without result XML. OOM counters did not
+increase. Its log identifies NullGfxDevice and a native SIGSEGV while
+`CatchReconstruction.LateUpdate -> RenderOnlyCopies -> Camera.Render` renders
+shadows. This is a headless replay-presentation failure, not evidence of the same
+crash on a normal graphics device. The original log and failed resource receipt
+are retained in the external native run `paete151-bot-interaction-stress`.
+
+A focused guard at the tag-presentation event skips replay allocation only when
+Unity reports the Null graphics device. Tag resolution, recovery, pose history
+and replay archive stay active. Candidate validation is recorded below.
+
+The focused headless tag/recovery regression passed1/1 (65.3s process,
+17.389s test). The original bot rerun then exposed the same native rendering
+failure in `UltimatePhaseView.Draw`, after getting past the guarded tag replay.
+That separate failed run also exited245/40.2s without XML or increased OOM.
+A second boundary check prevents displaying/rendering the ultimate texture on
+a Null device while retaining sampled poses, phase timing and pose handoff.
+Both original crash stacks and resource receipts are preserved in
+[headless-replay](headless-replay/). The original bot exercise now passes1/1:190 simulated seconds, every Paete
+ability used (skill2=2, skill2d=1, skill1=1, ultimate=6). Process105.4s,
+test63.229s; the fixture deliberately tops up ultimate charge every20 simulated
+seconds, so this is interaction coverage rather than balance/earning evidence.
+
+Normal OpenGL rendering controls pass2/2 (process75.3s): actual tag replay
+retains/restores gameplay shader context, and Rago's actual ultimate introduction
+renders and returns to his live ability. Their captured render targets were
+inspected: the Rago frame contains the posed hero; the shader-context replay
+fixture captured scenery only at its sampled instant, so that control does not
+certify character framing/contact. Frozen source inputs match after terminal completion; no additional
+OOM occurred. These are focused Linux native checks, not a new full release
+build or separate Windows/device acceptance. Protocol stays151.

@@ -68,6 +68,10 @@ namespace TumbangPreso.CameraSystem
         private void OnMoment(MatchFlair.Kind kind, int actor, int subject, Vector3 at, float strength)
         {
             if (kind != MatchFlair.Kind.Tag) return;
+            // Headless simulation still records tags/history, but has no device
+            // on which to render the victim-only replay. Camera.Render can crash
+            // natively on NullGfxDevice, outside the managed exception handler.
+            if (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null) return;
             if (Playing && (GameServices.Match == null || GameServices.Match.PresentationMatchId != _matchId)) End();
             var round = GameServices.Round;
             var victim = round != null ? round.PlayerAt(subject) : null;
