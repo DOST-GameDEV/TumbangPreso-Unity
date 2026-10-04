@@ -558,6 +558,8 @@ namespace TumbangPreso.Visual
         private static readonly Color AmBeak = new Color(1.0f, 0.90f, 0.58f, .92f);
         // v16 (owner: "the bird has no head"): the eyes floated over the front of the body, the same teal as the wings. A
         // round head of its own, paler and brighter, on a neck raised off the breast.
+        // v16: pure white edges and tip trails rendered salmon over the sky, the edge a pink zigzag like a bolt; her mint.
+        private static readonly Color AmBirdEdge = new Color(0.70f, 1.0f, 0.86f, 1f);
         private static readonly Color AmBirdHead = new Color(0.80f, 1.0f, 0.92f, .9f);
         private static readonly Vector3 AmHeadAt = new Vector3(0f, .6f, 1.45f), AmHeadSize = new Vector3(.62f, .56f, .7f);
         private const int AmEdgeSamples = 17, AmTrailSamples = 12;
@@ -598,9 +600,9 @@ namespace TumbangPreso.Visual
             var trail = new AnimationCurve(new Keyframe(0f, 1f), new Keyframe(.6f, .55f), new Keyframe(1f, 0f));
             for (int w = 0; w < 2; w++)
             {
-                _amWingEdge[w] = Line("AmihanBirdEdge" + w, AmEdgeSamples, .07f, Color.white);
+                _amWingEdge[w] = Line("AmihanBirdEdge" + w, AmEdgeSamples, .07f, AmBirdEdge);
                 _amWingEdge[w].widthCurve = edge; _amWingEdge[w].sortingOrder = 4; _amWingEdge[w].numCapVertices = 0;
-                _amTipTrail[w] = Line("AmihanBirdTipTrail" + w, AmTrailSamples, .12f, Color.white);
+                _amTipTrail[w] = Line("AmihanBirdTipTrail" + w, AmTrailSamples, .12f, AmBirdEdge);
                 _amTipTrail[w].widthCurve = trail; _amTipTrail[w].sortingOrder = 3; _amTipTrail[w].numCapVertices = 0;
             }
             for (int v = 0; v < _amWingVein.Length; v++)
@@ -822,7 +824,8 @@ namespace TumbangPreso.Visual
                 float side = w == 0 ? -1f : 1f;
                 for (int i = 0; i < AmTrailSamples; i++)
                 {
-                    float back = i * .03f;
+                    // v16: a third of a second drew long straight bars across the lens; a fifth is the arc of the stroke.
+                    float back = i * .018f;
                     AmBirdPose(story - back, calm, out var pAt, out var pTurn, out float pFlap, out _);
                     _amTrailPoints[i] = pAt + pTurn * (AmEdge(side, pFlap, 1f) * scale);
                 }
