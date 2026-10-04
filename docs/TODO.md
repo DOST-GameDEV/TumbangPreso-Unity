@@ -101,9 +101,19 @@ Nothing was deleted or renumbered.
 
 ### OWNER-MULTIPLAYER-FEEDBACK-1004: current live-test reports
 
-- [ ] Non-host multiplayer is heavily laggy: distinguish FPS/frame hitches from
-  network correction/latency, measure actual client and host, fix demonstrated cause.
-- [ ] Opening multiplayer camera shows FPP hands during arrival sequence.
+- [ ] Non-host multiplayer: owner confirms smooth frames but delay/rubber-banding.
+  Measure prediction/host acknowledgements/corrections under latency and real peers.
+- [x] Opening camera visibility: late activation/follow no longer exposes FPP
+  hands during arrival. Native2causes fail/2controls pass -> same4/4.
+  [Evidence](reports/reliability-2026-10-04/arrival-fpp/README.md).
+- [ ] Current packaged multiplayer arrival film and camera handoff acceptance.
+- [ ] Public online rooms are undiscoverable: host publication/query/UI filter
+  verification. QOL is read-only comparison; owner prohibits importing prank code.
+- [ ] First-time Home entrance animation does not play; inspect hidden loading/
+  login timing and start the entrance on actual visible reveal.
+- [ ] QA tester's editor opened NetSession.cs on launch: awaiting exact launch
+  action; screenshot is VS Code source, not a game dialog. Runtime source search
+  finds no editor-opening code.
 - [ ] Paete Bakya Bloom ready command produces no visible thrown slipper.
 - [ ] Paete carried slipper floats while emoting.
 - [ ] Replace the shared catch/tag VFX requested by the owner; live/peer/replay review.

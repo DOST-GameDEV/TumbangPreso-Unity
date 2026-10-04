@@ -30,6 +30,50 @@ namespace TumbangPreso.PlayTests
             var camera = Make("Arrival camera").AddComponent<Camera>(); camera.tag = "MainCamera";
             camera.transform.SetPositionAndRotation(new Vector3(0, -8, 0), Quaternion.Euler(90, 180, 0)); return camera;
         }
+        private CameraRig RigWithHands(out GameObject hands)
+        {
+            var camera=Camera();var rig=camera.gameObject.AddComponent<CameraRig>();
+            hands=Make("Controlled gameplay hands");hands.transform.SetParent(camera.transform,false);
+            Set(rig,"_viewmodel",hands.transform);Set(rig,"_mode",CameraMode.Fpp);return rig;
+        }
+        [UnityTest] public IEnumerator LateActivationDuringArrivalKeepsGameplayHandsHidden()
+        {
+            bool motion=Settings.SettingsStore.Current.CinematicCameraMotion;
+            var rig=RigWithHands(out var hands);var arrival=Make("Arrival late activation").AddComponent<MatchArrivalPresentation>();
+            var run=arrival.Run();
+            try
+            {
+                Settings.SettingsStore.Current.CinematicCameraMotion=true;Assert.IsTrue(run.MoveNext());
+                rig.SetActive(true);Assert.IsFalse(hands.activeSelf,"Late activation exposed FPP hands during the opening.");
+            }
+            finally{arrival.Cancel();(run as System.IDisposable)?.Dispose();Settings.SettingsStore.Current.CinematicCameraMotion=motion;}
+            yield return null;
+        }
+        [UnityTest] public IEnumerator LateFollowDuringArrivalKeepsGameplayHandsHidden()
+        {
+            bool motion=Settings.SettingsStore.Current.CinematicCameraMotion;
+            var rig=RigWithHands(out var hands);var actor=Make("Late local seat").AddComponent<CharacterMotor>();
+            var arrival=Make("Arrival late follow").AddComponent<MatchArrivalPresentation>();var run=arrival.Run();
+            try
+            {
+                Settings.SettingsStore.Current.CinematicCameraMotion=true;Assert.IsTrue(run.MoveNext());
+                rig.Follow(actor,true);Assert.IsFalse(hands.activeSelf,"Late seat binding exposed gameplay hands during the opening.");
+            }
+            finally{arrival.Cancel();(run as System.IDisposable)?.Dispose();Settings.SettingsStore.Current.CinematicCameraMotion=motion;}
+            yield return null;
+        }
+        [UnityTest] public IEnumerator NormalFppActivationStillShowsGameplayHands()
+        {
+            var rig=RigWithHands(out var hands);rig.SetActive(true);Assert.IsTrue(hands.activeSelf);yield return null;
+        }
+        [UnityTest] public IEnumerator ArrivalCancellationStillRestoresGameplayHands()
+        {
+            var rig=RigWithHands(out var hands);rig.SetActive(true);
+            var arrival=Make("Arrival restores gameplay").AddComponent<MatchArrivalPresentation>();var run=arrival.Run();
+            try{Assert.IsTrue(run.MoveNext());Assert.IsTrue(run.MoveNext());arrival.Cancel();Assert.IsTrue(hands.activeSelf);}
+            finally{arrival.Cancel();(run as System.IDisposable)?.Dispose();}
+            yield return null;
+        }
         [UnityTest] public IEnumerator EntryIsOpaqueBeforeTheFirstYieldAndCancellationClearsIt()
         {
             Camera(); var arrival = Make("Arrival").AddComponent<MatchArrivalPresentation>();

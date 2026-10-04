@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 15:08:09Z" end-time="2026-10-04 15:08:10Z" duration="0.7565951">
+  <test-suite type="TestSuite" id="3060" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1680" result="Passed" start-time="2026-10-04 15:08:09Z" end-time="2026-10-04 15:08:10Z" duration="0.756595" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3054" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1680" result="Passed" start-time="2026-10-04 15:08:09Z" end-time="2026-10-04 15:08:10Z" duration="0.745236" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="21944" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3055" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1680" result="Passed" start-time="2026-10-04 15:08:09Z" end-time="2026-10-04 15:08:10Z" duration="0.742725" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3056" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1680" result="Passed" start-time="2026-10-04 15:08:09Z" end-time="2026-10-04 15:08:10Z" duration="0.740613" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1102" name="ArrivalHandoffTests" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-04 15:08:09Z" end-time="2026-10-04 15:08:10Z" duration="0.503185" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1106" name="ArrivalCancellationStillRestoresGameplayHands" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.ArrivalCancellationStillRestoresGameplayHands" methodname="ArrivalCancellationStillRestoresGameplayHands" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="855085113" result="Passed" start-time="2026-10-04 15:08:09Z" end-time="2026-10-04 15:08:10Z" duration="0.318057" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Flow] unknown map 'PlayModeWorldReset_10', falling back to 'Eskinita'.
+]]></output>
+            </test-case>
+            <test-case id="1103" name="LateActivationDuringArrivalKeepsGameplayHandsHidden" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.LateActivationDuringArrivalKeepsGameplayHandsHidden" methodname="LateActivationDuringArrivalKeepsGameplayHandsHidden" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="534173610" result="Passed" start-time="2026-10-04 15:08:10Z" end-time="2026-10-04 15:08:10Z" duration="0.036504" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1104" name="LateFollowDuringArrivalKeepsGameplayHandsHidden" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.LateFollowDuringArrivalKeepsGameplayHandsHidden" methodname="LateFollowDuringArrivalKeepsGameplayHandsHidden" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="1296761844" result="Passed" start-time="2026-10-04 15:08:10Z" end-time="2026-10-04 15:08:10Z" duration="0.083776" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1105" name="NormalFppActivationStillShowsGameplayHands" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.NormalFppActivationStillShowsGameplayHands" methodname="NormalFppActivationStillShowsGameplayHands" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="721721278" result="Passed" start-time="2026-10-04 15:08:10Z" end-time="2026-10-04 15:08:10Z" duration="0.034174" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

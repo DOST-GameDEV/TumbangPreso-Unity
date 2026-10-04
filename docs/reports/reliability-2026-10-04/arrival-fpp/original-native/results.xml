@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 15:03:27Z" end-time="2026-10-04 15:03:28Z" duration="0.6555577">
+  <test-suite type="TestSuite" id="3060" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1680" result="Failed" site="Child" start-time="2026-10-04 15:03:27Z" end-time="2026-10-04 15:03:28Z" duration="0.655558" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3054" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1680" result="Failed" site="Child" start-time="2026-10-04 15:03:27Z" end-time="2026-10-04 15:03:28Z" duration="0.644208" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="19592" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3055" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1680" result="Failed" site="Child" start-time="2026-10-04 15:03:27Z" end-time="2026-10-04 15:03:28Z" duration="0.641624" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3056" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1680" result="Failed" site="Child" start-time="2026-10-04 15:03:27Z" end-time="2026-10-04 15:03:28Z" duration="0.639607" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1102" name="ArrivalHandoffTests" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-04 15:03:28Z" end-time="2026-10-04 15:03:28Z" duration="0.440206" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1106" name="ArrivalCancellationStillRestoresGameplayHands" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.ArrivalCancellationStillRestoresGameplayHands" methodname="ArrivalCancellationStillRestoresGameplayHands" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="1929653860" result="Passed" start-time="2026-10-04 15:03:28Z" end-time="2026-10-04 15:03:28Z" duration="0.264119" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Flow] unknown map 'PlayModeWorldReset_10', falling back to 'Eskinita'.
+]]></output>
+            </test-case>
+            <test-case id="1103" name="LateActivationDuringArrivalKeepsGameplayHandsHidden" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.LateActivationDuringArrivalKeepsGameplayHandsHidden" methodname="LateActivationDuringArrivalKeepsGameplayHandsHidden" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="2144446728" result="Failed" start-time="2026-10-04 15:03:28Z" end-time="2026-10-04 15:03:28Z" duration="0.047653" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Late activation exposed FPP hands during the opening.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ArrivalHandoffTests+<LateActivationDuringArrivalKeepsGameplayHandsHidden>d__9.MoveNext () [0x0006e] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\ArrivalHandoffTests.cs:47
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1104" name="LateFollowDuringArrivalKeepsGameplayHandsHidden" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.LateFollowDuringArrivalKeepsGameplayHandsHidden" methodname="LateFollowDuringArrivalKeepsGameplayHandsHidden" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="63220580" result="Failed" start-time="2026-10-04 15:03:28Z" end-time="2026-10-04 15:03:28Z" duration="0.057017" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Late seat binding exposed gameplay hands during the opening.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ArrivalHandoffTests+<LateFollowDuringArrivalKeepsGameplayHandsHidden>d__10.MoveNext () [0x00082] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\ArrivalHandoffTests.cs:60
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1105" name="NormalFppActivationStillShowsGameplayHands" fullname="TumbangPreso.PlayTests.ArrivalHandoffTests.NormalFppActivationStillShowsGameplayHands" methodname="NormalFppActivationStillShowsGameplayHands" classname="TumbangPreso.PlayTests.ArrivalHandoffTests" runstate="Runnable" seed="349807914" result="Passed" start-time="2026-10-04 15:03:28Z" end-time="2026-10-04 15:03:28Z" duration="0.036914" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

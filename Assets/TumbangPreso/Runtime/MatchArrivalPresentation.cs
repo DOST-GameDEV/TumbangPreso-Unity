@@ -16,6 +16,8 @@ namespace TumbangPreso
     {
         private static MatchArrivalPresentation _active;
         public static bool Active => _active != null;
+        public static bool OwnsCamera => Active && !_active._returningToGameplay
+            && Settings.SettingsStore.Current.CinematicCameraMotion;
         public const float Seconds = 8.6f;
         private const float EstablishSeconds = 2.8f, PortraitSeconds = 1.1f;
         private const float HandoffStart = 7.2f, PortraitFov = 50;
@@ -38,6 +40,7 @@ namespace TumbangPreso
         private readonly RaycastHit[] _hits = new RaycastHit[32];
         private int _shownBeat = -2;
         private int _runGeneration;
+        private bool _returningToGameplay;
 
         public IEnumerator Run()
         {
@@ -58,6 +61,7 @@ namespace TumbangPreso
         private IEnumerator RunCurrent(int generation)
         {
             _active = this;
+            _returningToGameplay = false;
             BuildCaption();
             _ink.color = new Color(HubStyle.Ink.r, HubStyle.Ink.g, HubStyle.Ink.b, 1);
             _captionGroup.alpha = 0;
@@ -210,7 +214,8 @@ namespace TumbangPreso
                     rotation = Quaternion.Slerp(rotation, _rotation, handoff);
                     fov = Mathf.Lerp(fov, _fov, handoff);
                 }
-                if (handoff >= .7f && _rigActive && _rig != null) _rig.SetActive(true);
+                if (handoff >= .7f && _rigActive && _rig != null)
+                { _returningToGameplay = true; _rig.SetActive(true); }
             }
             bool cameraMotion = Settings.SettingsStore.Current.CinematicCameraMotion;
             if (!cameraMotion) { eye = _position; rotation = _rotation; fov = _fov; }
