@@ -131,9 +131,24 @@ artifact checks pass locally. Preserve original live-loss/result/input gates.
 Owner now requests FULL user flow, login through gameplay and adding friends.
 Answered: request-by-tag/accept UI exists; actual two-account/service path unproven.
 Root reserves account/front-end/social investigation; laptop build takes priority.
-NEXT: publish checked host-loss tool correction, trace actual Friends/login routes
-and implement demonstrated product faults while laptop build runs. Inspect its
-terminal memory/build/full-artifact receipts before planning any current pair.
+Host-loss tool publishedce9d7dd74. Root current Friends unit: actual server accepts
+at full100 capacity and normalizer trims added rows into one-way friendships.
+Both-side capacity guards before writes: original3failures/5controls ->8/8 local
+two-account endpoint checks. Evidence:reliability-2026-10-04/friends-capacity.
+No deployed-service or complete UI/invite/join claim. Source UI request/accept exists.
+Owner ALSO requests optimization and correct preload timing across the journey.
+Preserve authored quality and broad-loading contributor ownership; measure costs.
+Same-tab UI refresh replaces focused draft/search fields: hypothesis only until
+native reproduction. Root reserves account/front-end/social; laptop native/build.
+Laptop build13511 failed actual reserve (1220<1536),91samples/jobtreepeak4849MiB.
+ONE changed serial-import repair98086 also TERMINAL125,41samples/peak4265MiB/
+min1394. Unity still spawned HW0 despite desired0/standby0. Settings restored3/2,
+inputs unchanged and preserved/free, no artifact or third unchanged retry.
+First2import deltas preserved/classified:2runtime shaders + newline-only settings;
+all208existing private importer hashes preserved. Do not launch PC without release.
+NEXT: publish checked Friends capacity correction, prepare a focused-field native
+reproduction for the laptop's available slot and continue full journey/preload
+inspection. Build/real service/current peer and rendered performance gates stay open.
 Owner last-five-hours question was answered; do not replay it after compaction.
 
 ## Completed evidence and next integration gates

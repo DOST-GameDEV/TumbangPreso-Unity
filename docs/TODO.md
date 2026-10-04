@@ -17,6 +17,14 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### FRIENDS-CAPACITY-1004: acceptance retains both accounts' state
+
+- [x] Check both accounts' capacity before accepting or resolving a crossed
+  request. Full accounts retain pending rows and no asymmetric friend is saved.
+  Actual social endpoint with local Cloud Save: original3failures/5controls ->8/8.
+  [Evidence](reports/reliability-2026-10-04/friends-capacity/README.md).
+- [ ] Deployment and actual two-account UI/service/invite/join acceptance.
+
 ### CURRENT-HOST-LOSS-RUNNER-1004: validate the agreed release
 
 - [x] Replace protocol132/old rules assumptions with explicit artifact protocol
@@ -35,6 +43,10 @@ Nothing was deleted or renumbered.
   Friends has tag-request/accept UI and a server path; verify both accounts'
   request/accept state, persisted friendship and invite/join before claiming it
   works. Fix demonstrated route/lifetime failures and retain original evidence.
+- [ ] Optimize demonstrated costs across the journey and verify preload work
+  runs at the correct boundary before consumers need it. Measure startup,
+  first-use and frame hitches; preserve art quality and contributor ownership.
+  Existing broad loading work is not permission to overwrite another contributor.
 
 ### READER-BACKGROUND-FOCUS-1004: retired input stays neutral while away
 
