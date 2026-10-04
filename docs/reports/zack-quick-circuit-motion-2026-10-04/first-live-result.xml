@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="11" result="Failed(Child)" total="11" passed="10" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 07:28:12Z" end-time="2026-10-04 07:28:15Z" duration="2.3960342">
+  <test-suite type="TestSuite" id="3001" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1626" result="Failed" site="Child" start-time="2026-10-04 07:28:12Z" end-time="2026-10-04 07:28:15Z" duration="2.396034" total="11" passed="10" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2995" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1626" result="Failed" site="Child" start-time="2026-10-04 07:28:12Z" end-time="2026-10-04 07:28:15Z" duration="2.378012" total="11" passed="10" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="41623" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2996" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1626" result="Failed" site="Child" start-time="2026-10-04 07:28:12Z" end-time="2026-10-04 07:28:15Z" duration="2.368239" total="11" passed="10" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2997" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1626" result="Failed" site="Child" start-time="2026-10-04 07:28:12Z" end-time="2026-10-04 07:28:15Z" duration="2.345539" total="11" passed="10" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2295" name="QuickCircuitPresentationTests" fullname="TumbangPreso.PlayTests.QuickCircuitPresentationTests" classname="TumbangPreso.PlayTests.QuickCircuitPresentationTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-04 07:28:12Z" end-time="2026-10-04 07:28:14Z" duration="1.872259" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2296" name="BothCutDirectionsPlayTheShippingBodyAndRecover" fullname="TumbangPreso.PlayTests.QuickCircuitPresentationTests.BothCutDirectionsPlayTheShippingBodyAndRecover" methodname="BothCutDirectionsPlayTheShippingBodyAndRecover" classname="TumbangPreso.PlayTests.QuickCircuitPresentationTests" runstate="Runnable" seed="42682615" result="Failed" start-time="2026-10-04 07:28:12Z" end-time="2026-10-04 07:28:14Z" duration="1.859780" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="45000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: less than 0.100000001f
+  But was:  0.362230957f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.QuickCircuitPresentationTests+<BothCutDirectionsPlayTheShippingBodyAndRecover>d__5.MoveNext () [0x0058a] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/QuickCircuitPresentationTests.cs:63
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2297" name="QuickCircuitTests" fullname="TumbangPreso.PlayTests.QuickCircuitTests" classname="TumbangPreso.PlayTests.QuickCircuitTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-10-04 07:28:14Z" end-time="2026-10-04 07:28:15Z" duration="0.448042" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="2302" name="ActualMotorCutsLaterallyWithoutSprintOrStunTrail" fullname="TumbangPreso.PlayTests.QuickCircuitTests.ActualMotorCutsLaterallyWithoutSprintOrStunTrail" classname="TumbangPreso.PlayTests.QuickCircuitTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-04 07:28:14Z" end-time="2026-10-04 07:28:14Z" duration="0.094929" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2300" name="ActualMotorCutsLaterallyWithoutSprintOrStunTrail(-1)" fullname="TumbangPreso.PlayTests.QuickCircuitTests.ActualMotorCutsLaterallyWithoutSprintOrStunTrail(-1)" methodname="ActualMotorCutsLaterallyWithoutSprintOrStunTrail" classname="TumbangPreso.PlayTests.QuickCircuitTests" runstate="Runnable" seed="404118148" result="Passed" start-time="2026-10-04 07:28:14Z" end-time="2026-10-04 07:28:14Z" duration="0.053869" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2301" name="ActualMotorCutsLaterallyWithoutSprintOrStunTrail(1)" fullname="TumbangPreso.PlayTests.QuickCircuitTests.ActualMotorCutsLaterallyWithoutSprintOrStunTrail(1)" methodname="ActualMotorCutsLaterallyWithoutSprintOrStunTrail" classname="TumbangPreso.PlayTests.QuickCircuitTests" runstate="Runnable" seed="1580804167" result="Passed" start-time="2026-10-04 07:28:14Z" end-time="2026-10-04 07:28:14Z" duration="0.039933" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="2305" name="DeclinedFollowupExpiresAndCannotSurviveRoundReset" fullname="TumbangPreso.PlayTests.QuickCircuitTests.DeclinedFollowupExpiresAndCannotSurviveRoundReset" methodname="DeclinedFollowupExpiresAndCannotSurviveRoundReset" classname="TumbangPreso.PlayTests.QuickCircuitTests" runstate="Runnable" seed="530482475" result="Passed" start-time="2026-10-04 07:28:14Z" end-time="2026-10-04 07:28:14Z" duration="0.041984" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2303" name="NoLateralInputFallsBackRightAndNormalCannotUseSecondCut" fullname="TumbangPreso.PlayTests.QuickCircuitTests.NoLateralInputFallsBackRightAndNormalCannotUseSecondCut" methodname="NoLateralInputFallsBackRightAndNormalCannotUseSecondCut" classname="TumbangPreso.PlayTests.QuickCircuitTests" runstate="Runnable" seed="9179159" result="Passed" start-time="2026-10-04 07:28:14Z" end-time="2026-10-04 07:28:15Z" duration="0.048678" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2304" name="OverclockOffersExactlyOneOptionalFollowupWithoutResettingCooldown" fullname="TumbangPreso.PlayTests.QuickCircuitTests.OverclockOffersExactlyOneOptionalFollowupWithoutResettingCooldown" methodname="OverclockOffersExactlyOneOptionalFollowupWithoutResettingCooldown" classname="TumbangPreso.PlayTests.QuickCircuitTests" runstate="Runnable" seed="2048870905" result="Passed" start-time="2026-10-04 07:28:15Z" end-time="2026-10-04 07:28:15Z" duration="0.047689" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2307" name="PendingSecondCutRecoveryNeverCreatesAnotherFollowup" fullname="TumbangPreso.PlayTests.QuickCircuitTests.PendingSecondCutRecoveryNeverCreatesAnotherFollowup" methodname="PendingSecondCutRecoveryNeverCreatesAnotherFollowup" classname="TumbangPreso.PlayTests.QuickCircuitTests" runstate="Runnable" seed="2133952892" result="Passed" start-time="2026-10-04 07:28:15Z" end-time="2026-10-04 07:28:15Z" duration="0.046496" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2298" name="QuickCircuitUsesTheSpecifiedCooldownInsteadOfLegacySprint" fullname="TumbangPreso.PlayTests.QuickCircuitTests.QuickCircuitUsesTheSpecifiedCooldownInsteadOfLegacySprint" methodname="QuickCircuitUsesTheSpecifiedCooldownInsteadOfLegacySprint" classname="TumbangPreso.PlayTests.QuickCircuitTests" runstate="Runnable" seed="1381270543" result="Passed" start-time="2026-10-04 07:28:15Z" end-time="2026-10-04 07:28:15Z" duration="0.036145" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2306" name="RecoveryAgesOptionalWindowWithoutImpulseCooldownOrRefresh" fullname="TumbangPreso.PlayTests.QuickCircuitTests.RecoveryAgesOptionalWindowWithoutImpulseCooldownOrRefresh" methodname="RecoveryAgesOptionalWindowWithoutImpulseCooldownOrRefresh" classname="TumbangPreso.PlayTests.QuickCircuitTests" runstate="Runnable" seed="1459360581" result="Passed" start-time="2026-10-04 07:28:15Z" end-time="2026-10-04 07:28:15Z" duration="0.045401" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2308" name="StunAndInactiveRoundAlsoBlockActiveFollowups" fullname="TumbangPreso.PlayTests.QuickCircuitTests.StunAndInactiveRoundAlsoBlockActiveFollowups" methodname="StunAndInactiveRoundAlsoBlockActiveFollowups" classname="TumbangPreso.PlayTests.QuickCircuitTests" runstate="Runnable" seed="1888784437" result="Passed" start-time="2026-10-04 07:28:15Z" end-time="2026-10-04 07:28:15Z" duration="0.042878" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2299" name="ZappedMustBlockAnAlreadyActiveFollowup" fullname="TumbangPreso.PlayTests.QuickCircuitTests.ZappedMustBlockAnAlreadyActiveFollowup" methodname="ZappedMustBlockAnAlreadyActiveFollowup" classname="TumbangPreso.PlayTests.QuickCircuitTests" runstate="Runnable" seed="393496542" result="Passed" start-time="2026-10-04 07:28:15Z" end-time="2026-10-04 07:28:15Z" duration="0.040261" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,4 +1,12 @@
-# Production activation remains blocked
+# Production activation: October 4 update
+
+Existing authorized deployment access succeeded on October4. Production walletv2
+now exactly matches canonical source with all four declared parameters and v1
+rollback retained. [Current receipt](../reliability-2026-10-04/wallet-deployment/README.md).
+Rendered signed-in reward and Victory audio still require acceptance.
+
+## Retained October 3 failure and activation scope
+
 
 The Unity project's current shipping ID is dcf0831e-a5f4-43b4-832e-b687f13a3569; environment production; Cloud Code script wallet. Source implementation was published at79e9e2724/integrated3d9f6bb6b.
 

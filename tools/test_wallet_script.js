@@ -20,7 +20,7 @@ Module._load = function (request, parent, isMain) {
     if (request === "@unity-services/cloud-save-1.4") return { DataApi };
     return load.apply(this, arguments);
 };
-const wallet = require(path.join(__dirname, "..", "ugs", "cloud-code", "wallet.js"));
+const wallet = require(process.argv[2] ? path.resolve(process.argv[2]) : path.join(__dirname, "..", "ugs", "cloud-code", "wallet.js"));
 const rules = wallet.rules;
 
 const GOLDEN = {
@@ -70,6 +70,11 @@ const GOLDEN = {
     assert.strictEqual(out.result, topup > 0 ? "bought" : "poor");
     out = await wallet({ params: { action: "buy", item: "hero:maring" }, context: ctx });
     assert.strictEqual(out.result, "unknown");
+    for (const hero of ["amihan", "paete"]) {
+        out = await wallet({ params: { action: "buy", item: "hero:" + hero }, context: ctx });
+        assert.strictEqual(out.result, topup > 0 ? "bought" : "poor", "current hero must be addressable in the shop");
+    }
+    out = await wallet({ params: { action: "load" }, context: ctx });
 
     const board = JSON.parse(out.tasks);
     assert.strictEqual(board.length, 6);

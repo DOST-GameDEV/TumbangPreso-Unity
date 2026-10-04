@@ -1,0 +1,14 @@
+{
+  "passed": false,
+  "role": "host",
+  "protocol": 145,
+  "source": "8f7f304b543d93db71ed09f9fbaa4107fc365895",
+  "profile": "pc-hostloss145-1004",
+  "pid": 18700,
+  "exitCode": 1,
+  "error": "Host exited before verified live loss trigger",
+  "terminal": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "artifactUnchanged": true
+}

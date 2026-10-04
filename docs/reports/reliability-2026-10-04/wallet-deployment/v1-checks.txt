@@ -1,0 +1,12 @@
+AssertionError [ERR_ASSERTION]: only the three online first places pay
+
+325 !== 195
+
+    at C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\tools\test_wallet_script.js:50:12 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 325,
+  expected: 195,
+  operator: 'strictEqual',
+  diff: 'simple'
+}

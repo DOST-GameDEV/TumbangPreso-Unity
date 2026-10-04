@@ -160,18 +160,22 @@ during long runs, rather than leaving stale processes or branches behind.
 
 ## Shared Workspace And Publication
 
-- Work and integrate on ASTRAReworks. Fetch first; inspect status and divergence.
+- Work and integrate on ASTRAReworks. The first action of every session, including
+  one continued from a handoff, is to pull origin/ASTRAReworks (merge it in) before
+  reading code or editing; inspect status and divergence.
   Never edit/merge/push main, reset, clean, force-push or discard another's changes.
   Integrate relevant contributions with their authored behavior and assets intact.
 - Preserve profiles, saves, IDs, source/supplied art, unfinished work and unrelated
   processes. Unexpected edits are not permission to revert them.
 - Stage explicit task-owned paths only. Never commit the two protected
   Resources/UI/composition-redesign/*.png.meta files. Keep private notes/overlays private.
-- Push coherent checked batches, fetch before each push, then verify remote HEAD.
+- Push every commit as soon as it is made (pull, then push, then verify remote HEAD);
+  never hold local commits while waiting on Unity jobs or evidence.
   Sole author M4tyu633; use git commit -F. No attribution trailers, tooling references
   or em dashes in repository prose and commit messages.
 - Handoff prompts go in chat, never a committed file. Include rules, repo/branch/HEAD,
-  actual tests/build state, changed behavior and the next TODO pointer.
+  actual tests/build state, changed behavior and the next TODO pointer. Every
+  handoff starts with: pull origin/ASTRAReworks first, push each commit as you go.
 - Stop only task-owned helpers and close task-owned previews. Never kill unrelated
   apps or delete a managed worktree as ordinary cleanup.
 - Prune obsolete task-owned internal builds, superseded temporary outputs and

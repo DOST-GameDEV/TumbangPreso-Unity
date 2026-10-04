@@ -68,8 +68,10 @@ Friendscapacity9cc/deliveryc26: recipientfirst prevents stranded pending request
 local11/11. PRODUCTIONsocialv3 matches canonical source, params unchanged,
 rollbackv1/v2 retained. ActualHTTPS2newanonymousaccounts PASSED save/tagresolve/
 request/accept/bothreload,11 scriptcalls inclcleanup. Tokens memoryonly.
-Friendship/profile/handleindex/auth accounts deleted; EMPTYsocial records remain
-foradmin cleanup. Source live receipt Logs/service-flow-readonly1004.
+Friendship/profile/handleindex/auth accounts deleted. All remainingEMPTYprotected
+keys of ONLYthetwofreshaccounts removed viaexistingadminAPI; bothlistsverified
+empty, no credentialsprinted. Receipt Logs/service-flow-readonly1004/test-cloud-
+cleanup-result.json and report. Existing users/profiles untouched.
 
 Rootdeleted28REMOTE+11LOCAL task branch references; all rootcompetitionPC/laptop/
 root refs removed after merge checks or verified superseded archive. Unique old
@@ -78,13 +80,88 @@ alternatives.bundle. Exact SHA receipts there and pending report. Unrelated/
 canonical branches/worktrees/private work preserved. Laptop4local refs deleted.
 No root browser tabs/servers/native helpers live. Do not bypass cleanup review.
 
+## Current active loss unit
+
+Root firsthost18700/session85950 failed completionobserver'sown110Quit(1)
+beforeLIVE; no intentional loss/gamebug/pass. Actualfailure preserved.
+Armed approach: laptop fixedtest-control endpoint192.168.1.144:18051 starts
+client automatically onhostlisten; no model/chatdelay in30-secondactivewindow.
+Root11380/session18149 TERMINALintentionalstop only afterRootactualround1/2
+admissions/READY andclient2440stillLive/Eskinita/noend. RetainedPopenownership,
+allprefs/artifactrestored. RootLogs/host-loss145-pc-armed1004, exactrawpending.
+Client2440normalexit0, finalactualMatchSetup/round0/inactive/protocol145,
+careerFILEABSENT/history0queue0witness0, no fabricatedmatchover/record. Endpoint
+scene is historical; finalNetState authoritative. Clientraw integratedc336bf991;
+root18rawhashes/finalreport/careerabsence/normalexit/prefs/hashcheck verified.
+Helper18051 cleanup requested afterhandoff; confirmterminal fromlaptop.
+No nativeprocesseslive onRoot. Firstattempt diagnosticfailure remains preserved.
+
 ## Exact next action
 
-Publish host receipt/report/career +live-service and cleanup evidence, send ref to
-laptop for exactclient-record comparison. Agree a NEW actual active-round host-loss
-question/roles/profiles on same145artifact; keep normalcompleted-pair proof distinct.
-Complete emptytestCloudSave cleanup. Continue full rendered login/Friends/invite/
+Normalpair and activehostloss combinedproof COMPLETE at bounded scope. CloudSave
+cleanup COMPLETE. ActualpackagedCore emptywire defaults Classic0|0|8|90|0|3|0|1|0|0|0
+andHero1|0|8|90|0|3|0|1|0|0|0. Nextfull8roundnormalClassicP2P proposed PC49157/
+laptop49158, armclientfirst/actualCoredefault/noforcedend/AllBots; no short-wire
+substitute. Latestinstructionrace: laptop earlier acceptedSolo lane; askactual
+currentjob beforechanging it, don'tinterruptalreadyrunningcoherentunit. Rootowns
+servermatchrecord drift assessment; laptopfull-default/native lane. No newbranches.
+Continue full rendered login/Friends/invite/
 join, Relay/online/maps/modes/physical/recovery/slowreplay/performance/preload gates.
 Read-only publishedmatch-recordv5 drifts from canonical mastery/botweight/offline/
 travel/history fixes; assess/deploy coherent checked source, not unsupported SDK
 success. Do not repeat passed cohorts or claim whole competition readiness.
+
+
+## October 4 current owner priority and server shipment
+
+Owner: let Claude finish the quick animation fix first. No PC Unity/player launch
+until completion is confirmed. Root stopped only owned host10232/session70837
+at owner request after natural Classic8 completion (130/150/2880/3350). Saved
+History/Queue/QueueWitness each1 captured; scheduled terminal report absent.
+Input/profile restoration and full artifact check passed. This is an owner
+interruption, not full terminal acceptance. Claude Unity20212 remains untouched.
+Laptop notified to preserve its actual client results and continue independent work.
+
+Production match-record v6 now exactly matches canonical source, seven parameters
+unchanged and rollback v5 retained. Exported v5: mastery/history/offline5 failures
+and4 controls; exported v6:9/9. Bot rating4/4, Core travel6/6, digest unchanged.
+Evidence: reports/reliability-2026-10-04/match-record-deployment. No new live
+account submissions or rendered SDK acceptance claimed. Next: publish this
+checked unit, compare laptop Classic8 saved result and continue lightweight source
+work while Claude owns the PC slot. Local exact checkpoint updated; no new branch.
+
+
+## Current uncommitted social ordering unit
+
+Root owns SocialStore.cs and SocialRefreshOrderingTests.cs/meta. Suspected older
+refresh replaces newer acknowledged same-account list. Private dispatched cores
+preserve shipping REST wrappers; candidate invalidates earlier reads at write
+start and defers a new refresh during write. Both versions compile against actual
+145 references with the same six delayed-response cases. Native baseline/candidate
+comparison remains pending; do not claim causal proof or ship as checked yet.
+Immutable packet Logs/social-refresh-order1004/packet.json, filter
+TumbangPreso.Tests.SocialRefreshOrderingTests. Source baseline b263ff1dd;
+fixture SHA273f9dc436d761fc9942a35388de32d19d5aa5f330ccdf4abfd0402d34e11b91.
+Laptop acknowledges free source reservation and focused native slot after own
+Classic terminal unit. Latest status18052 runnerTerminal=true. Final packet message
+first failed host lookup, one explicit-host retry succeeded; no duplicate job.
+Task-only server18053 PID3108/session27804 TERMINAL after laptop verified all
+packet hashes and copied the four PC Classic receipts. No Root helper remains.
+Unused compiler DLLs removed; source/receipts/reproduction response files retained.
+PC remains reserved for Claude; no Root editor/player launches until confirmed.
+Next: inspect laptop exact original/candidate results, repair only real issue and
+publish checked source. Compare actual Classic8 peer records without inventing a
+normal host terminal report that owner priority interrupted.
+
+
+## Wallet production shipment
+
+Productionwalletv2 exact canonical source verified, action/item/task preserved,
+optionalString request added and v1 retained. Old exported endpoint reproduces
+325 vs195 offline Practice overpayment. Exportedv2 wallet checks pass including
+current Amihan/Paete purchases and Credits retry/receipt/overflow. No live wallet
+calls or rendered reward/audio claims. Temporary999999 playtestgrant retained;
+public-release disable/redeploy gate remains and no automatic balance reset.
+Evidence reports/reliability-2026-10-04/wallet-deployment. Old403 activation
+blocker retired with current live metadata. Publish checked wallet tests/docs now;
+SocialStore candidate remains unstaged pending laptop native baseline/candidate.

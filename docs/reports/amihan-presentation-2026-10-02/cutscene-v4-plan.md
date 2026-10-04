@@ -249,3 +249,20 @@ Removed: all of Amihan's skill sounds (owner: "remove all sfx"); `tools/build_am
 The `Teehee` face (`VoxelFace.Look.Teehee`, chevron eyes) is baked but unused: the owner found it weird.
 Evidence: `Logs/amihan-v14r1` (films 3/3, EditMode 4/4) and `Logs/amihan-v14r2` (finish reframed, 2/2); videos in
 `Logs/amihan-v6-share`. Human taste is the open gate; the owner has not approved v14.
+
+## v16 (October 4): the bird gets a head
+
+Owner: "the bird has no head". The body spindle tapered to a point where the head should be, and the eyes floated above
+it in the wing teal. Now the body runs along a curved spine up a neck into a round head of its own, paler and brighter
+than the wings (`AmBirdHead`), with the eyes on its front, a slender pale-gold beak and the crest streaming off its crown.
+Evidence: `Logs/amihan-v16r1`.
+
+Then (owner: "it doesnt look that good"), its whole shape: primaries fingered at the wing tips with deep gaps and
+shallow scallops inside them, more colour in the wings, a thin bright line along the feather tips so the shape stays
+crisp where the translucent layers melt together, a teardrop head running into the beak, and five fanned tail plumes
+that flare into feathers at their ends. Its white edges rendered salmon over the sky (a pink zigzag like a bolt): mint
+now, and the wing-tip trails half as long. The vortex leaves shrink into the light before it is born (they read as
+blocks round it). Its swoop crosses higher (from 2.3 m to 3.0 m) and it grows a third as it rears for the wind-up (seen
+from behind her it was a small haze). Still soft: passing over the low lens one wing fills the frame (that shot tracks
+it, so height alone does not change it). Owner: "looks great so far". Evidence: `Logs/amihan-v16r6` (films 3/3, 0
+errors), `Logs/amihan-v16r7` (EditMode 4/4); video `Logs/amihan-v16-share/airburst-v16-final.mp4`.

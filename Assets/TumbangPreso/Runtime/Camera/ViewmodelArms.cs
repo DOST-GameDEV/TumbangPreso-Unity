@@ -688,13 +688,15 @@ namespace TumbangPreso.CameraSystem
             new Key(1.550f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
         };
 
+        // Quick Circuit: one gather/release at the tell, then settle. No repeated skate pumps.
         private static readonly Key[] SprintElectricClip =
         {
-            new Key(0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
-            new Key(0.160f, 0.300f, 0.420f, -0.220f, -0.300f, -0.300f, 0.180f),
-            new Key(0.320f, -0.300f, 0.200f, 0.120f, 0.260f, -0.400f, -0.160f),
-            new Key(0.480f, 0.280f, 0.360f, -0.180f, -0.240f, -0.260f, 0.140f),
-            new Key(0.640f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f, 0.000f),
+            new Key(0.000f, 0, 0, 0, 0, 0, 0),
+            new Key(0.080f, -.12f, .08f, -.04f, -.10f, -.08f, .04f),
+            new Key(0.150f, .26f, .22f, -.12f, -.24f, -.18f, .10f, true),
+            new Key(0.280f, .20f, .16f, -.09f, -.18f, -.13f, .07f),
+            new Key(0.460f, .08f, .06f, -.03f, -.07f, -.05f, .02f),
+            new Key(0.640f, 0, 0, 0, 0, 0, 0),
         };
 
         private static readonly Key[] OverchargeClip =

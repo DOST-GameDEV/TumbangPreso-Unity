@@ -1,5 +1,24 @@
 # TODO: Tumbang Preso Unity
 
+### TUTORIAL-MUSIC-1004: owner-supplied track
+
+- [x] Replace guided tutorial music with Tutorial.mp3, cut exactly its first3s.
+  Native2/2 verifies real tutorial entry, countdown retention and looping.
+  Existing match/menu tracks remain. [Evidence](reports/tutorial-music-2026-10-04/README.md).
+
+### HERO-PRESENTATION-PARITY-1004: remaining hero presentation
+
+Owner target: refine Zack, Sean, Dante, Cheska, Nemu and Rafi to the presentation
+standard of Phaister, Paete and Amihan. Review actual motion, body/FPP coherence,
+readable VFX, sound timing and ultimate direction. Preserve each hero's identity;
+reference characters are quality examples, not a new redesign assignment.
+
+- [ ] Zack: Quick Circuit body/FPP single-cut refinement passes13 scoped native
+  checks and actual left/right cast review; full kit still open.
+  [Motion evidence](reports/zack-quick-circuit-motion-2026-10-04/README.md).
+- [ ] Sean, Dante, Cheska, Nemu and Rafi: finish their remaining presentation passes.
+- [ ] Real-game film/listening review and multiplayer/player qualification.
+
 **How this file is organised (docs cleanup, 2026-09-23).** This file is the ONE status
 queue: the current queue and priority order, then one index row for every numbered entry.
 Nothing was deleted or renumbered.
@@ -16,6 +35,29 @@ Nothing was deleted or renumbered.
 - Section numbers are not unique (§ 53, 63, 64, 65 repeat). Search by title too.
 
 ## CURRENT IMPLEMENTATION QUEUE
+
+### MATCH-RECORD-DEPLOYMENT-1004: publish checked career rules
+
+- [x] Published canonical source as production v6, exact fetched source and seven
+  parameters verified with v5 rollback retained. Exported old source reproduces
+  five mastery/history/offline failures; v6 passes9/9 plus bot-rating4/4,
+  Core travel6/6 and unchanged digest.
+  [Evidence](reports/reliability-2026-10-04/match-record-deployment/README.md).
+- [ ] Rendered SDK career submission and witnessed ranked flow acceptance.
+
+
+### ACTIVE-HOST-LOSS145-1004: current package retires an unfinished round
+
+- [x] Actual two-machine round1/readiness on identical145 package; retained
+  owned host process stopped while both log/PID states were live and no end
+  event existed. Client returns MatchSetup/round0/inactive, no career file or
+  completed result, normal exit and preferences restored. Earlier completion
+  observer110 autoquit failure is retained as diagnostic/coordination evidence.
+  [Evidence](reports/reliability-2026-10-04/host-loss145-armed/README.md).
+- [x] Client raw normally integratedc336bf991; root all18 hashes and actual final
+  inactive0/MatchSetup/145, career absent, normal exit/restoration inspected.
+- [ ] Body/input/clock recovery, retained-seat, Relay/WAN, physical and newer-
+  source acceptance. Do not overstate log scope.
 
 ### POWER-RECAST-READINESS-1004: owner icon matches the real follow-up window
 
@@ -74,8 +116,9 @@ Nothing was deleted or renumbered.
 - [x] Production socialv3 matches canonical delivery/capacity source; actual
   authenticated two-account lookup/request/accept/both reload passed.11 script
   calls include cleanup, isolated accounts deleted. [Live evidence](reports/reliability-2026-10-04/friend-request-delivery/live-acceptance.md).
-- [ ] Empty test social records admin cleanup, rendered game UI/invite/join and
-  complete cross-account SDK/operator acceptance.
+- [x] Empty test protected keys removed with existing admin authentication and
+  both post-delete lists verified empty. No live user/profile targeted.
+- [ ] Rendered game UI/invite/join and complete cross-account SDK/operator acceptance.
 
 ### HUB-EDIT-REFRESH-1004: background data does not interrupt typing
 
@@ -219,8 +262,10 @@ Nothing was deleted or renumbered.
 - [x] Client and authoritative wallet source; keyboard/D-pad/mouse/touch input,
   retry receipts and success-only Victory cue. Managed715/715, Node wallet
   checks and native8/8 controls; [evidence](reports/credits-code-2026-10-03/README.md).
-- [ ] Publish and verify production wallet, then actual signed-in reward/audio.
-  Cloud session returned403 Not authorized. [Deployment scope](reports/credits-code-2026-10-03/deployment.md).
+- [x] Published production walletv2 and verified exact source/four parameters;
+  rollbackv1 retained. [Receipt](reports/reliability-2026-10-04/wallet-deployment/README.md).
+- [ ] Actual signed-in reward/audio. October3 cloud403 is retained historical
+  evidence, no longer a deployment blocker.
 
 ### STATUS-TYPOGRAPHY-1003: readable description wrapping
 
@@ -410,7 +455,9 @@ Nothing was deleted or renumbered.
   human verification remain open. [Evidence](reports/feedback-2026-10-03/cheska-caster.md).
 - [ ] Investigate bots remaining inactive after status expiry; reproduce before fixing.
   Real Classic Frozen/Tagged expiry probe2/2 resumes bot input; no generic timer
-  stall reproduced. Hero/status combinations and peers remain open.
+  stall reproduced. Current native can-down/Zack-ultimate/reset/patrol case also
+  passes1/1; broader hero/status combinations and peers remain open.
+  [Current recovery check](reports/current-arrival-2026-10-04/README.md).
   [Scoped evidence](reports/reliability-2026-10-03/bot-status-expiry/README.md).
 - [x] Remove Frozen/Stunned action bar while preserving status indicators.
   Focused original failure and candidate 1/1 plus UI capture retained.
@@ -2398,8 +2445,8 @@ points at it rather than copying it. Nothing here is ticked without evidence.
   points at the thumb target). Photograph each prompt on all three devices (CLAUDE.md 4a).
 - [ ] **Everyone gets 999999 tansan so the testers can unlock everything** (*"unlock all"* was asked and
   withdrawn in the next message). Built: `ugs/cloud-code/wallet.js` `PLAYTEST_TOPUP = 999999` tops every
-  loaded wallet up (`tools/test_wallet_script.js` passes). OPEN: the OWNER must deploy `wallet.js` to the
-  UGS project (`dcf0831e-...`), nothing changes in game until then. ⚠️⚠️ TEMPORARY: before any public
+  loaded wallet up (`tools/test_wallet_script.js` passes). Productionv2 deployed and exact source verified
+  October4; actual rendered tester unlock acceptance remains open. ⚠️⚠️ TEMPORARY: before any public
   build set `PLAYTEST_TOPUP = 0` and redeploy (balances already topped up stay topped up; resetting them
   is a separate decision for the owner).
 - [ ] **LIANA LEAP from his own eyes looks like his arms extending**, then *"it doesnt bend with arms
