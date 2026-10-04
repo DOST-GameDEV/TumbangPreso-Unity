@@ -11,6 +11,35 @@ namespace TumbangPreso.Core.Tests
     /// </summary>
     public class PaeteRulesTests
     {
+        [Theory]
+        [InlineData(8f,.8f,5.95f,1.25f)]
+        [InlineData(4f,.8f,2.56f,.64f)]
+        [InlineData(1f,.8f,.16f,.04f)]
+        public void PlayerLatchGivesPaeteMostTravelAndKeepsContactClearance(float distance,float gap,float caster,float target)
+        {
+            Assert.True(PaeteRules.VinePairTravel(distance,gap,out float a,out float b));
+            Assert.Equal(caster,a,3); Assert.Equal(target,b,3);
+            Assert.Equal(distance-gap,a+b,3);
+            Assert.True(a>b); Assert.InRange(b,0,PaeteRules.VineTargetMaxPull);
+        }
+        [Fact]
+        public void PlayerLatchNeverPushesApartAlreadyTouchingOrInvalidBodies()
+        {
+            foreach(float distance in new[]{0f,.4f,.8f,float.NaN,float.PositiveInfinity,-1f})
+            {
+                Assert.False(PaeteRules.VinePairTravel(distance,.8f,out float a,out float b));
+                Assert.Equal(0,a); Assert.Equal(0,b);
+            }
+        }
+        [Fact]
+        public void ThornContactAndPullBeatsFitBeforeTheExistingRetirement()
+        {
+            Assert.True(PaeteRules.ThornReachSeconds>0);
+            Assert.True(PaeteRules.ThornReachSeconds<PaeteRules.ThornHoldSeconds);
+            Assert.True(PaeteRules.ThornYankSeconds>.5f);
+            Assert.True(PaeteRules.ThornHoldSeconds+PaeteRules.ThornYankSeconds<PaeteRules.ThornConstructSeconds);
+        }
+
         [Fact]
         public void TheOwnersNumbersAreTheOnesInTheKit()
         {

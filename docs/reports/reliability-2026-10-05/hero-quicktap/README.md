@@ -1,0 +1,9 @@
+# Preserve quick hero skill key presses
+
+E/Q/X hero input previously read only InputAction.IsPressed. A key pressed and released during the same Input System update left no held level when PlayerInputReader polled, so the skill intent vanished. The reader now gives the rendered hero consumer one pulse from WasPressedThisFrame and buffers its edge until physics consumes it. Existing menu-held suppression and focus/typing/loading boundaries still apply. Charge, sprint and movement retain held-state behavior.
+
+Baseline4edb7bb08: native Unity14260/session2322 reproduced three lost quick taps, with ordinary held skill and menu-held/release controls passing. Candidate5440/session21432 passed the identical five cases, zero skips, exit0. The fixture queues actual Keyboard down/up events, updates the Input System then reads through the real PlayerInputReader and checks intent persistence/consumption. This is input producer evidence; it does not claim every ability fired through live Relay or fix rubber-banding.
+
+Both jobs are terminal; isolated settings, shared input preferences, editor preferences and QualitySettings restored. Each froze19,261 inputs;202 owned GUI importer changes retained then restored exact with no remaining deltas. Pre-existing Auditor dirt preserved. Full maps/logs remain locally in Logs/hero-quicktap1005; compact original/candidate XML/results and exact source bytes are retained here.
+
+The preceding visible two-machine online flow verified Guest/title/Home/Custom, ONLINE+PUBLIC creation, public row Join, leave and separate code entry/rejoin, readiness/start and a natural Hero4x30 match with identical full records. Instant OS E taps did not establish gameplay activation and were not misclassified as a transport failure. This native unit isolates one real missed-tap cause; updated packaged operator acceptance remains open.

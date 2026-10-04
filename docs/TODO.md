@@ -1,5 +1,16 @@
 # TODO: Tumbang Preso Unity
 
+### PAETE-REFINEMENT-1004: existing animation and player vine latch
+
+- [x] Preserve the existing plant and character shapes while making the charged
+  launch and slower defensive reach/contact/pull read clearly.
+- [x] Add the owner-requested unequal mutual player pull, collision stop and
+  scoped host decision; qualify actual signature, interruptions and replication.
+- [x] Review actual plant/defense and player-latch film. Final focused teleport
+  correction and input/receiver controls pass3/3 after the retained10/11 sweep.
+  [Evidence](reports/paete-refinement-2026-10-04/README.md).
+- [ ] Matching protocol149 live peers, Windows player and human visual acceptance.
+
 ### LINUX-SMOKE-1004: integrated build and offline startup
 
 - [x] Source70a600a1 packages all12 scenes and runs the actual Linux player:
@@ -125,6 +136,9 @@ Nothing was deleted or renumbered.
 
 ### OWNER-MULTIPLAYER-FEEDBACK-1004: current live-test reports
 
+- [x] Preserve quick E/Q/X skill press/release before input polling. Native
+  three causal failures plus held/menu controls -> same five passes. Updated
+  packaged skill/operator acceptance remains open. [Evidence](reports/reliability-2026-10-05/hero-quicktap/README.md).
 - [ ] Non-host multiplayer: owner confirms smooth frames but delay/rubber-banding.
   Measure prediction/host acknowledgements/corrections under latency and real peers.
 - [x] Opening camera visibility: late activation/follow no longer exposes FPP

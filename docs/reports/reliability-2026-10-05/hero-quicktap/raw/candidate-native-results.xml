@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 17:47:18Z" end-time="2026-10-04 17:47:18Z" duration="0.4474813">
+  <test-suite type="TestSuite" id="3078" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1695" result="Passed" start-time="2026-10-04 17:47:18Z" end-time="2026-10-04 17:47:18Z" duration="0.447481" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3072" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1695" result="Passed" start-time="2026-10-04 17:47:18Z" end-time="2026-10-04 17:47:18Z" duration="0.429681" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="5440" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3073" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1695" result="Passed" start-time="2026-10-04 17:47:18Z" end-time="2026-10-04 17:47:18Z" duration="0.420641" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3074" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1695" result="Passed" start-time="2026-10-04 17:47:18Z" end-time="2026-10-04 17:47:18Z" duration="0.411951" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1624" name="HeroQuickTapTests" fullname="TumbangPreso.PlayTests.HeroQuickTapTests" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-04 17:47:18Z" end-time="2026-10-04 17:47:18Z" duration="0.367260" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1629" name="AKeyHeldThroughMenuClosureCannotCastUntilReleasedAndPressedAgain" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.AKeyHeldThroughMenuClosureCannotCastUntilReleasedAndPressedAgain" methodname="AKeyHeldThroughMenuClosureCannotCastUntilReleasedAndPressedAgain" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="1332308788" result="Passed" start-time="2026-10-04 17:47:18Z" end-time="2026-10-04 17:47:18Z" duration="0.198753" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1628" name="OrdinaryHeldSignatureStillProducesOneEdge" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.OrdinaryHeldSignatureStillProducesOneEdge" methodname="OrdinaryHeldSignatureStillProducesOneEdge" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="1972814313" result="Passed" start-time="2026-10-04 17:47:18Z" end-time="2026-10-04 17:47:18Z" duration="0.040766" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1626" name="RoleSkillQuickTapSurvivesUntilGameplayConsumesIt" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.RoleSkillQuickTapSurvivesUntilGameplayConsumesIt" methodname="RoleSkillQuickTapSurvivesUntilGameplayConsumesIt" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="71944294" result="Passed" start-time="2026-10-04 17:47:18Z" end-time="2026-10-04 17:47:18Z" duration="0.038265" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1625" name="SignatureQuickTapSurvivesUntilGameplayConsumesIt" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.SignatureQuickTapSurvivesUntilGameplayConsumesIt" methodname="SignatureQuickTapSurvivesUntilGameplayConsumesIt" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="628959328" result="Passed" start-time="2026-10-04 17:47:18Z" end-time="2026-10-04 17:47:18Z" duration="0.037213" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1627" name="UltimateQuickTapSurvivesUntilGameplayConsumesIt" fullname="TumbangPreso.PlayTests.HeroQuickTapTests.UltimateQuickTapSurvivesUntilGameplayConsumesIt" methodname="UltimateQuickTapSurvivesUntilGameplayConsumesIt" classname="TumbangPreso.PlayTests.HeroQuickTapTests" runstate="Runnable" seed="1985945233" result="Passed" start-time="2026-10-04 17:47:18Z" end-time="2026-10-04 17:47:18Z" duration="0.036666" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

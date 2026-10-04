@@ -570,7 +570,7 @@ namespace TumbangPreso.Net
         //146: throws ignore can state; restoration lowers an active charge over0.5s.
         //147: revised Cryo placement and fifteen-second all-throw Frostbite; timed Boulder.
         //148: arc-wall snapshots preserve radius, length and remaining hit budget.
-        public const int ProtocolVersion = 148;
+        public const int ProtocolVersion = 149;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

@@ -42,6 +42,23 @@ namespace TumbangPreso.Core
         public static float VineHoldSeconds(float distance)
             => CarryRules.SecondsFor(System.Math.Max(0.0f, distance - VineStopShort), VineReelSpeed);
 
+        // Owner-requested player latch: Paete covers most of the gap; the victim
+        // moves only a small capped share. Both endpoints retain capsule clearance.
+        public const float VineTargetMaxPull = 1.25f;
+        public const float VineTargetShare = 0.20f;
+        public static bool VinePairTravel(float separation, float stopDistance,
+            out float casterTravel, out float targetTravel)
+        {
+            casterTravel = targetTravel = 0;
+            if (float.IsNaN(separation) || float.IsInfinity(separation) ||
+                float.IsNaN(stopDistance) || float.IsInfinity(stopDistance) ||
+                separation < 0 || stopDistance < 0) return false;
+            float gap = System.Math.Max(0, separation - stopDistance);
+            targetTravel = System.Math.Min(VineTargetMaxPull, gap * VineTargetShare);
+            casterTravel = gap - targetTravel;
+            return gap > 0;
+        }
+
         // ------------------------------------------------------------------ BAKYA BLOOM (attacking)
 
         /// <summary>The seed's throw range, from his feet.</summary>
@@ -114,10 +131,11 @@ namespace TumbangPreso.Core
         public const float ThornRange = 7.0f;
 
         /// <summary>The Scorpion beat: caught, held taut, then yanked.</summary>
-        public const float ThornHoldSeconds = 0.25f;
+        public const float ThornReachSeconds = 0.45f;
+        public const float ThornHoldSeconds = 0.65f;
 
         /// <summary>The yank itself, from wherever it was caught to beside him.</summary>
-        public const float ThornYankSeconds = 0.5f;
+        public const float ThornYankSeconds = 1.1f;
 
         /// <summary>Where a yanked slipper lands: this far from the construct, so it never lands on him.</summary>
         public const float ThornLandDistance = 1.0f;

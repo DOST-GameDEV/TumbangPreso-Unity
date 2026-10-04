@@ -1,129 +1,86 @@
 # Active competition checkpoint
 
-Read AGENTS.md, COMPETITION_COORDINATION.md and current TODO. TODO owns status.
-Resume the concrete command below; no whole-history rereads or unchanged test loops.
-Exact local handles are in Logs/arrival-pan-review1004/current-resume.json.
+Read AGENTS, COMPETITION_COORDINATION and current TODO. TODO is the only queue.
+Exact handles/next command: Logs/arrival-pan-review1004/current-resume.json.
+Resume after compaction; no whole-history rereads or unchanged passing loops.
 
-## Persistent owner instructions
+## Owner directives
 
-Make the game competition ready through actual fixes, full user flow and measured
-preload/performance work. Continue after questions, passing batches and compaction.
-Answer promptly; progress at least once per minute. No repetitive internal filler.
-Owner removed arbitrary RAM/admission/retry/external-timeout guards. Direct local
-execution with isolated inputs/profiles/outputs is authorized; monitor actual jobs.
-One heavy job per machine. Preserve contributor reservations, private/finalized
-art, profiles, saves, shared preferences and Desktop releases. No reset, clean,
-force-push, new chats/agents or unapproved paid services.
+Continue autonomously while owner sleeps. NETWORK FIRST: all QA testers could
+not join ASTRAReworks; non-host lag is smooth frames with delay/rubber-banding.
+Fix skill/input failures too. Test visible tester menus and normal input, not only
+CLI/API. Answer promptly then resume; progress updates at least once per minute.
+No arbitrary RAM/admission/retry/time guards, reset, clean, force-push, new chats/
+agents or unapproved paid services. Preserve user data/private art/other work and
+Desktop releases. One heavy job per machine; freeze native/build inputs until the
+parent terminates. Clean verified owned leftovers; never bypass deletion rejection.
+Existing PC/laptop cooperation is authorized; ask files/jobs before reassignment,
+checkpoint for paired tests then resume source work. Normal checked pushes.
+Feature requirements belong TODO/ledger. Paete automatic mature lobs every5s are
+explicitly authorized; unnecessary AGENTS feature entry was removed at owner request.
 
-Existing PC/laptop cooperation is authorized. Ask current task/file ownership
-before reassignment. Safely checkpoint for a requested joint LAN/online test,
-perform it, then resume the prior task. Push coherent checked commits through
-normal fetch/merge. Bounded live UGS tests were explicitly authorized.
-Clean verified task-owned helpers/outputs/obsolete merged branches regularly.
-Never bypass automatic approval rejection. Reuse the existing quiet six-hour
-cleanup heartbeat; no duplicate automation.
-
-## Current ownership and source
-
-October 4 latest owner priority is SERVER FIXES. Public room discovery and joining
-by code both failed for QA; the owner says QoLUpdates worked. Non-host lag is
-smooth visuals with delayed movement/rubber-banding. Online Relay acceptance is
-required separately from LAN. QoLUpdates is a prank branch: relevant read-only
-comparison only; never run, merge or copy its prank code.
-
-Current Root publication e7587c72e includes server fix2fdf910fc + Paete speedba1. Camera d647aff69 is shipped: original
-two late-activation/follow failures plus two controls -> same four native passes.
-Title/login bb4269df9 is shipped with actual multi-resolution native pixels;
-new Yasmin clothing model draft and shared catch VFX are deferred for server work.
-Laptop owns PaeteHazards projectile regression (original two failures/one control
--> candidate three passes) and emote investigation. Ask exact ownership before
-changing its lane. DanteBoulder follow-up is reserved on laptop, unedited.
-
-Root server investigation: actual non-batch Relay hosting, UGS S1 custom-code
-lookup and shipping public browser passed one live case (22952/session83437).
-This is one machine and does not prove peer admission. Fault injection then
-reproduced two failures: host succeeds despite registration refusal and reports
-success before delayed registration settles (10112/session15798). Both terminal
-with original evidence and prefs/Quality restored; 202 owned importers restored.
-Topology original8984/session79818 failed Relay direct advertisement and passed
-real LAN control. Final candidate4852/session33477 passed same three causes plus
-LAN and real UGS publication/code/browser controls, 5/5. All terminal/restored;
-202 generated importers restored exact. Initial profile/fixture failures retained.
-The exact QA failure, second-client admission and non-host lag remain OPEN.
-NEXT: publish opt-in normal online lobby bootstrap, build current checked148
-source once, classify/copy full artifact then paired ONLINE custom-code join
-and actual gameplay. Keep all source frozen until build parent terminal.
-Owner sleeps; continue server-first autonomously and then actual skill failures.
-Paete auto5s is a scoped owner exception in TODO/ledger, not a standing AGENTS
-feature entry. Laptop implements independently; Root Net149 shot event follows
-the first repaired online pair. New Yasmin/catch VFX/home animation remain queued.
-Exact local handles remain in Logs/arrival-pan-review1004/current-resume.json.
+## Source, ownership and live work
 
 Root checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
-Source86849453c includes brand e9cfa13fc, contributor Glacial restoration and
-the owner's concise title hint. Legacy MapSource skip wording is cleared;
-the animated street title remains, with Click/Tap/Press-a-button to continue.
-Current protocol148/recording14; old paired146 tests do not qualify new semantics.
-Only pre-existing ProjectAuditorSettings.asset generated dirt is retained outside
-the browser lifetime source/report batch. Root owns shared UI/account/Net/release/docs.
-Laptop chat Fix gameplay interruption recovery, thread01a0ffab-10a0-70d0-9270-
-07e171c1613b, physical192.168.1.144; Root PC192.168.1.7.
-Latest laptop lane: inspect new frostload/charge input interruption/retirement,
-reserve PlayerInputReader/Carrier and focused tests if an actual defect appears.
-Coordinate Slipper before overlap. Laptop owns client replay raw publication.
+Repository4edb7bb08; tested package3947a82e8/protocol148/recording14. Later Rago
+contributor source is preserved but absent from that package. Pre-existing Auditor
+dirt and untracked Yasmin voxel draft script preserved. Root owns Net/UI/docs/
+release and acknowledged PlayerInputReader plus HeroQuickTapTests. Laptop owns
+PaeteRules/PaeteHazards/PaeteHeroKit +5 auto-lob fixtures; emote CharacterVisual
+observed/checkpointed, unedited. Old Carrier/Paete speed ba1 unit shipped.
+Laptop Fix gameplay interruption recovery: thread01a0ffab-10a0-70d0-9270-
+07e171c1613b, physical192.168.1.144; Root192.168.1.7.
 
-## Latest shipped results and limits
+CURRENT Root original native quicktap Unity14260/session2322, source4edb,
+Logs/hero-quicktap1005/run-original.py. Runtime UNEDITED. Five actual InputSystem
+cases E/Q/X press+release before real reader poll, held skill and menu-held/release.
+Unity child exited; poll SAME parent2322 and inspect exact XML/cases before edits.
+Keep input freeze until parent terminal, restore only owned generated importers
+with original bytes retained. Native causal proof, minimal fix then same candidate;
+no idle matches as busywork. Root non-host stale-owner-echo/correction lead open.
+Laptop auto5s original/candidate native unit proceeds on separate machine.
 
-Displayed names: Basilio/Yasmin/Rago/Isagani/Nemu/Soraya/Ilyas/Amihan/Paete.
-Stable IDs and finalized hero protection retained. Owner five SVG variants,
-transparent matching brand/menu/icon exports and thin cream#FCD39F keyline
-shipped e9cfa13fc, integrated7a303afe2. Native18064/session78502 terminal1/1:
-five imported aspects/four transparent corners/credits/gallery on D3D11. Actual
-pixels inspected. Quality/input/profile restored;202 unrelated GUI metadata
-restored exact;15 intentional PNG imports+5 new SVG records retained.
-Deliverables C:/Users/matth/Downloads/TUMP-vector-set. No avatar/background rewrite.
+## Verified results and honest limits
 
-F489 direct full release7988/session41168 terminal0, protocol146,
-258files2565875723B. Manifest Builds/integration-f4890bdd4-1004-manifest.json.
-Runtime e4be6c71d3cb067d1e12ed9830f054aa40f0422639cf8e25b2bc0e9ebcf88c1e.
-Real replay host19728/session30422 and client10228 terminal0. Eskinita/HeroStrike,
-actual catch clip1/12456bytes/three fields. Sampled retained-to-ACK0.479s, not an
-exact send-start/large-transfer benchmark. Shared epoch639267125897668305.
-Host183held/100view and client91view samples; all scores170/0/0/0 and local
-simulation frozen. Round5 resumes, both1920PNGs inspected and full artifact/
-inputs/profile restored. Controlled intermediate-round advance, not natural
-full match, slow-peer, third-peer fault or human operator acceptance.
-Host raw53470e5a5: reports/reliability-2026-10-04/paired-replay146-host.
-Laptop client raw154b is published and normally merged. Root all11Git hashes,
-actual client PNG and CSV identities/scores/local simulation independently checked.
-Prior Classic
-and true Hero default8 Kanto full matching saved histories on23168/146 passed;
-do not repeat without a changed requirement.
+Server2fdf910fc integratede758: await online registration before success, stop own
+failed room/show error, keep Relay out of direct LAN advertisements. Original3
+causes plus LAN/real UGS code/browser controls -> same5 native passes. Harness
+profile/teardown/dispatch errors preserved; production not weakened. Report
+reliability-2026-10-04/online-room-publication. Opt-in3947 online bootstrap is
+explicit diagnostics, not the normal visible QA flow.
 
-## Jobs, cleanup and next action
+Full3947 release20040/37599 terminal0, all258files2667618731B verified on both
+machines and after players. Runtimeba75219a031856be4509fdf1cfdb8240fb331a1278054
+ dea1e4d3b89d527fe23; manifest36e4c25e573f91b9e93756f21770209e8fade9a1233f5ea2
+42d83ff863b2e7ec (exact whole hashes in checkpoint). 203 GUI/EOL deltas restored
+exact. Share17532/11339 closed after full-copy ACK. No Root player remains.
 
-No Root Unity/player/share job active. Server1936/session48545 and laptop armer
-26164/session32456 closed after acknowledgements. Essential F489/23168 packages
-retained. Old build deletion and temporary vtracer dependency-folder deletion
-rejected "blocked by policy"; neither bypassed. Paths remain in local receipt.
+Online CLI S1/Relay pair naturalHero8x90, not intended shortClassic (fixture
+restore mismatch retained). Full record9153eb2b4fe24916b325a20bc33216ae /719.926s /
+40,50,3370,3400; both full hash247e139fa789934d929617b3d42c9e8a01ed07fb5e471cde8
+40fb1390f6898c8. Root independently checked12 raw Git hashes54e870 report and all
+full-record fields. Source-proof package3947; no human movement/skill claim.
 
-SVG-precedence generator guard55778d24f is shipped; seven isolated exports match
-dimensions/every RGBA pixel, encoded-PNG difference retained separately.
-Browser lifetime original17764/98876 native3causes fail/2controls pass -> same
-candidate1212/66148 all5pass. Start/stop generation checks after auth/query reject
-old work while normal/manual refresh survives. Both terminal and restored;
-202generatedGUI importers restoredexact/sourcefixture stable in19252 frozen maps.
-No UGS calls. Reports/reliability-2026-10-04/browser-lifetime.
-Browser source31c5f4340 shipped, integrated51aa2bd19. Laptop explicitly released
-NetReplayProbe/fixture; its input/Carrier/Slipper lane remains separate.
-Opt-in glacial probe adds one real arc with two remaining hits and read-only
-clip/view geometry logs; default19CSV/contact unchanged. Direct compile0; no
-actual peer pass yet. NEXT: publish this opt-in diagnostic then ONE coherent
-current148 release build, freeze source until terminal/classification and transfer
-the accepted full manifest. Joint Eskinita/Hero/catch/glacial1/ready1, Root49165,
-laptop18061 control/direct client ephemeralport. Safely checkpoint laptop input
-lane for the requested pair, then resume it. Do not repeat accepted brand native
-tests or rebuild unchanged F489.
-Current148 peer/Relay/recovery/maps,
-rendered signed-in Friends journey, performance/operator and presentation gates
-remain in TODO. Wallet temporary playtest-top-up removal remains a release gate.
+Then normal visible startup BOTH: Guest->title->Home->Custom; Root Host form
+ONLINE+PUBLIC createdPUX9. Laptop actual public row JOIN, BACK leave, separate CODE
+PUX9 typed+JOIN all passed with independent host admission/lobby screenshots.
+Actual Rules controls Hero4x30; client read-only Rules agree (saved8 preference
+intentionally separate). Actual Ready/Host Start->draft->natural full game record
+3ae8dc265147411d8b54ea9f7f070f26 /119.943s /20,20,640,540, both full hash
+bfd02a8f283308b5848f9a82597b0d908b2f1b90469146efec24fea628e9d441.
+Manual draft-lock/intro film/continuous movement/skill firing NOT established:
+tools overran draft and instant E taps ambiguous. No repeat idle rematch until
+input controlled. Paete correctly locked on fresh Guest, not network failure.
+Players820/25213 and32084/61323 exited normally; prefs/settings restored and full
+artifact postchecks unchanged. All actual images/logs/profile evidence retained.
+
+UI control: bundled computer-use skill, deferred node_repl import@oai/sky. Root
+WGC capture failed; fresh DESKTOP crop of exact observed owned window via PIL
+worked windowed and Sky pointer actions succeeded. PrintWindow images were stale.
+Laptop Sky capture works. No product login bug inferred from tool failure.
+
+Names/logo SVGs/title-loginbb4269df9/camera late activationd647aff69 shipped with
+focused evidence. New Yasmin draft, tag VFX, first Home animation, Paete emote,
+auto5s native +RootNet149 shot event, controlled peer latency/LAN/recovery and
+release/preload gates remain TODO. Full matches do not close rubber-banding.
+Goal remains active; keep implementing concrete fixes and publishing checked units.
