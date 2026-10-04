@@ -1,8 +1,8 @@
-# Current Windows151 visible startup and join recovery
+# Current Windows 151 visible startup and join recovery
 
-Full Windows release source89cc9f295/protocol151 built with Options.None, exited0
-and retained258 files/2667632603bytes. Per-build generated203 UI metadata/EOL
-changes were retained then restored to frozen bytes. Actual graphics player20584
+Full Windows release source 89cc9f295/protocol151 built with Options.None, exited0
+and retained 258 files/2667632603bytes. Per-build generated 203 UI metadata/EOL
+changes were retained then restored to frozen bytes. Actual graphics player 20584
 used a new named profile and no network bootstrap or direct menu/game method.
 
 Observed actual pointer route: Guest login -> painted title -> Home. Adjacent
@@ -12,7 +12,7 @@ fallback warnings, with no HubSceneVideo failure warning; those warnings are
 not certified harmless on every hardware/clip combination.
 
 Custom -> JOIN ROOM -> CODE -> typed the earlier closed test code WAD6 -> JOIN
-showed ìNo game answered to 'WAD6'.î Switching to Internet browser worked after
+showed ‚ÄúNo game answered to 'WAD6'.‚Äù Switching to Internet browser worked after
 the failure. Empty browser at that moment is not evidence of discovery failure:
 no current151 public test host was running. This is negative-path recovery,
 not successful151 peer admission or clean non-host movement acceptance.
