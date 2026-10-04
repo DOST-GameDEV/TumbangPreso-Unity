@@ -87,6 +87,24 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### BROWSER-LIFETIME-1004: closed or reopened browser rejects old lookups
+
+- [x] Invalidate old authentication/query completions on browser start/stop.
+  Original native3causes fail/2controls pass -> same candidate5/5. Current opening
+  and direct manual refresh retained; closed auth no longer dispatches a lookup.
+  [Evidence](reports/reliability-2026-10-04/browser-lifetime/README.md).
+- [ ] Live/rendered close/reopen acceptance on the current packaged build.
+
+### PAIRED-REPLAY146-1004: actual retained catch clip and playback
+
+- [x] Identical full258-file package on both physical machines; actual catch clip,
+  verification ACK, canonical playback, four stable scores, frozen simulation
+  and round5 release. Both PNGs inspected, both terminal/restored/artifact unchanged.
+  Root independently checks all11client raw Git hashes and matching CSV identities.
+  [Host evidence](reports/reliability-2026-10-04/paired-replay146-host/README.md),
+  [client evidence](reports/laptop-validation-2026-10-04/paired-replay146-client/README.md).
+- [ ] Source148, paced/large transfer, third-peer faults, Relay and physical inputs.
+
 ### CRYO-OWNER-1004: updated ranges, window and compact wall
 
 - [x] Implement owner-requested Cold Feet/Wall numbers and every-throw15second Frostbite.

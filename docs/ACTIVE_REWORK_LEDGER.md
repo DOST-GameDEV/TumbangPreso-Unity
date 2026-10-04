@@ -26,10 +26,12 @@ cleanup heartbeat; no duplicate automation.
 ## Current ownership and source
 
 Root checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
-Source7a303afe2 includes brand e9cfa13fc and contributor Glacial restoration.
+Source86849453c includes brand e9cfa13fc, contributor Glacial restoration and
+the owner's concise title hint. Legacy MapSource skip wording is cleared;
+the animated street title remains, with Click/Tap/Press-a-button to continue.
 Current protocol148/recording14; old paired146 tests do not qualify new semantics.
 Only pre-existing ProjectAuditorSettings.asset generated dirt is retained outside
-the small generator/doc batch. Root owns shared UI/account/Net/release/docs.
+the browser lifetime source/report batch. Root owns shared UI/account/Net/release/docs.
 Laptop chat Fix gameplay interruption recovery, thread01a0ffab-10a0-70d0-9270-
 07e171c1613b, physical192.168.1.144; Root PC192.168.1.7.
 Latest laptop lane: inspect new frostload/charge input interruption/retirement,
@@ -58,7 +60,9 @@ simulation frozen. Round5 resumes, both1920PNGs inspected and full artifact/
 inputs/profile restored. Controlled intermediate-round advance, not natural
 full match, slow-peer, third-peer fault or human operator acceptance.
 Host raw53470e5a5: reports/reliability-2026-10-04/paired-replay146-host.
-Laptop independently correlated raw; client publication pending. Prior Classic
+Laptop client raw154b is published and normally merged. Root all11Git hashes,
+actual client PNG and CSV identities/scores/local simulation independently checked.
+Prior Classic
 and true Hero default8 Kanto full matching saved histories on23168/146 passed;
 do not repeat without a changed requirement.
 
@@ -69,10 +73,16 @@ No Root Unity/player/share job active. Server1936/session48545 and laptop armer
 retained. Old build deletion and temporary vtracer dependency-folder deletion
 rejected "blocked by policy"; neither bypassed. Paths remain in local receipt.
 
-NEXT: publish SVG-precedence brand generator guard, then fetch/inspect laptop
-client replay raw and resume an independent concrete Net/account fix. One
-isolated generation reproduces all seven installed export dimensions and RGBA
-pixels; encoded PNG difference retained separately. Do not rerun accepted brand
-native tests or rebuild unchanged F489. Current148 peer/Relay/recovery/maps,
+SVG-precedence generator guard55778d24f is shipped; seven isolated exports match
+dimensions/every RGBA pixel, encoded-PNG difference retained separately.
+Browser lifetime original17764/98876 native3causes fail/2controls pass -> same
+candidate1212/66148 all5pass. Start/stop generation checks after auth/query reject
+old work while normal/manual refresh survives. Both terminal and restored;
+202generatedGUI importers restoredexact/sourcefixture stable in19252 frozen maps.
+No UGS calls. Reports/reliability-2026-10-04/browser-lifetime.
+NEXT: commit/push this browser source/report batch immediately, then prepare one
+coherent current148 build and actual changed-wall/brand/player acceptance with
+laptop coordination. Do not repeat accepted brand native tests or rebuild F489.
+Current148 peer/Relay/recovery/maps,
 rendered signed-in Friends journey, performance/operator and presentation gates
 remain in TODO. Wallet temporary playtest-top-up removal remains a release gate.

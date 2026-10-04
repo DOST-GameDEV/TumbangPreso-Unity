@@ -1,0 +1,14 @@
+{
+  "neutral-extraction.json": "5142e6502f2cf1977d7fa9e5811103d938580a98f172571261b9e2b9531308ce",
+  "ServerQuery.candidate.cs": "c4c3927a96586c7603afaceb71add437ca61effe95af2d54bcb7b851e7b255dc",
+  "ServerQuery.neutral-original.cs": "ef020662d84b81fca61b9050a2df16634c6d32a022dd078769d658ae7b5fcf54",
+  "ServerQuery.original-shipping.cs": "a2ffd03032d3248fa84d3127e8e28b75b50e130c5197a356ae86fbb86c5ebd47",
+  "ServerQueryBrowserLifetimeTests.cs": "fad93737a641e8dff8558a4d122be8890e1e2c1dfe3c54f329417a0c353772de",
+  "ServerQueryBrowserLifetimeTests.cs.meta": "40cfabe7b71ac67d951da6a8af9ca96c8adb345b7b09f227fd2a62e7c6232ef8",
+  "candidate-native/classification.json": "17a88ad772f3481fad9e64dd18efbb9f0d893b90a7f1e1948a0a16eab4fea2c5",
+  "candidate-native/launch.json": "fccc16c8ea1afd803df8ef32bc1844359551724179cef3b39aded72be641dd53",
+  "candidate-native/results.xml": "2474c6f1644cbaed41924048dad5a84d8c0f195df7becba9cdef463aa9843c1e",
+  "original-native/classification.json": "9d2f72de93173715f4cb4ff056843745563767c8f2fbd4fb6a57de9fa1ca4c88",
+  "original-native/launch.json": "6e69ebe7f9663be8a60fedf5514025f5666aba5124abcadfe6abbc9adbe72d95",
+  "original-native/results.xml": "3693b38d3050f0840f2fa3e041adcd7b38f696191f027ce753ea6ce68c9be8a2"
+}
