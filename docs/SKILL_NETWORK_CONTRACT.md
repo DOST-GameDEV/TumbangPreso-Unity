@@ -1,5 +1,19 @@
 # Skill Networking Contract
 
+## Fifteen-second imbuements, protocol147
+
+Frostbite remains active for15seconds and coats every throw in that window;
+throwing does not consume or refresh it. Cold Feet uses radius2.5m, range0.5–5m
+and a1second aim ramp. Glacial Wall lasts10seconds with range1.5–4m and a1second
+aim ramp; its compact5m arc retains radius3m and three slipper hits still shatter it. Boulder now has a
+15second host-owned deadline on the exact loaded slipper. Dropping/retrieving
+it does not refresh that deadline; replacing its affinity retires the old timer.
+A timely held throw transfers the existing one-hit payload to flight. An expired
+load cannot be launched by racing the normal Update expiry. Pausing simulation
+pauses the deadline. Expiry uses the existing reliable slipper-affinity state
+message; no packet fields were added. Existing35second cooldowns remain.
+Matching rebuilt peers are required for the changed gameplay timings.
+
 ## Restore charge return, protocol146
 
 Throws remain legal while the can is down or protected. A real down-to-upright

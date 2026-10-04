@@ -93,6 +93,56 @@ namespace TumbangPreso.PlayTests
             _shoe.Affinity=SlipperAffinity.Normal;arms.MatchSkin(_shoe);yield return null;Assert.IsFalse(cue.enabled);
             Assert.AreEqual(1,filter.GetComponentsInChildren<Renderer>(true).Count(x=>x.name=="BoulderStoneInlay"));
         }
+        [UnityTest,Timeout(30000)] public IEnumerator WikiBoulderLoadExpiresOnItsDroppedShoe()
+        {
+            Kit.AttackingSkill.Activate(Context);
+            Assert.AreEqual(SlipperAffinity.Concussed,_shoe.Affinity);
+            Assert.IsTrue(_shoe.HostDisarm());
+            yield return new WaitForSeconds(14f);
+            Assert.AreEqual(SlipperAffinity.Concussed,_shoe.Affinity,"Dropping must not discard or refresh the armed payload.");
+            yield return new WaitForSeconds(1.2f);
+            Assert.AreEqual(SlipperAffinity.Normal,_shoe.Affinity,"Boulder must stop being armed after fifteen seconds, even on the ground.");
+            Assert.AreEqual(35,Kit.AttackingSkill.Cooldown);
+        }
+
+        [UnityTest] public IEnumerator TimelyBoulderThrowKeepsItsFlightPayload()
+        {
+            Assert.IsTrue(_shoe.HostLoadTimedAffinity(SlipperAffinity.Concussed,.1f));
+            _shoe.HostThrow(_actor,new Vector3(0,20,-8),new Vector3(0,4,3),SlipperAffinity.Concussed);
+            yield return new WaitForSeconds(.2f);
+            Assert.AreEqual(SlipperState.InFlight,_shoe.State);
+            Assert.AreEqual(SlipperAffinity.Concussed,_shoe.Affinity,"A timely throw must not lose its one-hit payload when the former armed deadline passes.");
+        }
+        [UnityTest] public IEnumerator RetiredBoulderDeadlineCannotEraseAnotherPayload()
+        {
+            Assert.IsTrue(_shoe.HostLoadTimedAffinity(SlipperAffinity.Concussed,.1f));
+            _shoe.Affinity=SlipperAffinity.FireExplosive;
+            yield return new WaitForSeconds(.2f);
+            Assert.AreEqual(SlipperAffinity.FireExplosive,_shoe.Affinity);
+        }
+
+        [UnityTest] public IEnumerator ExpiredBoulderCannotLaunchBeforeItsNextUpdate()
+        {
+            Assert.IsTrue(_shoe.HostLoadTimedAffinity(SlipperAffinity.Concussed,.1f));
+            _shoe.enabled=false;
+            yield return new WaitForSeconds(.2f);
+            _shoe.HostThrow(_actor,new Vector3(0,20,-8),new Vector3(0,4,3),SlipperAffinity.Concussed);
+            Assert.AreEqual(SlipperAffinity.Normal,_shoe.Affinity,"Host launch must settle an expired deadline even before the next shoe Update.");
+        }
+        [UnityTest] public IEnumerator PausingSimulationPreservesTheBoulderDeadline()
+        {
+            Assert.IsTrue(_shoe.HostLoadTimedAffinity(SlipperAffinity.Concussed,.1f));
+            try
+            {
+                PresentationClock.RequestScale(0);
+                yield return new WaitForSecondsRealtime(.2f);
+                Assert.AreEqual(SlipperAffinity.Concussed,_shoe.Affinity);
+            }
+            finally { PresentationClock.RequestScale(1); }
+            yield return new WaitForSeconds(.2f);
+            Assert.AreEqual(SlipperAffinity.Normal,_shoe.Affinity);
+        }
+
         private void Shot(Renderer source,string name)
         {
             var go=Keep(new GameObject("Boulder asset camera"));var camera=go.AddComponent<Camera>();camera.enabled=false;

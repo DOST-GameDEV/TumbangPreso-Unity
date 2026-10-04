@@ -316,9 +316,9 @@ namespace TumbangPreso
             }
             else if (ability != null && ability.Kit is CheskaHeroKit cheska && cheska.IsFrostbiteLoaded)
             {
-                // FROSTBITE (ABILITY-2): the throw carries the frost; the first body it hits is Frozen.
+                // Every throw in the timed Frostbite window carries a one-hit freeze.
+                // Releasing a throw neither consumes nor refreshes the window.
                 affinity = SlipperAffinity.Frost;
-                cheska.ConsumeFrostbite();
             }
             else if (ability != null && ability.Kit is PhaisterHeroKit phaister &&
                      (phaister.IsWitchfireInfused || phaister.IsEclipseActive))

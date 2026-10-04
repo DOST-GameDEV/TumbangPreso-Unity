@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 11:44:07Z" end-time="2026-10-04 11:44:07Z" duration="0.6217289">
+  <test-suite type="TestSuite" id="3042" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1664" result="Passed" start-time="2026-10-04 11:44:07Z" end-time="2026-10-04 11:44:07Z" duration="0.621729" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3036" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1664" result="Passed" start-time="2026-10-04 11:44:07Z" end-time="2026-10-04 11:44:07Z" duration="0.611243" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="86376" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3037" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1664" result="Passed" start-time="2026-10-04 11:44:07Z" end-time="2026-10-04 11:44:07Z" duration="0.608263" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3038" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1664" result="Passed" start-time="2026-10-04 11:44:07Z" end-time="2026-10-04 11:44:07Z" duration="0.606010" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1283" name="CheskaFrostbiteLoadTests" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-10-04 11:44:07Z" end-time="2026-10-04 11:44:07Z" duration="0.378938" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1295" name="ActualCryoFieldsUseNewRadiusLifeAndThreeHitWall" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests.ActualCryoFieldsUseNewRadiusLifeAndThreeHitWall" methodname="ActualCryoFieldsUseNewRadiusLifeAndThreeHitWall" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" seed="235078819" result="Passed" start-time="2026-10-04 11:44:07Z" end-time="2026-10-04 11:44:07Z" duration="0.365312" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2619" name="SkillReceiptTests" fullname="TumbangPreso.PlayTests.SkillReceiptTests" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" testcasecount="51" result="Passed" start-time="2026-10-04 11:44:07Z" end-time="2026-10-04 11:44:07Z" duration="0.144430" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2624" name="FreshCheskaRecoveryRestoresFrostbiteWithoutRecastingOrRefundingResources" fullname="TumbangPreso.PlayTests.SkillReceiptTests.FreshCheskaRecoveryRestoresFrostbiteWithoutRecastingOrRefundingResources" methodname="FreshCheskaRecoveryRestoresFrostbiteWithoutRecastingOrRefundingResources" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="899458161" result="Passed" start-time="2026-10-04 11:44:07Z" end-time="2026-10-04 11:44:07Z" duration="0.061004" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2626" name="FrostbiteRecoveryExpiresAndResetsWithoutGrantingASecondLoad" fullname="TumbangPreso.PlayTests.SkillReceiptTests.FrostbiteRecoveryExpiresAndResetsWithoutGrantingASecondLoad" methodname="FrostbiteRecoveryExpiresAndResetsWithoutGrantingASecondLoad" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="269206707" result="Passed" start-time="2026-10-04 11:44:07Z" end-time="2026-10-04 11:44:07Z" duration="0.037775" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2625" name="FrostbiteRecoveryRejectsInvalidLoadsWithoutPoisoningTheFirstValidState" fullname="TumbangPreso.PlayTests.SkillReceiptTests.FrostbiteRecoveryRejectsInvalidLoadsWithoutPoisoningTheFirstValidState" methodname="FrostbiteRecoveryRejectsInvalidLoadsWithoutPoisoningTheFirstValidState" classname="TumbangPreso.PlayTests.SkillReceiptTests" runstate="Runnable" seed="935065124" result="Passed" start-time="2026-10-04 11:44:07Z" end-time="2026-10-04 11:44:07Z" duration="0.035578" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

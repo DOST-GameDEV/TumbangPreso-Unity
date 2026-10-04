@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 11:30:11Z" end-time="2026-10-04 11:30:13Z" duration="1.1445297">
+  <test-suite type="TestSuite" id="3037" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1659" result="Passed" start-time="2026-10-04 11:30:11Z" end-time="2026-10-04 11:30:13Z" duration="1.144530" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3031" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1659" result="Passed" start-time="2026-10-04 11:30:12Z" end-time="2026-10-04 11:30:13Z" duration="1.134793" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="83876" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3032" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1659" result="Passed" start-time="2026-10-04 11:30:12Z" end-time="2026-10-04 11:30:13Z" duration="1.131311" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3033" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1659" result="Passed" start-time="2026-10-04 11:30:12Z" end-time="2026-10-04 11:30:13Z" duration="1.128078" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1420" name="DanteBoulderLoadTests" fullname="TumbangPreso.PlayTests.DanteBoulderLoadTests" classname="TumbangPreso.PlayTests.DanteBoulderLoadTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-04 11:30:12Z" end-time="2026-10-04 11:30:13Z" duration="1.085983" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1428" name="ExpiredBoulderCannotLaunchBeforeItsNextUpdate" fullname="TumbangPreso.PlayTests.DanteBoulderLoadTests.ExpiredBoulderCannotLaunchBeforeItsNextUpdate" methodname="ExpiredBoulderCannotLaunchBeforeItsNextUpdate" classname="TumbangPreso.PlayTests.DanteBoulderLoadTests" runstate="Runnable" seed="1822294099" result="Passed" start-time="2026-10-04 11:30:12Z" end-time="2026-10-04 11:30:12Z" duration="0.449633" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1429" name="PausingSimulationPreservesTheBoulderDeadline" fullname="TumbangPreso.PlayTests.DanteBoulderLoadTests.PausingSimulationPreservesTheBoulderDeadline" methodname="PausingSimulationPreservesTheBoulderDeadline" classname="TumbangPreso.PlayTests.DanteBoulderLoadTests" runstate="Runnable" seed="667917381" result="Passed" start-time="2026-10-04 11:30:12Z" end-time="2026-10-04 11:30:13Z" duration="0.620753" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
