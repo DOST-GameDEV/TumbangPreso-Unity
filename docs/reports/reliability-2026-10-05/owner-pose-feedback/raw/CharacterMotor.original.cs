@@ -1125,8 +1125,7 @@ namespace TumbangPreso
         /// accepts a correction when prediction has drifted far enough to be visible.
         /// </summary>
         public void ApplyNetworkTransform(Vector3 position, float yaw, Vector3 velocity,
-                                          bool grounded, bool reconcileLocal, bool force = false, long flightEpisode = 0,
-                                          bool acceptedOwnerPose = false)
+                                          bool grounded, bool reconcileLocal, bool force = false, long flightEpisode = 0)
         {
             // ⚠️ ASSIGNED BEFORE THE RECONCILE RETURN BELOW, AND THAT ORDERING MATTERS. A body
             // whose owner is predicting it skips the rest of this method whenever the error is
@@ -1134,10 +1133,6 @@ namespace TumbangPreso
             // still the owner's truth and `StepNetworkReplica` never runs for it anyway.
             _networkGrounded = grounded;
             ObserveFlightPose(grounded, flightEpisode);
-
-            // Accepted owner poses are acknowledgements of earlier input. Their
-            // round-trip distance is not a prediction error or a host correction.
-            if (acceptedOwnerPose && !force) return;
 
             float error = Vector3.Distance(transform.position, position);
             if(reconcileLocal && !force && _awaitingTeleport)return;

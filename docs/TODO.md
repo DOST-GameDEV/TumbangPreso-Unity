@@ -141,6 +141,10 @@ Nothing was deleted or renumbered.
   packaged skill/operator acceptance remains open. [Evidence](reports/reliability-2026-10-05/hero-quicktap/README.md).
 - [ ] Non-host multiplayer: owner confirms smooth frames but delay/rubber-banding.
   Measure prediction/host acknowledgements/corrections under latency and real peers.
+- [x] Separate accepted owner movement echoes from authoritative corrections.
+  Native two backward-snap failures plus three controls -> same five passes and
+  status replication control. Protocol150 requires a new matching peer build.
+  [Evidence](reports/reliability-2026-10-05/owner-pose-feedback/README.md).
 - [x] Opening camera visibility: late activation/follow no longer exposes FPP
   hands during arrival. Native2causes fail/2controls pass -> same4/4.
   [Evidence](reports/reliability-2026-10-04/arrival-fpp/README.md).
