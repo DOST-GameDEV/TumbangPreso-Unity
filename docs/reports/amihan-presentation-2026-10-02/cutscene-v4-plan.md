@@ -256,3 +256,10 @@ Owner: "the bird has no head". The body spindle tapered to a point where the hea
 it in the wing teal. Now the body runs along a curved spine up a neck into a round head of its own, paler and brighter
 than the wings (`AmBirdHead`), with the eyes on its front, a slender pale-gold beak and the crest streaming off its crown.
 Evidence: `Logs/amihan-v16r1`.
+
+Then (owner: "it doesnt look that good"), its whole shape: primaries fingered at the wing tips with deep gaps and
+shallow scallops inside them, more colour in the wings, a thin bright line along the feather tips so the shape stays
+crisp where the translucent layers melt together, a teardrop head running into the beak, and five fanned tail plumes
+that flare into feathers at their ends. Its white edges rendered salmon over the sky (a pink zigzag like a bolt): mint
+now, and the wing-tip trails half as long. The vortex leaves shrink into the light before it is born (they read as
+blocks round it). Evidence: `Logs/amihan-v16r4` (films 3/3), `Logs/amihan-v16r3` (EditMode 4/4), `Logs/amihan-v16r5`.
