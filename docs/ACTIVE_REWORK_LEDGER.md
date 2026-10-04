@@ -1,299 +1,78 @@
 # Active competition checkpoint
 
-Read AGENTS.md, COMPETITION_COORDINATION.md and current TODO. Do not reread
-whole chat histories. Prior detailed checkpoint is archived at
-archive/ACTIVE_REWORK_LEDGER_before_direct145_2026-10-04.md. TODO owns status.
+Read AGENTS.md, COMPETITION_COORDINATION.md and current TODO. TODO owns status.
+Resume the concrete command below; no whole-history rereads or unchanged test loops.
+Exact local handles are in Logs/arrival-pan-review1004/current-resume.json.
 
-## Owner directives
+## Persistent owner instructions
 
-Competition readiness through concrete fixes, full user flow and measured
-optimization/preload timing. Keep advancing after questions and compaction.
-October4 explicitly removes self-created RAM/admission/retry/external-timeout
-execution barriers. Direct isolated Unity/player execution is authorized;
-preserve actual source/profiles/preferences and unrelated processes. Do not
-interpret estimated budgets as Unity requirements or revive old cutoffs.
-Existing PC/laptop cooperation is authorized; no new chats/agents/resets/clean/
-force-push/paid services. The owner explicitly approved bounded live UGS tests.
-Preserve finalized heroes, private artwork and Desktop releases.
+Make the game competition ready through actual fixes, full user flow and measured
+preload/performance work. Continue after questions, passing batches and compaction.
+Answer promptly; progress at least once per minute. No repetitive internal filler.
+Owner removed arbitrary RAM/admission/retry/external-timeout guards. Direct local
+execution with isolated inputs/profiles/outputs is authorized; monitor actual jobs.
+One heavy job per machine. Preserve contributor reservations, private/finalized
+art, profiles, saves, shared preferences and Desktop releases. No reset, clean,
+force-push, new chats/agents or unapproved paid services.
 
-Clean up after coherent units and regularly during long work: exact task-owned
-process/tab/server identity, terminal jobs, absolute target paths, merged branch
-ancestry and active worktree checks. Keep needed unmerged work and evidence.
-User-wide rules and owner memory note updated October4; shared repo AGENTS has
-owner direct-execution and cleanup directives. One current-thread6hour heartbeat
-clean-up-competition-engineering-work ACTIVE; no duplicate automation/agent.
+Existing PC/laptop cooperation is authorized. Ask current task/file ownership
+before reassignment. Safely checkpoint for a requested joint LAN/online test,
+perform it, then resume the prior task. Push coherent checked commits through
+normal fetch/merge. Bounded live UGS tests were explicitly authorized.
+Clean verified task-owned helpers/outputs/obsolete merged branches regularly.
+Never bypass automatic approval rejection. Reuse the existing quiet six-hour
+cleanup heartbeat; no duplicate automation.
 
 ## Current ownership and source
 
 Root checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
-Root source4b73e65ce normal integration, no reset; source/document evidence batch
-below is pending publication. Other presentation work fcca/0610 normally merged,
-not independently requalified by the earlier artifact. Private Main untouched.
-Root owns account/Friends/release/tools/docs. Existing laptop owns gameplay/native
-and built/shared the release; ask current ownership before reassignment.
+Source7a303afe2 includes brand e9cfa13fc and contributor Glacial restoration.
+Current protocol148/recording14; old paired146 tests do not qualify new semantics.
+Only pre-existing ProjectAuditorSettings.asset generated dirt is retained outside
+the small generator/doc batch. Root owns shared UI/account/Net/release/docs.
 Laptop chat Fix gameplay interruption recovery, thread01a0ffab-10a0-70d0-9270-
-07e171c1613b, hostremote-control:env_e_6aa6c4fde2dc83218a0722e34ac3face.
+07e171c1613b, physical192.168.1.144; Root PC192.168.1.7.
+Latest laptop lane: inspect new frostload/charge input interruption/retirement,
+reserve PlayerInputReader/Carrier and focused tests if an actual defect appears.
+Coordinate Slipper before overlap. Laptop owns client replay raw publication.
 
-## Actual release and paired test
+## Latest shipped results and limits
 
-Direct full-quality RELEASE succeeded239s/exit0 after automatic cutoffs removed.
-Artifact source8f7f304b543d93db71ed09f9fbaa4107fc365895/logicalad0026,
-ACTUALPROTOCOL145 (old144plan labels stale). All19662 frozen inputs unchanged,
-210 prior dirty/importer/generated files preserved,15 existing prefs restored.
-Package258files/2553558902bytes, manifestcef828729584c4a1f0e6f6f33bf7ae0a8255
-bdc018ba8bdb1be6deaffdc3b176, Runtimeaf9919abf43c9261c863494c5feb6b1060b1045
-d77f51cd4cbb6bec3360c7b45,Coree7553b7849b6364ff2999c2c07ac8426bac44f4a9f1b1
- ee5d3423c6f27e48d50. Exact hashes in accepted full manifest, not whitespace here.
-PC internalBuilds/shared-owner-direct-131818, complete package checked twice.
-Laptop server3875 http://192.168.1.144:18050/ manifest/files only; active sharing.
+Displayed names: Basilio/Yasmin/Rago/Isagani/Nemu/Soraya/Ilyas/Amihan/Paete.
+Stable IDs and finalized hero protection retained. Owner five SVG variants,
+transparent matching brand/menu/icon exports and thin cream#FCD39F keyline
+shipped e9cfa13fc, integrated7a303afe2. Native18064/session78502 terminal1/1:
+five imported aspects/four transparent corners/credits/gallery on D3D11. Actual
+pixels inspected. Quality/input/profile restored;202 unrelated GUI metadata
+restored exact;15 intentional PNG imports+5 new SVG records retained.
+Deliverables C:/Users/matth/Downloads/TUMP-vector-set. No avatar/background rewrite.
 
-First host3464 timedreport180 ended beforeclientjoined: coordination failure,
-not game defect/pass. Freshhost19356/session64465 DIRECT600 scenario completed
-normal lobby/2peerREADY/Hero1/30/Eskinita scores20/0/0/150; PCterminalPASS/exit0,
-profile/input restored/fullartifact+manifest unchanged. HostHeavyFREE.
-Client29832/session59869 DIRECT480 scenario also completed/saved matching record,
-then returnedoffline/MatchSetup afterhostended; terminalexit0/prefs restored.
-No false abandon penalty (Abandons0/Cooldownempty), but post-endHostLost log remains.
-Both saveMatchId3af3aaf4f2f04ad9bedc61d285d4f4c6/SHA d0b3451f831645859c60b3b52
-ba83f045a8ec55b499f8e1fdf35a9e7f1dd2330,history1queue1witness1/markerempty,
-ownhuman/twoorigins. Both players terminal. Current normal pair raw proof pending
-combined publication. Do not claim finalclient remained connected or newer source.
+F489 direct full release7988/session41168 terminal0, protocol146,
+258files2565875723B. Manifest Builds/integration-f4890bdd4-1004-manifest.json.
+Runtime e4be6c71d3cb067d1e12ed9830f054aa40f0422639cf8e25b2bc0e9ebcf88c1e.
+Real replay host19728/session30422 and client10228 terminal0. Eskinita/HeroStrike,
+actual catch clip1/12456bytes/three fields. Sampled retained-to-ACK0.479s, not an
+exact send-start/large-transfer benchmark. Shared epoch639267125897668305.
+Host183held/100view and client91view samples; all scores170/0/0/0 and local
+simulation frozen. Round5 resumes, both1920PNGs inspected and full artifact/
+inputs/profile restored. Controlled intermediate-round advance, not natural
+full match, slow-peer, third-peer fault or human operator acceptance.
+Host raw53470e5a5: reports/reliability-2026-10-04/paired-replay146-host.
+Laptop independently correlated raw; client publication pending. Prior Classic
+and true Hero default8 Kanto full matching saved histories on23168/146 passed;
+do not repeat without a changed requirement.
 
-## Other checked progress and cleanup
+## Jobs, cleanup and next action
 
-CoreNaN1329: original4failures/5controls ->68/68. UI754+proof82c8 integrated81e68:
-original2fail2controls ->same4/4+new3/3(caret/Bioflush/pointerup/closed). Root34raw
-hashes/3440+3442maps/source/preservation checked, no repeat. Inputfocus28 checked.
-Friendscapacity9cc/deliveryc26: recipientfirst prevents stranded pending request;
-local11/11. PRODUCTIONsocialv3 matches canonical source, params unchanged,
-rollbackv1/v2 retained. ActualHTTPS2newanonymousaccounts PASSED save/tagresolve/
-request/accept/bothreload,11 scriptcalls inclcleanup. Tokens memoryonly.
-Friendship/profile/handleindex/auth accounts deleted. All remainingEMPTYprotected
-keys of ONLYthetwofreshaccounts removed viaexistingadminAPI; bothlistsverified
-empty, no credentialsprinted. Receipt Logs/service-flow-readonly1004/test-cloud-
-cleanup-result.json and report. Existing users/profiles untouched.
+No Root Unity/player/share job active. Server1936/session48545 and laptop armer
+26164/session32456 closed after acknowledgements. Essential F489/23168 packages
+retained. Old build deletion and temporary vtracer dependency-folder deletion
+rejected "blocked by policy"; neither bypassed. Paths remain in local receipt.
 
-Rootdeleted28REMOTE+11LOCAL task branch references; all rootcompetitionPC/laptop/
-root refs removed after merge checks or verified superseded archive. Unique old
-alternatives retained in5887byte Logs/branch-cleanup1004/superseded-source-
-alternatives.bundle. Exact SHA receipts there and pending report. Unrelated/
-canonical branches/worktrees/private work preserved. Laptop4local refs deleted.
-No root browser tabs/servers/native helpers live. Do not bypass cleanup review.
-
-## Current active loss unit
-
-Root firsthost18700/session85950 failed completionobserver'sown110Quit(1)
-beforeLIVE; no intentional loss/gamebug/pass. Actualfailure preserved.
-Armed approach: laptop fixedtest-control endpoint192.168.1.144:18051 starts
-client automatically onhostlisten; no model/chatdelay in30-secondactivewindow.
-Root11380/session18149 TERMINALintentionalstop only afterRootactualround1/2
-admissions/READY andclient2440stillLive/Eskinita/noend. RetainedPopenownership,
-allprefs/artifactrestored. RootLogs/host-loss145-pc-armed1004, exactrawpending.
-Client2440normalexit0, finalactualMatchSetup/round0/inactive/protocol145,
-careerFILEABSENT/history0queue0witness0, no fabricatedmatchover/record. Endpoint
-scene is historical; finalNetState authoritative. Clientraw integratedc336bf991;
-root18rawhashes/finalreport/careerabsence/normalexit/prefs/hashcheck verified.
-Helper18051 cleanup requested afterhandoff; confirmterminal fromlaptop.
-No nativeprocesseslive onRoot. Firstattempt diagnosticfailure remains preserved.
-
-## Exact next action
-
-Normalpair and activehostloss combinedproof COMPLETE at bounded scope. CloudSave
-cleanup COMPLETE. ActualpackagedCore emptywire defaults Classic0|0|8|90|0|3|0|1|0|0|0
-andHero1|0|8|90|0|3|0|1|0|0|0. Nextfull8roundnormalClassicP2P proposed PC49157/
-laptop49158, armclientfirst/actualCoredefault/noforcedend/AllBots; no short-wire
-substitute. Latestinstructionrace: laptop earlier acceptedSolo lane; askactual
-currentjob beforechanging it, don'tinterruptalreadyrunningcoherentunit. Rootowns
-servermatchrecord drift assessment; laptopfull-default/native lane. No newbranches.
-Continue full rendered login/Friends/invite/
-join, Relay/online/maps/modes/physical/recovery/slowreplay/performance/preload gates.
-Read-only publishedmatch-recordv5 drifts from canonical mastery/botweight/offline/
-travel/history fixes; assess/deploy coherent checked source, not unsupported SDK
-success. Do not repeat passed cohorts or claim whole competition readiness.
-
-
-## October 4 current owner priority and server shipment
-
-Owner: let Claude finish the quick animation fix first. No PC Unity/player launch
-until completion is confirmed. Root stopped only owned host10232/session70837
-at owner request after natural Classic8 completion (130/150/2880/3350). Saved
-History/Queue/QueueWitness each1 captured; scheduled terminal report absent.
-Input/profile restoration and full artifact check passed. This is an owner
-interruption, not full terminal acceptance. Claude Unity20212 remains untouched.
-Laptop notified to preserve its actual client results and continue independent work.
-
-Production match-record v6 now exactly matches canonical source, seven parameters
-unchanged and rollback v5 retained. Exported v5: mastery/history/offline5 failures
-and4 controls; exported v6:9/9. Bot rating4/4, Core travel6/6, digest unchanged.
-Evidence: reports/reliability-2026-10-04/match-record-deployment. No new live
-account submissions or rendered SDK acceptance claimed. Next: publish this
-checked unit, compare laptop Classic8 saved result and continue lightweight source
-work while Claude owns the PC slot. Local exact checkpoint updated; no new branch.
-
-
-## Current uncommitted social ordering unit
-
-Root owns SocialStore.cs and SocialRefreshOrderingTests.cs/meta. Suspected older
-refresh replaces newer acknowledged same-account list. Private dispatched cores
-preserve shipping REST wrappers; candidate invalidates earlier reads at write
-start and defers a new refresh during write. Both versions compile against actual
-145 references with the same six delayed-response cases. Native baseline/candidate
-comparison remains pending; do not claim causal proof or ship as checked yet.
-Immutable packet Logs/social-refresh-order1004/packet.json, filter
-TumbangPreso.Tests.SocialRefreshOrderingTests. Source baseline b263ff1dd;
-fixture SHA273f9dc436d761fc9942a35388de32d19d5aa5f330ccdf4abfd0402d34e11b91.
-Laptop acknowledges free source reservation and focused native slot after own
-Classic terminal unit. Latest status18052 runnerTerminal=true. Final packet message
-first failed host lookup, one explicit-host retry succeeded; no duplicate job.
-Task-only server18053 PID3108/session27804 TERMINAL after laptop verified all
-packet hashes and copied the four PC Classic receipts. No Root helper remains.
-Unused compiler DLLs removed; source/receipts/reproduction response files retained.
-PC remains reserved for Claude; no Root editor/player launches until confirmed.
-Next: inspect laptop exact original/candidate results, repair only real issue and
-publish checked source. Compare actual Classic8 peer records without inventing a
-normal host terminal report that owner priority interrupted.
-
-
-## Wallet production shipment
-
-Productionwalletv2 exact canonical source verified, action/item/task preserved,
-optionalString request added and v1 retained. Old exported endpoint reproduces
-325 vs195 offline Practice overpayment. Exportedv2 wallet checks pass including
-current Amihan/Paete purchases and Credits retry/receipt/overflow. No live wallet
-calls or rendered reward/audio claims. Temporary999999 playtestgrant retained;
-public-release disable/redeploy gate remains and no automatic balance reset.
-Evidence reports/reliability-2026-10-04/wallet-deployment. Old403 activation
-blocker retired with current live metadata. Publish checked wallet tests/docs now;
-SocialStore candidate remains unstaged pending laptop native baseline/candidate.
-
-
-## Owner naming completion and publication
-
-Owner-approved mapping: dante/Basilio, cheska/Yasmin, sean/Rago, zack/Isagani,
-phaister/Soraya, rafi/Ilyas; Nemu/Amihan/Paete unchanged. Naming-only Astra worker
-completed and was interrupted after the owner finished. No engineering delegation.
-Names now cover both roster arrays/kit display names/current dialogue/Soraya doll/
-selection fallback/mastery result labels and current lore. Stable lowercase IDs,
-asset/source keys and all hero behavior retained. Existing Core47/47 and zero
-standalone old-name Runtime/Core string literals; packaged rendered acceptance
-follows integration build. Push explicit naming paths; keep social/career fixes
-and generated ProjectAuditor metadata unstaged until their separate evidence.
-
-Career ORIGINAL7932/session51532 terminal: acknowledged420 overwritten by77,
-1causal failure and2controls. CoreProfileRevision fix now under SAME3case native
-candidate13072/session55408. Sourceinputs frozen; do not modify them whilelive.
-Original202 generatedUI importermetas restored exact pre-run after blob/CRLFhash
-comparison; rawgeneratedcopies and cleanup receipt retained. ProjectAuditor change
-preserved independently. Laptop social native4fail2controls ->6/6, same fixture,
-raw report/source map pending. No Root helper or old player remains live.
-
-
-## Career refresh ordering publication
-
-Candidate13072/session55408 TERMINALexit0/SAME3cases allPASS, original7932
-1causal420→77 failure/2controls. Input/profile restored. Runtime/fixture/meta
-unchanged in both frozen19220maps; strict all-input preservation FALSE because
-202 UI importer metadata rewrites (original also ProjectAuditor generated ref).
-Both sets of UI metadata restored exact pre-run, original/generated proof retained.
-No RootUnity/helper/player live; ProjectAuditor preserved unstaged. Code/fixture/
-raw/qualification at reports/reliability-2026-10-04/career-refresh-order. Publish
-checked career unit now; laptop Social6/6 raw next then combined integration build
-with approved names and rendered labels. No unchanged passing cohort repeated.
-
-
-## Social ordering checked source publication
-
-Laptop native10464/23920 CLOSED original4causalFAIL2controls -> candidate6/6.
-Root all20 rawGithashes/actualXMLs/terminal/restoredQuality+9preferences/exact
-candidateRuntime/fixture/meta inspected; sameProjectAuditor generatedrefonly,
-strictallinput preservationFALSE. Neutraloriginal reverseexactbaseb263 proved.
-Raw4ffdc376047d2904f597af006aa21add7399d61c integrated02f4d4c32; code+root
-inspection nowpublish. NoRootnative/helpers/playerlive. NextactualupdatedWindows
-releasebuild in1003i/newinternaloutput, no cutoffs/qualityreduction/Desktopwrite;
-freezecurrent source and classify generatedchanges. Coordinate package transfer
-and names/rendered/fullHero8/maps/Relay tests with laptop afterits actualownership.
-
-
-## Current new-package UI boundary
-
-New91aad player build14416/session32315 TERMINALexit0,115s/None/all258hashes.
-Menu10120/session60399 TERMINALPASS exit0/restored/unchanged. Fulloldflow18212/
-session7556 TERMINALreportFAIL despiteexit0: oldEnterSettingsFromHome expects
-legacyClassic/Practice/Settings buttons afterStart, butcurrentHub isactive.
-No productcrash inferred. Current-hub-only route addedOwnerUiPlayerReview.cs,
-all9actuallabels/text/bounds/settings/modeback, directcompiler0. Firstpreflight
-needed actual internalPresentationClock source in the isolated compile; no
-shipping access modifier changed. Nextbuild/review route covers realcurrentUI;
-no unchanged menu rerun needed. SourceShader registrations2 retained/intended.
-Report reports/reliability-2026-10-04/integration-names-races.
-Artifactserver4508/session89233 LIVE servesonly exact258whitelist+manifest;
-close afterlaptopverifiedcopy. LaptopAIroundopening/cadence sourceunit next.
-No Rootheavyjob/player live. Keepoldshared145 untilnewmatchingpeeraccepted.
-
-
-## Current names and final-package boundary
-
-CurrentHub18464/session70606 TERMINALPASS exit0: all9visibleheroheadings/text/
-bounds and currentsettings/modeback, prefs/profile restored/all258files unchanged.
-Actual Isagani/Soraya screenshots inspected; files taskLogs/current-hub-player.
-Story JSON omitted by initialroute stillhadoldnames in8fields; correctedall8,
-nineIDs unchanged. CurrentHubOnly nowopens/checks/captures available story canvas,
-directcompile0; actualstoryacceptance NEXT, notclaimed fromoldheadingpass.
-AI200909b90 integrated815a4b3a5 AFTERbuildterminal. Root19rawGithashes/actual5XML/
-4fail1control ->5/5/terminal/restoredquality+9prefs/exactRuntimefixturemeta verified.
-LPTprepareHero8 armeronly/notlaunched; agreed FINALsamepackageKanto8*90 normal2peers.
-AllRootplayer/build/helper processes terminal (3384/94504,18464/70606,4508/89233).
-Nextpublishstorycorrection then FINALWindows release includingnames/currentUI/
-AIroundreset/asyncfixes/latestIsaganiintro, actualstoryroute; shareonlychangedfiles
-bylatestfullmanifestwherepossible. Do not repeat oldmenu/passingcohorts. Keep
-current91aad/old145 untilfinalaccepted, thenpruneonlyobsoleteowned builds.
-
-
-## Protocol transition and map staging
-
-8a player16728/session60664 TERMINALPASS all9heads+9stories/currentnavigation,
-exit0/prefs+profile restored/all258 unchanged. Ilyas/Nemu storyimages inspected.
-Full8aRelease16004/89514 TERMINAL98s. Report names-story-final145 precise145scope.
-Concurrent13069614c introduces gameplay/protocol146; integrated onlyafterall
-Rootjobs terminal. Do not start145joint or use145UI proof for146wholeacceptance.
-NetAutomationProbe host-only existing-autostart nowhonors -tp-map through existing
-AdoptLaunchMap+realHost.SelectMap beforeStartGame afteradmission.8linefix direct
-compile0; actual146/Kantopeer acceptance next. No readiness/rule/transport shortcut.
-Server18056/19736/session68566 stillservesOLD145/8a package; askedLPTactivecopy
-statusbeforeclosing; no new145player. LPTreplay repairedfixtureoriginalUnity12316/
-session38246 source130696 actualRenderfault/control; RuntimeCameraunchanged.
-Nextpushmapfix/proof thenfresh146combinedbuild, exactmanifest/storypeer prep;
-LPTarmer18055/49160 notlaunched. No newagent/reset/paidservices.
-
-
-## Actual Classic Kanto pair and next true Hero
-
-Both19684/93277 HOST and30144CLIENT nowTERMINAL0/restored/fullartifactunchanged.
-ActualtournamentClassicKanto8*90 naturalend130/50/3450/2545 seat2; fullrecordSHA
- d27f0b9246d44696bdda5aa1e5c212336f7a75d8ef9ff78a8ef26e7bde4d09f9 matches,
-queue==historyboth/witnessc9f645728c718e75/clearmarkers. RootactualClassic default
-reportvalidatorzero faults. OriginalHero-labelled expectedcheck failed retained,
-not relaxed; canonicalMapIdKanto. TrueHerogateOPEN. Clientrawnextintegration and
-postreportownquitHostLost orderingnotphysical/midmatchfailure. Hostproof report
-classic-kanto146. NoRootplayer/helper/Unitylive. LPTclose18055thenARM18058 fresh
-trueHero scripts no-tournament/HQ2/empty8*90/source23168/146/49161→49162. Root
-hero8-casual-host-direct.py preparednotlaunched waitingrealarm. Skipdoc/auditdelay
-whenreceipts preserved; launchtest first andpublishraw duringlongrun. Cleanup3old
-builds policyrejected/no delete/nobypass; standingcleanupcontinueswhenallowed.
-
-
-## Hero peer and room notification completion
-
-TRUEHero14780/24342 and23528 nowTERMINALPASS0/source23168/146/default8*90/Kanto,
-proper finalHOST/CLIENT roles, matchingfullHistory/Queue/Witness/clearmarkers,
-prefs/profile restored/all258files unchanged. Root10rawGitclient inspected; ownquit
-HostLost afterreport only. Native human-originseatsundriven; latestart/physical/
-Relay/maps/slowReplay gates OPEN. Report hero-kanto146. NoRootplayer/helperactive.
-Roomnotify repaired19308/76371 baseline2causalFAIL2controls ->candidate8108/87383
-SAME4/4, one-linesignatureMap/Visibility, sourcefixturemeta unchanged in19230maps;
-202importersrestoredexact. First16348 counterSetupfailure retainednotproductproof.
-Report server-query-notifications. Nextcheckedcommit/push now then normalmerge
-LPTNetReplayProbe contactdiagD2/raw13 +readonlyscoretrace oncepublished; inspectonce,
-coherentlatestsource build andactual2peerReplay catch/ready-peers1/bytes/elapsed/view/
-all4scores/PNG. No extra unneedednativegettertests/source/packet/kit/art rewrite.
-Threeobsoletebuilddeletepolicyrejection retained/nobypass; all criticaldata kept.
+NEXT: publish SVG-precedence brand generator guard, then fetch/inspect laptop
+client replay raw and resume an independent concrete Net/account fix. One
+isolated generation reproduces all seven installed export dimensions and RGBA
+pixels; encoded PNG difference retained separately. Do not rerun accepted brand
+native tests or rebuild unchanged F489. Current148 peer/Relay/recovery/maps,
+rendered signed-in Friends journey, performance/operator and presentation gates
+remain in TODO. Wallet temporary playtest-top-up removal remains a release gate.
