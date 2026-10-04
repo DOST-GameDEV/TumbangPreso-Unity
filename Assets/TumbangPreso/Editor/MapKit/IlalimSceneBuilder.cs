@@ -206,6 +206,17 @@ namespace TumbangPreso.EditorTools.MapKit
                 boxes += AddFootprintColliders(go, p.collider);
                 MarkStatic(go, !NotBatched.Contains(groupName));
                 if (CullShare.TryGetValue(groupName, out float share)) { CullOnly(go, share); culled++; }
+                // ⚠️ THE GROUND IS ITS OWN COLLIDER (2026-10-04). The floors were boxes: a plate, two
+                // pavements, two kerbs, right for a straight street under the bridge. The play area
+                // now takes in the lot, Taft and the Padre Faura junction (owner: "open up more of
+                // the play area corner so i can go in the middle of the intersection"), whose kerbs
+                // curve and whose pavements stop at the corners, and a box pavement carried across
+                // the junction's mouth is an invisible 21 cm step in the road. The drawn road,
+                // gutters, kerbs, pavements and lot are what a body stands on, exactly.
+                if (groupName == "StreetGround")
+                    foreach (var mf in go.GetComponentsInChildren<MeshFilter>())
+                        if (mf.sharedMesh != null && mf.GetComponent<MeshCollider>() == null)
+                            mf.gameObject.AddComponent<MeshCollider>().sharedMesh = mf.sharedMesh;
                 // The elevated guideway (everything but the piers and their fittings) and the
                 // overhead wires are meant to be in the air; MapGeometryCheck's resting and can
                 // tests measure bounds, and a 20 m span over the court covers the can's spot.
@@ -522,11 +533,12 @@ namespace TumbangPreso.EditorTools.MapKit
         /// and the spawns are where they always were, about (0, 0, 0) on y = 0, and it is the
         /// street that sits off to the east: Taft's centreline is x = `roadX`, its asphalt
         /// `roadTop` below the lot. A player may cross it to the shop fronts ("make it so the
-        /// players can still cross over"), so the floors are the lot, the two pavements, the two
-        /// kerbs and the road, and the four thin walls stand with their INNER faces on the play
-        /// rectangle (`MatchInstaller.MeasurePlayableBounds` reads the faces, each side its own):
-        /// the lot's west fence, the shop fronts, the lot's south fence line and the Padre Faura
-        /// fence line, the last two carried straight across the road.</summary>
+        /// players can still cross over"), and into the Padre Faura junction ("open up more of the
+        /// play area corner so i can go in the middle of the intersection"). The floor is the
+        /// drawn ground's own colliders; the four thin walls stand with their INNER faces on the
+        /// play rectangle (`MatchInstaller.MeasurePlayableBounds` reads the faces, each side its
+        /// own): the lot's west fence line, the shop fronts, the lot's south fence line, and the
+        /// back of Padre Faura's far pavement, each carried straight across the roads.</summary>
         private static void Gameplay(Transform root, GameplaySpec g)
         {
             Group(root, "~Match").gameObject.AddComponent<MatchInstaller>();
@@ -547,30 +559,18 @@ namespace TumbangPreso.EditorTools.MapKit
             const float margin = 3f, wallThickness = 0.4f, wallHeight = 6f;
             float x0 = g.playMinX - margin, x1 = g.playMaxX + margin, z0 = g.playMinZ - margin, z1 = g.playMaxZ + margin;
             float zc = (z0 + z1) * 0.5f, zs = z1 - z0;
-            float roadHalf = g.box, kerbHalf = (g.box - g.kerbInner) * 0.5f;
-            float lotEdge = g.roadX - g.pavementOuter;      // where the lot meets the west pavement
             var bounds = Group(root, "Bounds");
-            // The road's level under everything, so no seam between the pieces is a hole.
+            // A catch floor a hand under the road, in case a seam between the ground's meshes is ever
+            // a hole: the ground itself is the drawn meshes' colliders (Build, "StreetGround").
             var floor = bounds.gameObject.AddComponent<BoxCollider>();
-            floor.center = new Vector3((x0 + x1) * 0.5f, g.roadTop - 0.25f, zc);
+            floor.center = new Vector3((x0 + x1) * 0.5f, g.roadTop - 0.4f, zc);
             floor.size = new Vector3(x1 - x0, 0.5f, zs);
-            // The lot: the court's own ground, y = 0, a small step above the pavement.
-            Box(bounds, "Lot", new Vector3((x0 + lotEdge) * 0.5f, -0.2f, zc), new Vector3(lotEdge - x0, 0.4f, zs));
-            foreach (int side in new[] { -1, 1 })
-            {
-                Box(bounds, side < 0 ? "PavementWest" : "PavementEast",
-                    new Vector3(g.roadX + side * (roadHalf + g.pavementOuter) * 0.5f, g.pavementTop - 0.2f, zc),
-                    new Vector3(g.pavementOuter - roadHalf, 0.4f, zs));
-                Box(bounds, side < 0 ? "KerbWest" : "KerbEast",
-                    new Vector3(g.roadX + side * (roadHalf - kerbHalf), g.kerbTop - 0.2f, zc),
-                    new Vector3(kerbHalf * 2, 0.4f, zs));
-            }
             float wy = wallHeight * 0.5f + g.roadTop;
             Box(bounds, "WallWest", new Vector3(g.playMinX - wallThickness * 0.5f, wy, zc), new Vector3(wallThickness, wallHeight, zs));
             Box(bounds, "WallEast", new Vector3(g.playMaxX + wallThickness * 0.5f, wy, zc), new Vector3(wallThickness, wallHeight, zs));
             Box(bounds, "WallNorth", new Vector3((x0 + x1) * 0.5f, wy, g.playMaxZ + wallThickness * 0.5f), new Vector3(x1 - x0, wallHeight, wallThickness));
             Box(bounds, "WallSouth", new Vector3((x0 + x1) * 0.5f, wy, g.playMinZ - wallThickness * 0.5f), new Vector3(x1 - x0, wallHeight, wallThickness));
-            Debug.Log($"{Tag}Bounds: play x {g.playMinX}..{g.playMaxX}, z {g.playMinZ}..{g.playMaxZ}; Taft's centreline x {g.roadX}, road y {g.roadTop}, lot edge x {lotEdge}.");
+            Debug.Log($"{Tag}Bounds: play x {g.playMinX}..{g.playMaxX}, z {g.playMinZ}..{g.playMaxZ}; Taft's centreline x {g.roadX}, road y {g.roadTop}.");
         }
 
         /// <summary>The guideway's gameplay half: the pier legs of the rows inside the corridor

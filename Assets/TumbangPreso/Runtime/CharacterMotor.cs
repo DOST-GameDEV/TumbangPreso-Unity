@@ -1926,25 +1926,47 @@ namespace TumbangPreso
             return true;
         }
 
+        /// <summary>
+        /// ⚠️ A VEHICLE'S HIT IS A LAUNCH, PAST THE KNOCKBACK CAPS (owner, 2026-10-04, hit by a car
+        /// on the rebuilt Ilalim: "can you add more physics to the ragdoll? i wanna feel like im
+        /// getting launched"). Every hit in the game is clamped to `MaxKnockbackSpeed` 16 and
+        /// `MaxKnockbackLift` 7, which at `Friction` 30 is 4 m of slide and a 1.2 m hop: right for
+        /// a shove, nothing like a jeepney. A car or the train sends its throw through the SAME
+        /// impact path (and the same network message), marked by adding `LaunchFlag` to its lift;
+        /// `ApplyImpulse` takes the flag off and uses the launch caps instead. Nothing new is on
+        /// the wire: a peer that does not know the flag would clamp the lift to 7, a weaker fall.
+        /// </summary>
+        public const float LaunchFlag = 1000.0f, LaunchMaxSpeed = 27.0f, LaunchMaxLift = 13.0f;
+
+        public static Vector3 AsLaunch(Vector3 throwVelocity)
+            => new Vector3(throwVelocity.x, Mathf.Max(0.0f, throwVelocity.y) + LaunchFlag, throwVelocity.z);
+
         public void ApplyImpulse(Vector3 impulse)
         {
             if (!MayMutateGameplayState() || !IsLocallySimulated()) return;
+            bool launch = impulse.y > LaunchFlag * 0.5f;
+            if (launch) impulse.y -= LaunchFlag;
+            float maxSpeed = launch ? LaunchMaxSpeed : Balance.MaxKnockbackSpeed;
+            float maxLift = launch ? LaunchMaxLift : Balance.MaxKnockbackLift;
             float lift=impulse.y;
+            // A launch's height is the jump arc alone; left in the slide as well it would be braked by `Friction`.
+            if (launch) impulse.y = 0.0f;
             float scale=IncomingKnockbackSpeedScale;
             if(scale<1)
             {
                 // Distance under friction is squared speed. Apply the existing cap first.
-                impulse=Vector3.ClampMagnitude(impulse,Balance.MaxKnockbackSpeed);
+                impulse=Vector3.ClampMagnitude(impulse,maxSpeed);
                 impulse.x*=scale; impulse.z*=scale;
             }
             _externalVelocity += impulse;
 
             float mag = _externalVelocity.magnitude;
-            if (mag > Balance.MaxKnockbackSpeed)
-                _externalVelocity = _externalVelocity.normalized * Balance.MaxKnockbackSpeed;
+            if (mag > maxSpeed)
+                _externalVelocity = _externalVelocity.normalized * maxSpeed;
 
             if (lift > 0.0f)
-                _velocity.y = Mathf.Min(lift, Balance.MaxKnockbackLift);
+                _velocity.y = Mathf.Min(lift, maxLift);
+            if (launch) _grounded = false;
         }
 
         private void Update()

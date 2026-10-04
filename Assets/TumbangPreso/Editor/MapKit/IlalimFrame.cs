@@ -37,6 +37,6 @@ namespace TumbangPreso.EditorTools.MapKit
         /// <summary>Where a player may go, in the game frame: the lot (its west fence at Blender
         /// x -35, its south fence at z 3.4, the Padre Faura fence, which slants from z 24.07 to 25.19, so the wall is at 24.0), across Taft, to the
         /// shop fronts at Blender x +11.</summary>
-        public const float PlayMinX = -12f, PlayMaxX = 34f, PlayMinZ = -10.8f, PlayMaxZ = 9.8f;
+        public const float PlayMinX = -12f, PlayMaxX = 34f, PlayMinZ = -10.8f, PlayMaxZ = 25.0f;
     }
 }

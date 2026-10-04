@@ -157,7 +157,7 @@ FOOT_REACH, FOOT_CAP, GROUNDED, COMPACT = 1.2, 6.0, 1.0, 3.0
 GAME_ORIGIN = (-23.0, 14.2, 0.24)
 # Where a body can reach, in the Blender frame (x0, x1, y0, y1): the lot inside its fences, across
 # Taft, to the shop fronts. Footprint colliders are made only for what stands in here.
-REACH = (-36.0, 11.0, 2.4, 25.4)
+REACH = (-36.0, 11.0, 2.4, 41.0)
 PROOF_MESHES = ("lrt_pier", "lrt_span_25_parapet", "tree_mango_0_leaves", "tree_lily_0", "train_body")
 
 
@@ -1070,7 +1070,9 @@ def main():
                  "collider: world axis-aligned boxes in the game frame, six floats each (centre, size)."),
         # Heights are game heights (the lot is 0); kerbInner, pavementOuter, trackX and pierX are
         # distances from Taft's centreline, which is x = roadX in the game. play* is where a body
-        # may go: the lot inside its fences, across Taft, to the shop fronts.
+        # may go: the lot inside its fences, across Taft to the shop fronts, and north over Padre
+        # Faura to the back of its far pavement (owner, 2026-10-04: "open up more of the play area
+        # corner so i can go in the middle of the intersection").
         "gameplay": {"box": 7.0, "kerbInner": 6.65, "kerbTop": round(0.150 - GAME_ORIGIN[2], 4), "pavementOuter": 11.0,
                      "pavementTop": round(0.212 - GAME_ORIGIN[2], 4), "roadTop": round(-GAME_ORIGIN[2], 4),
                      "wallZ": 16.5, "soffit": round(8.0 - GAME_ORIGIN[2], 4), "deckTop": round(9.04 - GAME_ORIGIN[2], 4),
@@ -1079,7 +1081,7 @@ def main():
                      "originX": GAME_ORIGIN[0], "originY": GAME_ORIGIN[2], "originZ": GAME_ORIGIN[1],
                      "roadX": round(-GAME_ORIGIN[0], 4), "roadZ": round(-GAME_ORIGIN[1], 4),
                      "playMinX": round(-35.0 - GAME_ORIGIN[0], 4), "playMaxX": round(11.0 - GAME_ORIGIN[0], 4),
-                     "playMinZ": round(3.4 - GAME_ORIGIN[1], 4), "playMaxZ": round(24.0 - GAME_ORIGIN[1], 4)},
+                     "playMinZ": round(3.4 - GAME_ORIGIN[1], 4), "playMaxZ": round(39.2 - GAME_ORIGIN[1], 4)},
         "sun": sun_json, "sky": sky, "haze": haze, "train": train_json,
         "anchors": [dict(name=k, **v) for k, v in sorted(anchors.items()) if k != "piers"],
         "piers": anchors.get("piers", []),

@@ -126,11 +126,11 @@ namespace TumbangPreso
         public float HitMinSpeed = 2f;
         /// <summary>The throw along the car's travel, m/s, at `HitMinSpeed` and at 9 m/s (a car's
         /// cruise) and over; `Balance.MaxKnockbackSpeed` (16) still caps what the body takes.</summary>
-        public Vector2 HitThrow = new Vector2(7f, 14f);
+        public Vector2 HitThrow = new Vector2(15f, 25f);   // a launch (CharacterMotor.AsLaunch): 4 to 10 m of slide
         /// <summary>Thrown this much to the side the player stood on, m/s, so he lands out of the lane.</summary>
-        public float HitAside = 4f;
+        public float HitAside = 5f;
         /// <summary>The lift, m/s: under `Balance.MaxKnockbackLift` (7), so a hero's own launch stays the higher one.</summary>
-        public float HitLift = 6f;
+        public float HitLift = 11f;      // about 3 m up, a second in the air
         /// <summary>Seconds down: `StreetTripHazard.TripDuration`, the game's one fall.</summary>
         public float HitTrip = 2.5f;
         /// <summary>One car cannot hit the same player again within this, seconds: its own length passing over him.</summary>
@@ -977,7 +977,9 @@ namespace TumbangPreso
             if (!who.IsTripped) return;
             float throwSpeed = Mathf.Lerp(HitThrow.x, HitThrow.y, Mathf.InverseLerp(HitMinSpeed, 9f, _speed[i]));
             // After the trip, which zeroes the walk: the throw is the body's external velocity.
-            who.ApplyResolvedImpact(dir * throwSpeed + right * (side >= 0f ? HitAside : -HitAside) + Vector3.up * HitLift);
+            // A LAUNCH, past the knockback caps (`CharacterMotor.AsLaunch`): "i wanna feel like im getting launched".
+            who.ApplyResolvedImpact(CharacterMotor.AsLaunch(dir * throwSpeed + right * (side >= 0f ? HitAside : -HitAside) + Vector3.up * HitLift));
+            Visual.WindTumble.Attach(who)?.Throw(HitTrip);
             // `hit_body` is a body meeting something hard, the cue a trip already plays; pitched lower, for a car.
             NetCue.PlayVaried("hit_body", at, .7f, .9f, 1f);
             if (!wasDown) Show(who, at, now);
@@ -989,6 +991,8 @@ namespace TumbangPreso
             if (_nextShown.TryGetValue(who, out float next) && now < next) return;
             _nextShown[who] = now + HitTrip;
             ComicPopup.Spawn(at + Vector3.up * 1f, HitPopup, UI.UiTheme.Danger, 1.2f);
+            // The body is the air's while it flies: the same tumble on every peer that sees the fall.
+            Visual.WindTumble.Attach(who)?.Throw(HitTrip);
             ImpactBurst.SpawnAt(at);
         }
 

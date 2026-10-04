@@ -139,7 +139,7 @@ namespace TumbangPreso
         public Vector3 SolidSize = new Vector3(2.6f, 3.6f, 15.6f);
 
         /// <summary>The throw: along the line, and up. A train, so harder than a car's 14.</summary>
-        public float HitThrow = 18.0f, HitLift = 8.0f, HitTrip = 3.0f;
+        public float HitThrow = 26.0f, HitLift = 13.0f, HitTrip = 3.0f;
 
         private readonly System.Collections.Generic.Dictionary<CharacterMotor, float> _nextHit =
             new System.Collections.Generic.Dictionary<CharacterMotor, float>();
@@ -175,7 +175,8 @@ namespace TumbangPreso
                 _nextHit[who] = Time.time + 2.0f;
                 who.ApplyTrip(HitTrip);
                 if (!who.IsTripped) continue;
-                who.ApplyResolvedImpact(forward * HitThrow + right * (side >= 0.0f ? 6.0f : -6.0f) + Vector3.up * HitLift);
+                who.ApplyResolvedImpact(CharacterMotor.AsLaunch(forward * HitThrow + right * (side >= 0.0f ? 6.0f : -6.0f) + Vector3.up * HitLift));
+                Visual.WindTumble.Attach(who)?.Throw(HitTrip);
                 NetCue.PlayVaried("hit_body", who.transform.position, 0.6f, 0.75f, 1.0f);
                 ImpactBurst.SpawnAt(who.transform.position);
             }
