@@ -130,7 +130,9 @@ namespace TumbangPreso.UI
                 var skill = _skills[i]; if (skill == null) continue;
                 _symbols[i].SetCastLocked(system.GetComponent<CharacterMotor>()?.IsZapped == true);
                 if (_symbols[i].Glyph != skill.Glyph) { _symbols[i].Glyph = skill.Glyph; _symbols[i].SetVerticesDirty(); }
-                bool ready = !kit.PracticeMode && !system.GetComponent<CharacterMotor>().IsZapped && (i == 2 ? kit.IsUltimateReady : skill.IsReady);
+                // Active reactivation follows its own window, not the original cast cooldown.
+                bool actionReady = skill.IsActive && skill.CanReactivate ? skill.ReactivateReady : skill.IsReady;
+                bool ready = !kit.PracticeMode && !system.GetComponent<CharacterMotor>().IsZapped && (i == 2 ? kit.IsUltimateReady : actionReady);
                 float ratio = skill.IsActive ? skill.DurationRatio : i == 2 ? kit.UltimateRatio : 1 - skill.CooldownRatio;
                 _ownerDials[i].State(ratio, ready, skill.IsActive, i == 2);
                 _symbols[i].color = ready ? CourtPresentationPalette.Gold : CourtPresentationPalette.Paper;

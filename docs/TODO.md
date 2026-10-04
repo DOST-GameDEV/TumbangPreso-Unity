@@ -17,6 +17,14 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### POWER-RECAST-READINESS-1004: owner icon matches the real follow-up window
+
+- [x] Use active reactivation readiness instead of the original cooldown for the
+  owner power icon. Real Zack/public HUD original2failures/2controls ->4/4.
+  Preserve expiry, spent follow-up, Zapped, timing and layout.
+  [Evidence](reports/power-recast-readiness-2026-10-04/README.md).
+- [ ] Rendered whole-match, packaged and actual-peer acceptance.
+
 ### VIEWMODEL-MESH-OWNERSHIP-1004: rendering leaves source assets untouched
 
 - [x] Cache one owned working mesh per path so outline preparation cannot modify

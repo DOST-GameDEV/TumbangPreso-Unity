@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Owner follow-up readiness: [real ability and HUD-state correction](reports/power-recast-readiness-2026-10-04/README.md).
+
 First-person source-mesh preservation: [ownership correction and native evidence](reports/viewmodel-mesh-ownership-2026-10-04/README.md).
 
 Owner arms catalog fallback: [causal native checks](reports/viewmodel-roster-fallback-2026-10-04/README.md).
