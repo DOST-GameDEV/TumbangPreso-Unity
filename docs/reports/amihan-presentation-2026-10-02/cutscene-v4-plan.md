@@ -262,4 +262,7 @@ shallow scallops inside them, more colour in the wings, a thin bright line along
 crisp where the translucent layers melt together, a teardrop head running into the beak, and five fanned tail plumes
 that flare into feathers at their ends. Its white edges rendered salmon over the sky (a pink zigzag like a bolt): mint
 now, and the wing-tip trails half as long. The vortex leaves shrink into the light before it is born (they read as
-blocks round it). Evidence: `Logs/amihan-v16r4` (films 3/3), `Logs/amihan-v16r3` (EditMode 4/4), `Logs/amihan-v16r5`.
+blocks round it). Its swoop crosses higher (from 2.3 m to 3.0 m) and it grows a third as it rears for the wind-up (seen
+from behind her it was a small haze). Still soft: passing over the low lens one wing fills the frame (that shot tracks
+it, so height alone does not change it). Owner: "looks great so far". Evidence: `Logs/amihan-v16r6` (films 3/3, 0
+errors), `Logs/amihan-v16r7` (EditMode 4/4); video `Logs/amihan-v16-share/airburst-v16-final.mp4`.
