@@ -89,8 +89,11 @@ loss/jitter Linux peer proof; this is not Windows/WAN/human acceptance.
 
 HUD06b09fa0b stops normal clock packets renewing Back to Action toast; actual
 packet/HUD original2 causes+2 controls become4 PASS. Names/title plain login/
-logo/camera intro source shipped. Owner catch/tag VFX replacement, Yasmin voxel
-model integration and other current TODO acceptance remain unfinished. Preserve
+logo/camera intro source shipped. Tag ink source is shipped. October5 owner
+cancelled Yasmin Benguet replacement and chose the existing cyan/goggles model;
+verified currentcf405 player preview09 and sourceGLB hashfe571a94. Keep draft
+outside Assets and do not revive its integration after compaction. Other TODO
+acceptance remains unfinished. Preserve
 finalized hero direction and private art. Do not treat source or compilation as
 complete player/audio/transport acceptance.
 

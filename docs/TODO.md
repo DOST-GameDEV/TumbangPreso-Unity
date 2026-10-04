@@ -218,9 +218,10 @@ Nothing was deleted or renumbered.
   with actual small/wide captures and boot login/guest flow.
   [Evidence](reports/title-replacement-2026-10-04/README.md).
 - [x] Login uses a plain transparent logo with the added cream outline removed.
-- [ ] Integrate the owner-approved new voxel Yasmin outfit/model and refreshed
-  portraits/FPP clothing. Draft generated; rig/nodes/skins/37 animation data exact.
-- [ ] Current packaged preview of new title/login/model and multiplayer qualification.
+- [x] October5 owner chooses the old Yasmin model again. Keep existing
+  team-cheska model and cancel the Benguet wardrobe integration. The preview
+  draft was never referenced by the roster; preserve it outside active Assets.
+- [ ] Current packaged title/login and multiplayer qualification.
 ### ILALIM-OVERLAY-1004: painted facade speckles
 
 - [x] Isolate painted-overlay sampling and replace its failing lookup with explicit footprint LOD; authored grime and mip filtering retained. Final native2/2, integrated compile/texture1/1 pass. [Evidence](reports/ilalim-overlay-sampling-2026-10-04/README.md).
