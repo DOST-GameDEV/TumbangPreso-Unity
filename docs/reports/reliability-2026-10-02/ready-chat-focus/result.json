@@ -1,0 +1,68 @@
+{
+  "status": "pending_unqualified",
+  "productFinalRun": false,
+  "fixtureRepairsUsed": 1,
+  "reason": "First baseline manual tests did not generate a gameplay input press; bounded fixture repair destroyed the previous transient InputSettings when assigning the clone, leaving later fixtures unable to set up.",
+  "runs": {
+    "baseline": {
+      "jointTotal": 18,
+      "readyTotal": 4,
+      "readyPassed": 2,
+      "readyFailed": 2,
+      "cases": [
+        {
+          "name": "AutomaticReadyStillRetriesDuringChat",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "ManualReadyKeyBelongsToTheCurrentInputContext(True)",
+          "result": "Failed",
+          "message": "  The synthetic key did not reach the real ReadyUp action.\n  Expected: True\n  But was:  False\n"
+        },
+        {
+          "name": "ManualReadyKeyBelongsToTheCurrentInputContext(False)",
+          "result": "Failed",
+          "message": "  The synthetic key did not reach the real ReadyUp action.\n  Expected: True\n  But was:  False\n"
+        },
+        {
+          "name": "PreviouslySubmittedReadyStillRetriesDuringChat",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "preservationCompleted": true,
+      "leaseHeld": false
+    },
+    "baseline-repair": {
+      "jointTotal": 18,
+      "readyTotal": 4,
+      "readyPassed": 0,
+      "readyFailed": 4,
+      "cases": [
+        {
+          "name": "AutomaticReadyStillRetriesDuringChat",
+          "result": "Failed",
+          "message": "SetUp : UnityEngine.MissingReferenceException : The object of type 'UnityEngine.InputSystem.InputSettings' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object. Parameter name: data"
+        },
+        {
+          "name": "ManualReadyKeyBelongsToTheCurrentInputContext(True)",
+          "result": "Failed",
+          "message": "SetUp : UnityEngine.MissingReferenceException : The object of type 'UnityEngine.InputSystem.InputSettings' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object. Parameter name: data"
+        },
+        {
+          "name": "ManualReadyKeyBelongsToTheCurrentInputContext(False)",
+          "result": "Failed",
+          "message": "SetUp : UnityEngine.MissingReferenceException : The object of type 'UnityEngine.InputSystem.InputSettings' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object. Parameter name: data"
+        },
+        {
+          "name": "PreviouslySubmittedReadyStillRetriesDuringChat",
+          "result": "Failed",
+          "message": "SetUp : UnityEngine.MissingReferenceException : The object of type 'UnityEngine.InputSystem.InputSettings' has been destroyed but you are still trying to access it.\nYour script should either check if it is null or you should not destroy the object. Parameter name: data"
+        }
+      ],
+      "preservationCompleted": true,
+      "leaseHeld": false
+    }
+  }
+}

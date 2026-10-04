@@ -1,0 +1,18 @@
+{
+  "protectedInputs": 12529,
+  "protectedChanged": 0,
+  "candidate": {
+    "total": 3,
+    "passed": 3,
+    "failed": 0
+  },
+  "claim": "public CanEmote eligibility only",
+  "fixtureRepairs": 0,
+  "toolingRepairs": 1,
+  "baseline": {
+    "total": 3,
+    "intendedFailure": "LessonWithholdingTheEmoteVerbRefusesEmoteEligibility",
+    "passed": 2,
+    "failed": 1
+  }
+}

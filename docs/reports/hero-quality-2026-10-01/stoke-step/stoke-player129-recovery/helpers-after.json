@@ -1,0 +1,16 @@
+{
+  "apply": true,
+  "helpers": [
+    {
+      "pid": 331812,
+      "args": [
+        "/workspace/shared/tump-tools/unity-6000.5.8f1/Editor/Data/DotNetSdk/dotnet",
+        "build-server",
+        "shutdown"
+      ],
+      "rss": "108836 kB",
+      "terminated": true
+    }
+  ],
+  "memoryCurrent": "4199243776"
+}

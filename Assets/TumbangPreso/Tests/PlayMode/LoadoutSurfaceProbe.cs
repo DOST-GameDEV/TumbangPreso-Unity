@@ -755,3 +755,77 @@ namespace TumbangPreso.PlayTests
         }
     }
 }
+
+namespace TumbangPreso.PlayTests
+{
+    public sealed class KitRecallParityChecks
+    {
+        private GameObject _root;
+        [UnitySetUp] public IEnumerator Before()
+        { yield return PlayModeWorld.Reset(); _root = new GameObject("Kit recall parity"); }
+        [UnityTearDown] public IEnumerator After()
+        { if (_root != null) Object.DestroyImmediate(_root); yield return PlayModeWorld.Reset(); }
+        [TestCase("cheska"), TestCase("dante")]
+        public void SameKitRoleChangeRefreshesItsRealNameAndDescription(string hero)
+        {
+            var canvas = OwnerUiLayout.Canvas(_root.transform, "RecallCanvas", 100);
+            var panel = AbilityInspectPanel.Create(canvas.transform);
+            var kit = Abilities.HeroAbilitySystem.CreateKitFor(hero);
+            panel.Bind(kit);
+            Assert.Contains(kit.AttackingSkill.EffectiveName, Words(panel));
+            kit.SetRole(true, null); panel.Bind(kit);
+            Assert.Contains(kit.DefendingSkill.EffectiveName, Words(panel), "Same kit kept the attacker's name after becoming defender.");
+            Assert.Contains(kit.DefendingSkill.EffectiveDescription, Words(panel));
+            CollectionAssert.DoesNotContain(Words(panel), kit.AttackingSkill.EffectiveDescription);
+            kit.SetRole(false, null); panel.Bind(kit);
+            Assert.Contains(kit.AttackingSkill.EffectiveDescription, Words(panel));
+            CollectionAssert.DoesNotContain(Words(panel), kit.DefendingSkill.EffectiveDescription);
+        }
+        [UnityTest] public IEnumerator CurrentGuidesAndRecallCardsMatchBothCompleteKits()
+        {
+            foreach (string hero in new[] { "cheska", "dante" })
+            {
+                var go = new GameObject(hero + " current skill guide"); go.transform.SetParent(_root.transform);
+                var view = go.AddComponent<TumpSkillView>(); view.Open(go.transform, hero, null);
+                yield return null;
+                var canvas = (Canvas)typeof(TumpSkillView).GetField("_canvas", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(view);
+                var kit = Abilities.HeroAbilitySystem.CreateKitFor(hero);
+                string[] names = hero == "cheska"
+                    ? new[] { "COLD FEET", "FROSTBITE", "GLACIAL WALL", "ABSOLUTE ZERO" }
+                    : new[] { "UNSTOPPABLE", "BOULDER", "BASTION", "CONTINENTAL DRIFT" };
+                float[] cooldowns = hero == "cheska" ? new[] { 35f, 35f, 35f, 0f } : new[] { 40f, 35f, 35f, 0f };
+                Assert.AreEqual(12, kit.UltimateCost);
+                Assert.AreEqual(4, kit.ScreenSlots.Length);
+                for (int i = 0; i < 4; i++)
+                {
+                    int slot = i == 3 ? 0 : i + 1;
+                    System.Array.Find(canvas.GetComponentsInChildren<Button>(true), b => b.name == "TumpSkillSlot" + slot).onClick.Invoke();
+                    yield return null; Canvas.ForceUpdateCanvases();
+                    var ability = kit.ScreenSlots[i].Ability;
+                    Assert.AreEqual(names[i], ability.EffectiveName); Assert.AreEqual(cooldowns[i], ability.Cooldown);
+                    var name = System.Array.Find(canvas.GetComponentsInChildren<Text>(true), t => t.name == "AbilityName");
+                    var body = System.Array.Find(canvas.GetComponentsInChildren<Text>(true), t => t.name == "WhatItDoes");
+                    Assert.AreEqual(names[i], name.text); Assert.AreEqual(ability.Summary, body.text);
+                    Assert.LessOrEqual(name.preferredHeight, name.rectTransform.rect.height + 1);
+                    Assert.LessOrEqual(body.preferredHeight, body.rectTransform.rect.height + 1);
+                }
+                foreach (var size in new[] { new Vector2Int(960, 540), new Vector2Int(1600, 680) })
+                    yield return TumpUiCapture.Capture("KitParity-" + hero + "-guide-" + size.x, canvas, size.x, size.y, false);
+                view.Back();
+                var recallCanvas = OwnerUiLayout.Canvas(_root.transform, hero + "RecallCanvas", 100);
+                var panel = AbilityInspectPanel.Create(recallCanvas.transform);
+                foreach (bool defending in new[] { false, true })
+                {
+                    kit.SetRole(defending, null); panel.OpenForCapture(kit);
+                    Assert.Contains(kit.Skill2.EffectiveDescription, Words(panel));
+                    Assert.Contains("35s CD" + (kit.Skill2.Duration > 0 ? " · " + kit.Skill2.Duration.ToString("0.#") + "s" : ""), Words(panel));
+                }
+                yield return TumpUiCapture.Capture("KitParity-" + hero + "-defender-recall", recallCanvas, 1600, 680, false);
+                Object.DestroyImmediate(go); Object.DestroyImmediate(canvas.gameObject); Object.DestroyImmediate(recallCanvas.gameObject);
+            }
+        }
+
+        private static string[] Words(Component root) => System.Linq.Enumerable.ToArray(
+            System.Linq.Enumerable.Select(root.GetComponentsInChildren<Text>(true), text => text.text));
+    }
+}

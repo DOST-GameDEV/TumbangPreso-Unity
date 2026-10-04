@@ -17,13 +17,15 @@ def evaluate(folder,case,reconnected=False):
         if case=="mash":
             active=[r for r in rows if r["stunLeft"]>0]
             if not active:errors.append(name+" missed the stun");continue
-            peak=max(r["mashPresses"] for r in active)
-            drops=sum(b["mashPresses"]<a["mashPresses"] for a,b in zip(active,active[1:]) if b["stunLeft"]>.05)
+            peak=max(r["mashPresses"] for r in rows)
             duration=active[-1]["time"]-active[0]["time"]
-            details[name]={"accepted_presses":peak,"progress_rollbacks":drops,"stun_duration":duration}
-            if peak<3:errors.append(name+" lost the recovery presses")
-            if duration>3.3:errors.append(name+" did not shorten the four-second stun")
-            if drops:errors.append(name+" recovery progress went backwards")
+            expired=any(r["time"]>active[-1]["time"] and r["stunLeft"]==0 for r in rows)
+            details[name]={"accepted_presses":peak,"stun_duration":duration,"observed_expiry":expired}
+            if peak!=0:errors.append(name+" accepted retired recovery presses")
+            # The probe applies four seconds. Sampling/network cadence may omit an edge,
+            # but neither input-shortening nor a permanently held trace is acceptable.
+            if not 3.7<=duration<=4.3:errors.append(name+" did not retain the four-second stun")
+            if not expired:errors.append(name+" never observed timed stun expiry")
             continue
         if case=="impact":
             # Processes begin observing at different server times. Anchor to the

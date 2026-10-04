@@ -15,7 +15,7 @@ namespace TumbangPreso.Diagnostics
     {
         private IEnumerator SeanVisualOnly()
         {
-            Stage("Sean native visual review through real selection");
+            Stage("Rago native visual review through real selection");
             yield return WaitFor(() => Find("GuestAccount") != null || Find("ContinueAccount") != null || Find("StartButton") != null, 80);
             if (Find("GuestAccount") != null) yield return Click("GuestAccount");
             else if (Find("ContinueAccount") != null) yield return Click("ContinueAccount");
@@ -26,7 +26,7 @@ namespace TumbangPreso.Diagnostics
             foreach (var brain in Object.FindObjectsByType<AIController>()) brain.enabled = false;
             foreach (var input in Object.FindObjectsByType<PlayerInputReader>()) input.enabled = false;
             var who = Object.FindAnyObjectByType<PauseWatcher>().Local;
-            if (!(who.AbilitySystem.Kit is Abilities.SeanHeroKit)) throw new InvalidOperationException("Sean selection did not reach the real player kit");
+            if (!(who.AbilitySystem.Kit is Abilities.SeanHeroKit)) throw new InvalidOperationException("Rago selection did not reach the real player kit");
             foreach (var actor in GameServices.Round.Players)
                 if (actor != who)
                 {
@@ -41,20 +41,20 @@ namespace TumbangPreso.Diagnostics
             bool HasEmbers()
             {
                 foreach (var mesh in Object.FindObjectsByType<MeshFilter>())
-                    if (mesh.sharedMesh != null && mesh.sharedMesh.name == "Sean fractured ember") return true;
+                    if (mesh.sharedMesh != null && mesh.sharedMesh.name == "Rago fractured ember") return true;
                 return false;
             }
             yield return WaitFor(() => who.IsGrounded && GameObject.Find("SupernovaCrater") != null && HasEmbers(), 8);
             foreach (var mesh in Object.FindObjectsByType<MeshFilter>())
             {
-                if (mesh.sharedMesh == null || mesh.sharedMesh.name != "Sean fractured ember") continue;
+                if (mesh.sharedMesh == null || mesh.sharedMesh.name != "Rago fractured ember") continue;
                 var renderer = mesh.GetComponent<Renderer>();
                 if (mesh.sharedMesh.vertexCount != 12 || renderer == null || renderer.sharedMaterial == null || !renderer.sharedMaterial.shader.isSupported)
                     throw new InvalidOperationException("Native fire debris mesh/material is invalid");
             }
             yield return Shot("sean-native-landing");
             yield return new WaitForSecondsRealtime(.5f); yield return Shot("sean-native-recovery");
-            Stage("native Sean ultimate produced the corrected ember geometry with supported material");
+            Stage("native Rago ultimate produced the corrected ember geometry with supported material");
         }
 
         // Controlled native input fixture. Scene entry is through the real UI. Positions,
@@ -149,16 +149,17 @@ namespace TumbangPreso.Diagnostics
                 Keys(Key.Space); yield return new WaitForSecondsRealtime(.15f);
                 if (who.transform.position.y < grounded + .1f) throw new InvalidOperationException("Space did not jump");
                 Keys(); yield return new WaitForSecondsRealtime(.8f);
-                Stage(label + " direct get-up presses");
+                Stage(label + " timed get-up ignores repeated Space");
                 who.ApplyTrip();
-                int maxMash = 0;
+                int maxMash = 0; float recoveryBegan = Time.time, authoredDuration = who.TripTotal;
                 for (int i = 0; i < 24 && who.IsTripped; i++)
                 {
                     Keys(Key.Space); yield return new WaitForSecondsRealtime(.08f);
                     maxMash = Mathf.Max(maxMash, who.MashPresses);
                     Keys(); yield return new WaitForSecondsRealtime(.09f);
                 }
-                if (who.IsTripped || maxMash == 0) throw new InvalidOperationException("Fresh Space presses did not complete get-up");
+                if (who.IsTripped || maxMash != 0 || Time.time-recoveryBegan < authoredDuration-.1f)
+                    throw new InvalidOperationException("Repeated Space changed timed recovery or its timer did not expire");
                 yield return Shot(label + "-direct-recovered");
 
                 Place(new Vector3(0, .12f, -12), Vector3.forward);
@@ -205,21 +206,10 @@ namespace TumbangPreso.Diagnostics
                 victim.Teleport(new Vector3(6, .12f, 8));
                 yield return new WaitForSecondsRealtime(.3f);
 
-                Stage(label + " direct right-mouse retrieval slide");
-                if (!carrier.Held.HostDisarm()) throw new InvalidOperationException("Could not stage the loose slide target");
-                Place(new Vector3(0, .12f, -10), Vector3.forward);
-                // Slipper owns its own flight/loose simulation; HostDisarm already clears
-                // velocity. Use its actual support height instead of inventing a Rigidbody.
-                var slideTarget = new Vector3(0, 0, -8);
-                slideTarget.y = Slipper.GroundY(slideTarget) + shoe.RestHeight;
-                shoe.transform.position = slideTarget;
-                yield return new WaitForSecondsRealtime(.3f);
-                if (!combat.SlideMayStartFrom(who.transform.position, Vector3.forward, out var target) || target != shoe)
-                    throw new InvalidOperationException("Staged own slipper is not a legal slide target");
-                Buttons(2); yield return new WaitForSecondsRealtime(.06f); Buttons(0);
-                yield return WaitFor(() => carrier.Held == shoe, 2);
-                if (combat.SlideCooldownLeft <= 0) throw new InvalidOperationException("Pickup did not use the retrieval slide");
-                yield return Shot(label + "-direct-slide");
+                Stage(label + " retired retrieval slide remains unavailable");
+                if (combat.SlideMayStartFrom(who.transform.position, Vector3.forward, out _) ||
+                    combat.HostResolveSlide(who.transform.position, Vector3.forward) || combat.SlideActive)
+                    throw new InvalidOperationException("Removed retrieval slide still accepts an entry");
 
                 Stage(label + " switch fixture to the defender role");
                 GameServices.Round.EndRound(); GameServices.Match.AdvanceRound();

@@ -47,7 +47,7 @@ namespace TumbangPreso.EditorTools
                 var vertices=pose.vertices;var normals=pose.normals;var uv=skin.sharedMesh.uv;
                 var selected=chosen.Distinct().ToArray();var remap=selected.Select((index,next)=>(index,next)).ToDictionary(p=>p.index,p=>p.next);
                 var matrix=source.transform.worldToLocalMatrix*skin.transform.localToWorldMatrix;
-                var mesh=new Mesh{name="Native Rafi "+label};
+                var mesh=new Mesh{name="Native Ilyas "+label};
                 mesh.vertices=selected.Select(i=>matrix.MultiplyPoint3x4(vertices[i])).ToArray();
                 mesh.normals=selected.Select(i=>matrix.MultiplyVector(normals[i]).normalized).ToArray();
                 mesh.uv=selected.Select(i=>uv[i]).ToArray();mesh.triangles=chosen.Select(i=>remap[i]).ToArray();mesh.RecalculateBounds();
@@ -82,7 +82,7 @@ namespace TumbangPreso.EditorTools
             var old=RenderTexture.active;RenderTexture.active=target;
             var image=new Texture2D(2400,600,TextureFormat.RGB24,false);image.ReadPixels(new Rect(0,0,2400,600),0,0);image.Apply();
             File.WriteAllBytes(output,image.EncodeToPNG());
-            File.WriteAllText(Path.ChangeExtension(output,"txt"),"Rafi HERO source only; idle pose; native ToonSkin and fixed2.38 scale. Same camera magnification across all four angles. Isolated bones: "+string.Join(",",names)+"; meshes="+owned.Count+"; framingSpan="+span+"m.\n");
+            File.WriteAllText(Path.ChangeExtension(output,"txt"),"Ilyas HERO source only; idle pose; native ToonSkin and fixed2.38 scale. Same camera magnification across all four angles. Isolated bones: "+string.Join(",",names)+"; meshes="+owned.Count+"; framingSpan="+span+"m.\n");
             RenderTexture.active=old;camera.targetTexture=null;target.Release();Object.DestroyImmediate(target);Object.DestroyImmediate(image);
             foreach(var mesh in owned)Object.DestroyImmediate(mesh);EditorSceneManager.CloseScene(scene,true);
         }

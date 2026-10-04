@@ -1,0 +1,10 @@
+{
+  "source_head": "e4d6ee6b9852872cbdfb7163f58c8db0052187df",
+  "scope": "Owned unfinished Rafi Backwash/Baha overlay, protocol132, recording13; current source Runtime/Core and shader frozen in player-inputs.json",
+  "question": "Build matching12scene compressed Linux candidate for a NEW coherent Baha integration and retained Backwash acceptance",
+  "expected_artifact": "Builds/rafi-baha132/TumbangPreso.x86_64",
+  "retry_count": 0,
+  "limits": "No old Backwash-only rerun; original two failures remain false. Memory guard retained;512MiB managed helper heap and conserve7 are build-process-only tuning, not a larger machine limit.",
+  "reference": "https://learn.microsoft.com/en-us/dotnet/core/runtime-config/garbage-collector#heap-hard-limit",
+  "stopping": "Fresh build success/binary+Runtime hashes/guard restoration, or exact failure with bounded diagnosis"
+}

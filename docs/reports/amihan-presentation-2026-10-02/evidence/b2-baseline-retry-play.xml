@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 03:03:21Z" end-time="2026-10-02 03:06:08Z" duration="166.3996541">
+  <test-suite type="TestSuite" id="2523" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1246" result="Failed" site="Child" start-time="2026-10-02 03:03:21Z" end-time="2026-10-02 03:06:08Z" duration="166.399654" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2517" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-amihan1002/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1246" result="Failed" site="Child" start-time="2026-10-02 03:03:21Z" end-time="2026-10-02 03:06:08Z" duration="166.385991" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12736" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2518" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1246" result="Failed" site="Child" start-time="2026-10-02 03:03:21Z" end-time="2026-10-02 03:06:08Z" duration="166.383052" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2519" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1246" result="Failed" site="Child" start-time="2026-10-02 03:03:21Z" end-time="2026-10-02 03:06:08Z" duration="166.380617" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1069" name="AmihanKitPlayProbe" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" testcasecount="17" result="Failed" site="Child" start-time="2026-10-02 03:03:21Z" end-time="2026-10-02 03:06:08Z" duration="166.203735" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1073" name="AirburstWindupRetiresAtTheRoundBoundary" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe.AirburstWindupRetiresAtTheRoundBoundary" methodname="AirburstWindupRetiresAtTheRoundBoundary" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" seed="1920130713" result="Passed" start-time="2026-10-02 03:03:21Z" end-time="2026-10-02 03:03:33Z" duration="11.352169" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="120000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+
+IgnoreFailingMessages:true
+Can't add 'VfxShapes/GeneratedMeshOwner' to IntroductionScene-amihan because a 'GeneratedMeshOwner' is already added to the game object!
+NullReferenceException: Object reference not set to an instance of an object
+TumbangPreso.Visual.VfxShapes.Own (UnityEngine.GameObject host, UnityEngine.Mesh mesh) (at Assets/TumbangPreso/Runtime/Visual/VfxShapes.cs:2408)
+TumbangPreso.Visual.WindVfx+Motif..ctor (UnityEngine.Transform parent, System.Int32 count, System.Single seed, System.Single threadShare) (at Assets/TumbangPreso/Runtime/Visual/WindVfx.cs:336)
+TumbangPreso.Visual.HeroIntroductionScene.BuildAmihan () (at Assets/TumbangPreso/Runtime/Visual/HeroIntroductionScene.Amihan.cs:134)
+TumbangPreso.Visual.HeroIntroductionScene..ctor (UnityEngine.Transform parent, System.String hero, TumbangPreso.CharacterMotor source, TumbangPreso.CameraSystem.MatchPoseHistory+Copy body, System.Nullable`1[T] aim) (at Assets/TumbangPreso/Runtime/Visual/HeroIntroductionScene.cs:107)
+TumbangPreso.CameraSystem.UltimatePhaseView..ctor (UnityEngine.Transform owner, System.Collections.Generic.IReadOnlyList`1[T] commits, System.Double duration) (at Assets/TumbangPreso/Runtime/Camera/UltimatePhaseView.cs:146)
+TumbangPreso.SharedUltimatePhase.LateUpdate () (at Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs:246)
+UnityEngine.Debug:LogException(Exception)
+TumbangPreso.SharedUltimatePhase:LateUpdate() (at Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs:247)
+
+[Slice] round 2 begins, taya is seat 1
+
+IgnoreFailingMessages:false
+]]></output>
+            </test-case>
+            <test-case id="1071" name="FilmAirburstBodyOnly" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe.FilmAirburstBodyOnly" methodname="FilmAirburstBodyOnly" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" seed="380385920" result="Failed" start-time="2026-10-02 03:03:33Z" end-time="2026-10-02 03:04:27Z" duration="54.243034" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="900000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The cutscene never came up.
+  Expected: greater than or equal to 0
+  But was:  -1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.AmihanKitPlayProbe+<FilmAirburst>d__7.MoveNext () [0x00a0a] in C:\Users\matth\Documents\Codex\work\tump-amihan1002\Assets\TumbangPreso\Tests\PlayMode\AmihanKitPlayProbe.AirburstFilm.cs:209
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+
+IgnoreFailingMessages:true
+Can't add 'VfxShapes/GeneratedMeshOwner' to IntroductionScene-amihan because a 'GeneratedMeshOwner' is already added to the game object!
+NullReferenceException: Object reference not set to an instance of an object
+TumbangPreso.Visual.VfxShapes.Own (UnityEngine.GameObject host, UnityEngine.Mesh mesh) (at Assets/TumbangPreso/Runtime/Visual/VfxShapes.cs:2408)
+TumbangPreso.Visual.WindVfx+Motif..ctor (UnityEngine.Transform parent, System.Int32 count, System.Single seed, System.Single threadShare) (at Assets/TumbangPreso/Runtime/Visual/WindVfx.cs:336)
+TumbangPreso.Visual.HeroIntroductionScene.BuildAmihan () (at Assets/TumbangPreso/Runtime/Visual/HeroIntroductionScene.Amihan.cs:134)
+TumbangPreso.Visual.HeroIntroductionScene..ctor (UnityEngine.Transform parent, System.String hero, TumbangPreso.CharacterMotor source, TumbangPreso.CameraSystem.MatchPoseHistory+Copy body, System.Nullable`1[T] aim) (at Assets/TumbangPreso/Runtime/Visual/HeroIntroductionScene.cs:107)
+TumbangPreso.CameraSystem.UltimatePhaseView..ctor (UnityEngine.Transform owner, System.Collections.Generic.IReadOnlyList`1[T] commits, System.Double duration) (at Assets/TumbangPreso/Runtime/Camera/UltimatePhaseView.cs:146)
+TumbangPreso.SharedUltimatePhase.LateUpdate () (at Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs:246)
+UnityEngine.Debug:LogException(Exception)
+TumbangPreso.SharedUltimatePhase:LateUpdate() (at Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs:247)
+
+Releasing render texture that is set to be RenderTexture.active!
+
+IgnoreFailingMessages:false
+[AirburstFilm] variant body; logged errors 1 (first: NullReferenceException: Object reference not set to an instance of an object); scene frames -1--1; handback -1; release 184; victim whirled 184; palm peak frame -1 (-340282300000000000000000000000000000000.000 m); outsider whirled False; clock -1.000 to -1.000
+]]></output>
+            </test-case>
+            <test-case id="1072" name="FilmAirburstOnLow" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe.FilmAirburstOnLow" methodname="FilmAirburstOnLow" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" seed="331050247" result="Failed" start-time="2026-10-02 03:04:27Z" end-time="2026-10-02 03:05:16Z" duration="48.698747" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="900000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The cutscene never came up.
+  Expected: greater than or equal to 0
+  But was:  -1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.AmihanKitPlayProbe+<FilmAirburst>d__7.MoveNext () [0x00a0a] in C:\Users\matth\Documents\Codex\work\tump-amihan1002\Assets\TumbangPreso\Tests\PlayMode\AmihanKitPlayProbe.AirburstFilm.cs:209
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+
+IgnoreFailingMessages:true
+Can't add 'VfxShapes/GeneratedMeshOwner' to IntroductionScene-amihan because a 'GeneratedMeshOwner' is already added to the game object!
+NullReferenceException: Object reference not set to an instance of an object
+TumbangPreso.Visual.VfxShapes.Own (UnityEngine.GameObject host, UnityEngine.Mesh mesh) (at Assets/TumbangPreso/Runtime/Visual/VfxShapes.cs:2408)
+TumbangPreso.Visual.WindVfx+Motif..ctor (UnityEngine.Transform parent, System.Int32 count, System.Single seed, System.Single threadShare) (at Assets/TumbangPreso/Runtime/Visual/WindVfx.cs:336)
+TumbangPreso.Visual.HeroIntroductionScene.BuildAmihan () (at Assets/TumbangPreso/Runtime/Visual/HeroIntroductionScene.Amihan.cs:134)
+TumbangPreso.Visual.HeroIntroductionScene..ctor (UnityEngine.Transform parent, System.String hero, TumbangPreso.CharacterMotor source, TumbangPreso.CameraSystem.MatchPoseHistory+Copy body, System.Nullable`1[T] aim) (at Assets/TumbangPreso/Runtime/Visual/HeroIntroductionScene.cs:107)
+TumbangPreso.CameraSystem.UltimatePhaseView..ctor (UnityEngine.Transform owner, System.Collections.Generic.IReadOnlyList`1[T] commits, System.Double duration) (at Assets/TumbangPreso/Runtime/Camera/UltimatePhaseView.cs:146)
+TumbangPreso.SharedUltimatePhase.LateUpdate () (at Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs:246)
+UnityEngine.Debug:LogException(Exception)
+TumbangPreso.SharedUltimatePhase:LateUpdate() (at Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs:247)
+
+Releasing render texture that is set to be RenderTexture.active!
+
+IgnoreFailingMessages:false
+[AirburstFilm] variant low; logged errors 1 (first: NullReferenceException: Object reference not set to an instance of an object); scene frames -1--1; handback -1; release 184; victim whirled 184; palm peak frame -1 (-340282300000000000000000000000000000000.000 m); outsider whirled False; clock -1.000 to -1.000
+]]></output>
+            </test-case>
+            <test-case id="1070" name="FilmAirburstWithEffects" fullname="TumbangPreso.PlayTests.AmihanKitPlayProbe.FilmAirburstWithEffects" methodname="FilmAirburstWithEffects" classname="TumbangPreso.PlayTests.AmihanKitPlayProbe" runstate="Runnable" seed="1752297960" result="Failed" start-time="2026-10-02 03:05:16Z" end-time="2026-10-02 03:06:08Z" duration="51.881908" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="900000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The cutscene never came up.
+  Expected: greater than or equal to 0
+  But was:  -1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.AmihanKitPlayProbe+<FilmAirburst>d__7.MoveNext () [0x00a0a] in C:\Users\matth\Documents\Codex\work\tump-amihan1002\Assets\TumbangPreso\Tests\PlayMode\AmihanKitPlayProbe.AirburstFilm.cs:209
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+
+IgnoreFailingMessages:true
+Can't add 'VfxShapes/GeneratedMeshOwner' to IntroductionScene-amihan because a 'GeneratedMeshOwner' is already added to the game object!
+NullReferenceException: Object reference not set to an instance of an object
+TumbangPreso.Visual.VfxShapes.Own (UnityEngine.GameObject host, UnityEngine.Mesh mesh) (at Assets/TumbangPreso/Runtime/Visual/VfxShapes.cs:2408)
+TumbangPreso.Visual.WindVfx+Motif..ctor (UnityEngine.Transform parent, System.Int32 count, System.Single seed, System.Single threadShare) (at Assets/TumbangPreso/Runtime/Visual/WindVfx.cs:336)
+TumbangPreso.Visual.HeroIntroductionScene.BuildAmihan () (at Assets/TumbangPreso/Runtime/Visual/HeroIntroductionScene.Amihan.cs:134)
+TumbangPreso.Visual.HeroIntroductionScene..ctor (UnityEngine.Transform parent, System.String hero, TumbangPreso.CharacterMotor source, TumbangPreso.CameraSystem.MatchPoseHistory+Copy body, System.Nullable`1[T] aim) (at Assets/TumbangPreso/Runtime/Visual/HeroIntroductionScene.cs:107)
+TumbangPreso.CameraSystem.UltimatePhaseView..ctor (UnityEngine.Transform owner, System.Collections.Generic.IReadOnlyList`1[T] commits, System.Double duration) (at Assets/TumbangPreso/Runtime/Camera/UltimatePhaseView.cs:146)
+TumbangPreso.SharedUltimatePhase.LateUpdate () (at Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs:246)
+UnityEngine.Debug:LogException(Exception)
+TumbangPreso.SharedUltimatePhase:LateUpdate() (at Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs:247)
+
+Releasing render texture that is set to be RenderTexture.active!
+
+IgnoreFailingMessages:false
+[AirburstFilm] variant fx; logged errors 1 (first: NullReferenceException: Object reference not set to an instance of an object); scene frames -1--1; handback -1; release 184; victim whirled 184; palm peak frame -1 (-340282300000000000000000000000000000000.000 m); outsider whirled False; clock -1.000 to -1.000
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

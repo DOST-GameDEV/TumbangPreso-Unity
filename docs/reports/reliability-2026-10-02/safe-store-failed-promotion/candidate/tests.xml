@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 10:10:08Z" end-time="2026-10-02 10:10:08Z" duration="0.1436503">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="957" result="Passed" start-time="2026-10-02 10:10:08Z" end-time="2026-10-02 10:10:08Z" duration="0.143650" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2157" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="957" result="Passed" start-time="2026-10-02 10:10:08Z" end-time="2026-10-02 10:10:08Z" duration="0.121119" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22564" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2158" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="957" result="Passed" start-time="2026-10-02 10:10:08Z" end-time="2026-10-02 10:10:08Z" duration="0.107918" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2159" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="957" result="Passed" start-time="2026-10-02 10:10:08Z" end-time="2026-10-02 10:10:08Z" duration="0.094616" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1976" name="SafeStoreFailedPromotionSaveTests" fullname="TumbangPreso.Tests.SafeStoreFailedPromotionSaveTests" classname="TumbangPreso.Tests.SafeStoreFailedPromotionSaveTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 10:10:08Z" end-time="2026-10-02 10:10:08Z" duration="0.073381" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1977" name="FailedPromotionThenReleasedLockAndValidatedSavePreserveTheUsableBackup" fullname="TumbangPreso.Tests.SafeStoreFailedPromotionSaveTests.FailedPromotionThenReleasedLockAndValidatedSavePreserveTheUsableBackup" methodname="FailedPromotionThenReleasedLockAndValidatedSavePreserveTheUsableBackup" classname="TumbangPreso.Tests.SafeStoreFailedPromotionSaveTests" runstate="Runnable" seed="1513891592" result="Passed" start-time="2026-10-02 10:10:08Z" end-time="2026-10-02 10:10:08Z" duration="0.043198" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[SafeStore] cache.txt was unreadable or invalid; recovered the previous version from .bak. Something interrupted a save. Primary could not be restored: The process cannot access the file 'C:\Users\matth\AppData\Local\Temp\tp-failed-promotion-save-1fcf6d5ab20b42c69b2d939de0c89cd1\cache.txt' because it is being used by another process.
+]]></output>
+            </test-case>
+            <test-case id="1979" name="LegacyTwoArgumentTextWritesKeepTheirExistingBackupContract" fullname="TumbangPreso.Tests.SafeStoreFailedPromotionSaveTests.LegacyTwoArgumentTextWritesKeepTheirExistingBackupContract" methodname="LegacyTwoArgumentTextWritesKeepTheirExistingBackupContract" classname="TumbangPreso.Tests.SafeStoreFailedPromotionSaveTests" runstate="Runnable" seed="2093781247" result="Passed" start-time="2026-10-02 10:10:08Z" end-time="2026-10-02 10:10:08Z" duration="0.005342" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1978" name="ValidatedSaveStillRotatesAUsablePrimaryAsItsPreviousVersion" fullname="TumbangPreso.Tests.SafeStoreFailedPromotionSaveTests.ValidatedSaveStillRotatesAUsablePrimaryAsItsPreviousVersion" methodname="ValidatedSaveStillRotatesAUsablePrimaryAsItsPreviousVersion" classname="TumbangPreso.Tests.SafeStoreFailedPromotionSaveTests" runstate="Runnable" seed="1959100994" result="Passed" start-time="2026-10-02 10:10:08Z" end-time="2026-10-02 10:10:08Z" duration="0.007809" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

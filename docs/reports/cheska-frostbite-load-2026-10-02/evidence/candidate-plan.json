@@ -1,0 +1,15 @@
+{
+  "question": "Loaded real and owner shoe cue visible; preserved surfaces; expiry/reset/consumption/drop/hydration lifecycle",
+  "stop": "fresh five-test XML and rendered frames, or actionable product failure/resource guard",
+  "tool_retry_count": 1,
+  "files": {
+    "Runtime/Visual/CheskaFrostbiteCoating.cs": "5ace0e731dff4b5af8aa53dd2a815c7bc26b368431ddc73db043ead3a58bf4fa",
+    "Runtime/Visual/CheskaFrostbiteCoating.cs.meta": "2f065ae83f5c2eccfe3d33e9bab4193c93c6eedff7592174eb9243bf8a74ceee",
+    "Resources/Shaders/FrostbiteLoad.shader": "737ab54dc5e14362d192d966c1b778da94188966960867c3ee51320ad17a1477",
+    "Resources/Shaders/FrostbiteLoad.shader.meta": "c649fd7aeca86e34de10625e86b57789f0e36e2f9d097891e0b1ae3b6760f63e",
+    "Runtime/Abilities/CheskaHeroKit.cs": "b8123b61b7cff945172af50ddb1f10e0dc27028630d84a50a61f52a89e11006e",
+    "Runtime/Camera/ViewmodelArms.cs": "a736903b977905adcdb82f747131404378058a98ada5c05580a642f00e01a199",
+    "Tests/PlayMode/CheskaFrostbiteLoadTests.cs": "4eeba66ec959ffdc89152ad5e68c1d268a075bfbd247e815fabeca1e348a9561",
+    "Tests/PlayMode/CheskaFrostbiteLoadTests.cs.meta": "ff795cc73ed65fc337a971234be2860ef7c594ff7fe8119603d51746b1176006"
+  }
+}

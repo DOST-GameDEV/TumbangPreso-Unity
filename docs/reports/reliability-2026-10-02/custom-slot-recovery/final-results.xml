@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 04:48:44Z" end-time="2026-10-02 04:48:45Z" duration="0.2456269">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="907" result="Passed" start-time="2026-10-02 04:48:44Z" end-time="2026-10-02 04:48:45Z" duration="0.245627" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2090" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="907" result="Passed" start-time="2026-10-02 04:48:44Z" end-time="2026-10-02 04:48:45Z" duration="0.205483" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="17724" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2091" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="907" result="Passed" start-time="2026-10-02 04:48:44Z" end-time="2026-10-02 04:48:45Z" duration="0.191215" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2092" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="907" result="Passed" start-time="2026-10-02 04:48:44Z" end-time="2026-10-02 04:48:45Z" duration="0.172832" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1241" name="CustomCharacterSlotRecoveryTests" fullname="TumbangPreso.Tests.CustomCharacterSlotRecoveryTests" classname="TumbangPreso.Tests.CustomCharacterSlotRecoveryTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-02 04:48:44Z" end-time="2026-10-02 04:48:45Z" duration="0.085720" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1247" name="CompleteSavedProfileRetainsAllSlots" fullname="TumbangPreso.Tests.CustomCharacterSlotRecoveryTests.CompleteSavedProfileRetainsAllSlots" methodname="CompleteSavedProfileRetainsAllSlots" classname="TumbangPreso.Tests.CustomCharacterSlotRecoveryTests" runstate="Runnable" seed="1896157575" result="Passed" start-time="2026-10-02 04:48:44Z" end-time="2026-10-02 04:48:45Z" duration="0.051541" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1246" name="MissingSlotPreservesLaterSavedCharacters" fullname="TumbangPreso.Tests.CustomCharacterSlotRecoveryTests.MissingSlotPreservesLaterSavedCharacters" classname="TumbangPreso.Tests.CustomCharacterSlotRecoveryTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-02 04:48:45Z" end-time="2026-10-02 04:48:45Z" duration="0.014610" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1242" name="MissingSlotPreservesLaterSavedCharacters(0,null)" fullname="TumbangPreso.Tests.CustomCharacterSlotRecoveryTests.MissingSlotPreservesLaterSavedCharacters(0,null)" methodname="MissingSlotPreservesLaterSavedCharacters" classname="TumbangPreso.Tests.CustomCharacterSlotRecoveryTests" runstate="Runnable" seed="1006141769" result="Passed" start-time="2026-10-02 04:48:45Z" end-time="2026-10-02 04:48:45Z" duration="0.002216" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1243" name="MissingSlotPreservesLaterSavedCharacters(0,&quot;&quot;)" fullname="TumbangPreso.Tests.CustomCharacterSlotRecoveryTests.MissingSlotPreservesLaterSavedCharacters(0,&quot;&quot;)" methodname="MissingSlotPreservesLaterSavedCharacters" classname="TumbangPreso.Tests.CustomCharacterSlotRecoveryTests" runstate="Runnable" seed="569350292" result="Passed" start-time="2026-10-02 04:48:45Z" end-time="2026-10-02 04:48:45Z" duration="0.000737" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1244" name="MissingSlotPreservesLaterSavedCharacters(1,null)" fullname="TumbangPreso.Tests.CustomCharacterSlotRecoveryTests.MissingSlotPreservesLaterSavedCharacters(1,null)" methodname="MissingSlotPreservesLaterSavedCharacters" classname="TumbangPreso.Tests.CustomCharacterSlotRecoveryTests" runstate="Runnable" seed="107208538" result="Passed" start-time="2026-10-02 04:48:45Z" end-time="2026-10-02 04:48:45Z" duration="0.001057" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1245" name="MissingSlotPreservesLaterSavedCharacters(1,&quot;&quot;)" fullname="TumbangPreso.Tests.CustomCharacterSlotRecoveryTests.MissingSlotPreservesLaterSavedCharacters(1,&quot;&quot;)" methodname="MissingSlotPreservesLaterSavedCharacters" classname="TumbangPreso.Tests.CustomCharacterSlotRecoveryTests" runstate="Runnable" seed="747165699" result="Passed" start-time="2026-10-02 04:48:45Z" end-time="2026-10-02 04:48:45Z" duration="0.000784" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1248" name="ShortProfileKeepsDistinctDefaultSlots" fullname="TumbangPreso.Tests.CustomCharacterSlotRecoveryTests.ShortProfileKeepsDistinctDefaultSlots" methodname="ShortProfileKeepsDistinctDefaultSlots" classname="TumbangPreso.Tests.CustomCharacterSlotRecoveryTests" runstate="Runnable" seed="291743920" result="Passed" start-time="2026-10-02 04:48:45Z" end-time="2026-10-02 04:48:45Z" duration="0.000974" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

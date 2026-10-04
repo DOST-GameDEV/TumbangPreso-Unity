@@ -139,6 +139,10 @@ namespace TumbangPreso.Audio
                 { "ui_start",       -3.0f },
                 { "land",           -6.0f },
                 { "step_rubber",   -11.0f },
+                // Amihan's own light step (owner 2026-10-02, `tools/build_amihan_steps.py`): quieter than the rubber slap.
+                { "step_amihan",   -14.0f },
+                // ⚠️ Amihan's reworked skill sounds (her Airburst theme and release, Featherfall's three) were taken out again on the
+                // owner's instruction (2026-10-03: *"i meant remove all sfx"*). `tools/build_amihan_ult_audio.py` keeps the recipes.
                 { "slide_scrape",   -6.0f },
                 { "grab",           -6.0f },
                 { "throw_charge",   -5.0f },
@@ -207,7 +211,7 @@ namespace TumbangPreso.Audio
 
             // Bodies.
             "bump", "tag", "downed", "jump", "land", "dash", "guard_block", "respawn",
-            "step_rubber", "slide_scrape",
+            "step_rubber", "step_amihan", "slide_scrape",
             "stamina_empty",
 
             // ⚠️⚠️ EVERY HERO SKILL SOUND IS DELETED (2026-09-29), ON THE OWNER'S INSTRUCTION. 🧑: *"also all ur skill sfx
@@ -310,6 +314,7 @@ namespace TumbangPreso.Audio
             {
                 { "menu",  "ost_menu.mp3" },
                 { "match", "ost_match.mp3" },
+                { "tutorial", "ost_tutorial.wav" },
             };
 
         public const float MusicCrossfadeTime = 1.5f;
@@ -402,8 +407,20 @@ namespace TumbangPreso.Audio
             return false;
         }
 
-        /// <summary>False for a skill sound while they are switched off (<see cref="SkillSfxOn"/>).</summary>
-        public static bool Audible(string cue) => SkillSfxOn || !IsSkillSfx(cue);
+        /// <summary>
+        /// ⚠️ THE REWORKED SKILL SOUNDS, released from the switch one by one as each is rebuilt. AIRBURST v3 (2026-10-03,
+        /// `docs/reports/amihan-presentation-2026-10-02/airburst-v3.md`, `tools/build_amihan_ult_audio.py`): Amihan's ultimate
+        /// only. Every other hero's skill sounds, and her other skills, stay off.
+        /// </summary>
+        private static readonly HashSet<string> ReworkedSkillSfx = new HashSet<string>
+        {
+            // Empty again: Amihan's were removed on the owner's instruction (2026-10-03, *"i meant remove all sfx"*).
+        };
+
+        public static bool IsReworkedSkillSfx(string cue) => !string.IsNullOrEmpty(cue) && ReworkedSkillSfx.Contains(cue);
+
+        /// <summary>False for a skill sound while they are switched off (<see cref="SkillSfxOn"/>), unless it was reworked.</summary>
+        public static bool Audible(string cue) => SkillSfxOn || !IsSkillSfx(cue) || IsReworkedSkillSfx(cue);
 
         public static bool IsKnown(string cue) => !string.IsNullOrEmpty(cue) && KnownNames.Contains(cue);
 

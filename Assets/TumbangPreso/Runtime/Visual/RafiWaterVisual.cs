@@ -1,5 +1,6 @@
 using System;
 using TumbangPreso.Abilities;
+using TumbangPreso.Core;
 using TumbangPreso.Net;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -14,6 +15,21 @@ namespace TumbangPreso.Visual
         private MeshRenderer _surface;
         private LineRenderer _foam, _wallRunoff;
         private Vector3[] _vertices;
+        private int _crestRows;
+        private Color[] _crestColors;
+        private Gradient _bahaGradient;
+        private GradientAlphaKey[] _bahaAlpha;
+        private static readonly GradientColorKey[] BahaEdgeColour={new GradientColorKey(Color.white,0),new GradientColorKey(Color.white,1)};
+        // One authored cross-section and an unequal nine-column lip, not a glass rectangle.
+        private static readonly float[] BahaHeight={.35f,.74f,.92f,1f,.82f,.95f,.89f,.64f,.28f};
+        private static readonly float[] BahaPhase={.2f,1.8f,3.1f,.9f,4.2f,2.5f,5.4f,3.6f,1.1f};
+        private static readonly float[] BahaDepth={-.38f,-.25f,-.08f,.12f,.26f,.30f,.20f,.08f};
+        private static readonly float[] BahaProfile={.01f,.09f,.30f,.51f,.62f,.59f,.48f,.31f};
+        private static readonly Color[] BahaColour={
+            new Color(.10f,.32f,.34f,.12f),new Color(.10f,.39f,.40f,.28f),
+            new Color(.12f,.51f,.53f,.34f),new Color(.21f,.65f,.65f,.38f),
+            new Color(.48f,.82f,.78f,.58f),new Color(.80f,.94f,.86f,.75f),
+            new Color(.43f,.77f,.72f,.44f),new Color(.10f,.42f,.42f,.22f)};
         private MaterialPropertyBlock _block;
         private float _sampleAge;
         private Transform _echo, _leftArm, _rightArm, _head, _leftLeg, _rightLeg;
@@ -38,8 +54,8 @@ namespace TumbangPreso.Visual
             // A thin two-sided sheet needs its own transparent pass. Opposite
             // triangles sharing normals cancel out under the Standard shader.
             var shader = Resources.Load<Shader>("Shaders/RafiWater");
-            if (shader == null) throw new InvalidOperationException("Rafi water shader is missing.");
-            var material = new Material(shader) { name = "Rafi translucent water", color = colour };
+            if (shader == null) throw new InvalidOperationException("Ilyas water shader is missing.");
+            var material = new Material(shader) { name = "Ilyas translucent water", color = colour };
             renderer.sharedMaterial = material;
             VfxRenderTag.Own(renderer.gameObject, material);
         }
@@ -129,8 +145,15 @@ namespace TumbangPreso.Visual
             _surface = surface.AddComponent<MeshRenderer>();
             _surface.shadowCastingMode = ShadowCastingMode.Off; _surface.receiveShadows = false;
             Paint(_surface, new Color(.16f, .60f, .77f, .36f));
-            bool wave = _state.Type == WorldEffectSnapshot.Kind.Breakwater;
-            int columns = wave ? 9 : 17, rows = 5;
+            bool wave = (_state.Type == WorldEffectSnapshot.Kind.Breakwater || _state.Type == WorldEffectSnapshot.Kind.Baha);
+            bool baha=_state.Type==WorldEffectSnapshot.Kind.Baha;
+            int columns = wave ? 9 : 17, rows = baha?8:5;_crestRows=rows;
+            if(baha)
+            {
+                _surface.sharedMaterial.SetFloat("_UseVertexTint",1);
+                _surface.sharedMaterial.SetFloat("_UseVertexColour",1);
+                _crestColors=new Color[columns*rows];_bahaGradient=new Gradient();_bahaAlpha=new GradientAlphaKey[8];
+            }
             _vertices = new Vector3[columns * rows]; var triangles = new int[(columns - 1) * (rows - 1) * 6];
             int at = 0;
             for (int x = 0; x < columns - 1; x++) for (int y = 0; y < rows - 1; y++)
@@ -145,6 +168,7 @@ namespace TumbangPreso.Visual
             _foam.numCapVertices = 1; _foam.numCornerVertices = 1;
             _foam.shadowCastingMode = ShadowCastingMode.Off; _foam.receiveShadows = false;
             Paint(_foam, new Color(.73f, .93f, .94f, .78f));
+            if(baha){foam.name="WetLeadingEdge";_foam.widthMultiplier=.025f;_foam.sharedMaterial.SetFloat("_UseVertexTint",1);}
         }
 
         private void BuildEcho()
@@ -184,22 +208,38 @@ namespace TumbangPreso.Visual
             if (_state.Type == WorldEffectSnapshot.Kind.Mirrorwake) { Echo(age, fade); return; }
             if (_state.Type == WorldEffectSnapshot.Kind.Waterwall) { Wall(age,fade); return; }
             if (_mesh == null) return;
-            bool wave = _state.Type == WorldEffectSnapshot.Kind.Breakwater;
+            bool wave = (_state.Type == WorldEffectSnapshot.Kind.Breakwater || _state.Type == WorldEffectSnapshot.Kind.Baha);
             float gather = RafiWaterField.Gather(_state.Type);
             float formed = Mathf.SmoothStep(0, 1, Mathf.Clamp01(age / gather));
             float travel = Mathf.Max(0, age - gather) * _state.FirstScale;
+            if(_state.Type==WorldEffectSnapshot.Kind.Baha)
+            {
+                travel=Mathf.Min(travel,_state.SecondScale);
+                float tail=Mathf.Clamp01((age-gather-_state.SecondScale/RafiRules.BahaSpeed)/RafiRules.BahaCarryTail);
+                formed*=1-tail;fade*=1-tail;
+            }
             float spent = _state.Split ? .12f : 1;
+            bool baha=_state.Type==WorldEffectSnapshot.Kind.Baha;
             int columns = wave ? 9 : 17;
             for (int x = 0; x < columns; x++)
             {
                 float u = x / (float)(columns - 1), side = Mathf.Lerp(-_state.Radius, _state.Radius, u);
                 float end = wave ? Vector3.Dot(_state.Path[x] - _state.Position, _state.Forward) : 6;
                 bool passed = travel > end + .05f;
-                for (int row = 0; row < 5; row++)
+                float laneFade=baha?Mathf.Clamp01((end-travel)/.3f):1;
+                for (int row = 0; row < _crestRows; row++)
                 {
-                    float v = row / 4f;
+                    float v = row / (float)(_crestRows-1);
                     Vector3 point;
-                    if (wave)
+                    if(baha)
+                    {
+                        float ripple=1+.035f*Mathf.Sin(age*7+BahaPhase[x]);
+                        point=new Vector3(side,BahaProfile[row]*BahaHeight[x]*formed*ripple,
+                            Mathf.Min(travel,end)+BahaDepth[row]);
+                        var colour=BahaColour[row];colour.a*=laneFade*Mathf.Lerp(.45f,1,BahaHeight[x]);
+                        _crestColors[x*_crestRows+row]=colour;
+                    }
+                    else if (wave)
                     {
                         // Flat trough, rising face, curled lip; never a tall opaque wall.
                         float y = Mathf.Sin(v * Mathf.PI * .75f) * .63f * formed;
@@ -214,13 +254,28 @@ namespace TumbangPreso.Visual
                             .85f + Mathf.Cos(angle) * radius - .43f, travel - Mathf.Cos(angle) * .25f + v * .06f);
                         point.y = Mathf.Lerp(.3f, point.y, formed);
                     }
-                    _vertices[x * 5 + row] = point;
+                    _vertices[x * _crestRows + row] = point;
                 }
-                _foam.SetPosition(x, _vertices[x * 5 + 4]);
+                if(baha)
+                {
+                    _foam.SetPosition(x,new Vector3(side,.018f,Mathf.Min(travel,end)+.29f));
+                    // Unity gradients have eight keys; the mesh retains exact alpha on all nine lanes.
+                    if(x!=4)_bahaAlpha[x<4?x:x-1]=new GradientAlphaKey(laneFade*Mathf.Lerp(.45f,1,BahaHeight[x]),u);
+                }
+                else _foam.SetPosition(x, _vertices[x * _crestRows + _crestRows-1]);
             }
             _mesh.vertices = _vertices; _mesh.RecalculateNormals(); _mesh.RecalculateBounds();
-            Tint(_surface, new Color(.16f, .60f, .77f, .36f * fade * formed * spent));
-            Tint(_foam, new Color(.73f, .93f, .94f, .78f * fade * formed * spent));
+            if(baha)
+            {
+                _mesh.colors=_crestColors;_bahaGradient.SetKeys(BahaEdgeColour,_bahaAlpha);_foam.colorGradient=_bahaGradient;
+                Tint(_surface,new Color(1,1,1,fade*formed));
+                Tint(_foam,new Color(.045f,.20f,.21f,.58f*fade*formed));
+            }
+            else
+            {
+                Tint(_surface, new Color(.16f, .60f, .77f, .36f * fade * formed * spent));
+                Tint(_foam, new Color(.73f, .93f, .94f, .78f * fade * formed * spent));
+            }
         }
 
         private void Echo(float age, float fade)

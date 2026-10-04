@@ -1,0 +1,15 @@
+{
+ "Assets/TumbangPreso/Editor/AmihanMotionAuthor.cs": "de2b2c3502be9586046c3c571adc197e551675064bb4195382de9ab403abb509",
+ "Assets/TumbangPreso/Resources/UltimateIntros/amihan.txt": "2f220150aad5a7c3671fa95d0f1b2083e19fca1f38ea9c79916488855f71b943",
+ "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.CastGesture.cs": "7bbe86d72c627a619041849717fc98a0bb777b2fa6092610bacac4ca16372282",
+ "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs": "2d457603923bc545d5c61bdd763ee3ebe51bd3c79e9ff28511993b744fe4c442",
+ "Assets/TumbangPreso/Runtime/Visual/AmihanVfx.cs": "a6b18d3ad72f4d2494e45bde95570d453941281cbac6f492d8215237aeaf3151",
+ "Assets/TumbangPreso/Runtime/Visual/HeroAbilityClips.Amihan.cs": "e82e7a54478d8b297a81755e933612833b623d9387194e929f0d094b2bc17ea0",
+ "Assets/TumbangPreso/Runtime/Visual/HeroIntroductionScene.Amihan.cs": "b9b57935e4f43a54fd43da478e5d7c51b1566f863213c74fa65899a7b7e59586",
+ "Assets/TumbangPreso/Tests/AmihanAirburstPresentationTests.cs": "9963515c28b4aa3b9c09942d1bfd7869e02e1300175acca19e637373cdb10dcb",
+ "Assets/TumbangPreso/Tests/AmihanAirburstPresentationTests.cs.meta": "55e186f6db7003428857e957bc33db889c29bd717c03949950be8bf698f98844",
+ "Assets/TumbangPreso/Tests/PlayMode/AmihanKitPlayProbe.AirburstFilm.cs": "b67358182fa988faa8c5f986bedcc8be38d6462265d6f347a7c5a7f11c4b8ece",
+ "Assets/TumbangPreso/Tests/PlayMode/AmihanKitPlayProbe.AirburstFilm.cs.meta": "0da3e5ee1a1e41f21af6f2947b98b04e92c0f474b2d39d74a7c2c8c6ec63e31c",
+ "Assets/TumbangPreso/Tests/PlayMode/UltimateIntroductionProbe.cs": "e928f7d965c6e5e103f767cce627fed0ace110b036a784aad5bd99425f8ce9ed",
+ "tools/author_ultimate_intros.py": "09a76b4c423452dd363a59796e139264d832630fa87f0e2e9f300826ef196277"
+}

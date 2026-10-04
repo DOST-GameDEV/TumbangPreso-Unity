@@ -1,0 +1,121 @@
+{
+  "passed": false,
+  "faults": [
+    "host: the host stopped refereeing before it sampled (round active False). A host that freezes when a peer leaves is exactly what this row is looking for",
+    "client: the client was not in a live round at exit (round active False)",
+    "host did not use the expected HeroStrike session.",
+    "client did not use the expected HeroStrike session."
+  ],
+  "host": {
+    "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\competition-fullclassic1002\\demo-clean-direct\\host.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": false,
+        "score": 40,
+        "travelled": 40.7
+      },
+      {
+        "seat": 1,
+        "char": 0,
+        "bot": true,
+        "origin": "HandedToBot",
+        "taya": false,
+        "score": 40,
+        "travelled": 767.6
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 3580,
+        "travelled": 728.0
+      },
+      {
+        "seat": 3,
+        "char": 9,
+        "bot": true,
+        "origin": "Bot",
+        "taya": true,
+        "score": 3280,
+        "travelled": 785.9
+      }
+    ],
+    "role": "HOST",
+    "networked": "True",
+    "slot": "0",
+    "protocol": "129",
+    "sampled": "1112.9",
+    "round": "8",
+    "active": "False",
+    "defender": "3",
+    "mode": "Classic",
+    "map": "Kanto",
+    "structural": "BEB31538",
+    "hash": "1DF40AAC"
+  },
+  "client": {
+    "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Logs\\competition-fullclassic1002\\demo-clean-direct\\client.txt",
+    "seats": [
+      {
+        "seat": 0,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": false,
+        "score": 40,
+        "travelled": 42.6
+      },
+      {
+        "seat": 1,
+        "char": 0,
+        "bot": false,
+        "origin": "Human",
+        "taya": false,
+        "score": 40,
+        "travelled": 50.9
+      },
+      {
+        "seat": 2,
+        "char": 6,
+        "bot": true,
+        "origin": "Bot",
+        "taya": false,
+        "score": 3580,
+        "travelled": 783.0
+      },
+      {
+        "seat": 3,
+        "char": 9,
+        "bot": true,
+        "origin": "Bot",
+        "taya": true,
+        "score": 3280,
+        "travelled": 837.6
+      }
+    ],
+    "role": "CLIENT",
+    "networked": "True",
+    "slot": "1",
+    "protocol": "129",
+    "sampled": "1099.9",
+    "round": "8",
+    "active": "False",
+    "defender": "3",
+    "mode": "Classic",
+    "map": "Kanto",
+    "structural": "BEB31538",
+    "hash": "EDF4E12F"
+  },
+  "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Builds\\competition-matchflow1002\\TumbangPreso.exe",
+  "clientArtifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Builds\\competition-matchflow1002\\TumbangPreso.exe",
+  "expectedProtocolRefusal": false,
+  "runtimeSha256": "cffda47c23e633f1e3745737ea9781e8816ee8f852d836a231a7a2c03e8558e3",
+  "clientRuntimeSha256": "cffda47c23e633f1e3745737ea9781e8816ee8f852d836a231a7a2c03e8558e3",
+  "sharedInputUnchanged": true
+}

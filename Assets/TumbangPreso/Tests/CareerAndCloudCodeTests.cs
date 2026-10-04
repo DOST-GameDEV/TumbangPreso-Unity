@@ -19,6 +19,767 @@ namespace TumbangPreso.Tests
     /// </summary>
     public class CareerAndCloudCodeTests
     {
+        [TestCase("{}")]
+        [TestCase("null")]
+        [TestCase("{\"profile\":\"\",\"applied\":false}")]
+        [TestCase("{\"verdict\":\"\"}")]
+        [TestCase("{\"verdict\":\"unknown-server-error\"}")]
+        public void UnacknowledgedSubmissionKeepsRecordAndWitness(string output)
+            => CheckSubmissionCompletion(output, false);
+
+        [TestCase("pending")]
+        [TestCase("witnessed")]
+        [TestCase("disputed")]
+        [TestCase("impossible")]
+        [TestCase("offline")]
+        public void TerminalSubmissionVerdictRemovesOnlyAcknowledgedRecord(string verdict)
+            => CheckSubmissionCompletion("{\"verdict\":\"" + verdict + "\",\"applied\":false}", true);
+
+        private static void CheckSubmissionCompletion(string output, bool acknowledged)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"), "Career checks need an isolated profile.");
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career acknowledgement check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                var cache = typeof(TumbangPreso.Net.CareerStore).GetField("_cache", flags).GetValue(career);
+                var queue = (System.Collections.Generic.List<MatchRecord>)cache.GetType().GetField("Queue").GetValue(cache);
+                var witnesses = (System.Collections.Generic.List<string>)cache.GetType().GetField("QueueWitness").GetValue(cache);
+                queue.Clear(); witnesses.Clear();
+                var first = new MatchRecord { MatchId = "first-ack-check" };
+                var second = new MatchRecord { MatchId = "second-ack-check" };
+                queue.Add(first); queue.Add(second); witnesses.Add("first-witness"); witnesses.Add("second-witness");
+                System.Exception failure = null;
+                try { typeof(TumbangPreso.Net.CareerStore).GetMethod("CompleteSubmission", flags).Invoke(career, new object[] { cache, first, output }); }
+                catch (System.Reflection.TargetInvocationException error) { failure = error.InnerException; }
+                if (acknowledged)
+                {
+                    Assert.IsNull(failure); Assert.AreEqual(1, queue.Count); Assert.AreSame(second, queue[0]);
+                    CollectionAssert.AreEqual(new[] { "second-witness" }, witnesses);
+                }
+                else
+                {
+                    Assert.AreEqual(2, queue.Count, "Missing/unknown acknowledgement discarded a queued result.");
+                    Assert.AreSame(first, queue[0]); Assert.AreSame(second, queue[1]);
+                    CollectionAssert.AreEqual(new[] { "first-witness", "second-witness" }, witnesses);
+                    Assert.IsInstanceOf<InvalidDataException>(failure, "Invalid acknowledgement must reach the existing deferred-upload path.");
+                }
+            }
+            finally
+            {
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
+        [TestCase("{}")]
+        [TestCase("null")]
+        [TestCase("{\"other\":{}}")]
+        [TestCase("{\"output\":null}")]
+        public void MissingCloudOutputCannotReportSuccessfulDelivery(string response)
+        {
+            var read = typeof(TumbangPreso.Net.CloudCode).GetMethod("ReadOutput", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            System.Exception failure = null;
+            try { read.Invoke(null, new object[] { response }); }
+            catch (System.Reflection.TargetInvocationException error) { failure = error.InnerException; }
+            Assert.IsInstanceOf<System.InvalidOperationException>(failure, "An absent service output was accepted as successful delivery.");
+        }
+
+        [TestCase("{\"output\":{\"ok\":true}}", "{\"ok\":true}")]
+        [TestCase("{\"output\":[1,2]}", "[1,2]")]
+        [TestCase("{\"output\":false}", "false")]
+        [TestCase("{\"output\":0}", "0")]
+        public void CloudOutputKeepsCallerOwnedPayloadShape(string response, string expected)
+        {
+            var read = typeof(TumbangPreso.Net.CloudCode).GetMethod("ReadOutput", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            Assert.AreEqual(expected, read.Invoke(null, new object[] { response }));
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void LateSubmissionAcknowledgementCannotRemoveAnotherRecord(bool replaceAccountCache)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career pending identity check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                var cacheField = typeof(TumbangPreso.Net.CareerStore).GetField("_cache", flags);
+                var submittedCache = cacheField.GetValue(career);
+                var queue = (System.Collections.Generic.List<MatchRecord>)submittedCache.GetType().GetField("Queue").GetValue(submittedCache);
+                var witnesses = (System.Collections.Generic.List<string>)submittedCache.GetType().GetField("QueueWitness").GetValue(submittedCache);
+                queue.Clear(); witnesses.Clear();
+                var submitted = new MatchRecord { MatchId = "submitted-old" };
+                var remaining = new MatchRecord { MatchId = "not-submitted" };
+                queue.Add(submitted); queue.Add(remaining); witnesses.Add("old-witness"); witnesses.Add("remaining-witness");
+                if (replaceAccountCache)
+                {
+                    var nextCache = System.Activator.CreateInstance(submittedCache.GetType(), true);
+                    cacheField.SetValue(career, nextCache);
+                    queue = (System.Collections.Generic.List<MatchRecord>)nextCache.GetType().GetField("Queue").GetValue(nextCache);
+                    witnesses = (System.Collections.Generic.List<string>)nextCache.GetType().GetField("QueueWitness").GetValue(nextCache);
+                    queue.Add(remaining); witnesses.Add("remaining-witness");
+                }
+                else
+                {
+                    // Record's bounded queue can evict its oldest entry while upload awaits.
+                    queue.RemoveAt(0); witnesses.RemoveAt(0);
+                }
+                var accepted = (bool)typeof(TumbangPreso.Net.CareerStore).GetMethod("CompleteSubmission", flags)
+                    .Invoke(career, new object[] { submittedCache, submitted, "{\"verdict\":\"pending\",\"applied\":true}" });
+                Assert.AreEqual(1, queue.Count, "The late response removed a different queued result.");
+                Assert.AreSame(remaining, queue[0]); CollectionAssert.AreEqual(new[] { "remaining-witness" }, witnesses);
+                Assert.AreEqual(!replaceAccountCache, accepted, "An obsolete account upload must stop its old flush.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void CareerRefreshResponseCannotReplaceAnotherAccountCache(bool replaceAccountCache)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career refresh ownership check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                var cacheField = typeof(TumbangPreso.Net.CareerStore).GetField("_cache", flags);
+                var requestedCache = cacheField.GetValue(career);
+                if (replaceAccountCache) cacheField.SetValue(career, System.Activator.CreateInstance(requestedCache.GetType(), true));
+                career.Profile.Xp = 77;
+                var profile = new PlayerProfile { Xp = 420 };
+                // Build the endpoint's string-valued profile envelope without an extra JSON dependency.
+                string response = "{\"profile\":\"" + JsonUtility.ToJson(profile).Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"}";
+                var accepted = (bool)typeof(TumbangPreso.Net.CareerStore).GetMethod("CompleteRefresh", flags)
+                    .Invoke(career, new object[] { requestedCache, response });
+                Assert.AreEqual(replaceAccountCache ? 77 : 420, career.Profile.Xp, "An older account response overwrote the active career.");
+                Assert.AreEqual(!replaceAccountCache, accepted);
+            }
+            finally
+            {
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
+        [TestCase(false, false)]
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        [TestCase(true, true)]
+        public void RemainingCareerResponsesRespectAccountOwnership(bool historyResponse, bool replaceAccountCache)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career response ownership check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                var cacheField = typeof(TumbangPreso.Net.CareerStore).GetField("_cache", flags);
+                var requestedCache = cacheField.GetValue(career);
+                if (replaceAccountCache) cacheField.SetValue(career, System.Activator.CreateInstance(requestedCache.GetType(), true));
+                career.Profile.Xp = 77;
+                if (historyResponse)
+                {
+                    var remote = new MatchRecord { MatchId = "old-account-result" };
+                    string array = "[" + JsonUtility.ToJson(remote) + "]";
+                    string response = "{\"history\":\"" + array.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"}";
+                    System.Exception failure = null;
+                    System.Collections.Generic.List<MatchRecord> page = null;
+                    try { page = (System.Collections.Generic.List<MatchRecord>)typeof(TumbangPreso.Net.CareerStore).GetMethod("CompleteHistory", flags)
+                        .Invoke(career, new object[] { requestedCache, response, 0, 20 }); }
+                    catch (System.Reflection.TargetInvocationException error) { failure = error.InnerException; }
+                    if (replaceAccountCache)
+                        Assert.IsInstanceOf<System.OperationCanceledException>(failure, "An old account history request must cancel instead of displaying its results.");
+                    else
+                    {
+                        Assert.IsNull(failure); Assert.AreEqual(1, page.Count);
+                        Assert.AreEqual(remote.MatchId, page[0].MatchId);
+                    }
+                }
+                else
+                {
+                    var profile = new PlayerProfile { Xp = 420 };
+                    string response = "{\"profile\":\"" + JsonUtility.ToJson(profile).Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"}";
+                    typeof(TumbangPreso.Net.CareerStore).GetMethod("CompleteAbandon", flags)
+                        .Invoke(career, new object[] { requestedCache, response });
+                    Assert.AreEqual(replaceAccountCache ? 77 : 420, career.Profile.Xp,
+                        "An old abandon response replaced the active account career.");
+                }
+            }
+            finally
+            {
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void RefusedQueuedRecordsKeepRemainingWitnessesAligned(bool legacyMissingWitnesses)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career refusal witness check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                var cache = typeof(TumbangPreso.Net.CareerStore).GetField("_cache", flags).GetValue(career);
+                var queue = (System.Collections.Generic.List<MatchRecord>)cache.GetType().GetField("Queue").GetValue(cache);
+                var witnessField = cache.GetType().GetField("QueueWitness");
+                queue.Clear();
+                var remaining = new MatchRecord { MatchId = "valid-result", Players = new[] {
+                    new PlayerMatchStats { PlayerId = TumbangPreso.Net.CareerStore.LocalPlayerId, IsBot = false } } };
+                queue.Add(new MatchRecord { MatchId = "" }); queue.Add(remaining);
+                queue.Add(new MatchRecord { MatchId = "wrong-player", Players = new[] {
+                    new PlayerMatchStats { PlayerId = "another-player", IsBot = false } } });
+                witnessField.SetValue(cache, legacyMissingWitnesses ? null : new System.Collections.Generic.List<string> {
+                    "refused-first", "remaining-witness", "refused-last" });
+                int dropped = (int)typeof(TumbangPreso.Net.CareerStore).GetMethod("DropUnsubmittable", flags).Invoke(career, null);
+                Assert.AreEqual(2, dropped); Assert.AreEqual(1, queue.Count); Assert.AreSame(remaining, queue[0]);
+                var witnesses = (System.Collections.Generic.List<string>)witnessField.GetValue(cache);
+                Assert.IsNotNull(witnesses, "Legacy careers need an empty witness for their remaining record.");
+                CollectionAssert.AreEqual(new[] { legacyMissingWitnesses ? "" : "remaining-witness" }, witnesses,
+                    "The remaining result retained a different match's witness.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public async System.Threading.Tasks.Task AccountSyncWaitsForThePreviousAccountOperation(bool pendingFlush)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsFalse(TumbangPreso.GameServices.Account?.IsSignedIn ?? false, "This scheduling check must stay offline.");
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career account sync scheduling check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var busyField = typeof(TumbangPreso.Net.CareerStore).GetField(pendingFlush ? "_flushing" : "_refreshing", flags);
+            System.Threading.Tasks.Task sync = null;
+            try
+            {
+                var cache = typeof(TumbangPreso.Net.CareerStore).GetField("_cache", flags).GetValue(career);
+                busyField.SetValue(career, true);
+                sync = (System.Threading.Tasks.Task)typeof(TumbangPreso.Net.CareerStore).GetMethod("SyncAfterPendingWorkAsync", flags)
+                    .Invoke(career, new object[] { cache });
+                await System.Threading.Tasks.Task.Delay(20);
+                Assert.IsFalse(sync.IsCompleted, "The newly selected account sync was skipped while the previous request was busy.");
+                busyField.SetValue(career, false);
+                Assert.AreSame(sync, await System.Threading.Tasks.Task.WhenAny(sync, System.Threading.Tasks.Task.Delay(1000)),
+                    "The current account sync did not resume after the previous request finished.");
+                await sync;
+                Assert.AreEqual("Local career", career.Status, "The resumed current-account sync did not reach its offline refresh path.");
+            }
+            finally
+            {
+                busyField.SetValue(career, false);
+                if (sync != null) await System.Threading.Tasks.Task.WhenAny(sync, System.Threading.Tasks.Task.Delay(1000));
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public async System.Threading.Tasks.Task AccountSyncCoalescesItsOwnerAndDropsObsoleteWaiters(bool replaceAccountCache)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsFalse(TumbangPreso.GameServices.Account?.IsSignedIn ?? false);
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career account waiter ownership check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var type = typeof(TumbangPreso.Net.CareerStore);
+            var busy = type.GetField("_refreshing", flags);
+            var cacheField = type.GetField("_cache", flags);
+            var syncMethod = type.GetMethod("SyncAfterPendingWorkAsync", flags);
+            System.Threading.Tasks.Task first = null, next = null;
+            try
+            {
+                var cache = cacheField.GetValue(career); busy.SetValue(career, true);
+                first = (System.Threading.Tasks.Task)syncMethod.Invoke(career, new object[] { cache });
+                if (replaceAccountCache)
+                {
+                    var replacement = System.Activator.CreateInstance(cache.GetType(), true);
+                    cacheField.SetValue(career, replacement);
+                    next = (System.Threading.Tasks.Task)syncMethod.Invoke(career, new object[] { replacement });
+                    Assert.AreSame(first, await System.Threading.Tasks.Task.WhenAny(first, System.Threading.Tasks.Task.Delay(1000)));
+                    Assert.IsFalse(next.IsCompleted, "The new account waiter must survive the old waiter's cleanup.");
+                    Assert.AreSame(replacement, type.GetField("_accountSyncOwner", flags).GetValue(career));
+                }
+                else
+                {
+                    next = (System.Threading.Tasks.Task)syncMethod.Invoke(career, new object[] { cache });
+                    Assert.IsTrue(next.IsCompleted, "Repeated notifications must coalesce behind one pending sync.");
+                    Assert.IsFalse(first.IsCompleted);
+                }
+                busy.SetValue(career, false);
+                var pending = replaceAccountCache ? next : first;
+                Assert.AreSame(pending, await System.Threading.Tasks.Task.WhenAny(pending, System.Threading.Tasks.Task.Delay(1000)));
+                await pending;
+                Assert.IsNull(type.GetField("_accountSyncOwner", flags).GetValue(career));
+            }
+            finally
+            {
+                busy.SetValue(career, false);
+                if (first != null) await System.Threading.Tasks.Task.WhenAny(first, System.Threading.Tasks.Task.Delay(1000));
+                if (next != null) await System.Threading.Tasks.Task.WhenAny(next, System.Threading.Tasks.Task.Delay(1000));
+                Object.DestroyImmediate(owner);
+                type.GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void ResultDisputeCopyOnlyDescribesTheDisplayedMatch(bool sameMatch)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            var prior = TumbangPreso.Net.CareerStore.Instance;
+            var owner = new GameObject("Career verdict identity check");
+            var career = owner.AddComponent<TumbangPreso.Net.CareerStore>();
+            typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, career);
+            var boardOwner = new GameObject("Result verdict identity check"); boardOwner.SetActive(false);
+            var board = boardOwner.AddComponent<TumbangPreso.UI.MatchResult>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                var cache = typeof(TumbangPreso.Net.CareerStore).GetField("_cache", flags).GetValue(career);
+                var submitted = new MatchRecord { MatchId = "older-queued-result" };
+                var queue = (System.Collections.Generic.List<MatchRecord>)cache.GetType().GetField("Queue").GetValue(cache);
+                var witnesses = (System.Collections.Generic.List<string>)cache.GetType().GetField("QueueWitness").GetValue(cache);
+                queue.Clear(); witnesses.Clear(); queue.Add(submitted); witnesses.Add("");
+                typeof(TumbangPreso.Net.CareerStore).GetMethod("CompleteSubmission", flags)
+                    .Invoke(career, new object[] { cache, submitted, "{\"verdict\":\"disputed\"}" });
+                typeof(TumbangPreso.UI.MatchResult).GetField("_lastRecord", flags)
+                    .SetValue(board, sameMatch ? submitted : new MatchRecord { MatchId = "current-result" });
+                string line = (string)typeof(TumbangPreso.UI.MatchResult).GetMethod("RankLine", flags)
+                    .Invoke(board, new object[] { null });
+                Assert.AreEqual(sameMatch, line.Contains("THIS RESULT DID NOT MATCH"),
+                    "An older queued result's dispute was displayed as the current match's verdict.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(boardOwner); Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.CareerStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WalletResponseCannotBecomeAnotherAccountsBalance(bool changeOwner)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsTrue(string.IsNullOrWhiteSpace(TumbangPreso.GameServices.Account?.PlayerId), "This completion check uses isolated offline identity.");
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var tokenField = typeof(TumbangPreso.Net.NetIdentity).GetField("_overrideTokenForTesting", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            string previousToken = (string)tokenField.GetValue(null);
+            var previousWallet = TumbangPreso.Net.WalletStore.Instance;
+            var owner = new GameObject("Wallet response ownership check");
+            var wallet = owner.AddComponent<TumbangPreso.Net.WalletStore>();
+            try
+            {
+                TumbangPreso.Net.NetIdentity.OverrideForTesting("wallet-request-owner");
+                string requested = TumbangPreso.Net.CareerStore.LocalPlayerId;
+                if (changeOwner) TumbangPreso.Net.NetIdentity.OverrideForTesting("wallet-current-owner");
+                var cache = typeof(TumbangPreso.Net.WalletStore).GetField("_cache", flags).GetValue(wallet);
+                cache.GetType().GetField("Wallet").SetValue(cache, new Wallet { Balance = 77 });
+                cache.GetType().GetField("Known").SetValue(cache, true);
+                cache.GetType().GetField("OwnerId").SetValue(cache, TumbangPreso.Net.CareerStore.LocalPlayerId);
+                string body = JsonUtility.ToJson(new Wallet { Balance = 420 });
+                string response = "{\"wallet\":\"" + body.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\",\"result\":\"bought\",\"paid\":25}";
+                typeof(TumbangPreso.Net.WalletStore).GetMethod("CompleteResponse", flags).Invoke(wallet, new object[] { requested, response });
+                Assert.AreEqual(changeOwner ? 77 : 420, wallet.Balance, "An older account wallet answer replaced the current account's balance.");
+                Assert.AreEqual(changeOwner ? 0 : 25, wallet.LastPaid, "An older account's payout was adopted by the current account.");
+            }
+            finally
+            {
+                TumbangPreso.Net.NetIdentity.OverrideForTesting(previousToken);
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.WalletStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, previousWallet);
+            }
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void WalletAccountNotificationRetiresOnlyAnotherOwnersCache(bool changeOwner)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsTrue(string.IsNullOrWhiteSpace(TumbangPreso.GameServices.Account?.PlayerId));
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var tokenField = typeof(TumbangPreso.Net.NetIdentity).GetField("_overrideTokenForTesting", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            string previousToken = (string)tokenField.GetValue(null);
+            var prior = TumbangPreso.Net.WalletStore.Instance;
+            var owner = new GameObject("Wallet account cache check"); var wallet = owner.AddComponent<TumbangPreso.Net.WalletStore>();
+            try
+            {
+                TumbangPreso.Net.NetIdentity.OverrideForTesting("wallet-owner-a");
+                var cache = typeof(TumbangPreso.Net.WalletStore).GetField("_cache", flags).GetValue(wallet);
+                cache.GetType().GetField("OwnerId").SetValue(cache, TumbangPreso.Net.CareerStore.LocalPlayerId);
+                cache.GetType().GetField("Known").SetValue(cache, true);
+                cache.GetType().GetField("Wallet").SetValue(cache, new Wallet { Balance = 77 });
+                typeof(TumbangPreso.Net.WalletStore).GetProperty("LastPaid").SetValue(wallet, 25);
+                if (changeOwner) TumbangPreso.Net.NetIdentity.OverrideForTesting("wallet-owner-b");
+                typeof(TumbangPreso.Net.WalletStore).GetMethod("OnAccountChanged", flags).Invoke(wallet, null);
+                Assert.AreEqual(!changeOwner, wallet.Known, "The account kept another owner's known wallet.");
+                Assert.AreEqual(changeOwner ? -1 : 77, wallet.Balance);
+                Assert.AreEqual(changeOwner ? 0 : 25, wallet.LastPaid);
+            }
+            finally
+            {
+                TumbangPreso.Net.NetIdentity.OverrideForTesting(previousToken); Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.WalletStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
+        [Test]
+        public void WalletScheduledRefreshWaitsForThePendingRequest()
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsFalse(TumbangPreso.Net.WalletStore.CanTransact, "The scheduling check must stay offline.");
+            var prior = TumbangPreso.Net.WalletStore.Instance;
+            var owner = new GameObject("Wallet deferred refresh check"); var wallet = owner.AddComponent<TumbangPreso.Net.WalletStore>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            try
+            {
+                var refresh = typeof(TumbangPreso.Net.WalletStore).GetField("_refreshAfter", flags);
+                refresh.SetValue(wallet, Time.unscaledTime);
+                typeof(TumbangPreso.Net.WalletStore).GetProperty("Busy").SetValue(wallet, true);
+                typeof(TumbangPreso.Net.WalletStore).GetMethod("Update", flags).Invoke(wallet, null);
+                Assert.GreaterOrEqual((float)refresh.GetValue(wallet), 0, "A busy wallet consumed its pending refresh.");
+                typeof(TumbangPreso.Net.WalletStore).GetProperty("Busy").SetValue(wallet, false);
+                typeof(TumbangPreso.Net.WalletStore).GetMethod("Update", flags).Invoke(wallet, null);
+                Assert.Less((float)refresh.GetValue(wallet), 0);
+            }
+            finally
+            {
+                Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.WalletStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, prior);
+            }
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void SocialResponseCannotReplaceAnotherAccountsFriends(bool changeOwner)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsTrue(string.IsNullOrWhiteSpace(TumbangPreso.GameServices.Account?.PlayerId));
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var tokenField = typeof(TumbangPreso.Net.NetIdentity).GetField("_overrideTokenForTesting", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            string previousToken = (string)tokenField.GetValue(null); var previous = TumbangPreso.Net.SocialStore.Instance;
+            var owner = new GameObject("Social response ownership check"); var social = owner.AddComponent<TumbangPreso.Net.SocialStore>();
+            try
+            {
+                TumbangPreso.Net.NetIdentity.OverrideForTesting("social-owner-a");
+                string requested = TumbangPreso.Net.CareerStore.LocalPlayerId;
+                if (changeOwner) TumbangPreso.Net.NetIdentity.OverrideForTesting("social-owner-b");
+                social.List.Friends.Clear(); social.List.Friends.Add(new FriendRef { PlayerId = "current-friend", Handle = "CURRENT#4417" });
+                social.List.Blocked.Clear(); social.List.Blocked.Add("current-block");
+                var remote = new SocialList(); remote.Friends.Add(new FriendRef { PlayerId = "previous-friend", Handle = "PREVIOUS#4427" });
+                remote.Blocked.Add("previous-block"); string body = JsonUtility.ToJson(remote);
+                string response = "{\"list\":\"" + body.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"}";
+                typeof(TumbangPreso.Net.SocialStore).GetMethod("Adopt", flags).Invoke(social, new object[] { requested, response });
+                Assert.AreEqual(changeOwner ? "current-friend" : "previous-friend", social.List.Friends.Single().PlayerId,
+                    "An old account reply replaced the current friends.");
+                Assert.AreEqual(changeOwner ? "current-block" : "previous-block", social.List.Blocked.Single(),
+                    "An old account reply changed who the current account blocks.");
+            }
+            finally
+            {
+                TumbangPreso.Net.NetIdentity.OverrideForTesting(previousToken); Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.SocialStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, previous);
+            }
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void SocialHandleLookupCannotOverwriteAnotherAccountsSearch(bool changeOwner)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsTrue(string.IsNullOrWhiteSpace(TumbangPreso.GameServices.Account?.PlayerId));
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var tokenField = typeof(TumbangPreso.Net.NetIdentity).GetField("_overrideTokenForTesting", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            string previousToken = (string)tokenField.GetValue(null); var previous = TumbangPreso.Net.SocialStore.Instance;
+            var owner = new GameObject("Social handle lookup ownership check"); var social = owner.AddComponent<TumbangPreso.Net.SocialStore>();
+            try
+            {
+                TumbangPreso.Net.NetIdentity.OverrideForTesting("social-lookup-owner-a");
+                string requested = TumbangPreso.Net.CareerStore.LocalPlayerId;
+                if (changeOwner) TumbangPreso.Net.NetIdentity.OverrideForTesting("social-lookup-owner-b");
+                typeof(TumbangPreso.Net.SocialStore).GetProperty("SearchStatus").SetValue(social, "CURRENT ACCOUNT SEARCH");
+                // Empty resolution cannot dispatch a friend request or reach an endpoint.
+                typeof(TumbangPreso.Net.SocialStore).GetMethod("CompleteHandleLookup", flags).Invoke(social, new object[] { requested, "{}" });
+                Assert.AreEqual(changeOwner ? "CURRENT ACCOUNT SEARCH" : "NO ACCOUNT HAS THAT EXACT NAME AND TAG.", social.SearchStatus);
+            }
+            finally
+            {
+                TumbangPreso.Net.NetIdentity.OverrideForTesting(previousToken); Object.DestroyImmediate(owner);
+                typeof(TumbangPreso.Net.SocialStore).GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, previous);
+            }
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void SocialCacheReadsRetireOnlyAnotherOwnersFriendsAndBlocks(bool changeOwner)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsTrue(string.IsNullOrWhiteSpace(TumbangPreso.GameServices.Account?.PlayerId));
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var type = typeof(TumbangPreso.Net.SocialStore);
+            var tokenField = typeof(TumbangPreso.Net.NetIdentity).GetField("_overrideTokenForTesting", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            string previousToken = (string)tokenField.GetValue(null); var previous = TumbangPreso.Net.SocialStore.Instance;
+            TumbangPreso.Net.NetIdentity.OverrideForTesting("social-cache-owner-a");
+            var owner = new GameObject("Social cache account switch check"); var social = owner.AddComponent<TumbangPreso.Net.SocialStore>();
+            try
+            {
+                var cache = type.GetField("_cache", flags).GetValue(social);
+                cache.GetType().GetField("OwnerId").SetValue(cache, TumbangPreso.Net.CareerStore.LocalPlayerId);
+                var list = new SocialList(); list.Friends.Add(new FriendRef { PlayerId = "old-friend", Handle = "OLD#4417" }); list.Blocked.Add("old-block");
+                cache.GetType().GetField("List").SetValue(cache, list);
+                type.GetProperty("SearchStatus").SetValue(social, "OLD ACCOUNT SEARCH");
+                int notifications = 0; social.Changed += () => notifications++;
+                if (changeOwner) TumbangPreso.Net.NetIdentity.OverrideForTesting("social-cache-owner-b");
+                var visible = social.List;
+                Assert.AreEqual(changeOwner ? 0 : 1, visible.Friends.Count, "The friends rail exposed another account's cached friend.");
+                Assert.AreEqual(changeOwner ? 0 : 1, visible.Blocked.Count, "Lobby admission inherited another account's blocks.");
+                Assert.AreEqual(changeOwner ? "" : "OLD ACCOUNT SEARCH", social.SearchStatus);
+                Assert.AreEqual(changeOwner ? 1 : 0, notifications, "An ownership change should redraw once; ordinary reads should not notify.");
+                Assert.AreSame(visible, social.List, "Repeated reads discarded the current owner's list.");
+                Assert.AreEqual(changeOwner ? 1 : 0, notifications);
+                if (!changeOwner) Assert.AreSame(list, visible, "A same-account notification discarded its offline list.");
+            }
+            finally
+            {
+                TumbangPreso.Net.NetIdentity.OverrideForTesting(previousToken); Object.DestroyImmediate(owner);
+                type.GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, previous);
+            }
+        }
+
+        [TestCase("_loading")]
+        [TestCase("_writing")]
+        public void SocialAccountRefreshSurvivesThePreviousOwnersPendingOperation(string pendingOperation)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsTrue(string.IsNullOrWhiteSpace(TumbangPreso.GameServices.Account?.PlayerId));
+            Assert.IsFalse(TumbangPreso.Net.NetIdentity.IsOnline, "The scheduling check must stay offline.");
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var type = typeof(TumbangPreso.Net.SocialStore);
+            var tokenField = typeof(TumbangPreso.Net.NetIdentity).GetField("_overrideTokenForTesting", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            string previousToken = (string)tokenField.GetValue(null); var previous = TumbangPreso.Net.SocialStore.Instance;
+            TumbangPreso.Net.NetIdentity.OverrideForTesting("social-pending-owner-a");
+            var owner = new GameObject("Social deferred account refresh check"); var social = owner.AddComponent<TumbangPreso.Net.SocialStore>();
+            try
+            {
+                var cache = type.GetField("_cache", flags).GetValue(social);
+                cache.GetType().GetField("OwnerId").SetValue(cache, TumbangPreso.Net.CareerStore.LocalPlayerId);
+                type.GetField("_nextPresence", flags).SetValue(social, float.PositiveInfinity);
+                type.GetField("_nextPresenceChange", flags).SetValue(social, float.PositiveInfinity);
+                var busy = type.GetField(pendingOperation, flags); busy.SetValue(social, true);
+                TumbangPreso.Net.NetIdentity.OverrideForTesting("social-pending-owner-b");
+                social.Refresh();
+                var refresh = type.GetField("_refreshPending", flags);
+                Assert.IsNotNull(refresh, "The new account's refresh needs to survive the previous account's pending operation.");
+                Assert.IsTrue((bool)refresh.GetValue(social));
+                type.GetMethod("Update", flags).Invoke(social, null);
+                Assert.IsTrue((bool)refresh.GetValue(social), "A busy request consumed the new account's refresh.");
+                busy.SetValue(social, false);
+                // An offline new owner keeps the request until its own sign-in notification.
+                type.GetMethod("Update", flags).Invoke(social, null);
+                Assert.IsTrue((bool)refresh.GetValue(social), "An offline account consumed the refresh before it could use its own session.");
+                Assert.IsFalse((bool)type.GetField("_loading", flags).GetValue(social));
+            }
+            finally
+            {
+                TumbangPreso.Net.NetIdentity.OverrideForTesting(previousToken); Object.DestroyImmediate(owner);
+                type.GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, previous);
+            }
+        }
+
+        [TestCase(false, false)]
+        [TestCase(true, false)]
+        [TestCase(true, true)]
+        public async System.Threading.Tasks.Task SocialOfflineAndGuestAccountsNeverUseThePrimaryServiceSession(bool guest, bool reportedSignedIn)
+        {
+            Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+            Assert.IsFalse(TumbangPreso.Net.NetIdentity.IsOnline);
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var accountProperty = typeof(TumbangPreso.GameServices).GetProperty("Account");
+            var priorAccount = TumbangPreso.GameServices.Account; var priorSocial = TumbangPreso.Net.SocialStore.Instance;
+            var accountOwner = new GameObject("Inactive offline social account"); accountOwner.SetActive(false);
+            var account = accountOwner.AddComponent<TumbangPreso.Net.PlayerAccount>();
+            // Keep Awake dormant: this fixture has no authentication initialization or credential access.
+            typeof(TumbangPreso.Net.PlayerAccount).GetField("_profile", flags).SetValue(account, new AccountProfile { PlayerId = guest ? "guest-social-test" : "offline-social-test" });
+            typeof(TumbangPreso.Net.PlayerAccount).GetProperty("IsGuest").SetValue(account, guest);
+            typeof(TumbangPreso.Net.PlayerAccount).GetProperty("IsSignedIn").SetValue(account, reportedSignedIn);
+            accountProperty.SetValue(null, account);
+            var owner = new GameObject("Social offline service guard check"); var social = owner.AddComponent<TumbangPreso.Net.SocialStore>();
+            var type = typeof(TumbangPreso.Net.SocialStore);
+            try
+            {
+                // Ordinary EditMode components do not receive runtime lifecycle callbacks.
+                // Drive the enable hook explicitly while keeping PlayerAccount.Awake dormant.
+                type.GetMethod("OnEnable", flags)?.Invoke(social, null);
+                social.Refresh();
+                Assert.IsFalse((bool)type.GetField("_loading", flags).GetValue(social));
+                social.RequestHandle("MARIA#4417");
+                Assert.AreEqual("SIGN IN TO ADD FRIENDS.", social.SearchStatus, "The offline/guest lookup attempted to use a primary-account credential.");
+                await (System.Threading.Tasks.Task)type.GetMethod("Post", flags).Invoke(social, new object[] { new { action = "block", playerId = "someone-else" } });
+                Assert.AreEqual("SIGN IN TO MANAGE FRIENDS.", social.SearchStatus);
+                Assert.IsFalse((bool)type.GetField("_writing", flags).GetValue(social));
+                type.GetMethod("Update", flags).Invoke(social, null);
+                Assert.IsNull(type.GetField("_lastPresenceFault", flags).GetValue(social), "Offline/guest presence reached the service helper.");
+                social.List.Friends.Add(new FriendRef { PlayerId = "prior-account-friend" });
+                typeof(TumbangPreso.Net.PlayerAccount).GetField("_profile", flags).SetValue(account, new AccountProfile { PlayerId = "guest-next-social-test" });
+                var changed = typeof(TumbangPreso.Net.PlayerAccount).GetField("Changed", flags | System.Reflection.BindingFlags.Public).GetValue(account) as System.Action;
+                changed?.Invoke();
+                var cache = type.GetField("_cache", flags).GetValue(social);
+                var notifiedList = (SocialList)cache.GetType().GetField("List").GetValue(cache);
+                Assert.IsEmpty(notifiedList.Friends, "The account notification left the previous rail visible until a later read.");
+                Assert.AreEqual("", social.SearchStatus);
+            }
+            finally
+            {
+                type.GetMethod("OnDisable", flags)?.Invoke(social, null);
+                Object.DestroyImmediate(owner); Object.DestroyImmediate(accountOwner);
+                accountProperty.SetValue(null, priorAccount);
+                type.GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static).SetValue(null, priorSocial);
+            }
+        }
+
+        private sealed class SocialAckFixture : System.IDisposable
+        {
+            internal const System.Reflection.BindingFlags Hidden = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            internal readonly TumbangPreso.Net.SocialStore Store;
+            private readonly GameObject _accountRoot, _socialRoot;
+            private readonly TumbangPreso.Net.PlayerAccount _account;
+            private readonly TumbangPreso.Net.PlayerAccount _previousAccount = TumbangPreso.GameServices.Account;
+            private readonly TumbangPreso.Net.SocialStore _previousSocial = TumbangPreso.Net.SocialStore.Instance;
+
+            internal SocialAckFixture(bool signedIn = false, bool guest = false)
+            {
+                Assert.IsTrue(System.Environment.GetCommandLineArgs().Contains("-tp-profile"));
+                Assert.IsFalse(TumbangPreso.Net.NetIdentity.IsOnline, "Acknowledgement fixtures never initialize a service session.");
+                _accountRoot = new GameObject("Dormant social acknowledgement account"); _accountRoot.SetActive(false);
+                _account = _accountRoot.AddComponent<TumbangPreso.Net.PlayerAccount>();
+                SetOwner("ack-owner-a");
+                typeof(TumbangPreso.Net.PlayerAccount).GetProperty("IsSignedIn").SetValue(_account, signedIn);
+                typeof(TumbangPreso.Net.PlayerAccount).GetProperty("IsGuest").SetValue(_account, guest);
+                typeof(TumbangPreso.GameServices).GetProperty("Account").SetValue(null, _account);
+                _socialRoot = new GameObject("Dormant social acknowledgement store"); _socialRoot.SetActive(false);
+                Store = _socialRoot.AddComponent<TumbangPreso.Net.SocialStore>();
+                _ = Store.List; // Stamp the current local owner without calling an endpoint.
+            }
+
+            internal void SetOwner(string id) => typeof(TumbangPreso.Net.PlayerAccount).GetField("_profile", Hidden)
+                .SetValue(_account, new AccountProfile { PlayerId = id });
+
+            internal object Invoke(string name, params object[] arguments)
+            {
+                var method = typeof(TumbangPreso.Net.SocialStore).GetMethod(name, Hidden);
+                Assert.IsNotNull(method, "SocialStore must expose its current-owner request acknowledgement path.");
+                return method.Invoke(Store, arguments);
+            }
+
+            public void Dispose()
+            {
+                Object.DestroyImmediate(_socialRoot); Object.DestroyImmediate(_accountRoot);
+                typeof(TumbangPreso.GameServices).GetProperty("Account").SetValue(null, _previousAccount);
+                typeof(TumbangPreso.Net.SocialStore).GetProperty("Instance").SetValue(null, _previousSocial);
+            }
+        }
+
+        [TestCase("outgoing")]
+        [TestCase("friend")]
+        [TestCase("missing")]
+        public void SocialRequestAcknowledgementNeedsItsTargetInAnAcceptedReply(string outcome)
+        {
+            using (var fixture = new SocialAckFixture())
+            {
+                var list = new SocialList();
+                if (outcome == "outgoing") list.Outgoing.Add(new FriendRef { PlayerId = "ack-target" });
+                if (outcome == "friend") list.Friends.Add(new FriendRef { PlayerId = "ack-target" });
+                string body = JsonUtility.ToJson(list);
+                string reply = "{\"list\":\"" + body.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"}";
+                object adoption = fixture.Invoke("Adopt", "ack-owner-a", reply);
+                Assert.IsInstanceOf<bool>(adoption, "List adoption must report whether this response was accepted.");
+                bool confirmed = (bool)fixture.Invoke("CompleteRequest", "ack-owner-a", "ack-target", "TARGET#4417", (bool)adoption);
+                Assert.AreEqual(outcome != "missing", confirmed);
+                Assert.AreEqual(outcome != "missing" ? "REQUEST SENT TO TARGET#4417." : "REQUEST COULD NOT BE CONFIRMED. TRY AGAIN WHEN ONLINE.", fixture.Store.SearchStatus);
+            }
+        }
+
+        [TestCase(false, false)]
+        [TestCase(true, true)]
+        public void SocialRequestAcknowledgementCannotUseACachedRowOrAnotherOwnersReply(bool changeOwner, bool acceptedReply)
+        {
+            using (var fixture = new SocialAckFixture())
+            {
+                if (changeOwner) fixture.SetOwner("ack-owner-b");
+                fixture.Store.List.Outgoing.Add(new FriendRef { PlayerId = "ack-target" });
+                typeof(TumbangPreso.Net.SocialStore).GetProperty("SearchStatus").SetValue(fixture.Store, "CURRENT OWNER SEARCH");
+                bool confirmed = (bool)fixture.Invoke("CompleteRequest", "ack-owner-a", "ack-target", "TARGET#4417", acceptedReply);
+                Assert.IsFalse(confirmed, "A cached row or stale owner's answer was treated as this attempt's acknowledgement.");
+                Assert.AreEqual(changeOwner ? "CURRENT OWNER SEARCH" : "REQUEST COULD NOT BE CONFIRMED. TRY AGAIN WHEN ONLINE.", fixture.Store.SearchStatus);
+            }
+        }
+
+        [TestCase("offline")]
+        [TestCase("guest")]
+        [TestCase("self")]
+        [TestCase("blocked")]
+        [TestCase("busy")]
+        public async System.Threading.Tasks.Task SocialRequestAsyncRefusesOfflineLocalAndBusyActionsWithoutDispatch(string refusal)
+        {
+            using (var fixture = new SocialAckFixture(signedIn: refusal != "offline", guest: refusal == "guest"))
+            {
+                string target = refusal == "self" ? "ack-owner-a" : "ack-target";
+                if (refusal == "blocked") fixture.Store.List.Blocked.Add(target);
+                if (refusal == "busy") typeof(TumbangPreso.Net.SocialStore).GetField("_writing", SocialAckFixture.Hidden).SetValue(fixture.Store, true);
+                var method = typeof(TumbangPreso.Net.SocialStore).GetMethod("RequestAsync");
+                Assert.IsNotNull(method, "Callers need an awaitable acknowledgement rather than async void dispatch.");
+                bool confirmed = await (System.Threading.Tasks.Task<bool>)method.Invoke(fixture.Store, new object[] { target, "TARGET#4417" });
+                Assert.IsFalse(confirmed);
+                string expected = refusal == "self" ? "THAT IS YOU."
+                    : refusal == "blocked" ? "UNBLOCK THEM FIRST."
+                    : refusal == "busy" ? "A FRIEND UPDATE IS STILL IN PROGRESS. TRY AGAIN."
+                    : "SIGN IN TO ADD FRIENDS.";
+                Assert.AreEqual(expected, fixture.Store.SearchStatus);
+                Assert.IsFalse((bool)typeof(TumbangPreso.Net.SocialStore).GetField("_loading", SocialAckFixture.Hidden).GetValue(fixture.Store));
+                Assert.AreEqual(refusal == "busy", (bool)typeof(TumbangPreso.Net.SocialStore).GetField("_writing", SocialAckFixture.Hidden).GetValue(fixture.Store));
+            }
+        }
+
+        [TestCase(null)]
+        [TestCase("{}")]
+        [TestCase("{\"list\":\"null\"}")]
+        public void SocialRequestInvalidReplyCannotEraseOrConfirmTheExistingCache(string reply)
+        {
+            using (var fixture = new SocialAckFixture())
+            {
+                fixture.Store.List.Outgoing.Add(new FriendRef { PlayerId = "ack-target" });
+                object adoption = fixture.Invoke("Adopt", "ack-owner-a", reply);
+                Assert.IsInstanceOf<bool>(adoption);
+                Assert.IsFalse((bool)adoption);
+                Assert.AreEqual("ack-target", fixture.Store.List.Outgoing.Single().PlayerId, "An invalid reply erased the known social cache.");
+                Assert.IsFalse((bool)fixture.Invoke("CompleteRequest", "ack-owner-a", "ack-target", "TARGET#4417", (bool)adoption));
+            }
+        }
+
         private const string AssetsRoot = "Assets/TumbangPreso";
         private const string CloudCodeRoot = "ugs/cloud-code";
 

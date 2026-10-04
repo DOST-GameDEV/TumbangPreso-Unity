@@ -1,0 +1,41 @@
+{
+  "provenance": "Original deterministic synthesis (numpy only); no external samples, voices or paid API.",
+  "listening": "Not yet heard by the owner in the game mix. Peak and RMS are measurements, not approval.",
+  "cues": [
+    {
+      "cue": "sfx_ult_theme_amihan",
+      "seconds": 5.6,
+      "peak": 0.7,
+      "rms": 0.0841911083227065,
+      "sha256": "f3d631c0006379b4419a468146e2744bd7481426d54b81248fbb94ad1d11baf3"
+    },
+    {
+      "cue": "sfx_amihan_storm_release",
+      "seconds": 2.0,
+      "peak": 0.8,
+      "rms": 0.06573509184533338,
+      "sha256": "9fc3183bf86020dadce8073f563c1572e32848c83db6d1edabf096ae6705a993"
+    },
+    {
+      "cue": "sfx_cast_amihan_updraft",
+      "seconds": 1.0,
+      "peak": 0.6,
+      "rms": 0.11407909919973869,
+      "sha256": "fa9aca885c6f580bcaa3b6a7de43a87ea585c0b4626237b5f829b07d3eb50d14"
+    },
+    {
+      "cue": "sfx_amihan_updraft_gust",
+      "seconds": 0.55,
+      "peak": 0.45,
+      "rms": 0.12731848037713803,
+      "sha256": "4ce6f252339026af7efa3adc3f7300ba63769a67d8830155551c0e9aebaa3abd"
+    },
+    {
+      "cue": "sfx_amihan_updraft_settle",
+      "seconds": 0.5,
+      "peak": 0.5,
+      "rms": 0.07769866461532379,
+      "sha256": "2ab77387ec705cd78f73aa3dc1000936846be87691651f9955500526218616a4"
+    }
+  ]
+}

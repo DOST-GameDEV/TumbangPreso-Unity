@@ -16,7 +16,7 @@ namespace TumbangPreso.Abilities
     /// | Signature | DRIFT | Propel forward in the target direction; inflicts Whirled and slightly pushes back other players. 35 s. |
     /// | Attacking | FEATHERFALL | Fly for 5 seconds; move and throw aloft, descend to retrieve. 40 s (updated owner table, 2026-09-26). |
     /// | Defending | WHIRLWIND | An arc-shaped gale that inflicts Whirled on players it hits as it swiftly moves forward. Lasts 2.5 s. 35 s. |
-    /// | Ultimate | AIRBURST | After a 1.5 s delay, a map-wide fan spanning60degrees inflicts Whirled and sends caught players and slippers airborne toward the edge. 15 points. |
+    /// | Ultimate | AIRBURST | (v3.2: released in the shared cutscene; play resumes on the hit, no live delay) A map-wide fan spanning60degrees inflicts Whirled and sends caught players and slippers airborne toward the edge. 15 points. |
     ///
     /// Every number is in `Core.AmihanRules`; the design, the decisions the owner left open and
     /// every moving part are in `docs/reports/amihan-kit-2026-09-25/plan.md`, and the look, the
@@ -323,16 +323,17 @@ namespace TumbangPreso.Abilities
 
             public StormSurge(AmihanHeroKit kit)
                 : base("amihan_ultimate", "AIRBURST",
-                       "After 1.5 s, unleash a 60 degree fan of wind across the map. Players caught are Whirled and thrown airborne; caught slippers fly toward the arena edge.",
+                       "Unleash a monsoon across the whole court in front of you and everyone close around you. Players caught are Whirled and thrown airborne; caught slippers fly toward the arena edge.",
                        0.0f, 0.0f, AbilityGlyph.AmihanStormSurge,
-                       summary: "After 1.5 s, a 60 degree wind fan blows caught players and slippers toward the edge.",
-                       castAction: "hero-amihan-storm", viewmodelAction: "storm-call",
-                       castCue: "sfx_cast_amihan_storm")
+                       summary: "A monsoon blows everyone in front of you, and around you, toward the edge.",
+                       // v3.2: no press sound; the cutscene's theme carries the call and the release cue lands on the hit.
+                       castAction: "hero-amihan-storm", viewmodelAction: "storm-call")
             {
                 // The adopted Wiki delay is the shared ability windup. The storm's
                 // telegraph and contact boundary use the same Core rule values.
                 _kit=kit;
-                Windup = AmihanRules.StormSurgeGatherSeconds;
+                // v3.2: the shared cutscene shows the release; play resumes on the hit (`AmihanRules.StormSurgeDelaySeconds`, 0).
+                Windup = AmihanRules.StormSurgeDelaySeconds;
             }
 
             public override void Activate(AbilityContext ctx)
@@ -350,10 +351,11 @@ namespace TumbangPreso.Abilities
 
             protected override void OnActivate(AbilityContext ctx)
             {
-                // The end of the delay: the wind leaves. A storm that was never spawned (an editor
-                // test calling this directly, a headless harness) is spawned and released at once.
+                // The wind leaves. v3.2: the cutscene already showed it leave, so the fan is spawned at the age the cutscene's
+                // last frame drew (`AmihanStorm.CutsceneTail` after the release) and the host throws everyone in it now.
                 if (_storm == null && ctx?.Motor != null)
-                    _storm = AmihanStorm.Spawn(ctx.Position, ctx.Forward, ctx.Motor.PlayerSlot, this, AmihanRules.StormSurgeGatherSeconds);
+                    _storm = AmihanStorm.Spawn(ctx.Position, ctx.Forward, ctx.Motor.PlayerSlot, this,
+                        AmihanRules.StormSurgeGatherSeconds + AmihanStorm.CutsceneTail);
                 _storm?.Release();
                 _storm = null;
             }

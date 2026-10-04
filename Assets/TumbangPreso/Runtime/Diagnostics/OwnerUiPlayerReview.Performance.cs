@@ -32,12 +32,20 @@ namespace TumbangPreso.Diagnostics
         private readonly PerformanceActions _performanceActions = new PerformanceActions();
         private DriveInfo _performanceDrive;
         private float _performanceDiskCheckAt;
+        private bool _performanceBinary;
+        private const long PerformanceTraceBudget = 512L * 1024 * 1024;
 
         private bool PerformanceHasHeadroom()
         {
             if (_finished) return false;
             if (Time.realtimeSinceStartup < _performanceDiskCheckAt) return true;
             _performanceDiskCheckAt = Time.realtimeSinceStartup + 1;
+            if (_performanceBinary && Directory.EnumerateFiles(_folder, "*.raw")
+                    .Sum(path => new FileInfo(path).Length) >= PerformanceTraceBudget)
+            {
+                Finish(false, "Binary profiler capture reached its 512 MiB budget. Completed timing windows are retained; this is not a complete performance pass.");
+                return false;
+            }
             _performanceDrive ??= new DriveInfo(Path.GetPathRoot(_folder));
             // Leave the 4 GiB reserve plus room for the profiler's final buffered write.
             if (_performanceDrive.AvailableFreeSpace >= 5L * 1024 * 1024 * 1024) return true;
@@ -56,6 +64,7 @@ namespace TumbangPreso.Diagnostics
             probe._folder = Path.GetFullPath(args[at + 1]);
             Directory.CreateDirectory(probe._folder);
             probe._performanceReview = probe._measureMenus = true;
+            probe._performanceBinary = args.Contains("-tp-performance-binary");
             probe._deadline = Time.realtimeSinceStartup + 1500;
             probe.StartFrameWindow("00-boot-to-title");
             probe.StartCoroutine(probe.Guard(probe.Walk()));
@@ -63,9 +72,11 @@ namespace TumbangPreso.Diagnostics
 
         private void BeginPerformanceProfile(string name)
         {
-            // Development/autoconnect also permits live inspection. The binary files are
-            // the saved evidence; enabling autoconnect alone does not record a capture.
+            // Routine timing keeps CSV evidence without the profiler's collection cost.
+            // Large binary traces require an explicit, separately budgeted diagnostic.
             Profiler.enabled = false;
+            Profiler.enableBinaryLog = false;
+            if (!_performanceBinary) return;
             Profiler.logFile = Path.Combine(_folder, name + ".raw");
             Profiler.enableBinaryLog = true;
             Profiler.SetAreaEnabled(ProfilerArea.CPU, true);

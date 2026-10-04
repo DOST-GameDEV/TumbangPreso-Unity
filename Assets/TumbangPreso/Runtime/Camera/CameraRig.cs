@@ -195,6 +195,9 @@ namespace TumbangPreso.CameraSystem
         private Vector3 _vmKickOffset;
 
         private bool _emoteView;
+        private WhirledView _whirledView;
+        // Amihan's Airburst v3.2: the swing-out while her wind has thrown this body (`WindTumble`).
+        private bool _blownView;
         private Social.EmotePlayer _emotes;
         private Visual.CharacterVisual _visual;
         private GameObject _hiddenModelInstance;
@@ -412,6 +415,8 @@ namespace TumbangPreso.CameraSystem
         {
             _camera = GetComponent<UnityEngine.Camera>();
             if (_camera == null) _camera = gameObject.AddComponent<UnityEngine.Camera>();
+            // Whirled as the player it happened to sees it (owner, 2026-10-03): the wind round their own view.
+            _whirledView = WhirledView.Attach(this);
 
             _camera.fieldOfView = _fieldOfView;
             _camera.nearClipPlane = 0.05f;
@@ -721,6 +726,15 @@ namespace TumbangPreso.CameraSystem
             _viewmodel = go.transform;
         }
 
+        /// <summary>Resolve the gameplay eye under loading, even when world presentation is held.</summary>
+        public bool PrepareArrivalReturnView()
+        {
+            if (_character == null || !_active) return false;
+            ApplyLens();
+            if (_mode == CameraMode.Fpp) ApplyFpp(); else ApplyTpp();
+            return true;
+        }
+
         public void SetActive(bool active)
         {
             _active = active;
@@ -823,6 +837,9 @@ namespace TumbangPreso.CameraSystem
 
             StepShake();
             StepViewmodelKick();
+            // Whirled's dizzy roll, about the line of sight, only on a frame this pass wrote and only in first person.
+            if (_mode == CameraMode.Fpp && _whirledView != null && _whirledView.Roll != 0f)
+                transform.rotation *= Quaternion.Euler(0f, 0f, _whirledView.Roll);
         }
 
         private void StepCompanionLook(Visual.GhostPetCompanion companion)
@@ -1509,7 +1526,12 @@ namespace TumbangPreso.CameraSystem
             // there IS something to do: hold Interact to struggle free, and they can still throw and cast, so
             // they see their own body held by the tree. It keeps the standing pitch, as a held body does.
             bool rooted = _character != null && _character.IsRooted;
-            bool down = _character != null && (_character.IsTripped || held || rooted);
+            // ⚠️ BLOWN BACK SWINGS OUT TOO (owner, 2026-10-03, Amihan's Airburst v3.2: *"make the fpp view of all that got pushed back
+            // see that as well"*). Thrown by her wind they have lost their body to it (`WindTumble`), so they watch it tumble, like a
+            // trip; the view comes home once they are down and the carry is spent. Standing pitch: the body is in the air, not on the road.
+            bool blown = _character != null && _character.IsWhirled && (_character.IsCarried || !_character.IsGrounded);
+            bool down = _character != null && (_character.IsTripped || held || rooted || blown);
+            if (down != _fallView) _blownView = down && blown;
             if (down == _fallView) return;
 
             // ⚠️ AN EMOTE ALREADY OWNS THE SWING, SO DO NOT TAKE IT FROM ONE. `EmotePlayer.Stop`
@@ -1532,7 +1554,9 @@ namespace TumbangPreso.CameraSystem
                 // `FallPitchDeg` looks DOWN at a body on the tarmac; using it for a stun would
                 // aim the camera at the road in front of a character who is upright, and the
                 // one thing the player needs to see is the element on their own body.
-                if (!held && !rooted) _emotePitchDeg = FallPitchDeg;
+                if (!held && !rooted && !blown) _emotePitchDeg = FallPitchDeg;
+                // The wind's hit is felt, not just seen.
+                if (blown) Shake(1.1f, .55f);
             }
             else EndEmoteView();
         }
@@ -1630,9 +1654,17 @@ namespace TumbangPreso.CameraSystem
             // because the subject is on the ground.
             float mountHeight = _fallView ? FallMountHeight : TppMountHeight;
             float arm = _fallView ? FallSpringLength : _tppSpringLength;
+            // Thrown by her wind (film v3.3: the fall arm put the tumbling body's head across the whole lens): back and up, so the
+            // whole body tumbling and the court it is thrown across are in frame, the lens rocking with the gusts.
+            float roll = 0.0f;
+            if (_blownView)
+            {
+                mountHeight = 1.1f; arm = Mathf.Max(arm, 4.4f);
+                if (Settings.SettingsStore.Current.EffectiveCameraShake > 0f) roll = 7.0f * Mathf.Sin(Time.unscaledTime * 5.3f);
+            }
 
             Vector3 mount = _character.transform.position + Vector3.up * mountHeight;
-            var rot = Quaternion.Euler(_emotePitchDeg, _emoteYawDeg, 0.0f);
+            var rot = Quaternion.Euler(_emotePitchDeg, _emoteYawDeg, roll);
             Vector3 wanted = mount - (rot * Vector3.forward) * arm;
 
             float length = arm;

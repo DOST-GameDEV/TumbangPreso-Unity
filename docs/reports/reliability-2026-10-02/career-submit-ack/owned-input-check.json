@@ -1,0 +1,9 @@
+{
+  "source": "26a4b2449be12b79091ca572023c5b97bbeb2712",
+  "checks": {
+    "Assets/TumbangPreso/Runtime/Net/CareerStore.cs": true,
+    "Assets/TumbangPreso/Tests/CareerAndCloudCodeTests.cs": true
+  },
+  "retry": 0,
+  "scope": "Actual CareerStore completion and queue/witness mutation in isolated named profile; not deployed backend integration"
+}

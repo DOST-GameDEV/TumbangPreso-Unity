@@ -1,0 +1,120 @@
+Mono path[0] = 'C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Builds/competition-candidate1002i/TumbangPreso_Data/Managed'
+Mono config path = 'C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Builds/competition-candidate1002i/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.5.8f1 (5cb7df797b7d)
+[Subsystems] Discovering subsystems at path C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Builds/competition-candidate1002i/TumbangPreso_Data/UnitySubsystems
+Forcing GfxDevice: Direct3D 11
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: AMD Radeon RX 6600 (ID=0x73ff)
+    Vendor:   ATI
+    VRAM:     8147 MB
+    Driver:   32.0.21043.19003
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.045 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+D3D11 device created for Microsoft Media Foundation video decoding.
+[Audio] loaded 64 of 64 cues.
+[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+UnloadTime: 0.778400 ms
+[Build] TUMBANG PRESO 1.0.0 | 42e0d48e9903+dirty | protocol 132 | StandaloneWindows64
+[NetBoot] lobby requested, port=9081 join='127.0.0.1:9080' chat=''
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 3.259400 ms
+Unloading 28 unused Assets to reduce memory usage. Loaded Objects now: 4096.
+Total: 1.779200 ms (FindLiveObjects: 0.183600 ms CreateObjectMapping: 0.340400 ms MarkObjects: 1.190000 ms  DeleteObjects: 0.065100 ms)
+
+First video frame not zero: 4 (0.133333s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Builds/competition-candidate1002i/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Builds/competition-candidate1002i/TumbangPreso_Data/resources.resource
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 9081, join code J5RK
+[LobbyAuto] joining 127.0.0.1:9080
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] connecting to 127.0.0.1:9080
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[Net] connected
+[Net] connected as seat 2
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[LobbyAuto] join result True
+[Link] Good at 110 ms round trip (client).
+[Link] Bad at 3454 ms round trip (client).
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 15.041900 ms
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[NetSeat] arena installed: LocalSlot=1 spectator=False host=False allBots=False | s0:-+live+act | s1:reader+sim+live+act | s2:-+bot+live+act | s3:-+bot+live+act
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+Unloading 114 unused Assets to reduce memory usage. Loaded Objects now: 15177.
+Total: 5.027700 ms (FindLiveObjects: 1.144800 ms CreateObjectMapping: 1.012600 ms MarkObjects: 2.562500 ms  DeleteObjects: 0.307200 ms)
+
+[NetAuto] READY submitted from a client peer.
+[ArenaPrewarm] drew 20 views in 0.44 s.
+[HubLoading] Eskinita ready after 2.66 s.
+[Slice] round 1 begins, taya is seat 0
+[Link] Good at 42 ms round trip (client).
+IOException: Sharing violation on path C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Logs\competition-candidate1002i-peer\client.json
+  at System.IO.FileStream..ctor (System.String path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, System.Int32 bufferSize, System.Boolean anonymous, System.IO.FileOptions options) [0x0019e] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.IO.FileStream..ctor (System.String path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, System.Int32 bufferSize, System.IO.FileOptions options) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at (wrapper remoting-invoke-with-check) System.IO.FileStream..ctor(string,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare,int,System.IO.FileOptions)
+  at System.IO.StreamWriter..ctor (System.String path, System.Boolean append, System.Text.Encoding encoding, System.Int32 bufferSize) [0x00055] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.IO.StreamWriter..ctor (System.String path) [0x00008] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at (wrapper remoting-invoke-with-check) System.IO.StreamWriter..ctor(string)
+  at System.IO.File.WriteAllText (System.String path, System.String contents) [0x00026] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Net.NetCompletedArrivalProbe.Save () [0x00044] in <fac3ff055880431ba6a6b3c0f4d88770>:0 
+  at TumbangPreso.Net.NetCompletedArrivalProbe.Ended (System.Int32 winner) [0x00013] in <fac3ff055880431ba6a6b3c0f4d88770>:0 
+  at (wrapper delegate-invoke) System.Action`1[System.Int32].invoke_void_T(int)
+  at TumbangPreso.MatchDirector.ApplySnapshot (System.Int32[] scores, System.Int32 roundNumber, System.Boolean inProgress, System.Boolean completedArrival) [0x0007a] in <fac3ff055880431ba6a6b3c0f4d88770>:0 
+  at TumbangPreso.Net.MatchRpc.SyncWorldSnapshotClientRpc (System.Int32 roundNumber, System.Int32 defenderSlot, System.Single timeLeft, System.Int32[] scores, System.Boolean inProgress, System.Boolean roundActive) [0x000bf] in <fac3ff055880431ba6a6b3c0f4d88770>:0 
+  at TumbangPreso.Net.MatchRpc.OnSyncWorldMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x0011f] in <fac3ff055880431ba6a6b3c0f4d88770>:0 
+  at Unity.Netcode.CustomMessagingManager.InvokeNamedMessage (System.UInt64 hash, System.UInt64 sender, Unity.Netcode.FastBufferReader reader, System.Int32 serializedHeaderSize) [0x000cb] in <c4fd0518d4684a88b0e2647e75b23b32>:0 
+  at Unity.Netcode.NamedMessage.Handle (Unity.Netcode.NetworkContext& context) [0x00022] in <c4fd0518d4684a88b0e2647e75b23b32>:0 
+  at Unity.Netcode.NetworkMessageManager.ReceiveMessage[T] (Unity.Netcode.FastBufferReader reader, Unity.Netcode.NetworkContext& context, Unity.Netcode.NetworkMessageManager manager) [0x00098] in <c4fd0518d4684a88b0e2647e75b23b32>:0 
+  at (wrapper delegate-invoke) <Module>.invoke_void_FastBufferReader_NetworkContext&_NetworkMessageManager(Unity.Netcode.FastBufferReader,Unity.Netcode.NetworkContext&,Unity.Netcode.NetworkMessageManager)
+  at Unity.Netcode.NetworkMessageManager.HandleMessage (Unity.Netcode.NetworkMessageHeader& header, Unity.Netcode.FastBufferReader reader, System.UInt64 senderId, System.Single timestamp, System.Int32 serializedHeaderSize) [0x000ff] in <c4fd0518d4684a88b0e2647e75b23b32>:0 
+UnityEngine.DebugLogHandler:Internal_LogException_Injected(Exception, IntPtr)
+UnityEngine.DebugLogHandler:Internal_LogException(Exception, Object)
+UnityEngine.DebugLogHandler:LogException(Exception, Object)
+UnityEngine.Logger:LogException(Exception, Object)
+UnityEngine.Debug:LogException(Exception)
+Unity.Netcode.NetworkMessageManager:HandleMessage(NetworkMessageHeader&, FastBufferReader, UInt64, Single, Int32)
+Unity.Netcode.NetworkMessageManager:ProcessIncomingMessageQueue()
+Unity.Netcode.NetworkManager:NetworkUpdate(NetworkUpdateStage)
+Unity.Netcode.NetworkUpdateLoop:RunNetworkUpdateStage(NetworkUpdateStage)
+Unity.Netcode.<>c:<CreateLoopSystem>b__0_0()
+
+[NetDisconnect] peer=1 local=1 server=False connected=True
+[Net] disconnected: [Disconnect Event][Client-1][TransportClientId-4294967296][ClosedByRemote] Connection was closed by remote endpoint.
+[Abandon] HostLost: ABANDONED at round 1 of 1; this peer may no longer resolve anything
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 12.170700 ms
+Unloading 767 unused Assets to reduce memory usage. Loaded Objects now: 6898.
+Total: 5.976700 ms (FindLiveObjects: 0.425000 ms CreateObjectMapping: 0.773700 ms MarkObjects: 3.238300 ms  DeleteObjects: 1.539400 ms)
+
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 9081, join code ZJW3
+[LobbyAuto] joining 127.0.0.1:9080
+[Net] offline
+[Link] Unknown at 0 ms round trip (host, worst peer).
+First video frame not zero: 4 (0.133333s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Builds/competition-candidate1002i/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Builds/competition-candidate1002i/TumbangPreso_Data/resources.resource
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] connecting to 127.0.0.1:9080
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.

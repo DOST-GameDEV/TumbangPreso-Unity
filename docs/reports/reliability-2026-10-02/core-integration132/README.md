@@ -1,0 +1,1 @@
+One merged Core pass after incoming protocol132/Rafi Baha geometry changes:704/704,0failed,0skipped, net9.0. RawTRX retained. This is engine-free integration acceptance, not new Windows player/physics/transport qualification. No unchanged repeat.

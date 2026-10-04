@@ -1,0 +1,16 @@
+        }
+
+        private IEnumerator Run()
+        {
+            BuildSurface();
+            // The logo may have its short studio cue. The illustrated loading
+            // screen stays quiet; the menu bed begins only on the visible home.
+            GameServices.Music?.StopNow();
+            if(_ownerLoading || _illustration!=null)BootSting.Stop();
+            BeginPreload();
+            // ⚠️ THE MENU IS ACTIVATED ONLY AFTER THE ACCOUNT BARRIER SETTLES. There is no
+            // prompt and no account form here: a fresh player signs in anonymously while the
+            // existing studio/loading screen is already doing its work, and an unreachable
+            // service settles to the local profile inside PlayerAccount's bounded budget.
+            var accountBarrier = GameServices.Account?.InitializeAsync();
+

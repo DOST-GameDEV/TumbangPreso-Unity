@@ -14,6 +14,7 @@ namespace TumbangPreso.Diagnostics
     public sealed class NetIceProbe : MonoBehaviour
     {
         private static bool _enabled;
+        private static bool _joiningSean;
         private string _scenario;
         private StreamWriter _writer;
         private bool _pickSent, _seededPick, _prepared;
@@ -34,7 +35,9 @@ namespace TumbangPreso.Diagnostics
             if(!_enabled)return;
             UI.SceneFlow.PinSelectedRules(CustomGameRules.Defaults(GameMode.HeroStrike));
             bool sean=Argument("-tp-icecase")=="cheska-sean";
-            bool joining=Environment.GetCommandLineArgs().Contains("-tp-join");
+            bool joining=Environment.GetCommandLineArgs().Contains("-tp-join") ||
+                !string.IsNullOrEmpty(Argument("-tp-lobbyjoin"));
+            _joiningSean=joining;
             Settings.SettingsStore.Current.CharacterPick=Roster.IndexIn(Roster.HeroPeople,
                 sean && joining ? "sean" : "cheska");
         }
@@ -146,7 +149,9 @@ namespace TumbangPreso.Diagnostics
             int cheska=Roster.IndexIn(Roster.HeroPeople,"cheska");
             int sean=Roster.IndexIn(Roster.HeroPeople,"sean");
             int local=NetAuthority.LocalSlot;
-            if(!NetAuthority.IsNetworked || local<0 || local>1)return;
+            // The normal join screen first hosts a temporary local room. Preserve
+            // the configured Sean pick until this process has its intended client seat.
+            if(!NetAuthority.IsNetworked || local!=(_joiningSean?1:0) || NetAuthority.IsHost==_joiningSean)return;
             int pick=local==0?cheska:sean;
             if(!_pickSent && MatchRpc.Instance!=null)
             {

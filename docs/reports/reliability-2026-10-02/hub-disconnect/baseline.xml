@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 04:50:21Z" end-time="2026-10-02 04:50:21Z" duration="0.2629147">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="910" result="Failed" site="Child" start-time="2026-10-02 04:50:21Z" end-time="2026-10-02 04:50:21Z" duration="0.262915" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2094" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="910" result="Failed" site="Child" start-time="2026-10-02 04:50:21Z" end-time="2026-10-02 04:50:21Z" duration="0.247727" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22732" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2095" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="910" result="Failed" site="Child" start-time="2026-10-02 04:50:21Z" end-time="2026-10-02 04:50:21Z" duration="0.242120" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2096" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="910" result="Failed" site="Child" start-time="2026-10-02 04:50:21Z" end-time="2026-10-02 04:50:21Z" duration="0.237055" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1337" name="HubDisconnectCancellationTests" fullname="TumbangPreso.Tests.HubDisconnectCancellationTests" classname="TumbangPreso.Tests.HubDisconnectCancellationTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-02 04:50:21Z" end-time="2026-10-02 04:50:21Z" duration="0.216941" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1340" name="HostLossCancelsAnActiveQueueBeforeClearingItsPlate" fullname="TumbangPreso.Tests.HubDisconnectCancellationTests.HostLossCancelsAnActiveQueueBeforeClearingItsPlate" methodname="HostLossCancelsAnActiveQueueBeforeClearingItsPlate" classname="TumbangPreso.Tests.HubDisconnectCancellationTests" runstate="Runnable" seed="278534124" result="Failed" start-time="2026-10-02 04:50:21Z" end-time="2026-10-02 04:50:21Z" duration="0.176165" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The queue kept joining after its UI and transport were retired.
+  Expected: Cancelled
+  But was:  Joining
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.HubDisconnectCancellationTests.HostLossCancelsAnActiveQueueBeforeClearingItsPlate () [0x0005b] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\HubDisconnectCancellationTests.cs:132
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1338" name="HostLossCancelsThePendingNativeJoin" fullname="TumbangPreso.Tests.HubDisconnectCancellationTests.HostLossCancelsThePendingNativeJoin" methodname="HostLossCancelsThePendingNativeJoin" classname="TumbangPreso.Tests.HubDisconnectCancellationTests" runstate="Runnable" seed="1839359736" result="Failed" start-time="2026-10-02 04:50:21Z" end-time="2026-10-02 04:50:21Z" duration="0.011934" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Returning HOME left the native join operation alive.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.HubDisconnectCancellationTests.HostLossCancelsThePendingNativeJoin () [0x0003c] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\HubDisconnectCancellationTests.cs:104
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1339" name="LateJoinFailureCannotOverwriteTheNextRoute" fullname="TumbangPreso.Tests.HubDisconnectCancellationTests.LateJoinFailureCannotOverwriteTheNextRoute" methodname="LateJoinFailureCannotOverwriteTheNextRoute" classname="TumbangPreso.Tests.HubDisconnectCancellationTests" runstate="Runnable" seed="770538917" result="Failed" start-time="2026-10-02 04:50:21Z" end-time="2026-10-02 04:50:21Z" duration="0.011078" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The retired join changed the network state of the next route.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.HubDisconnectCancellationTests.LateJoinFailureCannotOverwriteTheNextRoute () [0x00098] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\HubDisconnectCancellationTests.cs:118
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

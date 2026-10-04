@@ -1,0 +1,27 @@
+{
+  "baseline": {
+    "total": 7,
+    "passed": 5,
+    "failed": 2,
+    "durationSeconds": 0.1951392,
+    "status": "failed",
+    "exitCode": 2,
+    "preservationCompleted": true,
+    "leaseHeld": false
+  },
+  "final": {
+    "total": 12,
+    "passed": 12,
+    "failed": 0,
+    "durationSeconds": 0.1287548,
+    "status": "completed",
+    "exitCode": 0,
+    "preservationCompleted": true,
+    "leaseHeld": false
+  },
+  "protectedCount": 1462,
+  "protectedChanged": [],
+  "ownedChanged": [],
+  "fixtureRepairs": 0,
+  "unityProcessesAtCompletion": []
+}

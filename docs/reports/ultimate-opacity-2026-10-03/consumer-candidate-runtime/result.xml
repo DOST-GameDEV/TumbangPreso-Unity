@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 09:12:43Z" end-time="2026-10-03 09:12:44Z" duration="0.3669901">
+  <test-suite type="TestSuite" id="1000" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1080" result="Passed" start-time="2026-10-03 09:12:43Z" end-time="2026-10-03 09:12:44Z" duration="0.366990" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2316" name="TumbangPreso.Tests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1080" result="Passed" start-time="2026-10-03 09:12:43Z" end-time="2026-10-03 09:12:44Z" duration="0.347998" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="67449" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2317" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1080" result="Passed" start-time="2026-10-03 09:12:43Z" end-time="2026-10-03 09:12:44Z" duration="0.336148" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2318" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1080" result="Passed" start-time="2026-10-03 09:12:43Z" end-time="2026-10-03 09:12:44Z" duration="0.325162" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2266" name="UltimateFrameCompositionTests" fullname="TumbangPreso.Tests.UltimateFrameCompositionTests" classname="TumbangPreso.Tests.UltimateFrameCompositionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 09:12:44Z" end-time="2026-10-03 09:12:44Z" duration="0.308513" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="ParameterizedMethod" id="2270" name="SharedFrameIsOpaqueButCanvasFadeStillWorks" fullname="TumbangPreso.Tests.UltimateFrameCompositionTests.SharedFrameIsOpaqueButCanvasFadeStillWorks" classname="TumbangPreso.Tests.UltimateFrameCompositionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-03 09:12:44Z" end-time="2026-10-03 09:12:44Z" duration="0.304427" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2267" name="SharedFrameIsOpaqueButCanvasFadeStillWorks(0.0f)" fullname="TumbangPreso.Tests.UltimateFrameCompositionTests.SharedFrameIsOpaqueButCanvasFadeStillWorks(0.0f)" methodname="SharedFrameIsOpaqueButCanvasFadeStillWorks" classname="TumbangPreso.Tests.UltimateFrameCompositionTests" runstate="Runnable" seed="129366149" result="Passed" start-time="2026-10-03 09:12:44Z" end-time="2026-10-03 09:12:44Z" duration="0.279669" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[source alpha=0; full frame pixel=RGBA(0.000, 0.000, 1.000, 1.000)
+intentional canvas fade=RGBA(0.733, 0.000, 0.737, 0.749)
+]]></output>
+              </test-case>
+              <test-case id="2268" name="SharedFrameIsOpaqueButCanvasFadeStillWorks(0.25f)" fullname="TumbangPreso.Tests.UltimateFrameCompositionTests.SharedFrameIsOpaqueButCanvasFadeStillWorks(0.25f)" methodname="SharedFrameIsOpaqueButCanvasFadeStillWorks" classname="TumbangPreso.Tests.UltimateFrameCompositionTests" runstate="Runnable" seed="1733918402" result="Passed" start-time="2026-10-03 09:12:44Z" end-time="2026-10-03 09:12:44Z" duration="0.008051" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[source alpha=0.25; full frame pixel=RGBA(0.000, 0.000, 1.000, 1.000)
+intentional canvas fade=RGBA(0.733, 0.000, 0.737, 0.749)
+]]></output>
+              </test-case>
+              <test-case id="2269" name="SharedFrameIsOpaqueButCanvasFadeStillWorks(1.0f)" fullname="TumbangPreso.Tests.UltimateFrameCompositionTests.SharedFrameIsOpaqueButCanvasFadeStillWorks(1.0f)" methodname="SharedFrameIsOpaqueButCanvasFadeStillWorks" classname="TumbangPreso.Tests.UltimateFrameCompositionTests" runstate="Runnable" seed="1169479701" result="Passed" start-time="2026-10-03 09:12:44Z" end-time="2026-10-03 09:12:44Z" duration="0.006724" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[source alpha=1; full frame pixel=RGBA(0.000, 0.000, 1.000, 1.000)
+intentional canvas fade=RGBA(0.733, 0.000, 0.737, 0.749)
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

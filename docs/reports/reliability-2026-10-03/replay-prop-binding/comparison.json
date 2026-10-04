@@ -1,0 +1,7 @@
+{
+  "originalMedianUs": 3.69255,
+  "candidateMedianUs": 3.1633,
+  "medianReductionPercent": 14.33291356921369,
+  "allocationCounter": "Both reported 0; uninformative and not used as a valid allocation delta.",
+  "scope": "Warmed native dormant-can binding, seven batches of2000 calls, no FPS or historical stall attribution."
+}

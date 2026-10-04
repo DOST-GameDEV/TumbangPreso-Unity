@@ -14,6 +14,11 @@ namespace TumbangPreso.Abilities
     {
         public string HeroId { get; }
         public string HeroName { get; }
+        public virtual float ThrowChargeRate => 1f;
+        public virtual float PassiveDuration => 0f;
+        public virtual void OnManualOwnThrowRetrieved(AbilityContext context) { }
+        public virtual void OnAuthoritativeThrow(AbilityContext context) { }
+
         /// <summary>
         /// The SIGNATURE ability: the same whatever the hero's role (ability overhaul, owner
         /// 2026-09-25). `Verb.Skill1`. On a legacy kit it is simply skill one.
@@ -133,6 +138,9 @@ namespace TumbangPreso.Abilities
 
         /// <summary>Existing movement skills may scale wish speed; impulses and slows retain their own rules.</summary>
         public virtual float MovementSpeedScale => 1.0f;
+        // Ability-owned commitment gates are opt-in; they are not a status effect.
+        public virtual bool BlocksOwnLocomotion => false;
+        public virtual bool BlocksOwnActions => false;
         public virtual float IncomingKnockbackDistanceScale => 1.0f;
         // Kits with accepted-cast state need the owner event, without repeating a predicted payload.
         public virtual bool RequiresOwnerCastEvents => false;

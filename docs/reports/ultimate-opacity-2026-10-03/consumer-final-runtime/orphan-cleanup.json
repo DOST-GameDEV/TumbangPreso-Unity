@@ -1,0 +1,15 @@
+{
+  "reason": "Only orphaned idle compiler/shutdown helpers from this task-owned Unity SDK; no active owned Editor. No files removed.",
+  "beforeCgroup": 4369338368,
+  "afterCgroup": 4306636800,
+  "rssRetiredBytes": 111779840,
+  "processes": [
+    {
+      "pid": 68163,
+      "kind": "shutdown",
+      "ageSeconds": 176.0,
+      "rssBytes": 111779840
+    }
+  ],
+  "completedCompileReceipt": "/workspace/scratch/0ed9da4aed7f/tump-qa/ultimate-opacity-1003/consumer-final/compile/resources.json"
+}

@@ -40,9 +40,51 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(90000)]
         public IEnumerator RafiStagesHisCurrentBahaPerformance()
             => Study(new[] { "rafi" }, false, false, true);
+        // AIRBURST (docs/reports/amihan-presentation-2026-10-02): grounded throughout, held shoe clear of the face.
+        // Visual and body study only; no audio acceptance.
+        [UnityTest, Timeout(90000)]
+        public IEnumerator AmihanGathersHerAirburstWithoutLeavingTheGround()
+            => Study(new[] { "amihan" }, false, false, true);
+        [UnityTest, Timeout(90000)]
+        public IEnumerator ZackDrawsOverclockIntoHimselfWithoutLosingHisShoe()
+            => Study(new[] { "zack" }, false, false, true);
+        private static IEnumerator BuildZackArtStage()
+        {
+            GameServices.Ensure(); GameServices.Round.Clear();
+            var floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            floor.name = "Overclock art support"; floor.transform.position = Vector3.down * .5f;
+            floor.transform.localScale = new Vector3(30, 1, 30);
+            var actorObject = new GameObject("Overclock art actor", typeof(CharacterController));
+            var cc = actorObject.GetComponent<CharacterController>();
+            cc.height = 1.6f; cc.radius = .35f; cc.center = Vector3.up * .8f;
+            var actor = actorObject.AddComponent<CharacterMotor>();
+            actor.Mode = GameMode.HeroStrike; actor.PlayerSlot = 1; actor.IsBot = true;
+            actor.CharacterIndex = Roster.IndexIn(Roster.HeroPeople, "zack");
+            actorObject.AddComponent<Carrier>(); actorObject.AddComponent<CombatVerbs>();
+            actorObject.AddComponent<TumbangPreso.Abilities.HeroAbilitySystem>().BindHero("zack");
+            var art = Resources.Load<RosterEntryAsset>("Roster/person_zack");
+            actorObject.AddComponent<CharacterVisual>().ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
+            GameServices.Round.Register(actor);
+            GameServices.Match.ApplySnapshot(new int[4], 1, true);
+            GameServices.Round.ApplySnapshot(100, true, 0, true);
+            actor.Teleport(new Vector3(0, .12f, -4));
+            var shoe = new GameObject("Overclock held shoe").AddComponent<Slipper>();
+            var shoeArt = Resources.Load<RosterEntryAsset>("Roster/slipper_loafers");
+            var shoeModel = Object.Instantiate(shoeArt.Model, shoe.transform);
+            ToonSkin.ApplySlipper(shoeModel, ToonSkin.PropOutlineWidth); shoe.HostForceEquip(actor);
+            var light = new GameObject("Overclock art light").AddComponent<Light>();
+            light.type = LightType.Directional; light.transform.rotation = Quaternion.Euler(35, -25, 0);
+            var eye = new GameObject("Overclock source camera", typeof(Camera)); eye.tag = "MainCamera";
+            eye.AddComponent<CameraRig>().Follow(actor);
+            yield return null; yield return null;
+        }
+
         private static IEnumerator Study(string[] heroes, bool checkFraming, bool emptyHands = false, bool allowMutedTheme = false)
         {
-            yield return MapRetrievalProbe.Load("Eskinita", GameMode.HeroStrike);
+            // Zack's render-copy review needs its actual rig/equipment, not an entire
+            // populated court. Keep other established court probes unchanged.
+            if (heroes.Length == 1 && heroes[0] == "zack") yield return BuildZackArtStage();
+            else yield return MapRetrievalProbe.Load("Eskinita", GameMode.HeroStrike);
             var actor = GameServices.Round.PlayerAt(1);
             var visual = actor.GetComponent<CharacterVisual>();
             if (emptyHands) actor.GetComponent<Carrier>().Held?.HostDisarm();
@@ -144,6 +186,24 @@ namespace TumbangPreso.PlayTests
                                 Assert.AreEqual(95,wave.vertexCount);Assert.AreEqual(432,wave.triangles.Length);
                             }
                             scene.SetVisibleForCapture(true);
+                        }
+                        if (hero == "zack" && scene != null)
+                        {
+                            // Warm all three authored shots before starting a wall-clock film.
+                            foreach (float warm in new[] { 0f, .9f, 1.6f, 1.95f, 2.5f, 0f })
+                            {
+                                clip.SampleAnimation(copy.Root, warm); scene.Sample(warm);
+                                scene.Shot(warm, out var eye, out var target, out var lens, camera.aspect);
+                                camera.transform.position = eye; camera.transform.LookAt(target); camera.fieldOfView = lens;
+                                if (Mathf.Abs(warm - 1.95f) < .001f)
+                                {
+                                    var bolt = scene.Root.transform.Find("SnapBolt").GetComponent<MeshFilter>();
+                                    var headPoint = copy.Bones.First(b => b.name == "head").position + Vector3.up * .35f;
+                                    float contact = bolt.sharedMesh.vertices.Min(v => Vector3.Distance(bolt.transform.TransformPoint(v), headPoint));
+                                    Assert.Less(contact, .15f, "Overclock's bolt must reach Zack, not an old distant target.");
+                                }
+                                camera.Render(); yield return null;
+                            }
                         }
                         yield return ImprovementEvidenceProbe.Record(camera, hero + (withScene ? "-introduction-scene" : "-introduction-body"), seconds,
                             drive: age =>

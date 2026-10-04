@@ -1,0 +1,20 @@
+{
+  "toolingRepairs": 1,
+  "protectedChecks": 24,
+  "nativeRuns": 2,
+  "baselinePoolSession": 57334,
+  "resourceInterventions": 0,
+  "baselineGuardPid": 5752,
+  "baselineSnapshot": "profile-preservation-39e129ac2e6f",
+  "fixtureRepairs": 0,
+  "finalUnityPid": 4828,
+  "finalPoolSession": 26377,
+  "uniqueProtectedPaths": 20,
+  "sharedEditorInputPreferencesRestoredEach": 1,
+  "baselineProfileFilesRestored": 0,
+  "parallelProof": false,
+  "finalSnapshot": "profile-preservation-ab8690791eee",
+  "baselineUnityPid": 23364,
+  "finalGuardPid": 23924,
+  "finalProfileFilesRestored": 1
+}

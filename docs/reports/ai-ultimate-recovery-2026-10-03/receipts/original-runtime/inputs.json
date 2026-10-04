@@ -1,0 +1,8 @@
+{
+  "Assets/TumbangPreso/Tests/AiUltimateInputRecoveryTests.cs": "a02276512e9303636c10629d02e0120e493e63448a6e533a325ebf069a5ca297",
+  "Assets/TumbangPreso/Tests/AiUltimateInputRecoveryTests.cs.meta": "9ed3a709b88e524ef596212ca0dbe59f2e2fc3167e655623c4c8967244cb145f",
+  "Assets/TumbangPreso/Runtime/AIController.cs": "073f402cc7550e57990ad484fde4c0cc951d19d9e8799c912afb27be00ccf15e",
+  "Assets/TumbangPreso/Runtime/SharedUltimatePhase.cs": "918652322f1ccda6a9e64d50c3851b41c0e3cd08366b68076e08aa982c24ceaf",
+  "Assets/TumbangPreso/Runtime/InputIntent.cs": "a46576471cf7a8fa85b2953a1bf480fb26fb7196aafa720b5375e3ac57c79b79",
+  "Assets/TumbangPreso/Runtime/PresentationClock.cs": "9c176cd36579a61124775edb5aa347bbfe0f1b05114292b4768563dd170a663b"
+}

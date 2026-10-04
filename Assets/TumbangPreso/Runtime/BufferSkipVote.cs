@@ -152,6 +152,9 @@ namespace TumbangPreso
             }
 
             if (_votedLocally) return;
+            // Chat owns the ready key while typing; an already submitted vote may
+            // still retry above without turning a chat letter into new consent.
+            if (UI.LobbyChat.AnyTyping) return;
             if (_readyUp == null || !_readyUp.WasPressedThisFrame()) return;
 
             _votedLocally = true;

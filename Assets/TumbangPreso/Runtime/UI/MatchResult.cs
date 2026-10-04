@@ -131,10 +131,14 @@ namespace TumbangPreso.UI
             _canvas.gameObject.SetActive(false);
         }
 
+        private Net.CareerStore _hookedCareer;
+
         private void OnEnable()
         {
             if (GameServices.Match != null) GameServices.Match.MatchEnded += OnMatchWon;
             if (GameServices.Stats != null) GameServices.Stats.RecordReady += OnRecordReady;
+            _hookedCareer = GameServices.Career;
+            if (_hookedCareer != null) _hookedCareer.Changed += OnCareerChanged;
         }
 
         private void OnDisable()
@@ -143,6 +147,8 @@ namespace TumbangPreso.UI
             if (_nativeResult && _canvas != null) _canvas.gameObject.SetActive(false);
             if (GameServices.Match != null) GameServices.Match.MatchEnded -= OnMatchWon;
             if (GameServices.Stats != null) GameServices.Stats.RecordReady -= OnRecordReady;
+            if (_hookedCareer != null) _hookedCareer.Changed -= OnCareerChanged;
+            _hookedCareer = null;
 
             // ⚠⚠ WHOEVER STOPPED TIME RESTORES IT, ON EVERY PATH INCLUDING DEATH. This
             // board was the second class in the project to stop the clock from an instance and
@@ -152,6 +158,13 @@ namespace TumbangPreso.UI
             // `Time.timeScale` stayed 0 for the rest of the process, so the MENUS the player
             // returned to were frozen and nothing said why.
             RestoreTime();
+        }
+
+        private void OnCareerChanged()
+        {
+            if (_canvas == null || !_canvas.gameObject.activeSelf || _lastRecord == null
+                || _hookedCareer == null || _lastRecord.MatchId != GameServices.Stats?.Last?.MatchId) return;
+            ShowProgression(_hookedCareer.LastAward, _hookedCareer.Profile);
         }
 
         private void OnDestroy() { RestoreTime(); ScreenTakeover.Unregister(this); }
@@ -516,8 +529,9 @@ namespace TumbangPreso.UI
                     line += "   ·   STILL PLACING YOU";
             }
 
-            string verdict = Net.CareerStore.Instance?.LastVerdict ?? "";
-            if (verdict == "disputed")
+            var career = Net.CareerStore.Instance;
+            if (career?.LastVerdict == "disputed" && _lastRecord != null
+                && career.LastVerdictMatchId == _lastRecord.MatchId)
                 line += "\nTHIS RESULT DID NOT MATCH WHAT THE OTHER PLAYERS SAW. NO RANK CHANGE.";
 
             return line;
@@ -546,7 +560,9 @@ namespace TumbangPreso.UI
 
             if (award.MasteryXp > 0 && !string.IsNullOrEmpty(award.MasteryId))
             {
-                string hero = award.MasteryId.ToUpperInvariant();
+                string hero = Core.Roster.At(Core.Roster.HeroPeople,
+                    Core.Roster.IndexIn(Core.Roster.HeroPeople, award.MasteryId))?.Name
+                    ?? award.MasteryId.ToUpperInvariant();
                 detail += award.MasteryLevelAfter > award.MasteryLevelBefore
                     ? $"\n{hero} MASTERY {award.MasteryLevelAfter}   \u00b7   MASTERY UP"
                     : $"\n{hero} MASTERY {award.MasteryLevelAfter}   \u00b7   +{award.MasteryXp}";
@@ -1242,6 +1258,7 @@ namespace TumbangPreso.UI
         {
             if (!NetAuthority.ShouldResolve() || !IsVisible || _rematchStarting) return;
 
+            RetireDisconnectedMapVotes();
             _rematchVotes.Remove(peerId);
             _rematchVotes.RetainEligible(EligibleRematchPeer);
 
@@ -1350,6 +1367,27 @@ namespace TumbangPreso.UI
         private void ClearMapVotes()
         {
             for (int i = 0; i < _mapVotes.Length; i++) _mapVotes[i] = Core.MapRotationRules.NoVote;
+        }
+
+        private void RetireDisconnectedMapVotes()
+        {
+            var lobby = Net.NetSession.Instance?.Lobby;
+            if (!NetAuthority.IsNetworked || lobby == null) return;
+
+            // Depart has already removed the peer. A held reconnect seat is not a live ballot.
+            bool changed = false;
+            for (int seat = 0; seat < _mapVotes.Length; seat++)
+            {
+                if (_mapVotes[seat] == Core.MapRotationRules.NoVote) continue;
+                var peer = lobby.PeerInSeat(seat);
+                if (peer != null && lobby.IsSeatedPeer(peer.PeerId)) continue;
+                _mapVotes[seat] = Core.MapRotationRules.NoVote;
+                changed = true;
+            }
+            if (!changed) return;
+
+            Net.MatchRpc.Instance?.MapVoteTallyClientRpc(_mapVotes);
+            RefreshMapVote();
         }
 
         /// <summary>

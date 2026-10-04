@@ -1,0 +1,8 @@
+{
+  "Assets/TumbangPreso/Runtime/Net/PlayerAccount.cs": "36818477842ed4e2329c34b4b873949f5738520796a1ee28997a108a3ef23ad8",
+  "Assets/TumbangPreso/Tests/AccountRenameOwnershipTests.cs": "15af1706e2769b436565f6381b032eef9127b2622e664c798859b8d30cdb7279",
+  "Assets/TumbangPreso/Tests/AccountRenameOwnershipTests.cs.meta": "f6a3da4547b0a99120a4e6ae3fb034394a0a5e04d33631c0e13fe0a89a18277c",
+  "Assets/TumbangPreso/Runtime/Net/CareerStore.cs": "ebbf5726bc471706f3f31c2a48928852f435df62ff65a6cb5097e704a9a4c9d0",
+  "Assets/TumbangPreso/Tests/CareerGuestIsolationTests.cs": "c8028fe638c2e2e748c64a493488d21481db1c96d47b77ca7f5ca4ee99e218a3",
+  "Assets/TumbangPreso/Tests/CareerGuestIsolationTests.cs.meta": "e51b817a9463673644d83416a230ec5bfc75436f4fe7cc5b20b19531ed58e4f2"
+}

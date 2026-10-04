@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 09:40:34Z" end-time="2026-10-02 09:40:34Z" duration="0.3809775">
+  <test-suite type="TestSuite" id="2577" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1285" result="Failed" site="Child" start-time="2026-10-02 09:40:34Z" end-time="2026-10-02 09:40:34Z" duration="0.380978" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2571" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1285" result="Failed" site="Child" start-time="2026-10-02 09:40:34Z" end-time="2026-10-02 09:40:34Z" duration="0.363061" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25568" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2572" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1285" result="Failed" site="Child" start-time="2026-10-02 09:40:34Z" end-time="2026-10-02 09:40:34Z" duration="0.354094" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2573" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1285" result="Failed" site="Child" start-time="2026-10-02 09:40:34Z" end-time="2026-10-02 09:40:34Z" duration="0.345269" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1601" name="LungeDisableLifetimeTests" fullname="TumbangPreso.PlayTests.LungeDisableLifetimeTests" classname="TumbangPreso.PlayTests.LungeDisableLifetimeTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-02 09:40:34Z" end-time="2026-10-02 09:40:34Z" duration="0.309625" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1603" name="AClockHoldPreservesTheExistingContactWhileTheBodyStaysEnabled" fullname="TumbangPreso.PlayTests.LungeDisableLifetimeTests.AClockHoldPreservesTheExistingContactWhileTheBodyStaysEnabled" methodname="AClockHoldPreservesTheExistingContactWhileTheBodyStaysEnabled" classname="TumbangPreso.PlayTests.LungeDisableLifetimeTests" runstate="Runnable" seed="209280756" result="Passed" start-time="2026-10-02 09:40:34Z" end-time="2026-10-02 09:40:34Z" duration="0.209013" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1602" name="BodyRetirementCannotResumeTheOldContactButKeepsItsSpentCooldown" fullname="TumbangPreso.PlayTests.LungeDisableLifetimeTests.BodyRetirementCannotResumeTheOldContactButKeepsItsSpentCooldown" methodname="BodyRetirementCannotResumeTheOldContactButKeepsItsSpentCooldown" classname="TumbangPreso.PlayTests.LungeDisableLifetimeTests" runstate="Runnable" seed="1000245218" result="Failed" start-time="2026-10-02 09:40:34Z" end-time="2026-10-02 09:40:34Z" duration="0.042760" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Reactivated body retained its pre-retirement lunge sweep.
+  Expected: less than or equal to 0.0f
+  But was:  0.449999988f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.LungeDisableLifetimeTests+<BodyRetirementCannotResumeTheOldContactButKeepsItsSpentCooldown>d__10.MoveNext () [0x0004a] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\LungeDisableLifetimeTests.cs:45
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1604" name="UnchargedBodyRetirementDoesNotCreateContactOrCooldown" fullname="TumbangPreso.PlayTests.LungeDisableLifetimeTests.UnchargedBodyRetirementDoesNotCreateContactOrCooldown" methodname="UnchargedBodyRetirementDoesNotCreateContactOrCooldown" classname="TumbangPreso.PlayTests.LungeDisableLifetimeTests" runstate="Runnable" seed="1290023766" result="Passed" start-time="2026-10-02 09:40:34Z" end-time="2026-10-02 09:40:34Z" duration="0.039717" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

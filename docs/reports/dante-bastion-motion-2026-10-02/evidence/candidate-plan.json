@@ -1,0 +1,14 @@
+{
+  "question": "Distinct Bastion body and owner forward brace, actual defender input, existing duration/follow/reset behavior",
+  "expected": 1,
+  "retry_count": 0,
+  "sha256": {
+    "Assets/TumbangPreso/Art/characters/persons/team-dante.glb": "2ae095f9657bdfdab2a297ff63e93a2d9878f8d0fe06179b4f4acd77768e4eab",
+    "Assets/TumbangPreso/Resources/Roster/person_dante.asset": "da0cd5156d0cf6603969a2edd5a1ff1a6b0c76f8b1235716dc28a652a4f1742a",
+    "Assets/TumbangPreso/Runtime/Abilities/DanteHeroKit.cs": "26d816fd4f34a6a098eff47c30a552b1e5841fcd3f4485b78c403a337a08307b",
+    "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.cs": "70b0d3e88c6be5e8393479d2a88321d3c9333af13b0e0bd3286d679fe3ce9680",
+    "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs": "4ab2a3ed8d4771dce3eaf4059ad73776c58b2ed5606fa4d00f4c9cc6eec086a3",
+    "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.CastGesture.cs": "d0006723414909765ac970760e08c29ef4d76cb50af0ab6327e8d6bf79f95eb5",
+    "Assets/TumbangPreso/Tests/PlayMode/DanteBastionMotionTests.cs": "ad4ab546ad083c8ef9b40c2a7ce893f68039f36941e8fbc7b4e5bcf2c51b0faa"
+  }
+}

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Failed(Child)" total="7" passed="4" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 05:14:32Z" end-time="2026-10-03 05:14:32Z" duration="0.6216419">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-c-dddaa72bc5b9" fullname="TumpWorker-qa-c-dddaa72bc5b9" runstate="Runnable" testcasecount="1082" result="Failed" site="Child" start-time="2026-10-03 05:14:32Z" end-time="2026-10-03 05:14:32Z" duration="0.621642" total="7" passed="4" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2316" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-c/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1082" result="Failed" site="Child" start-time="2026-10-03 05:14:32Z" end-time="2026-10-03 05:14:32Z" duration="0.611957" total="7" passed="4" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="7696" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2317" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1082" result="Failed" site="Child" start-time="2026-10-03 05:14:32Z" end-time="2026-10-03 05:14:32Z" duration="0.607956" total="7" passed="4" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2318" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1082" result="Failed" site="Child" start-time="2026-10-03 05:14:32Z" end-time="2026-10-03 05:14:32Z" duration="0.603884" total="7" passed="4" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1397" name="HostedLobbyLifetimeTests" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-03 05:14:32Z" end-time="2026-10-03 05:14:32Z" duration="0.587203" total="7" passed="4" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1403" name="ADeletionAlreadySentToTheOldIdDoesNotClearTheNewLobbyWhenItCompletes" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.ADeletionAlreadySentToTheOldIdDoesNotClearTheNewLobbyWhenItCompletes" methodname="ADeletionAlreadySentToTheOldIdDoesNotClearTheNewLobbyWhenItCompletes" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="1428872065" result="Passed" start-time="2026-10-03 05:14:32Z" end-time="2026-10-03 05:14:32Z" duration="0.177933" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Query] Created UGS Lobby lobby-first with JoinCode First
+[Query] Created UGS Lobby lobby-second with JoinCode Second
+[Query] Deleted UGS Lobby lobby-first
+[Query] Deleted UGS Lobby lobby-second
+]]></output>
+            </test-case>
+            <test-case id="1400" name="AStoppedAuthenticationWaitCannotStartAnObsoleteLobbyAllocation" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.AStoppedAuthenticationWaitCannotStartAnObsoleteLobbyAllocation" methodname="AStoppedAuthenticationWaitCannotStartAnObsoleteLobbyAllocation" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="178201283" result="Failed" start-time="2026-10-03 05:14:32Z" end-time="2026-10-03 05:14:32Z" duration="0.141507" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  An obsolete authentication wait allocated another hosted lobby.
+  Expected: 0
+  But was:  1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.HostedLobbyLifetimeTests.AStoppedAuthenticationWaitCannotStartAnObsoleteLobbyAllocation () [0x000ae] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-c\Assets\TumbangPreso\Tests\HostedLobbyLifetimeTests.cs:107
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Query] Created UGS Lobby cleanup-lobby-0 with JoinCode Stopped
+[Query] Deleted UGS Lobby cleanup-lobby-0
+]]></output>
+            </test-case>
+            <test-case id="1404" name="AuthenticationRefusalSettlesBothCreationAndItsRequestedCleanup" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.AuthenticationRefusalSettlesBothCreationAndItsRequestedCleanup" methodname="AuthenticationRefusalSettlesBothCreationAndItsRequestedCleanup" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="482661022" result="Passed" start-time="2026-10-03 05:14:32Z" end-time="2026-10-03 05:14:32Z" duration="0.050584" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1401" name="CurrentCreationAppliesTheLatestBufferedCountsOnlyOnce" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.CurrentCreationAppliesTheLatestBufferedCountsOnlyOnce" methodname="CurrentCreationAppliesTheLatestBufferedCountsOnlyOnce" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="630411491" result="Passed" start-time="2026-10-03 05:14:32Z" end-time="2026-10-03 05:14:32Z" duration="0.006050" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Query] Created UGS Lobby lobby-current with JoinCode Current
+[Query] Deleted UGS Lobby lobby-current
+]]></output>
+            </test-case>
+            <test-case id="1402" name="CurrentSuccessfulCreateAndDeleteStillUseTheirOwnLobbyId" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.CurrentSuccessfulCreateAndDeleteStillUseTheirOwnLobbyId" methodname="CurrentSuccessfulCreateAndDeleteStillUseTheirOwnLobbyId" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="1225826423" result="Passed" start-time="2026-10-03 05:14:32Z" end-time="2026-10-03 05:14:32Z" duration="0.002850" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Query] Created UGS Lobby lobby-current with JoinCode Current
+[Query] Deleted UGS Lobby lobby-current
+]]></output>
+            </test-case>
+            <test-case id="1398" name="OldStopCannotDeleteTheNewLobbyWhenItsCreationFinishesFirst" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.OldStopCannotDeleteTheNewLobbyWhenItsCreationFinishesFirst" methodname="OldStopCannotDeleteTheNewLobbyWhenItsCreationFinishesFirst" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="1804882462" result="Failed" start-time="2026-10-03 05:14:32Z" end-time="2026-10-03 05:14:32Z" duration="0.091500" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: "lobby-second"
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.HostedLobbyLifetimeTests.OldStopCannotDeleteTheNewLobbyWhenItsCreationFinishesFirst () [0x00131] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-c\Assets\TumbangPreso\Tests\HostedLobbyLifetimeTests.cs:82
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Query] Created UGS Lobby lobby-second with JoinCode Second
+[Query] Deleted UGS Lobby lobby-second
+[Query] Created UGS Lobby cleanup-lobby-0 with JoinCode First
+[Query] Deleted UGS Lobby cleanup-lobby-0
+]]></output>
+            </test-case>
+            <test-case id="1399" name="RetiredCreationCannotAdoptItsIdOrClearTheNewCreationFlag" fullname="TumbangPreso.Tests.HostedLobbyLifetimeTests.RetiredCreationCannotAdoptItsIdOrClearTheNewCreationFlag" methodname="RetiredCreationCannotAdoptItsIdOrClearTheNewCreationFlag" classname="TumbangPreso.Tests.HostedLobbyLifetimeTests" runstate="Runnable" seed="90278197" result="Failed" start-time="2026-10-03 05:14:32Z" end-time="2026-10-03 05:14:32Z" duration="0.099990" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A retired creation became the current advertisement.
+  Expected: null
+  But was:  "lobby-first"
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.HostedLobbyLifetimeTests.RetiredCreationCannotAdoptItsIdOrClearTheNewCreationFlag () [0x00106] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-c\Assets\TumbangPreso\Tests\HostedLobbyLifetimeTests.cs:94
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Query] Created UGS Lobby lobby-first with JoinCode First
+[Query] Created UGS Lobby cleanup-lobby-1 with JoinCode Second
+[Query] Deleted UGS Lobby cleanup-lobby-1
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-c-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

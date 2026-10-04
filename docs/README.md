@@ -1,5 +1,38 @@
 # Documentation: Start Here
 
+Owner follow-up readiness: [real ability and HUD-state correction](reports/power-recast-readiness-2026-10-04/README.md).
+
+First-person source-mesh preservation: [ownership correction and native evidence](reports/viewmodel-mesh-ownership-2026-10-04/README.md).
+
+Owner arms catalog fallback: [causal native checks](reports/viewmodel-roster-fallback-2026-10-04/README.md).
+
+Zack powered wall contact: [compact cue and scoped native evidence](reports/zack-bank-contact-2026-10-04/validation.md).
+
+Friends acceptance capacity: [two-account server flow and correction](reports/reliability-2026-10-04/friends-capacity/README.md).
+
+Background input ownership: [focus-loss failures and checked recovery](reports/laptop-validation-2026-10-04/background-focus/README.md).
+
+Record measurement integrity: [NaN normalization and profile evidence](reports/reliability-2026-10-04/match-record-nan/README.md).
+
+Server history write recovery: [failure reproduction and correction](reports/reliability-2026-10-04/cloud-history-write/README.md).
+
+Server travel-bound parity: [current movement correction and focused evidence](reports/reliability-2026-10-04/cloud-travel-bound/README.md).
+
+Latest playtested movement revision: [measured speeds, jump and free shove/lunge](reports/movement-playtest-2026-10-03/README.md).
+Earlier same-day movement values are superseded; their evidence remains historical.
+
+Objective income revision: [rules and four-case native evidence](reports/feedback-2026-10-03/objective-economy/README.md).
+
+Latest human Feedback: [Cheska caster exclusion](reports/feedback-2026-10-03/cheska-caster.md).
+
+LAN participant identity and missing client result: [native boundary evidence](reports/reliability-2026-10-03/lan-record-identity/README.md).
+
+HOME pinned-rules preservation: [native causal and control evidence](reports/reliability-2026-10-03/hub-pinned-rules/README.md).
+
+Current Windows integration build and normal-lobby mode/client-save findings: [1002m evidence](reports/reliability-2026-10-02/windows-candidate1002m/README.md).
+
+Slide prediction and retrieval inventory optimization: [native timing and behavior evidence](reports/reliability-2026-10-02/slide-inventory/README.md).
+
 Read only the current route needed for the task. Full history is retained, but
 old prompts, counts and work orders are not current instructions.
 
@@ -71,3 +104,98 @@ from Godot now live here as Unity-owned references; never overwrite them from th
 frozen Godot repository.
 
 Bank Shot mechanics and validation: [current report](reports/feedback-2026-09-30/bank-shot.md).
+
+Rebuilt Ilalim generated-scenery preview isolation: [native evidence](reports/reliability-2026-10-02/ilalim-preview-scope/README.md).
+
+Rebuilt Ilalim under-viaduct preview framing: [native evidence](reports/reliability-2026-10-02/ilalim-preview-framing/README.md).
+
+Replay trail capture inventory reuse: [native evidence](reports/reliability-2026-10-02/replay-shoe-lookup/README.md).
+
+Zack bot Overclock decision repair: [native evidence](reports/reliability-2026-10-02/bot-overclock/README.md).
+
+Current129 Windows rebuilt-Ilalim player observations: [evidence](reports/reliability-2026-10-02/ilalim-player129/README.md).
+
+Rebuilt Ilalim late preview-audio playback fix: [native evidence](reports/reliability-2026-10-02/ilalim-preview-audio/README.md).
+
+Empty replay sample allocation removal: [native evidence](reports/reliability-2026-10-02/replay-empty-capture/README.md).
+
+Queue connection startup exception recovery: [native evidence](reports/reliability-2026-10-02/queue-start-fault/README.md).
+
+Career submission acknowledgement and saved-result retention: [native evidence](reports/reliability-2026-10-02/career-submit-ack/README.md).
+
+Shared Cloud Code missing-output failure boundary: [native evidence](reports/reliability-2026-10-02/cloud-output/README.md).
+
+Bounded shared service-request timeout: [native evidence](reports/reliability-2026-10-02/http-timeout/README.md).
+
+Late career submission identity and pending-result preservation: [native evidence](reports/reliability-2026-10-02/career-submit-identity/README.md).
+
+Refreshed129 Windows Classic tournament-context observations: [evidence](reports/reliability-2026-10-02/current-tournament129/README.md).
+
+Career refresh account-cache ownership: [native evidence](reports/reliability-2026-10-02/career-refresh-owner/README.md).
+
+Abandon/history account-response ownership: [native evidence](reports/reliability-2026-10-02/career-async-owner/README.md).
+
+Queued-result verification alignment after refusals: [native evidence](reports/reliability-2026-10-02/career-witness/README.md).
+
+Late history UI completion and navigation safety: [native evidence](reports/reliability-2026-10-02/history-navigation/README.md).
+
+Automatic career sync after pending older-account work: [native evidence](reports/reliability-2026-10-02/career-account-sync/README.md).
+All-nine-hero official footage research and implementation plans: [October 2 review](reports/hero-reference-footage-2026-10-02/README.md).
+
+Displayed match and career-dispute identity: [native evidence](reports/reliability-2026-10-02/result-verdict/README.md).
+
+Late career acknowledgements refresh visible result details: [native evidence](reports/reliability-2026-10-02/result-late-ack/README.md).
+
+Wallet account ownership and deferred refresh: [native evidence](reports/reliability-2026-10-02/wallet-owner/README.md).
+
+Full current Windows Classic tournament-context match: [actual peer evidence](reports/reliability-2026-10-02/full-classic-match/README.md).
+
+Inactive bot-body observation isolation: [native evidence](reports/reliability-2026-10-02/bot-inactive-body/README.md).
+
+Social reply and handle lookup account ownership: [native evidence](reports/reliability-2026-10-02/social-owner/README.md).
+
+Sean held-shoe body preparation: [evidence](reports/sean-empowered-presentation-2026-10-02/README.md).
+
+Amihan presentation: Airburst and cutscene, Drift, her light body and floating run: [report](reports/amihan-presentation-2026-10-02/README.md).
+
+Cheska held Frostbite surface cue and low-memory qualification: [October 2 result](reports/cheska-frostbite-load-2026-10-02/result.md).
+
+Distinct Cheska held-shoe cast: [native review and preservation proof](reports/cheska-frostbite-motion-2026-10-02/README.md).
+
+Dante Boulder weight-bearing preparation: [native review and preserved assets](reports/dante-boulder-motion-2026-10-02/README.md).
+
+- [Boulder loaded-shoe surface and lifecycle](reports/dante-boulder-load-2026-10-02/README.md): affinity-bound world/owner inlay, retained baseline and serial checks.
+
+- [Bastion forward-brace motion](reports/dante-bastion-motion-2026-10-02/README.md): distinct body/FPP action with existing field behavior preserved.
+
+- [Attacking tutorial barrier warning](reports/tutorial-barrier-warning-2026-10-02/README.md): one actual-route case, real throw and visible-warning control.
+
+- [Tutorial Block attacker placement](reports/tutorial-block-placement-2026-10-02/README.md): behind-centre spawn, genuine misses and player interception.
+
+- [Latest3.5second Next Round timing](reports/round-timer-35-2026-10-02/README.md): shared ordinary deadline and unchanged10second halftime.
+
+Timed status recovery without mashing: [native evidence](reports/timed-recovery-2026-10-02/README.md).
+
+Studio intro before loading: [native evidence](reports/studio-intro-2026-10-02/README.md).
+
+Cloud tool recovery and bounded smoke results: [October3 evidence](reports/cloud-recovery-2026-10-03/README.md).
+
+Continental Drift irregular-fracture unit: [scoped plan](reports/dante-drift-fractures-2026-10-03/plan.md).
+
+Account canonical refresh ownership: [native causal and control evidence](reports/reliability-2026-10-03/account-refresh-ownership/README.md).
+
+Local account/lobby resumption qualification: [25 unique native checks](reports/reliability-2026-10-03/local-resume-qualification/README.md).
+
+Competition work continuity: [persistent coordination directives](COMPETITION_COORDINATION.md).
+
+Replay new-match history isolation: [native boundary evidence](reports/reliability-2026-10-03/replay-match-identity/README.md).
+
+Portable save backup preservation: [native file I/O evidence](reports/reliability-2026-10-03/portable-store-backup/README.md).
+
+Spectator footage and local match identity: [native prerequisite and boundary evidence](reports/reliability-2026-10-03/spectator-match-lifetime/README.md).
+
+First PC/laptop LAN match: [actual paired baseline evidence](reports/reliability-2026-10-03/two-machine-lan/README.md).
+
+Ice diagnostic admission timing: [native setup evidence](reports/reliability-2026-10-03/ice-admission-role/README.md).
+
+Current full managed Core integration: [704-case gate and retained contract failure](reports/reliability-2026-10-03/managed-integration/README.md).

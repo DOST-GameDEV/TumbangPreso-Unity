@@ -1,0 +1,8 @@
+{
+  "tests.xml": "0e88b3ec1503ac01ec0276c1b4fd59c67b0f606971059f9d371c8f17948b82ea",
+  "job-receipt.json": "03c9a19c5df49e76f84139d5a6d6fd85ba05ca669250911a05c88f6e9f8f17fb",
+  "qualified-source.json": "33f39a9b6fa94596535cf170e82e9df22f04c162d27fb1ce9eb07d7bcca0e0f1",
+  "post-input-audit.json": "75507202be948d2abbb6baec2542e4ae759c8a39f8fcf8baf6d410cb740cb913",
+  "prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20"
+}

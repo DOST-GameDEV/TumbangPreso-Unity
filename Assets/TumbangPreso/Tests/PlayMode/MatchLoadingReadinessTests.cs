@@ -71,7 +71,7 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator ViewmodelMeshWarmupRetainsTheExactSourcesWithoutBuildingActors()
+        public IEnumerator ViewmodelMeshWarmupRetainsSourceGeometryWithoutBuildingActors()
         {
             int actors = Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None).Length;
             int viewmodels = Object.FindObjectsByType<CameraSystem.ViewmodelArms>(FindObjectsSortMode.None).Length;
@@ -94,7 +94,10 @@ namespace TumbangPreso.PlayTests
             {
                 Assert.IsTrue(cache.TryGetValue(path, out var mesh) && mesh != null, path);
                 Assert.AreSame(mesh, CameraSystem.ViewmodelMeshAssets.Load(path), path);
-                Assert.AreSame(mesh, Resources.Load<Mesh>(path), path);
+                var source = Resources.Load<Mesh>(path);
+                Assert.AreNotSame(source, mesh, path);
+                CollectionAssert.AreEqual(source.vertices, mesh.vertices, path);
+                CollectionAssert.AreEqual(source.triangles, mesh.triangles, path);
             }
             var retained = cache.ToArray();
             yield return CameraSystem.ViewmodelMeshAssets.Warmup(RosterBook.Load());

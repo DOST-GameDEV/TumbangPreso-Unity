@@ -1,0 +1,354 @@
+{
+    "profiles": [
+        {
+            "name": "nemu-nemu_skill1-cast-1",
+            "count": 375,
+            "slowest": [
+                {
+                    "index": 243,
+                    "ms": 4213.6259765625,
+                    "samples": [
+                        {
+                            "name": "Main Thread",
+                            "ms": 4213.6259765625
+                        },
+                        {
+                            "name": "PlayerLoop",
+                            "ms": 4213.6220703125
+                        },
+                        {
+                            "name": "PostLateUpdate.ProfilerEndFrame",
+                            "ms": 4203.1708984375
+                        },
+                        {
+                            "name": "Profiler.FlushCounters",
+                            "ms": 4203.169921875
+                        },
+                        {
+                            "name": "Profiler.CollectLegacyStats",
+                            "ms": 4203.169921875
+                        },
+                        {
+                            "name": "Profiler.Collect2DStats",
+                            "ms": 4203.16650390625
+                        },
+                        {
+                            "name": "Profiler2D.CaptureFrame",
+                            "ms": 4203.166015625
+                        },
+                        {
+                            "name": "PostLateUpdate.FinishFrameRendering",
+                            "ms": 8.16759967803955
+                        },
+                        {
+                            "name": "Camera.Render",
+                            "ms": 8.081099510192871
+                        },
+                        {
+                            "name": "Drawing",
+                            "ms": 4.242499828338623
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "nemu-nemu_skill1-cast-2",
+            "count": 385,
+            "slowest": [
+                {
+                    "index": 132,
+                    "ms": 3792.270751953125,
+                    "samples": [
+                        {
+                            "name": "Main Thread",
+                            "ms": 3792.270751953125
+                        },
+                        {
+                            "name": "PlayerLoop",
+                            "ms": 11.847100257873536
+                        },
+                        {
+                            "name": "PostLateUpdate.FinishFrameRendering",
+                            "ms": 8.335700035095215
+                        },
+                        {
+                            "name": "Camera.Render",
+                            "ms": 8.235799789428711
+                        },
+                        {
+                            "name": "Drawing",
+                            "ms": 4.645199775695801
+                        },
+                        {
+                            "name": "Render.OpaqueGeometry",
+                            "ms": 2.4723000526428224
+                        },
+                        {
+                            "name": "RenderForwardOpaque.Render",
+                            "ms": 2.157900094985962
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "classic-match-entry-and-round-start",
+            "count": 154,
+            "slowest": [
+                {
+                    "index": 8,
+                    "ms": 3433.4404296875,
+                    "samples": [
+                        {
+                            "name": "Main Thread",
+                            "ms": 3433.4404296875
+                        },
+                        {
+                            "name": "PlayerLoop",
+                            "ms": 3433.414794921875
+                        },
+                        {
+                            "name": "EarlyUpdate.ScriptRunDelayedStartupFrame",
+                            "ms": 3248.0224609375
+                        },
+                        {
+                            "name": "CoroutinesDelayedCalls",
+                            "ms": 3248.02197265625
+                        },
+                        {
+                            "name": "TumbangPreso.Runtime.dll!TumbangPreso::MatchInstaller.Start() [Invoke]",
+                            "ms": 3232.4091796875
+                        },
+                        {
+                            "name": "GameObject.AddComponent",
+                            "ms": 2575.30859375
+                        },
+                        {
+                            "name": "TumbangPreso.Runtime.dll!TumbangPreso.Visual::CharacterNameplate.Awake() [Invoke]",
+                            "ms": 2574.7822265625
+                        },
+                        {
+                            "name": "GameObject.AddComponent",
+                            "ms": 2572.895751953125
+                        },
+                        {
+                            "name": "Font.CacheFontForText",
+                            "ms": 2572.40380859375
+                        },
+                        {
+                            "name": "SoundManager.GetHandle",
+                            "ms": 351.0653991699219
+                        },
+                        {
+                            "name": "SoundManager.LoadFMODSound",
+                            "ms": 351.04791259765627
+                        },
+                        {
+                            "name": "Update.ScriptRunBehaviourUpdate",
+                            "ms": 65.39459991455078
+                        },
+                        {
+                            "name": "BehaviourUpdate",
+                            "ms": 65.3936996459961
+                        },
+                        {
+                            "name": "GameObject.AddComponent",
+                            "ms": 58.76070022583008
+                        },
+                        {
+                            "name": "TumbangPreso.Runtime.dll!TumbangPreso.UI::Hud.Awake() [Invoke]",
+                            "ms": 57.464298248291019
+                        },
+                        {
+                            "name": "PreLateUpdate.ScriptRunBehaviourLateUpdate",
+                            "ms": 55.30289840698242
+                        },
+                        {
+                            "name": "LateBehaviourUpdate",
+                            "ms": 55.301998138427737
+                        },
+                        {
+                            "name": "TumbangPreso.Runtime.dll!TumbangPreso.UI::Hud.Update() [Invoke]",
+                            "ms": 39.38240051269531
+                        },
+                        {
+                            "name": "GameObject.AddComponent",
+                            "ms": 27.008800506591798
+                        },
+                        {
+                            "name": "EarlyUpdate.UpdatePreloading",
+                            "ms": 26.827499389648439
+                        },
+                        {
+                            "name": "Loading.UpdatePreloading",
+                            "ms": 26.827199935913087
+                        },
+                        {
+                            "name": "UpdatePreloading",
+                            "ms": 26.826200485229493
+                        },
+                        {
+                            "name": "Application.Integrate Assets in Background",
+                            "ms": 26.82550048828125
+                        },
+                        {
+                            "name": "Preload Single Step",
+                            "ms": 26.825000762939454
+                        },
+                        {
+                            "name": "Application.LoadLevelAsync Integrate",
+                            "ms": 26.74370002746582
+                        },
+                        {
+                            "name": "PostLateUpdate.FinishFrameRendering",
+                            "ms": 23.886199951171876
+                        },
+                        {
+                            "name": "Camera.Render",
+                            "ms": 23.77090072631836
+                        },
+                        {
+                            "name": "TumbangPreso.Runtime.dll!TumbangPreso.CameraSystem::ViewmodelArms..ctor() [Invoke]",
+                            "ms": 19.696800231933595
+                        },
+                        {
+                            "name": "GameObject.AddComponent",
+                            "ms": 18.480499267578126
+                        },
+                        {
+                            "name": "Mono.JIT",
+                            "ms": 18.24519920349121
+                        }
+                    ]
+                },
+                {
+                    "index": 9,
+                    "ms": 92.61859893798828,
+                    "samples": [
+                        {
+                            "name": "Main Thread",
+                            "ms": 92.61859893798828
+                        },
+                        {
+                            "name": "PlayerLoop",
+                            "ms": 92.58920288085938
+                        },
+                        {
+                            "name": "Update.ScriptRunDelayedDynamicFrameRate",
+                            "ms": 55.069000244140628
+                        },
+                        {
+                            "name": "CoroutinesDelayedCalls",
+                            "ms": 55.06809997558594
+                        },
+                        {
+                            "name": "TumbangPreso.Runtime.dll!TumbangPreso::PracticeRange.Begin() [Coroutine: MoveNext] [Invoke]",
+                            "ms": 41.35449981689453
+                        },
+                        {
+                            "name": "PreLateUpdate.ScriptRunBehaviourLateUpdate",
+                            "ms": 17.693700790405275
+                        },
+                        {
+                            "name": "LateBehaviourUpdate",
+                            "ms": 17.6924991607666
+                        },
+                        {
+                            "name": "TumbangPreso.Runtime.dll!TumbangPreso.CameraSystem::MatchPoseHistory.LateUpdate() [Invoke]",
+                            "ms": 14.135100364685059
+                        },
+                        {
+                            "name": "TumbangPreso.Runtime.dll!TumbangPreso.UI.Hub::HubLoading.Follow() [Coroutine: MoveNext] [Invoke]",
+                            "ms": 13.698599815368653
+                        },
+                        {
+                            "name": "Mono.JIT",
+                            "ms": 11.059900283813477
+                        },
+                        {
+                            "name": "Camera.CustomRender",
+                            "ms": 10.314499855041504
+                        },
+                        {
+                            "name": "EarlyUpdate.UpdatePreloading",
+                            "ms": 9.907600402832032
+                        },
+                        {
+                            "name": "Loading.UpdatePreloading",
+                            "ms": 9.90719985961914
+                        },
+                        {
+                            "name": "UpdatePreloading",
+                            "ms": 9.906299591064454
+                        },
+                        {
+                            "name": "Application.Integrate Assets in Background",
+                            "ms": 9.905400276184082
+                        },
+                        {
+                            "name": "Preload Single Step",
+                            "ms": 9.903800010681153
+                        },
+                        {
+                            "name": "GarbageCollectAssetsProfile",
+                            "ms": 9.895999908447266
+                        },
+                        {
+                            "name": "Mono.JIT",
+                            "ms": 9.563699722290039
+                        },
+                        {
+                            "name": "PostLateUpdate.FinishFrameRendering",
+                            "ms": 7.5625
+                        },
+                        {
+                            "name": "Camera.Render",
+                            "ms": 7.476399898529053
+                        },
+                        {
+                            "name": "GC.MarkDependencies",
+                            "ms": 5.19890022277832
+                        },
+                        {
+                            "name": "Drawing",
+                            "ms": 3.902100086212158
+                        },
+                        {
+                            "name": "Drawing",
+                            "ms": 3.5443999767303469
+                        },
+                        {
+                            "name": "UIEvents.WillRenderCanvases",
+                            "ms": 3.1598000526428224
+                        },
+                        {
+                            "name": "UGUI.Rendering.UpdateBatches",
+                            "ms": 3.1594998836517336
+                        },
+                        {
+                            "name": "UnityEngine.UIModule.dll!UnityEngine::Canvas.SendWillRenderCanvases() [Invoke]",
+                            "ms": 3.036099910736084
+                        },
+                        {
+                            "name": "Render",
+                            "ms": 3.0281999111175539
+                        },
+                        {
+                            "name": "CanvasUpdate.PreRender",
+                            "ms": 3.0174999237060549
+                        },
+                        {
+                            "name": "Mono.JIT",
+                            "ms": 2.4149999618530275
+                        },
+                        {
+                            "name": "GC.BuildLiveObjectMaps",
+                            "ms": 2.2339000701904299
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

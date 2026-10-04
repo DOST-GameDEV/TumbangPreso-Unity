@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 11:07:44Z" end-time="2026-10-02 11:07:45Z" duration="0.253292">
+  <test-suite type="TestSuite" id="2585" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1291" result="Passed" start-time="2026-10-02 11:07:44Z" end-time="2026-10-02 11:07:45Z" duration="0.253292" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2579" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1291" result="Passed" start-time="2026-10-02 11:07:44Z" end-time="2026-10-02 11:07:45Z" duration="0.231569" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25044" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2580" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1291" result="Passed" start-time="2026-10-02 11:07:44Z" end-time="2026-10-02 11:07:45Z" duration="0.223100" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2581" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1291" result="Passed" start-time="2026-10-02 11:07:44Z" end-time="2026-10-02 11:07:45Z" duration="0.214651" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1605" name="LungeWindupLifetimeTests" fullname="TumbangPreso.PlayTests.LungeWindupLifetimeTests" classname="TumbangPreso.PlayTests.LungeWindupLifetimeTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-02 11:07:44Z" end-time="2026-10-02 11:07:45Z" duration="0.180781" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1608" name="AnEnabledBodyStillReleasesItsActualLocalWindupNormally" fullname="TumbangPreso.PlayTests.LungeWindupLifetimeTests.AnEnabledBodyStillReleasesItsActualLocalWindupNormally" methodname="AnEnabledBodyStillReleasesItsActualLocalWindupNormally" classname="TumbangPreso.PlayTests.LungeWindupLifetimeTests" runstate="Runnable" seed="615794922" result="Passed" start-time="2026-10-02 11:07:44Z" end-time="2026-10-02 11:07:45Z" duration="0.096339" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1606" name="DisabledLocalWindupDoesNotReleaseASpontaneousDashAfterReactivation" fullname="TumbangPreso.PlayTests.LungeWindupLifetimeTests.DisabledLocalWindupDoesNotReleaseASpontaneousDashAfterReactivation" methodname="DisabledLocalWindupDoesNotReleaseASpontaneousDashAfterReactivation" classname="TumbangPreso.PlayTests.LungeWindupLifetimeTests" runstate="Runnable" seed="1130866047" result="Passed" start-time="2026-10-02 11:07:45Z" end-time="2026-10-02 11:07:45Z" duration="0.035864" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1607" name="DisabledObservedWindupDoesNotReappearOnTheReactivatedBody" fullname="TumbangPreso.PlayTests.LungeWindupLifetimeTests.DisabledObservedWindupDoesNotReappearOnTheReactivatedBody" methodname="DisabledObservedWindupDoesNotReappearOnTheReactivatedBody" classname="TumbangPreso.PlayTests.LungeWindupLifetimeTests" runstate="Runnable" seed="1499617824" result="Passed" start-time="2026-10-02 11:07:45Z" end-time="2026-10-02 11:07:45Z" duration="0.033267" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

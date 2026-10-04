@@ -1,0 +1,86 @@
+[
+  {
+    "path": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\docs\\reports\\cloud-integration-2026-09-24\\skill-fx\\supernova-overlap-plan.md",
+    "bytes": 1055,
+    "lastWriteUtc": "2026-09-24T17:05:46.8461259Z",
+    "sha256": "A711900BE7E7464A47F6281389E58D893C2274AF7D896FE7DE8E1B6F2F7B499F"
+  },
+  {
+    "path": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\docs\\reports\\cloud-integration-2026-09-24\\skill-fx\\supernova-overlap\\before-before.png",
+    "bytes": 858292,
+    "lastWriteUtc": "2026-09-24T17:08:54.3081616Z",
+    "sha256": "F71F36AAA2D71597989B15CECF5E69999E39AC9AEF019E6ED98704D4B9FA9614"
+  },
+  {
+    "path": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\docs\\reports\\cloud-integration-2026-09-24\\skill-fx\\supernova-overlap\\before-impact-early.png",
+    "bytes": 789158,
+    "lastWriteUtc": "2026-09-24T17:09:00.2865784Z",
+    "sha256": "7B34E527B829FFE76B80EFAA89CB48D44F9026CF48F999A4FFDEED7B6B448EA7"
+  },
+  {
+    "path": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\docs\\reports\\cloud-integration-2026-09-24\\skill-fx\\supernova-overlap\\before-impact-early-grey25.png",
+    "bytes": 24882,
+    "lastWriteUtc": "2026-09-24T17:10:51.1428930Z",
+    "sha256": "92605B125991A61B20FC4E479392F0CACA2230C9A44975B59CE9AEFAF881AB88"
+  },
+  {
+    "path": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\docs\\reports\\cloud-integration-2026-09-24\\skill-fx\\supernova-overlap\\before-impact-middle.png",
+    "bytes": 796956,
+    "lastWriteUtc": "2026-09-24T17:09:00.3987063Z",
+    "sha256": "BBFCB88B6EA7C8A1B703E31F4BFC453B397499D0B43082EA5EAF5A9505A1267E"
+  },
+  {
+    "path": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\docs\\reports\\cloud-integration-2026-09-24\\skill-fx\\supernova-overlap\\before-impact-middle-grey25.png",
+    "bytes": 26246,
+    "lastWriteUtc": "2026-09-24T17:10:51.1715142Z",
+    "sha256": "9723E5F4D9273A5333F5AA5ABCC07BF7C0E34016AA570186B630889AC35CA5CC"
+  },
+  {
+    "path": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\docs\\reports\\cloud-integration-2026-09-24\\skill-fx\\supernova-overlap\\before.xml",
+    "bytes": 3966,
+    "lastWriteUtc": "2026-09-24T17:09:00.5156310Z",
+    "sha256": "94F1056313C0D1446DC7E83934957F6FD900AB039B211CDDCBD184549A235DB5"
+  },
+  {
+    "path": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-world-qualification-20260923\\Logs\\supernova-overlap-after.xml",
+    "bytes": 3966,
+    "lastWriteUtc": "2026-09-24T17:11:57.9596927Z",
+    "sha256": "03A13688C8FA358FB71CF6C65C8EC0574E2BD421E4C7119AD81A21894523C2F5"
+  },
+  {
+    "path": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-world-qualification-20260923\\Logs\\supernova-overlap-after.log",
+    "bytes": 915165,
+    "lastWriteUtc": "2026-09-24T17:12:00.5875998Z",
+    "sha256": "2BC7FB848C20A83E4B74BDC514B0581BB96487D233FD1CBE3503F1718076C7BD"
+  },
+  {
+    "path": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-world-qualification-20260923\\Logs\\supernova-overlap-live\\before.png",
+    "bytes": 858192,
+    "lastWriteUtc": "2026-09-24T17:11:52.0267596Z",
+    "sha256": "2CFBD21A650EA723FE236CC2E511C5BE094DFDC622305B3BCA8451F3AC025EC0"
+  },
+  {
+    "path": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-world-qualification-20260923\\Logs\\supernova-overlap-live\\impact-early.png",
+    "bytes": 799627,
+    "lastWriteUtc": "2026-09-24T17:11:57.7416010Z",
+    "sha256": "F4E284D34AAB0D5823007D00BD6BFA964A41E6FD570795759540043937ACE14F"
+  },
+  {
+    "path": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-world-qualification-20260923\\Logs\\supernova-overlap-live\\impact-middle.png",
+    "bytes": 773249,
+    "lastWriteUtc": "2026-09-24T17:11:57.8443358Z",
+    "sha256": "4E9EE0E4EF2C497BB265307C252F56616C98592DD0E6065F9C6A953789BB3B8A"
+  },
+  {
+    "path": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-world-qualification-20260923\\Assets\\TumbangPreso\\Tests\\PlayMode\\SeanSkillTimingProbe.cs",
+    "bytes": 21555,
+    "lastWriteUtc": "2026-09-24T17:06:38.5017126Z",
+    "sha256": "B4DA36C7531EF0B2253DDB131A8773897DB6693D8677908C1CD20CFB914D5492"
+  },
+  {
+    "path": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-world-qualification-20260923\\Assets\\TumbangPreso\\Runtime\\Abilities\\HeroHazards.cs",
+    "bytes": 266090,
+    "lastWriteUtc": "2026-09-24T17:10:35.9824246Z",
+    "sha256": "FECED519FA29287DA73038B5EC62FF34BB0F9D413144F3F5363239F96FAB5551"
+  }
+]

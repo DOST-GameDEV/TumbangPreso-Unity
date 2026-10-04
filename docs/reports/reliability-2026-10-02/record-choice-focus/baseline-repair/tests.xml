@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 07:07:08Z" end-time="2026-10-02 07:07:10Z" duration="1.3901293">
+  <test-suite type="TestSuite" id="2543" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1260" result="Failed" site="Child" start-time="2026-10-02 07:07:08Z" end-time="2026-10-02 07:07:10Z" duration="1.390129" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2537" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1260" result="Failed" site="Child" start-time="2026-10-02 07:07:08Z" end-time="2026-10-02 07:07:10Z" duration="1.367073" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23016" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2538" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1260" result="Failed" site="Child" start-time="2026-10-02 07:07:08Z" end-time="2026-10-02 07:07:10Z" duration="1.352475" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2539" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1260" result="Failed" site="Child" start-time="2026-10-02 07:07:08Z" end-time="2026-10-02 07:07:10Z" duration="1.338391" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2044" name="RecordChoiceFocusTests" fullname="TumbangPreso.PlayTests.RecordChoiceFocusTests" classname="TumbangPreso.PlayTests.RecordChoiceFocusTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-02 07:07:08Z" end-time="2026-10-02 07:07:10Z" duration="1.305313" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2046" name="CancellingAnActiveChoiceReturnsFocusToItsOpener" fullname="TumbangPreso.PlayTests.RecordChoiceFocusTests.CancellingAnActiveChoiceReturnsFocusToItsOpener" methodname="CancellingAnActiveChoiceReturnsFocusToItsOpener" classname="TumbangPreso.PlayTests.RecordChoiceFocusTests" runstate="Runnable" seed="936114421" result="Passed" start-time="2026-10-02 07:07:08Z" end-time="2026-10-02 07:07:09Z" duration="0.633033" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2045" name="CareerModeRefreshDoesNotReselectItsRetiredChoice" fullname="TumbangPreso.PlayTests.RecordChoiceFocusTests.CareerModeRefreshDoesNotReselectItsRetiredChoice" methodname="CareerModeRefreshDoesNotReselectItsRetiredChoice" classname="TumbangPreso.PlayTests.RecordChoiceFocusTests" runstate="Runnable" seed="700948785" result="Failed" start-time="2026-10-02 07:07:09Z" end-time="2026-10-02 07:07:09Z" duration="0.364505" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Dropdown.Hide selected the old row after the current career page rebuilt its focus.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RecordChoiceFocusTests+<CareerModeRefreshDoesNotReselectItsRetiredChoice>d__12.MoveNext () [0x0016e] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\RecordChoiceFocusTests.cs:72
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2047" name="SelectingAnOptionWithoutARefreshKeepsTheNormalCallbackAndFocus" fullname="TumbangPreso.PlayTests.RecordChoiceFocusTests.SelectingAnOptionWithoutARefreshKeepsTheNormalCallbackAndFocus" methodname="SelectingAnOptionWithoutARefreshKeepsTheNormalCallbackAndFocus" classname="TumbangPreso.PlayTests.RecordChoiceFocusTests" runstate="Runnable" seed="1183274141" result="Passed" start-time="2026-10-02 07:07:09Z" end-time="2026-10-02 07:07:10Z" duration="0.291898" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

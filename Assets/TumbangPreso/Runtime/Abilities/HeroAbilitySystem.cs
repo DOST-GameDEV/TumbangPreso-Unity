@@ -1459,8 +1459,30 @@ namespace TumbangPreso.Abilities
         /// </summary>
         private void Award(float amount)
         {
-            if (Kit == null || Kit.PracticeMode) return;
+            if (Kit == null || Kit.PracticeMode || amount <= 0) return;
+            GrantObjectiveIncome(amount);
+        }
 
+        private long _defenderAwardMatch;
+        private int _defenderAwardRound;
+
+        public void OnDefenderRoundStarted()
+        {
+            var match = GameServices.Match;
+            if (!NetAuthority.ShouldResolve() || GameLaunch.GuidedTutorial || Kit == null || _motor == null
+                || _motor.Mode != GameMode.HeroStrike || GameServices.Round?.RoundActive != true
+                || match == null || !match.MatchInProgress || match.RoundNumber < 1
+                || match.PresentationMatchId <= 0 || _motor.PlayerSlot != match.DefenderSlot) return;
+            if (_defenderAwardMatch == match.PresentationMatchId && _defenderAwardRound == match.RoundNumber) return;
+            _defenderAwardMatch = match.PresentationMatchId;
+            _defenderAwardRound = match.RoundNumber;
+            // BeginRound runs before the kit's next Update clears its buffer-time
+            // PracticeMode. Validate the real round here, never that stale flag.
+            GrantObjectiveIncome(Balance.UltimateChargeDefenderRound);
+        }
+
+        private void GrantObjectiveIncome(float amount)
+        {
             Kit.AddUltimateCharge(amount);
             if (NetAuthority.IsHost)
             {

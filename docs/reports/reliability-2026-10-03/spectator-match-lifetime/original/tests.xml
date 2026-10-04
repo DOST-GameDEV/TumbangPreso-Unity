@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 05:50:21Z" end-time="2026-10-03 05:50:21Z" duration="0.1665909">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1089" result="Failed" site="Child" start-time="2026-10-03 05:50:21Z" end-time="2026-10-03 05:50:21Z" duration="0.166591" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2325" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1089" result="Failed" site="Child" start-time="2026-10-03 05:50:21Z" end-time="2026-10-03 05:50:21Z" duration="0.140492" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22352" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2326" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1089" result="Failed" site="Child" start-time="2026-10-03 05:50:21Z" end-time="2026-10-03 05:50:21Z" duration="0.123544" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2327" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1089" result="Failed" site="Child" start-time="2026-10-03 05:50:21Z" end-time="2026-10-03 05:50:21Z" duration="0.107089" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2243" name="SpectatorReplayMatchLifetimeTests" fullname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests" classname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-03 05:50:21Z" end-time="2026-10-03 05:50:21Z" duration="0.082649" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2249" name="CurrentMatchReadyFramesStillPlayOnTheOperatorRequest" fullname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests.CurrentMatchReadyFramesStillPlayOnTheOperatorRequest" methodname="CurrentMatchReadyFramesStillPlayOnTheOperatorRequest" classname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests" runstate="Runnable" seed="1127606428" result="Passed" start-time="2026-10-03 05:50:21Z" end-time="2026-10-03 05:50:21Z" duration="0.047175" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2247" name="FirstAcceptedNewMatchScoreRetiresOldBufferAndKeepsItsOwnMarker" fullname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests.FirstAcceptedNewMatchScoreRetiresOldBufferAndKeepsItsOwnMarker" methodname="FirstAcceptedNewMatchScoreRetiresOldBufferAndKeepsItsOwnMarker" classname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests" runstate="Runnable" seed="895257721" result="Failed" start-time="2026-10-03 05:50:21Z" end-time="2026-10-03 05:50:21Z" duration="0.008964" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: not equal to 639266034213662180
+  But was:  639266034213662180
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests.Restart () [0x00031] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\SpectatorReplayMatchLifetimeTests.cs:89
+at TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests.FirstAcceptedNewMatchScoreRetiresOldBufferAndKeepsItsOwnMarker () [0x0000e] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\SpectatorReplayMatchLifetimeTests.cs:121
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2246" name="NewMatchRetiresPendingFrameObjectsWithoutResettingReadbackAccounting" fullname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests.NewMatchRetiresPendingFrameObjectsWithoutResettingReadbackAccounting" methodname="NewMatchRetiresPendingFrameObjectsWithoutResettingReadbackAccounting" classname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests" runstate="Runnable" seed="123528644" result="Failed" start-time="2026-10-03 05:50:21Z" end-time="2026-10-03 05:50:21Z" duration="0.001474" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: not equal to 639266034213758635
+  But was:  639266034213758635
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests.Restart () [0x00031] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\SpectatorReplayMatchLifetimeTests.cs:89
+at TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests.NewMatchRetiresPendingFrameObjectsWithoutResettingReadbackAccounting () [0x0002f] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\SpectatorReplayMatchLifetimeTests.cs:113
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2248" name="OrdinaryRoundAdvancePreservesSameMatchFootageAndPlayingClip" fullname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests.OrdinaryRoundAdvancePreservesSameMatchFootageAndPlayingClip" methodname="OrdinaryRoundAdvancePreservesSameMatchFootageAndPlayingClip" classname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests" runstate="Runnable" seed="1888949368" result="Passed" start-time="2026-10-03 05:50:21Z" end-time="2026-10-03 05:50:21Z" duration="0.001473" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2245" name="ReplayKeyCannotStartPreviousMatchFootageBeforeTheNextPoll" fullname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests.ReplayKeyCannotStartPreviousMatchFootageBeforeTheNextPoll" methodname="ReplayKeyCannotStartPreviousMatchFootageBeforeTheNextPoll" classname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests" runstate="Runnable" seed="2060959563" result="Failed" start-time="2026-10-03 05:50:21Z" end-time="2026-10-03 05:50:21Z" duration="0.003974" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The operator replay request selected the prior match's ready buffer
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests.ReplayKeyCannotStartPreviousMatchFootageBeforeTheNextPoll () [0x00031] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\SpectatorReplayMatchLifetimeTests.cs:106
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2244" name="SameSceneRestartRetiresOldPlayingClipRingAndPendingMarker" fullname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests.SameSceneRestartRetiresOldPlayingClipRingAndPendingMarker" methodname="SameSceneRestartRetiresOldPlayingClipRingAndPendingMarker" classname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests" runstate="Runnable" seed="977842008" result="Failed" start-time="2026-10-03 05:50:21Z" end-time="2026-10-03 05:50:21Z" duration="0.001641" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Old-match footage is still covering the new live match
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests.SameSceneRestartRetiresOldPlayingClipRingAndPendingMarker () [0x00063] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\SpectatorReplayMatchLifetimeTests.cs:97
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

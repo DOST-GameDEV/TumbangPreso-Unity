@@ -1,0 +1,83 @@
+Mono path[0] = 'C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Builds/competition-release1002/TumbangPreso_Data/Managed'
+Mono config path = 'C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Builds/competition-release1002/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.5.8f1 (5cb7df797b7d)
+[Subsystems] Discovering subsystems at path C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Builds/competition-release1002/TumbangPreso_Data/UnitySubsystems
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: AMD Radeon RX 6600 (ID=0x73ff)
+    Vendor:   ATI
+    VRAM:     8147 MB
+    Driver:   32.0.21043.19003
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.060 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+D3D11 device created for Microsoft Media Foundation video decoding.
+[Audio] loaded 64 of 64 cues.
+[NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
+UnloadTime: 0.946000 ms
+[Build] TUMBANG PRESO 1.0.0 | 2664ad29c65f+dirty | protocol 129 | StandaloneWindows64
+[NetAuto] Explicit review rules: 1|0|2|30|0|3|0|1|0|1
+[Net] connecting to 127.0.0.1:8965
+[NetBoot] join requested to 127.0.0.1:8965: connecting
+[Social] presence not written: Singleton is not initialized. Please call UnityServices.InitializeAsync() to initialize.
+[Link] Good at 50 ms round trip (client).
+[SplashShaders] shaders=72 variants=135 warmed=135 complete=True calls=135 frames=27 budget_ms=2.0 elapsed_ms=450.581 max_slice_ms=6.908
+[Net] connected
+[Net] connected as seat 2
+[NetBoot] join admission: seat assigned
+[Link] Bad at 855 ms round trip (client).
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 3.612900 ms
+[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[NetSeat] arena installed: LocalSlot=1 spectator=False host=False allBots=False | s0:-+live+act | s1:reader+sim+live+act | s2:-+bot+live+act | s3:-+bot+live+act
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+Unloading 107 unused Assets to reduce memory usage. Loaded Objects now: 14910.
+Total: 6.846900 ms (FindLiveObjects: 1.022300 ms CreateObjectMapping: 1.164100 ms MarkObjects: 2.587800 ms  DeleteObjects: 2.072400 ms)
+
+[NetAuto] READY submitted from a client peer.
+[ArenaPrewarm] drew 20 views in 0.45 s.
+[HubLoading] Eskinita ready after 4.49 s.
+[Slice] round 1 begins, taya is seat 0
+[RoundBoundary] restarting client transport and reloading arena
+[Net] offline
+[NetDisconnect] peer=1 local=1 server=False connected=True
+[Net] connecting to 127.0.0.1:8965
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 16.957400 ms
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[NetSeat] arena installed: LocalSlot=0 spectator=False host=False allBots=False | s0:reader+sim+live+act | s1:-+live+act | s2:-+bot+live+act | s3:-+bot+live+act
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+Unloading 84 unused Assets to reduce memory usage. Loaded Objects now: 15165.
+Total: 5.327000 ms (FindLiveObjects: 1.122500 ms CreateObjectMapping: 1.760700 ms MarkObjects: 2.302700 ms  DeleteObjects: 0.140900 ms)
+
+[Link] Good at 50 ms round trip (client).
+[ArenaPrewarm] drew 20 views in 0.41 s.
+[HubLoading] Eskinita ready after 0.69 s.
+[Net] connected
+[Net] connected as seat 2
+[NetSeat] seat changed: LocalSlot=1 spectator=False host=False allBots=False | s0:reader(OFF)+live+act | s1:reader+sim+live+act | s2:-+bot+live+act | s3:-+bot+live+act
+[NetAuto] READY submitted from a client peer.
+[Link] Poor at 319 ms round trip (client).
+[NetDisconnect] peer=2 local=2 server=False connected=True
+[Net] disconnected: [Disconnect Event][Client-2][TransportClientId-4294967296][TransportShutdown] NetworkConnectionManager was shutdown. The transport was shutdown.
+[Abandon] HostLost: ABANDONED at round 2 of 2; this peer may no longer resolve anything
+UnloadTime: 5.326400 ms
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+CodeReloadManager destroyed

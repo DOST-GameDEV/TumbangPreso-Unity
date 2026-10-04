@@ -262,7 +262,15 @@ namespace TumbangPreso
 
         private void OnEnable() => Subscribe();
 
-        private void OnDisable() => Unsubscribe();
+        private void OnDisable()
+        {
+            Unsubscribe();
+            // A parked or removed practice seat must start fresh when its producer resumes.
+            // Input and consumer cancellation belongs to the transition that parks the seat.
+            ResetActionState();
+        }
+
+        internal void RetirePendingInput() => ReleaseAll(_motor.Intent);
 
         // -------------------------------------------------------------------
         // § WHAT THIS BOT IS LISTENING TO
@@ -721,53 +729,8 @@ namespace TumbangPreso
             {
                 _gates.Clear();
                 _chasing = null;
-                bool recoveryPressPending = intent.JustPressed(Verb.Jump);
                 ReleaseAll(intent);
-
-                // ⚠⚠ A BOT MASHES TO GET UP, BECAUSE A BOT PRESSES THE SAME BUTTONS A HUMAN
-                // DOES. `docs/VISION.md` § 4 makes that an invariant rather than a nicety: the
-                // alternative is a second path where a human answers a trip and a bot cannot,
-                // which would show up in `BotBehaviourProbe` as bots spending measurably longer
-                // on the floor than the same seat played by hand, and would quietly bias every
-                // hazard measurement taken from that probe.
-                //
-                // ⚠ THE TOGGLE IS WHAT MAKES IT A MASH. `MashRecover` reads `JustPressed`, which
-                // is an EDGE, so a held key produces exactly one press in a lifetime. Alternating
-                // the held state gives one edge every other frame; `Combat.MashRecover`'s rate
-                // cap then throws away everything above 10 Hz, so the bot is held to the same
-                // ceiling as a player rather than to the frame rate.
-                //
-                // ⚠⚠ THE STATE LIVES IN A FIELD, AND READING IT BACK OFF THE INTENT MEANT
-                // A TRIPPED BOT GOT EXACTLY ONE PRESS PER FALL. This line was
-                // `intent.Set(Verb.Jump, !intent.Pressed(Verb.Jump))`, and `ReleaseAll` three
-                // lines above calls `intent.Clear()`. So `Pressed(Jump)` was read from a table
-                // that had just been emptied: it answered false every single frame, the toggle
-                // set true every single frame, and the held state never alternated at all. After
-                // `CharacterMotor.FixedUpdate` took its first snapshot, `_heldPrev` contained
-                // Jump for the rest of the fall and `JustPressed` was false forever.
-                //
-                // ⚠ THE COMMENT ABOVE WAS ALREADY RIGHT ABOUT WHY, WHICH IS WHAT MAKES THIS
-                // WORTH SPELLING OUT. It says a held key fires once in a lifetime; the code then
-                // held the key. The bug was not a misunderstanding, it was reading the toggle
-                // out of the one object that gets wiped immediately beforehand.
-                //
-                // ⚠ `Tap` WOULD NOT HAVE WORKED EITHER, for the same reason: it alternates off
-                // `_pressed`, and `ReleaseAll` clears that too. A dedicated field is the only
-                // state on this path that survives the release.
-                //
-                // ⚠ WHAT IT COST: bots ate essentially the whole of every trip while a human
-                // mashed out in about 1.3 s. `BotBehaviourProbe` measures hazard penalties, so
-                // every trip-hazard number ever taken from it was measured against bots that
-                // could not answer a hazard. This comment's own note predicted that failure mode
-                // and the code underneath it had it.
-                if (_motor.IsTripped || _motor.StunElement != StunElement.None)
-                {
-                    _mashHeld = !_mashHeld;
-                    intent.Set(Verb.Jump, _mashHeld);
-                    // Render updates may outnumber physics steps. Preserve one tap
-                    // until the motor consumes it, using the same buffer as humans.
-                    if (recoveryPressPending || _mashHeld) intent.BufferPress(Verb.Jump);
-                }
+                // Bots wait for the same timed recovery as humans; no Jump tapping.
 
                 return;
             }
@@ -1482,16 +1445,9 @@ namespace TumbangPreso
             var round = GameServices.Round;
             if (round == null) { AbandonSabotage(cool: false); return null; }
 
-            // ⚠️ THE VERB'S OWN GATES FIRST. A shove on cooldown or one the bar cannot pay for is
-            // not an opportunity, it is a walk toward a press that will not fire.
+            // The shove cooldown still gates an opportunity; stamina no longer does.
             var myVerbs = GetComponent<CombatVerbs>();
             if (myVerbs != null && myVerbs.ShoveCooldownLeft > 0.0f)
-            {
-                AbandonSabotage(cool: false);
-                return null;
-            }
-
-            if (_motor.Stamina.Current < Balance.ShoveStaminaCost + 2.0f)
             {
                 AbandonSabotage(cool: false);
                 return null;
@@ -2170,70 +2126,7 @@ namespace TumbangPreso
             if (distance <= Balance.PickupRadius) Tap(intent, Verb.Grab);
             else Press(intent, Verb.Grab, false);
 
-            StepSlideIntent(intent, mine, distance);
-        }
-
-        /// <summary>
-        /// Whether to commit to the retrieval slide, and pressing the same button a human does.
-        ///
-        /// ⚠️⚠️ THE BOT IS TAUGHT THIS ON PURPOSE AND WOULD OTHERWISE NEVER DO IT. `Verb.Lunge`
-        /// is cleared for every plan that does not touch it (see the sweep at the bottom of
-        /// `StepPlan`), and the only plan that touches it is `Hunt`, which is the taya's. So an
-        /// attacker bot could not have found this verb by accident, which is the safe default and
-        /// is also why nothing would ever have measured it: `BotBehaviourProbe` is the only thing
-        /// in this repository that plays a whole match, and a feature no bot presses is a feature
-        /// with no numbers. `docs/TODO.md` § 146.
-        ///
-        /// ⚠️⚠️ IT COMMITS ONLY WHERE A HUMAN WOULD, WHICH IS THE POINT OF THE GATE RATHER THAN
-        /// CAUTION. The slide costs `Balance.SlideStaminaCost` out of the same bar the sprint
-        /// comes from, and `DoFetch`'s own note says the whole bar is 1.25 s of sprint spent on
-        /// *"the only moment an attacker is taggable"*. A bot that slid whenever it could would
-        /// arrive at every tsinelas with no stamina, which is a worse retrieval than walking, and
-        /// the probe would report a feature that makes the game measurably worse.
-        ///
-        /// ⚠️ SO IT ASKS FOR A REASON: the shoe is inside a slide and outside a walk-up, and the
-        /// run is one the bot has already decided is worth hurrying (`MineIsExposed`, or the
-        /// anti-stall clock is running). That is the same sentence a person would say out loud.
-        ///
-        /// ⚠️ A TAP, NOT A HOLD. `CombatVerbs.StepSlide` reads `JustPressed`, for the reason the
-        /// pickup above records: a held button produces exactly one edge in a lifetime.
-        /// </summary>
-        private void StepSlideIntent(InputIntent intent, Slipper mine, float distance)
-        {
-            if (mine == null || _motor.IsDefender) return;
-
-            var verbs = GetComponent<CombatVerbs>();
-            if (verbs == null || verbs.SlideCooldownLeft > 0.0f) return;
-
-            // ⚠️ ALREADY IN REACH MEANS WALK. Sliding into a shoe you could simply pick up spends
-            // a quarter of the bar and a 0.61 s recovery for nothing, and hands the taya a
-            // commitment to read at the one moment the bot is standing in the box.
-            if (distance <= Balance.PickupRadius) return;
-            if (distance > Balance.PickupRadius + Balance.SlideDistance) return;
-
-            if (_motor.Stamina.IsFatigued) return;
-
-            // ⚠️ THE SAME TWO REASONS `DoFetch` SPRINTS FOR, and no third one. A commitment is
-            // worth making when the run is contested or already late; anywhere else the cheap,
-            // reliable option is the right one and a bot that cannot tell the difference is not
-            // demonstrating the feature, it is spamming it.
-            var round = GameServices.Round;
-            bool late = round != null
-                        && round.AttackerIdleSeconds(_motor.PlayerSlot)
-                           >= Balance.SlipperUnretrievedWarningTime * 0.5f;
-
-            if (!late && !MineIsExposed(mine)) return;
-
-            // ⚠️ FACING IS NOT OPTIONAL: the impulse fires along the body's forward and the body
-            // only turns on a frame it walks (`DoHunt`'s note records a taya that stood still
-            // firing lunges into whatever direction it last walked in). A slide launched sideways
-            // is the bar spent on a dash away from the shoe.
-            Vector3 toward = mine.transform.position - transform.position;
-            toward.y = 0.0f;
-            if (toward.sqrMagnitude < 0.0001f) return;
-            if (Vector3.Angle(transform.forward, toward) > AiTuning.LungeConeFloor) return;
-
-            Tap(intent, Verb.Lunge);
+            // Retrieval slide removed: keep the ordinary run-up and pickup.
         }
 
         /// <summary>True while the slipper is somewhere the taya can contest. Decides a sprint
@@ -4217,7 +4110,7 @@ namespace TumbangPreso
         // retain memory outside it, but cannot sample live actors through it.
         private bool ActorIsVisible(CharacterMotor who)
         {
-            if (who == null) return false;
+            if (who == null || !who.gameObject.activeInHierarchy) return false;
             if (who == _motor || _motor.Mode != GameMode.HeroStrike || !_motor.IsHaunted) return true;
             return who.gameObject.activeInHierarchy &&
                 (who.transform.position - transform.position).sqrMagnitude <= 49f;
@@ -4296,19 +4189,12 @@ namespace TumbangPreso
 
         private readonly HashSet<Verb> _pressed = new HashSet<Verb>();
 
-        /// <summary>
-        /// The get-up / break-free mash toggle.
-        ///
-        /// ⚠️⚠️ IT IS A FIELD BECAUSE EVERY OTHER PIECE OF PRESS STATE ON THAT PATH IS WIPED
-        /// EVERY FRAME. `Update` calls `ReleaseAll` before it mashes, and that clears both
-        /// `InputIntent._held` and `_pressed`, so anything derived from either answers the same
-        /// thing on every frame and the alternation never happens. See the long note at the call
-        /// site for what that cost.
-        /// </summary>
-        private bool _mashHeld;
 
         private void Press(InputIntent intent, Verb verb, bool pressed)
         {
+            // Tutorial partners may demonstrate ordinary play without launching
+            // an ultimate over the student's lesson or completed practice range.
+            if (verb == Verb.Ultimate && GameLaunch.GuidedTutorial && _motor.IsBot) pressed = false;
             intent.Set(verb, pressed);
 
             if (pressed) _pressed.Add(verb);
@@ -4814,7 +4700,9 @@ namespace TumbangPreso
                     || _ultimateReadyFor >= AiTuning.UltimateHoldSeconds
                     || round.TimeLeft <= AiTuning.UltimateDumpWindowSeconds
                     // Phaister's doll needs nobody under it: its worth is the round it has left.
-                    || (kit is Abilities.PhaisterHeroKit && round.TimeLeft >= PhaisterDollWorthSeconds);
+                    || (kit is Abilities.PhaisterHeroKit && round.TimeLeft >= PhaisterDollWorthSeconds)
+                    // Overclock is valuable for the rest of the match even without a zap victim.
+                    || (kit is Abilities.ZackHeroKit zack && !zack.IsOverclocked);
             }
 
             if (kit.IsUltimateReady && kit.Ultimate != null && ultimateWorthIt)
@@ -4853,10 +4741,9 @@ namespace TumbangPreso
                 }
                 else if (kit is Abilities.ZackHeroKit)
                 {
-                    // ⚠️⚠️ THUNDERSTRIKE LANDS ON ZACK. Its telegraph is 4.5 m at range 0, and
-                    // the old gate fired it at a target up to 8.0 m away, which is a lightning
-                    // strike on an empty piece of road with the target watching from outside it.
-                    if (WouldCatch(kit.Ultimate, stunPayload: true)) Consider(intent, Verb.Ultimate, dt);
+                    // The nearby zap is secondary to the permanent self-upgrade. Opening,
+                    // cadence, deliberation and the kit's single-spend gate still apply.
+                    Consider(intent, Verb.Ultimate, dt);
                 }
                 else if (kit is Abilities.NemuHeroKit)
                 {
@@ -5010,6 +4897,20 @@ namespace TumbangPreso
                     {
                         intent.AimPoint=target.transform.position+Vector3.up*.8f;
                         Consider(intent,Verb.Skill2,dt);
+                    }
+                }
+                else if (kit is Abilities.SeanHeroKit && _motor.IsDefender)
+                {
+                    if (target != null && !target.IsTagged && target.IsGrounded && targetDistance > 1 && targetDistance < 6)
+                    {
+                        var approach = target.transform.position - myPos; approach.y = 0;
+                        if (approach.sqrMagnitude > .01f)
+                        {
+                            var at = myPos + approach.normalized * Mathf.Clamp(targetDistance * .55f, 1f, 3.5f);
+                            at.y = Slipper.FindGroundY(at, .5f);
+                            intent.AimPoint = at;
+                            Consider(intent, Verb.Skill2, dt);
+                        }
                     }
                 }
                 else if (kit is Abilities.SeanHeroKit || kit is Abilities.ZackHeroKit)
@@ -5412,6 +5313,37 @@ namespace TumbangPreso
         /// </summary>
         private void ReleaseAll(InputIntent intent)
         {
+            ResetActionState();
+
+            // ⚠️⚠️ A SUPPRESSED CONTROLLER CLEARS THE LEGS AND LEAVES THE HERO KEYS ALONE.
+            // `intent.Clear()` empties the whole table, and during a possession the player is
+            // holding Skill2 to come home: wiping it because NEMU'S BODY got stunned would strand
+            // the player inside the pet with no way back, which is the same fault
+            // `AbilitiesEnabled` exists for, reached through the stun branch instead.
+            // A bot's decision to stop is its real button release. Clear() alone
+            // empties held input but deliberately preserves the human release gate
+            // installed by an ultimate. A defender then holds Grab forever while
+            // resetting the can, so that gate can never rearm without Set(false).
+            intent.Move = Vector2.zero;
+            Press(intent, Verb.Sprint, false);
+            Press(intent, Verb.Jump, false);
+            Press(intent, Verb.Grab, false);
+            Press(intent, Verb.Lunge, false);
+            Press(intent, Verb.SpecialAbility, false);
+            Press(intent, Verb.Interact, false);
+            if (AbilitiesEnabled)
+            {
+                Press(intent, Verb.Skill1, false);
+                Press(intent, Verb.Skill2, false);
+                Press(intent, Verb.Ultimate, false);
+                intent.Clear();
+            }
+
+            _pressed.Clear();
+        }
+
+        private void ResetActionState()
+        {
             _windup = false;
             _lungeHeld = -1.0f;
             _goalValid = false;
@@ -5442,25 +5374,6 @@ namespace TumbangPreso
             // fires a blink the instant it recovers, in the direction it was facing before it
             // was hit, which is a teleport nobody saw wind up.
             _aimHeld.Clear();
-
-            // ⚠️⚠️ A SUPPRESSED CONTROLLER CLEARS THE LEGS AND LEAVES THE HERO KEYS ALONE.
-            // `intent.Clear()` empties the whole table, and during a possession the player is
-            // holding Skill2 to come home: wiping it because NEMU'S BODY got stunned would strand
-            // the player inside the pet with no way back, which is the same fault
-            // `AbilitiesEnabled` exists for, reached through the stun branch instead.
-            if (AbilitiesEnabled)
-            {
-                intent.Clear();
-            }
-            else
-            {
-                intent.Move = Vector2.zero;
-                Press(intent, Verb.Sprint, false);
-                Press(intent, Verb.Jump, false);
-                Press(intent, Verb.Grab, false);
-                Press(intent, Verb.Lunge, false);
-                Press(intent, Verb.SpecialAbility, false);
-            }
 
             _pressed.Clear();
         }

@@ -1,5 +1,27 @@
 # TODO: Tumbang Preso Unity
 
+### TUTORIAL-MUSIC-1004: owner-supplied track
+
+- [x] Replace guided tutorial music with Tutorial.mp3, cut exactly its first3s.
+  Native2/2 verifies real tutorial entry, countdown retention and looping.
+  Existing match/menu tracks remain. [Evidence](reports/tutorial-music-2026-10-04/README.md).
+
+### HERO-PRESENTATION-PARITY-1004: remaining hero presentation
+
+Owner target: refine Isagani, Rago, Basilio, Yasmin, Nemu and Ilyas to the presentation
+standard of Soraya, Paete and Amihan. Review actual motion, body/FPP coherence,
+readable VFX, sound timing and ultimate direction. Preserve each hero's identity;
+reference characters are quality examples, not a new redesign assignment.
+
+- [ ] Isagani: Quick Circuit body/FPP single-cut refinement passes13 scoped native
+  checks and actual left/right cast review; full kit still open.
+  [Motion evidence](reports/zack-quick-circuit-motion-2026-10-04/README.md).
+  Overclock now uses the free hand, front-side shots and a caster-centred strike;
+  native geometry/motion checks pass, final map/player/SFX review remains open.
+  [Overclock refinement](reports/isagani-overclock-2026-10-04/README.md).
+- [ ] Rago, Basilio, Yasmin, Nemu and Ilyas: finish their remaining presentation passes.
+- [ ] Real-game film/listening review and multiplayer/player qualification.
+
 **How this file is organised (docs cleanup, 2026-09-23).** This file is the ONE status
 queue: the current queue and priority order, then one index row for every numbered entry.
 Nothing was deleted or renumbered.
@@ -16,6 +38,1113 @@ Nothing was deleted or renumbered.
 - Section numbers are not unique (§ 53, 63, 64, 65 repeat). Search by title too.
 
 ## CURRENT IMPLEMENTATION QUEUE
+
+### SOCIAL-REFRESH-ORDER-1004: preserve newer acknowledged friend actions
+
+- [x] Older loads cannot erase an accepted friend or restore a removed one.
+  Refreshes defer during writes; failed-write collisions schedule a fresh read.
+  Native original4failures/2controls -> same candidate6/6; root inspected20 raw
+  hashes/actual XML and exact Runtime/fixture/meta plus generated-setting delta.
+  [Evidence](reports/reliability-2026-10-04/social-refresh-order/README.md).
+- [ ] Rendered Friends and packaged service acceptance.
+
+
+### CAREER-REFRESH-ORDER-1004: retain newer acknowledged profile
+
+- [x] Earlier same-account load cannot replace the profile returned by a newer
+  submission. Native original1causal failure/2controls; same candidate3/3.
+  Runtime/fixture/meta hashes inspected; generated importer deltas classified
+  and exact pre-run metadata restored. [Evidence](reports/reliability-2026-10-04/career-refresh-order/README.md).
+- [ ] Live-service and packaged result acceptance.
+
+
+### CHARACTER-NAMES-1004: owner-approved names across the UI
+
+- [x] Basilio/Yasmin/Rago/Isagani/Soraya/Ilyas replace the previous displayed
+  names. Nemu/Amihan/Paete stay. Both roster tables, kit headings, current dialogue,
+  Soraya's doll, fallback selection and mastery-result labels use current names.
+  Stable IDs/assets/progression are preserved. Current character docs updated.
+  Existing roster/hero-lines/progression checks47/47; active source string audit
+  finds zero standalone old-name literals in Runtime/Core.
+- [ ] Packaged rendered UI acceptance after the current integration build.
+
+
+### MATCH-RECORD-DEPLOYMENT-1004: publish checked career rules
+
+- [x] Published canonical source as production v6, exact fetched source and seven
+  parameters verified with v5 rollback retained. Exported old source reproduces
+  five mastery/history/offline failures; v6 passes9/9 plus bot-rating4/4,
+  Core travel6/6 and unchanged digest.
+  [Evidence](reports/reliability-2026-10-04/match-record-deployment/README.md).
+- [ ] Rendered SDK career submission and witnessed ranked flow acceptance.
+
+
+### ACTIVE-HOST-LOSS145-1004: current package retires an unfinished round
+
+- [x] Actual two-machine round1/readiness on identical145 package; retained
+  owned host process stopped while both log/PID states were live and no end
+  event existed. Client returns MatchSetup/round0/inactive, no career file or
+  completed result, normal exit and preferences restored. Earlier completion
+  observer110 autoquit failure is retained as diagnostic/coordination evidence.
+  [Evidence](reports/reliability-2026-10-04/host-loss145-armed/README.md).
+- [x] Client raw normally integratedc336bf991; root all18 hashes and actual final
+  inactive0/MatchSetup/145, career absent, normal exit/restoration inspected.
+- [ ] Body/input/clock recovery, retained-seat, Relay/WAN, physical and newer-
+  source acceptance. Do not overstate log scope.
+
+### POWER-RECAST-READINESS-1004: owner icon matches the real follow-up window
+
+- [x] Use active reactivation readiness instead of the original cooldown for the
+  owner power icon. Real Zack/public HUD original2failures/2controls ->4/4.
+  Preserve expiry, spent follow-up, Zapped, timing and layout.
+  [Evidence](reports/power-recast-readiness-2026-10-04/README.md).
+- [ ] Rendered whole-match, packaged and actual-peer acceptance.
+
+### DIRECT-RELEASE-LAN145-1004: actual build and paired completion
+
+- [x] Direct full-quality release build succeeded after execution cutoffs were
+  removed, not after lowering quality. Actual145 package258 files/2553558902bytes
+  verified on both machines, source8f7/logicalad0026. Startup/menu route passed.
+  [Build evidence](reports/laptop-validation-2026-10-04/direct-release145/README.md).
+- [x] Actual two-machine normal lobby/readiness/natural Hero1/30 completion and
+  matching saved match/scores observed. PC terminal/source/profile/artifact gates
+  pass; client subsequently returns offline after completed host exit.
+  [Pair evidence](reports/reliability-2026-10-04/lan145-direct-pair/README.md).
+- [ ] Full client raw terminal comparison, remaining modes/maps/Relay/recovery/
+  slow transfer/physical/performance and newer-source package acceptance.
+
+### VIEWMODEL-MESH-OWNERSHIP-1004: rendering leaves source assets untouched
+
+- [x] Cache one owned working mesh per path so outline preparation cannot modify
+  serialized source meshes. Preserve geometry and async/direct reuse; free
+  copies on reset and Editor exit. Original3failures/1control -> native4/4;
+  every candidate source asset remains byte-identical after the run.
+  [Evidence](reports/viewmodel-mesh-ownership-2026-10-04/README.md).
+- [ ] Full loading-scene and packaged acceptance; no measured performance claim.
+
+### VIEWMODEL-ROSTER-FALLBACK-1004: nullable catalog does not block owner arms
+
+- [x] Preserve mode/index identity when roster lookup has no book, list or art
+  row, including roster-arm lookup. Original four failures/one control become
+  five/five in native reduced-project checks. Valid model overrides remain.
+  [Evidence](reports/viewmodel-roster-fallback-2026-10-04/README.md).
+- [ ] Complete owner-camera composition, live map and packaged acceptance.
+  The separate owner-motion capture timed out and its frames are not accepted.
+
+### ZACK-BANK-CONTACT-1004: powered wall-contact cue
+
+- [x] Add a compact gold contact burst to each actual powered wall bank, including
+  both Overclock contacts. Preserve silent ceiling returns, ordinary spin banks,
+  scoring and restitution. Native component graphics7/7 and source-only runtime
+  bounce cases6/6 passed. [Evidence](reports/zack-bank-contact-2026-10-04/validation.md).
+- [ ] Whole-court/live owner footage, packaged visuals and actual remote-peer
+  acceptance. Component frames and reduced-project checks do not close these.
+
+### FRIEND-REQUEST-DELIVERY-1004: recipient delivery precedes pending state
+
+- [x] Failed recipient writes leave the sender retryable; failed sender writes
+  deduplicate the delivered incoming request on retry. Block privacy unchanged.
+  Actual script local original1failure/10controls ->11/11.
+  [Evidence](reports/reliability-2026-10-04/friend-request-delivery/README.md).
+- [x] Production socialv3 matches canonical delivery/capacity source; actual
+  authenticated two-account lookup/request/accept/both reload passed.11 script
+  calls include cleanup, isolated accounts deleted. [Live evidence](reports/reliability-2026-10-04/friend-request-delivery/live-acceptance.md).
+- [x] Empty test protected keys removed with existing admin authentication and
+  both post-delete lists verified empty. No live user/profile targeted.
+- [ ] Rendered game UI/invite/join and complete cross-account SDK/operator acceptance.
+
+### HUB-EDIT-REFRESH-1004: background data does not interrupt typing
+
+- [x] Native original two failures/two controls; candidate preserves actual
+  same-owner editing/caret and defers row rebuild until editing/UI actions end.
+  Original4/4 plus3 new lifetime controls pass; profile data refreshes after blur,
+  pointer-up is delivered and closing stays closed. Tab/account replacement
+  immediately retire old editing. One extra-fixture compile repair retained.
+  [Evidence](reports/reliability-2026-10-04/hub-edit-refresh/README.md).
+- [x] Exact raw proof normally integrated81e68dd82: all34 hashes, original/
+  candidate3440 maps and controls3442 inspected, tested source and restored/free
+  receipts match. No unchanged rerun.
+- [ ] Packaged/physical input and frame/first-use acceptance. Supplied
+  interactions do not qualify the full flow.
+
+### FRIENDS-CAPACITY-1004: acceptance retains both accounts' state
+
+- [x] Check both accounts' capacity before accepting or resolving a crossed
+  request. Full accounts retain pending rows and no asymmetric friend is saved.
+  Actual social endpoint with local Cloud Save: original3failures/5controls ->8/8.
+  [Evidence](reports/reliability-2026-10-04/friends-capacity/README.md).
+- [ ] Deployment and actual two-account UI/service/invite/join acceptance.
+
+### CURRENT-HOST-LOSS-RUNNER-1004: validate the agreed release
+
+- [x] Replace protocol132/old rules assumptions with explicit artifact protocol
+  and accepted full manifest, canonical eleven-field rules and fresh Hero picks.
+  Preserve build/source/Runtime identity, input/profile restoration, two live
+  receipts and no fabricated result gates. Check full artifact/manifest again
+  after owned players retire. Original current-report check fails; corrected
+  acceptance6/6 and shared artifact11/11 pass locally without player launches.
+- [ ] Actual current packaged host-loss pair. Historical132 proof remains
+  historical and local acceptance checks do not establish network behavior.
+
+### USER-FLOW-1004: login through gameplay and friends
+
+- [ ] Trace and validate login/account gates, HOME navigation, normal lobby and
+  matchmaking, character selection, gameplay, results, return and Friends.
+  Friends has tag-request/accept UI and a server path; verify both accounts'
+  request/accept state, persisted friendship and invite/join before claiming it
+  works. Fix demonstrated route/lifetime failures and retain original evidence.
+- [ ] Optimize demonstrated costs across the journey and verify preload work
+  runs at the correct boundary before consumers need it. Measure startup,
+  first-use and frame hitches; preserve art quality and contributor ownership.
+  Existing broad loading work is not permission to overwrite another contributor.
+
+### READER-BACKGROUND-FOCUS-1004: retired input stays neutral while away
+
+- [x] Keep the unfocused reader neutral while the network player continues
+  ticking. Capture held buttons on return so release precedes fresh gameplay
+  presses. Original two failures/two controls -> candidate28/28. Root verified
+  all16 raw Git hashes,3438 unchanged inputs per run with only Reader differing,
+  the tested source/fixture and terminal/restored/free receipts.
+  [Evidence](reports/laptop-validation-2026-10-04/background-focus/README.md).
+- [ ] Actual packaged focus return/physical Alt-Tab and current peer acceptance.
+  Supplied device/focus callbacks do not prove physical operator behavior.
+
+### MATCH-RECORD-NAN-1004: normalized measurements remain numeric
+
+- [x] Normalize NaN duration/distance/last-attacker duration to their existing
+  lower bounds so applying a record cannot contaminate career totals. Four
+  reproduced failures/five controls; corrected record/profile/integrity cohort
+  passed 68/68. Finite and infinity bounds unchanged, no schema/wire change.
+  [Evidence](reports/reliability-2026-10-04/match-record-nan/README.md).
+- [ ] Unity/package acceptance with this current Core source. Supplied records
+  do not identify a live measurement producer or repair old contaminated totals.
+
+### CLOUD-HISTORY-WRITE-1004: failed writes retain retryable history
+
+- [x] Save match history before the profile's applied-id marker. A failed history
+  write then remains retryable; a failed profile write deduplicates history on
+  retry. Actual exported endpoint with local one-shot storage failures:
+  original1failure/4controls -> corrected5/5, preserving duplicate/offline paths.
+  [Evidence](reports/reliability-2026-10-04/cloud-history-write/README.md).
+- [ ] Service deployment and real SDK/packaged acceptance. This does not restore
+  historical entries already missing behind persisted applied markers.
+
+### CLOUD-TRAVEL-BOUND-1004: server matches the current defender speed
+
+- [x] Mirror DefenderRunSpeed7.5 in the Cloud Code travel sanity bound. Actual
+  Core accepts the supplied1656/1700/1800 boundary records that the old server
+  refused; original3failures/3controls -> corrected6/6. Existing witness digest
+  contract unchanged. [Evidence](reports/reliability-2026-10-04/cloud-travel-bound/README.md).
+- [ ] Approved service deployment and actual SDK/packaged result acceptance.
+  Local source parity does not establish deployment or real match delivery.
+
+### CURRENT-LAN-RUNNER-1004: explicit current artifact and character selection
+
+- [x] Remove pinned134/legacy Runtime defaults, require explicit protocol and
+  Runtime hash plus accepted full artifact manifest, seed CharacterPick and
+  preserve ready/natural-end/standings/history/witness acceptance. Check all files,
+  source identity and executable/Runtime/Core before and after the owned player;
+  reject a changed manifest. Eleven local deterministic runner checks pass.
+  Actual current engine-free Core assembly rejects the original ten-field wire
+  and accepts the corrected canonical eleven-field wire with map voting disabled;
+  zero-warning Core build. Historical completed-arrival default remains available.
+- [ ] Actual matching current144 host/client player pair, completed normal lobby
+  route, saved results and necessary recovery/slow-replay acceptance. Tool checks
+  and old134 peer evidence do not satisfy this gate.
+
+### CAREER-FLUSH-OWNER-1004: keep upload work with its starting account
+
+- [x] Capture the flush cache and fence loop/final/failure writes after account
+  replacement. Same-account retry/acknowledgment and busy release remain. Real
+  delayed-dispatch original3 failures/3controls -> candidate6/6; root inspected
+  all16 exact raw Git blobs,3436 maps with only CareerStore changed and frozen
+  fixture/meta plus terminal/restored/free receipts. The neutral private dispatch
+  core preserves shipping REST behavior; no live auth/network or schema change.
+  [Evidence](reports/laptop-validation-2026-10-04/career-flush-owner/README.md).
+- [ ] Actual signed-in SDK/service and packaged history acceptance. Controlled
+  delayed tasks prove ownership, not deployed Cloud Code or real result delivery.
+
+### REPLAY-SHORTLIST-QUEUE-1004: deliver current retained footage
+
+- [x] Replace obsolete transfer entries with the authoritative archive shortlist,
+  keep begun still-retained send objects/offsets, update waiting priority and skip
+  acknowledged/prior-match clips. Archive policy, wire/protocol144 and bandwidth
+  limits unchanged. Original4 causal failures/3controls -> candidate7/7; root
+  inspected3430 maps with one production delta, exact tested code/fixture and
+  terminal/restored/free receipts. All18 raw Git blobs match their manifest after
+  one explanatory-text line-ending correction; no extra native run.
+  [Evidence](reports/laptop-validation-2026-10-04/replay-shortlist-queue/README.md).
+- [ ] Matching players under slow transfer: verify actual selected clip delivery,
+  interruption/replacement and rendered playback. Supplied queue tests do not
+  establish capture, physical peers or packaged performance.
+
+### CLIENT-MOVEMENT-FRAME-1004: reject malformed client movement effects
+
+- [x] Preflight exact unread payloads before decoding: Impact20, Carry24 and
+  familiar flight pose25 bytes. Preserve authority/seat/epoch/finite guards and
+  wire/protocol144. Laptop native original9 causal failures/9 controls ->18/18
+  on the unchanged fixture, both3428 inputs unchanged and terminal/restored/free.
+  Root verified tested runtime/fixture/meta hashes against candidate Git bytes.
+  Root inspected all six exact raw blobs, XML/maps and restored/free receipts.
+  [Evidence](reports/laptop-validation-2026-10-04/client-movement-packet-bounds/README.md).
+- [ ] Actual effect/body movement and current packaged/live-peer qualification.
+  Supplied packet tests establish framing and rejection, not complete gameplay.
+
+### CREDITS-CODE-1003: eight directions grant5000 Tansan
+
+- [x] Client and authoritative wallet source; keyboard/D-pad/mouse/touch input,
+  retry receipts and success-only Victory cue. Managed715/715, Node wallet
+  checks and native8/8 controls; [evidence](reports/credits-code-2026-10-03/README.md).
+- [x] Published production walletv2 and verified exact source/four parameters;
+  rollbackv1 retained. [Receipt](reports/reliability-2026-10-04/wallet-deployment/README.md).
+- [ ] Actual signed-in reward/audio. October3 cloud403 is retained historical
+  evidence, no longer a deployment blocker.
+
+### STATUS-TYPOGRAPHY-1003: readable description wrapping
+
+- [x] Chilled one-line body, longer two-line bodies with title separation;
+  native2/2 and actual960x540 images reviewed at HUD1.0/1.2.
+  [Evidence](reports/status-typography-2026-10-03/README.md).
+
+### ACTION-TIMINGS-1003: revised charge/contact recovery, no retrieval slide
+
+- [x] Throw charge1.5s, tag0.25hit/0.5miss, shove7.5hit/0.5miss, existing lunge
+  timings retained, retrieval slide removed from inputs/bots/host execution.
+  Scoped owner recovery receipts and protocol144. Native25/25 guard-free,
+  full managed709/709.
+  [Evidence and retained failures](reports/action-timings-2026-10-03/README.md).
+- [ ] Matching rebuilt player/live-peer timing acceptance.
+
+### OPENING-CAMERA-PREFERENCE-1004: camera motion OFF retains the saved view
+
+- [x] Opening sampler preserves saved position/rotation/FOV and suppresses ink
+  when Cinematic camera movement is OFF; ON travel/return remains. Original two
+  OFF failures/one ON control, current candidate3/3. Root inspected immutable
+  fixture/source bytes, XML, restored/free guards and explicit quality delta/
+  restoration. Not an immutable-quality or rendered-performance pass.
+  [Evidence](reports/laptop-validation-2026-10-04/opening-camera-preference/README.md).
+- [x] One actual Hero/custom-host-selected Eskinita route on143 reaches GO,
+  releases the clock and returns to first-person view. Native1/1;17 camera
+  images retained, hashes inspected. Overlay UI and perceived motion remain
+  unqualified. [Evidence](reports/laptop-validation-2026-10-04/fullcourt-hero-arrival/README.md).
+- [x] Actual144 Hero route with camera movement OFF preserves the saved
+  pose/rotation/FOV through >10 late-frame observations, reaches GO and releases
+  the clock. Native1/1;17 phase/image pairs verified. Exact mixed-line-ending
+  tested fixture retained and root verified its full normalized code equality.
+  [Evidence](reports/laptop-validation-2026-10-04/fullroute-camera-motion-off/README.md).
+- [x] One actual144 Classic/reduced-motion scene-leave case resumes cleanup;
+  native1/1 with terminal/restored/free guard. Controlled arm tangent import
+  deltas retained. [Evidence](reports/laptop-validation-2026-10-04/classic-reduced-leave/README.md).
+- [ ] All-map composition, full Classic gameplay, actual overlay/motion review
+  and current144 packaged players/matching peers. Phase metadata places the
+  first camera-only obstruction during prewarming; overlay pixels remain unseen.
+
+### ARRIVAL-CAMERA-CLEARANCE-1004: near walls cannot push the eye beyond collision
+
+- [x] Replace unsafe0.8m minimum with nonzero0.01m floor. Original two failures/
+  four controls, candidate6/6; root inspected3400 maps with one source delta,
+  immutable fixture and restored/free guards. Existing radius/stand-off retained.
+  [Evidence](reports/laptop-validation-2026-10-04/arrival-camera-clearance/README.md).
+  Actual full-pan framing and current player/peers remain open.
+
+
+### READING-FONT-1003: temporary Nunito Bold replacement
+
+- [x] Replace active Lydian Regular theme/fallback/regeneration references with
+  Nunito Bold, retaining original assets. Native3/3 and actual tutorial image
+  inspected; [evidence and limits](reports/reading-font-2026-10-03/README.md).
+
+
+### OPENING-HANDOFF-1003: prepare the shot under loading
+
+- [x] Keep entry covered, prepare the opening before loading fades away, resolve
+  the return eye from the actual player rig and hide overhead introduction names.
+  Native7/7 handoff/countdown controls pass, guard-free; settings restored.
+  [Evidence](reports/opening-handoff-2026-10-03/README.md).
+- [ ] Packaged player and actual loading-overlay acceptance of startup transition.
+  One143 Hero full-court runtime route now passes; its camera-only snapshots
+  omit the loading curtain and cannot settle the first pre-pan obstruction.
+
+
+### OPENING-CAMERA-1003: deliberate arena and character reveals
+
+- [x] Implement objective-centred opening, obstacle-aware body framing, individual
+  pose reveals, compact captions and direct gameplay handoff. Owner's latest
+  countdown is3/2/1/GO!, protocol143. Camera7/7 and countdown3/3 native checks;
+  actual Eskinita establishing frame inspected. [Evidence and limits](reports/opening-camera-2026-10-03/README.md).
+- [ ] Perceived normal-speed motion, all-map composition and matching144
+  packaged/live-peer acceptance. One143 Hero full-court route now passes with
+ 17 retained camera images showing overview, reveals and settled return.
+
+### TOUCH-STICK-POINTER-1003: retain the controlling finger
+
+- [x] A second pointer cannot replace or release the captured stick owner.
+  Root inspected original two failures/six controls and candidate8/8, immutable
+  fixture/meta,3396 maps with only TouchControls changed and restored/free guards.
+  One wrong-source attempt is retained and excluded; corrected candidate source
+  was verified before its bounded run.
+  [Evidence](reports/laptop-gameplay-2026-10-03/touch-stick-pointer-lifetime/README.md).
+  Native supplied handlers qualify; physical routing/device/player gates remain.
+
+### EDGE-CLIMB-FRAME-1003: reject malformed client requests
+
+- [x] Require exactly eight unread bytes before reading slot/epoch. Original
+  four failures/two controls, candidate6/6; root inspected unchanged fixture,
+ 3396-input maps with one source delta and terminal/restored/free receipts.
+  [Evidence](reports/reliability-2026-10-03/edge-climb-framing/README.md).
+  Ownership/epoch/geometry remain; live climb/player/peer gates are separate.
+
+### TOUCH-BUTTON-POINTER-1003: retain an action until the last finger lifts
+
+- [x] Multiple captured pointers retain button holds until the last owner lifts;
+  global release/customization boundaries retire stale owners. Root inspected
+  corrected original two failures/six controls and candidate8/8, immutable
+  fixture and3392 maps with only TouchControls changed. One initial native
+  SendMessage fixture assertion was preserved and repaired before baseline.
+  [Evidence](reports/laptop-gameplay-2026-10-03/touch-button-pointer-lifetime/README.md).
+  Supplied native handlers qualify; physical touch/routing/gameplay remain open.
+
+### EMOTE-TARGET-OWNER-1003: the wheel follows local input
+
+- [x] Active-reader ownership replaces ambiguous AI-absence discovery. Network
+  LocalSlot and parked-state fences preserve tutorial, replacement-reader and
+  temporary-AI controls. Original five failures/three controls, candidate8/8;
+  root inspected XML, unchanged fixture and3390-input maps plus restored guards.
+  [Evidence](reports/reliability-2026-10-03/emote-target-ownership/README.md).
+  Actual wheel/device/possession/live-peer acceptance remains separate.
+
+### CAST-PREPARATION-FRAME-1003: reject incomplete host payloads
+
+- [x] Preflight fixed header, bounded UTF16 name and exact52-byte tail before
+  decoding. Original seven causal failures/three controls, candidate10/10 on
+  unchanged fixture; root inspected XML, hashes and restored/free guard state.
+  [Evidence](reports/reliability-2026-10-03/cast-preparation-framing/README.md).
+  Wire layout unchanged; player/peer/ability acceptance remains separate.
+
+
+### MATCH-ENTRY-1003: automatic arrival and custom map choice
+
+- [x] Custom rooms open character select; MAP VOTE is optional and OFF by default.
+  Queued play retains its ballot. Arena arrival uses four poses and5/4/3/2/1/START,
+  with no second READY prompt. Protocol142; repeated start and cancellation guards.
+  Native30/30 plus two repeated graphics cases; four standing poses inspected.
+  [Evidence and limits](reports/match-start-2026-10-03/README.md).
+- [ ] Full-scene startup, rebuilt matching peers and packaged player acceptance.
+  Full-route attempts were blocked by the null renderer or memory guard; focused
+  component/packet checks do not close those gates.
+
+### NAMEPLATE-FIRST-USE-1003: font work behind loading
+
+- [x] Existing loading primes first native TextMesh/font initialization and96px
+  nameplate glyphs; original player trace attributes2.57s to font caching at spawn.
+  Native warmup1/1 plus loading-hook integration1/1; authored appearance retained.
+  [Evidence](reports/reliability-2026-10-03/nameplate-font-warmup/README.md).
+- [ ] Refreshed player first-entry timing; development/profiler overhead and
+  numeric improvement remain separate. Frozen1003h139 excludes this newer fix.
+
+### OFFLINE-BOT-ROSTER-1003: full character coverage
+
+- [x] Rotate offline bots against the full roster instead of four seat offsets.
+  Original2causal/2network controls, candidate4/4; Ate Girlie/Phaister coverage
+  restored. No kit/timing change, network defaults unchanged.
+  [Evidence](reports/reliability-2026-10-03/offline-bot-roster/README.md).
+
+### NETWORK-BOT-ROSTER-1003: shared empty-seat kits
+
+- [x] Network empty bot seats use shared selection instead of each viewer's local
+  character preference. Original2causal/2controls, first candidate4/4. Protocol139.
+  [Evidence](reports/reliability-2026-10-03/network-bot-roster/README.md).
+- [ ] Rebuilt matching142 host/client with different human picks: verify bot
+  characters/kits and replicated effects. Frozen1003g134 is excluded.
+
+### SEAT-PRODUCER-TRANSFER-1003: rapid role changes retain controls
+
+- [x] Retire deferred readers/brains and bind the surviving producer during rapid
+  player/spectator switches. Original8: four causal failures/four controls;
+  first candidate8/8, exact published source hashes checked. No protocol change.
+  [Evidence](reports/reliability-2026-10-03/seat-producer-transfer/README.md).
+  Live-peer/physical acceptance and frozen1003g inclusion remain separate.
+
+### EXPLICIT-MOVEMENT-1003: latest owner numbers
+
+- [x] Explicit role walk/run speeds, stamina and free shove/lunge retain the
+  playtested revision. Latest jump is5.75m/s launch,20m/s² gravity,25m/s fall cap;
+  protocol141. Four focused managed contracts and three native physical cases
+  pass, including all eight unchanged mode/role/run speed samples.
+  [Latest jump evidence and limits](reports/jump-restore-2026-10-03/README.md).
+  [Earlier stamina/lunge qualification](reports/movement-playtest-2026-10-03/README.md).
+
+### OBJECTIVE-ECONOMY-1003: latest owner revision
+
+- [x] Can knockdown +1, successful tag +1, and one defender-round start grant +1.
+  Throw and own-retrieval income become zero. Costs and charge carry remain.
+  Four focused native cases pass; protocol 136 requires matching rebuilt clients.
+  [Evidence and limits](reports/feedback-2026-10-03/objective-economy/README.md).
+
+### HUMAN-NOTES-1003: current Feedback corrections
+
+- [x] Absolute Zero excludes its caster from Frozen and thaw Chilled. Original
+  native failure and candidate1/1 retained; protocol135, current player/peer and
+  human verification remain open. [Evidence](reports/feedback-2026-10-03/cheska-caster.md).
+- [ ] Investigate bots remaining inactive after status expiry; reproduce before fixing.
+  Real Classic Frozen/Tagged expiry probe2/2 resumes bot input; no generic timer
+  stall reproduced. Current native can-down/Zack-ultimate/reset/patrol case also
+  passes1/1; broader hero/status combinations and peers remain open.
+  [Current recovery check](reports/current-arrival-2026-10-04/README.md).
+  [Scoped evidence](reports/reliability-2026-10-03/bot-status-expiry/README.md).
+- [x] Remove Frozen/Stunned action bar while preserving status indicators.
+  Focused original failure and candidate 1/1 plus UI capture retained.
+  [Evidence](reports/feedback-2026-10-03/status-action-bar.md).
+- [x] Distinct offline tutorial partners across all current hero picks/seats:
+  original9causal failures/2controls, candidate11/11.
+  [Evidence](reports/reliability-2026-10-03/tutorial-roster/README.md).
+- [x] Tutorial bots suppress Ultimate input while student/ordinary skills remain:
+  contributor native4/4 includes roster92 combinations and producer controls.
+  [Evidence](reports/feedback-2026-10-03/tutorial-policy/README.md).
+- [x] Normal tutorial entry already resets the complete rules to Standard via
+  SceneFlow.StartTraining before loading; stale Mirror settings are not retained.
+  Source reconciliation only; no new rendered/operator claim.
+- [x] Shared ultimate camera frames are opaque without changing authored fades:
+  original2pixel failures/1control, final3/3. Full player/hero film remains open.
+  [Evidence](reports/ultimate-opacity-2026-10-03/README.md).
+- [x] Haunted sight uses radial distance and existing Nemu purple ink, preserving
+  range/expiry/isolation. Native4/4 with retained guarded-shutdown limitation.
+  [Evidence](reports/haunt-sight-2026-10-03/README.md).
+
+### TWO-MACHINE-NETWORK-1003: paired baseline complete, new source and online open
+
+- [x] PC/laptop1003e normal LAN Hero1/30: actual join/ready/natural end, same
+  record/scores and both own saved histories/queues, normal exits/restoration.
+  [Evidence](reports/reliability-2026-10-03/two-machine-lan/README.md).
+- [x] Ice probe waits for intended client admission instead of consuming its
+  pick at temporary seat0. Native original2causal/3control, candidate5/5.
+  [Scope](reports/reliability-2026-10-03/ice-admission-role/README.md).
+- [x] Shared1003g build and startup/menu check completed with retained strict
+  input failure plus separate accepted post-import classification and full manifest.
+  [Artifact and limits](reports/reliability-2026-10-03/windows-candidate1003g/README.md).
+- [ ] Matching-artifact peer checks and actual Frozen effects; online/Relay remain
+  separate. Current Main142 is incompatible with frozen1003g134. Do not repeat
+  the unchanged baseline merely to produce more activity.
+
+### SPECTATOR-MATCH-LIFETIME-1003: retire old footage and markers
+
+- [x] Local starts advance identity despite clock resolution/backsteps; native3
+  pass against two original failures/one control. Spectator ring, clip and marker
+  lifetime then passes6 against four causal originals/two controls. Retain both
+  first runs with identity-precondition failures. Same-match rounds and readback
+  accounting remain. [Evidence](reports/reliability-2026-10-03/spectator-match-lifetime/README.md).
+  Actual GPU completion and rendered/operator acceptance remain separate.
+
+### PORTABLE-STORE-BACKUP-1003: retain recovery after corrupt primary
+
+- [x] Portable saves keep a usable backup when the previous primary or its
+  validator is invalid. Original4 causal failures/2 controls, candidate6/6.
+  Valid and legacy saves still rotate; native cases verify ordinary read recovery.
+  [Evidence](reports/reliability-2026-10-03/portable-store-backup/README.md).
+  Actual device filesystems and crash atomicity remain separate.
+
+### REPLAY-MATCH-IDENTITY-1003: prevent previous-match highlight lead-in
+
+- [x] Fresh same-scene match identity retires body, prop and field history even
+  at the same round number. Original2 causal failures/4 controls, candidate6/6.
+  Ordinary rounds preserve completed highlights and detached bytes.
+  [Evidence](reports/reliability-2026-10-03/replay-match-identity/README.md).
+  Rendered/operator pixel replay and physical acceptance remain separate.
+
+### INPUT-PRODUCER-LIFETIME-1003: checked laptop integration
+
+- [x] Focus/disable/Idle retire pending throw/lunge/reset before a release is read;
+  preserve committed contact and spent cooldown. Native original9causals/3controls,
+  firstcandidate12/12. [Evidence](reports/laptop-gameplay-2026-10-03/practice-reconciliation.md).
+- [x] Retire private bot planner clocks and preserve recorded world coordinates
+  under transformed owners. Original2causals, candidate2/2; disposal retained.
+  [Evidence](reports/laptop-gameplay-2026-10-03/replay/README.md).
+- [x] ResetRange/SetDefender retire live contact/windup before teleport. Original
+  3causals/2controls, firstcandidate5/5; pause/cooldown preserved. Full practice
+  operator/physical acceptance stays separate.
+- [x] Clear cached touch movement only for local input retirement. Original
+  2causals/3controls, firstcandidate5/5; remote-reader ownership retained.
+  [Evidence](reports/laptop-gameplay-2026-10-03/touch-movement-retirement.md).
+
+### ACCOUNT-OWNERSHIP-CANDIDATE-1003: source ready, native acceptance open
+
+Account/UI ownership and arrival now have laptop native58 acceptance: Edit42
+first pass and UI16 after one fixture-only canvas correction. Matchmaking9 passed
+against six original causal failures and three controls. Local pending25 passed:
+hosted7, fallback3, countdown3, deletion8 and deletionUI4. Six initial deletion
+failures came from an exact NUnit exception-type assertion; one cancellation
+subclass repair retained all side-effect assertions and passed8/8. These are
+scoped native checks, not live SDK/Relay or whole-release acceptance.
+[Local evidence](reports/reliability-2026-10-03/local-resume-qualification/README.md).
+
+Canonical online refresh ownership is qualified: original9 causal failures and
+four legitimate controls; first candidate13/13. Captured SDK owner and current
+profile/request guards fence name/cloud responses and failures while preserving
+new authenticated-ID adoption and late primary guest return. Actual SDK and
+online-peer acceptance remain separate.
+[Evidence](reports/reliability-2026-10-03/account-refresh-ownership/README.md).
+
+### TIMED-RECOVERY-1002: retire mash-to-escape
+
+- [x] Frozen/stuns, trips and edge recovery use their authored clocks. Humans
+  and bots cannot shorten them with presses. Live HUD has state/timed progress;
+  ordinary jump and hold-Interact roots remain. Fifteen focused native cases pass
+  separately. Protocol134; actual peers/player/human remain separate.
+  [Evidence](reports/timed-recovery-2026-10-02/README.md).
+  Diagnostic contracts now require timed expiry too;13 evaluator tests and native
+  compilation pass. [Limits](reports/timed-recovery-2026-10-02/diagnostics.md).
+- [x] Same Feedback row's studio intro now precedes loading, with no skip text
+  and any-input white fade. Five isolated native cases pass; original MP4 retained
+  alongside Linux-compatible VP8. Windows1003c/source8ef02cf7 now qualifies
+  actual visible intro and normal startup/current HOME routes. The separate
+  Linux copied-cache binding gap and physical-device skip checks remain.
+  [Evidence](reports/studio-intro-2026-10-02/README.md).
+
+### ROUND-TIMER-35-1002: latest ordinary break duration
+
+- [x] Next Round is3.5seconds per latest Feedback; halftime remains10s and keeps
+  replay/fallback. Three distinct native cases pass separately: shared schedule,
+  real-input/frozen-frame behavior and late-client observation. Protocol133
+  requires matching rebuilt clients; new actual peers/player/human pending.
+  [Evidence](reports/round-timer-35-2026-10-02/README.md).
+
+
+### TUTORIAL-BARRIER-WARNING-1002: truthful attacking practice warning
+
+- [x] Suppress and clear the false barrier refusal only for the existing offline
+  hidden-practice-can exception. Native actual-route1/1 passes with visible-can
+  control, cached-message removal, actual charge/release and another warning.
+  Compilation/runtime split retained after memory stop; player/human pending.
+  [Evidence](reports/tutorial-barrier-warning-2026-10-02/README.md).
+- [x] Latest Block placement request: attacker now behind the middle spawn,
+  aiming along a near-can miss lane. Native1/1 measures three genuine misses
+  and one real student block. [Evidence](reports/tutorial-block-placement-2026-10-02/README.md).
+
+
+### RAFI-BAHA-BACKWASH-1002: qualified flood and retrieval passive
+
+Baha now has the0.8second warning, bounded court-crossing front,3m loose-shoe
+carry, one grounded nudge and15point fee. Backwash grants1.5seconds of1.2x
+movement from genuine own retrieval without drop/regrab refresh. Protocol132,
+recording13; legacy replay behavior preserved. Core/native and first coherent
+three actual Linux peers qualify these units. Whole Hydro, SFX, hardware and
+human approval remain open. [Acceptance and film](reports/rafi-baha-2026-10-02/README.md).
+
+
+### REPLAY-DECODER-REFUSAL-1002: safely reject malformed recordings
+
+TryDecode now catches its own InvalidDataException and returns false/reason.
+Reproduced native escaped exception retained; exact shipping schema12 decoder
+passes2/2 malformed-header checks. No format/protocol change or unfinished Rafi
+shipment. [Evidence](reports/replay-decoder-refusal-2026-10-02/README.md).
+
+
+### SEAN-STEADY-EMBER-1002: qualified own-retrieval charge reward
+
+One genuine own-throw/manual-retrieval grants four seconds of1.25x charge rate,
+unchanged maximum; one throw consumes, drop/regrab never refreshes. Protocol131.
+Native5codec+7action/contracts pass; first actual3Linuxpeer scenario passes,
+owner measured1.25418x. Build memory warning and audio/device limits retained.
+[Evidence](reports/sean-steady-ember-2026-10-02/README.md). Whole Pyro and human
+approval remain open; preserve other agents' Supernova/Amihan ownership.
+
+
+### SEAN-CINDER-GATE-1002: finite grounded-crossing defender skill
+
+Cinder Gate replaces the defending placeholder. Three-metre line,0.35s warning,
+three armed seconds, first grounded crossing consumes/pushes toward approach;
+jumps/shoes pass.35s cooldown; no damage/stun/score. Core7, nine distinct native
+cases across focused runs and three actual matching Linux peers qualify the unit.
+Protocol130, recording12. Authored Sean body/FPP and18s review included; no SFX
+or human approval. Build/memory/disk/fixture failures remain in the
+[evidence](reports/sean-cinder-gate-2026-10-02/README.md). Broader Pyro work remains.
+
+
+### SEAN-EMPOWERED-PRESENTATION-1002: clearer held-shoe preparation
+
+Authored body opens the carrying arm, gathers/releases with the free hand and
+checks the load. Native actual-input1/1 with95body/95owner frames; first centred
+pose rejected after review. Original35otherclips/mesh preserved. Memory warnings
+retained; no player/audio/human approval claim.
+[Evidence](reports/sean-empowered-presentation-2026-10-02/README.md).
+
+
+### AMIHAN-AIRBURST-PRESENTATION-1002: honest gather, release and cutscene
+
+Native baseline found the shipped cutscene threw while built (never shown), the
+windup fan drew under Bayan Plaza's tiles, and body/FPP released 1 s late. Now:
+3.6 s CALL/GATHER/AIM cutscene with no pre-release, live body and FPP drive on
+the 1.5 s release, kasikus-chevron fan on the visible court with a simultaneous
+release front. EditMode 4/4; native fixed-simulation films and checks in the
+[evidence](reports/amihan-presentation-2026-10-02/evidence.md). Delay, fan,
+contact and protocol unchanged; no SFX. Human approval and peers remain open.
+
+- [x] AMIHAN-AIRBURST-FEEL-1002 (native, not human approval): ink-weighted fan
+  strokes with edges inside the true limit, sigil kept at her feet, upright lunge
+  with palms forward on the 1.5 s release, bigger CALL, GATHER keeps her face, AIM
+  opens wider, lit Vigan stage. E3 4/4, P2 Airburst films 3/3 after two retained
+  product failures. Decoration (palm diamond, glints) not added.
+  [Feel pass](reports/amihan-presentation-2026-10-02/feel-pass.md).
+- [ ] AMIHAN-LIGHT-BODY-1002 (owner): light steps and a floating run, soles 12 to
+  19 cm up with level hips, soft settles into throw/tag/jump, toe landings, her
+  own seeded `step_amihan`. Native P2 passes (sprint 0.121 to 0.189 m, throw
+  settles over 0.27 s, own steps only). Open: owner listening and taste, name tag
+  clearance in a player view. Presentation only.
+  [Heights and every verb](reports/amihan-presentation-2026-10-02/light-body.md).
+- [ ] Drift: flying launch and catching foot shipped (face stays in frame; baked
+  byte-identically twice; filmed in the skills film). Featherfall and Whirlwind
+  bodies reviewed and kept. `FilmHerSkillsInAMatch` now fails at Featherfall: its
+  two Drifts carry her, holding a slipper, inside the box where the retrieval rule
+  refuses flight. Re-stage it, then baseline their floor anchors.
+- [ ] AMIHAN-AIRBURST-V3 (owner Oct3: revamp cutscene, ult VFX and SFX, lighter):
+  direction in [airburst-v3](reports/amihan-presentation-2026-10-02/airburst-v3.md);
+  unbuildable WIP on branch `amihan-airburst-v3-wip`. Not shipped.
+
+### PLAYER-RING-RADIUS-1002: larger hollow circle
+
+Ordinary player circle now uses1.75 capsule radii, about27percent larger.
+Taya/catchable sizes and gameplay unchanged. Native Low-profile1/1 passes with
+inspected role captures; first memory timeout retained.
+[Evidence](reports/feedback-2026-09-30/player-ring-radius/README.md).
+
+
+### CITY-AMBIENCE-1002: Kanto and Ilalim gain reduction
+
+Existing city/traffic, sidewalk and train mix now applies a shared 0.75 gain.
+Five native gain cases reproduce baseline and pass after the change; no clip,
+slider or timing edits. [Evidence](reports/feedback-2026-09-30/city-ambience/README.md).
+Listening and human approval remain separate.
+
+### WARNING-STRIP-1002: thinner line and action-matched opacity
+
+48-unit base warning strip, natural line width and existing action-plate alpha.
+Native Low-profile case passes across two window shapes and two HUD scales;
+four UI captures inspected. Existing font floor/crowded wrapping preserved.
+[Evidence and memory limits](reports/feedback-2026-09-30/warning-strip/README.md).
+
+### CATCH-BANNER-UPGRADE-1002: immediate higher-catch recognition
+
+Same-player higher catches supersede current/queued lower catches, preserving
+unrelated order and score. Native baseline reproduced; two distinct cases pass
+with retained full-HD timeout/memory limits.
+[Evidence](reports/feedback-2026-09-30/catch-banner-upgrade/README.md).
+Warning styling and other new Feedback remain open.
+
+### SEAN-STOKE-PRESENTATION-1002: authored body refinement validated
+
+Sean dash now uses a compact brace, opposing limbs and a distinct foot catch.
+Actual imported Skill1 capture passes 1/1 in fixed simulation; original geometry,
+rig, materials and 35 other clips preserved. No mechanics/FPP/SFX changes.
+[Result and limits](reports/sean-stoke-presentation-2026-10-02/result.md).
+Human approval and target-player full-speed qualification remain separate.
+
+### HERO-REFERENCE-1002: visual research and implementation plans prepared
+
+All nine heroes reviewed against 16 official sources, 168 inspected captures and
+27 selected frames. [Research and production plans](reports/hero-reference-footage-2026-10-02/README.md)
+retain timecoded evidence and rejected samples. Audio unheard; no new character
+implementation, native acceptance or human taste approval implied. Next: one
+owned presentation unit with actual-cast baseline and shipping-asset checks.
+Reconcile existing kit migrations and protect finalized Paete/Phaister direction.
+
+### COMPETITION-READY-1002: active engineering and bug-fixing lane
+
+Current1003d source83f54e961/protocol134 includes rule/replay/chat/result/LAN/HOME
+fixes and contributor startup/recovery changes. First full default Hero8 passes
+exact packaged rules and both savedcareers; fullClassic133 passed separately on
+1003a. Native reconnect guard is qualified but postdates1003d. Current allmap,
+physical-input/device/WAN/performance-cause and recovery-specific gates remain open.
+[Current artifact/evidence](reports/reliability-2026-10-03/windows-candidate1003d/README.md).
+The goal remains ACTIVE. Root is working solo this continuation;
+the one authorized helper completed its latest bounded work, earlier agents retired.
+
+Current tested1002j contains46 fixes+diagnostics/protocol132/recording13, source
+d28770a25504c8f6a069b429d8384af0ae4ff557. Build77760 PASS12scenes2432MB86s,
+artifact classificationPASS/18903of18905 inputs unchanged/exact2 generated IDs.
+Fresh Windowspeer96292 FIRST PASS: normal result->HOME->cold rejoin/new scene/
+same record/all4 actors frozen. Separate actual host-loss20612 FIRST PASS66.609s:
+live pair before captured hostkill, surviving client inactiveRound0/MatchSetup/
+HostLost1of1/no fabricated End/Record. All owned players retired/input+profile
+seeds restored/runtime unchanged/leasefree. No full-default/physical/WAN claim.
+[Artifact](reports/reliability-2026-10-02/windows-candidate1002j/README.md),
+[Host loss](reports/reliability-2026-10-02/host-loss-real-peer/README.md).
+
+New coherent1002k freeze9852/build58413/finalizer25532 TERMINAL,48fixes included;
+12scenes2432MB88s/artifactPASS/18907of18909 inputs unchanged/exact2 generated IDs.
+Native/root process slots released. [Artifact](reports/reliability-2026-10-02/windows-candidate1002k/README.md).
+New focus boundary investigation:72476 ZERO tests/invalid33GUID, not qualification;
+ONE metadata-only repair to32hex. Corrected16510=2causal/1ordinary control;
+candidate52999 FIRST PASS3 after prep0/exact3/identicalfixture, sourcehookcalls existing
+inputdiscard onfocusfalse. ActualTouchInput+Unity focus
+callback,2causal/1ordinary toggle control planned; no physicalOS focus claim.
+Post74047 exact3/all18431 protected unchanged/restored/free.49source4f69e0af2
+qualified and committed. [Evidence](reports/reliability-2026-10-02/input-focus-lifetime/README.md).
+50EmoteWheel lifetime c788c5a08:61530 two retired-selection commits/one ordinary
+control,89005 FIRST PASS3/post93049 exact3/all18433 protected/restored/free.
+ONE counter-init fixture repair, no assertion weakening/additionalretry. Normal
+release preserved; focusfalse/ownerdisable cancel selection. All jobs terminal.
+[Evidence](reports/reliability-2026-10-02/emote-wheel-lifetime/README.md).
+No unchanged Core/fulltournament/hostloss repeats required for these lifecycle fixes.
+1002l supersedes1002k as the latest compiled+peer-qualified artifact. Source
+3e55308a0ddfc2e07e7649a161c9da1d89e064dd/runtime
+14cbafaed8ae5f56876e0bb174abc61e44ee046ec1fae78b3aa45679028b43aa.
+Default-backend and clean-exit shutdown gate met on this machine; performance/
+otherGPU/physical/WAN/fulldefault tournament requirements stay separate.
+
+47Lunge windup56446ad7c: original96494 two causal/one control;64944 FIRST PASS3,
+exact3/protected12547/no repairs. [Evidence](reports/reliability-2026-10-02/lunge-windup-lifetime/README.md).
+48Carrier55f2a5f79: original24020 two actual ghost-throw/old-tell causals/one control;
+93894 FIRST PASS3/post78275 exact4/all18428 protected. ONE qHeroKit API dependency
+repair after compile29117/noXML; MAINHeroKit unchanged, original snapshots kept.
+[Evidence](reports/reliability-2026-10-02/carrier-disable-lifetime/README.md).
+Prior1002i timeout55528 remains retained; observer diagnostic d28770a25 fixed IO
+callback escape before new1002j succeeded. Touch-null suspicion72038 passed3 on
+unchanged source, fixture retired/no patch/repeat. Prior practice fixture remains
+retired; actual SetBot operator not newlyqualified. All those jobs TERMINAL.
+
+This is competition engineering/bug-fixing; preserve contributor loading and
+finalized designs. TODO is the sole status queue; precise handles, input ownership
+and preservation rules are in ACTIVE_REWORK_LEDGER.md. Continue actual fixes and
+coherent releases, bounded checks and raw failures; no full readiness claim yet.
+
+- [x] SCORECARD-OWNER-CLOSE-1002: hide old account detail on ownership change;
+  shipped84ddfc391, PlayMode3/3. [Evidence](reports/reliability-2026-10-02/playerhub-owner-detail/acceptance.md).
+- [x] RECORD-CHOICE-FOCUS-1002: Career mode refresh retains active navigation;
+  shipped57158d1db, PlayMode3/3 after one causal failure and two controls.
+  [Evidence](reports/reliability-2026-10-02/record-choice-focus/acceptance.md).
+- [x] COLD-ENDED-ACTOR-FREEZE-1002: shipped12a2689ff, native3/3 after1 causal
+  failure/2 controls, ONE NUnit fixture repair; all2656 protected hashes match.
+  [Evidence](reports/reliability-2026-10-02/cold-arrival-actor-freeze/README.md).
+- [x] SCORECARD-CLOSE-FOCUS-1002: shipped7c3124886, native3/3 after1 causal
+  failure/2controls, zero repairs/1295 protected match.
+  [Evidence](reports/reliability-2026-10-02/scorecard-focus/acceptance.md).
+- [x] CURRENT-PAUSE-EXIT-OPERATOR-1002: native2/2 first run63868, exact current
+  button->HOME load/clock/cursor/deferred-break acceptance in minimal arena scene.
+  [Evidence](reports/reliability-2026-10-02/current-pause-exit/acceptance.md).
+- [x] SETTINGS-DECISION-FOCUS-1002: shippeddd4712ca0, native3/3 after1causal/2controls;
+  initial0 ignored due invalid GUID, ONE metadata-only repair.
+  [Evidence](reports/reliability-2026-10-02/settings-decision-focus/acceptance.md).
+- [x] COLD-ACTOR-PEER-1002: fresh1002g build/source248836d1e, first actualWindows
+  peer48099 PASS all4 actor inactive/parked/movement0/sprintfalse after cold rejoin.
+  [Evidence](reports/reliability-2026-10-02/cold-actor-peer/README.md).
+- [x] LAN-RECEIVE-OWNER-1002: shipped1dafe63c4, native3/3 after1causal/2controls,
+  zero repairs/12525 unrelated protected match. [Evidence](reports/reliability-2026-10-02/lan-receive-owner/README.md).
+- [x] TRAINING-PAUSE-TRANSITION-1002: shippedf33e1d8a7, native3/3 after1causal/
+  2controls, zero repairs/exact3/protected12527. [Evidence](reports/reliability-2026-10-02/training-pause-transition/README.md).
+- [x] LUNGE-DISABLE-LIFETIME-1002: shipped0747f1a44, directpublicAPI native3/3 after1causal/2controls, zero repairs/protected12537. [Evidence](reports/reliability-2026-10-02/lunge-disable-lifetime/README.md).
+- [x] SLIDE-DISABLE-LIFETIME-1002: shipped99f6b2994, actualHostResolveSlide/body
+  disable native3/3 after1causal/2controls; zero repairs/exact3/all18868 protected.
+  Cooldown/clock-hold preserved. [Evidence](reports/reliability-2026-10-02/slide-disable-lifetime/README.md).
+- [ ] PRACTICE-BOT-RESUME-1002: actual operator qualification remains OPEN;
+  old fixture route retired after two flaws. Underlying contact lifetime fixed by
+  separately qualified LUNGE-DISABLE-LIFETIME-1002; old failed evidence retained.
+  [Unqualified evidence](reports/reliability-2026-10-02/practice-bot-resume/README.md).
+- [x] TRAINING-EMOTE-ELIGIBILITY-1002: committed212cae991, nativeeligibility3/3
+  after1causal/2controls, ONE preflight classification repair/zero fixture repairs.
+  [Evidence](reports/reliability-2026-10-02/training-emote-eligibility/README.md).
+- [x] SAFE-STORE-RECOVERY-CHAIN-1002: shipped51994763d, native4/4 owned Windows files. [Evidence](reports/reliability-2026-10-02/safe-store-recovery-chain/README.md).
+- [x] SAFE-STORE-FAILED-PROMOTION-SAVE-1002: shipped42e0d48e9, candidate35856 PASS3,
+  original45036 reproduced good-backup loss after lock-release-save;2controls pass.
+  Exact7 owned inputs/protected12535/zero repairs; native slot released.
+  [Evidence](reports/reliability-2026-10-02/safe-store-failed-promotion/README.md).
+- [x] FAILURE-BUNDLE-UNIQUE-PATH-1002: committed40f8f2474, GUID filename suffix; now compiled in1002h, no shared-userpath write test.
+- [x] LAN-LISTENER-START-1002: shipped5367390ab, real8911 bind cleanup/retry/
+  shutdown native3/3 after1causal/2controls, zero repairs/12523 protected match.
+  [Evidence](reports/reliability-2026-10-02/lan-listener-start/README.md).
+
+Owner reaffirmed2026-10-02: competition ready is the objective. Continue through
+coherent fixes and pushes; no stopping after a single passing unit. DOTS owns
+Docs feedback, friend broad loading. Preserve profiles/contributor work.
+
+- [x] CAREER-ASYNC-OWNER-1002: abandon/history account fences; native4/4.
+  [Evidence](reports/reliability-2026-10-02/career-async-owner/README.md).
+- [x] CAREER-WITNESS-1002: refused records remove matching witnesses; native2/2.
+  [Evidence](reports/reliability-2026-10-02/career-witness/README.md).
+- [x] HISTORY-NAVIGATION-1002: stale completions preserve navigation/page/close;
+  native1/1 covers five states. [Evidence](reports/reliability-2026-10-02/history-navigation/README.md).
+- [x] CAREER-ACCOUNT-SYNC-1002: retain/coalesce current-account sync after older busy
+  operations; native4/4. [Evidence](reports/reliability-2026-10-02/career-account-sync/README.md).
+- [x] RESULT-VERDICT-IDENTITY-1002: dispute copy follows displayed match ID; native2/2.
+  [Evidence](reports/reliability-2026-10-02/result-verdict/README.md).
+- [x] RESULT-LATE-ACK-1002: open details repaint on current acknowledgement;
+  native1/1 includes callback retirement. [Evidence](reports/reliability-2026-10-02/result-late-ack/README.md).
+- [x] WALLET-RESPONSE-OWNER-1002: current-owner reply/cache and deferred refresh;
+  native5/5. [Evidence](reports/reliability-2026-10-02/wallet-owner/README.md).
+- [x] BOT-INACTIVE-BODY-1002: inactive actors stop supplying live observations;
+  native2/2 both modes. [Evidence](reports/reliability-2026-10-02/bot-inactive-body/README.md).
+- [x] SOCIAL-RESPONSE-OWNER-1002: reply and lookup state owned by requesting account;
+  native4/4. [Evidence](reports/reliability-2026-10-02/social-owner/README.md).
+- [x] JOIN-ADMISSION-1002: panel waits for connection/seat, unavailable room stays
+  actionable; shipped d80c4f455 via13c201e0a, native3distinct cases pass.
+  [Evidence](reports/reliability-2026-10-02/native-join-admission/README.md).
+- [x] SOCIAL-CACHE-OWNER-1002: retire old-account rail, defer new refresh, guest
+  service guard; shipped c2326d5bf via13c201e0a, native11distinct cases pass across
+  two final XMLs. [Evidence](reports/reliability-2026-10-02/social-cache-owner/README.md).
+- [x] HUB-ADMISSION-1002: client room entry waits for admission; shippedc63bea7b0
+  via45aa5dc62, native1/1. [Evidence](reports/reliability-2026-10-02/friend-join/README.md).
+- [x] FRIEND-JOIN-1002: existing hub handler serves HOME/hosted friend action;
+  shipped70370785e via45aa5dc62, native2/2.
+  [Evidence](reports/reliability-2026-10-02/friend-join-handler/README.md).
+- [x] REMATCH-DEPARTED-BALLOT-1002: departing/held-seat players stop choosing maps;
+  shipped7cbc65262 via45aa5dc62, native4/4.
+  [Evidence](reports/reliability-2026-10-02/rematch-departed-ballot/README.md).
+- [x] RECENT-PLAYER-ACK-1002: await friend/report acknowledgement before success
+  labels; shippedcd4a41069 via2c3f39dc9, native41/41.
+  [Evidence](reports/reliability-2026-10-02/recent-player-ack/README.md).
+- [x] REBIND-CANCEL-1002: consume same-frame Escape when cancelling settings input
+  listening; shipped1f2d2bcb9 via2c3f39dc9, native4/4.
+  [Evidence](reports/reliability-2026-10-02/rebind-cancel/README.md).
+- [x] QUEUE-HOST-RETRY-1002: retry cached evaluation after transient host failures;
+  shipped39a3bc430 via5bf65ed6a, native5/5.
+  [Evidence](reports/reliability-2026-10-02/queue-host-retry/README.md).
+- [x] REPORT-ELIGIBILITY-1002: reports remain available independently of friends;
+  shipped2c3eea229 via5bf65ed6a, native8/8.
+  [Evidence](reports/reliability-2026-10-02/report-eligibility/README.md).
+- [x] COMPLETED-ARRIVAL-1002: cold ended-match snapshot and retained-record recovery;
+  shipped960560b7c via5bf65ed6a, native12/12. Actual-peer acceptance remains open.
+  [Evidence](reports/reliability-2026-10-02/completed-match-arrival/README.md).
+  Actual short two-Windows-peer completed arrival now passes, evidence19697fea9;
+  new scene/end/record/visible board with same identity/scores. [Peer proof](reports/reliability-2026-10-02/completed-arrival-peer/README.md).
+- [x] CUSTOM-SLOT-RECOVERY-1002: missing saved slots preserve later characters;
+  shippede8de37021 via066bb51ee, native6/6 after four reproduced failures.
+  [Evidence](reports/reliability-2026-10-02/custom-slot-recovery/README.md).
+- [x] HUB-DISCONNECT-CANCEL-1002: host loss cancels pending join and queue work;
+  shipped8acbdf683 via066bb51ee, native3/3 after three reproduced failures.
+  [Evidence](reports/reliability-2026-10-02/hub-disconnect/README.md).
+- [x] ACCOUNT-SAVE-OWNER-1002: delayed save must preserve current account/edit;
+  shippedd01c62a68 via7b36c1e63, candidate5/5 after four native failures.
+  [Evidence](reports/reliability-2026-10-02/account-save-owner/README.md).
+- [x] READY-CHAT-INTENT-1002: typing must not create a manual ready vote;
+  committed3e91f02b0; new real PlayMode joint10/10 after four causal failures,
+  published via946006940. Old Editor failures preserved/retired.
+  [Limits](reports/reliability-2026-10-02/ready-chat-focus/README.md).
+- [x] REBIND-ACTION-STATE-1002: restore original disabled/enabled action state;
+  shipped5acff5bfe via69e341491, native10/10 after four causal failures.
+  [Evidence](reports/reliability-2026-10-02/rebind-action-state/acceptance.md).
+- [x] BUFFER-CHAT-INTENT-1002: typing must not submit a buffer-skip vote;
+  committed3e91f02b0, jointPlayMode10/10; published via946006940.
+  [Limits](reports/reliability-2026-10-02/buffer-chat-pending/README.md).
+- [x] EMOTE-CHAT-FOCUS-1002: typing must not open or commit the emote wheel;
+  committed3e91f02b0, jointPlayMode10/10; published via946006940. Old Editor route retired.
+  [Runtime proof and input-asset scope](reports/reliability-2026-10-02/gameplay-chat-input/acceptance.md).
+- [x] FORCE-EQUIP-LOCK-1002: round handover clears old pickup throw lock;
+  shipped8d970fb06 viaa8b662f9e, native3/3; duplicate snapshot/pickup preserved.
+  [Evidence](reports/reliability-2026-10-02/force-equip-lock/README.md).
+- [x] WALLET-CACHE-RECOVERY-1002: corrupt primary uses valid same-owner backup;
+  shipped4ac37e3dc viaa8b662f9e, native4/4; owner gate unchanged.
+  [Evidence](reports/reliability-2026-10-02/wallet-cache-recovery/acceptance.md).
+- [x] MENU-EXIT-LIFETIME-1002: retire persistent live round/intermission on exit;
+  shippedf163882cc native4/4 after three causal failures; one setup correction.
+  [Evidence](reports/reliability-2026-10-02/menu-exit-lifetime/README.md).
+- [x] SPECTATOR-ROLE-CAMERA-1002: seat/watch transition camera lifetime;
+  shippedd97be101d nativePlayMode3/3 after three causal failures, no view tuning.
+  [Evidence](reports/reliability-2026-10-02/spectator-camera-lifetime/README.md).
+- [x] TOUCH-LAYOUT-NULL-CACHE-1002: investigation complete, no defect reproduced;
+  original4/4, no product patch or candidate rerun. Not counted as a shipped fix.
+  [Finding](reports/reliability-2026-10-02/touch-layout-investigation/finding.md).
+- [x] HOST-LOSS-LIFETIME-1002: unexpected host loss retires old simulation before
+  empty lobby restores authority; shipped5f47abc84 final6/6 after two causal failures.
+  [Evidence](reports/reliability-2026-10-02/host-loss-lifetime/README.md).
+- [x] FAILURE-BUNDLE-ABANDONMENT-1002: retain classified disconnect cause/round;
+  diagnostic-only890656094 native2/2, not counted as a gameplay fix.
+  [Evidence](reports/reliability-2026-10-02/failure-bundle-abandonment/acceptance.md).
+- [x] SLIDE-INTERRUPTION-1002: interrupted pickup sweep cannot resume after recovery;
+  shipped3bbc90c61 native4/4 after three causal failures; pause/timing preserved.
+  [Evidence](reports/reliability-2026-10-02/slide-interruption/README.md).
+- [x] SLIDE-INVENTORY-COST-1002: reuse existing slipper inventory for prediction
+  and host retrieval sweep. Same six native controls pass before/after; warmed
+  prediction median17.13 to9.42microseconds/call (45.03percent lower in fixture).
+  One original fixture timeout and one bounded clock/provider repair retained.
+  No player FPS or historical stall attribution claim.
+  [Evidence](reports/reliability-2026-10-02/slide-inventory/README.md).
+- [x] PINNED-HOME-MODE-1002: passive HOME choice now preserves pinned rules;
+  explicit card/owned-hero choices retain their override behavior. Native original
+  two causal failures/two controls; candidate4/4 first pass, no fixture repair.
+  Packaged normal-lobby Classic8 now passes on1003a/protocol133: natural end,
+  matching scores and both saved histories. Explicit choices retain native controls.
+  [Full match proof](reports/reliability-2026-10-03/windows-candidate1003a/README.md).
+  [Fix evidence](reports/reliability-2026-10-03/hub-pinned-rules/README.md).
+  Original finding: normal LAN lobby refresh replaces pinned Classic
+  tournament mode with the saved Hero card. Current1002m actual eight-round run
+  ends naturally in Hero on both peers despite explicit tournament launch.
+  Preserve pins on passive refresh while retaining explicit mode/hero selection.
+  [Failure evidence](reports/reliability-2026-10-02/windows-candidate1002m/README.md).
+- [x] CLIENT-CAREER-DELIVERY-1002: same normal-lobby match stores one online
+  result/queue entry on host; client has no career.json after clean exit.
+  Trace record delivery, local identity and save eligibility before attributing
+  the failure or patching. No live-service or unchanged full-match retry.
+  [Failure evidence](reports/reliability-2026-10-02/windows-candidate1002m/README.md).
+  Source boundary fix now qualifies4/4 native checks after two causal failures:
+  LAN cached profile identity enters hello, survives admission and repeated
+  introduction; handle trust and Relay signed-only behavior preserved.
+  Actual Windows LAN acceptance now passes on current1003a: both fresh profiles
+  save one history/queue/witness, same online Hero1-round match and scores, each
+  local identity has one nonbot line. Client cold rejoin receives record again
+  without duplication; both normal exits/preservation pass. One offline-owner
+  aggregate assumption repaired on the same run, no native retry.
+  [Actual save proof](reports/reliability-2026-10-03/windows-candidate1003a/README.md).
+  [Source evidence](reports/reliability-2026-10-03/lan-record-identity/README.md).
+- [x] MATCH-RECORD-PACKET-1003: complete string framing and JSON refusal prevent
+  malformed result callbacks from escaping or replacing the current result.
+  Native original two causal/two controls; candidate FIRST4/4, no repairs.
+  Valid Unicode/normalisation and sender/host-loopback controls preserved.
+  [Evidence](reports/reliability-2026-10-03/match-record-packet/README.md).
+- [x] CHAT-PACKET-FRAMING-1003: bounded complete string framing protects host
+  and client chat callbacks, rate allowance and event state. Corrected original
+  two causals/seven controls; corrected candidate9/9 includes all result cases.
+  One counter fixture repair and one unshipped guard-placement regression retained.
+  [Evidence](reports/reliability-2026-10-03/chat-packet/README.md).
+- [x] CURRENT-MENU-REVIEW-1003: corrected native134 Windows normal boot passes
+  after one retired-route diagnostic repair: observed playing studio picture,
+  login/Terms/Guest, title/music/motion, currentHOME, Settings/Credits and Mode/Back.
+  First actual local Unicode chat exchange and cold completed record/save pair
+  also pass on same1003c artifact. Input/profile/Runtime preservation and exits pass.
+  [Current artifact/acceptance](reports/reliability-2026-10-03/windows-candidate1003c/README.md).
+- [x] REPLAY-PROP-BINDING-COST-1003: reuse replay-prop scratch storage and direct
+  lookup while preserving live query/track/window lifecycle. Same four native
+  cases pass original/candidate; warmed binding median3.69 to3.16us (~14.33% lower
+  in fixture). No repairs/retries. Zero-returning allocation counter is uninformative,
+  not a measured allocation delta or FPS/stall attribution.
+  [Evidence](reports/reliability-2026-10-03/replay-prop-binding/README.md).
+- [x] LOBBY-RULE-PACKET-1003: refuse incomplete/overflow/trailing rule frames
+  and wide sender aliasing before leader configuration. Native original three
+  causals/three controls; candidate FIRST6/6, no repairs/retries. Supported custom
+  wire/events and role/leader/loopback controls preserved.
+  [Evidence](reports/reliability-2026-10-03/lobby-rule-packet/README.md).
+- [x] REBIND-SEAT-PACKET-1003: validate whole header/slots/boolean/name before
+  local ownership change. Original four causals/two controls; candidate FIRST6/6,
+  no repairs/retries. Valid spectator/free-roam and duplicates preserved. Native
+  ownership/event boundary; packaged live-body restoration remains separate.
+  [Evidence](reports/reliability-2026-10-03/rebind-seat-packet/README.md).
+- [x] ALL-MAP-AVAILABILITY-1003 (stagedClassic rendering): corrected1003e probe
+  covers all6registered maps*3profiles=18rows, positivecounters/24captures; allsix
+  Balancedworldimages inspected. ONE oldEnvColourPass lookup repair; raw Ilalim
+  failure retained. Exits/input/Runtime preservation pass. Combat/Hero interactions,
+  otherdevices/physical/WAN remain separate; no art/style/asset regeneration.
+  [Evidence](reports/reliability-2026-10-03/map-availability/README.md).
+- [ ] TIMED-FROZEN-PEERS-1003: existing two-peer Cheska/Sean probe produced no
+  required actor/effect rows on both direct45141 and normal-lobby56995 setup.
+  Raw failures retained; the single setup repair did not resolve actor confirmation.
+  Stop unchanged builds/retries. Same freeze/phase/thaw/movement gates remain;
+  no game recovery defect or hero retuning attributed from absent effect data.
+  [Evidence](reports/reliability-2026-10-03/timed-freeze-peers/README.md).
+- [ ] CROSS-MACHINE-PEERS-1003: coordinate matching players on this PC and the
+  second laptop for real host/client tests. Owner confirms laptop Codex connection
+  to this PC; execute client/tests on laptop LOCAL host for separate compute.
+  Existing lobby commands and guarded per-machine runs are the starting point.
+  Builds/addresses/access on laptop and actual peer acceptance remain unverified.
+- [ ] Investigate recorded270.33ms host frame using existing measurements.
+- [ ] Review and finish relevant unpublished edits; protected UI metas remain private.
+- [x] DEFAULT-HERO-FULL-MATCH-1003: current1341003d first actual LAN8x90 Hero
+  passes exact packaged default wire, naturalend/equalscore/twohumanorigins and
+  both own savedcareers1history/queue/witness/appliedID. Normalexits/preservation
+  pass; physical input/allmaps/WAN/recovery contracts remain separate.
+  [Evidence](reports/reliability-2026-10-03/windows-candidate1003d/README.md).
+- [ ] Refresh coherent Windows candidate and exercise full tournament match flow
+  in both shipping modes, current remade maps, failure/recovery and visual availability.
+  Distinguish actual local-peer evidence from physical devices and WAN qualification.
+
+
+### CAREER-REFRESH-OWNER-1002: reject older account refresh output
+
+Older refresh completion cannot overwrite a replacement account cache or its
+status. Native normal/stale cache cases pass2/2; no login/service call or schema
+change. Newest-account refresh scheduling remains outside this proof.
+[Evidence](reports/reliability-2026-10-02/career-refresh-owner/README.md).
+
+### CAREER-SUBMIT-IDENTITY-1002: preserve other pending results
+
+Late upload completion now follows its captured cache/result identity, preserving
+other records and witnesses after head eviction or account-cache replacement.
+Native 12/12 includes existing acknowledgement controls; storage schema unchanged.
+[Evidence](reports/reliability-2026-10-02/career-submit-identity/README.md).
+
+### HTTP-TIMEOUT-1002: bound stalled service requests
+
+Shared production requests now have a 20-second timeout. Actual native loopback
+stall ends at 20.004s; normal local response succeeds. Final 2/2, no live endpoint
+or retry/UI configuration change.
+[Evidence](reports/reliability-2026-10-02/http-timeout/README.md).
+
+### CLOUD-OUTPUT-1002: reject missing service output
+
+Shared response helper no longer reports missing/null output as success. Native
+production-parser checks pass 8/8, preserving object/array/false/zero payloads.
+Existing caller failure paths retained; no live service call or configuration change.
+[Evidence](reports/reliability-2026-10-02/cloud-output/README.md).
+
+### CAREER-SUBMIT-ACK-1002: retain results without acknowledgement
+
+Missing/unknown submit verdicts no longer discard queued records or witnesses.
+Actual native completion/cache mutation checks pass 10/10, including recognized
+verdicts and duplicate applied=false responses. No backend call or schema change.
+[Evidence](reports/reliability-2026-10-02/career-submit-ack/README.md).
+
+### QUEUE-START-FAULT-1002: recover from startup dependency exceptions
+
+Actual host/join queue helpers stuck and faulted on startup errors. Native final
+4/4: active failures search again, cancelled attempts stay cancelled. Narrow
+startup catch only; existing retry/owner fences retained, no online service call.
+[Evidence](reports/reliability-2026-10-02/queue-start-fault/README.md).
+
+### REPLAY-EMPTY-CAPTURE-1002: remove unused empty-sample allocations
+
+Calibrated Unity recorder: 500 empty captures changed from 1,000 allocation
+events to 0. Native empty and actual flying-trail lifecycle cases pass 2/2.
+No new pools, wire or authored visual change.
+[Evidence](reports/reliability-2026-10-02/replay-empty-capture/README.md).
+
+### ILALIM-PREVIEW-AUDIO-1002: repaired late street voices behind menus
+
+Actual preview created 10 enabled late voices after its silence pass. Same native
+case now passes 1/1: preview 0, normal game scope 10. Authored audio/mix unchanged.
+[Evidence](reports/reliability-2026-10-02/ilalim-preview-audio/README.md).
+
+### BOT-OVERCLOCK-1002: repaired stale area-stun victim gates
+
+Actual Zack bot ignored ready permanent Overclock for13s outside the zap radius.
+Same native bot-input/activation case now passes1/1 at4.9s, with single-spend
+control. Existing cadence/opening and kit unchanged.
+[Evidence](reports/reliability-2026-10-02/bot-overclock/README.md).
+
+### REPLAY-SHOE-LOOKUP-1002: reuse existing live inventory
+
+Replay trail capture reuses the existing lifecycle-invalidated slipper inventory.
+Same native trail/lifecycle case passes before/after1/1; one1000capture batch
+19.7619ms to16.7017ms. Allocation counter unavailable; no FPS claim.
+[Evidence](reports/reliability-2026-10-02/replay-shoe-lookup/README.md).
+
+### ILALIM-PREVIEW-FRAMING-1002: repaired old above-deck camera
+
+Rebuilt Ilalim preview now faces its playing street below the viaduct rather than
+the roof. Native1/1passes and actual PNG inspected; authored map/lighting unchanged.
+[Evidence](reports/reliability-2026-10-02/ilalim-preview-framing/README.md).
+
+### ILALIM-PREVIEW-SCOPE-1002: repaired generated scenery camera leakage
+
+Rebuilt Ilalim actual preview baseline33escaped renderers; final0, native1/1passes.
+Runtime NPC/prop/look/cloud layer inheritance only; authored assets unchanged.
+Court framing remains a separate open defect. [Evidence](reports/reliability-2026-10-02/ilalim-preview-scope/README.md).
+
+### KIT-RECALL-PARITY-1001: role-aware held descriptions
+
+Same-kit attacker/defender changes now refresh the real role ability. Native
+baseline fails for Cheska and Dante; both corrected regressions pass. One actual
+four-slot guide/capture case also passes after one root-canvas fixture repair.
+Names, summaries, descriptions, cooldowns and12point costs checked; small/wide
+captures inspected. No mechanics/authored-copy/layout or protocol change.
+[Evidence](reports/feedback-2026-09-30/kit-recall-parity/README.md).
+
+### STOKE-STEP-1001: mechanics qualified
+
+Sean signature migration follows the researched2m grounded commitment,0.18s
+anticipation,0.25s recovery and30s cooldown. Six distinct native cases pass across
+4+2: accepted aim, real motor travel, no steering/fire field, wall/body/confinement,
+tag cancellation, rollback, aged restoration and default other-kit gates.
+Protocol129 full player and three actual Linux peers pass:1.8916m forward travel,
+zero lateral drift under perpendicular input, recovery gates and cleanup agree.
+Authored motion/SFX review remains separate. [Plan](reports/hero-quality-2026-10-01/stoke-step/plan.md).
+
 
 ### AIM-CIRCLE-CADENCE-1001: smooth visible landing-circle movement
 
@@ -107,6 +1236,26 @@ a reproduced baseline failure. Protocol118, no fresh player/peer claim.
 
 ### HERO-QUALITY-1001: full-roster research and durable plans
 
+NEMU-CATCH-MOTION-1003 implements a distinct small companion command instead
+of Catch's shared seance. Native lightweight-stage actual input/live clip/can
+protection/reset passes1/1;48 paired frames inspected. Model and36 old actions
+preserved. Corrected full-court film, player/peer/SFX/human acceptance remain
+open. [Evidence](reports/nemu-catch-motion-2026-10-03/README.md).
+
+DANTE-HANDBACK-1003 replaces the duplicate live windup with planted follow-through
+and low owner hands. Native actual-route1/1, imported-pose continuity and all
+five bands pass; before/after body and owner views inspected. All37otherclips
+and geometry remain intact. Warning/phase timing unchanged; player/SFX/human
+acceptance remains separate. [Evidence](reports/dante-handoff-2026-10-03/README.md).
+
+DANTE-DRIFT-FRACTURES-1003 shipped irregular
+ground art only, preserving five authoritative bands. Shipped4da1fb62 with
+four distinct focused presentation checks covered; final Low court/overlap views
+inspected. Subsequent actual-owner handoff views show the faults clearly;
+broader Dante polish and player/peer/human acceptance remain open.
+[Evidence](reports/dante-drift-fractures-2026-10-03/README.md).
+
+
 Owner priority October1: finish the current Continental Drift unit, then thoroughly
 research and plan every hero's skills, cutscenes, animation, VFX, SFX and UI before
 resuming other feedback/manual hunt. Analyze finalized Paete/Phaister as quality
@@ -197,6 +1346,48 @@ FPP, glyph/wake/audio and actual matching peers remain open.
 [Plan](reports/hero-quality-2026-10-01/skim-implementation.md) and
 [evidence](reports/hero-quality-2026-10-01/skim-checks/README.md).
 
+### DANTE-BASTION-MOTION-1002: distinct following-field brace
+
+- [x] Authored body/FPP forward set replaces the personal Unstoppable roar.
+  Actual defender input, duration/cooldown, following transform and round reset
+  pass1/1;77 paired native frames reviewed. All37 prior clips and model data
+  retained. Field art/player/peer/SFX/human approval remain separate.
+  [Review and limits](reports/dante-bastion-motion-2026-10-02/README.md).
+
+### DANTE-BOULDER-LOAD-1002: visible Concussed shoe payload
+
+- [x] Surface-bound stone inlay on the real world and owner slipper. Four fresh
+  serial native cases pass: Normal control, actual activation/drop/regrab/clear,
+  replica-set affinity/disable, owner source replacement and repeated state.
+  Authored mesh/materials and gameplay unchanged. Full-map/peer/performance/SFX
+  and human approval remain open. [Evidence](reports/dante-boulder-load-2026-10-02/README.md).
+
+### DANTE-BOULDER-MOTION-1002: weight-bearing held-shoe preparation
+
+- [x] Boulder gets its own body/FPP lift, weight catch and steady recovery.
+  Actual-input1/1 passes with78 paired frames; Concussed affinity and the same
+  held shoe are retained. All36 earlier clips and model data preserved. No new
+  player/peer, SFX, movement-combination or human acceptance claim.
+  [Review and scope](reports/dante-boulder-motion-2026-10-02/README.md).
+
+### CHESKA-FROSTBITE-MOTION-1002: distinct held-shoe cast
+
+- [x] Replace only Frostbite's borrowed ground sweep with authored body and owner
+  preparation. Final actual-input1/1 passes,76 paired frames, no guard request.
+  All36 old clips and original model data preserved. Full-map/player, SFX and
+  human approval remain open. [Review and limits](reports/cheska-frostbite-motion-2026-10-02/README.md).
+
+### CHESKA-FROSTBITE-LOAD-1002: loaded-shoe surface cue
+
+- [x] Reproduce missing loaded cue with a real slipper and retain inactive/material control.
+- [x] Qualify the world/owner mesh overlay and lifecycle tests.
+  All five cases passed as sequential one-test native graphics runs, retaining
+  the same memory guard. Final branching-frost world/owner renders passed and
+  were inspected. Consumption returns the inactive image exactly. The failed
+  batch remains failed evidence; broader body/camera/audio review stays open.
+  [Plan](reports/cheska-frostbite-load-2026-10-02/plan.md) and
+  [result](reports/cheska-frostbite-load-2026-10-02/result.md).
+
 ### PHAISTER-HEX-1001: refine the hallucination presentation
 
 Owner-authorized exception to finalized-kit protection. Full-size grounded copies,
@@ -243,12 +1434,46 @@ continuous manual bug hunting. Research, plan and critique using HERO_KIT_METHOD
 finalized Paete/Phaister character-specific work remains protected. The owner reopened remaining ability implementation on2026-10-01;
 shared/global fixes apply normally and exact concurrent claims still govern.
 
+- [x] EMPOWERED-THROW-1001: exact held-object8s load/35s cooldown and compact
+  first-impact pressure payload, without legacy speed/stagger/charges. Ten
+  distinct native behavior checks plus actual Linux host/owner/observer pass;
+  protocol128. Other Pyro slots and full presentation remain open.
+  [Evidence](reports/hero-quality-2026-10-01/empowered-throw/README.md).
+
+- [x] BANK-CEILING-CREDIT-1003: powered safety-ceiling return preserves Zack's
+  remaining wall-bank credit, matching its retained affinity; ordinary throws
+  and extra-bank retirement remain. Baseline2/2 reproduced; candidate9/9 native
+  assertions pass with shutdown resource guard retained, settings restored.
+  Protocol145; packaged/player/peer acceptance remains separate.
+  [Evidence](reports/bank-ceiling-2026-10-03/README.md).
+
+- [x] BANK-SHOT-LOAD-MOTION-1003 source: dedicated0.64s body/owner load of the
+  already-held slipper, preserving mechanics/copy/SFX and original37 clips.
+  Edit3/3, current headless13/13 guard-free, body-film1/1 with measured cadence;
+  separate owner composition1/1 and six actual hand-renderer poses inspected.
+  [Implementation and retained failures](reports/zack-bank-load-2026-10-03/implementation.md).
+- [ ] BANK-SHOT-LOAD-MOTION-1003 visual acceptance: owner/walking graphics
+  runtime film blocked by8GiB container headroom; static owner poses now checked
+  by a lighter Editor route. Real-map/peer/player/human review still open.
+
 - [x] CLOSED-CIRCUIT-1001: cancellable6m/.4s defending acquisition,2s host
   Zapped,35s commitment cooldown and Overclock different-target follow-up.
   Fourteen distinct focused native checks and actual Linux host/owner/observer
   traces pass with documented fixture/evaluator corrections. Protocol127;
   whole Zack presentation and WAN/device coverage remain open.
   [Evidence](reports/feedback-2026-09-30/closed-circuit/README.md).
+
+- [x] CLOSED-CIRCUIT-MOTION-1003: serialized dedicated acquisition body action,
+  distinct owner-hand dispatcher and measured casting-palm tell replace missing
+  body cast/generic thrust/face-origin line. Three Editor and nine PlayMode checks
+  pass; six native poses from two views inspected, with graphical resource stops
+  retained. Full-court film, live owner appearance, peers and human approval stay
+  open. No mechanics/protocol change.
+  [Evidence](reports/zack-circuit-motion-2026-10-03/README.md).
+- [x] CLOSED-CIRCUIT-WALK-1003: retain walking legs during mobile acquisition.
+  Original real-motor regression failed; candidate11/11 plus six motion/asset
+  controls pass. Standing/owner behavior preserved; moving-film and peer
+  acceptance remain separate. [Evidence](reports/zack-moving-cast-2026-10-03/README.md).
 
 - [x] BOT-COMPANION-OBSERVATION-1001: shared observation now includes companion
   targets and binds cached beliefs to the actual body. Native baseline reproduces
@@ -507,16 +1732,16 @@ incomplete cells still do not authorize invented specifications.
   actual effect clock; reactivation skills retain Again plus seconds remaining.
   Native shared-clock/UI case passes;960x540/1600x680 captures inspected.
   [Evidence](reports/feedback-2026-09-30/README.md#timed-power-lifetime).
-- [ ] F0930-09 Cheska: reconcile wiki names/rules/statuses and fix Frozen slipper hit.
+- [x] F0930-09 Cheska: reconcile wiki names/rules/statuses and fix Frozen slipper hit.
   Frozen-hit bug fixed: both real body-hit paths now consume frost after applying
   Frozen. Activation requires the held slipper. Four native cases pass; protocol101
-  requires matching updated builds. Complete kit alignment stays open.
+  requires matching updated builds. Remaining copy/UI parity is now qualified below.
   [Evidence](reports/feedback-2026-09-30/frostbite-delivery.md).
   Current Wiki timing/passive rules implemented: Cold Feet7.5s; Absolute Zero1.5s
   then all players including caster Frozen/Chilled; landed Hero Strike shove Chilled.
   Five distinct native cases pass across two final receipts, plus one Core numeric
   check. Protocol103. [Evidence](reports/feedback-2026-09-30/cheska-wiki-rules.md).
-- [ ] F0930-10 Dante: reconcile wiki names/rules/statuses (owner reauthorized implementation).
+- [x] F0930-10 Dante: reconcile wiki names/rules/statuses (owner reauthorized implementation).
   Earthbound incoming distance now approximately halves impulses/carries;4native
   cases plus the affected authored Airburst interaction pass. Classic/lift retained.
   [Passive evidence](reports/dante-wiki-2026-09-30/earthbound.md).
@@ -527,7 +1752,8 @@ incomplete cells still do not authorize invented specifications.
   slow for2.5s. Seven native cases and8Core pass, protocol108. [Boulder evidence](reports/dante-wiki-2026-09-30/boulder.md).
   Continental Drift now sends five forward Concussed blasts for12points; six
   distinct native cases cover timing, host/recovery/replay and authored court.
-  Protocol111; presentation critique and retained UI review remain open.
+  Protocol111; retained UI parity is now qualified by KIT-RECALL-PARITY-1001.
+  Broader presentation critique remains in HERO-QUALITY, not this Wiki-parity row.
   [Cascade evidence](reports/dante-wiki-2026-09-30/drift.md).
   Barrier visibility implemented separately: half-alpha authored slabs retain their
   palette and lifecycle. Two distinct native cases pass; observer court capture
@@ -1252,8 +2478,8 @@ points at it rather than copying it. Nothing here is ticked without evidence.
   points at the thumb target). Photograph each prompt on all three devices (CLAUDE.md 4a).
 - [ ] **Everyone gets 999999 tansan so the testers can unlock everything** (*"unlock all"* was asked and
   withdrawn in the next message). Built: `ugs/cloud-code/wallet.js` `PLAYTEST_TOPUP = 999999` tops every
-  loaded wallet up (`tools/test_wallet_script.js` passes). OPEN: the OWNER must deploy `wallet.js` to the
-  UGS project (`dcf0831e-...`), nothing changes in game until then. ⚠️⚠️ TEMPORARY: before any public
+  loaded wallet up (`tools/test_wallet_script.js` passes). Productionv2 deployed and exact source verified
+  October4; actual rendered tester unlock acceptance remains open. ⚠️⚠️ TEMPORARY: before any public
   build set `PLAYTEST_TOPUP = 0` and redeploy (balances already topped up stay topped up; resetting them
   is a separate decision for the owner).
 - [ ] **LIANA LEAP from his own eyes looks like his arms extending**, then *"it doesnt bend with arms
@@ -3877,7 +5103,12 @@ This machine's checkout: `C:/Users/Matthew/dev/TumbangPreso-Unity-ASTRAReworks`.
   Windows now explicitly prefers D3D11, retaining D3D12 second. Current-source
   five-map D3D11 rendering passed1/1 and actual views/grey were inspected. This is
   a machine-supported compatibility mitigation; internal engine/driver cause is
-  unproven. P7 still owes current-player default-backend, exit and performance.
+  unproven. Current50-fix Windows1002l default-renderer80018 FIRST PASS: both
+  players selected D3D11/RX6600 withoutforcingflags, completed normal end/HOME/
+  coldrejoin/newrecord and exited0, ownedPIDsdead/inputs+seedsrestored/free.
+  The default-backend and clean-exit parts are now met on this machine. P7 still
+  owes performance/soak/otherGPU scope; this row stays open for that wider gate.
+  [Current-binary evidence](reports/reliability-2026-10-02/windows-candidate1002l/README.md).
   [Native comparison and evidence](reports/map-by-map-refinement-2026-09-23/native-shutdown/report.md).
 - [ ] **Rafi B / lagoon C expansion, final integration.** Model, kit, map, v47 to v52
   evidence and the three-peer water checks are done (see the done list). Final coherent

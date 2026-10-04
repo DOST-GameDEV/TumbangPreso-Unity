@@ -1,0 +1,18 @@
+{
+  "generatedIdentitySha256": "EE3F2535B16E2654EC38B0556DE390B4789A6BABD918A2D9B0114F85F25A29A0",
+  "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Builds\\competition-candidate1002e\\TumbangPreso.exe",
+  "inputCount": 18845,
+  "protocol": 130,
+  "expectedGeneratedChanges": [
+    "Assets/StreamingAssets/build-identity.json",
+    "Assets/TumbangPreso/Resources/BuildIdentity.json"
+  ],
+  "sourceCommit": "69e3414913c3bc582b9ce5b028239f65503e62d7",
+  "scope": "Committed source plus retained importer/generated deltas and expected regenerated build identity; not pristine post-import.",
+  "runtimeSha256": "b0bfbbaec5d5c16041f90036e33b2abad41e8029e28ae4ca3e8ef7536f1ba6c0",
+  "originalStrictReceiptSha256": "ACB66C2218ACD93850A39B543D338CE3E93C6CBD7740FAA1C9EFCA1B4C7A3222",
+  "unchangedFrozenInputs": 18843,
+  "passed": true,
+  "target": "StandaloneWindows64",
+  "classification": "GameBuilder.StampBuildIdentity rewrites both declared identity JSON files on every build; packaged copy matches both generated sources and frozen commit/protocol/target. All other inputs unchanged. Original strict receipt preserved."
+}

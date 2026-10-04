@@ -15,7 +15,8 @@ namespace TumbangPreso
         private void BeginPresentationMatch()
         {
             PresentationMatchId = NetAuthority.IsNetworked && Net.MatchRpc.Instance != null
-                ? Net.MatchRpc.Instance.EnsurePresentationMatch() : DateTime.UtcNow.Ticks;
+                ? Net.MatchRpc.Instance.EnsurePresentationMatch()
+                : Math.Max(DateTime.UtcNow.Ticks, PresentationMatchId + 1);
             _momentSequence = _receivedMomentSequence = 0;
             _firstKnockdownRound = 0;
             LastMoment = default;

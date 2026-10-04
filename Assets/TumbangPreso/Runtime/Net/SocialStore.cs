@@ -48,6 +48,7 @@ namespace TumbangPreso.Net
         }
 
         private Cache _cache = new Cache();
+        private Cache _primaryCache;
         private float _nextPresence;
 
         /// <summary>The state the last write carried, so a CHANGE can be noticed. See `Update`.</summary>
@@ -57,12 +58,22 @@ namespace TumbangPreso.Net
         private float _nextPresenceChange;
         private bool _loading;
         private bool _writing;
+        private bool _refreshPending;
+        private long _listWriteVersion;
+        private PlayerAccount _hookedAccount;
 
         /// <summary>Raised whenever the list changes, so a rail can redraw without polling it.</summary>
         public event Action Changed;
 
         /// <summary>The list as it was last known. Never null.</summary>
-        public SocialList List => _cache.List ?? (_cache.List = new SocialList());
+        public SocialList List
+        {
+            get
+            {
+                RetireOtherOwnersCache();
+                return _cache.List ?? (_cache.List = new SocialList());
+            }
+        }
         public string SearchStatus { get; private set; } = "";
 
         [Serializable]
@@ -86,6 +97,61 @@ namespace TumbangPreso.Net
         private void OnDestroy()
         {
             if (Instance == this) Instance = null;
+        }
+
+        private void OnEnable()
+        {
+            _hookedAccount = GameServices.Account;
+            if (_hookedAccount != null) _hookedAccount.Changed += OnAccountChanged;
+            RetireOtherOwnersCache();
+        }
+
+        private void OnDisable()
+        {
+            if (_hookedAccount != null) _hookedAccount.Changed -= OnAccountChanged;
+            _hookedAccount = null;
+        }
+
+        private void OnAccountChanged()
+        {
+            RetireOtherOwnersCache();
+            if (CanUseService) _refreshPending = true;
+        }
+
+        // Tournament guests keep the primary account's underlying authentication session.
+        // That credential must never load or write social data on the guest's behalf.
+        private static bool CanUseService => GameServices.Account != null
+            && GameServices.Account.IsSignedIn && !GameServices.Account.IsGuest;
+
+        private void RetireOtherOwnersCache()
+        {
+            string owner = CareerStore.LocalPlayerId;
+            bool restoredPrimary = false;
+            if (GameServices.Account?.IsGuest ?? false)
+                _primaryCache ??= _cache;
+            else if (_primaryCache != null)
+            {
+                _cache = _primaryCache;
+                _primaryCache = null;
+                restoredPrimary = true;
+            }
+            if (_cache.OwnerId == owner)
+            {
+                if (restoredPrimary)
+                {
+                    SearchStatus = "";
+                    _refreshPending = true;
+                    Changed?.Invoke();
+                }
+                return;
+            }
+
+            // A read must be safe even before the account notification reaches this component.
+            // Keep the old disk cache until this owner has a real service answer to save.
+            _cache = new Cache { OwnerId = owner };
+            SearchStatus = "";
+            _refreshPending = true;
+            Changed?.Invoke();
         }
 
         // -------------------------------------------------------------------
@@ -112,19 +178,28 @@ namespace TumbangPreso.Net
             // on one machine is the tournament-guest case (`docs/TODO.md` § 97), and merging two
             // friends lists would put one player's friends on another player's screen.
             string me = CareerStore.LocalPlayerId;
-            if (!string.IsNullOrEmpty(_cache.OwnerId) && _cache.OwnerId != me)
-                _cache = new Cache();
+            if (GameServices.Account?.IsGuest ?? false)
+            {
+                _primaryCache = _cache;
+                _primaryCache.List = SocialRules.Normalise(_primaryCache.List);
+                _cache = new Cache { OwnerId = me };
+            }
+            else if (_cache.OwnerId != me)
+                _cache = new Cache { OwnerId = me };
 
             _cache.List = SocialRules.Normalise(_cache.List);
         }
 
         private void Save()
         {
+            if (_primaryCache != null || (GameServices.Account?.IsGuest ?? false)) return;
             try
             {
                 _cache.OwnerId = CareerStore.LocalPlayerId;
                 _cache.List = SocialRules.Normalise(_cache.List);
-                SafeStore.Write(Path, JsonUtility.ToJson(_cache, prettyPrint: true));
+                string path = Path;
+                SafeStore.Write(path, JsonUtility.ToJson(_cache, prettyPrint: true),
+                    text => JsonUtility.FromJson<Cache>(text) != null);
             }
             catch (Exception e)
             {
@@ -145,15 +220,26 @@ namespace TumbangPreso.Net
         /// have three of these in flight, each finishing over the last, and the newest answer is
         /// not necessarily the one that lands last.
         /// </summary>
-        public async void Refresh()
+        public async void Refresh() => await RefreshAsync(CloudCode.CallAsync);
+
+        private async Task RefreshAsync(Func<string, object, Task<string>> call)
         {
-            if (_loading) return;
+            RetireOtherOwnersCache();
+            if (_writing) { _refreshPending = true; return; }
+            if (_loading || !CanUseService) return;
+            string requestedOwner = CareerStore.LocalPlayerId;
+            long writeVersion = _listWriteVersion;
+            _refreshPending = false;
             _loading = true;
 
             try
             {
-                string output = await CloudCode.CallAsync(ScriptName, new { action = "load" });
-                Adopt(output);
+                string output = await call(ScriptName, new { action = "load" });
+                if (this == null) return;
+                // A write started after this load and may already be acknowledged.
+                // Retain its list and ask again after both operations have finished.
+                if (writeVersion == _listWriteVersion) Adopt(requestedOwner, output);
+                else _refreshPending = true;
             }
             catch (Exception e)
             {
@@ -175,21 +261,25 @@ namespace TumbangPreso.Net
         /// resurrect a friendship that was ended or drop one that was made. **The server wins,
         /// every time.**
         /// </summary>
-        private void Adopt(string json)
+        private bool Adopt(string requestedOwner, string json)
         {
-            if (string.IsNullOrEmpty(json)) return;
+            if (this == null || requestedOwner != CareerStore.LocalPlayerId || string.IsNullOrEmpty(json)) return false;
 
             try
             {
                 var envelope = JsonUtility.FromJson<ListEnvelope>(json);
-                if (envelope == null || string.IsNullOrEmpty(envelope.list)) return;
+                if (envelope == null || string.IsNullOrEmpty(envelope.list)) return false;
 
-                _cache.List = SocialRules.Normalise(JsonUtility.FromJson<SocialList>(envelope.list));
+                var list = JsonUtility.FromJson<SocialList>(envelope.list);
+                if (list == null) return false;
+                _cache.List = SocialRules.Normalise(list);
                 Save();
+                return true;
             }
             catch (Exception e)
             {
                 Debug.LogWarning($"[Social] could not read the endpoint's list: {e.Message}");
+                return false;
             }
         }
 
@@ -207,16 +297,60 @@ namespace TumbangPreso.Net
         /// WhyCannotRequest`), and the endpoint refuses again against the RECIPIENT's document,
         /// which is the only side that can see whether they blocked you.
         /// </summary>
-        public async void Request(string playerId, string theirHandle)
+        public async void Request(string playerId, string theirHandle) => await RequestAsync(playerId, theirHandle);
+
+        /// <summary>True only when this owner's service reply confirms an outgoing row or friendship.</summary>
+        public async Task<bool> RequestAsync(string playerId, string theirHandle)
         {
-            if (!SocialRules.CanRequest(List, CareerStore.LocalPlayerId, playerId)) return;
-            await Post(new
+            if (this == null) return false;
+            string requestedOwner = CareerStore.LocalPlayerId;
+            RetireOtherOwnersCache();
+            if (this == null || requestedOwner != CareerStore.LocalPlayerId) return false;
+            if (!CanUseService)
+            {
+                SearchStatus = "SIGN IN TO ADD FRIENDS.";
+                Changed?.Invoke();
+                return false;
+            }
+            var list = List;
+            if (this == null || requestedOwner != CareerStore.LocalPlayerId) return false;
+            string refusal = SocialRules.WhyCannotRequest(list, requestedOwner, playerId);
+            if (!string.IsNullOrEmpty(refusal))
+            {
+                SearchStatus = refusal.ToUpperInvariant() + ".";
+                Changed?.Invoke();
+                return false;
+            }
+            if (_writing)
+            {
+                SearchStatus = "A FRIEND UPDATE IS STILL IN PROGRESS. TRY AGAIN.";
+                Changed?.Invoke();
+                return false;
+            }
+            SearchStatus = "SENDING REQUEST...";
+            Changed?.Invoke();
+            if (this == null || requestedOwner != CareerStore.LocalPlayerId) return false;
+            bool acceptedReply = await Post(new
             {
                 action = "request",
                 playerId,
                 handle = MyHandle,
                 theirHandle = theirHandle ?? "",
             });
+            return CompleteRequest(requestedOwner, playerId, theirHandle, acceptedReply);
+        }
+
+        private bool CompleteRequest(string requestedOwner, string playerId, string theirHandle, bool acceptedReply)
+        {
+            if (this == null || requestedOwner != CareerStore.LocalPlayerId) return false;
+            // A previously cached row is not an acknowledgement of this attempt.
+            bool confirmed = acceptedReply && _cache.OwnerId == requestedOwner &&
+                (SocialRules.IsFriend(_cache.List, playerId) || SocialRules.Find(_cache.List?.Outgoing, playerId) != null);
+            SearchStatus = confirmed
+                ? "REQUEST SENT TO " + (theirHandle ?? "").ToUpperInvariant() + "."
+                : "REQUEST COULD NOT BE CONFIRMED. TRY AGAIN WHEN ONLINE.";
+            Changed?.Invoke();
+            return confirmed;
         }
 
         /// <summary>
@@ -226,6 +360,7 @@ namespace TumbangPreso.Net
         /// </summary>
         public async void RequestHandle(string handle)
         {
+            RetireOtherOwnersCache();
             if (!AccountRules.TrySplitHandle(handle, out _, out _))
             {
                 SearchStatus = "ENTER A NAME AND FOUR-DIGIT TAG, LIKE MARIA#4417.";
@@ -233,31 +368,46 @@ namespace TumbangPreso.Net
                 return;
             }
 
+            if (!CanUseService)
+            {
+                SearchStatus = "SIGN IN TO ADD FRIENDS.";
+                Changed?.Invoke();
+                return;
+            }
+
+            string requestedOwner = CareerStore.LocalPlayerId;
             SearchStatus = "LOOKING FOR " + handle.ToUpperInvariant() + "...";
             Changed?.Invoke();
             try
             {
                 string output = await CloudCode.CallAsync("player-account",
                     new { action = "resolve", handle });
-                var found = string.IsNullOrWhiteSpace(output)
-                    ? null : JsonUtility.FromJson<HandleResolution>(output);
-                if (found == null || string.IsNullOrEmpty(found.playerId))
-                {
-                    SearchStatus = "NO ACCOUNT HAS THAT EXACT NAME AND TAG.";
-                    Changed?.Invoke();
-                    return;
-                }
-
-                SearchStatus = "REQUEST SENT TO " + found.handle.ToUpperInvariant() + ".";
-                Changed?.Invoke();
-                Request(found.playerId, found.handle);
+                CompleteHandleLookup(requestedOwner, output);
             }
             catch (Exception e)
             {
+                if (this == null || requestedOwner != CareerStore.LocalPlayerId) return;
                 SearchStatus = "SEARCH IS UNAVAILABLE. TRY AGAIN WHEN ONLINE.";
                 Debug.LogWarning($"[Social] handle lookup failed: {e.Message}");
                 Changed?.Invoke();
             }
+        }
+
+        private void CompleteHandleLookup(string requestedOwner, string output)
+        {
+            if (this == null || requestedOwner != CareerStore.LocalPlayerId) return;
+            var found = string.IsNullOrWhiteSpace(output)
+                ? null : JsonUtility.FromJson<HandleResolution>(output);
+            if (found == null || string.IsNullOrEmpty(found.playerId))
+            {
+                SearchStatus = "NO ACCOUNT HAS THAT EXACT NAME AND TAG.";
+                Changed?.Invoke();
+                return;
+            }
+
+            SearchStatus = "SENDING REQUEST TO " + found.handle.ToUpperInvariant() + "...";
+            Changed?.Invoke();
+            Request(found.playerId, found.handle);
         }
 
         public async void Accept(string playerId)
@@ -280,14 +430,26 @@ namespace TumbangPreso.Net
         /// and one place that swallows a failure. Six copies of a try/catch is six chances for one
         /// of them to leave the local list ahead of the server's.
         /// </summary>
-        private async Task Post(object parameters)
+        private Task<bool> Post(object parameters) => PostAsync(parameters, CloudCode.CallAsync);
+
+        private async Task<bool> PostAsync(object parameters, Func<string, object, Task<string>> call)
         {
-            if (_writing) return;
+            string requestedOwner = CareerStore.LocalPlayerId;
+            RetireOtherOwnersCache();
+            if (this == null || requestedOwner != CareerStore.LocalPlayerId) return false;
+            if (!CanUseService)
+            {
+                SearchStatus = "SIGN IN TO MANAGE FRIENDS.";
+                Changed?.Invoke();
+                return false;
+            }
+            if (_writing) return false;
             _writing = true;
+            _listWriteVersion++;
 
             try
             {
-                Adopt(await CloudCode.CallAsync(ScriptName, parameters));
+                return Adopt(requestedOwner, await call(ScriptName, parameters));
             }
             catch (Exception e)
             {
@@ -297,6 +459,7 @@ namespace TumbangPreso.Net
                 // no such thing as a local one. Showing it as done and having it vanish on the
                 // next load is worse than the press appearing not to work.
                 Debug.LogWarning($"[Social] write failed: {e.Message}");
+                return false;
             }
             finally
             {
@@ -324,6 +487,10 @@ namespace TumbangPreso.Net
         /// </summary>
         private void Update()
         {
+            RetireOtherOwnersCache();
+            // Switching accounts while the old load is pending must not consume the new load.
+            if (_refreshPending && !_loading && !_writing && CanUseService) Refresh();
+
             var state = CurrentState;
 
             // ⚠️⚠️ A CHANGE IS SENT WITHOUT WAITING FOR THE HEARTBEAT, AND `PresenceState.Queued`
@@ -346,7 +513,7 @@ namespace TumbangPreso.Net
 
             _lastPresence = state;
 
-            if (!SocialRules.IsAddressable(GameServices.Account?.PlayerId)) return;
+            if (!CanUseService || !SocialRules.IsAddressable(GameServices.Account?.PlayerId)) return;
 
             SendPresence(state);
         }

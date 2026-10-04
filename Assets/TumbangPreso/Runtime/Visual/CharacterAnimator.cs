@@ -201,21 +201,28 @@ namespace TumbangPreso.Visual
             // -------------------------------------------------------------------
 
             { "hero-sean-dash", new[] { "hero-sean-dash", "attack-kick-right", Sprint } },
+            { "hero-sean-gate", new[] { "hero-sean-gate", Interact } },
             { "hero-sean-ignite", new[] { "hero-sean-ignite", "attack-melee-right", Interact } },
             { "hero-sean-supernova", new[] { "hero-sean-supernova", Jump, "attack-melee-right" } },
 
             { "hero-zack-sprint", new[] { "hero-zack-sprint", Sprint, "attack-kick-right" } },
             { "hero-zack-charge", new[] { "hero-zack-charge", "emote-no", "attack-melee-right" } },
+            { "hero-zack-circuit", new[] { "hero-zack-circuit" } },
+            { "hero-zack-bankshot", new[] { "hero-zack-bankshot" } },
             { "hero-zack-summon", new[] { "hero-zack-summon", "holding-both-shoot", Jump } },
 
+            { "hero-dante-boulder", new[] { "hero-dante-boulder" } },
+            { "hero-dante-bastion", new[] { "hero-dante-bastion" } },
             { "hero-dante-stomp", new[] { "hero-dante-stomp", PickUp, "attack-kick-right" } },
             { "hero-dante-roar", new[] { "hero-dante-roar", "attack-melee-left", "emote-yes" } },
             { "hero-dante-fissure", new[] { "hero-dante-fissure", "attack-kick-left", PickUp } },
 
+            { "hero-cheska-frostbite", new[] { "hero-cheska-frostbite" } },
             { "hero-cheska-frostwave", new[] { "hero-cheska-frostwave", "interact-right", "attack-melee-right" } },
             { "hero-cheska-raise", new[] { "hero-cheska-raise", PickUp, Interact } },
             { "hero-cheska-nova", new[] { "hero-cheska-nova", "holding-left-shoot", Jump } },
 
+            { "hero-nemu-guard", new[] { "hero-nemu-guard" } },
             { "hero-nemu-ghoststep", new[] { "hero-nemu-ghoststep", Sprint, Walk } },
             { "hero-nemu-project", new[] { "hero-nemu-project", "interact-left", "attack-melee-left" } },
             { "hero-nemu-seance", new[] { "hero-nemu-seance", "emote-yes", Interact } },
@@ -510,6 +517,7 @@ namespace TumbangPreso.Visual
 
         private void ReleaseGraph()
         {
+            RestoreArrivalPose(); _arrivalWeight = 0; _arrivalBones = null;
             ClearIntroductionPose();
             ClearTagBody();
             ClearResetRaise();
@@ -546,6 +554,7 @@ namespace TumbangPreso.Visual
 
         private void Update()
         {
+            RestoreArrivalPose();
             RestoreEdgeRecoveryPose();
             RestoreIntroductionPose();
             RestoreTagBody();
@@ -554,6 +563,7 @@ namespace TumbangPreso.Visual
             RestoreThrowBody();
             RestoreLocomotionWeight();
             if (!_graph.IsValid()) return;
+            if (_arrivalWeight > 0) return; // The held arrival owns the neutral base pose.
 
             RestoreChargeOffsets();
             if (_throwCancelTime >= 0)
@@ -698,8 +708,7 @@ namespace TumbangPreso.Visual
             _runCycleMetres=_runReference*run.length;
         }
 
-        private float OrdinaryWalkSpeed => Core.Balance.Speed * Core.Stamina.RoleSpeedScale(_motor.IsDefender)
-            * Core.Roster.PersonSpeedScale(_motor.CharacterIndex, _motor.Mode)
+        private float OrdinaryWalkSpeed => Core.Stamina.MovementSpeed(_motor.IsDefender, false)
             * Mathf.Max(.1f, _motor.Stamina.SpeedZones.Value);
 
         private void StepGait()=>AdvanceGait(Time.deltaTime);
@@ -709,8 +718,10 @@ namespace TumbangPreso.Visual
             float speed = FlatSpeed;
             _running = speed > OrdinaryWalkSpeed * (_running ? 1.10f : 1.22f);
             if (!_gait.IsValid()) return;
-            bool mobileGuard = _current == "hero-dante-roar";
-            bool movingAction = _throwReleaseTime >= 0 || mobileGuard;
+            // These upper-body actions permit movement; their legs must follow the motor.
+            bool mobileUpperBody = _current == "hero-dante-roar" || _current == "hero-zack-circuit"
+                || _current == "hero-zack-bankshot";
+            bool movingAction = _throwReleaseTime >= 0 || mobileUpperBody;
             bool layered = _motor.IsGrounded && !_motor.IsTripped && (_oneShotLeft <= 0 || movingAction)
                 && (_emote == null || !_emote.IsEmoting)
                 && (_carrier == null || _carrier.ChannelRatio <= 0)
@@ -991,6 +1002,7 @@ namespace TumbangPreso.Visual
 
         private void LateUpdate()
         {
+            RestoreArrivalPose();
             RestoreEdgeRecoveryPose();
             RestoreIntroductionPose();
             RestoreTagBody();
@@ -998,6 +1010,12 @@ namespace TumbangPreso.Visual
             RestoreLocomotionArms();
             RestoreThrowBody();
             RestoreLocomotionWeight();
+            if (_arrivalWeight > 0)
+            {
+                RestoreChargeOffsets();
+                ApplyArrivalPose();
+                return;
+            }
             try
             {
                 // Remove last frame's offsets even when the graph is paused or a clip
@@ -1032,7 +1050,7 @@ namespace TumbangPreso.Visual
                 _chargeOffsetsApplied=true;_lastThrowPose=pose;
                 ApplyThrowBody(throwing);
             }
-            finally { ApplyLocomotionWeight(); ApplyLocomotionArms(); ApplyResetRaise(); ApplyTagBody(); ApplyIntroductionPose(); ApplyEdgeRecoveryPose(); }
+            finally { ApplyLocomotionWeight(); ApplyLocomotionArms(); ApplyResetRaise(); ApplyTagBody(); ApplyIntroductionPose(); ApplyEdgeRecoveryPose(); ApplyArrivalPose(); }
         }
 
         private void RestoreChargeOffsets()

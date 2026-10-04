@@ -382,7 +382,7 @@ namespace TumbangPreso.UI
             if (string.IsNullOrEmpty(label)) return null;
 
             string key = label.Trim().ToUpperInvariant();
-            var authored = XeluSprite(key, onDark, family ?? CurrentFamily);
+            var authored = ScrollSprite(key) ?? XeluSprite(key, onDark, family ?? CurrentFamily);
             if (authored != null) return authored;
 
             // ⚠️ THE PAD IS ASKED FIRST. Nothing is in both tables today, and if a keyboard row
@@ -454,6 +454,28 @@ namespace TumbangPreso.UI
 
             string key = label.Trim().ToUpperInvariant();
             return key == "MOUSE" || PadColumns.ContainsKey(key) || Table.ContainsKey(key);
+        }
+
+        // Owner-authored135x100 icons: keep the complete, unchanged pixels and aspect.
+        // Consumers grow the width instead of fitting the wider artwork into a square.
+        public static float PromptWidth(Sprite sprite, float height, float normalWidth = -1)
+            => sprite != null && sprite.name.StartsWith("owner-scroll:", System.StringComparison.Ordinal)
+                ? height * sprite.rect.width / sprite.rect.height : normalWidth >= 0 ? normalWidth : height;
+
+        private static Sprite ScrollSprite(string key)
+        {
+            if (key != "WHEEL UP" && key != "WHEEL DOWN") return null;
+            string id = "owner-scroll:" + key;
+            if (Sprites.TryGetValue(id, out var cached)) return cached;
+            string path = key == "WHEEL UP" ? "UI/input/xelu/owner_scroll_up_v2" : "UI/input/xelu/owner_scroll_down_v2";
+            var texture = Resources.Load<Texture2D>(path);
+            if (texture == null) return null;
+            var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height),
+                Vector2.one * .5f, texture.height, 0, SpriteMeshType.FullRect);
+            sprite.name = id;
+            sprite.hideFlags = HideFlags.DontSave;
+            Sprites[id] = sprite;
+            return sprite;
         }
 
         private static Sprite XeluSprite(string key, bool onDark, PadFamily family)

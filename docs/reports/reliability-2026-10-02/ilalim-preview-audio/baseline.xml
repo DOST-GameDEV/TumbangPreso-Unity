@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 17:50:55Z" end-time="2026-10-01 17:50:59Z" duration="3.9697547">
+  <test-suite type="TestSuite" id="2496" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1223" result="Failed" site="Child" start-time="2026-10-01 17:50:55Z" end-time="2026-10-01 17:50:59Z" duration="3.969755" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2490" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1223" result="Failed" site="Child" start-time="2026-10-01 17:50:55Z" end-time="2026-10-01 17:50:59Z" duration="3.944377" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="2392" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2491" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1223" result="Failed" site="Child" start-time="2026-10-01 17:50:55Z" end-time="2026-10-01 17:50:59Z" duration="3.928237" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2492" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1223" result="Failed" site="Child" start-time="2026-10-01 17:50:55Z" end-time="2026-10-01 17:50:59Z" duration="3.912361" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2032" name="RemadeMapPreviewTests" fullname="TumbangPreso.PlayTests.RemadeMapPreviewTests" classname="TumbangPreso.PlayTests.RemadeMapPreviewTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-01 17:50:55Z" end-time="2026-10-01 17:50:59Z" duration="3.870171" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2036" name="LateStreetVoicesRemainSilentInMapPreviewButPlayInGameScope" fullname="TumbangPreso.PlayTests.RemadeMapPreviewTests.LateStreetVoicesRemainSilentInMapPreviewButPlayInGameScope" methodname="LateStreetVoicesRemainSilentInMapPreviewButPlayInGameScope" classname="TumbangPreso.PlayTests.RemadeMapPreviewTests" runstate="Runnable" seed="846673042" result="Failed" start-time="2026-10-01 17:50:55Z" end-time="2026-10-01 17:50:59Z" duration="3.853018" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Late-created street voices bypassed the map preview's audio silence.
+  Expected: 0
+  But was:  10
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.RemadeMapPreviewTests+<LateStreetVoicesRemainSilentInMapPreviewButPlayInGameScope>d__6.MoveNext () [0x0021c] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\RemadeMapPreviewTests.cs:65
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

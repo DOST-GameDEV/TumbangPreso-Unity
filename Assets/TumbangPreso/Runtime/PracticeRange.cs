@@ -112,8 +112,18 @@ namespace TumbangPreso
         public bool SetBot(int seat, bool present, bool idle)
         {
             if (!CanEdit || !IsBotSeat(seat)) return false;
-            var body = _seats[seat]; _idle[seat] = idle;
+            var body = _seats[seat];
             var brain = body.GetComponent<AIController>();
+            if (present && idle && !_idle[seat] && body.gameObject.activeSelf)
+            {
+                // Retire windups before parking publishes a release to their consumers.
+                body.GetComponent<Carrier>()?.CancelPendingInput();
+                body.GetComponent<CombatVerbs>()?.CancelPendingInput();
+                body.AbilitySystem?.ClearPresentationInput();
+                // Parking hides raw controls; retire the producer before a later unpark.
+                if (brain != null && brain.isActiveAndEnabled) brain.RetirePendingInput();
+            }
+            _idle[seat] = idle;
             if (brain != null) brain.enabled = present && !idle;
             body.Intent.Parked = idle || !present;
             if (present && !body.gameObject.activeSelf)
@@ -158,6 +168,17 @@ namespace TumbangPreso
             _resetting = true;
             try
             {
+                foreach (var body in _runner.Seats)
+                {
+                    if (body == null) continue;
+                    // Reset teleports a live body, so its old contact origin is no longer valid.
+                    body.GetComponent<Carrier>()?.CancelPendingInput();
+                    body.GetComponent<CombatVerbs>()?.RetireActions();
+                    // The enabled bot must begin a new action after the world reset,
+                    // rather than restoring a hold from its pre-teleport planner state.
+                    var brain = body.GetComponent<AIController>();
+                    if (brain != null && brain.isActiveAndEnabled) brain.RetirePendingInput();
+                }
                 _runner.ResetWorld(GameServices.Match.DefenderSlot);
                 foreach (var body in _runner.Seats)
                 {

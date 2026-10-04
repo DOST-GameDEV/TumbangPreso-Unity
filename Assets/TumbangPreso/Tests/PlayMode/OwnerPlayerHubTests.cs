@@ -152,6 +152,48 @@ namespace TumbangPreso.PlayTests
             }
             Press(Find("ClosePlayerHub"));yield return null;
         }
+        [UnityTest, Timeout(90000)]
+        public IEnumerator HistoryCompletionRespectsNavigationCloseAndNewerRequests()
+        {
+            SceneFlow.Networked = false;
+            SceneFlow.SetSelectedRules(CustomGameRules.Defaults(GameMode.Classic));
+            PlaySelectionScreen.RequestedLobbyMode = LobbyMode.Practice;
+            yield return SceneManager.LoadSceneAsync(SceneFlow.MatchSetup); yield return null;
+            Press(Find("NamePlate")); yield return null;
+            var hub = Object.FindFirstObjectByType<PlayerHub>();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var type = typeof(PlayerHub);
+            var requestField = type.GetField("_historyRequest", flags);
+            var pageField = type.GetField("_page", flags);
+            var tabField = type.GetField("_tab", flags);
+            var shownField = type.GetField("_shown", flags);
+            var completion = type.GetMethod("CompleteHistoryRefresh", flags);
+            var failures = new List<string>();
+            foreach (string state in new[] { "current", "navigated", "closed", "newer-request", "different-page" })
+            {
+                if (!hub.IsOpen) { Press(Find("NamePlate")); yield return null; }
+                pageField.SetValue(hub, 0);
+                Press(Find("HubTabMatches")); yield return null;
+                requestField.SetValue(hub, 42);
+                var before = new List<MatchRecord>(); shownField.SetValue(hub, before);
+                var response = new List<MatchRecord> { new MatchRecord {
+                    MatchId = "late-history-" + state, Mode = "Classic", MapId = SceneFlow.Eskinita } };
+                if (state == "navigated") { Press(Find("HubTabProfile")); yield return null; }
+                if (state == "closed") { Press(Find("ClosePlayerHub")); yield return null; }
+                if (state == "newer-request") requestField.SetValue(hub, 43);
+                if (state == "different-page") pageField.SetValue(hub, 1);
+                string selected = tabField.GetValue(hub).ToString();
+                bool accepted = (bool)completion.Invoke(hub, new object[] { 42, 0, response });
+                bool expected = state == "current";
+                if (accepted != expected) failures.Add(state + ": wrong completion acceptance");
+                if (tabField.GetValue(hub).ToString() != selected) failures.Add(state + ": selected tab changed");
+                if (!ReferenceEquals(shownField.GetValue(hub), expected ? response : before)) failures.Add(state + ": response changed visible history");
+                if (state == "closed" && hub.IsOpen) failures.Add(state + ": closed hub reopened");
+                yield return null;
+            }
+            Assert.IsEmpty(failures, string.Join("; ", failures));
+        }
+
         private static void ClickSelectable(Selectable control)
         {
             Canvas.ForceUpdateCanvases();var rect=(RectTransform)control.transform;

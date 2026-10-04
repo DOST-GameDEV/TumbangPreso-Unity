@@ -30,6 +30,44 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(90000)] public IEnumerator KantoPreviewContainsVisibleMapGeometry() => Inspect(SceneFlow.Kanto);
         [UnityTest, Timeout(90000)] public IEnumerator LagoonCovePreviewContainsVisibleMapGeometry() => Inspect(SceneFlow.LagoonCove);
         [UnityTest, Timeout(90000)] public IEnumerator IlalimPreviewContainsVisibleMapGeometry() => Inspect(SceneFlow.IlalimNgTulay);
+        [UnityTest, Timeout(90000)]
+        public IEnumerator LateStreetVoicesRemainSilentInMapPreviewButPlayInGameScope()
+        {
+            var root = new GameObject("Preview sound check", typeof(RectTransform), typeof(RawImage));
+            var preview = root.AddComponent<MapPreviewSurface>();
+            bool oldPause = AudioListener.pause; AudioListener.pause = false;
+            try
+            {
+                preview.Show(SceneFlow.IlalimNgTulay); float until = Time.realtimeSinceStartup + 45;
+                while (preview.Showing != SceneFlow.IlalimNgTulay && Time.realtimeSinceStartup < until) yield return null;
+                Assert.AreEqual(SceneFlow.IlalimNgTulay, preview.Showing);
+                yield return null; yield return null;
+                var life = Object.FindFirstObjectByType<SidewalkLife>(); Assert.IsNotNull(life);
+                Assert.AreEqual(MapPreviewSurface.PreviewLayer, life.gameObject.layer);
+                int Voices()
+                {
+                    int count = 0;
+                    foreach (var source in life.GetComponentsInChildren<AudioSource>(true))
+                        if (source.enabled && source.clip != null) count++;
+                    return count;
+                }
+                // Drive its authored story through the real runtime step. This reaches sources
+                // created after MapPreviewSurface.Silence, without a long idle wall-clock wait.
+                for (int i = 0; i < 1000; i++) life.Simulate(.1f);
+                int previewVoices = Voices();
+                life.gameObject.layer = 0;
+                for (int i = 0; i < 1000; i++) life.Simulate(.1f);
+                int gameVoices = Voices();
+                Directory.CreateDirectory("Logs/ilalim-preview-audio1002");
+                File.WriteAllText("Logs/ilalim-preview-audio1002/voices.txt",
+                    $"previewVoices={previewVoices}\ngameVoices={gameVoices}\n");
+                Assert.Greater(gameVoices, 0, "The authored street never created a normal game-scope voice.");
+                Assert.Zero(previewVoices, "Late-created street voices bypassed the map preview's audio silence.");
+            }
+            finally { AudioListener.pause = oldPause; Object.Destroy(root); }
+            yield return null;
+        }
+
         IEnumerator Inspect(string map)
         {
             var root = new GameObject("Remade preview check", typeof(RectTransform), typeof(RawImage));
@@ -41,11 +79,12 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(map, preview.Showing, "The selected map did not finish the actual additive preview route.");
                 yield return null; yield return null;
                 var camera = preview.Camera; Assert.IsNotNull(camera); Assert.IsNotNull(camera.targetTexture);
-                var planes = GeometryUtility.CalculateFrustumPlanes(camera); int total = 0, enabled = 0, visible = 0, badShaders = 0;
-                foreach (var renderer in Object.FindObjectsByType<MeshRenderer>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                var planes = GeometryUtility.CalculateFrustumPlanes(camera); int total = 0, enabled = 0, visible = 0, badShaders = 0, escaped = 0;
+                foreach (var renderer in Object.FindObjectsByType<Renderer>(FindObjectsInactive.Include, FindObjectsSortMode.None))
                 {
                     if (renderer.gameObject.scene.name != map) continue;
                     total++;
+                    if (renderer.gameObject.layer != MapPreviewSurface.PreviewLayer) escaped++;
                     if (!renderer.enabled || !renderer.gameObject.activeInHierarchy) continue;
                     enabled++;
                     if ((camera.cullingMask & (1 << renderer.gameObject.layer)) != 0 && GeometryUtility.TestPlanesAABB(planes, renderer.bounds)) visible++;
@@ -53,7 +92,7 @@ namespace TumbangPreso.PlayTests
                         if (material == null || material.shader == null || !material.shader.isSupported || material.shader.name == "Hidden/InternalErrorShader") badShaders++;
                 }
                 var directory = "Logs/feedback-0930/remade-previews"; Directory.CreateDirectory(directory);
-                File.WriteAllText(Path.Combine(directory, map + ".txt"), $"showing={preview.Showing}\ntotal={total}\nenabled={enabled}\nvisible={visible}\nbadShaders={badShaders}\ncameraEnabled={camera.enabled}\nlookScoped={TumbangPreso.Visual.WorldLookPresentation.HandlesCamera(camera)}\n");
+                File.WriteAllText(Path.Combine(directory, map + ".txt"), $"showing={preview.Showing}\ntotal={total}\nenabled={enabled}\nvisible={visible}\nbadShaders={badShaders}\nescaped={escaped}\ncameraEnabled={camera.enabled}\nlookScoped={TumbangPreso.Visual.WorldLookPresentation.HandlesCamera(camera)}\n");
                 camera.Render(); var previous = RenderTexture.active; RenderTexture.active = camera.targetTexture;
                 var pixels = new Texture2D(camera.targetTexture.width, camera.targetTexture.height, TextureFormat.RGB24, false);
                 try
@@ -65,6 +104,7 @@ namespace TumbangPreso.PlayTests
                 Assert.Greater(enabled, 20, "The preview lost the remade map's renderer roots.");
                 Assert.Greater(visible, 10, "Loaded geometry is outside the preview camera/layer scope.");
                 Assert.AreEqual(0, badShaders, "The map contains missing, unsupported or error shaders.");
+                Assert.AreEqual(0, escaped, "Runtime map geometry escaped the preview layer and can draw behind the menu.");
             }
             finally { Object.Destroy(root); }
             yield return null;

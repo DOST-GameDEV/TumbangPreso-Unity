@@ -1,0 +1,35 @@
+diff --git a/Assets/TumbangPreso/Tests/PlayMode/ImprovementEvidenceProbe.cs b/Assets/TumbangPreso/Tests/PlayMode/ImprovementEvidenceProbe.cs
+index 40443261..a362a1ee 100644
+--- a/Assets/TumbangPreso/Tests/PlayMode/ImprovementEvidenceProbe.cs
++++ b/Assets/TumbangPreso/Tests/PlayMode/ImprovementEvidenceProbe.cs
+@@ -474,6 +474,10 @@ namespace TumbangPreso.PlayTests
+             var pixels = new Texture2D(960, 540, TextureFormat.RGB24, false);
+             var log = new StringBuilder("frame,real_seconds,game_seconds,speed,held,leg_angle,action,charge,spin,torso_x,arm_x,hand_y,hand_forward,hand_side,body_y\n");
+             var field = typeof(CharacterAnimator).GetField("_current", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
++            // Optional offline review advances fixed simulation time; never a performance capture.
++            bool fixedReview = Environment.GetEnvironmentVariable("TUMP_CAPTURE_FIXED_REVIEW") == "1";
++            int previousCaptureRate = Time.captureFramerate;
++            if (fixedReview) Time.captureFramerate = 20;
+             float start = Time.realtimeSinceStartup, gameStart = Time.time, next = 0;
+             int frame = 0;
+             var late=camera.gameObject.AddComponent<LateMotionCapture>();
+@@ -481,9 +485,9 @@ namespace TumbangPreso.PlayTests
+             var previousActive = RenderTexture.active;
+             try
+             {
+-                while (Time.realtimeSinceStartup - start < seconds)
++                while ((fixedReview ? Time.time - gameStart : Time.realtimeSinceStartup - start) < seconds)
+                 {
+-                    float t = Time.realtimeSinceStartup - start;
++                    float t = fixedReview ? Time.time - gameStart : Time.realtimeSinceStartup - start;
+                     drive?.Invoke(t);
+                     yield return null;
+                     if (t < next) continue;
+@@ -573,6 +577,7 @@ namespace TumbangPreso.PlayTests
+             }
+             finally
+             {
++                Time.captureFramerate = previousCaptureRate;
+                 if(late!=null){late.Draw=null;Object.Destroy(late);}
+                 camera.targetTexture = previous;
+                 RenderTexture.active = previousActive;

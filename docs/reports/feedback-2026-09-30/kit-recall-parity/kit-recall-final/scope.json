@@ -1,0 +1,1 @@
+{"cases": 3, "question": "Two reproduced role-cache defects corrected; actual four-slot guides and recall text at small/wide sizes", "retry_count": 0, "stopping_condition": "Expected3nativecases or first meaningful failure; one bounded tooling repair maximum"}

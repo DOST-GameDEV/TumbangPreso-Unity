@@ -42,6 +42,7 @@ namespace TumbangPreso.Settings
 
         private InputActionRebindingExtensions.RebindingOperation _operation;
         private InputAction _target;
+        private bool _targetWasEnabled;
         private int _index;
         private Action<RebindOutcome, string> _finished;
         private bool _closed;
@@ -99,6 +100,7 @@ namespace TumbangPreso.Settings
             {
                 Action = action,
                 _target = target,
+                _targetWasEnabled = target.enabled,
                 _index = index,
                 _originalBinding = target.bindings[index],
                 _finished = finished,
@@ -170,11 +172,7 @@ namespace TumbangPreso.Settings
             _operation?.Dispose();
             _operation = null;
 
-            // ⚠️ THE ACTION IS RE-ENABLED ON EVERY PATH, INCLUDING THE ONES NOBODY TESTS. A
-            // rebind abandoned because the screen was destroyed mid-listen would otherwise leave
-            // a verb disabled for the rest of the session, and the symptom is one control that
-            // has silently stopped working in a match nobody connects to a menu they closed.
-            _target?.Enable();
+            RestoreActionState();
 
             var report = _finished;
             _finished = null;
@@ -184,7 +182,7 @@ namespace TumbangPreso.Settings
         /// <summary>
         /// ⚠️ DISPOSING DOES NOT REPORT. A screen tearing down is not a decision the player made,
         /// so a `Cancelled` callback into a half-destroyed screen is a null reference waiting to
-        /// happen. The action is still re-enabled, which is the half that matters.
+        /// happen. The action still returns to its state before listening.
         /// </summary>
         public void Dispose()
         {
@@ -193,8 +191,16 @@ namespace TumbangPreso.Settings
 
             _operation?.Dispose();
             _operation = null;
-            _target?.Enable();
+            RestoreActionState();
             _finished = null;
+        }
+
+        private void RestoreActionState()
+        {
+            // Listening temporarily disables an action; closing must not activate one that
+            // its input context had already disabled.
+            if (_targetWasEnabled) _target?.Enable();
+            else _target?.Disable();
         }
     }
 }

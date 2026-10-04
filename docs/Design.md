@@ -1,4 +1,27 @@
+## Current basic-action revision, October 3
+
+Full throw charge is1.5s. Normal tag/punch recovery is0.25s on an authoritative
+hit and0.5s on a miss. Defender lunge remains0.5s full charge with0.5s tap to2.5s
+full-charge recovery. Attacker shove is7.5s hit/0.5s miss. Retrieval slide is
+removed; attackers approach and pick up normally, and right-click only shoves.
+This supersedes historical slide/timing descriptions below. Protocol144.
+[Checks](reports/action-timings-2026-10-03/README.md).
+
 # Design — the rules, and every number that decides them
+
+## Current movement values, October 3 owner revision
+
+In both modes, attackers walk at 2.5 m/s and run at 5 m/s; defenders walk at
+3.75 m/s and run at 7.5 m/s. No innate role/hero speed multipliers. Stamina
+capacity is 250, drain/regen 100 per second, sprint start floor 50, regen delay
+1 second. Fatigue lasts 2.5 seconds with no walking penalty and no sprint/regen.
+Jump launch is 5.75 m/s, character gravity 20 m/s², maximum falling speed 25 m/s.
+Ideal flat-ground jump is about 0.827 m high and 0.575 s airborne; physics steps
+and collision affect actual measurements. This supersedes the earlier 1 m / 0.5 s revision.
+Shove and defender lunge cost no stamina and are usable during fatigue.
+Separate retrieval slide remains 1.75 m / 25 stamina / 2.45 s cooldown.
+Defender lunge remains 3.5 m with 0.5 s tap / 2.5 s full-hold cooldown.
+
 
 **Model/art requirement:** new and reworked models must belong to TUMP's cute
 blocky visual language and avoid unnecessary detail. Gameplay changes and stronger
@@ -211,7 +234,10 @@ that is designed rather than inherited. `main.gd`'s `get_nodes_in_group("hazard_
 sweep is now a no-op over an empty group. **The speed-zone STACK it feeds
 (`enter_speed_zone`/`exit_speed_zone`) is still live** — fatigue rides it (§3).
 
-## 3 · Movement and stamina — every player
+## 3 · Historical movement and stamina rationale
+
+The following dated port table is historical. The current October 3 playtest
+contract at the top of this document supersedes these values.
 
 | Constant | Value | Note |
 |---|---|---|
@@ -286,12 +312,17 @@ lunge on the other mouse button, so each mouse button is one verb by role.
 
 | Press | Condition | Result |
 |---|---|---|
-| **F tap** | Attacker, loose slipper within `PICKUP_RADIUS` | **pick up** |
+| **F tap** | Attacker, loose slipper within `PICKUP_RADIUS` with clear street reach | **pick up** |
 | **F hold** | Defender, in the lata's ring, lata down | **reset the lata** |
 | **Right click** | Attacker, loose slipper in slide reach ahead | **retrieval slide** |
 | **Right click** | Attacker, anything else | **shove**, instantly |
 | **Right click hold 0.5 s** | Defender | charge, release to **lunge** and tag |
 | **Left click** | Defender | **punch**, a quick close-range tag |
+
+Pickup and retrieval slide refuse a shoe through solid street geometry. The
+shared reach query ignores triggers, players and slippers, while checking for
+a solid blocker behind them. Ownership, status, empty-hand and range rules
+still apply; forced round equipment does not use the loose-shoe reach gate.
 
 ⚠️⚠️ **THE TAYA HAS TWO TAG VERBS SINCE 2026-08-01**, on human instruction: *"Melee
 Punch Tag (Left-Click) ... a quick close-range punch"* and *"Lunge Tag (Hold E for

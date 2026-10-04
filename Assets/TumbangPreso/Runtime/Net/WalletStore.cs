@@ -87,6 +87,7 @@ namespace TumbangPreso.Net
         public bool Busy { get; private set; }
 
         private Cache _cache = new Cache();
+        private Cache _primaryCache;
 
         public static string Path => System.IO.Path.Combine(ProfilePaths.Root, "wallet.json");
 
@@ -98,14 +99,58 @@ namespace TumbangPreso.Net
             Load();
         }
 
+        private PlayerAccount _hookedAccount;
+
         private void OnEnable()
         {
             if (GameServices.Career != null) GameServices.Career.Changed += OnCareerChanged;
+            _hookedAccount = GameServices.Account;
+            if (_hookedAccount != null) _hookedAccount.Changed += OnAccountChanged;
+            if ((_hookedAccount?.IsGuest ?? false) || _primaryCache != null) OnAccountChanged();
         }
 
         private void OnDisable()
         {
             if (GameServices.Career != null) GameServices.Career.Changed -= OnCareerChanged;
+            if (_hookedAccount != null) _hookedAccount.Changed -= OnAccountChanged;
+            _hookedAccount = null;
+        }
+
+        private void OnAccountChanged()
+        {
+            string owner = CareerStore.LocalPlayerId;
+            if (GameServices.Account?.IsGuest ?? false)
+            {
+                _primaryCache ??= _cache;
+                if (_cache.OwnerId != owner)
+                {
+                    _cache = new Cache { OwnerId = owner };
+                    LastPaid = 0;
+                    Status = "";
+                    Changed?.Invoke();
+                }
+                _refreshAfter = -1;
+                return;
+            }
+
+            bool restoredPrimary = _primaryCache != null;
+            if (restoredPrimary)
+            {
+                _cache = _primaryCache;
+                _primaryCache = null;
+                LastPaid = 0;
+                Status = "";
+            }
+            if (!string.IsNullOrEmpty(_cache.OwnerId) && _cache.OwnerId != owner)
+            {
+                _cache = new Cache { OwnerId = owner };
+                LastPaid = 0;
+                Status = "";
+                Save();
+                Changed?.Invoke();
+            }
+            else if (restoredPrimary) Changed?.Invoke();
+            _refreshAfter = Time.unscaledTime;
         }
 
         private float _refreshAfter = -1;
@@ -115,7 +160,7 @@ namespace TumbangPreso.Net
 
         private void Update()
         {
-            if (_refreshAfter < 0 || Time.unscaledTime < _refreshAfter) return;
+            if (_refreshAfter < 0 || Time.unscaledTime < _refreshAfter || Busy) return;
             _refreshAfter = -1;
             _ = RefreshAsync();
         }
@@ -212,6 +257,10 @@ namespace TumbangPreso.Net
 
         public static bool CanTransact => GameServices.Account != null && GameServices.Account.IsSignedIn;
 
+        /// <summary>Ask the protected wallet writer for the owner's Credits-code reward.</summary>
+        public async Task<string> ClaimCreditsCodeAsync(string request) =>
+            await CallAsync(new { action = "credits-code", request });
+
         public async Task RefreshAsync() => await CallAsync(new { action = "load" });
 
         /// <summary>Ask the server to sell <paramref name="id"/>. Returns the server's verdict.</summary>
@@ -229,28 +278,18 @@ namespace TumbangPreso.Net
             }
 
             if (Busy) return "busy";
+            string requestedOwner = CareerStore.LocalPlayerId;
             Busy = true;
             Changed?.Invoke();
 
             try
             {
                 string output = await CloudCode.CallAsync(ScriptName, parameters);
-                var answer = JsonUtility.FromJson<Answer>(output);
-                if (answer == null || string.IsNullOrEmpty(answer.wallet)) throw new InvalidOperationException("empty wallet answer");
-
-                var wallet = JsonUtility.FromJson<Wallet>(answer.wallet) ?? new Wallet();
-                _cache.Wallet = wallet;
-                _cache.Known = true;
-                _cache.OwnerId = CareerStore.LocalPlayerId;
-                _cache.Day = answer.day;
-                _cache.Tasks = ParseTasks(answer.tasks);
-                LastPaid = answer.paid;
-                Status = Sentence(answer.result);
-                Save();
-                return answer.result ?? "ok";
+                return CompleteResponse(requestedOwner, output);
             }
             catch (Exception e)
             {
+                if (this == null || requestedOwner != CareerStore.LocalPlayerId) return "cancelled";
                 Status = "The shop could not be reached. Showing what this machine last saw.";
                 Debug.LogWarning($"[Wallet] request failed: {e.Message}");
                 return "error";
@@ -262,6 +301,23 @@ namespace TumbangPreso.Net
             }
         }
 
+        private string CompleteResponse(string requestedOwner, string output)
+        {
+            if (this == null || requestedOwner != CareerStore.LocalPlayerId) return "cancelled";
+            var answer = JsonUtility.FromJson<Answer>(output);
+            if (answer == null || string.IsNullOrEmpty(answer.wallet)) throw new InvalidOperationException("empty wallet answer");
+            var wallet = JsonUtility.FromJson<Wallet>(answer.wallet) ?? new Wallet();
+            _cache.Wallet = wallet;
+            _cache.Known = true;
+            _cache.OwnerId = CareerStore.LocalPlayerId;
+            _cache.Day = answer.day;
+            _cache.Tasks = ParseTasks(answer.tasks);
+            LastPaid = answer.paid;
+            Status = Sentence(answer.result);
+            Save();
+            return answer.result ?? "ok";
+        }
+
         private static List<TaskRow> ParseTasks(string json)
         {
             if (string.IsNullOrEmpty(json)) return new List<TaskRow>();
@@ -271,6 +327,9 @@ namespace TumbangPreso.Net
 
         public static string Sentence(string result) => result switch
         {
+            "credits-code-granted" => "+5,000 Tansan!",
+            "credits-code-already" => "Credits bonus confirmed.",
+            "wallet-full" => "The wallet is full.",
             "bought" => "Yours now.",
             "owned" => "You already own that.",
             "poor" => "Not enough " + EconomyRules.CurrencyName + " yet. Tasks pay the most.",
@@ -288,14 +347,18 @@ namespace TumbangPreso.Net
         {
             try
             {
-                string json = SafeStore.Read(Path);
+                string json = SafeStore.Read(Path,
+                    text => JsonUtility.FromJson<Cache>(text) != null);
                 if (string.IsNullOrEmpty(json)) return;
                 var cache = JsonUtility.FromJson<Cache>(json);
                 if (cache == null) return;
 
                 // ⚠️ A CACHE FROM A DIFFERENT ACCOUNT IS NOT THIS ACCOUNT'S WALLET. Two people
                 // sharing one machine must not see each other's balance while offline.
-                if (!string.IsNullOrEmpty(cache.OwnerId) && cache.OwnerId != CareerStore.LocalPlayerId) return;
+                // Keep the primary cache private until a temporary guest hands back the device.
+                // OnEnable installs the guest view; return validates this owner's identity again.
+                if (!(GameServices.Account?.IsGuest ?? false)
+                    && !string.IsNullOrEmpty(cache.OwnerId) && cache.OwnerId != CareerStore.LocalPlayerId) return;
                 _cache = cache;
                 _cache.Wallet ??= new Wallet();
             }
@@ -307,7 +370,13 @@ namespace TumbangPreso.Net
 
         private void Save()
         {
-            try { SafeStore.Write(Path, JsonUtility.ToJson(_cache)); }
+            if (_primaryCache != null || (GameServices.Account?.IsGuest ?? false)) return;
+            try
+            {
+                string path = Path;
+                SafeStore.Write(path, JsonUtility.ToJson(_cache),
+                    text => JsonUtility.FromJson<Cache>(text) != null);
+            }
             catch (Exception e) { Debug.LogWarning($"[Wallet] cache not written: {e.Message}"); }
         }
     }

@@ -29,6 +29,7 @@ namespace TumbangPreso.CameraSystem
         private float _shotSide;
         private readonly RaycastHit[] _shotHits = new RaycastHit[32];
         private int _round;
+        private long _matchId, _pendingMatchId;
         private bool _pending;
         private int _pendingActor, _pendingVictim, _pendingRound;
         private Vector3 _pendingAt;
@@ -67,6 +68,7 @@ namespace TumbangPreso.CameraSystem
         private void OnMoment(MatchFlair.Kind kind, int actor, int subject, Vector3 at, float strength)
         {
             if (kind != MatchFlair.Kind.Tag) return;
+            if (Playing && (GameServices.Match == null || GameServices.Match.PresentationMatchId != _matchId)) End();
             var round = GameServices.Round;
             var victim = round != null ? round.PlayerAt(subject) : null;
             var rig = Camera.main != null ? Camera.main.GetComponent<CameraRig>() : null;
@@ -80,6 +82,7 @@ namespace TumbangPreso.CameraSystem
             // or dropping a legitimate client catch because its state is later.
             _pending = true; _pendingActor = actor; _pendingVictim = subject; _pendingAt = at;
             _pendingRound = GameServices.Match.RoundNumber; _pendingUntil = Time.unscaledTime + .65f;
+            _pendingMatchId = GameServices.Match.PresentationMatchId;
             _pendingStun = victim.StunLeft;
             TryPending();
         }
@@ -88,6 +91,7 @@ namespace TumbangPreso.CameraSystem
             if (!_pending) return;
             var round = GameServices.Round; var match = GameServices.Match;
             if (round == null || match == null || !round.RoundActive || match.RoundNumber != _pendingRound ||
+                match.PresentationMatchId != _pendingMatchId ||
                 Time.unscaledTime > _pendingUntil || Panel.AnyOpen || Settings.SettingsStore.Current.ReducedUiMotion ||
                 !Settings.SettingsStore.Current.CinematicCameraMotion)
             { _pending = false; return; }
@@ -122,6 +126,7 @@ namespace TumbangPreso.CameraSystem
             _actorTrack = actor; _victimTrack = victimTrack; _victim = victim; _rig = rig;
             _contact = contact; _began = Time.unscaledTime; _duration = Mathf.Min(ReplayDuration, victim.StunLeft - FadeDuration);
             _round = GameServices.Match != null ? GameServices.Match.RoundNumber : 0;
+            _matchId = GameServices.Match != null ? GameServices.Match.PresentationMatchId : 0;
             _clipStart = Mathf.Max(contact - (AnimationDuration - Followthrough), actor.Oldest, victimTrack.Oldest);
             _clipEnd = contact + Followthrough;
             float availableEnd = Mathf.Min(_clipEnd, actor.Newest, victimTrack.Newest);
@@ -217,7 +222,8 @@ namespace TumbangPreso.CameraSystem
             if (_victim == null || _rig == null || !_rig.IsFollowing(_victim) || _victim.StunLeft <= .18f ||
                 _victim.CanAct() || Panel.AnyOpen || !Settings.SettingsStore.Current.CinematicCameraMotion ||
                 Settings.SettingsStore.Current.ReducedUiMotion || GameServices.Round == null || !GameServices.Round.RoundActive ||
-                GameServices.Match == null || GameServices.Match.RoundNumber != _round || elapsed >= _duration)
+                GameServices.Match == null || GameServices.Match.RoundNumber != _round ||
+                GameServices.Match.PresentationMatchId != _matchId || elapsed >= _duration)
             { End(); return; }
             _picture.color = new Color(1, 1, 1, Mathf.Clamp01((_duration - elapsed) / FadeDuration));
             // Hold the complete captured image, including its background. All
@@ -332,6 +338,7 @@ namespace TumbangPreso.CameraSystem
         public void End()
         {
             _pending = false;
+            _matchId = _pendingMatchId = 0;
             if (_camera != null) _camera.targetTexture = null;
             if (_canvas != null) Destroy(_canvas.gameObject);
             if (_target != null) { _target.Release(); Destroy(_target); }

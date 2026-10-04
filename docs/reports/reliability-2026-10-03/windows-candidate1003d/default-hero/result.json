@@ -1,0 +1,198 @@
+{
+  "passed": true,
+  "sourceCommit": "83f54e961360831a92b47cfa91cb2d7c1ea16f66",
+  "runtimeSha256": "940e841c113da306ef8fcef1feb91a859df6be5c1698b9a730b1ff650430098e",
+  "modeRequested": "HeroStrike",
+  "expectedRulesWire": "1|0|8|90|0|3|0|1|0|1",
+  "scope": "Natural default HeroStrike eight-round match through LAN lobby; two undriven human seats, two ordinary bots. No AllBots, forced end, SDK or physical-input claim.",
+  "admission": {
+    "availableMb": 8663,
+    "activeJobsBefore": 0,
+    "acquiredUtc": "2026-10-02T21:52:55Z"
+  },
+  "hostPid": 21648,
+  "hostCommand": [
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Builds\\competition-candidate1003d\\TumbangPreso.exe",
+    "-batchmode",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1920",
+    "-screen-height",
+    "1080",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "default-tournament-host-bc3d6be3dc",
+    "-tp-autostart",
+    "2",
+    "-tp-netreport",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-candidate1003d\\default-hero\\host.txt",
+    "-tp-netseconds",
+    "803",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-candidate1003d\\default-hero\\host.log",
+    "-tp-lobby",
+    "-tp-lobbyport",
+    "9190"
+  ],
+  "hostProfile": "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\e2e78cacaa8c526fe4c607f07114459008ed68e5f621003308f1d4fa1c62dc0f",
+  "clientPid": 24948,
+  "clientCommand": [
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Builds\\competition-candidate1003d\\TumbangPreso.exe",
+    "-batchmode",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1920",
+    "-screen-height",
+    "1080",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "default-tournament-client-bc3d6be3dc",
+    "-tp-autostart",
+    "2",
+    "-tp-netreport",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-candidate1003d\\default-hero\\client.txt",
+    "-tp-netseconds",
+    "790",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-candidate1003d\\default-hero\\client.log",
+    "-tp-lobbyjoin",
+    "127.0.0.1:9190",
+    "-tp-lobbyport",
+    "9191"
+  ],
+  "clientProfile": "C:\\Users\\matth\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\d494e83bff9a8d2185a4d17c4cc5b4289ad141104d159aa6bb48074887cb3aa3",
+  "terminalScores": {
+    "host": [
+      40,
+      150,
+      3450,
+      3380
+    ],
+    "client": [
+      40,
+      150,
+      3450,
+      3380
+    ]
+  },
+  "reports": {
+    "host": {
+      "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-candidate1003d\\default-hero\\host.txt",
+      "seats": [
+        {
+          "seat": 0,
+          "char": 0,
+          "bot": false,
+          "origin": "Human",
+          "taya": false,
+          "score": 40,
+          "travelled": 40.1
+        },
+        {
+          "seat": 1,
+          "char": 0,
+          "bot": true,
+          "origin": "HandedToBot",
+          "taya": false,
+          "score": 150,
+          "travelled": 603.7
+        },
+        {
+          "seat": 2,
+          "char": 6,
+          "bot": true,
+          "origin": "Bot",
+          "taya": false,
+          "score": 3450,
+          "travelled": 746.5
+        },
+        {
+          "seat": 3,
+          "char": 1,
+          "bot": true,
+          "origin": "Bot",
+          "taya": true,
+          "score": 3380,
+          "travelled": 727.8
+        }
+      ],
+      "role": "HOST",
+      "networked": "True",
+      "slot": "0",
+      "protocol": "134",
+      "sampled": "803.0",
+      "round": "8",
+      "active": "False",
+      "defender": "3",
+      "mode": "HeroStrike",
+      "map": "Eskinita",
+      "structural": "969E398A",
+      "hash": "CCDA20DE"
+    },
+    "client": {
+      "path": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-release1002\\Logs\\competition-candidate1003d\\default-hero\\client.txt",
+      "seats": [
+        {
+          "seat": 0,
+          "char": 0,
+          "bot": false,
+          "origin": "Human",
+          "taya": false,
+          "score": 40,
+          "travelled": 41.9
+        },
+        {
+          "seat": 1,
+          "char": 0,
+          "bot": false,
+          "origin": "Human",
+          "taya": false,
+          "score": 150,
+          "travelled": 51.4
+        },
+        {
+          "seat": 2,
+          "char": 6,
+          "bot": true,
+          "origin": "Bot",
+          "taya": false,
+          "score": 3450,
+          "travelled": 794.1
+        },
+        {
+          "seat": 3,
+          "char": 1,
+          "bot": true,
+          "origin": "Bot",
+          "taya": true,
+          "score": 3380,
+          "travelled": 781.6
+        }
+      ],
+      "role": "CLIENT",
+      "networked": "True",
+      "slot": "1",
+      "protocol": "134",
+      "sampled": "790.0",
+      "round": "8",
+      "active": "False",
+      "defender": "3",
+      "mode": "HeroStrike",
+      "map": "Eskinita",
+      "structural": "969E398A",
+      "hash": "9F0BE279"
+    }
+  },
+  "errors": [],
+  "inputRestored": true,
+  "profileSeedsRestored": true,
+  "runtimeUnchanged": true,
+  "retiredPids": [
+    21648,
+    24948
+  ]
+}

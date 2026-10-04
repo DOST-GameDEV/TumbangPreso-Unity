@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 08:20:04Z" end-time="2026-10-03 08:20:04Z" duration="0.2887547">
+  <test-suite type="TestSuite" id="2738" name="TUMP Recovery 1003" fullname="TUMP Recovery 1003" runstate="Runnable" testcasecount="1413" result="Failed" site="Child" start-time="2026-10-03 08:20:04Z" end-time="2026-10-03 08:20:04Z" duration="0.288755" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2732" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-native-1003/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1413" result="Failed" site="Child" start-time="2026-10-03 08:20:04Z" end-time="2026-10-03 08:20:04Z" duration="0.276646" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="58916" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2733" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1413" result="Failed" site="Child" start-time="2026-10-03 08:20:04Z" end-time="2026-10-03 08:20:04Z" duration="0.271239" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2734" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1413" result="Failed" site="Child" start-time="2026-10-03 08:20:04Z" end-time="2026-10-03 08:20:04Z" duration="0.265220" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1506" name="HauntedSightVisualTests" fullname="TumbangPreso.PlayTests.HauntedSightVisualTests" classname="TumbangPreso.PlayTests.HauntedSightVisualTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-03 08:20:04Z" end-time="2026-10-03 08:20:04Z" duration="0.237276" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1509" name="SameDepthPlaneHasRadialPurpleFalloff" fullname="TumbangPreso.PlayTests.HauntedSightVisualTests.SameDepthPlaneHasRadialPurpleFalloff" classname="TumbangPreso.PlayTests.HauntedSightVisualTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-03 08:20:04Z" end-time="2026-10-03 08:20:04Z" duration="0.213367" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1507" name="SameDepthPlaneHasRadialPurpleFalloff(1.777778f)" fullname="TumbangPreso.PlayTests.HauntedSightVisualTests.SameDepthPlaneHasRadialPurpleFalloff(1.777778f)" methodname="SameDepthPlaneHasRadialPurpleFalloff" classname="TumbangPreso.PlayTests.HauntedSightVisualTests" runstate="Runnable" seed="1588398789" result="Failed" start-time="2026-10-03 08:20:04Z" end-time="2026-10-03 08:20:04Z" duration="0.200019" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The equal-eye-depth plane must fall off with radial distance, not remain flat.
+  Expected: greater than 0.413725495f
+  But was:  0.313725501f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.HauntedSightVisualTests.SameDepthPlaneHasRadialPurpleFalloff (System.Single aspect) [0x0006e] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/PlayMode/HauntedSightVisualTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1508" name="SameDepthPlaneHasRadialPurpleFalloff(1.333333f)" fullname="TumbangPreso.PlayTests.HauntedSightVisualTests.SameDepthPlaneHasRadialPurpleFalloff(1.333333f)" methodname="SameDepthPlaneHasRadialPurpleFalloff" classname="TumbangPreso.PlayTests.HauntedSightVisualTests" runstate="Runnable" seed="1795785105" result="Failed" start-time="2026-10-03 08:20:04Z" end-time="2026-10-03 08:20:04Z" duration="0.007998" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The equal-eye-depth plane must fall off with radial distance, not remain flat.
+  Expected: greater than 0.413725495f
+  But was:  0.313725501f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.PlayTests.HauntedSightVisualTests.SameDepthPlaneHasRadialPurpleFalloff (System.Single aspect) [0x0006e] in /workspace/scratch/0ed9da4aed7f/tump-native-1003/Assets/TumbangPreso/Tests/PlayMode/HauntedSightVisualTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-case id="1510" name="UnhauntedImageRemainsUniform" fullname="TumbangPreso.PlayTests.HauntedSightVisualTests.UnhauntedImageRemainsUniform" methodname="UnhauntedImageRemainsUniform" classname="TumbangPreso.PlayTests.HauntedSightVisualTests" runstate="Runnable" seed="830952962" result="Passed" start-time="2026-10-03 08:20:04Z" end-time="2026-10-03 08:20:04Z" duration="0.008650" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-o4cFzi/config/unity3d/BH Studios Validation/TUMP Recovery 1003/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

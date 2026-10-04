@@ -1,0 +1,66 @@
+{
+  "status": "qualified_controlled_native",
+  "sourceCommit": "69e3414913c3bc582b9ce5b028239f65503e62d7",
+  "repairsUsed": 0,
+  "ownedCandidateHashesMatch": true,
+  "runs": {
+    "baseline": {
+      "jointTotal": 7,
+      "jointPassed": 5,
+      "jointFailed": 2,
+      "jointDurationSeconds": 0.2482455,
+      "forceTotal": 3,
+      "forcePassed": 2,
+      "forceFailed": 1,
+      "cases": [
+        {
+          "name": "OnlyForcedRoundHandoverClearsTheSameShoesPickupLock(\"round-handover\",True)",
+          "result": "Failed",
+          "message": "  Only the explicit forced handover may retire the existing pickup delay.\n  Expected: 0.0f\n  But was:  1.25f\n"
+        },
+        {
+          "name": "OnlyForcedRoundHandoverClearsTheSameShoesPickupLock(\"duplicate-snapshot\",False)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "OnlyForcedRoundHandoverClearsTheSameShoesPickupLock(\"duplicate-pickup\",False)",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "guardPid": 17996,
+      "preservationCompleted": true,
+      "leaseHeld": false
+    },
+    "final": {
+      "jointTotal": 7,
+      "jointPassed": 7,
+      "jointFailed": 0,
+      "jointDurationSeconds": 0.3040738,
+      "forceTotal": 3,
+      "forcePassed": 3,
+      "forceFailed": 0,
+      "cases": [
+        {
+          "name": "OnlyForcedRoundHandoverClearsTheSameShoesPickupLock(\"round-handover\",True)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "OnlyForcedRoundHandoverClearsTheSameShoesPickupLock(\"duplicate-snapshot\",False)",
+          "result": "Passed",
+          "message": null
+        },
+        {
+          "name": "OnlyForcedRoundHandoverClearsTheSameShoesPickupLock(\"duplicate-pickup\",False)",
+          "result": "Passed",
+          "message": null
+        }
+      ],
+      "guardPid": 11300,
+      "preservationCompleted": true,
+      "leaseHeld": false
+    }
+  }
+}

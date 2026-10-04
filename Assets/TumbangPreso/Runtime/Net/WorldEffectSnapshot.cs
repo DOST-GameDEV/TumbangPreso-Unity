@@ -14,7 +14,8 @@ namespace TumbangPreso.Net
             // ⚠️ APPEND ONLY (protocol 53): Amihan's Whirlwind gale, a travelling front.
             Gale = 11,
             // ⚠️ APPEND ONLY (protocol 55, HERO-9): Paete's seedling, his thorn construct and his sentry.
-            Plant = 12, Thorns = 13, Sentry = 14, Drift = 15, Waterwall = 16 }
+            Plant = 12, Thorns = 13, Sentry = 14, Drift = 15, Waterwall = 16, CinderGate = 17, Baha = 18 }
+        public static bool UsesDynamicIdentity(Kind kind) => RafiWaterField.IsWater(kind) || kind == Kind.CinderGate;
         public struct Field
         {
             public Kind Type;
@@ -104,6 +105,8 @@ namespace TumbangPreso.Net
                 if (sentry.isActiveAndEnabled && sentry.Age >= 0f && sentry.Age < Core.PaeteRules.SentryLifeSeconds + .5f) fields.Add(sentry.Capture());
             foreach (var water in RafiWaterField.Active)
                 if (water != null && water.isActiveAndEnabled && water.Remaining > .02f) fields.Add(water.Capture());
+            foreach (var gate in SeanCinderGate.Active)
+                if (gate != null && gate.isActiveAndEnabled && gate.Remaining > .02f) fields.Add(gate.Capture());
             return fields;
         }
 
@@ -118,6 +121,7 @@ namespace TumbangPreso.Net
                 || (field.TargetMask & ~((1 << Core.Balance.PlayerCount) - 1)) != 0
                 || (field.Type != Kind.Sentry && field.TargetMask != 0)) return false;
             if (RafiWaterField.IsWater(field.Type)) return RafiWaterField.Valid(field);
+            if (field.Type == Kind.CinderGate) return SeanCinderGate.Valid(field);
             if (field.Type == Kind.Drift)
                 return field.Owner >= 0 && Mathf.Abs(field.Duration - Core.GeoRules.DriftSeconds) < .001f
                     && Mathf.Abs(field.Forward.y) < .001f && Mathf.Abs(field.Forward.sqrMagnitude - 1) < .001f
@@ -163,7 +167,8 @@ namespace TumbangPreso.Net
             {
                 float remaining = Mathf.Clamp(field.Remaining - elapsed, 0, field.Duration);
                 if (remaining <= .02f) continue;
-                if (RafiWaterField.IsWater(field.Type)) RafiWaterField.Restore(field, elapsed);
+                if (field.Type == Kind.CinderGate) SeanCinderGate.Restore(field, elapsed);
+                else if (RafiWaterField.IsWater(field.Type)) RafiWaterField.Restore(field, elapsed);
                 else if (field.Type == Kind.Sheet)
                 {
                     var go = HeroHazards.SpawnIceSheet(field.Position, field.Radius, field.Duration,
@@ -239,6 +244,7 @@ namespace TumbangPreso.Net
         public static void ClearPersistentFields()
         {
             Retire<RafiWaterField>();
+            Retire<SeanCinderGate>();
             Retire<HeroHazards.IceSheetComponent>();
             Retire<HeroHazards.IceBarricadeComponent>();
             Retire<HeroHazards.FireTrailComponent>();

@@ -24,7 +24,7 @@ namespace TumbangPreso.Abilities
     /// </summary>
     public sealed class CheskaHeroKit : HeroKit, ITimedKitReplication
     {
-        public CheskaHeroKit() : base("cheska", "CHESKA")
+        public CheskaHeroKit() : base("cheska", "YASMIN")
         {
             Skill1 = new ColdFeet();
             AttackingSkill = new Frostbite(this);
@@ -37,6 +37,18 @@ namespace TumbangPreso.Abilities
         /// <summary>True while her slipper carries the frost (Frostbite loaded, not yet thrown).</summary>
         public bool IsFrostbiteLoaded { get; set; }
         private bool _joiningFrostbiteSettled;
+
+        private CheskaFrostbiteCoating _loadedCue;
+
+        public override void Tick(AbilityContext context, float dt)
+        {
+            base.Tick(context, dt);
+            // Equipment may hydrate after the accepted timed-kit snapshot.
+            // This only follows the existing load; it never starts or refreshes it.
+            var held = context?.Carrier?.Held;
+            if (IsFrostbiteLoaded && held != null && (_loadedCue == null || _loadedCue.Shoe != held))
+                _loadedCue = CheskaFrostbiteCoating.Ensure(held.GetComponentInChildren<MeshFilter>(), held, this);
+        }
 
         public TimedKitSnapshot CaptureTimedKit()
             => new TimedKitSnapshot(AttackingSkill, IsFrostbiteLoaded ? AttackingSkill.DurationRemaining : 0);
@@ -114,7 +126,7 @@ namespace TumbangPreso.Abilities
                        "Attacking. Frost your slipper for 10 s. The next player it hits is Frozen: no moving, no grabbing, for 2.5 s.",
                        CryoRules.FrostbiteCooldown, CryoRules.FrostbiteLoadSeconds, AbilityGlyph.CheskaFrostbite,
                        summary: "Frost your slipper. Whoever it hits is Frozen.",
-                       castAction: "hero-cheska-frostwave", viewmodelAction: "frost-sweep",
+                       castAction: "hero-cheska-frostbite", viewmodelAction: "frost-load",
                        castCue: "sfx_cast_cheska_frostbite")
             {
                 _kit = kit;
@@ -201,7 +213,7 @@ namespace TumbangPreso.Abilities
                 {
                     foreach (var p in round.Players)
                     {
-                        if (p == null) continue;
+                        if (p == null || p == ctx.Motor) continue;
                         // Frozen now; Chilled for the 5 s after the thaw (the timer runs through the
                         // freeze, where a slow changes nothing, so it is the thaw's 5 s exactly).
                         p.ApplyStagger(StatusRules.FrozenSeconds, StunElement.Ice, 9);

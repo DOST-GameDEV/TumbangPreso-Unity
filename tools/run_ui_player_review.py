@@ -40,7 +40,8 @@ def main():
     parser.add_argument('--result-end-only',action='store_true',help='Run supported one-round/30-second bot matches to check natural result cleanup in both modes.')
     parser.add_argument('--whole-matches',action='store_true',help='Observe complete default eight-round Classic/Hero matches and sampled native screen/audio windows.')
     parser.add_argument('--frame-poll',action='store_true',help='Diagnostic control: search for results every frame instead of at 10 Hz.')
-    parser.add_argument('--performance-only',action='store_true',help='Measure boot, current menus and controlled first/repeat hero use with binary Profiler captures.')
+    parser.add_argument('--performance-only',action='store_true',help='Measure boot, current menus and controlled first/repeat hero use with compact CSV timing evidence.')
+    parser.add_argument('--performance-binary',action='store_true',help='Opt into binary Profiler traces with a 512 MiB sampled stopping budget; requires --performance-only and --review-hero.')
     parser.add_argument('--menu-only',action='store_true',help='Only qualify the changed startup/login/main-menu surfaces.')
     parser.add_argument('--recovery-only',action='store_true',help='Only qualify the menu-to-recovery input boundary.')
     parser.add_argument('--halftime-only',action='store_true',help='Capture full native halftime replay, standings and return in both modes.')
@@ -61,6 +62,8 @@ def main():
     args=parser.parse_args()
     if args.variant_observer and not args.skill_variants:
         parser.error('--variant-observer requires --skill-variants')
+    if args.performance_binary and (not args.performance_only or not args.review_hero):
+        parser.error('--performance-binary requires --performance-only and --review-hero')
     exe=Path(args.exe).resolve();out=Path(args.out).resolve()
     if not exe.is_file() or not exe.is_relative_to(ROOT/'Builds'):
         raise SystemExit('Use an existing internal Builds/... player, never the Desktop build.')
@@ -90,6 +93,7 @@ def main():
     if args.whole_matches:command.append('-tp-whole-matches')
     if args.frame_poll:command.append('-tp-review-frame-poll')
     if args.performance_only:command.append('-tp-performance-only')
+    if args.performance_binary:command.append('-tp-performance-binary')
     if args.menu_only:command.append('-tp-menu-review-only')
     if args.recovery_only:command.append('-tp-recovery-review-only')
     if args.halftime_only:command.append('-tp-halftime-only')

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 11:01:10Z" end-time="2026-10-02 11:01:10Z" duration="0.2571346">
+  <test-suite type="TestSuite" id="2585" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1291" result="Failed" site="Child" start-time="2026-10-02 11:01:10Z" end-time="2026-10-02 11:01:10Z" duration="0.257135" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2579" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1291" result="Failed" site="Child" start-time="2026-10-02 11:01:10Z" end-time="2026-10-02 11:01:10Z" duration="0.239618" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24600" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2580" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1291" result="Failed" site="Child" start-time="2026-10-02 11:01:10Z" end-time="2026-10-02 11:01:10Z" duration="0.230698" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2581" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1291" result="Failed" site="Child" start-time="2026-10-02 11:01:10Z" end-time="2026-10-02 11:01:10Z" duration="0.222325" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1605" name="LungeWindupLifetimeTests" fullname="TumbangPreso.PlayTests.LungeWindupLifetimeTests" classname="TumbangPreso.PlayTests.LungeWindupLifetimeTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-02 11:01:10Z" end-time="2026-10-02 11:01:10Z" duration="0.188187" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1608" name="AnEnabledBodyStillReleasesItsActualLocalWindupNormally" fullname="TumbangPreso.PlayTests.LungeWindupLifetimeTests.AnEnabledBodyStillReleasesItsActualLocalWindupNormally" methodname="AnEnabledBodyStillReleasesItsActualLocalWindupNormally" classname="TumbangPreso.PlayTests.LungeWindupLifetimeTests" runstate="Runnable" seed="121706566" result="Passed" start-time="2026-10-02 11:01:10Z" end-time="2026-10-02 11:01:10Z" duration="0.100387" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1606" name="DisabledLocalWindupDoesNotReleaseASpontaneousDashAfterReactivation" fullname="TumbangPreso.PlayTests.LungeWindupLifetimeTests.DisabledLocalWindupDoesNotReleaseASpontaneousDashAfterReactivation" methodname="DisabledLocalWindupDoesNotReleaseASpontaneousDashAfterReactivation" classname="TumbangPreso.PlayTests.LungeWindupLifetimeTests" runstate="Runnable" seed="780809872" result="Failed" start-time="2026-10-02 11:01:10Z" end-time="2026-10-02 11:01:10Z" duration="0.038592" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Reactivation released the retired local windup.
+  Expected: 0
+  But was:  1.5f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.LungeWindupLifetimeTests+<DisabledLocalWindupDoesNotReleaseASpontaneousDashAfterReactivation>d__8.MoveNext () [0x00086] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\LungeWindupLifetimeTests.cs:48
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1607" name="DisabledObservedWindupDoesNotReappearOnTheReactivatedBody" fullname="TumbangPreso.PlayTests.LungeWindupLifetimeTests.DisabledObservedWindupDoesNotReappearOnTheReactivatedBody" methodname="DisabledObservedWindupDoesNotReappearOnTheReactivatedBody" classname="TumbangPreso.PlayTests.LungeWindupLifetimeTests" runstate="Runnable" seed="1516745414" result="Failed" start-time="2026-10-02 11:01:10Z" end-time="2026-10-02 11:01:10Z" duration="0.033954" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The retired observed windup reappeared before its stale-packet expiry.
+  Expected: less than 0.0f
+  But was:  0.400000006f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.LungeWindupLifetimeTests+<DisabledObservedWindupDoesNotReappearOnTheReactivatedBody>d__9.MoveNext () [0x0005f] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\LungeWindupLifetimeTests.cs:57
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

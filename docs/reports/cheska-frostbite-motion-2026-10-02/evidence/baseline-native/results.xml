@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 15:18:08Z" end-time="2026-10-02 15:18:13Z" duration="5.1021385">
+  <test-suite type="TestSuite" id="2631" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1328" result="Failed" site="Child" start-time="2026-10-02 15:18:08Z" end-time="2026-10-02 15:18:13Z" duration="5.102139" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2625" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1328" result="Failed" site="Child" start-time="2026-10-02 15:18:08Z" end-time="2026-10-02 15:18:13Z" duration="5.093328" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="120190" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2626" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1328" result="Failed" site="Child" start-time="2026-10-02 15:18:08Z" end-time="2026-10-02 15:18:13Z" duration="5.090227" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2627" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1328" result="Failed" site="Child" start-time="2026-10-02 15:18:08Z" end-time="2026-10-02 15:18:13Z" duration="5.087376" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1255" name="CheskaFrostbiteMotionTests" fullname="TumbangPreso.PlayTests.CheskaFrostbiteMotionTests" classname="TumbangPreso.PlayTests.CheskaFrostbiteMotionTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-02 15:18:08Z" end-time="2026-10-02 15:18:13Z" duration="5.062445" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1256" name="FrostbiteHasItsOwnAuthoredShoePreparation" fullname="TumbangPreso.PlayTests.CheskaFrostbiteMotionTests.FrostbiteHasItsOwnAuthoredShoePreparation" methodname="FrostbiteHasItsOwnAuthoredShoePreparation" classname="TumbangPreso.PlayTests.CheskaFrostbiteMotionTests" runstate="Runnable" seed="388210904" result="Failed" start-time="2026-10-02 15:18:08Z" end-time="2026-10-02 15:18:13Z" duration="5.050995" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Frostbite still borrows the ground-sheet body sweep.
+  Expected: not equal to "hero-cheska-frostwave"
+  But was:  "hero-cheska-frostwave"
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.CheskaFrostbiteMotionTests+<FrostbiteHasItsOwnAuthoredShoePreparation>d__17.MoveNext () [0x001b9] in /workspace/scratch/0ed9da4aed7f/tump/Assets/TumbangPreso/Tests/PlayMode/CheskaFrostbiteMotionTests.cs:76
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-X1NIqZ/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

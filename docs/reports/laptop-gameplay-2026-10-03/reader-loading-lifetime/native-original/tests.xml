@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 06:27:48Z" end-time="2026-10-03 06:27:49Z" duration="0.4311859">
+  <test-suite type="TestSuite" id="2727" name="TumpWorker-qa-b-be075dcdfa07" fullname="TumpWorker-qa-b-be075dcdfa07" runstate="Runnable" testcasecount="1405" result="Failed" site="Child" start-time="2026-10-03 06:27:48Z" end-time="2026-10-03 06:27:49Z" duration="0.431186" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2721" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-b/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1405" result="Failed" site="Child" start-time="2026-10-03 06:27:48Z" end-time="2026-10-03 06:27:49Z" duration="0.417112" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22952" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2722" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1405" result="Failed" site="Child" start-time="2026-10-03 06:27:48Z" end-time="2026-10-03 06:27:49Z" duration="0.409120" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2723" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1405" result="Failed" site="Child" start-time="2026-10-03 06:27:48Z" end-time="2026-10-03 06:27:49Z" duration="0.401088" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2146" name="ReaderLoadingLifetimeTests" fullname="TumbangPreso.PlayTests.ReaderLoadingLifetimeTests" classname="TumbangPreso.PlayTests.ReaderLoadingLifetimeTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-03 06:27:49Z" end-time="2026-10-03 06:27:49Z" duration="0.381726" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2148" name="LoadingCurtainCancelsThePendingLungeBeforeARelease" fullname="TumbangPreso.PlayTests.ReaderLoadingLifetimeTests.LoadingCurtainCancelsThePendingLungeBeforeARelease" methodname="LoadingCurtainCancelsThePendingLungeBeforeARelease" classname="TumbangPreso.PlayTests.ReaderLoadingLifetimeTests" runstate="Runnable" seed="1842568135" result="Failed" start-time="2026-10-03 06:27:49Z" end-time="2026-10-03 06:27:49Z" duration="0.247314" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Loading input withdrawal spent a new lunge cooldown.
+  Expected: 0
+  But was:  1.5f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ReaderLoadingLifetimeTests.LoadingCurtainCancelsThePendingLungeBeforeARelease () [0x00023] in C:\Users\Matthew\dev\tump-workers1003\qa-b\Assets\TumbangPreso\Tests\PlayMode\ReaderLoadingLifetimeTests.cs:102
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2147" name="LoadingCurtainCancelsThePendingThrowBeforeARelease" fullname="TumbangPreso.PlayTests.ReaderLoadingLifetimeTests.LoadingCurtainCancelsThePendingThrowBeforeARelease" methodname="LoadingCurtainCancelsThePendingThrowBeforeARelease" classname="TumbangPreso.PlayTests.ReaderLoadingLifetimeTests" runstate="Runnable" seed="1900690607" result="Failed" start-time="2026-10-03 06:27:49Z" end-time="2026-10-03 06:27:49Z" duration="0.046815" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Loading input withdrawal launched the pending throw.
+  Expected: same as <Loading lifetime owned shoe (TumbangPreso.Slipper)>
+  But was:  null
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ReaderLoadingLifetimeTests.LoadingCurtainCancelsThePendingThrowBeforeARelease () [0x00023] in C:\Users\Matthew\dev\tump-workers1003\qa-b\Assets\TumbangPreso\Tests\PlayMode\ReaderLoadingLifetimeTests.cs:95
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2149" name="LoadingCurtainPreservesAlreadyCommittedLungeContactAndCooldown" fullname="TumbangPreso.PlayTests.ReaderLoadingLifetimeTests.LoadingCurtainPreservesAlreadyCommittedLungeContactAndCooldown" methodname="LoadingCurtainPreservesAlreadyCommittedLungeContactAndCooldown" classname="TumbangPreso.PlayTests.ReaderLoadingLifetimeTests" runstate="Runnable" seed="820034754" result="Passed" start-time="2026-10-03 06:27:49Z" end-time="2026-10-03 06:27:49Z" duration="0.043139" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2150" name="LoadingExitWaitsForReleaseAndAllowsAFreshPress" fullname="TumbangPreso.PlayTests.ReaderLoadingLifetimeTests.LoadingExitWaitsForReleaseAndAllowsAFreshPress" methodname="LoadingExitWaitsForReleaseAndAllowsAFreshPress" classname="TumbangPreso.PlayTests.ReaderLoadingLifetimeTests" runstate="Runnable" seed="1548905645" result="Passed" start-time="2026-10-03 06:27:49Z" end-time="2026-10-03 06:27:49Z" duration="0.033020" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-b-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

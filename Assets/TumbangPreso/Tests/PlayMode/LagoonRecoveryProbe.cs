@@ -62,7 +62,7 @@ namespace TumbangPreso.PlayTests
                     PresentationClock.RequestScale(0);
                     try{Assert.IsFalse(who.AcceptRecoveryRequest(episode,1));Assert.AreEqual(before,who.TripLeft);}
                     finally{PresentationClock.RequestScale(1);}
-                    Assert.IsTrue(who.AcceptRecoveryRequest(episode,2));Assert.IsFalse(who.AcceptRecoveryRequest(episode,2));
+                    Assert.IsFalse(who.AcceptRecoveryRequest(episode,2));Assert.IsFalse(who.AcceptRecoveryRequest(episode,2));
                     Assert.IsFalse(who.AcceptRecoveryRequest(episode,999));
                     who.ClearTrip();Assert.IsFalse(who.IsEdgeRecovering);Assert.IsFalse(who.AcceptRecoveryRequest(episode,3));
                     who.Teleport(new Vector3(17,.1f,5));yield return null;
@@ -109,18 +109,16 @@ namespace TumbangPreso.PlayTests
                 var animator=who.GetComponent<TumbangPreso.Visual.CharacterAnimator>();Assert.IsTrue(animator.EdgeRigReady);
                 Assert.Less(animator.EdgeGripError,.10f,"Visible palms must meet the actual lip.");
                 float before=who.TripLeft;
-                yield return new WaitForSeconds(!lagoon&&mode==GameMode.Classic?Balance.TripAutoRecoverSeconds+.2f:.35f);
-                Assert.That(who.TripLeft,Is.EqualTo(before).Within(.001f),"Waiting cannot complete an edge climb.");
+                yield return new WaitForSeconds(.35f);
+                Assert.Less(who.TripLeft,before,"An edge climb must advance without input.");
                 int count=who.MashPresses;input.Jump=true;yield return new WaitForSeconds(.40f);
-                Assert.AreEqual(count+1,who.MashPresses,"A held button must remain one press.");input.Jump=false;yield return new WaitForSeconds(.13f);
+                Assert.AreEqual(count,who.MashPresses,"Held Jump must not alter the timed climb.");input.Jump=false;yield return new WaitForSeconds(.13f);
                 if(mode==GameMode.Classic)
                 {
                     yield return CaptureEdge(who,grip,outward,(lagoon?"Lagoon":"Rooftop")+"-hang");
                     yield return CaptureOwner(who,rig,(lagoon?"Lagoon":"Rooftop")+"-hang-owner");
                 }
-                int taps=0;
-                while(who.CanMashUp&&taps++<18)
-                {input.Jump=true;yield return new WaitForSeconds(.065f);input.Jump=false;yield return new WaitForSeconds(.065f);}
+                Assert.IsFalse(who.CanMashUp);
                 deadline=Time.time+2;
                 while(who.IsEdgeRecovering&&(who.EdgePhase!=2||who.EdgePhaseRatio<.5f)&&Time.time<deadline)yield return null;
                 if(mode==GameMode.Classic)yield return CaptureEdge(who,grip,outward,(lagoon?"Lagoon":"Rooftop")+"-pull");

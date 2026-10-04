@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 06:00:37Z" end-time="2026-10-03 06:00:37Z" duration="0.1675261">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1092" result="Passed" start-time="2026-10-03 06:00:37Z" end-time="2026-10-03 06:00:37Z" duration="0.167526" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2329" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1092" result="Passed" start-time="2026-10-03 06:00:37Z" end-time="2026-10-03 06:00:37Z" duration="0.140779" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="29884" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2330" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1092" result="Passed" start-time="2026-10-03 06:00:37Z" end-time="2026-10-03 06:00:37Z" duration="0.123724" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2331" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1092" result="Passed" start-time="2026-10-03 06:00:37Z" end-time="2026-10-03 06:00:37Z" duration="0.107542" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2247" name="SpectatorReplayMatchLifetimeTests" fullname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests" classname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-03 06:00:37Z" end-time="2026-10-03 06:00:37Z" duration="0.079304" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2253" name="CurrentMatchReadyFramesStillPlayOnTheOperatorRequest" fullname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests.CurrentMatchReadyFramesStillPlayOnTheOperatorRequest" methodname="CurrentMatchReadyFramesStillPlayOnTheOperatorRequest" classname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests" runstate="Runnable" seed="611968502" result="Passed" start-time="2026-10-03 06:00:37Z" end-time="2026-10-03 06:00:37Z" duration="0.046867" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2251" name="FirstAcceptedNewMatchScoreRetiresOldBufferAndKeepsItsOwnMarker" fullname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests.FirstAcceptedNewMatchScoreRetiresOldBufferAndKeepsItsOwnMarker" methodname="FirstAcceptedNewMatchScoreRetiresOldBufferAndKeepsItsOwnMarker" classname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests" runstate="Runnable" seed="1313303822" result="Passed" start-time="2026-10-03 06:00:37Z" end-time="2026-10-03 06:00:37Z" duration="0.005796" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2250" name="NewMatchRetiresPendingFrameObjectsWithoutResettingReadbackAccounting" fullname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests.NewMatchRetiresPendingFrameObjectsWithoutResettingReadbackAccounting" methodname="NewMatchRetiresPendingFrameObjectsWithoutResettingReadbackAccounting" classname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests" runstate="Runnable" seed="21409822" result="Passed" start-time="2026-10-03 06:00:37Z" end-time="2026-10-03 06:00:37Z" duration="0.001317" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2252" name="OrdinaryRoundAdvancePreservesSameMatchFootageAndPlayingClip" fullname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests.OrdinaryRoundAdvancePreservesSameMatchFootageAndPlayingClip" methodname="OrdinaryRoundAdvancePreservesSameMatchFootageAndPlayingClip" classname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests" runstate="Runnable" seed="2118955828" result="Passed" start-time="2026-10-03 06:00:37Z" end-time="2026-10-03 06:00:37Z" duration="0.001236" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2249" name="ReplayKeyCannotStartPreviousMatchFootageBeforeTheNextPoll" fullname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests.ReplayKeyCannotStartPreviousMatchFootageBeforeTheNextPoll" methodname="ReplayKeyCannotStartPreviousMatchFootageBeforeTheNextPoll" classname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests" runstate="Runnable" seed="1908513775" result="Passed" start-time="2026-10-03 06:00:37Z" end-time="2026-10-03 06:00:37Z" duration="0.003229" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2248" name="SameSceneRestartRetiresOldPlayingClipRingAndPendingMarker" fullname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests.SameSceneRestartRetiresOldPlayingClipRingAndPendingMarker" methodname="SameSceneRestartRetiresOldPlayingClipRingAndPendingMarker" classname="TumbangPreso.Tests.SpectatorReplayMatchLifetimeTests" runstate="Runnable" seed="233280883" result="Passed" start-time="2026-10-03 06:00:37Z" end-time="2026-10-03 06:00:37Z" duration="0.001875" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

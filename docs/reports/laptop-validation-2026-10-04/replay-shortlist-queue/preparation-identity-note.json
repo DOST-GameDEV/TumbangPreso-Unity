@@ -1,0 +1,14 @@
+{
+  "Assets/TumbangPreso/Tests/ReplayShortlistQueueTests.cs": {
+    "testedRawSha256": "ff42b1fcdad73b5678379f7699ff7014ca032b7e10e26ec5de5cf85866c7b657",
+    "gitBlobSha256": "4f9e4a1acb11ae36b64b3130953cf5624c9f89400b0186bdd2d78ae6dc0f941e",
+    "normalizedBytesEqual": true,
+    "originalCandidateRawFixtureIdentical": true
+  },
+  "Assets/TumbangPreso/Tests/ReplayShortlistQueueTests.cs.meta": {
+    "testedRawSha256": "238ecfac9a31f66c3574bc4477930e24c0eb7733b9b7527bac8b35c81a16935f",
+    "gitBlobSha256": "4deae0b475f93fb806c73fa2aa4128a6730dda872de8842d78b95cf82e0fb69e",
+    "normalizedBytesEqual": true,
+    "originalCandidateRawFixtureIdentical": true
+  }
+}

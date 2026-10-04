@@ -1,0 +1,40 @@
+{
+  "pid": 32300,
+  "artifact": "C:\\Users\\Matthew\\dev\\tump-laptop-player1003i\\Builds\\owner-direct-131818\\TumbangPreso.exe",
+  "out": "C:\\Users\\Matthew\\dev\\tump-laptop-player1003i\\Logs\\owner-direct-menu-133038",
+  "profile": "laptop-owner-direct-menu-133038",
+  "execution": "Direct packaged game, no scheduler or memory/timeout wrapper",
+  "command": [
+    "C:\\Users\\Matthew\\dev\\tump-laptop-player1003i\\Builds\\owner-direct-131818\\TumbangPreso.exe",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1280",
+    "-screen-height",
+    "720",
+    "-tp-profile",
+    "laptop-owner-direct-menu-133038",
+    "-tp-uireview",
+    "C:\\Users\\Matthew\\dev\\tump-laptop-player1003i\\Logs\\owner-direct-menu-133038",
+    "-tp-menu-review-only",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-laptop-player1003i\\Logs\\owner-direct-menu-133038\\player.log"
+  ],
+  "exitCode": 0,
+  "reviewResult": {
+    "passed": true,
+    "error": "",
+    "stages": [
+      "cold loading and login music gate",
+      "studio intro rendered before loading",
+      "loading and login silent for 1795 observed frames",
+      "Terms agreement visibly checks the signup box",
+      "Both supplied login layouts, Terms and Guest recorded",
+      "menu music begins on revealed home",
+      "current title cloud/shadow/dust motion verified",
+      "reduced current title layers verified",
+      "current hub settings credits and mode selection/back remain reachable"
+    ],
+    "frameWindows": []
+  }
+}

@@ -28,10 +28,10 @@ namespace TumbangPreso.Visual
         public const float FadeEnd = 18.0f;
 
         /// <summary>Ring radius as a multiple of the unit's own capsule radius.
-        /// 0.55 / 0.4 = 1.375 for the Person, kept as a RATIO rather than a flat number so a
+        /// 0.70 / 0.4 = 1.75 for the Person, kept as a RATIO rather than a flat number so a
         /// smaller unit's ring reads as a ring around that unit, not a person-sized ring
         /// around a small object.</summary>
-        public const float RingRadiusRatio = 1.375f;
+        public const float RingRadiusRatio = 1.75f;
         // The small ring's hole was entirely covered by the hero's feet at eight
         // metres. A wider angular annulus leaves the role shape visible beside them.
         public const float TayaRingRadiusRatio = 1.95f;
@@ -311,9 +311,10 @@ namespace TumbangPreso.Visual
             if (rig != null && rig.IsLocalFpp && rig.IsFollowing(_character)) mine = true;
 
             if (_ring != null) _ring.gameObject.SetActive(!mine);
-            _label.gameObject.SetActive(!mine);
+            bool introducing = MatchArrivalPresentation.Active;
+            _label.gameObject.SetActive(!mine && !introducing);
 
-            if (mine) return;
+            if (mine || introducing) return;
 
             float distance = Vector3.Distance(cam.transform.position, _labelTransform.position);
 

@@ -57,7 +57,7 @@ namespace TumbangPreso.PlayTests
             yield return new WaitForSeconds(2.5f); yield return null;
             Assert.IsTrue(field == null, "The field must finish at the prescribed simulation lifetime.");
         }
-        [UnityTest] public IEnumerator AbsoluteZeroWaitsThenFreezesEveryPlayerAndLeavesTheFullThawChill()
+        [UnityTest] public IEnumerator AbsoluteZeroWaitsThenFreezesOtherPlayersAndLeavesTheFullThawChill()
         {
             yield return Load();
             var caster = GameServices.Round.PlayerAt(1); caster.AbilitySystem.BindHero("cheska");
@@ -72,7 +72,13 @@ namespace TumbangPreso.PlayTests
             }
             foreach (var who in GameServices.Round.Players)
             {
-                Assert.IsTrue(who.IsFrozen, "The current Wiki says every player, including the caster.");
+                if (who == caster)
+                {
+                    Assert.IsFalse(who.IsFrozen, "The caster is excluded from her ultimate.");
+                    Assert.IsFalse(who.IsChilled, "The caster is excluded from her thaw slow.");
+                    continue;
+                }
+                Assert.IsTrue(who.IsFrozen, "Every other player receives Frozen.");
                 Assert.AreEqual(StatusRules.FrozenSeconds, who.StunLeft, .001f);
                 Assert.AreEqual(StatusRules.FrozenSeconds + StatusRules.ChilledSeconds, who.ChilledLeft, .001f);
             }

@@ -1,0 +1,12 @@
+{
+  "sourceOverlay": "f361bca7dfb3a5b3e1de7190a73b57c4764bfb85",
+  "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930\\Builds\\competition-matchflow1002\\TumbangPreso.exe",
+  "runtimeSha256": "cffda47c23e633f1e3745737ea9781e8816ee8f852d836a231a7a2c03e8558e3",
+  "inputs": 1277,
+  "drift": [],
+  "buildLines": [
+    "[Build] identity aecc0ee2cf6c03f9705249022454106620743eb4, tree dirty, protocol 129, StandaloneWindows64",
+    "[Build] SUCCEEDED. 2432 MB, 77s -> Builds/competition-matchflow1002/TumbangPreso.exe"
+  ],
+  "scope": "Current published C# plus incoming Sean GLB; inherited qualification asset base. Excludes private Supernova and four arm experiments. Private Ultra settings retained; no pristine release claim."
+}

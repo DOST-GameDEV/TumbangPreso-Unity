@@ -28,6 +28,14 @@ namespace TumbangPreso.Tests
             Assert.AreEqual(.25f, settings.AnnouncerGain, .0001f); Assert.AreEqual(0, settings.SfxGain);
         }
         [Test]
+        public void AmbienceVolumeIsIndependentOfSfxAndFollowsMaster()
+        {
+            var settings = new GameSettings { MasterVolume = 1, SfxVolume = 0, AmbienceVolume = .5f };
+            Assert.AreEqual(.25f, settings.AmbienceGain, .0001f); Assert.AreEqual(0, settings.SfxGain);
+            settings.MasterVolume = 0;
+            Assert.AreEqual(0, settings.AmbienceGain);
+        }
+        [Test]
         public void CameraFeedbackCannotConsumeSimulationRandomOrMoveTheAimEye()
         {
             var go = new GameObject("Comfort camera"); var rig = go.AddComponent<CameraRig>();

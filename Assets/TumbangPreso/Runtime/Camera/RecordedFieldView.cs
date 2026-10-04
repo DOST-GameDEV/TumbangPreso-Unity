@@ -27,7 +27,8 @@ namespace TumbangPreso.CameraSystem
             {
             _built=field;
             Root=new GameObject("RecordedField-"+field.Type);Root.transform.SetParent(parent,false);Root.transform.position=field.Position;
-            if(RafiWaterField.IsWater(field.Type)){var fx=RafiWaterVisual.Build(Root.transform,field);fx.enabled=false;_step=fx.StepTo;}
+            if(field.Type==WorldEffectSnapshot.Kind.CinderGate){var fx=SeanCinderVisual.Build(Root.transform,field);fx.enabled=false;_step=fx.StepTo;}
+            else if(RafiWaterField.IsWater(field.Type)){var fx=RafiWaterVisual.Build(Root.transform,field);fx.enabled=false;_step=fx.StepTo;}
             else if(field.Type==WorldEffectSnapshot.Kind.Sheet){var fx=FrostSurfacePresentation.Build(Root.transform,field.Radius,field.Duration);fx.enabled=false;_step=fx.StepTo;}
             else if(field.Type==WorldEffectSnapshot.Kind.Fire||field.Type==WorldEffectSnapshot.Kind.Crater)
             {SeanHeatGround.Build(Root.transform,field.Radius,field.Duration,field.Forward,field.Type==WorldEffectSnapshot.Kind.Crater);var fx=Root.GetComponentInChildren<SeanHeatGround>();fx.enabled=false;_step=fx.StepTo;}

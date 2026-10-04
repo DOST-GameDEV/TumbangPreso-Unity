@@ -1,0 +1,15 @@
+{
+  "passed": false,
+  "sourceCommit": "05b2ee1563fc16879631aa481e9b34ac7591f271",
+  "runtimeSha256": "1ced9f265d9c2d0e60f11283c932fbc1f4ce9905b9606e263689462a98c6389b",
+  "scope": "Existing two-real-peer Cheska/Sean accepted ultimate,2.5s Frozen and owning-client movement after timed thaw; staged scene/input/meter, direct transport, no default-match/physical-input claim.",
+  "admission": {
+    "availableMb": 8816,
+    "activeJobsBefore": 0,
+    "acquiredUtc": "2026-10-03T00:23:37Z"
+  },
+  "exitCode": 1,
+  "peerContractPassed": false,
+  "inputRestored": true,
+  "runtimeUnchanged": true
+}

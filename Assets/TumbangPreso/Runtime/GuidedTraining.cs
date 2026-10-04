@@ -474,11 +474,15 @@ namespace TumbangPreso
         private void PrepareBlockExercise()
         {
             PrepareMovingAttacker(); if (_dummy == null) return;
-            // A fixed lane crosses the middle beside the can rather than targeting it.
-            _dummy.Teleport(new Vector3(2, 0, Confinement.AttackerSpawnRing()));
-            Face(_dummy, new Vector3(2, 0, -3));
+            // Start behind the middle attacker mark, looking down a near-can lane.
+            // Its lateral clearance preserves a real miss, not an invulnerable can.
+            _dummy.Teleport(new Vector3(0, 0, Confinement.AttackerSpawnRing()+1f));
+            Face(_dummy, BlockExerciseTarget());
             _dummy.Intent.Parked = true; _marker?.Bind(null);
         }
+
+        private Vector3 BlockExerciseTarget()
+            => _lata.transform.position + new Vector3(Mathf.Max(1f,_lata.HitWindow+.5f),.25f,0);
 
         private void PrepareAbilityGround(bool preserveExisting = false)
         {
@@ -531,7 +535,7 @@ namespace TumbangPreso
         {
             if (_orbitActor == _dummy) return;
             StopOrbit(); _orbitActor = _dummy;
-            float walking = Balance.Speed * Stamina.RoleSpeedScale(false) * Roster.PersonSpeedScale(_dummy.CharacterIndex, _dummy.Mode);
+            float walking = Stamina.MovementSpeed(false, false);
             _orbitSlow = Mathf.Min(1, OrbitRadius * OrbitAngularSpeed / Mathf.Max(.1f, walking));
             _orbitActor.EnterSpeedZone(_orbitSlow);
         }
@@ -568,7 +572,7 @@ namespace TumbangPreso
                 {
                     _nextDummyThrow = Time.time + 2.5f;
                     _dummy.GetComponent<Carrier>()?.HostThrowAt(_dummy.transform.position + Vector3.up * .9f,
-                        new Vector3(2, .25f, 0), 1f);
+                        BlockExerciseTarget(), 1f);
                 }
                 return;
             }
@@ -666,6 +670,9 @@ namespace TumbangPreso
         private IEnumerator AdvanceAfterBeat()
         {
             yield return new WaitForSecondsRealtime(0.70f);
+            // The completion beat uses real time, but entering a lesson changes the
+            // world. Give pause/loading the same ownership as the ordinary update.
+            while (Panel.AnyOpen || UI.Hub.HubLoading.Visible) yield return null;
             EnterLesson((Lesson)((int)_lesson + 1));
         }
 
@@ -964,7 +971,7 @@ namespace TumbangPreso
                 case Lesson.Pektus:
                     PrepareAttackerThrow(); title = "CURVE THROW";
                     body = "Scroll the mouse wheel to curve the throw. Use this to make the throw harder to block.";
-                    action = Key("CurveLeft") + " / " + Key("CurveRight") + " CURVE"; break;
+                    action = CurvePrompt(); break;
                 case Lesson.ThrowAndRetrieve:
                     PrepareAttackerThrow(); title = "THROW AND RETRIEVE";
                     body = "The ultimate test in attacking. Throw your slipper at the can to hit it. Retrieve your slipper and run back to the safe zone afterwards.";
@@ -1219,6 +1226,9 @@ namespace TumbangPreso
         /// because it is not a `Verb`; the stick is the only control on the layer nobody has to
         /// be taught.
         /// </summary>
+        private static string CurvePrompt()
+            => Key("CurveLeft") + " " + Key("CurveRight") + " CURVE";
+
         private static string Key(string action)
         {
             if (Hud.OnTouch)
@@ -1944,7 +1954,7 @@ namespace TumbangPreso
                 // `LEFT SHIFT`'s picture to nine characters wide. **The sheets already solve the
                 // long-name problem**, which is most of why they are worth having.
                 var square = go.AddComponent<LayoutElement>();
-                square.preferredWidth = GlyphSize;
+                square.preferredWidth = UI.InputGlyphs.PromptWidth(glyph, GlyphSize);
                 square.preferredHeight = GlyphSize;
                 square.minHeight = GlyphSize;
                 return;

@@ -1,0 +1,21 @@
+{
+  "fixtureToolRepairs": 1,
+  "protectedChanged": 0,
+  "repairedOriginal": {
+    "passed": 1,
+    "total": 3,
+    "causalFailures": 1,
+    "fixtureFailures": 1,
+    "failed": 2
+  },
+  "protectedInputs": 12529,
+  "firstOriginal": {
+    "passed": 1,
+    "total": 3,
+    "causalFailures": 1,
+    "fixtureFailures": 1,
+    "failed": 2
+  },
+  "qualified": false,
+  "productChanged": false
+}

@@ -1,0 +1,9 @@
+{
+  "Packages/com.tumbangpreso.core/Runtime/Balance.cs": "9c13c39e9efd01fba3fc94a3825e90e6045850489773b45d32052b681d0275cd",
+  "Assets/TumbangPreso/Runtime/AIController.cs": "073f402cc7550e57990ad484fde4c0cc951d19d9e8799c912afb27be00ccf15e",
+  "Assets/TumbangPreso/Runtime/CombatVerbs.cs": "a3be75759c81c7b387ea956329f8eaf2cfa666ac59e10da7a1cfb078533b0bce",
+  "Assets/TumbangPreso/Runtime/Slipper.cs": "cb86ccd16877efc930060e504d8094a636c8ee568160e02d77166a18c221e661",
+  "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "854512773dc3727905b5201e33896f41bf98eb969cd568c41b08ba0e88ce2152",
+  "Assets/TumbangPreso/Tests/PlayMode/MovementRuntimeTests.cs": "f55347d3fa510b21dcd5a1d52c226144444403696b02d58c5669a3230663e68a",
+  "Assets/TumbangPreso/Tests/NationalsHardeningTests.cs": "b7390bc71ee57ba173658f210ffef0ed6ed930e720919bc1c3e9afd36be0cb19"
+}

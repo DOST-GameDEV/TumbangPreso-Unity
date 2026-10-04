@@ -1,5 +1,48 @@
 # Skill Networking Contract
 
+## Powered ceiling credit, protocol145
+
+Zack's powered ceiling-only safety-bound return preserves the remaining wall-bank
+credit as well as its affinity. Side/corner contacts still count once; ordinary
+throws keep their existing bank limit. Shared prediction follows the same policy.
+No packet layout changes. Matching rebuilt clients are required.
+[Reproduction and qualification](reports/bank-ceiling-2026-10-03/README.md).
+
+## Explicit movement, protocol137
+
+Both modes use absolute role walk/run speeds without innate character scaling.
+Body jump gravity is separate from unchanged projectile gravity. Stamina and
+power-dependent lunge recovery follow the new owner values; local and host paths
+use the same cooldown function. No new packet fields are added. The existing
+movement budget retains its impulse margin at 30 m/s. Matching rebuilt clients
+are required. [Native physics evidence](reports/movement-2026-10-03/README.md).
+
+## Objective economy, protocol136
+
+Can knockdowns and successful tags each grant one objective point. Throws and
+retrievals grant zero. BeginRound grants the defender one point once per
+match/round, on the authority only; hydration never repeats the award. Existing
+bank snapshots and Zack objective-cooldown receipts carry the results unchanged.
+Matching rebuilt clients are required for the changed income contract.
+[Four focused native cases and limits](reports/feedback-2026-10-03/objective-economy/README.md).
+
+## Absolute Zero caster exclusion, protocol135
+
+The owner correction excludes the casting motor from its own Frozen and thaw
+Chilled. Other players remain valid targets, with existing timing and host
+authority. No packet fields change. Matching rebuilt clients are required.
+[Focused native failure and fix](reports/feedback-2026-10-03/cheska-caster.md).
+
+## Timed status recovery, protocol134
+
+Recovery presses are retired. Frozen/stuns expire on authored timers, trips
+count down TripTotal, and edge catch/hang/pull-over phases advance autonomously.
+Host authority and existing snapshot ordering remain. Legacy mash fields stay in
+the wire layout but restore as zero; buffered presses are discarded and recovery
+requests are refused. Recording format13 is unchanged. Matching rebuilt clients
+are required; focused native tests do not establish actual-peer qualification.
+[Evidence](reports/timed-recovery-2026-10-02/README.md).
+
 Presentation is replaceable. Stable ability IDs and shared gameplay state are the
 network boundary, not model files,effect class names,clips,palettes or cue names.
 Only Paete currently has substantial VFX; other presentation remains provisional.
@@ -622,3 +665,85 @@ status replication owns victims. Native checks and actual direct Linux
 host/owner/observer qualify cancellation, optional different-target follow-up
 and expiry. WAN/loss/reconnect/device coverage remains separate.
 [Evidence and retained failures](reports/feedback-2026-09-30/closed-circuit/README.md).
+
+
+## Empowered throw compatibility
+
+Protocol128 redefines Sean's stable FireExplosive payload as a1.25m once-only
+pressure impact, without its old launch-speed multiplier or stagger. Held
+snapshots may carry FireExplosive only when state is Held with a real holder;
+this binds timed recovery to the actual marked object rather than another shoe.
+Drop clears the mark; round reset/expiry clear held ownership without stripping
+an already launched payload. Ordinary impact ownership and can scoring remain.
+Ten distinct native behavior checks and a matching Linux host/owner/observer
+case qualify the load, flight,0.923m near-miss push and cleanup. Actual reconnect,
+WAN/device and listening scope remain separate.
+[Evidence](reports/hero-quality-2026-10-01/empowered-throw/README.md).
+
+## Stoke Step compatibility
+
+Protocol129 replaces sean_skill1 Flame Rush with Stoke Step. The accepted aim
+is held through0.18s anticipation; the ordinary owner-simulated motor receives
+one horizontal impulse with a continuous2m friction bound, followed by0.25s
+recovery. Default-false kit gates suppress voluntary locomotion and actions for
+the commitment without conferring a status or immunity. Cover, body collision,
+confinement and incoming impulses remain under the normal motor.
+
+The existing Sean MovementWindow now permits only zero emission phase and no
+wake points. It restores an aged, non-extending live gate, never another impulse
+or cast. The normal movement snapshots retain position/velocity authority. The
+old missing-fire-emission refresh is removed for Sean. Existing scope/generation,
+round and accepted-cast checks remain. Incompatible older clients must not join.
+Native6distinct checks pass across4+2receipts. A fresh full129Linux player and
+three actual peers pass1.8916m travel with zero lateral drift, held recovery,
+no fire/stagger and released gates. WAN/reconnect/device checks remain separate.
+
+## Cinder Gate compatibility
+
+Protocol130 appends CinderGate field kind17. The existing
+reliable dynamic-field route now accepts its positive event identity and empty
+path, alongside unchanged bounded Rafi water geometry. Host owns accepted cast,
+finite crossing, consumption and ordinary resolved impulse. Epoch/round/source
+checks and adopted server age remain on the shared receiver. Repeated older
+updates cannot rewind a live clock or revive a consumed seam. Prepared snapshots
+bind the same field clock to Sean's defending slot without recasting.
+
+Recording schema12 includes this appended field; schemas10/11 remain accepted,
+and version11 water data keeps its old meaning. Recorded Cinder views instantiate
+only presentation, with no collider or gameplay field. Matching clients are
+required for the new gameplay state. Focused native and three actual local Linux peer checks are recorded in the
+[Cinder report](reports/sean-cinder-gate-2026-10-02/README.md). WAN, reconnect and
+cross-platform qualification remain separate.
+
+## Protocol131: optional retrieval-passive clock
+
+TimedKitState appends one float PassiveRemaining, raising MaxWireBytes to235.
+TimedKitSnapshot binds a finite passive capacity from the current kit, zero for
+existing neutral channels. Sean binds four seconds independently of its loaded
+slipper clock. Existing match/round/movement epoch/sequence gates apply; round
+clock age subtracts from both channels. Positive inactive-round passive rejects,
+and newer zero clears without rewarding retrieval. Grant/accepted throw use the
+existing reliable timed-state broadcast. No character-specific RPC is added.
+See [Steady Ember evidence](reports/sean-steady-ember-2026-10-02/README.md).
+
+
+## Rafi Baha and Backwash, protocol132
+
+Baha is dynamic field kind18, with authoritative map/cover-bounded nine-point
+path,0.8second warning,5m/s front and0.6second carry retirement. Clients and
+recordings render it without resolving contact. Recording13 accepts Baha;
+schemas10/11/12 remain readable with their original allowed fields. Kind10
+Breakwater semantics are unchanged. Backwash uses the existing bounded passive
+timed-kit channel independently of Skim's one-time joining state. Genuine
+manual own-throw retrieval grants1.5seconds at1.2x movement; drop/regrab does
+not mint another reward. [Qualification](reports/rafi-baha-2026-10-02/README.md).
+
+## Next Round deadline, protocol133
+
+Ordinary Next Round is3.5seconds, replacing the earlier5second duration.
+Halftime remains10seconds with its existing replay/fallback/standings sequence.
+All peers derive the same end from the host-authored began timestamp; late
+arrivals do not restart or extend it. Protocol133 separates this timing from
+older clients that would independently wait5seconds. Break packet fields and
+recording format13 remain unchanged. Gameplay/UI input stays frozen until the
+shared boundary. Actual remote-peer qualification for this revision is separate.

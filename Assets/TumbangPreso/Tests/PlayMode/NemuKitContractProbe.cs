@@ -296,8 +296,8 @@ namespace TumbangPreso.PlayTests
             Assert.IsNull(Object.FindFirstObjectByType<HeroHazards.SeanceVoidComponent>());
             Assert.Less(Vector3.Distance(pet.transform.position,followTarget.TransformPoint(followOffset)),.2f,"Cancelled staging did not restore the familiar's normal shoulder offset.");
         }
-        [UnityTest] public IEnumerator QuickKeyboardTapReachesStunRecovery() => QuickRecoveryTap(false);
-        [UnityTest] public IEnumerator QuickControllerTapReachesStunRecovery() => QuickRecoveryTap(true);
+        [UnityTest] public IEnumerator QuickKeyboardTapCannotShortenTimedStun() => QuickRecoveryTap(false);
+        [UnityTest] public IEnumerator QuickControllerTapCannotShortenTimedStun() => QuickRecoveryTap(true);
         private IEnumerator QuickRecoveryTap(bool controller)
         {
             var device=controller?(UnityEngine.InputSystem.InputDevice)UnityEngine.InputSystem.InputSystem.AddDevice<UnityEngine.InputSystem.Gamepad>()
@@ -343,9 +343,9 @@ namespace TumbangPreso.PlayTests
                 Assert.IsFalse(action.IsPressed(),"Fixture must release before physics.");
                 reader.SendMessage("Update");
                 yield return new WaitForFixedUpdate();
-                Assert.AreEqual(1,_who.StunMashPresses,"A quick physical tap was lost before recovery.");
+                Assert.AreEqual(0,_who.StunMashPresses,"A quick physical tap shortened a timed stun.");
                 yield return new WaitForSeconds(.15f);
-                Assert.AreEqual(1,_who.StunMashPresses,"One tap became repeated recovery.");
+                Assert.AreEqual(0,_who.StunMashPresses,"Released input reactivated retired recovery.");
             }
             finally
             {
@@ -410,20 +410,20 @@ namespace TumbangPreso.PlayTests
                 trip?left:0,trip?4:0,trip?presses:0,0,100,0,0,episode,ack);
 
         [UnityTest]
-        public IEnumerator OldSnapshotKeepsOnlyUnacknowledgedRecoveryForTheSameStun()
+        public IEnumerator TimedStunSnapshotsCannotRestoreRetiredRecoveryInputs()
         {
             NetAuthority.Provider=new OwnerProvider();
             int episode=_who.RecoveryEpisode+1;
             RecoverySnapshot(episode,0);
-            Assert.IsTrue(_who.RecoverFromInput());
+            Assert.IsFalse(_who.RecoverFromInput());
             float predicted=_who.StunLeft;
             RecoverySnapshot(episode,0);
-            Assert.AreEqual(1,_who.StunMashPresses,"Old snapshot erased an in-flight tap.");
+            Assert.AreEqual(0,_who.StunMashPresses,"A snapshot restored retired mash progress.");
             Assert.AreEqual(predicted,_who.StunLeft,.001f);
             RecoverySnapshot(episode,0);
             Assert.AreEqual(predicted,_who.StunLeft,.001f,"Replaying a snapshot spent the tap twice.");
             RecoverySnapshot(episode,1,predicted,1);
-            Assert.AreEqual(1,_who.StunMashPresses);
+            Assert.AreEqual(0,_who.StunMashPresses);
             Assert.AreEqual(predicted,_who.StunLeft,.001f,"Acknowledged tap was predicted again.");
             RecoverySnapshot(episode+1,0);
             Assert.AreEqual(0,_who.StunMashPresses,"Fresh ice inherited taps from previous ice.");
@@ -434,15 +434,15 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator TripRecoverySurvivesOldSnapshotsWithoutDoubleSpending()
+        public IEnumerator TripSnapshotsStayAuthoritativeWithoutRecoveryPrediction()
         {
             NetAuthority.Provider=new OwnerProvider();
             int episode=_who.RecoveryEpisode+1;
             RecoverySnapshot(episode,0,4,0,true);
-            Assert.IsTrue(_who.RecoverFromInput());
+            Assert.IsFalse(_who.RecoverFromInput());
             float left=_who.TripLeft;
             RecoverySnapshot(episode,0,4,0,true);
-            Assert.AreEqual(1,_who.MashPresses);
+            Assert.AreEqual(0,_who.MashPresses);
             Assert.AreEqual(left,_who.TripLeft,.001f);
             RecoverySnapshot(episode,0,4,0,true);
             Assert.AreEqual(left,_who.TripLeft,.001f);
@@ -450,15 +450,15 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
-        public IEnumerator RecoveryRequestsCannotReplayCrossEpisodesOrBypassTheRateCap()
+        public IEnumerator RetiredRecoveryRequestsCannotAffectAnyEpisode()
         {
             _who.ApplyStagger(4,StunElement.Ice,6);
             int episode=_who.RecoveryEpisode;
-            Assert.IsTrue(_who.AcceptRecoveryRequest(episode,1));
+            Assert.IsFalse(_who.AcceptRecoveryRequest(episode,1));
             float left=_who.StunLeft;
             Assert.IsFalse(_who.AcceptRecoveryRequest(episode,1));
             Assert.IsFalse(_who.AcceptRecoveryRequest(episode,2),"Same-frame spam bypassed Core's cap.");
-            Assert.AreEqual(2,_who.RecoveryAcknowledged,"Refused prediction was not acknowledged.");
+            Assert.AreEqual(0,_who.RecoveryAcknowledged,"Retired recovery requests must not create live acknowledgements.");
             Assert.AreEqual(left,_who.StunLeft,.001f);
             Assert.IsFalse(_who.AcceptRecoveryRequest(episode,999));
             _who.ApplyStagger(5,StunElement.Ice,6);

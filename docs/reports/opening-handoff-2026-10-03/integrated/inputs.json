@@ -1,0 +1,10 @@
+{
+  "Assets/TumbangPreso/Runtime/Camera/CameraRig.cs": "9398fe6448cf1ca1e1244231bdfe2d9dc860b3c9b6c0a81c9f6f86b0d9f2fcc8",
+  "Assets/TumbangPreso/Runtime/MatchArrivalPresentation.cs": "efca68e13ab741bfb939a73ef8fa7d91013dc8360fd30cb216e813ede6423f9c",
+  "Assets/TumbangPreso/Runtime/UI/Hub/HubLoading.cs": "9a37be5793338443f8085962a68dc3d9b380726d23e1ef5a70a1c98f34892773",
+  "Assets/TumbangPreso/Runtime/Visual/CharacterNameplate.cs": "56b3a60f6b64e68eb68fc8f29b939a6e90caed4ca86e8000fa4b7d34edce5256",
+  "Assets/TumbangPreso/Tests/PlayMode/ArrivalHandoffTests.cs": "b80702d0e2b4afdf130725fa017f545512ba71bc290d1db4e9fbf47c32ba8d71",
+  "Assets/TumbangPreso/Tests/PlayMode/ArrivalHandoffTests.cs.meta": "ef9031517fff7f1922b9240300029e3b86b9040ff5049b21c49a013b33b0a800",
+  "Assets/TumbangPreso/Runtime/Camera/WhirledView.cs": "08c2aa021bee34a87365530c20729bd208924a445fb46ebcd424c72641ffc9ad",
+  "Assets/TumbangPreso/Runtime/Camera/WhirledView.cs.meta": "257fbb60c4196c9a228a5b11bb478bae019a8d5e3349063329b76671f0bdf933"
+}

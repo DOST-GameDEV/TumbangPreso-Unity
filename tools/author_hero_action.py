@@ -665,6 +665,61 @@ for actions in HEROES.values():
             readable(spec, *READABILITY[name])
 
 
+# October 2: Stoke Step replaced the long Flame Rush. Author its final timings
+# after the legacy retiming/readability passes so a held 65-degree wing pose
+# cannot silently return. The motor owns the two-metre impulse; this clip owns
+# the brace, opposing limbs and leading-foot catch on the knee-less rig.
+HEROES["sean"]["hero-sean-dash"] = {
+    "punch": .18,
+    "beats": [
+        (0.00, 1., 0., 0.00,  4,  0,  0,   2,  0,   0,  0,   0,  0,    0,  0,    0,  0),
+        (0.08, 1., 0., -.02, 18, -5, -2,  -8,  3, -12, -2,  10,  2,  -24,  8,   12, -5),
+        (0.16, 1., 0., -.03, 26, -8, -3, -16,  4, -20, -2,  14,  2,  -38, 10,   22, -8),
+        (0.18, 1., 0., 0.04, 34,  5,  2, -24, -3, -24, -2,  22,  2,   18, 12,  -24, -8),
+        (0.27, 1., 0., 0.05, 30,  4,  2, -21, -2, -16, -2,  18,  2,   24, 10,  -16, -6),
+        (0.43, 1., 0., 0.02, 21, -5, -2, -12,  3,  18, -2, -12,  2,  -24,  9,   16, -6),
+        (0.55, 1., 0., -.01, 13, -3, -1,  -5,  2,  10, -1,  -6,  1,  -14,  6,    8, -4),
+        (0.70, 1., 0., 0.00,  6,  1,  0,   0, -1,   3,  0,  -2,  0,   -4,  2,    3, -2),
+        (0.80, 1., 0., 0.00,  4,  0,  0,   2,  0,   0,  0,   0,  0,    0,  0,    0,  0),
+    ],
+    "grounded": (0., .08, .16, .18, .27, .43, .55, .70, .80),
+}
+
+
+# Empowered Throw kindles the actual held shoe. Keep the carrying arm forward
+# and outside the bulky chest; the free hand gathers then releases toward it.
+# A two-palm centre pose was rejected because Sean's short rigid arms buried the
+# prop against his torso. Preserve the open face and a distinct checking beat.
+HEROES["sean"]["hero-sean-ignite"] = {
+    "punch": .22,
+    "beats": [
+        (0.00, 1., 0., 0.00,  0,  0,  0,   0,  0,   0,  0,   0,  0,    0,   0,    0,  0),
+        (0.10, 1., 0., -.01,  5, -3, -1,  -1,  2,  -4, -2,   3,  2, -105, -18,  -68, 16),
+        (0.22, 1., 0., -.01,  8, -2, -1,  -3,  8,  -6, -2,   4,  2,  -78, -45,  -90, 24),
+        (0.34, 1., 0., -.01,  8, -2, -1,  -3,  8,  -6, -2,   4,  2,  -78, -45,  -90, 24),
+        (0.46, 1., 0., 0.00,  4,  2,  1,  -1, 10,  -3, -1,   2,  1,  -51, -28,  -83, 18),
+        (0.57, 1., 0., 0.00,  1,  1,  0,   0,  2,  -1,  0,   1,  0,  -21, -10,  -37,  8),
+        (0.66, 1., 0., 0.00,  0,  0,  0,   0,  0,   0,  0,   0,  0,    0,   0,    0,  0),
+    ],
+    "grounded": (0., .10, .22, .34, .46, .57, .66),
+}
+
+
+# Cinder Gate: brace, draw a low lateral seam, hold the armed beat, release.
+HEROES["sean"]["hero-sean-gate"] = {
+    "punch": .35,
+    "beats": [
+        (0.00,1.,0.,0., 0,0,0, 0,0, 0,0, 0,0, 0,0, 0,0),
+        (0.12,1.,0.,-.015, 9,-12,-2, -6,8, -9,-3, 6,3, 12,9, -48,-24),
+        (0.35,1.,0.,.025, 14,12,2, -10,-8, 8,-3, -7,3, 18,13, -74,28),
+        (0.46,1.,0.,.02, 12,10,2, -8,-7, 6,-2, -5,2, 14,11, -68,25),
+        (0.60,1.,0.,.005, 5,3,1, -3,-2, 2,-1, -2,1, 5,4, -28,10),
+        (0.75,1.,0.,0., 0,0,0, 0,0, 0,0, 0,0, 0,0, 0,0),
+    ],
+    "grounded": (0.,.12,.35,.46,.60,.75),
+}
+
+
 # ⚠️⚠️ THE SILHOUETTE BOUND, 2026-09-24 (SKILL-FX-1). Nine casts were measured on their pose sheets
 # (`docs/reports/skill-performances-2026-09-24/sheets/`) folding these big-headed rigs until the face
 # pointed at the road (Titan Fissure: torso 56 plus head 34, 90 degrees; Supernova 100) or at the sky

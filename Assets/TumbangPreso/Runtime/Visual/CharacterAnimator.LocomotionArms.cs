@@ -96,6 +96,8 @@ namespace TumbangPreso.Visual
         private void ResolveGaitStyle(GameObject model)
         {
             _gaitStyle = GaitStyles.For(!string.IsNullOrEmpty(GaitSource) ? GaitSource : model != null ? model.name : null);
+            // Amihan alone runs on the air (`AmihanAirStep`, owner 2026-10-02).
+            AmihanAirStep.Sync(this, _gaitStyle == GaitStyles.Amihan);
             _bind.Clear();
             if (model == null) return;
             // Captured before the graph first evaluates: the instance still stands in its bind pose here.

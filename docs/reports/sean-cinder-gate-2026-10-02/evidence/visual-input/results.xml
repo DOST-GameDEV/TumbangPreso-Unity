@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 04:03:05Z" end-time="2026-10-02 04:05:23Z" duration="138.2949538">
+  <test-suite type="TestSuite" id="2499" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1225" result="Failed" site="Child" start-time="2026-10-02 04:03:05Z" end-time="2026-10-02 04:05:23Z" duration="138.294954" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2493" name="TumbangPreso.PlayTests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1225" result="Failed" site="Child" start-time="2026-10-02 04:03:05Z" end-time="2026-10-02 04:05:23Z" duration="138.277514" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="66680" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2494" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1225" result="Failed" site="Child" start-time="2026-10-02 04:03:05Z" end-time="2026-10-02 04:05:23Z" duration="138.265556" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2495" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1225" result="Failed" site="Child" start-time="2026-10-02 04:03:05Z" end-time="2026-10-02 04:05:23Z" duration="138.254988" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2129" name="SeanCinderGateProbe" fullname="TumbangPreso.PlayTests.SeanCinderGateProbe" classname="TumbangPreso.PlayTests.SeanCinderGateProbe" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-02 04:03:05Z" end-time="2026-10-02 04:05:23Z" duration="138.232390" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2132" name="ActualCastShowsAuthoredBodyAndFieldWithoutReplayGameplay" fullname="TumbangPreso.PlayTests.SeanCinderGateProbe.ActualCastShowsAuthoredBodyAndFieldWithoutReplayGameplay" methodname="ActualCastShowsAuthoredBodyAndFieldWithoutReplayGameplay" classname="TumbangPreso.PlayTests.SeanCinderGateProbe" runstate="Runnable" seed="1725952250" result="Failed" start-time="2026-10-02 04:03:05Z" end-time="2026-10-02 04:05:23Z" duration="138.218496" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="180000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 0
+  But was:  1
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.SeanCinderGateProbe+<ActualCastShowsAuthoredBodyAndFieldWithoutReplayGameplay>d__16.MoveNext () [0x00274] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/PlayMode/SeanCinderGateProbe.cs:138
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] repainted 524 of 867 renderers, 108 with a roof variant.
+[NearFade] 986 occluder nodes matched, 600 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-X1NIqZ/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

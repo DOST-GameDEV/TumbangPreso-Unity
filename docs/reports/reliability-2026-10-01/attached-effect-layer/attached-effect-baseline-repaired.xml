@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-01 14:08:22Z" end-time="2026-10-01 14:08:22Z" duration="0.334911">
+  <test-suite type="TestSuite" id="2468" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1200" result="Failed" site="Child" start-time="2026-10-01 14:08:22Z" end-time="2026-10-01 14:08:22Z" duration="0.334911" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2462" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1200" result="Failed" site="Child" start-time="2026-10-01 14:08:22Z" end-time="2026-10-01 14:08:22Z" duration="0.321742" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="36292" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2463" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1200" result="Failed" site="Child" start-time="2026-10-01 14:08:22Z" end-time="2026-10-01 14:08:22Z" duration="0.318891" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2464" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1200" result="Failed" site="Child" start-time="2026-10-01 14:08:22Z" end-time="2026-10-01 14:08:22Z" duration="0.315959" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1099" name="AttachedEffectVisibilityTests" fullname="TumbangPreso.PlayTests.AttachedEffectVisibilityTests" classname="TumbangPreso.PlayTests.AttachedEffectVisibilityTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-01 14:08:22Z" end-time="2026-10-01 14:08:22Z" duration="0.217446" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1100" name="AuraOnPreviewLayerIsVisibleToTheHostsCamera" fullname="TumbangPreso.PlayTests.AttachedEffectVisibilityTests.AuraOnPreviewLayerIsVisibleToTheHostsCamera" methodname="AuraOnPreviewLayerIsVisibleToTheHostsCamera" classname="TumbangPreso.PlayTests.AttachedEffectVisibilityTests" runstate="Runnable" seed="2115515398" result="Failed" start-time="2026-10-01 14:08:22Z" end-time="2026-10-01 14:08:22Z" duration="0.195417" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Attached effect did not inherit its host's rendering layer.
+  Expected: 30
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.AttachedEffectVisibilityTests+<AuraOnPreviewLayerIsVisibleToTheHostsCamera>d__2.MoveNext () [0x001cc] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\PlayMode\AttachedEffectVisibilityTests.cs:37
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

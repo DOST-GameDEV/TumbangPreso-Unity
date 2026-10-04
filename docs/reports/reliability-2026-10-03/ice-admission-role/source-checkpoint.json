@@ -1,0 +1,34 @@
+{
+  "native": "pending root focused original/candidate5",
+  "cases": 5,
+  "original": "Logs/net-ice-admission-role1003/original-source/NetIceProbe.cs",
+  "evidence": "owner normal lobby temporary host seat0 -> AutomationJoin -> true host assigns seat1; original UpdateSean sent Cheska while temporary host and consumed only pick attempt; IsNetworked follows NetworkManager.IsListening while LocalSlot starts/resets0 and becomes actual client1 only at ApplyAssignedSeat",
+  "evidenceLog": "C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Logs/competition-candidate1003f/timed-freeze-peers/owner.log",
+  "paths": [
+    "Assets/TumbangPreso/Runtime/Diagnostics/NetIceProbe.cs",
+    "Assets/TumbangPreso/Tests/NetIceAdmissionRoleTests.cs",
+    "Assets/TumbangPreso/Tests/NetIceAdmissionRoleTests.cs.meta"
+  ],
+  "next": "review + root frozen original/candidate5; next coherent changed artifact actual Cheska/Sean gate with unchanged effect/timing assertions",
+  "evidenceSha256": "036a4609b7967a896de898cc1bb6c2ed0100f6368852dc04a1b637b83d357c29",
+  "originalSha256": "3854d8c98df6b046bbbb17e0dbfa08a875fa1035df612d11ca6ade01110b582e",
+  "originalExpectedFailed": 2,
+  "scope": "Diagnostic setup fix; no gameplay/Frozen success claim",
+  "hashes": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/Diagnostics/NetIceProbe.cs",
+      "sha256": "509fd2c41218de7392e61c4843f9e722a5f2f25c0acab9f6d4181c41c9048ea6"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/NetIceAdmissionRoleTests.cs",
+      "sha256": "56551336416c8666f72f32e2eadb8d528a949b9c2a7943426e741c0d3d3e0584"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/NetIceAdmissionRoleTests.cs.meta",
+      "sha256": "63d4bfedf5a5f696fbfd85fb7d2c358cbf199943463e18958b897819e022999e"
+    }
+  ],
+  "review": "requested value_review",
+  "name": "net-ice-intended-admission-role",
+  "filter": "TumbangPreso.Tests.NetIceAdmissionRoleTests"
+}

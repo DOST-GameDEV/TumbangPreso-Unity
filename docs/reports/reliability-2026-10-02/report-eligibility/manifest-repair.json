@@ -1,0 +1,11 @@
+{
+  "fixtureChanged": false,
+  "failure": "PowerShell array concatenation interpreted metadata operand as .meta; manifest write failed",
+  "kind": "Input manifest metadata path",
+  "allThreeHashesValidatedAfterLaunch": true,
+  "repairCount": 1,
+  "productionChanged": false,
+  "nativeRetry": false,
+  "copiedFromValidatedSnapshots": true,
+  "finalManifestCompletedAfterLaunch": true
+}

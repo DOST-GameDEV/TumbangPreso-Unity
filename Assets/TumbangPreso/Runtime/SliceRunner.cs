@@ -34,6 +34,15 @@ namespace TumbangPreso
 
         public bool Running { get; private set; }
 
+        private void OnEnable()
+        {
+            // A cold client can receive the completed match before a ready countdown
+            // ever calls Begin. Its actors still need the normal end-of-match freeze.
+            if (GameServices.Match == null) return;
+            GameServices.Match.MatchEnded -= OnMatchEnded;
+            GameServices.Match.MatchEnded += OnMatchEnded;
+        }
+
         private void Start()
         {
             if (AutoStart) Begin();
@@ -99,6 +108,7 @@ namespace TumbangPreso
         private void Subscribe()
         {
             Unsubscribe();
+            if (GameServices.Match == null) return;
 
             GameServices.Match.RoundStarted += OnRoundStarted;
             GameServices.Match.IntermissionStarted += OnIntermission;

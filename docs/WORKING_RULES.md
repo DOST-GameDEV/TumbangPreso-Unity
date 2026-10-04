@@ -21,6 +21,12 @@ and [earlier full rules](archive/CLAUDE_full_2026-09-24.md). New owner instructi
   clamps X/Z independently. Bots submit the same InputIntent as humans.
 - Stuns overlap with Max,never addition. Impulses derive from friction using
   `distance = speed * speed / (2 * friction)`. Neutral prop stays at index0.
+- Possession contact outcomes freeze at requested game speed zero. Keep the
+  accepted possession and its live contact behavior when the user resumes.
+- Carrier retires the opposite role's pending throw or can reset before consuming
+  the current role. Preserve held shoes and same-role charge/channel progress.
+- Combat retires the defender's pending lunge windup before attacker input.
+  Keep already committed contact windows and spent cooldowns.
 - People use first person,props third person; local emotes temporarily change view.
   Spectators have separate free/follow/POV rigs. Emotes end through EmotePlayer.Stop
   on interruption,not a new arbitrary timer that bypasses view cleanup.
@@ -32,6 +38,27 @@ and [earlier full rules](archive/CLAUDE_full_2026-09-24.md). New owner instructi
 
 - Mouse/keyboard,controller and touch are required for every feature. Gameplay and
   spectating are different contexts; one control does one action within each.
+- Reader withdrawal and parked control zero a controlled familiar's cached
+  movement while keeping its accepted possession. Retain explicit zero input
+  and local/offline custody; do not fall back to body AI or clear another seat.
+- A withdrawn reader retires local throw/lunge windup after losing its network
+  seat. Preserve newly received tells; clear its old local tell when no received
+  refresh replaced it. Keep committed contact and spent cooldowns.
+- Practice world reset retires active enabled bot input before teleporting.
+  Disabled brains retained on human seats do not own that seat's input; leave
+  its held controls intact. Preserve the existing shared human hero-key branch.
+- Active practice bots release producer-owned raw controls before entering idle,
+  so resume waits for a fresh command. Preserve disabled-brain custody and the
+  shared human hero-key branch.
+- A predicted punch owns its press until observed release, including after a
+  host refusal refunds cooldown. A cooldown-blocked initial edge is unspent;
+  observe release before interruption or role returns skip the punch path.
+- Touch buttons remain held until their last captured pointer/button releases.
+  Global release and customization invalidate old ownership before presses or
+  lifts; explicit release and disable clear it without changing visuals.
+- The touch stick keeps its first pointer/button owner until release, including
+  while centered. Disable or explicit SetValue zero retires ownership; preserve
+  nonzero overrides, coordinates, radius, clamping and knob behavior.
 - Preserve GenericPadBridge,MenuNav,controller mappings and the input backend.
   `InputCatalogue.For` is exhaustive: no discard arm; keep CS8509 as an error.
   Add pad/thumb mapping with a Verb and run the existing InputAssetSync regeneration.

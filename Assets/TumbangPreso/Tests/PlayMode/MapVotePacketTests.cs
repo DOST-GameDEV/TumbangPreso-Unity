@@ -24,6 +24,7 @@ namespace TumbangPreso.PlayTests
         }
         private const BindingFlags Hidden = BindingFlags.Instance | BindingFlags.NonPublic;
         private INetProvider _oldProvider;
+        private bool _oldBots;
         private object _oldSession;
         private GameObject _root, _resultRoot;
         private NetSession _session;
@@ -35,6 +36,7 @@ namespace TumbangPreso.PlayTests
         public IEnumerator Before()
         {
             _oldProvider = NetAuthority.Provider;
+            _oldBots = AIController.BotsEnabled; AIController.BotsEnabled = true;
             yield return PlayModeWorld.Reset();
             _oldScene = SceneManager.GetActiveScene();
             _preparation = SceneManager.CreateScene(SceneFlow.MatchSetup);
@@ -63,7 +65,7 @@ namespace TumbangPreso.PlayTests
             SceneManager.SetActiveScene(_oldScene);
             yield return SceneManager.UnloadSceneAsync(_preparation);
             yield return PlayModeWorld.Reset();
-            NetAuthority.Provider = _oldProvider;
+            NetAuthority.Provider = _oldProvider; AIController.BotsEnabled = _oldBots;
         }
 
         private void Deliver(string name, ulong sender, FastBufferWriter writer)
@@ -150,12 +152,75 @@ namespace TumbangPreso.PlayTests
             Assert.That(_rpc.QueueMapVoteFor(2), Is.EqualTo(-1));
         }
 
+        [Test]
+        public void CustomStartSelectsCharactersBeforeOpeningTheBallot()
+        {
+            _rpc.HostBeginCharacterSelection();
+            Assert.IsTrue(_rpc.CharacterSelecting); Assert.IsFalse(_rpc.QueueMapVoting);
+            Assert.That(_rpc.CharacterSelectSecondsLeft, Is.InRange(29f, 30f));
+            _rpc.HostBeginCharacterSelection();
+            var previous = SceneFlow.SelectedRules.MapVote;
+            SceneFlow.SelectedRules.MapVote = true;
+            try { _rpc.HostCompleteCharacterSelection(); }
+            finally { SceneFlow.SelectedRules.MapVote = previous; }
+            Assert.IsFalse(_rpc.CharacterSelecting); Assert.IsTrue(_rpc.QueueMapVoting);
+            Assert.That(_rpc.QueueMapSecondsLeft, Is.InRange(11f, 12f));
+        }
+
+        [Test]
+        public void MissingRequiredPlayerCancelsSelectionInsteadOfStrandingTheRoom()
+        {
+            bool bots = AIController.BotsEnabled;
+            try
+            {
+                AIController.BotsEnabled = false;
+                _rpc.HostBeginCharacterSelection(); Assert.IsTrue(_rpc.CharacterSelecting);
+                _rpc.HostCompleteCharacterSelection();
+                Assert.IsFalse(_rpc.CharacterSelecting); Assert.IsFalse(_rpc.QueueMapVoting);
+                Assert.IsFalse(_session.Lobby.MatchInProgress);
+            }
+            finally { AIController.BotsEnabled = bots; }
+        }
+
+        [TestCase(0, true), TestCase(1, false)]
+        public void ObserverReceivesPreparationPhaseWithoutAcceptingGuestsOrOlderPhases(int phase, bool selecting)
+        {
+            NetAuthority.Provider = new Peer();
+            void State(ulong sender, int serial, int stage)
+            {
+                using var writer = new FastBufferWriter(32, Allocator.Temp);
+                writer.WriteValueSafe(serial); writer.WriteValueSafe(8f);
+                writer.WriteValueSafe(stage); writer.WriteValueSafe(-1);
+                for (int i = 0; i < 4; i++) writer.WriteValueSafe(-1);
+                Deliver("OnQueueVoteStateMsg", sender, writer);
+            }
+            State(99, 4, phase);
+            Assert.IsFalse(_rpc.CharacterSelecting); Assert.IsFalse(_rpc.QueueMapVoting);
+            State(NetworkManager.ServerClientId, 4, phase);
+            Assert.AreEqual(selecting, _rpc.CharacterSelecting);
+            Assert.AreEqual(!selecting, _rpc.QueueMapVoting);
+            State(NetworkManager.ServerClientId, 3, 1-phase);
+            Assert.AreEqual(selecting, _rpc.CharacterSelecting);
+            Assert.AreEqual(!selecting, _rpc.QueueMapVoting);
+        }
+
+        [Test]
+        public void HostCancellationClearsTheObserversPreparationPhase()
+        {
+            ObserveQueue();
+            using var writer = new FastBufferWriter(32, Allocator.Temp);
+            writer.WriteValueSafe(4); writer.WriteValueSafe(0f); writer.WriteValueSafe(2); writer.WriteValueSafe(-1);
+            for (int i = 0; i < 4; i++) writer.WriteValueSafe(-1);
+            Deliver("OnQueueVoteStateMsg", NetworkManager.ServerClientId, writer);
+            Assert.IsFalse(_rpc.QueueMapVoting); Assert.IsFalse(_rpc.CharacterSelecting);
+        }
+
         [TestCase(false), TestCase(true)]
         public void QueueStateRequiresExactlyItsPublishedWireLength(bool trailing)
         {
             ObserveQueue();
             using var writer = new FastBufferWriter(40, Allocator.Temp);
-            writer.WriteValueSafe(1); writer.WriteValueSafe(8f); writer.WriteValueSafe(-1);
+            writer.WriteValueSafe(1); writer.WriteValueSafe(8f); writer.WriteValueSafe(1); writer.WriteValueSafe(-1);
             for (int i = 0; i < 4; i++) writer.WriteValueSafe(i);
             if (trailing) writer.WriteValueSafe((byte)1);
             Deliver("OnQueueVoteStateMsg", NetworkManager.ServerClientId, writer);

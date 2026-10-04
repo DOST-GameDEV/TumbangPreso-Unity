@@ -46,6 +46,7 @@ namespace TumbangPreso.Visual
         {
             var look=WorldLookProfile.Current.Find(parent.gameObject.scene.name);if(look==null)return null;
             var go=new GameObject("WorldLookPresentation");go.SetActive(false);go.transform.SetParent(parent,false);
+            go.layer=parent.gameObject.layer;
             var owner=go.AddComponent<WorldLookPresentation>();owner.Look=look;owner.Floor=floor;owner._preview=preview;
             owner.Build(sun);go.SetActive(true);return owner;
         }

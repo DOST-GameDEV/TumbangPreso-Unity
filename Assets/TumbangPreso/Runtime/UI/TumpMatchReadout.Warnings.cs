@@ -19,12 +19,13 @@ namespace TumbangPreso.UI
         private void BuildWarnings()
         {
             _warningRoot=OwnerUiLayout.Rect(_root,"WarningMessage");
-            Pin(_warningRoot,new Vector2(.5f,.66f),Vector2.zero,new Vector2(620,90));
+            Pin(_warningRoot,new Vector2(.5f,.66f),Vector2.zero,new Vector2(900,48));
             _warningPlate=_warningRoot.gameObject.AddComponent<HudCard>();
-            _warningPlate.color=CourtPresentationPalette.DeepRed;_warningPlate.Radius=18;_warningPlate.raycastTarget=false;
+            var warningFill = CourtPresentationPalette.DeepRed; warningFill.a = HudDraw.Plate.a;
+            _warningPlate.color=warningFill;_warningPlate.Radius=12;_warningPlate.raycastTarget=false;
             _warningText=Ink(_warningRoot,"WarningText","",28,true);
             _warningText.horizontalOverflow=HorizontalWrapMode.Wrap;
-            OwnerUiLayout.Place(_warningText.rectTransform,24,8,572,74);
+            OwnerUiLayout.Place(_warningText.rectTransform,16,4,868,40);
             _warningRoot.gameObject.SetActive(false);
         }
 
@@ -35,6 +36,11 @@ namespace TumbangPreso.UI
             var round=GameServices.Round;
             if(local==null||spectating||round==null||!round.RoundActive||ReadyWindow||ScreenTakeover.AnyOpen)
             {_warningRoot.gameObject.SetActive(false);_warningUntil=0;return;}
+            bool hiddenPracticeCan=GuidedTraining.HasHiddenPracticeCan(local,round.Lata);
+            // The same offline exception already permits the throw. Do not report a
+            // barrier refusal for that hidden target, including a previously cached one.
+            if(hiddenPracticeCan&&_recentWarning=="CANNOT THROW - WAIT FOR CAN BARRIER")
+            {_recentWarning=null;_warningUntil=0;}
             string text=null;
             if(local.IsDefender&&round.IsTayaCampWarningActive)
                 text=round.IsTayaCampPenaltyActive&&local.CanAct()
@@ -54,7 +60,7 @@ namespace TumbangPreso.UI
                         if(Confinement.IsInsideBox(local.transform.position.x,local.transform.position.z,Balance.ConfinementRadius))
                             refusal="CANNOT THROW - MUST BE OUTSIDE DANGER ZONE";
                         else if(can!=null&&!can.IsUpright)refusal="CANNOT THROW - CAN MUST BE UPRIGHT FIRST";
-                        else if(can!=null&&can.IsProtected)refusal="CANNOT THROW - WAIT FOR CAN BARRIER";
+                        else if(can!=null&&can.IsProtected&&!hiddenPracticeCan)refusal="CANNOT THROW - WAIT FOR CAN BARRIER";
                     }
                 }
                 if(refusal==null&&local.IsDefender&&local.Intent.Pressed(Verb.Lunge)&&can!=null&&!can.IsUpright)
@@ -83,12 +89,12 @@ namespace TumbangPreso.UI
             _warningRoot.gameObject.SetActive(show);
             if(!show)return;
             _warningText.text=text;
-            float width=Mathf.Min(_statusPromptMaxWidth,Mathf.Clamp(_warningText.preferredWidth+48,400,620));
-            _warningRoot.sizeDelta=new Vector2(width,90);
-            OwnerUiLayout.Place(_warningText.rectTransform,24,8,width-48,74);
-            float height=Mathf.Max(90,_warningText.preferredHeight+16);
+            float width=Mathf.Min(_statusPromptMaxWidth,Mathf.Clamp(_warningText.preferredWidth+32,360,1100));
+            _warningRoot.sizeDelta=new Vector2(width,48);
+            OwnerUiLayout.Place(_warningText.rectTransform,16,4,width-32,40);
+            float height=Mathf.Max(48,_warningText.preferredHeight+8);
             _warningRoot.sizeDelta=new Vector2(width,height);
-            _warningText.rectTransform.sizeDelta=new Vector2(width-48,height-16);
+            _warningText.rectTransform.sizeDelta=new Vector2(width-32,height-8);
         }
     }
 }

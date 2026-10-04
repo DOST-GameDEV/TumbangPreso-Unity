@@ -1,0 +1,10 @@
+{
+  "expectedCases": 3,
+  "retryCount": 0,
+  "question": "Does every local presentation start advance identity despite clock resolution/backstep?",
+  "candidate": {
+    "Assets/TumbangPreso/Runtime/MatchDirector.Moments.cs": "31648efb2ebb4bbce7119a02095e48a99e1eb2d6c81775d44ad2c08986ea5472",
+    "Assets/TumbangPreso/Tests/LocalPresentationIdentityTests.cs": "5bea6f4beef0f71c02078746a03667a1708cfe03ec29e20d7b104d856229f15f",
+    "Assets/TumbangPreso/Tests/LocalPresentationIdentityTests.cs.meta": "f0cdeb1a795f85a98195dc71b2049df6ec87c83a5bf604f4a6214adab86c19b8"
+  }
+}

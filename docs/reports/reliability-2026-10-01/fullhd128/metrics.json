@@ -1,0 +1,4 @@
+{
+  "host": "live frame rate : frames=8662; seconds=145.227; avg=59.64; p50=59.70; p5=57.97; p1=57.97; max_ms=90.64",
+  "client": "live frame rate : frames=7865; seconds=131.664; avg=59.74; p50=59.70; p5=57.97; p1=57.97; max_ms=27.60"
+}

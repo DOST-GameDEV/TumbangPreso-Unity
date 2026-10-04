@@ -1,0 +1,21 @@
+{
+  "original": {
+    "total": 6,
+    "passed": 4,
+    "failed": 2,
+    "source": "33c3602f38226f288668017ed1b831132c39a5d9",
+    "fixtureCommit": "51025181c21e016a5c466c76e21667f2565d7fad"
+  },
+  "candidate": {
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "source": "cfff8c772bce3d1194462c24ed293924b2f5ad99",
+    "endedUtc": "2026-10-03T16:12:06Z"
+  },
+  "frozenInputs": 3400,
+  "inputDelta": [
+    "Assets/TumbangPreso/Runtime/MatchArrivalPresentation.cs"
+  ],
+  "geometryOnly": true
+}

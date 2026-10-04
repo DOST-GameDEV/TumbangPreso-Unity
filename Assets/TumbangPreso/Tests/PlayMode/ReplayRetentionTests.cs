@@ -49,12 +49,12 @@ namespace TumbangPreso.PlayTests
                 var round=GameServices.Round;var match=GameServices.Match;
                 RoundBreakFreezeTests.DrawFrame();
                 round.EndRound();match.BeginIntermission();var phase=HalftimePresentation.Instance;
-                Assert.IsTrue(phase.Active);Assert.IsFalse(phase.IsHalftime);Assert.AreEqual(5,phase.Duration);
+                Assert.IsTrue(phase.Active);Assert.IsFalse(phase.IsHalftime);Assert.AreEqual(3.5f,phase.Duration);
                 Assert.IsTrue(PresentationClock.Held);Assert.IsTrue(PresentationClock.BlocksInput);
                 Assert.IsFalse(phase.HasReplay);Assert.IsNotNull(phase.FrozenFrame);
                 double began=phase.Began;
-                while(match.RoundNumber==1&&SharedUltimatePhase.Now-began<6)yield return null;
-                Assert.AreEqual(2,match.RoundNumber);Assert.That(SharedUltimatePhase.Now-began,Is.InRange(4.9,5.5));
+                while(match.RoundNumber==1&&SharedUltimatePhase.Now-began<4.5)yield return null;
+                Assert.AreEqual(2,match.RoundNumber);Assert.That(SharedUltimatePhase.Now-began,Is.InRange(3.4,4.0));
                 while(match.RoundNumber<4){round.EndRound();match.AdvanceRound();yield return null;}
                 round.EndRound();match.BeginIntermission();
                 Assert.IsTrue(phase.IsHalftime);Assert.IsTrue(PresentationClock.Held);Assert.IsTrue(PresentationClock.BlocksInput);

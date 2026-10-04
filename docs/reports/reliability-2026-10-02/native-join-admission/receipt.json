@@ -1,0 +1,21 @@
+{
+  "baseline_source_sha256": "bcd3fc259ab230348b6c3241bc0eba925584a13c07289ee5e5afe4ddf0d15cf0",
+  "baseline_and_first_final_test_sha256": "491c5762a12bdc0ef706d162f560888d8268e6ee26840dde00c8c949480341ac",
+  "final_inputs_sha256": {
+    "Assets/TumbangPreso/Runtime/UI/LobbyJoinPanel.cs": "65040d6e5f427e7d340e1923ba0594bf9bf85591cea4b9c90b4ac016da105f10",
+    "Assets/TumbangPreso/Tests/PlayMode/TumpNativeJoinTests.cs": "bd369c0dce38910040067c7ce459effac1e3a9d94ad1a498d46f10bac8d0b784"
+  },
+  "profiles_restored_runs": [
+    "profile-preservation-b5694abbc7b8",
+    "profile-preservation-768335d485ea",
+    "profile-preservation-cc9a8dfa6f12"
+  ],
+  "baseline_session": 53471,
+  "first_final_session": 22420,
+  "bounded_fixture_repair_session": 4875,
+  "unity": "6000.5.8f1",
+  "profile": "native-join-admission1002",
+  "all_jobs_terminal": true,
+  "test_fixture_repairs": 1,
+  "live_service_calls": 0
+}

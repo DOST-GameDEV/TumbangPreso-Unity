@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,7 +30,7 @@ namespace TumbangPreso.Visual
         {
             if (!Meshes.TryGetValue(meshName, out var mesh) || mesh == null)
                 Meshes[meshName] = mesh = Resources.Load<Mesh>("Models/CheskaIce/" + meshName);
-            if (mesh == null) throw new System.InvalidOperationException("Missing Cheska ice mesh: " + meshName);
+            if (mesh == null) throw new System.InvalidOperationException("Missing Yasmin ice mesh: " + meshName);
             var go = new GameObject(name);
             go.transform.SetParent(parent,false);
             go.AddComponent<MeshFilter>().sharedMesh = mesh;

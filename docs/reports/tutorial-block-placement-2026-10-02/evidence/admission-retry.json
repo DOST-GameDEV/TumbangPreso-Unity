@@ -1,0 +1,6 @@
+{
+  "original": "Import admission refused after90s for outside Unity; no editor launched, no source/profile changes",
+  "inspection": "Native inventory after refusal shows only the two already-recognized Hub/CLI helpers, no actual Editor/player. Exact inventory retained.",
+  "action": "Retry admission once at changed observed state, retain blocker inventory on any future refusal without altering decision logic.",
+  "retry_count": 1
+}

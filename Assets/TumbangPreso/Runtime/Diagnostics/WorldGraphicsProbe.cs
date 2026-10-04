@@ -97,7 +97,12 @@ namespace TumbangPreso.Diagnostics
                     try
                     {
                         var environment=FindFirstObjectByType<Visual.EnvColourPass>();
-                        var dressing=environment.transform.Find("Dressing")??environment.transform;
+                        // Authored remade maps can already carry their finished materials
+                        // without the old runtime colour pass. Measure their actual dressing.
+                        var dressing=environment!=null?environment.transform.Find("Dressing")??environment.transform:
+                            SceneManager.GetActiveScene().GetRootGameObjects()
+                                .Select(root=>root.transform.Find("Dressing")).FirstOrDefault(root=>root!=null);
+                        if(dressing==null)throw new InvalidOperationException(map+" has no authored dressing root to measure.");
                         var renderers=dressing.GetComponentsInChildren<MeshRenderer>().Where(r=>r.enabled&&r.gameObject.activeInHierarchy).ToArray();
                         foreach(var group in renderers.GroupBy(r=>string.Join("+",r.sharedMaterials.Select(m=>m!=null?m.shader.name:"missing"))))
                             materials.AppendLine($"{map},{group.Key.Replace(',',' ')},{group.Count()},{group.Sum(r=>r.sharedMaterials.Length)},{group.SelectMany(r=>r.sharedMaterials).Distinct().Count()},{group.Count(r=>r.isPartOfStaticBatch)}");

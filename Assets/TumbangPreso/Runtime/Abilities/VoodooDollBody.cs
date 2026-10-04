@@ -26,7 +26,7 @@ namespace TumbangPreso.Abilities
     public sealed class VoodooDollBody : MonoBehaviour
     {
         /// <summary>The name over it (plan 9.7: *"Nameplate PHAISTER'S DOLL in her colour"*).</summary>
-        public const string DisplayName = "PHAISTER'S DOLL";
+        public const string DisplayName = "SORAYA'S DOLL";
 
         /// <summary>How far to her side it stands up, metres (plan 9.7, the hand-back: *"the doll stands beside her"*).</summary>
         public const float BesideHer = 1.3f;

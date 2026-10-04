@@ -147,6 +147,7 @@ namespace TumbangPreso.UI
         PhaisterVoodooDoll,
         RafiSkim,
         RafiWaterwall,
+        SeanCinderGate,
     }
 
     /// <summary>
@@ -344,6 +345,7 @@ namespace TumbangPreso.UI
                 // producing something of their own, which is exactly what that word is for, and
                 // it is the single most useful thing the tray can tell a player about either.
                 case AbilityGlyph.SeanIgnite: return "SLIPPER BUFF";
+                case AbilityGlyph.SeanCinderGate: return "CROSSING TRAP";
                 case AbilityGlyph.SeanSupernova: return "FROM ABOVE";
                 case AbilityGlyph.CheskaFrostSheet: return "GROUND ZONE";
                 case AbilityGlyph.CheskaBarricade: return "BLOCKER";
@@ -536,6 +538,12 @@ namespace TumbangPreso.UI
                         Chevron(u - 0.36f, v, 0.68f, Stroke * 1.15f),
                         Chevron(u + 0.08f, v, 0.68f, Stroke * 1.15f)),
                         RightTriangle(u + 0.62f, v, 0.30f, 0.36f));
+
+                case AbilityGlyph.SeanCinderGate:
+                    // A finite seam and a returning arrow, not a shoe buff or solid wall.
+                    return Mathf.Max(Box(u,v+.36f,.75f,.065f),Mathf.Max(
+                        Mathf.Max(Box(u+.52f,v+.20f,.055f,.20f),Box(u-.49f,v+.23f,.055f,.17f)),
+                        Mathf.Max(Box(u,v+.15f,.06f,.25f),Chevron(-v+.16f,u,.40f,Stroke))));
 
                 case AbilityGlyph.SeanIgnite:
                     // Flaming slipper / rising flame silhouette

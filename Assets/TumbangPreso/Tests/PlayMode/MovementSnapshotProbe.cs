@@ -68,7 +68,7 @@ namespace TumbangPreso.PlayTests
             foreach(string hero in new[]{"zack","sean"})
             {
                 Fresh(hero);var source=System.Kit.Skill1;
-                source.Activate(Context());source.Tick(Context(),.08f);
+                source.Activate(Context());if(hero=="sean")source.Tick(Context(),SeanHeroKit.StokeAnticipation);source.Tick(Context(),.08f);
                 Assert.Greater(((Vector3)ExternalVelocity.GetValue(_caster)).magnitude,0,"The source never launched.");
                 var state=Capture();float cooldown=source.CooldownRemaining;int charges=source.ChargesRemaining;
                 var fields=WorldEffectSnapshot.Capture();
@@ -85,7 +85,7 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(cooldown,System.Kit.Skill1.CooldownRemaining);
                 Assert.AreEqual(charges,System.Kit.Skill1.ChargesRemaining);
                 Assert.That(Capture().Remaining,Is.EqualTo(state.Remaining-.02f).Within(.001));
-                Assert.That(Capture().UntilNextEmission,Is.EqualTo(state.UntilNextEmission-.02f).Within(.001));
+                Assert.That(Capture().UntilNextEmission,Is.EqualTo(hero=="sean"?0:state.UntilNextEmission-.02f).Within(.001));
                 float remaining=System.Kit.Skill1.DurationRemaining;
                 Assert.IsTrue(System.RestoreJoiningMovement(state,0));
                 Assert.AreEqual(remaining,System.Kit.Skill1.DurationRemaining,"A repeated record extended the window.");
@@ -108,7 +108,9 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(WorldEffectSnapshot.Apply(WorldEffectSnapshot.Capture(),0));
                 ability.Tick(Context(),hero=="zack"?.30f:.10f);
                 Assert.LessOrEqual(Fields(hero,1),6,"The live cap retained dead references after a world snapshot.");
-                Assert.Greater(Fields(hero,1),0);Assert.AreEqual(1,Fields(hero,2));
+                if(hero=="sean")Assert.Zero(Fields(hero,1),"Stoke Step must not create fire fields.");
+                else Assert.Greater(Fields(hero,1),0);
+                Assert.AreEqual(1,Fields(hero,2));
                 ability.RollBackPredictedCast(Context());
                 Assert.AreEqual(0,Fields(hero,1),"Cancellation missed restored owned field objects.");
                 Assert.AreEqual(1,Fields(hero,2),"Cancellation removed another player's trail.");

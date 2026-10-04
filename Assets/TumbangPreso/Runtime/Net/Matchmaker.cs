@@ -76,6 +76,48 @@ namespace TumbangPreso.Net
         private readonly MatchmakingCandidateCache _candidates = new MatchmakingCandidateCache();
         private float _reevaluateAt = float.PositiveInfinity;
         private CancellationTokenSource _queueCancellation = new CancellationTokenSource();
+        private PlayerAccount _queuedAccount, _hookedAccount;
+        private string _queuedOwner;
+        private bool _queueOwnerCaptured;
+
+        private void OnEnable() => HookAccount();
+        private void OnDisable() => UnhookAccount();
+        private void HookAccount()
+        {
+            if (ReferenceEquals(_hookedAccount, GameServices.Account)) return;
+            UnhookAccount();
+            _hookedAccount = GameServices.Account;
+            if (_hookedAccount != null) _hookedAccount.Changed += OnAccountChanged;
+        }
+        private void UnhookAccount()
+        {
+            if (_hookedAccount != null) _hookedAccount.Changed -= OnAccountChanged;
+            _hookedAccount = null;
+        }
+        private void CaptureQueueOwner()
+        {
+            _queuedAccount = GameServices.Account;
+            _queuedOwner = CareerStore.LocalPlayerId;
+            _queueOwnerCaptured = true;
+            HookAccount();
+        }
+        private bool QueueOwnerIsCurrent()
+            => !_queueOwnerCaptured || ReferenceEquals(_queuedAccount, GameServices.Account)
+                && _queuedOwner == CareerStore.LocalPlayerId
+                && (Stake != QueueStake.Ranked || _queuedAccount != null
+                    && _queuedAccount.IsSignedIn && !_queuedAccount.IsGuest);
+        private void OnAccountChanged()
+        {
+            if (IsQueueing && !QueueOwnerIsCurrent()) RetireOwnersQueue();
+        }
+        private void RetireOwnersQueue()
+        {
+            Cancel();
+            if (_net == null) return;
+            // Normal CANCEL keeps its lobby. A different account cannot inherit this room.
+            if (_net.IsNetworked) _net.Stop();
+            else _net.CancelPendingOperation();
+        }
 
         /// <summary>
         /// How many seats the ticket needs, which is the party size.
@@ -195,6 +237,7 @@ namespace TumbangPreso.Net
         /// </summary>
         public bool StartQueue(GameMode mode, QueueStake stake, int partySize = 1)
         {
+            if (IsQueueing && !QueueOwnerIsCurrent()) RetireOwnersQueue();
             // Retire the old search before a replacement can be refused locally.
             // A completed/custom room's backfill advert belongs to that room.
             if (IsQueueing)
@@ -212,6 +255,7 @@ namespace TumbangPreso.Net
             Mode = mode;
             Stake = stake;
             PartySize = Mathf.Clamp(partySize, 1, PartyRules.MaxSize);
+            CaptureQueueOwner();
 
             var refusal = PartyRules.CanQueue(PartySize, stake, PartyCooldowns(), PartySignedIn());
             if (refusal != PartyRefusal.None)
@@ -287,6 +331,9 @@ namespace TumbangPreso.Net
             _queueCancellation.Cancel();
             _busy = false;
             State = QueueState.Cancelled;
+            _queueOwnerCaptured = false;
+            _queuedAccount = null;
+            _queuedOwner = null;
             _candidates.Clear();
             _reevaluateAt = float.PositiveInfinity;
             Elapsed = 0.0f;
@@ -306,6 +353,8 @@ namespace TumbangPreso.Net
         private void Update()
         {
             if (!IsQueueing) return;
+            HookAccount();
+            if (!QueueOwnerIsCurrent()) { RetireOwnersQueue(); return; }
 
             float before = Elapsed;
             Elapsed += Time.unscaledDeltaTime;
@@ -349,6 +398,7 @@ namespace TumbangPreso.Net
 
         private void OnDestroy()
         {
+            UnhookAccount();
             _queueAttempts.Invalidate();
             _queueCancellation.Cancel();
             _queueCancellation.Dispose();
@@ -368,6 +418,7 @@ namespace TumbangPreso.Net
         private async void Evaluate()
         {
             if (!IsQueueing || _busy || _net == null) return;
+            if (!QueueOwnerIsCurrent()) { RetireOwnersQueue(); return; }
             _reevaluateAt = float.PositiveInfinity;
 
             var adverts = new List<LobbyAdvert>();
@@ -423,8 +474,21 @@ namespace TumbangPreso.Net
             }
         }
 
+        private async Task<bool> StartConnectionAsync(Func<Task<bool>> start, JoinAttemptGate.Attempt attempt)
+        {
+            try { return await start(); }
+            catch (OperationCanceledException) { return false; }
+            catch (Exception error)
+            {
+                if (this != null && attempt.CanContinue)
+                    Debug.LogWarning($"[Queue] connection startup failed: {error.Message}");
+                return false;
+            }
+        }
+
         private async Task JoinAsync(ServerQuery.Entry entry, Func<Task<bool>> startJoin)
         {
+            if (!_queueOwnerCaptured) CaptureQueueOwner();
             var attempt = _queueAttempts.Begin();
             string attemptedLobby = entry.Id, attemptedRelay = entry.RelayCode;
             _busy = true;
@@ -438,8 +502,9 @@ namespace TumbangPreso.Net
                 // to a third player, and the lobby draws it from `LobbySession.JoinCode`.
                 if (!string.IsNullOrEmpty(entry.JoinCode)) _net.Lobby.SetJoinCode(entry.JoinCode);
 
-                bool ok = await startJoin();
+                bool ok = await StartConnectionAsync(startJoin, attempt);
                 if (this == null || !attempt.CanContinue) return;
+                if (!QueueOwnerIsCurrent()) { RetireOwnersQueue(); return; }
 
                 if (ok)
                 {
@@ -472,6 +537,7 @@ namespace TumbangPreso.Net
 
         private async Task HostAsync(Func<Task<bool>> startHost)
         {
+            if (!_queueOwnerCaptured) CaptureQueueOwner();
             var attempt = _queueAttempts.Begin();
             _busy = true;
 
@@ -482,14 +548,16 @@ namespace TumbangPreso.Net
                     State = QueueState.Hosting;
                     Raise();
 
-                    bool ok = await startHost();
+                    bool ok = await StartConnectionAsync(startHost, attempt);
                     if (this == null || !attempt.CanContinue) return;
+                    if (!QueueOwnerIsCurrent()) { RetireOwnersQueue(); return; }
 
                     if (!ok)
                     {
                         // ⚠️ THE QUEUE KEEPS LOOKING RATHER THAN DYING. A machine with no route to
                         // Relay can still be found by somebody else on its LAN, and the search
                         // costs nothing while it waits.
+                        _reevaluateAt = Time.unscaledTime + (float)MatchmakingCandidateCache.RetrySeconds;
                         State = QueueState.Searching;
                         Raise();
                         return;
@@ -579,7 +647,7 @@ namespace TumbangPreso.Net
         private int[] PartyCooldowns() => new[] { LocalCooldownSeconds() };
 
         private bool[] PartySignedIn()
-            => new[] { GameServices.Account != null && GameServices.Account.IsSignedIn };
+            => new[] { GameServices.Account != null && GameServices.Account.IsSignedIn && !GameServices.Account.IsGuest };
 
         private void Raise() => Changed?.Invoke();
 

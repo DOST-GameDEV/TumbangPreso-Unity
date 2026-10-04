@@ -1,0 +1,36 @@
+{
+  "job": {
+    "id": "66a731dc80484ac2936d2ff31314f619",
+    "ownerPid": 600,
+    "guardPid": null,
+    "unityPids": [],
+    "createdUtc": "2026-10-02T19:20:16Z",
+    "kind": "build",
+    "memoryMb": 3072,
+    "reserveMb": 2048,
+    "project": "c:\\users\\matth\\documents\\codex\\work\\tump-competition-release1002",
+    "library": "c:\\users\\matth\\documents\\codex\\work\\tump-competition-release1002\\library",
+    "profile": "competition-candidate1003a",
+    "prefHive": "software\\unity\\unityeditor\\bh studios\\tumbang preso",
+    "ports": [],
+    "worker": false,
+    "allowParallel": false,
+    "companyName": "BH Studios",
+    "productName": "Tumbang Preso"
+  },
+  "requestedUtc": "2026-10-02T19:20:16Z",
+  "status": "completed",
+  "exitCode": 0,
+  "admission": {
+    "availableMb": 7324,
+    "activeJobsBefore": 0,
+    "acquiredUtc": "2026-10-02T19:20:16Z"
+  },
+  "startedUtc": "2026-10-02T19:20:16Z",
+  "guardPid": 16580,
+  "endedUtc": "2026-10-02T19:23:49Z",
+  "guardTerminal": true,
+  "preservationCompleted": true,
+  "availableMbAtEnd": 7981,
+  "leaseHeld": false
+}

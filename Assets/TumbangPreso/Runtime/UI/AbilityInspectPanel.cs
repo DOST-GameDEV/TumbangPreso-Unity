@@ -44,6 +44,7 @@ namespace TumbangPreso.UI
 
         private float _open;          // 0 closed, 1 open
         private HeroKit _boundKit;
+        private HeroAbility _boundRoleAbility;
 
         private sealed class Card
         {
@@ -384,9 +385,12 @@ namespace TumbangPreso.UI
 
         public void Bind(HeroKit kit)
         {
-            if (kit == null || kit == _boundKit) return;
+            if (kit == null || (kit == _boundKit && kit.Skill2 == _boundRoleAbility)) return;
 
             _boundKit = kit;
+            // A round can change the role without replacing the kit object.
+            // Recall must describe the ability actually available in that role.
+            _boundRoleAbility = kit.Skill2;
             Color hero = UiTheme.ColorForHero(kit.HeroId);
             _title.text = (kit.HeroName + "  ·  HERO POWERS").ToUpperInvariant();
             _title.color = hero;

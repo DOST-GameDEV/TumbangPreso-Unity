@@ -123,5 +123,148 @@ namespace TumbangPreso.PlayTests
             ctx.Motor.Intent.AimPoint=Vector3.left*5;kit.Skill2.Tick(ctx,.1f);yield return null;
             Assert.IsFalse(line.enabled);Assert.IsFalse(target.IsZapped);
         }
+
+        [UnityTest, Timeout(120000)] public IEnumerator AcceptedCastPlaysAuthoredBodyAndPreservesContactTiming()
+            => ReviewCast(false);
+        [UnityTest, Timeout(120000)] public IEnumerator OwnerGestureActuallyMovesAndTellUsesTheVisiblePalm()
+            => ReviewCast(true);
+
+        [UnityTest, Timeout(120000)] public IEnumerator WalkingDuringAcquisitionKeepsTheLegGaitActive()
+        {
+            var ctx = Stage(out var kit, out var target);
+            var motor = ctx.Motor; motor.Mode = GameMode.HeroStrike;
+            motor.CharacterIndex = Roster.IndexIn(Roster.HeroPeople, "zack");
+            var art = Resources.Load<RosterEntryAsset>("Roster/person_zack");
+            var visual = motor.gameObject.AddComponent<CharacterVisual>();
+            visual.ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
+            motor.enabled = true;
+            for (int step = 0; step < 25 && !motor.IsGrounded; step++) yield return new WaitForFixedUpdate();
+            Assert.IsTrue(motor.IsGrounded, "The physical walking fixture never reached its floor.");
+            var body = motor.GetComponent<CharacterAnimator>();
+            var gait = typeof(CharacterAnimator).GetField("_gaitWeight", BindingFlags.Instance | BindingFlags.NonPublic);
+            var leg = System.Array.Find(visual.Model.GetComponentsInChildren<Transform>(true), t => t.name == "leg-left");
+            var start = motor.transform.position; var rest = leg.localRotation;
+            motor.Intent.Move = Vector2.right;
+            Assert.AreEqual(HeroKit.CastOutcome.Cast, motor.AbilitySystem.ApplyNetworkCast(HeroAbilitySystem.Slot.Skill2,
+                motor.transform.position, motor.transform.forward, motor.Intent.AimPoint, 0, true));
+            float maxGait = 0, maxLeg = 0; bool observedCast = false;
+            for (int step = 0; step < 25; step++)
+            {
+                yield return new WaitForFixedUpdate();
+                kit.Skill2.Tick(ctx, Time.fixedDeltaTime);
+                if (body.CurrentClipName != "hero-zack-circuit" || !body.IsPlayingAction) continue;
+                observedCast = true;
+                maxGait = Mathf.Max(maxGait, (float)gait.GetValue(body));
+                maxLeg = Mathf.Max(maxLeg, Quaternion.Angle(rest, leg.localRotation));
+            }
+            motor.Intent.Move = Vector2.zero;
+            Assert.IsTrue(observedCast);
+            Assert.Greater(Vector3.Distance(start, motor.transform.position), .5f, "The caster did not actually walk.");
+            Assert.Greater(maxGait, .8f, "An aiming-only gesture suppressed walking legs while the motor kept moving.");
+            Assert.Greater(maxLeg, 10, "The active gait layer did not animate the actual leg.");
+        }
+
+        private IEnumerator ReviewCast(bool ownerView)
+        {
+            var ctx = Stage(out var kit, out var target);
+            var motor = ctx.Motor; motor.Mode = GameMode.HeroStrike;
+            motor.CharacterIndex = Roster.IndexIn(Roster.HeroPeople, "zack");
+            var visual = motor.gameObject.AddComponent<CharacterVisual>();
+            var art = Resources.Load<RosterEntryAsset>("Roster/person_zack");
+            visual.ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
+            var priorRate = Time.captureFramerate;
+            var priorAmbient = RenderSettings.ambientLight;
+            var priorSeat = GameLaunch.SoloSeat; var priorBots = GameLaunch.AllBots;
+            var priorSpectator = GameLaunch.Spectator;
+            var priorReduced = Settings.SettingsStore.Current.ReducedUiMotion;
+            try
+            {
+                Time.captureFramerate = 60;
+                GameLaunch.SoloSeat = motor.PlayerSlot; GameLaunch.AllBots = false; GameLaunch.Spectator = false;
+                Settings.SettingsStore.Current.ReducedUiMotion = false;
+                if (ownerView)
+                {
+                    var owner = Track(new GameObject("Circuit owner camera")); owner.tag = "MainCamera";
+                    var rig = owner.AddComponent<CameraSystem.CameraRig>();
+                    rig.Follow(motor, true);
+                    rig.SetAimSource(CameraSystem.AimSource.Movement);
+                }
+                yield return null; yield return null;
+                yield return null;
+                var body = motor.GetComponentInChildren<CharacterAnimator>();
+                Assert.IsNotNull(body);
+                var arm = System.Array.Find(visual.Model.GetComponentsInChildren<Transform>(true), t => t.name == "arm-left");
+                Assert.IsNotNull(arm);
+                var neutral = arm.localRotation;
+                var skin = visual.Model.GetComponentInChildren<SkinnedMeshRenderer>();
+                int armIndex = System.Array.FindIndex(skin.bones, b => b == arm);
+                Assert.IsTrue(CharacterVisual.PalmCentre(skin, armIndex, out var palm));
+                var ownerArms = ownerView ? Object.FindFirstObjectByType<CameraSystem.ViewmodelArms>() : null;
+                if (ownerView)
+                {
+                    Assert.IsNotNull(ownerArms);
+                    Assert.AreSame(motor, ownerArms.BoundCharacter);
+                }
+                var ownerHand = ownerArms != null ? ownerArms.LeftHandForProps() : null;
+                if (ownerView) Assert.IsNotNull(ownerHand);
+                var ownerNeutral = ownerHand != null ? ownerHand.localRotation : Quaternion.identity;
+                float largestOwnerAngle = 0; bool sawOwnerAction = false;
+                var actionField = typeof(CameraSystem.ViewmodelArms).GetField("_actionName", BindingFlags.Instance | BindingFlags.NonPublic);
+                var camera = Track(new GameObject("Circuit body observer")).AddComponent<Camera>();
+                camera.enabled = false; camera.fieldOfView = 42;
+                camera.transform.position = motor.transform.position + new Vector3(2.4f, 1.5f, 3.3f);
+                camera.transform.LookAt(motor.transform.position + Vector3.up * .8f);
+                var sun = Track(new GameObject("Circuit stage light")).AddComponent<Light>();
+                sun.type = LightType.Directional; sun.transform.rotation = Quaternion.Euler(40, -30, 0);
+                RenderSettings.ambientLight = new Color(.55f, .57f, .62f);
+                var system = motor.AbilitySystem;
+                Assert.AreEqual(HeroKit.CastOutcome.Cast, system.ApplyNetworkCast(HeroAbilitySystem.Slot.Skill2,
+                    motor.transform.position, motor.transform.forward, motor.Intent.AimPoint, 0, true));
+                bool sawAction = false; float largestAngle = 0;
+                float largestHandGap = 0; bool sawHandTell = false;
+                string directory = System.Environment.GetEnvironmentVariable("TUMP_CIRCUIT_CAPTURE");
+                for (int frame = 0; frame < 48; frame++)
+                {
+                    sawAction |= body.CurrentClipName == "hero-zack-circuit";
+                    largestAngle = Mathf.Max(largestAngle, Quaternion.Angle(neutral, arm.localRotation));
+                    if (ownerView)
+                    {
+                        largestOwnerAngle = Mathf.Max(largestOwnerAngle, Quaternion.Angle(ownerNeutral, ownerHand.localRotation));
+                        sawOwnerAction |= (string)actionField.GetValue(ownerArms) == "closed-circuit";
+                    }
+                    var tell = motor.GetComponentInChildren<ZackCircuitTell>()?.GetComponent<LineRenderer>();
+                    if (frame > 1 && tell != null && tell.enabled)
+                    {
+                        sawHandTell = true;
+                        var expectedPalm = ownerView ? ownerHand.TransformPoint(ownerArms.LeftPalmOffset()) : arm.TransformPoint(palm);
+                        largestHandGap = Mathf.Max(largestHandGap, Vector3.Distance(tell.GetPosition(0), expectedPalm));
+                    }
+                    if (frame == 22) Assert.IsFalse(target.IsZapped, "Contact happened before acquisition completed.");
+                    kit.Skill2.Tick(ctx, 1f / 60);
+                    if (!string.IsNullOrEmpty(directory) && SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null)
+                        yield return GameplayShots.Render(camera, "body-" + frame.ToString("D3"), false, directory, motor, 640, 360);
+                    else yield return null;
+                }
+                Assert.IsTrue(sawAction, "Accepted cast never reached the registered body clip.");
+                if (ownerView)
+                {
+                    Assert.IsTrue(sawOwnerAction, "The confirmation bridge did not dispatch the dedicated owner gesture.");
+                    Assert.Greater(largestOwnerAngle, 10, "The visible owner hand did not actually perform its gesture.");
+                }
+                Assert.IsTrue(sawHandTell, "No active hand-attached acquisition tell was observed.");
+                Assert.Less(largestHandGap, .08f, "The acquisition line must follow the moving casting palm.");
+                Assert.Greater(largestAngle, 30, "The registered action did not actually animate its arm.");
+                Assert.IsTrue(target.IsZapped);
+                Assert.That(target.ZappedLeft, Is.EqualTo(2).Within(.001f));
+                Assert.IsTrue(motor.CanAct(), "Presentation must not add a movement lock.");
+                Assert.IsFalse(body.IsPlayingAction, "Acquisition gesture did not recover.");
+            }
+            finally
+            {
+                Time.captureFramerate = priorRate; RenderSettings.ambientLight = priorAmbient;
+                GameLaunch.SoloSeat = priorSeat; GameLaunch.AllBots = priorBots; GameLaunch.Spectator = priorSpectator;
+                Settings.SettingsStore.Current.ReducedUiMotion = priorReduced;
+            }
+        }
     }
 }

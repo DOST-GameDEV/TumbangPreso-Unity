@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 08:08:09Z" end-time="2026-10-04 08:08:09Z" duration="0.155628">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1314" result="Failed" site="Child" start-time="2026-10-04 08:08:09Z" end-time="2026-10-04 08:08:09Z" duration="0.155628" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2615" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1314" result="Failed" site="Child" start-time="2026-10-04 08:08:09Z" end-time="2026-10-04 08:08:09Z" duration="0.142228" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="7932" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2616" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1314" result="Failed" site="Child" start-time="2026-10-04 08:08:09Z" end-time="2026-10-04 08:08:09Z" duration="0.137800" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2617" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1314" result="Failed" site="Child" start-time="2026-10-04 08:08:09Z" end-time="2026-10-04 08:08:09Z" duration="0.133662" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1248" name="CareerRefreshOrderingTests" fullname="TumbangPreso.Tests.CareerRefreshOrderingTests" classname="TumbangPreso.Tests.CareerRefreshOrderingTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-04 08:08:09Z" end-time="2026-10-04 08:08:09Z" duration="0.102500" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1249" name="OlderRefreshCannotEraseAcknowledgedCareer" fullname="TumbangPreso.Tests.CareerRefreshOrderingTests.OlderRefreshCannotEraseAcknowledgedCareer" methodname="OlderRefreshCannotEraseAcknowledgedCareer" classname="TumbangPreso.Tests.CareerRefreshOrderingTests" runstate="Runnable" seed="1582564251" result="Failed" start-time="2026-10-04 08:08:09Z" end-time="2026-10-04 08:08:09Z" duration="0.073073" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 420
+  But was:  77
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.CareerRefreshOrderingTests.OlderRefreshCannotEraseAcknowledgedCareer () [0x0015c] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\CareerRefreshOrderingTests.cs:75
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1250" name="OrdinaryRefreshStillAdoptsServerCareer" fullname="TumbangPreso.Tests.CareerRefreshOrderingTests.OrdinaryRefreshStillAdoptsServerCareer" methodname="OrdinaryRefreshStillAdoptsServerCareer" classname="TumbangPreso.Tests.CareerRefreshOrderingTests" runstate="Runnable" seed="1254212445" result="Passed" start-time="2026-10-04 08:08:09Z" end-time="2026-10-04 08:08:09Z" duration="0.004645" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1251" name="OrdinarySubmissionStillAcknowledgesCareer" fullname="TumbangPreso.Tests.CareerRefreshOrderingTests.OrdinarySubmissionStillAcknowledgesCareer" methodname="OrdinarySubmissionStillAcknowledgesCareer" classname="TumbangPreso.Tests.CareerRefreshOrderingTests" runstate="Runnable" seed="1092395069" result="Passed" start-time="2026-10-04 08:08:09Z" end-time="2026-10-04 08:08:09Z" duration="0.007709" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

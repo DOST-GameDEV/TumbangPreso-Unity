@@ -1,0 +1,5 @@
+{
+  "path": "Assets/TumbangPreso/Tests/PlayMode/HubAdmissionTests.cs",
+  "sha256": "803719966CDBC17D9867B27143149C8682553974E13688AD7A7BF86CC59E49DA",
+  "note": "Packaged after native execution; admission case body and setup unchanged; class renamed and two pre-dispatch fixture failures retired."
+}

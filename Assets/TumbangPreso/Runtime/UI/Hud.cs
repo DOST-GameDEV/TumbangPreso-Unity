@@ -166,7 +166,6 @@ namespace TumbangPreso.UI
         /// make a clean 10 Hz burst flicker. 0.14 s against the 0.10 s cap means a player at the
         /// cap holds the bar popped continuously, which is what "you are doing this right" wants
         /// to look like.</summary>
-        private const float MashPopSeconds = 0.14f;
         private string _getUpShown = "";
 
         // § THE STUN BREAK CARD. See `BuildStunBreakCard` for why it is pips and not a bar.
@@ -635,8 +634,8 @@ namespace TumbangPreso.UI
             if (_nativeReadout != null)
             {
                 GameServices.Audio?.PlayUi(tick == "GO!" ? "countdown_go" : "countdown_tick");
-                if (tick != "GO!" && GameServices.Music != null && GameServices.Music.Current != "match")
-                    GameServices.Music.Play("match", GameServices.MatchTrack);
+                if (tick != "GO!" && GameServices.Music != null && GameServices.Music.Current != GameServices.ArenaMusicCue)
+                    GameServices.Music.Play(GameServices.ArenaMusicCue, GameServices.ArenaTrack);
                 _nativeReadout.Countdown(tick); return;
             }
             if (_countdown == null) return;
@@ -660,9 +659,9 @@ namespace TumbangPreso.UI
             // late by the length of the countdown. 🧑 2026-08-01: *"Remove the audio latency
             // during round initialization. RoundMusic should begin playing immediately."*
             if (tick != "GO!" && GameServices.Music != null
-                && GameServices.Music.Current != "match")
+                && GameServices.Music.Current != GameServices.ArenaMusicCue)
             {
-                GameServices.Music.Play("match", GameServices.MatchTrack);
+                GameServices.Music.Play(GameServices.ArenaMusicCue, GameServices.ArenaTrack);
             }
 
             _countdown.enabled = true;
@@ -2545,96 +2544,15 @@ namespace TumbangPreso.UI
         private void UpdateGetUpPrompt()
         {
             if (_getUpCard == null) return;
-
-            // ⚠️ THE CARD FOLLOWS `IsTripped`, NOT `CanMashUp`. The old prompt returned early
-            // once the mash hit `Balance.MinTripDown`, so the feedback vanished for the last
-            // 0.9 s of every fall: the player was still on the floor, still unable to act, and
-            // the screen had gone quiet again. That gap is most of what "nothing happened" was.
-            if (_local == null || !_local.IsTripped)
-            {
-                if (_getUpCard.gameObject.activeSelf)
-                {
-                    _getUpCard.gameObject.SetActive(false);
-                    _getUpShown = "";
-                    if (_getUpBarRt != null) _getUpBarRt.localScale = Vector3.one;
-                }
-                return;
-            }
-
-            if (!_getUpCard.gameObject.activeSelf) _getUpCard.gameObject.SetActive(true);
-
-            // Two phases, because the fall genuinely has two. While there is slack above the
-            // floor, pressing buys time and the prompt asks for presses. Below it nothing more
-            // can be bought and the prompt stops asking, which is the rule `CanMashUp` already
-            // states: a prompt that keeps demanding presses it will not honour teaches the
-            // player that mashing does not work.
-            bool buying = _local.CanMashUp;
-
-            if (OnTouch && buying) InputLayer.TouchHud.Emphasise(Verb.Jump);
-
-            string text = buying
-                ? MashVerb("Jump") + (_local.IsEdgeRecovering?" TO CLIMB":" TO GET UP")
-                : _local.IsEdgeRecovering?"CLIMBING UP":"GETTING UP";
-
-            // ⚠️ THE STRING IS ONLY REBUILT WHEN IT CHANGES. A HUD string rebuilt every frame
-            // once cost the 6x behaviour probe an eighth of its frames and most of its physics
-            // steps; that finding is recorded in `CLAUDE.md` § 7.1 and this is the same shape of
-            // code in the same file.
-            if (text != _getUpShown)
-            {
-                _getUpShown = text;
-                _getUpLabel.text = text;
-                _getUpLabel.color = buying ? UiTheme.Cream : UiTheme.Amber;
-            }
-
-            // ⚠️⚠️ THE BAR IS A MASH METER NOW, NOT A CLOCK, AND THAT INVERSION IS THE WHOLE
-            // FIX. 🧑, 2026-08-26, off the played build: *"progress bar increases on its own when
-            // u trip (not supposed to happen) and if i mash, the progress pauses (opposite of
-            // what i want)"*. He was reading it exactly right. This line used to be
-            // `1 - TripLeft / TripTotal`, which is ELAPSED TIME: it filled at the passive bleed
-            // whatever the player did, and a press only steepened a slope that was already
-            // moving. Two bars in two colours were added to explain that and it did not help,
-            // because the thing being explained was still a countdown.
-            //
-            // ⚠️ SO THE ONLY INPUT IS `MashRemoved`. It is written in exactly one place,
-            // `CharacterMotor.MashRecover`, and only by a press that `Combat.MashRecover`
-            // ACCEPTED. Nothing else in the game can move this bar by a pixel, which is the
-            // property he asked for stated as code rather than as a colour convention.
-            //
-            // ⚠️⚠️ THE DENOMINATOR IS THE WHOLE MASHABLE SLACK, `TripTotal - MinTripDown`, AND
-            // IT IS FIXED FOR THE FALL. It is 2.15 s on a 2.50 s trip. Dividing by what is
-            // CURRENTLY still buyable was the obvious alternative and it was wrong twice: it
-            // went to zero when the passive bleed reached the floor on its own (that bleed is
-            // deleted as of 2026-08-26, see below) and it would let the bar creep as the
-            // denominator shrank, which is the exact behaviour being removed.
-            // Fixed means the bar reaching 1.0 and the body standing up are the SAME EVENT:
-            // the last accepted press is the one that puts `TripLeft` on the floor, so the fill
-            // completes exactly as the get-up clip starts.
-            //
-            // ⚠️⚠️ AND AS OF 2026-08-26 THAT IS A GUARANTEE RATHER THAN A COINCIDENCE. Nothing
-            // else ends a fall any more: `Balance.TripPassiveDecayRate` is deleted, and the
-            // stranding guard in `CharacterMotor` credits the whole remaining slack to
-            // `MashRemoved` on its way out. 🧑: *"sometimes i get up with it still at middle or
-            // when i only clicked once"*. That frame is now unreachable.
-            float slack = Mathf.Max(0.01f, _local.TripTotal - Balance.MinTripDown);
-            _getUpFill.fillAmount = Mathf.Clamp01(_local.MashRemoved / slack);
-
-            // Amber once the presses have done all they can, so the colour change and the
-            // wording agree that the player has stopped being able to help.
-            _getUpFill.color = buying ? UiTheme.Offense : UiTheme.Amber;
-
-            // ⚠️⚠️ THE POP IS THE ONLY THING THAT SEPARATES A DEAD PRESS FROM A REAL ONE.
-            // `Combat.MashRecover` refuses a press inside `Balance.MashCooldown` and changes
-            // nothing, so without this a player mashing above 10 Hz watched most of their
-            // presses vanish and read the rate cap as a punishment for mashing. A press that
-            // counted moves the bar; the pop makes that visible even when the movement is
-            // 0.20 s out of 2.50.
-            if (_getUpBarRt != null)
-            {
-                float sincePress = Time.time - _local.LastMashAcceptedTime;
-                float pop = Mathf.Clamp01(1.0f - sincePress / MashPopSeconds);
-                _getUpBarRt.localScale = new Vector3(1.0f, 1.0f + 0.35f * pop * pop, 1.0f);
-            }
+            bool active = _local != null && _local.IsTripped;
+            _getUpCard.gameObject.SetActive(active);
+            if (!active) { _getUpShown = ""; return; }
+            string text = _local.IsEdgeRecovering ? "CLIMBING UP" : "GETTING UP";
+            if (text != _getUpShown) { _getUpShown = text; _getUpLabel.text = text; }
+            _getUpLabel.color = UiTheme.Amber;
+            _getUpFill.fillAmount = 1-Mathf.Clamp01(_local.TripLeft/Mathf.Max(.01f,_local.TripTotal));
+            _getUpFill.color = UiTheme.Amber;
+            if (_getUpBarRt != null) _getUpBarRt.localScale = Vector3.one;
         }
 
         private void UpdateToast(float dt)
@@ -3794,7 +3712,7 @@ namespace TumbangPreso.UI
 
             _getUpLabel = HudLabel(group.transform, "GetUpLabel", 30, UiTheme.Cream,
                                    TextAnchor.MiddleCenter);
-            _getUpLabel.text = "MASH TO GET UP";
+            _getUpLabel.text = "GETTING UP";
             _getUpLabel.gameObject.AddComponent<LayoutElement>().minHeight = 40.0f;
 
             // The bar. Same two-part build as the status rows: a sunk plate, and a horizontal
@@ -3870,7 +3788,7 @@ namespace TumbangPreso.UI
 
             _stunLabel = HudLabel(group.transform, "StunBreakLabel", 30, UiTheme.Cream,
                                   TextAnchor.MiddleCenter);
-            _stunLabel.text = "BREAK FREE";
+            _stunLabel.text = "STUNNED";
             _stunLabel.gameObject.AddComponent<LayoutElement>().minHeight = 40.0f;
 
             var rowGo = new GameObject("StunPipRow", typeof(RectTransform));
@@ -3919,66 +3837,11 @@ namespace TumbangPreso.UI
         /// </summary>
         private void UpdateStunBreakPrompt()
         {
-            if (_stunCard == null) return;
-
-            var element = _local != null ? _local.StunElement : StunElement.None;
-
-            if (_local == null || element == StunElement.None)
-            {
-                if (_stunCard.gameObject.activeSelf)
-                {
-                    _stunCard.gameObject.SetActive(false);
-                    _stunShown = "";
-                }
-                return;
-            }
-
-            if (!_stunCard.gameObject.activeSelf) _stunCard.gameObject.SetActive(true);
-
-            var coat = Visual.StunCoat.For(element);
-            bool buying = _local.CanMashOutOfStun;
-
-            // ⚠️ THE VERB IS THE ELEMENTS, WHICH IS WHY `StunCoat` CARRIES ONE. "BREAK FREE"
-            // over a body encased in ice says less than "SHATTER THE ICE", and the element is
-            // already being tracked through the stun for the coat, so naming it costs nothing.
-            if (OnTouch && buying) InputLayer.TouchHud.Emphasise(Verb.Jump);
-
-            string text = buying
-                ? (OnTouch ? coat.Verb : coat.Verb + "  [" + KeyLabel("Jump") + "]")
-                : "BREAKING FREE";
-
-            // ⚠️ ONLY REBUILT WHEN IT CHANGES. A HUD string rebuilt every frame once cost the
-            // 6x behaviour probe an eighth of its frames (`CLAUDE.md` section 7.1), and this runs
-            // on every frame of every stun.
-            if (text != _stunShown)
-            {
-                _stunShown = text;
-                _stunLabel.text = text;
-                _stunLabel.color = buying ? UiTheme.Cream : UiTheme.Amber;
-            }
-
-            int need = Mathf.Clamp(_local.StunBreakPresses,
-                                   Balance.StunBreakPressesMin, Balance.StunBreakPressesMax);
-            int done = Mathf.Clamp(_local.StunMashPresses, 0, need);
-
-            for (int i = 0; i < _stunPips.Count; i++)
-            {
-                var pip = _stunPips[i];
-                if (pip == null) continue;
-
-                // Pips past what this stun costs are switched OFF, not dimmed. The row is meant
-                // to be counted at a glance, and fourteen shapes of which five matter is not a
-                // count, it is a puzzle.
-                bool used = i < need;
-                if (pip.gameObject.activeSelf != used) pip.gameObject.SetActive(used);
-                if (!used) continue;
-
-                // ⚠️ FILLED PIPS TAKE THE ELEMENTS RIM COLOUR, so the card and the body the
-                // player is now looking at in third person are obviously the same event.
-                pip.color = i < done
-                    ? coat.Rim
-                    : new Color(UiTheme.Ink.r, UiTheme.Ink.g, UiTheme.Ink.b, 0.55f);
-            }
+            // Frozen and elemental stuns expire automatically. Their existing
+            // status indicators replace this retired recovery action surface.
+            if (_stunCard != null) _stunCard.gameObject.SetActive(false);
+            foreach (var pip in _stunPips) if (pip != null) pip.gameObject.SetActive(false);
+            _stunShown = "";
         }
 
         private void BuildStatusStacks()
@@ -5107,6 +4970,7 @@ namespace TumbangPreso.UI
             if (sprite != null && card.KeyGlyph != null)
             {
                 card.KeyGlyph.sprite = sprite;
+                card.KeyGlyph.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, InputGlyphs.PromptWidth(sprite, 20));
                 card.KeyGlyph.enabled = true;
                 card.Key.text = string.Empty;
                 return;

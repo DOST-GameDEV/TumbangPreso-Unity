@@ -56,6 +56,9 @@ namespace TumbangPreso.CameraSystem
             { "thrust-fire", new CastPath(.22f, false,
                 Rest(0), K(.12f, .03f, -.10f, -.14f, .06f, .12f, -.10f),
                 K(.22f, -.05f, .02f, .30f, .06f, .16f, -.12f), K(.37f, -.05f, .02f, .28f, .06f, .15f, -.10f), Rest(.70f)) },
+            { "cinder-draw", new CastPath(.35f, false,
+                Rest(0), K(.12f,.20f,-.06f,.04f,-.04f,.12f,-.03f),
+                K(.35f,-.16f,-.10f,.28f,.06f,.18f,-.08f), K(.46f,-.14f,-.09f,.24f,.06f,.16f,-.06f), Rest(.75f)) },
             // IGNITION CANNON. Loading the throw: the slipper comes back to the shoulder and the free hand
             // comes across and cups over it, his lantern maker's care; held while it catches, then released.
             { "ignite", new CastPath(.28f, false,
@@ -68,17 +71,26 @@ namespace TumbangPreso.CameraSystem
                 K(.65f, -.14f, -.18f, .20f, .20f, .08f, .20f), K(.85f, -.13f, -.16f, .19f, .19f, .09f, .19f), Rest(1.2f)) },
 
             // ---------------------------------------------------------------- ZACK: sideways, bladed
-            // BOLT SPRINT. A skater's arms: the right swings across and back, the left counters, twice,
-            // quick and lateral. Locomotion, so no impact frame; `Contact` is the first push.
-            { "sprint-electric", new CastPath(.12f, true,
-                Rest(0), K(.12f, -.18f, .06f, .06f, -.06f, .16f, -.06f), K(.26f, .10f, -.04f, -.04f, .14f, .30f, .08f),
-                K(.40f, -.16f, .05f, .05f, -.04f, .18f, -.04f), K(.54f, .06f, -.02f, -.02f, .08f, .22f, .04f), Rest(.70f)) },
+            // QUICK CIRCUIT. Gather close, brace once at the .15s tell, recover.
+            // Small offsets keep the held shoe readable during either lateral cut.
+            { "sprint-electric", new CastPath(.15f, false,
+                Rest(0), K(.08f, -.04f, .02f, -.02f, .03f, .10f, -.02f),
+                K(.15f, .08f, -.03f, -.06f, -.06f, .18f, -.05f),
+                K(.28f, .06f, -.02f, -.04f, -.04f, .14f, -.03f),
+                K(.46f, .02f, 0, -.01f, -.01f, .05f, -.01f), Rest(.64f)) },
             // MAGNET. The off hand aims out at the slipper, then the right snaps in to the chest as it
             // arrives, with one electrical chatter before it lets go.
             { "overcharge", new CastPath(.30f, false,
                 Rest(0), K(.14f, .02f, .02f, .04f, -.12f, .42f, .22f), K(.22f, .03f, .02f, .06f, -.14f, .44f, .24f),
                 K(.30f, -.08f, .10f, -.14f, -.06f, .36f, .10f), K(.36f, -.07f, .11f, -.13f, -.06f, .36f, .10f),
                 K(.42f, -.09f, .10f, -.14f, -.06f, .35f, .10f), Rest(.73f)) },
+            // BANK SHOT. The shoe is already held: offer its surface, brush the charge,
+            // then withdraw. No distant reach or recall motion.
+            { "bank-load", new CastPath(.28f, false,
+                Rest(0), K(.08f, .01f, .025f, .01f, .04f, .10f, .02f),
+                K(.18f, -.025f, .065f, .055f, .18f, .30f, .14f),
+                K(.28f, -.020f, .060f, .050f, .24f, .28f, .17f),
+                K(.42f, -.008f, .025f, .020f, .10f, .12f, .06f), Rest(.64f)) },
             // THUNDERSTRIKE. One arm calls the sky and HOLDS ("hold to pick a spot"), then snaps down level
             // to point at it while the left is thrown back as the counterweight; chatter after.
             { "summon-lightning", new CastPath(.45f, false,
@@ -89,24 +101,45 @@ namespace TumbangPreso.CameraSystem
             // ---------------------------------------------------------------- DANTE: down and wide
             // SEISMIC STOMP. Fists come up short, never overhead, then hammer down and OUT to the sides
             // with the stomp; a heavy hold and a slow recovery.
+            // A small lift catches real shoe weight; the free arm counterbalances.
+            { "boulder-load", new CastPath(.32f, false,
+                Rest(0), K(.14f, .03f, .05f, .04f, -.05f, .02f, .02f),
+                K(.32f, .04f, -.10f, .08f, -.08f, .06f, .03f),
+                K(.43f, .04f, -.08f, .07f, -.07f, .05f, .03f),
+                K(.60f, .02f, -.02f, .03f, -.03f, .02f, .01f), Rest(.88f)) },
             { "stomp-heavy", new CastPath(.30f, false,
                 Rest(0), K(.18f, .06f, .22f, .02f, -.02f, .42f, .02f),
                 K(.30f, .12f, -.22f, .10f, -.14f, .02f, .10f), K(.50f, .11f, -.20f, .09f, -.13f, .03f, .09f), Rest(.75f)) },
+            // BASTION. One shoulder leads the draw; both hands set the field low and forward.
+            { "bastion-brace", new CastPath(.28f, false,
+                Rest(0), K(.12f, .06f, -.03f, -.05f, -.03f, .16f, -.03f),
+                K(.28f, .10f, -.08f, .18f, -.12f, .23f, .20f),
+                K(.39f, .10f, -.07f, .17f, -.11f, .22f, .18f),
+                K(.58f, .04f, -.03f, .07f, -.05f, .10f, .07f), Rest(.80f)) },
             // DEMONIC CARAPACE. The flex: both fists draw in low, then out wide and up at the shoulders and
             // stay there, trembling once with the effort. He is bigger now.
             { "carapace-guard", new CastPath(.32f, false,
                 Rest(0), K(.15f, -.08f, -.04f, .04f, .10f, .20f, .04f),
                 K(.32f, .16f, .10f, .04f, -.16f, .32f, .04f), K(.44f, .17f, .10f, .04f, -.17f, .32f, .04f),
                 K(.56f, .16f, .11f, .04f, -.16f, .33f, .04f), K(.70f, .16f, .10f, .04f, -.16f, .32f, .04f), Rest(1.08f)) },
-            // TITAN FISSURE. Arms rise short of vertical and the weight hangs, then both drive down and
-            // FORWARD into the road ahead, where the split will open.
+            // CONTINENTAL DRIFT. Continue the introduction's planted strike low.
+            // Pressure releases at the unchanged .40s warning; no second overhead windup.
             { "fissure-slam", new CastPath(.40f, false,
-                Rest(0), K(.22f, .02f, .34f, .00f, .02f, .54f, .00f), K(.30f, .02f, .35f, .00f, .02f, .55f, .00f),
-                K(.40f, -.06f, -.20f, .26f, .12f, .04f, .26f), K(.62f, -.05f, -.18f, .24f, .11f, .05f, .24f), Rest(.95f)) },
+                K(0, -.05f, -.17f, .22f, .11f, .02f, .22f),
+                K(.16f, -.05f, -.18f, .23f, .11f, .01f, .23f),
+                K(.40f, -.06f, -.21f, .26f, .12f, -.02f, .26f),
+                K(.54f, -.05f, -.20f, .24f, .11f, -.01f, .24f),
+                K(.76f, -.02f, -.08f, .10f, .04f, .00f, .10f), Rest(1.00f)) },
 
             // ---------------------------------------------------------------- CHESKA: one hand, exact
             // PERMAFROST SHEET. One flat pass of the right hand, low, right to left at one height (the
             // sheet's edge), and she holds it there. The left never moves: she spends one hand.
+            // Frostbite presents the real shoe; it does not draw a lane on the floor.
+            { "frost-load", new CastPath(.30f, false,
+                Rest(0), K(.12f, .04f, .03f, .06f, .06f, .10f, .03f),
+                K(.30f, .04f, .03f, .06f, .18f, .20f, .08f),
+                K(.44f, .04f, .03f, .06f, .17f, .19f, .08f),
+                K(.58f, .02f, .02f, .03f, .07f, .08f, .03f), Rest(.76f)) },
             { "frost-sweep", new CastPath(.22f, false,
                 Rest(0), K(.10f, .12f, -.06f, .12f, 0, 0, 0),
                 K(.22f, -.24f, -.06f, .14f, 0, 0, 0), K(.42f, -.24f, -.06f, .14f, 0, 0, 0), Rest(.80f)) },
@@ -131,6 +164,13 @@ namespace TumbangPreso.CameraSystem
             { "project-spirit", new CastPath(.25f, true,
                 Rest(0), K(.12f, .02f, .02f, .06f, .10f, .24f, .00f),
                 K(.25f, .14f, .12f, .26f, .20f, .34f, -.02f), K(.45f, .12f, .10f, .22f, .20f, .33f, -.02f), Rest(.75f)) },
+            // KURO: CATCH. A small off-hand instruction; the carrying hand stays low.
+            // Kuro performs the world action independently, without a new windup.
+            { "kuro-guard", new CastPath(.22f, true,
+                Rest(0), K(.10f, -.01f, -.02f, -.02f, .03f, .14f, .04f),
+                K(.22f, -.02f, -.04f, -.02f, .08f, .29f, .19f),
+                K(.38f, -.02f, -.04f, -.02f, .08f, .28f, .18f),
+                K(.54f, -.01f, -.02f, -.01f, .04f, .14f, .09f), Rest(.76f)) },
             // DEVOURING SEANCE. Arms wide as she rises, then dragged IN to the centre and down: the only
             // ultimate that collapses rather than strikes.
             { "seance-channel", new CastPath(.40f, true,
@@ -248,12 +288,11 @@ namespace TumbangPreso.CameraSystem
             { "gale-sweep", new CastPath(.32f, false,
                 Rest(0), K(.20f, .18f, .02f, .02f, .26f, .22f, .02f),
                 K(.32f, -.24f, .06f, .18f, -.20f, .34f, .18f), K(.52f, -.26f, .05f, .17f, -.22f, .33f, .17f), Rest(.90f)) },
-            // STORM SURGE. Both palms forward and braced through the 2.5 s gather, pressing harder as
-            // it builds, then one shove forward on the release (the key at 2.5 s is the contact).
-            { "storm-call", new CastPath(2.5f, false,
-                Rest(0), K(.25f, -.02f, .06f, .16f, .10f, .32f, .16f), K(1.2f, -.02f, .07f, .19f, .10f, .33f, .19f),
-                K(2.36f, -.01f, .08f, .12f, .09f, .34f, .12f), K(2.5f, -.02f, .10f, .36f, .10f, .36f, .36f),
-                K(2.66f, -.02f, .10f, .35f, .10f, .36f, .35f), Rest(2.85f)) },
+            // AIRBURST, v3.2: the cutscene shows the windup and the release, and play resumes on the hit (owner: *"no need to
+            // reshow it in fpp"*). Only the follow-through: both hands still out low under the reticle as play returns, parting
+            // and settling by 0.5 s. Contact at 0: the release already happened, on screen, in the cutscene.
+            { "storm-call", new CastPath(0f, false,
+                K(0f, -.02f, .04f, .33f, .08f, .30f, .33f), K(.18f, .08f, .02f, .24f, -.02f, .30f, .22f), Rest(.5f)) },
         };
 
         private bool _castApplied;

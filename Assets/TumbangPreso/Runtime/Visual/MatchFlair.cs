@@ -163,6 +163,9 @@ namespace TumbangPreso.Visual
                     break;
 
                 case Kind.BankShot:
+                    if (strength == BankShotContact.FlairStrength)
+                        BankShotContact.Spawn(at, Settings.SettingsStore.Current.GraphicsQuality == 0,
+                            Settings.SettingsStore.Current.ReducedUiMotion);
                     ComicPopup.Spawn(at + Vector3.up * 0.35f, "BANK!", UI.UiTheme.Highlight, 1.0f);
                     break;
 

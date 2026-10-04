@@ -40,8 +40,17 @@ namespace TumbangPreso.Core.Tests
             Assert.False(rooted.BlocksInteraction, "Rooted players can still throw and use skills (owner).");
             Assert.True(rooted.Removable, "A hold or a tag ends Rooted.");
             Assert.Equal(PaeteRules.SentryLifeSeconds, rooted.Seconds);
-            // Haunted is appended after the eleven existing statuses; IDs are unchanged.
-            Assert.Equal(12, StatusRules.All.Count);
+            // Haunted and then Zapped were appended; existing wire IDs stay unchanged.
+            Assert.Equal(12, (int)StatusKind.Haunted);
+            Assert.Equal(13, (int)StatusKind.Zapped);
+            Assert.Equal(13, StatusRules.All.Count);
+            var zapped = StatusRules.For(StatusKind.Zapped);
+            Assert.Equal(5.0f, zapped.Seconds);
+            Assert.Equal(1.0f, zapped.SpeedScale);
+            Assert.Equal("Disabled Ability Cast", zapped.Tooltip);
+            Assert.False(zapped.BlocksMovement || zapped.BlocksInteraction
+                || zapped.BlocksSlipperRetrieval || zapped.DropsHeldSlipper);
+            Assert.True(zapped.Removable && zapped.ImmunityApplies);
         }
 
         [Fact]
@@ -153,7 +162,8 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(40.0f, AmihanRules.UpdraftCooldown);
             Assert.Equal(15.0f, AmihanRules.StormSurgeCost);
             Assert.Equal(1.5f, AmihanRules.StormSurgeGatherSeconds);
-            Assert.Equal(60.0f, AmihanRules.StormSurgeHalfAngle * 2);
+            // AIRBURST v3.2 expands the owner's attack to the whole frontal half-plane.
+            Assert.Equal(180.0f, AmihanRules.StormSurgeHalfAngle * 2);
 
             // Every held speed is under the single-impulse cap, so a clamp never shortens a move.
             Assert.True(AmihanRules.QuickDashSpeed <= Balance.MaxKnockbackSpeed);

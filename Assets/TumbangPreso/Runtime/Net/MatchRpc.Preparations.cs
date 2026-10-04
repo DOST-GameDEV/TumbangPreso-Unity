@@ -73,7 +73,7 @@ namespace TumbangPreso.Net
         }
         private void OnCastPreparationMsg(ulong sender,FastBufferReader reader)
         {
-            if(NetAuthority.IsHost || !FromHost(sender))return;
+            if(NetAuthority.IsHost || !FromHost(sender) || !ValidCastPreparationFrame(ref reader))return;
             reader.ReadValueSafe(out int seat);reader.ReadValueSafe(out int round);
             reader.ReadValueSafe(out string hero);reader.ReadValueSafe(out int kind);
             reader.ReadValueSafe(out float remaining);reader.ReadValueSafe(out float held);
@@ -94,6 +94,19 @@ namespace TumbangPreso.Net
                 Debug.Log($"[CastPreparation] expired in transit seat={seat} kind={kind} remaining={remaining:F4} age={age:F4}");
                 StartCoroutine(RefreshAfterExpiredPreparation(round));
             }
+        }
+        private static bool ValidCastPreparationFrame(ref FastBufferReader reader)
+        {
+            int start = reader.Position;
+            try
+            {
+                if (!reader.TryBeginRead(sizeof(int) * 2)) return false;
+                reader.Seek(start + sizeof(int) * 2);
+                if (!SkipWireString(ref reader)) return false;
+                const int tail = sizeof(int) + sizeof(float) * 3 + sizeof(float) * 9;
+                return reader.Length - reader.Position == tail && reader.TryBeginRead(tail);
+            }
+            finally { reader.Seek(start); }
         }
         private IEnumerator RefreshAfterExpiredPreparation(int round)
         {

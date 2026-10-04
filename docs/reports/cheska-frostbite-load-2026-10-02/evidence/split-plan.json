@@ -1,0 +1,13 @@
+{
+  "authorization": "User 2026-10-02 13:24 UTC specifically requests working around RAM and splitting tests",
+  "change": "Each unchanged test runs in a fresh sequential native Editor; no overlap; no waived assertions; stop entire series on first failed run",
+  "tests": [
+    "LoadedCueUsesTheRealShoeAndRetiresWithTheLoad",
+    "AnUnloadedKitLeavesTheShoeUntouched",
+    "ExpiryAndResetRetireTheCue",
+    "RestoredLoadWaitsForEquipmentWithoutRefreshingTheClock",
+    "OwnerMeshUsesTheSameCueAndKeepsAuthoredSurfaces"
+  ],
+  "guard": "Same thresholds, profiles, project, graphics flags and inputs",
+  "stop": "five fresh one-test results and visual frames or first failure"
+}

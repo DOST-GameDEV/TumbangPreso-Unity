@@ -367,6 +367,7 @@ namespace TumbangPreso.UI
                 var sprite = InputGlyphs.For(_capLabel, onDark: true);
 
                 _cap.sprite = sprite;
+                _cap.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, InputGlyphs.PromptWidth(sprite, CapSize));
                 _cap.enabled = sprite != null;
                 _capText.enabled = sprite == null;
                 _capText.text = sprite == null ? _capLabel : "";

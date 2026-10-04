@@ -41,6 +41,10 @@ debugging. `Backspace` exits training. Completion returns to the main menu with 
 - `GuidedTraining` observes `InputIntent`, cooldowns, projectile state, cast answers, lata
   state, trip recovery and emote state. It never calls throw, shove, punch, lunge or ability
   activation methods for the player.
+- Emote eligibility respects the guided EmoteWheel verb lock until its lesson;
+  this shared gate also applies to direct wheel callbacks.
+- The0.70-second completion beat uses real time; entering the next lesson waits
+  while pause/loading owns the screen, so world setup stays still behind menus.
 - Setup actions are allowed between lessons: freeze bots, position a dummy, equip the player's
   own tsinelas, restore or knock down the lata, switch the derived defender round, refill the
   training ultimate once, and apply the trip that teaches recovery.

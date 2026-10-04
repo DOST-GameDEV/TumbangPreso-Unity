@@ -219,7 +219,7 @@ namespace TumbangPreso.UI
             if (_chat != null) _chat.SetPresented(false);
         }
 
-        public bool InRoom => IsLive;
+        public bool InRoom => NetSession.Instance != null && NetSession.Instance.IsAdmitted;
         public bool IsHost => IsLive && NetAuthority.IsHost;
         public bool LocalReady => _localReady;
         public string RoomCode => NetSession.Instance?.Lobby?.JoinCode ?? "";
@@ -274,6 +274,25 @@ namespace TumbangPreso.UI
             return seats;
         }
 
+        public LobbySeatSwapOffer SeatSwapOffer => MatchRpc.Instance?.SeatSwapOffer;
+        public string SeatSwapResult => MatchRpc.Instance?.SeatSwapResult ?? "";
+        public void RespondToSeatSwap(long requestId, bool accept) => MatchRpc.Instance?.RespondToSeatSwap(requestId, accept);
+        bool IHubHost.CanTakeSeat(int seat) => CanTakeLobbySeat(seat);
+        void IHubHost.TakeSeat(int seat)
+        {
+            if (CanTakeLobbySeat(seat)) TakeSeat(seat);
+        }
+        private bool CanTakeLobbySeat(int seat)
+        {
+            if (seat < 0 || seat >= Balance.PlayerCount || !InRoom || MatchInProgress || HubQueueWatch.QueueRoom || SeatSwapOffer != null)
+                return false;
+            var info = MatchRpc.Instance?.GetSeatInfo(seat);
+            if (info == null || seat == NetAuthority.LocalSlot) return false;
+            if (info.Occupied) return !Spectating && NetAuthority.LocalSlot >= 0;
+            // A host can also see reconnect reservations absent from the ordinary roster.
+            return !NetAuthority.IsHost || NetSession.Instance?.Lobby?.IsSeatOccupied(seat) == false;
+        }
+
         public void StartGame()
         {
             var net = NetSession.Instance;
@@ -294,7 +313,7 @@ namespace TumbangPreso.UI
             // ⚠️ NO SECOND `SceneFlow.StartMatch()`: `HostStartMatch` fires `OnMatchStarted`, which
             // this screen answers with the load (`HandleMatchStarted`).
             if (HubQueueWatch.QueueRoom) MatchRpc.Instance?.HostBeginQueueMapVote();
-            else MatchRpc.Instance?.HostStartMatch();
+            else MatchRpc.Instance?.HostBeginCharacterSelection();
         }
 
         public bool MapVoting => MatchRpc.Instance != null && MatchRpc.Instance.QueueMapVoting;
@@ -409,12 +428,9 @@ namespace TumbangPreso.UI
         private bool HubDisconnected(string detail)
         {
             if (_hubView == null) return false;
-            var net = NetSession.Instance;
-            if (net != null) net.Stop();
-            SceneFlow.Networked = false;
-            NetSession.ClearRoomSettings();
-            HubQueueWatch.End();
-            _localReady = false;
+            // Host loss retires the same join/queue work as an explicit exit. Otherwise
+            // its delayed completion can change the route chosen after returning HOME.
+            LeaveRoom();
             _hubView.Home();
             _hubView.Toast(string.IsNullOrWhiteSpace(detail) ? "The room closed." : detail);
             return true;

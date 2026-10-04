@@ -1,0 +1,86 @@
+[
+  {
+    "run": "baseline-import",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 35.00818502600305
+    },
+    "cases": [],
+    "peak_total_GiB": 6.65
+  },
+  {
+    "run": "baseline-native",
+    "exit": {
+      "exit_code": 2,
+      "guard_reason": null,
+      "seconds": 35.00511671799177
+    },
+    "cases": [
+      {
+        "name": "ScheduledBreakUsesOneDeadlineAndNeverRunsAfterTheFinalRound",
+        "result": "Failed",
+        "duration": "4.147933"
+      }
+    ],
+    "peak_total_GiB": 7.405
+  },
+  {
+    "run": "candidate-import",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 45.014860263996525
+    },
+    "cases": [],
+    "peak_total_GiB": 6.904
+  },
+  {
+    "run": "candidate-1",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 45.00410014401132
+    },
+    "cases": [
+      {
+        "name": "ScheduledBreakUsesOneDeadlineAndNeverRunsAfterTheFinalRound",
+        "result": "Passed",
+        "duration": "16.904771"
+      }
+    ],
+    "peak_total_GiB": 7.093
+  },
+  {
+    "run": "candidate-2",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 35.00336897200032
+    },
+    "cases": [
+      {
+        "name": "FinalViewAndRealInputsStayFrozenUntilTheHostDeadline",
+        "result": "Passed",
+        "duration": "6.532860"
+      }
+    ],
+    "peak_total_GiB": 7.119
+  },
+  {
+    "run": "candidate-3",
+    "exit": {
+      "exit_code": 0,
+      "guard_reason": null,
+      "seconds": 30.003585154001485
+    },
+    "cases": [
+      {
+        "name": "LateClientSharesTheDeadlineWithoutAdvancingOrRestartingIt",
+        "result": "Passed",
+        "duration": "2.959008"
+      }
+    ],
+    "peak_total_GiB": 6.968
+  }
+]

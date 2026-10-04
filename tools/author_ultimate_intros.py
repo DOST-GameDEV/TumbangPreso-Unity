@@ -410,51 +410,35 @@ def sean():
 
 @performance
 def zack():
-    """
-    THUNDERSTRIKE, 2.8 s, the shortest on purpose (plan.md section 3): "Finds the angle before
-    you see the opening", and makes difficult plays look casual. So nothing here strains: a hip
-    cocked, a spark flicked off a fingertip, one lazy finger to the sky that the storm answers,
-    then he SIGHTS the shot down his arm like a trick shot, snaps it down, and shrugs.
-    The old intro raised his hand in front of his own face for a second; every pose here keeps
-    the face clear.
+    """OVERCLOCK: a free-hand spark, draw the storm inward, receive it and settle.
+
+    Keep the existing2.8s shared-phase boundary. The carrying arm stays low;
+    neither the shoe nor a distant target is the source of this self-buff.
     """
     p = Performance("zack", 2.8)
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
-    cocky = Pose(torso=(0, -6, 6), head=(0, -12, -10), left=(6, 34, -12), right=(58, 18, 24),
+    cocky = Pose(torso=(0, -6, 4), head=(0, 8, -6), left=(58, 32, -18), right=(8, 20, 0),
                  legs=((2, 3), (-2, 8)))
-    flick = cocky.but(right=(74, 22, 24))
-    # One finger to the sky. Straight up vanished behind his hair on the sheet, so the arm goes
-    # up and a little forward and out, where it is a clear diagonal from every shot.
-    point_up = Pose(torso=(-4, -4, 4), head=(-18, -6, -6), left=(6, 34, -12), right=(158, 44, 0),
+    flick = cocky.but(left=(74, 36, -18))
+    point_up = Pose(torso=(-2, 6, -3), head=(-12, 10, 0), left=(148, 55, 0), right=(8, 20, 0),
                     legs=((2, 3), (-2, 8)))
-    # Lining it up: the arm straight down the line, the other hand low as a guide, head along it.
-    sight = Pose(torso=(4, -16, 0), head=(4, -10, 8), left=(70, 22, 22), right=(88, 6, 12),
-                 legs=((10, 4), (-12, 4)))
-    snap = Pose(torso=(10, -8, 0), head=(6, -6, 4), left=(40, 26, 10), right=(22, 34, 0),
-                legs=((10, 4), (-12, 4)))
-    shrug = Pose(torso=(0, -4, 4), head=(-2, -10, -12), left=(6, 34, -12), right=(12, 30, -8),
+    gather = Pose(torso=(8, 4, 0), head=(-4, -6, -4), left=(60, 30, -10), right=(12, 24, 0),
+                  legs=((6, 4), (-6, 4)))
+    strike = Pose(torso=(-12, 0, 0), head=(8, 0, 0), left=(42, 42, -10), right=(18, 30, 0),
+                  legs=((8, 4), (-8, 4)))
+    shrug = Pose(torso=(0, -4, 4), head=(-2, -10, -8), left=(6, 34, -12), right=(8, 24, 0),
                  legs=((2, 3), (-2, 8)))
-
     p.key(0, rest)
     p.key(.26, cocky).key(.40, flick, punch=True).key(.50, cocky)
-    p.key(.66, point_up)
-    p.hold(.66, 1.12, point_up)
-    p.key(1.30, sight)
-    p.hold(1.30, 1.74, sight)
-    p.key(1.88, snap, punch=True)
-    p.hold(1.88, 2.02, snap)
-    p.key(2.32, shrug)
-    p.hold(2.32, 2.8, shrug)
-
-    # A: low from his left side for the cocky stance and the finger to the sky.
-    p.shot(0, .98, (-2.7, .75, 2.8), (0, 1.15, 0), 46, eye_to=(-2.5, .7, 2.9))
-    # B: a profile from his right, level with the arm, so the arm and the line it sights run
-    # across the frame: the angle he found. (Over the shoulder was tried and his head, which is
-    # most of him, hid the arm completely.)
-    p.shot(.98, 1.82, (3.6, 1.25, .5), (0, 1.1, 1.4), 46, eye_to=(3.35, 1.22, .6))
-    # C: front and low for the snap and the shrug.
-    p.shot(1.82, 2.8, (.95, .65, 3.7), (0, 1.2, 0), 46, eye_to=(.85, .7, 3.4))
-    p.locked((-2.0, 1.1, 4.3), (0, 1.1, 0), 46)
+    p.key(.66, point_up).hold(.66, 1.12, point_up)
+    p.key(1.30, gather).hold(1.30, 1.74, gather)
+    p.key(1.88, strike, punch=True).hold(1.88, 2.02, strike)
+    p.key(2.32, shrug).hold(2.32, 2.8, shrug)
+    # Stay on the face's readable side instead of cutting behind his hair.
+    p.shot(0, .98, (-2.2, 1.35, 3.1), (0, 1.15, 0), 42, eye_to=(-2.05, 1.35, 2.85))
+    p.shot(.98, 1.82, (-1.5, 1.4, 2.4), (0, 1.35, .1), 40, eye_to=(-1.35, 1.4, 2.3))
+    p.shot(1.82, 2.8, (-.8, .95, 3.7), (0, 1.15, 0), 46, eye_to=(-.7, 1.0, 3.5))
+    p.locked((-1.9, 1.15, 4.3), (0, 1.15, 0), 46)
     return p
 
 
@@ -680,78 +664,105 @@ def rafi():
 @performance
 def amihan():
     """
-    STORM SURGE, 3.6 s (docs/reports/amihan-kit-2026-09-25/direction.md section 7, research.md).
+    AIRBURST v7, THE BIRD AMIHAN, 5.6 s (docs/reports/amihan-presentation-2026-10-02/cutscene-v4-plan.md, "v7"). The owner on
+    v6: "it doesnt look as good as paete's or phaisters"; "their ults look really good and have really cool beats and show off
+    story of their character"; "i want amihan to have hher own ult that doesnt jsut copy someone elses but it has to have the
+    same feel or impact"; "make it look like wind was slowly gathering around her and in the background"; and of the read,
+    "make her fly higher here like gojo when he was enlightened".
 
-    The four beats the reference research found in every good ultimate cutscene (Genshin's Venti
-    and Kazuha, Star Rail's Feixiao): WHO, INTENT, GATHER, RELEASE.
+    Paete's has Makiling and a tree with a face rising from the court; Phaister's opens an eye in the sky and lowers her doll.
+    Hers is her name: in the Tagalog creation story Amihan is the first bird, the one that pecked open the bamboo. The
+    monsoon answers her whistle across the whole plaza and gathers into that bird, made of wind; it swoops round her, rises
+    behind her as she winds up, and on her drive it beats its wings down the lane: the fan.
 
-    WHO (0 to 0.62): a wide low shot. She has been waiting for this and hates waiting: weight on
-    one hip, a hand on it, and an impatient look straight down the lens ("enough"). The wind is
-    already lifting her hair and robe.
-    INTENT (0.62 to 1.32): the ONE close-up, on her face and hand. She catches a tuft of cotton out
-    of the air and BLOWS it off her palm. That is Vigan's Binatbatan (beating cotton free for the
-    loom) and it is the breath of the amihan: the cotton becomes the first wind lines.
-    GATHER (1.32 to 2.46): wide and low from her left. She sweeps her arms round in two big turns,
-    the kasikus whirlwind her family weaves blooms in diamonds on the ground under her, abel
-    threads and cotton spiral up, and the vortex lifts her off the road.
-    RELEASE (2.46 to 3.6): over her shoulder, looking down the court the way the wind will go. She
-    draws the whole storm back to her right side, then drives both palms forward. The wall of wind
-    leaves toward the far end of the map and the camera watches it go; she lands braced in the
-    push, which is the first frame of the live 2.5 s gather.
+    STILL (0 to 1.66): eyes closed, she floats calmly on a breeze of her own, a leaf circling her; she settles and shrugs.
+    CALL (1.66 to 2.75): the whistle; the monsoon answers across the plaza, gathering round her into the sky; she looks up.
+    THE BIRD (2.75 to 3.62): it forms above her, cries, swoops round her past the lens; she reaches up to it, grinning; then
+    a glance into the lens.
+    WIND-UP (3.62 to 4.55): the bird behind her, wings raised, as she coils. DRIVE (4.55): both palms, the wingbeat. HANG
+    (4.55 to 5.18): the story clock at about a fifth (`HeroIntroductionScene.Amihan.cs` AmStory). FINISH: a close-up, her
+    cute pose (leaning in, hands behind her back, a foot kicked up, a wink), one feather drifting down.
+    The free (left) hand does the gestures: the right hand holds the slipper, which passes through her large head higher.
     """
-    p = Performance("amihan", 3.6)
-    rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
-    # Hand on her left hip, weight on the right leg, looking round at the lens (shot A is on her
-    # right, so the head turns right).
-    who = Pose(torso=(-3, 12, 4), head=(-6, 24, -6), left=(24, 58, 38), right=(6, 20, 0),
-               legs=((4, 6), (-6, 12)))
-    who_tap = who.but(head=(-2, 28, -8))
-    # A cotton tuft caught at the face: right hand up and open in front of her mouth.
-    catch = Pose(torso=(3, 4, 0), head=(6, 6, 0), left=(14, 26, 0), right=(122, 8, -34),
-                 legs=((2, 6), (-2, 6)))
-    # The blow: she leans in over the palm, and the hand opens away from her.
-    blow = catch.but(torso=(9, 2, 0), head=(14, 2, 0), right=(110, 16, -22))
-    # Two sweeping turns, arms wide, the torso twisting across the whole range the rig allows.
-    sweep_l = Pose(torso=(2, -38, -4), head=(-4, -24, 0), left=(86, 72, -10), right=(96, 62, 30),
-                   legs=((6, 10), (-6, 10)))
-    sweep_r = Pose(torso=(2, 38, 4), head=(-4, 24, 0), left=(96, 62, -30), right=(86, 72, 10),
-                   legs=((-6, 10), (6, 10)))
-    # Lifted on the vortex: arms up and open, head back, feet trailing.
-    lifted = Pose(torso=(-10, 0, 0), head=(-20, 0, 0), left=(158, 38, 0), right=(158, 38, 0),
-                  legs=((-10, 4), (8, 8)))
-    # The storm drawn back to her right side before the push.
-    load = Pose(torso=(-8, 40, -6), head=(-2, -26, 0), left=(78, 20, 46), right=(64, 58, -12),
-                legs=((16, 10), (-14, 14)))
-    # The push: both palms driven forward, low and wide, braced. Held into the handoff.
-    push = Pose(torso=(18, -4, 0), head=(-8, 0, 0), left=(94, 16, -8), right=(94, 16, 8),
-                legs=((22, 12), (-20, 14)))
+    p = Performance("amihan", 5.9)
+    # Easy, hip cocked, the slipper hand on her hip, head tipped: waiting for the wind.
+    idle = Pose(torso=(-3, -6, 4), head=(-6, 10, 8), left=(8, 24, 0), right=(14, 62, -38), legs=((2, 10), (-6, 16)))
+    idle_b = idle.but(torso=(-4, -4, 5), head=(-8, 12, 10))
+    # The read: her free arm out straight to her side, palm up, feeling for the wind; leaning into it, head cocked, chin up.
+    read = Pose(torso=(-6, -8, 10), head=(-14, -16, 14), left=(70, 88, -10), right=(14, 62, -38), legs=((4, 10), (-2, 14)))
+    shrug = Pose(torso=(-8, 0, 0), head=(-10, 0, -10), left=(34, 62, 0), right=(30, 58, 0), legs=((4, 10), (-2, 14)))
+    # The whistle: two fingers of the free hand at her mouth, chest up, feet planted wide.
+    whistle = Pose(torso=(-10, 6, 0), head=(-12, 6, 0), left=(118, 6, 46), right=(12, 60, -38), legs=((6, 16), (-4, 16)))
+    # The monsoon answers: she leans back and looks up at it gathering over the plaza, her free arm opening.
+    sky = Pose(torso=(-12, -6, 0), head=(-32, -8, 4), left=(44, 66, 0), right=(14, 62, -38), legs=((4, 12), (-4, 14)))
+    # Reaching up to the bird as it swoops round her, grinning.
+    reach = Pose(torso=(-12, -10, 6), head=(-28, -18, 8), left=(150, 40, 0), right=(14, 62, -38), legs=((4, 10), (-4, 14)))
+    reach_b = reach.but(left=(158, 46, 0), torso=(-13, -14, 6), head=(-26, -24, 8))
+    # The glance into the lens at her left front, chin tipped.
+    look = Pose(torso=(-4, -10, 4), head=(-10, -30, 10), left=(96, 48, -10), right=(14, 62, -38), legs=((4, 10), (-2, 14)))
+    # The wind-up: coiled hard right, the free arm swung back over and behind her head.
+    windup = Pose(torso=(-12, 48, -6), head=(-8, -22, 0), left=(-48, 44, 0), right=(30, 30, 30), legs=((24, 10), (-22, 14)))
+    windup_deep = windup.but(torso=(-15, 58, -8), head=(-9, -26, 0), left=(-58, 46, 0))
+    # The release keeps v3.2's drive (both palms forward, the lunge): the gameplay contract is pinned to it.
+    drive = Pose(torso=(16, -6, -2), head=(-18, 8, 0), left=(104, 20, 30), right=(104, 20, 30), legs=((42, 12), (-44, 10)))
+    follow = Pose(torso=(6, -8, 2), head=(-10, 6, 0), left=(70, 46, 10), right=(70, 46, 10), legs=((22, 10), (-18, 10)))
+    # THE FINISH (owner: "end of ult cutscene should be her posing or looking cute", "TEEHEE pose", "close up of her"): leaning
+    # in to the lens, hands clasped behind her back (her rigid arms cannot reach her head; behind her they read and hide the
+    # slipper), head tipped, one foot kicked up behind her, a wink.
+    # v10 ("make the pose cuter"): shoulders scrunched up as she leans in, her head tipped further, her hands tucked tighter
+    # behind her, the foot kicked up higher, and the teehee face (`VoxelFace.Look.Teehee`).
+    # v12 (owner: "doesnt look cute", "weird af expression"): with her rigid arms, hands behind her back read as two stiff
+    # arms sticking out. A happy wave up beside her face instead, the slipper hand on her hip, her head tipped, a foot kicked
+    # up behind her, and her happy closed-eyed grin (^v^), the face the owner liked.
+    finish = Pose(torso=(6, -6, 8), head=(-8, -10, 12), left=(112, 20, 40), right=(16, 58, -38), legs=((4, 10), (-50, 8)))
+    # v13: held out to her side her rigid arm only twisted, so the wave never showed. A GIGGLE instead (the classic teehee):
+    # her hand up by her chin, eyes shut in her grin, shoulders and head bobbing with it.
+    wave = finish.but(torso=(9, -6, 11), head=(-6, -12, 16), left=(116, 20, 40))
 
-    p.key(0, rest.but(head=(0, 10, 0)))
-    p.key(.2, who, punch=True)
-    p.hold(.2, .42, who)
-    p.key(.52, who_tap)
-    p.key(.74, catch, punch=True)
-    p.hold(.74, .98, catch)
-    p.key(1.1, blow, punch=True)
-    p.hold(1.1, 1.28, blow)
-    p.key(1.5, sweep_l).key(1.78, sweep_r).key(2.02, sweep_l)
-    p.key(2.22, lifted)
-    p.hold(2.22, 2.46, lifted)
-    p.key(2.74, load)
-    p.hold(2.74, 2.98, load)
-    p.key(3.1, push, punch=True)
-    p.hold(3.1, 3.6, push)
-    # The vortex lifts her in the gather and sets her down braced for the push.
-    p.rise(0, 0).rise(1.6, 0).rise(2.3, .38).rise(2.62, .34).rise(3.0, 0)
-    # A: WHO. Low wide three-quarter from her right, easing in a little.
-    p.shot(0, .62, (1.9, .55, 3.6), (0, 1.0, 0), 46, eye_to=(1.7, .6, 3.2))
-    # B: INTENT. The close-up: face and cotton hand, slightly below eye level.
-    p.shot(.62, 1.32, (.42, 1.42, 1.05), (0, 1.5, 0), 34, eye_to=(.34, 1.45, .92), close=True)
-    # C: GATHER. Wide and low from her left, drifting round with the turns.
-    p.shot(1.32, 2.46, (-3.1, .45, 2.7), (0, 1.25, 0), 52, eye_to=(-2.4, .55, 3.5))
-    # D: RELEASE. Over her right shoulder, down the court the wind is about to cross.
-    p.shot(2.46, 3.6, (1.05, 1.85, -2.3), (0, 1.1, 5.0), 54, eye_to=(.8, 1.65, -1.9), look_to=(0, 1.0, 7.0))
-    p.locked((1.6, 1.1, 4.2), (0, 1.15, 0), 48)
+    p.key(0, idle).hold(.32, .55, idle_b)
+    # (owner on v7: "the leg tapping dont make sense": she was tapping her feet in the air. The taps are gone: she floats,
+    # settles, and shrugs.)
+    p.hold(.78, 1.34, read)
+    p.hold(1.52, 1.66, shrug)
+    p.key(1.78, whistle, punch=True).key(1.98, whistle.but(head=(-13, 6, 0)))
+    p.hold(2.20, 2.70, sky)
+    p.key(2.92, reach, punch=True).key(3.12, reach_b).key(3.24, reach)
+    p.hold(3.36, 3.62, look)
+    p.key(3.85, windup).key(4.28, windup_deep).key(4.40, windup_deep.but(torso=(-16, 60, -8)))
+    # THE DRIVE, then the hang: held while the clock slows (a moving hold, so even slowed she is never a statue).
+    p.hold(4.55, 5.08, drive)
+    p.punches.append(4.55)
+    p.key(5.20, follow)
+    # (v9, owner: "hold the end pose a bit more": held 0.6 s, swaying a little through it and ending exactly on it,
+    # which the live clip starts from.)
+    # The hold: the hand waving twice, ending exactly on the finish the live clip starts from.
+    p.key(5.30, finish, punch=True).key(5.44, wave).key(5.58, finish).key(5.72, wave).key(5.9, finish)
+    # THE FLOAT (owner: "make her fly higher here like gojo when he was enlightened", "js a bite higher tho"): as she closes
+    # her eyes and feels for the wind she lifts, calm and weightless, about 0.37 m, and settles back onto her first tap.
+    # v10 (owner: "she should stay floating too during her ult why does she even do this if she immediately falls back
+    # donw"): she rises on her breeze and STAYS up, bobbing gently on it through the whistle, the bird, the wind-up and the
+    # drive, and only touches down softly into her finish (play resumes with her on the court).
+    p.rise(0, 0).rise(.60, 0).rise(.80, .2).rise(1.0, .36).rise(1.3, .42)
+    for i, t in enumerate([1.7, 2.1, 2.5, 2.9, 3.3, 3.7, 4.1, 4.5, 4.9]):
+        p.rise(t, .36 if i % 2 == 0 else .44)
+    p.rise(5.2, .38).rise(5.32, .12).rise(5.42, 0)
+
+    # A STILL: from her left front, all of her and the falling leaf, a slow push in.
+    p.shot(0, 1.66, (-.9, 1.05, 4.3), (-.2, 1.0, 0), 42, eye_to=(-.75, 1.05, 3.7), look_to=(-.2, 1.05, 0), fov_to=40)
+    # B CALL: close on the whistle, then pulled back low and wide, looking up past her at the monsoon gathering in the sky.
+    p.shot(1.66, 2.75, (-.6, 1.4, 1.6), (0, 1.45, 0), 34, eye_to=(-2.4, .55, 3.4), look_to=(0, 2.3, -1.5), fov_to=62)
+    # C THE BIRD: low and wide from her left front, her and the sky above her; the bird's swoop passes close to this lens.
+    # (v7 r4: by her glance into this lens she was too small to read; it closes in to a medium shot as the bird settles.)
+    p.shot(2.75, 3.62, (-3.0, .7, 4.6), (0, 2.4, -.5), 60, eye_to=(-1.7, 1.05, 3.0), look_to=(0, 1.45, 0), fov_to=44)
+    # D WIND-UP: behind her right shoulder, high and wide: her coiling and the bird over her with its wings raised.
+    # (v7 r2: the raised wings were cropped at the top; aimed higher.)
+    p.shot(3.62, 4.55, (2.8, 2.2, -4.2), (0, 2.8, 3.0), 62, eye_to=(3.0, 2.5, -4.6), look_to=(0, 2.2, 5.0), fov_to=62)
+    # E HANG: cut on the drive to her right side, wide enough for the wingbeat over the lane: her in the left third.
+    p.shot(4.55, 5.18, (5.2, 1.6, .6), (0, 1.5, 1.2), 66, eye_to=(4.8, 1.6, .9), look_to=(0, 1.45, 1.6), fov_to=62)
+    # F FINISH: a close-up of her at her left front (v14: the side of the hand at her chin; from her right her head hid
+    # it), as she giggles, a slow push in.
+    p.shot(5.18, 5.9, (-.7, 1.15, 3.3), (-.05, 1.2, 0), 42, eye_to=(-.6, 1.2, 2.85), look_to=(-.05, 1.22, 0), fov_to=38)
+    p.locked((3.4, 1.5, 3.4), (0, 1.0, 1.5), 50)
     return p
 
 @performance

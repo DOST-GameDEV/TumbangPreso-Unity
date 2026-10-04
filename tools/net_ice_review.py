@@ -191,8 +191,10 @@ def main():
     parser.add_argument("--delay", type=float)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--reconnect", action="store_true")
+    parser.add_argument("--lobby", action="store_true", help="Use normal lobby admission before starting the two-peer Sean case")
     args = parser.parse_args()
     sean_case = args.case == "cheska-sean"
+    if args.lobby and not sean_case: parser.error("Lobby admission is supported for the two-peer Sean case")
     if args.delay is None: args.delay = 0 if sean_case else 150
     if args.delay < 0: parser.error("Delay cannot be negative")
     if args.reconnect and sean_case: parser.error("The Sean case uses exactly two peers")
@@ -251,8 +253,12 @@ def main():
                        "-tp-icecase", args.case, "-tp-icetrace", str(folder / (name + ".csv")),
                        "-logFile", str(folder / (name + ".log"))] + route)
     try:
-        host = peer("host", ["-tp-host", str(host_port)])
-        wait_log("host", host, r"arena installed: LocalSlot=0[^\n]*host=True", 45)
+        host_route = ["-tp-lobby", "-tp-lobbyport", str(host_port)] if args.lobby else ["-tp-host", str(host_port)]
+        host = peer("host", host_route)
+        if args.lobby:
+            wait_log("host", host, r"\[Net\] hosting on " + str(host_port), 45)
+        else:
+            wait_log("host", host, r"arena installed: LocalSlot=0[^\n]*host=True", 45)
         port = str(host_port)
         if args.delay:
             port = str(proxy_port); log = (folder / "link.log").open("w"); handles.append(log)
@@ -260,7 +266,9 @@ def main():
                                       "--to", "127.0.0.1:" + str(host_port), "--delay", str(args.delay), "--seconds", "110"],
                                      cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, startupinfo=startup)
             processes.append(proxy); time.sleep(1)
-        owner = peer("owner", ["-tp-join", "127.0.0.1", port])
+        owner_route = ["-tp-lobbyjoin", "127.0.0.1:" + port,
+                       "-tp-lobbyport", str(free_port((host_port, proxy_port)))] if args.lobby else ["-tp-join", "127.0.0.1", port]
+        owner = peer("owner", owner_route)
         wait_log("owner", owner, r"(?:seat changed|arena installed): LocalSlot=1[^\n]*host=False", 35)
         if not sean_case:
             observer = peer("observer", ["-tp-join", "127.0.0.1", str(host_port)])
@@ -287,6 +295,7 @@ def main():
             result["ok"] = False; result["errors"].append("The requested reconnect was never exercised")
         result["observer_reconnected"] = rejoined
         result["case"] = args.case; result["delay_one_way_ms"] = args.delay
+        result["normal_lobby_admission"] = args.lobby
         if sean_case: result["host_udp_port"] = host_port
         result["exe_sha256"] = hashlib.sha256(args.exe.read_bytes()).hexdigest()
         runtime = args.exe.parent / (args.exe.stem + "_Data") / "Managed/TumbangPreso.Runtime.dll"

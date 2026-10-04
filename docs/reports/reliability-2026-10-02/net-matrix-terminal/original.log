@@ -1,0 +1,24 @@
+test_autohost_with_active_old_round_is_refused (test_net_matrix_terminal.MatrixTerminalTests.test_autohost_with_active_old_round_is_refused) ... FAIL
+test_explicit_inactive_round_is_accepted_in_either_role (test_net_matrix_terminal.MatrixTerminalTests.test_explicit_inactive_round_is_accepted_in_either_role) ... ok
+test_missing_round_state_is_not_terminal_evidence (test_net_matrix_terminal.MatrixTerminalTests.test_missing_round_state_is_not_terminal_evidence) ... FAIL
+
+======================================================================
+FAIL: test_autohost_with_active_old_round_is_refused (test_net_matrix_terminal.MatrixTerminalTests.test_autohost_with_active_old_round_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\tools\test_net_matrix_terminal.py", line 11, in test_autohost_with_active_old_round_is_refused
+    self.assertIsNotNone(net_matrix.judge_client(self.scenario, {'role': 'HOST', 'active': 'True'}))
+AssertionError: unexpectedly None
+
+======================================================================
+FAIL: test_missing_round_state_is_not_terminal_evidence (test_net_matrix_terminal.MatrixTerminalTests.test_missing_round_state_is_not_terminal_evidence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\matth\Documents\GitHub\TumbangPreso-Unity-ASTRAReworks\tools\test_net_matrix_terminal.py", line 14, in test_missing_round_state_is_not_terminal_evidence
+    self.assertIsNotNone(net_matrix.judge_client(self.scenario, {'role': 'HOST'}))
+AssertionError: unexpectedly None
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+
+FAILED (failures=2)

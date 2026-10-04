@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="13" result="Passed" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 05:35:50Z" end-time="2026-10-03 05:35:51Z" duration="0.2123921">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1071" result="Passed" start-time="2026-10-03 05:35:50Z" end-time="2026-10-03 05:35:51Z" duration="0.212392" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2301" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1071" result="Passed" start-time="2026-10-03 05:35:50Z" end-time="2026-10-03 05:35:51Z" duration="0.201532" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="11824" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2302" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1071" result="Passed" start-time="2026-10-03 05:35:50Z" end-time="2026-10-03 05:35:51Z" duration="0.200469" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2303" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1071" result="Passed" start-time="2026-10-03 05:35:50Z" end-time="2026-10-03 05:35:51Z" duration="0.199781" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1028" name="AccountRefreshOwnershipTests" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-10-03 05:35:50Z" end-time="2026-10-03 05:35:51Z" duration="0.175443" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1039" name="ActiveGuestKeepsItsIdentityAndReturnsToCanonicalPrimary" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.ActiveGuestKeepsItsIdentityAndReturnsToCanonicalPrimary" methodname="ActiveGuestKeepsItsIdentityAndReturnsToCanonicalPrimary" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="12438305" result="Passed" start-time="2026-10-03 05:35:50Z" end-time="2026-10-03 05:35:51Z" duration="0.057276" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1040" name="BootTimeoutLocalSnapshotStillAcceptsLateCanonicalReply" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.BootTimeoutLocalSnapshotStillAcceptsLateCanonicalReply" methodname="BootTimeoutLocalSnapshotStillAcceptsLateCanonicalReply" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="1774537037" result="Passed" start-time="2026-10-03 05:35:51Z" end-time="2026-10-03 05:35:51Z" duration="0.038123" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1032" name="ChangedServiceOwnerCannotApplyCloudReply" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.ChangedServiceOwnerCannotApplyCloudReply" methodname="ChangedServiceOwnerCannotApplyCloudReply" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="56760054" result="Passed" start-time="2026-10-03 05:35:51Z" end-time="2026-10-03 05:35:51Z" duration="0.003199" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1030" name="ChangedServiceOwnerCannotContinueNameReply" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.ChangedServiceOwnerCannotContinueNameReply" methodname="ChangedServiceOwnerCannotContinueNameReply" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="846365352" result="Passed" start-time="2026-10-03 05:35:51Z" end-time="2026-10-03 05:35:51Z" duration="0.001833" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1038" name="CurrentOwnerStillAdoptsCanonicalProfile" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.CurrentOwnerStillAdoptsCanonicalProfile" methodname="CurrentOwnerStillAdoptsCanonicalProfile" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="136459419" result="Passed" start-time="2026-10-03 05:35:51Z" end-time="2026-10-03 05:35:51Z" duration="0.013397" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1037" name="DestroyedAccountCannotPersistPendingCloudReply" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.DestroyedAccountCannotPersistPendingCloudReply" methodname="DestroyedAccountCannotPersistPendingCloudReply" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="30595823" result="Passed" start-time="2026-10-03 05:35:51Z" end-time="2026-10-03 05:35:51Z" duration="0.002530" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1036" name="EarlierRefreshCannotOverwriteNewerAcceptedRefresh" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.EarlierRefreshCannotOverwriteNewerAcceptedRefresh" methodname="EarlierRefreshCannotOverwriteNewerAcceptedRefresh" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="330395180" result="Passed" start-time="2026-10-03 05:35:51Z" end-time="2026-10-03 05:35:51Z" duration="0.013867" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1041" name="LegitimateSignInStillAdoptsDifferentAuthenticatedId" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.LegitimateSignInStillAdoptsDifferentAuthenticatedId" methodname="LegitimateSignInStillAdoptsDifferentAuthenticatedId" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="345888769" result="Passed" start-time="2026-10-03 05:35:51Z" end-time="2026-10-03 05:35:51Z" duration="0.012161" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1031" name="ReplacementDuringCloudLoadCannotBeOverwritten" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.ReplacementDuringCloudLoadCannotBeOverwritten" methodname="ReplacementDuringCloudLoadCannotBeOverwritten" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="1006594527" result="Passed" start-time="2026-10-03 05:35:51Z" end-time="2026-10-03 05:35:51Z" duration="0.002080" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1033" name="ReplacementDuringGeneratedNameCannotStartCloudLoad" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.ReplacementDuringGeneratedNameCannotStartCloudLoad" methodname="ReplacementDuringGeneratedNameCannotStartCloudLoad" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="1634666106" result="Passed" start-time="2026-10-03 05:35:51Z" end-time="2026-10-03 05:35:51Z" duration="0.002000" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1029" name="ReplacementDuringPlayerNameCannotStartCloudLoad" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.ReplacementDuringPlayerNameCannotStartCloudLoad" methodname="ReplacementDuringPlayerNameCannotStartCloudLoad" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="642546356" result="Passed" start-time="2026-10-03 05:35:51Z" end-time="2026-10-03 05:35:51Z" duration="0.002016" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1035" name="StaleCloudFailureCannotApplyLocalFallback" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.StaleCloudFailureCannotApplyLocalFallback" methodname="StaleCloudFailureCannotApplyLocalFallback" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="1788383026" result="Passed" start-time="2026-10-03 05:35:51Z" end-time="2026-10-03 05:35:51Z" duration="0.002113" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1034" name="StaleNameFailureCannotLoadAnotherOwnersProfile" fullname="TumbangPreso.Tests.AccountRefreshOwnershipTests.StaleNameFailureCannotLoadAnotherOwnersProfile" methodname="StaleNameFailureCannotLoadAnotherOwnersProfile" classname="TumbangPreso.Tests.AccountRefreshOwnershipTests" runstate="Runnable" seed="1308658694" result="Passed" start-time="2026-10-03 05:35:51Z" end-time="2026-10-03 05:35:51Z" duration="0.002024" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

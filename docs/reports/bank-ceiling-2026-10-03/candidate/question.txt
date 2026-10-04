@@ -1,0 +1,1 @@
+Candidate four-source frozen map. Nine cases: both power counts, ceiling between Overclock banks/flair, ordinary ceiling control, powered corner, bank-limit reset, both guides, bot prediction. Baseline2/2 failed correct thrower-credit assertion, exit2 with shutdown cgroup guard retained. Matching protocol145 clients needed. No collider-roof redesign.

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 02:27:26Z" end-time="2026-10-02 02:27:51Z" duration="25.3020812">
+  <test-suite type="TestSuite" id="2511" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1236" result="Failed" site="Child" start-time="2026-10-02 02:27:26Z" end-time="2026-10-02 02:27:51Z" duration="25.302081" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2505" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1236" result="Failed" site="Child" start-time="2026-10-02 02:27:26Z" end-time="2026-10-02 02:27:51Z" duration="25.263788" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="21188" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2506" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1236" result="Failed" site="Child" start-time="2026-10-02 02:27:26Z" end-time="2026-10-02 02:27:51Z" duration="25.236488" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2507" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1236" result="Failed" site="Child" start-time="2026-10-02 02:27:26Z" end-time="2026-10-02 02:27:51Z" duration="25.212909" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2347" name="TumpNativeJoinTests" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-02 02:27:26Z" end-time="2026-10-02 02:27:51Z" duration="25.107598" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2351" name="CancelledDelayedJoinCannotCloseOrCompleteTheNewerView" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.CancelledDelayedJoinCannotCloseOrCompleteTheNewerView" methodname="CancelledDelayedJoinCannotCloseOrCompleteTheNewerView" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="1877680825" result="Passed" start-time="2026-10-02 02:27:26Z" end-time="2026-10-02 02:27:26Z" duration="0.436531" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2349" name="NativeJoinCompletesOnlyAfterConnectionAndSeatAdmission" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.NativeJoinCompletesOnlyAfterConnectionAndSeatAdmission" methodname="NativeJoinCompletesOnlyAfterConnectionAndSeatAdmission" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="791579763" result="Passed" start-time="2026-10-02 02:27:26Z" end-time="2026-10-02 02:27:27Z" duration="0.525441" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="15000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Net] offline
+[Net] connecting to 127.0.0.1:64128
+[Net] connected as seat 2
+[Net] offline
+]]></output>
+            </test-case>
+            <test-case id="2348" name="NativeUnreachableJoinKeepsPanelOpenAndReportsFailure" fullname="TumbangPreso.PlayTests.TumpNativeJoinTests.NativeUnreachableJoinKeepsPanelOpenAndReportsFailure" methodname="NativeUnreachableJoinKeepsPanelOpenAndReportsFailure" classname="TumbangPreso.PlayTests.TumpNativeJoinTests" runstate="Runnable" seed="686785957" result="Failed" start-time="2026-10-02 02:27:27Z" end-time="2026-10-02 02:27:51Z" duration="24.124936" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="45000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[Unhandled log message: '[Error] Failed to connect to server.'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                <stack-trace><![CDATA[Unity.Netcode.Transports.UTP.UnityTransport:ProcessEvent () (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Transports/UTP/UnityTransport.cs:1139)
+Unity.Netcode.Transports.UTP.UnityTransport:OnEarlyUpdate () (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Transports/UTP/UnityTransport.cs:1192)
+Unity.Netcode.NetworkTransport:EarlyUpdate () (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Transports/NetworkTransport.cs:131)
+Unity.Netcode.NetworkManager:NetworkUpdate (Unity.Netcode.NetworkUpdateStage) (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Core/NetworkManager.cs:356)
+Unity.Netcode.NetworkUpdateLoop:RunNetworkUpdateStage (Unity.Netcode.NetworkUpdateStage) (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Core/NetworkUpdateLoop.cs:191)
+Unity.Netcode.NetworkUpdateLoop/NetworkEarlyUpdate/<>c:<CreateLoopSystem>b__0_0 () (at ./Library/PackageCache/com.unity.netcode.gameobjects@d43d28498f17/Runtime/Core/NetworkUpdateLoop.cs:214)
+
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] offline
+[Net] connecting to 127.0.0.1:64130
+Failed to connect to server.
+[NetDisconnect] peer=0 local=0 server=False connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-4294967296][MaxConnectionAttempts] Connection closed due to maximum connection attempts reached.
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-4294967296][MaxConnectionAttempts] Connection closed due to maximum connection attempts reached.
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

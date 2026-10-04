@@ -22,7 +22,7 @@ namespace TumbangPreso.Visual
 
         public static void Ensure(MeshFilter target,Slipper shoe,SeanHeroKit kit)
         {
-            if(target==null||target.sharedMesh==null||shoe==null||shoe.Holder==null||kit==null||!kit.IsIgnitionCannonActive)return;
+            if(target==null||target.sharedMesh==null||shoe==null||shoe.Holder==null||kit==null||!kit.IsEmpoweredThrowLoadedFor(shoe))return;
             if(target.GetComponentInChildren<SeanIgnitionVisual>()!=null)return;
             var visual=CreateVisual(target);visual._kit=kit;visual._shoe=shoe;visual._carrier=shoe.Holder.GetComponent<Carrier>();
         }
@@ -83,7 +83,7 @@ namespace TumbangPreso.Visual
 
         private void Update()
         {
-            if (_kit == null || !_kit.IsIgnitionCannonActive || _carrier == null
+            if (_kit == null || !_kit.IsEmpoweredThrowLoadedFor(_shoe) || _carrier == null
                 || _carrier.Held != _shoe || _carrier.GetComponent<HeroAbilitySystem>()?.Kit != _kit)
             {
                 gameObject.SetActive(false); Destroy(gameObject); return;

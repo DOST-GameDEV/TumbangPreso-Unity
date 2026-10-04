@@ -5,6 +5,37 @@ correction: login and the title screen stay untouched, HOME opens from TAP TO ST
 eleven sketches under `ArtSource/front-end-flow-20260923/`, and a read of the current
 front end. `docs/TODO.md` UX-1 is the status queue; this file is the design it points at.
 
+## Current match entry, October 3
+
+Queued play keeps character selection followed by map voting. Custom START GAME
+opens character selection for the room. Under RULES / THE ROOM, MAP VOTE defaults
+to OFF: after lock-in, the host-selected court loads. When ON, the players vote
+before loading. The host owns selection deadlines, ballot results and match start.
+
+Normal arena arrival automatically shows the slow court overview, four player
+pose introductions, then 3 / 2 / 1 / GO!. There is no second in-match
+READY prompt or manual-ready option. The internal seated-peer loaded barrier is
+retained; bots and spectators do not vote as ready players. Gameplay stays held
+through the introduction and countdown, with camera, pose and input cleanup on
+interruption. Practice and tutorial entry retain their dedicated routes.
+
+The refined presentation uses a2.8-second objective-centred establishing move,
+four1.1-second character reveals fitted to drawn body bounds, and a1.4-second
+handoff to the saved gameplay view. Map-authored height/distance remain intact;
+portraits choose clearer front angles, introduce their own pose, and cut through
+brief ink fades without retaining a previous frame. Reduced motion uses a stable
+map shot. [Refinement evidence and limits](../opening-camera-2026-10-03/README.md).
+The opening is prepared under the loading curtain, then fades in over0.5s.
+Its return view comes from the followed-player rig, even while world time is
+held. Overhead nameplates stay hidden until the introduction finishes or is
+cancelled; the title card supplies the character identity during those shots.
+[Handoff correction](../opening-handoff-2026-10-03/README.md).
+
+Protocol143 retains custom preparation phases and optional map voting while
+requiring matching three-second countdown builds. All peers must rebuild
+together. The owner's latest correction restores3 /2 /1 /GO! after the earlier
+five-second revision; custom manual-ready remains removed.
+
 ## Owner additions during completion,2026-09-23
 
 [Completion plan](completion-plan.md) extends the existing design with UX-1.12:

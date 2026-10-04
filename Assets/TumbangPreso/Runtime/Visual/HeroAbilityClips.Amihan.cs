@@ -48,6 +48,16 @@ namespace TumbangPreso.Visual
             foreach (var clip in clips) GroundIntroduction(clip, root, paths["root"], anchorToRest: true);
             return clips;
         }
+
+        /// <summary>Only the Airburst cast, so re-baking it leaves the other four shipped clips untouched.</summary>
+        public static AnimationClip[] BuildAmihanStormAuthored(Transform root)
+        {
+            var paths = ResolvePaths(root);
+            if (paths == null) throw new System.InvalidOperationException("Amihan rig is missing a required bone.");
+            var clips = new[] { BuildAmihanStorm(paths) };
+            foreach (var clip in clips) GroundIntroduction(clip, root, paths["root"], anchorToRest: true);
+            return clips;
+        }
 #endif
 
         /// <summary>
@@ -55,17 +65,23 @@ namespace TumbangPreso.Visual
         /// Release (0.12, punch): flung forward off the back foot, the LEFT arm leading low and out,
         /// the torso unwinding, feet off the road. Hold through the slipstream. Follow-through: the
         /// torso keeps turning past centre (the spiral), then settles.
+        /// FLYING PASS (2026-10-02, owner: her run floats and *"look like she flying"*; offline witness sheets): the launch
+        /// pitched her 24 degrees, so her large head dropped over both arms and her face left the frame for the whole carry.
+        /// Now the dash is a short flight in the same language as her floating run: launched upright with the chin up and
+        /// her eyes down the line, the lead hand reaching out low, the slipper hand swept back, BOTH legs trailing behind
+        /// her off the road; the spiral keeps turning through the carry; then a light catching foot reaches forward and she
+        /// settles without a stomp (`docs/reports/hero-reference-footage-2026-10-02/amihan.md`: a catching foot).
         /// </summary>
         private static AnimationClip BuildAmihanDash(Dictionary<string, string> paths)
         {
             var b = new ClipBuilder("hero-amihan-dash", paths);
             PoseKey(b, 0, 0, V(0, 0, 0), V(0, 0, 0), V(0, 0, 15), V(0, 0, -15));
-            PoseKey(b, .09f, -.05f, V(-6, 22, 3), V(4, -16, 0), V(34, 18, 30), V(40, -12, -34), V(-10, 0, 4), V(16, 0, -4));
+            PoseKey(b, .09f, -.05f, V(-6, 22, 3), V(2, -18, 0), V(34, 18, 30), V(40, -12, -34), V(-10, 0, 4), V(16, 0, -4));
             b.PunchAt(.13f);
             b.HoldAt(.13f, .16f);
-            PoseKey(b, .13f, .05f, V(24, -20, -4), V(-10, 14, 0), V(-78, 22, 44), V(46, 16, -30), V(-34, 0, 6), V(28, 0, -8));
-            PoseKey(b, .34f, .03f, V(16, -34, -5), V(-6, 22, 0), V(-58, 30, 52), V(30, 10, -36), V(-22, 0, 6), V(20, 0, -6));
-            PoseKey(b, .48f, 0, V(6, -14, -2), V(0, 8, 0), V(-20, 16, 30), V(10, 0, -24), V(-6, 0, 3), V(6, 0, -3));
+            PoseKey(b, .13f, .06f, V(14, -18, -4), V(-20, 16, 0), V(-84, 20, 40), V(52, 10, -40), V(12, 0, 4), V(30, 0, -6));
+            PoseKey(b, .34f, .04f, V(12, -30, -5), V(-16, 24, 0), V(-62, 30, 50), V(36, 8, -40), V(6, 0, 5), V(22, 0, -6));
+            PoseKey(b, .48f, -.02f, V(6, -12, -2), V(-4, 8, 0), V(-24, 16, 34), V(12, 0, -26), V(-24, 0, 4), V(14, 0, -4));
             PoseKey(b, .66f, 0, V(0, 0, 0), V(0, 0, 0), V(0, 0, 15), V(0, 0, -15));
             return b.Build();
         }
@@ -123,29 +139,19 @@ namespace TumbangPreso.Visual
         }
 
         /// <summary>
-        /// STORM SURGE, 2.85 s, played at the press over the 2.5 s wind-up. It STARTS in the pose the
-        /// introduction ends on (both palms driven forward, braced), so the cutscene hands straight to
-        /// it. Through the gather she leans harder into the wind she is holding back, arms trembling
-        /// forward; at 2.5 s (punch) she shoves it away with her whole body, the storm's release.
+        /// AIRBURST, v3.2 (owner, 2026-10-03: *"show the ult actually hitting and knocking abck ppl already in the cutscene"*, *"no
+        /// need to reshow it in fpp"*). The shared cutscene now shows the windup AND the release (v4: her drive at 3.85 s of 4.4,
+        /// `HeroIntroductionScene.Amihan.cs`), and play resumes on the hit (`AmihanRules.StormSurgeDelaySeconds`, 0). So this
+        /// clip only SETTLES: it starts in the pose the cutscene ends on (v8: her cute finish), so the hand-back does not jump, and she is back to her stand and free to run by 0.45 s.
         /// </summary>
         private static AnimationClip BuildAmihanStorm(Dictionary<string, string> paths)
         {
             var b = new ClipBuilder("hero-amihan-storm", paths);
-            var legL = V(-22, 0, 10); var legR = V(20, 0, -12);
-            PoseKey(b, 0, -.04f, V(18, -4, 0), V(-8, 0, 0), V(-94, 8, 22), V(-94, -8, -22), legL, legR);
-            float[] tremble = { .5f, .9f, 1.3f, 1.7f, 2.1f };
-            for (int i = 0; i < tremble.Length; i++)
-            {
-                float lean = 18 + i * 1.4f;
-                float shake = i % 2 == 0 ? 3 : -3;
-                PoseKey(b, tremble[i], -.05f - i * .004f, V(lean, -4 + shake * .5f, shake * .3f), V(-8 - i, 0, 0),
-                        V(-96 - i, 8 + shake, 22), V(-96 - i, -8 + shake, -22), legL, legR);
-            }
-            PoseKey(b, 2.36f, -.07f, V(12, -2, 0), V(-6, 0, 0), V(-80, 6, 26), V(-80, -6, -26), V(-18, 0, 10), V(18, 0, -12));
-            b.PunchAt(2.5f);
-            b.HoldAt(2.5f, .16f);
-            PoseKey(b, 2.5f, -.08f, V(30, 0, 0), V(-14, 0, 0), V(-88, 4, 12), V(-88, -4, -12), V(-30, 0, 12), V(26, 0, -14));
-            PoseKey(b, 2.85f, 0, V(0, 0, 0), V(0, 0, 0), V(0, 0, 15), V(0, 0, -15));
+            // v8: the cutscene ends on her cute pose (leaning in, hands behind her back, a foot kicked up behind her, a wink:
+            // `tools/author_ultimate_intros.py` amihan() finish), and she drops out of it into her stand.
+            PoseKey(b, 0, 0, V(6, -6, 8), V(-8, -10, 12), V(-112, 40, 20), V(-16, 38, -58), V(-4, 0, 10), V(50, 0, -8));
+            PoseKey(b, .2f, 0, V(2, -3, 4), V(-5, -5, 6), V(-60, 0, 30), V(-8, 16, -36), V(-2, 0, 8), V(16, 0, -6));
+            PoseKey(b, .45f, 0, V(0, 0, 0), V(0, 0, 0), V(0, 0, 15), V(0, 0, -15));
             return b.Build();
         }
     }

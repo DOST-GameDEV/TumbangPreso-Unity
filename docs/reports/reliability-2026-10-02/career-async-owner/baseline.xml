@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 00:14:47Z" end-time="2026-10-02 00:14:47Z" duration="0.159981">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="803" result="Failed" site="Child" start-time="2026-10-02 00:14:47Z" end-time="2026-10-02 00:14:47Z" duration="0.159981" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1952" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="803" result="Failed" site="Child" start-time="2026-10-02 00:14:47Z" end-time="2026-10-02 00:14:47Z" duration="0.146804" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="7308" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1953" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="803" result="Failed" site="Child" start-time="2026-10-02 00:14:47Z" end-time="2026-10-02 00:14:47Z" duration="0.144373" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1954" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="803" result="Failed" site="Child" start-time="2026-10-02 00:14:47Z" end-time="2026-10-02 00:14:47Z" duration="0.142307" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1060" name="CareerAndCloudCodeTests" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="41" result="Failed" site="Child" start-time="2026-10-02 00:14:47Z" end-time="2026-10-02 00:14:47Z" duration="0.113995" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1093" name="RemainingCareerResponsesRespectAccountOwnership" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RemainingCareerResponsesRespectAccountOwnership" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-02 00:14:47Z" end-time="2026-10-02 00:14:47Z" duration="0.099920" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1089" name="RemainingCareerResponsesRespectAccountOwnership(False,False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RemainingCareerResponsesRespectAccountOwnership(False,False)" methodname="RemainingCareerResponsesRespectAccountOwnership" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="93610419" result="Passed" start-time="2026-10-02 00:14:47Z" end-time="2026-10-02 00:14:47Z" duration="0.055191" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Career] reported a match left early
+]]></output>
+              </test-case>
+              <test-case id="1090" name="RemainingCareerResponsesRespectAccountOwnership(False,True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RemainingCareerResponsesRespectAccountOwnership(False,True)" methodname="RemainingCareerResponsesRespectAccountOwnership" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="332986515" result="Failed" start-time="2026-10-02 00:14:47Z" end-time="2026-10-02 00:14:47Z" duration="0.015519" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An old abandon response replaced the active account career.
+  Expected: 77
+  But was:  420
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.RemainingCareerResponsesRespectAccountOwnership (System.Boolean historyResponse, System.Boolean replaceAccountCache) [0x001f2] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:216
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Career] reported a match left early
+]]></output>
+              </test-case>
+              <test-case id="1091" name="RemainingCareerResponsesRespectAccountOwnership(True,False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RemainingCareerResponsesRespectAccountOwnership(True,False)" methodname="RemainingCareerResponsesRespectAccountOwnership" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="794042503" result="Passed" start-time="2026-10-02 00:14:47Z" end-time="2026-10-02 00:14:47Z" duration="0.004333" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1092" name="RemainingCareerResponsesRespectAccountOwnership(True,True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.RemainingCareerResponsesRespectAccountOwnership(True,True)" methodname="RemainingCareerResponsesRespectAccountOwnership" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="45530268" result="Failed" start-time="2026-10-02 00:14:47Z" end-time="2026-10-02 00:14:47Z" duration="0.002136" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An old account history request must cancel instead of displaying its results.
+  Expected: instance of <System.OperationCanceledException>
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.RemainingCareerResponsesRespectAccountOwnership (System.Boolean historyResponse, System.Boolean replaceAccountCache) [0x0012b] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:203
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

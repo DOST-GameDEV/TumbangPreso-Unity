@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="13" result="Failed(Child)" total="13" passed="3" failed="10" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 02:48:02Z" end-time="2026-10-03 02:48:03Z" duration="0.3311054">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1006" result="Failed" site="Child" start-time="2026-10-03 02:48:02Z" end-time="2026-10-03 02:48:03Z" duration="0.331105" total="13" passed="3" failed="10" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2219" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1006" result="Failed" site="Child" start-time="2026-10-03 02:48:02Z" end-time="2026-10-03 02:48:03Z" duration="0.321259" total="13" passed="3" failed="10" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="19800" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2220" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1006" result="Failed" site="Child" start-time="2026-10-03 02:48:02Z" end-time="2026-10-03 02:48:03Z" duration="0.320554" total="13" passed="3" failed="10" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2221" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1006" result="Failed" site="Child" start-time="2026-10-03 02:48:02Z" end-time="2026-10-03 02:48:03Z" duration="0.320072" total="13" passed="3" failed="10" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1014" name="AccountRenameOwnershipTests" fullname="TumbangPreso.Tests.AccountRenameOwnershipTests" classname="TumbangPreso.Tests.AccountRenameOwnershipTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-03 02:48:03Z" end-time="2026-10-03 02:48:03Z" duration="0.168692" total="7" passed="2" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1020" name="CurrentOwnerRenameStillApplies" fullname="TumbangPreso.Tests.AccountRenameOwnershipTests.CurrentOwnerRenameStillApplies" methodname="CurrentOwnerRenameStillApplies" classname="TumbangPreso.Tests.AccountRenameOwnershipTests" runstate="Runnable" seed="329727864" result="Passed" start-time="2026-10-03 02:48:03Z" end-time="2026-10-03 02:48:03Z" duration="0.065902" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1015" name="DelayedRenameCannotChangeGuestIdentity" fullname="TumbangPreso.Tests.AccountRenameOwnershipTests.DelayedRenameCannotChangeGuestIdentity" methodname="DelayedRenameCannotChangeGuestIdentity" classname="TumbangPreso.Tests.AccountRenameOwnershipTests" runstate="Runnable" seed="1208192825" result="Failed" start-time="2026-10-03 02:48:03Z" end-time="2026-10-03 02:48:03Z" duration="0.011989" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 5 but was 10. Strings differ at index 0.
+  Expected: "Guest"
+  But was:  "Old remote"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountRenameOwnershipTests.DelayedRenameCannotChangeGuestIdentity () [0x000c9] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\AccountRenameOwnershipTests.cs:59
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1016" name="DelayedRenameCannotChangeReplacementAccount" fullname="TumbangPreso.Tests.AccountRenameOwnershipTests.DelayedRenameCannotChangeReplacementAccount" methodname="DelayedRenameCannotChangeReplacementAccount" classname="TumbangPreso.Tests.AccountRenameOwnershipTests" runstate="Runnable" seed="2063383800" result="Failed" start-time="2026-10-03 02:48:03Z" end-time="2026-10-03 02:48:03Z" duration="0.012324" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 11 but was 10. Strings differ at index 0.
+  Expected: "Replacement"
+  But was:  "Old remote"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountRenameOwnershipTests.DelayedRenameCannotChangeReplacementAccount () [0x000eb] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\AccountRenameOwnershipTests.cs:69
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1018" name="EarlierRenameCannotOverwriteLaterAcceptedRename" fullname="TumbangPreso.Tests.AccountRenameOwnershipTests.EarlierRenameCannotOverwriteLaterAcceptedRename" methodname="EarlierRenameCannotOverwriteLaterAcceptedRename" classname="TumbangPreso.Tests.AccountRenameOwnershipTests" runstate="Runnable" seed="1946776282" result="Failed" start-time="2026-10-03 02:48:03Z" end-time="2026-10-03 02:48:03Z" duration="0.022064" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 6 but was 5. Strings differ at index 0.
+  Expected: "Second"
+  But was:  "First"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountRenameOwnershipTests.EarlierRenameCannotOverwriteLaterAcceptedRename () [0x00110] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\AccountRenameOwnershipTests.cs:85
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1017" name="GuestRoundTripRetiresThePrimaryPendingRename" fullname="TumbangPreso.Tests.AccountRenameOwnershipTests.GuestRoundTripRetiresThePrimaryPendingRename" methodname="GuestRoundTripRetiresThePrimaryPendingRename" classname="TumbangPreso.Tests.AccountRenameOwnershipTests" runstate="Runnable" seed="965903804" result="Failed" start-time="2026-10-03 02:48:03Z" end-time="2026-10-03 02:48:03Z" duration="0.012335" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 9 but was 10. Strings differ at index 0.
+  Expected: "Requested"
+  But was:  "Old remote"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountRenameOwnershipTests.GuestRoundTripRetiresThePrimaryPendingRename () [0x000b0] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\AccountRenameOwnershipTests.cs:77
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1021" name="OfflineRenameStillAppliesWithoutDispatch" fullname="TumbangPreso.Tests.AccountRenameOwnershipTests.OfflineRenameStillAppliesWithoutDispatch" methodname="OfflineRenameStillAppliesWithoutDispatch" classname="TumbangPreso.Tests.AccountRenameOwnershipTests" runstate="Runnable" seed="49275215" result="Passed" start-time="2026-10-03 02:48:03Z" end-time="2026-10-03 02:48:03Z" duration="0.012720" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1019" name="SignedOutOwnerDoesNotApplyDelayedRemoteRename" fullname="TumbangPreso.Tests.AccountRenameOwnershipTests.SignedOutOwnerDoesNotApplyDelayedRemoteRename" methodname="SignedOutOwnerDoesNotApplyDelayedRemoteRename" classname="TumbangPreso.Tests.AccountRenameOwnershipTests" runstate="Runnable" seed="642565531" result="Failed" start-time="2026-10-03 02:48:03Z" end-time="2026-10-03 02:48:03Z" duration="0.011802" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 9 but was 10. Strings differ at index 0.
+  Expected: "Requested"
+  But was:  "Old remote"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.AccountRenameOwnershipTests.SignedOutOwnerDoesNotApplyDelayedRemoteRename () [0x0008e] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\AccountRenameOwnershipTests.cs:92
+at UnityEngine.TestTools.TestRunner.TestTaskWrapper+<Execute>d__2.MoveNext () [0x00063] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\TestRunner\TestTaskWrapper.cs:31
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1175" name="CareerGuestIsolationTests" fullname="TumbangPreso.Tests.CareerGuestIsolationTests" classname="TumbangPreso.Tests.CareerGuestIsolationTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-03 02:48:03Z" end-time="2026-10-03 02:48:03Z" duration="0.109148" total="6" passed="1" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1183" name="ARealAccountReplacementStillRetiresThePreviousCareer" fullname="TumbangPreso.Tests.CareerGuestIsolationTests.ARealAccountReplacementStillRetiresThePreviousCareer" methodname="ARealAccountReplacementStillRetiresThePreviousCareer" classname="TumbangPreso.Tests.CareerGuestIsolationTests" runstate="Runnable" seed="1565064983" result="Passed" start-time="2026-10-03 02:48:03Z" end-time="2026-10-03 02:48:03Z" duration="0.035489" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Career] the cached career belongs to another account; starting a fresh one.
+]]></output>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1178" name="EnteringATemporaryGuestPreservesThePrimaryCareerFile" fullname="TumbangPreso.Tests.CareerGuestIsolationTests.EnteringATemporaryGuestPreservesThePrimaryCareerFile" classname="TumbangPreso.Tests.CareerGuestIsolationTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-03 02:48:03Z" end-time="2026-10-03 02:48:03Z" duration="0.019134" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1176" name="EnteringATemporaryGuestPreservesThePrimaryCareerFile(False)" fullname="TumbangPreso.Tests.CareerGuestIsolationTests.EnteringATemporaryGuestPreservesThePrimaryCareerFile(False)" methodname="EnteringATemporaryGuestPreservesThePrimaryCareerFile" classname="TumbangPreso.Tests.CareerGuestIsolationTests" runstate="Runnable" seed="1949036307" result="Failed" start-time="2026-10-03 02:48:03Z" end-time="2026-10-03 02:48:03Z" duration="0.005278" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The guest inherited the primary account's history.
+  Expected: 0
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerGuestIsolationTests.EnteringATemporaryGuestPreservesThePrimaryCareerFile (System.Boolean unclaimedCareer) [0x0007d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerGuestIsolationTests.cs:103
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1177" name="EnteringATemporaryGuestPreservesThePrimaryCareerFile(True)" fullname="TumbangPreso.Tests.CareerGuestIsolationTests.EnteringATemporaryGuestPreservesThePrimaryCareerFile(True)" methodname="EnteringATemporaryGuestPreservesThePrimaryCareerFile" classname="TumbangPreso.Tests.CareerGuestIsolationTests" runstate="Runnable" seed="457842511" result="Failed" start-time="2026-10-03 02:48:03Z" end-time="2026-10-03 02:48:03Z" duration="0.012526" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The guest inherited the primary account's history.
+  Expected: 0
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerGuestIsolationTests.EnteringATemporaryGuestPreservesThePrimaryCareerFile (System.Boolean unclaimedCareer) [0x0007d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerGuestIsolationTests.cs:103
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-case id="1182" name="GuestMatchWritesLeaveThePrimaryCareerFileUntouched" fullname="TumbangPreso.Tests.CareerGuestIsolationTests.GuestMatchWritesLeaveThePrimaryCareerFileUntouched" methodname="GuestMatchWritesLeaveThePrimaryCareerFileUntouched" classname="TumbangPreso.Tests.CareerGuestIsolationTests" runstate="Runnable" seed="1798908380" result="Failed" start-time="2026-10-03 02:48:03Z" end-time="2026-10-03 02:48:03Z" duration="0.035822" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A temporary guest overwrote the primary career on disk.
+  Expected is <System.Byte[933]>, actual is <System.Byte[3597]>
+  Values differ at index [24]
+  Expected: 34
+  But was:  103
+]]></message>
+                <stack-trace><![CDATA[at NUnit.Framework.CollectionAssert.AreEqual (System.Collections.IEnumerable expected, System.Collections.IEnumerable actual, System.String message, System.Object[] args) [0x00008] in <8b63e8ac0a4746599ed207982825ae6c>:0
+at TumbangPreso.Tests.CareerGuestIsolationTests.AssertPrimaryFilesUnchanged () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerGuestIsolationTests.cs:83
+at TumbangPreso.Tests.CareerGuestIsolationTests.GuestMatchWritesLeaveThePrimaryCareerFileUntouched () [0x000a8] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerGuestIsolationTests.cs:155
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1181" name="TakingBackTheDeviceRestoresPrimaryHistoryAndPendingUploads" fullname="TumbangPreso.Tests.CareerGuestIsolationTests.TakingBackTheDeviceRestoresPrimaryHistoryAndPendingUploads" classname="TumbangPreso.Tests.CareerGuestIsolationTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-03 02:48:03Z" end-time="2026-10-03 02:48:03Z" duration="0.016285" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1179" name="TakingBackTheDeviceRestoresPrimaryHistoryAndPendingUploads(False)" fullname="TumbangPreso.Tests.CareerGuestIsolationTests.TakingBackTheDeviceRestoresPrimaryHistoryAndPendingUploads(False)" methodname="TakingBackTheDeviceRestoresPrimaryHistoryAndPendingUploads" classname="TumbangPreso.Tests.CareerGuestIsolationTests" runstate="Runnable" seed="1533088091" result="Failed" start-time="2026-10-03 02:48:03Z" end-time="2026-10-03 02:48:03Z" duration="0.005879" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Career subscribers were not notified of the restored primary career.
+  Expected: same as <TumbangPreso.Net.CareerStore+Cache>
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerGuestIsolationTests.TakingBackTheDeviceRestoresPrimaryHistoryAndPendingUploads (System.Boolean unclaimedCareer) [0x000e9] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerGuestIsolationTests.cs:127
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1180" name="TakingBackTheDeviceRestoresPrimaryHistoryAndPendingUploads(True)" fullname="TumbangPreso.Tests.CareerGuestIsolationTests.TakingBackTheDeviceRestoresPrimaryHistoryAndPendingUploads(True)" methodname="TakingBackTheDeviceRestoresPrimaryHistoryAndPendingUploads" classname="TumbangPreso.Tests.CareerGuestIsolationTests" runstate="Runnable" seed="131480689" result="Failed" start-time="2026-10-03 02:48:03Z" end-time="2026-10-03 02:48:03Z" duration="0.009230" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Career subscribers were not notified of the restored primary career.
+  Expected: same as <TumbangPreso.Net.CareerStore+Cache>
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerGuestIsolationTests.TakingBackTheDeviceRestoresPrimaryHistoryAndPendingUploads (System.Boolean unclaimedCareer) [0x000e9] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerGuestIsolationTests.cs:127
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

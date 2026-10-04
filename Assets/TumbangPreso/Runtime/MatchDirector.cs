@@ -25,6 +25,7 @@ namespace TumbangPreso
         public event Action<int, ScoreEvent> CompanionScored;
 
         private readonly Scoreboard _scores = new Scoreboard();
+        private bool _snapshotEndReported;
 
         public int RoundNumber { get; private set; }
         public int DefenderSlot => MatchRules.DefenderSlotFor(RoundNumber);
@@ -181,9 +182,9 @@ namespace TumbangPreso
         /// § 1) was unreachable for anyone but the host: a client had no button to press, and
         /// `RematchTally` and `BeginRematch` arrived at a screen that was never raised.
         ///
-        /// ⚠️ ONLY THE TRUE-TO-FALSE EDGE, AND ONLY HERE. A joining client is told `false` before
-        /// the match starts and `false` again after it ends, so raising the event on the VALUE
-        /// would show the result board to somebody who has just walked into a lobby.
+        /// Normally only the confirmed true-to-false edge raises the event. A cold join after
+        /// completion has no live edge, so the installed arena receiver can explicitly admit a
+        /// validated terminal round. A plain false lobby snapshot still raises nothing.
         ///
         /// ⚠️⚠️ AND `RoundStarted` AND `IntermissionStarted` ARE DELIBERATELY NOT RAISED HERE,
         /// WHICH IS THE HALF THAT LOOKS LIKE AN OVERSIGHT AND IS NOT. Both are wired to
@@ -200,11 +201,16 @@ namespace TumbangPreso
         /// by construction: it passes the host its own `MatchInProgress` back, so the edge cannot
         /// fire.
         /// </summary>
-        public void ApplySnapshot(int[] scores, int roundNumber, bool inProgress)
+        public void ApplySnapshot(int[] scores, int roundNumber, bool inProgress,
+                                  bool completedArrival = false)
         {
             bool wasInProgress = MatchInProgress;
 
-            if (inProgress) HostConfirmedInProgress = true;
+            if (inProgress)
+            {
+                HostConfirmedInProgress = true;
+                _snapshotEndReported = false;
+            }
 
             _scores.SetAll(scores);
             RoundNumber = roundNumber;
@@ -213,9 +219,22 @@ namespace TumbangPreso
             // ⚠️ THE EDGE NEEDS THE HOST TO HAVE CONFIRMED THIS MATCH FIRST. See
             // `IsPreStartSnapshot`: without that clause the falling edge also fires on a packet
             // the host wrote BEFORE it started, which is the whole of § 82.
-            if (wasInProgress && !inProgress && HostConfirmedInProgress)
+            bool completed = completedArrival && IsCompletedSnapshot(scores, roundNumber);
+            if (!_snapshotEndReported && !inProgress &&
+                ((wasInProgress && HostConfirmedInProgress) || completed))
+            {
+                _snapshotEndReported = true;
                 MatchEnded?.Invoke(_scores.WinningSlot());
+            }
         }
+
+        // A fresh joiner may never see a live packet. Only the installed arena
+        // receiver opts into this terminal state, never an ordinary lobby snapshot.
+        internal bool IsCompletedSnapshot(int[] scores, int roundNumber)
+            => scores != null && scores.Length == Balance.PlayerCount && roundNumber > 0
+               && roundNumber <= TotalRounds + 1
+               && (roundNumber >= TotalRounds ||
+                   CustomGameRules.ScoreTargetReached(scores, UI.SceneFlow.SelectedRules.ScoreTarget));
 
         /// <summary>
         /// Whether the host has described THIS match as running at least once on this peer.
@@ -280,6 +299,7 @@ namespace TumbangPreso
             // standing from the PREVIOUS match would let the stale packet through second time
             // round. See `IsPreStartSnapshot`.
             HostConfirmedInProgress = false;
+            _snapshotEndReported = false;
 
             AdvanceRound();
         }
@@ -293,6 +313,7 @@ namespace TumbangPreso
             MatchInProgress = false;
             IsWarmupBuffer = false;
             HostConfirmedInProgress = false;
+            _snapshotEndReported = false;
         }
 
         public void AdvanceRound()

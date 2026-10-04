@@ -192,19 +192,41 @@ namespace TumbangPreso
         }
 
         private InputAction _readyUp;
+        private bool _countdownHold;
+        private void HoldUntilStart()
+        {
+            if (_countdownHold) return;
+            PresentationClock.Hold(); _countdownHold = true;
+        }
+        private void ReleaseStartHold()
+        {
+            if (!_countdownHold) return;
+            _countdownHold = false; PresentationClock.Release();
+            _local?.Intent.RequireFreshActions();
+        }
+        private void OnDisable()
+        {
+            StopAllCoroutines(); _arrival = null;
+            GetComponent<MatchArrivalPresentation>()?.Cancel();
+            ReleaseStartHold();
+        }
+        private void OnDestroy() => OnDisable();
         private CharacterMotor _local;
 
         public bool AwaitingReady => _awaitingLocalReady;
         public bool CountingDown => _countingDown;
 
-        /// <summary>Open the free-roam window. The round does not start until READY.</summary>
+        /// <summary>Open the automatic court introduction and loaded-peer barrier.</summary>
         public void Open(CharacterMotor local)
         {
+            StopAllCoroutines(); _arrival = null;
+            GetComponent<MatchArrivalPresentation>()?.Cancel();
+            ReleaseStartHold();
             _local = local;
             _awaitingLocalReady = true;
             _countingDown = false;
             _countdownConsumed = false;
-            _automatic = !UI.SceneFlow.SelectedRules.ManualReady;
+            _automatic = true; // Lobby lock-in is the only player-facing ready step.
             _introductionDone = !_automatic;
             _readySendPending = false;
             ReadyPromptChanged?.Invoke(!_automatic);
@@ -216,6 +238,7 @@ namespace TumbangPreso
             var presentation = gameObject.AddComponent<MatchArrivalPresentation>();
             yield return presentation.Run();
             if (presentation != null) Destroy(presentation);
+            HoldUntilStart();
             _introductionDone = true;
             _nextAutomaticReady = 0;
             _arrival = null;
@@ -265,10 +288,10 @@ namespace TumbangPreso
                 if (!_introductionDone) return;
                 if (!NetAuthority.IsNetworked) { StartCoroutine(RunReadyCountdown()); return; }
                 if (NetAuthority.IsHost && ExpectedReadyCount() == 0) { BeginNetCountdown(); return; }
-                if (GameLaunch.Spectator || Time.time < _nextAutomaticReady) return;
+                if (GameLaunch.Spectator || Time.unscaledTime < _nextAutomaticReady) return;
                 // The host can finish loading after this client. Repeat until the host's countdown
                 // acknowledges the quorum; the existing peer set makes each repeat idempotent.
-                _nextAutomaticReady = Time.time + .5f;
+                _nextAutomaticReady = Time.unscaledTime + .5f;
                 Net.MatchRpc.Instance?.DeclareReadyServerRpc();
                 return;
             }
@@ -303,6 +326,10 @@ namespace TumbangPreso
             // what keeps `-tp-autostart` working on an all-bots peer that this gate now ignores.
             if (GameLaunch.Spectator) return;
 
+            // This action bypasses PlayerInputReader, so it must respect the same chat
+            // context. Previously submitted votes and automatic readiness still run above.
+            if (UI.LobbyChat.AnyTyping) return;
+
             if (_readyUp == null || !_readyUp.WasPressedThisFrame()) return;
 
             if (_local != null) ReadyGestureRequested?.Invoke(_local);
@@ -329,6 +356,7 @@ namespace TumbangPreso
         /// </summary>
         private IEnumerator RunReadyCountdown()
         {
+            HoldUntilStart();
             _countdownConsumed = true;
             _readySendPending = false;
             _countingDown = true;
@@ -336,18 +364,32 @@ namespace TumbangPreso
 
             foreach (var tick in new[] { "3", "2", "1" })
             {
+                if (MatchAbandon.AuthorityRevoked) { CancelAbandonedCountdown(); yield break; }
                 CountdownTick?.Invoke(tick);
-                yield return new WaitForSeconds(TickSeconds);
+                yield return new WaitForSecondsRealtime(TickSeconds);
             }
 
-            CountdownTick?.Invoke(_automatic ? "START!" : "GO!");
-            yield return new WaitForSeconds(GoSeconds);
+            if (MatchAbandon.AuthorityRevoked) { CancelAbandonedCountdown(); yield break; }
+            CountdownTick?.Invoke("GO!");
+            yield return new WaitForSecondsRealtime(GoSeconds);
 
+            if (MatchAbandon.AuthorityRevoked) { CancelAbandonedCountdown(); yield break; }
             CountdownHidden?.Invoke();
             _awaitingLocalReady = false;
             _countingDown = false;
 
+            ReleaseStartHold();
             RoundShouldBegin?.Invoke();
+        }
+
+        private void CancelAbandonedCountdown()
+        {
+            ReleaseStartHold();
+            _readySendPending = false;
+            _awaitingLocalReady = false;
+            AwaitingNetReady = false;
+            _countingDown = false;
+            CountdownHidden?.Invoke();
         }
     }
 }

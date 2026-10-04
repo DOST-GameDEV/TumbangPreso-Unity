@@ -325,11 +325,28 @@ namespace TumbangPreso.UI.Hub
             if (_lobbyEntryPending) ShowLobby();
 
             HubQueueWatch.Tick(this);
+            if (Net.MatchRpc.Instance != null && Net.MatchRpc.Instance.CharacterSelecting &&
+                (!(Top is HubCharacterSelect selection) || !selection.Timed))
+            {
+                Home();
+                Push<HubCharacterSelect>(screen => screen.Timed = true);
+            }
             if (Host.MapVoting && !(Top is HubMapVote))
             {
                 Home();
                 Push<HubMapVote>();
             }
+            if (!QueuedRoom && Host.InRoom && !Host.MatchInProgress && !Host.MapVoting &&
+                Net.MatchRpc.Instance != null && !Net.MatchRpc.Instance.CharacterSelecting &&
+                Top is HubCharacterSelect customSelection && customSelection.Timed)
+            {
+                ShowLobby();
+                Toast("Match preparation cancelled. Check the players and room rules before starting again.");
+            }
+            var seatOffer = Host.SeatSwapOffer;
+            if (seatOffer != null && seatOffer.Incoming && !QueuedRoom && Host.InRoom && !Host.MatchInProgress
+                && !(Top is HubSeatSwapPopup))
+                Push<HubSeatSwapPopup>(popup => popup.Offer = seatOffer);
             Top?.Tick();
         }
 

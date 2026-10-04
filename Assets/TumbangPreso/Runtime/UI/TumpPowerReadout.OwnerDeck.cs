@@ -130,7 +130,9 @@ namespace TumbangPreso.UI
                 var skill = _skills[i]; if (skill == null) continue;
                 _symbols[i].SetCastLocked(system.GetComponent<CharacterMotor>()?.IsZapped == true);
                 if (_symbols[i].Glyph != skill.Glyph) { _symbols[i].Glyph = skill.Glyph; _symbols[i].SetVerticesDirty(); }
-                bool ready = !kit.PracticeMode && !system.GetComponent<CharacterMotor>().IsZapped && (i == 2 ? kit.IsUltimateReady : skill.IsReady);
+                // Active reactivation follows its own window, not the original cast cooldown.
+                bool actionReady = skill.IsActive && skill.CanReactivate ? skill.ReactivateReady : skill.IsReady;
+                bool ready = !kit.PracticeMode && !system.GetComponent<CharacterMotor>().IsZapped && (i == 2 ? kit.IsUltimateReady : actionReady);
                 float ratio = skill.IsActive ? skill.DurationRatio : i == 2 ? kit.UltimateRatio : 1 - skill.CooldownRatio;
                 _ownerDials[i].State(ratio, ready, skill.IsActive, i == 2);
                 _symbols[i].color = ready ? CourtPresentationPalette.Gold : CourtPresentationPalette.Paper;
@@ -158,6 +160,9 @@ namespace TumbangPreso.UI
                 string binding = Hud.KeyLabelFor(Actions[i]); _keys[i].text = Hud.OnTouch ? "" : binding;
                 bool pad = LastInputDevice.Current == InputDeviceKind.Gamepad;
                 _keyGlyphs[i].sprite = !Hud.OnTouch ? InputGlyphs.For(binding.ToUpperInvariant(), true) : null; _keyGlyphs[i].enabled = _keyGlyphs[i].sprite != null;
+                float extraWidth = (InputGlyphs.PromptWidth(_keyGlyphs[i].sprite, 40, 46) - 40) * .5f;
+                _keyGlyphs[i].rectTransform.offsetMin = new Vector2(-extraWidth, -3);
+                _keyGlyphs[i].rectTransform.offsetMax = new Vector2(extraWidth, 3);
                 bool cap = !Hud.OnTouch && !pad && !_keyGlyphs[i].enabled && binding.Length <= 3;
                 _ownerKeycaps[i].gameObject.SetActive(cap);
                 _keys[i].color = _keyGlyphs[i].enabled ? Color.clear : cap ? HudDraw.CardInk : CourtPresentationPalette.Paper;

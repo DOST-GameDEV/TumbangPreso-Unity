@@ -1,0 +1,10 @@
+{
+  "runtime": 0,
+  "tests": 0,
+  "scope": "Compile only,6cases nativepending",
+  "inputs": {
+    "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "01176fd43f9cceee1e4869c94d3fcf5e2796b8900955375802eb85cdfd823b67",
+    "Assets/TumbangPreso/Runtime/Net/JoinAttemptGate.cs": "0a59a918bd16cd2ae9aa8557da95f4d7dd8a025f2eda0510bb728c4f75bb925f",
+    "Assets/TumbangPreso/Tests/NetArrivalVerificationLifetimeTests.cs": "35774c521371d2b701c760d4ae8602b015a5871965ab9918fc6dc44333a043cb"
+  }
+}

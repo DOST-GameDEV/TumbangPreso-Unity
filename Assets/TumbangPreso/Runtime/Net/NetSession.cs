@@ -556,7 +556,18 @@ namespace TumbangPreso.Net
         //122: live Frostbite load uses the existing scoped timed-kit recovery.
         //123: authoritative objective cooldown grants reach predicted owners.
         //124: match-long Overclock uses an explicit bounded permanent-state bit.
-        public const int ProtocolVersion = 127;
+        //133: ordinary Next Round uses the shared3.5second deadline; halftime stays10.
+        //134: trip, elemental stun and edge recovery no longer accept mash input.
+        //135: Absolute Zero excludes its own caster from Frozen and thaw Chilled.
+        //136: objective income is knockdown/tag plus one defender-round grant.
+        //137: explicit movement speeds, stamina, jump and charged lunge recovery.
+        //138: playtested movement revision and stamina-free shove/lunge.
+        // 139: empty network bot seats use shared, unrotated character/kit selection.
+        // 140: occupied lobby seats require recipient consent before an atomic swap.
+        // 141: owner restores near-original jump launch, gravity and fall-speed cap.
+        // Three-second entry countdown: mixed clients must not release their hold two seconds apart.
+        // Revised throw/contact timings, hit-confirmed punch recovery and retired retrieval slide.
+        public const int ProtocolVersion = 145;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or
@@ -595,6 +606,8 @@ namespace TumbangPreso.Net
         // INetProvider
         public bool IsHost => _nm == null || !_nm.IsListening || _nm.IsServer;
         public bool IsNetworked => _nm != null && _nm.IsListening;
+        /// <summary>A hosted room or a client whose connection and seat were admitted.</summary>
+        public bool IsAdmitted => IsNetworked && (IsHost || _everConnected && _seatApplied);
         public int LocalSlot { get; private set; }
 
         /// <summary>
@@ -1770,7 +1783,9 @@ namespace TumbangPreso.Net
                 // every start path including the two LAN ones, and `FUTURE.md` § 0.5 rule 7 says
                 // a LAN match may never sit behind a login. `PrimeHandleProofAsync` fetches one
                 // on the relay paths, before this; empty here is a normal, playable state.
-                AccountPlayerId = account != null && account.IsSignedIn ? account.PlayerId : "",
+                // LAN records need this peer's cached local profile identity too. This
+                // is an identity claim, not a verified handle or an authenticated session.
+                AccountPlayerId = account != null && (account.IsSignedIn || !IsRelay) ? account.PlayerId : "",
                 HandleProof = account?.HandleProof ?? "",
 
                 // ⚠️ THE SAME DERIVATION THE QUEUE USES, ASKED ONCE. `Matchmaker.LocalLadderRating`
@@ -1812,6 +1827,7 @@ namespace TumbangPreso.Net
         /// </summary>
         private readonly Dictionary<string, (Core.AccountRules.HandleCheck Check, string Handle)>
             _handleChecks = new Dictionary<string, (Core.AccountRules.HandleCheck, string)>();
+        private Func<string, string, Task<(Core.AccountRules.HandleCheck Check, string Handle)>> _verifyHandleDispatch;
 
         /// <summary>
         /// The host side of `docs/TODO.md` § 88.1c: asks the account endpoint whether an arriving
@@ -1894,6 +1910,13 @@ namespace TumbangPreso.Net
             // of machines joining off the beacon.
             if (!IsRelay) return;
 
+            var peer = Lobby?.PeerById(peerId);
+            if (peer == null) return;
+            string token = peer.Token;
+            var network = _nm;
+            int session = _joinAttempts.Version;
+            _helloByClient.TryGetValue((ulong)peerId, out var approved);
+
             // ⚠️⚠️ THE WHOLE BODY IS GUARDED BECAUSE THIS IS `async void`. Nothing awaits it, so
             // an exception escaping here has no caller to land in and takes the process with it.
             // A guard that fails must cost a name, never a match.
@@ -1902,12 +1925,15 @@ namespace TumbangPreso.Net
                 string key = accountPlayerId + "|" + proof;
                 if (!_handleChecks.TryGetValue(key, out var answer))
                 {
-                    answer = await PlayerAccount.VerifyHandleAsync(accountPlayerId, proof);
+                    answer = _verifyHandleDispatch == null
+                        ? await PlayerAccount.VerifyHandleAsync(accountPlayerId, proof)
+                        : await _verifyHandleDispatch(accountPlayerId, proof);
+                    if (!OwnsArrivalVerification(peerId, accountPlayerId, token, network, session, approved)) return;
                     if (answer.Check != Core.AccountRules.HandleCheck.Unreachable)
                         _handleChecks[key] = answer;
                 }
 
-                if (Lobby == null) return;
+                if (!OwnsArrivalVerification(peerId, accountPlayerId, token, network, session, approved)) return;
                 if (!Lobby.ApplyHandleCheck(peerId, accountPlayerId, answer.Check, answer.Handle)) return;
 
                 if (answer.Check == Core.AccountRules.HandleCheck.NotOwned)
@@ -1925,6 +1951,19 @@ namespace TumbangPreso.Net
                 Debug.LogWarning($"[Net] handle verification for peer {peerId} failed; " +
                                  $"the claimed name stands: {e.Message}");
             }
+        }
+
+        private bool OwnsArrivalVerification(int peerId, string accountPlayerId, string token,
+                                            NetworkManager network, int session, ConnectionHello approved)
+        {
+            if (this == null || !IsHost || !IsRelay || !ReferenceEquals(_nm, network)
+                || _joinAttempts.Version != session) return false;
+            var current = Lobby?.PeerById(peerId);
+            if (current == null || current.Token != token || (!string.IsNullOrEmpty(current.AccountPlayerId)
+                && current.AccountPlayerId != accountPlayerId)) return false;
+            // Identify rebuilds the peer record, so bind to approval rather than that temporary record.
+            _helloByClient.TryGetValue((ulong)peerId, out var currentApproved);
+            return ReferenceEquals(currentApproved, approved);
         }
 
         private void ApproveConnection(NetworkManager.ConnectionApprovalRequest request,
@@ -2175,6 +2214,7 @@ namespace TumbangPreso.Net
 
             var record = Lobby.Admit((int)clientId, hello.Token, hello.Name,
                                      out int replacedPeerId);
+            record.AccountPlayerId = hello.AccountPlayerId ?? "";
             Debug.Log($"[NetArrival] peer={clientId} seat={record.Seat} replaces={replacedPeerId}");
 
             // ⚠️ AFTER `Admit`, NOT THROUGH IT. `Admit` has five callers and a widened signature

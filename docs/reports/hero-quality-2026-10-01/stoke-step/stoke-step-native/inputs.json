@@ -1,0 +1,8 @@
+{
+  "Assets/TumbangPreso/Runtime/Abilities/HeroKit.cs": "627ab76e80c8e58113702fb0fd97d06e8c3e61ffe7e9ff7f826079b20065f9e7",
+  "Assets/TumbangPreso/Runtime/Abilities/SeanHeroKit.cs": "b13f9be47244e4091b1dca343baeb97e69480016b9fc85b8147806941d44f622",
+  "Assets/TumbangPreso/Runtime/CharacterMotor.cs": "5a0e3d52db3f375090a6823a5797b5450516c9ec6abbc2a1849e5cda8536265d",
+  "Assets/TumbangPreso/Runtime/Net/MatchRpc.Movement.cs": "5bac6d4e68bfa45602b97e8e31b6d2a4723283d120433eab509e1980379bb695",
+  "Assets/TumbangPreso/Runtime/Net/NetSession.cs": "3ea73a5be788d28ce2c36d0021e4ffbcf590877cf80fde7f0466c39a3df0362b",
+  "Assets/TumbangPreso/Tests/PlayMode/SeanSkillTimingProbe.cs": "2bf0ceecf1d40c04b4e65ec74fc1d27ee58819ace3ea08d38245de7315839e72"
+}

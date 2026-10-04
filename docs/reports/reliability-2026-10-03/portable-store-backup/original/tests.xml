@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 05:44:52Z" end-time="2026-10-03 05:44:52Z" duration="0.4355988">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1083" result="Failed" site="Child" start-time="2026-10-03 05:44:52Z" end-time="2026-10-03 05:44:52Z" duration="0.435599" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2318" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1083" result="Failed" site="Child" start-time="2026-10-03 05:44:52Z" end-time="2026-10-03 05:44:52Z" duration="0.394053" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="30484" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2319" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1083" result="Failed" site="Child" start-time="2026-10-03 05:44:52Z" end-time="2026-10-03 05:44:52Z" duration="0.373016" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2320" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1083" result="Failed" site="Child" start-time="2026-10-03 05:44:52Z" end-time="2026-10-03 05:44:52Z" duration="0.311502" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1935" name="PortableStoreBackupTests" fullname="TumbangPreso.Tests.PortableStoreBackupTests" classname="TumbangPreso.Tests.PortableStoreBackupTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-03 05:44:52Z" end-time="2026-10-03 05:44:52Z" duration="0.241622" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1940" name="AThrowingPreviousValidatorCannotReplaceTheUsableBackupWithCorruptData" fullname="TumbangPreso.Tests.PortableStoreBackupTests.AThrowingPreviousValidatorCannotReplaceTheUsableBackupWithCorruptData" methodname="AThrowingPreviousValidatorCannotReplaceTheUsableBackupWithCorruptData" classname="TumbangPreso.Tests.PortableStoreBackupTests" runstate="Runnable" seed="8743931" result="Failed" start-time="2026-10-03 05:44:52Z" end-time="2026-10-03 05:44:52Z" duration="0.088273" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected string length 15 but was 14. Strings differ at index 0.
+  Expected: "usable:previous"
+  But was:  "broken primary"
+  -----------^
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.PortableStoreBackupTests.AThrowingPreviousValidatorCannotReplaceTheUsableBackupWithCorruptData () [0x00049] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\PortableStoreBackupTests.cs:58
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1942" name="LegacyTextSaveWithoutAValidatorStillKeepsThePreviousText" fullname="TumbangPreso.Tests.PortableStoreBackupTests.LegacyTextSaveWithoutAValidatorStillKeepsThePreviousText" methodname="LegacyTextSaveWithoutAValidatorStillKeepsThePreviousText" classname="TumbangPreso.Tests.PortableStoreBackupTests" runstate="Runnable" seed="1691726868" result="Passed" start-time="2026-10-03 05:44:52Z" end-time="2026-10-03 05:44:52Z" duration="0.029892" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1939" name="SavingAfterAnInterruptedPrimaryRetainsTheValidatedRecoveryCopy" fullname="TumbangPreso.Tests.PortableStoreBackupTests.SavingAfterAnInterruptedPrimaryRetainsTheValidatedRecoveryCopy" classname="TumbangPreso.Tests.PortableStoreBackupTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-03 05:44:52Z" end-time="2026-10-03 05:44:52Z" duration="0.068875" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1936" name="SavingAfterAnInterruptedPrimaryRetainsTheValidatedRecoveryCopy(Android)" fullname="TumbangPreso.Tests.PortableStoreBackupTests.SavingAfterAnInterruptedPrimaryRetainsTheValidatedRecoveryCopy(Android)" methodname="SavingAfterAnInterruptedPrimaryRetainsTheValidatedRecoveryCopy" classname="TumbangPreso.Tests.PortableStoreBackupTests" runstate="Runnable" seed="1920002741" result="Failed" start-time="2026-10-03 05:44:52Z" end-time="2026-10-03 05:44:52Z" duration="0.027619" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The next save replaced the last usable backup with the interrupted primary
+  Expected string length 15 but was 19. Strings differ at index 0.
+  Expected: "usable:previous"
+  But was:  "interrupted primary"
+  -----------^
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.PortableStoreBackupTests.SavingAfterAnInterruptedPrimaryRetainsTheValidatedRecoveryCopy (UnityEngine.RuntimePlatform platform) [0x00049] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\PortableStoreBackupTests.cs:46
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1937" name="SavingAfterAnInterruptedPrimaryRetainsTheValidatedRecoveryCopy(OSXPlayer)" fullname="TumbangPreso.Tests.PortableStoreBackupTests.SavingAfterAnInterruptedPrimaryRetainsTheValidatedRecoveryCopy(OSXPlayer)" methodname="SavingAfterAnInterruptedPrimaryRetainsTheValidatedRecoveryCopy" classname="TumbangPreso.Tests.PortableStoreBackupTests" runstate="Runnable" seed="459179064" result="Failed" start-time="2026-10-03 05:44:52Z" end-time="2026-10-03 05:44:52Z" duration="0.015530" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The next save replaced the last usable backup with the interrupted primary
+  Expected string length 15 but was 19. Strings differ at index 0.
+  Expected: "usable:previous"
+  But was:  "interrupted primary"
+  -----------^
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.PortableStoreBackupTests.SavingAfterAnInterruptedPrimaryRetainsTheValidatedRecoveryCopy (UnityEngine.RuntimePlatform platform) [0x00049] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\PortableStoreBackupTests.cs:46
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1938" name="SavingAfterAnInterruptedPrimaryRetainsTheValidatedRecoveryCopy(LinuxPlayer)" fullname="TumbangPreso.Tests.PortableStoreBackupTests.SavingAfterAnInterruptedPrimaryRetainsTheValidatedRecoveryCopy(LinuxPlayer)" methodname="SavingAfterAnInterruptedPrimaryRetainsTheValidatedRecoveryCopy" classname="TumbangPreso.Tests.PortableStoreBackupTests" runstate="Runnable" seed="1615678808" result="Failed" start-time="2026-10-03 05:44:52Z" end-time="2026-10-03 05:44:52Z" duration="0.018367" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The next save replaced the last usable backup with the interrupted primary
+  Expected string length 15 but was 19. Strings differ at index 0.
+  Expected: "usable:previous"
+  But was:  "interrupted primary"
+  -----------^
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.PortableStoreBackupTests.SavingAfterAnInterruptedPrimaryRetainsTheValidatedRecoveryCopy (UnityEngine.RuntimePlatform platform) [0x00049] in C:\Users\matth\Documents\Codex\work\tump-competition-release1002\Assets\TumbangPreso\Tests\PortableStoreBackupTests.cs:46
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-case id="1941" name="UsablePreviousPrimaryStillBecomesTheBackup" fullname="TumbangPreso.Tests.PortableStoreBackupTests.UsablePreviousPrimaryStillBecomesTheBackup" methodname="UsablePreviousPrimaryStillBecomesTheBackup" classname="TumbangPreso.Tests.PortableStoreBackupTests" runstate="Runnable" seed="695677967" result="Passed" start-time="2026-10-03 05:44:52Z" end-time="2026-10-03 05:44:52Z" duration="0.019182" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

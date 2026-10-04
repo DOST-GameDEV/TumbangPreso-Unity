@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 07:56:56Z" end-time="2026-10-02 07:56:57Z" duration="0.4319962">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="947" result="Failed" site="Child" start-time="2026-10-02 07:56:56Z" end-time="2026-10-02 07:56:57Z" duration="0.431996" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2144" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="947" result="Failed" site="Child" start-time="2026-10-02 07:56:56Z" end-time="2026-10-02 07:56:57Z" duration="0.381375" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25460" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2145" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="947" result="Failed" site="Child" start-time="2026-10-02 07:56:56Z" end-time="2026-10-02 07:56:57Z" duration="0.356598" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2146" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="947" result="Failed" site="Child" start-time="2026-10-02 07:56:56Z" end-time="2026-10-02 07:56:57Z" duration="0.301984" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1475" name="LanListenerStartTests" fullname="TumbangPreso.Tests.LanListenerStartTests" classname="TumbangPreso.Tests.LanListenerStartTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-02 07:56:57Z" end-time="2026-10-02 07:56:57Z" duration="0.203356" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1477" name="ARefusedListenerCanStartNormallyOnceThePortIsReleased" fullname="TumbangPreso.Tests.LanListenerStartTests.ARefusedListenerCanStartNormallyOnceThePortIsReleased" methodname="ARefusedListenerCanStartNormallyOnceThePortIsReleased" classname="TumbangPreso.Tests.LanListenerStartTests" runstate="Runnable" seed="835602846" result="Passed" start-time="2026-10-02 07:56:57Z" end-time="2026-10-02 07:56:57Z" duration="0.043032" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Lan] could not listen on 8911: An attempt was made to access a socket in a way forbidden by its access permissions.
+
+]]></output>
+            </test-case>
+            <test-case id="1476" name="FailedBindRetiresThePartiallyAllocatedListener" fullname="TumbangPreso.Tests.LanListenerStartTests.FailedBindRetiresThePartiallyAllocatedListener" methodname="FailedBindRetiresThePartiallyAllocatedListener" classname="TumbangPreso.Tests.LanListenerStartTests" runstate="Runnable" seed="1090095489" result="Failed" start-time="2026-10-02 07:56:57Z" end-time="2026-10-02 07:56:57Z" duration="0.135983" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A failed discovery bind retained its unused UDP socket.
+  Expected: null
+  But was:  <System.Net.Sockets.UdpClient>
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.LanListenerStartTests.FailedBindRetiresThePartiallyAllocatedListener () [0x0000c] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\LanListenerStartTests.cs:41
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Lan] could not listen on 8911: An attempt was made to access a socket in a way forbidden by its access permissions.
+
+]]></output>
+            </test-case>
+            <test-case id="1478" name="StoppingANormalListenerDisposesOnlyItsOwnedSocket" fullname="TumbangPreso.Tests.LanListenerStartTests.StoppingANormalListenerDisposesOnlyItsOwnedSocket" methodname="StoppingANormalListenerDisposesOnlyItsOwnedSocket" classname="TumbangPreso.Tests.LanListenerStartTests" runstate="Runnable" seed="1717822610" result="Passed" start-time="2026-10-02 07:56:57Z" end-time="2026-10-02 07:56:57Z" duration="0.004463" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

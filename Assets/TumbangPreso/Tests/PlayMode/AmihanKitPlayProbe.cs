@@ -932,7 +932,8 @@ namespace TumbangPreso.PlayTests
                 // ⚠️ The landing cue was this test's other witness, and every hero skill sound is deleted (2026-09-29, the owner:
                 // *"can we delete all skill abilities sfx"*, `AudioCues.IsSkillSfx`). The landing is proved by the body above; the
                 // cue must stay silent until the sounds are reworked.
-                Assert.AreEqual(Audio.AudioCues.SkillSfxOn ? 1 : 0, settles);
+                // 2026-10-03: Featherfall's sounds are reworked (`ReworkedSkillSfx`), so the landing is heard again.
+                Assert.AreEqual(Audio.AudioCues.Audible("sfx_amihan_updraft_settle") ? 1 : 0, settles);
                 Assert.IsTrue(soundedOnGround);
                 Assert.IsNull(actor.GetComponent<AmihanFlightPose>());
                 Assert.IsNull(actor.GetComponentInChildren<AmihanHoverRing>());
@@ -1008,7 +1009,9 @@ namespace TumbangPreso.PlayTests
             foreach (var p in round.Players) if (p.IsDefender) taya = p.PlayerSlot;
             Assert.GreaterOrEqual(taya, 0);
             int flySeat = GameLaunch.SoloSeat != taya ? GameLaunch.SoloSeat : (taya + 1) % 4;
-            Vector3 start = can + new Vector3(0f, .12f, -11.5f);
+            // Across the court, 11.5 m out: the two Drifts toward the can ended inside the box with a slipper, where Featherfall is
+            // refused by rule (`AmihanHeroKit`), so the film never flew (P1, 2026-10-02).
+            Vector3 start = can + new Vector3(-5.0f, .12f, -11.5f), across = Vector3.right;
             var flyer = Amihan(flySeat, start);
             var defender = Amihan(taya, can + new Vector3(-3.5f, .12f, -2.5f));
             var local = round.PlayerAt(GameLaunch.SoloSeat);
@@ -1021,11 +1024,11 @@ namespace TumbangPreso.PlayTests
                 else if (bystander == null) bystander = p;
             }
             if (bystander == null) foreach (var p in round.Players) if (p != flyer && p != defender && p != holder) bystander = p;
-            bystander?.Teleport(start + new Vector3(0.35f, 0f, 3.2f));
+            bystander?.Teleport(start + across * 3.2f + new Vector3(0f, 0f, .35f));
             if (bystander != null) { bystander.Intent.Parked = true; Face(bystander, start); }
             holder?.Teleport(can + new Vector3(0.5f, .12f, -2.8f));
             if (holder != null) { holder.Intent.Parked = true; Face(holder, can + new Vector3(-3.5f, 0, -2.5f)); }
-            Face(flyer, can); Face(defender, holder != null ? holder.transform.position : can);
+            Face(flyer, start + across * 10f); Face(defender, holder != null ? holder.transform.position : can);
 
             var wide = Film.Make("AmihanSkillsWide", 50);
             var shoulder = Film.Make("AmihanSkillsShoulder", 60);
@@ -1061,7 +1064,7 @@ namespace TumbangPreso.PlayTests
                         CharacterMotor acting = t < 9.0f ? flyer : defender;
                         CharacterMotor hit = t < 9.0f ? bystander : holder;
                         // The court: each skill framed from where its path reads.
-                        if (t < 2.6f) { wide.transform.position = start + new Vector3(6.0f, 2.4f, 2.5f); wide.transform.LookAt(start + new Vector3(0f, 1f, 3.2f)); }
+                        if (t < 2.6f) { wide.transform.position = start + across * 3.2f + new Vector3(0f, 2.4f, -6.5f); wide.transform.LookAt(start + across * 3.2f + Vector3.up); }
                         else if (t < 9.0f) { wide.transform.position = flyer.transform.position + new Vector3(7.5f, 1.2f, -2.5f); wide.transform.LookAt(flyer.transform.position + new Vector3(0f, 0.2f, 1.5f)); }
                         else { wide.transform.position = can + new Vector3(4.5f, 3.2f, -9.5f); wide.transform.LookAt(can + new Vector3(-1.5f, .8f, -2.6f)); }
                         if (acting == local && Camera.main != null) film.Shoot(Camera.main, "owner");

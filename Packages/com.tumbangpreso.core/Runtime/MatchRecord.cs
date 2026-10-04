@@ -474,6 +474,7 @@ namespace TumbangPreso.Core
         };
 
         private static int Clamp(int v, int lo, int hi) => v < lo ? lo : (v > hi ? hi : v);
-        private static float Clamp(float v, float lo, float hi) => v < lo ? lo : (v > hi ? hi : v);
+        private static float Clamp(float v, float lo, float hi)
+            => float.IsNaN(v) || v < lo ? lo : (v > hi ? hi : v);
     }
 }

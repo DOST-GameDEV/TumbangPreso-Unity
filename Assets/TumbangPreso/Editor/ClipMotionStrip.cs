@@ -84,7 +84,7 @@ namespace TumbangPreso.EditorTools
             ("quarter", 220.0f),
         };
 
-        [MenuItem("Tumbang Preso/Probe Sean Retrieval Slide Motion")]
+        [MenuItem("Tumbang Preso/Probe Rago Retrieval Slide Motion")]
         public static void RunFromMenu() => Execute("sean", "slide", 8, null, null);
 
         /// <summary>

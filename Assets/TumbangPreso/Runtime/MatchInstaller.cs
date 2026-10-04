@@ -628,7 +628,7 @@ namespace TumbangPreso
             // already answers it on the "match" branch with `stop_music_now()` rather than a
             // fade, under 🧑's *"pls js abruptly cut it"*.
             if (UseReadyGate && !guided && !range) GameServices.Music?.StopNow();
-            else GameServices.Music?.Play("match", GameServices.MatchTrack);
+            else GameServices.Music?.Play(GameServices.ArenaMusicCue, GameServices.ArenaTrack);
 
             // Scene management is intentionally game-owned rather than Netcode-owned. Tell
             // the host only after every local seat, prop, camera and HUD target exists; this
@@ -1171,12 +1171,14 @@ namespace TumbangPreso
                 var watchRig = UnityEngine.Object.FindFirstObjectByType<CameraSystem.CameraRig>();
                 if (watchRig != null) watchRig.SetActive(false);
 
-                if (UnityEngine.Object.FindFirstObjectByType<CameraSystem.SpectatorCamera>() == null)
+                var watcher = UnityEngine.Object.FindFirstObjectByType<CameraSystem.SpectatorCamera>();
+                if (watcher == null)
                 {
                     var watchGo = new GameObject("SpectatorCamera");
                     watchGo.tag = "MainCamera";
                     watchGo.AddComponent<CameraSystem.SpectatorCamera>();
                 }
+                else watcher.enabled = true;
 
                 UnityEngine.Object.FindFirstObjectByType<UI.Hud>()?.EnterSpectatorMode();
 
@@ -1309,7 +1311,7 @@ namespace TumbangPreso
                 if (body == null) continue;
 
                 bool shouldDrive = !nobodyDrives && slot == seat;
-                var reader = body.GetComponent<PlayerInputReader>();
+                var readers = body.GetComponents<PlayerInputReader>();
 
                 if (shouldDrive)
                 {
@@ -1318,32 +1320,41 @@ namespace TumbangPreso
                     // write `InputIntent` every step, so the player and the bot fight over the
                     // same character and the result reads as unresponsive controls rather than as
                     // two drivers.
-                    var ai = body.GetComponent<AIController>();
-                    if (ai != null)
+                    foreach (var ai in body.GetComponents<AIController>())
                     {
                         ai.enabled = false;
                         Destroy(ai);
                         body.ForgetInputSource();
                     }
 
-                    if (reader != null) continue;
+                    bool hasReader = false;
+                    foreach (var reader in readers)
+                    {
+                        if (reader.enabled) hasReader = true;
+                        else Destroy(reader); // A disabled retired reader may still await Destroy.
+                    }
+                    if (hasReader) continue;
 
                     body.gameObject.AddComponent<PlayerInputReader>();
                     body.ForgetInputSource();
                     continue;
                 }
 
-                if (reader == null) continue;
+                if (readers.Length == 0) continue;
 
                 // ⚠️ DISABLED FIRST, THEN DESTROYED. `Destroy` is deferred to the end of the
                 // frame, so without this the seat being left and the seat being taken would both
                 // write `InputIntent` for the rest of the current frame and one keypress would
                 // drive two bodies. `MatchRpc.ApplyRebindLocalSeat` carries the same pair.
-                reader.enabled = false;
-                Destroy(reader);
+                foreach (var reader in readers)
+                {
+                    reader.enabled = false;
+                    Destroy(reader);
+                }
 
-                if (AIController.BotsEnabled && NetAuthority.IsHost &&
-                    body.GetComponent<AIController>() == null)
+                bool hasBrain = false;
+                foreach (var ai in body.GetComponents<AIController>()) if (ai.enabled) hasBrain = true;
+                if (AIController.BotsEnabled && NetAuthority.IsHost && !hasBrain)
                     body.gameObject.AddComponent<AIController>();
 
                 body.ForgetInputSource();
@@ -1665,8 +1676,7 @@ namespace TumbangPreso
             // OPENED ON. It captured `local` in a lambda, so after Tab handed the player a
             // different body the wheel still emoted on the seat they had LEFT: the emote played
             // correctly, on a character somewhere else on the street, and read as *"emotes dont
-            // work at all"*. `Driven()` answers the same question the switcher does, off the
-            // scene, so the two cannot disagree.
+            // work at all"*. `Driven()` follows the active local input producer.
             //
             // ⚠️ AND NOT AT ALL FOR A SPECTATOR. A watcher has no body (§ SpectatorCamera), so
             // wiring the wheel to a seat would let them puppet a bot's emotes from a camera
@@ -1701,10 +1711,8 @@ namespace TumbangPreso
         /// The unit the human is actually driving right now.
         ///
         /// ⚠️ DISCOVERED, NOT REMEMBERED. Tab moves the player between bodies mid-match, so any
-        /// reference captured at install time is stale the moment they use it. The human's unit
-        /// is exactly the one with no active AI on it, which is the same fact
-        /// <see cref="DebugPlayerSwitcher.DefaultSlot"/> reads and needs no cooperation from
-        /// gameplay to stay true.
+        /// reference captured at install time is stale the moment they use it. Remote humans
+        /// and retired solo bodies can also have no AI; the active local reader owns the wheel.
         /// </summary>
         private static CharacterMotor Driven(CharacterMotor fallback)
         {
@@ -1713,11 +1721,12 @@ namespace TumbangPreso
             if (GameLaunch.GuidedTutorial) return fallback;
             foreach (var unit in FindObjectsByType<CharacterMotor>(FindObjectsInactive.Exclude))
             {
-                var ai = unit.GetComponent<AIController>();
-                if (ai == null || !ai.enabled) return unit;
+                if (unit.Intent.Parked || (NetAuthority.IsNetworked && unit.PlayerSlot != NetAuthority.LocalSlot)) continue;
+                foreach (var reader in unit.GetComponents<PlayerInputReader>())
+                    if (reader.isActiveAndEnabled) return unit;
             }
 
-            return fallback;
+            return null;
         }
 
         /// <summary>
@@ -1758,7 +1767,7 @@ namespace TumbangPreso
             int size = people.Count;
             if (size <= 0) return 0;
 
-            int rotation = humanPick >= 0 ? humanPick % AiPersonSpread.Length : 0;
+            int rotation = humanPick >= 0 ? humanPick % size : 0;
             int start = (AiPersonSpread[slot % AiPersonSpread.Length] + rotation) % size;
 
             for (int step = 0; step < size; step++)
@@ -1772,7 +1781,25 @@ namespace TumbangPreso
 
         private int AiCharacterIndex(int slot)
         {
-            int human = HumanSeat >= 0 ? Settings.SettingsStore.Current.CharacterPick : -1;
+            // Empty network seats have no replicated character pick. Their kit
+            // must be identical on every peer, independent of local preferences.
+            if (NetAuthority.IsNetworked)
+                return ResolveAiCharacterIndex(slot, -1, SceneFlow.SelectedMode);
+            int humanSeat = HumanSeat;
+            int human = humanSeat >= 0 ? Settings.SettingsStore.Current.CharacterPick : -1;
+            if (GameLaunch.GuidedTutorial && humanSeat >= 0)
+            {
+                int size = Roster.GetPeople(SceneFlow.SelectedMode).Count;
+                if (size > 0)
+                {
+                    int chosen = human >= 0 ? human : ResolveAiCharacterIndex(humanSeat, -1, SceneFlow.SelectedMode);
+                    if (slot == humanSeat) return chosen;
+                    // Give each other seat its own offset after the student. The
+                    // normal 0/3/6/9 spread collides in the nine-hero roster.
+                    int ordinal = slot < humanSeat ? slot : slot - 1;
+                    return (chosen + 1 + ordinal) % size;
+                }
+            }
             return ResolveAiCharacterIndex(slot, human, SceneFlow.SelectedMode);
         }
 

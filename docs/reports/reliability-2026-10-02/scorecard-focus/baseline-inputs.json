@@ -1,0 +1,29 @@
+{
+  "phase": "baseline",
+  "preparedUtc": "2026-10-02T07:22:40.5387945Z",
+  "expectedCases": 3,
+  "testFilter": "TumbangPreso.PlayTests.ScorecardFocusTests",
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/PlayerHub.OwnerHistory.cs",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\scorecard-focus1002\\frozen\\PlayerHub.OwnerHistory.original.cs",
+      "sha256": "BC4C5925C97527E4409A032C5A436875FB8415AE43D3062911B22294A4BB0C39"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/UI/PlayerHub.cs",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\scorecard-focus1002\\frozen\\PlayerHub.original.cs",
+      "sha256": "6EB745C89A949D9DEA7BE49AD7C7C336DAA78F1430FCB5B243BDF5E301613AFC"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/ScorecardFocusTests.cs",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\scorecard-focus1002\\frozen\\ScorecardFocusTests.cs",
+      "sha256": "EA08C1A60A5169A7DD373C6616D4C383BBED66762A62DE29F1309C62F38E0710"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/PlayMode/ScorecardFocusTests.cs.meta",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\scorecard-focus1002\\frozen\\ScorecardFocusTests.cs.meta",
+      "sha256": "6E458830A9DCFCA3ED72FFD3E4552BB327477E188FF0A22820164250AF684C57"
+    }
+  ],
+  "protectedCount": 1295
+}

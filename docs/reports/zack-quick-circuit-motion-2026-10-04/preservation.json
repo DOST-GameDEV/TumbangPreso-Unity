@@ -1,0 +1,16 @@
+{
+  "geometryAndRig": {
+    "nodes": true,
+    "meshes": true,
+    "skins": true,
+    "materials": true,
+    "textures": true,
+    "images": true,
+    "scenes": true
+  },
+  "otherClipsPreserved": 37,
+  "clipCountBefore": 38,
+  "clipCountAfter": 38,
+  "originalBinaryPrefixPreserved": true,
+  "changedClip": "hero-zack-sprint"
+}

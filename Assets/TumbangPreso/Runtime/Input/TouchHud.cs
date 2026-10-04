@@ -255,7 +255,8 @@ namespace TumbangPreso.InputLayer
 
         private void OnDestroy()
         {
-            if (Instance == this) Instance = null;
+            if (Instance != this) return;
+            Instance = null;
 
             // ⚠️ THE STATIC OUTLIVES THE OBJECT. A verb held when the layer is torn down between
             // scenes stays held in `TouchInput` for ever, and the next match starts with the
@@ -264,10 +265,12 @@ namespace TumbangPreso.InputLayer
             TouchInput.Active = false;
         }
 
-        private void OnEnable() => TouchInput.Active = true;
+        private void OnEnable() { Instance = this; TouchInput.Active = true; }
 
         private void OnDisable()
         {
+            if (Instance != this) return;
+            Instance = null;
             TouchInput.ReleaseAll();
             TouchInput.Active = false;
         }

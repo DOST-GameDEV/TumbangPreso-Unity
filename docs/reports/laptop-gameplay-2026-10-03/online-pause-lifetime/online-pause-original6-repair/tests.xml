@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 06:15:26Z" end-time="2026-10-03 06:15:26Z" duration="0.499542">
+  <test-suite type="TestSuite" id="2740" name="TumpWorker-qa-d-dddaa72bc5b9" fullname="TumpWorker-qa-d-dddaa72bc5b9" runstate="Runnable" testcasecount="1418" result="Failed" site="Child" start-time="2026-10-03 06:15:26Z" end-time="2026-10-03 06:15:26Z" duration="0.499542" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2734" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003-extra/qa-d/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1418" result="Failed" site="Child" start-time="2026-10-03 06:15:26Z" end-time="2026-10-03 06:15:26Z" duration="0.482210" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="18064" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2735" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1418" result="Failed" site="Child" start-time="2026-10-03 06:15:26Z" end-time="2026-10-03 06:15:26Z" duration="0.473675" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2736" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1418" result="Failed" site="Child" start-time="2026-10-03 06:15:26Z" end-time="2026-10-03 06:15:26Z" duration="0.465038" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1944" name="OnlinePauseActionLifetimeTests" fullname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests" classname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-03 06:15:26Z" end-time="2026-10-03 06:15:26Z" duration="0.441232" total="6" passed="3" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1948" name="OfflineMenuRestoresTheRequestedSpeedOnClose" fullname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests.OfflineMenuRestoresTheRequestedSpeedOnClose" methodname="OfflineMenuRestoresTheRequestedSpeedOnClose" classname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests" runstate="Runnable" seed="433510744" result="Passed" start-time="2026-10-03 06:15:26Z" end-time="2026-10-03 06:15:26Z" duration="0.167633" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1946" name="OnlineMenuCancelsPendingLungeBeforeParking" fullname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests.OnlineMenuCancelsPendingLungeBeforeParking" methodname="OnlineMenuCancelsPendingLungeBeforeParking" classname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests" runstate="Runnable" seed="1879521353" result="Failed" start-time="2026-10-03 06:15:26Z" end-time="2026-10-03 06:15:26Z" duration="0.038830" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Opening a live menu must retire a pending lunge synchronously.
+  Expected: -1
+  But was:  0.00406639744f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests+<Pending>d__37.MoveNext () [0x00072] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\OnlinePauseActionLifetimeTests.cs:146
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1945" name="OnlineMenuCancelsPendingThrowBeforeParking" fullname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests.OnlineMenuCancelsPendingThrowBeforeParking" methodname="OnlineMenuCancelsPendingThrowBeforeParking" classname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests" runstate="Runnable" seed="2094807490" result="Failed" start-time="2026-10-03 06:15:26Z" end-time="2026-10-03 06:15:26Z" duration="0.033951" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Opening a live menu must retire a pending throw synchronously.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests+<Pending>d__37.MoveNext () [0x00058] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\OnlinePauseActionLifetimeTests.cs:145
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1947" name="OnlineMenuPreservesCommittedLungeAndCooldown" fullname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests.OnlineMenuPreservesCommittedLungeAndCooldown" methodname="OnlineMenuPreservesCommittedLungeAndCooldown" classname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests" runstate="Runnable" seed="446683513" result="Passed" start-time="2026-10-03 06:15:26Z" end-time="2026-10-03 06:15:26Z" duration="0.091041" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1949" name="OnlineMenuRetiresPendingHeroAimWithoutSpendingCharges" fullname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests.OnlineMenuRetiresPendingHeroAimWithoutSpendingCharges" methodname="OnlineMenuRetiresPendingHeroAimWithoutSpendingCharges" classname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests" runstate="Runnable" seed="1813939577" result="Failed" start-time="2026-10-03 06:15:26Z" end-time="2026-10-03 06:15:26Z" duration="0.056473" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests+<OnlineMenuRetiresPendingHeroAimWithoutSpendingCharges>d__45.MoveNext () [0x00058] in C:\Users\Matthew\dev\tump-workers1003-extra\qa-d\Assets\TumbangPreso\Tests\PlayMode\OnlinePauseActionLifetimeTests.cs:182
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1950" name="StaleRemoteMenuOwnerPreservesReceivedHeroAimRenewal" fullname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests.StaleRemoteMenuOwnerPreservesReceivedHeroAimRenewal" methodname="StaleRemoteMenuOwnerPreservesReceivedHeroAimRenewal" classname="TumbangPreso.PlayTests.OnlinePauseActionLifetimeTests" runstate="Runnable" seed="1206073693" result="Passed" start-time="2026-10-03 06:15:26Z" end-time="2026-10-03 06:15:26Z" duration="0.038119" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-d-dddaa72bc5b9\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

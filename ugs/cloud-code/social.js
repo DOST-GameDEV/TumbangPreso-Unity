@@ -233,6 +233,8 @@ module.exports = async ({ params, context, logger }) => {
         // ⚠️ THE MUTUAL CASE IS AN ACCEPT, NOT A SECOND REQUEST. Two people adding each other at
         // once is the commonest race a friends list has, and this is where it resolves.
         if (findIn(mine.Incoming, subject)) {
+            if (theirs.Friends.length >= MAX_FRIENDS && !findIn(theirs.Friends, playerId))
+                throw new Error("their friends list is full");
             // ⚠️ THE HANDLE COMES OFF THE ROW THEY CREATED, NOT OFF THE CALLER'S PARAMETERS.
             // They wrote their own name into our inbox when they sent the request, which is the
             // only value here that they own; `params.theirHandle` is what WE last saw and would
@@ -252,12 +254,13 @@ module.exports = async ({ params, context, logger }) => {
         if (!findIn(mine.Outgoing, subject))
             mine.Outgoing.push(rowFrom({ PlayerId: subject, Handle: oneLine(params.theirHandle, HANDLE_MAX) }));
 
-        await saveList(api, projectId, playerId, mine);
-
         if (!refused && !findIn(theirs.Incoming, playerId) && !findIn(theirs.Friends, playerId)) {
             theirs.Incoming.push(rowFrom({ PlayerId: playerId, Handle: handle }));
             await saveList(store, projectId, subject, theirs);
         }
+        // The client refuses resending an outgoing pending row. Publish that row
+        // only after delivery, so a failed recipient write remains retryable.
+        await saveList(api, projectId, playerId, mine);
 
         return { list: JSON.stringify(normalise(mine)) };
     }
@@ -271,11 +274,17 @@ module.exports = async ({ params, context, logger }) => {
         const mine = await loadList(api, projectId, playerId);
         const pending = findIn(mine.Incoming, subject);
         if (!pending) return { list: JSON.stringify(mine) };
+        if (action === "accept" && mine.Friends.length >= MAX_FRIENDS)
+            throw new Error("your friends list is full");
 
         mine.Incoming = without(mine.Incoming, subject);
 
         const store = serviceStore(context);
         const theirs = await loadList(store, projectId, subject);
+        // Check both capacities before either save consumes the pending request.
+        // Normalisation otherwise trims the added row into a one-way friendship.
+        if (action === "accept" && theirs.Friends.length >= MAX_FRIENDS && !findIn(theirs.Friends, playerId))
+            throw new Error("their friends list is full");
         theirs.Outgoing = without(theirs.Outgoing, playerId);
 
         if (action === "accept") {

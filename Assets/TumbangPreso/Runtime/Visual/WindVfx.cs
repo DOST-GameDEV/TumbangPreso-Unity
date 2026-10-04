@@ -311,7 +311,8 @@ namespace TumbangPreso.Visual
                 _pieces = new Transform[count]; _renderers = new Renderer[count]; _materials = new Material[count];
                 _from = new Vector3[count]; _drift = new Vector3[count];
                 _spin = new float[count]; _delay = new float[count]; _life = new float[count]; _thread = new bool[count];
-                var tuft = VfxShapes.TwoSided(VfxShapes.Star(7, 0.55f, (int)(seed * 7) & 1023));
+                // v4 (owner: *"it looks like shapes are floating"*): a soft, nearly round puff of cotton, not a seven-point star.
+                var tuft = VfxShapes.TwoSided(VfxShapes.Star(11, 0.84f, (int)(seed * 7) & 1023));
                 for (int i = 0; i < count; i++)
                 {
                     float h(float k) => Mathf.Repeat(Mathf.Sin((i + 1) * 12.9898f + seed * 7.13f + k * 78.233f) * 43758.5453f, 1.0f);
@@ -374,6 +375,63 @@ namespace TumbangPreso.Visual
                 mesh.vertices = v; mesh.triangles = t; mesh.RecalculateNormals(); mesh.RecalculateBounds();
                 return VfxShapes.TwoSided(mesh);
             }
+        }
+
+        // ------------------------------------------------------------------ her looks (AIRBURST v3's language, the whole kit)
+
+        /// <summary>A wind sheet's middle: mint you can see through, inside a bright cream rim.</summary>
+        public static readonly Color SheetBody = new Color(0.78f, 0.96f, 0.72f, 1.0f);
+        /// <summary>Her darker greens for strokes lying on the court: they read on light tiles (the feel pass's finding).</summary>
+        public static readonly Color FloorBody = new Color(0.40f, 0.66f, 0.29f, 1.0f), FloorInk = new Color(0.11f, 0.27f, 0.10f, 1.0f);
+
+        /// <summary>`WindRibbon`'s ink band turned to a bright rim: swept wind as a SHEET (bright edges, a middle you see through).</summary>
+        public static Ribbon Sheet(Ribbon ribbon, float rimFrom = 0.58f)
+        {
+            ribbon.Recolour(Body, SheetBody, Core);
+            if (ribbon.Material != null) { ribbon.Material.SetFloat("_InkFrom", rimFrom); ribbon.Material.SetFloat("_InkAlpha", 0.9f); }
+            return ribbon;
+        }
+
+        /// <summary>
+        /// A LIVE wind sheet: a mint middle you can see through inside her deep ink rim. Film r1 on Bayan Plaza's light tiles: the
+        /// bright-rimmed sheets (right for the cutscene's dimmed stage) vanished from every court view; an ink rim reads on any floor.
+        /// </summary>
+        public static Ribbon InkSheet(Ribbon ribbon, float rimFrom = 0.55f)
+        {
+            ribbon.Recolour(Core, SheetBody, FloorInk);
+            if (ribbon.Material != null) { ribbon.Material.SetFloat("_InkFrom", rimFrom); ribbon.Material.SetFloat("_InkAlpha", 0.95f); }
+            return ribbon;
+        }
+
+        /// <summary>A stroke lying on the court: her darker greens and a wide solid ink rim, so it reads on a light floor.</summary>
+        public static Ribbon Floor(Ribbon ribbon)
+        {
+            ribbon.Recolour(Body, FloorBody, FloorInk);
+            if (ribbon.Material != null) { ribbon.Material.SetFloat("_InkFrom", 0.45f); ribbon.Material.SetFloat("_InkAlpha", 0.95f); }
+            return ribbon;
+        }
+
+        /// <summary>A thread in one of her abel colours.</summary>
+        public static Ribbon Thread(Ribbon ribbon, int colour)
+        {
+            var c = Threads[((colour % Threads.Length) + Threads.Length) % Threads.Length];
+            ribbon.Recolour(Color.Lerp(c, Core, 0.5f), c, c * 0.5f);
+            return ribbon;
+        }
+
+        /// <summary>A flat kasikus diamond of corner radius <paramref name="r"/> at <paramref name="height"/>, corners on the axes.</summary>
+        public static List<Vector3> Kasikus(float r, float height = 0.03f, int perSide = 6)
+        {
+            var spine = new List<Vector3>(perSide * 4 + 1);
+            for (int k = 0; k < 4; k++)
+                for (int j = 0; j < perSide; j++)
+                {
+                    float a0 = k * 90.0f * Mathf.Deg2Rad, a1 = (k + 1) * 90.0f * Mathf.Deg2Rad;
+                    spine.Add(Vector3.Lerp(new Vector3(Mathf.Sin(a0), 0, Mathf.Cos(a0)), new Vector3(Mathf.Sin(a1), 0, Mathf.Cos(a1)), j / (float)perSide) * r
+                              + Vector3.up * height);
+                }
+            spine.Add(spine[0]);
+            return spine;
         }
 
         // ------------------------------------------------------------------ small helpers

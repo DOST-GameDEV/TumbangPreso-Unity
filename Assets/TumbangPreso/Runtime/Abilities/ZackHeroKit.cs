@@ -78,7 +78,7 @@ namespace TumbangPreso.Abilities
         public void RebindWorldEffects(CharacterMotor motor)
         { if (motor != null) AdoptMovementFields(motor.PlayerSlot); }
 
-        public ZackHeroKit() : base("zack", "ZACK")
+        public ZackHeroKit() : base("zack", "ISAGANI")
         {
             Skill1 = new QuickCircuitAbility(this);
             // Role-specific authored Electro jobs.
@@ -184,7 +184,7 @@ namespace TumbangPreso.Abilities
                        "Load your held slipper for eight seconds. Its next throw retains 85% speed on the first wall bank. Overclock permits two credited banks.",
                        35, 8, AbilityGlyph.ZackOvercharge,
                        summary: "Load one throw for a stronger bank; Overclock allows two.",
-                       castAction: "hero-zack-charge", viewmodelAction: "overcharge", castCue: "sfx_cast_zack_magnet")
+                       castAction: "hero-zack-bankshot", viewmodelAction: "bank-load", castCue: "sfx_cast_zack_magnet")
             { _kit = kit; }
 
             public override bool CanActivate(AbilityContext ctx)

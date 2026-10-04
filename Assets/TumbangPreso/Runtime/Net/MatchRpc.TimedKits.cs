@@ -32,6 +32,16 @@ namespace TumbangPreso.Net
             _nm.CustomMessagingManager.SendNamedMessage("TimedKitState", peer, writer, NetworkDelivery.ReliableSequenced);
         }
 
+        public void BroadcastTimedKitState(int slot)
+        {
+            if (!NetAuthority.IsHost || !ValidSlot(slot) || _nm?.CustomMessagingManager == null
+                || GameServices.Match == null || GameServices.Round == null) return;
+            var kit=Unit(slot)?.AbilitySystem?.Kit;
+            if (!(kit is ITimedKitReplication replication)) return;
+            foreach (var peer in _nm.ConnectedClientsIds)
+                if (peer != _nm.LocalClientId) SendBoundTimedKit(slot,peer,kit,replication);
+        }
+
         private void OnTimedKitStateMsg(ulong sender, FastBufferReader reader)
         {
             if (NetAuthority.IsHost || !FromHost(sender) ||
@@ -43,7 +53,7 @@ namespace TumbangPreso.Net
         {
             if (!state.IsValid) return false;
             if (GameServices.Round?.RoundActive != true &&
-                (state.PersonalRemaining > 0 || state.UltimateRemaining > 0 || state.UltimatePending)) return false;
+                (state.PersonalRemaining > 0 || state.UltimateRemaining > 0 || state.PassiveRemaining > 0 || state.UltimatePending)) return false;
             var unit = Unit(state.Seat);
             if (unit == null || !state.Scope.Matches(PresentationMatchId,
                 GameServices.Match?.RoundNumber ?? -1, unit.MovementEpoch)) return false;

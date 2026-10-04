@@ -1,0 +1,1 @@
+{"cases": 1, "retry_count": 1, "repair": "Use actual panel-owned root canvas; OwnerUiLayout canvas is not a child of the passed owner. No runtime change; retain two already-passing role tests."}

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="11" result="Passed" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 23:23:06Z" end-time="2026-10-03 23:23:07Z" duration="0.7789337">
+  <test-suite type="TestSuite" id="2968" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1601" result="Passed" start-time="2026-10-03 23:23:06Z" end-time="2026-10-03 23:23:07Z" duration="0.778934" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2962" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1601" result="Passed" start-time="2026-10-03 23:23:06Z" end-time="2026-10-03 23:23:07Z" duration="0.756983" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="31640" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2963" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1601" result="Passed" start-time="2026-10-03 23:23:06Z" end-time="2026-10-03 23:23:07Z" duration="0.744728" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2964" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1601" result="Passed" start-time="2026-10-03 23:23:06Z" end-time="2026-10-03 23:23:07Z" duration="0.733565" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2337" name="ReaderDeviceLossLifetimeTests" fullname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests" classname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-03 23:23:06Z" end-time="2026-10-03 23:23:06Z" duration="0.333491" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2344" name="AChargedTriggerKeepsItsReleaseThresholdThroughUnusedPadChanges" fullname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests.AChargedTriggerKeepsItsReleaseThresholdThroughUnusedPadChanges" methodname="AChargedTriggerKeepsItsReleaseThresholdThroughUnusedPadChanges" classname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests" runstate="Runnable" seed="879801427" result="Passed" start-time="2026-10-03 23:23:06Z" end-time="2026-10-03 23:23:06Z" duration="0.193625" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2343" name="AStillHeldMouseThrowSurvivesRemovalOfTheDrivingPad" fullname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests.AStillHeldMouseThrowSurvivesRemovalOfTheDrivingPad" methodname="AStillHeldMouseThrowSurvivesRemovalOfTheDrivingPad" classname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests" runstate="Runnable" seed="136794582" result="Passed" start-time="2026-10-03 23:23:06Z" end-time="2026-10-03 23:23:06Z" duration="0.054682" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2346" name="DeviceLossKeepsAnAlreadyCommittedLungeWindowAndRecovery" fullname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests.DeviceLossKeepsAnAlreadyCommittedLungeWindowAndRecovery" methodname="DeviceLossKeepsAnAlreadyCommittedLungeWindowAndRecovery" classname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests" runstate="Runnable" seed="219134517" result="Passed" start-time="2026-10-03 23:23:06Z" end-time="2026-10-03 23:23:06Z" duration="0.034040" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2345" name="LostThrowInputKeepsUnrelatedTouchMovementAndHeroKeys" fullname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests.LostThrowInputKeepsUnrelatedTouchMovementAndHeroKeys" methodname="LostThrowInputKeepsUnrelatedTouchMovementAndHeroKeys" classname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests" runstate="Runnable" seed="908478164" result="Passed" start-time="2026-10-03 23:23:06Z" end-time="2026-10-03 23:23:06Z" duration="0.033110" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2352" name="ReaderSeatLocalTellControlTests" fullname="TumbangPreso.PlayTests.ReaderSeatLocalTellControlTests" classname="TumbangPreso.PlayTests.ReaderSeatLocalTellControlTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-03 23:23:06Z" end-time="2026-10-03 23:23:06Z" duration="0.035014" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2353" name="ObsoleteReaderWithoutReceivedRefreshRetiresItsOwnLocalThrowTell" fullname="TumbangPreso.PlayTests.ReaderSeatLocalTellControlTests.ObsoleteReaderWithoutReceivedRefreshRetiresItsOwnLocalThrowTell" methodname="ObsoleteReaderWithoutReceivedRefreshRetiresItsOwnLocalThrowTell" classname="TumbangPreso.PlayTests.ReaderSeatLocalTellControlTests" runstate="Runnable" seed="681835067" result="Passed" start-time="2026-10-03 23:23:06Z" end-time="2026-10-03 23:23:06Z" duration="0.033464" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2354" name="ReaderSeatPresentationLifetimeTests" fullname="TumbangPreso.PlayTests.ReaderSeatPresentationLifetimeTests" classname="TumbangPreso.PlayTests.ReaderSeatPresentationLifetimeTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-03 23:23:06Z" end-time="2026-10-03 23:23:07Z" duration="0.155001" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2356" name="ObsoleteReaderRetiresOldLungeButPreservesReceivedLungeTell" fullname="TumbangPreso.PlayTests.ReaderSeatPresentationLifetimeTests.ObsoleteReaderRetiresOldLungeButPreservesReceivedLungeTell" methodname="ObsoleteReaderRetiresOldLungeButPreservesReceivedLungeTell" classname="TumbangPreso.PlayTests.ReaderSeatPresentationLifetimeTests" runstate="Runnable" seed="850344790" result="Passed" start-time="2026-10-03 23:23:06Z" end-time="2026-10-03 23:23:06Z" duration="0.033388" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2355" name="ObsoleteReaderRetiresOldThrowButPreservesReceivedThrowTell" fullname="TumbangPreso.PlayTests.ReaderSeatPresentationLifetimeTests.ObsoleteReaderRetiresOldThrowButPreservesReceivedThrowTell" methodname="ObsoleteReaderRetiresOldThrowButPreservesReceivedThrowTell" classname="TumbangPreso.PlayTests.ReaderSeatPresentationLifetimeTests" runstate="Runnable" seed="148519393" result="Passed" start-time="2026-10-03 23:23:06Z" end-time="2026-10-03 23:23:06Z" duration="0.029554" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2359" name="ObsoleteReaderWithdrawalKeepsAlreadyCommittedLungeAndCooldown" fullname="TumbangPreso.PlayTests.ReaderSeatPresentationLifetimeTests.ObsoleteReaderWithdrawalKeepsAlreadyCommittedLungeAndCooldown" methodname="ObsoleteReaderWithdrawalKeepsAlreadyCommittedLungeAndCooldown" classname="TumbangPreso.PlayTests.ReaderSeatPresentationLifetimeTests" runstate="Runnable" seed="1678554249" result="Passed" start-time="2026-10-03 23:23:06Z" end-time="2026-10-03 23:23:07Z" duration="0.029581" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2358" name="StillOwnedReaderWithdrawalRetiresLungeAndItsTell" fullname="TumbangPreso.PlayTests.ReaderSeatPresentationLifetimeTests.StillOwnedReaderWithdrawalRetiresLungeAndItsTell" methodname="StillOwnedReaderWithdrawalRetiresLungeAndItsTell" classname="TumbangPreso.PlayTests.ReaderSeatPresentationLifetimeTests" runstate="Runnable" seed="633717482" result="Passed" start-time="2026-10-03 23:23:07Z" end-time="2026-10-03 23:23:07Z" duration="0.029157" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2357" name="StillOwnedReaderWithdrawalRetiresThrowAndItsTell" fullname="TumbangPreso.PlayTests.ReaderSeatPresentationLifetimeTests.StillOwnedReaderWithdrawalRetiresThrowAndItsTell" methodname="StillOwnedReaderWithdrawalRetiresThrowAndItsTell" classname="TumbangPreso.PlayTests.ReaderSeatPresentationLifetimeTests" runstate="Runnable" seed="314977830" result="Passed" start-time="2026-10-03 23:23:07Z" end-time="2026-10-03 23:23:07Z" duration="0.030589" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="2360" name="ReaderSeatSelfEchoControlTests" fullname="TumbangPreso.PlayTests.ReaderSeatSelfEchoControlTests" classname="TumbangPreso.PlayTests.ReaderSeatSelfEchoControlTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-03 23:23:07Z" end-time="2026-10-03 23:23:07Z" duration="0.032963" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2361" name="OwnedSnapshotSelfApplyDoesNotTurnItsOldLocalTellIntoAReceivedRefresh" fullname="TumbangPreso.PlayTests.ReaderSeatSelfEchoControlTests.OwnedSnapshotSelfApplyDoesNotTurnItsOldLocalTellIntoAReceivedRefresh" methodname="OwnedSnapshotSelfApplyDoesNotTurnItsOldLocalTellIntoAReceivedRefresh" classname="TumbangPreso.PlayTests.ReaderSeatSelfEchoControlTests" runstate="Runnable" seed="1481548958" result="Passed" start-time="2026-10-03 23:23:07Z" end-time="2026-10-03 23:23:07Z" duration="0.031559" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

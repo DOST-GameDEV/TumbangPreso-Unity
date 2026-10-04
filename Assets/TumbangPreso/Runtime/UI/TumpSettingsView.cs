@@ -57,7 +57,7 @@ namespace TumbangPreso.UI
             ScreenTakeover.ConsumeEscape();
             if (_session.Listening) { _session.CancelRebind(); return; }
             if (SettingsOptionMenu.OpenOption != null) { SettingsOptionMenu.OpenOption.Close(); return; }
-            if (_decision != null && _decision.activeSelf) { _decision.SetActive(false); return; }
+            if (_decision != null && _decision.activeSelf) { CloseDecision(); return; }
             Back();
         }
         private void ReleaseSession()
@@ -281,6 +281,13 @@ namespace TumbangPreso.UI
             if (_session.Listening) { _session.CancelRebind(); return; }
             if (_session.Dirty) { Decision(); return; }
             _canvas.gameObject.SetActive(false); _back?.Invoke();
+        }
+        private void CloseDecision()
+        {
+            var selected = UnityEngine.EventSystems.EventSystem.current?.currentSelectedGameObject;
+            bool owned = selected != null && _decision != null && selected.transform.IsChildOf(_decision.transform);
+            _decision?.SetActive(false);
+            if (owned && _canvas != null) _canvas.GetComponent<ScreenFocus>()?.Rebuild();
         }
         private void DecisionPrevious()
         {

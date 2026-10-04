@@ -273,7 +273,7 @@ namespace TumbangPreso.PlayTests
             Assert.IsFalse(Reads(truncated));
             var trailing = new byte[bytes.Length + 1]; System.Array.Copy(bytes, trailing, bytes.Length);
             Assert.IsFalse(Reads(trailing));
-            var invalidBoolean = (byte[])bytes.Clone(); invalidBoolean[invalidBoolean.Length - 1] = 2;
+            var invalidBoolean = (byte[])bytes.Clone(); invalidBoolean[invalidBoolean.Length - 5] = 2; // Permanent flag, before the passive float.
             Assert.IsFalse(Reads(invalidBoolean));
             var maximum = state;
             maximum.HeroId = new FixedString64Bytes(new string('h', 61));
@@ -411,11 +411,11 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(15, kit.Skill1.CooldownRemaining, .001f, "The awarded objective point never reached Amped-Up.");
             Assert.AreEqual(1, kit.UltimateCharge);
             system.OnThrowReleased();
-            Assert.AreEqual(14.25f, kit.Skill1.CooldownRemaining, .001f);
+            Assert.AreEqual(15f, kit.Skill1.CooldownRemaining, .001f, "Throws no longer grant objective income.");
             system.OnOwnSlipperRetrieved();
-            Assert.AreEqual(11.75f, kit.Skill1.CooldownRemaining, .001f);
+            Assert.AreEqual(15f, kit.Skill1.CooldownRemaining, .001f, "Retrieval no longer grants objective income.");
             kit.AddUltimateCharge(kit.UltimateCost);
-            Assert.AreEqual(11.75f, kit.Skill1.CooldownRemaining, .001f, "A non-objective practice/refill changed cooldowns.");
+            Assert.AreEqual(15f, kit.Skill1.CooldownRemaining, .001f, "A non-objective practice/refill changed cooldowns.");
         }
 
         private MatchRpc ObjectiveReceiver(out HeroAbilitySystem system, out GameplayActionScope scope)
@@ -576,7 +576,7 @@ namespace TumbangPreso.PlayTests
             bad = state; bad.UltimatePending = true; Assert.IsFalse(bad.IsValid);
             var other = new TimedProbeKit(); bad = TimedKitState.Capture(other, other.CaptureTimedKit(), 1, state.Scope, 2, 100);
             bad.UltimateRemaining = 0; bad.UltimatePermanent = true; Assert.IsFalse(bad.TryResolve(other, 98, out _));
-            bytes[bytes.Length - 1] = 2;
+            bytes[bytes.Length - 5] = 2; // Permanent flag precedes the appended passive float.
             var malformed = new FastBufferReader(bytes, Allocator.Temp);
             try { Assert.IsFalse(TimedKitState.TryRead(ref malformed, out _)); }
             finally { malformed.Dispose(); }

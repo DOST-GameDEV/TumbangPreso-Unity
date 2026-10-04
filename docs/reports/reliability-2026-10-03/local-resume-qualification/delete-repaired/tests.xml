@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 05:31:16Z" end-time="2026-10-03 05:31:16Z" duration="0.1785752">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1058" result="Passed" start-time="2026-10-03 05:31:16Z" end-time="2026-10-03 05:31:16Z" duration="0.178575" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2287" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-release1002/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1058" result="Passed" start-time="2026-10-03 05:31:16Z" end-time="2026-10-03 05:31:16Z" duration="0.168260" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="13828" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2288" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1058" result="Passed" start-time="2026-10-03 05:31:16Z" end-time="2026-10-03 05:31:16Z" duration="0.167448" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2289" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1058" result="Passed" start-time="2026-10-03 05:31:16Z" end-time="2026-10-03 05:31:16Z" duration="0.166964" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1014" name="AccountDeleteLifetimeTests" fullname="TumbangPreso.Tests.AccountDeleteLifetimeTests" classname="TumbangPreso.Tests.AccountDeleteLifetimeTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-03 05:31:16Z" end-time="2026-10-03 05:31:16Z" duration="0.143972" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1019" name="CurrentOwnerDeletionStillClearsAndRestarts" fullname="TumbangPreso.Tests.AccountDeleteLifetimeTests.CurrentOwnerDeletionStillClearsAndRestarts" methodname="CurrentOwnerDeletionStillClearsAndRestarts" classname="TumbangPreso.Tests.AccountDeleteLifetimeTests" runstate="Runnable" seed="1355860348" result="Passed" start-time="2026-10-03 05:31:16Z" end-time="2026-10-03 05:31:16Z" duration="0.068229" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1017" name="GuestDuringAuthDeletionCannotClearPrimarySettings" fullname="TumbangPreso.Tests.AccountDeleteLifetimeTests.GuestDuringAuthDeletionCannotClearPrimarySettings" methodname="GuestDuringAuthDeletionCannotClearPrimarySettings" classname="TumbangPreso.Tests.AccountDeleteLifetimeTests" runstate="Runnable" seed="2054719994" result="Passed" start-time="2026-10-03 05:31:16Z" end-time="2026-10-03 05:31:16Z" duration="0.011851" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1015" name="GuestDuringInitializationCannotReachDeletion" fullname="TumbangPreso.Tests.AccountDeleteLifetimeTests.GuestDuringInitializationCannotReachDeletion" methodname="GuestDuringInitializationCannotReachDeletion" classname="TumbangPreso.Tests.AccountDeleteLifetimeTests" runstate="Runnable" seed="37822864" result="Passed" start-time="2026-10-03 05:31:16Z" end-time="2026-10-03 05:31:16Z" duration="0.002250" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1023" name="GuestDuringRestartRetiresDeletionCompletion" fullname="TumbangPreso.Tests.AccountDeleteLifetimeTests.GuestDuringRestartRetiresDeletionCompletion" classname="TumbangPreso.Tests.AccountDeleteLifetimeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-03 05:31:16Z" end-time="2026-10-03 05:31:16Z" duration="0.027400" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1021" name="GuestDuringRestartRetiresDeletionCompletion(False)" fullname="TumbangPreso.Tests.AccountDeleteLifetimeTests.GuestDuringRestartRetiresDeletionCompletion(False)" methodname="GuestDuringRestartRetiresDeletionCompletion" classname="TumbangPreso.Tests.AccountDeleteLifetimeTests" runstate="Runnable" seed="1822302949" result="Passed" start-time="2026-10-03 05:31:16Z" end-time="2026-10-03 05:31:16Z" duration="0.013716" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1022" name="GuestDuringRestartRetiresDeletionCompletion(True)" fullname="TumbangPreso.Tests.AccountDeleteLifetimeTests.GuestDuringRestartRetiresDeletionCompletion(True)" methodname="GuestDuringRestartRetiresDeletionCompletion" classname="TumbangPreso.Tests.AccountDeleteLifetimeTests" runstate="Runnable" seed="1468969273" result="Passed" start-time="2026-10-03 05:31:16Z" end-time="2026-10-03 05:31:16Z" duration="0.011036" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1018" name="GuestRoundTripRetiresPendingCloudDeletion" fullname="TumbangPreso.Tests.AccountDeleteLifetimeTests.GuestRoundTripRetiresPendingCloudDeletion" methodname="GuestRoundTripRetiresPendingCloudDeletion" classname="TumbangPreso.Tests.AccountDeleteLifetimeTests" runstate="Runnable" seed="186025317" result="Passed" start-time="2026-10-03 05:31:16Z" end-time="2026-10-03 05:31:16Z" duration="0.002374" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1020" name="LocalOnlyDeletionDoesNotDispatchRemoteOperations" fullname="TumbangPreso.Tests.AccountDeleteLifetimeTests.LocalOnlyDeletionDoesNotDispatchRemoteOperations" methodname="LocalOnlyDeletionDoesNotDispatchRemoteOperations" classname="TumbangPreso.Tests.AccountDeleteLifetimeTests" runstate="Runnable" seed="425781954" result="Passed" start-time="2026-10-03 05:31:16Z" end-time="2026-10-03 05:31:16Z" duration="0.011804" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1016" name="ReplacementDuringCloudClearCannotReachAuthDeletion" fullname="TumbangPreso.Tests.AccountDeleteLifetimeTests.ReplacementDuringCloudClearCannotReachAuthDeletion" methodname="ReplacementDuringCloudClearCannotReachAuthDeletion" classname="TumbangPreso.Tests.AccountDeleteLifetimeTests" runstate="Runnable" seed="17395197" result="Passed" start-time="2026-10-03 05:31:16Z" end-time="2026-10-03 05:31:16Z" duration="0.003045" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

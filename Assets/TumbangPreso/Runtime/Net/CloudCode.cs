@@ -63,12 +63,7 @@ namespace TumbangPreso.Net
             string url = $"https://cloud-code.services.api.unity.com/v1/projects/{projectId}/scripts/{script}";
             string body = JsonConvert.SerializeObject(new { @params = parameters });
 
-            using var request = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST);
-            request.uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(body));
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Authorization", "Bearer " + accessToken);
-            request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("Accept", "application/json, application/problem+json");
+            using var request = CreateRequest(url, body, accessToken);
 
             UnityWebRequestAsyncOperation operation = request.SendWebRequest();
             while (!operation.isDone) await Task.Yield();
@@ -82,10 +77,30 @@ namespace TumbangPreso.Net
             // per script, and `JsonUtility` has no representation for "some JSON I will parse
             // later": typing the field as `string` makes it silently read empty. Newtonsoft hands
             // back the sub-document as text, which is what every caller actually wants.
-            var envelope = JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(
-                request.downloadHandler.text);
+            return ReadOutput(request.downloadHandler.text);
+        }
+
+        private const int RequestTimeoutSeconds = 20;
+
+        private static UnityWebRequest CreateRequest(string url, string body, string accessToken)
+        {
+            var request = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST) { timeout = RequestTimeoutSeconds };
+            request.uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(body));
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Authorization", "Bearer " + accessToken);
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("Accept", "application/json, application/problem+json");
+            return request;
+        }
+
+        private static string ReadOutput(string response)
+        {
+            var envelope = JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(response);
             var output = envelope?["output"];
-            return output?.ToString(Formatting.None) ?? "";
+            if (output == null || output.Type == Newtonsoft.Json.Linq.JTokenType.Null
+                || output.Type == Newtonsoft.Json.Linq.JTokenType.Undefined)
+                throw new InvalidOperationException("Cloud Code returned no output payload.");
+            return output.ToString(Formatting.None);
         }
     }
 }

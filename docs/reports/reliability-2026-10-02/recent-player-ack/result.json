@@ -1,0 +1,35 @@
+{
+  "baseline": {
+    "total": 2,
+    "passed": 0,
+    "failed": 2,
+    "observed": "Actual offline AddRecentPlayer and ReportRecentPlayer callbacks claimed success",
+    "nativeSeconds": 0.2786726
+  },
+  "final": {
+    "total": 41,
+    "passed": 41,
+    "failed": 0,
+    "ui": 6,
+    "career": 22,
+    "social": 13,
+    "nativeSeconds": 0.4499914
+  },
+  "fixtureRepairs": 0,
+  "frozenInputsUnchanged": 11,
+  "protectedInputsUnchanged": 13,
+  "poolSessions": [
+    15190,
+    72241
+  ],
+  "retiredUnityPids": [
+    24196,
+    20700
+  ],
+  "guardSnapshots": [
+    "profile-preservation-0f034d5db070",
+    "profile-preservation-7b18e147a6a9"
+  ],
+  "noLiveDispatch": true,
+  "parallelEditorsQualified": false
+}

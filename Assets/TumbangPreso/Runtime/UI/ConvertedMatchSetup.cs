@@ -3218,7 +3218,7 @@ namespace TumbangPreso.UI
             AIController.ApplyDifficulty(_difficulty);
 
             var modePeople = Roster.GetPeople(SceneFlow.SelectedMode);
-            string person = Roster.At(modePeople, s.CharacterPick)?.Name ?? (SceneFlow.SelectedMode == GameMode.HeroStrike ? "DANTE" : "BAYAN");
+            string person = Roster.At(modePeople, s.CharacterPick)?.Name ?? (SceneFlow.SelectedMode == GameMode.HeroStrike ? "BASILIO" : "BAYAN");
             string can = Roster.At(Roster.Cans, s.CanPick)?.Name ?? "PASIP";
             string slipper = Roster.At(Roster.Slippers, s.SlipperPick)?.Name ?? "SLIPPER";
 

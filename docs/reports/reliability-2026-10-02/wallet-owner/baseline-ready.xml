@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 01:25:47Z" end-time="2026-10-02 01:25:47Z" duration="0.1556336">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="816" result="Failed" site="Child" start-time="2026-10-02 01:25:47Z" end-time="2026-10-02 01:25:47Z" duration="0.155634" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1971" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="816" result="Failed" site="Child" start-time="2026-10-02 01:25:47Z" end-time="2026-10-02 01:25:47Z" duration="0.143741" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="14932" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1972" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="816" result="Failed" site="Child" start-time="2026-10-02 01:25:47Z" end-time="2026-10-02 01:25:47Z" duration="0.141296" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1973" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="816" result="Failed" site="Child" start-time="2026-10-02 01:25:47Z" end-time="2026-10-02 01:25:47Z" duration="0.139145" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1060" name="CareerAndCloudCodeTests" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="54" result="Failed" site="Child" start-time="2026-10-02 01:25:47Z" end-time="2026-10-02 01:25:47Z" duration="0.083438" total="5" passed="2" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="1111" name="WalletAccountNotificationRetiresOnlyAnotherOwnersCache" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.WalletAccountNotificationRetiresOnlyAnotherOwnersCache" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-02 01:25:47Z" end-time="2026-10-02 01:25:47Z" duration="0.043334" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1109" name="WalletAccountNotificationRetiresOnlyAnotherOwnersCache(False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.WalletAccountNotificationRetiresOnlyAnotherOwnersCache(False)" methodname="WalletAccountNotificationRetiresOnlyAnotherOwnersCache" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="859648124" result="Passed" start-time="2026-10-02 01:25:47Z" end-time="2026-10-02 01:25:47Z" duration="0.027582" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1110" name="WalletAccountNotificationRetiresOnlyAnotherOwnersCache(True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.WalletAccountNotificationRetiresOnlyAnotherOwnersCache(True)" methodname="WalletAccountNotificationRetiresOnlyAnotherOwnersCache" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="1695760837" result="Failed" start-time="2026-10-02 01:25:47Z" end-time="2026-10-02 01:25:47Z" duration="0.007795" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The account kept another owner's known wallet.
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.WalletAccountNotificationRetiresOnlyAnotherOwnersCache (System.Boolean changeOwner) [0x0013d] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:439
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="ParameterizedMethod" id="1108" name="WalletResponseCannotBecomeAnotherAccountsBalance" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.WalletResponseCannotBecomeAnotherAccountsBalance" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-02 01:25:47Z" end-time="2026-10-02 01:25:47Z" duration="0.013626" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1106" name="WalletResponseCannotBecomeAnotherAccountsBalance(False)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.WalletResponseCannotBecomeAnotherAccountsBalance(False)" methodname="WalletResponseCannotBecomeAnotherAccountsBalance" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="804316880" result="Passed" start-time="2026-10-02 01:25:47Z" end-time="2026-10-02 01:25:47Z" duration="0.009085" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1107" name="WalletResponseCannotBecomeAnotherAccountsBalance(True)" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.WalletResponseCannotBecomeAnotherAccountsBalance(True)" methodname="WalletResponseCannotBecomeAnotherAccountsBalance" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="147142370" result="Failed" start-time="2026-10-02 01:25:47Z" end-time="2026-10-02 01:25:47Z" duration="0.003358" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  An older account wallet answer replaced the current account's balance.
+  Expected: 77
+  But was:  420
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.WalletResponseCannotBecomeAnotherAccountsBalance (System.Boolean changeOwner) [0x00184] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:407
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-case id="1112" name="WalletScheduledRefreshWaitsForThePendingRequest" fullname="TumbangPreso.Tests.CareerAndCloudCodeTests.WalletScheduledRefreshWaitsForThePendingRequest" methodname="WalletScheduledRefreshWaitsForThePendingRequest" classname="TumbangPreso.Tests.CareerAndCloudCodeTests" runstate="Runnable" seed="28954167" result="Failed" start-time="2026-10-02 01:25:47Z" end-time="2026-10-02 01:25:47Z" duration="0.006928" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  A busy wallet consumed its pending refresh.
+  Expected: greater than or equal to 0.0f
+  But was:  -1.0f
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.CareerAndCloudCodeTests.WalletScheduledRefreshWaitsForThePendingRequest () [0x000a5] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\CareerAndCloudCodeTests.cs:464
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

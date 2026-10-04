@@ -1,0 +1,7 @@
+{
+  "baseline": "Logs/baha-20261002/visual/frames/baha-live",
+  "native": "1/1 pass75body75owner; memorywarning retained",
+  "rejected_visual": "Both owner and side view read as a uniform blue glass pane; weak material identity and a straight luminous lip. Retain existing body/held slipper.",
+  "change": "Baha-only authored unequal rolled cross-section, vertex foam/material gradient, thin dark wet leading edge, per-lane fade behind cover; derive origin from actual floor. Legacy Breakwater appearance untouched.",
+  "new_checks": "Focused two physical cases because origin changed, plus actual-cast native film1. Source field/gameplay bounds stay authoritative."
+}

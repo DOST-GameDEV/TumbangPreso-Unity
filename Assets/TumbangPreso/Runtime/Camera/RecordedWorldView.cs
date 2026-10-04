@@ -12,7 +12,7 @@ namespace TumbangPreso.CameraSystem
     // Playback owns rendering and its own audio voices, never simulation objects.
     public sealed class RecordedWorldView : IDisposable
     {
-        private sealed class Item { public RecordedObjectTrack Track; public MatchPoseHistory.Copy Copy; public Transform[] Bones; public GroundContactVisual Contact; }
+        private sealed class Item { public RecordedObjectTrack Track; public MatchPoseHistory.Copy Copy; public Transform[] Bones; public GroundContactVisual Contact; public Slipper HighlightSource; public MaterialPropertyBlock[] HighlightDefaults; }
         private readonly List<Item> _items=new List<Item>(13);
         private readonly List<Renderer> _hidden=new List<Renderer>();
         private readonly List<bool> _previous=new List<bool>();
@@ -29,6 +29,7 @@ namespace TumbangPreso.CameraSystem
         private Material _sky;
         private Light _skyFill;
         private RenderTexture _target;
+        private Material _frameMaterial;
         private Text _state;
         private readonly Dictionary<int,RecordedFieldView> _fields=new Dictionary<int,RecordedFieldView>();
         private readonly Dictionary<int,RecordedFlightStroke> _trails=new Dictionary<int,RecordedFlightStroke>();
@@ -52,13 +53,16 @@ namespace TumbangPreso.CameraSystem
             {
                 if(SystemInfo.graphicsDeviceType==UnityEngine.Rendering.GraphicsDeviceType.Null){UnavailableReason="No rendering device";return;}
                 if(Camera.main==null||clip.Map!=UnityEngine.SceneManagement.SceneManager.GetActiveScene().name){UnavailableReason="Camera or map not ready: camera="+(Camera.main!=null)+" scene="+UnityEngine.SceneManagement.SceneManager.GetActiveScene().name+" clip="+clip.Map;return;}
-                _stage=new GameObject("~RecordedWorld");_stage.transform.SetParent(owner,false);_stage.SetActive(false);
+                // Root pose samples and fields use world coordinates. Keep this owned
+                // stage at world identity even when the overlay owner is transformed.
+                _stage=new GameObject("~RecordedWorld");_stage.SetActive(false);
                 _court=CourtBoundaryPresentation.CreateRecorded(_stage.transform,GameServices.Round?.Lata);
                 _lataClock=LataClockPresentation.Install(_stage.transform,null,true);_lataClock.ShowForCapture(false);
                 _canLanding=new GroundContactVisual(_stage.transform,"Recorded can footprint",true);
                 foreach(var track in clip.Objects)
                 {
                     GameObject source=Source(track);
+                    var highlightSource=track.Kind==RecordedObjectKind.Slipper?source?.GetComponentInParent<Slipper>():null;
                     if((source==null||MatchReplayArchive.VisualKey(source)!=track.VisualKey)&&
                         (track.Kind==RecordedObjectKind.Can||track.Kind==RecordedObjectKind.Slipper))source=CataloguedProp(track);
                     if(source==null){UnavailableReason="Missing recorded art: "+track.Kind+" P"+(track.Seat+1)+" skin="+track.Skin+" person="+track.Person;return;}
@@ -69,7 +73,14 @@ namespace TumbangPreso.CameraSystem
                     var copy=history.Clone(_stage.transform);if(copy==null){UnavailableReason="Render copy failed: "+track.Kind;return;}
                     var bones=track.Pose.Bind(copy.Root);if(bones==null){UnavailableReason="Recorded pose binding changed: "+track.Kind;return;}
                     if(!source.scene.IsValid())ToonSkin.Apply(copy.Root,ToonSkin.PropOutlineWidth);
-                    _items.Add(new Item{Track=track,Copy=copy,Bones=bones,
+                    MaterialPropertyBlock[] highlightDefaults=null;
+                    if(track.Kind==RecordedObjectKind.Slipper)
+                    {
+                        highlightDefaults=new MaterialPropertyBlock[copy.Renderers.Length];
+                        for(int i=0;i<copy.Renderers.Length;i++)
+                        {highlightDefaults[i]=new MaterialPropertyBlock();copy.Renderers[i].GetPropertyBlock(highlightDefaults[i]);}
+                    }
+                    _items.Add(new Item{Track=track,Copy=copy,Bones=bones,HighlightSource=highlightSource,HighlightDefaults=highlightDefaults,
                         Contact=track.Kind==RecordedObjectKind.Familiar?null:new GroundContactVisual(_stage.transform,"Recorded object contact",true)});
                     track.Pose.Apply(bones,clip.Contact);
                 }
@@ -104,6 +115,14 @@ namespace TumbangPreso.CameraSystem
                 var input=_canvas.GetComponent<InputLayer.ScreenFocus>();if(input!=null)input.enabled=false;
                 var picture=OwnerUiLayout.Rect(_canvas.transform,"RecordedWorldFrame").gameObject.AddComponent<RawImage>();
                 OwnerUiLayout.Fill(picture.rectTransform);picture.texture=_target;picture.raycastTarget=false;
+                // The camera has already composited the recorded world into RGB.
+                // Its residual texture alpha must not blend present-time gameplay in.
+                var frameShader=Resources.Load<Shader>("UI/OpaqueCameraFrame");
+                if(frameShader!=null)
+                {
+                    _frameMaterial=new Material(frameShader){name="Opaque recorded camera frame",hideFlags=HideFlags.DontSave};
+                    picture.material=_frameMaterial;
+                }
                 var band=OwnerUiLayout.Rect(_canvas.transform,"ReplayIdentity");band.anchorMin=band.anchorMax=new Vector2(0,1);band.pivot=new Vector2(0,1);
                 band.anchoredPosition=new Vector2(42,-28);band.sizeDelta=new Vector2(426,62);
                 var plate=band.gameObject.AddComponent<CourtPopupGraphic>();plate.Brush=true;plate.color=CourtPresentationPalette.Red;plate.raycastTarget=false;
@@ -198,14 +217,22 @@ namespace TumbangPreso.CameraSystem
                     LataClockPresentation.Unpack(state.State,out float restore,out float protection);
                     _lataClock.Draw(item.Bones[0].position,item.Bones[0].rotation,restore,protection);
                 }
-                foreach(var surface in item.Copy.Renderers)
+                int propState=state.State&255;
+                bool recordedNonLoose=item.Track.Kind==RecordedObjectKind.Slipper&&
+                    (propState==(int)SlipperState.Held||propState==(int)SlipperState.InFlight);
+                for(int surfaceIndex=0;surfaceIndex<item.Copy.Renderers.Length;surfaceIndex++)
                 {
+                    var surface=item.Copy.Renderers[surfaceIndex];
+                    // Loose keeps the original copy's unknown landing history. Restore
+                    // exact blocks so non-loose overrides cannot leak across state edges.
+                    if(item.HighlightDefaults!=null)surface.SetPropertyBlock(item.HighlightDefaults[surfaceIndex]);
                     surface.GetPropertyBlock(_coatBlock);_coatBlock.SetFloat("_TayaCue",0);
                     _coatBlock.SetFloat("_DepthReadability",item.Track.Kind==RecordedObjectKind.Slipper?0:WorldCueProfile.Current.DistanceReadability);
                     if(item.Track.Kind==RecordedObjectKind.Player)
                         _coatBlock.SetVector("_WorldBody",new Vector4(item.Bones[0].position.y,1.6f,1,0));
                     if(item.Track.Kind==RecordedObjectKind.Can)
                     {Vector3 axis=item.Bones[0].up;_coatBlock.SetVector("_WorldMetalAxis",new Vector4(axis.x,axis.y,axis.z,1));}
+                    if(recordedNonLoose)Slipper.ApplyRecordedNonLooseHighlight(_coatBlock,item.HighlightSource);
                     surface.SetPropertyBlock(_coatBlock);
                 }
                 if(!state.HasCoat)continue;
@@ -306,6 +333,7 @@ namespace TumbangPreso.CameraSystem
             if(_camera!=null)_camera.targetTexture=null;
             if(_target!=null){_target.Release();Object.Destroy(_target);}_target=null;
             if(_canvas!=null)Object.Destroy(_canvas.gameObject);_canvas=null;
+            if(_frameMaterial!=null)Object.Destroy(_frameMaterial);_frameMaterial=null;
             if(_sky!=null)Object.Destroy(_sky);_sky=null;
             if(_stage!=null)Object.Destroy(_stage);_stage=null;
             foreach(var trail in _trails.Values)trail.Dispose();_trails.Clear();

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 19:42:41Z" end-time="2026-10-02 19:42:41Z" duration="0.1287177">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="972" result="Failed" site="Child" start-time="2026-10-02 19:42:41Z" end-time="2026-10-02 19:42:41Z" duration="0.128718" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2177" name="TumbangPreso.Tests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-feedback-0930/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="972" result="Failed" site="Child" start-time="2026-10-02 19:42:41Z" end-time="2026-10-02 19:42:41Z" duration="0.110057" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10852" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2178" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="972" result="Failed" site="Child" start-time="2026-10-02 19:42:41Z" end-time="2026-10-02 19:42:41Z" duration="0.100557" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2179" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="972" result="Failed" site="Child" start-time="2026-10-02 19:42:41Z" end-time="2026-10-02 19:42:41Z" duration="0.091438" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1653" name="MatchRecordPacketTests" fullname="TumbangPreso.Tests.MatchRecordPacketTests" classname="TumbangPreso.Tests.MatchRecordPacketTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-02 19:42:41Z" end-time="2026-10-02 19:42:41Z" duration="0.069748" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1655" name="InvalidJsonAndTrailingBytesCannotPublishAResult" fullname="TumbangPreso.Tests.MatchRecordPacketTests.InvalidJsonAndTrailingBytesCannotPublishAResult" methodname="InvalidJsonAndTrailingBytesCannotPublishAResult" classname="TumbangPreso.Tests.MatchRecordPacketTests" runstate="Runnable" seed="1494905080" result="Failed" start-time="2026-10-02 19:42:41Z" end-time="2026-10-02 19:42:41Z" duration="0.036359" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.ArgumentException: JSON parse error: Invalid value.
+  at (wrapper managed-to-native) UnityEngine.JsonUtility.FromJsonInternal_Injected(UnityEngine.Bindings.ManagedSpanWrapper&,object,System.Type)
+  at UnityEngine.JsonUtility.FromJsonInternal (System.String json, System.Object objectToOverwrite, System.Type type) [0x0002a] in <eee6d1be66ae4b6baaf8ad4597657ae5>:0 
+  at UnityEngine.JsonUtility.FromJson (System.String json, System.Type type) [0x00053] in <eee6d1be66ae4b6baaf8ad4597657ae5>:0 
+  at UnityEngine.JsonUtility.FromJson[T] (System.String json) [0x00000] in <eee6d1be66ae4b6baaf8ad4597657ae5>:0 
+  at TumbangPreso.Net.MatchRpc.OnMatchRecordMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00024] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:4152 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+   --- End of inner exception stack trace ---
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.MatchRecordPacketTests+<>c__DisplayClass13_0.<Deliver>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\MatchRecordPacketTests.cs:57 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.MatchRecordPacketTests.Deliver (System.Byte[] bytes, System.UInt64 sender) [0x00023] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\MatchRecordPacketTests.cs:57
+at TumbangPreso.Tests.MatchRecordPacketTests.InvalidJsonAndTrailingBytesCannotPublishAResult () [0x00027] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\MatchRecordPacketTests.cs:83
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1657" name="NonHostAndHostLoopbackCannotPublishEvenMalformedFrames" fullname="TumbangPreso.Tests.MatchRecordPacketTests.NonHostAndHostLoopbackCannotPublishEvenMalformedFrames" methodname="NonHostAndHostLoopbackCannotPublishEvenMalformedFrames" classname="TumbangPreso.Tests.MatchRecordPacketTests" runstate="Runnable" seed="928567482" result="Passed" start-time="2026-10-02 19:42:41Z" end-time="2026-10-02 19:42:41Z" duration="0.008687" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1654" name="TruncatedAndOverflowingFramesCannotThrowOrReplaceTheResult" fullname="TumbangPreso.Tests.MatchRecordPacketTests.TruncatedAndOverflowingFramesCannotThrowOrReplaceTheResult" methodname="TruncatedAndOverflowingFramesCannotThrowOrReplaceTheResult" classname="TumbangPreso.Tests.MatchRecordPacketTests" runstate="Runnable" seed="1605680908" result="Failed" start-time="2026-10-02 19:42:41Z" end-time="2026-10-02 19:42:41Z" duration="0.001058" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.OverflowException: Reading past the end of the buffer
+  at Unity.Netcode.FastBufferReader.ReadValueSafe (System.String& s, System.Boolean oneByteChars) [0x0002c] in .\Library\PackageCache\com.unity.netcode.gameobjects@d43d28498f17\Runtime\Serialization\FastBufferReader.cs:660 
+  at TumbangPreso.Net.MatchRpc.OnMatchRecordMsg (System.UInt64 senderClientId, Unity.Netcode.FastBufferReader reader) [0x00011] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Runtime\Net\MatchRpc.cs:4149 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0007c] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Tests.MatchRecordPacketTests+<>c__DisplayClass13_0.<Deliver>b__0 () [0x00000] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\MatchRecordPacketTests.cs:57 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00001] in <8b63e8ac0a4746599ed207982825ae6c>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00050] in <8b63e8ac0a4746599ed207982825ae6c>:0 >
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.MatchRecordPacketTests.Deliver (System.Byte[] bytes, System.UInt64 sender) [0x00023] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\MatchRecordPacketTests.cs:57
+at TumbangPreso.Tests.MatchRecordPacketTests.TruncatedAndOverflowingFramesCannotThrowOrReplaceTheResult () [0x0001e] in C:\Users\matth\Documents\Codex\work\tump-feedback-0930\Assets\TumbangPreso\Tests\MatchRecordPacketTests.cs:76
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1656" name="ValidHostRecordPreservesUnicodeAndExistingNormalisation" fullname="TumbangPreso.Tests.MatchRecordPacketTests.ValidHostRecordPreservesUnicodeAndExistingNormalisation" methodname="ValidHostRecordPreservesUnicodeAndExistingNormalisation" classname="TumbangPreso.Tests.MatchRecordPacketTests" runstate="Runnable" seed="303970758" result="Passed" start-time="2026-10-02 19:42:41Z" end-time="2026-10-02 19:42:41Z" duration="0.006247" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

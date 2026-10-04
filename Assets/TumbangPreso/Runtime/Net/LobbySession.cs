@@ -351,6 +351,9 @@ namespace TumbangPreso.Net
                 // peer's own introduction, and the field would read 0 for every peer that ever
                 // completed a join. `docs/TODO.md` § 144.7.
                 record.Rating = replaced.Rating;
+                // The ordinary Identify introduction must not erase the identity
+                // received with approval. Handle verification remains independent.
+                record.AccountPlayerId = replaced.AccountPlayerId;
                 _peers.Remove(replaced.PeerId);
 
                 if (LeaderPeerId == replaced.PeerId)
@@ -593,6 +596,18 @@ namespace TumbangPreso.Net
             // Somebody who was spectating and has just sat down is now electable, and on a
             // lobby whose only seated peer left there may be no leader at all.
             ClaimLeaderIfVacant(peerId);
+            return true;
+        }
+
+        internal bool TrySwapSeats(PeerRecord from, PeerRecord to, int fromSeat, int toSeat)
+        {
+            if (MatchInProgress || from == null || to == null || ReferenceEquals(from, to)
+                || fromSeat < 0 || toSeat < 0 || fromSeat >= MaxPlayers || toSeat >= MaxPlayers
+                || from.Spectator || to.Spectator || IsSeatlessReferee(from.PeerId) || IsSeatlessReferee(to.PeerId)
+                || !ReferenceEquals(PeerInSeat(fromSeat), from) || !ReferenceEquals(PeerInSeat(toSeat), to)
+                || !ReferenceEquals(PeerById(from.PeerId), from) || !ReferenceEquals(PeerById(to.PeerId), to)
+                || _heldSeats.ContainsKey(fromSeat) || _heldSeats.ContainsKey(toSeat)) return false;
+            from.Seat = toSeat; to.Seat = fromSeat;
             return true;
         }
 

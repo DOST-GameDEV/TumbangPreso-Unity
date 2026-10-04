@@ -1,0 +1,16 @@
+{
+  "Assets/TumbangPreso/Art/characters/persons/team-zack.glb": "6434f1076ca6f080a362544739f90ee27aba54caab6890ef7e74034032062e88",
+  "Assets/TumbangPreso/Runtime/Abilities/ZackHeroKit.cs": "e30679336f11426248c14631f2493d47c9e676ff8a805b9d0400f0a98268e009",
+  "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.CastGesture.cs": "717673ef1326841933982ae4931c4222dbc0a8d3c2b8e35d095ed3228eb215fa",
+  "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.cs": "2803f70f76830ac48a013394b7164b5c512880e27a316f47f3ee704db6bed145",
+  "Assets/TumbangPreso/Runtime/Visual/CharacterAnimator.cs": "886a7f4b82dbc5cd13af30245ef6bf121cdcbeb0e3cd545bf25474b013bfd7ef",
+  "Assets/TumbangPreso/Tests/PlayMode/ZackBankShotTests.cs": "72812f4a96d518c6b04515670b7532b01c7cd23cf1575f518592b4476963c723",
+  "Assets/TumbangPreso/Editor/ZackBankShotMotionAuthor.cs": "ade5d216ee836133abc4ecc0738574260f7fa8a4902942d15a29f404bb361af4",
+  "Assets/TumbangPreso/Editor/ZackBankShotMotionAuthor.cs.meta": "d76c6c8e0b6ae6be16030bdf049bafaf7b924e6c9a89e16784be61336bd466ac",
+  "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.ZackBankShot.cs": "9dfcfe02503045b428a3296aa2763e7b767a8c0c92b1cc09eac0ffcaee52c65f",
+  "Assets/TumbangPreso/Runtime/Camera/ViewmodelArms.ZackBankShot.cs.meta": "5b692ff99268d6fd7d2bc3ce57d7aa2405756e64715fd9083e6f59a2dd2d7b72",
+  "Assets/TumbangPreso/Tests/ZackBankLoadMotionTests.cs": "58b15c6f43d1afca0d094ca80ffbaf63eeeb92fc3ecdae85e055289f320b1f97",
+  "Assets/TumbangPreso/Tests/ZackBankLoadMotionTests.cs.meta": "a9833740b27e8751ddbfc8f21f69f98bb02fb67909e95c278197c86789d50065",
+  "tools/author_zack_bank_shot.py": "655068b6170a961d932ec877fa2274f3cac1a7c66b015fbbf7bfeba386cb9dfd",
+  "Assets/TumbangPreso/Resources/Roster/person_zack.asset": "b81732a1b97b6bff5222d51811e68d0243e768fcf2525d9a18ca206ce6a9a816"
+}

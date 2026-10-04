@@ -1,0 +1,90 @@
+{
+  "sourceCommit": "39a3bc430e2233ab5d22839980d676505e1b9568",
+  "qualification": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-feedback-0930",
+  "inputs": [
+    {
+      "path": "Assets/TumbangPreso/Runtime/MatchDirector.cs",
+      "variant": "original",
+      "sha256": "e27d7bac10b558bf75a1d7d53ddff6f6d664e7b8f31afbe8c4b7fe8bf243acb6",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\completed-match-arrival1002-inputs\\MatchDirector.cs.original.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/MatchDirector.cs",
+      "variant": "final",
+      "sha256": "eea54b6a2cbc6667c72e9a6d92ac005018532585622a970167b2488b92366b1d",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\completed-match-arrival1002-inputs\\MatchDirector.cs.final.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/MatchDirector.cs",
+      "variant": "qualification-before",
+      "sha256": "e27d7bac10b558bf75a1d7d53ddff6f6d664e7b8f31afbe8c4b7fe8bf243acb6",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\completed-match-arrival1002-inputs\\MatchDirector.cs.qualification-before.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/MatchDirector.cs",
+      "variant": "baseline-installed",
+      "sha256": "e27d7bac10b558bf75a1d7d53ddff6f6d664e7b8f31afbe8c4b7fe8bf243acb6"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/MatchDirector.cs.meta",
+      "variant": "shared-metadata",
+      "sha256": "500925db871e00740072c5dd600fb9a20e1de9bde8bfbc255021abd2e159eebd"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "variant": "original",
+      "sha256": "2706025bdcaefc5c327d3fb68ed99451e29e3dc44f1fbf83a17d8fc223c605e9",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\completed-match-arrival1002-inputs\\MatchRpc.cs.original.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "variant": "final",
+      "sha256": "5b239695b07f496e27e637d3bab30a080471b4c59c9bd91e0fa1c76cb79d13a7",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\completed-match-arrival1002-inputs\\MatchRpc.cs.final.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "variant": "qualification-before",
+      "sha256": "2706025bdcaefc5c327d3fb68ed99451e29e3dc44f1fbf83a17d8fc223c605e9",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\completed-match-arrival1002-inputs\\MatchRpc.cs.qualification-before.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs",
+      "variant": "baseline-installed",
+      "sha256": "2706025bdcaefc5c327d3fb68ed99451e29e3dc44f1fbf83a17d8fc223c605e9"
+    },
+    {
+      "path": "Assets/TumbangPreso/Runtime/Net/MatchRpc.cs.meta",
+      "variant": "shared-metadata",
+      "sha256": "6a003ac12ab5d5de4e9692ec8994dbfa9e5568c6bba64e9c7519e83676003d34"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/MatchStartRaceTests.cs",
+      "variant": "original",
+      "sha256": "c77b5ffe9dd1c439d09e9f70bac6c44e2988954865b84da0d7386f931690d707",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\completed-match-arrival1002-inputs\\MatchStartRaceTests.cs.original.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/MatchStartRaceTests.cs",
+      "variant": "final",
+      "sha256": "21c095850f04ed8b6f7cb858d9fe95dd5fa2d1826b83539d3cf6e3b2a8ec95ff",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\completed-match-arrival1002-inputs\\MatchStartRaceTests.cs.final.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/MatchStartRaceTests.cs",
+      "variant": "qualification-before",
+      "sha256": "88a0e8edff8bdac79726792c79987cf47e40867a14f42c321868c86c21162cbb",
+      "snapshot": "C:\\Users\\matth\\Documents\\GitHub\\TumbangPreso-Unity-ASTRAReworks\\Logs\\completed-match-arrival1002-inputs\\MatchStartRaceTests.cs.qualification-before.txt"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/MatchStartRaceTests.cs",
+      "variant": "baseline-installed",
+      "sha256": "21c095850f04ed8b6f7cb858d9fe95dd5fa2d1826b83539d3cf6e3b2a8ec95ff"
+    },
+    {
+      "path": "Assets/TumbangPreso/Tests/MatchStartRaceTests.cs.meta",
+      "variant": "shared-metadata",
+      "sha256": "25d03727e038712a1c257746847e2601ce9fb98c81bdab8bb32b2cf7bcc090f4"
+    }
+  ]
+}

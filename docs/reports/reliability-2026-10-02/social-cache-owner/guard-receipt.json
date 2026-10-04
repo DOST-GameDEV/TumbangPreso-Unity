@@ -1,0 +1,37 @@
+{
+  "toolingRetries": 1,
+  "combinedCleanSuite": false,
+  "notes": "All jobs terminal before shared validation slot release. Profile runner verified preserved bytes and restored shared input preferences. No resource watchdog was added; owned process and available memory were monitored.",
+  "profile": "social-cache-owner1002",
+  "profilePreservation": [
+    {
+      "snapshot": "profile-preservation-ef1085105823",
+      "unityLogExitCode": 2,
+      "shellExitCode": 1,
+      "restoredProfileFiles": 0,
+      "execSession": 46175,
+      "run": "baseline",
+      "restoredEditorInputPreferences": 1
+    },
+    {
+      "snapshot": "profile-preservation-a1de582ef764",
+      "unityLogExitCode": 2,
+      "shellExitCode": 1,
+      "restoredProfileFiles": 1,
+      "execSession": 85162,
+      "run": "final",
+      "restoredEditorInputPreferences": 1
+    },
+    {
+      "snapshot": "profile-preservation-ca65e44b689f",
+      "unityLogExitCode": 0,
+      "shellExitCode": 0,
+      "restoredProfileFiles": 2,
+      "execSession": 74528,
+      "run": "final-retry",
+      "restoredEditorInputPreferences": 1
+    }
+  ],
+  "distinctPassingCases": 11,
+  "resourceInterventions": 0
+}

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 05:55:07Z" end-time="2026-10-04 05:55:08Z" duration="0.0744516">
+  <test-suite type="TestSuite" id="1047" name="TUMP Bank Runtime1004" fullname="TUMP Bank Runtime1004" runstate="Runnable" testcasecount="32" result="Passed" start-time="2026-10-04 05:55:07Z" end-time="2026-10-04 05:55:08Z" duration="0.074452" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1041" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="32" result="Passed" start-time="2026-10-04 05:55:07Z" end-time="2026-10-04 05:55:08Z" duration="0.068275" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25783" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1042" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="32" result="Passed" start-time="2026-10-04 05:55:07Z" end-time="2026-10-04 05:55:08Z" duration="0.067767" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1043" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="32" result="Passed" start-time="2026-10-04 05:55:07Z" end-time="2026-10-04 05:55:08Z" duration="0.067424" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1003" name="ViewmodelMeshOwnershipTests" fullname="TumbangPreso.PlayTests.ViewmodelMeshOwnershipTests" classname="TumbangPreso.PlayTests.ViewmodelMeshOwnershipTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-04 05:55:07Z" end-time="2026-10-04 05:55:08Z" duration="0.065982" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1004" name="OutlineWeldingLeavesSourceMeshUntouched" fullname="TumbangPreso.PlayTests.ViewmodelMeshOwnershipTests.OutlineWeldingLeavesSourceMeshUntouched" methodname="OutlineWeldingLeavesSourceMeshUntouched" classname="TumbangPreso.PlayTests.ViewmodelMeshOwnershipTests" runstate="Runnable" seed="1454428430" result="Passed" start-time="2026-10-04 05:55:07Z" end-time="2026-10-04 05:55:08Z" duration="0.040119" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1005" name="ResetReleasesWorkingMeshButRetainsSource" fullname="TumbangPreso.PlayTests.ViewmodelMeshOwnershipTests.ResetReleasesWorkingMeshButRetainsSource" methodname="ResetReleasesWorkingMeshButRetainsSource" classname="TumbangPreso.PlayTests.ViewmodelMeshOwnershipTests" runstate="Runnable" seed="1337488013" result="Passed" start-time="2026-10-04 05:55:08Z" end-time="2026-10-04 05:55:08Z" duration="0.004362" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1007" name="UnknownMeshStillReturnsNull" fullname="TumbangPreso.PlayTests.ViewmodelMeshOwnershipTests.UnknownMeshStillReturnsNull" methodname="UnknownMeshStillReturnsNull" classname="TumbangPreso.PlayTests.ViewmodelMeshOwnershipTests" runstate="Runnable" seed="1458509008" result="Passed" start-time="2026-10-04 05:55:08Z" end-time="2026-10-04 05:55:08Z" duration="0.000642" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1006" name="WarmupSharesTheSynchronousWorkingCopy" fullname="TumbangPreso.PlayTests.ViewmodelMeshOwnershipTests.WarmupSharesTheSynchronousWorkingCopy" methodname="WarmupSharesTheSynchronousWorkingCopy" classname="TumbangPreso.PlayTests.ViewmodelMeshOwnershipTests" runstate="Runnable" seed="1023977253" result="Passed" start-time="2026-10-04 05:55:08Z" end-time="2026-10-04 05:55:08Z" duration="0.009917" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Bank Runtime1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

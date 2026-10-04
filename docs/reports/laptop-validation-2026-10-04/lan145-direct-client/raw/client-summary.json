@@ -1,0 +1,25 @@
+{
+  "sourceCommit": "8f7f304b543d93db71ed09f9fbaa4107fc365895",
+  "protocol": 145,
+  "artifactManifestSha256": "cef828729584c4a1f0e6f6f33bf7ae0a8255bdc018ba8bdb1be6deaffdc3b176",
+  "completedNaturalMatch": true,
+  "matchIdSha256": "d0b3451f831645859c60b3b52ba83f045a8ec55b499f8e1fdf35a9e7f1dd2330",
+  "scores": [
+    20,
+    0,
+    0,
+    150
+  ],
+  "history": 1,
+  "queue": 1,
+  "witness": 1,
+  "marker": "",
+  "inputRestored": true,
+  "profileSeedRestored": true,
+  "exitCode": 0,
+  "finalNetworked": "False",
+  "finalMap": "MatchSetup",
+  "postEndHostClosure": true,
+  "abandonPenaltyCount": 0,
+  "scope": "Normal admission/readiness/natural completed short match and saved results; final client snapshot is post-host-exit offline lobby, not connected completed-match snapshot"
+}

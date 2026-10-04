@@ -1,0 +1,15 @@
+{
+  "baselineExpected": {
+    "total": 3,
+    "causalFailures": 1,
+    "controls": 2
+  },
+  "finalExpected": {
+    "total": 3,
+    "passed": 3
+  },
+  "filter": "TumbangPreso.Tests.SlipperHandoverTests.OnlyForcedRoundHandoverClearsTheSameShoesPickupLock",
+  "repairsUsed": 0,
+  "repairLimit": 1,
+  "scope": "Actual HostGrab then SliceRunner equipment pass, compared with duplicate snapshot/pickup notification; no frame timing, network transport, hero callback or physical input claim."
+}

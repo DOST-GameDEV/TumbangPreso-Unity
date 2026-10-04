@@ -1004,6 +1004,54 @@ namespace TumbangPreso.PlayTests
             return Rect.MinMaxRect(min.x,min.y,max.x,max.y);
         }
 
+        [UnityTest, Timeout(90000)]
+        public IEnumerator WarningStripIsThinSingleLineAndMatchesActionOpacity()
+        {
+            float oldScale = SettingsStore.Current.HudScale;
+            try
+            {
+                yield return Open(GameMode.Classic);
+                yield return new WaitForSeconds(1.4f);
+                var round = GameServices.Round; round.enabled = false;
+                var local = round.PlayerAt(GameLaunch.SoloSeat);
+                local.GetComponent<PlayerInputReader>().enabled = false;
+                local.GetComponent<Carrier>().enabled = false;
+                local.enabled = false; local.Intent.Clear();
+                local.Teleport(new Vector3(0, .1f, 2));
+                local.Intent.Set(Verb.SpecialAbility, true);
+                var view = Object.FindFirstObjectByType<TumpMatchReadout>();
+                var root = (RectTransform)view.Canvas.transform;
+                foreach (float scale in new[] { 1f, 1.2f })
+                {
+                    SettingsStore.Current.HudScale = scale;
+                    view.Tick(local, false, false, false, false);
+                    Assert.That(view.WarningText, Does.Contain("OUTSIDE DANGER ZONE"));
+                    foreach (var size in new[] { new Vector2Int(960, 540), new Vector2Int(1600, 680) })
+                    {
+                        Canvas.ForceUpdateCanvases();
+                        var warning = (RectTransform)root.Find("WarningMessage");
+                        Assert.LessOrEqual(warning.rect.height, 64, "Ordinary warnings should be a thin strip.");
+                        yield return TumpUiCapture.Capture("Warning-strip-" + scale + "-" + size.x,
+                            view.Canvas, size.x, size.y, false, false, inspectViewport: () =>
+                            {
+                                var text = warning.GetComponentInChildren<Text>();
+                                Assert.AreEqual(1, text.cachedTextGenerator.lineCount, "The warning should fit one readable line.");
+                                Assert.GreaterOrEqual(text.fontSize, 28);
+                                Assert.LessOrEqual(text.preferredWidth, text.rectTransform.rect.width + 1);
+                                var action = root.Find("ContextualAction/PromptPlate").GetComponent<HudCard>();
+                                Assert.AreEqual(action.color.a, warning.GetComponent<HudCard>().color.a, .001f);
+                                var bounds = HudRevisionBounds(root, warning);
+                                Assert.GreaterOrEqual(bounds.xMin, root.rect.xMin);
+                                Assert.LessOrEqual(bounds.xMax, root.rect.xMax);
+                            });
+                    }
+                }
+                view.Tick(local, true, false, false, false);
+                Assert.AreEqual("", view.WarningText);
+            }
+            finally { SettingsStore.Current.HudScale = oldScale; }
+        }
+
         [UnityTest,Timeout(60000)]
         public IEnumerator RevisedWarningsFollowRefusedInputsAndHideForSpectators()
         {
@@ -1024,6 +1072,47 @@ namespace TumbangPreso.PlayTests
             local.Intent.Clear();local.Intent.Set(Verb.Sprint,true);local.Stamina.ApplyNetworkSnapshot(0,0,2.5f);
             view.Tick(local,false,false,false,false);Assert.That(view.WarningText,Does.StartWith("CANNOT RUN"));
             view.Tick(local,true,false,false,false);Assert.AreEqual("",view.WarningText);
+        }
+
+        [UnityTest,Timeout(90000)]
+        public IEnumerator TimedRecoveryShowsStateWithoutMashPromptsOrPressCounts()
+        {
+            int quality=QualitySettings.GetQualityLevel(),mip=QualitySettings.globalTextureMipmapLimit;
+            try
+            {
+                QualitySettings.SetQualityLevel(0,true);QualitySettings.globalTextureMipmapLimit=2;
+                yield return Open(GameMode.HeroStrike);
+                var local=GameServices.Round.PlayerAt(GameLaunch.SoloSeat);
+                local.GetComponent<PlayerInputReader>().enabled=false;local.enabled=false;local.Intent.Clear();
+                var view=Object.FindFirstObjectByType<TumpMatchReadout>();Assert.IsNotNull(view);
+                local.ApplyStagger(2.5f,StunElement.Ice,9);view.Tick(local,false,false,false,false);
+                Assert.IsTrue(local.IsFrozen);Assert.IsFalse(local.CanAct());
+                Assert.IsTrue(view.Canvas.GetComponentsInChildren<Text>().Any(t=>t.isActiveAndEnabled&&t.name=="StatusName"&&t.text==StatusIcons.Name(StatusKind.Frozen)));
+                var actionRoot=(RectTransform)typeof(TumpMatchReadout).GetField("_promptRoot",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(view);
+                Assert.IsFalse(actionRoot.gameObject.activeSelf,"Timed Frozen is represented by its status indicator only.");
+                NoMashText(view);
+                yield return TumpUiCapture.Capture("Timed-recovery-Frozen",view.Canvas,960,540,false,true);
+                local.ClearStun();local.ApplyTrip(2.5f);view.Tick(local,false,false,false,false);
+                Assert.IsTrue(view.Canvas.GetComponentsInChildren<Text>().Any(t=>t.isActiveAndEnabled&&t.text=="Getting up"));
+                NoMashText(view);
+                local.ApplyNetworkState(0,0,StunElement.None,6,9,1.25f,2.5f,9,1.7f,100,0,0);
+                view.Tick(local,false,false,false,false);
+                var progress=(Image)typeof(TumpMatchReadout).GetField("_progress",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(view);
+                Assert.AreEqual(.5f,progress.rectTransform.anchorMax.x,.001f,"The recovery bar measures time, never old press counts.");
+                Assert.AreEqual(0,local.MashPresses);NoMashText(view);
+                yield return TumpUiCapture.Capture("Timed-recovery-get-up",view.Canvas,960,540,false,true);
+            }
+            finally {QualitySettings.SetQualityLevel(quality,true);QualitySettings.globalTextureMipmapLimit=mip;}
+        }
+
+        private static void NoMashText(TumpMatchReadout view)
+        {
+            foreach(var text in view.Canvas.GetComponentsInChildren<Text>())
+            {
+                if(!text.isActiveAndEnabled)continue;
+                string value=text.text.ToLowerInvariant();
+                Assert.IsFalse(value.Contains("mash")||value.Contains("presses")||value.Contains("shatter the ice"),text.name+": "+text.text);
+            }
         }
 
         private static IEnumerator Open(GameMode mode)

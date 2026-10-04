@@ -117,7 +117,7 @@ namespace TumbangPreso.Net
 
         public event Action EntriesChanged;
 
-        private UdpClient _listener;
+        private volatile UdpClient _listener;
         private UdpClient _sender;
         private readonly Dictionary<string, LanEntry> _seen = new Dictionary<string, LanEntry>();
         private string _lastSignature = "";
@@ -142,7 +142,12 @@ namespace TumbangPreso.Net
         /// thread, which IS Unity's main thread, so the Unity call inside it was legal there and
         /// the parser looked correct in isolation. It was only ever wrong on the socket thread.
         /// </summary>
-        private readonly ConcurrentQueue<LanEntry> _inbox = new ConcurrentQueue<LanEntry>();
+        private struct ReceivedBeacon
+        {
+            public UdpClient Listener;
+            public LanEntry Entry;
+        }
+        private readonly ConcurrentQueue<ReceivedBeacon> _inbox = new ConcurrentQueue<ReceivedBeacon>();
 
         public bool Advertising { get; private set; }
         public bool Listening { get; private set; }
@@ -228,11 +233,14 @@ namespace TumbangPreso.Net
                 // re-arm at the end of it is skipped, so discovery dies on the first packet of a
                 // busy network. Setting it first costs nothing: the failure path below clears it.
                 Listening = true;
-                _listener.BeginReceive(OnReceive, null);
+                _listener.BeginReceive(OnReceive, _listener);
             }
             catch (Exception e)
             {
                 Listening = false;
+                // Bind/receive setup may fail after allocating the UDP socket.
+                try { _listener?.Close(); } catch { }
+                _listener = null;
                 Debug.LogWarning($"[Lan] could not listen on {DiscoveryPort}: {e.Message}");
             }
         }
@@ -425,8 +433,9 @@ namespace TumbangPreso.Net
         /// </summary>
         private void OnReceive(IAsyncResult ar)
         {
-            var listener = _listener;
-            if (listener == null) return;
+            var listener = ar.AsyncState as UdpClient;
+            // A stopped session's completion must never touch its replacement socket.
+            if (listener == null || !Listening || !ReferenceEquals(listener, _listener)) return;
 
             try
             {
@@ -436,7 +445,7 @@ namespace TumbangPreso.Net
                 if (TryParsePayload(Encoding.UTF8.GetString(data), from.Address.ToString(), out var entry))
                 {
                     // Handed to Update(); see _inbox. LastSeen is stamped there, on the main thread.
-                    _inbox.Enqueue(entry);
+                    _inbox.Enqueue(new ReceivedBeacon { Listener = listener, Entry = entry });
                 }
             }
             catch (ObjectDisposedException)
@@ -451,7 +460,7 @@ namespace TumbangPreso.Net
 
             try
             {
-                if (Listening) listener.BeginReceive(OnReceive, null);
+                if (Listening && ReferenceEquals(listener, _listener)) listener.BeginReceive(OnReceive, listener);
             }
             catch (ObjectDisposedException)
             {
@@ -459,6 +468,7 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
+                if (!ReferenceEquals(listener, _listener)) return;
                 Listening = false;
                 Debug.LogWarning($"[Lan] could not re-arm the discovery socket: {e.Message}");
             }
@@ -471,8 +481,11 @@ namespace TumbangPreso.Net
         {
             bool touched = false;
 
-            while (_inbox.TryDequeue(out var entry))
+            while (_inbox.TryDequeue(out var received))
             {
+                // StopAll can race with enqueue after clearing the old inbox.
+                if (!Listening || !ReferenceEquals(received.Listener, _listener)) continue;
+                var entry = received.Entry;
                 // ⚠️⚠️ OUR OWN ADVERTISEMENT IS DROPPED HERE, AND THAT IS WHY THIS FILTER IS ON
                 // THE MAIN THREAD RATHER THAN IN `TryParsePayload`. The parser is a pure function
                 // over a payload and a remote address, it runs on the socket thread, and it is

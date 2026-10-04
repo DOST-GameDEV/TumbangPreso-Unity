@@ -226,7 +226,15 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
-        public IEnumerator QueuedLockInVotesThenLoadsIntroducesAndStartsWithoutReadyInput()
+        public IEnumerator QueuedLockInVotesThenLoadsIntroducesAndStartsWithoutReadyInput() => StartFlow(true, true);
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator CustomStartSelectsVotesLoadsAndBeginsWithoutSecondReady() => StartFlow(false, true);
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator CustomHostSelectedCourtSkipsVotingAndBeginsWithoutSecondReady() => StartFlow(false, false);
+
+        private IEnumerator StartFlow(bool queued, bool mapVote)
         {
             HubHome.Choice = 2;
             Settings.SettingsStore.Current.HighContrastHud = false;
@@ -238,13 +246,26 @@ namespace TumbangPreso.PlayTests
             while (!hosting.IsCompleted && Time.realtimeSinceStartup < until) yield return null;
             Assert.IsTrue(hosting.IsCompleted && !hosting.IsFaulted && string.IsNullOrEmpty(hosting.Result));
 
+            var selectedRules = SceneFlow.SelectedRules.Clone(); selectedRules.MapVote = mapVote;
+            MatchRpc.Instance.SelectRulesServerRpc(CustomGameRules.ToWire(selectedRules));
+
             // This is the local queued-room state path on a real LAN host, not a UGS matchmaking claim.
-            HubQueueWatch.Begin(GameMode.HeroStrike, QueueStake.Casual);
-            HubQueueWatch.AcceptBots(); TumpHub.Current.Host.AcceptBots();
+            if (queued)
+            {
+                HubQueueWatch.Begin(GameMode.HeroStrike, QueueStake.Casual);
+                HubQueueWatch.AcceptBots(); TumpHub.Current.Host.AcceptBots();
+            }
+            else
+            {
+                TumpHub.Current.Host.AcceptBots();
+                TumpHub.Current.Host.StartGame();
+            }
             until = Time.realtimeSinceStartup + 6;
             while (!(TumpHub.Current.Top is HubCharacterSelect) && Time.realtimeSinceStartup < until) yield return null;
             Assert.IsInstanceOf<HubCharacterSelect>(TumpHub.Current.Top);
             yield return HubFlowTests.Press("SelectButton");
+            if (queued || mapVote)
+            {
             until = Time.realtimeSinceStartup + 5;
             while (!(TumpHub.Current.Top is HubMapVote) && Time.realtimeSinceStartup < until) yield return null;
             Assert.IsInstanceOf<HubMapVote>(TumpHub.Current.Top);
@@ -256,9 +277,12 @@ namespace TumbangPreso.PlayTests
             yield return HubFlowTests.Press("VoteMap1");
             Assert.AreEqual(1, TumpHub.Current.Host.MapVoteFor(NetAuthority.LocalSlot));
 
+            }
+            string expectedMap = queued || mapVote ? SceneFlow.BayanPlaza : SceneFlow.Eskinita;
+
             until = Time.realtimeSinceStartup + 20;
-            while (SceneManager.GetActiveScene().name != SceneFlow.BayanPlaza && Time.realtimeSinceStartup < until) yield return null;
-            Assert.AreEqual(SceneFlow.BayanPlaza, SceneManager.GetActiveScene().name);
+            while (SceneManager.GetActiveScene().name != expectedMap && Time.realtimeSinceStartup < until) yield return null;
+            Assert.AreEqual(expectedMap, SceneManager.GetActiveScene().name);
             until = Time.realtimeSinceStartup + 10;
             while (Object.FindFirstObjectByType<MatchArrivalPresentation>() == null && Time.realtimeSinceStartup < until) yield return null;
             Assert.IsNotNull(Object.FindFirstObjectByType<MatchArrivalPresentation>());
@@ -267,16 +291,69 @@ namespace TumbangPreso.PlayTests
             var ticks = new List<string>();
             gate.CountdownTick += ticks.Add;
             until = Time.realtimeSinceStartup + 20;
-            while (GameServices.Round?.RoundActive != true && Time.realtimeSinceStartup < until) yield return null;
+            string captureFolder = System.Environment.GetEnvironmentVariable("TUMP_ARRIVAL_CAPTURE");
+            float nextCapture = 0; int captureIndex = 0;
+            while (GameServices.Round?.RoundActive != true && Time.realtimeSinceStartup < until)
+            {
+                if (!string.IsNullOrEmpty(captureFolder) && Time.realtimeSinceStartup >= nextCapture &&
+                    SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null)
+                {
+                    CaptureArrivalCamera(captureFolder, captureIndex++);
+                    nextCapture = Time.realtimeSinceStartup + .75f;
+                }
+                yield return null;
+            }
             gate.CountdownTick -= ticks.Add;
             Assert.IsTrue(GameServices.Round.RoundActive, "No key was pressed: the queued match must start itself.");
-            CollectionAssert.AreEqual(new[] { "3", "2", "1", "START!" }, ticks);
+            CollectionAssert.AreEqual(new[] { "3", "2", "1", "GO!" }, ticks);
             Assert.IsFalse(PresentationClock.Held);
             Assert.IsFalse(HubLoading.Visible);
         }
 
+        private static void CaptureArrivalCamera(string directory, int index)
+        {
+            var camera = Camera.main; if (camera == null) return;
+            System.IO.Directory.CreateDirectory(directory);
+            var target = RenderTexture.GetTemporary(640, 360, 24);
+            var previousTarget = camera.targetTexture; var previousActive = RenderTexture.active;
+            var image = new Texture2D(640, 360, TextureFormat.RGB24, false);
+            try
+            {
+                camera.targetTexture = target; camera.Render(); RenderTexture.active = target;
+                image.ReadPixels(new Rect(0, 0, 640, 360), 0, 0); image.Apply();
+                System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory, $"arrival-{index:00}.png"), image.EncodeToPNG());
+                var arrival = Object.FindFirstObjectByType<MatchArrivalPresentation>();
+                var beat = arrival != null ? typeof(MatchArrivalPresentation).GetField("_shownBeat",
+                    System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic) : null;
+                var phase = new ArrivalCapturePhase
+                {
+                    frame = index, realtime = Time.realtimeSinceStartup, unityFrame = Time.frameCount,
+                    loadingVisible = HubLoading.Visible, loadingPreparing = HubLoading.Preparing,
+                    clockHeld = PresentationClock.Held, roundActive = GameServices.Round?.RoundActive == true,
+                    arrivalPresent = arrival != null, beat = beat != null ? (int)beat.GetValue(arrival) : -99,
+                    position = camera.transform.position, rotation = camera.transform.rotation,
+                    fieldOfView = camera.fieldOfView
+                };
+                System.IO.File.WriteAllText(System.IO.Path.Combine(directory, $"arrival-{index:00}.json"), JsonUtility.ToJson(phase, true));
+            }
+            finally
+            {
+                camera.targetTexture = previousTarget; RenderTexture.active = previousActive;
+                RenderTexture.ReleaseTemporary(target); Object.DestroyImmediate(image);
+            }
+        }
+
+        [System.Serializable] private sealed class ArrivalCapturePhase
+        {
+            public int frame, unityFrame, beat;
+            public float realtime, fieldOfView;
+            public bool loadingVisible, loadingPreparing, clockHeld, roundActive, arrivalPresent;
+            public Vector3 position;
+            public Quaternion rotation;
+        }
+
         [UnityTest, Timeout(60000)]
-        public IEnumerator ManualCustomRoomWaitsAndItsOptionCanBeChanged()
+        public IEnumerator CustomRoomHasNoSecondReadyOptionAndLegacyRulesStillIntroduceTheCourt()
         {
             yield return HubFlowTests.OpenHome();
             yield return HubFlowTests.Press("MenuButton");
@@ -286,11 +363,7 @@ namespace TumbangPreso.PlayTests
             var buttons = GameObject.Find("OwnerCustomGameCanvas").GetComponentsInChildren<UnityEngine.UI.Button>(true);
             foreach (var b in buttons) if (b.name == "RoomRulesTab") b.onClick.Invoke();
             yield return null;
-            bool before = SceneFlow.SelectedRules.ManualReady;
-            var toggle = System.Array.Find(buttons, b => b.name == "ManualReadyNext");
-            Assert.IsNotNull(toggle); Assert.IsTrue(toggle.IsInteractable());
-            toggle.onClick.Invoke(); yield return null;
-            Assert.AreEqual(!before, SceneFlow.SelectedRules.ManualReady);
+            Assert.IsNull(System.Array.Find(buttons, b => b.name == "ManualReadyNext"));
             rules.Close();
             var manual = CustomGameRules.Defaults(GameMode.Classic); manual.ManualReady = true;
             SceneFlow.PinSelectedRules(manual); SceneFlow.Networked = false;
@@ -300,7 +373,7 @@ namespace TumbangPreso.PlayTests
             Assert.IsNotNull(gate); Assert.IsTrue(gate.AwaitingReady);
             Assert.IsFalse(gate.CountingDown);
             Assert.IsFalse(GameServices.Round.RoundActive);
-            Assert.IsNull(Object.FindFirstObjectByType<MatchArrivalPresentation>());
+            Assert.IsNotNull(Object.FindFirstObjectByType<MatchArrivalPresentation>());
         }
 
         [UnityTest, Timeout(60000)]

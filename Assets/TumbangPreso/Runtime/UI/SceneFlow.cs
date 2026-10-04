@@ -151,8 +151,10 @@ namespace TumbangPreso.UI
             new MapEntry(BayanPlaza, "BAYAN PLAZA",
                          "Barangay plaza. Church, basketball ring, acacia.", 0.0f, 22.0f, 16.0f),
 
+            // The rebuilt court is below an 8 m soffit. Look down the street under it,
+            // rather than through the viaduct deck and the adjacent shop roofs.
             new MapEntry(IlalimNgTulay, "ILALIM NG TULAY",
-                         "LRT Gilmore strip. Viaduct pillars, PC Express, pisonet.", 35.0f, 22.0f, 13.5f),
+                         "LRT Gilmore strip. Viaduct pillars, PC Express, pisonet.", 0.0f, 22.0f, 5.5f),
             new MapEntry(SaBubong,"SA BUBONG",
                          "Condo roofdeck. Watch the edge; lost slippers return after 10s.",35,30,22),
             // ⚠️ THE LAGOON COURT IS THE REWORKED COVE NOW, and Kanto joins the list (owner,
@@ -704,6 +706,8 @@ namespace TumbangPreso.UI
 
             Net.NetSession.Instance?.Stop();
 
+            RetireMatchSimulation();
+
             // ⚠️⚠️ THE LAUNCH BLOCK IS CLEARED HERE BECAUSE THIS IS THE SINGLE EXIT, AND IT WAS
             // NOT. `docs/TODO.md` § 149.8: the remaining lifecycle risk is not the first launch,
             // it is process-wide state surviving into the NEXT match. `GameLaunch.Reset()` was
@@ -731,6 +735,15 @@ namespace TumbangPreso.UI
             // (TAP TO START and nothing else), so landing there after a match cost a press that
             // led straight back to HOME. The session is stopped above either way.
             GoHome();
+        }
+
+        internal static void RetireMatchSimulation()
+        {
+            // Also used on unexpected host loss before the empty lobby restores
+            // offline authority. No completed result is manufactured by retirement.
+            HalftimePresentation.Instance?.End(false);
+            GameServices.Round?.ResetForNewMatch();
+            GameServices.Match?.ResetForNewMatch();
         }
 
         public static void Quit()

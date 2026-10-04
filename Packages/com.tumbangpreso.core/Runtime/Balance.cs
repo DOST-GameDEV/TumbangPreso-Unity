@@ -86,84 +86,16 @@
         public const float TournamentPenaltyInterval = 1.0f;
 
         // ------------------------------------------------------------------
-        // Hero Strike ultimate economy. EVERY POINT IS EARNED BY AN ACT.
-        //
-        // ⚠️⚠️ `UltimatePassiveChargePerSecond` WAS DELETED ON 2026-08-25 AND MUST NOT COME
-        // BACK. It was 1.0/s against a max of 100, so a player who did nothing at all reached
-        // **90 of the 100 in a 90 s round**: the meter was a 100 second clock wearing an
-        // economy's clothes, and objective play was a bonus on top of a gift.
-        //
-        // `docs/VISION.md` § 4 lists **"Nothing may reward waiting"** as a competitive
-        // requirement and names the ultimate charge in the same breath, so the trickle was
-        // against the mode's own stated rules the whole time. 🧑 2026-08-25: *"make it so that
-        // ult has to be charged and isnt cooldown gated"*.
-        //
-        // ⚠️ THE COST IS PER HERO NOW, at `HeroKit.UltimateCost`, and ranges 90 to 150 against
-        // these earnings. `HeroKit.UltimateMax` 100 is only the meter's full scale.
-        // `docs/Hero_Strike_Balance.md` § 3.1 has both tables and the reasoning for each price.
-        // ------------------------------------------------------------------
-
-        // ⚠️⚠️ THE METER COUNTS EVENTS NOW, NOT POINTS. 🧑 2026-08-27: *"wtf how many points or
-        // charges to ult does downing can give? i want downing can and tayaing to only give one
-        // point for the charges"*, and then *"i wanted like 10-20 charges required on ult
-        // depending on impact"*. A knockdown used to be 25 and a tag 20 against costs of 90 to
-        // 150, so the only way to answer "how close am I" was to divide two numbers nothing on
-        // screen ever showed. **One knockdown is one charge. One tag is one charge.** An ultimate
-        // costs 10 to 20 of them, ranked by how much it swings a round.
-        //
-        // ⚠️⚠️ THIS IS A REAL PACING CHANGE AND NOT ONLY A RESCALE, SO HERE IS THE ARITHMETIC IT
-        // HAS TO BE JUDGED AGAINST. The old economy bought the most expensive ultimate for six
-        // knockdowns; the new one asks twenty. A live attacker earns roughly
-        //
-        //     1 to 2 knockdowns        1.0 to 2.0
-        //     3 to 4 retrievals        1.5 to 2.0
-        //     5 to 6 throws            0.8 to 0.9
-        //     ------------------------------------
-        //     about 4.3 charges per 90 s round
-        //
-        // so Nemu's 10 lands after about two and a half rounds and Zack's 20 after about four and
-        // a half. Over Hero Strike's eight rounds that is between one and three ultimates per
-        // seat per match, against roughly three to five before. **If a match measures fewer than
-        // one ultimate per seat, this is the number to move, and moving the COST is the honest
-        // lever rather than inflating what an act pays.** `BotBehaviourProbe` prints ultimates
-        // per match and `docs/TODO.md` § 38 carries the measurement.
-        //
-        // ⚠️ THE RATIOS BETWEEN THE FOUR EARNINGS ARE UNCHANGED, except the tag. Retrieval was
-        // 12/25 of a knockdown and is 0.5; a throw was 4/25 and is 0.15. The tag goes from 0.8 of
-        // a knockdown to a full 1.0 because he asked for both objectives to be worth one: a 25
-        // per cent raise to the taya's only source of charge, for one round in four.
-
-        /// <summary>The objective. ONE CHARGE, and everything else is priced against it.</summary>
+        // Hero Strike objective economy, owner revision October 3, 2026.
+        // Knockdowns and successful tags each pay one point. The defender also
+        // receives one point once at the beginning of their round. No timed
+        // trickle, throw income or retrieval income. Ultimate costs are unchanged.
         public const float UltimateChargeLataKnock = 1.0f;
-
-        /// <summary>
-        /// The taya's only way to earn, and now worth exactly what the objective is.
-        ///
-        /// ⚠️ 1.0, UP FROM THE 0.8 A STRAIGHT RESCALE WOULD HAVE GIVEN. Asked for by name, and
-        /// defensible on its own: an attacker has three ways to earn charge and the defender has
-        /// this one, for one round in four.
-        /// </summary>
         public const float UltimateChargeTag = 1.0f;
-
-        /// <summary>
-        /// ⚠️⚠️ IT PAYS THE ACT THE WHOLE GAME IS BUILT AROUND. `docs/VISION.md` § 0: *"The
-        /// tension is the retrieval, not the throw. Throwing is safe and free; going back in for
-        /// your tsinelas is the only moment you can be caught."* Until 2026-08-25 the retrieval
-        /// earned NOTHING toward an ultimate and the safe act earned 8, which paid the two halves
-        /// of the game in exactly the wrong order.
-        ///
-        /// ⚠️ HALF A KNOCKDOWN, which is what 12 against 25 was.
-        /// </summary>
-        public const float UltimateChargeOwnSlipperRetrieved = 0.5f;
-
-        /// <summary>
-        /// ⚠️ THE SMALLEST EARNING IN THE GAME, for the reason above. A throw costs nothing and
-        /// risks nothing, so it is the one act that should pay least. It still pays something,
-        /// because a round where nobody throws is not a round.
-        ///
-        /// ⚠️ 0.15 OF A KNOCKDOWN, which is what 4 against 25 was.
-        /// </summary>
-        public const float UltimateChargeLegalThrow = 0.15f;
+        public const float UltimateChargeDefenderRound = 1.0f;
+        // Retained names keep existing callers and numeric contracts explicit.
+        public const float UltimateChargeOwnSlipperRetrieved = 0.0f;
+        public const float UltimateChargeLegalThrow = 0.0f;
 
         // Pektus (Curve Spin) Throwing
         public const float PektusCurveStrength = 14.0f;
@@ -187,6 +119,8 @@
         // MOVEMENT AND THE ARENA — character_base.gd
         // -------------------------------------------------------------------
 
+        // Legacy non-locomotion reference for companion flight and throw presentation.
+        // Player walking/running uses the explicit role speeds below.
         public const float Speed = 4.6f;
 
         // Bolt Sprint promises sustained skating speed. Its old 4 m/s² per-tick
@@ -198,74 +132,19 @@
         // The previous 3*dt impulse was erased by ordinary movement friction.
         public const float NemuPhaseSpeedScale = 1.20f;
 
-        /// <summary>
-        /// ⚠️⚠️ 0.45, DOWN FROM 0.75, AND IT IS A 40% CUT HE ASKED FOR BY NAME. 🧑 2026-08-29,
-        /// after playing the 8-round Hero Strike build: *"defender kinda hard now so can we slow
-        /// down all attackers as well as bot, even when they sprint, by 40%"*, and separately
-        /// *"feels like shit get past defender very easily"*.
-        ///
-        /// ⚠️⚠️ 0.55 SINCE LATER THE SAME DAY, AND THE NERF STAYS. 🧑, after playing the 40%:
-        /// *"my speed reduction might have been too harsh, u can increase a bit ... js a bit ...
-        /// but i want the nerf to stay for attackers"*.
-        ///
-        /// 0.45 → **0.55**, which is a **27% cut** from the original 0.75 rather than 40%.
-        /// **Walk 2.53 m/s, sprint 3.79 m/s**, against 3.45 and 5.18 before any of this.
-        ///
-        /// | scale | walk | sprint | cut |
-        /// |---|---|---|---|
-        /// | 0.75, original | 3.45 | 5.18 | — |
-        /// | 0.45, first pass | 2.07 | 3.11 | 40% |
-        /// | **0.55, shipped** | **2.53** | **3.79** | **27%** |
-        ///
-        /// ⚠️ THE TAYA IS STILL THE FASTER ROLE BY A WIDE MARGIN: 5.06 m/s walking against an
-        /// attacker's 3.79 m/s SPRINTING. That is the thing he asked for and it is untouched.
-        ///
-        /// ⚠️ AND `StaminaDrainRate` MOVED WITH IT, AGAIN. § 83.1b: the bar buys a DISTANCE, so a
-        /// speed change is a drain change or the interlock breaks. 29 at 0.55, where it was 24 at
-        /// 0.45 and 40 at 0.75, and `ASprintBuysOneCrossingOfTheDangerZone` is what says so
-        /// without anybody having to remember.
-        ///
-        /// ⚠️ THE SPRINT IS CUT BY THE SAME 40% WITHOUT TOUCHING `SprintScale`, WHICH IS WHY IT
-        /// IS THIS CONSTANT THAT MOVED. `CharacterMotor` composes speed as
-        /// `Speed * RoleSpeedScale * PersonSpeedScale * sprint * SpeedZones`, all multiplicative,
-        /// so scaling the role term scales every state an attacker can be in — walking, sprinting,
-        /// fatigued and inside a hazard zone — by exactly 0.60. Cutting `SprintScale` instead
-        /// would have slowed the sprint and left the walk untouched, and would have hit the TAYA's
-        /// sprint too, which is the opposite of the ask.
-        ///
-        /// ⚠️ IT REACHES THE BOTS FOR FREE. `AIController` drives the same `InputIntent` through
-        /// the same motor; there is no second speed path to change. The second half of the quote
-        /// is therefore satisfied by this line and not by anything in `AIController`.
-        ///
-        /// ⚠️⚠️ AND IT MOVES THE INTERLOCKED SET. `Stamina`'s header names StaminaMax,
-        /// StaminaDrainRate, SprintScale and ConfinementRadius as one set dimensioned so the bar
-        /// buys roughly one crossing of the danger zone. A 40% slower attacker covers 40% less
-        /// ground on the same bar, so **a sprint no longer buys a full crossing** — that is a
-        /// deliberate consequence of the ask, not an oversight, and it is what makes the taya
-        /// stronger. `TripGraceAfterGetUp` was re-solved against the new speed; nothing else in
-        /// the set was, and re-measuring it is `docs/TODO.md` § 83.1.
-        /// </summary>
-        public const float AttackerSpeedScale = 0.55f;
-
-        /// <summary>
-        /// The taya's own multiplier, which used to be a literal 1.0 inside `RoleSpeedScale`.
-        ///
-        /// ⚠️ 🧑 2026-08-29, in the same breath as widening the block: *"make them a bit faster
-        /// too"*. 4.6 x 1.10 = **5.06 m/s**. "A bit" is taken at its word: the taya was already
-        /// the faster role and the attacker cut above is doing most of the work.
-        ///
-        /// ⚠️ IT IS A NAMED CONSTANT RATHER THAN A NUMBER IN THE EXPRESSION, because the two role
-        /// scales are read against each other constantly — the ratio is the whole balance of
-        /// chase versus escape — and one of them being invisible is how it stayed at 1.0 through
-        /// every retune of the other.
-        /// </summary>
-        public const float DefenderSpeedScale = 1.10f;
+        // October 3 playtest revision: explicit role speeds, identical across character
+        // picks and both modes. Active statuses, abilities and terrain remain separate.
+        public const float AttackerWalkSpeed = 2.5f;
+        public const float DefenderWalkSpeed = 3.75f;
+        public const float AttackerRunSpeed = 5.0f;
+        public const float DefenderRunSpeed = 7.5f;
 
         public const float SprintScale = 1.50f;
         public const float Friction = 30.0f;
-        public const float Gravity = 20.0f;
-        public const float MaxFallSpeed = 26.0f;
-        public const float JumpVelocity = 5.8f;
+        public const float Gravity = 20.0f; // Slipper/projectile gravity is unchanged.
+        public const float CharacterGravity = 20.0f;
+        public const float MaxFallSpeed = 25.0f;
+        public const float JumpVelocity = 5.75f;
 
         /// <summary>
         /// ⚠️ A SQUARE, NOT A CIRCLE. Both the chalk the map builders draw and the clamp
@@ -313,7 +192,7 @@
         // against. Port_Plan.md §7.1 carries the reconciliation as a Phase 1 blocker.
         // -------------------------------------------------------------------
 
-        public const float StaminaMax = 60.0f;
+        public const float StaminaMax = 250.0f;
         /// <summary>
         /// Stamina spent per second of sprinting.
         ///
@@ -353,15 +232,15 @@
         /// DISTANCE against `ConfinementRadius`, so the next person to move the speed, the bar,
         /// the drain or the box gets told rather than finding out from a playtest.
         /// </summary>
-        public const float StaminaDrainRate = 29.0f;
-        public const float StaminaRegenRate = 20.0f;
+        public const float StaminaDrainRate = 100.0f;
+        public const float StaminaRegenRate = 100.0f;
         public const float StaminaRegenDelay = 1.0f;
 
         /// <summary>You cannot START a sprint below this, so the bar cannot be feathered.</summary>
-        public const float StaminaSprintFloor = 7.5f;
+        public const float StaminaSprintFloor = 50.0f;
 
         public const float FatigueTime = 2.5f;
-        public const float FatigueSpeedScale = 0.75f;
+        public const float FatigueSpeedScale = 1.0f;
 
         // -------------------------------------------------------------------
         // THE SHOVE — character_base.gd. Attackers shove Attackers.
@@ -375,9 +254,9 @@
         public const float ShoveSpeed = 12.247f;
         public const float ShoveLift = 2.2f;
         public const float ShoveStun = 1.25f;
-        public const float ShoveStaminaCost = 25.0f;
+        public const float ShoveStaminaCost = 0.0f;
         public const float ShoveCooldown = 7.5f;
-        public const float ShoveMissCooldown = 2.0f;
+        public const float ShoveMissCooldown = 0.5f;
         public const float ShoveRange = 1.6f;
         public const float ShoveArcDeg = 70.0f;
 
@@ -393,12 +272,13 @@
         public const float LungeChargeTime = 0.5f;
         // Owner feedback, 2026-09-30: a faster, farther defender commitment.
         // Solve the impulse from travel so friction and all derived reach stay coherent.
-        public const float LungeDistance = 3.0f;
+        public const float LungeDistance = 3.5f;
         public static readonly float LungeSpeed =
             (float)System.Math.Sqrt(2.0 * Friction * LungeDistance);
         public const float LungeTagRadius = 1.3f;
-        public const float LungeActiveTime = 0.45f;
-        public const float LungeCooldown = 1.5f;
+        public static readonly float LungeActiveTime = LungeSpeed / Friction;
+        public const float LungeCooldown = 2.5f;
+        public const float LungeTapCooldown = 0.5f;
         public const float LungeMinPower = 0.35f;
 
         // -------------------------------------------------------------------
@@ -469,7 +349,7 @@
         /// So the committed window is that number: the slide's own 0.34 s plus this.
         /// </summary>
         public static readonly float SlideRecoveryTime =
-            (LungeChargeTime + LungeActiveTime) - SlideActiveTime;
+            0.95f - SlideActiveTime;
 
         /// <summary>
         /// How much of their steering an attacker keeps while committed.
@@ -496,24 +376,18 @@
         /// would have no such property, and "cannot instantly chain another lunge" is exactly what
         /// the brief asks the commitment to cost.
         /// </summary>
-        public static readonly float SlideCooldown =
-            LungeChargeTime + LungeActiveTime + LungeCooldown;
+        public const float SlideCooldown = 2.45f;
 
         /// <summary>
-        /// What a slide costs in stamina.
-        ///
-        /// ⚠️⚠️ IT IS `ShoveStaminaCost`, WHICH IS THE ATTACKER'S OTHER COMMITTED VERB, and the
-        /// parity is the point rather than laziness. `docs/VISION.md` § 1.1 forbids Classic
-        /// another resource bar and `CLAUDE.md` § 6.2 forbids another thing to hold in the head;
-        /// pricing this against a bar the player already watches means the decision is one they
-        /// already know how to make. It also makes the slide compete with SPRINTING AWAY, which is
-        /// the counterplay the taya gets for free: an attacker who slid cannot also run.
+        /// Retrieval slide keeps its explicit 25-point price. It no longer aliases
+        /// ShoveStaminaCost, because the owner removed shove/lunge costs after playtesting.
         /// </summary>
-        public const float SlideStaminaCost = ShoveStaminaCost;
+        public const float SlideStaminaCost = 25.0f;
 
         public const float PunchRange = 1.7f;
         public const float PunchArcDeg = 75.0f;
-        public const float PunchCooldown = 0.9f;
+        public const float PunchCooldown = 0.5f;
+        public const float PunchHitCooldown = 0.25f;
 
         public const float MaxKnockbackSpeed = 16.0f;
         public const float MaxKnockbackLift = 7.0f;
@@ -525,7 +399,7 @@
 
         // Faster ordinary wind-up requested in Feedback. Power range, launch
         // speed and retrieval recovery remain unchanged in both modes.
-        public const float ChargeFullTime = 1.25f;
+        public const float ChargeFullTime = 1.5f;
         public const float ChargeMinPower = 0.35f;
         public const float ThrowLockTime = 1.25f;
         /// <summary>How close a body's FEET have to be to a resting tsinelas to pick it up.

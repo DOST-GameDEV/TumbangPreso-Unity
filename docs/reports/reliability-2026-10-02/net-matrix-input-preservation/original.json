@@ -1,0 +1,6 @@
+{
+  "run": 2,
+  "failures": 1,
+  "errors": 1,
+  "intended": "Old cleanup detects input drift but leaves changed bindings/new layout in place."
+}

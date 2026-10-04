@@ -7,6 +7,26 @@ namespace TumbangPreso.Abilities
 {
     public sealed class RafiHeroKit : HeroKit, ITimedKitReplication
     {
+        public const float BackwashSeconds=1.5f, BackwashScale=1.2f;
+        private float _backwashRemaining;
+        public float BackwashRemaining => _backwashRemaining;
+        public override float PassiveDuration => BackwashSeconds;
+        public override float MovementSpeedScale => !IsDefending && _backwashRemaining>0 ? BackwashScale : 1f;
+        public override void OnManualOwnThrowRetrieved(AbilityContext context)
+        {
+            if (!NetAuthority.ShouldResolve() || context?.Motor == null || context.Motor.IsDefender
+                || context.Motor.Mode != GameMode.HeroStrike || GameServices.Round?.RoundActive != true) return;
+            _backwashRemaining=BackwashSeconds;
+            MatchRpc.Instance?.BroadcastTimedKitState(context.Motor.PlayerSlot);
+        }
+        public override void Tick(AbilityContext context,float dt)
+        {
+            base.Tick(context,dt);
+            if (context?.Motor == null || context.Motor.IsDefender || GameServices.Round?.RoundActive != true)
+                _backwashRemaining=0;
+            else if (float.IsFinite(dt) && dt>0) _backwashRemaining=Mathf.Max(0,_backwashRemaining-dt);
+        }
+
         private Slipper _loadedSlipper;
         private bool _joiningSkimSettled;
         public bool IsSkimLoaded => _loadedSlipper != null && AttackingSkill.IsActive
@@ -23,37 +43,47 @@ namespace TumbangPreso.Abilities
         }
 
         public TimedKitSnapshot CaptureTimedKit()
-            => new TimedKitSnapshot(AttackingSkill, IsSkimLoaded ? AttackingSkill.DurationRemaining : 0);
+            => new TimedKitSnapshot(AttackingSkill, IsSkimLoaded ? AttackingSkill.DurationRemaining : 0,
+                passiveRemaining:_backwashRemaining,passiveCapacity:PassiveDuration);
 
         public bool RestoreTimedKit(CharacterMotor motor, TimedKitSnapshot state)
         {
+            if (motor == null) return false;
+            bool changed=RestoreJoiningSkim(motor,state.PersonalRemaining);
+            float remaining=motor.IsDefender?0:Mathf.Clamp(state.PassiveRemaining,0,BackwashSeconds);
+            changed |= remaining != _backwashRemaining;_backwashRemaining=remaining;
+            return changed;
+        }
+
+        private bool RestoreJoiningSkim(CharacterMotor motor,float personalRemaining)
+        {
             if (motor == null || _joiningSkimSettled || AttackingSkill.IsActive
-                || !float.IsFinite(state.PersonalRemaining) || state.PersonalRemaining < 0
-                || state.PersonalRemaining > RafiRules.SkimLoadSeconds) return false;
+                || !float.IsFinite(personalRemaining) || personalRemaining < 0
+                || personalRemaining > RafiRules.SkimLoadSeconds) return false;
             _joiningSkimSettled = true;
             var held = motor.GetComponent<Carrier>()?.Held;
-            if (state.PersonalRemaining <= 0 || held == null || motor.IsDefender) return false;
+            if (personalRemaining <= 0 || held == null || motor.IsDefender) return false;
             _loadedSlipper = held;
-            ((Skim)AttackingSkill).RestoreLoad(state.PersonalRemaining);
+            ((Skim)AttackingSkill).RestoreLoad(personalRemaining);
             Visual.RafiSkimCoating.Ensure(held.GetComponentInChildren<MeshFilter>(),held,this);
             return true;
         }
 
         public override void Reset()
         {
-            _loadedSlipper = null; _joiningSkimSettled = false;
+            _loadedSlipper = null; _joiningSkimSettled = false; _backwashRemaining=0;
             base.Reset();
         }
 
         public override void ResetForRound(AbilityContext ctx)
         {
             base.ResetForRound(ctx);
-            _loadedSlipper = null; _joiningSkimSettled = false;
+            _loadedSlipper = null; _joiningSkimSettled = false; _backwashRemaining=0;
         }
 
-        public override float UltimateCost => 16;
+        public override float UltimateCost => RafiRules.BahaCost;
 
-        public RafiHeroKit() : base("rafi", "RAFI")
+        public RafiHeroKit() : base("rafi", "ILYAS")
         {
             Skill1 = new Crosscurrent();
             AttackingSkill = new Skim(this);
@@ -131,8 +161,8 @@ namespace TumbangPreso.Abilities
         private sealed class Breakwater : HeroAbility
         {
             public override AbilityNetworkMode NetworkMode => AbilityNetworkMode.SharedUltimate;
-            public Breakwater() : base("rafi_ultimate", "BREAKWATER",
-                "Release a low wave that nudges each rival once and carries loose slippers. Jump, sidestep or use cover.",
+            public Breakwater() : base("rafi_ultimate", "BAHA",
+                "After a 0.8-second warning, send a low flood front across the court. It carries loose slippers up to 3 metres and nudges each grounded rival once. Jump or use cover; held slippers and the can are unaffected.",
                 0, glyph: AbilityGlyph.RafiBreakwater,
                 summary: "Send a low wave. Rivals can jump, sidestep or use cover.",
                 telegraphRadius: 3, telegraphRange: 8,
@@ -140,7 +170,7 @@ namespace TumbangPreso.Abilities
             protected override void OnActivate(AbilityContext ctx)
             {
                 if (!NetAuthority.ShouldResolve()) return;
-                RafiWaterField.Cast(ctx, WorldEffectSnapshot.Kind.Breakwater, 3, 5, 2.15f, false);
+                RafiWaterField.CastBaha(ctx);
             }
         }
     }

@@ -127,6 +127,9 @@ namespace TumbangPreso.Abilities
             AIController.PlayableMinX, AIController.PlayableMaxX,
             AIController.PlayableMinZ, AIController.PlayableMaxZ);
         public bool Released => _released;
+        /// <summary>How far the shared cutscene's story clock runs after the release (`HeroIntroductionScene.AmihanStoryAfterRelease`; v6 slows it through the hang, 4.55 to 5.6 s real):
+        /// the live fan picks up from that age, so the hand-back never replays the release.</summary>
+        public const float CutsceneTail = 0.55f;
 
         private float _age;
         private bool _released;
@@ -143,7 +146,8 @@ namespace TumbangPreso.Abilities
             storm._fan = AmihanStormFan.Build(go.transform, origin, forward, AmihanRules.StormSurgeGatherSeconds);
             storm._age = Mathf.Max(0.0f, age);
             storm._fan.StepTo(storm._age);
-            GameServices.Audio?.PlayAt("sfx_amihan_storm_gather", origin);
+            // The gather is heard only while it is still gathering (v3.2 spawns it already released, after the cutscene).
+            if (storm._age < AmihanRules.StormSurgeGatherSeconds) GameServices.Audio?.PlayAt("sfx_amihan_storm_gather", origin);
             return storm;
         }
 
@@ -156,6 +160,8 @@ namespace TumbangPreso.Abilities
             Vector3 d = point - origin; d.y = 0.0f;
             if (d.sqrMagnitude < 0.04f) return false; // her own spot
             if (d.magnitude > FanRange) return false;
+            // v3.2: everyone close round her is taken too, whichever way they stand.
+            if (d.magnitude <= AmihanRules.StormSurgeAroundRadius) return true;
             return Vector3.Angle(forward, d) <= AmihanRules.StormSurgeHalfAngle;
         }
 
@@ -167,7 +173,9 @@ namespace TumbangPreso.Abilities
         {
             Vector3 d = point - origin; d.y = 0.0f;
             Vector3 radial = d.sqrMagnitude > 0.01f ? d.normalized : forward;
-            Vector3 dir = (radial * 0.6f + forward * 0.4f);
+            // v3.2: in front it leans on her facing; caught BEHIND her (the ring round her) it blows straight out, away from her.
+            float ahead = Mathf.Clamp01(Vector3.Dot(radial, forward) * 2.0f);
+            Vector3 dir = radial * (1.0f - 0.4f * ahead) + forward * (0.4f * ahead);
             return dir.sqrMagnitude > 0.001f ? dir.normalized : forward;
         }
 
@@ -177,6 +185,7 @@ namespace TumbangPreso.Abilities
             if (_released) return;
             _released = true;
             _age = Mathf.Max(_age, AmihanRules.StormSurgeGatherSeconds);
+            _fan?.StepTo(_age);
             GameServices.Audio?.PlayAt("sfx_amihan_storm_release", Origin);
             PunchNearbyCamera();
             if (!NetAuthority.ShouldResolve()) return;

@@ -1,0 +1,211 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using NUnit.Framework;
+using TumbangPreso.Abilities;
+using TumbangPreso.Visual;
+using UnityEngine;
+using UnityEngine.TestTools;
+using Object = UnityEngine.Object;
+
+namespace TumbangPreso.PlayTests
+{
+    // Temporary task-local witness. A capture pass is not readability approval.
+    public sealed class SupernovaOpacityPairProbe
+    {
+        [Serializable] private sealed class Pose
+        {
+            public string name, id;
+            public Vector3 position, scale;
+            public Quaternion rotation;
+        }
+        [Serializable] private sealed class Book
+        {
+            public string name, shader;
+            public Vector2 tiling, offset;
+            public Color tint;
+        }
+        [Serializable] private sealed class State
+        {
+            public int frame;
+            public Pose camera, lata;
+            public Pose[] players, debris;
+            public Book[] flipbooks;
+            public Vector3 shellScale;
+            public float cameraFov, targetRadius, meshRadius;
+        }
+        [Serializable] private sealed class Frame
+        {
+            public string image, phase;
+            public float visualAge, observedShellAge, gameSecondsAfterObservedImpact, startAlpha, materialAlpha;
+            public Color emission;
+            public State state;
+        }
+        [Serializable] private sealed class Receipt
+        {
+            public string scope = "One real accepted cast, same-shell parameter A/B at two exact visual phases. No separate-build, motion-feel or readability approval.";
+            public bool accepted, groundedAtImpact, captureCompleted, readabilityApproved;
+            public bool worldLookContext;
+            public int width = 1280, height = 720;
+            public string scene;
+            public Frame[] frames;
+        }
+        private const BindingFlags Hidden = BindingFlags.Instance | BindingFlags.NonPublic;
+        private readonly List<Frame> _frames = new List<Frame>();
+        private readonly Receipt _receipt = new Receipt();
+        private SeanSkillTimingProbe _driver;
+        private Camera _witness;
+        private CharacterMotor _caster;
+        private MonoBehaviour _shell;
+        private IVfxTimeline _shellTimeline;
+        private VfxFlipbook[] _books;
+        private MonoBehaviour[] _visualTimelines;
+        private Rigidbody[] _debris;
+        private FieldInfo _alpha;
+        private float _originalAlpha, _originalScale, _impactObserved;
+        private string _folder;
+
+        [UnitySetUp] public IEnumerator Before()
+        {
+            _originalScale = PresentationClock.RequestedScale;
+            _driver = new SeanSkillTimingProbe();
+            yield return _driver.Before();
+        }
+        [UnityTearDown] public IEnumerator After()
+        {
+            if (_shell != null && _alpha != null) _alpha.SetValue(_shell, _originalAlpha);
+            PresentationClock.RequestScale(_originalScale);
+            if (_witness != null) Object.DestroyImmediate(_witness.gameObject);
+            if (_driver != null) yield return _driver.After();
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator AcceptedSupernovaHasFourPhaseMatchedOpacityWitnesses()
+        {
+            _folder = Path.Combine(Path.GetDirectoryName(Application.dataPath), "Logs", "supernova-alpha1002", "frames");
+            Assert.IsFalse(Directory.Exists(_folder) && Directory.EnumerateFiles(_folder).Any(), "Never replace retained captures.");
+            Directory.CreateDirectory(_folder);
+            _caster = GameServices.Round.PlayerAt(1);
+            int near = 0;
+            foreach (var player in GameServices.Round.Players)
+            {
+                if (player == _caster) continue;
+                player.Teleport(new Vector3((near - 1) * 1.8f, .12f, .4f + near * .35f));
+                near++;
+            }
+            _witness = new GameObject("Supernova same-frame world witness").AddComponent<Camera>();
+            _witness.CopyFrom(Camera.main); _witness.enabled = false; _witness.tag = "Untagged";
+            _witness.cullingMask &= ~(1 << 5); _witness.fieldOfView = 72;
+            _witness.transform.position = new Vector3(0, 1.65f, -7.2f);
+            _witness.transform.LookAt(new Vector3(0, 1, 0));
+            _witness.gameObject.AddComponent<WorldLookCamera>();
+            _witness.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+            _witness.gameObject.AddComponent<PostAntiAlias>();
+            _witness.gameObject.AddComponent<WorldOutline>().PrototypeEnabled = true;
+            Assert.IsTrue(WorldLookPresentation.HandlesCamera(_witness));
+            _receipt.worldLookContext = true;
+            _receipt.scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+
+            var before = new HashSet<MonoBehaviour>(Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None));
+            var bodiesBefore = new HashSet<Rigidbody>(Object.FindObjectsByType<Rigidbody>(FindObjectsSortMode.None));
+            _caster.Teleport(new Vector3(0, 20, -1.5f));
+            _caster.Intent.Set(Verb.Ultimate, true);
+            float began = Time.time, deadline = Time.realtimeSinceStartup + 30;
+            while (Time.time - began < 4 && Time.realtimeSinceStartup < deadline)
+            {
+                if (Time.time - began > .2f) _caster.Intent.Set(Verb.Ultimate, false);
+                _receipt.accepted |= _caster.AbilitySystem.LastAnswer(HeroAbilitySystem.Slot.Ultimate) == HeroKit.CastOutcome.Cast;
+                if (Object.FindFirstObjectByType<HeroHazards.SupernovaCraterComponent>() != null) break;
+                yield return null;
+            }
+            _caster.Intent.Set(Verb.Ultimate, false);
+            Assert.IsTrue(_receipt.accepted, "The real ultimate was not accepted.");
+            Assert.IsNotNull(Object.FindFirstObjectByType<HeroHazards.SupernovaCraterComponent>(), "No real impact.");
+            _receipt.groundedAtImpact = _caster.IsGrounded;
+            Assert.IsTrue(_receipt.groundedAtImpact);
+            _impactObserved = Time.time;
+            var fresh = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).Where(x => !before.Contains(x)).ToArray();
+            _shell = fresh.Single(x => x.gameObject.name == "ExplosionCore" && x.GetType().Name == "ExplosionVfxAnim");
+            _shellTimeline = (IVfxTimeline)_shell;
+            _alpha = _shell.GetType().GetField("StartAlpha");
+            Assert.IsNotNull(_alpha, "The validation overlay must contain the preserved private StartAlpha support.");
+            _originalAlpha = (float)_alpha.GetValue(_shell);
+            Assert.AreEqual(.50f, _originalAlpha, .00001f);
+            _books = fresh.OfType<VfxFlipbook>().OrderBy(x => x.GetEntityId().ToString(), StringComparer.Ordinal).ToArray();
+            Assert.IsTrue(_books.Any(x => x.name == "Vfx_vfx_burst_v1"));
+            Assert.IsTrue(_books.Any(x => x.name == "Vfx_vfx_shrapnel_v1"));
+            _visualTimelines = fresh.Where(x => x is VfxFlipbook || x.GetType().Name == "ExplosionVfxAnim" || x.GetType().Name == "ShockwaveRingAnim").ToArray();
+            _debris = Object.FindObjectsByType<Rigidbody>(FindObjectsSortMode.None).Where(x => !bodiesBefore.Contains(x)).OrderBy(x => x.GetEntityId().ToString(), StringComparer.Ordinal).ToArray();
+            foreach (float phase in new[] { .06f, .18f })
+            {
+                while (_shell != null && Age(_shell) < phase) yield return null;
+                Assert.IsNotNull(_shell, "The live shell expired before the requested phase.");
+                float observedAge = Age(_shell), physicalAge = Time.time - _impactObserved;
+                Assert.LessOrEqual(observedAge - phase, .05f, "The physical phase missed the capture window.");
+                float scale = PresentationClock.RequestedScale;
+                try
+                {
+                    PresentationClock.RequestScale(0);
+                    foreach (var visual in _visualTimelines) if (visual != null) ((IVfxTimeline)visual).StepTo(phase);
+                    string label = phase < .1f ? "early" : "middle";
+                    var first = Capture(label, phase, observedAge, physicalAge, .85f);
+                    var second = Capture(label, phase, observedAge, physicalAge, .50f);
+                    Assert.AreEqual(JsonUtility.ToJson(first.state), JsonUtility.ToJson(second.state), "A/B world or phase state changed.");
+                    // Absorb the synchronous GPU/readback wall time while still paused;
+                    // it must not become a large simulation step before the next window.
+                    yield return null;
+                }
+                finally
+                {
+                    if (_shell != null) { _alpha.SetValue(_shell, _originalAlpha); _shellTimeline.StepTo(phase); }
+                    PresentationClock.RequestScale(scale);
+                }
+            }
+            _receipt.captureCompleted = true;
+            Save();
+            Assert.AreEqual(4, _frames.Count);
+        }
+
+        private static float Age(MonoBehaviour target) => (float)target.GetType().GetField("_elapsed", Hidden).GetValue(target);
+        private static Pose Position(Component component) => new Pose { name = component.name, id = component.GetEntityId().ToString(), position = component.transform.position, rotation = component.transform.rotation, scale = component.transform.localScale };
+        private Frame Capture(string label, float phase, float observed, float physical, float alpha)
+        {
+            _alpha.SetValue(_shell, alpha); _shellTimeline.StepTo(phase);
+            string name = label + (alpha > .6f ? "-a085" : "-b050");
+            // No UI is drawn, so no canvas layout frames are needed. Assert the exact
+            // existing iterator shape instead of editing its shared capture implementation.
+            var capture = GameplayShots.Render(_witness, name, false, _folder, _caster, 1280, 720);
+            int layoutYields = 0;
+            try { while (capture.MoveNext()) { Assert.IsNull(capture.Current); layoutYields++; } }
+            finally { (capture as IDisposable)?.Dispose(); }
+            Assert.AreEqual(2, layoutYields);
+            var material = _shell.GetComponent<Renderer>().material;
+            Assert.AreEqual(alpha * (1 - phase / _shellTimeline.LifeSeconds), material.color.a, .00001f);
+            var frame = new Frame
+            {
+                image = name + ".png", phase = label, visualAge = Age(_shell), observedShellAge = observed,
+                gameSecondsAfterObservedImpact = physical, startAlpha = alpha, materialAlpha = material.color.a,
+                emission = material.HasProperty("_EmissionColor") ? material.GetColor("_EmissionColor") : Color.black,
+                state = new State
+                {
+                    frame = Time.frameCount, camera = Position(_witness), cameraFov = _witness.fieldOfView,
+                    lata = Position(GameServices.Round.Lata), shellScale = _shell.transform.localScale,
+                    targetRadius = (float)_shell.GetType().GetField("TargetRadius").GetValue(_shell),
+                    meshRadius = (float)_shell.GetType().GetField("MeshRadius").GetValue(_shell),
+                    players = GameServices.Round.Players.OrderBy(x => x.PlayerSlot).Select(Position).ToArray(),
+                    debris = _debris.Where(x => x != null).Select(Position).ToArray(),
+                    flipbooks = _books.Where(x => x != null).Select(x => { var m = x.GetComponent<Renderer>().sharedMaterial; return new Book { name = x.name, shader = m.shader.name, tiling = m.mainTextureScale, offset = m.mainTextureOffset, tint = m.color }; }).ToArray()
+                }
+            };
+            _frames.Add(frame); Save(); return frame;
+        }
+        private void Save()
+        {
+            _receipt.frames = _frames.ToArray();
+            File.WriteAllText(Path.Combine(_folder, "capture-not-readability-approval.json"), JsonUtility.ToJson(_receipt, true));
+        }
+    }
+}

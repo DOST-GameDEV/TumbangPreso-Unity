@@ -1,0 +1,15 @@
+{
+  "baselineExpected": {
+    "total": 4,
+    "causalFailures": 1,
+    "controls": 3
+  },
+  "finalExpected": {
+    "total": 4,
+    "passed": 4
+  },
+  "filter": "TumbangPreso.Tests.ReadyChatFocusTests",
+  "repairsUsed": 1,
+  "repairLimit": 1,
+  "scope": "Actual ReadyUp action and ReadyGate.Update with controlled chat flag, synthetic keyboard and client authority; no transport, world, physical-input or chat-widget focus claim."
+}

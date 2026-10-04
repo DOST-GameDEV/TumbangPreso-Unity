@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-02 06:57:51Z" end-time="2026-10-02 06:57:51Z" duration="0.107643">
+  <test-suite type="TestSuite" id="1000" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="904" result="Failed" site="Child" start-time="2026-10-02 06:57:51Z" end-time="2026-10-02 06:57:51Z" duration="0.107643" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2086" name="TumbangPreso.Tests.dll" fullname="/workspace/shared/tump-validation/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="904" result="Failed" site="Child" start-time="2026-10-02 06:57:51Z" end-time="2026-10-02 06:57:51Z" duration="0.091976" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="88547" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2087" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="904" result="Failed" site="Child" start-time="2026-10-02 06:57:51Z" end-time="2026-10-02 06:57:51Z" duration="0.083788" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2088" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="904" result="Failed" site="Child" start-time="2026-10-02 06:57:51Z" end-time="2026-10-02 06:57:51Z" duration="0.074456" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1811" name="RafiBahaTests" fullname="TumbangPreso.Tests.RafiBahaTests" classname="TumbangPreso.Tests.RafiBahaTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-02 06:57:51Z" end-time="2026-10-02 06:57:51Z" duration="0.048158" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1815" name="BahaRecordingRoundtripKeepsRangeAndRejectsAnOlderSchema" fullname="TumbangPreso.Tests.RafiBahaTests.BahaRecordingRoundtripKeepsRangeAndRejectsAnOlderSchema" methodname="BahaRecordingRoundtripKeepsRangeAndRejectsAnOlderSchema" classname="TumbangPreso.Tests.RafiBahaTests" runstate="Runnable" seed="2103150723" result="Failed" label="Error" start-time="2026-10-02 06:57:51Z" end-time="2026-10-02 06:57:51Z" duration="0.031941" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[System.IO.InvalidDataException : Dynamic field in an incompatible clip]]></message>
+                <stack-trace><![CDATA[  at TumbangPreso.CameraSystem.RecordedMatchClip.TryDecode (System.Byte[] bytes, TumbangPreso.CameraSystem.RecordedMatchClip& clip, System.String& error) [0x009de] in /workspace/shared/tump-validation/Assets/TumbangPreso/Runtime/Camera/RecordedMatchClip.cs:168 
+  at TumbangPreso.Tests.RafiBahaTests.BahaRecordingRoundtripKeepsRangeAndRejectsAnOlderSchema () [0x0008c] in /workspace/shared/tump-validation/Assets/TumbangPreso/Tests/RafiBahaTests.cs:67 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <94b103fb80364239bfc0542bee09d001>:0 ]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1816" name="PreviousSchemaStillReadsLegacyWater" fullname="TumbangPreso.Tests.RafiBahaTests.PreviousSchemaStillReadsLegacyWater" methodname="PreviousSchemaStillReadsLegacyWater" classname="TumbangPreso.Tests.RafiBahaTests" runstate="Runnable" seed="2035472601" result="Passed" start-time="2026-10-02 06:57:51Z" end-time="2026-10-02 06:57:51Z" duration="0.003570" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-X1NIqZ/config/unity3d/BH Studios/Tumbang Preso/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

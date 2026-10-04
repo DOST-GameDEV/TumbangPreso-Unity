@@ -1,0 +1,110 @@
+using System.Linq;
+using System.Reflection;
+using NUnit.Framework;
+using TumbangPreso.UI;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
+using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.UI;
+
+namespace TumbangPreso.Tests
+{
+    public sealed class EmoteChatFocusTests
+    {
+        private const BindingFlags Hidden = BindingFlags.Instance | BindingFlags.NonPublic;
+        private GameObject _root;
+        private EmoteWheel _wheel;
+        private InputActionAsset _actions;
+        private InputSettings _originalInputSettings, _inputSettings;
+        private InputAction _emote;
+        private Keyboard _keyboard;
+        private KeyControl _key;
+        private bool _typing;
+        private int _played;
+
+        [SetUp]
+        public void Before()
+        {
+            Assert.IsFalse(Panel.AnyOpen);
+            Assert.IsFalse(EmoteWheel.AnyOpen, "This fixture must not share an open wheel.");
+            _originalInputSettings = InputSystem.settings;
+            _inputSettings = Object.Instantiate(_originalInputSettings);
+            _inputSettings.updateMode = InputSettings.UpdateMode.ProcessEventsInDynamicUpdate;
+            _inputSettings.SetInternalFeatureFlag("RUN_PLAYER_UPDATES_IN_EDIT_MODE", true);
+            InputSystem.settings = _inputSettings;
+            _typing = LobbyChat.AnyTyping; Typing(false); _played = 0;
+            _root = new GameObject("Dormant emote input"); _root.SetActive(false);
+            _wheel = _root.AddComponent<EmoteWheel>();
+            var canvasRoot = new GameObject("WheelCanvas", typeof(RectTransform));
+            canvasRoot.transform.SetParent(_root.transform, false);
+            Field("_canvas", canvasRoot.AddComponent<Canvas>());
+            Field("_slices", new Image[0]); Field("_labels", new Text[0]);
+            var label = new GameObject("Centre", typeof(RectTransform), typeof(Text));
+            label.transform.SetParent(_root.transform, false); Field("_centreLabel", label.GetComponent<Text>());
+            _wheel.EmoteChosen += _ => _played++;
+            var shipped = Resources.Load<InputActionAsset>("TumbangPreso"); Assert.IsNotNull(shipped);
+            _actions = InputActionAsset.FromJson(shipped.ToJson());
+            _keyboard = InputSystem.AddDevice<Keyboard>(); InputSystem.EnableDevice(_keyboard);
+            _actions.devices = new InputDevice[] { _keyboard };
+            _emote = _actions.FindAction("Player/EmoteWheel", true);
+            string path = _emote.bindings.First(binding => binding.effectivePath.StartsWith("<Keyboard>/")).effectivePath;
+            _key = (KeyControl)_keyboard[path.Substring("<Keyboard>/".Length)];
+            _emote.Enable(); Field("_emoteAction", _emote);
+        }
+
+        [TearDown]
+        public void After()
+        {
+            if (_wheel != null) _wheel.Close(false);
+            if (_actions != null) { _actions.Disable(); Object.DestroyImmediate(_actions); }
+            if (_keyboard != null) InputSystem.RemoveDevice(_keyboard);
+            if (_root != null) Object.DestroyImmediate(_root);
+            if (_originalInputSettings != null) InputSystem.settings = _originalInputSettings;
+            if (_inputSettings != null) Object.DestroyImmediate(_inputSettings);
+            Typing(_typing);
+        }
+
+        private static void Typing(bool value) => typeof(LobbyChat).GetProperty("AnyTyping").SetValue(null, value);
+        private void Field(string name, object value) => typeof(EmoteWheel).GetField(name, Hidden).SetValue(_wheel, value);
+        private void Tick() => typeof(EmoteWheel).GetMethod("Update", Hidden).Invoke(_wheel, null);
+        private void Press()
+        {
+            InputSystem.QueueStateEvent(_keyboard, new KeyboardState(_key.keyCode)); InputSystem.Update();
+            Assert.IsTrue(_emote.WasPressedThisFrame(), "The synthetic key did not reach EmoteWheel.");
+            Tick();
+        }
+        private void Release()
+        {
+            InputSystem.QueueStateEvent(_keyboard, new KeyboardState()); InputSystem.Update();
+            Assert.IsTrue(_emote.WasReleasedThisFrame()); Tick();
+        }
+
+        [Test]
+        public void ChatLetterCannotOpenTheWheelOrCaptureLook()
+        {
+            Typing(true); Press();
+            Assert.IsFalse(_wheel.IsOpen, "The chat key opened the gameplay emote wheel.");
+            Assert.IsFalse(EmoteWheel.AnyOpen);
+            Assert.AreEqual(0, _played);
+        }
+
+        [Test]
+        public void ChatFocusCancelsTheArmedWheelWithoutPlayingOnRelease()
+        {
+            Press(); Assert.IsTrue(_wheel.IsOpen);
+            Field("_selection", 0); Typing(true); Release();
+            Assert.IsFalse(_wheel.IsOpen); Assert.IsFalse(EmoteWheel.AnyOpen);
+            Assert.AreEqual(0, _played, "Releasing the key over chat committed the armed emote.");
+        }
+
+        [Test]
+        public void GameplayPressAndReleaseStillCommitsTheSelectedEmote()
+        {
+            Press(); Assert.IsTrue(_wheel.IsOpen); Assert.IsTrue(EmoteWheel.AnyOpen);
+            Field("_selection", 0); Release();
+            Assert.IsFalse(_wheel.IsOpen); Assert.IsFalse(EmoteWheel.AnyOpen);
+            Assert.AreEqual(1, _played);
+        }
+    }
+}

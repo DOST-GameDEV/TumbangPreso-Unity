@@ -32,6 +32,7 @@ namespace TumbangPreso.CameraSystem
         private Canvas _canvas;
         private CanvasGroup _fade;
         private RawImage _picture;
+        private Material _pictureMaterial;
         private ActorScene _primary;
         private Slipper[] _slippers;
         private bool _handedOff;
@@ -96,6 +97,13 @@ namespace TumbangPreso.CameraSystem
                 var root = (RectTransform)_canvas.transform;
                 _picture = OwnerUiLayout.Rect(root, "UltimateScene").gameObject.AddComponent<RawImage>();
                 OwnerUiLayout.Fill(_picture.rectTransform); _picture.raycastTarget = false;
+                _picture.enabled = false; // Do not show an unrendered target before the first Draw.
+                var frameShader = Resources.Load<Shader>("UI/OpaqueCameraFrame");
+                if (frameShader != null)
+                {
+                    _pictureMaterial = new Material(frameShader) { name = "Opaque ultimate camera frame", hideFlags = HideFlags.DontSave };
+                    _picture.material = _pictureMaterial;
+                }
                 var header = OwnerUiLayout.Rect(root, "UltimateIdentity");
                 header.gameObject.SetActive(!GameLaunch.GuidedTutorial);
                 header.anchorMin=header.anchorMax=header.pivot=new Vector2(.5f,1);
@@ -186,6 +194,7 @@ namespace TumbangPreso.CameraSystem
                 if(_stillMirror)eye=target+Vector3.Reflect(eye-target,_primary.Actor.transform.right);
             }
             _camera.transform.position=eye; _camera.transform.LookAt(target); _camera.fieldOfView=fov;
+            LastAge=age;LastShot=moving?_primary.Scene.ShotIndexAt(age):-2;LastEye=eye;
             _hidden.Clear();_wasHidden.Clear();_seen.Clear();
             foreach(var actor in GameServices.Round.Players)
             {
@@ -277,6 +286,8 @@ namespace TumbangPreso.CameraSystem
         /// a borrowed shot is invisible in a green test and costs the cutscene its payoff.
         /// </summary>
         public static string LastShotReport{get;private set;}=string.Empty;
+        /// <summary>For films: the phase's own clock, the authored shot it drew and the lens, on the last drawn frame.</summary>
+        public static float LastAge{get;private set;}public static int LastShot{get;private set;}public static Vector3 LastEye{get;private set;}
         private string _lastBlocker="";
         // The clear distance from the focus toward the eye on the last blocked test, less a margin for the lens.
         private float _lastRoom;
@@ -312,6 +323,8 @@ namespace TumbangPreso.CameraSystem
         {
             if(_camera!=null)_camera.targetTexture=null;
             if(_canvas!=null)Object.Destroy(_canvas.gameObject);
+            if(_pictureMaterial!=null)Object.Destroy(_pictureMaterial);
+            _pictureMaterial=null;
             if(_target!=null){_target.Release();Object.Destroy(_target);}
             foreach(var entry in _actors){entry.Scene?.Dispose();entry.Contact?.Dispose();}
             _actors.Clear();if(_stage!=null)Object.Destroy(_stage);

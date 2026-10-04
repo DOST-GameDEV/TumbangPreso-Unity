@@ -1,0 +1,128 @@
+using System.Collections;
+using System.Reflection;
+using NUnit.Framework;
+using TumbangPreso.Core;
+using TumbangPreso.UI;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.TestTools;
+
+namespace TumbangPreso.PlayTests
+{
+    public sealed class PracticeBotResumeTests
+    {
+        private PracticeRange _range;
+        private CharacterMotor _bot;
+        private CombatVerbs _combat;
+        private PauseWatcher _watcher;
+        private INetProvider _provider;
+        private CustomRules _rules;
+        private bool _networked, _rangeFlag, _tutorial, _spectator, _allBots, _pinned;
+        private float ContactWindow => (float)typeof(CombatVerbs)
+            .GetField("_lungeActiveLeft", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(_combat);
+
+        [UnitySetUp] public IEnumerator Before()
+        {
+            yield return PlayModeWorld.Reset();
+            _provider = NetAuthority.Provider; _networked = SceneFlow.Networked;
+            _rules = SceneFlow.SelectedRules.Clone(); _pinned = SceneFlow.RulesPinned;
+            _rangeFlag = GameLaunch.TrainingRange; _tutorial = GameLaunch.GuidedTutorial;
+            _spectator = GameLaunch.Spectator; _allBots = GameLaunch.AllBots;
+            GameLaunch.TrainingRange = true;
+            GameLaunch.GuidedTutorial = GameLaunch.Spectator = GameLaunch.AllBots = false;
+            NetAuthority.Provider = new SoloProvider(); SceneFlow.Networked = false; MatchAbandon.Forget();
+            SceneFlow.AdoptRemoteRules(CustomGameRules.Defaults(GameMode.Classic));
+            GameServices.Ensure();
+            SceneManager.SetActiveScene(SceneManager.CreateScene(SceneFlow.Eskinita));
+            var local = new GameObject("Practice removal local").AddComponent<CharacterMotor>();
+            local.enabled = false; local.PlayerSlot = 0; local.Mode = GameMode.Classic;
+            local.transform.position = new Vector3(-10, 0, -10);
+            _bot = new GameObject("Practice removal defender").AddComponent<CharacterMotor>();
+            _bot.enabled = false; _bot.PlayerSlot = 1; _bot.Mode = GameMode.Classic; _bot.IsBot = true;
+            _combat = _bot.gameObject.AddComponent<CombatVerbs>();
+            var can = new GameObject("Practice removal can").AddComponent<Lata>();
+            _watcher = local.gameObject.AddComponent<PauseWatcher>(); _watcher.enabled = false; _watcher.Local = local;
+            var runner = local.gameObject.AddComponent<SliceRunner>(); runner.AutoStart = false; runner.enabled = false;
+            runner.Lata = can; runner.Slippers = new Slipper[Balance.PlayerCount];
+            var seats = new CharacterMotor[Balance.PlayerCount]; seats[0] = local; seats[1] = _bot;
+            _range = local.gameObject.AddComponent<PracticeRange>();
+            _range.Configure(local, can, seats, runner.Slippers, runner);
+            // Keep the native fixture focused on the operator, not a new match/startup.
+            _range.StopAllCoroutines();
+            typeof(PracticeRange).GetField("_ready", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(_range, true);
+            GameServices.Match.ApplySnapshot(new int[Balance.PlayerCount], 2, true);
+            GameServices.Round.Lata = can; GameServices.Round.Register(local);
+            GameServices.Round.ApplySnapshot(90, true, 1);
+            Assert.IsTrue(_range.CanEdit); Assert.IsTrue(_range.SetBot(1, true, true));
+            _bot.Intent.Parked = false;
+            Assert.IsTrue(_bot.IsDefender); Assert.IsTrue(_bot.CanAct());
+        }
+
+        [UnityTearDown] public IEnumerator After()
+        {
+            yield return PlayModeWorld.Reset();
+            NetAuthority.Provider = _provider; SceneFlow.Networked = _networked;
+            GameLaunch.TrainingRange = _rangeFlag; GameLaunch.GuidedTutorial = _tutorial;
+            GameLaunch.Spectator = _spectator; GameLaunch.AllBots = _allBots;
+            if (_pinned) SceneFlow.PinSelectedRules(_rules);
+            else { SceneFlow.AdoptRemoteRules(_rules); SceneFlow.UnpinSelectedRules(); }
+            PresentationClock.RequestScale(1);
+        }
+
+        private IEnumerator ReleaseLunge()
+        {
+            _bot.Intent.Set(Verb.Lunge, true);
+            float until = Time.realtimeSinceStartup + 3;
+            while (_combat.ObservedLungeCharge < 0 && Time.realtimeSinceStartup < until) yield return null;
+            Assert.GreaterOrEqual(_combat.ObservedLungeCharge, 0, "Real held input did not start the windup.");
+            _bot.Intent.Set(Verb.Lunge, false);
+            while (ContactWindow <= 0 && Time.realtimeSinceStartup < until) yield return null;
+            Assert.Greater(ContactWindow, 0, "Real released input did not open the lunge contact window.");
+        }
+
+        private PausePanel Pause()
+        {
+            var pause = Panel.Open<PausePanel>(_watcher);
+            Assert.IsTrue(Panel.AnyOpen); Assert.Zero(Time.timeScale); Assert.IsFalse(_bot.CanAct());
+            return pause;
+        }
+
+        [UnityTest] public IEnumerator RemovedAndRestoredDefenderRetiresItsOldLungeContactWindow()
+        {
+            yield return ReleaseLunge();
+            var pause = Pause();
+            yield return new WaitForSecondsRealtime(.1f);
+            Assert.Greater(ContactWindow, 0, "Pause control lost the active window before removal.");
+            Assert.IsTrue(_range.SetBot(1, false, true));
+            Assert.IsTrue(_range.SetBot(1, true, true));
+            yield return null;
+            Assert.IsTrue(_bot.Intent.Parked); Assert.Greater(_combat.LungeCooldownLeft, 0);
+            Assert.Zero(ContactWindow, "A restored idle defender retained its pre-removal contact sweep.");
+            pause.Close();
+            yield return null;
+            Assert.Zero(ContactWindow);
+        }
+
+        [UnityTest] public IEnumerator OrdinaryPausePreservesTheActiveLungeForResume()
+        {
+            yield return ReleaseLunge();
+            var pause = Pause(); float window = ContactWindow;
+            yield return new WaitForSecondsRealtime(.1f);
+            Assert.AreEqual(window, ContactWindow, "Pause must freeze the existing contact window.");
+            Assert.Greater(_combat.LungeCooldownLeft, 0);
+            pause.Close();
+            float until = Time.realtimeSinceStartup + 3;
+            while (ContactWindow > 0 && Time.realtimeSinceStartup < until) yield return null;
+            Assert.Zero(ContactWindow);
+        }
+
+        [UnityTest] public IEnumerator UnchargedRemovalAndRestoreRemainIdleWithoutStartingALunge()
+        {
+            var pause = Pause();
+            Assert.IsTrue(_range.SetBot(1, false, true)); Assert.IsTrue(_range.SetBot(1, true, true));
+            pause.Close(); yield return null;
+            Assert.IsTrue(_bot.Intent.Parked); Assert.Zero(ContactWindow);
+            Assert.Zero(_combat.LungeCooldownLeft); Assert.Less(_combat.ObservedLungeCharge, 0);
+        }
+    }
+}

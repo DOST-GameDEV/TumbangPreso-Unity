@@ -1,0 +1,24 @@
+{
+  "sourceCommit": "409abc7acc30293fca4567bfd8123ba8c00746e4",
+  "expectedCases": 3,
+  "testFilter": "TumbangPreso.PlayTests.RecordChoiceFocusTests",
+  "expectedBaseline": "Careerrefresh stalefocus causal failure,normalcancel/selection2controls pass",
+  "inputs": [
+    {
+      "name": "RecordChoice.candidate.cs",
+      "sha256": "3CCD25757ED0943310454E95828101077913B9A9763909062A8D3EE43AC1CF9E"
+    },
+    {
+      "name": "RecordChoice.original.cs",
+      "sha256": "E3746EA42B7091C1668D8B83C5A821458276AB340DA94EB6BDAE4A553C4F52B2"
+    },
+    {
+      "name": "RecordChoiceFocusTests.cs",
+      "sha256": "A688D2A50A7E41BE2FB2DF9883FF9304FDA0D9FE0B6B490C953D9091D4B6255D"
+    },
+    {
+      "name": "RecordChoiceFocusTests.cs.meta",
+      "sha256": "72715D2551836C9D27B4114855C21D766B09A265FAD117D2C88A6AF3615C7A38"
+    }
+  ]
+}

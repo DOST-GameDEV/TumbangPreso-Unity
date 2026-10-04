@@ -1,0 +1,42 @@
+{
+  "rawFiles": {
+    "raw/completion-observer-attempt/launch.json": "943f01faeafc9fad8b8ae9de03f529fd8e8733c56f0b91d8df8a931f024b3cda",
+    "raw/completion-observer-attempt/direct-result.json": "400bdb0d05c3cf401f0daef13595b3c60b2878468739706695d0d06b8baca250",
+    "raw/completion-observer-attempt/state.txt": "9c48b317884b2cb8d65bab965791193e37aef4c9ad970d7f0b1f75c1207faeda",
+    "raw/completion-observer-attempt/player.log": "5318005fa45e2e97fdc2e671ad88fa288e8d777e73f6f382bd81f67c6c3bad2c",
+    "raw/completion-observer-attempt/pre-input-prefs.json": "6612b97c2295faa90521bc25ba08f58c626bfca300cfbf1a86a72e4e6fd5a217",
+    "raw/completion-observer-attempt/observer.json": "26c36811231da138f7e6972eae2e80488519ecc8eaccad9cd1a898487cd6b09f",
+    "raw/completion-observer-attempt/career-absence.json": "8820aa3ae1dd136e8805cb53100a7542d56cf1d87b2ce2df811c51865bd90487",
+    "raw/completion-observer-attempt/settings.json": "8a2e1d8b1930dd652941438713c25db48a412a47802934fa841d02475c0070fd",
+    "raw/armed-active-loss/launch.json": "4b1aba5f392673508063f8f73a7e7fa4fb27097e96fb9e62d408ff9e629128c2",
+    "raw/armed-active-loss/direct-result.json": "b3a779d27d87d3a02c97ffd5c3ae064f3fb451c2c1737bc5a9d26d89e17035b7",
+    "raw/armed-active-loss/state.txt": "42c79118326ee2314f049afe3e83c1fedcc52e12e498da23e2a4a276efad2513",
+    "raw/armed-active-loss/player.log": "4906ffeab5e899487fd00d9c9e798859c2ececb38fec2cbe41f22abd507a399f",
+    "raw/armed-active-loss/pre-input-prefs.json": "6612b97c2295faa90521bc25ba08f58c626bfca300cfbf1a86a72e4e6fd5a217",
+    "raw/armed-active-loss/career-absence.json": "8820aa3ae1dd136e8805cb53100a7542d56cf1d87b2ce2df811c51865bd90487",
+    "raw/armed-active-loss/settings.json": "6e0fbeb8d5bad234af7fbacfe276f1ae4889e244a01561a2717473abc95659e9",
+    "raw/client-summary.json": "c1d215ce968fa50e627425f00a78a56b11b2a13dd7e75922c1449004e5e13f97",
+    "raw/armed-trigger.json": "e6f7414bffd1c748592a0b2e2d381f500d679484932b2888981a745a54cafade",
+    "raw/artifact-identity-check.json": "c93301ec5660e0df2f8d1e49eaff390790839a72545af49af1cc80bcf8b0231b"
+  },
+  "summary": {
+    "pid": 2440,
+    "exitCode": 0,
+    "protocol": 145,
+    "sourceCommit": "8f7f304b543d93db71ed09f9fbaa4107fc365895",
+    "readyObserved": true,
+    "liveRoundObserved": true,
+    "actualHostLostRound1": true,
+    "matchEndedLogCount": 0,
+    "finalMap": "MatchSetup",
+    "finalRound": "0",
+    "finalActive": "False",
+    "historyCount": 0,
+    "queueCount": 0,
+    "witnessCount": 0,
+    "careerFilePresent": false,
+    "inputRestored": true,
+    "seedRestored": true,
+    "scope": "Actual active round host process loss and client round retirement/no completed result; host-owned intentional stop/live receipts retained separately"
+  }
+}

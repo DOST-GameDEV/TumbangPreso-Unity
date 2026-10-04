@@ -29,8 +29,9 @@ namespace TumbangPreso.Abilities
         { var f = _state; f.Source = gameObject; f.Remaining = Remaining; return f; }
         public static bool IsWater(WorldEffectSnapshot.Kind kind) => kind == WorldEffectSnapshot.Kind.Current
             || kind == WorldEffectSnapshot.Kind.Mirrorwake || kind == WorldEffectSnapshot.Kind.Breakwater
-            || kind == WorldEffectSnapshot.Kind.Waterwall;
+            || kind == WorldEffectSnapshot.Kind.Waterwall || kind == WorldEffectSnapshot.Kind.Baha;
         public static float Gather(WorldEffectSnapshot.Kind kind) => kind == WorldEffectSnapshot.Kind.Current ? RafiRules.CurrentGather
+            : kind == WorldEffectSnapshot.Kind.Baha ? RafiRules.BahaWarning
             : kind == WorldEffectSnapshot.Kind.Breakwater ? .55f
             : kind == WorldEffectSnapshot.Kind.Waterwall ? RafiRules.WallGather : 0;
 
@@ -57,6 +58,29 @@ namespace TumbangPreso.Abilities
             var field = Restore(state, 0);
             MatchRpc.Instance?.BroadcastRafiWater(state);
             return field;
+        }
+
+        public static RafiWaterField CastBaha(AbilityContext ctx)
+        {
+            if(!NetAuthority.ShouldResolve()||ctx?.Motor==null)return null;
+            var forward=ctx.AimPoint-ctx.Position;forward.y=0;
+            if(forward.sqrMagnitude<.01f)forward=ctx.Forward;
+            forward.y=0;forward.Normalize();var right=Vector3.Cross(Vector3.up,forward);
+            var origin=ctx.Position;origin.y=Slipper.FindGroundY(origin,.5f)+.015f;
+            var path=new Vector3[9];float distance=0;
+            for(int i=0;i<path.Length;i++)
+            {
+                var start=origin+right*Mathf.Lerp(-RafiRules.BahaHalfWidth,RafiRules.BahaHalfWidth,i/8f);
+                float edge=RafiRules.BahaLaneExit(start.x,start.z,forward.x,forward.z,
+                    AIController.PlayableMinX,AIController.PlayableMaxX,AIController.PlayableMinZ,AIController.PlayableMaxZ);
+                float clear=ClearDistance(start+Vector3.up*.4f,forward,edge);
+                path[i]=start+forward*clear;distance=Mathf.Max(distance,clear);
+            }
+            float duration=RafiRules.BahaDuration(distance);
+            var state=new WorldEffectSnapshot.Field{Type=WorldEffectSnapshot.Kind.Baha,EventId=++_nextId,
+                Position=origin,Forward=forward,Radius=RafiRules.BahaHalfWidth,FirstScale=RafiRules.BahaSpeed,
+                SecondScale=distance,Duration=duration,Remaining=duration,Owner=ctx.Motor.PlayerSlot,Path=path};
+            var field=Restore(state,0);MatchRpc.Instance?.BroadcastDynamicField(state);return field;
         }
 
         public static bool CanPlaceWall(AbilityContext ctx, Vector3 point)
@@ -95,9 +119,23 @@ namespace TumbangPreso.Abilities
         {
             if (!IsWater(f.Type) || f.EventId <= 0 || f.Owner < 0 || f.Owner >= Core.Balance.PlayerCount
                 || f.Forward.sqrMagnitude < .99f || f.Forward.sqrMagnitude > 1.01f || Mathf.Abs(f.Forward.y) > .01f
-                || f.Duration > RafiRules.WallSeconds || (f.Type != WorldEffectSnapshot.Kind.Waterwall && f.Duration > 3)
+                || (f.Type != WorldEffectSnapshot.Kind.Baha && (f.Duration > RafiRules.WallSeconds || (f.Type != WorldEffectSnapshot.Kind.Waterwall && f.Duration > 3)))
                 || f.Radius <= 0 || f.Radius > 3
-                || (f.SecondScale != 0 && f.SecondScale != 1) || f.Path == null || f.Path.Length > MaxPathPoints) return false;
+                || (f.Type != WorldEffectSnapshot.Kind.Baha && f.SecondScale != 0 && f.SecondScale != 1) || f.Path == null || f.Path.Length > MaxPathPoints) return false;
+            if(f.Type==WorldEffectSnapshot.Kind.Baha)
+            {
+                if(f.Path.Length!=9||f.FirstScale!=RafiRules.BahaSpeed||f.Radius!=RafiRules.BahaHalfWidth
+                    ||!float.IsFinite(f.SecondScale)||f.SecondScale<0||f.SecondScale>RafiRules.BahaMaximumRange
+                    ||Mathf.Abs(f.Duration-RafiRules.BahaDuration(f.SecondScale))>.001f||f.Split)return false;
+                var right=Vector3.Cross(Vector3.up,f.Forward);
+                for(int i=0;i<9;i++)
+                {
+                    var offset=f.Path[i]-f.Position;float along=Vector3.Dot(offset,f.Forward);
+                    if(!float.IsFinite(offset.sqrMagnitude)||Mathf.Abs(offset.y)>.01f||along<-.01f||along>f.SecondScale+.01f
+                        ||Mathf.Abs(Vector3.Dot(offset,right)-Mathf.Lerp(-f.Radius,f.Radius,i/8f))>.01f)return false;
+                }
+                return true;
+            }
             if (f.Type == WorldEffectSnapshot.Kind.Mirrorwake)
             {
                 if (f.Path.Length < 2 || f.Path.Length > 8 || f.FirstScale != 0) return false;
@@ -134,7 +172,7 @@ namespace TumbangPreso.Abilities
                     live._state = state; live._age = state.Duration - remaining;
                     live._visual.SetState(state); live._visual.StepTo(live._age); return live;
                 }
-            var go = new GameObject("Rafi-" + state.Type);
+            var go = new GameObject("Ilyas-" + state.Type);
             var field = go.AddComponent<RafiWaterField>();
             field._state = state; field._age = state.Duration - remaining;
             field._round = GameServices.Match?.RoundNumber ?? 0;
@@ -147,7 +185,9 @@ namespace TumbangPreso.Abilities
             Active.Add(field); return field;
         }
 
-        private float Travel => Mathf.Max(0, _age - Gather(_state.Type)) * _state.FirstScale;
+        private float Travel => _state.Type==WorldEffectSnapshot.Kind.Baha
+            ? Mathf.Min(_state.SecondScale,Mathf.Max(0,_age-RafiRules.BahaWarning)*RafiRules.BahaSpeed)
+            : Mathf.Max(0, _age - Gather(_state.Type)) * _state.FirstScale;
         private void Update()
         {
             if ((GameServices.Round != null && !GameServices.Round.RoundActive)
@@ -165,7 +205,7 @@ namespace TumbangPreso.Abilities
             float travel = Travel;
             if (_age < Gather(_state.Type)) { RememberShoes(); return; }
             if (_state.Type == WorldEffectSnapshot.Kind.Current && !_state.Split) ResolveCurrent(travel);
-            else if (_state.Type == WorldEffectSnapshot.Kind.Breakwater) ResolveWave(travel);
+            else if (_state.Type == WorldEffectSnapshot.Kind.Breakwater || _state.Type == WorldEffectSnapshot.Kind.Baha) ResolveWave(travel);
             else if (_state.Type == WorldEffectSnapshot.Kind.Waterwall && !_state.Split) ResolveWall();
             _previousTravel = travel; RememberShoes();
         }
@@ -232,23 +272,31 @@ namespace TumbangPreso.Abilities
             int lane = Mathf.Clamp(Mathf.RoundToInt((side / _state.Radius + 1) * 4), 0, 8);
             float limit = Vector3.Dot(_state.Path[lane] - _state.Position, _state.Forward);
             if (forward > limit) return false;
+            if(_state.Type==WorldEffectSnapshot.Kind.Baha
+                &&!RafiRules.BahaCrosses(side,offset.y,forward,_previousTravel,travel,limit,true))return false;
             var start = _state.Position + right * side + Vector3.up * .4f;
             return ClearDistance(start, _state.Forward, Mathf.Max(0, forward)) >= forward - .04f;
         }
         private void ResolveWave(float travel)
         {
-            foreach (var player in GameServices.Round.Players)
+            bool frontActive=_state.Type!=WorldEffectSnapshot.Kind.Baha
+                ||_age<=RafiRules.BahaWarning+_state.SecondScale/RafiRules.BahaSpeed;
+            if(frontActive) foreach (var player in GameServices.Round.Players)
             {
                 if (player == null || player.PlayerSlot == _state.Owner || _hitPlayers.Contains(player.PlayerSlot)
+                    || (_state.Type==WorldEffectSnapshot.Kind.Baha&&!player.IsGrounded)
                     || !Swept(player.transform.position, travel)) continue;
                 _hitPlayers.Add(player.PlayerSlot);
                 if (player.AbilitySystem != null && (player.AbilitySystem.IsImmuneToStuns || player.AbilitySystem.IsImmuneToTags)) continue;
                 player.ApplyResolvedImpact(_state.Forward * 4.8f);
             }
-            foreach (var shoe in _shoes)
+            if(frontActive) foreach (var shoe in _shoes)
                 if (shoe != null && shoe.State == SlipperState.Loose && !_movedShoes.Contains(shoe)
                     && Swept(shoe.transform.position, travel))
-                { _movedShoes.Add(shoe); _carryLeft[shoe] = 1.4f; }
+                { _movedShoes.Add(shoe); _carryLeft[shoe] = _state.Type==WorldEffectSnapshot.Kind.Baha?RafiRules.BahaCarryDistance:1.4f; }
+            if(_state.Type==WorldEffectSnapshot.Kind.Baha)
+                foreach(var shoe in _shoes)
+                    if(shoe!=null&&shoe.State!=SlipperState.Loose&&_carryLeft.ContainsKey(shoe))_carryLeft[shoe]=0;
             foreach (var shoe in _shoes)
                 if (shoe != null && shoe.State == SlipperState.Loose && _carryLeft.TryGetValue(shoe, out float left) && left > 0)
                 {
