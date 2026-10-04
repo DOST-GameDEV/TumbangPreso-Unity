@@ -350,7 +350,7 @@ namespace TumbangPreso
             // doppler to be audible at all, and at 18 m/s the true shift is about 5 per cent,
             // which nobody hears. This is the one place exaggerating it is honest: the effect
             // being sold is "it went past me", not a physics reading.
-            _rumble.dopplerLevel = 2.2f;
+            _rumble.dopplerLevel = 3.5f;   // up from 2.2 (owner, 2026-10-04: "i need doppler effect on any train sfx")
 
             _rumbleMix = mix;
         }
@@ -372,6 +372,7 @@ namespace TumbangPreso
             if (listener == null) return;
 
             float distance = Vector3.Distance(listener.transform.position, transform.position);
+            TrollDoppler(distance);
 
             if (_rumble != null)
             {
@@ -446,8 +447,31 @@ namespace TumbangPreso
             _trollBegun = true;
         }
 
+        // The music is a 2D source, which Unity never doppler-shifts, so its pitch is bent by hand
+        // from how fast the consist is closing on the listener (owner: "i need doppler effect on
+        // any train sfx", "including the music"). Exaggerated like the recording's: the true shift
+        // at 18 m/s is 5 per cent; this is about 20, higher coming and lower going.
+        private const float TrollDopplerLevel = 4.0f;
+        private float _trollLastDistance = -1.0f;
+        private float _trollApproach;
+
+        private void TrollDoppler(float distance)
+        {
+            if (_trollSource == null) return;
+            if (_trollLastDistance >= 0.0f && Time.deltaTime > 0.0f)
+            {
+                float approach = (_trollLastDistance - distance) / Time.deltaTime;
+                _trollApproach = Mathf.Lerp(_trollApproach, approach, 1.0f - Mathf.Exp(-12.0f * Time.deltaTime));
+                float closing = Mathf.Clamp(_trollApproach * TrollDopplerLevel, -160.0f, 160.0f);
+                _trollSource.pitch = Mathf.Clamp(343.0f / (343.0f - closing), 0.65f, 1.6f);
+            }
+            _trollLastDistance = distance;
+        }
+
         private void PauseTroll()
         {
+            _trollLastDistance = -1.0f;
+            _trollApproach = 0.0f;
             if (_trollSource == null) return;
             s_trollTime = _trollSource.time;
             _trollSource.Pause();
