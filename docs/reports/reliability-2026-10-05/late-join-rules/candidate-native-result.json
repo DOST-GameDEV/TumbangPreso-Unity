@@ -1,0 +1,47 @@
+{
+  "sourceRef": "105d40f8098d75f425f2ea96d5d3fb2c08f4c1bd",
+  "profile": "pc-rules-cand1005",
+  "filter": "TumbangPreso.PlayTests.LateJoinRulesTests",
+  "expectedCases": 2,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-rules-cand1005",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.LateJoinRulesTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\late-join-rules1005\\candidate-native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\late-join-rules1005\\candidate-native\\editor.log"
+  ],
+  "pid": 21052,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.LateJoinRulesTests.FirstArrivalReceivesRulesChosenBeforeJoining",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.LateJoinRulesTests.RepeatedIntroductionReceivesCurrentRulesWithoutChangingHostPreferences",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "sourceChanged": [],
+  "protectedCount": 19288,
+  "terminal": true
+}

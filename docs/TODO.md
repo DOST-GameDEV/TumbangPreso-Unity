@@ -140,6 +140,13 @@ Nothing was deleted or renumbered.
 
 ### OWNER-MULTIPLAYER-FEEDBACK-1004: current live-test reports
 
+- [x] First arrival and repeated introductions receive the host's current custom
+  rules before seating. Actual four-round LAN match exposed an eight-round client
+  header; native missing-reply failures become2/2 with host password/preferences
+  preserved. [Evidence](reports/reliability-2026-10-05/late-join-rules/README.md).
+- [ ] Fresh standalone client result header uses the host's chosen round count.
+- [ ] Correct LAN host hint choosing Npcap169.254 instead of Ethernet and inspect
+  duplicate LAN rows for the same beacon. [Actual pair](reports/reliability-2026-10-05/local-lan151/README.md).
 - [x] Menu-close look cannot leak late touch drag or held stick navigation into
   camera input in that frame; normal look resumes next frame. Two native causal
   failures plus ordinary control become3/3. Packaged pointer/relock review stays open.

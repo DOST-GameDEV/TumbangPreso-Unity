@@ -894,6 +894,10 @@ namespace TumbangPreso.Net
             SyncMapClientRpc(Mathf.Max(0, System.Array.IndexOf(UI.SceneFlow.Maps, UI.SceneFlow.SelectedMap)));
             SyncDifficultyClientRpc(Settings.SettingsStore.Current.AiDifficulty);
 
+            // Rules selected before this peer arrived have already been broadcast.
+            // Reply before seating can start its arena, including on Identify retries.
+            SendRulesTo(senderClientId);
+
             // ⚠️⚠️ THE SEAT GOES **AFTER** THE MODE AND THE MAP, AND IT USED TO GO FIRST. This is
             // the same ordering rule `HostStartMatch` states three paragraphs of reasoning for,
             // and the mid-match path was the one place that broke it. `OnSeatingMsg` is not just a
@@ -4645,6 +4649,15 @@ namespace TumbangPreso.Net
             using var writer = new FastBufferWriter(256, Allocator.Temp);
             writer.WriteValueSafe(wire ?? "");
             _nm.CustomMessagingManager.SendNamedMessage("SelectRules", NetworkManager.ServerClientId, writer);
+        }
+
+        private void SendRulesTo(ulong clientId)
+        {
+            if (!NetAuthority.IsHost || _nm == null || _nm.CustomMessagingManager == null) return;
+            using var writer = new FastBufferWriter(256, Allocator.Temp);
+            writer.WriteValueSafe(Core.CustomGameRules.ToWire(UI.SceneFlow.SelectedRules));
+            _nm.CustomMessagingManager.SendNamedMessage("SyncRules", clientId, writer,
+                NetworkDelivery.ReliableSequenced);
         }
 
         private void OnSelectRulesMsg(ulong senderClientId, FastBufferReader reader)

@@ -22,11 +22,17 @@ explicitly authorized; unnecessary AGENTS feature entry was removed at owner req
 ## Current source and live work
 
 Root checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
-Source10ceb58ff includes integrated laptop boulder and full online150 result proof,
-current Paete palm placement and shared tag ink. Protocol151/recording14.
-Accepted full Windows artifact remains89cc9f295/protocol151 and predates the
-boulder, palm, tag and current menu-look fix. Preserve pre-existing Auditor dirt
-and untracked Yasmin wardrobe script. No Root game/Unity/share/recorder active.
+Source105d40f80 plus the current focused late-join rules fix. Protocol151/recording14.
+Accepted full Windows artifact cf405096c includes boulder, palm, tag, menu-look and
+completed-departure fixes. Yasmin remains the original cyan/goggles asset; the
+Benguet integration is cancelled. Preserve Auditor dirt/private wardrobe draft.
+No Root game/Unity/share/recorder active. Native late-join rules original2FAIL,
+candidate2PASS; one targeted existing SyncRules reply before seating. Importer202
+restored, protected19,288 otherwise unchanged. Fresh packaged result header pending.
+Actual ordinary local LAN pair completed4x30 with identical full history objects;
+client header8 and wrong Npcap hint/duplicate discovery are retained defects.
+Client native quit crash narrowed to NewInput::Activate/accessibility/UIA focus
+reentrancy; isolated quit control exited0, no speculative game workaround.
 
 Latest owner instruction: laptop is off; PC continues ALONE. Laptop goal was
 explicitly paused. Do not wake/message it, wait for a pair or reuse obsolete
