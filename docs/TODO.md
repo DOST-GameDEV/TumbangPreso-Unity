@@ -7,7 +7,9 @@
   regions improve from968/3468near-black pixels to0/0 without changing authored
   textures, geometry or post processing. [Evidence](reports/near-fade-sampling-2026-10-04/README.md).
 - [x] Three affected-map captures and one near-camera approach pass; actual
-  frames inspected. Sa Bubong/Eskinita corrected; Kanto roadside planters remain open.
+  frames inspected. Sa Bubong/Eskinita corrected. Kanto street-tree guard UV repair also passes
+  native1/1 and three Blender mapping controls;180degenerate metal triangles
+  now0, with all non-UV model bytes retained. [Guard evidence](reports/kanto-guard-uv-2026-10-04/README.md).
 - [ ] Windows/player/GPU and human acceptance; exact red/cyan foliage report stays open.
 
 ### SLIPPER-CIRCLE-1004: ground-only recall circle
