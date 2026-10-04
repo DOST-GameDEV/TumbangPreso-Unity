@@ -59,6 +59,11 @@ namespace TumbangPreso
         private const string ModelPath = "Map/JumpPad/jump_pad";
         private const string PaintPath = "Map/JumpPad/jump_pad_paint";
         private const string PaintedShader = "TumbangPreso/IlalimPainted";
+        /// <summary>How solid a rising ring is at its most solid: see-through, so the street shows behind it.</summary>
+        private const float RingAlpha = 0.62f;
+        private static readonly int FlashColorId = Shader.PropertyToID("_FlashColor");
+        private static readonly int FlashAmountId = Shader.PropertyToID("_FlashAmount");
+        private bool _ghostFades;
 
         // The prop's own measures (tools/author_jump_pad.py): it is modelled 1.70 m square, the
         // cushion sits on the well floor, and a frame starts where the painted outline is.
@@ -158,7 +163,19 @@ namespace TumbangPreso
             _cushion.localPosition = new Vector3(0.0f, CushionSeat, 0.0f);
             for (int i = 0; i < Ghosts; i++)
             {
-                _ghostMaterial[i] = Painted(shader, paint, painted, GhostDim);
+                // ⚠️ THE RINGS ARE SEE-THROUGH AND FADE OUT (owner, 2026-10-04, first look in game:
+                // "can the white stuff be semi-transparent, fading out at the end"). The painted
+                // shader is opaque, so they used to shrink to nothing instead. They wear the
+                // game's own blended toon shader now: still lit and banded like everything else,
+                // with the alpha in `_Color` and the lift-off glow in its flash.
+                var fade = Shader.Find("TumbangPreso/ToonTransparent");
+                _ghostFades = fade != null;
+                if (_ghostFades)
+                {
+                    _ghostMaterial[i] = new Material(fade) { mainTexture = paint };
+                    _ghostMaterial[i].SetColor(FlashColorId, new Color(1.0f, 0.96f, 0.82f, 1.0f));
+                }
+                else _ghostMaterial[i] = Painted(shader, paint, painted, GhostDim);
                 _ghost[i] = Part("Rising frame " + i, ringMesh, _ghostMaterial[i], false);
             }
             for (int i = 0; i < _chevron.Length; i++)
@@ -414,6 +431,19 @@ namespace TumbangPreso
                 float plan = (1.0f + 0.10f * u + 0.25f * burst * u) * shrink;
                 float thick = Mathf.Max(0.0f, (0.15f + 0.85f * emerge) * shrink);
                 _ghost[i].localPosition = new Vector3(0.0f, FrameStart + GhostRise * rise * (1.0f + 0.6f * burst), 0.0f);
+                if (_ghostFades)
+                {
+                    // Full size all the way up: it thins into the air instead of shrinking. In from
+                    // nothing over the first tenth, RingAlpha through the middle, gone by the top.
+                    float grow = 1.0f + 0.10f * u + 0.25f * burst * u;
+                    _ghost[i].localScale = new Vector3(grow, Mathf.Max(0.0f, 0.15f + 0.85f * emerge), grow);
+                    float away = Mathf.Clamp01((u - 0.35f) / 0.65f);
+                    float alpha = RingAlpha * Mathf.Clamp01(u / 0.10f) * (1.0f - away * away * (3.0f - 2.0f * away));
+                    _ghostMaterial[i].SetColor(ColorId, new Color(1.0f, 1.0f, 1.0f, Mathf.Clamp01(alpha + 0.25f * burst * (1.0f - away))));
+                    // The glow: flashed toward warm white as it leaves the pad, dimming as it rises.
+                    _ghostMaterial[i].SetFloat(FlashAmountId, Mathf.Clamp01(0.55f * (1.0f - u) * (1.0f - u) + 0.4f * burst));
+                    continue;
+                }
                 _ghost[i].localScale = new Vector3(plan, thick, plan);
                 // Light: brightest as it leaves the pad, dimming as it rises.
                 _ghostMaterial[i].SetColor(EmissionId, Lit(GhostDim + (FloatBright - GhostDim) * (1.0f - u) * (1.0f - u) + FloatFlash * burst));
