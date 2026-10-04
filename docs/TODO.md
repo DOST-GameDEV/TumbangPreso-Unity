@@ -51,7 +51,9 @@ reference characters are quality examples, not a new redesign assignment.
 - [ ] Nemu: giant reveal separates both silhouettes; opening shot has more clearance.
   Held/empty native studies pass2/2 across three aspect ratios; full kit remains open.
   [Evidence](reports/nemu-reveal-framing-2026-10-04/README.md).
-- [ ] Ilyas: finish the remaining presentation pass.
+- [ ] Ilyas: ultimate wave has a rolled, tapered crest and fading water/foam edges;
+  native held/empty checks pass2/2. Full kit/player/SFX review remains open.
+  [Evidence](reports/ilyas-wave-crest-2026-10-04/README.md).
 - [ ] Real-game film/listening review and multiplayer/player qualification.
 
 **How this file is organised (docs cleanup, 2026-09-23).** This file is the ONE status

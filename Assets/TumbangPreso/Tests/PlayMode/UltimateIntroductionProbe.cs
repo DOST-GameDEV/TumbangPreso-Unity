@@ -77,6 +77,13 @@ namespace TumbangPreso.PlayTests
         public IEnumerator NemuEmptyHandsVisualReview()
             => Study(new[] { "nemu" }, true, true, true);
 
+        [UnityTest, Timeout(90000)]
+        public IEnumerator IlyasBreakwaterVisualReview()
+            => Study(new[] { "rafi" }, false, false, true);
+        [UnityTest, Timeout(90000)]
+        public IEnumerator IlyasEmptyHandsVisualReview()
+            => Study(new[] { "rafi" }, false, true, true);
+
         private static IEnumerator BuildHeroArtStage(string hero)
         {
             GameServices.Ensure(); GameServices.Round.Clear();
@@ -115,7 +122,7 @@ namespace TumbangPreso.PlayTests
         {
             // These focused render-copy reviews need their actual rig/equipment, not an entire
             // populated court. Keep other established court probes unchanged.
-            if (heroes.Length == 1 && (heroes[0] == "zack" || heroes[0] == "cheska" || heroes[0] == "sean" || heroes[0] == "dante" || heroes[0] == "nemu")) yield return BuildHeroArtStage(heroes[0]);
+            if (heroes.Length == 1 && (heroes[0] == "zack" || heroes[0] == "cheska" || heroes[0] == "sean" || heroes[0] == "dante" || heroes[0] == "nemu" || heroes[0] == "rafi")) yield return BuildHeroArtStage(heroes[0]);
             else yield return MapRetrievalProbe.Load("Eskinita", GameMode.HeroStrike);
             var actor = GameServices.Round.PlayerAt(1);
             var visual = actor.GetComponent<CharacterVisual>();
@@ -129,7 +136,7 @@ namespace TumbangPreso.PlayTests
                 }
                 Assert.IsNull(actor.GetComponent<Carrier>().Held);
             }
-            else if (heroes.Length == 1 && (heroes[0] == "zack" || heroes[0] == "cheska" || heroes[0] == "sean" || heroes[0] == "dante" || heroes[0] == "nemu"))
+            else if (heroes.Length == 1 && (heroes[0] == "zack" || heroes[0] == "cheska" || heroes[0] == "sean" || heroes[0] == "dante" || heroes[0] == "nemu" || heroes[0] == "rafi"))
                 Assert.IsNotNull(actor.GetComponent<Carrier>().Held, "Held-shoe review cannot silently become empty-handed.");
             foreach (var other in GameServices.Round.Players)
                 if (other != actor) other.Teleport(new Vector3(-9, other.transform.position.y, 8 + other.PlayerSlot * 3));
@@ -228,12 +235,16 @@ namespace TumbangPreso.PlayTests
                             else report.AppendLine("["+hero+"] visual-only study; retained theme started="+soundStarted+". No audio acceptance.");
                             if(hero=="rafi")
                             {
-                                var wave=scene.Root.GetComponentsInChildren<MeshFilter>(true).Single(m=>m.sharedMesh.name=="Rafi rolled wave").sharedMesh;
-                                Assert.AreEqual(95,wave.vertexCount);Assert.AreEqual(432,wave.triangles.Length);
+                                var wave=scene.Root.GetComponentsInChildren<MeshFilter>(true).Single(m=>m.sharedMesh.name=="Ilyas rolled wave").sharedMesh;
+                                Assert.AreEqual(133,wave.vertexCount);Assert.AreEqual(648,wave.triangles.Length);
+                                Assert.AreEqual(wave.vertexCount,wave.colors.Length,"The curled wave needs its authored fading edge colours.");
+                                Assert.AreEqual(0,wave.colors[0].a,.0001f);
+                                var crest=scene.Root.transform.Find("BreakwaterCrest").GetComponent<MeshFilter>().sharedMesh;
+                                Assert.AreEqual(0,crest.colors[0].a,.0001f,"Foam must taper with the water instead of leaving solid tips.");
                             }
                             scene.SetVisibleForCapture(true);
                         }
-                        if ((hero == "zack" || hero == "cheska" || hero == "sean" || hero == "dante" || hero == "nemu") && scene != null)
+                        if ((hero == "zack" || hero == "cheska" || hero == "sean" || hero == "dante" || hero == "nemu" || hero == "rafi") && scene != null)
                         {
                             // Warm all three authored shots before starting a wall-clock film.
                             foreach (float warm in hero == "sean" ? new[] { 0f, .9f, 1.6f, 1.95f, 2.5f, 2.97f, 3.15f, 0f }
