@@ -1,0 +1,20 @@
+{
+  "pid": 2440,
+  "exitCode": 0,
+  "protocol": 145,
+  "sourceCommit": "8f7f304b543d93db71ed09f9fbaa4107fc365895",
+  "readyObserved": true,
+  "liveRoundObserved": true,
+  "actualHostLostRound1": true,
+  "matchEndedLogCount": 0,
+  "finalMap": "MatchSetup",
+  "finalRound": "0",
+  "finalActive": "False",
+  "historyCount": 0,
+  "queueCount": 0,
+  "witnessCount": 0,
+  "careerFilePresent": false,
+  "inputRestored": true,
+  "seedRestored": true,
+  "scope": "Actual active round host process loss and client round retirement/no completed result; host-owned intentional stop/live receipts retained separately"
+}
