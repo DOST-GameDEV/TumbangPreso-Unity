@@ -86,20 +86,11 @@ namespace TumbangPreso.Diagnostics
                 foreach(var peer in Unity.Netcode.NetworkManager.Singleton.ConnectedClientsIds)
                     send.Invoke(Net.MatchRpc.Instance,new object[]{peer});
             }
-            bool catchContact=Argument("-tp-replay-contact")=="catch";
-            if(catchContact)PlaceCatchParticipants(round);
             yield return new WaitForSeconds(2.5f);
-            if(catchContact)
-            {
-                if(!ResolveCatchContact(round))throw new InvalidOperationException("Replay catch contact missing");
-            }
-            else
-            {
-                var thrower=round.PlayerAt(1);var shoe=FindObjectsByType<Slipper>().First(s=>s.OwnerSlot==1);
-                int serial=round.Lata.HostKnockdownSerial;shoe.HostThrow(thrower,round.Lata.transform.position+new Vector3(0,1.2f,-2),Vector3.forward*12);
-                float until=Time.time+2;while(round.Lata.IsUpright&&Time.time<until)yield return null;
-                if(round.Lata.HostKnockdownSerial!=serial+1)throw new InvalidOperationException("Physical replay contact missing");
-            }
+            var thrower=round.PlayerAt(1);var shoe=FindObjectsByType<Slipper>().First(s=>s.OwnerSlot==1);
+            int serial=round.Lata.HostKnockdownSerial;shoe.HostThrow(thrower,round.Lata.transform.position+new Vector3(0,1.2f,-2),Vector3.forward*12);
+            float until=Time.time+2;while(round.Lata.IsUpright&&Time.time<until)yield return null;
+            if(round.Lata.HostKnockdownSerial!=serial+1)throw new InvalidOperationException("Physical replay contact missing");
             yield return new WaitForSeconds(1.6f);
             var archive=FindAnyObjectByType<MatchReplayArchive>();
             if(archive==null||archive.Clips.Count==0)throw new InvalidOperationException("Replay not retained: "+archive?.LastSkip);
@@ -110,21 +101,6 @@ namespace TumbangPreso.Diagnostics
             if(Net.MatchRpc.Instance.ReplayReadyCount(retained.Clip.Id)<required)throw new InvalidOperationException("Both participants did not verify the clip");
             while(match.RoundNumber<4){round.EndRound();match.AdvanceRound();Net.MatchRpc.Instance.BroadcastWorldSnapshot();yield return new WaitForSecondsRealtime(.35f);}
             round.EndRound();match.BeginIntermission();Net.MatchRpc.Instance.BroadcastWorldSnapshot();
-        }
-
-        // An explicit catch fixture complements the existing physical knockdown
-        // fixture. Both use real gameplay contact and the normal replay archive.
-        private static void PlaceCatchParticipants(RoundDirector round)
-        {
-            var defender=round.PlayerAt(0);var victim=round.PlayerAt(1);
-            var a=new Vector3(0,0,-4);var b=new Vector3(0,0,-3);
-            a.y=Slipper.GroundY(a)+.1f;b.y=Slipper.GroundY(b)+.1f;
-            defender.Teleport(a);victim.Teleport(b);defender.transform.forward=Vector3.forward;
-        }
-        private static bool ResolveCatchContact(RoundDirector round)
-        {
-            var defender=round.PlayerAt(0);
-            return defender.GetComponent<CombatVerbs>().HostResolvePunch(defender.transform.position,defender.transform.forward);
         }
     }
 }
