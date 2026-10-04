@@ -73,6 +73,17 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CLASSIC-KANTO146-1004: coherent tournament pair and saved results
+
+- [x] Actual source23168/protocol146 Kanto/Classic default8*90, normal two-peer
+  lobby/map action/natural end and matching full saved record/queue/witness.
+  Host terminal0/restored/all258 hashes; client same terminal/restored reported.
+  Preserve expected-Hero staging failure; no Hero qualification.
+  [Evidence](reports/reliability-2026-10-04/classic-kanto146/README.md).
+- [ ] Independently inspect client raw terminal proof, separate true Hero8
+  acceptance and remaining Relay/recovery/device/maps/slow-replay gates.
+
+
 ### AI-ROUND-OPENING-1004: each round gets its own ability opening
 
 - [x] Clear old opening elapsed time and weighed skill decision on the real

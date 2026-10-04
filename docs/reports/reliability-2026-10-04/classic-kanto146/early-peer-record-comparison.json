@@ -1,0 +1,13 @@
+{
+  "recordCanonicalSHA256": "d27f0b9246d44696bdda5aa1e5c212336f7a75d8ef9ff78a8ef26e7bde4d09f9",
+  "fullRecordEqualsPeerCanonicalHash": true,
+  "queueEqualsHistoryBothPeers": true,
+  "witnessEqual": [
+    "c9f645728c718e75"
+  ],
+  "mode": "Classic",
+  "rounds": 8,
+  "map": "Kanto",
+  "matchId": "b611a31321014eb0bdd3f57bde48bf35",
+  "scope": "Natural eight-round Classic/Kanto saved result; terminal player reports/restoration still pending; trueHero gate open"
+}
