@@ -119,9 +119,21 @@ experiment:4096MiB admission estimate,1536MiB actual runtime reserve,600s,one wo
 full quality/no development/profiler; no guard change or PC launch authorization.
 Prior1003h139 was DEVELOPMENT and has no process-tree peak, only admission/end
 memory; it cannot establish a measured RELEASE requirement. Keep limits distinct.
-NEXT: publish coherent Core+focus source and send its exact ref for laptop freeze/
-one resource attempt. Inspect the eventual build receipt/artifact before any pair.
-Do not alter frozen laptop inputs or retry unchanged reserve failures.
+Core+focus published73dd6f89c; laptop release build LAUNCHED execsession13511,
+shippingc80e4ae32c1a213fdc943ab4568fc158aa23f7c0/logical73dd,19661 frozen inputs,
+208private importer hashes unchanged. Logs/release144-focus-core-lowmem-build1004,
+Builds/tournament1004-focus-core-lowmem-release;4096+1536/600s/fullquality/None,
+headless/one worker and once-per-second available/process-tree samples. No PC job.
+Do not poll its remote exec session with local write_stdin or alter frozen inputs.
+Root host-loss runner correction: current144 report was rejected as132; corrected
+explicit protocol/full manifest/canonical rules/Hero picks,6acceptance+11shared
+artifact checks pass locally. Preserve original live-loss/result/input gates.
+Owner now requests FULL user flow, login through gameplay and adding friends.
+Answered: request-by-tag/accept UI exists; actual two-account/service path unproven.
+Root reserves account/front-end/social investigation; laptop build takes priority.
+NEXT: publish checked host-loss tool correction, trace actual Friends/login routes
+and implement demonstrated product faults while laptop build runs. Inspect its
+terminal memory/build/full-artifact receipts before planning any current pair.
 Owner last-five-hours question was answered; do not replay it after compaction.
 
 ## Completed evidence and next integration gates

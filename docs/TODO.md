@@ -17,6 +17,25 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CURRENT-HOST-LOSS-RUNNER-1004: validate the agreed release
+
+- [x] Replace protocol132/old rules assumptions with explicit artifact protocol
+  and accepted full manifest, canonical eleven-field rules and fresh Hero picks.
+  Preserve build/source/Runtime identity, input/profile restoration, two live
+  receipts and no fabricated result gates. Check full artifact/manifest again
+  after owned players retire. Original current-report check fails; corrected
+  acceptance6/6 and shared artifact11/11 pass locally without player launches.
+- [ ] Actual current packaged host-loss pair. Historical132 proof remains
+  historical and local acceptance checks do not establish network behavior.
+
+### USER-FLOW-1004: login through gameplay and friends
+
+- [ ] Trace and validate login/account gates, HOME navigation, normal lobby and
+  matchmaking, character selection, gameplay, results, return and Friends.
+  Friends has tag-request/accept UI and a server path; verify both accounts'
+  request/accept state, persisted friendship and invite/join before claiming it
+  works. Fix demonstrated route/lifetime failures and retain original evidence.
+
 ### READER-BACKGROUND-FOCUS-1004: retired input stays neutral while away
 
 - [x] Keep the unfocused reader neutral while the network player continues

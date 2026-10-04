@@ -8,14 +8,23 @@ import run_host_loss as runner
 class HostLossAcceptanceTests(unittest.TestCase):
     def setUp(self):
         self.sha = "d28770a25504c8f6a069b429d8384af0ae4ff557"
-        self.report = dict(active="False", round="0", map="MatchSetup", protocol="132",
-                           role="HOST", text="build identity : TUMBANG PRESO 1.0.0 | d28770a25504 | protocol 132")
+        self.report = dict(active="False", round="0", map="MatchSetup", protocol="144",
+                           role="HOST", text="build identity : TUMBANG PRESO 1.0.0 | d28770a25504 | protocol 144")
         self.receipt = dict(role="client", pid=42, sawLive=True, originHumanSeats=True, scene="MatchSetup",
                             matchEndedEvents=0, recordReadyEvents=0, recordId=None, error=None)
         self.log = "[Abandon] HostLost: ABANDONED at round 1 of 1; this peer may no longer resolve anything"
 
     def faults(self, report=None, receipt=None, killed=8):
-        return runner.evaluate(report or self.report, receipt or self.receipt, self.log, self.sha, 42, killed, 0)
+        return runner.evaluate(report or self.report, receipt or self.receipt, self.log, self.sha, 42, killed, 0, 144)
+
+    def test_old_or_missing_protocol_is_refused(self):
+        for value in ("132", None):
+            self.assertIn('Client report did not use the agreed artifact protocol',
+                          self.faults(report=dict(self.report, protocol=value)))
+
+    def test_host_loss_uses_the_current_canonical_rules(self):
+        self.assertEqual(runner.lan.WIRE, runner.WIRE)
+        self.assertEqual(11, len(runner.WIRE.split('|')))
 
     def test_inactive_autohost_is_valid(self):
         self.assertEqual([], self.faults())

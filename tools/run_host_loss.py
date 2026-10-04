@@ -13,10 +13,12 @@ import uuid
 import net_matrix
 import run_unity_guarded as guard
 import run_unity_job as jobs
-from run_completed_arrival import read, restore_input, validate_rules, WIRE
+import run_lan_peer as lan
+from run_completed_arrival import read, restore_input, validate_rules
 from run_ui_player_review import read_input_preferences
 
 ROOT = Path(__file__).resolve().parents[1]
+WIRE = lan.WIRE
 SCOPE = ("One actual Windows loopback host process loss during custom 1-round/30-second "
          "two-human-origin match. Final round retirement and absence of completed events only; "
          "no direct MatchInProgress/clock, human input, WAN, AllBots or full-tournament claim.")
@@ -39,7 +41,7 @@ def live_faults(receipt, role, pid):
     return errors
 
 
-def evaluate(report, receipt, log, source_commit, client_pid, killed_at, exit_code):
+def evaluate(report, receipt, log, source_commit, client_pid, killed_at, exit_code, protocol):
     errors = []
     if killed_at is None:
         errors.append("The owned host was not deliberately killed after both live receipts")
@@ -50,8 +52,8 @@ def evaluate(report, receipt, log, source_commit, client_pid, killed_at, exit_co
     # A new lobby may auto-host; that does not permit the old round to remain active.
     if report.get("active") != "False" or report.get("round") != "0" or report.get("map") != "MatchSetup":
         errors.append("Client did not return to MatchSetup with its old round inactive/reset")
-    if report.get("protocol") != "132":
-        errors.append("Client report did not use the frozen protocol132")
+    if report.get("protocol") != str(protocol):
+        errors.append("Client report did not use the agreed artifact protocol")
     if not receipt or receipt.get("role") != "client" or receipt.get("pid") != client_pid:
         errors.append("Missing or foreign post-loss client observation")
     else:
@@ -78,27 +80,35 @@ def main():
     parser.add_argument("--source-commit", required=True)
     parser.add_argument("--runtime-sha", required=True)
     parser.add_argument("--build-receipt", type=Path, required=True)
+    parser.add_argument("--artifact-manifest", type=Path, required=True)
+    parser.add_argument("--protocol", type=int, required=True)
     args = parser.parse_args()
     project, exe, folder = args.project.resolve(), args.exe.resolve(), args.out.resolve()
     if os.name != "nt" or not exe.is_file() or not exe.is_relative_to(project / "Builds") or not folder.is_relative_to(project / "Logs"):
         parser.error("Use an existing Windows internal Builds player and dedicated Logs output")
-    if guard.project_identity(project) != ("BH Studios", "Tumbang Preso") or not 1024 <= args.port < 65535:
+    if (guard.project_identity(project) != ("BH Studios", "Tumbang Preso")
+            or not 1024 <= args.port < 65535 or not 1 <= args.protocol <= 65535):
         parser.error("Use the frozen shipping identity and two nonprivileged ports")
     runtime = exe.parent / (exe.stem + "_Data/Managed/TumbangPreso.Runtime.dll")
     runtime_bytes = runtime.read_bytes()
     before_hash = hashlib.sha256(runtime_bytes).hexdigest()
+    manifest_path = args.artifact_manifest.resolve()
+    artifact = lan.checked_artifact(exe, manifest_path, args.protocol, args.runtime_sha.lower())
+    manifest_hash = lan.file_sha256(manifest_path)
     build = read(args.build_receipt.resolve())
     identity = read(exe.parent / (exe.stem + "_Data/StreamingAssets/build-identity.json"))
-    if (not build or not build.get("passed") or not build.get("preservationCompleted") or
+    if (not build or not build.get("preservationCompleted") or
+            (not build.get("passed") and artifact.get("classifiedArtifactAccepted") is not True) or
+            artifact.get("sourceCommit") != args.source_commit or
             build.get("sourceCommit") != args.source_commit or
             build.get("runtimeSha256", "").lower() != args.runtime_sha.lower() or
             Path(build.get("artifact", "")).resolve() != exe or before_hash != args.runtime_sha.lower() or
-            not identity or identity.get("sha") != args.source_commit or identity.get("protocol") != 132 or
+            not identity or identity.get("sha") != args.source_commit or identity.get("protocol") != args.protocol or
             identity.get("target") != "StandaloneWindows64"):
         parser.error("Classified source/build receipt, player identity and Runtime hash must match")
     if b"NetCompletedArrivalProbe" not in runtime_bytes or b"NetStateReport" not in runtime_bytes:
         parser.error("Frozen player lacks the existing live observer/final reporter")
-    rules = validate_rules(runtime.with_name("TumbangPreso.Core.dll"))
+    rules = validate_rules(runtime.with_name("TumbangPreso.Core.dll"), wire=WIRE)
     folder.mkdir(parents=True, exist_ok=False)
     for port in (args.port, args.port + 1):
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
@@ -110,6 +120,7 @@ def main():
     profiles, seeds, children = {}, {}, []
     result = dict(passed=False, errors=["Scenario did not complete"], profiles=profiles, rules=rules,
                   sourceCommit=args.source_commit, runtimeSha256=before_hash,
+                  protocol=args.protocol, artifactManifestSha256=manifest_hash,
                   buildReceipt=str(args.build_receipt.resolve()), scope=SCOPE, killedAt=None)
 
     def launch(role):
@@ -135,6 +146,7 @@ def main():
             path = guard.player_profile() / "profiles" / hashlib.sha256(name.encode()).hexdigest()
             path.mkdir(parents=True, exist_ok=False)
             seed = json.dumps({"PlayerToken": uuid.uuid4().hex, "PlayerName": "HostLoss" + role,
+                               "CharacterPick": 0 if role == "host" else 2,
                                "CustomRulesWire": WIRE, "GraphicsQuality": 0, "MatchDefaultsRevision": 1}).encode("utf-8")
             (path / "settings.json").write_bytes(seed)
             seeds[path / "settings.json"] = seed
@@ -184,7 +196,7 @@ def main():
             report["text"] = (folder / "client.txt").read_text(encoding="utf-8-sig", errors="replace")
         receipt = read(folder / "client.json")
         log = (folder / "client.log").read_text(encoding="utf-8-sig", errors="replace")
-        result["errors"] = evaluate(report, receipt, log, args.source_commit, client.pid, result["killedAt"], client.returncode)
+        result["errors"] = evaluate(report, receipt, log, args.source_commit, client.pid, result["killedAt"], client.returncode, args.protocol)
         if (folder / "host.txt").exists():
             result["errors"].append("Host wrote its scheduled terminal report before intended loss")
         result["clientExitCode"] = client.returncode
@@ -217,9 +229,12 @@ def main():
                     result["errors"].append("Owned profile seed restore failed: " + str(error))
             result["profileSeedsRestored"] = len(seeds) == 2 and all(path.read_bytes() == seed for path, seed in seeds.items())
             result["runtimeUnchanged"] = before_hash == hashlib.sha256(runtime.read_bytes()).hexdigest()
+            result["manifestUnchanged"] = manifest_hash == lan.file_sha256(manifest_path)
+            lan.checked_artifact(exe, manifest_path, args.protocol, args.runtime_sha.lower())
+            result["artifactUnchanged"] = True
             result["retiredPids"] = [child.pid for child in children if child.poll() is not None]
             result["allOwnedProcessesRetired"] = len(children) == 2 and len(result["retiredPids"]) == 2
-            for field in ("inputRestored", "profileSeedsRestored", "runtimeUnchanged", "allOwnedProcessesRetired"):
+            for field in ("inputRestored", "profileSeedsRestored", "runtimeUnchanged", "manifestUnchanged", "artifactUnchanged", "allOwnedProcessesRetired"):
                 if not result.get(field):
                     result["errors"].append("Preservation/cleanup gate failed: " + field)
             result["passed"] &= not result["errors"]

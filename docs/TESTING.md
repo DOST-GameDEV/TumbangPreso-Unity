@@ -147,6 +147,16 @@ checks that the manifest itself stayed unchanged. Agree host availability/listen
 before joining. Local runner unit checks do not establish a real peer pass.
 
 Use the guarded GameBuilder with an explicit internal `-buildOutput`.
+
+`tools/run_host_loss.py` also requires explicit `--protocol` and
+`--artifact-manifest` alongside its source/Runtime/build receipt arguments.
+It uses the same full artifact validator and canonical rules as the LAN runner,
+checks manifest stability after owned processes retire and seeds valid Hero
+choices for both fresh profiles. Explicit artifact classification can account
+for preserved importer churn; build preservation and identity gates still apply.
+The loss scenario still requires both live receipts before terminating only its
+owned host and refuses resumed rounds or fabricated completion/results.
+
 The builder can purge a prior player at its target; choose an owned candidate path
 and preserve any needed existing output. Never target the Desktop player by default.
 Verify executable/data and run the exact produced player before claiming it works.
