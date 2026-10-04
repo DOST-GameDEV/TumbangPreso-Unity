@@ -34,3 +34,12 @@ is recorded. The validation product/profile identity is intentionally separate.
 These tests cover one clear court placement and ordinary completion. Sound,
 interruption/reconnect, blocked-shot alternatives, all equipment/locations, real
 player feel and matching new peer acceptance remain separate requirements.
+
+## Interruption and obstructed camera checks
+
+Reduced-motion/round cancellation:1/1,16.2304234 seconds. Ending the round clears
+the phase, reservation and canvas, while an independently requested operator
+pause remains at time scale0. Blocked camera:1/1,15.5454932 seconds. The fallback
+preserves the shared duration. Both native jobs exited0 with isolated settings
+restored, unchanged frozen inputs and no OOM increase. These add focused cases,
+not physical-disconnect or all-location acceptance.
