@@ -18,9 +18,7 @@ namespace TumbangPreso.CameraSystem
         {
             if (string.IsNullOrEmpty(path)) return null;
             if (Cache.TryGetValue(path, out var mesh) && mesh != null) return mesh;
-            mesh = Resources.Load<Mesh>(path);
-            if (mesh != null) Cache[path] = mesh;
-            return mesh;
+            return RetainWorkingCopy(path, Resources.Load<Mesh>(path));
         }
 
         public static IEnumerator Warmup(RosterBook book, Action<float> progress = null)
@@ -43,13 +41,49 @@ namespace TumbangPreso.CameraSystem
                 {
                     var request = Resources.LoadAsync<Mesh>(path);
                     yield return request;
-                    if (request.asset is Mesh loaded) Cache[path] = loaded;
+                    if (request.asset is Mesh loaded) RetainWorkingCopy(path, loaded);
                 }
                 progress?.Invoke((index + 1f) / paths.Count);
             }
         }
 
+        private static Mesh RetainWorkingCopy(string path, Mesh source)
+        {
+            if (source == null) return null;
+            // A synchronous caller may have populated the cache while Warmup yielded.
+            if (Cache.TryGetValue(path, out var retained) && retained != null) return retained;
+            // Outline welding writes tangents. Serialized .asset meshes must remain source data.
+            var copy = UnityEngine.Object.Instantiate(source);
+            copy.name = source.name + " (viewmodel)";
+            copy.hideFlags = HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
+            Cache[path] = copy;
+            return copy;
+        }
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void Reset() => Cache.Clear();
+        private static void Reset()
+        {
+            foreach (var mesh in Cache.Values)
+            {
+                if (mesh == null) continue;
+                Visual.OutlineNormals.Forget(mesh);
+                if (Application.isPlaying) UnityEngine.Object.Destroy(mesh);
+                else UnityEngine.Object.DestroyImmediate(mesh);
+            }
+            Cache.Clear();
+        }
+
+#if UNITY_EDITOR
+        [UnityEditor.InitializeOnLoadMethod]
+        private static void HookEditorCleanup()
+        {
+            UnityEditor.EditorApplication.playModeStateChanged -= OnPlayModeChanged;
+            UnityEditor.EditorApplication.playModeStateChanged += OnPlayModeChanged;
+        }
+        private static void OnPlayModeChanged(UnityEditor.PlayModeStateChange state)
+        {
+            if (state == UnityEditor.PlayModeStateChange.EnteredEditMode) Reset();
+        }
+#endif
     }
 }
