@@ -22,7 +22,7 @@ explicitly authorized; unnecessary AGENTS feature entry was removed at owner req
 ## Source, ownership and live work
 
 Root checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
-Repository4edb7bb08; tested package3947a82e8/protocol148/recording14. Later Rago
+Repository4825f41d5; tested package3947a82e8/protocol148/recording14. Later Rago
 contributor source is preserved but absent from that package. Pre-existing Auditor
 dirt and untracked Yasmin voxel draft script preserved. Root owns Net/UI/docs/
 release and acknowledged PlayerInputReader plus HeroQuickTapTests. Laptop owns
@@ -31,14 +31,27 @@ observed/checkpointed, unedited. Old Carrier/Paete speed ba1 unit shipped.
 Laptop Fix gameplay interruption recovery: thread01a0ffab-10a0-70d0-9270-
 07e171c1613b, physical192.168.1.144; Root192.168.1.7.
 
-CURRENT Root original native quicktap Unity14260/session2322, source4edb,
-Logs/hero-quicktap1005/run-original.py. Runtime UNEDITED. Five actual InputSystem
-cases E/Q/X press+release before real reader poll, held skill and menu-held/release.
-Unity child exited; poll SAME parent2322 and inspect exact XML/cases before edits.
-Keep input freeze until parent terminal, restore only owned generated importers
-with original bytes retained. Native causal proof, minimal fix then same candidate;
-no idle matches as busywork. Root non-host stale-owner-echo/correction lead open.
-Laptop auto5s original/candidate native unit proceeds on separate machine.
+CURRENT Root has no active Unity/player/share. Reader quicktap e27e55eb8 shipped
+integrated866: original3 E/Q/X dropped taps +2 held/menu controls -> same5 PASS,
+all terminal/preferences restored/202 owned GUI importers restored exact. Net
+owner feedback fc062bb56 shipped/protocol150: original2 accepted old owner poses
+at1.6/4.2m snapped current prediction backward,3 correction/epoch/observer controls
+PASS; same5 candidate PASS plus existing Voodoo/status control PASS (6 total).
+This is causal native evidence, not updated player/operator latency acceptance.
+
+Source fc062bb56/protocol150 includes concurrent907 PaeteVine/timing changes.
+PRESERVE these when adding laptop auto5 source; never whole-copy e758 versions.
+Laptop clean LOCAL66c65 includes additive907+Reader+auto5; actual auto5 native5,
+latestCore20 and latest native manual/Vine/Thorn neighborhood4 PASS. Latest7152 /
+88551 parent restoration still live; wait explicit published API ref before fetch.
+Root normal-merged checked laptop5de4675. Reliable AutomaticPlantShot source
+4825f41d5 is SHIPPED: host event/unbind +36byte match/round/instance-scoped
+receiver, native23124/26883 exact4 PASS/latest combined compile/source restored.
+Laptop Hud repeated normal clock toast original38736 has2 causal failures and2
+controls; candidate near-term. NEXT include checked HUD source if ready then
+ONE full combined150 release and identical-artifact controlled latency/inputs. Older148 online/
+visible-flow proofs are preserved but do not qualify150. Do not repeat idle full
+matches or attempt unsupported zero-duration key holds as human-feel evidence.
 
 ## Verified results and honest limits
 
@@ -83,4 +96,5 @@ Names/logo SVGs/title-loginbb4269df9/camera late activationd647aff69 shipped wit
 focused evidence. New Yasmin draft, tag VFX, first Home animation, Paete emote,
 auto5s native +RootNet149 shot event, controlled peer latency/LAN/recovery and
 release/preload gates remain TODO. Full matches do not close rubber-banding.
+Net150 accepted-shot draft and current exact next action are in the local checkpoint.
 Goal remains active; keep implementing concrete fixes and publishing checked units.
