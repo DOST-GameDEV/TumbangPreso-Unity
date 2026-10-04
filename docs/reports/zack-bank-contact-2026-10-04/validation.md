@@ -42,8 +42,8 @@ claim. No product runtime source is replaced by a test stub.
 
 Cases cover unspun powered one/two-bank events and strength/position/actor,
 powered ceiling silence and retained scoring credit, and ordinary ceiling
-credit retirement. Obstacle contact routing is source-reviewed but is not a
-separate physics-collider acceptance case in this batch. The existing GameBuilder
+credit retirement. The first six-case batch did not independently exercise obstacle colliders;
+the follow-through below closes that focused gate. The existing GameBuilder
 already preserves Sprites/Default. Packaged shader availability is not rerun.
 
 No wire layout, kind enum, scoring or restitution changes. BankShot strength1
@@ -55,3 +55,13 @@ including the second Overclock bank. This does not award objective points.
 Qualification source was4689a5b0 with the reported overlay. Incoming3661b191
 changes PlayerHub and documentation only; the checked bank/runtime inputs are
 unchanged by normal integration. The integrated whole game was not rerun.
+
+## Obstacle and lifetime follow-through
+
+Three additional native PlayMode cases passed05:06:04–05UTC,0.6596854s,
+zero skips, exit0 and no guard. Exact production BoxCollider spherecast contact
+announces once at the resolved shoe position; ordinary spun banks retain only
+one strength0 event; the contact automatically destroys itself and its owned
+material after its lifetime. All frozen inputs and restored settings matched.
+Peak tree2,287,194,112bytes, cgroup5,699,207,168bytes. This adds behavioral
+coverage without repeating the unchanged six earlier cases.

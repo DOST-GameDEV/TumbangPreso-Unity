@@ -303,6 +303,61 @@ namespace TumbangPreso.PlayTests
             }
             finally { MatchFlair.Presented -= Observe; }
         }
+        [Test] public void OrdinarySpunBankKeepsUnpoweredFlair()
+        {
+            var ctx = Actor(out _); var shoe = Shoe(ctx);
+            shoe.HostThrow(ctx.Motor, Vector3.up, new Vector3(10, 8, 2), SlipperAffinity.Normal, .9f);
+            var strengths = new List<float>();
+            void Observe(MatchFlair.Kind kind, int actor, int subject, Vector3 at, float strength)
+            { if (kind == MatchFlair.Kind.BankShot) strengths.Add(strength); }
+            MatchFlair.Presented += Observe;
+            try
+            {
+                Bank(shoe); Bank(shoe);
+                Assert.AreEqual(1, strengths.Count); Assert.AreEqual(0, strengths[0]);
+            }
+            finally { MatchFlair.Presented -= Observe; }
+        }
+        [Test] public void PoweredObstacleContactUsesResolvedPosition()
+        {
+            var ctx = Actor(out _); var shoe = Shoe(ctx);
+            shoe.HostThrow(ctx.Motor, Vector3.right, new Vector3(10, 0, 0), SlipperAffinity.BankShot);
+            var wall = Track(new GameObject("Bank contact wall"));
+            wall.transform.position = new Vector3(3, 1, 0);
+            wall.AddComponent<BoxCollider>().size = new Vector3(.2f, 2, 4);
+            Physics.SyncTransforms();
+            var previous = new Vector3(1, 1, 0); shoe.transform.position = new Vector3(4, 1, 0);
+            int contacts = 0; Vector3 position = Vector3.zero;
+            void Observe(MatchFlair.Kind kind, int actor, int subject, Vector3 at, float strength)
+            {
+                if (kind != MatchFlair.Kind.BankShot) return;
+                Assert.AreEqual(BankShotContact.FlairStrength, strength);
+                contacts++; position = at;
+            }
+            MatchFlair.Presented += Observe;
+            try
+            {
+                using (NetCue.SuppressRelay())
+                    typeof(Slipper).GetMethod("BounceOffObstacles", BindingFlags.Instance | BindingFlags.NonPublic)
+                        .Invoke(shoe, new object[] { previous, .3f });
+                Assert.AreEqual(1, contacts);
+                Assert.AreEqual(shoe.transform.position, position);
+                Assert.Less(position.x, 3); Assert.Greater(position.x, 2);
+                Assert.Less(shoe.Velocity.x, 0);
+            }
+            finally { MatchFlair.Presented -= Observe; }
+        }
+        [UnityTest] public IEnumerator ContactLifetimeReleasesItsOwnedMaterial()
+        {
+            var cue = BankShotContact.Spawn(new Vector3(2, 1, 0), false, false);
+            Assert.IsNotNull(cue);
+            var material = cue.GetComponentInChildren<LineRenderer>().sharedMaterial;
+            Assert.IsNotNull(material);
+            yield return new WaitForSeconds(BankShotContact.Lifetime + .1f);
+            yield return null;
+            Assert.IsTrue(cue == null, "The contact object must retire automatically.");
+            Assert.IsTrue(material == null, "The contact must release its exclusively owned material.");
+        }
         [Test] public void OrdinaryCeilingContactRetainsExistingBankLimit()
         {
             var ctx = Actor(out _); var shoe = Shoe(ctx);
