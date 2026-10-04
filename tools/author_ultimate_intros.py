@@ -523,8 +523,7 @@ HELD["nemu"] = lambda: nemu(True)
 HOLD_DRIFT["nemu-held"] = HOLD_DRIFT["nemu"]
 
 
-@performance
-def dante():
+def _dante(held):
     """
     TITAN FISSURE, 3.8 s (plan.md section 5). "Holds the difficult space. Refuses to be rushed."
     Weight is shown by SLOWNESS: he plants, gets under something heavy, stands into it and
@@ -533,7 +532,7 @@ def dante():
     strike the live fissure continues. Every hold trembles slightly: effort, not stillness.
     Signs measured on the sheets: +twist brings an arm inward, +torso yaw turns to his right.
     """
-    p = Performance("dante", 3.8)
+    p = Performance("dante-held" if held else "dante", 3.8)
     rest = Pose(left=(0, 15, 0), right=(0, 15, 0))
     plant = Pose(torso=(6, 0, 0), head=(18, 0, 0), left=(8, 24, 0), right=(8, 24, 0),
                  legs=((2, 14), (-2, 14)))
@@ -550,6 +549,14 @@ def dante():
     # The stamp: driving forward and down over the front leg.
     stamp = Pose(torso=(28, -10, 0), head=(-8, 6, 0), left=(72, 6, 30), right=(72, 6, 30),
                  legs=((22, 10), (-18, 10)))
+
+    if held:
+        # The free fist leads the stamp; the slipper stays below and outside the face.
+        shoe = (20, 42, -8)
+        brace = brace.but(right=shoe)
+        brace_shake = brace_shake.but(right=shoe)
+        load = load.but(right=shoe)
+        stamp = stamp.but(right=(30, 42, -8))
 
     p.key(0, rest)
     p.key(.45, plant).key(.8, plant.but(torso=(7, 0, 0)))
@@ -570,6 +577,15 @@ def dante():
     p.shot(2.5, 3.8, (2.5, .6, 3.5), (0, .9, .6), 48, eye_to=(2.2, .55, 3.1))
     p.locked((1.3, .9, 5.4), (0, 1.2, -1.0), 52)
     return p
+
+
+@performance
+def dante():
+    return _dante(False)
+
+
+HELD["dante"] = lambda: _dante(True)
+HOLD_DRIFT["dante-held"] = HOLD_DRIFT["dante"]
 
 
 def _cheska(held):
