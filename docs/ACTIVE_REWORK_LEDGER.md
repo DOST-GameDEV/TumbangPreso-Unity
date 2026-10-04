@@ -32,8 +32,8 @@ TODO is the only status queue. Reports hold evidence; this file holds execution.
 ## Exact source and outstanding unit
 
 Root checkout: C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
-Source5a6dcf8c2 normally merged the checked replay candidate, protocol144,
-clean detached HEAD before this checkpoint. Publish this coherent checked batch.
+Sourcea5ec8fd19 normally includes checked replay/input/F6 contributions,
+protocol144, clean detached HEAD before this checkpoint. Build remains unlaunched.
 Dirty Main is C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks;
 never overwrite/stage its private Amihan/artwork/input metadata. No root Editor.
 
@@ -61,6 +61,25 @@ artifact/build peak evidence. Owner release of isolated PC build slot is PENDING
 in async question; no answer is no approval. Inspect only task-owned stale helpers
 to recover laptop headroom, never terminate unrelated processes. Then verify full
 artifact/Runtime/Core hashes and actual startup before matching LAN/online checks.
+
+Root independent unit: CareerStore.FlushAsync's late failure/end status and loop
+follow replacement _cache, unlike its fenced submission/refresh responses. Static
+ownership gap; do not claim native qualification. Neutral ORIGINAL843af78b7db397480e6048b9c1651203388dda8d
+oncompetition-pc-career-flush-original1004 preserves behavior by extracting
+private async Task FlushWithDispatchAsync(Func<string,object,Task<string>> dispatch),
+public FlushAsync delegates CloudCode.CallAsync. Existing body and payload untouched.
+Candidatee92a760c8b6a8e53e699baeadfd08a8bba8142b0 on
+competition-pc-career-flush-candidate1004 captures flushingCache and fences each
+iteration/final/catch; finally releases busy for pending new-owner sync. Only
+CareerStore.cs10add6del versus neutral original; no CloudCode/schema/persistence
+change. Oldce013 branch is superseded; do not separately test/merge it.
+Laptop reserves ONLY CareerFlushOwnerLifetimeTests.cs/meta and is preparing six
+TCS async cases through the real private shipping core, expected3causal/3controls.
+No real HTTP/credentials, IL patching, mutable global or broad test hook. Both
+code refs remain OUTSIDEASTRA pending one frozen-fixture original/candidate pair.
+NEXT SOURCE ACTION: get exact fixture/ref and actual original job/result, then
+one candidate on unchanged fixture. Current task ownership: rootCareerStore,
+laptopfixture/native; preserve reader/carrier/debug-switcher contributions.
 Laptop own F6 is shipped a516409c5 + dd3c45636 proof, original1fail5controls ->6/6.
 Its device-loss5 original3fail2controls -> first candidate4/5 -> scoped candidate5/5
 reported,3432 unchanged/restored/free. New surviving-input/hysteresis/touch/committed
