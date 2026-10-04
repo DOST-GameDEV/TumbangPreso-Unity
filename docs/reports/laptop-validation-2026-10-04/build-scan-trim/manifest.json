@@ -1,0 +1,17 @@
+{
+  "rawFiles": {
+    "raw/job-receipt.json": "61e657f4257a8e99aa542206bef1c9884b791663219ccd774a8c994823bd8870",
+    "raw/qualified-source.json": "acb167f9e2bc51a577655b76cd71c0acea3d5e464c382e70a97aa5890b9c4425",
+    "raw/post-input-audit.json": "75507202be948d2abbb6baec2542e4ae759c8a39f8fcf8baf6d410cb740cb913",
+    "raw/resource-samples.jsonl": "f4afb66481f0ebea1db3e6faca16433fbb8475290eabe21ef477ca5c18f5deee",
+    "raw/resource-summary.json": "48d32bbdfe3bd0c1d55e5b379f46e18f4e10fc78a3bea8a78a6d3824af256782",
+    "raw/prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+    "raw/post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+    "raw/GameBuilder.cs": "e2a639bb4b11a9e15abdc01fc7edbe94ee3af6908a3582b9edf2bca92c98463b",
+    "raw/build-memory-boundary.txt": "c2ab45a7f591dbc3122ffafd6ce10c84d9966b96dc6dbe01a9804c71e3bbfd58",
+    "raw/owned-compiler-cleanup.json": "ea1a558cc5bd3f1034b1f635c127d486ea79dd1242f013829bda090aa87b6ba3"
+  },
+  "sourceCandidate": "ad0026b01918da1eff7e28f1bd246beb1c32134c",
+  "shippingGitHead": "8f7f304b543d93db71ed09f9fbaa4107fc365895",
+  "acceptedArtifact": false
+}
