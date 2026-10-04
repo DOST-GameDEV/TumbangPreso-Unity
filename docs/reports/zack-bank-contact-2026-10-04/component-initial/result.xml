@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 04:42:26Z" end-time="2026-10-04 04:42:26Z" duration="0.0609678">
+  <test-suite type="TestSuite" id="1000" name="TUMP Core Smoke1004b" fullname="TUMP Core Smoke1004b" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-04 04:42:26Z" end-time="2026-10-04 04:42:26Z" duration="0.060968" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1012" name="CoreRecoveryTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/core-native-project/Library/ScriptAssemblies/CoreRecoveryTests.dll" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-04 04:42:26Z" end-time="2026-10-04 04:42:26Z" duration="0.052958" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="11283" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1013" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-04 04:42:26Z" end-time="2026-10-04 04:42:26Z" duration="0.052600" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1014" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-04 04:42:26Z" end-time="2026-10-04 04:42:26Z" duration="0.052405" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1004" name="BankShotContactTests" fullname="TumbangPreso.Tests.BankShotContactTests" classname="TumbangPreso.Tests.BankShotContactTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-04 04:42:26Z" end-time="2026-10-04 04:42:26Z" duration="0.051807" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1008" name="FadeEndsWithNoVisibleStroke" fullname="TumbangPreso.Tests.BankShotContactTests.FadeEndsWithNoVisibleStroke" methodname="FadeEndsWithNoVisibleStroke" classname="TumbangPreso.Tests.BankShotContactTests" runstate="Runnable" seed="1391619660" result="Failed" start-time="2026-10-04 04:42:26Z" end-time="2026-10-04 04:42:26Z" duration="0.027560" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 0.25d +/- 9.9999997473787516E-05d
+  But was:  0.25098040699958801d
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.Tests.BankShotContactTests.FadeEndsWithNoVisibleStroke () [0x00023] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/core-native-project/Assets/Tests/BankShotContactTests.cs:47
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1011" name="InvalidPositionDoesNotSpawn" fullname="TumbangPreso.Tests.BankShotContactTests.InvalidPositionDoesNotSpawn" methodname="InvalidPositionDoesNotSpawn" classname="TumbangPreso.Tests.BankShotContactTests" runstate="Runnable" seed="621893654" result="Passed" start-time="2026-10-04 04:42:26Z" end-time="2026-10-04 04:42:26Z" duration="0.002058" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1010" name="NonfiniteAgeFailsClosed" fullname="TumbangPreso.Tests.BankShotContactTests.NonfiniteAgeFailsClosed" methodname="NonfiniteAgeFailsClosed" classname="TumbangPreso.Tests.BankShotContactTests" runstate="Runnable" seed="1775422198" result="Passed" start-time="2026-10-04 04:42:26Z" end-time="2026-10-04 04:42:26Z" duration="0.001142" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1007" name="QualityKeepsSmallAuthoredStrokesWithoutCollision" fullname="TumbangPreso.Tests.BankShotContactTests.QualityKeepsSmallAuthoredStrokesWithoutCollision" classname="TumbangPreso.Tests.BankShotContactTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-04 04:42:26Z" end-time="2026-10-04 04:42:26Z" duration="0.005672" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1005" name="QualityKeepsSmallAuthoredStrokesWithoutCollision(False,3)" fullname="TumbangPreso.Tests.BankShotContactTests.QualityKeepsSmallAuthoredStrokesWithoutCollision(False,3)" methodname="QualityKeepsSmallAuthoredStrokesWithoutCollision" classname="TumbangPreso.Tests.BankShotContactTests" runstate="Runnable" seed="1165302206" result="Passed" start-time="2026-10-04 04:42:26Z" end-time="2026-10-04 04:42:26Z" duration="0.003301" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1006" name="QualityKeepsSmallAuthoredStrokesWithoutCollision(True,2)" fullname="TumbangPreso.Tests.BankShotContactTests.QualityKeepsSmallAuthoredStrokesWithoutCollision(True,2)" methodname="QualityKeepsSmallAuthoredStrokesWithoutCollision" classname="TumbangPreso.Tests.BankShotContactTests" runstate="Runnable" seed="1365888644" result="Passed" start-time="2026-10-04 04:42:26Z" end-time="2026-10-04 04:42:26Z" duration="0.000356" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1009" name="ReducedMotionKeepsTheContactStationary" fullname="TumbangPreso.Tests.BankShotContactTests.ReducedMotionKeepsTheContactStationary" methodname="ReducedMotionKeepsTheContactStationary" classname="TumbangPreso.Tests.BankShotContactTests" runstate="Runnable" seed="223244906" result="Passed" start-time="2026-10-04 04:42:26Z" end-time="2026-10-04 04:42:26Z" duration="0.001885" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/bank-component/result.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,8 @@
+{
+  "Assets/TumbangPreso/Runtime/Slipper.cs": "960bf23f458a5f9cb4992d392b755521a3d7ae9e91e339929dc51cfc9a9739f2",
+  "Assets/TumbangPreso/Runtime/Visual/MatchFlair.cs": "92c4e4d00b792e4f963eb94c961a83d698cf2b612d1f5010a47e4e4be7423787",
+  "Assets/TumbangPreso/Runtime/Visual/BankShotContact.cs": "20805a8c29d71d2d0be024fd121cdcfac11eb4fc6a3912d0868287ed89d60c77",
+  "Assets/TumbangPreso/Runtime/Visual/BankShotContact.cs.meta": "7e20ae358c820804cc101f072855d04f53aff3095bb20ea40cc17917ae82f9af",
+  "Assets/TumbangPreso/Runtime/Visual/VfxRenderTag.cs": "1319b1fef426b42ab5333528915457649b6f2eda88ff6b6920b2cec6ea37397f",
+  "Assets/TumbangPreso/Tests/PlayMode/ZackBankShotTests.cs": "27765febb7778627b6c3c088d13417f00b6e9b88b6c56dc29356a804b3909aea"
+}
