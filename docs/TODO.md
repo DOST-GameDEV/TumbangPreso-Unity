@@ -17,6 +17,14 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### FRIEND-REQUEST-DELIVERY-1004: recipient delivery precedes pending state
+
+- [x] Failed recipient writes leave the sender retryable; failed sender writes
+  deduplicate the delivered incoming request on retry. Block privacy unchanged.
+  Actual script local original1failure/10controls ->11/11.
+  [Evidence](reports/reliability-2026-10-04/friend-request-delivery/README.md).
+- [ ] Verified deployment and owner-authorized two-account live acceptance.
+
 ### HUB-EDIT-REFRESH-1004: background data does not interrupt typing
 
 - [x] Native original two failures/two controls; candidate preserves actual
