@@ -75,11 +75,15 @@ controlled TCS covers actual incomplete requests, Changed replacement with empty
 nonempty queues, old-owner failure/success and same-owner retry/ack. No live
 auth/HTTP, IL mutation, global test hook, persistence or schema change. Actual
 deployed SDK/service and packaged delivery remain open.
-NEXT SOURCE ACTION: correct legacy tools/run_lan_peer.py protocol134/runtime
-defaults and omitted CharacterPick for current explicit144 matching artifacts.
-Preserve ready/natural-end/saved-result checks, no weakened acceptance or pair
-launch before slot/artifact agreement. Laptop prepares newest coherent release
-freeze; PC slot question remains pending and all guards/admission remain intact.
+LAN runner correction is checked: explicit protocol/runtime pin/accepted full
+manifest, valid character seed and pre/post full artifact/source/exeRuntimeCore
+verification. Original ready/natural-end/standings/history/witness gates intact;
+9/9 local deterministic checks, no Unity/player/peer launch. See TESTING and TODO.
+NEXT: produce the coherent current144 release on an admitted owned slot, freeze
+the same accepted artifact/manifest on both machines and coordinate host listen
+then client join. Do not use old134 Runtime/protocol or skip character selection.
+Laptop updates newest checked shipping source; PC slot question remains pending
+and all guards/admission remain intact. Continue separate source work meanwhile.
 Laptop own F6 is shipped a516409c5 + dd3c45636 proof, original1fail5controls ->6/6.
 Its device-loss5 original3fail2controls -> first candidate4/5 -> scoped candidate5/5
 reported,3432 unchanged/restored/free. New surviving-input/hysteresis/touch/committed

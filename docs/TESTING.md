@@ -130,6 +130,18 @@ guide preserve the detailed category rationale and historical measurements.
 
 ## Builds And Cleanup
 
+For paired LAN acceptance, use `tools/run_lan_peer.py` on each machine with the
+SAME accepted player and full artifact manifest. Pass the agreed `--protocol`,
+`--artifact-manifest` and `--runtime-sha256` explicitly; there is no legacy Runtime
+or protocol default. `--character-pick` defaults to Hero index0 and may differ by
+peer using valid picks from that artifact's roster. The fresh profile seed includes
+the pick so the normal lobby can pass character selection. Ready, natural match
+end, terminal standings and each peer's own saved history/witness checks remain.
+Before launch and after termination the runner checks every packaged file against
+the manifest, source/build identity and executable/Runtime/Core hashes. It also
+checks that the manifest itself stayed unchanged. Agree host availability/listening
+before joining. Local runner unit checks do not establish a real peer pass.
+
 Use the guarded GameBuilder with an explicit internal `-buildOutput`.
 The builder can purge a prior player at its target; choose an owned candidate path
 and preserve any needed existing output. Never target the Desktop player by default.

@@ -17,6 +17,17 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CURRENT-LAN-RUNNER-1004: explicit current artifact and character selection
+
+- [x] Remove pinned134/legacy Runtime defaults, require explicit protocol and
+  Runtime hash plus accepted full artifact manifest, seed CharacterPick and
+  preserve ready/natural-end/standings/history/witness acceptance. Check all files,
+  source identity and executable/Runtime/Core before and after the owned player;
+  reject a changed manifest. Nine local deterministic runner checks pass.
+- [ ] Actual matching current144 host/client player pair, completed normal lobby
+  route, saved results and necessary recovery/slow-replay acceptance. Tool checks
+  and old134 peer evidence do not satisfy this gate.
+
 ### CAREER-FLUSH-OWNER-1004: keep upload work with its starting account
 
 - [x] Capture the flush cache and fence loop/final/failure writes after account
