@@ -1,5 +1,11 @@
 # TODO: Tumbang Preso Unity
 
+### TUTORIAL-MUSIC-1004: owner-supplied track
+
+- [x] Replace guided tutorial music with Tutorial.mp3, cut exactly its first3s.
+  Native2/2 verifies real tutorial entry, countdown retention and looping.
+  Existing match/menu tracks remain. [Evidence](reports/tutorial-music-2026-10-04/README.md).
+
 ### HERO-PRESENTATION-PARITY-1004: remaining hero presentation
 
 Owner target: refine Zack, Sean, Dante, Cheska, Nemu and Rafi to the presentation

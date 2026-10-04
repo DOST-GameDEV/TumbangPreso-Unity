@@ -82,21 +82,26 @@ namespace TumbangPreso
         /// booting: the bed is the one thing in an audio stack whose absence a player can play
         /// straight through without noticing anything is broken.
         /// </summary>
-        public static AudioClip MenuTrack => LoadMusic("ost_menu", ref _menuTrack);
-        public static AudioClip MatchTrack => LoadMusic("ost_match", ref _matchTrack);
+        public static AudioClip MenuTrack => LoadMusic("ost_menu", ref _menuTrack, ref _menuTried);
+        public static AudioClip MatchTrack => LoadMusic("ost_match", ref _matchTrack, ref _matchTried);
 
+        public static AudioClip TutorialTrack => LoadMusic("ost_tutorial", ref _tutorialTrack, ref _tutorialTried);
+        public static string ArenaMusicCue => GameLaunch.GuidedTutorial ? "tutorial" : "match";
+        public static AudioClip ArenaTrack => GameLaunch.GuidedTutorial ? TutorialTrack : MatchTrack;
+
+        private static AudioClip _tutorialTrack;
+        private static bool _tutorialTried;
         private static AudioClip _menuTrack;
         private static AudioClip _matchTrack;
         private static bool _menuTried, _matchTried;
 
-        private static AudioClip LoadMusic(string name, ref AudioClip cache)
+        private static AudioClip LoadMusic(string name, ref AudioClip cache, ref bool tried)
         {
             if (cache != null) return cache;
 
-            bool tried = name == "ost_menu" ? _menuTried : _matchTried;
             if (tried) return null;
 
-            if (name == "ost_menu") _menuTried = true; else _matchTried = true;
+            tried = true;
 
             cache = Resources.Load<AudioClip>($"Music/{name}");
             if (cache == null)
@@ -244,6 +249,7 @@ namespace TumbangPreso
 
             _menuTrack = null;
             _matchTrack = null;
+            _tutorialTrack = null; _tutorialTried = false;
             _menuTried = false;
             _matchTried = false;
         }
