@@ -1,1 +1,9 @@
-{}
+{
+  "01-WAD6-public-admission.png": "0c3e0d18aaa1e9e62326116ad4a6616d00690e7a112b4da4aacc9e8e865f6654",
+  "02-actual-rules-before-ready.png": "859a3dbd8546e3795ceadc002037eccaf4d1429bbb8faf28f57b66df676b03fb",
+  "direct-result.json": "af51ef6568a7e45506ed850f8dffc2965d6e298850bf4ded1ff518465000222b",
+  "history-canonical.json": "99d32afbddb8813d05a135af4e2b9370cd5d4442c43f3f0250e4117bdf63356b",
+  "launch.json": "c33d1600b302515819f7b2b0f8dbf6a8cabebf7ac2f67db337c03295b3108593",
+  "player.log": "94c73a18413dae09c982e7d691bf85721a8f9d6c0de76d9f39271c38df6a4c68",
+  "pre-input-prefs.json": "6612b97c2295faa90521bc25ba08f58c626bfca300cfbf1a86a72e4e6fd5a217"
+}
