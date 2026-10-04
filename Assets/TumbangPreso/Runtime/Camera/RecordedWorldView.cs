@@ -289,6 +289,10 @@ namespace TumbangPreso.CameraSystem
                 view.Sample(state,time-frame.Time);
             }
             foreach(int id in _fields.Keys.ToArray())if(!_visibleFields.Contains(id)){_fields[id].Dispose();_fields.Remove(id);}
+            // Preparation also hides live objects and may lose its world owner.
+            // Restore visibility even when playback fails before Camera.Render.
+            try
+            {
             foreach(var field in RecordedSpecialFields.Capture())if(field.Source!=null)Hide(field.Source);
             foreach(var effect in Object.FindObjectsByType<VfxRenderTag>())if(!effect.transform.IsChildOf(_stage.transform))Hide(effect.gameObject);
             foreach(var callout in Object.FindObjectsByType<ComicPopup>())Hide(callout.gameObject);
@@ -318,7 +322,8 @@ namespace TumbangPreso.CameraSystem
                     _escapePuffs[i]=puff=CourtEscapePuff.Play(cue.Position,WorldCueProfile.Current.Escape,_stage.transform);
                 puff.Sample(age);puff.ShowForCapture(true);
             }
-            try{using var skyTime=NeighbourhoodSkyMotion.At(time);using var lighting=frame!=null?frame.Lighting.Use(_grade,_sky,_skyFill):null;_camera.Render();}
+            using var skyTime=NeighbourhoodSkyMotion.At(time);using var lighting=frame!=null?frame.Lighting.Use(_grade,_sky,_skyFill):null;_camera.Render();
+            }
             finally{foreach(var dust in _contactDust.Values)if(dust!=null)dust.ShowForCapture(false);_court.ShowForCapture(false);_lataClock.ShowForCapture(false);foreach(var puff in _escapePuffs.Values)puff.ShowForCapture(false);for(int i=0;i<_hiddenCanvases.Count;i++)if(_hiddenCanvases[i]!=null)_hiddenCanvases[i].enabled=_canvasWasEnabled[i];foreach(var trail in _trails.Values)trail.Visible(false);for(int i=0;i<_hiddenLights.Count;i++)if(_hiddenLights[i]!=null)_hiddenLights[i].enabled=_lightWasEnabled[i];foreach(var field in _fields.Values)field.Visible(false);foreach(var item in _items){item.Copy.ShowOnlyForCapture(false);item.Contact?.Visible(false);}_canLanding.Visible(false);for(int i=0;i<_hidden.Count;i++)if(_hidden[i]!=null)_hidden[i].forceRenderingOff=_previous[i];}
         }
         private void Hide(GameObject root)
