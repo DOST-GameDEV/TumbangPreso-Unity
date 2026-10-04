@@ -3868,6 +3868,44 @@ after Kanto and the Lagoon Cove. Team-facing issues from that merge are in
     the registry preview shot (yaw 35, 22 m, 13.5 m up) frames from over the deck.
   - legacy tools that loop over `SceneFlow.Maps` (MapSurfaceAuthor, MapFinalInventory) still treat
     "IlalimNgTulay" as the first Ilalim's surfaces; do not run them on the rebuild unreviewed.
+- [ ] ILALIM-1.8 THE COURT IN THE LOT AND THE LIVE STREET (2026-10-04 to 2026-10-05, branch
+  `QoLUpdates`, pushed at `aaa66cb2d`; the guide's HANDOFF block and its two newest CURRENT STATE
+  entries are the record). Done: the court moved into the campus lot with the world shifted
+  (`IlalimFrame`), both lot fences opened, the play area out to the Padre Faura junction, mesh
+  ground colliders, live solid traffic that launches players, the station-to-station solid train
+  with its clank, reverb and shake, the modelled glowing jump pads, and the first performance pass
+  (11.17 M to 5.97 M triangles a frame; `IlalimPerfProbe`). Open:
+  - a full played match, online, with a joining player on a weak PC (frame rate, the car hit's
+    strength, bots on the road, the late-join traffic catch-up);
+  - set-pass calls (about 3900 a frame from 694 materials);
+  - the sidewalk author's 6 failing samples and the life probe's 6 overlapping pair-steps;
+  - the poles and the ONE WAY sign in the lot's open edges; the median gap at the old court;
+  - re-run WorldCourtCueTests (the chalk is four edges now) and decide ILALIM-1.7's list;
+  - whether the character ambient occlusion test (F8, local only) becomes the look;
+  - the character redesign prototype (a Blender try of one blocky kid, not in the game).
+### ARENA-1 · The arena map ⚠️ BRIEF ONLY, 2026-10-05 (the next map)
+
+Owner, 2026-10-05: "we'll be resuming with a new arena style map. ideally this arena will feature a
+cheering crowd, rocket leaegue goal style effects and holograms, the main play area has features like
+a sprint charge pad (like how in rocket league theres orbs u can pick up to charge ur nitro/sprint),
+jump pads, platforms that you can fall off, and it rotates around different layouts for the duration
+of the game, limited to a certain amount of layouts though". The brief, the hard parts, the lessons
+from Ilalim and the questions for the owner are in [ARENA_MAP_BRIEF](ARENA_MAP_BRIEF.md).
+
+- [ ] ARENA-1.1 The owner's answers to the brief's seven questions (when layouts rotate and how
+  many, what a fall costs, where the can is, what the sprint charge does, the setting, the size,
+  the modes), then a one-page design for the layout rotation and the fall. The rotation is a
+  gameplay system every peer must agree on: read SKILL_NETWORK_CONTRACT and NETWORKING first.
+- [ ] ARENA-1.2 A grey-box blockout at exact gameplay dimensions (the can at the origin, the 14 m
+  box, the 9 m spawn ring) with two layouts, playable with bots: the rotation, the fall, jump pads
+  (`JumpPad`, reused) and the sprint charge pickup, before any art.
+- [ ] ARENA-1.3 The performance budget and a probe from the first build (`IlalimPerfProbe` is the
+  pattern): shared materials, real LODs, occlusion.
+- [ ] ARENA-1.4 The arena kit in Blender (floor, platforms, stands, lights) and its builder.
+- [ ] ARENA-1.5 The crowd: a cheap technique for full stands that reacts to the match.
+- [ ] ARENA-1.6 Holograms and the knockdown celebration (the "Rocket League goal" moment).
+- [ ] ARENA-1.7 Sound: the crowd bed and its reactions, the celebration, the pads.
+- [ ] ARENA-1.8 Checks, a played match online with a joining player, then the map pool.
 ### LIGHT-2 · Lighting style picker in the Graphics tab ⚠️ IN PROGRESS, 2026-09-25 (only slot 3 open)
 
 **Renamed 2026-09-26 (BUGS-0926.5):** Bright is now **Standard** (slot 1, the default) and Classic is
