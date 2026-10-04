@@ -1536,11 +1536,12 @@ namespace TumbangPreso.CameraSystem
             bool blown = _character != null && _character.IsWhirled && (_character.IsCarried || !_character.IsGrounded);
             bool down = _character != null && (_character.IsTripped || held || rooted || blown);
             if (down != _fallView) _blownView = down && blown;
+            if (!down) { _thrownView = false; _thrownRenderers = null; _thrownCentreSet = false; }
             if (down == _fallView)
             {
                 // The throw can reach the owning peer a frame or two after the trip that opened the view.
                 if (down && !_thrownAimed && Time.time - _fallViewAt < 0.5f && !held && !rooted && !blown && AimAtThrow())
-                    _emotePitchDeg = _tppPitchDeg;
+                    _emotePitchDeg = ThrownPitchDeg;
                 return;
             }
 
@@ -1574,6 +1575,7 @@ namespace TumbangPreso.CameraSystem
                 _fallViewAt = Time.time; _thrownAimed = false;
                 bool thrown = !held && !rooted && !blown && AimAtThrow();
                 if (!held && !rooted && !blown && !thrown) _emotePitchDeg = FallPitchDeg;
+                if (thrown) _emotePitchDeg = ThrownPitchDeg;
                 // The wind's hit is felt, not just seen.
                 if (blown) Shake(1.1f, .55f);
             }
@@ -1591,8 +1593,35 @@ namespace TumbangPreso.CameraSystem
             if (travel.sqrMagnitude < ThrownSpeed * ThrownSpeed) return false;
             _emoteYawDeg = Mathf.Atan2(travel.x, travel.z) * Mathf.Rad2Deg;
             _thrownAimed = true;
+            _thrownView = true;
+            _thrownRenderers = _character.GetComponentsInChildren<Renderer>();
             Shake(0.9f, 0.45f);
             return true;
+        }
+
+        // ⚠️ THE THROWN VIEW FRAMES THE BODY, NOT THE SPOT UNDER IT (owner, 2026-10-04, second look
+        // at a car hit: "can you put the cam back further and align it to the center of mass
+        // instead of the bottom"). The fall view mounts 0.x m over the motor's position, which is
+        // the FEET, on a short arm: right for a body lying on the road, and for a body the car has
+        // just put two metres in the air it left the lens on the tarmac looking up at it. So this
+        // view mounts on the middle of the body's own renderers, wherever the tumble has it, on a
+        // long arm looking a little down.
+        private const float ThrownArm = 6.0f, ThrownPitchDeg = 16.0f;
+        private bool _thrownView;
+        private Renderer[] _thrownRenderers;
+        private Vector3 _thrownCentre;
+        private bool _thrownCentreSet;
+
+        private Vector3 BodyCentre()
+        {
+            bool any = false; Bounds all = default;
+            if (_thrownRenderers != null)
+                foreach (var r in _thrownRenderers)
+                {
+                    if (r == null || !r.enabled || !r.gameObject.activeInHierarchy || r is ParticleSystemRenderer || r is TrailRenderer) continue;
+                    if (!any) { all = r.bounds; any = true; } else all.Encapsulate(r.bounds);
+                }
+            return any ? all.center : _character.transform.position + Vector3.up * 0.9f;
         }
 
         public void BeginEmoteView()
@@ -1698,6 +1727,14 @@ namespace TumbangPreso.CameraSystem
             }
 
             Vector3 mount = _character.transform.position + Vector3.up * mountHeight;
+            if (_thrownView)
+            {
+                // Eased, so the tumble's own wobble does not shake the frame; the first frame snaps.
+                Vector3 centre = BodyCentre();
+                _thrownCentre = _thrownCentreSet ? Vector3.Lerp(_thrownCentre, centre, 1.0f - Mathf.Exp(-14.0f * Time.deltaTime)) : centre;
+                _thrownCentreSet = true;
+                mount = _thrownCentre; arm = Mathf.Max(arm, ThrownArm);
+            }
             var rot = Quaternion.Euler(_emotePitchDeg, _emoteYawDeg, roll);
             Vector3 wanted = mount - (rot * Vector3.forward) * arm;
 
@@ -1705,7 +1742,10 @@ namespace TumbangPreso.CameraSystem
             if (Physics.SphereCast(mount, 0.2f, (wanted - mount).normalized, out var hit,
                                    arm, ~0, QueryTriggerInteraction.Ignore))
             {
-                if (hit.collider.GetComponentInParent<CharacterMotor>() != _character)
+                // The thrown view opens behind the body's travel, which is where the car that threw it
+                // is: a moving vehicle's box (kinematic) must not fold the arm back onto the body.
+                bool vehicle = _thrownView && hit.collider.attachedRigidbody != null && hit.collider.attachedRigidbody.isKinematic;
+                if (!vehicle && hit.collider.GetComponentInParent<CharacterMotor>() != _character)
                 {
                     // ⚠️ THE FALL FLOOR IS ITS OWN. `TppMinSpringLength` is 1.80 m, which is
                     // longer than the whole fall arm would ever need to shrink to, so a kerb or
