@@ -17,6 +17,15 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CLOUD-TRAVEL-BOUND-1004: server matches the current defender speed
+
+- [x] Mirror DefenderRunSpeed7.5 in the Cloud Code travel sanity bound. Actual
+  Core accepts the supplied1656/1700/1800 boundary records that the old server
+  refused; original3failures/3controls -> corrected6/6. Existing witness digest
+  contract unchanged. [Evidence](reports/reliability-2026-10-04/cloud-travel-bound/README.md).
+- [ ] Approved service deployment and actual SDK/packaged result acceptance.
+  Local source parity does not establish deployment or real match delivery.
+
 ### CURRENT-LAN-RUNNER-1004: explicit current artifact and character selection
 
 - [x] Remove pinned134/legacy Runtime defaults, require explicit protocol and

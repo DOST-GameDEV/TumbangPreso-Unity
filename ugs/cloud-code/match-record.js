@@ -40,7 +40,7 @@ const ROUND_TIME = 90.0;
 const SCORE_DEFENCE_PER_TICK = 10;
 const DEFENCE_TICK_INTERVAL = 1.0;
 const SCORE_LATA_KNOCKED = 100;
-const SPRINT_SPEED = 4.6 * 1.5;
+const DEFENDER_RUN_SPEED = 7.5;        // Balance.DefenderRunSpeed
 
 // ⚠️⚠️ MIRRORS `RatingRules`. `FUTURE.md` § 9 and `Core.Tests/RatingTests.cs`.
 const START_RATING = 1500.0;
@@ -589,7 +589,7 @@ function sanityFault(record) {
         if (p.ShoveHits > p.ShoveAttempts) return "MoreHitsThanAttempts";
         if (p.LungeHits > p.LungeAttempts) return "MoreHitsThanAttempts";
         if (passiveDefenceSeconds(p) > defenceCeiling) return "DefenceLongerThanTheMatch";
-        if ((Number(p.DistanceTravelled) || 0) > SPRINT_SPEED * defenceCeiling * 2.0)
+        if ((Number(p.DistanceTravelled) || 0) > DEFENDER_RUN_SPEED * defenceCeiling * 2.0)
             return "ImpossibleTravel";
     }
 

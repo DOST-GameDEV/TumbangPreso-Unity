@@ -32,7 +32,7 @@ TODO is the only status queue. Reports hold evidence; this file holds execution.
 ## Exact source and outstanding unit
 
 Root checkout: C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
-Sourcea5ec8fd19 normally includes checked replay/input/F6 contributions,
+Source73ef60af32 includes checked replay/input/F6/career and current LAN runner,
 protocol144, clean detached HEAD before this checkpoint. Build remains unlaunched.
 Dirty Main is C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks;
 never overwrite/stage its private Amihan/artwork/input metadata. No root Editor.
@@ -88,12 +88,22 @@ the same accepted artifact/manifest on both machines and coordinate host listen
 then client join. Do not use old134 Runtime/protocol or skip character selection.
 Laptop updates newest checked shipping source; PC slot question remains pending
 and all guards/admission remain intact. Continue separate source work meanwhile.
-Laptop own F6 is shipped a516409c5 + dd3c45636 proof, original1fail5controls ->6/6.
-Its device-loss5 original3fail2controls -> first candidate4/5 -> scoped candidate5/5
-reported,3432 unchanged/restored/free. New surviving-input/hysteresis/touch/committed
-contact controls plus existing reader7 are planned before publication; do not treat
-local unpublished code as a release source. Reader/carrier/debug-switcher remain
-laptop-owned. Root owns Net/account and shared docs; no new agents.
+Laptop F6 initial discovery11d714efa is shipped:2 causal failures ->8/8 combined.
+Device loss40740f5f3/daa00beee is shipped d90e: original3fail2controls ->5/5,
+plus11 surviving-input/hysteresis/touch/committed and existing reader checks.
+Reader/carrier/debug-switcher remain laptop-owned; root owns Net/account/docs.
+Laptop latest Main73ef clean; shippingc52012b60 tracked tree equals73ef and208
+private importer hashes unchanged. Latest release plan runner.json is prepared,
+NOT launched. All native jobs/helpers terminal/absent and RAM below7680MiB.
+Owner PC slot question remains unanswered; do not retry unchanged admission.
+
+Root server travel-bound unit: current actual Core accepts1656/1700/1800 but old
+Cloud Code rejects them. Corrected legacy6.9 bound to DefenderRunSpeed7.5 only;
+original3failures/3controls ->6/6 with actual Core answers and digest unchanged.
+No service deployment/native launch. Evidence:reliability-2026-10-04/cloud-travel-bound.
+NEXT: publish the coherent server correction, then continue independent source
+work or launch the prepared release only after an actual owned-slot gate changes.
+Owner last-five-hours question was answered; do not replay it after compaction.
 
 ## Completed evidence and next integration gates
 
@@ -123,5 +133,4 @@ laptop-owned. Root owns Net/account and shared docs; no new agents.
 - All-map composition, actual overlay/motion/audio, full Classic gameplay,
   physical input, current packaged first-use/performance and LAN/Relay remain open.
   Prior two-machine LAN134 is historical. No zero-bug/full-readiness claim.
-- Goal mechanism last reported blocked; engineering in the current turn continued.
-  Do not claim unattended goal continuation is active without verifying resumption.
+- Goal mechanism verified ACTIVE October4; competition acceptance remains open.

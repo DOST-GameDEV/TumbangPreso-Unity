@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Server travel-bound parity: [current movement correction and focused evidence](reports/reliability-2026-10-04/cloud-travel-bound/README.md).
+
 Latest playtested movement revision: [measured speeds, jump and free shove/lunge](reports/movement-playtest-2026-10-03/README.md).
 Earlier same-day movement values are superseded; their evidence remains historical.
 
