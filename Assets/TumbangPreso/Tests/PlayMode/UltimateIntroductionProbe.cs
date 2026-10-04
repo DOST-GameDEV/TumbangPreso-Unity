@@ -70,6 +70,13 @@ namespace TumbangPreso.PlayTests
         public IEnumerator BasilioEmptyHandsVisualReview()
             => Study(new[] { "dante" }, false, true, true);
 
+        [UnityTest, Timeout(90000)]
+        public IEnumerator NemuSeanceVisualReview()
+            => Study(new[] { "nemu" }, true, false, true);
+        [UnityTest, Timeout(90000)]
+        public IEnumerator NemuEmptyHandsVisualReview()
+            => Study(new[] { "nemu" }, true, true, true);
+
         private static IEnumerator BuildHeroArtStage(string hero)
         {
             GameServices.Ensure(); GameServices.Round.Clear();
@@ -108,7 +115,7 @@ namespace TumbangPreso.PlayTests
         {
             // These focused render-copy reviews need their actual rig/equipment, not an entire
             // populated court. Keep other established court probes unchanged.
-            if (heroes.Length == 1 && (heroes[0] == "zack" || heroes[0] == "cheska" || heroes[0] == "sean" || heroes[0] == "dante")) yield return BuildHeroArtStage(heroes[0]);
+            if (heroes.Length == 1 && (heroes[0] == "zack" || heroes[0] == "cheska" || heroes[0] == "sean" || heroes[0] == "dante" || heroes[0] == "nemu")) yield return BuildHeroArtStage(heroes[0]);
             else yield return MapRetrievalProbe.Load("Eskinita", GameMode.HeroStrike);
             var actor = GameServices.Round.PlayerAt(1);
             var visual = actor.GetComponent<CharacterVisual>();
@@ -122,7 +129,7 @@ namespace TumbangPreso.PlayTests
                 }
                 Assert.IsNull(actor.GetComponent<Carrier>().Held);
             }
-            else if (heroes.Length == 1 && (heroes[0] == "zack" || heroes[0] == "cheska" || heroes[0] == "sean" || heroes[0] == "dante"))
+            else if (heroes.Length == 1 && (heroes[0] == "zack" || heroes[0] == "cheska" || heroes[0] == "sean" || heroes[0] == "dante" || heroes[0] == "nemu"))
                 Assert.IsNotNull(actor.GetComponent<Carrier>().Held, "Held-shoe review cannot silently become empty-handed.");
             foreach (var other in GameServices.Round.Players)
                 if (other != actor) other.Teleport(new Vector3(-9, other.transform.position.y, 8 + other.PlayerSlot * 3));
@@ -226,7 +233,7 @@ namespace TumbangPreso.PlayTests
                             }
                             scene.SetVisibleForCapture(true);
                         }
-                        if ((hero == "zack" || hero == "cheska" || hero == "sean" || hero == "dante") && scene != null)
+                        if ((hero == "zack" || hero == "cheska" || hero == "sean" || hero == "dante" || hero == "nemu") && scene != null)
                         {
                             // Warm all three authored shots before starting a wall-clock film.
                             foreach (float warm in hero == "sean" ? new[] { 0f, .9f, 1.6f, 1.95f, 2.5f, 2.97f, 3.15f, 0f }

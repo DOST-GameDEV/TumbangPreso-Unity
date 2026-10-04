@@ -48,7 +48,10 @@ reference characters are quality examples, not a new redesign assignment.
 - [ ] Basilio: held slipper/face intersection fixed and slab visibility refined;
   native baseline1 fail/1 control becomes2/2. Full kit/player/SFX review remains open.
   [Evidence](reports/basilio-fissure-2026-10-04/README.md).
-- [ ] Nemu and Ilyas: finish their remaining presentation passes.
+- [ ] Nemu: giant reveal separates both silhouettes; opening shot has more clearance.
+  Held/empty native studies pass2/2 across three aspect ratios; full kit remains open.
+  [Evidence](reports/nemu-reveal-framing-2026-10-04/README.md).
+- [ ] Ilyas: finish the remaining presentation pass.
 - [ ] Real-game film/listening review and multiplayer/player qualification.
 
 **How this file is organised (docs cleanup, 2026-09-23).** This file is the ONE status
