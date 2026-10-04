@@ -126,7 +126,7 @@ namespace TumbangPreso.UI
         {
             // The shared phase already opened the passive card once.
             if (HalftimePresentation.Playing) return;
-            ShowScheduledBreak(nextRound,nextDefenderSlot,HalftimePresentation.Instance?.Remaining??HalftimePresentation.BreakDuration,null);
+            ShowScheduledBreak(nextRound,nextDefenderSlot,HalftimePresentation.Instance?.Remaining??HalftimePresentation.OrdinaryBreakDuration,null);
         }
 
         public void ShowScheduledBreak(int nextRound,int nextDefenderSlot,float remaining,string fallback)
@@ -183,7 +183,8 @@ namespace TumbangPreso.UI
             yield return StartCoroutine(RevealPanels());
 
             // Hold warmup buffer for remaining duration minus the final fight cue (1.5s)
-            float waitTime = Mathf.Max(1.0f, Core.Balance.WarmupBufferDuration - RevealDelay - RevealFade - 1.5f);
+            float buffer = HalftimePresentation.LiveStageBreak ? HalftimePresentation.OrdinaryBreakDuration : Core.Balance.WarmupBufferDuration;
+            float waitTime = Mathf.Max(1.0f, buffer - RevealDelay - RevealFade - 1.5f);
             yield return new WaitForSeconds(waitTime);
 
             _isBufferActive = false;

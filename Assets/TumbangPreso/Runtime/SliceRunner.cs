@@ -139,6 +139,18 @@ namespace TumbangPreso
 
         private void OnRoundStarted(int roundNumber, int defenderSlot)
         {
+            // ⚠️ THE ARENA'S FLOOR MOVES BETWEEN ROUNDS, and both things `ResetWorld` does read
+            // it: `Lata.HostRestore` puts the can on a mark that was snapped once in Start, and
+            // `MatchHost.SeatOnFloor` casts for the floor under each spawn. So the stage takes
+            // this round's colliders first and the can's mark is snapped again, in that order,
+            // before either runs. Every other map has no stage and skips this whole block.
+            var stage = Map.ArenaStage.Instance;
+            if (stage != null)
+            {
+                stage.ApplyForRound(roundNumber);
+                if (Lata != null) Lata.HostResnapMark();
+            }
+
             ResetWorld(defenderSlot);
             GameServices.Round.BeginRound();
 

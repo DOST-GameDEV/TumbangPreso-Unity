@@ -2638,7 +2638,7 @@ namespace TumbangPreso.Net
             if (!Finite(zappedLeft) || zappedLeft < 0 || zappedLeft > StatusRules.ZappedSeconds) return;
             if(!Finite(concussedLeft) || !Finite(fearedLeft) || !Finite(disorientedLeft) || !Finite(vulnerableLeft) || !Finite(fearFrom))return;
             if(recoveryEpisode<0 || recoveryAcknowledged<0)return;
-            if(edgeKind>(byte)EdgeRecoveryKind.Lagoon||edgePhase>2||!Finite(edgeGrip)||!Finite(edgeOutward)||!Finite(edgeRatio))return;
+            if(edgeKind>(byte)EdgeRecoveryKind.Drone||edgePhase>2||!Finite(edgeGrip)||!Finite(edgeOutward)||!Finite(edgeRatio))return;
             if(edgeKind!=0&&(edgeOutward.sqrMagnitude<.9f||edgeOutward.sqrMagnitude>1.1f||edgeRatio<0||edgeRatio>1))return;
 
             // ⚠️⚠️ A NON-FINITE POSE MAKES A BODY VANISH AND SPAMS THE LOG ONCE A FRAME, and at a

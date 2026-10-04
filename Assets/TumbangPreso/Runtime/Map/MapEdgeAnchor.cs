@@ -2,7 +2,9 @@ using UnityEngine;
 
 namespace TumbangPreso
 {
-    public enum EdgeRecoveryKind : byte { None, Rooftop, Lagoon }
+    // The value travels in SyncUnit as a byte: append, never renumber. Drone is the Arena's
+    // carry back from the pit (ARENA-1.1), a host-owned float with no lip to hold.
+    public enum EdgeRecoveryKind : byte { None, Rooftop, Lagoon, Drone }
 
     /// <summary>A real grip and supported landing, never a round spawn marker.</summary>
     public readonly struct MapEdgeAnchor

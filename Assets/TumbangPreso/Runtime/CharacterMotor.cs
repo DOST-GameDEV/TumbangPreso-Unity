@@ -433,6 +433,7 @@ namespace TumbangPreso
             if(epoch<=MovementEpoch)return;
             ClearNetworkResourceIntent();
             InvalidateFlightEpisode();
+            ClearSpeedBoost();
             MovementEpoch=epoch;_awaitingTeleport=false;_teleportAbility=-1;
         }
 
@@ -903,6 +904,7 @@ namespace TumbangPreso
                           * (AbilitySystem?.Kit?.MovementSpeedScale ?? 1.0f)
                           * (CommitLeft > 0.0f ? Balance.SlideSteerScale : 1.0f)
                           * StatusSpeedScale
+                          * SpeedBoostScale
                           * BodySpeedScale
                           * RooftopPool.MovementScale(transform.position);
 

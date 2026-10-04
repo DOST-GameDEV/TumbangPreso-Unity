@@ -1761,17 +1761,20 @@ namespace TumbangPreso.CameraSystem
 
         private void ApplyEdgeRecoveryView()
         {
-            var outward=_character.EdgeOutward;
+            var outward=_character.EdgeOutward;bool drone=_character.EdgeKind==EdgeRecoveryKind.Drone;
             float inwardYaw=Mathf.Atan2(-outward.x,-outward.z)*Mathf.Rad2Deg;
             if(_edgeViewEpisode!=_character.RecoveryEpisode)
-            {_edgeViewEpisode=_character.RecoveryEpisode;_emoteYawDeg=inwardYaw+30;_emotePitchDeg=12;}
+            {_edgeViewEpisode=_character.RecoveryEpisode;_emoteYawDeg=inwardYaw+(drone?0:30);_emotePitchDeg=drone?26:12;}
             _emoteYawDeg=inwardYaw+Mathf.Clamp(Mathf.DeltaAngle(inwardYaw,_emoteYawDeg),-65,65);
             _emotePitchDeg=Mathf.Clamp(_emotePitchDeg,-5,35);
             var mount=_character.EdgeGrip+outward*.50f-Vector3.up*.35f;
             if(_character.EdgePhase==2)mount=Vector3.Lerp(mount,_character.transform.position+Vector3.up*.85f,
                 Mathf.SmoothStep(0,1,Mathf.InverseLerp(.40f,1,_character.EdgePhaseRatio)));
+            // The Arena's drone carries the body across the stage: there is no lip to frame, so
+            // the mount is the body itself, followed from behind its travel and above.
+            if(drone)mount=_character.transform.position+Vector3.up*1.0f;
             var rotation=Quaternion.Euler(_emotePitchDeg,_emoteYawDeg,0);var direction=-(rotation*Vector3.forward);
-            float length=3.2f;
+            float length=drone?4.8f:3.2f;
             int hits=Physics.SphereCastNonAlloc(mount,.16f,direction,_edgeViewHits,length,~0,QueryTriggerInteraction.Ignore);
             for(int i=0;i<hits;i++)
                 if(_edgeViewHits[i].collider.GetComponentInParent<CharacterMotor>()==null)

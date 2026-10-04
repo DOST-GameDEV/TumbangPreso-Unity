@@ -567,7 +567,9 @@ namespace TumbangPreso.Net
         // 141: owner restores near-original jump launch, gravity and fall-speed cap.
         // Three-second entry countdown: mixed clients must not release their hold two seconds apart.
         // Revised throw/contact timings, hit-confirmed punch recovery and retired retrieval slide.
-        public const int ProtocolVersion = 145;
+        // 146: the Arena joins the map list as index 6 (maps travel as an index); its ordinary break is 8 s,
+        // read from the map; and the drone carry is a third edge-recovery kind on `SyncUnit`.
+        public const int ProtocolVersion = 146;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

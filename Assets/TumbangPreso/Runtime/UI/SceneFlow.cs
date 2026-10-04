@@ -60,6 +60,9 @@ namespace TumbangPreso.UI
         public const string LagoonCove = "LagoonCove";
         /// <summary>The city park block, built in Blender (docs/KANTO_DESIGN_GUIDE.md).</summary>
         public const string Kanto = "Kanto";
+        /// <summary>The game-show arena whose stage rearranges between rounds (docs/ARENA_MAP_BRIEF.md).
+        /// A grey-box until its art exists.</summary>
+        public const string Arena = "Arena";
 
         /// <summary>
         /// One map's registry row, from `game_launch.gd`'s `MAPS`.
@@ -166,9 +169,13 @@ namespace TumbangPreso.UI
                          "A cove court in the rocks. Stilt village, reefs and a sunset sea.",0,40,24),
             new MapEntry(Kanto,"KANTO",
                          "City park block. Jeepney stop, traffic lights, busy streets.",45,24,16),
+            // The Arena is LAST: maps travel as an index, so a new one is appended (protocol 146).
+            // Preview: high over a corner, so the whole 28 m stage and its pit are in frame.
+            new MapEntry(Arena,"ARENA",
+                         "Game-show stage. It rebuilds each round; mind the edges.",35,34,24),
         };
 
-        public static readonly string[] Maps = { Eskinita, BayanPlaza, IlalimNgTulay, SaBubong, LagoonCove, Kanto };
+        public static readonly string[] Maps = { Eskinita, BayanPlaza, IlalimNgTulay, SaBubong, LagoonCove, Kanto, Arena };
 
         /// <summary>
         /// True while an ARENA is the active scene rather than a menu.

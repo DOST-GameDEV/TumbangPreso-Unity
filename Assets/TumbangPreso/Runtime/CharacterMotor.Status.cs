@@ -165,6 +165,7 @@ namespace TumbangPreso
             ReleaseCommitment();
             EndFlightImmediately();
             _carryLeft = 0.0f;
+            ClearSpeedBoost();
             _stunLeft = Combat.ApplyStagger(_stunLeft, StatusRules.TaggedSeconds);
             _stunTotal = Mathf.Max(_stunTotal, _stunLeft);
             _stunElement = StunElement.None;
@@ -277,6 +278,7 @@ namespace TumbangPreso
             _chilledLeft = 0.0f;
             _hauntedLeft = 0.0f;
             _carryLeft = 0.0f;
+            ClearSpeedBoost();
             ClearReworkStatuses();
             ClearVoodoo();
             EndRooted();
@@ -321,9 +323,67 @@ namespace TumbangPreso
                 _rootedLeft = Mathf.Max(0.0f, _rootedLeft - dt);
                 if (_rootedLeft <= 0.0f) EndRooted();
             }
+            // The host's `ApplyTagged` runs on its own copy; the owning client learns of the tag from
+            // the replicated stun, so the boost is dropped here as well.
+            if (_speedBoostLeft > 0.0f)
+                _speedBoostLeft = IsTagged ? 0.0f : Mathf.Max(0.0f, _speedBoostLeft - dt);
             StepReworkStatuses(dt);
             StepVoodoo(dt);
             StepBreakFree(dt);
+        }
+
+        // ------------------------------------------------------------------ THE SPEED BOOST (map pads)
+
+        /// <summary>The bounds every caller's numbers are held to, so no pad can pass the host's move budget.</summary>
+        public const float SpeedBoostMaxScale = 2.0f, SpeedBoostMaxSeconds = 5.0f;
+
+        private float _speedBoostLeft, _speedBoostScale = 1.0f;
+
+        public bool IsSpeedBoosted => _speedBoostLeft > 0.0f;
+        public float SpeedBoostLeft => _speedBoostLeft;
+
+        /// <summary>The boost's term in the speed formula: its scale while it runs, 1 otherwise.</summary>
+        public float SpeedBoostScale => _speedBoostLeft > 0.0f ? _speedBoostScale : 1.0f;
+
+        /// <summary>
+        /// A map pad's timed speed-up (`ArenaSpeedPad`, `OverclockBoostPad`). Only on the peer that
+        /// simulates this unit, like `LaunchUp`; returns whether it took.
+        ///
+        /// ⚠️ IT IS ITS OWN MULTIPLIER BECAUSE `SpeedZoneStack` CANNOT SPEED ANYTHING UP: that stack
+        /// takes the LOWEST value starting from 1.0, so a 1.5 entered there is ignored. Slows still
+        /// apply on top (a chilled or fatigued body on a pad is still chilled or fatigued).
+        ///
+        /// ⚠️ REFRESHED BY Max, NEVER STACKED, the rule the stuns use: a second pad while one is
+        /// running keeps the larger scale and the longer time left. Nothing goes on the wire: the
+        /// owner moves faster and its poses travel as they always do. The clamp (scale 1 to 2,
+        /// seconds 0 to 5) keeps the fastest body far under `Core.MoveBudget.MetresPerSecond`.
+        /// </summary>
+        public bool BeginSpeedBoost(float scale, float seconds)
+        {
+            if (!MayMutateGameplayState() || !IsLocallySimulated() || !CanMove()) return false;
+            if (!float.IsFinite(scale) || !float.IsFinite(seconds)) return false;
+            scale = Mathf.Clamp(scale, 1.0f, SpeedBoostMaxScale);
+            seconds = Mathf.Clamp(seconds, 0.0f, SpeedBoostMaxSeconds);
+            if (scale <= 1.0f || seconds <= 0.0f) return false;
+
+            bool fresh = _speedBoostLeft <= 0.0f;
+            _speedBoostScale = fresh ? scale : Mathf.Max(_speedBoostScale, scale);
+            _speedBoostLeft = Mathf.Max(_speedBoostLeft, seconds);
+            // ⚠️ ON THE EDGE ONLY: a pad asks every frame a body stands on it.
+            if (fresh) NetCue.PlayVaried("dash", transform.position, 1.15f, 1.3f, 0.7f);
+            return true;
+        }
+
+        /// <summary>Ends a boost early, for a pad that is switched off with its layout. The simulating peer only.</summary>
+        public void EndSpeedBoost()
+        {
+            if (MayMutateGameplayState() && IsLocallySimulated()) ClearSpeedBoost();
+        }
+
+        private void ClearSpeedBoost()
+        {
+            _speedBoostLeft = 0.0f;
+            _speedBoostScale = 1.0f;
         }
 
         // ------------------------------------------------------------------ THE CARRY

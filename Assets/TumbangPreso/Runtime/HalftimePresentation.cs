@@ -12,6 +12,11 @@ namespace TumbangPreso
         public static bool Playing=>Instance!=null&&Instance.Active;
         public const float BreakDuration = 3.5f;
         public const float HalftimeDuration = 10;
+        // Arena transforms its stage during the ordinary break, so that break is longer there and
+        // the live picture is kept. Read from the map on every peer, so it stays shared with nothing sent.
+        public static bool LiveStageBreak=>Map.ArenaStage.Instance!=null;
+        public static float OrdinaryBreakDuration=>LiveStageBreak?Map.ArenaStage.BreakSeconds:BreakDuration;
+        public static float DurationFor(bool halftime)=>halftime?HalftimeDuration:OrdinaryBreakDuration;
         public bool Active {get;private set;}
         public bool IsHalftime {get;private set;}
         public long MatchId {get;private set;}
@@ -19,7 +24,7 @@ namespace TumbangPreso
         public int CompletedRound {get;private set;}
         public int NextTaya {get;private set;}
         public double Began {get;private set;}
-        public float Duration=>IsHalftime?HalftimeDuration:BreakDuration;
+        public float Duration=>DurationFor(IsHalftime);
         public float Remaining=>Active?Mathf.Max(0,Duration-(float)(SharedUltimatePhase.Now-Began)):0;
         public bool HasReplay=>_view?.Ready==true;
         public RenderTexture ReplayFrame=>_view?.Target;
@@ -61,10 +66,13 @@ namespace TumbangPreso
                 ||double.IsNaN(began)||double.IsInfinity(began)||began>SharedUltimatePhase.Now+1||clip<0
                 ||halftime!=IsMiddleBreak(completed,GameServices.Match.TotalRounds)||!float.IsFinite(requestedScale)||requestedScale<0||requestedScale>4)return false;
             if(MatchId==match&&CompletedRound==completed)return false;
-            if(SharedUltimatePhase.Now-began>=(halftime?HalftimeDuration:BreakDuration))return false;
+            if(SharedUltimatePhase.Now-began>=DurationFor(halftime))return false;
             End(false);
             if(halftime)FindAnyObjectByType<UI.RoleSwapCard>()?.DismissAndPractice();
-            _frame.Freeze();SharedUltimatePhase.Instance?.Cancel();
+            _frame.Freeze();
+            // Freeze also parks the UI input modules, which this break still needs; only its still image is dropped.
+            if(!halftime&&LiveStageBreak)_frame.SetImageVisible(false);
+            SharedUltimatePhase.Instance?.Cancel();
             MatchId=match;CompletedRound=completed;NextTaya=nextTaya;Began=began;ClipId=clip;IsHalftime=halftime;
             _scene=SceneManager.GetActiveScene();Active=true;_attempted=false;_standings=false;FallbackReason=null;
             PresentationClock.RequestScale(requestedScale);PresentationClock.Hold();FreshInput();
