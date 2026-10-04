@@ -27,7 +27,7 @@ namespace TumbangPreso.Diagnostics
             string path=Argument("-tp-replaytrace");if(path==null)return;
             var root=new GameObject("~NetReplayProbe");DontDestroyOnLoad(root);var probe=root.AddComponent<NetReplayProbe>();probe._started=Time.realtimeSinceStartup;
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path)));probe._trace=new StreamWriter(path){AutoFlush=true};
-            probe._trace.WriteLine("real,local,round,epoch,score1,clips,clip,ready,half,view,remaining,held,sim,fallback,fault,liveFields");
+            probe._trace.WriteLine("real,local,round,epoch,score1,clips,clip,ready,half,view,remaining,held,sim,fallback,fault,liveFields,score0,score2,score3");
         }
         private void OnDisable(){_trace?.Dispose();_trace=null;}
         private void Update()
@@ -63,7 +63,7 @@ namespace TumbangPreso.Diagnostics
             if(_trace==null||Time.realtimeSinceStartup<_next)return;_next=Time.realtimeSinceStartup+.05f;
             var archive=FindAnyObjectByType<MatchReplayArchive>();long clip=phase?.ClipId??0;
             if(clip==0&&archive?.Clips.Count>0)clip=archive.Clips[0].Clip.Id;
-            _trace.WriteLine(FormattableString.Invariant($"{Time.realtimeSinceStartup-_started:F3},{NetAuthority.LocalSlot},{match.RoundNumber},{match.PresentationMatchId},{match.ScoreFor(1)},{archive?.Clips.Count??0},{clip},{Net.MatchRpc.Instance.ReplayReadyCount(clip)},{(HalftimePresentation.Playing?1:0)},{(phase?.HasReplay==true?1:0)},{phase?.Remaining??0:F3},{(PresentationClock.Held?1:0)},{Time.time:F4},{(phase?.FallbackReason!=null?1:0)},{(_faultInjected?1:0)},{Net.WorldEffectSnapshot.Capture().Count}"));
+            _trace.WriteLine(FormattableString.Invariant($"{Time.realtimeSinceStartup-_started:F3},{NetAuthority.LocalSlot},{match.RoundNumber},{match.PresentationMatchId},{match.ScoreFor(1)},{archive?.Clips.Count??0},{clip},{Net.MatchRpc.Instance.ReplayReadyCount(clip)},{(HalftimePresentation.Playing?1:0)},{(phase?.HasReplay==true?1:0)},{phase?.Remaining??0:F3},{(PresentationClock.Held?1:0)},{Time.time:F4},{(phase?.FallbackReason!=null?1:0)},{(_faultInjected?1:0)},{Net.WorldEffectSnapshot.Capture().Count},{match.ScoreFor(0)},{match.ScoreFor(2)},{match.ScoreFor(3)}"));
         }
         private IEnumerator Shot()
         {

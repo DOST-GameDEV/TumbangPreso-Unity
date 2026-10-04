@@ -1,0 +1,14 @@
+{
+  "base": "d2c8712d835f2cfa05d7db41c6c17e731b70cf0e",
+  "helperBodyExactUnchanged": true,
+  "helperBodySHA256": "83c39ed6ba26e6d834c717fbbd8bb961289c26415a0ec6b10929532b44d4eb9c",
+  "CSVColumnCount": 19,
+  "preservedPrefixColumns": 16,
+  "newFields": [
+    "score0",
+    "score2",
+    "score3"
+  ],
+  "nativeReuseScope": "Exact catch helpers only; existing1/1 retained-clip evidence",
+  "actualBuildAndNetworkTraceAcceptance": "Pending"
+}
