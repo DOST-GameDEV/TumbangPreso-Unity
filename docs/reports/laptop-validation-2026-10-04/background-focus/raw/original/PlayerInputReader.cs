@@ -45,7 +45,6 @@ namespace TumbangPreso
         private readonly HashSet<Verb> _menuButtons=new HashSet<Verb>();
         private int _menuClosedFrame=-1;
         private bool _loadingInputHeld, _chatInputHeld;
-        private bool _focused = true;
         private readonly Core.ToggleControl _sprintToggle = new();
         private readonly Core.ToggleControl _restoreToggle = new();
         private Carrier _carrier;
@@ -265,14 +264,6 @@ namespace TumbangPreso
             // sampling twice in a frame is harmless but it hides which one is the real one.
 
             if (_motor == null) return;
-            if (!_focused)
-            {
-                // Network players keep ticking in the background. The retired
-                // producer must not import another hardware frame until focus returns.
-                _motor.Intent.Clear();
-                _motor.Intent.CommitFrame();
-                return;
-            }
             ReconcileDeviceInput();
 
             bool loading = UI.Hub.HubLoading.Visible;
@@ -540,13 +531,11 @@ namespace TumbangPreso
 
         private void OnApplicationFocus(bool focused)
         {
-            _focused = focused;
             if (!focused)
             {
                 CancelPendingInput();
+                DiscardMenuButtonsUntilRelease();
             }
-            // Buttons pressed while away also need an observed release on return.
-            DiscardMenuButtonsUntilRelease();
         }
 
         private void CancelPendingInput()
