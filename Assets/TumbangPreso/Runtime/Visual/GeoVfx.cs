@@ -61,7 +61,7 @@ namespace TumbangPreso.Visual
         private static void ApplyVisibility(GameObject root)
         {
             var shader = Shader.Find("TumbangPreso/DanteBarrier");
-            if (shader == null) { Debug.LogError("Dante barrier shader missing from build."); return; }
+            if (shader == null) { Debug.LogError("Basilio barrier shader missing from build."); return; }
             var copies = new Dictionary<Material, Material>();
             foreach (var renderer in root.GetComponentsInChildren<Renderer>())
             {

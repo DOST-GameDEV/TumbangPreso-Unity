@@ -560,7 +560,9 @@ namespace TumbangPreso.UI
 
             if (award.MasteryXp > 0 && !string.IsNullOrEmpty(award.MasteryId))
             {
-                string hero = award.MasteryId.ToUpperInvariant();
+                string hero = Core.Roster.At(Core.Roster.HeroPeople,
+                    Core.Roster.IndexIn(Core.Roster.HeroPeople, award.MasteryId))?.Name
+                    ?? award.MasteryId.ToUpperInvariant();
                 detail += award.MasteryLevelAfter > award.MasteryLevelBefore
                     ? $"\n{hero} MASTERY {award.MasteryLevelAfter}   \u00b7   MASTERY UP"
                     : $"\n{hero} MASTERY {award.MasteryLevelAfter}   \u00b7   +{award.MasteryXp}";

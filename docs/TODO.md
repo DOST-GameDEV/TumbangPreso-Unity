@@ -36,6 +36,26 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CAREER-REFRESH-ORDER-1004: retain newer acknowledged profile
+
+- [x] Earlier same-account load cannot replace the profile returned by a newer
+  submission. Native original1causal failure/2controls; same candidate3/3.
+  Runtime/fixture/meta hashes inspected; generated importer deltas classified
+  and exact pre-run metadata restored. [Evidence](reports/reliability-2026-10-04/career-refresh-order/README.md).
+- [ ] Live-service and packaged result acceptance.
+
+
+### CHARACTER-NAMES-1004: owner-approved names across the UI
+
+- [x] Basilio/Yasmin/Rago/Isagani/Soraya/Ilyas replace the previous displayed
+  names. Nemu/Amihan/Paete stay. Both roster tables, kit headings, current dialogue,
+  Soraya's doll, fallback selection and mastery-result labels use current names.
+  Stable IDs/assets/progression are preserved. Current character docs updated.
+  Existing roster/hero-lines/progression checks47/47; active source string audit
+  finds zero standalone old-name literals in Runtime/Core.
+- [ ] Packaged rendered UI acceptance after the current integration build.
+
+
 ### MATCH-RECORD-DEPLOYMENT-1004: publish checked career rules
 
 - [x] Published canonical source as production v6, exact fetched source and seven

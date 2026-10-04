@@ -35,7 +35,7 @@ namespace TumbangPreso.Abilities
         /// <summary>Kept for the throw path; HIGOP does not charge her throws.</summary>
         public bool IsEclipseActive => false;
 
-        public PhaisterHeroKit() : base("phaister", "PHAISTER")
+        public PhaisterHeroKit() : base("phaister", "SORAYA")
         {
             Skill1 = new Teleport();
             AttackingSkill = new CurseDrain();

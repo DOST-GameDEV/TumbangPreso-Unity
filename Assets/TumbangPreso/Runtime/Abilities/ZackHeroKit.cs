@@ -78,7 +78,7 @@ namespace TumbangPreso.Abilities
         public void RebindWorldEffects(CharacterMotor motor)
         { if (motor != null) AdoptMovementFields(motor.PlayerSlot); }
 
-        public ZackHeroKit() : base("zack", "ZACK")
+        public ZackHeroKit() : base("zack", "ISAGANI")
         {
             Skill1 = new QuickCircuitAbility(this);
             // Role-specific authored Electro jobs.

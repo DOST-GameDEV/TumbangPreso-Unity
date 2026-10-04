@@ -7,7 +7,7 @@ namespace TumbangPreso.EditorTools
 {
     public static class ZackBankShotMotionAuthor
     {
-        [MenuItem("TUMP/Authoring/Wire Zack Bank Shot Clip")]
+        [MenuItem("TUMP/Authoring/Wire Isagani Bank Shot Clip")]
         public static void Wire()
         {
             const string model = "Assets/TumbangPreso/Art/characters/persons/team-zack.glb";
@@ -22,7 +22,7 @@ namespace TumbangPreso.EditorTools
             roster.Clips = roster.Clips.Concat(new[] { clip }).ToArray();
             EditorUtility.SetDirty(roster);
             AssetDatabase.SaveAssetIfDirty(roster);
-            Debug.Log("Bank Shot held-shoe load clip wired to the shipping Zack roster.");
+            Debug.Log("Bank Shot held-shoe load clip wired to the shipping Isagani roster.");
         }
     }
 }

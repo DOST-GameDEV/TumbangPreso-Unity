@@ -96,7 +96,7 @@ namespace TumbangPreso.Visual
                     triangles[k + 3] = n + 1; triangles[k + 4] = n + 3; triangles[k + 5] = n + 4;
                 }
             }
-            var mesh = new Mesh { name = "Sean swept heat", vertices = vertices, triangles = triangles };
+            var mesh = new Mesh { name = "Rago swept heat", vertices = vertices, triangles = triangles };
             mesh.RecalculateNormals(); mesh.RecalculateBounds(); return mesh;
         }
 
@@ -116,7 +116,7 @@ namespace TumbangPreso.Visual
                 vertices.Add(new Vector3(Mathf.Cos(b), 0, Mathf.Sin(b)) * (rb - .025f));
                 triangles.AddRange(new[] { n, n + 2, n + 1, n + 1, n + 2, n + 3 });
             }
-            var mesh = new Mesh { name = "Sean broken burned edge" };
+            var mesh = new Mesh { name = "Rago broken burned edge" };
             mesh.SetVertices(vertices); mesh.SetTriangles(triangles, 0);
             mesh.RecalculateNormals(); mesh.RecalculateBounds(); return mesh;
         }

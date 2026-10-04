@@ -22,7 +22,7 @@ namespace TumbangPreso.EditorTools
         {
             if(model==null)throw new ArgumentNullException(nameof(model));
             Directory.CreateDirectory(Folder);AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
-            var copy=Object.Instantiate(model);copy.name="Phaister motion authoring copy";
+            var copy=Object.Instantiate(model);copy.name="Soraya motion authoring copy";
             copy.hideFlags=HideFlags.HideAndDontSave;
             AnimationClip[] generated=null;
             try
@@ -34,7 +34,7 @@ namespace TumbangPreso.EditorTools
                 for(int i=0;i<generated.Length;i++)
                 {
                     var clip=generated[i];var bindings=AnimationUtility.GetCurveBindings(clip);
-                    if(clip.length<=0||bindings.Length<21)throw new InvalidOperationException("Empty Phaister action: "+clip.name);
+                    if(clip.length<=0||bindings.Length<21)throw new InvalidOperationException("Empty Soraya action: "+clip.name);
                     foreach(var binding in bindings)
                         if(!string.IsNullOrEmpty(binding.path)&&root.Find(binding.path)==null)
                             throw new InvalidOperationException(clip.name+" does not bind to "+binding.path);

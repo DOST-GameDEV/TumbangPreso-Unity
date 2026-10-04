@@ -18,6 +18,16 @@ TODO IDs; open bodies live in TODO_Backlog and finished bodies in TODO_Archive.
 An old OPEN heading is not proof a feature is missing. Reconcile implemented,
 replaced, retired and genuinely blocked requirements without reviving old ideas.
 
+## Owner-approved character names, October 4
+
+The displayed roster is Basilio (dante), Yasmin (cheska), Rago (sean),
+Isagani (zack), Nemu (nemu), Soraya (phaister), Ilyas (rafi), Amihan (amihan)
+and Paete (paete). Use the current display names in UI, captions, dialogue and
+active character documentation. Existing lowercase IDs, source type names and
+asset keys preserve saves, mastery, replay and network compatibility; they do not
+supply player-facing labels. The finalized Phaister protection below applies to
+Soraya's existing character. Naming does not authorize kit or art redesign.
+
 ## Finalized Paete And Phaister
 
 - The owner-approved finalized Paete and Phaister implementations are authoritative

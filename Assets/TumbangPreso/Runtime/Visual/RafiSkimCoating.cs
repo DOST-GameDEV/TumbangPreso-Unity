@@ -65,7 +65,7 @@ namespace TumbangPreso.Visual
                 centre+along*length*.17f-across*width*.52f,
                 centre+along*length*.39f-across*width*.42f});
             var shader=Resources.Load<Shader>("Shaders/RafiWater");
-            if(shader==null)throw new System.InvalidOperationException("Rafi water shader is missing.");
+            if(shader==null)throw new System.InvalidOperationException("Ilyas water shader is missing.");
             _material=new Material(shader){name="Skim sole water"};_edge.sharedMaterial=_material;
             VfxRenderTag.Own(gameObject,_material);
         }

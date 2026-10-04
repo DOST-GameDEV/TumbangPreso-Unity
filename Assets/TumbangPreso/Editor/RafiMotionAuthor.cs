@@ -21,7 +21,7 @@ namespace TumbangPreso.EditorTools
         public static void BakeWaterwallFromCommandLine()
         {
             var art=RosterBook.Load()?.FindPersonArt("rafi");
-            if(art==null||art.Model==null)throw new InvalidOperationException("Rafi authored model missing.");
+            if(art==null||art.Model==null)throw new InvalidOperationException("Ilyas authored model missing.");
             Directory.CreateDirectory(Folder);AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
             var copy=Object.Instantiate(art.Model);copy.hideFlags=HideFlags.HideAndDontSave;
             AnimationClip clip=null;
@@ -41,7 +41,7 @@ namespace TumbangPreso.EditorTools
                 else{EditorUtility.CopySerialized(clip,saved);EditorUtility.SetDirty(saved);}
                 art.Clips=(art.Clips??Array.Empty<AnimationClip>()).Where(c=>c!=null&&c.name!="hero-rafi-wall").Append(saved).ToArray();
                 EditorUtility.SetDirty(art);AssetDatabase.SaveAssets();
-                Debug.Log("[RafiWallBake] Saved one grounded wall clip and Rafi roster reference; existing clips preserved.");
+                Debug.Log("[RafiWallBake] Saved one grounded wall clip and Ilyas roster reference; existing clips preserved.");
             }
             finally
             {
@@ -53,7 +53,7 @@ namespace TumbangPreso.EditorTools
         public static void BakeSkimFromCommandLine()
         {
             var art=RosterBook.Load()?.FindPersonArt("rafi");
-            if(art==null||art.Model==null)throw new InvalidOperationException("Rafi authored model missing.");
+            if(art==null||art.Model==null)throw new InvalidOperationException("Ilyas authored model missing.");
             Directory.CreateDirectory(Folder);AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
             var copy=Object.Instantiate(art.Model);copy.hideFlags=HideFlags.HideAndDontSave;
             AnimationClip clip=null;
@@ -73,7 +73,7 @@ namespace TumbangPreso.EditorTools
                 else{EditorUtility.CopySerialized(clip,saved);EditorUtility.SetDirty(saved);}
                 art.Clips=(art.Clips??Array.Empty<AnimationClip>()).Where(c=>c!=null&&c.name!="hero-rafi-skim").Append(saved).ToArray();
                 EditorUtility.SetDirty(art);AssetDatabase.SaveAssets();
-                Debug.Log("[RafiSkimBake] Saved one grounded skim clip and Rafi roster reference; existing clips preserved.");
+                Debug.Log("[RafiSkimBake] Saved one grounded skim clip and Ilyas roster reference; existing clips preserved.");
             }
             finally
             {
@@ -86,7 +86,7 @@ namespace TumbangPreso.EditorTools
         {
             if(model==null)throw new ArgumentNullException(nameof(model));
             Directory.CreateDirectory(Folder);AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
-            var copy=Object.Instantiate(model);copy.name="Rafi motion authoring copy";
+            var copy=Object.Instantiate(model);copy.name="Ilyas motion authoring copy";
             copy.hideFlags=HideFlags.HideAndDontSave;
             AnimationClip[] generated=null;
             try
@@ -94,13 +94,13 @@ namespace TumbangPreso.EditorTools
                 var animator=copy.GetComponentInChildren<Animator>(true);
                 var root=animator!=null?animator.transform:copy.transform;
                 if(!GeneratedAnimationAuthor.BakeRig(root,"rafi"))
-                    throw new InvalidOperationException("Rafi's player dance could not be baked.");
+                    throw new InvalidOperationException("Ilyas's player dance could not be baked.");
                 generated=HeroAbilityClips.BuildRafiAuthored(root);
                 var saved=new AnimationClip[generated.Length];
                 for(int i=0;i<generated.Length;i++)
                 {
                     var clip=generated[i];var bindings=AnimationUtility.GetCurveBindings(clip);
-                    if(clip.length<=0||bindings.Length<21)throw new InvalidOperationException("Empty Rafi action: "+clip.name);
+                    if(clip.length<=0||bindings.Length<21)throw new InvalidOperationException("Empty Ilyas action: "+clip.name);
                     foreach(var binding in bindings)
                         if(!string.IsNullOrEmpty(binding.path)&&root.Find(binding.path)==null)
                             throw new InvalidOperationException(clip.name+" does not bind to "+binding.path);

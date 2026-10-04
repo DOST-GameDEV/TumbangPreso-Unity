@@ -22,7 +22,7 @@ namespace TumbangPreso.EditorTools
             var light=new GameObject("Portrait key").AddComponent<Light>();light.type=LightType.Directional;
             light.intensity=.85f;light.color=new Color(1,.97f,.90f);light.transform.rotation=Quaternion.Euler(38,-40,0);
             RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Flat;RenderSettings.ambientLight=new Color(.48f,.46f,.42f);RenderSettings.fog=false;
-            var camera=new GameObject("Rafi portrait camera").AddComponent<Camera>();camera.enabled=false;
+            var camera=new GameObject("Ilyas portrait camera").AddComponent<Camera>();camera.enabled=false;
             camera.orthographic=true;camera.orthographicSize=1.03f;camera.transform.position=new Vector3(0,.86f,-6);
             camera.clearFlags=CameraClearFlags.SolidColor;camera.backgroundColor=Color.clear;
             camera.nearClipPlane=.1f;camera.farClipPlane=20;

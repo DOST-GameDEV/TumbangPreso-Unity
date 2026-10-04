@@ -1,0 +1,41 @@
+{
+  "rawFiles": {
+    "original-native\\results.xml": "885dba47b9caf40cca073c612bb14601cd4eaa9010b29c5327fcaec6d63b2d9e",
+    "original-native\\result.json": "e002d5acc68f3da2f4bb720f4f3221022b6d27582c15e386bb0121f89fe882ca",
+    "original-native\\launch.json": "39a70bfc603c5c53d2a63853d26a93c7851dd37f47ab575a3c697efc30998e79",
+    "original-native\\metadata-cleanup.json": "90394ebe3d24e1433ced51f10dc248d1a6a7d33faab8aa7ae24199add362ee00",
+    "candidate-native\\results.xml": "149a93081067ddc01bfbe79b7a504abb0680cc63a91ce24d334f7862bb9af8fa",
+    "candidate-native\\result.json": "b592162546806de268c90c9416f74579296d6292b214a1ee6332913cc3afa8e0",
+    "candidate-native\\launch.json": "e336c6e74353bbb39c1c1b1c150ae7394fb64844741fa7cce9da46b621618458",
+    "candidate-native\\metadata-cleanup.json": "1ce0e0ac623892730a58898ea661c2abda24bfcbbf04b8c08a9ab408328113ea",
+    "CareerStore.original-controlled.cs": "1007da98dab1e3eb79ff8a4087762f41322d7972a72d2bbd6c42600d2ab20ce9",
+    "CareerStore.candidate.cs": "bb7d63b85c48fa0a0082bc5ed9d9c8cdea74a897678732e9bcb50a0dfa0da164",
+    "CareerRefreshOrderingTests.cs": "24452c85c88290b1a2d8ea6b2b906dc2eec3164590ee7ba67a5fb727a38c3e50",
+    "CareerRefreshOrderingTests.cs.meta": "cbb453843b75e046803505333868e8adecf684ccd5290ebffa043c3614bff473"
+  },
+  "sourceProof": {
+    "original-native": {
+      "source": "1007da98dab1e3eb79ff8a4087762f41322d7972a72d2bbd6c42600d2ab20ce9",
+      "fixture": "24452c85c88290b1a2d8ea6b2b906dc2eec3164590ee7ba67a5fb727a38c3e50",
+      "meta": "cbb453843b75e046803505333868e8adecf684ccd5290ebffa043c3614bff473",
+      "inputCount": 19220,
+      "sourceDeltaCount": 203,
+      "deltaClass": "UI importer metadata; original also ProjectAuditor generated script reference",
+      "runtimeFixtureUnchanged": true,
+      "strictAllInputsUnchanged": false
+    },
+    "candidate-native": {
+      "source": "bb7d63b85c48fa0a0082bc5ed9d9c8cdea74a897678732e9bcb50a0dfa0da164",
+      "fixture": "24452c85c88290b1a2d8ea6b2b906dc2eec3164590ee7ba67a5fb727a38c3e50",
+      "meta": "cbb453843b75e046803505333868e8adecf684ccd5290ebffa043c3614bff473",
+      "inputCount": 19220,
+      "sourceDeltaCount": 202,
+      "deltaClass": "UI importer metadata; original also ProjectAuditor generated script reference",
+      "runtimeFixtureUnchanged": true,
+      "strictAllInputsUnchanged": false
+    }
+  },
+  "neutralWrapperReverseExact": true,
+  "sourceBaseline": "a312f26ee0c6ce6c7e9ca942098f6364a8b73f5e",
+  "scope": "Actual native EditMode delayed-dispatch career race; no live SDK or packaged-peer acceptance"
+}

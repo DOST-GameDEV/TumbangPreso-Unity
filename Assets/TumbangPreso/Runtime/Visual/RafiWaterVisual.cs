@@ -54,8 +54,8 @@ namespace TumbangPreso.Visual
             // A thin two-sided sheet needs its own transparent pass. Opposite
             // triangles sharing normals cancel out under the Standard shader.
             var shader = Resources.Load<Shader>("Shaders/RafiWater");
-            if (shader == null) throw new InvalidOperationException("Rafi water shader is missing.");
-            var material = new Material(shader) { name = "Rafi translucent water", color = colour };
+            if (shader == null) throw new InvalidOperationException("Ilyas water shader is missing.");
+            var material = new Material(shader) { name = "Ilyas translucent water", color = colour };
             renderer.sharedMaterial = material;
             VfxRenderTag.Own(renderer.gameObject, material);
         }

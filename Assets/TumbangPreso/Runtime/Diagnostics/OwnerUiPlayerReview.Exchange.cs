@@ -117,7 +117,7 @@ namespace TumbangPreso.Diagnostics
                     yield return movie;
                     string output = Path.Combine(_folder, label);
                     audio.Save(output);
-                    if(casterRoster)File.WriteAllText(Path.Combine(output,"scope.txt"),"Staged Sean/Phaister/Nemu/Cheska roster and full starting meters; four normal AI input writers afterward. This is overlap stress, not natural cast-frequency evidence.\n");
+                    if(casterRoster)File.WriteAllText(Path.Combine(output,"scope.txt"),"Staged Rago/Soraya/Nemu/Yasmin roster and full starting meters; four normal AI input writers afterward. This is overlap stress, not natural cast-frequency evidence.\n");
                     File.WriteAllText(Path.Combine(output, "events.csv"), events.ToString());
                     File.WriteAllText(Path.Combine(output, "participants.txt"), string.Join("\n", travel.Select((m, i) => $"P{i+1}: {m:F2} metres")));
                     if (throws < 1 || !sawTrail || travel.Any(m => m < 2)) throw new InvalidOperationException("Busy capture lacked a real release, supported stroke or four active players");

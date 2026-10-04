@@ -104,7 +104,7 @@ namespace TumbangPreso.Abilities
             ? Mathf.Lerp(0, .20f, 1 - Ultimate.WindupRemaining / Mathf.Max(.01f, Ultimate.Windup))
             : _supernovaPoseTime;
 
-        public SeanHeroKit() : base("sean", "SEAN")
+        public SeanHeroKit() : base("sean", "RAGO")
         {
             Skill1 = new StokeStepAbility();
             // Attacking load and defending crossing seam keep separate cooldowns.
