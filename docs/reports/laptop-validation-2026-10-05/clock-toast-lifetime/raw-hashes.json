@@ -1,0 +1,14 @@
+{
+  "original-tests.xml": "8ab50cc9adc5637552815878b164cb816bc282e9abebb8f597fe9dcc17c0a5c9",
+  "original-launch.json": "b1dd447921347d9bbc8c902232ca3b3714f70d212e61c160c63ae56ec86d6b13",
+  "original-direct-result.json": "5bb2aaeb11f1c4925612efe91c8cae52c6ebe803d70d972b91da45979473d0ed",
+  "original-classified-result.json": "35a582952baf74b92660cbf425c428872b34ce63c1a042eea066bb1836c10cfb",
+  "original-input-map-receipt.json": "21d16451d0b3ebc1938f6d028a1991b3d3f65012ffce69c2b060690bc9f330fb",
+  "candidate-tests.xml": "ff1afc225324e2a1ec8411d09079b76302d06c89f34a508915455e9e163dd195",
+  "candidate-launch.json": "c96665dd8eef89ab27ce37e8a21b3829a9c3f7e1d5a2abcaf4d08722028881e6",
+  "candidate-direct-result.json": "2f51b419ef82721d7d25e57c181f30cb057424e51bdbd4fb2e6fd905b3ba4666",
+  "candidate-classified-result.json": "4cafc25e97558a291ed7912bc75b7284d417a7c74ab42bdfaf3ee8170de3876c",
+  "candidate-input-map-receipt.json": "1fa51139aea7cf59b2cf2dfa556f84edaac7b31a9a1f1ff58e196fe6603f691c",
+  "hud-change.patch": "c5df56ec57ae251a007867c1176ca278732fe2babfc6d740e053af85eed072a8",
+  "behavioral-fixture.cs": "5f9c267f221acadf205526415bc7b2bca8c2ff641bba677c376307c9de258160"
+}
