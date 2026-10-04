@@ -355,7 +355,7 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(30, kit.AttackingSkill.CooldownRemaining, .001f);
                 Assert.AreEqual(0, kit.UltimateCharge);
                 Assert.IsFalse(Apply(state), "The same recovery sequence must not refresh the load.");
-                kit.ConsumeFrostbite(); kit.Tick(new AbilityContext(body, null, null), .01f);
+                kit.CancelFrostbiteWindow(); kit.Tick(new AbilityContext(body, null, null), .01f);
                 state.Sequence = 2; state.PersonalRemaining = 8;
                 Assert.IsTrue(Apply(state), "A valid no-op should retire the new sequence.");
                 Assert.IsFalse(kit.IsFrostbiteLoaded, "Late hydration resurrected an already-spent load.");

@@ -34,7 +34,7 @@ namespace TumbangPreso.Abilities
 
         public override float UltimateCost => CryoRules.AbsoluteZeroCost;
 
-        /// <summary>True while her slipper carries the frost (Frostbite loaded, not yet thrown).</summary>
+        /// <summary>True during the Frostbite window; every throw in it carries frost.</summary>
         public bool IsFrostbiteLoaded { get; set; }
         private bool _joiningFrostbiteSettled;
 
@@ -80,8 +80,8 @@ namespace TumbangPreso.Abilities
             IsFrostbiteLoaded = false; _joiningFrostbiteSettled = false;
         }
 
-        /// <summary>The throw took the frost: the load is spent.</summary>
-        public void ConsumeFrostbite() => IsFrostbiteLoaded = false;
+        /// <summary>Explicit cancellation ends the window; ordinary throws do not.</summary>
+        public void CancelFrostbiteWindow() => IsFrostbiteLoaded = false;
 
         // ================================================================== COLD FEET (signature)
 
@@ -98,7 +98,7 @@ namespace TumbangPreso.Abilities
                        castAction: "hero-cheska-frostwave", viewmodelAction: "frost-sweep",
                        castCue: "sfx_cast_cheska_coldfeet")
             {
-                AimByHolding(CryoRules.ColdFeetMinRange, CryoRules.ColdFeetMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
+                AimByHolding(CryoRules.ColdFeetMinRange, CryoRules.ColdFeetMaxRange, rampSeconds: 1.0f, maxHoldSeconds: 0.0f);
                 TelegraphStyle = GroundReticle.Style.Frost;
             }
 
@@ -123,9 +123,9 @@ namespace TumbangPreso.Abilities
 
             public Frostbite(CheskaHeroKit kit)
                 : base("cheska_skill2", "FROSTBITE",
-                       "Attacking. Frost your slipper for 10 s. The next player it hits is Frozen: no moving, no grabbing, for 2.5 s.",
+                       "Attacking. Frost your slipper for 15 s. Every throw during that window inflicts Frozen on a player hit: no moving, no grabbing, for 2.5 s.",
                        CryoRules.FrostbiteCooldown, CryoRules.FrostbiteLoadSeconds, AbilityGlyph.CheskaFrostbite,
-                       summary: "Frost your slipper. Whoever it hits is Frozen.",
+                       summary: "For 15 s, every throw can freeze a player.",
                        castAction: "hero-cheska-frostbite", viewmodelAction: "frost-load",
                        castCue: "sfx_cast_cheska_frostbite")
             {
@@ -160,14 +160,14 @@ namespace TumbangPreso.Abilities
 
             public GlacialWall()
                 : base("cheska_skill2d", "GLACIAL WALL",
-                       "Defending. Hold to aim, release to raise an arc of icicles. Bodies and slippers stop at it; three slipper hits shatter it.",
+                       "Defending. Hold to aim, release to raise an arc of icicles. Bodies and slippers stop at it; three slipper hits shatter it, or it expires after 10 s.",
                        CryoRules.GlacialWallCooldown, 0.0f, AbilityGlyph.CheskaBarricade,
                        summary: "Raise an icicle wall. Three slipper hits break it.",
                        telegraphRadius: CryoRules.GlacialWallArcLength * 0.5f, telegraphRange: CryoRules.GlacialWallMaxRange,
                        castAction: "hero-cheska-raise", viewmodelAction: "raise-barricade",
                        castCue: "sfx_cast_cheska_glacialwall")
             {
-                AimByHolding(CryoRules.GlacialWallMinRange, CryoRules.GlacialWallMaxRange, rampSeconds: 0.55f, maxHoldSeconds: 0.0f);
+                AimByHolding(CryoRules.GlacialWallMinRange, CryoRules.GlacialWallMaxRange, rampSeconds: 1.0f, maxHoldSeconds: 0.0f);
                 TelegraphStyle = GroundReticle.Style.Frost;
             }
 

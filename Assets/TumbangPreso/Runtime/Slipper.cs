@@ -37,7 +37,34 @@ namespace TumbangPreso
         [SerializeField] private int _ownerSlot = -1;
 
         public int SkinIndex { get => _skinIndex; set => _skinIndex = value; }
-        public SlipperAffinity Affinity { get; set; } = SlipperAffinity.Normal;
+        private SlipperAffinity _affinity = SlipperAffinity.Normal;
+        private double _affinityLoadUntil;
+        public SlipperAffinity Affinity
+        {
+            get => _affinity;
+            set { if (_affinity != value) _affinityLoadUntil = 0; _affinity = value; }
+        }
+
+        // The deadline belongs to this shoe, so drop/regrab cannot reset it and
+        // another payload cannot be erased by a retired load. Peers receive the
+        // host's existing affinity-state update when the load expires.
+        public bool HostLoadTimedAffinity(SlipperAffinity affinity, float seconds)
+        {
+            if (!NetAuthority.ShouldResolve() || State != SlipperState.Held || Holder == null
+                || affinity == SlipperAffinity.Normal || !float.IsFinite(seconds) || seconds <= 0) return false;
+            Affinity = affinity;
+            _affinityLoadUntil = Time.timeAsDouble + seconds;
+            return true;
+        }
+
+        private bool ExpireLoadedAffinity()
+        {
+            if (!NetAuthority.ShouldResolve() || _affinityLoadUntil <= 0 || Time.timeAsDouble < _affinityLoadUntil) return false;
+            _affinityLoadUntil = 0;
+            Affinity = SlipperAffinity.Normal;
+            Net.MatchRpc.Instance?.BroadcastSlipperState(this);
+            return true;
+        }
         private GameObject _affinityVfxGo;
 
 
@@ -1152,7 +1179,10 @@ namespace TumbangPreso
             // Null identifies an environmental ability displacement, which may
             // move any loose shoe without granting somebody else's shot credit.
             if (thrower != null && !OwnershipAllows(thrower)) return;
+            var expiringAffinity = Affinity;
+            if (ExpireLoadedAffinity() && affinity == expiringAffinity) affinity = SlipperAffinity.Normal;
             bool heldRelease = thrower != null && State == SlipperState.Held && Holder == thrower;
+            if (heldRelease) _affinityLoadUntil = 0; // A timely throw transfers the one-hit payload to flight.
             if (heldRelease)
             {
                 ClearRetrievalEpisode();
@@ -2157,6 +2187,7 @@ namespace TumbangPreso
 
         private void Update()
         {
+            ExpireLoadedAffinity();
             if (State != SlipperState.Loose) return;
             if (!NetAuthority.ShouldResolve()) return;
 

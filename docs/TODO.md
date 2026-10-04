@@ -76,6 +76,17 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CRYO-OWNER-1004: updated ranges, window and compact wall
+
+- [x] Implement owner-requested Cold Feet/Wall numbers and every-throw15second Frostbite.
+- [x] Close the visible/collision gaps in the5m/3m-radius wall. Implement Wiki15second Boulder expiry.
+- [x] Native load/status, field/recovery and compact-wall cases pass; protocol147 requires matching rebuilds.
+- [ ] Reproduce the reported excessive Chilled duration. Local shove/post-field-exit controls show5seconds; owner context pending.
+- [ ] Actual147peer/player and all-terrain acceptance.
+
+[Evidence](reports/cryo-owner-update-2026-10-04/README.md).
+
+
 ### CLASSIC-KANTO146-1004: coherent tournament pair and saved results
 
 - [x] Actual source23168/protocol146 Kanto/Classic default8*90, normal two-peer

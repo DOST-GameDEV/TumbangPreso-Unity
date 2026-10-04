@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="14" result="Passed" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 11:27:32Z" end-time="2026-10-04 11:27:53Z" duration="20.6681884">
+  <test-suite type="TestSuite" id="3035" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1657" result="Passed" start-time="2026-10-04 11:27:32Z" end-time="2026-10-04 11:27:53Z" duration="20.668188" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3029" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1657" result="Passed" start-time="2026-10-04 11:27:32Z" end-time="2026-10-04 11:27:53Z" duration="20.659358" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="83007" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3030" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1657" result="Passed" start-time="2026-10-04 11:27:32Z" end-time="2026-10-04 11:27:53Z" duration="20.657272" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3031" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1657" result="Passed" start-time="2026-10-04 11:27:32Z" end-time="2026-10-04 11:27:53Z" duration="20.655239" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1283" name="CheskaFrostbiteLoadTests" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-04 11:27:32Z" end-time="2026-10-04 11:27:35Z" duration="3.208032" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1285" name="AnUnloadedKitLeavesTheShoeUntouched" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests.AnUnloadedKitLeavesTheShoeUntouched" methodname="AnUnloadedKitLeavesTheShoeUntouched" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" seed="753593678" result="Passed" start-time="2026-10-04 11:27:32Z" end-time="2026-10-04 11:27:33Z" duration="0.537538" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1286" name="ExpiryAndResetRetireTheCue" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests.ExpiryAndResetRetireTheCue" methodname="ExpiryAndResetRetireTheCue" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" seed="520679197" result="Passed" start-time="2026-10-04 11:27:33Z" end-time="2026-10-04 11:27:33Z" duration="0.720363" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1290" name="JoiningFrostbiteCanRestoreFourteenSeconds" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests.JoiningFrostbiteCanRestoreFourteenSeconds" methodname="JoiningFrostbiteCanRestoreFourteenSeconds" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" seed="900692234" result="Passed" start-time="2026-10-04 11:27:33Z" end-time="2026-10-04 11:27:34Z" duration="0.221140" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1284" name="LoadedCueUsesTheRealShoeAndRetiresWithTheLoad" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests.LoadedCueUsesTheRealShoeAndRetiresWithTheLoad" methodname="LoadedCueUsesTheRealShoeAndRetiresWithTheLoad" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" seed="2109843104" result="Passed" start-time="2026-10-04 11:27:34Z" end-time="2026-10-04 11:27:34Z" duration="0.582632" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1288" name="OwnerMeshUsesTheSameCueAndKeepsAuthoredSurfaces" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests.OwnerMeshUsesTheSameCueAndKeepsAuthoredSurfaces" methodname="OwnerMeshUsesTheSameCueAndKeepsAuthoredSurfaces" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" seed="1007153183" result="Passed" start-time="2026-10-04 11:27:34Z" end-time="2026-10-04 11:27:35Z" duration="0.486198" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1287" name="RestoredLoadWaitsForEquipmentWithoutRefreshingTheClock" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests.RestoredLoadWaitsForEquipmentWithoutRefreshingTheClock" methodname="RestoredLoadWaitsForEquipmentWithoutRefreshingTheClock" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" seed="965465687" result="Passed" start-time="2026-10-04 11:27:35Z" end-time="2026-10-04 11:27:35Z" duration="0.420387" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1289" name="WikiFrostbiteLoadLastsFifteenSeconds" fullname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests.WikiFrostbiteLoadLastsFifteenSeconds" methodname="WikiFrostbiteLoadLastsFifteenSeconds" classname="TumbangPreso.PlayTests.CheskaFrostbiteLoadTests" runstate="Runnable" seed="1085058130" result="Passed" start-time="2026-10-04 11:27:35Z" end-time="2026-10-04 11:27:35Z" duration="0.226834" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1420" name="DanteBoulderLoadTests" fullname="TumbangPreso.PlayTests.DanteBoulderLoadTests" classname="TumbangPreso.PlayTests.DanteBoulderLoadTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-04 11:27:35Z" end-time="2026-10-04 11:27:53Z" duration="17.408181" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1422" name="AcceptedLoadSurvivesDropAndRetiresOnClear" fullname="TumbangPreso.PlayTests.DanteBoulderLoadTests.AcceptedLoadSurvivesDropAndRetiresOnClear" methodname="AcceptedLoadSurvivesDropAndRetiresOnClear" classname="TumbangPreso.PlayTests.DanteBoulderLoadTests" runstate="Runnable" seed="1767952380" result="Passed" start-time="2026-10-04 11:27:35Z" end-time="2026-10-04 11:27:36Z" duration="0.303552" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1421" name="NormalAffinityLeavesTheShoeUntouched" fullname="TumbangPreso.PlayTests.DanteBoulderLoadTests.NormalAffinityLeavesTheShoeUntouched" methodname="NormalAffinityLeavesTheShoeUntouched" classname="TumbangPreso.PlayTests.DanteBoulderLoadTests" runstate="Runnable" seed="1678990789" result="Passed" start-time="2026-10-04 11:27:36Z" end-time="2026-10-04 11:27:36Z" duration="0.369704" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1424" name="OwnerMeshKeepsItsSurfacesAndClearsThePayload" fullname="TumbangPreso.PlayTests.DanteBoulderLoadTests.OwnerMeshKeepsItsSurfacesAndClearsThePayload" methodname="OwnerMeshKeepsItsSurfacesAndClearsThePayload" classname="TumbangPreso.PlayTests.DanteBoulderLoadTests" runstate="Runnable" seed="26936877" result="Passed" start-time="2026-10-04 11:27:36Z" end-time="2026-10-04 11:27:36Z" duration="0.246788" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1427" name="RetiredBoulderDeadlineCannotEraseAnotherPayload" fullname="TumbangPreso.PlayTests.DanteBoulderLoadTests.RetiredBoulderDeadlineCannotEraseAnotherPayload" methodname="RetiredBoulderDeadlineCannotEraseAnotherPayload" classname="TumbangPreso.PlayTests.DanteBoulderLoadTests" runstate="Runnable" seed="36838808" result="Passed" start-time="2026-10-04 11:27:36Z" end-time="2026-10-04 11:27:37Z" duration="0.420153" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1423" name="SnapshotAffinityAndDisableFollowTheShoe" fullname="TumbangPreso.PlayTests.DanteBoulderLoadTests.SnapshotAffinityAndDisableFollowTheShoe" methodname="SnapshotAffinityAndDisableFollowTheShoe" classname="TumbangPreso.PlayTests.DanteBoulderLoadTests" runstate="Runnable" seed="284723931" result="Passed" start-time="2026-10-04 11:27:37Z" end-time="2026-10-04 11:27:37Z" duration="0.221825" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1426" name="TimelyBoulderThrowKeepsItsFlightPayload" fullname="TumbangPreso.PlayTests.DanteBoulderLoadTests.TimelyBoulderThrowKeepsItsFlightPayload" methodname="TimelyBoulderThrowKeepsItsFlightPayload" classname="TumbangPreso.PlayTests.DanteBoulderLoadTests" runstate="Runnable" seed="335181412" result="Passed" start-time="2026-10-04 11:27:37Z" end-time="2026-10-04 11:27:37Z" duration="0.422511" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1425" name="WikiBoulderLoadExpiresOnItsDroppedShoe" fullname="TumbangPreso.PlayTests.DanteBoulderLoadTests.WikiBoulderLoadExpiresOnItsDroppedShoe" methodname="WikiBoulderLoadExpiresOnItsDroppedShoe" classname="TumbangPreso.PlayTests.DanteBoulderLoadTests" runstate="Runnable" seed="583593732" result="Passed" start-time="2026-10-04 11:27:37Z" end-time="2026-10-04 11:27:53Z" duration="15.420644" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="30000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
