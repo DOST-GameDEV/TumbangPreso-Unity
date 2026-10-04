@@ -16,6 +16,26 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp]public IEnumerator Before()=>PlayModeWorld.Reset();
         [UnityTearDown]public IEnumerator After()=>PlayModeWorld.Reset();
         [UnityTest]
+        public IEnumerator TemporaryTumpLogoUsesSuppliedInkAcrossUiRoutes()
+        {
+            var sprite=TumpUiFactory.Sprite("UI/brand/tump_logo");
+            Assert.IsNotNull(sprite);
+            Assert.AreSame(sprite,OwnerUiTheme.Current.Art(OwnerUiTheme.Piece.Logo));
+            Assert.AreSame(sprite,OwnerMenuArt.Piece("login3-logo"));
+            Assert.AreEqual(1259f/828f,sprite.rect.width/sprite.rect.height,.003f);
+            Assert.Less(sprite.rect.width,sprite.texture.width,"Transparent export margins must not shrink the visible logo.");
+            var owner=new GameObject("TemporaryLogoReview");
+            owner.AddComponent<OwnerCreditsView>().Open(owner.transform,()=>{});
+            yield return null;
+            var canvas=GameObject.Find("OwnerCreditsCanvas").GetComponent<Canvas>();
+            var logo=canvas.GetComponentsInChildren<Image>().Single(i=>i.name=="OriginalOwnerLogo");
+            Assert.AreSame(sprite,logo.sprite);Assert.IsTrue(logo.preserveAspect);
+            Assert.AreEqual(Color.white,logo.color);
+            yield return TumpUiCapture.Capture("Temporary-TUMP-logo-credits",canvas,960,540,false);
+            Object.Destroy(owner);
+        }
+
+        [UnityTest]
         public IEnumerator OverridesMatchSourceTextAndDoNotAccumulateOffsets()
         {
             var book=Resources.Load<OwnerUiOverrideBook>("UI/owner-painted/OwnerUiOverrides");Assert.IsNotNull(book);

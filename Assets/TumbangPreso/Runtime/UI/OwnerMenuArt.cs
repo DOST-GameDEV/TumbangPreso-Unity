@@ -46,6 +46,7 @@ namespace TumbangPreso.UI
         }
         public static Sprite Piece(string name)
         {
+            if(name=="login3-logo")return TumpUiFactory.Sprite("UI/brand/tump_logo");
             if(Sprites.TryGetValue(name,out var sprite) && sprite!=null) return sprite;
             var texture=Texture(name);if(texture==null) return null;
             sprite=Sprite.Create(texture,new Rect(0,0,texture.width,texture.height),new Vector2(.5f,.5f),100,0,SpriteMeshType.FullRect);
