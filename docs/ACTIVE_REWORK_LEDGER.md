@@ -68,8 +68,10 @@ Friendscapacity9cc/deliveryc26: recipientfirst prevents stranded pending request
 local11/11. PRODUCTIONsocialv3 matches canonical source, params unchanged,
 rollbackv1/v2 retained. ActualHTTPS2newanonymousaccounts PASSED save/tagresolve/
 request/accept/bothreload,11 scriptcalls inclcleanup. Tokens memoryonly.
-Friendship/profile/handleindex/auth accounts deleted; EMPTYsocial records remain
-foradmin cleanup. Source live receipt Logs/service-flow-readonly1004.
+Friendship/profile/handleindex/auth accounts deleted. All remainingEMPTYprotected
+keys of ONLYthetwofreshaccounts removed viaexistingadminAPI; bothlistsverified
+empty, no credentialsprinted. Receipt Logs/service-flow-readonly1004/test-cloud-
+cleanup-result.json and report. Existing users/profiles untouched.
 
 Rootdeleted28REMOTE+11LOCAL task branch references; all rootcompetitionPC/laptop/
 root refs removed after merge checks or verified superseded archive. Unique old
@@ -78,12 +80,26 @@ alternatives.bundle. Exact SHA receipts there and pending report. Unrelated/
 canonical branches/worktrees/private work preserved. Laptop4local refs deleted.
 No root browser tabs/servers/native helpers live. Do not bypass cleanup review.
 
+## Current active loss unit
+
+Root firsthost18700/session85950 failed completionobserver'sown110Quit(1)
+beforeLIVE; no intentional loss/gamebug/pass. Actualfailure preserved.
+Armed approach: laptop fixedtest-control endpoint192.168.1.144:18051 starts
+client automatically onhostlisten; no model/chatdelay in30-secondactivewindow.
+Root11380/session18149 TERMINALintentionalstop only afterRootactualround1/2
+admissions/READY andclient2440stillLive/Eskinita/noend. RetainedPopenownership,
+allprefs/artifactrestored. RootLogs/host-loss145-pc-armed1004, exactrawpending.
+Client2440normalexit0, finalactualMatchSetup/round0/inactive/protocol145,
+careerFILEABSENT/history0queue0witness0, no fabricatedmatchover/record. Endpoint
+scene is historical; finalNetState authoritative. Clientrawpublication awaited;
+helper18051 mustcloseafterreceipt transfer. No nativeprocesseslive onRoot.
+
 ## Exact next action
 
 Publish host receipt/report/career +live-service and cleanup evidence, send ref to
 laptop for exactclient-record comparison. Agree a NEW actual active-round host-loss
 question/roles/profiles on same145artifact; keep normalcompleted-pair proof distinct.
-Complete emptytestCloudSave cleanup. Continue full rendered login/Friends/invite/
+CloudSave cleanup COMPLETE. Continue full rendered login/Friends/invite/
 join, Relay/online/maps/modes/physical/recovery/slowreplay/performance/preload gates.
 Read-only publishedmatch-recordv5 drifts from canonical mastery/botweight/offline/
 travel/history fixes; assess/deploy coherent checked source, not unsupported SDK

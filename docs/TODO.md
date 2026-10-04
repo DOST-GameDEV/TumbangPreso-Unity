@@ -17,6 +17,17 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### ACTIVE-HOST-LOSS145-1004: current package retires an unfinished round
+
+- [x] Actual two-machine round1/readiness on identical145 package; retained
+  owned host process stopped while both log/PID states were live and no end
+  event existed. Client returns MatchSetup/round0/inactive, no career file or
+  completed result, normal exit and preferences restored. Earlier completion
+  observer110 autoquit failure is retained as diagnostic/coordination evidence.
+  [Evidence](reports/reliability-2026-10-04/host-loss145-armed/README.md).
+- [ ] Exact client raw integration, body/input/clock recovery, retained-seat,
+  Relay/WAN, physical and newer-source acceptance. Do not overstate log scope.
+
 ### POWER-RECAST-READINESS-1004: owner icon matches the real follow-up window
 
 - [x] Use active reactivation readiness instead of the original cooldown for the
@@ -74,8 +85,9 @@ Nothing was deleted or renumbered.
 - [x] Production socialv3 matches canonical delivery/capacity source; actual
   authenticated two-account lookup/request/accept/both reload passed.11 script
   calls include cleanup, isolated accounts deleted. [Live evidence](reports/reliability-2026-10-04/friend-request-delivery/live-acceptance.md).
-- [ ] Empty test social records admin cleanup, rendered game UI/invite/join and
-  complete cross-account SDK/operator acceptance.
+- [x] Empty test protected keys removed with existing admin authentication and
+  both post-delete lists verified empty. No live user/profile targeted.
+- [ ] Rendered game UI/invite/join and complete cross-account SDK/operator acceptance.
 
 ### HUB-EDIT-REFRESH-1004: background data does not interrupt typing
 
