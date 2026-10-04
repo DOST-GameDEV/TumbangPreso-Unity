@@ -1,0 +1,26 @@
+{
+  "passed": false,
+  "role": "host",
+  "protocol": 145,
+  "source": "8f7f304b543d93db71ed09f9fbaa4107fc365895",
+  "profile": "pc-classic8-145-1004",
+  "expectedWire": "0|0|8|90|0|3|0|1|0|0|0",
+  "pid": 10232,
+  "clientStart": {
+    "armed": true,
+    "started": true,
+    "runnerTerminal": false,
+    "pid": null,
+    "ready": false,
+    "roundsBegun": [],
+    "matchEnded": false,
+    "hostLost": false,
+    "tail": [],
+    "launch": {}
+  },
+  "exitCode": 4294967295,
+  "terminal": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "artifactUnchanged": true
+}
