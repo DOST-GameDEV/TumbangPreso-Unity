@@ -17,6 +17,15 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### ZACK-BANK-CONTACT-1004: powered wall-contact cue
+
+- [x] Add a compact gold contact burst to each actual powered wall bank, including
+  both Overclock contacts. Preserve silent ceiling returns, ordinary spin banks,
+  scoring and restitution. Native component graphics7/7 and source-only runtime
+  bounce cases6/6 passed. [Evidence](reports/zack-bank-contact-2026-10-04/validation.md).
+- [ ] Whole-court/live owner footage, packaged visuals and actual remote-peer
+  acceptance. Component frames and reduced-project checks do not close these.
+
 ### HUB-EDIT-REFRESH-1004: background data does not interrupt typing
 
 - [x] Native original two failures/two controls; candidate preserves actual

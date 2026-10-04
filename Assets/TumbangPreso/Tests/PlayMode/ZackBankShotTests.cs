@@ -275,7 +275,31 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(1, shoe.BankCount); Assert.AreEqual(1, flairs);
                 Assert.AreEqual(SlipperAffinity.BankShot, shoe.Affinity);
                 Bank(shoe); Assert.AreEqual(1, shoe.ThrowerSlot);
-                Assert.AreEqual(2, shoe.BankCount); Assert.AreEqual(1, flairs);
+                Assert.AreEqual(2, shoe.BankCount); Assert.AreEqual(2, flairs, "Each real powered wall contact gets its own cue; the ceiling stays silent.");
+            }
+            finally { MatchFlair.Presented -= Observe; }
+        }
+        [TestCase(false, 1)] [TestCase(true, 2)]
+        public void EveryUnspunPoweredWallAnnouncesContact(bool overclock, int expected)
+        {
+            var ctx = Actor(out _); var shoe = Shoe(ctx);
+            shoe.HostThrow(ctx.Motor, Vector3.up, new Vector3(10, 8, 2),
+                overclock ? SlipperAffinity.OverclockBank : SlipperAffinity.BankShot);
+            var strengths = new List<float>();
+            void Observe(MatchFlair.Kind kind, int actor, int subject, Vector3 at, float strength)
+            {
+                if (kind != MatchFlair.Kind.BankShot) return;
+                Assert.AreEqual(1, actor); Assert.AreEqual(shoe.transform.position, at);
+                strengths.Add(strength);
+            }
+            MatchFlair.Presented += Observe;
+            try
+            {
+                for (int i = 0; i < expected; i++) Bank(shoe);
+                Assert.AreEqual(expected, strengths.Count);
+                Assert.That(strengths, Is.All.EqualTo(BankShotContact.FlairStrength));
+                Bank(shoe);
+                Assert.AreEqual(expected, strengths.Count, "An unpowered unspun contact cannot pretend to be powered.");
             }
             finally { MatchFlair.Presented -= Observe; }
         }
