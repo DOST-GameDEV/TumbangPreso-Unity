@@ -55,6 +55,9 @@ reference characters are quality examples, not a new redesign assignment.
   native held/empty checks pass2/2. Full kit/player/SFX review remains open.
   [Evidence](reports/ilyas-wave-crest-2026-10-04/README.md).
 - [ ] Real-game film/listening review and multiplayer/player qualification.
+  Five split native live-handoff cases pass on Eskinita; three also assert and
+  capture the actual visible cinematic. Full matches, listening and peers remain open.
+  [Handoff evidence](reports/hero-live-handoffs-2026-10-04/README.md).
 
 **How this file is organised (docs cleanup, 2026-09-23).** This file is the ONE status
 queue: the current queue and priority order, then one index row for every numbered entry.
