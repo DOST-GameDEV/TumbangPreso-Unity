@@ -72,6 +72,7 @@ Shader "TumbangPreso/IlalimPainted"
 
         sampler2D _MainTex, _BumpMap, _Ov0Tex, _Ov1Tex, _Ov2Tex;
         float4 _MainTex_ST, _BumpMap_ST, _Ov0Tex_ST, _Ov1Tex_ST, _Ov2Tex_ST;
+        float4 _Ov0Tex_TexelSize, _Ov1Tex_TexelSize, _Ov2Tex_TexelSize;
         fixed4 _Color, _PostTint;
         half _Glossiness, _BumpScale, _EmissionFromAlbedo, _Cutoff, _Saturation;
         half4 _EmissionColor;
@@ -131,10 +132,17 @@ Shader "TumbangPreso/IlalimPainted"
             return lerp(colour, other, f);
         }
 
-        float3 Overlay(float3 colour, Input IN, sampler2D tex, float4 st, float4 spec)
+        float3 Overlay(float3 colour, Input IN, sampler2D tex, float4 st, float4 spec, float4 texelSize)
         {
+            float2 uv = Channel(IN, spec.x) * st.xy + st.zw;
             if (spec.y < 0.5) return colour;
-            float4 o = tex2D(tex, Channel(IN, spec.x) * st.xy + st.zw);
+            // Implicit/gradient sampler lookup produced black facade speckles on
+            // the checked OpenGL path despite healthy overlay texels. Explicit
+            // footprint LOD preserves distance mip filtering and authored grime.
+            float2 dx = ddx(uv) * texelSize.zw, dy = ddy(uv) * texelSize.zw;
+            float footprint = max(1.0, max(dot(dx, dx), dot(dy, dy)));
+            float lod = 0.5 * log2(footprint);
+            float4 o = tex2Dlod(tex, float4(uv, 0, lod));
             return spec.y < 1.5 ? colour * o.rgb : lerp(colour, o.rgb, o.a);
         }
 
@@ -148,9 +156,9 @@ Shader "TumbangPreso/IlalimPainted"
             if (_AntiTileCount > 1.5) c = AntiTile(c, uv, _AT1, _AT1Mask, _AT1Seed);
             if (abs(_Saturation - 1) > 1e-3) c = Saturate(c, _Saturation);
             c *= _Color.rgb;
-            c = Overlay(c, IN, _Ov0Tex, _Ov0Tex_ST, _Ov0);
-            c = Overlay(c, IN, _Ov1Tex, _Ov1Tex_ST, _Ov1);
-            c = Overlay(c, IN, _Ov2Tex, _Ov2Tex_ST, _Ov2);
+            c = Overlay(c, IN, _Ov0Tex, _Ov0Tex_ST, _Ov0, _Ov0Tex_TexelSize);
+            c = Overlay(c, IN, _Ov1Tex, _Ov1Tex_ST, _Ov1, _Ov1Tex_TexelSize);
+            c = Overlay(c, IN, _Ov2Tex, _Ov2Tex_ST, _Ov2, _Ov2Tex_TexelSize);
             c *= _PostTint.rgb;
             o.Normal = UnpackScaleNormal(tex2D(_BumpMap, IN.packA.xy * _BumpMap_ST.xy + _BumpMap_ST.zw), _BumpScale);
             o.Albedo = c;
