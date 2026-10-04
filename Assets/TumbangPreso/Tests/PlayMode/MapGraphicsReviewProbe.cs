@@ -73,6 +73,26 @@ namespace TumbangPreso.PlayTests
                     yield return null;
                     using(NeighbourhoodSkyMotion.At(20))
                         yield return GameplayShots.Render(camera,map+(yaw>0?"-east":"-west"),false,folder,width:1920,height:1080);
+                    if(map==SceneFlow.SaBubong && yaw>0 && Environment.GetEnvironmentVariable("TUMP_MAP_SURFACE_CHECK")=="1")
+                    {
+                        // Fixed aerial witness: these authored pale walls/roofs have no near-black patches.
+                        var pixels=new Texture2D(2,2,TextureFormat.RGB24,false);
+                        try
+                        {
+                            pixels.LoadImage(File.ReadAllBytes(Path.Combine(folder,map+"-east.png")));
+                            int black=0;
+                            foreach(var rect in new[]{new RectInt(540,40,70,130),new RectInt(1220,150,120,85)})
+                                for(int y=rect.yMin;y<rect.yMax;y++)for(int x=rect.xMin;x<rect.xMax;x++)
+                                {
+                                    var c=pixels.GetPixel(x,pixels.height-1-y);
+                                    if(c.r<35f/255&&c.g<35f/255&&c.b<35f/255)black++;
+                                }
+                            File.WriteAllText(Path.Combine(folder,"surface-check.txt"),"Near-black pixels in two fixed facade/roof regions: "+black);
+                            Assert.Less(black,50,"Rooftop texture sampling introduced black patches in the fixed witness.");
+                        }
+                        finally {Object.Destroy(pixels);}
+                    }
+
                 }
             }
             finally {RenderSettings.fog=fog;Object.Destroy(camera.gameObject);}

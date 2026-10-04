@@ -1,5 +1,15 @@
 # TODO: Tumbang Preso Unity
 
+### MAP-SAMPLING-1004: aerial-capture surface corruption
+
+- [x] Reproduce Sa Bubong apartment black patches, isolate albedo sampling, and
+  replace implicit sampling with explicit footprint mip selection. Fixed witness
+  regions improve from968/3468near-black pixels to0/0 without changing authored
+  textures, geometry or post processing. [Evidence](reports/near-fade-sampling-2026-10-04/README.md).
+- [x] Three affected-map captures and one near-camera approach pass; actual
+  frames inspected. Sa Bubong/Eskinita corrected; Kanto roadside planters remain open.
+- [ ] Windows/player/GPU and human acceptance; exact red/cyan foliage report stays open.
+
 ### SLIPPER-CIRCLE-1004: ground-only recall circle
 
 - [x] Hide during held/flight states; show only after landing, retaining normal

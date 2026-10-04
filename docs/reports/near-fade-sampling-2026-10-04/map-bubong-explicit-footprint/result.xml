@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 13:56:54Z" end-time="2026-10-04 13:57:16Z" duration="21.7131559">
+  <test-suite type="TestSuite" id="3056" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1676" result="Passed" start-time="2026-10-04 13:56:54Z" end-time="2026-10-04 13:57:16Z" duration="21.713156" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3050" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1676" result="Passed" start-time="2026-10-04 13:56:54Z" end-time="2026-10-04 13:57:16Z" duration="21.699484" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="109753" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3051" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1676" result="Passed" start-time="2026-10-04 13:56:54Z" end-time="2026-10-04 13:57:16Z" duration="21.692649" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3052" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1676" result="Passed" start-time="2026-10-04 13:56:54Z" end-time="2026-10-04 13:57:16Z" duration="21.686089" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1812" name="MapGraphicsReviewProbe" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" testcasecount="52" result="Passed" start-time="2026-10-04 13:56:54Z" end-time="2026-10-04 13:57:16Z" duration="21.661085" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="WallClock" />
+            </properties>
+            <test-case id="1813" name="OwnerBirdsEyeMapScreenshots" fullname="TumbangPreso.PlayTests.MapGraphicsReviewProbe.OwnerBirdsEyeMapScreenshots" methodname="OwnerBirdsEyeMapScreenshots" classname="TumbangPreso.PlayTests.MapGraphicsReviewProbe" runstate="Runnable" seed="480159182" result="Passed" start-time="2026-10-04 13:56:54Z" end-time="2026-10-04 13:57:16Z" duration="21.644902" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 0 of 297 renderers, 0 with a roof variant.
+[NearFade] 2302 occluder nodes matched, 30 renderers moved onto TumbangPreso/NearFade.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/map-bubong-explicit-footprint/frames/SaBubong-east.png
+[Play] wrote /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/map-bubong-explicit-footprint/frames/SaBubong-west.png
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
