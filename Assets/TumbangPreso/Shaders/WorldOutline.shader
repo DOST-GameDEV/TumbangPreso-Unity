@@ -771,6 +771,8 @@ Shader "TumbangPreso/WorldOutline"
             float4 _ViewRay,_WorldContactProjection,_WorldAOParams;
             // x on (the cast's share, > 0), y radius in metres, z bias in metres. See CastAO.
             float4 _CharacterAOParams;
+            // World up in view space (xyz), and how far up the overhead shade looks, metres (w). See CastAO.
+            float4 _CastUpView;
             float3 ViewPoint(float2 uv,out float3 normal)
             {
                 float depth;DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture,float4(uv,0,0)),depth,normal);
@@ -848,9 +850,35 @@ Shader "TumbangPreso/WorldOutline"
                 }
                 float fine=saturate(fineHit/max(fineAll,1e-4)*3.6);
                 float broad=saturate(broadHit/max(broadAll,1e-4)*2.4);
-                // Joined as two coats of shade, then the ceiling.
+                // ⚠️⚠️ § SHADE FROM ABOVE, FOR A FLAT FACE (owner, 2026-10-05, on a forehead still flat
+                // under its fringe: "i want shading there too"). Neither kernel can do it: a fringe
+                // stands a few centimetres proud of the face, and a probe that leaves a flat face at
+                // an angle is past that within a hand's width, so only a thin line under the hair
+                // ever darkened. What a painter puts there is the shade something overhead THROWS
+                // DOWN the surface. So this walks straight up from the point (world up, in view
+                // space), `_CastUpView.w` metres, and asks at each step whether the scene is NEARER
+                // the eye than that step is: hair in front of the face's plane, a chin in front of
+                // the collar, a head in front of the chest. Each hit counts more the nearer it is, so
+                // the shade is deep under the overhang and fades down the surface: a gradient on a
+                // face that has no seam at all. A step's hit must be within 0.45 m in depth, so a
+                // lamp post or another player crossing in front does not shade the body behind it.
+                float3 up=normalize(_CastUpView.xyz);
+                float overHit=0,overAll=0;
+                [unroll] for(int q=0;q<8;q++)
+                {
+                    float step01=(q+frac(noise*8))/8;
+                    float rise=_CastUpView.w*lerp(.06,1.0,step01);
+                    float3 probe=p+up*rise+n*.01;
+                    float2 uv=(probe.xy/-probe.z)/_ViewRay.xy*.5+.5;
+                    float sceneZ=-EyeDepth(uv);
+                    float ahead=sceneZ-probe.z;        // positive: the scene is nearer the eye than the step
+                    float weight=1-step01*.85;
+                    overHit+=step(bias*2,ahead)*step(ahead,.45)*weight;overAll+=weight;
+                }
+                float over=saturate(overHit/max(overAll,1e-4)*1.6);
+                // Joined as coats of shade, then the ceiling.
                 const float CastCeiling=.62;
-                float ao=1-min(CastCeiling,1-(1-fine*.75)*(1-broad*.6));
+                float ao=1-min(CastCeiling,1-(1-fine*.75)*(1-broad*.6)*(1-over*.7));
                 // Out by 30 m, where a body is a few pixels and the probes land inside one.
                 return lerp(ao,1,smoothstep(18,30,-p.z));
             }

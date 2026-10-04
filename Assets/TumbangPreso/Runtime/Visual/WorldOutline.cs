@@ -969,6 +969,9 @@ namespace TumbangPreso.Visual
             _material.SetFloat("_CharacterAO",castShare);
             // The cast's own kernel (pass 2, CastAO): on only with a share, at a body's scale.
             _material.SetVector("_CharacterAOParams",new Vector4(castShare,WorldLookProfile.Current.CharacterAmbientOcclusionRadius,.006f,0));
+            // World up as the camera sees it, and the reach of the cast's shade from above (CastAO).
+            Vector3 castUp=_camera.worldToCameraMatrix.MultiplyVector(Vector3.up);
+            _material.SetVector("_CastUpView",new Vector4(castUp.x,castUp.y,castUp.z,WorldLookProfile.Current.CharacterOverheadShade));
             RenderTexture occlusion=null,occlusionBlur=null;
             float aoStrength=AmbientOcclusionLive?WorldLookProfile.Current.AmbientOcclusion*WorldLookPresentation.Current.Weight:0;
             if(aoStrength>0)

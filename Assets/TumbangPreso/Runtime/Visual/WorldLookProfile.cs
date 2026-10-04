@@ -142,6 +142,8 @@ namespace TumbangPreso.Visual
         // The cast's kernel radius, metres: a body's scale (a fringe of hair, an arm against a chest),
         // where the world's `AmbientOcclusionRadius` is a doorway's.
         [Range(.1f,1)] public float CharacterAmbientOcclusionRadius=.35f;
+        // How far the shade thrown from above reaches down a body, metres (a fringe's shade down a face).
+        [Range(.1f,1.2f)] public float CharacterOverheadShade=.5f;
         // 1 draws the cast's hull in a deeper shade of its own colour, 0 in black.
         [Range(0,1)] public float CastInkSelf=.88f;
         // The cast's hull width against its authored width.
