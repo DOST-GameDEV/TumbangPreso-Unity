@@ -44,4 +44,13 @@ Original sheet regions, SVG/PNG hashes and installation mapping are retained in
 the accompanying receipts. SVGs plus transparent PNGs are delivered in the local
 Downloads `TUMP-vector-set` folder. Local VTracer0.6.15 tracing follows
 [the upstream tool](https://github.com/visioncortex/vtracer); temporary dependency
-files are removed after acceptance.
+files remain tracked for cleanup: automatic approval review rejected recursive
+deletion of the task-owned dependency folder as "blocked by policy". No bypass
+was attempted. Earlier native/player/share helpers are terminal.
+
+The existing brand rebuild script now prefers these SVG masters instead of
+silently recreating the historical JPEG/recoloured art. A single regeneration
+into isolated outputs reproduces dimensions and every RGBA pixel for all seven
+brand exports. Encoded PNG bytes differ because Pillow re-encodes Cairo output;
+that initial byte-equality expectation and the direct pixel comparison are
+recorded separately. Current game assets were not overwritten by this check.
