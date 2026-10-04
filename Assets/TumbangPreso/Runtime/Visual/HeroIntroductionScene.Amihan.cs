@@ -721,7 +721,7 @@ namespace TumbangPreso.Visual
             float u = Ease(AmSwoopAt, AmSwoopEnd, story);
             float a = (180f + 180f * u) * Mathf.Deg2Rad;
             float r = Mathf.Lerp(-AmBirdBorn.z, AmSwoopRadius, Ease(0f, .35f, u));
-            float h = Mathf.Lerp(Mathf.Lerp(AmBirdBorn.y, 2.3f, Mathf.Sin(u * Mathf.PI * .8f)), AmBirdHover.y, u * u * u);
+            float h = Mathf.Lerp(Mathf.Lerp(AmBirdBorn.y, 3.0f, Mathf.Sin(u * Mathf.PI * .8f)), AmBirdHover.y, u * u * u);
             var path = new Vector3(Mathf.Sin(a) * r, h, Mathf.Cos(a) * r * Mathf.Lerp(1f, .5f, u * u));
             var tangent = new Vector3(Mathf.Cos(a), 0f, -Mathf.Sin(a));
             float swooping = Ease(AmSwoopAt - .05f, AmSwoopAt + .1f, story);
@@ -780,7 +780,8 @@ namespace TumbangPreso.Visual
 
         private void SampleAmihanBird(float story, bool calm, Vector3 at, Quaternion turn, float flap, float on)
         {
-            float scale = AmBirdScale;
+            // v16 d: in the wind-up, seen from behind her, it was a small haze over the church; it swells as it rears over her.
+            float scale = AmBirdScale * (1f + .35f * Ease(AmWindAt - .2f, AmWindAt + .4f, story));
             // It forms from the inside out: the body first, then the wings unfold from the shoulders, the tail streams out.
             float body = on * Ease(AmFormAt, AmFormAt + .14f, story);
             float unfold = Ease(AmFormAt + .04f, AmFormAt + .26f, story);
