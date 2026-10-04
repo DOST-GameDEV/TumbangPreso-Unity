@@ -33,3 +33,7 @@ No production carry update was altered. Final full CarryTests fixture passes5/5 
 (exit0,125.0s). Frozen inputs and both Editor/Quality setting backups match
 after completion. No additional OOM occurred. This restores a focused regression
 gate; it is not a full-project suite, multiplayer or release-build pass.
+
+Incoming late-join-rules fix8d8822d3 was preserved in the merge. The integrated
+runtime then passes3/3: actual first-person carry and both incoming current-rule
+arrival/repeated-identification controls. Process156.2s, no additional OOM.
