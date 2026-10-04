@@ -10,6 +10,7 @@ const empty = () => ({ Friends: [], Incoming: [], Outgoing: [], Blocked: [] });
 function fixture() {
     const data = new Map();
     const writes = [];
+    let failure = null;
     class DataApi {
         async getProtectedItems(project, player, keys) {
             return { data: { results: keys.filter(key => data.has(player + '/' + key))
@@ -17,6 +18,10 @@ function fixture() {
         }
         async setProtectedItem(project, player, item) {
             writes.push(player + '/' + item.key);
+            if (failure === player + '/' + item.key) {
+                failure = null;
+                throw new Error('injected write failure');
+            }
             data.set(player + '/' + item.key, item.value);
         }
     }
@@ -28,6 +33,7 @@ function fixture() {
     vm.runInContext(source, sandbox);
     return {
         writes,
+        fail: who => { failure = who + '/socialList'; },
         list: who => JSON.parse(data.get(who + '/socialList') || JSON.stringify(empty())),
         seed: (who, list) => data.set(who + '/socialList', JSON.stringify(list)),
         call: (who, action, subject, extra = {}) => sandbox.module.exports({
@@ -51,6 +57,31 @@ function mutualFriends(f) {
     }
 }
 const tests = [
+    ['failed recipient write does not strand the sender behind pending state', async () => {
+        const f = fixture(); f.fail('bob');
+        await assert.rejects(f.call('alice', 'request', 'bob'), /injected write failure/);
+        assert.equal(f.list('alice').Outgoing.length, 0, 'Client rejects resending a pending outgoing request');
+        assert.equal(f.list('bob').Incoming.length, 0);
+        await f.call('alice', 'request', 'bob');
+        assert.equal(f.list('alice').Outgoing.length, 1);
+        assert.equal(f.list('bob').Incoming.length, 1);
+    }],
+    ['sender write failure retries without duplicate pending rows', async () => {
+        const f = fixture(); f.fail('alice');
+        await assert.rejects(f.call('alice', 'request', 'bob'), /injected write failure/);
+        assert.equal(f.list('alice').Outgoing.length, 0);
+        await f.call('alice', 'request', 'bob');
+        assert.equal(f.list('alice').Outgoing.length, 1);
+        assert.equal(f.list('bob').Incoming.length, 1);
+    }],
+    ['blocked recipient remains opaque and receives no pending request', async () => {
+        const f = fixture();
+        await f.call('bob', 'block', 'alice');
+        const reply = await f.call('alice', 'request', 'bob');
+        assert.equal(JSON.parse(reply.list).Outgoing.length, 1);
+        assert.equal(f.list('bob').Incoming.length, 0);
+        assert.equal(f.list('bob').Friends.length, 0);
+    }],
     ['request, accept and reload persist both accounts', async () => {
         const f = fixture();
         await f.call('alice', 'request', 'bob');

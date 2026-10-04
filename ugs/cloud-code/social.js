@@ -254,12 +254,13 @@ module.exports = async ({ params, context, logger }) => {
         if (!findIn(mine.Outgoing, subject))
             mine.Outgoing.push(rowFrom({ PlayerId: subject, Handle: oneLine(params.theirHandle, HANDLE_MAX) }));
 
-        await saveList(api, projectId, playerId, mine);
-
         if (!refused && !findIn(theirs.Incoming, playerId) && !findIn(theirs.Friends, playerId)) {
             theirs.Incoming.push(rowFrom({ PlayerId: playerId, Handle: handle }));
             await saveList(store, projectId, subject, theirs);
         }
+        // The client refuses resending an outgoing pending row. Publish that row
+        // only after delivery, so a failed recipient write remains retryable.
+        await saveList(api, projectId, playerId, mine);
 
         return { list: JSON.stringify(normalise(mine)) };
     }

@@ -84,15 +84,16 @@ def main():
     parser.add_argument('--port', type=int, default=49153)
     parser.add_argument('--seconds', type=int, required=True)
     parser.add_argument('--wait-seconds', type=int, default=0)
+    parser.add_argument('--direct', action='store_true', help='Run without scheduler, RAM admission or external process timeout')
     parser.add_argument('--protocol', type=int, required=True, help='Agreed protocol of the checked shared artifact')
     parser.add_argument('--artifact-manifest', type=Path, required=True)
     parser.add_argument('--character-pick', type=int, default=0, help='Valid Hero roster index for normal lobby selection')
     parser.add_argument('--runtime-sha256', required=True,
                         help='Pinned Runtime hash from the checked shared artifact receipt')
     args = parser.parse_args()
-    if (not 1 <= args.port < 65535 or not 90 <= args.seconds <= 240 or not 0 <= args.wait_seconds <= 600
+    if (not 1 <= args.port < 65535 or not args.seconds >= 90 or not 0 <= args.wait_seconds <= 600
             or not 1 <= args.protocol <= 65535 or not 0 <= args.character_pick <= 2147483647):
-        parser.error('Require valid port/protocol, nonnegative character pick,90..240 seconds and0..600 pool wait seconds.')
+        parser.error('Require valid port/protocol, nonnegative character pick,at least90 scenario seconds and0..600 pool wait seconds.')
     exe = args.exe.resolve(); out = args.out.resolve()
     runtime = exe.parent / (exe.stem + '_Data/Managed/TumbangPreso.Runtime.dll')
     sha = file_sha256
@@ -107,8 +108,8 @@ def main():
     if profile.exists():
         raise RuntimeError('Require a fresh task-owned profile, never replace an existing one.')
     port = args.port if args.role == 'host' else args.port + 1
-    claim = jobs.make_claim(ROOT, 'gpu', 1536, 1024, args.profile, [port], [])
-    result = dict(passed=False, role=args.role, sourceCommit=source_commit,
+    claim = None if args.direct else jobs.make_claim(ROOT, 'gpu', 1536, 1024, args.profile, [port], [])
+    result = dict(passed=False, role=args.role, sourceCommit=source_commit, directExecution=args.direct,
                   protocol=args.protocol, runtimeSha256=expected, exeSha256=sha(exe),
                   coreSha256=sha(runtime.with_name('TumbangPreso.Core.dll')),
                   artifactManifestSha256=sha(args.artifact_manifest.resolve()), characterPick=args.character_pick,
@@ -117,7 +118,8 @@ def main():
     token = uuid.uuid4().hex
     seed = profile_seed(token, args.role, args.character_pick)
     try:
-        result['admission'] = jobs.acquire(jobs.POOL, claim, args.wait_seconds); acquired = True
+        if not args.direct:
+            result['admission'] = jobs.acquire(jobs.POOL, claim, args.wait_seconds); acquired = True
         before = read_input_preferences()
         profile.mkdir(parents=True, exist_ok=False); profile_created = True
         (profile / 'settings.json').write_bytes(seed)
@@ -131,7 +133,7 @@ def main():
         child = subprocess.Popen(command, cwd=ROOT, env=guard.unity_environment(), startupinfo=startup)
         result['pid'] = child.pid
         (out / 'launch.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
-        result['exitCode'] = child.wait(timeout=args.seconds + 35)
+        result['exitCode'] = child.wait() if args.direct else child.wait(timeout=args.seconds + 35)
         text = (out / 'state.txt').read_text(encoding='utf-8-sig')
         log = (out / 'player.log').read_text(encoding='utf-8-sig', errors='replace')
         report = net_matrix.parse_report(str(out / 'state.txt'))

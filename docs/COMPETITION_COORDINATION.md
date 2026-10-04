@@ -82,6 +82,16 @@ mark completion merely to stop a turn or because context is nearly full.
 
 ## Current test and hitch directive
 
+October4 owner override: remove self-created execution barriers. Do not treat
+estimated RAM/admission budgets, fixed free-memory reserves, retry ceilings or
+external execution deadlines as reasons to stop this engineering workflow.
+Direct isolated Unity/player execution is authorized. Preserve source, profiles,
+preferences and unrelated processes; freeze actual inputs and record real
+progress/failures. Coordinate machine/source ownership and observe actual jobs.
+Historical guarded run evidence remains history, not a revived execution order.
+The owner also explicitly authorizes the bounded live two-account UGS Friends
+test after the usage explanation. Do not ask again for that same test.
+
 The owner requests every available meaningful check on the coherent integration
 and fixes for any demonstrated bugs, freezes or lag. Split coverage explicitly
 between machines. Measure player first-use/frame behavior, identify the expensive
