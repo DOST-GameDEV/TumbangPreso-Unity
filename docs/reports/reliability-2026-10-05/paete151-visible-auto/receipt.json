@@ -1,0 +1,16 @@
+{
+  "sourceArtifact": "89cc9f295a96d3f1647c740e1387206329315af8",
+  "protocol": 151,
+  "runtimeSha256": "19a395ab45ad16ef0392b3ffdd02f9762efe16ac42f983024d8378e4778a2aaf",
+  "playerPid": 17928,
+  "profile": "pc-p151-plant1005a",
+  "exitCode": 0,
+  "inputRestored": true,
+  "profileSettingsRestored": true,
+  "terminal": true,
+  "route": "Guest -> title -> Home -> Hero carousel -> Paete -> Try in Practice",
+  "ordinaryInput": "Q held150ms and released; no secondcast/cheats/direct methods in recorded run",
+  "recording": "Fresh exact owned-window desktop crop15FPS/16s, recorder17056 exit0; two earlier window-recorder attempts returned stale frames",
+  "acceptance": "Plant grows, opens mouth and launches visible brown wooden slipper. Can falls and score0->100. Held player slipper stays in hand.",
+  "limits": "One first automatic shot, not repeated5s interval proof; automatic fire pauses while can down. Current remote peer still open; film silent."
+}

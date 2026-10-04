@@ -183,6 +183,10 @@ Nothing was deleted or renumbered.
   target every five seconds. Initial growth stays3s; host-approved shot delivery
   is identity-scoped. Laptop auto5/Core/native and Root replication checks pass.
 - [ ] Actual current Windows peer view of automatic plant windup/flight/contact.
+- [x] Windows151 normal Guest/HERO/TRY IN PRACTICE and one Q press visibly
+  grow the plant, launch a wooden slipper and topple the can without a second
+  cast. Native cadence, peer and audio evidence remain separate.
+  [Actual controls and film](reports/reliability-2026-10-05/paete151-visible-auto/README.md).
 - [ ] Paete carried slipper floats while emoting.
 - [x] Replace shared tag particle burst with compact warm contact ink. Actual tag,
   recovery/pause/lifetime/material cleanup and comfort/round retirement pass2/2.
