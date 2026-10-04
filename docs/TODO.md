@@ -187,7 +187,10 @@ Nothing was deleted or renumbered.
   grow the plant, launch a wooden slipper and topple the can without a second
   cast. Native cadence, peer and audio evidence remain separate.
   [Actual controls and film](reports/reliability-2026-10-05/paete151-visible-auto/README.md).
-- [ ] Paete carried slipper floats while emoting.
+- [x] Paete carried slipper now uses his measured branch-palm surface instead of
+  the human-hand lift. Original8.3cm gap becomes2.7mm; native support/model-swap/
+  T-pose-dance-bow film3/3 pass. Windows/peer/human review stays separate.
+  [Evidence](reports/paete-carried-emote-2026-10-05/README.md).
 - [x] Replace shared tag particle burst with compact warm contact ink. Actual tag,
   recovery/pause/lifetime/material cleanup and comfort/round retirement pass2/2.
   [Rendered source evidence](reports/reliability-2026-10-05/tag-contact-replacement/README.md).

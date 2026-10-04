@@ -59,6 +59,90 @@ namespace TumbangPreso.PlayTests
 
         private void Note(string claim, object value) => _log.AppendLine(FormattableString.Invariant($"{claim},{value}"));
 
+        [UnityTest]
+        public IEnumerator PaeteCarryAnchorRestsOnHisBranchPalm()
+        {
+            var who = HumanPaete(new Vector3(0, .12f, -6));
+            yield return null;
+            var visual = who.GetComponent<CharacterVisual>();
+            var hand = visual.HandAnchor;
+            Assert.IsNotNull(hand);
+            var skin = visual.Model.GetComponentInChildren<SkinnedMeshRenderer>();
+            int bone = Array.IndexOf(skin.bones, hand.parent);
+            Assert.GreaterOrEqual(bone, 0);
+            var mesh = skin.sharedMesh; var vertices = mesh.vertices; var weights = mesh.boneWeights;
+            float top = float.NegativeInfinity; int sampled = 0;
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                var w = weights[i];
+                float influence = (w.boneIndex0 == bone ? w.weight0 : 0) + (w.boneIndex1 == bone ? w.weight1 : 0)
+                    + (w.boneIndex2 == bone ? w.weight2 : 0) + (w.boneIndex3 == bone ? w.weight3 : 0);
+                if (influence < .5f) continue;
+                var p = mesh.bindposes[bone].MultiplyPoint3x4(vertices[i]);
+                if (Mathf.Abs(p.x - hand.localPosition.x) > .06f || Mathf.Abs(p.z - hand.localPosition.z) > .06f) continue;
+                top = Mathf.Max(top, p.y); sampled++;
+            }
+            Assert.Greater(sampled, 8, "Measure the actual weighted distal branch surface.");
+            float gap = (hand.localPosition.y - top) * hand.parent.TransformVector(Vector3.up).magnitude;
+            Note("paete_palm_support_gap", gap); Note("paete_palm_top_local", top); Note("paete_palm_anchor", hand.localPosition);
+            Assert.That(gap, Is.InRange(-.005f, .03f), "The carried sole support must rest on the branch palm, not a human-hand-height offset above it.");
+        }
+
+        [UnityTest, Timeout(180000)]
+        public IEnumerator ReviewPaeteCarriedSlipperDuringEmotes()
+        {
+            if (Environment.GetEnvironmentVariable("TUMP_PAETE_FILM") != "1") Assert.Ignore("Opt-in carried-item film.");
+            var who = HumanPaete(new Vector3(0, .12f, -6));
+            var carrier = who.GetComponent<Carrier>();
+            var shoe = carrier.Held;
+            Assert.IsNotNull(shoe);
+            var emotes = who.GetComponent<TumbangPreso.Social.EmotePlayer>();
+            var witness = new GameObject("PaeteEmoteWitness").AddComponent<Camera>();
+            witness.CopyFrom(Camera.main); witness.enabled = false; witness.tag = "Untagged";
+            witness.fieldOfView = 45;
+            witness.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+            try
+            {
+                foreach (string id in new[] { "tpose", "dance", "bow" })
+                {
+                    who.Intent.Clear(); emotes.Stop();
+                    Assert.IsTrue(emotes.CanEmote());
+                    emotes.HostPlay(id); Assert.IsTrue(emotes.IsEmoting);
+                    yield return ImprovementEvidenceProbe.Record(witness, "paete-held-" + id, 2f, who,
+                        witnessOffset: new Vector3(2.8f, 1.5f, 3.4f), witnessLookHeight: .9f);
+                    Assert.AreSame(shoe, carrier.Held, "An emote must retain the actual carried slipper.");
+                    Note("held_emote_" + id, who.GetComponent<CharacterVisual>().HandAnchor.localPosition);
+                }
+            }
+            finally { emotes.Stop(); Object.Destroy(witness.gameObject); }
+        }
+
+        [UnityTest]
+        public IEnumerator PaetePalmCorrectionPreservesHumanModelPlacementAcrossSwaps()
+        {
+            var who = HumanPaete(new Vector3(0, .12f, -6));
+            var visual = who.GetComponent<CharacterVisual>();
+            var branchAnchor = visual.HandAnchor.localPosition;
+            var shoe = who.GetComponent<Carrier>().Held;
+            foreach (string id in new[] { "bayan", "paete", "bayan" })
+            {
+                var art = RosterBook.Load().FindPersonArt(id);
+                visual.ApplyModel(art.Model, art.Tint, art.Clips, art.Palette, art.PetModel);
+                yield return null;
+                var hand = visual.HandAnchor;
+                Assert.IsNotNull(hand);
+                if (id == "paete") Assert.Less(Vector3.Distance(branchAnchor, hand.localPosition), .0001f);
+                else
+                {
+                    var skin = visual.Model.GetComponentInChildren<SkinnedMeshRenderer>();
+                    Assert.IsTrue(CharacterVisual.PalmCentre(skin, Array.IndexOf(skin.bones, hand.parent), out var palm));
+                    Assert.Less(Vector3.Distance(palm + Vector3.up * CharacterVisual.HandTopLift, hand.localPosition), .0001f,
+                        "A Paete kit must not apply branch-palm placement to a different visible model.");
+                }
+                Assert.AreSame(shoe, who.GetComponent<Carrier>().Held);
+            }
+        }
+
         private static CharacterMotor Paete(int slot, Vector3 at)
         {
             var who = GameServices.Round.PlayerAt(slot);
