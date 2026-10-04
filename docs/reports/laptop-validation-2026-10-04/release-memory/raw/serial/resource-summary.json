@@ -1,0 +1,13 @@
+{
+  "exitCode": 125,
+  "elapsedSeconds": 47.28,
+  "sampledMinimumAvailableMiB": 1394,
+  "sampledPeakJobTreeWorkingMiB": 4265.21,
+  "samples": 41,
+  "guardTerminal": true,
+  "leaseHeld": false,
+  "inputChanges": 0,
+  "qualityRestoredByteExact": true,
+  "artifactExists": false,
+  "scope": "One-second sampled aggregate working sets and available physical memory, not peak private commit or performance acceptance"
+}
