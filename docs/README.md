@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Background input ownership: [focus-loss failures and checked recovery](reports/laptop-validation-2026-10-04/background-focus/README.md).
+
 Record measurement integrity: [NaN normalization and profile evidence](reports/reliability-2026-10-04/match-record-nan/README.md).
 
 Server history write recovery: [failure reproduction and correction](reports/reliability-2026-10-04/cloud-history-write/README.md).

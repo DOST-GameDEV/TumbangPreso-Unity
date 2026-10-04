@@ -17,6 +17,17 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### READER-BACKGROUND-FOCUS-1004: retired input stays neutral while away
+
+- [x] Keep the unfocused reader neutral while the network player continues
+  ticking. Capture held buttons on return so release precedes fresh gameplay
+  presses. Original two failures/two controls -> candidate28/28. Root verified
+  all16 raw Git hashes,3438 unchanged inputs per run with only Reader differing,
+  the tested source/fixture and terminal/restored/free receipts.
+  [Evidence](reports/laptop-validation-2026-10-04/background-focus/README.md).
+- [ ] Actual packaged focus return/physical Alt-Tab and current peer acceptance.
+  Supplied device/focus callbacks do not prove physical operator behavior.
+
 ### MATCH-RECORD-NAN-1004: normalized measurements remain numeric
 
 - [x] Normalize NaN duration/distance/last-attacker duration to their existing
