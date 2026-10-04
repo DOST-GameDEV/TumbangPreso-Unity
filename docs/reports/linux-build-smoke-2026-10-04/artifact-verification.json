@@ -1,0 +1,40 @@
+{
+  "TumpQA.x86_64": {
+    "bytes": 4672,
+    "sha256": "78fd4776b65e70e3e0ac9e2daf7af26b8c94372247ceaf0dd4edf8b1bb4d4096"
+  },
+  "UnityPlayer.so": {
+    "bytes": 42411704,
+    "sha256": "d49fc1adab51b480351b714ce46c5f45fec86fb4a95fef33f3de3b2fd5127a7d"
+  },
+  "TumpQA_Data/Managed/TumbangPreso.Runtime.dll": {
+    "bytes": 3924480,
+    "sha256": "14adafe5f42e36b79bbf12326272ee6ec1060fa0402005fad8f7ecb49df11a90"
+  },
+  "TumpQA_Data/Managed/TumbangPreso.Core.dll": {
+    "bytes": 231424,
+    "sha256": "517e420dbe8c66fa6c79244d5d3bf7fd98646e84207f162d4b999c05d1819687"
+  },
+  "TumpQA_Data/Plugins/lib_burst_generated.so": {
+    "bytes": 2825424,
+    "sha256": "88d9b608ef5ba721042ac7fbb590a34dcfca86548331ec8094dcd49322f28860"
+  },
+  "TumpQA_Data/StreamingAssets/build-identity.json": {
+    "bytes": 297,
+    "sha256": "182daa0048f602a675fd76db16b114ff775607313566c2ade990faf3943dbdbc"
+  },
+  "identity": {
+    "sha": "",
+    "branch": "",
+    "protocol": 148,
+    "target": "StandaloneLinux64",
+    "appVersion": "1.0.0",
+    "ugsProject": "dcf0831e-a5f4-43b4-832e-b687f13a3569",
+    "ugsEnvironment": "production",
+    "builtAt": "2026-10-04 21:00:29",
+    "dirty": true,
+    "treeState": "unknown"
+  },
+  "fileCount": 254,
+  "totalBytes": 2538026926
+}

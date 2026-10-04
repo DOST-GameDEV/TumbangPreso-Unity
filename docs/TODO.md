@@ -1,5 +1,14 @@
 # TODO: Tumbang Preso Unity
 
+### LINUX-SMOKE-1004: integrated build and offline startup
+
+- [x] Source70a600a1 packages all12 scenes and runs the actual Linux player:
+  cold boot→Guest→Home→Training/Eskinita→movement/pause→Home→normal exit.
+  Graphics-free Editor build resolves two retained OOM attempts without reducing
+  player rendering features. [Evidence](reports/linux-build-smoke-2026-10-04/README.md).
+- [ ] Current Windows/paired-peer/audio/full-map acceptance remains separate;
+  later contributor fixes are not attributed to this earlier artifact.
+
 ### CINDER-READABILITY-1004: clearer floor trap
 
 - [x] Actual pale-court review, tapered scorch/hot seam and readable armed
