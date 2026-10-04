@@ -158,17 +158,26 @@ Nothing was deleted or renumbered.
 - [x] Fix online host success before registration and Relay advertising a direct
   LAN endpoint. Three native causes plus LAN and real UGS code/browser controls
   pass 5/5. [Evidence](reports/reliability-2026-10-04/online-room-publication/README.md).
-- [ ] Verify separate-machine online discovery/code admission and gameplay on one
-  matching artifact. One-machine UGS success does not close the QA report.
+- [x] Matching protocol148 Windows PC/laptop normal GUI public JOIN and separate
+  typed CODE JOIN reach the lobby and naturally save the same full result.
+  Protocol150 public JOIN/start/manual host draft also passed; clean non-host
+  held movement and current151 Windows/WAN acceptance remain open.
+  [Visible peer evidence](reports/laptop-validation-2026-10-05/visible-online148-client/README.md).
 - [ ] First-time Home entrance animation does not play; inspect hidden loading/
   login timing and start the entrance on actual visible reveal.
+- [x] Failed hidden Home-video preload no longer permanently parks first Home
+  on its poster. Original native one cause/two controls becomes3/3 with actual
+  decoded-frame advance. Current packaged first-launch film remains open.
+  [Evidence](reports/reliability-2026-10-05/home-video-recovery/README.md).
 - [ ] QA tester's editor opened NetSession.cs when creating a room in Unity Play
   Mode (not a build); screenshot is VS Code source, not a game dialog. Runtime source search
   finds no editor-opening code.
 - [x] Paete ready-recast slipper flight: authored 13m/s speed restored, ba1a02554;
   two causal native failures plus ungrown control -> same three passes on laptop.
-- [ ] Owner override: mature Paete plant automatically lobs a slipper at a valid
-  target every five seconds. Laptop owns scoped implementation/peer presentation.
+- [x] Owner override: mature Paete plant automatically lobs a slipper at a valid
+  target every five seconds. Initial growth stays3s; host-approved shot delivery
+  is identity-scoped. Laptop auto5/Core/native and Root replication checks pass.
+- [ ] Actual current Windows peer view of automatic plant windup/flight/contact.
 - [ ] Paete carried slipper floats while emoting.
 - [ ] Replace the shared catch/tag VFX requested by the owner; live/peer/replay review.
 

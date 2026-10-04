@@ -1,0 +1,32 @@
+{
+  "sourceRef": "dcaa39abfd7cdadc07e2245f8c0f6dd82d245562",
+  "pid": 19548,
+  "profile": "pc-homevideo-cand1005",
+  "filter": "TumbangPreso.PlayTests.HubSceneVideoTests.FailedBootWarmupGetsFreshPlaybackWhenHomeOpens;TumbangPreso.PlayTests.HubSceneVideoTests.BootWarmupRetainsOnePausedDecodedFrameAndHandsTheSamePlayerToHome;TumbangPreso.PlayTests.HubSceneVideoTests.ReducedMotionWarmupUsesThePosterWithoutOpeningADecoder",
+  "expectedCases": 3,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.HubSceneVideoTests.BootWarmupRetainsOnePausedDecodedFrameAndHandsTheSamePlayerToHome",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.HubSceneVideoTests.FailedBootWarmupGetsFreshPlaybackWhenHomeOpens",
+      "result": "Passed",
+      "message": null
+    },
+    {
+      "name": "TumbangPreso.PlayTests.HubSceneVideoTests.ReducedMotionWarmupUsesThePosterWithoutOpeningADecoder",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "inputRestored": true,
+  "profileRestored": true,
+  "editorInputRestored": true,
+  "qualityRestored": true,
+  "terminal": true,
+  "protectedCount": 19280
+}

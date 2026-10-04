@@ -19,82 +19,86 @@ checkpoint for paired tests then resume source work. Normal checked pushes.
 Feature requirements belong TODO/ledger. Paete automatic mature lobs every5s are
 explicitly authorized; unnecessary AGENTS feature entry was removed at owner request.
 
-## Source, ownership and live work
+## Current source and live work
 
 Root checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
-Repository4825f41d5; tested package3947a82e8/protocol148/recording14. Later Rago
-contributor source is preserved but absent from that package. Pre-existing Auditor
-dirt and untracked Yasmin voxel draft script preserved. Root owns Net/UI/docs/
-release and acknowledged PlayerInputReader plus HeroQuickTapTests. Laptop owns
-PaeteRules/PaeteHazards/PaeteHeroKit +5 auto-lob fixtures; emote CharacterVisual
-observed/checkpointed, unedited. Old Carrier/Paete speed ba1 unit shipped.
-Laptop Fix gameplay interruption recovery: thread01a0ffab-10a0-70d0-9270-
-07e171c1613b, physical192.168.1.144; Root192.168.1.7.
+Current source dcaa39abf/protocol151; accepted shared Windows artifact remains
+9226f4f78/protocol150/recording14. Contributor Paete151 and slow-frame contact
+fixes are pulled and preserved but absent from that artifact. Pre-existing
+ProjectAuditorSettings dirt and untracked Yasmin voxel draft remain protected.
 
-CURRENT Root has no active Unity/player/share. Reader quicktap e27e55eb8 shipped
-integrated866: original3 E/Q/X dropped taps +2 held/menu controls -> same5 PASS,
-all terminal/preferences restored/202 owned GUI importers restored exact. Net
-owner feedback fc062bb56 shipped/protocol150: original2 accepted old owner poses
-at1.6/4.2m snapped current prediction backward,3 correction/epoch/observer controls
-PASS; same5 candidate PASS plus existing Voodoo/status control PASS (6 total).
-This is causal native evidence, not updated player/operator latency acceptance.
+Root owns Net/UI/input/docs/release. Laptop owns Paete auto-lob and reserved
+Basilio/Dante boulder speed fix; emote CharacterVisual observed, unedited.
+Laptop chat Fix gameplay interruption recovery: thread01a0ffab-10a0-70d0-
+9270-07e171c1613b, host remote-control:env_e_6aa6c4fde2dc83218a0722e34ac3face.
+Root192.168.1.7 and laptop192.168.1.144. Ask current files/jobs before reassignment.
+Existing Sol6.1 High review helper finished local operator checks and Home-video
+source review; naming helper is naming-only. Do not launch idle extra workers.
 
-Source fc062bb56/protocol150 includes concurrent907 PaeteVine/timing changes.
-PRESERVE these when adding laptop auto5 source; never whole-copy e758 versions.
-Laptop clean LOCAL66c65 includes additive907+Reader+auto5; actual auto5 native5,
-latestCore20 and latest native manual/Vine/Thorn neighborhood4 PASS. Latest7152 /
-88551 parent restoration still live; wait explicit published API ref before fetch.
-Root normal-merged checked laptop5de4675. Reliable AutomaticPlantShot source
-4825f41d5 is SHIPPED: host event/unbind +36byte match/round/instance-scoped
-receiver, native23124/26883 exact4 PASS/latest combined compile/source restored.
-Laptop Hud repeated normal clock toast original38736 has2 causal failures and2
-controls; candidate near-term. NEXT include checked HUD source if ready then
-ONE full combined150 release and identical-artifact controlled latency/inputs. Older148 online/
-visible-flow proofs are preserved but do not qualify150. Do not repeat idle full
-matches or attempt unsupported zero-duration key holds as human-feel evidence.
+Root normal GUI150 host3344/session7674 closed normally with exit0 and input/
+settings restored. Actual Guest/title/Home/Custom/ONLINE-PUBLIC room WAD6,
+peer admission, rules Hero4x90, Host START and manual draft SELECT completed.
+Natural online record f4d8c6f59e9d43d898438e7088a773b9,359.969574s,
+scores20/110/1725/1700. Host full canonical2430bytes SHA256
+99d32afbddb8813d05a135af4e2b9370cd5d4442c43f3f0250e4117bdf63356b.
+Laptop36344/session42614/profilelpt-q150-ui1005a admitted via actual public JOIN;
+client full result and clean non-host motion receipt still pending. One rematch
+vote correctly required peer1/2; Root then used Main Menu->Practice->Training.
+Local held W2000ms/A1200ms and E150ms visibly responded, retained images35-38.
+Do not claim Training proves online motion or rubberbanding resolved.
 
-## Verified results and honest limits
+NEXT Root Home-video recovery is complete natively: original16720/session46955
+one causal failure plus2 controls, candidate19548/session67920 same3/3 PASS,
+actual fresh decoded-frame advance. Both terminal and202 owned GUI metadata
+restored per run with no remaining frozen deltas. Report reliability-2026-10-05/
+home-video-recovery. Publish explicit source/test/docs then make one coherent151
+package for normal visible cold-start and peer acceptance. No Root active job.
 
-Server2fdf910fc integratede758: await online registration before success, stop own
-failed room/show error, keep Relay out of direct LAN advertisements. Original3
-causes plus LAN/real UGS code/browser controls -> same5 native passes. Harness
-profile/teardown/dispatch errors preserved; production not weakened. Report
-reliability-2026-10-04/online-room-publication. Opt-in3947 online bootstrap is
-explicit diagnostics, not the normal visible QA flow.
+## Shipped fixes and evidence limits
 
-Full3947 release20040/37599 terminal0, all258files2667618731B verified on both
-machines and after players. Runtimeba75219a031856be4509fdf1cfdb8240fb331a1278054
- dea1e4d3b89d527fe23; manifest36e4c25e573f91b9e93756f21770209e8fade9a1233f5ea2
-42d83ff863b2e7ec (exact whole hashes in checkpoint). 203 GUI/EOL deltas restored
-exact. Share17532/11339 closed after full-copy ACK. No Root player remains.
+Online publication2fdf910fc: await UGS room registration before success, clean
+own failed host with readable error and stop Relay advertising direct LAN.
+Original3 causes plus LAN/live UGS controls become5 native PASS. Normal GUI148
+public JOIN and separate typed CODE JOIN also passed on two machines. Reports
+reliability-2026-10-04/online-room-publication and laptop-validation-2026-10-05/
+visible-online148-client. QoL prank branch is read-only comparison, never copy/run.
 
-Online CLI S1/Relay pair naturalHero8x90, not intended shortClassic (fixture
-restore mismatch retained). Full record9153eb2b4fe24916b325a20bc33216ae /719.926s /
-40,50,3370,3400; both full hash247e139fa789934d929617b3d42c9e8a01ed07fb5e471cde8
-40fb1390f6898c8. Root independently checked12 raw Git hashes54e870 report and all
-full-record fields. Source-proof package3947; no human movement/skill claim.
+Quicktap e27e55eb8: real E/Q/X down-up events retain one rendered intent plus
+physics edge; original3 causes and2 controls become5 PASS. Owner-pose fc062bb56:
+accepted old echoes preserve prediction; authoritative corrections/epoch/other
+seats remain. Original2 backward snaps at1.6/4.2m and3 controls become6 PASS.
+Protocol150 required. Reports reliability-2026-10-05/hero-quicktap and
+owner-pose-feedback. Actual controlled non-host human motion remains OPEN.
 
-Then normal visible startup BOTH: Guest->title->Home->Custom; Root Host form
-ONLINE+PUBLIC createdPUX9. Laptop actual public row JOIN, BACK leave, separate CODE
-PUX9 typed+JOIN all passed with independent host admission/lobby screenshots.
-Actual Rules controls Hero4x30; client read-only Rules agree (saved8 preference
-intentionally separate). Actual Ready/Host Start->draft->natural full game record
-3ae8dc265147411d8b54ea9f7f070f26 /119.943s /20,20,640,540, both full hash
-bfd02a8f283308b5848f9a82597b0d908b2f1b90469146efec24fea628e9d441.
-Manual draft-lock/intro film/continuous movement/skill firing NOT established:
-tools overran draft and instant E taps ambiguous. No repeat idle rematch until
-input controlled. Paete correctly locked on fresh Guest, not network failure.
-Players820/25213 and32084/61323 exited normally; prefs/settings restored and full
-artifact postchecks unchanged. All actual images/logs/profile evidence retained.
+Paete speed ba1a02554 restores authored13m/s instead of unit1m/s. Mature plant
+5de4675d3 automatically fires every5s with initial3s growth; Core20 and native5
+plus neighborhood4 PASS. Reliable4825f41d5 AutomaticPlantShot36-byte scoped
+replication passes4 native checks. Remote automatic-lob operator proof remains
+OPEN. Concurrent151 contributor bounded player-vine deadlines and added delay/
+loss/jitter Linux peer proof; this is not Windows/WAN/human acceptance.
 
-UI control: bundled computer-use skill, deferred node_repl import@oai/sky. Root
-WGC capture failed; fresh DESKTOP crop of exact observed owned window via PIL
-worked windowed and Sky pointer actions succeeded. PrintWindow images were stale.
-Laptop Sky capture works. No product login bug inferred from tool failure.
+HUD06b09fa0b stops normal clock packets renewing Back to Action toast; actual
+packet/HUD original2 causes+2 controls become4 PASS. Names/title plain login/
+logo/camera intro source shipped. Owner catch/tag VFX replacement, Yasmin voxel
+model integration and other current TODO acceptance remain unfinished. Preserve
+finalized hero direction and private art. Do not treat source or compilation as
+complete player/audio/transport acceptance.
 
-Names/logo SVGs/title-loginbb4269df9/camera late activationd647aff69 shipped with
-focused evidence. New Yasmin draft, tag VFX, first Home animation, Paete emote,
-auto5s native +RootNet149 shot event, controlled peer latency/LAN/recovery and
-release/preload gates remain TODO. Full matches do not close rubber-banding.
-Net150 accepted-shot draft and current exact next action are in the local checkpoint.
-Goal remains active; keep implementing concrete fixes and publishing checked units.
+## Cleanup and recovery
+
+All Root native parents before current Home unit are terminal and their shared
+preferences/Quality/input/generated owned GUI metadata were restored exactly.
+Normal GUI150 host is now closed; shared150 download server already closed.
+Current artifact and essential raw evidence are retained; Desktop release untouched.
+No browser tabs opened. Existing deletion review rejections must not be bypassed.
+
+Native graphics Unity path C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe.
+Use bundled PowerShell runtime for existing scan-code attach wrapper; never change
+execution policy. Sky captures fail on Root; fresh exact-window desktop crops work.
+One observed action per refresh. Unsupported instantaneous key taps are not proof
+of a game bug. Do not automate Codex app UI to recover another run; use supported
+thread tools and keep independent engineering moving if peer is stalled.
+
+After compaction resume the one concrete command in current-resume.json. Do not
+reread whole chats or reproduce meaningless internal noun fragments. Promptly
+answer the owner then implement/check/publish the next useful unit.
