@@ -138,15 +138,18 @@ two-account endpoint checks. Evidence:reliability-2026-10-04/friends-capacity.
 No deployed-service or complete UI/invite/join claim. Source UI request/accept exists.
 Owner ALSO requests optimization and correct preload timing across the journey.
 Preserve authored quality and broad-loading contributor ownership; measure costs.
-Root UI754aaef3ddaa01a7129f0a966b2dfce6c6321c75 on scoped
-competition-pc-hub-edit1004, NOT ASTRA integrated yet. Original53d6 native2fail/
+Root UI754aaef3ddaa01a7129f0a966b2dfce6c6321c75 CHECKED and normally
+integrated81e68dd82 on ASTRAReworks. Original53d6 native2fail/
 2controls, root verified5e9 proof10 raw hashes/3440 unchanged maps/source/fixture/
 terminal-restored-free. Candidate58576 core4/4; original fixture/meta unchanged,
 only PlayerHub.cs+OwnerPainted production delta. New-only controls84095 passed3/3:
 caret/actual Bio after blur, pointer-up delivery, closed pending hub. Extra59700
 stopped at compile(private Close),zero tests; one fixture-only correction retained.
-Root preserves actual field/IME, queues row refresh, flushes after UI actions in
-LateUpdate; tab/owner changes bypass/clear it. Await exact raw candidate publication.
+Root retains actual field/caret, queues row refresh, flushes after UI actions in
+LateUpdate; tab/owner changes bypass/clear it. Proof82c8ce547 integrated; root
+verified all34 raw hashes/source,3440 original/candidate maps only2UI deltas,
+3442 controls preserving3440 inputs, all terminal/quality preserved/leases free.
+Physical IME/device, SDK and packaged/frame-time claims remain unproven.
 Root reserves account/front-end/social; laptop native/build. No new agents.
 Laptop build13511 failed actual reserve (1220<1536),91samples/jobtreepeak4849MiB.
 ONE changed serial-import repair98086 also TERMINAL125,41samples/peak4265MiB/
@@ -160,8 +163,10 @@ source boundaries: boot asset/account/menu readiness precede reveal; arena insta
 introduction and20-view offscreen prewarm precede curtain dismissal. This is SOURCE
 ordering, not measured first-use completeness or hitch acceptance. No broad-loading
 source changed. Full login/friends/gameplay/invite/join and preload acceptance open.
-NEXT: inspect exact raw UI candidate/core4/extra3 evidence, integrate/publish the
-coherent fix normally, then continue the owner full-flow/preload optimization pass.
+NEXT: continue owner full-flow/preload optimization pass. Friends tag field has
+no onSubmit listener in current source; verify keyboard/soft-keyboard submit path
+before treating it as a bug. Existing request button/navigation remain available.
+Inspect live service setup read-only before claiming deployed friend lookup works.
 Never repeat passing cohorts unchanged or claim a current release artifact exists.
 Owner last-five-hours question was answered; do not replay it after compaction.
 

@@ -1,7 +1,7 @@
 # Same-owner hub refresh while editing: reproduction prepared
 
-Status: native reproduction and candidate checks completed. Source integration
-awaits exact raw candidate evidence publication; no packaged/operator claim.
+Status: native reproduction, candidate checks and source integration completed
+at81e68dd82. No packaged/operator claim.
 
 One prelaunch fixture correction follows the actual independent hub Canvas and
 opens the initially collapsed Find a friend group through its actual button.
@@ -35,8 +35,12 @@ The unchanged original four-case fixture passed4/4 on the candidate. Three
 additional native controls passed3/3: actual caret/selection and field retained,
 nonedited Bio refreshed after blur, pointer-up delivered once before rebuilding
 and a closed hub staying closed. No repeated original cohort. Source and frozen
-input/terminal evidence is retained by the laptop; exact raw publication is the
-remaining source-integration gate.
+input/terminal evidence is retained in the integrated
+[raw report](../../laptop-validation-2026-10-04/hub-edit-refresh/README.md).
+Root verified all34 raw Git hashes,3440 original/candidate maps with only the
+two UI source files differing and3442 controls preserving those3440 inputs.
+Tested candidate source matches the integrated code; all jobs are terminal,
+quality/input preserved and leases free. No repeated native check.
 
 The extra fixture first stopped at compilation after calling private Close;
 zero cases executed. One bounded fixture-only correction invoked the real close

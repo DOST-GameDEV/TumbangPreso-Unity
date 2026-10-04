@@ -25,8 +25,11 @@ Nothing was deleted or renumbered.
   pointer-up is delivered and closing stays closed. Tab/account replacement
   immediately retire old editing. One extra-fixture compile repair retained.
   [Evidence](reports/reliability-2026-10-04/hub-edit-refresh/README.md).
-- [ ] Exact raw candidate proof integration, then packaged/physical input and
-  frame/first-use acceptance. Supplied interactions do not qualify the full flow.
+- [x] Exact raw proof normally integrated81e68dd82: all34 hashes, original/
+  candidate3440 maps and controls3442 inspected, tested source and restored/free
+  receipts match. No unchanged rerun.
+- [ ] Packaged/physical input and frame/first-use acceptance. Supplied
+  interactions do not qualify the full flow.
 
 ### FRIENDS-CAPACITY-1004: acceptance retains both accounts' state
 
