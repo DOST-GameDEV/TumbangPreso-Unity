@@ -169,6 +169,11 @@ Nothing was deleted or renumbered.
   on its poster. Original native one cause/two controls becomes3/3 with actual
   decoded-frame advance. Current packaged first-launch film remains open.
   [Evidence](reports/reliability-2026-10-05/home-video-recovery/README.md).
+- [x] Current Windows151 source89cc9f295 fresh Guest/title/Home shows the Home
+  animation advancing through real pointer navigation. Expired code join shows
+  a readable error and returns to a usable Internet browser. This one profile/
+  device pass does not close hardware-wide startup or non-host motion acceptance.
+  [Visible evidence](reports/reliability-2026-10-05/windows151-visible-startup/README.md).
 - [ ] QA tester's editor opened NetSession.cs when creating a room in Unity Play
   Mode (not a build); screenshot is VS Code source, not a game dialog. Runtime source search
   finds no editor-opening code.
@@ -182,7 +187,10 @@ Nothing was deleted or renumbered.
   the human-hand lift. Original8.3cm gap becomes2.7mm; native support/model-swap/
   T-pose-dance-bow film3/3 pass. Windows/peer/human review stays separate.
   [Evidence](reports/paete-carried-emote-2026-10-05/README.md).
-- [ ] Replace the shared catch/tag VFX requested by the owner; live/peer/replay review.
+- [x] Replace shared tag particle burst with compact warm contact ink. Actual tag,
+  recovery/pause/lifetime/material cleanup and comfort/round retirement pass2/2.
+  [Rendered source evidence](reports/reliability-2026-10-05/tag-contact-replacement/README.md).
+- [ ] Current packaged peer/replay and contact-instant FPP review of tag effect.
 
 ### OWNER-VISUAL-REPLACEMENT-1004: title, login and Yasmin
 

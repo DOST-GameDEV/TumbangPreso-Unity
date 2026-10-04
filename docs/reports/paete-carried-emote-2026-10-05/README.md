@@ -27,3 +27,7 @@ without losing the held object, and real T-pose/dance/bow recording. Actual
 owner-view frames were inspected. The support point now follows the thinner
 palm rather than floating over it. This is Linux native/film evidence; current
 Windows player, separate-peer visual and human acceptance remain open.
+
+After merging incoming tag-contact ink source5f72ff88, the branch support and
+model-swap controls pass2/2 again with the integrated runtime compiled. No source
+conflict occurred; the TODO conflict was resolved retaining both completed fixes.
