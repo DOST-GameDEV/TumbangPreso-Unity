@@ -20,6 +20,13 @@ and paid services are outside this authorization.
 
 ## Work split
 
+October 5 owner override: the laptop is off and its engineering goal is paused.
+The PC continues alone and integrates the laptop's published checked work.
+Do not wake the laptop or wait for a joint test. Separate-machine acceptance
+remains open until the owner makes that machine available again. A local pair
+must be labeled as two instances on this PC, with shared preferences restored
+only after both players exit and their profiles kept separate.
+
 Both machines autonomously work on separate meaningful source tasks. The owner
 released the PC Unity slot after Claude finished. The PC may run its own native
 tests, builds and players again; the laptop retains its independent engineering
