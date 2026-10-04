@@ -1,5 +1,21 @@
 # TODO: Tumbang Preso Unity
 
+### LINUX-SMOKE-1004: integrated build and offline startup
+
+- [x] Source70a600a1 packages all12 scenes and runs the actual Linux player:
+  cold boot→Guest→Home→Training/Eskinita→movement/pause→Home→normal exit.
+  Graphics-free Editor build resolves two retained OOM attempts without reducing
+  player rendering features. [Evidence](reports/linux-build-smoke-2026-10-04/README.md).
+- [ ] Current Windows/paired-peer/audio/full-map acceptance remains separate;
+  later contributor fixes are not attributed to this earlier artifact.
+
+### RAGO-EMBER-1004: carried fire readability
+
+- [x] Broader, shoe-connected ember tongues retain the same three renderers and
+  gameplay. Actual cast/shape2/2 and release/expiry/refusal/replacement2/2 pass;
+  first-person frames inspected. [Evidence](reports/rago-held-ember-2026-10-04/README.md).
+- [ ] All-angle body, current player, sound and human acceptance remain separate.
+
 ### CINDER-READABILITY-1004: clearer floor trap
 
 - [x] Actual pale-court review, tapered scorch/hot seam and readable armed

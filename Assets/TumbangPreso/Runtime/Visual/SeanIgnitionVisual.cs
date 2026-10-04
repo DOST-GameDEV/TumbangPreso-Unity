@@ -54,16 +54,18 @@ namespace TumbangPreso.Visual
         {
             // Toe flame, side curl and a shorter heel flick. Their offsets and lean
             // differ so the shoe stays readable between the three tongues of heat.
+            // Normalize the authored mesh radius: the small world footprint is
+            // deliberate, but multiplying it by .32 again made detached needles.
             for (int i = 0; i < 3; i++)
             {
                 var flame = VfxShapes.Stand(transform, "KindledFlame_" + i,
                     VfxShapes.Tongue(5, .32f, i == 1 ? -.3f : .35f, .6f, .16f, 610 + i),
-                    i == 0 ? .095f : .065f, i == 0 ? .19f : .13f, yaw: i * 115);
+                    (i == 0 ? .055f : .038f) / .32f, i == 0 ? .19f : .13f, yaw: i * 115);
                 flame.layer = gameObject.layer;
-                flame.transform.localPosition = i == 0 ? new Vector3(.045f, .025f, .14f)
-                    : i == 1 ? new Vector3(-.08f, .015f, -.02f) : new Vector3(.06f, .02f, -.15f);
+                flame.transform.localPosition = i == 0 ? new Vector3(.025f, .012f, .14f)
+                    : i == 1 ? new Vector3(-.065f, .012f, -.02f) : new Vector3(.045f, .012f, -.15f);
                 VfxMaterial.Ghost(flame.GetComponent<Renderer>(),
-                    i == 0 ? new Color(1, .55f, .06f, .88f) : new Color(1, .29f, .025f, .76f), .35f);
+                    i == 0 ? new Color(1, .66f, .075f, .88f) : new Color(1, .36f, .035f, .80f), .35f);
                 _flames[i] = flame.transform; _sizes[i] = flame.transform.localScale;
                 _renderers[i] = flame.GetComponent<Renderer>();
             }

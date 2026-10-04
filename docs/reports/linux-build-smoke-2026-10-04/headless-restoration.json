@@ -1,0 +1,30 @@
+{
+  "restored": [
+    "ProjectSettings/EditorSettings.asset",
+    "ProjectSettings/TimeManager.asset",
+    "ProjectSettings/InputManager.asset",
+    "ProjectSettings/PackageManagerSettings.asset",
+    "ProjectSettings/GraphicsSettings.asset",
+    "ProjectSettings/ShaderGraphSettings.asset",
+    "ProjectSettings/SceneTemplateSettings.json",
+    "ProjectSettings/ProjectSettings.asset",
+    "ProjectSettings/QualitySettings.asset",
+    "ProjectSettings/PhysicsCoreProjectSettings2D.asset",
+    "ProjectSettings/TagManager.asset",
+    "ProjectSettings/NavMeshAreas.asset",
+    "ProjectSettings/MultiplayerManager.asset",
+    "ProjectSettings/DynamicsManager.asset",
+    "ProjectSettings/ProjectAuditorSettings.asset",
+    "ProjectSettings/VersionControlSettings.asset",
+    "ProjectSettings/ProjectVersion.txt",
+    "ProjectSettings/PresetManager.asset",
+    "ProjectSettings/AudioManager.asset",
+    "ProjectSettings/VFXManager.asset",
+    "ProjectSettings/Physics2DSettings.asset",
+    "ProjectSettings/MemorySettings.asset",
+    "ProjectSettings/ClusterInputManager.asset",
+    "ProjectSettings/EditorBuildSettings.asset",
+    "ProjectSettings/UnityConnectSettings.asset"
+  ],
+  "newBuildGeneratedFilesRetainedOutsideAssets": true
+}
