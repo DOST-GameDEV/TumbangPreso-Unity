@@ -442,6 +442,25 @@ namespace TumbangPreso.Settings
         /// </summary>
         public int SlipperHighlight = SlipperHighlights.Default;
 
+        /// <summary>
+        /// How strongly the cast is shaded by its own ambient occlusion (a fringe over a forehead,
+        /// an arm against a chest), as an index into <see cref="CharacterShadingLabels"/>: Off,
+        /// Soft, Full. Owner, 2026-10-05, after the F8 test: "we're also pushing through with the
+        /// character AO as an actual in game setting, full by default".
+        ///
+        /// ⚠️ THE DEFAULT IS FULL, AWAY FROM ROW 0, for the reason <see cref="RenderStyle"/>
+        /// records: an older `settings.json` inherits this initialiser, so everybody upgrading
+        /// gets the shading without opening the screen. It is local to one player's picture and
+        /// never replicated. It only draws where the world's ambient occlusion does (not on the
+        /// Low graphics tier, not under Nostalgic lighting); `Visual.WorldOutline` reads it.
+        /// </summary>
+        public int CharacterShading = CharacterShadingFull;
+        public const int CharacterShadingFull = 2;
+        public static readonly string[] CharacterShadingLabels = { "Off", "Soft", "Full" };
+        /// <summary>The cast's share of the occlusion for a stored index: 0, a half, all of it.</summary>
+        public static float CharacterShadingShare(int index)
+            => Mathf.Clamp(index, 0, CharacterShadingFull) * 0.5f;
+
         // -------------------------------------------------------------------
         // MATCH
         // -------------------------------------------------------------------
@@ -676,6 +695,7 @@ namespace TumbangPreso.Settings
             AiDifficulty = Mathf.Clamp(AiDifficulty, 0, AIController.NoBotsIndex);
             MatchFormat = Mathf.Clamp(MatchFormat, 0, (int)Core.MatchFormat.Mirror);
             SlipperHighlight = Mathf.Clamp(SlipperHighlight, 0, SlipperHighlights.All.Length - 1);
+            CharacterShading = Mathf.Clamp(CharacterShading, 0, CharacterShadingFull);
             AntiAliasMode = Mathf.Clamp(AntiAliasMode, 0, AntiAliasModes.All.Length - 1);
             GraphicsQuality = Mathf.Clamp(GraphicsQuality, 0, GraphicsProfiles.All.Length - 1);
             VSyncMode = Mathf.Clamp(VSyncMode, 0, VSyncModes.All.Length - 1);

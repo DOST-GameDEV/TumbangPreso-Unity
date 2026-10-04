@@ -539,8 +539,10 @@ namespace TumbangPreso.UI
             if (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.f8Key.wasPressedThisFrame && PracticeSandbox.Allowed)
             {
                 float now = Visual.WorldOutline.CharacterAoTest;
-                Visual.WorldOutline.CharacterAoTest = now < 0f ? 0.5f : now < 0.75f ? 1f : -1f;
-                string label = Visual.WorldOutline.CharacterAoTest < 0f ? "OFF" : Visual.WorldOutline.CharacterAoTest < 0.75f ? "HALF" : "FULL";
+                // The player's setting, then off, half and full over it, and round again.
+                Visual.WorldOutline.CharacterAoTest = now < 0f ? 0f : now < 0.25f ? 0.5f : now < 0.75f ? 1f : -1f;
+                now = Visual.WorldOutline.CharacterAoTest;
+                string label = now < 0f ? "YOUR SETTING" : now < 0.25f ? "OFF" : now < 0.75f ? "HALF" : "FULL";
                 Debug.Log("[Look] Character ambient occlusion test: " + label);
                 if (Hud.Instance != null) Hud.Instance.ShowToast("CHARACTER AO  ·  " + label, 1.6f);
             }

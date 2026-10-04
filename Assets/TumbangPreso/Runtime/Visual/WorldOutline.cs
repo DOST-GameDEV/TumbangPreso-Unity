@@ -289,7 +289,7 @@ namespace TumbangPreso.Visual
         // and in the shader already names.
         private const int AmbientOcclusionPass = 2;
         /// <summary>A debug session's test value for the cast's share of the ambient occlusion (F8,
-        /// `Hud`): negative means "use the look's own" (`WorldLookProfile.CharacterAmbientOcclusion`).</summary>
+        /// `Hud`): negative means "use the player's setting" (`GameSettings.CharacterShading`).</summary>
         public static float CharacterAoTest = -1f;
         private const int AmbientOcclusionBlurPass = 3;
         /// <summary>
@@ -965,7 +965,8 @@ namespace TumbangPreso.Visual
             ApplyBrightLookEdges();
             bool lagoonDeck=WorldLookPresentation.HandlesCamera(_camera) && WorldLookPresentation.Current.Look.Map==UI.SceneFlow.Lagoon;
             _material.SetFloat("_LagoonDeckDetail",lagoonDeck?WorldCueProfile.Current.LagoonDeckDetail:0);
-            float castShare=CharacterAoTest>=0?CharacterAoTest:WorldLookProfile.Current.CharacterAmbientOcclusion;
+            // The player's own setting (`GameSettings.CharacterShading`, Full by default); F8 in a debug session tests over it.
+            float castShare=CharacterAoTest>=0?CharacterAoTest:Settings.GameSettings.CharacterShadingShare(Settings.SettingsStore.Current.CharacterShading);
             _material.SetFloat("_CharacterAO",castShare);
             // The cast's own kernel (pass 2, CastAO): on only with a share, at a body's scale.
             _material.SetVector("_CharacterAOParams",new Vector4(castShare,WorldLookProfile.Current.CharacterAmbientOcclusionRadius,.006f,0));

@@ -134,11 +134,8 @@ namespace TumbangPreso.Visual
         // whole building. Off on the Low tier and under Classic, with the rest of the look.
         [Range(0,1)] public float AmbientOcclusion=.8f;
         [Range(.2f,3)] public float AmbientOcclusionRadius=1f;
-        // How much of that occlusion also shades the CAST (owner, 2026-10-04: "can we also test ambient
-        // occlusion for shading the characters too?"). 0 is the shipped look: characters keep only
-        // their own toon shading. F8 in a debug session cycles a test value over this one
-        // (`WorldOutline.CharacterAoTest`); set it here to make a value the look's own.
-        [Range(0,1)] public float CharacterAmbientOcclusion=0f;
+        // How much occlusion shades the CAST is the player's setting, not the look's
+        // (`GameSettings.CharacterShading`, Full by default; owner, 2026-10-05).
         // The cast's kernel radius, metres: a body's scale (a fringe of hair, an arm against a chest),
         // where the world's `AmbientOcclusionRadius` is a doorway's.
         [Range(.1f,1)] public float CharacterAmbientOcclusionRadius=.35f;

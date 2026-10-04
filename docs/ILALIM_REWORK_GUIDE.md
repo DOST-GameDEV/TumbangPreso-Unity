@@ -40,8 +40,8 @@ entries under it are the detailed record, newest first. THE NEXT MAP IS THE AREN
     colliders, combined vehicles, lighter AO below High, unseen people not posed, the traffic's
     match-start catch-up boxed): 11.17 M to 5.97 M triangles a frame over eight views. Measure
     with `Tests/PlayMode/IlalimPerfProbe.cs`.
-  - A TEST SWITCH for ambient occlusion on the cast (F8 in a debug session, local, not pushed):
-    a body-scale kernel with a ceiling. The owner tried a shade-from-above pass for flat faces and
+  - AMBIENT OCCLUSION ON THE CAST is a settings row ("Character shading": Off, Soft, Full; Full
+    by default; F8 in a debug session tests over it): a body-scale kernel with a ceiling. The owner tried a shade-from-above pass for flat faces and
     had it removed. A character REDESIGN prototype (Dante: a carved box head, painted
     textures, two hair variants) is a Blender try, not wired into the game; it has its own handoff,
     [CHARACTER_REDESIGN_DANTE](CHARACTER_REDESIGN_DANTE.md), and moves to its own session.
@@ -93,8 +93,9 @@ entries under it are the detailed record, newest first. THE NEXT MAP IS THE AREN
      planter between |y| 17.3 (Blender), where the old court was.
   5. Owner decisions still open: ILALIM-1.7's list (pole near-fade, a cat and a dog, the map
      description "LRT Gilmore strip" and the preview shot, the ignored old-map tests), cable
-     shadows on the court, Rizal Hall's size, names, and whether the character AO test becomes
-     the look. CLOSED: the train behind the parapet (the DECK hides it; a railing was built,
+     shadows on the court, Rizal Hall's size, names. CLOSED: the character shading is a player
+     setting, Full by default (`GameSettings.CharacterShading`, 2026-10-05; not yet seen in
+     Unity as a setting); the train behind the parapet (the DECK hides it; a railing was built,
      measured at 0% and reverted).
   6. The repo: about 60 MB of LOD models were added on top of 231 MB of Unity art, with no LFS.
      The troll song the owner committed and then removed (`193adf23`) is still in the branch's
