@@ -563,15 +563,15 @@ Shader "TumbangPreso/WorldOutline"
                     // first render of it: "notice how this part doesnt have any ao. its weak"). At
                     // `_CharacterAO` 0 the mask keeps the cast out, as shipped. Above 0 a masked pixel
                     // takes G, the body-scale kernel (pass 2, CastAO), at the cast's share times
-                    // `CastGain`, instead of the world's metre-wide R, which could not see a body.
+                    // the kernel's own ceiling, instead of the world's metre-wide R, which could not see a body.
                     // The contact shade and the ground occlusion still leave the cast out.
                     float2 enclosed=1-tex2D(_WorldAO,duv).rg;
                     float masked=saturate(mask*_WorldContactMask);
                     float occlusion=enclosed.x*_WorldAOParams.x*(1-masked);
-                    if(_CharacterAO>0)occlusion=lerp(enclosed.x*_WorldAOParams.x,enclosed.y*_CharacterAO*1.35,masked);
+                    if(_CharacterAO>0)occlusion=lerp(enclosed.x*_WorldAOParams.x,enclosed.y*_CharacterAO,masked);
                     // The cast's shade goes deeper than the world's (.7 of the cavity hue): a body's creases are
                     // small on screen, and at the world's depth they washed out on a bright skin tone.
-                    float castDepth=lerp(.7,.5,masked*step(1e-4,_CharacterAO));
+                    float castDepth=lerp(.7,.6,masked*step(1e-4,_CharacterAO));
                     source.rgb*=lerp(float3(1,1,1),_PeakShade.rgb*castDepth,saturate(occlusion));
                 }
                 if(_PeakDepth.w>0)
@@ -803,27 +803,54 @@ Shader "TumbangPreso/WorldOutline"
                 float angle=noise*6.2831853;
                 float3 r=float3(cos(angle),sin(angle),0);
                 float3 t=normalize(r-n*dot(r,n)),b=cross(n,t);
-                float occluded=0,total=0;
+                // ⚠️⚠️ TWO SCALES AND A CEILING, NOT MORE STRENGTH (owner, 2026-10-05, after the bump:
+                // "still not obvious on the flat faces but what do we do about the golem if we keep
+                // bumping it?"). Strength cannot answer that: occlusion only lands where geometry
+                // crowds itself, so every bump went onto the golem's hundred seams and none onto a
+                // flat face, which has no seam to find.
+                //   * FINE (the radius, a third of a metre): seams, a fringe's edge, fingers on a hip.
+                //   * BROAD (2.6 radii, a head's size): the mass of hair over a face, the head over
+                //     the shoulders, an arm beside the chest. On a flat face this is a soft gradient
+                //     under whatever overhangs it, which is the shading a flat face can have.
+                //   * THE CEILING: the two are joined and then held to `CastCeiling`, so a body of
+                //     overlapping blocks reaches the same depth in every seam and stops there,
+                //     instead of going to mud while the flat-faced cast is still catching up.
+                float fineHit=0,fineAll=0,broadHit=0,broadAll=0;
                 [unroll] for(int k=0;k<12;k++)
                 {
                     float phi=k*2.3999632+angle;
                     float elevation=lerp(.22,.75,frac(k*.618034+noise));
                     float ring=(fmod(k,4)+.5)/4;
-                    float reach=radius*lerp(.14,1.0,ring);
                     float3 dir=(t*cos(phi)+b*sin(phi))*cos(elevation)+n*sin(elevation);
+                    float weight=1-ring*.5;
+                    float reach=radius*lerp(.14,1.0,ring);
                     float3 probe=p+dir*reach;
                     float2 uv=(probe.xy/-probe.z)/_ViewRay.xy*.5+.5;
                     float sceneZ=-EyeDepth(uv);
                     float range=smoothstep(0,1,radius/max(abs(p.z-sceneZ),1e-4));
-                    float weight=1-ring*.5;
-                    occluded+=step(probe.z+bias,sceneZ)*range*weight;total+=weight;
+                    fineHit+=step(probe.z+bias,sceneZ)*range*weight;fineAll+=weight;
                 }
-                // ⚠️ x3.6, UP FROM 2.2 (owner, 2026-10-05, in play: "its obvious on some characters but
-                // not others. i think you need to bump it up"). A body built of overlapping blocks and
-                // vines blocks half its probes at every seam and read at once; a blocky kid is big flat
-                // faces with one overhang (the fringe over the forehead, the chin over the collar), which
-                // blocks about a quarter of the set at best. So a quarter blocked is now nearly full.
-                float ao=1-saturate(occluded/max(total,1e-4)*3.6);
+                [unroll] for(int m=0;m<8;m++)
+                {
+                    float phi=m*2.3999632+angle+1.7;
+                    // Steeper than the fine set: what overhangs a face is above it, not beside it.
+                    float elevation=lerp(.45,1.05,frac(m*.618034+noise));
+                    float ring=(fmod(m,4)+.5)/4;
+                    float3 dir=(t*cos(phi)+b*sin(phi))*cos(elevation)+n*sin(elevation);
+                    float weight=1-ring*.4;
+                    float wide=radius*2.6;
+                    float reach=wide*lerp(.25,1.0,ring);
+                    float3 probe=p+dir*reach;
+                    float2 uv=(probe.xy/-probe.z)/_ViewRay.xy*.5+.5;
+                    float sceneZ=-EyeDepth(uv);
+                    float range=smoothstep(0,1,wide/max(abs(p.z-sceneZ),1e-4));
+                    broadHit+=step(probe.z+bias*2,sceneZ)*range*weight;broadAll+=weight;
+                }
+                float fine=saturate(fineHit/max(fineAll,1e-4)*3.6);
+                float broad=saturate(broadHit/max(broadAll,1e-4)*2.4);
+                // Joined as two coats of shade, then the ceiling.
+                const float CastCeiling=.62;
+                float ao=1-min(CastCeiling,1-(1-fine*.75)*(1-broad*.6));
                 // Out by 30 m, where a body is a few pixels and the probes land inside one.
                 return lerp(ao,1,smoothstep(18,30,-p.z));
             }
