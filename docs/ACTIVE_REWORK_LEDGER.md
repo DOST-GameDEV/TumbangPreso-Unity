@@ -138,17 +138,31 @@ two-account endpoint checks. Evidence:reliability-2026-10-04/friends-capacity.
 No deployed-service or complete UI/invite/join claim. Source UI request/accept exists.
 Owner ALSO requests optimization and correct preload timing across the journey.
 Preserve authored quality and broad-loading contributor ownership; measure costs.
-Same-tab UI refresh replaces focused draft/search fields: hypothesis only until
-native reproduction. Root reserves account/front-end/social; laptop native/build.
+Root UI754aaef3ddaa01a7129f0a966b2dfce6c6321c75 on scoped
+competition-pc-hub-edit1004, NOT ASTRA integrated yet. Original53d6 native2fail/
+2controls, root verified5e9 proof10 raw hashes/3440 unchanged maps/source/fixture/
+terminal-restored-free. Candidate58576 core4/4; original fixture/meta unchanged,
+only PlayerHub.cs+OwnerPainted production delta. New-only controls84095 passed3/3:
+caret/actual Bio after blur, pointer-up delivery, closed pending hub. Extra59700
+stopped at compile(private Close),zero tests; one fixture-only correction retained.
+Root preserves actual field/IME, queues row refresh, flushes after UI actions in
+LateUpdate; tab/owner changes bypass/clear it. Await exact raw candidate publication.
+Root reserves account/front-end/social; laptop native/build. No new agents.
 Laptop build13511 failed actual reserve (1220<1536),91samples/jobtreepeak4849MiB.
 ONE changed serial-import repair98086 also TERMINAL125,41samples/peak4265MiB/
 min1394. Unity still spawned HW0 despite desired0/standby0. Settings restored3/2,
 inputs unchanged and preserved/free, no artifact or third unchanged retry.
 First2import deltas preserved/classified:2runtime shaders + newline-only settings;
 all208existing private importer hashes preserved. Do not launch PC without release.
-NEXT: publish checked Friends capacity correction, prepare a focused-field native
-reproduction for the laptop's available slot and continue full journey/preload
-inspection. Build/real service/current peer and rendered performance gates stay open.
+Friends fix published9cc23, host-loss tools ce9d; resource903314 evidence inspected
+all19 raw hashes/guard receipts and normally integrated4689a5b0e. Root checked
+source boundaries: boot asset/account/menu readiness precede reveal; arena installer,
+introduction and20-view offscreen prewarm precede curtain dismissal. This is SOURCE
+ordering, not measured first-use completeness or hitch acceptance. No broad-loading
+source changed. Full login/friends/gameplay/invite/join and preload acceptance open.
+NEXT: inspect exact raw UI candidate/core4/extra3 evidence, integrate/publish the
+coherent fix normally, then continue the owner full-flow/preload optimization pass.
+Never repeat passing cohorts unchanged or claim a current release artifact exists.
 Owner last-five-hours question was answered; do not replay it after compaction.
 
 ## Completed evidence and next integration gates

@@ -17,6 +17,17 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### HUB-EDIT-REFRESH-1004: background data does not interrupt typing
+
+- [x] Native original two failures/two controls; candidate preserves actual
+  same-owner editing/caret and defers row rebuild until editing/UI actions end.
+  Original4/4 plus3 new lifetime controls pass; profile data refreshes after blur,
+  pointer-up is delivered and closing stays closed. Tab/account replacement
+  immediately retire old editing. One extra-fixture compile repair retained.
+  [Evidence](reports/reliability-2026-10-04/hub-edit-refresh/README.md).
+- [ ] Exact raw candidate proof integration, then packaged/physical input and
+  frame/first-use acceptance. Supplied interactions do not qualify the full flow.
+
 ### FRIENDS-CAPACITY-1004: acceptance retains both accounts' state
 
 - [x] Check both accounts' capacity before accepting or resolving a crossed
