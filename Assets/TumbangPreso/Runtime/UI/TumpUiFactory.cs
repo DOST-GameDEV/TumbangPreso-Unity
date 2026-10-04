@@ -117,9 +117,9 @@ namespace TumbangPreso.UI
             return button;
         }
 
-        // Owner's temporary PNG: retain the supplied bytes, fit the visible ink rather
-        // than its transparent export canvas. Normalized UVs survive importer scaling.
-        public static Rect LogoUv => new Rect(339f/1920f,119f/1080f,1259f/1920f,828f/1080f);
+        // The owner restored the original flat-colour login logo. Its export is
+        // already tightly framed; keep its full pixels and native proportions.
+        public static Rect LogoUv => new Rect(0f, 0f, 1f, 1f);
 
         public static Sprite Sprite(string resource)
         {

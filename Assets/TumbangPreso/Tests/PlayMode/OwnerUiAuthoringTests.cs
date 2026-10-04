@@ -16,15 +16,18 @@ namespace TumbangPreso.PlayTests
         [UnitySetUp]public IEnumerator Before()=>PlayModeWorld.Reset();
         [UnityTearDown]public IEnumerator After()=>PlayModeWorld.Reset();
         [UnityTest]
-        public IEnumerator TemporaryTumpLogoUsesSuppliedInkAcrossUiRoutes()
+        public IEnumerator OriginalTumpLogoUsesOwnerArtworkAcrossUiRoutes()
         {
             var sprite=TumpUiFactory.Sprite("UI/brand/tump_logo");
             Assert.IsNotNull(sprite);
             Assert.AreSame(sprite,OwnerUiTheme.Current.Art(OwnerUiTheme.Piece.Logo));
             Assert.AreSame(sprite,OwnerMenuArt.Piece("login3-logo"));
-            Assert.AreEqual(1259f/828f,sprite.rect.width/sprite.rect.height,.003f);
-            Assert.Less(sprite.rect.width,sprite.texture.width,"Transparent export margins must not shrink the visible logo.");
-            var owner=new GameObject("TemporaryLogoReview");
+            var original=Resources.Load<Texture2D>("UI/owner-menu-edits/login3-logo");
+            Assert.IsNotNull(original);
+            Assert.AreEqual(original.width/(float)original.height,sprite.rect.width/sprite.rect.height,.003f);
+            Assert.AreEqual(sprite.texture.width,sprite.rect.width,"The original export must remain fully visible.");
+            Assert.AreEqual(sprite.texture.height,sprite.rect.height);
+            var owner=new GameObject("OriginalLogoReview");
             owner.AddComponent<OwnerCreditsView>().Open(owner.transform,()=>{});
             yield return null;
             var canvas=GameObject.Find("OwnerCreditsCanvas").GetComponent<Canvas>();
@@ -33,7 +36,7 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(Color.white,logo.color);
             var hans=canvas.GetComponentsInChildren<Text>().Single(t=>t.text=="HANS XAVIER LAO");
             Assert.LessOrEqual(hans.preferredWidth,hans.rectTransform.rect.width,"The full credit name must fit.");
-            yield return TumpUiCapture.Capture("Temporary-TUMP-logo-credits",canvas,960,540,false);
+            yield return TumpUiCapture.Capture("Original-TUMP-logo-credits",canvas,960,540,false);
             Object.Destroy(owner);
         }
 

@@ -14,11 +14,15 @@
   check pass, with actual body/owner-hand film. [Evidence](reports/throw-restore-decay-2026-10-04/README.md).
 - [ ] Paired-device/full-match and human feel acceptance.
 
-### TEMPORARY-LOGO-1004: supplied PNG preview
+### TEMPORARY-LOGO-1004: original logo restored after preview
 
-- [x] Separate UI logos use supplied art, preserved proportions/placement, with
-  native credits review. [Evidence](reports/temporary-logo-2026-10-04/README.md).
-- [ ] Title-screen wall painting baked into background remains to be replaced.
+- [x] Temporary supplied-art preview was checked, then the owner requested the
+  original flat-colour logo again. Restored the existing original pixels across
+  shared UI routes with preserved layout; native logo/credits1/1 and actual
+  screenshot review pass. [Current evidence](reports/original-logo-2026-10-04/README.md).
+  [Historical preview](reports/temporary-logo-2026-10-04/README.md).
+- [x] Keep the original title-screen wall painting; the preview replacement is
+  superseded by the owner's request to restore the original logo.
 
 ### TUTORIAL-MUSIC-1004: owner-supplied track
 
