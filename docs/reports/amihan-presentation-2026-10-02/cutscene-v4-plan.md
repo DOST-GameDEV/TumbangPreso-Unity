@@ -249,3 +249,10 @@ Removed: all of Amihan's skill sounds (owner: "remove all sfx"); `tools/build_am
 The `Teehee` face (`VoxelFace.Look.Teehee`, chevron eyes) is baked but unused: the owner found it weird.
 Evidence: `Logs/amihan-v14r1` (films 3/3, EditMode 4/4) and `Logs/amihan-v14r2` (finish reframed, 2/2); videos in
 `Logs/amihan-v6-share`. Human taste is the open gate; the owner has not approved v14.
+
+## v16 (October 4): the bird gets a head
+
+Owner: "the bird has no head". The body spindle tapered to a point where the head should be, and the eyes floated above
+it in the wing teal. Now the body runs along a curved spine up a neck into a round head of its own, paler and brighter
+than the wings (`AmBirdHead`), with the eyes on its front, a slender pale-gold beak and the crest streaming off its crown.
+Evidence: `Logs/amihan-v16r1`.

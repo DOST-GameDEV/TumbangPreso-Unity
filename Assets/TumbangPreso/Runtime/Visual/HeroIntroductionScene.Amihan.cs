@@ -917,7 +917,7 @@ namespace TumbangPreso.Visual
             {
                 var seed = _amLeafSeed[i];
                 Vector3 at; bool on;
-                float tumble = tumble0;
+                float tumble = tumble0, keep = 1f;
                 if (story < AmSwoopAt)
                 {
                     // TORN UP BY THE MONSOON: circling the plaza in its ring, closing and rising into the vortex.
@@ -927,6 +927,10 @@ namespace TumbangPreso.Visual
                     float h = Mathf.Lerp(.2f + 3.5f * seed.y, -.5f + 1.5f * seed.y, close);
                     at = centre + new Vector3(Mathf.Sin(a) * r, h, Mathf.Cos(a) * r);
                     on = t > AmGatherFrom + .25f * seed.x;
+                    // v16: drawn into the swell of light they were dark green confetti round the newborn bird (owner, twice:
+                    // "blocks"). They shrink into the light as the vortex closes, each a little before the next.
+                    keep = 1f - Ease(AmFormAt - .3f + .15f * seed.y, AmFormAt + .02f, t);
+                    on &= keep > .02f;
                 }
                 else if (since < 0f)
                 {
@@ -951,7 +955,7 @@ namespace TumbangPreso.Visual
                 }
                 if (!on) { Place(_amLeaf[i], Vector3.zero, Vector3.one * .001f, Quaternion.identity, 0f); continue; }
                 var spin = Quaternion.Euler(tumble * (190f + 120f * seed.x) + i * 37f, tumble * (260f + 90f * seed.y) + i * 53f, tumble * 140f + i * 11f);
-                Place(_amLeaf[i], at, new Vector3(.1f, .016f, .15f) * (.85f + .35f * seed.z), spin, 1f);
+                Place(_amLeaf[i], at, new Vector3(.1f, .016f, .15f) * ((.85f + .35f * seed.z) * keep), spin, keep);
             }
 
             // THE FEATHER: after the bird has gone down the lane, one feather drifts down past her, rocking.
