@@ -2373,6 +2373,8 @@ namespace TumbangPreso.Net
         private static string PlayerFacingDisconnectReason(string raw)
         {
             var cause = Core.SessionEndRules.Classify(raw, wasLocal: false);
+            if (cause == Core.SessionEndCause.HostLost && MatchAbandon.MatchWasCompleted)
+                return MatchAbandon.PlayerLine;
 
             // ⚠️ THE HOST'S OWN SENTENCE STILL WINS WHERE IT IS ONE. `ApproveConnection` writes
             // "Game version mismatch (network protocol 24)" with the actual number in it, and

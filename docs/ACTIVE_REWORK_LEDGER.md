@@ -43,13 +43,18 @@ The same client log confirms a NEW DEFECT: after Slice reports match over, later
 host departure logs ABANDONED round4of8 and moves back to an own lobby. Preserve
 completion during session teardown; keep genuine host-loss authority revocation.
 
-Menu-look source is natively complete and pending publication: original23460 /
-2621 late touch(40,-15) and held stick(0.22,0) leak closing frame;1 control PASS.
-Candidate9168/22252 same3/3 PASS with next-frame look resumption. Both terminal,
-202 owned UI importers restored per run, prefs/Quality restored, no frozen deltas.
-ReadLookDelta adds only the existing menu-close-frame guard; backend/bindings
-unchanged. NEXT publish explicit Reader/test/report/TODO paths, then reproduce
-completed-match disconnect before implementing its smallest fix.
+Menu-look eb12c2bf0 is pushed: original23460/2621 two causes plus1 control,
+candidate9168/22252 same3/3 with next-frame look. Parents and202 GUI metadata/
+prefs/Quality restoration terminal. No packaged legacy-mouse/relock claim.
+Completed departure source is ready to publish: original21484/4754 host+client
+terminal paths falsely ABANDONED4of8; two genuine-failure controls pass. Candidate
+22748/53439 same4/4 passes including shipping UI formatter, cached4-round count
+and authority revocation. Completion is recorded at existing MatchEnded, reset
+on new live match and retained for disconnect diagnostics; protocol151 unchanged.
+Both parents/restorations terminal,202 GUI per run exact, no frozen deltas.
+NEXT publish explicit MatchDirector/MatchAbandon/NetSession/test/report paths,
+then make one combined Windows151 package for current source. PC alone; actual
+second-machine motion remains open until owner resumes laptop.
 
 Normal Windows151 Guest/title/Home animated in real controls and expired-code
 join recovered to usable browser. Paete HERO->TRY IN PRACTICE, one held Q150ms,

@@ -170,9 +170,11 @@ Nothing was deleted or renumbered.
 - [x] Protocol150 normal public JOIN and natural four-round completion have
   identical full2430-byte saved records on PC/laptop, independently compared.
   [Client evidence](reports/laptop-validation-2026-10-05/online150-client/README.md).
-- [ ] After that completed match, host departure was wrongly reported as
-  ABANDONED4of8 on the client. Preserve terminal-match state during disconnect;
-  genuine mid-match host loss must still revoke authority and report failure.
+- [x] Completed host/client match departure retains the terminal state and its
+  four-round rules instead of reporting ABANDONED4of8 after local rules return.
+  Original two causal failures plus fresh-live/pre-start controls become4/4.
+  Genuine host loss still revokes authority. Packaged teardown remains open.
+  [Evidence](reports/reliability-2026-10-05/completed-departure/README.md).
 - [ ] First-time Home entrance animation does not play; inspect hidden loading/
   login timing and start the entrance on actual visible reveal.
 - [x] Failed hidden Home-video preload no longer permanently parks first Home

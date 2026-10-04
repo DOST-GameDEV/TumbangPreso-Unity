@@ -63,13 +63,20 @@ namespace TumbangPreso
         /// next solo match cannot resolve its own tags.
         /// </summary>
         public static bool AuthorityRevoked { get; private set; }
+        public static bool MatchWasCompleted { get; private set; }
+
+        private static bool CompletedHostDeparture => MatchWasCompleted && Cause == SessionEndCause.HostLost;
 
         /// <summary>The player-facing line, or "" when there is nothing worth saying.</summary>
-        public static string PlayerLine => SessionEndRules.PlayerLine(Cause);
+        public static string PlayerLine => CompletedHostDeparture
+            ? "The host connection closed after the match."
+            : SessionEndRules.PlayerLine(Cause);
 
         /// <summary>The operator's line: what happened AND what it did to the match.</summary>
         public static string Diagnostic =>
-            SessionEndRules.Diagnostic(Cause, RoundNumber, TotalRounds);
+            CompletedHostDeparture
+                ? $"{Cause}: connection ended after completed match at round {RoundNumber} of {TotalRounds}; authority revoked"
+                : SessionEndRules.Diagnostic(Cause, RoundNumber, TotalRounds);
 
         /// <summary>
         /// Record that this peer's session ended, and revoke its authority if that is what the
@@ -86,8 +93,9 @@ namespace TumbangPreso
             AuthorityRevoked = SessionEndRules.RevokesAuthority(Cause);
 
             var match = GameServices.Match;
+            MatchWasCompleted = match != null && match.HasCompleted;
             RoundNumber = match != null ? match.RoundNumber : 0;
-            TotalRounds = match != null ? match.TotalRounds : 0;
+            TotalRounds = match != null ? (MatchWasCompleted ? match.CompletedTotalRounds : match.TotalRounds) : 0;
 
             if (AuthorityRevoked)
                 Debug.LogWarning("[Abandon] " + Diagnostic);
@@ -110,6 +118,7 @@ namespace TumbangPreso
             RoundNumber = 0;
             TotalRounds = 0;
             AuthorityRevoked = false;
+            MatchWasCompleted = false;
         }
 
         /// <summary>

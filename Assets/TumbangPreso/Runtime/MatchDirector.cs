@@ -72,7 +72,17 @@ namespace TumbangPreso
             return CustomGameRules.ScoreTargetReached(scores, target);
         }
         public bool MatchInProgress { get; private set; }
+        public bool HasCompleted { get; private set; }
+        public int CompletedTotalRounds { get; private set; }
         public bool IsWarmupBuffer { get; set; }
+
+        private void ReportMatchEnded()
+        {
+            // Room teardown may restore local rules before departure is classified.
+            HasCompleted = true;
+            CompletedTotalRounds = TotalRounds;
+            MatchEnded?.Invoke(_scores.WinningSlot());
+        }
 
         public int ScoreFor(int slot) => _scores[slot];
 
@@ -210,6 +220,8 @@ namespace TumbangPreso
             {
                 HostConfirmedInProgress = true;
                 _snapshotEndReported = false;
+                HasCompleted = false;
+                CompletedTotalRounds = 0;
             }
 
             _scores.SetAll(scores);
@@ -224,7 +236,7 @@ namespace TumbangPreso
                 ((wasInProgress && HostConfirmedInProgress) || completed))
             {
                 _snapshotEndReported = true;
-                MatchEnded?.Invoke(_scores.WinningSlot());
+                ReportMatchEnded();
             }
         }
 
@@ -300,6 +312,8 @@ namespace TumbangPreso
             // round. See `IsPreStartSnapshot`.
             HostConfirmedInProgress = false;
             _snapshotEndReported = false;
+            HasCompleted = false;
+            CompletedTotalRounds = 0;
 
             AdvanceRound();
         }
@@ -314,6 +328,8 @@ namespace TumbangPreso
             IsWarmupBuffer = false;
             HostConfirmedInProgress = false;
             _snapshotEndReported = false;
+            HasCompleted = false;
+            CompletedTotalRounds = 0;
         }
 
         public void AdvanceRound()
@@ -330,7 +346,7 @@ namespace TumbangPreso
             if (RoundNumber > TotalRounds || ScoreTargetReached())
             {
                 MatchInProgress = false;
-                MatchEnded?.Invoke(_scores.WinningSlot());
+                ReportMatchEnded();
                 return;
             }
 
@@ -349,7 +365,7 @@ namespace TumbangPreso
             {
                 MatchInProgress = false;
                 IsWarmupBuffer = false;
-                MatchEnded?.Invoke(_scores.WinningSlot());
+                ReportMatchEnded();
                 return;
             }
 
