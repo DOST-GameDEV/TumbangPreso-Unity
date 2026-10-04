@@ -6,7 +6,7 @@ namespace TumbangPreso.Visual
     public sealed partial class HeroIntroductionScene
     {
         // =========================================================================================
-        // DANTE, TITAN FISSURE, 3.8 s. plan.md § 5.
+        // BASILIO, TITAN FISSURE, 3.8 s. plan.md § 5.
         //
         // "Holds the difficult space. Refuses to be rushed." In Montalban he grew up with the
         // mountain stories, and Bernardo Carpio's divided stone is the image his own power borrows
@@ -28,14 +28,29 @@ namespace TumbangPreso.Visual
             _dustLow = Wall("DustGround", 0, 1.2f, new Color(.2f, .14f, .09f, .8f));
             _dustHigh = Wall("DustSky", 1.2f, 11, new Color(.42f, .32f, .22f, .72f), emission: .08f, cap: true);
             for (int i = 0; i < 9; i++)
-                _ridge.Add(AddSolid("Ridge" + i, VfxShapes.Prism(4, 1, .25f, .2f, 0, 60 + i), new Color(.24f, .19f, .15f, 1)));
+                _ridge.Add(BasilioStone("Ridge" + i, VfxShapes.Prism(4, 1, .25f, .2f, 0, 60 + i), new Color(.24f, .19f, .15f, 1)));
             var slab = VfxShapes.Prism(5, 1, .72f, .18f, 0, 7);
-            _slabLeft = AddSolid("MountainSlabLeft", slab, new Color(.36f, .3f, .25f, 1));
-            _slabRight = AddSolid("MountainSlabRight", slab, new Color(.33f, .28f, .23f, 1));
+            _slabLeft = BasilioStone("MountainSlabLeft", slab, new Color(.36f, .3f, .25f, 1));
+            _slabRight = BasilioStone("MountainSlabRight", slab, new Color(.33f, .28f, .23f, 1));
             _seamGlow = Add("MoltenSeamGlow", VfxShapes.Fracture(5, 3, .09f, 21), new Color(1, .42f, .08f, .55f), .8f);
             _seam = Add("MoltenSeam", VfxShapes.Fracture(5, 3, .045f, 21), new Color(1, .62f, .18f, .95f), 1f);
             for (int i = 0; i < 5; i++)
                 _puffs.Add(Add("StampDust" + i, VfxShapes.Splat(10, .25f, 30 + i), new Color(.62f, .52f, .4f, .7f), .05f));
+        }
+
+        private int BasilioStone(string name, Mesh mesh, Color colour)
+        {
+            int index = AddSolid(name, mesh, colour);
+            // Keep opaque lit facets, with a small local fill so the dusk stage
+            // cannot turn the moving slabs into indistinguishable black cutouts.
+            var material = _pieces[index].Renderer.sharedMaterial;
+            if (material.HasProperty("_EmissionColor"))
+            {
+                material.EnableKeyword("_EMISSION");
+                material.SetColor("_EmissionColor", colour * .45f);
+                material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
+            }
+            return index;
         }
 
         private void SampleDante(float t)

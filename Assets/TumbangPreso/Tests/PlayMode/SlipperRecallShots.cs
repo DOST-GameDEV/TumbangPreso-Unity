@@ -47,6 +47,49 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown]
         public IEnumerator ResetWorldAfter() => PlayModeWorld.Reset();
 
+        [UnityTest]
+        public IEnumerator SlipperCircleAppearsOnlyAfterLandingAndClearsOnPickupOrRelaunch()
+        {
+            GameServices.Ensure();GameServices.Round.Clear();
+            var floor=GameObject.CreatePrimitive(PrimitiveType.Cube);floor.name="Recall review floor";
+            floor.transform.position=Vector3.down*.5f;floor.transform.localScale=new Vector3(40,1,40);
+            var actor=new GameObject("Recall review owner",typeof(CharacterController));
+            var who=actor.AddComponent<CharacterMotor>();who.enabled=false;who.PlayerSlot=1;who.IsBot=true;
+            who.transform.position=new Vector3(0,.1f,-8);who.IsDefender=false;
+            var carrier=actor.AddComponent<Carrier>();carrier.enabled=false;GameServices.Round.Register(who);
+            GameServices.Match.ApplySnapshot(new int[4],1,true);GameServices.Round.ApplySnapshot(90,true,0,true);
+            var camera=new GameObject("Recall review camera",typeof(Camera));camera.tag="MainCamera";
+            camera.transform.position=new Vector3(0,2,-8);camera.transform.LookAt(new Vector3(0,0,1));
+            var light=new GameObject("Recall review light").AddComponent<Light>();light.type=LightType.Directional;
+            light.transform.rotation=Quaternion.Euler(45,-30,0);
+            var shoe=new GameObject("Recall review slipper").AddComponent<Slipper>();shoe.enabled=false;
+            shoe.OwnerSlot=shoe.SeatOfOrigin=1;
+            var art=Resources.Load<RosterEntryAsset>("Roster/slipper_loafers");
+            var model=Object.Instantiate(art.Model,shoe.transform);Visual.ToonSkin.ApplySlipper(model,Visual.ToonSkin.PropOutlineWidth);
+            Assert.IsTrue(shoe.HostForceEquip(who));
+            var recall=new GameObject("Recall review").AddComponent<UI.SlipperRecall>();recall.Build(recall.transform);
+            yield return null;Canvas.ForceUpdateCanvases();
+            recall.Track(who,shoe);Assert.IsFalse(recall.Drawing,"Held slippers must have no circle.");
+            shoe.HostThrow(who,new Vector3(0,1.1f,-4),new Vector3(0,2,6));
+            recall.Track(who,shoe);Assert.AreEqual(SlipperState.InFlight,shoe.State);Assert.IsFalse(recall.Drawing,"Flying slippers must have no circle.");
+            var canvas=GameObject.Find("TumpRecallCanvas").GetComponent<Canvas>();
+            yield return TumpUiCapture.Capture("Slipper-circle-flight-hidden",canvas,960,540,false,true,
+                inspectViewport:()=>recall.Track(who,shoe));
+            Physics.SyncTransforms();
+            var flight=typeof(Slipper).GetMethod("FixedUpdate",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            for(int i=0;i<400&&shoe.State==SlipperState.InFlight;i++)flight.Invoke(shoe,null);
+            Assert.AreEqual(SlipperState.Loose,shoe.State,"Use an actual landed flight, not a guessed presentation timer.");
+            recall.Track(who,shoe);Assert.IsTrue(recall.Drawing);
+            yield return TumpUiCapture.Capture("Slipper-circle-landed-visible",canvas,960,540,false,true,
+                inspectViewport:()=>recall.Track(who,shoe));
+            var landed=shoe.transform.position;
+            shoe.ApplySnapshotState(SlipperState.InFlight,null,landed+Vector3.up,Quaternion.identity,Vector3.forward,0,SlipperAffinity.Normal,1);
+            recall.Track(who,shoe);Assert.IsFalse(recall.Drawing,"Replica relaunch clears the existing circle.");
+            shoe.ApplySnapshotState(SlipperState.Loose,null,landed,Quaternion.identity,Vector3.zero,0,SlipperAffinity.Normal,1);
+            recall.Track(who,shoe);Assert.IsTrue(recall.Drawing,"Replica landing restores it.");
+            Assert.IsTrue(shoe.HostForceEquip(who));recall.Track(who,shoe);Assert.IsFalse(recall.Drawing,"Pickup clears the landed circle immediately.");
+        }
+
         private const string OutDir = "Logs/shots-recall";
 
         /// <summary>
@@ -309,7 +352,7 @@ namespace TumbangPreso.PlayTests
             Face(me, mine.transform.position);
             for (int i = 0; i < 6; i++) yield return null;
 
-            yield return Shot(mine, me, "recall-1-inflight", SlipperState.InFlight);
+            yield return Shot(mine, me, "recall-1-inflight", SlipperState.InFlight, drawing: false);
 
             // ---- 2 · LOOSE, AT RANGE ------------------------------------------------------
             // Ring plus the live GRAB cap. This is the state the whole feature is for.
