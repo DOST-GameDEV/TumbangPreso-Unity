@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 09:27:24Z" end-time="2026-10-04 09:27:24Z" duration="0.0714736">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1319" result="Passed" start-time="2026-10-04 09:27:24Z" end-time="2026-10-04 09:27:24Z" duration="0.071474" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2621" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1319" result="Passed" start-time="2026-10-04 09:27:24Z" end-time="2026-10-04 09:27:24Z" duration="0.063399" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="19636" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2622" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1319" result="Passed" start-time="2026-10-04 09:27:24Z" end-time="2026-10-04 09:27:24Z" duration="0.062262" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2623" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1319" result="Passed" start-time="2026-10-04 09:27:24Z" end-time="2026-10-04 09:27:24Z" duration="0.061439" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1076" name="AiRoundOpeningLifetimeTests" fullname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests" classname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-04 09:27:24Z" end-time="2026-10-04 09:27:24Z" duration="0.043297" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1078" name="ActualInactiveUpdateCannotSubstituteForTheRoundEvent" fullname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests.ActualInactiveUpdateCannotSubstituteForTheRoundEvent" methodname="ActualInactiveUpdateCannotSubstituteForTheRoundEvent" classname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests" runstate="Runnable" seed="198558844" result="Passed" start-time="2026-10-04 09:27:24Z" end-time="2026-10-04 09:27:24Z" duration="0.027404" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1080" name="RoundEventDropsThePreviousDecisionButPreservesCastCadence" fullname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests.RoundEventDropsThePreviousDecisionButPreservesCastCadence" methodname="RoundEventDropsThePreviousDecisionButPreservesCastCadence" classname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests" runstate="Runnable" seed="1801549663" result="Passed" start-time="2026-10-04 09:27:24Z" end-time="2026-10-04 09:27:24Z" duration="0.001064" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1077" name="RoundEventStartsANewOpeningWithoutAnInactiveAbilityTick" fullname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests.RoundEventStartsANewOpeningWithoutAnInactiveAbilityTick" methodname="RoundEventStartsANewOpeningWithoutAnInactiveAbilityTick" classname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests" runstate="Runnable" seed="1259040581" result="Passed" start-time="2026-10-04 09:27:24Z" end-time="2026-10-04 09:27:24Z" duration="0.000576" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1081" name="SameRoundInactiveUpdatePreservesTheOpeningAndCadence" fullname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests.SameRoundInactiveUpdatePreservesTheOpeningAndCadence" methodname="SameRoundInactiveUpdatePreservesTheOpeningAndCadence" classname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests" runstate="Runnable" seed="1942355311" result="Passed" start-time="2026-10-04 09:27:24Z" end-time="2026-10-04 09:27:24Z" duration="0.000578" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1079" name="SuppressedBodyAiStartsFreshWithoutReleasingTheHumansHeroKey" fullname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests.SuppressedBodyAiStartsFreshWithoutReleasingTheHumansHeroKey" methodname="SuppressedBodyAiStartsFreshWithoutReleasingTheHumansHeroKey" classname="TumbangPreso.Tests.AiRoundOpeningLifetimeTests" runstate="Runnable" seed="19759223" result="Passed" start-time="2026-10-04 09:27:24Z" end-time="2026-10-04 09:27:24Z" duration="0.001548" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
