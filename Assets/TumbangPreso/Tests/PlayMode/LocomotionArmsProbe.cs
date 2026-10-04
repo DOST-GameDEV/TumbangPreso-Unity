@@ -108,12 +108,15 @@ namespace TumbangPreso.PlayTests
                 // degrees), so "swung enough" means most of what that character's gait asks for.
                 var authored = sprint ? anim.Style.Run : anim.Style.Walk;
                 float need = .6f * (authored.ArmForward + authored.ArmBack);
-                Assert.Greater(late.LMax - late.LMin, need, $"{name}: the left arm barely swung.");
+                // Isagani deliberately favours one arm while swaggering. Compare
+                // each side with its own authored range, as GaitStyle.Evaluate does.
+                float leftNeed=need*(1f-authored.ArmFavour),rightNeed=need*(1f+authored.ArmFavour);
+                Assert.Greater(late.LMax - late.LMin, leftNeed, $"{name}: the left arm barely swung.");
                 // ⚠️ 3 DEGREES: only catches an arm pulled inward past vertical. Every authored spread is 10 degrees or more
                 // (`GaitStyles`), and the shoulder is never moved off its pivot any more (the shift made arms float, 2026-09-27).
                 Assert.Greater(late.LSpread, 3f, $"{name}: the left arm hugged the body.");
                 if (holding) { Assert.Less(late.RMax, 50f, $"{name}: the slipper is still held out in front."); Assert.Less(late.RMax - late.RMin, 35f, $"{name}: the carrying hand swung the slipper about."); }
-                else { Assert.Greater(late.RMax - late.RMin, need, $"{name}: the right arm barely swung."); Assert.Greater(late.RSpread, 3f, $"{name}: the right arm hugged the body."); }
+                else { Assert.Greater(late.RMax - late.RMin, rightNeed, $"{name}: the right arm barely swung."); Assert.Greater(late.RSpread, 3f, $"{name}: the right arm hugged the body."); }
                 who.Teleport(from + Vector3.right * 30);
                 yield return null;
             }
