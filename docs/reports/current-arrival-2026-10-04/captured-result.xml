@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 06:35:19Z" end-time="2026-10-04 06:35:48Z" duration="29.1295051">
+  <test-suite type="TestSuite" id="2999" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1625" result="Failed" site="Child" start-time="2026-10-04 06:35:19Z" end-time="2026-10-04 06:35:48Z" duration="29.129505" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2993" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1625" result="Failed" site="Child" start-time="2026-10-04 06:35:19Z" end-time="2026-10-04 06:35:48Z" duration="29.115763" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="33570" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2994" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1625" result="Failed" site="Child" start-time="2026-10-04 06:35:19Z" end-time="2026-10-04 06:35:48Z" duration="29.108408" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2995" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1625" result="Failed" site="Child" start-time="2026-10-04 06:35:19Z" end-time="2026-10-04 06:35:48Z" duration="29.101040" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1881" name="MatchArrivalFlowTests" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-04 06:35:19Z" end-time="2026-10-04 06:35:48Z" duration="29.074621" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1887" name="CustomHostSelectedCourtSkipsVotingAndBeginsWithoutSecondReady" fullname="TumbangPreso.PlayTests.MatchArrivalFlowTests.CustomHostSelectedCourtSkipsVotingAndBeginsWithoutSecondReady" methodname="CustomHostSelectedCourtSkipsVotingAndBeginsWithoutSecondReady" classname="TumbangPreso.PlayTests.MatchArrivalFlowTests" runstate="Runnable" seed="749377974" result="Failed" start-time="2026-10-04 06:35:19Z" end-time="2026-10-04 06:35:48Z" duration="29.061734" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  No key was pressed: the queued match must start itself.
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.MatchArrivalFlowTests+<StartFlow>d__11.MoveNext () [0x00538] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/MatchArrivalFlowTests.cs:307
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Net] offline
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 8910, join code Y2UK
+[NetReady] peer 0 seat 0 ready=True -> 0 of 0
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[NetSeat] arena installed: LocalSlot=0 spectator=False host=True allBots=False | s0:reader+sim+live+act | s1:-+ai+sim+bot+live+act | s2:-+ai+sim+bot+live+act | s3:-+ai+sim+bot+live+act
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[ArenaPrewarm] drew 20 views in 4.34 s.
+[HubLoading] Eskinita ready after 14.55 s.
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
