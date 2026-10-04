@@ -229,3 +229,21 @@ Report reports/reliability-2026-10-04/integration-names-races.
 Artifactserver4508/session89233 LIVE servesonly exact258whitelist+manifest;
 close afterlaptopverifiedcopy. LaptopAIroundopening/cadence sourceunit next.
 No Rootheavyjob/player live. Keepoldshared145 untilnewmatchingpeeraccepted.
+
+
+## Current names and final-package boundary
+
+CurrentHub18464/session70606 TERMINALPASS exit0: all9visibleheroheadings/text/
+bounds and currentsettings/modeback, prefs/profile restored/all258files unchanged.
+Actual Isagani/Soraya screenshots inspected; files taskLogs/current-hub-player.
+Story JSON omitted by initialroute stillhadoldnames in8fields; correctedall8,
+nineIDs unchanged. CurrentHubOnly nowopens/checks/captures available story canvas,
+directcompile0; actualstoryacceptance NEXT, notclaimed fromoldheadingpass.
+AI200909b90 integrated815a4b3a5 AFTERbuildterminal. Root19rawGithashes/actual5XML/
+4fail1control ->5/5/terminal/restoredquality+9prefs/exactRuntimefixturemeta verified.
+LPTprepareHero8 armeronly/notlaunched; agreed FINALsamepackageKanto8*90 normal2peers.
+AllRootplayer/build/helper processes terminal (3384/94504,18464/70606,4508/89233).
+Nextpublishstorycorrection then FINALWindows release includingnames/currentUI/
+AIroundreset/asyncfixes/latestIsaganiintro, actualstoryroute; shareonlychangedfiles
+bylatestfullmanifestwherepossible. Do not repeat oldmenu/passingcohorts. Keep
+current91aad/old145 untilfinalaccepted, thenpruneonlyobsoleteowned builds.

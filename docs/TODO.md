@@ -53,6 +53,17 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### AI-ROUND-OPENING-1004: each round gets its own ability opening
+
+- [x] Clear old opening elapsed time and weighed skill decision on the real
+  round-start event. Inactive CanAct frames skip the old Update reset. Native
+  original4causes/1same-round control -> same candidate5/5. Root19rawhashes,
+  actual XMLs and exact shipped Runtime/fixture/meta verified; actor/human input,
+  authored timing and cadence unchanged.
+  [Evidence](reports/laptop-validation-2026-10-04/ai-round-opening-lifetime/README.md).
+- [ ] Final packaged default-round and actual-peer acceptance.
+
+
 ### UPDATED-NAMES-RACES-PLAYER-1004: actual integration build and current UI flow
 
 - [x] Source91aad/protocol145 full-quality release succeeded115s. All258 files
@@ -62,8 +73,13 @@ Nothing was deleted or renumbered.
   [Evidence](reports/reliability-2026-10-04/integration-names-races/README.md).
 - [x] Retain obsolete full-flow lookup failure and add a focused current-hub
   route for all nine names/visible text/bounds/settings/modeback. Direct compile0.
-- [ ] Run that focused route natively, then whole gameplay/result/return,
-  signed-in service and matching-peer/recovery acceptance.
+- [x] Exactbd97 player current-hub route passed all nine headings/text/bounds and
+  settings/modeback; terminal/restored/artifact checks, actual Isagani/Soraya
+  screenshot inspection. [Evidence](reports/reliability-2026-10-04/current-hub-names/README.md).
+- [x] Correct eight long-story fields that the heading route omitted, retaining
+  nine stable story IDs. Extend the actual route to check the story canvas too.
+- [ ] Native story acceptance in final integrated package, whole gameplay/results/
+  return, signed-in service and matching-peer/recovery acceptance.
 
 
 ### SOCIAL-REFRESH-ORDER-1004: preserve newer acknowledged friend actions

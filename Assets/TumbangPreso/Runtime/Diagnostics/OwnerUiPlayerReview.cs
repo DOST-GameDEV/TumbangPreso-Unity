@@ -470,6 +470,20 @@ namespace TumbangPreso.Diagnostics
                 var stale=texts.FirstOrDefault(t=>oldNames.IsMatch(t.text??""));
                 if(stale!=null)throw new InvalidOperationException("Old hero name remains in visible UI: "+stale.text);
                 Stage("current hero label "+heading.text);yield return Shot("Hero-"+heading.text);
+                if(Find("StoryButton")!=null)
+                {
+                    string heroName=heading.text;
+                    yield return Click("StoryButton");
+                    yield return WaitFor(()=>GameObject.Find("OwnerCharacterStoryCanvas")!=null);
+                    var book=GameObject.Find("OwnerCharacterStoryCanvas");
+                    var storyTexts=book.GetComponentsInChildren<Text>().Where(t=>t.isActiveAndEnabled).ToArray();
+                    var storyTitle=storyTexts.Single(t=>t.name=="StoryTitle");
+                    if(!storyTitle.text.Contains(heroName))throw new InvalidOperationException("Story heading lost the selected hero.");
+                    var oldStoryName=storyTexts.FirstOrDefault(t=>oldNames.IsMatch(t.text??""));
+                    if(oldStoryName!=null)throw new InvalidOperationException("Old hero name remains in story: "+oldStoryName.text);
+                    yield return Shot("Story-"+heroName);yield return Click("CloseCharacterStory");
+                    yield return WaitFor(()=>Find("NextHero")!=null);
+                }
                 yield return Click("NextHero");yield return null;
             }
             if(names.Count!=Core.Roster.HeroPeople.Count)throw new InvalidOperationException("Hero roster coverage incomplete.");
