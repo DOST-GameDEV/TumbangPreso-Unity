@@ -17,6 +17,15 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### VIEWMODEL-ROSTER-FALLBACK-1004: nullable catalog does not block owner arms
+
+- [x] Preserve mode/index identity when roster lookup has no book, list or art
+  row, including roster-arm lookup. Original four failures/one control become
+  five/five in native reduced-project checks. Valid model overrides remain.
+  [Evidence](reports/viewmodel-roster-fallback-2026-10-04/README.md).
+- [ ] Complete owner-camera composition, live map and packaged acceptance.
+  The separate owner-motion capture timed out and its frames are not accepted.
+
 ### ZACK-BANK-CONTACT-1004: powered wall-contact cue
 
 - [x] Add a compact gold contact burst to each actual powered wall bank, including

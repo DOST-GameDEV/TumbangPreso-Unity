@@ -1592,8 +1592,15 @@ namespace TumbangPreso.CameraSystem
 
             var actual=character.GetComponent<Visual.CharacterVisual>();
             if(actual!=null&&actual.SourceModel!=null)
-                foreach(var candidate in RosterBook.Load().People)
-                    if(candidate.Model==actual.SourceModel){charId=candidate.Id;break;}
+            {
+                var book = RosterBook.Load();
+                // A missing catalog keeps the mode/index identity fallback above.
+                // Unassigned art rows must not prevent attaching the owner camera.
+                if (book != null && book.People != null)
+                    foreach (var candidate in book.People)
+                        if (candidate != null && candidate.Model == actual.SourceModel)
+                        { charId = candidate.Id; break; }
+            }
             SetCharacter(charId);
         }
 
@@ -1735,8 +1742,11 @@ namespace TumbangPreso.CameraSystem
             var actual = _characterMotor != null ? _characterMotor.GetComponent<Visual.CharacterVisual>() : null;
             if (actual != null && actual.SourceModel != null)
             {
-                foreach (var candidate in RosterBook.Load().People)
-                    if (candidate.Model == actual.SourceModel) { characterId=candidate.Id; break; }
+                var book = RosterBook.Load();
+                if (book != null && book.People != null)
+                    foreach (var candidate in book.People)
+                        if (candidate != null && candidate.Model == actual.SourceModel)
+                        { characterId = candidate.Id; break; }
             }
             var right = ViewmodelMeshAssets.Load("Models/RosterArms/" + characterId + "_right");
             var left = ViewmodelMeshAssets.Load("Models/RosterArms/" + characterId + "_left");

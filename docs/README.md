@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Owner arms catalog fallback: [causal native checks](reports/viewmodel-roster-fallback-2026-10-04/README.md).
+
 Zack powered wall contact: [compact cue and scoped native evidence](reports/zack-bank-contact-2026-10-04/validation.md).
 
 Friends acceptance capacity: [two-account server flow and correction](reports/reliability-2026-10-04/friends-capacity/README.md).
