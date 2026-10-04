@@ -20,7 +20,8 @@ namespace TumbangPreso.CameraSystem
     { public float Time,Pitch,Gain;public Vector3 Position;public string Id; }
     public sealed class RecordedMatchClip
     {
-        public const int WireVersion=13;
+        //14: barricade fields preserve curved-wall geometry and remaining hits.
+        public const int WireVersion=14;
         public const int ByteLimit=2*1024*1024;
         public const int RawByteLimit=12*1024*1024;
         public const int SoundCueLimit=512;

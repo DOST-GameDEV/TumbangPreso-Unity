@@ -569,7 +569,8 @@ namespace TumbangPreso.Net
         // Revised throw/contact timings, hit-confirmed punch recovery and retired retrieval slide.
         //146: throws ignore can state; restoration lowers an active charge over0.5s.
         //147: revised Cryo placement and fifteen-second all-throw Frostbite; timed Boulder.
-        public const int ProtocolVersion = 147;
+        //148: arc-wall snapshots preserve radius, length and remaining hit budget.
+        public const int ProtocolVersion = 148;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

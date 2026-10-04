@@ -1,5 +1,14 @@
 # Skill Networking Contract
 
+## Compact wall restoration, protocol148 / recording14
+
+Barricade Radius greater than zero carries arc radius; FirstScale is arc length
+and SecondScale is the integer remaining slipper-hit budget. Restoration retains
+aged lifetime and prior damage; replay renders the same arc without live hazards.
+Radius-zero straight/split walls keep their previous scale semantics. Shattered
+walls are not captured. Matching rebuilt peers are required; old recordings are
+refused by the changed format gate. See reports/glacial-restore-2026-10-04.
+
 ## Fifteen-second imbuements, protocol147
 
 Frostbite remains active for15seconds and coats every throw in that window;
