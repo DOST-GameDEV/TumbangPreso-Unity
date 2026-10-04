@@ -17,6 +17,14 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### POWER-RECAST-READINESS-1004: owner icon matches the real follow-up window
+
+- [x] Use active reactivation readiness instead of the original cooldown for the
+  owner power icon. Real Zack/public HUD original2failures/2controls ->4/4.
+  Preserve expiry, spent follow-up, Zapped, timing and layout.
+  [Evidence](reports/power-recast-readiness-2026-10-04/README.md).
+- [ ] Rendered whole-match, packaged and actual-peer acceptance.
+
 ### DIRECT-RELEASE-LAN145-1004: actual build and paired completion
 
 - [x] Direct full-quality release build succeeded after execution cutoffs were
