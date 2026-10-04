@@ -308,6 +308,20 @@ def sean_rush(a):
     a.glint(720, 470, 22)
 
 
+def sean_cinder_gate(a):
+    # A low ember seam turns a crossing back; it is not a solid wall or shoe buff.
+    a.add(a.poly([(150, 750), (760, 650), (880, 750), (265, 860)]), DEEPRED)
+    a.add(a.band([(215, 758), (788, 716)], 42), EMBER, shade=False)
+    for x, y, height in ((300, 752, 155), (510, 733, 205), (735, 712, 145)):
+        a.add(a.poly(flame_pts(x, y, 120, height, 1)), PERSIMMON)
+        a.add(a.poly(flame_pts(x, y - 6, 56, height * .56, 1)), LEMON, shade=False)
+    # One broad curved return arrow, separated from the seam for small-HUD clarity.
+    a.add(a.band([(740, 472), (725, 350), (655, 252), (540, 211),
+                  (425, 236), (352, 318)], 100), GOLD)
+    a.add(a.poly([(228, 312), (439, 345), (284, 505)]), HONEY)
+    a.glint(554, 197, 43, 12)
+
+
 def sean_ignite(a):
     slipper(a, 400, 620, 560, -32, RIMRED, HONEY)
     a.add(a.poly(flame_pts(700, 600, 300, 520, 3)), PERSIMMON)
@@ -948,6 +962,7 @@ GLYPHS = {
     "DanteStomp": dante_stomp, "DanteShield": dante_shield, "DanteFissure": dante_fissure,
     "DanteBoulder": dante_boulder, "DanteBarrier": dante_barrier,
     "SeanRush": sean_rush, "SeanIgnite": sean_ignite, "SeanSupernova": sean_supernova,
+    "SeanCinderGate": sean_cinder_gate,
     "CheskaFrostSheet": cheska_frost, "CheskaBarricade": cheska_barricade, "CheskaNova": cheska_nova,
     "CheskaFrostbite": cheska_frostbite,
     "ZackSprint": zack_sprint, "ZackOvercharge": zack_magnet, "ZackThunderstrike": zack_thunder,
