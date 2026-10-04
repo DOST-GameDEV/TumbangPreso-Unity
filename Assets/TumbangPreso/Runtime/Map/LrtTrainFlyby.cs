@@ -137,6 +137,8 @@ namespace TumbangPreso
         // seconds. With no such file (every other machine, every build) nothing here does anything.
         private const string TrollClipPath = "Troll/lrt_troll";
         private const float TrollInterval = 12.0f;
+        // How far along the line the music is heard: its rolloff reaches zero here.
+        private const float TrollHalfZ = 120.0f;
         private AudioClip _trollClip;
         private bool _trollBegun;
         private AudioSource _trollSource;
@@ -165,6 +167,7 @@ namespace TumbangPreso
 
         private void Update()
         {
+            TickTroll();
             if (!_isRunning)
             {
                 _timer += Time.deltaTime;
@@ -227,6 +230,7 @@ namespace TumbangPreso
 
             // A shuttle run is 280 m, most of it out of earshot: the pass (and the troll music)
             // plays only across the court, so the clip still starts 48 m out.
+            if (!Shuttle || Mathf.Abs(_currentZ) <= TrollHalfZ) ResumeTroll(); else PauseTroll();
             if (!Shuttle || Mathf.Abs(_currentZ) <= SoundHalfZ) DriveRumble();
             else if (_rumbleStarted) StopRumble();
 
@@ -372,7 +376,6 @@ namespace TumbangPreso
             if (listener == null) return;
 
             float distance = Vector3.Distance(listener.transform.position, transform.position);
-            TrollDoppler(distance);
 
             if (_rumble != null)
             {
@@ -385,7 +388,6 @@ namespace TumbangPreso
                     _rumbleStarted = true;
                     _rumble.time = 0.0f;
                     _rumble.Play();
-                    ResumeTroll();
                 }
 
                 // The player's slider is read every frame rather than cached, because it can be
@@ -420,7 +422,7 @@ namespace TumbangPreso
         /// playing would put a train under the south wall for 24 s.
         /// </summary>
         // The troll music is its OWN source beside the recording (owner: "i hear the music but i
-        // still need the sfx"), and it is "on full blast unudjustable": 2D, volume 1, and it
+        // still need the sfx"), and it is "on full blast unudjustable": volume 1, and it
         // ignores the listener volume, so no slider in the game turns it down.
         private void ResumeTroll()
         {
@@ -433,46 +435,41 @@ namespace TumbangPreso
                 _trollSource.clip = _trollClip;
                 _trollSource.loop = true;
                 _trollSource.playOnAwake = false;
-                _trollSource.spatialBlend = 0.0f;
-                _trollSource.volume = 1.0f;
+                // POSITIONAL, on the consist (owner: "make the music positional then"): it comes
+                // up the line with the train, bends with Unity's own doppler as it passes, and
+                // falls away behind it. Full level out to 30 m, which covers the whole court.
+                _trollSource.spatialBlend = 1.0f;
+                _trollSource.rolloffMode = AudioRolloffMode.Linear;
+                _trollSource.minDistance = 30.0f;
+                _trollSource.maxDistance = TrollHalfZ;
+                _trollSource.dopplerLevel = 3.5f;
+                _trollSource.volume = 0.0f;
                 _trollSource.ignoreListenerVolume = true;
                 _trollSource.bypassEffects = true;
                 _trollSource.bypassListenerEffects = true;
                 _trollSource.bypassReverbZones = true;
                 _trollSource.priority = 0;
             }
+            _trollTarget = 1.0f;
+            if (_trollSource.isPlaying) return;
             if (_trollBegun) { _trollSource.UnPause(); return; }
             _trollSource.time = Mathf.Repeat(s_trollTime, _trollClip.length - 0.05f);
             _trollSource.Play();
             _trollBegun = true;
         }
 
-        // The music is a 2D source, which Unity never doppler-shifts, so its pitch is bent by hand
-        // from how fast the consist is closing on the listener (owner: "i need doppler effect on
-        // any train sfx", "including the music"). Exaggerated like the recording's: the true shift
-        // at 18 m/s is 5 per cent; this is about 20, higher coming and lower going.
-        private const float TrollDopplerLevel = 4.0f;
-        private float _trollLastDistance = -1.0f;
-        private float _trollApproach;
+        // Never a hard stop (owner: "it kinda cuts off just immediately"): the music is faded out
+        // and only then paused, by `TickTroll`, so the place it resumes from is where it faded.
+        private void PauseTroll() => _trollTarget = 0.0f;
 
-        private void TrollDoppler(float distance)
+        private const float TrollFadeSeconds = 1.2f;
+        private float _trollTarget;
+
+        private void TickTroll()
         {
             if (_trollSource == null) return;
-            if (_trollLastDistance >= 0.0f && Time.deltaTime > 0.0f)
-            {
-                float approach = (_trollLastDistance - distance) / Time.deltaTime;
-                _trollApproach = Mathf.Lerp(_trollApproach, approach, 1.0f - Mathf.Exp(-12.0f * Time.deltaTime));
-                float closing = Mathf.Clamp(_trollApproach * TrollDopplerLevel, -160.0f, 160.0f);
-                _trollSource.pitch = Mathf.Clamp(343.0f / (343.0f - closing), 0.65f, 1.6f);
-            }
-            _trollLastDistance = distance;
-        }
-
-        private void PauseTroll()
-        {
-            _trollLastDistance = -1.0f;
-            _trollApproach = 0.0f;
-            if (_trollSource == null) return;
+            _trollSource.volume = Mathf.MoveTowards(_trollSource.volume, _trollTarget, Time.deltaTime / TrollFadeSeconds);
+            if (_trollTarget > 0.0f || _trollSource.volume > 0.0f || !_trollSource.isPlaying) return;
             s_trollTime = _trollSource.time;
             _trollSource.Pause();
         }
