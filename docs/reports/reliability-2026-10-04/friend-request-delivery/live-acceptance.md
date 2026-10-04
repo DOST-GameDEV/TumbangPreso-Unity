@@ -16,8 +16,11 @@ both stored the reciprocal friend once and had no pending rows.
 
 Eleven actual script executions included cleanup. Friendship was removed,
 account profile/proof/handle-index data cleared and both Authentication accounts
-deleted. Empty socialList records remain for subsequent admin cleanup; do not
-claim complete Cloud Save erasure. Tokens existed only in helper process memory
+deleted. Subsequent owner-authorized admin cleanup removed only the empty
+accountProfile/handleProof/socialList keys of those two test accounts. Both
+protected-data lists were fetched afterward and verified empty;
+[cleanup receipt](test-cloud-cleanup-result.json). No existing user was targeted.
+Tokens existed only in helper process memory
 and were not printed or retained. Existing user accounts/preferences were untouched.
 
 This is real service-side authenticated HTTPS acceptance, not rendered UI or
