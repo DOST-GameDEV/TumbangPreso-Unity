@@ -3661,14 +3661,22 @@ namespace TumbangPreso.UI
             try
             {
                 var ips = System.Net.Dns.GetHostAddresses(System.Net.Dns.GetHostName());
+                System.Net.IPAddress linkLocal = null;
                 foreach (var ip in ips)
                 {
                     if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork &&
                         !System.Net.IPAddress.IsLoopback(ip))
                     {
+                        byte[] bytes = ip.GetAddressBytes();
+                        if (bytes[0] == 169 && bytes[1] == 254)
+                        {
+                            linkLocal ??= ip;
+                            continue;
+                        }
                         return $"{ip}:{port}";
                     }
                 }
+                if (linkLocal != null) return $"{linkLocal}:{port}";
             }
             catch (System.Exception e)
             {

@@ -22,15 +22,17 @@ explicitly authorized; unnecessary AGENTS feature entry was removed at owner req
 ## Current source and live work
 
 Root checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
-Source105d40f80 plus the current focused late-join rules fix. Protocol151/recording14.
+Source8d8822d31 plus the current focused LAN address/browser fix. Protocol151/recording14.
 Accepted full Windows artifact cf405096c includes boulder, palm, tag, menu-look and
 completed-departure fixes. Yasmin remains the original cyan/goggles asset; the
 Benguet integration is cancelled. Preserve Auditor dirt/private wardrobe draft.
 No Root game/Unity/share/recorder active. Native late-join rules original2FAIL,
-candidate2PASS; one targeted existing SyncRules reply before seating. Importer202
+candidate2PASS; one targeted existing SyncRules reply before seating. LAN hint and
+duplicate room causes become4/4, with separate-host/legacy controls. Importer202
 restored, protected19,288 otherwise unchanged. Fresh packaged result header pending.
 Actual ordinary local LAN pair completed4x30 with identical full history objects;
-client header8 and wrong Npcap hint/duplicate discovery are retained defects.
+client header8 and wrong Npcap hint/duplicate discovery reproduced and now source-fixed;
+fresh combined standalone browser/header acceptance is next.
 Client native quit crash narrowed to NewInput::Activate/accessibility/UIA focus
 reentrancy; isolated quit control exited0, no speculative game workaround.
 

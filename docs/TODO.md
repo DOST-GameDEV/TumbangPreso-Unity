@@ -145,8 +145,11 @@ Nothing was deleted or renumbered.
   header; native missing-reply failures become2/2 with host password/preferences
   preserved. [Evidence](reports/reliability-2026-10-05/late-join-rules/README.md).
 - [ ] Fresh standalone client result header uses the host's chosen round count.
-- [ ] Correct LAN host hint choosing Npcap169.254 instead of Ethernet and inspect
-  duplicate LAN rows for the same beacon. [Actual pair](reports/reliability-2026-10-05/local-lan151/README.md).
+- [x] Prefer usable IPv4 in the LAN hint and deduplicate current beacons by
+  process/port, preserving separate-host and legacy rows. Native2causes/2controls
+  become4/4. [Evidence](reports/reliability-2026-10-05/lan-browser-identity/README.md).
+- [ ] Fresh standalone LAN browser/address acceptance and timed preferred-address
+  retirement check. [Actual pair](reports/reliability-2026-10-05/local-lan151/README.md).
 - [x] Menu-close look cannot leak late touch drag or held stick navigation into
   camera input in that frame; normal look resumes next frame. Two native causal
   failures plus ordinary control become3/3. Packaged pointer/relock review stays open.
