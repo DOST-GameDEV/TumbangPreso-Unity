@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Failed(Child)" total="8" passed="7" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 12:08:16Z" end-time="2026-10-04 12:08:47Z" duration="31.7064238">
+  <test-suite type="TestSuite" id="3048" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1669" result="Failed" site="Child" start-time="2026-10-04 12:08:16Z" end-time="2026-10-04 12:08:47Z" duration="31.706424" total="8" passed="7" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3042" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1669" result="Failed" site="Child" start-time="2026-10-04 12:08:16Z" end-time="2026-10-04 12:08:47Z" duration="31.695806" total="8" passed="7" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="90478" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3043" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1669" result="Failed" site="Child" start-time="2026-10-04 12:08:16Z" end-time="2026-10-04 12:08:47Z" duration="31.691485" total="8" passed="7" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3044" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1669" result="Failed" site="Child" start-time="2026-10-04 12:08:16Z" end-time="2026-10-04 12:08:47Z" duration="31.687362" total="8" passed="7" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1662" name="IceWorldSnapshotProbe" fullname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" classname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-04 12:08:16Z" end-time="2026-10-04 12:08:47Z" duration="31.666637" total="8" passed="7" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1667" name="GlacialArcReplayKeepsFiveRenderOnlySlabs" fullname="TumbangPreso.PlayTests.IceWorldSnapshotProbe.GlacialArcReplayKeepsFiveRenderOnlySlabs" methodname="GlacialArcReplayKeepsFiveRenderOnlySlabs" classname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" runstate="Runnable" seed="554013906" result="Passed" start-time="2026-10-04 12:08:16Z" end-time="2026-10-04 12:08:16Z" duration="0.090710" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1666" name="GlacialArcRestoresDamageAlreadyTaken" fullname="TumbangPreso.PlayTests.IceWorldSnapshotProbe.GlacialArcRestoresDamageAlreadyTaken" methodname="GlacialArcRestoresDamageAlreadyTaken" classname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" runstate="Runnable" seed="998990456" result="Passed" start-time="2026-10-04 12:08:16Z" end-time="2026-10-04 12:08:16Z" duration="0.143647" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1665" name="GlacialArcRestoresItsFiveSlabsAndAgedLife" fullname="TumbangPreso.PlayTests.IceWorldSnapshotProbe.GlacialArcRestoresItsFiveSlabsAndAgedLife" methodname="GlacialArcRestoresItsFiveSlabsAndAgedLife" classname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" runstate="Runnable" seed="1711781010" result="Passed" start-time="2026-10-04 12:08:16Z" end-time="2026-10-04 12:08:16Z" duration="0.053538" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1670" name="InvalidSnapshotsLeaveTheWorldAndExpiredFieldsDoNotRevive" fullname="TumbangPreso.PlayTests.IceWorldSnapshotProbe.InvalidSnapshotsLeaveTheWorldAndExpiredFieldsDoNotRevive" methodname="InvalidSnapshotsLeaveTheWorldAndExpiredFieldsDoNotRevive" classname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" runstate="Runnable" seed="421601566" result="Passed" start-time="2026-10-04 12:08:16Z" end-time="2026-10-04 12:08:16Z" duration="0.045579" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1668" name="MixedPersistentFieldsRestoreTheirOriginalFormAndRemainingLife" fullname="TumbangPreso.PlayTests.IceWorldSnapshotProbe.MixedPersistentFieldsRestoreTheirOriginalFormAndRemainingLife" methodname="MixedPersistentFieldsRestoreTheirOriginalFormAndRemainingLife" classname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" runstate="Runnable" seed="1486445748" result="Passed" start-time="2026-10-04 12:08:16Z" end-time="2026-10-04 12:08:17Z" duration="1.265191" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1669" name="RestoredIceKeepsItsRemainingLifeShapeAndCasterResources" fullname="TumbangPreso.PlayTests.IceWorldSnapshotProbe.RestoredIceKeepsItsRemainingLifeShapeAndCasterResources" methodname="RestoredIceKeepsItsRemainingLifeShapeAndCasterResources" classname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" runstate="Runnable" seed="1499676893" result="Failed" start-time="2026-10-04 12:08:17Z" end-time="2026-10-04 12:08:17Z" duration="0.090576" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: 1
+  But was:  0
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.IceWorldSnapshotProbe+<RestoredIceKeepsItsRemainingLifeShapeAndCasterResources>d__10.MoveNext () [0x002fa] in /workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Assets/TumbangPreso/Tests/PlayMode/IceWorldSnapshotProbe.cs:239
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@773a3a4953ad/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1664" name="RestoredPlantsBindTheirOwnersAndOneResetPreservesAnotherPlayersPlant" fullname="TumbangPreso.PlayTests.IceWorldSnapshotProbe.RestoredPlantsBindTheirOwnersAndOneResetPreservesAnotherPlayersPlant" methodname="RestoredPlantsBindTheirOwnersAndOneResetPreservesAnotherPlayersPlant" classname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" runstate="Runnable" seed="1321998977" result="Passed" start-time="2026-10-04 12:08:17Z" end-time="2026-10-04 12:08:34Z" duration="16.125737" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] 'Unlit/Transparent' has no colour property this pass knows; that surface keeps the kit's own colour.
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+]]></output>
+            </test-case>
+            <test-case id="1663" name="SnapshotReceiverRejectsPredictionsAndNewerEventsBeforeReplacingFields" fullname="TumbangPreso.PlayTests.IceWorldSnapshotProbe.SnapshotReceiverRejectsPredictionsAndNewerEventsBeforeReplacingFields" methodname="SnapshotReceiverRejectsPredictionsAndNewerEventsBeforeReplacingFields" classname="TumbangPreso.PlayTests.IceWorldSnapshotProbe" runstate="Runnable" seed="557978454" result="Passed" start-time="2026-10-04 12:08:34Z" end-time="2026-10-04 12:08:47Z" duration="13.832018" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="60000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

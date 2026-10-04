@@ -26,6 +26,10 @@
 - [x] Follow-up supplied full-resolution logo: transparent SVG master and PNG
   export installed; native logo/credits1/1 and actual screenshot review pass.
   [Vector evidence](reports/vector-logo-2026-10-04/README.md).
+- [x] All five follow-up sheet variants traced into SVGs and matching game
+  resources replaced with transparent exports. Thin existing cream outline
+  fits dark/light backgrounds. Native imported aspect/alpha/gallery/credits1/1
+  and actual pixels reviewed. [Sheet evidence](reports/vector-brand-sheet-2026-10-04/README.md).
 
 ### TUTORIAL-MUSIC-1004: owner-supplied track
 
@@ -87,7 +91,8 @@ Nothing was deleted or renumbered.
 
 - [x] Implement owner-requested Cold Feet/Wall numbers and every-throw15second Frostbite.
 - [x] Close the visible/collision gaps in the5m/3m-radius wall. Implement Wiki15second Boulder expiry.
-- [x] Native load/status, field/recovery and compact-wall cases pass; protocol147 requires matching rebuilds.
+- [x] Native load/status, field/recovery and compact-wall cases pass.
+- [x] Restoration/replay retain the compact arc and prior hits; ten distinct native cases pass, plus the extended recording compatibility check. Protocol148/recording14 requires matching rebuilds; older saved formats10–13 remain readable. [Evidence](reports/glacial-restore-2026-10-04/README.md).
 - [ ] Reproduce the reported excessive Chilled duration. Local shove/post-field-exit controls show5seconds; owner context pending.
 - [ ] Actual147peer/player and all-terrain acceptance.
 
