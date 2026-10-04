@@ -55,6 +55,21 @@ namespace TumbangPreso.PlayTests
             NetAuthority.Provider=_provider;GameLaunch.SoloSeat=_seat;SceneFlow.AdoptRemoteRules(_rules);
             if(_pinned)SceneFlow.PinSelectedRules(_rules);else SceneFlow.UnpinSelectedRules();
         }
+        [UnityTest] public IEnumerator BoulderTravelsAtAuthoredLaunchSpeed()
+        {
+            Vector3 origin = new Vector3(0, 1.2f, -4);
+            Vector3 target = origin + Vector3.forward * 8;
+            var boulder = DanteBoulder.Spawn(origin, target, 1);
+            _objects.Add(boulder.gameObject);
+            float expectedFlatSpeed = Vector3.ProjectOnPlane(Slipper.SolveArc(origin, target, GeoRules.BoulderSpeed), Vector3.up).magnitude * GeoRules.BoulderSpeed;
+            yield return new WaitForFixedUpdate();
+            Vector3 before = boulder.transform.position;
+            for (int i = 0; i < 5; i++) yield return new WaitForFixedUpdate();
+            float travel = Vector3.ProjectOnPlane(boulder.transform.position - before, Vector3.up).magnitude;
+            float expected = expectedFlatSpeed * Time.fixedDeltaTime * 5;
+            Debug.Log($"[BoulderFlight] travel={travel:F4}, expected={expected:F4}, authoredSpeed={GeoRules.BoulderSpeed}");
+            Assert.That(travel, Is.EqualTo(expected).Within(expected * .25f), "Boulder unit direction was used as velocity instead of the authored launch speed.");
+        }
         [UnityTest] public IEnumerator BoulderHasItsOwnAuthoredWeightPreparation()
         {
             var rigObject=Keep(new GameObject("Dante owner camera"));rigObject.tag="MainCamera";
