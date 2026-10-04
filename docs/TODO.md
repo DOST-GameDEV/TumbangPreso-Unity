@@ -39,6 +39,19 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### UPDATED-NAMES-RACES-PLAYER-1004: actual integration build and current UI flow
+
+- [x] Source91aad/protocol145 full-quality release succeeded115s. All258 files
+  hashed; actual new-player startup/Terms/loginGuest/home/settings/credits/modeback
+  passed, normal exit/restoration/artifact checks. Generated importer/shader
+  registration deltas classified; no Desktop replacement.
+  [Evidence](reports/reliability-2026-10-04/integration-names-races/README.md).
+- [x] Retain obsolete full-flow lookup failure and add a focused current-hub
+  route for all nine names/visible text/bounds/settings/modeback. Direct compile0.
+- [ ] Run that focused route natively, then whole gameplay/result/return,
+  signed-in service and matching-peer/recovery acceptance.
+
+
 ### SOCIAL-REFRESH-ORDER-1004: preserve newer acknowledged friend actions
 
 - [x] Older loads cannot erase an accepted friend or restore a removed one.

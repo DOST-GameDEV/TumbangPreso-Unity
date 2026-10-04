@@ -444,6 +444,46 @@ namespace TumbangPreso.Diagnostics
             Stage("current hub settings credits and mode selection/back remain reachable");
         }
 
+        private IEnumerator CurrentHubOnly()
+        {
+            Stage("current hub entry");
+            yield return WaitFor(()=>Find("GuestAccount")!=null || Find("ContinueAccount")!=null || Find("StartButton")!=null,80);
+            if(Find("GuestAccount")!=null)yield return Click("GuestAccount");
+            else if(Find("ContinueAccount")!=null)yield return Click("ContinueAccount");
+            yield return WaitFor(()=>Find("StartButton")!=null || Find("HeroButton")!=null);
+            if(Find("HeroButton")==null)yield return Click("StartButton");
+            yield return WaitFor(()=>Find("HeroButton")!=null);
+            yield return Click("HeroButton");yield return WaitFor(()=>Find("NextHero")!=null);
+            var names=new HashSet<string>();
+            var oldNames=new System.Text.RegularExpressions.Regex(@"\b(Dante|Cheska|Sean|Zack|Phaister|Rafi)\b",
+                System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            for(int i=0;i<Core.Roster.HeroPeople.Count;i++)
+            {
+                var screen=UnityEngine.Object.FindFirstObjectByType<TumbangPreso.UI.Hub.HubHero>();
+                if(screen==null)throw new InvalidOperationException("Current hero screen missing.");
+                var texts=screen.Root.GetComponentsInChildren<Text>().Where(t=>t.isActiveAndEnabled).ToArray();
+                var heading=texts.Single(t=>t.name=="Heading");
+                if(!Core.Roster.HeroPeople.Any(h=>h.Name==heading.text) || !names.Add(heading.text))
+                    throw new InvalidOperationException("Hero heading missing, stale or repeated: "+heading.text);
+                if(heading.preferredWidth>heading.rectTransform.rect.width+2)
+                    throw new InvalidOperationException("Hero heading is clipped: "+heading.text);
+                var stale=texts.FirstOrDefault(t=>oldNames.IsMatch(t.text??""));
+                if(stale!=null)throw new InvalidOperationException("Old hero name remains in visible UI: "+stale.text);
+                Stage("current hero label "+heading.text);yield return Shot("Hero-"+heading.text);
+                yield return Click("NextHero");yield return null;
+            }
+            if(names.Count!=Core.Roster.HeroPeople.Count)throw new InvalidOperationException("Hero roster coverage incomplete.");
+            yield return Click("BackButton");yield return WaitFor(()=>Find("MenuButton")!=null);
+            yield return Click("MenuButton");yield return Click("MenuSETTINGS");
+            yield return WaitFor(()=>GameObject.Find("OwnerSettingsCanvas")!=null);
+            yield return Shot("Current-hub-settings");yield return Click("TumpSettingsBack");
+            yield return WaitFor(()=>Find("ModeCard")!=null);
+            yield return Click("ModeCard");yield return WaitFor(()=>Find("BackButton")!=null);
+            yield return Shot("Current-mode-selection");yield return Click("BackButton");
+            yield return WaitFor(()=>Find("ModeCard")!=null && Find("PlayButton")!=null);
+            Stage("current hub labels and navigation complete");
+        }
+
         private IEnumerator RecoveryOnly()
         {
             Stage("recovery menu boundary setup");
@@ -521,6 +561,8 @@ namespace TumbangPreso.Diagnostics
             {yield return GameplayOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-recovery-review-only"))
             {yield return RecoveryOnly();yield break;}
+            if(Environment.GetCommandLineArgs().Contains("-tp-current-hub-review-only"))
+            {yield return CurrentHubOnly();yield break;}
             if(Environment.GetCommandLineArgs().Contains("-tp-menu-review-only"))
             {yield return MenuOnly();yield break;}
             Stage("cold boot");
