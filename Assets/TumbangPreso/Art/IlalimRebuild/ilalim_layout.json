@@ -944,6 +944,1669 @@
    "placedTris": 2776678
   }
  ],
+ "lodBudget": [
+  {
+   "group": "ColumnSigns",
+   "tris0": 4592,
+   "tris1": 4592,
+   "tris2": 4592
+  },
+  {
+   "group": "Eastside",
+   "tris0": 643021,
+   "tris1": 243571,
+   "tris2": 173183
+  },
+  {
+   "group": "Guideway",
+   "tris0": 266216,
+   "tris1": 89672,
+   "tris2": 48920
+  },
+  {
+   "group": "Heritage",
+   "tris0": 760102,
+   "tris1": 389958,
+   "tris2": 192163
+  },
+  {
+   "group": "Landmarks",
+   "tris0": 79594,
+   "tris1": 30126,
+   "tris2": 16290
+  },
+  {
+   "group": "Lilies",
+   "tris0": 207152,
+   "tris1": 207152,
+   "tris2": 207152
+  },
+  {
+   "group": "Props",
+   "tris0": 127964,
+   "tris1": 104828,
+   "tris2": 97064
+  },
+  {
+   "group": "RizalHall",
+   "tris0": 206594,
+   "tris1": 53338,
+   "tris2": 35010
+  },
+  {
+   "group": "Rooftops",
+   "tris0": 322578,
+   "tris1": 176666,
+   "tris2": 95852
+  },
+  {
+   "group": "SariSari",
+   "tris0": 41484,
+   "tris1": 15356,
+   "tris2": 8548
+  },
+  {
+   "group": "Stations",
+   "tris0": 109652,
+   "tris1": 73572,
+   "tris2": 63636
+  },
+  {
+   "group": "Street",
+   "tris0": 29808,
+   "tris1": 29808,
+   "tris2": 29808
+  },
+  {
+   "group": "StreetFences",
+   "tris0": 167368,
+   "tris1": 155464,
+   "tris2": 152116
+  },
+  {
+   "group": "StreetFurniture",
+   "tris0": 193938,
+   "tris1": 190506,
+   "tris2": 189656
+  },
+  {
+   "group": "StreetGround",
+   "tris0": 46464,
+   "tris1": 46464,
+   "tris2": 46464
+  },
+  {
+   "group": "StreetLife",
+   "tris0": 279235,
+   "tris1": 271915,
+   "tris2": 268851
+  },
+  {
+   "group": "StreetMarkings",
+   "tris0": 27600,
+   "tris1": 27600,
+   "tris2": 27600
+  },
+  {
+   "group": "Traffic",
+   "tris0": 63770,
+   "tris1": 63770,
+   "tris2": 63770
+  },
+  {
+   "group": "Train",
+   "tris0": 70616,
+   "tris1": 70616,
+   "tris2": 70616
+  },
+  {
+   "group": "Trees",
+   "tris0": 2776678,
+   "tris1": 1378128,
+   "tris2": 390477
+  }
+ ],
+ "lods": [
+  {
+   "model": "Centennial_Building_fittings",
+   "lod1": "Centennial_Building_fittings__lod1",
+   "lod2": "",
+   "tris0": 4464,
+   "tris1": 2160,
+   "tris2": 0,
+   "size": 39.449
+  },
+  {
+   "model": "Centennial_Building_trim",
+   "lod1": "Centennial_Building_trim__lod1",
+   "lod2": "",
+   "tris0": 34596,
+   "tris1": 14764,
+   "tris2": 0,
+   "size": 44.342
+  },
+  {
+   "model": "Centennial_Building_walls",
+   "lod1": "Centennial_Building_walls__lod1",
+   "lod2": "",
+   "tris0": 8868,
+   "tris1": 4492,
+   "tris2": 0,
+   "size": 43.478
+  },
+  {
+   "model": "Central_Block_trim",
+   "lod1": "Central_Block_trim__lod1",
+   "lod2": "",
+   "tris0": 4096,
+   "tris1": 1644,
+   "tris2": 0,
+   "size": 144.079
+  },
+  {
+   "model": "Central_Block_walls",
+   "lod1": "Central_Block_walls__lod1",
+   "lod2": "",
+   "tris0": 98764,
+   "tris1": 45852,
+   "tris2": 0,
+   "size": 143.435
+  },
+  {
+   "model": "Gat_Andres_Bonifacio_Building_walls",
+   "lod1": "Gat_Andres_Bonifacio_Building_walls__lod1",
+   "lod2": "",
+   "tris0": 8688,
+   "tris1": 4432,
+   "tris2": 0,
+   "size": 47.352
+  },
+  {
+   "model": "Museum_of_a_History_of_Ideas_walls",
+   "lod1": "Museum_of_a_History_of_Ideas_walls__lod1",
+   "lod2": "",
+   "tris0": 11256,
+   "tris1": 5320,
+   "tris2": 0,
+   "size": 56.33
+  },
+  {
+   "model": "Old_Supreme_Court_Main_Building_entrance_trim",
+   "lod1": "Old_Supreme_Court_Main_Building_entrance_trim__lod1",
+   "lod2": "",
+   "tris0": 6568,
+   "tris1": 3044,
+   "tris2": 0,
+   "size": 19.581
+  },
+  {
+   "model": "Old_Supreme_Court_Main_Building_entrance_walls",
+   "lod1": "Old_Supreme_Court_Main_Building_entrance_walls__lod1",
+   "lod2": "",
+   "tris0": 2532,
+   "tris1": 1244,
+   "tris2": 0,
+   "size": 19.346
+  },
+  {
+   "model": "Old_Supreme_Court_Main_Building_trim",
+   "lod1": "Old_Supreme_Court_Main_Building_trim__lod1",
+   "lod2": "",
+   "tris0": 37288,
+   "tris1": 17580,
+   "tris2": 0,
+   "size": 68.87
+  },
+  {
+   "model": "Old_Supreme_Court_Main_Building_walls",
+   "lod1": "Old_Supreme_Court_Main_Building_walls__lod1",
+   "lod2": "",
+   "tris0": 16832,
+   "tris1": 8004,
+   "tris2": 0,
+   "size": 68.074
+  },
+  {
+   "model": "PGH_Nurses_Home_entrance_trim",
+   "lod1": "PGH_Nurses_Home_entrance_trim__lod1",
+   "lod2": "",
+   "tris0": 16024,
+   "tris1": 6036,
+   "tris2": 0,
+   "size": 19.006
+  },
+  {
+   "model": "PGH_Nurses_Home_entrance_walls",
+   "lod1": "PGH_Nurses_Home_entrance_walls__lod1",
+   "lod2": "",
+   "tris0": 2532,
+   "tris1": 1244,
+   "tris2": 0,
+   "size": 18.747
+  },
+  {
+   "model": "PGH_Nurses_Home_fittings",
+   "lod1": "PGH_Nurses_Home_fittings__lod1",
+   "lod2": "",
+   "tris0": 10168,
+   "tris1": 4920,
+   "tris2": 0,
+   "size": 72.044
+  },
+  {
+   "model": "PGH_Nurses_Home_trim",
+   "lod1": "PGH_Nurses_Home_trim__lod1",
+   "lod2": "",
+   "tris0": 85988,
+   "tris1": 36576,
+   "tris2": 0,
+   "size": 76.467
+  },
+  {
+   "model": "PGH_Nurses_Home_walls",
+   "lod1": "PGH_Nurses_Home_walls__lod1",
+   "lod2": "",
+   "tris0": 25630,
+   "tris1": 12270,
+   "tris2": 0,
+   "size": 75.727
+  },
+  {
+   "model": "PGH_Out-Patient_Department_entrance_trim",
+   "lod1": "PGH_Out-Patient_Department_entrance_trim__lod1",
+   "lod2": "",
+   "tris0": 5820,
+   "tris1": 2616,
+   "tris2": 0,
+   "size": 16.547
+  },
+  {
+   "model": "PGH_Out-Patient_Department_fittings",
+   "lod1": "PGH_Out-Patient_Department_fittings__lod1",
+   "lod2": "",
+   "tris0": 16368,
+   "tris1": 7920,
+   "tris2": 0,
+   "size": 118.81
+  },
+  {
+   "model": "PGH_Out-Patient_Department_trim",
+   "lod1": "PGH_Out-Patient_Department_trim__lod1",
+   "lod2": "",
+   "tris0": 73696,
+   "tris1": 32320,
+   "tris2": 0,
+   "size": 123.538
+  },
+  {
+   "model": "PGH_Out-Patient_Department_walls",
+   "lod1": "PGH_Out-Patient_Department_walls__lod1",
+   "lod2": "",
+   "tris0": 32972,
+   "tris1": 17100,
+   "tris2": 0,
+   "size": 122.74
+  },
+  {
+   "model": "Sentro_Oftalmologica_walls",
+   "lod1": "Sentro_Oftalmologica_walls__lod1",
+   "lod2": "",
+   "tris0": 9124,
+   "tris1": 4856,
+   "tris2": 0,
+   "size": 54.931
+  },
+  {
+   "model": "Supreme_Court_Main_Building_walls",
+   "lod1": "Supreme_Court_Main_Building_walls__lod1",
+   "lod2": "",
+   "tris0": 6352,
+   "tris1": 3336,
+   "tris2": 0,
+   "size": 47.578
+  },
+  {
+   "model": "campus_block_112_walls",
+   "lod1": "campus_block_112_walls__lod1",
+   "lod2": "",
+   "tris0": 3284,
+   "tris1": 1772,
+   "tris2": 0,
+   "size": 25.5
+  },
+  {
+   "model": "campus_block_113_walls",
+   "lod1": "campus_block_113_walls__lod1",
+   "lod2": "",
+   "tris0": 2788,
+   "tris1": 1500,
+   "tris2": 0,
+   "size": 24.763
+  },
+  {
+   "model": "campus_block_114_walls",
+   "lod1": "campus_block_114_walls__lod1",
+   "lod2": "",
+   "tris0": 6540,
+   "tris1": 3484,
+   "tris2": 0,
+   "size": 46.82
+  },
+  {
+   "model": "campus_block_115_walls",
+   "lod1": "campus_block_115_walls__lod1",
+   "lod2": "",
+   "tris0": 4372,
+   "tris1": 2316,
+   "tris2": 0,
+   "size": 35.529
+  },
+  {
+   "model": "campus_block_123_walls",
+   "lod1": "campus_block_123_walls__lod1",
+   "lod2": "",
+   "tris0": 7144,
+   "tris1": 3744,
+   "tris2": 0,
+   "size": 56.347
+  },
+  {
+   "model": "campus_block_124_walls",
+   "lod1": "campus_block_124_walls__lod1",
+   "lod2": "",
+   "tris0": 3184,
+   "tris1": 1704,
+   "tris2": 0,
+   "size": 24.536
+  },
+  {
+   "model": "campus_block_125_walls",
+   "lod1": "campus_block_125_walls__lod1",
+   "lod2": "",
+   "tris0": 5164,
+   "tris1": 2724,
+   "tris2": 0,
+   "size": 36.982
+  },
+  {
+   "model": "campus_block_14_walls",
+   "lod1": "campus_block_14_walls__lod1",
+   "lod2": "",
+   "tris0": 4372,
+   "tris1": 2316,
+   "tris2": 0,
+   "size": 35.576
+  },
+  {
+   "model": "campus_block_16_walls",
+   "lod1": "campus_block_16_walls__lod1",
+   "lod2": "",
+   "tris0": 8728,
+   "tris1": 4560,
+   "tris2": 0,
+   "size": 58.409
+  },
+  {
+   "model": "campus_block_17_trim",
+   "lod1": "campus_block_17_trim__lod1",
+   "lod2": "",
+   "tris0": 3352,
+   "tris1": 1352,
+   "tris2": 0,
+   "size": 44.925
+  },
+  {
+   "model": "campus_block_17_walls",
+   "lod1": "campus_block_17_walls__lod1",
+   "lod2": "",
+   "tris0": 5638,
+   "tris1": 3054,
+   "tris2": 0,
+   "size": 44.045
+  },
+  {
+   "model": "campus_block_2_roof_caps",
+   "lod1": "campus_block_2_roof_caps__lod1",
+   "lod2": "",
+   "tris0": 2852,
+   "tris1": 868,
+   "tris2": 0,
+   "size": 205.683
+  },
+  {
+   "model": "campus_block_2_trim",
+   "lod1": "campus_block_2_trim__lod1",
+   "lod2": "",
+   "tris0": 6688,
+   "tris1": 2584,
+   "tris2": 0,
+   "size": 202.562
+  },
+  {
+   "model": "campus_block_2_walls",
+   "lod1": "campus_block_2_walls__lod1",
+   "lod2": "",
+   "tris0": 75804,
+   "tris1": 39052,
+   "tris2": 0,
+   "size": 201.804
+  },
+  {
+   "model": "campus_block_3_trim",
+   "lod1": "campus_block_3_trim__lod1",
+   "lod2": "",
+   "tris0": 6392,
+   "tris1": 3020,
+   "tris2": 0,
+   "size": 35.158
+  },
+  {
+   "model": "campus_block_3_walls",
+   "lod1": "campus_block_3_walls__lod1",
+   "lod2": "",
+   "tris0": 3408,
+   "tris1": 1888,
+   "tris2": 0,
+   "size": 34.138
+  },
+  {
+   "model": "campus_block_5_trim",
+   "lod1": "campus_block_5_trim__lod1",
+   "lod2": "",
+   "tris0": 2852,
+   "tris1": 1152,
+   "tris2": 0,
+   "size": 79.303
+  },
+  {
+   "model": "campus_block_5_walls",
+   "lod1": "campus_block_5_walls__lod1",
+   "lod2": "",
+   "tris0": 11964,
+   "tris1": 6264,
+   "tris2": 0,
+   "size": 78.727
+  },
+  {
+   "model": "campus_block_69_trim",
+   "lod1": "campus_block_69_trim__lod1",
+   "lod2": "",
+   "tris0": 8376,
+   "tris1": 3980,
+   "tris2": 0,
+   "size": 47.31
+  },
+  {
+   "model": "campus_block_69_walls",
+   "lod1": "campus_block_69_walls__lod1",
+   "lod2": "",
+   "tris0": 4528,
+   "tris1": 2496,
+   "tris2": 0,
+   "size": 46.45
+  },
+  {
+   "model": "campus_block_76_walls",
+   "lod1": "campus_block_76_walls__lod1",
+   "lod2": "",
+   "tris0": 3688,
+   "tris1": 2040,
+   "tris2": 0,
+   "size": 36.089
+  },
+  {
+   "model": "east_astral_kit",
+   "lod1": "east_astral_kit__lod1",
+   "lod2": "",
+   "tris0": 8156,
+   "tris1": 2604,
+   "tris2": 0,
+   "size": 70.941
+  },
+  {
+   "model": "east_astral_podium",
+   "lod1": "east_astral_podium__lod1",
+   "lod2": "",
+   "tris0": 3150,
+   "tris1": 798,
+   "tris2": 0,
+   "size": 46.234
+  },
+  {
+   "model": "east_astral_tower",
+   "lod1": "east_astral_tower__lod1",
+   "lod2": "",
+   "tris0": 11828,
+   "tris1": 4436,
+   "tris2": 0,
+   "size": 60.055
+  },
+  {
+   "model": "east_bldg_104",
+   "lod1": "east_bldg_104__lod1",
+   "lod2": "",
+   "tris0": 4690,
+   "tris1": 1402,
+   "tris2": 0,
+   "size": 19.252
+  },
+  {
+   "model": "east_bldg_104_kit",
+   "lod1": "east_bldg_104_kit__lod1",
+   "lod2": "",
+   "tris0": 5804,
+   "tris1": 1068,
+   "tris2": 0,
+   "size": 19.635
+  },
+  {
+   "model": "east_bldg_106",
+   "lod1": "east_bldg_106__lod1",
+   "lod2": "",
+   "tris0": 7946,
+   "tris1": 2050,
+   "tris2": 0,
+   "size": 24.548
+  },
+  {
+   "model": "east_bldg_106_kit",
+   "lod1": "east_bldg_106_kit__lod1",
+   "lod2": "",
+   "tris0": 5554,
+   "tris1": 1154,
+   "tris2": 0,
+   "size": 26.478
+  },
+  {
+   "model": "east_bldg_107",
+   "lod1": "east_bldg_107__lod1",
+   "lod2": "",
+   "tris0": 5670,
+   "tris1": 1726,
+   "tris2": 0,
+   "size": 24.384
+  },
+  {
+   "model": "east_bldg_107_kit",
+   "lod1": "east_bldg_107_kit__lod1",
+   "lod2": "",
+   "tris0": 11972,
+   "tris1": 2652,
+   "tris2": 0,
+   "size": 26.214
+  },
+  {
+   "model": "east_bldg_111",
+   "lod1": "east_bldg_111__lod1",
+   "lod2": "",
+   "tris0": 12018,
+   "tris1": 3650,
+   "tris2": 0,
+   "size": 37.403
+  },
+  {
+   "model": "east_bldg_111_kit",
+   "lod1": "east_bldg_111_kit__lod1",
+   "lod2": "",
+   "tris0": 37210,
+   "tris1": 7626,
+   "tris2": 0,
+   "size": 36.698
+  },
+  {
+   "model": "east_bldg_112",
+   "lod1": "east_bldg_112__lod1",
+   "lod2": "",
+   "tris0": 4312,
+   "tris1": 1480,
+   "tris2": 0,
+   "size": 40.721
+  },
+  {
+   "model": "east_bldg_118",
+   "lod1": "east_bldg_118__lod1",
+   "lod2": "",
+   "tris0": 9546,
+   "tris1": 2674,
+   "tris2": 0,
+   "size": 40.189
+  },
+  {
+   "model": "east_bldg_118_kit",
+   "lod1": "east_bldg_118_kit__lod1",
+   "lod2": "",
+   "tris0": 14252,
+   "tris1": 2124,
+   "tris2": 0,
+   "size": 42.145
+  },
+  {
+   "model": "east_bldg_129",
+   "lod1": "east_bldg_129__lod1",
+   "lod2": "",
+   "tris0": 6466,
+   "tris1": 1946,
+   "tris2": 0,
+   "size": 20.547
+  },
+  {
+   "model": "east_bldg_129_kit",
+   "lod1": "east_bldg_129_kit__lod1",
+   "lod2": "",
+   "tris0": 17904,
+   "tris1": 3568,
+   "tris2": 0,
+   "size": 20.503
+  },
+  {
+   "model": "east_bldg_130",
+   "lod1": "east_bldg_130__lod1",
+   "lod2": "",
+   "tris0": 6162,
+   "tris1": 1594,
+   "tris2": 0,
+   "size": 19.502
+  },
+  {
+   "model": "east_bldg_130_kit",
+   "lod1": "east_bldg_130_kit__lod1",
+   "lod2": "",
+   "tris0": 2724,
+   "tris1": 836,
+   "tris2": 0,
+   "size": 14.402
+  },
+  {
+   "model": "east_bldg_36",
+   "lod1": "east_bldg_36__lod1",
+   "lod2": "",
+   "tris0": 11202,
+   "tris1": 3418,
+   "tris2": 0,
+   "size": 29.643
+  },
+  {
+   "model": "east_bldg_36_kit",
+   "lod1": "east_bldg_36_kit__lod1",
+   "lod2": "",
+   "tris0": 14232,
+   "tris1": 2608,
+   "tris2": 0,
+   "size": 29.36
+  },
+  {
+   "model": "east_bldg_39",
+   "lod1": "east_bldg_39__lod1",
+   "lod2": "",
+   "tris0": 15498,
+   "tris1": 4786,
+   "tris2": 0,
+   "size": 34.828
+  },
+  {
+   "model": "east_bldg_39_kit",
+   "lod1": "east_bldg_39_kit__lod1",
+   "lod2": "",
+   "tris0": 14780,
+   "tris1": 3356,
+   "tris2": 0,
+   "size": 33.043
+  },
+  {
+   "model": "east_bldg_56",
+   "lod1": "east_bldg_56__lod1",
+   "lod2": "",
+   "tris0": 8314,
+   "tris1": 2434,
+   "tris2": 0,
+   "size": 33.866
+  },
+  {
+   "model": "east_bldg_99",
+   "lod1": "east_bldg_99__lod1",
+   "lod2": "",
+   "tris0": 5750,
+   "tris1": 1726,
+   "tris2": 0,
+   "size": 22.524
+  },
+  {
+   "model": "east_bldg_99_kit",
+   "lod1": "east_bldg_99_kit__lod1",
+   "lod2": "",
+   "tris0": 11724,
+   "tris1": 2716,
+   "tris2": 0,
+   "size": 23.499
+  },
+  {
+   "model": "east_gck_building",
+   "lod1": "east_gck_building__lod1",
+   "lod2": "",
+   "tris0": 18633,
+   "tris1": 5699,
+   "tris2": 0,
+   "size": 58.339
+  },
+  {
+   "model": "east_gck_building_kit",
+   "lod1": "east_gck_building_kit__lod1",
+   "lod2": "",
+   "tris0": 6470,
+   "tris1": 2070,
+   "tris2": 0,
+   "size": 53.149
+  },
+  {
+   "model": "east_girl_scouts_of_the_p",
+   "lod1": "east_girl_scouts_of_the_p__lod1",
+   "lod2": "",
+   "tris0": 15026,
+   "tris1": 4398,
+   "tris2": 0,
+   "size": 41.668
+  },
+  {
+   "model": "east_girl_scouts_of_the_p_kit",
+   "lod1": "east_girl_scouts_of_the_p_kit__lod1",
+   "lod2": "",
+   "tris0": 35274,
+   "tris1": 6706,
+   "tris2": 0,
+   "size": 39.731
+  },
+  {
+   "model": "east_school",
+   "lod1": "east_school__lod1",
+   "lod2": "",
+   "tris0": 15852,
+   "tris1": 4348,
+   "tris2": 0,
+   "size": 89.126
+  },
+  {
+   "model": "east_school_kit",
+   "lod1": "east_school_kit__lod1",
+   "lod2": "",
+   "tris0": 3284,
+   "tris1": 932,
+   "tris2": 0,
+   "size": 91.033
+  },
+  {
+   "model": "east_shoprow",
+   "lod1": "east_shoprow__lod1",
+   "lod2": "",
+   "tris0": 15810,
+   "tris1": 4866,
+   "tris2": 0,
+   "size": 45.907
+  },
+  {
+   "model": "east_shoprow_awnings",
+   "lod1": "east_shoprow_awnings__lod1",
+   "lod2": "",
+   "tris0": 5152,
+   "tris1": 720,
+   "tris2": 0,
+   "size": 43.984
+  },
+  {
+   "model": "east_vista_gl",
+   "lod1": "east_vista_gl__lod1",
+   "lod2": "",
+   "tris0": 22388,
+   "tris1": 7060,
+   "tris2": 0,
+   "size": 47.245
+  },
+  {
+   "model": "east_vista_gl_kit",
+   "lod1": "east_vista_gl_kit__lod1",
+   "lod2": "",
+   "tris0": 108680,
+   "tris1": 20880,
+   "tris2": 0,
+   "size": 47.722
+  },
+  {
+   "model": "east_wec",
+   "lod1": "east_wec__lod1",
+   "lod2": "",
+   "tris0": 8155,
+   "tris1": 1915,
+   "tris2": 0,
+   "size": 44.365
+  },
+  {
+   "model": "east_wec_kit",
+   "lod1": "east_wec_kit__lod1",
+   "lod2": "",
+   "tris0": 15124,
+   "tris1": 3236,
+   "tris2": 0,
+   "size": 44.306
+  },
+  {
+   "model": "land_condo_tower",
+   "lod1": "land_condo_tower__lod1",
+   "lod2": "",
+   "tris0": 32610,
+   "tris1": 10642,
+   "tris2": 0,
+   "size": 66.618
+  },
+  {
+   "model": "land_condo_yard",
+   "lod1": "land_condo_yard__lod1",
+   "lod2": "",
+   "tris0": 7600,
+   "tris1": 2480,
+   "tris2": 0,
+   "size": 19.414
+  },
+  {
+   "model": "land_crane",
+   "lod1": "land_crane__lod1",
+   "lod2": "",
+   "tris0": 3120,
+   "tris1": 936,
+   "tris2": 0,
+   "size": 88.251
+  },
+  {
+   "model": "land_deco_body",
+   "lod1": "land_deco_body__lod1",
+   "lod2": "",
+   "tris0": 17572,
+   "tris1": 5056,
+   "tris2": 0,
+   "size": 28.704
+  },
+  {
+   "model": "land_deco_details",
+   "lod1": "land_deco_details__lod1",
+   "lod2": "",
+   "tris0": 2704,
+   "tris1": 896,
+   "tris2": 0,
+   "size": 25.735
+  },
+  {
+   "model": "land_sixties_body",
+   "lod1": "land_sixties_body__lod1",
+   "lod2": "",
+   "tris0": 2526,
+   "tris1": 1006,
+   "tris2": 0,
+   "size": 35.597
+  },
+  {
+   "model": "land_sixties_grid",
+   "lod1": "land_sixties_grid__lod1",
+   "lod2": "",
+   "tris0": 6392,
+   "tris1": 2040,
+   "tris2": 0,
+   "size": 32.107
+  },
+  {
+   "model": "life_pedicab",
+   "lod1": "life_pedicab__lod1",
+   "lod2": "",
+   "tris0": 5204,
+   "tris1": 2552,
+   "tris2": 0,
+   "size": 3.064
+  },
+  {
+   "model": "lrt_gantry",
+   "lod1": "lrt_gantry__lod1",
+   "lod2": "",
+   "tris0": 2604,
+   "tris1": 596,
+   "tris2": 0,
+   "size": 10.909
+  },
+  {
+   "model": "lrt_pier_fittings",
+   "lod1": "lrt_pier_fittings__lod1",
+   "lod2": "",
+   "tris0": 3296,
+   "tris1": 936,
+   "tris2": 0,
+   "size": 13.377
+  },
+  {
+   "model": "lrt_span_20_parapet",
+   "lod1": "lrt_span_20_parapet__lod1",
+   "lod2": "",
+   "tris0": 6272,
+   "tris1": 1664,
+   "tris2": 0,
+   "size": 22.753
+  },
+  {
+   "model": "lrt_span_20_sleepers",
+   "lod1": "lrt_span_20_sleepers__lod1",
+   "lod2": "",
+   "tris0": 9776,
+   "tris1": 3120,
+   "tris2": 0,
+   "size": 20.654
+  },
+  {
+   "model": "lrt_span_25_fascia",
+   "lod1": "lrt_span_25_fascia__lod1",
+   "lod2": "",
+   "tris0": 472,
+   "tris1": 152,
+   "tris2": 0,
+   "size": 27.08
+  },
+  {
+   "model": "lrt_span_25_girder",
+   "lod1": "lrt_span_25_girder__lod1",
+   "lod2": "",
+   "tris0": 1800,
+   "tris1": 456,
+   "tris2": 0,
+   "size": 26.011
+  },
+  {
+   "model": "lrt_span_25_parapet",
+   "lod1": "lrt_span_25_parapet__lod1",
+   "lod2": "",
+   "tris0": 7840,
+   "tris1": 2080,
+   "tris2": 0,
+   "size": 27.237
+  },
+  {
+   "model": "lrt_span_25_slab",
+   "lod1": "lrt_span_25_slab__lod1",
+   "lod2": "",
+   "tris0": 788,
+   "tris1": 212,
+   "tris2": 0,
+   "size": 27.034
+  },
+  {
+   "model": "lrt_span_25_sleepers",
+   "lod1": "lrt_span_25_sleepers__lod1",
+   "lod2": "",
+   "tris0": 12032,
+   "tris1": 3840,
+   "tris2": 0,
+   "size": 25.409
+  },
+  {
+   "model": "lrt_span_25_track",
+   "lod1": "lrt_span_25_track__lod1",
+   "lod2": "",
+   "tris0": 1980,
+   "tris1": 540,
+   "tris2": 0,
+   "size": 25.944
+  },
+  {
+   "model": "lrt_span_9_girder",
+   "lod1": "lrt_span_9_girder__lod1",
+   "lod2": "",
+   "tris0": 1800,
+   "tris1": 456,
+   "tris2": 0,
+   "size": 12.026
+  },
+  {
+   "model": "lrt_span_9_parapet",
+   "lod1": "lrt_span_9_parapet__lod1",
+   "lod2": "",
+   "tris0": 3136,
+   "tris1": 832,
+   "tris2": 0,
+   "size": 14.198
+  },
+  {
+   "model": "lrt_span_9_sleepers",
+   "lod1": "lrt_span_9_sleepers__lod1",
+   "lod2": "",
+   "tris0": 4136,
+   "tris1": 1320,
+   "tris2": 0,
+   "size": 10.959
+  },
+  {
+   "model": "lrt_span_9_track",
+   "lod1": "lrt_span_9_track__lod1",
+   "lod2": "",
+   "tris0": 1980,
+   "tris1": 540,
+   "tris2": 0,
+   "size": 11.504
+  },
+  {
+   "model": "pot_bloom_clay_pot",
+   "lod1": "pot_bloom_clay_pot__lod1",
+   "lod2": "",
+   "tris0": 824,
+   "tris1": 320,
+   "tris2": 0,
+   "size": 0.469
+  },
+  {
+   "model": "prop_crate_stack_e",
+   "lod1": "prop_crate_stack_e__lod1",
+   "lod2": "",
+   "tris0": 3168,
+   "tris1": 1088,
+   "tris2": 0,
+   "size": 1.011
+  },
+  {
+   "model": "prop_pares_cart",
+   "lod1": "prop_pares_cart__lod1",
+   "lod2": "",
+   "tris0": 16092,
+   "tris1": 4844,
+   "tris2": 0,
+   "size": 3.781
+  },
+  {
+   "model": "prop_pares_cart_food",
+   "lod1": "prop_pares_cart_food__lod1",
+   "lod2": "",
+   "tris0": 5928,
+   "tris1": 2392,
+   "tris2": 0,
+   "size": 1.834
+  },
+  {
+   "model": "prop_stall_sarisari",
+   "lod1": "prop_stall_sarisari__lod1",
+   "lod2": "",
+   "tris0": 10880,
+   "tris1": 4608,
+   "tris2": 0,
+   "size": 3.909
+  },
+  {
+   "model": "rizal_aircon",
+   "lod1": "rizal_aircon__lod1",
+   "lod2": "",
+   "tris0": 52748,
+   "tris1": 6188,
+   "tris2": 0,
+   "size": 80.128
+  },
+  {
+   "model": "rizal_balconies",
+   "lod1": "rizal_balconies__lod1",
+   "lod2": "",
+   "tris0": 11064,
+   "tris1": 1272,
+   "tris2": 0,
+   "size": 49.479
+  },
+  {
+   "model": "rizal_bands",
+   "lod1": "rizal_bands__lod1",
+   "lod2": "",
+   "tris0": 3108,
+   "tris1": 476,
+   "tris2": 0,
+   "size": 86.179
+  },
+  {
+   "model": "rizal_capitals",
+   "lod1": "rizal_capitals__lod1",
+   "lod2": "",
+   "tris0": 29984,
+   "tris1": 8224,
+   "tris2": 0,
+   "size": 27.864
+  },
+  {
+   "model": "rizal_dentils",
+   "lod1": "rizal_dentils__lod1",
+   "lod2": "",
+   "tris0": 13740,
+   "tris1": 2700,
+   "tris2": 0,
+   "size": 27.783
+  },
+  {
+   "model": "rizal_downpipes",
+   "lod1": "rizal_downpipes__lod1",
+   "lod2": "",
+   "tris0": 3872,
+   "tris1": 608,
+   "tris2": 0,
+   "size": 87.914
+  },
+  {
+   "model": "rizal_rafters",
+   "lod1": "rizal_rafters__lod1",
+   "lod2": "",
+   "tris0": 31104,
+   "tris1": 3456,
+   "tris2": 0,
+   "size": 84.581
+  },
+  {
+   "model": "rizal_roof_caps",
+   "lod1": "rizal_roof_caps__lod1",
+   "lod2": "",
+   "tris0": 4620,
+   "tris1": 588,
+   "tris2": 0,
+   "size": 88.797
+  },
+  {
+   "model": "rizal_sills",
+   "lod1": "rizal_sills__lod1",
+   "lod2": "",
+   "tris0": 7236,
+   "tris1": 804,
+   "tris2": 0,
+   "size": 83.845
+  },
+  {
+   "model": "rizal_walls",
+   "lod1": "rizal_walls__lod1",
+   "lod2": "",
+   "tris0": 26390,
+   "tris1": 6294,
+   "tris2": 0,
+   "size": 86.165
+  },
+  {
+   "model": "roof_bulkhead",
+   "lod1": "roof_bulkhead__lod1",
+   "lod2": "",
+   "tris0": 892,
+   "tris1": 388,
+   "tris2": 0,
+   "size": 4.912
+  },
+  {
+   "model": "roof_cell_mast",
+   "lod1": "roof_cell_mast__lod1",
+   "lod2": "",
+   "tris0": 2500,
+   "tris1": 1228,
+   "tris2": 0,
+   "size": 12.018
+  },
+  {
+   "model": "roof_dish",
+   "lod1": "roof_dish__lod1",
+   "lod2": "",
+   "tris0": 1140,
+   "tris1": 600,
+   "tris2": 0,
+   "size": 2.105
+  },
+  {
+   "model": "roof_garden_a_pots",
+   "lod1": "roof_garden_a_pots__lod1",
+   "lod2": "",
+   "tris0": 2112,
+   "tris1": 1156,
+   "tris2": 0,
+   "size": 3.098
+  },
+  {
+   "model": "roof_laundry_a",
+   "lod1": "roof_laundry_a__lod1",
+   "lod2": "",
+   "tris0": 2532,
+   "tris1": 1124,
+   "tris2": 0,
+   "size": 5.166
+  },
+  {
+   "model": "roof_laundry_b",
+   "lod1": "roof_laundry_b__lod1",
+   "lod2": "",
+   "tris0": 2352,
+   "tris1": 1064,
+   "tris2": 0,
+   "size": 4.257
+  },
+  {
+   "model": "roof_penthouse_mint",
+   "lod1": "roof_penthouse_mint__lod1",
+   "lod2": "",
+   "tris0": 2276,
+   "tris1": 1092,
+   "tris2": 0,
+   "size": 7.14
+  },
+  {
+   "model": "roof_penthouse_rose",
+   "lod1": "roof_penthouse_rose__lod1",
+   "lod2": "",
+   "tris0": 2276,
+   "tris1": 1092,
+   "tris2": 0,
+   "size": 7.14
+  },
+  {
+   "model": "roof_shack",
+   "lod1": "roof_shack__lod1",
+   "lod2": "",
+   "tris0": 4500,
+   "tris1": 2116,
+   "tris2": 0,
+   "size": 5.859
+  },
+  {
+   "model": "roof_tank_pair",
+   "lod1": "roof_tank_pair__lod1",
+   "lod2": "",
+   "tris0": 1992,
+   "tris1": 1192,
+   "tris2": 0,
+   "size": 3.387
+  },
+  {
+   "model": "roof_tank_stand_black",
+   "lod1": "roof_tank_stand_black__lod1",
+   "lod2": "",
+   "tris0": 1808,
+   "tris1": 840,
+   "tris2": 0,
+   "size": 4.792
+  },
+  {
+   "model": "roof_tank_stand_cream",
+   "lod1": "roof_tank_stand_cream__lod1",
+   "lod2": "",
+   "tris0": 1808,
+   "tris1": 840,
+   "tris2": 0,
+   "size": 4.792
+  },
+  {
+   "model": "roof_tank_stand_galv",
+   "lod1": "roof_tank_stand_galv__lod1",
+   "lod2": "",
+   "tris0": 1664,
+   "tris1": 612,
+   "tris2": 0,
+   "size": 4.883
+  },
+  {
+   "model": "roof_tank_stand_green",
+   "lod1": "roof_tank_stand_green__lod1",
+   "lod2": "",
+   "tris0": 1808,
+   "tris1": 840,
+   "tris2": 0,
+   "size": 4.792
+  },
+  {
+   "model": "sarisari_front",
+   "lod1": "sarisari_front__lod1",
+   "lod2": "",
+   "tris0": 18408,
+   "tris1": 6096,
+   "tris2": 0,
+   "size": 10.079
+  },
+  {
+   "model": "sarisari_furniture",
+   "lod1": "sarisari_furniture__lod1",
+   "lod2": "",
+   "tris0": 12176,
+   "tris1": 3072,
+   "tris2": 0,
+   "size": 6.336
+  },
+  {
+   "model": "sarisari_upper",
+   "lod1": "sarisari_upper__lod1",
+   "lod2": "",
+   "tris0": 4068,
+   "tris1": 1276,
+   "tris2": 0,
+   "size": 11.339
+  },
+  {
+   "model": "sarisari_walls",
+   "lod1": "sarisari_walls__lod1",
+   "lod2": "",
+   "tris0": 2820,
+   "tris1": 900,
+   "tris2": 0,
+   "size": 11.22
+  },
+  {
+   "model": "stn_bent_high",
+   "lod1": "stn_bent_high__lod1",
+   "lod2": "",
+   "tris0": 1144,
+   "tris1": 368,
+   "tris2": 0,
+   "size": 18.677
+  },
+  {
+   "model": "stn_bent_low",
+   "lod1": "stn_bent_low__lod1",
+   "lod2": "",
+   "tris0": 1144,
+   "tris1": 368,
+   "tris2": 0,
+   "size": 19.131
+  },
+  {
+   "model": "stn_concourse",
+   "lod1": "stn_concourse__lod1",
+   "lod2": "",
+   "tris0": 2068,
+   "tris1": 660,
+   "tris2": 0,
+   "size": 41.328
+  },
+  {
+   "model": "stn_ends",
+   "lod1": "stn_ends__lod1",
+   "lod2": "",
+   "tris0": 2084,
+   "tris1": 628,
+   "tris2": 0,
+   "size": 92.427
+  },
+  {
+   "model": "stn_platform_walls",
+   "lod1": "stn_platform_walls__lod1",
+   "lod2": "",
+   "tris0": 4712,
+   "tris1": 2280,
+   "tris2": 0,
+   "size": 92.2
+  },
+  {
+   "model": "stn_platforms",
+   "lod1": "stn_platforms__lod1",
+   "lod2": "",
+   "tris0": 1744,
+   "tris1": 432,
+   "tris2": 0,
+   "size": 92.442
+  },
+  {
+   "model": "stn_roof",
+   "lod1": "stn_roof__lod1",
+   "lod2": "",
+   "tris0": 3668,
+   "tris1": 1068,
+   "tris2": 0,
+   "size": 93.662
+  },
+  {
+   "model": "stn_stair",
+   "lod1": "stn_stair__lod1",
+   "lod2": "",
+   "tris0": 2488,
+   "tris1": 1064,
+   "tris2": 0,
+   "size": 13.683
+  },
+  {
+   "model": "stn_track",
+   "lod1": "stn_track__lod1",
+   "lod2": "",
+   "tris0": 2356,
+   "tris1": 660,
+   "tris2": 0,
+   "size": 91.078
+  },
+  {
+   "model": "stn_trackway_slab",
+   "lod1": "stn_trackway_slab__lod1",
+   "lod2": "",
+   "tris0": 1596,
+   "tris1": 412,
+   "tris2": 0,
+   "size": 91.505
+  },
+  {
+   "model": "street_signal_taft",
+   "lod1": "street_signal_taft__lod1",
+   "lod2": "",
+   "tris0": 4848,
+   "tris1": 1416,
+   "tris2": 0,
+   "size": 9.267
+  },
+  {
+   "model": "tree_fig_0_leaves",
+   "lod1": "tree_fig_0_leaves__lod1",
+   "lod2": "tree_fig_0_leaves__lod2",
+   "tris0": 2786,
+   "tris1": 1400,
+   "tris2": 346,
+   "size": 4.75
+  },
+  {
+   "model": "tree_fig_0_wood",
+   "lod1": "tree_fig_0_wood__lod1",
+   "lod2": "tree_fig_0_wood__lod2",
+   "tris0": 1138,
+   "tris1": 522,
+   "tris2": 208,
+   "size": 5.029
+  },
+  {
+   "model": "tree_fig_1_leaves",
+   "lod1": "tree_fig_1_leaves__lod1",
+   "lod2": "tree_fig_1_leaves__lod2",
+   "tris0": 3482,
+   "tris1": 1750,
+   "tris2": 430,
+   "size": 5.353
+  },
+  {
+   "model": "tree_fig_1_wood",
+   "lod1": "tree_fig_1_wood__lod1",
+   "lod2": "tree_fig_1_wood__lod2",
+   "tris0": 1370,
+   "tris1": 642,
+   "tris2": 256,
+   "size": 5.304
+  },
+  {
+   "model": "tree_hedge",
+   "lod1": "tree_hedge__lod1",
+   "lod2": "tree_hedge__lod2",
+   "tris0": 2312,
+   "tris1": 1160,
+   "tris2": 288,
+   "size": 4.286
+  },
+  {
+   "model": "tree_ixora_1",
+   "lod1": "tree_ixora_1__lod1",
+   "lod2": "tree_ixora_1__lod2",
+   "tris0": 1056,
+   "tris1": 530,
+   "tris2": 136,
+   "size": 2.358
+  },
+  {
+   "model": "tree_ixora_2",
+   "lod1": "tree_ixora_2__lod1",
+   "lod2": "tree_ixora_2__lod2",
+   "tris0": 1256,
+   "tris1": 638,
+   "tris2": 160,
+   "size": 2.706
+  },
+  {
+   "model": "tree_mango_0_leaves",
+   "lod1": "tree_mango_0_leaves__lod1",
+   "lod2": "tree_mango_0_leaves__lod2",
+   "tris0": 6178,
+   "tris1": 3094,
+   "tris2": 752,
+   "size": 10.156
+  },
+  {
+   "model": "tree_mango_0_wood",
+   "lod1": "tree_mango_0_wood__lod1",
+   "lod2": "tree_mango_0_wood__lod2",
+   "tris0": 1370,
+   "tris1": 642,
+   "tris2": 255,
+   "size": 7.742
+  },
+  {
+   "model": "tree_mango_1_leaves",
+   "lod1": "tree_mango_1_leaves__lod1",
+   "lod2": "tree_mango_1_leaves__lod2",
+   "tris0": 5184,
+   "tris1": 2594,
+   "tris2": 634,
+   "size": 9.872
+  },
+  {
+   "model": "tree_mango_1_wood",
+   "lod1": "tree_mango_1_wood__lod1",
+   "lod2": "tree_mango_1_wood__lod2",
+   "tris0": 1114,
+   "tris1": 522,
+   "tris2": 208,
+   "size": 7.298
+  },
+  {
+   "model": "tree_mango_2_leaves",
+   "lod1": "tree_mango_2_leaves__lod1",
+   "lod2": "tree_mango_2_leaves__lod2",
+   "tris0": 7324,
+   "tris1": 3668,
+   "tris2": 892,
+   "size": 11.398
+  },
+  {
+   "model": "tree_mango_2_wood",
+   "lod1": "tree_mango_2_wood__lod1",
+   "lod2": "tree_mango_2_wood__lod2",
+   "tris0": 1846,
+   "tris1": 862,
+   "tris2": 343,
+   "size": 7.815
+  },
+  {
+   "model": "tree_narra_0_leaves",
+   "lod1": "tree_narra_0_leaves__lod1",
+   "lod2": "tree_narra_0_leaves__lod2",
+   "tris0": 6236,
+   "tris1": 3120,
+   "tris2": 760,
+   "size": 13.21
+  },
+  {
+   "model": "tree_narra_0_wood",
+   "lod1": "tree_narra_0_wood__lod1",
+   "lod2": "tree_narra_0_wood__lod2",
+   "tris0": 1444,
+   "tris1": 672,
+   "tris2": 268,
+   "size": 12.627
+  },
+  {
+   "model": "tree_narra_1_leaves",
+   "lod1": "tree_narra_1_leaves__lod1",
+   "lod2": "tree_narra_1_leaves__lod2",
+   "tris0": 6846,
+   "tris1": 3428,
+   "tris2": 830,
+   "size": 13.272
+  },
+  {
+   "model": "tree_narra_1_wood",
+   "lod1": "tree_narra_1_wood__lod1",
+   "lod2": "tree_narra_1_wood__lod2",
+   "tris0": 1810,
+   "tris1": 842,
+   "tris2": 335,
+   "size": 12.741
+  },
+  {
+   "model": "tree_pit",
+   "lod1": "tree_pit__lod1",
+   "lod2": "",
+   "tris0": 270,
+   "tris1": 142,
+   "tris2": 0,
+   "size": 1.767
+  },
+  {
+   "model": "tree_raintree_0_leaves",
+   "lod1": "tree_raintree_0_leaves__lod1",
+   "lod2": "tree_raintree_0_leaves__lod2",
+   "tris0": 8728,
+   "tris1": 4370,
+   "tris2": 1058,
+   "size": 20.362
+  },
+  {
+   "model": "tree_raintree_0_wood",
+   "lod1": "tree_raintree_0_wood__lod1",
+   "lod2": "tree_raintree_0_wood__lod2",
+   "tris0": 2726,
+   "tris1": 1262,
+   "tris2": 504,
+   "size": 15.185
+  },
+  {
+   "model": "tree_raintree_1_leaves",
+   "lod1": "tree_raintree_1_leaves__lod1",
+   "lod2": "tree_raintree_1_leaves__lod2",
+   "tris0": 7008,
+   "tris1": 3510,
+   "tris2": 854,
+   "size": 18.645
+  },
+  {
+   "model": "tree_raintree_1_wood",
+   "lod1": "tree_raintree_1_wood__lod1",
+   "lod2": "tree_raintree_1_wood__lod2",
+   "tris0": 2250,
+   "tris1": 1042,
+   "tris2": 416,
+   "size": 14.744
+  },
+  {
+   "model": "tree_raintree_2_leaves",
+   "lod1": "tree_raintree_2_leaves__lod1",
+   "lod2": "tree_raintree_2_leaves__lod2",
+   "tris0": 8512,
+   "tris1": 4262,
+   "tris2": 1032,
+   "size": 22.522
+  },
+  {
+   "model": "tree_raintree_2_wood",
+   "lod1": "tree_raintree_2_wood__lod1",
+   "lod2": "tree_raintree_2_wood__lod2",
+   "tris0": 2836,
+   "tris1": 1312,
+   "tris2": 656,
+   "size": 17.34
+  },
+  {
+   "model": "walls_concrete",
+   "lod1": "walls_concrete__lod1",
+   "lod2": "",
+   "tris0": 17484,
+   "tris1": 5580,
+   "tris2": 0,
+   "size": 232.809
+  }
+ ],
  "materials": [
   {
    "name": "east_ac",

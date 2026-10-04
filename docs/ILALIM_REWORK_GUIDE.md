@@ -67,7 +67,11 @@ first; the CURRENT STATE entries under it are the detailed record, newest first.
      balcony parapets), and the eatery tarp sign's own faces. The ray-peel check
      (`scratchpad/zpeel.py`) crashed indexing the original mesh with an evaluated face index: read
      the evaluated mesh. Fix it in the kit, re-export, rebuild.
-  3. PERFORMANCE: 6.4 M triangles (trees 2.8 M, heritage 760 k, eastside 640 k, rooftops 323 k); only
+  3. PERFORMANCE: FIRST PASS DONE 2026-10-04 (the CURRENT STATE entry right below this block:
+     occlusion, real LODs, cull distances, colliders, vehicles, the tiered AO, the match-start
+     hitch). Measure with `Tests/PlayMode/IlalimPerfProbe.cs`. What is left is the set-pass count
+     (about 3900 a frame from 694 materials) and a played frame rate on a weak PC. Before it:
+     6.4 M triangles (trees 2.8 M, heritage 760 k, eastside 640 k, rooftops 323 k); only
      cull LODs so far. Measure the frame rate, then real LODs or simpler far trees and rooftops.
   4. Owner decisions still open: cable shadows on the court (the low sun makes them stripe it),
      Rizal Hall's size from the court, names. CLOSED 2026-10-01, the train behind the parapet: a ray
@@ -77,6 +81,39 @@ first; the CURRENT STATE entries under it are the detailed record, newest first.
      loud LRT sfx) plus the existing camera shake.
   5. Real voice recordings would beat the synthesized taho call, "salamat po" and the giggles (drop in
      files with the same names). Repo size: the Unity art is about 231 MB with no LFS.
+
+⚠️⚠️ **CURRENT STATE (2026-10-04): THE MAP'S FIRST PERFORMANCE PASS.** Owner, 2026-10-04: the game is
+"primarily not laggy for the server host but it is for players joining too", then "add these
+optimization fixes". Not committed, not played on a weak PC.
+- **The measure** is `Tests/PlayMode/IlalimPerfProbe.cs` (PlayMode, batch): it renders the game's own
+  camera at 1920x1080 from eight fixed viewpoints and writes `Logs/ilalim-unity/perf_<label>.txt`
+  (the label is the one line in `Logs/ilalim-unity/perf_label.txt`). COUNTS are the measure; its
+  milliseconds are the development PC's. It also renders 308 views with occlusion culling on and
+  off and FAILS if any picture differs, so a bad bake cannot ship quietly.
+- **Mean of the eight views, before and after:** triangles 11.17 M to 5.95 M, set-pass calls 5246 to
+  3945, draw calls 7267 to 5318, shadow casters 1163 to 980. Footprint colliders 386 to 201.
+- **What the builder does now** (all in `IlalimSceneBuilder`, notes on each constant):
+  - bakes occlusion on every build (`OccluderGroups`, `BakeOcclusion`; the data is
+    `Scenes/Maps/IlalimNgTulay/OcclusionCullingData.asset`). The guideway is NOT an occluder and
+    neither are the NearFade piers, trees, fences, glass or cut-outs;
+  - builds real LODGroups from the layout's `lods` list (`LodMetres`, by DISTANCE past the
+    object's near side; a tree's trunk and canopy swap as one, `PairTrees`; the guideway keeps its
+    model from anywhere in the play rectangle; a hard-surface LOD2 never above 5 per cent of the
+    screen's height, which in practice means it is hardly ever drawn);
+  - culls small things by their own size (`CullGroups`: under 13 pixels at 1080 lines, never
+    nearer than 60 m). ⚠️ The old per-group shares forgot `QualitySettings.lodBias` (2) and culled nothing;
+  - takes shadow casting off the ground, the markings, the rooftop kit and anything under 0.6 m
+    (`NoShadowGroups`). The CABLES still cast: that is the owner's open decision;
+  - merges fence pickets into one box a stretch (`MergeRuns`);
+  - `IlalimLifeAuthor.Combine` makes each traffic vehicle one mesh (`Art/IlalimRebuild/Generated`).
+- **Runtime:** the ambient occlusion takes 8 probes a pixel below the High tier and 16 on it
+  (`WorldOutline.AmbientOcclusionLiteKeyword`; ⚠️ this changes the DEFAULT tier's picture a little: 1 to 2
+  per cent of pixels move by more than 2/255); `SidewalkLife.PoseUnseen` and `JumpPad.Seen` skip
+  posing what no camera drew; `KantoTraffic`'s match-start catch-up is boxed at 4 ms a frame and
+  `HubLoading` holds the curtain (up to 6 s) until the street is caught up.
+- **Per map shadow distance:** left alone. `GraphicsProfiles` already gives 24, 40 and 70 m by tier.
+- **Known:** `MapGeometryCheck` now reports 1723 informational findings, not 866: it measures the
+  LOD1 and LOD2 renderers as well. The sidewalk author's "6 failing samples" is unchanged.
 
 ⚠️⚠️ **CURRENT STATE (2026-10-01): THE REBUILD IS THE SHIPPED ILALIM NG TULAY (ILALIM-1.6).**
 Owner, 2026-10-01: "wait you also need to replace the old ilalim ng tulaywith this one in the map

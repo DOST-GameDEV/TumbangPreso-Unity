@@ -52,6 +52,9 @@ namespace TumbangPreso.PlayTests
             yield return null;
             var life = Object.FindFirstObjectByType<SidewalkLife>();
             Assert.IsNotNull(life, "No SidewalkLife in " + Scene);
+            // This probe reads the limbs, and batch mode has no camera drawing the people: without
+            // this the life would walk them unposed (SidewalkLife.PoseUnseen, 2026-10-04).
+            life.PoseUnseen = true;
             Time.timeScale = 1f;
             yield return null;
             int n = life.PeopleCount;

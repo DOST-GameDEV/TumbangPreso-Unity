@@ -324,10 +324,16 @@ namespace TumbangPreso.EditorTools.MapKit
                 part.SetParent(vehicle, true);
             }
 
+            // One mesh a vehicle (see Combine), before the copies are made of them.
+            int partRenderers = 0, partDraws = 0, oneDraws = 0;
+            var partCorners = new Dictionary<Transform, List<Vector3>>();
+            foreach (var kv in vehicles) Combine(kv.Value, partCorners, ref partRenderers, ref partDraws, ref oneDraws);
+
             var rng = new System.Random(11);
             var drivers = new List<KantoTraffic.Driver>();
             var offsets = new Dictionary<string, Quaternion>();
             var log = new StringBuilder();
+            float boxDrift = 0f;
             foreach (var kv in vehicles)
             {
                 var vehicle = kv.Value; string kind = vehicle.name; var spec = Kinds[kind];
@@ -336,6 +342,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 var heading = traffic.RouteHeading(spec.route, along);
                 var offset = Quaternion.Inverse(Quaternion.LookRotation(heading, Vector3.up)) * vehicle.rotation;
                 offsets[kind] = offset;
+                boxDrift = Mathf.Max(boxDrift, BoxDrift(vehicle, heading, partCorners));
                 MakeDriver(vehicle);
                 drivers.Add(Driver(vehicle, spec.route, along, heading, spec.cruise, offset, rng));
                 log.Append($"{kind} yaw {Mathf.Round(offset.eulerAngles.y)}; ");
@@ -387,12 +394,141 @@ namespace TumbangPreso.EditorTools.MapKit
 
             int[] perRoute = new int[traffic.Routes.Length];
             foreach (var d in drivers) perRoute[d.Lane]++;
+            report.AppendLine($"Vehicles: each is one mesh ({vehicles.Count} kinds: {partRenderers} part renderers and {partDraws} material draws became {vehicles.Count} renderers and {oneDraws} draws; " +
+                              $"over the {drivers.Count} drivers that is {drivers.Count} renderers). The travel box KantoTraffic measures moved by at most {boxDrift * 1000f:F1} mm.");
             report.AppendLine($"Traffic: {drivers.Count} drivers ({vehicles.Count} placed, {drivers.Count - vehicles.Count} copies), " +
                               $"routes {string.Join(", ", traffic.Routes.Select((r, i) => $"{r.Name} {perRoute[i]} ({r.Points.Length} points)"))}; " +
                               $"{inLot} route samples in the lot; hits players {traffic.HitsPlayers}; " +
                               $"{traffic.Signals.Length} signal renderers; sound bed={sound.CityBed != null} " +
                               $"horns={sound.HornsCar.Length + sound.HornsJeepney.Length + sound.HornsTricycle.Length} sirens={sound.Sirens.Length}. " +
                               "Model offsets (one per kind, all nose-first): " + log);
+        }
+
+        /// <summary>
+        /// ⚠️ ONE MESH A VEHICLE (owner, 2026-10-04: "add these optimization fixes"). The kit
+        /// exports a vehicle as five to seven parts (body, trim, glass, wheels, round, livery,
+        /// letters), each its own renderer with its own material slots, and 28 of them drive: 167
+        /// moving renderers, none of which static batching can touch. Nothing animates a part
+        /// (`KantoTraffic` poses the body only; the wheels do not turn), so here the parts of
+        /// each placed vehicle become ONE mesh in the vehicle's own frame, one sub-mesh for each
+        /// material the parts use between them, saved under Art/IlalimRebuild/Generated, and the
+        /// copies share it. The materials are the same assets under the same names, so the brake
+        /// lamp (`BrakeMaterial`) is still a slot `KantoTraffic` finds.
+        /// ⚠️ `KantoTraffic.BuildLiveRoad` measures the hit box and the solid from the body's
+        /// MeshFilters. It now measures one box of the whole vehicle where it measured each
+        /// part's; <see cref="BoxDrift"/> compares the two and the build log prints the most any
+        /// vehicle's box moved.
+        /// </summary>
+        private static void Combine(Transform vehicle, Dictionary<Transform, List<Vector3>> partCorners, ref int partRenderers, ref int partDraws, ref int oneDraws)
+        {
+            var parts = vehicle.GetComponentsInChildren<MeshRenderer>().Where(r => !IlalimSceneBuilder.IsLowerLod(r.transform)).ToArray();
+            var materials = new List<Material>();
+            var pieces = new Dictionary<Material, List<CombineInstance>>();
+            var scratch = new List<Mesh>();
+            var corners = new List<Vector3>();
+            foreach (var r in parts)
+            {
+                var filter = r.GetComponent<MeshFilter>();
+                if (filter == null || filter.sharedMesh == null) continue;
+                var mesh = filter.sharedMesh; var mats = r.sharedMaterials;
+                var toVehicle = vehicle.worldToLocalMatrix * r.transform.localToWorldMatrix;
+                partRenderers++;
+                var b = mesh.bounds;
+                for (int c = 0; c < 8; c++)
+                    corners.Add(toVehicle.MultiplyPoint3x4(b.center + Vector3.Scale(b.extents, new Vector3((c & 1) == 0 ? -1f : 1f, (c & 2) == 0 ? -1f : 1f, (c & 4) == 0 ? -1f : 1f))));
+                for (int s = 0; s < Mathf.Min(mesh.subMeshCount, mats.Length); s++)
+                {
+                    if (mats[s] == null) continue;
+                    partDraws++;
+                    if (!pieces.TryGetValue(mats[s], out var list)) { pieces[mats[s]] = list = new List<CombineInstance>(); materials.Add(mats[s]); }
+                    var piece = new CombineInstance { mesh = mesh, subMeshIndex = s, transform = toVehicle };
+                    // A mirrored part (a negative scale) would come out inside out: its triangles are turned first.
+                    if (toVehicle.determinant < 0f)
+                    {
+                        var turned = new Mesh { indexFormat = UnityEngine.Rendering.IndexFormat.UInt32 };
+                        turned.CombineMeshes(new[] { new CombineInstance { mesh = mesh, subMeshIndex = s, transform = Matrix4x4.identity } }, true, false);
+                        var t = turned.triangles;
+                        for (int k = 0; k + 2 < t.Length; k += 3) { int swap = t[k]; t[k] = t[k + 1]; t[k + 1] = swap; }
+                        turned.triangles = t;
+                        scratch.Add(turned);
+                        piece = new CombineInstance { mesh = turned, subMeshIndex = 0, transform = toVehicle };
+                    }
+                    list.Add(piece);
+                }
+            }
+            if (materials.Count == 0) return;
+            var perMaterial = new List<CombineInstance>();
+            int vertices = 0;
+            foreach (var m in materials)
+            {
+                var one = new Mesh { indexFormat = UnityEngine.Rendering.IndexFormat.UInt32 };
+                one.CombineMeshes(pieces[m].ToArray(), true, true);
+                scratch.Add(one);
+                vertices += one.vertexCount;
+                perMaterial.Add(new CombineInstance { mesh = one, subMeshIndex = 0, transform = Matrix4x4.identity });
+            }
+            // ⚠️ The index format is chosen BEFORE the mesh is filled: setting it afterwards empties
+            // the index buffer, and a vehicle with no triangles is a vehicle nobody sees (the first
+            // build of this did exactly that; the probe's Traffic row read 0 triangles).
+            var whole = new Mesh { name = "veh_" + vehicle.name, indexFormat = vertices < 65000 ? UnityEngine.Rendering.IndexFormat.UInt16 : UnityEngine.Rendering.IndexFormat.UInt32 };
+            whole.CombineMeshes(perMaterial.ToArray(), false, false);
+            whole.RecalculateBounds();
+            long triangles = 0;
+            for (int s = 0; s < whole.subMeshCount; s++) triangles += (long)whole.GetIndexCount(s) / 3;
+            if (triangles == 0) throw new InvalidOperationException("The combined mesh of " + vehicle.name + " has no triangles");
+            foreach (var m in scratch) Object.DestroyImmediate(m);
+            oneDraws += materials.Count;
+
+            string folder = IlalimSceneBuilder.Root + "/Generated";
+            if (!AssetDatabase.IsValidFolder(folder)) AssetDatabase.CreateFolder(IlalimSceneBuilder.Root, "Generated");
+            string path = $"{folder}/veh_{vehicle.name}.asset";
+            // Over the mesh a build before wrote, keeping its GUID, as the materials are kept.
+            var saved = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+            if (saved == null) { AssetDatabase.CreateAsset(whole, path); saved = whole; }
+            else { EditorUtility.CopySerialized(whole, saved); saved.name = whole.name; EditorUtility.SetDirty(saved); Object.DestroyImmediate(whole); }
+
+            // The parts go (each a model instance with its own LODGroup); the vehicle draws itself.
+            foreach (var child in vehicle.Cast<Transform>().ToArray()) Object.DestroyImmediate(child.gameObject);
+            var model = new GameObject("Model");
+            model.transform.SetParent(vehicle, false);
+            model.AddComponent<MeshFilter>().sharedMesh = saved;
+            var renderer = model.AddComponent<MeshRenderer>();
+            renderer.sharedMaterials = materials.ToArray();
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+            // Culled when it is a speck, as the parts were (IlalimSceneBuilder.CullGroups).
+            IlalimSceneBuilder.CullOnly(vehicle.gameObject, null);
+            partCorners[vehicle] = corners;
+        }
+
+        /// <summary>How far the vehicle's travel box moved by being measured on one mesh: the box
+        /// `KantoTraffic.BuildLiveRoad` takes (along the travel direction, across it, and the
+        /// roof), from the parts' own boxes as before against the one mesh's box, in metres.</summary>
+        private static float BoxDrift(Transform vehicle, Vector3 heading, Dictionary<Transform, List<Vector3>> partCorners)
+        {
+            if (!partCorners.TryGetValue(vehicle, out var before)) return 0f;
+            var filter = vehicle.GetComponentInChildren<MeshFilter>();
+            if (filter == null || filter.sharedMesh == null) return 0f;
+            var after = new List<Vector3>();
+            var b = filter.sharedMesh.bounds;
+            for (int c = 0; c < 8; c++)
+                after.Add(b.center + Vector3.Scale(b.extents, new Vector3((c & 1) == 0 ? -1f : 1f, (c & 2) == 0 ? -1f : 1f, (c & 4) == 0 ? -1f : 1f)));
+            var f = heading; f.y = 0f; f.Normalize();
+            var right = Vector3.Cross(Vector3.up, f);
+            float[] Box(List<Vector3> local)
+            {
+                float f0 = float.MaxValue, f1 = float.MinValue, r0 = float.MaxValue, r1 = float.MinValue, top = float.MinValue;
+                foreach (var corner in local)
+                {
+                    var p = vehicle.TransformPoint(corner) - vehicle.position;
+                    float a = Vector3.Dot(p, f), s = Vector3.Dot(p, right);
+                    f0 = Mathf.Min(f0, a); f1 = Mathf.Max(f1, a); r0 = Mathf.Min(r0, s); r1 = Mathf.Max(r1, s); top = Mathf.Max(top, p.y);
+                }
+                return new[] { f0, f1, r0, r1, top };
+            }
+            var was = Box(before); var now = Box(after);
+            float drift = 0f;
+            for (int k = 0; k < was.Length; k++) drift = Mathf.Max(drift, Mathf.Abs(was[k] - now[k]));
+            return drift;
         }
 
         private static KantoTraffic.Driver Driver(Transform body, int route, float along, Vector3 heading, float cruise, Quaternion offset, System.Random rng)
@@ -490,6 +626,8 @@ namespace TumbangPreso.EditorTools.MapKit
                 {
                     var renderer = filter.GetComponent<Renderer>();
                     if (filter.sharedMesh == null || renderer == null) continue;
+                    // A placement's lower LODs stand in the same place as its model: measured once.
+                    if (IlalimSceneBuilder.IsLowerLod(filter.transform)) continue;
                     var b = renderer.bounds;
                     if (Flat(b.center).magnitude - Mathf.Max(b.extents.x, b.extents.z) > 120f) continue;
                     // Small things standing on the ground block a pavement perch by their footprint

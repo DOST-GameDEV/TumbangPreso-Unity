@@ -165,11 +165,38 @@ namespace TumbangPreso
         /// pose drawn between two steps runs on at the vehicle's speed, so nothing stutters.</summary>
         private const float LockStep = 1f / 30f;
         /// <summary>The street is re-seeded from the shared clock every 20 minutes, so a peer that
-        /// joins late has at most that much to step through (36000 steps, `LockCatchUp` a frame:
-        /// a second of loading). ⚠️ At the boundary every vehicle returns to its authored start on
+        /// joins late has at most that much to step through (36000 steps; see `LockCatchUpSeconds`
+        /// for how they are spread). ⚠️ At the boundary every vehicle returns to its authored start on
         /// every peer at once: one visible reset in a match that runs past it.</summary>
         private const double LockEpochSeconds = 1200.0;
-        private const int LockCatchUp = 600;
+        /// <summary>
+        /// ⚠️⚠️ THE CATCH-UP IS BOXED IN TIME, NOT IN STEPS (owner, 2026-10-04: the game is "primarily
+        /// not laggy for the server host but it is for players joining too"). It was 600 steps a
+        /// frame whatever they cost: each step is every vehicle against every other, about 20
+        /// microseconds for the 28 of the Ilalim street on the development PC and several times that
+        /// on a weak one, so a joining laptop spent 40 to 60 ms of every frame on a street it
+        /// could not see yet, for up to 60 frames. Now a frame spends at most this long on it,
+        /// and never fewer than `LockCatchUpFloor` steps (two seconds of street a frame, so it
+        /// always gains on the clock). The steps themselves, their order and their arithmetic are
+        /// untouched: every peer still comes out with the same street, only later or sooner.
+        /// `HubLoading` holds the match curtain until the street is caught up (`CatchingUp`, with
+        /// its own time limit) and says so through `Covered`, which lets a frame spend more.
+        /// </summary>
+        private const double LockCatchUpSeconds = 0.004, LockCatchUpCoveredSeconds = 0.020;
+        private const int LockCatchUpFloor = 60;
+        /// <summary>Further behind the clock than this, in steps (1.5 s), the vehicles are not
+        /// drawn or moved until the street is caught up: nobody may see or touch a street that is
+        /// minutes old and running at a hundred times its speed.</summary>
+        private const int LockFarBehind = 45;
+        /// <summary>Set by the loading curtain while it covers the scene: nobody is playing, so
+        /// the catch-up may take most of a frame.</summary>
+        public static bool Covered;
+        private static int _catchingUp;
+        /// <summary>True while any live road in the scene is still stepping through what it
+        /// missed. The loading curtain waits on it, so the first frame a player sees is the
+        /// street every other peer sees.</summary>
+        public static bool CatchingUp => _catchingUp > 0;
+        private bool _counted;
         private const long NoEpoch = long.MinValue, SoloEpoch = long.MinValue + 1;
         private long _lockEpoch = NoEpoch, _lockSteps;
         private double _lockTime;
@@ -879,11 +906,25 @@ namespace TumbangPreso
             }
             // The shared clock is an estimate on a client and may step back a hair: a step is never undone.
             long target = (long)(_lockTime / LockStep);
-            int budget = LockCatchUp;
-            _quiet = true;
-            while (_lockSteps < target && budget-- > 0) { _clock += LockStep; UpdateRoutes(LockStep); _lockSteps++; }
-            _quiet = false;
+            bool far = target - _lockSteps > LockFarBehind;
+            if (_lockSteps < target)
+            {
+                // Boxed in time (see `LockCatchUpSeconds`); the clock is read every eighth step.
+                double began = Time.realtimeSinceStartupAsDouble, box = Covered ? LockCatchUpCoveredSeconds : LockCatchUpSeconds;
+                int done = 0;
+                _quiet = true;
+                while (_lockSteps < target)
+                {
+                    _clock += LockStep; UpdateRoutes(LockStep); _lockSteps++; done++;
+                    if (done >= LockCatchUpFloor && (done & 7) == 0 && Time.realtimeSinceStartupAsDouble - began > box) break;
+                }
+                _quiet = false;
+            }
             _caughtUp = _lockSteps >= target;
+            Count(!_caughtUp);
+            // Still far behind: the street is not shown stepping through what it missed (nothing
+            // is posed, so the vehicles, their solids and their brake lights wait where they are).
+            if (far && !_caughtUp) return;
             float lead = _caughtUp ? Mathf.Clamp((float)(_lockTime - _lockSteps * (double)LockStep), 0f, LockStep) : 0f;
             for (int i = 0; i < Drivers.Length; i++)
             {
@@ -893,6 +934,16 @@ namespace TumbangPreso
             }
             UpdateSignals();
         }
+
+        /// <summary>This road's part of `CatchingUp`.</summary>
+        private void Count(bool catching)
+        {
+            if (catching == _counted) return;
+            _counted = catching;
+            _catchingUp += catching ? 1 : -1;
+        }
+
+        private void OnDisable() => Count(false);
 
         /// <summary>Every vehicle back at its authored start, speeds and the signal clock drawn from `seed`.</summary>
         private void Reseed(int seed)

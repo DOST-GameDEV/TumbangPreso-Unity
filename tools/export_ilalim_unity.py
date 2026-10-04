@@ -5,6 +5,7 @@
 Writes, and touches nothing else:
 
   Assets/TumbangPreso/Art/IlalimRebuild/Models/<model>.glb    one file per PROTOTYPE mesh
+  Assets/TumbangPreso/Art/IlalimRebuild/Models/<model>__lod1.glb, <model>__lod2.glb   its LODs, where it has any
   Assets/TumbangPreso/Art/IlalimRebuild/Textures/<name>.png   every image an exported material reads
   Assets/TumbangPreso/Art/IlalimRebuild/ilalim_layout.json    materials, placements, sun, haze, anchors
 
@@ -89,15 +90,31 @@ COLOURS IN THE JSON are sRGB-ENCODED, as Kanto's and the Lagoon's: `new Color(r,
 linear-space project lands on Blender's linear value. Values above 1 are encoded on the same
 curve. Overlay and normal images are marked "linear" when Blender reads them Non-Color.
 
-Nothing is decimated or simplified (WORKING_RULES: do not decimate as a speculative optimization):
-modifiers are applied, every used UV map is kept. Triangle counts per kit are logged and written
-into the layout ("budget") for the Unity builder's measures (LOD culling of small far things).
+THE LOD0 IS NEVER DECIMATED OR SIMPLIFIED (WORKING_RULES: do not decimate as a speculative
+optimization): modifiers are applied, every used UV map is kept. Triangle counts per kit are logged
+and written into the layout ("budget") for the Unity builder's measures (LOD culling of small far
+things).
+
+LODS (tools/ilalim_lods.py, which says how each kind is made). The owner, 2026-10-04: "its
+primarily not laggy for the server host but it is for players joining too", then "add these
+optimization fixes". A prototype worth it gets <model>__lod1.glb (the same object with its Bevel
+modifiers off, or a canopy with fewer, larger leaf cards) and, for the trees, <model>__lod2.glb.
+A LOD is exported exactly as its LOD0: one node named for the file, the same axes and origin, the
+same stub materials in the same slots, the same TEXCOORD sets. Each is read back and checked
+against its LOD0 (materials, UV sets, bounds within LOD_BOUNDS_TOL); one that fails is deleted and
+not listed. The layout lists them under "lods":
+  {"model", "lod1", "lod2" ("" when there is none), "tris0", "tris1", "tris2" (0 when there is
+   none), "size"}, size being the LOD0's bounding-sphere diameter in metres in the prototype's own
+  space (a scaled placement scales it), for the Unity side's switch distances.
+A prototype without an entry keeps the cull-only behaviour. "lodBudget" is the placed triangles
+per group if every placement drew its LOD0, its LOD1, its LOD2.
 """
 import json
 import math
 import shutil
 import struct
 import sys
+import time
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -158,6 +175,8 @@ GAME_ORIGIN = (-23.0, 14.2, 0.24)
 # Where a body can reach, in the Blender frame (x0, x1, y0, y1): the lot inside its fences, across
 # Taft, to the shop fronts. Footprint colliders are made only for what stands in here.
 REACH = (-36.0, 11.0, 2.4, 41.0)
+# A LOD's bounds may differ from its LOD0's by this much (metres) on any side.
+LOD_BOUNDS_TOL = 0.05
 PROOF_MESHES = ("lrt_pier", "lrt_span_25_parapet", "tree_mango_0_leaves", "tree_lily_0", "train_body")
 
 
@@ -746,10 +765,12 @@ def bake_pier(me, mats, tex_dir):
 # ====================================================================== main
 
 def main():
+    started = time.time()
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     survey = "--survey" in argv
     sys.path.insert(0, str(TOOLS))
     import author_ilalim_city as CITY
+    import ilalim_lods as LODS
     dg = bpy.context.evaluated_depsgraph_get()
     root = bpy.data.collections["ilalim_city"]
     top_of = {}
@@ -824,10 +845,12 @@ def main():
             protos[key] = {"mesh": me, "mats": [(lib_of(s.material), s.material.name) if s.material else None
                                                  for s in orig.material_slots],
                            "users": 0, "tris": sum(len(p.vertices) - 2 for p in me.polygons), "group": group,
-                           "object": orig.name}
+                           "object": orig.name, "orig": orig, "inPlay": False, "groups": set()}
         p = protos[key]
         p["users"] += 1
+        p["groups"].add(group)
         mw = inst.matrix_world.copy()
+        p["inPlay"] = p["inPlay"] or LODS.in_play(np.array([mw @ Vector(c) for c in ob.bound_box]))
         rec = {"key": key, "group": group, "object": orig.name, "_m": mw}
         if group == "Train":
             train_parent = inst.parent.matrix_world.copy() if inst.parent is not None else Matrix.Identity(4)
@@ -860,6 +883,15 @@ def main():
                 anchors[orig.name.split(".")[0]] = entry
     log("instances:", len(placements), "prototypes:", len(protos), "skipped:", dict(skipped))
     log("footprint colliders:", dict(footprints))
+
+    # ------------------------------------------------------------ the LOD meshes
+    # Made here, from the LOD0 meshes as the kits left them and from the kit objects themselves;
+    # from here on a LOD mesh gets exactly the treatment its LOD0 gets (UV order, stub materials).
+    for p in protos.values():
+        p["cards"] = LODS.is_cards(p["mesh"]) and bool(p["mats"]) and all(
+            mk is not None and specs[mk]["shader"] == "foliage" for mk in p["mats"])
+        p["size"] = LODS.sphere_diameter(p["mesh"])
+    lod_skipped = LODS.build(protos, log)
 
     # ------------------------------------------------------------ prototype names
     taken = set()
@@ -894,6 +926,11 @@ def main():
             for ov in specs[mk]["overlays"]:
                 want = max(want, ov["uv"])
         sources = canonical_uvs(me, want)
+        for lod in p["lods"].values():
+            canonical_uvs(lod, want)
+            for i, mk in enumerate(p["mats"]):
+                if i < len(lod.materials):
+                    lod.materials[i] = stub[mk] if mk is not None else None
         for i, src in enumerate(sources):
             if i > 0 and src is None:
                 uv_report[f"TEXCOORD_{i} zero-filled"] += 1
@@ -927,6 +964,7 @@ def main():
         baked.materials.append(nf)
         pier["mesh"] = baked
         pier["mats"] = ["NEARFADE"]
+        pier["lods"] = {}
         pier["tangents"] = True
         pier_spec = {"name": nf.name, "shader": "nearfade", "albedo": files["albedo"], "normal": files["normal"],
                      "normalStrength": 1.0, "tint": [1.0, 1.0, 1.0], "smoothness": 0.15,
@@ -946,8 +984,17 @@ def main():
         export_glb(o, path, tangents=p.get("tangents", False))
         written[p["name"]] = path
         bpy.data.objects.remove(o)
+    lod_written = {}
+    for key, p in sorted(protos.items(), key=lambda kv: kv[1]["name"]):
+        for level, me in sorted(p["lods"].items()):
+            name = f"{p['name']}__lod{level}"
+            o = bpy.data.objects.new(name, me)
+            scene_col.objects.link(o)
+            lod_written[name] = MODELS / f"{name}.glb"
+            export_glb(o, lod_written[name])
+            bpy.data.objects.remove(o)
     for f in MODELS.glob("*.glb"):
-        if f.stem not in written:
+        if f.stem not in written and f.stem not in lod_written:
             f.unlink()
             meta = f.with_suffix(".glb.meta")
             if meta.exists():
@@ -982,6 +1029,51 @@ def main():
     for pr in problems[:30]:
         log("ERROR:", pr)
     log("read-back problems:", len(problems))
+
+    # Every LOD against its LOD0: the same materials in the same order, the same TEXCOORD sets,
+    # the same bounds. One that fails is deleted and not listed (a failed LOD1 takes its LOD2 along).
+    def glb_shape(gltf):
+        prims = [pr for m in gltf.get("meshes", []) for pr in m["primitives"]]
+        mats = [gltf["materials"][pr["material"]]["name"] if "material" in pr else None for pr in prims]
+        uvs = sorted({sum(1 for k in pr["attributes"] if k.startswith("TEXCOORD_")) for pr in prims})
+        acc = [gltf["accessors"][pr["attributes"]["POSITION"]] for pr in prims]
+        lo = np.min([a["min"] for a in acc], axis=0)
+        hi = np.max([a["max"] for a in acc], axis=0)
+        return mats, uvs, lo, hi, len(gltf.get("nodes", []))
+
+    lod_problems, lod_worst = [], 0.0
+    lod_tris = {}
+    for key, p in protos.items():
+        if not p["lods"]:
+            continue
+        mats0, uvs0, lo0, hi0, nodes0 = glb_shape(stats[p["name"]][1])
+        for level in sorted(p["lods"]):
+            name = f"{p['name']}__lod{level}"
+            tris, _tc, gltf, _blob = glb_summary(lod_written[name])
+            mats, uvs, lo, hi, nodes = glb_shape(gltf)
+            off = float(max(np.abs(lo - lo0).max(), np.abs(hi - hi0).max()))
+            why = []
+            if mats != mats0:
+                why.append(f"materials {mats} against {mats0}")
+            if uvs != uvs0:
+                why.append(f"TEXCOORD sets {uvs} against {uvs0}")
+            if nodes != nodes0:
+                why.append(f"{nodes} nodes against {nodes0}")
+            if off > LOD_BOUNDS_TOL:
+                why.append(f"bounds off by {off:.3f} m")
+            if level == 2 and 1 not in p["lods"]:
+                why.append("its LOD1 failed")
+            if why:
+                lod_problems.append(f"{name}: " + "; ".join(why))
+                del p["lods"][level]
+                lod_written.pop(name).unlink()
+                continue
+            lod_worst = max(lod_worst, off)
+            lod_tris[name] = tris
+    for pr in lod_problems:
+        log("LOD DROPPED:", pr)
+    log(f"LOD read-back: {len(lod_tris)} files kept, {len(lod_problems)} dropped, worst bounds difference "
+        f"{lod_worst * 100:.2f} cm")
 
     def prove(mesh_name):
         key, index, B_ = proof_objs[mesh_name]
@@ -1055,6 +1147,26 @@ def main():
         k["placedTris"] += protos[r["key"]]["tris"]
     budget_json = [{"group": g, "placements": v["placements"], "prototypes": len(v["prototypes"]),
                     "placedTris": v["placedTris"]} for g, v in sorted(kits.items())]
+    # LODs: what the Unity side reads, and the placed triangles per group at each level (a
+    # prototype without a level draws the one above it).
+    lods_json = []
+    for key, p in sorted(protos.items(), key=lambda kv: kv[1]["name"]):
+        if 1 not in p["lods"]:
+            continue
+        n1 = f"{p['name']}__lod1"
+        n2 = f"{p['name']}__lod2" if 2 in p["lods"] else ""
+        p["tris1"], p["tris2"] = lod_tris[n1], lod_tris.get(n2, 0)
+        lods_json.append({"model": p["name"], "lod1": n1, "lod2": n2, "tris0": p["tris"], "tris1": p["tris1"],
+                          "tris2": p["tris2"], "size": round(p["size"], 3)})
+    lod_kits = defaultdict(lambda: [0, 0, 0])
+    for r in placements:
+        p = protos[r["key"]]
+        t1 = p.get("tris1", p["tris"])
+        k = lod_kits[r["group"]]
+        k[0] += p["tris"]
+        k[1] += t1
+        k[2] += p.get("tris2") or t1
+    lod_budget_json = [{"group": g, "tris0": v[0], "tris1": v[1], "tris2": v[2]} for g, v in sorted(lod_kits.items())]
     train_json = None
     if train_parent is not None:
         train_json = {"root": unity_matrix(train_parent), "halfLength": 7.8,
@@ -1086,6 +1198,8 @@ def main():
         "anchors": [dict(name=k, **v) for k, v in sorted(anchors.items()) if k != "piers"],
         "piers": anchors.get("piers", []),
         "budget": budget_json,
+        "lodBudget": lod_budget_json,
+        "lods": lods_json,
         "materials": spec_list,
         "placements": out_placements,
     }
@@ -1102,12 +1216,22 @@ def main():
     for b in budget_json:
         log(f"  {b['group']:16s} placements {b['placements']:5d} prototypes {b['prototypes']:4d} placed tris {b['placedTris']:9d}")
     log("  placed triangles total", sum(b["placedTris"] for b in budget_json))
+    log(f"LODs: {len(lods_json)} prototypes with a LOD1, {sum(1 for e in lods_json if e['lod2'])} with a LOD2, "
+        f"{len(lod_written)} files, {sum(f.stat().st_size for f in lod_written.values()) / 1e6:.1f} MB")
+    log(f"  {'group':16s} {'LOD0':>9s} {'LOD1':>9s} {'LOD2':>9s}   (placed triangles if every placement drew that level)")
+    for b in lod_budget_json:
+        log(f"  {b['group']:16s} {b['tris0']:9d} {b['tris1']:9d} {b['tris2']:9d}")
+    log(f"  {'total':16s} " + " ".join(f"{sum(b[k] for b in lod_budget_json):9d}" for k in ("tris0", "tris1", "tris2")))
+    for why, names in sorted(lod_skipped.items()):
+        log(f"  no LOD, {why}: {len(names)}: {', '.join(sorted(names)[:12])}{' ...' if len(names) > 12 else ''}")
     log("materials per shader:", dict(kinds))
     log("fallbacks:", fallbacks if fallbacks else "none")
     for n, notes in others:
         log("note:", n, notes)
     log("anchors:", [a["name"] for a in data["anchors"]], "piers", len(data["piers"]))
     log("layout ->", LAYOUT)
+    log(f"export took {time.time() - started:.0f} s")
+    return lod_budget_json
 
 
 if __name__ == "__main__":

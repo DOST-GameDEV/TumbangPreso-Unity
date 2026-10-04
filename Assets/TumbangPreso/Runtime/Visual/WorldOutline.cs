@@ -292,6 +292,27 @@ namespace TumbangPreso.Visual
         /// `Hud`): negative means "use the look's own" (`WorldLookProfile.CharacterAmbientOcclusion`).</summary>
         public static float CharacterAoTest = -1f;
         private const int AmbientOcclusionBlurPass = 3;
+        /// <summary>
+        /// ⚠️⚠️ THE OCCLUSION'S COST FOLLOWS THE GRAPHICS TIER (owner, 2026-10-04: the game is
+        /// "primarily not laggy for the server host but it is for players joining too", then "add
+        /// these optimization fixes"). Pass 2 is the dearest thing this component draws: sixteen
+        /// dependent depth-normal reads for every pixel of the frame, on every tier but Low.
+        /// On the top tier (High) it is unchanged. On the tiers between (Balanced, the DEFAULT)
+        /// the shader's `WORLD_AO_LITE` variant takes EIGHT probes: the same four rings, two
+        /// probes a ring, the same radius, bias and falloff, the same 4x4 tile of rotations, so
+        /// pass 3's blur still cancels the pattern (it now averages 128 probes, not 256).
+        /// ⚠️ STILL FULL RESOLUTION. Half resolution is the cheaper cut and it is the one the
+        /// owner turned down (see the note in `OnRenderImage`: the rotation tile reads as a grid).
+        /// Tests/PlayMode/IlalimPerfProbe.cs renders the same frame both ways and reports how
+        /// far the picture moves.
+        /// </summary>
+        private const string AmbientOcclusionLiteKeyword = "WORLD_AO_LITE";
+        /// <summary>REVIEW ONLY: 16 or 8 forces that many probes whatever the tier; 0 (the game)
+        /// lets the tier decide. Like `CharacterAoTest`, never set by the game itself.</summary>
+        public static int AmbientOcclusionSamplesTest;
+        private static bool AmbientOcclusionLite => AmbientOcclusionSamplesTest != 0
+            ? AmbientOcclusionSamplesTest <= 8
+            : Settings.SettingsStore.Current.GraphicsQuality < Settings.GraphicsProfiles.All.Length - 1;
         private static readonly int WorldAOId = Shader.PropertyToID("_WorldAO");
         private static readonly int WorldAOParamsId = Shader.PropertyToID("_WorldAOParams");
 
@@ -959,6 +980,8 @@ namespace TumbangPreso.Visual
                 occlusion=RenderTexture.GetTemporary(w,h,0,format,RenderTextureReadWrite.Linear);
                 occlusionBlur=RenderTexture.GetTemporary(w,h,0,format,RenderTextureReadWrite.Linear);
                 _material.SetVector(WorldAOParamsId,new Vector4(aoStrength,WorldLookProfile.Current.AmbientOcclusionRadius,.03f,NearGuard()));
+                // Eight probes below the top tier, sixteen on it (see `AmbientOcclusionLiteKeyword`).
+                if(AmbientOcclusionLite)_material.EnableKeyword(AmbientOcclusionLiteKeyword);else _material.DisableKeyword(AmbientOcclusionLiteKeyword);
                 Graphics.Blit(source,occlusion,_material,AmbientOcclusionPass);
                 Graphics.Blit(occlusion,occlusionBlur,_material,AmbientOcclusionBlurPass);
                 _material.SetTexture(WorldAOId,occlusionBlur);

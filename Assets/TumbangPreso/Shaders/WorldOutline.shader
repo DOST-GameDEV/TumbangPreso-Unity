@@ -747,7 +747,18 @@ Shader "TumbangPreso/WorldOutline"
             #pragma vertex vert_img
             #pragma fragment frag
             #pragma target 3.0
+            // ⚠️ multi_compile, not shader_feature: the keyword is switched from code by the
+            // graphics tier (`WorldOutline.AmbientOcclusionLiteKeyword`), so a build must carry
+            // both variants whatever the materials on disk say.
+            #pragma multi_compile_local __ WORLD_AO_LITE
             #include "UnityCG.cginc"
+            // The probes a pixel takes: sixteen on the top tier, eight on the tiers below it
+            // (owner, 2026-10-04: the joining players' frame rate). Two a ring instead of four.
+            #ifdef WORLD_AO_LITE
+            #define WORLD_AO_PROBES 8
+            #else
+            #define WORLD_AO_PROBES 16
+            #endif
             sampler2D _CameraDepthNormalsTexture;
             float4 _ViewRay,_WorldContactProjection,_WorldAOParams;
             float3 ViewPoint(float2 uv,out float3 normal)
@@ -812,7 +823,7 @@ Shader "TumbangPreso/WorldOutline"
                 // inside corner blocks about half the directions, and that half is mapped to full
                 // occlusion, ramping to clean by about one radius from the edge.
                 float occluded=0,total=0;
-                [unroll] for(int k=0;k<16;k++)
+                [unroll] for(int k=0;k<WORLD_AO_PROBES;k++)
                 {
                     float phi=k*2.3999632+angle;
                     float elevation=lerp(.30,.7,frac(k*.618034+noise));

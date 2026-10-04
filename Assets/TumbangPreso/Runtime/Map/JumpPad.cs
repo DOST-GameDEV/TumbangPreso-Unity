@@ -101,6 +101,8 @@ namespace TumbangPreso
         private readonly Transform[] _chevron = new Transform[2];
         private readonly Material[] _chevronMaterial = new Material[2];
         private Mesh _plateMesh, _frameMesh, _chevronMesh;
+        /// <summary>Every renderer of the look, for `Seen`.</summary>
+        private Renderer[] _drawn = System.Array.Empty<Renderer>();
 
         private void Start()
         {
@@ -114,6 +116,21 @@ namespace TumbangPreso
             _modelled = BuildModel();
             if (!_modelled) BuildFlat();
             BuildGlow();
+            _drawn = _look.GetComponentsInChildren<Renderer>(true);
+        }
+
+        /// <summary>
+        /// True when a camera drew any part of the pad last frame. ⚠️ A PAD NOBODY IS LOOKING AT
+        /// IS NOT ANIMATED (owner, 2026-10-04: the joining players' frame rate, "add these
+        /// optimization fixes"): the loop writes a dozen transforms, seven materials and a light
+        /// every frame on each of the map's four pads. The launch, the loop's clock and the kick
+        /// run on regardless, so a pad that comes into view is mid-beat, not restarting.
+        /// </summary>
+        private bool Seen()
+        {
+            foreach (var r in _drawn)
+                if (r != null && r.isVisible) return true;
+            return false;
         }
 
         // ------------------------------------------------------------------ the modelled prop
@@ -359,6 +376,7 @@ namespace TumbangPreso
             _kick = Mathf.MoveTowards(_kick, 0.0f, Time.deltaTime * 1.6f);
             _phase += Time.deltaTime * (0.55f + 2.6f * _kick);
             _sinceLaunch += Time.deltaTime;
+            if (!Seen()) return;
             if (_modelled) Animate(); else AnimateFlat();
             AnimateGlow();
         }

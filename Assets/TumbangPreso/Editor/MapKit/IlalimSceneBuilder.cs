@@ -61,8 +61,10 @@ namespace TumbangPreso.EditorTools.MapKit
     ///
     /// ⚠️ TRIANGLES: about 6.4 million placed, 2.8 million of them trees (see the layout's
     /// `budget`). Nothing is decimated. The honest measures are: small far things (trees, lilies,
-    /// rooftop items, street life, parked traffic) get a LODGroup that only CULLS them below a
-    /// share of the screen height (<see cref="CullShare"/>); trees and lilies stay out of static
+    /// rooftop items, street life, street furniture, parked traffic) stop drawing when they are a
+    /// few pixels tall (<see cref="CullGroups"/>); the prototypes the layout lists have real LODs
+    /// (<see cref="LodMetres"/>); the scene carries baked occlusion (<see cref="OccluderGroups"/>);
+    /// trees and lilies stay out of static
     /// batching so GPU instancing draws their 34 shared meshes; the game camera's 240 m far plane
     /// and the look's fog already hide what lies past them.
     ///
@@ -80,7 +82,7 @@ namespace TumbangPreso.EditorTools.MapKit
         /// would overwrite IlalimNgTulaySky.mat, which the vaulted first Ilalim still wears, and
         /// switch to the first Ilalim's hand-tuned clouds and sun.</summary>
         private const string SkyKey = "IlalimRebuild";
-        private const string Root = "Assets/TumbangPreso/Art/IlalimRebuild";
+        internal const string Root = "Assets/TumbangPreso/Art/IlalimRebuild";
         private const string LayoutPath = Root + "/ilalim_layout.json";
         private const string Tag = "[IlalimRebuild] ";
         private const string LogFolder = "Logs/ilalim-unity";
@@ -109,28 +111,147 @@ namespace TumbangPreso.EditorTools.MapKit
             public KeyValue[] linear;
         }
         [Serializable] private class Placement { public string model, group, @object; public float[] matrix, collider; public bool local; }
+        /// <summary>A prototype's lower levels of detail (tools/ilalim_lods.py): the model names of
+        /// its LOD1 and LOD2 (.glb beside the LOD0; `lod2` empty when there is none), the three
+        /// triangle counts, and the LOD0's bounding-sphere diameter in metres.</summary>
+        [Serializable] private class LodSpec { public string model, lod1, lod2; public int tris0, tris1, tris2; public float size; }
         [Serializable]
         private class Layout
         {
             public string note; public GameplaySpec gameplay; public SunSpec sun; public SkySpec sky; public HazeSpec haze;
             public TrainSpec train; public Anchor[] anchors, piers; public BudgetRow[] budget;
-            public MatSpec[] materials; public Placement[] placements;
+            public MatSpec[] materials; public Placement[] placements; public LodSpec[] lods;
         }
 
-        /// <summary>The screen-height share under which a small far thing stops drawing (a LODGroup
-        /// with one LOD and no fallback: culling only, the model is never swapped). Screen share of
-        /// an object of size s at distance d with the game's 95 degree VERTICAL field of view is
-        /// s / (2.18 d): a 12 m tree culls at 0.02 past 275 m (beyond the 240 m far plane anyway),
-        /// a 0.7 m lily at 0.012 past 27 m, a 3 m rooftop tank at 0.015 past 92 m.</summary>
-        private static readonly Dictionary<string, float> CullShare = new Dictionary<string, float>
+        /// <summary>
+        /// The groups whose things stop drawing when they are too small on the screen to be seen
+        /// (a LODGroup whose last level ends in nothing: the model is never swapped for it).
+        ///
+        /// ⚠️ PER OBJECT, BY ITS OWN SIZE, SINCE 2026-10-04 (owner: "add these optimization
+        /// fixes"). This was one screen share per group (0.01 to 0.02), written for a lens of
+        /// 2.18 d and forgetting QualitySettings.lodBias, which is 2: every distance in the old
+        /// note was really twice as far, so a lily bush drew to 145 m and a parked car to 367 m,
+        /// past the 240 m far plane, and nothing was ever culled. Now a thing `size` metres
+        /// across stops drawing when it would be under <see cref="CullPixels"/> pixels tall on a
+        /// 1080-line screen through the first-person lens, which is `size` x 38 m away: a 1.3 m
+        /// lily at 60 m (see below), a 3 m rooftop tank at 115 m, a 4 m parked car at 153 m, a
+        /// 12 m tree never (458 m). ⚠️ AND NEVER NEARER THAN <see cref="CullNearest"/>: the play
+        /// rectangle is 58 m corner to corner, so nothing a player can stand in the same
+        /// rectangle as ever disappears, however small.
+        /// </summary>
+        private static readonly HashSet<string> CullGroups = new HashSet<string>
+            { "Trees", "Lilies", "Rooftops", "StreetLife", "Traffic", "StreetFurniture" };
+        private const float CullPixels = 13f, CullNearest = 60f;
+
+        /// <summary>The LODGroup height under which an object `size` metres across is culled.</summary>
+        private static float CullHeight(float size)
         {
-            ["Trees"] = 0.02f, ["Lilies"] = 0.012f, ["Rooftops"] = 0.015f, ["StreetLife"] = 0.01f, ["Traffic"] = 0.01f,
+            float metres = Mathf.Max(CullNearest, size * 1080f / (LodLens * CullPixels));
+            return size * LodBias / (LodLens * metres);
+        }
+
+        /// <summary>
+        /// ⚠️ WHO CASTS NO SHADOW (owner, 2026-10-04: "add these optimization fixes"). Every
+        /// renderer of the map cast one. A caster inside the shadow distance is drawn again for
+        /// each cascade, so these are the ones whose shadow nobody can see:
+        ///   * the ground and the road markings: flat, they shade nothing but themselves. NOT
+        ///     the "Street" group: the median's planters are in it, and without their shadows the
+        ///     probe's view up Taft showed them floating;
+        ///   * the rooftop kit (tanks, sheds, aerials on the EAST row's roofs): the sun stands in
+        ///     the west-south-west, so their shadows fall further east, on roofs and behind the
+        ///     row, never on the street;
+        ///   * anything under <see cref="ShadowSmallest"/> across (a pot, a crate, a small
+        ///     sign): at the Balanced tier's shadow resolution it is a few texels of blur.
+        /// ⚠️ NOT the cables: thin, but their stripes on the court are an OPEN OWNER DECISION
+        /// (docs/ILALIM_REWORK_GUIDE.md, "cable shadows on the court"), not this pass's to make.
+        /// </summary>
+        private static readonly HashSet<string> NoShadowGroups = new HashSet<string> { "StreetGround", "StreetMarkings", "Rooftops" };
+        private const float ShadowSmallest = 0.6f;
+
+        /// <summary>
+        /// ⚠️⚠️ REAL LODS (owner, 2026-10-04: "add these optimization fixes"). Where the layout's
+        /// `lods` list names a prototype and its files exist, the placement gets a real LODGroup:
+        /// the Blender model, then its LOD1 (the same object with its bevels off, or a canopy of
+        /// fewer, larger leaf cards), then its LOD2 where it has one, then nothing where the group
+        /// culls (<see cref="CullGroups"/>). A prototype with no entry, or a layout with no list,
+        /// builds exactly as it did (<see cref="CullOnly"/> or nothing).
+        ///
+        /// THE SWAPS ARE SET BY DISTANCE, NOT BY A SHARE OF THE SCREEN. What a bevel-free LOD1
+        /// drops is a bevel a few centimetres wide, and whether that shows depends on how far the
+        /// wall is, not on how big the building is: a 140 m hospital block fills the screen from
+        /// 60 m and its bevels are still under a pixel. So each group names the metres past the
+        /// object's NEAR side (x for the LOD1, y for the LOD2) at which the swap cannot be seen,
+        /// and <see cref="LodHeight"/> turns that into the LODGroup's screen height for that
+        /// object's own size. Unity measures to the object's centre, hence the half size added.
+        /// ⚠️ `LodBias` is the project's QualitySettings.lodBias (2 on every tier: nothing in
+        /// `GraphicsProfiles` changes it) and `LodLens` the first-person lens (95 degrees
+        /// vertical); the third-person and cutscene lenses are narrower, so they swap later.
+        /// ⚠️ THE GUIDEWAY STANDS OVER THE PLAY AREA, so its LOD1 waits for 60 m, the play
+        /// rectangle's own diagonal: from anywhere a player can stand, every span he can stand
+        /// under or beside is the Blender model.
+        /// ⚠️ A HARD-SURFACE LOD2 IS A DECIMATED MESH whose UVs smear a little, so besides its
+        /// metres it never comes in above <see cref="Lod2Share"/> of the screen's height (5 per
+        /// cent): a building big enough to fill more than that at 80 m keeps its LOD1. The trees'
+        /// LOD2 (12 per cent of the leaf cards, each larger) has no such limit.
+        /// ⚠️ A TREE'S TRUNK AND ITS CANOPY ARE TWO PLACEMENTS of different sizes. Left to
+        /// themselves they would swap at different distances, a thinned canopy on a full trunk.
+        /// Placements of the Trees group that stand on the same spot are sized and centred as ONE
+        /// object (<see cref="PairTrees"/>), so they swap, and cull, together.
+        /// </summary>
+        private static readonly Dictionary<string, Vector2> LodMetres = new Dictionary<string, Vector2>
+        {
+            ["Trees"] = new Vector2(30f, 75f), ["Traffic"] = new Vector2(30f, 80f), ["Guideway"] = new Vector2(60f, 120f),
         };
+        private static readonly Vector2 LodMetresDefault = new Vector2(28f, 80f);
+        private const float LodBias = 2f, LodLens = 2.1826f;       // 2 tan(95 / 2 degrees)
+        private const float Lod2Share = 0.05f;
+        private const string TreeGroup = "Trees";
+        /// <summary>A Trees placement waiting for <see cref="PairTrees"/>.</summary>
+        private struct TreePart { public GameObject Go; public List<GameObject> Lower; }
+        /// <summary>The child a placement's lower LOD is instantiated under. Its colliders, its
+        /// triangle count, its occluder flag and the life's measurements are the LOD0's alone.</summary>
+        private static readonly string[] LowerLodNames = { "LOD1", "LOD2" };
+
+        /// <summary>True for anything inside a placement's LOD1 or LOD2 child.</summary>
+        internal static bool IsLowerLod(Transform t)
+        {
+            for (; t != null; t = t.parent)
+                if (Array.IndexOf(LowerLodNames, t.name) >= 0 && t.parent != null) return true;
+            return false;
+        }
 
         /// <summary>Groups whose renderers stay out of static batching: GPU instancing draws their
         /// shared meshes, the foliage shader hashes its object origin (static batching would hand it
         /// an identity matrix), and the train moves.</summary>
         private static readonly HashSet<string> NotBatched = new HashSet<string> { "Trees", "Lilies", "Train" };
+
+        /// <summary>
+        /// ⚠️⚠️ OCCLUSION CULLING (owner, 2026-10-04: the game is "primarily not laggy for the server
+        /// host but it is for players joining too", then "add these optimization fixes"). Until
+        /// now a camera in the lot drew every tree and building in its frustum out to the far
+        /// plane, the ones behind Rizal Hall and behind the shop row included: 9 to 13 million
+        /// triangles a frame, 11.2 on average over the probe's eight views, and 8.6 with this
+        /// (Tests/PlayMode/IlalimPerfProbe.cs). <see cref="BakeOcclusion"/>
+        /// bakes Unity's occlusion data for the generated scene on every build, so a rebuild can
+        /// never ship a scene without it or with a stale one.
+        ///
+        /// WHO HIDES THINGS (an occluder): only a renderer of one of these groups, at least
+        /// <see cref="OccluderMinSize"/> across in two directions, whose every material is a
+        /// solid painted one (<see cref="SolidMaterials"/>). So never a tree, a fence of bars, a
+        /// cut-out sign, glass, or an LRT pier: the pier is NearFade and dissolves at the lens so
+        /// the player sees past it, and an occluder there would cull what he is looking at.
+        /// ⚠️ NOT THE GUIDEWAY'S DECK EITHER, though it is solid and 10 m wide. With it the probe's
+        /// truth test (the same frame with culling on and off, 308 views) found a sliver of what
+        /// is above the deck missing through the gap between its girders, from a shop awning;
+        /// without it no pixel of any view differs, and the deck was worth 1 per cent of the
+        /// triangles. The numbers do not justify a hole in the picture.
+        /// WHO CAN BE HIDDEN (an occludee): every static renderer. The train, the live traffic
+        /// and the people are not static; Unity culls a moving renderer behind the baked
+        /// occluders on its own (`Renderer.allowOcclusionWhenDynamic`).
+        /// </summary>
+        private static readonly HashSet<string> OccluderGroups = new HashSet<string>
+            { "Eastside", "Heritage", "RizalHall", "Landmarks", "SariSari", "Stations" };
+        private const float OccluderMinSize = 3f;
 
         [MenuItem("Tumbang Preso/Sample Map/Build Ilalim Rebuild")]
         public static void BuildFromMenu() { Build(); EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single); }
@@ -176,6 +297,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var clock = System.Diagnostics.Stopwatch.StartNew();
             var layout = JsonUtility.FromJson<Layout>(File.ReadAllText(LayoutPath));
             var materials = BuildMaterials(layout.materials);
+            var solid = SolidMaterials(layout.materials, materials);
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             var root = new GameObject(SceneName).transform;
             // The map grade. ⚠️ Saturation 1.06, NOT the first Ilalim's 1.045: Lighting() calls
@@ -191,7 +313,13 @@ namespace TumbangPreso.EditorTools.MapKit
             var unmatched = new HashSet<string>();
             var g = layout.gameplay;
             var train = TrainSystem(dressing, g);
-            int placed = 0, missing = 0, boxes = 0, culled = 0;
+            int placed = 0, missing = 0, boxes = 0, exported = 0, culled = 0, occluders = 0, realLods = 0, withLod2 = 0, noShadow = 0;
+            var trees = new List<TreePart>();
+            var lods = new Dictionary<string, LodSpec>();
+            foreach (var l in layout.lods ?? Array.Empty<LodSpec>())
+                if (l != null && !string.IsNullOrEmpty(l.model) && !string.IsNullOrEmpty(l.lod1)) lods[l.model] = l;
+            if (!Mathf.Approximately(QualitySettings.lodBias, LodBias))
+                Debug.LogWarning($"{Tag}QualitySettings.lodBias is {QualitySettings.lodBias}, the LOD distances assume {LodBias}");
             var tris = new Dictionary<string, long>();
             foreach (var p in layout.placements)
             {
@@ -202,10 +330,19 @@ namespace TumbangPreso.EditorTools.MapKit
                 var go = (GameObject)PrefabUtility.InstantiatePrefab(prefab, p.local ? train : group);
                 go.name = string.IsNullOrEmpty(p.@object) ? p.model : p.@object;
                 ApplyMatrix(go.transform, p.matrix, p.local);
+                // The lower LODs join before the materials and the static flags, so they get both.
+                var lower = lods.TryGetValue(p.model, out var lod) ? AddLowerLods(go, lod) : null;
                 Rematerial(go, materials, unmatched);
-                boxes += AddFootprintColliders(go, p.collider);
+                noShadow += QuietShadows(go, groupName);
+                boxes += AddFootprintColliders(go, p.collider, ref exported);
                 MarkStatic(go, !NotBatched.Contains(groupName));
-                if (CullShare.TryGetValue(groupName, out float share)) { CullOnly(go, share); culled++; }
+                occluders += MarkOcclusion(go, groupName, p.local, solid);
+                bool culls = CullGroups.Contains(groupName);
+                if (lower != null) { realLods++; if (lower.Count > 1) withLod2++; } else if (culls) culled++;
+                // A tree's trunk and canopy wait to be sized together (PairTrees).
+                if (groupName == TreeGroup) trees.Add(new TreePart { Go = go, Lower = lower });
+                else if (lower != null) RealLods(go, lower, groupName, culls, null);
+                else if (culls) CullOnly(go, null);
                 // ⚠️ THE GROUND IS ITS OWN COLLIDER (2026-10-04). The floors were boxes: a plate, two
                 // pavements, two kerbs, right for a straight street under the bridge. The play area
                 // now takes in the lot, Taft and the Padre Faura junction (owner: "open up more of
@@ -215,7 +352,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 // gutters, kerbs, pavements and lot are what a body stands on, exactly.
                 if (groupName == "StreetGround")
                     foreach (var mf in go.GetComponentsInChildren<MeshFilter>())
-                        if (mf.sharedMesh != null && mf.GetComponent<MeshCollider>() == null)
+                        if (mf.sharedMesh != null && mf.GetComponent<MeshCollider>() == null && !IsLowerLod(mf.transform))
                             mf.gameObject.AddComponent<MeshCollider>().sharedMesh = mf.sharedMesh;
                 // The elevated guideway (everything but the piers and their fittings) and the
                 // overhead wires are meant to be in the air; MapGeometryCheck's resting and can
@@ -227,7 +364,7 @@ namespace TumbangPreso.EditorTools.MapKit
                     AirborneByDesign.Attach(go, "Overhead cables strung between the street kit's power poles.");
                 if (!byObject.ContainsKey(go.name)) byObject[go.name] = go;
                 foreach (var mf in go.GetComponentsInChildren<MeshFilter>())
-                    if (mf.sharedMesh != null)
+                    if (mf.sharedMesh != null && !IsLowerLod(mf.transform))
                     {
                         tris.TryGetValue(groupName, out long t);
                         // Index counts, not `triangles`: they need no CPU-readable mesh.
@@ -236,6 +373,7 @@ namespace TumbangPreso.EditorTools.MapKit
                     }
                 placed++;
             }
+            int paired = PairTrees(trees);
             Gameplay(root, g);
             Tulay(root, g, layout.piers);
             GameplayProps(dressing, g, layout.anchors, byObject);
@@ -259,11 +397,14 @@ namespace TumbangPreso.EditorTools.MapKit
             Directory.CreateDirectory(Path.GetDirectoryName(ScenePath));
             if (!EditorSceneManager.SaveScene(scene, ScenePath)) throw new InvalidOperationException("Could not save " + ScenePath);
             AssetDatabase.SaveAssets();
+            BakeOcclusion(root, g, occluders);
+            if (!EditorSceneManager.SaveScene(scene, ScenePath)) throw new InvalidOperationException("Could not save " + ScenePath + " with its occlusion data");
             if (unmatched.Count > 0) Debug.LogWarning(Tag + "Material names with no spec: " + string.Join(", ", unmatched.OrderBy(s => s)));
             long total = tris.Values.Sum();
             Debug.Log($"{Tag}Scene built in {clock.Elapsed.TotalSeconds:F1} s: {placed} placed, {missing} missing, " +
-                      $"{materials.Count} materials, {unmatched.Count} unmatched names, {boxes} footprint colliders, " +
-                      $"{culled} cull-only LODGroups, {total} triangles in the scene.");
+                      $"{materials.Count} materials, {unmatched.Count} unmatched names, {boxes} footprint colliders (from {exported} exported boxes), " +
+                      $"{culled} cull-only LODGroups, {realLods} real LODGroups ({withLod2} with a LOD2, of {lods.Count} prototypes listed; {paired} trees of two or more parts swap as one), " +
+                      $"{noShadow} renderers casting no shadow, {total} LOD0 triangles in the scene.");
             foreach (var kv in tris.OrderByDescending(k => k.Value)) Debug.Log($"{Tag}  triangles {kv.Key,-16} {kv.Value,9}");
         }
 
@@ -493,34 +634,283 @@ namespace TumbangPreso.EditorTools.MapKit
                 GameObjectUtility.SetStaticEditorFlags(t.gameObject, batch ? all : all & ~StaticEditorFlags.BatchingStatic);
         }
 
-        /// <summary>One LOD holding every renderer, no fallback: the object stops drawing below
-        /// `share` of the screen height and is otherwise exactly the Blender model.</summary>
-        private static void CullOnly(GameObject go, float share)
+        /// <summary>The materials a wall is made of: painted, with no cut-out. A renderer made only
+        /// of these cannot be seen through, so it may hide what stands behind it.</summary>
+        private static HashSet<Material> SolidMaterials(MatSpec[] specs, Dictionary<string, Material> materials)
+        {
+            var solid = new HashSet<Material>();
+            foreach (var s in specs)
+            {
+                string kind = string.IsNullOrEmpty(s.shader) ? "painted" : s.shader;
+                if (kind == "painted" && s.cutoff <= 0f && materials.TryGetValue(s.name, out var m)) solid.Add(m);
+            }
+            return solid;
+        }
+
+        /// <summary>Leaves the occluder flag only on what may hide things (see
+        /// <see cref="OccluderGroups"/>), and takes both occlusion flags off the train's pieces,
+        /// which move: a static occludee is culled where it was BAKED, so a consist flagged
+        /// static would vanish by its parked place and not by where it is. Returns the occluders.</summary>
+        private static int MarkOcclusion(GameObject go, string group, bool moves, HashSet<Material> solid)
+        {
+            int occluders = 0;
+            bool mayOcclude = !moves && OccluderGroups.Contains(group);
+            foreach (var t in go.GetComponentsInChildren<Transform>())
+            {
+                var flags = GameObjectUtility.GetStaticEditorFlags(t.gameObject);
+                bool occluder = false;
+                // The LOD0 is the occluder: a bevel-free LOD1 is the same wall a bevel's width larger.
+                var r = mayOcclude && !IsLowerLod(t) ? t.GetComponent<MeshRenderer>() : null;
+                if (r != null)
+                {
+                    var size = r.bounds.size;
+                    float smallest = Mathf.Min(size.x, Mathf.Min(size.y, size.z)), largest = Mathf.Max(size.x, Mathf.Max(size.y, size.z));
+                    float middle = size.x + size.y + size.z - smallest - largest;
+                    var mats = r.sharedMaterials;
+                    occluder = middle >= OccluderMinSize && mats.Length > 0 && mats.All(m => m != null && solid.Contains(m));
+                }
+                if (!occluder) flags &= ~StaticEditorFlags.OccluderStatic; else occluders++;
+                if (moves) flags &= ~StaticEditorFlags.OccludeeStatic;
+                GameObjectUtility.SetStaticEditorFlags(t.gameObject, flags);
+            }
+            return occluders;
+        }
+
+        /// <summary>
+        /// Bakes the occlusion data into the saved scene (Unity writes it beside the scene, in
+        /// Scenes/Maps/IlalimNgTulay/OcclusionCullingData.asset, and the scene's own settings name
+        /// it; the caller saves the scene again). The settings are a street's, not a room's:
+        ///   * smallest occluder 4 m: a storey of wall hides things, a parapet or a stall does not;
+        ///   * smallest hole 0.1 m (Unity's default is 0.25): the gap between two buildings stays
+        ///     a gap, and the finer cells culled 4 per cent more than the default did;
+        ///   * ONE VIEW VOLUME, the play rectangle and 6 m round it, from under the road to 40 m
+        ///     up (a jump pad's apex is 14 m). ⚠️ A camera OUTSIDE it (the review's aerials, a
+        ///     spectator flown off the map) is not occlusion culled at all: Unity only culls
+        ///     from inside a view volume, which is the safe answer for a place nobody baked.
+        /// </summary>
+        private static void BakeOcclusion(Transform root, GameplaySpec g, int occluders)
+        {
+            var clock = System.Diagnostics.Stopwatch.StartNew();
+            const float margin = 6f, top = 40f;
+            var area = Group(root, "OcclusionView").gameObject.AddComponent<OcclusionArea>();
+            float floor = g.roadTop - 1f;
+            area.center = new Vector3((g.playMinX + g.playMaxX) * 0.5f, (floor + top) * 0.5f, (g.playMinZ + g.playMaxZ) * 0.5f);
+            area.size = new Vector3(g.playMaxX - g.playMinX + margin * 2f, top - floor, g.playMaxZ - g.playMinZ + margin * 2f);
+            StaticOcclusionCulling.smallestOccluder = 4f;
+            StaticOcclusionCulling.smallestHole = 0.1f;
+            StaticOcclusionCulling.backfaceThreshold = 100f;
+            if (!StaticOcclusionCulling.Compute()) throw new InvalidOperationException("The occlusion bake failed");
+            Debug.Log($"{Tag}Occlusion: {occluders} occluders, view volume {area.size} at {area.center}, " +
+                      $"{StaticOcclusionCulling.umbraDataSize} bytes baked in {clock.Elapsed.TotalSeconds:F1} s.");
+        }
+
+        /// <summary>One LOD holding every renderer, no fallback: the object stops drawing where
+        /// <see cref="CullHeight"/> puts it for its size and is otherwise exactly the Blender model.</summary>
+        internal static void CullOnly(GameObject go, Bounds? shared)
         {
             var renderers = go.GetComponentsInChildren<Renderer>();
             if (renderers.Length == 0) return;
             var lod = go.AddComponent<LODGroup>();
-            lod.SetLODs(new[] { new LOD(share, renderers) });
+            lod.SetLODs(new[] { new LOD(0.01f, renderers) });
             lod.RecalculateBounds();
+            Share(lod, shared);
+            lod.SetLODs(new[] { new LOD(CullHeight(WorldSize(lod)), renderers) });
+        }
+
+        /// <summary>Gives a LODGroup another object's centre and size (world bounds), so the two
+        /// measure the same distance and the same screen height and change level together.</summary>
+        private static void Share(LODGroup group, Bounds? shared)
+        {
+            if (shared == null) return;
+            var b = shared.Value; var scale = group.transform.lossyScale;
+            float largest = Mathf.Max(Mathf.Abs(scale.x), Mathf.Max(Mathf.Abs(scale.y), Mathf.Abs(scale.z)));
+            group.localReferencePoint = group.transform.InverseTransformPoint(b.center);
+            group.size = Mathf.Max(b.size.x, Mathf.Max(b.size.y, b.size.z)) / Mathf.Max(largest, 1e-4f);
+        }
+
+        /// <summary>The Trees placements, grouped by the spot they stand on (a trunk and its
+        /// canopy share an origin), each group's LODGroups built on the group's whole bounds.
+        /// Returns the trees made of two or more parts.</summary>
+        private static int PairTrees(List<TreePart> parts)
+        {
+            int paired = 0;
+            bool culls = CullGroups.Contains(TreeGroup);
+            foreach (var tree in parts.GroupBy(p => { var at = p.Go.transform.position; return (Mathf.RoundToInt(at.x * 100f), Mathf.RoundToInt(at.y * 100f), Mathf.RoundToInt(at.z * 100f)); }))
+            {
+                Bounds? whole = null;
+                foreach (var part in tree)
+                    foreach (var r in part.Go.GetComponentsInChildren<Renderer>())
+                    {
+                        if (IsLowerLod(r.transform)) continue;
+                        if (whole == null) whole = r.bounds; else { var b = whole.Value; b.Encapsulate(r.bounds); whole = b; }
+                    }
+                Bounds? shared = tree.Count() > 1 ? whole : null;
+                if (shared != null) paired++;
+                foreach (var part in tree)
+                    if (part.Lower != null) RealLods(part.Go, part.Lower, TreeGroup, culls, shared);
+                    else if (culls) CullOnly(part.Go, shared);
+            }
+            return paired;
+        }
+
+        /// <summary>A LODGroup's size in metres: its own (local) size by the placement's scale.</summary>
+        private static float WorldSize(LODGroup group)
+        {
+            var scale = group.transform.lossyScale;
+            return group.size * Mathf.Max(Mathf.Abs(scale.x), Mathf.Max(Mathf.Abs(scale.y), Mathf.Abs(scale.z)));
+        }
+
+        /// <summary>Shadow casting off where <see cref="NoShadowGroups"/> says nobody would see
+        /// the shadow; the renderer still receives. Returns how many were switched off.</summary>
+        private static int QuietShadows(GameObject go, string groupName)
+        {
+            int off = 0;
+            bool whole = NoShadowGroups.Contains(groupName);
+            foreach (var r in go.GetComponentsInChildren<Renderer>())
+            {
+                var size = r.bounds.size;
+                if (!whole && Mathf.Max(size.x, Mathf.Max(size.y, size.z)) >= ShadowSmallest) continue;
+                r.shadowCastingMode = ShadowCastingMode.Off;
+                off++;
+            }
+            return off;
+        }
+
+        /// <summary>Instantiates the prototype's LOD1 (and LOD2) models as children "LOD1" and
+        /// "LOD2" of the placement, at its own origin: the export writes a LOD exactly as its
+        /// LOD0 (one node, the same axes and origin). Null when the LOD1 file is not there.</summary>
+        private static List<GameObject> AddLowerLods(GameObject go, LodSpec lod)
+        {
+            var lower = new List<GameObject>();
+            var names = new[] { lod.lod1, lod.lod2 };
+            for (int level = 0; level < names.Length; level++)
+            {
+                if (string.IsNullOrEmpty(names[level])) break;
+                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{Root}/Models/{names[level]}.glb");
+                if (prefab == null) { Debug.LogWarning($"{Tag}LOD model {names[level]} is listed but missing; {lod.model} keeps what it has"); break; }
+                var child = (GameObject)PrefabUtility.InstantiatePrefab(prefab, go.transform);
+                child.name = LowerLodNames[level];
+                child.transform.localPosition = Vector3.zero; child.transform.localRotation = Quaternion.identity; child.transform.localScale = Vector3.one;
+                lower.Add(child);
+            }
+            return lower.Count > 0 ? lower : null;
+        }
+
+        /// <summary>The LODGroup screen height at which an object `size` metres across is
+        /// `metres` past its near side, through the first-person lens (see <see cref="LodMetres"/>).</summary>
+        private static float LodHeight(float size, float metres) => size * LodBias / (LodLens * (size * 0.5f + metres));
+
+        /// <summary>LOD0 (every renderer the placement had), LOD1, an optional LOD2, then nothing
+        /// below <see cref="CullHeight"/> where `culls` (a <see cref="CullGroups"/> group; the
+        /// others are never culled, as before).</summary>
+        private static void RealLods(GameObject go, List<GameObject> lower, string groupName, bool culls, Bounds? shared)
+        {
+            var sets = lower.Select(l => l.GetComponentsInChildren<Renderer>()).ToArray();
+            var lowerAll = new HashSet<Renderer>(sets.SelectMany(s => s));
+            var lod0 = go.GetComponentsInChildren<Renderer>().Where(r => !lowerAll.Contains(r)).ToArray();
+            if (lod0.Length == 0 || sets.Any(s => s.Length == 0)) { foreach (var l in lower) Object.DestroyImmediate(l); if (culls) CullOnly(go, shared); return; }
+            var group = go.AddComponent<LODGroup>();
+            // Sized on the LOD0 alone first: the swap distances are for the model the player knows.
+            group.SetLODs(new[] { new LOD(0.5f, lod0) });
+            group.RecalculateBounds();
+            Share(group, shared);
+            float size = WorldSize(group);
+            float cullShare = culls ? CullHeight(size) : 0f;
+            var metres = LodMetres.TryGetValue(groupName, out var m) ? m : LodMetresDefault;
+            // Unity wants each height under the one before it, and no height over 1: a building
+            // too big for its distance swaps at 1 (twice the screen's height), later than asked.
+            float h1 = Mathf.Min(LodHeight(size, metres.x), 0.99f);
+            float h2 = Mathf.Min(LodHeight(size, metres.y), h1 * 0.9f);
+            if (groupName != TreeGroup) h2 = Mathf.Min(h2, Lod2Share * LodBias);
+            var levels = new List<LOD> { new LOD(h1, lod0) };
+            if (sets.Length > 1) { levels.Add(new LOD(h2, sets[0])); levels.Add(new LOD(Mathf.Min(cullShare, h2 * 0.5f), sets[1])); }
+            else levels.Add(new LOD(Mathf.Min(cullShare, h1 * 0.5f), sets[0]));
+            group.fadeMode = LODFadeMode.None;
+            group.SetLODs(levels.ToArray());
         }
 
         /// <summary>The export's measured boxes (world, axis-aligned, six floats each) as child
-        /// colliders, so a rotated chair keeps a box in the frame the numbers were taken in.</summary>
-        private static int AddFootprintColliders(GameObject go, float[] boxes)
+        /// colliders, so a rotated chair keeps a box in the frame the numbers were taken in.
+        /// Boxes standing in a row are one box first (<see cref="MergeRuns"/>). `exported` counts
+        /// the boxes the layout gave; the return is the colliders made.</summary>
+        private static int AddFootprintColliders(GameObject go, float[] boxes, ref int exported)
         {
             if (boxes == null || boxes.Length < 6) return 0;
-            int n = 0;
+            var runs = new List<Bounds>();
             for (int i = 0; i + 5 < boxes.Length; i += 6)
+                runs.Add(new Bounds(new Vector3(boxes[i], boxes[i + 1], boxes[i + 2]), new Vector3(boxes[i + 3], boxes[i + 4], boxes[i + 5])));
+            exported += runs.Count;
+            runs = MergeRuns(runs);
+            foreach (var b in runs)
             {
                 var child = new GameObject("Collider");
                 child.transform.SetParent(go.transform, false);
-                child.transform.SetPositionAndRotation(new Vector3(boxes[i], boxes[i + 1], boxes[i + 2]), Quaternion.identity);
+                child.transform.SetPositionAndRotation(b.center, Quaternion.identity);
                 var lossy = go.transform.lossyScale;
                 child.transform.localScale = new Vector3(1f / Mathf.Max(Mathf.Abs(lossy.x), 1e-4f), 1f / Mathf.Max(Mathf.Abs(lossy.y), 1e-4f), 1f / Mathf.Max(Mathf.Abs(lossy.z), 1e-4f));
-                child.AddComponent<BoxCollider>().size = new Vector3(boxes[i + 3], boxes[i + 4], boxes[i + 5]);
-                n++;
+                child.AddComponent<BoxCollider>().size = b.size;
             }
-            return n;
+            return runs.Count;
+        }
+
+        /// <summary>
+        /// ⚠️ A FENCE IS ONE BOX A STRETCH, NOT ONE A PICKET (owner, 2026-10-04: "add these
+        /// optimization fixes"). The export measures a box for every loose part that stands on
+        /// the ground, so the PGH and Supreme Court fences arrived as 272 pickets, 5 cm square
+        /// and 21 cm apart: three quarters of the map's footprint colliders, each one a body the
+        /// physics broadphase carries and every sweep of a player or a slipper tests.
+        /// Two boxes of the same placement become their common box when, along X or along Z,
+        ///   * the gap between them is at most <see cref="RunGap"/> (20 cm: under a picket's
+        ///     spacing and far under anything thrown here, the slipper's 0.4 m and the can's
+        ///     0.3 m, so nothing that was stopped by the pickets passes the box, and nothing
+        ///     that passed between them existed);
+        ///   * across the run the common box is at most <see cref="RunSlack"/> (3 cm a side)
+        ///     thicker than the thinner of the two, so a run that slants (the Supreme Court
+        ///     fence does) breaks into short straight boxes instead of one fat one;
+        ///   * their tops and their bottoms are within <see cref="RunStep"/> (5 cm) of every
+        ///     other in the run, so a post, a plinth or a scalloped stretch stays its own box.
+        /// So a body or a slipper meets a face within 3 cm of where the picket's face was.
+        /// </summary>
+        private const float RunGap = 0.2f, RunSlack = 0.03f, RunStep = 0.05f;
+
+        private struct BoxRun { public Bounds Box; public float Thin, TopMin, TopMax, BottomMin, BottomMax; public int Axis; }
+
+        private static List<Bounds> MergeRuns(List<Bounds> boxes)
+        {
+            // Axis -1: not yet in a run, free to start one along either axis.
+            var runs = boxes.Select(b => new BoxRun { Box = b, Axis = -1, TopMin = b.max.y, TopMax = b.max.y, BottomMin = b.min.y, BottomMax = b.min.y }).ToList();
+            bool merged = true;
+            while (merged)
+            {
+                merged = false;
+                for (int i = 0; i < runs.Count && !merged; i++)
+                    for (int j = i + 1; j < runs.Count && !merged; j++)
+                        foreach (int axis in new[] { 0, 2 })
+                        {
+                            if (!TryMerge(runs[i], runs[j], axis, out var run)) continue;
+                            runs[i] = run; runs.RemoveAt(j); merged = true;
+                            break;
+                        }
+            }
+            return runs.Select(r => r.Box).ToList();
+        }
+
+        private static bool TryMerge(BoxRun a, BoxRun b, int axis, out BoxRun run)
+        {
+            run = a;
+            if ((a.Axis >= 0 && a.Axis != axis) || (b.Axis >= 0 && b.Axis != axis)) return false;
+            int across = axis == 0 ? 2 : 0;
+            float gap = Mathf.Max(a.Box.min[axis], b.Box.min[axis]) - Mathf.Min(a.Box.max[axis], b.Box.max[axis]);
+            if (gap > RunGap) return false;
+            var box = a.Box; box.Encapsulate(b.Box);
+            // The thickness a run started with: its thinnest member's, across the run.
+            float thin = Mathf.Min(a.Axis >= 0 ? a.Thin : a.Box.size[across], b.Axis >= 0 ? b.Thin : b.Box.size[across]);
+            if (box.size[across] > thin + RunSlack * 2f) return false;
+            float topMin = Mathf.Min(a.TopMin, b.TopMin), topMax = Mathf.Max(a.TopMax, b.TopMax);
+            float bottomMin = Mathf.Min(a.BottomMin, b.BottomMin), bottomMax = Mathf.Max(a.BottomMax, b.BottomMax);
+            if (topMax - topMin > RunStep || bottomMax - bottomMin > RunStep) return false;
+            run = new BoxRun { Box = box, Thin = thin, Axis = axis, TopMin = topMin, TopMax = topMax, BottomMin = bottomMin, BottomMax = bottomMax };
+            return true;
         }
 
         // ------------------------------------------------------------------ gameplay

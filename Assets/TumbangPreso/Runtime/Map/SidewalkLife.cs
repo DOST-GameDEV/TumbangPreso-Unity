@@ -181,6 +181,22 @@ namespace TumbangPreso
         /// so a voice across the pavement is not already faded to a fifth.</summary>
         [Range(1f, 5f)] public float Reach = 3f;
 
+        /// <summary>
+        /// ⚠️ A PERSON NOBODY IS LOOKING AT IS WALKED, NOT POSED (owner, 2026-10-04: the game is
+        /// "primarily not laggy for the server host but it is for players joining too", then "add
+        /// these optimization fixes"). Posing is most of this component's frame: each person's
+        /// clips sampled onto the rig (`AnimationClip.SampleAnimation`, twice through a
+        /// crossfade), the relaxed idle, the drawn gait with its foot plant, the seat, the
+        /// gestures, the head's spring and the pole's. In Play, a person whose renderers no
+        /// camera drew last frame still walks his route, keeps his gait's clock and so his
+        /// footsteps, and plays every sound; only the bones are left as they were. He is posed
+        /// again the frame after a camera draws him (and for a quarter second after he was last
+        /// seen or was shown, so a glance away never drops a spring mid-swing).
+        /// Set this TRUE to pose everybody always: a probe that reads limbs in batch mode, where
+        /// no camera draws. Outside Play (the films) everybody is always posed.
+        /// </summary>
+        public bool PoseUnseen;
+
         /// <summary>REVIEW ONLY (the author's filmed events): lets the TAHOOO and thank-you popups
         /// spawn outside Play, where the film steps <see cref="Simulate"/> by hand. Never set in
         /// the game; false keeps Play's behaviour exactly.</summary>
@@ -370,6 +386,10 @@ namespace TumbangPreso
             public float LookWeight, LookYaw, NodAt = -99f, NextNod, NextLook, LookUntil;
             public Body LookAt;
             public float JukeUntil, JukeSide, ClapUntil, CheerFrom = -99f, LaughFrom = -99f;
+            /// <summary>The body's renderers (found on its first pose, once everything is hung on
+            /// it), and the life's clock when a camera last drew one of them. See `PoseUnseen`.</summary>
+            public Renderer[] Skin;
+            public float SeenAt = -99f;
             // The relaxed idle (see Relax): the next small weight shift and which way, and the
             // role's idle touch (arms folded, hands on hips, a kid's fidget) with its start and length.
             public float ShiftAt = -99f, ShiftSide = 1f, NextShift, TouchFrom = -99f, TouchLength, NextTouch;
@@ -863,6 +883,18 @@ namespace TumbangPreso
             b.HasLast = false; b.Speed = b.AlongSpeed = 0f; b.YawVel = 0f;
             b.Planted[0] = b.Planted[1] = false; b.StanceLeg = -1;
             b.Squash = b.SquashVel = 0f; b.HeadLagging = false; b.HeadVel = Vector3.zero;
+            // Just shown: no camera has had a frame to draw it yet (see `PoseUnseen`).
+            b.SeenAt = _clock;
+        }
+
+        /// <summary>True when the body is to be posed this frame: see `PoseUnseen`.</summary>
+        private bool Watched(Body b)
+        {
+            if (PoseUnseen || !Application.isPlaying) return true;
+            if (b.Skin == null) b.Skin = b.Root.GetComponentsInChildren<Renderer>(true);
+            foreach (var r in b.Skin)
+                if (r != null && r.isVisible) { b.SeenAt = _clock; return true; }
+            return _clock - b.SeenAt < .25f;
         }
 
         /// <summary>Crossfades to `clip` (falling back to idle when the rig lacks it) at `rate`.</summary>
@@ -894,6 +926,16 @@ namespace TumbangPreso
             Measure(b, dt);
             // The character frame first: every drawn layer below is built in it.
             b.Root.SetPositionAndRotation(b.Position, Quaternion.Euler(0f, b.Yaw, 0f));
+            if (!Watched(b))
+            {
+                // Walked, not posed (`PoseUnseen`): the gait's clock and its footfalls only. The
+                // foot plant and the head's spring start afresh when he is next drawn, as they do
+                // when he is shown: a plant kept from before would be a leg aimed at a stale spot.
+                Locomote(b, dt, false);
+                b.Planted[0] = b.Planted[1] = false; b.Stance[0] = b.Stance[1] = false; b.StanceLeg = -1;
+                b.HeadLagging = false;
+                return;
+            }
             Spring(b, dt);
             Sample(b);
             Relax(b, dt);
@@ -1099,7 +1141,7 @@ namespace TumbangPreso
         /// numbers), scaled per role (<see cref="Body.ArmGain"/>), the magtataho's pole arm held
         /// within <see cref="PoleArmSwing"/>.
         /// </summary>
-        private void Locomote(Body b, float dt)
+        private void Locomote(Body b, float dt, bool draw = true)
         {
             if (b.Gait == null || b.LegL == null || b.LegR == null || b.ArmL == null || b.ArmR == null || b.Reach <= 0f) return;
             float turning = Mathf.Abs(b.YawVel) * Mathf.Deg2Rad * .25f;
@@ -1122,6 +1164,8 @@ namespace TumbangPreso
                 b.Foot = foot;
                 if (b.Loco > .6f) Footfall(b);
             }
+            // The gait's clock and its footfalls are above; the rest draws (see `PoseUnseen`).
+            if (!draw) return;
 
             var pose = b.Gait.Evaluate(b.Phase, b.RunW, _clock, Mathf.Abs(b.Cadence));
             float amount = Smooth(b.Loco);
