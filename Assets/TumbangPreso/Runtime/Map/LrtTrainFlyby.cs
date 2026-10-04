@@ -113,9 +113,24 @@ namespace TumbangPreso
         /// the recording's arithmetic (§ THE PASS): its peak lands with the consist overhead.</summary>
         public float SoundHalfZ = 48.0f;
 
+        /// <summary>
+        /// Where the line is in the world. Zero, the viaduct runs through the origin, over the
+        /// court, as on the first Ilalim. The rebuilt map's court is in the lot beside Taft
+        /// (owner, 2026-10-04: "can we move the play area to this open space?") and the world was
+        /// moved to put it at the origin, so there the line's centreline is x = `CentreX` and the
+        /// midpoint between its two stations is z = `CentreZ`. The pass's windows (warning,
+        /// overhead, sound) stay centred on the COURT, world z = 0: the consist is "passing" when
+        /// it is level with the players, wherever its stations are.
+        /// </summary>
+        public float CentreX, CentreZ;
+
         private int _dir = 1;
-        private float RunX => Shuttle ? _dir * Mathf.Abs(TrackX) : TrackX;
-        private Vector3 RunPosition(float along) => new Vector3(RunX, TrackY, Shuttle ? _dir * along : along);
+        private float RunX => CentreX + (Shuttle ? _dir * Mathf.Abs(TrackX) : TrackX);
+        private Vector3 RunPosition(float along) => new Vector3(RunX, TrackY, CentreZ + (Shuttle ? _dir * along : along));
+
+        /// <summary>The run coordinate measured from the court: zero when the consist is level
+        /// with world z = 0, negative before it gets there.</summary>
+        private float FromCourt(float along) => along + (Shuttle ? _dir : 1) * CentreZ;
 
         private void Place(float along)
         {
@@ -195,14 +210,16 @@ namespace TumbangPreso
 
             float warnAt = -OverheadHalfZ - Speed * WarningLead;
 
-            if (!_warned && _currentZ >= warnAt)
+            float court = FromCourt(_currentZ);
+
+            if (!_warned && court >= warnAt)
             {
                 _warned = true;
                 OverheadPassWindow.SetWarning(true);
                 Announce();
             }
 
-            bool overhead = _currentZ >= -OverheadHalfZ && _currentZ <= OverheadHalfZ;
+            bool overhead = court >= -OverheadHalfZ && court <= OverheadHalfZ;
 
             if (overhead != _windowOpen)
             {
@@ -222,7 +239,7 @@ namespace TumbangPreso
             // one object, two of them synthesised and one of them about fire, is most of why 🧑
             // reported this repeatedly and finally said *"i keep reporting its broken and i give
             // up on it"*. The recording is the train; the burst stays because it is a picture.
-            if (!_whooshPlayed && _currentZ >= -18.0f)
+            if (!_whooshPlayed && court >= -18.0f)
             {
                 _whooshPlayed = true;
                 ImpactBurst.SpawnAt(RunPosition(_currentZ) + Vector3.down * 0.5f);
@@ -230,8 +247,8 @@ namespace TumbangPreso
 
             // A shuttle run is 280 m, most of it out of earshot: the pass (and the troll music)
             // plays only across the court, so the clip still starts 48 m out.
-            if (!Shuttle || Mathf.Abs(_currentZ) <= TrollHalfZ) ResumeTroll(); else PauseTroll();
-            if (!Shuttle || Mathf.Abs(_currentZ) <= SoundHalfZ) DriveRumble();
+            if (!Shuttle || Mathf.Abs(court) <= TrollHalfZ) ResumeTroll(); else PauseTroll();
+            if (!Shuttle || Mathf.Abs(court) <= SoundHalfZ) DriveRumble();
             else if (_rumbleStarted) StopRumble();
 
             if (_currentZ < EndZ) return;

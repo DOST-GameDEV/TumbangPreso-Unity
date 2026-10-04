@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using TumbangPreso.Abilities;
+using TumbangPreso.Visual;
 using UnityEngine;
 
 namespace TumbangPreso
@@ -14,6 +17,9 @@ namespace TumbangPreso
     /// a tsinelas: every lane lies on a road centre line 22 m out, so the nearest lane is 20.2 m
     /// from the court centre and the play walls stand at +/-13. Each client runs its own traffic
     /// from its own clock (like AmbientLife); nobody needs to see the same taxi at the same time.
+    /// ⚠️ THE ONE EXCEPTION IS `HitsPlayers` (§ THE LIVE ROAD below), off unless a map's author
+    /// switches it on: the Ilalim rebuild's Taft is crossed by players, and there every peer must
+    /// see the same taxi at the same time, because the host decides who it hit.
     ///
     /// THE NETWORK is the map's # grid (tools/author_kanto_blockout.py): four road centre lines,
     /// x = +/-Road and z = +/-Road, each running to +/-Extent, with one lane each side at
@@ -91,6 +97,48 @@ namespace TumbangPreso
         public Color[] LampGlow = Array.Empty<Color>();
         public Color BrakeGlow = Color.black;
 
+        // ⚠️⚠️ § THE LIVE ROAD (owner 2026-10-04, moving the Ilalim court off Taft into the campus
+        // lot: "make it so the players can still cross over and they ragdoll when they get hit by a
+        // car"). OFF BY DEFAULT: Kanto's traffic never meets a player and stays exactly as it was.
+        // Routes mode only; `IlalimLifeAuthor` switches it on.
+        //   * THE HIT is the game's own knockdown: `CharacterMotor.ApplyTrip` (the fall
+        //     `StreetTripHazard` gives) and a throw along the car's travel through
+        //     `CharacterMotor.ApplyResolvedImpact`. Contact is resolved ONCE BY THE HOST
+        //     (`NetAuthority.ShouldResolve`); the trip reaches a remote owner in the host's status
+        //     stream and the throw through `MatchRpc.BroadcastImpact`, the message every ability's
+        //     knockback already uses. Nothing new is on the wire. The sound goes out through
+        //     `NetCue`; the popup and the dust are drawn by each peer when it sees the fall.
+        //   * ⚠️ SO THE HOST'S TAXI HAS TO BE EVERYBODY'S TAXI. A client run from its own clock
+        //     would be thrown by a car it cannot see and walk through the one it can. With this on,
+        //     the traffic is stepped in FIXED steps from the session's shared clock (Netcode's
+        //     server time, already synchronised, no message of ours), from the authored starts and a
+        //     seed taken from that clock, so every peer computes the same street. See `UpdateLocked`.
+        //   * A car below `HitMinSpeed` (creeping up to a red light, waiting in the queue) hits
+        //     nobody: players cross between the stopped cars.
+        //   * A player who is immune to stuns is not felled (both calls refuse), and one inside the
+        //     body's own get-up grace (`CharacterMotor.IsTripImmune`) is left alone, as every hazard
+        //     leaves him: he was put down in the lane and has to be able to walk out of it.
+        //   * BOTS read `HazardMap`: each moving vehicle carries one `HazardVolume` disc over its nose
+        //     and the road just ahead of it, so a bot's walk to its goal bends round a passing car
+        //     the way it bends round a pier. A stopped vehicle carries none.
+        public bool HitsPlayers;
+        /// <summary>Slower than this a vehicle fells nobody: a walk's pace, a car easing up to a stop line.</summary>
+        public float HitMinSpeed = 2f;
+        /// <summary>The throw along the car's travel, m/s, at `HitMinSpeed` and at 9 m/s (a car's
+        /// cruise) and over; `Balance.MaxKnockbackSpeed` (16) still caps what the body takes.</summary>
+        public Vector2 HitThrow = new Vector2(7f, 14f);
+        /// <summary>Thrown this much to the side the player stood on, m/s, so he lands out of the lane.</summary>
+        public float HitAside = 4f;
+        /// <summary>The lift, m/s: under `Balance.MaxKnockbackLift` (7), so a hero's own launch stays the higher one.</summary>
+        public float HitLift = 6f;
+        /// <summary>Seconds down: `StreetTripHazard.TripDuration`, the game's one fall.</summary>
+        public float HitTrip = 2.5f;
+        /// <summary>One car cannot hit the same player again within this, seconds: its own length passing over him.</summary>
+        public float HitCooldown = 1.5f;
+        /// <summary>A player's body, metres across the ground from his centre (the cast's capsule).</summary>
+        public float HitBodyRadius = .35f;
+        public string HitPopup = "BEEP BEEP!";
+
         // Lanes: 0..3 run along X (lines z = -Road, +Road; dir +X, -X), 4..7 along Z.
         private const int LaneCount = 8;
         private readonly Vector3[] _origin = new Vector3[LaneCount], _dir = new Vector3[LaneCount];
@@ -111,6 +159,29 @@ namespace TumbangPreso
         private Color[][] _brakeBase;           // each brake slot's authored emission, read once (sharedMaterials allocates)
         private Color[] _lampEmission = new Color[3];
         private int _lastPhase = -1;
+
+        // ---- § THE LIVE ROAD: the shared clock's fixed steps, each vehicle's box, the bots' discs.
+        /// <summary>The fixed step, seconds. 30 a second: a car at 9 m/s moves 0.3 m a step, and the
+        /// pose drawn between two steps runs on at the vehicle's speed, so nothing stutters.</summary>
+        private const float LockStep = 1f / 30f;
+        /// <summary>The street is re-seeded from the shared clock every 20 minutes, so a peer that
+        /// joins late has at most that much to step through (36000 steps, `LockCatchUp` a frame:
+        /// a second of loading). ⚠️ At the boundary every vehicle returns to its authored start on
+        /// every peer at once: one visible reset in a match that runs past it.</summary>
+        private const double LockEpochSeconds = 1200.0;
+        private const int LockCatchUp = 600;
+        private const long NoEpoch = long.MinValue, SoloEpoch = long.MinValue + 1;
+        private long _lockEpoch = NoEpoch, _lockSteps;
+        private double _lockTime;
+        private bool _quiet, _caughtUp = true;
+        private int[] _lane0;
+        private float[] _along0, _pitch;
+        private Vector3[] _poseAt, _poseDir;    // per driver: where its body was last drawn, and its travel direction
+        private Vector4[] _box;                 // per driver, about its body's origin: centre forward, centre right, half length, half width
+        private float[] _boxTop;                // per driver: its roof over the road
+        private GameObject[] _hazards;
+        private readonly Dictionary<CharacterMotor, float> _nextHit = new Dictionary<CharacterMotor, float>();
+        private readonly Dictionary<CharacterMotor, float> _nextShown = new Dictionary<CharacterMotor, float>();
         private static readonly int EmissionId = Shader.PropertyToID("_EmissionColor");
         private static readonly int ColorId = Shader.PropertyToID("_Color");
 
@@ -121,6 +192,9 @@ namespace TumbangPreso
             if (RouteMode) BuildRoutes();
             int n = Drivers.Length;
             _speed = new float[n]; _shift = new float[n]; _dwell = new float[n]; _brake = new float[n]; _stopState = new int[n];
+            _pitch = new float[n]; _poseAt = new Vector3[n]; _poseDir = new Vector3[n];
+            _lane0 = new int[n]; _along0 = new float[n];
+            for (int i = 0; i < n; i++) { _lane0[i] = Drivers[i].Lane; _along0[i] = Drivers[i].Along; _poseDir[i] = Vector3.forward; }
             _order = new int[LaneCount][]; _orderCount = new int[LaneCount];
             for (int l = 0; l < LaneCount; l++) _order[l] = new int[n];
             _vehicleRenderers = new Renderer[n][]; _brakeSlots = new int[n][]; _brakeBase = new Color[n][];
@@ -167,20 +241,26 @@ namespace TumbangPreso
                 }
             }
             _clock = Range(0f, CycleSeconds);
-            // A vehicle placed just short of a stop line starts no faster than it can stop at it.
-            if (RouteMode)
-                for (int i = 0; i < n; i++)
+            EaseIntoStops();
+            if (LiveRoad) BuildLiveRoad();
+        }
+
+        /// <summary>A vehicle placed just short of a stop line starts no faster than it can stop at it.</summary>
+        private void EaseIntoStops()
+        {
+            if (!RouteMode) return;
+            for (int i = 0; i < Drivers.Length; i++)
+            {
+                var d = Drivers[i];
+                if (d.Body == null || d.Lane < 0 || d.Lane >= Routes.Length) continue;
+                foreach (float stop in Routes[d.Lane].StopAlong ?? Array.Empty<float>())
                 {
-                    var d = Drivers[i];
-                    if (d.Body == null || d.Lane < 0 || d.Lane >= Routes.Length) continue;
-                    foreach (float stop in Routes[d.Lane].StopAlong ?? Array.Empty<float>())
-                    {
-                        float room = stop - d.Along - d.Length * .5f;
-                        if (room < -.5f) continue;
-                        _speed[i] = Mathf.Min(_speed[i], Mathf.Sqrt(2f * 2.8f * Mathf.Max(0f, room - 1f)));
-                        break;
-                    }
+                    float room = stop - d.Along - d.Length * .5f;
+                    if (room < -.5f) continue;
+                    _speed[i] = Mathf.Min(_speed[i], Mathf.Sqrt(2f * 2.8f * Mathf.Max(0f, room - 1f)));
+                    break;
                 }
+            }
         }
 
         private float Range(float a, float b) => a + (float)_random.NextDouble() * (b - a);
@@ -267,6 +347,16 @@ namespace TumbangPreso
         private void Update()
         {
             float dt = Time.deltaTime;
+            if (LiveRoad && Application.isPlaying && Drivers.Length > 0)
+            {
+                // The live road keeps its own clock (UpdateLocked): in a session it is the shared one,
+                // which does not stop for a held frame, so the street runs on behind a cutscene
+                // instead of jumping when it ends. Nobody is hit while the world is held.
+                UpdateLocked(Mathf.Clamp(dt, 0f, .05f));
+                UpdateHazards();
+                if (dt > 0f && !PresentationClock.Held) UpdateHits();
+                return;
+            }
             if (dt <= 0f || Drivers.Length == 0) return;
             dt = Mathf.Min(dt, .05f);
             _clock += dt;
@@ -581,7 +671,10 @@ namespace TumbangPreso
             }
             v0 = Mathf.Max(v0, .5f);
             float sStar = s0 + Mathf.Max(0f, v * headway + v * (v - vAhead) / (2f * Mathf.Sqrt(amax * bcomf)));
-            float accel = amax * (1f - Mathf.Pow(v / v0, 4f)) - (gap < float.MaxValue ? amax * (sStar / Mathf.Max(gap, .1f)) * (sStar / Mathf.Max(gap, .1f)) : 0f);
+            // ⚠️ The fourth power by hand, not Mathf.Pow: the live road is stepped on every peer and
+            // has to come out the same on each, and `pow` is the C runtime's, which differs by CPU.
+            float pace = v / v0; pace *= pace; pace *= pace;
+            float accel = amax * (1f - pace) - (gap < float.MaxValue ? amax * (sStar / Mathf.Max(gap, .1f)) * (sStar / Mathf.Max(gap, .1f)) : 0f);
             accel = Mathf.Clamp(accel, -7f, amax);
             v = Mathf.Max(0f, v + accel * dt);
             d.Along += v * dt;
@@ -609,12 +702,22 @@ namespace TumbangPreso
                 else d.Along = length + 4f;
             }
 
-            var pos = RoutePoint(r, d.Along);
-            var dir = RouteHeading(r, d.Along);
+            _pitch[i] = Mathf.Clamp(-accel * .45f, -1.2f, 2.2f);
+            // The live road steps many times a frame and draws once (UpdateLocked).
+            if (!_quiet) Pose(i, 0f);
+        }
+
+        /// <summary>Draws a vehicle on its route, `lead` seconds on from its last step at its own speed.</summary>
+        private void Pose(int i, float lead)
+        {
+            var d = Drivers[i]; int r = d.Lane;
+            float along = d.Along + _speed[i] * lead;
+            var pos = RoutePoint(r, along);
+            var dir = RouteHeading(r, along);
             var right = Vector3.Cross(Vector3.up, dir);
-            float pitch = Mathf.Clamp(-accel * .45f, -1.2f, 2.2f);
-            d.Body.SetPositionAndRotation(pos, Quaternion.AngleAxis(pitch, right) * Quaternion.LookRotation(dir, Vector3.up) * d.ModelOffset);
+            d.Body.SetPositionAndRotation(pos, Quaternion.AngleAxis(_pitch[i], right) * Quaternion.LookRotation(dir, Vector3.up) * d.ModelOffset);
             ApplyBrakeLights(i);
+            _poseAt[i] = pos; _poseDir[i] = dir;
         }
 
         /// <summary>A yield line (axis -2): clear when nothing on the route this one joins is within
@@ -656,6 +759,202 @@ namespace TumbangPreso
                 if (route.StopAxis != null && k < route.StopAxis.Length && route.StopAxis[k] == -2 && o.Along + o.Length * .5f > stops[k] - .5f)
                     return true;
             return false;
+        }
+
+        // ------------------------------------------------------------------ the live road (§ THE LIVE ROAD)
+
+        private bool LiveRoad => HitsPlayers && RouteMode;
+
+        /// <summary>Each vehicle's box, measured once from its meshes in its own travel frame (the
+        /// body is rigid, so the box rides with it), and one hazard disc per vehicle for the bots.</summary>
+        private void BuildLiveRoad()
+        {
+            int n = Drivers.Length;
+            _box = new Vector4[n]; _boxTop = new float[n];
+            for (int i = 0; i < n; i++)
+            {
+                var d = Drivers[i];
+                _box[i] = new Vector4(0f, 0f, d.Length * .5f, .9f); _boxTop[i] = 1.6f;
+                if (d.Body == null) continue;
+                var f = d.Body.rotation * Quaternion.Inverse(d.ModelOffset) * Vector3.forward; f.y = 0f;
+                f = f.sqrMagnitude > 1e-6f ? f.normalized : Vector3.forward;
+                var right = Vector3.Cross(Vector3.up, f);
+                var origin = d.Body.position;
+                _poseAt[i] = origin; _poseDir[i] = f;
+                float f0 = float.MaxValue, f1 = float.MinValue, r0 = float.MaxValue, r1 = float.MinValue, top = float.MinValue;
+                foreach (var filter in d.Body.GetComponentsInChildren<MeshFilter>())
+                {
+                    if (filter.sharedMesh == null) continue;
+                    var b = filter.sharedMesh.bounds; var m = filter.transform.localToWorldMatrix;
+                    for (int c = 0; c < 8; c++)
+                    {
+                        var corner = b.center + Vector3.Scale(b.extents, new Vector3((c & 1) == 0 ? -1f : 1f, (c & 2) == 0 ? -1f : 1f, (c & 4) == 0 ? -1f : 1f));
+                        var p = m.MultiplyPoint3x4(corner) - origin;
+                        float a = Vector3.Dot(p, f), s = Vector3.Dot(p, right);
+                        f0 = Mathf.Min(f0, a); f1 = Mathf.Max(f1, a); r0 = Mathf.Min(r0, s); r1 = Mathf.Max(r1, s); top = Mathf.Max(top, p.y);
+                    }
+                }
+                if (f1 <= f0) continue;
+                _box[i] = new Vector4((f0 + f1) * .5f, (r0 + r1) * .5f, (f1 - f0) * .5f, (r1 - r0) * .5f);
+                _boxTop[i] = top;
+            }
+            // Outside Play (the author's probes call Start by hand) nothing is added to the scene.
+            if (!Application.isPlaying) return;
+            _hazards = new GameObject[n];
+            for (int i = 0; i < n; i++)
+            {
+                if (Drivers[i].Body == null) continue;
+                var go = new GameObject("Road hazard " + i);
+                go.transform.SetParent(transform, false);
+                // Its half width and a step's room, or half its length up to 3 m; a bot ignores a disc over 4 (AiTuning.HazardAvoidMaxRadius).
+                HazardVolume.Attach(go, Mathf.Max(_box[i].w + .6f, Mathf.Min(_box[i].z, 3f)), -1);
+                go.SetActive(false);
+                _hazards[i] = go;
+            }
+        }
+
+        /// <summary>
+        /// The live road's step. ⚠️ EVERY PEER MUST COME OUT WITH THE SAME STREET, so nothing here
+        /// reads this peer's frame time once a session is live: the street's age is the shared
+        /// clock's (Netcode's synchronised server time), cut into epochs; at an epoch's start every
+        /// vehicle stands at its authored start with a speed drawn from a seed that is the epoch's
+        /// number; from there it is `LockStep` at a time, the same arithmetic on every peer. A peer
+        /// that arrives late steps through what it missed, `LockCatchUp` steps a frame, and hits
+        /// nobody until it has caught up. Offline there is nobody to agree with: the same steps, on
+        /// this peer's own game clock (so a pause stops the street), from a seed of its own.
+        /// ⚠️ CLOSE, NOT BIT-EXACT ACROSS CPU FAMILIES: the turn caps come from an arc cosine at
+        /// Start. A difference there is a last digit of a speed, a few centimetres over an epoch.
+        /// </summary>
+        private void UpdateLocked(float dt)
+        {
+            var nm = Unity.Netcode.NetworkManager.Singleton;
+            bool shared = NetAuthority.IsNetworked && nm != null && nm.IsListening;
+            if (shared)
+            {
+                double now = nm.ServerTime.Time;
+                long epoch = (long)Math.Floor(now / LockEpochSeconds);
+                if (epoch != _lockEpoch) { Reseed(unchecked((int)(epoch * 7919L) + 17)); _lockEpoch = epoch; }
+                _lockTime = now - epoch * LockEpochSeconds;
+            }
+            else
+            {
+                // A session that ended under this peer keeps the street it had; only a fresh scene seeds.
+                if (_lockEpoch == NoEpoch) { Reseed(Guid.NewGuid().GetHashCode()); _lockTime = 0.0; }
+                _lockEpoch = SoloEpoch;
+                _lockTime += dt;
+            }
+            // The shared clock is an estimate on a client and may step back a hair: a step is never undone.
+            long target = (long)(_lockTime / LockStep);
+            int budget = LockCatchUp;
+            _quiet = true;
+            while (_lockSteps < target && budget-- > 0) { _clock += LockStep; UpdateRoutes(LockStep); _lockSteps++; }
+            _quiet = false;
+            _caughtUp = _lockSteps >= target;
+            float lead = _caughtUp ? Mathf.Clamp((float)(_lockTime - _lockSteps * (double)LockStep), 0f, LockStep) : 0f;
+            for (int i = 0; i < Drivers.Length; i++)
+            {
+                var d = Drivers[i];
+                if (d.Body == null || d.Lane < 0 || d.Lane >= Routes.Length) continue;
+                Pose(i, lead);
+            }
+            UpdateSignals();
+        }
+
+        /// <summary>Every vehicle back at its authored start, speeds and the signal clock drawn from `seed`.</summary>
+        private void Reseed(int seed)
+        {
+            _random = new System.Random(seed);
+            for (int i = 0; i < Drivers.Length; i++)
+            {
+                var d = Drivers[i];
+                d.Lane = _lane0[i]; d.Along = _along0[i];
+                _speed[i] = d.Cruise * Range(.5f, 1f); _brake[i] = 0f; _pitch[i] = 0f;
+            }
+            _clock = Range(0f, CycleSeconds);
+            _lastPhase = -1;
+            _lockSteps = 0;
+            EaseIntoStops();
+        }
+
+        /// <summary>The bots' disc rides over each moving vehicle's nose and the road it is about to
+        /// cover (0.35 s of travel); a stopped vehicle has none, so bots cross between queued cars.</summary>
+        private void UpdateHazards()
+        {
+            if (_hazards == null) return;
+            for (int i = 0; i < _hazards.Length; i++)
+            {
+                var go = _hazards[i];
+                if (go == null) continue;
+                bool moving = _caughtUp && _speed[i] >= HitMinSpeed;
+                if (go.activeSelf != moving) go.SetActive(moving);
+                if (!moving) continue;
+                var right = Vector3.Cross(Vector3.up, _poseDir[i]);
+                go.transform.position = _poseAt[i] + _poseDir[i] * (_box[i].x + _box[i].z * .5f + _speed[i] * .35f) + right * _box[i].y;
+            }
+        }
+
+        /// <summary>
+        /// Each moving vehicle's box against each player, flat, under its roof. On the resolving
+        /// peer a touch is the hit (see § THE LIVE ROAD); on every other peer the same touch, on a
+        /// player the host has just felled, draws the popup and the dust the host drew for itself.
+        /// Four players by a few dozen vehicles: no physics query, no allocation.
+        /// </summary>
+        private void UpdateHits()
+        {
+            if (!_caughtUp || _box == null) return;
+            var round = GameServices.Round;
+            var players = round != null ? round.Players : null;
+            if (players == null) return;
+            bool resolve = NetAuthority.ShouldResolve();
+            float now = Time.time;
+            for (int k = 0; k < players.Count; k++)
+            {
+                var who = players[k];
+                if (who == null || !who.isActiveAndEnabled) continue;
+                var at = who.transform.position;
+                for (int i = 0; i < Drivers.Length; i++)
+                {
+                    if (Drivers[i].Body == null || _speed[i] < HitMinSpeed) continue;
+                    var d = at - _poseAt[i];
+                    // Over its roof (a jump, a flying hero) or well under the road: no contact.
+                    if (d.y > _boxTop[i] || d.y < -1.5f) continue;
+                    var dir = _poseDir[i]; var right = Vector3.Cross(Vector3.up, dir);
+                    float along = Vector3.Dot(d, dir) - _box[i].x, side = Vector3.Dot(d, right) - _box[i].y;
+                    // A watching peer sees the fall a moment after the host decided it: the car has moved on.
+                    float slack = resolve ? 0f : 1.5f;
+                    if (Mathf.Abs(along) > _box[i].z + HitBodyRadius + slack || Mathf.Abs(side) > _box[i].w + HitBodyRadius + slack * .3f) continue;
+                    if (resolve) Hit(i, who, at, dir, right, side, now);
+                    else if (who.IsTripped && who.TripLeft > HitTrip - .6f) Show(who, at, now);
+                    break;
+                }
+            }
+        }
+
+        private void Hit(int i, CharacterMotor who, Vector3 at, Vector3 dir, Vector3 right, float side, float now)
+        {
+            if (_nextHit.TryGetValue(who, out float next) && now < next) return;
+            // The body's own grace after a get-up, the one window every hazard reads (StreetTripHazard).
+            if (who.IsTripImmune) return;
+            _nextHit[who] = now + HitCooldown;
+            bool wasDown = who.IsTripped;
+            who.ApplyTrip(HitTrip);
+            // Immune to stuns (a hero's carapace): `ApplyTrip` refused, and so would the throw. The car passes.
+            if (!who.IsTripped) return;
+            float throwSpeed = Mathf.Lerp(HitThrow.x, HitThrow.y, Mathf.InverseLerp(HitMinSpeed, 9f, _speed[i]));
+            // After the trip, which zeroes the walk: the throw is the body's external velocity.
+            who.ApplyResolvedImpact(dir * throwSpeed + right * (side >= 0f ? HitAside : -HitAside) + Vector3.up * HitLift);
+            // `hit_body` is a body meeting something hard, the cue a trip already plays; pitched lower, for a car.
+            NetCue.PlayVaried("hit_body", at, .7f, .9f, 1f);
+            if (!wasDown) Show(who, at, now);
+        }
+
+        /// <summary>The fall's announcement, as `StreetTripHazard` announces a trip: a comic popup and a dust burst.</summary>
+        private void Show(CharacterMotor who, Vector3 at, float now)
+        {
+            if (_nextShown.TryGetValue(who, out float next) && now < next) return;
+            _nextShown[who] = now + HitTrip;
+            ComicPopup.Spawn(at + Vector3.up * 1f, HitPopup, UI.UiTheme.Danger, 1.2f);
+            ImpactBurst.SpawnAt(at);
         }
 
 #if UNITY_EDITOR

@@ -27,15 +27,28 @@ first; the CURRENT STATE entries under it are the detailed record, newest first.
   **Tumbang Preso > Sample Map > Build Ilalim Rebuild** (batch: `IlalimSceneBuilder.Run`; review
   renders: `RunReview`). Blender (x, y, z) is Unity (x, z, y).
 - **Life in Unity** (all built by the builder, no hand edits):
-  - traffic: `KantoTraffic`'s routes mode (`Editor/MapKit/IlalimLifeAuthor.cs`; 21 vehicles, never
-    in the court);
-  - pigeons: `LagoonFlocks` on measured perch lines;
+  - traffic: `KantoTraffic`'s routes mode (`Editor/MapKit/IlalimLifeAuthor.cs`). Since 2026-10-04
+    (the court moved into the campus lot; owner: "make it so the players can still cross over and
+    they ragdoll when they get hit by a car") Taft runs STRAIGHT THROUGH under the bridge, both
+    ways (routes TN and TS; the closure queue, the U-turn and its yield are gone), 28 vehicles,
+    never in the lot. `KantoTraffic.HitsPlayers` is on for this map only: a moving vehicle trips
+    and throws the player it touches, resolved once by the host (`ApplyTrip` plus
+    `ApplyResolvedImpact`, nothing new on the wire), every peer stepping the same street from
+    Netcode's server time, and bots walk round moving cars through `HazardVolume`. NOT yet run in
+    Unity or played;
+  - pigeons: `LagoonFlocks` on measured perch lines, none in the court's keep-clear square or on
+    the lot's frontage;
   - the street bed: `KantoStreetSound`;
   - the sidewalk people in `Runtime/Map/SidewalkLife.cs` and `Editor/MapKit/IlalimSidewalkAuthor.cs`:
     kids at tag, the magtataho (shoulder pole), spectators, and the beggar (his own voxel model,
-    `tools/build_beggar_voxel.py`) with a COSMETIC coin donation on the Interact verb.
+    `tools/build_beggar_voxel.py`) with a COSMETIC coin donation on the Interact verb. Since
+    2026-10-04 nobody is on the shop pavement or the road: the kids run the lot's east margin and
+    the west pavement, the magtataho stops at the lot's open frontage, the watchers stand along
+    it, by the fruit stall and in the lot's north-east corner, and the beggar sits at its south end.
 
-  They walk the court's pavements but never the chalk box, the kerb or within 0.5 m of a prop.
+  Every number typed in those two authors is in the Blender frame and goes through
+  `Editor/MapKit/IlalimFrame.cs`. The people never enter the court's keep-clear square (9 m from
+  the can), the road, a fence line or within 0.5 m of a prop.
   Their 36 sounds are synthesized by `tools/synth_ilalim_life_sfx.py`, with the `Loudness` and
   `Reach` knobs on SidewalkLife. The checks:
   - the probe: `IlalimSidewalkFilm.RunBuildProbeStills`;

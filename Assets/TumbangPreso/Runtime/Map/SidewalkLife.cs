@@ -63,18 +63,24 @@ namespace TumbangPreso
     /// ⚠️⚠️ SCENERY, NEVER A PLAYER. No CharacterMotor, no collider (the rig's are destroyed), no
     /// network state: every client runs its own, like `KantoTraffic` and `LagoonFlocks`. They walk
     /// only the authored routes, which the author measured against the art and which never enter
-    /// the play area (|x| &lt; 11.2, |z| &lt; 16.7), let alone the chalk box.
-    ///   * KIDS: a game of tag on the south-east pavement, now and then (hidden between sessions).
-    ///   * TAHO: the magtataho with his pole and two aluminium buckets, slow along the south-west
-    ///     pavement, stopping to call. The call is `sfx_taho_call_1..3` (synthesised, see
+    /// the court's keep-clear square (9 m either way from the can), let alone the chalk box.
+    /// ⚠️ WHERE, SINCE THE COURT MOVED INTO THE LOT (owner 2026-10-04: "the children cant be on the
+    /// other side next to the shops because they wont be visible"): everybody is on the court's
+    /// side of Taft, nobody on the shop pavement and nobody on the road, which is live now
+    /// (`KantoTraffic.HitsPlayers`). Nothing in this file knows where: `IlalimSidewalkAuthor` does.
+    ///   * KIDS: a game of tag down the lot's east margin and out onto the west pavement, now and
+    ///     then (hidden between sessions).
+    ///   * TAHO: the magtataho with his pole and two aluminium buckets, slow up Taft's west
+    ///     pavement to the lot's open frontage, stopping to call. The call is `sfx_taho_call_1..3` (synthesised, see
     ///     `tools/synth_ilalim_life_sfx.py`) with the small comic popup ("TAHOOO!") kept.
-    ///   * SPECTATORS: passers-by who walk to a spot at the court's edge (the pavement ends past
-    ///     the end walls, the PGH lawn behind the fence), watch facing the court, cheer when the
+    ///   * SPECTATORS: passers-by who walk to a spot at the lot's edge (along its open frontage
+    ///     on the pavement side, and just inside it at its two ends), watch facing the court, cheer when the
     ///     can goes down and groan at a tag (<see cref="MatchFlair.Presented"/>), then walk on.
     ///   * BEGGAR: his OWN voxel model (npc-beggar.glb, `tools/build_beggar_voxel.py`: the
     ///     cast's pipeline on character-male-e's skeleton), not a cast rig. Walks in, lays his
-    ///     carton down against the PGH fence just past the south wall and sits on it with a tin
-    ///     cup, a tied bundle and a plastic bag beside him, within reach of a player at the wall.
+    ///     carton down on the west pavement at the south end of the lot's open frontage and sits
+    ///     on it facing the court, with a tin cup, a tied bundle and a plastic bag beside him,
+    ///     where a player on his way to the road passes within reach.
     ///     While he sits the match HUD offers "Give a coin" on the Interact control
     ///     (<see cref="StreetInteractions"/>): a coin arcs into the cup and clinks, he bows and
     ///     waves from where he sits and murmurs "salamat po" (the popup says the same). ⚠️
@@ -142,7 +148,7 @@ namespace TumbangPreso
         public Walk[] Walks = new Walk[0];
         public Watch[] Watches = new Watch[0];
         public int TahoWalk = -1, BeggarWalk = -1;
-        /// <summary>The kids' pavement: they play along it; its LAST point is where they come and go.</summary>
+        /// <summary>The kids' run: they play along it; its LAST point is where they come and go.</summary>
         public Vector3[] KidTrack = new Vector3[0];
         public float KidHalfWidth = .7f;
         public Vector3 BeggarSeat;
@@ -1931,8 +1937,8 @@ namespace TumbangPreso
             holder.SetPositionAndRotation(BeggarSeat, Quaternion.LookRotation(f, Vector3.up));
             var cube = Builtin("Cube.fbx"); var cylinder = Builtin("Cylinder.fbx");
             _carton = Part(holder, "Carton", CartonMesh(), Cardboard, new Vector3(0f, .008f, .12f), Vector3.one, Vector3.zero);
-            // The cup on his left, the side toward the court and the players at the wall, just
-            // inside where his left hand rests on the pavement.
+            // The cup on his left and before him, toward whoever he faces, just inside where his
+            // left hand rests on the pavement.
             _cup = Part(holder, "Tin cup", CupMesh(), Tin, new Vector3(-.26f, .05f, .62f), new Vector3(.11f, .05f, .11f), Vector3.zero);
             _coin = Part(transform, "Coin", cylinder, Coin, Vector3.zero, new Vector3(.05f, .004f, .05f), Vector3.zero);
             _carton.gameObject.SetActive(false); _cup.gameObject.SetActive(false); _coin.gameObject.SetActive(false);

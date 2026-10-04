@@ -28,80 +28,121 @@ namespace TumbangPreso.EditorTools.MapKit
     /// voxel model since 2026-09-30 (see <see cref="BeggarOption"/>): a street beggar must not
     /// read as a playable cast member.
     ///
+    /// ⚠️⚠️ THEY MOVED WITH THE COURT (owner 2026-10-04: "can we move the play area to this open
+    /// space? ... we need to figure out the live characters stuff tho. the children cant be on the
+    /// other side next to the shops because they wont be visible. but make it so the players can
+    /// still cross over and they ragdoll when they get hit by a car"). The court is in the campus
+    /// lot west of Taft now, and Taft is a live road. So:
+    ///   * NOBODY is on the east (shop) pavement any more, and nobody crosses the road;
+    ///   * the KIDS play tag in the lot's east margin, north of the fruit stall, and out through
+    ///     the open frontage onto the west pavement, in sight of the court;
+    ///   * the MAGTATAHO walks Taft's west pavement up from the south and stops at the lot's open
+    ///     frontage to call;
+    ///   * the WATCHERS stand along the open frontage on the pavement side and just inside it at its two ends,
+    ///     facing the court;
+    ///   * the BEGGAR sits on the west pavement at the south end of the open frontage, where a
+    ///     player on his way to the road passes him, facing the court.
+    /// Every number typed below is in the BLENDER FRAME (x east, z north, the origin on Taft under
+    /// the viaduct, the kits' own) and goes through <see cref="IlalimFrame"/> where it meets the
+    /// scene; everything MEASURED (the art, the layout's anchors, the people) is in the game frame,
+    /// where the can is the origin.
+    ///
     /// ⚠️ THE ROUTES ARE MEASURED, NOT TRUSTED. Every route is sampled every 0.25 m at the lateral
     /// offsets the walkers use, and each sample is checked against the art (temporary MeshColliders
     /// on the dressing, removed afterwards): the ground under it must be the street kit's ground
-    /// (pavement, lawn, kerb ramp), nothing solid may stand in a 0.22 m capsule from 0.35 to 1.6 m,
-    /// no small prop's footprint may cover it, it must stay out of the chalk box (|x| 7, |z| 16.5)
-    /// and off the court's kerb (|x| under 7.3 beside it), at least 0.5 m from every gameplay prop
-    /// on the court's pavements (the layout's anchors: the pisonet row and its cord, the pares cart,
-    /// the overclock pad, the bridge hoop, the stalls, crates, chairs, bench, bin and drum), and at
-    /// least 2 m from every live traffic route's centre line (a bus is 2.5 m wide). The build log's
-    /// "Sidewalk" lines count the failures by cause. <see cref="Probe"/> then steps the life for 300 s
-    /// without PlayMode beside the traffic and renders each event (sidewalk_*.png).
+    /// (pavement, the lot, lawn, kerb ramp), nothing solid may stand in a 0.22 m capsule from 0.35
+    /// to 1.6 m, no small prop's footprint may cover it, it must stay out of the court's keep-clear
+    /// square (9 m either way from the can: the chalk box is 7, the throwing line 8, the attackers
+    /// spawn at 9), off Taft's carriageway and kerb (nearer than 7.3 m to its centre line) and off
+    /// the shop side altogether, at least 0.3 m from the lot's fences (so no route passes through
+    /// one), at least 0.5 m from every gameplay prop in the play area (the layout's anchors: the
+    /// stalls, the bench, chair, crates, drum and hoop, and whatever stands on the pavements), and
+    /// at least 2 m from every live traffic route's centre line (a bus is 2.5 m wide). The build
+    /// log's "Sidewalk" lines count the failures by cause. <see cref="Probe"/> then steps the life
+    /// for 300 s without PlayMode beside the traffic and renders each event (sidewalk_*.png).
     ///
-    /// ⚠️ THE COURT'S PAVEMENTS ARE WALKED (owner 2026-10-01: "they also stop before getting to the
+    /// ⚠️ THE PLAY AREA IS WALKED (owner 2026-10-01: "they also stop before getting to the
     /// middle of the sidewalk infront of the play area"). The people are scenery with no collider,
-    /// so they cannot block play; they used to turn back at the court's ends only because the
-    /// routes were kept outside the play area. Now the magtataho walks the whole west pavement in
-    /// front of the court, a passer-by watches from each of the west and east pavements, and the
-    /// kids' tag runs up the south-east pavement to the pares cart.
+    /// so they cannot block play. Since 2026-10-04 the play area is the lot, Taft and both its
+    /// pavements; the people use the lot's east margin and the west pavement in it.
     /// </summary>
     internal static class IlalimSidewalkAuthor
     {
         private const string Tag = "[IlalimRebuild] ";
         private const string Folder = "Assets/TumbangPreso/Art/IlalimRebuild/Life";
-        private const float PlayX = 11.2f, PlayZ = 16.7f, BoxX = 7f, BoxZ = 16.5f;
-        /// <summary>The court's kerb: the chalk box ends at |x| 7 and the kerb stone runs 6.65 to 7;
-        /// nobody walks closer to it than 7.3.</summary>
+        /// <summary>The chalk box, game frame: 7 m either way from the can.</summary>
+        private const float Box = 7f;
+        /// <summary>Taft's kerb, metres from its centre line: the kerb stone runs 6.65 to 7; nobody
+        /// walks nearer the road than 7.3.</summary>
         private const float KerbX = 7.3f;
         /// <summary>The clearance every route keeps from a gameplay prop's footprint, metres.</summary>
         private const float PropClear = .5f;
+        /// <summary>The clearance every route keeps from the lot's fences, metres (a body is 0.22).</summary>
+        private const float FenceClear = .3f;
         private const float WalkLateral = .35f, KidHalfWidth = .7f, TrafficClear = 2f;
 
-        // ------------------------------------------------------------------ where (game metres, x and z)
+        // ------------------------------------------------------------------ where (BLENDER FRAME metres, x and z)
 
         /// <summary>Each route's FIRST point is its far end (where a person appears and vanishes).
-        ///   * the south-west Taft pavement (PGH side), toward the court's south wall: the
-        ///     magtataho's beat and the beggar's way to his spot;
-        ///   * Padre Faura's south sidewalk from the west, round the corner onto the north-west
-        ///     Taft pavement, to the court's north wall (two spots);
-        ///   * Padre Faura's south sidewalk from the east (the Astral podium), round the corner onto
-        ///     the north-east Taft pavement, to the north wall (two spots);
-        ///   * across the PGH parking lot to its fence behind the west wall (three spots), clear of
-        ///     the two vans parked there at x -18.5 to -14.5.
-        /// Pre-checked against a 0.25 m ray scan of ArtSource/ilalim/ilalim_city.blend: the NW corner
-        /// keeps inside the kerb's curve (the road starts at z 26.5 by x -14) and the fence planters
-        /// at x -10.6, then measured again here in Unity (the build log's "Sidewalk" lines).</summary>
+        /// The geometry they are planned on (Blender frame; tools/author_ilalim_street.py and
+        /// author_ilalim_props.py as of 2026-10-04): Taft's west pavement is x -11 to -7 (its kerb
+        /// stone 6.65 to 7); the lot lies west of x -11.1, fenced along z 3.4 (from the end pillar
+        /// at (-11.2, 3.4) west) and along x -35, OPEN to the pavement on the east (its frontage,
+        /// a 28 mm step up) and, since the owner had the Padre Faura side fence taken out on
+        /// 2026-10-04, open to Padre Faura on the north too (players stop at a wall at z 24.0;
+        /// the people keep off Padre Faura's road as off every road); the court is the square 7
+        /// about (-23, 14.2) and nothing walks within 9 of that centre; the fruit stall stands at
+        /// (-12.5, 5.1), turned, its footprint with its umbrella x -13.38 to -10.96 (14 cm out
+        /// over the pavement), z 3.63 to 5.98 (the export's anchors of 2026-10-04); the fishball
+        /// stall stands in the lot's north-west corner by the back fence, about (-33.4, 22.4), out
+        /// of every route's way. South of the lot the pavement
+        /// still has the sari-sari stall (x up to -9.7, z -15.4 to -12.85), a chair and a bin
+        /// against the PGH fence.
+        ///   * FROM THE SOUTH, up Taft's west pavement at x -8.5 (the line measured on 2026-09-30
+        ///     from z -46 to -21; 0.85 m clear of the sari-sari stall with the keep-right offset),
+        ///     easing out to x -8.0 and single file past the beggar and his things (which reach
+        ///     x -9.2): the magtataho, to the middle of the frontage where he turns in and calls;
+        ///     the beggar, to his spot; a watcher to the frontage's south half, and one in through
+        ///     the frontage to stand north of the fruit stall, 1.4 m from it and 1.6 m outside the
+        ///     keep-clear square.
+        ///   * FROM THE NORTH-WEST, along Padre Faura's south sidewalk and round the corner onto the
+        ///     pavement (the measured one-way of 2026-09-30, unchanged): a watcher to the
+        ///     frontage's north half, and one in through the frontage to stand in the lot's
+        ///     north-east corner, 1.6 m outside the keep-clear square.
+        /// ⚠️ NOT YET MEASURED IN UNITY against the 2026-10-04 street. Planned from the numbers
+        /// above and checked offline against the export's anchors (every route 0.7 m or more from
+        /// every prop's footprint, the kids 0.7 m outside the keep-clear square and 0.2 m inside
+        /// the kerb line); the art itself (poles, pillars, planters) is the build log's
+        /// "Sidewalk" lines to check.
+        /// ⚠️ THE BENCH (-34.1, 10.0) IS NOT A WATCH SPOT. It stands in the 3 m strip between the
+        /// keep-clear square and the back fence, and the only ways to it on foot are through that
+        /// square or along the 1.8 m south margin, where the attackers spawn and the fruit stall
+        /// stands; and the life has no seated watcher (only the beggar's drawn sit).</summary>
         private static readonly (string name, Vector2[] points, float[] width)[] WalkPlan =
         {
-            // Up the south-west pavement and on along the court's WEST pavement, x -7.85: between
-            // the kerb (-7.0) and the hoop (-8.63), the stalls and the chairs (all past -9.7).
-            ("SW Taft and the west pavement, the magtataho", new[] { V(-8.5f, -46f), V(-8.5f, -21f), V(-7.85f, -17.2f), V(-7.85f, 12.5f) }, new[] { 1f, 1f, .6f, .6f }),
-            ("SW Taft, the beggar", new[] { V(-8.5f, -46f), V(-8.5f, -19.6f), V(-10.2f, -18.05f) }, null),
-            ("NW corner", NorthWest(V(-9.2f, 17.7f)), NorthWestWidth()),
-            // Round the north-west corner and down the west pavement to watch from beside the court
-            // (single file past the yellow railing's end at the corner, x -7.55 z 18.3).
-            ("NW corner, the west pavement", NorthWest(V(-7.9f, 18.3f)).Concat(new[] { V(-7.85f, 16.2f), V(-7.85f, 5.5f) }).ToArray(),
-             NorthWestWidth().Take(10).Concat(new[] { .15f, .3f, .6f }).ToArray()),
-            ("NE corner", new[] { V(23f, 25.3f), V(10f, 25.3f), V(8.5f, 24.2f), V(8.4f, 17.9f) }, null),
-            // Round the north-east corner and down the EAST pavement, single file at x 7.55: between
-            // the kerb (7.0) and the pisonet cord (8.18) and the overclock pad (8.1), to a spot short
-            // of the pares cart's A-board (z -3.4).
-            ("NE corner, the east pavement", new[] { V(23f, 25.3f), V(10f, 25.3f), V(8.5f, 24.2f), V(8.3f, 20.5f), V(7.9f, 18.6f), V(7.55f, 16.4f), V(7.55f, 1.8f) },
-             new[] { 1f, 1f, 1f, 1f, .4f, 0f, 0f }),
-            ("PGH lot, fence A", new[] { V(-42f, 3.5f), V(-26f, .6f), V(-15f, .4f), V(-12.3f, 1f) }, null),
-            ("PGH lot, fence B", new[] { V(-42f, 3.5f), V(-26f, 1.2f), V(-13f, -.4f), V(-12.4f, -1.2f) }, null),
-            ("PGH lot, fence C", new[] { V(-42f, 5.8f), V(-24f, 5.8f), V(-12.3f, 6.2f) }, null),
+            // Straight up the pavement, 2 m out from the watchers along the frontage, then in to call.
+            ("the west pavement to the frontage, the magtataho",
+             new[] { V(-8.5f, -46f), V(-8.5f, 0f), V(-8f, 3f), V(-8f, 7.4f), V(-8.5f, 12.4f), V(-9.7f, 14.2f) }, new[] { 1f, 1f, .4f, .4f, 1f, 1f }),
+            // Past the fence's end pillar (-11.2, 3.4) with 2 m to spare, then in to his spot.
+            ("the west pavement, the beggar", new[] { V(-8.5f, -46f), V(-8.5f, 2.6f), V(-9.9f, 5.2f) }, null),
+            ("the west pavement to the frontage's south half",
+             new[] { V(-8.5f, -46f), V(-8.5f, 0f), V(-8f, 3f), V(-8f, 7.4f), V(-8.5f, 9f), V(-10.5f, 10.6f) }, new[] { 1f, 1f, .4f, .4f, 1f, 1f }),
+            // In through the open frontage at z 8.3 to a spot north of the fruit stall.
+            ("the west pavement to the fruit stall",
+             new[] { V(-8.5f, -46f), V(-8.5f, 0f), V(-8f, 3f), V(-8f, 7.4f), V(-8.5f, 8.2f), V(-11.4f, 8.3f), V(-12.4f, 7.4f) }, new[] { 1f, 1f, .4f, .4f, .8f, .6f, 1f }),
+            ("NW corner to the frontage's north half", NorthWest(V(-10.5f, 17.8f)), NorthWestWidth()),
+            // In through the open frontage at z 20.3 to a spot in the lot's north-east corner.
+            ("NW corner to the lot's north-east corner", NorthWest(V(-11.4f, 20.3f)).Concat(new[] { V(-12.4f, 20.2f) }).ToArray(),
+             NorthWestWidth().Concat(new[] { 1f }).ToArray()),
         };
 
         /// <summary>Padre Faura's south sidewalk from the west (from x -30: the lamp at -34.25 and
         /// the pole at -26 stand on its two edges, Padre Faura's through lane 2.3 m out), past the
-        /// ONE WAY post at (-16.52, 25.57), then the one way round the corner, MEASURED in Unity:
-        /// single file (the keep-right offset closes to nothing) through the half-metre gaps
-        /// between the tx pole (-10.89, 24.63) and the street blade post (-10.79, 25.63), then
-        /// between the fence planter and the closure barrier's west end, and down the north-west
-        /// Taft pavement.</summary>
+        /// ONE WAY post at (-16.52, 25.57), then the one way round the corner, MEASURED in Unity
+        /// on 2026-09-30: single file (the keep-right offset closes to nothing) through the
+        /// half-metre gaps between the tx pole (-10.89, 24.63) and the street blade post
+        /// (-10.79, 25.63), then past the fence planter, and down the north-west Taft pavement
+        /// to (-9.2, 21), beside the frontage's north end.</summary>
         private static Vector2[] NorthWest(Vector2 end) => new[]
         {
             V(-30f, 26.55f), V(-24f, 26.55f), V(-20f, 26.4f), V(-16.5f, 26.3f), V(-13f, 25.35f), V(-10.84f, 25.13f),
@@ -112,20 +153,36 @@ namespace TumbangPreso.EditorTools.MapKit
         private const int TahoWalk = 0, BeggarWalk = 1;
         private static readonly (string name, int walk)[] WatchPlan =
         {
-            ("the north-west corner", 2), ("the west pavement", 3), ("the north-east corner", 4), ("the east pavement", 5),
-            ("the PGH fence", 6), ("the PGH fence", 7), ("the PGH fence", 8),
+            ("the frontage, south", 2), ("the fruit stall", 3), ("the frontage, north", 4), ("the lot's north-east corner", 5),
         };
-        /// <summary>The kids' pavement: the south-east Taft pavement below the shops and on up the
-        /// court's east pavement to 1 m short of the pares cart's crates (z -7); its last point is
-        /// where they come and go.</summary>
-        private static readonly Vector2[] KidPlan = { V(8.5f, -8f), V(8.5f, -36.5f) };
-        /// <summary>The beggar's spot: on the pavement against the PGH fence, 1.55 m past the south
-        /// wall, between the street pole (-10.58, -17.4) and the RABIES tarp on the fence (z -20.6).</summary>
-        private static readonly Vector2 Seat = V(-10.2f, -18.05f);
-        private static readonly Vector3 Facing = new Vector3(.9f, 0f, .45f);
+        /// <summary>The kids' run: down the lot's east margin (x -12.6, 0.7 m
+        /// outside the keep-clear square with their 0.7 m either side, 2 m north of the fruit stall),
+        /// out through the open frontage north of the beggar's things, and down the west
+        /// pavement's kerb side (x -8.2, their 0.7 m keeping 0.2 m inside the 7.3 line and 0.3 m
+        /// off his bag) to 9.4 m south of the lot's fence; its last point is where they come and go.</summary>
+        private static readonly Vector2[] KidPlan = { V(-12.6f, 18.6f), V(-12.6f, 9.6f), V(-8.2f, 8f), V(-8.2f, -6f) };
+        /// <summary>The beggar's spot: on the west pavement at the south end of the lot's open
+        /// frontage, 1.3 m east and 1.8 m north of the fence's end pillar (-11.2, 3.4) and 1.06 m
+        /// east of the fruit stall's footprint (which reaches x -10.96; the asked-for (-10.2, 5.0)
+        /// was 0.76 m from it, his cup 0.1 m), where a player leaving the lot for the road passes
+        /// him. His cup lands at (-10.56, 5.34), his bundle and bag reach east to about x -9.2.</summary>
+        private static readonly Vector2 Seat = V(-9.9f, 5.2f);
+        /// <summary>Facing the court: from his spot to its centre (-23, 14.2). A direction, the same in both frames.</summary>
+        private static readonly Vector3 Facing = new Vector3(-13.1f, 0f, 9f);
         private const float Reach = 2.6f;
+        /// <summary>The lot's fences (Blender frame), as segments: south and west (the back fence).
+        /// The Padre Faura side has none since 2026-10-04.</summary>
+        private static readonly (Vector2 a, Vector2 b)[] Fences =
+        {
+            (V(IlalimLifeAuthor.LotEast, IlalimLifeAuthor.LotSouth), V(IlalimLifeAuthor.LotWest, IlalimLifeAuthor.LotSouth)),
+            (V(IlalimLifeAuthor.LotWest, IlalimLifeAuthor.LotSouth), V(IlalimLifeAuthor.LotWest, IlalimLifeAuthor.LotNorth)),
+        };
 
         private static Vector2 V(float x, float z) => new Vector2(x, z);
+        /// <summary>A Blender-frame plan point (x, z) in the scene's game frame.</summary>
+        private static Vector2 G(Vector2 blender) => new Vector2(blender.x - IlalimFrame.OriginX, blender.y - IlalimFrame.OriginZ);
+        /// <summary>A Blender-frame height in the game frame.</summary>
+        private static float H(float y) => y - IlalimFrame.OriginY;
 
         // ------------------------------------------------------------------ who
 
@@ -377,12 +434,13 @@ namespace TumbangPreso.EditorTools.MapKit
             var lanes = traffic != null ? traffic.Routes.Select(r => r.Points).ToArray() : new Vector3[0][];
             using (var art = new ArtQuery(dressing))
             {
-                life.Walks = WalkPlan.Select(w => new SidewalkLife.Walk { Name = w.name, Points = w.points.Select(p => art.Ground(p)).ToArray(), Width = w.width }).ToArray();
+                life.Walks = WalkPlan.Select(w => new SidewalkLife.Walk { Name = w.name, Points = w.points.Select(p => art.Ground(G(p))).ToArray(), Width = w.width }).ToArray();
                 life.TahoWalk = TahoWalk; life.BeggarWalk = BeggarWalk;
+                // The watchers face the can, the game frame's origin, at chest height.
                 life.Watches = WatchPlan.Select(w => new SidewalkLife.Watch { Name = w.name, Walk = w.walk, LookAt = new Vector3(0f, 1.2f, 0f) }).ToArray();
-                life.KidTrack = KidPlan.Select(p => art.Ground(p)).ToArray();
+                life.KidTrack = KidPlan.Select(p => art.Ground(G(p))).ToArray();
                 life.KidHalfWidth = KidHalfWidth;
-                life.BeggarSeat = art.Ground(Seat);
+                life.BeggarSeat = art.Ground(G(Seat));
                 life.BeggarFacing = Facing.normalized;
                 life.BeggarReach = Reach;
 
@@ -390,10 +448,10 @@ namespace TumbangPreso.EditorTools.MapKit
                 var lines = new StringBuilder();
                 for (int i = 0; i < life.Walks.Length; i++)
                     bad += Check(art, lanes, life.Walks[i].Name, life.Walks[i].Points, life.Walks[i].Width, new[] { -WalkLateral, 0f, WalkLateral }, lines);
-                bad += Check(art, lanes, "kids' pavement", life.KidTrack, null, new[] { -KidHalfWidth, -KidHalfWidth * .5f, 0f, KidHalfWidth * .5f, KidHalfWidth }, lines);
+                bad += Check(art, lanes, "kids' run", life.KidTrack, null, new[] { -KidHalfWidth, -KidHalfWidth * .5f, 0f, KidHalfWidth * .5f, KidHalfWidth }, lines);
                 bad += CheckSeat(art, life.BeggarSeat, lines);
                 report.AppendLine($"Sidewalk: {looks.Count} people ({cast}), {life.Walks.Length} routes, {life.Watches.Length} watch spots, " +
-                                  $"kids' pavement {Length(life.KidTrack):F1} m, beggar at {life.BeggarSeat:F2}; {bad} failing samples.");
+                                  $"kids' run {Length(life.KidTrack):F1} m, beggar at {life.BeggarSeat:F2}; {bad} failing samples.");
                 report.Append(lines);
             }
         }
@@ -463,11 +521,11 @@ namespace TumbangPreso.EditorTools.MapKit
         [Serializable] private sealed class LayoutAnchor { public string name; public float[] origin, min, max; }
         private const string LayoutPath = "Assets/TumbangPreso/Art/IlalimRebuild/ilalim_layout.json";
 
-        /// <summary>The footprints (x, z) of every prop standing on or beside the court's pavements
-        /// (the layout's anchors that reach below 1.5 m within 6.5 to 12.5 m of the centre line
-        /// and 19 m of the middle): the pisonet terminals, chairs and cord, the pares cart, its
-        /// A-board, stools and gas tank, the overclock pad, the bridge hoop, the three stalls, the
-        /// crates, chairs, bench, bin and drum. Every route keeps <see cref="PropClear"/> from them.</summary>
+        /// <summary>The footprints (x, z; game frame, as the export writes them) of every prop
+        /// standing in the play area or within 1.5 m of it (the layout's anchors that reach below
+        /// 1.5 m, Blender height): the two stalls, the bench, chair, crates, drum and hoop in the
+        /// lot, and whatever the kit stands on Taft's pavements. Every route keeps
+        /// <see cref="PropClear"/> from them.</summary>
         internal static List<(string name, Rect rect)> CourtProps()
         {
             var list = new List<(string, Rect)>();
@@ -476,11 +534,11 @@ namespace TumbangPreso.EditorTools.MapKit
             foreach (var a in file?.anchors ?? new LayoutAnchor[0])
             {
                 if (a?.min == null || a.max == null || a.min.Length < 3 || a.max.Length < 3) continue;
-                if (a.min[1] > 1.5f || a.max[1] < .02f) continue;
-                if (a.max[2] < -19f || a.min[2] > 19f) continue;
-                float near = Mathf.Min(Mathf.Abs(a.min[0]), Mathf.Abs(a.max[0])), far = Mathf.Max(Mathf.Abs(a.min[0]), Mathf.Abs(a.max[0]));
-                if (a.min[0] < 0f && a.max[0] > 0f) near = 0f;
-                if (far < 6.5f || near > 12.5f) continue;
+                if (a.min[1] > H(1.5f) || a.max[1] < H(.02f)) continue;
+                if (a.max[0] < IlalimFrame.PlayMinX - 1.5f || a.min[0] > IlalimFrame.PlayMaxX + 1.5f) continue;
+                if (a.max[2] < IlalimFrame.PlayMinZ - 1.5f || a.min[2] > IlalimFrame.PlayMaxZ + 1.5f) continue;
+                // A prop, not a building: nothing 12 m across is walked round by its footprint.
+                if (a.max[0] - a.min[0] > 12f || a.max[2] - a.min[2] > 12f) continue;
                 list.Add((a.name, Rect.MinMaxRect(a.min[0], a.min[2], a.max[0], a.max[2])));
             }
             return list;
@@ -493,10 +551,30 @@ namespace TumbangPreso.EditorTools.MapKit
             return Mathf.Sqrt(dx * dx + dz * dz);
         }
 
-        /// <summary>On the court's kerb or in the chalk box: never. On the court's pavements: fine.</summary>
-        internal static bool OnKerb(Vector3 p) => Mathf.Abs(p.z) < PlayZ && Mathf.Abs(p.x) < KerbX && Mathf.Abs(p.x) >= BoxX;
-        internal static bool InBox(Vector3 p) => Mathf.Abs(p.x) < BoxX && Mathf.Abs(p.z) < BoxZ;
-        internal static bool OnCourtPavement(Vector3 p) => Mathf.Abs(p.x) < PlayX && Mathf.Abs(p.z) < PlayZ && !InBox(p);
+        // All in the GAME frame (the people, the art and the anchors are measured there).
+        /// <summary>In the chalk box, or anywhere in the keep-clear square round it: never.</summary>
+        internal static bool InBox(Vector3 p) => Mathf.Abs(p.x) < Box && Mathf.Abs(p.z) < Box;
+        internal static bool InKeepClear(Vector3 p) => IlalimLifeAuthor.InKeepClear(p);
+        /// <summary>On Taft's carriageway or its kerb stones (the road is live): never.</summary>
+        internal static bool OnRoad(Vector3 p) => Mathf.Abs(p.x - IlalimFrame.RoadX) < KerbX;
+        /// <summary>East of Taft, the shop pavement: never (owner 2026-10-04: "they wont be visible").</summary>
+        internal static bool OnShopSide(Vector3 p) => p.x - IlalimFrame.RoadX >= KerbX;
+        /// <summary>Where a player may go (the lot, Taft and its pavements): walked, and counted.</summary>
+        internal static bool InPlayArea(Vector3 p)
+            => p.x > IlalimFrame.PlayMinX && p.x < IlalimFrame.PlayMaxX && p.z > IlalimFrame.PlayMinZ && p.z < IlalimFrame.PlayMaxZ;
+        /// <summary>The flat distance to the nearest of the lot's fences.</summary>
+        internal static float FenceGap(Vector3 p)
+        {
+            var q = new Vector2(p.x + IlalimFrame.OriginX, p.z + IlalimFrame.OriginZ);
+            float best = float.MaxValue;
+            foreach (var (a, b) in Fences)
+            {
+                var ab = b - a;
+                float t = Mathf.Clamp01(Vector2.Dot(q - a, ab) / ab.sqrMagnitude);
+                best = Mathf.Min(best, Vector2.Distance(q, a + ab * t));
+            }
+            return best;
+        }
 
         // ------------------------------------------------------------------ measuring the art
 
@@ -533,17 +611,18 @@ namespace TumbangPreso.EditorTools.MapKit
                 var r = f.GetComponent<Renderer>();
                 if (f.sharedMesh == null || r == null) return;
                 var b = r.bounds;
-                if (new Vector2(b.center.x, b.center.z).magnitude - Mathf.Max(b.extents.x, b.extents.z) > 70f) return;
+                // From the can: the routes' far ends are 62 m out (the west pavement at Blender z -46).
+                if (new Vector2(b.center.x, b.center.z).magnitude - Mathf.Max(b.extents.x, b.extents.z) > 90f) return;
                 // Only low things block by their whole footprint (a bench, a crate, a planter); a tall
                 // one (a pole with its arms, a shelter with its roof, a tree with its crown) blocks by
                 // its surface, which the capsule below meets.
-                if (footprints && b.min.y < 1f && b.max.y > .3f && b.max.y < 2.4f && b.size.x < 12f && b.size.z < 12f) Footprints.Add((b, f.name));
+                if (footprints && b.min.y < H(1f) && b.max.y > H(.3f) && b.max.y < H(2.4f) && b.size.x < 12f && b.size.z < 12f) Footprints.Add((b, f.name));
                 var c = f.gameObject.AddComponent<MeshCollider>();
                 c.sharedMesh = f.sharedMesh;
                 _made.Add(c); into.Add(c);
             }
 
-            /// <summary>The ground's height under (x, z): the first of OUR hits from 2.2 m down.</summary>
+            /// <summary>The ground's height under (x, z), game frame: the first of OUR hits from 2.2 m down.</summary>
             public Vector3 Ground3(Vector2 p, out string surface, out string blocker)
             {
                 surface = null; blocker = null;
@@ -551,9 +630,10 @@ namespace TumbangPreso.EditorTools.MapKit
                 foreach (var h in hits.OrderBy(h => h.distance))
                 {
                     if (GroundColliders.Contains(h.collider)) { surface = h.collider.name; return h.point; }
-                    if (Solids.Contains(h.collider) && h.point.y > .3f) { blocker = h.collider.name; return new Vector3(p.x, h.point.y, p.y); }
+                    if (Solids.Contains(h.collider) && h.point.y > H(.3f)) { blocker = h.collider.name; return new Vector3(p.x, h.point.y, p.y); }
                 }
-                return new Vector3(p.x, .212f, p.y);
+                // No ground of ours: the pavement's top (0.212, the contract).
+                return new Vector3(p.x, H(.212f), p.y);
             }
 
             public Vector3 Ground(Vector2 p) => Ground3(p, out _, out _);
@@ -578,8 +658,8 @@ namespace TumbangPreso.EditorTools.MapKit
         {
             var causes = new Dictionary<string, (int n, Vector3 first)>();
             var surfaces = new Dictionary<string, int>();
-            float nearestLane = float.MaxValue, nearestPlay = float.MaxValue, nearestProp = float.MaxValue;
-            int onCourt = 0;
+            float nearestLane = float.MaxValue, nearestCourt = float.MaxValue, nearestProp = float.MaxValue, nearestFence = float.MaxValue;
+            int inPlay = 0;
             string nearestPropName = "";
             var props = CourtProps();
             int samples = 0;
@@ -614,17 +694,22 @@ namespace TumbangPreso.EditorTools.MapKit
                         var at = new Vector3(p.x, ground.y, p.z);
                         string touch = art.Touches(at, .22f);
                         if (touch != null) Fail("touches " + touch, p);
-                        // The court's pavements are walked; the chalk box and the kerb are not.
-                        if (OnCourtPavement(p)) onCourt++;
-                        if (InBox(p)) Fail("inside the chalk box", p);
-                        else if (OnKerb(p)) Fail("on the court's kerb", p);
+                        // The play area is walked; the court's keep-clear square, the road, the shop
+                        // side and the fences' lines are not.
+                        if (InPlayArea(p)) inPlay++;
+                        if (InKeepClear(p)) Fail(InBox(p) ? "inside the chalk box" : "inside the court's keep-clear square", p);
+                        if (OnRoad(p)) Fail("on Taft's carriageway or kerb", p);
+                        else if (OnShopSide(p)) Fail("on the shop side of Taft", p);
+                        float fence = FenceGap(p);
+                        nearestFence = Mathf.Min(nearestFence, fence);
+                        if (fence < FenceClear) Fail($"within {FenceClear} m of the lot's fence", p);
                         foreach (var (prop, rect) in props)
                         {
                             float gap = Gap(rect, p);
                             if (gap < nearestProp) { nearestProp = gap; nearestPropName = prop; }
                             if (gap < PropClear) Fail($"within {PropClear} m of {prop}", p);
                         }
-                        nearestPlay = Mathf.Min(nearestPlay, BoxBy(p));
+                        nearestCourt = Mathf.Min(nearestCourt, KeepBy(p));
                         foreach (var lane in lanes)
                         {
                             float dl = DistanceToLine(lane, p);
@@ -636,20 +721,20 @@ namespace TumbangPreso.EditorTools.MapKit
             }
             int bad = causes.Values.Sum(v => v.n);
             log.AppendLine(FormattableString.Invariant($"  {name}: {Length(points):F1} m, {samples} samples, {bad} failing; ground {string.Join(", ", surfaces.Select(kv => $"{kv.Key} {kv.Value}"))}; ") +
-                           FormattableString.Invariant($"nearest traffic lane {nearestLane:F1} m, {nearestPlay:F2} m outside the chalk box at the closest, ") +
-                           FormattableString.Invariant($"{onCourt} samples on the court's pavements, nearest gameplay prop {(nearestProp == float.MaxValue ? -1f : nearestProp):F2} m ({nearestPropName})."));
+                           FormattableString.Invariant($"nearest traffic lane {nearestLane:F1} m, {nearestCourt:F2} m outside the court's keep-clear square at the closest, nearest fence {nearestFence:F2} m, ") +
+                           FormattableString.Invariant($"{inPlay} samples in the play area, nearest gameplay prop {(nearestProp == float.MaxValue ? -1f : nearestProp):F2} m ({nearestPropName})."));
             foreach (var kv in causes.OrderByDescending(kv => kv.Value.n))
                 log.AppendLine(FormattableString.Invariant($"    FAIL {kv.Key}: {kv.Value.n} samples, first at ({kv.Value.first.x:F2}, {kv.Value.first.z:F2})"));
             return bad;
         }
 
-        private static float OutsideBy(Vector3 p) => Mathf.Max(Mathf.Abs(p.x) - PlayX, Mathf.Abs(p.z) - PlayZ);
-        /// <summary>How far outside the chalk box (negative inside).</summary>
-        private static float BoxBy(Vector3 p) => Mathf.Max(Mathf.Abs(p.x) - BoxX, Mathf.Abs(p.z) - BoxZ);
+        /// <summary>How far outside the court's keep-clear square (negative inside), game frame.</summary>
+        private static float KeepBy(Vector3 p) => Mathf.Max(Mathf.Abs(p.x), Mathf.Abs(p.z)) - IlalimLifeAuthor.KeepClear;
 
-        /// <summary>The beggar's spot: clear ground for his seat and carton, outside the play area,
-        /// and the nearest spot a player can stand (inside the walls, clear of the props'
-        /// colliders) within his reach.</summary>
+        /// <summary>The beggar's spot: clear ground for his seat and carton, outside the court's
+        /// keep-clear square, off the road and clear of the fence's end post, and the nearest spot
+        /// a player can stand (inside the play limits, clear of the props' colliders) within his
+        /// reach.</summary>
         private static int CheckSeat(ArtQuery art, Vector3 seat, StringBuilder log)
         {
             int bad = 0;
@@ -662,14 +747,16 @@ namespace TumbangPreso.EditorTools.MapKit
                 string touch = art.Touches(p, .2f);
                 if (touch != null) { bad++; log.AppendLine($"    FAIL the beggar's spot {p:F2} touches {touch}"); }
             }
-            if (InBox(seat) || OnKerb(seat)) { bad++; log.AppendLine("    FAIL the beggar sits in the chalk box or on the kerb"); }
+            if (InKeepClear(seat) || OnRoad(seat) || OnShopSide(seat)) { bad++; log.AppendLine("    FAIL the beggar sits in the court's keep-clear square, on the road or on the shop side"); }
+            if (FenceGap(seat) < PropClear + .3f) { bad++; log.AppendLine(FormattableString.Invariant($"    FAIL the beggar sits {FenceGap(seat):F2} m from the lot's fence")); }
             foreach (var (prop, rect) in CourtProps())
                 if (Gap(rect, seat) < PropClear + .3f) { bad++; log.AppendLine($"    FAIL the beggar sits within {PropClear + .3f} m of {prop}"); }
             Vector3 best = Vector3.zero; float bestDistance = float.MaxValue;
-            for (float x = -10.65f; x <= 10.65f; x += .1f)
-                for (float z = -16.15f; z <= 16.15f; z += .1f)
+            // Round his spot, inside the play limits by a body's half width, at his pavement's height.
+            for (float x = Mathf.Max(seat.x - Reach - 1f, IlalimFrame.PlayMinX + .35f); x <= Mathf.Min(seat.x + Reach + 1f, IlalimFrame.PlayMaxX - .35f); x += .1f)
+                for (float z = Mathf.Max(seat.z - Reach - 1f, IlalimFrame.PlayMinZ + .35f); z <= Mathf.Min(seat.z + Reach + 1f, IlalimFrame.PlayMaxZ - .35f); z += .1f)
                 {
-                    var q = new Vector3(x, .212f, z);
+                    var q = new Vector3(x, seat.y, z);
                     float dq = Vector2.Distance(new Vector2(q.x, q.z), new Vector2(seat.x, seat.z));
                     if (dq >= bestDistance || dq > Reach + 1f) continue;
                     bool blocked = false;
@@ -727,13 +814,15 @@ namespace TumbangPreso.EditorTools.MapKit
 
         /// <summary>Opens the saved scene (never saves it) and drives SidewalkLife.Simulate and the
         /// traffic's own step methods at 20 steps a second for 300 simulated seconds. It measures,
-        /// per person: time shown, steps on the court's pavements (allowed since 2026-10-01), any
-        /// step in the chalk box, on the court's kerb or within 0.5 m of a gameplay prop (never),
-        /// any step more than 0.5 m off an authored route (1 m on the kids' pavement, the seat
-        /// excepted), and any overlap with a vehicle's rectangle (with 0.3 m to spare). The walks:
+        /// per person: time shown, steps in the play area (allowed since 2026-10-01), any step in
+        /// the court's keep-clear square, on Taft's carriageway or kerb or on its shop side, or
+        /// within 0.5 m of a gameplay prop (never), any step more than 0.5 m off an authored route
+        /// (1 m on the kids' run, the seat excepted), and any overlap with a vehicle's rectangle
+        /// (with 0.3 m to spare; the road is live since 2026-10-04, so this is the check that
+        /// nobody of the life is ever where a car is). The walks:
         /// the planted sole's slip (the STANCE leg's sole, see SidewalkLife.PersonSole), the swing
         /// sole's clearance, and the arms' swing against the legs. It gives the beggar a coin from
-        /// a player spot at the wall the first time he sits (and measures his seat and his wave),
+        /// a player spot on the pavement beside him the first time he sits (and measures his seat and his wave),
         /// sends a can-down moment while somebody watches, and renders each event with the match look.</summary>
         public static void Probe(string folder, string scenePath) => Probe(folder, scenePath, null, null, "sidewalk_probe.txt");
 
@@ -798,7 +887,8 @@ namespace TumbangPreso.EditorTools.MapKit
             bool donated = false, reacted = false;
             float kidsAt = -1f, beggarThanksAt = -1f;
             var shots = new HashSet<string>();
-            var playerSpot = new Vector3(-9.6f, .212f, -16.15f);
+            // A player on the west pavement beside him, 1.4 m from his spot (Blender frame, the pavement's top).
+            var playerSpot = IlalimFrame.W(-8.6f, .212f, 5.6f);
             Shooter shooter = null;
             void Take(string name, Vector3 eye, Vector3 target)
             {
@@ -860,16 +950,16 @@ namespace TumbangPreso.EditorTools.MapKit
                             float hang = life.PersonArmHang(i);
                             if (!float.IsNaN(hang)) { hangSum[i] += hang; hangHigh[i] = Mathf.Max(hangHigh[i], hang); hangN[i]++; }
                         }
-                        if (OnCourtPavement(p)) inPlay[i]++;
-                        if (InBox(p)) inBox[i]++;
-                        if (OnKerb(p)) onKerb[i]++;
+                        if (InPlayArea(p)) inPlay[i]++;
+                        if (InKeepClear(p)) inBox[i]++;
+                        if (OnRoad(p) || OnShopSide(p)) onKerb[i]++;
                         foreach (var (_, rect) in props)
                         {
                             float gap = Gap(rect, p);
                             closestProp[i] = Mathf.Min(closestProp[i], gap);
                             if (gap < PropClear) nearProp[i]++;
                         }
-                        closestPlay[i] = Mathf.Min(closestPlay[i], BoxBy(p));
+                        closestPlay[i] = Mathf.Min(closestPlay[i], KeepBy(p));
                         bool kid = life.PersonRole(i) == "kid";
                         float off = kid ? DistanceToLine(life.KidTrack, p) : lines.Min(l => DistanceToLine(l, p));
                         bool seat = Vector2.Distance(new Vector2(p.x, p.z), new Vector2(life.BeggarSeat.x, life.BeggarSeat.z)) < .7f;
@@ -924,18 +1014,20 @@ namespace TumbangPreso.EditorTools.MapKit
                     if (kidsAt > 0f && t >= kidsAt + 14f && !shots.Contains("kids"))
                     {
                         shots.Add("kids");
-                        Take("sidewalk_kids_court", new Vector3(5.8f, 1.55f, -15.8f), new Vector3(8.5f, .7f, -27f));
-                        Take("sidewalk_kids_close", new Vector3(5.2f, 2.2f, -22f), new Vector3(8.6f, .5f, -28.5f));
+                        // From the chalk box's east edge at eye height (the lot is Blender y 0.24), and from the frontage.
+                        Take("sidewalk_kids_court", IlalimFrame.W(-16.5f, 1.79f, 14.2f), IlalimFrame.W(-12.6f, .94f, 13f));
+                        Take("sidewalk_kids_close", IlalimFrame.W(-10.2f, 2.4f, 11.5f), IlalimFrame.W(-12.6f, .74f, 15f));
                     }
                     for (int i = 0; i < n; i++)
                     {
                         if (!life.PersonShown(i)) continue;
                         string role = life.PersonRole(i), state = life.PersonState(i);
                         var p = life.PersonPosition(i);
-                        if (role == "taho" && state == "calling" && p.z > -30f && !shots.Contains("taho"))
+                        // His call at the frontage (north of the lot's south fence), not one on his way up.
+                        if (role == "taho" && state == "calling" && p.z + IlalimFrame.OriginZ > IlalimLifeAuthor.LotSouth && !shots.Contains("taho"))
                         {
                             shots.Add("taho");
-                            Take("sidewalk_taho_court", new Vector3(-6f, 1.55f, -15.8f), p + Vector3.up * .9f);
+                            Take("sidewalk_taho_court", IlalimFrame.W(-16.5f, 1.79f, 12f), p + Vector3.up * .9f);
                             Take("sidewalk_taho_close", p + new Vector3(2.4f, 1.3f, 2.2f), p + Vector3.up * .7f);
                             // Review-only: his right side (the pole's) and his front, low.
                             Take("check_taho_side", p + new Vector3(2.6f, .9f, 0f), p + Vector3.up * .7f);
@@ -945,8 +1037,9 @@ namespace TumbangPreso.EditorTools.MapKit
                         if (role == "spectator" && state.StartsWith("watching") && !shots.Contains("spectator " + state) && shots.Count(x => x.StartsWith("spectator")) < 3)
                         {
                             shots.Add("spectator " + state);
-                            var eye = new Vector3(Mathf.Clamp(p.x * .45f, -6f, 6f), 1.55f, Mathf.Clamp(p.z * .55f, -12f, 12f));
-                            string where = state.Contains("PGH") ? "pgh" : Mathf.Abs(p.z) < PlayZ ? (p.x < 0f ? "west" : "east") : p.z > 0f ? (p.x < 0f ? "nw" : "ne") : "s";
+                            // From inside the chalk box (the game frame's origin is the can), toward the watcher.
+                            var eye = new Vector3(Mathf.Clamp(p.x * .45f, -6f, 6f), 1.55f, Mathf.Clamp(p.z * .45f, -6f, 6f));
+                            string where = state.Contains("fruit") ? "fruit_stall" : state.Contains("corner") ? "lot_ne" : p.z > 0f ? "frontage_n" : "frontage_s";
                             Take("sidewalk_watch_" + where, eye, p + Vector3.up * 1f);
                         }
                     }
@@ -956,10 +1049,10 @@ namespace TumbangPreso.EditorTools.MapKit
 
             sb.AppendLine($"People: {n}. Steps: 6000 x 0.05 s.");
             int totalPlay = inPlay.Sum(), totalBox = inBox.Sum(), totalKerb = onKerb.Sum(), totalProp = nearProp.Sum(), totalOff = offRoute.Sum(), totalCar = hitTraffic.Sum();
-            sb.AppendLine($"Steps on the court's pavements (allowed): {totalPlay}. In the chalk box: {totalBox}. On the court's kerb: {totalKerb}. Within {PropClear} m of a gameplay prop: {totalProp}. Off an authored route: {totalOff}. Within 0.3 m of a vehicle: {totalCar}.");
+            sb.AppendLine($"Steps in the play area (allowed): {totalPlay}. In the court's keep-clear square: {totalBox}. On Taft's road, kerb or shop side: {totalKerb}. Within {PropClear} m of a gameplay prop: {totalProp}. Off an authored route: {totalOff}. Within 0.3 m of a vehicle: {totalCar}.");
             for (int i = 0; i < n; i++)
-                sb.AppendLine(FormattableString.Invariant($"  {life.PersonName(i),-12} {life.PersonRole(i),-9} shown {shown[i] * .05f,6:F1} s (first at {firstShown[i]:F1} s), court pavement {inPlay[i]}, box {inBox[i]}, kerb {onKerb[i]}, near a prop {nearProp[i]}, off-route {offRoute[i]}, ") +
-                              FormattableString.Invariant($"nearest the chalk box {(closestPlay[i] == float.MaxValue ? 0f : closestPlay[i]):F2} m outside, nearest prop {(closestProp[i] == float.MaxValue ? -1f : closestProp[i]):F2} m, nearest vehicle {(closestCar[i] == float.MaxValue ? -1f : closestCar[i]):F2} m; states: {string.Join(", ", states[i])}"));
+                sb.AppendLine(FormattableString.Invariant($"  {life.PersonName(i),-12} {life.PersonRole(i),-9} shown {shown[i] * .05f,6:F1} s (first at {firstShown[i]:F1} s), play area {inPlay[i]}, keep-clear {inBox[i]}, road or shop side {onKerb[i]}, near a prop {nearProp[i]}, off-route {offRoute[i]}, ") +
+                              FormattableString.Invariant($"nearest the keep-clear square {(closestPlay[i] == float.MaxValue ? 0f : closestPlay[i]):F2} m outside, nearest prop {(closestProp[i] == float.MaxValue ? -1f : closestProp[i]):F2} m, nearest vehicle {(closestCar[i] == float.MaxValue ? -1f : closestCar[i]):F2} m; states: {string.Join(", ", states[i])}"));
             sb.AppendLine("Walks (the PLANTED sole while walking: the stance leg's, by the phase, not the lower one; its mean ground speed along the body's travel and its mean speed at all, against the body's, and its height over the pavement; a sole that does not slide reads about 0. Then the swinging sole's height, and the arms: each arm's range forward of hanging, and the left arm against the left leg, where opposite phase reads near -1):");
             for (int i = 0; i < n; i++)
             {

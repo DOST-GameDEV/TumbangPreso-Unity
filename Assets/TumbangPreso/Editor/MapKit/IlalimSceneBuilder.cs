@@ -86,7 +86,8 @@ namespace TumbangPreso.EditorTools.MapKit
         private const string LogFolder = "Logs/ilalim-unity";
 
         // ------------------------------------------------------------------ layout
-        [Serializable] private class GameplaySpec { public float box, kerbInner, kerbTop, pavementOuter, pavementTop, wallZ, soffit, deckTop, deckWidth, railHead, trackX, pierX, pierHalf; }
+        [Serializable] private class GameplaySpec { public float box, kerbInner, kerbTop, pavementOuter, pavementTop, wallZ, soffit, deckTop, deckWidth, railHead, trackX, pierX, pierHalf,
+                roadTop, originX, originY, originZ, roadX, roadZ, playMinX, playMaxX, playMinZ, playMaxZ; }
         [Serializable] private class SunSpec { public float[] forward, color, colorLinear; public float blenderEnergy, angleDeg; }
         [Serializable] private class SkySpec { public float[] color; public float strength; }
         [Serializable] private class HazeSpec { public float[] color, colorLinear; public float start, depth, cap; }
@@ -233,11 +234,13 @@ namespace TumbangPreso.EditorTools.MapKit
             // Jump pads on the pavements, clear of awnings, poles, props and canopies: the only way
             // to see the consist, which the deck hides from the ground (owner, 2026-10-04).
             var pads = Group(dressing, "JumpPads");
-            foreach (var at in new[] { new Vector2(8.6f, 2f), new Vector2(8.6f, -13f), new Vector2(-8.6f, -4f), new Vector2(-8.6f, 8f) })
+            // Blender-frame spots (IlalimFrame): two on the shop pavement, one on the west pavement
+            // and one in the lot's north-east corner, all inside the play area.
+            foreach (var at in new[] { new Vector3(8.6f, 0.212f, 8f), new Vector3(8.6f, 0.212f, 20f), new Vector3(-8.6f, 0.212f, 12f), new Vector3(-13f, 0.24f, 21f) })
             {
-                var pad = new GameObject($"JumpPad_{at.x:F0}_{at.y:F0}");
+                var pad = new GameObject($"JumpPad_{at.x:F0}_{at.z:F0}");
                 pad.transform.SetParent(pads, false);
-                pad.transform.position = new Vector3(at.x, g.pavementTop, at.y);
+                pad.transform.position = IlalimFrame.W(at);
                 pad.AddComponent<JumpPad>();
             }
             Lighting(root, layout);
@@ -511,11 +514,19 @@ namespace TumbangPreso.EditorTools.MapKit
 
         // ------------------------------------------------------------------ gameplay
 
-        /// <summary>IlalimNgTulayBuilder.BuildGameplayRig and BuildBounds, from the same contract
-        /// numbers: the match installer, the kill plane, the spawn markers (derived from
-        /// `Confinement`, averaged on the can for the map preview), the floor, kerbs and pavements
-        /// matching the drawn heights, and thin walls with their INNER faces on |x| = 11 and
-        /// |z| = 16.5 (`MatchInstaller.MeasurePlayableBounds` reads the faces).</summary>
+        /// <summary>The match installer, the kill plane, the spawn markers (derived from
+        /// `Confinement`, averaged on the can for the map preview) and the Bounds.
+        ///
+        /// ⚠️ THE COURT IS IN THE LOT NOW, AND THE WORLD MOVED TO PUT IT AT THE ORIGIN (IlalimFrame;
+        /// owner, 2026-10-04: "can we move the play area to this open space?"). So the can, the box
+        /// and the spawns are where they always were, about (0, 0, 0) on y = 0, and it is the
+        /// street that sits off to the east: Taft's centreline is x = `roadX`, its asphalt
+        /// `roadTop` below the lot. A player may cross it to the shop fronts ("make it so the
+        /// players can still cross over"), so the floors are the lot, the two pavements, the two
+        /// kerbs and the road, and the four thin walls stand with their INNER faces on the play
+        /// rectangle (`MatchInstaller.MeasurePlayableBounds` reads the faces, each side its own):
+        /// the lot's west fence, the shop fronts, the lot's south fence line and the Padre Faura
+        /// fence line, the last two carried straight across the road.</summary>
         private static void Gameplay(Transform root, GameplaySpec g)
         {
             Group(root, "~Match").gameObject.AddComponent<MatchInstaller>();
@@ -533,24 +544,33 @@ namespace TumbangPreso.EditorTools.MapKit
             Group(spawns, "Spawn2").localPosition = new Vector3(0, 0.1f, -ring);
             Group(spawns, "Spawn3").localPosition = new Vector3(3f, 0.1f, -ring);
 
-            const float backlotX = 20f, corridorZ = 24f, wallThickness = 0.4f;
+            const float margin = 3f, wallThickness = 0.4f, wallHeight = 6f;
+            float x0 = g.playMinX - margin, x1 = g.playMaxX + margin, z0 = g.playMinZ - margin, z1 = g.playMaxZ + margin;
+            float zc = (z0 + z1) * 0.5f, zs = z1 - z0;
             float roadHalf = g.box, kerbHalf = (g.box - g.kerbInner) * 0.5f;
+            float lotEdge = g.roadX - g.pavementOuter;      // where the lot meets the west pavement
             var bounds = Group(root, "Bounds");
+            // The road's level under everything, so no seam between the pieces is a hole.
             var floor = bounds.gameObject.AddComponent<BoxCollider>();
-            floor.center = new Vector3(0, -0.25f, 0);
-            floor.size = new Vector3(backlotX * 2, 0.5f, corridorZ * 2);
+            floor.center = new Vector3((x0 + x1) * 0.5f, g.roadTop - 0.25f, zc);
+            floor.size = new Vector3(x1 - x0, 0.5f, zs);
+            // The lot: the court's own ground, y = 0, a small step above the pavement.
+            Box(bounds, "Lot", new Vector3((x0 + lotEdge) * 0.5f, -0.2f, zc), new Vector3(lotEdge - x0, 0.4f, zs));
             foreach (int side in new[] { -1, 1 })
             {
-                Box(bounds, side < 0 ? "PavementWest" : "PavementEast", new Vector3(side * (roadHalf + g.pavementOuter) * 0.5f, g.pavementTop - 0.25f, 0),
-                    new Vector3(g.pavementOuter - roadHalf, 0.5f, corridorZ * 2));
-                Box(bounds, side < 0 ? "KerbWest" : "KerbEast", new Vector3(side * (roadHalf - kerbHalf), g.kerbTop - 0.25f, 0),
-                    new Vector3(kerbHalf * 2, 0.5f, corridorZ * 2));
+                Box(bounds, side < 0 ? "PavementWest" : "PavementEast",
+                    new Vector3(g.roadX + side * (roadHalf + g.pavementOuter) * 0.5f, g.pavementTop - 0.2f, zc),
+                    new Vector3(g.pavementOuter - roadHalf, 0.4f, zs));
+                Box(bounds, side < 0 ? "KerbWest" : "KerbEast",
+                    new Vector3(g.roadX + side * (roadHalf - kerbHalf), g.kerbTop - 0.2f, zc),
+                    new Vector3(kerbHalf * 2, 0.4f, zs));
             }
-            float wallX = g.pavementOuter + wallThickness * 0.5f, wallZ = g.wallZ + wallThickness * 0.5f;
-            Box(bounds, "WallWest", new Vector3(-wallX, 3f, 0), new Vector3(wallThickness, 6f, corridorZ * 2));
-            Box(bounds, "WallEast", new Vector3(wallX, 3f, 0), new Vector3(wallThickness, 6f, corridorZ * 2));
-            Box(bounds, "WallNorth", new Vector3(0, 3f, wallZ), new Vector3(g.pavementOuter * 2, 6f, wallThickness));
-            Box(bounds, "WallSouth", new Vector3(0, 3f, -wallZ), new Vector3(g.pavementOuter * 2, 6f, wallThickness));
+            float wy = wallHeight * 0.5f + g.roadTop;
+            Box(bounds, "WallWest", new Vector3(g.playMinX - wallThickness * 0.5f, wy, zc), new Vector3(wallThickness, wallHeight, zs));
+            Box(bounds, "WallEast", new Vector3(g.playMaxX + wallThickness * 0.5f, wy, zc), new Vector3(wallThickness, wallHeight, zs));
+            Box(bounds, "WallNorth", new Vector3((x0 + x1) * 0.5f, wy, g.playMaxZ + wallThickness * 0.5f), new Vector3(x1 - x0, wallHeight, wallThickness));
+            Box(bounds, "WallSouth", new Vector3((x0 + x1) * 0.5f, wy, g.playMinZ - wallThickness * 0.5f), new Vector3(x1 - x0, wallHeight, wallThickness));
+            Debug.Log($"{Tag}Bounds: play x {g.playMinX}..{g.playMaxX}, z {g.playMinZ}..{g.playMaxZ}; Taft's centreline x {g.roadX}, road y {g.roadTop}, lot edge x {lotEdge}.");
         }
 
         /// <summary>The guideway's gameplay half: the pier legs of the rows inside the corridor
@@ -564,24 +584,27 @@ namespace TumbangPreso.EditorTools.MapKit
             int legs = 0;
             foreach (var p in piers ?? Array.Empty<Anchor>())
             {
+                // The pier rows a body can reach: those beside the play rectangle's stretch of road.
                 float z = p.origin[2];
-                if (Mathf.Abs(z) > 24f) continue;
+                if (z < g.playMinZ - 4f || z > g.playMaxZ + 4f) continue;
+                float alongRoad = z - g.roadZ;      // the row's place along Taft, as the kits number it
                 foreach (int side in new[] { -1, 1 })
                 {
-                    string name = $"LrtPillar_{(z > 0 ? "North" : "South")}{(side < 0 ? "West" : "East")}_{Mathf.Abs(z):F0}";
+                    string name = $"LrtPillar_{(alongRoad > 0 ? "North" : "South")}{(side < 0 ? "West" : "East")}_{Mathf.Abs(alongRoad):F0}";
                     var leg = Group(tulay, name);
-                    leg.position = new Vector3(side * g.pierX, 0, z);
+                    leg.position = new Vector3(g.roadX + side * g.pierX, g.roadTop, z);
                     var box = leg.gameObject.AddComponent<BoxCollider>();
-                    box.center = new Vector3(0, g.soffit * 0.5f, 0);
-                    box.size = new Vector3(g.pierHalf * 2, g.soffit, g.pierHalf * 2);
+                    float height = g.soffit - g.roadTop;
+                    box.center = new Vector3(0, height * 0.5f, 0);
+                    box.size = new Vector3(g.pierHalf * 2, height, g.pierHalf * 2);
                     HazardVolume.Attach(leg.gameObject, g.pierHalf + 0.4f, -1);
                     legs++;
                 }
             }
             var deck = Group(tulay, "GuidewayDeck").gameObject.AddComponent<BoxCollider>();
-            deck.center = new Vector3(0, (g.soffit + g.deckTop) * 0.5f, 0);
+            deck.center = new Vector3(g.roadX, (g.soffit + g.deckTop) * 0.5f, g.roadZ);
             deck.size = new Vector3(g.deckWidth, g.deckTop - g.soffit, 48f);
-            Debug.Log($"{Tag}Tulay: {legs} pier legs with colliders and HazardVolume, deck collider {deck.size}.");
+            Debug.Log($"{Tag}Tulay: {legs} pier legs with colliders and HazardVolume, deck collider {deck.size} at {deck.center}.");
         }
 
         /// <summary>The train: the Blender consist at scale 1 under one root the flyby drives. The
@@ -599,7 +622,7 @@ namespace TumbangPreso.EditorTools.MapKit
             // The stations stand at z +/-94.03..185.2 (author_ilalim_stations.py): the consist waits
             // at a platform's middle and shuttles between the two (LrtTrainFlyby.Shuttle).
             const float stationZ = 139.6f;
-            go.transform.position = new Vector3(Mathf.Abs(trackX), g.railHead, -stationZ);
+            go.transform.position = new Vector3(g.roadX + Mathf.Abs(trackX), g.railHead, g.roadZ - stationZ);
             var flyby = go.AddComponent<LrtTrainFlyby>();
             flyby.TrackX = trackX;
             flyby.TrackY = g.railHead;
@@ -607,6 +630,9 @@ namespace TumbangPreso.EditorTools.MapKit
             flyby.Interval = 150f;
             flyby.InitialDelay = 6f;
             flyby.Shuttle = true;
+            // The line runs along Taft, which is no longer through the origin (IlalimFrame).
+            flyby.CentreX = g.roadX;
+            flyby.CentreZ = g.roadZ;
             flyby.StartZ = -stationZ;
             flyby.EndZ = stationZ;
             flyby.OverheadHalfZ = g.wallZ + IlalimNgTulayBuilder.TrainConsistHalfLength;
@@ -875,8 +901,8 @@ namespace TumbangPreso.EditorTools.MapKit
             int v = 1; while (Directory.Exists($"{LogFolder}/v{v}")) v++; return $"{LogFolder}/v{v}";
         }
 
-        /// <summary>Blender (x, y, z) to Unity: (x, z, y) for this map.</summary>
-        private static Vector3 B(float x, float y, float z) => new Vector3(x, z, y);
+        /// <summary>Blender (x, y, z) to the game frame: (x, z, y), then IlalimFrame's shift.</summary>
+        private static Vector3 B(float x, float y, float z) => IlalimFrame.W(x, z, y);
 
         /// <summary>Blender's horizontal field of view for a lens on its 36 mm sensor.</summary>
         private static float Lens(float mm) => 2f * Mathf.Atan(18f / mm) * Mathf.Rad2Deg;
@@ -893,14 +919,15 @@ namespace TumbangPreso.EditorTools.MapKit
             const float eye = 95f;
             var shots = new (string name, Vector3 at, Vector3 look, float hfov, float far, bool game)[]
             {
-                ("spawn_north", B(0, -9, 1.25f), B(0, 30, 4), eye, 3000, false),
-                ("taya_south", B(0, 4, 1.25f), B(0, -30, 2), eye, 3000, false),
-                ("east_pavement_west", B(9.3f, 2, 1.46f), B(-14, -4, 3), eye, 3000, false),
-                ("west_pavement_east", B(-9.5f, -4, 1.46f), B(12, 6, 3), eye, 3000, false),
-                ("hoop_to_sarisari", B(-6, -10, 1.25f), B(15, 40, 2.6f), eye, 3000, false),
-                ("aerial_nw", B(48, -62, 52), B(-30, 30, 4), Lens(24), 3000, false),
-                ("aerial_se", B(-70, 70, 48), B(6, -6, 4), Lens(24), 3000, false),
-                ("game_spawn_north", B(0, -9, 1.25f), B(0, 30, 4), 95, 240, true),
+                ("spawn_north", B(-23, 5.2f, 1.5f), B(-23, 30, 3), eye, 3000, false),
+                ("taya_east", B(-23, 14.2f, 1.5f), B(11, 14.2f, 4), eye, 3000, false),
+                ("frontage_west", B(-9, 14, 1.7f), B(-30, 14.2f, 1.5f), eye, 3000, false),
+                ("lot_to_bridge", B(-33, 8, 1.7f), B(0, 16, 6), eye, 3000, false),
+                ("old_court_north", B(0, -9, 1.5f), B(0, 30, 4), eye, 3000, false),
+                ("east_pavement_west", B(9.3f, 12, 1.7f), B(-23, 14.2f, 1.5f), eye, 3000, false),
+                ("aerial_court", B(25, -20, 45), B(-23, 14.2f, 0), Lens(24), 3000, false),
+                ("aerial_se", B(-60, 50, 40), B(-12, 12, 2), Lens(24), 3000, false),
+                ("game_spawn_north", B(-23, 5.2f, 1.5f), B(-23, 30, 3), 95, 240, true),
             };
             foreach (bool withLook in new[] { true, false })
             {

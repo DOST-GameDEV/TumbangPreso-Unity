@@ -147,7 +147,17 @@ BAKE_SIZE = 2048
 FOOTPRINT_GROUPS = {"Props", "StreetFurniture", "StreetFences", "Trees", "StreetLife", "SariSari", "Eastside",
                     "Heritage"}
 FOOT_REACH, FOOT_CAP, GROUNDED, COMPACT = 1.2, 6.0, 1.0, 3.0
-REACH_X, REACH_Z = 11.0, 16.5
+# THE GAME'S ORIGIN, in the Blender frame (x, y, z). The kits are modelled with their origin on
+# Taft under the viaduct, where the court used to be. The owner moved the court into the campus lot
+# (2026-10-04: "can we move the play area to this open space?"), and the game's rules need the can
+# at the world origin, so the export subtracts the new court's centre from every placement,
+# collider, anchor and pier, and the lot's height (author_ilalim_street.py LOT_TOP) from every
+# height: the lot is y = 0 in the game and the can stands at (0, 0, 0).
+# Assets/TumbangPreso/Editor/MapKit/IlalimFrame.cs carries the same three numbers.
+GAME_ORIGIN = (-23.0, 14.2, 0.24)
+# Where a body can reach, in the Blender frame (x0, x1, y0, y1): the lot inside its fences, across
+# Taft, to the shop fronts. Footprint colliders are made only for what stands in here.
+REACH = (-36.0, 11.0, 2.4, 25.4)
 PROOF_MESHES = ("lrt_pier", "lrt_span_25_parapet", "tree_mango_0_leaves", "tree_lily_0", "train_body")
 
 
@@ -155,13 +165,20 @@ def log(*a):
     print(TAG, *a, flush=True)
 
 
-def unity_matrix(m):
+def unity_matrix(m, world=True):
+    """Row-major Unity matrix. A WORLD matrix is moved into the game frame (GAME_ORIGIN); a matrix
+    relative to a parent (the train's pieces) is not."""
     r = D4 @ m @ C4T
-    return [round(r[i][j], 6) for i in range(4) for j in range(4)]
+    out = [[r[i][j] for j in range(4)] for i in range(4)]
+    if world:
+        out[0][3] -= GAME_ORIGIN[0]
+        out[1][3] -= GAME_ORIGIN[2]
+        out[2][3] -= GAME_ORIGIN[1]
+    return [round(out[i][j], 6) for i in range(4) for j in range(4)]
 
 
 def game_point(v):
-    return [round(v.x, 5), round(v.z, 5), round(v.y, 5)]
+    return [round(v.x - GAME_ORIGIN[0], 5), round(v.z - GAME_ORIGIN[2], 5), round(v.y - GAME_ORIGIN[1], 5)]
 
 
 def srgb(c):
@@ -604,8 +621,8 @@ def footprint(ob, mw):
     barrier) is one box round the whole object instead, so a chair is a chair, not four legs.
     World axis-aligned boxes in the game frame: [[cx, cy, cz, sx, sy, sz], ...]."""
     corners = np.array([mw @ Vector(c) for c in ob.bound_box])
-    if corners[:, 0].min() > REACH_X or corners[:, 0].max() < -REACH_X or \
-            corners[:, 1].min() > REACH_Z or corners[:, 1].max() < -REACH_Z or corners[:, 2].min() > GROUNDED:
+    if corners[:, 0].min() > REACH[1] or corners[:, 0].max() < REACH[0] or \
+            corners[:, 1].min() > REACH[3] or corners[:, 1].max() < REACH[2] or corners[:, 2].min() > GROUNDED:
         return None
     me = ob.data
     co = np.empty(len(me.vertices) * 3, dtype=np.float64)
@@ -642,13 +659,14 @@ def _part_box(pw):
     low = pw[pw[:, 2] < base + FOOT_REACH]
     x0, y0 = low[:, 0].min(), low[:, 1].min()
     x1, y1 = low[:, 0].max(), low[:, 1].max()
-    if x0 >= REACH_X or x1 <= -REACH_X or y0 >= REACH_Z or y1 <= -REACH_Z:
+    if x0 >= REACH[1] or x1 <= REACH[0] or y0 >= REACH[3] or y1 <= REACH[2]:
         return None
     over = pw[(pw[:, 0] >= x0 - 0.05) & (pw[:, 0] <= x1 + 0.05) & (pw[:, 1] >= y0 - 0.05) & (pw[:, 1] <= y1 + 0.05)]
     top = min(over[:, 2].max(), base + FOOT_CAP)
     if top - base < 0.30:
         return None
-    return [round(float(v), 4) for v in ((x0 + x1) / 2, (base + top) / 2, (y0 + y1) / 2, x1 - x0, top - base, y1 - y0)]
+    ox, oy, oz = GAME_ORIGIN
+    return [round(float(v), 4) for v in ((x0 + x1) / 2 - ox, (base + top) / 2 - oz, (y0 + y1) / 2 - oy, x1 - x0, top - base, y1 - y0)]
 
 
 # ====================================================================== the pier bake
@@ -969,7 +987,8 @@ def main():
         key, index, B_ = proof_objs[mesh_name]
         p = protos[key]
         _t, gltf, blob = stats[p["name"]]
-        mu = np.array(unity_matrix(placements[index]["_m"]), dtype=np.float64).reshape(4, 4)
+        # The frame proof compares against Blender points, so it is made before the game shift.
+        mu = np.array(unity_matrix(placements[index]["_m"], world=False), dtype=np.float64).reshape(4, 4)
         worst, n = 0.0, 0
         for node in gltf["nodes"]:
             if node.get("mesh") is None:
@@ -1027,7 +1046,7 @@ def main():
         p = protos[r["key"]]
         m = r["_local"] if "_local" in r else r["_m"]
         out_placements.append({"model": p["name"], "group": r["group"], "object": r["object"],
-                               "matrix": unity_matrix(m), "local": "_local" in r, "collider": [v for box in r.get("collider", []) for v in box]})
+                               "matrix": unity_matrix(m, world="_local" not in r), "local": "_local" in r, "collider": [v for box in r.get("collider", []) for v in box]})
     kits = defaultdict(lambda: {"placements": 0, "prototypes": set(), "placedTris": 0})
     for r in placements:
         k = kits[r["group"]]
@@ -1043,13 +1062,24 @@ def main():
     data = {
         "note": ("Written by tools/export_ilalim_unity.py from ArtSource/ilalim/ilalim_city.blend. Matrices are UNITY "
                  "axes, row-major: D . M_blender . C^T, D = [[1,0,0],[0,0,1],[0,1,0]], C = [[-1,0,0],[0,0,1],[0,-1,0]]. "
-                 "A Blender point (x, y, z) is Unity (x, z, y): the Ilalim kits are modelled in the game's frame. "
+                 "A Blender point (x, y, z) is Unity (x, z, y) MINUS gameplay.origin: the kits are modelled about the old "
+                 "court on Taft, and the game's origin is the new court in the lot (GAME_ORIGIN). Every world matrix, "
+                 "collider, anchor, pier and height below is already in the game frame. "
                  "Colours are sRGB-encoded (assign with new Color in the linear project). UV channels: TEXCOORD_0 painted, "
                  "1 UVGrime, 2 UVSplash, 3 UVSill. Placements with local=true are relative to the train root. "
                  "collider: world axis-aligned boxes in the game frame, six floats each (centre, size)."),
-        "gameplay": {"box": 7.0, "kerbInner": 6.65, "kerbTop": 0.150, "pavementOuter": 11.0, "pavementTop": 0.212,
-                     "wallZ": 16.5, "soffit": 8.0, "deckTop": 9.04, "deckWidth": 10.5, "railHead": 9.19,
-                     "trackX": 2.35, "pierX": 4.45, "pierHalf": 0.70},
+        # Heights are game heights (the lot is 0); kerbInner, pavementOuter, trackX and pierX are
+        # distances from Taft's centreline, which is x = roadX in the game. play* is where a body
+        # may go: the lot inside its fences, across Taft, to the shop fronts.
+        "gameplay": {"box": 7.0, "kerbInner": 6.65, "kerbTop": round(0.150 - GAME_ORIGIN[2], 4), "pavementOuter": 11.0,
+                     "pavementTop": round(0.212 - GAME_ORIGIN[2], 4), "roadTop": round(-GAME_ORIGIN[2], 4),
+                     "wallZ": 16.5, "soffit": round(8.0 - GAME_ORIGIN[2], 4), "deckTop": round(9.04 - GAME_ORIGIN[2], 4),
+                     "deckWidth": 10.5, "railHead": round(9.19 - GAME_ORIGIN[2], 4),
+                     "trackX": 2.35, "pierX": 4.45, "pierHalf": 0.70,
+                     "originX": GAME_ORIGIN[0], "originY": GAME_ORIGIN[2], "originZ": GAME_ORIGIN[1],
+                     "roadX": round(-GAME_ORIGIN[0], 4), "roadZ": round(-GAME_ORIGIN[1], 4),
+                     "playMinX": round(-35.0 - GAME_ORIGIN[0], 4), "playMaxX": round(11.0 - GAME_ORIGIN[0], 4),
+                     "playMinZ": round(3.4 - GAME_ORIGIN[1], 4), "playMaxZ": round(24.0 - GAME_ORIGIN[1], 4)},
         "sun": sun_json, "sky": sky, "haze": haze, "train": train_json,
         "anchors": [dict(name=k, **v) for k, v in sorted(anchors.items()) if k != "piers"],
         "piers": anchors.get("piers", []),
