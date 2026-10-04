@@ -87,6 +87,11 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### ILALIM-OVERLAY-1004: painted facade speckles
+
+- [x] Isolate painted-overlay sampling and replace its failing lookup with explicit footprint LOD; authored grime and mip filtering retained. Final native2/2, integrated compile/texture1/1 pass. [Evidence](reports/ilalim-overlay-sampling-2026-10-04/README.md).
+- [ ] Exact red/cyan foliage report, target player/platform and human verification remain separate.
+
 ### BROWSER-LIFETIME-1004: closed or reopened browser rejects old lookups
 
 - [x] Invalidate old authentication/query completions on browser start/stop.

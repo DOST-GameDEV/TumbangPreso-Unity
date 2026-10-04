@@ -45,3 +45,10 @@ foliage case remains open. No network protocol change is required.
 Final trimmed fixture2/2 passes in32.6115639s, with the same0of2166near-black
 pixels. Editor exit0, exact frozen inputs unchanged, settings restored and no
 new OOM. Temporary material mutation/capture diagnostics are not shipping code.
+
+Integrated source recheck: all current C#/assembly inputs were compared and the17
+differing files synchronized. Fresh native compilation and the GPU texture-range
+case pass1/1 in0.271549s, exit0/no new OOM. The incoming brand importer aligns13
+validation-only brand texture importers; this metadata drift is retained in the
+receipt, rather than describing the whole validation tree as unchanged. The
+checked map shader and its textures remain unchanged by integration.
