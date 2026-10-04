@@ -47,12 +47,15 @@ vote correctly required peer1/2; Root then used Main Menu->Practice->Training.
 Local held W2000ms/A1200ms and E150ms visibly responded, retained images35-38.
 Do not claim Training proves online motion or rubberbanding resolved.
 
-NEXT Root Home-video recovery is complete natively: original16720/session46955
-one causal failure plus2 controls, candidate19548/session67920 same3/3 PASS,
-actual fresh decoded-frame advance. Both terminal and202 owned GUI metadata
-restored per run with no remaining frozen deltas. Report reliability-2026-10-05/
-home-video-recovery. Publish explicit source/test/docs then make one coherent151
-package for normal visible cold-start and peer acceptance. No Root active job.
+NEXT Native tag replacement7724/session7855 passed2/2 and parent/restoration
+68549 are terminal with202 GUI metadata restored and no frozen source deltas.
+New TagContactAccent/MatchFlair hook replaces only tag ImpactBurst; source staged
+and report prepared. Publish explicit source/test/TODO/evidence paths normally.
+Current full15189cc9f295 package passed normal GUI Guest/title/Home animation and
+expired code recovery, player20584/session3874 exited0 with prefs/settings restored.
+This artifact predates the new tag effect. No Root active player/Unity/share.
+Laptop still has no new concrete tool output after Rules; queued requests ask
+full150 saved result/ownership and resumed boulder work. Do not fake a peer pass.
 
 ## Shipped fixes and evidence limits
 

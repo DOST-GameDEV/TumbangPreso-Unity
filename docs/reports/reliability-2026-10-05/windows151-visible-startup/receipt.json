@@ -1,0 +1,15 @@
+{
+  "source": "89cc9f295a96d3f1647c740e1387206329315af8",
+  "protocol": 151,
+  "runtimeSha256": "19a395ab45ad16ef0392b3ffdd02f9762efe16ac42f983024d8378e4778a2aaf",
+  "artifactFileCount": 258,
+  "artifactBytes": 2667632603,
+  "manifestSha256": "8340dc35526314e1359bda94c0389ee354c58b5743713b6f55416b3efd5bd477",
+  "playerPid": 20584,
+  "exitCode": 0,
+  "inputRestored": true,
+  "profileRestored": true,
+  "terminal": true,
+  "route": "Normal visible Guest/title/Home/Custom/Join/CODE expiredWAD6/Internet browser",
+  "limits": "No network bootstrap; no151 second-peer motion/automatic plant acceptance. This one first-entry Home loop advanced; hardware-wide first-launch report remains open."
+}
