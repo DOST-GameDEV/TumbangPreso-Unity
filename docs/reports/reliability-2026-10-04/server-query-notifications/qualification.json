@@ -1,0 +1,43 @@
+{
+  "rawFiles": {
+    "original-native\\results.xml": "7167e38a631ab1bf38dc97c18a0294ef5bb61c3e36b3c5531bbe968040f9ab56",
+    "original-native\\result.json": "a899add706201fa32e66ec76f5a40bd513b36ee072b3633c906ad2d1d528edec",
+    "original-native\\launch.json": "7117c906ec161b720c99c3e69f23432244277b4485f63f10400659861dbcb930",
+    "original-native\\metadata-cleanup.json": "bffc2015efc72c965622d7498125718aa8289a02a66bf7d4fce119e8a19f9aaf",
+    "original-repaired-native\\results.xml": "699d28bef1c60682fa4ebe9b919586f5da2a4124fdcacd2e7122a4f67f517641",
+    "original-repaired-native\\result.json": "def5b780f5131759848c80730aef4d2eba1038076364cf875f01212af4a679d1",
+    "original-repaired-native\\launch.json": "b6b6890eeaba6557144a2a7cfd89d7da7c8adc595331e3322b9e8cf746dc37c7",
+    "original-repaired-native\\metadata-cleanup.json": "7b5bf64364f538abe2c8e8aac88363002dffa7e54b41e73a22c83a6f74e03c68",
+    "candidate-native\\results.xml": "3473aa18e3b860cf61aca99b54767fdcf2f5f4a7b1569bf32c284b30a232f348",
+    "candidate-native\\result.json": "72af5914971dbf77fb32a510aed4edcd11c72bdef8dfbe3bc94e296d5ccd4d74",
+    "candidate-native\\launch.json": "36a80fe8ce51356948f93242c90c53d991372a7a8dfc00cb016b389c7c46268f",
+    "candidate-native\\metadata-cleanup.json": "7b5bf64364f538abe2c8e8aac88363002dffa7e54b41e73a22c83a6f74e03c68",
+    "ServerQuery.original.cs": "826da236aa90d98787ef0d53160098e6dc32b7aba041eef46a6de0291adb7fec",
+    "ServerQuery.candidate.cs": "a2ffd03032d3248fa84d3127e8e28b75b50e130c5197a356ae86fbb86c5ebd47",
+    "ServerQueryChangeNotificationTests.cs": "0ea9d42db4aaa44d7ff2d3339a0ed012ebf1d72ceca70ca7528f9cb341afbaa1",
+    "ServerQueryChangeNotificationTests.cs.meta": "e6513f064cff43aae2f8a0279923dc54a08c277e0df5cc5a731f9a17c019043c",
+    "fixture-before-counter-repair.cs": "507f1a29ee7922ea77ec748977af8a33baaa89eb1f4da7188b908e0ec724d315"
+  },
+  "sourceProof": {
+    "original-repaired-native": {
+      "sourceHash": "826da236aa90d98787ef0d53160098e6dc32b7aba041eef46a6de0291adb7fec",
+      "fixtureHash": "0ea9d42db4aaa44d7ff2d3339a0ed012ebf1d72ceca70ca7528f9cb341afbaa1",
+      "metaHash": "e6513f064cff43aae2f8a0279923dc54a08c277e0df5cc5a731f9a17c019043c",
+      "frozenInputCount": 19230,
+      "generatedImportersChanged": 202,
+      "runtimeFixtureUnchanged": true
+    },
+    "candidate-native": {
+      "sourceHash": "a2ffd03032d3248fa84d3127e8e28b75b50e130c5197a356ae86fbb86c5ebd47",
+      "fixtureHash": "0ea9d42db4aaa44d7ff2d3339a0ed012ebf1d72ceca70ca7528f9cb341afbaa1",
+      "metaHash": "e6513f064cff43aae2f8a0279923dc54a08c277e0df5cc5a731f9a17c019043c",
+      "frozenInputCount": 19230,
+      "generatedImportersChanged": 202,
+      "runtimeFixtureUnchanged": true
+    }
+  },
+  "strictAllInputsUnchanged": false,
+  "generatedMetadataRestoredExactly": true,
+  "fixtureRepair": "Reset counter in Before; first3setupfailures notproductproof",
+  "scope": "actual native ServersChanged callback/room metadata changes; no live Lobby SDK or rendered server list proof"
+}

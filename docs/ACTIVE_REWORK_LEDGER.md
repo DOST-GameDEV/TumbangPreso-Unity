@@ -280,3 +280,20 @@ trueHero scripts no-tournament/HQ2/empty8*90/source23168/146/49161→49162. Root
 hero8-casual-host-direct.py preparednotlaunched waitingrealarm. Skipdoc/auditdelay
 whenreceipts preserved; launchtest first andpublishraw duringlongrun. Cleanup3old
 builds policyrejected/no delete/nobypass; standingcleanupcontinueswhenallowed.
+
+
+## Hero peer and room notification completion
+
+TRUEHero14780/24342 and23528 nowTERMINALPASS0/source23168/146/default8*90/Kanto,
+proper finalHOST/CLIENT roles, matchingfullHistory/Queue/Witness/clearmarkers,
+prefs/profile restored/all258files unchanged. Root10rawGitclient inspected; ownquit
+HostLost afterreport only. Native human-originseatsundriven; latestart/physical/
+Relay/maps/slowReplay gates OPEN. Report hero-kanto146. NoRootplayer/helperactive.
+Roomnotify repaired19308/76371 baseline2causalFAIL2controls ->candidate8108/87383
+SAME4/4, one-linesignatureMap/Visibility, sourcefixturemeta unchanged in19230maps;
+202importersrestoredexact. First16348 counterSetupfailure retainednotproductproof.
+Report server-query-notifications. Nextcheckedcommit/push now then normalmerge
+LPTNetReplayProbe contactdiagD2/raw13 +readonlyscoretrace oncepublished; inspectonce,
+coherentlatestsource build andactual2peerReplay catch/ready-peers1/bytes/elapsed/view/
+all4scores/PNG. No extra unneedednativegettertests/source/packet/kit/art rewrite.
+Threeobsoletebuilddeletepolicyrejection retained/nobypass; all criticaldata kept.
