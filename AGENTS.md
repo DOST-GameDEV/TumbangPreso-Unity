@@ -68,6 +68,10 @@ back an implementable problem or repeatedly restating it.
   admission estimate, retry count or automatic timeout as proof Unity cannot run.
   The owner explicitly authorized direct local Unity execution without those
   automatic barriers. Monitor actual process and log progress instead.
+- The owner reiterated that RAM must never become an excuse to stop work.
+  Split or serialize useful workloads, reuse unchanged evidence, release verified
+  task-owned leftovers and change the execution approach when needed. Keep another
+  authorized engineering lane moving while diagnosing an actual resource failure.
 - Preserve source, profiles, saves, private artwork and shared preferences;
   use fresh named profiles and internal outputs. Keep one heavy job per machine
   and respect another contributor's occupied machine and source reservations.
