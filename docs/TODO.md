@@ -1,5 +1,24 @@
 # TODO: Tumbang Preso Unity
 
+### TUTORIAL-MUSIC-1004: owner-supplied track
+
+- [x] Replace guided tutorial music with Tutorial.mp3, cut exactly its first3s.
+  Native2/2 verifies real tutorial entry, countdown retention and looping.
+  Existing match/menu tracks remain. [Evidence](reports/tutorial-music-2026-10-04/README.md).
+
+### HERO-PRESENTATION-PARITY-1004: remaining hero presentation
+
+Owner target: refine Zack, Sean, Dante, Cheska, Nemu and Rafi to the presentation
+standard of Phaister, Paete and Amihan. Review actual motion, body/FPP coherence,
+readable VFX, sound timing and ultimate direction. Preserve each hero's identity;
+reference characters are quality examples, not a new redesign assignment.
+
+- [ ] Zack: Quick Circuit body/FPP single-cut refinement passes13 scoped native
+  checks and actual left/right cast review; full kit still open.
+  [Motion evidence](reports/zack-quick-circuit-motion-2026-10-04/README.md).
+- [ ] Sean, Dante, Cheska, Nemu and Rafi: finish their remaining presentation passes.
+- [ ] Real-game film/listening review and multiplayer/player qualification.
+
 **How this file is organised (docs cleanup, 2026-09-23).** This file is the ONE status
 queue: the current queue and priority order, then one index row for every numbered entry.
 Nothing was deleted or renumbered.

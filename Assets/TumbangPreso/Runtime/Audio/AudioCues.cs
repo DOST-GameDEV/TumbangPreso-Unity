@@ -306,6 +306,7 @@ namespace TumbangPreso.Audio
             {
                 { "menu",  "ost_menu.mp3" },
                 { "match", "ost_match.mp3" },
+                { "tutorial", "ost_tutorial.wav" },
             };
 
         public const float MusicCrossfadeTime = 1.5f;

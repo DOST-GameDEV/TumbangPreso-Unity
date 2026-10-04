@@ -628,7 +628,7 @@ namespace TumbangPreso
             // already answers it on the "match" branch with `stop_music_now()` rather than a
             // fade, under 🧑's *"pls js abruptly cut it"*.
             if (UseReadyGate && !guided && !range) GameServices.Music?.StopNow();
-            else GameServices.Music?.Play("match", GameServices.MatchTrack);
+            else GameServices.Music?.Play(GameServices.ArenaMusicCue, GameServices.ArenaTrack);
 
             // Scene management is intentionally game-owned rather than Netcode-owned. Tell
             // the host only after every local seat, prop, camera and HUD target exists; this

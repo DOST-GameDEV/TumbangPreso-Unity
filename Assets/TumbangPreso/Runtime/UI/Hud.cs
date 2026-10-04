@@ -634,8 +634,8 @@ namespace TumbangPreso.UI
             if (_nativeReadout != null)
             {
                 GameServices.Audio?.PlayUi(tick == "GO!" ? "countdown_go" : "countdown_tick");
-                if (tick != "GO!" && GameServices.Music != null && GameServices.Music.Current != "match")
-                    GameServices.Music.Play("match", GameServices.MatchTrack);
+                if (tick != "GO!" && GameServices.Music != null && GameServices.Music.Current != GameServices.ArenaMusicCue)
+                    GameServices.Music.Play(GameServices.ArenaMusicCue, GameServices.ArenaTrack);
                 _nativeReadout.Countdown(tick); return;
             }
             if (_countdown == null) return;
@@ -659,9 +659,9 @@ namespace TumbangPreso.UI
             // late by the length of the countdown. 🧑 2026-08-01: *"Remove the audio latency
             // during round initialization. RoundMusic should begin playing immediately."*
             if (tick != "GO!" && GameServices.Music != null
-                && GameServices.Music.Current != "match")
+                && GameServices.Music.Current != GameServices.ArenaMusicCue)
             {
-                GameServices.Music.Play("match", GameServices.MatchTrack);
+                GameServices.Music.Play(GameServices.ArenaMusicCue, GameServices.ArenaTrack);
             }
 
             _countdown.enabled = true;
