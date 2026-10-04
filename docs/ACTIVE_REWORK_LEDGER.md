@@ -31,7 +31,7 @@ smooth visuals with delayed movement/rubber-banding. Online Relay acceptance is
 required separately from LAN. QoLUpdates is a prank branch: relevant read-only
 comparison only; never run, merge or copy its prank code.
 
-Current Root source/publication 0b16a2e98. Camera d647aff69 is shipped: original
+Current Root publication e7587c72e includes server fix2fdf910fc + Paete speedba1. Camera d647aff69 is shipped: original
 two late-activation/follow failures plus two controls -> same four native passes.
 Title/login bb4269df9 is shipped with actual multi-resolution native pixels;
 new Yasmin clothing model draft and shared catch VFX are deferred for server work.
@@ -45,13 +45,18 @@ This is one machine and does not prove peer admission. Fault injection then
 reproduced two failures: host succeeds despite registration refusal and reports
 success before delayed registration settles (10112/session15798). Both terminal
 with original evidence and prefs/Quality restored; 202 owned importers restored.
-Next topology original: Relay advertises a direct LAN address although its UTP
-transport is Relay; LAN-first resolution may select that address. Native8984 /
-session79818 runs the Relay no-direct-advert case plus real LAN advert control.
-Freeze Assets/Packages/ProjectSettings until parent terminal. Next restore owned
-importers, implement awaited publication/failure cleanup and correct advert
-topology, run same causal cases plus live publication control then publish/build
-one accepted artifact for paired ONLINE custom-code join and movement checks.
+Topology original8984/session79818 failed Relay direct advertisement and passed
+real LAN control. Final candidate4852/session33477 passed same three causes plus
+LAN and real UGS publication/code/browser controls, 5/5. All terminal/restored;
+202 generated importers restored exact. Initial profile/fixture failures retained.
+The exact QA failure, second-client admission and non-host lag remain OPEN.
+NEXT: publish opt-in normal online lobby bootstrap, build current checked148
+source once, classify/copy full artifact then paired ONLINE custom-code join
+and actual gameplay. Keep all source frozen until build parent terminal.
+Owner sleeps; continue server-first autonomously and then actual skill failures.
+Paete auto5s is a scoped owner exception in TODO/ledger, not a standing AGENTS
+feature entry. Laptop implements independently; Root Net149 shot event follows
+the first repaired online pair. New Yasmin/catch VFX/home animation remain queued.
 Exact local handles remain in Logs/arrival-pan-review1004/current-resume.json.
 
 Root checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.

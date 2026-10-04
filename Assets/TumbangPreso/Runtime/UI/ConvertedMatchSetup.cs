@@ -531,7 +531,9 @@ namespace TumbangPreso.UI
             // leave to join path can never be reached.
             int port = NetBootstrap.LobbyPort > 0 ? NetBootstrap.LobbyPort : LobbySession.DefaultPort;
 
-            bool ok = await net.StartHostAsync(port);
+            bool ok = NetBootstrap.LobbyOnline
+                ? await net.StartRelayHost()
+                : await net.StartHostAsync(port);
 
             if (this == null) return;
 

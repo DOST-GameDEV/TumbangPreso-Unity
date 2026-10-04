@@ -46,16 +46,6 @@ Soraya's existing character. Naming does not authorize kit or art redesign.
 - Any permitted bug fix must identify the reproducible defect, preserve the
   finalized direction and include focused behavioral evidence.
 
-### October 4 owner exception: automatic Paete plant
-
-The owner explicitly requested that the mature Bakya Bloom plant automatically
-lob a slipper at a valid target every five seconds. This supersedes the old
-manual-recast requirement and fifteen-second reload for this scoped behavior.
-Preserve unrelated finalized Paete art and mechanics. Validate maturity, target
-validity, automatic projectile flight, five-second cadence and peer replication.
-The laptop owns PaeteRules, PaeteHazards, PaeteHeroKit and focused Paete fixtures;
-Root owns server fixes and integration. Ask current ownership before overlap.
-
 ### October1 owner exception: Phaister hallucination refinement
 
 The owner explicitly requested refining Phaister's hallucination skill. This
