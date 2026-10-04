@@ -39,6 +39,31 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CHAR-REDESIGN-1: Dante (Basilio) redesign prototype, Blender only
+
+Owner, 2026-10-05: *"can you try redesigning one of the normal blocky character models? add
+texture, more unique shapes and be less oriented around the whole blocky aesthetic"*. Then, on
+a first fully rounded head: *"i dont like the deviation from the boxy head.. i know i said
+stray further from the original boxy design, but its somewhat part of our game's identity"*;
+on a plain cube: *"not necessarily, just not entirely a cube"*; on the boxy turnaround:
+*"looks weird in these spots. hair texture overlaps to the ears, weird colors on hands, hair
+shimmer idk if i like it, it looks weird in some spots"*; and on the early spiky hair:
+*"can we have one version with this non-blocky hair model?"*
+Handoff: [CHARACTER_REDESIGN_DANTE.md](CHARACTER_REDESIGN_DANTE.md).
+[Pictures](reports/character-redesign-dante-2026-10-05/README.md).
+
+- [x] One character rebuilt as a prototype: the original's box head carved (soft corners, a
+  small nose), a hand-painted atlas with a shaded face, chamfered and tapered body blocks with
+  added pieces, on the original rig untouched. Two variants: A block hair, B lock hair.
+  3,373 and 3,469 triangles against the original's 7,741. Not loaded by the game.
+- [x] The circled faults fixed and checked in close-up renders: no painted hair shine, no
+  hair paint on the ears, hands skin only, plus the rest of a close pass (handoff section 8).
+- [ ] Owner to choose: hair A or B; head carving `block`, `carved` or `shaped`; whether the
+  flat hair shading is right; whether the jacket reads green overall or keeps a brown base.
+- [ ] Never opened in Unity: real toon shader and outline, clips, hand anchor, atlas budget,
+  first-person arms and every derived image are unverified (handoff sections 7 and 9).
+- [ ] Not approved for the rest of the cast. One character at a time.
+
 ### SOCIAL-REFRESH-ORDER-1004: preserve newer acknowledged friend actions
 
 - [x] Older loads cannot erase an accepted friend or restore a removed one.

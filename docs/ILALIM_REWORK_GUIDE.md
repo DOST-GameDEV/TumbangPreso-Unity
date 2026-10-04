@@ -42,8 +42,9 @@ entries under it are the detailed record, newest first. THE NEXT MAP IS THE AREN
     with `Tests/PlayMode/IlalimPerfProbe.cs`.
   - A TEST SWITCH for ambient occlusion on the cast (F8 in a debug session, local, not pushed):
     a body-scale kernel with a ceiling. The owner tried a shade-from-above pass for flat faces and
-    had it removed. A character REDESIGN prototype (less blocky, textured) is in progress as a
-    Blender try, not wired into the game.
+    had it removed. A character REDESIGN prototype (Dante: a carved box head, painted
+    textures, two hair variants) is a Blender try, not wired into the game; it has its own handoff,
+    [CHARACTER_REDESIGN_DANTE](CHARACTER_REDESIGN_DANTE.md), and moves to its own session.
 - **The pipeline, end to end.** Blender kits (`tools/author_ilalim_<kit>.py`, textures in
   `tools/author_ilalim_textures_<kit>.py`) build in this order: street, then trees, then eastside and
   props, then rooftops and streetlife (they read the east walls and roofs), then
