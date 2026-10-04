@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using TumbangPreso.UI;
+using TumbangPreso.Core;
 using TumbangPreso.Visual;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -24,7 +25,7 @@ namespace TumbangPreso.PlayTests
     public sealed class LocomotionArmsProbe
     {
         private bool _bots, _spectator; private int _seat;
-        private const string Output = "Logs/locomotion-arms";
+        private static string Output => Environment.GetEnvironmentVariable("TUMP_LOCOMOTION_OUTPUT") ?? "Logs/locomotion-arms";
 
         [UnitySetUp] public IEnumerator Before()
         {
@@ -43,10 +44,23 @@ namespace TumbangPreso.PlayTests
         {
             // Spectating, so no seat is the hidden first-person body: every carrier is drawn.
             GameLaunch.Spectator = true; GameLaunch.AllBots = true;
-            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita);
+            string personId=Environment.GetEnvironmentVariable("TUMP_LOCOMOTION_PERSON");
+            var mode=string.IsNullOrEmpty(personId)?GameMode.Classic:GameMode.HeroStrike;
+            yield return MapRetrievalProbe.Load(SceneFlow.Eskinita,mode);
             var players = GameServices.Round.Players.ToList();
             var carrying = players.First(p => p.GetComponent<Carrier>().Held != null);
             var empty = players.First(p => p.GetComponent<Carrier>().Held == null);
+            if(!string.IsNullOrEmpty(personId))
+            {
+                int personIndex=Roster.IndexIn(Roster.GetPeople(mode),personId);
+                Assert.GreaterOrEqual(personIndex,0,"Unknown requested locomotion character.");
+                var art=Resources.Load<RosterBook>("RosterBook").PersonArt(personIndex,mode);
+                foreach(var actor in new[]{empty,carrying})
+                {
+                    actor.CharacterIndex=personIndex;
+                    actor.GetComponent<CharacterVisual>().ApplyModel(art.Model,art.Tint,art.Clips,art.Palette,art.PetModel);
+                }
+            }
             foreach (var p in players) if (p != carrying && p != empty) p.Teleport(new Vector3(20 + p.PlayerSlot * 3, .2f, -20));
 
             var report = new StringBuilder("case,frames,amount,strideMin,strideMax,leftFwdMin,leftFwdMax,rightFwdMin,rightFwdMax,leftSpreadMin,rightSpreadMin\n");
@@ -77,7 +91,7 @@ namespace TumbangPreso.PlayTests
                 // poses the bones, so the first three runs of this probe measured and photographed the clip
                 // underneath the layer and never the drawn result.
                 var late = who.gameObject.AddComponent<LateSampler>();
-                late.Begin(anim, witness, Path.Combine(Output, name), 6, .07f);
+                late.Begin(anim, witness, Path.Combine(Output, name), 6, .15f);
                 yield return new WaitForSeconds(1.0f);
                 late.enabled = false;
                 Object.Destroy(input);
@@ -132,8 +146,10 @@ namespace TumbangPreso.PlayTests
             private void Shoot()
             {
                 var at = transform.position;
-                var eye = at + transform.right * 2.3f + transform.forward * .6f + Vector3.up * .9f;
-                _cam.transform.SetPositionAndRotation(eye, Quaternion.LookRotation(at + Vector3.up * .6f - eye));
+                bool wholeBody=!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("TUMP_LOCOMOTION_PERSON"));
+                var eye = wholeBody ? at + transform.right * 2.8f + transform.forward * 2.8f + Vector3.up * 1.2f
+                    : at + transform.right * 2.3f + transform.forward * .6f + Vector3.up * .9f;
+                _cam.transform.SetPositionAndRotation(eye, Quaternion.LookRotation(at + Vector3.up * (wholeBody?1.1f:.6f) - eye));
                 // The local first-person body draws shadows only; show it for the photograph and put it back.
                 var hidden = GetComponentsInChildren<Renderer>().Where(x => x.shadowCastingMode == UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly).ToList();
                 foreach (var h in hidden) h.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;

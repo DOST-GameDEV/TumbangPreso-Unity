@@ -28,6 +28,39 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest]
+        public IEnumerator CinderGateHasItsOwnIllustrationAtHudAndSmallSizes()
+        {
+            var skill=new Abilities.SeanHeroKit().DefendingSkill;
+            Assert.AreEqual(AbilityGlyph.SeanCinderGate,skill.Glyph);
+            var root=new GameObject("CinderIconReview",typeof(RectTransform),typeof(Canvas));
+            var canvas=root.GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceOverlay;
+            try
+            {
+                var symbols=new List<TumpAbilitySymbol>();int index=0;
+                foreach(float size in new[]{128f,72f,44f})
+                {
+                    var rect=TumpUiFactory.Rect(root.transform,"CinderSize"+size);
+                    rect.anchorMin=rect.anchorMax=new Vector2(.5f,.5f);rect.sizeDelta=Vector2.one*size;
+                    rect.anchoredPosition=new Vector2((index++-1)*180,0);
+                    var symbol=rect.gameObject.AddComponent<TumpAbilitySymbol>();
+                    symbol.Glyph=skill.Glyph;symbol.HudStyle=true;symbols.Add(symbol);
+                }
+                Canvas.ForceUpdateCanvases();yield return null;
+                yield return TumpUiCapture.Capture("CinderGate-icon-sizes",canvas,960,540,false);
+                var illustration=AbilityIcons.Illustration(skill.Glyph);
+                Assert.IsNotNull(illustration,"Cinder Gate still falls back to the plain procedural icon.");
+                Assert.AreSame(illustration,AbilityIcons.For(skill.Glyph));
+                foreach(var symbol in symbols)
+                {
+                    Assert.AreSame(illustration.texture,symbol.mainTexture);
+                    Assert.AreEqual(4,symbol.canvasRenderer.GetMesh().vertexCount);
+                }
+                Assert.AreNotSame(illustration,AbilityIcons.Illustration(AbilityGlyph.SeanIgnite));
+            }
+            finally {Object.Destroy(root);}
+        }
+
+        [UnityTest]
         public IEnumerator AbilityIconPreparationYieldsAndRetainsIllustrationsFallbacksAndCooldown()
         {
             var progress = new List<float>();
