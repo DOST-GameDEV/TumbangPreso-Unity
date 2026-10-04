@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 04:31:05Z" end-time="2026-10-04 04:31:06Z" duration="0.6643583">
+  <test-suite type="TestSuite" id="2980" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1611" result="Passed" start-time="2026-10-04 04:31:05Z" end-time="2026-10-04 04:31:06Z" duration="0.664358" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="2974" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1611" result="Passed" start-time="2026-10-04 04:31:05Z" end-time="2026-10-04 04:31:06Z" duration="0.650573" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28720" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="2975" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1611" result="Passed" start-time="2026-10-04 04:31:05Z" end-time="2026-10-04 04:31:06Z" duration="0.641066" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2976" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1611" result="Passed" start-time="2026-10-04 04:31:05Z" end-time="2026-10-04 04:31:06Z" duration="0.630891" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="2213" name="PlayerHubEditRefreshTests" fullname="TumbangPreso.PlayTests.PlayerHubEditRefreshTests" classname="TumbangPreso.PlayTests.PlayerHubEditRefreshTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-04 04:31:05Z" end-time="2026-10-04 04:31:06Z" duration="0.608975" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="2216" name="ChangingTabsDoesNotRestoreTheOldField" fullname="TumbangPreso.PlayTests.PlayerHubEditRefreshTests.ChangingTabsDoesNotRestoreTheOldField" methodname="ChangingTabsDoesNotRestoreTheOldField" classname="TumbangPreso.PlayTests.PlayerHubEditRefreshTests" runstate="Runnable" seed="239331985" result="Passed" start-time="2026-10-04 04:31:05Z" end-time="2026-10-04 04:31:06Z" duration="0.452345" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2215" name="FriendRefreshKeepsTheActiveSearchField" fullname="TumbangPreso.PlayTests.PlayerHubEditRefreshTests.FriendRefreshKeepsTheActiveSearchField" methodname="FriendRefreshKeepsTheActiveSearchField" classname="TumbangPreso.PlayTests.PlayerHubEditRefreshTests" runstate="Runnable" seed="1997021841" result="Passed" start-time="2026-10-04 04:31:06Z" end-time="2026-10-04 04:31:06Z" duration="0.051774" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2214" name="ProfileRefreshKeepsTheActiveDraftField" fullname="TumbangPreso.PlayTests.PlayerHubEditRefreshTests.ProfileRefreshKeepsTheActiveDraftField" methodname="ProfileRefreshKeepsTheActiveDraftField" classname="TumbangPreso.PlayTests.PlayerHubEditRefreshTests" runstate="Runnable" seed="2087701384" result="Passed" start-time="2026-10-04 04:31:06Z" end-time="2026-10-04 04:31:06Z" duration="0.042784" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2217" name="ReplacingTheAccountRetiresItsSearchAndEditing" fullname="TumbangPreso.PlayTests.PlayerHubEditRefreshTests.ReplacingTheAccountRetiresItsSearchAndEditing" methodname="ReplacingTheAccountRetiresItsSearchAndEditing" classname="TumbangPreso.PlayTests.PlayerHubEditRefreshTests" runstate="Runnable" seed="940836625" result="Passed" start-time="2026-10-04 04:31:06Z" end-time="2026-10-04 04:31:06Z" duration="0.051129" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
