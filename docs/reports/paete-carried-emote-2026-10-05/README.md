@@ -31,3 +31,8 @@ Windows player, separate-peer visual and human acceptance remain open.
 After merging incoming tag-contact ink source5f72ff88, the branch support and
 model-swap controls pass2/2 again with the integrated runtime compiled. No source
 conflict occurred; the TODO conflict was resolved retaining both completed fixes.
+
+The legacy CarryTests failures mentioned above were subsequently isolated to
+unstarted-round setup, a stationary-idle assumption and pre-LateUpdate sampling.
+[The repaired complete fixture](../carry-regression-fixture-2026-10-05/README.md)
+now passes5/5 without changing production carry behavior or its geometry bounds.
