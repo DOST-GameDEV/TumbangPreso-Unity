@@ -48,7 +48,9 @@ namespace TumbangPreso.PlayTests
             var mode=string.IsNullOrEmpty(personId)?GameMode.Classic:GameMode.HeroStrike;
             yield return MapRetrievalProbe.Load(SceneFlow.Eskinita,mode);
             var players = GameServices.Round.Players.ToList();
-            var carrying = players.First(p => p.GetComponent<Carrier>().Held != null);
+            // MapRetrievalProbe.Load establishes a solo first-person seat. Use another
+            // carrier so the owner-view hiding layer cannot erase the held prop.
+            var carrying = players.First(p => p.PlayerSlot != GameLaunch.SoloSeat && p.GetComponent<Carrier>().Held != null);
             var empty = players.First(p => p.GetComponent<Carrier>().Held == null);
             if(!string.IsNullOrEmpty(personId))
             {
@@ -91,7 +93,8 @@ namespace TumbangPreso.PlayTests
                 // poses the bones, so the first three runs of this probe measured and photographed the clip
                 // underneath the layer and never the drawn result.
                 var late = who.gameObject.AddComponent<LateSampler>();
-                late.Begin(anim, witness, Path.Combine(Output, name), 6, .15f);
+                bool film=Environment.GetEnvironmentVariable("TUMP_LOCOMOTION_FILM")=="1";
+                late.Begin(anim, witness, Path.Combine(Output, name), film?30:6, film?1f/30:.15f);
                 yield return new WaitForSeconds(1.0f);
                 late.enabled = false;
                 Object.Destroy(input);
@@ -150,7 +153,9 @@ namespace TumbangPreso.PlayTests
             {
                 var at = transform.position;
                 bool wholeBody=!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("TUMP_LOCOMOTION_PERSON"));
-                var eye = wholeBody ? at + transform.right * 2.8f + transform.forward * 2.8f + Vector3.up * 1.2f
+                // Look from the carrying side when equipment would be hidden behind the body.
+                float side=GetComponent<Carrier>()?.Held!=null?-1f:1f;
+                var eye = wholeBody ? at + transform.right * (2.8f*side) + transform.forward * 2.8f + Vector3.up * 1.2f
                     : at + transform.right * 2.3f + transform.forward * .6f + Vector3.up * .9f;
                 _cam.transform.SetPositionAndRotation(eye, Quaternion.LookRotation(at + Vector3.up * (wholeBody?1.1f:.6f) - eye));
                 // The local first-person body draws shadows only; show it for the photograph and put it back.
