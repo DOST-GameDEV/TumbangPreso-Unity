@@ -180,6 +180,7 @@ namespace TumbangPreso
         private Vector4[] _box;                 // per driver, about its body's origin: centre forward, centre right, half length, half width
         private float[] _boxTop;                // per driver: its roof over the road
         private GameObject[] _hazards;
+        private Transform[] _solids;            // per driver: its body's box as a real collider (the live road only)
         private readonly Dictionary<CharacterMotor, float> _nextHit = new Dictionary<CharacterMotor, float>();
         private readonly Dictionary<CharacterMotor, float> _nextShown = new Dictionary<CharacterMotor, float>();
         private static readonly int EmissionId = Shader.PropertyToID("_EmissionColor");
@@ -811,6 +812,39 @@ namespace TumbangPreso
                 go.SetActive(false);
                 _hazards[i] = go;
             }
+            // ⚠️ THE VEHICLES ARE SOLID ON THE LIVE ROAD (owner, 2026-10-04, first play of the lot
+            // court: "the cars are just pass through ... so u can go through them when theyre not
+            // moving"). The hit above is a test, not a body: a queued car at a red light was air.
+            // Each vehicle now carries its measured box as a kinematic collider that rides with
+            // it, so a stopped car blocks a walk and a throw, and a roof can be stood on. A MOVING
+            // car still fells whoever it reaches: the hit's box is this one grown by a body's
+            // radius, so the fall lands before the two overlap.
+            _solids = new Transform[n];
+            for (int i = 0; i < n; i++)
+            {
+                if (Drivers[i].Body == null) continue;
+                var go = new GameObject("Road solid " + i);
+                go.transform.SetParent(transform, false);
+                var body = go.AddComponent<Rigidbody>();
+                body.isKinematic = true; body.useGravity = false;
+                var box = go.AddComponent<BoxCollider>();
+                float top = Mathf.Max(_boxTop[i], .6f);
+                box.center = new Vector3(_box[i].y, top * .5f, _box[i].x);
+                box.size = new Vector3(_box[i].w * 2f, top, _box[i].z * 2f);
+                _solids[i] = go.transform;
+            }
+            UpdateSolids();
+        }
+
+        private void UpdateSolids()
+        {
+            if (_solids == null) return;
+            for (int i = 0; i < _solids.Length; i++)
+            {
+                var t = _solids[i];
+                if (t == null) continue;
+                t.SetPositionAndRotation(_poseAt[i], Quaternion.LookRotation(_poseDir[i], Vector3.up));
+            }
         }
 
         /// <summary>
@@ -880,6 +914,7 @@ namespace TumbangPreso
         /// cover (0.35 s of travel); a stopped vehicle has none, so bots cross between queued cars.</summary>
         private void UpdateHazards()
         {
+            UpdateSolids();
             if (_hazards == null) return;
             for (int i = 0; i < _hazards.Length; i++)
             {

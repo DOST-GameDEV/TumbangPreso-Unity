@@ -111,6 +111,10 @@ namespace TumbangPreso.CameraSystem
         public const float FallSpringLength = 2.80f;
         public const float FallPitchDeg = 26.0f;
 
+        /// <summary>Travel, m/s, over which a falling body counts as THROWN (a car, a train) rather
+        /// than tripped where it stood: a sprint is 6 to 7, a car's throw 7 to 14 plus its aside.</summary>
+        public const float ThrownSpeed = 7.5f;
+
         /// ⚠️ THE FALL KEEPS ITS OWN CLAMP because the emote band tops out at 20 degrees, which
         /// is BELOW the angle a fall opens at. Sharing it would have silently pulled the shot
         /// back up to the standing framing on the first frame.
@@ -1532,7 +1536,13 @@ namespace TumbangPreso.CameraSystem
             bool blown = _character != null && _character.IsWhirled && (_character.IsCarried || !_character.IsGrounded);
             bool down = _character != null && (_character.IsTripped || held || rooted || blown);
             if (down != _fallView) _blownView = down && blown;
-            if (down == _fallView) return;
+            if (down == _fallView)
+            {
+                // The throw can reach the owning peer a frame or two after the trip that opened the view.
+                if (down && !_thrownAimed && Time.time - _fallViewAt < 0.5f && !held && !rooted && !blown && AimAtThrow())
+                    _emotePitchDeg = _tppPitchDeg;
+                return;
+            }
 
             // ⚠️ AN EMOTE ALREADY OWNS THE SWING, SO DO NOT TAKE IT FROM ONE. `EmotePlayer.Stop`
             // is reached by losing the right to act, and a trip does exactly that, so an emote
@@ -1554,11 +1564,35 @@ namespace TumbangPreso.CameraSystem
                 // `FallPitchDeg` looks DOWN at a body on the tarmac; using it for a stun would
                 // aim the camera at the road in front of a character who is upright, and the
                 // one thing the player needs to see is the element on their own body.
-                if (!held && !rooted && !blown) _emotePitchDeg = FallPitchDeg;
+                //
+                // ⚠️ THROWN, NOT TRIPPED (owner, 2026-10-04, hit by a car on the rebuilt Ilalim:
+                // "ragdoll cam is weird"). The view opens behind the way the body FACES, and a
+                // player facing the car that hits them is thrown backwards, straight through the
+                // lens: the frame was their own arms. A body with real travel on it is going
+                // somewhere, so the view opens behind the way it is GOING and watches it fly away,
+                // at the standing pitch like the wind's blow (it is in the air, not on the road).
+                _fallViewAt = Time.time; _thrownAimed = false;
+                bool thrown = !held && !rooted && !blown && AimAtThrow();
+                if (!held && !rooted && !blown && !thrown) _emotePitchDeg = FallPitchDeg;
                 // The wind's hit is felt, not just seen.
                 if (blown) Shake(1.1f, .55f);
             }
             else EndEmoteView();
+        }
+
+        private float _fallViewAt;
+        private bool _thrownAimed;
+
+        /// <summary>Turns the fall view to look along a thrown body's travel. False when the body
+        /// is not travelling fast enough to count as thrown.</summary>
+        private bool AimAtThrow()
+        {
+            Vector3 travel = _character.PresentationTravelVelocity; travel.y = 0.0f;
+            if (travel.sqrMagnitude < ThrownSpeed * ThrownSpeed) return false;
+            _emoteYawDeg = Mathf.Atan2(travel.x, travel.z) * Mathf.Rad2Deg;
+            _thrownAimed = true;
+            Shake(0.9f, 0.45f);
+            return true;
         }
 
         public void BeginEmoteView()

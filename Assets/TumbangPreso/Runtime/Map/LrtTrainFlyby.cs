@@ -124,6 +124,63 @@ namespace TumbangPreso
         /// </summary>
         public float CentreX, CentreZ;
 
+        /// <summary>
+        /// THE CONSIST IS A BODY (owner, 2026-10-04: "the cars are just pass through, even the
+        /// train"). With jump pads on the pavements a player can land on the deck, and the consist
+        /// went through them. On, it carries a kinematic box (`SolidSize`, about its rail-head
+        /// origin), so it can be stood against when it waits in a station, and while it RUNS it
+        /// fells and throws whoever it reaches, as a car does on the live road (`KantoTraffic`):
+        /// resolved once by the host, the throw through the existing impact RPC.
+        /// </summary>
+        public bool Solid;
+
+        /// <summary>The consist's box: width, height over the rail head, length. LRT-1's car body
+        /// is 2.5 m wide and stands about 3.6 m over the rail; the consist is 15.6 m.</summary>
+        public Vector3 SolidSize = new Vector3(2.6f, 3.6f, 15.6f);
+
+        /// <summary>The throw: along the line, and up. A train, so harder than a car's 14.</summary>
+        public float HitThrow = 18.0f, HitLift = 8.0f, HitTrip = 3.0f;
+
+        private readonly System.Collections.Generic.Dictionary<CharacterMotor, float> _nextHit =
+            new System.Collections.Generic.Dictionary<CharacterMotor, float>();
+
+        private void BuildSolid()
+        {
+            if (!Solid || !Application.isPlaying) return;
+            var body = gameObject.AddComponent<Rigidbody>();
+            body.isKinematic = true; body.useGravity = false;
+            var box = gameObject.AddComponent<BoxCollider>();
+            box.center = new Vector3(0.0f, SolidSize.y * 0.5f, 0.0f);
+            box.size = SolidSize;
+        }
+
+        private void HitPlayers(float speed)
+        {
+            if (!Solid || speed < 2.0f || !NetAuthority.ShouldResolve()) return;
+            var round = GameServices.Round;
+            var players = round != null ? round.Players : null;
+            if (players == null) return;
+            Vector3 forward = transform.forward, right = transform.right, at = transform.position;
+            for (int k = 0; k < players.Count; k++)
+            {
+                var who = players[k];
+                if (who == null || !who.isActiveAndEnabled) continue;
+                Vector3 d = who.transform.position - at;
+                if (d.y < -1.5f || d.y > SolidSize.y) continue;
+                if (Mathf.Abs(Vector3.Dot(d, forward)) > SolidSize.z * 0.5f + 0.5f) continue;
+                float side = Vector3.Dot(d, right);
+                if (Mathf.Abs(side) > SolidSize.x * 0.5f + 0.5f) continue;
+                if (_nextHit.TryGetValue(who, out float next) && Time.time < next) continue;
+                if (who.IsTripImmune) continue;
+                _nextHit[who] = Time.time + 2.0f;
+                who.ApplyTrip(HitTrip);
+                if (!who.IsTripped) continue;
+                who.ApplyResolvedImpact(forward * HitThrow + right * (side >= 0.0f ? 6.0f : -6.0f) + Vector3.up * HitLift);
+                NetCue.PlayVaried("hit_body", who.transform.position, 0.6f, 0.75f, 1.0f);
+                ImpactBurst.SpawnAt(who.transform.position);
+            }
+        }
+
         private int _dir = 1;
         private float RunX => CentreX + (Shuttle ? _dir * Mathf.Abs(TrackX) : TrackX);
         private Vector3 RunPosition(float along) => new Vector3(RunX, TrackY, CentreZ + (Shuttle ? _dir * along : along));
@@ -167,6 +224,7 @@ namespace TumbangPreso
             _timer = Interval - InitialDelay;
             _isRunning = false;
             Place(StartZ);
+            BuildSolid();
             OverheadPassWindow.Clear();
         }
 
@@ -207,6 +265,7 @@ namespace TumbangPreso
             }
             _currentZ += speed * Time.deltaTime;
             Place(_currentZ);
+            HitPlayers(speed);
 
             float warnAt = -OverheadHalfZ - Speed * WarningLead;
 

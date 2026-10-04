@@ -630,6 +630,7 @@ namespace TumbangPreso.EditorTools.MapKit
             flyby.Interval = 150f;
             flyby.InitialDelay = 6f;
             flyby.Shuttle = true;
+            flyby.Solid = true;
             // The line runs along Taft, which is no longer through the origin (IlalimFrame).
             flyby.CentreX = g.roadX;
             flyby.CentreZ = g.roadZ;
