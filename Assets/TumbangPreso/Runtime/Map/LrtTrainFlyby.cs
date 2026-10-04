@@ -100,8 +100,22 @@ namespace TumbangPreso
         private bool _warned;
         private bool _windowOpen;
 
+        // TEMPORARY TROLL (owner, 2026-10-04: "as a troll ... this is just temporary"). When the
+        // LOCAL-ONLY, git-excluded clip Resources/Troll/lrt_troll exists, the pass plays that music
+        // instead of the recording: it is PAUSED when the consist leaves and RESUMED from the same
+        // point on the next pass, never restarted, and the consist comes round every TrollInterval
+        // seconds. With no such file (every other machine, every build) nothing here does anything.
+        private const string TrollClipPath = "Troll/lrt_troll";
+        private const float TrollInterval = 12.0f;
+        private AudioClip _trollClip;
+        private bool _trollBegun;
+        // Static, so the song carries on from the same point in the NEXT match as well.
+        private static float s_trollTime;
+
         private void Start()
         {
+            _trollClip = Resources.Load<AudioClip>(TrollClipPath);
+            if (_trollClip != null) { Interval = TrollInterval; InitialDelay = Mathf.Min(InitialDelay, 4.0f); }
             _timer = Interval - InitialDelay;
             _isRunning = false;
             transform.position = new Vector3(TrackX, TrackY, StartZ);
@@ -112,7 +126,11 @@ namespace TumbangPreso
         // cooldown rate behind on the way out would follow the player into the next match on a
         // different map, where nothing would ever put it back.
         private void OnDisable() => OverheadPassWindow.Clear();
-        private void OnDestroy() => OverheadPassWindow.Clear();
+        private void OnDestroy()
+        {
+            if (_trollClip != null && _rumble != null && _rumbleStarted) s_trollTime = _rumble.time;
+            OverheadPassWindow.Clear();
+        }
 
         private void Update()
         {
@@ -270,6 +288,7 @@ namespace TumbangPreso
             // cue asked for through a local named anything else is a call site the check cannot
             // see, and it would then report `sfx_lrt_pass` as a file nothing plays.
             if (!GameServices.Audio.TryGetClip("sfx_lrt_pass", out var clip, out float mix)) return;
+            if (_trollClip != null) { clip = _trollClip; mix = 1.0f; }
 
             var go = new GameObject("LrtRumble");
             go.transform.SetParent(transform, false);
@@ -288,6 +307,16 @@ namespace TumbangPreso
             // which nobody hears. This is the one place exaggerating it is honest: the effect
             // being sold is "it went past me", not a physics reading.
             _rumble.dopplerLevel = 2.2f;
+
+            if (_trollClip != null)
+            {
+                // Music, not a pass-by: it loops, it is not pitch-bent, and it is at full level
+                // for the whole traverse rather than only under the deck.
+                _rumble.loop = true;
+                _rumble.dopplerLevel = 0.0f;
+                _rumble.minDistance = 45.0f;
+                _rumble.maxDistance = 140.0f;
+            }
 
             _rumbleMix = mix;
         }
@@ -319,8 +348,13 @@ namespace TumbangPreso
                 if (!_rumbleStarted)
                 {
                     _rumbleStarted = true;
-                    _rumble.time = 0.0f;
-                    _rumble.Play();
+                    if (_trollClip != null && _trollBegun) _rumble.UnPause();
+                    else
+                    {
+                        _rumble.time = _trollClip != null ? Mathf.Repeat(s_trollTime, _trollClip.length - 0.05f) : 0.0f;
+                        _rumble.Play();
+                        _trollBegun = _trollClip != null;
+                    }
                 }
 
                 // The player's slider is read every frame rather than cached, because it can be
@@ -357,6 +391,7 @@ namespace TumbangPreso
         private void StopRumble()
         {
             _rumbleStarted = false;
+            if (_rumble != null && _trollClip != null) { s_trollTime = _rumble.time; _rumble.Pause(); return; }
             if (_rumble != null && _rumble.isPlaying) _rumble.Stop();
         }
 
