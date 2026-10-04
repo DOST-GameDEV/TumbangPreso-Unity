@@ -16,3 +16,5 @@ The field keeps its continuous3m boundary, five renderers and three individually
 - Final frozen manifest unchanged, settings/profile restored, exit0/no new OOM.
 
 The before/after review uses measured0.1game-second frame spacing, labelled1x game-time/half-speed/repeat; it is not a renderer FPS measurement. Tested Linux OpenGL/llvmpipe at the probe's low graphics profile. High-quality/player/hardware, actual peers, audio and human approval remain separate. Existing gameplay/packet contracts are unchanged; this is a focused presentation improvement, not completion of the broader hero-quality Feedback row.
+
+Integration41e02506 includes the separately authored supplied-title replacement. Eleven changed C#/assembly inputs were synchronized; integrated compile and the Cinder visual contract pass1/1 in1.142s, exit0/restored/no new OOM. This is not a new root validation of the contributor title artwork.
