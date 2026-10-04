@@ -78,8 +78,11 @@ Nothing was deleted or renumbered.
   screenshot inspection. [Evidence](reports/reliability-2026-10-04/current-hub-names/README.md).
 - [x] Correct eight long-story fields that the heading route omitted, retaining
   nine stable story IDs. Extend the actual route to check the story canvas too.
-- [ ] Native story acceptance in final integrated package, whole gameplay/results/
-  return, signed-in service and matching-peer/recovery acceptance.
+- [x] Actual8a/protocol145 package passed all nine story pages and headings;
+  native0/restored/artifact check and Ilyas/Nemu image inspection.
+  [Evidence](reports/reliability-2026-10-04/names-story-final145/README.md).
+- [ ] Newer protocol146 package, whole gameplay/results/return, signed-in service
+  and matching-peer/recovery acceptance.145UI proof does not replace that gate.
 
 
 ### SOCIAL-REFRESH-ORDER-1004: preserve newer acknowledged friend actions

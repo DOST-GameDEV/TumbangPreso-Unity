@@ -1,0 +1,14 @@
+{
+  "sourceCommit": "8a4466b4882280b5e5e7a0b2a8225eebdd6e3d41",
+  "protocol": 145,
+  "artifact": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\integration-8a4466b48-1004\\TumbangPreso.exe",
+  "strictReceiptPassed": false,
+  "classifiedArtifactAccepted": true,
+  "classification": "Fullquality Release98s/None. Runtime/Core/authored source unchanged; generatedGUI importermetadata+ProjectSettingsEOL restored exactbefore. PreexistingProjectAuditor generatedreference retained; packageddirtyidentity honest. Actualstory/peeracceptance next.",
+  "buildOptions": "None",
+  "exeSha256": "ba26219c895f07eae430a96cf0bc31a09bd767905c1ffa957bbfa86d60d2be59",
+  "runtimeSha256": "88de3e55c299495da37d55f03869f81c5b60951569ec6b301fe831b5d3fdaef2",
+  "coreSha256": "5b0afae74e8cb89b48e8a41bae1ed3ed6079ce4105599c9f77d728465aa1cff7",
+  "fileCount": 258,
+  "totalBytes": 2565869483
+}

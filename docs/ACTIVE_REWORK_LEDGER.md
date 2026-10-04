@@ -247,3 +247,20 @@ Nextpublishstorycorrection then FINALWindows release includingnames/currentUI/
 AIroundreset/asyncfixes/latestIsaganiintro, actualstoryroute; shareonlychangedfiles
 bylatestfullmanifestwherepossible. Do not repeat oldmenu/passingcohorts. Keep
 current91aad/old145 untilfinalaccepted, thenpruneonlyobsoleteowned builds.
+
+
+## Protocol transition and map staging
+
+8a player16728/session60664 TERMINALPASS all9heads+9stories/currentnavigation,
+exit0/prefs+profile restored/all258 unchanged. Ilyas/Nemu storyimages inspected.
+Full8aRelease16004/89514 TERMINAL98s. Report names-story-final145 precise145scope.
+Concurrent13069614c introduces gameplay/protocol146; integrated onlyafterall
+Rootjobs terminal. Do not start145joint or use145UI proof for146wholeacceptance.
+NetAutomationProbe host-only existing-autostart nowhonors -tp-map through existing
+AdoptLaunchMap+realHost.SelectMap beforeStartGame afteradmission.8linefix direct
+compile0; actual146/Kantopeer acceptance next. No readiness/rule/transport shortcut.
+Server18056/19736/session68566 stillservesOLD145/8a package; askedLPTactivecopy
+statusbeforeclosing; no new145player. LPTreplay repairedfixtureoriginalUnity12316/
+session38246 source130696 actualRenderfault/control; RuntimeCameraunchanged.
+Nextpushmapfix/proof thenfresh146combinedbuild, exactmanifest/storypeer prep;
+LPTarmer18055/49160 notlaunched. No newagent/reset/paidservices.
