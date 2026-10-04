@@ -110,3 +110,22 @@ join, Relay/online/maps/modes/physical/recovery/slowreplay/performance/preload g
 Read-only publishedmatch-recordv5 drifts from canonical mastery/botweight/offline/
 travel/history fixes; assess/deploy coherent checked source, not unsupported SDK
 success. Do not repeat passed cohorts or claim whole competition readiness.
+
+
+## October 4 current owner priority and server shipment
+
+Owner: let Claude finish the quick animation fix first. No PC Unity/player launch
+until completion is confirmed. Root stopped only owned host10232/session70837
+at owner request after natural Classic8 completion (130/150/2880/3350). Saved
+History/Queue/QueueWitness each1 captured; scheduled terminal report absent.
+Input/profile restoration and full artifact check passed. This is an owner
+interruption, not full terminal acceptance. Claude Unity20212 remains untouched.
+Laptop notified to preserve its actual client results and continue independent work.
+
+Production match-record v6 now exactly matches canonical source, seven parameters
+unchanged and rollback v5 retained. Exported v5: mastery/history/offline5 failures
+and4 controls; exported v6:9/9. Bot rating4/4, Core travel6/6, digest unchanged.
+Evidence: reports/reliability-2026-10-04/match-record-deployment. No new live
+account submissions or rendered SDK acceptance claimed. Next: publish this
+checked unit, compare laptop Classic8 saved result and continue lightweight source
+work while Claude owns the PC slot. Local exact checkpoint updated; no new branch.

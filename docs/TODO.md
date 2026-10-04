@@ -17,6 +17,16 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### MATCH-RECORD-DEPLOYMENT-1004: publish checked career rules
+
+- [x] Published canonical source as production v6, exact fetched source and seven
+  parameters verified with v5 rollback retained. Exported old source reproduces
+  five mastery/history/offline failures; v6 passes9/9 plus bot-rating4/4,
+  Core travel6/6 and unchanged digest.
+  [Evidence](reports/reliability-2026-10-04/match-record-deployment/README.md).
+- [ ] Rendered SDK career submission and witnessed ranked flow acceptance.
+
+
 ### ACTIVE-HOST-LOSS145-1004: current package retires an unfinished round
 
 - [x] Actual two-machine round1/readiness on identical145 package; retained
