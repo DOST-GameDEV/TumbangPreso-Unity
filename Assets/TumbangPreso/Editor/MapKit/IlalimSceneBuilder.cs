@@ -230,6 +230,16 @@ namespace TumbangPreso.EditorTools.MapKit
             // The moving cars and their street sound, and the pigeons (IlalimLifeAuthor): after the
             // gameplay colliders, which the pigeons' perch measurement respects.
             IlalimLifeAuthor.Build(root, dressing);
+            // Jump pads on the pavements, clear of awnings, poles, props and canopies: the only way
+            // to see the consist, which the deck hides from the ground (owner, 2026-10-04).
+            var pads = Group(dressing, "JumpPads");
+            foreach (var at in new[] { new Vector2(8.6f, 2f), new Vector2(8.6f, -13f), new Vector2(-8.6f, -4f), new Vector2(-8.6f, 8f) })
+            {
+                var pad = new GameObject($"JumpPad_{at.x:F0}_{at.y:F0}");
+                pad.transform.SetParent(pads, false);
+                pad.transform.position = new Vector3(at.x, g.pavementTop, at.y);
+                pad.AddComponent<JumpPad>();
+            }
             Lighting(root, layout);
             EditorSceneManager.MarkSceneDirty(scene);
             Directory.CreateDirectory(Path.GetDirectoryName(ScenePath));

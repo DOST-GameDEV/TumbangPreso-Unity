@@ -2049,6 +2049,18 @@ namespace TumbangPreso
         private float IncomingKnockbackSpeedScale => Mode == Core.GameMode.HeroStrike
             ? Mathf.Sqrt(Mathf.Clamp01(AbilitySystem?.Kit?.IncomingKnockbackDistanceScale ?? 1)) : 1;
 
+        /// <summary>A jump pad's throw (`JumpPad`): sets the vertical speed outright, past
+        /// `Balance.MaxKnockbackLift`, which caps hits and not map furniture. Only on the peer
+        /// that simulates this unit; returns whether it launched.</summary>
+        public bool LaunchUp(float speed)
+        {
+            if (!MayMutateGameplayState() || !IsLocallySimulated() || !CanMove()) return false;
+            _velocity.y = speed;
+            _grounded = false;
+            NetCue.PlayVaried("jump", transform.position, 0.7f, 0.8f, 1.0f);
+            return true;
+        }
+
         public void ApplyImpulse(Vector3 impulse)
         {
             if (!MayMutateGameplayState() || !IsLocallySimulated()) return;
