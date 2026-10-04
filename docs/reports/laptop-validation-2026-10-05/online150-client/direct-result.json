@@ -1,0 +1,41 @@
+{
+  "source": "9226f4f78ca21d98a8083d6d6832a6a1250714bd",
+  "protocol": 150,
+  "profile": "lpt-q150-ui1005a",
+  "profilePath": "C:\\Users\\Matthew\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\b8c0e30d67f8f91c14663a4bac98fa96dc1abc9253e77615c69247b8e9d33150",
+  "command": [
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\integration-9226f4f78-1004\\TumbangPreso.exe",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1280",
+    "-screen-height",
+    "720",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "lpt-q150-ui1005a",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Logs\\qa-visible-150-client1005a\\player.log"
+  ],
+  "manifestSha256": "49c0fcfeb3d1d7c129d3829e23c8255d92d17aa95e32bd2a1392d5890310294f",
+  "route": "normal visible boot; actual UI clicks; no network bootstrap",
+  "scope": "Actual visible guest/Home/room browser/code/lobby/readiness/gameplay through supported native UI; no skip/bootstrap/autostart flags",
+  "pid": 36344,
+  "exitCode": 0,
+  "savedProfileHashes": {
+    "career.json": "4234dfb4a39b40dd32d791fed764d13cf8c34762c29276a0e8e8a8b7f15a39f3",
+    "career.json.bak": "b2c755e93a21815e93adfd4eabdfacb0c5cb8db7a30524024f18e112244a9912",
+    "settings.json": "8a94a5fdcb647a38ac69d3e7c479934e9c2566b91b405a04bd6362f9c5e375e2",
+    "settings.json.bak": "8a94a5fdcb647a38ac69d3e7c479934e9c2566b91b405a04bd6362f9c5e375e2",
+    "social.json": "1499d939e535bea3ed4d31a6ad032879bbee755e05679bcf2bb9109bd1cbff32",
+    "social.json.bak": "1499d939e535bea3ed4d31a6ad032879bbee755e05679bcf2bb9109bd1cbff32",
+    "wallet.json": "e0a6c464163bdd1c3c8424a8eff7cfaa9aaaeb9a40dc508d6f1c9113123283fb",
+    "wallet.json.bak": "e0a6c464163bdd1c3c8424a8eff7cfaa9aaaeb9a40dc508d6f1c9113123283fb"
+  },
+  "inputRestored": true,
+  "seedRestored": true,
+  "terminal": true,
+  "artifactUnchanged": true
+}

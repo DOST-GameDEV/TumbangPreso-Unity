@@ -220,7 +220,7 @@ namespace TumbangPreso.Abilities
             go.transform.position = origin;
             var b = go.AddComponent<DanteBoulder>();
             b._owner = ownerSlot;
-            b._velocity = Slipper.SolveArc(origin, target, GeoRules.BoulderSpeed);
+            b._velocity = Slipper.SolveArc(origin, target, GeoRules.BoulderSpeed) * GeoRules.BoulderSpeed;
             DanteBoulderVisual.Build(go.transform);
             return b;
         }
