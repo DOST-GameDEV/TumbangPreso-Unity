@@ -106,7 +106,7 @@ namespace TumbangPreso.UI
                 "Composer, Original Soundtrack  ·  Logo & UI Design  ·  Game Voice Over"),
             new TeamMember("CLARENCE PAGADUAN",
                 "UI Designer  ·  Game Asset Artist  ·  Audio Composer"),
-            new TeamMember("HANS LAO",
+            new TeamMember("HANS XAVIER LAO",
                 "QA Tester & Validation  ·  Administration  ·  Cinematics Director"),
         };
 
