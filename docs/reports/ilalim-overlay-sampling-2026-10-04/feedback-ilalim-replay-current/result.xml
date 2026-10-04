@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 12:54:18Z" end-time="2026-10-04 12:54:54Z" duration="36.5984948">
+  <test-suite type="TestSuite" id="3051" name="TUMP Full Flow1004" fullname="TUMP Full Flow1004" runstate="Runnable" testcasecount="1672" result="Passed" start-time="2026-10-04 12:54:18Z" end-time="2026-10-04 12:54:54Z" duration="36.598495" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3045" name="TumbangPreso.PlayTests.dll" fullname="/workspace/scratch/0ed9da4aed7f/tump-qa/recovery-1004b/runtime-native-project/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1672" result="Passed" start-time="2026-10-04 12:54:18Z" end-time="2026-10-04 12:54:54Z" duration="36.589887" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="98570" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3046" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1672" result="Passed" start-time="2026-10-04 12:54:18Z" end-time="2026-10-04 12:54:54Z" duration="36.587363" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3047" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1672" result="Passed" start-time="2026-10-04 12:54:18Z" end-time="2026-10-04 12:54:54Z" duration="36.585287" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1236" name="CatchReconstructionTests" fullname="TumbangPreso.PlayTests.CatchReconstructionTests" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" testcasecount="40" result="Passed" start-time="2026-10-04 12:54:18Z" end-time="2026-10-04 12:54:54Z" duration="36.560810" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1237" name="CatchCameraAdoptsGameplayShaderContextAndRestoresGlobals" fullname="TumbangPreso.PlayTests.CatchReconstructionTests.CatchCameraAdoptsGameplayShaderContextAndRestoresGlobals" methodname="CatchCameraAdoptsGameplayShaderContextAndRestoresGlobals" classname="TumbangPreso.PlayTests.CatchReconstructionTests" runstate="Runnable" seed="1893612314" result="Passed" start-time="2026-10-04 12:54:18Z" end-time="2026-10-04 12:54:54Z" duration="36.545983" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="Timeout" value="90000" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Slice] round 1 begins, taya is seat 0
+[Slice] round 1 begins, taya is seat 0
+Saving results to: /dev/shm/codex-orbit-desktop/runtime-dF3nrK/config/unity3d/BH Studios Validation/TUMP Full Flow1004/TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,2 @@
+_Ov0Tex: heritage_grime_eave, 1024x512, DXT1, mips11, min0.7098039, max1, invalid0
+_Ov1Tex: heritage_grime_sill, 1024x512, DXT1, mips11, min0.6117647, max1, invalid0

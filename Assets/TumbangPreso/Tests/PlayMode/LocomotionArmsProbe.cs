@@ -48,7 +48,9 @@ namespace TumbangPreso.PlayTests
             var mode=string.IsNullOrEmpty(personId)?GameMode.Classic:GameMode.HeroStrike;
             yield return MapRetrievalProbe.Load(SceneFlow.Eskinita,mode);
             var players = GameServices.Round.Players.ToList();
-            var carrying = players.First(p => p.GetComponent<Carrier>().Held != null);
+            // MapRetrievalProbe.Load establishes a solo first-person seat. Use another
+            // carrier so the owner-view hiding layer cannot erase the held prop.
+            var carrying = players.First(p => p.PlayerSlot != GameLaunch.SoloSeat && p.GetComponent<Carrier>().Held != null);
             var empty = players.First(p => p.GetComponent<Carrier>().Held == null);
             if(!string.IsNullOrEmpty(personId))
             {
@@ -91,7 +93,8 @@ namespace TumbangPreso.PlayTests
                 // poses the bones, so the first three runs of this probe measured and photographed the clip
                 // underneath the layer and never the drawn result.
                 var late = who.gameObject.AddComponent<LateSampler>();
-                late.Begin(anim, witness, Path.Combine(Output, name), 6, .15f);
+                bool film=Environment.GetEnvironmentVariable("TUMP_LOCOMOTION_FILM")=="1";
+                late.Begin(anim, witness, Path.Combine(Output, name), film?30:6, film?1f/30:.15f);
                 yield return new WaitForSeconds(1.0f);
                 late.enabled = false;
                 Object.Destroy(input);
@@ -108,12 +111,15 @@ namespace TumbangPreso.PlayTests
                 // degrees), so "swung enough" means most of what that character's gait asks for.
                 var authored = sprint ? anim.Style.Run : anim.Style.Walk;
                 float need = .6f * (authored.ArmForward + authored.ArmBack);
-                Assert.Greater(late.LMax - late.LMin, need, $"{name}: the left arm barely swung.");
+                // Isagani deliberately favours one arm while swaggering. Compare
+                // each side with its own authored range, as GaitStyle.Evaluate does.
+                float leftNeed=need*(1f-authored.ArmFavour),rightNeed=need*(1f+authored.ArmFavour);
+                Assert.Greater(late.LMax - late.LMin, leftNeed, $"{name}: the left arm barely swung.");
                 // ⚠️ 3 DEGREES: only catches an arm pulled inward past vertical. Every authored spread is 10 degrees or more
                 // (`GaitStyles`), and the shoulder is never moved off its pivot any more (the shift made arms float, 2026-09-27).
                 Assert.Greater(late.LSpread, 3f, $"{name}: the left arm hugged the body.");
                 if (holding) { Assert.Less(late.RMax, 50f, $"{name}: the slipper is still held out in front."); Assert.Less(late.RMax - late.RMin, 35f, $"{name}: the carrying hand swung the slipper about."); }
-                else { Assert.Greater(late.RMax - late.RMin, need, $"{name}: the right arm barely swung."); Assert.Greater(late.RSpread, 3f, $"{name}: the right arm hugged the body."); }
+                else { Assert.Greater(late.RMax - late.RMin, rightNeed, $"{name}: the right arm barely swung."); Assert.Greater(late.RSpread, 3f, $"{name}: the right arm hugged the body."); }
                 who.Teleport(from + Vector3.right * 30);
                 yield return null;
             }
@@ -147,7 +153,9 @@ namespace TumbangPreso.PlayTests
             {
                 var at = transform.position;
                 bool wholeBody=!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("TUMP_LOCOMOTION_PERSON"));
-                var eye = wholeBody ? at + transform.right * 2.8f + transform.forward * 2.8f + Vector3.up * 1.2f
+                // Look from the carrying side when equipment would be hidden behind the body.
+                float side=GetComponent<Carrier>()?.Held!=null?-1f:1f;
+                var eye = wholeBody ? at + transform.right * (2.8f*side) + transform.forward * 2.8f + Vector3.up * 1.2f
                     : at + transform.right * 2.3f + transform.forward * .6f + Vector3.up * .9f;
                 _cam.transform.SetPositionAndRotation(eye, Quaternion.LookRotation(at + Vector3.up * (wholeBody?1.1f:.6f) - eye));
                 // The local first-person body draws shadows only; show it for the photograph and put it back.

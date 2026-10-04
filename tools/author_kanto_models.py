@@ -291,7 +291,9 @@ class Buf:
         """Real-world-scale UVs: walls project horizontally along the face, floors from above.
         A brick is then the same size on every surface, and courses run level round corners."""
         uv = self.bm.loops.layers.uv.verify()
-        if getattr(self, "uv_mode", None) == "keep":
+        keep = getattr(self, "uv_mode", None) == "keep"
+        projected_materials = getattr(self, "world_uv_materials", ())
+        if keep and not projected_materials:
             return   # the builder wrote its own UVs (tree limbs: one cylindrical map per limb)
         if getattr(self, "uv_mode", None) == "trunk":
             # TREES: u runs AROUND the tree's own vertical axis (one texture tile per turn),
@@ -306,6 +308,8 @@ class Buf:
                     l[uv].uv = (u, l.vert.co.z / TILE_M)
             return
         for f in self.bm.faces:
+            if keep and self.mats[f.material_index] not in projected_materials:
+                continue
             n = f.normal
             if 0.3 < n.z < 0.97 and self.mats[f.material_index].startswith("roof_tile"):
                 # PITCHED TILE ROOFS: u along the eaves, v up the slope, so tile courses run

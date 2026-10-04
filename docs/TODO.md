@@ -1,5 +1,17 @@
 # TODO: Tumbang Preso Unity
 
+### MAP-SAMPLING-1004: aerial-capture surface corruption
+
+- [x] Reproduce Sa Bubong apartment black patches, isolate albedo sampling, and
+  replace implicit sampling with explicit footprint mip selection. Fixed witness
+  regions improve from968/3468near-black pixels to0/0 without changing authored
+  textures, geometry or post processing. [Evidence](reports/near-fade-sampling-2026-10-04/README.md).
+- [x] Three affected-map captures and one near-camera approach pass; actual
+  frames inspected. Sa Bubong/Eskinita corrected. Kanto street-tree guard UV repair also passes
+  native1/1 and three Blender mapping controls;180degenerate metal triangles
+  now0, with all non-UV model bytes retained. [Guard evidence](reports/kanto-guard-uv-2026-10-04/README.md).
+- [ ] Windows/player/GPU and human acceptance; exact red/cyan foliage report stays open.
+
 ### SLIPPER-CIRCLE-1004: ground-only recall circle
 
 - [x] Hide during held/flight states; show only after landing, retaining normal
@@ -106,6 +118,10 @@ Nothing was deleted or renumbered.
 - [ ] Integrate the owner-approved new voxel Yasmin outfit/model and refreshed
   portraits/FPP clothing. Draft generated; rig/nodes/skins/37 animation data exact.
 - [ ] Current packaged preview of new title/login/model and multiplayer qualification.
+### ILALIM-OVERLAY-1004: painted facade speckles
+
+- [x] Isolate painted-overlay sampling and replace its failing lookup with explicit footprint LOD; authored grime and mip filtering retained. Final native2/2, integrated compile/texture1/1 pass. [Evidence](reports/ilalim-overlay-sampling-2026-10-04/README.md).
+- [ ] Exact red/cyan foliage report, target player/platform and human verification remain separate.
 
 ### BROWSER-LIFETIME-1004: closed or reopened browser rejects old lookups
 

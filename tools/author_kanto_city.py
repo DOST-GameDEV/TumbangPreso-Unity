@@ -1160,6 +1160,9 @@ def tree(name, style, seed, tint="", trunk="trunk", s=1.0):
     P = sk.nodes[top]
     rt = R * 0.62
     if style == "young":
+        # The added guard has no authored limb UVs: map its metal faces while
+        # preserving the cylindrical bark coordinates on the same buffer.
+        wood.world_uv_materials = ("railing", "metal_dark")
         _curve(sk, top, P, P + Vector((0, 0, 0.3 * s)), P + Vector((0, 0, 0.7 * s)), rt, 0.025)
         clumps.append((P + Vector((0, 0, 0.8 * s)), (1.05 * s, 1.05 * s, 0.95 * s)))
         for k in range(4):   # a tree guard and an iron grate, as before

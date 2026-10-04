@@ -758,7 +758,9 @@ namespace TumbangPreso
 
         private void RetireLocalCharge(bool publish)
         {
-            _throwChargeDecayLeft = 0;
+            // An obsolete reader can retire its own input without cancelling
+            // another seat's received charge-return presentation.
+            if (publish || _observedChargeFromInput) _throwChargeDecayLeft = 0;
             if (!_charging) return;
 
             _charging = false;

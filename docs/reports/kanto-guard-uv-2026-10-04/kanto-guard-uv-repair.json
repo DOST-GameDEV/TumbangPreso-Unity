@@ -1,0 +1,20 @@
+{
+  "original_sha256": "3d28b41b23d9193e9942b6e77ca45da6c828c6d4a1dd78408b80895968fe8a7f",
+  "candidate_sha256": "5ca9ed2b5b7c8504eb7ae73c81c959437e639173fff609cbb53de1240ee2df1f",
+  "changed_uv_ranges": [
+    [
+      "railing",
+      6912,
+      9216,
+      288
+    ],
+    [
+      "metal_dark",
+      10800,
+      10992,
+      24
+    ]
+  ],
+  "non_uv_binary_bytes_unchanged": true,
+  "method": "Planar 2m guard mapping, same as canonical Buf.world_uvs; retain all bark/leaf coordinates and all geometry."
+}
