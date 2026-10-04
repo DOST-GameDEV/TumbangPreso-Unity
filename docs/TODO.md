@@ -1,5 +1,13 @@
 # TODO: Tumbang Preso Unity
 
+### CINDER-READABILITY-1004: clearer floor trap
+
+- [x] Actual pale-court review, tapered scorch/hot seam and readable armed
+  flame silhouettes. Final native2/2 includes accepted crossing and deterministic
+  render-only replay/retirement; same3m boundary/five renderers.
+  [Evidence](reports/cinder-readability-2026-10-04/README.md).
+- [ ] Player/high-quality/hardware and human visual acceptance; broader SFX remains separate.
+
 ### MAP-SAMPLING-1004: aerial-capture surface corruption
 
 - [x] Reproduce Sa Bubong apartment black patches, isolate albedo sampling, and
