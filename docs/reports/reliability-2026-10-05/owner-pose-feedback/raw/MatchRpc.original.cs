@@ -2487,7 +2487,7 @@ namespace TumbangPreso.Net
             ApplyUnitMove(slot, pos, yaw, velocity, grounded, flightEpisode);
             unit.ApplyNetworkResourceIntent(effort);
             unit.AbilitySystem?.ApplyNetworkAim(aim);
-            SendUnitPose(slot, pos, yaw, velocity, false, ownerCorrection: false);
+            SyncUnitTransformClientRpc(slot, pos, yaw, velocity);
         }
 
         /// <summary>
@@ -2510,8 +2510,7 @@ namespace TumbangPreso.Net
         public void SyncUnitTransformClientRpc(int slot, Vector3 pos, float yaw, Vector3 velocity)
             =>SendUnitPose(slot,pos,yaw,velocity,false);
 
-        private void SendUnitPose(int slot,Vector3 pos,float yaw,Vector3 velocity,bool reliable,ulong? onlyClient = null,
-                                  bool ownerCorrection = true)
+        private void SendUnitPose(int slot,Vector3 pos,float yaw,Vector3 velocity,bool reliable,ulong? onlyClient = null)
         {
             if (!NetAuthority.IsHost) return;
             if (_nm == null || _nm.CustomMessagingManager == null) return;
@@ -2528,7 +2527,6 @@ namespace TumbangPreso.Net
                 Epoch = _movementEpochs[slot],
             });
             writer.WriteValueSafe(++_unitPoseSerial[slot]);
-            writer.WriteValueSafe(ownerCorrection);
             writer.WriteValueSafe(pos);
             writer.WriteValueSafe(yaw);
             writer.WriteValueSafe(velocity);
@@ -2590,7 +2588,7 @@ namespace TumbangPreso.Net
             // Netcode invokes the handler locally for the listen host, so every broadcast the
             // host sent was also applied ON the host, a second time, over authoritative state it
             // had just produced. See § THE LOOPBACK.
-            if (NetAuthority.IsHost || !reader.TryBeginRead(217 + VoodooBodySnapshot.WireBytes)) return;
+            if (NetAuthority.IsHost || !reader.TryBeginRead(216 + VoodooBodySnapshot.WireBytes)) return;
 
             reader.ReadValueSafe(out int slot);
             reader.ReadNetworkSerializable(out GameplayActionScope scope);
@@ -2600,7 +2598,6 @@ namespace TumbangPreso.Net
                 scope.Round != (GameServices.Match?.RoundNumber ?? -1)) return;
             int epoch = scope.Epoch;
             reader.ReadValueSafe(out ulong poseSerial);
-            reader.ReadValueSafe(out bool ownerCorrection);
             reader.ReadValueSafe(out Vector3 pos);
             reader.ReadValueSafe(out float yaw);
             reader.ReadValueSafe(out Vector3 velocity);
@@ -2672,9 +2669,7 @@ namespace TumbangPreso.Net
             bool edgeOwned=unit.IsEdgeRecovering||edgeKind!=0;
             unit.ApplyEdgeRecoverySnapshot((EdgeRecoveryKind)edgeKind,edgeGrip,edgeOutward,edgePhase,edgeRatio);
             float facing=local && newEpoch&&!edgeOwned?unit.transform.eulerAngles.y:yaw;
-            unit.ApplyNetworkTransform(pos, facing, velocity, grounded, reconcileLocal: local&&!edgeOwned,
-                force:newEpoch, flightEpisode:flightEpisode,
-                acceptedOwnerPose:local&&!ownerCorrection&&!newEpoch&&!edgeOwned);
+            unit.ApplyNetworkTransform(pos, facing, velocity, grounded, reconcileLocal: local&&!edgeOwned,force:newEpoch,flightEpisode:flightEpisode);
             if(newEpoch)unit.GetComponent<Visual.CharacterVisual>()?.SnapRemoteTransform();
             // A status edge can deplete locally; the host's resource correction
             // below must be the final pool value, including legitimate later gains.

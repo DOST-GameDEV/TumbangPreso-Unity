@@ -1,0 +1,18 @@
+{
+  ".gitattributes": "85e48d232edc7b02f6cecf8fbbf905f3b126c467b594d8dd16c4f8fa283a8320",
+  "candidate-native-classification.json": "fcd965e8801a28f82ed0ca98bc1f03131fee7661b0a6aa9e905994b7a74f4199",
+  "candidate-native-launch.json": "ff4ff75e3885523fcea1cfd4c5d5d377ff6d9df9f802ec1cbf2557eae6a82868",
+  "candidate-native-result.json": "f38bb69f422d36eb5509b8f9eae64610b853d31e30757075a5ab3a198db4e5b5",
+  "candidate-native-results.xml": "0454e580f55fed7424d4dbec6d9c9c629e1adc178bf8fa925c6ba6b531b074aa",
+  "CharacterMotor.candidate.cs": "1326fcf1c3d56b6425d079293abf0af0b83ea81c8f7f9c95aad50d36a5cfd287",
+  "CharacterMotor.original.cs": "34ecbef3145e2a1d3228f7fe07d9f39c41bf8f0b658a47899aa8b36087db205e",
+  "MatchRpc.candidate.cs": "547d0ee066f2abdf345a01088af0f01a9d410de5a86255c2ba8df26a1a86818f",
+  "MatchRpc.original.cs": "296d99917df662c8b534f611971000e466b78f5b963683257e326a8de7943112",
+  "NetSession.candidate.cs": "61d9f24502c8c82fe0ff8cd1d0fb4eac84e6c285925dda67dd9968dd5b105de2",
+  "NetSession.original.cs": "61f518b92d2550295dee47cca533d9b19dce1dfcfb35d23d4b354635efa9710b",
+  "original-native-classification.json": "251f5fc9faed78b4f647856913bb1ee9aca2d0c17e1c0166366a04266372f262",
+  "original-native-launch.json": "48f2591792beae349d9b942ffed41e18ef377ee4e820ffe883fbab0fe2aa0aae",
+  "original-native-result.json": "fdf1d518dbeb86f2b7fb3eaa195e2ee74715435ca1d8b937038433c66d7213ff",
+  "original-native-results.xml": "0223735da38346cc651cfd1b74c9562269c1b8da6d7285d054fb537a23e0aff5",
+  "OwnerPoseFeedbackTests.cs": "27b1678a54256b03e9c9bce6e57226e882de9d2bbc3693b1f83008a328accee0"
+}

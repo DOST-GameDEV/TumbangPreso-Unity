@@ -1205,6 +1205,7 @@ namespace TumbangPreso.PlayTests
                 writer.WriteValueSafe(1);
                 writer.WriteNetworkSerializable(new GameplayActionScope { Match = match, Round = round, Epoch = epoch });
                 writer.WriteValueSafe(serial);
+                writer.WriteValueSafe(true); // Explicit authoritative owner correction.
                 writer.WriteValueSafe(Vector3.zero); writer.WriteValueSafe(0f); writer.WriteValueSafe(Vector3.zero);
                 writer.WriteValueSafe(true);
                 writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe((int)StunElement.None);
@@ -1218,8 +1219,9 @@ namespace TumbangPreso.PlayTests
                 writer.WriteValueSafe((byte)0); writer.WriteValueSafe((byte)0);
                 writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f); writer.WriteValueSafe(0f);
                 writer.WriteValueSafe(Vector3.zero); writer.WriteValueSafe(0L); writer.WriteValueSafe(haunted);
+                writer.WriteValueSafe(0f); // Zapped status.
                 writer.WriteNetworkSerializable(data); writer.WriteNetworkSerializable(default(AbilityAimSnapshot));
-                Assert.AreEqual(212 + VoodooBodySnapshot.WireBytes, writer.Length);
+                Assert.AreEqual(217 + VoodooBodySnapshot.WireBytes, writer.Length);
                 using var reader = new FastBufferReader(writer, Allocator.Temp);
                 receive.Invoke(receiver, new object[] { NetworkManager.ServerClientId, reader });
             }
