@@ -129,3 +129,39 @@ Evidence: reports/reliability-2026-10-04/match-record-deployment. No new live
 account submissions or rendered SDK acceptance claimed. Next: publish this
 checked unit, compare laptop Classic8 saved result and continue lightweight source
 work while Claude owns the PC slot. Local exact checkpoint updated; no new branch.
+
+
+## Current uncommitted social ordering unit
+
+Root owns SocialStore.cs and SocialRefreshOrderingTests.cs/meta. Suspected older
+refresh replaces newer acknowledged same-account list. Private dispatched cores
+preserve shipping REST wrappers; candidate invalidates earlier reads at write
+start and defers a new refresh during write. Both versions compile against actual
+145 references with the same six delayed-response cases. Native baseline/candidate
+comparison remains pending; do not claim causal proof or ship as checked yet.
+Immutable packet Logs/social-refresh-order1004/packet.json, filter
+TumbangPreso.Tests.SocialRefreshOrderingTests. Source baseline b263ff1dd;
+fixture SHA273f9dc436d761fc9942a35388de32d19d5aa5f330ccdf4abfd0402d34e11b91.
+Laptop acknowledges free source reservation and focused native slot after own
+Classic terminal unit. Latest status18052 runnerTerminal=true. Final packet message
+first failed host lookup, one explicit-host retry succeeded; no duplicate job.
+Task-only server18053 PID3108/session27804 TERMINAL after laptop verified all
+packet hashes and copied the four PC Classic receipts. No Root helper remains.
+Unused compiler DLLs removed; source/receipts/reproduction response files retained.
+PC remains reserved for Claude; no Root editor/player launches until confirmed.
+Next: inspect laptop exact original/candidate results, repair only real issue and
+publish checked source. Compare actual Classic8 peer records without inventing a
+normal host terminal report that owner priority interrupted.
+
+
+## Wallet production shipment
+
+Productionwalletv2 exact canonical source verified, action/item/task preserved,
+optionalString request added and v1 retained. Old exported endpoint reproduces
+325 vs195 offline Practice overpayment. Exportedv2 wallet checks pass including
+current Amihan/Paete purchases and Credits retry/receipt/overflow. No live wallet
+calls or rendered reward/audio claims. Temporary999999 playtestgrant retained;
+public-release disable/redeploy gate remains and no automatic balance reset.
+Evidence reports/reliability-2026-10-04/wallet-deployment. Old403 activation
+blocker retired with current live metadata. Publish checked wallet tests/docs now;
+SocialStore candidate remains unstaged pending laptop native baseline/candidate.

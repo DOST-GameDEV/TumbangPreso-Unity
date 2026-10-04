@@ -1,0 +1,18 @@
+{
+  "name": "wallet",
+  "environment": "production",
+  "version": 2,
+  "published": "2026-10-04T07:52:09",
+  "codeSHA256": "04818577bf6c122ac17195c013d9322df2613167e04b97bdc902c1c60a65d5ba",
+  "canonicalSourceExact": true,
+  "oldParametersPreserved": true,
+  "newParameter": "request:STRING optional",
+  "rollbackVersion": 1,
+  "versionsRetained": [
+    2,
+    1
+  ],
+  "temporaryPlaytestTopup": 999999,
+  "livePlayerCalls": 0,
+  "previousCodeSHA256": "4e6dc5587b80400d41bd1e6f475315bf2452f42de754f5420127e9c1f879c586"
+}

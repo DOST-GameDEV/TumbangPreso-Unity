@@ -243,8 +243,10 @@ Nothing was deleted or renumbered.
 - [x] Client and authoritative wallet source; keyboard/D-pad/mouse/touch input,
   retry receipts and success-only Victory cue. Managed715/715, Node wallet
   checks and native8/8 controls; [evidence](reports/credits-code-2026-10-03/README.md).
-- [ ] Publish and verify production wallet, then actual signed-in reward/audio.
-  Cloud session returned403 Not authorized. [Deployment scope](reports/credits-code-2026-10-03/deployment.md).
+- [x] Published production walletv2 and verified exact source/four parameters;
+  rollbackv1 retained. [Receipt](reports/reliability-2026-10-04/wallet-deployment/README.md).
+- [ ] Actual signed-in reward/audio. October3 cloud403 is retained historical
+  evidence, no longer a deployment blocker.
 
 ### STATUS-TYPOGRAPHY-1003: readable description wrapping
 
@@ -2424,8 +2426,8 @@ points at it rather than copying it. Nothing here is ticked without evidence.
   points at the thumb target). Photograph each prompt on all three devices (CLAUDE.md 4a).
 - [ ] **Everyone gets 999999 tansan so the testers can unlock everything** (*"unlock all"* was asked and
   withdrawn in the next message). Built: `ugs/cloud-code/wallet.js` `PLAYTEST_TOPUP = 999999` tops every
-  loaded wallet up (`tools/test_wallet_script.js` passes). OPEN: the OWNER must deploy `wallet.js` to the
-  UGS project (`dcf0831e-...`), nothing changes in game until then. ⚠️⚠️ TEMPORARY: before any public
+  loaded wallet up (`tools/test_wallet_script.js` passes). Productionv2 deployed and exact source verified
+  October4; actual rendered tester unlock acceptance remains open. ⚠️⚠️ TEMPORARY: before any public
   build set `PLAYTEST_TOPUP = 0` and redeploy (balances already topped up stay topped up; resetting them
   is a separate decision for the owner).
 - [ ] **LIANA LEAP from his own eyes looks like his arms extending**, then *"it doesnt bend with arms
