@@ -8,15 +8,18 @@
 
 ### HERO-PRESENTATION-PARITY-1004: remaining hero presentation
 
-Owner target: refine Zack, Sean, Dante, Cheska, Nemu and Rafi to the presentation
-standard of Phaister, Paete and Amihan. Review actual motion, body/FPP coherence,
+Owner target: refine Isagani, Rago, Basilio, Yasmin, Nemu and Ilyas to the presentation
+standard of Soraya, Paete and Amihan. Review actual motion, body/FPP coherence,
 readable VFX, sound timing and ultimate direction. Preserve each hero's identity;
 reference characters are quality examples, not a new redesign assignment.
 
-- [ ] Zack: Quick Circuit body/FPP single-cut refinement passes13 scoped native
+- [ ] Isagani: Quick Circuit body/FPP single-cut refinement passes13 scoped native
   checks and actual left/right cast review; full kit still open.
   [Motion evidence](reports/zack-quick-circuit-motion-2026-10-04/README.md).
-- [ ] Sean, Dante, Cheska, Nemu and Rafi: finish their remaining presentation passes.
+  Overclock now uses the free hand, front-side shots and a caster-centred strike;
+  native geometry/motion checks pass, final map/player/SFX review remains open.
+  [Overclock refinement](reports/isagani-overclock-2026-10-04/README.md).
+- [ ] Rago, Basilio, Yasmin, Nemu and Ilyas: finish their remaining presentation passes.
 - [ ] Real-game film/listening review and multiplayer/player qualification.
 
 **How this file is organised (docs cleanup, 2026-09-23).** This file is the ONE status
