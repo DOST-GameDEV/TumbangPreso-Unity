@@ -1,0 +1,12 @@
+{
+  "matchIdEqual": true,
+  "matchIdSha256": "d0b3451f831645859c60b3b52ba83f045a8ec55b499f8e1fdf35a9e7f1dd2330",
+  "fullSavedRecordEqual": true,
+  "recordDifferences": {},
+  "hostQueueEqualsHistory": true,
+  "clientQueueEqualsHistory": true,
+  "witnessEqual": true,
+  "hostPassed": true,
+  "hostProtocol": 145,
+  "hostArtifactManifestSha256": "cef828729584c4a1f0e6f6f33bf7ae0a8255bdc018ba8bdb1be6deaffdc3b176"
+}
