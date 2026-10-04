@@ -183,7 +183,10 @@ Nothing was deleted or renumbered.
   target every five seconds. Initial growth stays3s; host-approved shot delivery
   is identity-scoped. Laptop auto5/Core/native and Root replication checks pass.
 - [ ] Actual current Windows peer view of automatic plant windup/flight/contact.
-- [ ] Paete carried slipper floats while emoting.
+- [x] Paete carried slipper now uses his measured branch-palm surface instead of
+  the human-hand lift. Original8.3cm gap becomes2.7mm; native support/model-swap/
+  T-pose-dance-bow film3/3 pass. Windows/peer/human review stays separate.
+  [Evidence](reports/paete-carried-emote-2026-10-05/README.md).
 - [x] Replace shared tag particle burst with compact warm contact ink. Actual tag,
   recovery/pause/lifetime/material cleanup and comfort/round retirement pass2/2.
   [Rendered source evidence](reports/reliability-2026-10-05/tag-contact-replacement/README.md).
