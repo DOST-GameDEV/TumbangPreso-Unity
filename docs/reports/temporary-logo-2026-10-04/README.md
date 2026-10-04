@@ -17,3 +17,6 @@ all three sprite routes and supplied ink aspect asserted. Input hashes unchanged
 settings restored, Editor exit0, no OOM event increase.
 
 Actual target-device rendering and the baked title illustration remain separate.
+
+Owner credit correction: HANS XAVIER LAO. Native credits rendering/name-width
+check passes1/1,0.6195151s09:53:26–27UTC; actual pixels inspected.

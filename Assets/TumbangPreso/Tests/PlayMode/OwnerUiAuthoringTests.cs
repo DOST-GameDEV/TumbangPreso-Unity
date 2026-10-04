@@ -31,6 +31,8 @@ namespace TumbangPreso.PlayTests
             var logo=canvas.GetComponentsInChildren<Image>().Single(i=>i.name=="OriginalOwnerLogo");
             Assert.AreSame(sprite,logo.sprite);Assert.IsTrue(logo.preserveAspect);
             Assert.AreEqual(Color.white,logo.color);
+            var hans=canvas.GetComponentsInChildren<Text>().Single(t=>t.text=="HANS XAVIER LAO");
+            Assert.LessOrEqual(hans.preferredWidth,hans.rectTransform.rect.width,"The full credit name must fit.");
             yield return TumpUiCapture.Capture("Temporary-TUMP-logo-credits",canvas,960,540,false);
             Object.Destroy(owner);
         }
