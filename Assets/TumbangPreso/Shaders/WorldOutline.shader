@@ -569,7 +569,10 @@ Shader "TumbangPreso/WorldOutline"
                     float masked=saturate(mask*_WorldContactMask);
                     float occlusion=enclosed.x*_WorldAOParams.x*(1-masked);
                     if(_CharacterAO>0)occlusion=lerp(enclosed.x*_WorldAOParams.x,enclosed.y*_CharacterAO*1.35,masked);
-                    source.rgb*=lerp(float3(1,1,1),_PeakShade.rgb*.7,saturate(occlusion));
+                    // The cast's shade goes deeper than the world's (.7 of the cavity hue): a body's creases are
+                    // small on screen, and at the world's depth they washed out on a bright skin tone.
+                    float castDepth=lerp(.7,.5,masked*step(1e-4,_CharacterAO));
+                    source.rgb*=lerp(float3(1,1,1),_PeakShade.rgb*castDepth,saturate(occlusion));
                 }
                 if(_PeakDepth.w>0)
                 {
@@ -815,7 +818,12 @@ Shader "TumbangPreso/WorldOutline"
                     float weight=1-ring*.5;
                     occluded+=step(probe.z+bias,sceneZ)*range*weight;total+=weight;
                 }
-                float ao=1-saturate(occluded/max(total,1e-4)*2.2);
+                // ⚠️ x3.6, UP FROM 2.2 (owner, 2026-10-05, in play: "its obvious on some characters but
+                // not others. i think you need to bump it up"). A body built of overlapping blocks and
+                // vines blocks half its probes at every seam and read at once; a blocky kid is big flat
+                // faces with one overhang (the fringe over the forehead, the chin over the collar), which
+                // blocks about a quarter of the set at best. So a quarter blocked is now nearly full.
+                float ao=1-saturate(occluded/max(total,1e-4)*3.6);
                 // Out by 30 m, where a body is a few pixels and the probes land inside one.
                 return lerp(ao,1,smoothstep(18,30,-p.z));
             }
