@@ -71,11 +71,13 @@ namespace TumbangPreso.CameraSystem
                 K(.65f, -.14f, -.18f, .20f, .20f, .08f, .20f), K(.85f, -.13f, -.16f, .19f, .19f, .09f, .19f), Rest(1.2f)) },
 
             // ---------------------------------------------------------------- ZACK: sideways, bladed
-            // BOLT SPRINT. A skater's arms: the right swings across and back, the left counters, twice,
-            // quick and lateral. Locomotion, so no impact frame; `Contact` is the first push.
-            { "sprint-electric", new CastPath(.12f, true,
-                Rest(0), K(.12f, -.18f, .06f, .06f, -.06f, .16f, -.06f), K(.26f, .10f, -.04f, -.04f, .14f, .30f, .08f),
-                K(.40f, -.16f, .05f, .05f, -.04f, .18f, -.04f), K(.54f, .06f, -.02f, -.02f, .08f, .22f, .04f), Rest(.70f)) },
+            // QUICK CIRCUIT. Gather close, brace once at the .15s tell, recover.
+            // Small offsets keep the held shoe readable during either lateral cut.
+            { "sprint-electric", new CastPath(.15f, false,
+                Rest(0), K(.08f, -.04f, .02f, -.02f, .03f, .10f, -.02f),
+                K(.15f, .08f, -.03f, -.06f, -.06f, .18f, -.05f),
+                K(.28f, .06f, -.02f, -.04f, -.04f, .14f, -.03f),
+                K(.46f, .02f, 0, -.01f, -.01f, .05f, -.01f), Rest(.64f)) },
             // MAGNET. The off hand aims out at the slipper, then the right snaps in to the chest as it
             // arrives, with one electrical chatter before it lets go.
             { "overcharge", new CastPath(.30f, false,
