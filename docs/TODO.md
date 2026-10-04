@@ -26,6 +26,10 @@
 - [x] Follow-up supplied full-resolution logo: transparent SVG master and PNG
   export installed; native logo/credits1/1 and actual screenshot review pass.
   [Vector evidence](reports/vector-logo-2026-10-04/README.md).
+- [x] All five follow-up sheet variants traced into SVGs and matching game
+  resources replaced with transparent exports. Thin existing cream outline
+  fits dark/light backgrounds. Native imported aspect/alpha/gallery/credits1/1
+  and actual pixels reviewed. [Sheet evidence](reports/vector-brand-sheet-2026-10-04/README.md).
 
 ### TUTORIAL-MUSIC-1004: owner-supplied track
 

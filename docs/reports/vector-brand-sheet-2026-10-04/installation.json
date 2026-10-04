@@ -1,0 +1,33 @@
+{
+  "sourceSha256": "f4b6ec1d17939d01a2eeca60dc67d14b1297cbb53e3fb4ef1421ee5b24bacdb0",
+  "installed": [
+    "Assets/TumbangPreso/Art/ui/brand/source/tump-logo-colour.svg",
+    "Assets/TumbangPreso/Art/ui/brand/tump_logo.png",
+    "Assets/TumbangPreso/Resources/UI/brand/tump_logo.png",
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/main-logo.png",
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login-logo.png",
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login2-logo.png",
+    "Assets/TumbangPreso/Resources/UI/owner-menu-edits/login3-logo.png",
+    "Assets/TumbangPreso/Art/ui/brand/source/tump-logo.svg",
+    "Assets/TumbangPreso/Art/ui/brand/owner_app_icon.png",
+    "Assets/TumbangPreso/Art/ui/brand/source/tsinelas-mark.svg",
+    "Assets/TumbangPreso/Art/ui/brand/tsinelas_mark.png",
+    "Assets/TumbangPreso/Resources/UI/brand/tsinelas_mark.png",
+    "Assets/TumbangPreso/Art/ui/brand/source/tsinelas-hit.svg",
+    "Assets/TumbangPreso/Art/ui/brand/tsinelas_hit.png",
+    "Assets/TumbangPreso/Resources/UI/brand/tsinelas_hit.png",
+    "Assets/TumbangPreso/Art/ui/brand/source/tump-logo-outline.svg",
+    "Assets/TumbangPreso/Art/ui/brand/tump_wordmark_ink.png",
+    "Assets/TumbangPreso/Resources/UI/brand/tump_wordmark_ink.png",
+    "Assets/TumbangPreso/Art/ui/brand/source/tump-logo-textured.svg",
+    "Assets/TumbangPreso/Art/ui/brand/tump_wordmark_login.png",
+    "Assets/TumbangPreso/Resources/UI/brand/tump_wordmark_login.png",
+    "Assets/TumbangPreso/Art/ui/brand/tump_wordmark_lobby.png",
+    "Assets/TumbangPreso/Resources/UI/brand/tump_wordmark_lobby.png",
+    "Assets/TumbangPreso/Art/ui/brand/tump_wordmark_stage.png",
+    "Assets/TumbangPreso/Resources/UI/brand/tump_wordmark_stage.png"
+  ],
+  "downloads": "C:\\Users\\matth\\Downloads\\TUMP-vector-set",
+  "outline": "#FCD39F",
+  "unrelatedAvatarsAndBackgroundsPreserved": true
+}
