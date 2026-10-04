@@ -109,6 +109,7 @@ namespace TumbangPreso
         private const float TrollInterval = 12.0f;
         private AudioClip _trollClip;
         private bool _trollBegun;
+        private AudioSource _trollSource;
         // Static, so the song carries on from the same point in the NEXT match as well.
         private static float s_trollTime;
 
@@ -128,7 +129,7 @@ namespace TumbangPreso
         private void OnDisable() => OverheadPassWindow.Clear();
         private void OnDestroy()
         {
-            if (_trollClip != null && _rumble != null && _rumbleStarted) s_trollTime = _rumble.time;
+            if (_trollSource != null && _trollBegun) s_trollTime = _trollSource.time;
             OverheadPassWindow.Clear();
         }
 
@@ -288,7 +289,6 @@ namespace TumbangPreso
             // cue asked for through a local named anything else is a call site the check cannot
             // see, and it would then report `sfx_lrt_pass` as a file nothing plays.
             if (!GameServices.Audio.TryGetClip("sfx_lrt_pass", out var clip, out float mix)) return;
-            if (_trollClip != null) { clip = _trollClip; mix = 1.0f; }
 
             var go = new GameObject("LrtRumble");
             go.transform.SetParent(transform, false);
@@ -307,16 +307,6 @@ namespace TumbangPreso
             // which nobody hears. This is the one place exaggerating it is honest: the effect
             // being sold is "it went past me", not a physics reading.
             _rumble.dopplerLevel = 2.2f;
-
-            if (_trollClip != null)
-            {
-                // Music, not a pass-by: it loops, it is not pitch-bent, and it is at full level
-                // for the whole traverse rather than only under the deck.
-                _rumble.loop = true;
-                _rumble.dopplerLevel = 0.0f;
-                _rumble.minDistance = 45.0f;
-                _rumble.maxDistance = 140.0f;
-            }
 
             _rumbleMix = mix;
         }
@@ -348,13 +338,9 @@ namespace TumbangPreso
                 if (!_rumbleStarted)
                 {
                     _rumbleStarted = true;
-                    if (_trollClip != null && _trollBegun) _rumble.UnPause();
-                    else
-                    {
-                        _rumble.time = _trollClip != null ? Mathf.Repeat(s_trollTime, _trollClip.length - 0.05f) : 0.0f;
-                        _rumble.Play();
-                        _trollBegun = _trollClip != null;
-                    }
+                    _rumble.time = 0.0f;
+                    _rumble.Play();
+                    ResumeTroll();
                 }
 
                 // The player's slider is read every frame rather than cached, because it can be
@@ -388,10 +374,45 @@ namespace TumbangPreso
         /// teleported back to `StartZ` and left there for the rest of the interval; leaving it
         /// playing would put a train under the south wall for 24 s.
         /// </summary>
+        // The troll music is its OWN source beside the recording (owner: "i hear the music but i
+        // still need the sfx"), and it is "on full blast unudjustable": 2D, volume 1, and it
+        // ignores the listener volume, so no slider in the game turns it down.
+        private void ResumeTroll()
+        {
+            if (_trollClip == null) return;
+            if (_trollSource == null)
+            {
+                var go = new GameObject("LrtTrollMusic");
+                go.transform.SetParent(transform, false);
+                _trollSource = go.AddComponent<AudioSource>();
+                _trollSource.clip = _trollClip;
+                _trollSource.loop = true;
+                _trollSource.playOnAwake = false;
+                _trollSource.spatialBlend = 0.0f;
+                _trollSource.volume = 1.0f;
+                _trollSource.ignoreListenerVolume = true;
+                _trollSource.bypassEffects = true;
+                _trollSource.bypassListenerEffects = true;
+                _trollSource.bypassReverbZones = true;
+                _trollSource.priority = 0;
+            }
+            if (_trollBegun) { _trollSource.UnPause(); return; }
+            _trollSource.time = Mathf.Repeat(s_trollTime, _trollClip.length - 0.05f);
+            _trollSource.Play();
+            _trollBegun = true;
+        }
+
+        private void PauseTroll()
+        {
+            if (_trollSource == null) return;
+            s_trollTime = _trollSource.time;
+            _trollSource.Pause();
+        }
+
         private void StopRumble()
         {
             _rumbleStarted = false;
-            if (_rumble != null && _trollClip != null) { s_trollTime = _rumble.time; _rumble.Pause(); return; }
+            PauseTroll();
             if (_rumble != null && _rumble.isPlaying) _rumble.Stop();
         }
 
