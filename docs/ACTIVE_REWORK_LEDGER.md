@@ -62,24 +62,24 @@ in async question; no answer is no approval. Inspect only task-owned stale helpe
 to recover laptop headroom, never terminate unrelated processes. Then verify full
 artifact/Runtime/Core hashes and actual startup before matching LAN/online checks.
 
-Root independent unit: CareerStore.FlushAsync's late failure/end status and loop
-follow replacement _cache, unlike its fenced submission/refresh responses. Static
-ownership gap; do not claim native qualification. Neutral ORIGINAL843af78b7db397480e6048b9c1651203388dda8d
-oncompetition-pc-career-flush-original1004 preserves behavior by extracting
-private async Task FlushWithDispatchAsync(Func<string,object,Task<string>> dispatch),
-public FlushAsync delegates CloudCode.CallAsync. Existing body and payload untouched.
-Candidatee92a760c8b6a8e53e699baeadfd08a8bba8142b0 on
-competition-pc-career-flush-candidate1004 captures flushingCache and fences each
-iteration/final/catch; finally releases busy for pending new-owner sync. Only
-CareerStore.cs10add6del versus neutral original; no CloudCode/schema/persistence
-change. Oldce013 branch is superseded; do not separately test/merge it.
-Laptop reserves ONLY CareerFlushOwnerLifetimeTests.cs/meta and is preparing six
-TCS async cases through the real private shipping core, expected3causal/3controls.
-No real HTTP/credentials, IL patching, mutable global or broad test hook. Both
-code refs remain OUTSIDEASTRA pending one frozen-fixture original/candidate pair.
-NEXT SOURCE ACTION: get exact fixture/ref and actual original job/result, then
-one candidate on unchanged fixture. Current task ownership: rootCareerStore,
-laptopfixture/native; preserve reader/carrier/debug-switcher contributions.
+Career ownership unit CHECKED and normally integrateddc02 ata63a4462c. Neutral
+843af preserves all original source after only wrapper/await-target substitutions;
+e92 captures flushingCache and fences loop/final/catch. All merged code/fixture/
+meta bytes exactly match checked e92/e238. Real async original3causal/3controls
+and candidate6/6, no skips;3436 maps differ ONLYCareerStore. Root inspected16 raw
+Git manifest hashes, exact tested variants, XML and terminal/restored/free receipts
+under reports/laptop-validation-2026-10-04/career-flush-owner (ad4473/f58afff93).
+Oldce013 superseded; original3649 and candidate41481 are CLOSED. No more runs.
+Public FlushAsync uses private FlushWithDispatchAsync with CloudCode.CallAsync;
+controlled TCS covers actual incomplete requests, Changed replacement with empty/
+nonempty queues, old-owner failure/success and same-owner retry/ack. No live
+auth/HTTP, IL mutation, global test hook, persistence or schema change. Actual
+deployed SDK/service and packaged delivery remain open.
+NEXT SOURCE ACTION: correct legacy tools/run_lan_peer.py protocol134/runtime
+defaults and omitted CharacterPick for current explicit144 matching artifacts.
+Preserve ready/natural-end/saved-result checks, no weakened acceptance or pair
+launch before slot/artifact agreement. Laptop prepares newest coherent release
+freeze; PC slot question remains pending and all guards/admission remain intact.
 Laptop own F6 is shipped a516409c5 + dd3c45636 proof, original1fail5controls ->6/6.
 Its device-loss5 original3fail2controls -> first candidate4/5 -> scoped candidate5/5
 reported,3432 unchanged/restored/free. New surviving-input/hysteresis/touch/committed

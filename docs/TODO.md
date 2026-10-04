@@ -17,6 +17,18 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CAREER-FLUSH-OWNER-1004: keep upload work with its starting account
+
+- [x] Capture the flush cache and fence loop/final/failure writes after account
+  replacement. Same-account retry/acknowledgment and busy release remain. Real
+  delayed-dispatch original3 failures/3controls -> candidate6/6; root inspected
+  all16 exact raw Git blobs,3436 maps with only CareerStore changed and frozen
+  fixture/meta plus terminal/restored/free receipts. The neutral private dispatch
+  core preserves shipping REST behavior; no live auth/network or schema change.
+  [Evidence](reports/laptop-validation-2026-10-04/career-flush-owner/README.md).
+- [ ] Actual signed-in SDK/service and packaged history acceptance. Controlled
+  delayed tasks prove ownership, not deployed Cloud Code or real result delivery.
+
 ### REPLAY-SHORTLIST-QUEUE-1004: deliver current retained footage
 
 - [x] Replace obsolete transfer entries with the authoritative archive shortlist,
