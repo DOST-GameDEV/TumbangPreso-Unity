@@ -7,7 +7,7 @@ namespace TumbangPreso.EditorTools
 {
     public static class DanteBastionMotionAuthor
     {
-        [MenuItem("TUMP/Authoring/Wire Dante Bastion Clip")]
+        [MenuItem("TUMP/Authoring/Wire Basilio Bastion Clip")]
         public static void Wire()
         {
             const string model="Assets/TumbangPreso/Art/characters/persons/team-dante.glb";
@@ -19,7 +19,7 @@ namespace TumbangPreso.EditorTools
             if(roster.Clips.Any(c=>c==clip))return;
             roster.Clips=roster.Clips.Concat(new[]{clip}).ToArray();
             EditorUtility.SetDirty(roster);AssetDatabase.SaveAssetIfDirty(roster);
-            Debug.Log("Dante Bastion authored clip added to the serialized roster.");
+            Debug.Log("Basilio Bastion authored clip added to the serialized roster.");
         }
     }
 }

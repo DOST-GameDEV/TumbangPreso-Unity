@@ -60,7 +60,7 @@ namespace TumbangPreso.Diagnostics
                 var system = actor.AbilitySystem;
                 var ability = slot == 1 ? system.Kit.Skill1 : system.Kit.Skill2;
                 if(hero=="rafi"&&!art.Clips.Any(clip=>clip!=null&&clip.name==ability.CastAction&&clip.length>0))
-                    throw new InvalidOperationException("Rafi's shipping roster is missing authored clip "+ability.CastAction);
+                    throw new InvalidOperationException("Ilyas's shipping roster is missing authored clip "+ability.CastAction);
                 if (ability.VariantName != variant.Name)
                     throw new InvalidOperationException("Native variant was not equipped: " + variant.Id);
                 foreach (var shoe in Object.FindObjectsByType<Slipper>(FindObjectsInactive.Include))
@@ -90,7 +90,7 @@ namespace TumbangPreso.Diagnostics
                     var meshes=arms!=null?arms.GetComponentsInChildren<MeshFilter>(true):Array.Empty<MeshFilter>();
                     if(arms==null||arms.CurrentHeroId!="rafi"||new[]{"left","right"}.Any(side=>
                         !meshes.Any(m=>m.sharedMesh==Resources.Load<Mesh>("Models/RosterArms/rafi_"+side))))
-                        throw new InvalidOperationException("Rafi's actual owner hands are not his source arm meshes.");
+                        throw new InvalidOperationException("Ilyas's actual owner hands are not his source arm meshes.");
                 }
 
                 bool roleRefusal = defender && slot == 2 && (hero == "sean" || hero == "zack");
@@ -155,8 +155,8 @@ namespace TumbangPreso.Diagnostics
                     if (inputSamples == 0 || (roleRefusal ? accepted || !refused || ability.IsActive || ability.ChargesRemaining != before : !accepted))
                         throw new InvalidOperationException("Wrong native role outcome: " + name);
                     if(hero=="rafi"&&!defender&&(!sawCharge||!sawRelease))
-                        throw new InvalidOperationException("Rafi appearance route did not include a real charge and empty-hand release: "+name);
-                    if(hero=="rafi"&&!bodyClipSeen)throw new InvalidOperationException("Rafi's authored body clip did not actually play: "+name);
+                        throw new InvalidOperationException("Ilyas appearance route did not include a real charge and empty-hand release: "+name);
+                    if(hero=="rafi"&&!bodyClipSeen)throw new InvalidOperationException("Ilyas's authored body clip did not actually play: "+name);
                     cases++;
                 }
                 finally { actor.Intent.Clear(); audio.enabled = false; Destroy(audio); system.ResetKit(); }

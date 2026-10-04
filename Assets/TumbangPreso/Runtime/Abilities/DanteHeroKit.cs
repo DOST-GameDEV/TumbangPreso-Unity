@@ -36,7 +36,7 @@ namespace TumbangPreso.Abilities
             return true;
         }
 
-        public DanteHeroKit() : base("dante", "DANTE")
+        public DanteHeroKit() : base("dante", "BASILIO")
         {
             Skill1 = new Shield(this);
             AttackingSkill = new Boulder();

@@ -15,13 +15,13 @@ namespace TumbangPreso.EditorTools
                 .SingleOrDefault(c=>c.name=="hero-sean-gate");
             if(clip==null||clip.length<.7f)throw new InvalidOperationException("Authored Cinder Gate clip missing.");
             var art=RosterBook.Load()?.FindPersonArt("sean");
-            if(art==null)throw new InvalidOperationException("Sean roster asset missing.");
+            if(art==null)throw new InvalidOperationException("Rago roster asset missing.");
             if(!(art.Clips??Array.Empty<AnimationClip>()).Contains(clip))
             {
                 art.Clips=(art.Clips??Array.Empty<AnimationClip>()).Append(clip).ToArray();
                 EditorUtility.SetDirty(art);AssetDatabase.SaveAssetIfDirty(art);
             }
-            Debug.Log("[CinderGate] Bound one authored Sean clip; existing roster references preserved.");
+            Debug.Log("[CinderGate] Bound one authored Rago clip; existing roster references preserved.");
         }
     }
 }

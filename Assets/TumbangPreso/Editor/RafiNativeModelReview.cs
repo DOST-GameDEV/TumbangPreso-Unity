@@ -20,7 +20,7 @@ namespace TumbangPreso.EditorTools
             if(at<0||at+1>=args.Length)throw new ArgumentException("A fresh -out turnaround filename is required.");
             string directory=Path.GetDirectoryName(Path.GetFullPath(args[at+1]));Directory.CreateDirectory(directory);
             AssetDatabase.ImportAsset("Assets/TumbangPreso/Art/characters/persons/team-rafi.glb",ImportAssetOptions.ForceUpdate|ImportAssetOptions.ForceSynchronousImport);
-            if(!RosterBookBuilder.RefreshPerson("rafi"))throw new InvalidOperationException("Rafi asset refresh failed.");
+            if(!RosterBookBuilder.RefreshPerson("rafi"))throw new InvalidOperationException("Ilyas asset refresh failed.");
             Lineup(directory,"hero-lineup-front.png",180);
             Lineup(directory,"hero-lineup-quarter.png",220);
             if(args.Contains("-tp-part-studies"))RenderPartStudies(directory);

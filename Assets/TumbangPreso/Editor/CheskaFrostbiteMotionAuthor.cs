@@ -7,7 +7,7 @@ namespace TumbangPreso.EditorTools
 {
     public static class CheskaFrostbiteMotionAuthor
     {
-        [MenuItem("TUMP/Authoring/Wire Cheska Frostbite Clip")]
+        [MenuItem("TUMP/Authoring/Wire Yasmin Frostbite Clip")]
         public static void Wire()
         {
             const string model="Assets/TumbangPreso/Art/characters/persons/team-cheska.glb";
@@ -19,7 +19,7 @@ namespace TumbangPreso.EditorTools
             if(roster.Clips.Any(c=>c==clip))return;
             roster.Clips=roster.Clips.Concat(new[]{clip}).ToArray();
             EditorUtility.SetDirty(roster);AssetDatabase.SaveAssetIfDirty(roster);
-            Debug.Log("Cheska Frostbite authored clip added to her serialized roster.");
+            Debug.Log("Yasmin Frostbite authored clip added to her serialized roster.");
         }
     }
 }

@@ -15,7 +15,7 @@ namespace TumbangPreso.Diagnostics
     {
         private IEnumerator SeanVisualOnly()
         {
-            Stage("Sean native visual review through real selection");
+            Stage("Rago native visual review through real selection");
             yield return WaitFor(() => Find("GuestAccount") != null || Find("ContinueAccount") != null || Find("StartButton") != null, 80);
             if (Find("GuestAccount") != null) yield return Click("GuestAccount");
             else if (Find("ContinueAccount") != null) yield return Click("ContinueAccount");
@@ -26,7 +26,7 @@ namespace TumbangPreso.Diagnostics
             foreach (var brain in Object.FindObjectsByType<AIController>()) brain.enabled = false;
             foreach (var input in Object.FindObjectsByType<PlayerInputReader>()) input.enabled = false;
             var who = Object.FindAnyObjectByType<PauseWatcher>().Local;
-            if (!(who.AbilitySystem.Kit is Abilities.SeanHeroKit)) throw new InvalidOperationException("Sean selection did not reach the real player kit");
+            if (!(who.AbilitySystem.Kit is Abilities.SeanHeroKit)) throw new InvalidOperationException("Rago selection did not reach the real player kit");
             foreach (var actor in GameServices.Round.Players)
                 if (actor != who)
                 {
@@ -41,20 +41,20 @@ namespace TumbangPreso.Diagnostics
             bool HasEmbers()
             {
                 foreach (var mesh in Object.FindObjectsByType<MeshFilter>())
-                    if (mesh.sharedMesh != null && mesh.sharedMesh.name == "Sean fractured ember") return true;
+                    if (mesh.sharedMesh != null && mesh.sharedMesh.name == "Rago fractured ember") return true;
                 return false;
             }
             yield return WaitFor(() => who.IsGrounded && GameObject.Find("SupernovaCrater") != null && HasEmbers(), 8);
             foreach (var mesh in Object.FindObjectsByType<MeshFilter>())
             {
-                if (mesh.sharedMesh == null || mesh.sharedMesh.name != "Sean fractured ember") continue;
+                if (mesh.sharedMesh == null || mesh.sharedMesh.name != "Rago fractured ember") continue;
                 var renderer = mesh.GetComponent<Renderer>();
                 if (mesh.sharedMesh.vertexCount != 12 || renderer == null || renderer.sharedMaterial == null || !renderer.sharedMaterial.shader.isSupported)
                     throw new InvalidOperationException("Native fire debris mesh/material is invalid");
             }
             yield return Shot("sean-native-landing");
             yield return new WaitForSecondsRealtime(.5f); yield return Shot("sean-native-recovery");
-            Stage("native Sean ultimate produced the corrected ember geometry with supported material");
+            Stage("native Rago ultimate produced the corrected ember geometry with supported material");
         }
 
         // Controlled native input fixture. Scene entry is through the real UI. Positions,

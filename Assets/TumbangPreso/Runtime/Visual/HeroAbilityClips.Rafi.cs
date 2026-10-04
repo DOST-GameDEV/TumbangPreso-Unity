@@ -9,7 +9,7 @@ namespace TumbangPreso.Visual
         public static AnimationClip[] BuildRafiAuthored(Transform root)
         {
             var paths=ResolvePaths(root);
-            if(paths==null)throw new System.InvalidOperationException("Rafi rig is missing a required bone.");
+            if(paths==null)throw new System.InvalidOperationException("Ilyas rig is missing a required bone.");
             var clips=new[]{BuildRafiCut(paths),BuildRafiFeint(paths),BuildRafiBreakwater(paths),BuildRafiWall(paths),BuildRafiSkim(paths)};
             foreach(var clip in clips)GroundIntroduction(clip,root,paths["root"],anchorToRest:true);
             return clips;
@@ -17,7 +17,7 @@ namespace TumbangPreso.Visual
         public static AnimationClip BuildRafiSkimAuthored(Transform root)
         {
             var paths=ResolvePaths(root);
-            if(paths==null)throw new System.InvalidOperationException("Rafi skim rig is missing a required bone.");
+            if(paths==null)throw new System.InvalidOperationException("Ilyas skim rig is missing a required bone.");
             var clip=BuildRafiSkim(paths);
             AlignSkimPalms(clip,root,paths);
             GroundIntroduction(clip,root,paths["root"],anchorToRest:true);
@@ -70,7 +70,7 @@ namespace TumbangPreso.Visual
         public static AnimationClip BuildRafiWallAuthored(Transform root)
         {
             var paths=ResolvePaths(root);
-            if(paths==null)throw new System.InvalidOperationException("Rafi wall rig is missing a required bone.");
+            if(paths==null)throw new System.InvalidOperationException("Ilyas wall rig is missing a required bone.");
             var clip=BuildRafiWall(paths);
             GroundIntroduction(clip,root,paths["root"],anchorToRest:true);
             return clip;

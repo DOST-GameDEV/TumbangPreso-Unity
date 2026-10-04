@@ -44,7 +44,7 @@ namespace TumbangPreso.Visual
         /// <summary>An arc of wall behind the hero, open toward the camera side: the wave's face.</summary>
         private static Mesh ArcWallMesh(int sides, float arcDegrees)
         {
-            var mesh=new Mesh {name="Rafi rolled wave"};
+            var mesh=new Mesh {name="Ilyas rolled wave"};
             float[] heights={0,.42f,.75f,.96f,1};
             float[] radii={1,1.015f,.93f,.78f,.62f};
             var vertices=new Vector3[(sides+1)*5];var uv=new Vector2[vertices.Length];
@@ -69,7 +69,7 @@ namespace TumbangPreso.Visual
         }
         private static Mesh ArcCrestMesh(int sides,float arcDegrees)
         {
-            var mesh=new Mesh {name="Rafi rolled crest"};
+            var mesh=new Mesh {name="Ilyas rolled crest"};
             var vertices=new Vector3[(sides+1)*2];var triangles=new int[sides*6];
             for(int i=0;i<=sides;i++)
             {
@@ -142,7 +142,7 @@ namespace TumbangPreso.Visual
 
         private static Mesh WaterRibbon()
         {
-            var mesh = new Mesh { name = "Rafi cupped current ribbon" }; var vertices = new Vector3[26]; var triangles = new int[72];
+            var mesh = new Mesh { name = "Ilyas cupped current ribbon" }; var vertices = new Vector3[26]; var triangles = new int[72];
             for (int i = 0; i < 13; i++)
             {
                 float t = i / 12f, a = t * 2.1f;

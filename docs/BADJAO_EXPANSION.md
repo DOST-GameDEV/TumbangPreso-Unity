@@ -3,7 +3,7 @@
 ## Latest owner style correction: blocky hair, no eyebrows
 
 The v4 swept volumes and eyebrows are REJECTED. The owner identifies two concrete
-cast rules: blocky hair and no eyebrows. Remove both eyebrow meshes, replace Rafi's
+cast rules: blocky hair and no eyebrows. Remove both eyebrow meshes, replace Ilyas's
 hair volumes with native box/chamfer forms and preserve his own readable layout.
 The HERO lineup is authoritative over the generated concept. Keep the fitted left
 wrist cord, functional accessories, palette, body/FPP parity, rig and clip work.
@@ -19,12 +19,12 @@ head/full body and HERO lineup before accepting this pass internally. Archive v4
 
 ### Newest body-part quality pass: HERO ONLY
 
-The owner reiterates Rafi belongs only to Hero Strike, never the Classic cast,
+The owner reiterates Ilyas belongs only to Hero Strike, never the Classic cast,
 and asks for careful renders/refinement of every body part, especially bracelets,
 accessories and hair. Roster.cs already puts him only in HeroPeople; AllPeople is
 the asset union, not the Classic selection. Classic figures in the deck diagnostic
-are not Rafi references. His only cast comparison is Sean/Cheska/Dante/Zack/Nemu/
-Phaister. The published56a220a9 model is a checkpoint, not final visual acceptance.
+are not Ilyas references. His only cast comparison is Rago/Yasmin/Basilio/Isagani/Nemu/
+Soraya. The published56a220a9 model is a checkpoint, not final visual acceptance.
 
 Work order, retained before editing:
 
@@ -38,7 +38,7 @@ Work order, retained before editing:
    an asymmetric hook/forelock, exposed temple and compact tied tail; no floating
    locks, flat helmet cap, copied lightning/horns or photoreal strand texture.
 3. **Face:** retain the native skull/flat graphic-face construction, but author
-   Rafi's own focused eye shapes and weighted brows rather than donor smile-eyes.
+   Ilyas's own focused eye shapes and weighted brows rather than donor smile-eyes.
    Keep a short restrained closed mouth. No broad grin, gills, face markings or
    realistic sculpted eyes/nose. Check frontal and quarter expression together.
 4. **Wrist cord/bracelet:** a continuous fitted faceted rope loop with a small
@@ -58,7 +58,7 @@ Work order, retained before editing:
    depth/taper if the FPP reads edge-on and skinny. Fit the left cord to the revised
    wrist. Keep the short HERO-family legs, distinct shorts cuffs, supported feet,
    sandal sole/strap volumes and current pivots/grounding.
-8. **Delivery check:** regenerate ONLY Rafi's model/palette/roster/portrait/arms;
+8. **Delivery check:** regenerate ONLY Ilyas's model/palette/roster/portrait/arms;
    preserve original characters/builders/GUIDs and all33clips. Inspect the part
    sheets and full hero lineup, then changed body/FPP carry/throw/cast poses. Make
    specific shape corrections where necessary, not repeated unchanged broad tests.
@@ -80,22 +80,22 @@ Human art approval is not inferred; the broader assignment remains active.
 The Lagoon deck fix completed its focused runtime comparison before this new
 steering: separated thin board batches remove the exaggerated ink gaps, physical
 walking collision is unchanged. Assets recovered via expansion-asset-transfer-v7;
-broader final qualification remains pending. Current priority is this Rafi pass.
+broader final qualification remains pending. Current priority is this Ilyas pass.
 
 **Further owner correction:** the copied-builder draft's broad curved smile and
-helmet-like hair are also rejected. Refine only Rafi: calm focused native eyes,
+helmet-like hair are also rejected. Refine only Ilyas: calm focused native eyes,
 short restrained mouth, a shaped swept fringe with visible forehead/temples and a
 compact tied back silhouette. Preserve his identity/outfit and the other heroes.
 The owner also identified mismatched FPP arms. Root cause: ApplyCharacterStyle
-still selected the generic arm/accessory fallback for Rafi, despite his extracted
-arm assets existing. Route only Rafi through his source arm meshes and body palette;
+still selected the generic arm/accessory fallback for Ilyas, despite his extracted
+arm assets existing. Route only Ilyas through his source arm meshes and body palette;
 confirm actual holding/empty/cast views. Do not redesign the other cast's FPP.
 The first routing patch remained unreachable because NormalizeCharacterId also
-omitted Rafi and returned classic. That registration is repaired; nativev51 passed
+omitted Ilyas and returned classic. That registration is repaired; nativev51 passed
 8owner/8observer cases with actual arm mesh identity, charging/release and inspected
 cloth/skin/cord parity. The former v50 appearance failure remains in the receipts.
 
-**Newest scope: a distinctive hero, not a retexture.** The owner says Rafi lacks
+**Newest scope: a distinctive hero, not a retexture.** The owner says Ilyas lacks
 his own features. This supersedes treating the previous outfit as finished. Keep
 the native rig/family proportions and water-trickster/boat-repairer identity, but
 author a distinct readable silhouette and garment shapes, not just a face tweak.
@@ -108,12 +108,12 @@ Revised execution, saved before authoring:
 2. Choose a coherent silhouette from it: asymmetric short work overshirt, turned
    lining/shoulder flap, off-centre tie, tapered sailcloth hip panel and fitted rope
    coil. Purposeful broad forms first; avoid turning every surface into decoration.
-   These are Rafi's individual fictional practical belongings, not traditional dress.
+   These are Ilyas's individual fictional practical belongings, not traditional dress.
 3. Retrofit ONLY tools/build_rafi_voxel.py recipe, native flat face and scoped hair
    transforms. Original builders/other heroes remain byte-identical. Short focused
    expression replaces the generic grin; retain native skull and simple hands.
-4. FPP must use extracted Rafi arm geometry and AppliedPalette, including any final
-   cuff/cord. The runtime fallback fix is already in DEV only. Regenerate Rafi's
+4. FPP must use extracted Ilyas arm geometry and AppliedPalette, including any final
+   cuff/cord. The runtime fallback fix is already in DEV only. Regenerate Ilyas's
    roster/portrait/arms together after the new model; keep all existing GUIDs.
 5. Review native front/quarter/back/side plus HERO lineup, then actual holding,
    empty, throw and skill views. One focused correction if a real issue is found;
@@ -125,13 +125,13 @@ Rejected face/hair source/model/palette are retained in
 ArtSource/rafi/rejected-face-hair-20260922. Built-in image generation is ideation;
 its tool exposes no model-version selector. No paid API, reset or delegation.
 
-**Latest owner change: no gills.** The active Rafi design, model, animation and lore
+**Latest owner change: no gills.** The active Ilyas design, model, animation and lore
 must contain none. Earlier gill references below and in archived concepts describe
 superseded history, not an outstanding task. His water magic remains personal magic.
 
-The owner rejected BOTH the separate-box Rafi and the sparse, regular lagoon dock.
+The owner rejected BOTH the separate-box Ilyas and the sparse, regular lagoon dock.
 Those images/assets are drafts, not approved art. The later request explicitly
-requires Rafi to belong beside **Sean, Cheska, Dante and the HERO cast**, and says
+requires Ilyas to belong beside **Rago, Yasmin, Basilio and the HERO cast**, and says
 to copy and retrofit the old voxel builder without editing existing characters.
 `tools/build_rafi_voxel.py` is now a dedicated copy of `build_person_voxel.py`;
 the original and all existing character models/builders stay untouched. The old
@@ -152,15 +152,15 @@ face construction govern the model; generated anatomy/facet noise is not binding
 The tool does not expose a model-version selector, so its requested2.5 version
 was not claimed as verified. No paid API or reset was used.
 
-### Rafi's own character
+### Ilyas's own character
 
-Initial qualification found his prototype4/3/3stat row duplicated Zack. The
-retained distinct-row rule is not weakened: Rafi now has4Bilis/2Lakas/4Tatag,
+Initial qualification found his prototype4/3/3stat row duplicated Isagani. The
+retained distinct-row rule is not weakened: Ilyas now has4Bilis/2Lakas/4Tatag,
 trading direct throwing power for endurance while retaining his agile utility
 identity. This is a prototype tuning choice, not a human balance verdict; other
-characters' stats are unchanged. Classic remains neutral and excludes Rafi.
+characters' stats are unchanged. Classic remains neutral and excludes Ilyas.
 
-Rafi is an inventive boat-repairer and athlete from a fictional Sama Dilaut community
+Ilyas is an inventive boat-repairer and athlete from a fictional Sama Dilaut community
 in Tawi-Tawi. He notices the loose board, the awkward stair and the predictable
 opponent, then immediately has an idea. He repairs his own gear and makes a small
 buoy token from a useful offcut; the token is his personal keepsake, not an ethnic
@@ -168,10 +168,10 @@ symbol. His teasing confidence is warm rather than cruel. He will help fix a riv
 slipper strap, then bet that rival cannot read his next throw.
 
 His weakness is overplaying a clever idea when a simple shot would do. Tournament
-play challenges him to make the useful choice, not merely the funny one. Sean's
-directness frustrates his elaborate feints; Cheska spots more of them than he likes;
-Dante's steadiness makes an opponent worth studying. These relationships do not
-change or redesign those heroes. Rafi's movement is an off-hand cut, an abandoned
+play challenges him to make the useful choice, not merely the funny one. Rago's
+directness frustrates his elaborate feints; Yasmin spots more of them than he likes;
+Basilio's steadiness makes an opponent worth studying. These relationships do not
+change or redesign those heroes. Ilyas's movement is an off-hand cut, an abandoned
 heel-turn and a cupped hip-to-side wave release. No borrowed weapon, armor or outfit.
 His water magic is an individual fantasy power.
 
@@ -184,7 +184,7 @@ entry/swimming remains available. Host authority and existing recovery/input/cam
 HUD/network paths are reused; no new protocol, score or collision change. Details
 and evidence: [Lagoon fall report](reports/map-by-map-refinement-2026-09-23/lagoon-fall-recovery/report.md).
 Birds and the newer building/water/island refinement remain in REFINE-2.6. This does
-not reopen historical Rafi designs or replace newer cast work.
+not reopen historical Ilyas designs or replace newer cast work.
 
 ### Lagoon: reference-to-construction decisions
 
@@ -226,8 +226,8 @@ village rather than look like six identical huts placed around a resort dock.
 7. **Culture/source boundary:** the supplied photograph remains internal reference.
    Use primary sources to distinguish fixed stilt homes, dugouts and lepa houseboats.
    No invented sacred/tribal markings or copied contemporary artists' mat patterns.
-   The sporting court/layout, Rafi's costume and his magic are original fiction.
-8. **Implementation order:** finish the copied Rafi recipe and native hero comparison;
+   The sporting court/layout, Ilyas's costume and his magic are original fiction.
+8. **Implementation order:** finish the copied Ilyas recipe and native hero comparison;
    refine the lagoon architecture/composition in authored batches; then update the
    native expansion candidate. Keep every other TODO and existing gameplay result.
    Broad regression remains final integration work, not a reason to stall the art.
@@ -274,7 +274,7 @@ rolled green shirt and practical boatcraft direction, with a central court
 surrounded by the lagoon village. Source sheets are in
 ArtSource/badjao/concepts-2026-09-14. This selects the concept, not every generated
 surface detail. Preserve native chunky TUMP forms and no-thumb hands. The
-working name Rafi is not a separately approved final name. Implementation stays
+working name Ilyas is not a separately approved final name. Implementation stays
 LAST LAST after the existing queue.
 
 **LAST LAST. Research and concept selection only for now.** The owner explicitly
@@ -282,7 +282,7 @@ places this after the existing rework, UI and deferred Inday work. Do not add
 runtime roster rows, character assets, abilities, unlock rules or a playable map
 until that stage. Generated concept images are choices, not production approval.
 
-## Rafi, working name
+## Ilyas, working name
 
 ## Latest map addition, 2026-09-22
 
@@ -331,7 +331,7 @@ compile/behavior/art checks at useful integration points, then return to feature
    reach a perimeter loop and distinct fixed homes. Piles/crossbeams visibly meet
    the waterbed. Handrails protect the main circulation; explicit water-access
    steps/ramp recovery work for all people/modes. Reuse established swimming and
-   recovery contracts, without a Rafi-only passive. No narrow jumping maze.
+   recovery contracts, without a Ilyas-only passive. No narrow jumping maze.
 7. Different house construction/detail: weathered board frontage, painted repair
    workshop, bamboo-screen veranda, patched corrugated roof, laundry porch and
    boat landing. Use restrained wood grain/board joints, roof ribs/fasteners,
@@ -357,20 +357,20 @@ He is an inventive, teasing competitor who likes making a rival commit too early
 He helps maintain his family's boat and is forever proposing tiny improvements
 to the community court. His cousins keep score on which ones actually work.
 He enters the circuit to play people he cannot already predict. He enjoys beating
-Zack at a trick shot; Cheska is harder to distract than he expected.
+Isagani at a trick shot; Yasmin is harder to distract than he expected.
 
 Short lore: **Draws you into the wrong current. Leaves with his slipper.**
 
 Long introduction draft:
 
-Rafi grew up in a Sama Dilaut community in Tawi-Tawi, where the playing deck was
+Ilyas grew up in a Sama Dilaut community in Tawi-Tawi, where the playing deck was
 also the place to catch up with everyone on the way home. He repairs boats with
 his family and spends the rest of his time inventing shots his cousins insist
 should not count. On the tournament court, his water takes the shape of a nudge,
 a false step or a route that changes beneath you. He is here for stronger rivals
 and better stories. Preferably stories where he gets the last laugh.
 
-The earlier gill proposal was removed by the owner on2026-09-22. Rafi has normal
+The earlier gill proposal was removed by the owner on2026-09-22. Ilyas has normal
 human skin and personal water magic. Keep him expressive and native to the retained
 hero cast, with simple no-thumb/no-finger hands.
 
@@ -383,7 +383,7 @@ water is not a prerequisite. The kit creates chances, never automatic points.
 ### Q: Crosscurrent
 
 An aimed narrow crescent of water bends the first flying slipper it crosses
-sideways. Rafi chooses the lateral direction before release. This can save him
+sideways. Ilyas chooses the lateral direction before release. This can save him
 from an incoming throw or turn his own throw into a bank around cover.
 
 - Tradeoff: a small interception window, one slipper only and a visible lead-in.
@@ -393,11 +393,11 @@ from an incoming throw or turn his own throw into a bank around cover.
 - Form: one travelling crescent with a crisp curl at the actual interception.
   No ring field or persistent blue puddle.
 - Cast: quick off-hand sideways cut with a planted opposite foot; the throw hand
-  retains the prop and can clearly recover. Not Zack's magnetic recall gesture.
+  retains the prop and can clearly recover. Not Isagani's magnetic recall gesture.
 
 ### E: Mirrorwake
 
-A brief watery echo repeats Rafi's last movement and throw feint. It invites a
+A brief watery echo repeats Ilyas's last movement and throw feint. It invites a
 mistimed chase while he takes another route. It does not attack, score, tag,
 collide, grant immunity or hide the actual can and slippers.
 
@@ -408,7 +408,7 @@ collide, grant immunity or hide the actual can and slippers.
 - Form: a sparse translucent body reflection that peels into ribbons when spent.
   Distinct from Nemu's independently moving companion and possession.
 - Cast: a short heel turn and shoulder misdirection; the echo continues the
-  abandoned line while Rafi opens toward his actual movement direction.
+  abandoned line while Ilyas opens toward his actual movement direction.
 
 ### Ultimate: Breakwater
 
@@ -426,8 +426,8 @@ escape across the edge. It is a travelling event, not a sustained prison.
 - Form: low glassy crest, visible trough, trailing foam that settles quickly.
   Keep the can readable through the water. No blue copy of a fire nova or ice wall.
 - Cast: low cupped-water gather at one hip, a continuous rising spiral through
-  the torso, then an open sideways release. No Dante ground slam, Sean leap,
-  Phaister overhead invocation or Cheska inward burst.
+  the torso, then an open sideways release. No Basilio ground slam, Rago leap,
+  Soraya overhead invocation or Yasmin inward burst.
 
 Numbers and alternates wait for the later prototype. Start with role, tell,
 counterplay and ownership before tuning size/cooldown. Do not add complexity
@@ -460,7 +460,7 @@ Three concept compositions are being explored:
 
 All require a flat clear court, believable supports, generous chase/retrieval
 routes and readable rail/edge rules. Water access/recovery must be designed for
-all heroes and Classic, not only Rafi. No narrow platform-jumping maze. Homes
+all heroes and Classic, not only Ilyas. No narrow platform-jumping maze. Homes
 remain safe scenery; powers do not destroy a community for spectacle. Everyday
 colour, laundry, maintenance and boats should communicate a living place.
 
@@ -469,7 +469,7 @@ colour, laundry, maintenance and boats should communicate a living place.
 - [National Museum: Peoples of Southwestern Philippines](https://www.nationalmuseum.gov.ph/exhibitions/nm-western-southern-mindanao-regional-museum/peoples-of-southwestern-philippines/)
   identifies Sama Dilaut stilt houses, dugout boats and lepa houseboats. It also
   distinguishes the other communities represented in the exhibit. Do not merge
-  their rituals or clothing into Rafi's design.
+  their rituals or clothing into Ilyas's design.
 - [National Museum: transport and fishing collections](https://www.nationalmuseum.gov.ph/our-collections/ethnology/agriculture-fishing-hunting-transportation/)
   supports boatbuilding and lepa use. Not every present-day Sama Dilaut person
   lives aboard a boat or has the same occupation. Avoid the outdated label used

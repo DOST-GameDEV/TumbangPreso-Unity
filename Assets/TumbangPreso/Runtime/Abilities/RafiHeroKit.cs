@@ -83,7 +83,7 @@ namespace TumbangPreso.Abilities
 
         public override float UltimateCost => RafiRules.BahaCost;
 
-        public RafiHeroKit() : base("rafi", "RAFI")
+        public RafiHeroKit() : base("rafi", "ILYAS")
         {
             Skill1 = new Crosscurrent();
             AttackingSkill = new Skim(this);

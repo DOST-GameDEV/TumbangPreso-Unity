@@ -7,7 +7,7 @@ namespace TumbangPreso.EditorTools
 {
     public static class ZackCircuitMotionAuthor
     {
-        [MenuItem("TUMP/Authoring/Wire Zack Circuit Clip")]
+        [MenuItem("TUMP/Authoring/Wire Isagani Circuit Clip")]
         public static void Wire()
         {
             const string model = "Assets/TumbangPreso/Art/characters/persons/team-zack.glb";
@@ -22,7 +22,7 @@ namespace TumbangPreso.EditorTools
             roster.Clips = roster.Clips.Concat(new[] { clip }).ToArray();
             EditorUtility.SetDirty(roster);
             AssetDatabase.SaveAssetIfDirty(roster);
-            Debug.Log("Closed Circuit acquisition clip wired to the shipping Zack roster.");
+            Debug.Log("Closed Circuit acquisition clip wired to the shipping Isagani roster.");
         }
     }
 }

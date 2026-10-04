@@ -29,7 +29,7 @@ namespace TumbangPreso.Visual
         public static AnimationClip[] BuildPhaisterAuthored(Transform root)
         {
             var paths = ResolvePaths(root);
-            if (paths == null) throw new System.InvalidOperationException("Phaister rig is missing a required bone.");
+            if (paths == null) throw new System.InvalidOperationException("Soraya rig is missing a required bone.");
             var clips = new[]
             {
                 BuildPhaisterSwarm(paths), BuildPhaisterManika(paths), BuildPhaisterPin(paths), BuildPhaisterOmen(paths),

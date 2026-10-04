@@ -24,7 +24,7 @@ namespace TumbangPreso.Abilities
     /// </summary>
     public sealed class CheskaHeroKit : HeroKit, ITimedKitReplication
     {
-        public CheskaHeroKit() : base("cheska", "CHESKA")
+        public CheskaHeroKit() : base("cheska", "YASMIN")
         {
             Skill1 = new ColdFeet();
             AttackingSkill = new Frostbite(this);

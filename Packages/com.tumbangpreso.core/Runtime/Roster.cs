@@ -131,13 +131,13 @@ namespace TumbangPreso.Core
         public static readonly IReadOnlyList<RosterEntry> HeroPeople = new[]
         {
             //                id              name           bilis lakas tatag
-            new RosterEntry("dante",       "DANTE",           2,    4,    5),
-            new RosterEntry("cheska",      "CHESKA",          3,    4,    4),
-            new RosterEntry("sean",        "SEAN",            1,    5,    3),
-            new RosterEntry("zack",        "ZACK",            4,    3,    3),
+            new RosterEntry("dante",       "BASILIO",         2,    4,    5),
+            new RosterEntry("cheska",      "YASMIN",          3,    4,    4),
+            new RosterEntry("sean",        "RAGO",            1,    5,    3),
+            new RosterEntry("zack",        "ISAGANI",         4,    3,    3),
             new RosterEntry("nemu",        "NEMU",            4,    3,    4),
-            new RosterEntry("phaister",    "PHAISTER",        4,    4,    3),
-            new RosterEntry("rafi",        "RAFI",            4,    2,    4),
+            new RosterEntry("phaister",    "SORAYA",          4,    4,    3),
+            new RosterEntry("rafi",        "ILYAS",           4,    2,    4),
             // ⚠️ AMIHAN, APPENDED (2026-09-25). Append only: a person index crosses the wire as a
             // bare int, so a row inserted above an existing one renders another character for
             // the same pick on a peer. Wind is speed: the fastest hero, light, average grit, a
@@ -167,13 +167,13 @@ namespace TumbangPreso.Core
             new RosterEntry("lola_pacing", "LOLA PACING",     1,    4,    5),
             new RosterEntry("mang_kanor",  "MANG KANOR",      5,    3,    2),
             new RosterEntry("aling_nena",  "ALING NENA",      2,    3,    5),
-            new RosterEntry("dante",       "DANTE",           2,    4,    5),
-            new RosterEntry("cheska",      "CHESKA",          3,    4,    4),
-            new RosterEntry("sean",        "SEAN",            1,    5,    3),
-            new RosterEntry("zack",        "ZACK",            4,    3,    3),
+            new RosterEntry("dante",       "BASILIO",         2,    4,    5),
+            new RosterEntry("cheska",      "YASMIN",          3,    4,    4),
+            new RosterEntry("sean",        "RAGO",            1,    5,    3),
+            new RosterEntry("zack",        "ISAGANI",         4,    3,    3),
             new RosterEntry("nemu",        "NEMU",            4,    3,    4),
-            new RosterEntry("phaister",    "PHAISTER",        4,    4,    3),
-            new RosterEntry("rafi",        "RAFI",            4,    2,    4),
+            new RosterEntry("phaister",    "SORAYA",          4,    4,    3),
+            new RosterEntry("rafi",        "ILYAS",           4,    2,    4),
             // ⚠️ AMIHAN, APPENDED (2026-09-25). Append only: a person index crosses the wire as a
             // bare int, so a row inserted above an existing one renders another character for
             // the same pick on a peer. Wind is speed: the fastest hero, light, average grit, a

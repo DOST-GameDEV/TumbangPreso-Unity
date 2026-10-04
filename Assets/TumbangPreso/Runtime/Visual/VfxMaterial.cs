@@ -462,7 +462,7 @@ namespace TumbangPreso.Visual
 
                 if (_volcanic == null)
                 {
-                    Debug.LogWarning("[Vfx] TumbangPreso/VolcanicRock is missing; Dante's ground " +
+                    Debug.LogWarning("[Vfx] TumbangPreso/VolcanicRock is missing; Basilio's ground " +
                                      "falls back to flat colour. Check GameBuilder.EnsureRuntimeShaders.");
                 }
 

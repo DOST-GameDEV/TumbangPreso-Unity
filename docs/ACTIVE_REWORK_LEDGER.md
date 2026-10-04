@@ -165,3 +165,24 @@ public-release disable/redeploy gate remains and no automatic balance reset.
 Evidence reports/reliability-2026-10-04/wallet-deployment. Old403 activation
 blocker retired with current live metadata. Publish checked wallet tests/docs now;
 SocialStore candidate remains unstaged pending laptop native baseline/candidate.
+
+
+## Owner naming completion and publication
+
+Owner-approved mapping: dante/Basilio, cheska/Yasmin, sean/Rago, zack/Isagani,
+phaister/Soraya, rafi/Ilyas; Nemu/Amihan/Paete unchanged. Naming-only Astra worker
+completed and was interrupted after the owner finished. No engineering delegation.
+Names now cover both roster arrays/kit display names/current dialogue/Soraya doll/
+selection fallback/mastery result labels and current lore. Stable lowercase IDs,
+asset/source keys and all hero behavior retained. Existing Core47/47 and zero
+standalone old-name Runtime/Core string literals; packaged rendered acceptance
+follows integration build. Push explicit naming paths; keep social/career fixes
+and generated ProjectAuditor metadata unstaged until their separate evidence.
+
+Career ORIGINAL7932/session51532 terminal: acknowledged420 overwritten by77,
+1causal failure and2controls. CoreProfileRevision fix now under SAME3case native
+candidate13072/session55408. Sourceinputs frozen; do not modify them whilelive.
+Original202 generatedUI importermetas restored exact pre-run after blob/CRLFhash
+comparison; rawgeneratedcopies and cleanup receipt retained. ProjectAuditor change
+preserved independently. Laptop social native4fail2controls ->6/6, same fixture,
+raw report/source map pending. No Root helper or old player remains live.

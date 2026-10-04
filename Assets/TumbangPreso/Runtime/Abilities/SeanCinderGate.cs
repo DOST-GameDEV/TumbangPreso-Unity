@@ -83,7 +83,7 @@ namespace TumbangPreso.Abilities
                     live._visual.SetState(state); live._visual.StepTo(age); live.BindOwner();
                     return live;
                 }
-            var go = new GameObject("Sean Cinder Gate");
+            var go = new GameObject("Rago Cinder Gate");
             var gate = go.AddComponent<SeanCinderGate>(); gate._state = state;
             gate._age = state.Duration - remaining;
             gate._round = GameServices.Match?.RoundNumber ?? 0;

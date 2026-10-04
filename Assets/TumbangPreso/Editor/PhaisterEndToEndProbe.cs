@@ -44,11 +44,11 @@ namespace TumbangPreso.EditorTools
 
             if (!foundHero)
             {
-                Debug.LogError("[PhaisterEndToEndProbe] FAIL: Phaister not found in Roster.GetPeople(GameMode.HeroStrike)!");
+                Debug.LogError("[PhaisterEndToEndProbe] FAIL: Soraya not found in Roster.GetPeople(GameMode.HeroStrike)!");
                 EditorApplication.Exit(1);
                 return;
             }
-            Debug.Log($"[PhaisterEndToEndProbe] PASS: Phaister found at Hero Index {heroIndex} ({heroPeople[heroIndex].Name})");
+            Debug.Log($"[PhaisterEndToEndProbe] PASS: Soraya found at Hero Index {heroIndex} ({heroPeople[heroIndex].Name})");
 
             // 3. Verify Hero Kit & Glyphs
             var kit = HeroAbilitySystem.CreateKitFor("phaister");
@@ -63,7 +63,7 @@ namespace TumbangPreso.EditorTools
 
             // 4. Verify UI Theme Accent
             var accent = UiTheme.ColorForHero("phaister");
-            Debug.Log($"[PhaisterEndToEndProbe] PASS: Phaister UI Theme Color = {accent}");
+            Debug.Log($"[PhaisterEndToEndProbe] PASS: Soraya UI Theme Color = {accent}");
 
             // 5. Capture Hero UI Sheets & Inspect Tray
             HeroUiProbe.CaptureFromMenu();
