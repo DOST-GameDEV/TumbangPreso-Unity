@@ -80,9 +80,16 @@ candidate1212/66148 all5pass. Start/stop generation checks after auth/query reje
 old work while normal/manual refresh survives. Both terminal and restored;
 202generatedGUI importers restoredexact/sourcefixture stable in19252 frozen maps.
 No UGS calls. Reports/reliability-2026-10-04/browser-lifetime.
-NEXT: commit/push this browser source/report batch immediately, then prepare one
-coherent current148 build and actual changed-wall/brand/player acceptance with
-laptop coordination. Do not repeat accepted brand native tests or rebuild F489.
+Browser source31c5f4340 shipped, integrated51aa2bd19. Laptop explicitly released
+NetReplayProbe/fixture; its input/Carrier/Slipper lane remains separate.
+Opt-in glacial probe adds one real arc with two remaining hits and read-only
+clip/view geometry logs; default19CSV/contact unchanged. Direct compile0; no
+actual peer pass yet. NEXT: publish this opt-in diagnostic then ONE coherent
+current148 release build, freeze source until terminal/classification and transfer
+the accepted full manifest. Joint Eskinita/Hero/catch/glacial1/ready1, Root49165,
+laptop18061 control/direct client ephemeralport. Safely checkpoint laptop input
+lane for the requested pair, then resume it. Do not repeat accepted brand native
+tests or rebuild unchanged F489.
 Current148 peer/Relay/recovery/maps,
 rendered signed-in Friends journey, performance/operator and presentation gates
 remain in TODO. Wallet temporary playtest-top-up removal remains a release gate.
