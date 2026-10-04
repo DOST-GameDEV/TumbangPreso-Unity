@@ -7,37 +7,38 @@ protocol        : 145
 mode            : HeroStrike
 selected rules  : 1|0|1|30|0|3|0|1|0|1|0
 map             : MatchSetup
-sampled         : 150.0 s
+sampled         : 480.0 s
 graphics        : Low; 640x360; vsync=0; target=60
 hardware        : 13th Gen Intel(R) Core(TM) i5-13420H; NVIDIA GeForce RTX 4050 Laptop GPU; RAM=16087 MB
-live frame rate : unavailable (no live sample or collection disabled)
+live frame rate : frames=1785; seconds=29.806; avg=59.89; p50=59.70; p5=59.70; p1=57.97; max_ms=25.82
+max frame context: sample_frame=3022; observed_s=53.052; scene=Eskinita; round=1; scale=1.000; focused=True; pause=False; loading=False; gc0_total=147
 round           : 0
 defender        : 0
 round active    : False
 hub lobby seen  : True
-arrival seen    : False
+arrival seen    : True
 auto count seen : False
-lata upright    : True   flips: 0
+lata upright    : False   flips: 1
 tournament ruleset : the rule set is not the tournament one: mode is HeroStrike, tournament is Classic
 tournament modifiers : none
 build identity  : TUMBANG PRESO 1.0.0 | 8f7f304b543d+dirty | protocol 145 | StandaloneWindows64
 
 seat   char   bot      origin  taya   score  travelled  skills  ults
 --------------------------------------------------------------------------
-0        -1 False     Unknown False       0        0.0       0     0
-1        -1 False     Unknown False       0        0.0       0     0
-2        -1 False     Unknown False       0        0.0       0     0
-3        -1 False     Unknown False       0        0.0       0     0
+0        -1 False     Unknown False       0        2.6       0     0
+1        -1 False     Unknown False       0        0.2       0     0
+2        -1 False     Unknown False       0       29.9       0     0
+3        -1 False     Unknown False       0       30.8       0     0
 
 slipper    on  state  owner  holder  changes
 ---------------------------------------------
 0           -     -1     -1      -1        0
-1           -     -1     -1      -1        0
-2           -     -1     -1      -1        0
-3           -     -1     -1      -1        0
+1           -     -1     -1      -1        1
+2           -     -1     -1      -1        4
+3           -     -1     -1      -1        4
 
 structural state hash : 8999D3ED
-discrete state hash : 2A8522B8
+discrete state hash : 2B85244B
 
 ⚠️ THE DISCRETE HASH COVERS ONLY DISCRETE STATE. Two peers cannot agree bit
 for bit on a position or a clock; they must agree on who is who, who is

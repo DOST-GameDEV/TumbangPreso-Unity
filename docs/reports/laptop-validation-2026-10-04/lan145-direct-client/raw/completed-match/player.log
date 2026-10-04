@@ -23,14 +23,14 @@ Begin MonoManager ReloadAssembly
 [Physics::Module] Threading Mode: Multi-Threaded
 [Audio] loaded 65 of 65 cues.
 [NetIdentity] UGS sign-in is disabled in batch mode. LAN hosting and joining are unaffected.
-UnloadTime: 0.627100 ms
+UnloadTime: 0.590200 ms
 [Build] TUMBANG PRESO 1.0.0 | 8f7f304b543d+dirty | protocol 145 | StandaloneWindows64
 [NetBoot] lobby requested, port=49154 join='192.168.1.7:49153' chat=''
-[NetReport] writing C:\Users\Matthew\dev\tump-laptop-player1003i\Logs\lan145-normal-direct-client1004\state.txt after 150 s.
+[NetReport] writing C:\Users\Matthew\dev\tump-laptop-player1003i\Logs\lan145-normal-direct-client1004b\state.txt after 480 s.
 Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
-UnloadTime: 2.299200 ms
+UnloadTime: 2.590200 ms
 Unloading 8 unused Assets to reduce memory usage. Loaded Objects now: 4097.
-Total: 1.160500 ms (FindLiveObjects: 0.107700 ms CreateObjectMapping: 0.224000 ms MarkObjects: 0.799200 ms  DeleteObjects: 0.029400 ms)
+Total: 1.151700 ms (FindLiveObjects: 0.108600 ms CreateObjectMapping: 0.226200 ms MarkObjects: 0.788200 ms  DeleteObjects: 0.028500 ms)
 
 Unexpected timestamp values detected. This can occur in H.264 videos not encoded with the baseline profile. Timestamps will be skewed to correct the playback for C:/Users/Matthew/dev/tump-laptop-player1003i/Builds/owner-direct-131818/TumbangPreso_Data/sharedassets0.resource
 Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/Matthew/dev/tump-laptop-player1003i/Builds/owner-direct-131818/TumbangPreso_Data/sharedassets0.resource
@@ -39,7 +39,7 @@ Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling b
 [NetApproval] peer=0 approved=True reason=
 [NetArrival] peer=0 seat=0 replaces=-1
 [Net] connected as seat 1
-[Net] hosting on 49154, join code HVHQ
+[Net] hosting on 49154, join code ZZKS
 [LobbyAuto] joining 192.168.1.7:49153
 [Net] offline
 [NetDisconnect] peer=0 local=0 server=True connected=False
@@ -51,14 +51,52 @@ Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling b
 [Net] connected
 [Net] connected as seat 2
 [LobbyAuto] join result True
-[Link] Good at 109 ms round trip (client).
-[Link] Bad at 2176 ms round trip (client).
+[Link] Good at 92 ms round trip (client).
+[Link] Bad at 4558 ms round trip (client).
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 8.962000 ms
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[NetSeat] arena installed: LocalSlot=1 spectator=False host=False allBots=False | s0:-+live+act | s1:reader+sim+live+act | s2:-+bot+live+act | s3:-+bot+live+act
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+Unloading 114 unused Assets to reduce memory usage. Loaded Objects now: 15069.
+Total: 3.357300 ms (FindLiveObjects: 0.595700 ms CreateObjectMapping: 0.906200 ms MarkObjects: 1.636900 ms  DeleteObjects: 0.218400 ms)
+
+[Link] Good at 98 ms round trip (client).
+[NetAuto] READY submitted from a client peer.
+[ArenaPrewarm] drew 20 views in 0.35 s.
+[HubLoading] Eskinita ready after 1.30 s.
+[Link] Bad at 2736 ms round trip (client).
+[Link] Good at 16 ms round trip (client).
+[Slice] round 1 begins, taya is seat 0
+[Slice] match over. scores: 20 / 0 / 0 / 150. seat 3 wins
 [NetDisconnect] peer=1 local=1 server=False connected=True
 [Net] disconnected: [Disconnect Event][Client-1][TransportClientId-4294967296][ClosedByRemote] Connection was closed by remote endpoint.
-[Abandon] HostLost: ABANDONED at round 0 of 1; this peer may no longer resolve anything
+[Abandon] HostLost: ABANDONED at round 1 of 1; this peer may no longer resolve anything
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 8.382200 ms
+Unloading 707 unused Assets to reduce memory usage. Loaded Objects now: 6921.
+Total: 4.264100 ms (FindLiveObjects: 0.275000 ms CreateObjectMapping: 0.526500 ms MarkObjects: 1.947000 ms  DeleteObjects: 1.515300 ms)
+
+First video frame not zero: 2 (0.066667s). Result may be out of sync. Please make sure tracks all start at 0 in C:/Users/Matthew/dev/tump-laptop-player1003i/Builds/owner-direct-131818/TumbangPreso_Data/resources.resource
+Color primaries 0 is unknown or unsupported by WindowsMediaFoundation. Falling back to default may result in color shift. C:/Users/Matthew/dev/tump-laptop-player1003i/Builds/owner-direct-131818/TumbangPreso_Data/resources.resource
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 49154, join code MUC8
+[LobbyAuto] joining 192.168.1.7:49153
 [Net] offline
-[NetReady] refused peer 0: not in the lobby table
-[NetReport] wrote C:\Users\Matthew\dev\tump-laptop-player1003i\Logs\lan145-normal-direct-client1004\state.txt
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[Net] connecting to 192.168.1.7:49153
+[Env] repainted 371 of 1117 renderers, 161 with a roof variant.
+[NearFade] 1349 occluder nodes matched, 246 renderers moved onto TumbangPreso/NearFade.
+[WorldLook] Eskinita: lifted 2 court ground slots over 2 material(s) by 1.6.
+Failed to connect to server.
+[NetDisconnect] peer=0 local=0 server=False connected=False
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-4294967296][MaxConnectionAttempts] Connection closed due to maximum connection attempts reached.
+[Net] disconnected: [Disconnect Event][Client-0][TransportClientId-4294967296][MaxConnectionAttempts] Connection closed due to maximum connection attempts reached.
+[LobbyAuto] join result False
+[NetReport] wrote C:\Users\Matthew\dev\tump-laptop-player1003i\Logs\lan145-normal-direct-client1004b\state.txt
 TUMBANG PRESO NETWORK STATE REPORT
 
 role            : HOST
@@ -68,37 +106,38 @@ protocol        : 145
 mode            : HeroStrike
 selected rules  : 1|0|1|30|0|3|0|1|0|1|0
 map             : MatchSetup
-sampled         : 150.0 s
+sampled         : 480.0 s
 graphics        : Low; 640x360; vsync=0; target=60
 hardware        : 13th Gen Intel(R) Core(TM) i5-13420H; NVIDIA GeForce RTX 4050 Laptop GPU; RAM=16087 MB
-live frame rate : unavailable (no live sample or collection disabled)
+live frame rate : frames=1785; seconds=29.806; avg=59.89; p50=59.70; p5=59.70; p1=57.97; max_ms=25.82
+max frame context: sample_frame=3022; observed_s=53.052; scene=Eskinita; round=1; scale=1.000; focused=True; pause=False; loading=False; gc0_total=147
 round           : 0
 defender        : 0
 round active    : False
 hub lobby seen  : True
-arrival seen    : False
+arrival seen    : True
 auto count seen : False
-lata upright    : True   flips: 0
+lata upright    : False   flips: 1
 tournament ruleset : the rule set is not the tournament one: mode is HeroStrike, tournament is Classic
 tournament modifiers : none
 build identity  : TUMBANG PRESO 1.0.0 | 8f7f304b543d+dirty | protocol 145 | StandaloneWindows64
 
 seat   char   bot      origin  taya   score  travelled  skills  ults
 --------------------------------------------------------------------------
-0        -1 False     Unknown False       0        0.0       0     0
-1        -1 False     Unknown False       0        0.0       0     0
-2        -1 False     Unknown False       0        0.0       0     0
-3        -1 False     Unknown False       0        0.0       0     0
+0        -1 False     Unknown False       0        2.6       0     0
+1        -1 False     Unknown False       0        0.2       0     0
+2        -1 False     Unknown False       0       29.9       0     0
+3        -1 False     Unknown False       0       30.8       0     0
 
 slipper    on  state  owner  holder  changes
 ---------------------------------------------
 0           -     -1     -1      -1        0
-1           -     -1     -1      -1        0
-2           -     -1     -1      -1        0
-3           -     -1     -1      -1        0
+1           -     -1     -1      -1        1
+2           -     -1     -1      -1        4
+3           -     -1     -1      -1        4
 
 structural state hash : 8999D3ED
-discrete state hash : 2A8522B8
+discrete state hash : 2B85244B
 
 ⚠️ THE DISCRETE HASH COVERS ONLY DISCRETE STATE. Two peers cannot agree bit
 for bit on a position or a clock; they must agree on who is who, who is
