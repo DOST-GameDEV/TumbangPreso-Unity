@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+First-person source-mesh preservation: [ownership correction and native evidence](reports/viewmodel-mesh-ownership-2026-10-04/README.md).
+
 Owner arms catalog fallback: [causal native checks](reports/viewmodel-roster-fallback-2026-10-04/README.md).
 
 Zack powered wall contact: [compact cue and scoped native evidence](reports/zack-bank-contact-2026-10-04/validation.md).

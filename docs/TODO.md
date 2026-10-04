@@ -17,6 +17,15 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### VIEWMODEL-MESH-OWNERSHIP-1004: rendering leaves source assets untouched
+
+- [x] Cache one owned working mesh per path so outline preparation cannot modify
+  serialized source meshes. Preserve geometry and async/direct reuse; free
+  copies on reset and Editor exit. Original3failures/1control -> native4/4;
+  every candidate source asset remains byte-identical after the run.
+  [Evidence](reports/viewmodel-mesh-ownership-2026-10-04/README.md).
+- [ ] Full loading-scene and packaged acceptance; no measured performance claim.
+
 ### VIEWMODEL-ROSTER-FALLBACK-1004: nullable catalog does not block owner arms
 
 - [x] Preserve mode/index identity when roster lookup has no book, list or art
