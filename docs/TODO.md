@@ -3917,14 +3917,15 @@ jump pads, platforms that you can fall off, and it rotates around different layo
 of the game, limited to a certain amount of layouts though". The brief, the hard parts, the lessons
 from Ilalim and the questions for the owner are in [ARENA_MAP_BRIEF](ARENA_MAP_BRIEF.md).
 
-- [ ] ARENA-1.1 ANSWERED 2026-10-05 (the brief's table): layouts change BETWEEN ROUNDS with a
+- [x] ARENA-1.1 ANSWERED 2026-10-05 (the brief's table): layouts change BETWEEN ROUNDS with a
   visible transformation, four or five of them; a fall is a drone carrying the player back up and
   a tag-style freeze; the can is always at the centre, at a height that may differ by layout; a
   stamina charge pickup AND a separate speed pad; a bigger floor; the same map pool as Lagoon,
   Kanto and Ilalim; the setting is a noontime game-show arena (decided for the owner, who said
-  "you decide"). STILL OPEN: the one-page design for how a layout id reaches every peer, where
-  players are during the transformation, and the drone carry, against SKILL_NETWORK_CONTRACT and
-  NETWORKING.
+  "you decide"). THE DESIGN IS AGREED (the brief's "The design for rotation, the fall
+  and the pads"): the layout is derived from the round number and match id, nothing sent; an 8 s
+  break on this map with cinematic cameras; the drone is a third edge-recovery kind, then the
+  tag's 5 s; one new message for the pickups; one protocol bump for all of it.
 - [ ] ARENA-1.2 A grey-box blockout at exact gameplay dimensions (the can at the origin, the 14 m
   box, the 9 m spawn ring) with two layouts, playable with bots: the rotation, the fall, jump pads
   (`JumpPad`, reused) and the sprint charge pickup, before any art.

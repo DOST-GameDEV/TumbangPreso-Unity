@@ -1,6 +1,6 @@
 # The arena map: brief (ARENA-1)
 
-Status: BRIEF AND THE OWNER'S ANSWERS, written 2026-10-05. Nothing is built. This is the next map after the Ilalim
+Status: BRIEF, THE OWNER'S ANSWERS AND THE AGREED DESIGN (ARENA-1.1), 2026-10-05. Nothing is built. This is the next map after the Ilalim
 rebuild; read [ILALIM_REWORK_GUIDE](ILALIM_REWORK_GUIDE.md)'s HANDOFF block for the pipeline and the
 lessons this brief leans on, and TODO ARENA-1 for the work items.
 
@@ -116,6 +116,80 @@ Nothing copied from a real show, channel or brand. Still to respect: nothing nea
    the attackers' spawn ring and the throwing line come from `Confinement`, so a larger floor is
    free in the rules; what it changes is how far a slipper must be fetched and how long a round
    takes. Start the grey-box at about twice the court's width and play it.
+
+## The design for rotation, the fall and the pads (ARENA-1.1, agreed 2026-10-05)
+
+Checked against the code, [SKILL_NETWORK_CONTRACT](SKILL_NETWORK_CONTRACT.md) and
+[NETWORKING](NETWORKING.md). The owner's three decisions are at the end. The wire here is named
+messages on `MatchRpc` (no NetworkVariables); `NetSession.ProtocolVersion` is 145.
+
+### 1. The layout reaches every peer with nothing sent
+- `SyncWorld` already carries `RoundNumber`, `RoundActive`, `MatchInProgress` and
+  `PresentationMatchId` at 5 Hz and in the late-join snapshot (`HostSyncPeer`).
+- The layout is a pure function of those: the match id seeds a shuffle of the layouts, the round
+  number indexes it. The stage shows the layout of the round being played, or of the NEXT round
+  while `MatchInProgress && !RoundActive`; before the match, round 1's. It polls that every frame
+  and snaps if it ever disagrees, so a dropped packet or a late join cannot leave a peer on the
+  wrong stage.
+- FIVE layouts, not four: with four seats taking the taya in turn (`MatchRules.DefenderSlotFor`),
+  four layouts would hand each player the same layout every time they are taya.
+
+### 2. The transformation and where players are
+- It plays in the existing break (`HalftimePresentation`): simulation held (`PresentationClock.Hold`,
+  `Time.timeScale` 0), input refused, every peer timing from the host's `Began` stamp in
+  `MatchBreak` (`SharedUltimatePhase.Now`). The stage animates on THAT clock, never `deltaTime`.
+- The break today draws a frozen frame. On this map it draws the live stage through cinematic
+  cameras (owner: "ther'll be camera cinematics showing the transforming play arrea").
+- THE BREAK IS LONGER ON THIS MAP: 8 s in place of 3.5 s (start value; halftime stays 10 s). The
+  duration is read from the map on every peer, so it stays shared. This is a timing change like
+  protocol133's and ships under the same protocol bump as the map's entry in the pool.
+- Colliders switch to the next layout at the break's start (nothing simulates while held); the
+  visuals travel. Players are shown lifted by the drones and set down on their marks; the real
+  reset is the existing `SliceRunner.ResetWorld` teleport at round start.
+- Fixed in every layout: floor under the computed marks (taya at (0, 0, -2.5), attackers on z +9
+  at x -1.8, 0, +1.8; `MatchHost.SeatOnFloor` casts from +2 m down 6 m) and the walls (`Bounds`,
+  measured once in `MatchInstaller.Start`).
+- The can: centre in plan always; height 0 to 1.5 m in the grey-box, the taya's mark on the same
+  platform. `Lata._mark` is snapped once in `Start` and has no setter: it needs a host re-snap
+  before `HostRestore` each round. Clients take the can's position from `SyncLata` already.
+
+### 3. The fall, the drone, the freeze
+- The host decides, in a host-only `FixedUpdate` like `RooftopRecovery`: a body below the stage by
+  about 3 m is caught. It must be above y -5, where `MatchRpc.AcceptMove` refuses a pose.
+- The carry is a third `EdgeRecoveryKind` (after Rooftop and Lagoon): the host owns the body's
+  trajectory (`BeginEdgeMovementOwnership`), the owner's moves are refused until it ends, and the
+  kind, grip and phase already ride `SyncUnit`. No new message; a new enum value, so it ships
+  under the same protocol bump.
+- Set down on the last safe spot the body stood on in this layout, inset from the edge; else the
+  nearest platform. Not the round spawn.
+- A held slipper is lost and returns to its mark after a delay (`Slipper.HostBeginMapRecovery`,
+  as on Sa Bubong).
+- Then `ApplyTagged()`: the tag's own 5 s, not removable, no immunity (owner: "same 5 second tag
+  freeze"). No score, no teleport to the spawn.
+
+### 4. Pads and the pickup
+- Jump pad: `JumpPad` as it is (the simulating peer launches, nothing on the wire), launch lowered
+  so the apex is about 6 m (`AcceptMove` refuses y above 20; the ceiling is 12).
+- Speed pad: the simulating peer, nothing on the wire; the host's move budget is 30 m/s. The motor
+  needs a real timed speed-up: `SpeedZoneStack` takes the LOWEST value from 1.0, so it can only
+  slow, and Ilalim's `OverclockBoostPad` (1.5 through that stack) does nothing today.
+- Stamina pickup: the host grants `Stamina.RefillAndClearFatigue()`, which reaches the owner
+  through `SyncUnit`. Whether an orb is taken or back is new shared state: ONE new host message
+  with the pickups' availability, also in the late-join snapshot (owner: agreed). The solo
+  grey-box does not need it.
+
+### 5. What else the grey-box must add
+- BOTS HAVE NO PATHFINDING AND NO EDGE SENSE (`AIController.Goto` steers straight on a flat plane).
+  They need a ground probe ahead that turns them along an edge, and layouts joined by ramps and
+  bridges rather than jump-only islands.
+- One protocol bump covers everything above: the map's entry in `SceneFlow.Maps` (maps travel as
+  an index), the break's length here, the drone recovery kind, the pickup message.
+
+### The owner's decisions (2026-10-05)
+1. The freeze after a fall: "same 5 second tag freeze".
+2. The transformation: "lengthen the break on this map, ther'll be camera cinematics showing the
+   transforming play arrea".
+3. The pickup message, shipped with the map list change: "yea".
 
 ## Order of work
 
