@@ -1,0 +1,303 @@
+[
+  {
+    "job": "paete-skills-current-baseline",
+    "result": "Passed",
+    "total": "1",
+    "passed": "1",
+    "failed": "0",
+    "exitCode": 0,
+    "elapsedSeconds": 331.3,
+    "cases": [
+      {
+        "name": "FilmHisSkillsInAMatch",
+        "result": "Passed",
+        "message": null
+      }
+    ]
+  },
+  {
+    "job": "paete-animation-first-candidate",
+    "result": "Passed",
+    "total": "1",
+    "passed": "1",
+    "failed": "0",
+    "exitCode": 0,
+    "elapsedSeconds": 361.3,
+    "cases": [
+      {
+        "name": "FilmHisSkillsInAMatch",
+        "result": "Passed",
+        "message": null
+      }
+    ]
+  },
+  {
+    "job": "paete-animation-timing-contracts",
+    "result": "Failed(Child)",
+    "total": "3",
+    "passed": "1",
+    "failed": "2",
+    "exitCode": 2,
+    "elapsedSeconds": 90.4,
+    "cases": [
+      {
+        "name": "PlantPreparesBeforeLaunchAndKeepsItsAuthoredGeometry",
+        "result": "Failed",
+        "message": "  Expected: <empty>\n  But was:  < <patch (UnityEngine.BoxCollider)>, <patch (UnityEngine.BoxCollider)>, <patch (UnityEngine.BoxCollider)>, <clod (UnityEngine.BoxCollider)>, <clod (UnityEngine.BoxCollider)>, <clod (UnityEngine.BoxCollider)>, <clod (UnityEngine.BoxCollider)>, <clod (UnityEngine.BoxCollider)>, <clod (UnityEngine.BoxCollider)> >\n"
+      },
+      {
+        "name": "ThornContactPrecedesSnatchAndThePullHasReadableTravel",
+        "result": "Failed",
+        "message": "  Contact must release the held slipper.\n  Expected: not same as <Slipper1 (TumbangPreso.Slipper)>\n  But was:  <Slipper1 (TumbangPreso.Slipper)>\n"
+      },
+      {
+        "name": "ThornsTakeASlipperOutOfAHand",
+        "result": "Passed",
+        "message": null
+      }
+    ]
+  },
+  {
+    "job": "paete-animation-timing-settled",
+    "result": "Passed",
+    "total": "3",
+    "passed": "3",
+    "failed": "0",
+    "exitCode": 0,
+    "elapsedSeconds": 80.3,
+    "cases": [
+      {
+        "name": "PlantPreparesBeforeLaunchAndKeepsItsAuthoredGeometry",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "ThornContactPrecedesSnatchAndThePullHasReadableTravel",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "ThornsTakeASlipperOutOfAHand",
+        "result": "Passed",
+        "message": null
+      }
+    ]
+  },
+  {
+    "job": "paete-player-anchor-contracts",
+    "result": "Passed",
+    "total": "1",
+    "passed": "1",
+    "failed": "0",
+    "exitCode": 0,
+    "elapsedSeconds": 75.3,
+    "cases": [
+      {
+        "name": "VinePlayerQueryChoosesNearestVisibleBodyAndHonoursWallsAndRange",
+        "result": "Passed",
+        "message": null
+      }
+    ]
+  },
+  {
+    "job": "paete-mutual-pull-prototype",
+    "result": "Passed",
+    "total": "1",
+    "passed": "1",
+    "failed": "0",
+    "exitCode": 0,
+    "elapsedSeconds": 80.3,
+    "cases": [
+      {
+        "name": "PlayerVinePullMovesBothUnequallyAndStopsAtContact",
+        "result": "Passed",
+        "message": null
+      }
+    ]
+  },
+  {
+    "job": "paete-vine-integrated",
+    "result": "Failed(Child)",
+    "total": "4",
+    "passed": "2",
+    "failed": "2",
+    "exitCode": 2,
+    "elapsedSeconds": 95.5,
+    "cases": [
+      {
+        "name": "ActualVineSkillPullsBothPlayersAndStopsAtContact",
+        "result": "Failed",
+        "message": "System.InvalidOperationException : paete_skill1 needs a deferred preparation adapter before using a host-confirmed windup."
+      },
+      {
+        "name": "TheVinesReelHimForward",
+        "result": "Failed",
+        "message": "System.InvalidOperationException : paete_skill1 needs a deferred preparation adapter before using a host-confirmed windup."
+      },
+      {
+        "name": "ExactPacketRoundTrips",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "TrailingBytesAndInvalidTargetsAreRefused",
+        "result": "Passed",
+        "message": null
+      }
+    ]
+  },
+  {
+    "job": "paete-vine-authority-and-interruptions",
+    "result": "Passed",
+    "total": "6",
+    "passed": "6",
+    "failed": "0",
+    "exitCode": 0,
+    "elapsedSeconds": 125.5,
+    "cases": [
+      {
+        "name": "ActualVineSkillPullsBothPlayersAndStopsAtContact",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "PlayerVineReleasesBothWhenInterruptedAndPreservesNewImpact",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "PlayerVineStopsAgainstAnObstacleWithoutCrossingIt",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "TheVinesReelHimForward",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "ExactPacketRoundTrips",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "TrailingBytesAndInvalidTargetsAreRefused",
+        "result": "Passed",
+        "message": null
+      }
+    ]
+  },
+  {
+    "job": "paete-vine-receipts-film",
+    "result": "Passed",
+    "total": "2",
+    "passed": "2",
+    "failed": "0",
+    "exitCode": 0,
+    "elapsedSeconds": 105.4,
+    "cases": [
+      {
+        "name": "FilmPlayerVineMeeting",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "VineReceiverRejectsForeignStaleAndDuplicateStates",
+        "result": "Passed",
+        "message": null
+      }
+    ]
+  },
+  {
+    "job": "paete-refinement-final-local",
+    "result": "Failed(Child)",
+    "total": "11",
+    "passed": "10",
+    "failed": "1",
+    "exitCode": 2,
+    "elapsedSeconds": 220.9,
+    "cases": [
+      {
+        "name": "PlantPreparesBeforeLaunchAndKeepsItsAuthoredGeometry",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "ActualVineSkillPullsBothPlayersAndStopsAtContact",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "FilmPlayerVineMeeting",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "PlayerVineRejectsTouchingAndReleasesOnTeleportOrKitChange",
+        "result": "Failed",
+        "message": "  Teleport epoch retained a prior attachment.\n  Expected: True\n  But was:  False\n"
+      },
+      {
+        "name": "PlayerVineReleasesBothWhenInterruptedAndPreservesNewImpact",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "PlayerVineStopsAgainstAnObstacleWithoutCrossingIt",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "TheVinesReelHimForward",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "ThornContactPrecedesSnatchAndThePullHasReadableTravel",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "VineReceiverRejectsForeignStaleAndDuplicateStates",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "ExactPacketRoundTrips",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "TrailingBytesAndInvalidTargetsAreRefused",
+        "result": "Passed",
+        "message": null
+      }
+    ]
+  },
+  {
+    "job": "paete-teleport-release-fix",
+    "result": "Passed",
+    "total": "3",
+    "passed": "3",
+    "failed": "0",
+    "exitCode": 0,
+    "elapsedSeconds": 100.4,
+    "cases": [
+      {
+        "name": "ActualVineSkillPullsBothPlayersAndStopsAtContact",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "PlayerVineRejectsTouchingAndReleasesOnTeleportOrKitChange",
+        "result": "Passed",
+        "message": null
+      },
+      {
+        "name": "VineReceiverRejectsForeignStaleAndDuplicateStates",
+        "result": "Passed",
+        "message": null
+      }
+    ]
+  }
+]

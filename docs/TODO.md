@@ -1,5 +1,16 @@
 # TODO: Tumbang Preso Unity
 
+### PAETE-REFINEMENT-1004: existing animation and player vine latch
+
+- [x] Preserve the existing plant and character shapes while making the charged
+  launch and slower defensive reach/contact/pull read clearly.
+- [x] Add the owner-requested unequal mutual player pull, collision stop and
+  scoped host decision; qualify actual signature, interruptions and replication.
+- [x] Review actual plant/defense and player-latch film. Final focused teleport
+  correction and input/receiver controls pass3/3 after the retained10/11 sweep.
+  [Evidence](reports/paete-refinement-2026-10-04/README.md).
+- [ ] Matching protocol149 live peers, Windows player and human visual acceptance.
+
 ### LINUX-SMOKE-1004: integrated build and offline startup
 
 - [x] Source70a600a1 packages all12 scenes and runs the actual Linux player:

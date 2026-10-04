@@ -431,6 +431,7 @@ namespace TumbangPreso
         public void AdoptMovementEpoch(int epoch)
         {
             if(epoch<=MovementEpoch)return;
+            _paetePull?.Stop("movement epoch changed");
             ClearNetworkResourceIntent();
             InvalidateFlightEpisode();
             MovementEpoch=epoch;_awaitingTeleport=false;_teleportAbility=-1;
@@ -439,6 +440,7 @@ namespace TumbangPreso
         public void Teleport(Vector3 position)
         {
             if (!MayMutateGameplayState()) return;
+            _paetePull?.Stop("teleport");
             if(IsEdgeRecovering)ClearTrip();
             if(_predictingAbility>=0)ExpectAbilityTeleport(_predictingAbility);
             // ⚠️⚠️ THE ARENA WALL IS ENFORCED HERE TOO, AND THIS IS THE PATH THAT ACTUALLY
@@ -940,6 +942,11 @@ namespace TumbangPreso
             ApplyGravity(dt);
 
             Vector3 total = _velocity + _externalVelocity;
+            if (PaetePullVelocity(dt, out var vineVelocity))
+            {
+                _velocity.x=vineVelocity.x; _velocity.z=vineVelocity.z;
+                total.x=vineVelocity.x; total.z=vineVelocity.z;
+            }
             CollisionFlags flags = _cc.Move(total * dt);
 
             // ⚠️ `isGrounded` ALONE IS NOT TRUSTWORTHY. It reflects only the last Move and
@@ -1902,6 +1909,7 @@ namespace TumbangPreso
         {
             if(!NetAuthority.ShouldResolve())return;
             if(AbilitySystem!=null && AbilitySystem.IsImmuneToStuns)return;
+            _paetePull?.Stop("new impact");
             if(Diagnostics.NetFamiliarProbe.Active)Debug.Log($"[ImpactProbe] resolve slot={_playerSlot} bot={IsBot} sim={IsLocallySimulated()} reader={GetComponent<PlayerInputReader>()!=null} ai={GetComponent<AIController>()!=null}");
             if(!IsLocallySimulated())
             {

@@ -1,5 +1,26 @@
 # Skill Networking Contract
 
+## Paete player vine, protocol149
+
+Liana Leap keeps its predicted tell and cooldown, but only the host chooses the
+player or terrain endpoint. A reliable81byte PaeteVine state carries match, round,
+owner movement epoch, sequence, target identity/epoch, endpoints, simulation clock
+and duration. Each peer integrates only its own motor through CharacterController;
+terrain reels use the existing owner-delivered Carry result. Duplicate, foreign,
+wrong-round and wrong-body messages cannot restart a pull. End state retires it;
+late snapshots age the original deadline rather than refreshing it.
+
+The target moves20percent of the available gap, capped at1.25m and reduced by
+existing incoming-displacement resistance. Paete covers the rest. Capsule
+clearance ends both velocities; collision stalls, new impact/carry, status, kit,
+role, round and movement-epoch changes cancel the constraint. No damage, tag,
+score or stun status is added. The terrain range and fallback stay unchanged.
+
+Thorn Harvest now reaches before snatching:0.45s visible reach, pull starts at
+0.65s, and travel lasts1.1s. Matching rebuilt peers are required. Focused local
+physics/receiver evidence is separate from actual matching-peer acceptance.
+[Refinement evidence](reports/paete-refinement-2026-10-04/README.md).
+
 ## Compact wall restoration, protocol148 / recording14
 
 Barricade Radius greater than zero carries arc radius; FirstScale is arc length

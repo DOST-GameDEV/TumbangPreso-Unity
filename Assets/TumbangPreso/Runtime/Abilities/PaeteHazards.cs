@@ -39,6 +39,32 @@ namespace TumbangPreso.Abilities
             return anchor;
         }
 
+        // Player attachment has its own nearest-solid query. Keep the established
+        // scenery fallback unchanged, and never select a body through a wall.
+        public static CharacterMotor FindPlayer(CharacterMotor caster, Vector3 feet, Vector3 forward, Vector3 aimPoint)
+        {
+            if (caster == null) return null;
+            Vector3 origin = feet + Vector3.up * 1.3f;
+            Vector3 direction = aimPoint - origin;
+            if (direction.sqrMagnitude < .25f) direction = forward;
+            if (direction.sqrMagnitude < .0001f) return null;
+            var hits = Physics.RaycastAll(origin, direction.normalized, PaeteRules.VineRange,
+                ~0, QueryTriggerInteraction.Ignore);
+            System.Array.Sort(hits, (a,b) => a.distance.CompareTo(b.distance));
+            foreach (var hit in hits)
+            {
+                var collider = hit.collider;
+                if (collider == null) continue;
+                var player = collider.GetComponentInParent<CharacterMotor>();
+                if (player == caster || collider.GetComponentInParent<Slipper>() != null ||
+                    collider.GetComponentInParent<Lata>() != null) continue;
+                // Any nearer solid surface blocks the hook, including an invalid body.
+                return player != null && player.isActiveAndEnabled && player.RoundActive &&
+                    !player.IsTagged && player.AbilitySystem?.IsImmuneToStuns != true ? player : null;
+            }
+            return null;
+        }
+
         /// <summary>A throw target: <paramref name="aimPoint"/> on the ground, pulled in to <paramref name="range"/> and kept inside the court.</summary>
         public static Vector3 GroundTarget(Vector3 feet, Vector3 forward, Vector3 aimPoint, float range)
         {
@@ -513,6 +539,8 @@ namespace TumbangPreso.Abilities
             if (!NetAuthority.ShouldResolve() || !_burst) return;
             if (!_resolved)
             {
+                // Keep a held slipper in its hand until the visible rattan tip arrives.
+                if (_age < PaeteRules.ThornReachSeconds) return;
                 _resolved = true;
                 foreach (var shoe in _caught)
                     if (shoe != null && shoe.HostSnatch()) Net.MatchRpc.Instance?.BroadcastSlipperState(shoe);
