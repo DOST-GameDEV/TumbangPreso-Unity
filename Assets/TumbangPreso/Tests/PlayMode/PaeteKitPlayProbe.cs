@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using TumbangPreso.Abilities;
@@ -229,6 +230,250 @@ namespace TumbangPreso.PlayTests
             Assert.AreNotSame(shoe, holder.GetComponent<Carrier>().Held, "THORN HARVEST left the slipper in the holder's hand.");
             Assert.Less(home, 2.2f, "The slipper was not hauled into the thorns where he placed them.");
             Assert.Greater(fromHim, 3f, "The slipper went to his feet, not to the thorns he placed.");
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator PlayerVinePullMovesBothUnequallyAndStopsAtContact()
+        {
+            int previous=Time.captureFramerate;Time.captureFramerate=60;
+            try
+            {
+                var caster=Paete(1,new Vector3(-5,.12f,-6));
+                var target=GameServices.Round.PlayerAt(2);target.Teleport(new Vector3(-5,.12f,0));
+                caster.Intent.Parked=target.Intent.Parked=false;
+                caster.Intent.Move=target.Intent.Move=Vector2.zero;
+                yield return null;
+                Vector3 a=caster.transform.position,b=target.transform.position;
+                var pull=PaetePlayerPull.Begin(caster,target);Assert.IsNotNull(pull);
+                float until=Time.time+2,minGap=99;
+                while(pull!=null&&pull.Active&&Time.time<until)
+                {
+                    yield return new WaitForFixedUpdate();
+                    minGap=Mathf.Min(minGap,Flat(target.transform.position-caster.transform.position).magnitude);
+                }
+                Assert.IsTrue(pull==null||!pull.Active,"Pull did not terminate.");
+                float casterTravel=Flat(caster.transform.position-a).magnitude;
+                float targetTravel=Flat(target.transform.position-b).magnitude;
+                Assert.Greater(casterTravel,3);Assert.That(targetTravel,Is.InRange(.15f,1.3f));
+                Assert.Greater(casterTravel,targetTravel*2);
+                Assert.Greater(minGap,.55f,"Capsules crossed through each other.");
+                Assert.Less(Flat(target.transform.position-caster.transform.position).magnitude,1.1f);
+                var stopA=caster.transform.position;var stopB=target.transform.position;
+                yield return new WaitForSeconds(.25f);
+                Assert.Less(Flat(caster.transform.position-stopA).magnitude,.08f,"Caster retained a friction tail after contact.");
+                Assert.Less(Flat(target.transform.position-stopB).magnitude,.08f,"Target retained a friction tail after contact.");
+                Note("player_pull_caster",casterTravel);Note("player_pull_target",targetTravel);Note("player_pull_min_gap",minGap);
+            }
+            finally{Time.captureFramerate=previous;}
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator ActualVineSkillPullsBothPlayersAndStopsAtContact()
+        {
+            int previous=Time.captureFramerate;Time.captureFramerate=60;
+            try
+            {
+                var caster=Paete(1,new Vector3(-5,.12f,-6));
+                var target=GameServices.Round.PlayerAt(2);target.Teleport(new Vector3(-5,.12f,0));
+                caster.Intent.Parked=target.Intent.Parked=false;
+                caster.Intent.Move=target.Intent.Move=Vector2.zero;
+                yield return null;
+                Vector3 a=caster.transform.position,b=target.transform.position;
+                caster.Intent.AimPoint=target.transform.position+Vector3.up*.9f;
+                yield return Press(caster,Verb.Skill1,.16f);
+                var pull=Object.FindFirstObjectByType<PaetePlayerPull>();Assert.IsNotNull(pull,"Actual signature did not attach to the player.");
+                float until=Time.time+2,minGap=99;
+                while(pull!=null&&pull.Active&&Time.time<until)
+                {
+                    yield return new WaitForFixedUpdate();
+                    minGap=Mathf.Min(minGap,Flat(target.transform.position-caster.transform.position).magnitude);
+                }
+                Assert.IsTrue(pull==null||!pull.Active,"Pull did not terminate.");
+                float casterTravel=Flat(caster.transform.position-a).magnitude;
+                float targetTravel=Flat(target.transform.position-b).magnitude;
+                Assert.Greater(casterTravel,3);Assert.That(targetTravel,Is.InRange(.15f,1.3f));
+                Assert.Greater(casterTravel,targetTravel*2);
+                Assert.Greater(minGap,.55f,"Capsules crossed through each other.");
+                Assert.Less(Flat(target.transform.position-caster.transform.position).magnitude,1.1f);
+                var stopA=caster.transform.position;var stopB=target.transform.position;
+                yield return new WaitForSeconds(.25f);
+                Assert.Less(Flat(caster.transform.position-stopA).magnitude,.08f,"Caster retained a friction tail after contact.");
+                Assert.Less(Flat(target.transform.position-stopB).magnitude,.08f,"Target retained a friction tail after contact.");
+                Note("player_pull_caster",casterTravel);Note("player_pull_target",targetTravel);Note("player_pull_min_gap",minGap);
+            }
+            finally{Time.captureFramerate=previous;}
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator PlayerVineReleasesBothWhenInterruptedAndPreservesNewImpact()
+        {
+            int previous=Time.captureFramerate;Time.captureFramerate=60;
+            try
+            {
+                var caster=Paete(1,new Vector3(-5,.12f,-6));
+                var target=GameServices.Round.PlayerAt(2);target.Teleport(new Vector3(-5,.12f,0));
+                caster.Intent.Parked=target.Intent.Parked=false;
+                yield return null;
+                var pull=PaetePlayerPull.Begin(caster,target);Assert.IsNotNull(pull);
+                yield return new WaitForSeconds(.2f);
+                Vector3 before=target.transform.position;
+                target.ApplyResolvedImpact(Vector3.right*5);
+                Assert.IsFalse(pull.Active,"An accepted new impact must cancel both sides immediately.");
+                yield return new WaitForSeconds(.12f);
+                Assert.Greater(target.transform.position.x-before.x,.1f,"Ending the hook erased a newer impact.");
+                yield return new WaitForSeconds(.35f);
+                caster.Teleport(new Vector3(-5,.12f,-6));target.Teleport(new Vector3(-5,.12f,0));
+                yield return null;
+                pull=PaetePlayerPull.Begin(caster,target);Assert.IsNotNull(pull);
+                target.enabled=false;
+                yield return new WaitForFixedUpdate();
+                Assert.IsTrue(pull==null||!pull.Active,"Disabled participant left a live pull.");
+                target.enabled=true;
+            }
+            finally{Time.captureFramerate=previous;}
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator PlayerVineStopsAgainstAnObstacleWithoutCrossingIt()
+        {
+            int previous=Time.captureFramerate;Time.captureFramerate=60;
+            GameObject wall=null;
+            try
+            {
+                var caster=Paete(1,new Vector3(-5,.12f,-6));
+                var target=GameServices.Round.PlayerAt(2);target.Teleport(new Vector3(-5,.12f,0));
+                caster.Intent.Parked=target.Intent.Parked=false;
+                yield return null;
+                var pull=PaetePlayerPull.Begin(caster,target);Assert.IsNotNull(pull);
+                wall=GameObject.CreatePrimitive(PrimitiveType.Cube);
+                wall.transform.position=new Vector3(-5,1,-3);wall.transform.localScale=new Vector3(2,3,.4f);
+                Physics.SyncTransforms();
+                yield return new WaitForSeconds(1.2f);
+                Assert.IsTrue(pull==null||!pull.Active);
+                Assert.Less(caster.transform.position.z,-3.4f,"Controller passed through the obstacle.");
+                Assert.Greater(target.transform.position.z,-1.35f,"Blocked hook over-pulled its target.");
+            }
+            finally{Time.captureFramerate=previous;if(wall!=null)Object.Destroy(wall);}
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator PlayerVineRejectsTouchingAndReleasesOnTeleportOrKitChange()
+        {
+            var caster=Paete(1,new Vector3(-5,.12f,-6));
+            var target=GameServices.Round.PlayerAt(2);target.Teleport(caster.transform.position+Vector3.forward*.5f);
+            caster.Intent.Parked=target.Intent.Parked=false;
+            Assert.IsNull(PaetePlayerPull.Begin(caster,target),"Already touching bodies should not be yanked through each other.");
+            target.Teleport(new Vector3(-5,.12f,0));yield return null;
+            var pull=PaetePlayerPull.Begin(caster,target);Assert.IsNotNull(pull);
+            target.Teleport(target.transform.position+Vector3.right);
+            yield return new WaitForFixedUpdate();Assert.IsTrue(pull==null||!pull.Active,"Teleport epoch retained a prior attachment.");
+            target.Teleport(new Vector3(-5,.12f,0));yield return null;
+            pull=PaetePlayerPull.Begin(caster,target);Assert.IsNotNull(pull);
+            caster.AbilitySystem.BindHero("sean");
+            yield return new WaitForFixedUpdate();Assert.IsTrue(pull==null||!pull.Active,"A replacement kit inherited the old hook.");
+        }
+
+        private sealed class VineOwnerPeer : INetProvider
+        { public bool IsHost=>false;public bool IsNetworked=>true;public int LocalSlot=>2;public int LocalPeerId=>7;public bool IsSeatlessReferee=>false; }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator VineReceiverRejectsForeignStaleAndDuplicateStates()
+        {
+            var caster=Paete(1,new Vector3(-5,.12f,-6));
+            var target=GameServices.Round.PlayerAt(2);target.Teleport(new Vector3(-5,.12f,0));
+            caster.Intent.Parked=target.Intent.Parked=false;
+            yield return null;
+            var router=TumbangPreso.Net.MatchRpc.Instance;
+            GameObject built=null;
+            if(router==null){built=new GameObject("Vine receipt router");router=built.AddComponent<TumbangPreso.Net.MatchRpc>();}
+            long match=GameServices.Match.PresentationMatchId;
+            typeof(TumbangPreso.Net.MatchRpc).GetProperty("PresentationMatchId").SetValue(router,match);
+            NetAuthority.Provider=new VineOwnerPeer();
+            var state=new TumbangPreso.Net.PaeteVineState {Scope=new TumbangPreso.Net.GameplayActionScope {
+                Match=match,Round=GameServices.Match.RoundNumber,Epoch=caster.MovementEpoch},Sequence=1,
+                Owner=1,Target=2,TargetEpoch=target.MovementEpoch,Phase=TumbangPreso.Net.PaeteVinePhase.Player,
+                Anchor=target.transform.position+Vector3.up*.9f,CasterEnd=new Vector3(-5,.12f,-1.824f),
+                TargetEnd=new Vector3(-5,.12f,-1.044f),Duration=.8f,RoundClock=GameServices.Round.TimeLeft};
+            var method=typeof(TumbangPreso.Net.MatchRpc).GetMethod("OnPaeteVineMsg",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance);
+            void Deliver(ulong sender,TumbangPreso.Net.PaeteVineState packet)
+            {
+                using var writer=new Unity.Netcode.FastBufferWriter(256,Unity.Collections.Allocator.Temp);
+                writer.WriteNetworkSerializable(packet);
+                using var reader=new Unity.Netcode.FastBufferReader(writer,Unity.Collections.Allocator.Temp);
+                method.Invoke(router,new object[]{sender,reader});
+            }
+            try
+            {
+                Deliver(7,state);Assert.IsNull(Object.FindFirstObjectByType<PaetePlayerPull>(),"A non-host selected the victim.");
+                var stale=state;stale.TargetEpoch++;Deliver(0,stale);
+                Assert.IsNull(Object.FindFirstObjectByType<PaetePlayerPull>(),"A different target incarnation accepted the hook.");
+                stale=state;stale.Scope.Round++;Deliver(0,stale);
+                Assert.IsNull(Object.FindFirstObjectByType<PaetePlayerPull>());
+                Deliver(0,state);var pull=Object.FindFirstObjectByType<PaetePlayerPull>();Assert.IsNotNull(pull);
+                Deliver(0,state);Assert.IsTrue(pull.Active,"A duplicate restarted/replaced the current constraint.");
+                Vector3 casterBefore=caster.transform.position,targetBefore=target.transform.position;
+                yield return new WaitForSeconds(.24f);
+                Assert.Less(Flat(caster.transform.position-casterBefore).magnitude,.01f,"A peer moved somebody else's body.");
+                Assert.Greater(Flat(target.transform.position-targetBefore).magnitude,.03f,"Owning peer did not integrate its target pull.");
+                state.Sequence=2;state.Phase=TumbangPreso.Net.PaeteVinePhase.Ended;state.Duration=0;Deliver(0,state);
+                Assert.IsTrue(pull==null||!pull.Active);
+                state.Sequence=1;state.Phase=TumbangPreso.Net.PaeteVinePhase.Player;state.Duration=.8f;Deliver(0,state);
+                Assert.IsTrue(pull==null||!pull.Active,"Old start revived an ended hook.");
+            }
+            finally{NetAuthority.Provider=new SoloProvider();if(built!=null)Object.Destroy(built);}
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator VinePlayerQueryChoosesNearestVisibleBodyAndHonoursWallsAndRange()
+        {
+            var caster = Paete(1,new Vector3(-5,.12f,-6));
+            var near = GameServices.Round.PlayerAt(2); var far = GameServices.Round.PlayerAt(3);
+            near.Teleport(new Vector3(-5,.12f,-2)); far.Teleport(new Vector3(-5,.12f,.5f));
+            yield return null;
+            Vector3 aim = near.transform.position+Vector3.up;
+            Assert.AreSame(near,PaeteVine.FindPlayer(caster,caster.transform.position,Vector3.forward,aim));
+            var wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            wall.transform.position = new Vector3(-5,1,-4); wall.transform.localScale = new Vector3(2,3,.2f);
+            try
+            {
+                Physics.SyncTransforms();
+                Assert.IsNull(PaeteVine.FindPlayer(caster,caster.transform.position,Vector3.forward,aim),"A nearer wall must stop player attachment.");
+            }
+            finally { Object.Destroy(wall); }
+            yield return null;
+            near.Teleport(new Vector3(-5,.12f,3)); far.Teleport(new Vector3(12,.12f,4));
+            yield return null;
+            Assert.IsNull(PaeteVine.FindPlayer(caster,caster.transform.position,Vector3.forward,near.transform.position+Vector3.up),"No player latch beyond the existing eight-metre reach.");
+        }
+
+        [UnityTest, Timeout(60000)]
+        public IEnumerator ThornContactPrecedesSnatchAndThePullHasReadableTravel()
+        {
+            int priorCaptureRate = Time.captureFramerate;
+            Time.captureFramerate = 60;
+            try
+            {
+            int taya = GameServices.Round.Players.First(p => p.IsDefender).PlayerSlot;
+            var holder = GameServices.Round.Players.First(p => !p.IsDefender && p.GetComponent<Carrier>().Held != null);
+            holder.Teleport(new Vector3(5,.12f,-4));
+            yield return null; // The held prop follows its hand in LateUpdate before target capture.
+            var shoe = holder.GetComponent<Carrier>().Held;
+            var at = new Vector3(0,0,-4);
+            var thorns = PaeteThorns.Spawn(at,at,taya);
+            while(thorns.Age < PaeteRules.ThornReachSeconds-.06f) yield return null;
+            Assert.AreSame(shoe,holder.GetComponent<Carrier>().Held,"No snatch before the vine tip arrives.");
+            while(thorns.Age < PaeteRules.ThornHoldSeconds+.15f) yield return null;
+            Assert.AreNotSame(shoe,holder.GetComponent<Carrier>().Held,"Contact must release the held slipper.");
+            float early = Flat(shoe.transform.position-at).magnitude;
+            Assert.Greater(early,2.5f,"The slower pull must have a readable travel phase, not teleport home.");
+            while(thorns.Age < PaeteRules.ThornHoldSeconds+PaeteRules.ThornYankSeconds+.08f) yield return null;
+            float arrived = Flat(shoe.transform.position-at).magnitude;
+            Assert.Less(arrived,1.3f,"Pull must end beside the same construct.");
+            Assert.Less(arrived,early-1f);
+            Note("thorn_contact_seconds",PaeteRules.ThornReachSeconds);
+            Note("thorn_pull_early_distance",early); Note("thorn_pull_final_distance",arrived);
+            }
+            finally { Time.captureFramerate = priorCaptureRate; }
         }
 
         [UnityTest, Timeout(90000)]
@@ -752,6 +997,45 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(planted, "BAKYA BLOOM planted nothing.");
             Assert.IsTrue(fired, "BAKYA BLOOM never fired its wooden slipper.");
             Assert.IsTrue(snatched, "THORN HARVEST left the slipper in the holder's hand.");
+        }
+
+        [UnityTest, Timeout(180000)]
+        public IEnumerator FilmPlayerVineMeeting()
+        {
+            if(Environment.GetEnvironmentVariable("TUMP_PAETE_FILM")!="1")Assert.Ignore("Opt-in visual capture.");
+            var caster=Paete(1,new Vector3(-5,.12f,-6));
+            var target=GameServices.Round.PlayerAt(2);target.Teleport(new Vector3(-5,.12f,0));
+            caster.Intent.Parked=target.Intent.Parked=false;
+            caster.Intent.AimPoint=target.transform.position+Vector3.up*.9f;
+            yield return null;
+            string root=Path.Combine(Environment.GetEnvironmentVariable("TUMP_EVIDENCE")??"Logs","player-vine");Directory.CreateDirectory(root);
+            var camera=new GameObject("PaetePlayerVineFilm").AddComponent<Camera>();
+            camera.CopyFrom(Camera.main);camera.enabled=false;camera.tag="Untagged";camera.fieldOfView=47;
+            camera.cullingMask &= ~(1<<5);camera.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+            camera.transform.position=new Vector3(3,4,-7);camera.transform.LookAt(new Vector3(-5,1,-3));
+            var hdr=new RenderTexture(1280,720,24,RenderTextureFormat.DefaultHDR,RenderTextureReadWrite.Linear);
+            var ldr=new RenderTexture(1280,720,0,RenderTextureFormat.ARGB32,RenderTextureReadWrite.sRGB);
+            var pixels=new Texture2D(1280,720,TextureFormat.RGB24,false);
+            int previous=Time.captureFramerate;Time.captureFramerate=30;bool caught=false;
+            try
+            {
+                for(int frame=0;frame<100;frame++)
+                {
+                    caster.Intent.Set(Verb.Skill1,frame>=20&&frame<25);
+                    yield return null;
+                    caught|=Object.FindFirstObjectByType<PaetePlayerPull>()!=null;
+                    RenderFilmView(camera,hdr);Graphics.Blit(hdr,ldr);
+                    var active=RenderTexture.active;RenderTexture.active=ldr;
+                    pixels.ReadPixels(new Rect(0,0,1280,720),0,0);pixels.Apply();RenderTexture.active=active;
+                    File.WriteAllBytes(Path.Combine(root,$"{frame:D5}.jpg"),pixels.EncodeToJPG(92));
+                }
+                Assert.IsTrue(caught);Assert.Less(Flat(target.transform.position-caster.transform.position).magnitude,1.1f);
+            }
+            finally
+            {
+                Time.captureFramerate=previous;Object.Destroy(camera.gameObject);Object.Destroy(pixels);
+                hdr.Release();ldr.Release();Object.Destroy(hdr);Object.Destroy(ldr);
+            }
         }
 
         private static Vector3 Flat(Vector3 v) => new Vector3(v.x, 0, v.z);

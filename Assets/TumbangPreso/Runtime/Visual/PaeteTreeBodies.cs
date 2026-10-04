@@ -892,9 +892,12 @@ namespace TumbangPreso.Visual
             // ⚠️ IT RISES OUT OF THE SOIL, IT DOES NOT SCALE IN (owner, 2026-09-26).
             float rise = GrowthVfx.Pop(age / 0.45f);
             float squash = age > 0.35f && age < 0.6f ? 1f + 0.18f * Mathf.Sin((age - 0.35f) / 0.25f * Mathf.PI) : 1f;
-            // The spit's anticipation: the neck compresses before the snap.
-            float coil = sinceShot < 0.12f ? sinceShot / 0.12f : sinceShot < 0.3f ? 1f - (sinceShot - 0.12f) / 0.18f : 0f;
-            squash *= 1f + 0.10f * coil;
+            // Store the wind-up as the bakya finishes growing, BEFORE the command
+            // launches it. The old recoil curve wound up after the projectile left.
+            float grown = Mathf.Clamp01(shotGrowth);
+            float charge = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(.96f, 1f, grown));
+            float release = sinceShot < .38f ? 1f - Mathf.SmoothStep(0f, 1f, sinceShot / .38f) : 0f;
+            squash *= 1f + .10f * charge - .05f * release;
             _stem.localScale = new Vector3(squash, 1f / squash, squash);
             _stem.localPosition = Vector3.down * (1.0f * (1f - rise));
             float sway = Mathf.Sin(age * 1.2f) * 2.5f, swayZ = Mathf.Sin(age * 0.85f + 1f) * 2.5f;
@@ -917,12 +920,11 @@ namespace TumbangPreso.Visual
 
             // The pitcher: a beat behind the neck (follow-through); the spit (rear back, snap past rest,
             // wobble); the proud bob when ready; the droop as it loosens. Negative pitch rears the mouth back.
-            float spit = sinceShot < 0.12f ? -34f * (sinceShot / 0.12f)
-                       : sinceShot < 0.22f ? Mathf.Lerp(-34f, 28f, (sinceShot - 0.12f) / 0.10f)
-                       : sinceShot < 0.55f ? Mathf.Lerp(28f, 0f, (sinceShot - 0.22f) / 0.33f) * Mathf.Cos((sinceShot - 0.22f) * 28f) : 0f;
-            float grown = Mathf.Clamp01(shotGrowth);
+            float settle = sinceShot >= .12f && sinceShot < .65f
+                ? Mathf.Sin((sinceShot - .12f) * 19f) * Mathf.Exp(-(sinceShot - .12f) * 6f) * 7f : 0f;
+            float spit = -24f * charge + 28f * release + settle;
             bool ready = grown >= 1f && sinceShot > 0.6f;
-            float proud = ready ? Mathf.Abs(Mathf.Sin(age * 3.2f)) * 5f : 0f;
+            float proud = ready ? Mathf.Abs(Mathf.Sin(age * 3.2f)) * 2f : 0f;
             float follow = Mathf.Sin(age * 1.2f - 0.7f) * 4f;
             _pod.localRotation = _podRest * Quaternion.Euler(spit + 38f * loosen + follow - proud, 0f, 12f * loosen);
             _pod.localPosition = _podAt + Vector3.up * (0.03f * proud / 5f);
@@ -933,7 +935,7 @@ namespace TumbangPreso.Visual
             if (_lid != null)
             {
                 // ⚠️ Opens to 84 degrees at READY, not 58: the v22 film had the rising bakya cutting through the lid.
-                float open = -12f - 72f * grown * grown;
+                float open = -12f - 72f * Mathf.Max(grown * grown, sinceShot < .12f ? 1f : 0f);
                 float slap = GrowthVfx.Envelope(sinceShot, 0.12f, 0.04f, 0.5f, 0.4f);
                 open = Mathf.Lerp(open, -4f, slap);
                 open = Mathf.Lerp(open, -30f, loosen);
@@ -957,7 +959,7 @@ namespace TumbangPreso.Visual
                 float flick = GrowthVfx.Pop((age - 0.30f - 0.06f * i) / 0.30f);
                 float breathe = Mathf.Sin(age * 1.6f + i * 1.9f) * 4f;
                 float armFlare = GrowthVfx.Envelope(sinceShot, 0f, 0.08f, 0.45f, 0.3f);
-                float pitch = -60f * (1f - flick) + breathe - 24f * armFlare + 26f * loosen;
+                float pitch = -60f * (1f - flick) + breathe - 10f * charge - 24f * armFlare + 26f * loosen;
                 _arms[i].localRotation = _armRest[i] * Quaternion.Euler(pitch, 0f, 0f);
             }
 
@@ -1096,7 +1098,7 @@ namespace TumbangPreso.Visual
                 // over the centre on the clench, flopping out as it sinks.
                 float open = Mathf.Clamp01((age - RiseAt[i] - 0.08f) / 0.22f);
                 float fold = -38f * (1f - GrowthVfx.Pop(open));
-                float shiver = Mathf.Sin(age * 60f + i * 2.3f) * Quiver[i] * quiver;
+                float shiver = Mathf.Sin(age * 18f + i * 2.3f) * Quiver[i] * quiver;
                 float pitch = fold + shiver - 18f * whipBack - 58f * clench + 48f * sink;
                 // The frond is the sheath's sibling in the file (both under the root), so it drops with it.
                 _frond[i].localPosition = _frondAt[i] + Vector3.down * drop;
@@ -1113,10 +1115,10 @@ namespace TumbangPreso.Visual
                 _whip[stem].gameObject.SetActive(false);
                 Vector3 from = transform.InverseTransformPoint(_whip[stem].position);
                 Vector3 to = transform.InverseTransformPoint(shoe.transform.position);
-                Vector3 tip = Vector3.Lerp(from, to, GrowthVfx.Pop(Mathf.Clamp01(age / 0.18f)));
+                Vector3 tip = Vector3.Lerp(from, to, Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(age / PaeteRules.ThornReachSeconds)));
                 float slack = age < hold ? 0.03f : 0f;
                 GrowthVfx.Curve(_points, from, tip, 12, slack * Vector3.Distance(from, tip), 0.05f, k * 1.3f + age * 6f);
-                _lashes[k].Draw(_points, 0.55f);
+                _lashes[k].Draw(_points, 1.0f);
             }
 
             // The blades brown as it sinks (one re-dress, cached by `ToonSkin`).

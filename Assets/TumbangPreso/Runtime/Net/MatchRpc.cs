@@ -323,6 +323,7 @@ namespace TumbangPreso.Net
             PresentationMatchId = 0; _pendingMoments.Clear();
             ResetUltimateTransport();
             ResetTimedKitTransport();
+            ResetPaeteVineTransport();
             ResetObjectiveCooldownTransport();
             _lastSkillRequest.Clear();_skillRequestSequence=0;_skillEventSequence=0;_skillEpoch=long.MinValue;
             _pendingSkillCasts.Clear();
@@ -372,6 +373,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("TimedKitState", OnTimedKitStateMsg);
             cm.RegisterNamedMessageHandler("CircuitAim", OnCircuitAimMsg);
             cm.RegisterNamedMessageHandler("CircuitState", OnCircuitStateMsg);
+            cm.RegisterNamedMessageHandler("PaeteVine", OnPaeteVineMsg);
             cm.RegisterNamedMessageHandler("CastPreparation", OnCastPreparationMsg);
             cm.RegisterNamedMessageHandler("MovementWindow", OnMovementWindowMsg);
             cm.RegisterNamedMessageHandler("WorldFieldBegin", OnWorldFieldBeginMsg);
@@ -1980,6 +1982,7 @@ namespace TumbangPreso.Net
                 if (fieldGeneration > 0) SendFeatherfallSnapshot(slot, peer, fieldGeneration, amihan);
                 return;
             }
+            if(kit is Abilities.PaeteHeroKit)SendPaeteVineSnapshot(slot,peer);
             if (!(kit is Abilities.ITimedKitReplication replication)) return;
             SendBoundTimedKit(slot, peer, kit, replication);
             if(kit is Abilities.ZackHeroKit)SendCircuitSnapshot(slot,peer);

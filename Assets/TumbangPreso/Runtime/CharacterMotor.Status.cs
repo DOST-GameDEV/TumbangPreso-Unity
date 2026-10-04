@@ -366,6 +366,7 @@ namespace TumbangPreso
         {
             if (!NetAuthority.ShouldResolve()) return;
             if (AbilitySystem != null && AbilitySystem.IsImmuneToStuns) return;
+            _paetePull?.Stop("new carry");
             if (!IsLocallySimulated())
             {
                 Net.MatchRpc.Instance?.BroadcastCarry(_playerSlot, velocity, seconds);
