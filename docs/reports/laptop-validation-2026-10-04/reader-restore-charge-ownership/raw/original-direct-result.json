@@ -1,0 +1,14 @@
+{
+  "pid": 26400,
+  "exitCode": 2,
+  "terminal": true,
+  "inputCount": 3472,
+  "inputChanges": {
+    "ProjectSettings/ProjectAuditorSettings.asset": {
+      "before": "45b12b6b55a6af51617594ca259af79aa6b39dc53249a720540b53c8a7e6fad0",
+      "after": "22c699d7b424bd59053e552e6c358d9cca02d0663c276ec46ea0d0bd96651d85"
+    }
+  },
+  "qualityRestored": true,
+  "existingPrefsRestored": 9
+}
