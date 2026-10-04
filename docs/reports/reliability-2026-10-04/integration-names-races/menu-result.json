@@ -1,0 +1,47 @@
+{
+  "source": "91aad50f2b54387f853298f3c0cc161d8effa1a2",
+  "protocol": 145,
+  "profile": "pc-names-menu-91aad1004",
+  "command": [
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Builds\\integration-91aad50f2-1004\\TumbangPreso.exe",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1920",
+    "-screen-height",
+    "1080",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "pc-names-menu-91aad1004",
+    "-tp-uireview",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\integration-names-races1004\\menu-player",
+    "-tp-menu-review-only",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\integration-names-races1004\\menu-player\\player.log"
+  ],
+  "execution": "direct player; no external timeout or memory/admission guard",
+  "pid": 10120,
+  "exitCode": 0,
+  "review": {
+    "passed": true,
+    "error": "",
+    "stages": [
+      "cold loading and login music gate",
+      "studio intro rendered before loading",
+      "loading and login silent for 1302 observed frames",
+      "Terms agreement visibly checks the signup box",
+      "Both supplied login layouts, Terms and Guest recorded",
+      "menu music begins on revealed home",
+      "current title cloud/shadow/dust motion verified",
+      "reduced current title layers verified",
+      "current hub settings credits and mode selection/back remain reachable"
+    ],
+    "frameWindows": []
+  },
+  "inputRestored": true,
+  "profileRestored": true,
+  "artifactUnchanged": true,
+  "terminal": true
+}

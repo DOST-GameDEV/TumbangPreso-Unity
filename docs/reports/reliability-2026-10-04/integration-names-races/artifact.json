@@ -1,0 +1,17 @@
+{
+  "sourceCommit": "91aad50f2b54387f853298f3c0cc161d8effa1a2",
+  "protocol": 145,
+  "fileCount": 258,
+  "totalBytes": 2557601499,
+  "runtimeSha256": "41d0b1d9e006bbcf21a9595f8115002b27112a091cf928bc746c782cf654aa10",
+  "coreSha256": "5b0afae74e8cb89b48e8a41bae1ed3ed6079ce4105599c9f77d728465aa1cff7",
+  "exeSha256": "ba26219c895f07eae430a96cf0bc31a09bd767905c1ffa957bbfa86d60d2be59",
+  "buildSeconds": 115,
+  "buildOptions": "None",
+  "inputRestored": true,
+  "profileRestored": true,
+  "terminal": true,
+  "classifiedForPlayerTesting": true,
+  "sourceDeltaCount": 204,
+  "renderedAcceptance": "active PC menu10120/session60399; names roster screenshots and actual peer acceptance next"
+}

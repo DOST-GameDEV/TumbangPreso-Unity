@@ -212,3 +212,20 @@ inspection nowpublish. NoRootnative/helpers/playerlive. NextactualupdatedWindows
 releasebuild in1003i/newinternaloutput, no cutoffs/qualityreduction/Desktopwrite;
 freezecurrent source and classify generatedchanges. Coordinate package transfer
 and names/rendered/fullHero8/maps/Relay tests with laptop afterits actualownership.
+
+
+## Current new-package UI boundary
+
+New91aad player build14416/session32315 TERMINALexit0,115s/None/all258hashes.
+Menu10120/session60399 TERMINALPASS exit0/restored/unchanged. Fulloldflow18212/
+session7556 TERMINALreportFAIL despiteexit0: oldEnterSettingsFromHome expects
+legacyClassic/Practice/Settings buttons afterStart, butcurrentHub isactive.
+No productcrash inferred. Current-hub-only route addedOwnerUiPlayerReview.cs,
+all9actuallabels/text/bounds/settings/modeback, directcompiler0. Firstpreflight
+needed actual internalPresentationClock source in the isolated compile; no
+shipping access modifier changed. Nextbuild/review route covers realcurrentUI;
+no unchanged menu rerun needed. SourceShader registrations2 retained/intended.
+Report reports/reliability-2026-10-04/integration-names-races.
+Artifactserver4508/session89233 LIVE servesonly exact258whitelist+manifest;
+close afterlaptopverifiedcopy. LaptopAIroundopening/cadence sourceunit next.
+No Rootheavyjob/player live. Keepoldshared145 untilnewmatchingpeeraccepted.
