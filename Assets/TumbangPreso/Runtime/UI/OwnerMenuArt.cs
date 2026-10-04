@@ -10,9 +10,7 @@ namespace TumbangPreso.UI
         private static readonly Dictionary<string,Texture2D> Textures=new Dictionary<string,Texture2D>();
         private static readonly Dictionary<string,Sprite> Sprites=new Dictionary<string,Sprite>();
         private static readonly string[] TextureOnly = {
-            "login-background", "main2-background", "main2-sky-mask", "main2-cloud",
-            "main2-shadow", "main2-leaf", "main-ground-mask", "main-sky-cutout",
-            "main-sky-background-data", "cloud-bank-a", "cloud-bank-b"
+            "login-background", "main2-background"
         };
         private static readonly string[] PaintedPieces = {
             "login3-logo", "login3-tabs-track", "login3-tabs-pill", "login3-field-user",
@@ -46,7 +44,6 @@ namespace TumbangPreso.UI
         }
         public static Sprite Piece(string name)
         {
-            if(name=="login3-logo")return TumpUiFactory.Sprite("UI/brand/tump_logo");
             if(Sprites.TryGetValue(name,out var sprite) && sprite!=null) return sprite;
             var texture=Texture(name);if(texture==null) return null;
             sprite=Sprite.Create(texture,new Rect(0,0,texture.width,texture.height),new Vector2(.5f,.5f),100,0,SpriteMeshType.FullRect);

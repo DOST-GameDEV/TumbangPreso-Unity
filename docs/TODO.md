@@ -87,6 +87,26 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### OWNER-MULTIPLAYER-FEEDBACK-1004: current live-test reports
+
+- [ ] Non-host multiplayer is heavily laggy: distinguish FPS/frame hitches from
+  network correction/latency, measure actual client and host, fix demonstrated cause.
+- [ ] Opening multiplayer camera shows FPP hands during arrival sequence.
+- [ ] Paete Bakya Bloom ready command produces no visible thrown slipper.
+- [ ] Paete carried slipper floats while emoting.
+- [ ] Replace the shared catch/tag VFX requested by the owner; live/peer/replay review.
+
+### OWNER-VISUAL-REPLACEMENT-1004: title, login and Yasmin
+
+- [x] Replace title with exact TUMP12 art, remove the old weather composite/layers,
+  keep continue input and refine arrival/exit motion. Native4/4 then focused2/2
+  with actual small/wide captures and boot login/guest flow.
+  [Evidence](reports/title-replacement-2026-10-04/README.md).
+- [x] Login uses a plain transparent logo with the added cream outline removed.
+- [ ] Integrate the owner-approved new voxel Yasmin outfit/model and refreshed
+  portraits/FPP clothing. Draft generated; rig/nodes/skins/37 animation data exact.
+- [ ] Current packaged preview of new title/login/model and multiplayer qualification.
+
 ### BROWSER-LIFETIME-1004: closed or reopened browser rejects old lookups
 
 - [x] Invalidate old authentication/query completions on browser start/stop.

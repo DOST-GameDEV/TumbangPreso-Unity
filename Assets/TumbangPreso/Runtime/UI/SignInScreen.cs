@@ -1020,7 +1020,7 @@ namespace TumbangPreso.UI
             // and `CLAUDE.md` § 6.4: his art is the design system and it is not to be repainted.
             // This draws the file he actually drew, at `Color.white`, on the ground it was drawn
             // against.
-            var logo = Resources.Load<Texture2D>("UI/brand/tump_logo")
+            var logo = OwnerMenuArt.Texture("login3-logo")
                        ?? Resources.Load<Texture2D>("UI/main-menu/TUMP");
 
             if (logo == null)

@@ -52,18 +52,14 @@ namespace TumbangPreso.UI
         public static Canvas Build(Transform owner,Action settings,Action credits)
         {
             var canvas=OwnerUiLayout.Canvas(owner,"OwnerHomeCanvas",100);
+            var paper=OwnerUiLayout.Rect(canvas.transform,"TitleArrivalPaper").gameObject.AddComponent<Image>();
+            OwnerUiLayout.Fill(paper.rectTransform);paper.color=new Color32(252,211,159,255);paper.raycastTarget=false;
             var background=OwnerUiLayout.Rect(canvas.transform,"OwnerMainMenuBackground");
             OwnerUiLayout.Fill(background);
             var image=background.gameObject.AddComponent<RawImage>();
             var scene=background.gameObject.AddComponent<HomeCourtScene>();
             scene.Illustration=OwnerMenuArt.Texture("main2-background");scene.Drift=0;
             image.texture=scene.Illustration;
-            background.gameObject.AddComponent<OwnerMenuAir>();
-
-            var dust=OwnerUiLayout.Rect(background,"BackgroundRoadDust").gameObject.AddComponent<OwnerRoadDust>();
-            OwnerUiLayout.Fill(dust.rectTransform);dust.Background=image;dust.raycastTarget=false;
-            var leaves=OwnerUiLayout.Rect(background,"BackgroundLeaves").gameObject.AddComponent<OwnerMenuLeaves>();
-            OwnerUiLayout.Fill(leaves.rectTransform);leaves.Background=image;leaves.raycastTarget=false;
 
             var design=OwnerUiLayout.DesignArea(canvas.transform,"OwnerMainMenuComposition");
 

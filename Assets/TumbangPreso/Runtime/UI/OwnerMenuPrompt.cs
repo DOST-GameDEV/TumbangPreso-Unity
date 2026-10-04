@@ -58,6 +58,17 @@ namespace TumbangPreso.UI
             // Ordinary non-Submit keys and pointer clicks need only the frame boundary.
             while (MenuNav.SubmitHeld) yield return null;
             yield return null;
+            if(!Settings.SettingsStore.Current.ReducedUiMotion)
+            {
+                var canvas=GetComponentInParent<Canvas>();
+                if(canvas!=null)
+                {
+                    var group=canvas.GetComponent<CanvasGroup>();
+                    if(group==null)group=canvas.gameObject.AddComponent<CanvasGroup>();
+                    for(float t=0;t<.18f;t+=Time.unscaledDeltaTime)
+                    {group.alpha=1-Mathf.SmoothStep(0,1,t/.18f);yield return null;}
+                }
+            }
             SceneFlow.GoHome();
         }
 

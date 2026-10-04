@@ -1,0 +1,26 @@
+{
+  "sourceRef": "5d600801e3b25f4794bed3e84e798ee7b3ace868",
+  "profile": "pc-title-clean1004",
+  "filter": "TumbangPreso.PlayTests.HomeFlowTests.TitleKeepsSuppliedPaintingSharpAndOneContinueTarget;TumbangPreso.PlayTests.OwnerMenuSkyTests;TumbangPreso.PlayTests.OwnerUiAuthoringTests.OriginalTumpLogoUsesOwnerArtworkAcrossUiRoutes",
+  "expectedCases": 4,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-title-clean1004",
+    "-runTests",
+    "-testPlatform",
+    "PlayMode",
+    "-testFilter",
+    "TumbangPreso.PlayTests.HomeFlowTests.TitleKeepsSuppliedPaintingSharpAndOneContinueTarget;TumbangPreso.PlayTests.OwnerMenuSkyTests;TumbangPreso.PlayTests.OwnerUiAuthoringTests.OriginalTumpLogoUsesOwnerArtworkAcrossUiRoutes",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\title-replacement1004\\native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\title-replacement1004\\native\\editor.log"
+  ],
+  "pid": 20136
+}
