@@ -554,7 +554,7 @@ namespace TumbangPreso.Visual
         // wing tips that follow the path it really flew, so every swoop and wingbeat leaves a graceful arc.
         // v7 r5: near-white against the pale sky it faded to a haze; her teal-green, with the white kept for its edges.
         // v16 b (owner: "it doesnt look that good"): more colour in the wings so they hold a shape against the sky.
-        private static readonly Color AmBirdFill = new Color(0.30f, 0.82f, 0.68f, .72f);
+        private static readonly Color AmBirdFill = new Color(0.30f, 0.82f, 0.68f, .8f);
         private static readonly Color AmBirdBody = new Color(0.50f, 0.90f, 0.78f, .8f);
         private static readonly Color AmBeak = new Color(1.0f, 0.90f, 0.58f, .92f);
         // v16 (owner: "the bird has no head"): the eyes floated over the front of the body, the same teal as the wings. A
@@ -568,9 +568,9 @@ namespace TumbangPreso.Visual
         private readonly Mesh[] _amWingMesh = new Mesh[2];
         private readonly Vector3[] _amWingVerts = new Vector3[AmEdgeSamples * 2];
         private int _amBody = -1, _amHead = -1, _amBeakPiece = -1;
-        private readonly LineRenderer[] _amWingEdge = new LineRenderer[2], _amWingVein = new LineRenderer[6];
+        private readonly LineRenderer[] _amWingEdge = new LineRenderer[2], _amWingTips = new LineRenderer[2], _amWingVein = new LineRenderer[6];
         private readonly LineRenderer[] _amTail = new LineRenderer[5], _amTipTrail = new LineRenderer[2], _amCrest = new LineRenderer[3];
-        private readonly Vector3[] _amEdgePoints = new Vector3[AmEdgeSamples];
+        private readonly Vector3[] _amEdgePoints = new Vector3[AmEdgeSamples], _amTipPoints = new Vector3[AmEdgeSamples];
         private readonly Vector3[] _amTrailPoints = new Vector3[AmTrailSamples];
 
         private void BuildAmihanBird()
@@ -603,6 +603,10 @@ namespace TumbangPreso.Visual
             {
                 _amWingEdge[w] = Line("AmihanBirdEdge" + w, AmEdgeSamples, .07f, AmBirdEdge);
                 _amWingEdge[w].widthCurve = edge; _amWingEdge[w].sortingOrder = 4; _amWingEdge[w].numCapVertices = 0;
+                // v16 c: the feather tips drawn in light, so the fingers and scallops make a crisp edge where the translucent
+                // layers otherwise melt together in the wind-up.
+                _amWingTips[w] = Line("AmihanBirdTips" + w, AmEdgeSamples, .035f, AmBirdEdge);
+                _amWingTips[w].sortingOrder = 4; _amWingTips[w].numCapVertices = 0; _amWingTips[w].numCornerVertices = 2;
                 _amTipTrail[w] = Line("AmihanBirdTipTrail" + w, AmTrailSamples, .12f, AmBirdEdge);
                 _amTipTrail[w].widthCurve = trail; _amTipTrail[w].sortingOrder = 3; _amTipTrail[w].numCapVertices = 0;
             }
@@ -791,7 +795,11 @@ namespace TumbangPreso.Visual
                     _amEdgePoints[i] = at + turn * (_amWingVerts[i] * scale);
                     var trailing = AmTrailing(side, wingFlap, i);
                     _amWingVerts[AmEdgeSamples + i] = Vector3.Lerp(_amWingVerts[i], trailing, unfold);
+                    _amTipPoints[i] = at + turn * (_amWingVerts[AmEdgeSamples + i] * scale);
                 }
+                _amWingTips[w].SetPositions(_amTipPoints);
+                _amWingTips[w].widthMultiplier = .045f * scale * body * unfold;
+                _amWingTips[w].enabled = body * unfold > .02f;
                 _amWingMesh[w].vertices = _amWingVerts;
                 _amWingMesh[w].RecalculateBounds();
                 Place(_amWing[w], at, Vector3.one * scale, turn, body);
