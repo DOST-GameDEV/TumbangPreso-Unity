@@ -36,6 +36,16 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### MATCH-RECORD-DEPLOYMENT-1004: publish checked career rules
+
+- [x] Published canonical source as production v6, exact fetched source and seven
+  parameters verified with v5 rollback retained. Exported old source reproduces
+  five mastery/history/offline failures; v6 passes9/9 plus bot-rating4/4,
+  Core travel6/6 and unchanged digest.
+  [Evidence](reports/reliability-2026-10-04/match-record-deployment/README.md).
+- [ ] Rendered SDK career submission and witnessed ranked flow acceptance.
+
+
 ### ACTIVE-HOST-LOSS145-1004: current package retires an unfinished round
 
 - [x] Actual two-machine round1/readiness on identical145 package; retained
@@ -44,8 +54,10 @@ Nothing was deleted or renumbered.
   completed result, normal exit and preferences restored. Earlier completion
   observer110 autoquit failure is retained as diagnostic/coordination evidence.
   [Evidence](reports/reliability-2026-10-04/host-loss145-armed/README.md).
-- [ ] Exact client raw integration, body/input/clock recovery, retained-seat,
-  Relay/WAN, physical and newer-source acceptance. Do not overstate log scope.
+- [x] Client raw normally integratedc336bf991; root all18 hashes and actual final
+  inactive0/MatchSetup/145, career absent, normal exit/restoration inspected.
+- [ ] Body/input/clock recovery, retained-seat, Relay/WAN, physical and newer-
+  source acceptance. Do not overstate log scope.
 
 ### POWER-RECAST-READINESS-1004: owner icon matches the real follow-up window
 

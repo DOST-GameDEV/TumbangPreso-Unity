@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
-const source = fs.readFileSync(path.join(__dirname, '../ugs/cloud-code/match-record.js'), 'utf8');
+const source = fs.readFileSync(process.argv[2] || path.join(__dirname, '../ugs/cloud-code/match-record.js'), 'utf8');
 
 function fixture() {
     const store = new Map();
@@ -59,6 +59,15 @@ function countedOnce(f) {
 }
 
 const tests = [
+    ...['rafi', 'amihan', 'paete', 'dante'].map(hero => [hero + ' receives mastery from an active match', async () => {
+        const f = fixture();
+        f.record.Mode = 'Hero';
+        f.record.Players[0].CharacterId = hero;
+        await f.submit();
+        const profile = countedOnce(f);
+        const mastery = profile.Mastery.find(row => row.Id === hero);
+        assert.ok(mastery && mastery.Xp > 0, 'earned hero mastery is missing');
+    }]),
     ['history write failure is recovered by resubmission', async () => {
         const f = fixture();
         f.fail('matchHistory');

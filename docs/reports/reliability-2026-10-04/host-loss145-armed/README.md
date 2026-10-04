@@ -25,7 +25,11 @@ The laptop subsequently observed HostLost before a match-over event. Its
 actual final NetState report is MatchSetup/round0/activeFalse/protocol145,
 normal exit0. No career file exists: history/queue/witness are explicitly zero,
 so no completed result was fabricated. Input/profile restoration is reported;
-exact client raw publication remains the combined evidence gate.
+The [client raw evidence](../../laptop-validation-2026-10-04/host-loss145-direct-client/README.md)
+is normally integrated atc336bf991. Root verified all18 raw hashes, actual
+terminal inactive0/MatchSetup/145, empty career, normal exit and restored seeds/
+input. The retained executable/Runtime/Core hash check remains unchanged.
+The combined intentional-stop and retirement question is complete at this scope.
 
 The endpoint's historical sceneEskinita comes from its live log and is not
 the final retirement scene; the actual final state report owns that fact.

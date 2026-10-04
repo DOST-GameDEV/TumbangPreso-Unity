@@ -91,16 +91,41 @@ admissions/READY andclient2440stillLive/Eskinita/noend. RetainedPopenownership,
 allprefs/artifactrestored. RootLogs/host-loss145-pc-armed1004, exactrawpending.
 Client2440normalexit0, finalactualMatchSetup/round0/inactive/protocol145,
 careerFILEABSENT/history0queue0witness0, no fabricatedmatchover/record. Endpoint
-scene is historical; finalNetState authoritative. Clientrawpublication awaited;
-helper18051 mustcloseafterreceipt transfer. No nativeprocesseslive onRoot.
+scene is historical; finalNetState authoritative. Clientraw integratedc336bf991;
+root18rawhashes/finalreport/careerabsence/normalexit/prefs/hashcheck verified.
+Helper18051 cleanup requested afterhandoff; confirmterminal fromlaptop.
+No nativeprocesseslive onRoot. Firstattempt diagnosticfailure remains preserved.
 
 ## Exact next action
 
-Publish host receipt/report/career +live-service and cleanup evidence, send ref to
-laptop for exactclient-record comparison. Agree a NEW actual active-round host-loss
-question/roles/profiles on same145artifact; keep normalcompleted-pair proof distinct.
-CloudSave cleanup COMPLETE. Continue full rendered login/Friends/invite/
+Normalpair and activehostloss combinedproof COMPLETE at bounded scope. CloudSave
+cleanup COMPLETE. ActualpackagedCore emptywire defaults Classic0|0|8|90|0|3|0|1|0|0|0
+andHero1|0|8|90|0|3|0|1|0|0|0. Nextfull8roundnormalClassicP2P proposed PC49157/
+laptop49158, armclientfirst/actualCoredefault/noforcedend/AllBots; no short-wire
+substitute. Latestinstructionrace: laptop earlier acceptedSolo lane; askactual
+currentjob beforechanging it, don'tinterruptalreadyrunningcoherentunit. Rootowns
+servermatchrecord drift assessment; laptopfull-default/native lane. No newbranches.
+Continue full rendered login/Friends/invite/
 join, Relay/online/maps/modes/physical/recovery/slowreplay/performance/preload gates.
 Read-only publishedmatch-recordv5 drifts from canonical mastery/botweight/offline/
 travel/history fixes; assess/deploy coherent checked source, not unsupported SDK
 success. Do not repeat passed cohorts or claim whole competition readiness.
+
+
+## October 4 current owner priority and server shipment
+
+Owner: let Claude finish the quick animation fix first. No PC Unity/player launch
+until completion is confirmed. Root stopped only owned host10232/session70837
+at owner request after natural Classic8 completion (130/150/2880/3350). Saved
+History/Queue/QueueWitness each1 captured; scheduled terminal report absent.
+Input/profile restoration and full artifact check passed. This is an owner
+interruption, not full terminal acceptance. Claude Unity20212 remains untouched.
+Laptop notified to preserve its actual client results and continue independent work.
+
+Production match-record v6 now exactly matches canonical source, seven parameters
+unchanged and rollback v5 retained. Exported v5: mastery/history/offline5 failures
+and4 controls; exported v6:9/9. Bot rating4/4, Core travel6/6, digest unchanged.
+Evidence: reports/reliability-2026-10-04/match-record-deployment. No new live
+account submissions or rendered SDK acceptance claimed. Next: publish this
+checked unit, compare laptop Classic8 saved result and continue lightweight source
+work while Claude owns the PC slot. Local exact checkpoint updated; no new branch.

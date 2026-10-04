@@ -553,17 +553,24 @@ namespace TumbangPreso.Visual
         // feather edge and a bright leading edge, a glowing body with a gold beak, long streamers in its tail and trails off its
         // wing tips that follow the path it really flew, so every swoop and wingbeat leaves a graceful arc.
         // v7 r5: near-white against the pale sky it faded to a haze; her teal-green, with the white kept for its edges.
-        private static readonly Color AmBirdFill = new Color(0.42f, 0.86f, 0.72f, .62f);
+        // v16 b (owner: "it doesnt look that good"): more colour in the wings so they hold a shape against the sky.
+        private static readonly Color AmBirdFill = new Color(0.30f, 0.82f, 0.68f, .8f);
         private static readonly Color AmBirdBody = new Color(0.50f, 0.90f, 0.78f, .8f);
-        private static readonly Color AmBeak = new Color(0.96f, 1.0f, 0.88f, .85f);
-        private const int AmEdgeSamples = 17, AmTrailSamples = 12;
+        private static readonly Color AmBeak = new Color(1.0f, 0.90f, 0.58f, .92f);
+        // v16 (owner: "the bird has no head"): the eyes floated over the front of the body, the same teal as the wings. A
+        // round head of its own, paler and brighter, on a neck raised off the breast.
+        // v16: pure white edges and tip trails rendered salmon over the sky, the edge a pink zigzag like a bolt; her mint.
+        private static readonly Color AmBirdEdge = new Color(0.70f, 1.0f, 0.86f, 1f);
+        private static readonly Color AmBirdHead = new Color(0.80f, 1.0f, 0.92f, .9f);
+        private static readonly Vector3 AmHeadAt = new Vector3(0f, .6f, 1.45f), AmHeadSize = new Vector3(.62f, .56f, .7f);
+        private const int AmEdgeSamples = 21, AmTrailSamples = 12;
         private readonly int[] _amWing = new int[2];
         private readonly Mesh[] _amWingMesh = new Mesh[2];
         private readonly Vector3[] _amWingVerts = new Vector3[AmEdgeSamples * 2];
-        private int _amBody = -1, _amBeakPiece = -1;
-        private readonly LineRenderer[] _amWingEdge = new LineRenderer[2], _amWingVein = new LineRenderer[6];
-        private readonly LineRenderer[] _amTail = new LineRenderer[3], _amTipTrail = new LineRenderer[2], _amCrest = new LineRenderer[3];
-        private readonly Vector3[] _amEdgePoints = new Vector3[AmEdgeSamples];
+        private int _amBody = -1, _amHead = -1, _amBeakPiece = -1;
+        private readonly LineRenderer[] _amWingEdge = new LineRenderer[2], _amWingTips = new LineRenderer[2], _amWingVein = new LineRenderer[6];
+        private readonly LineRenderer[] _amTail = new LineRenderer[5], _amTipTrail = new LineRenderer[2], _amCrest = new LineRenderer[3];
+        private readonly Vector3[] _amEdgePoints = new Vector3[AmEdgeSamples], _amTipPoints = new Vector3[AmEdgeSamples];
         private readonly Vector3[] _amTrailPoints = new Vector3[AmTrailSamples];
 
         private void BuildAmihanBird()
@@ -585,17 +592,22 @@ namespace TumbangPreso.Visual
                 _amWing[w] = Add("AmihanBirdWing" + w, mesh, AmBirdFill, .55f, plain: true);
             }
             _amBody = Add("AmihanBirdBody", AmBodyMesh(), AmBirdBody, .55f, plain: true);
+            _amHead = Add("AmihanBirdHead", AmHeadMesh(), AmBirdHead, .75f, plain: true);
             // v9 (owner on the close-up: "tf is that haha"): a solid orange pyramid read as a paper plane; a small round beak
             // glowing like the rest of its spirit body.
-            _amBeakPiece = Add("AmihanBirdBeak", VfxShapes.Prism(8, 1f, 0f), AmBeak, .7f, plain: true);
+            _amBeakPiece = Add("AmihanBirdBeak", VfxShapes.Prism(10, 1f, 0f), AmBeak, .75f, plain: true);
 
             var edge = new AnimationCurve(new Keyframe(0f, .6f), new Keyframe(.5f, 1f), new Keyframe(1f, .15f));
             var trail = new AnimationCurve(new Keyframe(0f, 1f), new Keyframe(.6f, .55f), new Keyframe(1f, 0f));
             for (int w = 0; w < 2; w++)
             {
-                _amWingEdge[w] = Line("AmihanBirdEdge" + w, AmEdgeSamples, .07f, Color.white);
+                _amWingEdge[w] = Line("AmihanBirdEdge" + w, AmEdgeSamples, .07f, AmBirdEdge);
                 _amWingEdge[w].widthCurve = edge; _amWingEdge[w].sortingOrder = 4; _amWingEdge[w].numCapVertices = 0;
-                _amTipTrail[w] = Line("AmihanBirdTipTrail" + w, AmTrailSamples, .12f, Color.white);
+                // v16 c: the feather tips drawn in light, so the fingers and scallops make a crisp edge where the translucent
+                // layers otherwise melt together in the wind-up.
+                _amWingTips[w] = Line("AmihanBirdTips" + w, AmEdgeSamples, .035f, AmBirdEdge);
+                _amWingTips[w].sortingOrder = 4; _amWingTips[w].numCapVertices = 0; _amWingTips[w].numCornerVertices = 2;
+                _amTipTrail[w] = Line("AmihanBirdTipTrail" + w, AmTrailSamples, .12f, AmBirdEdge);
                 _amTipTrail[w].widthCurve = trail; _amTipTrail[w].sortingOrder = 3; _amTipTrail[w].numCapVertices = 0;
             }
             for (int v = 0; v < _amWingVein.Length; v++)
@@ -603,10 +615,13 @@ namespace TumbangPreso.Visual
                 _amWingVein[v] = Line("AmihanBirdVein" + v, AmStrokeSamples, .03f, AmSheetBody);
                 _amWingVein[v].widthCurve = edge; _amWingVein[v].sortingOrder = 3; _amWingVein[v].numCapVertices = 0;
             }
+            // v16 b: five plumes, each a quill that flares into a feather at its end, as a phoenix's (three thin streamers read as
+            // strings trailing behind it).
+            var plume = new AnimationCurve(new Keyframe(0f, .45f), new Keyframe(.5f, .22f), new Keyframe(.8f, 1f), new Keyframe(.93f, .8f), new Keyframe(1f, 0f));
             for (int k = 0; k < _amTail.Length; k++)
             {
-                _amTail[k] = Line("AmihanBirdTail" + k, AmTrailSamples, .4f, k == 1 ? new Color(0.92f, 1.0f, 0.95f, .75f) : new Color(0.80f, 0.97f, 0.84f, .6f));
-                _amTail[k].widthCurve = trail; _amTail[k].sortingOrder = 2; _amTail[k].numCapVertices = 0;
+                _amTail[k] = Line("AmihanBirdTail" + k, AmTrailSamples, .4f, k == 2 ? new Color(0.88f, 1.0f, 0.92f, .85f) : k % 2 == 0 ? new Color(0.62f, 0.95f, 0.80f, .75f) : new Color(0.42f, 0.86f, 0.72f, .75f));
+                _amTail[k].widthCurve = plume; _amTail[k].sortingOrder = 2; _amTail[k].numCapVertices = 0;
             }
             for (int c = 0; c < _amCrest.Length; c++)
             {
@@ -618,21 +633,28 @@ namespace TumbangPreso.Visual
             _amHeart = AddGlow("AmihanBirdHeart", new Color(0.80f, 1.0f, 0.86f, 1f), falloff: 1.4f, core: 0f);
         }
 
-        /// <summary>Its body: a spindle from the head (z 1.45) to the root of the tail (z -1.1), deepest at the breast, the head raised.</summary>
+        /// <summary>
+        /// Its body: a tube along a curved spine from the root of the tail (z -1.1) through the deep breast and up a neck into
+        /// the back of the head (v16: the old spindle tapered to a point where the head should be). Stations are (z, y, radius).
+        /// </summary>
         private static Mesh AmBodyMesh()
         {
-            const int rings = 14, sides = 10;
+            var stations = new[]
+            {
+                new Vector3(1.32f, .56f, .1f), new Vector3(1.12f, .46f, .2f), new Vector3(.88f, .32f, .25f), new Vector3(.5f, .16f, .4f),
+                new Vector3(0f, .05f, .42f), new Vector3(-.6f, 0f, .3f), new Vector3(-1.1f, 0f, .05f),
+            };
+            const int rings = 25, sides = 12;
             var verts = new List<Vector3>(rings * sides);
             for (int r = 0; r < rings; r++)
             {
-                float u = r / (rings - 1f);
-                float z = Mathf.Lerp(1.45f, -1.1f, u);
-                float radius = .42f * Mathf.Pow(Mathf.Sin(Mathf.PI * Mathf.Clamp(u, .02f, .98f)), .7f) * (u < .25f ? .8f + .8f * u : 1f) * (1f - .45f * u * u);
-                float y = .22f * (1f - u) * (1f - u);
+                float f = r / (rings - 1f) * (stations.Length - 1);
+                int k = Mathf.Min((int)f, stations.Length - 2);
+                var c = Vector3.Lerp(stations[k], stations[k + 1], Mathf.SmoothStep(0f, 1f, f - k));
                 for (int s = 0; s < sides; s++)
                 {
                     float a = s / (float)sides * Mathf.PI * 2f;
-                    verts.Add(new Vector3(Mathf.Cos(a) * radius, y + Mathf.Sin(a) * radius * .85f, z));
+                    verts.Add(new Vector3(Mathf.Cos(a) * c.z, c.y + Mathf.Sin(a) * c.z * .85f, c.x));
                 }
             }
             var tris = new List<int>();
@@ -643,6 +665,35 @@ namespace TumbangPreso.Visual
                     tris.AddRange(new[] { a, c, b, b, c, d });
                 }
             var mesh = new Mesh { name = "AmihanBirdBody" };
+            mesh.SetVertices(verts); mesh.SetTriangles(tris, 0); mesh.RecalculateNormals(); mesh.RecalculateBounds();
+            return mesh;
+        }
+
+        /// <summary>Its head: a unit sphere, scaled by <see cref="AmHeadSize"/> where it is placed.</summary>
+        private static Mesh AmHeadMesh()
+        {
+            const int rings = 10, sides = 14;
+            var verts = new List<Vector3>();
+            for (int r = 0; r <= rings; r++)
+            {
+                float v = Mathf.PI * r / rings;
+                for (int s = 0; s < sides; s++)
+                {
+                    float a = s / (float)sides * Mathf.PI * 2f;
+                    // v16 b: a teardrop drawn forward into the beak, not a ball stuck on the neck. The pole points forward.
+                    float z = Mathf.Cos(v);
+                    float pinch = z > 0f ? 1f - .55f * z * z : 1f;
+                    verts.Add(new Vector3(Mathf.Sin(v) * Mathf.Cos(a) * pinch, Mathf.Sin(v) * Mathf.Sin(a) * pinch, z * (z > 0f ? 1.25f : 1f)) * .5f);
+                }
+            }
+            var tris = new List<int>();
+            for (int r = 0; r < rings; r++)
+                for (int s = 0; s < sides; s++)
+                {
+                    int a = r * sides + s, b = r * sides + (s + 1) % sides, c = a + sides, d = b + sides;
+                    tris.AddRange(new[] { a, b, c, b, d, c });
+                }
+            var mesh = new Mesh { name = "AmihanBirdHead" };
             mesh.SetVertices(verts); mesh.SetTriangles(tris, 0); mesh.RecalculateNormals(); mesh.RecalculateBounds();
             return mesh;
         }
@@ -717,7 +768,12 @@ namespace TumbangPreso.Visual
             var root = AmEdge(side, flap, f);
             float raise = (f < .45f ? flap : flap * 1.3f) - 6f;
             float rake = Mathf.Lerp(0f, 58f, f) * Mathf.Deg2Rad;
-            float length = Mathf.Lerp(1.05f, 1.6f, f * f) * (1f - .55f * Mathf.Pow(f, 6f)) * (i % 2 == 0 ? 1f : .74f);
+            // v16 b: the outer half is the primaries, long fingers with deep gaps between (the mark of a bird's wing); the inner
+            // half the secondaries, shallow scallops.
+            bool primaries = f >= .5f;
+            float notch = primaries ? .42f : .86f;
+            float length = (primaries ? Mathf.Lerp(1.35f, 2.0f, (f - .5f) * 2f) * (1f - .3f * Mathf.Pow(f, 8f)) : Mathf.Lerp(1.05f, 1.3f, f * 2f))
+                * (i % 2 == 0 ? 1f : notch);
             if (i == 0) length = .95f;
             return AmWing(side, raise, root, Mathf.Sin(rake) * length, -.06f, -Mathf.Cos(rake) * length);
         }
@@ -739,7 +795,11 @@ namespace TumbangPreso.Visual
                     _amEdgePoints[i] = at + turn * (_amWingVerts[i] * scale);
                     var trailing = AmTrailing(side, wingFlap, i);
                     _amWingVerts[AmEdgeSamples + i] = Vector3.Lerp(_amWingVerts[i], trailing, unfold);
+                    _amTipPoints[i] = at + turn * (_amWingVerts[AmEdgeSamples + i] * scale);
                 }
+                _amWingTips[w].SetPositions(_amTipPoints);
+                _amWingTips[w].widthMultiplier = .045f * scale * body * unfold;
+                _amWingTips[w].enabled = body * unfold > .02f;
                 _amWingMesh[w].vertices = _amWingVerts;
                 _amWingMesh[w].RecalculateBounds();
                 Place(_amWing[w], at, Vector3.one * scale, turn, body);
@@ -750,7 +810,7 @@ namespace TumbangPreso.Visual
                 for (int v = 0; v < 3; v++)
                 {
                     var line = _amWingVein[w * 3 + v];
-                    int idx = 4 + v * 5;
+                    int idx = 4 + v * 6;
                     var root = _amWingVerts[idx]; var tip = _amWingVerts[AmEdgeSamples + idx];
                     for (int i = 0; i < AmStrokeSamples; i++) _amStrokePoints[i] = at + turn * (Vector3.Lerp(root, tip, i / (AmStrokeSamples - 1f) * .9f) * scale);
                     line.SetPositions(_amStrokePoints);
@@ -759,23 +819,25 @@ namespace TumbangPreso.Visual
                 }
             }
             Place(_amBody, at, Vector3.one * scale, turn, body);
-            Place(_amBeakPiece, at + turn * (new Vector3(0f, .3f, 1.42f) * scale), new Vector3(.07f, .2f, .07f) * scale,
-                turn * Quaternion.Euler(95f, 0f, 0f), body);
+            Place(_amHead, at + turn * (AmHeadAt * scale), AmHeadSize * scale, turn, body);
+            Place(_amBeakPiece, at + turn * (new Vector3(0f, .58f, 1.84f) * scale), new Vector3(.09f, .28f, .09f) * scale,
+                turn * Quaternion.Euler(98f, 0f, 0f), body);
 
             // THE TAIL STREAMERS and THE WING-TIP TRAILS follow the path it really flew, a few hundredths of a second at a time.
             for (int k = 0; k < _amTail.Length; k++)
             {
-                float offset = (k - 1) * .28f;
+                float offset = (k - 2) * .16f;
                 for (int i = 0; i < AmTrailSamples; i++)
                 {
                     float back = i * .04f;
                     AmBirdPose(story - back, calm, out var pAt, out var pTurn, out _, out _);
                     float wave = calm ? 0f : .12f * Mathf.Sin(story * 7f - i * .7f + k);
                     // v7 r7: hovering, a resting length of 4.5 m draped the streamers across the wind-up lens; the flight path gives the length.
-                    _amTrailPoints[i] = pAt + pTurn * (new Vector3(offset * (1f + .1f * i), -.02f * i + wave, -1.0f - .1f * i) * scale);
+                    // Fanned: the outer plumes spread and lie a little shorter.
+                    _amTrailPoints[i] = pAt + pTurn * (new Vector3(offset * (1f + .35f * i), -.02f * i + wave, -1.0f - (.1f - .012f * Mathf.Abs(k - 2)) * i) * scale);
                 }
                 _amTail[k].SetPositions(_amTrailPoints);
-                _amTail[k].widthMultiplier = (k == 1 ? .42f : .3f) * scale * body * Ease(AmFormAt + .08f, AmFormAt + .3f, story);
+                _amTail[k].widthMultiplier = (k == 2 ? .36f : .3f) * scale * body * Ease(AmFormAt + .08f, AmFormAt + .3f, story);
                 _amTail[k].enabled = body > .02f;
             }
             for (int w = 0; w < 2; w++)
@@ -783,7 +845,8 @@ namespace TumbangPreso.Visual
                 float side = w == 0 ? -1f : 1f;
                 for (int i = 0; i < AmTrailSamples; i++)
                 {
-                    float back = i * .03f;
+                    // v16: a third of a second drew long straight bars across the lens; a fifth is the arc of the stroke.
+                    float back = i * .018f;
                     AmBirdPose(story - back, calm, out var pAt, out var pTurn, out float pFlap, out _);
                     _amTrailPoints[i] = pAt + pTurn * (AmEdge(side, pFlap, 1f) * scale);
                 }
@@ -798,7 +861,7 @@ namespace TumbangPreso.Visual
                 {
                     float u = i / (AmStrokeSamples - 1f);
                     float stream = calm ? 0f : .07f * Mathf.Sin(story * 11f + c - u * 3f) * u;
-                    _amStrokePoints[i] = at + turn * (new Vector3((c - 1) * .1f, .5f + .35f * u * u + stream, 1.15f - .85f * u) * scale);
+                    _amStrokePoints[i] = at + turn * (new Vector3((c - 1) * .1f, .84f + .3f * u * u + stream, 1.42f - .9f * u) * scale);
                 }
                 _amCrest[c].SetPositions(_amStrokePoints);
                 _amCrest[c].widthMultiplier = .07f * scale * body;
@@ -811,8 +874,8 @@ namespace TumbangPreso.Visual
                 .8f * Ease(AmWindAt, AmWindAt + .3f, story));
             float eyes = on * Ease(AmFormAt + .12f, AmFormAt + .3f, story) * blaze * (calm ? .6f : 1f);
             var eyeSize = Vector3.one * .17f * scale * Mathf.Min(blaze, 1.3f);
-            PlaceGlow(_amEyeL, at + turn * (new Vector3(-.17f, .42f, 1.22f) * scale), eyeSize, Quaternion.identity, eyes);
-            PlaceGlow(_amEyeR, at + turn * (new Vector3(.17f, .42f, 1.22f) * scale), eyeSize, Quaternion.identity, eyes);
+            PlaceGlow(_amEyeL, at + turn * (new Vector3(-.24f, .68f, 1.62f) * scale), eyeSize, Quaternion.identity, eyes);
+            PlaceGlow(_amEyeR, at + turn * (new Vector3(.24f, .68f, 1.62f) * scale), eyeSize, Quaternion.identity, eyes);
             float charging = Ease(AmWindAt, AmReleaseAt - .05f, story) * (1f - Ease(AmReleaseAt, AmReleaseAt + .1f, story));
             float throb = calm ? 0f : .15f * Mathf.Sin(story * 18f) * charging;
             PlaceGlow(_amHeart, at + turn * (new Vector3(0f, .2f, .3f) * scale), Vector3.one * (2.0f + 1.4f * charging + throb) * scale, Quaternion.identity,
@@ -878,7 +941,7 @@ namespace TumbangPreso.Visual
             {
                 var seed = _amLeafSeed[i];
                 Vector3 at; bool on;
-                float tumble = tumble0;
+                float tumble = tumble0, keep = 1f;
                 if (story < AmSwoopAt)
                 {
                     // TORN UP BY THE MONSOON: circling the plaza in its ring, closing and rising into the vortex.
@@ -888,6 +951,10 @@ namespace TumbangPreso.Visual
                     float h = Mathf.Lerp(.2f + 3.5f * seed.y, -.5f + 1.5f * seed.y, close);
                     at = centre + new Vector3(Mathf.Sin(a) * r, h, Mathf.Cos(a) * r);
                     on = t > AmGatherFrom + .25f * seed.x;
+                    // v16: drawn into the swell of light they were dark green confetti round the newborn bird (owner, twice:
+                    // "blocks"). They shrink into the light as the vortex closes, each a little before the next.
+                    keep = 1f - Ease(AmFormAt - .3f + .15f * seed.y, AmFormAt + .02f, t);
+                    on &= keep > .02f;
                 }
                 else if (since < 0f)
                 {
@@ -912,7 +979,7 @@ namespace TumbangPreso.Visual
                 }
                 if (!on) { Place(_amLeaf[i], Vector3.zero, Vector3.one * .001f, Quaternion.identity, 0f); continue; }
                 var spin = Quaternion.Euler(tumble * (190f + 120f * seed.x) + i * 37f, tumble * (260f + 90f * seed.y) + i * 53f, tumble * 140f + i * 11f);
-                Place(_amLeaf[i], at, new Vector3(.1f, .016f, .15f) * (.85f + .35f * seed.z), spin, 1f);
+                Place(_amLeaf[i], at, new Vector3(.1f, .016f, .15f) * ((.85f + .35f * seed.z) * keep), spin, keep);
             }
 
             // THE FEATHER: after the bird has gone down the lane, one feather drifts down past her, rocking.
