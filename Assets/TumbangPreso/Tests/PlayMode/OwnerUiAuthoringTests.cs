@@ -22,9 +22,8 @@ namespace TumbangPreso.PlayTests
             Assert.IsNotNull(sprite);
             Assert.AreSame(sprite,OwnerUiTheme.Current.Art(OwnerUiTheme.Piece.Logo));
             Assert.AreSame(sprite,OwnerMenuArt.Piece("login3-logo"));
-            var original=Resources.Load<Texture2D>("UI/owner-menu-edits/login3-logo");
-            Assert.IsNotNull(original);
-            Assert.AreEqual(original.width/(float)original.height,sprite.rect.width/sprite.rect.height,.003f);
+            // Tight transparent viewBox of the owner's full-resolution traced logo.
+            Assert.AreEqual(1294f/852f,sprite.rect.width/sprite.rect.height,.003f);
             Assert.AreEqual(sprite.texture.width,sprite.rect.width,"The original export must remain fully visible.");
             Assert.AreEqual(sprite.texture.height,sprite.rect.height);
             var owner=new GameObject("OriginalLogoReview");
@@ -36,7 +35,7 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(Color.white,logo.color);
             var hans=canvas.GetComponentsInChildren<Text>().Single(t=>t.text=="HANS XAVIER LAO");
             Assert.LessOrEqual(hans.preferredWidth,hans.rectTransform.rect.width,"The full credit name must fit.");
-            yield return TumpUiCapture.Capture("Original-TUMP-logo-credits",canvas,960,540,false);
+            yield return TumpUiCapture.Capture("Vector-TUMP-logo-credits",canvas,960,540,false);
             Object.Destroy(owner);
         }
 

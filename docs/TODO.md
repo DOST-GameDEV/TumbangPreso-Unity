@@ -23,6 +23,9 @@
   [Historical preview](reports/temporary-logo-2026-10-04/README.md).
 - [x] Keep the original title-screen wall painting; the preview replacement is
   superseded by the owner's request to restore the original logo.
+- [x] Follow-up supplied full-resolution logo: transparent SVG master and PNG
+  export installed; native logo/credits1/1 and actual screenshot review pass.
+  [Vector evidence](reports/vector-logo-2026-10-04/README.md).
 
 ### TUTORIAL-MUSIC-1004: owner-supplied track
 

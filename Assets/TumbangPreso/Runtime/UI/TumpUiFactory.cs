@@ -117,8 +117,8 @@ namespace TumbangPreso.UI
             return button;
         }
 
-        // The owner restored the original flat-colour login logo. Its export is
-        // already tightly framed; keep its full pixels and native proportions.
+        // Transparent export of the owner's original flat-colour SVG master.
+        // Keep its complete tightly framed pixels and native proportions.
         public static Rect LogoUv => new Rect(0f, 0f, 1f, 1f);
 
         public static Sprite Sprite(string resource)
