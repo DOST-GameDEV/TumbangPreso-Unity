@@ -505,7 +505,9 @@ namespace TumbangPreso.UI
             // (`HubLoading.PreparePreview`). Request, 2026-09-30: that second screen is
             // redundant and every asset and shader loads HERE. The hub curtain is gone, so this is
             // once again the only place the arenas' meshes, textures and materials are read.
+            double mapWarmBegan = Time.realtimeSinceStartupAsDouble;
             yield return WarmMapAssets();
+            Debug.Log($"[Splash] map asset warmup completed in {Time.realtimeSinceStartupAsDouble - mapWarmBegan:0.00} s.");
 
             // 9. The hero ability layer.
             //
