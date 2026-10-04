@@ -293,7 +293,9 @@ namespace TumbangPreso
         // range inside the first few metres, so the consist would be at full volume across the
         // entire arena and then vanish. Linear from 12 to 70 spans the map: audible from the far
         // wall, loudest overhead, gone by the time the tail clears the boundary traffic.
-        private const float RumbleMinDistance = 12.0f;
+        // 20, up from 12 (2026-10-04): the pavement is 13 to 15 m from the consist, and at 12 the
+        // rolloff had already taken a slice off before anybody could stand under it.
+        private const float RumbleMinDistance = 20.0f;
 
         /// ⚠️⚠️ 44, DOWN FROM 70, BECAUSE 70 MADE IT AUDIBLE FROM THE MOMENT IT SPAWNED.
         /// The consist starts at z = -48 and the arena is centred on the origin, so at 70 m of
@@ -302,7 +304,7 @@ namespace TumbangPreso
         /// the *"loud wind soudn that plays randomly"* off the played build: not random, just
         /// audible for the whole 5.3 s traverse at full level. At 44 the sound arrives with the
         /// warning and leaves with the train.
-        private const float RumbleMaxDistance = 44.0f;
+        private const float RumbleMaxDistance = 52.0f;
 
         /// <summary>
         /// How hard the street shakes directly under the consist.
@@ -354,12 +356,42 @@ namespace TumbangPreso
             // doppler to be audible at all, and at 18 m/s the true shift is about 5 per cent,
             // which nobody hears. This is the one place exaggerating it is honest: the effect
             // being sold is "it went past me", not a physics reading.
-            _rumble.dopplerLevel = 3.5f;   // up from 2.2 (owner, 2026-10-04: "i need doppler effect on any train sfx")
+            // 1.3: the first 2.2 was hard to hear, 3.5 was "too much" (owner, 2026-10-04).
+            _rumble.dopplerLevel = 1.3f;
+            Reverb(go);
+
+            // The rail clank (tools/synth_ilalim_train_clack.py): wheels over the joints, a loop
+            // on the consist beside the roar (owner: "theres no sfx for the rails clanking when
+            // the train goes over"). Not a registered cue: a map-owned loop like the street bed.
+            var clackClip = Resources.Load<AudioClip>("Ambience/lrt_clack");
+            if (clackClip != null)
+            {
+                var clackGo = new GameObject("LrtClack");
+                clackGo.transform.SetParent(transform, false);
+                _clack = clackGo.AddComponent<AudioSource>();
+                _clack.clip = clackClip;
+                _clack.loop = true;
+                _clack.playOnAwake = false;
+                _clack.spatialBlend = 1.0f;
+                _clack.rolloffMode = AudioRolloffMode.Linear;
+                _clack.minDistance = RumbleMinDistance;
+                _clack.maxDistance = RumbleMaxDistance;
+                _clack.dopplerLevel = 1.3f;
+                Reverb(clackGo);
+            }
 
             _rumbleMix = mix;
         }
 
         private float _rumbleMix = 1.0f;
+        private AudioSource _clack;
+
+        // The street under a concrete viaduct rings (owner, 2026-10-04: "theres no reverb").
+        private static void Reverb(GameObject source)
+        {
+            var reverb = source.AddComponent<AudioReverbFilter>();
+            reverb.reverbPreset = AudioReverbPreset.ParkingLot;
+        }
 
         /// <summary>
         /// The pass, every frame it is running: the rumble's level and the shake under it.
@@ -394,6 +426,11 @@ namespace TumbangPreso
                 // moved in the pause panel while a train is mid-pass.
                 float slider = GameServices.Audio != null ? GameServices.Audio.AmbienceVolume : 1.0f;
                 _rumble.volume = _rumbleMix * slider * KantoStreetSound.AmbientGainScale;
+                if (_clack != null)
+                {
+                    if (!_clack.isPlaying) _clack.Play();
+                    _clack.volume = 0.85f * slider;
+                }
             }
 
             // ⚠️ THE SHAKE IS RE-ARMED EVERY FRAME RATHER THAN FIRED ONCE. `CameraRig.Shake`
@@ -413,7 +450,11 @@ namespace TumbangPreso
             if (strength < 0.01f) return;
 
             var rig = listener.GetComponent<CameraSystem.CameraRig>();
-            rig?.Shake(strength, 0.12f);
+            // ⚠️ 0.7 s, NOT 0.12. `CameraRig` scales a shake by `Clamp01(_shakeLeft)`, so re-arming
+            // 0.12 s every frame held the whole pass at 12 per cent of `ShakePeak`: it "worked"
+            // and nobody could see it (owner, 2026-10-04: "add a slight screen shake when the
+            // train passes"). At 0.7 it is a slight rumble that dies away as the tail clears.
+            rig?.Shake(strength, 0.7f);
         }
 
         /// <summary>
@@ -442,10 +483,10 @@ namespace TumbangPreso
                 _trollSource.rolloffMode = AudioRolloffMode.Linear;
                 _trollSource.minDistance = 30.0f;
                 _trollSource.maxDistance = TrollHalfZ;
-                _trollSource.dopplerLevel = 3.5f;
+                _trollSource.dopplerLevel = 1.2f;
                 _trollSource.volume = 0.0f;
                 _trollSource.ignoreListenerVolume = true;
-                _trollSource.bypassEffects = true;
+                Reverb(go);
                 _trollSource.bypassListenerEffects = true;
                 _trollSource.bypassReverbZones = true;
                 _trollSource.priority = 0;
@@ -479,6 +520,7 @@ namespace TumbangPreso
             _rumbleStarted = false;
             PauseTroll();
             if (_rumble != null && _rumble.isPlaying) _rumble.Stop();
+            if (_clack != null && _clack.isPlaying) _clack.Stop();
         }
 
         /// <summary>

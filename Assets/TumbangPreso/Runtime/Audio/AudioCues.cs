@@ -80,7 +80,11 @@ namespace TumbangPreso.Audio
                 // warning toast and leaves with the consist, and a louder pass no longer reads as
                 // random wind. The deck hides the consist from every place a player can stand,
                 // so this recording and the shake ARE the train.
-                { "sfx_lrt_pass", -8.0f },
+                //
+                // ⚠️ 0, UP AGAIN (2026-10-04): "the actual train sfx still isnt audible". Since the
+                // -8, the pass moved to the Ambience slider times `AmbientGainScale` 0.75, and the
+                // recording is quiet in itself (RMS 0.10), so -8 came out near 0.2 of full scale.
+                { "sfx_lrt_pass", 0.0f },
 
                 // ⚠️⚠️ THE SIX ULTIMATE THEMES ARE BEDS, NOT EVENTS, AND ARE MIXED AS BEDS.
                 // The train row above records what happens to a sustained cue with no row:
