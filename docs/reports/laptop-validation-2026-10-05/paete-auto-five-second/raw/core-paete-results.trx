@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="1cb807ac-1767-4406-9a60-cc2850473eae" name="Matthew@GAMERGMAE 2026-10-05 02:01:39" runUser="GAMERGMAE\Matthew" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-05T02:01:39.2581612+08:00" queuing="2026-10-05T02:01:39.2581617+08:00" start="2026-10-05T02:01:36.7151983+08:00" finish="2026-10-05T02:01:39.2878119+08:00" />
+  <TestSettings name="default" id="c03727fd-f417-4f34-906c-644fb241bff2">
+    <Deployment runDeploymentRoot="Matthew_GAMERGMAE_2026-10-05_02_01_39" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="c752c35b-be28-4c1a-8f22-a5146afed0ff" testId="6b36ddf7-01af-9e18-c808-df0948a90270" testName="TumbangPreso.Core.Tests.PaeteRulesTests.MovesStayUnderTheSingleImpulseCapAndCoverTheirDistance" computerName="GAMERGMAE" duration="00:00:00.0014966" startTime="2026-10-05T02:01:39.2453946+08:00" endTime="2026-10-05T02:01:39.2453947+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c752c35b-be28-4c1a-8f22-a5146afed0ff" />
+    <UnitTestResult executionId="231c15ab-b28a-4720-98f5-1a7145c4cb19" testId="e3774aeb-019a-2a57-c5ff-9f10d8ef59f1" testName="TumbangPreso.Core.Tests.PaeteRulesTests.APlantAimedIntoTheBoxLandsJustOutsideIt(x: 6.9000001, z: 6.94999981, wantX: 6.9000001, wantZ: 7.5999999)" computerName="GAMERGMAE" duration="00:00:00.0000037" startTime="2026-10-05T02:01:39.2395606+08:00" endTime="2026-10-05T02:01:39.2395611+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="231c15ab-b28a-4720-98f5-1a7145c4cb19" />
+    <UnitTestResult executionId="289487a8-4056-4194-9080-07f1c39369cd" testId="fe15c21f-7ede-013c-cd87-9059f40df2d7" testName="TumbangPreso.Core.Tests.PaeteRulesTests.AHeldBodyIsPressedIntoTheRootsAndClearOfTheCan" computerName="GAMERGMAE" duration="00:00:00.0000524" startTime="2026-10-05T02:01:39.2454641+08:00" endTime="2026-10-05T02:01:39.2454641+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="289487a8-4056-4194-9080-07f1c39369cd" />
+    <UnitTestResult executionId="f73addd9-53ad-43d3-81ee-3d74fe74ff1f" testId="2b95873e-5315-f2ad-3e30-486d131fde78" testName="TumbangPreso.Core.Tests.PaeteRulesTests.APlantAimedIntoTheBoxLandsJustOutsideIt(x: -5, z: 1, wantX: -7.5999999, wantZ: 1)" computerName="GAMERGMAE" duration="00:00:00.0003011" startTime="2026-10-05T02:01:39.2395076+08:00" endTime="2026-10-05T02:01:39.2395077+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f73addd9-53ad-43d3-81ee-3d74fe74ff1f" />
+    <UnitTestResult executionId="a743bf3b-d38a-4f3e-85a5-48972ddbd360" testId="920dd5ed-385d-e825-12e1-b659b75627c1" testName="TumbangPreso.Core.Tests.PaeteRulesTests.PlayerLatchNeverPushesApartAlreadyTouchingOrInvalidBodies" computerName="GAMERGMAE" duration="00:00:00.0001379" startTime="2026-10-05T02:01:39.2464066+08:00" endTime="2026-10-05T02:01:39.2464067+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a743bf3b-d38a-4f3e-85a5-48972ddbd360" />
+    <UnitTestResult executionId="25a04be8-6c0f-413e-a2d5-8a4d8d07c5e0" testId="63fa2933-5006-f9ce-bd5b-376147089abe" testName="TumbangPreso.Core.Tests.PaeteRulesTests.TheOwnersNumbersAreTheOnesInTheKit" computerName="GAMERGMAE" duration="00:00:00.2203575" startTime="2026-10-05T02:01:39.2374488+08:00" endTime="2026-10-05T02:01:39.2374601+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="25a04be8-6c0f-413e-a2d5-8a4d8d07c5e0" />
+    <UnitTestResult executionId="00e23a4e-9094-4810-8118-43516ce8f5be" testId="308911dc-187e-5a41-cbe8-15b171a55d7b" testName="TumbangPreso.Core.Tests.PaeteRulesTests.PlayerLatchGivesPaeteMostTravelAndKeepsContactClearance(distance: 1, gap: 0.800000012, caster: 0.159999996, target: 0.0399999991)" computerName="GAMERGMAE" duration="00:00:00.0001781" startTime="2026-10-05T02:01:39.2453249+08:00" endTime="2026-10-05T02:01:39.2453249+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="00e23a4e-9094-4810-8118-43516ce8f5be" />
+    <UnitTestResult executionId="767e718e-1d65-40e1-8605-ed52e36fe4cf" testId="83d5115c-7132-0d45-d82b-f32e8c568124" testName="TumbangPreso.Core.Tests.PaeteRulesTests.APlantAimedIntoTheBoxLandsJustOutsideIt(x: 2, z: -3, wantX: 2, wantZ: -7.5999999)" computerName="GAMERGMAE" duration="00:00:00.0000059" startTime="2026-10-05T02:01:39.2395265+08:00" endTime="2026-10-05T02:01:39.2395266+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="767e718e-1d65-40e1-8605-ed52e36fe4cf" />
+    <UnitTestResult executionId="d7dcc983-25e8-473f-8612-47bd9daf0214" testId="2bfcd7c5-5cba-b00f-c94a-cb0e935dcc10" testName="TumbangPreso.Core.Tests.PaeteRulesTests.TheSentryFreesEveryoneBeforeARoundEnds" computerName="GAMERGMAE" duration="00:00:00.0002022" startTime="2026-10-05T02:01:39.2392753+08:00" endTime="2026-10-05T02:01:39.2392753+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d7dcc983-25e8-473f-8612-47bd9daf0214" />
+    <UnitTestResult executionId="8ab06c3c-32e7-4aa1-8b24-ba86f6a1a96b" testId="6c10d0fb-5a6c-1225-82ee-7021de44bdb4" testName="TumbangPreso.Core.Tests.PaeteRulesTests.APlantCannotOutliveItsWelcome" computerName="GAMERGMAE" duration="00:00:00.0000897" startTime="2026-10-05T02:01:39.2455111+08:00" endTime="2026-10-05T02:01:39.2455112+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8ab06c3c-32e7-4aa1-8b24-ba86f6a1a96b" />
+    <UnitTestResult executionId="84900803-518f-480c-bf4e-37b11b1d1194" testId="90669066-22bb-fe2c-aa2d-fe667d28f3c7" testName="TumbangPreso.Core.Tests.PaeteRulesTests.APlantAimedIntoTheBoxLandsJustOutsideIt(x: 9, z: 2, wantX: 9, wantZ: 2)" computerName="GAMERGMAE" duration="00:00:00.0007352" startTime="2026-10-05T02:01:39.2394879+08:00" endTime="2026-10-05T02:01:39.2394879+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="84900803-518f-480c-bf4e-37b11b1d1194" />
+    <UnitTestResult executionId="e88d7b97-c067-4e9d-beb0-db6c2a5d7808" testId="b28010e1-8d84-b018-5e3d-87d9e271a512" testName="TumbangPreso.Core.Tests.PaeteRulesTests.PlayerLatchGivesPaeteMostTravelAndKeepsContactClearance(distance: 4, gap: 0.800000012, caster: 2.55999994, target: 0.639999986)" computerName="GAMERGMAE" duration="00:00:00.0000061" startTime="2026-10-05T02:01:39.2453552+08:00" endTime="2026-10-05T02:01:39.2453552+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e88d7b97-c067-4e9d-beb0-db6c2a5d7808" />
+    <UnitTestResult executionId="fced3ccf-aeac-42bf-866d-432cc2835947" testId="3867bc3d-a114-2038-4703-99199a925394" testName="TumbangPreso.Core.Tests.PaeteRulesTests.TheGuardianStaysInsideAnAsymmetricArenaAndTheHalfOverloadIsTheSymmetricCase" computerName="GAMERGMAE" duration="00:00:00.0004457" startTime="2026-10-05T02:01:39.2454144+08:00" endTime="2026-10-05T02:01:39.2454144+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fced3ccf-aeac-42bf-866d-432cc2835947" />
+    <UnitTestResult executionId="250c7eb3-9276-481a-8539-c1dca22adb0b" testId="bbf0c6e8-142a-f691-0783-cefdc82afbd7" testName="TumbangPreso.Core.Tests.PaeteRulesTests.ThornContactAndPullBeatsFitBeforeTheExistingRetirement" computerName="GAMERGMAE" duration="00:00:00.0000726" startTime="2026-10-05T02:01:39.2395798+08:00" endTime="2026-10-05T02:01:39.2395798+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="250c7eb3-9276-481a-8539-c1dca22adb0b" />
+    <UnitTestResult executionId="9f21ba84-d00a-493f-b1dd-76455688958d" testId="04cebdd5-6fc8-dda6-8153-5236e5a80004" testName="TumbangPreso.Core.Tests.PaeteRulesTests.TheGuardianNeverStandsOnTheCan" computerName="GAMERGMAE" duration="00:00:00.0006241" startTime="2026-10-05T02:01:39.2454387+08:00" endTime="2026-10-05T02:01:39.2454387+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9f21ba84-d00a-493f-b1dd-76455688958d" />
+    <UnitTestResult executionId="5fc7fc4d-2f68-4cd3-9d4e-fe20f74a3b91" testId="51bdb055-9b98-2392-002e-f5d7533aa642" testName="TumbangPreso.Core.Tests.PaeteRulesTests.TheThornsArePlacedWithinHisPlantsReachAndArriveInOneHoldBeat" computerName="GAMERGMAE" duration="00:00:00.0001815" startTime="2026-10-05T02:01:39.2464449+08:00" endTime="2026-10-05T02:01:39.2464450+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5fc7fc4d-2f68-4cd3-9d4e-fe20f74a3b91" />
+    <UnitTestResult executionId="6818a462-3697-472f-a67c-6acc3daff629" testId="073cdf54-8a4f-8e5d-79c4-737a0b8ea721" testName="TumbangPreso.Core.Tests.PaeteRulesTests.AGuardianAimedAtACanInTheCornerStillClearsIt" computerName="GAMERGMAE" duration="00:00:00.0001072" startTime="2026-10-05T02:01:39.2454889+08:00" endTime="2026-10-05T02:01:39.2454889+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6818a462-3697-472f-a67c-6acc3daff629" />
+    <UnitTestResult executionId="a86088f9-ee64-4143-bf7d-8d2373966217" testId="18e38d62-9859-e437-bb35-3fd02ddd40b4" testName="TumbangPreso.Core.Tests.PaeteRulesTests.APlantAimedIntoTheBoxLandsJustOutsideIt(x: 0, z: 0, wantX: 7.5999999, wantZ: 0)" computerName="GAMERGMAE" duration="00:00:00.0000068" startTime="2026-10-05T02:01:39.2395456+08:00" endTime="2026-10-05T02:01:39.2395457+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a86088f9-ee64-4143-bf7d-8d2373966217" />
+    <UnitTestResult executionId="ac200573-84b4-45f7-8e36-b6f0020f1c32" testId="26580063-c6ad-846c-97e3-1d2a6024a488" testName="TumbangPreso.Core.Tests.PaeteRulesTests.PlayerLatchGivesPaeteMostTravelAndKeepsContactClearance(distance: 8, gap: 0.800000012, caster: 5.94999981, target: 1.25)" computerName="GAMERGMAE" duration="00:00:00.0008495" startTime="2026-10-05T02:01:39.2397150+08:00" endTime="2026-10-05T02:01:39.2397151+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ac200573-84b4-45f7-8e36-b6f0020f1c32" />
+    <UnitTestResult executionId="51ba7008-342a-4875-9773-7cf1f9f5ebdf" testId="6cccfe51-27d1-5153-7fa9-0f3cfefae0d2" testName="TumbangPreso.Core.Tests.PaeteRulesTests.AWoodenSlipperKnockdownIsWorthLessThanARealOne" computerName="GAMERGMAE" duration="00:00:00.0015152" startTime="2026-10-05T02:01:39.2453765+08:00" endTime="2026-10-05T02:01:39.2453768+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="51ba7008-342a-4875-9773-7cf1f9f5ebdf" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="TumbangPreso.Core.Tests.PaeteRulesTests.APlantCannotOutliveItsWelcome" storage="c:\users\matthew\dev\tump-integration1003\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="6c10d0fb-5a6c-1225-82ee-7021de44bdb4">
+      <Execution id="8ab06c3c-32e7-4aa1-8b24-ba86f6a1a96b" />
+      <TestMethod codeBase="C:\Users\Matthew\dev\tump-integration1003\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.PaeteRulesTests" name="APlantCannotOutliveItsWelcome" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.PaeteRulesTests.PlayerLatchGivesPaeteMostTravelAndKeepsContactClearance(distance: 1, gap: 0.800000012, caster: 0.159999996, target: 0.0399999991)" storage="c:\users\matthew\dev\tump-integration1003\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="308911dc-187e-5a41-cbe8-15b171a55d7b">
+      <Execution id="00e23a4e-9094-4810-8118-43516ce8f5be" />
+      <TestMethod codeBase="C:\Users\Matthew\dev\tump-integration1003\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.PaeteRulesTests" name="PlayerLatchGivesPaeteMostTravelAndKeepsContactClearance" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.PaeteRulesTests.AHeldBodyIsPressedIntoTheRootsAndClearOfTheCan" storage="c:\users\matthew\dev\tump-integration1003\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="fe15c21f-7ede-013c-cd87-9059f40df2d7">
+      <Execution id="289487a8-4056-4194-9080-07f1c39369cd" />
+      <TestMethod codeBase="C:\Users\Matthew\dev\tump-integration1003\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.PaeteRulesTests" name="AHeldBodyIsPressedIntoTheRootsAndClearOfTheCan" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.PaeteRulesTests.PlayerLatchGivesPaeteMostTravelAndKeepsContactClearance(distance: 8, gap: 0.800000012, caster: 5.94999981, target: 1.25)" storage="c:\users\matthew\dev\tump-integration1003\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="26580063-c6ad-846c-97e3-1d2a6024a488">
+      <Execution id="ac200573-84b4-45f7-8e36-b6f0020f1c32" />
+      <TestMethod codeBase="C:\Users\Matthew\dev\tump-integration1003\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.PaeteRulesTests" name="PlayerLatchGivesPaeteMostTravelAndKeepsContactClearance" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.PaeteRulesTests.TheOwnersNumbersAreTheOnesInTheKit" storage="c:\users\matthew\dev\tump-integration1003\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="63fa2933-5006-f9ce-bd5b-376147089abe">
+      <Execution id="25a04be8-6c0f-413e-a2d5-8a4d8d07c5e0" />
+      <TestMethod codeBase="C:\Users\Matthew\dev\tump-integration1003\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.PaeteRulesTests" name="TheOwnersNumbersAreTheOnesInTheKit" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.PaeteRulesTests.APlantAimedIntoTheBoxLandsJustOutsideIt(x: 2, z: -3, wantX: 2, wantZ: -7.5999999)" storage="c:\users\matthew\dev\tump-integration1003\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="83d5115c-7132-0d45-d82b-f32e8c568124">
+      <Execution id="767e718e-1d65-40e1-8605-ed52e36fe4cf" />
+      <TestMethod codeBase="C:\Users\Matthew\dev\tump-integration1003\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.PaeteRulesTests" name="APlantAimedIntoTheBoxLandsJustOutsideIt" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.PaeteRulesTests.APlantAimedIntoTheBoxLandsJustOutsideIt(x: 9, z: 2, wantX: 9, wantZ: 2)" storage="c:\users\matthew\dev\tump-integration1003\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="90669066-22bb-fe2c-aa2d-fe667d28f3c7">
+      <Execution id="84900803-518f-480c-bf4e-37b11b1d1194" />
+      <TestMethod codeBase="C:\Users\Matthew\dev\tump-integration1003\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.PaeteRulesTests" name="APlantAimedIntoTheBoxLandsJustOutsideIt" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.PaeteRulesTests.APlantAimedIntoTheBoxLandsJustOutsideIt(x: 6.9000001, z: 6.94999981, wantX: 6.9000001, wantZ: 7.5999999)" storage="c:\users\matthew\dev\tump-integration1003\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="e3774aeb-019a-2a57-c5ff-9f10d8ef59f1">
+      <Execution id="231c15ab-b28a-4720-98f5-1a7145c4cb19" />
+      <TestMethod codeBase="C:\Users\Matthew\dev\tump-integration1003\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.PaeteRulesTests" name="APlantAimedIntoTheBoxLandsJustOutsideIt" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.PaeteRulesTests.PlayerLatchGivesPaeteMostTravelAndKeepsContactClearance(distance: 4, gap: 0.800000012, caster: 2.55999994, target: 0.639999986)" storage="c:\users\matthew\dev\tump-integration1003\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="b28010e1-8d84-b018-5e3d-87d9e271a512">
+      <Execution id="e88d7b97-c067-4e9d-beb0-db6c2a5d7808" />
+      <TestMethod codeBase="C:\Users\Matthew\dev\tump-integration1003\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.PaeteRulesTests" name="PlayerLatchGivesPaeteMostTravelAndKeepsContactClearance" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.PaeteRulesTests.MovesStayUnderTheSingleImpulseCapAndCoverTheirDistance" storage="c:\users\matthew\dev\tump-integration1003\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="6b36ddf7-01af-9e18-c808-df0948a90270">
+      <Execution id="c752c35b-be28-4c1a-8f22-a5146afed0ff" />
+      <TestMethod codeBase="C:\Users\Matthew\dev\tump-integration1003\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.PaeteRulesTests" name="MovesStayUnderTheSingleImpulseCapAndCoverTheirDistance" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.PaeteRulesTests.TheGuardianNeverStandsOnTheCan" storage="c:\users\matthew\dev\tump-integration1003\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="04cebdd5-6fc8-dda6-8153-5236e5a80004">
+      <Execution id="9f21ba84-d00a-493f-b1dd-76455688958d" />
+      <TestMethod codeBase="C:\Users\Matthew\dev\tump-integration1003\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.PaeteRulesTests" name="TheGuardianNeverStandsOnTheCan" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.PaeteRulesTests.TheGuardianStaysInsideAnAsymmetricArenaAndTheHalfOverloadIsTheSymmetricCase" storage="c:\users\matthew\dev\tump-integration1003\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="3867bc3d-a114-2038-4703-99199a925394">
+      <Execution id="fced3ccf-aeac-42bf-866d-432cc2835947" />
+      <TestMethod codeBase="C:\Users\Matthew\dev\tump-integration1003\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.PaeteRulesTests" name="TheGuardianStaysInsideAnAsymmetricArenaAndTheHalfOverloadIsTheSymmetricCase" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.PaeteRulesTests.AWoodenSlipperKnockdownIsWorthLessThanARealOne" storage="c:\users\matthew\dev\tump-integration1003\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="6cccfe51-27d1-5153-7fa9-0f3cfefae0d2">
+      <Execution id="51ba7008-342a-4875-9773-7cf1f9f5ebdf" />
+      <TestMethod codeBase="C:\Users\Matthew\dev\tump-integration1003\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.PaeteRulesTests" name="AWoodenSlipperKnockdownIsWorthLessThanARealOne" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.PaeteRulesTests.ThornContactAndPullBeatsFitBeforeTheExistingRetirement" storage="c:\users\matthew\dev\tump-integration1003\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="bbf0c6e8-142a-f691-0783-cefdc82afbd7">
+      <Execution id="250c7eb3-9276-481a-8539-c1dca22adb0b" />
+      <TestMethod codeBase="C:\Users\Matthew\dev\tump-integration1003\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.PaeteRulesTests" name="ThornContactAndPullBeatsFitBeforeTheExistingRetirement" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.PaeteRulesTests.APlantAimedIntoTheBoxLandsJustOutsideIt(x: -5, z: 1, wantX: -7.5999999, wantZ: 1)" storage="c:\users\matthew\dev\tump-integration1003\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="2b95873e-5315-f2ad-3e30-486d131fde78">
+      <Execution id="f73addd9-53ad-43d3-81ee-3d74fe74ff1f" />
+      <TestMethod codeBase="C:\Users\Matthew\dev\tump-integration1003\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.PaeteRulesTests" name="APlantAimedIntoTheBoxLandsJustOutsideIt" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.PaeteRulesTests.PlayerLatchNeverPushesApartAlreadyTouchingOrInvalidBodies" storage="c:\users\matthew\dev\tump-integration1003\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="920dd5ed-385d-e825-12e1-b659b75627c1">
+      <Execution id="a743bf3b-d38a-4f3e-85a5-48972ddbd360" />
+      <TestMethod codeBase="C:\Users\Matthew\dev\tump-integration1003\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.PaeteRulesTests" name="PlayerLatchNeverPushesApartAlreadyTouchingOrInvalidBodies" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.PaeteRulesTests.TheSentryFreesEveryoneBeforeARoundEnds" storage="c:\users\matthew\dev\tump-integration1003\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="2bfcd7c5-5cba-b00f-c94a-cb0e935dcc10">
+      <Execution id="d7dcc983-25e8-473f-8612-47bd9daf0214" />
+      <TestMethod codeBase="C:\Users\Matthew\dev\tump-integration1003\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.PaeteRulesTests" name="TheSentryFreesEveryoneBeforeARoundEnds" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.PaeteRulesTests.AGuardianAimedAtACanInTheCornerStillClearsIt" storage="c:\users\matthew\dev\tump-integration1003\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="073cdf54-8a4f-8e5d-79c4-737a0b8ea721">
+      <Execution id="6818a462-3697-472f-a67c-6acc3daff629" />
+      <TestMethod codeBase="C:\Users\Matthew\dev\tump-integration1003\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.PaeteRulesTests" name="AGuardianAimedAtACanInTheCornerStillClearsIt" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.PaeteRulesTests.TheThornsArePlacedWithinHisPlantsReachAndArriveInOneHoldBeat" storage="c:\users\matthew\dev\tump-integration1003\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="51bdb055-9b98-2392-002e-f5d7533aa642">
+      <Execution id="5fc7fc4d-2f68-4cd3-9d4e-fe20f74a3b91" />
+      <TestMethod codeBase="C:\Users\Matthew\dev\tump-integration1003\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.PaeteRulesTests" name="TheThornsArePlacedWithinHisPlantsReachAndArriveInOneHoldBeat" />
+    </UnitTest>
+    <UnitTest name="TumbangPreso.Core.Tests.PaeteRulesTests.APlantAimedIntoTheBoxLandsJustOutsideIt(x: 0, z: 0, wantX: 7.5999999, wantZ: 0)" storage="c:\users\matthew\dev\tump-integration1003\core.tests\bin\debug\net9.0\tumbangpreso.core.tests.dll" id="18e38d62-9859-e437-bb35-3fd02ddd40b4">
+      <Execution id="a86088f9-ee64-4143-bf7d-8d2373966217" />
+      <TestMethod codeBase="C:\Users\Matthew\dev\tump-integration1003\Core.Tests\bin\Debug\net9.0\TumbangPreso.Core.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="TumbangPreso.Core.Tests.PaeteRulesTests" name="APlantAimedIntoTheBoxLandsJustOutsideIt" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="6b36ddf7-01af-9e18-c808-df0948a90270" executionId="c752c35b-be28-4c1a-8f22-a5146afed0ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e3774aeb-019a-2a57-c5ff-9f10d8ef59f1" executionId="231c15ab-b28a-4720-98f5-1a7145c4cb19" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fe15c21f-7ede-013c-cd87-9059f40df2d7" executionId="289487a8-4056-4194-9080-07f1c39369cd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2b95873e-5315-f2ad-3e30-486d131fde78" executionId="f73addd9-53ad-43d3-81ee-3d74fe74ff1f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="920dd5ed-385d-e825-12e1-b659b75627c1" executionId="a743bf3b-d38a-4f3e-85a5-48972ddbd360" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="63fa2933-5006-f9ce-bd5b-376147089abe" executionId="25a04be8-6c0f-413e-a2d5-8a4d8d07c5e0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="308911dc-187e-5a41-cbe8-15b171a55d7b" executionId="00e23a4e-9094-4810-8118-43516ce8f5be" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="83d5115c-7132-0d45-d82b-f32e8c568124" executionId="767e718e-1d65-40e1-8605-ed52e36fe4cf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2bfcd7c5-5cba-b00f-c94a-cb0e935dcc10" executionId="d7dcc983-25e8-473f-8612-47bd9daf0214" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6c10d0fb-5a6c-1225-82ee-7021de44bdb4" executionId="8ab06c3c-32e7-4aa1-8b24-ba86f6a1a96b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="90669066-22bb-fe2c-aa2d-fe667d28f3c7" executionId="84900803-518f-480c-bf4e-37b11b1d1194" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b28010e1-8d84-b018-5e3d-87d9e271a512" executionId="e88d7b97-c067-4e9d-beb0-db6c2a5d7808" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3867bc3d-a114-2038-4703-99199a925394" executionId="fced3ccf-aeac-42bf-866d-432cc2835947" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bbf0c6e8-142a-f691-0783-cefdc82afbd7" executionId="250c7eb3-9276-481a-8539-c1dca22adb0b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="04cebdd5-6fc8-dda6-8153-5236e5a80004" executionId="9f21ba84-d00a-493f-b1dd-76455688958d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="51bdb055-9b98-2392-002e-f5d7533aa642" executionId="5fc7fc4d-2f68-4cd3-9d4e-fe20f74a3b91" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="073cdf54-8a4f-8e5d-79c4-737a0b8ea721" executionId="6818a462-3697-472f-a67c-6acc3daff629" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="18e38d62-9859-e437-bb35-3fd02ddd40b4" executionId="a86088f9-ee64-4143-bf7d-8d2373966217" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="26580063-c6ad-846c-97e3-1d2a6024a488" executionId="ac200573-84b4-45f7-8e36-b6f0020f1c32" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6cccfe51-27d1-5153-7fa9-0f3cfefae0d2" executionId="51ba7008-342a-4875-9773-7cf1f9f5ebdf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="20" executed="20" passed="20" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.19)&#xD;
+[xUnit.net 00:00:01.06]   Discovering: TumbangPreso.Core.Tests&#xD;
+[xUnit.net 00:00:01.14]   Discovered:  TumbangPreso.Core.Tests&#xD;
+[xUnit.net 00:00:01.14]   Starting:    TumbangPreso.Core.Tests&#xD;
+[xUnit.net 00:00:01.40]   Finished:    TumbangPreso.Core.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>
