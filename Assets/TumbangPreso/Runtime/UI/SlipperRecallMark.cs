@@ -20,9 +20,8 @@ namespace TumbangPreso.UI
     /// legible against all of it, and it is the same trick `TumpTargetPointer` uses.
     ///
     /// ⚠️ NO BLUE, NO NAVY, NO COLD GREY, at any state. `CLAUDE.md` § 6.4, stated wide after it
-    /// had to be said six times: the palette here is Cream while the shoe is still travelling and
-    /// Yellow once it can be picked up, with DeepOlive as the ink, and all three are the theme's
-    /// own.
+    /// had to be said six times: the landed marker uses the existing theme ink and highlight.
+    /// Held and travelling slippers do not draw this marker.
     ///
     /// ⚠️⚠️ THERE IS NO "IN RANGE" STATE AND THAT IS DELIBERATE. The first build of this had one,
     /// a thicker yellow ring inside `Balance.PickupRadius`, and the render of it

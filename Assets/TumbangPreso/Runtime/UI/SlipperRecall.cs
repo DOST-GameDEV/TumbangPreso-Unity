@@ -151,19 +151,9 @@ namespace TumbangPreso.UI
         /// <summary>
         /// Once a frame from the HUD, with the local unit and the tsinelas that answers to it.
         ///
-        /// ⚠️⚠️ THE MARK IS UP FROM THE MOMENT THE SHOE LEAVES THE HAND, NOT FROM THE MOMENT IT
-        /// LANDS, AND THE IN-FLIGHT HALF IS NOT DECORATION. `AIController.MySlipper`'s note
-        /// measured what leaving it out costs a player who cannot see their own throw land:
-        /// *"a version that only considered loose slippers made a bot's slipper invisible to it
-        /// the instant it was released: measured throws 27 → 14"*. A person in first person has a
-        /// narrower cone than that bot does.
-        ///
-        /// ⚠️ THE CAP ONLY APPEARS ONCE THE GRAB WOULD ACTUALLY TAKE IT. In flight the ring is
-        /// drawn alone: there is nothing to press yet, and a button cap over a shoe still in the
-        /// air is the prompt promising something the carrier would refuse. The state clause it
-        /// asks is `Slipper.IsGrabbableIgnoringReach`, the same function the grab itself asks,
-        /// for the reason `Hud.UpdatePickupPrompt` already records: *"a prompt derived from its
-        /// own distance check is a second answer to one question."*
+        /// The circle appears only for a landed, loose slipper. Held and flying
+        /// states stay clear, including received network states. The existing owner,
+        /// role, Haunted and pickup-range rules still decide whether it is useful.
         /// </summary>
         public void Track(CharacterMotor local, Slipper mine)
         {
@@ -177,7 +167,7 @@ namespace TumbangPreso.UI
                         && !local.IsDefender
                         && mine.gameObject.activeInHierarchy
                         && mine.OwnerSlot == local.PlayerSlot
-                        && !(mine.State == SlipperState.Held && mine.Holder == local);
+                        && mine.State == SlipperState.Loose;
 
             // ⚠️⚠️ THE MARK GOES OUT THE MOMENT THE GRAB IS IN REACH, AND THE RENDER IS WHAT
             // FORCED THAT. The first build had an "in range" state, a thicker yellow ring, and

@@ -1,5 +1,11 @@
 # TODO: Tumbang Preso Unity
 
+### SLIPPER-CIRCLE-1004: ground-only recall circle
+
+- [x] Hide during held/flight states; show only after landing, retaining normal
+  owner/range restrictions. Native real-flight/landing and snapshot/pickup
+  transitions pass. [Evidence](reports/slipper-circle-2026-10-04/README.md).
+
 ### THROW-RESTORE-1004: can-state throw freedom and smooth return
 
 - [x] Can-down and barrier no longer refuse throws. Actual restoration lowers an
@@ -33,7 +39,16 @@ reference characters are quality examples, not a new redesign assignment.
   Overclock now uses the free hand, front-side shots and a caster-centred strike;
   native geometry/motion checks pass, final map/player/SFX review remains open.
   [Overclock refinement](reports/isagani-overclock-2026-10-04/README.md).
-- [ ] Rago, Basilio, Yasmin, Nemu and Ilyas: finish their remaining presentation passes.
+- [ ] Yasmin: Absolute Zero crystal/hand connection and framing refined; held and
+  empty-hand native studies pass2/2. Full kit/player/SFX review remains open.
+  [Evidence](reports/yasmin-crystal-2026-10-04/README.md).
+- [ ] Rago: Supernova parol handoff and held-equipment staging refined; native
+  held/empty studies pass2/2. Full kit/player/SFX review remains open.
+  [Evidence](reports/rago-supernova-2026-10-04/README.md).
+- [ ] Basilio: held slipper/face intersection fixed and slab visibility refined;
+  native baseline1 fail/1 control becomes2/2. Full kit/player/SFX review remains open.
+  [Evidence](reports/basilio-fissure-2026-10-04/README.md).
+- [ ] Nemu and Ilyas: finish their remaining presentation passes.
 - [ ] Real-game film/listening review and multiplayer/player qualification.
 
 **How this file is organised (docs cleanup, 2026-09-23).** This file is the ONE status
