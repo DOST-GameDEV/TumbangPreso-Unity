@@ -105,7 +105,8 @@ namespace TumbangPreso.PlayTests
             var field = Field("PlayerNameEdit"); yield return Edit(field);
             Bio("Pending while closed"); _hub.SendMessage("OnDataChanged");
             yield return null; Assert.AreSame(field, Field("PlayerNameEdit"));
-            _hub.Close(); yield return null; yield return null; yield return null;
+            Canvas.GetComponentsInChildren<Button>().Single(b => b.name == "ClosePlayerHub").onClick.Invoke();
+            yield return null; yield return null; yield return null;
             Assert.IsFalse(_hub.IsOpen);
             Assert.IsFalse(((GameObject)typeof(PlayerHub).GetField("_root", Hidden).GetValue(_hub)).activeSelf);
         }
