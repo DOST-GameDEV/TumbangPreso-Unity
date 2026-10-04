@@ -186,3 +186,16 @@ Original202 generatedUI importermetas restored exact pre-run after blob/CRLFhash
 comparison; rawgeneratedcopies and cleanup receipt retained. ProjectAuditor change
 preserved independently. Laptop social native4fail2controls ->6/6, same fixture,
 raw report/source map pending. No Root helper or old player remains live.
+
+
+## Career refresh ordering publication
+
+Candidate13072/session55408 TERMINALexit0/SAME3cases allPASS, original7932
+1causal420→77 failure/2controls. Input/profile restored. Runtime/fixture/meta
+unchanged in both frozen19220maps; strict all-input preservation FALSE because
+202 UI importer metadata rewrites (original also ProjectAuditor generated ref).
+Both sets of UI metadata restored exact pre-run, original/generated proof retained.
+No RootUnity/helper/player live; ProjectAuditor preserved unstaged. Code/fixture/
+raw/qualification at reports/reliability-2026-10-04/career-refresh-order. Publish
+checked career unit now; laptop Social6/6 raw next then combined integration build
+with approved names and rendered labels. No unchanged passing cohort repeated.
