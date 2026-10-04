@@ -31,32 +31,62 @@ namespace TumbangPreso.PlayTests
         /// gate whose red set moves is not measuring the code. `PlayModeWorld.Reset` has the
         /// mechanism and why BOTH hooks are needed rather than one.
         /// </summary>
+        private bool _bots, _spectator, _pinned;
+        private int _soloSeat;
+        private Core.CustomRules _rules;
         [UnitySetUp]
-        public IEnumerator ResetWorldBefore() => PlayModeWorld.Reset();
+        public IEnumerator ResetWorldBefore()
+        {
+            _bots = GameLaunch.AllBots; _spectator = GameLaunch.Spectator; _soloSeat = GameLaunch.SoloSeat;
+            _pinned = UI.SceneFlow.RulesPinned; _rules = UI.SceneFlow.SelectedRules.Clone();
+            yield return PlayModeWorld.Reset();
+        }
 
         [UnityTearDown]
-        public IEnumerator ResetWorldAfter() => PlayModeWorld.Reset();
+        public IEnumerator ResetWorldAfter()
+        {
+            yield return PlayModeWorld.Reset();
+            GameLaunch.AllBots = _bots; GameLaunch.Spectator = _spectator; GameLaunch.SoloSeat = _soloSeat;
+            UI.SceneFlow.AdoptRemoteRules(_rules);
+            if (_pinned) UI.SceneFlow.PinSelectedRules(_rules); else UI.SceneFlow.UnpinSelectedRules();
+        }
+
+        [DefaultExecutionOrder(10000)]
+        private sealed class AfterCarryPose : MonoBehaviour
+        {
+            public System.Action Sample;
+            private void LateUpdate() => Sample?.Invoke();
+        }
+
+        private static IEnumerator OpenPlayableCarryRound()
+        {
+            yield return MapRetrievalProbe.Load("Eskinita");
+            Object.FindFirstObjectByType<ReadyGate>().StartLocalCountdown();
+            yield return new WaitForSeconds(3.6f);
+            Assert.IsTrue(GameServices.Round.RoundActive, "Carry checks need an actual started round.");
+            foreach (var actor in GameServices.Round.Players)
+            {
+                actor.Intent.Clear(); actor.Intent.Parked = false;
+            }
+        }
+
+        private static Slipper PlaceOwnedSlipperForPickup(CharacterMotor carrier)
+        {
+            var slipper = carrier.GetComponent<Carrier>().Held;
+            Assert.IsNotNull(slipper, "The round must provide the attacker's actual owned slipper.");
+            Assert.AreEqual(carrier.PlayerSlot, slipper.OwnerSlot);
+            Assert.IsTrue(slipper.HostDisarm());
+            slipper.transform.position = carrier.transform.position + Vector3.up * slipper.RestHeight;
+            Physics.SyncTransforms();
+            return slipper;
+        }
 
         [UnityTest]
         public IEnumerator TheHandAnchorLandsOnTheHandAndRidesIt()
         {
-            var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
-            yield return ProbeWait.Done(load, "scene load");
-
-            for (int i = 0; i < 20; i++) yield return null;
-
-            CharacterVisual visual = null;
-
-            foreach (var v in Object.FindObjectsByType<CharacterVisual>(FindObjectsSortMode.None))
-            {
-                if (v.HandAnchor == null) continue;
-                visual = v;
-                break;
-            }
-
-            Assert.IsNotNull(visual,
-                "No seat built a hand anchor. `arm-right` was not found on any rig, or the skin " +
-                "measurement failed, and a carried slipper cannot follow the arm.");
+            yield return OpenPlayableCarryRound();
+            var visual = GameServices.Round.PlayerAt(1).GetComponent<CharacterVisual>();
+            Assert.IsNotNull(visual.HandAnchor, "The selected attacker needs a resolved hand anchor.");
 
             var anchor = visual.HandAnchor;
 
@@ -74,16 +104,27 @@ namespace TumbangPreso.PlayTests
                 $"The hand anchor is at {anchor.position}, outside the character's own bounds " +
                 $"{bounds}. That is the armpit-or-neck failure the measurement exists to avoid.");
 
-            // ⚠️ AND IT RIDES THE POSE. A child written onto the bone's own transform is
-            // overwritten from the pose every frame; a child OF the bone follows it. The idle
-            // clip is running, so the anchor has to move in world space.
+            // A carrying idle may deliberately hold the palm still. Request a
+            // real emote, then sample its motion rather than compare two endpoints
+            // that can coincide when a looping clip returns to its starting pose.
+            var emotes = visual.GetComponent<Social.EmotePlayer>();
+            Assert.IsTrue(emotes.CanEmote());
             Vector3 was = anchor.position;
+            emotes.HostPlay("tpose");
+            Assert.IsTrue(emotes.IsEmoting, "The motion witness must actually start.");
+            float furthest = 0;
+            try
+            {
+                for (int i = 0; i < 40; i++)
+                {
+                    yield return null;
+                    furthest = Mathf.Max(furthest, Vector3.Distance(was, anchor.position));
+                }
+                Assert.Greater(furthest, .0005f,
+                    "The hand anchor must track the accepted emote's animated arm.");
+            }
+            finally { emotes.Stop(); }
 
-            for (int i = 0; i < 40; i++) yield return null;
-
-            Assert.Greater(Vector3.Distance(was, anchor.position), 0.0005f,
-                "The hand anchor has not moved in 40 frames of a live idle, so it is sitting at " +
-                "the bone's rest transform rather than tracking the animated pose.");
         }
 
         /// <summary>
@@ -109,122 +150,39 @@ namespace TumbangPreso.PlayTests
         [UnityTest]
         public IEnumerator AHeldSlipperStaysOnTheArmThroughMovementAndAMissingAnchor()
         {
-            var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
-            yield return ProbeWait.Done(load, "scene load");
-
-            for (int i = 0; i < 20; i++) yield return null;
-
-            CharacterMotor carrier = null;
-
-            foreach (var m in Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None))
-            {
-                if (!m.IsPerson || m.IsDefender) continue;
-                if (m.GetComponent<CharacterVisual>()?.HandAnchor == null) continue;
-                carrier = m;
-                break;
-            }
-
-            Assert.IsNotNull(carrier, "no attacker seat with a hand anchor to carry anything");
-
-            // ⚠️⚠️ THE ONE THAT ANSWERS TO THIS SEAT, NOT THE FIRST LOOSE ONE IN THE ARENA.
-            // § THE OWNERSHIP LOCK (`Slipper.OwnerSlot`, 2026-09-19) refuses a rival's tsinelas,
-            // and this harness used to take whatever `FindObjectsByType` handed back first, which
-            // is explicitly unsorted: it grabbed another seat's shoe roughly three times in four
-            // and `HostGrab` now says no. **Nothing about carrying changed** and this file is not
-            // about ownership at all; the fixture was simply relying on a rule that is gone.
-            Slipper slipper = null;
-
-            foreach (var s in Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
-            {
-                if (s.State != SlipperState.Loose || s.OwnerSlot != carrier.PlayerSlot) continue;
-                slipper = s;
-                break;
-            }
-
-            Assert.IsNotNull(slipper,
-                $"seat {carrier.PlayerSlot} owns no loose tsinelas, so there is nothing it is " +
-                $"allowed to pick up");
-
-            // ⚠️ THE SLIPPER MOVES ONTO THE CARRIER, NOT THE OTHER WAY AROUND. `Confine` clamps a
-            // unit back into the box every step, so walking the capsule to a slipper that happens
-            // to lie outside it fails the pickup for a reason that has nothing to do with this.
-            var stand = carrier.transform.position;
-            slipper.transform.position = new Vector3(stand.x, slipper.transform.position.y, stand.z);
-
-            carrier.RoundActive = true;
-
-            for (int i = 0; i < 3; i++) yield return new WaitForFixedUpdate();
-
-            Assert.IsTrue(slipper.HostGrab(carrier), "the harness failed to put a slipper in hand");
+            yield return OpenPlayableCarryRound();
+            var carrier = GameServices.Round.PlayerAt(1);
+            var slipper = PlaceOwnedSlipperForPickup(carrier);
+            Assert.IsTrue(slipper.HostGrab(carrier), "Pickup must be accepted in the started round.");
 
             var visual = carrier.GetComponent<CharacterVisual>();
 
             // 1 — it rides a moving, animating carrier.
+            Vector3 walkedFrom = carrier.transform.position;
             carrier.Intent.Move = new Vector2(0.0f, 1.0f);
 
-            float worst = 0.0f;
-            float worstOrigin = 0.0f;
-
-            for (int i = 0; i < 60; i++)
+            float worst = 0, worstOrigin = 0; int samples = 0;
+            var observation = carrier.gameObject.AddComponent<AfterCarryPose>();
+            // Test coroutines resume before the final body/carry LateUpdates.
+            // Observe their completed pose, just as the existing film capture does.
+            observation.Sample = () =>
             {
-                yield return null;
-
                 var anchor = visual.HandAnchor;
-                if (anchor == null) continue;
-
-                // The carry lifts the slipper off the anchor by its own rest height, so the
-                // distance is never zero. It must never GROW, which is what coming off looks like.
-                //
-                // ⚠️ NO `* anchor.lossyScale.y` — see AHeldSlipperSitsOnTheHandNotFloatingAboveIt.
-                // `RideAnchor` no longer scales the lift a second time, and this had to match or
-                // it would silently keep grading the fixed code against the bug's own formula.
-                //
-                // ⚠️⚠️ AND IT MEASURES THE DRAWN CENTRE, NOT THE ORIGIN, WHICH IS THE WHOLE OF
-                // `docs/TODO.md` § 93. This read `slipper.transform.position` and subtracted the
-                // lift alone, and `Carrier.RideAnchor` applies TWO terms:
-                //
-                //     position = hand.position + hand.up * CarrySupportExtent(hand.up) - DrawnCentreOffset
-                //
-                // The second one landed in § 80.5, for 🧑's *"slipper floats for everyone
-                // including bots, it isnt on their arms"*: § 70.2 fixes every slipper mesh as
-                // seated on Z = 0, so the ORIGIN is on the sole at one END of the shoe and the
-                // drawn middle is somewhere else, by a different amount for each of the nine
-                // skins. `RideAnchor` puts the DRAWN CENTRE on the hand, deliberately.
-                //
-                // So this measured the deliberate offset and called it drift: **0.084 m and
-                // 0.092 m on two full sweeps**, both about the size of half a shoe, both filed as
-                // a carry regression nobody could bisect. ⚠️ `Carrier`'s own note claims *"
-                // `CarryTests` CANNOT SEE THIS AND STILL CANNOT ... which this still satisfies"*,
-                // and that sentence was wrong the day it was written.
-                //
-                // ⚠️ THE BOUND IS UNCHANGED AT 0.05 m. This corrects WHICH POINT is measured, not
-                // how far it is allowed to be: `BotBehaviourProbe`'s standing rule about not
-                // moving a number to make a run pass applies with full force here.
+                if (anchor == null) return;
                 float lift = slipper.CarrySupportExtent(anchor.up);
                 Vector3 drawn = slipper.transform.position + slipper.DrawnCentreOffset;
-
-                float slack = Vector3.Distance(drawn, anchor.position + anchor.up * lift);
-                float originSlack =
-                    Vector3.Distance(slipper.transform.position, anchor.position) - lift;
-
-                worst = Mathf.Max(worst, Mathf.Abs(slack));
-                worstOrigin = Mathf.Max(worstOrigin, Mathf.Abs(originSlack));
-            }
-
+                worst = Mathf.Max(worst, Vector3.Distance(drawn, anchor.position + anchor.up * lift));
+                worstOrigin = Mathf.Max(worstOrigin, Mathf.Abs(Vector3.Distance(slipper.transform.position, anchor.position) - lift));
+                samples++;
+            };
+            try { for (int i = 0; i < 60; i++) yield return null; }
+            finally { observation.Sample = null; Object.Destroy(observation); }
             carrier.Intent.Move = Vector2.zero;
-
-            // ⚠️ BOTH READINGS ARE IN THE MESSAGE, which is `CLAUDE.md` § 2.3 applied to an
-            // assertion: § 93 cost two sweeps and an unfinished bisect because "drifted 0.084 m"
-            // named no number anybody could act on. If the drawn centre is on the hand and the
-            // ORIGIN is far from it, that is the deliberate per-skin offset and not a fault; if
-            // both have moved, the carry really has come off the arm.
-            Assert.Less(worst, 0.05f,
-                $"a held slipper's DRAWN CENTRE drifted {worst:0.000} m from the hand while its " +
-                $"carrier walked (its origin sat {worstOrigin:0.000} m out, which is the " +
-                $"deliberate per-skin DrawnCentreOffset and is not this bound). " +
-                "The carry has to run in LateUpdate: Unity evaluates the Animator between Update " +
-                "and LateUpdate, so a bone read in Update is the PREVIOUS frame's pose and the " +
-                "slipper trails the hand by one frame of animation.");
+            Assert.GreaterOrEqual(samples, 50, "Measure actual completed frames, not an empty observation.");
+            Assert.Greater(Vector3.Distance(walkedFrom, carrier.transform.position), .1f, "The carry witness must actually walk.");
+            Assert.Less(worst, .05f,
+                $"A held slipper's drawn centre drifted {worst:0.000}m after the carry update " +
+                $"(origin offset {worstOrigin:0.000}m). Preserve the existing 5cm bound.");
 
             // 2 — it survives the anchor going away.
             Object.DestroyImmediate(visual.HandAnchor.gameObject);
@@ -259,10 +217,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest]
         public IEnumerator TheViewmodelCarriesItsOwnSlipperInFirstPerson()
         {
-            var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
-            yield return ProbeWait.Done(load, "scene load");
-
-            for (int i = 0; i < 20; i++) yield return null;
+            yield return OpenPlayableCarryRound();
 
             var rig = Object.FindFirstObjectByType<CameraSystem.CameraRig>();
             Assert.IsNotNull(rig, "no camera rig in the arena");
@@ -283,37 +238,13 @@ namespace TumbangPreso.PlayTests
                 "the viewmodel has no HeldSlipper node, so the local player holds nothing " +
                 "visible in first person however well the world object is attached.");
 
-            Assert.IsFalse(held.gameObject.activeSelf,
-                "the viewmodel slipper is showing before anything was picked up");
-
             var mine = rig.Following;
-            Assert.IsNotNull(mine, "the rig is following no character");
-
-            // ⚠️⚠️ THE ONE THAT ANSWERS TO THIS SEAT, NOT THE FIRST LOOSE ONE IN THE ARENA.
-            // § THE OWNERSHIP LOCK (`Slipper.OwnerSlot`, 2026-09-19) refuses a rival's tsinelas,
-            // and this harness used to take whatever `FindObjectsByType` handed back first, which
-            // is explicitly unsorted: it grabbed another seat's shoe roughly three times in four
-            // and `HostGrab` now says no. **Nothing about carrying changed** and this file is not
-            // about ownership at all; the fixture was simply relying on a rule that is gone.
-            Slipper loose = null;
-
-            foreach (var s in Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
-            {
-                if (s.State != SlipperState.Loose || s.OwnerSlot != mine.PlayerSlot) continue;
-                loose = s;
-                break;
-            }
-
-            Assert.IsNotNull(loose,
-                $"seat {mine.PlayerSlot} owns no loose tsinelas, so there is nothing it is " +
-                $"allowed to pick up");
-
-            mine.RoundActive = true;
-            loose.transform.position = mine.transform.position;
-
-            yield return new WaitForFixedUpdate();
-
-            Assert.IsTrue(loose.HostGrab(mine), "the harness failed to put a slipper in hand");
+            Assert.IsNotNull(mine, "The rig must follow the actual local attacker.");
+            Assert.IsFalse(mine.IsDefender);
+            var loose = PlaceOwnedSlipperForPickup(mine);
+            for (int i = 0; i < 3; i++) yield return null;
+            Assert.IsFalse(held.gameObject.activeSelf, "The viewmodel must hide after the owned slipper is dropped.");
+            Assert.IsTrue(loose.HostGrab(mine), "Pickup must be accepted in the started round.");
 
             // The rig writes the viewmodel in LateUpdate, so give it a whole frame.
             for (int i = 0; i < 3; i++) yield return null;
@@ -446,50 +377,10 @@ namespace TumbangPreso.PlayTests
         [UnityTest]
         public IEnumerator AHeldSlipperSitsOnTheHandNotFloatingAboveIt()
         {
-            var load = SceneManager.LoadSceneAsync("Eskinita", LoadSceneMode.Single);
-            yield return ProbeWait.Done(load, "scene load");
-
-            for (int i = 0; i < 20; i++) yield return null;
-
-            CharacterMotor carrier = null;
-
-            foreach (var m in Object.FindObjectsByType<CharacterMotor>(FindObjectsSortMode.None))
-            {
-                if (!m.IsPerson || m.IsDefender) continue;
-                if (m.GetComponent<CharacterVisual>()?.HandAnchor == null) continue;
-                carrier = m;
-                break;
-            }
-
-            Assert.IsNotNull(carrier, "no attacker seat with a hand anchor to carry anything");
-
-            // ⚠️⚠️ THE ONE THAT ANSWERS TO THIS SEAT, NOT THE FIRST LOOSE ONE IN THE ARENA.
-            // § THE OWNERSHIP LOCK (`Slipper.OwnerSlot`, 2026-09-19) refuses a rival's tsinelas,
-            // and this harness used to take whatever `FindObjectsByType` handed back first, which
-            // is explicitly unsorted: it grabbed another seat's shoe roughly three times in four
-            // and `HostGrab` now says no. **Nothing about carrying changed** and this file is not
-            // about ownership at all; the fixture was simply relying on a rule that is gone.
-            Slipper slipper = null;
-
-            foreach (var s in Object.FindObjectsByType<Slipper>(FindObjectsSortMode.None))
-            {
-                if (s.State != SlipperState.Loose || s.OwnerSlot != carrier.PlayerSlot) continue;
-                slipper = s;
-                break;
-            }
-
-            Assert.IsNotNull(slipper,
-                $"seat {carrier.PlayerSlot} owns no loose tsinelas, so there is nothing it is " +
-                $"allowed to pick up");
-
-            var stand = carrier.transform.position;
-            slipper.transform.position = new Vector3(stand.x, slipper.transform.position.y, stand.z);
-
-            carrier.RoundActive = true;
-
-            for (int i = 0; i < 3; i++) yield return new WaitForFixedUpdate();
-
-            Assert.IsTrue(slipper.HostGrab(carrier), "the harness failed to put a slipper in hand");
+            yield return OpenPlayableCarryRound();
+            var carrier = GameServices.Round.PlayerAt(1);
+            var slipper = PlaceOwnedSlipperForPickup(carrier);
+            Assert.IsTrue(slipper.HostGrab(carrier), "Pickup must be accepted in the started round.");
 
             var visual = carrier.GetComponent<CharacterVisual>();
 
