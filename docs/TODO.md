@@ -87,7 +87,8 @@ Nothing was deleted or renumbered.
 
 - [x] Implement owner-requested Cold Feet/Wall numbers and every-throw15second Frostbite.
 - [x] Close the visible/collision gaps in the5m/3m-radius wall. Implement Wiki15second Boulder expiry.
-- [x] Native load/status, field/recovery and compact-wall cases pass; protocol147 requires matching rebuilds.
+- [x] Native load/status, field/recovery and compact-wall cases pass.
+- [x] Restoration/replay retain the compact arc and prior hits; ten distinct native cases pass, plus the extended recording compatibility check. Protocol148/recording14 requires matching rebuilds; older saved formats10–13 remain readable. [Evidence](reports/glacial-restore-2026-10-04/README.md).
 - [ ] Reproduce the reported excessive Chilled duration. Local shove/post-field-exit controls show5seconds; owner context pending.
 - [ ] Actual147peer/player and all-terrain acceptance.
 

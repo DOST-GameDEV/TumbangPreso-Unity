@@ -188,7 +188,27 @@ namespace TumbangPreso.PlayTests
             Assert.IsTrue(TumbangPreso.CameraSystem.RecordedMatchClip.TryDecode(clip.Encode(),out var decoded,out var error),error);
             var restored=decoded.FieldFrames[1].Fields[0].State;
             Assert.AreEqual(3,restored.Radius);Assert.AreEqual(5,restored.FirstScale);Assert.AreEqual(1,restored.SecondScale);
-            Assert.AreEqual(6,restored.Remaining);yield return null;
+            Assert.AreEqual(6,restored.Remaining);
+            byte[] WithVersion(byte[] bytes,int version)
+            {
+                using var packed=new System.IO.MemoryStream(bytes);
+                using var zip=new System.IO.Compression.DeflateStream(packed,System.IO.Compression.CompressionMode.Decompress);
+                using var raw=new System.IO.MemoryStream();zip.CopyTo(raw);raw.Position=4;
+                using(var writer=new System.IO.BinaryWriter(raw,System.Text.Encoding.UTF8,true))writer.Write(version);
+                raw.Position=0;using var output=new System.IO.MemoryStream();
+                using(var encoder=new System.IO.Compression.DeflateStream(output,System.IO.Compression.CompressionLevel.Fastest,true))raw.CopyTo(encoder);
+                return output.ToArray();
+            }
+            Assert.IsFalse(TumbangPreso.CameraSystem.RecordedMatchClip.TryDecode(WithVersion(clip.Encode(),13),out _,out var oldArcError));
+            StringAssert.Contains("Arc wall",oldArcError);
+            foreach(var frame in clip.FieldFrames)
+            {
+                var legacy=frame.Fields[0].State;legacy.Radius=0;legacy.FirstScale=1;legacy.SecondScale=1;
+                frame.Fields[0]=new TumbangPreso.CameraSystem.RecordedField {Id=1,State=legacy};
+            }
+            Assert.IsTrue(TumbangPreso.CameraSystem.RecordedMatchClip.TryDecode(WithVersion(clip.Encode(),13),out var oldClip,out var oldError),oldError);
+            Assert.AreEqual(0,oldClip.FieldFrames[0].Fields[0].State.Radius);
+            yield return null;
         }
         [UnityTest] public IEnumerator ArcWallSnapshotRejectsAmbiguousShapeAndHitData()
         {

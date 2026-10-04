@@ -30,3 +30,9 @@ change the owner's ten-second lifetime or three-hit rule.
 Final inputs match their frozen manifest; jobs restored isolated settings and
 show no new OOM. Original failures remain in the receipts. No new actual-peer,
 packaged-player or human acceptance is claimed.
+
+Compatibility review retains format13 alongside10–12 for older saved clips,
+while refusing arc geometry labelled as an earlier schema. The extended native
+recording round-trip passes1/1 in0.1579953s, exit0, restored settings and unchanged
+frozen inputs. No extra OOM. The EditMode header filter did not run in this
+PlayMode invocation, so no additional header-test pass is claimed.
