@@ -27,7 +27,7 @@ namespace TumbangPreso.Diagnostics
             string path=Argument("-tp-replaytrace");if(path==null)return;
             var root=new GameObject("~NetReplayProbe");DontDestroyOnLoad(root);var probe=root.AddComponent<NetReplayProbe>();probe._started=Time.realtimeSinceStartup;
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path)));probe._trace=new StreamWriter(path){AutoFlush=true};
-            probe._trace.WriteLine("real,local,round,epoch,score1,clips,clip,ready,half,view,remaining,held,sim,fallback,fault,liveFields,score0,score2,score3");
+            probe._trace.WriteLine("real,local,round,epoch,score1,clips,clip,ready,half,view,remaining,held,sim,fallback,fault,liveFields");
         }
         private void OnDisable(){_trace?.Dispose();_trace=null;}
         private void Update()
@@ -63,7 +63,7 @@ namespace TumbangPreso.Diagnostics
             if(_trace==null||Time.realtimeSinceStartup<_next)return;_next=Time.realtimeSinceStartup+.05f;
             var archive=FindAnyObjectByType<MatchReplayArchive>();long clip=phase?.ClipId??0;
             if(clip==0&&archive?.Clips.Count>0)clip=archive.Clips[0].Clip.Id;
-            _trace.WriteLine(FormattableString.Invariant($"{Time.realtimeSinceStartup-_started:F3},{NetAuthority.LocalSlot},{match.RoundNumber},{match.PresentationMatchId},{match.ScoreFor(1)},{archive?.Clips.Count??0},{clip},{Net.MatchRpc.Instance.ReplayReadyCount(clip)},{(HalftimePresentation.Playing?1:0)},{(phase?.HasReplay==true?1:0)},{phase?.Remaining??0:F3},{(PresentationClock.Held?1:0)},{Time.time:F4},{(phase?.FallbackReason!=null?1:0)},{(_faultInjected?1:0)},{Net.WorldEffectSnapshot.Capture().Count},{match.ScoreFor(0)},{match.ScoreFor(2)},{match.ScoreFor(3)}"));
+            _trace.WriteLine(FormattableString.Invariant($"{Time.realtimeSinceStartup-_started:F3},{NetAuthority.LocalSlot},{match.RoundNumber},{match.PresentationMatchId},{match.ScoreFor(1)},{archive?.Clips.Count??0},{clip},{Net.MatchRpc.Instance.ReplayReadyCount(clip)},{(HalftimePresentation.Playing?1:0)},{(phase?.HasReplay==true?1:0)},{phase?.Remaining??0:F3},{(PresentationClock.Held?1:0)},{Time.time:F4},{(phase?.FallbackReason!=null?1:0)},{(_faultInjected?1:0)},{Net.WorldEffectSnapshot.Capture().Count}"));
         }
         private IEnumerator Shot()
         {
@@ -86,20 +86,11 @@ namespace TumbangPreso.Diagnostics
                 foreach(var peer in Unity.Netcode.NetworkManager.Singleton.ConnectedClientsIds)
                     send.Invoke(Net.MatchRpc.Instance,new object[]{peer});
             }
-            bool catchContact=Argument("-tp-replay-contact")=="catch";
-            if(catchContact)PlaceCatchParticipants(round);
             yield return new WaitForSeconds(2.5f);
-            if(catchContact)
-            {
-                if(!ResolveCatchContact(round))throw new InvalidOperationException("Replay catch contact missing");
-            }
-            else
-            {
-                var thrower=round.PlayerAt(1);var shoe=FindObjectsByType<Slipper>().First(s=>s.OwnerSlot==1);
-                int serial=round.Lata.HostKnockdownSerial;shoe.HostThrow(thrower,round.Lata.transform.position+new Vector3(0,1.2f,-2),Vector3.forward*12);
-                float until=Time.time+2;while(round.Lata.IsUpright&&Time.time<until)yield return null;
-                if(round.Lata.HostKnockdownSerial!=serial+1)throw new InvalidOperationException("Physical replay contact missing");
-            }
+            var thrower=round.PlayerAt(1);var shoe=FindObjectsByType<Slipper>().First(s=>s.OwnerSlot==1);
+            int serial=round.Lata.HostKnockdownSerial;shoe.HostThrow(thrower,round.Lata.transform.position+new Vector3(0,1.2f,-2),Vector3.forward*12);
+            float until=Time.time+2;while(round.Lata.IsUpright&&Time.time<until)yield return null;
+            if(round.Lata.HostKnockdownSerial!=serial+1)throw new InvalidOperationException("Physical replay contact missing");
             yield return new WaitForSeconds(1.6f);
             var archive=FindAnyObjectByType<MatchReplayArchive>();
             if(archive==null||archive.Clips.Count==0)throw new InvalidOperationException("Replay not retained: "+archive?.LastSkip);
@@ -110,21 +101,6 @@ namespace TumbangPreso.Diagnostics
             if(Net.MatchRpc.Instance.ReplayReadyCount(retained.Clip.Id)<required)throw new InvalidOperationException("Both participants did not verify the clip");
             while(match.RoundNumber<4){round.EndRound();match.AdvanceRound();Net.MatchRpc.Instance.BroadcastWorldSnapshot();yield return new WaitForSecondsRealtime(.35f);}
             round.EndRound();match.BeginIntermission();Net.MatchRpc.Instance.BroadcastWorldSnapshot();
-        }
-
-        // An explicit catch fixture complements the existing physical knockdown
-        // fixture. Both use real gameplay contact and the normal replay archive.
-        private static void PlaceCatchParticipants(RoundDirector round)
-        {
-            var defender=round.PlayerAt(0);var victim=round.PlayerAt(1);
-            var a=new Vector3(0,0,-4);var b=new Vector3(0,0,-3);
-            a.y=Slipper.GroundY(a)+.1f;b.y=Slipper.GroundY(b)+.1f;
-            defender.Teleport(a);victim.Teleport(b);defender.transform.forward=Vector3.forward;
-        }
-        private static bool ResolveCatchContact(RoundDirector round)
-        {
-            var defender=round.PlayerAt(0);
-            return defender.GetComponent<CombatVerbs>().HostResolvePunch(defender.transform.position,defender.transform.forward);
         }
     }
 }

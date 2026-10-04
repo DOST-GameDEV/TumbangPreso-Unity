@@ -86,6 +86,23 @@ Nothing was deleted or renumbered.
 
 [Evidence](reports/cryo-owner-update-2026-10-04/README.md).
 
+### SERVER-QUERY-NOTIFY-1004: map and visibility updates reach observers
+
+- [x] Include Map/Visibility in room-change signature. Actual native repaired
+  baseline2causes/2controls -> same candidate4/4. Preserve first fixture setup
+  counter error separately; source/fixture/meta stable and202 generated UI
+  importers restored exactly. No extra service requests.
+  [Evidence](reports/reliability-2026-10-04/server-query-notifications/README.md).
+- [ ] Live/rendered room browser acceptance.
+
+### HERO-KANTO146-1004: default Hero eight-round matched pair
+
+- [x] Actual normal two-machine HeroStrike/Kanto/default8*90 without tournament
+  override. Natural end, full matching saved History/Queue/Witness, both proper
+  final reports/normal exit/restoration/all258hashes. Root10clientraw inspected.
+  [Evidence](reports/reliability-2026-10-04/hero-kanto146/README.md).
+- [ ] Latest presentation, remaining maps/Relay/recovery/devices/slow peer replay.
+
 
 ### CLASSIC-KANTO146-1004: coherent tournament pair and saved results
 

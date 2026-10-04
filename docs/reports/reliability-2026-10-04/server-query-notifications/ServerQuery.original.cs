@@ -678,7 +678,6 @@ namespace TumbangPreso.Net
                 {
                     sb.Append($"{e.Id}:{e.Name}:{e.JoinCode}:{e.Seated}/{e.Occupied}/{e.Capacity}:{e.InProgress};");
                     sb.Append($"{e.RelayCode}:{e.PoolKey}:{e.SkillContract}:{e.HostPlayerId}:{e.BandLow}/{e.BandHigh}/{e.SeatLow}/{e.SeatHigh}:{e.Backfill};");
-                    sb.Append($"{e.Map}:{e.Visibility};");
                 }
             }
 
