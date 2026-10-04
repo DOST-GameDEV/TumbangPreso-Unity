@@ -501,10 +501,7 @@ namespace TumbangPreso.PlayTests
                 StringAssert.Contains("to continue",prompt.text);
 
                 var air=canvas.GetComponentInChildren<OwnerMenuAir>();
-                Assert.IsNotNull(air,"Her clouds and her cast shadow are the menu's only motion in the air");
-                var material=air.GetComponent<RawImage>().material;
-                foreach(string texture in new[]{"_SkyMask","_Cloud","_Shadow"})
-                    Assert.IsNotNull(material.GetTexture(texture),texture+" failed to load");
+                Assert.IsNull(air,"The supplied title art must not use the retired weather composite.");
 
                 TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion=true;
                 foreach(var size in TumpUiCapture.PcViewports)
@@ -516,13 +513,11 @@ namespace TumbangPreso.PlayTests
                 var dust=canvas.GetComponentInChildren<OwnerRoadDust>();
                 var leaves=canvas.GetComponentInChildren<OwnerMenuLeaves>();
                 yield return TumpUiCapture.Capture("OwnerMenu-v8-weather",canvas,1920,1080,false);
-                Assert.Greater(dust.canvasRenderer.GetMesh().vertexCount,0);
-                Assert.Greater(leaves.canvasRenderer.GetMesh().vertexCount,0,"Leaves fall off her tree");
+                Assert.IsNull(dust);Assert.IsNull(leaves);
 
                 TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion=true;
                 yield return null;yield return null;Canvas.ForceUpdateCanvases();
-                Assert.AreEqual(0,dust.canvasRenderer.GetMesh().vertexCount,"Reduced motion must remove drifting dust");
-                Assert.AreEqual(0,leaves.canvasRenderer.GetMesh().vertexCount,"Reduced motion must ground the leaves");
+                Assert.AreEqual(1f,prompt.color.a,.001f,"Reduced motion keeps the continue hint steady.");
 
                 buttons[0].onClick.Invoke();
                 yield return new WaitForSecondsRealtime(.5f);
@@ -558,11 +553,10 @@ namespace TumbangPreso.PlayTests
                 leaves=canvas.GetComponentInChildren<OwnerMenuLeaves>();
                 dust=canvas.GetComponentInChildren<OwnerRoadDust>();
                 prompt=canvas.GetComponentsInChildren<Text>().Single(t=>t.name=="ContinuePrompt");
-                Assert.IsNotNull(air);Assert.IsNotNull(leaves);Assert.IsNotNull(dust);
+                Assert.IsNull(air);Assert.IsNull(leaves);Assert.IsNull(dust);
                 originalTexture=plate.texture;originalMaterial=plate.material;
-                airEnabled=air.enabled;leavesEnabled=leaves.enabled;
-                dustEnabled=dust.enabled;promptEnabled=prompt.enabled;
-                Assert.AreEqual("TumbangPreso/UI/OwnerMenuAir",originalMaterial.shader.name);
+                promptEnabled=prompt.enabled;
+                Assert.AreEqual(Graphic.defaultGraphicMaterial,originalMaterial);
 
                 var imported=OwnerMenuArt.Texture("main2-background");
                 Assert.AreSame(imported,originalTexture);
@@ -587,8 +581,8 @@ namespace TumbangPreso.PlayTests
                         $"logo=({logo.x*factor},{logo.y*factor},{logo.width*factor},{logo.height*factor}), " +
                         $"can=({can.x*factor},{can.y*factor},{can.width*factor},{can.height*factor})");
                     TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion=true;
-                    air.enabled=true;yield return null;yield return null;
-                    air.enabled=false;leaves.enabled=false;dust.enabled=false;prompt.enabled=false;
+                    yield return null;yield return null;
+                    prompt.enabled=false;
                     void Inspect(string arm)
                     {
                         var uv=plate.uvRect;
@@ -612,7 +606,7 @@ namespace TumbangPreso.PlayTests
                         canvas,size.x,size.y,false,inspectViewport:()=>Inspect("current-material"));
 
                     TumbangPreso.Settings.SettingsStore.Current.ReducedUiMotion=false;
-                    air.enabled=true;leaves.enabled=true;dust.enabled=true;prompt.enabled=true;
+                    prompt.enabled=true;
                     yield return null;
                     yield return TumpUiCapture.Capture($"QA01-live-overlay-{size.x}x{size.y}",
                         canvas,size.x,size.y,false,inspectViewport:()=>Inspect("live-overlay"));
@@ -635,31 +629,10 @@ namespace TumbangPreso.PlayTests
                 }
                 CheckWindow();
                 float deadline=Time.realtimeSinceStartup+10f;
-                Mesh firstMesh=leaves.canvasRenderer.GetMesh();
-                while((firstMesh==null || firstMesh.vertexCount==0) && Time.realtimeSinceStartup<deadline)
-                {yield return null;Canvas.ForceUpdateCanvases();CheckWindow();firstMesh=leaves.canvasRenderer.GetMesh();}
-                Assert.IsNotNull(firstMesh,"Live title leaves had no mesh.");
-                Assert.Greater(firstMesh.vertexCount,0,"Live title leaves had no visible vertices.");
-                var first=firstMesh.vertices;
-                float sampledAt=Time.realtimeSinceStartup;
-                deadline=sampledAt+10f;
-                bool moved=false;
-                int secondCount=first.Length;
-                while(!moved && Time.realtimeSinceStartup<deadline)
-                {
-                    yield return new WaitForSecondsRealtime(.15f);
-                    Canvas.ForceUpdateCanvases();CheckWindow();
-                    var secondMesh=leaves.canvasRenderer.GetMesh();
-                    var second=secondMesh!=null?secondMesh.vertices:System.Array.Empty<Vector3>();
-                    secondCount=second.Length;
-                    moved=first.Length!=second.Length;
-                    for(int i=0;i<Mathf.Min(first.Length,second.Length) && !moved;i++)
-                        moved=(first[i]-second[i]).sqrMagnitude>.0025f;
-                }
-                Assert.IsTrue(moved,"The live title leaves did not move during the bounded actual-window sample.");
-                Debug.Log($"[QA01Title] actual-window leaves moved at {windowWidth}x{windowHeight}, " +
-                    $"canvas={canvasSize}, scale={canvasScale:0.###}, " +
-                    $"vertices={first.Length}->{secondCount}, interval={Time.realtimeSinceStartup-sampledAt:0.###}s");
+                Assert.IsNull(leaves);Assert.IsNull(dust);Assert.IsNull(air);
+                CheckWindow();
+                Assert.AreEqual(Graphic.defaultGraphicMaterial,plate.material);
+
             }
             finally
             {

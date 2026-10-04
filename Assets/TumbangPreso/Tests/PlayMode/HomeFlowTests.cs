@@ -30,7 +30,7 @@ namespace TumbangPreso.PlayTests
         /// `TumpNativeFrontEndTests` walks to settings and credits through the lobby.
         /// </summary>
         [UnityTest]
-        public IEnumerator TitleIsOnePressAndKeepsHerStreetMoving()
+        public IEnumerator TitleKeepsSuppliedPaintingSharpAndOneContinueTarget()
         {
             yield return SceneManager.LoadSceneAsync(SceneFlow.MainMenu);
             yield return new WaitForSecondsRealtime(0.5f);
@@ -45,14 +45,17 @@ namespace TumbangPreso.PlayTests
             Assert.AreEqual(OwnerUiTheme.Current.Display, prompt.font,
                 "Her caption is Darumadrop; Paalalabas is the caption face on the login.");
 
-            var air = canvas.GetComponentInChildren<OwnerMenuAir>();
-            Assert.IsNotNull(air, "The sky and the cast shadow are the title's only motion in the air.");
-            Assert.IsNotNull(canvas.GetComponentInChildren<OwnerMenuLeaves>());
-            Assert.IsNotNull(canvas.GetComponentInChildren<OwnerRoadDust>());
+            var picture=canvas.GetComponentsInChildren<RawImage>().Single(i=>i.name=="OwnerMainMenuBackground");
+            Assert.AreEqual(OwnerMenuArt.Texture("main2-background"),picture.texture);
+            Assert.AreEqual(1920,picture.texture.width);Assert.AreEqual(1080,picture.texture.height);
+            Assert.AreEqual(Graphic.defaultGraphicMaterial,picture.material);
+            Assert.IsNull(canvas.GetComponentInChildren<OwnerMenuAir>());
+            Assert.IsNull(canvas.GetComponentInChildren<OwnerMenuLeaves>());
+            Assert.IsNull(canvas.GetComponentInChildren<OwnerRoadDust>());
 
-            yield return UiRuntimeShots.Capture("Home-street-v1",1920,1080);
-            yield return UiRuntimeShots.Capture("Home-street-v1-720p",1280,720);
-            yield return UiRuntimeShots.Capture("Home-street-v1-shortwide",1920,820);
+            yield return TumpUiCapture.Capture("Title-clean-1080p",canvas,1920,1080,false);
+            yield return TumpUiCapture.Capture("Title-clean-720p",canvas,1280,720,false);
+            yield return TumpUiCapture.Capture("Title-clean-shortwide",canvas,1920,820,false);
         }
 
         /// <summary>

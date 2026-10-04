@@ -25,7 +25,7 @@ namespace TumbangPreso.UI
             paper.rectTransform.anchorMin = paper.rectTransform.anchorMax = new Vector2(0, .5f);
             paper.rectTransform.pivot = new Vector2(0, .5f);
             paper.rectTransform.anchoredPosition = new Vector2(24, 0); paper.rectTransform.sizeDelta = new Vector2(898, 1044);
-            var logo = TumpUiFactory.Art(paper.transform, "OriginalLogo", TumpUiFactory.Sprite("UI/brand/tump_logo"));
+            var logo = TumpUiFactory.Art(paper.transform, "OriginalLogo", OwnerMenuArt.Piece("login3-logo"));
             TumpUiFactory.Place(logo.rectTransform, 180, 34, 480, 250);
             var pieces = new List<GameObject>();
             _signInTab = TumpUiFactory.Button(paper.transform, "SignInTab", "Sign in", () => SetMode(false), TumpSurface.Form.Pebble, f.Apricot, 34);

@@ -94,12 +94,12 @@ namespace TumbangPreso.PlayTests
             Object.FindFirstObjectByType<TumpHomeView>()?.Resume();
             yield return new WaitForSecondsRealtime(.3f);
             Canvas.ForceUpdateCanvases();
-            var dust = Object.FindFirstObjectByType<OwnerRoadDust>();
-            var leaves = Object.FindFirstObjectByType<OwnerMenuLeaves>();
-            Assert.AreEqual(0, dust.canvasRenderer.GetMesh().vertexCount,
-                "Reduced UI motion must stop the title street drifting.");
-            Assert.AreEqual(0, leaves.canvasRenderer.GetMesh().vertexCount,
-                "Reduced UI motion must ground the falling leaves.");
+            var prompt=Object.FindFirstObjectByType<OwnerMenuPrompt>();
+            Assert.IsNotNull(prompt);
+            Assert.AreEqual(1f,prompt.GetComponent<Text>().color.a,.001f,
+                "Reduced UI motion keeps the title hint steady.");
+            Assert.IsNull(Object.FindFirstObjectByType<OwnerRoadDust>());
+            Assert.IsNull(Object.FindFirstObjectByType<OwnerMenuLeaves>());
             var roundtrip = JsonUtility.FromJson<Settings.GameSettings>(JsonUtility.ToJson(Settings.SettingsStore.Current));
             Assert.IsTrue(roundtrip.ReducedUiMotion);
         }

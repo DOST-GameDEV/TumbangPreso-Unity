@@ -21,7 +21,9 @@ namespace TumbangPreso.PlayTests
             var sprite=TumpUiFactory.Sprite("UI/brand/tump_logo");
             Assert.IsNotNull(sprite);
             Assert.AreSame(sprite,OwnerUiTheme.Current.Art(OwnerUiTheme.Piece.Logo));
-            Assert.AreSame(sprite,OwnerMenuArt.Piece("login3-logo"));
+            var loginLogo=OwnerMenuArt.Piece("login3-logo");Assert.IsNotNull(loginLogo);
+            Assert.AreNotSame(sprite,loginLogo,"Login uses the owner's plain logo without the added cream keyline.");
+            AssertTransparentCorners(loginLogo.texture,"login3-logo");
             // Tight transparent viewBox of the owner's full-resolution traced logo.
             Assert.AreEqual(818f/539f,sprite.rect.width/sprite.rect.height,.003f);
             Assert.AreEqual(sprite.texture.width,sprite.rect.width,"The original export must remain fully visible.");
