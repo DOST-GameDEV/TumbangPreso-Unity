@@ -65,6 +65,7 @@ namespace TumbangPreso.UI
         }
         private void Show(Tab tab)
         {
+            _refreshAfterEditing = false;
             string identity=GameServices.Account?.PlayerId??"local";
             if(_ownerDraftId!=identity)
             {

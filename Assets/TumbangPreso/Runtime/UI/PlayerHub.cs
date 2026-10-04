@@ -945,12 +945,44 @@ namespace TumbangPreso.UI
 
         private void OnDataChanged()
         {
-            if (_ownerDraftId != (GameServices.Account?.PlayerId ?? "local"))
+            bool ownerChanged = _ownerDraftId != (GameServices.Account?.PlayerId ?? "local");
+            if (ownerChanged)
             {
                 _notice = "";
                 if (GameServices.Account?.IsGuest == true) ++_deleteViewRequest;
             }
-            if (_root != null && _root.activeSelf) Show(_tab);
+            if (_root != null && _root.activeSelf)
+            {
+                if (!ownerChanged && (EditingField() || UiActionHeld()))
+                {
+                    _refreshAfterEditing = true;
+                    RefreshHeader();
+                    return;
+                }
+                Show(_tab);
+            }
+        }
+
+        private bool _refreshAfterEditing;
+        private bool EditingField()
+        {
+            var selected = UnityEngine.EventSystems.EventSystem.current?.currentSelectedGameObject;
+            return selected != null && _list != null && selected.transform.IsChildOf(_list)
+                && selected.GetComponent<UnityEngine.UI.InputField>()?.isFocused == true;
+        }
+        private static bool UiActionHeld()
+        {
+            var module = UnityEngine.EventSystems.EventSystem.current?.currentInputModule
+                as UnityEngine.InputSystem.UI.InputSystemUIInputModule;
+            return module != null && (module.leftClick?.action?.IsPressed() == true
+                || module.submit?.action?.IsPressed() == true);
+        }
+        private void LateUpdate()
+        {
+            if (!_refreshAfterEditing) return;
+            if (_root == null || !_root.activeSelf) { _refreshAfterEditing = false; return; }
+            // After EventSystem.Update has delivered pointer-up/submit, never mid-click.
+            if (!EditingField() && !UiActionHeld()) Show(_tab);
         }
 
         /// <summary>
