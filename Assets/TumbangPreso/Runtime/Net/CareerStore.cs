@@ -588,19 +588,21 @@ namespace TumbangPreso.Net
             if (_flushing || _cache.Queue.Count == 0) return;
             if (!(GameServices.Account?.IsSignedIn ?? false)) return;
 
+            var flushingCache = _cache;
             _flushing = true;
             try
             {
                 int abandoned = DropUnsubmittable();
 
-                while (_cache.Queue.Count > 0)
+                while (flushingCache.Queue.Count > 0)
                 {
-                    var submittedCache = _cache;
-                    var record = submittedCache.Queue[0];
+                    if (this == null || !ReferenceEquals(_cache, flushingCache)) return;
+                    var submittedCache = flushingCache;
+                    var record = flushingCache.Queue[0];
                     string json = JsonUtility.ToJson(record);
 
                     PadWitnesses();
-                    string witness = _cache.QueueWitness[0] ?? "";
+                    string witness = flushingCache.QueueWitness[0] ?? "";
 
                     string output = await CloudCode.CallAsync(
                         ScriptName, new { action = "submit", record = json, witness = witness });
@@ -608,14 +610,16 @@ namespace TumbangPreso.Net
                     if (!CompleteSubmission(submittedCache, record, output)) return;
                 }
 
+                if (this == null || !ReferenceEquals(_cache, flushingCache)) return;
                 Status = abandoned > 0
                     ? $"Career saved; {abandoned} match(es) could not be uploaded"
                     : "Career saved";
             }
             catch (Exception e)
             {
-                Status = $"{_cache.Queue.Count} match(es) waiting to upload";
-                Debug.LogWarning($"[Career] submission deferred; {_cache.Queue.Count} queued: {e.Message}");
+                if (this == null || !ReferenceEquals(_cache, flushingCache)) return;
+                Status = $"{flushingCache.Queue.Count} match(es) waiting to upload";
+                Debug.LogWarning($"[Career] submission deferred; {flushingCache.Queue.Count} queued: {e.Message}");
             }
             finally
             {
