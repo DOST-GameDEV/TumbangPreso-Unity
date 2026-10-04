@@ -458,10 +458,18 @@ namespace TumbangPreso.Visual
                 return;
             }
 
-            if (!PalmCentre(skinned, bone, out Vector3 palm)) return;
+            // Paete's thin branch palm is not the original human hand box for
+            // which HandTopLift was authored. Use its actual distal surface;
+            // keep the approved carry placement of all other models unchanged.
+            var paete = RosterBook.Load()?.FindPersonArt("paete");
+            bool branchPalm = SourceModel != null && paete != null && SourceModel == paete.Model;
+            if (!PalmCentre(skinned, bone, out Vector3 palm, branchPalm)) return;
 
             // The shoe rests ON the hand. See HandTopLift.
-            palm.y += HandTopLift;
+            if (!branchPalm) palm.y += HandTopLift;
+            // One centimetre of world-space clearance over the irregular twig
+            // surface avoids small intersections as the branch hand rotates.
+            else palm.y += .01f / Mathf.Max(.001f, skinned.bones[bone].TransformVector(Vector3.up).magnitude);
 
             var anchorGo = new GameObject("HandAnchor");
             anchorGo.transform.SetParent(skinned.bones[bone], false);
@@ -485,7 +493,7 @@ namespace TumbangPreso.Visual
         /// wrong values the Godot side recorded all came from measuring in a frame nobody else
         /// was measuring in. It is a read with no side effects, so exposing it costs nothing.
         /// </summary>
-        public static bool PalmCentre(SkinnedMeshRenderer skinned, int bone, out Vector3 palm)
+        public static bool PalmCentre(SkinnedMeshRenderer skinned, int bone, out Vector3 palm, bool onSurface = false)
         {
             palm = Vector3.zero;
 
@@ -561,6 +569,12 @@ namespace TumbangPreso.Visual
 
             foreach (var v in blob) palm += v;
             palm /= blob.Count;
+            if (onSurface)
+            {
+                float top = float.NegativeInfinity;
+                foreach (var v in blob) top = Mathf.Max(top, v.y);
+                palm.y = top;
+            }
 
             return true;
         }
