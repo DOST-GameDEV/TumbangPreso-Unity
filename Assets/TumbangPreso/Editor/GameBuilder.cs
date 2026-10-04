@@ -1155,6 +1155,7 @@ namespace TumbangPreso.EditorTools
 
             StampBuildBranch();
             StampBuildIdentity(target, outputPath);
+            TrimUnusedBuildScanAssets();
 
             // Ship at the monitor's native resolution in borderless fullscreen. Starting the
             // player in a fixed 1600x900 window made a normal build look like a test harness;
@@ -1197,6 +1198,22 @@ namespace TumbangPreso.EditorTools
                         Debug.LogError($"[Build]   {step.name}: {msg.content}");
 
             return false;
+        }
+
+        private static void TrimUnusedBuildScanAssets()
+        {
+            if (!Application.isBatchMode || !Environment.GetCommandLineArgs().Any(arg =>
+                string.Equals(arg, "-tp-build-trim-unused-assets", StringComparison.OrdinalIgnoreCase))) return;
+
+            // The saved shader collection retains every variant. Release only unused
+            // scan assets before the build; preserve script/static roots and full quality.
+            long allocatedBefore = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong();
+            long reservedBefore = UnityEngine.Profiling.Profiler.GetTotalReservedMemoryLong();
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            GC.Collect();
+            EditorUtility.UnloadUnusedAssetsImmediate(includeMonoReferencesAsRoots: true);
+            GC.Collect();
+            Debug.Log(FormattableString.Invariant($"[BuildMemory] unused-scan boundary allocated_before={allocatedBefore} allocated_after={UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong()} reserved_before={reservedBefore} reserved_after={UnityEngine.Profiling.Profiler.GetTotalReservedMemoryLong()} elapsed_ms={watch.Elapsed.TotalMilliseconds:F3}; Unity bytes, not process-tree working set"));
         }
     }
 }
