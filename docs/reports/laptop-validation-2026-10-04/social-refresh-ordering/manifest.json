@@ -1,0 +1,31 @@
+{
+  "rawFiles": {
+    "raw/original/qualified-source.json": "16235b9358caa6a820e71648e3aa171f18d323771608c6fc27988a210ea7ec2a",
+    "raw/original/direct-result.json": "4f9ccbe6ef84a761fb4554dd880ff50c52741e09b0b7fce9d21576237e344b55",
+    "raw/original/tests.xml": "76d67f3898adbfa078f5561cf438dc1f3a90e9b30c4b15337a5e355838139705",
+    "raw/original/launch.json": "51f573761184239a9b26af1ddac0f753e3a259ffeee9d17c58c1ffd8af332de2",
+    "raw/original/prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+    "raw/original/post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+    "raw/original/SocialStore.cs": "d1fd1d68ac28ed054b57a3ebdc62a6d9749b8b8f0e3602f9d4f3817e5b2b1e1b",
+    "raw/candidate/qualified-source.json": "468c1e2cc87c6265ef91a0e4d1ee38c4e1dcf223780ee8032109a8c3d901fa4f",
+    "raw/candidate/direct-result.json": "5b5b7ecdbd6aba5bccf129eed16056662631c4f5be91b6027cefc48809039e0c",
+    "raw/candidate/tests.xml": "59ca671af02043eedec1a9dbc7729e407381ae4b1fea8c6b394167193ec5e05b",
+    "raw/candidate/launch.json": "024ccc9f1033ecfb8ebabc1ff75373e8e1912219f1f2c6abc8bdbe00d29b2ffb",
+    "raw/candidate/prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+    "raw/candidate/post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+    "raw/candidate/SocialStore.cs": "caa59805d06664fe35032c5ae22d4d052288ad7327d31be324a0ed4dd50dfc76",
+    "raw/SocialRefreshOrderingTests.cs": "273f9dc436d761fc9942a35388de32d19d5aa5f330ccdf4abfd0402d34e11b91",
+    "raw/SocialRefreshOrderingTests.cs.meta": "752fe19b2b47067fdcb1c0d80b859a0866edb418b379a0419e0bc793ae6a5faf",
+    "raw/ProjectAuditor-before.asset": "45b12b6b55a6af51617594ca259af79aa6b39dc53249a720540b53c8a7e6fad0",
+    "raw/ProjectAuditor-generated-after.asset": "22c699d7b424bd59053e552e6c358d9cca02d0663c276ec46ea0d0bd96651d85",
+    "raw/neutral-original-proof.json": "4d917525e689c2e05a3ae5d7751cf24e796a1f19fd8f3bbfe61b05c09f9ff7d4",
+    "raw/packet.json": "b7cf7304ae5323d15f639eb16f5592644f3d2248f990fe8735e6aa64e98fcab2"
+  },
+  "base": "b263ff1dde14b2eef5a8bc047e9fdf48454317a0",
+  "productionDeltaPaths": [
+    "Assets/TumbangPreso/Runtime/Net/SocialStore.cs"
+  ],
+  "originalPassed": 2,
+  "originalFailed": 4,
+  "candidatePassed": 6
+}

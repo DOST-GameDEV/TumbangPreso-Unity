@@ -139,7 +139,6 @@ namespace TumbangPreso.Net
         private Cache _primaryCache;
         private bool _flushing;
         private bool _refreshing;
-        private long _profileRevision;
         private Cache _accountSyncOwner;
 
         /// <summary>Raised whenever the profile or the history changed, from any cause.</summary>
@@ -723,10 +722,8 @@ namespace TumbangPreso.Net
                 await ReportAbandonIfAnyAsync();
                 if (this == null || !ReferenceEquals(_cache, requestedCache)) return;
 
-                long profileRevision = _profileRevision;
                 string output = await dispatch(ScriptName, new { action = "load" });
-                // A newer acknowledgement already supplied this owner's profile.
-                if (profileRevision == _profileRevision) CompleteRefresh(requestedCache, output);
+                CompleteRefresh(requestedCache, output);
             }
             catch (Exception e)
             {
@@ -818,7 +815,6 @@ namespace TumbangPreso.Net
             // server's arithmetic yet, so the profile shown will be a match or two behind until
             // `FlushAsync` succeeds. That is honest, and `Status` says so.
             _cache.Profile = ProfileRules.Normalise(remote);
-            _profileRevision++;
             Save();
             Changed?.Invoke();
         }

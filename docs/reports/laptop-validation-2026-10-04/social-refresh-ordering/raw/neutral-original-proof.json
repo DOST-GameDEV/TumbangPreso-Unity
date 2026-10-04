@@ -1,0 +1,7 @@
+{
+  "base": "b263ff1dde14b2eef5a8bc047e9fdf48454317a0",
+  "neutralControlledOriginal": true,
+  "normalizedBaseSha256": "c507306543c04ca085cc9e5e1725e9cdc182dbeda3569c38ae8ead5e8f774458",
+  "normalizedRestoredSha256": "c507306543c04ca085cc9e5e1725e9cdc182dbeda3569c38ae8ead5e8f774458",
+  "scope": "Reverse ONLY two private dispatch extractions and call targets; all original behavior bytes otherwise equal"
+}
