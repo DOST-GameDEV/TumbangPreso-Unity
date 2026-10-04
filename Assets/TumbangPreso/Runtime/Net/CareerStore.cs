@@ -583,7 +583,9 @@ namespace TumbangPreso.Net
             return true;
         }
 
-        public async Task FlushAsync()
+        public Task FlushAsync() => FlushWithDispatchAsync(CloudCode.CallAsync);
+
+        private async Task FlushWithDispatchAsync(Func<string, object, Task<string>> dispatch)
         {
             if (_flushing || _cache.Queue.Count == 0) return;
             if (!(GameServices.Account?.IsSignedIn ?? false)) return;
@@ -602,7 +604,7 @@ namespace TumbangPreso.Net
                     PadWitnesses();
                     string witness = _cache.QueueWitness[0] ?? "";
 
-                    string output = await CloudCode.CallAsync(
+                    string output = await dispatch(
                         ScriptName, new { action = "submit", record = json, witness = witness });
 
                     if (!CompleteSubmission(submittedCache, record, output)) return;
