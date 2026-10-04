@@ -1774,7 +1774,8 @@ namespace TumbangPreso.CameraSystem
             renderer.sharedMaterial = source;
             renderer.SetPropertyBlock(null);
             // The close camera needs the same cloth and hand geometry with a finer
-            // contour than a two-metre body. Imported meshes are shared, never destroyed.
+            // contour than a two-metre body. The mesh cache owns these shared working copies;
+            // individual arm renderers never destroy them.
             Visual.ToonSkin.Apply(renderer, Visual.ToonSkin.PersonOutlineWidth * .45f, palette);
         }
 

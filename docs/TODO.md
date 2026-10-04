@@ -17,6 +17,28 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### DIRECT-RELEASE-LAN145-1004: actual build and paired completion
+
+- [x] Direct full-quality release build succeeded after execution cutoffs were
+  removed, not after lowering quality. Actual145 package258 files/2553558902bytes
+  verified on both machines, source8f7/logicalad0026. Startup/menu route passed.
+  [Build evidence](reports/laptop-validation-2026-10-04/direct-release145/README.md).
+- [x] Actual two-machine normal lobby/readiness/natural Hero1/30 completion and
+  matching saved match/scores observed. PC terminal/source/profile/artifact gates
+  pass; client subsequently returns offline after completed host exit.
+  [Pair evidence](reports/reliability-2026-10-04/lan145-direct-pair/README.md).
+- [ ] Full client raw terminal comparison, remaining modes/maps/Relay/recovery/
+  slow transfer/physical/performance and newer-source package acceptance.
+
+### VIEWMODEL-MESH-OWNERSHIP-1004: rendering leaves source assets untouched
+
+- [x] Cache one owned working mesh per path so outline preparation cannot modify
+  serialized source meshes. Preserve geometry and async/direct reuse; free
+  copies on reset and Editor exit. Original3failures/1control -> native4/4;
+  every candidate source asset remains byte-identical after the run.
+  [Evidence](reports/viewmodel-mesh-ownership-2026-10-04/README.md).
+- [ ] Full loading-scene and packaged acceptance; no measured performance claim.
+
 ### VIEWMODEL-ROSTER-FALLBACK-1004: nullable catalog does not block owner arms
 
 - [x] Preserve mode/index identity when roster lookup has no book, list or art
@@ -41,7 +63,11 @@ Nothing was deleted or renumbered.
   deduplicate the delivered incoming request on retry. Block privacy unchanged.
   Actual script local original1failure/10controls ->11/11.
   [Evidence](reports/reliability-2026-10-04/friend-request-delivery/README.md).
-- [ ] Verified deployment and owner-authorized two-account live acceptance.
+- [x] Production socialv3 matches canonical delivery/capacity source; actual
+  authenticated two-account lookup/request/accept/both reload passed.11 script
+  calls include cleanup, isolated accounts deleted. [Live evidence](reports/reliability-2026-10-04/friend-request-delivery/live-acceptance.md).
+- [ ] Empty test social records admin cleanup, rendered game UI/invite/join and
+  complete cross-account SDK/operator acceptance.
 
 ### HUB-EDIT-REFRESH-1004: background data does not interrupt typing
 

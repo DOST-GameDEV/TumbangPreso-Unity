@@ -1,0 +1,23 @@
+{
+  "rawFiles": {
+    "raw/build/launch.json": "10ba432c60657116c3a5401868100f1b1edc90be6b6d38d45d2f6627680ef6f6",
+    "raw/build/result.json": "855b81565b2c09f890a00770eb8368671be0a0cc731024597581d08fab546a8f",
+    "raw/build/qualified-source.json": "f5f4ff1d4717e16845e9d19b8fec5053abe0d777b75eac34b730f021958e8497",
+    "raw/build/post-input-audit.json": "6b6ad7acd5e56189706f7203065a2b71e585662c2a9ce302f6ea8c2e53cd78e7",
+    "raw/build/artifact-manifest.json": "cef828729584c4a1f0e6f6f33bf7ae0a8255bdc018ba8bdb1be6deaffdc3b176",
+    "raw/build/prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+    "raw/build/post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+    "raw/menu/launch.json": "0f3b47cc25afadb5ff156e82ff1512eed3d40ae43f23bde7094151ac7f34b2d9",
+    "raw/menu/result.json": "8e02c8f22e955aa26d6c0d71a152391895ffcc4df636a4dd41d4f3d0ffe36749",
+    "raw/menu/direct-runner-result.json": "36544c082fca3522d2cb69f9fbe73845e099e15879d711adb7d62408962326db",
+    "raw/menu/normal-title-motion.csv": "09ade4d03925be0615d8ad442c1d0ecf4229e03210ffb63a5a99c8eafc0f36aa",
+    "raw/menu/reduced-title-motion.csv": "ed86a59c132a1fc1b4f438114c5cdec7e0fe0d7105b9afc854a4140a14df2056",
+    "raw/menu/viewports.csv": "6734230522dcdd40479bd2675a418aebe32e8452745b9826089227666ff203ba",
+    "raw/menu/Login-1366x768.png": "c1e9b70bb0a911ea2f2e02310cd7f3deef33847eefac9d35d2fb8156b8335730",
+    "raw/menu/Hub-home.png": "ef5017e3728848062134874cb7f794f7525e6874ab42fd10a7192f3ff379883a",
+    "raw/build/build-completion.txt": "8498f0f42db65ad4838fc70be321a4710fe04a8dc41420a1093ec745f291a3b2"
+  },
+  "artifactManifestSha256": "cef828729584c4a1f0e6f6f33bf7ae0a8255bdc018ba8bdb1be6deaffdc3b176",
+  "protocol": 145,
+  "sourceCommit": "8f7f304b543d93db71ed09f9fbaa4107fc365895"
+}
