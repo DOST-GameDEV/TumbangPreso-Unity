@@ -1,0 +1,5 @@
+PASS human seat weights
+PASS solo bot match changes neither rating nor confidence nor season credit
+PASS two human match scales gains and confidence together
+PASS two human loss is reduced and a full human match is unchanged
+{"passed":4,"failed":0,"scope":"actual server rating functions; no live account data"}

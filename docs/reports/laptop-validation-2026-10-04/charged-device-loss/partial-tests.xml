@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 23:14:51Z" end-time="2026-10-03 23:14:51Z" duration="0.3659067">
+  <test-suite type="TestSuite" id="2964" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1597" result="Failed" site="Child" start-time="2026-10-03 23:14:51Z" end-time="2026-10-03 23:14:51Z" duration="0.365907" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2958" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1597" result="Failed" site="Child" start-time="2026-10-03 23:14:51Z" end-time="2026-10-03 23:14:51Z" duration="0.351153" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="6408" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2959" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1597" result="Failed" site="Child" start-time="2026-10-03 23:14:51Z" end-time="2026-10-03 23:14:51Z" duration="0.341633" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2960" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1597" result="Failed" site="Child" start-time="2026-10-03 23:14:51Z" end-time="2026-10-03 23:14:51Z" duration="0.332002" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2337" name="ReaderDeviceLossLifetimeTests" fullname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests" classname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-03 23:14:51Z" end-time="2026-10-03 23:14:51Z" duration="0.310147" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2342" name="AnOrdinaryTriggerReleaseStillThrows" fullname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests.AnOrdinaryTriggerReleaseStillThrows" methodname="AnOrdinaryTriggerReleaseStillThrows" classname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests" runstate="Runnable" seed="504057417" result="Passed" start-time="2026-10-03 23:14:51Z" end-time="2026-10-03 23:14:51Z" duration="0.159659" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2340" name="AStillHeldTouchThrowSurvivesRemovalOfThePad" fullname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests.AStillHeldTouchThrowSurvivesRemovalOfThePad" methodname="AStillHeldTouchThrowSurvivesRemovalOfThePad" classname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests" runstate="Runnable" seed="1161086092" result="Passed" start-time="2026-10-03 23:14:51Z" end-time="2026-10-03 23:14:51Z" duration="0.033512" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2341" name="RemovingAnUnusedPadPreservesTheDrivingThrow" fullname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests.RemovingAnUnusedPadPreservesTheDrivingThrow" methodname="RemovingAnUnusedPadPreservesTheDrivingThrow" classname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests" runstate="Runnable" seed="130769968" result="Failed" start-time="2026-10-03 23:14:51Z" end-time="2026-10-03 23:14:51Z" duration="0.040271" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests.RemovingAnUnusedPadPreservesTheDrivingThrow () [0x00038] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\ReaderDeviceLossLifetimeTests.cs:94
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="2339" name="RemovingTheLungeDeviceCancelsWithoutSpendingRecovery" fullname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests.RemovingTheLungeDeviceCancelsWithoutSpendingRecovery" methodname="RemovingTheLungeDeviceCancelsWithoutSpendingRecovery" classname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests" runstate="Runnable" seed="848761890" result="Passed" start-time="2026-10-03 23:14:51Z" end-time="2026-10-03 23:14:51Z" duration="0.034119" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="2338" name="RemovingTheThrowDeviceCancelsWithoutLaunchingItsShoe" fullname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests.RemovingTheThrowDeviceCancelsWithoutLaunchingItsShoe" methodname="RemovingTheThrowDeviceCancelsWithoutLaunchingItsShoe" classname="TumbangPreso.PlayTests.ReaderDeviceLossLifetimeTests" runstate="Runnable" seed="1095962751" result="Passed" start-time="2026-10-03 23:14:51Z" end-time="2026-10-03 23:14:51Z" duration="0.031232" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

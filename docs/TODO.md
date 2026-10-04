@@ -17,14 +17,310 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### MATCH-RECORD-DEPLOYMENT-1004: publish checked career rules
+
+- [x] Published canonical source as production v6, exact fetched source and seven
+  parameters verified with v5 rollback retained. Exported old source reproduces
+  five mastery/history/offline failures; v6 passes9/9 plus bot-rating4/4,
+  Core travel6/6 and unchanged digest.
+  [Evidence](reports/reliability-2026-10-04/match-record-deployment/README.md).
+- [ ] Rendered SDK career submission and witnessed ranked flow acceptance.
+
+
+### ACTIVE-HOST-LOSS145-1004: current package retires an unfinished round
+
+- [x] Actual two-machine round1/readiness on identical145 package; retained
+  owned host process stopped while both log/PID states were live and no end
+  event existed. Client returns MatchSetup/round0/inactive, no career file or
+  completed result, normal exit and preferences restored. Earlier completion
+  observer110 autoquit failure is retained as diagnostic/coordination evidence.
+  [Evidence](reports/reliability-2026-10-04/host-loss145-armed/README.md).
+- [x] Client raw normally integratedc336bf991; root all18 hashes and actual final
+  inactive0/MatchSetup/145, career absent, normal exit/restoration inspected.
+- [ ] Body/input/clock recovery, retained-seat, Relay/WAN, physical and newer-
+  source acceptance. Do not overstate log scope.
+
+### POWER-RECAST-READINESS-1004: owner icon matches the real follow-up window
+
+- [x] Use active reactivation readiness instead of the original cooldown for the
+  owner power icon. Real Zack/public HUD original2failures/2controls ->4/4.
+  Preserve expiry, spent follow-up, Zapped, timing and layout.
+  [Evidence](reports/power-recast-readiness-2026-10-04/README.md).
+- [ ] Rendered whole-match, packaged and actual-peer acceptance.
+
+### DIRECT-RELEASE-LAN145-1004: actual build and paired completion
+
+- [x] Direct full-quality release build succeeded after execution cutoffs were
+  removed, not after lowering quality. Actual145 package258 files/2553558902bytes
+  verified on both machines, source8f7/logicalad0026. Startup/menu route passed.
+  [Build evidence](reports/laptop-validation-2026-10-04/direct-release145/README.md).
+- [x] Actual two-machine normal lobby/readiness/natural Hero1/30 completion and
+  matching saved match/scores observed. PC terminal/source/profile/artifact gates
+  pass; client subsequently returns offline after completed host exit.
+  [Pair evidence](reports/reliability-2026-10-04/lan145-direct-pair/README.md).
+- [ ] Full client raw terminal comparison, remaining modes/maps/Relay/recovery/
+  slow transfer/physical/performance and newer-source package acceptance.
+
+### VIEWMODEL-MESH-OWNERSHIP-1004: rendering leaves source assets untouched
+
+- [x] Cache one owned working mesh per path so outline preparation cannot modify
+  serialized source meshes. Preserve geometry and async/direct reuse; free
+  copies on reset and Editor exit. Original3failures/1control -> native4/4;
+  every candidate source asset remains byte-identical after the run.
+  [Evidence](reports/viewmodel-mesh-ownership-2026-10-04/README.md).
+- [ ] Full loading-scene and packaged acceptance; no measured performance claim.
+
+### VIEWMODEL-ROSTER-FALLBACK-1004: nullable catalog does not block owner arms
+
+- [x] Preserve mode/index identity when roster lookup has no book, list or art
+  row, including roster-arm lookup. Original four failures/one control become
+  five/five in native reduced-project checks. Valid model overrides remain.
+  [Evidence](reports/viewmodel-roster-fallback-2026-10-04/README.md).
+- [ ] Complete owner-camera composition, live map and packaged acceptance.
+  The separate owner-motion capture timed out and its frames are not accepted.
+
+### ZACK-BANK-CONTACT-1004: powered wall-contact cue
+
+- [x] Add a compact gold contact burst to each actual powered wall bank, including
+  both Overclock contacts. Preserve silent ceiling returns, ordinary spin banks,
+  scoring and restitution. Native component graphics7/7 and source-only runtime
+  bounce cases6/6 passed. [Evidence](reports/zack-bank-contact-2026-10-04/validation.md).
+- [ ] Whole-court/live owner footage, packaged visuals and actual remote-peer
+  acceptance. Component frames and reduced-project checks do not close these.
+
+### FRIEND-REQUEST-DELIVERY-1004: recipient delivery precedes pending state
+
+- [x] Failed recipient writes leave the sender retryable; failed sender writes
+  deduplicate the delivered incoming request on retry. Block privacy unchanged.
+  Actual script local original1failure/10controls ->11/11.
+  [Evidence](reports/reliability-2026-10-04/friend-request-delivery/README.md).
+- [x] Production socialv3 matches canonical delivery/capacity source; actual
+  authenticated two-account lookup/request/accept/both reload passed.11 script
+  calls include cleanup, isolated accounts deleted. [Live evidence](reports/reliability-2026-10-04/friend-request-delivery/live-acceptance.md).
+- [x] Empty test protected keys removed with existing admin authentication and
+  both post-delete lists verified empty. No live user/profile targeted.
+- [ ] Rendered game UI/invite/join and complete cross-account SDK/operator acceptance.
+
+### HUB-EDIT-REFRESH-1004: background data does not interrupt typing
+
+- [x] Native original two failures/two controls; candidate preserves actual
+  same-owner editing/caret and defers row rebuild until editing/UI actions end.
+  Original4/4 plus3 new lifetime controls pass; profile data refreshes after blur,
+  pointer-up is delivered and closing stays closed. Tab/account replacement
+  immediately retire old editing. One extra-fixture compile repair retained.
+  [Evidence](reports/reliability-2026-10-04/hub-edit-refresh/README.md).
+- [x] Exact raw proof normally integrated81e68dd82: all34 hashes, original/
+  candidate3440 maps and controls3442 inspected, tested source and restored/free
+  receipts match. No unchanged rerun.
+- [ ] Packaged/physical input and frame/first-use acceptance. Supplied
+  interactions do not qualify the full flow.
+
+### FRIENDS-CAPACITY-1004: acceptance retains both accounts' state
+
+- [x] Check both accounts' capacity before accepting or resolving a crossed
+  request. Full accounts retain pending rows and no asymmetric friend is saved.
+  Actual social endpoint with local Cloud Save: original3failures/5controls ->8/8.
+  [Evidence](reports/reliability-2026-10-04/friends-capacity/README.md).
+- [ ] Deployment and actual two-account UI/service/invite/join acceptance.
+
+### CURRENT-HOST-LOSS-RUNNER-1004: validate the agreed release
+
+- [x] Replace protocol132/old rules assumptions with explicit artifact protocol
+  and accepted full manifest, canonical eleven-field rules and fresh Hero picks.
+  Preserve build/source/Runtime identity, input/profile restoration, two live
+  receipts and no fabricated result gates. Check full artifact/manifest again
+  after owned players retire. Original current-report check fails; corrected
+  acceptance6/6 and shared artifact11/11 pass locally without player launches.
+- [ ] Actual current packaged host-loss pair. Historical132 proof remains
+  historical and local acceptance checks do not establish network behavior.
+
+### USER-FLOW-1004: login through gameplay and friends
+
+- [ ] Trace and validate login/account gates, HOME navigation, normal lobby and
+  matchmaking, character selection, gameplay, results, return and Friends.
+  Friends has tag-request/accept UI and a server path; verify both accounts'
+  request/accept state, persisted friendship and invite/join before claiming it
+  works. Fix demonstrated route/lifetime failures and retain original evidence.
+- [ ] Optimize demonstrated costs across the journey and verify preload work
+  runs at the correct boundary before consumers need it. Measure startup,
+  first-use and frame hitches; preserve art quality and contributor ownership.
+  Existing broad loading work is not permission to overwrite another contributor.
+
+### READER-BACKGROUND-FOCUS-1004: retired input stays neutral while away
+
+- [x] Keep the unfocused reader neutral while the network player continues
+  ticking. Capture held buttons on return so release precedes fresh gameplay
+  presses. Original two failures/two controls -> candidate28/28. Root verified
+  all16 raw Git hashes,3438 unchanged inputs per run with only Reader differing,
+  the tested source/fixture and terminal/restored/free receipts.
+  [Evidence](reports/laptop-validation-2026-10-04/background-focus/README.md).
+- [ ] Actual packaged focus return/physical Alt-Tab and current peer acceptance.
+  Supplied device/focus callbacks do not prove physical operator behavior.
+
+### MATCH-RECORD-NAN-1004: normalized measurements remain numeric
+
+- [x] Normalize NaN duration/distance/last-attacker duration to their existing
+  lower bounds so applying a record cannot contaminate career totals. Four
+  reproduced failures/five controls; corrected record/profile/integrity cohort
+  passed 68/68. Finite and infinity bounds unchanged, no schema/wire change.
+  [Evidence](reports/reliability-2026-10-04/match-record-nan/README.md).
+- [ ] Unity/package acceptance with this current Core source. Supplied records
+  do not identify a live measurement producer or repair old contaminated totals.
+
+### CLOUD-HISTORY-WRITE-1004: failed writes retain retryable history
+
+- [x] Save match history before the profile's applied-id marker. A failed history
+  write then remains retryable; a failed profile write deduplicates history on
+  retry. Actual exported endpoint with local one-shot storage failures:
+  original1failure/4controls -> corrected5/5, preserving duplicate/offline paths.
+  [Evidence](reports/reliability-2026-10-04/cloud-history-write/README.md).
+- [ ] Service deployment and real SDK/packaged acceptance. This does not restore
+  historical entries already missing behind persisted applied markers.
+
+### CLOUD-TRAVEL-BOUND-1004: server matches the current defender speed
+
+- [x] Mirror DefenderRunSpeed7.5 in the Cloud Code travel sanity bound. Actual
+  Core accepts the supplied1656/1700/1800 boundary records that the old server
+  refused; original3failures/3controls -> corrected6/6. Existing witness digest
+  contract unchanged. [Evidence](reports/reliability-2026-10-04/cloud-travel-bound/README.md).
+- [ ] Approved service deployment and actual SDK/packaged result acceptance.
+  Local source parity does not establish deployment or real match delivery.
+
+### CURRENT-LAN-RUNNER-1004: explicit current artifact and character selection
+
+- [x] Remove pinned134/legacy Runtime defaults, require explicit protocol and
+  Runtime hash plus accepted full artifact manifest, seed CharacterPick and
+  preserve ready/natural-end/standings/history/witness acceptance. Check all files,
+  source identity and executable/Runtime/Core before and after the owned player;
+  reject a changed manifest. Eleven local deterministic runner checks pass.
+  Actual current engine-free Core assembly rejects the original ten-field wire
+  and accepts the corrected canonical eleven-field wire with map voting disabled;
+  zero-warning Core build. Historical completed-arrival default remains available.
+- [ ] Actual matching current144 host/client player pair, completed normal lobby
+  route, saved results and necessary recovery/slow-replay acceptance. Tool checks
+  and old134 peer evidence do not satisfy this gate.
+
+### CAREER-FLUSH-OWNER-1004: keep upload work with its starting account
+
+- [x] Capture the flush cache and fence loop/final/failure writes after account
+  replacement. Same-account retry/acknowledgment and busy release remain. Real
+  delayed-dispatch original3 failures/3controls -> candidate6/6; root inspected
+  all16 exact raw Git blobs,3436 maps with only CareerStore changed and frozen
+  fixture/meta plus terminal/restored/free receipts. The neutral private dispatch
+  core preserves shipping REST behavior; no live auth/network or schema change.
+  [Evidence](reports/laptop-validation-2026-10-04/career-flush-owner/README.md).
+- [ ] Actual signed-in SDK/service and packaged history acceptance. Controlled
+  delayed tasks prove ownership, not deployed Cloud Code or real result delivery.
+
+### REPLAY-SHORTLIST-QUEUE-1004: deliver current retained footage
+
+- [x] Replace obsolete transfer entries with the authoritative archive shortlist,
+  keep begun still-retained send objects/offsets, update waiting priority and skip
+  acknowledged/prior-match clips. Archive policy, wire/protocol144 and bandwidth
+  limits unchanged. Original4 causal failures/3controls -> candidate7/7; root
+  inspected3430 maps with one production delta, exact tested code/fixture and
+  terminal/restored/free receipts. All18 raw Git blobs match their manifest after
+  one explanatory-text line-ending correction; no extra native run.
+  [Evidence](reports/laptop-validation-2026-10-04/replay-shortlist-queue/README.md).
+- [ ] Matching players under slow transfer: verify actual selected clip delivery,
+  interruption/replacement and rendered playback. Supplied queue tests do not
+  establish capture, physical peers or packaged performance.
+
+### CLIENT-MOVEMENT-FRAME-1004: reject malformed client movement effects
+
+- [x] Preflight exact unread payloads before decoding: Impact20, Carry24 and
+  familiar flight pose25 bytes. Preserve authority/seat/epoch/finite guards and
+  wire/protocol144. Laptop native original9 causal failures/9 controls ->18/18
+  on the unchanged fixture, both3428 inputs unchanged and terminal/restored/free.
+  Root verified tested runtime/fixture/meta hashes against candidate Git bytes.
+  Root inspected all six exact raw blobs, XML/maps and restored/free receipts.
+  [Evidence](reports/laptop-validation-2026-10-04/client-movement-packet-bounds/README.md).
+- [ ] Actual effect/body movement and current packaged/live-peer qualification.
+  Supplied packet tests establish framing and rejection, not complete gameplay.
+
+### CREDITS-CODE-1003: eight directions grant5000 Tansan
+
+- [x] Client and authoritative wallet source; keyboard/D-pad/mouse/touch input,
+  retry receipts and success-only Victory cue. Managed715/715, Node wallet
+  checks and native8/8 controls; [evidence](reports/credits-code-2026-10-03/README.md).
+- [ ] Publish and verify production wallet, then actual signed-in reward/audio.
+  Cloud session returned403 Not authorized. [Deployment scope](reports/credits-code-2026-10-03/deployment.md).
+
+### STATUS-TYPOGRAPHY-1003: readable description wrapping
+
+- [x] Chilled one-line body, longer two-line bodies with title separation;
+  native2/2 and actual960x540 images reviewed at HUD1.0/1.2.
+  [Evidence](reports/status-typography-2026-10-03/README.md).
+
+### ACTION-TIMINGS-1003: revised charge/contact recovery, no retrieval slide
+
+- [x] Throw charge1.5s, tag0.25hit/0.5miss, shove7.5hit/0.5miss, existing lunge
+  timings retained, retrieval slide removed from inputs/bots/host execution.
+  Scoped owner recovery receipts and protocol144. Native25/25 guard-free,
+  full managed709/709.
+  [Evidence and retained failures](reports/action-timings-2026-10-03/README.md).
+- [ ] Matching rebuilt player/live-peer timing acceptance.
+
+### OPENING-CAMERA-PREFERENCE-1004: camera motion OFF retains the saved view
+
+- [x] Opening sampler preserves saved position/rotation/FOV and suppresses ink
+  when Cinematic camera movement is OFF; ON travel/return remains. Original two
+  OFF failures/one ON control, current candidate3/3. Root inspected immutable
+  fixture/source bytes, XML, restored/free guards and explicit quality delta/
+  restoration. Not an immutable-quality or rendered-performance pass.
+  [Evidence](reports/laptop-validation-2026-10-04/opening-camera-preference/README.md).
+- [x] One actual Hero/custom-host-selected Eskinita route on143 reaches GO,
+  releases the clock and returns to first-person view. Native1/1;17 camera
+  images retained, hashes inspected. Overlay UI and perceived motion remain
+  unqualified. [Evidence](reports/laptop-validation-2026-10-04/fullcourt-hero-arrival/README.md).
+- [x] Actual144 Hero route with camera movement OFF preserves the saved
+  pose/rotation/FOV through >10 late-frame observations, reaches GO and releases
+  the clock. Native1/1;17 phase/image pairs verified. Exact mixed-line-ending
+  tested fixture retained and root verified its full normalized code equality.
+  [Evidence](reports/laptop-validation-2026-10-04/fullroute-camera-motion-off/README.md).
+- [x] One actual144 Classic/reduced-motion scene-leave case resumes cleanup;
+  native1/1 with terminal/restored/free guard. Controlled arm tangent import
+  deltas retained. [Evidence](reports/laptop-validation-2026-10-04/classic-reduced-leave/README.md).
+- [ ] All-map composition, full Classic gameplay, actual overlay/motion review
+  and current144 packaged players/matching peers. Phase metadata places the
+  first camera-only obstruction during prewarming; overlay pixels remain unseen.
+
+### ARRIVAL-CAMERA-CLEARANCE-1004: near walls cannot push the eye beyond collision
+
+- [x] Replace unsafe0.8m minimum with nonzero0.01m floor. Original two failures/
+  four controls, candidate6/6; root inspected3400 maps with one source delta,
+  immutable fixture and restored/free guards. Existing radius/stand-off retained.
+  [Evidence](reports/laptop-validation-2026-10-04/arrival-camera-clearance/README.md).
+  Actual full-pan framing and current player/peers remain open.
+
+
+### READING-FONT-1003: temporary Nunito Bold replacement
+
+- [x] Replace active Lydian Regular theme/fallback/regeneration references with
+  Nunito Bold, retaining original assets. Native3/3 and actual tutorial image
+  inspected; [evidence and limits](reports/reading-font-2026-10-03/README.md).
+
+
+### OPENING-HANDOFF-1003: prepare the shot under loading
+
+- [x] Keep entry covered, prepare the opening before loading fades away, resolve
+  the return eye from the actual player rig and hide overhead introduction names.
+  Native7/7 handoff/countdown controls pass, guard-free; settings restored.
+  [Evidence](reports/opening-handoff-2026-10-03/README.md).
+- [ ] Packaged player and actual loading-overlay acceptance of startup transition.
+  One143 Hero full-court runtime route now passes; its camera-only snapshots
+  omit the loading curtain and cannot settle the first pre-pan obstruction.
+
+
 ### OPENING-CAMERA-1003: deliberate arena and character reveals
 
 - [x] Implement objective-centred opening, obstacle-aware body framing, individual
   pose reveals, compact captions and direct gameplay handoff. Owner's latest
   countdown is3/2/1/GO!, protocol143. Camera7/7 and countdown3/3 native checks;
   actual Eskinita establishing frame inspected. [Evidence and limits](reports/opening-camera-2026-10-03/README.md).
-- [ ] Full normal-speed portrait/handoff visual review, all-map composition and
-  matching packaged/live-peer acceptance. Graphics capture hit RAM after one frame.
+- [ ] Perceived normal-speed motion, all-map composition and matching144
+  packaged/live-peer acceptance. One143 Hero full-court route now passes with
+ 17 retained camera images showing overview, reveals and settled return.
 
 ### TOUCH-STICK-POINTER-1003: retain the controlling finger
 
@@ -138,7 +434,9 @@ Nothing was deleted or renumbered.
   human verification remain open. [Evidence](reports/feedback-2026-10-03/cheska-caster.md).
 - [ ] Investigate bots remaining inactive after status expiry; reproduce before fixing.
   Real Classic Frozen/Tagged expiry probe2/2 resumes bot input; no generic timer
-  stall reproduced. Hero/status combinations and peers remain open.
+  stall reproduced. Current native can-down/Zack-ultimate/reset/patrol case also
+  passes1/1; broader hero/status combinations and peers remain open.
+  [Current recovery check](reports/current-arrival-2026-10-04/README.md).
   [Scoped evidence](reports/reliability-2026-10-03/bot-status-expiry/README.md).
 - [x] Remove Frozen/Stunned action bar while preserving status indicators.
   Focused original failure and candidate 1/1 plus UI capture retained.
@@ -1088,11 +1386,21 @@ shared/global fixes apply normally and exact concurrent claims still govern.
   protocol128. Other Pyro slots and full presentation remain open.
   [Evidence](reports/hero-quality-2026-10-01/empowered-throw/README.md).
 
-- [ ] BANK-SHOT-LOAD-MOTION-1003: scoped replacement of the stale magnet-recall
-  body/owner gesture with loading the already-held slipper. Preserve mechanics,
-  descriptions, assets outside the appended clip and existing sound. Reserved
-  bank-only authoring/dispatch/test paths and acceptance in
-  [plan](reports/zack-bank-load-2026-10-03/plan.md).
+- [x] BANK-CEILING-CREDIT-1003: powered safety-ceiling return preserves Zack's
+  remaining wall-bank credit, matching its retained affinity; ordinary throws
+  and extra-bank retirement remain. Baseline2/2 reproduced; candidate9/9 native
+  assertions pass with shutdown resource guard retained, settings restored.
+  Protocol145; packaged/player/peer acceptance remains separate.
+  [Evidence](reports/bank-ceiling-2026-10-03/README.md).
+
+- [x] BANK-SHOT-LOAD-MOTION-1003 source: dedicated0.64s body/owner load of the
+  already-held slipper, preserving mechanics/copy/SFX and original37 clips.
+  Edit3/3, current headless13/13 guard-free, body-film1/1 with measured cadence;
+  separate owner composition1/1 and six actual hand-renderer poses inspected.
+  [Implementation and retained failures](reports/zack-bank-load-2026-10-03/implementation.md).
+- [ ] BANK-SHOT-LOAD-MOTION-1003 visual acceptance: owner/walking graphics
+  runtime film blocked by8GiB container headroom; static owner poses now checked
+  by a lighter Editor route. Real-map/peer/player/human review still open.
 
 - [x] CLOSED-CIRCUIT-1001: cancellable6m/.4s defending acquisition,2s host
   Zapped,35s commitment cooldown and Overclock different-target follow-up.

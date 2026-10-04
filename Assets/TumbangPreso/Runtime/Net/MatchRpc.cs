@@ -411,6 +411,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("CastDenied", OnCastDeniedMsg);
             cm.RegisterNamedMessageHandler("CastAccepted", OnCastAccepted);
             cm.RegisterNamedMessageHandler("VerbDenied", OnVerbDeniedMsg);
+            cm.RegisterNamedMessageHandler("ContactRecovery", OnContactRecoveryMsg);
             cm.RegisterNamedMessageHandler("ReqMash", OnReqMashMsg);
             cm.RegisterNamedMessageHandler("ReqEdgeClimb", OnReqEdgeClimbMsg);
             cm.RegisterNamedMessageHandler("ThrowCharge", OnThrowChargeMsg);
@@ -2240,7 +2241,7 @@ namespace TumbangPreso.Net
 
         private void OnSyncFamiliarMsg(ulong senderClientId,FastBufferReader reader)
         {
-            if(NetAuthority.IsHost || !FromHost(senderClientId))return;
+            if(NetAuthority.IsHost || !FromHost(senderClientId) || reader.Length-reader.Position!=25 || !reader.TryBeginRead(25))return;
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out int round);
             reader.ReadValueSafe(out Vector3 position);
@@ -2268,7 +2269,7 @@ namespace TumbangPreso.Net
 
         private void OnImpactMsg(ulong senderClientId,FastBufferReader reader)
         {
-            if(NetAuthority.IsHost || !FromHost(senderClientId))return;
+            if(NetAuthority.IsHost || !FromHost(senderClientId) || reader.Length-reader.Position!=20 || !reader.TryBeginRead(20))return;
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out int epoch);
             reader.ReadValueSafe(out Vector3 impulse);
@@ -2298,7 +2299,7 @@ namespace TumbangPreso.Net
 
         private void OnCarryMsg(ulong senderClientId,FastBufferReader reader)
         {
-            if(NetAuthority.IsHost || !FromHost(senderClientId))return;
+            if(NetAuthority.IsHost || !FromHost(senderClientId) || reader.Length-reader.Position!=24 || !reader.TryBeginRead(24))return;
             reader.ReadValueSafe(out int slot);
             reader.ReadValueSafe(out int epoch);
             reader.ReadValueSafe(out Vector3 velocity);
@@ -2726,6 +2727,8 @@ namespace TumbangPreso.Net
                 return;
             }
 
+            SendContactRecovery(senderClientId, slot, request, scope, DeniedVerb.Punch,
+                who.GetComponent<CombatVerbs>().PunchCooldownDuration == Balance.PunchHitCooldown);
             BroadcastAction(slot, "punch", senderClientId, scope);
         }
 
@@ -2896,6 +2899,8 @@ namespace TumbangPreso.Net
                 return;
             }
 
+            SendContactRecovery(senderClientId, slot, request, scope, DeniedVerb.Shove,
+                who.GetComponent<CombatVerbs>().ShoveCooldownDuration == Balance.ShoveCooldown);
             BroadcastAction(slot, "shove", senderClientId, scope);
         }
 

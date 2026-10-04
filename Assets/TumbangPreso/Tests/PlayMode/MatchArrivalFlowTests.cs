@@ -305,7 +305,7 @@ namespace TumbangPreso.PlayTests
             }
             gate.CountdownTick -= ticks.Add;
             Assert.IsTrue(GameServices.Round.RoundActive, "No key was pressed: the queued match must start itself.");
-            CollectionAssert.AreEqual(new[] { "5", "4", "3", "2", "1", "START!" }, ticks);
+            CollectionAssert.AreEqual(new[] { "3", "2", "1", "GO!" }, ticks);
             Assert.IsFalse(PresentationClock.Held);
             Assert.IsFalse(HubLoading.Visible);
         }
@@ -322,12 +322,34 @@ namespace TumbangPreso.PlayTests
                 camera.targetTexture = target; camera.Render(); RenderTexture.active = target;
                 image.ReadPixels(new Rect(0, 0, 640, 360), 0, 0); image.Apply();
                 System.IO.File.WriteAllBytes(System.IO.Path.Combine(directory, $"arrival-{index:00}.png"), image.EncodeToPNG());
+                var arrival = Object.FindFirstObjectByType<MatchArrivalPresentation>();
+                var beat = arrival != null ? typeof(MatchArrivalPresentation).GetField("_shownBeat",
+                    System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic) : null;
+                var phase = new ArrivalCapturePhase
+                {
+                    frame = index, realtime = Time.realtimeSinceStartup, unityFrame = Time.frameCount,
+                    loadingVisible = HubLoading.Visible, loadingPreparing = HubLoading.Preparing,
+                    clockHeld = PresentationClock.Held, roundActive = GameServices.Round?.RoundActive == true,
+                    arrivalPresent = arrival != null, beat = beat != null ? (int)beat.GetValue(arrival) : -99,
+                    position = camera.transform.position, rotation = camera.transform.rotation,
+                    fieldOfView = camera.fieldOfView
+                };
+                System.IO.File.WriteAllText(System.IO.Path.Combine(directory, $"arrival-{index:00}.json"), JsonUtility.ToJson(phase, true));
             }
             finally
             {
                 camera.targetTexture = previousTarget; RenderTexture.active = previousActive;
                 RenderTexture.ReleaseTemporary(target); Object.DestroyImmediate(image);
             }
+        }
+
+        [System.Serializable] private sealed class ArrivalCapturePhase
+        {
+            public int frame, unityFrame, beat;
+            public float realtime, fieldOfView;
+            public bool loadingVisible, loadingPreparing, clockHeld, roundActive, arrivalPresent;
+            public Vector3 position;
+            public Quaternion rotation;
         }
 
         [UnityTest, Timeout(60000)]

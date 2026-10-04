@@ -1,0 +1,13 @@
+{
+  "qualityRestoredByteExact": true,
+  "inputChanges": {
+    "ProjectSettings/GraphicsSettings.asset": {
+      "before": "ba2ec8c698bae8e89767e9d28147990b9b6599b96d03e579866aeaa415bdbbd0",
+      "after": "ebbf9d77aa04069f663fd8c8312fb0c3160c61ca0ca6a5893911ba4190b77800"
+    },
+    "ProjectSettings/ProjectSettings.asset": {
+      "before": "6e8261ba99968175c032d9802a6964a7ff580d5f703b024a025801308a670c8d",
+      "after": "f5cfb1b8f70592e0498d32c87be7d847a2079f94ccf683291c59871b8515c677"
+    }
+  }
+}

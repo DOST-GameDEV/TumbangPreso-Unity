@@ -1,0 +1,6 @@
+{
+  "qualityPostPreserved": true,
+  "qualityRestoredByteExact": true,
+  "inputChanges": {},
+  "limit": "Importer edits are retained and reported, never discarded. A pass is not inferred from compilation or source hashes."
+}

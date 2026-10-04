@@ -35,9 +35,11 @@ namespace TumbangPreso.UI.Hub
         private IEnumerator _prewarm;
         private GameObject _failureControls;
         private Button _returnButton;
-        private bool _ownsSceneLoad;
+        private bool _ownsSceneLoad, _revealing;
         public string FailureReason { get; private set; }
         public static bool Visible => _current != null;
+        // Camera ownership may transfer under the still-opaque curtain after prewarm.
+        public static bool Preparing => _current != null && !_current._revealing;
 
         /// <summary>True when <paramref name="scene"/> is an arena, the only kind of load this covers.</summary>
         public static bool Covers(string scene) => System.Array.IndexOf(SceneFlow.Maps, scene) >= 0;
@@ -227,6 +229,7 @@ namespace TumbangPreso.UI.Hub
                 if (SceneManager.GetActiveScene() != destination) { Cancel(); yield break; }
             }
             ReleasePrewarm();
+            _revealing = true;
             _percent.text = "100%";
             Debug.Log($"[HubLoading] {_scene} ready after {Time.realtimeSinceStartup - _began:F2} s.");
             yield return null;

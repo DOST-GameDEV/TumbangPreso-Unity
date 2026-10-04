@@ -311,9 +311,10 @@ namespace TumbangPreso.Visual
             if (rig != null && rig.IsLocalFpp && rig.IsFollowing(_character)) mine = true;
 
             if (_ring != null) _ring.gameObject.SetActive(!mine);
-            _label.gameObject.SetActive(!mine);
+            bool introducing = MatchArrivalPresentation.Active;
+            _label.gameObject.SetActive(!mine && !introducing);
 
-            if (mine) return;
+            if (mine || introducing) return;
 
             float distance = Vector3.Distance(cam.transform.position, _labelTransform.position);
 

@@ -65,7 +65,7 @@ namespace TumbangPreso.CameraSystem
         {
             if(!NetAuthority.ShouldResolve()||PresentationClock.Held||GameServices.Round?.RoundActive!=true)return;
             float now=Time.time;_sounds.RemoveAll(c=>c.Time<now-8);
-            if(_sounds.Count>=512)_sounds.RemoveAt(0);
+            if(_sounds.Count>=RecordedMatchClip.SoundCueLimit)_sounds.RemoveAt(0);
             _sounds.Add(new RecordedWorldCue{Time=now,Id=id,Position=position,Pitch=pitch,Gain=gain});
         }
         private void Sample(float time)

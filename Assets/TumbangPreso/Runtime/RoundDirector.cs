@@ -693,20 +693,23 @@ namespace TumbangPreso
         /// VULNERABLE row asks, so the warning a player sees and the check that catches them
         /// are one function and cannot disagree.
         /// </summary>
-        public void ResolveTag(CharacterMotor taya, CharacterMotor victim)
+        public void ResolveTag(CharacterMotor taya, CharacterMotor victim) => TryResolveTag(taya, victim);
+
+        /// <summary>Whether the authoritative tag actually landed, including a companion tag.</summary>
+        public bool TryResolveTag(CharacterMotor taya, CharacterMotor victim)
         {
             // ⚠️ THE HOST RE-CHECKS EVERYTHING THE CLIENT ALREADY CHECKED, and that is not
             // redundancy. A client says where it stood, which way it faced and how hard it
             // committed; it never says who it hit. A client that could report a result is a
             // client that can award itself 100 points.
-            if (!NetAuthority.ShouldResolve()) return;
+            if (!NetAuthority.ShouldResolve()) return false;
 
-            if (!RoundActive || taya == null || victim == null) return;
-            if (!taya.IsDefender || !victim.IsTaggable()) return;
-            if (Lata == null || !Lata.IsUpright) return;
+            if (!RoundActive || taya == null || victim == null) return false;
+            if (!taya.IsDefender || !victim.IsTaggable()) return false;
+            if (Lata == null || !Lata.IsUpright) return false;
 
             // ⚠️⚠️ TAGGING A COMPANION PAYS NOBODY (the owner: *"The doll does not give points when tagged/sabotaged"*).
-            if (CompanionSeats.IsCompanion(victim.PlayerSlot)) { ResolveCompanionTag(taya, victim); return; }
+            if (CompanionSeats.IsCompanion(victim.PlayerSlot)) { ResolveCompanionTag(taya, victim); return true; }
 
             GameServices.Match.AddScore(taya.PlayerSlot, ScoreEvent.Tag);
             GameServices.Match.RecordHostTagChain(taya.PlayerSlot, victim.PlayerSlot);
@@ -725,6 +728,7 @@ namespace TumbangPreso
 
             ApplyTagPenalty(taya, victim);
             Tagged?.Invoke(taya.PlayerSlot, victim.PlayerSlot);
+            return true;
         }
 
         /// <summary>

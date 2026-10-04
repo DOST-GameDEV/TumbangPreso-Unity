@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Passed" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 00:26:28Z" end-time="2026-10-04 00:26:29Z" duration="0.0950792">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1297" result="Passed" start-time="2026-10-04 00:26:28Z" end-time="2026-10-04 00:26:29Z" duration="0.095079" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2593" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1297" result="Passed" start-time="2026-10-04 00:26:29Z" end-time="2026-10-04 00:26:29Z" duration="0.086877" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="30772" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2594" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1297" result="Passed" start-time="2026-10-04 00:26:29Z" end-time="2026-10-04 00:26:29Z" duration="0.084868" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2595" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1297" result="Passed" start-time="2026-10-04 00:26:29Z" end-time="2026-10-04 00:26:29Z" duration="0.082981" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1222" name="CareerFlushOwnerLifetimeTests" fullname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests" classname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-04 00:26:29Z" end-time="2026-10-04 00:26:29Z" duration="0.066007" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1223" name="ObsoleteFailureCannotOverwriteReplacementOwnerStatus" fullname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.ObsoleteFailureCannotOverwriteReplacementOwnerStatus" methodname="ObsoleteFailureCannotOverwriteReplacementOwnerStatus" classname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests" runstate="Runnable" seed="761032055" result="Passed" start-time="2026-10-04 00:26:29Z" end-time="2026-10-04 00:26:29Z" duration="0.027285" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1227" name="ObsoleteSuccessCannotAcknowledgeReplacementOwnerData" fullname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.ObsoleteSuccessCannotAcknowledgeReplacementOwnerData" methodname="ObsoleteSuccessCannotAcknowledgeReplacementOwnerData" classname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests" runstate="Runnable" seed="419043789" result="Passed" start-time="2026-10-04 00:26:29Z" end-time="2026-10-04 00:26:29Z" duration="0.002222" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1226" name="OwnerReplacementFromCompletionCannotContinueOrClaimItsQueue" fullname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.OwnerReplacementFromCompletionCannotContinueOrClaimItsQueue" classname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-04 00:26:29Z" end-time="2026-10-04 00:26:29Z" duration="0.016539" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1224" name="OwnerReplacementFromCompletionCannotContinueOrClaimItsQueue(0)" fullname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.OwnerReplacementFromCompletionCannotContinueOrClaimItsQueue(0)" methodname="OwnerReplacementFromCompletionCannotContinueOrClaimItsQueue" classname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests" runstate="Runnable" seed="2090422121" result="Passed" start-time="2026-10-04 00:26:29Z" end-time="2026-10-04 00:26:29Z" duration="0.010595" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1225" name="OwnerReplacementFromCompletionCannotContinueOrClaimItsQueue(1)" fullname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.OwnerReplacementFromCompletionCannotContinueOrClaimItsQueue(1)" methodname="OwnerReplacementFromCompletionCannotContinueOrClaimItsQueue" classname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests" runstate="Runnable" seed="1311343608" result="Passed" start-time="2026-10-04 00:26:29Z" end-time="2026-10-04 00:26:29Z" duration="0.003970" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1228" name="SameOwnerFailureRetainsItsRecordAndWitnessForRetry" fullname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.SameOwnerFailureRetainsItsRecordAndWitnessForRetry" methodname="SameOwnerFailureRetainsItsRecordAndWitnessForRetry" classname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests" runstate="Runnable" seed="1850884863" result="Passed" start-time="2026-10-04 00:26:29Z" end-time="2026-10-04 00:26:29Z" duration="0.003290" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Career] submission deferred; 1 queued: Controlled same-owner failure
+]]></output>
+            </test-case>
+            <test-case id="1229" name="SameOwnerSuccessAcknowledgesOnlyItsQueuedRecord" fullname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests.SameOwnerSuccessAcknowledgesOnlyItsQueuedRecord" methodname="SameOwnerSuccessAcknowledgesOnlyItsQueuedRecord" classname="TumbangPreso.Tests.CareerFlushOwnerLifetimeTests" runstate="Runnable" seed="361728753" result="Passed" start-time="2026-10-04 00:26:29Z" end-time="2026-10-04 00:26:29Z" duration="0.004788" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

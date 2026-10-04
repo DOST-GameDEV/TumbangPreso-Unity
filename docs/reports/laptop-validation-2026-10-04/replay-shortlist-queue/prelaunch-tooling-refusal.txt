@@ -1,0 +1,1 @@
+First scheduler invocation omitted -nographics; CPU classification refused before Unity/receipt/lease/XML. One bounded tooling correction adds required -nographics for EditMode. No source or fixture change.

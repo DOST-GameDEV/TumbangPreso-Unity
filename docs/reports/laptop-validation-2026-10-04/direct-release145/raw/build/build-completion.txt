@@ -1,0 +1,3 @@
+[BuildMemory] unused-scan boundary allocated_before=1125501018 allocated_after=689415266 reserved_before=1746210816 reserved_after=1746210816 elapsed_ms=430.971; Unity bytes, not process-tree working set
+[Build] building 12 scenes to C:\Users\Matthew\dev\tump-laptop-player1003i\Builds\owner-direct-131818\TumbangPreso.exe (None)
+[Build] SUCCEEDED. 2434 MB, 210s -> C:\Users\Matthew\dev\tump-laptop-player1003i\Builds\owner-direct-131818\TumbangPreso.exe

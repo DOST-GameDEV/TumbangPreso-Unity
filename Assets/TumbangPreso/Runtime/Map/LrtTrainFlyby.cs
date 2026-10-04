@@ -325,7 +325,7 @@ namespace TumbangPreso
 
                 // The player's slider is read every frame rather than cached, because it can be
                 // moved in the pause panel while a train is mid-pass.
-                float slider = GameServices.Audio != null ? GameServices.Audio.SfxVolume : 1.0f;
+                float slider = GameServices.Audio != null ? GameServices.Audio.AmbienceVolume : 1.0f;
                 _rumble.volume = _rumbleMix * slider * KantoStreetSound.AmbientGainScale;
             }
 

@@ -85,9 +85,39 @@ const GOLDEN = {
     out = await wallet({ params: { action: "claim", task: "nope" }, context: ctx });
     assert.strictEqual(out.result, "unassigned");
 
-    assert.deepStrictEqual(Object.keys(wallet.params).sort(), ["action", "item", "task"]);
+    assert.deepStrictEqual(Object.keys(wallet.params).sort(), ["action", "item", "request", "task"]);
     assert.strictEqual(GOLDEN.daily, "d_tag2,d_classic1,d_fetch4", "must match EconomyTests");
     assert.strictEqual(GOLDEN.weekly, "w_play10,w_pressure5,w_win3", "must match EconomyTests");
+
+    // Credits sequence rewards are fixed, repeatable for a new entry, retry-safe.
+    const request = "abcdef0123456789abcdef0123456789";
+    const baseline = JSON.parse(out.wallet);
+    const beforeBonus = Math.max(baseline.Balance, topup);
+    out = await wallet({ params: { action: "credits-code", request, amount: 99999999 }, context: ctx });
+    assert.strictEqual(out.result, "credits-code-granted");
+    assert.strictEqual(out.paid, 5000);
+    assert.strictEqual(JSON.parse(out.wallet).Balance, beforeBonus + 5000);
+    assert.deepStrictEqual(JSON.parse(out.wallet).Claimed, baseline.Claimed);
+    out = await wallet({ params: { action: "credits-code", request: request.toUpperCase() }, context: ctx });
+    assert.strictEqual(out.result, "credits-code-already");
+    assert.strictEqual(out.paid, 0);
+    assert.strictEqual(JSON.parse(out.wallet).Balance, beforeBonus + 5000);
+    out = await wallet({ params: { action: "credits-code", request: "1".repeat(32) }, context: ctx });
+    assert.strictEqual(JSON.parse(out.wallet).Balance, beforeBonus + 10000);
+    await assert.rejects(wallet({ params: { action: "credits-code", request: "invalid" }, context: ctx }), /invalid credits-code/);
+    const other = await wallet({ params: { action: "credits-code", request }, context: { ...ctx, playerId: "other" } });
+    assert.strictEqual(other.result, "credits-code-granted", "receipts are per player");
+    // Confirm the script keeps the new receipt on a normal reload too.
+    out = await wallet({ params: { action: "load" }, context: ctx });
+    assert.ok(JSON.parse(out.wallet).CreditsCodeReceipts.includes(request));
+
+    const storedKey = Object.keys(store).find(k => k.startsWith("me/") && (()=>{try{return JSON.parse(store[k]).CreditsCodeReceipts;}catch{return false;}})());
+    assert.ok(storedKey, "reward receipts persisted in protected wallet");
+    const savedWallet=store[storedKey];
+    const capped=JSON.parse(savedWallet);capped.Balance=2147483647;store[storedKey]=JSON.stringify(capped);
+    out=await wallet({params:{action:"credits-code",request:"2".repeat(32)},context:ctx});
+    assert.strictEqual(out.result,"wallet-full");assert.strictEqual(JSON.parse(out.wallet).Balance,2147483647);
+    store[storedKey]=savedWallet;
 
     const matchRecord = require(path.join(__dirname, "..", "ugs", "cloud-code", "match-record.js"));
     const record = {

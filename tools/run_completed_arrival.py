@@ -34,7 +34,7 @@ def read(path):
         return None
 
 
-def validate_rules(core):
+def validate_rules(core, wire=WIRE):
     # The existing engine-free parser validates the profile wire before any player launch.
     shell = shutil.which("pwsh")
     if not shell:
@@ -47,9 +47,9 @@ $rules=$type.GetMethod('Parse').Invoke($null,@($env:TUMP_COMPLETED_WIRE,$mode))
 @{wire=$type.GetMethod('ToWire').Invoke($null,@($rules));rounds=$rules.Rounds;seconds=$rules.RoundSeconds;manual=$rules.ManualReady} | ConvertTo-Json -Compress
 """
     result = subprocess.run([shell, "-NoProfile", "-Command", script], capture_output=True, text=True,
-                            env=dict(os.environ, TUMP_COMPLETED_CORE=str(core), TUMP_COMPLETED_WIRE=WIRE), check=True)
+                            env=dict(os.environ, TUMP_COMPLETED_CORE=str(core), TUMP_COMPLETED_WIRE=wire), check=True)
     rules = json.loads(result.stdout)
-    if rules != {"wire": WIRE, "rounds": 1, "seconds": 30, "manual": True}:
+    if rules != {"wire": wire, "rounds": 1, "seconds": 30, "manual": True}:
         raise RuntimeError("Installed custom-rule parser rejected the scenario")
     return rules
 

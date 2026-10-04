@@ -1,5 +1,23 @@
 # Documentation: Start Here
 
+Owner follow-up readiness: [real ability and HUD-state correction](reports/power-recast-readiness-2026-10-04/README.md).
+
+First-person source-mesh preservation: [ownership correction and native evidence](reports/viewmodel-mesh-ownership-2026-10-04/README.md).
+
+Owner arms catalog fallback: [causal native checks](reports/viewmodel-roster-fallback-2026-10-04/README.md).
+
+Zack powered wall contact: [compact cue and scoped native evidence](reports/zack-bank-contact-2026-10-04/validation.md).
+
+Friends acceptance capacity: [two-account server flow and correction](reports/reliability-2026-10-04/friends-capacity/README.md).
+
+Background input ownership: [focus-loss failures and checked recovery](reports/laptop-validation-2026-10-04/background-focus/README.md).
+
+Record measurement integrity: [NaN normalization and profile evidence](reports/reliability-2026-10-04/match-record-nan/README.md).
+
+Server history write recovery: [failure reproduction and correction](reports/reliability-2026-10-04/cloud-history-write/README.md).
+
+Server travel-bound parity: [current movement correction and focused evidence](reports/reliability-2026-10-04/cloud-travel-bound/README.md).
+
 Latest playtested movement revision: [measured speeds, jump and free shove/lunge](reports/movement-playtest-2026-10-03/README.md).
 Earlier same-day movement values are superseded; their evidence remains historical.
 

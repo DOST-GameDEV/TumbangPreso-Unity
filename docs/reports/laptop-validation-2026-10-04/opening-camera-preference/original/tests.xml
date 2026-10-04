@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-03 16:54:28Z" end-time="2026-10-03 16:54:28Z" duration="0.1833932">
+  <test-suite type="TestSuite" id="1000" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1259" result="Failed" site="Child" start-time="2026-10-03 16:54:28Z" end-time="2026-10-03 16:54:28Z" duration="0.183393" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2546" name="TumbangPreso.Tests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.Tests.dll" runstate="Runnable" testcasecount="1259" result="Failed" site="Child" start-time="2026-10-03 16:54:28Z" end-time="2026-10-03 16:54:28Z" duration="0.171145" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28284" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2547" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1259" result="Failed" site="Child" start-time="2026-10-03 16:54:28Z" end-time="2026-10-03 16:54:28Z" duration="0.164198" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2548" name="Tests" fullname="TumbangPreso.Tests" runstate="Runnable" testcasecount="1259" result="Failed" site="Child" start-time="2026-10-03 16:54:28Z" end-time="2026-10-03 16:54:28Z" duration="0.157231" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2055" name="OpeningCameraMotionPreferenceTests" fullname="TumbangPreso.Tests.OpeningCameraMotionPreferenceTests" classname="TumbangPreso.Tests.OpeningCameraMotionPreferenceTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-03 16:54:28Z" end-time="2026-10-03 16:54:28Z" duration="0.124747" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="ParameterizedMethod" id="2058" name="CameraMovementOffKeepsSavedViewThroughoutEveryBeat" fullname="TumbangPreso.Tests.OpeningCameraMotionPreferenceTests.CameraMovementOffKeepsSavedViewThroughoutEveryBeat" classname="TumbangPreso.Tests.OpeningCameraMotionPreferenceTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-03 16:54:28Z" end-time="2026-10-03 16:54:28Z" duration="0.108539" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2056" name="CameraMovementOffKeepsSavedViewThroughoutEveryBeat(False)" fullname="TumbangPreso.Tests.OpeningCameraMotionPreferenceTests.CameraMovementOffKeepsSavedViewThroughoutEveryBeat(False)" methodname="CameraMovementOffKeepsSavedViewThroughoutEveryBeat" classname="TumbangPreso.Tests.OpeningCameraMotionPreferenceTests" runstate="Runnable" seed="1029613078" result="Failed" start-time="2026-10-03 16:54:28Z" end-time="2026-10-03 16:54:28Z" duration="0.102400" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: less than 9.99999975E-05f
+  But was:  34.6490974f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.OpeningCameraMotionPreferenceTests.CameraMovementOffKeepsSavedViewThroughoutEveryBeat (System.Boolean reduced) [0x00030] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\OpeningCameraMotionPreferenceTests.cs:34
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2057" name="CameraMovementOffKeepsSavedViewThroughoutEveryBeat(True)" fullname="TumbangPreso.Tests.OpeningCameraMotionPreferenceTests.CameraMovementOffKeepsSavedViewThroughoutEveryBeat(True)" methodname="CameraMovementOffKeepsSavedViewThroughoutEveryBeat" classname="TumbangPreso.Tests.OpeningCameraMotionPreferenceTests" runstate="Runnable" seed="741773778" result="Failed" start-time="2026-10-03 16:54:28Z" end-time="2026-10-03 16:54:28Z" duration="0.000912" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: less than 9.99999975E-05f
+  But was:  32.3072739f
+]]></message>
+                  <stack-trace><![CDATA[at TumbangPreso.Tests.OpeningCameraMotionPreferenceTests.CameraMovementOffKeepsSavedViewThroughoutEveryBeat (System.Boolean reduced) [0x00030] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\OpeningCameraMotionPreferenceTests.cs:34
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-case id="2059" name="CameraMovementOnRetainsEstablishingTravelAndRestoresAtTheEnd" fullname="TumbangPreso.Tests.OpeningCameraMotionPreferenceTests.CameraMovementOnRetainsEstablishingTravelAndRestoresAtTheEnd" methodname="CameraMovementOnRetainsEstablishingTravelAndRestoresAtTheEnd" classname="TumbangPreso.Tests.OpeningCameraMotionPreferenceTests" runstate="Runnable" seed="2051848138" result="Passed" start-time="2026-10-03 16:54:28Z" end-time="2026-10-03 16:54:28Z" duration="0.009035" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

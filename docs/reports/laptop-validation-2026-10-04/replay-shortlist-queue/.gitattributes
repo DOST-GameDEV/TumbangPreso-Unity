@@ -1,0 +1,5 @@
+*.xml -text -whitespace
+*.json -text -whitespace
+*.asset -text -whitespace
+*.fixture -text -whitespace
+*.txt -text -whitespace

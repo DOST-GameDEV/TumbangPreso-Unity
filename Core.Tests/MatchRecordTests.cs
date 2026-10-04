@@ -186,6 +186,57 @@ namespace TumbangPreso.Core.Tests
             Assert.Equal(record.Rounds, record.Players[0].RoundsDefended);
         }
 
+        [Theory]
+        [InlineData("duration")]
+        [InlineData("distance")]
+        [InlineData("lastAttacker")]
+        public void NormaliseRetiresNaNMeasurements(string measurement)
+        {
+            var record = Match(100, 0, 0, 0);
+            if (measurement == "duration") record.DurationSeconds = float.NaN;
+            if (measurement == "distance") record.Players[0].DistanceTravelled = float.NaN;
+            if (measurement == "lastAttacker") record.Players[0].LongestLastAttacker = float.NaN;
+
+            MatchRecordRules.Normalise(record);
+
+            float value = measurement == "duration" ? record.DurationSeconds
+                : measurement == "distance" ? record.Players[0].DistanceTravelled
+                : record.Players[0].LongestLastAttacker;
+            Assert.Equal(0.0f, value);
+        }
+
+        [Fact]
+        public void NormalisedNaNMeasurementsCannotPoisonCareerTotals()
+        {
+            var record = Match(100, 0, 0, 0);
+            record.Online = true;
+            record.DurationSeconds = float.NaN;
+            record.Players[0].DistanceTravelled = float.NaN;
+            var profile = new PlayerProfile();
+
+            MatchRecordRules.Normalise(record);
+            Assert.True(ProfileRules.Apply(profile, record, "player-0"));
+
+            var totals = ProfileRules.ModeFor(profile, record.Mode).Totals;
+            Assert.Equal(0.0f, totals.SecondsPlayed);
+            Assert.Equal(0.0f, totals.DistanceTravelled);
+            Assert.Equal(1, totals.Matches);
+        }
+
+        [Theory]
+        [InlineData(-1.0f, 0.0f)]
+        [InlineData(123.0f, 123.0f)]
+        [InlineData(1000001.0f, 1000000.0f)]
+        [InlineData(float.PositiveInfinity, 1000000.0f)]
+        [InlineData(float.NegativeInfinity, 0.0f)]
+        public void NormalisePreservesExistingDistanceBounds(float input, float expected)
+        {
+            var record = Match(100, 0, 0, 0);
+            record.Players[0].DistanceTravelled = input;
+            MatchRecordRules.Normalise(record);
+            Assert.Equal(expected, record.Players[0].DistanceTravelled);
+        }
+
         /// <summary>-1 is "never threw" and survives normalisation; 0 would report the most
         /// passive player in the room as the most aggressive.</summary>
         [Fact]

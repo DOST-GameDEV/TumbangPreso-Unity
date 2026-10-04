@@ -14,6 +14,8 @@ namespace TumbangPreso
     /// </summary>
     public sealed class MatchArrivalPresentation : MonoBehaviour
     {
+        private static MatchArrivalPresentation _active;
+        public static bool Active => _active != null;
         public const float Seconds = 8.6f;
         private const float EstablishSeconds = 2.8f, PortraitSeconds = 1.1f;
         private const float HandoffStart = 7.2f, PortraitFov = 50;
@@ -55,21 +57,27 @@ namespace TumbangPreso
 
         private IEnumerator RunCurrent(int generation)
         {
-            // Let the new gameplay rig establish its first real eye pose before saving it.
+            _active = this;
+            BuildCaption();
+            _ink.color = new Color(HubStyle.Ink.r, HubStyle.Ink.g, HubStyle.Ink.b, 1);
+            _captionGroup.alpha = 0;
+            // Cover direct arena entry too. Never expose the inherited map/player camera
+            // while waiting for installation, prewarm or the rig's first LateUpdate.
             yield return null;
             if (!Current(generation)) yield break;
             while (PresentationClock.Held) { if (!Current(generation)) yield break; yield return null; }
             if (!Current(generation)) yield break;
             PresentationClock.Hold(); _held = true;
-            while (HubLoading.Visible) { if (!Current(generation)) yield break; yield return null; }
+            while (HubLoading.Preparing) { if (!Current(generation)) yield break; yield return null; }
             if (!Current(generation)) yield break;
             _camera = Camera.main;
             if (_camera == null) yield break;
-            _position = _camera.transform.position; _rotation = _camera.transform.rotation; _fov = _camera.fieldOfView;
             _rig = _camera.GetComponent<CameraRig>();
             _spectator = _camera.GetComponent<SpectatorCamera>();
             _rigActive = _rig != null && _camera.enabled && (_spectator == null || !_spectator.enabled);
-            if (_rigActive) _rig.SetActive(false);
+            if (_rigActive) _rig.PrepareArrivalReturnView();
+            _position = _camera.transform.position; _rotation = _camera.transform.rotation; _fov = _camera.fieldOfView;
+            if (_rigActive && Settings.SettingsStore.Current.CinematicCameraMotion) _rig.SetActive(false);
             // SpectatorCamera already respects PresentationClock.Held. Disabling it would
             // unhook its highlight subscriptions, which a temporary shot must never do.
             _camera.enabled = true;
@@ -78,10 +86,12 @@ namespace TumbangPreso
             FreshInput();
             for (int i = 0; i < _players.Length; i++)
                 _poses[i] = _players[i] != null ? _players[i].GetComponent<Visual.CharacterAnimator>() : null;
-            BuildCaption();
             var map = SceneFlow.PreviewFor(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
             PrepareShots(map);
             bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
+            Sample(0, reduced, map);
+            // Loading can now fade onto the already-prepared opening curtain/shot.
+            while (HubLoading.Visible) { if (!Current(generation)) yield break; yield return null; }
             for (float age = 0; age < Seconds; age += Time.unscaledDeltaTime)
             {
                 if (!Current(generation)) yield break;
@@ -202,13 +212,16 @@ namespace TumbangPreso
                 }
                 if (handoff >= .7f && _rigActive && _rig != null) _rig.SetActive(true);
             }
+            bool cameraMotion = Settings.SettingsStore.Current.CinematicCameraMotion;
+            if (!cameraMotion) { eye = _position; rotation = _rotation; fov = _fov; }
             _camera.transform.SetPositionAndRotation(eye, rotation); _camera.fieldOfView = fov;
-            float ink = 0;
+            float ink = 1 - Mathf.SmoothStep(0, 1, age / .5f);
             if (!reduced)
                 for (int cut = 0; cut < 4; cut++)
                     ink = Mathf.Max(ink, 1 - Mathf.Clamp01(Mathf.Abs(age - EstablishSeconds - cut * PortraitSeconds) / .12f));
             else if (age >= HandoffStart)
                 ink = 1 - Mathf.Clamp01(Mathf.Abs(handoff - .5f) / .22f);
+            if (!cameraMotion) ink = 0;
             if (_ink != null) _ink.color = new Color(HubStyle.Ink.r, HubStyle.Ink.g, HubStyle.Ink.b, ink);
             if (_captionGroup != null) _captionGroup.alpha = (1 - ink) * (1 - handoff);
             Caption(beat, map);
@@ -225,7 +238,9 @@ namespace TumbangPreso
                 var collider = _hits[i].collider;
                 if (collider == null || collider.GetComponentInParent<CharacterMotor>() != null ||
                     collider.GetComponentInParent<Slipper>() != null || collider.GetComponentInParent<Lata>() != null) continue;
-                clear = Mathf.Min(clear, Mathf.Max(.8f, _hits[i].distance - .3f));
+                // A framing minimum must not push the eye through a closer wall.
+                // Retain a nonzero look vector while honoring the actual clearance.
+                clear = Mathf.Min(clear, Mathf.Max(.01f, _hits[i].distance - .3f));
             }
             return focus + ray.normalized * clear;
         }
@@ -267,6 +282,7 @@ namespace TumbangPreso
 
         private void Finish()
         {
+            if (_active == this) _active = null;
             for (int i = 0; i < _poses.Length; i++)
             {
                 if (_poses[i] != null) _poses[i].SetArrivalPose(i, 0);

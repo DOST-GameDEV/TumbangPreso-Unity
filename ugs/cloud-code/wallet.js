@@ -13,7 +13,7 @@ const { DataApi } = require("@unity-services/cloud-save-1.4");
 // `matchHistory`, which only `match-record.js` writes, and a purchase names an id whose price is
 // looked up here. Nothing a client sends is a number of TANSAN.
 //
-// ⚠️ NO REAL MONEY. There is no action that adds currency for anything but play.
+// No real money. Play rewards plus the owner-requested Credits cheat grant soft currency.
 
 const WALLET_KEY = "wallet";
 const PROFILE_KEY = "careerProfile";
@@ -31,6 +31,8 @@ const PAID_ID_MEMORY = 200;
 const DAILY_TASK_COUNT = 3;
 const WEEKLY_TASK_COUNT = 3;
 const CLAIM_MEMORY = 64;
+const CREDITS_CODE_REWARD = 5000;
+const CREDITS_CODE_RECEIPTS = 64;
 
 // ⚠️⚠️ TEMPORARY PLAYTEST GRANT (owner, 2026-09-26: *"give us all 999999 tansan so we can unlock all"*). While this is above
 // zero, every wallet this script loads is topped up to it before anything else happens, so the playtesters can unlock every
@@ -117,6 +119,7 @@ function normaliseWallet(raw) {
         Balance: ints(w.Balance), Owned: list(w.Owned), PaidMatchIds: list(w.PaidMatchIds),
         EarnedDay: ints(w.EarnedDay), EarnedToday: ints(w.EarnedToday), Claimed: list(w.Claimed),
         Version: 1, CreatedUtc: String(w.CreatedUtc || ""),
+        CreditsCodeReceipts: list(w.CreditsCodeReceipts).slice(-CREDITS_CODE_RECEIPTS),
     };
 }
 
@@ -278,7 +281,7 @@ module.exports = async ({ params, context, logger }) => {
 
     // ⚠️ EVERY ACTION SETTLES FIRST, so a balance is never shown or spent without the matches the
     // server already recorded. Settling is idempotent: paid ids are remembered.
-    const paid = settle(wallet, matches, today);
+    let paid = settle(wallet, matches, today);
     if (PLAYTEST_TOPUP > 0 && wallet.Balance < PLAYTEST_TOPUP) wallet.Balance = PLAYTEST_TOPUP;
 
     let result = "ok";
@@ -301,6 +304,20 @@ module.exports = async ({ params, context, logger }) => {
             wallet.Balance += task.Reward;
             result = "claimed";
         }
+    } else if (action === "credits-code") {
+        // Deliberate owner-requested soft-currency cheat. The amount is server-fixed.
+        // A request receipt makes a transport retry idempotent without evicting task claims.
+        const request = String(params.request || "").toLowerCase();
+        if (!/^[a-f0-9]{32}$/i.test(request)) throw new Error("invalid credits-code request");
+        wallet.CreditsCodeReceipts = wallet.CreditsCodeReceipts || [];
+        if (wallet.CreditsCodeReceipts.includes(request)) result = "credits-code-already";
+        else if (wallet.Balance > 2147483647 - CREDITS_CODE_REWARD) result = "wallet-full";
+        else {
+            wallet.Balance += CREDITS_CODE_REWARD; paid += CREDITS_CODE_REWARD;
+            wallet.CreditsCodeReceipts.push(request);
+            while (wallet.CreditsCodeReceipts.length > CREDITS_CODE_RECEIPTS) wallet.CreditsCodeReceipts.shift();
+            result = "credits-code-granted";
+        }
     } else if (action !== "load") {
         throw new Error("unknown wallet action");
     }
@@ -322,12 +339,13 @@ module.exports = async ({ params, context, logger }) => {
 
 // ⚠️⚠️ EVERY PARAMETER A SCRIPT USES MUST BE DECLARED HERE OR CLOUD CODE STRIPS IT, AND THE
 // FAILURE IS SILENT (`docs/TODO.md` § 90.5). `EconomyTests.TheCloudScriptMirrorsEveryConstant`
-// asserts this block names all three.
+// asserts the required parameter declarations.
 module.exports.params = {
     action: "String",
     item: "String",
     task: "String",
+    request: "String",
 };
 
 // Exposed for `tools/test_wallet_script.js`, which runs the rules under node with a stub store.
-module.exports.rules = { createWallet, settle, tasksFor, progress, priceOf, fnv, weekOf, dayOf, earnedFrom, PLAYTEST_TOPUP };
+module.exports.rules = { createWallet, settle, tasksFor, progress, priceOf, fnv, weekOf, dayOf, earnedFrom, PLAYTEST_TOPUP, CREDITS_CODE_REWARD };

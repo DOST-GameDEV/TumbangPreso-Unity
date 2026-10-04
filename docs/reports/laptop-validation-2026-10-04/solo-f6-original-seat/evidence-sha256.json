@@ -1,0 +1,18 @@
+{
+  "original-tests.xml": "c5514ecb282b3cdb68f92539ec704eba70c2569b3c9a8152d74b1753df730224",
+  "original-job-receipt.json": "cd91a9189709fcdc1199a0f8dc055766106b0a5dee269f9eea93b17529b0b1b1",
+  "original-qualified-source.json": "77b8763fa7772fe0d577030293d63158792733fdfa132bbdfef63c8608ce47ed",
+  "original-post-input-audit.json": "75507202be948d2abbb6baec2542e4ae759c8a39f8fcf8baf6d410cb740cb913",
+  "original-prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "original-post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "candidate-tests.xml": "612fc6b742d01216f63636460ae24b194359a10746cbb213e17b4aa05d2eb102",
+  "candidate-job-receipt.json": "6ec19aa32436001855ae3f2fe26369d15b8be271a31028500cd20e9de572788a",
+  "candidate-qualified-source.json": "f83a576af7f803a9dc19de1a8658662567d32589397119f56388e2a3146597ae",
+  "candidate-post-input-audit.json": "75507202be948d2abbb6baec2542e4ae759c8a39f8fcf8baf6d410cb740cb913",
+  "candidate-prejob-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "candidate-post-QualitySettings.asset": "09cecc5749f2f0f71390defe3b42b031e1afd7c4519698ff5fae624377c82d20",
+  "tested-SoloDefaultSeatLifetimeTests.fixture": "425721b966d4c7a47ff9b446752437ac7a230f1d8a8f83fa3b8ad48c63936cd4",
+  "tested-SoloDefaultSeatLifetimeTests.meta.fixture": "f43d98ad0291ecf242ada70bfbadea2bb6dbce31f7e19a1a3af0522d0f266fd1",
+  "original-DebugPlayerSwitcher.fixture": "70aa345d33e74d6117b7dac7d212cfaa574f5f6df064af22ad1a597c0fad5a35",
+  "candidate-DebugPlayerSwitcher.fixture": "5f03fd73411bb1ce153f3663feaf5f677161631ef510ee02011c6ba31cc72d97"
+}

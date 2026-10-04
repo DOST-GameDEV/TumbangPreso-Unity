@@ -1,0 +1,16 @@
+{
+  "Assets/TumbangPreso/Resources/Models/FppDetails/inday_left_arm.asset": {
+    "vertices": 160,
+    "positionNormalUvBytesUnchanged": true,
+    "addedTangentStreamBytesPerVertex": 16,
+    "retainedDerivedPostAsset": true,
+    "notCommittedAsArtwork": true
+  },
+  "Assets/TumbangPreso/Resources/Models/FppDetails/inday_right_arm.asset": {
+    "vertices": 160,
+    "positionNormalUvBytesUnchanged": true,
+    "addedTangentStreamBytesPerVertex": 16,
+    "retainedDerivedPostAsset": true,
+    "notCommittedAsArtwork": true
+  }
+}

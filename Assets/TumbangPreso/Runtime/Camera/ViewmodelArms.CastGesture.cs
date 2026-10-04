@@ -82,6 +82,13 @@ namespace TumbangPreso.CameraSystem
                 Rest(0), K(.14f, .02f, .02f, .04f, -.12f, .42f, .22f), K(.22f, .03f, .02f, .06f, -.14f, .44f, .24f),
                 K(.30f, -.08f, .10f, -.14f, -.06f, .36f, .10f), K(.36f, -.07f, .11f, -.13f, -.06f, .36f, .10f),
                 K(.42f, -.09f, .10f, -.14f, -.06f, .35f, .10f), Rest(.73f)) },
+            // BANK SHOT. The shoe is already held: offer its surface, brush the charge,
+            // then withdraw. No distant reach or recall motion.
+            { "bank-load", new CastPath(.28f, false,
+                Rest(0), K(.08f, .01f, .025f, .01f, .04f, .10f, .02f),
+                K(.18f, -.025f, .065f, .055f, .18f, .30f, .14f),
+                K(.28f, -.020f, .060f, .050f, .24f, .28f, .17f),
+                K(.42f, -.008f, .025f, .020f, .10f, .12f, .06f), Rest(.64f)) },
             // THUNDERSTRIKE. One arm calls the sky and HOLDS ("hold to pick a spot"), then snaps down level
             // to point at it while the left is thrown back as the counterweight; chatter after.
             { "summon-lightning", new CastPath(.45f, false,

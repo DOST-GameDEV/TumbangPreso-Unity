@@ -1,6 +1,6 @@
 # Bank Shot load gesture
 
-Status: planned presentation unit, not implemented or accepted by this document.
+Status: implementation and scoped evidence now available in [implementation.md](implementation.md). This original plan is retained; remaining visual acceptance is explicit there.
 
 ## Current source and reference
 

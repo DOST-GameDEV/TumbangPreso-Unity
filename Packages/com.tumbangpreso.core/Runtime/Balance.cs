@@ -256,7 +256,7 @@
         public const float ShoveStun = 1.25f;
         public const float ShoveStaminaCost = 0.0f;
         public const float ShoveCooldown = 7.5f;
-        public const float ShoveMissCooldown = 2.0f;
+        public const float ShoveMissCooldown = 0.5f;
         public const float ShoveRange = 1.6f;
         public const float ShoveArcDeg = 70.0f;
 
@@ -386,7 +386,8 @@
 
         public const float PunchRange = 1.7f;
         public const float PunchArcDeg = 75.0f;
-        public const float PunchCooldown = 0.9f;
+        public const float PunchCooldown = 0.5f;
+        public const float PunchHitCooldown = 0.25f;
 
         public const float MaxKnockbackSpeed = 16.0f;
         public const float MaxKnockbackLift = 7.0f;
@@ -398,7 +399,7 @@
 
         // Faster ordinary wind-up requested in Feedback. Power range, launch
         // speed and retrieval recovery remain unchanged in both modes.
-        public const float ChargeFullTime = 1.25f;
+        public const float ChargeFullTime = 1.5f;
         public const float ChargeMinPower = 0.35f;
         public const float ThrowLockTime = 1.25f;
         /// <summary>How close a body's FEET have to be to a resting tsinelas to pick it up.

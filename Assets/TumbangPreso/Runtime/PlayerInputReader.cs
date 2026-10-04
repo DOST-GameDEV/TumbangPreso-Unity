@@ -45,6 +45,7 @@ namespace TumbangPreso
         private readonly HashSet<Verb> _menuButtons=new HashSet<Verb>();
         private int _menuClosedFrame=-1;
         private bool _loadingInputHeld, _chatInputHeld;
+        private bool _focused = true;
         private readonly Core.ToggleControl _sprintToggle = new();
         private readonly Core.ToggleControl _restoreToggle = new();
         private Carrier _carrier;
@@ -70,8 +71,24 @@ namespace TumbangPreso
         {
             if(RawButton(action,verb))_menuButtons.Add(verb);
         }
-        private static bool RawButton(InputAction action,Verb verb)
-            =>(action!=null && action.IsPressed()) || InputLayer.TouchInput.Pressed(verb);
+        private bool RawButton(InputAction action,Verb verb)
+        {
+            bool down = action != null && action.IsPressed();
+            bool charge = verb == Verb.SpecialAbility || verb == Verb.Lunge;
+            if (charge && !down && action != null && action.enabled && action.activeValueType == typeof(float))
+            {
+                // Re-resolution retains the processed value of a surviving control
+                // but can lose IsPressed. Preserve its normal press/release hysteresis.
+                bool held = verb == Verb.SpecialAbility ? _throwHardwareHeld : _lungeHardwareHeld;
+                float point = action.activeControl is UnityEngine.InputSystem.Controls.ButtonControl button
+                    ? button.pressPointOrDefault : InputSystem.settings.defaultButtonPressPoint;
+                float value = action.ReadValue<float>();
+                down = held ? value > point * InputSystem.settings.buttonReleaseThreshold : value >= point;
+            }
+            if (verb == Verb.SpecialAbility) _throwHardwareHeld = down;
+            else if (verb == Verb.Lunge) _lungeHardwareHeld = down;
+            return down || InputLayer.TouchInput.Pressed(verb);
+        }
         private bool ReadButton(InputAction action,Verb verb)
         {
             bool down=RawButton(action,verb);
@@ -89,6 +106,36 @@ namespace TumbangPreso
         [SerializeField] private Camera _aimCamera;
 
         private InputAction _move, _sprint, _jump, _special, _grab, _lunge, _emote, _skill1, _skill2, _ultimate, _interact;
+        private InputDevice _throwDevice, _lungeDevice;
+        private bool _throwDeviceLost, _lungeDeviceLost;
+        private bool _throwHardwareHeld, _lungeHardwareHeld;
+
+        private void OnEnable() => InputSystem.onDeviceChange += DeviceChanged;
+
+        private void DeviceChanged(InputDevice device, InputDeviceChange change)
+        {
+            if (change != InputDeviceChange.Removed && change != InputDeviceChange.Disconnected
+                && change != InputDeviceChange.Disabled && change != InputDeviceChange.SoftReset
+                && change != InputDeviceChange.HardReset) return;
+            if (_throwDevice == device) _throwDeviceLost = true;
+            if (_lungeDevice == device) _lungeDeviceLost = true;
+        }
+
+        private void ReconcileDeviceInput()
+        {
+            // Check aggregate input after the Input System update, when surviving
+            // bindings have been resolved. Never read a removed device's controls.
+            bool ownsSeat = !NetAuthority.IsNetworked || _motor.PlayerSlot == NetAuthority.LocalSlot;
+            bool throwing = RawButton(_special, Verb.SpecialAbility);
+            bool lunging = RawButton(_lunge, Verb.Lunge);
+            if (_throwDeviceLost && !throwing)
+                _motor.GetComponent<Carrier>()?.RetireThrowInput(ownsSeat);
+            if (_lungeDeviceLost && !lunging)
+                _motor.GetComponent<CombatVerbs>()?.RetireProducerInput(ownsSeat);
+            _throwDeviceLost = _lungeDeviceLost = false;
+            _throwDevice = _throwHardwareHeld ? _special.activeControl?.device : null;
+            _lungeDevice = _lungeHardwareHeld ? _lunge.activeControl?.device : null;
+        }
 
         /// <summary>
         /// The pektus curve, left and right.
@@ -196,6 +243,11 @@ namespace TumbangPreso
             // rather than throwing on every seat in every match.
             _look = map.FindAction("Look", false);
 
+            // Button bindings otherwise lose their held phase during a device
+            // re-resolution until another hardware event arrives.
+            _special.wantsInitialStateCheck = true;
+            _lunge.wantsInitialStateCheck = true;
+
             map.Enable();
         }
 
@@ -213,6 +265,15 @@ namespace TumbangPreso
             // sampling twice in a frame is harmless but it hides which one is the real one.
 
             if (_motor == null) return;
+            if (!_focused)
+            {
+                // Network players keep ticking in the background. The retired
+                // producer must not import another hardware frame until focus returns.
+                _motor.Intent.Clear();
+                _motor.Intent.CommitFrame();
+                return;
+            }
+            ReconcileDeviceInput();
 
             bool loading = UI.Hub.HubLoading.Visible;
             bool typing = UI.LobbyChat.AnyTyping;
@@ -479,11 +540,13 @@ namespace TumbangPreso
 
         private void OnApplicationFocus(bool focused)
         {
+            _focused = focused;
             if (!focused)
             {
                 CancelPendingInput();
-                DiscardMenuButtonsUntilRelease();
             }
+            // Buttons pressed while away also need an observed release on return.
+            DiscardMenuButtonsUntilRelease();
         }
 
         private void CancelPendingInput()
@@ -505,12 +568,16 @@ namespace TumbangPreso
 
         private void OnDisable()
         {
+            InputSystem.onDeviceChange -= DeviceChanged;
+            _throwDevice = _lungeDevice = null;
+            _throwDeviceLost = _lungeDeviceLost = false;
             CancelPendingInput();
             _readyUseHeld = false;
             _readyInteractHeld = false;
             // ⚠️ RELEASE EVERYTHING ON THE WAY OUT. A verb held across a disable stays held
             // in the intent table forever, and the player walks back in already sprinting.
             DiscardMenuButtonsUntilRelease();
+            _throwHardwareHeld = _lungeHardwareHeld = false;
         }
     }
 }
