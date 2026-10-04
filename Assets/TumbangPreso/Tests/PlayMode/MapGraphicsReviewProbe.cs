@@ -8,6 +8,7 @@ using TumbangPreso.CameraSystem;
 using TumbangPreso.Core;
 using TumbangPreso.Settings;
 using TumbangPreso.UI;
+using TumbangPreso.Visual;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -39,6 +40,44 @@ namespace TumbangPreso.PlayTests
             SceneFlow.Networked=_networked;SceneFlow.AdoptRemoteRules(_rules);
             if(_pinned)SceneFlow.PinSelectedRules(_rules);else SceneFlow.UnpinSelectedRules();
         }
+        [UnityTest]
+        public IEnumerator OwnerBirdsEyeMapScreenshots()
+        {
+            string map=Environment.GetEnvironmentVariable("TUMP_BIRDS_EYE_MAP")??SceneFlow.Eskinita;
+            Assert.Contains(map,SceneFlow.Maps);
+            yield return MapRetrievalProbe.Load(map);
+            var rig=Object.FindFirstObjectByType<CameraRig>();rig.enabled=false;
+            foreach(var arms in Object.FindObjectsByType<ViewmodelArms>())arms.gameObject.SetActive(false);
+            foreach(var canvas in Object.FindObjectsByType<Canvas>())canvas.enabled=false;
+            var camera=new GameObject("Owner birds-eye witness").AddComponent<Camera>();
+            camera.CopyFrom(rig.Camera);camera.enabled=false;camera.cullingMask&=~(1<<5);
+            camera.fieldOfView=54;camera.nearClipPlane=.1f;camera.farClipPlane=1000;
+            camera.gameObject.AddComponent<WorldLookCamera>();
+            camera.gameObject.AddComponent<ColourGrade>().AdoptFromScene();
+            camera.gameObject.AddComponent<WorldOutline>();
+            camera.gameObject.AddComponent<PostAntiAlias>();
+            float span=Mathf.Max(AIController.PlayableMaxX-AIController.PlayableMinX,AIController.PlayableMaxZ-AIController.PlayableMinZ);
+            var focus=new Vector3((AIController.PlayableMaxX+AIController.PlayableMinX)*.5f,
+                GameServices.Round.Lata.transform.position.y+.8f,(AIController.PlayableMaxZ+AIController.PlayableMinZ)*.5f);
+            float distance=Mathf.Max(30,span*1.25f);
+            string folder=Environment.GetEnvironmentVariable("TUMP_EVIDENCE")??Output;
+            Directory.CreateDirectory(folder);
+            bool fog=RenderSettings.fog;RenderSettings.fog=false;
+            try
+            {
+                foreach(float yaw in new[]{35f,-35f})
+                {
+                    float angle=yaw*Mathf.Deg2Rad,elevation=50*Mathf.Deg2Rad;
+                    var offset=new Vector3(Mathf.Sin(angle)*Mathf.Cos(elevation),Mathf.Sin(elevation),-Mathf.Cos(angle)*Mathf.Cos(elevation))*distance;
+                    camera.transform.SetPositionAndRotation(focus+offset,Quaternion.LookRotation(-offset));
+                    yield return null;
+                    using(NeighbourhoodSkyMotion.At(20))
+                        yield return GameplayShots.Render(camera,map+(yaw>0?"-east":"-west"),false,folder,width:1920,height:1080);
+                }
+            }
+            finally {RenderSettings.fog=fog;Object.Destroy(camera.gameObject);}
+        }
+
         [UnityTest,Timeout(240000)]
         public IEnumerator FourMapsReportMatchedWorldFramesAndQualityDifferences()
         {
