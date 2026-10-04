@@ -175,7 +175,6 @@ namespace TumbangPreso.Net
         private TaskCompletionSource<string> _hostLobbyCreation;
 
         public IEnumerable<Entry> Servers => _seen.Values;
-        public string HostedLobbyProblem { get; private set; } = "";
 
         public void StartBrowsing()
         {
@@ -485,7 +484,6 @@ namespace TumbangPreso.Net
             if (_hostLobbyCreation != null || !string.IsNullOrEmpty(_activeHostLobbyId))
                 _ = DeleteHostedLobbyAsync();
             long request = ++_hostLobbyRequest;
-            HostedLobbyProblem = "";
             var completion = new TaskCompletionSource<string>();
             _hostLobbyCreation = completion;
             string createdId = null;
@@ -562,7 +560,6 @@ namespace TumbangPreso.Net
             }
             catch (Exception e)
             {
-                if (this != null && request == _hostLobbyRequest) HostedLobbyProblem = e.Message;
                 NetIdentity.ReportServiceCallFailed("Lobby creation", e);
                 return null;
             }

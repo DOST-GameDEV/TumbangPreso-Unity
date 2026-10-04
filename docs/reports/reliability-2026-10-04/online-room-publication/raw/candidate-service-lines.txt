@@ -1,0 +1,7 @@
+[NetIdentity] UGS could not be reached (error code 10006), so Relay and Lobby cannot be used right now. LAN hosting and joining are unaffected. [AuthenticationException: Invalid profile name. The profile may only contain alphanumeric values, '-', '_', and must be no longer than 30 characters.]
+[Net] connected as seat 1
+[Net] hosting on 49171, join code 8A3W
+[Net] offline
+[Net] signing in to online services...
+[Net] cannot go online: UGS could not be reached (error code 10006), so Relay and Lobby cannot be used right now. LAN hosting and joining are unaffected.
+[Net] offline

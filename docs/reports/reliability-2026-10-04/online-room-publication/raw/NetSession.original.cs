@@ -1320,7 +1320,9 @@ namespace TumbangPreso.Net
                 // notices until a player is stuck. Same reasoning as `docs/TODO.md` § 60: two
                 // routes to one outcome, one of them a subset.
                 if (ok) RegisterSeatHandler();
-                if (!ok) SetStatus(_startProblem ?? "failed to start relay host");
+                SetStatus(ok
+                    ? $"relay hosting active, code {Lobby.JoinCode} (relay {relayCode})"
+                    : _startProblem ?? "failed to start relay host");
 
                 if (ok)
                 {
@@ -1330,28 +1332,18 @@ namespace TumbangPreso.Net
                     _beacon.Port = DefaultPort;
                     _beacon.InProgress = false;
                     PublishLobbyCounts();
+                    _beacon.StartAdvertising();
 
-                    // Relay does not listen at the direct LAN address. Advertising that
-                    // address makes LAN-first code lookup bypass the working Relay route.
-                    SetStatus("publishing the online room...");
-                    string published = Query == null ? null : await Query.CreateHostedLobbyAsync(
+                    if (Query != null)
+                    {
+                        _ = Query.CreateHostedLobbyAsync(
                             LocalLobbyName(),
                             Lobby.JoinCode,
                             relayCode,
                             Lobby.SeatedPeerCount(),
                             Lobby.OccupiedSeatCount(),
                             Advert);
-                    if (!CanContinueJoin(attempt)) return false;
-                    if (string.IsNullOrEmpty(published))
-                    {
-                        string problem = Query?.HostedLobbyProblem;
-                        await EnsureStoppedAsync(attempt);
-                        if (!CanContinueJoin(attempt)) return false;
-                        SetStatus("Could not publish the online room." +
-                            (string.IsNullOrWhiteSpace(problem) ? " Please try again." : " " + problem));
-                        return false;
                     }
-                    SetStatus($"relay hosting active, code {Lobby.JoinCode} (relay {relayCode})");
                 }
 
                 if (!ok)

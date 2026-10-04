@@ -25,6 +25,35 @@ cleanup heartbeat; no duplicate automation.
 
 ## Current ownership and source
 
+October 4 latest owner priority is SERVER FIXES. Public room discovery and joining
+by code both failed for QA; the owner says QoLUpdates worked. Non-host lag is
+smooth visuals with delayed movement/rubber-banding. Online Relay acceptance is
+required separately from LAN. QoLUpdates is a prank branch: relevant read-only
+comparison only; never run, merge or copy its prank code.
+
+Current Root source/publication 0b16a2e98. Camera d647aff69 is shipped: original
+two late-activation/follow failures plus two controls -> same four native passes.
+Title/login bb4269df9 is shipped with actual multi-resolution native pixels;
+new Yasmin clothing model draft and shared catch VFX are deferred for server work.
+Laptop owns PaeteHazards projectile regression (original two failures/one control
+-> candidate three passes) and emote investigation. Ask exact ownership before
+changing its lane. DanteBoulder follow-up is reserved on laptop, unedited.
+
+Root server investigation: actual non-batch Relay hosting, UGS S1 custom-code
+lookup and shipping public browser passed one live case (22952/session83437).
+This is one machine and does not prove peer admission. Fault injection then
+reproduced two failures: host succeeds despite registration refusal and reports
+success before delayed registration settles (10112/session15798). Both terminal
+with original evidence and prefs/Quality restored; 202 owned importers restored.
+Next topology original: Relay advertises a direct LAN address although its UTP
+transport is Relay; LAN-first resolution may select that address. Native8984 /
+session79818 runs the Relay no-direct-advert case plus real LAN advert control.
+Freeze Assets/Packages/ProjectSettings until parent terminal. Next restore owned
+importers, implement awaited publication/failure cleanup and correct advert
+topology, run same causal cases plus live publication control then publish/build
+one accepted artifact for paired ONLINE custom-code join and movement checks.
+Exact local handles remain in Logs/arrival-pan-review1004/current-resume.json.
+
 Root checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
 Source86849453c includes brand e9cfa13fc, contributor Glacial restoration and
 the owner's concise title hint. Legacy MapSource skip wording is cleared;

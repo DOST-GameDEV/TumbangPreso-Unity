@@ -117,12 +117,20 @@ Nothing was deleted or renumbered.
 - [ ] Current packaged multiplayer arrival film and camera handoff acceptance.
 - [ ] Public online rooms are undiscoverable: host publication/query/UI filter
   verification. QOL is read-only comparison; owner prohibits importing prank code.
+- [x] Fix online host success before registration and Relay advertising a direct
+  LAN endpoint. Three native causes plus LAN and real UGS code/browser controls
+  pass 5/5. [Evidence](reports/reliability-2026-10-04/online-room-publication/README.md).
+- [ ] Verify separate-machine online discovery/code admission and gameplay on one
+  matching artifact. One-machine UGS success does not close the QA report.
 - [ ] First-time Home entrance animation does not play; inspect hidden loading/
   login timing and start the entrance on actual visible reveal.
-- [ ] QA tester's editor opened NetSession.cs on launch: awaiting exact launch
-  action; screenshot is VS Code source, not a game dialog. Runtime source search
+- [ ] QA tester's editor opened NetSession.cs when creating a room in Unity Play
+  Mode (not a build); screenshot is VS Code source, not a game dialog. Runtime source search
   finds no editor-opening code.
-- [ ] Paete Bakya Bloom ready command produces no visible thrown slipper.
+- [x] Paete ready-recast slipper flight: authored 13m/s speed restored, ba1a02554;
+  two causal native failures plus ungrown control -> same three passes on laptop.
+- [ ] Owner override: mature Paete plant automatically lobs a slipper at a valid
+  target every five seconds. Laptop owns scoped implementation/peer presentation.
 - [ ] Paete carried slipper floats while emoting.
 - [ ] Replace the shared catch/tag VFX requested by the owner; live/peer/replay review.
 

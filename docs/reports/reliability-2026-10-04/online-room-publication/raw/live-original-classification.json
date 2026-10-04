@@ -1,0 +1,18 @@
+{
+  "terminal": true,
+  "exitCode": 0,
+  "passed": [
+    {
+      "name": "TumbangPreso.PlayTests.OnlineRoomPublicationProbe.RelayRoomPublishesTheCodeAndPublicListing",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "restoredGeneratedImporters": 202,
+  "remainingDeltas": [],
+  "protectedCount": 19257,
+  "inputRestored": true,
+  "profileRestored": true,
+  "qualityRestored": true,
+  "editorInputRestored": true
+}

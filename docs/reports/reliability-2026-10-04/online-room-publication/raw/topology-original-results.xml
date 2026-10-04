@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-04 15:38:04Z" end-time="2026-10-04 15:38:07Z" duration="3.3224391">
+  <test-suite type="TestSuite" id="3067" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1686" result="Failed" site="Child" start-time="2026-10-04 15:38:04Z" end-time="2026-10-04 15:38:07Z" duration="3.322439" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3061" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1686" result="Failed" site="Child" start-time="2026-10-04 15:38:04Z" end-time="2026-10-04 15:38:07Z" duration="3.187646" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="8984" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3062" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1686" result="Failed" site="Child" start-time="2026-10-04 15:38:04Z" end-time="2026-10-04 15:38:07Z" duration="3.157513" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3063" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1686" result="Failed" site="Child" start-time="2026-10-04 15:38:04Z" end-time="2026-10-04 15:38:07Z" duration="3.133277" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="2102" name="OnlineRoomPublicationProbe" fullname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" classname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-04 15:38:04Z" end-time="2026-10-04 15:38:07Z" duration="3.029197" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties>
+              <property name="Category" value="Ugs" />
+            </properties>
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="2107" name="DirectLanHostStillAdvertisesItsReachableAddress" fullname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe.DirectLanHostStillAdvertisesItsReachableAddress" methodname="DirectLanHostStillAdvertisesItsReachableAddress" classname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" runstate="Runnable" seed="32070310" result="Passed" start-time="2026-10-04 15:38:04Z" end-time="2026-10-04 15:38:04Z" duration="0.514724" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 49171, join code 3WB8
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+]]></output>
+            </test-case>
+            <test-case id="2106" name="RelayHostDoesNotOfferAnUnreachableDirectLanAddress" fullname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe.RelayHostDoesNotOfferAnUnreachableDirectLanAddress" methodname="RelayHostDoesNotOfferAnUnreachableDirectLanAddress" classname="TumbangPreso.PlayTests.OnlineRoomPublicationProbe" runstate="Runnable" seed="1418669002" result="Failed" start-time="2026-10-04 15:38:04Z" end-time="2026-10-04 15:38:07Z" duration="2.491897" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  LAN-first code lookup selects a direct address although this host listens through Relay.
+  Expected: False
+  But was:  True
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.OnlineRoomPublicationProbe+<RelayHostDoesNotOfferAnUnreachableDirectLanAddress>d__6.MoveNext () [0x000a6] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\OnlineRoomPublicationProbe.cs:113
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[Net] signing in to online services...
+[Net] allocating relay server...
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] relay hosting active, code R9FM (relay HBBJPQ)
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
