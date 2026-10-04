@@ -32,7 +32,7 @@ TODO is the only status queue. Reports hold evidence; this file holds execution.
 ## Exact source and outstanding unit
 
 Root checkout: C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
-Source67d0980dd8 includes checked replay/input/F6/career, LAN runner and server speed,
+Sourcecc96738d3 includes checked gameplay/LAN units and both server corrections,
 protocol144, clean detached HEAD before this checkpoint. Build remains unlaunched.
 Dirty Main is C:/Users/matth/Documents/GitHub/TumbangPreso-Unity-ASTRAReworks;
 never overwrite/stage its private Amihan/artwork/input metadata. No root Editor.
@@ -101,13 +101,19 @@ Root server travel-bound unit: current actual Core accepts1656/1700/1800 but old
 Cloud Code rejects them. Corrected legacy6.9 bound to DefenderRunSpeed7.5 only;
 original3failures/3controls ->6/6 with actual Core answers and digest unchanged.
 No service deployment/native launch. Evidence:reliability-2026-10-04/cloud-travel-bound.
-Root next server unit: baseline67d exported submit endpoint loses history when
+Root checked server unit cc967: baseline67d exported submit endpoint loses history when
 profile succeeds/history fails, then retry sees applied id and skips history.
 History-before-profile correction: original1failure/4controls ->5/5. Travel6/6 and
 digest still pass. No deployed/transaction/concurrent-write or old-loss recovery
 claim. Evidence:reliability-2026-10-04/cloud-history-write. No owned native job.
-NEXT: publish this checked write-order correction and continue independent source
-work; release launch still requires an actual owned-slot gate change.
+Root current Core unit: NaN survives record normalization and reaches career
+time/distance totals. Baselinecc967 plus unchanged nine-case fixture:4failures/
+5controls. One float-clamp change ->68/68 record/profile/integrity checks. No
+Unity/service/player/profile mutation. Evidence:reliability-2026-10-04/match-record-nan.
+NEXT: publish this checked Core correction and notify laptop to incorporate it
+in its UNLAUNCHED release freeze. No old73ef Core qualification for final release.
+Laptop currently checking its separate reader focus fix after native original
+2causal failures/2controls; do not overlap its PlayerInputReader source or jobs.
 Owner last-five-hours question was answered; do not replay it after compaction.
 
 ## Completed evidence and next integration gates

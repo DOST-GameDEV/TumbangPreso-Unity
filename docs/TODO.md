@@ -17,6 +17,16 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### MATCH-RECORD-NAN-1004: normalized measurements remain numeric
+
+- [x] Normalize NaN duration/distance/last-attacker duration to their existing
+  lower bounds so applying a record cannot contaminate career totals. Four
+  reproduced failures/five controls; corrected record/profile/integrity cohort
+  passed 68/68. Finite and infinity bounds unchanged, no schema/wire change.
+  [Evidence](reports/reliability-2026-10-04/match-record-nan/README.md).
+- [ ] Unity/package acceptance with this current Core source. Supplied records
+  do not identify a live measurement producer or repair old contaminated totals.
+
 ### CLOUD-HISTORY-WRITE-1004: failed writes retain retryable history
 
 - [x] Save match history before the profile's applied-id marker. A failed history
