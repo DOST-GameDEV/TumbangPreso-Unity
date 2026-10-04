@@ -199,3 +199,16 @@ No RootUnity/helper/player live; ProjectAuditor preserved unstaged. Code/fixture
 raw/qualification at reports/reliability-2026-10-04/career-refresh-order. Publish
 checked career unit now; laptop Social6/6 raw next then combined integration build
 with approved names and rendered labels. No unchanged passing cohort repeated.
+
+
+## Social ordering checked source publication
+
+Laptop native10464/23920 CLOSED original4causalFAIL2controls -> candidate6/6.
+Root all20 rawGithashes/actualXMLs/terminal/restoredQuality+9preferences/exact
+candidateRuntime/fixture/meta inspected; sameProjectAuditor generatedrefonly,
+strictallinput preservationFALSE. Neutraloriginal reverseexactbaseb263 proved.
+Raw4ffdc376047d2904f597af006aa21add7399d61c integrated02f4d4c32; code+root
+inspection nowpublish. NoRootnative/helpers/playerlive. NextactualupdatedWindows
+releasebuild in1003i/newinternaloutput, no cutoffs/qualityreduction/Desktopwrite;
+freezecurrent source and classify generatedchanges. Coordinate package transfer
+and names/rendered/fullHero8/maps/Relay tests with laptop afterits actualownership.

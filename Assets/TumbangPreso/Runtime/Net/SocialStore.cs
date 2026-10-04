@@ -59,6 +59,7 @@ namespace TumbangPreso.Net
         private bool _loading;
         private bool _writing;
         private bool _refreshPending;
+        private long _listWriteVersion;
         private PlayerAccount _hookedAccount;
 
         /// <summary>Raised whenever the list changes, so a rail can redraw without polling it.</summary>
@@ -219,18 +220,26 @@ namespace TumbangPreso.Net
         /// have three of these in flight, each finishing over the last, and the newest answer is
         /// not necessarily the one that lands last.
         /// </summary>
-        public async void Refresh()
+        public async void Refresh() => await RefreshAsync(CloudCode.CallAsync);
+
+        private async Task RefreshAsync(Func<string, object, Task<string>> call)
         {
             RetireOtherOwnersCache();
-            if (_loading || (_refreshPending && _writing) || !CanUseService) return;
+            if (_writing) { _refreshPending = true; return; }
+            if (_loading || !CanUseService) return;
             string requestedOwner = CareerStore.LocalPlayerId;
+            long writeVersion = _listWriteVersion;
             _refreshPending = false;
             _loading = true;
 
             try
             {
-                string output = await CloudCode.CallAsync(ScriptName, new { action = "load" });
-                Adopt(requestedOwner, output);
+                string output = await call(ScriptName, new { action = "load" });
+                if (this == null) return;
+                // A write started after this load and may already be acknowledged.
+                // Retain its list and ask again after both operations have finished.
+                if (writeVersion == _listWriteVersion) Adopt(requestedOwner, output);
+                else _refreshPending = true;
             }
             catch (Exception e)
             {
@@ -421,7 +430,9 @@ namespace TumbangPreso.Net
         /// and one place that swallows a failure. Six copies of a try/catch is six chances for one
         /// of them to leave the local list ahead of the server's.
         /// </summary>
-        private async Task<bool> Post(object parameters)
+        private Task<bool> Post(object parameters) => PostAsync(parameters, CloudCode.CallAsync);
+
+        private async Task<bool> PostAsync(object parameters, Func<string, object, Task<string>> call)
         {
             string requestedOwner = CareerStore.LocalPlayerId;
             RetireOtherOwnersCache();
@@ -434,10 +445,11 @@ namespace TumbangPreso.Net
             }
             if (_writing) return false;
             _writing = true;
+            _listWriteVersion++;
 
             try
             {
-                return Adopt(requestedOwner, await CloudCode.CallAsync(ScriptName, parameters));
+                return Adopt(requestedOwner, await call(ScriptName, parameters));
             }
             catch (Exception e)
             {

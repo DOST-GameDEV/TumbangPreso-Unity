@@ -36,6 +36,16 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### SOCIAL-REFRESH-ORDER-1004: preserve newer acknowledged friend actions
+
+- [x] Older loads cannot erase an accepted friend or restore a removed one.
+  Refreshes defer during writes; failed-write collisions schedule a fresh read.
+  Native original4failures/2controls -> same candidate6/6; root inspected20 raw
+  hashes/actual XML and exact Runtime/fixture/meta plus generated-setting delta.
+  [Evidence](reports/reliability-2026-10-04/social-refresh-order/README.md).
+- [ ] Rendered Friends and packaged service acceptance.
+
+
 ### CAREER-REFRESH-ORDER-1004: retain newer acknowledged profile
 
 - [x] Earlier same-account load cannot replace the profile returned by a newer
