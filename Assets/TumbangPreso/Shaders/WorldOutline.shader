@@ -558,12 +558,17 @@ Shader "TumbangPreso/WorldOutline"
                     // of the way to the violet is about a third darker on screen at the crease.
                     // Masked like the contact shade: the cast and Kanto's foliage (WorldOutline.
                     // IsToonSurface) keep their own shading.
-                    // ⚠️ `_CharacterAO` LETS THE CAST IN, FOR A TEST (owner, 2026-10-04: "can we also test
-                    // ambient occlusion for shading the characters too?"). At 0 the mask keeps them out,
-                    // as shipped; toward 1 the same occlusion shades a body where its limbs meet it
-                    // and where it stands against a wall. The contact shade and the ground occlusion
-                    // still leave the cast out.
-                    float occlusion=(1-tex2D(_WorldAO,duv).r)*_WorldAOParams.x*(1-saturate(mask*_WorldContactMask)*(1-_CharacterAO));
+                    // ⚠️ THE CAST HAS ITS OWN OCCLUSION UNDER ITS MASK (owner, 2026-10-04: "can we also
+                    // test ambient occlusion for shading the characters too?"; 2026-10-05, on the
+                    // first render of it: "notice how this part doesnt have any ao. its weak"). At
+                    // `_CharacterAO` 0 the mask keeps the cast out, as shipped. Above 0 a masked pixel
+                    // takes G, the body-scale kernel (pass 2, CastAO), at the cast's share times
+                    // `CastGain`, instead of the world's metre-wide R, which could not see a body.
+                    // The contact shade and the ground occlusion still leave the cast out.
+                    float2 enclosed=1-tex2D(_WorldAO,duv).rg;
+                    float masked=saturate(mask*_WorldContactMask);
+                    float occlusion=enclosed.x*_WorldAOParams.x*(1-masked);
+                    if(_CharacterAO>0)occlusion=lerp(enclosed.x*_WorldAOParams.x,enclosed.y*_CharacterAO*1.35,masked);
                     source.rgb*=lerp(float3(1,1,1),_PeakShade.rgb*.7,saturate(occlusion));
                 }
                 if(_PeakDepth.w>0)
@@ -761,6 +766,8 @@ Shader "TumbangPreso/WorldOutline"
             #endif
             sampler2D _CameraDepthNormalsTexture;
             float4 _ViewRay,_WorldContactProjection,_WorldAOParams;
+            // x on (the cast's share, > 0), y radius in metres, z bias in metres. See CastAO.
+            float4 _CharacterAOParams;
             float3 ViewPoint(float2 uv,out float3 normal)
             {
                 float depth;DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture,float4(uv,0,0)),depth,normal);
@@ -772,10 +779,52 @@ Shader "TumbangPreso/WorldOutline"
                 float depth;float3 normal;DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture,float4(uv,0,0)),depth,normal);
                 return depth*_WorldContactProjection.x;
             }
+            // ⚠️⚠️ § THE CAST'S OWN OCCLUSION, A SECOND KERNEL AT A BODY'S SCALE (owner, 2026-10-05,
+            // circling the head and chest in the difference picture: "notice how this part doesnt
+            // have any ao. its weak"). The world's kernel above cannot see a character: its radius is
+            // a metre and its bias 3 cm plus 0.4 per cent of the distance, sized for a wall's foot
+            // and a doorway, so a fringe of hair 5 cm proud of a forehead, an arm against a chest or
+            // a chin over a collar sits inside the bias and far inside the first ring. And it gives
+            // no occlusion at all nearer than the near-fade guard (1.8 m, ramping to 3.6), which is
+            // exactly where another player usually stands. This kernel is the same skimming probe
+            // set at `_CharacterAOParams.y` (about a third of a metre), with a bias of millimetres,
+            // and no near guard: the range check alone keeps a dissolved pillar at the lens from
+            // shading a body metres behind it. It is written to G and used only under the cast's
+            // mask, and it costs nothing when the cast's share is 0 (the shipped look).
+            float CastAO(float3 p,float3 n,float2 pixel)
+            {
+                float radius=_CharacterAOParams.y;
+                float bias=_CharacterAOParams.z+(-p.z)*.0015;
+                float2 cell=fmod(floor(pixel),4);
+                float noise=(fmod((cell.x*4+cell.y)*5,16)+.5)/16;
+                float angle=noise*6.2831853;
+                float3 r=float3(cos(angle),sin(angle),0);
+                float3 t=normalize(r-n*dot(r,n)),b=cross(n,t);
+                float occluded=0,total=0;
+                [unroll] for(int k=0;k<12;k++)
+                {
+                    float phi=k*2.3999632+angle;
+                    float elevation=lerp(.22,.75,frac(k*.618034+noise));
+                    float ring=(fmod(k,4)+.5)/4;
+                    float reach=radius*lerp(.14,1.0,ring);
+                    float3 dir=(t*cos(phi)+b*sin(phi))*cos(elevation)+n*sin(elevation);
+                    float3 probe=p+dir*reach;
+                    float2 uv=(probe.xy/-probe.z)/_ViewRay.xy*.5+.5;
+                    float sceneZ=-EyeDepth(uv);
+                    float range=smoothstep(0,1,radius/max(abs(p.z-sceneZ),1e-4));
+                    float weight=1-ring*.5;
+                    occluded+=step(probe.z+bias,sceneZ)*range*weight;total+=weight;
+                }
+                float ao=1-saturate(occluded/max(total,1e-4)*2.2);
+                // Out by 30 m, where a body is a few pixels and the probes land inside one.
+                return lerp(ao,1,smoothstep(18,30,-p.z));
+            }
             half4 frag(v2f_img i):SV_Target
             {
                 float3 n;float3 p=ViewPoint(i.uv,n);
                 if(-p.z>_WorldContactProjection.x*.999)return 1;
+                float cast=1;
+                if(_CharacterAOParams.x>0)cast=CastAO(p,n,i.pos.xy);
                 // ⚠️⚠️ NOTHING NEARER THAN THE NEAR-FADE START IS TRUSTED (`_WorldAOParams.w`,
                 // `NearFade.FadeStartMetres`, 1.8 m). A NearFade prop close to the camera (a bridge
                 // pillar you stand beside) dissolves in the colour pass so you can see past it, but
@@ -787,7 +836,7 @@ Shader "TumbangPreso/WorldOutline"
                 // every pixel as occluded. Found by a yaw sweep on Ilalim and switching renderer
                 // groups off one at a time: the LRT pillars alone. So a pixel that near gets no
                 // occlusion, and a probe that lands on one is not an occluder.
-                if(-p.z<_WorldAOParams.w)return 1;
+                if(-p.z<_WorldAOParams.w)return half4(1,cast,1,1);
                 float radius=_WorldAOParams.y;
                 // ⚠️⚠️ THE BIAS GROWS WITH DISTANCE, AND OPEN FLAT GROUND MUST READ CLEAN (owner,
                 // 2026-09-27, on Kanto's lawn and court: "still noticeable ... why do we have this ao
@@ -851,7 +900,7 @@ Shader "TumbangPreso/WorldOutline"
                 // (The gate is 0 on maps with no near-fade prop at the lens: the ramp's end is kept
                 // off its start so smoothstep never divides by zero.)
                 ao=lerp(1,ao,smoothstep(_WorldAOParams.w,max(_WorldAOParams.w*2,_WorldAOParams.w+.01),-p.z));
-                return half4(ao,ao,ao,1);
+                return half4(ao,cast,ao,1);
             }
             ENDCG
         }
@@ -879,7 +928,7 @@ Shader "TumbangPreso/WorldOutline"
             {
                 // The 4x4 block that holds all sixteen rotations of pass 2, so the rotation
                 // pattern averages out exactly; depth-aware, so an edge does not smear.
-                float centre=EyeDepth(i.uv);float sum=0,weight=0;
+                float centre=EyeDepth(i.uv);float2 sum=0;float weight=0;
                 [unroll] for(int y=-2;y<=1;y++)
                 [unroll] for(int x=-2;x<=1;x++)
                 {
@@ -894,10 +943,11 @@ Shader "TumbangPreso/WorldOutline"
                     // counts almost fully and only a real depth break drops out.
                     float rel=abs(EyeDepth(uv)-centre)/max(centre,1e-3);
                     float w=exp(-(rel/.02)*(rel/.02));
-                    sum+=tex2Dlod(_MainTex,float4(uv,0,0)).r*w;weight+=w;
+                    sum+=tex2Dlod(_MainTex,float4(uv,0,0)).rg*w;weight+=w;
                 }
-                float ao=sum/max(weight,1e-4);
-                return half4(ao,ao,ao,1);
+                // R the world's occlusion, G the cast's (pass 2, CastAO); G is 1 when the target has one channel.
+                float2 ao=sum/max(weight,1e-4);
+                return half4(ao.x,ao.y,ao.x,1);
             }
             ENDCG
         }

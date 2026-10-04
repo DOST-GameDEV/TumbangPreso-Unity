@@ -965,7 +965,10 @@ namespace TumbangPreso.Visual
             ApplyBrightLookEdges();
             bool lagoonDeck=WorldLookPresentation.HandlesCamera(_camera) && WorldLookPresentation.Current.Look.Map==UI.SceneFlow.Lagoon;
             _material.SetFloat("_LagoonDeckDetail",lagoonDeck?WorldCueProfile.Current.LagoonDeckDetail:0);
-            _material.SetFloat("_CharacterAO",CharacterAoTest>=0?CharacterAoTest:WorldLookProfile.Current.CharacterAmbientOcclusion);
+            float castShare=CharacterAoTest>=0?CharacterAoTest:WorldLookProfile.Current.CharacterAmbientOcclusion;
+            _material.SetFloat("_CharacterAO",castShare);
+            // The cast's own kernel (pass 2, CastAO): on only with a share, at a body's scale.
+            _material.SetVector("_CharacterAOParams",new Vector4(castShare,WorldLookProfile.Current.CharacterAmbientOcclusionRadius,.006f,0));
             RenderTexture occlusion=null,occlusionBlur=null;
             float aoStrength=AmbientOcclusionLive?WorldLookProfile.Current.AmbientOcclusion*WorldLookPresentation.Current.Weight:0;
             if(aoStrength>0)
@@ -977,6 +980,8 @@ namespace TumbangPreso.Visual
                 // which is what Minecraft's corners look like.
                 int w=Mathf.Max(1,source.width),h=Mathf.Max(1,source.height);
                 var format=SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.R8)?RenderTextureFormat.R8:RenderTextureFormat.ARGB32;
+                // Two channels when the cast has a share: R the world's occlusion, G the cast's.
+                if(castShare>0)format=SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.RG16)?RenderTextureFormat.RG16:RenderTextureFormat.ARGB32;
                 occlusion=RenderTexture.GetTemporary(w,h,0,format,RenderTextureReadWrite.Linear);
                 occlusionBlur=RenderTexture.GetTemporary(w,h,0,format,RenderTextureReadWrite.Linear);
                 _material.SetVector(WorldAOParamsId,new Vector4(aoStrength,WorldLookProfile.Current.AmbientOcclusionRadius,.03f,NearGuard()));

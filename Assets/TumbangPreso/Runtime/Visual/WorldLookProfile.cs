@@ -139,6 +139,9 @@ namespace TumbangPreso.Visual
         // their own toon shading. F8 in a debug session cycles a test value over this one
         // (`WorldOutline.CharacterAoTest`); set it here to make a value the look's own.
         [Range(0,1)] public float CharacterAmbientOcclusion=0f;
+        // The cast's kernel radius, metres: a body's scale (a fringe of hair, an arm against a chest),
+        // where the world's `AmbientOcclusionRadius` is a doorway's.
+        [Range(.1f,1)] public float CharacterAmbientOcclusionRadius=.35f;
         // 1 draws the cast's hull in a deeper shade of its own colour, 0 in black.
         [Range(0,1)] public float CastInkSelf=.88f;
         // The cast's hull width against its authored width.
