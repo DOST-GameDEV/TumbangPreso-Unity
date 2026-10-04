@@ -370,10 +370,13 @@ namespace TumbangPreso.PlayTests
                 System.IO.Directory.CreateDirectory(directory);
                 float lastTime = -1, lastGap = float.MaxValue, lastPoseTime = 0, lastAlpha = 0;
                 float lastShift = 0, lastLean = 0, lastStretch = 0;
+                var poseTiming = new System.Collections.Generic.List<string> { "simulation,delta,presentation,recorded,newest,liveTagTime,liveTorsoLean" };
+                var tagTimeField = typeof(CharacterAnimator).GetField("_tagTime", flags);
                 rendered = c =>
                 {
                     if (c != camera) return;
                     lastTime = Time.unscaledTime - began;
+                    end = (float)Field("_clipEnd");
                     lastPoseTime = Mathf.Lerp(start, end, Mathf.Clamp01(lastTime / CatchReconstruction.AnimationDuration));
                     var bounds = victimCopy.Renderers[0].bounds;
                     foreach (var renderer in victimCopy.Renderers) bounds.Encapsulate(renderer.bounds);
@@ -383,6 +386,7 @@ namespace TumbangPreso.PlayTests
                     lastLean = Vector3.Angle(copiedTorso.up, actor.transform.up);
                     Vector3 armScale = hand.parent.localScale;
                     lastStretch = Mathf.Max(armScale.x / restScale.x, armScale.y / restScale.y, armScale.z / restScale.z);
+                    poseTiming.Add(System.FormattableString.Invariant($"{Time.time:F6},{Time.deltaTime:F6},{lastTime:F6},{lastPoseTime:F6},{track.Newest:F6},{tagTimeField.GetValue(actor.GetComponent<CharacterAnimator>())},{Vector3.Angle(sourceTorso.up, actor.transform.up):F4}"));
                 };
                 Camera.onPostRender += rendered;
                 float next = 0, bestDistance = float.MaxValue, bestGap = float.MaxValue, bestAlpha = 0;
@@ -405,7 +409,7 @@ namespace TumbangPreso.PlayTests
                         byte[] bytes = image.EncodeToPNG();
                         System.IO.File.WriteAllBytes(directory + "/frame-" + frames.ToString("D3") + ".png", bytes);
                         times.Add(presentationTime.ToString("F6", System.Globalization.CultureInfo.InvariantCulture));
-                        float proximity = Mathf.Abs(lastPoseTime - (contact + .17f));
+                        float proximity = Mathf.Abs(lastPoseTime - end);
                         if (proximity < bestDistance)
                         {
                             bestDistance = proximity; bestGap = lastGap; bestAlpha = lastAlpha;
@@ -418,6 +422,7 @@ namespace TumbangPreso.PlayTests
                     finally { RenderTexture.active = previous; Object.Destroy(image); }
                 }
                 System.IO.File.WriteAllLines(directory + "/times.txt", times);
+                System.IO.File.WriteAllLines(directory + "/pose-timing.csv", poseTiming);
                 string values = "distance=" + distance + " contactGap=" + bestGap + " contactAlpha=" + bestAlpha
                     + " sampleError=" + bestDistance + " frames=" + frames
                     + " bodyShift=" + bestShift + " torsoLean=" + bestLean + " armStretch=" + bestStretch + " skinSurfaceGap=" + bestSurfaceGap;

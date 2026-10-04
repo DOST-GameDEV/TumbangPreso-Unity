@@ -113,10 +113,17 @@ namespace TumbangPreso.Visual
         private void ApplyTagBody()
         {
             if (_tagTime < 0 || _animator == null) return;
+            float previousTime = _tagTime;
             _tagTime += Time.deltaTime;
             bool lunge = _tagAction == "lunge";
             float end = lunge ? TagLungeSeconds : TagPunchSeconds;
-            if (_tagTime >= end || (_motor != null && (_motor.IsStunned || _motor.IsTripped))) { _tagTime = -1; return; }
+            float reachTime = lunge ? .10f : .12f;
+            float holdTime = lunge ? Core.Balance.LungeActiveTime : .22f;
+            // A slow frame must not skip the only visible touch. Show its peak
+            // once if this step crossed the entire contact window; the real
+            // gesture clock still advances and recovers on the following frame.
+            bool skippedTouch = previousTime < reachTime && _tagTime > holdTime;
+            if ((_tagTime >= end && !skippedTouch) || (_motor != null && (_motor.IsStunned || _motor.IsTripped))) { _tagTime = -1; return; }
             if (!_tgResolved)
             {
                 foreach (var skin in _animator.GetComponentsInChildren<SkinnedMeshRenderer>(false))
@@ -146,7 +153,7 @@ namespace TumbangPreso.Visual
 
             // Keep the touch legible, then recover on the existing clip clock.
             // The lunge holds for its actual live sweep, including late contacts.
-            float w = lunge ? Envelope(_tagTime, .10f, Core.Balance.LungeActiveTime, end) : Envelope(_tagTime, .12f, .22f, end);
+            float w = Envelope(skippedTouch ? reachTime : _tagTime, reachTime, holdTime, end);
             if (w <= .001f) return;
             // The shoulder travels because the body commits to the reach. Do not
             // inherit the old melee clip's backwards wind-up under this pose.

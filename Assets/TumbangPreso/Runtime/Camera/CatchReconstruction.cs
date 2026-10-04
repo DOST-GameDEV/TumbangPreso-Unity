@@ -238,6 +238,10 @@ namespace TumbangPreso.CameraSystem
             if (!_followthroughCaptured && _actorTrack.Newest >= _clipEnd && _victimTrack.Newest >= _clipEnd)
             {
                 _followthroughCaptured = true;
+                // Retain the first actual sample past follow-through. At low
+                // frame rates, trimming between samples can erase the one real
+                // contact pose and freeze an interpolated half-reach instead.
+                _clipEnd = Mathf.Min(_actorTrack.Newest, _victimTrack.Newest);
                 if (!RetainClip(_clipEnd))
                     _clipEnd = Mathf.Min(_actorClip.End, _victimClip.End);
             }
