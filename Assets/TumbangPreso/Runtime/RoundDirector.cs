@@ -68,7 +68,6 @@ namespace TumbangPreso
         public Lata Lata { get; set; }
 
         private readonly List<CharacterMotor> _players = new List<CharacterMotor>();
-        private float _throwCooldownLeft;
         private float _defenseTickAccum;
         private float _tayaCampTimer;
         private float _tayaCampTickAccum;
@@ -361,7 +360,6 @@ namespace TumbangPreso
             AdoptFieldLifetime();
             RoundActive = true;
             TimeLeft = RoundLength;
-            _throwCooldownLeft = 0.0f;
             _defenseTickAccum = 0.0f;
             _tayaCampTimer = 0.0f;
             _tayaCampTickAccum = 0.0f;
@@ -407,7 +405,6 @@ namespace TumbangPreso
 
             RoundActive = false;
             TimeLeft = RoundLength;
-            _throwCooldownLeft = 0.0f;
             _defenseTickAccum = 0.0f;
             _tayaCampTimer = 0.0f;
             _tayaCampTickAccum = 0.0f;
@@ -428,11 +425,8 @@ namespace TumbangPreso
             _clock += dt;
             TimeLeft = Mathf.Max(0.0f, TimeLeft - dt);
 
-            if (_throwCooldownLeft > 0.0f)
-                _throwCooldownLeft = Mathf.Max(0.0f, _throwCooldownLeft - dt);
-
             // Guided training is a practice range, not a scored round. The rules and every
-            // verb stay live, including throw restoration protection and real ability
+            // verb stay live, including can contact protection and real ability
             // cooldowns, but the lesson must not end halfway through because 90 seconds passed.
             if (GameLaunch.GuidedTutorial || PracticeRange.Active)
             {
@@ -650,14 +644,14 @@ namespace TumbangPreso
         {
             if (who == null) return false;
 
-            bool hiddenPracticeCan = GuidedTraining.HasHiddenPracticeCan(who, Lata);
+            var carrier = who.GetComponent<Carrier>();
             var ctx = new ThrowContext
             {
                 RoundActive = RoundActive,
                 IsDefender = who.IsDefender,
                 HoldingSlipper = who.HoldingSlipper,
-                LataUpright = hiddenPracticeCan || (Lata != null && Lata.IsUpright),
-                ThrowCooldownLeft = Mathf.Max(_throwCooldownLeft, Lata != null && !hiddenPracticeCan ? Lata.ProtectionLeft : 0),
+                LataUpright = Lata != null && Lata.IsUpright,
+                ThrowCooldownLeft = carrier != null && carrier.IsThrowChargeDecaying ? 1f : 0f,
                 X = who.transform.position.x,
                 Z = who.transform.position.z,
                 ConfinementRadius = Balance.ConfinementRadius,
@@ -666,19 +660,17 @@ namespace TumbangPreso
         }
 
         /// <summary>
-        /// Current feedback cancels charge on knockdown or restoration protection.
-        /// Starting, maintaining and releasing share the same legal gate.
+        /// Normal charge maintenance shares position/role legality. Restoration
+        /// decay is handled by Carrier before this gate.
         /// </summary>
         public bool CanMaintainThrowCharge(CharacterMotor who) => CanThrow(who);
 
         /// <summary>
-        /// ⚠️ NOBODY MAY THROW FOR A MOMENT AFTER THE CAN IS STOOD BACK UP. It stops the lata
-        /// being re-knocked by a slipper already charged and waiting on the last frame of the
-        /// reset channel, which would make the channel unfinishable.
+        /// Round observers are told the reset completed. The can retains its contact
+        /// protection; it no longer imposes a global throw cooldown.
         /// </summary>
         public void NotifyLataRestored()
         {
-            _throwCooldownLeft = Balance.ThrowRestoreCooldown;
             LataRestored?.Invoke();
         }
 

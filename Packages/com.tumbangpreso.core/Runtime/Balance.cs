@@ -72,6 +72,7 @@
         public const float TagStunTime = 5.0f;
         public const float SabotageWindow = 2.5f;
         public const float ThrowRestoreCooldown = 1.25f;
+        public const float ThrowChargeResetTime = .5f;
 
         // Tournament Anti-Camping & Anti-Stall Penalties
         public const float TayaCampRadius = 1.5f;

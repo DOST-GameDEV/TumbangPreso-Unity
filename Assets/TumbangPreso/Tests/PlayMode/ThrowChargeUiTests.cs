@@ -15,6 +15,138 @@ namespace TumbangPreso.PlayTests
         [UnityTearDown] public IEnumerator After() => PlayModeWorld.Reset();
         static readonly MethodInfo Step = typeof(Carrier).GetMethod("StepAttacker", BindingFlags.Instance | BindingFlags.NonPublic);
 
+        private static (CharacterMotor who, Carrier carrier, Slipper shoe, Lata can) MakeRestoreCase()
+        {
+            GameServices.Ensure(); GameServices.Round.Clear();
+            var go=new GameObject("Restore charge actor",typeof(CharacterController));
+            var who=go.AddComponent<CharacterMotor>();who.enabled=false;
+            who.PlayerSlot=1;who.Mode=GameMode.Classic;who.RoundActive=true;
+            who.transform.position=new Vector3(0,.1f,-8);
+            var carrier=go.AddComponent<Carrier>();carrier.enabled=false;
+            GameServices.Round.Register(who);
+            var can=new GameObject("Restore charge can").AddComponent<Lata>();can.enabled=false;
+            GameServices.Round.Lata=can;
+            GameServices.Match.ApplySnapshot(new int[4],1,true);
+            GameServices.Round.ApplySnapshot(90,true,0,true);
+            var shoe=new GameObject("Owned reset test slipper").AddComponent<Slipper>();shoe.enabled=false;
+            shoe.OwnerSlot=shoe.SeatOfOrigin=1;Assert.IsTrue(shoe.HostForceEquip(who));
+            who.Intent.Parked=false;who.Intent.AimPoint=Vector3.zero;
+            return (who,carrier,shoe,can);
+        }
+        private static void ChargeStep(Carrier carrier,float dt)=>Step.Invoke(carrier,new object[]{dt});
+        private static void DecayStep(Carrier carrier,float dt)=>typeof(Carrier)
+            .GetMethod("StepRestoreChargeDecay",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(carrier,new object[]{dt});
+
+        [TestCase(false)] [TestCase(true)]
+        public void ThrowsRemainLegalWithCanDownOrProtected(bool protectedCan)
+        {
+            var x=MakeRestoreCase();x.can.HostKnockDown(-1);
+            if(protectedCan)x.can.HostRestore();
+            Assert.IsTrue(GameServices.Round.CanThrow(x.who));
+            x.who.Intent.Set(Verb.SpecialAbility,true);ChargeStep(x.carrier,0);ChargeStep(x.carrier,.5f);
+            Assert.IsTrue(x.carrier.IsCharging);
+            x.who.Intent.Set(Verb.SpecialAbility,false);ChargeStep(x.carrier,.01f);
+            Assert.IsNull(x.carrier.Held);Assert.AreEqual(SlipperState.InFlight,x.shoe.State);
+        }
+
+        [TestCase(false)] [TestCase(true)]
+        public void RestoreSmoothlyLowersChargeAndCannotReleaseMidDecay(bool snapshot)
+        {
+            var x=MakeRestoreCase();
+            x.who.Intent.Set(Verb.SpecialAbility,true);ChargeStep(x.carrier,0);ChargeStep(x.carrier,Balance.ChargeFullTime);
+            x.can.HostKnockDown(-1);ChargeStep(x.carrier,.02f);
+            Assert.IsTrue(x.carrier.IsCharging);Assert.AreEqual(1,x.carrier.ChargeRatio);
+            if(snapshot)x.can.ApplySnapshotState(Vector3.zero,Quaternion.identity,true,x.can.SkinIndex);
+            else x.can.HostRestore();
+            Assert.IsTrue(x.carrier.IsThrowChargeDecaying);Assert.AreEqual(1,x.carrier.ChargeRatio);
+            Assert.IsFalse(GameServices.Round.CanThrow(x.who));
+            DecayStep(x.carrier,.25f);
+            Assert.AreEqual(.5f,x.carrier.ChargeRatio,.0001f);Assert.AreEqual(.5f,x.carrier.ObservedChargePower,.0001f);
+            x.who.Intent.Set(Verb.SpecialAbility,false);ChargeStep(x.carrier,.01f);
+            x.carrier.HostThrowAt(x.who.transform.position,Vector3.zero,1);
+            Assert.AreSame(x.shoe,x.carrier.Held,"Neither input nor direct host release may bypass decay.");
+            // Repeated upright packets are observation, not another reset.
+            x.can.ApplySnapshotState(Vector3.zero,Quaternion.identity,true,x.can.SkinIndex);
+            DecayStep(x.carrier,.25f);
+            Assert.IsFalse(x.carrier.IsThrowChargeDecaying);Assert.IsFalse(x.carrier.IsCharging);
+            Assert.Zero(x.carrier.ChargeRatio);Assert.AreEqual(-1,x.carrier.ObservedChargePower);
+            Assert.AreSame(x.shoe,x.carrier.Held,"A release during lowering is discarded, never buffered.");
+            x.who.Intent.Set(Verb.SpecialAbility,true);ChargeStep(x.carrier,0);Assert.Zero(x.carrier.ChargeRatio);
+            ChargeStep(x.carrier,Balance.ChargeFullTime);Assert.AreEqual(1,x.carrier.ChargeRatio);
+            x.who.Intent.Set(Verb.SpecialAbility,false);ChargeStep(x.carrier,.01f);
+            Assert.IsNull(x.carrier.Held);Assert.IsTrue(x.can.IsProtected,"Throwing no longer waits for the can barrier.");
+        }
+
+        [Test]
+        public void ObservedChargeDecaysAndLateKeepaliveCannotRaiseIt()
+        {
+            var x=MakeRestoreCase();x.carrier.ApplyObservedCharge(true,Balance.ChargeFullTime,.5f);
+            x.can.HostKnockDown(-1);x.can.HostRestore();DecayStep(x.carrier,.25f);
+            Assert.AreEqual(.5f,x.carrier.ObservedChargePower,.0001f);
+            x.carrier.ApplyObservedCharge(true,Balance.ChargeFullTime,.5f);
+            Assert.AreEqual(.5f,x.carrier.ObservedChargePower,.0001f);
+            DecayStep(x.carrier,0);Assert.AreEqual(.5f,x.carrier.ObservedChargePower,.0001f,"Paused time cannot consume the decay.");
+            DecayStep(x.carrier,.25f);Assert.AreEqual(-1,x.carrier.ObservedChargePower);
+        }
+
+        [Test]
+        public void LosingTheShoeCancelsRestoreDecay()
+        {
+            var x=MakeRestoreCase();x.who.Intent.Set(Verb.SpecialAbility,true);
+            ChargeStep(x.carrier,0);ChargeStep(x.carrier,.8f);x.can.HostKnockDown(-1);x.can.HostRestore();
+            Assert.IsTrue(x.carrier.IsThrowChargeDecaying);x.shoe.HostDisarm();DecayStep(x.carrier,.01f);
+            Assert.IsFalse(x.carrier.IsThrowChargeDecaying);Assert.IsFalse(x.carrier.IsCharging);
+            Assert.AreEqual(-1,x.carrier.ObservedChargePower);
+        }
+
+        [UnityTest, Timeout(90000)]
+        public IEnumerator RestoreDecayHasNativeBodyAndOwnerHandEvidence()
+        {
+            var x=MakeRestoreCase();x.who.IsBot=true;x.who.Mode=GameMode.HeroStrike;
+            x.who.CharacterIndex=Roster.IndexIn(Roster.HeroPeople,"zack");
+            var art=Resources.Load<RosterEntryAsset>("Roster/person_zack");
+            x.who.gameObject.AddComponent<Visual.CharacterVisual>().ApplyModel(art.Model,art.Tint,art.Clips,art.Palette,art.PetModel);
+            var shoeArt=Resources.Load<RosterEntryAsset>("Roster/slipper_loafers");
+            var shoeModel=Object.Instantiate(shoeArt.Model,x.shoe.transform);
+            Visual.ToonSkin.ApplySlipper(shoeModel,Visual.ToonSkin.PropOutlineWidth);
+            x.shoe.HostForceEquip(x.who);
+            var floor=GameObject.CreatePrimitive(PrimitiveType.Cube);floor.transform.position=Vector3.down*.5f;
+            floor.transform.localScale=new Vector3(30,1,30);
+            var capsule=x.who.GetComponent<CharacterController>();
+            capsule.height=1.6f;capsule.center=Vector3.up*.8f;capsule.radius=.35f;
+            x.who.enabled=true;
+            var light=new GameObject("Charge review light").AddComponent<Light>();
+            light.type=LightType.Directional;light.transform.rotation=Quaternion.Euler(35,-25,0);
+            var owner=new GameObject("Charge owner camera",typeof(Camera));owner.tag="MainCamera";
+            var rig=owner.AddComponent<CameraSystem.CameraRig>();rig.Follow(x.who,true);rig.SetAimSource(CameraSystem.AimSource.Movement);
+            var witness=new GameObject("Charge body witness").AddComponent<Camera>();witness.enabled=false;
+            witness.fieldOfView=45;witness.nearClipPlane=.05f;
+            yield return null;yield return null;
+            witness.transform.position=x.who.transform.position+new Vector3(2.4f,1.3f,3);
+            witness.transform.LookAt(x.who.transform.position+Vector3.up);witness.Render();owner.GetComponent<Camera>().Render();
+            yield return null;
+            x.can.HostKnockDown(-1);x.carrier.enabled=true;
+            bool restored=false,sawMiddle=false;float restoredAt=-1,endedAt=-1;
+            yield return ImprovementEvidenceProbe.Record(witness,"restore-charge",3.4f,x.who,t=>
+            {
+                x.who.Intent.Set(Verb.SpecialAbility,t>=.2f&&t<2.2f);
+                if(t>=2.05f&&!restored)
+                {
+                    Assert.Greater(x.carrier.ChargeRatio,.95f);
+                    x.can.HostRestore();restored=true;restoredAt=Time.time;
+                }
+                if(restored)
+                {
+                    sawMiddle|=x.carrier.ChargeRatio>.1f&&x.carrier.ChargeRatio<.9f;
+                    if(endedAt<0&&!x.carrier.IsThrowChargeDecaying)endedAt=Time.time;
+                    Assert.AreSame(x.shoe,x.carrier.Held,"Release during the return must never launch.");
+                }
+            },new Vector3(2.4f,1.3f,3));
+            Assert.IsTrue(restored&&sawMiddle);Assert.GreaterOrEqual(endedAt-restoredAt,.49f);
+            Assert.Less(endedAt-restoredAt,.65f,"The real charge return must finish around0.5s, not a later cooldown.");
+            Assert.IsFalse(x.carrier.IsCharging);Assert.Zero(x.carrier.ChargeRatio);
+        }
+
         [UnityTest]
         public IEnumerator CentreDotStaysFilledAndOnlyPulsesForItsOwnersThrow()
         {
@@ -131,16 +263,13 @@ namespace TumbangPreso.PlayTests
             can.HostKnockDown(2);
             yield return null;
             Step.Invoke(carrier, new object[] { .02f });yield return null;
-            Assert.IsFalse(can.IsUpright); Assert.IsFalse(GameServices.Round.CanThrow(who));
-            Assert.IsFalse(carrier.IsCharging,"Knockdown must cancel the existing charge");
-            Assert.AreEqual(0,carrier.ChargeRatio);
-            Assert.AreEqual("",reticle.ChargeCaption,"Cancelled charge must leave no full-power prompt");
-            can.HostRestore(); yield return null;
-            Step.Invoke(carrier,new object[]{.1f});
-            Assert.IsFalse(GameServices.Round.CanThrow(who));Assert.IsFalse(carrier.IsCharging,"Barrier must not bank a new charge");
-            float until = Time.realtimeSinceStartup + 6;
-            while ((!GameServices.Round.CanThrow(who) || can.IsProtected) && Time.realtimeSinceStartup < until) yield return null;
-            Assert.IsTrue(GameServices.Round.CanThrow(who)); Assert.IsFalse(can.IsProtected); yield return null;
+            Assert.IsFalse(can.IsUpright); Assert.IsTrue(GameServices.Round.CanThrow(who));
+            Assert.IsTrue(carrier.IsCharging,"Knockdown must preserve the charge");
+            can.HostRestore();yield return null;
+            Assert.IsTrue(carrier.IsThrowChargeDecaying);
+            DecayStep(carrier,.25f);yield return null;Assert.AreEqual(.5f,carrier.ChargeRatio,.01f);
+            DecayStep(carrier,.25f);yield return null;
+            Assert.IsTrue(GameServices.Round.CanThrow(who));Assert.IsFalse(carrier.IsCharging);
             Step.Invoke(carrier,new object[]{0f});Assert.IsTrue(carrier.IsCharging);Assert.AreEqual(0,carrier.ChargeRatio);
             Step.Invoke(carrier,new object[]{Balance.ChargeFullTime});yield return null;
             Assert.AreEqual("FULL · RELEASE", reticle.ChargeCaption);

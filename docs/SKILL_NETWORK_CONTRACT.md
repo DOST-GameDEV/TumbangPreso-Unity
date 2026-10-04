@@ -1,5 +1,14 @@
 # Skill Networking Contract
 
+## Restore charge return, protocol146
+
+Throws remain legal while the can is down or protected. A real down-to-upright
+edge lowers each active held charge over0.5s on host, owner and observing peers.
+Release is rejected during that decay, including the direct host launch path;
+late charge keepalives cannot raise a returning hand. Identical upright snapshots
+do not restart it. Existing can contact protection and packet layouts remain.
+Matching rebuilt peers are required.
+
 ## Powered ceiling credit, protocol145
 
 Zack's powered ceiling-only safety-bound return preserves the remaining wall-bank

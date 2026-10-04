@@ -1,5 +1,19 @@
 # TODO: Tumbang Preso Unity
 
+### THROW-RESTORE-1004: can-state throw freedom and smooth return
+
+- [x] Can-down and barrier no longer refuse throws. Actual restoration lowers an
+  active held charge over0.5s, with release locked during the return. The two old
+  warnings are removed. Protocol146; final15native cases and a managed legality
+  check pass, with actual body/owner-hand film. [Evidence](reports/throw-restore-decay-2026-10-04/README.md).
+- [ ] Paired-device/full-match and human feel acceptance.
+
+### TEMPORARY-LOGO-1004: supplied PNG preview
+
+- [x] Separate UI logos use supplied art, preserved proportions/placement, with
+  native credits review. [Evidence](reports/temporary-logo-2026-10-04/README.md).
+- [ ] Title-screen wall painting baked into background remains to be replaced.
+
 ### TUTORIAL-MUSIC-1004: owner-supplied track
 
 - [x] Replace guided tutorial music with Tutorial.mp3, cut exactly its first3s.

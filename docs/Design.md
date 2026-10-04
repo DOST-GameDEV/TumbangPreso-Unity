@@ -365,14 +365,14 @@ file is 🤖 `build ai`'s; a second binding for one verb costs a human nothing.
 
 1. The round is live and the player is an attacker holding a slipper.
 2. The player is outside the confinement box, using the shared geometry rule.
-3. The lata is upright and its restoration protection has expired.
+3. No pickup lock or active restore-charge decay is blocking release.
 
-Current Feedback changes the earlier allow-down behavior: can knockdown cancels
-an existing charge, and no charge/release is accepted until the can is restored
-and its barrier is gone. A later valid charge starts from zero. Already airborne
-slippers retain existing collision and can-protection behavior. This shared rule
-applies in Classic and Hero Strike and requires matching protocol118clients.
-The previous rationale is retained in Git history, not as a conflicting live rule.
+Can-down and can-barrier states no longer forbid starting or releasing a throw.
+Knockdown keeps an existing charge. On the actual down-to-upright transition,
+a held wind-up lowers smoothly to zero over0.5s; release is blocked during that
+return and is not buffered. Continuing to hold begins a fresh charge afterwards.
+Already airborne slippers and the can's contact protection are unchanged.
+This applies to Classic and Hero Strike with matching protocol146clients.
 
 ⚠️ **§2.16 MEASURED 2026-08-01 — THE DOTTED ARC LANDS WHERE THE SLIPPER LANDS.**
 `tools/mech_probe.tscn` integrates the preview's own scheme from the velocity it is
@@ -738,8 +738,8 @@ mesh's own AABB so it follows the skin. **Verified: `tools/models/lata_floor_pro
 reports all four skins at +0.0001 or better, upright and downed** — it exits
 non-zero if any skin sinks, so re-run it after touching a profile or the topple.
 
-`is_upright` gates **four** separate rules: the throw, the tag, passive scoring and the
-reset channel. It is host-authoritative and replicated through an **explicit RPC, not a
+`is_upright` gates tagging and the reset channel; its restoration edge lowers
+held throw charges. It no longer gates throw permission. It is host-authoritative and replicated through an **explicit RPC, not a
 `MultiplayerSynchronizer` property** — a synchronizer writes a property directly, so a
 setter's `signal` never fires on the peer that *received* it. That exact defect cost a
 whole session on 2026-07-30 (one setter, three symptoms).

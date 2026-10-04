@@ -701,8 +701,8 @@ namespace TumbangPreso.Core.Tests
             c = ok; c.HoldingSlipper = false; Assert.False(ThrowRules.CanThrow(c));
             c = ok; c.ThrowCooldownLeft = 0.5f; Assert.False(ThrowRules.CanThrow(c));
 
-            // Current feedback cancels/refuses throws until the can is restored.
-            c = ok; c.LataUpright = false; Assert.False(ThrowRules.CanThrow(c));
+            // Can orientation does not prohibit throwing; restore decay is a carrier lock.
+            c = ok; c.LataUpright = false; Assert.True(ThrowRules.CanThrow(c));
             c = ok; c.X = 0.0f; c.Z = 0.0f; Assert.False(ThrowRules.CanThrow(c)); // inside
         }
 

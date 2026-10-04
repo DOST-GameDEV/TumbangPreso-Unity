@@ -121,6 +121,8 @@ namespace TumbangPreso
         private float _aimHeldSeconds, _aimMovement;
         private int _aimSequence;
         private bool _charging;
+        private float _throwChargeDecayLeft, _throwChargeDecayStart, _observedDecayStart;
+        public bool IsThrowChargeDecaying => _throwChargeDecayLeft > 0f;
         private float _throwLockLeft;
         private float _channel;
 
@@ -259,7 +261,7 @@ namespace TumbangPreso
         /// </summary>
         public void HostThrowAt(Vector3 origin, Vector3 aimPoint, float charge, float spin = 0.0f)
         {
-            if (!NetAuthority.ShouldResolve() || Held == null) return;
+            if (!NetAuthority.ShouldResolve() || Held == null || IsThrowChargeDecaying) return;
 
             // ⚠️⚠️ `NetCue`, NOT `GameServices.Audio`, AND THIS LINE IS WHY THAT CLASS EXISTS.
             // It sits inside `HostThrowAt`, which opens with `if (!NetAuthority.ShouldResolve())
@@ -481,6 +483,8 @@ namespace TumbangPreso
 
             if (_throwLockLeft > 0.0f) _throwLockLeft = Mathf.Max(0.0f, _throwLockLeft - dt);
 
+            if (StepRestoreChargeDecay(dt)) return;
+
             // The observed wind-up runs on every peer, including the ones that are not driving
             // this unit. See ObservedChargePower.
             if (_observedCharge >= 0.0f)
@@ -650,6 +654,7 @@ namespace TumbangPreso
 
         private void StepAttacker(float dt)
         {
+            if (IsThrowChargeDecaying) return; // Releasing during the return cannot throw.
             var intent = _motor.Intent;
 
             // First refusal: a tap with something grabbable at your feet is a pickup, and
@@ -722,8 +727,8 @@ namespace TumbangPreso
                 _observedSpin = _pektusSpin;
                 _observedChargeFromInput = true;
 
-                // The current rule also cancels on can knockdown/protection, so
-                // a previously full charge cannot be banked across the reset.
+                // Leaving legal position/role still cancels ordinary preparation.
+                // Can knockdown and barrier state do not cancel or refuse it.
                 if (!canMaintainCharge) CancelCharge();
                 else
                 {
@@ -753,6 +758,7 @@ namespace TumbangPreso
 
         private void RetireLocalCharge(bool publish)
         {
+            _throwChargeDecayLeft = 0;
             if (!_charging) return;
 
             _charging = false;
@@ -776,10 +782,37 @@ namespace TumbangPreso
             _observedChargeFromInput = active;
         }
 
+        // Called on the actual down-to-upright edge, locally and on snapshot peers.
+        // The same observed charge drives both the body and first-person hands.
+        internal void BeginRestoreChargeDecay()
+        {
+            if (Held == null || _motor.IsDefender || (!_charging && _observedCharge < 0)) return;
+            _throwChargeDecayLeft = Balance.ThrowChargeResetTime;
+            _throwChargeDecayStart = _charge;
+            _observedDecayStart = Mathf.Max(0, _observedChargeFromInput ? _charge : _observedCharge);
+        }
+
+        private bool StepRestoreChargeDecay(float dt)
+        {
+            if (!IsThrowChargeDecaying) return false;
+            if (Held == null || _motor.IsDefender || !_motor.CanAct())
+            { CancelAll(); return true; }
+            _throwChargeDecayLeft = Mathf.Max(0, _throwChargeDecayLeft - dt);
+            float weight = Mathf.SmoothStep(0, 1, _throwChargeDecayLeft / Balance.ThrowChargeResetTime);
+            _charge = _throwChargeDecayStart * weight;
+            _observedCharge = _observedDecayStart * weight;
+            if (_throwChargeDecayLeft <= 0)
+            {
+                CancelCharge(); ApplyObservedCharge(false);
+            }
+            return true;
+        }
+
         /// <summary>Applies another peer's visible throw wind-up without touching local input.</summary>
         public void ApplyObservedCharge(bool active,float seconds=0,float spin=0)
         {
             if(float.IsNaN(seconds) || float.IsInfinity(seconds) || float.IsNaN(spin) || float.IsInfinity(spin))return;
+            if (active && IsThrowChargeDecaying) return; // Late keepalives cannot raise the returning hand.
             _observedChargeFromInput = active && _observedChargeFromInput && NetAuthority.IsHost
                                        && (_motor.PlayerSlot == NetAuthority.LocalSlot || _motor.IsBot);
             _observedCharge = active ? Mathf.Clamp(seconds,0,Balance.ChargeFullTime) : -1.0f;

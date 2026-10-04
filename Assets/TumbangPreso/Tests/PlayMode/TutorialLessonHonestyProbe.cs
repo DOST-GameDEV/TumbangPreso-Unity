@@ -223,7 +223,7 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(90000)]
-        public IEnumerator ListeningHostKeepsCanDownAndRestoreThrowRestrictions()
+        public IEnumerator ListeningHostAllowsThrowsAcrossCanStates()
         {
             yield return LoadTraining();
             var route = Object.FindFirstObjectByType<GuidedTraining>();
@@ -241,7 +241,7 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(start.Result, net.Status);
                 Assert.IsTrue(net.IsNetworked && net.IsHost);
                 GameLaunch.GuidedTutorial = true; // Even a stale route flag cannot bypass host rules.
-                Assert.IsFalse(GameServices.Round.CanThrow(who), "Hosted play must not inherit the hidden tutorial exception.");
+                Assert.IsTrue(GameServices.Round.CanThrow(who), "Throw legality no longer needs a hidden tutorial exception.");
                 can.gameObject.SetActive(true);
                 deadline = Time.realtimeSinceStartup + 6;
                 while (can.IsProtected && Time.realtimeSinceStartup < deadline) yield return null;
@@ -249,10 +249,10 @@ namespace TumbangPreso.PlayTests
                 Assert.IsTrue(GameServices.Round.CanThrow(who), "Host permits an ordinary upright, unprotected can.");
                 can.HostKnockDown(2);
                 Assert.IsFalse(can.IsUpright);
-                Assert.IsFalse(GameServices.Round.CanThrow(who));
+                Assert.IsTrue(GameServices.Round.CanThrow(who));
                 can.HostRestore();
                 Assert.IsTrue(can.IsProtected);
-                Assert.IsFalse(GameServices.Round.CanThrow(who));
+                Assert.IsTrue(GameServices.Round.CanThrow(who));
             }
             finally { net.Stop(); }
             yield return null;

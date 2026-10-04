@@ -37,8 +37,7 @@ namespace TumbangPreso.UI
             bool charging = _aimCarrier != null && _aimCarrier.IsCharging;
             float charge = charging ? Mathf.Max(.02f, _aimCarrier.ChargeRatio) : 0;
             float spin = charging ? _aimCarrier.CurrentPektusSpin : 0;
-            bool refused = charging && ((round.Lata != null && round.Lata.IsProtected)
-                                        || !round.CanThrow(local) || _aimCarrier.ThrowLocked || !local.CanAct());
+            bool refused = charging && (!round.CanThrow(local) || _aimCarrier.ThrowLocked || !local.CanAct());
 
             float cooldown = 0;
             foreach (var row in _statusRows)
