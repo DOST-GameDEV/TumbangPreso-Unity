@@ -1,0 +1,22 @@
+{
+  "matchId": "9153eb2b4fe24916b325a20bc33216ae",
+  "fullCanonicalRecordSHA256": "247e139fa789934d929617b3d42c9e8a01ed07fb5e471cde840fb1390f6898c8",
+  "canonicalBytes": 2424,
+  "rootIndependentFullHashACK": true,
+  "rootThread": "01a0f9f2-e618-7ac3-9be8-12f6a221b94c",
+  "actualMode": "HeroStrike",
+  "actualRounds": 8,
+  "actualRoundSeconds": 90,
+  "expectedClassicShortWire": "0|0|2|30|0|3|2|1|0|0|0",
+  "actualSavedWire": "1|0|8|90|0|3|0|1|0|0|0",
+  "scopeMismatchPreserved": true,
+  "humanSlots": [
+    0,
+    1
+  ],
+  "botSlots": [
+    2,
+    3
+  ],
+  "noHumanThrows": true
+}
