@@ -6,7 +6,7 @@ namespace TumbangPreso.Visual
     public sealed partial class HeroIntroductionScene
     {
         // =========================================================================================
-        // CHESKA, GLACIAL NOVA, 3.2 s. plan.md § 6.
+        // YASMIN, ABSOLUTE ZERO, 3.2 s. plan.md § 6.
         //
         // "Reads the space. Leaves you the harder route." She is from La Trinidad, Benguet: cool
         // highland air and pine ridges (CHARACTER_ORIGINS.md; her ice is her own magic, not local
@@ -30,12 +30,35 @@ namespace TumbangPreso.Visual
                 _pines.Add(AddSolid("RidgePine" + i, VfxShapes.Spire(6, .08f, .25f, 120 + i), new Color(.26f, .34f, .31f, 1)));
             _breath = Add("ColdBreath", VfxShapes.TwoSided(VfxShapes.Splat(10, .3f, 5)), new Color(.95f, .98f, 1, .5f), .4f);
             _frostLine = Add("FrostLine", VfxShapes.Prism(4, 1, 1), CheskaIce, .7f);
-            for (int i = 0; i < 5; i++) _lineBuds.Add(Add("FrostBud" + i, VfxShapes.Crystal(5, 12), CheskaIce, .7f));
-            _crystal = Add("GatheredCrystal", VfxShapes.Crystal(6, 20), new Color(.7f, .94f, 1, .95f), .8f);
+            for (int i = 0; i < 5; i++) _lineBuds.Add(Add("FrostBud" + i, YasminGatheredCrystal(), CheskaIce, .7f));
+            _crystal = Add("GatheredCrystal", YasminGatheredCrystal(), new Color(.7f, .94f, 1, .95f), .8f);
             _frostPlates = Add("FrostPlates", VfxShapes.Wedges(8, .14f, 9, .05f, .25f, 33), new Color(.78f, .95f, 1, .8f), .5f);
             for (int i = 0; i < 9; i++)
                 _spires.Add(Add("ClosingSpire" + i, VfxShapes.Spire(6, .12f, .3f, 140 + i), new Color(.55f, .85f, 1, .85f), .45f));
-            for (int i = 0; i < 6; i++) _shards.Add(Add("SnapShard" + i, VfxShapes.Crystal(4, 30 + i), CheskaIce, .9f));
+            for (int i = 0; i < 6; i++) _shards.Add(Add("SnapShard" + i, YasminGatheredCrystal(), CheskaIce, .9f));
+        }
+
+        // A held crystal needs volume. VfxShapes.Crystal is a flat ground fan,
+        // which disappeared edge-on in the low gather shot.
+        private static Mesh YasminGatheredCrystal()
+        {
+            var top = Vector3.up;
+            var bottom = Vector3.down * .65f;
+            var front = Vector3.forward;
+            var right = Vector3.right;
+            var back = Vector3.back;
+            var left = Vector3.left;
+            var mesh = new Mesh { name = "Yasmin gathered ice crystal" };
+            mesh.vertices = new[] {
+                top, front, right, top, right, back,
+                top, back, left, top, left, front,
+                bottom, right, front, bottom, back, right,
+                bottom, left, back, bottom, front, left
+            };
+            mesh.triangles = new[] { 0,1,2,3,4,5,6,7,8,9,10,11,
+                12,13,14,15,16,17,18,19,20,21,22,23 };
+            mesh.RecalculateNormals(); mesh.RecalculateBounds();
+            return mesh;
         }
 
         private void SampleCheska(float t)
@@ -61,9 +84,9 @@ namespace TumbangPreso.Visual
 
             // One exact line of frost, drawn left to right by her fingertip, budding as it goes.
             float drawn = Ease(.9f, 1.3f, t);
-            var from = new Vector3(side * .15f, 1.15f, .62f);
-            var to = new Vector3(side * .62f, 1.22f, .5f);
-            var end = Vector3.Lerp(from, to, drawn);
+            var to = (_heldItem != null ? FreePalm : RightPalm) + new Vector3(0, .04f, .12f);
+            var from = to - new Vector3(side * .4f, .06f, -.1f) * drawn;
+            var end = to;
             var along = end - from;
             float lineOn = Ease(.9f, .95f, t) * (1 - Ease(1.45f, 1.7f, t)) * leave;
             if (along.sqrMagnitude > 1e-5f)
@@ -76,18 +99,18 @@ namespace TumbangPreso.Visual
             {
                 float u = (i + .5f) / _lineBuds.Count;
                 float grown = Ease(.9f + u * .4f, 1.0f + u * .4f, t);
-                Place(_lineBuds[i], Vector3.Lerp(from, to, u), Vector3.one * .05f * grown, Quaternion.Euler(0, i * 50, 20), grown * lineOn);
+                Place(_lineBuds[i], Vector3.Lerp(from, to, u), Vector3.one * .035f * grown, Quaternion.Euler(0, i * 50, 20), grown * lineOn);
             }
 
             // The crystal closes between her palms, rises with them, and shatters on the snap.
             Vector3 gatherAt = (_heldItem != null ? FreePalm : BothPalms) + new Vector3(0, .1f, .12f);
             float form = Ease(1.45f, 1.95f, t), snap = Ease(2.88f, 2.92f, t);
-            Place(_crystal, gatherAt, new Vector3(.09f, .2f, .09f) * form, Quaternion.Euler(0, t * 40, 0), form * (1 - snap) * leave);
+            Place(_crystal, gatherAt, new Vector3(.11f, .18f, .11f) * form, Quaternion.Euler(0, t * 40, 0), form * (1 - snap) * leave);
             for (int i = 0; i < _shards.Count; i++)
             {
                 float age = t - 2.9f, u = Mathf.Clamp01(age / .3f);
                 float angle = i * Mathf.PI * 2 / _shards.Count;
-                var at = new Vector3(0, 1.15f, .45f) + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle) * .7f, .3f) * u * .9f;
+                var at = gatherAt + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle) * .7f, .3f) * u * .9f;
                 Place(_shards[i], at, Vector3.one * .06f * (1 - u * .5f), Quaternion.Euler(angle * 57, 0, 90), age >= 0 ? (1 - u) * leave : 0);
             }
 

@@ -560,10 +560,10 @@ def dante():
 
 def _cheska(held):
     """
-    GLACIAL NOVA, 3.2 s (plan.md section 6). "Reads the space. Leaves you the harder route."
+    ABSOLUTE ZERO, 3.2 s (plan.md section 6). "Reads the space. Leaves you the harder route."
     Quiet and precise: she stands still and READS the court with a slow head turn, draws one
     exact line of frost in the air with a fingertip, closes her hands round it into a crystal,
-    lifts it to eye height, a beat, and snaps her hands apart: the frame before the live nova.
+    lifts it clear of her chest, a beat, and snaps her hands apart: the frame before the live nova.
     Holding a slipper, the free (left) hand does the fine work and the shoe stays low and out
     of the way, and the camera takes her other side so the shoe is on the far side.
     """
@@ -575,14 +575,14 @@ def _cheska(held):
     if held:
         draw_a = Pose(torso=(2, -6, 0), head=(8, -10, 0), left=(82, 10, 6), right=shoe)
         draw_b = draw_a.but(left=(86, 22, -22), head=(8, -18, 0))
-        close = Pose(torso=(4, -4, 0), head=(14, -8, 0), left=(72, 4, 30), right=shoe)
-        lift = close.but(left=(104, 4, 30), head=(-2, -8, 6))
+        close = Pose(torso=(4, -4, 0), head=(14, -8, 0), left=(72, 20, 15), right=shoe)
+        lift = close.but(left=(82, 35, 8), head=(6, -8, 4))
         snap = Pose(torso=(-4, 0, 0), head=(-4, 0, 0), left=(72, 74, 0), right=(30, 40, 0))
     else:
         draw_a = Pose(torso=(2, 6, 0), head=(8, 10, 0), left=(4, 12, 0), right=(82, 10, 6))
         draw_b = draw_a.but(right=(86, 22, -22), head=(8, 18, 0))
         close = Pose(torso=(4, 0, 0), head=(14, 0, 0), left=(70, 4, 36), right=(70, 4, 36))
-        lift = close.but(left=(102, 4, 36), right=(102, 4, 36), head=(-2, 0, 6))
+        lift = close.but(left=(82, 15, 20), right=(82, 15, 20), head=(6, 0, 4))
         snap = Pose(torso=(-4, 0, 0), head=(-4, 0, 0), left=(72, 74, 0), right=(72, 74, 0))
 
     p.key(0, rest)
@@ -600,8 +600,8 @@ def _cheska(held):
     p.shot(0, 1.42, (m * 1.8, 1.45, 4.1), (0, 1.1, 0), 42, eye_to=(m * 1.62, 1.42, 3.75), close=True)
     # B: close on the hands as the frost gathers into the crystal.
     p.shot(1.42, 2.12, (m * .95, 1.05, 3.1), (0, .9, .3), 40, eye_to=(m * .85, 1.05, 2.85), close=True)
-    # C: wider and low for the lift, the frost spreading and the snap.
-    p.shot(2.12, 3.2, (m * -1.6, .7, 3.7), (0, 1.1, 0), 48, eye_to=(m * -1.45, .68, 3.45))
+    # C: widen on the same side; keep the gathering palm visible through the snap.
+    p.shot(2.12, 3.2, (m * 1.6, 1.65, 3.7), (0, 1.05, 0), 48, eye_to=(m * 1.45, 1.6, 3.45))
     p.locked((m * 1.5, 1.1, 4.6), (0, 1.05, 0), 46)
     return p
 

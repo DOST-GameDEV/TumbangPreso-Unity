@@ -33,7 +33,10 @@ reference characters are quality examples, not a new redesign assignment.
   Overclock now uses the free hand, front-side shots and a caster-centred strike;
   native geometry/motion checks pass, final map/player/SFX review remains open.
   [Overclock refinement](reports/isagani-overclock-2026-10-04/README.md).
-- [ ] Rago, Basilio, Yasmin, Nemu and Ilyas: finish their remaining presentation passes.
+- [ ] Yasmin: Absolute Zero crystal/hand connection and framing refined; held and
+  empty-hand native studies pass2/2. Full kit/player/SFX review remains open.
+  [Evidence](reports/yasmin-crystal-2026-10-04/README.md).
+- [ ] Rago, Basilio, Nemu and Ilyas: finish their remaining presentation passes.
 - [ ] Real-game film/listening review and multiplayer/player qualification.
 
 **How this file is organised (docs cleanup, 2026-09-23).** This file is the ONE status

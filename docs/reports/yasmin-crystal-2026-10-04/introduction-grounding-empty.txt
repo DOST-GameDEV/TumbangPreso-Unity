@@ -1,0 +1,7 @@
+Private body studies. Ground clearance uses the existing motion-strip deformed-vertex audit.
+[cheska] bake space: already scaled (renderer box 1.885 m, baked spans 1.885 and 4.486; rest pose sits at 0.000 m against a floor at 0)
+[cheska] visual-only study; retained theme started=False. No audio acceptance.
+Yasmin t=1.60 empty=True palm=(-0.085, 0.536, 0.342) crystal=(0.066, 0.638, 0.491) head=(0.000, 1.161, 0.022)
+Yasmin t=2.50 empty=True palm=(-0.214, 0.619, 0.398) crystal=(0.073, 0.722, 0.523) head=(0.000, 1.160, 0.028)
+cheska: clearance 0.00000 to 0.00000 metres
+cheska: maximum held-shoe vertices inside rigid head surfaces: 0
