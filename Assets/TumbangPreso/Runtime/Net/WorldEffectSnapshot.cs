@@ -68,10 +68,16 @@ namespace TumbangPreso.Net
             }
             foreach (var wall in Object.FindObjectsByType<HeroHazards.IceBarricadeComponent>(FindObjectsSortMode.None))
             {
-                if (wall.Remaining <= .02f) continue;
+                if (wall.Remaining <= .02f || wall.IsShattered) continue;
                 fields.Add(new Field { Type = Kind.Barricade, Source = wall.gameObject, Position = wall.transform.position,
                     Forward = wall.transform.forward, Duration = wall.Duration, Remaining = wall.Remaining,
-                    Owner = -1, FirstScale = wall.SpanScale, SecondScale = wall.ThicknessScale, Split = wall.Split });
+                    Owner = -1,
+                    // A nonzero barricade Radius denotes an arc. The two existing
+                    // scale channels carry arc length and remaining hit budget.
+                    Radius = wall.ArcLength > 0 ? wall.ArcRadius : 0,
+                    FirstScale = wall.ArcLength > 0 ? wall.ArcLength : wall.SpanScale,
+                    SecondScale = wall.ArcLength > 0 ? wall.RemainingHits : wall.ThicknessScale,
+                    Split = wall.ArcLength <= 0 && wall.Split });
             }
             foreach (var trail in Object.FindObjectsByType<HeroHazards.FireTrailComponent>(FindObjectsSortMode.None))
                 if (trail.Remaining > .02f) fields.Add(new Field { Type = Kind.Fire, Source = trail.gameObject,
@@ -131,8 +137,14 @@ namespace TumbangPreso.Net
                 return field.Radius > 0 && field.Radius <= 10 && field.FirstScale > 0 && field.FirstScale <= 1
                     && field.SecondScale > 0 && field.SecondScale <= 3;
             if (field.Type == Kind.Barricade)
-                return field.Forward.sqrMagnitude > .5f && field.Forward.sqrMagnitude < 1.5f
-                    && field.FirstScale > 0 && field.FirstScale <= 3 && field.SecondScale > 0 && field.SecondScale <= 3;
+            {
+                if (field.Forward.sqrMagnitude <= .5f || field.Forward.sqrMagnitude >= 1.5f) return false;
+                if (field.Radius == 0) // Retained straight/split barricades.
+                    return field.FirstScale > 0 && field.FirstScale <= 3 && field.SecondScale > 0 && field.SecondScale <= 3;
+                return field.Radius >= .25f && field.Radius <= 10 && !field.Split
+                    && field.FirstScale > 0 && field.FirstScale <= 12 && field.FirstScale / field.Radius <= Mathf.PI
+                    && field.SecondScale >= 0 && field.SecondScale <= 16 && field.SecondScale == Mathf.Floor(field.SecondScale);
+            }
             if (field.Type == Kind.Fissure)
                 return field.Forward.sqrMagnitude > .5f && field.Forward.sqrMagnitude < 1.5f
                     && (field.FirstScale == -1 || field.FirstScale == 1);
@@ -179,9 +191,13 @@ namespace TumbangPreso.Net
                 }
                 else if (field.Type == Kind.Barricade)
                 {
+                    bool arc = field.Radius > 0;
                     var go = HeroHazards.SpawnIceBarricade(field.Position, field.Forward, field.Duration,
-                        field.FirstScale, field.SecondScale, field.Split, silent: true);
-                    go.GetComponent<HeroHazards.IceBarricadeComponent>().RestoreRemaining(remaining);
+                        arc ? 1 : field.FirstScale, arc ? 1 : field.SecondScale, field.Split, silent: true,
+                        arcLength: arc ? field.FirstScale : 0, arcRadius: arc ? field.Radius : 3);
+                    var wall = go.GetComponent<HeroHazards.IceBarricadeComponent>();
+                    if (arc) wall.HitsToShatter = Mathf.RoundToInt(field.SecondScale);
+                    wall.RestoreRemaining(remaining);
                 }
                 else if (field.Type == Kind.Fire)
                 {

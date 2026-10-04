@@ -131,6 +131,97 @@ namespace TumbangPreso.PlayTests
             Physics.SyncTransforms();
         }
 
+        [UnityTest] public IEnumerator GlacialArcRestoresItsFiveSlabsAndAgedLife()
+        {
+            Floor();
+            var wall=HeroHazards.SpawnIceBarricade(Vector3.zero,Vector3.forward,10,arcLength:5,arcRadius:3)
+                .GetComponent<HeroHazards.IceBarricadeComponent>();
+            wall.HitsToShatter=3;wall.RestoreRemaining(6);
+            var original=wall.GetComponentsInChildren<MeshCollider>().Select(c=>c.transform.localPosition).ToArray();
+            Assert.AreEqual(5,original.Length);
+            var fields=WorldEffectSnapshot.Capture();Assert.IsTrue(WorldEffectSnapshot.Apply(fields,.5f));yield return null;
+            var restored=Object.FindFirstObjectByType<HeroHazards.IceBarricadeComponent>();
+            var slabs=restored.GetComponentsInChildren<MeshCollider>();
+            Assert.AreEqual(5,slabs.Length,"Restoring the compact arc must not rebuild the old straight three-piece wall.");
+            for(int i=0;i<5;i++)Assert.Less(Vector3.Distance(original[i],slabs[i].transform.localPosition),.001f);
+            Assert.That(restored.Remaining,Is.InRange(5.3f,5.51f));
+        }
+        [UnityTest] public IEnumerator GlacialArcRestoresDamageAlreadyTaken()
+        {
+            Floor();
+            var wall=HeroHazards.SpawnIceBarricade(Vector3.zero,Vector3.forward,10,arcLength:5,arcRadius:3)
+                .GetComponent<HeroHazards.IceBarricadeComponent>();
+            wall.HitsToShatter=3;wall.HostSlipperHit();wall.HostSlipperHit();
+            Assert.IsTrue(WorldEffectSnapshot.Apply(WorldEffectSnapshot.Capture(),0));yield return null;
+            var restored=Object.FindFirstObjectByType<HeroHazards.IceBarricadeComponent>();
+            Assert.IsNotNull(restored);restored.HostSlipperHit();yield return null;
+            Assert.IsTrue(restored==null,"A restored wall that already took two hits must shatter on the next hit.");
+        }
+        [UnityTest] public IEnumerator GlacialArcReplayKeepsFiveRenderOnlySlabs()
+        {
+            Floor();HeroHazards.SpawnIceBarricade(Vector3.zero,Vector3.forward,10,arcLength:5,arcRadius:3);
+            var field=WorldEffectSnapshot.Capture().Single();var parent=new GameObject("Arc replay witness");
+            using(var view=new TumbangPreso.CameraSystem.RecordedFieldView(parent.transform,field))
+            {
+                Assert.AreEqual(5,view.Root.GetComponentsInChildren<MeshFilter>().Length,"Replay must use the captured arc geometry.");
+                Assert.IsEmpty(view.Root.GetComponentsInChildren<Collider>());
+                Assert.IsNull(view.Root.GetComponentInChildren<HeroHazards.IceBarricadeComponent>());
+            }
+            Object.Destroy(parent);yield return null;
+        }
+
+        [UnityTest] public IEnumerator ArcWallRecordingKeepsRadiusLengthAndRemainingHit()
+        {
+            var field=new WorldEffectSnapshot.Field {Type=WorldEffectSnapshot.Kind.Barricade,Position=Vector3.zero,
+                Forward=Vector3.forward,Duration=10,Remaining=7,Radius=3,FirstScale=5,SecondScale=1,Owner=-1};
+            TumbangPreso.CameraSystem.RecordedPoseTrack.Sample Pose(float time)=>new TumbangPreso.CameraSystem.RecordedPoseTrack.Sample
+            {Time=time,Epoch=1,Positions=new[]{Vector3.zero},Rotations=new[]{Quaternion.identity},Scales=new[]{Vector3.one},Active=new[]{true}};
+            var end=field;end.Remaining=6;
+            var clip=new TumbangPreso.CameraSystem.RecordedMatchClip {MatchId=1,Id=1,Round=1,Actor=1,Subject=-1,
+                Mode=GameMode.HeroStrike,Map=TumbangPreso.UI.SceneFlow.Eskinita,Reason="Arc wall witness",Start=0,End=1,Contact=.5f,
+                Objects=new[]{new TumbangPreso.CameraSystem.RecordedObjectTrack {Kind=TumbangPreso.CameraSystem.RecordedObjectKind.Can,
+                    Seat=-1,Skin=-1,Pose=new TumbangPreso.CameraSystem.RecordedPoseTrack(new[]{""},new[]{Pose(0),Pose(1)})}},
+                FieldFrames=new[]{new TumbangPreso.CameraSystem.RecordedFieldFrame {Time=0,Lighting=TumbangPreso.CameraSystem.RecordedEnvironment.Capture(),
+                    Fields=new[]{new TumbangPreso.CameraSystem.RecordedField {Id=1,State=field}}},
+                    new TumbangPreso.CameraSystem.RecordedFieldFrame {Time=1,Lighting=TumbangPreso.CameraSystem.RecordedEnvironment.Capture(),
+                    Fields=new[]{new TumbangPreso.CameraSystem.RecordedField {Id=1,State=end}}}}};
+            Assert.IsTrue(TumbangPreso.CameraSystem.RecordedMatchClip.TryDecode(clip.Encode(),out var decoded,out var error),error);
+            var restored=decoded.FieldFrames[1].Fields[0].State;
+            Assert.AreEqual(3,restored.Radius);Assert.AreEqual(5,restored.FirstScale);Assert.AreEqual(1,restored.SecondScale);
+            Assert.AreEqual(6,restored.Remaining);
+            byte[] WithVersion(byte[] bytes,int version)
+            {
+                using var packed=new System.IO.MemoryStream(bytes);
+                using var zip=new System.IO.Compression.DeflateStream(packed,System.IO.Compression.CompressionMode.Decompress);
+                using var raw=new System.IO.MemoryStream();zip.CopyTo(raw);raw.Position=4;
+                using(var writer=new System.IO.BinaryWriter(raw,System.Text.Encoding.UTF8,true))writer.Write(version);
+                raw.Position=0;using var output=new System.IO.MemoryStream();
+                using(var encoder=new System.IO.Compression.DeflateStream(output,System.IO.Compression.CompressionLevel.Fastest,true))raw.CopyTo(encoder);
+                return output.ToArray();
+            }
+            Assert.IsFalse(TumbangPreso.CameraSystem.RecordedMatchClip.TryDecode(WithVersion(clip.Encode(),13),out _,out var oldArcError));
+            StringAssert.Contains("Arc wall",oldArcError);
+            foreach(var frame in clip.FieldFrames)
+            {
+                var legacy=frame.Fields[0].State;legacy.Radius=0;legacy.FirstScale=1;legacy.SecondScale=1;
+                frame.Fields[0]=new TumbangPreso.CameraSystem.RecordedField {Id=1,State=legacy};
+            }
+            Assert.IsTrue(TumbangPreso.CameraSystem.RecordedMatchClip.TryDecode(WithVersion(clip.Encode(),13),out var oldClip,out var oldError),oldError);
+            Assert.AreEqual(0,oldClip.FieldFrames[0].Fields[0].State.Radius);
+            yield return null;
+        }
+        [UnityTest] public IEnumerator ArcWallSnapshotRejectsAmbiguousShapeAndHitData()
+        {
+            var field=new WorldEffectSnapshot.Field {Type=WorldEffectSnapshot.Kind.Barricade,Position=Vector3.zero,
+                Forward=Vector3.forward,Duration=10,Remaining=7,Radius=3,FirstScale=5,SecondScale=1,Owner=-1};
+            Assert.IsTrue(WorldEffectSnapshot.Valid(field));
+            var invalid=field;invalid.SecondScale=.5f;Assert.IsFalse(WorldEffectSnapshot.Valid(invalid));
+            invalid=field;invalid.Split=true;Assert.IsFalse(WorldEffectSnapshot.Valid(invalid));
+            invalid=field;invalid.FirstScale=20;Assert.IsFalse(WorldEffectSnapshot.Valid(invalid));
+            invalid=field;invalid.Radius=.1f;Assert.IsFalse(WorldEffectSnapshot.Valid(invalid));
+            yield return null;
+        }
+
         [UnityTest]
         public IEnumerator MixedPersistentFieldsRestoreTheirOriginalFormAndRemainingLife()
         {
@@ -177,7 +268,9 @@ namespace TumbangPreso.PlayTests
         {
             Floor();
             var owner=new GameObject("Snapshot caster");var system=owner.AddComponent<HeroAbilitySystem>();system.BindHero("cheska");
-            system.Kit.Skill1.ApplyNetworkSnapshot(0,1);system.Kit.Skill2.ApplyNetworkSnapshot(0,0);system.Kit.AddUltimateCharge(7);
+            system.Kit.Skill1.ApplyNetworkSnapshot(9,0);system.Kit.Skill2.ApplyNetworkSnapshot(13,0);system.Kit.AddUltimateCharge(7);
+            float skill1Cooldown=system.Kit.Skill1.CooldownRemaining,skill2Cooldown=system.Kit.Skill2.CooldownRemaining;
+            int skill1Charges=system.Kit.Skill1.ChargesRemaining,skill2Charges=system.Kit.Skill2.ChargesRemaining;
             var sheet=HeroHazards.SpawnIceSheet(new Vector3(-2,0,0),1.495f,5,1,1.35f).GetComponent<HeroHazards.IceSheetComponent>();
             var wall=HeroHazards.SpawnIceBarricade(new Vector3(2,0,0),Vector3.forward,6,1.4f,.6f,true)
                 .GetComponent<HeroHazards.IceBarricadeComponent>();
@@ -197,7 +290,9 @@ namespace TumbangPreso.PlayTests
             var surface=restoredSheet.GetComponent<FrostSurfacePresentation>();Assert.AreEqual(5,surface.Duration);
             Assert.Greater(restoredSheet.transform.Find("FrozenSkin").GetComponent<Renderer>().sharedMaterial.GetFloat("_Growth"),1,
                 "An already formed sheet replayed its initial growth.");
-            Assert.AreEqual(1,system.Kit.Skill1.ChargesRemaining);Assert.Zero(system.Kit.Skill2.ChargesRemaining);
+            Assert.AreEqual(skill1Charges,system.Kit.Skill1.ChargesRemaining);Assert.AreEqual(skill2Charges,system.Kit.Skill2.ChargesRemaining);
+            Assert.AreEqual(skill1Cooldown,system.Kit.Skill1.CooldownRemaining,.1f);
+            Assert.AreEqual(skill2Cooldown,system.Kit.Skill2.CooldownRemaining,.1f);
             Assert.AreEqual(7,system.Kit.UltimateCharge);
             Assert.IsTrue(WorldEffectSnapshot.Apply(snapshot,1));yield return null;
             Assert.AreEqual(2,WorldEffectSnapshot.Capture().Count,"A repeated complete snapshot duplicated fields.");

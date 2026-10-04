@@ -46,6 +46,7 @@ namespace TumbangPreso.Abilities
             var comp = go.AddComponent<IceBarricadeComponent>();
             comp.Duration = duration;
             comp.SpanScale = spanScale; comp.ThicknessScale = thicknessScale; comp.Split = split;
+            comp.ArcLength = arcLength; comp.ArcRadius = arcRadius;
 
             HazardVolume.Attach(go, 1.6f * spanScale, -1);
 
@@ -56,6 +57,7 @@ namespace TumbangPreso.Abilities
         {
             public float Duration = 6.0f;
             public float SpanScale = 1, ThicknessScale = 1;
+            public float ArcLength, ArcRadius = 3;
             public bool Split;
 
             /// <summary>
@@ -65,6 +67,8 @@ namespace TumbangPreso.Abilities
             /// </summary>
             public int HitsToShatter;
             private int _hits;
+            public int RemainingHits => HitsToShatter > 0 ? Mathf.Max(0, HitsToShatter - _hits) : 0;
+            public bool IsShattered => _shattered;
 
             public void HostSlipperHit()
             {
