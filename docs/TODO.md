@@ -410,7 +410,9 @@ Nothing was deleted or renumbered.
   human verification remain open. [Evidence](reports/feedback-2026-10-03/cheska-caster.md).
 - [ ] Investigate bots remaining inactive after status expiry; reproduce before fixing.
   Real Classic Frozen/Tagged expiry probe2/2 resumes bot input; no generic timer
-  stall reproduced. Hero/status combinations and peers remain open.
+  stall reproduced. Current native can-down/Zack-ultimate/reset/patrol case also
+  passes1/1; broader hero/status combinations and peers remain open.
+  [Current recovery check](reports/current-arrival-2026-10-04/README.md).
   [Scoped evidence](reports/reliability-2026-10-03/bot-status-expiry/README.md).
 - [x] Remove Frozen/Stunned action bar while preserving status indicators.
   Focused original failure and candidate 1/1 plus UI capture retained.
