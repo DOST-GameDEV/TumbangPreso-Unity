@@ -288,6 +288,9 @@ namespace TumbangPreso.Visual
         // than inserted, so the composite and the mask keep the indices every other line here
         // and in the shader already names.
         private const int AmbientOcclusionPass = 2;
+        /// <summary>A debug session's test value for the cast's share of the ambient occlusion (F8,
+        /// `Hud`): negative means "use the look's own" (`WorldLookProfile.CharacterAmbientOcclusion`).</summary>
+        public static float CharacterAoTest = -1f;
         private const int AmbientOcclusionBlurPass = 3;
         private static readonly int WorldAOId = Shader.PropertyToID("_WorldAO");
         private static readonly int WorldAOParamsId = Shader.PropertyToID("_WorldAOParams");
@@ -941,6 +944,7 @@ namespace TumbangPreso.Visual
             ApplyBrightLookEdges();
             bool lagoonDeck=WorldLookPresentation.HandlesCamera(_camera) && WorldLookPresentation.Current.Look.Map==UI.SceneFlow.Lagoon;
             _material.SetFloat("_LagoonDeckDetail",lagoonDeck?WorldCueProfile.Current.LagoonDeckDetail:0);
+            _material.SetFloat("_CharacterAO",CharacterAoTest>=0?CharacterAoTest:WorldLookProfile.Current.CharacterAmbientOcclusion);
             RenderTexture occlusion=null,occlusionBlur=null;
             float aoStrength=AmbientOcclusionLive?WorldLookProfile.Current.AmbientOcclusion*WorldLookPresentation.Current.Weight:0;
             if(aoStrength>0)

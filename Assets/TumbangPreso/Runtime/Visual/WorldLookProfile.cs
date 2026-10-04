@@ -134,6 +134,11 @@ namespace TumbangPreso.Visual
         // whole building. Off on the Low tier and under Classic, with the rest of the look.
         [Range(0,1)] public float AmbientOcclusion=.8f;
         [Range(.2f,3)] public float AmbientOcclusionRadius=1f;
+        // How much of that occlusion also shades the CAST (owner, 2026-10-04: "can we also test ambient
+        // occlusion for shading the characters too?"). 0 is the shipped look: characters keep only
+        // their own toon shading. F8 in a debug session cycles a test value over this one
+        // (`WorldOutline.CharacterAoTest`); set it here to make a value the look's own.
+        [Range(0,1)] public float CharacterAmbientOcclusion=0f;
         // 1 draws the cast's hull in a deeper shade of its own colour, 0 in black.
         [Range(0,1)] public float CastInkSelf=.88f;
         // The cast's hull width against its authored width.

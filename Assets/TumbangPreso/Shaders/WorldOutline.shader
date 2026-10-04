@@ -121,6 +121,8 @@ Shader "TumbangPreso/WorldOutline"
             float4 _WorldGroundContact,_WorldContactProjection;
             float4x4 _WorldContactToWorld;
             float _WorldContactMask;
+            // 0 leaves the cast out of the ambient occlusion (the shipped look); 1 shades them like the world. See the AO composite.
+            float _CharacterAO;
             float _LagoonDeckDetail;
             float _Supersample;
 
@@ -556,7 +558,12 @@ Shader "TumbangPreso/WorldOutline"
                     // of the way to the violet is about a third darker on screen at the crease.
                     // Masked like the contact shade: the cast and Kanto's foliage (WorldOutline.
                     // IsToonSurface) keep their own shading.
-                    float occlusion=(1-tex2D(_WorldAO,duv).r)*_WorldAOParams.x*(1-saturate(mask*_WorldContactMask));
+                    // ⚠️ `_CharacterAO` LETS THE CAST IN, FOR A TEST (owner, 2026-10-04: "can we also test
+                    // ambient occlusion for shading the characters too?"). At 0 the mask keeps them out,
+                    // as shipped; toward 1 the same occlusion shades a body where its limbs meet it
+                    // and where it stands against a wall. The contact shade and the ground occlusion
+                    // still leave the cast out.
+                    float occlusion=(1-tex2D(_WorldAO,duv).r)*_WorldAOParams.x*(1-saturate(mask*_WorldContactMask)*(1-_CharacterAO));
                     source.rgb*=lerp(float3(1,1,1),_PeakShade.rgb*.7,saturate(occlusion));
                 }
                 if(_PeakDepth.w>0)
