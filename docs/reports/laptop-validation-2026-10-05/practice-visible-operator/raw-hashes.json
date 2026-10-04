@@ -1,0 +1,20 @@
+{
+  "01-training.png": "05b4cfc1a61347a7156be08a925454157aa70788aa0cacabed9107b59f3c63ec",
+  "02-bot3-active.png": "d236475352a9629230cf88a77d5304a7c0a729e2493d61fdb918660329b63bea",
+  "03-defender-restored.png": "2ba10746ff84300acf3372456f2c6db438670de3e5f8e5abdd87aa10127ec255",
+  "04-after-throw-bot-approach.png": "454525dc2125d215785ad4147c3b4f046bd48c0591e6ef9b414799a6da33200c",
+  "05-bot3-idle.png": "2f7ddee048c59b2bd8b4c00ef00c2f9f27a187108ea28aad2f4f266dd0d036ed",
+  "06-idle-defender-stable.png": "35f3bc869017fb07dc272d1ce0b3ff4673b4d9e9e343418790722c3c4a3c3b0e",
+  "07-defender-removed.png": "1e7eb5fc313818856016620d0b03633799f9e441898419879f14839ab48a9c4f",
+  "08-defender-readded.png": "830b9bab0bfcb11806dbd2e9293055bf8c086cd601f9552074284ebc66c36e63",
+  "09-defender-planner-after-readd.png": "56ab49f8e9123c52d9b84e7062ffa1c3cf49843fde91045b806bcc33a54fd705",
+  "10-attacker-added-with-shoe.png": "224e141dd71f2628f5cc0fb26ab08dc77bdad2f8bce1ab1f65460cf3b84754d3",
+  "11-attacker-removed-defender-preserved.png": "cfcd58d1555e9db49a9aee7b688ec47d2abd9d4f52ae739c83b96a286a1a55c0",
+  "12-attacker-restored-defender-preserved.png": "8f6b33882741b59041f3529cb4e237bdd46e46fdd37f40a8862080299cf9ac9a",
+  "13-recovered-defender-catches-attacker.png": "1f6c4056945205c52a9e0ec9cd67cea0911e8634a87b2370db113292f73b34a2",
+  "14-normal-return-home.png": "7e431bf5080042ae79e8d95de96318027a9c17981dfc6822d0e69701d0d2e088",
+  "direct-result.json": "37a93a57ed492781a8f6dcbd9882066899e346c9dd2d459ef9858a3101c9cd28",
+  "launch.json": "f1c31652706b4151078a1ef31134cfafd4da392779969bb122a13a05e16d27bf",
+  "player.log": "5772dfd2516b1bb9f0cd3820f7172b3b342cd90b743a947e08357463c42a8f98",
+  "pre-input-prefs.json": "6612b97c2295faa90521bc25ba08f58c626bfca300cfbf1a86a72e4e6fd5a217"
+}
