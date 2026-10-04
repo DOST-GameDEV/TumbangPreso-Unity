@@ -95,17 +95,6 @@ namespace TumbangPreso
             if(!down)_menuButtons.Remove(verb);
             return Time.frameCount!=_menuClosedFrame && !_menuButtons.Contains(verb) && down;
         }
-
-        private void ReadHeroButton(InputIntent intent, InputAction action, Verb verb)
-        {
-            bool menuBlocked = Time.frameCount == _menuClosedFrame || _menuButtons.Contains(verb);
-            bool held = ReadButton(action, verb);
-            bool tap = !menuBlocked && action.WasPressedThisFrame();
-            // A down/up pair can precede this poll. The rendered hero consumer
-            // needs one pulse; retain its edge until physics consumes the intent.
-            intent.Set(verb, held || tap);
-            if (tap) intent.BufferPress(verb);
-        }
         /// <summary>This frame's curve from one direction: a step on the press edge, a turn while held.</summary>
         private static float CurveInput(InputAction action)
         {
@@ -330,9 +319,9 @@ namespace TumbangPreso
             intent.Set(Verb.Jump, ReadButton(_jump,Verb.Jump));
             bool touchRecovery=InputLayer.TouchInput.ConsumeRecoveryPress();
             if (Time.frameCount!=_menuClosedFrame && !_menuButtons.Contains(Verb.Jump) && (_jump.WasPressedThisFrame()||touchRecovery)) intent.BufferPress(Verb.Jump);
-            if (_skill1 != null) ReadHeroButton(intent, _skill1, Verb.Skill1);
-            if (_skill2 != null) ReadHeroButton(intent, _skill2, Verb.Skill2);
-            if (_ultimate != null) ReadHeroButton(intent, _ultimate, Verb.Ultimate);
+            if (_skill1 != null) intent.Set(Verb.Skill1, ReadButton(_skill1,Verb.Skill1));
+            if (_skill2 != null) intent.Set(Verb.Skill2, ReadButton(_skill2,Verb.Skill2));
+            if (_ultimate != null) intent.Set(Verb.Ultimate, ReadButton(_ultimate,Verb.Ultimate));
             if (_interact != null)
                 intent.Set(Verb.Interact, !ConsumeReadyControl(_interact, ref _readyInteractHeld) && ReadButton(_interact,Verb.Interact));
 

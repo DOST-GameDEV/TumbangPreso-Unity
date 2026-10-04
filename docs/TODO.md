@@ -125,6 +125,9 @@ Nothing was deleted or renumbered.
 
 ### OWNER-MULTIPLAYER-FEEDBACK-1004: current live-test reports
 
+- [x] Preserve quick E/Q/X skill press/release before input polling. Native
+  three causal failures plus held/menu controls -> same five passes. Updated
+  packaged skill/operator acceptance remains open. [Evidence](reports/reliability-2026-10-05/hero-quicktap/README.md).
 - [ ] Non-host multiplayer: owner confirms smooth frames but delay/rubber-banding.
   Measure prediction/host acknowledgements/corrections under latency and real peers.
 - [x] Opening camera visibility: late activation/follow no longer exposes FPP
