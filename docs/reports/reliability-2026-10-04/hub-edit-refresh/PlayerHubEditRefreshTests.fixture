@@ -49,8 +49,19 @@ namespace TumbangPreso.PlayTests
         private static void Service(string name, object value) => typeof(GameServices).GetProperty(name).SetValue(null, value);
         private void SetOwner(string id) => typeof(PlayerAccount).GetField("_profile", Hidden).SetValue(_account,
             AccountRules.Normalise(new AccountProfile { PlayerId = id, DisplayName = "FlowOwner" }));
-        private InputField Field(string name) => _hubRoot.GetComponentsInChildren<InputField>()
+        private Canvas HubCanvas => (Canvas)typeof(PlayerHub).GetField("_canvas", Hidden).GetValue(_hub);
+        private InputField Field(string name) => HubCanvas.GetComponentsInChildren<InputField>()
             .Single(field => field.name == name);
+        private IEnumerator OpenSearch()
+        {
+            _hub.OpenTab(PlayerHub.Door.Party); yield return null;
+            if (!HubCanvas.GetComponentsInChildren<InputField>().Any(field => field.name == "FriendSearch"))
+            {
+                HubCanvas.GetComponentsInChildren<Button>().Single(button =>
+                    button.transform.parent.name == "Group_Find a friend").onClick.Invoke();
+                yield return null;
+            }
+        }
         private static IEnumerator Edit(InputField field, string text)
         {
             field.text = text;
@@ -72,7 +83,7 @@ namespace TumbangPreso.PlayTests
         }
         [UnityTest] public IEnumerator FriendRefreshKeepsTheActiveSearchField()
         {
-            _hub.OpenTab(PlayerHub.Door.Party); yield return null;
+            yield return OpenSearch();
             yield return Edit(Field("FriendSearch"), "MARIA#4417");
             _hub.SendMessage("OnDataChanged");
             yield return null; yield return null;
@@ -84,14 +95,14 @@ namespace TumbangPreso.PlayTests
         [UnityTest] public IEnumerator ChangingTabsDoesNotRestoreTheOldField()
         {
             yield return Edit(Field("PlayerNameEdit"), "DraftOwner");
-            _hub.OpenTab(PlayerHub.Door.Party);
+            yield return OpenSearch();
             yield return null; yield return null;
             Assert.IsFalse(Field("FriendSearch").isFocused);
-            Assert.IsFalse(_hubRoot.GetComponentsInChildren<InputField>().Any(field => field.name == "PlayerNameEdit"));
+            Assert.IsFalse(HubCanvas.GetComponentsInChildren<InputField>().Any(field => field.name == "PlayerNameEdit"));
         }
         [UnityTest] public IEnumerator ReplacingTheAccountRetiresItsSearchAndEditing()
         {
-            _hub.OpenTab(PlayerHub.Door.Party); yield return null;
+            yield return OpenSearch();
             yield return Edit(Field("FriendSearch"), "MARIA#4417");
             SetOwner("edit-owner-b");
             _hub.SendMessage("OnDataChanged");

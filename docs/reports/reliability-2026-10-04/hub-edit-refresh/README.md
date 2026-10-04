@@ -2,6 +2,12 @@
 
 Status: hypothesis and native fixture only. No production fix or pass claim.
 
+One prelaunch fixture correction follows the actual independent hub Canvas and
+opens the initially collapsed Find a friend group through its actual button.
+OwnerUiLayout.Canvas already ensures the EventSystem; no new input backend is
+needed. No Unity job ran on the first draft and no product failure was attributed
+to these preparation mistakes. Use the corrected fixture and unchanged metadata.
+
 Current PlayerHub.OwnerPainted.Show destroys and recreates all visible fields
 when OnDataChanged refreshes the same tab. Draft/search text is retained, but
 the active InputField and its editing selection are replaced. The owner asked
