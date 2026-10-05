@@ -37,16 +37,22 @@ transient copy and accepted catch coat/prop/world audio; Root verified five blob
 and the fixture. Host admission now preserves the running server identity using
 qualified288d source and3059 fixture, original one cause/three controls ->four
 passes. Root verified18 raw blobs, source/fixture/meta LF hashes and XML.
-Laptop next qualifies root card imports and Home rendering before one152 build.
-Root card importer is now exact qualifiedcd4 with79e fixture/meta353. Native
-three passes preserve Arena960x540 RGB24; Hero already1040x920 RGB24/mips disabled,
-so its extra flag is future protection only. Root verified14 raw Git blobs and
-all three source PNG hashes. Home layout remains an unapplied candidate.
+Latest source includes the checked host-identity refusal8c48, card importer0c58
+and Arena inactive-scene activation03de. Root verifies18/15/10 raw evidence blobs
+respectively. Arena's added state-registration cause becomes7/7; static active
+callbacks already match, so no motion/QA cause is inferred. Card import preserves
+Arena960x540 RGB24; Hero1040x920 was already good/mips disabled and gains future
+protection only. Source art hashes remain unchanged.
+The balanced Home e447 layout is now adopted with qualified b107 fixture/meta.
+Root verified12 raw blobs/XML/restoration and individually inspected all six
+720/1080 frames. Bigger art, map/title/ruleset and separate arrow remain clear.
+Earlier small f5e/a2 layouts stay historical unshipped evidence. The original
+43428 cause/control remains the baseline; no redundant rerun was needed.
 Root owns Net/UI, integration and the shared queue/checkpoint. Preserve protected
 ProjectAuditorSettings.asset dirt and private tools/build_yasmin_benguet_voxel.py.
-The uncommitted HomeModeCardReadabilityTests.cs/meta fixture is qualified, but the
-200x110 poster candidate makes the art too small. Production HubHome is unchanged;
-refine against current QoL art before shipping a layout merely because it passes.
+Laptop freezes one current protocol152 Windows build after Home source publication,
+then normal operator and visible online/LAN controls on its available machine.
+PC remains personal-use: no Root native/player launches, input or window shortcuts.
 
 ## Qualified evidence and remaining acceptance
 
@@ -79,11 +85,10 @@ after terminal/path/subject checks; preserved all active-worktree refs and build
 
 ## Next action
 
-Published8c48 host refusal with unchanged protocol152 and qualified fixture.
-Card importercd4/fixture79e is qualified3/3 and being published; do not repeat
-these unchanged checks. Laptop proceeds with actual Home refinement rendering.
-Card fixture79e uses installed NUnit;
-Home candidate normalized LF f5e8 (raw CRLF07bb), unchanged patch. Logs packets
-are exact; initial fixture errors are preserved, never attributed to production.
-After these coherent UI fixes, package current152 and run visible live controls.
-PC remains personal-use, no Root native launches. Keep updates every60s.
+Publish exact accepted Home source/fixture, send its ref to the laptop for one
+coherent current152 build. Freeze inputs until parent/restoration terminal and
+verify artifact manifest/hashes before actual GUI/network/operator checks.
+Prior151 build/peer evidence is historical; the owner's Relay timeout, host-kick
+and non-host lag remain open. No unchanged passing-suite repeats or style loops.
+No PC native/input/window actions until owner release. Preserve exact live job
+handles/next action in current-resume.json and keep updates at least every60s.

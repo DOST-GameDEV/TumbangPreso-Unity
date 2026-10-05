@@ -1,5 +1,15 @@
 # TODO: Tumbang Preso Unity
 
+### HOME-CARD-READABILITY-1005: artwork and a separate caption
+
+- [x] Preserve authored poster pixels/aspect and the card's door/back behavior.
+  Original overlaps the headline in all three modes at720/1080; balanced larger
+  artwork and a separate lower caption pass two native cases. Root independently
+  verifies12 raw Git blobs, source/fixture/meta/XML and all six actual PNGs.
+  The smaller intermediate candidate was rejected after actual visual review.
+  [Evidence](reports/laptop-validation-2026-10-05/home-balanced/README.md).
+- [ ] Current packaged-player view and broader map/rank/aspect/device acceptance.
+
 ### UI-CARD-IMPORT-1005: preserve authored pixels on reimport
 
 - [x] Extend the existing artwork guard to map/mode cards and bump its import
@@ -7,7 +17,7 @@
   960x540 RGB24. Hero Strike already kept1040x920 RGB24 with mipmaps disabled;
   its extra flag is future quality protection, not a demonstrated current blur.
   Original two assertion failures/one brand control ->candidate3/3 native passes.
-  Root verifies14 raw Git blobs, source/fixture/meta/XML and all3unchanged PNG
+  Root verifies15 raw Git blobs including the scope follow-up, source/fixture/meta/XML and all3unchanged PNG
   hashes. [Evidence](reports/laptop-validation-2026-10-05/card-import-quality/README.md).
 - [ ] Current packaged image review and broader UI visual acceptance.
 
@@ -34,6 +44,11 @@
   five cases pass including two current-owner cleanup controls. Root verifies nine
   raw Git blobs, source/fixture hashes, XML and terminal restoration receipts.
   [Arena evidence](reports/laptop-validation-2026-10-05/arena-owner/README.md).
+- [x] Inactive additive recovery components do not install unowned global hooks.
+  One actual state-registration failure/six controls ->seven passes; ten exact
+  evidence blobs/source/XML verified. Static active-owner callbacks were already
+  identical; no motion or QA cause is claimed.
+  [Activation evidence](reports/laptop-validation-2026-10-05/arena-inactive-scene/README.md).
 - [x] Actual merged Arena scene/roster imports and changed replay contracts pass
   three native cases, including accepted catch coat/prop/world-audio preservation.
   Root verifies five raw Git blobs, the exact fixture and terminal restoration.
