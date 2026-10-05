@@ -317,9 +317,11 @@ namespace TumbangPreso.Map
             switch ((layout ?? "").ToLowerInvariant())
             {
                 case "plaza": return 8.5f;
-                case "tore": return 8.3f;
+                // tore and hukay: 2 m and more ONTO the ring (owner, 2026-10-06: "i want there to still be a piece of the
+                // ring that the taya can still walk on"), and not past where attackers spawn (2 m outside it) still has deck.
+                case "tore": return 10.0f;
                 case "krus": return 7.9f;
-                case "hukay": return 8.3f;
+                case "hukay": return 10.5f;
                 case "entablado": return 7.5f;
                 default: return Core.Balance.ConfinementRadius;
             }
