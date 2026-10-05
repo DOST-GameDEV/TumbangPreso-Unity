@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "caller": "plugin",
+      "skill": "unity-cli",
+      "format": "json",
+      "code": "var k=(UnityEngine.InputSystem.Keyboard)System.AppDomain.CurrentDomain.GetData(\"lpt151-test-keyboard\");UnityEngine.InputSystem.InputSystem.QueueStateEvent(k,new UnityEngine.InputSystem.LowLevel.KeyboardState());UnityEngine.InputSystem.InputSystem.QueueStateEvent(k,new UnityEngine.InputSystem.LowLevel.KeyboardState(UnityEngine.InputSystem.Key.Q));return \"Released E and queued Q hardware-state control\";"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "Released E and queued Q hardware-state control"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

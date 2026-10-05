@@ -1,0 +1,30 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "caller": "plugin",
+      "skill": "unity-cli",
+      "format": "json",
+      "code": "System.AppDomain.CurrentDomain.SetData(\"lpt151-real-keyboard\",UnityEngine.InputSystem.Keyboard.current);var k=UnityEngine.InputSystem.InputSystem.AddDevice<UnityEngine.InputSystem.Keyboard>();System.AppDomain.CurrentDomain.SetData(\"lpt151-test-keyboard\",k);UnityEngine.InputSystem.InputSystem.QueueStateEvent(k,new UnityEngine.InputSystem.LowLevel.KeyboardState());return new {device=k.deviceId,kind=\"Synthetic InputSystem test keyboard; no forced Update\"};"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "device": 6,
+        "kind": "Synthetic InputSystem test keyboard; no forced Update"
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "C:\\Users\\Matthew\\dev\\tump-workers1003\\qa-a"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}
