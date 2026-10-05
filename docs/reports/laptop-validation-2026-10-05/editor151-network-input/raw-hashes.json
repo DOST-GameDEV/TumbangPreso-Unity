@@ -170,5 +170,9 @@
   "practice-sky-e-input-events.json": {
     "bytes": 1065,
     "sha256": "4c75d9497b9af73a4a803a5b75c9962c920fbdf325e28526d228f8840899aeed"
+  },
+  "capture-format.json": {
+    "bytes": 4941,
+    "sha256": "478ad519fc14ecafc5d0487af27fde358b4ec5937c4cae624c977b0d722031d0"
   }
 }

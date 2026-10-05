@@ -78,5 +78,9 @@
   "host-player.log": {
     "bytes": 8067,
     "sha256": "dea858e98611f771904635969f1c1644d10977d7ccb2223d44de23c08137a84c"
+  },
+  "capture-format.json": {
+    "bytes": 2973,
+    "sha256": "ee265d2376fd36f8d926035a0c39716e5996e44856640a4bd8c9d866e647b6f0"
   }
 }

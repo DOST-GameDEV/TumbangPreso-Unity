@@ -106,3 +106,15 @@ physical skill feedback, then recovery/loss after normal admission and matching
 results. Investigate initial LAN view delay and the retained pre-start timeout.
 Do not repeat unchanged13case evidence or claim complete tournament readiness.
 All window-close and Alt+F4 cleanup actions are stopped pending target audit.
+
+## Raw capture format correction
+
+The Sky captures retain their historical .png filenames, but capture-format.json
+records the actual image formats and dimensions from their original bytes.
+These are JPEG captures, not lossless PNG frames. Exact dimensions are recorded
+per capture in capture-format.json. No bytes were
+re-encoded or replaced. The1280x720 player launch request in the lobby run does
+not establish the actual native viewport or DPI; neither was independently
+measured. These captures support the visible UI/state observations, not lossless
+crispness, unresized rendering or a game-quality diagnosis. The19.78s client boot
+log is a measured startup observation, not an optimization or animation result.
