@@ -1,0 +1,15 @@
+{
+  "confirmedUTC": "2026-10-05T18:26:32.256963+00:00",
+  "MatchId": "9555eedca7874d69a827f96a4b6db595",
+  "canonicalBytes": 2405,
+  "laptopCanonicalSHA256": "9e847b08f6c7247f6ba9e8591c65a0afe76c66723c971ff11b3faa1a5b544a64",
+  "pcIndependentCanonicalSHA256": "9e847b08f6c7247f6ba9e8591c65a0afe76c66723c971ff11b3faa1a5b544a64",
+  "fullObjectNoRemovedFields": true,
+  "allPlayers": 4,
+  "fieldsPerPlayer": 28,
+  "source": "8db2dda82202690434bd1443555fa3b4fc99eaef",
+  "protocol": 152,
+  "route": "Normal natural PUBLICONLINE browser rowNAC2 toactualPCRelayHost, no code/bootstrap/observer",
+  "historyOrder": "Newestfirst, exactnewID selected",
+  "scope": "Samepackage actualtwo-machineONLINE natural4rounds/full saved-record equality; notloss/performance/hardware or discoveryfix"
+}

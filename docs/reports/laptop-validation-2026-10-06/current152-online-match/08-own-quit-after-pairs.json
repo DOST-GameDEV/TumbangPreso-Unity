@@ -1,0 +1,28 @@
+{
+  "pid": 44848,
+  "window": 5113394,
+  "foregroundBeforeAndAfter": true,
+  "physicalClientRect": [
+    160,
+    104,
+    1760,
+    1004
+  ],
+  "physicalClientWidth": 1600,
+  "physicalClientHeight": 900,
+  "physicalWindowRect": [
+    151,
+    66,
+    1769,
+    1013
+  ],
+  "windowDpi": 120,
+  "dpiAwareness": 2,
+  "observerDpiContext": "PerMonitorV2 for read-only coordinates; restored afterward",
+  "image": "C:\\Users\\Matthew\\Documents\\Codex\\2026-10-03\\continue-competition-readiness-engineering-for-dost\\work\\lossless-capture1005\\peer152-online\\08-own-quit-after-pairs.png",
+  "format": "PNG",
+  "sha256": "e7168d38c5ee9ede6fb1fad5eae6a76eea2d7640b7919c4cea78e9cfb6a0fbc7",
+  "resampling": false,
+  "jpegConversion": false,
+  "scope": "Physical foreground desktop client pixels; not engine backbuffer/audio/input acceptance"
+}

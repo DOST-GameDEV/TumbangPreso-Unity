@@ -1,0 +1,26 @@
+{
+  "source": "8db2dda82202690434bd1443555fa3b4fc99eaef",
+  "protocol": 152,
+  "profile": "lpt-peer152-1006a",
+  "profilePath": "C:\\Users\\Matthew\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\650d8ffef32a0a548034dc499c6179ba2a06a359c515d16133292d84b82ee83d",
+  "command": [
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\current-laptop-8db2dda82-1005\\TumbangPreso.exe",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1280",
+    "-screen-height",
+    "720",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "lpt-peer152-1006a",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Logs\\current-peer152-1006a\\player.log"
+  ],
+  "manifestSha256": "e407e40685617a40e6fb1f450abaf516de9643645f24ed640d50eb33a33eb511",
+  "route": "normal visible boot; actual UI clicks; no network bootstrap",
+  "scope": "Actual PC-host/laptop-join same8db152 package; ordinary GUI, no bootstrap; host availability and full canonical records required",
+  "pid": 44848
+}

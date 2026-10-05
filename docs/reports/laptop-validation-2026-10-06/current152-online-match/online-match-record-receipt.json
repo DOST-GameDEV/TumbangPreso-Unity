@@ -1,0 +1,26 @@
+{
+  "MatchId": "9555eedca7874d69a827f96a4b6db595",
+  "Mode": "HeroStrike",
+  "MapId": "Arena",
+  "Rounds": 4,
+  "DurationSeconds": 119.93617248535156,
+  "WinningSlot": 3,
+  "Online": true,
+  "Ranked": false,
+  "DefenderByRound": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "canonicalBytes": 2405,
+  "canonicalSHA256": "9e847b08f6c7247f6ba9e8591c65a0afe76c66723c971ff11b3faa1a5b544a64",
+  "playerCount": 4,
+  "scores": [
+    90,
+    100,
+    530,
+    1040
+  ],
+  "historyOrder": "Newest first; selected exact new ID, notHistory[-1]"
+}
