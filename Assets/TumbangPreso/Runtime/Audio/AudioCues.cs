@@ -129,7 +129,9 @@ namespace TumbangPreso.Audio
                 // levelled by the RMS of its loudest 0.4 s (0.20 to 0.27; peak under 0.85), not by its peak: a roar and a
                 // clap of the same peak are 10 dB apart to an ear. A reaction's takes (`_2`, `_3`) share its row's value.
                 // NOBODY HAS HEARD THESE YET: they are the knobs for that session.
-                { "sfx_arena_crowd_bed_calm", -6.0f }, { "sfx_arena_crowd_bed_lively", -4.0f }, { "sfx_arena_crowd_bed_roar", -1.0f },
+                // The resting bed far under the reactions (owner, 2026-10-05: "the crowd doesnt react.. its just the same cheer ambience all
+                // throughout"): the calm bed was 6 dB under an eruption and is itself a recording of a cheering crowd, so nothing stood out.
+                { "sfx_arena_crowd_bed_calm", -16.0f }, { "sfx_arena_crowd_bed_lively", -9.0f }, { "sfx_arena_crowd_bed_roar", -1.0f },
                 { "sfx_arena_crowd_bed_tension", -5.0f }, { "sfx_arena_crowd_bed_applause", -3.0f },
                 { "sfx_arena_crowd_erupt", 0.0f }, { "sfx_arena_crowd_erupt_2", 0.0f }, { "sfx_arena_crowd_erupt_3", 0.0f },
                 { "sfx_arena_crowd_cheer", -1.0f }, { "sfx_arena_crowd_cheer_2", -1.0f }, { "sfx_arena_crowd_cheer_3", -1.0f },
