@@ -1,3 +1,17 @@
+## Current performance baseline terminal, preload remains intact
+
+Root actualWarmMapAssets measured19180/93944 native1PASS:23.119seconds/all7maps,
+3Env starts/3NearFade starts, noactiveRound/playerbodies, PreviewOnlyrestored.
+Original23916/62465 wrongRoundservice-null assertionFAIL retained, onebounded
+fixture repair only. Both21136inputs/prefs/seed/Quality restored216metadata.
+TemporaryOwnerMenuEditsTests measurement preservedLogs then exactGitbytes restored.
+NoSplash/Env/NearFade production change or standaloneFPS/coldbootgain claimed.
+Staticpainted/fadedmaterialcaches make the observed setup potentially useful;
+no skip/preload weakening without isolated cost evidence. Newreport map-preload-baseline.
+Root allnative/player/capturejobs terminal. LaptopReader pulse candidate2PASS and
+final16casespending; source reserved. Next Root measure/use current networking
+owner effects with supported current-kit diagnostics, not stale Dante scenarios.
+
 ## Latest Root native unit terminal: LAN map copy and HUD discriminator
 
 LegacyLAN noMapfield, so UI/Hub/IHubHost now showsUNKNOWN instead of transportLAN

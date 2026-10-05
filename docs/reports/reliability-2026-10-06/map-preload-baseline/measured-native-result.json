@@ -1,0 +1,19 @@
+{
+  "sourceRef": "d2f0b68c24d8a1cda7922b3feabc88511c351e75",
+  "pid": 19180,
+  "exitCode": 0,
+  "cases": [
+    {
+      "name": "TumbangPreso.PlayTests.OwnerMenuEditsTests.MeasureCurrentMapPreloadWithoutStartingAMatch",
+      "result": "Passed",
+      "message": null
+    }
+  ],
+  "exactCaseCount": true,
+  "terminal": true,
+  "protectedCount": 21136,
+  "inputRestored": true,
+  "editorInputRestored": true,
+  "profileRestored": true,
+  "qualityRestored": true
+}

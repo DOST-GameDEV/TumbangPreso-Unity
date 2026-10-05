@@ -1,0 +1,9 @@
+scene=Eskinita arrival_ms=943.572
+scene=BayanPlaza arrival_ms=1527.821
+scene=IlalimNgTulay arrival_ms=8218.695
+scene=SaBubong arrival_ms=11008.516
+scene=LagoonCove arrival_ms=15863.616
+scene=Kanto arrival_ms=18578.673
+scene=Arena arrival_ms=23080.048
+elapsed_ms=23118.558
+loaded=7 environment_starts=3 nearfade_starts=3

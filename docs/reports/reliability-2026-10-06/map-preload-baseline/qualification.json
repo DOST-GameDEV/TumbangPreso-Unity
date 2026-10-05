@@ -1,0 +1,10 @@
+{
+  "testedTemporaryFixtureSHA256": "749ea07ef3e11bca04ea3563d0941ee5701bd5782537ac4fea7fafa81c06458c",
+  "sourceUnchanged": [
+    "Runtime/UI/SplashScreen.cs",
+    "Runtime/Visual/EnvColourPass.cs",
+    "Runtime/Visual/NearFade.cs"
+  ],
+  "temporaryFixtureRestoredToGitBytes": true,
+  "scope": "Native Editor actualWarmMapAssets, not fresh standalone boot or isolated Env/NearFade component cost"
+}
