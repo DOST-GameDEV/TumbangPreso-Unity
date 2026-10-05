@@ -93,7 +93,8 @@ namespace TumbangPreso.Map
         public static float Lamp(ArenaFx fx, Vector3 lamp, Vector3 aim, Color colour, float power, float full, float gone,
                                  float size = 1.0f, bool rich = false, bool ghosts = false, float seen = 1.0f, float floor = 0.0f)
         {
-            if (!_has || power <= 0.0f || seen <= 0.0f) return 0.0f;
+            if (rich) _dbgRich++;
+            if (!_has || power <= 0.0f || seen <= 0.0f) { if (rich) _dbgWhy = !_has ? "no camera" : power <= 0.0f ? "no power" : "hidden (seen 0)"; return 0.0f; }
 
             Vector3 to = lamp - _eye;
             float depth = Vector3.Dot(to, _forward);
@@ -108,7 +109,7 @@ namespace TumbangPreso.Map
             float framed = 1.0f - Mathf.SmoothStep(1.0f, 1.6f, out_);
             // What the LENS does with it reaches much further out of shot: see `Bleed`.
             float lens = ghosts ? 1.0f - Mathf.SmoothStep(1.2f, 3.0f, out_) : 0.0f;
-            if (framed <= 0.0f && lens <= 0.0f) return 0.0f;
+            if (framed <= 0.0f && lens <= 0.0f) { if (rich) _dbgWhy = "out of frame by " + out_.ToString("0.00") + (ghosts ? "" : ", ghosts off"); return 0.0f; }
 
             float metres = to.magnitude;
             float angle = Mathf.Acos(Mathf.Clamp(Vector3.Dot(aim, -to) / metres, -1.0f, 1.0f)) * Mathf.Rad2Deg;
@@ -175,7 +176,7 @@ namespace TumbangPreso.Map
         /// </summary>
         private static void LensBurst(ArenaFx fx, float x, float y, float out_, Color colour, float size, float glare, float seed)
         {
-            if (glare < 0.05f) return;
+            if (glare < 0.05f) { _dbgWhy = "too weak: " + glare.ToString("0.000") + " at " + out_.ToString("0.00") + " out"; return; }
             float pull = out_ > 1.02f ? 1.02f / out_ : 1.0f;
             Add(x * pull, y * pull, glare, size, colour, seed);
         }
@@ -218,11 +219,41 @@ namespace TumbangPreso.Map
             Asked[slot] = new Shown { X = x, Y = y, Glare = glare, Size = size, Seed = seed, Colour = colour };
         }
 
+        // ⚠️ A DIAGNOSTIC, IN THE EDITOR ONLY, UNTIL THE FLARE HAS BEEN SEEN (2026-10-05: four versions
+        // did not show for the owner and the cause could not be found by reading). Twice a second it
+        // appends one line to Logs/arena/glare_debug.txt: how many `rich` lamps asked, how many flares
+        // were kept, why the last one that was refused was refused, and the canvas's state.
+        private static int _dbgRich;
+        private static string _dbgWhy = "";
+        private static float _dbgNext;
+
+        [System.Diagnostics.Conditional("UNITY_EDITOR")]
+        private static void Trace(int count, float flash)
+        {
+            if (Time.unscaledTime < _dbgNext) { _dbgRich = 0; return; }
+            _dbgNext = Time.unscaledTime + 0.5f;
+            try
+            {
+                float top = 0.0f; int best = -1;
+                for (int i = 0; i < count; i++) if (Asked[i].Glare * Asked[i].Size > top) { top = Asked[i].Glare * Asked[i].Size; best = i; }
+                string line = Time.unscaledTime.ToString("0.0") + " s  rich lamps " + _dbgRich + "  flares " + count
+                    + (best >= 0 ? "  strongest glare " + Asked[best].Glare.ToString("0.00") + " size " + Asked[best].Size.ToString("0.00") + " at " + Asked[best].X.ToString("0.00") + "," + Asked[best].Y.ToString("0.00") : "")
+                    + "  last refusal: " + (_dbgWhy.Length > 0 ? _dbgWhy : "none") + "  flash " + flash.ToString("0.00") + "  has camera " + _has
+                    + "  canvas " + (_canvas == null ? "none" : (_canvas.enabled ? "on" : "OFF") + " order " + _canvas.sortingOrder + " active " + _canvas.gameObject.activeInHierarchy)
+                    + "  opening " + ArenaIntro.HidesUi + "\n";
+                System.IO.Directory.CreateDirectory("Logs/arena");
+                System.IO.File.AppendAllText("Logs/arena/glare_debug.txt", line);
+            }
+            catch (System.Exception) { }
+            _dbgRich = 0; _dbgWhy = "";
+        }
+
         /// <summary>Put this frame's flares on the screen and forget them. Called once a frame by `ArenaFx`, last.</summary>
         public static void Present(Transform owner)
         {
             int count = _asked;
             _asked = 0;
+            Trace(count, Settings.SettingsStore.Current.EffectiveFlashIntensity);
             float flash = Settings.SettingsStore.Current.EffectiveFlashIntensity;
             if (flash <= 0.001f) count = 0;
             if (count == 0 && _canvas == null) return;
