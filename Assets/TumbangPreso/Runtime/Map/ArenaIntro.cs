@@ -433,10 +433,14 @@ namespace TumbangPreso.Map
         {
             if (!t.Full) { z = LineEnd; stride = 0.0f; return; }
 
-            float p = Mathf.Clamp01((age - t.Walk) / (t.Taya - t.Walk + 0.3f));
-            float eased = Mathf.Lerp(p, p * p * (3.0f - 2.0f * p), 0.5f);
+            // ⚠️ THEY ARE WALKING FROM THE FIRST FRAME (owner, 2026-10-05: "i dont want to see the players
+            // standing still at all i nthe opening scene, they should immediately be walking"). They stood
+            // for 1.8 s before the first step. The same ground over the whole time, already in stride as
+            // the picture comes up from black, easing only into the stop out on the turf.
+            float p = Mathf.Clamp01(age / (t.Taya + 0.3f));
+            float eased = Mathf.Lerp(p, 1.0f - (1.0f - p) * (1.0f - p), 0.4f);
             z = Mathf.Lerp(LineStart, LineEnd, eased);
-            stride = Mathf.Clamp01(Mathf.Min(p, 1.0f - p) * 14.0f);
+            stride = Mathf.Clamp01((1.0f - p) * 14.0f);
         }
 
         private void Models(float age, in Times t, float build)
@@ -649,7 +653,7 @@ namespace TumbangPreso.Map
                     float metres = to.magnitude;
                     if (metres < 1.0f) continue;
                     float seen = SeenFromTunnel(eye - _centre, lamp - _centre);
-                    ArenaGlare.Lamp(fx, lamp, to / metres, FloodColour, Mathf.Lerp(0.45f, 1.0f, glare), 4.0f, 12.0f,
+                    ArenaGlare.Lamp(fx, lamp, to / metres, FloodColour, Mathf.Lerp(0.45f, 1.0f, glare) * Mathf.Clamp01(glare * 4.0f), 4.0f, 12.0f,
                                     1.0f + 2.4f * glare, true, flash > 0.3f && seen > 0.5f, seen);
                 }
 
@@ -660,12 +664,34 @@ namespace TumbangPreso.Map
                 // across the field, square in the opening, growing from the first step of the walk.
                 if (t.Full && age < t.Reveal)
                 {
-                    float grow = Smooth((age - t.Walk * 0.4f) / (t.Peak - t.Walk * 0.4f));
+                    // ⚠️ IT GROWS AS THEY NEAR THE MOUTH, NOT BEFORE (owner: "big glare effect grows before the
+                    // players even move forward"): nothing for the first second and a half, slow, then fast.
+                    float grow = Smooth((age - 1.5f) / (t.Peak - 1.5f));
+                    grow *= grow;
                     Vector3 sun = _centre + new Vector3(0.0f, Mathf.Lerp(3.6f, 5.2f, grow), -44.0f);
                     Vector3 from = eye - sun;
+                    // ⚠️ AND IT IS LIGHT IN THE TUNNEL, NOT ONLY A PICTURE ON THE GLASS ("it still looks
+                    // unrealistic and like still and flat images not real lighting"). Three things a real
+                    // light does that a picture cannot: the walkers' heads cross it and it DIMS AND FLARES
+                    // as they do (`Clear`); it lies on the floor in a pool from the mouth; and it stands in
+                    // the tunnel's air as shafts, which the walkers pass in front of and behind.
+                    float clear = Clear(eye, sun);
                     if (grow > 0.02f && from.sqrMagnitude > 1.0f)
-                        ArenaGlare.Lamp(fx, sun, from.normalized, FloodColour, Mathf.Lerp(0.4f, 1.0f, grow), 6.0f, 20.0f,
+                        ArenaGlare.Lamp(fx, sun, from.normalized, FloodColour, Mathf.Lerp(0.4f, 1.0f, grow) * Mathf.Lerp(0.3f, 1.0f, clear), 6.0f, 20.0f,
                                         1.1f + 2.8f * grow, true, flash > 0.3f, 1.0f);
+                    float spill = Smooth((age - 0.4f) / 2.6f) * (0.35f + 0.65f * grow);
+                    Vector3 mouth = _centre + new Vector3(0.0f, Ground + 0.03f, MouthZ);
+                    fx.DrawFlat(ArenaFx.Cell.Dot, mouth + new Vector3(0.0f, 0.0f, -3.5f), 5.2f, 15.0f, 0.0f, FloodColour, 0.34f * spill);
+                    fx.DrawFlat(ArenaFx.Cell.Dot, mouth + new Vector3(0.0f, 0.0f, -1.0f), 4.0f, 6.0f, 0.0f, ArenaFx.White, 0.30f * spill);
+                    float drift = age * 0.35f;
+                    for (int k = 0; k < 5; k++)
+                    {
+                        float across = (k - 2.0f) * 0.78f + 0.12f * Mathf.Sin(drift + k * 1.9f);
+                        Vector3 top = _centre + new Vector3(across * 0.8f, TunnelTop - 0.05f, MouthZ + 0.6f);
+                        Vector3 foot = _centre + new Vector3(across * 1.25f, Ground, MouthZ - 5.5f - 1.3f * k);
+                        float beat = 0.75f + 0.25f * Mathf.Sin(age * (0.9f + 0.17f * k) + k * 2.3f);
+                        fx.DrawBeam(top, foot, 0.35f, 1.5f, FloodColour, 0.085f * spill * beat);
+                    }
                 }
 
                 // The bright air beyond the mouth: what the dark tunnel is looking out at.
@@ -723,6 +749,43 @@ namespace TumbangPreso.Map
         /// <summary>How much of a lamp the tunnel's mouth lets through to an eye inside it (both
         /// in the stadium's frame): where the line to the lamp crosses the mouth, against its
         /// lintel and jambs. 1 from outside.</summary>
+        /// <summary>How much of a lamp an eye in THIS opening's tunnel can see past the lintel and the jambs (world
+        /// points); 1 with no opening playing or from outside. For `ArenaGlare`'s flares, which nothing in the world hides.</summary>
+        public static float SeenInOpening(Vector3 eye, Vector3 lamp)
+        {
+            var self = Instance;
+            if (self == null || !self._prepared) return 1.0f;
+            return SeenFromTunnel(eye - self._centre, lamp - self._centre);
+        }
+
+        /// <summary>
+        /// How clear the line from the eye to a light is of the four walkers, 0 to 1: each is a head and a
+        /// body (two balls) where its model is drawn. Their colliders are on the stage, not here, so this is
+        /// by distance from the line, not a ray. It is what makes the flare gutter as a head crosses it.
+        /// </summary>
+        private float Clear(Vector3 eye, Vector3 light)
+        {
+            Vector3 along = light - eye;
+            float reach = along.magnitude;
+            if (reach < 0.5f) return 1.0f;
+            along /= reach;
+            float clear = 1.0f;
+            for (int s = 0; s < Seats; s++)
+            {
+                if (_root[s] == null) continue;
+                for (int part = 0; part < 2; part++)
+                {
+                    Vector3 at = _stand[s] + Vector3.up * (part == 0 ? 1.4f : 0.75f);
+                    float radius = part == 0 ? 0.55f : 0.42f;
+                    float t = Vector3.Dot(at - eye, along);
+                    if (t <= 0.2f || t >= reach) continue;
+                    float away = (eye + along * t - at).magnitude;
+                    clear *= Smooth((away - radius * 0.55f) / (radius * 0.9f));
+                }
+            }
+            return clear;
+        }
+
         private static float SeenFromTunnel(Vector3 eye, Vector3 lamp)
         {
             if (eye.z >= MouthZ || lamp.z <= eye.z) return 1.0f;

@@ -461,7 +461,7 @@ namespace TumbangPreso.Map
                 // The lamp. Only a spot on the stage can have a body or a deck between it and the eye.
                 float seen = focus ? ArenaGlare.Seen(foot, stage) : 1.0f;
                 _spotSeen[i] = Mathf.MoveTowards(_spotSeen[i], seen, dt * 12.0f);
-                ArenaGlare.Lamp(fx, foot, direction, SpotColour, 1.0f, SpotFull, SpotGone, 1.0f, true, focus && !reduced, _spotSeen[i], 0.22f);
+                ArenaGlare.Lamp(fx, foot, direction, SpotColour, 1.0f, SpotFull, SpotGone, 1.0f, true, focus && !reduced, _spotSeen[i], 0.22f, lensGain: 0.46f);
 
                 if (focus)
                 {

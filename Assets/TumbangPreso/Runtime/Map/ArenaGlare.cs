@@ -107,7 +107,7 @@ namespace TumbangPreso.Map
         /// it reached the eye.
         /// </summary>
         public static float Lamp(ArenaFx fx, Vector3 lamp, Vector3 aim, Color colour, float power, float full, float gone,
-                                 float size = 1.0f, bool rich = false, bool ghosts = false, float seen = 1.0f, float floor = 0.0f)
+                                 float size = 1.0f, bool rich = false, bool ghosts = false, float seen = 1.0f, float floor = 0.0f, float lensGain = 1.0f)
         {
             if (!_has || power <= 0.0f || seen <= 0.0f) return 0.0f;
 
@@ -136,7 +136,11 @@ namespace TumbangPreso.Map
             if (ghosts && flare > 0.15f) Flare(fx, x, y, out_, colour, flare);
             // The rays' pattern is the LAMP's own (where it really is), so it does not turn as the camera does.
             float seed = Mathf.Repeat(lamp.x * 0.137f + lamp.z * 0.291f + lamp.y * 0.053f, 1.0f);
-            if (rich) LensBurst(fx, x, y, out_, colour, size, seed: seed, glare:
+            // What the opening's tunnel hides (its lintel), for the flares on the picture: they are drawn
+            // over everything, so the world cannot hide them ("the floodlights glare seeps through the
+            // ceiling during the opening scene").
+            float open = ArenaIntro.SeenInOpening(_eye, lamp);
+            if (rich) LensBurst(fx, x, y, out_, colour, size, seed: seed, gain: lensGain, glare:
                                 power * facing * Mathf.Max(framed, 1.0f - Ramp(1.2f, 3.0f, out_)) * far * Mathf.Clamp01(seen));
             if (amount < 0.02f) return flare;
 
@@ -160,7 +164,7 @@ namespace TumbangPreso.Map
                 fx.DrawBillboard(ArenaFx.Cell.Dot, lamp, unit * 0.80f, colour, 0.22f * glare);
                 if (glare > 0.06f) Burst(fx, lamp, unit, colour, glare, 6, seed);
                 // The lamp itself stars on the picture (owner: "the light sources themselves should have some").
-                if (framed > 0.5f) Add(x, y, 0.75f * glare, 0.30f * size, colour, seed);
+                if (framed > 0.5f && open > 0.01f) Add(x, y, 0.75f * glare * open, 0.30f * size, colour, seed, 0.8f * lensGain);
             }
             // The anamorphic streak: the star's cell pulled long and thin across the frame.
             fx.DrawQuad(ArenaFx.Cell.Star, lamp, _right * (unit * (0.25f + 0.55f * glare)), _up * (unit * 0.085f), colour, 0.6f * glare);
@@ -189,11 +193,11 @@ namespace TumbangPreso.Map
         /// where the lamp is on the screen or at the frame's edge nearest it when it is outside (as
         /// a real lens flares from a light just out of shot), and as strong as the lamp is facing.
         /// </summary>
-        private static void LensBurst(ArenaFx fx, float x, float y, float out_, Color colour, float size, float glare, float seed)
+        private static void LensBurst(ArenaFx fx, float x, float y, float out_, Color colour, float size, float glare, float seed, float gain)
         {
             if (glare < 0.05f) return;
             float pull = out_ > 1.02f ? 1.02f / out_ : 1.0f;
-            Add(x * pull, y * pull, glare, size, colour, seed);
+            Add(x * pull, y * pull, glare, size, colour, seed, gain);
         }
 
         // ------------------------------------------------------------------ the flare on the picture
@@ -210,7 +214,7 @@ namespace TumbangPreso.Map
         // `ArenaFx` presents them once a frame (`Present`), after every caller has drawn.
 
         private const int MaxFlares = 10, Layers = 2, BurstPixels = 768;
-        private struct Shown { public float X, Y, Glare, Size, Seed; public Color Colour; }
+        private struct Shown { public float X, Y, Glare, Size, Seed, Gain; public Color Colour; }
         private static readonly Shown[] Asked = new Shown[MaxFlares];
         private static int _asked;
         private static Canvas _canvas;
@@ -222,7 +226,7 @@ namespace TumbangPreso.Map
         private static void ResetStatics() { _asked = 0; _canvas = null; _burst = null; _added = null; _frame = -1; }
 
         /// <summary>Ask for a flare this frame at (x, y), -1 to 1 across the frame. The strongest `MaxFlares` are kept.</summary>
-        private static void Add(float x, float y, float glare, float size, Color colour, float seed)
+        private static void Add(float x, float y, float glare, float size, Color colour, float seed, float gain)
         {
             int slot = _asked;
             if (slot >= MaxFlares)
@@ -232,7 +236,7 @@ namespace TumbangPreso.Map
                 if (Asked[slot].Glare * Asked[slot].Size >= glare * size) return;
             }
             else _asked++;
-            Asked[slot] = new Shown { X = x, Y = y, Glare = glare, Size = size, Seed = seed, Colour = colour };
+            Asked[slot] = new Shown { X = x, Y = y, Glare = glare, Size = size, Seed = seed, Gain = gain, Colour = colour };
         }
 
         /// <summary>Put this frame's flares on the screen and forget them. Called once a frame by `ArenaFx`, last.</summary>
@@ -269,10 +273,13 @@ namespace TumbangPreso.Map
                     if (!on) continue;
 
                     var a = Asked[i];
-                    bool big = a.Size > 1.5f, spot = !big && a.Size >= 0.6f;
                     var rect = image.rectTransform;
                     rect.anchorMin = rect.anchorMax = new Vector2(a.X * 0.5f + 0.5f, a.Y * 0.5f + 0.5f);
-                    float across = tall * (spot ? 0.68f : 0.95f) * a.Size * (0.45f + 0.55f * a.Glare) * (layer == 0 ? 1.0f : 0.84f);
+                    // ⚠️ NO CLASSES BY SIZE. A flare was "big" over size 1.5 and a held-back "spot" under it, and the
+                    // opening's floodlights shrink through 1.5 as they fade: the flare fell to half in one frame
+                    // (owner, 2026-10-05: "flare just suddenly drops down in intensity"). How far a caller holds
+                    // its flare back is now its own number (`lensGain`), and everything here is continuous.
+                    float across = tall * 0.95f * a.Size * (0.45f + 0.55f * a.Glare) * Mathf.Lerp(0.7f, 1.0f, Mathf.Clamp01(a.Gain)) * (layer == 0 ? 1.0f : 0.84f);
                     // A slow breath in the size, each layer on its own beat.
                     across *= 1.0f + 0.035f * Mathf.Sin(clock * (layer == 0 ? 1.7f : 2.3f) + a.Seed * 40.0f);
                     rect.sizeDelta = new Vector2(across, across);
@@ -280,7 +287,7 @@ namespace TumbangPreso.Map
                     rect.localRotation = Quaternion.Euler(0.0f, 0.0f, a.Seed * 360.0f + (layer == 0 ? clock * 5.0f : 137.0f - clock * 3.5f));
                     Color c = Color.Lerp(Color.white, a.Colour, 0.35f);
                     float shimmer = 0.88f + 0.12f * Mathf.Sin(clock * (layer == 0 ? 6.1f : 4.3f) + a.Seed * 70.0f + layer);
-                    c.a = Mathf.Clamp01(a.Glare * (big ? 1.0f : spot ? 0.46f : 0.8f)) * (layer == 0 ? 1.0f : 0.62f) * shimmer * Mathf.Lerp(0.45f, 1.0f, flash);
+                    c.a = Mathf.Clamp01(a.Glare * a.Gain) * (layer == 0 ? 1.0f : 0.62f) * shimmer * Mathf.Lerp(0.45f, 1.0f, flash);
                     image.color = c;
                 }
             }
@@ -362,9 +369,10 @@ namespace TumbangPreso.Map
                         rays += Mathf.Min(1.0f, Mathf.Lerp(profile[b][index], profile[b][next], between)) * along * Mathf.Sqrt(along);
                     }
                     rays *= Mathf.Clamp01(r * 9.0f);
-                    float core = Mathf.Exp(-r * r * 140.0f) * 1.1f + Mathf.Exp(-r * r * 22.0f) * 0.55f + Mathf.Exp(-r * r * 4.0f) * 0.16f;
-                    float alpha = Mathf.Clamp01(rays * 0.8f + core) * Mathf.Clamp01((1.0f - r) * 6.0f);
-                    float tinted = Mathf.Clamp01(r * 2.2f) * 0.22f * Mathf.Clamp01(1.0f - core);
+                    // No wide halo: at a few per cent of white it banded into rings on a dark frame.
+                    float core = Mathf.Exp(-r * r * 140.0f) * 1.1f + Mathf.Exp(-r * r * 26.0f) * 0.5f;
+                    float alpha = Mathf.Clamp01(rays * 0.8f + core) * Mathf.Clamp01((1.0f - r) * 3.0f);
+                    float tinted = Mathf.Clamp01(r * 2.2f) * 0.09f * Mathf.Clamp01(1.0f - core);
                     Color rgb = Color.Lerp(Color.white, Color.HSVToRGB(Mathf.Repeat(angle * 3.0f + r * 0.35f, 1.0f), 0.7f, 1.0f), tinted);
                     pixels[py * n + px] = new Color32((byte)(rgb.r * 255.0f), (byte)(rgb.g * 255.0f), (byte)(rgb.b * 255.0f), (byte)(alpha * 255.0f));
                 }
