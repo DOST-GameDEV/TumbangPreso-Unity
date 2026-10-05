@@ -1,0 +1,224 @@
+{
+  "dpi": 96,
+  "coordinateScope": "PerMonitorV2 client pixels; temporary read-only thread context restored after capture",
+  "gamePid": 18944,
+  "window": 13239502,
+  "bounds": [
+    160,
+    101,
+    1760,
+    1001
+  ],
+  "fps": 10,
+  "secondsRequested": 120.0,
+  "startUtc": "2026-10-05T22:41:56Z",
+  "scope": "Only independently verified foreground game client pixels; every grab verifies PID/foreground before and after; no input injection or FPS/hardware proof.",
+  "samples": [
+    {
+      "frame": 0,
+      "wallSeconds": 0.094,
+      "sha256": "dbe626f9eb55b17160407fdb9aa0321ad2db64cf656ca766f1b09b36b3ac292e"
+    },
+    {
+      "frame": 30,
+      "wallSeconds": 3.344,
+      "sha256": "26fb780f4b78de188dd95910d6d047857d154f87b7b658c596e71e64320c801c"
+    },
+    {
+      "frame": 60,
+      "wallSeconds": 6.407,
+      "sha256": "32cb284af766c4a36f8c72ddec9f3a9ad4a735a921a40b83bd966892802bf90d"
+    },
+    {
+      "frame": 90,
+      "wallSeconds": 9.313,
+      "sha256": "7c4f1acc0298e233c322c1626ecdb0a1810585d9e274aacab0eaed6223764903"
+    },
+    {
+      "frame": 120,
+      "wallSeconds": 12.36,
+      "sha256": "21e13193862c5a806e2c128e309ad3e3057535532725fe54c6000ee3686038c3"
+    },
+    {
+      "frame": 150,
+      "wallSeconds": 15.719,
+      "sha256": "2376c2a69b0a1f8da1b6050b9b7d7c7972e0312dd7ed4c10d566ed3510b0ee71"
+    },
+    {
+      "frame": 180,
+      "wallSeconds": 18.922,
+      "sha256": "3f3d90645efe10adf8cf164cba5f24b99d02e736569b9bd74e113c5c87db3d8a"
+    },
+    {
+      "frame": 210,
+      "wallSeconds": 21.735,
+      "sha256": "c744a3c973c24d6245e50143d1c018e79bc096c530ded3ec9c5e05285e08d4c6"
+    },
+    {
+      "frame": 240,
+      "wallSeconds": 24.578,
+      "sha256": "4d538746538b05d922aa8ff04b2101d6db60c1cd8baff40ff29a23a44c305495"
+    },
+    {
+      "frame": 270,
+      "wallSeconds": 27.688,
+      "sha256": "d80d6a7812a4cfd382916af233404e52e8fa6205a65c3743aa925fbd300b6c07"
+    },
+    {
+      "frame": 300,
+      "wallSeconds": 30.422,
+      "sha256": "dddd7926eaa498ab6c2f13972039a10886f733f07ec94c7c5a0449b2cea02bf8"
+    },
+    {
+      "frame": 330,
+      "wallSeconds": 33.125,
+      "sha256": "ded65ad76236068638780c47015d3cc12423cfc6b6a9117b5e82ec7a1a2bcce5"
+    },
+    {
+      "frame": 360,
+      "wallSeconds": 36.094,
+      "sha256": "d1aaa4139d45a7e0849eab8e146f70218e1da07b996f9f8c3071f2837ddc2bcb"
+    },
+    {
+      "frame": 390,
+      "wallSeconds": 39.078,
+      "sha256": "6cc39fc3809fce9e6e3cc13f60bcfd9958fcc8fd748b2099d028da623598fef1"
+    },
+    {
+      "frame": 420,
+      "wallSeconds": 42.094,
+      "sha256": "968cc3c3439dd9754d86b8ca731fdf9a6d9936ae92f957635da21a6432c39b54"
+    },
+    {
+      "frame": 450,
+      "wallSeconds": 45.141,
+      "sha256": "df18d149d9f90cd6882e16050cc1cb82c3b692d3cc69c0c2ab6bbda33cc10828"
+    },
+    {
+      "frame": 480,
+      "wallSeconds": 48.078,
+      "sha256": "6f4fcf6eb0a62ef58c0fb12cbb76684ea0d65a0d8cc301a2b7cf61ba75794860"
+    },
+    {
+      "frame": 510,
+      "wallSeconds": 51.11,
+      "sha256": "783aa7fca7689d91a1650e1b8583036b77c29d01b3171ffc4cfb8fe0fd588ae0"
+    },
+    {
+      "frame": 540,
+      "wallSeconds": 54.094,
+      "sha256": "595b69c4f22d70ce10ae748fa80e7a12429e9ee845fd764fc32526bd850d9747"
+    },
+    {
+      "frame": 570,
+      "wallSeconds": 57.094,
+      "sha256": "28c5bfc8516a93d3f1f703130b94d575b40537a152b3a9fb82bfa38710a5b42a"
+    },
+    {
+      "frame": 600,
+      "wallSeconds": 60.11,
+      "sha256": "7b96da164f3ebc8fabed9ae6f399390e5cf02ac897d65ca830efcc00a90eba95"
+    },
+    {
+      "frame": 630,
+      "wallSeconds": 63.407,
+      "sha256": "701f80594a871bc022ee26d0d6a88a5311d5f869229313a5f69808677c43751b"
+    },
+    {
+      "frame": 660,
+      "wallSeconds": 66.407,
+      "sha256": "2044690ea95edade935f7043782f0630511407d2295ba95c6e0a67076cfcab6e"
+    },
+    {
+      "frame": 690,
+      "wallSeconds": 69.532,
+      "sha256": "506d4dba1b18583a2cdea78cb555a6693f18d4a28b2e0dcef1da40f983596484"
+    },
+    {
+      "frame": 720,
+      "wallSeconds": 72.453,
+      "sha256": "72bab018c53c1a9e31655ecc887a68c29fece7a072f1914d2200dcd8ffdfeed0"
+    },
+    {
+      "frame": 750,
+      "wallSeconds": 75.469,
+      "sha256": "b02fbd367cad8a50abceb35fd84d202ccf8d7f1a92f9f53c9c6b32fbc9bcf9ec"
+    },
+    {
+      "frame": 780,
+      "wallSeconds": 78.328,
+      "sha256": "69cdeafea744c2b5d56f8e374a6a88462ee3c1e7fe641675b36c4317de905089"
+    },
+    {
+      "frame": 810,
+      "wallSeconds": 81.172,
+      "sha256": "de034941b4ae56e7b84eddc6a30d65aa19db87793142350eff1989d5e1400beb"
+    },
+    {
+      "frame": 840,
+      "wallSeconds": 84.11,
+      "sha256": "e38dbfe7872085a27b96df063b2a5656b69b90790177bf3790de2d13774cc710"
+    },
+    {
+      "frame": 870,
+      "wallSeconds": 87.094,
+      "sha256": "5a1067b5740406bc3473b8fecfddb810fca92bf0c4fc04de086ef21ac787860c"
+    },
+    {
+      "frame": 900,
+      "wallSeconds": 90.094,
+      "sha256": "2bfd4d84efb3622d1a3871073d5ffd07aee2c6b3808014ab9684d8a10f2af74d"
+    },
+    {
+      "frame": 930,
+      "wallSeconds": 93.094,
+      "sha256": "8b7f349987259adf02673a9927d428917d6150782b40dca6b3c07e39155d7562"
+    },
+    {
+      "frame": 960,
+      "wallSeconds": 96.094,
+      "sha256": "913c9c3a47e9ad84e06d4af275e51a83587f0c29ad1e47c7d151aaa752c5071c"
+    },
+    {
+      "frame": 990,
+      "wallSeconds": 99.094,
+      "sha256": "5ad3e6ea7e269640debca49549610e6767bd6e2896ec2cd40b68ace720c1ec22"
+    },
+    {
+      "frame": 1020,
+      "wallSeconds": 102.094,
+      "sha256": "a36b75de697d6b1cb7dc40c17ff30c4811adf0a9a5c9725c57320ee2bbaafc34"
+    },
+    {
+      "frame": 1050,
+      "wallSeconds": 105.078,
+      "sha256": "aa5a2f41454c1b21259ab2d72dd97cb14129069f34cfd58878081e064b3a6c31"
+    },
+    {
+      "frame": 1080,
+      "wallSeconds": 108.094,
+      "sha256": "b998e617e239849466ab341d102a5215c114931e08b1b5c928e5f66e0b6b3e02"
+    },
+    {
+      "frame": 1110,
+      "wallSeconds": 111.094,
+      "sha256": "302b52ebceeab86fb076cc6bc319e0e76a449aed4225df1d4539bf948699f1e1"
+    },
+    {
+      "frame": 1140,
+      "wallSeconds": 114.094,
+      "sha256": "fd2f73fbae91acf977b86ca12f655754e244d271f2ce7847f319d1ba4c3cd6b2"
+    },
+    {
+      "frame": 1170,
+      "wallSeconds": 117.11,
+      "sha256": "0fafd80a22c9b268d2b1c88be7fdd0678896fc34f4e1eff3dc731b68a9404553"
+    }
+  ],
+  "capturePid": 728,
+  "exitCode": 0,
+  "frames": 1200,
+  "terminal": true,
+  "elapsedWallSeconds": 120.09400000001187,
+  "videoBytes": 29311065
+}

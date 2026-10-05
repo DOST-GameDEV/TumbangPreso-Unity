@@ -1,0 +1,18 @@
+{
+  "dpi": 96,
+  "coordinateScope": "PerMonitorV2 client pixels; temporary read-only thread context restored after capture",
+  "gamePid": 18944,
+  "window": 13239502,
+  "bounds": [
+    160,
+    101,
+    1760,
+    1001
+  ],
+  "fps": 10,
+  "secondsRequested": 120.0,
+  "startUtc": "2026-10-05T22:41:56Z",
+  "scope": "Only independently verified foreground game client pixels; every grab verifies PID/foreground before and after; no input injection or FPS/hardware proof.",
+  "samples": [],
+  "capturePid": 728
+}

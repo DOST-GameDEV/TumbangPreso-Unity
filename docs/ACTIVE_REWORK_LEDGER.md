@@ -1,3 +1,31 @@
+## October6 current: matched online flow and actual opening recorded
+
+Matched4b679/p152/261files2947173446bytes, manifest2a258/runtime721d includes
+queued-focus6379 and buntingd14. Root verifies7 raw package blobs and28 laptop
+operator blobs. Normal online GEJH row admission and code rejoin pass; natural
+4x90 completes FULL2406byte record e1e79e65/d752868f independently identical on
+both peers. This does not close intermittent Relay timeout/host loss or E/Q/motion.
+
+Initial title-based GDI movies freeze on the room and are rejected. Replacement
+foreground ImageGrab checks exact PID/foreground/client bounds every frame. The
+first calibration changes Title/Home but its30fps declaration compresses time;
+rejected speed claim. Corrected capture728/38759 yields1200frames,120.000encoded
+and120.094wall seconds. Actual17second clip/selected frames show Eskinita wide,
+all four portraits/hands hidden/01:30, then FPP,3/2/1 and active clock.
+
+Root18944/85996 normal earlyLeave/Home/ownQuit0, shared inputs/fresh seed restored
+and all261 unchanged. Laptop45104/41371 normalLeave unfinished at round3/00:41
+and ownQuit/restoration is tracked by its receipt. No Root player/editor/helper or
+browser remains active. Saved source/profile/essential failed captures retained;
+19 redundant terminal stale extracts removed. No Desktop release overwritten.
+
+Next Root UI/network lead: actual LAN MAP column saysLAN before joining actual
+EskinitaXRD3; inspect exact advert/query mapping and test a causal fix. HUD top-name
+clipping is a separate presentation lead requiring layout verification. Laptop
+PlayerInputReader fresh-after-focus-before-first-poll two-case unit reserved and
+resumes after its restored slot. No additional pair/build while these source
+questions can progress. Same artifact stays available for justified acceptance.
+
 ## Current continuation: October6 PC released, native unit terminal
 
 Owner released the PC again before sleep. Root uses its native/player slot and

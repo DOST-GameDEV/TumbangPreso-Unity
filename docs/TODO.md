@@ -431,10 +431,19 @@ Handoff: [CHARACTER_REDESIGN_DANTE.md](CHARACTER_REDESIGN_DANTE.md).
 - [x] Opening camera visibility: late activation/follow no longer exposes FPP
   hands during arrival. Native2causes fail/2controls pass -> same4/4.
   [Evidence](reports/reliability-2026-10-04/arrival-fpp/README.md).
-- [ ] Current packaged multiplayer arrival film and camera handoff acceptance.
-- [ ] Public online rooms are undiscoverable: host publication/query/UI filter
-  verification. Current QoL content is owner-authorized for integration; its
-  temporary train prank hooks are removed. Current152 peer acceptance remains open.
+- [x] Current matched4b679/p152 LAN Eskinita opening film: loading, wide court,
+  all four portraits with hands hidden, normal FPP and3/2/1 then active clock.
+  Corrected foreground capture is1200frames/120.000encoded vs120.094wall seconds;
+  actual17second clip and selected frames inspected. Failed staleGDI and incorrect
+  calibration-speed attempts retained and excluded.
+  [Acceptance](reports/reliability-2026-10-06/visible-arrival/README.md).
+- [ ] Broader map/reduced-motion/latency opening acceptance and sub-frame flash
+  coverage remain separate from this10fps Eskinita run.
+- [x] Matched4b679/p152 normal public-online GEJH discovery/row joining, normal
+  Back and typed four-character code rejoin succeed while the laptop host remains
+  live. Both complete the same2406byte full record; no claim that intermittent
+  tester Relay timeout/host-kick or physical input reports are closed.
+  [Actual online evidence](reports/laptop-validation-2026-10-06/online152-operator/README.md).
 - [x] Fix online host success before registration and Relay advertising a direct
   LAN endpoint. Three native causes plus LAN and real UGS code/browser controls
   pass 5/5. [Evidence](reports/reliability-2026-10-04/online-room-publication/README.md).
