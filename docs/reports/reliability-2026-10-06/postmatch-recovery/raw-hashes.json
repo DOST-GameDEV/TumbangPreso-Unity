@@ -1,0 +1,26 @@
+{
+  "original-results.xml": {
+    "bytes": 12186,
+    "sha256": "da332c83387017ce99bdfe60b4cb3c29eb038a736a09efa356f785ff9ce89530"
+  },
+  "original-classification.json": {
+    "bytes": 227,
+    "sha256": "3e5516a1e9faf9c1bff17b65bac6c9c9391e6d70125f8342baa7761870d5e878"
+  },
+  "original-launch.json": {
+    "bytes": 981,
+    "sha256": "c9825864442038d22d7e5c61610840942ff7a90a1bd1861385b2ac1f69190571"
+  },
+  "candidate-results.xml": {
+    "bytes": 10293,
+    "sha256": "e75014456a9c0de08681e28a8c79da2318feeea732b2689d023113651bf9ff95"
+  },
+  "candidate-classification.json": {
+    "bytes": 226,
+    "sha256": "d867d967fc4a0924313cdea9dbc29263fbf74793ff84c50815957bddd842eb7a"
+  },
+  "candidate-launch.json": {
+    "bytes": 993,
+    "sha256": "4a197b478ab63df9bf9ad26aff147e378daeacd6380d16f44f11fb2a73eabccd"
+  }
+}

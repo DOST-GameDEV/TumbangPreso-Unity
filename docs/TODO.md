@@ -1,5 +1,22 @@
 # TODO: Tumbang Preso Unity
 
+### PEER-RECOVERY-1006: actual two-machine discovery and return paths
+
+- [x] Same byte-identical protocol152 package completes natural Arena Hero Strike
+  four-round LAN and public-online matches on the PC and laptop. Full saved
+  records independently match every field: LAN2401bytes and online2405bytes.
+- [ ] Repair LAN discovery/code joining: the laptop's natural LAN list stays
+  empty85.2seconds and GWEC code fails. Direct192.168.1.7:8910 joins successfully.
+  Reverse host roles after the current fixes to isolate routing from receive behavior.
+- [ ] Repair post-match client recovery: normal host MAIN MENU after either LAN
+  or online completion silently starts a new LAN host on the untouched client
+  (6JKN then KJ9W). MatchRpc routes to networked MatchSetup and AutoHost opens it.
+  Root qualifies current hub HOME recovery with legacy preparation-board controls.
+- [ ] Reconcile room Bots NONE with actual vacant-seat bots. Laptop owns existing
+  bot-policy consumers and preserves the four-seat start gate.
+- [ ] Tester Relay timeout/host kick, physical skill input and non-host movement
+  delay acceptance remain open. These completed matches do not close those reports.
+
 ### HOME-CARD-READABILITY-1005: artwork and a separate caption
 
 - [x] Preserve authored poster pixels/aspect and the card's door/back behavior.

@@ -295,6 +295,14 @@ namespace TumbangPreso.Net
             }
 
             UI.SceneFlow.RetireMatchSimulation();
+            // The current hub recovers to HOME. Requesting a networked preparation
+            // screen here makes AutoHost open a replacement LAN room without input,
+            // including when the original online match already finished.
+            if (UI.ConvertedMatchSetup.HubEnabled)
+            {
+                UI.SceneFlow.GoHome();
+                return;
+            }
             UI.SceneFlow.Networked = true;
             UI.SceneFlow.Go(UI.SceneFlow.MatchSetup);
         }

@@ -11,8 +11,11 @@ The October 5 request to merge current QoLUpdates takes precedence over earlier
 model restrictions for this integration. Adopt incoming Yasmin; do not restore
 her old model. Stable IDs and approved display names remain. This scoped merge
 does not authorize subsequent unrelated character redesigns. Remove prank hooks.
-The owner currently uses the PC: source work continues, but no PC Computer Use,
-Unity launches or player tests until released. Do not close unrelated apps.
+October6 owner override: "u can use my pc again imma sleep now". PC Unity,
+player and Computer Use are released for tests. Inspect current process ownership
+first; use matching current152 artifact/profiles and fresh verified game windows.
+Do not restore the earlier personal-use hold after compaction. Never close
+ChatGPT/Codex or use X/AltF4; quit only through the actual game's own menu.
 Existing laptop chat cooperation is authorized; ask its current ownership before
 reassignment. No new chats/agents, reset, clean, force-push or unapproved charges.
 M4tyu633 <matthewtlabrador@gmail.com> is the publication identity.
@@ -57,7 +60,9 @@ Parent84169/Python15108; profilelpt-build152-8db2dda82-1005; native PID follows
 launch.json. Preserve frozen Assets/Packages/ProjectSettings until parent and
 restoration terminal. No duplicate launches. Then normal operator and visible
 online/LAN controls on the laptop's available machine.
-PC remains personal-use: no Root native/player launches, input or window shortcuts.
+PC is now released by the owner. No Root native/player process was present at
+release. Acquire exact current8db artifact from laptop, verifye407manifest/b6f2
+runtime and all261files before actual PC/laptop peer tests. Close shortcuts stay off.
 
 ## Qualified evidence and remaining acceptance
 
@@ -84,17 +89,26 @@ with only 'blocked by policy'; its specific governing mechanism is unknown.
 Do not call it an automatic approval review or a lack of owner authorization.
 The16 rejected Root build targets are protected from retries or alternate-method
 bypass in the local JSON receipt. Preserve Desktop releases and essential evidence.
-No task-owned Root native jobs, helpers or browser tabs remain active.
+Root player and download/share helpers finished; the current native test parent is
+tracked below. No task-owned browser tabs were opened.
 Heartbeat1357 removed48 published temporary commit-message files,7289bytes,
 after terminal/path/subject checks; preserved all active-worktree refs and builds.
 
 ## Next action
 
-Wait current8db build identity/terminal result and exact input/preference/Quality
-restoration. Verify source/runtime/artifact manifest before actual GUI/network/
-operator checks. Root's later documentation-only commits do not change that
-artifact's frozen8db production identity; do not rebuild for a documentation tip.
-Prior151 build/peer evidence is historical; the owner's Relay timeout, host-kick
-and non-host lag remain open. No unchanged passing-suite repeats or style loops.
-No PC native/input/window actions until owner release. Preserve exact live job
-handles/next action in current-resume.json and keep updates at least every60s.
+Current8db/protocol152 byte-identical package completed actual PC/laptop LAN
+and public ONLINE Arena4x30 matches. Independently extracted full saved records
+match on both machines: LAN2401B/37b2a9f5 and ONLINE2405B/9e847b08.
+LAN discovery remained empty85s and code join failed; direct address passed.
+After normal host result MAIN MENU, untouched client unexpectedly creates a new
+LAN room in both runs (6JKN then KJ9W). These are open defects, not full readiness.
+Root player21060/parent9730 ownQuit exit0, shared preferences/seed restored and
+all261 package files unchanged. Root now tests the postmatch recovery destination
+using existing MenuExitLifetimeTests plus two hub-route cases. Original parent92004 terminal: two hub-route failures and six controls pass.
+Candidate14860/parent85120 terminal: all eight pass. Both21126-input manifests
+restored byte exactly, including217 incidental metadata/TimeManager changes.
+Corrected packaged peer recovery remains open. Next publish/integrate then
+coordinate matching corrected artifact and reverse-host LAN checks.
+Laptop owns AIController/MatchInstaller and nonvisual Hub/CustomRules bot-state
+consumers after its player restoration; preserve four-seat gate. Root owns Net
+recovery/discovery, UI quality, integration and queue. No unchanged passing reruns.
