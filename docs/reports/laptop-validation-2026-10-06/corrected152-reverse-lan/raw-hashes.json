@@ -1,0 +1,122 @@
+{
+  "01-laptop-lan-host.json": {
+    "bytes": 869,
+    "sha256": "455d66e2e6e6d4d2e372b46e15a8a2c0ac77d204fc9c6851b2e673571e50eaee"
+  },
+  "01-laptop-lan-host.png": {
+    "bytes": 1100195,
+    "sha256": "83cdcee826cd83365096d0e531fa743f1de9c547efadd67ee6bada9b73bdae1d"
+  },
+  "02-actual-none-policy.json": {
+    "bytes": 872,
+    "sha256": "94c33cd73823311c7adb1bc70da1a3104e726d0d6e09b29c75b9cd2ecccf58d5"
+  },
+  "02-actual-none-policy.png": {
+    "bytes": 103892,
+    "sha256": "87c18b1116cda170a75a5a22e340345123c5edbf7075cae250e4b00f69f731c8"
+  },
+  "03-packaged-none-refusal.json": {
+    "bytes": 875,
+    "sha256": "6d69c8e16a580fdec386518f25f254bd9376b4fd885b187e6891353607f4f2c3"
+  },
+  "03-packaged-none-refusal.png": {
+    "bytes": 1110663,
+    "sha256": "809619120e0c3d15d09a796b9a90c1ab24dc6140eafd56463546ac207a19462a"
+  },
+  "04-normal-bots-enabled.json": {
+    "bytes": 873,
+    "sha256": "a051935d3f6d78cd1930da0aa695e75df361471b53bee206ac9e2442bb399cd9"
+  },
+  "04-normal-bots-enabled.png": {
+    "bytes": 105515,
+    "sha256": "7a3819fe328e363c8aa48a402c9e50f0a654ab49a6ead6fe471da559e8583854"
+  },
+  "05-actual-hero4x30.json": {
+    "bytes": 869,
+    "sha256": "550d85c6b6df05d8e383f3ae2b3270dabe98d736ea6fd95b11b4095eca3f3d75"
+  },
+  "05-actual-hero4x30.png": {
+    "bytes": 120997,
+    "sha256": "caabd3e49767a5c4e92ece1a6981d6942f9bcb71d38183a3f0d9ca237db53397"
+  },
+  "06-live-character-confirmation.json": {
+    "bytes": 881,
+    "sha256": "7fa8000655bc2597bf3d52b4600d7c3b44b104812c0c912658aa4e88290a0af5"
+  },
+  "06-live-character-confirmation.png": {
+    "bytes": 337755,
+    "sha256": "b7bd0437c8de93b176aab884eaea03f84977ce928a95bbfb29de062a22074b17"
+  },
+  "07-corrected-live-round1.json": {
+    "bytes": 875,
+    "sha256": "dfa3a1d51ba2b96cdf71a60c7a68bb7ae0299bb723af1a8d2a24821abc2d787a"
+  },
+  "07-corrected-live-round1.png": {
+    "bytes": 1546569,
+    "sha256": "d99cadcec91097f1fc469c25abdfb0b060b908897e3cbc0fe24ded617b7cd5b5"
+  },
+  "08-corrected-round-progress.json": {
+    "bytes": 878,
+    "sha256": "c3851b9c615dda077cf33bc9d859b54118b29db90fe2e9c872f5ca2528cc2e44"
+  },
+  "08-corrected-round-progress.png": {
+    "bytes": 1739113,
+    "sha256": "3f1f2f936e4090b44b058390f91d3a4aa7ca8d5e358720b2f88119838648eee2"
+  },
+  "09-corrected-natural-results.json": {
+    "bytes": 879,
+    "sha256": "b5a05d0a8f1714a189b53dc3aa491e57c260fd159aec9c7891490e60d89bff7d"
+  },
+  "09-corrected-natural-results.png": {
+    "bytes": 868911,
+    "sha256": "e38584843e8cf2c485c7cff4b557b41f43a1fb968957bb27afb668419bd0c662"
+  },
+  "10-host-normal-mainmenu-home.json": {
+    "bytes": 879,
+    "sha256": "3e01e4a33084660edcbed00712abe46ba2d1f7342e87bf7f3f0cdb23df548dac"
+  },
+  "10-host-normal-mainmenu-home.png": {
+    "bytes": 1108335,
+    "sha256": "c1767e0976d51900adc564bc07b2c6679b0ff214b7243dff3a25c566e5720737"
+  },
+  "11-own-quit-after-corrected-pair.json": {
+    "bytes": 883,
+    "sha256": "9650bc6e226d5177f01167f3283a6d65c767e0bbab909cbf1baed5045231a0d2"
+  },
+  "11-own-quit-after-corrected-pair.png": {
+    "bytes": 698286,
+    "sha256": "78478e667013e6ada98e26560b50b47001c7e4a6ec7785af45e89cd0b8a8ab34"
+  },
+  "direct-result.json": {
+    "bytes": 1930,
+    "sha256": "2f7773369889195fb503f3132345aff7a560018da2bd9ef516c347a11807fd1c"
+  },
+  "launch.json": {
+    "bytes": 1054,
+    "sha256": "e1b9df2a664662f21d68c48214af66489ea4d1446d076ba6da1c858ab6f0e249"
+  },
+  "match-full-canonical.json": {
+    "bytes": 2403,
+    "sha256": "78ed5a5a0b9aaf856d8a0c3beb47d60f2eba3c34b17338b9e646503104740e66"
+  },
+  "match-record-receipt.json": {
+    "bytes": 477,
+    "sha256": "e9b178e26245f59a963e04e4b551244b75ce41de61b2867b837d2751dcf56b6c"
+  },
+  "operator-receipt.json": {
+    "bytes": 1499,
+    "sha256": "f6bcaf58a67a167ef7b53a7335887513b681ff2c1aa5885286322b66c5366d33"
+  },
+  "pc-full-record-correlation.json": {
+    "bytes": 792,
+    "sha256": "b999e4027acd5f61e7120070907337373c4c4d2551f65f3bf4759b9f1d89094a"
+  },
+  "pc-hostleave-recovery-correlation.json": {
+    "bytes": 756,
+    "sha256": "ca2a19afd005a5b03637aad983048333fbe1aa6b519256e23f9f65a62b5cc162"
+  },
+  "runtime-observations.txt": {
+    "bytes": 1219,
+    "sha256": "d5a1e39f35c7ad77043814eaa219140465960904b3427a021ffd43a950d07532"
+  }
+}

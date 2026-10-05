@@ -1,0 +1,17 @@
+{
+  "observedUTC": "2026-10-05T19:22:37.811198+00:00",
+  "source": "917bca66c311fd2832cf571ede2f4b42336deb50",
+  "protocol": 152,
+  "completedMatchId": "083c34baae9b4857a2fa1b17f24738b0",
+  "hostPid": 14324,
+  "pcClientPid": 17396,
+  "hostAction": "NormalResultMAINMENUafterfullrecordACK",
+  "pcInputSinceResult": false,
+  "pcObservedDestination": "ActualHome",
+  "pcHostLostAuthorityRevoked": true,
+  "pcNoNewPeer0ApprovalOrHostingCode": true,
+  "pcNoLocalUDP8910Listener": true,
+  "fullRecordIntact": true,
+  "independentEvidence": "PCforegroundphysicalPNGcorrected-reverse152-hostleave-settled +readonlylogs/endpoints",
+  "scope": "Actualpackagedhubclient hostleave recovery PASS; PC-hostbroadcast/discovery failures remain separate"
+}

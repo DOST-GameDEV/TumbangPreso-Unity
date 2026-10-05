@@ -1,0 +1,28 @@
+{
+  "pid": 14324,
+  "window": 2557590,
+  "foregroundBeforeAndAfter": true,
+  "physicalClientRect": [
+    160,
+    104,
+    1760,
+    1004
+  ],
+  "physicalClientWidth": 1600,
+  "physicalClientHeight": 900,
+  "physicalWindowRect": [
+    151,
+    66,
+    1769,
+    1013
+  ],
+  "windowDpi": 120,
+  "dpiAwareness": 2,
+  "observerDpiContext": "PerMonitorV2 for read-only coordinates; restored afterward",
+  "image": "C:\\Users\\Matthew\\Documents\\Codex\\2026-10-03\\continue-competition-readiness-engineering-for-dost\\work\\lossless-capture1005\\corrected-reverse152\\02-actual-none-policy.png",
+  "format": "PNG",
+  "sha256": "87c18b1116cda170a75a5a22e340345123c5edbf7075cae250e4b00f69f731c8",
+  "resampling": false,
+  "jpegConversion": false,
+  "scope": "Physical foreground desktop client pixels; not engine backbuffer/audio/input acceptance"
+}
