@@ -28,7 +28,7 @@ These snapshots do not qualify physical hero keys, controller/touch, human feel,
 frame-time performance, wholeintro timing, replay/audio taste or loss/recovery.
 The owner's intermittentRelaytimeout/hostkick and rubber-banding remain open.
 
-Six actualPNG captures1600x900/DPI120/foregroundPID44848/HWND5113394 are retained.
+Seven actualPNG captures1600x900/DPI120/foregroundPID44848/HWND5113394 are retained.
 Capture02 returnedtool exit1 without output and producedNOfile; it is not counted.
 LateractualRule03/Ready04 captures succeeded. This capture failure is not presented
 as a game/network failure. Package/source/artwork/Desktop releases unchanged.
