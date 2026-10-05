@@ -1,0 +1,38 @@
+[
+  {
+    "route": "unbound-directed",
+    "target": "192.168.1.255",
+    "local": [
+      "0.0.0.0",
+      54947
+    ],
+    "sentBytes": 42
+  },
+  {
+    "route": "unbound-limited",
+    "target": "255.255.255.255",
+    "local": [
+      "0.0.0.0",
+      54948
+    ],
+    "sentBytes": 41
+  },
+  {
+    "route": "bound-directed",
+    "target": "192.168.1.255",
+    "local": [
+      "192.168.1.7",
+      54949
+    ],
+    "sentBytes": 40
+  },
+  {
+    "route": "bound-unicast",
+    "target": "192.168.1.144",
+    "local": [
+      "192.168.1.7",
+      54950
+    ],
+    "sentBytes": 39
+  }
+]

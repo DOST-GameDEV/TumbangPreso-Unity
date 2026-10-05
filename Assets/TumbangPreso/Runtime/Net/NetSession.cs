@@ -1647,7 +1647,7 @@ namespace TumbangPreso.Net
             PresentationClock.RequestScale(1);
         }
 
-        public void BrowseLan() => _beacon.StartListening();
+        public void BrowseLan() => _beacon.RequestDiscovery();
 
         public System.Collections.Generic.IEnumerable<LanEntry> LanEntries => _beacon.Entries;
 

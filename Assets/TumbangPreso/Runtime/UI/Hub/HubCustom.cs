@@ -268,6 +268,7 @@ namespace TumbangPreso.UI.Hub
         {
             if (Time.unscaledTime < _nextDraw) return;
             _nextDraw = Time.unscaledTime + 1.0f;
+            if (_source == 1) Net.NetSession.Instance?.Beacon?.RequestDiscovery();
             Draw();
         }
 

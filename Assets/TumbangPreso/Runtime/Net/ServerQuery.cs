@@ -389,7 +389,7 @@ namespace TumbangPreso.Net
             var beacon = GetComponent<LanBeacon>() ?? FindFirstObjectByType<LanBeacon>();
             if (beacon != null)
             {
-                beacon.StartListening();
+                beacon.RequestDiscovery();
                 float until = Time.realtimeSinceStartup + LanBeacon.BeaconInterval * 1.5f;
                 while (true)
                 {

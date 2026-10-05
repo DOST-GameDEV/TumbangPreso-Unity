@@ -1,0 +1,26 @@
+{
+  "sourceRef": "4604f18ee155ee78f811e6d11fb96a763df0308a",
+  "profile": "pc-solicit-original1006",
+  "filter": "TumbangPreso.Tests.LanReceiveOwnershipTests",
+  "expectedCases": 6,
+  "execution": "direct; no memory/admission/timeout guard",
+  "command": [
+    "C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Unity.exe",
+    "-projectPath",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i",
+    "-batchmode",
+    "-force-d3d11",
+    "-tp-profile",
+    "pc-solicit-original1006",
+    "-runTests",
+    "-testPlatform",
+    "EditMode",
+    "-testFilter",
+    "TumbangPreso.Tests.LanReceiveOwnershipTests",
+    "-testResults",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\lan-solicitation1006\\original-native\\results.xml",
+    "-logFile",
+    "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i\\Logs\\lan-solicitation1006\\original-native\\editor.log"
+  ],
+  "pid": 19600
+}

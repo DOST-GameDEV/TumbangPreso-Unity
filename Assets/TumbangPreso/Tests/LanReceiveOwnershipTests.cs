@@ -77,5 +77,88 @@ namespace TumbangPreso.Tests
             var result = Completed(_old, "Stopped room"); Adopt(_old); _beacon.StopAll(); Receive(result); Drain();
             Assert.IsFalse(_beacon.Listening); Assert.IsEmpty(_beacon.Entries); Assert.AreEqual(0, Pending);
         }
+
+        private IAsyncResult DiscoveryRequest(string payload)
+        {
+            var receive = _current.BeginReceive(null, _current);
+            var bytes = Encoding.UTF8.GetBytes(payload);
+            _sender.Send(bytes, bytes.Length, (IPEndPoint)_current.Client.LocalEndPoint);
+            Assert.IsTrue(receive.AsyncWaitHandle.WaitOne(1500));
+            return receive;
+        }
+
+        [Test] public void HostAnswersARealDiscoveryRequestWithItsCurrentAdvertisement()
+        {
+            Adopt(_current);
+            typeof(LanBeacon).GetProperty("Advertising").SetValue(_beacon, true);
+            _beacon.JoinCode = "ROOM"; _beacon.HostName = "Current host";
+            _beacon.Players = 1; _beacon.Occupied = 1; _beacon.Connections = 1;
+            Receive(DiscoveryRequest("tumbang-preso-lan-query1")); Drain();
+            Assert.IsTrue(SpinWait.SpinUntil(() => _sender.Available > 0, 1000),
+                "The host ignored a browser request instead of replying over the usable unicast route.");
+            var from = new IPEndPoint(IPAddress.Any, 0);
+            string response = Encoding.UTF8.GetString(_sender.Receive(ref from));
+            Assert.IsTrue(LanBeacon.TryParsePayload(response, from.Address.ToString(), out var room));
+            Assert.AreEqual("ROOM", room.JoinCode); Assert.AreEqual("Current host", room.HostName);
+            Assert.AreEqual(1, room.Players);
+        }
+
+        [Test] public void BrowsingOnlyDoesNotReplyToDiscoveryRequests()
+        {
+            Adopt(_current); Receive(DiscoveryRequest("tumbang-preso-lan-query1")); Drain();
+            Thread.Sleep(100); Assert.AreEqual(0, _sender.Available);
+            Assert.IsEmpty(_beacon.Entries);
+        }
+
+        [Test] public void HostIgnoresMalformedDiscoveryRequests()
+        {
+            Adopt(_current); typeof(LanBeacon).GetProperty("Advertising").SetValue(_beacon, true);
+            Receive(DiscoveryRequest("tumbang-preso-lan-query1|arbitrary-target")); Drain();
+            Thread.Sleep(100); Assert.AreEqual(0, _sender.Available);
+            Assert.IsEmpty(_beacon.Entries);
+        }
+
+        [Test] public void QueuedDiscoveryRequestCannotAnswerAfterHostStop()
+        {
+            Adopt(_current); typeof(LanBeacon).GetProperty("Advertising").SetValue(_beacon, true);
+            Receive(DiscoveryRequest("tumbang-preso-lan-query1"));
+            _beacon.StopAll(); Drain();
+            Thread.Sleep(100); Assert.AreEqual(0, _sender.Available);
+        }
+
+        [Test] public void DistinctBrowsersBothReceiveRepliesInOneInterval()
+        {
+            Adopt(_current); typeof(LanBeacon).GetProperty("Advertising").SetValue(_beacon, true);
+            Receive(DiscoveryRequest("tumbang-preso-lan-query1"));
+            using (var other = Bound())
+            {
+                var bytes = Encoding.UTF8.GetBytes("tumbang-preso-lan-query1");
+                other.Send(bytes, bytes.Length, (IPEndPoint)_current.Client.LocalEndPoint);
+                Assert.IsTrue(SpinWait.SpinUntil(() => Pending >= 2, 1500));
+                Drain();
+                Assert.IsTrue(SpinWait.SpinUntil(() => _sender.Available > 0 && other.Available > 0, 1000),
+                    "One browser request must not throttle a different browser.");
+            }
+        }
+
+        [Test] public void RepeatedRequestFromOneBrowserIsBoundedWithinTheInterval()
+        {
+            Adopt(_current); typeof(LanBeacon).GetProperty("Advertising").SetValue(_beacon, true);
+            Receive(DiscoveryRequest("tumbang-preso-lan-query1")); Drain();
+            Assert.IsTrue(SpinWait.SpinUntil(() => _sender.Available > 0, 1000));
+            var from = new IPEndPoint(IPAddress.Any, 0); _sender.Receive(ref from);
+            var bytes = Encoding.UTF8.GetBytes("tumbang-preso-lan-query1");
+            _sender.Send(bytes, bytes.Length, (IPEndPoint)_current.Client.LocalEndPoint);
+            Assert.IsTrue(SpinWait.SpinUntil(() => Pending > 0, 1000)); Drain();
+            Thread.Sleep(100); Assert.AreEqual(0, _sender.Available);
+        }
+
+        [Test] public void RetiredListenerRequestCannotProduceAReplacementReply()
+        {
+            Adopt(_current); typeof(LanBeacon).GetProperty("Advertising").SetValue(_beacon, true);
+            Receive(DiscoveryRequest("tumbang-preso-lan-query1"));
+            Adopt(_old); Drain();
+            Thread.Sleep(100); Assert.AreEqual(0, _sender.Available);
+        }
     }
 }
