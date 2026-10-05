@@ -170,9 +170,12 @@ namespace TumbangPreso.UI
             new MapEntry(Kanto,"KANTO",
                          "City park block. Jeepney stop, traffic lights, busy streets.",45,24,16),
             // The Arena is LAST: maps travel as an index, so a new one is appended (protocol 146).
-            // Preview: high over a corner, so the whole 28 m stage and its pit are in frame.
+            // Preview: high over a corner, so the whole stage and its shaft are in frame. The
+            // stage is 43 m across (walking radius 21.5), not the 28 m the first shot was framed
+            // for: from 34 m back and 24 m up the near edge of the ring was under the frame
+            // (RemadeMapPreviewTests' Arena.png, 2026-10-05). The arrival's wide shot reads these too.
             new MapEntry(Arena,"ARENA",
-                         "Game-show stage. It rebuilds each round; mind the edges.",35,34,24),
+                         "Game-show stage. It rebuilds each round; mind the edges.",35,40,27),
         };
 
         public static readonly string[] Maps = { Eskinita, BayanPlaza, IlalimNgTulay, SaBubong, LagoonCove, Kanto, Arena };

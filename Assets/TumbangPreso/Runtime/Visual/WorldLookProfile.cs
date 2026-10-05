@@ -69,6 +69,13 @@ namespace TumbangPreso.Visual
             // canopies are 150 to 190 m out and 64 to 71 m up). False, the default and every other
             // row's value, is today's clouds.
             public bool NoBlockyClouds;
+            // ⚠️ A MAP'S OWN GLOW (owner, 2026-10-05, of the Arena: "you'll also need to look into
+            // emmissives for the arena so things are glowy"). The profile's bloom is tuned for
+            // daylight, where only the sun disc and effect cores may pass (0.05 above 2.2, see
+            // `Bloom` below), so a night map's LED rows, signs and rim lights never glowed. A row
+            // that sets these takes its own strength and threshold; 0, the default and every
+            // other row's value, is the profile's.
+            public float Bloom,BloomThreshold;
             public MapLook(string map,Color sky,Color equator,Color ground,Color tint,float fogStart,float fogEnd,int wear,bool dark)
             {
                 Map=map;Sky=sky;Equator=equator;Ground=ground;ShadowTint=tint;FogStart=fogStart;FogEnd=fogEnd;WearKind=wear;
@@ -84,6 +91,7 @@ namespace TumbangPreso.Visual
             {Sun=sun;SunIntensity=intensity;SunElevation=elevation;ShadowStrength=shadowStrength;Lift=lift;return this;}
             public MapLook Floor(float lift){GroundLift=lift;return this;}
             public MapLook Roofed(){NoBlockyClouds=true;return this;}
+            public MapLook Glow(float bloom,float threshold){Bloom=bloom;BloomThreshold=threshold;return this;}
         }
 
         [Header("Cast and hero props")]
@@ -346,7 +354,10 @@ namespace TumbangPreso.Visual
             // Light chalk, like Kanto. Nothing here is near #f87020 or #0080e8.
             new MapLook("Arena",new Color(.3f,.34f,.52f),new Color(.26f,.28f,.4f),new Color(.16f,.17f,.24f),new Color(.78f,.82f,1.1f),180,3400,0,false)
                 .Air(new Color(.1f,.12f,.22f),new Color(.03f,.04f,.1f),new Color(.16f,.14f,.3f),new Color(.3f,.3f,.44f),new Color(.08f,.09f,.16f))
-                .Key(new Color(.92f,.95f,1),1.15f,0,.7f,new Color(.02f,.024f,.045f)).Roofed(),
+                // Glow: bloom 0.2 above 1.8. Under this key (1.15) and ambient a lit body or the pale
+                // deck tops out near 1.4, below the knee (1.44), so only emissives glow: the kit's
+                // glowing materials are given 2.5 and more in `ArenaArtPlacer.Rules`.
+                .Key(new Color(.92f,.95f,1),1.15f,0,.7f,new Color(.02f,.024f,.045f)).Roofed().Glow(.32f,1.7f),
             // ⚠️ THE FIRST ILALIM NG TULAY, VAULTED 2026-10-01 (ILALIM-1.6) at Scenes/Vault/IlalimNgTulayOld.unity:
             // its look, kept so the vaulted scene still opens in it. This was the "IlalimNgTulay" row.
             new MapLook("IlalimNgTulayOld",new Color(.46f,.47f,.64f),new Color(.5f,.5f,.58f),new Color(.5f,.42f,.36f),new Color(.82f,.82f,1.12f),36,180,2,false)

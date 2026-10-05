@@ -38,7 +38,7 @@ Material:
     - _Cull: 2
     - _Cutoff: 0.5
     - _EmissionFromAlbedo: 0
-    - _EmissionStrength: 1.6
+    - _EmissionStrength: 2.4
     - _Fog: 1
     m_Colors:
     - _AT0: {r: 37, g: 0.61, b: 0.37, a: 0.71}

@@ -61,7 +61,7 @@ Shader "TumbangPreso/ArenaCrowd"
         _NightDesaturate ("Night Desaturate", Range(0, 1)) = 0.2
         _ExciteLift ("Brightness Added At Full Excitement", Range(0, 1)) = 0.12
 
-        _EmitStrength ("Glow Strength", Range(0, 8)) = 1.0
+        _EmitStrength ("Glow Strength", Range(0, 8)) = 2.4
         _Glow0 ("Glow: white", Color) = (0.94, 0.97, 1.0, 1)
         _Glow1 ("Glow: ice", Color) = (0.62, 0.90, 1.0, 1)
         _Glow2 ("Glow: deep LED blue", Color) = (0.30, 0.40, 1.0, 1)

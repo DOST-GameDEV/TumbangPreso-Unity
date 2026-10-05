@@ -123,7 +123,11 @@ namespace TumbangPreso.EditorTools.MapKit
             new Rule("arena_bowl_steel") { AntiTile = true },
             // "LED emission near 1.0 keeps the blue deep (#0a1a9a). Higher washes it toward the
             // sky blue the owner rejected. led wraps in u; arena_bowl_led.png is 1024 x 512."
-            new Rule("arena_bowl_led") { Emission = 1.0f, Wrap = Wrap.RepeatUClampV },
+            // ⚠️ THE GLOW PASS (2026-10-05, the owner: "look into emmissives for the arena so things are
+            // glowy"). The map blooms above 1.8 (`WorldLookProfile`, the Arena row's `Glow`), so what
+            // is meant to glow is given 2.5 and more below, over the authors' Blender numbers: LED
+            // rows, light strips, rims, signs, pads, holograms. Lit windows and screens stay under it.
+            new Rule("arena_bowl_led") { Emission = 2.6f, Wrap = Wrap.RepeatUClampV },
             // "arena_bowl_marking is RGBA and needs alpha clip at 0.5 (the logo decal). The decal
             // casts no shadow." (Nothing placed here casts one.)
             new Rule("arena_bowl_marking") { Surface = Surface.Cutout, TwoSided = false },
@@ -133,21 +137,21 @@ namespace TumbangPreso.EditorTools.MapKit
             // trusses are tubes a few pixels wide from the stage, where a tile cannot be seen to
             // repeat and the resample's noise would be paid for nothing. "screen and logo must match."
             new Rule("arena_roof_lamp") { Emission = 8.0f },
-            new Rule("arena_roof_led") { Emission = 1.6f },
+            new Rule("arena_roof_led") { Emission = 3.0f },
             new Rule("arena_roof_glazing") { Emission = 1.0f },
-            new Rule("arena_roof_screen") { Emission = 1.2f },
-            new Rule("arena_roof_logo") { Emission = 1.2f },
-            new Rule("arena_roof_booth_glass") { Emission = 1.6f },
+            new Rule("arena_roof_screen") { Emission = 1.5f },
+            new Rule("arena_roof_logo") { Emission = 1.5f },
+            new Rule("arena_roof_booth_glass") { Emission = 2.2f },
             new Rule("arena_roof_*"),
 
             // ---- THE HULL. No resample on any of it but the steel. "arena_hull_glass is opaque."
             new Rule("arena_hull_steel") { AntiTile = true },
             new Rule("arena_hull_glass") { Emission = 0.8f },
-            new Rule("arena_hull_light") { Emission = 2.8f },
+            new Rule("arena_hull_light") { Emission = 3.6f },
             new Rule("arena_hull_glow") { Emission = 7.0f },
-            new Rule("arena_hull_shaft") { Emission = 1.6f },
+            new Rule("arena_hull_shaft") { Emission = 2.4f },
             new Rule("arena_hull_pad") { Emission = 3.0f },
-            new Rule("arena_hull_trim") { Emission = 2.0f },
+            new Rule("arena_hull_trim") { Emission = 3.0f },
             new Rule("arena_hull_*"),
 
             // ---- THE CITY. "tune down, not up."
@@ -167,10 +171,10 @@ namespace TumbangPreso.EditorTools.MapKit
             new Rule("arena_city_metal") { Emission = 1.0f },
             new Rule("arena_city_floor") { Emission = 1.0f },
             // "arena_city_trim is eight 32 px rows: mipmaps off, clamp." A mip would mix two LED colours.
-            new Rule("arena_city_trim") { Emission = 1.25f, Wrap = Wrap.Clamp, Mips = false },
-            new Rule("arena_city_signs") { Emission = 0.8f },
+            new Rule("arena_city_trim") { Emission = 3.2f, Wrap = Wrap.Clamp, Mips = false },
+            new Rule("arena_city_signs") { Emission = 2.0f },
             // "arena_city_fx is transparent or additive, cull off, no shadows."
-            new Rule("arena_city_fx") { Surface = Surface.Light, Emission = 1.1f, TwoSided = true, Albedo = 0.25f },
+            new Rule("arena_city_fx") { Surface = Surface.Light, Emission = 2.4f, TwoSided = true, Albedo = 0.25f },
             // "arena_city_haze is alpha blend, cull off, no fog, drawn after the opaque city."
             new Rule("arena_city_haze") { Surface = Surface.Sheet, Emission = 1.0f, TwoSided = true, Fog = false, Albedo = 0.3f },
             new Rule("arena_city_*"),
@@ -184,7 +188,10 @@ namespace TumbangPreso.EditorTools.MapKit
             // light it as well. The deck glows only enough to stay the brightest floor.
             new Rule("arena_stage_deck") { Emission = 0.12f },
             new Rule("arena_stage_line") { Emission = 0.5f },
-            new Rule("arena_stage_rim") { Emission = 1.6f },
+            new Rule("arena_stage_rim") { Emission = 2.4f },
+            new Rule("arena_stage_under") { Emission = 3.0f },
+            new Rule("arena_stage_mark") { Emission = 2.2f },
+            new Rule("arena_stage_props") { Emission = 2.6f },
             new Rule("arena_stage_*"),
 
             new Rule("*"),

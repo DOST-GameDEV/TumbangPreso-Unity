@@ -149,6 +149,12 @@ namespace TumbangPreso
             if (!_modelled) BuildFlat();
             BuildGlow();
             _drawn = _look.GetComponentsInChildren<Renderer>(true);
+
+            // ⚠️ THE LOOK WEARS THE PAD'S OWN LAYER. It is built here, after the map preview has
+            // already moved the loaded scene onto its own layer (`MapPreviewSurface.Confine`), so
+            // parts left on the default layer were drawn by the menu's cameras behind the menu:
+            // `RemadeMapPreviewTests` counted 32 such renderers on Ilalim and 16 on the Arena.
+            foreach (var part in _look.GetComponentsInChildren<Transform>(true)) part.gameObject.layer = gameObject.layer;
         }
 
         /// <summary>

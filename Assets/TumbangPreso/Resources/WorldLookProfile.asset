@@ -218,6 +218,8 @@ MonoBehaviour:
     Lift: {r: 0.02, g: 0.024, b: 0.045, a: 1}
     GroundLift: 1
     NoBlockyClouds: 1
+    Bloom: 0.32
+    BloomThreshold: 1.7
   - Map: IlalimNgTulayOld
     Sky: {r: 0.46, g: 0.47, b: 0.64, a: 1}
     Equator: {r: 0.5, g: 0.5, b: 0.58, a: 1}

@@ -35,7 +35,7 @@ Material:
     m_Floats:
     - _Cull: 0
     - _DstBlend: 1
-    - _EmissionStrength: 1.1
+    - _EmissionStrength: 2.4
     - _Fog: 1
     - _FogToColour: 0
     - _Rim: 0

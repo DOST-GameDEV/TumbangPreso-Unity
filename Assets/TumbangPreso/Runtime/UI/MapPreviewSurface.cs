@@ -450,6 +450,7 @@ namespace TumbangPreso.UI
 
                 AimAt(map);
                 EnsureCamera();
+                AdoptRange(map);
 
                 // ⚠️ AFTER EnsureCamera, because it attaches the grade to that camera and the camera
                 // does not exist on the first swap until EnsureCamera has run.
@@ -1231,6 +1232,41 @@ namespace TumbangPreso.UI
         /// whatever the component order is. Its own header spends a paragraph on this precisely
         /// because the grade is added from three places at three different times.
         /// </summary>
+        /// <summary>The far plane Unity gives a new camera, which is this camera's on every map
+        /// that names no range.</summary>
+        private const float DefaultFar = 1000.0f;
+
+        /// <summary>
+        /// The shown map's own camera range, if it names one (`Visual.MapCameraRange`: the Arena).
+        ///
+        /// ⚠️ THIS CAMERA IS OUTSIDE THE PLAY AREA, SO IT TAKES `FreeFar`. `CameraRig` and
+        /// `SpectatorCamera` adopt the range in their `Start`; this camera lives in the menu
+        /// scene and outlives every map it shows, so it adopts on each swap and gives the range
+        /// back when the next map names none. Without it the Arena's preview stopped at 1000 m:
+        /// the landmark towers stand to 1090 m from the can and the far ring to 2130 m, and the
+        /// high shot looks down through the shaft at a city floor 760 m below.
+        /// </summary>
+        private void AdoptRange(string map)
+        {
+            if (_camera == null) return;
+
+            Visual.MapCameraRange range = null;
+            if (map != null && _cache.TryGetValue(map, out var scene) && scene.IsValid() && scene.isLoaded)
+                foreach (var root in scene.GetRootGameObjects())
+                {
+                    range = root.GetComponentInChildren<Visual.MapCameraRange>(true);
+                    if (range != null) break;
+                }
+
+            _camera.farClipPlane = range != null ? Mathf.Max(DefaultFar, range.FreeFar) : DefaultFar;
+
+            var outline = _camera.GetComponent<Visual.WorldOutline>();
+            if (outline == null) return;
+            if (range != null && range.InkFadeStart >= 0.0f && range.InkFadeEnd > range.InkFadeStart)
+                outline.SetFade(range.InkFadeStart, range.InkFadeEnd);
+            else outline.SetFade(-1.0f, -1.0f);
+        }
+
         private void EnsureWorldOutline()
         {
             if (_camera == null) return;

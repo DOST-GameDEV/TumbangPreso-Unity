@@ -507,15 +507,17 @@ namespace TumbangPreso.EditorTools.MapKit
         }
 
         /// <summary>The top under a plan point in one layout: the highest piece that covers it
-        /// and is not above `ceiling`.</summary>
+        /// and is not above `ceiling`. A can or a spawn mark never counts a bonus platform (only a
+        /// jump pad reaches one); a pad or a pickup does (`bonusToo`), because the lofts carry
+        /// pickups as the reward for the jump.</summary>
         private static bool FloorAt(List<string> order, Dictionary<string, Shape[]> byId, int layout, float x, float z, float ceiling,
-                                    bool roundOnly, out float y)
+                                    bool roundOnly, out float y, bool bonusToo = false)
         {
             y = float.NegativeInfinity;
             foreach (var id in order)
             {
                 var shape = byId[id][layout];
-                if (!shape.Exists || shape.Bonus || (roundOnly && shape.IsRamp) || !shape.Contains(x, z, 0.0f)) continue;
+                if (!shape.Exists || (shape.Bonus && !bonusToo) || (roundOnly && shape.IsRamp) || !shape.Contains(x, z, 0.0f)) continue;
 
                 float top = shape.HeightAt(x, z);
                 if (top <= ceiling && top > y) y = top;
@@ -561,7 +563,7 @@ namespace TumbangPreso.EditorTools.MapKit
             {
                 float bearing = Need(token, "bearing", what), r = Need(token, "r", what), y = Number(token["y"], 0.0f);
                 Vector3 at = ArenaStageMesh.Direction(bearing) * r + Vector3.up * y;
-                if (!FloorAt(order, byId, index, at.x, at.z, y + 0.3f, false, out float floor) || Mathf.Abs(floor - y) > 0.3f)
+                if (!FloorAt(order, byId, index, at.x, at.z, y + 0.3f, false, out float floor, true) || Mathf.Abs(floor - y) > 0.3f)
                     Debug.LogWarning($"{Tag}{what} at bearing {bearing}, r {r}, y {y} has no floor at that height under it.");
                 return at;
             }

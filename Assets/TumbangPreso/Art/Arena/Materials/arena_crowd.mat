@@ -34,7 +34,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _Cutoff: 0.5
-    - _EmitStrength: 1
+    - _EmitStrength: 2.4
     - _ExciteLift: 0.12
     - _FlashRate: 0.05
     - _FlashStrength: 2.5

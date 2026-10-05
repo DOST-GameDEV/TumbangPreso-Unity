@@ -17,6 +17,7 @@ namespace TumbangPreso
         public const float SpawnFloorProbeHeight = 2.0f;
         public const float SpawnFloorProbeDepth = 6.0f;
         public const float SpawnFloorClearance = 0.02f;
+        private static readonly RaycastHit[] FloorHits = new RaycastHit[16];
 
         private CameraSystem.SpectatorCamera _spectator;
 
@@ -42,14 +43,35 @@ namespace TumbangPreso
 
             // QueryTriggerInteraction.Ignore: the kill plane and every hazard zone are
             // triggers, and seating a unit on the kill plane puts it under the world.
-            if (!Physics.Raycast(from, Vector3.down, out RaycastHit hit,
-                    SpawnFloorProbeDepth, ~0, QueryTriggerInteraction.Ignore))
-                return;
+            //
+            // ⚠️⚠️ THE UNIT'S OWN CAPSULE IS LOOKED PAST, NOT GIVEN UP ON. Unity has no per-cast
+            // exclude list, and `Teleport` has just put the capsule on the mark, so a single
+            // `Physics.Raycast` from 2 m up met the unit's own head (y 1.44 over a mark at 0)
+            // before any floor lower than that, and this returned having seated nothing. It
+            // only ever worked where the floor was ABOVE the head. Nobody saw it on the street
+            // maps, whose marks are already at floor height. The Arena has marks 1.2 m under a
+            // deck and 1.2 m over a sunk one: `ArenaMatchProbe`, 2026-10-05, found three
+            // attackers put under the apron of 'entablado' at y 0 and dropped into the shaft
+            // at the whistle, and again on every tag, because the tag sends a body to the
+            // `SpawnPosition` this never wrote. The nearest hit that is not the unit is the floor.
+            int count = Physics.RaycastNonAlloc(from, Vector3.down, FloorHits,
+                SpawnFloorProbeDepth, ~0, QueryTriggerInteraction.Ignore);
+            bool found = false;
+            RaycastHit hit = default;
+            for (int i = 0; i < count; i++)
+            {
+                var met = FloorHits[i].collider;
+                if (met == null || met.transform.IsChildOf(character.transform)) continue;
+                // Nor is another seat a floor (the seats are reset one after another, so one may
+                // still be standing on this mark), nor a tsinelas, nor the lata.
+                if (met.GetComponentInParent<CharacterMotor>() != null || met.GetComponentInParent<Slipper>() != null
+                    || met.GetComponentInParent<Lata>() != null) continue;
+                if (found && FloorHits[i].distance >= hit.distance) continue;
+                hit = FloorHits[i];
+                found = true;
+            }
 
-            // The collider we hit might be the unit itself if it was not excluded; Unity has
-            // no per-cast exclude list, so check what we hit rather than trusting the cast.
-            if (hit.collider != null && hit.collider.transform.IsChildOf(character.transform))
-                return;
+            if (!found) return;
 
             Vector3 p = character.transform.position;
 

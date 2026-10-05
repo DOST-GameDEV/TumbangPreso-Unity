@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
+using TumbangPreso.Core;
 using TumbangPreso.Map;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -212,42 +213,185 @@ namespace TumbangPreso.PlayTests
             yield return new WaitForFixedUpdate();
             report.AppendLine();
             var round = GameServices.Round;
+            // ⚠️ THE FALL IS TRIED IN A LIVE ROUND, NOT BEFORE ONE. The arrival's shots and the
+            // ready countdown hold the simulation (`PresentationClock.Held`: `CharacterMotor.FixedUpdate`
+            // returns at once), and the round's start then teleports every seat to its mark. A body
+            // put over the shaft before that hung in the air at y 1.0 and was then put back on the
+            // stage: that, not the catch, was this probe's "caught NEVER, lowest y 0.00".
+            float ready = Time.realtimeSinceStartup;
+            while (Time.realtimeSinceStartup - ready < 60f && (PresentationClock.Held || round == null || !round.RoundActive)) { round = GameServices.Round; yield return null; }
+            report.AppendLine($"The round was live {Time.realtimeSinceStartup - ready:F1} s after the layouts were walked (held {PresentationClock.Held}, round active {(round != null && round.RoundActive)}).");
+            if (PresentationClock.Held || round == null || !round.RoundActive) Fail("fall: no live round within 60 s, so nothing simulates");
+            for (float t = 0f; t < 1.0f; t += Time.unscaledDeltaTime) yield return null;
+            // ⚠️ AN ATTACKER, NEVER THE TAYA. `CharacterMotor.Confine` clamps the round's defender to
+            // the chalk box every step, so a taya put over the shaft is back on the drum one step
+            // later and never falls: that was this probe's "caught NEVER, lowest y 0.00".
             CharacterMotor who = null;
-            if (round != null) foreach (var p in round.Players) if (p != null && p.gameObject.activeInHierarchy && !p.IsEdgeRecovering) { who = p; break; }
-            if (who == null) Fail("fall: no body to drop (no round, or no active player)");
+            if (round != null) foreach (var p in round.Players) if (p != null && p.gameObject.activeInHierarchy && !p.IsEdgeRecovering && !p.IsDefender && p.IsBot) { who = p; break; }
+            if (round != null && who == null) foreach (var p in round.Players) if (p != null && p.gameObject.activeInHierarchy && !p.IsEdgeRecovering && !p.IsDefender) { who = p; break; }
+            if (who == null) Fail("fall: no body to drop (no round, or no active attacker)");
             else if (!haveGap) Fail("fall: found no open cell beside the stage inside the walls to drop a body into");
             else
             {
+                // The pictures look outward from the stage's side of the body, the drone's height in frame.
+                void Picture(string name)
+                {
+                    Vector3 at = who.transform.position, inward = Vector3.ProjectOnPlane(-at, Vector3.up).normalized;
+                    Vector3 side = Vector3.Cross(Vector3.up, inward);
+                    Shot(cam, at + inward * 6.5f + side * 3.0f + Vector3.up * 3.2f, at + Vector3.up * 1.7f, 55f, $"{Folder}/fall_{name}.png");
+                    cam.transform.SetPositionAndRotation(savedPos, savedRot); cam.fieldOfView = savedFov;
+                }
+
+                // Taken in a LateUpdate after every other one: the body is posed in FixedUpdate and
+                // the drone follows it in its own LateUpdate, so a picture taken from this coroutine
+                // shows the drone a frame behind a body it is in fact over.
+                string wanted = null;
+                var late = new GameObject("Arena fall pictures").AddComponent<LateRecorder>();
+                late.OnLate = _ => { if (wanted != null) { Picture(wanted); wanted = null; } };
+
                 who.Teleport(new Vector3(gap.x, 1.0f, gap.z));
                 float lowest = who.transform.position.y, began = Time.realtimeSinceStartup;
+                bool shotFalling = false; int traced = 0; var trace = new StringBuilder();
                 while (Time.realtimeSinceStartup - began < 8f && who.EdgeKind != EdgeRecoveryKind.Drone)
-                { Time.timeScale = 1f; lowest = Mathf.Min(lowest, who.transform.position.y); yield return null; }
+                {
+                    Time.timeScale = 1f; lowest = Mathf.Min(lowest, who.transform.position.y);
+                    // The first second and a half, ten times a second: where the body is and what is under it.
+                    if (traced < 15 && Time.realtimeSinceStartup - began >= traced * 0.1f)
+                    {
+                        traced++;
+                        Vector3 at = who.transform.position;
+                        string under = "nothing";
+                        if (Physics.Raycast(at + Vector3.up * 0.5f, Vector3.down, out var below, 14f, ~0, QueryTriggerInteraction.Ignore))
+                            under = $"{below.collider.name} at y {below.point.y:F2} (under {below.collider.transform.root.name})";
+                        trace.AppendLine($"    {Time.realtimeSinceStartup - began:F2} s: ({at.x:F2}, {at.y:F2}, {at.z:F2}) grounded {who.IsGrounded} vy {who.Velocity.y:F2} held {PresentationClock.Held} round {who.RoundActive}; under it: {under}");
+                    }
+                    if (!shotFalling && who.transform.position.y < -1.5f) { shotFalling = true; wanted = "1_falling"; }
+                    yield return null;
+                }
                 bool caught = who.EdgeKind == EdgeRecoveryKind.Drone;
                 float caughtAfter = Time.realtimeSinceStartup - began;
-                report.AppendLine($"FALL: {who.name} dropped at ({gap.x:F1}, {gap.z:F1}); caught {(caught ? "after " + caughtAfter.ToString("F2") + " s" : "NEVER")}, lowest y {lowest:F2}");
+                report.AppendLine($"FALL: {who.name} (bot {who.IsBot}) dropped at ({gap.x:F1}, {gap.z:F1}); caught {(caught ? "after " + caughtAfter.ToString("F2") + " s" : "NEVER")}, lowest y {lowest:F2}");
+                report.Append(trace);
                 if (!caught) Fail("fall: the body was never taken by the drone (EdgeKind never became Drone)");
                 else
                 {
                     if (lowest <= ArenaStage.MoveFloorY) Fail($"fall: the body reached y {lowest:F2} before it was caught, under the {ArenaStage.MoveFloorY} where AcceptMove refuses poses");
                     began = Time.realtimeSinceStartup;
-                    while (Time.realtimeSinceStartup - began < 10f && who.IsEdgeRecovering) { Time.timeScale = 1f; yield return null; }
+                    bool shotLift = false, shotBeam = false; float carriedLowest = lowest, highest = lowest;
+                    while (Time.realtimeSinceStartup - began < 10f && who.IsEdgeRecovering)
+                    {
+                        Time.timeScale = 1f;
+                        carriedLowest = Mathf.Min(carriedLowest, who.transform.position.y); highest = Mathf.Max(highest, who.transform.position.y);
+                        if (!shotLift && who.EdgePhase == 1 && who.EdgePhaseRatio > 0.2f) { shotLift = true; wanted = "2_lifted"; }
+                        if (!shotBeam && who.EdgePhase == 1 && who.EdgePhaseRatio > 0.7f) { shotBeam = true; wanted = "3_in_the_beam"; }
+                        yield return null;
+                    }
+                    float carried = Time.realtimeSinceStartup - began;
+                    report.AppendLine($"  carried for {carried:F2} s (the design's {CharacterMotor.DroneCatchSeconds + CharacterMotor.DroneCarrySeconds + CharacterMotor.DroneSetDownSeconds:F2}); lowest {carriedLowest:F2}, highest {highest:F2}; drones in the scene: {Object.FindObjectsByType<ArenaDrone>().Length}");
+                    if (carriedLowest <= ArenaStage.MoveFloorY) Fail($"fall: the carried body reached y {carriedLowest:F2}, under {ArenaStage.MoveFloorY}");
                     if (who.IsEdgeRecovering) Fail("fall: the carry never ended");
                     else
                     {
                         Vector3 down = who.transform.position;
                         bool onFloor = Ground(stage.Layouts[0].Colliders.transform, down + Vector3.up * 0.5f, 1.0f, out var landed);
                         bool tagged = who.IsTagged;
-                        report.AppendLine($"  set down after {Time.realtimeSinceStartup - began:F2} s at ({down.x:F2}, {down.y:F2}, {down.z:F2}); floor under it {(onFloor ? landed.collider.name : "NONE")}; tagged {tagged}");
+                        report.AppendLine($"  set down at ({down.x:F2}, {down.y:F2}, {down.z:F2}); floor under it {(onFloor ? landed.collider.name + " at " + landed.point.y.ToString("F2") : "NONE")}; tagged {tagged}");
                         if (!onFloor) Fail("fall: the body was not set down on the stage");
                         if (!tagged) Fail("fall: the body was not frozen (IsTagged false) after the carry");
+                        wanted = "4_set_down";
+                        yield return null; yield return null;
                         began = Time.realtimeSinceStartup;
-                        while (Time.realtimeSinceStartup - began < 1.5f) { Time.timeScale = 1f; yield return null; }
-                        float moved = Vector3.Distance(who.transform.position, down);
-                        report.AppendLine($"  1.5 s later: moved {moved:F2} m, tagged {who.IsTagged}");
-                        if (moved > 0.25f) Fail($"fall: the frozen body moved {moved:F2} m in 1.5 s");
-                        if (!who.IsTagged) Fail("fall: the freeze ended within 1.5 s (the tag's own is 5 s)");
+                        float movedFrozen = 0f;
+                        while (Time.realtimeSinceStartup - began < 9f && who.IsTagged)
+                        { Time.timeScale = 1f; movedFrozen = Mathf.Max(movedFrozen, Vector3.Distance(who.transform.position, down)); yield return null; }
+                        float frozen = Time.realtimeSinceStartup - began;
+                        report.AppendLine($"  frozen for {frozen:F2} s (the tag's own is {StatusRules.TaggedSeconds:F1}), moved {movedFrozen:F2} m while frozen");
+                        if (who.IsTagged) Fail("fall: the freeze never ended");
+                        if (movedFrozen > 0.25f) Fail($"fall: the frozen body moved {movedFrozen:F2} m");
+                        if (frozen < StatusRules.TaggedSeconds - 0.6f || frozen > StatusRules.TaggedSeconds + 0.6f) Fail($"fall: the freeze lasted {frozen:F2} s, not the tag's {StatusRules.TaggedSeconds:F1}");
+                        began = Time.realtimeSinceStartup;
+                        float movedAfter = 0f;
+                        while (Time.realtimeSinceStartup - began < 8f && movedAfter < 0.5f)
+                        { Time.timeScale = 1f; movedAfter = Vector3.Distance(who.transform.position, down); yield return null; }
+                        report.AppendLine($"  after the freeze: moved {movedAfter:F2} m in {Time.realtimeSinceStartup - began:F2} s (a bot, on its own)");
+                        if (movedAfter < 0.5f) Fail($"fall: the body did not move again within 8 s of the freeze ending (moved {movedAfter:F2} m)");
                     }
                 }
+            }
+
+            foreach (var leftover in Object.FindObjectsByType<LateRecorder>()) Object.Destroy(leftover.gameObject);
+
+            // The pads and the pickup, each stood on once in the live round (layout 0).
+            report.AppendLine();
+            CharacterMotor tester = null;
+            if (round != null) foreach (var p in round.Players) if (p != null && p.gameObject.activeInHierarchy && !p.IsEdgeRecovering && !p.IsDefender && !p.IsStunned && p != who) { tester = p; break; }
+            if (tester == null || !round.RoundActive) Fail("pads: no free attacker in a live round to stand on them");
+            else
+            {
+                var brain = tester.GetComponent<AIController>();
+                if (brain != null) brain.enabled = false;
+                tester.Intent.Clear(); tester.Intent.CommitFrame(); tester.Intent.Parked = true;
+                var features = stage.Layouts[0].Features;
+                report.AppendLine($"PADS AND PICKUP on '{stage.Layouts[0].Name}', stood on by {tester.name} with its brain off:");
+
+                var jump = features.GetComponentInChildren<JumpPad>();
+                if (jump == null) Fail("pads: layout 0 has no jump pad");
+                else
+                {
+                    Vector3 pad = jump.transform.position;
+                    tester.ClearStun(); tester.ClearTrip();
+                    tester.Teleport(pad + Vector3.up * 0.05f);
+                    float began = Time.realtimeSinceStartup, top = pad.y; bool launched = false, landed = false, taken = false;
+                    while (Time.realtimeSinceStartup - began < 6f)
+                    {
+                        Time.timeScale = 1f;
+                        if (!launched && tester.Velocity.y > jump.LaunchSpeed * 0.5f) launched = true;
+                        top = Mathf.Max(top, tester.transform.position.y);
+                        if (tester.IsEdgeRecovering) { taken = true; break; }
+                        if (launched && tester.IsGrounded && Time.realtimeSinceStartup - began > 0.6f) { landed = true; break; }
+                        yield return null;
+                    }
+                    Vector3 down = tester.transform.position;
+                    report.AppendLine($"  jump pad at ({pad.x:F1}, {pad.y:F2}, {pad.z:F1}), launch speed {jump.LaunchSpeed:F1}: launched {launched}, apex {top - pad.y:F2} m over the pad, " +
+                                      (taken ? "came down over the shaft and was taken by the drone" : landed ? $"on the ground again at ({down.x:F1}, {down.y:F2}, {down.z:F1})" + (Vector3.Distance(down, pad) > 8f ? " (that far from the pad it was put there: a tag sends a body to its mark)" : "") : "did not land within 6 s"));
+                    if (!launched) Fail("pads: the jump pad did not launch a body stood on it");
+                    else if (top - pad.y < 3.0f || top > 12.0f) Fail($"pads: the jump pad's apex was {top - pad.y:F2} m over the pad (the design asks for about 6, under the 12 m ceiling)");
+                    began = Time.realtimeSinceStartup;
+                    while (Time.realtimeSinceStartup - began < 12f && (tester.IsEdgeRecovering || tester.IsStunned)) { Time.timeScale = 1f; yield return null; }
+                }
+
+                var speed = features.GetComponentInChildren<ArenaSpeedPad>();
+                if (speed == null) Fail("pads: layout 0 has no speed pad");
+                else
+                {
+                    Vector3 pad = speed.transform.position;
+                    tester.ClearStun(); tester.ClearTrip();
+                    tester.Teleport(pad + Vector3.up * 0.05f);
+                    float began = Time.realtimeSinceStartup;
+                    while (Time.realtimeSinceStartup - began < 2f && !tester.IsSpeedBoosted) { Time.timeScale = 1f; yield return null; }
+                    report.AppendLine($"  speed pad at ({pad.x:F1}, {pad.y:F2}, {pad.z:F1}): boosted {tester.IsSpeedBoosted} after {Time.realtimeSinceStartup - began:F2} s, scale {tester.SpeedBoostScale:F2} for {tester.SpeedBoostLeft:F2} s more (the pad gives {speed.Scale:F2} for {speed.Seconds:F1} s)");
+                    if (!tester.IsSpeedBoosted) Fail("pads: the speed pad did not boost a body stood on it");
+                }
+
+                ArenaStaminaPickup orb = null;
+                foreach (var candidate in features.GetComponentsInChildren<ArenaStaminaPickup>()) if (candidate.Available) { orb = candidate; break; }
+                if (orb == null) Fail("pads: layout 0 has no stamina pickup that is there to take");
+                else
+                {
+                    Vector3 at = orb.transform.position;
+                    tester.ClearStun(); tester.ClearTrip();
+                    tester.Stamina.Deplete();
+                    float before = tester.Stamina.Ratio;
+                    tester.Teleport(at + Vector3.up * 0.05f);
+                    float began = Time.realtimeSinceStartup;
+                    while (Time.realtimeSinceStartup - began < 2f && orb.Available) { Time.timeScale = 1f; yield return null; }
+                    report.AppendLine($"  stamina pickup at ({at.x:F1}, {at.y:F2}, {at.z:F1}): taken {!orb.Available} after {Time.realtimeSinceStartup - began:F2} s; stamina {before * 100f:F0}% before, {tester.Stamina.Ratio * 100f:F0}% after, fatigued {tester.Stamina.IsFatigued}; it returns in {orb.RespawnSeconds:F0} s");
+                    if (orb.Available) Fail("pads: the stamina pickup was not taken by a body with empty stamina stood on it");
+                    else if (tester.Stamina.Ratio < 0.95f) Fail($"pads: the pickup was taken but stamina is {tester.Stamina.Ratio * 100f:F0}%");
+                }
+
+                tester.Intent.Parked = false;
+                if (brain != null) brain.enabled = true;
             }
 
             stage.HoldLayout = -1;
