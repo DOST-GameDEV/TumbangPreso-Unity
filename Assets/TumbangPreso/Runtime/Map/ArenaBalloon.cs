@@ -556,7 +556,7 @@ namespace TumbangPreso.Map
             ArenaFx.CueFlat(Squeaks[(n - 1) % Squeaks.Length], 0.92f + 0.06f * n, 0.98f + 0.06f * n, 0.9f);
             ArenaFx.CueFlat("sfx_arena_balloon_boing", 1.06f - 0.04f * n, 1.1f - 0.04f * n, 0.75f + 0.05f * n);
             if (n >= 3) { ArenaFx.CueFlat("sfx_arena_balloon_creak", 0.95f, 1.05f, 0.8f); _creak = 2.5f; }
-            ArenaFx.CueFlat("sfx_arena_crowd_roar", 1.12f, 1.2f, 0.22f + 0.07f * n);
+            ArenaCrowdAudio.Laugh(n);
             ArenaCrowd.Excite(0.45f + 0.1f * n, 1.6f + 0.3f * n);
             if (n >= 3) ArenaCrowd.Wave();
 
@@ -595,7 +595,7 @@ namespace TumbangPreso.Map
             _scrapIn = ScrapDelay;
 
             ArenaFx.CueFlat("sfx_arena_balloon_pop", 1.0f, 1.0f, 1.2f);
-            ArenaFx.CueFlat("sfx_arena_crowd_roar", 0.98f, 1.04f, 1.0f);
+            ArenaCrowdAudio.BalloonPopped();
             ArenaFx.CueFlat("sfx_arena_pyro", 0.9f, 0.96f, 0.7f);
             ArenaCrowd.Excite(1.0f, 5.5f);
             ArenaCrowd.Wave();

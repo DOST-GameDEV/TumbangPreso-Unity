@@ -19,8 +19,13 @@ Writes these into Assets/TumbangPreso/Resources/Sfx/ (44100 Hz, mono, 16 bit, ea
     sfx_arena_reveal.wav       2.40 s  the reveal: a boom, a bright shimmer falling away
     sfx_arena_crowd_roar.wav   3.60 s  the stands going up: many voices, swelling then settling
     sfx_arena_pyro.wav         1.50 s  a firework or a pyro jet: a thump, then crackle
-    sfx_arena_drone_ping.wav   0.80 s  the catch drone locking on: a sonar ping with one echo
-    sfx_arena_drone_set.wav    0.60 s  the drone setting a body down: a soft thump and a servo's fall
+    The rescue drone, SAGIP, is a toy and sounds like one (owner, 2026-10-05: "drone design and ufo
+    effect needs to be more stylized"; before this its two cues were a sonar ping and a thump):
+    sfx_arena_drone_ping.wav   0.36 s  locking on: "bi-BIP!", two toy blips
+    sfx_arena_drone_hum.wav    0.80 s  one beat of its hover, a wobbly buzz (struck again as it works)
+    sfx_arena_drone_beam.wav   1.45 s  the haul: a slide whistle rising with the lift, a sparkle at the top
+    sfx_arena_drone_set.wav    0.85 s  setting a body down: a soft boing and a ding
+    sfx_arena_drone_zip.wav    0.60 s  gone: a slide whistle shot upward and a "ting"
 
 Same house method as synth_ilalim_train_clack.py and synth_ilalim_life_sfx.py: numpy and scipy only,
 fixed seeds, no recordings and nothing downloaded, so a rerun is byte-identical."""
@@ -185,25 +190,80 @@ def pyro(rng):
     return fade(thump + burst + crackle, 0.001, 0.15)
 
 
+def toy(phase, bright=0.35):
+    """A toy's voice: a sine with a little square in it, so it reads as a gadget and not as a siren."""
+    return np.sin(phase) * (1 - bright) + np.tanh(np.sin(phase) * 4.0) * bright
+
+
 def drone_ping(rng):
-    """The drone locking on: a clean high ping, a quieter echo a fifth of a second later."""
-    t = t_of(0.80)
+    """SAGIP locking on: "bi-BIP!", two toy blips a fourth apart, the second one bent upward."""
+    t = t_of(0.36)
     out = np.zeros(len(t))
-    for start, gain in ((0.0, 1.0), (0.21, 0.36)):
+    for start, f0, f1, length, gain in ((0.0, 988.0, 988.0, 0.075, 0.8), (0.105, 1319.0, 1480.0, 0.20, 1.0)):
+        tt = t_of(length)
+        freq = f0 + (f1 - f0) * (tt / tt[-1]) ** 0.5
+        blip = toy(2 * np.pi * np.cumsum(freq) / SR) * np.exp(-tt * (5.0 if length > 0.1 else 2.0))
+        place(out, fade(blip, 0.003, 0.02) * gain, start)
+    out += band(rng.standard_normal(len(t)), 4000, 9000) * np.exp(-t * 90) * 0.12       # the click of the claw
+    return fade(lowpass(out, 7000), 0.002, 0.05)
+
+
+def drone_hum(rng):
+    """Its hover, one beat of it (the game strikes it again every half second, each a little
+    higher as it pulls): a round buzzy note that wobbles, with the fan's flutter on top."""
+    t = t_of(0.80)
+    wobble = 1.0 + 0.045 * np.sin(2 * np.pi * 6.5 * t) + 0.02 * np.sin(2 * np.pi * 11.0 * t + 1.0)
+    phase = 2 * np.pi * np.cumsum(168.0 * wobble) / SR
+    note = toy(phase, 0.25) * 0.8 + np.sin(phase * 2.0) * 0.22 + np.sin(phase * 3.01) * 0.10
+    flutter = 0.72 + 0.28 * np.sin(2 * np.pi * 21.0 * t)
+    air = band(rng.standard_normal(len(t)), 900, 3200) * 0.10 * (0.6 + 0.4 * np.sin(2 * np.pi * 21.0 * t + 0.6))
+    env = np.clip(t / 0.12, 0, 1) * np.clip((t[-1] - t) / 0.30, 0, 1)                    # long ends: the beats overlap
+    return fade(lowpass(note * flutter + air, 3200) * env, 0.02, 0.1)
+
+
+def drone_beam(rng):
+    """The haul: a slide whistle going up for as long as the lift (1.4 s), a wobble in it, air
+    rising under it, and a sparkle at the top."""
+    t = t_of(1.45)
+    share = (t / t[-1]) ** 1.5
+    freq = (300.0 + 1250.0 * share) * (1.0 + 0.022 * np.sin(2 * np.pi * 9.0 * t))
+    phase = 2 * np.pi * np.cumsum(freq) / SR
+    whistle = (np.sin(phase) + np.sin(phase * 2.0) * 0.18) * (0.35 + 0.65 * share) * np.clip(t / 0.05, 0, 1)
+    noise = rng.standard_normal(len(t))
+    air = (band(noise, 500, 1600) * (1 - share) + band(noise, 1600, 6000) * share) * (0.10 + 0.30 * share)
+    out = whistle * 0.8 + air
+    for k, f in enumerate((2093.0, 2637.0, 3136.0)):                                     # the sparkle: three high notes at the top
+        start = 1.18 + 0.055 * k
         tt = np.clip(t - start, 0, None)
-        ping = (np.sin(2 * np.pi * 1480 * tt) + np.sin(2 * np.pi * 2220 * tt) * 0.35) * np.exp(-tt * 9.0) * (t >= start)
-        out += ping * gain
-    out += band(rng.standard_normal(len(t)), 3000, 9000) * np.exp(-t * 60) * 0.25
-    return fade(out, 0.002, 0.1)
+        out += np.sin(2 * np.pi * f * tt) * np.exp(-tt * 14) * (t >= start) * 0.22
+    return fade(out, 0.004, 0.12)
 
 
 def drone_set(rng):
-    """Set down: a soft thump and the rotors' pitch falling away as the drone lets go."""
+    """Set down: a soft boing as the feet touch (a pitch that drops and springs) and a bright ding
+    over it, the bell of a jeepney's fare box."""
+    t = t_of(0.85)
+    spring = 150.0 + 110.0 * np.exp(-t * 9) * np.cos(2 * np.pi * 13.0 * t)
+    boing = np.sin(2 * np.pi * np.cumsum(spring) / SR) * np.exp(-t * 7.5) * 0.75
+    puff = band(rng.standard_normal(len(t)), 400, 2600) * np.exp(-t * 22) * 0.22
+    ding = np.zeros(len(t))
+    for f, gain, decay in ((1568.0, 1.0, 5.0), (3136.0, 0.42, 7.0), (4699.0, 0.22, 10.0), (2349.0, 0.30, 6.0)):
+        tt = np.clip(t - 0.06, 0, None)
+        ding += np.sin(2 * np.pi * f * tt) * np.exp(-tt * decay) * (t >= 0.06) * gain
+    return fade(boing + puff + ding * 0.55, 0.001, 0.2)
+
+
+def drone_zip(rng):
+    """Gone: a slide whistle shot upward in a third of a second, and a tiny "ting" where it went."""
     t = t_of(0.60)
-    thump = sweep(t, 110, 52, 0.5) * np.exp(-t * 15) * 1.0
-    dust = band(rng.standard_normal(len(t)), 500, 3500) * np.exp(-t * 14) * 0.35
-    servo = sweep(t, 620, 310, 1.2) * np.exp(-t * 5.5) * 0.20 * (0.7 + 0.3 * np.sin(2 * np.pi * 48 * t))
-    return fade(thump + dust + servo, 0.001, 0.1)
+    share = np.clip(t / 0.34, 0, 1) ** 1.6
+    freq = 420.0 + 3000.0 * share
+    phase = 2 * np.pi * np.cumsum(freq) / SR
+    zipped = (np.sin(phase) + np.sin(phase * 2.0) * 0.15) * np.clip(t / 0.02, 0, 1) * np.clip((0.36 - t) / 0.05, 0, 1) * 0.8
+    air = band(rng.standard_normal(len(t)), 1500, 8000) * np.clip(t / 0.05, 0, 1) * np.exp(-np.clip(t - 0.10, 0, None) * 12) * 0.30
+    tt = np.clip(t - 0.36, 0, None)
+    ting = (np.sin(2 * np.pi * 3520.0 * tt) + np.sin(2 * np.pi * 5274.0 * tt) * 0.4) * np.exp(-tt * 16) * (t >= 0.36) * 0.5
+    return fade(zipped + air + ting, 0.002, 0.08)
 
 
 SOUNDS = (
@@ -216,6 +276,9 @@ SOUNDS = (
     ("sfx_arena_pyro", pyro, 2307),
     ("sfx_arena_drone_ping", drone_ping, 2308),
     ("sfx_arena_drone_set", drone_set, 2309),
+    ("sfx_arena_drone_hum", drone_hum, 2310),
+    ("sfx_arena_drone_beam", drone_beam, 2311),
+    ("sfx_arena_drone_zip", drone_zip, 2312),
 )
 
 

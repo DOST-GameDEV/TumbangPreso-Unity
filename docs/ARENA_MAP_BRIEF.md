@@ -284,3 +284,20 @@ From the stage the balloon's middle stands 32 to 41 degrees up, south-south-west
 What was wrong: `Slipper.FindGroundY` answers 0 when its cast finds nothing, and 0 is this stage's deck height, so a slipper past an edge or in a gap "landed" in the air at deck height, out of reach, and stayed. A bot walked to the lip and stood there. Now the host takes any slipper with nothing of the stage under it and sets it down 1.6 s later at `ArenaStage.TryNearestStandable` of where it left (inset 1 m, never a ramp or a bonus piece). It is switched off meanwhile, so a bot sees none, waits on its throwing ring and fetches it when it is back. A slipper held by a body that fell keeps the fall's 8 s return to its owner. A slipper resting more than 1.2 m above its owner already goes to the owner (`Slipper`'s own rule), which covers a loft.
 
 Probe: `Tests/PlayMode/ArenaBalloonProbe.cs` (report `Logs/arena/unity/balloon_probe.txt`). Sounds: `tools/synth_arena_balloon_sfx.py`.
+
+## Lamps that look like lamps, and the sound of the stadium (ARENA-1.8, 2026-10-05)
+
+The owner, after playing: "the spotlight being pointed at you when the can is down just looks like a bunch of feathered circles, and doesnt look like actual glare", and "there should be reverbey crowd cheers, chants, and an announcer". NOBODY HAS SEEN OR HEARD ANY OF THIS YET: every number below is a first guess to be tuned in play.
+
+### Glare and shafts (`Runtime/Map/ArenaGlare.cs`, drawn by `ArenaAmbience` through `ArenaFx`)
+- What it replaced: eight soft dots 3.2 m across hung in the air round the can, at the ends of eight beams whose streak fades at both ends.
+- GLARE is drawn at a lamp when it points at this camera: the angle between its aim and the line to the eye (a show spot: whole inside 2.5 degrees, gone by 9), times how far inside the frame it is, times whether a body or a deck stands in the way. A core laid three deep (4.5 against this map's bloom threshold of 1.7), a tight centre, a long thin anamorphic streak, and for the show spots a small star, a halo and three faint ghosts through the middle of the screen. It is drawn out at the lamp, so the play is always in front of it.
+- A SHAFT is three quads from the lamp (a soft cone, a narrower one, a thin white core), brightest at the lamp (`ArenaFx.DrawShaft`), with dust drifting down it.
+- On a knocked can four spots land round the can and four follow the players. A pool is drawn only on the deck under the aim, 5 cm over that deck's own top, shrunk to fit inside its edges, never over a gap. The bodies take a rim (`_WorldLookShape.y`, raised for the gameplay camera only) and the picture a brief veil of at most 9 per cent, scaled by Flash intensity.
+- The 24 floodlight banks and the 15 searchlights use the same lamp, quietly.
+
+### The crowd and the PA (`Runtime/Map/ArenaCrowdAudio.cs`, clips from `tools/synth_arena_crowd_sfx.py`)
+- Five seamless beds (calm, lively, roar, tension, applause) follow `ArenaCrowd.Level` and the match; six reactions; seven chants that come and go on their own with long gaps; four PA stings. Crowd on the Ambience slider, PA on the Announcer slider. Levels are the rows in `AudioCues.TrimDb`.
+- Everything has the bowl's reverb baked in (a synthesised impulse response, loops convolved circularly so they have no seam). `py -3 tools/synth_arena_crowd_sfx.py --report` writes pictures and numbers to `Logs/arena/audio/`.
+- On this map the announcer's takes play through the stadium (`Resources/ArenaPa/pa_<take>.wav`, baked by the same tool; rerun it with `--only pa` when a new take lands in `Resources/Vo`).
+- The map's own lines are NOT RECORDED (there is no text to speech here): `ArenaCrowdAudio.Lines` lists the nine, with wording. Each is wired and captioned and plays the day `Resources/Vo/vo_<id>_1.wav` exists; until then a sting marks the moment.

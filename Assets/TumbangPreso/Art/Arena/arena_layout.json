@@ -411,7 +411,88 @@
    "parts": [
     {
      "node": "drone_body",
-     "tris": 1400,
+     "tris": 1260,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "node": "drone_fan",
+     "tris": 180,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "node": "drone_antenna",
+     "tris": 120,
+     "position": [
+      -0.093,
+      0.35,
+      -0.1994
+     ]
+    },
+    {
+     "node": "drone_claw_0",
+     "tris": 44,
+     "position": [
+      0.2338,
+      -0.35,
+      0.135
+     ]
+    },
+    {
+     "node": "drone_claw_1",
+     "tris": 44,
+     "position": [
+      0.0,
+      -0.35,
+      -0.27
+     ]
+    },
+    {
+     "node": "drone_claw_2",
+     "tris": 44,
+     "position": [
+      -0.2338,
+      -0.35,
+      0.135
+     ]
+    },
+    {
+     "node": "drone_face_search",
+     "tris": 140,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "node": "drone_face_lock",
+     "tris": 140,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "node": "drone_face_carry",
+     "tris": 140,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "node": "drone_face_proud",
+     "tris": 140,
      "position": [
       0.0,
       0.0,
@@ -420,47 +501,29 @@
     },
     {
      "node": "drone_beam",
-     "tris": 48,
+     "tris": 96,
      "position": [
       0.0,
-      0.0,
+      -0.33,
       0.0
      ]
     },
     {
-     "node": "drone_rotor_0",
-     "tris": 52,
+     "node": "drone_beam_core",
+     "tris": 48,
      "position": [
-      0.3889,
       0.0,
-      0.3889
+      -0.33,
+      0.0
      ]
     },
     {
-     "node": "drone_rotor_1",
-     "tris": 52,
+     "node": "drone_spot",
+     "tris": 2,
      "position": [
-      0.3889,
       0.0,
-      -0.3889
-     ]
-    },
-    {
-     "node": "drone_rotor_2",
-     "tris": 52,
-     "position": [
-      -0.3889,
       0.0,
-      -0.3889
-     ]
-    },
-    {
-     "node": "drone_rotor_3",
-     "tris": 52,
-     "position": [
-      -0.3889,
-      0.0,
-      0.3889
+      0.0
      ]
     }
    ]
@@ -1673,14 +1736,31 @@
    "name": "arena_stage_beam",
    "shader": "painted",
    "albedo": "arena_stage_beam.png",
-   "emissionMap": "arena_stage_beam.png",
-   "emissionStrength": 1.0,
+   "emissionMap": "",
+   "emissionStrength": 1.6,
    "alphaFromAlbedo": true,
    "blend": "blend",
    "twoSided": true,
    "size": [
     256,
     512
+   ],
+   "notes": [
+    "two-sided: 50 per cent open edges"
+   ]
+  },
+  {
+   "name": "arena_stage_beamcore",
+   "shader": "painted",
+   "albedo": "arena_stage_beamcore.png",
+   "emissionMap": "",
+   "emissionStrength": 1.6,
+   "alphaFromAlbedo": true,
+   "blend": "blend",
+   "twoSided": true,
+   "size": [
+    256,
+    256
    ],
    "notes": [
     "two-sided: 50 per cent open edges"
@@ -1775,6 +1855,23 @@
     1024
    ],
    "notes": []
+  },
+  {
+   "name": "arena_stage_spot",
+   "shader": "painted",
+   "albedo": "arena_stage_spot.png",
+   "emissionMap": "arena_stage_spot.png",
+   "emissionStrength": 0.7,
+   "alphaFromAlbedo": true,
+   "blend": "blend",
+   "twoSided": true,
+   "size": [
+    512,
+    512
+   ],
+   "notes": [
+    "two-sided: 100 per cent open edges"
+   ]
   },
   {
    "name": "arena_stage_under",

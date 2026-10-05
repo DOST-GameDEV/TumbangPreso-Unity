@@ -19,8 +19,9 @@ THE COLLECTIONS (all inside `arena_stage`, everything at its place in the stadiu
         linked copies of the prop meshes, for review only. The game places props from the JSON.
   stage_props
         the props, each at the origin: jump_base, jump_cushion, jump_chevron, jump_ring,
-        speed_base, speed_chevrons, pickup_base, pickup_cell, pickup_halo, drone_body,
-        drone_rotor, drone_beam, and stage_shaft_rim (in place at radius 40).
+        speed_base, speed_chevrons, pickup_base, pickup_cell, pickup_halo, the drone (SAGIP, v6:
+        drone_body, drone_fan, drone_antenna, drone_claw_0..2, drone_face_search / _lock / _carry /
+        _proud, drone_beam, drone_beam_core, drone_spot; see `drone`), and stage_shaft_rim (in place at radius 40).
   stage_hologram_preview
         the tore layout again wearing the hologram material, lifted 6 cm: how the NEXT layout is
         shown before it turns solid. Review only; the game swaps the material on the real meshes.
@@ -55,15 +56,15 @@ lies along a face of another). `joint_check` measures all of this and must print
 `height_check` ray-casts the walking surface against the layout data and against the collider's
 own ramp grid (a copy of ArenaStageMesh.Ramp).
 
-MATERIALS (9; textures tools/author_arena_textures_stage.py): arena_stage_deck, _line, _rim,
-_hull, _under, _mark, _props, _beam, _holo.
+MATERIALS (11; textures tools/author_arena_textures_stage.py): arena_stage_deck, _line, _rim,
+_hull, _under, _mark, _props, _beam, _beamcore, _spot, _holo.
 UVS: deck and holo are a plain top-down projection at 8 m a tile (no stretching, and the hexagons
 run on across pieces); line, rim, hull and under are top-down at 4 m on level faces and
 (run along the face, height) on upright ones; the mark is 0..1 over 3 m; the props use one atlas.
 """
 import bpy, bmesh, json, math, os, sys
 import numpy as np
-from mathutils import Vector
+from mathutils import Matrix, Vector
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import arena_kit as K                                             # noqa: E402
@@ -89,6 +90,11 @@ REGIONS = {
     "jump_cushion": (0, 0, 256, 256), "jump_base": (256, 0, 512, 256), "speed_top": (512, 0, 768, 512),
     "metal_dark": (768, 0, 1024, 256), "metal_light": (768, 256, 1024, 512), "pickup_cell": (0, 256, 256, 512),
     "drone_top": (256, 256, 512, 512),
+    "drone_skin": (0, 640, 512, 832), "drone_buoy": (0, 832, 512, 896), "drone_under": (512, 640, 768, 896),
+    "drone_plate": (768, 640, 1024, 704), "sw_crimson": (768, 704, 896, 832), "sw_shell": (896, 704, 1024, 832),
+    "sw_brass": (768, 832, 896, 896),
+    "drone_face_search": (0, 896, 256, 1024), "drone_face_lock": (256, 896, 512, 1024),
+    "drone_face_carry": (512, 896, 768, 1024), "drone_face_proud": (768, 896, 1024, 1024),
     "sw_teal": (0, 512, 128, 640), "sw_lime": (128, 512, 256, 640), "sw_violet": (256, 512, 384, 640),
     "sw_ice": (384, 512, 512, 640), "sw_gold": (512, 512, 640, 640), "sw_glass": (640, 512, 768, 640),
     "sw_cream": (768, 512, 896, 640), "sw_black": (896, 512, 1024, 640),
@@ -126,7 +132,18 @@ def materials():
         material(key, emit=True, strength=GLOW[key])
     material("hull")
     material("holo", alpha=True, strength=GLOW["holo"])
-    material("beam", alpha=True, strength=1.0)
+    material("spot", alpha=True, strength=0.7)
+    for key in ("beam", "beamcore"):
+        m = material(key, alpha=True, strength=1.6)
+        nt = m.node_tree
+        b = nt.nodes.get("Principled BSDF")
+        tint = nt.nodes.new("ShaderNodeMix"); tint.data_type = "RGBA"; tint.blend_type = "MULTIPLY"; tint.name = "phase tint"
+        tint.inputs[0].default_value = 1.0
+        tint.inputs[7].default_value = (0.45, 0.95, 1.0, 1.0)
+        tex = b.inputs["Base Color"].links[0].from_node
+        nt.links.new(tex.outputs["Color"], tint.inputs[6])
+        nt.links.new(tint.outputs[2], b.inputs["Emission Color"])
+        b.inputs["Base Color"].default_value = (0, 0, 0, 1)
 
 
 # ---------------------------------------------------------------- the plate's cross-section
@@ -406,7 +423,12 @@ class Prop:
     Rules: ("top", region, half_x, half_y)  a top-down drawing
            ("sw", region)                    a flat swatch
            ("box", region)                   painted metal, 1 m across the region
-           ("skin", region, z0, z1)          u round the axis, v up from z0 to z1"""
+           ("skin", region, z0, z1)          u round the axis, v up from z0 to z1
+           ("wrap", region, heights)         u round the axis with the seam at the BACK (-y), so the nose is the
+                                             region's middle; v by `heights`, ((z, v), ..) top down, read between
+           ("torus", region, R, zc)          a ring about z: u round it from the back, v round its tube
+           ("arc", region, a0, a1, z0, z1)   a patch facing out between two bearings: u across it as it
+                                             is READ from outside (its left at a1), v up from z0 to z1"""
 
     def __init__(self):
         self.bm = bmesh.new()
@@ -478,6 +500,46 @@ class Prop:
             self.face([vs[i] for i in f], rule)
         return self
 
+    def torus(self, R, r, zc, rule, sides=24, tube=8):
+        """A ring about z: major radius R, tube radius r, its middle at height zc."""
+        ring = [[self.bm.verts.new(polar(R + r * math.cos(2 * math.pi * k / tube), 360.0 * i / sides, zc + r * math.sin(2 * math.pi * k / tube)))
+                 for k in range(tube)] for i in range(sides)]
+        for i in range(sides):
+            p, q = ring[i], ring[(i + 1) % sides]
+            for k in range(tube):
+                self.face((p[k], q[k], q[(k + 1) % tube], p[(k + 1) % tube]), rule)
+        return self
+
+    def ball(self, centre, r, rule, squash=1.0, sides=10, rows=6):
+        o = Vector(centre)
+        top, bot = self.bm.verts.new(o + Vector((0, 0, r * squash))), self.bm.verts.new(o - Vector((0, 0, r * squash)))
+        cols = [[self.bm.verts.new(o + polar(r * math.sin(math.pi * j / rows), 360.0 * i / sides, r * squash * math.cos(math.pi * j / rows)))
+                 for j in range(1, rows)] for i in range(sides)]
+        for i in range(sides):
+            p, q = cols[i], cols[(i + 1) % sides]
+            self.face((top, p[0], q[0]), rule)
+            for j in range(rows - 2):
+                self.face((p[j], p[j + 1], q[j + 1], q[j]), rule)
+            self.face((p[-1], bot, q[-1]), rule)
+        return self
+
+    def shell(self, grid, back, rule_front, rule_rest):
+        """A closed slab from a grid of points (rows of columns) and the same grid pushed back."""
+        A = [[self.bm.verts.new(v) for v in row] for row in grid]
+        B = [[self.bm.verts.new(v) for v in row] for row in back]
+        rows, cols = len(grid), len(grid[0])
+        for j in range(rows - 1):
+            for i in range(cols - 1):
+                self.face((A[j][i], A[j][i + 1], A[j + 1][i + 1], A[j + 1][i]), rule_front)
+                self.face((B[j][i], B[j + 1][i], B[j + 1][i + 1], B[j][i + 1]), rule_rest)
+        for i in range(cols - 1):
+            self.face((A[0][i], B[0][i], B[0][i + 1], A[0][i + 1]), rule_rest)
+            self.face((A[-1][i], A[-1][i + 1], B[-1][i + 1], B[-1][i]), rule_rest)
+        for j in range(rows - 1):
+            self.face((A[j][0], A[j + 1][0], B[j + 1][0], B[j][0]), rule_rest)
+            self.face((A[j][-1], B[j][-1], B[j + 1][-1], A[j + 1][-1]), rule_rest)
+        return self
+
     def done(self, name, coll, smooth=28.0):
         bm = self.bm
         bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
@@ -498,6 +560,26 @@ class Prop:
                     if a < 0.02 and f.calc_center_median().x < 0:
                         a = 1.0
                     loop[uv].uv = region_uv(rule[1], a * 2 - 1, (co.z - rule[2]) / (rule[3] - rule[2]) * 2 - 1)
+                elif kind in ("wrap", "torus"):
+                    c = f.calc_center_median()
+                    ac = (math.atan2(-c.x, -c.y) / (2 * math.pi)) % 1.0                # the face's own way round, from the back
+                    a = ac if math.hypot(co.x, co.y) < 1e-6 else (math.atan2(-co.x, -co.y) / (2 * math.pi)) % 1.0
+                    a += 1.0 if a - ac < -0.5 else -1.0 if a - ac > 0.5 else 0.0       # a corner on the seam goes with its face
+                    if kind == "wrap":
+                        fy = rule[2][-1][1]
+                        for (z0, v0), (z1, v1) in zip(rule[2], rule[2][1:]):
+                            if z1 <= co.z <= z0:
+                                fy = v0 + (v1 - v0) * (z0 - co.z) / max(1e-9, z0 - z1)
+                                break
+                    else:
+                        t = (math.atan2(co.z - rule[3], math.hypot(co.x, co.y) - rule[2]) / (2 * math.pi)) % 1.0
+                        tc = (math.atan2(c.z - rule[3], math.hypot(c.x, c.y) - rule[2]) / (2 * math.pi)) % 1.0
+                        t += 1.0 if t - tc < -0.5 else -1.0 if t - tc > 0.5 else 0.0
+                        fy = t * 2 - 1
+                    loop[uv].uv = region_uv(rule[1], 1 - a * 2, fy)
+                elif kind == "arc":
+                    b = math.degrees(math.atan2(co.x, co.y))
+                    loop[uv].uv = region_uv(rule[1], (rule[2] + rule[3] - 2 * b) / (rule[3] - rule[2]), (co.z - rule[4]) / (rule[5] - rule[4]) * 2 - 1)
                 else:
                     if abs(n.z) > 0.6:
                         loop[uv].uv = region_uv(rule[1], co.x * 0.9, co.y * 0.9)
@@ -566,43 +648,7 @@ def props(coll):
     out["pickup_cell"] = cell.done("pickup_cell", coll, smooth=10)
     out["pickup_halo"] = Prop().lathe([(0.30, -0.012, lens), (0.335, -0.012, lens), (0.335, 0.012, lens), (0.30, 0.012, lens)], 32).done("pickup_halo", coll)
 
-    # ---- the catch drone: 1.62 m across the ducts. +y is its nose.
-    dt = ("top", "drone_top", 0.50, 0.50)
-    ice, gold, glass = ("sw", "sw_ice"), ("sw", "sw_gold"), ("sw", "sw_glass")
-    d = Prop()
-    d.lathe([(0, 0.17, dt), (0.17, 0.165, dt), (0.24, 0.14, dt), (0.37, 0.07, dt), (0.43, 0.0, light), (0.37, -0.07, light),
-             (0.22, -0.12, dark), (0.17, -0.12, dark), (0.155, -0.23, dark), (0.115, -0.23, ice), (0.09, -0.17, ice), (0, -0.17, ice)], 24)
-    for k, a in enumerate((45, 135, 225, 315)):
-        c = polar(0.55, a, 0.0)
-        mid = polar(0.44, a, -0.035)
-        d.box((mid.x, mid.y, mid.z), (0.07, 0.36, 0.05), dark, yaw=a)                      # the arm: from inside the shell to inside the hub
-        d.lathe([(0.215, -0.07, ice), (0.26, -0.07, light), (0.26, 0.07, light), (0.215, 0.07, dark)], 20, origin=(c.x, c.y, 0))     # the duct: its lower lip is the lifter's light
-        d.lathe([(0, 0.02, dark), (0.05, 0.02, dark), (0.05, -0.07, dark), (0, -0.07, dark)], 10, origin=(c.x, c.y, 0))               # the hub
-        lamp = polar(0.55 + 0.262, a, 0.0)
-        d.box((lamp.x, lamp.y, 0.0), (0.07, 0.03, 0.05), gold if a in (45, 315) else ice, yaw=a)
-    d.box((0, 0.40, -0.005), (0.16, 0.12, 0.09), glass)                                    # the camera in the nose
-    d.box((0, 0.465, -0.005), (0.07, 0.03, 0.05), gold)
-    out["drone_body"] = d.done("drone_body", coll)
-    rot = Prop().box((0, 0, 0.045), (0.40, 0.045, 0.012), dark)
-    rot.lathe([(0, 0.07, dark), (0.035, 0.06, dark), (0.035, 0.02, dark), (0, 0.02, dark)], 10)
-    out["drone_rotor"] = rot.done("drone_rotor", coll)
-
-    # the tractor beam: an open cone 2.5 m long (a sheet, not a solid), v 1 at the drone
-    bm = bmesh.new()
-    uv = bm.loops.layers.uv.new("UVMap")
-    n = 24
-    top = [bm.verts.new(polar(0.11, 360.0 * i / n, -0.21)) for i in range(n)]
-    bot = [bm.verts.new(polar(0.62, 360.0 * i / n, -2.71)) for i in range(n)]
-    for i in range(n):
-        k = (i + 1) % n
-        f = bm.faces.new((top[i], top[k], bot[k], bot[i]))
-        for loop, co in zip(f.loops, ((i / n, 1.0), ((i + 1) / n, 1.0), ((i + 1) / n, 0.0), (i / n, 0.0))):
-            loop[uv].uv = co
-        f.smooth = True
-    me = bpy.data.meshes.new("drone_beam"); bm.to_mesh(me); bm.free()
-    me.materials.append(K.mat("beam"))
-    out["drone_beam"] = bpy.data.objects.new("drone_beam", me)
-    coll.objects.link(out["drone_beam"])
+    out.update(drone(coll))
 
     # the shaft's rim light at radius 40: a collar on the shaft wall, just under the field
     rim = lathe("stage_shaft_rim", [(39.30, -0.34, "rim"), (39.30, -0.20, "rim"), (39.42, -0.10, "hull"), (40.25, -0.10, "hull"),
@@ -610,6 +656,185 @@ def props(coll):
     dress(rim)
     out["stage_shaft_rim"] = rim
     return out
+
+
+# ---------------------------------------------------------------- the rescue drone
+DRONE_BEAM = 2.5                   # the beam's two cones are this long at scale 1 (ArenaDrone.ModelBeam)
+DRONE_BELLY = -0.33                # where they hang from: the lens under the belly
+DRONE_CLAWS = (60.0, 180.0, 300.0)  # the bearings of the three prongs, hinged at radius 0.27 under the belly
+DRONE_FACES = ("search", "lock", "carry", "proud")
+# The body's outline, top to bottom: (radius, height). +y is its nose, the origin its middle.
+DRONE_BODY = [(0.0, 0.40), (0.16, 0.39), (0.29, 0.335), (0.385, 0.23), (0.435, 0.08), (0.44, -0.08), (0.41, -0.22), (0.33, -0.32),
+              (0.30, -0.36), (0.20, -0.36), (0.17, -0.31), (0.0, -0.31)]
+
+
+def drone_radius(z):
+    for (r0, z0), (r1, z1) in zip(DRONE_BODY, DRONE_BODY[1:]):
+        if z1 <= z <= z0 and z0 > z1:
+            return r0 + (r1 - r0) * (z0 - z) / (z0 - z1)
+    return 0.0
+
+
+def drone(coll):
+    """SAGIP ("rescue"), the catch drone (v6; owner, 2026-10-05: "drone design and ufo effect needs
+    to be more stylized". Before this it was a grey quadcopter: four ducts on a puck, no front, no
+    face, a grey smudge at game distance). A CHARACTER: a chubby rescue bot wearing a lifebuoy
+    (salbabida) that is also its saucer brim, a ceiling fan on a stalk for its rotor, a jeepney
+    nameplate on its brow, a screen face that changes with what it is doing, a crane-game claw
+    round the lens under its belly, and a beacon on a bent antenna. 1.38 m across the buoy, 1.6 m
+    across the fan, 1.16 m from lens to fan cap.
+
+    THE MOVING PARTS ARE THEIR OWN OBJECTS, each with its pivot where it turns:
+      drone_fan           spins about the drone's own axis (its origin is the drone's)
+      drone_claw_0..2     one mesh three times, each hinged at its origin under the belly, hanging
+                          shut; the game opens a prong by turning it about the tangent there
+      drone_antenna       pivots at its foot on the back of the head (the game makes it whip)
+      drone_face_*        four screens, the same slab with a different drawing; the game shows one
+      drone_beam, _core   two open cones hung at the lens (DRONE_BELLY), DRONE_BEAM long; the game
+                          scales their length and scrolls their textures (they are sheets of light,
+                          the kit's only open meshes, with the mark below)
+      drone_spot          the landing mark, a painted sheet 2 m across: the game takes it off the
+                          drone, lays it on the deck where the body will stand, and turns it"""
+    out = {}
+    dark, shell, brass, crimson, gold = ("box", "metal_dark"), ("sw", "sw_shell"), ("sw", "sw_brass"), ("sw", "sw_crimson"), ("sw", "sw_gold")
+    # the skin's v runs down the outline by its own LENGTH, so the dome's texels are even
+    run = [0.0]
+    for (r0, z0), (r1, z1) in zip(DRONE_BODY[:6], DRONE_BODY[1:7]):
+        run.append(run[-1] + math.hypot(r1 - r0, z1 - z0))
+    skin = ("wrap", "drone_skin", tuple((z, 1.0 - 2.0 * t / run[-1]) for (_, z), t in zip(DRONE_BODY[:7], run)))
+    under = ("top", "drone_under", 0.46, 0.46)
+    d = Prop()
+    d.lathe([(r, z, skin if i < 6 else under) for i, (r, z) in enumerate(DRONE_BODY)], 24)
+    d.torus(0.54, 0.15, -0.17, ("torus", "drone_buoy", 0.54, -0.17), tube=10)                 # the lifebuoy, sunk 5 cm into the body
+    for sx in (-1, 1):
+        d.ball((sx * 0.40, 0.0, 0.17), 0.095, gold, squash=1.0, sides=10, rows=6)             # the ear lamps
+    # the brow: the nameplate, a block bent round the head from inside the shell to 8 cm proud
+    a0, a1, n = -36.0, 36.0, 8
+    plate = ("arc", "drone_plate", a0, a1, 0.215, 0.345)
+    rows = ((0.215, 0.475), (0.345, 0.455))
+    d.shell([[polar(r, a0 + (a1 - a0) * i / n, z) for i in range(n + 1)] for z, r in rows],
+            [[polar(0.24, a0 + (a1 - a0) * i / n, z) for i in range(n + 1)] for z, r in rows], plate, crimson)
+    d.lathe([(0, 0.66, dark), (0.04, 0.66, dark), (0.04, 0.37, dark), (0, 0.37, dark)], 8)       # the fan's stalk, from inside the head to inside the hub
+    out["drone_body"] = d.done("drone_body", coll, smooth=40)
+
+    # the fan: a hub and three broad paddles, painted from above AND below as rings
+    top = ("top", "drone_top", 0.84, 0.84)
+    fan = Prop()
+    fan.lathe([(0, 0.80, top), (0.075, 0.79, top), (0.135, 0.745, brass), (0.135, 0.67, brass), (0.07, 0.62, dark), (0, 0.62, dark)], 12)
+    blade = [(-0.09, 0.10), (0.09, 0.10), (0.17, 0.58), (0.16, 0.71), (0.09, 0.79), (-0.09, 0.79), (-0.16, 0.71), (-0.17, 0.58)]
+    for k in range(3):                                                                        # each pitched a little, as a fan's are
+        c, sn = math.cos(math.radians(120 * k + 20)), math.sin(math.radians(120 * k + 20))
+        lo = [fan.bm.verts.new((x * c + y * sn, -x * sn + y * c, 0.690 + x * 0.30 * min(1.0, (y - 0.10) / 0.2))) for x, y in blade]
+        hi = [fan.bm.verts.new((x * c + y * sn, -x * sn + y * c, 0.730 + x * 0.30 * min(1.0, (y - 0.10) / 0.2))) for x, y in blade]
+        for i in range(8):
+            fan.face((lo[i], lo[(i + 1) % 8], hi[(i + 1) % 8], hi[i]), shell)
+        fan.face(hi, top); fan.face(lo[::-1], top)
+    out["drone_fan"] = fan.done("drone_fan", coll)
+
+    # one prong of the claw, hinged at its origin: +y is outward, it hangs down and hooks back in
+    hook = [(-0.04, 0.03), (0.07, 0.04), (0.165, -0.04), (0.19, -0.13), (0.15, -0.225), (0.045, -0.265),
+            (0.035, -0.195), (0.085, -0.17), (0.10, -0.12), (0.08, -0.07), (0.02, -0.04), (-0.04, -0.04)]
+    cl = Prop()
+    L = [cl.bm.verts.new((-0.06, y, z)) for y, z in hook]
+    R = [cl.bm.verts.new((0.06, y, z)) for y, z in hook]
+    for i in range(12):
+        k = (i + 1) % 12
+        cl.face((L[i], L[k], R[k], R[i]), crimson if i in (4, 5, 6) else brass)               # a crimson tip
+    for i in range(5):
+        cl.face((L[i], L[11 - i], L[10 - i], L[i + 1]), brass)
+        cl.face((R[i], R[i + 1], R[10 - i], R[11 - i]), brass)
+    out["drone_claw"] = cl.done("drone_claw", coll, smooth=20)
+
+    # the antenna: a bent rod from inside the head, a beacon on its end. Its origin is its foot.
+    an = Prop()
+    tip = Vector((-0.05, -0.15, 0.20))
+    ring0 = [an.bm.verts.new(polar(0.022, 60 * i, -0.06)) for i in range(6)]
+    ring1 = [an.bm.verts.new(tip + polar(0.018, 60 * i, 0.0)) for i in range(6)]
+    for i in range(6):
+        an.face((ring0[i], ring0[(i + 1) % 6], ring1[(i + 1) % 6], ring1[i]), dark)
+    an.face(ring0[::-1], dark); an.face(ring1, dark)
+    an.ball(tuple(tip + Vector((0, 0, 0.045))), 0.062, crimson, sides=10, rows=6)
+    out["drone_antenna"] = an.done("drone_antenna", coll, smooth=40)
+
+    # the four faces: one slab over the screen, 1.2 cm proud of the shell and 6 cm deep into it
+    fa0, fa1, fz0, fz1, fn = -34.0, 34.0, -0.05, 0.19, 8
+    zs = [fz0 + (fz1 - fz0) * j / 3 for j in range(4)]
+    for name in DRONE_FACES:
+        fp = Prop()
+        fp.shell([[polar(drone_radius(z) + 0.012, fa0 + (fa1 - fa0) * i / fn, z) for i in range(fn + 1)] for z in zs],
+                 [[polar(drone_radius(z) - 0.06, fa0 + (fa1 - fa0) * i / fn, z) for i in range(fn + 1)] for z in zs],
+                 ("arc", "drone_face_" + name, fa0, fa1, fz0, fz1), ("sw", "sw_black"))
+        out["drone_face_" + name] = fp.done("drone_face_" + name, coll, smooth=40)
+
+    # the tractor beam: two open cones, their tops at their origins (which hang at the lens).
+    # v runs 0 at the far end to 1 at the drone; u goes six (four) times round.
+    def cone(name, key, r0, r1, sides, around, teeth):
+        bm = bmesh.new()
+        uv = bm.loops.layers.uv.new("UVMap")
+        cut = [(0.26 * abs(((i * teeth / sides) % 1.0) * 2 - 1) if teeth else 0.0) for i in range(sides + 1)]   # a zigzag hem
+        for i in range(sides):
+            k = (i + 1) % sides
+            f0, f1 = cut[i] / DRONE_BEAM, cut[i + 1] / DRONE_BEAM
+            vs = [bm.verts.new(polar(r0, 360.0 * i / sides, 0.0)), bm.verts.new(polar(r0, 360.0 * k / sides, 0.0)),
+                  bm.verts.new(polar(r1 + (r0 - r1) * f1, 360.0 * k / sides, -DRONE_BEAM + cut[i + 1])),
+                  bm.verts.new(polar(r1 + (r0 - r1) * f0, 360.0 * i / sides, -DRONE_BEAM + cut[i]))]
+            f = bm.faces.new(vs)
+            for loop, co in zip(f.loops, ((around * i / sides, 1.0), (around * (i + 1) / sides, 1.0), (around * (i + 1) / sides, f1), (around * i / sides, f0))):
+                loop[uv].uv = co
+            f.smooth = True
+        bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-5)
+        me = bpy.data.meshes.new(name); bm.to_mesh(me); bm.free()
+        me.materials.append(K.mat(key))
+        ob = bpy.data.objects.new(name, me)
+        ob.location = (0, 0, DRONE_BELLY)
+        coll.objects.link(ob)
+        return ob
+    # the landing mark: a flat sheet 2 m across at the origin, which the game lays on the deck
+    bm = bmesh.new()
+    uv = bm.loops.layers.uv.new("UVMap")
+    f = bm.faces.new([bm.verts.new((x, y, 0.0)) for x, y in ((-1, -1), (1, -1), (1, 1), (-1, 1))])
+    for loop in f.loops:
+        loop[uv].uv = ((loop.vert.co.x + 1) / 2, (loop.vert.co.y + 1) / 2)
+    me = bpy.data.meshes.new("drone_spot"); bm.to_mesh(me); bm.free()
+    me.materials.append(K.mat("spot"))
+    out["drone_spot"] = bpy.data.objects.new("drone_spot", me)
+    coll.objects.link(out["drone_spot"])
+    out["drone_beam"] = cone("drone_beam", "beam", 0.24, 1.05, 48, 6, 12)
+    out["drone_beam_core"] = cone("drone_beam_core", "beamcore", 0.13, 0.50, 24, 4, 0)
+    return out
+
+
+def drone_set(P, coll, prefix="", at=(0, 0, 0), face="search", beam=True, claws=0.0, lean=None):
+    """The drone's parts as the game finds them, in place round `at`: the kit's own (prefix "") or a
+    copy for a review picture, with one face shown, the prongs opened by `claws` degrees and the
+    whole thing turned by `lean` (a Blender euler) about its middle."""
+    from mathutils import Euler, Matrix
+    at = Vector(at)
+    turn = Euler(lean or (0, 0, 0)).to_matrix().to_4x4()
+    made = {}
+
+    def put(key, name, local=Matrix.Identity(4)):
+        ob = P[key] if prefix == "" and key != "drone_claw" else bpy.data.objects.new(prefix + name, P[key].data)
+        if ob.name not in coll.objects:
+            coll.objects.link(ob)
+        ob.matrix_world = Matrix.Translation(at) @ turn @ local
+        made[name] = ob
+        return ob
+    put("drone_body", "drone_body"); put("drone_fan", "drone_fan")
+    put("drone_antenna", "drone_antenna", Matrix.Translation(polar(0.22, 205.0, 0.35)))
+    for k, a in enumerate(DRONE_CLAWS):
+        hinge = Matrix.Translation(polar(0.27, a, -0.35)) @ Matrix.Rotation(-math.radians(a), 4, "Z") @ Matrix.Rotation(math.radians(claws), 4, "X")
+        put("drone_claw", "drone_claw_%d" % k, hinge)
+    for name in DRONE_FACES:
+        ob = put("drone_face_" + name, "drone_face_" + name)
+        ob.hide_render = prefix != "" and name != face
+    for key in ("drone_beam", "drone_beam_core"):
+        ob = put(key, key, Matrix.Translation((0, 0, DRONE_BELLY)))
+        ob.hide_render = prefix != "" and not beam
+    if prefix == "":
+        made["drone_spot"] = P["drone_spot"]                      # at the origin: the game takes it off the drone
+    return made
+
 
 
 def copy_of(src, name, coll, loc, yaw=0.0):
@@ -1119,10 +1344,8 @@ def main():
     root = collection("arena_stage")
     prop_coll = bpy.data.collections.new("stage_props"); root.children.link(prop_coll)
     P = props(prop_coll)
-    for k, a in enumerate((45, 135, 225, 315)):                   # the four rotors, in place on the drone at the origin
-        c = polar(0.55, a, 0.0)
-        copy_of(P["drone_rotor"], "drone_rotor_%d" % k, prop_coll, c, yaw=a + 35 * k)
-    P["drone_rotor"].hide_render = True; P["drone_rotor"].hide_viewport = True
+    drone_set(P, prop_coll)                                       # the drone's parts, in place on the drone at the origin
+    P["drone_claw"].hide_render = True; P["drone_claw"].hide_viewport = True
 
     colls, prop_colls = {}, {}
     for lay in DATA["layouts"]:
@@ -1151,9 +1374,9 @@ def main():
             slot.link = "OBJECT"; slot.material = K.mat("holo")
     pre = bpy.data.collections.new("preview_only"); root.children.link(pre)
     figs = preview(pre)
-    drone = [copy_of(P[k], "preview_" + k, pre, (0, 0, 0)) for k in ("drone_body", "drone_beam")]
-    drone += [copy_of(P["drone_rotor"], "preview_drone_rotor_%d" % k, pre, polar(0.55, a, 0.0), yaw=a + 35 * k) for k, a in enumerate((45, 135, 225, 315))]
-    drone_home = [Vector(o.location) for o in drone]
+    drone = list(drone_set(P, pre, "preview_", face="carry", claws=38.0).values())
+    drone_home = [o.matrix_world.copy() for o in drone]
+    drone_shown = [not o.hide_render for o in drone]
 
     os.makedirs(LOGS, exist_ok=True)
     report(colls, prop_coll, os.path.join(LOGS, "stage_%s_report.txt" % version))
@@ -1178,10 +1401,10 @@ def main():
         figs["taya"].location = (t[0], t[2], floor_height(lay, t[0], t[2]))
         for f, m in zip(figs["attackers"], DATA["spawns"]["attackers"]):
             f.location = (m[0], m[2], floor_height(lay, m[0], m[2]))
-        for o, home in zip(drone, drone_home):
-            o.hide_render = drone_at is None
+        for o, home, shown in zip(drone, drone_home, drone_shown):
+            o.hide_render = drone_at is None or not shown
             if drone_at is not None:
-                o.location = home + Vector(drone_at)
+                o.matrix_world = Matrix.Translation(drone_at) @ home
         return lay
 
     key = bpy.data.objects.new("floodlight key", bpy.data.lights.new("floodlight key", "SUN"))
@@ -1230,8 +1453,8 @@ def main():
         k = polar(15.25, 180, 0)
         shoot(pfx + "prop_pickup", (k.x + 1.5, k.y - 1.9, 1.5), (k.x, k.y, 0.6), lens=40)
         show("plaza", drone_at=(3.0, -4.0, 4.3))
-        shoot(pfx + "prop_drone", (5.4, -7.2, 3.6), (3.0, -4.0, 3.5), lens=40)
-        shoot(pfx + "prop_drone_under", (4.6, -6.6, 1.3), (3.0, -4.0, 4.0), lens=35)
+        shoot(pfx + "prop_drone", (0.6, 1.2, 4.9), (3.0, -4.0, 3.4), lens=40)      # from its front: +y is its nose
+        shoot(pfx + "prop_drone_under", (2.2, -2.2, 1.5), (3.0, -4.0, 4.0), lens=35)
         show("plaza", holo_on=True)
         shoot(pfx + "hologram", (24, -40, 30), (0, 1, 0), lens=30)
         show("plaza", holo_on=True, solid=False)
@@ -1255,7 +1478,7 @@ def main():
     show("plaza")
     for ob in prop_coll.objects:
         ob.hide_render = False
-    P["drone_rotor"].hide_render = True
+    P["drone_claw"].hide_render = True
     for n, c in colls.items():                                    # saved showing plaza; the others are one click away
         c.hide_viewport = n != "plaza"; c.hide_render = n != "plaza"
         for ob in list(c.objects) + list(prop_colls[n].objects):

@@ -186,7 +186,14 @@ namespace TumbangPreso.EditorTools.MapKit
             // ---- THE STAGE. Atlases and world-scale drawings (the deck's hexagons run on across
             // pieces): no resample. The kit's strengths: deck 1.0, line 1.0, rim 3.2, under 2.2,
             // mark 1.4, props 1.15.
-            new Rule("arena_stage_beam") { Surface = Surface.Light, TwoSided = true, Fog = false },
+            // The drone's tractor beam, two cones: WHITE drawings in the alpha that tile and are
+            // slid along the cones and coloured by `ArenaDrone` through a property block (so
+            // they repeat, and take no emission of their own: the block's colour is the light).
+            new Rule("arena_stage_beamcore") { Surface = Surface.Light, Emission = 0.0f, TwoSided = true, Fog = false },
+            new Rule("arena_stage_beam") { Surface = Surface.Light, Emission = 0.0f, TwoSided = true, Fog = false },
+            // The drone's landing mark: PAINT on the deck, blended and not added (light added to a
+            // near-white deck is only more white), with enough of its own light to read at night.
+            new Rule("arena_stage_spot") { Surface = Surface.Sheet, Emission = 0.35f, TwoSided = true, Fog = false, Wrap = Wrap.Clamp },
             // The first Unity review (2026-10-05) drew the deck pure white, its hexagons gone: the
             // kit's 1.0 was set under Blender's one sun, and here the key and the stage lights
             // light it as well. The deck glows only enough to stay the brightest floor.

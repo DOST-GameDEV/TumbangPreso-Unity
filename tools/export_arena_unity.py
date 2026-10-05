@@ -27,7 +27,7 @@ THE FRAME, AND WHY EVERY .glb HERE IS IN THE GAME'S OWN SPACE.
   LookRotation, so every mesh is turned half a turn about Blender's z BEFORE export (R below; a proper
   rotation, normals and winding untouched). Then C . R = D: a vertex p of any .glb is at D . p in the
   model's own Unity space, and a placement's matrix is simply D . M . D (the identity for everything
-  the kits modelled in place). A part with its own pivot inside a prop (the drone's rotors) is
+  the kits modelled in place). A part with its own pivot inside a prop (the drone's prongs) is
   exported at R . M . R for the same reason. The read-back at the end proves it with numbers.
 
 WHAT IS AN INSTANCE. Only the 36 craft share mesh data (3 meshes); they are exported once each and
@@ -93,7 +93,10 @@ PROP_SETS = {
     "arena_jump_pad": ("jump_base", "jump_cushion", "jump_chevron", "jump_ring"),
     "arena_speed_pad": ("speed_base", "speed_chevrons"),
     "arena_pickup": ("pickup_base", "pickup_cell", "pickup_halo"),
-    "arena_drone": ("drone_body", "drone_beam", "drone_rotor_0", "drone_rotor_1", "drone_rotor_2", "drone_rotor_3"),
+    # SAGIP (v6). Every moving part is its own node with its pivot where it turns (Runtime/Map/ArenaDrone.cs).
+    "arena_drone": ("drone_body", "drone_fan", "drone_antenna", "drone_claw_0", "drone_claw_1", "drone_claw_2",
+                    "drone_face_search", "drone_face_lock", "drone_face_carry", "drone_face_proud",
+                    "drone_beam", "drone_beam_core", "drone_spot"),
 }
 SHAFT_RIM = "stage_shaft_rim"
 
@@ -121,7 +124,7 @@ def unity_matrix(m):
 def world_of(ob):
     """The object's world matrix from its own location, rotation and scale. NOT `matrix_world`: the
     assembly hides the stage's collections, and a hidden object's matrix_world is never evaluated
-    (the drone's rotors read as standing at the origin)."""
+    (the drone's prongs read as standing at the origin)."""
     if ob.parent is not None:
         raise RuntimeError(f"{ob.name} has a parent; the kits were expected to place every object on its own")
     return ob.matrix_basis.copy()
@@ -569,7 +572,7 @@ def main():
     drone = read.get("arena_drone")
     if drone:
         for node, pts, _, _, _ in drone:
-            if node.startswith("drone_rotor_"):
+            if node.startswith("drone_claw_") or node in ("drone_antenna", "drone_face_search", "drone_beam"):
                 c = (pts.min(axis=0) + pts.max(axis=0)) / 2
                 proofs.append(f"{node}: centre Unity ({c[0]:.3f}, {c[1]:.3f}, {c[2]:.3f}), bearing {math.degrees(math.atan2(c[0], c[2])) % 360:.0f}")
     # The floodlight banks the roof author measured, against the lamp faces that went out.

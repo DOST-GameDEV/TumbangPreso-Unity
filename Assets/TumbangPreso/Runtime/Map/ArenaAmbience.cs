@@ -33,10 +33,14 @@ namespace TumbangPreso.Map
     ///   * SEARCHLIGHTS sweeping the sky over the stadium (owner, 2026-10-05: "moving
     ///     spotlights"): six on the hull's rim, one on each of the four landing pads, five on
     ///     the city's rooftops, each with its own period, all on the clock every peer shares.
-    ///   * SHOW SPOTS from under the four canopies: eight beams that sweep the field and the
+    ///   * SHOW SPOTS from under the four canopies: eight shafts that sweep the field and the
     ///     crowd slowly, each with a soft pool where it lands; they chase round the bowl
     ///     through a break's alarm and at the match's end, and snap onto the stage when the
-    ///     platforms move and when the can goes down. Beams and quads: no Light is added.
+    ///     platforms move and when the can goes down: four round the can, four following the
+    ///     players, each with a pool on the deck it lands on. A spot that points at the eye
+    ///     GLARES (`ArenaGlare`), the bodies on the stage take a rim of its light, and the
+    ///     picture a brief veil. Shafts and quads: no Light is added.
+    ///   * THE 24 FLOODLIGHT BANKS and the sky's searchlights glare the same way, quietly.
     ///   * THE CITY'S HAZE (owner, 2026-10-05: "a distance haze effect for outside the arena"):
     ///     two shader globals that TumbangPreso/ArenaPainted reads (a layer of lit air low
     ///     among the towers, none inside the stadium), and one faint ring of light standing
@@ -86,7 +90,26 @@ namespace TumbangPreso.Map
         };
         private const float StingerSeconds = 2.0f;
 
+        // The floodlight banks (tools/arena_lights.json, `roof.floodlight_banks`): six on the
+        // front edge of each canopy, 151.3 m out and 66.75 m up, each aimed at the stage 14 m
+        // out from the can on its own bearing.
+        private const int Floods = 24;
+        private const float FloodRadius = 151.3f, FloodHeight = 66.75f, FloodAimOut = 14.0f;
+        private static readonly float[] FloodBearing = { -27.0f, -17.0f, -7.125f, 7.125f, 17.0f, 27.0f };
+        private static readonly Color SpotColour = new Color(0.80f, 0.93f, 1.0f), FloodColour = new Color(0.93f, 0.96f, 1.0f);
+        /// <summary>A show spot glares whole inside this many degrees of its aim and not at all
+        /// past the second: from 170 m that is a body within 7 m of where it points, fading out
+        /// by 27 m, so the glare comes and goes as a player moves through the light.</summary>
+        private const float SpotFull = 2.5f, SpotGone = 9.0f;
+        /// <summary>How far the spots' pools reach on a deck, and what a body on the stage
+        /// takes from them: added to the look's own upper rim (`_WorldLookShape.y`, which
+        /// TumbangPreso/Toon reads) while they are on the stage.</summary>
+        private const float PoolRadius = 2.6f, SpotRim = 0.6f;
+        private static readonly int LookShapeId = Shader.PropertyToID("_WorldLookShape");
+
         private static ArenaAmbience _instance;
+        private readonly float[] _spotSeen = new float[Spots];
+        private float _lit, _focusAge;
 
         private readonly Vector3[] _spotAim = new Vector3[Spots];
         private bool _spotsAimed;
@@ -137,16 +160,40 @@ namespace TumbangPreso.Map
         {
             _instance = this;
             MatchFlair.Presented += OnFlair;
+            Camera.onPreRender += LightBodies;
             Shader.SetGlobalColor(HazeColourId, HazeColour);
             Shader.SetGlobalVector(HazeShapeId, HazeShape);
         }
 
-        private void Start() => BuildHazeRing();
+        private void Start()
+        {
+            BuildHazeRing();
+            // The crowd's sound and the stadium's PA, for a scene built before they existed.
+            if (GetComponent<ArenaCrowdAudio>() == null) gameObject.AddComponent<ArenaCrowdAudio>();
+        }
+
+        /// <summary>
+        /// The bodies on the stage, lit by the spots (no Light is added: the scene keeps its
+        /// few). TumbangPreso/Toon draws a rim on a body's upper half from the look's global
+        /// `_WorldLookShape.y`; `WorldLookPresentation` sets that for each camera as it is
+        /// culled and puts it back after it has drawn, so raising it here, between the two,
+        /// lasts for this camera's picture only and leaves nothing set. Nothing without the
+        /// look (Classic), where the rim is not drawn at all.
+        /// </summary>
+        private void LightBodies(Camera camera)
+        {
+            if (_lit <= 0.01f || WorldLookPresentation.Current == null || !WorldLookPresentation.HandlesCamera(camera)) return;
+            Vector4 shape = Shader.GetGlobalVector(LookShapeId);
+            shape.y += SpotRim * _lit * ArenaFx.Light;
+            Shader.SetGlobalVector(LookShapeId, shape);
+        }
 
         private void OnDisable()
         {
             if (_instance == this) _instance = null;
             MatchFlair.Presented -= OnFlair;
+            Camera.onPreRender -= LightBodies;
+            _lit = 0.0f; _focusAge = 0.0f;
             Unhook();
             // The haze is this map's: no other map's surfaces read it, and none is left set.
             Shader.SetGlobalColor(HazeColourId, Color.clear);
@@ -262,7 +309,7 @@ namespace TumbangPreso.Map
                       0.2f + 0.3f * k, k == 1 ? ArenaFx.Magenta : ArenaFx.Gold);
 
             ArenaCrowd.Wave();
-            ArenaFx.CueFlat("sfx_arena_crowd_roar", 1.0f, 1.06f, 0.85f);
+            // The roar is the crowd's own now (`ArenaCrowdAudio` hears the same event).
             ArenaFx.Cue("sfx_arena_pyro", can, 0.95f, 1.05f);
             _stinger = StingerSeconds;
             _focus = 2.5f;
@@ -321,7 +368,9 @@ namespace TumbangPreso.Map
             if (still) { Pads(fx); Pickups(fx, dt); Emitters(fx, dt, eye, centre, reduced); }
             Shaft(fx, centre, reduced);
             Motes(fx, dt, centre);
+            ArenaGlare.Begin(view);
             Sky(fx, centre, reduced);
+            Floodlights(fx, centre, reduced);
             ShowSpots(stage, fx, dt, centre, reduced);
             Screens(fx, dt, centre);
         }
@@ -341,37 +390,53 @@ namespace TumbangPreso.Map
 
         /// <summary>
         /// Eight spots under the canopies. IDLE: each sweeps its own side slowly (the even ones
-        /// the field, the odd ones the crowd), never across the stage, so no beam stands
+        /// the field, the odd ones the crowd), never across the stage, so no shaft stands
         /// between a player and the play. CHASE (a break's alarm, the match's end): the eight
         /// run round the lower bowl. FOCUS (the platforms moving, a knocked can): all eight on
-        /// a point over the can, with no pool: the decks stand at different heights and a flat
-        /// pool would cut through the higher ones.
+        /// the stage, the even ones round the can and the odd ones each following a player.
+        ///
+        /// Each is a SHAFT from its lamp (`ArenaGlare.Shaft`) and, where it lands, a POOL: on
+        /// the turf or along a stand when idle, and in focus on the deck under its aim only,
+        /// 5 cm proud of that deck's own top, shrunk to fit inside its edges, and not drawn at
+        /// all over a gap (the shaft runs on down into the shaft of the stadium instead) or
+        /// while the platforms are moving. Its lamp GLARES when it points at the eye
+        /// (`ArenaGlare.Lamp`), unless a body or a deck stands in the way.
         /// </summary>
         private void ShowSpots(ArenaStage stage, ArenaFx fx, float dt, Vector3 centre, bool reduced)
         {
             _focus = Mathf.Max(0.0f, _focus - dt);
             _chase = Mathf.Max(0.0f, _chase - dt);
 
-            bool focus = _focus > 0.0f, chase = _chase > 0.0f && !focus;
+            // A knocked can is in play, so its spots may follow the players; a break's may not
+            // (the bodies are held, and only their drawn models are carried).
+            bool focus = _focus > 0.0f, chase = _chase > 0.0f && !focus, follow = focus;
             if (stage.TryBreak(out var beats) && !beats.Halftime && beats.From != beats.To)
             {
                 focus = beats.Age >= beats.Undock && beats.Age < beats.Reveal + 0.8f;
                 chase = beats.Age < beats.Undock;
+                follow = false;
             }
             // Reduced effects: no chase (it is the one fast sweep here).
             if (reduced) chase = false;
 
+            _lit = Mathf.MoveTowards(_lit, focus ? 1.0f : 0.0f, dt * (focus ? 6.0f : 1.5f));
+            _focusAge = focus ? _focusAge + dt : 0.0f;
+            // The veil: up in an eighth of a second, then down to a third of itself over the next.
+            float veil = focus ? Mathf.Clamp01(_focusAge / 0.12f) * Mathf.Lerp(1.0f, 0.3f, Mathf.Clamp01((_focusAge - 0.25f) / 1.0f)) : 0.0f;
+
             float shared = (float)(ArenaFx.SharedClock % 3600.0);
+            var round = GameServices.Round;
             for (int i = 0; i < Spots; i += reduced ? 2 : 1)
             {
                 Vector3 foot = centre + ArenaStageMesh.Direction(SpotBearing[i]) * SpotRadius + Vector3.up * SpotHeight;
-                bool crowd = (i & 1) == 1;
+                bool crowd = (i & 1) == 1, landed = true;
+                float radius = PoolRadius;
                 Vector3 want;
                 float out_;
                 if (focus)
                 {
                     out_ = 0.0f;
-                    want = centre + ArenaStageMesh.Direction(45.0f * i) * 2.5f + Vector3.up * (stage.CanHeight + 1.6f);
+                    want = FocusPoint(stage, follow ? round : null, i, centre, ref radius, out landed);
                 }
                 else if (chase)
                 {
@@ -389,22 +454,109 @@ namespace TumbangPreso.Map
                 // The snap onto the stage is quick; everything else eases.
                 _spotAim[i] = _spotsAimed ? Vector3.Lerp(_spotAim[i], want, 1.0f - Mathf.Exp(-(focus ? 10.0f : chase ? 16.0f : 3.0f) * dt)) : want;
                 Vector3 aim = _spotAim[i];
+                Vector3 along = aim - foot;
+                float reach = along.magnitude;
+                if (reach < 1.0f) continue;
+                Vector3 direction = along / reach;
 
-                fx.DrawBeam(foot, aim, 1.1f, focus ? 4.0f : 8.5f, ArenaFx.White, 0.10f);
-                fx.DrawBeam(foot, aim, 0.4f, focus ? 1.5f : 3.0f, ArenaFx.Cyan, 0.07f);
+                // The shaft. Over a gap it has nothing to land on and runs on down.
+                Vector3 end = focus && !landed ? aim + direction * 18.0f : aim;
+                ArenaGlare.Shaft(fx, foot, end, focus ? PoolRadius * 2.0f : 8.5f, SpotColour, 1.0f, _clock, reduced ? 0 : i + 1);
 
-                if (focus) { fx.DrawBillboard(ArenaFx.Cell.Dot, aim, 3.2f, ArenaFx.White, 0.22f); continue; }
+                // The lamp. Only a spot on the stage can have a body or a deck between it and the eye.
+                float seen = focus ? ArenaGlare.Seen(foot, stage) : 1.0f;
+                _spotSeen[i] = Mathf.MoveTowards(_spotSeen[i], seen, dt * 12.0f);
+                ArenaGlare.Lamp(fx, foot, direction, SpotColour, 1.0f, SpotFull, SpotGone, 1.0f, true, focus && !reduced, _spotSeen[i], 0.22f);
+
+                if (focus)
+                {
+                    // On the deck under it, where it was measured to fit, once the aim has arrived there.
+                    if (!landed || (aim - want).sqrMagnitude > 1.0f) continue;
+                    float across = radius * 2.0f / 0.92f;
+                    fx.DrawFlat(ArenaFx.Cell.Disc, want, across, across, 0.0f, SpotColour, 0.20f * _lit);
+                    continue;
+                }
 
                 // The pool: a soft disc lying along the surface it lands on (flat on the field,
                 // tilted up the stand), where the aim has it.
                 Vector3 flat = aim - centre; flat.y = 0.0f;
                 float r = flat.magnitude;
                 if (r < 1.0f) continue;
-                Vector3 outward = flat / r, across = Vector3.Cross(Vector3.up, outward);
+                Vector3 outward = flat / r, sideways = Vector3.Cross(Vector3.up, outward);
                 Vector3 slope = (outward * 2.0f + Vector3.up * (BowlHeight(r + 1.0f) - BowlHeight(r - 1.0f))).normalized;
-                fx.DrawQuad(ArenaFx.Cell.Disc, aim, across * 6.0f, slope * 6.0f, ArenaFx.White, 0.16f);
+                fx.DrawQuad(ArenaFx.Cell.Disc, aim, sideways * 6.0f, slope * 6.0f, SpotColour, 0.16f);
             }
             _spotsAimed = true;
+
+            ArenaGlare.Veil(fx, veil);
+        }
+
+        /// <summary>
+        /// Where spot `i` points while the spots are on the stage, in the world: an even one
+        /// at its own place on a ring 3.4 m round the can, an odd one at a player's feet (or,
+        /// with no such player, on a wider ring). `landed` is whether a deck is under it; then
+        /// the point is 5 cm over that deck's top and `radius` is the pool that fits on it.
+        /// </summary>
+        private Vector3 FocusPoint(ArenaStage stage, RoundDirector round, int i, Vector3 centre, ref float radius, out bool landed)
+        {
+            int pair = i >> 1;
+            bool odd = (i & 1) == 1;
+            CharacterMotor who = null;
+            if (odd && round != null && pair < round.Players.Count) who = round.Players[pair];
+            if (who != null && (!who.gameObject.activeInHierarchy || ArenaStage.IsShaftFall(who))) who = null;
+
+            Vector3 target = who != null
+                ? who.transform.position
+                : centre + ArenaStageMesh.Direction(45.0f + 90.0f * pair + (odd ? 45.0f : 0.0f)) * (odd ? 7.5f : 3.4f) + Vector3.up * stage.CanHeight;
+
+            Vector3 local = stage.transform.InverseTransformPoint(target);
+            landed = Surface(stage, local.x, local.z, ref radius, out float top);
+            if (landed) local.y = top + 0.05f;
+            return stage.transform.TransformPoint(local);
+        }
+
+        /// <summary>
+        /// The deck under a plan point of the stage (its own frame), if a pool `radius` across
+        /// fits on one: the highest flat top that covers the point that far in from every one
+        /// of its edges, tried again at half the radius. Never a ramp (a pool lies flat), never
+        /// while the platforms are moving, and false over a gap.
+        /// </summary>
+        private static bool Surface(ArenaStage stage, float x, float z, ref float radius, out float top)
+        {
+            top = float.NegativeInfinity;
+            int layout = stage.Applied;
+            if (layout < 0 || stage.Travelling) return false;
+
+            for (int attempt = 0; attempt < 2; attempt++)
+            {
+                for (int p = 0; p < stage.Pieces.Length; p++)
+                {
+                    var piece = stage.Pieces[p];
+                    if (piece == null || piece.Shapes == null || layout >= piece.Shapes.Length) continue;
+                    var shape = piece.Shapes[layout];
+                    if (!shape.Exists || shape.IsRamp || !shape.Contains(x, z, radius)) continue;
+                    top = Mathf.Max(top, shape.Top);
+                }
+
+                if (!float.IsNegativeInfinity(top)) return true;
+                radius *= 0.5f;
+            }
+
+            return false;
+        }
+
+        /// <summary>The 24 floodlight banks: lamps that are always on and always aimed at the
+        /// stage, so from the stage each is a small steady glare with a short streak.</summary>
+        private void Floodlights(ArenaFx fx, Vector3 centre, bool reduced)
+        {
+            for (int i = 0; i < Floods; i += reduced ? 2 : 1)
+            {
+                Vector3 outward = ArenaStageMesh.Direction(90.0f * (i / 6) + FloodBearing[i % 6]);
+                Vector3 lamp = centre + outward * FloodRadius + Vector3.up * FloodHeight;
+                Vector3 aim = (centre + outward * FloodAimOut + Vector3.up * 0.5f - lamp).normalized;
+                float breathe = 0.93f + 0.07f * Mathf.Sin(_clock * (1.9f + 0.13f * i) + i * 1.9f);
+                ArenaGlare.Lamp(fx, lamp, aim, FloodColour, 0.5f * breathe, 7.0f, 24.0f, 0.55f);
+            }
         }
 
         private void Fireworks(ArenaFx fx, float dt)
@@ -642,6 +794,7 @@ namespace TumbangPreso.Map
                 Vector3 end = foot + aim * 430.0f;
                 fx.DrawBeam(foot, end, 5.0f, 44.0f, ArenaFx.White, 0.075f);
                 fx.DrawBeam(foot, end, 2.0f, 14.0f, ArenaFx.Cyan, 0.06f);
+                Searchlight(fx, foot, aim, centre, ArenaFx.White);
             }
 
             // The four landing pads: steeper, and slower, crossing over the bowl. Seen from the
@@ -657,6 +810,7 @@ namespace TumbangPreso.Map
                 Vector3 end = foot + aim * 460.0f;
                 fx.DrawBeam(foot, end, 4.0f, 36.0f, ArenaFx.Cyan, 0.07f);
                 fx.DrawBeam(foot, end, 1.6f, 11.0f, ArenaFx.White, 0.055f);
+                Searchlight(fx, foot, aim, centre, ArenaFx.Cyan);
             }
 
             // Five rooftops in the city: each turns a slow cone about the vertical, leaning
@@ -671,7 +825,16 @@ namespace TumbangPreso.Map
                 Vector3 end = foot + aim.normalized * 520.0f;
                 fx.DrawBeam(foot, end, 6.0f, 50.0f, i % 2 == 0 ? ArenaFx.Magenta : ArenaFx.White, 0.06f);
                 fx.DrawBeam(foot, end, 2.2f, 16.0f, ArenaFx.White, 0.045f);
+                Searchlight(fx, foot, aim, centre, i % 2 == 0 ? ArenaFx.Magenta : ArenaFx.White);
             }
+        }
+
+        /// <summary>A searchlight's lamp: it glares for the moment its beam sweeps across the
+        /// eye (whole inside 1.5 degrees, gone by 6), if the stadium is not between them.</summary>
+        private static void Searchlight(ArenaFx fx, Vector3 foot, Vector3 aim, Vector3 centre, Color colour)
+        {
+            if (!ArenaGlare.OverTheBowl(foot, centre)) return;
+            ArenaGlare.Lamp(fx, foot, aim.normalized, colour, 0.85f, 1.5f, 6.0f, 1.2f, true, false, 1.0f, 0.12f);
         }
 
         private void Screens(ArenaFx fx, float dt, Vector3 centre)

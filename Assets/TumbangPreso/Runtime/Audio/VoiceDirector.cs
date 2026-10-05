@@ -28,7 +28,14 @@ namespace TumbangPreso.Audio
             "count_3" => "Three!", "count_2" => "Two!", "count_1" => "One!",
             "count_go" => "Begin!", "clock_30" => "Thirty seconds left!",
             "clock_10" => "Ten seconds left!", "match_win" => "Winner!",
-            "match_draw" => "It's a draw!", _ => null
+            "match_draw" => "It's a draw!",
+            // The Arena's own lines (`Map.ArenaCrowdAudio.Lines`). None is recorded yet, and an absent
+            // take is never captioned: `Play` returns before it reaches a caption.
+            "arena_welcome" => "Welcome to the Arena!", "arena_next_stage" => "Next stage!",
+            "arena_plaza" => "Plaza!", "arena_tore" => "Tower!", "arena_krus" => "Cross!",
+            "arena_hukay" => "Pit!", "arena_entablado" => "Stage!",
+            "arena_balloon" => "The balloon popped!", "arena_rescue" => "Caught! Back in the game!",
+            _ => null
         };
         /// <summary>How far the music drops under a line, and the floor on how long that
         /// duck is held — a duck that recovers before the line ends pumps audibly.</summary>

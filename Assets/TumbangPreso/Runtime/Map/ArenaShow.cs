@@ -13,7 +13,7 @@ namespace TumbangPreso.Map
     ///   1. ALARM (0 to 2.4 s). The picture dims (`ArenaBreakCamera`), the alarm sounds with a
     ///      riser under it, beacons turn round the stage's rim, the next layout's hologram
     ///      sweeps in from the can behind a scanning ring, and its NAME stands over the stage
-    ///      as a hologram title. The drones come down over every player.
+    ///      as a hologram title. The drones come down over every player, looking, and lock on.
     ///   2. THE MOVE (2.4 to 6.2 s). Every moving platform undocks at once with a jolt, a
     ///      clunk, a thruster burst from under it and arcs along it; the drones lift the
     ///      players clear; then the platforms go one after another, trailing light, and each
@@ -75,8 +75,8 @@ namespace TumbangPreso.Map
         private readonly CharacterMotor[] _liftBody = new CharacterMotor[MaxLifted];
         private readonly Transform[] _liftRoot = new Transform[MaxLifted];
         private readonly Vector3[] _liftRest = new Vector3[MaxLifted], _liftFrom = new Vector3[MaxLifted], _liftTo = new Vector3[MaxLifted];
+        private readonly Quaternion[] _liftTurn = new Quaternion[MaxLifted];
         private readonly ArenaDrone[] _liftDrone = new ArenaDrone[MaxLifted];
-        private readonly bool[] _liftDown = new bool[MaxLifted], _liftPinged = new bool[MaxLifted];
         private int _lifted;
         private bool _lifting;
         private Transform _droneRoot;
@@ -459,7 +459,7 @@ namespace TumbangPreso.Map
             if (Crossed(beats.Reveal, age))
             {
                 ArenaFx.CueFlat("sfx_arena_reveal");
-                ArenaFx.CueFlat("sfx_arena_crowd_roar");
+                ArenaCrowdAudio.Reveal();
                 ArenaFx.CueFlat("sfx_arena_pyro", 0.92f, 1.0f, 0.9f);
                 ArenaBreakCamera.Punch(2.2f);
                 ArenaCrowd.Excite(1.0f, 5.5f);
@@ -514,7 +514,7 @@ namespace TumbangPreso.Map
         {
             float age = beats.Age;
             float come = beats.Undock - 0.75f, rise = beats.Undock - 0.1f, across = beats.Undock + 0.9f, over = beats.MoveEnd - 0.2f;
-            float lower = beats.Reveal + 0.15f, down = beats.Reveal + 1.05f, gone = Mathf.Min(beats.Duration - 0.05f, down + 0.5f);
+            float lower = beats.Reveal + 0.15f, down = beats.Reveal + 1.05f, gone = Mathf.Min(beats.Duration - 0.05f, down + 0.9f);
 
             if (age < come || age >= beats.Duration - 0.02f) { if (_lifting) EndLift(); return; }
             if (!_lifting) BeginLift(hp);
@@ -533,38 +533,32 @@ namespace TumbangPreso.Map
                 float top = carry + Mathf.Sin((age + i * 0.7f) * 2.4f) * 0.12f * up * (1.0f - drop);
                 at.y = age < lower ? Mathf.Lerp(from.y, top, up) : Mathf.Lerp(top, to.y, drop);
 
-                // ONLY the drawn model moves: its root's own rest pose plus the offset.
+                // ONLY the drawn model moves: its root's own rest pose plus the offset. It turns
+                // once, slowly, in the beam on its way over (a whole turn, so it lands as it stood).
                 Vector3 offset = at - body.transform.position;
                 var parent = root.parent;
                 root.localPosition = _liftRest[i] + (parent != null ? parent.InverseTransformVector(offset) : offset);
+                root.localRotation = _liftTurn[i] * Quaternion.AngleAxis(360.0f * Smooth((age - rise) / (lower - rise)), Vector3.up);
 
-                // The drone over it: down onto the body, with it all the way, away at the end.
+                // The drone over it: down onto the body looking for it, locked on, with it all the
+                // way, a bow where it set the body down, and away. The drone draws each act itself.
                 var drone = _liftDrone[i];
                 if (drone == null) continue;
-                float arrive = Smooth((age - come) / (rise - come)), leave = Smooth((age - down) / (gone - down));
-                float beam = (ArenaDrone.Hover - 1.25f) * arrive * (1.0f - leave);
-                Vector3 hover = at + Vector3.up * (ArenaDrone.Hover + 12.0f * (1.0f - arrive) + 14.0f * leave);
-                drone.Hold(hover, body.transform.eulerAngles.y, beam, dt);
+                float arrive = Smooth((age - come) / (rise - come)), leave = Mathf.Clamp01((age - down) / (gone - down));
+                const float bow = 0.5f;
+                ArenaDrone.Act act;
+                float t;
+                if (age < rise) { bool locked = arrive >= 0.7f; act = locked ? ArenaDrone.Act.Lock : ArenaDrone.Act.Search; t = locked ? (arrive - 0.7f) / 0.3f : arrive / 0.7f; }
+                else if (age < across) { act = ArenaDrone.Act.Haul; t = (age - rise) / (across - rise); }
+                else if (age < lower) { act = ArenaDrone.Act.Across; t = Mathf.Clamp01((age - across) / (over - across)); }
+                else if (age < down) { act = ArenaDrone.Act.SetDown; t = (age - lower) / (down - lower); }
+                else if (leave < bow) { act = ArenaDrone.Act.Proud; t = leave / bow; }
+                else { act = ArenaDrone.Act.Leave; t = (leave - bow) / (1.0f - bow); }
 
-                if (!_liftPinged[i] && age >= rise)
-                {
-                    _liftPinged[i] = true;
-                    fx.Ring(from + Vector3.up * 0.1f, 0.3f, 3.6f, ArenaFx.Cyan, 0.8f, 0.5f, ArenaFx.Cell.ThinRing);
-                    if (i == 0) ArenaFx.CueFlat("sfx_arena_drone_ping", 0.98f, 1.02f, 0.7f);
-                }
-
-                if (!_liftDown[i] && age >= down)
-                {
-                    _liftDown[i] = true;
-                    fx.Ring(to + Vector3.up * 0.08f, 0.4f, 3.8f, ArenaFx.Cyan, 0.8f, 0.5f);
-                    fx.Dots(to + Vector3.up * 0.1f, Vector3.up, 80.0f, 8, 1.5f, 4.0f, ArenaFx.White, 0.4f, 0.3f, 0.6f, 0.3f, 3.0f);
-                    if (i == 0) ArenaFx.CueFlat("sfx_arena_drone_set", 0.98f, 1.02f, 0.8f);
-                }
-                else if (age >= lower && age < down)
-                {
-                    // The pool of light on its mark as it comes down.
-                    fx.DrawFlat(ArenaFx.Cell.Disc, to + Vector3.up * 0.06f, 1.6f + 1.6f * drop, 1.6f + 1.6f * drop, 0.0f, ArenaFx.Cyan, 0.18f + 0.3f * drop);
-                }
+                float away = act == ArenaDrone.Act.Leave ? t : 0.0f;
+                float beam = age < down ? (ArenaDrone.Hover - 1.25f) * arrive : 0.0f;
+                Vector3 hover = at + Vector3.up * (ArenaDrone.Hover + 12.0f * (1.0f - arrive) + 16.0f * away * away);
+                drone.Hold(hover, act, t, beam, at, to, dt, i == 0);
             }
         }
 
@@ -588,10 +582,9 @@ namespace TumbangPreso.Map
                 if (root == null || root == body.transform) continue;
 
                 int i = _lifted++;
-                _liftBody[i] = body; _liftRoot[i] = root; _liftRest[i] = root.localPosition;
+                _liftBody[i] = body; _liftRoot[i] = root; _liftRest[i] = root.localPosition; _liftTurn[i] = root.localRotation;
                 _liftFrom[i] = body.transform.position;
                 _liftTo[i] = MarkFor(body, hp.NextTaya);
-                _liftDown[i] = false; _liftPinged[i] = false;
 
                 if (_liftDrone[i] == null)
                 {
@@ -627,7 +620,7 @@ namespace TumbangPreso.Map
             _lifting = false;
             for (int i = 0; i < _lifted; i++)
             {
-                if (_liftRoot[i] != null) _liftRoot[i].localPosition = _liftRest[i];
+                if (_liftRoot[i] != null) { _liftRoot[i].localPosition = _liftRest[i]; _liftRoot[i].localRotation = _liftTurn[i]; }
                 if (_liftDrone[i] != null) _liftDrone[i].Release();
                 _liftBody[i] = null; _liftRoot[i] = null;
             }

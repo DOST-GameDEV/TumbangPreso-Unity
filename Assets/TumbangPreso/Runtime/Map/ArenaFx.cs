@@ -11,7 +11,8 @@ namespace TumbangPreso.Map
     ///
     /// ONE MESH, ONE MATERIAL, ONE DRAW CALL. Each effect is a quad in a fixed pool, textured
     /// from one small atlas painted here in code (a soft dot, a shock ring, a streak, a glint,
-    /// a chevron, a disc, a thin ring, a scan ring) and coloured by its vertices, on
+    /// a chevron, a disc, a thin ring, a scan ring, and eight COMIC shapes with hard edges and
+    /// flat fills: see `Cell`) and coloured by its vertices, on
     /// TumbangPreso/ArenaGlow with `_VertexTint` on: unlit, added, no depth write. The quads are
     /// rebuilt each frame into arrays made once, so nothing is allocated after `Awake`, and with
     /// nothing alive nothing is uploaded.
@@ -37,17 +38,31 @@ namespace TumbangPreso.Map
     {
         public static ArenaFx Instance { get; private set; }
 
-        /// <summary>The atlas cells, left to right, top row first.</summary>
-        public enum Cell : byte { Dot, Ring, Streak, Star, Chevron, Disc, ThinRing, Scan }
+        /// <summary>
+        /// The atlas cells, left to right, top row first. The first eight are LIGHT (soft, the
+        /// show's and the ambience's). The second eight are COMIC (owner, 2026-10-05: "drone
+        /// design and ufo effect needs to be more stylized"): hard edges and flat fills, the
+        /// game's own callout language drawn as shapes. Band: a bold flat ring. Star5: a chunky
+        /// five-pointed star. Burst: a zigzag crown, a comic burst's outline. Halftone: a disc
+        /// of dots that shrink toward its rim. Target: a ring, four darts and a spot. Line: a
+        /// speed line, a sliver pointed at both ends. Sparkle: a fat four-pointed twinkle.
+        /// Puff: a three-lobed cartoon cloud. `tools/review_arena_drone.py` paints the same
+        /// sixteen (`fx_shape`) into Logs/arena/stage/drone_fx_atlas_v6.png.
+        /// </summary>
+        public enum Cell : byte
+        {
+            Dot, Ring, Streak, Star, Chevron, Disc, ThinRing, Scan,
+            Band, Star5, Burst, Halftone, Target, Line, Sparkle, Puff
+        }
 
         /// <summary>How a particle's quad is turned. Billboard faces the eye; Flat lies on the
         /// ground plane turned by its yaw; Stretch runs along its own travel; Upright stands on
         /// the vertical, its foot at the position.</summary>
         public enum Mode : byte { Billboard, Flat, Stretch, Upright }
 
-        public const int MaxParticles = 1024, MaxImmediate = 384;
+        public const int MaxParticles = 1024, MaxImmediate = 640;
         private const int Quads = MaxParticles + MaxImmediate;
-        private const int AtlasColumns = 4, AtlasRows = 2, CellPixels = 128;
+        private const int AtlasColumns = 4, AtlasRows = 4, CellPixels = 128;
 
         // The palette. Nothing near the team hues #f87020 and #0080e8 (the art brief's rule 7):
         // the stage's own cyan-white, a deep LED indigo, the kit's teal, lime and violet, a
@@ -232,7 +247,7 @@ namespace TumbangPreso.Map
             return material;
         }
 
-        /// <summary>The eight shapes, white with the shape in the alpha, each fading to nothing
+        /// <summary>The sixteen shapes, white with the shape in the alpha, each fading to nothing
         /// inside its own cell so neighbours never bleed.</summary>
         private static Texture2D PaintAtlas()
         {
@@ -285,12 +300,63 @@ namespace TumbangPreso.Map
                 case Cell.Disc: return Mathf.Clamp01((0.92f - r) * 3.2f) * (0.55f + 0.45f * Mathf.Exp(-r * r * 2.0f));
                 case Cell.ThinRing: return Band(r, 0.90f, 0.022f);
                 case Cell.Scan: return Band(r, 0.90f, 0.03f) + 0.5f * Mathf.Clamp01((r - 0.55f) / 0.35f) * Mathf.Clamp01((0.90f - r) * 40.0f);
+
+                // ---- The comic shapes: a hard edge is a ramp `Hard` steep, about three pixels of feather.
+                case Cell.Band: return Mathf.Clamp01((0.115f - Mathf.Abs(r - 0.76f)) * Hard);
+                case Cell.Star5:
+                {
+                    // The straight edge from a point (0.92) to the notch beside it (0.44), by the angle from the nearest point.
+                    float u = Mathf.Atan2(x, y) * 5.0f / (2.0f * Mathf.PI);
+                    float phi = Mathf.Abs(u - Mathf.Floor(u + 0.5f)) * (2.0f * Mathf.PI / 5.0f);
+                    const float fifth = Mathf.PI / 5.0f;
+                    float edge = 0.92f * 0.44f * Mathf.Sin(fifth) / (0.92f * Mathf.Sin(phi) + 0.44f * Mathf.Sin(fifth - phi));
+                    return Mathf.Clamp01((edge - r) * Hard);
+                }
+                case Cell.Burst:
+                {
+                    // Twelve teeth: the line zigzags between 0.54 and 0.86.
+                    float edge = 0.70f + 0.16f * (Mathf.Abs(Mathf.Repeat(Mathf.Atan2(x, y) * 12.0f / (2.0f * Mathf.PI), 1.0f) * 2.0f - 1.0f) * 2.0f - 1.0f);
+                    return Mathf.Clamp01((0.075f - Mathf.Abs(r - edge)) * Hard);
+                }
+                case Cell.Halftone:
+                {
+                    float gx = Mathf.Repeat(x * 5.0f + 0.5f, 1.0f) - 0.5f, gy = Mathf.Repeat(y * 5.0f + 0.5f, 1.0f) - 0.5f;
+                    return Mathf.Clamp01((0.44f * (1.0f - r) - Mathf.Sqrt(gx * gx + gy * gy)) * 18.0f) * Mathf.Clamp01((0.9f - r) * 20.0f);
+                }
+                case Cell.Target:
+                {
+                    float angle = Mathf.Atan2(x, y);
+                    float ring = Mathf.Clamp01((0.045f - Mathf.Abs(r - 0.84f)) * Hard);
+                    // The angle from the nearest of four axes: a dart on each, its point inward.
+                    float q = Mathf.Repeat(angle + Mathf.PI / 4.0f, Mathf.PI / 2.0f) - Mathf.PI / 4.0f;
+                    float dart = Mathf.Clamp01((0.30f * (0.70f - r) / 0.26f - Mathf.Abs(q) * r) * Hard) * Mathf.Clamp01((r - 0.44f) * Hard) * Mathf.Clamp01((0.70f - r) * Hard);
+                    float spot = Mathf.Clamp01((0.12f - r) * Hard);
+                    float dash = Mathf.Clamp01((0.03f - Mathf.Abs(r - 0.30f)) * Hard)
+                               * Mathf.Clamp01((Mathf.Abs(Mathf.Repeat(angle * 8.0f / (2.0f * Mathf.PI), 1.0f) - 0.5f) - 0.2f) * 12.0f);
+                    return Mathf.Max(Mathf.Max(ring, dart), Mathf.Max(spot, dash));
+                }
+                case Cell.Line: return Mathf.Clamp01((0.085f * (1.0f - Mathf.Abs(y) / 0.94f) - Mathf.Abs(x)) * 60.0f);
+                case Cell.Sparkle:
+                {
+                    float ax = Mathf.Abs(x), ay = Mathf.Abs(y);
+                    return Mathf.Clamp01((0.86f - (ax + ay + 2.6f * Mathf.Sqrt(ax * ay))) * 22.0f);
+                }
+                case Cell.Puff:
+                {
+                    float left = Mathf.Sqrt((x + 0.36f) * (x + 0.36f) + (y + 0.10f) * (y + 0.10f)) - 0.36f;
+                    float right = Mathf.Sqrt((x - 0.36f) * (x - 0.36f) + (y + 0.10f) * (y + 0.10f)) - 0.36f;
+                    float top = Mathf.Sqrt(x * x + (y - 0.20f) * (y - 0.20f)) - 0.46f;
+                    return Mathf.Clamp01(-Mathf.Min(Mathf.Min(left, right), top) * Hard) * Mathf.Clamp01((y + 0.42f) * Hard);
+                }
             }
 
             return 0.0f;
         }
 
         private static float Band(float r, float at, float half) => Mathf.Exp(-(r - at) * (r - at) / (half * half));
+
+        /// <summary>How steep a comic shape's edge is: one over the feather, in cell half widths.</summary>
+        private const float Hard = 40.0f;
 
         // ------------------------------------------------------------------ its own random stream
 
@@ -345,6 +411,28 @@ namespace TumbangPreso.Map
         /// <summary>A soft ball of light that swells and goes.</summary>
         public void Flash(Vector3 at, float size0, float size1, Color colour, float alpha, float life)
             => Emit(Cell.Dot, Mode.Billboard, at, Vector3.zero, colour, alpha, life, size0, size1, -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.08f);
+
+        /// <summary>
+        /// Comic stars thrown from a point: chunky five-pointed stars and fat sparkles that
+        /// tumble out, hang and fall, each turned its own way (a flat quad's yaw; a billboard
+        /// keeps its own up, so every other one is the sparkle, which reads at any turn).
+        /// </summary>
+        public void Stars(Vector3 at, Vector3 direction, float spread, int count, float speedLow, float speedHigh, Color colour, Color other,
+                          float alpha, float lifeLow, float lifeHigh, float size, float gravity = 5.0f, float drag = 1.6f)
+        {
+            count = Count(count);
+            var forward = direction.sqrMagnitude > 1e-6f ? direction.normalized : Vector3.up;
+            var turn = Quaternion.FromToRotation(Vector3.up, forward);
+            float cosLimit = Mathf.Cos(Mathf.Clamp(spread, 0.0f, 180.0f) * Mathf.Deg2Rad);
+            for (int i = 0; i < count; i++)
+            {
+                float c = Rand(cosLimit, 1.0f), a = Rand(0.0f, Mathf.PI * 2.0f), s = Mathf.Sqrt(Mathf.Max(0.0f, 1.0f - c * c));
+                var d = turn * new Vector3(s * Mathf.Cos(a), c, s * Mathf.Sin(a));
+                float big = size * Rand(0.6f, 1.15f);
+                Emit(i % 2 == 0 ? Cell.Star5 : Cell.Sparkle, Mode.Billboard, at, d * Rand(speedLow, speedHigh), i % 3 == 0 ? other : colour, alpha,
+                     Rand(lifeLow, lifeHigh), big * 0.5f, big, -1.0f, -1.0f, gravity, drag, 0.0f, 0.12f);
+            }
+        }
 
         /// <summary>A four-pointed glint.</summary>
         public void Glint(Vector3 at, float size, Color colour, float alpha, float life)
@@ -421,6 +509,15 @@ namespace TumbangPreso.Map
             Write(v, centre - right - up, centre + right - up, centre + right + up, centre - right + up, cell, colour, alpha);
         }
 
+        /// <summary>For this frame only: a quad facing the eye, turned `degrees` about the line of sight (a target closing, a tumbling star).</summary>
+        public void DrawSpun(Cell cell, Vector3 centre, float size, float degrees, Color colour, float alpha)
+        {
+            if (alpha <= 0.002f || !Reserve(out int v)) return;
+            float rad = degrees * Mathf.Deg2Rad, c = Mathf.Cos(rad) * size * 0.5f, s = Mathf.Sin(rad) * size * 0.5f;
+            Vector3 right = _right * c + _up * s, up = _up * c - _right * s;
+            Write(v, centre - right - up, centre + right - up, centre + right + up, centre - right + up, cell, colour, alpha);
+        }
+
         /// <summary>For this frame only: a beam of light from one point to another, turned to
         /// face the eye about its own length, `width0` wide at its foot and `width1` at its end.</summary>
         public void DrawBeam(Vector3 from, Vector3 to, float width0, float width1, Color colour, float alpha, Cell cell = Cell.Streak)
@@ -439,6 +536,30 @@ namespace TumbangPreso.Map
         {
             if (alpha <= 0.002f || !Reserve(out int v)) return;
             Write(v, centre - halfRight - halfUp, centre + halfRight - halfUp, centre + halfRight + halfUp, centre - halfRight + halfUp, cell, colour, alpha);
+        }
+
+        /// <summary>
+        /// For this frame only: a SHAFT of light through the air (`ArenaGlare`), turned to face
+        /// the eye about its own length like a beam, but lit along it by the caller: `alpha0` at
+        /// its foot and `alpha1` at its end, where a beam's streak fades at BOTH ends and so has
+        /// no lamp. Only the middle of the streak's cell is drawn (its soft sides, none of its
+        /// ends), so several laid over each other make a cone with a bright core.
+        /// </summary>
+        public void DrawShaft(Vector3 from, Vector3 to, float width0, float width1, Color colour, float alpha0, float alpha1)
+        {
+            if ((alpha0 <= 0.002f && alpha1 <= 0.002f) || !Reserve(out int v)) return;
+            Vector3 along = to - from;
+            Vector3 side = Vector3.Cross(along, _eye - (from + to) * 0.5f);
+            if (side.sqrMagnitude < 1e-8f) side = Vector3.Cross(along, Vector3.up);
+            if (side.sqrMagnitude < 1e-8f) side = Vector3.right;
+            side.Normalize();
+            Write(v, from - side * (width0 * 0.5f), from + side * (width0 * 0.5f), to + side * (width1 * 0.5f), to - side * (width1 * 0.5f), Cell.Streak, colour, alpha0);
+
+            byte end = (byte)(Mathf.Clamp01(alpha1 * _light) * 255.0f);
+            _colours[v + 2].a = end; _colours[v + 3].a = end;
+            float middle = (_uvs[v].y + _uvs[v + 2].y) * 0.5f, reach = (_uvs[v + 2].y - _uvs[v].y) * 0.08f;
+            _uvs[v].y = _uvs[v + 1].y = middle - reach;
+            _uvs[v + 2].y = _uvs[v + 3].y = middle + reach;
         }
 
         private bool Reserve(out int vertex)
