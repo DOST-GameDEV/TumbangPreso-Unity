@@ -1,0 +1,74 @@
+{
+  "candidate-classified-result.json": {
+    "bytes": 284,
+    "sha256": "61856ca766da1fc516866ef96cc8d933bc1f4f0f191c9f49e45b9a5673fbfb9d"
+  },
+  "candidate-direct-result.json": {
+    "bytes": 68752,
+    "sha256": "af12c6ea1c4d0c18da008fa533ca6e6114cb8af843dcc3bf7292fd02a7e7b269"
+  },
+  "candidate-launch.json": {
+    "bytes": 968,
+    "sha256": "1319bfb1b8b721992529191be40f77e507661f334afaabc8dd814a287007567a"
+  },
+  "candidate-observations.json": {
+    "bytes": 1515,
+    "sha256": "f92d96eb5f979095e7cac0ad23963a7f6d093d3d73aa8d9edb789d8c191e79b3"
+  },
+  "candidate-tests.xml": {
+    "bytes": 14386,
+    "sha256": "e2dd0ae0dc4b2e1f35b097b76c8500ab1fe0e00730c1ad8d6acf74554a0d360d"
+  },
+  "checked-source.json": {
+    "bytes": 420,
+    "sha256": "f336f4cc524e1f6efb98a798503f4bcbad17bbc019e2b6403bb0e64eb3a7acb6"
+  },
+  "fixture-compile-classified-result.json": {
+    "bytes": 282,
+    "sha256": "ddcac38e3e24839a8afa6a342fefe732a88d761da92b04b610d7fccbcd2db5fd"
+  },
+  "fixture-compile-direct-result.json": {
+    "bytes": 166,
+    "sha256": "0c6e528764097fc90c78968a6b0c85b11ca14e0833e1df55a82b8a6ee55478c4"
+  },
+  "fixture-compile-launch.json": {
+    "bytes": 964,
+    "sha256": "4b452794acd868add7f5b316e9b15e520354d86ef9dccec549438cef25a6f2c5"
+  },
+  "fixture-compile-observations.json": {
+    "bytes": 490,
+    "sha256": "a3256fff2c243cb8c354a37c0a8abc3b85e93e68e0eeefabaa9b8a5de3d8f290"
+  },
+  "original-classified-result.json": {
+    "bytes": 284,
+    "sha256": "ca6d93f953f6532e2ec318dc2ccf7766ad9e465a986c2645505175bda32e9cca"
+  },
+  "original-direct-result.json": {
+    "bytes": 68752,
+    "sha256": "c964e23e88bf650bd1695e979ee8eaab1a7bcfeea05d049206d4f6a0d6b5828b"
+  },
+  "original-launch.json": {
+    "bytes": 964,
+    "sha256": "fc9e43a626a4b1a1dd0bc6df2363a61ed1b28552db3752b1e04f645c31d0b352"
+  },
+  "original-observations.json": {
+    "bytes": 1447,
+    "sha256": "9b1d9217a5f423cdb881f2e5e907fc3b4347111abc87da7ee2bcb6663471e19a"
+  },
+  "original-tests.xml": {
+    "bytes": 15775,
+    "sha256": "be5458e9be1f953fe4b02c89640ad76bfd1b682e1c847c2ce118e0c765cfe7dc"
+  },
+  "packet.json": {
+    "bytes": 829,
+    "sha256": "3931317da121980ddf501d2d55203b204354c8d324230b94170b30c334c80c8a"
+  },
+  "qualified-fixture.cs.txt": {
+    "bytes": 4010,
+    "sha256": "3059c5f841610f0e3cea3145cae585f5c298ef12a9c3f4e6f4a8996ab95e1afa"
+  },
+  "qualified-fixture.meta.txt": {
+    "bytes": 60,
+    "sha256": "824ee486ff967d2904421e7fa43f84e370a9d1344279717686609015fa720332"
+  }
+}

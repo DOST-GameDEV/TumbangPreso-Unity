@@ -1,0 +1,7 @@
+{
+  "observations": [
+    "Assets\\TumbangPreso\\Tests\\PlayMode\\HostIdentityCollisionTests.cs(50,20): error CS0117: 'Assert' does not contain a definition for 'Multiple'",
+    "Assets\\TumbangPreso\\Tests\\PlayMode\\HostIdentityCollisionTests.cs(50,20): error CS0117: 'Assert' does not contain a definition for 'Multiple'",
+    "Assets\\TumbangPreso\\Tests\\PlayMode\\HostIdentityCollisionTests.cs(50,20): error CS0117: 'Assert' does not contain a definition for 'Multiple'"
+  ]
+}

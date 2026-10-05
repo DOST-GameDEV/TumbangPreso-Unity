@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 14:28:23Z" end-time="2026-10-05 14:28:24Z" duration="0.5243828">
+  <test-suite type="TestSuite" id="3186" name="TumpWorker-qa-a-be075dcdfa07" fullname="TumpWorker-qa-a-be075dcdfa07" runstate="Runnable" testcasecount="1780" result="Failed" site="Child" start-time="2026-10-05 14:28:23Z" end-time="2026-10-05 14:28:24Z" duration="0.524383" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3178" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/Matthew/dev/tump-workers1003/qa-a/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1780" result="Failed" site="Child" start-time="2026-10-05 14:28:23Z" end-time="2026-10-05 14:28:24Z" duration="0.513807" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="30576" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3179" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1780" result="Failed" site="Child" start-time="2026-10-05 14:28:23Z" end-time="2026-10-05 14:28:24Z" duration="0.508921" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3182" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1778" result="Failed" site="Child" start-time="2026-10-05 14:28:23Z" end-time="2026-10-05 14:28:24Z" duration="0.504114" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1686" name="HostIdentityCollisionTests" fullname="TumbangPreso.PlayTests.HostIdentityCollisionTests" classname="TumbangPreso.PlayTests.HostIdentityCollisionTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-05 14:28:23Z" end-time="2026-10-05 14:28:24Z" duration="0.481205" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1690" name="LocalHostApprovalDoesNotRefuseItself" fullname="TumbangPreso.PlayTests.HostIdentityCollisionTests.LocalHostApprovalDoesNotRefuseItself" methodname="LocalHostApprovalDoesNotRefuseItself" classname="TumbangPreso.PlayTests.HostIdentityCollisionTests" runstate="Runnable" seed="1207090196" result="Passed" start-time="2026-10-05 14:28:24Z" end-time="2026-10-05 14:28:24Z" duration="0.310280" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18764, join code BDTU
+[NetApproval] peer=0 approved=True reason=
+]]></output>
+            </test-case>
+            <test-case id="1687" name="RemoteHostIdentityIsRefusedBeforeItCanReplaceTheRoomOwner" fullname="TumbangPreso.PlayTests.HostIdentityCollisionTests.RemoteHostIdentityIsRefusedBeforeItCanReplaceTheRoomOwner" methodname="RemoteHostIdentityIsRefusedBeforeItCanReplaceTheRoomOwner" classname="TumbangPreso.PlayTests.HostIdentityCollisionTests" runstate="Runnable" seed="1121617978" result="Failed" start-time="2026-10-05 14:28:24Z" end-time="2026-10-05 14:28:24Z" duration="0.074325" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  Collision must be refused with host record, leader and transport preserved: approved=True keepsHost=False keepsLeader=False listening=True
+  Expected: True
+  But was:  False
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.HostIdentityCollisionTests+<RemoteHostIdentityIsRefusedBeforeItCanReplaceTheRoomOwner>d__6.MoveNext () [0x00148] in C:\Users\Matthew\dev\tump-workers1003\qa-a\Assets\TumbangPreso\Tests\PlayMode\HostIdentityCollisionTests.cs:55
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+              <output><![CDATA[[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.EnsureStoppedAsync (System.Nullable`1[T] joinAttempt) [0x0005b] in <314d354e0f5b4b4d89b1394faf4bbd8f>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.Start[TStateMachine] (TStateMachine& stateMachine) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Net.NetSession.EnsureStoppedAsync (System.Nullable`1[T] joinAttempt) [0x00000] in <314d354e0f5b4b4d89b1394faf4bbd8f>:0 
+  at TumbangPreso.Net.NetSession.StartHostAsync (System.Int32 port, System.Boolean dedicated) [0x00073] in <314d354e0f5b4b4d89b1394faf4bbd8f>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[TResult].Start[TStateMachine] (TStateMachine& stateMachine) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Net.NetSession.StartHostAsync (System.Int32 port, System.Boolean dedicated) [0x00000] in <314d354e0f5b4b4d89b1394faf4bbd8f>:0 
+  at TumbangPreso.PlayTests.HostIdentityCollisionTests+<Before>d__3.MoveNext () [0x0004f] in <ee962806b7454f5a83ca4c736aab1ffc>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00132] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18764, join code N5X2
+[NetApproval] peer=101 approved=True reason=
+[HostCollision] approved=True keepsHost=False leaderBefore=0 leaderAfter=101 listening=True
+]]></output>
+            </test-case>
+            <test-case id="1689" name="RemoteReconnectStillReclaimsItsOwnSeat" fullname="TumbangPreso.PlayTests.HostIdentityCollisionTests.RemoteReconnectStillReclaimsItsOwnSeat" methodname="RemoteReconnectStillReclaimsItsOwnSeat" classname="TumbangPreso.PlayTests.HostIdentityCollisionTests" runstate="Runnable" seed="1085391691" result="Passed" start-time="2026-10-05 14:28:24Z" end-time="2026-10-05 14:28:24Z" duration="0.043666" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.EnsureStoppedAsync (System.Nullable`1[T] joinAttempt) [0x0005b] in <314d354e0f5b4b4d89b1394faf4bbd8f>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.Start[TStateMachine] (TStateMachine& stateMachine) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Net.NetSession.EnsureStoppedAsync (System.Nullable`1[T] joinAttempt) [0x00000] in <314d354e0f5b4b4d89b1394faf4bbd8f>:0 
+  at TumbangPreso.Net.NetSession.StartHostAsync (System.Int32 port, System.Boolean dedicated) [0x00073] in <314d354e0f5b4b4d89b1394faf4bbd8f>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[TResult].Start[TStateMachine] (TStateMachine& stateMachine) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Net.NetSession.StartHostAsync (System.Int32 port, System.Boolean dedicated) [0x00000] in <314d354e0f5b4b4d89b1394faf4bbd8f>:0 
+  at TumbangPreso.PlayTests.HostIdentityCollisionTests+<Before>d__3.MoveNext () [0x0004f] in <ee962806b7454f5a83ca4c736aab1ffc>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00132] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18764, join code PN4U
+[NetApproval] peer=102 approved=True reason=
+]]></output>
+            </test-case>
+            <test-case id="1688" name="UniqueRemoteIdentityRemainsAdmissible" fullname="TumbangPreso.PlayTests.HostIdentityCollisionTests.UniqueRemoteIdentityRemainsAdmissible" methodname="UniqueRemoteIdentityRemainsAdmissible" classname="TumbangPreso.PlayTests.HostIdentityCollisionTests" runstate="Runnable" seed="1823566950" result="Passed" start-time="2026-10-05 14:28:24Z" end-time="2026-10-05 14:28:24Z" duration="0.042965" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[NetLifecycle] requested-stop server=True relay=False origin=  at TumbangPreso.Net.NetSession.EnsureStoppedAsync (System.Nullable`1[T] joinAttempt) [0x0005b] in <314d354e0f5b4b4d89b1394faf4bbd8f>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.Start[TStateMachine] (TStateMachine& stateMachine) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Net.NetSession.EnsureStoppedAsync (System.Nullable`1[T] joinAttempt) [0x00000] in <314d354e0f5b4b4d89b1394faf4bbd8f>:0 
+  at TumbangPreso.Net.NetSession.StartHostAsync (System.Int32 port, System.Boolean dedicated) [0x00073] in <314d354e0f5b4b4d89b1394faf4bbd8f>:0 
+  at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[TResult].Start[TStateMachine] (TStateMachine& stateMachine) [0x00000] in <816f70bc2a9c4332b0bd119906a8d40e>:0 
+  at TumbangPreso.Net.NetSession.StartHostAsync (System.Int32 port, System.Boolean dedicated) [0x00000] in <314d354e0f5b4b4d89b1394faf4bbd8f>:0 
+  at TumbangPreso.PlayTests.HostIdentityCollisionTests+<Before>d__3.MoveNext () [0x0004f] in <ee962806b7454f5a83ca4c736aab1ffc>:0 
+  at UnityEngine.TestTools.EnumeratorHelper+<ProgressOnEnumerator>d__5.MoveNext () [0x00017] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00132] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.BeforeAfterTestCommandBase`1+<ExecuteEnumerable>d__16[T].MoveNext () [0x00353] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.RetryCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.RepeatCommand+<ExecuteEnumerable>d__2.MoveNext () [0x000cf] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.IgnoreTestCommand+<ExecuteEnumerable>d__3.MoveNext () [0x000ff] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.StrictCheckCommand+<ExecuteEnumerable>d__2.MoveNext () [0x00083] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.TestTools.Utils.CoroutineRunner+<WrapEnumeratorForChecks>d__8.MoveNext () [0x0006c] in <a764045e84314b1fa60a749e9cc0dc08>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) [0x00000] in <858f0765bd8f497aacadfc2cd49efcc0>:0 
+[Net] offline
+[NetDisconnect] peer=0 local=0 server=True connected=False
+[NetLifecycle] server-stopped wasHost=True requestedStop=True
+[NetApproval] peer=0 approved=True reason=
+[NetArrival] peer=0 seat=0 replaces=-1
+[Net] connected as seat 1
+[Net] hosting on 18764, join code 8EXV
+[NetApproval] peer=101 approved=True reason=
+Saving results to: C:/Users/Matthew/AppData/LocalLow/BH Studios Validation/TumpWorker-qa-a-be075dcdfa07\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

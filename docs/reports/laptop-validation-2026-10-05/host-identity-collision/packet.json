@@ -1,0 +1,12 @@
+{
+  "base": "a971b83bc6f04c861664a520d271e03c78574c66",
+  "rootBase": "20e8e91e7abeb36ec83106395fe9375776c9215e",
+  "filter": "TumbangPreso.PlayTests.HostIdentityCollisionTests",
+  "expected": 4,
+  "publicationOwner": "Desktop",
+  "question": "Runninghost nativepublic approvalcallback/lobby identity must survive remotehost token collision; unique/localhost/reconnect controls",
+  "candidateLFsha256": "288d65838699b321f0dfecd84496f94e87fdbbd5180699879c8d2f54f5fed22e",
+  "initialFixtureSHA256": "30ba28eae4d71ef3ff2502d4d96e53f02b665d46170071705e5b51a3ed8bec29",
+  "fixtureSHA256": "3059c5f841610f0e3cea3145cae585f5c298ef12a9c3f4e6f4a8996ab95e1afa",
+  "fixtureRepair": "Unsupported NUnit Assert.Multiple wrapper replaced by equivalent four-condition conjunction and explicit observation log; no behavior weakening"
+}
