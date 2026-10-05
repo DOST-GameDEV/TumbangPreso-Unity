@@ -1,0 +1,50 @@
+{
+  "classified-result.json": {
+    "bytes": 284,
+    "sha256": "609e8affe63f8e7cdca9f79fa5b1de3542fd388781d8e42d7fd0f7ab97c8872a"
+  },
+  "direct-result.json": {
+    "bytes": 72241,
+    "sha256": "117ae501d2a64cd05edbaab632c602709b21d0af477808a9ca6f8297a902139b"
+  },
+  "Home-mode-card-0-1280.png": {
+    "bytes": 807752,
+    "sha256": "d69a5a81ed4bcf49bcc767a0588431f07845906185281f74f89c9564be2d6c25"
+  },
+  "Home-mode-card-0-1920.png": {
+    "bytes": 1567863,
+    "sha256": "76378bc7ee5de1e416bb74084322b982044baaaa1fc37b318a17b31b4593cf4b"
+  },
+  "Home-mode-card-1-1280.png": {
+    "bytes": 798939,
+    "sha256": "4eea1ee0ae1ee5b86b02f04821b2c24bf1c075748dccc6c60f7205ac53161b38"
+  },
+  "Home-mode-card-1-1920.png": {
+    "bytes": 1534656,
+    "sha256": "225e729e4e84adfb251097495ed7dab4edb7211ef2616d350c97b8aaec349606"
+  },
+  "Home-mode-card-2-1280.png": {
+    "bytes": 806895,
+    "sha256": "4fc482aeee32a9c8ce83a063c558a514be82b25b512888c51445cea81254a002"
+  },
+  "Home-mode-card-2-1920.png": {
+    "bytes": 1541419,
+    "sha256": "f6314f23f59ae3407079e128d113d2870696b46f187f21aba37824088ab859f3"
+  },
+  "launch.json": {
+    "bytes": 967,
+    "sha256": "7c31450468832f7408856fe3344420f35a42626ce5ff91cbb85518444f80f715"
+  },
+  "packet.json": {
+    "bytes": 309,
+    "sha256": "86c2b0d01ffd94e35f797c0db580d0814a218d3a54ee02a2bfd586335e03f03d"
+  },
+  "qualified-HubHome.cs.txt": {
+    "bytes": 26041,
+    "sha256": "e4476ccfd6069cf2c2a641602c0237032f5987630249e077c819897672fee27b"
+  },
+  "tests.xml": {
+    "bytes": 5693,
+    "sha256": "667d36217136ef638eb61d1b7cee5680c7f05482be9ccf9c5b7234d389fbad76"
+  }
+}

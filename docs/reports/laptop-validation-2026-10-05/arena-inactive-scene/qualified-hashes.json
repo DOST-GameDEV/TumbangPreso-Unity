@@ -8,6 +8,7 @@
     "testedRawSHA256": "57f15845fea8232bc5e4e0eaeeb5aa57f002740819ca35ac099600cbf729162e"
   },
   "Assets/TumbangPreso/Tests/PlayMode/ArenaOwnerLifetimeTests.cs.meta": {
-    "sha256": "ecc49ede1d90f8b847c4ed5824634162a2cbfa84f67902c407cb01d160d755df"
+    "sha256": "ecc49ede1d90f8b847c4ed5824634162a2cbfa84f67902c407cb01d160d755df",
+    "normalizedLFsha256": "48db5ed1e7d4b6536dd2f06ff4269eeeb84f1ec79e9684d1991840eef7ac5a42"
   }
 }

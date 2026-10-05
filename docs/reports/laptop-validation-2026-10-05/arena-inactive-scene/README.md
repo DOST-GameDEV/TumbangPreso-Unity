@@ -30,3 +30,9 @@ The native input set includes the unchanged additional Home readability fixture
 from the previous UI unit, while published original HubHome is restored. Only
 ArenaOwnerLifetimeTests ran; no Home or complete-map acceptance is inferred.
 Current152 player/operator and matching peers remain separate.
+
+Production callers load maps additively in MapPreviewSurface and SplashScreen.
+Preview claims and parks map roots after the load completes. This test exercises
+the component activation boundary rather than executing the entire preview or
+prewarm flow. The metadata receipt distinguishes raw CRLF from normalized LF;
+script/GUID content is unchanged.

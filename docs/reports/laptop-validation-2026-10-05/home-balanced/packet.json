@@ -1,0 +1,7 @@
+{
+  "base": "03de6a1869c4923a6315b5ea6bdde0264603e003",
+  "filter": "TumbangPreso.PlayTests.HomeModeCardReadabilityTests",
+  "expected": 2,
+  "candidateLF": "e4476ccfd6069cf2c2a641602c0237032f5987630249e077c819897672fee27b",
+  "originalReused": "home-refined-original1-direct1005; unchanged HubHome1a"
+}
