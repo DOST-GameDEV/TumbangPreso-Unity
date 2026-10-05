@@ -395,7 +395,7 @@ namespace TumbangPreso.Visual
                 // Glow: bloom 0.2 above 1.8. Under this key (1.15) and ambient a lit body or the pale
                 // deck tops out near 1.4, below the knee (1.44), so only emissives glow: the kit's
                 // glowing materials are given 2.5 and more in `ArenaArtPlacer.Rules`.
-                .Key(new Color(.92f,.95f,1),1.15f,0,.7f,new Color(.02f,.024f,.045f)).Glow(.32f,1.7f)
+                .Key(new Color(.92f,.95f,1),1.15f,0,.7f,new Color(.02f,.024f,.045f)).Glow(.16f,1.9f)
                 .CloudLayers(new Color(.486f,.337f,.565f,1),new Color(.11f,.133f,.329f,1),new Color(.184f,.173f,.455f,1),1,
                     new MapLook.CloudBand(16,70,240,-345,-300,90,130,9),
                     new MapLook.CloudBand(5,250,272,340,400,55,80,6)),
