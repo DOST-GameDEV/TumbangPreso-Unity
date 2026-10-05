@@ -64,6 +64,22 @@ namespace TumbangPreso.Map
         private static float _veil;
         private static Vector2 _veilAt;
 
+        /// <summary>
+        /// 0 below `from`, 1 above `to`, eased between: the shader's smoothstep.
+        ///
+        /// ⚠️⚠️ THIS IS WHY NO GLARE EVER SHOWED (found 2026-10-05 from the trace below, after four
+        /// redraws of the look). Every fade here was written `Mathf.SmoothStep(edge0, edge1, x)`, as
+        /// in a shader. Unity's `Mathf.SmoothStep(from, to, t)` is the OTHER thing: it blends from
+        /// `from` to `to` by t. So "how far in frame" was 1 minus a number between 1.0 and 1.6, never
+        /// above zero, and every lamp was refused before anything was drawn. NEVER call
+        /// `Mathf.SmoothStep` with edges first: use this.
+        /// </summary>
+        private static float Ramp(float from, float to, float x)
+        {
+            float t = Mathf.Clamp01((x - from) / Mathf.Max(1e-5f, to - from));
+            return t * t * (3.0f - 2.0f * t);
+        }
+
         /// <summary>Take the camera the picture is drawn through, once a frame. False with none.</summary>
         public static bool Begin(Camera view)
         {
@@ -106,14 +122,14 @@ namespace TumbangPreso.Map
             // A lamp a little outside the frame still flares into the lens: gone 60 per cent of a
             // half frame out (with the game camera tipped down at the can, the canopies' lamps
             // sit just over the top edge, and their ghosts and veil are what says they are on).
-            float framed = 1.0f - Mathf.SmoothStep(1.0f, 1.6f, out_);
+            float framed = 1.0f - Ramp(1.0f, 1.6f, out_);
             // What the LENS does with it reaches much further out of shot: see `Bleed`.
-            float lens = ghosts ? 1.0f - Mathf.SmoothStep(1.2f, 3.0f, out_) : 0.0f;
+            float lens = ghosts ? 1.0f - Ramp(1.2f, 3.0f, out_) : 0.0f;
             if (framed <= 0.0f && lens <= 0.0f) { if (rich) _dbgWhy = "out of frame by " + out_.ToString("0.00") + (ghosts ? "" : ", ghosts off"); return 0.0f; }
 
             float metres = to.magnitude;
             float angle = Mathf.Acos(Mathf.Clamp(Vector3.Dot(aim, -to) / metres, -1.0f, 1.0f)) * Mathf.Rad2Deg;
-            float facing = 1.0f - Mathf.SmoothStep(full, gone, angle);
+            float facing = 1.0f - Ramp(full, gone, angle);
             facing *= facing;
             float far = 1.0f / (1.0f + metres * metres / (700.0f * 700.0f));
             float amount = power * Mathf.Max(facing, floor) * framed * far * Mathf.Clamp01(seen);
@@ -122,7 +138,7 @@ namespace TumbangPreso.Map
             // The rays' pattern is the LAMP's own (where it really is), so it does not turn as the camera does.
             float seed = Mathf.Repeat(lamp.x * 0.137f + lamp.z * 0.291f + lamp.y * 0.053f, 1.0f);
             if (rich) LensBurst(fx, x, y, out_, colour, size, seed: seed, glare:
-                                power * facing * Mathf.Max(framed, 1.0f - Mathf.SmoothStep(1.2f, 3.0f, out_)) * far * Mathf.Clamp01(seen));
+                                power * facing * Mathf.Max(framed, 1.0f - Ramp(1.2f, 3.0f, out_)) * far * Mathf.Clamp01(seen));
             if (amount < 0.02f) return flare;
 
             // One unit: this share of the frame's half height, at the distance it is drawn at.
@@ -275,11 +291,13 @@ namespace TumbangPreso.Map
                 var a = Asked[i];
                 var rect = image.rectTransform;
                 rect.anchorMin = rect.anchorMax = new Vector2(a.X * 0.5f + 0.5f, a.Y * 0.5f + 0.5f);
-                float across = tall * 2.1f * a.Size * (0.45f + 0.55f * a.Glare);
+                // A show spot (size 1) is under a frame's height across, and up to eight show at once; the
+                // opening's light (size up to 3.9) fills the frame.
+                float across = tall * 0.95f * a.Size * (0.45f + 0.55f * a.Glare);
                 rect.sizeDelta = new Vector2(across, across);
                 rect.localRotation = Quaternion.Euler(0.0f, 0.0f, a.Seed * 360.0f);
                 Color c = Color.Lerp(Color.white, a.Colour, 0.35f);
-                c.a = Mathf.Clamp01(a.Glare * 1.15f) * Mathf.Lerp(0.45f, 1.0f, flash);
+                c.a = Mathf.Clamp01(a.Glare * (a.Size > 1.5f ? 1.15f : 0.8f)) * Mathf.Lerp(0.45f, 1.0f, flash);
                 image.color = c;
             }
         }
@@ -415,7 +433,7 @@ namespace TumbangPreso.Map
             _veil += flare;
             _veilAt += new Vector2(gx, gy) * flare;
 
-            float bleed = Mathf.SmoothStep(0.85f, 1.1f, out_) * flare * flash;
+            float bleed = Ramp(0.85f, 1.1f, out_) * flare * flash;
             if (bleed <= 0.01f) return;
 
             // The point of the frame's edge nearest the lamp, and the way from it to the middle.

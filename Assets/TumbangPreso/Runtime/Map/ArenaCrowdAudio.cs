@@ -495,14 +495,14 @@ namespace TumbangPreso.Map
             if (alarm) tension = 0.9f;
             else if (!inBreak && round != null && round.RoundActive && round.TimeLeft > 0.0f && round.TimeLeft <= TensionSeconds)
                 tension = Mathf.Clamp01((TensionSeconds - round.TimeLeft) / 6.0f);
-            tension *= 1.0f - Mathf.SmoothStep(0.5f, 0.9f, excitement);
+            tension *= 1.0f - Ramp(0.5f, 0.9f, excitement);
             _excitement = excitement;
 
             // The murmur gets out of the way as the stands come up (it sat under every reaction
             // at nearly full level), and the lively layer is fully up by a tag's excitement.
-            SetBed(Calm, (1.0f - 0.65f * Mathf.SmoothStep(0.1f, 0.8f, excitement)) * (1.0f - 0.45f * tension), dt);
-            SetBed(Lively, Mathf.SmoothStep(0.08f, 0.50f, excitement) * (1.0f - 0.35f * tension), dt);
-            SetBed(Roar, Mathf.SmoothStep(0.50f, 0.92f, excitement), dt);
+            SetBed(Calm, (1.0f - 0.65f * Ramp(0.1f, 0.8f, excitement)) * (1.0f - 0.45f * tension), dt);
+            SetBed(Lively, Ramp(0.08f, 0.50f, excitement) * (1.0f - 0.35f * tension), dt);
+            SetBed(Roar, Ramp(0.50f, 0.92f, excitement), dt);
             SetBed(Tension, tension, dt);
             SetBed(Applause, _applause, dt);
 
@@ -559,6 +559,21 @@ namespace TumbangPreso.Map
             float paLevel = Mathf.Pow(10.0f, VoiceDirector.TrimDb / 20.0f) * announcer * PaVoiceGain;
             for (int i = 0; i < PaVoices; i++)
                 if (_pa[i] != null && _pa[i].isPlaying) _pa[i].volume = paLevel;
+        }
+
+        /// <summary>
+        /// 0 below `from`, 1 above `to`, eased between.
+        ///
+        /// ⚠️⚠️ THIS IS WHY THE CROWD NEVER SEEMED TO REACT (owner, 2026-10-05: "its just the same cheer
+        /// ambience all throughout"). The bed's layers were mixed with `Mathf.SmoothStep(edge0, edge1,
+        /// excitement)` as a shader's smoothstep, and Unity's is a blend FROM the first TO the second by
+        /// the third: the ROAR layer was never under half and the lively layer never over half, whatever
+        /// happened in the game. The stands were roaring at rest, so nothing could stand out.
+        /// </summary>
+        private static float Ramp(float from, float to, float x)
+        {
+            float t = Mathf.Clamp01((x - from) / Mathf.Max(1e-5f, to - from));
+            return t * t * (3.0f - 2.0f * t);
         }
 
         private void SetBed(int bed, float target, float dt)
