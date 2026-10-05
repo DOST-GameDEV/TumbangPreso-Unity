@@ -80,8 +80,12 @@ namespace TumbangPreso.Map
         // and immediately cuts to next scene. also i need the roll to flicker more. doesnt matter if it loops
         // through the players multiple times"). The roll was 2.2 s and the landed card stayed 0.55 s; the roll is
         // 3.3 s of faster cards (`BuildTicks`) and the landed card stays about 2 s before the cut.
+        // ⚠️ THE GLARE IS TIMED TO THE WALK, NOT THE WALK TO THE GLARE (owner, 2026-10-05: "the glare happens
+        // after the characters already exit the tunnel"). The tunnel is 10 m deep and the camera needs four of
+        // them, so the line has 5 m to the mouth: at the walk's pace (`Line`, 1.28 m/s) that is 3.9 s. The
+        // white's peak and the cut to the bowl sit there, and the glare builds through the whole walk to it.
         public static Times TimesFor(bool full) => full
-            ? new Times { Full = true, Walk = 1.8f, Glare = 3.6f, Peak = 5.1f, Reveal = 5.35f, Taya = 8.2f, Land = 11.5f, Spot = 13.6f, Build = 14.25f, Handoff = 14.25f + BuildSeconds, End = 14.25f + BuildSeconds + 0.8f }
+            ? new Times { Full = true, Walk = 0.6f, Glare = 1.6f, Peak = 3.7f, Reveal = 3.95f, Taya = 6.8f, Land = 10.1f, Spot = 12.2f, Build = 12.85f, Handoff = 12.85f + BuildSeconds, End = 12.85f + BuildSeconds + 0.8f }
             : new Times { Full = false, Walk = -1.0f, Glare = -1.0f, Peak = -1.0f, Reveal = 0.0f, Taya = 2.0f, Land = 4.7f, Spot = 6.6f, Build = 7.2f, Handoff = 7.2f + BuildSeconds, End = 7.2f + BuildSeconds + 0.8f };
 
         public static ArenaIntro Instance { get; private set; }
@@ -115,7 +119,7 @@ namespace TumbangPreso.Map
 
         // The stadium's own numbers (docs/ARENA_ART_BRIEF.md; tools/author_arena_bowl.py for the tunnel).
         private const float MouthZ = -83.9f, TunnelHalf = 2.1f, TunnelTop = 2.6f, Ground = 0.04f;
-        private const float LineStart = -88.6f, LineEnd = -75.5f, Stride = 1.45f;
+        private const float LineStart = -88.6f, LineEnd = -79.5f, Stride = 1.2f;
         private const float FloodRadius = 151.3f, FloodHeight = 66.75f, SpotRadius = 160.0f, SpotHeight = 62.0f;
         private static readonly float[] FloodBearing = { -27.0f, -17.0f, -7.125f, 7.125f, 17.0f, 27.0f };
         private static readonly Color FloodColour = new Color(0.86f, 0.93f, 1.0f);
@@ -172,7 +176,7 @@ namespace TumbangPreso.Map
         private AudioSource _loop, _ringer, _shots;
         private AudioClip _rumble, _heart, _whoosh, _ring, _tickClip, _stamp;
         private int _beats;
-        private static readonly float[] HeartAt = { 0.35f, 1.25f, 2.05f, 2.8f, 3.45f, 4.0f, 4.45f, 4.82f };
+        private static readonly float[] HeartAt = { 0.3f, 1.05f, 1.7f, 2.25f, 2.7f, 3.05f, 3.35f, 3.6f };
 
         /// <summary>This map's opening, made if the map is loaded and has none. Null on every other map.</summary>
         public static ArenaIntro Ensure()
@@ -437,8 +441,9 @@ namespace TumbangPreso.Map
             // standing still at all i nthe opening scene, they should immediately be walking"). They stood
             // for 1.8 s before the first step. The same ground over the whole time, already in stride as
             // the picture comes up from black, easing only into the stop out on the turf.
+            // One steady pace the whole way (9.1 m in 7.1 s), easing only into the stop over the last tenth.
             float p = Mathf.Clamp01(age / (t.Taya + 0.3f));
-            float eased = Mathf.Lerp(p, 1.0f - (1.0f - p) * (1.0f - p), 0.4f);
+            float eased = p < 0.9f ? p * (0.95f / 0.9f) : 0.95f + 0.05f * (1.0f - (1.0f - (p - 0.9f) / 0.1f) * (1.0f - (p - 0.9f) / 0.1f));
             z = Mathf.Lerp(LineStart, LineEnd, eased);
             stride = Mathf.Clamp01((1.0f - p) * 14.0f);
         }
@@ -542,7 +547,7 @@ namespace TumbangPreso.Map
             if (t.Full && age < t.Reveal)
             {
                 // 1 and 2. Low at their backs, following them out and rising toward the mouth.
-                float p = _still ? 0.0f : Smooth((age - t.Walk) / (t.Reveal - t.Walk));
+                float p = _still ? 0.0f : Smooth(age / t.Reveal);
                 float bob = _still ? 0.0f : Mathf.Sin((line - LineStart) / Stride * Mathf.PI * 4.0f) * 0.018f;
                 Pose(_centre + new Vector3(0.0f, Mathf.Lerp(0.95f, 1.75f, p) + bob, line - Mathf.Lerp(4.0f, 3.1f, p)),   // dead centre between the two files
                      _centre + new Vector3(0.0f, Mathf.Lerp(1.9f, 4.4f, p), line + 40.0f), 50.0f);
@@ -665,9 +670,9 @@ namespace TumbangPreso.Map
                 if (t.Full && age < t.Reveal)
                 {
                     // ⚠️ IT GROWS AS THEY NEAR THE MOUTH, NOT BEFORE (owner: "big glare effect grows before the
-                    // players even move forward"): nothing for the first second and a half, slow, then fast.
-                    float grow = Smooth((age - 1.5f) / (t.Peak - 1.5f));
-                    grow *= grow;
+                    // players even move forward"): nothing for the first half second, then with every step to the mouth.
+                    float grow = Smooth((age - 0.5f) / (t.Peak - 0.5f));
+                    grow = Mathf.Pow(grow, 1.3f);
                     Vector3 sun = _centre + new Vector3(0.0f, Mathf.Lerp(3.6f, 5.2f, grow), -44.0f);
                     Vector3 from = eye - sun;
                     // ⚠️ AND IT IS LIGHT IN THE TUNNEL, NOT ONLY A PICTURE ON THE GLASS ("it still looks
