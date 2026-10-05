@@ -1,0 +1,22 @@
+{
+  "pid": 33504,
+  "boundAddress": "0.0.0.0",
+  "port": 18991,
+  "readyUtc": "2026-10-05T19:55:49.121983+00:00",
+  "scope": "One agreed diagnostic UDP round, prefix-filtered; not a game socket or discovery acceptance",
+  "terminal": true,
+  "socketClosed": true,
+  "endedUtc": "2026-10-05T19:58:51.264696+00:00",
+  "packets": [
+    {
+      "utc": "2026-10-05T19:56:48.328611+00:00",
+      "secondsSinceReady": 59.203,
+      "senderAddress": "192.168.1.7",
+      "senderPort": 54950,
+      "payload": "tump-route-diagnostic1006:bound-unicast",
+      "bytes": 39
+    }
+  ],
+  "ignoredPacketCount": 0,
+  "settleSecondsAfterSenderAck": 15
+}
