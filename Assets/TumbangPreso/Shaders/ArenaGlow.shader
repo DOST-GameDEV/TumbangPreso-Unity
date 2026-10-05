@@ -10,6 +10,10 @@
 //   for the haze sheets. Never writes depth, casts no shadow, and is in no depth texture.
 //   FOG (_Fog 1): light fades out with distance (to black, it is added); a blended surface fades
 //   into the fog colour (_FogToColour 1). The haze sheets have it off: they ARE the air.
+//   VERTEX TINT (_VertexTint 1): the colour is also multiplied by the vertex colour's rgb. Off (0,
+//   the default) for every material that existed before it, which use only the vertex ALPHA. On
+//   for the map's pooled effects (Runtime/Map/ArenaFx.cs), where one mesh holds sparks, rings
+//   and streaks of many colours in one draw call.
 //
 // ⚠️ UNCOMPILED: written without Unity (2026-10-05).
 Shader "TumbangPreso/ArenaGlow"
@@ -24,6 +28,7 @@ Shader "TumbangPreso/ArenaGlow"
         _Near ("Near fade (gone at x m, whole at y m)", Vector) = (0, 0, 0, 0)
         _Fog ("Fog (1 on, 0 off)", Range(0, 1)) = 1
         [Toggle] _FogToColour ("Fog fades to the fog colour (blended), not to black (added)", Float) = 0
+        [Toggle] _VertexTint ("Vertex colour tints (pooled effects)", Float) = 0
         [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend ("Source blend", Float) = 5
         [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Destination blend", Float) = 1
         [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull", Float) = 0
@@ -46,7 +51,7 @@ Shader "TumbangPreso/ArenaGlow"
             sampler2D _MainTex, _EmissionMap;
             float4 _MainTex_ST;
             half4 _Color;
-            half _EmissionStrength, _Rim, _Fog, _FogToColour;
+            half _EmissionStrength, _Rim, _Fog, _FogToColour, _VertexTint;
             float4 _Near;
 
             struct appdata
@@ -85,6 +90,7 @@ Shader "TumbangPreso/ArenaGlow"
             {
                 half4 albedo = tex2D(_MainTex, i.uv);
                 half3 colour = albedo.rgb * _Color.rgb + tex2D(_EmissionMap, i.uv).rgb * _EmissionStrength;
+                colour *= lerp(half3(1.0, 1.0, 1.0), i.color.rgb, _VertexTint);
                 half alpha = albedo.a * _Color.a * i.color.a;
 
                 float3 toEye = _WorldSpaceCameraPos - i.world;

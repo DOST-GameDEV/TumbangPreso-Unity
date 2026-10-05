@@ -98,6 +98,14 @@ namespace TumbangPreso.Audio
                 // half it is not competing with anything: it is the only thing saying an
                 // ultimate is coming. The other five start on the same frame as their blast.
                 { "sfx_step_deck", -8.0f }, { "sfx_swim_stroke", -9.0f }, { "sfx_lagoon_lap", -12.0f },
+                // The Arena's show (owner 2026-10-05, `tools/synth_arena_show_sfx.py`). The reveal's boom is the
+                // loudest moment of the break and the lock is its percussion, so those two are mixed as events.
+                // The alarm is 2.3 s of sustained tone and the roar 3.6 s of crowd: beds, mixed as beds (the
+                // train's row above records what a sustained cue with no trim does). The thruster fires once
+                // per moving platform inside a quarter second, so it is mixed like a status.
+                { "sfx_arena_alarm", -9.0f }, { "sfx_arena_undock", -4.0f }, { "sfx_arena_thruster", -11.0f },
+                { "sfx_arena_lock", -3.0f }, { "sfx_arena_reveal", -2.0f }, { "sfx_arena_crowd_roar", -10.0f },
+                { "sfx_arena_pyro", -7.0f }, { "sfx_arena_drone_ping", -7.0f }, { "sfx_arena_drone_set", -5.0f },
                 // Amihan (2026-09-25, `tools/build_amihan_audio.py`). The gather is a sustained
                 // pressure rise under 2.5 s of telegraph and is mixed as a bed; the release is the
                 // loudest moment of her kit and is mixed as an ultimate payload.
@@ -282,6 +290,15 @@ namespace TumbangPreso.Audio
 
             // The lagoon deck (Lagoon Cove): footsteps on the boards, a swimmer's stroke, the water at the piles.
             "sfx_step_deck", "sfx_swim_stroke", "sfx_lagoon_lap",
+
+            // The Arena (ARENA-1, owner 2026-10-05: "map transformation is so dull, theres no emphasis on it",
+            // "more vfx overall in the map, including the drone stuff"). The stage's transformation between
+            // rounds in its three beats (the alarm, the undock, a thruster and a lock per platform, the
+            // reveal), the stands' roar, the pyro, and the catch drone's lock-on and set-down. Every one is
+            // played by each peer for itself from state it already has (`Map.ArenaShow`, `ArenaDrone`,
+            // `ArenaAmbience`), never through `NetCue`: nothing about them is on the wire.
+            "sfx_arena_alarm", "sfx_arena_undock", "sfx_arena_thruster", "sfx_arena_lock", "sfx_arena_reveal",
+            "sfx_arena_crowd_roar", "sfx_arena_pyro", "sfx_arena_drone_ping", "sfx_arena_drone_set",
 
             // The shove has a dedicated cloth/rubber cue; body contact retains its alias.
             "hit_body", "bump_swing",

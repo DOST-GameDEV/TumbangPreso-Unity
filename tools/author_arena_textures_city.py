@@ -92,7 +92,7 @@ SIGNS = {
 # The hologram atlas, 1024 x 1024, image pixels.
 FX_ATLAS = 1024
 FX = {"logo": (0, 0, 1024, 674), "scan": (0, 700, 1024, 828), "glow": (0, 832, 192, 1024),
-      "beam": (208, 832, 1024, 1024)}
+      "beam": (208, 832, 800, 1024), "halo": (816, 832, 1008, 1024)}
 
 
 def atlas_uv(box, size):
@@ -185,11 +185,24 @@ def halo(emit, sigma, gain):
     return emit + ndimage.gaussian_filter(emit, (sigma, sigma, 0), mode="wrap") * gain
 
 
-NIGHT = 0.22                              # how much of its own colour a facade gives off, so night never turns it black
+# How much of its own colour a facade gives off, so night never turns it black. 0.22 until the owner
+# played the map (2026-10-05, "buildings should also be more visible"): the towers read as near-black
+# slabs with sparse windows. 0.55 lifts every wall off the sky; `band()` adds a lit floor per tile.
+NIGHT = 0.55
 
 
 def night(img, emit):
     return img * NIGHT + emit
+
+
+def band(emit, ly, colour, centre, half, strength=0.85, rows=None, iy=None):
+    """A LIT FLOOR BAND: one soft strip of light across the whole tile at `centre` (cell pixels from a
+    floor's middle), on the floors `rows` (None: every floor). A tile is twelve floors, so a tower
+    carries one every 64 m: the edge lighting that lets a silhouette be read against the night."""
+    m = np.clip((half - np.abs(ly - centre)) / 1.6 + 0.5, 0, 1)
+    if rows is not None:
+        m = m * np.isin(iy, rows)
+    return np.maximum(emit, m[..., None] * hexcol(colour) * strength)
 
 
 def save(name, img, alpha=None):
@@ -269,7 +282,7 @@ def glass_a():
     img = lay(img, pane, glass)
     # Lit floors: a floor is lit in runs, and neighbouring floors tend to agree.
     run = clusters(ny, nx, 120, scale=(4.0, 0.35)) + 0.9 * np.random.default_rng(127).standard_normal((ny, 1))
-    lit = (run > 1.0) & (table(ny, nx, 122) > 0.15)              # the odd dark pane in a lit floor
+    lit = (run > 0.45) & (table(ny, nx, 122) > 0.15)             # the odd dark pane in a lit floor
     lit |= table(ny, nx, 123) > 0.975                             # a cleaner's light, alone
     tone = clusters(ny, nx, 124, scale=(6.0, 1.5))
     cols = np.where(tone[..., None] > 0.5, hexcol("f0cf9c"), np.where(tone[..., None] > -0.5, hexcol("bcd0ea"), hexcol("98cfe0")))
@@ -279,6 +292,7 @@ def glass_a():
     on = pane * lit[iy, ix]
     img = lay(img, on, room * 0.6)
     emit = halo(room * on[..., None], 7, 0.5)
+    emit = band(emit, ly, "9fe6f4", 29.0, 4.2, rows=[5, 11], iy=iy)   # the spandrel of every sixth floor is a light line
     save("glass_a", img)
     save("glass_a_emit", night(img, emit))
 
@@ -306,7 +320,7 @@ def glass_b():
     fx, fy = 16, 12
     fyi = np.floor((np.mgrid[0:S, 0:S][0] + 2.4 * smooth(S, S, 46, 211)) / (S / fy)).astype(int) % fy
     run = clusters(fy, fx, 220, scale=(0.8, 4.5)) + 0.8 * np.random.default_rng(221).standard_normal((1, fx))
-    lit = (run > 1.2) & (table(fy, fx, 222) > 0.2)
+    lit = (run > 0.7) & (table(fy, fx, 222) > 0.2)
     lit |= table(fy, fx, 223) > 0.975
     tone = clusters(fy, fx, 224, scale=(1.5, 6.0))
     cols = np.where(tone[..., None] > 0.8, hexcol("e8c890"), np.where(tone[..., None] > -0.6, hexcol("a0d4c4"), hexcol("c4e4d8")))
@@ -316,6 +330,7 @@ def glass_b():
     on = pane * lit[fyi, ix]
     img = lay(img, on, room * 0.6)
     emit = halo(room * on[..., None], 7, 0.45)
+    emit = band(emit, ly, "8af0c8", 124.0, 3.6, strength=0.8)       # a mint line on the megaframe between slot groups
     save("glass_b", img)
     save("glass_b_emit", night(img, emit))
 
@@ -344,8 +359,8 @@ def resi():
     # Lit by the FLAT: two bays share a home, so their windows agree.
     flat = clusters(ny, nx // 2, 320, scale=(1.3, 1.6))
     home = np.repeat(flat, 2, axis=1)
-    lit_d = (home > 0.55) & (table(ny, nx, 322) > 0.2)
-    lit_s = (home > 0.55) & (table(ny, nx, 323) > 0.45)
+    lit_d = (home > 0.15) & (table(ny, nx, 322) > 0.2)
+    lit_s = (home > 0.15) & (table(ny, nx, 323) > 0.45)
     tone = np.repeat(table(ny, nx // 2, 324), 2, axis=1)
     cols = np.where(tone[..., None] > 0.9, hexcol("e088b8"), np.where(tone[..., None] > 0.74, hexcol("9cd8e6"),
                     np.where(tone[..., None] > 0.38, hexcol("f0c880"), hexcol("f0dcb8"))))
@@ -358,6 +373,7 @@ def resi():
     img = lay(img, rail * 0.85, "3a3256")
     emit = room * (np.clip(on, 0, 1) * (1 - 0.8 * rail))[..., None]
     emit = halo(emit, 6, 0.4)
+    emit = band(emit, ly, "f2a8d0", 39.0, 2.6, strength=0.7, rows=[3, 7, 11], iy=iy)   # a pink slab light every fourth floor
     save("resi", img)
     save("resi_emit", night(img, emit))
 
@@ -385,13 +401,14 @@ def bands():
     palette = [hexcol("bcd0ea"), hexcol("c8bce8"), hexcol("98cfe0"), hexcol("f0cf9c")]
     for k in range(ny):
         n = smooth(1, S, 70, 421 + k)[0]
-        level = rng.uniform(0.6, 1.9)
+        level = rng.uniform(0.1, 1.5)
         r = np.clip((n - level) / 0.25 + 0.5, 0, 1)
         run[iy == k] = np.broadcast_to(r, (S, S))[iy == k]
         tone[iy == k] = palette[rng.integers(0, len(palette))] * rng.uniform(0.8, 1.0)
     on = strip * run
     img = lay(img, on, tone * 0.6)
     emit = halo(tone * on[..., None], 7, 0.5)
+    emit = band(emit, ly, "b9c4ff", 26.0, 3.0, strength=0.8, rows=[2, 6, 10], iy=iy)
     save("bands", img)
     save("bands_emit", night(img, emit))
 
@@ -407,7 +424,7 @@ def far():
     jw = table(ny, nx, 512, -6.0, 8.0)[iy, ix]
     light = box_mask(lx, ly, jx, 0.0, 20.0 + jw, 12.0, 8.0, feather=4.0)
     group = clusters(ny, nx, 520, scale=(1.1, 0.8))
-    lit = (group > 0.75) & (table(ny, nx, 522) > 0.25)
+    lit = (group > 0.4) & (table(ny, nx, 522) > 0.25)
     tone = clusters(ny, nx, 524, scale=(3.0, 3.0))
     cols = np.where(tone[..., None] > 0.6, hexcol("e8c898"), np.where(tone[..., None] > -0.7, hexcol("a8b8e8"), hexcol("c898d0")))
     room = cols[iy, ix] * (0.7 + 0.3 * table(ny, nx, 525)[iy, ix])[..., None]
@@ -415,7 +432,7 @@ def far():
     img = lay(img, on * 0.7, room)
     emit = halo(room * on[..., None] * 0.7, 9, 0.5)
     save("far", img)
-    save("far_emit", img * 0.3 + emit)
+    save("far_emit", img * 0.42 + emit)
 
 
 def base():
@@ -773,6 +790,13 @@ def fx():
     v = np.abs((yy[y0:y1, x0:x1] - y0) / (y1 - y0) - 0.5) * 2
     rgb[y0:y1, x0:x1] = hexcol("dfeaff")
     alpha[y0:y1, x0:x1] = np.clip(1 - v / (0.15 + 0.85 * u), 0, 1) ** 1.5 * (1 - u) ** 1.2 * 0.5
+    # THE CROWN HALO: a faint violet-blue wash that stands BEHIND a tower's upper third (the tower
+    # hides the middle of it), so the silhouette is cut out of light instead of lost in the sky.
+    # Faint on purpose: drawn at the fx material's strength it adds about a fifth of a window's light.
+    x0, y0, x1, y1 = FX["halo"]
+    d = np.hypot(xx[y0:y1, x0:x1] - (x0 + x1) / 2, yy[y0:y1, x0:x1] - (y0 + y1) / 2) / ((x1 - x0) / 2)
+    rgb[y0:y1, x0:x1] = hexcol("8f8cff")
+    alpha[y0:y1, x0:x1] = np.clip(1 - d, 0, 1) ** 1.5 * 0.30
     save("fx", rgb, alpha)
     save("fx_emit", rgb * alpha[..., None])
 

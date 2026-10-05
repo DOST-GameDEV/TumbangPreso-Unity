@@ -33,6 +33,15 @@ namespace TumbangPreso.UI
         private int _nextRoundNumber;
         private bool _popupBuilt;
         private const float PopupWidth=1100, PopupTop=0;
+        // ⚠️ ON THE ARENA THE BREAK IS A SHOW, AND THIS CARD WAS STANDING IN FRONT OF IT (owner,
+        // 2026-10-05: "map transformation is so dull, theres no emphasis on it"). That map draws
+        // its stage rebuilding itself behind the card (`HalftimePresentation.LiveStageBreak`),
+        // and an 1100 by 270 card dead centre covered the can, the hologram and every lock. So
+        // on that map's ordinary break, and nowhere else, the same card sits in the lower third
+        // at 0.7 of its size. Halftime there, and every break on every other map, is untouched:
+        // the anchors and the scale below are exactly the old ones whenever `lower` is false.
+        private const float LowerThirdScale=.7f, LowerThirdMargin=30;
+        private bool _lowerThird;
 
         public void Build(Transform owner,Action dismiss)
         {
@@ -151,9 +160,16 @@ namespace TumbangPreso.UI
             float settle=1-Mathf.Pow(1-appear,3);
             float exit=Mathf.SmoothStep(0,1,Mathf.Clamp01(_remaining/.2f));
             _popupFade.alpha=settle*exit;
-            _popup.anchoredPosition=new Vector2(0,-PopupTop+(reduced?0:(1-settle)*24));
+            bool lower=!_halftime&&HalftimePresentation.LiveStageBreak;
+            if(lower!=_lowerThird)
+            {
+                _lowerThird=lower;
+                _popup.anchorMin=_popup.anchorMax=new Vector2(.5f,lower?0:.5f);_popup.pivot=new Vector2(.5f,lower?0:.5f);
+            }
+            _popup.anchoredPosition=lower?new Vector2(0,LowerThirdMargin-(reduced?0:(1-settle)*24))
+                :new Vector2(0,-PopupTop+(reduced?0:(1-settle)*24));
             float pop=reduced?1:1+.025f*Mathf.Sin(appear*Mathf.PI)*(1-appear);
-            _popup.localScale=Vector3.one*pop;
+            _popup.localScale=Vector3.one*pop*(lower?LowerThirdScale:1);
             if(_returnClock!=null)_returnClock.Set(_remainingStart>0?_remaining/_remainingStart:0);
         }
     }

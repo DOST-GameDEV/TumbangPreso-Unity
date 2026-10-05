@@ -2,7 +2,7 @@
 
     blender -b --python tools/author_arena_assembly.py -- --version=v1 [--layout=tore]
 
-Kits (docs/ARENA_ART_BRIEF.md): bowl, roof, hull, city, stage. Each is already in the stadium's
+Kits (docs/ARENA_ART_BRIEF.md): bowl, roof, hull, city, holo, stage. Each is already in the stadium's
 frame, so assembling is appending. The crowd is drawn in Unity (sprites), not here. Writes
 ArtSource/arena/arena_assembly.blend and pictures to Logs/arena/assembly/.
 """
@@ -59,6 +59,7 @@ def main():
     scene = bpy.context.scene
     append("bowl", ["arena_bowl"]); append("roof", ["arena_roof"]); append("hull", ["arena_hull"])
     append("city", ["arena_city", "review (not the kit)"])
+    append("holo", ["arena_holo"])                                # the hologram ads and the slipper: light and one balloon
     for c in append("stage", ["arena_stage"]):
         for sub in c.children:
             show = sub.name in ("stage_" + layout,) or sub.name == "stage_props" and False
@@ -108,9 +109,11 @@ def main():
     shoot(p + "upper_stand", (0, -168, 56), (0, 10, 6), 22)
     shoot(p + "corner_concourse", (96, -96, 31), (-40, 60, 12), 18)
     shoot(p + "shaft_down", (10, -10, 2.0), (2, -2, -70), 16)
-    shoot(p + "air", (330, -470, 300), (0, 0, 0), 24)
+    # The city came in (2026-10-05: towers from radius 365): these two cameras stood where towers T09 and
+    # T08 now do, so they stand in the south avenue of sky instead (bearing 200, clear from the hull out).
+    shoot(p + "air", polar(600.0, 199.5, 300.0), (0, 0, 20), 24)
     shoot(p + "air_far", (900, -1300, 420), (0, 0, -40), 30)
-    shoot(p + "under", (220, -320, -200), (0, 0, -30), 20)
+    shoot(p + "under", polar(420.0, 200.0, -210.0), (0, 0, -30), 20)
     shoot(p + "plaza", (150, -190, 16), (60, -120, 20), 20)
     print("ASSEMBLY_OK")
 

@@ -527,7 +527,7 @@ namespace TumbangPreso.PlayTests
                 }
                 if (falls.Count == 0) report.AppendLine("  none");
                 report.AppendLine($"  bodies seen under y {ArenaStage.MoveFloorY} (not caught in time): {uncaught}; the lowest any body reached: {lowestSeen:F2} ({lowestWho})");
-                Verdict("FALLS: every fall caught above y -5, set down on floor, frozen the tag's 5 s, then moving", fallsOk,
+                Verdict($"FALLS: every fall caught above y {ArenaStage.MoveFloorY:F0} (the catch is at {ArenaStage.CatchY:F1}), set down on floor, frozen the tag's 5 s, then moving", fallsOk,
                     falls.Count == 0 ? "no bot fell, so nothing was exercised here (ArenaStageProbe drops one)" : $"{falls.Count} falls, {falls.Count(f => f.Phase == 4)} followed to the end, {falls.Count(f => f.Interrupted)} cut short by a round's end, {uncaught} uncaught",
                     falls.Count > 0 || uncaught > 0);
                 report.AppendLine();

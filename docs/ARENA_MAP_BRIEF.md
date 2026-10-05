@@ -202,3 +202,58 @@ messages on `MatchRpc` (no NetworkVariables); `NetSession.ProtocolVersion` is 14
    the knockdown celebration.
 5. Sound: the crowd bed and its reactions, the celebration, the pads.
 6. Checks, a played match online with a joining player, then the map pool.
+
+## After the first play: the show, the deeper fall, the effects (ARENA-1.6, 2026-10-05)
+
+The owner played the map and said (verbatim): "map transformation is so dull, theres no emphasis on
+it. could also use some screenshake"; "falling off threshold is too high, you need to fall further";
+"there should be more vfx overall in the map, including the drone stuff". What changed, and where
+each number now lives. Nothing here added anything to the wire.
+
+### The transformation is three beats on the break's shared clock
+`ArenaStage.BreakBeats` owns the times; `ArenaShow` puts light, sound and shake on them;
+`ArenaBreakCamera` cuts to them. On the 8 s break:
+
+| Seconds | Beat | The stage | Light, sound, shake | The camera |
+|---|---|---|---|---|
+| 0.0 to 0.8 | ALARM | still | the picture dims; the alarm and its riser; beacons round the rim | low push in from the turf |
+| 0.3 to 1.7 | ALARM | the next layout's hologram sweeps out from the can | the scanning ring; from 0.65 the layout's NAME as a hologram title | from 0.8: straight down on the whole stage |
+| 1.65 to 2.3 | ALARM | still | a drone comes down over every player | |
+| 2.4 | THE MOVE | every moving platform jolts (the undock) | clunk, thruster bursts under each, arcs along each, a camera punch | cut: a low push across the stage |
+| 2.6 to 6.2 | THE MOVE | the platforms go one after another; each LOCKS at the end of its own window | per platform: a thruster as it goes, light trailing off it, and on its lock a thud (a step higher each time), flash, shock ring, column of light, camera punch; a pulse chases round the LED barrier; the players are carried over the stage | from 4.95: a long lens on the last platform to lock |
+| 6.35 | THE REVEAL | still | a stadium-wide flash and two shock rings from the can, the boom, the lights back, the crowd up and roaring, pyro and confetti from the field's edge, fireworks over the stands, the screens' stinger; the biggest punch | cut: a rising wide shot |
+| 6.5 to 7.4 | THE REVEAL | still | the players are set down on their marks | |
+
+- The "Next Round" card sits in the lower third at 0.7 of its size on this map's ordinary break
+  only (`TumpRoundSwapView.CourtBreak.cs`).
+- The players' lift moves only what is drawn (`CharacterVisual.ModelRoot`); the real reset is still
+  `SliceRunner.ResetWorld`.
+- The crowd has its own clock (`ArenaCrowd`, `_ArenaCrowdClock`), which keeps running in a break.
+- The sounds are `tools/synth_arena_show_sfx.py` (nine cues, `sfx_arena_*`).
+
+### The fall is a real fall
+This REPLACES point 3's "it must be above y -5" above.
+
+| Height | What | Where it is set |
+|---|---|---|
+| y -4.5 | a SLIPPER is taken (well above `Balance.VoidY` -12) | `ArenaStage.SlipperCatchY` |
+| y -22 | the drone takes a body | `catchY` in `tools/arena_layouts.json` (written by `tools/author_arena_layouts.py`) |
+| y -40 | `MatchRpc.AcceptMove` believes an owner's pose down to here, on this map only | `ArenaStage.MoveFloor`, written to `MatchRpc.MoveFloorY` while the stage is loaded (-5 on every other map) |
+| y -60 | the kill plane (last resort) and, 2 m under it, the walls' feet | `ArenaStage.KillPlaneY`, `KillPlane.Height` |
+
+The catch can never be set closer than 12 m to the move floor (`ArenaStage.CatchMargin`). Terminal
+speed is 25 m/s (`Balance.MaxFallSpeed`), under the 30 m/s move budget, so a 22 m fall takes about
+1.5 s; the carry back is 3.5 s (0.4 caught, 2.5 hauled and floated, 0.6 set down). While a body
+falls the camera swings out above it looking down the shaft, the body tumbles and wind streaks rush
+past it (`ArenaStage.IsShaftFall`).
+
+### Effects
+Every effect on this map is drawn by `ArenaFx` (one mesh, one material, one draw call) and placed
+by `ArenaShow`, `ArenaDrone` or `ArenaAmbience`. All of it is presentation, local to each peer, and
+halved under reduced effects.
+
+### The sky outside: haze, spotlights, clouds (owner, 2026-10-05)
+"we should also add a distance haze effect for outside the arena, moving spotlights, use the clouds we have in the other maps too."
+- HAZE: two shader globals read by `TumbangPreso/ArenaPainted` and set in Play by `ArenaAmbience` (`_ArenaHazeColor`, `_ArenaHaze`): lit air low among the towers, by height and by level distance from the eye, only on what stands more than 250 m from the can. Plus one faint ring of light 300 m out. Tune the numbers at the top of `ArenaAmbience`.
+- SPOTLIGHTS: six on the rim, four on the landing pads, five on rooftops (the shared clock), and eight show spots under the canopies (idle sweep, chase in the alarm and at the match end, on the stage when it moves and when the can falls). All quads through `ArenaFx`; no Light.
+- CLOUDS: the other maps' voxel clouds, placed by this map's look row (`MapLook.CloudBands`, in `WorldLookProfile.cs` and `Resources/WorldLookProfile.asset`): a deck of 16 under the stadium (y -345 to -228) and 5 high ones (y 340 and up, 250 to 272 m out), lit from below in the city kit's night colours.

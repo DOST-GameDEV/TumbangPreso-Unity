@@ -125,6 +125,10 @@ namespace TumbangPreso.EditorTools.MapKit
         /// apex is v*v/40: 15.5 gives 6.0 m, under the 12 m ceiling.</summary>
         private const float JumpPadSpeed = 15.5f;
         private const float WallThickness = 0.4f;
+        /// <summary>The fall under the stage (owner, 2026-10-05: "you need to fall further"):
+        /// `MatchRpc.AcceptMove` believes a pose down to `MoveFloorY` on this map, and the kill
+        /// plane and the walls' feet are at `KillPlaneY`. The catch itself is the data's `catchY`.</summary>
+        private const float MoveFloorY = ArenaStage.DefaultMoveFloorY, KillPlaneY = ArenaStage.DefaultKillPlaneY;
         /// <summary>The walls' top above the stage unless the data names `wallHeight`: the slipper's ceiling.</summary>
         private const float WallHeight = 12.0f;
         /// <summary>The grey field that stands in for the bowl when there is no art: the turf's width.</summary>
@@ -161,12 +165,13 @@ namespace TumbangPreso.EditorTools.MapKit
             float pitRadius = Number(doc["pitRadius"], 40.0f);
             float wallHalf = Number(doc["wallHalf"], 22.0f);
             float wallHeight = Number(doc["wallHeight"], WallHeight);
-            float catchY = Number(doc["catchY"], ArenaStage.LowestCatchY);
+            float catchY = Number(doc["catchY"], ArenaStage.DefaultCatchY);
             var layouts = doc["layouts"] as JArray;
             if (layouts == null || layouts.Count == 0) throw new InvalidOperationException(LayoutPath + " names no layouts");
-            if (catchY < ArenaStage.LowestCatchY)
-                Debug.LogWarning($"{Tag}catchY {catchY} is under {ArenaStage.LowestCatchY}: a joining player's body would never be seen that low " +
-                                 "(MatchRpc.AcceptMove refuses poses under -5). The stage catches at the higher line.");
+            if (catchY < MoveFloorY + ArenaStage.CatchMargin)
+                Debug.LogWarning($"{Tag}catchY {catchY} is under {MoveFloorY + ArenaStage.CatchMargin}: a joining player's body would never be seen that low " +
+                                 $"(on this map MatchRpc.AcceptMove refuses poses under {MoveFloorY}, and the catch needs {ArenaStage.CatchMargin} m above that). " +
+                                 "The stage catches at the higher line.");
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             var root = new GameObject(SceneName).transform;
@@ -182,6 +187,7 @@ namespace TumbangPreso.EditorTools.MapKit
 
             var stats = Stage(root, layouts, doc["spawns"], stageTop, catchY);
             Gameplay(root, doc["spawns"], wallHalf, wallHeight, stageTop);
+            Effects(root);
             BreakCamera(root, stats.Radius);
 
             int art = 0;
@@ -195,6 +201,10 @@ namespace TumbangPreso.EditorTools.MapKit
             bool crowd = Crowd(root);
             int lights = Floodlights(root, stats.Radius);
             int craft = Traffic(root);
+            // ---- HOLO KIT (art, 2026-10-05): what moves in it (tools/arena_holo_motion.json) is baked onto the
+            // Holo group the art placer made. One call; everything else is in ArenaHoloAuthor.cs. ----
+            if (hasArt) ArenaHoloAuthor.Attach(root);
+            // ---- end of the holo kit's block ----
             Lighting(root);
             ArenaArtPlacer.ReportUnmatched();
 
@@ -349,7 +359,9 @@ namespace TumbangPreso.EditorTools.MapKit
             Purge(GeneratedFolder, written);
 
             stage.PieceMaterials = pieceMaterials;
-            stage.CatchHeight = catchY;
+            stage.CatchLine = catchY;
+            stage.MoveFloor = MoveFloorY;
+            stage.KillPlaneY = KillPlaneY;
             stage.Radius = stats.Radius;
             stage.LowestUnderside = lowest;
             return stats;
@@ -621,15 +633,19 @@ namespace TumbangPreso.EditorTools.MapKit
         /// <summary>
         /// The match installer, the kill plane, the spawn markers and the Bounds: four invisible
         /// box walls (`MatchInstaller.MeasurePlayableBounds` reads boxes) with their inner faces
-        /// on +/- half. They run from under the catch line to `wallHeight` above the stage, so a
-        /// body in the shaft is still inside them when the host catches it.
+        /// on +/- half. They run from under the KILL PLANE to `wallHeight` above the stage, so a
+        /// body falling down the shaft is inside them all the way to the catch (`catchY`, about
+        /// y -22) and past it: a body that drifted out under a wall's foot would be refused by
+        /// `MatchRpc.AcceptMove` for being outside the walls, and the host would never see it
+        /// reach the catch. The plane itself is this map's own (`KillPlaneY`), far under the
+        /// catch: the last resort.
         /// </summary>
         private static void Gameplay(Transform root, JToken spawns, float half, float wallHeight, float stageTop)
         {
             Group(root, "~Match").gameObject.AddComponent<MatchInstaller>();
             var kill = Group(root, "KillPlane");
-            kill.localPosition = new Vector3(0, KillPlane.PlaneHeight, 0);
-            kill.gameObject.AddComponent<KillPlane>();
+            kill.localPosition = new Vector3(0, KillPlaneY, 0);
+            kill.gameObject.AddComponent<KillPlane>().Height = KillPlaneY;
             var trigger = kill.gameObject.AddComponent<BoxCollider>();
             trigger.isTrigger = true;
             trigger.size = new Vector3(KillPlane.PlaneExtent, KillPlane.PlaneThickness, KillPlane.PlaneExtent);
@@ -644,12 +660,27 @@ namespace TumbangPreso.EditorTools.MapKit
             }
 
             var bounds = Group(root, "Bounds");
-            float top = stageTop + wallHeight, bottom = KillPlane.PlaneHeight, height = top - bottom, y = (top + bottom) * 0.5f;
+            float top = stageTop + wallHeight, bottom = KillPlaneY - 2.0f, height = top - bottom, y = (top + bottom) * 0.5f;
             float span = 2 * (half + WallThickness), centre = half + WallThickness * 0.5f;
             Wall(bounds, "WallWest", new Vector3(-centre, y, 0), new Vector3(WallThickness, height, span));
             Wall(bounds, "WallEast", new Vector3(centre, y, 0), new Vector3(WallThickness, height, span));
             Wall(bounds, "WallSouth", new Vector3(0, y, -centre), new Vector3(span, height, WallThickness));
             Wall(bounds, "WallNorth", new Vector3(0, y, centre), new Vector3(span, height, WallThickness));
+        }
+
+        /// <summary>
+        /// The map's effects: the pooled sparks, rings and streaks every effect here is drawn
+        /// with (`ArenaFx`), the transformation's show (`ArenaShow`) and the ambient and reactive
+        /// effects (`ArenaAmbience`). Each also installs itself at run time if a scene built
+        /// before it existed is played (`ArenaFx.Ensure`), so this is for a rebuilt scene to
+        /// carry them plainly, where they can be found and tuned.
+        /// </summary>
+        private static void Effects(Transform root)
+        {
+            var effects = Group(root, "Effects").gameObject;
+            effects.AddComponent<ArenaFx>();
+            effects.AddComponent<ArenaShow>();
+            effects.AddComponent<ArenaAmbience>();
         }
 
         /// <summary>The break's camera (`ArenaBreakCamera` poses it every frame of a break). It

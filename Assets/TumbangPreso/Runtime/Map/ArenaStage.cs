@@ -26,6 +26,11 @@ namespace TumbangPreso.Map
     /// mesh is rebuilt each frame between its two sets of numbers), a piece leaving sinks into
     /// the shaft, a piece arriving rises out of it, and each piece's hologram turns solid as the
     /// piece arrives. Outside a break, and on a late join, the visuals snap.
+    ///
+    /// THE BREAK IS A SHOW IN THREE BEATS (owner, 2026-10-05: "map transformation is so dull,
+    /// theres no emphasis on it"): the alarm, the move, the reveal. This file owns the beats'
+    /// times (`BreakBeats`) and where each piece is (`MoveOf`); `ArenaShow` puts the light, the
+    /// sound and the shake on them, and `ArenaBreakCamera` cuts to them.
     /// </summary>
     [DefaultExecutionOrder(-200)]
     public sealed class ArenaStage : MonoBehaviour
@@ -36,32 +41,59 @@ namespace TumbangPreso.Map
         /// <summary>The ordinary break on this map, in place of 3.5 s. Halftime stays 10 s.</summary>
         public const float BreakSeconds = 8.0f;
 
-        /// <summary>`MatchRpc.AcceptMove` refuses an owner's pose under this height.</summary>
-        public const float MoveFloorY = -5.0f;
-
         /// <summary>
-        /// The highest the catch may be set, whatever the data says. ⚠️ A CATCH UNDER y -5 NEVER
-        /// FIRES FOR A JOINING PLAYER: the host only sees a remote body where its last ACCEPTED
-        /// pose put it, `AcceptMove` refuses every pose under -5 and answers each with the stale
-        /// pose, so the owner is pulled back up and falls again while the host's copy hangs above
-        /// the line. So the data's `catchY` is used, but never lower than this. The lowest deck's
-        /// underside is y -2.2, so this still clears every deck.
+        /// THE FALL IS A REAL FALL (owner, 2026-10-05: "falling off threshold is too high, you
+        /// need to fall further"). Three heights, top to bottom, each from the map:
+        ///   `CatchLine`  the data's `catchY` (about -22): the host's drone takes a body under it;
+        ///   `MoveFloor`  (about -40): `MatchRpc.AcceptMove` believes an owner's pose down to here
+        ///                on THIS map (`MatchRpc.MoveFloorY`, -5 everywhere else);
+        ///   `KillPlaneY` (about -60): the `KillPlane`, the last resort, and the walls' feet.
+        /// The shaft is open to y -80 and its first ledge is at y -26 at radius 37.6, outside
+        /// the walls (22 m, 31 m at a corner), so nothing is in the way of a body down to there.
+        ///
+        /// ⚠️ THE CATCH MUST STAY WELL ABOVE THE MOVE FLOOR. The host sees a remote body only
+        /// where its last ACCEPTED pose put it; under the floor every pose is refused and
+        /// answered with the stale one, so the owner is pulled back up and falls again while the
+        /// host's copy hangs above the line and the drone never comes. `CatchMargin` is what a
+        /// body at terminal speed (25 m/s) covers in half a second of lost poses.
         /// </summary>
-        public const float LowestCatchY = -4.5f;
+        public const float DefaultCatchY = -22.0f, DefaultMoveFloorY = -40.0f, DefaultKillPlaneY = -60.0f, CatchMargin = 12.0f;
+
+        /// <summary>A SLIPPER is taken sooner than a body: just under the lowest deck (its
+        /// underside is y -2.2), far above `Balance.VoidY` (-12), where the slipper's own flight
+        /// would otherwise put it back on its mark before `ArenaFallRecovery` could start the
+        /// delayed return the design asks for.</summary>
+        public const float SlipperCatchY = -4.5f;
+
+        /// <summary>`MatchRpc.AcceptMove` refuses an owner's pose under this height, here and now.</summary>
+        public static float MoveFloorY => Net.MatchRpc.MoveFloorY;
+
+        /// <summary>The lowest the catch can be on this stage, whatever the data says.</summary>
+        public static float LowestCatchY => (Instance != null ? Instance.MoveFloor : DefaultMoveFloorY) + CatchMargin;
 
         /// <summary>A body below this has fallen off the stage (the host catches it). From the
         /// layout data, held above `LowestCatchY`.</summary>
-        public static float CatchY => Instance != null ? Mathf.Max(Instance.CatchHeight, LowestCatchY) : LowestCatchY;
+        public static float CatchY => Instance != null ? Mathf.Max(Instance.CatchLine, LowestCatchY) : DefaultCatchY;
 
-        /// <summary>The visuals are still this long before a break ends.</summary>
-        private const float SettleSeconds = 1.4f;
+        /// <summary>How far under the lowest underside a body is "in the shaft".</summary>
+        public const float ShaftFallClearance = 1.0f;
+
+        /// <summary>True for a body dropping through the shaft, under every deck, before the
+        /// drone has it: what the fall camera, the tumble and the wind streaks read. Every peer.</summary>
+        public static bool IsShaftFall(CharacterMotor who) =>
+            Instance != null && who != null && !who.IsGrounded && !who.IsEdgeRecovering
+            && who.transform.position.y < Instance.LowestUnderside - ShaftFallClearance;
+
+        /// <summary>The visuals are still this long before a break ends: the reveal's beat.</summary>
+        private const float SettleSeconds = 1.8f;
         /// <summary>The hologram comes up this long into a break, over `HologramFade`, and stands
-        /// alone for `HologramSeconds` before the first piece moves.</summary>
-        private const float HologramLead = 0.3f, HologramFade = 0.5f, HologramSeconds = 2.0f;
+        /// alone for `HologramSeconds` before the first piece moves: the alarm's beat.</summary>
+        private const float HologramLead = 0.3f, HologramFade = 0.5f, HologramSeconds = 2.3f;
         /// <summary>Halftime's replay comes first, so its travel takes the last seconds before the settle.</summary>
         private const float HalftimeTravelSeconds = 3.2f;
-        /// <summary>Each piece moves for this share of the travel; the rest is the stagger.</summary>
-        private const float PieceShare = 0.5f;
+        /// <summary>Each piece moves for this share of the travel; the rest is the stagger
+        /// between one piece's lock and the next's.</summary>
+        public const float PieceShare = 0.42f;
         /// <summary>How far in from an edge `TryNearestStandable` answers.</summary>
         private const float StandInset = 1.0f;
 
@@ -206,8 +238,14 @@ namespace TumbangPreso.Map
 
         public Piece[] Pieces = Array.Empty<Piece>();
         public Layout[] Layouts = Array.Empty<Layout>();
-        /// <summary>The data's `catchY`. Read it through `CatchY`, which holds it above `LowestCatchY`.</summary>
-        public float CatchHeight = LowestCatchY;
+        /// <summary>The data's `catchY`. Read it through `CatchY`, which holds it above `LowestCatchY`.
+        /// ⚠️ NOT THE OLD `CatchHeight`: a scene built before the deeper fall saved -4.5 under
+        /// that name, and this one's default is what such a scene plays with until it is rebuilt.</summary>
+        public float CatchLine = DefaultCatchY;
+        /// <summary>What `MatchRpc.MoveFloorY` is while this stage is loaded.</summary>
+        public float MoveFloor = DefaultMoveFloorY;
+        /// <summary>Where this map's `KillPlane` sits and the walls reach down to.</summary>
+        public float KillPlaneY = DefaultKillPlaneY;
         /// <summary>The furthest walking edge from the can in any layout, metres: the break camera frames it.</summary>
         public float Radius = 22.0f;
         /// <summary>The lowest underside of any piece in any layout: a body in the air under it has nothing to land on.</summary>
@@ -245,6 +283,8 @@ namespace TumbangPreso.Map
         {
             Instance = this;
             AIController.EdgeSense = true;
+            Net.MatchRpc.MoveFloorY = MoveFloor;
+            DeepenTheFall();
             ApplyForRound(WantedRound());
             ShowApplied();
         }
@@ -253,12 +293,48 @@ namespace TumbangPreso.Map
         {
             Instance = this;
             AIController.EdgeSense = true;
+            Net.MatchRpc.MoveFloorY = MoveFloor;
         }
 
         private void OnDisable()
         {
             AIController.EdgeSense = false;
+            Net.MatchRpc.MoveFloorY = Net.MatchRpc.DefaultMoveFloorY;
             if (Instance == this) Instance = null;
+        }
+
+        /// <summary>
+        /// A scene built before the deeper fall has its `KillPlane` at y -10 and walls that end
+        /// there, above the catch: a body would be sent to its spawn, or drift out under a wall
+        /// where `AcceptMove` refuses it for being outside the walls. So the plane and the walls
+        /// are put where this stage says, whatever the scene saved. `ArenaSceneBuilder` builds
+        /// them there, and then this changes nothing. Runs before `KillPlane.Awake` (this
+        /// component's order is -200), which moves the plane to its own `Height`.
+        /// </summary>
+        private void DeepenTheFall()
+        {
+            var root = transform.parent;
+            if (root == null) return;
+
+            var plane = root.GetComponentInChildren<KillPlane>(true);
+            if (plane != null && plane.Height > KillPlaneY)
+            {
+                plane.Height = KillPlaneY;
+                var at = plane.transform.position;
+                plane.transform.position = new Vector3(at.x, KillPlaneY, at.z);
+            }
+
+            var bounds = root.Find("Bounds");
+            if (bounds == null) return;
+            float feet = KillPlaneY - 2.0f;
+            foreach (var wall in bounds.GetComponentsInChildren<BoxCollider>(true))
+            {
+                // Unscaled boxes, as the builder makes them: only the foot is lowered.
+                float y = wall.transform.position.y + wall.center.y, top = y + wall.size.y * 0.5f, bottom = y - wall.size.y * 0.5f;
+                if (bottom <= feet + 0.01f) continue;
+                wall.center = new Vector3(wall.center.x, (top + feet) * 0.5f - wall.transform.position.y, wall.center.z);
+                wall.size = new Vector3(wall.size.x, top - feet, wall.size.z);
+            }
         }
 
         private void OnDestroy()
@@ -342,6 +418,10 @@ namespace TumbangPreso.Map
             LayoutApplied?.Invoke(layout);
         }
 
+        /// <summary>The map's effects (`ArenaFx`, and with it the show and the ambience) install
+        /// themselves here if the scene was built before they existed.</summary>
+        private void Start() => ArenaFx.Ensure();
+
         private void Update() => ApplyForRound(WantedRound());
 
         private void LateUpdate() => Present();
@@ -356,40 +436,208 @@ namespace TumbangPreso.Map
         }
 
         /// <summary>
+        /// The break that is playing, as the beats every part of the show reads (the stage's
+        /// travel here, `ArenaShow`'s light and sound, `ArenaBreakCamera`'s cuts), all in seconds
+        /// from the host's `Began` stamp, so every peer is on the same frame of the same beat:
+        ///   ALARM   `ScanStart` to `ScanEnd`: the next layout's hologram sweeps in from the can;
+        ///   THE MOVE `Undock` (every moving piece jolts), then `MoveStart` to `MoveEnd`: the
+        ///           pieces go one after another and each LOCKS at the end of its own window;
+        ///   REVEAL  `Reveal`, just after the last lock; the stage is still from `MoveEnd` on.
+        /// </summary>
+        public struct BreakBeats
+        {
+            public int From, To;
+            public bool Halftime;
+            public float Age, Duration, ScanStart, ScanEnd, Undock, MoveStart, MoveEnd, Reveal;
+            /// <summary>0 to 1 through the move.</summary>
+            public float Travel => Mathf.Clamp01((Age - MoveStart) / (MoveEnd - MoveStart));
+            /// <summary>The second a piece's own window (a share of the move) ends: its lock.</summary>
+            public float At(float share) => MoveStart + (MoveEnd - MoveStart) * share;
+        }
+
+        /// <summary>The scan takes this long to cross the stage, and the pieces jolt this long before the first goes.</summary>
+        public const float ScanSeconds = 1.4f, UndockLead = 0.2f, RevealLag = 0.15f;
+
+        /// <summary>
+        /// The break that is playing on this stage. The layouts are read off the break's own
+        /// completed round, so a peer that joins in the middle of a break lands on the same
+        /// frame of the travel as everyone. False outside a break, and for a break of another match.
+        /// </summary>
+        public bool TryBreak(out BreakBeats beats)
+        {
+            beats = default;
+            var hp = HalftimePresentation.Instance;
+            var match = GameServices.Match;
+            int count = LayoutCount;
+            if (hp == null || !hp.Active || match == null || hp.MatchId != match.PresentationMatchId || count == 0) return false;
+
+            beats.From = LayoutFor(hp.MatchId, hp.CompletedRound, count);
+            beats.To = LayoutFor(hp.MatchId, hp.CompletedRound + 1, count);
+            beats.Halftime = hp.IsHalftime;
+            beats.Duration = hp.Duration;
+            beats.MoveEnd = hp.Duration - SettleSeconds;
+            beats.MoveStart = HologramLead + HologramSeconds;
+            if (hp.IsHalftime) beats.MoveStart = Mathf.Max(beats.MoveStart, beats.MoveEnd - HalftimeTravelSeconds);
+            beats.ScanStart = beats.MoveStart - HologramSeconds;
+            beats.ScanEnd = beats.ScanStart + ScanSeconds;
+            beats.Undock = beats.MoveStart - UndockLead;
+            beats.Reveal = beats.MoveEnd + RevealLag;
+            beats.Age = (float)(SharedUltimatePhase.Now - hp.Began);
+            return beats.MoveEnd > beats.MoveStart;
+        }
+
+        /// <summary>How far out from the can the hologram's scan has reached, metres; past the
+        /// whole stage once it is done.</summary>
+        public float ScanRadius(in BreakBeats beats)
+        {
+            float t = Mathf.Clamp01((beats.Age - beats.ScanStart) / (beats.ScanEnd - beats.ScanStart));
+            return t >= 1.0f ? float.PositiveInfinity : (Radius + 3.0f) * t * t * (3.0f - 2.0f * t);
+        }
+
+        /// <summary>The jolt of the undock, metres, `since` seconds after it: a drop and a short ring.</summary>
+        public static float UndockJolt(float since) =>
+            since <= 0.0f || since > 1.0f ? 0.0f : -0.24f * Mathf.Exp(-since * 6.0f) * Mathf.Sin(since * 22.0f);
+
+        /// <summary>
         /// Pose the visuals for the break that is playing, if it is the break INTO the applied
-        /// layout. The old layout is read off the break's own completed round, so a peer that
-        /// joins in the middle of a break lands on the same frame of the travel as everyone.
+        /// layout.
         /// </summary>
         private bool TryTravel()
         {
-            var hp = HalftimePresentation.Instance;
-            var match = GameServices.Match;
-            if (hp == null || !hp.Active || match == null || hp.MatchId != match.PresentationMatchId) return false;
+            if (!TryBreak(out var beats) || beats.To != Applied || beats.From == beats.To) return false;
+            if (beats.Age >= beats.MoveEnd) return false;
 
-            int count = LayoutCount;
-            int from = LayoutFor(hp.MatchId, hp.CompletedRound, count);
-            int to = LayoutFor(hp.MatchId, hp.CompletedRound + 1, count);
-            if (to != Applied || from == to) return false;
-
-            float end = hp.Duration - SettleSeconds;
-            float start = HologramLead + HologramSeconds;
-            if (hp.IsHalftime) start = Mathf.Max(start, end - HalftimeTravelSeconds);
-            if (end <= start) return false;
-
-            float age = (float)(SharedUltimatePhase.Now - hp.Began);
-            if (age >= end) return false;
-
-            PoseTravel(from, to, Mathf.Clamp01((age - start) / (end - start)),
-                       Mathf.Clamp01((age - (start - HologramSeconds)) / HologramFade));
+            PoseTravel(beats.From, beats.To, beats.Travel, Mathf.Clamp01((beats.Age - beats.ScanStart) / HologramFade),
+                       ScanRadius(beats), UndockJolt(beats.Age - beats.Undock));
             return true;
+        }
+
+        /// <summary>What a piece does between two layouts.</summary>
+        public enum Motion
+        {
+            /// <summary>In neither layout.</summary>
+            Absent,
+            /// <summary>Stands the same in both: it neither moves nor needs announcing.</summary>
+            Still,
+            /// <summary>Only in the old layout: down into the shaft, gathering speed.</summary>
+            Leave,
+            /// <summary>Only in the new one: up out of the shaft, and it slams home.</summary>
+            Arrive,
+            /// <summary>In both, a different shape: one mesh rebuilt between the two sets of numbers.</summary>
+            Morph,
+            /// <summary>In both, the same solid somewhere else: it turns about the can and rises or drops.</summary>
+            Turn,
+            /// <summary>In both, and it can do neither: the old one sinks, then the new one rises.</summary>
+            Swap,
+        }
+
+        /// <summary>Where one piece is at one moment of the move.</summary>
+        public struct PieceMove
+        {
+            public Motion Motion;
+            /// <summary>The share of the move (0 to 1) at which this piece starts and locks.</summary>
+            public float Starts, Locks;
+            /// <summary>0 to 1 through this piece's own window, and the same eased (`Slam`).</summary>
+            public float T, E;
+            /// <summary>Which layout's solid is the one drawn now (-1: none, or the changing mesh).</summary>
+            public int Shown;
+            /// <summary>That solid's lift in metres and turn in degrees from where it stands.</summary>
+            public float Lift, Yaw;
+        }
+
+        public Motion MotionOf(int index, int from, int to)
+        {
+            var piece = index >= 0 && index < Pieces.Length ? Pieces[index] : null;
+            if (piece == null || piece.Shapes == null || from < 0 || to < 0 || from >= piece.Shapes.Length || to >= piece.Shapes.Length) return Motion.Absent;
+
+            var a = piece.Shapes[from];
+            var b = piece.Shapes[to];
+            if (!a.Exists && !b.Exists) return Motion.Absent;
+            if (!b.Exists) return Motion.Leave;
+            if (!a.Exists) return Motion.Arrive;
+            if (Shape.Same(a, b)) return Motion.Still;
+
+            bool authored = IsAuthored(piece, from) || IsAuthored(piece, to);
+            if (!authored && a.IsRamp == b.IsRamp && PieceMaterials != null && PieceMaterials.Length > 0) return Motion.Morph;
+            return Shape.SameSolid(a, b) ? Motion.Turn : Motion.Swap;
+        }
+
+        private static bool Moves(Motion motion) => motion != Motion.Absent && motion != Motion.Still;
+
+        /// <summary>True for a piece that ends the move standing in the new layout: it LOCKS. A
+        /// leaving piece only goes.</summary>
+        public static bool Locks(Motion motion) => Moves(motion) && motion != Motion.Leave;
+
+        /// <summary>The piece whose lock is the last of the move (they go in list order), or -1
+        /// when nothing locks: the break camera's last shot is on it.</summary>
+        public int LastLocking(int from, int to)
+        {
+            for (int i = Pieces.Length - 1; i >= 0; i--)
+                if (Locks(MotionOf(i, from, to))) return i;
+            return -1;
+        }
+
+        /// <summary>
+        /// One piece at `travel` (0 to 1) of the way from one layout to another. The pieces that
+        /// move go one after another in list order, each for `PieceShare` of the move, and each
+        /// LOCKS at the end of its own window: `ArenaShow` rings each lock at `Locks`.
+        /// </summary>
+        public PieceMove MoveOf(int index, int from, int to, float travel)
+        {
+            var move = new PieceMove { Motion = MotionOf(index, from, to), Shown = -1 };
+            if (move.Motion == Motion.Absent) return move;
+            if (move.Motion == Motion.Still) { move.Shown = to; move.T = move.E = 1.0f; return move; }
+
+            int order = 0, moving = 0;
+            for (int i = 0; i < Pieces.Length; i++)
+            {
+                if (!Moves(MotionOf(i, from, to))) continue;
+                if (i < index) order++;
+                moving++;
+            }
+
+            move.Starts = moving > 1 ? (1.0f - PieceShare) * order / (moving - 1) : (1.0f - PieceShare) * 0.5f;
+            move.Locks = move.Starts + PieceShare;
+            float t = move.T = Mathf.Clamp01((travel - move.Starts) / PieceShare);
+            float e = move.E = Slam(t);
+
+            var a = Pieces[index].Shapes[from];
+            var b = Pieces[index].Shapes[to];
+            switch (move.Motion)
+            {
+                case Motion.Leave:
+                    move.Shown = t >= 1.0f ? -1 : from;
+                    move.Lift = -SinkDepth * Fall(t);
+                    break;
+                case Motion.Arrive:
+                    // Out of sight until it starts: it would otherwise hang at the bottom of its rise.
+                    move.Shown = t <= 0.0f ? -1 : to;
+                    move.Lift = -SinkDepth * (1.0f - e);
+                    break;
+                case Motion.Morph:
+                    move.Shown = t <= 0.0f ? from : t >= 1.0f ? to : -1;
+                    break;
+                case Motion.Turn:
+                    move.Shown = t >= 1.0f ? to : from;
+                    if (t < 1.0f) { move.Yaw = Mathf.DeltaAngle(a.A0, b.A0) * e; move.Lift = (b.Top - a.Top) * e; }
+                    break;
+                case Motion.Swap:
+                    if (t < 0.5f) { move.Shown = from; move.Lift = -SinkDepth * Fall(t * 2.0f); }
+                    else { move.Shown = to; move.Lift = -SinkDepth * (1.0f - Slam(t * 2.0f - 1.0f)); }
+                    break;
+            }
+
+            return move;
         }
 
         /// <summary>
         /// The visuals `travel` (0 to 1) of the way from one layout to another, with the next
-        /// layout's hologram `appear` (0 to 1) of the way up. Public so a probe or a film can
-        /// pose any frame of the transformation without a break.
+        /// layout's hologram `appear` (0 to 1) of the way up and swept in out to `scan` metres
+        /// from the can, and every piece that has not gone yet dropped by `jolt` metres (the
+        /// undock). Public so a probe or a film can pose any frame of the transformation
+        /// without a break.
         /// </summary>
-        public void PoseTravel(int from, int to, float travel, float appear)
+        public void PoseTravel(int from, int to, float travel, float appear, float scan = float.PositiveInfinity, float jolt = 0.0f)
         {
             Travelling = true;
             _shown = -1;
@@ -401,55 +649,87 @@ namespace TumbangPreso.Map
                 var piece = Pieces[i];
                 if (piece == null || piece.Shapes == null || from >= piece.Shapes.Length || to >= piece.Shapes.Length) continue;
 
-                var a = piece.Shapes[from];
-                var b = piece.Shapes[to];
-
-                // A piece that stands the same in both layouts neither moves nor needs announcing.
-                if (a.Exists && b.Exists && Shape.Same(a, b))
+                var move = MoveOf(i, from, to, travel);
+                if (move.Motion == Motion.Absent || move.Motion == Motion.Still)
                 {
-                    ShowSolid(piece, to, 0.0f, 0.0f);
+                    ShowSolid(piece, move.Shown, 0.0f, 0.0f);
                     ShowMorph(i, false);
                     ShowHologram(i, -1, 0.0f, 0.0f);
                     continue;
                 }
 
-                // Staggered in list order: each piece moves for PieceShare of the window.
-                float offset = n > 1 ? (1.0f - PieceShare) * i / (n - 1) : 0.0f;
-                float t = Mathf.Clamp01((travel - offset) / PieceShare);
-                float e = t * t * (3.0f - 2.0f * t);
+                var a = piece.Shapes[from];
+                var b = piece.Shapes[to];
 
-                ShowHologram(i, b.Exists && appear > 0.0f && t < 1.0f ? to : -1, e, appear);
+                // The hologram of where the piece is going: it comes up as the scan passes over
+                // it, and turns solid as the piece arrives.
+                float swept = b.Exists ? appear * Mathf.Clamp01((scan - b.Inner) / 2.5f) : 0.0f;
+                ShowHologram(i, swept > 0.0f && move.T < 1.0f ? to : -1, move.E, swept);
 
-                bool morph = false;
-                if (t <= 0.0f) ShowSolid(piece, a.Exists ? from : -1, 0.0f, 0.0f);
-                else if (t >= 1.0f) ShowSolid(piece, b.Exists ? to : -1, 0.0f, 0.0f);
-                else if (a.Exists && b.Exists)
+                bool morph = move.Motion == Motion.Morph && move.T > 0.0f && move.T < 1.0f;
+                if (morph)
                 {
-                    bool authored = IsAuthored(piece, from) || IsAuthored(piece, to);
-                    if (!authored && a.IsRamp == b.IsRamp && PieceMaterials != null && PieceMaterials.Length > 0)
-                    {
-                        // Changing shape: one mesh, rebuilt between the two sets of numbers.
-                        morph = true;
-                        ShowSolid(piece, -1, 0.0f, 0.0f);
-                        ArenaStageMesh.Build(Shape.Lerp(a, b, e), MorphMesh(i), true);
-                    }
-                    else if (Shape.SameSolid(a, b))
-                    {
-                        // The same solid somewhere else: it turns about the can and rises or drops.
-                        ShowSolid(piece, from, Mathf.DeltaAngle(a.A0, b.A0) * e, (b.Top - a.Top) * e);
-                    }
-                    else if (t < 0.5f) ShowSolid(piece, from, 0.0f, -SinkDepth * Fall(t * 2.0f));
-                    else ShowSolid(piece, to, 0.0f, -SinkDepth * Fall(2.0f - t * 2.0f));
+                    // Changing shape: one mesh, rebuilt between the two sets of numbers.
+                    ShowSolid(piece, -1, 0.0f, 0.0f);
+                    ArenaStageMesh.Build(Shape.Lerp(a, b, move.E), MorphMesh(i), true);
                 }
-                // Leaving: down into the shaft, gathering speed. Arriving: up out of it, slowing.
-                else if (a.Exists) ShowSolid(piece, from, 0.0f, -SinkDepth * Fall(t));
-                else ShowSolid(piece, b.Exists ? to : -1, 0.0f, -SinkDepth * Fall(1.0f - t));
+                else ShowSolid(piece, move.Shown, move.Yaw, move.Lift + (move.T <= 0.0f ? jolt : 0.0f));
 
                 ShowMorph(i, morph);
             }
         }
 
         private static float Fall(float t) => t * t;
+
+        /// <summary>A piece's arrival: it gathers speed and stops dead where it locks (its
+        /// speed at the end is nearly twice its average), so the lock reads as a hit.</summary>
+        public static float Slam(float t) => Mathf.Lerp(t * t * (3.0f - 2.0f * t), t * t * t, 0.6f);
+
+        /// <summary>
+        /// Up to `into.Length` points along a piece's walking surface in one layout, in the
+        /// WORLD, at rest (add a `PieceMove`'s lift): where its hover emitters and its lock's
+        /// sparks are drawn. A disc: its middle and three round it; a ring or an arc: along its
+        /// centre line; a ramp: along its length.
+        /// </summary>
+        public int PiecePoints(int index, int layout, Vector3[] into)
+        {
+            var piece = index >= 0 && index < Pieces.Length ? Pieces[index] : null;
+            if (piece == null || piece.Shapes == null || layout < 0 || layout >= piece.Shapes.Length || into == null || into.Length == 0) return 0;
+
+            var shape = piece.Shapes[layout];
+            if (!shape.Exists) return 0;
+
+            int count = 0;
+            if (shape.IsRamp)
+            {
+                int along = Mathf.Min(into.Length, 2);
+                for (int k = 0; k < along; k++)
+                {
+                    float r = Mathf.Lerp(shape.R0, shape.R1, (k + 1.0f) / (along + 1.0f));
+                    Vector3 at = ArenaStageMesh.Direction(shape.A0) * r;
+                    into[count++] = transform.TransformPoint(at + Vector3.up * shape.HeightAt(at.x, at.z));
+                }
+                return count;
+            }
+
+            if (shape.Inner < 0.01f)
+            {
+                into[count++] = transform.TransformPoint(Vector3.up * shape.Top);
+                for (int k = 0; k < 3 && count < into.Length; k++)
+                    into[count++] = transform.TransformPoint(ArenaStageMesh.Direction(shape.A0 + 60.0f + 120.0f * k) * (shape.Outer * 0.7f) + Vector3.up * shape.Top);
+                return count;
+            }
+
+            float mid = (shape.Inner + shape.Outer) * 0.5f;
+            // One point about every 7 m of arc, and the two ends of an arc always.
+            int steps = Mathf.Clamp(Mathf.CeilToInt(shape.Sweep * Mathf.Deg2Rad * mid / 7.0f), shape.Full ? 4 : 2, into.Length);
+            for (int k = 0; k < steps; k++)
+            {
+                float share = shape.Full ? (float)k / steps : (k + 0.5f) / steps;
+                into[count++] = transform.TransformPoint(ArenaStageMesh.Direction(shape.A0 + shape.Sweep * share) * mid + Vector3.up * shape.Top);
+            }
+            return count;
+        }
 
         private static bool IsAuthored(Piece piece, int layout) =>
             piece.Authored != null && layout < piece.Authored.Length && piece.Authored[layout];

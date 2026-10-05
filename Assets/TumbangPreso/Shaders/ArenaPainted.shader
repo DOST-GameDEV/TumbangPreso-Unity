@@ -17,6 +17,17 @@
 //   generator adding its own), by true distance from the eye, on the pixel's final colour, so what
 //   glows fades into the air with everything else.
 //
+//   THE CITY'S HAZE (owner, 2026-10-05: "add a distance haze effect for outside the arena"). Two
+//   GLOBALS, set in Play by Runtime/Map/ArenaAmbience.cs and zero otherwise (so off in the editor
+//   and in a review render): _ArenaHazeColor (rgb the haze, a its strength) and _ArenaHaze
+//   (x the height it is gone above, y the depth below that over which it grows to whole,
+//   z the level distance from the eye at which it begins, w the distance over which it grows).
+//   It is a layer of lit air LOW among the towers: whole at their feet, gone at their crowns, and
+//   only on what stands outside the stadium (more than 250 m from the map's origin; the hull's rim
+//   is at 239), so no stadium surface takes any whatever its material. It is measured LEVEL from
+//   the eye, not along the sight line, so the city floor straight down the shaft stays clear.
+//   A material with _Fog 0 takes none.
+//
 // WHAT WAS LEFT OUT, FOR COST: the grime overlays and their three extra UV sets, the normal map and
 // its tangent frame, the saturation and the mapping rotation, and the Standard lighting model
 // (Lambert: nothing here is glossy at the distances it is seen from). `noforwardadd`: one
@@ -63,6 +74,9 @@ Shader "TumbangPreso/ArenaPainted"
         half4 _EmissionColor;
         half _EmissionStrength, _EmissionFromAlbedo, _Cutoff, _Fog;
         float4 _AT0, _AT0Mask;
+        // Globals (see THE CITY'S HAZE above). Unset, both are zero and the haze is off.
+        half4 _ArenaHazeColor;
+        float4 _ArenaHaze;
 
         struct Input
         {
@@ -107,6 +121,11 @@ Shader "TumbangPreso/ArenaPainted"
                 float clear = lerp(1.0, saturate(unityFogFactor), _Fog);
                 color.rgb = lerp(unity_FogColor.rgb, color.rgb, clear);
             #endif
+            // The city's haze: by height, by level distance from the eye, and only outside the stadium.
+            float low = saturate((_ArenaHaze.x - IN.worldPos.y) / max(_ArenaHaze.y, 1.0));
+            float level = saturate((distance(_WorldSpaceCameraPos.xz, IN.worldPos.xz) - _ArenaHaze.z) / max(_ArenaHaze.w, 1.0));
+            float outside = saturate((length(IN.worldPos.xz) - 250.0) / 60.0);
+            color.rgb = lerp(color.rgb, _ArenaHazeColor.rgb, _ArenaHazeColor.a * low * level * outside * _Fog);
         }
         ENDCG
     }

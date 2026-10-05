@@ -65,7 +65,7 @@ namespace TumbangPreso.PlayTests
             var failures = new List<string>();
             void Fail(string line) { failures.Add(line); report.AppendLine("  FAIL " + line); }
             report.AppendLine($"ARENA STAGE PROBE, {Scene}");
-            report.AppendLine($"{stage.LayoutCount} layouts, {stage.Pieces.Length} pieces, catch at y {ArenaStage.CatchY:F2} (data {stage.CatchHeight:F2}), " +
+            report.AppendLine($"{stage.LayoutCount} layouts, {stage.Pieces.Length} pieces, catch at y {ArenaStage.CatchY:F2} (data {stage.CatchLine:F2}; poses believed down to {ArenaStage.MoveFloorY:F1}, kill plane {stage.KillPlaneY:F1}), " +
                               $"walls x {AIController.PlayableMinX:F1}..{AIController.PlayableMaxX:F1}, z {AIController.PlayableMinZ:F1}..{AIController.PlayableMaxZ:F1}");
             if (stage.LayoutCount == 0) Fail("the stage has no layouts");
 
@@ -276,6 +276,9 @@ namespace TumbangPreso.PlayTests
                 else
                 {
                     if (lowest <= ArenaStage.MoveFloorY) Fail($"fall: the body reached y {lowest:F2} before it was caught, under the {ArenaStage.MoveFloorY} where AcceptMove refuses poses");
+                    // The owner's rule (2026-10-05): a real fall. The early catch (`ArenaFallRecovery.PoseLead`) may take
+                    // a body at terminal speed a metre or so above the line; anything higher is the old short fall.
+                    if (lowest > ArenaStage.CatchY + 2.5f) Fail($"fall: the body was caught at y {lowest:F2}, well above the catch line {ArenaStage.CatchY:F2}: not the long fall the design asks for");
                     began = Time.realtimeSinceStartup;
                     bool shotLift = false, shotBeam = false; float carriedLowest = lowest, highest = lowest;
                     while (Time.realtimeSinceStartup - began < 10f && who.IsEdgeRecovering)

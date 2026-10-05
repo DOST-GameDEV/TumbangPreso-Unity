@@ -114,8 +114,16 @@ namespace TumbangPreso
         // across, set down. It runs on its own clock. The fall trip that BeginEdgeRecovery
         // applied only keeps the body from acting and is counted down to match; the Rooftop
         // and Lagoon steps above never see this kind.
-        public const float DroneCatchSeconds=.35f,DroneCarrySeconds=1.9f,DroneSetDownSeconds=.6f,DroneCarryHeight=3.2f;
-        private const float DroneLiftShare=.42f,DroneCatchSink=.3f;
+        //
+        // THE CATCH IS DEEP IN THE SHAFT NOW (about y -22, owner 2026-10-05), so the body
+        // arrives at terminal speed (25 m/s) and has 25 m to come back up. The catch takes the
+        // fall up over 3 m (an ease-out from 15 m/s: a snatch, not a wall), the haul is the
+        // larger share of the carry and peaks near 30 m/s (a replica's smoothing follows to
+        // 40), and the whole carry is 3.5 s: 0.4 caught, 2.5 hauled and floated across, 0.6 set
+        // down. Only the Arena has this kind, so no other map sees these numbers.
+        public const float DroneCatchSeconds=.4f,DroneCarrySeconds=2.5f,DroneSetDownSeconds=.6f,DroneCarryHeight=3.2f;
+        public const float DroneLiftShare=.55f;
+        private const float DroneCatchSink=3;
 
         private void StepDroneCarry(float dt)
         {

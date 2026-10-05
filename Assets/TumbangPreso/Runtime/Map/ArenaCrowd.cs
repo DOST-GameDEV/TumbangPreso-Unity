@@ -132,6 +132,17 @@ namespace TumbangPreso.Map
         private static readonly int ExcitementId = Shader.PropertyToID("_ArenaCrowdExcitement");
         private static readonly int GroanId = Shader.PropertyToID("_ArenaCrowdGroan");
         private static readonly int WaveId = Shader.PropertyToID("_ArenaCrowdWave");
+        private static readonly int ClockId = Shader.PropertyToID("_ArenaCrowdClock");
+
+        /// <summary>
+        /// THE CROWD'S OWN CLOCK, seconds. It is game time, except that it KEEPS RUNNING THROUGH A
+        /// BREAK between rounds: `Time.timeScale` is 0 there, which stops `Time.time` and the
+        /// shader's `_Time`, and the break is exactly when the stands have the most to react to
+        /// (the stage's reveal, `ArenaShow`). Everything the crowd times is on it, here and in
+        /// the shader (`_ArenaCrowdClock`). A pause that is not a held presentation stops it.
+        /// </summary>
+        private static float _clock;
+        private static int _clockFrame = -1;
 
         // ------------------------------------------------------------------ the reactions (static: one crowd, any caller)
 
@@ -149,8 +160,8 @@ namespace TumbangPreso.Map
         public static void Excite(float amount, float seconds)
         {
             amount = Mathf.Clamp01(amount);
-            float until = Time.time + Mathf.Max(0f, seconds);
-            if (amount >= _target || Time.time > _holdUntil) { _target = amount; _holdUntil = until; }
+            float until = _clock + Mathf.Max(0f, seconds);
+            if (amount >= _target || _clock > _holdUntil) { _target = amount; _holdUntil = until; }
             else _holdUntil = Mathf.Max(_holdUntil, Mathf.Min(until, _holdUntil + seconds * 0.5f));
         }
 
@@ -158,13 +169,13 @@ namespace TumbangPreso.Map
         public static void Groan(float amount, float seconds)
         {
             _groan = Mathf.Max(_groan, Mathf.Clamp01(amount));
-            _groanUntil = Mathf.Max(_groanUntil, Time.time + Mathf.Max(0f, seconds));
+            _groanUntil = Mathf.Max(_groanUntil, _clock + Mathf.Max(0f, seconds));
         }
 
         /// <summary>Send the wave once round the bowl.</summary>
         public static void Wave()
         {
-            if (Time.time - _waveStart > WaveSeconds) _waveStart = Time.time;
+            if (_clock - _waveStart > WaveSeconds) _waveStart = _clock;
         }
 
         /// <summary>The crowd's level now, 0 to 1 (for the audio, if it wants to follow).</summary>
@@ -204,6 +215,7 @@ namespace TumbangPreso.Map
             if (_alive == 0)
             {
                 _target = _level = _groan = 0f; _waveStart = -99f;
+                _holdUntil = _groanUntil = 0f; _clock = 0f;
                 Shader.SetGlobalFloat(ExcitementId, 0f);
                 Shader.SetGlobalFloat(GroanId, 0f);
                 Shader.SetGlobalVector(WaveId, Vector4.zero);
@@ -218,12 +230,15 @@ namespace TumbangPreso.Map
             var match = GameServices.Match;
             if (match != _match) { Unhook(); _match = match; if (match != null) { match.IntermissionStarted += OnIntermission; match.MatchEnded += OnMatchEnded; } }
 
-            float dt = Time.deltaTime;
-            if (Time.time > _holdUntil) _target = 0f;
+            float dt = PresentationClock.Held ? Mathf.Min(Time.unscaledDeltaTime, 0.05f) : Time.deltaTime;
+            // One crowd advances the clock, once a frame, however many banks are alive.
+            if (_clockFrame != Time.frameCount) { _clockFrame = Time.frameCount; _clock += dt; }
+            Shader.SetGlobalFloat(ClockId, _clock);
+            if (_clock > _holdUntil) _target = 0f;
             _level = Mathf.MoveTowards(_level, _target, (_target > _level ? RiseRate : FallRate) * dt);
-            if (Time.time > _groanUntil) _groan = Mathf.MoveTowards(_groan, 0f, GroanFall * dt);
+            if (_clock > _groanUntil) _groan = Mathf.MoveTowards(_groan, 0f, GroanFall * dt);
 
-            float wave = (Time.time - _waveStart) / WaveSeconds;
+            float wave = (_clock - _waveStart) / WaveSeconds;
             bool waving = wave >= 0f && wave <= 1f;
             // The wave fades in and out over its first and last tenth, so it does not pop.
             float strength = waving ? Mathf.Clamp01(Mathf.Min(wave, 1f - wave) * 10f) : 0f;

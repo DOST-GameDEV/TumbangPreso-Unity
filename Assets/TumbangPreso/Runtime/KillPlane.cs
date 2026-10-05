@@ -41,6 +41,11 @@ namespace TumbangPreso
         public const float PlaneThickness = 4.0f;
         public const float PlaneHeight = -10.0f;
 
+        /// <summary>Where this map's plane sits. Every map's is `PlaneHeight`; a map with a
+        /// deliberate fall under its floor sets its own in its builder (the Arena, whose drone
+        /// catches a body well above it: the plane is only the last resort there).</summary>
+        public float Height = PlaneHeight;
+
         private void Awake()
         {
             // ⚠️ THE TRIGGER MUST BE ON THIS OBJECT. Unity delivers OnTriggerEnter to the
@@ -62,7 +67,7 @@ namespace TumbangPreso
             }
 
             var p = transform.position;
-            transform.position = new Vector3(p.x, PlaneHeight, p.z);
+            transform.position = new Vector3(p.x, Height, p.z);
         }
 
         /// <summary>The converted `CollisionShape3D`'s box if there is one, so a map that

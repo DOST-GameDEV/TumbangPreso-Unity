@@ -9,6 +9,7 @@
 //     _ArenaCrowdGroan        0 to 1: the share of the seated who put their hands to their heads
 //     _ArenaCrowdWave         x: where the wave is, 0 to 1 round the bowl (a bearing / 360)
 //                             y: its half width in the same unit   z: its strength, 0 when there is none
+//     _ArenaCrowdClock        the crowd's clock in seconds, in place of _Time.y: it runs through a break
 //
 // So the whole crowd reacts with no per-object cost: no script touches a seat, no material is
 // duplicated, and the meshes never change.
@@ -133,6 +134,9 @@ Shader "TumbangPreso/ArenaCrowd"
             float _ArenaCrowdExcitement;
             float _ArenaCrowdGroan;
             float4 _ArenaCrowdWave;
+            // The crowd's own clock, seconds (ArenaCrowd): game time, except that it keeps running through
+            // a break between rounds, where Time.timeScale is 0 and _Time stands still.
+            float _ArenaCrowdClock;
 
             // The loops, in the atlas's row order: idle, clap, cheer, jump, stick, stick_up, flag, groan.
             #define LOOP_IDLE 0
@@ -171,7 +175,7 @@ Shader "TumbangPreso/ArenaCrowd"
                 float wave = _ArenaCrowdWave.z * (1.0 - smoothstep(0.0, max(_ArenaCrowdWave.y, 1e-4), away));
                 float excite = saturate(max(_ArenaCrowdExcitement, wave));
                 // A slow swell that travels round the bowl, so a calm crowd claps in pockets.
-                float swell = 0.5 + 0.5 * sin(bearing * 75.0 + _Time.y * 0.35 + second * 2.0);
+                float swell = 0.5 + 0.5 * sin(bearing * 75.0 + _ArenaCrowdClock * 0.35 + second * 2.0);
 
                 // Which loop. A flag is always waved; a stick is held up once its holder is
                 // roused; the rest groan, or get to their feet, or clap, or sit.
@@ -184,13 +188,13 @@ Shader "TumbangPreso/ArenaCrowd"
 
                 float count = LoopCount[loop];
                 float fps = lerp(LoopFpsCalm[loop], LoopFpsExcited[loop], excite);
-                float frame = floor(frac(_Time.y * fps / count + phase) * count);
+                float frame = floor(frac(_ArenaCrowdClock * fps / count + phase) * count);
                 float row = LoopStart[loop] + min(frame, count - 1.0);
 
                 // A body on its feet bobs. The jump's own lift is drawn in its frames; this is
                 // the part a still frame cannot carry, and it is what reads from 85 m.
                 float standing = (loop == LOOP_CHEER || loop == LOOP_JUMP || loop == LOOP_STICK_UP) ? 1.0 : 0.0;
-                float hop = standing * abs(sin(_Time.y * 7.0 + phase * 6.2831853)) * _CellMetres.w * excite;
+                float hop = standing * abs(sin(_ArenaCrowdClock * 7.0 + phase * 6.2831853)) * _CellMetres.w * excite;
 
                 // Open the quad about the vertical axis, toward the camera.
                 float3 seat = mul(unity_ObjectToWorld, float4(v.vertex.xyz, 1.0)).xyz;
@@ -208,7 +212,7 @@ Shader "TumbangPreso/ArenaCrowd"
                 o.uv = float2((person + corner.x) * _Grid.x, 1.0 - (row + 1.0 - corner.y) * _Grid.y);
 
                 // A phone's flash: this seat, this eighth of a second.
-                float tick = floor(_Time.y * 8.0);
+                float tick = floor(_ArenaCrowdClock * 8.0);
                 float flash = Hash(float2(phase * 91.7 + reluctance * 13.1, tick * 0.137 + bearing * 57.0)) < _FlashRate * excite ? 1.0 : 0.0;
                 o.cell = float4(corner, flash, 1.0 + 0.5 * excite);
 

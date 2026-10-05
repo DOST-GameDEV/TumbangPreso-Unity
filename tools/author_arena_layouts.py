@@ -220,7 +220,7 @@ DATA = {
              "its id and kind across layouts and travels; an id missing from a layout sinks away. 'bonus' lists the "
              "pieces only a jump pad reaches. Speed pad halfSize is [across, along]; 'tangent' travel is clockwise, "
              "'radial' travel is outward.",
-    "stageTop": 0.0, "pitRadius": 40.0, "wallHalf": WALL, "catchY": -4.5,   # above y -5 (the host refuses poses below it), below the lowest underside (-2.2)
+    "stageTop": 0.0, "pitRadius": 40.0, "wallHalf": WALL, "catchY": -22.0,   # a real fall into the shaft (owner 2026-10-05). On this map the host believes poses down to y -40 (ArenaStage.MoveFloor); the first ledge is at y -26, outside the walls
     "spawns": {"taya": [0, 0, -2.5], "attackers": [[-1.8, 0, 9], [0, 0, 9], [1.8, 0, 9]]},
     "layouts": LAYOUTS,
 }

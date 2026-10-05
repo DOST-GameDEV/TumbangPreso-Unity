@@ -12,8 +12,9 @@ buildings to look like that in the final design" (procedural window grids), "the
 out textures on the buildings", "need you to be more critical of the work".
 
 WHAT IS HERE
-  1. TOWERS, placed by sightline (`TOWERS`): four gates of three at the open corners and six far
-     towers behind the stands. 18 towers of 11 designs that differ in construction:
+  1. TOWERS, placed by sightline (`TOWERS`): four gates of three at the open corners and eleven
+     towers over the stands in two depths. 23 towers of 11 designs that differ in construction
+     (the first skyline was 18, further out and lower: see the note over `TOWERS`):
        haligi     square, modelled piers on every face, three setbacks, a stepped crown
        tirahan    a cross-plan condominium, balcony slabs all the way up, tanks on the roof
        magkapatid a PAIR of slabs with lift spines, joined by two skybridges     (landmark, SE)
@@ -166,8 +167,8 @@ def comb(base, pd, cw, pw=0.0, every=0.0):
 class Frame:
     """A tower's place: its foot at bearing and distance from the can, its local -y facing the can."""
 
-    def __init__(self, bearing, r, turn=0.0):
-        self.bearing, self.r = bearing, r
+    def __init__(self, bearing, r, turn=0.0, scale=1.0):
+        self.bearing, self.r, self.scale = bearing, r, scale
         o = K.polar(r, bearing)
         self.o = Vector((o.x, o.y, 0.0))
         a = math.radians(bearing + turn)
@@ -175,7 +176,8 @@ class Frame:
         self.dy = Vector((math.sin(a), math.cos(a), 0.0))
 
     def p(self, x, y, z):
-        return self.o + self.dx * x + self.dy * y + Z * z
+        """`scale` widens the PLAN only (the needle, whose rows-only facade has no bay to keep)."""
+        return self.o + self.dx * (x * self.scale) + self.dy * (y * self.scale) + Z * z
 
     def ring(self, plan, z):
         return [self.p(x, y, z) for x, y in plan]
@@ -463,9 +465,9 @@ SIGN_LOG = []
 
 
 class Tower:
-    def __init__(self, tid, design, bearing, r, coll):
+    def __init__(self, tid, design, bearing, r, coll, scale=1.0):
         self.name = "city_%s_%s" % (tid, design)
-        self.F = Frame(bearing, r)
+        self.F = Frame(bearing, r, scale=scale)
         self.body = Mesh(self.name + "_body", self.F.o)
         self.parts = Mesh(self.name + "_parts", self.F.o)
         self.fx = None
@@ -489,8 +491,15 @@ class Tower:
 
 
 def wall(F, pts, z0, zt):
-    """A tier's rings: the wall, a 1.2 m LED line under the parapet, the parapet."""
-    return [F.ring(pts, z0), F.ring(pts, zt - 1.2), F.ring(pts, zt), F.ring(pts, zt + 1.6)]
+    """A tier's rings: the wall, a 2.4 m LED line under the parapet, the parapet."""
+    return [F.ring(pts, z0), F.ring(pts, zt - 2.4), F.ring(pts, zt), F.ring(pts, zt + 1.6)]
+
+
+def strip(P, F, x, y, z0, z1, led, w=1.1):
+    """AN EDGE LIGHT: a closed LED bar up a corner or a column, standing proud of what it is on
+    (its foot and head run 1 m into the ledges it joins). The owner, 2026-10-05: "buildings should
+    also be more visible": a lit edge is what cuts a dark tower out of a dark sky."""
+    P.box(F.p(x, y, (z0 + z1) / 2), (w, w, z1 - z0), F.dx, mat="trim." + led)
 
 
 def cap(facade, led):
@@ -508,6 +517,10 @@ def haligi(t, top, w=80.0, facade="glass_a", led="led_blue", sign_name=None, sig
         pts, tags, fac = comb(rect(width, width), 3.0, 6.0, 4.0, 16.0)
         mats = [facade if tag == "bay" else "metal" for tag in tags]
         b.seg(wall(F, pts, z0, zt), mats, fac, span=cap(facade, led))
+        if k >= 1:                                                # a lit edge up each corner post of the upper two tiers
+            for sx in (-1, 1):
+                for sy in (-1, 1):
+                    strip(P, F, sx * (width / 2 + 3.0), sy * (width / 2 + 3.0), z0 - 1.0, zt + 1.0, led)
         for sx in (-1, 1):                                        # plant on the terrace this tier leaves
             if k < 2:
                 plant(P, F, sx * (width / 2 - 4.5), 0.0, zt + 1.3, kind=k)
@@ -555,6 +568,9 @@ def tirahan(t, top, core=24.0, arm=24.0, facade="resi", sign_name=None, sign_z=N
           span=lambda i, j, m: "trim.amber" if i == 1 else None)
     b.end()
     half = core / 2 + arm / 2
+    for sx, sy in ((1, 0), (-1, 0), (0, 1), (0, -1)):             # a lit edge up the middle of each wing's end, upper half
+        reach = core / 2 + arm + 3.1
+        strip(P, F, sx * reach, sy * reach, (LOBBY + top) / 2, top + 2.0, "amber", 1.0)
     for k, (sx, sy) in enumerate(((1, 0), (-1, 0), (0, 1), (0, -1))):
         plant(P, F, sx * half, sy * half, top + 2.1, kind=(1, 1, 0, 2)[k])
     mast(P, F.p(4.0, 3.0, 0), top + 15.5, 30.0, 1.0, 2)
@@ -702,12 +718,12 @@ def singsing(t, top):
     mast(P, F.p(R, 0, 0), top + 20.0, 18.0, 0.9, 1)
 
 
-def korona(t, top):
+def korona(t, top, R=1.0):
     """THE HOLOGRAM CROWN: a hexagon in three tiers, six blades leaning out from its roof, and the
-    TUMP logo as a hologram standing inside them over an emitter. `top` is the roof."""
+    TUMP logo as a hologram standing inside them over an emitter. `top` is the roof; `R` scales the
+    plan and the crown (the piers keep their 16 m spacing, so they still land on the painted bays)."""
     F, b, P = t.F, t.body, t.parts
-    hexa = lambda r: ngon(r, 6, -math.pi / 2 - math.pi / 6 + math.pi / 3)     # a flat face toward the can
-    hexa = lambda r: ngon(r, 6, 0.0)                                           # corners left and right, a face toward the can
+    hexa = lambda r: ngon(r * R, 6, 0.0)                                       # corners left and right, a face toward the can
     t.base(hexa(66.0), hexa(60.0))
     z0 = LOBBY
     for r, zt in ((48.0, snap(top - 150.0)), (40.0, snap(top - 58.0)), (32.0, top)):
@@ -716,41 +732,41 @@ def korona(t, top):
         b.seg(wall(F, pts, z0, zt), mats, fac, span=cap("glass_b", "cyan"))
         z0 = zt + 1.6
     b.end()
-    H = 118.0
+    H = 118.0 * R
     tips = []
     for k, (x, y) in enumerate(hexa(32.0)):                       # the blades stand in the corner posts and lean out
         out = Vector((x, y)).normalized()
         side = Vector((-out.y, out.x))
 
         def sect(z, lean, depth, width):
-            c = Vector((x, y)) + out * lean
+            c = Vector((x, y)) + out * lean * R
             return [F.p(*(c - out * depth / 2 - side * width / 2), z), F.p(*(c + out * depth / 2 - side * width / 2), z),
                     F.p(*(c + out * depth / 2 + side * width / 2), z), F.p(*(c - out * depth / 2 + side * width / 2), z)]
 
         front = y < -1.0                                          # THE CROWN IS OPEN TOWARD THE CAN: the two front blades are
-        tall = 24.0 if front else (H if k % 2 == 0 else H * 0.8)  # short horns, so nothing stands in front of the hologram
+        tall = 24.0 * R if front else (H if k % 2 == 0 else H * 0.8)  # short horns, so nothing stands in front of the hologram
         P.solid([sect(z0 - 6.0, -2.0, 9.0, 5.0), sect(z0 + tall * 0.6, 8.0 if not front else 4.0, 6.0, 3.6),
                  sect(z0 + tall, 15.0 if not front else 7.0, 1.2, 1.4)], ["metal"] * 4,
                 span=lambda i, j, m: "trim.cyan" if (i == 1 and j == 0) else None)
-        tips.append((Vector((x, y)) + out * 8.0, z0 + tall * 0.6, front))
+        tips.append((Vector((x, y)) + out * 8.0 * R, z0 + tall * 0.6, front))
     for k in range(6):                                            # a ring beam through the tall blades at their waist
         a, c = tips[k], tips[(k + 1) % 6]
         if not (a[2] or c[2]):
             P.tube(F.p(a[0].x, a[0].y, min(a[1], c[1])), F.p(c[0].x, c[0].y, min(a[1], c[1])), 0.9, 6)
-    em = [(12.0, 0.0), (12.0, 3.0), (9.0, 5.0), (4.0, 5.0)]       # the emitter dish on the roof
+    em = [(12.0 * R, 0.0), (12.0 * R, 3.0), (9.0 * R, 5.0), (4.0 * R, 5.0)]       # the emitter dish on the roof
     P.solid([F.ring(ngon(rr, 16), z0 - 0.4 + dz) for rr, dz in em], ["metal"] * 16, [(0, "arc")] * 16, top="trim.cyan",
             span=lambda i, j, m: "trim.cyan" if i == 1 else None)
-    plant(P, F, 0.0, 20.0, z0 - 0.3, kind=0)
-    plant(P, F, -17.0, -9.0, z0 - 0.3, kind=3)
+    plant(P, F, 0.0, 20.0 * R, z0 - 0.3, kind=0)
+    plant(P, F, -17.0 * R, -9.0 * R, z0 - 0.3, kind=3)
     # The hologram: light, not a solid. The logo faces the can; three scanline hoops stand round it.
     t.fx = Mesh(t.name + "_fx", F.o)
-    w = 72.0
+    w = 72.0 * R
     h = w / K.LOGO_ASPECT
     zc = z0 + 20.0 + h / 2
     t.fx.quad_uv([F.p(-w / 2, 0, zc - h / 2), F.p(w / 2, 0, zc - h / 2), F.p(w / 2, 0, zc + h / 2), F.p(-w / 2, 0, zc + h / 2)],
                  "fx", T.atlas_uv(T.FX["logo"], T.FX_ATLAS))
     su0, sv0, su1, sv1 = T.atlas_uv(T.FX["scan"], T.FX_ATLAS)
-    for rr, zz in ((17.0, z0 + 8.0), (23.0, zc + h / 2 + 6.0)):
+    for rr, zz in ((17.0 * R, z0 + 8.0), (23.0 * R, zc + h / 2 + 6.0)):
         hoop = ngon(rr, 20)
         for k in range(20):
             (x0, y0), (x1, y1) = hoop[k], hoop[(k + 1) % 20]
@@ -934,6 +950,7 @@ def balangkas(t, top, w=56.0, facade="glass_b", led="amber", sign_name=None, sig
     for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1)):           # the four columns, from the belt to over the roof
         P.tube(F.p(sx * c, sy * c, LOBBY - 4.0), F.p(sx * c, sy * c, top + 18.0), 2.6, 8, 2.0)
         P.box(F.p(sx * c, sy * c, top + 18.6), (1.2, 1.2, 1.2), mat="trim.red")
+        strip(P, F, sx * (c + 2.1), sy * (c + 2.1), LOBBY + (top - LOBBY) * 0.35, top + 16.0, led, 0.9)
     corners = [(-c, -c), (c, -c), (c, c), (-c, c)]
     for zz in levels + [top + 12.0]:                              # ring beams, their ends inside the columns, tied to the neck
         for k in range(4):
@@ -965,60 +982,96 @@ DESIGNS = {"haligi": haligi, "tirahan": tirahan, "magkapatid": magkapatid, "bilo
 # THE SKYLINE, by sightline. (id, design, bearing, distance, the elevation its `top` reaches seen
 # from the can, keyword arguments).
 #
-# THE PLAN: FOUR GATES AND FOUR OPEN SIDES. A player sees deepest through the four open corners
-# (the stadium hides only 18 degrees there, against 23 over a canopy), so each corner gets a GATE
-# of three: the landmark on the corner's axis, close, and a flanker either side, further out and
-# of unlike height and build. Behind each stand the sky is left open, with one or two tall towers
-# standing far off, a different figure on each side:
-#   north   ONE broad deco tower, far, a little right of the stand's middle; open sky both sides
-#   east    two, far: a low stack and a tall cross, a gap between them
-#   south   ONE exoskeleton, left of the middle
-#   west    two: tall terraces and a low far blade, stepping down to the right
-# Seen from the air that is four clusters and four avenues of sky, so the stadium floats free; the
-# blockout's ring of thirty-two giants made a canyon.
+# THE OWNER PLAYED THE FIRST SKYLINE (2026-10-05) AND SAID "buildings should also be more visible".
+# It stood 440 to 900 m out and showed 6 to 24 degrees over the stadium, 4.5 to 15.5 wide: in the
+# game's wide camera that is a few slim dark towers barely over the canopies. So the whole city has
+# come IN and UP, and there is more of it:
+#   * NOTHING INSIDE RADIUS 300 (the hull's rim is at 239, the landing pads at 254, and the two
+#     orbits of sky traffic now run at 268 and 284, inside every tower).
+#   * FOUR GATES, as before: the landmark on each open corner's axis, now 365 to 395 m out, its top
+#     45 degrees and more up (25 to 33 shown over the corner screen) and 19 to 21 degrees wide; a
+#     flanker either side at 480 to 540 m, 10 to 13 degrees wide, LOWER than its landmark (35 to 40
+#     degrees) and of unlike build.
+#   * OVER EACH STAND three or four towers at 620 to 900 m, in three depths and stepping down with
+#     distance (38 down to 28.5 degrees), with gaps of open sky between them (it is a skyline, not
+#     a wall): no canopy has an empty sky, and each side keeps ONE AVENUE of sky from the hull out
+#     (about 355 north, 86 east, 200 south, 267 west), so from the air the stadium still floats free.
+#     The first pass of this (flankers at 42 to 44 degrees) made a canyon and left 60 degrees of sky.
+# The other programmer is adding distance haze in Unity: the towers are lit to sit BEHIND it, their
+# light and contrast in their upper halves (lit parapets and edges, the crown halo, the signs).
+# `sign_below` is how far under the roof a sign's middle hangs.
 TOWERS = [
-    ("T01", "singsing",   45.0, 470.0, 28.0, {}),
-    ("T02", "balangkas",  34.5, 640.0, 31.0, dict(w=64.0, facade="glass_a", led="cyan")),
-    ("T03", "tirahan",    56.0, 720.0, 26.5, {}),
-    ("T04", "haligi",      6.0, 820.0, 30.5, dict(w=112.0, sign_name="liga", sign_z_elev=26.6)),
-    ("T05", "patong",     78.0, 860.0, 27.0, dict(w=72.0, sign_name="isko", sign_z_elev=25.0)),
-    ("T06", "tirahan",   100.0, 900.0, 32.0, dict(core=32.0, arm=32.0, facade="glass_a", sign_name="kape", sign_z_elev=28.0)),
-    ("T07", "bilog",     123.5, 760.0, 26.5, dict(R=40.74)),
-    ("T08", "magkapatid", 135.0, 480.0, 37.0, dict(top2_elev=30.5, sign_name="halo", sign_z_elev=23.6)),
-    ("T09", "haligi",    147.0, 700.0, 29.5, dict(w=96.0, facade="resi", led="magenta", sign_name="dyip", sign_z_elev=26.0)),
-    ("T10", "balangkas", 172.0, 840.0, 31.5, dict(w=72.0, sign_name="sinag", sign_z_elev=27.2)),
-    ("T11", "patong",    213.0, 640.0, 30.5, dict(w=64.0, facade="glass_a", led="cyan")),
-    ("T12", "korona",    225.0, 450.0, 21.5, {}),
-    ("T13", "talim",     237.0, 700.0, 29.0, dict(w=96.0, d=32.0, sign_name="pansitan", sign_z_elev=23.2)),
-    ("T14", "hagdan",    262.0, 800.0, 33.0, dict(w=88.0, d=72.0, sign_name="bahaghari", sign_z_elev=31.3)),
-    ("T15", "talim",     283.0, 900.0, 27.0, dict(w=100.0, d=34.0, facade="glass_a")),
-    ("T16", "bilog",     303.5, 760.0, 27.0, dict(R=35.65, led="magenta")),
-    ("T17", "parola",    315.0, 440.0, 33.0, {}),
-    ("T18", "hagdan",    327.0, 600.0, 31.0, dict(facade="resi", sign_name="dely", sign_z_elev=29.2)),
+    ("T01", "singsing",   45.0, 365.0, 42.0, {}),
+    ("T02", "balangkas",  31.0, 500.0, 40.0, dict(w=80.0, facade="glass_a", led="cyan")),
+    ("T03", "tirahan",    59.0, 540.0, 35.0, dict(core=32.0, arm=32.0)),
+    ("T04", "haligi",      8.0, 620.0, 38.0, dict(w=120.0, sign_name="liga", sign_below=40.0)),
+    ("T05", "patong",     76.0, 640.0, 31.0, dict(w=88.0, sign_name="isko", sign_below=32.0)),
+    ("T06", "tirahan",    97.0, 700.0, 36.0, dict(core=36.0, arm=36.0, facade="glass_a", sign_name="kape", sign_below=44.0)),
+    ("T07", "bilog",     123.0, 520.0, 36.0, dict(R=48.0)),
+    ("T08", "magkapatid", 135.0, 375.0, 46.0, dict(top2_elev=38.0, sign_name="halo", sign_below=52.0)),
+    ("T09", "haligi",    148.5, 500.0, 39.0, dict(w=112.0, facade="resi", led="magenta", sign_name="dyip", sign_below=38.0)),
+    ("T10", "balangkas", 171.0, 640.0, 37.0, dict(w=96.0, sign_name="sinag", sign_below=42.0)),
+    ("T11", "patong",    212.0, 500.0, 39.0, dict(w=88.0, facade="glass_a", led="cyan")),
+    ("T12", "korona",    225.0, 395.0, 33.0, dict(R=1.4)),
+    ("T13", "talim",     238.0, 520.0, 40.0, dict(w=124.0, d=40.0, sign_name="pansitan", sign_below=120.0)),
+    ("T14", "hagdan",    258.0, 620.0, 38.0, dict(w=112.0, d=80.0, sign_name="bahaghari", sign_below=16.0)),
+    ("T15", "talim",     276.0, 680.0, 33.0, dict(w=108.0, d=36.0, facade="glass_a")),
+    ("T16", "bilog",     302.0, 520.0, 35.0, dict(R=46.0, led="magenta")),
+    ("T17", "parola",    315.0, 368.0, 44.0, dict(scale=1.25)),
+    ("T18", "hagdan",    328.0, 480.0, 38.0, dict(w=96.0, d=72.0, facade="resi", sign_name="dely", sign_below=16.0)),
+    # The far depth over each stand (new): lower, slimmer, further.
+    ("T19", "bilog",     345.0, 700.0, 30.0, dict(R=45.0, led="white")),
+    ("T20", "patong",     19.5, 820.0, 29.0, dict(w=80.0, facade="glass_b", led="amber")),
+    ("T21", "hagdan",    105.0, 860.0, 29.0, dict(w=96.0, d=72.0, facade="glass_b")),
+    ("T22", "bilog",     189.0, 760.0, 30.0, dict(R=44.0, led="magenta")),
+    ("T24", "balangkas", 248.0, 900.0, 29.0, dict(w=56.0, facade="resi", led="magenta")),
 ]
 
 
-# Skybridges low in each gate, below the hull's deck: (bearing, distance) of the two towers and the height.
-BRIDGES = [((45.0, 470.0), (34.5, 640.0), -64.0), ((135.0, 480.0), (147.0, 700.0), -96.0),
-           ((225.0, 450.0), (213.0, 640.0), -48.0), ((315.0, 440.0), (327.0, 600.0), -80.0)]
+# Skybridges low in each gate, below the hull's deck: the two towers and the height.
+BRIDGES = [("T01", "T02", -64.0), ("T08", "T09", -96.0), ("T12", "T11", -48.0), ("T17", "T18", -80.0)]
+PLACE = {tid: (bearing, r) for tid, _, bearing, r, _, _ in TOWERS}
+LOOP_R = 270.0                             # the rail loop: inside every tower's foot (it was 330, where the landmarks now stand)
+VIA_BEARING, VIA_SIDE = 109.7, 40.0        # the viaduct's line: through the gap east (T21 | T07) and the gap west (T15 | T16)
 
 
 def height_at(r, elev):
     return EYE + r * math.tan(math.radians(elev))
 
 
+def crown_halo(t):
+    """THE CROWN HALO: one faint card of violet light standing 6 m BEHIND the tower's upper third,
+    facing the can. The tower hides its middle, so what a player sees is a soft rim of light round
+    the crown: the silhouette is cut out of the sky. It is light (the fx material), not a solid."""
+    F = t.F
+    pts = [v.co for m in (t.body, t.parts) for v in m.bm.verts] + ([v.co for v in t.extra.bm.verts] if t.extra else [])
+    high = max(p.z for p in pts)
+    upper = [p for p in pts if p.z > high * 0.45]
+    xs = [(p - F.o).dot(F.dx) for p in upper]
+    back = max((p - F.o).dot(F.dy) for p in upper) + 6.0
+    cx, half = (min(xs) + max(xs)) / 2, (max(xs) - min(xs)) / 2
+    w, z0, z1 = half * 2.1 + 40.0, high * 0.42, high + half * 0.8 + 30.0
+    if t.fx is None:
+        t.fx = Mesh(t.name + "_fx", F.o)
+    s = 1.0 / F.scale
+    t.fx.quad_uv([F.p((cx + w / 2) * s, back * s, z0), F.p((cx - w / 2) * s, back * s, z0),
+                  F.p((cx - w / 2) * s, back * s, z1), F.p((cx + w / 2) * s, back * s, z1)],
+                 "fx", T.atlas_uv(T.FX["halo"], T.FX_ATLAS))
+
+
 def towers(coll):
     built = []
     for tid, design, bearing, r, elev, kw in TOWERS:
         kw = dict(kw)
-        t = Tower(tid, design, bearing, r, coll)
+        t = Tower(tid, design, bearing, r, coll, scale=kw.pop("scale", 1.0))
         t.extra = None
         top = snap(height_at(r, elev))
-        if "sign_z_elev" in kw:
-            kw["sign_z"] = height_at(r, kw.pop("sign_z_elev"))
         if "top2_elev" in kw:
             kw["top2"] = snap(height_at(r, kw.pop("top2_elev")))
+        if "sign_below" in kw:
+            kw["sign_z"] = kw.get("top2", top) - kw.pop("sign_below")
         DESIGNS[design](t, top, **kw)
+        crown_halo(t)
         t.done()
         if t.extra is not None:
             t.objects.append(t.extra.done(coll))
@@ -1053,9 +1106,9 @@ def far_towers(coll, rng):
 def path_points(kind):
     """The rail's two lines, as polylines at rail height."""
     if kind == "loop":
-        return [K.polar(330.0, a, -500.0) for a in range(0, 360, 6)]
-    d = K.polar(1.0, 114.5)                                       # the viaduct: a straight line through two gaps in the towers,
-    side = K.polar(40.0, 24.5)                                    # passing 40 m from the axis, so it crosses under the shaft's mouth
+        return [K.polar(LOOP_R, a, -500.0) for a in range(0, 360, 6)]
+    d = K.polar(1.0, VIA_BEARING)                                 # the viaduct: a straight line through two gaps in the towers,
+    side = K.polar(VIA_SIDE, VIA_BEARING + 90.0)                  # passing 40 m from the axis, so it crosses under the shaft's mouth
     return [Vector((side.x + d.x * s, side.y + d.y * s, -424.0)) for s in range(-1900, 1901, 100)]
 
 
@@ -1136,7 +1189,7 @@ def depths(coll, rng, tower_spots):
 
     br = Mesh("city_skybridges")
     for a, c, z in BRIDGES:
-        pa, pc = Frame(a[0], a[1]).o, Frame(c[0], c[1]).o
+        pa, pc = Frame(*PLACE[a]).o, Frame(*PLACE[c]).o
         tdir = (pc - pa).normalized()
         side = Vector((tdir.y, -tdir.x, 0))
         sect = lambda p: [p + side * 5.0 + Z * z, p + side * 5.0 + Z * (z + 6.0), p + Z * (z + 8.2), p - side * 5.0 + Z * (z + 6.0), p - side * 5.0 + Z * z]
@@ -1214,12 +1267,13 @@ def circle_lane(r, z, n=48, clockwise=True):
 def traffic(coll, loop, via):
     """Four lanes and the train. A lane is a closed polyline; the craft are placed along it here for the
     pictures and Unity moves them (tools/arena_traffic.json). Lanes keep clear of every tower: both
-    orbits run inside the nearest landmark's reach (r under 385) and above the canopies' sightline."""
+    orbits run INSIDE the city (every tower stands outside radius 300) and outside the hull's landing
+    pads (r 254), above the canopies' sightline."""
     lanes = [
         dict(name="loob", note="inner orbit, clockwise, just over the canopies seen from the can (27 degrees)",
-             closed=True, speed=24.0, craft=["kotse", "dyip", "kotse", "kotse", "dyip"], count=9, points=circle_lane(330.0, 172.0)),
-        dict(name="labas", note="outer orbit, counter-clockwise, higher (28 degrees)",
-             closed=True, speed=18.0, craft=["dyip", "kotse", "barge", "kotse"], count=7, points=circle_lane(366.0, 204.0, clockwise=False)),
+             closed=True, speed=24.0, craft=["kotse", "dyip", "kotse", "kotse", "dyip"], count=9, points=circle_lane(268.0, 140.0)),
+        dict(name="labas", note="outer orbit, counter-clockwise, higher (31 degrees)",
+             closed=True, speed=18.0, craft=["dyip", "kotse", "barge", "kotse"], count=7, points=circle_lane(284.0, 176.0, clockwise=False)),
         dict(name="ilalim", note="under the hull, a two-way street in the air seen looking down the shaft: eastward 40 m north "
                                  "of the axis, back westward 24 m south of it, turning round far out in the haze",
              closed=True, speed=34.0, craft=["kotse", "kotse", "dyip"], count=12,
@@ -1260,12 +1314,12 @@ def traffic(coll, loop, via):
     tr = Mesh("city_train")
     for k in range(6):
         a0 = k * 4.6
-        p = K.polar(330.0, a0 + 2.0, -500.0)
+        p = K.polar(LOOP_R, a0 + 2.0, -500.0)
         tdir = K.polar(1.0, a0 + 2.0 + 90.0)
         tr.box(p + Z * 2.2, (24.0, 5.0, 4.6), Vector((tdir.x, tdir.y, 0)), mats={"-y": "bands", "+y": "bands", "+x": "trim.white", "-x": "trim.red"})
     tr.done(coll)
     out.append(dict(name="tren", note="the train on the rail loop, 500 m below the can; city_train is built at phase 0",
-                    closed=True, speed_mps=30.0, length_m=round(math.tau * 330.0, 1), craft=["city_train"], count=1, phase=[0.0],
+                    closed=True, speed_mps=30.0, length_m=round(math.tau * LOOP_R, 1), craft=["city_train"], count=1, phase=[0.0],
                     points_blender=[[round(p.x, 2), round(p.y, 2), round(p.z, 2)] for p in loop],
                     points_unity=[[round(-p.x, 2), round(p.z, 2), round(-p.y, 2)] for p in loop]))
     data = dict(about="Sky traffic for the arena's city kit. Written by tools/author_arena_city.py; do not edit by hand.",
@@ -1530,13 +1584,22 @@ def main():
     coll = K.collection("arena_city")
     rng = random.Random(1005)
     built = towers(coll)
-    spots = [(t.F.o.x, t.F.o.y, 75.0) for t in built]
+    spots = [(t.F.o.x, t.F.o.y, 95.0) for t in built]
     far, far_spots = far_towers(coll, rng)
     loop, via = depths(coll, rng, spots + [(x, y, w) for x, y, w in far_spots])
     traffic(coll, loop, via)
-    for name, pts, closed in (("rail loop", loop, True), ("viaduct", via, False)):
-        gap = min(dist_to_path(t.F.o.x, t.F.o.y, pts, closed) for t in built)
-        print("CLEAR %s passes no nearer than %.0f m to a tower's axis" % (name, gap))
+    for name, pts, closed in (("rail loop", loop, True), ("viaduct", via, False)):          # measured to every tower's FOOT, not its axis
+        worst = (1e9, "")
+        for t in built:
+            for ob in t.objects:
+                if ob.name.endswith("_fx"):
+                    continue
+                for v in ob.data.vertices:
+                    if v.co.z < -380.0:
+                        worst = min(worst, (dist_to_path(v.co.x, v.co.y, pts, closed), t.name[5:8]))
+        print("CLEAR %s (12 m wide) passes no nearer than %.0f m to a tower's foot (%s)%s" % (name, worst[0], worst[1], "   <-- TOO NEAR" if worst[0] < 14.0 else ""))
+    inner = min((math.hypot(v.co.x, v.co.y), t.name[5:8]) for t in built for ob in t.objects if not ob.name.endswith("_fx") for v in ob.data.vertices)
+    print("CLEAR nothing of a tower is nearer the can than %.0f m (%s)%s" % (inner[0], inner[1], "   <-- INSIDE 300" if inner[0] < 300.0 else ""))
     total = report(coll)
     sight(built)
 

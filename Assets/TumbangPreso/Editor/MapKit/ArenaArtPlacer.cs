@@ -97,6 +97,10 @@ namespace TumbangPreso.EditorTools.MapKit
             public bool Mips = true;
             public bool Fog = true;
             public bool TwoSided;
+            /// <summary>Never two-sided, even though the export finds open edges on it: a sheet of
+            /// light that is READ (a logo, lettering). The kit builds it as two sheets back to
+            /// back, each drawn from its own side only, so it is never seen mirrored.</summary>
+            public bool OneSided;
             /// <summary>For the two unlit kinds: how much of the albedo is drawn (a lit surface in
             /// Blender, unlit here, so it is dimmed to what the night would leave of it).</summary>
             public float Albedo = 1.0f;
@@ -194,6 +198,24 @@ namespace TumbangPreso.EditorTools.MapKit
             new Rule("arena_stage_props") { Emission = 2.6f },
             new Rule("arena_stage_*"),
 
+            // ---- THE HOLO KIT (tools/author_arena_holo.py): the hologram ads and the slipper.
+            // "Translucent, added to the sky, no fog (they are 250 to 760 m out and would be
+            // fogged to nothing), never brighter than the stage." The stage's rim is 2.4 and the
+            // lamps 8; these sit at 1.5 to 2.0, about the map's bloom threshold (1.8): the logos'
+            // whites just bloom, the washes do not. Tune DOWN first if they fight the play.
+            // ads and logo are ONE-SIDED (lettering and marks, built as two sheets back to back).
+            // The ads' strip repeats in v: `ArenaHoloMotion` scrolls it by a property block.
+            new Rule("arena_holo_ads") { Surface = Surface.Light, Emission = 1.5f, OneSided = true, Fog = false, Albedo = 0.30f },
+            new Rule("arena_holo_logo") { Surface = Surface.Light, Emission = 2.0f, OneSided = true, Fog = false, Albedo = 0.35f },
+            new Rule("arena_holo_fx") { Surface = Surface.Light, Emission = 1.7f, TwoSided = true, Fog = false, Albedo = 0.25f },
+            // "arena_holo_led is eight 32 px rows: mipmaps off, clamp." A mip would mix two colours.
+            new Rule("arena_holo_led") { Emission = 3.0f, Wrap = Wrap.Clamp, Mips = false },
+            new Rule("arena_holo_metal") { Emission = 1.0f },
+            // The slipper balloon: lit paint that also gives off 0.7 of its own colour (its
+            // emission image), so it is toy-bright at night without being a lamp.
+            new Rule("arena_holo_balloon") { Emission = 1.0f },
+            new Rule("arena_holo_*"),
+
             new Rule("*"),
         };
 
@@ -210,8 +232,9 @@ namespace TumbangPreso.EditorTools.MapKit
 
         // ------------------------------------------------------------------ what the builder calls
 
-        /// <summary>Placements whose things move at run time: never static.</summary>
-        private static readonly HashSet<string> Moving = new HashSet<string> { "Train" };
+        /// <summary>Placements whose things move at run time: never static. (The Holo kit's
+        /// things turn, sway, ride and scroll: `ArenaHoloMotion`.)</summary>
+        private static readonly HashSet<string> Moving = new HashSet<string> { "Train", "Holo" };
 
         private const float LodBias = 2f, LodLens = 2.1826f;
         private static readonly Vector2 LodMetres = new Vector2(70f, 160f);
@@ -414,7 +437,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 m.renderQueue = -1;
 
                 float strength = string.IsNullOrEmpty(s.emissionMap) ? 0.0f : rule.Emission >= 0.0f ? rule.Emission : s.emissionStrength;
-                bool twoSided = rule.TwoSided || (s.twoSided && !lit);
+                bool twoSided = !rule.OneSided && (rule.TwoSided || (s.twoSided && !lit));
                 m.SetTexture("_MainTex", Tex(s.albedo));
                 m.SetTexture("_EmissionMap", Tex(s.emissionMap));
                 m.SetFloat("_EmissionStrength", strength);

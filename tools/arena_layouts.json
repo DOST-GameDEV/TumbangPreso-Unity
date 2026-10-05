@@ -3,7 +3,7 @@
  "stageTop": 0.0,
  "pitRadius": 40.0,
  "wallHalf": 22.0,
- "catchY": -4.5,
+ "catchY": -22.0,
  "spawns": {
   "taya": [
    0,

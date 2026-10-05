@@ -9,17 +9,23 @@ namespace TumbangPreso.Map
     /// that drops under the stage, a drone carries it back to the last safe place it stood, and
     /// it then takes the tag's own five seconds (owner: "same 5 second tag freeze").
     ///
-    /// ⚠️ THE CATCH IS AT `ArenaStage.CatchY`, ABOVE TWO OTHER FLOORS. `MatchRpc.AcceptMove`
-    /// refuses a pose under y -5, so a remote body the host waited any longer for would stop
-    /// arriving, and the `KillPlane` at -10 returns a body to its round spawn, which is the
-    /// one place the owner's rule says a fall must not send it. That plane stays as the last
-    /// resort.
+    /// ⚠️ THE CATCH IS AT `ArenaStage.CatchY` (the data's `catchY`, about y -22: owner,
+    /// 2026-10-05, "falling off threshold is too high, you need to fall further"), ABOVE TWO
+    /// OTHER FLOORS. On this map `MatchRpc.AcceptMove` believes a pose down to
+    /// `ArenaStage.MoveFloorY` (about -40; -5 on every other map), so a remote body is seen all
+    /// the way down to the catch with 18 m to spare, and the `KillPlane` (about -60 here)
+    /// returns a body to its round spawn, which is the one place the owner's rule says a fall
+    /// must not send it. That plane stays as the last resort.
     ///
-    /// ⚠️ THE LINE IS HALF A METRE ABOVE THAT REFUSAL (the data's -4.5), AND A FALLING BODY
-    /// CROSSES HALF A METRE BETWEEN TWO POSES. The host sees a remote body only where its last
-    /// accepted pose put it, so a body whose poses went -4.3 then -5.2 would never be seen under
-    /// the line. So a body in the air under the lowest deck is also caught when its own speed
-    /// carries it past the line within `PoseLead`: nothing is left for it to land on there.
+    /// ⚠️ A FALLING BODY CROSSES HALF A METRE BETWEEN TWO POSES (terminal speed is 25 m/s), and
+    /// the host sees a remote body only where its last accepted pose put it. So a body in the
+    /// air under the lowest deck is also caught when its own speed carries it past the line
+    /// within `PoseLead` (two physics steps): every peer then sees the catch at the same depth,
+    /// whoever simulates the body.
+    ///
+    /// ⚠️ A SLIPPER IS TAKEN AT `ArenaStage.SlipperCatchY`, NOT AT THE BODY'S LINE. The slipper's
+    /// own flight returns it to its mark under `Balance.VoidY` (-12), at once and with no
+    /// delay; taken just under the decks, it gets this map's delayed return first.
     ///
     /// ⚠️ ONLY THE HOST DECIDES (`NetAuthority.ShouldResolve()`, round or free roam alike, as
     /// `RooftopRecovery` does). Nothing here is sent: the carry is the `Drone` edge recovery
@@ -28,7 +34,7 @@ namespace TumbangPreso.Map
     /// </summary>
     public sealed class ArenaFallRecovery : MonoBehaviour
     {
-        public const float SlipperDelay=8,SafeMargin=1,SafeRefresh=.2f,PoseLead=.15f;
+        public const float SlipperDelay=8,SafeMargin=1,SafeRefresh=.2f,PoseLead=.04f;
         public static ArenaFallRecovery Instance { get; private set; }
         private static readonly RaycastHit[] FloorHits=new RaycastHit[16];
         private static readonly Vector3[] Around={Vector3.right,Vector3.left,Vector3.forward,Vector3.back};
@@ -93,7 +99,7 @@ namespace TumbangPreso.Map
         private void RememberSafe(CharacterMotor who)
         {
             var p=who.transform.position;
-            if(!who.IsGrounded||p.y<=ArenaStage.CatchY||!Floor(p,.4f,.7f,out float y))return;
+            if(!who.IsGrounded||p.y<=ArenaStage.SlipperCatchY||!Floor(p,.4f,.7f,out float y))return;
             foreach(var side in Around)
                 if(!Floor(p+side*SafeMargin,.6f,1.2f,out float beside)||Mathf.Abs(beside-y)>.6f)return;
             _safe[who]=new Vector3(p.x,y,p.z);
@@ -103,7 +109,7 @@ namespace TumbangPreso.Map
         {
             // The last safe spot, if THIS layout still has floor there; else the nearest
             // platform; the round spawn only when the stage has no answer at all.
-            if(_safe.TryGetValue(who,out var safe)&&Floor(safe,1.5f,2.5f,out float y)&&y>ArenaStage.CatchY)
+            if(_safe.TryGetValue(who,out var safe)&&Floor(safe,1.5f,2.5f,out float y)&&y>ArenaStage.SlipperCatchY)
                 return new Vector3(safe.x,y+.02f,safe.z);
             if(_stage!=null&&_stage.TryNearestStandable(who.transform.position,out var near))
                 return near+Vector3.up*.02f;
@@ -134,7 +140,7 @@ namespace TumbangPreso.Map
             if(_slice!=null&&_slice.Slippers!=null)
                 foreach(var slipper in _slice.Slippers)
                     if(slipper!=null&&slipper.gameObject.activeSelf&&slipper.State!=SlipperState.Held
-                       &&slipper.transform.position.y<ArenaStage.CatchY)Lose(slipper);
+                       &&slipper.transform.position.y<ArenaStage.SlipperCatchY)Lose(slipper);
             bool remember=Time.time>=_nextSafe;
             if(remember)_nextSafe=Time.time+SafeRefresh;
             foreach(var who in GameServices.Round.Players)
@@ -160,13 +166,19 @@ namespace TumbangPreso.Map
             foreach(var shoe in _finished)_lost.Remove(shoe);
         }
 
-        // Every peer. Presentation only, off the replicated kind.
+        // Every peer. Presentation only, off the replicated kind and the body's own motion.
         private void Update()
         {
             var round=GameServices.Round;if(round==null)return;
-            foreach(var who in round.Players)
+            var players=round.Players;
+            for(int i=0;i<players.Count;i++)
             {
-                if(who==null||who.EdgeKind!=EdgeRecoveryKind.Drone||!who.gameObject.activeInHierarchy)continue;
+                var who=players[i];
+                if(who==null||!who.gameObject.activeInHierarchy)continue;
+                // Dropping through the shaft: the body has lost itself to the fall (the same
+                // tumble a car's throw gives), re-armed while it lasts and let go at the catch.
+                if(ArenaStage.IsShaftFall(who))Visual.WindTumble.Attach(who)?.Throw(.2f);
+                if(who.EdgeKind!=EdgeRecoveryKind.Drone)continue;
                 if(!_drones.TryGetValue(who,out var drone)||drone==null)
                 {
                     if(_droneRoot==null)_droneRoot=new GameObject("Arena drones").transform;

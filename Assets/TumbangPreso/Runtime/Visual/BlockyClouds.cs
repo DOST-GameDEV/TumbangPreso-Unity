@@ -50,7 +50,7 @@ namespace TumbangPreso.Visual
         public static BlockyClouds Create(WorldLookPresentation owner, WorldLookProfile.MapLook look, float floor)
         {
             var profile = WorldLookProfile.Current;
-            // A map whose sky is not open above its court has none (the Arena: the ring would hang inside the bowl).
+            // A map whose sky is not open above its court has none, unless it places its own (`MapLook.CloudBands`).
             if (profile.BlockyCloudCount <= 0 || look == null || look.NoBlockyClouds) return null;
             if (_shader == null && !_shaderMissed)
             {
@@ -90,17 +90,33 @@ namespace TumbangPreso.Visual
             var random = new System.Random(Seed(look.Map));
             float Range(float a, float b) => a + (float)random.NextDouble() * (b - a);
 
-            int count = profile.BlockyCloudCount;
-            for (int i = 0; i < count; i++)
+            // The profile's one ring, or the map's own bands (`MapLook.CloudBands`, the Arena).
+            // With no bands this is one pass with the profile's numbers: the same calls to the
+            // same random stream in the same order, so every other map's clouds are as they were.
+            bool own = look.CloudBands != null && look.CloudBands.Length > 0;
+            int bands = own ? look.CloudBands.Length : 1;
+            float reach = 0f, top = 0f, bottom = 0f;
+            for (int b = 0; b < bands; b++)
             {
-                float angle = (i + Range(0f, .55f)) / count * Mathf.PI * 2f;
-                float radius = Range(profile.BlockyCloudRadius.x, profile.BlockyCloudRadius.y);
-                float height = Range(profile.BlockyCloudHeight.x, profile.BlockyCloudHeight.y);
-                var belly = new Vector3(Mathf.Cos(angle) * radius, height, Mathf.Sin(angle) * radius);
-                // Long side along the ring, give or take, so a cloud is seen broadside.
-                var turn = Quaternion.Euler(0, -angle * Mathf.Rad2Deg + 90f + Range(-20f, 20f), 0);
-                float width = Range(profile.BlockyCloudSize.x, profile.BlockyCloudSize.y);
-                AddCloud(belly, turn, width, Mathf.Max(2f, profile.BlockyCloudVoxel), random, buffers);
+                int count = own ? look.CloudBands[b].Count : profile.BlockyCloudCount;
+                Vector2 radii = own ? look.CloudBands[b].Radius : profile.BlockyCloudRadius;
+                Vector2 heights = own ? look.CloudBands[b].Height : profile.BlockyCloudHeight;
+                Vector2 sizes = own ? look.CloudBands[b].Size : profile.BlockyCloudSize;
+                float voxel = own && look.CloudBands[b].Voxel > 0f ? look.CloudBands[b].Voxel : profile.BlockyCloudVoxel;
+                reach = Mathf.Max(reach, radii.y + sizes.y);
+                top = Mathf.Max(top, heights.y + sizes.y * .7f);
+                bottom = Mathf.Min(bottom, heights.x);
+                for (int i = 0; i < count; i++)
+                {
+                    float angle = (i + Range(0f, .55f)) / count * Mathf.PI * 2f;
+                    float radius = Range(radii.x, radii.y);
+                    float height = Range(heights.x, heights.y);
+                    var belly = new Vector3(Mathf.Cos(angle) * radius, height, Mathf.Sin(angle) * radius);
+                    // Long side along the ring, give or take, so a cloud is seen broadside.
+                    var turn = Quaternion.Euler(0, -angle * Mathf.Rad2Deg + 90f + Range(-20f, 20f), 0);
+                    float width = Range(sizes.x, sizes.y);
+                    AddCloud(belly, turn, width, Mathf.Max(2f, voxel), random, buffers);
+                }
             }
 
             _mesh = new Mesh { name = look.Map + " blocky clouds" };
@@ -108,15 +124,15 @@ namespace TumbangPreso.Visual
             _mesh.SetVertices(buffers.Vertices); _mesh.SetNormals(buffers.Normals); _mesh.SetUVs(0, buffers.Uvs);
             _mesh.SetTriangles(buffers.Triangles, 0);
             // The ring turns in the vertex stage, so the bounds must hold every angle of it.
-            float reach = profile.BlockyCloudRadius.y + profile.BlockyCloudSize.y;
-            float top = profile.BlockyCloudHeight.y + profile.BlockyCloudSize.y * .7f;
-            _mesh.bounds = new Bounds(new Vector3(0, top * .5f, 0), new Vector3(reach * 2f, top + 10f, reach * 2f));
+            // (With the profile's ring `bottom` is 0, and this is the box it always was.)
+            _mesh.bounds = new Bounds(new Vector3(0, (top + bottom) * .5f, 0), new Vector3(reach * 2f, top - bottom + 10f, reach * 2f));
             gameObject.AddComponent<MeshFilter>().sharedMesh = _mesh;
 
             _material = new Material(_shader) { name = look.Map + " blocky clouds", hideFlags = HideFlags.HideAndDontSave };
-            _material.SetColor("_LitColor", look.CloudLight);
-            _material.SetColor("_ShadeColor", look.CloudShade);
-            _material.SetColor("_AirColor", look.Horizon);
+            _material.SetColor("_LitColor", look.BlockyLit.a > 0f ? look.BlockyLit : look.CloudLight);
+            _material.SetColor("_ShadeColor", look.BlockyShade.a > 0f ? look.BlockyShade : look.CloudShade);
+            _material.SetColor("_AirColor", look.BlockyAir.a > 0f ? look.BlockyAir : look.Horizon);
+            _material.SetFloat("_FromBelow", Mathf.Clamp01(look.CloudsFromBelow));
             _material.SetColor("_ZenithColor", look.Zenith);
             _material.SetFloat("_Air", profile.BlockyCloudAir);
             _material.SetFloat("_Drift", profile.BlockyCloudDrift);

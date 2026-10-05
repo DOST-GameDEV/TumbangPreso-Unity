@@ -76,7 +76,10 @@ D4 = D3.to_4x4()
 # Half a turn about Blender's z, baked into every mesh before export (see the docstring).
 R4 = Matrix.Rotation(math.pi, 4, "Z")
 
-KITS = (("arena_bowl", "Bowl"), ("arena_roof", "Roof"), ("arena_hull", "Hull"), ("arena_city", "City"))
+# The Holo kit's objects carry their own pivots (the middle of the globe, the balloon's tether
+# point): each is exported in its own space and its placement's matrix puts it there, so Unity can
+# turn it about that pivot (tools/arena_holo_motion.json, Runtime/Map/ArenaHoloMotion.cs).
+KITS = (("arena_bowl", "Bowl"), ("arena_roof", "Roof"), ("arena_hull", "Hull"), ("arena_city", "City"), ("arena_holo", "Holo"))
 # object -> (degrees a sector, how it is cut: whole loose "parts", or single "faces").
 SECTORS = {
     "arena_bowl_rails": (30.0, "parts"),

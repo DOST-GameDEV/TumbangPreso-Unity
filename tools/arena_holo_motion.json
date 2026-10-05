@@ -1,0 +1,197 @@
+{
+ "about": "What moves in the arena's holo kit. Written by tools/author_arena_holo.py; do not edit by hand. ArenaSceneBuilder bakes it onto an ArenaHoloMotion component.",
+ "kinds": {
+  "rotate": "turns about the object's own up axis (Unity local +y), degrees_per_second, clockwise seen from above when positive",
+  "scroll": "moves the named material's texture along v, v_per_second (tiles a second), by a property block",
+  "sway": "leans about its pivot: `degrees` each way, one swing every `period` seconds, on two level axes out of step",
+  "bob": "rises and falls `metres` each way every `period` seconds",
+  "pulse": "its light's strength runs between `low` and `high` of itself every `period` seconds"
+ },
+ "moves": [
+  {
+   "object": "arena_holo_column_ne_ads",
+   "kind": "scroll",
+   "v_per_second": 0.013999999999999999,
+   "material": "arena_holo_ads"
+  },
+  {
+   "object": "arena_holo_column_se_ads",
+   "kind": "scroll",
+   "v_per_second": 0.022,
+   "material": "arena_holo_ads"
+  },
+  {
+   "object": "arena_holo_column_sw_ads",
+   "kind": "scroll",
+   "v_per_second": 0.013999999999999999,
+   "material": "arena_holo_ads"
+  },
+  {
+   "object": "arena_holo_column_nw_ads",
+   "kind": "scroll",
+   "v_per_second": 0.022,
+   "material": "arena_holo_ads"
+  },
+  {
+   "object": "arena_holo_column_s_far_ads",
+   "kind": "scroll",
+   "v_per_second": 0.013999999999999999,
+   "material": "arena_holo_ads"
+  },
+  {
+   "object": "arena_holo_column_w_far_ads",
+   "kind": "scroll",
+   "v_per_second": 0.022,
+   "material": "arena_holo_ads"
+  },
+  {
+   "object": "arena_holo_sign_pcx_east",
+   "kind": "bob",
+   "metres": 1.2,
+   "period": 9.0
+  },
+  {
+   "object": "arena_holo_sign_pcx_east",
+   "kind": "pulse",
+   "low": 0.86,
+   "high": 1.0,
+   "period": 4.3
+  },
+  {
+   "object": "arena_holo_sign_pcx_east_cubes",
+   "kind": "bob",
+   "metres": 1.8,
+   "period": 12.0
+  },
+  {
+   "object": "arena_holo_sign_tump",
+   "kind": "bob",
+   "metres": 1.2,
+   "period": 9.0
+  },
+  {
+   "object": "arena_holo_sign_tump",
+   "kind": "pulse",
+   "low": 0.86,
+   "high": 1.0,
+   "period": 4.6
+  },
+  {
+   "object": "arena_holo_sign_tump_cubes",
+   "kind": "bob",
+   "metres": 1.8,
+   "period": 13.0
+  },
+  {
+   "object": "arena_holo_sign_sampaguita",
+   "kind": "bob",
+   "metres": 1.2,
+   "period": 11.0
+  },
+  {
+   "object": "arena_holo_sign_sampaguita",
+   "kind": "pulse",
+   "low": 0.86,
+   "high": 1.0,
+   "period": 3.4
+  },
+  {
+   "object": "arena_holo_sign_jeepney",
+   "kind": "bob",
+   "metres": 1.2,
+   "period": 12.0
+  },
+  {
+   "object": "arena_holo_sign_jeepney",
+   "kind": "pulse",
+   "low": 0.86,
+   "high": 1.0,
+   "period": 4.0
+  },
+  {
+   "object": "arena_holo_sign_carabao",
+   "kind": "bob",
+   "metres": 1.2,
+   "period": 12.0
+  },
+  {
+   "object": "arena_holo_sign_carabao",
+   "kind": "pulse",
+   "low": 0.86,
+   "high": 1.0,
+   "period": 4.0
+  },
+  {
+   "object": "arena_holo_sign_can",
+   "kind": "bob",
+   "metres": 1.2,
+   "period": 12.0
+  },
+  {
+   "object": "arena_holo_sign_can",
+   "kind": "pulse",
+   "low": 0.86,
+   "high": 1.0,
+   "period": 4.3
+  },
+  {
+   "object": "arena_holo_sign_rooster",
+   "kind": "bob",
+   "metres": 1.2,
+   "period": 12.0
+  },
+  {
+   "object": "arena_holo_sign_rooster",
+   "kind": "pulse",
+   "low": 0.86,
+   "high": 1.0,
+   "period": 4.0
+  },
+  {
+   "object": "arena_holo_globe",
+   "kind": "rotate",
+   "degrees_per_second": 5.0
+  },
+  {
+   "object": "arena_holo_globe_ring",
+   "kind": "rotate",
+   "degrees_per_second": -9.0
+  },
+  {
+   "object": "arena_holo_globe_cubes",
+   "kind": "bob",
+   "metres": 2.2,
+   "period": 13.0
+  },
+  {
+   "object": "arena_holo_slipper",
+   "kind": "rotate",
+   "degrees_per_second": 11.0
+  },
+  {
+   "object": "arena_holo_slipper",
+   "kind": "bob",
+   "metres": 1.6,
+   "period": 7.0
+  },
+  {
+   "object": "arena_holo_slipper_cubes",
+   "kind": "bob",
+   "metres": 2.0,
+   "period": 11.0
+  },
+  {
+   "object": "arena_holo_balloon",
+   "kind": "sway",
+   "degrees": 1.3,
+   "period": 8.5
+  },
+  {
+   "object": "arena_holo_sign_pcx_far",
+   "kind": "pulse",
+   "low": 0.88,
+   "high": 1.0,
+   "period": 4.1
+  }
+ ]
+}
