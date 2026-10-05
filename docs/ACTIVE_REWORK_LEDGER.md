@@ -1,3 +1,26 @@
+## Current continuation: October6 PC released, native unit terminal
+
+Owner released the PC again before sleep. Root uses its native/player slot and
+continues network/UI optimization. Integrated laptop6379ae555 fixes queued
+focus-return buttons, original three failures/two controls ->same five passes,
+plus seven adjacent controls. Root verifies10 raw blobs and three LF hashes.
+PlayerInputReader reservation released; coordinate coupled edits. Laptop is
+read-only inspecting replay lifetimes and available after this coherent unit.
+
+Root publishedd14e3638b bunting allocation unit: original20036/83314 one cause fails
+and two controls pass; candidate20740/94756 same three pass, then only resize
+control21380/73691 passes. Each native parent terminal/input21136 byte-exact
+restored216 importer changes. Calibrated GC.Alloc events200->0 per100 redraws,
+not byte or FPS measurement. Same flag seed/motion/geometry retained.
+No Root heavy job, player, helper or browser remains active. Protected Auditor and
+private cancelled voxel script are untouched. Existing0358 artifact remains.
+
+Next: laptop verify source hashes/raw evidence and produce ONE combined artifact.
+Laptop ONLINE host, PC natural public-row join and code rejoin, Ready and first-
+arrival capture, non-host Basilio GUI skill/movement observations; normal owned
+quit. Text-only Sky alphabet input is a known confound, not a product failure or
+physical hardware pass. Broad latency acceptance remains open.
+
 # Active competition checkpoint
 
 Read AGENTS, COMPETITION_COORDINATION and current TODO. TODO is the only queue.

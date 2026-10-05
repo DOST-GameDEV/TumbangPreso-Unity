@@ -1,3 +1,12 @@
+### UI-BUNTING-ALLOCATION-1006: preserve motion without recurring random state
+
+- [x] Calibrated native GC.Alloc baseline observes200 events per100 warm redraws.
+  Cache the identical seeded flag sequence; same candidate zero-event case and
+  two contour controls pass. One additional resize/seed/reduced-motion control
+  passes without changing production again. No frame-time/FPS claim.
+  [Evidence](reports/reliability-2026-10-06/bunting-allocation/README.md).
+- [ ] Current packaged arrival and network-owner movement acceptance remain open.
+
 # TODO: Tumbang Preso Unity
 
 ### PEER-RECOVERY-1006: actual two-machine discovery and return paths
