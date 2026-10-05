@@ -1,0 +1,46 @@
+{
+  "code-admitted.png": {
+    "bytes": 1046850,
+    "sha256": "75c0ee0f6babed0f21351e1cecdbbd0d0acbf9a872da104e4ee8b81621a438b0"
+  },
+  "code-entered.png": {
+    "bytes": 118047,
+    "sha256": "b14fb5235aae5a36eb1ca7c91debbff1d68f937eec49cddf4f600a4e4fb3c40d"
+  },
+  "download-receipt.json": {
+    "bytes": 777,
+    "sha256": "db9035afab0079c55c12706f66be87499ccbc4abe3b16118c0bcac0bcb7b851b"
+  },
+  "first-lan.png": {
+    "bytes": 105456,
+    "sha256": "904788d73f614444709bf6db1b2e3b83098d729c784274120c506682b9b2e215"
+  },
+  "hostleave-home.png": {
+    "bytes": 1067551,
+    "sha256": "7652593160ee7cf733f71a613fa8084e32b52c177487d27586feb742ce5e2091"
+  },
+  "lan-full-canonical.json": {
+    "bytes": 2403,
+    "sha256": "78ed5a5a0b9aaf856d8a0c3beb47d60f2eba3c34b17338b9e646503104740e66"
+  },
+  "lan-record-receipt.json": {
+    "bytes": 592,
+    "sha256": "df927c65eb569e460bcc9a05cef5e270f30f8656a73886548cca7a8422177db0"
+  },
+  "natural-result.png": {
+    "bytes": 894598,
+    "sha256": "d6e799aa3f92aa345d409dfa28f67779c2ad92db6e621c0606df1f91bc43bfff"
+  },
+  "postmatch-recovery-receipt.json": {
+    "bytes": 1020,
+    "sha256": "234a9a83260cd7d51ce5c3a2a53e541ca8a8c0afb31aa8aa8d6a189cc473f204"
+  },
+  "rules-normal-4x30.png": {
+    "bytes": 104350,
+    "sha256": "eb410875609bdcdde676a3ea4086fd0808f9c556e8343d35a2bd20c4e0728147"
+  },
+  "terminal-result.json": {
+    "bytes": 1003,
+    "sha256": "13892312a065fabe3c46c9c9d0beda443b2dec93c09e325465e4c658475c9abf"
+  }
+}
