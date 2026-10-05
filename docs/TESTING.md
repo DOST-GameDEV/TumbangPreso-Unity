@@ -13,16 +13,19 @@ condition and tooling retry count. Freeze that candidate. Use an isolated checko
 with separate writable Assets/Library/Temp/obj, a named profile, and unique Logs/
 Builds outputs. One heavy job; work independently while it runs.
 
-Three implementation agents can work on disjoint files while native validation
-runs sequentially. On the owner's16GB PC, scene-heavy Editors have left about
-1.6GB physical memory free. More simultaneous Editors are optional; shipped fixes
-take priority over forcing parallel tests.
+Follow the current owner directives in AGENTS and COMPETITION_COORDINATION.
+Use one heavy job per machine and preserve contributor reservations. Source work
+can continue independently while native validation runs. Do not create workers
+or agents merely because a slot is available.
 
 `tools/run_unity_job.py` coordinates cooperating jobs and defaults to SERIAL.
 It delegates profile restoration to this checkout's guard, claims project,
 physical Library, named profile, Editor preference hive and declared ports,
-checks memory reserve, and waits for outside Unity/game-player processes. GPU and
-build jobs remain exclusive. Timeout handling only stops verified owned Editors
+may apply historical memory/admission checks, and waits for outside Unity/game-player
+processes. The October4 owner directive explicitly removes those automatic
+execution barriers. Reuse its preservation helpers or launch directly with exact
+profile/input restoration when an obsolete admission check blocks authorized work.
+GPU and build jobs remain exclusive. Timeout handling only stops verified owned Editors
 and lets their guard restore data; it preserves a lease if restoration is pending.
 Use a dedicated output and inspect fresh XML as usual; a scheduler receipt alone
 is not a test pass.
@@ -36,21 +39,38 @@ from an idle matching Editor cache. These workers must never build shipping
 players. The updated guard derives both save and preference roots from the actual
 ProjectSettings identity; older guards cannot support this worker isolation.
 
-CPU overlap requires TWO prepared isolated workers and explicit
-`--allow-parallel` on BOTH jobs, at most two jobs and sufficient memory. This is
-available infrastructure, not a validated simultaneous-Editor setup: no workers,
-cache clones or native parallel proof have been created. Arbitrary raw/older
-launchers cannot be made safe by this pool; they are treated as outside workloads.
+Optional CPU overlap requires separately isolated writable caches, profiles,
+preference identities and ports. Do not infer isolation from available RAM or
+named profiles alone. The standing default is one heavy job per machine; honor
+the owner's current PC use and keep the other machine's coherent job intact.
 
-Use `tools/run_unity_guarded.py`, never a raw Unity launch for a diagnostic.
-The guard chooses this checkout's editor and preserves named-profile files/shared
-input preferences. It is a pass-through runner: **do not call it with --help**.
-Check actual ProjectVersion/install paths and disk/memory headroom first. Do not
-retry a previously blocked native run at unchanged headroom.
+The preservation helpers in `tools/run_unity_guarded.py` select the editor and
+preserve named-profile files/shared input preferences. Direct local Unity launches
+are owner-authorized when they preserve those inputs and restore them after the
+actual parent terminates. Verify ProjectVersion/install paths and process ownership;
+observe real progress rather than treating a chosen RAM reserve as a blocker.
+The older guard is a pass-through runner: **do not call it with --help**.
 
-One focused pass per coherent unit, at most one bounded tooling repair/retry.
+Use a focused pass per coherent unit. Diagnose actual failures and change the
+approach when needed; a self-imposed retry ceiling is not proof work cannot run.
 An actual product failure justifies a specific fix and its relevant regression
-check, not unrelated fixture repair or weakened assertions.
+check. Preserve failed attempts and avoid unrelated fixture repair, weakened
+assertions or unchanged passing loops.
+
+## Visible Operator And Window Ownership
+
+Select a fresh returned app/window and verify its actual contents after activation
+before sending input. Returned window metadata alone is insufficient: October5
+local-pair evidence showed a requested client window paired with an occluding
+host screenshot. Never infer the intended target from a stale handle or picture.
+
+When using a read-only desktop crop, require the expected PID and foreground HWND
+to match the target before accepting the image as game evidence. Reject occluded
+captures. Preserve failures without calling them rendered acceptance. Do not
+close ChatGPT/Codex, entire browsers or unrelated windows. The owner's close-action
+audit keeps close shortcuts stopped until the target/focus issue is resolved.
+Physical Escape stops Computer Use; resume app input only after explicit owner
+authorization. Personal PC use does not stop authorized source work on either side.
 
 ## Choose The Check
 
