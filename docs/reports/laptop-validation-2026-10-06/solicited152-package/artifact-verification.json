@@ -1,0 +1,15 @@
+{
+  "sourceCommit": "0358e70de18f94889ec101201934b40ee466a6b4",
+  "protocol": 152,
+  "fileCount": 261,
+  "totalBytes": 2947172902,
+  "manifestSha256": "79d2dda2607afef210741d3484e173ff40051eefe6f8816e0a02c9aaca978814",
+  "runtimeSha256": "5969d848ffbe53ff231f36c7e2146988dff05a44b5f6fc4dcb55d7f20d0c3827",
+  "changedRuntimeMethodAndQueryMarkersPresent": {
+    "RefreshRemoteRules": true,
+    "RequestDiscovery": true,
+    "tumbang-preso-lan-query1": true
+  },
+  "resourceStreamingPackagedIdentityEqual": true,
+  "scope": "Markers and exact package identity/input qualification; runtime operator acceptance remains pending"
+}

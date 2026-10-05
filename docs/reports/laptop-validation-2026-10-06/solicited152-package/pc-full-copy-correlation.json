@@ -1,0 +1,11 @@
+{
+  "pcCopyParent": 10554,
+  "pcCopyTerminal": true,
+  "pcCopyExitCode": 0,
+  "filesVerified": 261,
+  "totalBytes": 2947172902,
+  "manifestSha256": "79d2dda2607afef210741d3484e173ff40051eefe6f8816e0a02c9aaca978814",
+  "source": "0358e70de18f94889ec101201934b40ee466a6b4",
+  "pcArtifact": "Builds/solicit-pc-0358152-1006",
+  "scope": "Independent PC all-file size/SHA/path inventory and streaming identity ACK before both actual game peers"
+}
