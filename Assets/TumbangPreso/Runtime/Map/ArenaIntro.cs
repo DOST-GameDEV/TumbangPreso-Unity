@@ -611,7 +611,7 @@ namespace TumbangPreso.Map
             }
 
             // The north canopy's banks in the lens: this map's own lamp, pointed at this camera.
-            if (glare > 0.01f && ArenaGlare.Begin(_camera))
+            if ((glare > 0.01f || (t.Full && age < t.Reveal)) && ArenaGlare.Begin(_camera))
             {
                 Vector3 eye = _camera.transform.position;
                 for (int i = 0; i < FloodBearing.Length; i++)
@@ -623,6 +623,21 @@ namespace TumbangPreso.Map
                     float seen = SeenFromTunnel(eye - _centre, lamp - _centre);
                     ArenaGlare.Lamp(fx, lamp, to / metres, FloodColour, Mathf.Lerp(0.45f, 1.0f, glare), 4.0f, 12.0f,
                                     1.0f + 2.4f * glare, true, flash > 0.3f && seen > 0.5f, seen);
+                }
+
+                // ⚠️ THE GLARE THEY WALK INTO (owner, 2026-10-05: "the glare doesnt happen on the starting
+                // cinematic"). The canopy's banks above are 15 degrees up from here and the tunnel's lintel
+                // hides them until the camera is out, which is when the white has already taken the frame:
+                // so nothing flared. This is the far side's light as the mouth frames it: one lamp low
+                // across the field, square in the opening, growing from the first step of the walk.
+                if (t.Full && age < t.Reveal)
+                {
+                    float grow = Smooth((age - t.Walk * 0.4f) / (t.Peak - t.Walk * 0.4f));
+                    Vector3 sun = _centre + new Vector3(0.0f, Mathf.Lerp(3.6f, 5.2f, grow), -44.0f);
+                    Vector3 from = eye - sun;
+                    if (grow > 0.02f && from.sqrMagnitude > 1.0f)
+                        ArenaGlare.Lamp(fx, sun, from.normalized, FloodColour, Mathf.Lerp(0.4f, 1.0f, grow), 6.0f, 20.0f,
+                                        1.1f + 2.8f * grow, true, flash > 0.3f, 1.0f);
                 }
 
                 // The bright air beyond the mouth: what the dark tunnel is looking out at.

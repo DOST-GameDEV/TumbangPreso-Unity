@@ -43,6 +43,9 @@ namespace TumbangPreso.Map
 
         private CharacterMotor[] _motors = System.Array.Empty<CharacterMotor>();
         private readonly List<CharacterMotor> _boosted = new List<CharacterMotor>();
+        // The pad's sound and the boost's (owner, 2026-10-05; it had none). Not on the wire: every peer
+        // plays them when a body steps ONTO the pad here, whoever simulates it.
+        private readonly HashSet<CharacterMotor> _on = new HashSet<CharacterMotor>();
         private float _rescan;
         private float _kick;    // 1 when a body is boosted, eased to 0: the stripes hurry
         private float _phase;
@@ -95,9 +98,23 @@ namespace TumbangPreso.Map
             Vector3 here = transform.position;
             foreach (var motor in _motors)
             {
-                if (motor == null || !motor.IsGrounded) continue;
+                if (motor == null) continue;
                 Vector3 d = toLocal * (motor.transform.position - here);
-                if (Mathf.Abs(d.y) > Reach || Mathf.Abs(d.x) > HalfSize.x || Mathf.Abs(d.z) > HalfSize.y) continue;
+                bool local = motor.IsLocallySimulated();
+                if (Mathf.Abs(d.y) > Reach || Mathf.Abs(d.x) > HalfSize.x || Mathf.Abs(d.z) > HalfSize.y || (local && !motor.IsGrounded))
+                {
+                    // Off it, or in the air over it: the next landing on it sounds again.
+                    if (Mathf.Abs(d.y) > Reach || Mathf.Abs(d.x) > HalfSize.x || Mathf.Abs(d.z) > HalfSize.y) _on.Remove(motor);
+                    continue;
+                }
+                if (_on.Add(motor))
+                {
+                    var audio = GameServices.Audio;
+                    audio?.PlayAtVaried("sfx_arena_pad_speed", here, 0.97f, 1.05f, 1.0f);
+                    audio?.PlayAtVaried("sfx_arena_boost", motor.transform.position, 0.96f, 1.04f, 1.0f);
+                    _kick = 1.0f;
+                }
+                if (!local) continue;
                 if (!motor.BeginSpeedBoost(Scale, Seconds)) continue;
                 _kick = 1.0f;
                 if (!_boosted.Contains(motor)) _boosted.Add(motor);

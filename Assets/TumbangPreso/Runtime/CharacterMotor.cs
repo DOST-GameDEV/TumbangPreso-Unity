@@ -1944,12 +1944,13 @@ namespace TumbangPreso
         /// <summary>A jump pad's throw (`JumpPad`): sets the vertical speed outright, past
         /// `Balance.MaxKnockbackLift`, which caps hits and not map furniture. Only on the peer
         /// that simulates this unit; returns whether it launched.</summary>
-        public bool LaunchUp(float speed)
+        /// `cue` is the sound relayed with it; null when the pad plays its own on every peer (the Arena's).
+        public bool LaunchUp(float speed, string cue = "jump")
         {
             if (!MayMutateGameplayState() || !IsLocallySimulated() || !CanMove()) return false;
             _velocity.y = speed;
             _grounded = false;
-            NetCue.PlayVaried("jump", transform.position, 0.7f, 0.8f, 1.0f);
+            if (cue != null) NetCue.PlayVaried(cue, transform.position, 0.7f, 0.8f, 1.0f);
             return true;
         }
 

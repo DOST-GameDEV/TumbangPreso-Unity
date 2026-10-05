@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace TumbangPreso
@@ -74,6 +75,11 @@ namespace TumbangPreso
         public string SurfaceShader = PaintedShader;
 
         private CharacterMotor[] _motors = System.Array.Empty<CharacterMotor>();
+        // ⚠️ THE ARENA'S PAD HAS ITS OWN SOUND (owner, 2026-10-05: "more unique jump sfx"; it was the
+        // ordinary jump pitched down). It is not on the wire: this peer plays it for the bodies it
+        // launches, and for a body another peer simulates when that body arrives on the pad here.
+        private const string ArenaCue = "sfx_arena_pad_jump";
+        private readonly HashSet<CharacterMotor> _remoteOn = new HashSet<CharacterMotor>();
         private float _rescan;
         private float _kick;        // 1 on a launch, eased to 0: the pad's answer to throwing somebody
         private float _phase;       // the loop's own clock, which a launch hurries
@@ -404,12 +410,24 @@ namespace TumbangPreso
             }
 
             Vector3 here = transform.position;
+            bool arena = Map.ArenaStage.Instance != null;
             foreach (var motor in _motors)
             {
-                if (motor == null || !motor.IsGrounded) continue;
+                if (motor == null) continue;
                 Vector3 d = motor.transform.position - here;
-                if (Mathf.Abs(d.y) > 0.8f || Mathf.Abs(d.x) > Radius || Mathf.Abs(d.z) > Radius) continue;
-                if (motor.LaunchUp(LaunchSpeed)) { _kick = 1.0f; _sinceLaunch = 0.0f; }
+                bool over = Mathf.Abs(d.x) <= Radius && Mathf.Abs(d.z) <= Radius;
+                if (arena && !motor.IsLocallySimulated())
+                {
+                    if (!over || Mathf.Abs(d.y) > 0.5f) _remoteOn.Remove(motor);
+                    else if (_remoteOn.Add(motor)) { GameServices.Audio?.PlayAtVaried(ArenaCue, here, 0.96f, 1.05f, 1.0f); _kick = 1.0f; _sinceLaunch = 0.0f; }
+                    continue;
+                }
+                if (!motor.IsGrounded || !over || Mathf.Abs(d.y) > 0.8f) continue;
+                if (motor.LaunchUp(LaunchSpeed, arena ? null : "jump"))
+                {
+                    _kick = 1.0f; _sinceLaunch = 0.0f;
+                    if (arena) GameServices.Audio?.PlayAtVaried(ArenaCue, here, 0.96f, 1.05f, 1.0f);
+                }
             }
 
             if (_look == null) return;

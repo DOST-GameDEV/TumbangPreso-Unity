@@ -106,6 +106,8 @@ namespace TumbangPreso.Audio
                 { "sfx_arena_alarm", -9.0f }, { "sfx_arena_undock", -4.0f }, { "sfx_arena_thruster", -11.0f },
                 { "sfx_arena_lock", -3.0f }, { "sfx_arena_reveal", -2.0f }, { "sfx_arena_crowd_roar", -10.0f },
                 { "sfx_arena_pyro", -7.0f }, { "sfx_arena_drone_ping", -7.0f }, { "sfx_arena_drone_set", -5.0f },
+                // The stage's furniture (owner 2026-10-05, `tools/synth_arena_pad_sfx.py`): events a player causes, mixed as events.
+                { "sfx_arena_pad_jump", -3.0f }, { "sfx_arena_pad_speed", -5.0f }, { "sfx_arena_boost", -6.0f }, { "sfx_arena_stamina", -3.0f },
                 // The rescue drone's toy voice (2026-10-05). Its hum is struck again every half second of a
                 // carry and up to four carries can run at once, so it is mixed as a bed; the rising whistle of
                 // the haul and the zip away are one each per carry and sit under the lock-on and the ding.
@@ -335,6 +337,7 @@ namespace TumbangPreso.Audio
             // `ArenaAmbience`), never through `NetCue`: nothing about them is on the wire.
             "sfx_arena_alarm", "sfx_arena_undock", "sfx_arena_thruster", "sfx_arena_lock", "sfx_arena_reveal",
             "sfx_arena_crowd_roar", "sfx_arena_pyro", "sfx_arena_drone_ping", "sfx_arena_drone_set",
+            "sfx_arena_pad_jump", "sfx_arena_pad_speed", "sfx_arena_boost", "sfx_arena_stamina",
             "sfx_arena_drone_hum", "sfx_arena_drone_beam", "sfx_arena_drone_zip",
             // The Arena's slipper balloon and a slipper set back on the stage (`Map.ArenaBalloon`,
             // `Map.ArenaFallRecovery`): each peer plays them for itself, never through `NetCue`.

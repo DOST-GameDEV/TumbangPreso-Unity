@@ -147,7 +147,7 @@ namespace TumbangPreso.Map
                 if (motor == null || !motor.IsGrounded || !Within(motor, TakeRadius) || !NotFull(motor)) continue;
                 motor.Stamina.RefillAndClearFatigue();
                 _takenLeft = Mathf.Max(0.0f, RespawnSeconds);
-                NetCue.PlayVaried("pickup", transform.position, 1.2f, 1.35f, 0.9f);
+                NetCue.PlayVaried("sfx_arena_stamina", transform.position, 0.98f, 1.04f, 1.0f);
                 return;
             }
         }
