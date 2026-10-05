@@ -1,0 +1,25 @@
+{
+  "pid": 45356,
+  "source": "0358e70de18f94889ec101201934b40ee466a6b4",
+  "command": [
+    "C:\\Program Files\\Unity\\Hub\\Editor\\6000.5.8f1\\Editor\\Unity.exe",
+    "-projectPath",
+    "C:\\Users\\Matthew\\dev\\tump-integration1003",
+    "-batchmode",
+    "-nographics",
+    "-executeMethod",
+    "TumbangPreso.EditorTools.GameBuilder.BuildWindows",
+    "-buildOutput",
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\current-laptop-0358e70de-1005\\TumbangPreso.exe",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Logs\\current-laptop-build-0358e70de-1005\\unity.log",
+    "-tp-profile",
+    "lpt-build152-0358e70de-1005",
+    "-job-worker-count",
+    "1",
+    "-gc-helper-count",
+    "1"
+  ],
+  "out": "C:\\Users\\Matthew\\dev\\tump-integration1003\\Logs\\current-laptop-build-0358e70de-1005",
+  "artifact": "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\current-laptop-0358e70de-1005"
+}
