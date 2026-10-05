@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 10:16:52Z" end-time="2026-10-05 10:16:53Z" duration="0.9134887">
+  <test-suite type="TestSuite" id="3145" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1750" result="Failed" site="Child" start-time="2026-10-05 10:16:52Z" end-time="2026-10-05 10:16:53Z" duration="0.913489" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3137" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1750" result="Failed" site="Child" start-time="2026-10-05 10:16:52Z" end-time="2026-10-05 10:16:53Z" duration="0.888533" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22108" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3138" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1750" result="Failed" site="Child" start-time="2026-10-05 10:16:52Z" end-time="2026-10-05 10:16:53Z" duration="0.881100" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3141" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1748" result="Failed" site="Child" start-time="2026-10-05 10:16:52Z" end-time="2026-10-05 10:16:53Z" duration="0.873774" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestFixture" id="1488" name="DanteWardHudFeedbackTests" fullname="TumbangPreso.PlayTests.DanteWardHudFeedbackTests" classname="TumbangPreso.PlayTests.DanteWardHudFeedbackTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-05 10:16:52Z" end-time="2026-10-05 10:16:53Z" duration="0.812331" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-case id="1491" name="ActiveLabelUsesTheAbilityClockAndDisappearsOnEarlyEnd" fullname="TumbangPreso.PlayTests.DanteWardHudFeedbackTests.ActiveLabelUsesTheAbilityClockAndDisappearsOnEarlyEnd" methodname="ActiveLabelUsesTheAbilityClockAndDisappearsOnEarlyEnd" classname="TumbangPreso.PlayTests.DanteWardHudFeedbackTests" runstate="Runnable" seed="103822856" result="Passed" start-time="2026-10-05 10:16:52Z" end-time="2026-10-05 10:16:53Z" duration="0.189478" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1489" name="ActiveWardHasNamedFeedbackEvenWithTheFirstPersonReticle" fullname="TumbangPreso.PlayTests.DanteWardHudFeedbackTests.ActiveWardHasNamedFeedbackEvenWithTheFirstPersonReticle" methodname="ActiveWardHasNamedFeedbackEvenWithTheFirstPersonReticle" classname="TumbangPreso.PlayTests.DanteWardHudFeedbackTests" runstate="Runnable" seed="1611348045" result="Failed" start-time="2026-10-05 10:16:53Z" end-time="2026-10-05 10:16:53Z" duration="0.546886" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <failure>
+                <message><![CDATA[  The active ward has no named first-person HUD confirmation.
+  Expected: not <empty>
+  But was:  <empty>
+]]></message>
+                <stack-trace><![CDATA[at TumbangPreso.PlayTests.DanteWardHudFeedbackTests+<ActiveWardHasNamedFeedbackEvenWithTheFirstPersonReticle>d__10.MoveNext () [0x000d0] in C:\Users\matth\Documents\Codex\work\tump-competition-candidate1003i\Assets\TumbangPreso\Tests\PlayMode\DanteWardHudFeedbackTests.cs:62
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in .\Library\PackageCache\com.unity.test-framework@1405238725ab\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+              </failure>
+            </test-case>
+            <test-case id="1490" name="InactiveWardDoesNotShowAnActiveLabel" fullname="TumbangPreso.PlayTests.DanteWardHudFeedbackTests.InactiveWardDoesNotShowAnActiveLabel" methodname="InactiveWardDoesNotShowAnActiveLabel" classname="TumbangPreso.PlayTests.DanteWardHudFeedbackTests" runstate="Runnable" seed="871169435" result="Passed" start-time="2026-10-05 10:16:53Z" end-time="2026-10-05 10:16:53Z" duration="0.040064" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

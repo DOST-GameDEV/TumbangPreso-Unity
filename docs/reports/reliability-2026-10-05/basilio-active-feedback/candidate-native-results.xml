@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-05 10:21:39Z" end-time="2026-10-05 10:21:40Z" duration="1.4051946">
+  <test-suite type="TestSuite" id="3150" name="Tumbang Preso" fullname="Tumbang Preso" runstate="Runnable" testcasecount="1755" result="Passed" start-time="2026-10-05 10:21:39Z" end-time="2026-10-05 10:21:40Z" duration="1.405195" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="3142" name="TumbangPreso.PlayTests.dll" fullname="C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i/Library/ScriptAssemblies/TumbangPreso.PlayTests.dll" runstate="Runnable" testcasecount="1755" result="Passed" start-time="2026-10-05 10:21:39Z" end-time="2026-10-05 10:21:40Z" duration="1.389014" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="8576" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="3143" name="TumbangPreso" fullname="TumbangPreso" runstate="Runnable" testcasecount="1755" result="Passed" start-time="2026-10-05 10:21:39Z" end-time="2026-10-05 10:21:40Z" duration="1.381533" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3146" name="PlayTests" fullname="TumbangPreso.PlayTests" runstate="Runnable" testcasecount="1753" result="Passed" start-time="2026-10-05 10:21:39Z" end-time="2026-10-05 10:21:40Z" duration="1.374132" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1488" name="DanteWardHudFeedbackTests" fullname="TumbangPreso.PlayTests.DanteWardHudFeedbackTests" classname="TumbangPreso.PlayTests.DanteWardHudFeedbackTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-05 10:21:39Z" end-time="2026-10-05 10:21:40Z" duration="1.327060" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1491" name="ActiveLabelUsesTheAbilityClockAndDisappearsOnEarlyEnd" fullname="TumbangPreso.PlayTests.DanteWardHudFeedbackTests.ActiveLabelUsesTheAbilityClockAndDisappearsOnEarlyEnd" methodname="ActiveLabelUsesTheAbilityClockAndDisappearsOnEarlyEnd" classname="TumbangPreso.PlayTests.DanteWardHudFeedbackTests" runstate="Runnable" seed="2126243915" result="Passed" start-time="2026-10-05 10:21:39Z" end-time="2026-10-05 10:21:39Z" duration="0.200692" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1489" name="ActiveWardHasNamedFeedbackEvenWithTheFirstPersonReticle" fullname="TumbangPreso.PlayTests.DanteWardHudFeedbackTests.ActiveWardHasNamedFeedbackEvenWithTheFirstPersonReticle" methodname="ActiveWardHasNamedFeedbackEvenWithTheFirstPersonReticle" classname="TumbangPreso.PlayTests.DanteWardHudFeedbackTests" runstate="Runnable" seed="507147597" result="Passed" start-time="2026-10-05 10:21:39Z" end-time="2026-10-05 10:21:40Z" duration="1.073303" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TumpGeometry] Basilio-Unstoppable-active/Power0: vertices=610, cull=False, alpha=1, depth=74, material=1
+[TumpGeometry] Basilio-Unstoppable-active/PowerIcon: vertices=4, cull=False, alpha=1, depth=75, material=1
+[TumpGeometry] Basilio-Unstoppable-active/Power1: vertices=659, cull=False, alpha=1, depth=79, material=1
+[TumpGeometry] Basilio-Unstoppable-active/PowerIcon: vertices=4, cull=False, alpha=1, depth=80, material=1
+[TumpGeometry] Basilio-Unstoppable-active/Power2: vertices=418, cull=False, alpha=1, depth=84, material=1
+[TumpGeometry] Basilio-Unstoppable-active/PowerIcon: vertices=4, cull=False, alpha=1, depth=85, material=1
+[TumpUiCapture] Basilio-Unstoppable-active cream source=252,211,159 pixel=252,211,159; isolated UI camera, no ColourGrade.
+]]></output>
+            </test-case>
+            <test-case id="1490" name="InactiveWardDoesNotShowAnActiveLabel" fullname="TumbangPreso.PlayTests.DanteWardHudFeedbackTests.InactiveWardDoesNotShowAnActiveLabel" methodname="InactiveWardDoesNotShowAnActiveLabel" classname="TumbangPreso.PlayTests.DanteWardHudFeedbackTests" runstate="Runnable" seed="7424984" result="Passed" start-time="2026-10-05 10:21:40Z" end-time="2026-10-05 10:21:40Z" duration="0.036189" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/matth/AppData/LocalLow/BH Studios/Tumbang Preso\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -203,8 +203,14 @@ Nothing was deleted or renumbered.
   owner-driven first code/start, the probe-adjacent lobby timeout and initial
   reciprocal empty-view delay as limits. [Evidence](reports/reliability-2026-10-05/two-machine-ui151/README.md).
 - [ ] Owner Basilio E/Q failure on both machines: isolate actual input events,
-  effective bindings and eligible ability consumption. Automated presses showed
-  no convincing cooldown response; kit-present/post-match state is insufficient.
+  effective bindings and eligible ability consumption. Sky letter presses produce
+  TEXT rather than key-state events. Native producer-to-consumer checks pass13/13;
+  physical and paired skill effects remain unqualified.
+  [Input evidence](reports/laptop-validation-2026-10-05/editor151-network-input/README.md).
+- [x] Give active Unstoppable a named first-person HUD countdown using its existing
+  clock. Original rendered confirmation fails while two clock/inactive controls
+  pass; candidate three native cases pass with captured label. Preserve skill
+  mechanics and orbiting ward. [Evidence](reports/reliability-2026-10-05/basilio-active-feedback/README.md).
 - [x] Host-approved rules update shared state before UI observers, including
   when no lobby view exists. Two mode/state causes plus three guards become5/5;
   saved preferences stay unchanged. [Evidence](reports/reliability-2026-10-05/rules-receiver-state/README.md).
@@ -1198,6 +1204,11 @@ coherent releases, bounded checks and raw failures; no full readiness claim yet.
   old fixture route retired after two flaws. Underlying contact lifetime fixed by
   separately qualified LUNGE-DISABLE-LIFETIME-1002; old failed evidence retained.
   [Unqualified evidence](reports/reliability-2026-10-02/practice-bot-resume/README.md).
+  Newer normal Windows Practice operator evidence qualifies non-default bot-seat
+  controls, removal/re-add, resumed planner liveness, a throw and subsequent
+  bot-victim contact. Timer progression, held-charge interruption, physical
+  controller/touch and remaining maps/current151 recovery are still separate.
+  [Scoped operator evidence](reports/laptop-validation-2026-10-05/practice-visible-operator/README.md).
 - [x] TRAINING-EMOTE-ELIGIBILITY-1002: committed212cae991, nativeeligibility3/3
   after1causal/2controls, ONE preflight classification repair/zero fixture repairs.
   [Evidence](reports/reliability-2026-10-02/training-emote-eligibility/README.md).
