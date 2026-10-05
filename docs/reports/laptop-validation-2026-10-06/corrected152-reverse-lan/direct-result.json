@@ -1,0 +1,41 @@
+{
+  "source": "917bca66c311fd2832cf571ede2f4b42336deb50",
+  "protocol": 152,
+  "profile": "lpt-reverse152-1006b",
+  "profilePath": "C:\\Users\\Matthew\\AppData\\LocalLow\\BH Studios\\Tumbang Preso\\profiles\\dcc8238517309558267113478f735449f19a5f77e3bea024952768a91d63d3fd",
+  "command": [
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Builds\\current-laptop-917bca66c-1005\\TumbangPreso.exe",
+    "-force-d3d11",
+    "-screen-fullscreen",
+    "0",
+    "-screen-width",
+    "1280",
+    "-screen-height",
+    "720",
+    "-tp-framecap",
+    "60",
+    "-tp-profile",
+    "lpt-reverse152-1006b",
+    "-logFile",
+    "C:\\Users\\Matthew\\dev\\tump-integration1003\\Logs\\corrected-reverse152-1006b\\player.log"
+  ],
+  "manifestSha256": "3ac354c44b450e9ba0d8d9e07b9ae796ffc2577a0692d63c4113ddf5ef9ac313",
+  "route": "normal visible boot; actual UI clicks; no network bootstrap",
+  "scope": "Correctedsame-package LPT-host/PC-join LAN; normalNONErefusal/enablebots/4x30/fullresults andhostleaveHOME; nobootstrap",
+  "pid": 14324,
+  "exitCode": 0,
+  "savedProfileHashes": {
+    "career.json": "882b3b3a25648b5bb67a584e68a7093f25f43bc46c0c482edf2789a92e5a3f08",
+    "career.json.bak": "7a5a4f5696e1a49cffce8cab7ef41504c63275a59dc925eb73a757b0c14da33e",
+    "settings.json": "5ea357cafde528c426ebaf1f081b567a7c6b21c699b2c0d7bdb8a293011bbda1",
+    "settings.json.bak": "5ea357cafde528c426ebaf1f081b567a7c6b21c699b2c0d7bdb8a293011bbda1",
+    "social.json": "7fc7e8fe19a27a52dbdcdb9ac6d6f6c45c9b46a04d46bbf8fe450f343b3f4720",
+    "social.json.bak": "7fc7e8fe19a27a52dbdcdb9ac6d6f6c45c9b46a04d46bbf8fe450f343b3f4720",
+    "wallet.json": "6bc3bef7cc215e74dd821b769326b9328974a006143eece3583f28d531e558ec",
+    "wallet.json.bak": "6bc3bef7cc215e74dd821b769326b9328974a006143eece3583f28d531e558ec"
+  },
+  "inputRestored": true,
+  "seedRestored": true,
+  "terminal": true,
+  "artifactUnchanged": true
+}
