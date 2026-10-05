@@ -107,7 +107,7 @@ namespace TumbangPreso.Audio
                 { "sfx_arena_lock", -3.0f }, { "sfx_arena_reveal", -2.0f }, { "sfx_arena_crowd_roar", -10.0f },
                 { "sfx_arena_pyro", -7.0f }, { "sfx_arena_drone_ping", -7.0f }, { "sfx_arena_drone_set", -5.0f },
                 // The stage's furniture (owner 2026-10-05, `tools/synth_arena_pad_sfx.py`): events a player causes, mixed as events.
-                { "sfx_arena_pad_jump", -3.0f }, { "sfx_arena_pad_speed", -5.0f }, { "sfx_arena_boost", -6.0f }, { "sfx_arena_stamina", -3.0f },
+                { "sfx_arena_pad_jump", 0.0f }, { "sfx_arena_pad_speed", 0.0f }, { "sfx_arena_boost", -1.0f }, { "sfx_arena_stamina", 0.0f },
                 // The rescue drone's toy voice (2026-10-05). Its hum is struck again every half second of a
                 // carry and up to four carries can run at once, so it is mixed as a bed; the rising whistle of
                 // the haul and the zip away are one each per carry and sit under the lock-on and the ding.

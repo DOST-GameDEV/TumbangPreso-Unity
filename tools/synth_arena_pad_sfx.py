@@ -196,6 +196,9 @@ def main():
             continue
         x = build(np.random.default_rng(seed))
         x = x - x.mean()
+        # Driven into a soft clip (owner, 2026-10-05: "pads sfx arent too audible"): the body of each sound comes up
+        # about 6 dB under the same peak.
+        x = np.tanh(x / np.abs(x).max() * 2.6)
         x = x / np.abs(x).max() * PEAK
         with wave.open(str(OUT / (name + ".wav")), "wb") as w:
             w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR)
