@@ -21,9 +21,15 @@ explicitly authorized; unnecessary AGENTS feature entry was removed at owner req
 
 ## Current source and live work
 
+Current source40dbb7ca7 is published under M4. Owner wants this PC for personal
+use: leave mouse, keyboard, focus and windows alone until owner resumes control.
+Current local inventory has no Unity/player/Python jobs. Laptop acknowledged
+this restriction and continues its own replay lifecycle native qualification.
+Continue source investigation; QA Relay timeout/host kick remains unresolved.
+
 Latest incoming f69a64a03/0d11a2716 integrated normally, M4 authors verified;
 43 raw evidence hashes exact and13 input-consumer XML cases pass. Owner's latest
-question is cast visibility. Unstoppable FPP confirmation fix is ready to publish:
+question is cast visibility. Unstoppable FPP confirmation fix is published40db:
 original rendered label fails/two clock-inactive controls pass -> candidate3/3.
 StatusStack already had name/clock; add ShowWithReticle only on Dante signature
 and keep its named timer despite reticle suppression. Existing ward/mechanics
