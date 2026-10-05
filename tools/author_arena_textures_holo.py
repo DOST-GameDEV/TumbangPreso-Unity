@@ -109,6 +109,9 @@ BAL = dict(post=0.86, anchor=0.60, anchor_x=0.80, scarf_t=0.21, eye_t=0.405, eye
            mouth_t=0.335, mouth_r=0.050, blush_x=0.335, blush_t=0.350)
 # The game's own slipper colours (Art/ui/brand/tsinelas_hit.png, avatars/avatar_tsinelas.png): the
 # logo's yellow sole d8c808 and maroon line 980818, the avatar strap's amber f8b828.
+# The balloon's faces: arena_holo_balloon.png is the first, arena_holo_balloon_<mood>.png the others
+# (each with its _emit). Runtime/Map/ArenaBalloon.cs holds the same four, in this order.
+BALLOON_FACES = ("happy", "worried", "ouch", "dizzy")
 BAL_HEX = dict(yellow="dccb0c", yellow_hi="ece04c", yellow_lo="c2b006", yellow_back="cdbb08", yellow_line="a08c04",
                maroon="980818", red="b8242e", amber="f8b828", cream="f6ecc8", stitch="fff4b4", blush="f08a80", gloss="fffbd8")
 # The hologram slipper's strap (tools/author_arena_holo.py, `slipper_hologram`).
@@ -913,31 +916,85 @@ def balloon():
         st = np.clip((px * 2.0 - np.abs(rr - r * 0.74)) / (px * 1.0) + 0.5, 0, 1) * (np.abs(((an * 8 / math.pi) % 1.0) - 0.5) < 0.3)
         foot = T.lay(foot, st * inside, C["stitch"])
     # THE FACE: two closed happy arcs, a small smile, two cheeks. That is all of it.
+    # It has FOUR MOODS, one texture each (BALLOON_FACES): Unity swaps the whole texture on the body
+    # for a moment when a slipper hits it (Runtime/Map/ArenaBalloon.cs). Every mood is drawn with the
+    # same maroon line, the same cheeks and in the same place; none has whites, pupils or highlights.
     et, ex, er = BAL["eye_t"], BAL["eye_x"], BAL["eye_r"]
     thick = BAL["line"]
-    face = np.zeros((h, w))
-    for sx in (-1, 1):
-        cx = sx * ex + lean(et)
-        rr = disc(fx_, ft, cx, et, 1.0)
-        arc = np.clip((thick / 2 - np.abs(rr - er)) / (px * 1.4) + 0.5, 0, 1) * np.clip(((ft - et) * asp + er * 0.18) / (px * 2.0), 0, 1)
-        for ex_ in (-1, 1):                                       # a round end on each foot of the arc
-            arc = np.maximum(arc, np.clip((thick / 2 - disc(fx_, ft, cx + ex_ * er * 0.984, et - er * 0.18 / asp, 1.0)) / (px * 1.4) + 0.5, 0, 1))
-        face = np.maximum(face, arc)
-        blush = np.clip((1.0 - disc(fx_, ft, sx * BAL["blush_x"] + lean(et), BAL["blush_t"], 0.070, 0.042)) / 0.45, 0, 1)
-        foot = T.lay(foot, blush * inside * 0.78, C["blush"])
     mt, mr = BAL["mouth_t"], BAL["mouth_r"]
-    rr = disc(fx_, ft, lean(mt), mt + mr * 0.55 / asp, 1.0)
-    smile = np.clip((thick / 2 - np.abs(rr - mr)) / (px * 1.4) + 0.5, 0, 1) * np.clip((-(ft - mt) * asp - mr * 0.05) / (px * 2.0), 0, 1)
-    for ex_ in (-1, 1):
-        smile = np.maximum(smile, np.clip((thick / 2 - disc(fx_, ft, lean(mt) + ex_ * mr * 0.835, mt - mr * 0.05 / asp, 1.0)) / (px * 1.4) + 0.5, 0, 1))
-    face = np.maximum(face, smile)
-    foot = T.lay(foot, face * inside, C["maroon"])
+    edge = lambda dist, half: np.clip((half - dist) / (px * 1.4) + 0.5, 0, 1)
+
+    def stroke(pts, half=None):
+        """A round-ended line through pts, (x in widths, t along)."""
+        out = np.zeros((h, w))
+        for (ax, at_), (bx, bt) in zip(pts, pts[1:]):
+            ux, uy = bx - ax, (bt - at_) * asp
+            qx, qy = fx_ - ax, (ft - at_) * asp
+            k = np.clip((qx * ux + qy * uy) / max(ux * ux + uy * uy, 1e-9), 0, 1)
+            out = np.maximum(out, edge(np.hypot(qx - ux * k, qy - uy * k), half or thick / 2))
+        return out
+
+    def draw_face(base, mood):
+        face = np.zeros((h, w))
+        for sx in (-1, 1):
+            cx = sx * ex + lean(et)
+            blush = np.clip((1.0 - disc(fx_, ft, sx * BAL["blush_x"] + lean(et), BAL["blush_t"], 0.070, 0.042)) / 0.45, 0, 1)
+            base = T.lay(base, blush * inside * (0.95 if mood == "ouch" else 0.78), C["blush"])
+            if mood == "happy":                                   # a closed arc, a round end on each foot
+                rr = disc(fx_, ft, cx, et, 1.0)
+                arc = edge(np.abs(rr - er), thick / 2) * np.clip(((ft - et) * asp + er * 0.18) / (px * 2.0), 0, 1)
+                for ex_ in (-1, 1):
+                    arc = np.maximum(arc, edge(disc(fx_, ft, cx + ex_ * er * 0.984, et - er * 0.18 / asp, 1.0), thick / 2))
+                face = np.maximum(face, arc)
+            elif mood == "worried":                               # a small round dot, and a short brow tipped up toward the middle
+                face = np.maximum(face, edge(disc(fx_, ft, cx, et - er * 0.1 / asp, 1.0), er * 0.40))
+                face = np.maximum(face, stroke([(cx - sx * er * 0.2, et + er * 1.55 / asp), (cx + sx * er * 1.0, et + er * 1.05 / asp)]))
+            elif mood == "ouch":                                  # squeezed shut: > and <
+                tip = (cx - sx * er * 0.55, et)
+                face = np.maximum(face, stroke([(cx + sx * er * 0.95, et + er * 0.80 / asp), tip, (cx + sx * er * 0.95, et - er * 0.80 / asp)]))
+            else:                                                 # dizzy: a spiral
+                spiral = [(cx + sx * er * 1.12 * (k / 40.0) * math.cos(math.tau * 1.75 * k / 40.0),
+                           et + er * 1.12 * (k / 40.0) * math.sin(math.tau * 1.75 * k / 40.0) / asp) for k in range(41)]
+                face = np.maximum(face, stroke(spiral, thick * 0.42))
+        mx = lean(mt)
+        if mood == "happy":
+            rr = disc(fx_, ft, mx, mt + mr * 0.55 / asp, 1.0)
+            smile = edge(np.abs(rr - mr), thick / 2) * np.clip((-(ft - mt) * asp - mr * 0.05) / (px * 2.0), 0, 1)
+            for ex_ in (-1, 1):
+                smile = np.maximum(smile, edge(disc(fx_, ft, mx + ex_ * mr * 0.835, mt - mr * 0.05 / asp, 1.0), thick / 2))
+            face = np.maximum(face, smile)
+        elif mood == "worried":                                   # a small wavy line, and one drop of sweat by its temple
+            face = np.maximum(face, stroke([(mx + mr * (k / 6.0 - 1.0) * 1.1, mt - mr * 0.25 / asp + mr * 0.22 * math.sin(k * math.pi / 2.0) / asp) for k in range(13)]))
+            dx_, dt_ = ex + er * 2.1 + lean(et), et + er * 1.5 / asp
+            drop = np.maximum(edge(disc(fx_, ft, dx_, dt_, 1.0), er * 0.42),
+                              stroke([(dx_, dt_), (dx_ - er * 0.18, dt_ + er * 0.95 / asp)], er * 0.16))
+            base = T.lay(base, drop * inside, "dff6ff")
+            face = np.maximum(face, np.clip(drop - edge(disc(fx_, ft, dx_, dt_, 1.0), er * 0.42 - thick * 0.45), 0, 1) * 0.0)
+        elif mood == "ouch":                                      # a small round "o"
+            rr = disc(fx_, ft, mx, mt - mr * 0.15 / asp, 0.80, 1.0)
+            face = np.maximum(face, edge(np.abs(rr - mr * 0.62), thick / 2))
+        else:                                                     # dizzy: a wobbly line, wider
+            face = np.maximum(face, stroke([(mx + mr * (k / 8.0 - 1.0) * 1.45, mt - mr * 0.2 / asp + mr * 0.30 * math.sin(k * math.pi / 2.0 + 0.6) / asp) for k in range(17)]))
+        return T.lay(base, face * inside, C["maroon"])
+
+    bare = foot.copy()
+    foot = draw_face(foot, "happy")
     # Painted gloss: two big soft shapes high on the left. Vinyl, not chrome.
     gl = np.clip(1 - disc(fx_, ft, -0.25, 0.745, 0.050, 0.150), 0, 1) + np.clip(1 - disc(fx_, ft, -0.335, 0.52, 0.030, 0.060), 0, 1)
     gl = ndimage.gaussian_filter(np.clip(gl, 0, 1), 7.0) * inside
     foot = T.lay(foot, gl * 0.55, C["gloss"])
     glow[y0:y1, x0:x1] = gl * 0.3
     img[y0:y1, x0:x1] = img[y0:y1, x0:x1] * (1 - inside[..., None]) + foot * inside[..., None]
+    front_box, front_inside = (x0, y0, x1, y1), inside
+    moods = {}
+    for mood in BALLOON_FACES[1:]:
+        moods[mood] = T.lay(draw_face(bare.copy(), mood), gl * 0.55, C["gloss"])
+    # Where the two seams cross the front, soft: the strained balloon's seams glow (the worried face's emission).
+    tpx = FOOT_SPAN[1] / h
+    strain = np.zeros((h, w))
+    for t0, bow in SEAMS:
+        strain = np.maximum(strain, np.clip(1.0 - np.abs(ft - (t0 + bow * np.cos(fx_ * math.pi / 0.9))) / (tpx * 9.0), 0, 1))
+    strain = ndimage.gaussian_filter(strain, 2.0) * inside
 
     # ---- the back: a designed back. The same yellow a shade deeper, the game's stamp across the
     # middle, a chevron tread at the heel and at the toe, the same stitching.
@@ -991,8 +1048,10 @@ def balloon():
     st_ = T.fill(h, w, C["red"])
     st_ = T.coat(st_, "cc3a40", 200, 0.4, 3051, feather=1.0, stretch=(0.5, 1.0))
     st_ = T.coat(st_, "a01a24", 180, 0.25, 3053, feather=1.0, stretch=(0.5, 1.0))
-    stripe = np.clip((0.20 - np.abs(((xx + yy * 1.4) / 46.0) % 1.0 - 0.5)) / 0.05 + 0.5, 0, 1)   # the logo strap's diagonal stripes
-    st_ = T.lay(st_, stripe * 0.32, "e0666a")
+    # The logo strap's diagonal stripes: WIDE and FAINT. (At 46 px and 0.32 they read as a segmented,
+    # busy limb from the stage; the strap is one smooth red band with a hint of the logo's stripe.)
+    stripe = np.clip((0.20 - np.abs(((xx + yy * 1.4) / 92.0) % 1.0 - 0.5)) / 0.08 + 0.5, 0, 1)
+    st_ = T.lay(st_, stripe * 0.15, "d8565c")
     gloss = ndimage.gaussian_filter(np.clip(1 - np.abs(vv - 0.30) / 0.07, 0, 1) * ((uu > 0.25) & (uu < 0.9)), 4.0)
     st_ = T.lay(st_, gloss * 0.45, "ffd0cc")
     img[box[1]:box[3], box[0]:box[2]] = st_
@@ -1019,6 +1078,19 @@ def balloon():
     save("balloon", img)
     # Lit for night from inside and by the stadium's spill: it gives off a good part of its own colour.
     save("balloon_emit", img * 0.70 + glow[..., None] * 0.3)
+    # The other moods: the same sheet with the front's face redrawn. The worried one is what a
+    # STRAINED balloon wears (three hits and more), and its emission has the two seams glowing.
+    x0, y0, x1, y1 = front_box
+    for mood, front in moods.items():
+        sheet_ = img.copy()
+        sheet_[y0:y1, x0:x1] = sheet_[y0:y1, x0:x1] * (1 - front_inside[..., None]) + front * front_inside[..., None]
+        save("balloon_" + mood, sheet_)
+        emit = sheet_ * 0.70 + glow[..., None] * 0.3
+        if mood == "worried":
+            hot = np.zeros((n, n))
+            hot[y0:y1, x0:x1] = strain
+            emit = np.clip(emit + hot[..., None] * (np.array(hexcol("ffd0b0")) - emit) * 0.9, 0, 1)
+        save("balloon_%s_emit" % mood, emit)
 
 
 def options_sheet(version):

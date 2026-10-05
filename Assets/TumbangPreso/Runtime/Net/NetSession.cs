@@ -569,6 +569,8 @@ namespace TumbangPreso.Net
         // Revised throw/contact timings, hit-confirmed punch recovery and retired retrieval slide.
         // 146: the Arena joins the map list as index 6 (maps travel as an index); its ordinary break is 8 s,
         // read from the map; and the drone carry is a third edge-recovery kind on `SyncUnit`.
+        // Also under 146 (the same unreleased change set): one host-to-all message, `ArenaBalloon`, the
+        // Arena's slipper balloon (hits, popped, its last event), also sent to a joining peer.
         public const int ProtocolVersion = 146;
 
         /// <summary>

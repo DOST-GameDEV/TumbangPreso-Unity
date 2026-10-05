@@ -3,6 +3,7 @@
     py -3 tools/author_arena_textures_holo.py            (the textures, first)
     blender -b --python tools/author_arena_holo.py -- --version=vN [--shots=eye,air,...] [--no-render]
     blender -b --python tools/author_arena_holo.py -- --version=vN --options     (the three balloon designs, blocked)
+    blender -b --python tools/author_arena_holo.py -- --version=vN --shots=pose  (only the balloon's posed pictures)
 
 Builds ArtSource/arena/kits/holo.blend (collection `arena_holo`), tools/arena_holo_motion.json and
 the review pictures Logs/arena/holo/holo_<shot>_vN.png. Read docs/ARENA_ART_BRIEF.md first.
@@ -33,8 +34,10 @@ of it the towers and the stadium really leave in view, by casting rays at the ot
        the BALLOON  an inflatable slipper CHARACTER 60 m tall, fat and round, with stubby arms and
                     feet, a scarf and a small happy face, sitting in the air over the south stand's
                     canopy and leaning toward the stage, moored by a tether and four guy ropes to a
-                    winch and anchor rings on the canopy. Closed solids, painted. It sways about its
-                    tether point. (Its first design was a flat sole with a staring face: see `balloon`.)
+                    winch and anchor rings on the canopy. Closed solids, painted, in RIGID PARTS
+                    (body, two arms, two legs, two scarf tails, five ropes) that Unity animates:
+                    Runtime/Map/ArenaBalloon.cs. (Its first design was a flat sole with a staring
+                    face: see `balloon`.)
        the HOLOGRAM the same slipper as a wireframe with a faint striped volume, 84 m, standing on its heel and turning over
                     an emitter buoy north of the stadium.
 
@@ -432,6 +435,7 @@ BALLOON_AT = dict(bearing=204.5, r=178.0, body_bearing=202.0, body_r=171.0, yaw=
 PCX_FAR = dict(tower="T22", bearing=189.0, r=760.0, width=132.0)
 MOVES = []
 BALLOON_OBJECTS = []
+BALLOON_RIG = {}                           # the balloon's parts, for the posed pictures
 
 
 def move(ob, kind, **kw):
@@ -786,7 +790,7 @@ SKIN = dict(front="balloon", rim="balloon", back="balloon", strap="balloon", lim
 BLOCK = dict(front="blk_yellow", rim="blk_maroon", back="blk_back", strap="blk_red", limb="blk_yellow", scarf="blk_cream", uv=False, face="blk_maroon")
 
 
-def build_toy(m, heel, X, Y, N, P, skin, down=None):
+def build_toy(m, heel, X, Y, N, P, skin, down=None, parts=None):
     """AN INFLATED SLIPPER CHARACTER, in the frame (X across, Y heel to toe, N out of the footbed),
     its heel's end at `heel`. P gives the proportions and what it has:
       the SOLE      one closed pillow: the slipper's outline swept from the middle of the back, round
@@ -796,7 +800,12 @@ def build_toy(m, heel, X, Y, N, P, skin, down=None):
       a SCARF       a closed ring lying in the pinch under the face, a knot and two tails;
       LIMBS         round-ended lobes that start inside the sole;
       a FACE        painted (the kit's texture); the blockouts carry it as raised lines.
-    Every part is a closed solid that starts INSIDE the sole, as an inflatable's lobes are sewn on."""
+    Every part is a closed solid that starts INSIDE the sole, as an inflatable's lobes are sewn on.
+
+    `parts` (the kit's balloon only): {"limbs": [a Mesh per limb], "tails": [a Mesh per scarf tail]}.
+    Each of those lobes is then built into its OWN object, its pivot at the middle of the round end
+    that sits inside the body (a limb's base, the scarf's knot), so Unity can swing it about that
+    point and the join never opens: a ball turned about its own middle is the same ball."""
     L, W, Th = P["L"], P["W"], P["Th"]
     waist = P.get("waist", 0.8)
     hwf = lambda t: T.half_width(t, waist)
@@ -939,14 +948,22 @@ def build_toy(m, heel, X, Y, N, P, skin, down=None):
         for k, (lean_, length) in enumerate(((0.10, sr * 4.6), (0.62, sr * 3.6))):
             d = (down + X * lean_ + N * 0.25).normalized()
             tail = [knot + d * (length * j / 5) + N * (sr * 0.5 * math.sin(math.pi * j / 5)) for j in range(6)]
-            toy_hose(m, tail, [sr * (0.92 - 0.06 * j) for j in range(6)], skin["scarf"], isl("scarf"), 8, u_span=(0.1 + 0.4 * k, 0.5 + 0.4 * k), ref=X)
+            tm = m
+            if parts:
+                tm = parts["tails"][k]
+                tm.origin = knot.copy()
+            toy_hose(tm, tail, [sr * (0.92 - 0.06 * j) for j in range(6)], skin["scarf"], isl("scarf"), 8, u_span=(0.1 + 0.4 * k, 0.5 + 0.4 * k), ref=X)
 
     # ---- the limbs: (x in half widths, t, which face (+1 front, -1 back, 0 the edge), its direction in (X, Y, N), length, radii)
-    for hx, t, face, vec, length, r0, r1 in P.get("limbs", ()):
+    for k, (hx, t, face, vec, length, r0, r1) in enumerate(P.get("limbs", ())):
         x = T.lean(t) + hx * hwf(t)
         base = S(x, t, face * surf(x, t) * 0.25)
         d = (X * vec[0] + Y * vec[1] + N * vec[2]).normalized()
-        toy_capsule(m, base, base + d * length, r0, r1, skin["limb"], isl("limb"), 18, 5)
+        lm = m
+        if parts:
+            lm = parts["limbs"][k]
+            lm.origin = base.copy()
+        toy_capsule(lm, base, base + d * length, r0, r1, skin["limb"], isl("limb"), 18, 5)
 
     # ---- the face as raised lines: the blockouts only (the kit's is painted)
     if skin["face"] and P.get("face"):
@@ -1015,7 +1032,7 @@ def balloon(coll, built, roof_z):
     smooth V high on its head, well clear of the face, like a cap worn back. The face is small, low
     and wide apart: two closed happy arcs, a small smile, two cheeks (the texture). A scarf with a
     knot and two tails, as the cow has. The back carries the game's stamp.
-    Its pivot is the tether point on the canopy; it sways about it."""
+    It is built as rigid parts (below) that Unity moves; nothing of it is in the motion file."""
     at = BALLOON_AT
     F = Frame(at["bearing"], at["r"])
     zc = roof_z(F.o.x, F.o.y)
@@ -1030,8 +1047,29 @@ def balloon(coll, built, roof_z):
     heel = Vector((Fb.o.x, Fb.o.y, zc + at["lift"]))
     P = TOY_A
 
-    m = Mesh("balloon", pivot)
-    toy = build_toy(m, heel, X, Y, N, P, SKIN)
+    # IT IS ANIMATED IN UNITY (Runtime/Map/ArenaBalloon.cs; the owner: "the balloon should be animated
+    # btw"), so it is SEVERAL RIGID OBJECTS, each with its pivot where it turns:
+    #   balloon_body         the body (sole, strap, scarf ring and knot, valve, the rings' stubs). Its
+    #                        pivot is the middle of the sole and ITS AXES ARE THE SLIPPER'S (x across,
+    #                        z heel to toe, so Unity's y), so Unity squashes and stretches it along
+    #                        its own length;
+    #   balloon_arm_wave, balloon_arm_rest, balloon_leg_l, balloon_leg_r
+    #                        the four lobes, pivot at the middle of the round end inside the body;
+    #   balloon_tail_a, _b   the scarf's tails, pivot at the knot's middle;
+    #   balloon_rope_0..4    the tether and the four guy ropes, pivot at the anchor on the canopy and
+    #                        z (Unity's y) ALONG the rope: Unity aims each at its ring on the body and
+    #                        stretches it to reach, so a rope is always fast at both ends;
+    #   balloon_scrap        what is left of it when it has been popped: a heap by the winch (hidden
+    #                        until then);
+    #   balloon_mooring      the winch, the rings, the up-lights. Static.
+    # A lobe turned about the middle of its own round end leaves that end where it was, so no join
+    # can open however the parts move.
+    centre = heel + X * (T.lean(0.5) * P["W"]) + Y * (0.5 * P["L"])
+    axes = Matrix((X, -N, Y)).transposed()                         # columns: x across, y back, z heel to toe
+    m = Mesh("balloon_body", centre, basis=axes)
+    limb_names = ("arm_rest", "arm_wave", "leg_l", "leg_r")        # in TOY_A's order
+    parts = dict(limbs=[Mesh("balloon_" + n, centre) for n in limb_names], tails=[Mesh("balloon_tail_" + n, centre) for n in "ab"])
+    toy = build_toy(m, heel, X, Y, N, P, SKIN, parts=parts)
     S, surf, hwf = toy["S"], toy["surf"], toy["hwf"]
 
     # The valve, low on the back: steel and a red cap, standing in the skin.
@@ -1045,17 +1083,26 @@ def balloon(coll, built, roof_z):
         q = F.p(dx_, dy_, 0.0)
         anchors.append(("ring%d" % k, Vector((q.x, q.y, roof_z(q.x, q.y) + 1.1))))
     ties = [(0.0, 0.035), (-0.55, 0.11), (0.55, 0.11), (-0.62, 0.30), (0.62, 0.30)]   # on the back: (x in half widths, t)
-    for (name, a), (hx, tt) in zip(anchors, ties):
+    ropes, tie_points = [], []
+    for k, ((name, a), (hx, tt)) in enumerate(zip(anchors, ties)):
         x = T.lean(tt) + hx * hwf(tt)
         p = S(x, tt, -surf(x, tt))
         m.tube(p + N * 1.3, p - N * 1.0, 0.6, 6, kind="metal")                       # the D-ring's stub, in the skin
-        m.tube(p + N * 0.5, a + (a - p).normalized() * 0.5, 0.28 if name == "winch" else 0.18, 5, kind="led.rope")
+        along = (p - a).normalized()
+        side = along.cross(Z).normalized()
+        rope = Mesh("balloon_rope_%d" % k, a, basis=Matrix((side, along.cross(side), along)).transposed())
+        # From half a metre inside the anchor to the middle of the ring's stub: its length is |p - a|.
+        rope.tube(a - along * 0.5, p, 0.28 if name == "winch" else 0.18, 5, kind="led.rope")
+        ropes.append(rope.done(coll))
+        tie_points.append(p.copy())
     ob = m.done(coll)
-    for p in ob.data.polygons:                                    # the skin is smooth; the hardware is flat
-        if ob.data.materials[p.material_index].name != PRE + "balloon":
-            p.use_smooth = False
-    move(ob, "sway", degrees=1.1, period=9.0)
-    built.append(("slipper balloon", [ob], "the slipper, as a balloon"))
+    made = [ob]
+    for part in parts["limbs"] + parts["tails"]:
+        made.append(part.done(coll))
+    for o in made:
+        for poly in o.data.polygons:                              # the skin is smooth; the hardware is flat
+            poly.use_smooth = o.data.materials[poly.material_index].name == PRE + "balloon"
+    built.append(("slipper balloon", made + ropes, "the slipper, as a balloon"))
 
     # THE MOORING, on the canopy: a winch with its drum, four anchor rings, six up-lights. Static.
     g = Mesh("balloon_mooring", pivot)
@@ -1073,7 +1120,29 @@ def balloon(coll, built, roof_z):
         g.tube(c + Z * 0.6, c + Z * 0.6 + aim * 2.6, 0.8, 8, 1.15, kind="metal", cap="led.white")
     mo = g.done(coll)
     built.append(("slipper balloon", [mo], None))
-    BALLOON_OBJECTS[:] = [ob, mo]
+
+    # WHAT IS LEFT WHEN IT HAS BEEN POPPED: a slumped heap of its skin beside the winch, toward the
+    # stage, cream-tipped lobes flopped across each other. Four flat closed lobes sunk into each
+    # other and into the roof. Unity hides it until the pop.
+    sc = F.p(0.0, -9.5, 0.0)
+    sc.z = roof_z(sc.x, sc.y)
+    scrap = Mesh("balloon_scrap", Vector((sc.x, sc.y, sc.z)))
+    flat = Matrix.Translation(scrap.origin) @ Matrix.Diagonal((1.0, 1.0, 0.36, 1.0)) @ Matrix.Translation(-scrap.origin)
+    for dx_, dy_, length, r0, r1, turn in ((-3.4, 0.4, 7.0, 3.6, 3.0, 12.0), (2.6, -1.0, 6.0, 3.2, 2.6, 168.0), (0.2, 2.2, 5.0, 2.8, 2.4, 96.0), (-0.6, -2.4, 6.4, 2.2, 1.9, 40.0)):
+        b0 = scrap.origin + F.dx * dx_ + F.dy * dy_ + Z * (r0 * 0.9)
+        d = F.dx * math.cos(math.radians(turn)) + F.dy * math.sin(math.radians(turn))
+        before = len(scrap.bm.verts)
+        toy_capsule(scrap, b0, b0 + d * length + Z * 0.6, r0, r1, "balloon", T.ISLAND["limb"], 12, 3)
+        scrap.bm.verts.ensure_lookup_table()
+        bmesh.ops.transform(scrap.bm, matrix=flat, verts=scrap.bm.verts[before:])
+    so = scrap.done(coll, weld=False)
+    for poly in so.data.polygons:
+        poly.use_smooth = True
+    built.append(("slipper balloon scrap", [so], None))
+    BALLOON_OBJECTS[:] = made + [mo]
+    BALLOON_RIG.clear()
+    BALLOON_RIG.update(body=ob, limbs=dict(zip(limb_names, made[1:5])), tails=made[5:7], ropes=ropes, scrap=so, mooring=mo,
+                       ties=tie_points, pivot=pivot.copy(), axes=(X.copy(), Y.copy(), N.copy()))
     return heel, Y, N, X
 
 
@@ -1243,7 +1312,7 @@ def sight(built, tree):
         g = groups[name]
         pts = []
         for ob in g["obs"]:
-            if ob.name.endswith(("_rig", "_mooring", "_cubes")):
+            if ob.name.endswith(("_rig", "_mooring", "_cubes", "_scrap")):
                 continue
             M = ob.matrix_basis
             keep = [i for i, mt in enumerate(ob.data.materials) if mt.name.split(PRE)[1] in ("ads", "logo", "fx", "balloon")]
@@ -1314,6 +1383,95 @@ def shoot(name, version, loc, target, lens=35.0, size=(1920, 1080)):
     scene.render.resolution_x, scene.render.resolution_y = size
     scene.render.filepath = os.path.join(LOGS, "holo_%s_%s.png" % (name, version))
     bpy.ops.render.render(write_still=True)
+
+
+# THE BALLOON'S POSES, as Runtime/Map/ArenaBalloon.cs makes them: for the review pictures only (the
+# kit is already saved, with every part at rest). The same order of moves as the component: the
+# whole balloon leans and rides about the winch, the body squashes along its own length and swells,
+# each lobe turns about its own pivot in the body's frame, each rope is aimed at its ring.
+POSES = (   # name, lean toward the stage, lean across (degrees), ride (m), squash, swell, wave, rest arm, legs, tails (degrees), face, popped
+    ("rest", 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, "", False),
+    ("squash", -1.5, 0.0, -1.6, -0.15, 1.0, 10.0, 12.0, -10.0, 14.0, "ouch", False),
+    ("stretch_wave", 1.5, 3.0, 1.6, 0.13, 1.0, 26.0, -8.0, 12.0, -18.0, "", False),
+    ("hit_back", -9.0, -4.0, 0.8, 0.08, 1.04, -24.0, 22.0, 20.0, 32.0, "ouch", False),
+    ("strained", 2.0, 2.0, 0.0, 0.03, 1.15, 8.0, 6.0, -6.0, 8.0, "worried", False),
+    ("dizzy_swing", 8.0, 6.0, 0.0, -0.06, 1.12, 20.0, -18.0, -16.0, -30.0, "dizzy", False),
+    ("popped", 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, "", True),
+)
+
+
+def pose_balloon(pose, rest):
+    name, lean_in, lean_side, ride, squash, swell, wave, arm, legs, tails, face, popped = pose
+    R = BALLOON_RIG
+    X, Y, N = R["axes"]
+    pivot = R["pivot"]
+    body = R["body"]
+    for o, mw in rest.items():
+        o.matrix_basis = mw.copy()
+        o.hide_render = False
+    R["scrap"].hide_render = not popped
+    for m_ in bpy.data.materials:
+        if m_.name == PRE + "balloon":
+            for node in m_.node_tree.nodes:
+                if node.type == "TEX_IMAGE":
+                    emit = node.image.filepath.replace("\\", "/").endswith("_emit.png")
+                    node.image = bpy.data.images.load(os.path.join(TEX, "arena_holo_balloon%s%s.png" % ("_" + face if face else "", "_emit" if emit else "")), check_existing=True)
+    if popped:
+        for o in [body] + list(R["limbs"].values()) + R["tails"]:
+            o.hide_render = True
+        for k, rope in enumerate(R["ropes"]):                     # reeled in: a short slack length lying on the canopy
+            a = rest[rope].translation
+            out = (R["ties"][k] - a); out.z = 0.0
+            d = (out.normalized() + Vector((0, 0, 0.04))).normalized()
+            length = (R["ties"][k] - a).length
+            side = d.cross(Z).normalized()
+            rope.matrix_basis = Matrix.Translation(a) @ Matrix((side, d.cross(side), d)).transposed().to_4x4() @ Matrix.Diagonal((1.0, 1.0, 0.28, 1.0))
+        return
+    up = (rest[body].translation - pivot).normalized()
+    root = (Matrix.Translation(pivot + up * ride) @ Matrix.Rotation(math.radians(lean_in), 4, X) @ Matrix.Rotation(math.radians(lean_side), 4, N)
+            @ Matrix.Translation(-pivot))
+    B = rest[body]
+    scale = Matrix.Diagonal((swell * (1.0 - squash * 0.5), swell * (1.0 - squash * 0.5), swell * (1.0 + squash), 1.0))
+    body.matrix_basis = root @ B @ scale
+    delta = root @ B @ scale @ B.inverted()                       # what the body's move does to anything that rides on it
+    turns = {"arm_wave": (N, wave), "arm_rest": (N, arm), "leg_l": (X, legs), "leg_r": (X, -legs * 0.6)}
+    for key, ob in R["limbs"].items():
+        axis, degrees = turns[key]
+        pv = rest[ob].translation
+        ob.matrix_basis = delta @ Matrix.Translation(pv) @ Matrix.Rotation(math.radians(degrees), 4, axis) @ Matrix.Translation(-pv) @ rest[ob]
+    for k, ob in enumerate(R["tails"]):
+        pv = rest[ob].translation
+        ob.matrix_basis = (delta @ Matrix.Translation(pv) @ Matrix.Rotation(math.radians(tails * (1.0 if k == 0 else 0.7)), 4, N)
+                           @ Matrix.Rotation(math.radians(tails * 0.4), 4, X) @ Matrix.Translation(-pv) @ rest[ob])
+    for k, rope in enumerate(R["ropes"]):
+        a = rest[rope].translation
+        tie = delta @ R["ties"][k]
+        d = (tie - a).normalized()
+        side = d.cross(Z).normalized()
+        rope.matrix_basis = (Matrix.Translation(a) @ Matrix((side, d.cross(side), d)).transposed().to_4x4()
+                             @ Matrix.Diagonal((1.0, 1.0, (tie - a).length / (R["ties"][k] - a).length, 1.0)))
+
+
+def posed_pictures(version, info):
+    """The animation's extremes, from the stage (a long lens from the can's eye, and the game's wide
+    lens from behind a player) and close: Logs/arena/holo/holo_pose_<pose>_<view>_vN.png."""
+    R = BALLOON_RIG
+    heel, Y, N, X = info["balloon"]
+    mid = heel + Y * 30.0
+    everything = [R["body"], R["scrap"]] + list(R["limbs"].values()) + R["tails"] + R["ropes"]
+    rest = {o: o.matrix_basis.copy() for o in everything}
+    for pose in POSES:
+        pose_balloon(pose, rest)
+        bpy.context.view_layer.update()
+        shoot("pose_%s_stage" % pose[0], version, (0, 0, EYE), mid - Z * 12.0, lens=85, size=(1280, 720))
+        shoot("pose_%s_close" % pose[0], version, mid + N * 150.0 + X * 46.0 - Z * 30.0, mid - Z * 16.0, lens=32, size=(1280, 720))
+    pose_balloon(POSES[1], rest)
+    shoot("pose_squash_game", version, K.polar(9.0, BALLOON_AT["body_bearing"] + 180.0, EYE + 1.6), K.polar(100.0, BALLOON_AT["body_bearing"], EYE + 44.0), lens=18)
+    pose_balloon(POSES[3], rest)
+    shoot("pose_hit_back_side", version, mid + X * 150.0 + N * 40.0 - Z * 10.0, mid - Z * 16.0, lens=32, size=(1280, 720))
+    shoot("pose_hit_back_back", version, mid - N * 130.0 + Z * 30.0 - X * 40.0, mid - Z * 14.0, lens=30, size=(1280, 720))
+    pose_balloon(POSES[0], rest)
+    R["scrap"].hide_render = True
 
 
 def pictures(version, shots, info):
@@ -1409,7 +1567,7 @@ def main():
     globe(coll, built)
     slipper_hologram(coll, built)
     info = {"balloon": balloon(coll, built, roof_z)}
-    info["pivot"] = BALLOON_OBJECTS[0].location.copy()
+    info["pivot"] = BALLOON_RIG["pivot"].copy()
     pcx_far(coll, built, city_z)
     info["pcx_far_z"] = next(o for n, obs, _ in built if n == "pcx_far" for o in obs).location.z
 
@@ -1437,6 +1595,13 @@ def main():
                                   sway="leans about its pivot: `degrees` each way, one swing every `period` seconds, on two level axes out of step",
                                   bob="rises and falls `metres` each way every `period` seconds",
                                   pulse="its light's strength runs between `low` and `high` of itself every `period` seconds"),
+                       balloon=dict(about="The slipper balloon's parts, by object name: Editor/MapKit/ArenaHoloAuthor.cs hands them to "
+                                          "Runtime/Map/ArenaBalloon.cs, which animates them. Faces are texture files, happy first.",
+                                    body=BALLOON_RIG["body"].name, arm_wave=BALLOON_RIG["limbs"]["arm_wave"].name, arm_rest=BALLOON_RIG["limbs"]["arm_rest"].name,
+                                    leg_l=BALLOON_RIG["limbs"]["leg_l"].name, leg_r=BALLOON_RIG["limbs"]["leg_r"].name,
+                                    tails=[o.name for o in BALLOON_RIG["tails"]], ropes=[o.name for o in BALLOON_RIG["ropes"]],
+                                    scrap=BALLOON_RIG["scrap"].name, mooring=BALLOON_RIG["mooring"].name,
+                                    faces=["arena_holo_balloon%s.png" % ("" if f == "happy" else "_" + f) for f in T.BALLOON_FACES]),
                        moves=MOVES), fh, indent=1)
     print("MOTION %d entries -> %s" % (len(MOVES), MOTION))
 
@@ -1482,7 +1647,11 @@ def main():
         for o in bpy.data.objects:                                # the craft and the haze sheets pass the lens: out of the pictures
             if "city_haze" in o.name:
                 o.hide_render = True
-        pictures(version, shots, info)
+        BALLOON_RIG["scrap"].hide_render = True                    # Unity shows it only when the balloon has been popped
+        if shots != ["pose"]:
+            pictures(version, shots, info)
+        if not shots or "pose" in shots:
+            posed_pictures(version, info)
     print("HOLO_OK %s triangles %d" % (version, total))
 
 

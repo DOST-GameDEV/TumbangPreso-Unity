@@ -52,7 +52,9 @@ namespace TumbangPreso.Map
         /// <summary>The blueprint's shot: no higher than this over the stage (the scoreboard hangs from y 41.6).</summary>
         public float TopHeight = 37.0f;
         /// <summary>How dark the alarm takes the picture, and how grey (1 is untouched).</summary>
-        public float DimBrightness = 0.60f, DimSaturation = 0.86f;
+        // 1 and 1: no dim. It was 0.60 and 0.86 for the alarm; the owner, 2026-10-05, on playing it:
+        // "the screen goes dim when the platform switches". The show must not darken the picture.
+        public float AlarmBrightness = 1.0f, AlarmSaturation = 1.0f;
         /// <summary>The largest turn of one punch at strength 1, degrees.</summary>
         public float ShakeDegrees = 0.55f;
 
@@ -198,7 +200,7 @@ namespace TumbangPreso.Map
                 float down = Mathf.Clamp01(age / 0.5f), up = Mathf.Clamp01((age - beats.Reveal) / 0.2f);
                 float dim = Smooth(down) * (1.0f - up);
                 float depth = settings.ReducedEffects ? 0.5f : 1.0f;
-                _grade.SetEventGrade(Mathf.Lerp(1.0f, DimBrightness, dim * depth), Mathf.Lerp(1.0f, DimSaturation, dim * depth));
+                _grade.SetEventGrade(Mathf.Lerp(1.0f, AlarmBrightness, dim * depth), Mathf.Lerp(1.0f, AlarmSaturation, dim * depth));
             }
 
             // Its own shake, last, so it is added to the shot and never fed back into it.

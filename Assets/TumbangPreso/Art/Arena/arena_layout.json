@@ -25,9 +25,9 @@
   },
   {
    "group": "Holo",
-   "placements": 39,
-   "prototypes": 39,
-   "placedTris": 19374
+   "placements": 51,
+   "prototypes": 51,
+   "placedTris": 19950
   },
   {
    "group": "Hull",
@@ -45,7 +45,7 @@
    "group": "Stage (all five layouts)",
    "placements": 56,
    "prototypes": 56,
-   "placedTris": 67496
+   "placedTris": 82928
   },
   {
    "group": "StageRim",
@@ -61,156 +61,156 @@
   }
  ],
  "stageTrisPerLayout": {
-  "plaza": 16208,
-  "tore": 13656,
-  "krus": 11352,
-  "hukay": 16064,
-  "entablado": 10216
+  "plaza": 22496,
+  "tore": 16364,
+  "krus": 12272,
+  "hukay": 21048,
+  "entablado": 10748
  },
  "stage": [
   {
    "model": "stage_plaza_drum",
    "layout": "plaza",
    "id": "drum",
-   "tris": 4096
+   "tris": 5120
   },
   {
    "model": "stage_plaza_walk",
    "layout": "plaza",
    "id": "walk",
-   "tris": 5632
+   "tris": 9328
   },
   {
    "model": "stage_plaza_arc1",
    "layout": "plaza",
    "id": "arc1",
-   "tris": 1052
+   "tris": 1272
   },
   {
    "model": "stage_plaza_arc2",
    "layout": "plaza",
    "id": "arc2",
-   "tris": 1052
+   "tris": 1272
   },
   {
    "model": "stage_plaza_arc3",
    "layout": "plaza",
    "id": "arc3",
-   "tris": 1052
+   "tris": 1272
   },
   {
    "model": "stage_plaza_arc4",
    "layout": "plaza",
    "id": "arc4",
-   "tris": 1052
+   "tris": 1272
   },
   {
    "model": "stage_plaza_ramp1",
    "layout": "plaza",
    "id": "ramp1",
-   "tris": 284
+   "tris": 388
   },
   {
    "model": "stage_plaza_ramp2",
    "layout": "plaza",
    "id": "ramp2",
-   "tris": 284
+   "tris": 388
   },
   {
    "model": "stage_plaza_ramp3",
    "layout": "plaza",
    "id": "ramp3",
-   "tris": 284
+   "tris": 388
   },
   {
    "model": "stage_plaza_ramp4",
    "layout": "plaza",
    "id": "ramp4",
-   "tris": 284
+   "tris": 388
   },
   {
    "model": "stage_plaza_link1",
    "layout": "plaza",
    "id": "link1",
-   "tris": 284
+   "tris": 352
   },
   {
    "model": "stage_plaza_link2",
    "layout": "plaza",
    "id": "link2",
-   "tris": 284
+   "tris": 352
   },
   {
    "model": "stage_plaza_link3",
    "layout": "plaza",
    "id": "link3",
-   "tris": 284
+   "tris": 352
   },
   {
    "model": "stage_plaza_link4",
    "layout": "plaza",
    "id": "link4",
-   "tris": 284
+   "tris": 352
   },
   {
    "model": "stage_tore_drum",
    "layout": "tore",
    "id": "drum",
-   "tris": 3072
+   "tris": 2688
   },
   {
    "model": "stage_tore_walk",
    "layout": "tore",
    "id": "walk",
-   "tris": 5632
+   "tris": 6952
   },
   {
    "model": "stage_tore_ramp1",
    "layout": "tore",
    "id": "ramp1",
-   "tris": 284
+   "tris": 640
   },
   {
    "model": "stage_tore_ramp2",
    "layout": "tore",
    "id": "ramp2",
-   "tris": 284
+   "tris": 640
   },
   {
    "model": "stage_tore_ramp3",
    "layout": "tore",
    "id": "ramp3",
-   "tris": 284
+   "tris": 640
   },
   {
    "model": "stage_tore_ramp4",
    "layout": "tore",
    "id": "ramp4",
-   "tris": 284
+   "tris": 640
   },
   {
    "model": "stage_tore_arc1",
    "layout": "tore",
    "id": "arc1",
-   "tris": 1624
+   "tris": 1778
   },
   {
    "model": "stage_tore_arc3",
    "layout": "tore",
    "id": "arc3",
-   "tris": 1624
+   "tris": 1778
   },
   {
    "model": "stage_tore_link1",
    "layout": "tore",
    "id": "link1",
-   "tris": 284
+   "tris": 304
   },
   {
    "model": "stage_tore_link3",
    "layout": "tore",
    "id": "link3",
-   "tris": 284
+   "tris": 304
   },
   {
    "model": "stage_krus_drum",
@@ -222,175 +222,175 @@
    "model": "stage_krus_walk",
    "layout": "krus",
    "id": "walk",
-   "tris": 5632
+   "tris": 6688
   },
   {
    "model": "stage_krus_apron",
    "layout": "krus",
    "id": "apron",
-   "tris": 832
+   "tris": 1052
   },
   {
    "model": "stage_krus_ramp1",
    "layout": "krus",
    "id": "ramp1",
-   "tris": 284
+   "tris": 292
   },
   {
    "model": "stage_krus_link1",
    "layout": "krus",
    "id": "link1",
-   "tris": 284
+   "tris": 292
   },
   {
    "model": "stage_krus_ramp2",
    "layout": "krus",
    "id": "ramp2",
-   "tris": 416
+   "tris": 292
   },
   {
    "model": "stage_krus_ramp3",
    "layout": "krus",
    "id": "ramp3",
-   "tris": 416
+   "tris": 292
   },
   {
    "model": "stage_krus_ramp4",
    "layout": "krus",
    "id": "ramp4",
-   "tris": 416
+   "tris": 292
   },
   {
    "model": "stage_hukay_drum",
    "layout": "hukay",
    "id": "drum",
-   "tris": 3072
+   "tris": 2688
   },
   {
    "model": "stage_hukay_walk",
    "layout": "hukay",
    "id": "walk",
-   "tris": 5632
+   "tris": 7744
   },
   {
    "model": "stage_hukay_ramp1",
    "layout": "hukay",
    "id": "ramp1",
-   "tris": 284
+   "tris": 674
   },
   {
    "model": "stage_hukay_ramp2",
    "layout": "hukay",
    "id": "ramp2",
-   "tris": 284
+   "tris": 674
   },
   {
    "model": "stage_hukay_ramp3",
    "layout": "hukay",
    "id": "ramp3",
-   "tris": 284
+   "tris": 674
   },
   {
    "model": "stage_hukay_ramp4",
    "layout": "hukay",
    "id": "ramp4",
-   "tris": 284
+   "tris": 674
   },
   {
    "model": "stage_hukay_arc1",
    "layout": "hukay",
    "id": "arc1",
-   "tris": 1272
+   "tris": 1448
   },
   {
    "model": "stage_hukay_arc2",
    "layout": "hukay",
    "id": "arc2",
-   "tris": 1272
+   "tris": 1448
   },
   {
    "model": "stage_hukay_arc3",
    "layout": "hukay",
    "id": "arc3",
-   "tris": 1272
+   "tris": 1448
   },
   {
    "model": "stage_hukay_arc4",
    "layout": "hukay",
    "id": "arc4",
-   "tris": 1272
+   "tris": 1448
   },
   {
    "model": "stage_hukay_link1",
    "layout": "hukay",
    "id": "link1",
-   "tris": 284
+   "tris": 532
   },
   {
    "model": "stage_hukay_link2",
    "layout": "hukay",
    "id": "link2",
-   "tris": 284
+   "tris": 532
   },
   {
    "model": "stage_hukay_link3",
    "layout": "hukay",
    "id": "link3",
-   "tris": 284
+   "tris": 532
   },
   {
    "model": "stage_hukay_link4",
    "layout": "hukay",
    "id": "link4",
-   "tris": 284
+   "tris": 532
   },
   {
    "model": "stage_entablado_drum",
    "layout": "entablado",
    "id": "drum",
-   "tris": 3072
+   "tris": 2784
   },
   {
    "model": "stage_entablado_apron",
    "layout": "entablado",
    "id": "apron",
-   "tris": 2328
+   "tris": 2460
   },
   {
    "model": "stage_entablado_ramp2",
    "layout": "entablado",
    "id": "ramp2",
-   "tris": 284
+   "tris": 564
   },
   {
    "model": "stage_entablado_ramp4",
    "layout": "entablado",
    "id": "ramp4",
-   "tris": 284
+   "tris": 564
   },
   {
    "model": "stage_entablado_arc2",
    "layout": "entablado",
    "id": "arc2",
-   "tris": 1140
+   "tris": 1228
   },
   {
    "model": "stage_entablado_arc3",
    "layout": "entablado",
    "id": "arc3",
-   "tris": 1140
+   "tris": 1228
   },
   {
    "model": "stage_entablado_link2",
    "layout": "entablado",
    "id": "link2",
-   "tris": 328
+   "tris": 304
   },
   {
    "model": "stage_entablado_link3",
    "layout": "entablado",
    "id": "link3",
-   "tris": 328
+   "tris": 304
   },
   {
    "model": "stage_entablado_arc1",
@@ -5750,22 +5750,114 @@
    ]
   },
   {
-   "model": "arena_holo_balloon",
+   "model": "arena_holo_balloon_arm_rest",
    "group": "Holo",
-   "object": "arena_holo_balloon",
+   "object": "arena_holo_balloon_arm_rest",
    "matrix": [
     1.0,
     0.0,
     0.0,
-    -73.815399,
+    -47.764332,
     0.0,
     1.0,
     0.0,
-    72.191513,
+    122.227722,
     0.0,
     0.0,
     1.0,
-    -161.973099,
+    -157.640213,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_arm_wave",
+   "group": "Holo",
+   "object": "arena_holo_balloon_arm_wave",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -77.447876,
+    0.0,
+    1.0,
+    0.0,
+    123.401505,
+    0.0,
+    0.0,
+    1.0,
+    -148.869049,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_body",
+   "group": "Holo",
+   "object": "arena_holo_balloon_body",
+   "matrix": [
+    -0.961262,
+    0.057308,
+    -0.269614,
+    -62.338478,
+    0.0,
+    0.978148,
+    0.207912,
+    126.335945,
+    0.275637,
+    0.199858,
+    -0.940256,
+    -152.552719,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_leg_l",
+   "group": "Holo",
+   "object": "arena_holo_balloon_leg_l",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -57.014839,
+    0.0,
+    1.0,
+    0.0,
+    101.033485,
+    0.0,
+    0.0,
+    1.0,
+    -157.834213,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_leg_r",
+   "group": "Holo",
+   "object": "arena_holo_balloon_leg_r",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -69.649086,
+    0.0,
+    1.0,
+    0.0,
+    101.031273,
+    0.0,
+    0.0,
+    1.0,
+    -154.200607,
     0.0,
     0.0,
     0.0,
@@ -5789,6 +5881,190 @@
     0.0,
     1.0,
     -161.973099,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_rope_0",
+   "group": "Holo",
+   "object": "arena_holo_balloon_rope_0",
+   "matrix": [
+    -0.256916,
+    0.277168,
+    0.925836,
+    -73.815399,
+    0.0,
+    0.957992,
+    -0.286794,
+    72.191513,
+    -0.966434,
+    -0.073682,
+    -0.246123,
+    -161.973099,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_rope_1",
+   "group": "Holo",
+   "object": "arena_holo_balloon_rope_1",
+   "matrix": [
+    -0.805505,
+    0.151679,
+    0.572848,
+    -65.164856,
+    0.0,
+    0.966687,
+    -0.25596,
+    71.534233,
+    -0.592588,
+    -0.206177,
+    -0.778672,
+    -159.871155,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_rope_2",
+   "group": "Holo",
+   "object": "arena_holo_balloon_rope_2",
+   "matrix": [
+    -0.855103,
+    0.16276,
+    0.492249,
+    -77.904312,
+    0.0,
+    0.949446,
+    -0.313931,
+    71.534203,
+    -0.518459,
+    -0.268443,
+    -0.811873,
+    -154.06546,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_rope_3",
+   "group": "Holo",
+   "object": "arena_holo_balloon_rope_3",
+   "matrix": [
+    0.250058,
+    0.270536,
+    0.929667,
+    -69.686195,
+    0.0,
+    0.960171,
+    -0.279413,
+    70.495995,
+    -0.968231,
+    0.069869,
+    0.240098,
+    -170.998047,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_rope_4",
+   "group": "Holo",
+   "object": "arena_holo_balloon_rope_4",
+   "matrix": [
+    0.279332,
+    0.172916,
+    0.944496,
+    -83.335609,
+    0.0,
+    0.983651,
+    -0.180084,
+    70.495995,
+    -0.960194,
+    0.050303,
+    0.274766,
+    -164.777649,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_scrap",
+   "group": "Holo",
+   "object": "arena_holo_balloon_scrap",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -69.875816,
+    0.0,
+    1.0,
+    0.0,
+    70.693756,
+    0.0,
+    0.0,
+    1.0,
+    -153.328461,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_tail_a",
+   "group": "Holo",
+   "object": "arena_holo_balloon_tail_a",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -67.329231,
+    0.0,
+    1.0,
+    0.0,
+    106.87233,
+    0.0,
+    0.0,
+    1.0,
+    -142.924362,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_tail_b",
+   "group": "Holo",
+   "object": "arena_holo_balloon_tail_b",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -67.329231,
+    0.0,
+    1.0,
+    0.0,
+    106.87233,
+    0.0,
+    0.0,
+    1.0,
+    -142.924362,
     0.0,
     0.0,
     0.0,

@@ -27,6 +27,25 @@ namespace TumbangPreso.Map
     /// own flight returns it to its mark under `Balance.VoidY` (-12), at once and with no
     /// delay; taken just under the decks, it gets this map's delayed return first.
     ///
+    /// ⚠️ A SLIPPER THAT LEAVES THE STAGE COMES STRAIGHT BACK TO ITS NEAREST EDGE. The owner,
+    /// 2026-10-05: "issue with the bots is that if their slipper goes off the platform they cant
+    /// retrieve it", and, of the balloon, "the slipper will just spawn/tp back to the nearest edge
+    /// to be able to retrieve it". WHAT WAS HAPPENING: a flight ends where `Slipper.FindGroundY`
+    /// says the ground is, and over the shaft that cast finds nothing and answers 0, which is this
+    /// stage's deck height. So a slipper thrown or knocked past an edge, or into a gap between two
+    /// pieces, did not fall: it "landed" in the air at deck height, loose and out of reach, up to
+    /// 9 m out in the corners of the square walls. Nothing ever took it (the catch below is 4.5 m
+    /// down) and a bot walked to the lip and stood there for the rest of the round. NOW the host
+    /// takes any slipper with nothing of the stage under it (resting, or flying down through deck
+    /// height) and sets it down `EdgeReturnSeconds` later at `ArenaStage.TryNearestStandable` of
+    /// where it left: inset a metre from every edge, on a disc, ring or arc of the CURRENT
+    /// layout, never a ramp, never a bonus piece. It is out of play meanwhile (switched off, as
+    /// on any map recovery), so a bot sees no slipper, waits on its throwing ring, and fetches it
+    /// when it is back on floor it can walk to. `ArenaBalloon` uses the same return. A slipper
+    /// HELD by a body that fell keeps the fall's own rule: the eight seconds, to its owner.
+    /// A slipper resting on a piece too high for its owner is `Slipper`'s own existing rule
+    /// (more than 1.2 m over the owner's feet goes to the owner), so a loft never strands one.
+    ///
     /// ⚠️ ONLY THE HOST DECIDES (`NetAuthority.ShouldResolve()`, round or free roam alike, as
     /// `RooftopRecovery` does). Nothing here is sent: the carry is the `Drone` edge recovery
     /// kind, whose kind, phase and pose already ride `SyncUnit`. What every peer does run is
@@ -35,11 +54,20 @@ namespace TumbangPreso.Map
     public sealed class ArenaFallRecovery : MonoBehaviour
     {
         public const float SlipperDelay=8,SafeMargin=1,SafeRefresh=.2f,PoseLead=.04f;
+        /// <summary>From leaving the stage to being set back on it; how often resting slippers are
+        /// looked at; how far over the deck a falling slipper is taken (its flight would end in
+        /// the air a step or two later); and how far down "nothing under it" looks.</summary>
+        public const float EdgeReturnSeconds=1.6f,LooseCheck=.2f,FlightSkim=.25f,VoidDepth=60;
         public static ArenaFallRecovery Instance { get; private set; }
         private static readonly RaycastHit[] FloorHits=new RaycastHit[16];
         private static readonly Vector3[] Around={Vector3.right,Vector3.left,Vector3.forward,Vector3.back};
         private readonly Dictionary<Slipper,float> _lost=new Dictionary<Slipper,float>();
         private readonly List<Slipper> _finished=new List<Slipper>();
+        private struct Away{public float At;public Vector3 From;}
+        private readonly Dictionary<Slipper,Away> _away=new Dictionary<Slipper,Away>();
+        private Slipper[] _seen=System.Array.Empty<Slipper>();
+        private bool[] _wasActive=System.Array.Empty<bool>();
+        private float _nextLoose,_nextScan;
         private readonly Dictionary<CharacterMotor,Vector3> _safe=new Dictionary<CharacterMotor,Vector3>();
         private readonly Dictionary<CharacterMotor,ArenaDrone> _drones=new Dictionary<CharacterMotor,ArenaDrone>();
         /// <summary>The stage kit's drone, left inactive in the scene by `ArenaSceneBuilder` and
@@ -53,10 +81,11 @@ namespace TumbangPreso.Map
         private bool Live=>gameObject.scene==SceneManager.GetActiveScene()&&ArenaStage.Instance!=null&&GameServices.Round!=null;
 
         private void OnEnable(){if(gameObject.scene==SceneManager.GetActiveScene())Instance=this;}
-        private void OnDisable(){if(Instance==this)Instance=null;Watch(null);_lost.Clear();_safe.Clear();}
+        private void OnDisable(){if(Instance==this)Instance=null;Watch(null);_lost.Clear();_away.Clear();_safe.Clear();}
         private void OnDestroy(){if(_droneRoot!=null)Destroy(_droneRoot.gameObject);}
 
-        public float SecondsUntilReturn(Slipper slipper)=>_lost.TryGetValue(slipper,out float end)?Mathf.Max(0,end-Time.time):0;
+        public float SecondsUntilReturn(Slipper slipper)=>_lost.TryGetValue(slipper,out float end)?Mathf.Max(0,end-Time.time)
+            :_away.TryGetValue(slipper,out var away)?Mathf.Max(0,away.At-Time.time):0;
 
         private void Watch(ArenaStage stage)
         {
@@ -76,7 +105,7 @@ namespace TumbangPreso.Map
             if(round==_round)return;
             // SliceRunner.ResetWorld reactivates and equips the round's stock, as on Sa Bubong:
             // a loss deadline must never recall a newly assigned shoe into another round.
-            _round=round;_lost.Clear();_safe.Clear();
+            _round=round;_lost.Clear();_away.Clear();_safe.Clear();
         }
 
         /// <summary>The highest floor under a point, ignoring bodies, slippers and the can.</summary>
@@ -123,6 +152,30 @@ namespace TumbangPreso.Map
             _lost.Add(slipper,Time.time+SlipperDelay);
         }
 
+        /// <summary>
+        /// HOST: takes a slipper out of play and books it back onto the stage, loose, `seconds`
+        /// from now at the nearest standable point to `leftAt`. False if it is not this peer's
+        /// to decide or the slipper is already away.
+        /// </summary>
+        public bool HostSendAway(Slipper slipper,Vector3 leftAt,float seconds)
+        {
+            if(!NetAuthority.ShouldResolve()||slipper==null||_away.ContainsKey(slipper)||_lost.ContainsKey(slipper))return false;
+            if(!slipper.HostBeginMapRecovery())return false;
+            _away.Add(slipper,new Away{At=Time.time+Mathf.Max(0,seconds),From=leftAt});
+            return true;
+        }
+
+        /// <summary>True when nothing of the stage is under the point: it is over the shaft or a gap.</summary>
+        public static bool OverTheVoid(Vector3 p)=>!Floor(p,.4f,VoidDepth,out _);
+
+        private void Return(Slipper shoe,Vector3 from)
+        {
+            // No stage, or a layout with nothing to stand on: the slipper's own return, to its owner.
+            if(_stage==null||!_stage.TryNearestStandable(from,out var near)){shoe.HostFinishMapRecovery();return;}
+            if(Floor(near,1.5f,2.5f,out float y))near.y=y;
+            shoe.HostFinishMapRecoveryAt(near+Vector3.up*Core.Balance.SlipperRestHeight);
+        }
+
         private static bool Fallen(CharacterMotor who,Vector3 p)
         {
             float line=ArenaStage.CatchY;
@@ -136,11 +189,20 @@ namespace TumbangPreso.Map
             Instance=this;Watch(ArenaStage.Instance);
             SyncRound();
             if(_slice==null)_slice=Object.FindFirstObjectByType<SliceRunner>();
-            // A slipper thrown or dropped into the pit: the same delayed return as a held one.
+            // A slipper that has left the stage (see the class note): resting on nothing, flying
+            // down through deck height over nothing, or under the decks. Straight back to the edge.
+            bool sweep=Time.time>=_nextLoose;
+            if(sweep)_nextLoose=Time.time+LooseCheck;
             if(_slice!=null&&_slice.Slippers!=null)
                 foreach(var slipper in _slice.Slippers)
-                    if(slipper!=null&&slipper.gameObject.activeSelf&&slipper.State!=SlipperState.Held
-                       &&slipper.transform.position.y<ArenaStage.SlipperCatchY)Lose(slipper);
+                {
+                    if(slipper==null||!slipper.gameObject.activeSelf||slipper.State==SlipperState.Held)continue;
+                    var at=slipper.transform.position;
+                    bool gone=at.y<ArenaStage.SlipperCatchY;
+                    if(!gone&&slipper.State==SlipperState.Loose)gone=sweep&&OverTheVoid(at);
+                    else if(!gone)gone=slipper.Velocity.y<0&&at.y<ArenaStage.Instance.transform.position.y+FlightSkim&&OverTheVoid(at);
+                    if(gone)HostSendAway(slipper,at,EdgeReturnSeconds);
+                }
             bool remember=Time.time>=_nextSafe;
             if(remember)_nextSafe=Time.time+SafeRefresh;
             foreach(var who in GameServices.Round.Players)
@@ -164,12 +226,67 @@ namespace TumbangPreso.Map
                 shoe.HostFinishMapRecovery();_finished.Add(shoe);
             }
             foreach(var shoe in _finished)_lost.Remove(shoe);
+            _finished.Clear();
+            foreach(var entry in _away)
+            {
+                var shoe=entry.Key;
+                // Back in play already (a round began and re-equipped it): nothing left to do.
+                if(shoe==null||shoe.gameObject.activeSelf){_finished.Add(shoe);continue;}
+                if(Time.time<entry.Value.At)continue;
+                Return(shoe,entry.Value.From);_finished.Add(shoe);
+            }
+            foreach(var shoe in _finished)_away.Remove(shoe);
+        }
+
+        // Every peer, off each slipper's replicated state: a puff where one left the stage, and a
+        // ring (from the sky, if the balloon sent it back) where one is set down again.
+        private void WatchSlippers()
+        {
+            if(Time.unscaledTime>=_nextScan)
+            {
+                _nextScan=Time.unscaledTime+2;
+                var found=FindObjectsByType<Slipper>(FindObjectsInactive.Include,FindObjectsSortMode.None);
+                bool same=found.Length==_seen.Length;
+                for(int i=0;same&&i<found.Length;i++)same=System.Array.IndexOf(_seen,found[i])>=0;
+                if(!same)
+                {
+                    _seen=found;_wasActive=new bool[found.Length];
+                    for(int i=0;i<found.Length;i++)_wasActive[i]=found[i]!=null&&found[i].gameObject.activeSelf;
+                }
+            }
+            var fx=ArenaFx.Instance;
+            for(int i=0;i<_seen.Length;i++)
+            {
+                var shoe=_seen[i];if(shoe==null)continue;
+                bool active=shoe.gameObject.activeSelf;
+                if(active==_wasActive[i])continue;
+                _wasActive[i]=active;
+                var p=shoe.transform.position;
+                if(fx==null||GameServices.Round==null||!GameServices.Round.RoundActive)continue;
+                if(!active)
+                {
+                    if(!OverTheVoid(p))continue;
+                    fx.Ring(p,.2f,1.4f,ArenaFx.White,.7f,.35f,ArenaFx.Cell.ThinRing);
+                    fx.Dots(p,Vector3.up,70,8,1,3.5f,ArenaFx.White,.8f,.3f,.6f,.22f,-1);
+                }
+                else if(shoe.State==SlipperState.Loose)
+                {
+                    bool sky=ArenaBalloon.ReturningFromSky(shoe.SeatOfOrigin);
+                    fx.Ring(p,.2f,sky?2.6f:1.7f,ArenaFx.Gold,.9f,.5f,ArenaFx.Cell.ThinRing);
+                    fx.Ring(p,.1f,sky?1.6f:1.0f,ArenaFx.White,.8f,.35f);
+                    fx.Pillar(p,sky?36:3.2f,sky?.9f:.5f,sky?ArenaFx.White:ArenaFx.Gold,.85f,sky?.4f:.45f);
+                    if(sky)fx.Sparks(p+Vector3.up*.1f,Vector3.up,65,14,2,7,ArenaFx.Gold,.95f,.3f,.7f,.12f,9);
+                    fx.Glint(p+Vector3.up*.5f,1.2f,ArenaFx.White,.9f,.4f);
+                    ArenaFx.Cue("sfx_arena_slipper_return",p,.96f,1.06f);
+                }
+            }
         }
 
         // Every peer. Presentation only, off the replicated kind and the body's own motion.
         private void Update()
         {
             var round=GameServices.Round;if(round==null)return;
+            if(ArenaStage.Instance!=null)WatchSlippers();
             var players=round.Players;
             for(int i=0;i<players.Count;i++)
             {

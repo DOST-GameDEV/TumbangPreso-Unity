@@ -16,6 +16,11 @@ namespace TumbangPreso.EditorTools.MapKit
     /// The file names each thing by its object in the kit, which is the name its placement wears
     /// in the scene. A placement's own transform carries the kit's pivot (the middle of the globe,
     /// the balloon's tether point), so the transform is what turns, sways and rides.
+    ///
+    /// THE SLIPPER BALLOON is not in the list of moves: the file's `balloon` block names its parts
+    /// (body, arms, legs, scarf tails, ropes, the heap left when it is popped) and its four face
+    /// textures, and <see cref="AttachBalloon"/> hands them to one <see cref="ArenaBalloon"/>,
+    /// which animates them and runs the easter egg.
     /// </summary>
     internal static class ArenaHoloAuthor
     {
@@ -30,11 +35,13 @@ namespace TumbangPreso.EditorTools.MapKit
             var group = root.Find("Dressing/Holo");
             if (group == null) { Debug.Log($"{Tag}No Holo group in the art: {MotionPath} is not used."); return 0; }
 
-            var moves = JToken.Parse(File.ReadAllText(MotionPath))["moves"] as JArray;
+            var file = JToken.Parse(File.ReadAllText(MotionPath));
+            var moves = file["moves"] as JArray;
             if (moves == null) { Debug.LogWarning($"{Tag}{MotionPath} has no list of moves"); return 0; }
 
             var byName = new Dictionary<string, Transform>();
             foreach (Transform child in group) byName[child.name] = child;
+            AttachBalloon(group, file["balloon"], byName);
 
             var baked = new List<ArenaHoloMotion.Move>();
             var missing = new List<string>();
@@ -98,6 +105,72 @@ namespace TumbangPreso.EditorTools.MapKit
             motion.Moves = baked.ToArray();
             Debug.Log($"{Tag}Holo motion: {baked.Count} moves baked onto {group.name}.");
             return baked.Count;
+        }
+
+        /// <summary>
+        /// The slipper balloon's parts onto one <see cref="ArenaBalloon"/> on the Holo group. With
+        /// no `balloon` block (a kit from before it was animated) or no body, nothing is added
+        /// and the balloon stands still, as it did.
+        /// </summary>
+        private static void AttachBalloon(Transform group, JToken block, Dictionary<string, Transform> byName)
+        {
+            if (block == null || block.Type != JTokenType.Object) return;
+
+            Transform Part(JToken name)
+            {
+                string key = name != null && name.Type == JTokenType.String ? (string)name : null;
+                if (string.IsNullOrEmpty(key)) return null;
+                if (byName.TryGetValue(key, out var part)) return part;
+                Debug.LogWarning($"{Tag}{MotionPath}: the balloon names '{key}', which the Holo group does not hold (export the kit again?)");
+                return null;
+            }
+
+            Transform[] Parts(JToken names)
+            {
+                var list = new List<Transform>();
+                foreach (var name in names as JArray ?? new JArray()) { var part = Part(name); if (part != null) list.Add(part); }
+                return list.ToArray();
+            }
+
+            var body = Part(block["body"]);
+            var ropes = Parts(block["ropes"]);
+            if (body == null || ropes.Length == 0) { Debug.LogWarning($"{Tag}{MotionPath}: the balloon has no body or no ropes; it is left still"); return; }
+
+            var balloon = group.gameObject.GetComponent<ArenaBalloon>();
+            if (balloon == null) balloon = group.gameObject.AddComponent<ArenaBalloon>();
+            balloon.Body = body;
+            balloon.ArmWave = Part(block["arm_wave"]);
+            balloon.ArmRest = Part(block["arm_rest"]);
+            balloon.LegLeft = Part(block["leg_l"]);
+            balloon.LegRight = Part(block["leg_r"]);
+            balloon.Tails = Parts(block["tails"]);
+            balloon.Ropes = ropes;
+            balloon.Scrap = Part(block["scrap"]);
+            balloon.Centre = body.position;
+
+            // The painted skin: the body's renderer, and which of its materials wears the face.
+            balloon.Skin = body.GetComponentInChildren<Renderer>(true);
+            balloon.SkinMaterial = MaterialIndex(balloon.Skin, "arena_holo_balloon");
+
+            // The four faces and their emission maps, imported as the kit's own textures are.
+            var faces = new List<Texture2D>();
+            var glows = new List<Texture2D>();
+            foreach (var name in block["faces"] as JArray ?? new JArray())
+            {
+                string png = (string)name;
+                if (string.IsNullOrEmpty(png)) continue;
+                var face = ArenaArtPlacer.ImportTexture(png, false, false, true, false, false);
+                var glow = ArenaArtPlacer.ImportTexture(png.Replace(".png", "_emit.png"), false, false, true, false, false);
+                if (face == null || glow == null) Debug.LogWarning($"{Tag}The balloon's face {png} or its _emit is missing (run tools/author_arena_textures_holo.py): that face will not change");
+                faces.Add(face);
+                glows.Add(glow);
+            }
+            balloon.Faces = faces.ToArray();
+            balloon.FaceGlows = glows.ToArray();
+
+            // The heap of skin is only there when the balloon has been popped: the component shows it.
+            if (balloon.Scrap != null) balloon.Scrap.gameObject.SetActive(false);
+            Debug.Log($"{Tag}Slipper balloon: {ropes.Length} ropes, {balloon.Tails.Length} scarf tails, {faces.Count} faces, baked onto {group.name}.");
         }
 
         private static int MaterialIndex(Renderer skin, string material)

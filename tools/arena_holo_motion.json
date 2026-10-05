@@ -7,6 +7,33 @@
   "bob": "rises and falls `metres` each way every `period` seconds",
   "pulse": "its light's strength runs between `low` and `high` of itself every `period` seconds"
  },
+ "balloon": {
+  "about": "The slipper balloon's parts, by object name: Editor/MapKit/ArenaHoloAuthor.cs hands them to Runtime/Map/ArenaBalloon.cs, which animates them. Faces are texture files, happy first.",
+  "body": "arena_holo_balloon_body",
+  "arm_wave": "arena_holo_balloon_arm_wave",
+  "arm_rest": "arena_holo_balloon_arm_rest",
+  "leg_l": "arena_holo_balloon_leg_l",
+  "leg_r": "arena_holo_balloon_leg_r",
+  "tails": [
+   "arena_holo_balloon_tail_a",
+   "arena_holo_balloon_tail_b"
+  ],
+  "ropes": [
+   "arena_holo_balloon_rope_0",
+   "arena_holo_balloon_rope_1",
+   "arena_holo_balloon_rope_2",
+   "arena_holo_balloon_rope_3",
+   "arena_holo_balloon_rope_4"
+  ],
+  "scrap": "arena_holo_balloon_scrap",
+  "mooring": "arena_holo_balloon_mooring",
+  "faces": [
+   "arena_holo_balloon.png",
+   "arena_holo_balloon_worried.png",
+   "arena_holo_balloon_ouch.png",
+   "arena_holo_balloon_dizzy.png"
+  ]
+ },
  "moves": [
   {
    "object": "arena_holo_column_ne_ads",
@@ -179,12 +206,6 @@
    "kind": "bob",
    "metres": 2.0,
    "period": 11.0
-  },
-  {
-   "object": "arena_holo_balloon",
-   "kind": "sway",
-   "degrees": 1.1,
-   "period": 9.0
   },
   {
    "object": "arena_holo_sign_pcx_far",

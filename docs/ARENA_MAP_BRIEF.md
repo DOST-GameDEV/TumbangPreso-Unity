@@ -257,3 +257,30 @@ halved under reduced effects.
 - HAZE: two shader globals read by `TumbangPreso/ArenaPainted` and set in Play by `ArenaAmbience` (`_ArenaHazeColor`, `_ArenaHaze`): lit air low among the towers, by height and by level distance from the eye, only on what stands more than 250 m from the can. Plus one faint ring of light 300 m out. Tune the numbers at the top of `ArenaAmbience`.
 - SPOTLIGHTS: six on the rim, four on the landing pads, five on rooftops (the shared clock), and eight show spots under the canopies (idle sweep, chase in the alarm and at the match end, on the stage when it moves and when the can falls). All quads through `ArenaFx`; no Light.
 - CLOUDS: the other maps' voxel clouds, placed by this map's look row (`MapLook.CloudBands`, in `WorldLookProfile.cs` and `Resources/WorldLookProfile.asset`): a deck of 16 under the stadium (y -345 to -228) and 5 high ones (y 340 and up, 250 to 272 m out), lit from below in the city kit's night colours.
+
+## The slipper balloon and a slipper that leaves the stage (ARENA-1.7, 2026-10-05)
+
+The owner (verbatim): "the balloon should be animated btw, and make it an easter egg when you try to throw a slipper at full range directed towards it you can actually hit it, and itll react like the balloon cow in overwatch. do it enough times and itll pop"; "the slipper will just spawn/tp back to the nearest edge to be able to retrieve it"; and, after playing: "issue with the bots is that if their slipper goes off the platform they cant retrieve it".
+
+### The balloon is a rig of rigid parts (`Runtime/Map/ArenaBalloon.cs`)
+The holo kit delivers it as a body (its own axes), two arms, two legs, two scarf tails, five ropes (pivot at the anchor, y along the rope), a heap of skin, the mooring; `tools/arena_holo_motion.json` names them in its `balloon` block and `ArenaHoloAuthor` bakes them onto one `ArenaBalloon` on the Holo group. It leans and rides about the winch, squashes and stretches along its length, its lobes turn about pivots inside the body, and every rope is aimed at its ring each frame. Idle is closed-form on the shared clock (the same sky on every peer); a hit, a knocked can and the crowd kick damped springs. No shader was added.
+
+### The hit is a rule, decided by the host at the throw
+| Test | Number | Where |
+|---|---|---|
+| a human seat, a plain slipper (no ability payload) | | `ArenaBalloon.HostTake` |
+| charge | 0.9 of full or more | `MinCharge` |
+| the sight line (throw origin to aim point) from the middle of the balloon | within 10 degrees | `ConeDegrees` |
+| the sight line's climb | 20 degrees or more (the cone already needs 22) | `MinElevationDegrees` |
+| the aim point | at or past where the line leaves the walls or the 12 m ceiling, less 1 m | `PlayExit`, `AimSlack` |
+| hits to pop | 5 | `PopHits` |
+
+From the stage the balloon's middle stands 32 to 41 degrees up, south-south-west. A throw at the can, a body or a platform aims at a point in play and fails the last test; bots are refused by seat. A hit slipper leaves play at the throw, is drawn flying up for 1.1 s, and is set back loose 1.4 s after the strike at the nearest standable point to where its line left the play area. No score, can, tag or rule is touched. Popped, it re-inflates at the next round's start or after 75 s.
+
+### One message
+`ArenaBalloon`, host to all and in `HostSyncPeer` (`Net/MatchRpc.ArenaBalloon.cs`): hits, popped, and the last event (a hit's seat, origin, line and launch time on the server clock; a re-inflation). It could not ride the slipper (an out-of-play slipper travels as Loose with no affinity) and nothing existing carries a count for a late joiner. Under protocol 146.
+
+### A slipper off the stage comes back to the nearest edge (`ArenaFallRecovery`)
+What was wrong: `Slipper.FindGroundY` answers 0 when its cast finds nothing, and 0 is this stage's deck height, so a slipper past an edge or in a gap "landed" in the air at deck height, out of reach, and stayed. A bot walked to the lip and stood there. Now the host takes any slipper with nothing of the stage under it and sets it down 1.6 s later at `ArenaStage.TryNearestStandable` of where it left (inset 1 m, never a ramp or a bonus piece). It is switched off meanwhile, so a bot sees none, waits on its throwing ring and fetches it when it is back. A slipper held by a body that fell keeps the fall's 8 s return to its owner. A slipper resting more than 1.2 m above its owner already goes to the owner (`Slipper`'s own rule), which covers a loft.
+
+Probe: `Tests/PlayMode/ArenaBalloonProbe.cs` (report `Logs/arena/unity/balloon_probe.txt`). Sounds: `tools/synth_arena_balloon_sfx.py`.

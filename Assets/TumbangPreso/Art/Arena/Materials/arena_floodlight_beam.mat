@@ -40,6 +40,7 @@ Material:
     - _FogToColour: 0
     - _Rim: 1.5
     - _SrcBlend: 5
+    - _VertexTint: 0
     m_Colors:
     - _Color: {r: 0.82, g: 0.9, b: 1, a: 0.085}
     - _Near: {r: 20, g: 70, b: 0, a: 0}

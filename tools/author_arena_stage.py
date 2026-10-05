@@ -2,10 +2,12 @@
 
   py -3 tools/author_arena_layouts.py                 # the layout data (tools/arena_layouts.json)
   py -3 tools/author_arena_textures_stage.py          # the textures
-  blender -b --python tools/author_arena_stage.py -- --version=vN [--no-render]
+  blender -b --python tools/author_arena_stage.py -- --version=vN [--no-render] [--no-check]
 
 Writes ArtSource/arena/kits/stage.blend and review pictures Logs/arena/stage/stage_<vN>_*.png, and
-prints the open-edge and triangle report (also saved as Logs/arena/stage/stage_<vN>_report.txt).
+prints the open-edge and triangle report (also saved as Logs/arena/stage/stage_<vN>_report.txt),
+the fighting-face count (stage_<vN>_joints.txt, must be zero) and the walking surface against the
+layout data and the collider (stage_<vN>_heights.txt, must stay under 15 mm).
 Read docs/ARENA_ART_BRIEF.md first. Blender units are metres, z up, y north, the can at the origin:
 a Unity point (x, y, z) is Blender (x, z, y).
 
@@ -27,19 +29,31 @@ THE COLLECTIONS (all inside `arena_stage`, everything at its place in the stadiu
         of dark field and the shaft wall. Not part of the kit.
 
 HOW A PLATE IS BUILT. Every piece is ONE closed solid with one cross-section (`section`):
-  a pale DECK; a white LINE 7 cm wide, 35 cm in from the edge; a dark band; the edge's 10 cm
-  CHAMFER and the first 8 cm of the side, which are the LIT RIM (so the edge reads from above and
+  a pale DECK; a white LINE 7 cm wide, 35 cm in from the edge; a dark band; the LIT RIM, which is
+  the last 10 cm of the top and the first 18 cm of the side (so the edge reads from above and
   from the side); a dark side; a skirt cut back 55 cm; a recessed underside of ribs and glowing
   hover cells; and a keel along the middle whose bottom face is the hover emitter. The bands are
   faces of the same surface, told apart by material; nothing is laid on top of anything.
+  THE TOP IS FLAT RIGHT OUT TO THE EDGE (v5). The rim used to be a 10 cm chamfer, which put the
+  art up to 10 cm under the collider along every edge and left a notch at every joint.
     disc, ring   that section swept round (arena_kit.lathe)
     arc          nested loops of the arc's outline, each inset by the section's distance, so the
                  two ENDS get the same line, rim, skirt and keel as the long edges
-    ramp         the section swept along the bearing. Each station sits at one TRUE radius, so
-                 both ends are arcs flush with their round neighbours. Past each end the ramp
-                 runs a 62 cm tongue INTO the neighbour: its top steps down 12 cm there, so it is
-                 never in the neighbour's deck plane, and the first 7 cm keeps the full top to
-                 cover the neighbour's chamfer.
+    ramp         a grid: rows of one TRUE radius (so both ends are arcs and the height is linear
+                 in the true distance from the can, the collider's law), columns of one offset
+                 across. The deck is cut into columns no wider than 45 cm.
+
+HOW TWO PIECES JOIN (v5; `joints`, `edge_angles`). A ramp's end and its round neighbour's edge
+are THE SAME POLYLINE, corner for corner: the neighbour drops its own regular corners across the
+ramp's mouth and takes the ramp's columns instead (theta() gives both the same number, so the
+two meshes hold identical coordinates). The two tops are one plane continued, butted along that
+line with no overlap, no gap and no step; the neighbour's line and lit rim cross the mouth as
+the visible joint. From the line the ramp DIVES at 45 degrees into the neighbour to 12 cm under
+its top and runs on 62 cm as a tongue, its underside tapering up, so everything past the joint
+is hidden deep inside the neighbour's solid and crosses its faces squarely (no face of one piece
+lies along a face of another). `joint_check` measures all of this and must print zero;
+`height_check` ray-casts the walking surface against the layout data and against the collider's
+own ramp grid (a copy of ArenaStageMesh.Ramp).
 
 MATERIALS (9; textures tools/author_arena_textures_stage.py): arena_stage_deck, _line, _rim,
 _hull, _under, _mark, _props, _beam, _holo.
@@ -48,6 +62,7 @@ run on across pieces); line, rim, hull and under are top-down at 4 m on level fa
 (run along the face, height) on upright ones; the mark is 0..1 over 3 m; the props use one atlas.
 """
 import bpy, bmesh, json, math, os, sys
+import numpy as np
 from mathutils import Vector
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -61,8 +76,11 @@ LOGS = os.path.join(ROOT, "Logs", "arena", "stage")
 DATA = json.load(open(os.path.join(ROOT, "tools", "arena_layouts.json"), encoding="utf-8"))
 
 SEG = 128                          # a full circle
-CHAMFER, LINE_IN, LINE_W, SKIRT, LIP, RECESS = 0.10, 0.35, 0.07, 0.55, 0.80, 0.12
-TONGUE, COVER, STEP = 0.62, 0.07, 0.12
+RIM_W, RIM_SIDE, LINE_IN, LINE_W, SKIRT, LIP, RECESS = 0.10, 0.18, 0.35, 0.07, 0.55, 0.80, 0.12
+TONGUE, STEP = 0.62, 0.12          # a ramp runs this far inside its neighbour, this far under its top
+COLUMN = 0.45                      # the widest a ramp's deck column may be
+ROW = 0.50                         # the longest a sloping ramp's row may be
+GUARD = 0.7                        # degrees: no regular corner of a round edge this close to a ramp's mouth
 MATS = ["deck", "line", "rim", "hull", "under", "mark"]
 GLOW = {"deck": 1.0, "line": 1.0, "rim": 3.2, "under": 2.2, "mark": 1.4, "props": 1.15, "holo": 2.6}
 
@@ -116,7 +134,7 @@ def edge(thick):
     """From the deck's boundary out over the edge and back under: (inset, height below the top)
     and the material of each strip between two points."""
     side = min(0.42, thick * 0.5)
-    pts = [(LINE_IN + LINE_W, 0.0), (LINE_IN, 0.0), (CHAMFER, 0.0), (0.0, -CHAMFER), (0.0, -CHAMFER - 0.08),
+    pts = [(LINE_IN + LINE_W, 0.0), (LINE_IN, 0.0), (RIM_W, 0.0), (0.0, 0.0), (0.0, -RIM_SIDE),
            (0.0, -side), (SKIRT, -thick), (LIP, -thick), (LIP, -thick + RECESS)]
     tags = ["line", "hull", "rim", "rim", "hull", "hull", "hull", "hull"]
     return pts, tags
@@ -152,33 +170,128 @@ def disc_section(r, thick, mark, keels):
     return out
 
 
+# ---------------------------------------------------------------- how the pieces join
+def theta(bearing, s, radius):
+    """The bearing of the point `s` across a ramp's line at true distance `radius`. A ramp and its
+    neighbour both ask this, so the two meshes hold the same corner to the last bit."""
+    return bearing + math.degrees(math.asin(max(-1.0, min(1.0, s / radius))))
+
+
+def ramp_section(width, thick):
+    """A ramp's cross-section: `section`, with the deck cut into columns."""
+    prof = section(-width / 2, width / 2, thick, keel=0.15)
+    lo, hi = prof[0][0], prof[1][0]
+    n = max(2, int(math.ceil((hi - lo) / COLUMN)))
+    return [prof[0]] + [(lo + (hi - lo) * i / n, 0.0, "deck") for i in range(1, n)] + prof[1:]
+
+
+def joints(lay):
+    """Which round edge each ramp end butts. Answers {ramp id: [(neighbour id, edge), (..)]} for
+    its near and far end, and the MOUTHS {(neighbour id, "out" or "in"): [(bearing, half angle,
+    [the bearing of every corner of the ramp's end, left to right])]}. An end with no round
+    neighbour at its radius and height is an error: the kit has no free ramp end."""
+    ends, mouths = {}, {}
+    for p in lay["pieces"]:
+        if p["kind"] != "ramp":
+            continue
+        cols = sorted(s for s, z, _ in ramp_section(p["width"], p["thick"]) if z == 0.0)
+        ends[p["id"]] = []
+        for radius, height, edge in ((p["r0"], p["z0"], "out"), (p["r1"], p["z1"], "in")):
+            half = math.degrees(math.asin(p["width"] / 2 / radius))
+            found = None
+            for q in lay["pieces"]:
+                if q["kind"] == "ramp" or abs(q["top"] - height) > 1e-6 or (q["kind"] == "disc" and edge == "in"):
+                    continue
+                at = q["r"] if q["kind"] == "disc" else (q["r1"] if edge == "out" else q["r0"])
+                if abs(at - radius) > 1e-6:
+                    continue
+                if q["kind"] == "arc":
+                    rel = (p["bearing"] - q["a0"]) % 360.0
+                    if not (half + 2 * GUARD < rel < q["a1"] - q["a0"] - half - 2 * GUARD):
+                        continue
+                found = q
+            if found is None:
+                raise ValueError("%s %s: no round piece at radius %.2f, height %.2f for its %s end" % (
+                    lay["name"], p["id"], radius, height, "near" if edge == "out" else "far"))
+            if found["thick"] < p["thick"] + 0.15:
+                raise ValueError("%s %s: %s is too thin to hide its tongue" % (lay["name"], p["id"], found["id"]))
+            ends[p["id"]].append((found["id"], edge))
+            mouths.setdefault((found["id"], edge), []).append(
+                (p["bearing"], half, [theta(p["bearing"], s, radius) for s in cols]))
+    return ends, mouths
+
+
+def _apart(a, b):
+    return abs((a - b + 180.0) % 360.0 - 180.0)
+
+
+def _clear(mouths, what):
+    for i, (b1, h1, _) in enumerate(mouths):
+        for b2, h2, _ in mouths[i + 1:]:
+            if _apart(b1, b2) < h1 + h2 + 2 * GUARD:
+                raise ValueError("%s: the ramps at bearings %.0f and %.0f share a stretch of edge" % (what, b1, b2))
+
+
+def round_angles(mouths, what):
+    """The corners of a full circle: the regular ones, but across each ramp's mouth the ramp's."""
+    _clear(mouths, what)
+    out = [a for a in circle(SEG) if all(_apart(a, b) > h + GUARD for b, h, _ in mouths)]
+    for _, _, ts in mouths:
+        out += ts
+    return sorted(out, key=lambda a: a % 360.0)
+
+
+def arc_angles(a0, a1, mouths, what):
+    """One long edge of an arc: (fraction along it, the bearing to build that corner with)."""
+    _clear(mouths, what)
+    n = max(3, int(math.ceil((a1 - a0) / (360.0 / SEG))))
+    rows = [(0.0, a0), (1.0, a1)]
+    for i in range(1, n):
+        f = i / n
+        if all(abs(f * (a1 - a0) - (b - a0) % 360.0) > h + GUARD for b, h, _ in mouths):
+            rows.append((f, a0 + (a1 - a0) * f))
+    for b, _, ts in mouths:
+        rows += [(((b - a0) % 360.0 + (t - b)) / (a1 - a0), t) for t in ts]
+    return sorted(rows)
+
+
 # ---------------------------------------------------------------- the three builders
-def build_round(name, p, coll, mark=False):
+def build_round(name, p, coll, mouths, mark=False):
     top, thick = p["top"], p["thick"]
     if p["kind"] == "disc":
         keels = [p["r"] * 0.58] if p["r"] > 7.0 else []
         prof = disc_section(p["r"], thick, mark, keels)
     else:
         prof = section(p["r0"], p["r1"], thick)
-    return lathe(name, [(r, top + z, t) for r, z, t in prof], circle(SEG), MATS, coll)
+    mine = mouths.get((p["id"], "out"), []) + mouths.get((p["id"], "in"), [])
+    return lathe(name, [(r, top + z, t) for r, z, t in prof], round_angles(mine, name), MATS, coll)
 
 
-def build_arc(name, p, coll):
+def build_arc(name, p, coll, mouths):
     r0, r1, a0, a1, top, thick = p["r0"], p["r1"], p["a0"], p["a1"], p["top"], p["thick"]
-    n = max(3, int(math.ceil((a1 - a0) / (360.0 / SEG))))
+    edges = (arc_angles(a0, a1, mouths.get((p["id"], "out"), []), name), arc_angles(a0, a1, mouths.get((p["id"], "in"), []), name))
     bm = bmesh.new()
     index = {m: i for i, m in enumerate(MATS)}
 
     def rows(d, z):
+        """The outer and the inner long edge, inset by d. At d = 0 a corner is at its own bearing
+        exactly (a ramp's corner must be); further in, the row is squeezed between the two ends."""
         out = []
-        for rr in (r1 - d, r0 + d):
+        for rr, edge in ((r1 - d, edges[0]), (r0 + d, edges[1])):
             dl = math.degrees(math.asin(min(1.0, d / rr))) if d > 0 else 0.0
-            out.append([bm.verts.new(polar(rr, a0 + dl + (a1 - a0 - 2 * dl) * i / n, top + z)) for i in range(n + 1)])
+            out.append([bm.verts.new(polar(rr, a if d == 0 else a0 + dl + (a1 - a0 - 2 * dl) * f, top + z)) for f, a in edge])
         return out
 
     def fill(r, tag):
-        for i in range(n):
-            bm.faces.new((r[0][i], r[0][i + 1], r[1][i + 1], r[1][i])).material_index = index[tag]
+        """The strip between the two long edges, which need not have the same corners."""
+        (A, B), fa, fb = r, [f for f, _ in edges[0]], [f for f, _ in edges[1]]
+        i = j = 0
+        while i < len(A) - 1 or j < len(B) - 1:
+            if j == len(B) - 1 or (i < len(A) - 1 and fa[i + 1] <= fb[j + 1]):
+                f = bm.faces.new((A[i], A[i + 1], B[j])); i += 1
+            else:
+                f = bm.faces.new((A[i], B[j + 1], B[j])); j += 1
+            f.material_index = index[tag]
 
     pts, tags = edge(thick)
     half = (r1 - r0) / 2
@@ -201,32 +314,36 @@ def build_arc(name, p, coll):
 
 
 def build_ramp(name, p, coll):
-    b = math.radians(p["bearing"])
-    along, right = Vector((math.sin(b), math.cos(b), 0)), Vector((math.cos(b), -math.sin(b), 0))
-    r0, r1, z0, z1, w, thick = p["r0"], p["r1"], p["z0"], p["z1"], p["width"], p["thick"]
-    prof = section(-w / 2, w / 2, thick, keel=0.15)
+    """Rows of one true radius, columns of one offset across. Past each end: the dive (the top
+    12 cm lower, 12 cm inside the neighbour) and the tongue's end, a plain block with no keel."""
+    b, r0, r1, z0, z1, thick = p["bearing"], p["r0"], p["r1"], p["z0"], p["z1"], p["thick"]
+    prof = ramp_section(p["width"], thick)
+    base = -thick + RECESS
     index = {m: i for i, m in enumerate(MATS)}
-    mids = max(1, int(round((r1 - r0) / 2.5)))
-    stations = [(r0 - TONGUE, True), (r0 - COVER, True), (r0 - COVER, False)] + \
-               [(r0 + (r1 - r0) * i / mids, False) for i in range(mids + 1)] + \
-               [(r1 + COVER, False), (r1 + COVER, True), (r1 + TONGUE, True)]
+    n = 1 if abs(z1 - z0) < 1e-9 else max(1, int(math.ceil((r1 - r0) / ROW)))
+    stations = [(r0 - TONGUE, 2), (r0 - STEP, 1), (r0, 0)] + [(r0 + (r1 - r0) * i / n, 0) for i in range(1, n)] + \
+               [(r1, 0), (r1 + STEP, 1), (r1 + TONGUE, 2)]
     bm = bmesh.new()
     cols = []
-    for rho, low in stations:
+    for rho, inside in stations:
         h = z0 + (z1 - z0) * min(1.0, max(0.0, (rho - r0) / (r1 - r0)))
         col = []
         for s, z, _ in prof:
-            y = math.sqrt(max(rho * rho - s * s, 0.0))
-            zz = z - STEP if (low and z > -1e-6) else z
-            col.append(bm.verts.new(along * y + right * s + Vector((0, 0, h + zz))))
+            if inside and z == 0.0:
+                z = -STEP
+            if inside == 2 and z < base:
+                z = base
+            col.append(bm.verts.new(polar(rho, theta(b, s, rho), h + z)))
         cols.append(col)
-    n = len(prof)
+    m = len(prof)
     for i in range(len(cols) - 1):
-        for j in range(n):
-            k = (j + 1) % n
+        for j in range(m):
+            k = (j + 1) % m
             bm.faces.new((cols[i][j], cols[i][k], cols[i + 1][k], cols[i + 1][j])).material_index = index[prof[j][2]]
-    bm.faces.new(cols[0][::-1]).material_index = index["hull"]
-    bm.faces.new(cols[-1]).material_index = index["hull"]
+    for col, (rho, _), h in ((cols[0], stations[0], z0), (cols[-1], stations[-1], z1)):      # the two hidden ends: a fan each
+        hub = bm.verts.new(polar(rho, b, h - 0.40))
+        for j in range(m):
+            bm.faces.new((hub, col[j], col[(j + 1) % m])).material_index = index["hull"]
     bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=0.0005)
     dead = [f for f in bm.faces if f.calc_area() < 1e-8]
     if dead:
@@ -595,6 +712,332 @@ def floor_height(lay, x, y):
     return best
 
 
+# ---------------------------------------------------------------- the joints, measured
+def _soup(ob):
+    """An object's triangles as an (n, 3, 3) array, and the polygon each belongs to."""
+    me = ob.data
+    me.calc_loop_triangles()
+    n = len(me.loop_triangles)
+    co = np.empty(len(me.vertices) * 3, dtype=np.float32); me.vertices.foreach_get("co", co)
+    idx = np.empty(n * 3, dtype=np.int32); me.loop_triangles.foreach_get("vertices", idx)
+    poly = np.empty(n, dtype=np.int32); me.loop_triangles.foreach_get("polygon_index", poly)
+    return co.astype(np.float64).reshape(-1, 3)[idx].reshape(n, 3, 3), poly
+
+
+def _shared(ta, tb, n):
+    """The area two triangles share when both are laid in the plane whose normal is n, and the
+    middle of that area."""
+    ax = (1.0, 0.0, 0.0) if abs(n[0]) < 0.9 else (0.0, 1.0, 0.0)
+    e1 = (n[1] * ax[2] - n[2] * ax[1], n[2] * ax[0] - n[0] * ax[2], n[0] * ax[1] - n[1] * ax[0])
+    ln = math.sqrt(e1[0] ** 2 + e1[1] ** 2 + e1[2] ** 2)
+    e1 = (e1[0] / ln, e1[1] / ln, e1[2] / ln)
+    e2 = (n[1] * e1[2] - n[2] * e1[1], n[2] * e1[0] - n[0] * e1[2], n[0] * e1[1] - n[1] * e1[0])
+
+    def flat(t):
+        q = [(p[0] * e1[0] + p[1] * e1[1] + p[2] * e1[2], p[0] * e2[0] + p[1] * e2[1] + p[2] * e2[2]) for p in t]
+        turn = (q[1][0] - q[0][0]) * (q[2][1] - q[0][1]) - (q[2][0] - q[0][0]) * (q[1][1] - q[0][1])
+        return q if turn > 0 else q[::-1]
+
+    A, poly = flat(ta), flat(tb)
+    for i in range(3):
+        x0, y0 = A[i]
+        x1, y1 = A[(i + 1) % 3]
+        nxt = []
+        for k in range(len(poly)):
+            p, q = poly[k], poly[(k + 1) % len(poly)]
+            dp = (x1 - x0) * (p[1] - y0) - (y1 - y0) * (p[0] - x0)
+            dq = (x1 - x0) * (q[1] - y0) - (y1 - y0) * (q[0] - x0)
+            if dp >= 0:
+                nxt.append(p)
+            if (dp > 0 > dq) or (dp < 0 < dq):
+                t = dp / (dp - dq)
+                nxt.append((p[0] + t * (q[0] - p[0]), p[1] + t * (q[1] - p[1])))
+        poly = nxt
+        if len(poly) < 3:
+            return 0.0, None
+    area = 0.5 * abs(sum(poly[k][0] * poly[(k + 1) % len(poly)][1] - poly[(k + 1) % len(poly)][0] * poly[k][1] for k in range(len(poly))))
+    cx, cy = sum(p[0] for p in poly) / len(poly), sum(p[1] for p in poly) / len(poly)
+    d = ta[0][0] * n[0] + ta[0][1] * n[1] + ta[0][2] * n[2]
+    return area, (e1[0] * cx + e2[0] * cy + n[0] * d, e1[1] * cx + e2[1] * cy + n[1] * d, e1[2] * cx + e2[2] * cy + n[2] * d)
+
+
+def _faults(pieces, tol=0.03, reach=0.02):
+    """Every way two faces can fight, for one layout's pieces [(name, triangles, polygons)].
+      SAME PLANE  two faces looking the same way (normals within 1 degree), their planes within
+                  `tol`, sharing area. Pairs inside one piece are counted too.
+      LYING ON    a face of one piece within `reach` of a face of another that it lies along
+                  (normals within 15 degrees, either way round), measured square to that face:
+                  'near' looks the same way, 'skim' is buried just under the other's surface,
+                  'slot' faces it across a slit, 'touch' lies exactly on it.
+    A face that CROSSES another squarely is not a fault: that is how a tongue enters a solid."""
+    from mathutils.bvhtree import BVHTree
+    P = np.concatenate([p for _, p, _ in pieces])
+    owner = np.concatenate([np.full(len(p), i) for i, (_, p, _) in enumerate(pieces)])
+    polygon = np.concatenate([g for _, _, g in pieces])
+    N = np.cross(P[:, 1] - P[:, 0], P[:, 2] - P[:, 0])
+    L = np.linalg.norm(N, axis=1)
+    live = L > 1e-10
+    N[live] /= L[live][:, None]
+    area = L / 2
+    lo, hi = P.min(axis=1) - tol, P.max(axis=1) + tol
+    cells = {}
+    clo, chi = np.floor(lo).astype(int), np.floor(hi).astype(int)
+    for i in np.nonzero(live)[0]:
+        for x in range(clo[i, 0], chi[i, 0] + 1):
+            for y in range(clo[i, 1], chi[i, 1] + 1):
+                for z in range(clo[i, 2], chi[i, 2] + 1):
+                    cells.setdefault((x, y, z), []).append(i)
+    cos1, cos15 = math.cos(math.radians(1.0)), math.cos(math.radians(15.0))
+    found = {}
+
+    def note(a, b, kind, face, amount, gap, at):
+        g = found.setdefault((pieces[a][0], pieces[b][0], kind), {"faces": set(), "area": 0.0, "gap": 0.0, "z": [1e9, -1e9], "r": [1e9, -1e9], "at": at})
+        g["faces"].add(face); g["area"] += amount; g["gap"] = max(g["gap"], gap)
+        g["z"] = [min(g["z"][0], at[2]), max(g["z"][1], at[2])]
+        r = math.hypot(at[0], at[1])
+        g["r"] = [min(g["r"][0], r), max(g["r"][1], r)]
+
+    seen = set()
+    for ids in cells.values():
+        if len(ids) < 2:
+            continue
+        I = np.array(ids)
+        ok = (N[I] @ N[I].T > cos1)
+        for ax in range(3):
+            ok &= (lo[I, ax][:, None] <= hi[I, ax][None, :]) & (lo[I, ax][None, :] <= hi[I, ax][:, None])
+        for a, b in np.argwhere(np.triu(ok, 1)):
+            i, j = int(I[a]), int(I[b])
+            if (i, j) in seen or (owner[i] == owner[j] and polygon[i] == polygon[j]):
+                continue
+            seen.add((i, j))
+            side = (P[j] - P[i, 0]) @ N[i]
+            if side.min() > tol or side.max() < -tol:
+                continue
+            shared, at = _shared(P[i].tolist(), P[j].tolist(), N[i].tolist())
+            if shared <= 1e-6:
+                continue
+            gap = abs(float((np.array(at) - P[j, 0]) @ N[j]))
+            if gap > tol:
+                continue
+            note(int(owner[i]), int(owner[j]), "same plane", (int(owner[i]), int(polygon[i]), int(owner[j]), int(polygon[j])), shared, gap, at)
+
+    starts = np.cumsum([0] + [len(p) for _, p, _ in pieces])
+    trees = [BVHTree.FromPolygons([Vector(v) for v in p.reshape(-1, 3)], [(3 * k, 3 * k + 1, 3 * k + 2) for k in range(len(p))]) for _, p, _ in pieces]
+    weights = ((1 / 3, 1 / 3, 1 / 3), (0.7, 0.15, 0.15), (0.15, 0.7, 0.15), (0.15, 0.15, 0.7))
+    for a in range(len(pieces)):
+        for b in range(len(pieces)):
+            if a == b:
+                continue
+            blo, bhi = pieces[b][1].reshape(-1, 3).min(axis=0) - reach, pieces[b][1].reshape(-1, 3).max(axis=0) + reach
+            for i in range(starts[a], starts[a + 1]):
+                if not live[i] or (hi[i] < blo).any() or (lo[i] > bhi).any():
+                    continue
+                n = Vector(N[i])
+                for w in weights:
+                    p = Vector(P[i, 0] * w[0] + P[i, 1] * w[1] + P[i, 2] * w[2])
+                    co, nb, _, dist = trees[b].find_nearest(p, reach)
+                    if co is None:
+                        continue
+                    v = p - co
+                    up = v.dot(nb)
+                    if (v - nb * up).length > 1e-4 or abs(n.dot(nb)) < cos15:
+                        continue
+                    kind = "near" if n.dot(nb) > 0 else ("slot" if up > 1e-5 else ("skim" if up < -1e-5 else "touch"))
+                    note(a, b, kind, (a, int(polygon[i])), area[i] / len(weights), dist, tuple(p))
+    return found
+
+
+def _corners(lay, coll):
+    """Corners of a ramp's end with no twin on its neighbour's edge, and the other way round."""
+    ends, mouths = joints(lay)
+    piece = {p["id"]: p for p in lay["pieces"]}
+    bad = 0
+
+    def top_corners(ob, radius, height, bearing, half):
+        co = np.empty(len(ob.data.vertices) * 3, dtype=np.float32); ob.data.vertices.foreach_get("co", co)
+        co = co.reshape(-1, 3)
+        keep = (np.abs(np.hypot(co[:, 0], co[:, 1]) - radius) < 2e-5) & (np.abs(co[:, 2] - height) < 2e-5)
+        away = np.abs((np.degrees(np.arctan2(co[:, 0], co[:, 1])) - bearing + 180.0) % 360.0 - 180.0)
+        return {tuple(v) for v in co[keep & (away < half + 1e-3)].tolist()}
+
+    for rid, pair in ends.items():
+        p = piece[rid]
+        for (nid, _), radius, height in zip(pair, (p["r0"], p["r1"]), (p["z0"], p["z1"])):
+            half = math.degrees(math.asin(p["width"] / 2 / radius))
+            a = top_corners(coll.objects["stage_%s_%s" % (lay["name"], rid)], radius, height, p["bearing"], half)
+            b = top_corners(coll.objects["stage_%s_%s" % (lay["name"], nid)], radius, height, p["bearing"], half)
+            bad += len(a ^ b)
+    return bad
+
+
+def joint_check(layout_colls, path=None):
+    """Print every fighting pair of faces in every layout. The count must be zero."""
+    lines, total = [], 0
+    kinds = ("same plane", "near", "skim", "slot", "touch")
+    for lay in DATA["layouts"]:
+        coll = layout_colls[lay["name"]]
+        pieces = [(ob.name.replace("stage_%s_" % lay["name"], ""),) + _soup(ob) for ob in coll.objects if ob.type == "MESH"]
+        found = _faults(pieces)
+        stray = _corners(lay, coll)
+        faces = sum(len(g["faces"]) for g in found.values())
+        total += faces + stray
+        lines.append("JOINTS %-10s fighting faces %4d   same plane %d, near %d, skim %d, slot %d, touch %d   ramp-end corners without a twin %d" % (
+            (lay["name"], faces) + tuple(sum(len(g["faces"]) for k, g in found.items() if k[2] == kind) for kind in kinds) + (stray,)))
+        for (a, b, kind), g in sorted(found.items()):
+            lines.append("   %-10s %-7s | %-7s faces %4d  area %8.1f cm2  apart up to %4.1f mm  z %6.2f..%6.2f  r %5.2f..%5.2f  e.g. (%.2f, %.2f, %.2f)" % (
+                (kind, a, b, len(g["faces"]), g["area"] * 1e4, g["gap"] * 1e3, g["z"][0], g["z"][1], g["r"][0], g["r"][1]) + tuple(g["at"])))
+    lines.append("JOINT FAULTS TOTAL %d" % total)
+    text = "\n".join(lines)
+    print(text)
+    if path:
+        with open(path, "w", encoding="utf-8", newline="\n") as f:
+            f.write(text + "\n")
+    return total
+
+
+# ---------------------------------------------------------------- the walking surface, measured
+def floor_np(lay, X, Y, ramps=True):
+    """`floor_height` for arrays: the height the layout data gives (nan off the stage) and the
+    index of the piece that gives it."""
+    R, B = np.hypot(X, Y), np.degrees(np.arctan2(X, Y))
+    best, who = np.full(X.shape, np.nan), np.full(X.shape, -1)
+    for i, p in enumerate(lay["pieces"]):
+        k = p["kind"]
+        if k == "ramp":
+            if not ramps:
+                continue
+            a = math.radians(p["bearing"])
+            al, sd = X * math.sin(a) + Y * math.cos(a), X * math.cos(a) - Y * math.sin(a)
+            m = (al > 0) & (np.abs(sd) <= p["width"] / 2) & (R >= p["r0"]) & (R <= p["r1"])
+            h = p["z0"] + (p["z1"] - p["z0"]) * (R - p["r0"]) / (p["r1"] - p["r0"])
+        else:
+            m = (R <= p["r"]) if k == "disc" else (R >= p["r0"]) & (R <= p["r1"])
+            if k == "arc":
+                m &= ((B - p["a0"]) % 360.0) <= p["a1"] - p["a0"]
+            h = np.full(X.shape, float(p["top"]))
+        take = m & (np.isnan(best) | (h > best))
+        best[take] = h[take]; who[take] = i
+    return best, who
+
+
+def collider_ramp(p):
+    """The top of a ramp's COLLIDER as ArenaStageMesh.Ramp builds it (8 columns, 6 rows of equal
+    true distance, one more row 4 cm past each end at that end's height, each cell split a-b-c,
+    a-c-d), in Blender's frame."""
+    across_n, along_n, seam = 8, 6, 0.04
+    a = math.radians(p["bearing"])
+    along, across = Vector((math.sin(a), math.cos(a), 0)), Vector((math.cos(a), -math.sin(a), 0))
+    near, far = max(0.0, p["r0"]), max(p["r1"], p["r0"] + 0.05)
+    half = max(p["width"], 0.2) * 0.5
+    grid = []
+    for k in range(across_n + 1):
+        x = -half + 2.0 * half * k / across_n
+        col = []
+        for j in range(along_n + 3):
+            t = min(1.0, max(0.0, (j - 1) / along_n))
+            dist = near + (far - near) * t
+            if j == 0:
+                dist = max(0.0, near - seam)
+            if j == along_n + 2:
+                dist = far + seam
+            reach = math.sqrt(max(0.0, dist * dist - x * x))
+            col.append(along * reach + across * x + Vector((0, 0, p["z0"] + (p["z1"] - p["z0"]) * t)))
+        grid.append(col)
+    tris = []
+    for k in range(across_n):
+        for j in range(along_n + 2):
+            q = (grid[k][j], grid[k][j + 1], grid[k + 1][j + 1], grid[k + 1][j])
+            tris += [(q[0], q[1], q[2]), (q[0], q[2], q[3])]
+    return tris
+
+
+def height_check(layout_colls, path=None, step=0.04, inset=0.015):
+    """Ray-cast the art's walking surface on a `step` grid over every layout (and every centimetre
+    along both sides of every joint) and compare it with the height the layout data gives and with
+    the collider's top. Points within `inset` of the stage's outer edge are left out: there the
+    art's chords and the collider's chords both sit a few millimetres inside the true arc."""
+    from mathutils.bvhtree import BVHTree
+    lines, worst_all = [], 0.0
+    down = Vector((0, 0, -1))
+    for lay in DATA["layouts"]:
+        coll = layout_colls[lay["name"]]
+        verts, tris = [], []
+        for ob in coll.objects:
+            if ob.type != "MESH":
+                continue
+            P, _ = _soup(ob)
+            base = len(verts)
+            verts += [Vector(v) for v in P.reshape(-1, 3)]
+            tris += [(base + 3 * k, base + 3 * k + 1, base + 3 * k + 2) for k in range(len(P))]
+        art = BVHTree.FromPolygons(verts, tris)
+        cverts, ctris = [], []
+        for p in lay["pieces"]:
+            if p["kind"] == "ramp":
+                for t in collider_ramp(p):
+                    ctris.append((len(cverts), len(cverts) + 1, len(cverts) + 2)); cverts += list(t)
+        col = BVHTree.FromPolygons(cverts, ctris) if ctris else None
+
+        g = np.arange(-22.5, 22.5, step) + step * 0.37
+        X, Y = [a.ravel() for a in np.meshgrid(g, g)]
+        xs, ys = [X], [Y]
+        for p in lay["pieces"]:                                   # the joints, a centimetre apart
+            if p["kind"] != "ramp":
+                continue
+            a = math.radians(p["bearing"])
+            s = np.arange(-p["width"] / 2 + 0.005, p["width"] / 2, 0.01)
+            for radius in (p["r0"], p["r1"]):
+                for d in (-0.05, -0.03, -0.01, -0.003, 0.003, 0.01, 0.03, 0.05):
+                    y = np.sqrt((radius + d) ** 2 - s * s)
+                    xs.append(y * math.sin(a) + s * math.cos(a)); ys.append(y * math.cos(a) - s * math.sin(a))
+        X, Y = np.concatenate(xs), np.concatenate(ys)
+        H, who = floor_np(lay, X, Y)
+        ok = ~np.isnan(H)
+        for k in range(8):
+            hh, _ = floor_np(lay, X + inset * math.cos(k * math.pi / 4), Y + inset * math.sin(k * math.pi / 4))
+            ok &= ~np.isnan(hh)
+        Hr, _ = floor_np(lay, X, Y, ramps=False)
+        stats = {i: {"n": 0, "lo": 0.0, "hi": 0.0, "holes": 0, "col": 0.0, "at": None, "cat": None} for i in range(len(lay["pieces"]))}
+        for i in np.nonzero(ok)[0]:
+            x, y = float(X[i]), float(Y[i])
+            st = stats[int(who[i])]
+            st["n"] += 1
+            hit = art.ray_cast(Vector((x, y, 30.0)), down)
+            if hit[0] is None:
+                st["holes"] += 1
+                continue
+            d = hit[0].z - float(H[i])
+            if d < st["lo"] or d > st["hi"]:
+                if abs(d) > max(-st["lo"], st["hi"]):
+                    st["at"] = (x, y, hit[0].z)
+                st["lo"], st["hi"] = min(st["lo"], d), max(st["hi"], d)
+            hc = None if np.isnan(Hr[i]) else float(Hr[i])
+            if col is not None:
+                chit = col.ray_cast(Vector((x, y, 30.0)), down)
+                if chit[0] is not None and (hc is None or chit[0].z > hc):
+                    hc = chit[0].z
+            if hc is not None and abs(hit[0].z - hc) > st["col"]:
+                st["col"], st["cat"] = abs(hit[0].z - hc), (x, y, hit[0].z)
+        worst = max(max(-s["lo"], s["hi"]) for s in stats.values())
+        worst_col = max(s["col"] for s in stats.values())
+        holes = sum(s["holes"] for s in stats.values())
+        worst_all = max(worst_all, worst, worst_col, 9.99 if holes else 0.0)
+        lines.append("HEIGHT %-10s samples %7d   art against the data: worst %5.1f mm   art against the collider: worst %5.1f mm   rays that found no art: %d" % (
+            lay["name"], sum(s["n"] for s in stats.values()), worst * 1e3, worst_col * 1e3, holes))
+        for i, p in enumerate(lay["pieces"]):
+            s = stats[i]
+            lines.append("   %-6s %-4s samples %7d  art - data %+6.1f..%+5.1f mm%s  |art - collider| %5.1f mm%s  no art %d" % (
+                p["id"], p["kind"], s["n"], s["lo"] * 1e3, s["hi"] * 1e3,
+                "" if s["at"] is None or max(-s["lo"], s["hi"]) < 0.002 else " at (%.2f, %.2f, %.2f)" % s["at"],
+                s["col"] * 1e3, "" if s["cat"] is None or s["col"] < 0.002 else " at (%.2f, %.2f, %.2f)" % s["cat"], s["holes"]))
+    lines.append("HEIGHT WORST %.1f mm (the limit is 15.0)" % (worst_all * 1e3))
+    text = "\n".join(lines)
+    print(text)
+    if path:
+        with open(path, "w", encoding="utf-8", newline="\n") as f:
+            f.write(text + "\n")
+    return worst_all
+
+
 # ---------------------------------------------------------------- checks
 def report(layout_colls, prop_coll, path):
     lines = []
@@ -643,13 +1086,31 @@ def shoot(name, loc, target, lens=35.0, ortho=None):
     bpy.data.objects.remove(cam)
 
 
+EYE = 1.7                          # a player's eye over the deck
+JOINT_SHOTS = (                    # layout, name, eye, target, lens: every joint kind at a glancing angle, 4 to 20 m away
+    ("plaza", "plaza_drum", polar(5.0, 12, EYE), polar(12.5, 0, 0), 35),
+    ("plaza", "plaza_walk", polar(15.25, -28, EYE), polar(12.5, 0, 0), 35),
+    ("plaza", "plaza_link", polar(15.25, 22, EYE), polar(17.75, 45, 0), 35),
+    ("plaza", "plaza_across", polar(20.0, 45, EYE), polar(0, 0, 0), 35),
+    ("plaza", "plaza_far", polar(2.0, 180, EYE), polar(12.5, 0, 0), 50),
+    ("hukay", "hukay_up", polar(3.0, 190, -1.2 + EYE), polar(6.6, 0, -0.6), 35),
+    ("hukay", "hukay_down", polar(11.5, 12, EYE), polar(5.2, 0, -1.2), 35),
+    ("hukay", "hukay_side", polar(10.5, 45, EYE), polar(6.6, 0, -0.6), 35),
+    ("hukay", "hukay_link", polar(10.5, 62, EYE), polar(14.25, 45, 0.5), 35),
+    ("tore", "tore_ramp", polar(10.5, 25, EYE), polar(6.3, 0, 0.75), 35),
+    ("entablado", "entablado_ramp", polar(2.0, 200, EYE), polar(5.7, 50, 0.6), 35),
+)
+
+
 def main():
-    version, render = "v1", True
+    version, render, check = "v1", True, True
     for a in sys.argv:
         if a.startswith("--version="):
             version = a.split("=", 1)[1]
         if a == "--no-render":
             render = False
+        if a == "--no-check":
+            check = False
     bpy.ops.wm.read_factory_settings()
     for ob in list(bpy.data.objects):
         bpy.data.objects.remove(ob)
@@ -668,12 +1129,13 @@ def main():
         name = lay["name"]
         c = bpy.data.collections.new("stage_%s" % name); root.children.link(c)
         pc = bpy.data.collections.new("stage_%s_props" % name); c.children.link(pc)
+        _, mouths = joints(lay)
         for p in lay["pieces"]:
             oname = "stage_%s_%s" % (name, p["id"])
             if p["kind"] in ("disc", "ring"):
-                ob = build_round(oname, p, c, mark=(p["id"] == "drum"))
+                ob = build_round(oname, p, c, mouths, mark=(p["id"] == "drum"))
             elif p["kind"] == "arc":
-                ob = build_arc(oname, p, c)
+                ob = build_arc(oname, p, c, mouths)
             else:
                 ob = build_ramp(oname, p, c)
             dress(ob, p)
@@ -695,6 +1157,10 @@ def main():
 
     os.makedirs(LOGS, exist_ok=True)
     report(colls, prop_coll, os.path.join(LOGS, "stage_%s_report.txt" % version))
+    if check:
+        faults = joint_check(colls, os.path.join(LOGS, "stage_%s_joints.txt" % version))
+        worst = height_check(colls, os.path.join(LOGS, "stage_%s_heights.txt" % version))
+        print("STAGE_CHECKS joint faults %d, worst height difference %.1f mm" % (faults, worst * 1e3))
 
     def show(name, holo_on=False, props_on=True, drone_at=None, solid=True):
         for n, c in colls.items():
@@ -753,6 +1219,9 @@ def main():
         show("tore")
         shoot(pfx + "ramp_joint", (5.2, 9.6, 3.1), (0.6, 6.4, 0.7), lens=30)
         shoot(pfx + "ramp_side", (7.5, 5.9, 0.9), (0.0, 6.6, 0.6), lens=30)
+        for lay_name, tag, e, t, lens in JOINT_SHOTS:             # the joints from a player's eye
+            show(lay_name)
+            shoot(pfx + "joint_" + tag, e, t, lens=lens)
         show("plaza")
         j = polar(8.0, 120, 0)
         shoot(pfx + "prop_jump", (j.x + 2.2, j.y - 2.6, 1.7), (j.x, j.y, 0.55), lens=35)
@@ -777,6 +1246,10 @@ def main():
         shoot(pfx + "solid_under", (10, -15, -6), (0, 0, 0), lens=28)
         show("entablado")
         shoot(pfx + "solid_entablado", (20, -24, 16), (0, 1, 0.5), lens=30)
+        for lay_name, tag, e, t, lens in JOINT_SHOTS:
+            if tag in ("plaza_drum", "plaza_link", "hukay_up", "hukay_down"):
+                show(lay_name, props_on=False)
+                shoot(pfx + "solid_joint_" + tag, e, t, lens=lens)
         scene.render.engine = eevee
 
     show("plaza")

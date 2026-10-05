@@ -982,6 +982,19 @@ namespace TumbangPreso
         }
 
         /// <summary>
+        /// The same return, to a place the MAP chose rather than to the owner's mark: the Arena sets
+        /// a slipper that left its stage back down at the nearest standable point to where it left
+        /// (`Map.ArenaFallRecovery`). Only that map calls it. `Land` still applies its own rules to
+        /// the resting place (the walls, and a slipper out of its owner's reach goes to the owner).
+        /// </summary>
+        public void HostFinishMapRecoveryAt(Vector3 at)
+        {
+            if(!NetAuthority.ShouldResolve())return;
+            transform.position=at;gameObject.SetActive(true);
+            Land(false,FindGroundY(at,Balance.SlipperRestHeight+1f));
+        }
+
+        /// <summary>
         /// Restores authoritative slipper state for a late join without firing pickup sounds,
         /// animation, scoring, or throw feedback. Both halves of the carrier relationship are
         /// rewritten so a reclaimed player never has a slipper visually in hand while the

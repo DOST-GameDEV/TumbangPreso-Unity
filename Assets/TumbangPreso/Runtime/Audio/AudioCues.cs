@@ -106,6 +106,12 @@ namespace TumbangPreso.Audio
                 { "sfx_arena_alarm", -9.0f }, { "sfx_arena_undock", -4.0f }, { "sfx_arena_thruster", -11.0f },
                 { "sfx_arena_lock", -3.0f }, { "sfx_arena_reveal", -2.0f }, { "sfx_arena_crowd_roar", -10.0f },
                 { "sfx_arena_pyro", -7.0f }, { "sfx_arena_drone_ping", -7.0f }, { "sfx_arena_drone_set", -5.0f },
+                // The Arena's slipper balloon (`tools/synth_arena_balloon_sfx.py`). The pop is a once-a-match
+                // event and is mixed as one; a squeak and the boing sound together on a hit, so each sits under
+                // an event; the creak and the hiss are beds.
+                { "sfx_arena_balloon_fly", -8.0f }, { "sfx_arena_balloon_squeak_a", -6.0f }, { "sfx_arena_balloon_squeak_b", -6.0f },
+                { "sfx_arena_balloon_squeak_c", -6.0f }, { "sfx_arena_balloon_boing", -5.0f }, { "sfx_arena_balloon_creak", -10.0f },
+                { "sfx_arena_balloon_pop", -1.0f }, { "sfx_arena_balloon_hiss", -8.0f }, { "sfx_arena_slipper_return", -7.0f },
                 // Amihan (2026-09-25, `tools/build_amihan_audio.py`). The gather is a sustained
                 // pressure rise under 2.5 s of telegraph and is mixed as a bed; the release is the
                 // loudest moment of her kit and is mixed as an ultimate payload.
@@ -299,6 +305,11 @@ namespace TumbangPreso.Audio
             // `ArenaAmbience`), never through `NetCue`: nothing about them is on the wire.
             "sfx_arena_alarm", "sfx_arena_undock", "sfx_arena_thruster", "sfx_arena_lock", "sfx_arena_reveal",
             "sfx_arena_crowd_roar", "sfx_arena_pyro", "sfx_arena_drone_ping", "sfx_arena_drone_set",
+            // The Arena's slipper balloon and a slipper set back on the stage (`Map.ArenaBalloon`,
+            // `Map.ArenaFallRecovery`): each peer plays them for itself, never through `NetCue`.
+            "sfx_arena_balloon_fly", "sfx_arena_balloon_squeak_a", "sfx_arena_balloon_squeak_b", "sfx_arena_balloon_squeak_c",
+            "sfx_arena_balloon_boing", "sfx_arena_balloon_creak", "sfx_arena_balloon_pop", "sfx_arena_balloon_hiss",
+            "sfx_arena_slipper_return",
 
             // The shove has a dedicated cloth/rubber cue; body contact retains its alias.
             "hit_body", "bump_swing",
