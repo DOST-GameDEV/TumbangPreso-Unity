@@ -115,8 +115,10 @@ namespace TumbangPreso.Map
         private const float FloodRadius = 151.3f, FloodHeight = 66.75f, SpotRadius = 160.0f, SpotHeight = 62.0f;
         private static readonly float[] FloodBearing = { -27.0f, -17.0f, -7.125f, 7.125f, 17.0f, 27.0f };
         private static readonly Color FloodColour = new Color(0.86f, 0.93f, 1.0f);
-        /// <summary>Each seat's place across the tunnel (the taya's seat and the next nearest the middle), and how far ahead or behind the line.</summary>
-        private static readonly float[] LaneX = { -0.475f, 0.475f, -1.425f, 1.425f }, LaneZ = { 0.15f, -0.12f, -0.32f, 0.2f };
+        /// <summary>Each seat's place across the tunnel and how far ahead of the line. TWO FILES OF TWO (owner,
+        /// 2026-10-05, of four abreast: "the hall is too crowded. split the characters into 2 lines like the
+        /// bluelock reference"): the taya's seat leads the left file, the camera follows the rear pair.</summary>
+        private static readonly float[] LaneX = { -0.85f, 0.85f, -0.85f, 0.85f }, LaneZ = { 1.9f, 1.65f, 0.1f, -0.12f };
         private const int Seats = Core.Balance.PlayerCount, MaxTicks = 40;
         private const string WelcomeLine = "arena_welcome";
 
@@ -418,7 +420,7 @@ namespace TumbangPreso.Map
                 var root = _root[s];
                 if (body == null || root == null) continue;
 
-                // Shoulder to shoulder in the tunnel, spreading once they are out on the turf.
+                // Two files in the tunnel, spreading once they are out on the turf.
                 float z = line + LaneZ[s];
                 float spread = Mathf.Lerp(1.0f, 1.9f, Smooth((z - MouthZ - 1.0f) / 6.0f));
                 float phase = (walked / Stride + s * 0.31f) * Mathf.PI * 2.0f;

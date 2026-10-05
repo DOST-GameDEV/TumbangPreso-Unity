@@ -31,6 +31,13 @@ namespace TumbangPreso.Map
     ///   whether anything stands between (`Seen` for the stage's bodies and decks,
     ///   `OverTheBowl` for a lamp outside the stadium).
     ///
+    ///   ⚠️ THE LOOK WAS REDRAWN (owner, 2026-10-05, with a photograph of the sun through a
+    ///   windscreen: "the glare looks weird. i want something like that. same for the
+    ///   spotlights"). What the photograph has and the first version did not: a white bloom that
+    ///   burns out the middle, a STARBURST of many thin rays of uneven length, a few of them
+    ///   tinted, and a scatter of small coloured ghosts across the lens. `Burst` draws the rays
+    ///   at the lamp, `Flare` the ghosts; the streak, star and halo stay, quieter.
+    ///
     ///   The beams themselves are `ArenaAmbience`'s own and are not drawn here: the owner
     ///   kept them ("the old spotlight beam was good, i mean i wanted a camera glare when iit
     ///   was pointed at you"). What the LENS does (`Flare`) is the part he asked for.
@@ -125,8 +132,12 @@ namespace TumbangPreso.Map
 
             fx.DrawBillboard(ArenaFx.Cell.Dot, lamp, core, ArenaFx.White, glare);
             fx.DrawBillboard(ArenaFx.Cell.Dot, lamp, unit * 0.11f, colour, 0.75f * glare);
+            // The burn: a white bloom over the lamp and the lamp's colour wide round it.
+            fx.DrawBillboard(ArenaFx.Cell.Dot, lamp, unit * 0.26f, ArenaFx.White, 0.55f * glare * glare);
+            fx.DrawBillboard(ArenaFx.Cell.Dot, lamp, unit * 0.62f, colour, 0.16f * glare);
+            if (glare > 0.1f) Burst(fx, lamp, unit, colour, glare, rich ? 14 : 6);
             // The anamorphic streak: the star's cell pulled long and thin across the frame.
-            fx.DrawQuad(ArenaFx.Cell.Star, lamp, _right * (unit * (0.25f + 0.55f * glare)), _up * (unit * 0.085f), colour, 0.9f * glare);
+            fx.DrawQuad(ArenaFx.Cell.Star, lamp, _right * (unit * (0.25f + 0.55f * glare)), _up * (unit * 0.085f), colour, 0.6f * glare);
 
             if (rich)
             {
@@ -139,6 +150,30 @@ namespace TumbangPreso.Map
             }
 
             return amount;
+        }
+
+        private static readonly Color[] Tints = { ArenaFx.Gold, ArenaFx.Magenta, ArenaFx.Cyan, ArenaFx.Violet, ArenaFx.Lime, ArenaFx.Teal };
+
+        /// <summary>
+        /// THE STARBURST: `rays` thin lines through the lamp (each is two opposite rays), at angles
+        /// and lengths that are the lamp's own (hashed from where it is, so no two lamps match and
+        /// none shimmers), every third one tinted. They grow with the glare.
+        /// </summary>
+        private static void Burst(ArenaFx fx, Vector3 lamp, float unit, Color colour, float glare, int rays)
+        {
+            float seed = Mathf.Repeat(lamp.x * 0.137f + lamp.z * 0.291f + lamp.y * 0.053f, 1.0f);
+            float grow = 0.35f + 0.65f * glare;
+            for (int i = 0; i < rays; i++)
+            {
+                float h = Mathf.Repeat(seed * 7.31f + i * 0.618034f, 1.0f), k = Mathf.Repeat(h * 5.77f + 0.31f, 1.0f);
+                float angle = (i + 0.7f * h) * Mathf.PI / rays + seed * Mathf.PI;
+                Vector3 along = _right * Mathf.Cos(angle) + _up * Mathf.Sin(angle), across = _up * Mathf.Cos(angle) - _right * Mathf.Sin(angle);
+                float length = unit * (0.22f + 0.62f * k * k) * grow, width = unit * (0.006f + 0.008f * h);
+                bool tinted = i % 3 == 2;
+                fx.DrawQuad(ArenaFx.Cell.Streak, lamp, across * width, along * length,
+                            tinted ? Tints[(i / 3 + (int)(seed * 6.0f)) % Tints.Length] : i % 2 == 0 ? ArenaFx.White : colour,
+                            (tinted ? 0.34f : 0.5f) * glare * (0.55f + 0.45f * h));
+            }
         }
 
         /// <summary>
@@ -160,9 +195,17 @@ namespace TumbangPreso.Map
             // The ghosts mirror a point no further out than just past the edge.
             float pull = out_ > 1.15f ? 1.15f / out_ : 1.0f;
             float gx = x * pull, gy = y * pull;
-            Ghost(fx, ArenaFx.Cell.ThinRing, gx, gy, -0.38f, 0.10f, colour, 0.08f * flare * flash);
-            Ghost(fx, ArenaFx.Cell.Dot, gx, gy, -0.72f, 0.05f, ArenaFx.Cyan, 0.07f * flare * flash);
-            Ghost(fx, ArenaFx.Cell.ThinRing, gx, gy, 0.48f, 0.06f, ArenaFx.Violet, 0.06f * flare * flash);
+            // The ghosts: small coloured discs strung along the line through the middle of the
+            // screen and a little off it, as the photograph has them, and one thin ring.
+            float lit = flare * flash;
+            Ghost(fx, ArenaFx.Cell.ThinRing, gx, gy, -0.38f, 0.10f, colour, 0.08f * lit);
+            Ghost(fx, ArenaFx.Cell.Disc, gx, gy, -1.05f, 0.055f, ArenaFx.Magenta, 0.10f * lit, 0.05f);
+            Ghost(fx, ArenaFx.Cell.Disc, gx, gy, -0.78f, 0.030f, ArenaFx.Lime, 0.12f * lit, -0.07f);
+            Ghost(fx, ArenaFx.Cell.Disc, gx, gy, -0.55f, 0.042f, ArenaFx.Gold, 0.10f * lit, 0.03f);
+            Ghost(fx, ArenaFx.Cell.Disc, gx, gy, -0.22f, 0.022f, ArenaFx.Cyan, 0.13f * lit, -0.04f);
+            Ghost(fx, ArenaFx.Cell.Disc, gx, gy, 0.30f, 0.026f, ArenaFx.Violet, 0.12f * lit, 0.06f);
+            Ghost(fx, ArenaFx.Cell.Disc, gx, gy, 0.52f, 0.048f, ArenaFx.Teal, 0.09f * lit, -0.05f);
+            Ghost(fx, ArenaFx.Cell.Disc, gx, gy, 0.74f, 0.020f, ArenaFx.Gold, 0.13f * lit, 0.08f);
             _veil += flare;
             _veilAt += new Vector2(gx, gy) * flare;
 
@@ -187,9 +230,10 @@ namespace TumbangPreso.Map
 
         /// <summary>A ghost: on the line from the lamp through the middle of the screen, `along`
         /// of the way (negative is the far side of the middle), `size` of the frame's half height.</summary>
-        private static void Ghost(ArenaFx fx, ArenaFx.Cell cell, float x, float y, float along, float size, Color colour, float alpha)
+        private static void Ghost(ArenaFx fx, ArenaFx.Cell cell, float x, float y, float along, float size, Color colour, float alpha, float off = 0.0f)
         {
-            Vector3 at = _eye + (_forward + _right * (x * along * _tanX) + _up * (y * along * _tanY)) * Lens;
+            // `off`: a step sideways from the line, in half frames, so the ghosts are scattered and not strung on a wire.
+            Vector3 at = _eye + (_forward + _right * ((x * along - y * off) * _tanX) + _up * ((y * along + x * off) * _tanY)) * Lens;
             fx.DrawBillboard(cell, at, Lens * _tanY * size * 2.0f, colour, alpha);
         }
 
@@ -197,7 +241,7 @@ namespace TumbangPreso.Map
         /// The veil the frame's facing lamps leave over the picture: one soft quad just in
         /// front of the eye, leaning toward where they are. `level` is the caller's own
         /// envelope (it is brief); the Flash intensity setting scales it, and reduced effects
-        /// with it. Never more than 9 per cent of white at its middle, and nothing at its rim.
+        /// with it. Never more than 10 per cent of white at its middle, and nothing at its rim.
         /// </summary>
         public static void Veil(ArenaFx fx, float level)
         {
@@ -206,7 +250,7 @@ namespace TumbangPreso.Map
             _veil = 0.0f; _veilAt = Vector2.zero;
             if (!_has || veil <= 0.0f || level <= 0.0f) return;
 
-            float alpha = Mathf.Min(0.06f, 0.022f * veil) * Mathf.Clamp01(level) * Settings.SettingsStore.Current.EffectiveFlashIntensity;
+            float alpha = Mathf.Min(0.10f, 0.035f * veil) * Mathf.Clamp01(level) * Settings.SettingsStore.Current.EffectiveFlashIntensity;
             if (alpha <= 0.003f) return;
             Vector3 centre = _eye + (_forward + _right * (at.x * 0.45f * _tanX) + _up * (at.y * 0.45f * _tanY)) * Lens;
             fx.DrawBillboard(ArenaFx.Cell.Dot, centre, Lens * _tanX * 4.2f, ArenaFx.White, alpha);
