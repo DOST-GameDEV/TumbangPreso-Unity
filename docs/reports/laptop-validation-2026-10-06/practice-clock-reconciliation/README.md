@@ -1,0 +1,9 @@
+# Reconcile the training clock before changing it
+
+PRACTICE-BOT-RESUME-1002 still has scoped operator acceptance open. Existing normal Practice evidence already qualifies non-default bot seats, Idle/Active, removal/re-add, resumed planner movement, mouse throw and bot-victim contact. Its static01:30 display is recorded honestly and was not called a ticking-clock pass.
+
+Current RoundDirector.FixedUpdate first advances its internal clock, then explicitly sets TimeLeft back to RoundLength and returns for GuidedTutorial or active PracticeRange. The comment says the lesson must not end halfway through because90seconds passed. PracticeRange.SetDefender applies an active round snapshot and ResetRange makes participating bodies RoundActive again. Thus the free training session intentionally retains the displayed round length while verbs and their actual timers can run. A static01:30 training HUD is not by itself a round-clock bug or a reason to retune the range.
+
+This source reconciliation does not prove held-charge interruption, contact-window/cooldown progression after pause, physical input hardware, other maps or full bot-resume acceptance. Those underlying action timers remain separate from the intentionally reset training round display. Existing qualified LUNGE-DISABLE-LIFETIME-1002 evidence and normal operator observations are reused where unchanged; the flawed retired practice fixture is not revived. No production code, Core rules, HUD design, timing or private artwork is changed.
+
+Next gameplay work should inspect the actual carrier/combat interruption consumers and current operator coverage, then exercise a specific unresolved transition. It should not demand a finite scored-round countdown from an intentional free practice range or repeat unchanged menu/bot controls merely to collect more screenshots.
