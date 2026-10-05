@@ -204,6 +204,23 @@ namespace TumbangPreso.UI.Hub
                 { Fail("The match did not finish preparing."); yield break; }
                 yield return null;
             }
+            // ⚠️ THE LIVE ROAD CATCHES UP BEHIND THE CURTAIN (owner, 2026-10-04: the game is
+            // "primarily not laggy for the server host but it is for players joining too").
+            // A map whose traffic hits players (`KantoTraffic` § THE LIVE ROAD) steps its street
+            // from the shared clock, and a peer that arrives late has minutes of it to step
+            // through. That work belongs here, where nobody is playing, not in the first seconds
+            // of the round. Bounded: a street that is not caught up in six seconds is revealed
+            // as it is and finishes in the open, in small slices.
+            float roadUntil = Time.realtimeSinceStartup + 6f;
+            KantoTraffic.Covered = true;
+            // One frame first: the road reads the clock in its own Update.
+            yield return null;
+            while (KantoTraffic.CatchingUp && Time.realtimeSinceStartup < roadUntil)
+            {
+                if (SceneManager.GetActiveScene() != destination) { KantoTraffic.Covered = false; Cancel(); yield break; }
+                yield return null;
+            }
+            KantoTraffic.Covered = false;
             shown = Mathf.Max(shown, 75f);
             _percent.text = "75%";
 
@@ -261,7 +278,8 @@ namespace TumbangPreso.UI.Hub
             ReleasePrewarm();
             ScreenTakeover.Unregister(this);
             if (_canvas != null) Destroy(_canvas.gameObject);
-            if (_current == this) _current = null;
+            // A curtain destroyed while it waited on the live road must not leave the road thinking it is covered.
+            if (_current == this) { _current = null; KantoTraffic.Covered = false; }
         }
 
         private void ReleasePrewarm()

@@ -10,6 +10,11 @@ namespace TumbangPreso.Visual
         private readonly Vector3[] _edgeRestPositions=new Vector3[7];
         private readonly Quaternion[] _edgeRestRotations=new Quaternion[7];
         private Vector3 _edgeLeftPalm,_edgeRightPalm;
+        // ⚠️ A RIG WITH ELBOWS (the redesign prototypes) HANGS BY ITS HANDS, NOT ITS ELBOWS. Its hand is on `forearm-<side>`,
+        // so the palm is measured there and carried into the upper arm's space through the two bind poses, and the forearm is
+        // held straight (its bind rotation) for as long as the grab lasts. Null on the seven-bone cast.
+        private readonly Transform[] _edgeFore=new Transform[2];
+        private readonly Quaternion[] _edgeForeBind=new Quaternion[2],_edgeForeRest=new Quaternion[2];
         private bool _edgePoseApplied,_edgePlaying;
         public float EdgeGripError {get;private set;}
         public bool EdgeRigReady=>_edgeBones!=null;
@@ -26,19 +31,33 @@ namespace TumbangPreso.Visual
             foreach(var skin in _motor.GetComponentsInChildren<SkinnedMeshRenderer>(true))
             {
                 if(skin.sharedMesh==null||!skin.sharedMesh.isReadable)continue;
+                var binds=skin.sharedMesh.bindposes;
                 for(int i=0;i<skin.bones.Length;i++)
                 {
-                    if(skin.bones[i]==bones[3]&&CharacterVisual.PalmCentre(skin,i,out var l)){_edgeLeftPalm=l;left=true;}
-                    if(skin.bones[i]==bones[4]&&CharacterVisual.PalmCentre(skin,i,out var r)){_edgeRightPalm=r;right=true;}
+                    if(skin.bones[i]==bones[3]&&EdgePalm(skin,binds,i,"left",0,out var l)){_edgeLeftPalm=l;left=true;}
+                    if(skin.bones[i]==bones[4]&&EdgePalm(skin,binds,i,"right",1,out var r)){_edgeRightPalm=r;right=true;}
                 }
             }
             if(!left||!right)return false;
             _edgeBones=bones;return true;
         }
 
+        /// <summary>One side's palm in its UPPER arm's space, with the arm straight. `arm` is that arm bone's index.</summary>
+        private bool EdgePalm(SkinnedMeshRenderer skin,Matrix4x4[] binds,int arm,string side,int slot,out Vector3 palm)
+        {
+            _edgeFore[slot]=null;
+            if(!CharacterVisual.HandBone(skin,side,out int hand,out palm))return false;
+            if(hand==arm||binds==null||hand>=binds.Length||arm>=binds.Length)return true;
+            var foreToArm=binds[arm]*binds[hand].inverse;
+            palm=foreToArm.MultiplyPoint3x4(palm);
+            _edgeFore[slot]=skin.bones[hand];_edgeForeBind[slot]=foreToArm.rotation;
+            return true;
+        }
+
         private void RestoreEdgeRecoveryPose()
         {
             if(!_edgePoseApplied||_edgeBones==null)return;
+            for(int i=0;i<2;i++)if(_edgeFore[i]!=null)_edgeFore[i].localRotation=_edgeForeRest[i];
             for(int i=0;i<_edgeBones.Length;i++)if(_edgeBones[i]!=null)
             {_edgeBones[i].localPosition=_edgeRestPositions[i];_edgeBones[i].localRotation=_edgeRestRotations[i];}
             _edgePoseApplied=false;
@@ -62,8 +81,11 @@ namespace TumbangPreso.Visual
             if(_motor==null||!_motor.IsEdgeRecovering||!ResolveEdgeRig())return;
             for(int i=0;i<7;i++){_edgeRestPositions[i]=_edgeBones[i].localPosition;_edgeRestRotations[i]=_edgeBones[i].localRotation;}
             _edgePoseApplied=true;
+            if(_motor.EdgeKind==EdgeRecoveryKind.Drone){ApplyDroneCarryPose();return;}
             float phase=_motor.EdgePhaseRatio;
             float reach=_motor.EdgePhase==0?Mathf.SmoothStep(0,1,phase):1;
+            for(int i=0;i<2;i++)if(_edgeFore[i]!=null)
+            {_edgeForeRest[i]=_edgeFore[i].localRotation;_edgeFore[i].localRotation=Quaternion.Slerp(_edgeForeRest[i],_edgeForeBind[i],reach);}
             float pull=_motor.EdgePhase==2?phase:0;
             float release=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(.58f,.96f,pull));
             float contact=reach*release;
@@ -99,6 +121,29 @@ namespace TumbangPreso.Visual
             root.position=Vector3.Lerp(rootBase,root.position,contact);
             left.rotation=Quaternion.Slerp(leftBase,left.rotation,contact);right.rotation=Quaternion.Slerp(rightBase,right.rotation,contact);
             EdgeGripError=Mathf.Max(Vector3.Distance(left.TransformPoint(_edgeLeftPalm),leftTarget),Vector3.Distance(right.TransformPoint(_edgeRightPalm),rightTarget));
+        }
+
+        // Carried by the Arena's drone: no lip and no grip, the body hangs limp from its back.
+        // Slumped forward, head down, limbs trailing and swaying a little. It eases in over the
+        // catch and stands back up over the end of the set-down, so the feet land straight.
+        private void ApplyDroneCarryPose()
+        {
+            EdgeGripError=0;
+            float ratio=_motor.EdgePhaseRatio;
+            float limp=_motor.EdgePhase==0?Mathf.SmoothStep(0,1,ratio)
+                :_motor.EdgePhase==2?1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(.45f,1,ratio)):1;
+            var across=_motor.transform.right;var along=_motor.transform.forward;
+            float sway=Mathf.Sin(Time.time*2.6f);
+            _edgeBones[1].rotation=Quaternion.AngleAxis((16+sway*2)*limp,across)*_edgeBones[1].rotation;
+            _edgeBones[2].rotation=Quaternion.AngleAxis(24*limp,across)*_edgeBones[2].rotation;
+            for(int i=0;i<2;i++)
+            {
+                float side=i==0?1:-1;
+                float swing=Mathf.Sin(Time.time*2.6f+i*1.3f);
+                // Arms fall a little away from the sides; legs trail behind the travel.
+                _edgeBones[3+i].rotation=Quaternion.AngleAxis(side*9*limp,along)*Quaternion.AngleAxis((-8+swing*6)*limp,across)*_edgeBones[3+i].rotation;
+                _edgeBones[5+i].rotation=Quaternion.AngleAxis((12+swing*7)*limp,across)*_edgeBones[5+i].rotation;
+            }
         }
 
         private static void AimPalm(Transform bone,Vector3 palm,Vector3 target)

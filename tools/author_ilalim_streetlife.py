@@ -78,13 +78,13 @@ final list, the checks and the triangle count):
     one-way Padre Faura faces west), linked from vehicles.blend: five on the west arm's north kerb
     (the narrow ones nearest the corner), nine along both kerbs of the east arm with a tricycle
     line at the corner, three in the PGH parking behind the campus fence (noses to the fence, seen
-    through the pickets), a tricycle on the service drive, and two PEDICABS modelled here (a
+    through the pickets; the van stands clear of the court lot's fence at y 3.4), a tricycle on the service drive, and two PEDICABS modelled here (a
     chunky bicycle with a roofed sidecar, disc wheels, no spokes, a painted KUYA BOY panel), one
     in the tricycle line and one on the service drive.
   * TARPAULINS, 5, tied at their grommets by chunky rope to the fence rails or into the wall,
     each in a pillar gap found by rays at rail height and 4.5 cm in front of the rails: the
-    birthday tarp on the PGH fence north of the court and the anti-rabies tarp south of it (both
-    face the court), the barangay fiesta greeting (2.4 x 0.8) on the PGH fence along Padre Faura,
+    birthday tarp on the court lot's back fence (x -35.0), facing east into the court, the
+    anti-rabies tarp on the PGH fence along Taft south of the old court, the barangay fiesta greeting (2.4 x 0.8) on the PGH fence along Padre Faura,
     the graduation tarp on the Supreme Court's white fence, and the councillor's Christmas
     greeting on the Astral podium's wall. The ties are their own objects ("<tarp> ties").
   * NOTICES, 4, strapped to poles: the bedspace board on the pole at (26, 23.7) turned toward the
@@ -139,6 +139,11 @@ RIM = (455, 40)
 
 # The hard rules.
 PLAY_X, PLAY_Y = 11.0, 16.5
+# The court on the campus lot (owner, 2026-10-04: "can we move the play area to this open space?"),
+# the street kit's numbers: its centre, the keep-clear half width (nothing but chalk stands inside
+# it), and the lot's new fence lines (its back, x -35.0, and its south side, y 3.4).
+COURT, KEEP_CLEAR = (-23.0, 14.2), 9.5
+LOT_WEST, LOT_SOUTH = -35.0, 3.4
 TAFT_LANES_X = 6.65
 LOT = (11.8, 22.8, 38.3, 47.3)
 BUNTING_MIN_Z = 4.5
@@ -1057,8 +1062,9 @@ class Kit:
             # Heading west turns the box: local +y becomes world -y.
             y = ys + hi + gap if side == "s" else yn + lo - gap
             park(name, x, y, west)
-        # PGH parking behind the campus fence, noses to the fence, seen through the pickets.
-        for name, y in (("veh_sedan_grey", -6.4), ("veh_taxi", -3.4), ("veh_uv_express", 2.8)):
+        # PGH parking behind the campus fence, noses to the fence, seen through the pickets. The
+        # van stood at y 2.8: the court lot's south fence is at y 3.4 now, so it parks at 0.6.
+        for name, y in (("veh_sedan_grey", -6.4), ("veh_taxi", -3.4), ("veh_uv_express", 0.6)):
             park(name, -16.6, y, 0.0)
         # The service drive east of Taft: a tricycle waiting by the TODA board.
         park("veh_tricycle", 14.3, -38.9, west)
@@ -1104,15 +1110,22 @@ class Kit:
 
     def tarps(self):
         ctx = self.ctx
-        # The PGH fence along Taft (rails at x about -11.2), facing the court, north and south of it.
-        for name, tex, want, w, h, lo, hi in (("life_tarp_birthday", "life_tarp_birthday", 20.3, 2.4, 1.2, 17.6, 23.5),
-                                              ("life_tarp_rabies", "life_tarp_rabies", -21.0, 2.0, 1.2, -26.0, -17.2)):
-            g = ctx.fence_gap((-9.2, 0, 0), (0, 1, 0), (-1, 0, 0), 0.84, lo, hi, want, w)
+        # The birthday tarp hung on the PGH fence along Taft at y 19: that run is gone (owner:
+        # "fix up the fences so the area is still open to the road"), so it hangs on the court lot's
+        # back fence, facing east into the court, in the pillar gap the rays find nearest y 8 (south
+        # of the bench, the chair and the hoop, which this kit cannot see: the props kit owns them).
+        # The anti-rabies tarp stays on the PGH fence along Taft (rails at x about -11.2).
+        for name, tex, x_from, floor_x, want, w, h, lo, hi in (
+                ("life_tarp_birthday", "life_tarp_birthday", LOT_WEST + 2.0, LOT_WEST + 1.0, 8.1, 2.4, 1.2,
+                 LOT_SOUTH + 0.6, COURT[1] - 2.0),
+                ("life_tarp_rabies", "life_tarp_rabies", -9.2, -10.6, -21.0, 2.0, 1.2, -26.0, -17.2)):
+            g = ctx.fence_gap((x_from, 0, 0), (0, 1, 0), (-1, 0, 0), 0.84, lo, hi, want, w)
             if g is None:
                 self.report.append(f"{name}: no fence gap found")
                 continue
             c, n = g
-            c.z = ctx.floor(-10.6, c.y)[0] + 0.72 + h / 2
+            # The same height on the rails either side: the lot stands 28 mm above the pavement.
+            c.z = min(ctx.floor(floor_x, c.y)[0], 0.212) + 0.72 + h / 2
             self.tarp(name, tex, c, n, w, h, 0.045)
         # The PGH fence along Padre Faura, facing the street (north).
         g = ctx.fence_gap((0, 27.2, 0), (1, 0, 0), (0, -1, 0), 0.84, -42.0, -34.0, -37.6, 2.4)
@@ -1201,8 +1214,10 @@ class Kit:
         self.cluster((18.4, 21.5), Vector((1, 0, 0)), Vector((0, -1, 0)), ["pot_shrub_bucket", "pot_santan_clay"], "lugawW")
         self.cluster((25.9, 21.5), Vector((1, 0, 0)), Vector((0, -1, 0)),
                      ["pot_bloom_clay", "pot_lily_can", "pot_santan_clay"], "lugawE")
-        # Under the birthday tarp, against the PGH fence (outside the play area).
-        self.cluster((-10.6, 21.9), Vector((0, 1, 0)), Vector((-1, 0, 0)),
+        # The fence pots stood on the west pavement against the Taft run that is gone. They line
+        # the court lot's south fence now, in its south-west corner: the fruit stall is 20 m east
+        # of them, and they stay south of the keep-clear square (y 4.7).
+        self.cluster((LOT_WEST + 0.75, LOT_SOUTH + 0.6), Vector((1, 0, 0)), Vector((0, -1, 0)),
                      ["pot_lily_can", "pot_santan_clay", "pot_trough"], "fence")
         # At the feet of two bamboo poles on the east arm's north lots.
         for tag, names in (("EN27", ["pot_bloom_clay", "pot_shrub_bucket"]), ("EN47", ["pot_santan_clay", "pot_lily_can"])):
@@ -1225,6 +1240,9 @@ class Kit:
                     break
                 if abs(v.x) < TAFT_LANES_X:
                     bad.append(f"{o.name}: over Taft's lanes at ({v.x:.2f}, {v.y:.2f}, {v.z:.2f})")
+                    break
+                if abs(v.x - COURT[0]) <= KEEP_CLEAR and abs(v.y - COURT[1]) <= KEEP_CLEAR and v.z < 4.0:
+                    bad.append(f"{o.name}: in the court lot's keep-clear square at ({v.x:.2f}, {v.y:.2f}, {v.z:.2f})")
                     break
                 if LOT[0] < v.x < LOT[1] and LOT[2] < v.y < LOT[3]:
                     bad.append(f"{o.name}: in the sari-sari lot at ({v.x:.2f}, {v.y:.2f})")

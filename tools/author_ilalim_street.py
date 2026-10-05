@@ -24,12 +24,26 @@ flat faces, with a skirt down its whole edge. The classes never share a plane:
     that paint is the east and west chalk. The side streets' kerbs are yellow and black;
   * pavements 0.212, starting 2 cm back over the kerb's top;
   * lots, parking and drives 0.24, starting 2 cm back over the pavement; lawns 0.30.
-THE CONTRACT (guide section 1) holds exactly inside the play area: for |y| <= 17.5 the fields are
-Taft's alone, so the carriageway is |x| <= 6.65 at 0.000, the kerb 6.65..7.0 at 0.150, the
-pavements 7..11 at 0.212. The chalk box's north and south lines (|y| = 7, white) and the
-throwing lines (|y| = 8, yellow) are flat chalk decals 6 mm proud; the two potholes at
-(+/-3.4, -/+3.0) are flat decals. Everything inside the chalk is the calm, desaturated asphalt,
-with no road markings: it is the ability floor.
+THE CONTRACT (guide section 1) still holds exactly on the OLD court under the bridge: for
+|y| <= 17.5 the fields are Taft's alone, so the carriageway is |x| <= 6.65 at 0.000, the kerb
+6.65..7.0 at 0.150, the pavements 7..11 at 0.212. It is plain road now: no chalk, the same calm,
+desaturated asphalt as the rest of Taft, the two potholes at (+/-3.4, -/+3.0) still flat decals.
+
+THE COURT IS ON THE CAMPUS LOT (owner, 2026-10-04: "can we move the play area to this open
+space? then fix up the area where the old play area was. then fix up the fences so the area is
+still open to the road."). Its centre is COURT = (-23.0, 14.2) on the lot surface (0.24), west of
+the west pavement. The lot it stands on, x -35.0..-11.1 and y 3.4 up to the Padre Faura side
+fence, is ONE plain lot surface: the parking bays that reached into it are cut back to the new
+fence. The chalk is flat decals 6 mm proud of the lot: the box is the square 7 m about the
+centre, FOUR objects, one per edge ("chalk box edge east" and so on; the game reads each edge
+by its own bounds, so they are never one mesh), each exactly 14 m long and mitred into its
+neighbours so no two share a face; the throwing line is the yellow square at 8 m, one object
+("chalk throw line"). The PGH fence no longer runs along Taft in front of the lot: it turns
+west at y 3.4, runs to x -35.0 and north to Padre Faura, where it meets the campus fence that
+carries on west from there. The Padre Faura side fence along the lot is gone too (owner, looking
+at the first result: "yes that fence needs to be removed"), so the lot is open to Taft on the
+east AND to Padre Faura on the north, and on both the lot's own edge is a 28 mm step up from
+the pavement.
 
 THE ROAD MARKINGS are thin decal slabs (top 8 mm, sunk 1 cm): zebra crossings on Taft where OSM
 has footways (y 22..25 and 40..43), stop lines, Manila's red intersection box with its
@@ -60,7 +74,7 @@ mid-pavement, so the 4.2 m flanks stay walkable.
     and black crowd barriers like the ones in the photographs;
   * the campus fences and walls from OSM: PGH's iron picket fence on a low plinth with
     concrete pillars (the Taft run lands exactly on the x = -11 wall line: see-through, chunky
-    pickets), the Supreme Court's white arched fence north of Padre Faura, cream concrete walls;
+    pickets; it goes round the back of the court lot, see open_court_lot()), the Supreme Court's white arched fence north of Padre Faura, cream concrete walls;
   * the OSM bus stops as simple SAKAYAN shelters; galvanized street lamps; and a hand-painted
     yellow and red barangay welcome board (BARANGAY 712, every name invented) on the east
     pavement north of the court, turned to face the court.
@@ -98,7 +112,13 @@ SIDEWALK = 2.0
 LANE_W = 3.0
 STREET_KINDS = B.STREET_KINDS
 PIER_ROWS = (19.0, 44.0, 69.0, 94.0, 119.0, 144.0)
-OVERRIDE_Y = 17.5          # rows where the fields are Taft's alone (the play area and a margin)
+OVERRIDE_Y = 17.5          # rows where the fields are Taft's alone (the old court and a margin)
+# The court on the campus lot (owner, 2026-10-04: "can we move the play area to this open space?").
+# These numbers are shared with the game code: do not move them here alone.
+COURT = (-23.0, 14.2)      # the chalk box's centre, on the lot surface
+KEEP_CLEAR = 9.5           # nothing but chalk stands within this of the centre, in x or in y
+FENCE_X = -(PAVE_OUT + 0.2)             # the Taft fence's centre line (prepare_barrier)
+LOT_WEST, LOT_SOUTH = -35.0, 3.4        # the new fence runs: the lot's back and its south side
 
 # ------------------------------------------------------------------ materials
 
@@ -445,7 +465,13 @@ def build_fields(layout):
             W[w] = np.minimum(W[w], poly_sdf(GX[w], GY[w], a["poly"]))
         elif a["kind"] == "parking":
             P[w] = np.minimum(P[w], poly_sdf(GX[w], GY[w], a["poly"]))
-    # THE CONTRACT: inside the play area (and a margin) the corridor is Taft's alone.
+    # THE COURT LOT is one plain lot surface (owner: "can we move the play area to this open
+    # space?"): no parking bay, drive or lawn crosses it. OSM's PGH parking reached about 1.5 m
+    # into its south end; it now stops on the new fence line, under the plinth. The cut is a box
+    # distance, so the contour lands on y = 3.4 exactly and not on the nearest lattice row.
+    box = np.maximum.reduce([LOT_WEST - GX, GX + PAVE_OUT - 1.0, LOT_SOUTH - GY, GY - 30.0])
+    P, D, W = np.maximum(P, -box), np.maximum(D, -box), np.maximum(W, -box)
+    # THE CONTRACT: on the old court (and a margin) the corridor is Taft's alone.
     zone = (np.abs(GY) <= OVERRIDE_Y) & (np.abs(GX) < 14.0)
     R[zone] = (np.abs(GX) - KERB_IN)[zone]
     S[zone] = (np.abs(GX) - PAVE_OUT)[zone]
@@ -772,9 +798,10 @@ def kerbs(col, fl):
 
 # ------------------------------------------------------------------ markings and chalk
 
-def decal_slab(buf, poly, mat, top=0.008):
-    """A flat marking: a thin slab, its top `top` above the road, sunk 1 cm into it."""
-    buf.extrude_z(poly, -0.01, top, mat)
+def decal_slab(buf, poly, mat, top=0.008, base=0.0):
+    """A flat marking: a thin slab, its top `top` above the surface at `base` (the road unless
+    given), sunk 1 cm into it."""
+    buf.extrude_z(poly, base - 0.01, base + top, mat)
 
 
 def rect(cx, cy, hw, hh, rot=0.0):
@@ -784,12 +811,29 @@ def rect(cx, cy, hw, hh, rot=0.0):
 
 def markings(col, fl, layout):
     R = fl["R"]
-    chalk = SBuf("chalk box lines")
-    for s in (-1, 1):
-        # north and south lines on the road, running 5 cm into the kerb faces
-        decal_slab(chalk, L.fillet(rect(0, s * BOX, KERB_IN + 0.05, 0.06), 0.03, 2), "street_chalk", top=0.006)
-        decal_slab(chalk, L.fillet(rect(0, s * THROW, KERB_IN + 0.05, 0.06), 0.03, 2), "street_chalk_yellow", top=0.006)
-    chalk.finish(col, bevel=0.003, segments=1)
+    # THE CHALK, on the lot (owner: "can we move the play area to this open space?"). The old
+    # lines across Taft at |y| = 7 and 8 are gone: that stretch is plain road.
+    cx, cy = COURT
+
+    def chalk_edge(buf, side, half, mat):
+        """One side of the square `half` about the court centre: a 12 cm line, exactly 2 * half
+        long, each end mitred along the corner's diagonal so two sides never overlap."""
+        hw = 0.06
+        pts = [(half + hw, -half), (half + hw, half), (half, half), (half - hw, half - hw),
+               (half - hw, hw - half), (half, -half)]                         # the east side
+        c, s = {"east": (1, 0), "north": (0, 1), "west": (-1, 0), "south": (0, -1)}[side]
+        decal_slab(buf, [(cx + x * c - y * s, cy + x * s + y * c) for x, y in pts], mat, top=0.006, base=LOT_TOP)
+
+    # The box is FOUR objects, one per edge: the game finds each edge by its own bounds, so they
+    # must never be merged into one mesh.
+    for side in ("east", "west", "north", "south"):
+        edge = SBuf(f"chalk box edge {side}")
+        chalk_edge(edge, side, BOX, "street_chalk")
+        edge.finish(col, bevel=0.003, segments=1)
+    throw = SBuf("chalk throw line")
+    for side in ("east", "west", "north", "south"):
+        chalk_edge(throw, side, THROW, "street_chalk_yellow")
+    throw.finish(col, bevel=0.003, segments=1)
 
     pot = SBuf("potholes")
     rng = random.Random(7)
@@ -1262,6 +1306,41 @@ def prepare_barrier(fl, line):
     return out
 
 
+def open_court_lot(line):
+    """Take the PGH fence off Taft in front of the court lot and send it round the back (owner,
+    2026-10-04: "then fix up the fences so the area is still open to the road."; confirmed: the
+    fence along the road in front of the lot is removed, and re-routed behind the lot).
+
+    OSM's campus fence comes east along Padre Faura's south side, turns the corner at Taft (the
+    corner itself stands 35 cm west of the wall line, pushed off Padre Faura's sidewalk) and runs
+    south down the wall line, x = FENCE_X. The run from that corner down to y = LOT_SOUTH is
+    dropped, and so is the Padre Faura side east of x = LOT_WEST (owner, on the first result,
+    where it still stood: "yes that fence needs to be removed"). The Padre Faura fence west of
+    there stays and now ends where it crosses x = LOT_WEST. The Taft run turns west at
+    y = LOT_SOUTH, goes to x = LOT_WEST, and north up to that same point, so the two share ONE
+    pillar there (fences() builds a pillar once per spot) and it reads as a finished fence corner.
+    Returns the pieces (the line itself if it is not that fence)."""
+    for pts in (line, line[::-1]):
+        on_taft = [abs(x - FENCE_X) < 1.0 for x, _ in pts]
+        for i in range(1, len(pts) - 1):
+            (px, py), (qx, qy) = pts[i - 1], pts[i]
+            if not (on_taft[i] and not on_taft[i - 1] and px < LOT_WEST < qx and qy > LOT_SOUTH):
+                continue
+            k = i                                # the first vertex on the wall line south of the lot
+            while k < len(pts) and on_taft[k] and pts[k][1] >= LOT_SOUTH:
+                k += 1
+            if k == len(pts) or not on_taft[k]:
+                continue
+            t = (LOT_WEST - px) / (qx - px)
+            join = (LOT_WEST, py + (qy - py) * t)
+            print(f"[street] court lot: the Taft fence is off from ({qx:.2f}, {qy:.2f}) down to y {LOT_SOUTH}, the Padre "
+                  f"Faura side from there west to x {LOT_WEST}; the new run and the Padre Faura fence share the corner "
+                  f"pillar at ({join[0]:.2f}, {join[1]:.2f})")
+            return [pts[:i] + [join],
+                    [join, (LOT_WEST, LOT_SOUTH), (FENCE_X, LOT_SOUTH)] + pts[k:]]
+    return [line]
+
+
 def fences(col, fl, layout):
     iron, court, wall = SBuf("fence PGH iron"), SBuf("fence Supreme Court white"), SBuf("walls concrete")
     # The bars are their own objects with no bevel (round tubes need none, and a bevel on
@@ -1270,12 +1349,30 @@ def fences(col, fl, layout):
     bars_buf = {"iron": SBuf("fence PGH iron bars"), "court": SBuf("fence Supreme Court white bars")}
     rng = random.Random(31)
     base = LOT_TOP - 0.1
+    lines, opened = [], 0
     for bar in layout["barriers"]:
         line = [tuple(p) for p in bar["line"] if max(abs(p[0]), abs(p[1])) < EXT - 2]
         if len(line) < 2:
             continue
         line = prepare_barrier(fl, line)
         style = "wall" if bar["kind"] == "wall" else fence_style(line)
+        pieces = open_court_lot(line) if style == "iron" else [line]
+        opened += len(pieces) > 1
+        lines += [(style, piece) for piece in pieces]
+    if opened != 1:
+        print(f"[street] COURT LOT? the Taft frontage fence was found {opened} times, want 1")
+    # One pillar per spot: where two segments meet (and where the court lot's new run joins the
+    # Padre Faura side) the second pillar would stand in the first, turned a few degrees.
+    pillars = set()
+
+    def pillar_free(p):
+        key = (round(p[0], 2), round(p[1], 2))
+        if key in pillars:
+            return False
+        pillars.add(key)
+        return True
+
+    for style, line in lines:
         for (x0, y0), (x1, y1) in zip(line, line[1:]):
             mx, my = (x0 + x1) / 2, (y0 + y1) / 2
             if sample(fl["R"], mx, my) < 0.5:
@@ -1287,14 +1384,16 @@ def fences(col, fl, layout):
             if style == "wall":
                 wall.seg_box((x0, y0), (x1, y1), 0.11, base, LOT_TOP + 2.6, "street_wall_cream", ext=0.1)
                 wall.seg_box((x0, y0), (x1, y1), 0.16, LOT_TOP + 2.55, LOT_TOP + 2.68, "street_coping", ext=0.14, r=0.05)
-                n = max(1, int(Ls / (4.0 if math.hypot(mx, my) < PICKETS_R else 9.0)))
+                n = max(1, int(Ls / (4.0 if math.hypot(mx - COURT[0], my - COURT[1]) < PICKETS_R else 9.0)))
                 for k in range(n + 1):
                     p = (x0 + d[0] * Ls * k / n, y0 + d[1] * Ls * k / n)
+                    if not pillar_free(p):
+                        continue
                     wall.box((p[0], p[1], base + 1.3), (0.4, 0.4, 2.6), "street_wall_cream", r=0.05,
                              rot=math.atan2(d[1], d[0]))
                 continue
             buf = iron if style == "iron" else court
-            bb = bars_buf[style] if math.hypot(mx, my) < PICKETS_R else None
+            bb = bars_buf[style] if math.hypot(mx - COURT[0], my - COURT[1]) < PICKETS_R else None
             wmat = "street_wall_cream" if style == "iron" else "street_wall_white"
             bars = "street_fence_iron" if style == "iron" else "street_fence_white"
             buf.seg_box((x0, y0), (x1, y1), 0.15, base, LOT_TOP + 0.42, wmat, ext=0.12)
@@ -1303,6 +1402,8 @@ def fences(col, fl, layout):
             ph = 2.05 if style == "iron" else 2.25
             for k in range(n + 1):
                 p = (x0 + d[0] * Ls * k / n, y0 + d[1] * Ls * k / n)
+                if not pillar_free(p):
+                    continue
                 buf.box((p[0], p[1], base + ph / 2), (0.42, 0.42, ph), wmat, r=0.05, rot=math.atan2(d[1], d[0]))
                 buf.box((p[0], p[1], base + ph + 0.07), (0.54, 0.54, 0.16), wmat, r=0.06, rot=math.atan2(d[1], d[0]))
             for k in range(n):
@@ -1610,6 +1711,37 @@ def verify():
                 bad.append((o.name, tuple(round(c, 2) for c in p)))
                 break
     print("[street] solids in the box or mid-pavement:", bad or "none")
+    # The court on the lot: one flat lot surface under the whole keep-clear square (the chalk 6 mm
+    # proud of it), every chalk edge on its own line, and nothing of this kit standing in it.
+    cx, cy = COURT
+    for dx in (-9.4, -7.0, -3.5, 0.0, 3.5, 7.0, 9.4):
+        for dy in (-9.4, -7.0, -3.5, 0.0, 3.5, 7.0, 9.4):
+            hit = scene.ray_cast(dg, Vector((cx + dx, cy + dy, 3.0)), Vector((0, 0, -1)))
+            chalk = hit[0] and hit[4].name.startswith("chalk")
+            want = LOT_TOP + (0.006 if chalk else 0.0)
+            if not hit[0] or abs(hit[1].z - want) > 0.004 or not hit[4].name.startswith(("ground lot", "chalk")):
+                print(f"[street] COURT? top at ({cx + dx}, {cy + dy}) is {hit[1].z if hit[0] else None} on "
+                      f"{hit[4].name if hit[0] else None}, want {want} on the lot")
+    for side, (ex, ey) in (("east", (BOX, 0)), ("west", (-BOX, 0)), ("north", (0, BOX)), ("south", (0, -BOX))):
+        o = bpy.data.objects[f"chalk box edge {side}"]
+        pts = [o.matrix_world @ v.co for v in o.data.vertices]
+        lo = [min(q[i] for q in pts) for i in range(2)]
+        hi = [max(q[i] for q in pts) for i in range(2)]
+        mid, size = [(lo[i] + hi[i]) / 2 for i in range(2)], [hi[i] - lo[i] for i in range(2)]
+        off = math.hypot(mid[0] - cx - ex, mid[1] - cy - ey)
+        flag = "" if off < 0.2 and abs(max(size) - 2 * BOX) < 1e-4 else "  <-- COURT?"
+        print(f"[street] chalk box edge {side}: centre ({mid[0]:.3f}, {mid[1]:.3f}), {max(size):.3f} m long, "
+              f"{min(size):.3f} wide, {off:.3f} m off its edge{flag}")
+    bad = []
+    for o in bpy.data.objects:
+        if o.type != "MESH" or any(c.hide_render for c in o.users_collection) or o.name.startswith(("ground", "chalk")):
+            continue
+        for v in o.data.vertices:
+            q = o.matrix_world @ v.co
+            if abs(q.x - cx) <= KEEP_CLEAR and abs(q.y - cy) <= KEEP_CLEAR and q.z < 4.0:
+                bad.append((o.name, tuple(round(c, 2) for c in q)))
+                break
+    print("[street] solids in the court lot's keep-clear square:", bad or "none")
 
 
 def main():

@@ -115,6 +115,8 @@ namespace TumbangPreso.UI
                 v=>{s.RenderStyle=v;RenderStyles.Apply(v);});
             Choice("AntiAliasing","Smooth edges",AntiAliasModes.All.Select(p=>p.Label).ToArray(),s.AntiAliasMode,
                 v=>{s.AntiAliasMode=v;AntiAliasModes.Apply(v);});
+            // Read every frame by `Visual.WorldOutline`, so the pick shows at once and needs no Apply.
+            Choice("CharacterShading","Character shading",GameSettings.CharacterShadingLabels,s.CharacterShading,v=>s.CharacterShading=v);
             Toggle("Fullscreen","Fullscreen",s.Fullscreen,v=>s.Fullscreen=v,s.ApplyDisplay);
             Header("PERFORMANCE");
             Choice("VSync","Vertical sync",VSyncModes.All.Select(p=>p.Label).ToArray(),s.VSyncMode,

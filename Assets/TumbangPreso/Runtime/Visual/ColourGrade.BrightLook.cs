@@ -43,14 +43,25 @@ namespace TumbangPreso.Visual
             _material.SetFloat(VibranceId,profile.Vibrance*weight);
             _material.SetFloat(BloomIntensityId,0);_material.SetTexture(BloomTexId,Texture2D.blackTexture);
             BloomLive=false;
-            if(weight<=0 || profile.Bloom<=0 || Settings.GraphicsProfiles.Current<=0)return null;
+            // A map's own glow over the profile's (`WorldLookProfile.MapLook.Bloom`); 0 is the profile's.
+            // ⚠️ A MAP'S OWN GLOW SHOWS UNDER EVERY LIGHTING STYLE (owner, 2026-10-05, told the Arena's
+            // glow only ran under Standard: "are you able to fix this so it shows under all lighting
+            // styles?"). The profile's bloom belongs to the bright look and fades with its weight,
+            // which is 0 under Nostalgic. A night map's glow is the map's own emissive art, not that
+            // look, so it takes full weight whatever the style. Other maps set no glow and are as before.
+            var mapLook=WorldLookPresentation.HandlesCamera(_camera)&&WorldLookPresentation.Current!=null?WorldLookPresentation.Current.Look:null;
+            bool ownGlow=mapLook!=null&&mapLook.Bloom>0;
+            float bloom=ownGlow?mapLook.Bloom:profile.Bloom;
+            float threshold=ownGlow&&mapLook.BloomThreshold>0?mapLook.BloomThreshold:profile.BloomThreshold;
+            float glowWeight=ownGlow?1:weight;
+            if(glowWeight<=0 || bloom<=0 || Settings.GraphicsProfiles.Current<=0)return null;
 
             // The chain must hold values above 1 or the threshold has nothing to find.
             var format=source.format;
             bool hdr=format==RenderTextureFormat.ARGBHalf || format==RenderTextureFormat.ARGBFloat ||
                      format==RenderTextureFormat.RGB111110Float || format==RenderTextureFormat.DefaultHDR;
             if(!hdr && SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.DefaultHDR))format=RenderTextureFormat.DefaultHDR;
-            _material.SetVector(BloomThresholdId,new Vector4(profile.BloomThreshold,Mathf.Max(.01f,profile.BloomKnee),0,0));
+            _material.SetVector(BloomThresholdId,new Vector4(threshold,Mathf.Max(.01f,profile.BloomKnee),0,0));
             int width=Mathf.Max(1,source.width/2),height=Mathf.Max(1,source.height/2);
             var current=RenderTexture.GetTemporary(width,height,0,format,RenderTextureReadWrite.Linear);
             Graphics.Blit(source,current,_material,PassPrefilter);
@@ -68,7 +79,7 @@ namespace TumbangPreso.Visual
                 RenderTexture.ReleaseTemporary(_bloomChain[i+1]);_bloomChain[i+1]=null;
             }
             var result=_bloomChain[0];_bloomChain[0]=null;
-            _material.SetTexture(BloomTexId,result);_material.SetFloat(BloomIntensityId,profile.Bloom*weight);
+            _material.SetTexture(BloomTexId,result);_material.SetFloat(BloomIntensityId,bloom*glowWeight);
             BloomLive=true;return result;
         }
     }

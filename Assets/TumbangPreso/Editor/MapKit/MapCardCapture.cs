@@ -54,6 +54,12 @@ namespace TumbangPreso.EditorTools.MapKit
 
         public static void RunIlalim() => Start(true, SceneFlow.IlalimNgTulay);
 
+        // The Arena's card (ARENA-1, 2026-10-05), rendered when it joined the map list. Batch: .RunArena.
+        [MenuItem("Tumbang Preso/Maps/Render Arena Card")]
+        public static void MenuArena() => Start(false, SceneFlow.Arena);
+
+        public static void RunArena() => Start(true, SceneFlow.Arena);
+
         private static void Start(bool batch, params string[] maps)
         {
             if (EditorApplication.isPlaying) { Debug.LogWarning("[MapCard] Stop Play first."); return; }
@@ -131,6 +137,14 @@ namespace TumbangPreso.EditorTools.MapKit
                 {
                     at = new Vector3(0, floor + 6.2f, -15.6f);
                     aim = new Vector3(0, floor + 0.6f, 8f);
+                }
+                // ⚠️ THE ARENA'S STAGE IS 43 m ACROSS, NOT A 14 m COURT. The pose above stands over
+                // the stage's own outer ring and shows a third of it. From 38 m back and 27 m up
+                // the whole stage, the shaft under it and the stands behind are in the frame.
+                if (map == SceneFlow.Arena)
+                {
+                    at = new Vector3(0, floor, 0) + dir * 38f + Vector3.up * 27f;
+                    aim = new Vector3(0, floor, 0) - dir * 2f;
                 }
                 cam.fieldOfView = Camera.HorizontalToVerticalFieldOfView(80f, 16f / 9f);
                 cam.transform.SetPositionAndRotation(at, Quaternion.LookRotation(aim - at));

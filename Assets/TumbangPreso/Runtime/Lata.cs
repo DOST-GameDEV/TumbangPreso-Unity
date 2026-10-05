@@ -99,9 +99,26 @@ namespace TumbangPreso
         /// </summary>
         private void Start() => SnapHomeToGround();
 
-        private void SnapHomeToGround()
+        /// <summary>
+        /// Host-side. The same snap again, for a map whose floor under the mark changes between
+        /// rounds (the Arena's layouts put the can anywhere from 0 to 1.5 m up, ARENA-1.1).
+        /// `SliceRunner.OnRoundStarted` calls it after the stage has switched its colliders and
+        /// BEFORE `HostRestore`, which is what reads `_mark`.
+        ///
+        /// ⚠️ BODIES ARE EXCLUDED HERE AND NOT IN Start. At Start nobody stands on the mark; at
+        /// a round change somebody can, and a ray that stops on a head seats the can 1.6 m up.
+        /// The cast also starts a metre higher, so a mark that was on the low layout still
+        /// finds the top of the tall one.
+        /// </summary>
+        public void HostResnapMark()
         {
-            var hits = Physics.RaycastAll(_mark + Vector3.up * 2.0f, Vector3.down, 8.0f,
+            if (!NetAuthority.ShouldResolve()) return;
+            SnapHomeToGround(3.0f, true);
+        }
+
+        private void SnapHomeToGround(float above = 2.0f, bool skipBodies = false)
+        {
+            var hits = Physics.RaycastAll(_mark + Vector3.up * above, Vector3.down, 6.0f + above,
                                           ~0, QueryTriggerInteraction.Ignore);
 
             if (hits == null || hits.Length == 0) return;
@@ -114,6 +131,8 @@ namespace TumbangPreso
                 if (hit.collider == null) continue;
                 if (hit.collider.transform == transform ||
                     hit.collider.transform.IsChildOf(transform)) continue;
+                if (skipBodies && (hit.collider.GetComponentInParent<CharacterMotor>() != null ||
+                                   hit.collider.GetComponentInParent<Slipper>() != null)) continue;
 
                 if (found && hit.point.y <= bestY) continue;
 

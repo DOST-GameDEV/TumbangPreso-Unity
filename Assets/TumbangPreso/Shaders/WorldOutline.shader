@@ -121,6 +121,8 @@ Shader "TumbangPreso/WorldOutline"
             float4 _WorldGroundContact,_WorldContactProjection;
             float4x4 _WorldContactToWorld;
             float _WorldContactMask;
+            // 0 leaves the cast out of the ambient occlusion (the shipped look); 1 shades them like the world. See the AO composite.
+            float _CharacterAO;
             float _LagoonDeckDetail;
             float _Supersample;
 
@@ -556,8 +558,21 @@ Shader "TumbangPreso/WorldOutline"
                     // of the way to the violet is about a third darker on screen at the crease.
                     // Masked like the contact shade: the cast and Kanto's foliage (WorldOutline.
                     // IsToonSurface) keep their own shading.
-                    float occlusion=(1-tex2D(_WorldAO,duv).r)*_WorldAOParams.x*(1-saturate(mask*_WorldContactMask));
-                    source.rgb*=lerp(float3(1,1,1),_PeakShade.rgb*.7,saturate(occlusion));
+                    // ⚠️ THE CAST HAS ITS OWN OCCLUSION UNDER ITS MASK (owner, 2026-10-04: "can we also
+                    // test ambient occlusion for shading the characters too?"; 2026-10-05, on the
+                    // first render of it: "notice how this part doesnt have any ao. its weak"). At
+                    // `_CharacterAO` 0 the mask keeps the cast out, as shipped. Above 0 a masked pixel
+                    // takes G, the body-scale kernel (pass 2, CastAO), at the cast's share times
+                    // the kernel's own ceiling, instead of the world's metre-wide R, which could not see a body.
+                    // The contact shade and the ground occlusion still leave the cast out.
+                    float2 enclosed=1-tex2D(_WorldAO,duv).rg;
+                    float masked=saturate(mask*_WorldContactMask);
+                    float occlusion=enclosed.x*_WorldAOParams.x*(1-masked);
+                    if(_CharacterAO>0)occlusion=lerp(enclosed.x*_WorldAOParams.x,enclosed.y*_CharacterAO,masked);
+                    // The cast's shade goes deeper than the world's (.7 of the cavity hue): a body's creases are
+                    // small on screen, and at the world's depth they washed out on a bright skin tone.
+                    float castDepth=lerp(.7,.6,masked*step(1e-4,_CharacterAO));
+                    source.rgb*=lerp(float3(1,1,1),_PeakShade.rgb*castDepth,saturate(occlusion));
                 }
                 if(_PeakDepth.w>0)
                 {
@@ -740,9 +755,22 @@ Shader "TumbangPreso/WorldOutline"
             #pragma vertex vert_img
             #pragma fragment frag
             #pragma target 3.0
+            // ⚠️ multi_compile, not shader_feature: the keyword is switched from code by the
+            // graphics tier (`WorldOutline.AmbientOcclusionLiteKeyword`), so a build must carry
+            // both variants whatever the materials on disk say.
+            #pragma multi_compile_local __ WORLD_AO_LITE
             #include "UnityCG.cginc"
+            // The probes a pixel takes: sixteen on the top tier, eight on the tiers below it
+            // (owner, 2026-10-04: the joining players' frame rate). Two a ring instead of four.
+            #ifdef WORLD_AO_LITE
+            #define WORLD_AO_PROBES 8
+            #else
+            #define WORLD_AO_PROBES 16
+            #endif
             sampler2D _CameraDepthNormalsTexture;
             float4 _ViewRay,_WorldContactProjection,_WorldAOParams;
+            // x on (the cast's share, > 0), y radius in metres, z bias in metres. See CastAO.
+            float4 _CharacterAOParams;
             float3 ViewPoint(float2 uv,out float3 normal)
             {
                 float depth;DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture,float4(uv,0,0)),depth,normal);
@@ -754,10 +782,84 @@ Shader "TumbangPreso/WorldOutline"
                 float depth;float3 normal;DecodeDepthNormal(tex2Dlod(_CameraDepthNormalsTexture,float4(uv,0,0)),depth,normal);
                 return depth*_WorldContactProjection.x;
             }
+            // ⚠️⚠️ § THE CAST'S OWN OCCLUSION, A SECOND KERNEL AT A BODY'S SCALE (owner, 2026-10-05,
+            // circling the head and chest in the difference picture: "notice how this part doesnt
+            // have any ao. its weak"). The world's kernel above cannot see a character: its radius is
+            // a metre and its bias 3 cm plus 0.4 per cent of the distance, sized for a wall's foot
+            // and a doorway, so a fringe of hair 5 cm proud of a forehead, an arm against a chest or
+            // a chin over a collar sits inside the bias and far inside the first ring. And it gives
+            // no occlusion at all nearer than the near-fade guard (1.8 m, ramping to 3.6), which is
+            // exactly where another player usually stands. This kernel is the same skimming probe
+            // set at `_CharacterAOParams.y` (about a third of a metre), with a bias of millimetres,
+            // and no near guard: the range check alone keeps a dissolved pillar at the lens from
+            // shading a body metres behind it. It is written to G and used only under the cast's
+            // mask, and it costs nothing when the cast's share is 0 (the shipped look).
+            float CastAO(float3 p,float3 n,float2 pixel)
+            {
+                float radius=_CharacterAOParams.y;
+                float bias=_CharacterAOParams.z+(-p.z)*.0015;
+                float2 cell=fmod(floor(pixel),4);
+                float noise=(fmod((cell.x*4+cell.y)*5,16)+.5)/16;
+                float angle=noise*6.2831853;
+                float3 r=float3(cos(angle),sin(angle),0);
+                float3 t=normalize(r-n*dot(r,n)),b=cross(n,t);
+                // ⚠️⚠️ TWO SCALES AND A CEILING, NOT MORE STRENGTH (owner, 2026-10-05, after the bump:
+                // "still not obvious on the flat faces but what do we do about the golem if we keep
+                // bumping it?"). Strength cannot answer that: occlusion only lands where geometry
+                // crowds itself, so every bump went onto the golem's hundred seams and none onto a
+                // flat face, which has no seam to find.
+                //   * FINE (the radius, a third of a metre): seams, a fringe's edge, fingers on a hip.
+                //   * BROAD (2.6 radii, a head's size): the mass of hair over a face, the head over
+                //     the shoulders, an arm beside the chest. On a flat face this is a soft gradient
+                //     under whatever overhangs it, which is the shading a flat face can have.
+                //   * THE CEILING: the two are joined and then held to `CastCeiling`, so a body of
+                //     overlapping blocks reaches the same depth in every seam and stops there,
+                //     instead of going to mud while the flat-faced cast is still catching up.
+                float fineHit=0,fineAll=0,broadHit=0,broadAll=0;
+                [unroll] for(int k=0;k<12;k++)
+                {
+                    float phi=k*2.3999632+angle;
+                    float elevation=lerp(.22,.75,frac(k*.618034+noise));
+                    float ring=(fmod(k,4)+.5)/4;
+                    float3 dir=(t*cos(phi)+b*sin(phi))*cos(elevation)+n*sin(elevation);
+                    float weight=1-ring*.5;
+                    float reach=radius*lerp(.14,1.0,ring);
+                    float3 probe=p+dir*reach;
+                    float2 uv=(probe.xy/-probe.z)/_ViewRay.xy*.5+.5;
+                    float sceneZ=-EyeDepth(uv);
+                    float range=smoothstep(0,1,radius/max(abs(p.z-sceneZ),1e-4));
+                    fineHit+=step(probe.z+bias,sceneZ)*range*weight;fineAll+=weight;
+                }
+                [unroll] for(int m=0;m<8;m++)
+                {
+                    float phi=m*2.3999632+angle+1.7;
+                    // Steeper than the fine set: what overhangs a face is above it, not beside it.
+                    float elevation=lerp(.45,1.05,frac(m*.618034+noise));
+                    float ring=(fmod(m,4)+.5)/4;
+                    float3 dir=(t*cos(phi)+b*sin(phi))*cos(elevation)+n*sin(elevation);
+                    float weight=1-ring*.4;
+                    float wide=radius*2.6;
+                    float reach=wide*lerp(.25,1.0,ring);
+                    float3 probe=p+dir*reach;
+                    float2 uv=(probe.xy/-probe.z)/_ViewRay.xy*.5+.5;
+                    float sceneZ=-EyeDepth(uv);
+                    float range=smoothstep(0,1,wide/max(abs(p.z-sceneZ),1e-4));
+                    broadHit+=step(probe.z+bias*2,sceneZ)*range*weight;broadAll+=weight;
+                }
+                float fine=saturate(fineHit/max(fineAll,1e-4)*3.6);
+                float broad=saturate(broadHit/max(broadAll,1e-4)*2.4);
+                // Joined as two coats of shade, then the ceiling.
+                const float CastCeiling=.62;
+                float ao=1-min(CastCeiling,1-(1-fine*.75)*(1-broad*.6));
+                // Out by 30 m, where a body is a few pixels and the probes land inside one.
+                return lerp(ao,1,smoothstep(18,30,-p.z));
+            }
             half4 frag(v2f_img i):SV_Target
             {
                 float3 n;float3 p=ViewPoint(i.uv,n);
                 if(-p.z>_WorldContactProjection.x*.999)return 1;
+                float cast=1;
+                if(_CharacterAOParams.x>0)cast=CastAO(p,n,i.pos.xy);
                 // ⚠️⚠️ NOTHING NEARER THAN THE NEAR-FADE START IS TRUSTED (`_WorldAOParams.w`,
                 // `NearFade.FadeStartMetres`, 1.8 m). A NearFade prop close to the camera (a bridge
                 // pillar you stand beside) dissolves in the colour pass so you can see past it, but
@@ -769,7 +871,7 @@ Shader "TumbangPreso/WorldOutline"
                 // every pixel as occluded. Found by a yaw sweep on Ilalim and switching renderer
                 // groups off one at a time: the LRT pillars alone. So a pixel that near gets no
                 // occlusion, and a probe that lands on one is not an occluder.
-                if(-p.z<_WorldAOParams.w)return 1;
+                if(-p.z<_WorldAOParams.w)return half4(1,cast,1,1);
                 float radius=_WorldAOParams.y;
                 // ⚠️⚠️ THE BIAS GROWS WITH DISTANCE, AND OPEN FLAT GROUND MUST READ CLEAN (owner,
                 // 2026-09-27, on Kanto's lawn and court: "still noticeable ... why do we have this ao
@@ -805,7 +907,7 @@ Shader "TumbangPreso/WorldOutline"
                 // inside corner blocks about half the directions, and that half is mapped to full
                 // occlusion, ramping to clean by about one radius from the edge.
                 float occluded=0,total=0;
-                [unroll] for(int k=0;k<16;k++)
+                [unroll] for(int k=0;k<WORLD_AO_PROBES;k++)
                 {
                     float phi=k*2.3999632+angle;
                     float elevation=lerp(.30,.7,frac(k*.618034+noise));
@@ -833,7 +935,7 @@ Shader "TumbangPreso/WorldOutline"
                 // (The gate is 0 on maps with no near-fade prop at the lens: the ramp's end is kept
                 // off its start so smoothstep never divides by zero.)
                 ao=lerp(1,ao,smoothstep(_WorldAOParams.w,max(_WorldAOParams.w*2,_WorldAOParams.w+.01),-p.z));
-                return half4(ao,ao,ao,1);
+                return half4(ao,cast,ao,1);
             }
             ENDCG
         }
@@ -861,7 +963,7 @@ Shader "TumbangPreso/WorldOutline"
             {
                 // The 4x4 block that holds all sixteen rotations of pass 2, so the rotation
                 // pattern averages out exactly; depth-aware, so an edge does not smear.
-                float centre=EyeDepth(i.uv);float sum=0,weight=0;
+                float centre=EyeDepth(i.uv);float2 sum=0;float weight=0;
                 [unroll] for(int y=-2;y<=1;y++)
                 [unroll] for(int x=-2;x<=1;x++)
                 {
@@ -876,10 +978,11 @@ Shader "TumbangPreso/WorldOutline"
                     // counts almost fully and only a real depth break drops out.
                     float rel=abs(EyeDepth(uv)-centre)/max(centre,1e-3);
                     float w=exp(-(rel/.02)*(rel/.02));
-                    sum+=tex2Dlod(_MainTex,float4(uv,0,0)).r*w;weight+=w;
+                    sum+=tex2Dlod(_MainTex,float4(uv,0,0)).rg*w;weight+=w;
                 }
-                float ao=sum/max(weight,1e-4);
-                return half4(ao,ao,ao,1);
+                // R the world's occlusion, G the cast's (pass 2, CastAO); G is 1 when the target has one channel.
+                float2 ao=sum/max(weight,1e-4);
+                return half4(ao.x,ao.y,ao.x,1);
             }
             ENDCG
         }

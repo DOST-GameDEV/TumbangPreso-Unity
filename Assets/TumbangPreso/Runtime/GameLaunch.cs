@@ -53,6 +53,8 @@ namespace TumbangPreso
                 "A cove court in the rocks. Stilt village, reefs and a sunset sea.",SceneFlow.LagoonCove),
             new MapEntry("kanto","KANTO",
                 "City park block. Jeepney stop, traffic lights, busy streets.",SceneFlow.Kanto),
+            new MapEntry("arena","ARENA",
+                "Game-show stage. It rebuilds each round; mind the edges.",SceneFlow.Arena),
         };
 
         public static string SelectedMap = "eskinita";

@@ -93,6 +93,15 @@ namespace TumbangPreso
         public static bool BotsEnabled = true;
 
         /// <summary>
+        /// True while the live map has open edges a body can walk off. See § THE EDGE SENSE.
+        ///
+        /// ⚠️⚠️ OFF BY DEFAULT AND THE MAP TURNS IT ON. The Arena's stage sets it while its scene
+        /// is live and clears it when the scene goes. Every branch that reads it is guarded, so
+        /// with it false a bot on every other map does exactly what it did before this existed.
+        /// </summary>
+        public static bool EdgeSense;
+
+        /// <summary>
         /// Godot's `AIController.apply_difficulty()`, called off the saved setting index.
         ///
         /// ⚠️ NOTHING CALLED THIS BEFORE, so the difficulty in the settings panel was saved,
@@ -753,6 +762,7 @@ namespace TumbangPreso
             // the verb code is what produced a bot that re-decided every frame.
             _stalkTime = Plan == AiPlan.Stalk ? _stalkTime + dt : 0.0f;
             if (_headingCommitLeft > 0.0f) _headingCommitLeft -= dt;
+            if (EdgeSense) StepEdgeSense(dt);
 
             // ⚠️ THE BEAT IS PAID BEFORE THE GLANCE RUNS, not alongside it. A glance is a
             // movement key held for `GlanceSeconds` 0.09 s, and a heading the plan changed just
@@ -2554,6 +2564,7 @@ namespace TumbangPreso
             // Measured in the original with an arrival stop here: one seat stood still for
             // 42.9 s of a 90 s round, adjacent to a vulnerable attacker, firing lunges into
             // whatever direction it had last walked in.
+            if (EdgeSense) _edgeGoalDistance = toward.magnitude;
             Drive(intent, toward, MaySprint() && toward.magnitude > 1.5f);
             StepLungeIntent(intent, victim, dt);
         }
@@ -2652,6 +2663,16 @@ namespace TumbangPreso
                 // landed, so a taya 0.78 m from a vulnerable attacker had no verb at all.
                 if (reach > Me.LungeRange) { Press(intent, Verb.Lunge, false); return; }
 
+                // ⚠️ A CHARGE CANNOT BE TAKEN BACK, SO THE FLOOR IS ASKED FOR BEFORE IT STARTS.
+                // The dash runs `LungeDistance` along the facing whether or not the stage does.
+                // The punch above needs no such check: it does not move the body.
+                if (EdgeSense && !EdgeLungeClear(
+                        AheadOf(victim, AiTuning.LungeHoldTime).Value - transform.position))
+                {
+                    Press(intent, Verb.Lunge, false);
+                    return;
+                }
+
                 // ⚠️⚠️ AND NOT WHEN THE PUNCH WILL GET THERE FIRST. See `AiLungeRules`: a charge
                 // opened inside that distance was almost always dumped after the punch had
                 // already tagged, as a dash at nobody with a 1.5 s cooldown. The punch branch
@@ -2667,6 +2688,17 @@ namespace TumbangPreso
             }
 
             _lungeHeld += dt;
+
+            // ⚠️ AND THE RELEASE IS HELD BACK WHILE THE FACING POINTS OFF THE STAGE. The body
+            // has walked and turned since the charge began, and letting go is what fires it.
+            // Holding costs nothing but the tag; the hunt keeps walking and the key comes up
+            // on the first frame the facing has floor under it again.
+            if (EdgeSense && _lungeHeld >= AiTuning.LungeHoldTime
+                && !EdgeLungeClear(transform.forward))
+            {
+                Press(intent, Verb.Lunge, true);
+                return;
+            }
 
             // ⚠️ THE CONE IS FLOORED. An eight-way heading cannot aim finer than
             // `LungeConeFloor`, so a tighter tier value would ask for an angle the bot has no
@@ -2911,6 +2943,10 @@ namespace TumbangPreso
         {
             point = ClampToPlayable(point);
 
+            // ⚠️ THE WALLS ARE NOT THE ONLY THING A GOAL CAN BE OUTSIDE OF. See § THE EDGE SENSE:
+            // this one line covers every producer that reaches the body through `Goto`.
+            if (EdgeSense) point = EdgeGroundedGoal(point);
+
             if (Flat(_goal, point) > AiTuning.GoalMoved) _arrived = false;
 
             _goal = point;
@@ -2941,6 +2977,7 @@ namespace TumbangPreso
             // people read as three people.
             heading += Separation() * AiTuning.SeparationWeight;
 
+            if (EdgeSense) _edgeGoalDistance = distance;
             Drive(intent, heading, sprint && distance > AiTuning.Reach);
             return false;
         }
@@ -2982,7 +3019,44 @@ namespace TumbangPreso
             if (_unstickLeft > 0.0f)
                 flat = new Vector3(-flat.z * _unstickSign, 0.0f, flat.x * _unstickSign);
 
-            Vector2 committed = CommitHeading(EightWay(flat), pausesOnTurn);
+            Vector2 keys = EightWay(flat);
+
+            // ⚠️⚠️ THE EDGE SENSE SITS HERE, AFTER THE HAZARDS AND THE UNSTICK AND BEFORE THE
+            // COMMIT, because this is the one door every step a bot takes goes through: `Goto`,
+            // the hunt, the dodge, the sabotage walk, the loiter and the unstick sidestep all
+            // end in this method. It filters the KEYS and not the wanted bearing, since the
+            // eight keys are the only directions the body can actually walk.
+            if (EdgeSense)
+            {
+                float goalDistance = _edgeGoalDistance;
+                _edgeGoalDistance = -1.0f;
+
+                keys = EdgeSteer(keys, flat, goalDistance, ref sprint);
+
+                if (keys.sqrMagnitude < 0.0001f)
+                {
+                    // ⚠️ NOTHING ROUND THE BODY HAS FLOOR, SO IT STANDS. `_driving` stays on:
+                    // this bot did ask to move, and the unstick is welcome to try its sidestep,
+                    // which comes back through this same filter.
+                    CommitHeading(Vector2.zero, pausesOnTurn);
+                    _sprintAsked = false;
+                    Stop(intent);
+                    return;
+                }
+            }
+
+            Vector2 committed = CommitHeading(keys, pausesOnTurn);
+
+            // ⚠️ A COMMIT MAY NOT HOLD A HEADING OVER AN EDGE. `CommitHeading` keeps the last
+            // key for `HeadingCommitSeconds` unless the new one is 90 degrees off it, and a
+            // deflection along an edge is often 45, so the held key is asked the same question
+            // and loses to the safe one when it fails. No key change beat is charged for it.
+            if (EdgeSense && committed != keys && !EdgeHeadingClear(committed, EdgeFeetY()))
+            {
+                _committedMove = keys;
+                _headingCommitLeft = AiTuning.HeadingCommitSeconds;
+                committed = keys;
+            }
 
             // ⚠️⚠️ THE HAND BETWEEN TWO KEYS. `CommitHeading` starts this beat when it accepts
             // a heading more than `AiTuning.KeyChangeBeatDeg` off the last one, and for its length
@@ -3011,6 +3085,451 @@ namespace TumbangPreso
 
             intent.Set(Verb.Sprint, wantsToRun && SprintKeyDown());
         }
+
+        // -------------------------------------------------------------------
+        // § THE EDGE SENSE
+        //
+        // ⚠️⚠️ A BOT HAS NO PATHFINDING AND THIS DOES NOT GIVE IT ANY. `Goto` steers straight at
+        // a point on a flat plane, which is right for a walled court and walks a body off the
+        // Arena's stage, where the platforms have open edges over a pit and a fall costs a
+        // drone ride and five seconds frozen (`docs/ARENA_MAP_BRIEF.md`, the design's point 5).
+        // This is the smallest thing that stops that: the body feels for floor ahead of its
+        // feet, and when there is none it turns along the edge until there is.
+        //
+        // ⚠️⚠️ EVERYTHING HERE IS BEHIND `EdgeSense`, AND THAT IS THE CONTRACT WITH EVERY OTHER
+        // MAP. Nothing in this section runs, and no field in it is written, while the flag is
+        // off, so the measured behaviour of a bot on the street, the rooftop, the lagoon and
+        // Ilalim cannot have moved.
+        //
+        // ⚠️ IT TURNS ONE SIDE AND KEEPS TURNING THAT SIDE. A bot that re-chose the nearer side
+        // every frame stands at the lip of a gap flicking between two keys, because the side
+        // that is nearer changes as soon as it steps. So the side is remembered for
+        // `EdgeSideSeconds`, and only given up when a whole span of it brought the goal no
+        // closer, which is what lets a body follow an edge round to a bridge.
+        //
+        // ⚠️ "FLOOR" IS MEASURED FROM THE BODY'S OWN FEET, NOT FROM ZERO. The stage has ramps
+        // and a raised dais, so a fixed height would call the top of the dais a wall and the
+        // bottom of a ramp a pit. Anything from `EdgeProbeHeight` above the feet to
+        // `EdgeDropMax` below them is ground. A ledge too tall to climb still counts: it is
+        // not a fall, and a body pressed against it is the unstick's problem, as on any map.
+        // -------------------------------------------------------------------
+
+        private static readonly RaycastHit[] EdgeHits = new RaycastHit[16];
+
+        /// <summary>Which way this bot is turning round a gap: +1, -1, or 0 for neither.</summary>
+        private float _edgeSide;
+
+        /// <summary>Seconds left before the remembered side is asked to justify itself.</summary>
+        private float _edgeSideLeft;
+
+        /// <summary>How long the current side is being kept for. Doubles on a flip.</summary>
+        private float _edgeSideSpan;
+
+        /// <summary>Seconds since a heading was last refused for having no floor.</summary>
+        private float _edgeQuietFor;
+
+        /// <summary>How far the goal was when the current side's span began, or -1.</summary>
+        private float _edgeSpanFrom = -1.0f;
+
+        /// <summary>How far `Goto`'s goal is on this frame, handed to `Drive`, or -1 when the
+        /// step did not come from a goal.</summary>
+        private float _edgeGoalDistance = -1.0f;
+
+        /// <summary>The height of the feet the last time they were on the ground.</summary>
+        private float _edgeGroundY;
+        private bool _edgeGroundKnown;
+
+        private Vector3 _edgeGoalAsked;
+        private Vector3 _edgeGoalGiven;
+        private float _edgeGoalUntil = -1.0f;
+
+        private void StepEdgeSense(float dt)
+        {
+            if (_motor.IsGrounded)
+            {
+                _edgeGroundY = transform.position.y;
+                _edgeGroundKnown = true;
+            }
+
+            if (_edgeSideLeft > 0.0f) _edgeSideLeft -= dt;
+
+            _edgeQuietFor += dt;
+
+            if (_edgeQuietFor > AiTuning.EdgeSideForget)
+            {
+                _edgeSide = 0.0f;
+                _edgeSideLeft = 0.0f;
+                _edgeSpanFrom = -1.0f;
+            }
+        }
+
+        /// <summary>
+        /// The height the ground probes measure from.
+        ///
+        /// ⚠️ THE LAST GROUND STOOD ON WHILE THE BODY IS IN THE AIR. A hop lifts the feet over a
+        /// metre, and measured from there the platform it left is "too far down" and every
+        /// heading reads as a drop for the length of the jump.
+        /// </summary>
+        private float EdgeFeetY()
+        {
+            if (_motor.IsGrounded || !_edgeGroundKnown) return transform.position.y;
+            return _edgeGroundY;
+        }
+
+        /// <summary>
+        /// Is there ground under this point, between <paramref name="up"/> above
+        /// <paramref name="feetY"/> and <paramref name="down"/> below it?
+        ///
+        /// ⚠️ A BODY IS NOT GROUND, and neither is a tsinelas or the lata. Another seat standing
+        /// past the lip would otherwise read as floor and be followed off it.
+        /// </summary>
+        private bool EdgeFloorAt(float x, float z, float feetY, float up, float down)
+        {
+            // An airborne body can be above the height it is measuring from. The ray starts
+            // over whichever is higher so a platform under the body is never started inside.
+            float top = Mathf.Max(feetY, transform.position.y) + up;
+            float length = top - (feetY - down);
+
+            var origin = new Vector3(x, top, z);
+            var hits = EdgeHits;
+            int count = Physics.RaycastNonAlloc(origin, Vector3.down, hits, length, ~0,
+                                                QueryTriggerInteraction.Ignore);
+
+            // A full buffer may hold only ignored bodies and omit the floor behind them.
+            if (count == hits.Length)
+            {
+                hits = Physics.RaycastAll(origin, Vector3.down, length, ~0,
+                                          QueryTriggerInteraction.Ignore);
+                count = hits.Length;
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                var collider = hits[i].collider;
+                if (collider == null) continue;
+
+                if (collider.GetComponentInParent<CharacterMotor>() != null) continue;
+                if (collider.GetComponentInParent<Slipper>() != null) continue;
+                if (collider.GetComponentInParent<Lata>() != null) continue;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool EdgeFloorAt(Vector3 point, float feetY)
+            => EdgeFloorAt(point.x, point.z, feetY, AiTuning.EdgeProbeHeight, AiTuning.EdgeDropMax);
+
+        /// <summary>
+        /// May the body walk this key? Four probes: the first stride, the stopping distance, and
+        /// the stopping distance again one body radius to each side.
+        /// </summary>
+        /// <param name="within">How far the body means to walk, when that is known. ⚠️ A GOAL
+        /// NEXT TO AN EDGE IS STILL A GOAL: with the probes at their full length a bot walking
+        /// to a point 0.3 m inside the lip is refused 0.6 m short of it and never arrives.
+        /// Nothing past the goal is ground the body needs.</param>
+        private bool EdgeHeadingClear(Vector2 keys, float feetY, float within = -1.0f)
+        {
+            if (keys.sqrMagnitude < 0.0001f) return true;
+
+            float near = AiTuning.EdgeProbeNear;
+            float reach = AiTuning.EdgeProbeAhead;
+
+            if (within >= 0.0f)
+            {
+                near = Mathf.Min(near, within);
+                reach = Mathf.Min(reach, within);
+            }
+
+            Vector3 here = transform.position;
+            Vector3 along = new Vector3(keys.x, 0.0f, keys.y).normalized;
+            Vector3 across = new Vector3(-along.z, 0.0f, along.x) * AiTuning.EdgeProbeHalfWidth;
+            Vector3 ahead = here + along * reach;
+
+            return EdgeFloorAt(here + along * near, feetY)
+                   && EdgeFloorAt(ahead, feetY)
+                   && EdgeFloorAt(ahead + across, feetY)
+                   && EdgeFloorAt(ahead - across, feetY);
+        }
+
+        /// <summary>Is there floor all the way along a straight line from the body? For the
+        /// movement that cannot be steered once it starts: a lunge and a hop.</summary>
+        private bool EdgeLineClear(Vector3 direction, float reach)
+        {
+            direction.y = 0.0f;
+            if (direction.sqrMagnitude < 0.0001f) return true;
+
+            direction = direction.normalized;
+
+            Vector3 here = transform.position;
+            float feetY = EdgeFeetY();
+
+            for (float at = AiTuning.EdgeLineStep; at < reach; at += AiTuning.EdgeLineStep)
+            {
+                if (!EdgeFloorAt(here + direction * at, feetY)) return false;
+            }
+
+            return EdgeFloorAt(here + direction * reach, feetY);
+        }
+
+        private bool EdgeLungeClear(Vector3 direction)
+            => EdgeLineClear(direction, Balance.LungeDistance + AiTuning.EdgeLungeMargin);
+
+        /// <summary>
+        /// May this bot hop right now? Standing still, always. Moving, only with floor under
+        /// the whole flight: `JumpVelocity` against `CharacterGravity` is 0.575 s in the air,
+        /// and at `DefenderRunSpeed` that is 4.3 m the body cannot take back.
+        /// </summary>
+        private bool EdgeHopClear(InputIntent intent)
+        {
+            Vector2 move = intent.Move;
+            if (move.sqrMagnitude < 0.0001f) return true;
+
+            float airtime = 2.0f * Balance.JumpVelocity / Balance.CharacterGravity;
+            return EdgeLineClear(new Vector3(move.x, 0.0f, move.y), airtime * Balance.DefenderRunSpeed);
+        }
+
+        /// <summary>A key turned by a number of 45 degree steps, which is always another
+        /// key.</summary>
+        private static Vector2 EdgeTurned(Vector2 keys, float steps)
+        {
+            Vector3 turned = Quaternion.AngleAxis(45.0f * steps, Vector3.up)
+                             * new Vector3(keys.x, 0.0f, keys.y).normalized;
+            return EightWay(turned);
+        }
+
+        /// <summary>
+        /// The key to press in place of <paramref name="keys"/> when the ground runs out in
+        /// front of it, or zero when no key has ground.
+        ///
+        /// ⚠️ THE TURNS ARE 45, 90 AND 135 DEGREES, NOT 30, 60, 90 AND 120. A bot presses keys,
+        /// so a heading 30 degrees off would be probed in one direction and then walked in
+        /// another once `EightWay` had snapped it. What is tested here is exactly what the body
+        /// will do.
+        ///
+        /// ⚠️ WITH NO SIDE REMEMBERED THE TWO SIDES ALTERNATE, the one nearer the wanted bearing
+        /// first at each angle. With a side remembered that side is tried at every angle before
+        /// the other is looked at, which is what makes the body follow an edge instead of
+        /// bouncing off it.
+        ///
+        /// ⚠️ AND STRAIGHT BACK IS THE LAST THING TRIED, BEFORE STANDING STILL. A body on the
+        /// tip of a spit has floor in exactly one direction, and it is the one behind it.
+        /// </summary>
+        private Vector2 EdgeSteer(Vector2 keys, Vector3 wanted, float goalDistance, ref bool sprint)
+        {
+            float feetY = EdgeFeetY();
+
+            if (EdgeHeadingClear(keys, feetY, goalDistance))
+            {
+                // ⚠️ THE FAR PROBE ONLY TAKES THE SPRINT. See `AiTuning.EdgeProbeFar`.
+                if (sprint)
+                {
+                    Vector3 far = transform.position
+                                  + new Vector3(keys.x, 0.0f, keys.y).normalized * AiTuning.EdgeProbeFar;
+                    if (!EdgeFloorAt(far, feetY)) sprint = false;
+                }
+
+                return keys;
+            }
+
+            sprint = false;
+            _edgeQuietFor = 0.0f;
+
+            bool remembered = !Mathf.Approximately(_edgeSide, 0.0f);
+
+            if (remembered && _edgeSideLeft <= 0.0f)
+            {
+                // ⚠️ A SPAN IS OVER AND THE BODY IS STILL ON THE EDGE. Keep the side if it
+                // brought the goal closer. Otherwise turn round, and give the other side twice
+                // as long, so a bridge further away than one span is still reached.
+                bool known = goalDistance >= 0.0f && _edgeSpanFrom >= 0.0f;
+                bool closer = known && _edgeSpanFrom - goalDistance >= AiTuning.EdgeProgressMin;
+
+                if (known && !closer)
+                {
+                    _edgeSide = -_edgeSide;
+                    _edgeSideSpan = Mathf.Min(_edgeSideSpan * 2.0f, AiTuning.EdgeSideSecondsMax);
+                }
+
+                _edgeSideLeft = _edgeSideSpan;
+                _edgeSpanFrom = goalDistance;
+            }
+
+            float first = _edgeSide;
+
+            if (!remembered)
+            {
+                // The side whose first turn stays nearer the bearing the plan asked for.
+                Vector2 plus = EdgeTurned(keys, 1.0f);
+                Vector2 minus = EdgeTurned(keys, -1.0f);
+
+                float plusDot = plus.x * wanted.x + plus.y * wanted.z;
+                float minusDot = minus.x * wanted.x + minus.y * wanted.z;
+
+                first = plusDot >= minusDot ? 1.0f : -1.0f;
+            }
+
+            Vector2 chosen = Vector2.zero;
+            float side = 0.0f;
+
+            if (remembered)
+            {
+                for (int pass = 0; pass < 2 && side == 0.0f; pass++)
+                {
+                    float trying = pass == 0 ? first : -first;
+
+                    // ⚠️ THE REMEMBERED SIDE GOES ALL THE WAY ROUND TO STRAIGHT BACK (four
+                    // steps) before the other side is asked. That is what carries a body round
+                    // the corner of a platform and down its next edge, where the bridge may be.
+                    int most = pass == 0 ? 4 : 3;
+
+                    for (int steps = 1; steps <= most; steps++)
+                    {
+                        Vector2 turned = EdgeTurned(keys, steps * trying);
+                        if (!EdgeHeadingClear(turned, feetY)) continue;
+
+                        chosen = turned;
+                        side = trying;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                for (int steps = 1; steps <= 3 && side == 0.0f; steps++)
+                {
+                    for (int pass = 0; pass < 2; pass++)
+                    {
+                        float trying = pass == 0 ? first : -first;
+
+                        Vector2 turned = EdgeTurned(keys, steps * trying);
+                        if (!EdgeHeadingClear(turned, feetY)) continue;
+
+                        chosen = turned;
+                        side = trying;
+                        break;
+                    }
+                }
+            }
+
+            if (side != 0.0f)
+            {
+                if (!remembered || side != _edgeSide)
+                {
+                    // A side taken for the first time, or the remembered one had no floor at
+                    // any angle and the other did. Either way its span starts now.
+                    if (!remembered) _edgeSideSpan = AiTuning.EdgeSideSeconds;
+
+                    _edgeSide = side;
+                    _edgeSideLeft = _edgeSideSpan;
+                    _edgeSpanFrom = goalDistance;
+                }
+
+                return chosen;
+            }
+
+            Vector2 back = -keys;
+            if (EdgeHeadingClear(back, feetY)) return back;
+
+            // ⚠️ IN THE AIR WITH NO FLOOR IN REACH, THE KEY IS KEPT. Letting go of it over a gap
+            // gives up the only thing still carrying the body toward the far side.
+            if (!_motor.IsGrounded) return keys;
+
+            return Vector2.zero;
+        }
+
+        /// <summary>
+        /// A goal with no floor under it, pulled back to the nearest point that has one: along
+        /// the line back to this bot first, and then along the line to the centre spot.
+        ///
+        /// ⚠️ THE CENTRE IS THE SECOND LINE BECAUSE IT IS THE ONE PLACE THE STAGE ALWAYS HAS
+        /// FLOOR. The can stands there in every layout, on a platform the taya's mark shares.
+        ///
+        /// ⚠️ IT IS REUSED FOR `EdgeGoalRefresh` SECONDS. `Goto` asks every frame, the line back
+        /// to the bot moves with the bot, and a goal that shifted a few centimetres a frame
+        /// would never let `_arrived` settle.
+        /// </summary>
+        private Vector3 EdgeGroundedGoal(Vector3 point)
+        {
+            if (Time.time < _edgeGoalUntil && Flat(point, _edgeGoalAsked) <= AiTuning.EdgeGoalStep * 0.5f)
+                return new Vector3(_edgeGoalGiven.x, point.y, _edgeGoalGiven.z);
+
+            _edgeGoalAsked = point;
+            _edgeGoalUntil = Time.time + AiTuning.EdgeGoalRefresh;
+            _edgeGoalGiven = EdgePulledGoal(point);
+
+            return _edgeGoalGiven;
+        }
+
+        private Vector3 EdgePulledGoal(Vector3 point)
+        {
+            float feetY = EdgeFeetY();
+
+            if (EdgeGoalFloorAt(point, feetY)) return point;
+
+            Vector3 here = transform.position;
+            float reach = AiTuning.EdgeGoalStep * AiTuning.EdgeGoalSteps;
+
+            Vector3 back = here - point;
+            back.y = 0.0f;
+            float toBot = back.magnitude;
+
+            if (toBot > 0.001f)
+            {
+                back /= toBot;
+
+                for (int i = 1; i <= AiTuning.EdgeGoalSteps; i++)
+                {
+                    float at = i * AiTuning.EdgeGoalStep;
+                    if (at >= toBot) break;
+
+                    Vector3 probe = point + back * at;
+                    if (EdgeGoalFloorAt(probe, feetY)) return EdgeInset(probe, back, toBot - at, feetY);
+                }
+            }
+
+            // Nothing between the goal and the body, and the body is close: where it stands is
+            // the nearest floor there is.
+            if (toBot <= reach) return new Vector3(here.x, point.y, here.z);
+
+            Vector3 inward = new Vector3(-point.x, 0.0f, -point.z);
+            float toCentre = inward.magnitude;
+
+            if (toCentre > 0.001f)
+            {
+                inward /= toCentre;
+
+                for (int i = 1; i <= AiTuning.EdgeGoalSteps; i++)
+                {
+                    float at = i * AiTuning.EdgeGoalStep;
+                    if (at >= toCentre) break;
+
+                    Vector3 probe = point + inward * at;
+                    if (EdgeGoalFloorAt(probe, feetY)) return EdgeInset(probe, inward, toCentre - at, feetY);
+                }
+            }
+
+            // ⚠️ LEFT WHERE IT WAS. The walk there is still filtered by `EdgeSteer`, so a goal
+            // this could not fix costs a bot standing at an edge, not a bot in the pit.
+            return point;
+        }
+
+        /// <summary>
+        /// The first floored probe is on the lip. This steps it two probes further in when
+        /// there is floor and room there, so the body has somewhere to put its feet.
+        /// </summary>
+        private Vector3 EdgeInset(Vector3 found, Vector3 inward, float room, float feetY)
+        {
+            float inset = AiTuning.EdgeGoalStep * 2.0f;
+            if (inset >= room) return found;
+
+            Vector3 deeper = found + inward * inset;
+            return EdgeGoalFloorAt(deeper, feetY) ? deeper : found;
+        }
+
+        private bool EdgeGoalFloorAt(Vector3 point, float feetY)
+            => EdgeFloorAt(point.x, point.z, feetY, AiTuning.EdgeGoalUp, AiTuning.EdgeGoalDown);
 
         // -------------------------------------------------------------------
         // § ATTENTION WANDERS
@@ -3110,6 +3629,10 @@ namespace TumbangPreso
             if (!MayHop()) return;
 
             if (UnityEngine.Random.value > AiTuning.HopChance * Me.Hops * _self.Springiness) return;
+
+            // ⚠️ AFTER THE ROLL, so the random stream a hop draws from is the same with the edge
+            // sense on or off, and the probes are only paid for by a hop that would happen.
+            if (EdgeSense && !EdgeHopClear(intent)) return;
 
             _hopHeld = true;
             Press(intent, Verb.Jump, true);

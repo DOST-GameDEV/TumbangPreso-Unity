@@ -184,7 +184,7 @@ namespace TumbangPreso.UI
         public void Flash(bool active) => _effects.Flash(active);
         public void Tick(CharacterMotor local, bool spectating, bool training, bool hidePowers, bool spectatorControls)
         {
-            Canvas.enabled = !RoleSwapCard.Showing && !HalftimePresentation.Playing;
+            Canvas.enabled = !RoleSwapCard.Showing && !HalftimePresentation.Playing && !Map.ArenaIntro.HidesUi;
             float dt = Time.unscaledDeltaTime;
             if (_toastLeft > 0) { _toastLeft -= dt; if (_toastLeft <= 0) { _toast.enabled = false; SizeToastPlate(); } }
             if (_hitLeft > 0)
@@ -535,6 +535,10 @@ namespace TumbangPreso.UI
         private void Sandbox()
         {
             if (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.f7Key.wasPressedThisFrame && PracticeSandbox.Allowed) PracticeSandbox.Toggle();
+            // The F8 character ambient occlusion switch lived here (off, half, full). Removed on
+            // 2026-10-05 at the owner's word ("we dont need the F8 character AO toggle anymore"):
+            // the editor's Character Redesign menu drives the same single value
+            // (`WorldOutline.CharacterAoTest`), and two writers of one value could disagree.
             _sandbox.enabled = PracticeSandbox.Allowed && !Hud.OnTouch && (PracticeSandbox.Active || ReadyWindow);
             _sandbox.text = "F7 · No cooldowns " + (PracticeSandbox.Active ? "on" : "off");
             // Keep the practice status above the enlarged deck and its reading hint.

@@ -159,6 +159,7 @@ namespace TumbangPreso.UI
                 v => { s.RenderStyle = v; RenderStyles.Apply(v); });
             Choice("AntiAliasing", "Smooth edges", AntiAliasModes.All.Select(p => p.Label).ToArray(), s.AntiAliasMode,
                 v => { s.AntiAliasMode = v; AntiAliasModes.Apply(v); });
+            Choice("CharacterShading", "Character shading", GameSettings.CharacterShadingLabels, s.CharacterShading, v => s.CharacterShading = v);
             Choice("VSync", "Vertical sync", VSyncModes.All.Select(p => p.Label).ToArray(), s.VSyncMode,
                 v => { s.VSyncMode = v; VSyncModes.Apply(v); FrameRateOptions.Apply(s.FrameRateLimit); UpdateFrameCapState(); });
             _frameCap = TumpFormWidgets.Choice(Row("FrameRate", "Frame rate limit"), "FrameRateValue",

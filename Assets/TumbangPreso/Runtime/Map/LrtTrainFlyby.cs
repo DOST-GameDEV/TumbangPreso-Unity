@@ -93,6 +93,109 @@ namespace TumbangPreso
         /// <summary>Seconds of warning before the consist reaches the overhead window.</summary>
         public float WarningLead = 3.0f;
 
+        /// <summary>
+        /// STATION TO STATION (owner, 2026-10-04, from a jump pad: "make it so the train actually
+        /// comes from pedro gil station going to UN. when its not moving its just in the middle
+        /// of the track"). Off, the consist runs `StartZ` to `EndZ` and is put back at `StartZ`,
+        /// which on the rebuilt Ilalim left it parked on the open viaduct. On, `StartZ` and `EndZ`
+        /// are the two STATIONS: it waits inside one, eases out, crosses the court, brakes into
+        /// the other, waits there, and comes back on the other track, so it is never parked or
+        /// moved in sight. `_currentZ` is then the distance along the run and the world z is
+        /// `_dir * _currentZ`; trains keep right, so the run toward +z is on x = +|TrackX|.
+        /// </summary>
+        public bool Shuttle;
+
+        /// <summary>Metres over which a shuttle run gathers speed out of a station and sheds it
+        /// into the next.</summary>
+        public float StationEase = 45.0f;
+
+        /// <summary>Half-length of the stretch round the court where the pass sounds. 48 keeps
+        /// the recording's arithmetic (§ THE PASS): its peak lands with the consist overhead.</summary>
+        public float SoundHalfZ = 48.0f;
+
+        /// <summary>
+        /// Where the line is in the world. Zero, the viaduct runs through the origin, over the
+        /// court, as on the first Ilalim. The rebuilt map's court is in the lot beside Taft
+        /// (owner, 2026-10-04: "can we move the play area to this open space?") and the world was
+        /// moved to put it at the origin, so there the line's centreline is x = `CentreX` and the
+        /// midpoint between its two stations is z = `CentreZ`. The pass's windows (warning,
+        /// overhead, sound) stay centred on the COURT, world z = 0: the consist is "passing" when
+        /// it is level with the players, wherever its stations are.
+        /// </summary>
+        public float CentreX, CentreZ;
+
+        /// <summary>
+        /// THE CONSIST IS A BODY (owner, 2026-10-04: "the cars are just pass through, even the
+        /// train"). With jump pads on the pavements a player can land on the deck, and the consist
+        /// went through them. On, it carries a kinematic box (`SolidSize`, about its rail-head
+        /// origin), so it can be stood against when it waits in a station, and while it RUNS it
+        /// fells and throws whoever it reaches, as a car does on the live road (`KantoTraffic`):
+        /// resolved once by the host, the throw through the existing impact RPC.
+        /// </summary>
+        public bool Solid;
+
+        /// <summary>The consist's box: width, height over the rail head, length. LRT-1's car body
+        /// is 2.5 m wide and stands about 3.6 m over the rail; the consist is 15.6 m.</summary>
+        public Vector3 SolidSize = new Vector3(2.6f, 3.6f, 15.6f);
+
+        /// <summary>The throw: along the line, and up. A train, so harder than a car's 14.</summary>
+        public float HitThrow = 26.0f, HitLift = 13.0f, HitTrip = 3.0f;
+
+        private readonly System.Collections.Generic.Dictionary<CharacterMotor, float> _nextHit =
+            new System.Collections.Generic.Dictionary<CharacterMotor, float>();
+
+        private void BuildSolid()
+        {
+            if (!Solid || !Application.isPlaying) return;
+            var body = gameObject.AddComponent<Rigidbody>();
+            body.isKinematic = true; body.useGravity = false;
+            var box = gameObject.AddComponent<BoxCollider>();
+            box.center = new Vector3(0.0f, SolidSize.y * 0.5f, 0.0f);
+            box.size = SolidSize;
+        }
+
+        private void HitPlayers(float speed)
+        {
+            if (!Solid || speed < 2.0f || !NetAuthority.ShouldResolve()) return;
+            var round = GameServices.Round;
+            var players = round != null ? round.Players : null;
+            if (players == null) return;
+            Vector3 forward = transform.forward, right = transform.right, at = transform.position;
+            for (int k = 0; k < players.Count; k++)
+            {
+                var who = players[k];
+                if (who == null || !who.isActiveAndEnabled) continue;
+                Vector3 d = who.transform.position - at;
+                if (d.y < -1.5f || d.y > SolidSize.y) continue;
+                if (Mathf.Abs(Vector3.Dot(d, forward)) > SolidSize.z * 0.5f + 0.5f) continue;
+                float side = Vector3.Dot(d, right);
+                if (Mathf.Abs(side) > SolidSize.x * 0.5f + 0.5f) continue;
+                if (_nextHit.TryGetValue(who, out float next) && Time.time < next) continue;
+                if (who.IsTripImmune) continue;
+                _nextHit[who] = Time.time + 2.0f;
+                who.ApplyTrip(HitTrip);
+                if (!who.IsTripped) continue;
+                who.ApplyResolvedImpact(CharacterMotor.AsLaunch(forward * HitThrow + right * (side >= 0.0f ? 6.0f : -6.0f) + Vector3.up * HitLift));
+                Visual.WindTumble.Attach(who)?.Throw(HitTrip);
+                NetCue.PlayVaried("hit_body", who.transform.position, 0.6f, 0.75f, 1.0f);
+                ImpactBurst.SpawnAt(who.transform.position);
+            }
+        }
+
+        private int _dir = 1;
+        private float RunX => CentreX + (Shuttle ? _dir * Mathf.Abs(TrackX) : TrackX);
+        private Vector3 RunPosition(float along) => new Vector3(RunX, TrackY, CentreZ + (Shuttle ? _dir * along : along));
+
+        /// <summary>The run coordinate measured from the court: zero when the consist is level
+        /// with world z = 0, negative before it gets there.</summary>
+        private float FromCourt(float along) => along + (Shuttle ? _dir : 1) * CentreZ;
+
+        private void Place(float along)
+        {
+            transform.position = RunPosition(along);
+            if (Shuttle) transform.rotation = Quaternion.Euler(0.0f, _dir > 0 ? 0.0f : 180.0f, 0.0f);
+        }
+
         private float _timer;
         private bool _isRunning;
         private float _currentZ;
@@ -104,7 +207,8 @@ namespace TumbangPreso
         {
             _timer = Interval - InitialDelay;
             _isRunning = false;
-            transform.position = new Vector3(TrackX, TrackY, StartZ);
+            Place(StartZ);
+            BuildSolid();
             OverheadPassWindow.Clear();
         }
 
@@ -112,7 +216,10 @@ namespace TumbangPreso
         // cooldown rate behind on the way out would follow the player into the next match on a
         // different map, where nothing would ever put it back.
         private void OnDisable() => OverheadPassWindow.Clear();
-        private void OnDestroy() => OverheadPassWindow.Clear();
+        private void OnDestroy()
+        {
+            OverheadPassWindow.Clear();
+        }
 
         private void Update()
         {
@@ -130,19 +237,30 @@ namespace TumbangPreso
                 return;
             }
 
-            _currentZ += Speed * Time.deltaTime;
-            transform.position = new Vector3(TrackX, TrackY, _currentZ);
+            float speed = Speed;
+            if (Shuttle)
+            {
+                // Out of one station and into the next: a quarter speed at the platform, full
+                // speed `StationEase` metres out. Never zero, or it would not leave.
+                float fromEnds = Mathf.Min(_currentZ - StartZ, EndZ - _currentZ);
+                speed *= Mathf.Lerp(0.25f, 1.0f, Mathf.Clamp01(fromEnds / Mathf.Max(1.0f, StationEase)));
+            }
+            _currentZ += speed * Time.deltaTime;
+            Place(_currentZ);
+            HitPlayers(speed);
 
             float warnAt = -OverheadHalfZ - Speed * WarningLead;
 
-            if (!_warned && _currentZ >= warnAt)
+            float court = FromCourt(_currentZ);
+
+            if (!_warned && court >= warnAt)
             {
                 _warned = true;
                 OverheadPassWindow.SetWarning(true);
                 Announce();
             }
 
-            bool overhead = _currentZ >= -OverheadHalfZ && _currentZ <= OverheadHalfZ;
+            bool overhead = court >= -OverheadHalfZ && court <= OverheadHalfZ;
 
             if (overhead != _windowOpen)
             {
@@ -162,13 +280,14 @@ namespace TumbangPreso
             // one object, two of them synthesised and one of them about fire, is most of why 🧑
             // reported this repeatedly and finally said *"i keep reporting its broken and i give
             // up on it"*. The recording is the train; the burst stays because it is a picture.
-            if (!_whooshPlayed && _currentZ >= -18.0f)
+            if (!_whooshPlayed && court >= -18.0f)
             {
                 _whooshPlayed = true;
-                ImpactBurst.SpawnAt(new Vector3(TrackX, TrackY - 0.5f, _currentZ));
+                ImpactBurst.SpawnAt(RunPosition(_currentZ) + Vector3.down * 0.5f);
             }
 
-            DriveRumble();
+            if (!Shuttle || Mathf.Abs(court) <= SoundHalfZ) DriveRumble();
+            else if (_rumbleStarted) StopRumble();
 
             if (_currentZ < EndZ) return;
 
@@ -177,7 +296,10 @@ namespace TumbangPreso
             OverheadPassWindow.SetOverhead(false);
             OverheadPassWindow.SetWarning(false);
             StopRumble();
-            transform.position = new Vector3(TrackX, TrackY, StartZ);
+            // It has arrived in the far station: the next run starts from there, the other way,
+            // on the other track. Without Shuttle it is put back where it started.
+            if (Shuttle) _dir = -_dir;
+            Place(StartZ);
         }
 
         // ------------------------------------------------------------------ § THE PASS
@@ -226,7 +348,9 @@ namespace TumbangPreso
         // range inside the first few metres, so the consist would be at full volume across the
         // entire arena and then vanish. Linear from 12 to 70 spans the map: audible from the far
         // wall, loudest overhead, gone by the time the tail clears the boundary traffic.
-        private const float RumbleMinDistance = 12.0f;
+        // 20, up from 12 (2026-10-04): the pavement is 13 to 15 m from the consist, and at 12 the
+        // rolloff had already taken a slice off before anybody could stand under it.
+        private const float RumbleMinDistance = 20.0f;
 
         /// ⚠️⚠️ 44, DOWN FROM 70, BECAUSE 70 MADE IT AUDIBLE FROM THE MOMENT IT SPAWNED.
         /// The consist starts at z = -48 and the arena is centred on the origin, so at 70 m of
@@ -235,7 +359,7 @@ namespace TumbangPreso
         /// the *"loud wind soudn that plays randomly"* off the played build: not random, just
         /// audible for the whole 5.3 s traverse at full level. At 44 the sound arrives with the
         /// warning and leaves with the train.
-        private const float RumbleMaxDistance = 44.0f;
+        private const float RumbleMaxDistance = 52.0f;
 
         /// <summary>
         /// How hard the street shakes directly under the consist.
@@ -287,12 +411,42 @@ namespace TumbangPreso
             // doppler to be audible at all, and at 18 m/s the true shift is about 5 per cent,
             // which nobody hears. This is the one place exaggerating it is honest: the effect
             // being sold is "it went past me", not a physics reading.
-            _rumble.dopplerLevel = 2.2f;
+            // 1.3: the first 2.2 was hard to hear, 3.5 was "too much" (owner, 2026-10-04).
+            _rumble.dopplerLevel = 1.3f;
+            Reverb(go);
+
+            // The rail clank (tools/synth_ilalim_train_clack.py): wheels over the joints, a loop
+            // on the consist beside the roar (owner: "theres no sfx for the rails clanking when
+            // the train goes over"). Not a registered cue: a map-owned loop like the street bed.
+            var clackClip = Resources.Load<AudioClip>("Ambience/lrt_clack");
+            if (clackClip != null)
+            {
+                var clackGo = new GameObject("LrtClack");
+                clackGo.transform.SetParent(transform, false);
+                _clack = clackGo.AddComponent<AudioSource>();
+                _clack.clip = clackClip;
+                _clack.loop = true;
+                _clack.playOnAwake = false;
+                _clack.spatialBlend = 1.0f;
+                _clack.rolloffMode = AudioRolloffMode.Linear;
+                _clack.minDistance = RumbleMinDistance;
+                _clack.maxDistance = RumbleMaxDistance;
+                _clack.dopplerLevel = 1.3f;
+                Reverb(clackGo);
+            }
 
             _rumbleMix = mix;
         }
 
         private float _rumbleMix = 1.0f;
+        private AudioSource _clack;
+
+        // The street under a concrete viaduct rings (owner, 2026-10-04: "theres no reverb").
+        private static void Reverb(GameObject source)
+        {
+            var reverb = source.AddComponent<AudioReverbFilter>();
+            reverb.reverbPreset = AudioReverbPreset.ParkingLot;
+        }
 
         /// <summary>
         /// The pass, every frame it is running: the rumble's level and the shake under it.
@@ -327,6 +481,11 @@ namespace TumbangPreso
                 // moved in the pause panel while a train is mid-pass.
                 float slider = GameServices.Audio != null ? GameServices.Audio.AmbienceVolume : 1.0f;
                 _rumble.volume = _rumbleMix * slider * KantoStreetSound.AmbientGainScale;
+                if (_clack != null)
+                {
+                    if (!_clack.isPlaying) _clack.Play();
+                    _clack.volume = 0.85f * slider;
+                }
             }
 
             // ⚠️ THE SHAKE IS RE-ARMED EVERY FRAME RATHER THAN FIRED ONCE. `CameraRig.Shake`
@@ -346,7 +505,11 @@ namespace TumbangPreso
             if (strength < 0.01f) return;
 
             var rig = listener.GetComponent<CameraSystem.CameraRig>();
-            rig?.Shake(strength, 0.12f);
+            // ⚠️ 0.7 s, NOT 0.12. `CameraRig` scales a shake by `Clamp01(_shakeLeft)`, so re-arming
+            // 0.12 s every frame held the whole pass at 12 per cent of `ShakePeak`: it "worked"
+            // and nobody could see it (owner, 2026-10-04: "add a slight screen shake when the
+            // train passes"). At 0.7 it is a slight rumble that dies away as the tail clears.
+            rig?.Shake(strength, 0.7f);
         }
 
         /// <summary>
@@ -358,6 +521,7 @@ namespace TumbangPreso
         {
             _rumbleStarted = false;
             if (_rumble != null && _rumble.isPlaying) _rumble.Stop();
+            if (_clack != null && _clack.isPlaying) _clack.Stop();
         }
 
         /// <summary>

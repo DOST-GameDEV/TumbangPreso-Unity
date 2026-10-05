@@ -64,6 +64,38 @@ namespace TumbangPreso.Visual
             // `EnvColourPass.RoadTint` already sets, so no material asset or texture is touched.
             // 1 (or an unset 0) leaves the floor alone; the plaza, deck and rooftop keep theirs.
             public float GroundLift=1;
+            // ⚠️ NO VOXEL CLOUDS ON THIS MAP. `BlockyClouds` stands its ring 100 to 150 m out and
+            // 40 to 64 m up, which is open sky over a street and INSIDE the Arena's bowl (its
+            // canopies are 150 to 190 m out and 64 to 71 m up). False, the default and every other
+            // row's value, is today's clouds.
+            public bool NoBlockyClouds;
+            // ⚠️ A MAP'S OWN CLOUD PLACEMENT (owner, 2026-10-05, of the Arena: "use the clouds we
+            // have in the other maps too"). The same voxel clouds, built by the same code, stood
+            // where THIS map has open sky: each band is so many clouds between two radii from the
+            // map's centre and two belly heights over its floor (negative is under it), of a
+            // width and a block size. Empty, the default and every other row's value, is the
+            // profile's one ring exactly as before. The three colours replace `CloudLight`,
+            // `CloudShade` and the horizon for the voxel clouds only when their alpha is above 0
+            // (the row's own cloud colours also tint a painted sky); `CloudsFromBelow` 1 lights
+            // them from under, for a night city (see `BlockyCloud.shader`).
+            [Serializable] public struct CloudBand
+            {
+                public int Count;
+                public Vector2 Radius,Height,Size;
+                public float Voxel;
+                public CloudBand(int count,float radiusFrom,float radiusTo,float heightFrom,float heightTo,float sizeFrom,float sizeTo,float voxel)
+                {Count=count;Radius=new Vector2(radiusFrom,radiusTo);Height=new Vector2(heightFrom,heightTo);Size=new Vector2(sizeFrom,sizeTo);Voxel=voxel;}
+            }
+            public CloudBand[] CloudBands;
+            public Color BlockyLit,BlockyShade,BlockyAir;
+            public float CloudsFromBelow;
+            // ⚠️ A MAP'S OWN GLOW (owner, 2026-10-05, of the Arena: "you'll also need to look into
+            // emmissives for the arena so things are glowy"). The profile's bloom is tuned for
+            // daylight, where only the sun disc and effect cores may pass (0.05 above 2.2, see
+            // `Bloom` below), so a night map's LED rows, signs and rim lights never glowed. A row
+            // that sets these takes its own strength and threshold; 0, the default and every
+            // other row's value, is the profile's.
+            public float Bloom,BloomThreshold;
             public MapLook(string map,Color sky,Color equator,Color ground,Color tint,float fogStart,float fogEnd,int wear,bool dark)
             {
                 Map=map;Sky=sky;Equator=equator;Ground=ground;ShadowTint=tint;FogStart=fogStart;FogEnd=fogEnd;WearKind=wear;
@@ -78,6 +110,10 @@ namespace TumbangPreso.Visual
             public MapLook Key(Color sun,float intensity,float elevation,float shadowStrength,Color lift)
             {Sun=sun;SunIntensity=intensity;SunElevation=elevation;ShadowStrength=shadowStrength;Lift=lift;return this;}
             public MapLook Floor(float lift){GroundLift=lift;return this;}
+            public MapLook Roofed(){NoBlockyClouds=true;return this;}
+            public MapLook CloudLayers(Color lit,Color shade,Color air,float fromBelow,params CloudBand[] bands)
+            {NoBlockyClouds=false;CloudBands=bands;BlockyLit=lit;BlockyShade=shade;BlockyAir=air;CloudsFromBelow=fromBelow;return this;}
+            public MapLook Glow(float bloom,float threshold){Bloom=bloom;BloomThreshold=threshold;return this;}
         }
 
         [Header("Cast and hero props")]
@@ -134,6 +170,13 @@ namespace TumbangPreso.Visual
         // whole building. Off on the Low tier and under Classic, with the rest of the look.
         [Range(0,1)] public float AmbientOcclusion=.8f;
         [Range(.2f,3)] public float AmbientOcclusionRadius=1f;
+        // How much occlusion shades the CAST is the player's setting, not the look's
+        // (`GameSettings.CharacterShading`, Full by default; owner, 2026-10-05).
+        // The cast's kernel radius, metres: a body's scale (a fringe of hair, an arm against a chest),
+        // where the world's `AmbientOcclusionRadius` is a doorway's.
+        // ⚠️ 0.14 SINCE 2026-10-05 (owner: ".14m seems like the best ao setting"). It was a third of a
+        // metre, which spread the shade past creases that are centimetres deep.
+        [Range(.1f,1)] public float CharacterAmbientOcclusionRadius=.14f;
         // 1 draws the cast's hull in a deeper shade of its own colour, 0 in black.
         [Range(0,1)] public float CastInkSelf=.88f;
         // The cast's hull width against its authored width.
@@ -321,6 +364,43 @@ namespace TumbangPreso.Visual
             new MapLook("LagoonCove",new Color(.44f,.42f,.64f),new Color(.66f,.52f,.54f),new Color(.62f,.46f,.34f),new Color(.9f,.8f,1.1f),70,340,4,false)
                 .Air(new Color(.98f,.78f,.64f),new Color(.3f,.46f,.72f),new Color(1,.74f,.54f),new Color(1,.8f,.64f),new Color(.62f,.54f,.74f))
                 .Key(new Color(1,.8f,.56f),1.25f,6,.7f,new Color(.05f,.03f,.06f)),
+            // ⚠️ ARENA: A NIGHT MATCH (docs/ARENA_ART_BRIEF.md: a stadium floating in the night sky, owner:
+            // "bluelock/rocketleague stadium in aesthetic ... night time"). The one row that is NOT daylight, so
+            // it reads the rules above for a night: the key is the floodlights, a cool white from high up
+            // (elevation 0 keeps the scene light's own angle), and the shade is still COLOURED, a deep navy,
+            // never black, with the coloured floor under it. The air is a dark indigo. ⚠️ IT RUNS FROM
+            // 180 m TO 3400 m (it was 140 to 620, 2026-10-05): linear fog is WHOLE at its end, and the
+            // landmark towers stand 440 to 900 m out, so at 620 every one of them was the fog's flat
+            // colour. Now the bowl is clear (the upper stands, 183 m, take nothing), a tower at 440 m
+            // keeps 92 per cent of itself and one at 900 m 78, and the far ring at 2000 m 43: distance
+            // reads and nothing is hidden. Sky: the city kit's painted panorama (TumbangPreso/ArenaSky);
+            // the zenith and horizon here are only what glass reflects.
+            // ⚠️ ITS OWN VOXEL CLOUDS (owner, 2026-10-05: "use the clouds we have in the other maps too").
+            // The profile's ring (100 to 150 m out, 40 to 64 m up) is INSIDE this bowl, so the row
+            // places two bands of its own (`CloudLayers`), each clear of everything that is there:
+            //   * A CLOUD DECK UNDER THE STADIUM: 16 clouds 70 to 240 m out, bellies 345 to 300 m under
+            //     the stage, 90 to 130 m wide (tops no higher than y -228). Over them the hull's
+            //     underside (y -76) and the car lane (y -190); under them the viaduct's masts
+            //     (y -380) and the train's loop (y -500); outside them every tower (the nearest
+            //     face is about 320 m out, and the widest cloud reaches 303). The stadium floats
+            //     over them: they are what is seen down the shaft and past the hull from the air.
+            //   * A FEW HIGH ONES: 5 clouds 250 to 272 m out, bellies 340 to 400 m up, 55 to 80 m
+            //     wide: 52 to 57 degrees up from the stage, over the canopies (71 m) and the sky
+            //     traffic (to y 204, out to r 366), inside the nearest towers' faces, in open sky.
+            //   The ring turns about the can (the profile's drift), so a band must be clear all
+            //   the way round, which is why none stands among the towers themselves. The farthest
+            //   block is under 500 m from the stage: inside the play camera's 1300 m.
+            //   Night colours, lit from below by the city: the city kit's (#7c5690, #1c2254, #2f2c74).
+            // Light chalk, like Kanto. Nothing here is near #f87020 or #0080e8.
+            new MapLook("Arena",new Color(.3f,.34f,.52f),new Color(.26f,.28f,.4f),new Color(.16f,.17f,.24f),new Color(.78f,.82f,1.1f),180,3400,0,false)
+                .Air(new Color(.1f,.12f,.22f),new Color(.03f,.04f,.1f),new Color(.16f,.14f,.3f),new Color(.3f,.3f,.44f),new Color(.08f,.09f,.16f))
+                // Glow: bloom 0.2 above 1.8. Under this key (1.15) and ambient a lit body or the pale
+                // deck tops out near 1.4, below the knee (1.44), so only emissives glow: the kit's
+                // glowing materials are given 2.5 and more in `ArenaArtPlacer.Rules`.
+                .Key(new Color(.92f,.95f,1),1.15f,0,.7f,new Color(.02f,.024f,.045f)).Glow(.16f,1.9f)
+                .CloudLayers(new Color(.486f,.337f,.565f,1),new Color(.11f,.133f,.329f,1),new Color(.184f,.173f,.455f,1),1,
+                    new MapLook.CloudBand(16,70,240,-345,-300,90,130,9),
+                    new MapLook.CloudBand(5,250,272,340,400,55,80,6)),
             // ⚠️ THE FIRST ILALIM NG TULAY, VAULTED 2026-10-01 (ILALIM-1.6) at Scenes/Vault/IlalimNgTulayOld.unity:
             // its look, kept so the vaulted scene still opens in it. This was the "IlalimNgTulay" row.
             new MapLook("IlalimNgTulayOld",new Color(.46f,.47f,.64f),new Color(.5f,.5f,.58f),new Color(.5f,.42f,.36f),new Color(.82f,.82f,1.12f),36,180,2,false)

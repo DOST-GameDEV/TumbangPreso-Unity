@@ -93,6 +93,26 @@ namespace TumbangPreso
             var map = SceneFlow.PreviewFor(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
             PrepareShots(map);
             bool reduced = Settings.SettingsStore.Current.ReducedUiMotion;
+            // ARENA-INTRO begin. The Arena has its own opening in place of these shots (`Map.ArenaIntro`:
+            // the tunnel, the glare, the taya on the screens, the stage built). Null on every other
+            // map, and false when there is none to play here: then nothing below is different. The
+            // hold, the input, the curtain and the camera's return stay this component's (`Finish`).
+            var opening = Map.ArenaIntro.Ensure();
+            if (opening != null && _rigActive && opening.Begin(_camera, _players, _position, _rotation, _fov, reduced))
+            {
+                _ink.color = Color.clear; _captionGroup.alpha = 0;
+                while (HubLoading.Visible) { if (!Current(generation)) yield break; yield return null; }
+                opening.Roll();
+                while (opening != null && opening.Playing)
+                {
+                    if (!Current(generation)) yield break;
+                    // The same single handoff as below: the rig is live again for the last of the return.
+                    if (opening.Age >= Mathf.Lerp(opening.Timeline.Handoff, opening.Timeline.End, .7f) && _rig != null) _rig.SetActive(true);
+                    yield return null;
+                }
+                yield break;
+            }
+            // ARENA-INTRO end.
             Sample(0, reduced, map);
             // Loading can now fade onto the already-prepared opening curtain/shot.
             while (HubLoading.Visible) { if (!Current(generation)) yield break; yield return null; }
@@ -287,6 +307,8 @@ namespace TumbangPreso
 
         private void Finish()
         {
+            // ARENA-INTRO: the Arena's opening, if one is up, puts back everything it posed. A no-op elsewhere.
+            Map.ArenaIntro.Stop();
             if (_active == this) _active = null;
             for (int i = 0; i < _poses.Length; i++)
             {

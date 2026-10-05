@@ -12,6 +12,15 @@ namespace TumbangPreso
         public static bool Playing=>Instance!=null&&Instance.Active;
         public const float BreakDuration = 3.5f;
         public const float HalftimeDuration = 10;
+        // Arena transforms its stage during the ordinary break, so that break is longer there and
+        // the live picture is kept. Read from the map on every peer, so it stays shared with nothing sent.
+        public static bool LiveStageBreak=>Map.ArenaStage.Instance!=null;
+        public static float OrdinaryBreakDuration=>LiveStageBreak?Map.ArenaStage.BreakSeconds:BreakDuration;
+        // ARENA'S HALFTIME IS TWO ACTS ON THE ONE CLOCK: this package untouched (replay, then standings),
+        // THEN the stage's transformation, the same 8 s as its ordinary break. So halftime is longer there
+        // only, by the map, on every peer; nothing is sent. Every part of that show reads its start here.
+        public static float StageShowLead(bool halftime)=>halftime&&LiveStageBreak?Map.ArenaStage.HalftimeLeadSeconds:0;
+        public static float DurationFor(bool halftime)=>halftime?(LiveStageBreak?Map.ArenaStage.HalftimeLeadSeconds+Map.ArenaStage.BreakSeconds:HalftimeDuration):OrdinaryBreakDuration;
         public bool Active {get;private set;}
         public bool IsHalftime {get;private set;}
         public long MatchId {get;private set;}
@@ -19,7 +28,12 @@ namespace TumbangPreso
         public int CompletedRound {get;private set;}
         public int NextTaya {get;private set;}
         public double Began {get;private set;}
-        public float Duration=>IsHalftime?HalftimeDuration:BreakDuration;
+        public float Duration=>DurationFor(IsHalftime);
+        public double StageShowBegan=>Began+StageShowLead(IsHalftime);
+        public float StageShowAge=>(float)(SharedUltimatePhase.Now-StageShowBegan);
+        public float StageShowDuration=>Duration-StageShowLead(IsHalftime);
+        // False through Arena's halftime package, and always on every other map.
+        public bool StageShowPlaying=>Active&&LiveStageBreak&&(!IsHalftime||SharedUltimatePhase.Now-Began>=Map.ArenaStage.HalftimeLeadSeconds);
         public float Remaining=>Active?Mathf.Max(0,Duration-(float)(SharedUltimatePhase.Now-Began)):0;
         public bool HasReplay=>_view?.Ready==true;
         public RenderTexture ReplayFrame=>_view?.Target;
@@ -28,7 +42,7 @@ namespace TumbangPreso
         private RoundBreakFrame _frame;
         private RecordedWorldView _view;
         private RecordedMatchClip _clip;
-        private bool _attempted,_standings;
+        private bool _attempted,_standings,_stageShow;
         private Scene _scene;
         public static bool IsMiddleBreak(int completed,int total)=>total>=6&&completed==total/2&&completed<total;
         public static HalftimePresentation Ensure()
@@ -61,12 +75,15 @@ namespace TumbangPreso
                 ||double.IsNaN(began)||double.IsInfinity(began)||began>SharedUltimatePhase.Now+1||clip<0
                 ||halftime!=IsMiddleBreak(completed,GameServices.Match.TotalRounds)||!float.IsFinite(requestedScale)||requestedScale<0||requestedScale>4)return false;
             if(MatchId==match&&CompletedRound==completed)return false;
-            if(SharedUltimatePhase.Now-began>=(halftime?HalftimeDuration:BreakDuration))return false;
+            if(SharedUltimatePhase.Now-began>=DurationFor(halftime))return false;
             End(false);
             if(halftime)FindAnyObjectByType<UI.RoleSwapCard>()?.DismissAndPractice();
-            _frame.Freeze();SharedUltimatePhase.Instance?.Cancel();
+            _frame.Freeze();
+            // Freeze also parks the UI input modules, which this break still needs; only its still image is dropped.
+            if(LiveStageBreak&&(!halftime||SharedUltimatePhase.Now-began>=Map.ArenaStage.HalftimeLeadSeconds))_frame.SetImageVisible(false);
+            SharedUltimatePhase.Instance?.Cancel();
             MatchId=match;CompletedRound=completed;NextTaya=nextTaya;Began=began;ClipId=clip;IsHalftime=halftime;
-            _scene=SceneManager.GetActiveScene();Active=true;_attempted=false;_standings=false;FallbackReason=null;
+            _scene=SceneManager.GetActiveScene();Active=true;_attempted=false;_standings=false;_stageShow=false;FallbackReason=null;
             PresentationClock.RequestScale(requestedScale);PresentationClock.Hold();FreshInput();
             if(!halftime)FindAnyObjectByType<UI.RoleSwapCard>()?.ShowScheduledBreak(completed+1,nextTaya,Remaining,null);
             return true;
@@ -80,6 +97,14 @@ namespace TumbangPreso
             float age=(float)(SharedUltimatePhase.Now-Began);
             if(age>=Duration){End(true);return;}
             if(!IsHalftime)return;
+            if(StageShowPlaying)
+            {
+                // The package is over: its replay, its still frame and the centred card give way to the live stage.
+                if(_stageShow)return;
+                _stageShow=true;_clip=null;_view?.Dispose();_view=null;_frame.SetImageVisible(false);
+                if(!_standings){_standings=true;FindAnyObjectByType<UI.RoleSwapCard>()?.ShowScheduledBreak(CompletedRound+1,NextTaya,Remaining,FallbackReason);}
+                return;
+            }
             if(!_attempted&&age>=.2f)
             {
                 _attempted=true;

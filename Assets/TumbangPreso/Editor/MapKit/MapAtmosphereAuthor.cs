@@ -30,16 +30,18 @@ namespace TumbangPreso.EditorTools.MapKit
         private static void Clouds(Material sky,string map)
         {
             bool alley=map=="Eskinita",bridge=map=="IlalimNgTulay",roof=map=="SaBubong";
+            // Arena is a night match: faint clouds in the dark, in its look row's colours (ArenaSceneBuilder.Lighting).
+            bool night=map=="Arena";
             sky.SetColor("_Tint",new Color(.5f,.5f,.5f));sky.SetFloat("_Exposure",1);
-            sky.SetColor("_CloudLight",roof?new Color(.95f,.80f,.66f):alley?new Color(.94f,.87f,.73f):new Color(.91f,.92f,.89f));
-            sky.SetColor("_CloudShade",roof?new Color(.39f,.40f,.53f):bridge?new Color(.43f,.53f,.61f):new Color(.45f,.54f,.63f));
+            sky.SetColor("_CloudLight",night?new Color(.3f,.3f,.44f):roof?new Color(.95f,.80f,.66f):alley?new Color(.94f,.87f,.73f):new Color(.91f,.92f,.89f));
+            sky.SetColor("_CloudShade",night?new Color(.08f,.09f,.16f):roof?new Color(.39f,.40f,.53f):bridge?new Color(.43f,.53f,.61f):new Color(.45f,.54f,.63f));
             string source=roof?"wasteland_clouds_puresky":bridge?"kloppenheim_03_puresky":
                 alley?"kloofendal_38d_partly_cloudy_puresky":"kloofendal_48d_partly_cloudy_puresky";
             var texture=CloudTexture(source,out var sampling);
             sky.SetFloat("_CloudSpeed",(roof?.022f:bridge?.045f:alley?.035f:.025f)/360f);
             sky.SetTexture("_CloudMap",texture);sky.SetFloat("_CloudLumaScale",sampling.lumaScale);
             sky.SetFloat("_CloudLumaLow",sampling.cloudLow);sky.SetFloat("_CloudLumaHigh",sampling.cloudHigh);
-            sky.SetFloat("_CloudSunCutoff",sampling.sunCutoff);sky.SetFloat("_CloudOpacity",roof?.90f:.94f);
+            sky.SetFloat("_CloudSunCutoff",sampling.sunCutoff);sky.SetFloat("_CloudOpacity",night?.5f:roof?.90f:.94f);
             var direction=sky.GetVector("_SunDirection");
             sky.SetFloat("_CloudYaw",sampling.sunU-(Mathf.Atan2(direction.x,direction.z)/(2*Mathf.PI)+.5f));
             EditorUtility.SetDirty(sky);

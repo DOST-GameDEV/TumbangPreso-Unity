@@ -39,6 +39,17 @@ namespace TumbangPreso.Visual
         /// <summary>How much the wind has the body this frame, 0 to 1 (probes and the camera).</summary>
         public float Amount => _amount;
 
+        /// <summary>
+        /// THROWN BY A VEHICLE (owner, 2026-10-04: "can you add more physics to the ragdoll? i wanna
+        /// feel like im getting launched"). The same loss of the body, without her wind: for
+        /// `seconds` the tumble has the body whenever it travels fast or is in the air, exactly as
+        /// while Whirled, and lets it go as it slows on the road.
+        /// </summary>
+        public void Throw(float seconds) => _thrownUntil = Mathf.Max(_thrownUntil, Time.time + seconds);
+
+        private float _thrownUntil;
+        private bool Taken => _body.IsWhirled || Time.time < _thrownUntil;
+
         public static WindTumble Attach(CharacterMotor body)
         {
             if (body == null) return null;
@@ -105,12 +116,12 @@ namespace TumbangPreso.Visual
             float speed = dt > 1e-5f ? flat.magnitude / dt : 0f;
             if (flat.sqrMagnitude > 1e-6f) _travel = Vector3.Slerp(_travel, flat.normalized, 1f - Mathf.Exp(-12f * dt));
             // The wind has them while they are Whirled and travelling fast; it lets go over a short beat once they slow.
-            float want = _body.IsWhirled ? Mathf.Clamp01((speed - 1.5f) / (FullSpeed - 1.5f)) : 0f;
-            if (!_body.IsGrounded && _body.IsWhirled) want = Mathf.Max(want, .7f);
+            float want = Taken ? Mathf.Clamp01((speed - 1.5f) / (FullSpeed - 1.5f)) : 0f;
+            if (!_body.IsGrounded && Taken) want = Mathf.Max(want, .7f);
             _amount = Mathf.MoveTowards(_amount, want, dt * (want > _amount ? 8f : 2.2f));
             if (_amount <= .001f)
             {
-                if (!_body.IsWhirled) Destroy(this);
+                if (!Taken) Destroy(this);
                 return;
             }
             _clock += dt;

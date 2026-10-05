@@ -111,6 +111,10 @@ namespace TumbangPreso.CameraSystem
         public const float FallSpringLength = 2.80f;
         public const float FallPitchDeg = 26.0f;
 
+        /// <summary>Travel, m/s, over which a falling body counts as THROWN (a car, a train) rather
+        /// than tripped where it stood: a sprint is 6 to 7, a car's throw 7 to 14 plus its aside.</summary>
+        public const float ThrownSpeed = 7.5f;
+
         /// ⚠️ THE FALL KEEPS ITS OWN CLAMP because the emote band tops out at 20 degrees, which
         /// is BELOW the angle a fall opens at. Sharing it would have silently pulled the shot
         /// back up to the standing framing on the first frame.
@@ -480,6 +484,9 @@ namespace TumbangPreso.CameraSystem
         private void Start()
         {
             if (_grade != null) _grade.AdoptFromScene();
+            // A map larger than the 240 m above says so with a `MapCameraRange` (the Arena). No
+            // other map carries one, and then this changes nothing.
+            Visual.MapCameraRange.Adopt(_camera, false);
         }
 
         /// <summary>
@@ -1162,6 +1169,19 @@ namespace TumbangPreso.CameraSystem
             }
         }
 
+        /// <summary>
+        /// Draw this rig's own body again, for a camera that is NOT this one. In first person the
+        /// local body is shadows-only so the player does not look out through their own head;
+        /// a cutaway through another camera (the Arena's break camera, which shows every player
+        /// lifted off the stage) would otherwise show three players and a shadow. Nothing has
+        /// to undo it: `ApplyFppSelfHideIfNeeded` hides the body again on the first frame this
+        /// rig draws, which is the frame the hold ends. A no-op when nothing is hidden.
+        /// </summary>
+        public void ShowBodyForCutaway()
+        {
+            if (_hiddenForFpp.Count > 0) RestoreSelfHide();
+        }
+
         private void RestoreSelfHide()
         {
             for (int i = 0; i < _hiddenForFpp.Count; i++)
@@ -1530,9 +1550,33 @@ namespace TumbangPreso.CameraSystem
             // see that as well"*). Thrown by her wind they have lost their body to it (`WindTumble`), so they watch it tumble, like a
             // trip; the view comes home once they are down and the carry is spent. Standing pitch: the body is in the air, not on the road.
             bool blown = _character != null && _character.IsWhirled && (_character.IsCarried || !_character.IsGrounded);
-            bool down = _character != null && (_character.IsTripped || held || rooted || blown);
+            // ⚠️ DROPPING THROUGH THE ARENA'S SHAFT SWINGS OUT TOO (owner, 2026-10-05: "falling off
+            // threshold is too high, you need to fall further"). The body has left the stage and
+            // nothing the player presses matters until the drone has it, so the view goes above
+            // and behind the body looking DOWN the shaft: its rings go by and the city is under
+            // their feet. `ArenaStage.IsShaftFall` is false on every other map (no stage), and
+            // the drone's own view (`ApplyEdgeRecoveryView`) takes over at the catch.
+            //
+            // ⚠️⚠️ ONLY ONCE THE BODY IS PAST SAVING (owner, 2026-10-05, playing: "paete's utility is
+            // like a grappling hook but it doesnt even have much of a time window to let me clutch
+            // back up"). This view is the emote orbit: the mouse turns the lens and not the body,
+            // the pitch is held between 6 and 48 degrees DOWN, and `AimPoint` is cast along it, so
+            // from the first metre of a fall a player could not look at the deck, let alone aim a
+            // skill at it. Down to `ArenaFallRecovery.LostDepth` the view and the aim stay the
+            // player's own; under it "nothing the player presses matters" is true and this opens.
+            bool shaft = Map.ArenaFallRecovery.IsLostFall(_character);
+            bool down = _character != null && (_character.IsTripped || held || rooted || blown || shaft);
             if (down != _fallView) _blownView = down && blown;
-            if (down == _fallView) return;
+            if (shaft && !_shaftView) _shaftOpened = true;
+            _shaftView = shaft;
+            if (!down) { _thrownView = false; _thrownRenderers = null; _thrownCentreSet = false; }
+            if (down == _fallView)
+            {
+                // The throw can reach the owning peer a frame or two after the trip that opened the view.
+                if (down && !_thrownAimed && Time.time - _fallViewAt < 0.5f && !held && !rooted && !blown && AimAtThrow())
+                    _emotePitchDeg = ThrownPitchDeg;
+                return;
+            }
 
             // ⚠️ AN EMOTE ALREADY OWNS THE SWING, SO DO NOT TAKE IT FROM ONE. `EmotePlayer.Stop`
             // is reached by losing the right to act, and a trip does exactly that, so an emote
@@ -1554,11 +1598,67 @@ namespace TumbangPreso.CameraSystem
                 // `FallPitchDeg` looks DOWN at a body on the tarmac; using it for a stun would
                 // aim the camera at the road in front of a character who is upright, and the
                 // one thing the player needs to see is the element on their own body.
-                if (!held && !rooted && !blown) _emotePitchDeg = FallPitchDeg;
+                //
+                // ⚠️ THROWN, NOT TRIPPED (owner, 2026-10-04, hit by a car on the rebuilt Ilalim:
+                // "ragdoll cam is weird"). The view opens behind the way the body FACES, and a
+                // player facing the car that hits them is thrown backwards, straight through the
+                // lens: the frame was their own arms. A body with real travel on it is going
+                // somewhere, so the view opens behind the way it is GOING and watches it fly away,
+                // at the standing pitch like the wind's blow (it is in the air, not on the road).
+                _fallViewAt = Time.time; _thrownAimed = false;
+                bool thrown = !held && !rooted && !blown && AimAtThrow();
+                if (!held && !rooted && !blown && !thrown) _emotePitchDeg = FallPitchDeg;
+                if (thrown) _emotePitchDeg = ThrownPitchDeg;
                 // The wind's hit is felt, not just seen.
                 if (blown) Shake(1.1f, .55f);
             }
             else EndEmoteView();
+        }
+
+        private float _fallViewAt;
+        private bool _thrownAimed;
+        // The Arena's shaft: the view over a falling body. 46 degrees is inside the fall band's
+        // 48, so the player's own look keeps it; 5 m back and up shows the whole tumbling body.
+        private const float ShaftPitchDeg = 46.0f, ShaftArm = 5.0f, ShaftMountHeight = 1.0f;
+        private bool _shaftView, _shaftOpened;
+
+        /// <summary>Turns the fall view to look along a thrown body's travel. False when the body
+        /// is not travelling fast enough to count as thrown.</summary>
+        private bool AimAtThrow()
+        {
+            Vector3 travel = _character.PresentationTravelVelocity; travel.y = 0.0f;
+            if (travel.sqrMagnitude < ThrownSpeed * ThrownSpeed) return false;
+            _emoteYawDeg = Mathf.Atan2(travel.x, travel.z) * Mathf.Rad2Deg;
+            _thrownAimed = true;
+            _thrownView = true;
+            _thrownRenderers = _character.GetComponentsInChildren<Renderer>();
+            Shake(0.9f, 0.45f);
+            return true;
+        }
+
+        // ⚠️ THE THROWN VIEW FRAMES THE BODY, NOT THE SPOT UNDER IT (owner, 2026-10-04, second look
+        // at a car hit: "can you put the cam back further and align it to the center of mass
+        // instead of the bottom"). The fall view mounts 0.x m over the motor's position, which is
+        // the FEET, on a short arm: right for a body lying on the road, and for a body the car has
+        // just put two metres in the air it left the lens on the tarmac looking up at it. So this
+        // view mounts on the middle of the body's own renderers, wherever the tumble has it, on a
+        // long arm looking a little down.
+        private const float ThrownArm = 6.0f, ThrownPitchDeg = 16.0f;
+        private bool _thrownView;
+        private Renderer[] _thrownRenderers;
+        private Vector3 _thrownCentre;
+        private bool _thrownCentreSet;
+
+        private Vector3 BodyCentre()
+        {
+            bool any = false; Bounds all = default;
+            if (_thrownRenderers != null)
+                foreach (var r in _thrownRenderers)
+                {
+                    if (r == null || !r.enabled || !r.gameObject.activeInHierarchy || r is ParticleSystemRenderer || r is TrailRenderer) continue;
+                    if (!any) { all = r.bounds; any = true; } else all.Encapsulate(r.bounds);
+                }
+            return any ? all.center : _character.transform.position + Vector3.up * 0.9f;
         }
 
         public void BeginEmoteView()
@@ -1646,6 +1746,7 @@ namespace TumbangPreso.CameraSystem
         private void ApplyEmoteView()
         {
             if(_character!=null&&_character.IsEdgeRecovering){ApplyEdgeRecoveryView();return;}
+            if (_shaftView && _shaftOpened) { _shaftOpened = false; _emotePitchDeg = ShaftPitchDeg; }
             _emotePitchDeg = Mathf.Clamp(_emotePitchDeg,
                                          _fallView ? FallPitchMinDeg : EmotePitchMinDeg,
                                          _fallView ? FallPitchMaxDeg : EmotePitchMaxDeg);
@@ -1663,7 +1764,17 @@ namespace TumbangPreso.CameraSystem
                 if (Settings.SettingsStore.Current.EffectiveCameraShake > 0f) roll = 7.0f * Mathf.Sin(Time.unscaledTime * 5.3f);
             }
 
+            if (_shaftView && _fallView) { mountHeight = ShaftMountHeight; arm = Mathf.Max(arm, ShaftArm); }
+
             Vector3 mount = _character.transform.position + Vector3.up * mountHeight;
+            if (_thrownView)
+            {
+                // Eased, so the tumble's own wobble does not shake the frame; the first frame snaps.
+                Vector3 centre = BodyCentre();
+                _thrownCentre = _thrownCentreSet ? Vector3.Lerp(_thrownCentre, centre, 1.0f - Mathf.Exp(-14.0f * Time.deltaTime)) : centre;
+                _thrownCentreSet = true;
+                mount = _thrownCentre; arm = Mathf.Max(arm, ThrownArm);
+            }
             var rot = Quaternion.Euler(_emotePitchDeg, _emoteYawDeg, roll);
             Vector3 wanted = mount - (rot * Vector3.forward) * arm;
 
@@ -1671,7 +1782,10 @@ namespace TumbangPreso.CameraSystem
             if (Physics.SphereCast(mount, 0.2f, (wanted - mount).normalized, out var hit,
                                    arm, ~0, QueryTriggerInteraction.Ignore))
             {
-                if (hit.collider.GetComponentInParent<CharacterMotor>() != _character)
+                // The thrown view opens behind the body's travel, which is where the car that threw it
+                // is: a moving vehicle's box (kinematic) must not fold the arm back onto the body.
+                bool vehicle = _thrownView && hit.collider.attachedRigidbody != null && hit.collider.attachedRigidbody.isKinematic;
+                if (!vehicle && hit.collider.GetComponentInParent<CharacterMotor>() != _character)
                 {
                     // ⚠️ THE FALL FLOOR IS ITS OWN. `TppMinSpringLength` is 1.80 m, which is
                     // longer than the whole fall arm would ever need to shrink to, so a kerb or
@@ -1687,17 +1801,21 @@ namespace TumbangPreso.CameraSystem
 
         private void ApplyEdgeRecoveryView()
         {
-            var outward=_character.EdgeOutward;
+            var outward=_character.EdgeOutward;bool drone=_character.EdgeKind==EdgeRecoveryKind.Drone;
             float inwardYaw=Mathf.Atan2(-outward.x,-outward.z)*Mathf.Rad2Deg;
             if(_edgeViewEpisode!=_character.RecoveryEpisode)
-            {_edgeViewEpisode=_character.RecoveryEpisode;_emoteYawDeg=inwardYaw+30;_emotePitchDeg=12;}
+            {_edgeViewEpisode=_character.RecoveryEpisode;_emoteYawDeg=inwardYaw+(drone?0:30);_emotePitchDeg=drone?26:12;}
             _emoteYawDeg=inwardYaw+Mathf.Clamp(Mathf.DeltaAngle(inwardYaw,_emoteYawDeg),-65,65);
             _emotePitchDeg=Mathf.Clamp(_emotePitchDeg,-5,35);
             var mount=_character.EdgeGrip+outward*.50f-Vector3.up*.35f;
             if(_character.EdgePhase==2)mount=Vector3.Lerp(mount,_character.transform.position+Vector3.up*.85f,
                 Mathf.SmoothStep(0,1,Mathf.InverseLerp(.40f,1,_character.EdgePhaseRatio)));
+            // The Arena's drone carries the body across the stage: there is no lip to frame, so
+            // the mount is the body itself, followed from behind its travel and above.
+            if(drone)mount=_character.transform.position+Vector3.up*1.0f;
             var rotation=Quaternion.Euler(_emotePitchDeg,_emoteYawDeg,0);var direction=-(rotation*Vector3.forward);
-            float length=3.2f;
+            // The haul up the shaft is seen from further back: the body, the drone over it and the shaft going by.
+            float length=drone?(_character.EdgePhase==1&&_character.EdgePhaseRatio<CharacterMotor.DroneLiftShare?6.2f:4.8f):3.2f;
             int hits=Physics.SphereCastNonAlloc(mount,.16f,direction,_edgeViewHits,length,~0,QueryTriggerInteraction.Ignore);
             for(int i=0;i<hits;i++)
                 if(_edgeViewHits[i].collider.GetComponentInParent<CharacterMotor>()==null)

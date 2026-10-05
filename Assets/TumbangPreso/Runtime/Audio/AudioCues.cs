@@ -72,7 +72,19 @@ namespace TumbangPreso.Audio
                 // with NO row, fell back to 0.0 dB, and was reported off the build as *"a loud
                 // wind soudn that plays randomly"*. A long sound is mixed as a background
                 // whatever it is called.
-                { "sfx_lrt_pass", -16.0f },
+                //
+                // ⚠️ -8, UP FROM -16 (2026-10-01). 🧑, on the rebuilt Ilalim: *"does the train/lrt
+                // move and have a loud LRT sfx?"*, then "proceed" on making it louder. The -16 was
+                // set while the clip still played for the whole traverse from 70 m; the source now
+                // reaches only 44 m (`LrtTrainFlyby.RumbleMaxDistance`), so it arrives with the
+                // warning toast and leaves with the consist, and a louder pass no longer reads as
+                // random wind. The deck hides the consist from every place a player can stand,
+                // so this recording and the shake ARE the train.
+                //
+                // ⚠️ 0, UP AGAIN (2026-10-04): "the actual train sfx still isnt audible". Since the
+                // -8, the pass moved to the Ambience slider times `AmbientGainScale` 0.75, and the
+                // recording is quiet in itself (RMS 0.10), so -8 came out near 0.2 of full scale.
+                { "sfx_lrt_pass", 0.0f },
 
                 // ⚠️⚠️ THE SIX ULTIMATE THEMES ARE BEDS, NOT EVENTS, AND ARE MIXED AS BEDS.
                 // The train row above records what happens to a sustained cue with no row:
@@ -86,6 +98,52 @@ namespace TumbangPreso.Audio
                 // half it is not competing with anything: it is the only thing saying an
                 // ultimate is coming. The other five start on the same frame as their blast.
                 { "sfx_step_deck", -8.0f }, { "sfx_swim_stroke", -9.0f }, { "sfx_lagoon_lap", -12.0f },
+                // The Arena's show (owner 2026-10-05, `tools/synth_arena_show_sfx.py`). The reveal's boom is the
+                // loudest moment of the break and the lock is its percussion, so those two are mixed as events.
+                // The alarm is 2.3 s of sustained tone and the roar 3.6 s of crowd: beds, mixed as beds (the
+                // train's row above records what a sustained cue with no trim does). The thruster fires once
+                // per moving platform inside a quarter second, so it is mixed like a status.
+                { "sfx_arena_alarm", -9.0f }, { "sfx_arena_undock", -4.0f }, { "sfx_arena_thruster", -11.0f },
+                { "sfx_arena_lock", -3.0f }, { "sfx_arena_reveal", -2.0f }, { "sfx_arena_crowd_roar", -10.0f },
+                { "sfx_arena_pyro", -7.0f }, { "sfx_arena_drone_ping", -7.0f }, { "sfx_arena_drone_set", -5.0f },
+                // The stage's furniture (owner 2026-10-05, `tools/synth_arena_pad_sfx.py`): events a player causes, mixed as events.
+                { "sfx_arena_pad_jump", 0.0f }, { "sfx_arena_pad_speed", 0.0f }, { "sfx_arena_boost", -1.0f }, { "sfx_arena_stamina", 0.0f },
+                // The rescue drone's toy voice (2026-10-05). Its hum is struck again every half second of a
+                // carry and up to four carries can run at once, so it is mixed as a bed; the rising whistle of
+                // the haul and the zip away are one each per carry and sit under the lock-on and the ding.
+                { "sfx_arena_drone_hum", -14.0f }, { "sfx_arena_drone_beam", -9.0f }, { "sfx_arena_drone_zip", -9.0f },
+                // The Arena's slipper balloon (`tools/synth_arena_balloon_sfx.py`). The pop is a once-a-match
+                // event and is mixed as one; a squeak and the boing sound together on a hit, so each sits under
+                // an event; the creak and the hiss are beds.
+                { "sfx_arena_balloon_fly", -8.0f }, { "sfx_arena_balloon_squeak_a", -6.0f }, { "sfx_arena_balloon_squeak_b", -6.0f },
+                { "sfx_arena_balloon_squeak_c", -6.0f }, { "sfx_arena_balloon_boing", -5.0f }, { "sfx_arena_balloon_creak", -10.0f },
+                { "sfx_arena_balloon_pop", -1.0f }, { "sfx_arena_balloon_hiss", -8.0f }, { "sfx_arena_slipper_return", -7.0f },
+                // The Arena's crowd and its public address (owner 2026-10-05: "there should be reverbey crowd cheers,
+                // chants, and an announcer"). `Map.ArenaCrowdAudio` plays every one on its own sources: the crowd on the
+                // Ambience slider, the PA's stings on the Announcer's.
+                //
+                // ⚠️ THE CROWD IS REAL RECORDINGS SINCE 2026-10-05 (`tools/build_arena_crowd_from_recordings.py`, sources in
+                // `Resources/Sfx/ARENA_CROWD_SOURCES.md`), AND THESE ROWS WERE RESET WITH IT. The owner on the synthesised
+                // crowd: "i dont hear ... reactions to certain happenings in the game". Measured against these rows, that
+                // was the mix: a block's cheer and a throw's gasp played 10 to 16 dB under a murmur at -3. So the murmur is
+                // at -6 and gives way further as the stands rise, and a reaction sits 0 to 4 dB under an event.
+                // The five beds are loops levelled by RMS (0.13 to 0.17), so these rows ARE their loudness. A reaction is
+                // levelled by the RMS of its loudest 0.4 s (0.20 to 0.27; peak under 0.85), not by its peak: a roar and a
+                // clap of the same peak are 10 dB apart to an ear. A reaction's takes (`_2`, `_3`) share its row's value.
+                // NOBODY HAS HEARD THESE YET: they are the knobs for that session.
+                // The resting bed far under the reactions (owner, 2026-10-05: "the crowd doesnt react.. its just the same cheer ambience all
+                // throughout"). The real cause was the layers' mix (`ArenaCrowdAudio.Ramp`): the roar never fell under half. With that mended the calm bed is 10 dB under an eruption.
+                { "sfx_arena_crowd_bed_calm", -10.0f }, { "sfx_arena_crowd_bed_lively", -5.0f }, { "sfx_arena_crowd_bed_roar", -1.0f },
+                { "sfx_arena_crowd_bed_tension", -5.0f }, { "sfx_arena_crowd_bed_applause", -3.0f },
+                { "sfx_arena_crowd_erupt", 0.0f }, { "sfx_arena_crowd_erupt_2", 0.0f }, { "sfx_arena_crowd_erupt_3", 0.0f },
+                { "sfx_arena_crowd_cheer", -1.0f }, { "sfx_arena_crowd_cheer_2", -1.0f }, { "sfx_arena_crowd_cheer_3", -1.0f },
+                { "sfx_arena_crowd_ooh", -1.0f }, { "sfx_arena_crowd_ooh_2", -1.0f }, { "sfx_arena_crowd_ooh_3", -1.0f },
+                { "sfx_arena_crowd_aww", -2.0f }, { "sfx_arena_crowd_aww_2", -2.0f }, { "sfx_arena_crowd_aww_3", -2.0f },
+                { "sfx_arena_crowd_gasp", -4.0f }, { "sfx_arena_crowd_gasp_2", -4.0f },
+                { "sfx_arena_crowd_laugh", -2.0f }, { "sfx_arena_crowd_laugh_2", -2.0f }, { "sfx_arena_crowd_save", 0.0f },
+                { "sfx_arena_chant_stomp", -3.0f }, { "sfx_arena_chant_claps", -3.0f }, { "sfx_arena_chant_claps_fast", -3.0f },
+                { "sfx_arena_chant_ooh_hey", -3.0f }, { "sfx_arena_chant_drums", -3.0f }, { "sfx_arena_chant_horns", -5.0f },
+                { "sfx_arena_pa_chime", -5.0f }, { "sfx_arena_pa_organ", -6.0f }, { "sfx_arena_pa_horn", -5.0f }, { "sfx_arena_pa_fanfare", -5.0f },
                 // Amihan (2026-09-25, `tools/build_amihan_audio.py`). The gather is a sustained
                 // pressure rise under 2.5 s of telegraph and is mixed as a bed; the release is the
                 // loudest moment of her kit and is mixed as an ultimate payload.
@@ -270,6 +328,44 @@ namespace TumbangPreso.Audio
 
             // The lagoon deck (Lagoon Cove): footsteps on the boards, a swimmer's stroke, the water at the piles.
             "sfx_step_deck", "sfx_swim_stroke", "sfx_lagoon_lap",
+
+            // The Arena (ARENA-1, owner 2026-10-05: "map transformation is so dull, theres no emphasis on it",
+            // "more vfx overall in the map, including the drone stuff"). The stage's transformation between
+            // rounds in its three beats (the alarm, the undock, a thruster and a lock per platform, the
+            // reveal), the stands' roar, the pyro, and the rescue drone's lock-on, hover, haul, set-down and exit. Every one is
+            // played by each peer for itself from state it already has (`Map.ArenaShow`, `ArenaDrone`,
+            // `ArenaAmbience`), never through `NetCue`: nothing about them is on the wire.
+            "sfx_arena_alarm", "sfx_arena_undock", "sfx_arena_thruster", "sfx_arena_lock", "sfx_arena_reveal",
+            "sfx_arena_crowd_roar", "sfx_arena_pyro", "sfx_arena_drone_ping", "sfx_arena_drone_set",
+            "sfx_arena_pad_jump", "sfx_arena_pad_speed", "sfx_arena_boost", "sfx_arena_stamina",
+            "sfx_arena_drone_hum", "sfx_arena_drone_beam", "sfx_arena_drone_zip",
+            // The Arena's slipper balloon and a slipper set back on the stage (`Map.ArenaBalloon`,
+            // `Map.ArenaFallRecovery`): each peer plays them for itself, never through `NetCue`.
+            "sfx_arena_balloon_fly", "sfx_arena_balloon_squeak_a", "sfx_arena_balloon_squeak_b", "sfx_arena_balloon_squeak_c",
+            "sfx_arena_balloon_boing", "sfx_arena_balloon_creak", "sfx_arena_balloon_pop", "sfx_arena_balloon_hiss",
+            "sfx_arena_slipper_return",
+            // The Arena's crowd and public address (`Map.ArenaCrowdAudio`): five seamless beds, six reactions in two or
+            // three takes each (`_2`, `_3`: one is drawn each time), a self-save's roar, six chants and four PA stings.
+            // The crowd is cut from CC0 recordings (`tools/build_arena_crowd_from_recordings.py`); the stings are
+            // `tools/synth_arena_crowd_sfx.py --no-vo --only pa`. Each peer plays them for itself from events it already
+            // has, never through `NetCue`. The announcer's own takes as the stadium plays them are not cues: they are
+            // `Resources/ArenaPa/pa_<take>`, found by the take's name.
+            // ⚠️ THREE NAMES ARE DELIBERATELY ABSENT: `sfx_arena_chant_tumbang_preso`, `sfx_arena_chant_taya` and
+            // `sfx_arena_chant_tumba`. The game's own word chants cannot be cut from another crowd, and the synthesised
+            // ones were rejected and deleted. `ArenaCrowdAudio.Recorded` plays a clapping or drumming pattern in their
+            // place. When the team records one, put the .wav in `Resources/Sfx` and its name back in this list (and a
+            // row in `TrimDb`, about -3): nothing else has to change.
+            "sfx_arena_crowd_bed_calm", "sfx_arena_crowd_bed_lively", "sfx_arena_crowd_bed_roar", "sfx_arena_crowd_bed_tension",
+            "sfx_arena_crowd_bed_applause",
+            "sfx_arena_crowd_erupt", "sfx_arena_crowd_erupt_2", "sfx_arena_crowd_erupt_3",
+            "sfx_arena_crowd_cheer", "sfx_arena_crowd_cheer_2", "sfx_arena_crowd_cheer_3",
+            "sfx_arena_crowd_ooh", "sfx_arena_crowd_ooh_2", "sfx_arena_crowd_ooh_3",
+            "sfx_arena_crowd_aww", "sfx_arena_crowd_aww_2", "sfx_arena_crowd_aww_3",
+            "sfx_arena_crowd_gasp", "sfx_arena_crowd_gasp_2", "sfx_arena_crowd_laugh", "sfx_arena_crowd_laugh_2",
+            "sfx_arena_crowd_save",
+            "sfx_arena_chant_stomp", "sfx_arena_chant_claps", "sfx_arena_chant_claps_fast",
+            "sfx_arena_chant_ooh_hey", "sfx_arena_chant_drums", "sfx_arena_chant_horns",
+            "sfx_arena_pa_chime", "sfx_arena_pa_organ", "sfx_arena_pa_horn", "sfx_arena_pa_fanfare",
 
             // The shove has a dedicated cloth/rubber cue; body contact retains its alias.
             "hit_body", "bump_swing",

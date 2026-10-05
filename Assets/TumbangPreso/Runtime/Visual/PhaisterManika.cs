@@ -309,17 +309,13 @@ namespace TumbangPreso.Visual
             var model = visual != null ? visual.Model : null;
             var skinned = model != null ? model.GetComponentInChildren<SkinnedMeshRenderer>() : null;
             if (skinned == null) return null;
-            for (int i = 0; i < skinned.bones.Length; i++)
-            {
-                if (skinned.bones[i] == null || skinned.bones[i].name != "arm-left") continue;
-                if (!CharacterVisual.PalmCentre(skinned, i, out Vector3 palm)) return null;
-                var anchor = new GameObject("ManikaPalm").transform;
-                anchor.SetParent(skinned.bones[i], false);
-                anchor.localPosition = palm + Vector3.up * CharacterVisual.HandTopLift;
-                _palm = anchor;
-                return _palm;
-            }
-            return null;
+            // The bone her left HAND is on: the forearm on a rig with elbows (`CharacterVisual.HandBone`).
+            if (!CharacterVisual.HandBone(skinned, "left", out int hand, out Vector3 palm)) return null;
+            var anchor = new GameObject("ManikaPalm").transform;
+            anchor.SetParent(skinned.bones[hand], false);
+            anchor.localPosition = palm + Vector3.up * CharacterVisual.HandTopLift;
+            _palm = anchor;
+            return _palm;
         }
 
         /// <summary>Her own screen: a copy of the doll in her first-person left hand, so she sees she is using it.</summary>

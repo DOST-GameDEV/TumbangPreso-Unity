@@ -230,6 +230,8 @@ namespace TumbangPreso.Core
         /// </summary>
         public static readonly Modifier[] NotModifiers =
         {
+            new Modifier("AIController.EdgeSense",
+                "Not a setting. The Arena's stage sets it while its scene is live and clears it when the scene goes (ArenaStage); it only lets bots see the open edges of that map."),
             new Modifier("ConvertedMatchSetup.Hub.HubEnabled",
                 "Front-end view selection only. Hub and preparation board use the same match controller, rules and networking."),
             new Modifier("-tp-preparation-board",

@@ -141,6 +141,31 @@ Nothing was deleted or renumbered.
 
 ## CURRENT IMPLEMENTATION QUEUE
 
+### CHAR-REDESIGN-1: Dante (Basilio) redesign prototype, Blender only
+
+Owner, 2026-10-05: *"can you try redesigning one of the normal blocky character models? add
+texture, more unique shapes and be less oriented around the whole blocky aesthetic"*. Then, on
+a first fully rounded head: *"i dont like the deviation from the boxy head.. i know i said
+stray further from the original boxy design, but its somewhat part of our game's identity"*;
+on a plain cube: *"not necessarily, just not entirely a cube"*; on the boxy turnaround:
+*"looks weird in these spots. hair texture overlaps to the ears, weird colors on hands, hair
+shimmer idk if i like it, it looks weird in some spots"*; and on the early spiky hair:
+*"can we have one version with this non-blocky hair model?"*
+Handoff: [CHARACTER_REDESIGN_DANTE.md](CHARACTER_REDESIGN_DANTE.md).
+[Pictures](reports/character-redesign-dante-2026-10-05/README.md).
+
+- [x] One character rebuilt as a prototype: the original's box head carved (soft corners, a
+  small nose), a hand-painted atlas with a shaded face, chamfered and tapered body blocks with
+  added pieces, on the original rig untouched. Two variants: A block hair, B lock hair.
+  3,373 and 3,469 triangles against the original's 7,741. Not loaded by the game.
+- [x] The circled faults fixed and checked in close-up renders: no painted hair shine, no
+  hair paint on the ears, hands skin only, plus the rest of a close pass (handoff section 8).
+- [ ] Owner to choose: hair A or B; head carving `block`, `carved` or `shaped`; whether the
+  flat hair shading is right; whether the jacket reads green overall or keeps a brown base.
+- [ ] Never opened in Unity: real toon shader and outline, clips, hand anchor, atlas budget,
+  first-person arms and every derived image are unverified (handoff sections 7 and 9).
+- [ ] Not approved for the rest of the cast. One character at a time.
+
 ### OWNER-MULTIPLAYER-FEEDBACK-1004: current live-test reports
 
 - [ ] October5 owner real ONLINE failure: visible public room but Relay request
@@ -4275,6 +4300,53 @@ after Kanto and the Lagoon Cove. Team-facing issues from that merge are in
     the registry preview shot (yaw 35, 22 m, 13.5 m up) frames from over the deck.
   - legacy tools that loop over `SceneFlow.Maps` (MapSurfaceAuthor, MapFinalInventory) still treat
     "IlalimNgTulay" as the first Ilalim's surfaces; do not run them on the rebuild unreviewed.
+- [ ] ILALIM-1.8 THE COURT IN THE LOT AND THE LIVE STREET (2026-10-04 to 2026-10-05, branch
+  `QoLUpdates`, pushed at `aaa66cb2d`; the guide's HANDOFF block and its two newest CURRENT STATE
+  entries are the record). Done: the court moved into the campus lot with the world shifted
+  (`IlalimFrame`), both lot fences opened, the play area out to the Padre Faura junction, mesh
+  ground colliders, live solid traffic that launches players, the station-to-station solid train
+  with its clank, reverb and shake, the modelled glowing jump pads, and the first performance pass
+  (11.17 M to 5.97 M triangles a frame; `IlalimPerfProbe`). Open:
+  - a full played match, online, with a joining player on a weak PC (frame rate, the car hit's
+    strength, bots on the road, the late-join traffic catch-up);
+  - set-pass calls (about 3900 a frame from 694 materials);
+  - the sidewalk author's 6 failing samples and the life probe's 6 overlapping pair-steps;
+  - the poles and the ONE WAY sign in the lot's open edges; the median gap at the old court;
+  - re-run WorldCourtCueTests (the chalk is four edges now) and decide ILALIM-1.7's list;
+  - whether the character ambient occlusion test (F8, local only) becomes the look;
+  - the character redesign prototype (a Blender try of one blocky kid, not in the game).
+### ARENA-1 · The arena map ⚠️ BUILT AND IN PLAY-TEST WITH THE OWNER, 2026-10-05
+
+**READ [ARENA_HANDOFF](ARENA_HANDOFF.md) FIRST: it is the current state, the open list and the rules.
+The numbered items below are the original plan; items 1.2 to 1.7 are built (see the handoff's table),
+1.8 (an online match with a joining player, a weaker PC) is not done. Local only, not pushed.**
+
+Owner, 2026-10-05: "we'll be resuming with a new arena style map. ideally this arena will feature a
+cheering crowd, rocket leaegue goal style effects and holograms, the main play area has features like
+a sprint charge pad (like how in rocket league theres orbs u can pick up to charge ur nitro/sprint),
+jump pads, platforms that you can fall off, and it rotates around different layouts for the duration
+of the game, limited to a certain amount of layouts though". The brief, the hard parts, the lessons
+from Ilalim and the questions for the owner are in [ARENA_MAP_BRIEF](ARENA_MAP_BRIEF.md).
+
+- [x] ARENA-1.1 ANSWERED 2026-10-05 (the brief's table): layouts change BETWEEN ROUNDS with a
+  visible transformation, four or five of them; a fall is a drone carrying the player back up and
+  a tag-style freeze; the can is always at the centre, at a height that may differ by layout; a
+  stamina charge pickup AND a separate speed pad; a bigger floor; the same map pool as Lagoon,
+  Kanto and Ilalim; the setting is a noontime game-show arena (decided for the owner, who said
+  "you decide"). THE DESIGN IS AGREED (the brief's "The design for rotation, the fall
+  and the pads"): the layout is derived from the round number and match id, nothing sent; an 8 s
+  break on this map with cinematic cameras; the drone is a third edge-recovery kind, then the
+  tag's 5 s; one new message for the pickups; one protocol bump for all of it.
+- [x] ARENA-1.2 A grey-box blockout at exact gameplay dimensions (the can at the origin, the 14 m
+  box, the 9 m spawn ring) with two layouts, playable with bots: the rotation, the fall, jump pads
+  (`JumpPad`, reused) and the sprint charge pickup, before any art.
+- [x] ARENA-1.3 The performance budget and a probe from the first build (`IlalimPerfProbe` is the
+  pattern): shared materials, real LODs, occlusion.
+- [x] ARENA-1.4 The arena kit in Blender (floor, platforms, stands, lights) and its builder.
+- [x] ARENA-1.5 The crowd: a cheap technique for full stands that reacts to the match.
+- [x] ARENA-1.6 Holograms and the knockdown celebration (the "Rocket League goal" moment).
+- [x] ARENA-1.7 Sound: the crowd bed and its reactions, the celebration, the pads.
+- [ ] ARENA-1.8 Checks, a played match online with a joining player, then the map pool.
 ### LIGHT-2 · Lighting style picker in the Graphics tab ⚠️ IN PROGRESS, 2026-09-25 (only slot 3 open)
 
 **Renamed 2026-09-26 (BUGS-0926.5):** Bright is now **Standard** (slot 1, the default) and Classic is

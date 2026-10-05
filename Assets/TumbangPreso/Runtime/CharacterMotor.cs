@@ -434,12 +434,14 @@ namespace TumbangPreso
             _paetePull?.Stop("movement epoch changed");
             ClearNetworkResourceIntent();
             InvalidateFlightEpisode();
+            ClearSpeedBoost();
             MovementEpoch=epoch;_awaitingTeleport=false;_teleportAbility=-1;
         }
 
         public void Teleport(Vector3 position)
         {
             if (!MayMutateGameplayState()) return;
+            EndHaul();
             _paetePull?.Stop("teleport");
             if(IsEdgeRecovering)ClearTrip();
             if(_predictingAbility>=0)ExpectAbilityTeleport(_predictingAbility);
@@ -905,6 +907,7 @@ namespace TumbangPreso
                           * (AbilitySystem?.Kit?.MovementSpeedScale ?? 1.0f)
                           * (CommitLeft > 0.0f ? Balance.SlideSteerScale : 1.0f)
                           * StatusSpeedScale
+                          * SpeedBoostScale
                           * BodySpeedScale
                           * RooftopPool.MovementScale(transform.position);
 
@@ -940,6 +943,8 @@ namespace TumbangPreso
             }
 
             ApplyGravity(dt);
+            // A haul owns the whole velocity while it lasts (`CharacterMotor.Status.cs`).
+            StepHaul(dt);
 
             Vector3 total = _velocity + _externalVelocity;
             if (PaetePullVelocity(dt, out var vineVelocity))
@@ -948,6 +953,8 @@ namespace TumbangPreso
                 total.x=vineVelocity.x; total.z=vineVelocity.z;
             }
             CollisionFlags flags = _cc.Move(total * dt);
+            // Hauled up into something overhead: the line lets go rather than pin the body there.
+            if ((flags & CollisionFlags.Above) != 0) EndHaul();
 
             // ⚠️ `isGrounded` ALONE IS NOT TRUSTWORTHY. It reflects only the last Move and
             // goes false on slopes, on steps and on the frame an impulse lifts the capsule.
@@ -1316,6 +1323,24 @@ namespace TumbangPreso
         /// </summary>
         private const float GroundedRestVelocityY = -2.0f;
 
+        /// <summary>
+        /// A MAP'S OWN FALL. A map may change the gravity and the terminal speed of a body that
+        /// is in the air in its own space: the Arena's shaft, where an updraft slows the fall
+        /// (`Map.ArenaFallRecovery.Updraft`, owner, 2026-10-05: "the fall effect is too fast").
+        /// It is handed the game's numbers (`Balance.CharacterGravity`, `Balance.MaxFallSpeed`)
+        /// and changes them or leaves them.
+        ///
+        /// ⚠️ NULL ON EVERY OTHER MAP, and then the two numbers reach the same two lines they
+        /// always did: nothing about a fall anywhere else moves. The map that sets it clears it
+        /// when it unloads, as `MatchRpc.MoveFloorY` is.
+        ///
+        /// ⚠️ ONLY THE PEER THAT SIMULATES THE BODY RUNS IT (`ApplyGravity` is never reached on a
+        /// replica), and nothing is sent: the owner falls slower and its poses travel as they
+        /// always do. `MatchRpc.AcceptMove` limits how FAST a body may go, never how slow.
+        /// </summary>
+        public delegate void FallRule(CharacterMotor who, ref float gravity, ref float maxFallSpeed);
+        public static FallRule MapFall;
+
         private void ApplyGravity(float dt)
         {
             // Flight owns the vertical while it lasts (`CharacterMotor.Status.cs`).
@@ -1364,8 +1389,10 @@ namespace TumbangPreso
             }
             else
             {
-                _velocity.y -= Balance.CharacterGravity * dt;
-                if (_velocity.y < -Balance.MaxFallSpeed) _velocity.y = -Balance.MaxFallSpeed;
+                float gravity = Balance.CharacterGravity, maxFallSpeed = Balance.MaxFallSpeed;
+                MapFall?.Invoke(this, ref gravity, ref maxFallSpeed);
+                _velocity.y -= gravity * dt;
+                if (_velocity.y < -maxFallSpeed) _velocity.y = -maxFallSpeed;
             }
         }
 
@@ -1928,25 +1955,60 @@ namespace TumbangPreso
         private float IncomingKnockbackSpeedScale => Mode == Core.GameMode.HeroStrike
             ? Mathf.Sqrt(Mathf.Clamp01(AbilitySystem?.Kit?.IncomingKnockbackDistanceScale ?? 1)) : 1;
 
+        /// <summary>A jump pad's throw (`JumpPad`): sets the vertical speed outright, past
+        /// `Balance.MaxKnockbackLift`, which caps hits and not map furniture. Only on the peer
+        /// that simulates this unit; returns whether it launched.</summary>
+        /// `cue` is the sound relayed with it; null when the pad plays its own on every peer (the Arena's).
+        public bool LaunchUp(float speed, string cue = "jump")
+        {
+            if (!MayMutateGameplayState() || !IsLocallySimulated() || !CanMove()) return false;
+            _velocity.y = speed;
+            _grounded = false;
+            if (cue != null) NetCue.PlayVaried(cue, transform.position, 0.7f, 0.8f, 1.0f);
+            return true;
+        }
+
+        /// <summary>
+        /// ⚠️ A VEHICLE'S HIT IS A LAUNCH, PAST THE KNOCKBACK CAPS (owner, 2026-10-04, hit by a car
+        /// on the rebuilt Ilalim: "can you add more physics to the ragdoll? i wanna feel like im
+        /// getting launched"). Every hit in the game is clamped to `MaxKnockbackSpeed` 16 and
+        /// `MaxKnockbackLift` 7, which at `Friction` 30 is 4 m of slide and a 1.2 m hop: right for
+        /// a shove, nothing like a jeepney. A car or the train sends its throw through the SAME
+        /// impact path (and the same network message), marked by adding `LaunchFlag` to its lift;
+        /// `ApplyImpulse` takes the flag off and uses the launch caps instead. Nothing new is on
+        /// the wire: a peer that does not know the flag would clamp the lift to 7, a weaker fall.
+        /// </summary>
+        public const float LaunchFlag = 1000.0f, LaunchMaxSpeed = 27.0f, LaunchMaxLift = 13.0f;
+
+        public static Vector3 AsLaunch(Vector3 throwVelocity)
+            => new Vector3(throwVelocity.x, Mathf.Max(0.0f, throwVelocity.y) + LaunchFlag, throwVelocity.z);
+
         public void ApplyImpulse(Vector3 impulse)
         {
             if (!MayMutateGameplayState() || !IsLocallySimulated()) return;
+            bool launch = impulse.y > LaunchFlag * 0.5f;
+            if (launch) impulse.y -= LaunchFlag;
+            float maxSpeed = launch ? LaunchMaxSpeed : Balance.MaxKnockbackSpeed;
+            float maxLift = launch ? LaunchMaxLift : Balance.MaxKnockbackLift;
             float lift=impulse.y;
+            // A launch's height is the jump arc alone; left in the slide as well it would be braked by `Friction`.
+            if (launch) impulse.y = 0.0f;
             float scale=IncomingKnockbackSpeedScale;
             if(scale<1)
             {
                 // Distance under friction is squared speed. Apply the existing cap first.
-                impulse=Vector3.ClampMagnitude(impulse,Balance.MaxKnockbackSpeed);
+                impulse=Vector3.ClampMagnitude(impulse,maxSpeed);
                 impulse.x*=scale; impulse.z*=scale;
             }
             _externalVelocity += impulse;
 
             float mag = _externalVelocity.magnitude;
-            if (mag > Balance.MaxKnockbackSpeed)
-                _externalVelocity = _externalVelocity.normalized * Balance.MaxKnockbackSpeed;
+            if (mag > maxSpeed)
+                _externalVelocity = _externalVelocity.normalized * maxSpeed;
 
             if (lift > 0.0f)
-                _velocity.y = Mathf.Min(lift, Balance.MaxKnockbackLift);
+                _velocity.y = Mathf.Min(lift, maxLift);
+            if (launch) _grounded = false;
         }
 
         private void Update()

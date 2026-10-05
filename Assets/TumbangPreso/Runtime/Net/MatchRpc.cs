@@ -77,6 +77,16 @@ namespace TumbangPreso.Net
         // and a constant beside a rule in a different assembly is a constant that drifts from it.
         // This one is kept here because it bounds a VELOCITY rather than a distance.
         private const float MoveMaxVelocityHeadroom = 8.0f;
+
+        /// <summary>
+        /// The lowest height `AcceptMove` believes an owner's pose at. -5 on every map: nothing is
+        /// playable under a court. A map with a real fall under its floor lowers it for as long
+        /// as it is loaded and puts it back when it goes (the Arena: `Map.ArenaStage` writes its
+        /// own `MoveFloor` in OnEnable and `DefaultMoveFloorY` in OnDisable), so a body can be
+        /// seen falling into the shaft before the host's drone takes it.
+        /// </summary>
+        public const float DefaultMoveFloorY = -5.0f;
+        public static float MoveFloorY = DefaultMoveFloorY;
         private const float IntentPoseLeeway = 2.25f;
 
         public LobbySeatInfo GetSeatInfo(int slot)
@@ -374,6 +384,7 @@ namespace TumbangPreso.Net
             cm.RegisterNamedMessageHandler("FamiliarEffect", OnFamiliarEffectMsg);
             cm.RegisterNamedMessageHandler("PreparedWorld", OnPreparedWorldMsg);
             cm.RegisterNamedMessageHandler("SkyEffect", OnSkyEffectMsg);
+            cm.RegisterNamedMessageHandler("ArenaBalloon", OnArenaBalloonMsg);
             cm.RegisterNamedMessageHandler("TimedKit", OnTimedKitMsg);
             cm.RegisterNamedMessageHandler("TimedKitState", OnTimedKitStateMsg);
             cm.RegisterNamedMessageHandler("CircuitAim", OnCircuitAimMsg);
@@ -554,7 +565,7 @@ namespace TumbangPreso.Net
             // Cove's shore, past the land wall's distance but inside the sea wall, is legal.
             // `IsOutsidePlayable` is the old `Abs(x) > half + 1` to the bit on a symmetric arena.
             if (AIController.IsOutsidePlayable(position, 1.0f) ||
-                position.y < -5.0f || position.y > 20.0f)
+                position.y < MoveFloorY || position.y > 20.0f)
                 return false;
 
             if (velocity.magnitude > Core.MoveBudget.MetresPerSecond + MoveMaxVelocityHeadroom)
@@ -2654,7 +2665,7 @@ namespace TumbangPreso.Net
             if (!Finite(zappedLeft) || zappedLeft < 0 || zappedLeft > StatusRules.ZappedSeconds) return;
             if(!Finite(concussedLeft) || !Finite(fearedLeft) || !Finite(disorientedLeft) || !Finite(vulnerableLeft) || !Finite(fearFrom))return;
             if(recoveryEpisode<0 || recoveryAcknowledged<0)return;
-            if(edgeKind>(byte)EdgeRecoveryKind.Lagoon||edgePhase>2||!Finite(edgeGrip)||!Finite(edgeOutward)||!Finite(edgeRatio))return;
+            if(edgeKind>(byte)EdgeRecoveryKind.Drone||edgePhase>2||!Finite(edgeGrip)||!Finite(edgeOutward)||!Finite(edgeRatio))return;
             if(edgeKind!=0&&(edgeOutward.sqrMagnitude<.9f||edgeOutward.sqrMagnitude>1.1f||edgeRatio<0||edgeRatio>1))return;
 
             // ⚠️⚠️ A NON-FINITE POSE MAKES A BODY VANISH AND SPAMS THE LOG ONCE A FRAME, and at a
@@ -6420,6 +6431,7 @@ namespace TumbangPreso.Net
             }
             SendReplayShortlist((ulong)peerId);
             SendSkySnapshot((ulong)peerId);
+            SendArenaBalloonSnapshot((ulong)peerId);
             FindFirstObjectByType<BufferSkipVote>()?.PublishTally((ulong)peerId);
             FindFirstObjectByType<UI.MatchResult>()?.PublishRematchTally((ulong)peerId);
             int previousFieldGeneration=_worldFieldGeneration;

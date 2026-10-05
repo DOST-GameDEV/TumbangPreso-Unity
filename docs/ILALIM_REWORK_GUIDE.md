@@ -1,65 +1,164 @@
 # Ilalim ng Tulay rework guide (ILALIM-1)
 
-⚠️⚠️⚠️ **HANDOFF FOR THE NEXT SESSION (written 2026-10-01 before a manual compaction). Read this
-first; the CURRENT STATE entries under it are the detailed record, newest first.**
-- **Branch and remote.** `claude/kanto-blender-assembly-909442` was PUSHED at `2a610270` on the
-  owner's explicit "need you to push this to the branch". That push holds all the Ilalim work and a
-  merge of `origin/ASTRAReworks` (402 commits; the one conflict, `TumpMatchReadout.cs`, kept both the
-  upstream penalty-surface change and the beggar's prompt). `main` is stale (2026-09-19); the live
-  team branch is `ASTRAReworks`. Push only when the owner asks; never commit the owner's files
+⚠️⚠️⚠️ **HANDOFF FOR THE NEXT SESSION (written 2026-10-05). Read this first; the CURRENT STATE
+entries under it are the detailed record, newest first. THE ARENA MAP IS NOW BUILT AND IN PLAY-TEST: its state is [ARENA_HANDOFF](ARENA_HANDOFF.md). Its brief:
+[ARENA_MAP_BRIEF](ARENA_MAP_BRIEF.md), TODO ARENA-1. Ilalim is parked where this block leaves it.**
+- **Branch and remote.** The work is on `QoLUpdates`, PUSHED at `aaa66cb2d` (2026-10-05) on the
+  owner's explicit asks. Local commits after that push (the character ambient occlusion test, F8)
+  are NOT pushed. `QoLUpdates` holds everything from `claude/kanto-blender-assembly-909442` (pushed
+  at `a7523a11`, since merged into `ASTRAReworks` by the team), a merge of `origin/ASTRAReworks` as
+  of 2026-10-04, and all of the 2026-10-04 and 2026-10-05 work below. `main` is stale; the live team
+  branch is `ASTRAReworks`. Push only when the owner asks; never commit the owner's files
   (`Resources/UI/composition-redesign/*.png.meta`, `ProjectSettings/ProjectAuditorSettings.asset`)
-  or Unity's reimport `.meta` churn (`Resources/UI/input/xelu/**`, the two `prop_glass` materials).
-- **ILALIM-1.6, the map-pool swap, is DONE and PUSHED** (owner: "you also need to replace the old
-  ilalim ng tulay with this one in the map pool"). Details are in the CURRENT STATE entry right
-  below; the owner's open decisions are in TODO ILALIM-1.7.
-  - `IlalimSceneBuilder` writes the shipped `Scenes/Maps/IlalimNgTulay.unity`, keeping the same GUID,
-    index and network surface.
-  - The old map is vaulted at `Scenes/Vault/IlalimNgTulayOld.unity`.
-  - The rebuild's look is the IlalimNgTulay row, and the map card is re-rendered.
-  - Two WorldCourtCue tests are red (the chalk is road-wide lines, not four box edges), and 21
-    old-map probes are ignored.
-  - No played match yet. The bot match does not finish, the same as on clean ASTRAReworks per §4.
+  or Unity's churn (`Resources/UI/input/xelu/**`, `Art/IlalimRebuild/Materials/prop_glass__*.mat`,
+  `Art/LagoonCove/Materials/court_chalk.mat`). GitHub counts contributions only on the default
+  branch (`main`), by merge commit or rebase, not by squash.
+- **What Ilalim is now (2026-10-04 and 2026-10-05, the CURRENT STATE entries below).**
+  - THE COURT IS IN THE CAMPUS LOT, not under the bridge, and the WORLD IS SHIFTED so the can is
+    still the origin: `Editor/MapKit/IlalimFrame.cs` and the export's `GAME_ORIGIN` (Blender
+    x -23.0, y 14.2, z 0.24) carry the same three numbers. Everything read from
+    `ilalim_layout.json` is already in the game frame; a number TYPED into an author is in the
+    Blender frame and goes through `IlalimFrame.W`.
+  - The lot's Taft and Padre Faura fences are gone and the PGH fence runs behind the lot; the
+    court is four chalk edge objects and a throwing line (the two red WorldCourtCue tests should
+    pass now: not re-run). The play rectangle is game x -12..34, z -10.8..25: the lot, across
+    Taft to the shop fronts, north over Padre Faura to the back of its far pavement.
+  - The floor is the drawn ground's own MeshColliders (group "StreetGround"); four thin walls
+    stand on the play rectangle.
+  - TAFT IS A LIVE ROAD: 28 vehicles drive straight through, solid, and a moving one LAUNCHES a
+    player (`KantoTraffic.HitsPlayers`; `CharacterMotor.AsLaunch` marks the throw on the existing
+    impact message; `WindTumble.Throw` tumbles the body; `CameraRig`'s thrown view frames the
+    body's middle from 6 m). Traffic is stepped from the server clock so every peer sees the same
+    street.
+  - THE TRAIN shuttles Pedro Gil to UN Avenue and back on the other track
+    (`LrtTrainFlyby.Shuttle`), is solid, fells whoever stands on the rails, and sounds: the pass
+    recording (`sfx_lrt_pass`, 0 dB, on the Ambience slider), a synthesized rail clank
+    (`tools/synth_ilalim_train_clack.py`), a ParkingLot reverb, doppler 1.3, a real camera shake.
+    The deck hides the consist from the ground; JUMP PADS (`Runtime/Map/JumpPad.cs`, a modelled,
+    glowing prop from `tools/author_jump_pad.py`) throw a player 14 m up to see it.
+  - THE FIRST PERFORMANCE PASS is in (occlusion culling, real LODs, cull heights, merged
+    colliders, combined vehicles, lighter AO below High, unseen people not posed, the traffic's
+    match-start catch-up boxed): 11.17 M to 5.97 M triangles a frame over eight views. Measure
+    with `Tests/PlayMode/IlalimPerfProbe.cs`.
+  - AMBIENT OCCLUSION ON THE CAST is a settings row ("Character shading": Off, Soft, Full; Full
+    by default; F8 in a debug session tests over it): a body-scale kernel with a ceiling. The owner tried a shade-from-above pass for flat faces and
+    had it removed. A character REDESIGN prototype (Dante: a carved box head, painted
+    textures, two hair variants) is a Blender try, not wired into the game; it has its own handoff,
+    [CHARACTER_REDESIGN_DANTE](CHARACTER_REDESIGN_DANTE.md), and moves to its own session.
 - **The pipeline, end to end.** Blender kits (`tools/author_ilalim_<kit>.py`, textures in
   `tools/author_ilalim_textures_<kit>.py`) build in this order: street, then trees, then eastside and
   props, then rooftops and streetlife (they read the east walls and roofs), then
   `tools/author_ilalim_city.py` (links every kit, plus stations and landmarks). Then
-  `blender -b ArtSource/ilalim/ilalim_city.blend --python tools/export_ilalim_unity.py`, and in Unity
+  `blender -b ArtSource/ilalim/ilalim_city.blend --python tools/export_ilalim_unity.py` (it also
+  writes the LOD models through `tools/ilalim_lods.py`), and in Unity
   **Tumbang Preso > Sample Map > Build Ilalim Rebuild** (batch: `IlalimSceneBuilder.Run`; review
-  renders: `RunReview`). Blender (x, y, z) is Unity (x, z, y).
-- **Life in Unity** (all built by the builder, no hand edits):
-  - traffic: `KantoTraffic`'s routes mode (`Editor/MapKit/IlalimLifeAuthor.cs`; 21 vehicles, never
-    in the court);
-  - pigeons: `LagoonFlocks` on measured perch lines;
-  - the street bed: `KantoStreetSound`;
-  - the sidewalk people in `Runtime/Map/SidewalkLife.cs` and `Editor/MapKit/IlalimSidewalkAuthor.cs`:
-    kids at tag, the magtataho (shoulder pole), spectators, and the beggar (his own voxel model,
-    `tools/build_beggar_voxel.py`) with a COSMETIC coin donation on the Interact verb.
-
-  They walk the court's pavements but never the chalk box, the kerb or within 0.5 m of a prop.
-  Their 36 sounds are synthesized by `tools/synth_ilalim_life_sfx.py`, with the `Loudness` and
-  `Reach` knobs on SidewalkLife. The checks:
-  - the probe: `IlalimSidewalkFilm.RunBuildProbeStills`;
-  - the films: `RunVideos`, then `py -3 tools/encode_ilalim_films.py`;
-  - real Play: `Tests/PlayMode/IlalimSidewalkPlayProbe.cs`.
+  renders: `RunReview`). The builder bakes occlusion and writes the scene; the scene is never
+  hand-edited.
+  - ⚠️ THE EXPORT REWRITES EVERY .glb WITH BYTE NOISE and the repo has no LFS. After an export,
+    restore every tracked .glb whose geometry did not change (compare each primitive's POSITION
+    accessor min, max and count against `git show HEAD:<file>`) and commit only the changed and
+    new ones.
+  - ⚠️ The Blender export and Unity cannot run at the same time (the export fails with
+    `OSError: [Errno 22]` while Unity reads `Assets`).
+- **Life in Unity** (all built by the builder, no hand edits): traffic and pigeons in
+  `Editor/MapKit/IlalimLifeAuthor.cs`; the street bed in `KantoStreetSound`; the sidewalk people
+  (kids at tag, the magtataho, spectators, the beggar with a cosmetic coin donation) in
+  `Runtime/Map/SidewalkLife.cs` and `Editor/MapKit/IlalimSidewalkAuthor.cs`, all on the lot's side
+  since the court moved (nobody on the shop pavement or the road). Checks:
+  `IlalimSidewalkFilm.RunBuildProbeStills`, `RunVideos` then `py -3 tools/encode_ilalim_films.py`,
+  and `Tests/PlayMode/IlalimSidewalkPlayProbe.cs`.
 - **Unity rules.** Batch Unity (`tools/run_unity_guarded.py`) needs the owner's editor CLOSED and a
-  signed-in Unity Hub (exit 198 with "No valid Unity Editor license" means the Hub session lapsed: the
-  owner signs in). Only one Unity at a time. C# edits recompile in the owner's open editor. Open the
-  scene for the owner with `Unity.exe -projectPath <worktree> -executeMethod
-  TumbangPreso.EditorTools.MapKit.IlalimSceneBuilder.Open`.
-- **OPEN, in order:**
-  1. Finish, commit and push ILALIM-1.6 (above).
-  2. A Z-FIGHT the owner saw on the east shop row near KARINDERYA NI ALING DORY. The first lead is the
-     West East Center balcony front, where a render panel and a breeze-block panel share a plane
-     (x 10.42 to 10.47, y -4.7 to -7.6, about 4.5 m up, in `author_ilalim_eastside.py`'s WEC
-     balcony parapets), and the eatery tarp sign's own faces. The ray-peel check
-     (`scratchpad/zpeel.py`) crashed indexing the original mesh with an evaluated face index: read
-     the evaluated mesh. Fix it in the kit, re-export, rebuild.
-  3. PERFORMANCE: 6.4 M triangles (trees 2.8 M, heritage 760 k, eastside 640 k, rooftops 323 k); only
-     cull LODs so far. Measure the frame rate, then real LODs or simpler far trees and rooftops.
-  4. Owner decisions still open: the train hidden by the solid parapet (railing recommended), cable
-     shadows on the court (the low sun makes them stripe it), Rizal Hall's size from the court, names.
-  5. Real voice recordings would beat the synthesized taho call, "salamat po" and the giggles (drop in
-     files with the same names). Repo size: the Unity art is about 231 MB with no LFS.
+  signed-in Unity Hub (exit 198 with "No valid Unity Editor license": the owner signs in). Only one
+  Unity at a time; never kill the owner's editor, ask them to close it. C# edits recompile in the
+  owner's open editor. Open the scene for the owner with `Unity.exe -projectPath <worktree>
+  -executeMethod TumbangPreso.EditorTools.MapKit.IlalimSceneBuilder.Open`.
+  - ⚠️ `run_unity_guarded.py --help` does NOT print usage: it launches a full editor.
+  - A COMPILE CHECK WITHOUT UNITY: Unity's own response files are in
+    `Library/Bee/artifacts/<hash>.dag/<Assembly>.rsp`; copy one, point `-out:` and `-refout:` at a
+    scratch folder (and, for Editor and PlayTests, the Runtime reference at the scratch build), and
+    run `dotnet "<sdk>/Roslyn/bincore/csc.dll" -nologo @<copy>` in the order Runtime, Editor,
+    PlayTests. It compiles what is on disk; a NEW .cs file is not in the list until Unity
+    regenerates it. Shaders only compile in Unity.
+  - A PlayMode probe can render the game's own camera in batch mode: freeze the clock, set the
+    pose, `cam.Render()` into a RenderTexture (`IlalimPerfProbe`).
+- **OPEN on Ilalim, none of it blocking the arena:**
+  1. NOT PLAYED AS A FULL MATCH since the court moved. The scene builds in batch and every probe
+     that was run passes, but nobody has finished a match on it; the car hit's strength, the bots
+     on a live road and the late-join traffic catch-up are unverified in play.
+  2. The joining players' frame rate is unmeasured on a weak PC (the counts halved). Next lever:
+     set-pass calls, about 3900 a frame from 694 materials.
+  3. The sidewalk author reports "6 failing samples" on build (routes against the real art), and
+     the life probe 6 overlapping vehicle pair-steps at the junction.
+  4. Three street poles and a ONE WAY sign stand in the lot's open edges; the median has no
+     planter between |y| 17.3 (Blender), where the old court was.
+  5. Owner decisions still open: ILALIM-1.7's list (pole near-fade, a cat and a dog, the map
+     description "LRT Gilmore strip" and the preview shot, the ignored old-map tests), cable
+     shadows on the court, Rizal Hall's size, names. CLOSED: the character shading is a player
+     setting, Full by default (`GameSettings.CharacterShading`, 2026-10-05; not yet seen in
+     Unity as a setting); the train behind the parapet (the DECK hides it; a railing was built,
+     measured at 0% and reverted).
+  6. The repo: about 60 MB of LOD models were added on top of 231 MB of Unity art, with no LFS.
+     The troll song the owner committed and then removed (`193adf23`) is still in the branch's
+     history.
+
+⚠️⚠️ **CURRENT STATE (2026-10-04 to 2026-10-05): THE COURT MOVED TO THE LOT, AND THE STREET CAME
+ALIVE.** In the order the owner asked, each quoted where the code explains itself:
+- **The train and its sound.** "does the train/lrt move and have a loud LRT sfx?": the pass went
+  -16, -8, then 0 dB. "make it so the train actually comes from pedro gil station going to UN.
+  when its not moving its just in the middle of the track": `LrtTrainFlyby.Shuttle`, the stations at
+  Blender y +/-139.6, easing in and out, the return on the other track. "theres no sfx for the
+  rails clanking", "add a slight screen shake", "the doppler effect is too much and theres no
+  reverb": the clank loop, the shake's duration (it was re-armed for 0.12 s a frame, which
+  `CameraRig` scales to 12 per cent), doppler 1.3, the reverb filter.
+- **Jump pads.** "can you add jump pads on the sidewalk so we can jump up to see the train", then
+  "it looks flat, doesnt have shading, texture or any of that stylized character to it", "jump pad
+  needs to be glowy", "can the white stuff be semi-transparent, fading out at the end": the kit,
+  the emission, the point light and halo, the rings on `ToonTransparent`.
+- **The court.** "can we move the play area to this open space? then fix up the area where the old
+  play area was. then fix up the fences so the area is still open to the road", "yes that fence
+  needs to be removed" (Padre Faura's side), "open up more of the play area corner so i can go in
+  the middle of the intersection". See the HANDOFF bullets for what was built.
+- **The road.** "make it so the players can still cross over and they ragdoll when they get hit by a
+  car", "the cars are just pass through, even the train", "ragdoll cam is weird", "put the cam back
+  further and align it to the center of mass", "can you add more physics to the ragdoll? i wanna
+  feel like im getting launched".
+- **The troll.** A song on the train for a friend, on a branch the owner called a troll; the owner
+  committed the audio file themselves and later had it removed. The dormant code path in
+  `LrtTrainFlyby` (a clip at `Resources/Troll/lrt_troll`) does nothing without the file and can be
+  deleted.
+
+⚠️⚠️ **CURRENT STATE (2026-10-04): THE MAP'S FIRST PERFORMANCE PASS.** Owner, 2026-10-04: the game is
+"primarily not laggy for the server host but it is for players joining too", then "add these
+optimization fixes". Not committed, not played on a weak PC.
+- **The measure** is `Tests/PlayMode/IlalimPerfProbe.cs` (PlayMode, batch): it renders the game's own
+  camera at 1920x1080 from eight fixed viewpoints and writes `Logs/ilalim-unity/perf_<label>.txt`
+  (the label is the one line in `Logs/ilalim-unity/perf_label.txt`). COUNTS are the measure; its
+  milliseconds are the development PC's. It also renders 308 views with occlusion culling on and
+  off and FAILS if any picture differs, so a bad bake cannot ship quietly.
+- **Mean of the eight views, before and after:** triangles 11.17 M to 5.95 M, set-pass calls 5246 to
+  3945, draw calls 7267 to 5318, shadow casters 1163 to 980. Footprint colliders 386 to 201.
+- **What the builder does now** (all in `IlalimSceneBuilder`, notes on each constant):
+  - bakes occlusion on every build (`OccluderGroups`, `BakeOcclusion`; the data is
+    `Scenes/Maps/IlalimNgTulay/OcclusionCullingData.asset`). The guideway is NOT an occluder and
+    neither are the NearFade piers, trees, fences, glass or cut-outs;
+  - builds real LODGroups from the layout's `lods` list (`LodMetres`, by DISTANCE past the
+    object's near side; a tree's trunk and canopy swap as one, `PairTrees`; the guideway keeps its
+    model from anywhere in the play rectangle; a hard-surface LOD2 never above 5 per cent of the
+    screen's height, which in practice means it is hardly ever drawn);
+  - culls small things by their own size (`CullGroups`: under 13 pixels at 1080 lines, never
+    nearer than 60 m). ⚠️ The old per-group shares forgot `QualitySettings.lodBias` (2) and culled nothing;
+  - takes shadow casting off the ground, the markings, the rooftop kit and anything under 0.6 m
+    (`NoShadowGroups`). The CABLES still cast: that is the owner's open decision;
+  - merges fence pickets into one box a stretch (`MergeRuns`);
+  - `IlalimLifeAuthor.Combine` makes each traffic vehicle one mesh (`Art/IlalimRebuild/Generated`).
+- **Runtime:** the ambient occlusion takes 8 probes a pixel below the High tier and 16 on it
+  (`WorldOutline.AmbientOcclusionLiteKeyword`; ⚠️ this changes the DEFAULT tier's picture a little: 1 to 2
+  per cent of pixels move by more than 2/255); `SidewalkLife.PoseUnseen` and `JumpPad.Seen` skip
+  posing what no camera drew; `KantoTraffic`'s match-start catch-up is boxed at 4 ms a frame and
+  `HubLoading` holds the curtain (up to 6 s) until the street is caught up.
+- **Per map shadow distance:** left alone. `GraphicsProfiles` already gives 24, 40 and 70 m by tier.
+- **Known:** `MapGeometryCheck` now reports 1723 informational findings, not 866: it measures the
+  LOD1 and LOD2 renderers as well. The sidewalk author's "6 failing samples" is unchanged.
 
 ⚠️⚠️ **CURRENT STATE (2026-10-01): THE REBUILD IS THE SHIPPED ILALIM NG TULAY (ILALIM-1.6).**
 Owner, 2026-10-01: "wait you also need to replace the old ilalim ng tulaywith this one in the map

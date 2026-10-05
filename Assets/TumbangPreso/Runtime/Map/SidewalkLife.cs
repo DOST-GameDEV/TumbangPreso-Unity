@@ -63,18 +63,24 @@ namespace TumbangPreso
     /// ⚠️⚠️ SCENERY, NEVER A PLAYER. No CharacterMotor, no collider (the rig's are destroyed), no
     /// network state: every client runs its own, like `KantoTraffic` and `LagoonFlocks`. They walk
     /// only the authored routes, which the author measured against the art and which never enter
-    /// the play area (|x| &lt; 11.2, |z| &lt; 16.7), let alone the chalk box.
-    ///   * KIDS: a game of tag on the south-east pavement, now and then (hidden between sessions).
-    ///   * TAHO: the magtataho with his pole and two aluminium buckets, slow along the south-west
-    ///     pavement, stopping to call. The call is `sfx_taho_call_1..3` (synthesised, see
+    /// the court's keep-clear square (9 m either way from the can), let alone the chalk box.
+    /// ⚠️ WHERE, SINCE THE COURT MOVED INTO THE LOT (owner 2026-10-04: "the children cant be on the
+    /// other side next to the shops because they wont be visible"): everybody is on the court's
+    /// side of Taft, nobody on the shop pavement and nobody on the road, which is live now
+    /// (`KantoTraffic.HitsPlayers`). Nothing in this file knows where: `IlalimSidewalkAuthor` does.
+    ///   * KIDS: a game of tag down the lot's east margin and out onto the west pavement, now and
+    ///     then (hidden between sessions).
+    ///   * TAHO: the magtataho with his pole and two aluminium buckets, slow up Taft's west
+    ///     pavement to the lot's open frontage, stopping to call. The call is `sfx_taho_call_1..3` (synthesised, see
     ///     `tools/synth_ilalim_life_sfx.py`) with the small comic popup ("TAHOOO!") kept.
-    ///   * SPECTATORS: passers-by who walk to a spot at the court's edge (the pavement ends past
-    ///     the end walls, the PGH lawn behind the fence), watch facing the court, cheer when the
+    ///   * SPECTATORS: passers-by who walk to a spot at the lot's edge (along its open frontage
+    ///     on the pavement side, and just inside it at its two ends), watch facing the court, cheer when the
     ///     can goes down and groan at a tag (<see cref="MatchFlair.Presented"/>), then walk on.
     ///   * BEGGAR: his OWN voxel model (npc-beggar.glb, `tools/build_beggar_voxel.py`: the
     ///     cast's pipeline on character-male-e's skeleton), not a cast rig. Walks in, lays his
-    ///     carton down against the PGH fence just past the south wall and sits on it with a tin
-    ///     cup, a tied bundle and a plastic bag beside him, within reach of a player at the wall.
+    ///     carton down on the west pavement at the south end of the lot's open frontage and sits
+    ///     on it facing the court, with a tin cup, a tied bundle and a plastic bag beside him,
+    ///     where a player on his way to the road passes within reach.
     ///     While he sits the match HUD offers "Give a coin" on the Interact control
     ///     (<see cref="StreetInteractions"/>): a coin arcs into the cup and clinks, he bows and
     ///     waves from where he sits and murmurs "salamat po" (the popup says the same). ⚠️
@@ -142,7 +148,7 @@ namespace TumbangPreso
         public Walk[] Walks = new Walk[0];
         public Watch[] Watches = new Watch[0];
         public int TahoWalk = -1, BeggarWalk = -1;
-        /// <summary>The kids' pavement: they play along it; its LAST point is where they come and go.</summary>
+        /// <summary>The kids' run: they play along it; its LAST point is where they come and go.</summary>
         public Vector3[] KidTrack = new Vector3[0];
         public float KidHalfWidth = .7f;
         public Vector3 BeggarSeat;
@@ -174,6 +180,22 @@ namespace TumbangPreso
         /// <summary>Scales each sound's full-volume distance (its far edge grows by half as much),
         /// so a voice across the pavement is not already faded to a fifth.</summary>
         [Range(1f, 5f)] public float Reach = 3f;
+
+        /// <summary>
+        /// ⚠️ A PERSON NOBODY IS LOOKING AT IS WALKED, NOT POSED (owner, 2026-10-04: the game is
+        /// "primarily not laggy for the server host but it is for players joining too", then "add
+        /// these optimization fixes"). Posing is most of this component's frame: each person's
+        /// clips sampled onto the rig (`AnimationClip.SampleAnimation`, twice through a
+        /// crossfade), the relaxed idle, the drawn gait with its foot plant, the seat, the
+        /// gestures, the head's spring and the pole's. In Play, a person whose renderers no
+        /// camera drew last frame still walks his route, keeps his gait's clock and so his
+        /// footsteps, and plays every sound; only the bones are left as they were. He is posed
+        /// again the frame after a camera draws him (and for a quarter second after he was last
+        /// seen or was shown, so a glance away never drops a spring mid-swing).
+        /// Set this TRUE to pose everybody always: a probe that reads limbs in batch mode, where
+        /// no camera draws. Outside Play (the films) everybody is always posed.
+        /// </summary>
+        public bool PoseUnseen;
 
         /// <summary>REVIEW ONLY (the author's filmed events): lets the TAHOOO and thank-you popups
         /// spawn outside Play, where the film steps <see cref="Simulate"/> by hand. Never set in
@@ -364,6 +386,10 @@ namespace TumbangPreso
             public float LookWeight, LookYaw, NodAt = -99f, NextNod, NextLook, LookUntil;
             public Body LookAt;
             public float JukeUntil, JukeSide, ClapUntil, CheerFrom = -99f, LaughFrom = -99f;
+            /// <summary>The body's renderers (found on its first pose, once everything is hung on
+            /// it), and the life's clock when a camera last drew one of them. See `PoseUnseen`.</summary>
+            public Renderer[] Skin;
+            public float SeenAt = -99f;
             // The relaxed idle (see Relax): the next small weight shift and which way, and the
             // role's idle touch (arms folded, hands on hips, a kid's fidget) with its start and length.
             public float ShiftAt = -99f, ShiftSide = 1f, NextShift, TouchFrom = -99f, TouchLength, NextTouch;
@@ -857,6 +883,18 @@ namespace TumbangPreso
             b.HasLast = false; b.Speed = b.AlongSpeed = 0f; b.YawVel = 0f;
             b.Planted[0] = b.Planted[1] = false; b.StanceLeg = -1;
             b.Squash = b.SquashVel = 0f; b.HeadLagging = false; b.HeadVel = Vector3.zero;
+            // Just shown: no camera has had a frame to draw it yet (see `PoseUnseen`).
+            b.SeenAt = _clock;
+        }
+
+        /// <summary>True when the body is to be posed this frame: see `PoseUnseen`.</summary>
+        private bool Watched(Body b)
+        {
+            if (PoseUnseen || !Application.isPlaying) return true;
+            if (b.Skin == null) b.Skin = b.Root.GetComponentsInChildren<Renderer>(true);
+            foreach (var r in b.Skin)
+                if (r != null && r.isVisible) { b.SeenAt = _clock; return true; }
+            return _clock - b.SeenAt < .25f;
         }
 
         /// <summary>Crossfades to `clip` (falling back to idle when the rig lacks it) at `rate`.</summary>
@@ -888,6 +926,16 @@ namespace TumbangPreso
             Measure(b, dt);
             // The character frame first: every drawn layer below is built in it.
             b.Root.SetPositionAndRotation(b.Position, Quaternion.Euler(0f, b.Yaw, 0f));
+            if (!Watched(b))
+            {
+                // Walked, not posed (`PoseUnseen`): the gait's clock and its footfalls only. The
+                // foot plant and the head's spring start afresh when he is next drawn, as they do
+                // when he is shown: a plant kept from before would be a leg aimed at a stale spot.
+                Locomote(b, dt, false);
+                b.Planted[0] = b.Planted[1] = false; b.Stance[0] = b.Stance[1] = false; b.StanceLeg = -1;
+                b.HeadLagging = false;
+                return;
+            }
             Spring(b, dt);
             Sample(b);
             Relax(b, dt);
@@ -1093,7 +1141,7 @@ namespace TumbangPreso
         /// numbers), scaled per role (<see cref="Body.ArmGain"/>), the magtataho's pole arm held
         /// within <see cref="PoleArmSwing"/>.
         /// </summary>
-        private void Locomote(Body b, float dt)
+        private void Locomote(Body b, float dt, bool draw = true)
         {
             if (b.Gait == null || b.LegL == null || b.LegR == null || b.ArmL == null || b.ArmR == null || b.Reach <= 0f) return;
             float turning = Mathf.Abs(b.YawVel) * Mathf.Deg2Rad * .25f;
@@ -1116,6 +1164,8 @@ namespace TumbangPreso
                 b.Foot = foot;
                 if (b.Loco > .6f) Footfall(b);
             }
+            // The gait's clock and its footfalls are above; the rest draws (see `PoseUnseen`).
+            if (!draw) return;
 
             var pose = b.Gait.Evaluate(b.Phase, b.RunW, _clock, Mathf.Abs(b.Cadence));
             float amount = Smooth(b.Loco);
@@ -1931,8 +1981,8 @@ namespace TumbangPreso
             holder.SetPositionAndRotation(BeggarSeat, Quaternion.LookRotation(f, Vector3.up));
             var cube = Builtin("Cube.fbx"); var cylinder = Builtin("Cylinder.fbx");
             _carton = Part(holder, "Carton", CartonMesh(), Cardboard, new Vector3(0f, .008f, .12f), Vector3.one, Vector3.zero);
-            // The cup on his left, the side toward the court and the players at the wall, just
-            // inside where his left hand rests on the pavement.
+            // The cup on his left and before him, toward whoever he faces, just inside where his
+            // left hand rests on the pavement.
             _cup = Part(holder, "Tin cup", CupMesh(), Tin, new Vector3(-.26f, .05f, .62f), new Vector3(.11f, .05f, .11f), Vector3.zero);
             _coin = Part(transform, "Coin", cylinder, Coin, Vector3.zero, new Vector3(.05f, .004f, .05f), Vector3.zero);
             _carton.gameObject.SetActive(false); _cup.gameObject.SetActive(false); _coin.gameObject.SetActive(false);

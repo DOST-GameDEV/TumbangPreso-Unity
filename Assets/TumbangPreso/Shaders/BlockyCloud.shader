@@ -29,6 +29,10 @@ Shader "TumbangPreso/BlockyCloud"
         _SunDir("Direction to the sun", Vector)=(0,1,0,0)
         _Air("Air share", Range(0,1))=.32
         _Drift("Drift, degrees per second", Float)=.06
+        // A night map's clouds, lit by the city under them and not by a sun over them (the
+        // Arena): 1 turns the crown-to-belly gradient and the light's direction over. 0, the
+        // default and every other map's value, is the daylight rule exactly.
+        _FromBelow("Lit from below", Range(0,1))=0
     }
     SubShader
     {
@@ -42,7 +46,7 @@ Shader "TumbangPreso/BlockyCloud"
             #include "UnityCG.cginc"
             half4 _LitColor,_ShadeColor,_AirColor,_ZenithColor;
             float4 _SunDir;
-            half _Air;
+            half _Air,_FromBelow;
             float _Drift,_TumpSkyTime;
             struct appdata { float4 vertex:POSITION; float3 normal:NORMAL; float2 uv:TEXCOORD0; };
             struct v2f { float4 pos:SV_POSITION; float3 normal:TEXCOORD0; float2 shape:TEXCOORD1; float3 world:TEXCOORD2; };
@@ -59,16 +63,16 @@ Shader "TumbangPreso/BlockyCloud"
             half4 frag(v2f i):SV_Target
             {
                 float3 n=normalize(i.normal);
-                float3 toSun=normalize(_SunDir.xyz);
+                float3 toSun=normalize(lerp(_SunDir.xyz,float3(0,-1,0),_FromBelow));
                 float3 toEye=normalize(_WorldSpaceCameraPos-i.world);
                 // ⚠️ THE VOLUME COMES FROM THREE SOFT TERMS, NOT FROM FACE TONES (owner, "less
                 // volume-y", "too sharp"): the height through the whole cloud (x, 0 belly to 1
                 // crown), a half-Lambert on the ROUNDED normals the builder wrote, and the
                 // crevice occlusion (y, 1 open to 0 deep). Face-to-face contrast is small, so a
                 // cloud reads as one lit body made of blocks.
-                half crown=saturate(i.shape.x);
+                half crown=lerp(saturate(i.shape.x),1.0h-saturate(i.shape.x),_FromBelow);
                 half facing=saturate(dot(n,toSun)*.5h+.5h);
-                half tone=saturate(crown*.55h+facing*.5h+n.y*.12h-.08h);
+                half tone=saturate(crown*.55h+facing*.5h+n.y*.12h*(1.0h-2.0h*_FromBelow)-.08h);
                 tone=smoothstep(.08h,.92h,tone);
                 half3 colour=lerp(_ShadeColor.rgb,_LitColor.rgb,tone);
                 // Crevices sink toward the body colour, a deeper lavender.

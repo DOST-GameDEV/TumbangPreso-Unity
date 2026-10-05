@@ -19,26 +19,47 @@ namespace TumbangPreso.EditorTools.MapKit
     /// cosmetic and local, never networked, never a collider a player, the lata or a tsinelas can
     /// touch (docs/ILALIM_REWORK_GUIDE.md § 3, "Moving things").
     ///
-    /// TRAFFIC is Kanto's <see cref="KantoTraffic"/> on its ROUTES network (§ ROUTES there): the
-    /// court IS Taft Avenue between the walls at |z| 16.5, so no car ever enters |z| &lt; 19.
-    /// Taft is a closed road for the street game (docs/Ilalim_Ng_Tulay.md § 4.4: cars stay outside
-    /// |z| 16.5), and the traffic behaves the way traffic at a closure does:
-    ///   * NORTH, the Padre Faura junction (signals, Taft against Padre Faura): Padre Faura runs
-    ///     one-way WEST (its ONE WAY arrows), one lane through the parked cars of its east arm,
+    /// ⚠️⚠️ THE COURT LEFT THE ROAD (owner 2026-10-04: "can we move the play area to this open space?
+    /// then fix up the area where the old play area was... make it so the players can still cross
+    /// over and they ragdoll when they get hit by a car"). The court is in the campus lot west of
+    /// Taft now, and Taft is a LIVE street again. Every number typed in this file is still in the
+    /// BLENDER FRAME (x east, z north, the origin on Taft under the viaduct) and goes through
+    /// <see cref="IlalimFrame"/> where it meets the scene, which is in the game frame (the can at
+    /// the origin). So the traffic is no longer "cosmetic, never touching a player": it is still
+    /// local arithmetic with no collider and nothing of its own on the wire, but with
+    /// <see cref="KantoTraffic.HitsPlayers"/> on, a moving vehicle fells the player it touches (see
+    /// § THE LIVE ROAD there for who decides it and how every peer sees the same car).
+    ///
+    /// TRAFFIC is Kanto's <see cref="KantoTraffic"/> on its ROUTES network (§ ROUTES there). Until
+    /// 2026-10-04 the court WAS Taft between the walls at |z| 16.5, Taft was a closed road, and the
+    /// routes were what traffic does at a closure (a queue at a stop line that never turned green,
+    /// a bus's U-turn past the median's end, a yield line for it). Those are gone with the reason
+    /// for them. Now:
+    ///   * TAFT RUNS STRAIGHT THROUGH under the bridge, both ways, from Pedro Gil to UN Avenue: TN
+    ///     northbound in the east lane (x +1.9), TS southbound in the west lane (x -1.9), past the
+    ///     lot's open frontage, where players cross. Right-hand traffic, as the kit drives.
+    ///   * THE PADRE FAURA JUNCTION (signals, Taft against Padre Faura) is as it was: Padre Faura
+    ///     runs one-way WEST (its ONE WAY arrows), one lane through the parked cars of its east arm,
     ///     splitting at the junction into the through lane (N1, the south lane of the west arm)
-    ///     and a right turn north up Taft (N3). Taft's southbound traffic from UN Avenue turns
-    ///     right into Padre Faura's west arm before the closure (N4). The Taft stretch between the
-    ///     junction and the court stays empty, as a closed block does.
-    ///   * SOUTH: Taft's northbound traffic from Pedro Gil turns right into G. Apacible, 110 m
-    ///     out (S1); the two cars placed nearer the court wait at the closure with their engines
-    ///     running (S0, a stop line that never turns green: they queue, idle and honk); the bus
-    ///     placed southbound drives away south, U-turns past the median's end and joins S1 (S2).
+    ///     and a right turn north up Taft (N3); some of Taft's southbound traffic turns right into
+    ///     Padre Faura's west arm (N4), the rest carries on (TS). Taft's northbound traffic now
+    ///     stops for the junction too, at a line 12.9 m south of Padre Faura's centre (z 18.8, the
+    ///     mirror of the southbound line at 44.6): its queue stands on the stretch beside the lot,
+    ///     and a stopped car hits nobody.
+    ///   * SOUTH: some of Taft's northbound traffic from Pedro Gil still turns right into
+    ///     G. Apacible, 110 m out (S1); the rest carries on north (TN).
+    ///   * ⚠️ NEVER IN THE LOT. No route leaves the carriageway: Taft's lanes are 4.75 m inside
+    ///     the kerb (6.65) and 9.2 m from the lot's edge (x -11.1). The build log counts any route
+    ///     sample inside the lot, and `Probe` counts any vehicle there.
     ///   * Lanes are the street kit's: Taft x = +/-1.9 (between the median and the pier collars),
     ///     Padre Faura's lanes 3 m apart about its OSM centre line, G. Apacible's eastbound lane
-    ///     1.5 m right of its centre. Every route was checked against the placed art's bounds
-    ///     (vehicles, piers, collars, bents, poles, trees, parked cars) before it was written.
+    ///     1.5 m right of its centre. The turning routes were checked against the placed art's
+    ///     bounds (vehicles, piers, collars, bents, poles, trees, parked cars) on 2026-09-30; the
+    ///     through lanes run where the old court's chalk was and are NOT yet checked against the
+    ///     2026-10-04 street (anything the kit leaves standing in a lane under the bridge shows
+    ///     as a car driving through it).
     ///   * The eight placed Traffic vehicles become drivers where they stand (keeping their
-    ///     placed rotation relative to their route, as KantoTrafficAuthor does); thirteen copies of
+    ///     placed rotation relative to their route, as KantoTrafficAuthor does); twenty copies of
     ///     them fill the routes. The parked cars (StreetLife) stay parked.
     /// SOUND is Kanto's <see cref="KantoStreetSound"/> on the traffic with Kanto's clips (the city
     /// bed, car, diesel and tricycle engines, horns, sirens), unchanged files.
@@ -46,7 +67,8 @@ namespace TumbangPreso.EditorTools.MapKit
     /// PIGEONS are Kanto's flock (<see cref="LagoonFlocks"/> with fauna_pigeon, KantoPigeonsAuthor's
     /// tuning), landing on PERCH LINES measured here against the real meshes: the guideway's
     /// parapet copings, the flat roofs along the street, the station roofs' near ends, and the
-    /// outer edge of the pavements (outside the chalk box, clear of every prop). The power poles'
+    /// outer edge of the pavements (clear of every prop, and never the lot's open frontage, where
+    /// the sidewalk people stand; no line may touch the court's keep-clear square). The power poles'
     /// crossarms and their cables are probed too, but measured no flat run long enough for a bird
     /// on the 2026-09-30 art (the build log's "Perches" line counts each kind). The flock wheels
     /// over the campus side of the street, clear of the Astral tower. `Probe` steps the traffic and
@@ -57,7 +79,24 @@ namespace TumbangPreso.EditorTools.MapKit
         private const string Tag = "[IlalimRebuild] ";
         private const float TurnRadius = 5f;
 
-        // ------------------------------------------------------------------ street geometry
+        // ------------------------------------------------------------------ the two frames
+
+        /// <summary>A Blender-frame ground point (x east, z north) in the scene's game frame, flat.</summary>
+        private static Vector3 G(float x, float z) { var p = IlalimFrame.W(x, 0f, z); p.y = 0f; return p; }
+        /// <summary>A Blender-frame height in the game frame.</summary>
+        private static float H(float y) => y - IlalimFrame.OriginY;
+        /// <summary>A scene (game-frame) point back in the Blender frame, for the typed limits below.</summary>
+        private static Vector3 B(Vector3 game) => game + IlalimFrame.Shift;
+        /// <summary>The court's keep-clear square in the game frame (the chalk box is 7, the
+        /// throwing line 8, the attackers' spawn 9 from the can): nothing of the life goes in it.</summary>
+        internal const float KeepClear = 9f;
+        internal static bool InKeepClear(Vector3 game) => Mathf.Abs(game.x) <= KeepClear && Mathf.Abs(game.z) <= KeepClear;
+        /// <summary>The lot, Blender frame: its west (back) fence, its open frontage on Taft's west
+        /// pavement, its south fence, and the players' wall along its north side (open to Padre
+        /// Faura since the owner had that fence taken out on 2026-10-04; IlalimFrame.PlayMaxZ).</summary>
+        internal const float LotWest = -35f, LotEast = -11.1f, LotSouth = 3.4f, LotNorth = 24f;
+
+        // ------------------------------------------------------------------ street geometry (Blender frame)
 
         /// <summary>Padre Faura's OSM centre line (ArtSource/ilalim/osm_layout.json), east to west.</summary>
         private static readonly Vector2[] PadreFaura =
@@ -109,10 +148,15 @@ namespace TumbangPreso.EditorTools.MapKit
                 yield return Pf(x, Mathf.Lerp(from, to, Mathf.SmoothStep(0f, 1f, (x0 - x) / (x0 - x1))));
         }
 
+        /// <summary>A route's points, typed in the Blender frame on the road (y 0), into the game frame.</summary>
         private static Vector3[] Clean(IEnumerable<Vector3> points)
         {
             var list = new List<Vector3>();
-            foreach (var p in points) if (list.Count == 0 || Vector3.Distance(list[list.Count - 1], p) > .05f) list.Add(p);
+            foreach (var blender in points)
+            {
+                var p = IlalimFrame.W(blender);
+                if (list.Count == 0 || Vector3.Distance(list[list.Count - 1], p) > .05f) list.Add(p);
+            }
             return list.ToArray();
         }
 
@@ -136,22 +180,24 @@ namespace TumbangPreso.EditorTools.MapKit
             float zg = Ga(1.9f + r, -1.5f).z;
             var s1 = new[] { -212f, -200f, -170f, -150f, zg - r }.Select(z => new Vector3(1.9f, 0, z))
                 .Concat(Arc(new Vector3(1.9f + r, 0, zg - r), r, 180f, 90f)).Concat(new[] { 12f, 20f, 30f, 45f, 60f }.Select(x => Ga(x, -1.5f)));
-            // S0: the queue at the closed court end, behind the pier row at z -19 and its collars.
-            var s0 = new[] { -110f, -80f, -50f, -21.2f }.Select(z => new Vector3(1.9f, 0, z));
-            // S2: southbound away from the court, a U-turn past the median's end (z -150), then S1.
-            var s2 = new[] { -21.2f, -60f, -100f, -150f, -200f }.Select(z => new Vector3(-1.9f, 0, z))
-                .Concat(Arc(new Vector3(0, 0, -200f), 1.9f, 180f, 360f));
+            // TN, TS: Taft straight through under the bridge, past the lot (owner 2026-10-04).
+            var through = new[] { -212f, -150f, -100f, -50f, 0f, 46f, 100f, 150f, 212f };
+            var tn = through.Select(z => new Vector3(1.9f, 0, z));
+            var ts = through.Reverse().Select(z => new Vector3(-1.9f, 0, z));
             return new[]
             {
                 new KantoTraffic.Route { Name = "N1 Padre Faura west", Points = Clean(n1) },
                 new KantoTraffic.Route { Name = "N3 Padre Faura to Taft north", Points = Clean(n3) },
                 new KantoTraffic.Route { Name = "N4 Taft south to Padre Faura", Points = Clean(n4) },
                 new KantoTraffic.Route { Name = "S1 Taft north to G. Apacible", Points = Clean(s1) },
-                new KantoTraffic.Route { Name = "S0 queue at the closed court", Points = Clean(s0) },
-                new KantoTraffic.Route { Name = "S2 Taft south, U-turn", Points = Clean(s2) },
+                new KantoTraffic.Route { Name = "TN Taft north, through", Points = Clean(tn) },
+                new KantoTraffic.Route { Name = "TS Taft south, through", Points = Clean(ts) },
             };
         }
-        private const int N1 = 0, N3 = 1, N4 = 2, S1 = 3, S0 = 4, S2 = 5;
+        private const int N1 = 0, N3 = 1, N4 = 2, S1 = 3, TN = 4, TS = 5;
+        /// <summary>Taft's stop lines for the Padre Faura junction (Blender z): the southbound one on
+        /// its painted line, the northbound one its mirror about Padre Faura's centre (31.7).</summary>
+        private const float StopSouthbound = 44.6f, StopNorthbound = 18.8f;
 
         // ------------------------------------------------------------------ vehicles
 
@@ -160,16 +206,24 @@ namespace TumbangPreso.EditorTools.MapKit
         /// <summary>Each kind's dressing-group name, read by KantoStreetSound for its engine and horn
         /// (it matches "jeepney", "bus", "tricycle", "van", "hatch", "taxi"; the UV Express is a
         /// diesel van), its cruise speed (KantoTrafficAuthor's numbers), and the route its one
-        /// placed vehicle drives.</summary>
+        /// placed vehicle drives. The two that waited at the old closure (the Taft jeepney, the UV
+        /// Express) and the bus that turned away from it now drive Taft straight through.</summary>
         private static readonly Dictionary<string, (string group, float cruise, int route)> Kinds = new Dictionary<string, (string, float, int)>
         {
-            ["jeepney_taft"] = ("jeepney_taft", 7.5f, S0), ["uv_express"] = ("van_uv_express", 8.5f, S0),
-            ["bus_liner"] = ("bus_liner", 7f, S2), ["jeepney_green"] = ("jeepney_green", 7.5f, N4),
+            ["jeepney_taft"] = ("jeepney_taft", 7.5f, TN), ["uv_express"] = ("van_uv_express", 8.5f, TN),
+            ["bus_liner"] = ("bus_liner", 7f, TS), ["jeepney_green"] = ("jeepney_green", 7.5f, N4),
             ["taxi"] = ("taxi", 9.5f, N3), ["tricycle"] = ("tricycle", 5.5f, N1),
             ["sedan_grey"] = ("sedan_grey", 9.5f, N4), ["hatch_maroon"] = ("hatch_maroon", 9.5f, N1),
         };
 
-        /// <summary>The copies: kind, route, and a point on the route it starts at.</summary>
+        /// <summary>The copies: kind, route, and a point on the route it starts at (Blender frame).
+        /// ⚠️ Routes that share a lane share its vehicles: TN runs in S1's lane south of
+        /// G. Apacible and in N3's north of Padre Faura, TS in N4's north of it. The starts below
+        /// are at least 18 m apart along each LANE, not only along each route, and as far from
+        /// the vehicles the kit placed in those lanes (the export of 2026-10-04: the Taft jeepney
+        /// at z -27 and the UV Express at -63 northbound, N3's taxi at 58; the bus at -48 and
+        /// N4's green jeepney at 52 southbound). None starts on the stretch players cross
+        /// (z 3.4 to 24).</summary>
         private static (string kind, int route, Vector3 at)[] Copies() => new[]
         {
             ("sedan_grey", N1, Pf(60f, 0f)), ("jeepney_taft", N1, Pf(-60f, -3f)), ("uv_express", N1, Pf(-115f, -3f)),
@@ -177,6 +231,9 @@ namespace TumbangPreso.EditorTools.MapKit
             ("taxi", N4, new Vector3(-1.9f, 0, 120f)), ("uv_express", N4, new Vector3(-1.9f, 0, 175f)),
             ("bus_liner", N4, new Vector3(-1.9f, 0, 85f)), ("jeepney_taft", N4, Pf(-95f, 0f)),
             ("taxi", S1, new Vector3(1.9f, 0, -185f)), ("jeepney_green", S1, new Vector3(1.9f, 0, -158f)), ("sedan_grey", S1, Ga(35f, -1.5f)),
+            ("taxi", TN, new Vector3(1.9f, 0, -138f)), ("hatch_maroon", TN, new Vector3(1.9f, 0, -92f)), ("tricycle", TN, new Vector3(1.9f, 0, 90f)),
+            ("sedan_grey", TS, new Vector3(-1.9f, 0, 148f)), ("jeepney_green", TS, new Vector3(-1.9f, 0, -14f)),
+            ("uv_express", TS, new Vector3(-1.9f, 0, -100f)), ("taxi", TS, new Vector3(-1.9f, 0, -160f)),
         };
 
         public static void Build(Transform root, Transform dressing)
@@ -184,7 +241,8 @@ namespace TumbangPreso.EditorTools.MapKit
             var report = new StringBuilder();
             Traffic(root, dressing, report);
             Pigeons(root, dressing, report);
-            // The sidewalk people (IlalimSidewalkAuthor): after the traffic, whose lanes they keep clear of.
+            // The sidewalk people (IlalimSidewalkAuthor): after the traffic, whose lanes they keep clear
+            // of, and after the pigeons, whose flock they read for its coos.
             IlalimSidewalkAuthor.Build(root, dressing, report);
             Debug.Log(Tag + "Life:\n" + report);
         }
@@ -197,9 +255,13 @@ namespace TumbangPreso.EditorTools.MapKit
             go.transform.SetParent(root, false);
             var traffic = go.AddComponent<KantoTraffic>();
             traffic.Routes = Routes();
-            // Only the street sound reads these in route mode: the bed opens toward Padre Faura's
-            // line (z 31) and the sirens pass on the four lines 31 m out, the hospital side among them.
-            traffic.Road = 31f; traffic.LaneOffset = 1.9f; traffic.Extent = 128f; traffic.GroundY = 0f;
+            // Only the street sound reads these in route mode, about the court at the game's origin:
+            // the bed opens toward Taft's line (23 m east of the can) and the sirens pass on the four
+            // lines 23 m out, Taft among them, at the road's height.
+            traffic.Road = IlalimFrame.RoadX; traffic.LaneOffset = 1.9f; traffic.Extent = 128f; traffic.GroundY = H(0f);
+            // ⚠️ THE LIVE ROAD (owner 2026-10-04: "they ragdoll when they get hit by a car"): off on
+            // every other map; here a moving vehicle fells the player it touches (KantoTraffic).
+            traffic.HitsPlayers = true;
             traffic.LampMaterials = new[] { "street_lens_red", "street_lens_amber", "street_lens_green" };
             traffic.BrakeMaterial = "veh_signal_red";
             // The street kit lights only the red lens (emission 1.35, .38, .27); amber and green get
@@ -207,27 +269,35 @@ namespace TumbangPreso.EditorTools.MapKit
             traffic.LampGlow = new[] { new Color(1.35f, .38f, .27f), new Color(1.4f, .95f, .22f), new Color(.3f, 1.3f, .75f) };
             traffic.BrakeGlow = new Color(1.1f, .1f, .07f);
 
-            // The stop lines: Padre Faura's before its east zebra (x 17.5), Taft's on its painted
-            // line north of the junction (z 44.3), and the closure at the court (never green).
+            // The stop lines (Blender frame): Padre Faura's before its east zebra (x 17.5), Taft's
+            // southbound on its painted line north of the junction (z 44.3), and Taft's northbound
+            // 12.9 m south of Padre Faura's centre. No closure any more: every line turns green.
             var stops = new List<(int route, Vector3 at, int axis)>
             {
-                (N1, Pf(17.5f, 0f), 0), (N3, Pf(17.5f, 0f), 0), (N4, new Vector3(-1.9f, 0, 44.6f), 1),
+                (N1, Pf(17.5f, 0f), 0), (N3, Pf(17.5f, 0f), 0), (N4, new Vector3(-1.9f, 0, StopSouthbound), 1),
+                (TS, new Vector3(-1.9f, 0, StopSouthbound), 1), (TN, new Vector3(1.9f, 0, StopNorthbound), 1),
             };
-            foreach (var (route, at, axis) in stops)
+            foreach (var (route, blender, axis) in stops)
             {
+                var at = IlalimFrame.W(blender);
                 float along = traffic.RouteAlong(route, at, out float off);
                 traffic.Routes[route].StopAlong = new[] { along };
                 traffic.Routes[route].StopAxis = new[] { axis };
                 if (off > .5f) Debug.LogWarning($"{Tag}Stop line {at} is {off:F2} m off {traffic.Routes[route].Name}");
             }
-            var queue = traffic.Routes[S0];
-            queue.StopAlong = new[] { traffic.RouteAlong(S0, queue.Points[queue.Points.Length - 1], out _) };
-            queue.StopAxis = new[] { -1 };
-            traffic.Routes[S2].Next = S1;
-            traffic.Routes[S2].NextAlong = traffic.RouteAlong(S1, traffic.Routes[S2].Points[traffic.Routes[S2].Points.Length - 1], out _);
-            // The U-turn waits 4 m short of its arc until Taft's northbound lane is clear to join.
-            traffic.Routes[S2].StopAlong = new[] { traffic.RouteAlong(S2, new Vector3(-1.9f, 0, -196f), out _) };
-            traffic.Routes[S2].StopAxis = new[] { -2 };
+            // ⚠️ Never in the lot: every route, sampled each metre, against the lot's rectangle and
+            // a vehicle's half width (a bus is 2.5 m wide) more.
+            int inLot = 0;
+            for (int r = 0; r < traffic.Routes.Length; r++)
+            {
+                float length = traffic.RouteAlong(r, traffic.Routes[r].Points[traffic.Routes[r].Points.Length - 1], out _);
+                for (float a = 0f; a <= length; a += 1f)
+                {
+                    var b = B(traffic.RoutePoint(r, a));
+                    if (b.x > LotWest - 1.5f && b.x < LotEast + 1.5f && b.z > LotSouth - 1.5f && b.z < LotNorth + 1.5f) inLot++;
+                }
+            }
+            if (inLot > 0) Debug.LogWarning($"{Tag}{inLot} traffic route samples lie inside the lot");
 
             // The placed vehicles: every part stands on the vehicle's own pose (the kit exports each
             // part relative to the vehicle origin), so parts are grouped by kind and position.
@@ -254,10 +324,16 @@ namespace TumbangPreso.EditorTools.MapKit
                 part.SetParent(vehicle, true);
             }
 
+            // One mesh a vehicle (see Combine), before the copies are made of them.
+            int partRenderers = 0, partDraws = 0, oneDraws = 0;
+            var partCorners = new Dictionary<Transform, List<Vector3>>();
+            foreach (var kv in vehicles) Combine(kv.Value, partCorners, ref partRenderers, ref partDraws, ref oneDraws);
+
             var rng = new System.Random(11);
             var drivers = new List<KantoTraffic.Driver>();
             var offsets = new Dictionary<string, Quaternion>();
             var log = new StringBuilder();
+            float boxDrift = 0f;
             foreach (var kv in vehicles)
             {
                 var vehicle = kv.Value; string kind = vehicle.name; var spec = Kinds[kind];
@@ -266,12 +342,14 @@ namespace TumbangPreso.EditorTools.MapKit
                 var heading = traffic.RouteHeading(spec.route, along);
                 var offset = Quaternion.Inverse(Quaternion.LookRotation(heading, Vector3.up)) * vehicle.rotation;
                 offsets[kind] = offset;
+                boxDrift = Mathf.Max(boxDrift, BoxDrift(vehicle, heading, partCorners));
                 MakeDriver(vehicle);
                 drivers.Add(Driver(vehicle, spec.route, along, heading, spec.cruise, offset, rng));
                 log.Append($"{kind} yaw {Mathf.Round(offset.eulerAngles.y)}; ");
             }
-            foreach (var (kind, route, at) in Copies())
+            foreach (var (kind, route, blender) in Copies())
             {
+                var at = IlalimFrame.W(blender);
                 if (!byKind.TryGetValue(kind, out var source)) { Debug.LogWarning(Tag + "No placed " + kind + " to copy"); continue; }
                 float along = traffic.RouteAlong(route, at, out _);
                 var heading = traffic.RouteHeading(route, along);
@@ -316,11 +394,141 @@ namespace TumbangPreso.EditorTools.MapKit
 
             int[] perRoute = new int[traffic.Routes.Length];
             foreach (var d in drivers) perRoute[d.Lane]++;
+            report.AppendLine($"Vehicles: each is one mesh ({vehicles.Count} kinds: {partRenderers} part renderers and {partDraws} material draws became {vehicles.Count} renderers and {oneDraws} draws; " +
+                              $"over the {drivers.Count} drivers that is {drivers.Count} renderers). The travel box KantoTraffic measures moved by at most {boxDrift * 1000f:F1} mm.");
             report.AppendLine($"Traffic: {drivers.Count} drivers ({vehicles.Count} placed, {drivers.Count - vehicles.Count} copies), " +
                               $"routes {string.Join(", ", traffic.Routes.Select((r, i) => $"{r.Name} {perRoute[i]} ({r.Points.Length} points)"))}; " +
+                              $"{inLot} route samples in the lot; hits players {traffic.HitsPlayers}; " +
                               $"{traffic.Signals.Length} signal renderers; sound bed={sound.CityBed != null} " +
                               $"horns={sound.HornsCar.Length + sound.HornsJeepney.Length + sound.HornsTricycle.Length} sirens={sound.Sirens.Length}. " +
                               "Model offsets (one per kind, all nose-first): " + log);
+        }
+
+        /// <summary>
+        /// ⚠️ ONE MESH A VEHICLE (owner, 2026-10-04: "add these optimization fixes"). The kit
+        /// exports a vehicle as five to seven parts (body, trim, glass, wheels, round, livery,
+        /// letters), each its own renderer with its own material slots, and 28 of them drive: 167
+        /// moving renderers, none of which static batching can touch. Nothing animates a part
+        /// (`KantoTraffic` poses the body only; the wheels do not turn), so here the parts of
+        /// each placed vehicle become ONE mesh in the vehicle's own frame, one sub-mesh for each
+        /// material the parts use between them, saved under Art/IlalimRebuild/Generated, and the
+        /// copies share it. The materials are the same assets under the same names, so the brake
+        /// lamp (`BrakeMaterial`) is still a slot `KantoTraffic` finds.
+        /// ⚠️ `KantoTraffic.BuildLiveRoad` measures the hit box and the solid from the body's
+        /// MeshFilters. It now measures one box of the whole vehicle where it measured each
+        /// part's; <see cref="BoxDrift"/> compares the two and the build log prints the most any
+        /// vehicle's box moved.
+        /// </summary>
+        private static void Combine(Transform vehicle, Dictionary<Transform, List<Vector3>> partCorners, ref int partRenderers, ref int partDraws, ref int oneDraws)
+        {
+            var parts = vehicle.GetComponentsInChildren<MeshRenderer>().Where(r => !IlalimSceneBuilder.IsLowerLod(r.transform)).ToArray();
+            var materials = new List<Material>();
+            var pieces = new Dictionary<Material, List<CombineInstance>>();
+            var scratch = new List<Mesh>();
+            var corners = new List<Vector3>();
+            foreach (var r in parts)
+            {
+                var filter = r.GetComponent<MeshFilter>();
+                if (filter == null || filter.sharedMesh == null) continue;
+                var mesh = filter.sharedMesh; var mats = r.sharedMaterials;
+                var toVehicle = vehicle.worldToLocalMatrix * r.transform.localToWorldMatrix;
+                partRenderers++;
+                var b = mesh.bounds;
+                for (int c = 0; c < 8; c++)
+                    corners.Add(toVehicle.MultiplyPoint3x4(b.center + Vector3.Scale(b.extents, new Vector3((c & 1) == 0 ? -1f : 1f, (c & 2) == 0 ? -1f : 1f, (c & 4) == 0 ? -1f : 1f))));
+                for (int s = 0; s < Mathf.Min(mesh.subMeshCount, mats.Length); s++)
+                {
+                    if (mats[s] == null) continue;
+                    partDraws++;
+                    if (!pieces.TryGetValue(mats[s], out var list)) { pieces[mats[s]] = list = new List<CombineInstance>(); materials.Add(mats[s]); }
+                    var piece = new CombineInstance { mesh = mesh, subMeshIndex = s, transform = toVehicle };
+                    // A mirrored part (a negative scale) would come out inside out: its triangles are turned first.
+                    if (toVehicle.determinant < 0f)
+                    {
+                        var turned = new Mesh { indexFormat = UnityEngine.Rendering.IndexFormat.UInt32 };
+                        turned.CombineMeshes(new[] { new CombineInstance { mesh = mesh, subMeshIndex = s, transform = Matrix4x4.identity } }, true, false);
+                        var t = turned.triangles;
+                        for (int k = 0; k + 2 < t.Length; k += 3) { int swap = t[k]; t[k] = t[k + 1]; t[k + 1] = swap; }
+                        turned.triangles = t;
+                        scratch.Add(turned);
+                        piece = new CombineInstance { mesh = turned, subMeshIndex = 0, transform = toVehicle };
+                    }
+                    list.Add(piece);
+                }
+            }
+            if (materials.Count == 0) return;
+            var perMaterial = new List<CombineInstance>();
+            int vertices = 0;
+            foreach (var m in materials)
+            {
+                var one = new Mesh { indexFormat = UnityEngine.Rendering.IndexFormat.UInt32 };
+                one.CombineMeshes(pieces[m].ToArray(), true, true);
+                scratch.Add(one);
+                vertices += one.vertexCount;
+                perMaterial.Add(new CombineInstance { mesh = one, subMeshIndex = 0, transform = Matrix4x4.identity });
+            }
+            // ⚠️ The index format is chosen BEFORE the mesh is filled: setting it afterwards empties
+            // the index buffer, and a vehicle with no triangles is a vehicle nobody sees (the first
+            // build of this did exactly that; the probe's Traffic row read 0 triangles).
+            var whole = new Mesh { name = "veh_" + vehicle.name, indexFormat = vertices < 65000 ? UnityEngine.Rendering.IndexFormat.UInt16 : UnityEngine.Rendering.IndexFormat.UInt32 };
+            whole.CombineMeshes(perMaterial.ToArray(), false, false);
+            whole.RecalculateBounds();
+            long triangles = 0;
+            for (int s = 0; s < whole.subMeshCount; s++) triangles += (long)whole.GetIndexCount(s) / 3;
+            if (triangles == 0) throw new InvalidOperationException("The combined mesh of " + vehicle.name + " has no triangles");
+            foreach (var m in scratch) Object.DestroyImmediate(m);
+            oneDraws += materials.Count;
+
+            string folder = IlalimSceneBuilder.Root + "/Generated";
+            if (!AssetDatabase.IsValidFolder(folder)) AssetDatabase.CreateFolder(IlalimSceneBuilder.Root, "Generated");
+            string path = $"{folder}/veh_{vehicle.name}.asset";
+            // Over the mesh a build before wrote, keeping its GUID, as the materials are kept.
+            var saved = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+            if (saved == null) { AssetDatabase.CreateAsset(whole, path); saved = whole; }
+            else { EditorUtility.CopySerialized(whole, saved); saved.name = whole.name; EditorUtility.SetDirty(saved); Object.DestroyImmediate(whole); }
+
+            // The parts go (each a model instance with its own LODGroup); the vehicle draws itself.
+            foreach (var child in vehicle.Cast<Transform>().ToArray()) Object.DestroyImmediate(child.gameObject);
+            var model = new GameObject("Model");
+            model.transform.SetParent(vehicle, false);
+            model.AddComponent<MeshFilter>().sharedMesh = saved;
+            var renderer = model.AddComponent<MeshRenderer>();
+            renderer.sharedMaterials = materials.ToArray();
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+            // Culled when it is a speck, as the parts were (IlalimSceneBuilder.CullGroups).
+            IlalimSceneBuilder.CullOnly(vehicle.gameObject, null);
+            partCorners[vehicle] = corners;
+        }
+
+        /// <summary>How far the vehicle's travel box moved by being measured on one mesh: the box
+        /// `KantoTraffic.BuildLiveRoad` takes (along the travel direction, across it, and the
+        /// roof), from the parts' own boxes as before against the one mesh's box, in metres.</summary>
+        private static float BoxDrift(Transform vehicle, Vector3 heading, Dictionary<Transform, List<Vector3>> partCorners)
+        {
+            if (!partCorners.TryGetValue(vehicle, out var before)) return 0f;
+            var filter = vehicle.GetComponentInChildren<MeshFilter>();
+            if (filter == null || filter.sharedMesh == null) return 0f;
+            var after = new List<Vector3>();
+            var b = filter.sharedMesh.bounds;
+            for (int c = 0; c < 8; c++)
+                after.Add(b.center + Vector3.Scale(b.extents, new Vector3((c & 1) == 0 ? -1f : 1f, (c & 2) == 0 ? -1f : 1f, (c & 4) == 0 ? -1f : 1f)));
+            var f = heading; f.y = 0f; f.Normalize();
+            var right = Vector3.Cross(Vector3.up, f);
+            float[] Box(List<Vector3> local)
+            {
+                float f0 = float.MaxValue, f1 = float.MinValue, r0 = float.MaxValue, r1 = float.MinValue, top = float.MinValue;
+                foreach (var corner in local)
+                {
+                    var p = vehicle.TransformPoint(corner) - vehicle.position;
+                    float a = Vector3.Dot(p, f), s = Vector3.Dot(p, right);
+                    f0 = Mathf.Min(f0, a); f1 = Mathf.Max(f1, a); r0 = Mathf.Min(r0, s); r1 = Mathf.Max(r1, s); top = Mathf.Max(top, p.y);
+                }
+                return new[] { f0, f1, r0, r1, top };
+            }
+            var was = Box(before); var now = Box(after);
+            float drift = 0f;
+            for (int k = 0; k < was.Length; k++) drift = Mathf.Max(drift, Mathf.Abs(was[k] - now[k]));
+            return drift;
         }
 
         private static KantoTraffic.Driver Driver(Transform body, int route, float along, Vector3 heading, float cruise, Quaternion offset, System.Random rng)
@@ -367,19 +575,25 @@ namespace TumbangPreso.EditorTools.MapKit
             flocks.FishTemplates = new Transform[0];
             flocks.SchoolCentres = new Vector3[0];
             flocks.SchoolFloor = new float[0];
-            flocks.WaterY = 0f;
+            // The flock's heights are measured from here: the road (Blender y 0), as before the move.
+            flocks.WaterY = H(0f);
             // ⚠️ THE SKY AREA IS THE CAMPUS SIDE OF THE STREET, 24 TO 36 m UP. The art carries no
             // colliders, so obstacle avoidance cannot see a building: the flock wheels where
             // nothing stands that high (PGH's roofs top out at 17 m, the east row's at 17), and its
-            // disc stops short of the Astral tower, which rises to 70 m from x 18 east of the court.
-            flocks.SkyCentre = new Vector3(-14f, 0f, 2f);
+            // disc stops short of the Astral tower, which rises to 70 m from x 18 east of the road.
+            // The same disc as before the move (Blender (-14, 2), radius 28): it now wheels over the
+            // lot and the court in it, a storey above the 14 m the flock keeps over a court anyway.
+            flocks.SkyCentre = G(-14f, 2f);
             flocks.SkyRadius = 28f;
             flocks.SkyHeight = new Vector2(24f, 36f);
             flocks.Dips = false;
             flocks.Flocks = 2; flocks.BirdsPerFlock = 8;
             flocks.FlightSpeed = new Vector2(5f, 8f);
+            // The court is the game's origin (IlalimFrame): the flock never crosses it low. The
+            // landing square around it is only LagoonFlocks' fallback with no perch line at all,
+            // and with none nobody lands (below), so no bird ever comes down on the court.
             flocks.CourtCentre = Vector3.zero; flocks.CourtKeepOut = 18f;
-            flocks.CourtHalf = 13f; flocks.CourtGroundY = 0.212f;
+            flocks.CourtHalf = 13f; flocks.CourtGroundY = H(0.212f);
             flocks.MaxGroundedBirds = 8;
             flocks.LandEverySeconds = new Vector2(5f, 12f);
             flocks.LandGroup = new Vector2Int(2, 5);
@@ -390,6 +604,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 ("feather_pigeon_pale", new Color(0.776f, 0.765f, 0.780f)),
                 ("feather_pigeon_dark", new Color(0.373f, 0.361f, 0.388f)));
             flocks.PerchLines = Perches(dressing, report);
+            if (flocks.PerchLines.Length == 0) flocks.MaxGroundedBirds = 0;
             report.AppendLine($"Pigeons: template {(flocks.BirdTemplate != null ? "fauna_pigeon" : "MISSING")}, " +
                               $"{flocks.Flocks} x {flocks.BirdsPerFlock}, {flocks.PerchLines.Length / 2} perch lines, " +
                               $"{flocks.FeatherMaterials.Length} feather materials.");
@@ -411,11 +626,13 @@ namespace TumbangPreso.EditorTools.MapKit
                 {
                     var renderer = filter.GetComponent<Renderer>();
                     if (filter.sharedMesh == null || renderer == null) continue;
+                    // A placement's lower LODs stand in the same place as its model: measured once.
+                    if (IlalimSceneBuilder.IsLowerLod(filter.transform)) continue;
                     var b = renderer.bounds;
                     if (Flat(b.center).magnitude - Mathf.Max(b.extents.x, b.extents.z) > 120f) continue;
                     // Small things standing on the ground block a pavement perch by their footprint
                     // (a MeshCollider is a shell: a ray from above cannot tell a trunk's inside).
-                    if (b.min.y < 1f && b.max.y > .3f && b.size.x < 12f && b.size.z < 12f) footprints.Add(b);
+                    if (b.min.y < H(1f) && b.max.y > H(.3f) && b.size.x < 12f && b.size.z < 12f) footprints.Add(b);
                     if (filter.GetComponent<Collider>() != null) continue;
                     var query = filter.gameObject.AddComponent<MeshCollider>();
                     query.sharedMesh = filter.sharedMesh;
@@ -425,7 +642,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var trees = dressing.Find("Trees");
             if (trees != null)
                 foreach (var r in trees.GetComponentsInChildren<Renderer>())
-                    if (r.name.Contains("wood") && r.bounds.min.y < 1f && Flat(r.bounds.center).magnitude < 60f) footprints.Add(r.bounds);
+                    if (r.name.Contains("wood") && r.bounds.min.y < H(1f) && Flat(r.bounds.center).magnitude < 60f) footprints.Add(r.bounds);
             Physics.SyncTransforms();
             var lines = new List<Vector3>();
             var counts = new Dictionary<string, int>();
@@ -436,10 +653,10 @@ namespace TumbangPreso.EditorTools.MapKit
                 // The guideway's parapet copings over and beside the court, both sides.
                 foreach (int side in new[] { -1, 1 })
                 {
-                    if (!Ridge(guideway, new Vector3(side * 4.4f, 0, 3f), new Vector3(side * 5.7f, 0, 3f), 13.2f, 9.4f, 10.8f, out var top)) continue;
-                    Add("guideway parapets", Runs(guideway, new Vector3(top.x, 0, -46f), new Vector3(top.x, 0, 46f), 13.2f, top.y - .06f, top.y + .06f, .4f, 1.5f));
+                    if (!Ridge(guideway, G(side * 4.4f, 3f), G(side * 5.7f, 3f), H(13.2f), H(9.4f), H(10.8f), out var top)) continue;
+                    Add("guideway parapets", Runs(guideway, new Vector3(top.x, 0, G(0f, -46f).z), new Vector3(top.x, 0, G(0f, 46f).z), H(13.2f), top.y - .06f, top.y + .06f, .4f, 1.5f));
                 }
-                // The power poles' crossarms along Taft and Padre Faura, near the court.
+                // The power poles' crossarms along Taft and Padre Faura, within 50 m of the court.
                 var furniture = dressing.Find("StreetFurniture");
                 if (furniture != null)
                     foreach (Transform t in furniture)
@@ -472,24 +689,40 @@ namespace TumbangPreso.EditorTools.MapKit
                         var b = Bounds(t);
                         if (b == null) continue;
                         var bb = b.Value;
-                        if (bb.max.y < 3f || bb.max.y > 26f || bb.min.x > 17.5f || bb.max.x < -45f || bb.max.z < -40f || bb.min.z > 50f) continue;
+                        // The limits are the Blender frame's; the bounds are the scene's.
+                        Vector3 lo = B(bb.min), hi = B(bb.max);
+                        if (hi.y < 3f || hi.y > 26f || lo.x > 17.5f || hi.x < -45f || hi.z < -40f || lo.z > 50f) continue;
                         Add("roofs", Roof(t, bb));
                     }
                 }
-                // The stations' roofs, their ends nearest the court.
+                // The stations' roofs, their ends nearest the old court.
                 var stations = dressing.Find("Stations");
                 foreach (int end in new[] { -1, 1 })
-                    if (Ridge(stations, new Vector3(-1.5f, 0, end * 100f), new Vector3(1.5f, 0, end * 100f), 22f, 16f, 20f, out var crown))
-                        Add("station roofs", Runs(stations, new Vector3(crown.x, 0, end * 95.5f), new Vector3(crown.x, 0, end * 112f), 22f, crown.y - .08f, crown.y + .08f, .4f, 1.5f));
-                // The pavements' outer edge, outside the chalk box, clear of every prop and post.
-                foreach (int side in new[] { -1, 1 })
-                    Add("pavement edges", Pavement(side * 10.45f, footprints));
+                    if (Ridge(stations, G(-1.5f, end * 100f), G(1.5f, end * 100f), H(22f), H(16f), H(20f), out var crown))
+                        Add("station roofs", Runs(stations, new Vector3(crown.x, 0, G(0f, end * 95.5f).z), new Vector3(crown.x, 0, G(0f, end * 112f).z), H(22f), crown.y - .08f, crown.y + .08f, .4f, 1.5f));
+                // The pavements' outer edge, clear of every prop and post: the east one (the shop
+                // side, where no sidewalk person walks since 2026-10-04) from z -30 to 30, the west
+                // one only south of the lot. Its stretch along the lot's open frontage (z 3.4 to
+                // 24) is where the watchers stand, the magtataho sells and the beggar sits, and
+                // the corner north of it is the watchers' way in.
+                Add("pavement edges", Pavement(10.45f, -30f, 30f, footprints));
+                Add("pavement edges", Pavement(-10.45f, -30f, LotSouth - 1.4f, footprints));
             }
             finally
             {
                 foreach (var q in temporary) if (q != null) Object.DestroyImmediate(q);
                 Physics.SyncTransforms();
             }
+            // ⚠️ NEVER IN THE COURT: no line may touch the keep-clear square, whatever found it.
+            int dropped = 0;
+            for (int k = lines.Count - 2; k >= 0; k -= 2)
+            {
+                bool inside = false;
+                for (int step = 0; step <= 8 && !inside; step++) inside = InKeepClear(Vector3.Lerp(lines[k], lines[k + 1], step / 8f));
+                if (!inside) continue;
+                lines.RemoveRange(k, 2); dropped++;
+            }
+            if (dropped > 0) Debug.LogWarning($"{Tag}{dropped} perch lines crossed the court's keep-clear square and were dropped");
             report.AppendLine("Perches: " + string.Join(", ", counts.Select(kv => $"{kv.Key} {kv.Value}")) +
                               $" ({lines.Count / 2} lines, {Length(lines):F0} m in all).");
             return lines.ToArray();
@@ -582,15 +815,17 @@ namespace TumbangPreso.EditorTools.MapKit
                 var found = Runs(owner, a, z, fromY, b.min.y + 2.5f, b.max.y + .1f, 1f, 2.5f, .93f);
                 for (int k = 0; k + 1 < found.Count; k += 2)
                 {
-                    // Only a roof beside the street (never over the play area), and nothing east of
-                    // x 17.5, where the flight in would pass through the Astral tower.
-                    if (Mathf.Abs(found[k].x) < 11f || Mathf.Abs(found[k + 1].x) < 11f) continue;
-                    if (found[k].x > 17.5f || found[k + 1].x > 17.5f) continue;
+                    // Only a roof beside the street (never over the road or its pavements, Blender
+                    // |x| under 11), and nothing east of x 17.5, where the flight in would pass
+                    // through the Astral tower.
+                    float xa = B(found[k]).x, xb = B(found[k + 1]).x;
+                    if (Mathf.Abs(xa) < 11f || Mathf.Abs(xb) < 11f) continue;
+                    if (xa > 17.5f || xb > 17.5f) continue;
                     runs.Add((found[k], found[k + 1]));
                 }
             }
             var result = new List<Vector3>();
-            foreach (var r in runs.OrderBy(r => Mathf.Min(Mathf.Abs(r.a.x), Mathf.Abs(r.b.x))).ThenByDescending(r => Vector3.Distance(r.a, r.b)).Take(2))
+            foreach (var r in runs.OrderBy(r => Mathf.Min(Mathf.Abs(B(r.a).x), Mathf.Abs(B(r.b).x))).ThenByDescending(r => Vector3.Distance(r.a, r.b)).Take(2))
             {
                 // Long runs are cut to 8 m so one roof never takes every landing.
                 var s = r.a; var e = r.b; float len = Vector3.Distance(s, e);
@@ -600,16 +835,16 @@ namespace TumbangPreso.EditorTools.MapKit
             return result;
         }
 
-        /// <summary>The pavement's outer edge (top 0.212, the contract) from z -30 to 30, split around
-        /// every prop, post, trunk and gameplay collider standing on it.</summary>
-        private static List<Vector3> Pavement(float x, List<Bounds> footprints)
+        /// <summary>The pavement's outer edge (top 0.212, the contract) at Blender x, from z `from` to
+        /// `to`, split around every prop, post, trunk and gameplay collider standing on it.</summary>
+        private static List<Vector3> Pavement(float x, float from, float to, List<Bounds> footprints)
         {
             var result = new List<Vector3>();
             const float y = .212f, step = .25f;
             Vector3? start = null, last = null;
-            for (float z = -30f; z <= 30.001f; z += step)
+            for (float z = from; z <= to + .001f; z += step)
             {
-                var p = new Vector3(x, y, z);
+                var p = IlalimFrame.W(x, y, z);
                 bool clear = !Physics.CheckBox(p + Vector3.up * .3f, new Vector3(.3f, .15f, .3f), Quaternion.identity, ~0, QueryTriggerInteraction.Ignore);
                 if (clear)
                     foreach (var f in footprints)
@@ -628,8 +863,11 @@ namespace TumbangPreso.EditorTools.MapKit
         /// driven through reflection at 20 steps a second for 90 simulated seconds, exactly the code
         /// Update runs in Play (no players stand in the scene, so no bird is startled). It measures
         /// how far every vehicle travelled, whether any two vehicles ever overlapped (their
-        /// length-by-width rectangles), whether any vehicle entered the court (|x| &lt; 7.4 and
-        /// |z| &lt; 16.5), how many pigeons landed and where, and renders four views at 45 s.</summary>
+        /// length-by-width rectangles), whether any vehicle entered the LOT (never) and how many
+        /// vehicle-steps crossed Taft's stretch beside it, where players cross (expected since
+        /// 2026-10-04: the road is live), how many pigeons landed and where (never in the court's
+        /// keep-clear square), and renders three views at 45 s. ⚠️ No player stands in the scene and
+        /// this is not Play, so the hit itself (KantoTraffic § THE LIVE ROAD) is not exercised here.</summary>
         public static void Probe(string folder, string scenePath)
         {
             EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
@@ -664,7 +902,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 var bb = Bounds(d.Body) ?? new Bounds(d.Body.position, Vector3.one * 2f);
                 width[i] = Mathf.Abs(bb.size.x * h.z) + Mathf.Abs(bb.size.z * h.x);
             }
-            int overlaps = 0, courtEntries = 0, landings = 0, groundedMax = 0, groundedOffLine = 0, groundedInCourt = 0;
+            int overlaps = 0, lotEntries = 0, crossingSteps = 0, landings = 0, groundedMax = 0, groundedOffLine = 0, groundedInCourt = 0;
             float closest = float.MaxValue; string closestPair = "";
             var landedAt = new List<Vector3>();
             var wasGrounded = new bool[flocks.BirdCount];
@@ -686,7 +924,9 @@ namespace TumbangPreso.EditorTools.MapKit
                     last[i] = p; top[i] = Mathf.Max(top[i], traffic.DriverSpeed(i));
                     if (traffic.DriverWaiting(i)) waitedSteps[i]++;
                     var f = Nose(traffic.Drivers[i].Body, traffic.Drivers[i].ModelOffset);
-                    if (Overlap(p, f, traffic.Drivers[i].Length, width[i], Vector3.zero, Vector3.forward, 14.8f, 33f)) courtEntries++;
+                    // The lot (fence to fence, west fence to frontage) and Taft's carriageway beside it.
+                    if (Overlap(p, f, traffic.Drivers[i].Length, width[i], G((LotWest + LotEast) * .5f, (LotSouth + LotNorth) * .5f), Vector3.forward, LotNorth - LotSouth, LotEast - LotWest)) lotEntries++;
+                    if (Overlap(p, f, traffic.Drivers[i].Length, width[i], G(0f, (LotSouth + LotNorth) * .5f), Vector3.forward, LotNorth - LotSouth, 13.3f)) crossingSteps++;
                     for (int j = i + 1; j < n; j++)
                     {
                         var q = traffic.Drivers[j].Body.position;
@@ -709,7 +949,7 @@ namespace TumbangPreso.EditorTools.MapKit
                     {
                         landings++; landedAt.Add(at);
                         if (DistanceToLines(flocks.PerchLines, at) > .06f) groundedOffLine++;
-                        if (Mathf.Abs(at.x) < 7f && Mathf.Abs(at.z) < 16.5f && at.y < 1f) groundedInCourt++;
+                        if (InKeepClear(at) && at.y < 1f) groundedInCourt++;
                     }
                     wasGrounded[b] = true;
                 }
@@ -718,7 +958,7 @@ namespace TumbangPreso.EditorTools.MapKit
                     for (int b = 0; b < flocks.BirdCount && !shot; b++)
                         if (modes[b] == 2) { Shots(folder, flocks.BirdPosition(b)); shot = true; sb.AppendLine(FormattableString.Invariant($"Views rendered at t={s * dt:F1}s, the pigeon view on the bird at {flocks.BirdPosition(b):F2}.")); }
             }
-            sb.AppendLine(FormattableString.Invariant($"Traffic: {n} drivers over {steps * dt:F0} s. Overlapping vehicle pairs (pair-steps): {overlaps}. Vehicle-steps inside the court: {courtEntries}. Closest centres {closest:F2} m ({closestPair})."));
+            sb.AppendLine(FormattableString.Invariant($"Traffic: {n} drivers over {steps * dt:F0} s. Overlapping vehicle pairs (pair-steps): {overlaps}. Vehicle-steps inside the lot (never): {lotEntries}. Vehicle-steps on Taft beside the lot, where players cross (the live road): {crossingSteps}. Closest centres {closest:F2} m ({closestPair})."));
             for (int i = 0; i < n; i++)
             {
                 var d = traffic.Drivers[i];
@@ -785,8 +1025,9 @@ namespace TumbangPreso.EditorTools.MapKit
             catch (Exception e) { Debug.LogWarning(Tag + "Life probe look failed: " + e.Message); }
             var shots = new (string name, Vector3 at, Vector3 look)[]
             {
-                ("north_junction", new Vector3(0f, 4f, 14f), new Vector3(-6f, .5f, 34f)),
-                ("south_queue", new Vector3(0f, 4f, -14f), new Vector3(1.9f, .5f, -40f)),
+                ("north_junction", IlalimFrame.W(0f, 4f, 14f), IlalimFrame.W(-6f, .5f, 34f)),
+                // From the lot's open frontage, eye height, down Taft past the stretch players cross.
+                ("taft_through", IlalimFrame.W(-10.5f, 1.9f, 22f), IlalimFrame.W(1.9f, .5f, -20f)),
                 ("pigeon", pigeonEye, pigeonAt),
             };
             foreach (var s in shots)

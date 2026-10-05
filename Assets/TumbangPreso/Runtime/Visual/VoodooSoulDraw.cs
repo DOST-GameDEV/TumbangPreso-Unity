@@ -168,10 +168,9 @@ namespace TumbangPreso.Visual
         {
             var visual = GetComponent<CharacterVisual>();
             var skinned = visual != null && visual.Model != null ? visual.Model.GetComponentInChildren<SkinnedMeshRenderer>() : null;
-            if (skinned != null)
-                for (int i = 0; i < skinned.bones.Length; i++)
-                    if (skinned.bones[i] != null && skinned.bones[i].name == "arm-left" && CharacterVisual.PalmCentre(skinned, i, out var palm))
-                    { _leftArm = skinned.bones[i]; _leftPalm = palm; break; }
+            // The bone her left HAND is on: the forearm on a rig with elbows (`CharacterVisual.HandBone`).
+            if (CharacterVisual.HandBone(skinned, "left", out int hand, out var palm))
+            { _leftArm = skinned.bones[hand]; _leftPalm = palm; }
 
             bool mine = ViewmodelArms.IsFirstPersonFor(_body);
             if (_leftArm != null)

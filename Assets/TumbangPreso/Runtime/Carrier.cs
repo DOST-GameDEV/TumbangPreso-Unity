@@ -329,6 +329,10 @@ namespace TumbangPreso
 
             var thrown = Held;
             thrown.HostThrow(_motor, origin, velocity, affinity, spin);
+            // The Arena's slipper balloon (`Map.ArenaBalloon`, a toy): a full-charge throw aimed at it leaves
+            // play to strike it and is set back on the stage. No other map has one: there this is one null
+            // test, and the throw above is the whole of what happened.
+            Map.ArenaBalloon.HostOfferThrow(thrown, _motor, origin, aimPoint, charge, affinity);
 
             Held = null;
             _motor.HoldingSlipper = false;

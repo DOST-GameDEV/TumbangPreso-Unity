@@ -30,6 +30,7 @@ namespace TumbangPreso.PlayTests
         [UnityTest, Timeout(90000)] public IEnumerator KantoPreviewContainsVisibleMapGeometry() => Inspect(SceneFlow.Kanto);
         [UnityTest, Timeout(90000)] public IEnumerator LagoonCovePreviewContainsVisibleMapGeometry() => Inspect(SceneFlow.LagoonCove);
         [UnityTest, Timeout(90000)] public IEnumerator IlalimPreviewContainsVisibleMapGeometry() => Inspect(SceneFlow.IlalimNgTulay);
+        [UnityTest, Timeout(90000)] public IEnumerator ArenaPreviewContainsVisibleMapGeometry() => Inspect(SceneFlow.Arena);
         [UnityTest, Timeout(90000)]
         public IEnumerator LateStreetVoicesRemainSilentInMapPreviewButPlayInGameScope()
         {
@@ -68,6 +69,12 @@ namespace TumbangPreso.PlayTests
             yield return null;
         }
 
+        static string Where(Transform t)
+        {
+            string path = t.name;
+            for (int depth = 0; depth < 4 && t.parent != null; depth++) { t = t.parent; path = t.name + "/" + path; }
+            return path;
+        }
         IEnumerator Inspect(string map)
         {
             var root = new GameObject("Remade preview check", typeof(RectTransform), typeof(RawImage));
@@ -79,12 +86,12 @@ namespace TumbangPreso.PlayTests
                 Assert.AreEqual(map, preview.Showing, "The selected map did not finish the actual additive preview route.");
                 yield return null; yield return null;
                 var camera = preview.Camera; Assert.IsNotNull(camera); Assert.IsNotNull(camera.targetTexture);
-                var planes = GeometryUtility.CalculateFrustumPlanes(camera); int total = 0, enabled = 0, visible = 0, badShaders = 0, escaped = 0;
+                var planes = GeometryUtility.CalculateFrustumPlanes(camera); int total = 0, enabled = 0, visible = 0, badShaders = 0, escaped = 0; var strays = new System.Text.StringBuilder();
                 foreach (var renderer in Object.FindObjectsByType<Renderer>(FindObjectsInactive.Include, FindObjectsSortMode.None))
                 {
                     if (renderer.gameObject.scene.name != map) continue;
                     total++;
-                    if (renderer.gameObject.layer != MapPreviewSurface.PreviewLayer) escaped++;
+                    if (renderer.gameObject.layer != MapPreviewSurface.PreviewLayer) { escaped++; if (escaped <= 60) strays.AppendLine("stray=" + Where(renderer.transform)); }
                     if (!renderer.enabled || !renderer.gameObject.activeInHierarchy) continue;
                     enabled++;
                     if ((camera.cullingMask & (1 << renderer.gameObject.layer)) != 0 && GeometryUtility.TestPlanesAABB(planes, renderer.bounds)) visible++;
@@ -92,7 +99,7 @@ namespace TumbangPreso.PlayTests
                         if (material == null || material.shader == null || !material.shader.isSupported || material.shader.name == "Hidden/InternalErrorShader") badShaders++;
                 }
                 var directory = "Logs/feedback-0930/remade-previews"; Directory.CreateDirectory(directory);
-                File.WriteAllText(Path.Combine(directory, map + ".txt"), $"showing={preview.Showing}\ntotal={total}\nenabled={enabled}\nvisible={visible}\nbadShaders={badShaders}\nescaped={escaped}\ncameraEnabled={camera.enabled}\nlookScoped={TumbangPreso.Visual.WorldLookPresentation.HandlesCamera(camera)}\n");
+                File.WriteAllText(Path.Combine(directory, map + ".txt"), $"showing={preview.Showing}\ntotal={total}\nenabled={enabled}\nvisible={visible}\nbadShaders={badShaders}\nescaped={escaped}\ncameraEnabled={camera.enabled}\nlookScoped={TumbangPreso.Visual.WorldLookPresentation.HandlesCamera(camera)}\nfar={camera.farClipPlane}\n{strays}");
                 camera.Render(); var previous = RenderTexture.active; RenderTexture.active = camera.targetTexture;
                 var pixels = new Texture2D(camera.targetTexture.width, camera.targetTexture.height, TextureFormat.RGB24, false);
                 try

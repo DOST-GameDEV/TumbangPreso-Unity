@@ -572,7 +572,12 @@ namespace TumbangPreso.Net
         //148: arc-wall snapshots preserve radius, length and remaining hit budget.
         //150: owner pose acknowledgements are distinct from authoritative corrections.
         //151: bounded remote vine completion; deadline grace is separate from reel speed.
-        public const int ProtocolVersion = 151;
+        // 152: the Arena joins the map list as index 6 (maps travel as an index); its ordinary break is 8 s,
+        // read from the map; and the drone carry is a third edge-recovery kind on `SyncUnit`. Also one
+        // host-to-all message, `ArenaBalloon`, the Arena's slipper balloon (hits, popped, its last event),
+        // also sent to a joining peer. (This was 146 on QoLUpdates before the two branches met:
+        // ASTRAReworks had taken 146 to 151 for other things.)
+        public const int ProtocolVersion = 152;
 
         /// <summary>
         /// What this machine's hosted lobby publishes to QUICK MATCH, or

@@ -187,6 +187,11 @@ namespace TumbangPreso.Visual
         [SerializeField] private float _fadeStart = -1.0f;
         [SerializeField] private float _fadeEnd = -1.0f;
 
+        /// <summary>A map may name the ink's own distances in place of its fog's
+        /// (`MapCameraRange`: the Arena's fog runs out to its city, kilometres past its stands).
+        /// Negative values adopt the fog again. Nothing calls this on a map that names none.</summary>
+        public void SetFade(float start, float end) { _fadeStart = start; _fadeEnd = end; }
+
         [Header("Exclusion")]
         [SerializeField] private Exclusion _exclusion = Exclusion.ToonSurfaces;
         [SerializeField] private LayerMask _excludedLayers;
@@ -288,7 +293,38 @@ namespace TumbangPreso.Visual
         // than inserted, so the composite and the mask keep the indices every other line here
         // and in the shader already names.
         private const int AmbientOcclusionPass = 2;
+        /// <summary>A debug session's test value for the cast's share of the ambient occlusion (F8,
+        /// `Hud`): negative means "use the player's setting" (`GameSettings.CharacterShading`).</summary>
+        public static float CharacterAoTest = -1f;
+        /// <summary>A debug session's test value for the RADIUS of the cast's own occlusion kernel, in
+        /// metres: zero or less means "use the look's own" (`WorldLookProfile.CharacterAmbientOcclusionRadius`,
+        /// a third of a metre). The redesigned cast's creases are centimetres deep (piping, a fringe
+        /// over a brow, a cuff on a wrist), and a third of a metre spreads the shade past them; a
+        /// smaller radius keeps it IN the crease. Owner, 2026-10-05: "the ao isnt being applied to the
+        /// character creases properly". Like `CharacterAoTest`, never set by the game itself.</summary>
+        public static float CharacterAoRadiusTest = -1f;
         private const int AmbientOcclusionBlurPass = 3;
+        /// <summary>
+        /// ⚠️⚠️ THE OCCLUSION'S COST FOLLOWS THE GRAPHICS TIER (owner, 2026-10-04: the game is
+        /// "primarily not laggy for the server host but it is for players joining too", then "add
+        /// these optimization fixes"). Pass 2 is the dearest thing this component draws: sixteen
+        /// dependent depth-normal reads for every pixel of the frame, on every tier but Low.
+        /// On the top tier (High) it is unchanged. On the tiers between (Balanced, the DEFAULT)
+        /// the shader's `WORLD_AO_LITE` variant takes EIGHT probes: the same four rings, two
+        /// probes a ring, the same radius, bias and falloff, the same 4x4 tile of rotations, so
+        /// pass 3's blur still cancels the pattern (it now averages 128 probes, not 256).
+        /// ⚠️ STILL FULL RESOLUTION. Half resolution is the cheaper cut and it is the one the
+        /// owner turned down (see the note in `OnRenderImage`: the rotation tile reads as a grid).
+        /// Tests/PlayMode/IlalimPerfProbe.cs renders the same frame both ways and reports how
+        /// far the picture moves.
+        /// </summary>
+        private const string AmbientOcclusionLiteKeyword = "WORLD_AO_LITE";
+        /// <summary>REVIEW ONLY: 16 or 8 forces that many probes whatever the tier; 0 (the game)
+        /// lets the tier decide. Like `CharacterAoTest`, never set by the game itself.</summary>
+        public static int AmbientOcclusionSamplesTest;
+        private static bool AmbientOcclusionLite => AmbientOcclusionSamplesTest != 0
+            ? AmbientOcclusionSamplesTest <= 8
+            : Settings.SettingsStore.Current.GraphicsQuality < Settings.GraphicsProfiles.All.Length - 1;
         private static readonly int WorldAOId = Shader.PropertyToID("_WorldAO");
         private static readonly int WorldAOParamsId = Shader.PropertyToID("_WorldAOParams");
 
@@ -941,6 +977,14 @@ namespace TumbangPreso.Visual
             ApplyBrightLookEdges();
             bool lagoonDeck=WorldLookPresentation.HandlesCamera(_camera) && WorldLookPresentation.Current.Look.Map==UI.SceneFlow.Lagoon;
             _material.SetFloat("_LagoonDeckDetail",lagoonDeck?WorldCueProfile.Current.LagoonDeckDetail:0);
+            // The player's own setting (`GameSettings.CharacterShading`, Full by default); F8 in a debug session tests over it.
+            float castShare=CharacterAoTest>=0?CharacterAoTest:Settings.GameSettings.CharacterShadingShare(Settings.SettingsStore.Current.CharacterShading);
+            _material.SetFloat("_CharacterAO",castShare);
+            // The cast's own kernel (pass 2, CastAO): on only with a share, at a body's scale.
+            float castRadius=CharacterAoRadiusTest>0?CharacterAoRadiusTest:WorldLookProfile.Current.CharacterAmbientOcclusionRadius;
+            // The bias follows the radius down, or a tight kernel sits wholly inside its own bias.
+            float castBias=Mathf.Min(.02f,castRadius*.1f);   // was .006 / .02: a smooth slope shaded itself in stripes (owner, 2026-10-05: "weird lining effect too from the ao")
+            _material.SetVector("_CharacterAOParams",new Vector4(castShare,castRadius,castBias,0));
             RenderTexture occlusion=null,occlusionBlur=null;
             float aoStrength=AmbientOcclusionLive?WorldLookProfile.Current.AmbientOcclusion*WorldLookPresentation.Current.Weight:0;
             if(aoStrength>0)
@@ -952,9 +996,13 @@ namespace TumbangPreso.Visual
                 // which is what Minecraft's corners look like.
                 int w=Mathf.Max(1,source.width),h=Mathf.Max(1,source.height);
                 var format=SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.R8)?RenderTextureFormat.R8:RenderTextureFormat.ARGB32;
+                // Two channels when the cast has a share: R the world's occlusion, G the cast's.
+                if(castShare>0)format=SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.RG16)?RenderTextureFormat.RG16:RenderTextureFormat.ARGB32;
                 occlusion=RenderTexture.GetTemporary(w,h,0,format,RenderTextureReadWrite.Linear);
                 occlusionBlur=RenderTexture.GetTemporary(w,h,0,format,RenderTextureReadWrite.Linear);
                 _material.SetVector(WorldAOParamsId,new Vector4(aoStrength,WorldLookProfile.Current.AmbientOcclusionRadius,.03f,NearGuard()));
+                // Eight probes below the top tier, sixteen on it (see `AmbientOcclusionLiteKeyword`).
+                if(AmbientOcclusionLite)_material.EnableKeyword(AmbientOcclusionLiteKeyword);else _material.DisableKeyword(AmbientOcclusionLiteKeyword);
                 Graphics.Blit(source,occlusion,_material,AmbientOcclusionPass);
                 Graphics.Blit(occlusion,occlusionBlur,_material,AmbientOcclusionBlurPass);
                 _material.SetTexture(WorldAOId,occlusionBlur);

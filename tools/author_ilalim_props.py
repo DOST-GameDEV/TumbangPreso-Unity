@@ -8,8 +8,19 @@ Logs/ilalim-blender/prop_<shot>_vN.png (an existing file is never overwritten).
 
 THE BRIEF (Ilalim_Ng_Tulay.md section 4, 8.4, 10.2, 10.6; ILALIM_REWORK_GUIDE.md section 1): the
 props that carry the map's gameplay, on the two 4 m pavements (x 7..11 each side, top 0.212),
-always against the shopfront or the PGH fence, never mid-pavement, and NOTHING inside the chalk
-box (|x|, |y| < 7). Blender X is the game's x (east), Blender Y is the game's z (north).
+always against the shopfront or the PGH fence, never mid-pavement. Blender X is the game's x
+(east), Blender Y is the game's z (north).
+
+THE COURT MOVED TO THE CAMPUS LOT (owner, 2026-10-04: "can we move the play area to this open
+space? then fix up the area where the old play area was. then fix up the fences so the area is
+still open to the road."). Its centre is COURT = (-23.0, 14.2) on the lot surface (0.24), and
+the PGH fence in front of the lot is gone, so the west props that stood against it between
+y 3.4 and 24.4 now stand ON THE LOT (on_lot()): the fruit stall at the south end of the open
+Taft frontage and the fishball cart in the north-west corner by the back fence (owner: "move the
+stalls either to where i drew, or somewhere else along the main sidewalk"), both turned to face
+the court, and the bench, chair, crates, drum and the hoop against the new back fence
+(x -35.0), facing east. NOTHING but chalk stands within 9.5 m of the court centre in x
+and in y (the square x -32.5..-13.5, y 4.7..23.7).
 
 THE HOUSE STYLE (KANTO_DESIGN_GUIDE.md section 2, LAGOON_REWORK_GUIDE.md section 2), as in the
 LRT kit (tools/author_ilalim_lrt.py, whose fillet() and rounded_rect() this script imports):
@@ -65,27 +76,32 @@ Footprints are x by y (metres, world axes) and height above the pavement top:
                                  light bars 26 mm. Bars run along y, 0.90 long, at x -0.46, 0,
                                  +0.46: plum (prop_bar_plum), mint glow (prop_bar_glow), gold
                                  (prop_bar_gold), all emissive.
-  prop_bridge_hoop (WEST)        origin (-8.90, -10.00): the RING CENTRE is at local (0, 0, 3.07)
-                                 (BridgeHoop.RingCentre), tube radius 0.25 about it, facing the
-                                 street (+x). Yellow steel post at x -9.62 set in a concrete-filled
-                                 tyre (r 0.40), backboard 1.2 x 0.8 face at x -9.33 painted
-                                 BRGY. 671, "Handog ni Kag. Ruben Dela Paz". No net: street rims
-                                 on Taft lose theirs, and a net is exactly the fiddly strand the
-                                 owner rejects. Footprint x -10.02..-8.63, y -10.60..-9.40.
-  WEST vendor stalls against the PGH fence (x -11):
-    prop_stall_fruit             (-10.35, 12.50): a plank table with two tilted crates of mangoes
-                                 and bananas, pomelos and a market scale, under a red and cream
-                                 umbrella (R 1.15). Table 1.0 x 1.5, 0.80 high.
-    prop_stall_fishball          (-10.35, 14.60): a pale-yellow push cart with a wok of fishballs
-                                 and kikiam, three sauce jars, a skewer cup, a small LPG tank, and
-                                 a yellow and green umbrella (R 1.0). Body 0.95 x 1.30.
+  prop_bridge_hoop (THE LOT)     origin (-33.60, 14.20, 0.24), on the court's west side against
+                                 the back fence: the RING CENTRE is at local (0, 0, 3.07)
+                                 (BridgeHoop.RingCentre), tube radius 0.25 about it, facing east
+                                 into the court (+x). Yellow steel post at x -34.32 set in a
+                                 concrete-filled tyre (r 0.40), backboard 1.2 x 0.8 face at
+                                 x -34.03 painted BRGY. 671, "Handog ni Kag. Ruben Dela Paz". No
+                                 net: street rims on Taft lose theirs, and a net is exactly the
+                                 fiddly strand the owner rejects. Footprint x -34.72..-33.33,
+                                 y 13.60..14.80.
+  THE LOT's vendor stalls, where the owner drew them, each turned to face the court:
+    prop_stall_fruit             (-12.50, 5.10), facing north-west: a plank table with two tilted
+                                 crates of mangoes and bananas, pomelos and a market scale, under
+                                 a red and cream umbrella (R 1.15). Table 1.0 x 1.5, 0.80 high.
+    prop_stall_fishball          (-33.40, 22.40), facing south-east: a pale-yellow push cart with
+                                 a wok of fishballs and kikiam, three sauce jars, a skewer cup, a
+                                 small LPG tank, and a yellow and green umbrella (R 1.0). Body
+                                 0.95 x 1.30.
+  WEST vendor stall against the PGH fence (x -11):
     prop_stall_sarisari          (-10.35, -14.20): a stepped plank stand of candy jars, hanging
                                  sachet strips, a styrofoam ice box and a cardboard MAY LOAD /
                                  YELO sign, under a four-colour umbrella (R 1.2).
-  prop_clutter: prop_crate_stack_w (-10.55, 11.05), prop_crate_stack_e (10.45, -6.80),
-    prop_water_drum (-10.55, 15.95, r 0.30, 0.92 tall, a cream drum with a tabo on the lid),
-    prop_bench (-10.62, 7.70, 0.34 x 1.6, 0.46 high), prop_trash_bin (-10.50, -12.30, r 0.27,
-    0.84 tall, green), prop_chair_w1 (-10.25, 13.62) and prop_chair_w2 (-10.35, -15.75).
+  prop_clutter. On the lot against the back fence, facing east: prop_bench (-34.10, 10.00,
+    0.34 x 1.6, 0.46 high), prop_chair_w1 (-34.00, 12.30), prop_crate_stack_w (-34.20, 17.50),
+    prop_water_drum (-34.20, 19.20, r 0.30, 0.92 tall, a cream drum with a tabo on the lid).
+    On the pavements: prop_crate_stack_e (10.45, -6.80), prop_trash_bin (-10.50, -12.30, r 0.27,
+    0.84 tall, green) and prop_chair_w2 (-10.35, -15.75).
   prop_column_signs, built at the ORIGIN (hidden from renders) for the Unity builder to place.
   Each has its BACK at local y = +0.008 and its face toward local -Y, so it sits on a column face
   with 8 mm sunk in. Rotate about Z so local -Y points away from the column:
@@ -123,6 +139,8 @@ TEXTURES = SOURCE / "textures"
 PREVIEWS = ROOT / "Logs" / "ilalim-blender"
 TILE_M = 2.0
 PT = 0.212                     # pavement top
+LOT_TOP = 0.24                 # the campus lot's top (the street kit's LOT_TOP)
+COURT = (-23.0, 14.2)          # the chalk box's centre on the lot (the street kit's COURT)
 UP = Vector((0, 0, 1))
 
 # The pisonet atlas regions, in image pixels, top-left origin (same numbers as the texture script).
@@ -317,6 +335,7 @@ class PBuf(L.Buf):
     def __init__(self, name, top=None):
         super().__init__(name)
         self.top = top
+        self.floor = PT            # what the prop stands on: the splash grime starts here
         self.M = Matrix()
         # Decal faces get their UVs written at once and are flagged, so world_uvs() skips them.
         self.uv = self.bm.loops.layers.uv.new("UVMap")
@@ -483,9 +502,9 @@ class PBuf(L.Buf):
                 else:
                     l[drip].uv = (co.x / 2.0, clean)
                 if side:
-                    l[splash].uv = (co.dot(t) / 2.0, min(clean, max(0.0, (co.z - PT) / 1.0)))
+                    l[splash].uv = (co.dot(t) / 2.0, min(clean, max(0.0, (co.z - self.floor) / 1.0)))
                 else:
-                    l[splash].uv = (co.x / 2.0, clean if n.z > 0 else min(clean, max(0.0, (co.z - PT))))
+                    l[splash].uv = (co.x / 2.0, clean if n.z > 0 else min(clean, max(0.0, (co.z - self.floor))))
 
     def finish(self, collection, origin=(0, 0, 0), bevel=0.012, segments=2, smooth=True):
         self.world_uvs()
@@ -508,6 +527,19 @@ class PBuf(L.Buf):
             mod.limit_method, mod.angle_limit = "ANGLE", math.radians(35)
             mod.harden_normals, mod.use_clamp_overlap = True, True
         return obj
+
+
+def on_lot(b, old, new, yaw=0.0):
+    """Stand a prop that was authored on the west pavement at `old` (x, y) on the court lot at
+    `new`, turned `yaw` degrees about its own anchor (owner, 2026-10-04: "can we move the play area
+    to this open space?"). Everything built into `b` after this lands there, 28 mm higher (the lot
+    is at 0.24, the pavement at 0.212), and the grime maps follow. Returns the new anchor, which
+    is the origin to finish() the prop with."""
+    b.M = Matrix.Translation((new[0], new[1], LOT_TOP - PT)) @ rz(yaw) @ Matrix.Translation((-old[0], -old[1], 0.0))
+    b.floor = LOT_TOP
+    if b.top is not None:
+        b.top += LOT_TOP - PT
+    return (new[0], new[1], LOT_TOP)
 
 
 def collection(name, parent=None):
@@ -933,6 +965,9 @@ def bridge_hoop(parent):
     col = collection("prop_bridge_hoop", parent)
     ox, oy = -8.90, -10.0
     b = PBuf("prop_bridge_hoop", top=PT + 3.65)
+    # On the lot now, on the court's west side against the back fence, facing east into the
+    # court: it is the bank-shot target, so it moved with the court.
+    origin = on_lot(b, (ox, oy), (-33.6, COURT[1]))
     bx = -9.62
     b.torus((bx, oy, PT + 0.09), 0.30, 0.10, "prop_rubber", seg=28, sides=10)
     b.lathe((bx, oy, PT + 0.02), [(0.30, 0.0), (0.30, 0.14), (0.2, 0.16), (0.05, 0.165)], "prop_concrete", sides=24)
@@ -945,7 +980,7 @@ def bridge_hoop(parent):
     b.rbox((-9.235, oy, PT + 3.07), (0.21, 0.10, 0.06), "prop_steel_red", r=0.02)
     b.tube([Vector((-9.33, oy, PT + 2.91)), Vector((-9.17, oy, PT + 3.055))], 0.02, "prop_steel_red", sides=8)
     b.torus((ox, oy, PT + 3.07), 0.25, 0.02, "prop_steel_red", seg=32, sides=8)
-    b.finish(col, origin=(ox, oy, PT), bevel=0.01)
+    b.finish(col, origin=origin, bevel=0.01)
 
 
 # ------------------------------------------------------------------ the west stalls
@@ -954,6 +989,12 @@ def stall_fruit(parent):
     col = collection("prop_stall_fruit", parent)
     cx, cy = -10.35, 12.5
     b = PBuf("prop_stall_fruit", top=PT + 0.82)
+    # The fence it stood against is gone (owner: "fix up the fences so the area is still open to
+    # the road"). It stands on the lot at the south end of the open frontage, its display turned
+    # north-west to the court. Not at (-12.8, 4.7): there the table's corner and the umbrella
+    # reached into the court's keep-clear square (x < -13.5) and the umbrella rim met the new
+    # fence's pillar caps; here everything stays east of x -13.4 and clear of the pillars.
+    origin = on_lot(b, (cx, cy), (-12.5, 5.1), 135.0)
     b.rbox((cx, cy, PT + 0.785), (1.0, 1.5, 0.05), "prop_wood", r=0.02)
     for lx in (cx - 0.44, cx + 0.44):
         for ly in (cy - 0.67, cy + 0.67):
@@ -964,7 +1005,7 @@ def stall_fruit(parent):
     rng = random.Random(21)
     for k, (dy, fruit) in enumerate(((-0.36, "mango"), (0.36, "banana"))):
         saved = b.M
-        b.M = Matrix.Translation((cx - 0.05, cy + dy, PT + 0.81 + 0.08)) @ Matrix.Rotation(math.radians(14), 4, "Y")
+        b.M = saved @ Matrix.Translation((cx - 0.05, cy + dy, PT + 0.81 + 0.08)) @ Matrix.Rotation(math.radians(14), 4, "Y")
         w = 0.022
         b.rbox((0, 0, 0.01), (0.62, 0.62, 0.025), "prop_wood", r=0.02)
         for s in (-1, 1):
@@ -1005,13 +1046,18 @@ def stall_fruit(parent):
     b.tube([Vector((cx + 0.3, cy - 0.2, PT + 0.9)), Vector((cx + 0.3, cy - 0.2, PT + 1.08))], 0.02, "prop_alu")
     umbrella(b, Vector((cx - 0.48, cy - 0.05, PT)), PT + 2.5, 1.15, ["prop_canvas_red", "prop_canvas_cream"],
              tilt=(4, 0))
-    b.finish(col, origin=(cx, cy, PT), bevel=0.008)
+    b.finish(col, origin=origin, bevel=0.008)
 
 
 def stall_fishball(parent):
     col = collection("prop_stall_fishball", parent)
     cx, cy = -10.35, 14.6
     b = PBuf("prop_stall_fishball", top=PT + 0.92)
+    # On the lot in its north-west corner by the back fence, where the owner drew it ("move the
+    # stalls either to where i drew, or somewhere else along the main sidewalk"), its painted
+    # front turned south-east to the court. Cart and umbrella stay west of x -32.5 (the keep-clear
+    # square), off the fence's pillars, and 2 m north of the water drum.
+    origin = on_lot(b, (cx, cy), (-33.4, 22.4), -45.0)
     b.rbox((cx, cy, PT + 0.62), (0.85, 1.20, 0.50), "prop_cart_cream", r=0.03)
     b.panel(facing("+x", (-9.922, cy, PT + 0.62)), 1.10, 0.31, 0.02, "prop_cart_cream", "prop_sign_fishball", r=0.02)
     b.rbox((cx, cy, PT + 0.895), (0.95, 1.30, 0.05), "prop_stainless", r=0.04)
@@ -1052,7 +1098,7 @@ def stall_fishball(parent):
     umbrella(b, Vector((-10.82, cy + 0.05, PT)), PT + 2.3, 1.0,
              ["prop_canvas_yellow", "prop_canvas_green"], tilt=(5, 0), weight=False)
     b.rbox((-10.80, cy + 0.05, PT + 0.75), (0.06, 0.08, 0.1), "prop_steel_dark", r=0.02)
-    b.finish(col, origin=(cx, cy, PT), bevel=0.008)
+    b.finish(col, origin=origin, bevel=0.008)
 
 
 def stall_sarisari(parent):
@@ -1100,11 +1146,14 @@ def stall_sarisari(parent):
 
 def clutter(parent):
     col = collection("prop_clutter", parent)
+    # The west clutter between y 3.4 and 24.4 stood against the Taft fence that is gone; it now
+    # lines the lot's new back fence (x -35.0), behind the court's west side.
     b = PBuf("prop_crate_stack_w", top=PT + 0.84)
+    origin = on_lot(b, (-10.55, 11.05), (-34.2, 17.5))
     crate(b, Vector((-10.55, 11.05, PT - 0.01)), (0.45, 0.34, 0.28), "prop_plastic_yellow", yaw=3)
     crate(b, Vector((-10.54, 11.04, PT + 0.265)), (0.45, 0.34, 0.28), "prop_plastic_maroon", yaw=-5)
     crate(b, Vector((-10.57, 11.06, PT + 0.54)), (0.45, 0.34, 0.28), "prop_plastic_green", yaw=8)
-    b.finish(col, origin=(-10.55, 11.05, PT))
+    b.finish(col, origin=origin)
 
     b = PBuf("prop_crate_stack_e", top=PT + 0.6)
     crate(b, Vector((10.45, -6.80, PT - 0.01)), (0.45, 0.34, 0.28), "prop_plastic_maroon", yaw=-4)
@@ -1115,6 +1164,7 @@ def clutter(parent):
 
     b = PBuf("prop_water_drum", top=PT + 0.92)
     dx, dy = -10.55, 15.95
+    origin = on_lot(b, (dx, dy), (-34.2, 19.2))
     b.lathe((dx, dy, PT - 0.01), [(0.26, 0.0), (0.285, 0.03), (0.29, 0.28), (0.3, 0.31), (0.29, 0.34), (0.29, 0.58),
                                   (0.3, 0.61), (0.29, 0.64), (0.285, 0.86), (0.26, 0.89), (0.05, 0.9)],
             "prop_plastic_cream", sides=24)
@@ -1123,19 +1173,20 @@ def clutter(parent):
             "prop_plastic_red", sides=16)
     b.tube([Vector((dx + 0.12, dy - 0.03, PT + 0.97)), Vector((dx + 0.24, dy - 0.05, PT + 0.985))], 0.014,
            "prop_plastic_red", sides=6)
-    b.finish(col, origin=(dx, dy, PT))
+    b.finish(col, origin=origin)
 
     b = PBuf("prop_bench", top=PT + 0.46)
     # y 7.7, not 6.2: the west Taft pole at y 5.9 stood in the bench (owner: "fix these canopy + pole
     # clipping issues").
     bx, by = -10.62, 7.7
+    origin = on_lot(b, (bx, by), (-34.1, 10.0))
     b.rbox((bx, by, PT + 0.435), (0.34, 1.6, 0.05), "prop_wood", r=0.02)
     for ly in (by - 0.6, by + 0.6):
         for sx in (-1, 1):
             b.prism((bx + sx * 0.16, ly, PT - 0.01), (bx + sx * 0.08, ly, PT + 0.42), 0.03, 0.03, "prop_wood_dark", r=0.01)
         b.rbox((bx, ly, PT + 0.2), (0.3, 0.04, 0.05), "prop_wood_dark", r=0.01)
     b.rbox((bx, by, PT + 0.2), (0.04, 1.24, 0.05), "prop_wood_dark", r=0.01)
-    b.finish(col, origin=(bx, by, PT))
+    b.finish(col, origin=origin)
 
     b = PBuf("prop_trash_bin", top=PT + 0.84)
     tx, ty = -10.50, -12.30
@@ -1148,8 +1199,10 @@ def clutter(parent):
     for name, (x, y, yaw, mat) in (("prop_chair_w1", (-10.25, 13.62, -8, "prop_plastic_red")),
                                    ("prop_chair_w2", (-10.35, -15.75, 5, "prop_plastic_white"))):
         c = PBuf(name, top=PT + 0.87)
+        # The north chair sits by the bench on the lot, facing east into the court.
+        origin = on_lot(c, (x, y), (-34.0, 12.3)) if name == "prop_chair_w1" else (x, y, PT)
         monobloc(c, Vector((x, y, PT)), yaw, mat)
-        c.finish(col, origin=(x, y, PT), bevel=0.008)
+        c.finish(col, origin=origin, bevel=0.008)
 
 
 # ------------------------------------------------------------------ column signs (at the origin)

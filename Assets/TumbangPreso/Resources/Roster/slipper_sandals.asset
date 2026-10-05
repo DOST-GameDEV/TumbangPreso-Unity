@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: TumbangPreso.Runtime::TumbangPreso.RosterEntryAsset
   Id: sandals
   Model: {fileID: 3876036975794863995, guid: e30eb9ec2fba1c74e9f6aa7fd5be51e5, type: 3}
+  ArmModel: {fileID: 0}
   PetModel: {fileID: 0}
   Material: {fileID: 0}
   Tint: {r: 1, g: 1, b: 1, a: 1}

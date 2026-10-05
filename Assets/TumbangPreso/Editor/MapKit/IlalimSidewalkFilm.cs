@@ -47,7 +47,11 @@ namespace TumbangPreso.EditorTools.MapKit
         internal const string Out = "Logs/ilalim-unity/videos_v4";
         private const float Dt = 1f / 30f;
         private const int W = 1280, H = 720;
-        private static readonly Vector3 PlayerSpot = new Vector3(-9.6f, .212f, -16.15f);
+        /// <summary>A player on the west pavement beside the beggar (Blender frame, the pavement's
+        /// top), 1.4 m from his spot: IlalimSidewalkAuthor's probe gives its coin from the same place.</summary>
+        private static readonly Vector3 PlayerSpot = IlalimFrame.W(-8.6f, .212f, 5.6f);
+        /// <summary>A scene (game-frame) position's Blender z: the limits typed below are the kits'.</summary>
+        private static float Bz(Vector3 game) => game.z + IlalimFrame.OriginZ;
 
         [MenuItem("Tumbang Preso/Sample Map/Film Ilalim Rebuild Sidewalk Life")]
         public static void FilmFromMenu() { Stills(); Videos(); }
@@ -391,7 +395,7 @@ namespace TumbangPreso.EditorTools.MapKit
             var films = new List<Film>();
             if (s.KidsOut > 0f)
                 films.Add(new Film { Name = "kids_tag", Windows = { (s.KidsOut + 1f, s.KidsOut + 21f) }, Aim = (w, r, k) => AimKids(w, r) });
-            var call = s.Calls.Where(c => c.at.z > -38f && c.at.z < -23f && c.t > 9f).Select(c => (float?)c.t).FirstOrDefault() ?? (s.Calls.Count > 0 ? s.Calls[0].t : -1f);
+            var call = s.Calls.Where(c => Bz(c.at) > 0f && c.t > 9f).Select(c => (float?)c.t).FirstOrDefault() ?? (s.Calls.Count > 0 ? s.Calls[0].t : -1f);
             if (call > 0f)
                 films.Add(new Film { Name = "taho_calling", Windows = { (Mathf.Max(.5f, call - 9f), call + 9f) }, Aim = (w, r, k) => AimTaho(w, r) });
             if (s.WatchAt > 0f)
@@ -467,23 +471,25 @@ namespace TumbangPreso.EditorTools.MapKit
             var seat = life.BeggarSeat;
             if (k == 1)
             {
-                // Beside the player spot at the wall: the coin's arc, his bow and the thank-you in frame.
-                r.Follow(new Vector3(-7.6f, 2.1f, -15.6f), new Vector3(-9.9f, 1.9f, -17.8f), 3f);
+                // Beside the player spot on the pavement: the coin's arc, his bow and the thank-you in frame.
+                r.Follow(PlayerSpot + new Vector3(2f, 1.9f, .55f), seat + new Vector3(.3f, 1.7f, .25f), 3f);
                 return 64f;
             }
             var p = i >= 0 && life.PersonShown(i) ? life.PersonPosition(i) : seat;
-            // Walking in or out along the south-west pavement, seen from the court's south-west corner.
-            r.Follow(new Vector3(-6.3f, 1.9f, -15.1f), Vector3.Lerp(p, seat, .25f) + Vector3.up * .8f, 2f);
+            // Walking in or out along the west pavement, seen from the lot's east margin, north of the fruit stall.
+            r.Follow(seat + new Vector3(-3.2f, 1.7f, 3.4f), Vector3.Lerp(p, seat, .25f) + Vector3.up * .8f, 2f);
             return 56f;
         }
 
         /// <summary>The wide's candidate views: eye, aim, vertical field of view.</summary>
         internal static readonly (string name, Vector3 eye, Vector3 target, float fov)[] Wides =
         {
-            ("south under the bridge", new Vector3(-10.5f, 5.2f, -6f), new Vector3(3f, 1f, -34f), 62f),
-            ("court from the south-east, the PGH sky", new Vector3(9f, 4.2f, -19.5f), new Vector3(-8f, 5.5f, 8f), 64f),
-            ("north under the bridge", new Vector3(-2f, 5f, 14f), new Vector3(0f, 3f, -30f), 62f),
-            ("south-west, high", new Vector3(-13f, 9f, -12f), new Vector3(6f, 1f, -36f), 60f),
+            // Blender frame (the court is the lot at (-23, 14.2) since 2026-10-04; the people use its
+            // east margin, its open frontage and Taft's west pavement).
+            ("the frontage from the court", IlalimFrame.W(-18f, 2.8f, 14.2f), IlalimFrame.W(-9f, 1f, 12f), 62f),
+            ("south down the west pavement", IlalimFrame.W(-9.5f, 5.2f, 24f), IlalimFrame.W(-9f, 1f, -20f), 62f),
+            ("the lot from the road, the PGH sky", IlalimFrame.W(-3f, 4.2f, 2f), IlalimFrame.W(-20f, 3f, 16f), 64f),
+            ("the frontage from the south, high", IlalimFrame.W(-14f, 9f, 0f), IlalimFrame.W(-10f, 1f, 20f), 60f),
         };
 
         private static int _widePick = -1;
@@ -536,7 +542,7 @@ namespace TumbangPreso.EditorTools.MapKit
             // 1. The model alone, standing in idle on the court, and beside the old look.
             using (var w = new World(null))
             {
-                var at = new Vector3(-1.5f, .212f, -9f);
+                var at = IlalimFrame.W(-24.5f, .24f, 9.2f);   // on the court (the lot's surface), south of the can
                 if (own != null)
                 {
                     var solo = Stand(own, at, 0f);
@@ -584,7 +590,7 @@ namespace TumbangPreso.EditorTools.MapKit
                 Shoot(w, stills, "beggar_seated_front", seat + f * 2.1f + Vector3.up * .95f + Vector3.Cross(Vector3.up, f) * .4f, seat + Vector3.up * .5f, 45f);
                 Shoot(w, stills, "beggar_seated_side", seat + new Vector3(2.6f, 1.3f, -.9f), seat + Vector3.up * .5f, 50f);
                 Shoot(w, stills, "beggar_seated_close", seat + f * 1.25f + Vector3.up * .75f - Vector3.Cross(Vector3.up, f) * .35f, seat + Vector3.up * .55f, 45f);
-                Shoot(w, stills, "beggar_seated_context", new Vector3(-5.8f, 2.3f, -13.6f), seat + Vector3.up * .6f, 55f);
+                Shoot(w, stills, "beggar_seated_context", seat + new Vector3(-3.6f, 2.1f, 4.2f), seat + Vector3.up * .6f, 55f);
                 Shoot(w, stills, "beggar_seated_side_level", seat + across * 2.4f + f * .35f + Vector3.up * .45f, seat + Vector3.up * .35f + f * .35f, 42f);
                 Shoot(w, stills, "beggar_seated_front_low", seat + f * 2.3f + Vector3.up * .5f, seat + Vector3.up * .4f, 42f);
                 // The carton close (its drawing) and the seat on it from low at the side (the float the owner saw).
@@ -638,7 +644,7 @@ namespace TumbangPreso.EditorTools.MapKit
                         if (i < 0 || !w.Life.PersonShown(i)) continue;
                         if (appeared < 0f) appeared = w.T;
                         var p = w.Life.PersonPosition(i); string state = w.Life.PersonState(i);
-                        if (!called && state == "calling" && p.z > -32f && w.T > appeared + 2f)
+                        if (!called && state == "calling" && Bz(p) > -32f && w.T > appeared + 2f)
                         {
                             called = true;
                             Shoot(w, stills, $"taho/{c}_side", p + new Vector3(2.6f, .95f, 0f), p + Vector3.up * .8f, 50f);
@@ -646,7 +652,7 @@ namespace TumbangPreso.EditorTools.MapKit
                             Shoot(w, stills, $"taho/{c}_back", p + new Vector3(-1.6f, 1.15f, -2.3f), p + Vector3.up * .8f, 50f);
                             Shoot(w, stills, $"taho/{c}_close", p + new Vector3(1.5f, 1.55f, 1.25f), p + Vector3.up * 1.05f, 45f);
                         }
-                        if (!walked && state == "walking in" && w.T > appeared + 4f && p.z > -40f)
+                        if (!walked && state == "walking in" && w.T > appeared + 4f && Bz(p) > -40f)
                         {
                             walked = true;
                             Shoot(w, stills, $"taho/{c}_walk_side", p + new Vector3(2.7f, .95f, 0f), p + Vector3.up * .8f, 50f);

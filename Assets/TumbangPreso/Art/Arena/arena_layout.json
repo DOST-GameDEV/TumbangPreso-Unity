@@ -1,0 +1,7046 @@
+{
+ "note": "Written by tools/export_arena_unity.py from ArtSource/arena/arena_assembly.blend. Every .glb is in the GAME's own space once glTFast has imported it: a Blender point (x, y, z) is Unity (x, z, y), north is +z, a bearing b at radius r is x = r sin b, z = r cos b, the can at the origin. Matrices are Unity axes, row-major, D . M . D with D = [[1,0,0],[0,0,1],[0,1,0]] (the identity for everything modelled in place). tools/arena_lights.json and tools/arena_traffic.json are in the BLENDER frame (use points_blender, as (x, z, y)); the traffic file's points_unity are (-x, z, -y), half a turn out, and are not used.",
+ "extent": {
+  "farthest": 2387.4,
+  "note": "the farthest vertex of the bowl, roof, hull and city from the can, metres (the city floor's corners)"
+ },
+ "budget": [
+  {
+   "group": "Bowl",
+   "placements": 36,
+   "prototypes": 36,
+   "placedTris": 125484
+  },
+  {
+   "group": "City",
+   "placements": 78,
+   "prototypes": 78,
+   "placedTris": 67570
+  },
+  {
+   "group": "Craft",
+   "placements": 36,
+   "prototypes": 3,
+   "placedTris": 5988
+  },
+  {
+   "group": "Holo",
+   "placements": 51,
+   "prototypes": 51,
+   "placedTris": 29626
+  },
+  {
+   "group": "Hull",
+   "placements": 34,
+   "prototypes": 34,
+   "placedTris": 56644
+  },
+  {
+   "group": "Roof",
+   "placements": 23,
+   "prototypes": 23,
+   "placedTris": 58516
+  },
+  {
+   "group": "Stage (all five layouts)",
+   "placements": 56,
+   "prototypes": 56,
+   "placedTris": 82928
+  },
+  {
+   "group": "StageRim",
+   "placements": 1,
+   "prototypes": 1,
+   "placedTris": 2304
+  },
+  {
+   "group": "Train",
+   "placements": 1,
+   "prototypes": 1,
+   "placedTris": 72
+  }
+ ],
+ "stageTrisPerLayout": {
+  "plaza": 22496,
+  "tore": 16364,
+  "krus": 12272,
+  "hukay": 21048,
+  "entablado": 10748
+ },
+ "stage": [
+  {
+   "model": "stage_plaza_drum",
+   "layout": "plaza",
+   "id": "drum",
+   "tris": 5120
+  },
+  {
+   "model": "stage_plaza_walk",
+   "layout": "plaza",
+   "id": "walk",
+   "tris": 9328
+  },
+  {
+   "model": "stage_plaza_arc1",
+   "layout": "plaza",
+   "id": "arc1",
+   "tris": 1272
+  },
+  {
+   "model": "stage_plaza_arc2",
+   "layout": "plaza",
+   "id": "arc2",
+   "tris": 1272
+  },
+  {
+   "model": "stage_plaza_arc3",
+   "layout": "plaza",
+   "id": "arc3",
+   "tris": 1272
+  },
+  {
+   "model": "stage_plaza_arc4",
+   "layout": "plaza",
+   "id": "arc4",
+   "tris": 1272
+  },
+  {
+   "model": "stage_plaza_ramp1",
+   "layout": "plaza",
+   "id": "ramp1",
+   "tris": 388
+  },
+  {
+   "model": "stage_plaza_ramp2",
+   "layout": "plaza",
+   "id": "ramp2",
+   "tris": 388
+  },
+  {
+   "model": "stage_plaza_ramp3",
+   "layout": "plaza",
+   "id": "ramp3",
+   "tris": 388
+  },
+  {
+   "model": "stage_plaza_ramp4",
+   "layout": "plaza",
+   "id": "ramp4",
+   "tris": 388
+  },
+  {
+   "model": "stage_plaza_link1",
+   "layout": "plaza",
+   "id": "link1",
+   "tris": 352
+  },
+  {
+   "model": "stage_plaza_link2",
+   "layout": "plaza",
+   "id": "link2",
+   "tris": 352
+  },
+  {
+   "model": "stage_plaza_link3",
+   "layout": "plaza",
+   "id": "link3",
+   "tris": 352
+  },
+  {
+   "model": "stage_plaza_link4",
+   "layout": "plaza",
+   "id": "link4",
+   "tris": 352
+  },
+  {
+   "model": "stage_tore_drum",
+   "layout": "tore",
+   "id": "drum",
+   "tris": 2688
+  },
+  {
+   "model": "stage_tore_walk",
+   "layout": "tore",
+   "id": "walk",
+   "tris": 6952
+  },
+  {
+   "model": "stage_tore_ramp1",
+   "layout": "tore",
+   "id": "ramp1",
+   "tris": 640
+  },
+  {
+   "model": "stage_tore_ramp2",
+   "layout": "tore",
+   "id": "ramp2",
+   "tris": 640
+  },
+  {
+   "model": "stage_tore_ramp3",
+   "layout": "tore",
+   "id": "ramp3",
+   "tris": 640
+  },
+  {
+   "model": "stage_tore_ramp4",
+   "layout": "tore",
+   "id": "ramp4",
+   "tris": 640
+  },
+  {
+   "model": "stage_tore_arc1",
+   "layout": "tore",
+   "id": "arc1",
+   "tris": 1778
+  },
+  {
+   "model": "stage_tore_arc3",
+   "layout": "tore",
+   "id": "arc3",
+   "tris": 1778
+  },
+  {
+   "model": "stage_tore_link1",
+   "layout": "tore",
+   "id": "link1",
+   "tris": 304
+  },
+  {
+   "model": "stage_tore_link3",
+   "layout": "tore",
+   "id": "link3",
+   "tris": 304
+  },
+  {
+   "model": "stage_krus_drum",
+   "layout": "krus",
+   "id": "drum",
+   "tris": 3072
+  },
+  {
+   "model": "stage_krus_walk",
+   "layout": "krus",
+   "id": "walk",
+   "tris": 6688
+  },
+  {
+   "model": "stage_krus_apron",
+   "layout": "krus",
+   "id": "apron",
+   "tris": 1052
+  },
+  {
+   "model": "stage_krus_ramp1",
+   "layout": "krus",
+   "id": "ramp1",
+   "tris": 292
+  },
+  {
+   "model": "stage_krus_link1",
+   "layout": "krus",
+   "id": "link1",
+   "tris": 292
+  },
+  {
+   "model": "stage_krus_ramp2",
+   "layout": "krus",
+   "id": "ramp2",
+   "tris": 292
+  },
+  {
+   "model": "stage_krus_ramp3",
+   "layout": "krus",
+   "id": "ramp3",
+   "tris": 292
+  },
+  {
+   "model": "stage_krus_ramp4",
+   "layout": "krus",
+   "id": "ramp4",
+   "tris": 292
+  },
+  {
+   "model": "stage_hukay_drum",
+   "layout": "hukay",
+   "id": "drum",
+   "tris": 2688
+  },
+  {
+   "model": "stage_hukay_walk",
+   "layout": "hukay",
+   "id": "walk",
+   "tris": 7744
+  },
+  {
+   "model": "stage_hukay_ramp1",
+   "layout": "hukay",
+   "id": "ramp1",
+   "tris": 674
+  },
+  {
+   "model": "stage_hukay_ramp2",
+   "layout": "hukay",
+   "id": "ramp2",
+   "tris": 674
+  },
+  {
+   "model": "stage_hukay_ramp3",
+   "layout": "hukay",
+   "id": "ramp3",
+   "tris": 674
+  },
+  {
+   "model": "stage_hukay_ramp4",
+   "layout": "hukay",
+   "id": "ramp4",
+   "tris": 674
+  },
+  {
+   "model": "stage_hukay_arc1",
+   "layout": "hukay",
+   "id": "arc1",
+   "tris": 1448
+  },
+  {
+   "model": "stage_hukay_arc2",
+   "layout": "hukay",
+   "id": "arc2",
+   "tris": 1448
+  },
+  {
+   "model": "stage_hukay_arc3",
+   "layout": "hukay",
+   "id": "arc3",
+   "tris": 1448
+  },
+  {
+   "model": "stage_hukay_arc4",
+   "layout": "hukay",
+   "id": "arc4",
+   "tris": 1448
+  },
+  {
+   "model": "stage_hukay_link1",
+   "layout": "hukay",
+   "id": "link1",
+   "tris": 532
+  },
+  {
+   "model": "stage_hukay_link2",
+   "layout": "hukay",
+   "id": "link2",
+   "tris": 532
+  },
+  {
+   "model": "stage_hukay_link3",
+   "layout": "hukay",
+   "id": "link3",
+   "tris": 532
+  },
+  {
+   "model": "stage_hukay_link4",
+   "layout": "hukay",
+   "id": "link4",
+   "tris": 532
+  },
+  {
+   "model": "stage_entablado_drum",
+   "layout": "entablado",
+   "id": "drum",
+   "tris": 2784
+  },
+  {
+   "model": "stage_entablado_apron",
+   "layout": "entablado",
+   "id": "apron",
+   "tris": 2460
+  },
+  {
+   "model": "stage_entablado_ramp2",
+   "layout": "entablado",
+   "id": "ramp2",
+   "tris": 564
+  },
+  {
+   "model": "stage_entablado_ramp4",
+   "layout": "entablado",
+   "id": "ramp4",
+   "tris": 564
+  },
+  {
+   "model": "stage_entablado_arc2",
+   "layout": "entablado",
+   "id": "arc2",
+   "tris": 1228
+  },
+  {
+   "model": "stage_entablado_arc3",
+   "layout": "entablado",
+   "id": "arc3",
+   "tris": 1228
+  },
+  {
+   "model": "stage_entablado_link2",
+   "layout": "entablado",
+   "id": "link2",
+   "tris": 304
+  },
+  {
+   "model": "stage_entablado_link3",
+   "layout": "entablado",
+   "id": "link3",
+   "tris": 304
+  },
+  {
+   "model": "stage_entablado_arc1",
+   "layout": "entablado",
+   "id": "arc1",
+   "tris": 656
+  },
+  {
+   "model": "stage_entablado_arc4",
+   "layout": "entablado",
+   "id": "arc4",
+   "tris": 656
+  }
+ ],
+ "props": [
+  {
+   "file": "arena_drone",
+   "parts": [
+    {
+     "node": "drone_body",
+     "tris": 1260,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "node": "drone_fan",
+     "tris": 180,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "node": "drone_antenna",
+     "tris": 120,
+     "position": [
+      -0.093,
+      0.35,
+      -0.1994
+     ]
+    },
+    {
+     "node": "drone_claw_0",
+     "tris": 44,
+     "position": [
+      0.2338,
+      -0.35,
+      0.135
+     ]
+    },
+    {
+     "node": "drone_claw_1",
+     "tris": 44,
+     "position": [
+      0.0,
+      -0.35,
+      -0.27
+     ]
+    },
+    {
+     "node": "drone_claw_2",
+     "tris": 44,
+     "position": [
+      -0.2338,
+      -0.35,
+      0.135
+     ]
+    },
+    {
+     "node": "drone_face_search",
+     "tris": 140,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "node": "drone_face_lock",
+     "tris": 140,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "node": "drone_face_carry",
+     "tris": 140,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "node": "drone_face_proud",
+     "tris": 140,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "node": "drone_beam",
+     "tris": 96,
+     "position": [
+      0.0,
+      -0.33,
+      0.0
+     ]
+    },
+    {
+     "node": "drone_beam_core",
+     "tris": 48,
+     "position": [
+      0.0,
+      -0.33,
+      0.0
+     ]
+    },
+    {
+     "node": "drone_spot",
+     "tris": 2,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "file": "arena_jump_pad",
+   "parts": [
+    {
+     "node": "jump_base",
+     "tris": 400,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "node": "jump_cushion",
+     "tris": 400,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "node": "jump_chevron",
+     "tris": 20,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "node": "jump_ring",
+     "tris": 320,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "file": "arena_pickup",
+   "parts": [
+    {
+     "node": "pickup_base",
+     "tris": 288,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "node": "pickup_cell",
+     "tris": 84,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "node": "pickup_halo",
+     "tris": 256,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  },
+  {
+   "file": "arena_speed_pad",
+   "parts": [
+    {
+     "node": "speed_base",
+     "tris": 44,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "node": "speed_chevrons",
+     "tris": 60,
+     "position": [
+      0.0,
+      0.0,
+      0.0
+     ]
+    }
+   ]
+  }
+ ],
+ "craft": [
+  {
+   "object": "city_craft_barge_labas_02",
+   "model": "city_craft_barge",
+   "position": [
+    -256.153,
+    176.0,
+    -121.312
+   ]
+  },
+  {
+   "object": "city_craft_barge_labas_06",
+   "model": "city_craft_barge",
+   "position": [
+    231.459,
+    176.0,
+    163.689
+   ]
+  },
+  {
+   "object": "city_craft_barge_taas_00",
+   "model": "city_craft_barge",
+   "position": [
+    -186.322,
+    590.0,
+    1043.396
+   ]
+  },
+  {
+   "object": "city_craft_barge_taas_01",
+   "model": "city_craft_barge",
+   "position": [
+    806.868,
+    590.0,
+    686.963
+   ]
+  },
+  {
+   "object": "city_craft_barge_taas_02",
+   "model": "city_craft_barge",
+   "position": [
+    1043.263,
+    590.0,
+    186.925
+   ]
+  },
+  {
+   "object": "city_craft_barge_taas_03",
+   "model": "city_craft_barge",
+   "position": [
+    589.944,
+    590.0,
+    -879.798
+   ]
+  },
+  {
+   "object": "city_craft_barge_taas_04",
+   "model": "city_craft_barge",
+   "position": [
+    -94.2,
+    590.0,
+    -1055.727
+   ]
+  },
+  {
+   "object": "city_craft_barge_taas_05",
+   "model": "city_craft_barge",
+   "position": [
+    -897.716,
+    590.0,
+    -561.818
+   ]
+  },
+  {
+   "object": "city_craft_barge_taas_06",
+   "model": "city_craft_barge",
+   "position": [
+    -1035.671,
+    590.0,
+    -221.167
+   ]
+  },
+  {
+   "object": "city_craft_barge_taas_07",
+   "model": "city_craft_barge",
+   "position": [
+    -811.0,
+    590.0,
+    682.454
+   ]
+  },
+  {
+   "object": "city_craft_dyip_ilalim_02",
+   "model": "city_craft_dyip",
+   "position": [
+    -355.68,
+    -190.0,
+    40.0
+   ]
+  },
+  {
+   "object": "city_craft_dyip_ilalim_05",
+   "model": "city_craft_dyip",
+   "position": [
+    959.565,
+    -190.0,
+    40.0
+   ]
+  },
+  {
+   "object": "city_craft_dyip_ilalim_08",
+   "model": "city_craft_dyip",
+   "position": [
+    307.889,
+    -190.0,
+    -24.0
+   ]
+  },
+  {
+   "object": "city_craft_dyip_ilalim_11",
+   "model": "city_craft_dyip",
+   "position": [
+    -946.239,
+    -190.0,
+    -24.0
+   ]
+  },
+  {
+   "object": "city_craft_dyip_labas_00",
+   "model": "city_craft_dyip",
+   "position": [
+    -48.526,
+    176.0,
+    279.291
+   ]
+  },
+  {
+   "object": "city_craft_dyip_labas_04",
+   "model": "city_craft_dyip",
+   "position": [
+    147.536,
+    176.0,
+    -242.252
+   ]
+  },
+  {
+   "object": "city_craft_dyip_loob_01",
+   "model": "city_craft_dyip",
+   "position": [
+    147.747,
+    140.0,
+    222.909
+   ]
+  },
+  {
+   "object": "city_craft_dyip_loob_04",
+   "model": "city_craft_dyip",
+   "position": [
+    83.215,
+    140.0,
+    -254.166
+   ]
+  },
+  {
+   "object": "city_craft_dyip_loob_06",
+   "model": "city_craft_dyip",
+   "position": [
+    -234.727,
+    140.0,
+    -128.662
+   ]
+  },
+  {
+   "object": "city_craft_kotse_ilalim_00",
+   "model": "city_craft_kotse",
+   "position": [
+    -1192.779,
+    -190.0,
+    40.0
+   ]
+  },
+  {
+   "object": "city_craft_kotse_ilalim_01",
+   "model": "city_craft_kotse",
+   "position": [
+    -907.917,
+    -190.0,
+    40.0
+   ]
+  },
+  {
+   "object": "city_craft_kotse_ilalim_03",
+   "model": "city_craft_kotse",
+   "position": [
+    62.966,
+    -190.0,
+    40.0
+   ]
+  },
+  {
+   "object": "city_craft_kotse_ilalim_04",
+   "model": "city_craft_kotse",
+   "position": [
+    346.389,
+    -190.0,
+    40.0
+   ]
+  },
+  {
+   "object": "city_craft_kotse_ilalim_06",
+   "model": "city_craft_kotse",
+   "position": [
+    1194.263,
+    -190.0,
+    40.0
+   ]
+  },
+  {
+   "object": "city_craft_kotse_ilalim_07",
+   "model": "city_craft_kotse",
+   "position": [
+    728.596,
+    -190.0,
+    -24.0
+   ]
+  },
+  {
+   "object": "city_craft_kotse_ilalim_09",
+   "model": "city_craft_kotse",
+   "position": [
+    40.85,
+    -190.0,
+    -24.0
+   ]
+  },
+  {
+   "object": "city_craft_kotse_ilalim_10",
+   "model": "city_craft_kotse",
+   "position": [
+    -517.341,
+    -190.0,
+    -24.0
+   ]
+  },
+  {
+   "object": "city_craft_kotse_labas_01",
+   "model": "city_craft_kotse",
+   "position": [
+    -262.55,
+    176.0,
+    108.185
+   ]
+  },
+  {
+   "object": "city_craft_kotse_labas_03",
+   "model": "city_craft_kotse",
+   "position": [
+    -38.257,
+    176.0,
+    -281.334
+   ]
+  },
+  {
+   "object": "city_craft_kotse_labas_05",
+   "model": "city_craft_kotse",
+   "position": [
+    272.729,
+    176.0,
+    -78.201
+   ]
+  },
+  {
+   "object": "city_craft_kotse_loob_00",
+   "model": "city_craft_kotse",
+   "position": [
+    -13.318,
+    140.0,
+    267.127
+   ]
+  },
+  {
+   "object": "city_craft_kotse_loob_02",
+   "model": "city_craft_kotse",
+   "position": [
+    254.338,
+    140.0,
+    82.709
+   ]
+  },
+  {
+   "object": "city_craft_kotse_loob_03",
+   "model": "city_craft_kotse",
+   "position": [
+    205.124,
+    140.0,
+    -171.695
+   ]
+  },
+  {
+   "object": "city_craft_kotse_loob_05",
+   "model": "city_craft_kotse",
+   "position": [
+    -111.208,
+    140.0,
+    -243.334
+   ]
+  },
+  {
+   "object": "city_craft_kotse_loob_07",
+   "model": "city_craft_kotse",
+   "position": [
+    -265.797,
+    140.0,
+    33.605
+   ]
+  },
+  {
+   "object": "city_craft_kotse_loob_08",
+   "model": "city_craft_kotse",
+   "position": [
+    -151.26,
+    140.0,
+    220.562
+   ]
+  }
+ ],
+ "lods": [],
+ "materials": [
+  {
+   "name": "arena_bowl_concrete",
+   "shader": "painted",
+   "albedo": "arena_bowl_concrete.png",
+   "emissionMap": "",
+   "emissionStrength": 0.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_bowl_door",
+   "shader": "painted",
+   "albedo": "arena_bowl_door.png",
+   "emissionMap": "arena_bowl_door_emit.png",
+   "emissionStrength": 1.6,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_bowl_led",
+   "shader": "painted",
+   "albedo": "arena_bowl_led.png",
+   "emissionMap": "arena_bowl_led_emit.png",
+   "emissionStrength": 1.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    512
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_bowl_marking",
+   "shader": "painted",
+   "albedo": "arena_bowl_marking.png",
+   "emissionMap": "",
+   "emissionStrength": 0.0,
+   "alphaFromAlbedo": true,
+   "blend": "cutout",
+   "twoSided": true,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": [
+    "two-sided: 100 per cent open edges"
+   ]
+  },
+  {
+   "name": "arena_bowl_panel",
+   "shader": "painted",
+   "albedo": "arena_bowl_panel.png",
+   "emissionMap": "arena_bowl_panel_emit.png",
+   "emissionStrength": 1.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_bowl_seat",
+   "shader": "painted",
+   "albedo": "arena_bowl_seat.png",
+   "emissionMap": "",
+   "emissionStrength": 0.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_bowl_steel",
+   "shader": "painted",
+   "albedo": "arena_bowl_steel.png",
+   "emissionMap": "",
+   "emissionStrength": 0.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_bowl_step",
+   "shader": "painted",
+   "albedo": "arena_bowl_step.png",
+   "emissionMap": "",
+   "emissionStrength": 0.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_bowl_track",
+   "shader": "painted",
+   "albedo": "arena_bowl_track.png",
+   "emissionMap": "",
+   "emissionStrength": 0.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_bowl_turf_a",
+   "shader": "painted",
+   "albedo": "arena_bowl_turf_a.png",
+   "emissionMap": "",
+   "emissionStrength": 0.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_bowl_turf_b",
+   "shader": "painted",
+   "albedo": "arena_bowl_turf_b.png",
+   "emissionMap": "",
+   "emissionStrength": 0.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_city_bands",
+   "shader": "painted",
+   "albedo": "arena_city_bands.png",
+   "emissionMap": "arena_city_bands_emit.png",
+   "emissionStrength": 0.8,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_city_base",
+   "shader": "painted",
+   "albedo": "arena_city_base.png",
+   "emissionMap": "arena_city_base_emit.png",
+   "emissionStrength": 0.9,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    256,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_city_far",
+   "shader": "painted",
+   "albedo": "arena_city_far.png",
+   "emissionMap": "arena_city_far_emit.png",
+   "emissionStrength": 0.7,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_city_floor",
+   "shader": "painted",
+   "albedo": "arena_city_floor.png",
+   "emissionMap": "arena_city_floor_emit.png",
+   "emissionStrength": 1.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": true,
+   "size": [
+    2048,
+    2048
+   ],
+   "notes": [
+    "two-sided: 100 per cent open edges"
+   ]
+  },
+  {
+   "name": "arena_city_fx",
+   "shader": "painted",
+   "albedo": "arena_city_fx.png",
+   "emissionMap": "arena_city_fx_emit.png",
+   "emissionStrength": 1.1,
+   "alphaFromAlbedo": true,
+   "blend": "blend",
+   "twoSided": true,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": [
+    "two-sided: 100 per cent open edges"
+   ]
+  },
+  {
+   "name": "arena_city_glass_a",
+   "shader": "painted",
+   "albedo": "arena_city_glass_a.png",
+   "emissionMap": "arena_city_glass_a_emit.png",
+   "emissionStrength": 0.8,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_city_glass_b",
+   "shader": "painted",
+   "albedo": "arena_city_glass_b.png",
+   "emissionMap": "arena_city_glass_b_emit.png",
+   "emissionStrength": 0.8,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_city_haze",
+   "shader": "painted",
+   "albedo": "arena_city_haze.png",
+   "emissionMap": "arena_city_haze_emit.png",
+   "emissionStrength": 1.0,
+   "alphaFromAlbedo": true,
+   "blend": "blend",
+   "twoSided": true,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": [
+    "two-sided: 100 per cent open edges"
+   ]
+  },
+  {
+   "name": "arena_city_metal",
+   "shader": "painted",
+   "albedo": "arena_city_metal.png",
+   "emissionMap": "arena_city_metal_emit.png",
+   "emissionStrength": 1.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_city_resi",
+   "shader": "painted",
+   "albedo": "arena_city_resi.png",
+   "emissionMap": "arena_city_resi_emit.png",
+   "emissionStrength": 0.8,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_city_roofs",
+   "shader": "painted",
+   "albedo": "arena_city_roofs.png",
+   "emissionMap": "arena_city_roofs_emit.png",
+   "emissionStrength": 0.9,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_city_signs",
+   "shader": "painted",
+   "albedo": "arena_city_signs.png",
+   "emissionMap": "arena_city_signs_emit.png",
+   "emissionStrength": 0.8,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    2048,
+    2048
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_city_trim",
+   "shader": "painted",
+   "albedo": "arena_city_trim.png",
+   "emissionMap": "arena_city_trim_emit.png",
+   "emissionStrength": 1.25,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    256,
+    256
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_holo_ads",
+   "shader": "painted",
+   "albedo": "arena_holo_ads.png",
+   "emissionMap": "arena_holo_ads_emit.png",
+   "emissionStrength": 1.5,
+   "alphaFromAlbedo": true,
+   "blend": "blend",
+   "twoSided": true,
+   "size": [
+    1024,
+    2048
+   ],
+   "notes": [
+    "two-sided: 100 per cent open edges"
+   ]
+  },
+  {
+   "name": "arena_holo_balloon",
+   "shader": "painted",
+   "albedo": "arena_holo_balloon.png",
+   "emissionMap": "arena_holo_balloon_emit.png",
+   "emissionStrength": 1.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    2048,
+    2048
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_holo_fx",
+   "shader": "painted",
+   "albedo": "arena_holo_fx.png",
+   "emissionMap": "arena_holo_fx_emit.png",
+   "emissionStrength": 1.4,
+   "alphaFromAlbedo": true,
+   "blend": "blend",
+   "twoSided": true,
+   "size": [
+    2048,
+    2048
+   ],
+   "notes": [
+    "two-sided: 100 per cent open edges"
+   ]
+  },
+  {
+   "name": "arena_holo_led",
+   "shader": "painted",
+   "albedo": "arena_holo_led.png",
+   "emissionMap": "arena_holo_led_emit.png",
+   "emissionStrength": 2.4,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    256,
+    256
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_holo_logo",
+   "shader": "painted",
+   "albedo": "arena_holo_fx.png",
+   "emissionMap": "arena_holo_fx_emit.png",
+   "emissionStrength": 1.6,
+   "alphaFromAlbedo": true,
+   "blend": "blend",
+   "twoSided": true,
+   "size": [
+    2048,
+    2048
+   ],
+   "notes": [
+    "two-sided: 100 per cent open edges"
+   ]
+  },
+  {
+   "name": "arena_holo_metal",
+   "shader": "painted",
+   "albedo": "arena_holo_metal.png",
+   "emissionMap": "arena_holo_metal_emit.png",
+   "emissionStrength": 1.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    512,
+    512
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_hull_engine",
+   "shader": "painted",
+   "albedo": "arena_hull_engine.png",
+   "emissionMap": "",
+   "emissionStrength": 0.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_hull_glass",
+   "shader": "painted",
+   "albedo": "arena_hull_glass.png",
+   "emissionMap": "arena_hull_glass_emit.png",
+   "emissionStrength": 0.8,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_hull_glow",
+   "shader": "painted",
+   "albedo": "arena_hull_glow.png",
+   "emissionMap": "arena_hull_glow_emit.png",
+   "emissionStrength": 7.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_hull_light",
+   "shader": "painted",
+   "albedo": "arena_hull_light.png",
+   "emissionMap": "arena_hull_light_emit.png",
+   "emissionStrength": 2.8,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_hull_pad",
+   "shader": "painted",
+   "albedo": "arena_hull_pad.png",
+   "emissionMap": "arena_hull_pad_emit.png",
+   "emissionStrength": 3.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_hull_paving",
+   "shader": "painted",
+   "albedo": "arena_hull_paving.png",
+   "emissionMap": "",
+   "emissionStrength": 0.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_hull_plate_a",
+   "shader": "painted",
+   "albedo": "arena_hull_plate_a.png",
+   "emissionMap": "",
+   "emissionStrength": 0.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_hull_plate_b",
+   "shader": "painted",
+   "albedo": "arena_hull_plate_b.png",
+   "emissionMap": "",
+   "emissionStrength": 0.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_hull_shaft",
+   "shader": "painted",
+   "albedo": "arena_hull_shaft.png",
+   "emissionMap": "arena_hull_shaft_emit.png",
+   "emissionStrength": 1.6,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_hull_steel",
+   "shader": "painted",
+   "albedo": "arena_hull_steel.png",
+   "emissionMap": "",
+   "emissionStrength": 0.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_hull_trim",
+   "shader": "painted",
+   "albedo": "arena_hull_trim.png",
+   "emissionMap": "arena_hull_trim_emit.png",
+   "emissionStrength": 2.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_roof_booth_glass",
+   "shader": "painted",
+   "albedo": "arena_roof_booth_glass.png",
+   "emissionMap": "arena_roof_booth_glass_emit.png",
+   "emissionStrength": 1.6,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_roof_booth_wall",
+   "shader": "painted",
+   "albedo": "arena_roof_booth_wall.png",
+   "emissionMap": "",
+   "emissionStrength": 0.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_roof_glazing",
+   "shader": "painted",
+   "albedo": "arena_roof_glazing.png",
+   "emissionMap": "arena_roof_glazing_emit.png",
+   "emissionStrength": 1.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_roof_housing",
+   "shader": "painted",
+   "albedo": "arena_roof_housing.png",
+   "emissionMap": "",
+   "emissionStrength": 0.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_roof_lamp",
+   "shader": "painted",
+   "albedo": "arena_roof_lamp.png",
+   "emissionMap": "arena_roof_lamp_emit.png",
+   "emissionStrength": 8.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_roof_led",
+   "shader": "painted",
+   "albedo": "arena_roof_led.png",
+   "emissionMap": "arena_roof_led_emit.png",
+   "emissionStrength": 1.6,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_roof_logo",
+   "shader": "painted",
+   "albedo": "arena_roof_logo.png",
+   "emissionMap": "arena_roof_logo_emit.png",
+   "emissionStrength": 1.2,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_roof_screen",
+   "shader": "painted",
+   "albedo": "arena_roof_screen.png",
+   "emissionMap": "arena_roof_screen_emit.png",
+   "emissionStrength": 1.2,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_roof_skin",
+   "shader": "painted",
+   "albedo": "arena_roof_skin.png",
+   "emissionMap": "",
+   "emissionStrength": 0.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_roof_steel",
+   "shader": "painted",
+   "albedo": "arena_roof_steel.png",
+   "emissionMap": "",
+   "emissionStrength": 0.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_stage_beam",
+   "shader": "painted",
+   "albedo": "arena_stage_beam.png",
+   "emissionMap": "",
+   "emissionStrength": 1.6,
+   "alphaFromAlbedo": true,
+   "blend": "blend",
+   "twoSided": true,
+   "size": [
+    256,
+    512
+   ],
+   "notes": [
+    "two-sided: 50 per cent open edges"
+   ]
+  },
+  {
+   "name": "arena_stage_beamcore",
+   "shader": "painted",
+   "albedo": "arena_stage_beamcore.png",
+   "emissionMap": "",
+   "emissionStrength": 1.6,
+   "alphaFromAlbedo": true,
+   "blend": "blend",
+   "twoSided": true,
+   "size": [
+    256,
+    256
+   ],
+   "notes": [
+    "two-sided: 50 per cent open edges"
+   ]
+  },
+  {
+   "name": "arena_stage_deck",
+   "shader": "painted",
+   "albedo": "arena_stage_deck.png",
+   "emissionMap": "arena_stage_deck_emit.png",
+   "emissionStrength": 1.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_stage_hull",
+   "shader": "painted",
+   "albedo": "arena_stage_hull.png",
+   "emissionMap": "",
+   "emissionStrength": 0.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_stage_line",
+   "shader": "painted",
+   "albedo": "arena_stage_line.png",
+   "emissionMap": "arena_stage_line_emit.png",
+   "emissionStrength": 1.0,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_stage_mark",
+   "shader": "painted",
+   "albedo": "arena_stage_mark.png",
+   "emissionMap": "arena_stage_mark_emit.png",
+   "emissionStrength": 1.4,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_stage_props",
+   "shader": "painted",
+   "albedo": "arena_stage_props.png",
+   "emissionMap": "arena_stage_props_emit.png",
+   "emissionStrength": 1.15,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_stage_rim",
+   "shader": "painted",
+   "albedo": "arena_stage_rim.png",
+   "emissionMap": "arena_stage_rim_emit.png",
+   "emissionStrength": 3.2,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  },
+  {
+   "name": "arena_stage_spot",
+   "shader": "painted",
+   "albedo": "arena_stage_spot.png",
+   "emissionMap": "arena_stage_spot.png",
+   "emissionStrength": 0.7,
+   "alphaFromAlbedo": true,
+   "blend": "blend",
+   "twoSided": true,
+   "size": [
+    512,
+    512
+   ],
+   "notes": [
+    "two-sided: 100 per cent open edges"
+   ]
+  },
+  {
+   "name": "arena_stage_under",
+   "shader": "painted",
+   "albedo": "arena_stage_under.png",
+   "emissionMap": "arena_stage_under_emit.png",
+   "emissionStrength": 2.2,
+   "alphaFromAlbedo": false,
+   "blend": "opaque",
+   "twoSided": false,
+   "size": [
+    1024,
+    1024
+   ],
+   "notes": []
+  }
+ ],
+ "placements": [
+  {
+   "model": "arena_bowl_field",
+   "group": "Bowl",
+   "object": "arena_bowl_field",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_field_logo",
+   "group": "Bowl",
+   "object": "arena_bowl_field_logo",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_fins",
+   "group": "Bowl",
+   "object": "arena_bowl_fins",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_kiosks",
+   "group": "Bowl",
+   "object": "arena_bowl_kiosks",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_lower_s00",
+   "group": "Bowl",
+   "object": "arena_bowl_lower_s00",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_lower_s01",
+   "group": "Bowl",
+   "object": "arena_bowl_lower_s01",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_lower_s02",
+   "group": "Bowl",
+   "object": "arena_bowl_lower_s02",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_lower_s03",
+   "group": "Bowl",
+   "object": "arena_bowl_lower_s03",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_lower_s04",
+   "group": "Bowl",
+   "object": "arena_bowl_lower_s04",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_lower_s05",
+   "group": "Bowl",
+   "object": "arena_bowl_lower_s05",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_lower_s06",
+   "group": "Bowl",
+   "object": "arena_bowl_lower_s06",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_lower_s07",
+   "group": "Bowl",
+   "object": "arena_bowl_lower_s07",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_rails_s00",
+   "group": "Bowl",
+   "object": "arena_bowl_rails_s00",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_rails_s01",
+   "group": "Bowl",
+   "object": "arena_bowl_rails_s01",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_rails_s02",
+   "group": "Bowl",
+   "object": "arena_bowl_rails_s02",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_rails_s03",
+   "group": "Bowl",
+   "object": "arena_bowl_rails_s03",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_rails_s04",
+   "group": "Bowl",
+   "object": "arena_bowl_rails_s04",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_rails_s05",
+   "group": "Bowl",
+   "object": "arena_bowl_rails_s05",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_rails_s06",
+   "group": "Bowl",
+   "object": "arena_bowl_rails_s06",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_rails_s07",
+   "group": "Bowl",
+   "object": "arena_bowl_rails_s07",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_rails_s08",
+   "group": "Bowl",
+   "object": "arena_bowl_rails_s08",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_rails_s09",
+   "group": "Bowl",
+   "object": "arena_bowl_rails_s09",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_rails_s10",
+   "group": "Bowl",
+   "object": "arena_bowl_rails_s10",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_rails_s11",
+   "group": "Bowl",
+   "object": "arena_bowl_rails_s11",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_tower_0",
+   "group": "Bowl",
+   "object": "arena_bowl_tower_0",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_tower_1",
+   "group": "Bowl",
+   "object": "arena_bowl_tower_1",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_tower_2",
+   "group": "Bowl",
+   "object": "arena_bowl_tower_2",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_tower_3",
+   "group": "Bowl",
+   "object": "arena_bowl_tower_3",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_tower_4",
+   "group": "Bowl",
+   "object": "arena_bowl_tower_4",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_tower_5",
+   "group": "Bowl",
+   "object": "arena_bowl_tower_5",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_tower_6",
+   "group": "Bowl",
+   "object": "arena_bowl_tower_6",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_tower_7",
+   "group": "Bowl",
+   "object": "arena_bowl_tower_7",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_upper_000",
+   "group": "Bowl",
+   "object": "arena_bowl_upper_000",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_upper_090",
+   "group": "Bowl",
+   "object": "arena_bowl_upper_090",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_upper_180",
+   "group": "Bowl",
+   "object": "arena_bowl_upper_180",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_bowl_upper_270",
+   "group": "Bowl",
+   "object": "arena_bowl_upper_270",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_canopy_east",
+   "group": "Roof",
+   "object": "roof_canopy_east",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_canopy_north",
+   "group": "Roof",
+   "object": "roof_canopy_north",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_canopy_south",
+   "group": "Roof",
+   "object": "roof_canopy_south",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_canopy_steel_east",
+   "group": "Roof",
+   "object": "roof_canopy_steel_east",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_canopy_steel_north",
+   "group": "Roof",
+   "object": "roof_canopy_steel_north",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_canopy_steel_south",
+   "group": "Roof",
+   "object": "roof_canopy_steel_south",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_canopy_steel_west",
+   "group": "Roof",
+   "object": "roof_canopy_steel_west",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_canopy_west",
+   "group": "Roof",
+   "object": "roof_canopy_west",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_corner_screen_ne",
+   "group": "Roof",
+   "object": "roof_corner_screen_ne",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_corner_screen_nw",
+   "group": "Roof",
+   "object": "roof_corner_screen_nw",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_corner_screen_se",
+   "group": "Roof",
+   "object": "roof_corner_screen_se",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_corner_screen_steel_ne",
+   "group": "Roof",
+   "object": "roof_corner_screen_steel_ne",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_corner_screen_steel_nw",
+   "group": "Roof",
+   "object": "roof_corner_screen_steel_nw",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_corner_screen_steel_se",
+   "group": "Roof",
+   "object": "roof_corner_screen_steel_se",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_corner_screen_steel_sw",
+   "group": "Roof",
+   "object": "roof_corner_screen_steel_sw",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_corner_screen_sw",
+   "group": "Roof",
+   "object": "roof_corner_screen_sw",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_floodlights_east",
+   "group": "Roof",
+   "object": "roof_floodlights_east",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_floodlights_north",
+   "group": "Roof",
+   "object": "roof_floodlights_north",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_floodlights_south",
+   "group": "Roof",
+   "object": "roof_floodlights_south",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_floodlights_west",
+   "group": "Roof",
+   "object": "roof_floodlights_west",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_host_booth",
+   "group": "Roof",
+   "object": "roof_host_booth",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_scoreboard",
+   "group": "Roof",
+   "object": "roof_scoreboard",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "roof_scoreboard_rigging",
+   "group": "Roof",
+   "object": "roof_scoreboard_rigging",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_engine_0",
+   "group": "Hull",
+   "object": "engine 0",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_engine_1",
+   "group": "Hull",
+   "object": "engine 1",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_engine_2",
+   "group": "Hull",
+   "object": "engine 2",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_engine_3",
+   "group": "Hull",
+   "object": "engine 3",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_engine_4",
+   "group": "Hull",
+   "object": "engine 4",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_engine_5",
+   "group": "Hull",
+   "object": "engine 5",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_engine_6",
+   "group": "Hull",
+   "object": "engine 6",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_engine_7",
+   "group": "Hull",
+   "object": "engine 7",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_engine_gussets_and_actuators",
+   "group": "Hull",
+   "object": "engine gussets and actuators",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_gate_hall_0",
+   "group": "Hull",
+   "object": "gate hall 0",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_gate_hall_180",
+   "group": "Hull",
+   "object": "gate hall 180",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_gate_hall_270",
+   "group": "Hull",
+   "object": "gate hall 270",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_gate_hall_90",
+   "group": "Hull",
+   "object": "gate hall 90",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_hull_body_deck_rim_flank_tiers_keel_s00",
+   "group": "Hull",
+   "object": "hull_hull_body_deck_rim_flank_tiers_keel_s00",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_hull_body_deck_rim_flank_tiers_keel_s01",
+   "group": "Hull",
+   "object": "hull_hull_body_deck_rim_flank_tiers_keel_s01",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_hull_body_deck_rim_flank_tiers_keel_s02",
+   "group": "Hull",
+   "object": "hull_hull_body_deck_rim_flank_tiers_keel_s02",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_hull_body_deck_rim_flank_tiers_keel_s03",
+   "group": "Hull",
+   "object": "hull_hull_body_deck_rim_flank_tiers_keel_s03",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_hull_body_deck_rim_flank_tiers_keel_s04",
+   "group": "Hull",
+   "object": "hull_hull_body_deck_rim_flank_tiers_keel_s04",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_hull_body_deck_rim_flank_tiers_keel_s05",
+   "group": "Hull",
+   "object": "hull_hull_body_deck_rim_flank_tiers_keel_s05",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_hull_body_deck_rim_flank_tiers_keel_s06",
+   "group": "Hull",
+   "object": "hull_hull_body_deck_rim_flank_tiers_keel_s06",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_hull_body_deck_rim_flank_tiers_keel_s07",
+   "group": "Hull",
+   "object": "hull_hull_body_deck_rim_flank_tiers_keel_s07",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_keel_fins",
+   "group": "Hull",
+   "object": "keel fins",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_landing_pad_135",
+   "group": "Hull",
+   "object": "landing pad 135",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_landing_pad_225",
+   "group": "Hull",
+   "object": "landing pad 225",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_landing_pad_315",
+   "group": "Hull",
+   "object": "landing pad 315",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_landing_pad_45",
+   "group": "Hull",
+   "object": "landing pad 45",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_pad_arms_and_braces",
+   "group": "Hull",
+   "object": "pad arms and braces",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_parked_craft_two_shuttles_a_lifter",
+   "group": "Hull",
+   "object": "parked craft (two shuttles, a lifter)",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_plaza_lamps",
+   "group": "Hull",
+   "object": "plaza lamps",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_plaza_planters_benches_and_kiosks",
+   "group": "Hull",
+   "object": "plaza planters, benches and kiosks",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_rim_balustrade",
+   "group": "Hull",
+   "object": "rim balustrade",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_shaft_liner_wall_ribs_ledges_exit_ring",
+   "group": "Hull",
+   "object": "shaft liner (wall, ribs, ledges, exit ring)",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_shaft_machinery_cabinets_tanks_coils_vents_ducts",
+   "group": "Hull",
+   "object": "shaft machinery (cabinets, tanks, coils, vents, ducts)",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "hull_underside_gear_gondolas_tank_racks_vents_antennas",
+   "group": "Hull",
+   "object": "underside gear (gondolas, tank racks, vents, antennas)",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t01_singsing_body",
+   "group": "City",
+   "object": "city_T01_singsing_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t01_singsing_fx",
+   "group": "City",
+   "object": "city_T01_singsing_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t01_singsing_parts",
+   "group": "City",
+   "object": "city_T01_singsing_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t02_balangkas_body",
+   "group": "City",
+   "object": "city_T02_balangkas_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t02_balangkas_fx",
+   "group": "City",
+   "object": "city_T02_balangkas_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t02_balangkas_parts",
+   "group": "City",
+   "object": "city_T02_balangkas_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t03_tirahan_body",
+   "group": "City",
+   "object": "city_T03_tirahan_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t03_tirahan_fx",
+   "group": "City",
+   "object": "city_T03_tirahan_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t03_tirahan_parts",
+   "group": "City",
+   "object": "city_T03_tirahan_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t04_haligi_body",
+   "group": "City",
+   "object": "city_T04_haligi_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t04_haligi_fx",
+   "group": "City",
+   "object": "city_T04_haligi_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t04_haligi_parts",
+   "group": "City",
+   "object": "city_T04_haligi_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t05_patong_body",
+   "group": "City",
+   "object": "city_T05_patong_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t05_patong_fx",
+   "group": "City",
+   "object": "city_T05_patong_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t05_patong_parts",
+   "group": "City",
+   "object": "city_T05_patong_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t06_tirahan_body",
+   "group": "City",
+   "object": "city_T06_tirahan_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t06_tirahan_fx",
+   "group": "City",
+   "object": "city_T06_tirahan_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t06_tirahan_parts",
+   "group": "City",
+   "object": "city_T06_tirahan_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t07_bilog_body",
+   "group": "City",
+   "object": "city_T07_bilog_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t07_bilog_fx",
+   "group": "City",
+   "object": "city_T07_bilog_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t07_bilog_parts",
+   "group": "City",
+   "object": "city_T07_bilog_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t08_magkapatid_body",
+   "group": "City",
+   "object": "city_T08_magkapatid_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t08_magkapatid_body_b",
+   "group": "City",
+   "object": "city_T08_magkapatid_body_b",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t08_magkapatid_fx",
+   "group": "City",
+   "object": "city_T08_magkapatid_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t08_magkapatid_parts",
+   "group": "City",
+   "object": "city_T08_magkapatid_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t09_haligi_body",
+   "group": "City",
+   "object": "city_T09_haligi_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t09_haligi_fx",
+   "group": "City",
+   "object": "city_T09_haligi_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t09_haligi_parts",
+   "group": "City",
+   "object": "city_T09_haligi_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t10_balangkas_body",
+   "group": "City",
+   "object": "city_T10_balangkas_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t10_balangkas_fx",
+   "group": "City",
+   "object": "city_T10_balangkas_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t10_balangkas_parts",
+   "group": "City",
+   "object": "city_T10_balangkas_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t11_patong_body",
+   "group": "City",
+   "object": "city_T11_patong_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t11_patong_fx",
+   "group": "City",
+   "object": "city_T11_patong_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t11_patong_parts",
+   "group": "City",
+   "object": "city_T11_patong_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t12_korona_body",
+   "group": "City",
+   "object": "city_T12_korona_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t12_korona_fx",
+   "group": "City",
+   "object": "city_T12_korona_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t12_korona_parts",
+   "group": "City",
+   "object": "city_T12_korona_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t13_talim_body",
+   "group": "City",
+   "object": "city_T13_talim_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t13_talim_fx",
+   "group": "City",
+   "object": "city_T13_talim_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t13_talim_parts",
+   "group": "City",
+   "object": "city_T13_talim_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t14_hagdan_body",
+   "group": "City",
+   "object": "city_T14_hagdan_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t14_hagdan_fx",
+   "group": "City",
+   "object": "city_T14_hagdan_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t14_hagdan_parts",
+   "group": "City",
+   "object": "city_T14_hagdan_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t15_talim_body",
+   "group": "City",
+   "object": "city_T15_talim_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t15_talim_fx",
+   "group": "City",
+   "object": "city_T15_talim_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t15_talim_parts",
+   "group": "City",
+   "object": "city_T15_talim_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t16_bilog_body",
+   "group": "City",
+   "object": "city_T16_bilog_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t16_bilog_fx",
+   "group": "City",
+   "object": "city_T16_bilog_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t16_bilog_parts",
+   "group": "City",
+   "object": "city_T16_bilog_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t17_parola_body",
+   "group": "City",
+   "object": "city_T17_parola_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t17_parola_fx",
+   "group": "City",
+   "object": "city_T17_parola_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t17_parola_parts",
+   "group": "City",
+   "object": "city_T17_parola_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t18_hagdan_body",
+   "group": "City",
+   "object": "city_T18_hagdan_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t18_hagdan_fx",
+   "group": "City",
+   "object": "city_T18_hagdan_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t18_hagdan_parts",
+   "group": "City",
+   "object": "city_T18_hagdan_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t19_bilog_body",
+   "group": "City",
+   "object": "city_T19_bilog_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t19_bilog_fx",
+   "group": "City",
+   "object": "city_T19_bilog_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t19_bilog_parts",
+   "group": "City",
+   "object": "city_T19_bilog_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t20_patong_body",
+   "group": "City",
+   "object": "city_T20_patong_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t20_patong_fx",
+   "group": "City",
+   "object": "city_T20_patong_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t20_patong_parts",
+   "group": "City",
+   "object": "city_T20_patong_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t21_hagdan_body",
+   "group": "City",
+   "object": "city_T21_hagdan_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t21_hagdan_fx",
+   "group": "City",
+   "object": "city_T21_hagdan_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t21_hagdan_parts",
+   "group": "City",
+   "object": "city_T21_hagdan_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t22_bilog_body",
+   "group": "City",
+   "object": "city_T22_bilog_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t22_bilog_fx",
+   "group": "City",
+   "object": "city_T22_bilog_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t22_bilog_parts",
+   "group": "City",
+   "object": "city_T22_bilog_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t24_balangkas_body",
+   "group": "City",
+   "object": "city_T24_balangkas_body",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t24_balangkas_fx",
+   "group": "City",
+   "object": "city_T24_balangkas_fx",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_t24_balangkas_parts",
+   "group": "City",
+   "object": "city_T24_balangkas_parts",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_depths_blocks",
+   "group": "City",
+   "object": "city_depths_blocks",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_far_towers",
+   "group": "City",
+   "object": "city_far_towers",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_floor",
+   "group": "City",
+   "object": "city_floor",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_haze_300",
+   "group": "City",
+   "object": "city_haze_300",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_haze_470",
+   "group": "City",
+   "object": "city_haze_470",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_haze_640",
+   "group": "City",
+   "object": "city_haze_640",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_rail",
+   "group": "City",
+   "object": "city_rail",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_skybridges",
+   "group": "City",
+   "object": "city_skybridges",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "city_train",
+   "group": "Train",
+   "object": "city_train",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_arm_rest",
+   "group": "Holo",
+   "object": "arena_holo_balloon_arm_rest",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -47.764332,
+    0.0,
+    1.0,
+    0.0,
+    122.227722,
+    0.0,
+    0.0,
+    1.0,
+    -157.640213,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_arm_wave",
+   "group": "Holo",
+   "object": "arena_holo_balloon_arm_wave",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -77.447876,
+    0.0,
+    1.0,
+    0.0,
+    123.401505,
+    0.0,
+    0.0,
+    1.0,
+    -148.869049,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_body",
+   "group": "Holo",
+   "object": "arena_holo_balloon_body",
+   "matrix": [
+    -0.961262,
+    0.057308,
+    -0.269614,
+    -62.338478,
+    0.0,
+    0.978148,
+    0.207912,
+    126.335945,
+    0.275637,
+    0.199858,
+    -0.940256,
+    -152.552719,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_leg_l",
+   "group": "Holo",
+   "object": "arena_holo_balloon_leg_l",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -57.014839,
+    0.0,
+    1.0,
+    0.0,
+    101.033485,
+    0.0,
+    0.0,
+    1.0,
+    -157.834213,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_leg_r",
+   "group": "Holo",
+   "object": "arena_holo_balloon_leg_r",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -69.649086,
+    0.0,
+    1.0,
+    0.0,
+    101.031273,
+    0.0,
+    0.0,
+    1.0,
+    -154.200607,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_mooring",
+   "group": "Holo",
+   "object": "arena_holo_balloon_mooring",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -73.815399,
+    0.0,
+    1.0,
+    0.0,
+    72.191513,
+    0.0,
+    0.0,
+    1.0,
+    -161.973099,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_rope_0",
+   "group": "Holo",
+   "object": "arena_holo_balloon_rope_0",
+   "matrix": [
+    -0.256916,
+    0.277168,
+    0.925836,
+    -73.815399,
+    0.0,
+    0.957992,
+    -0.286794,
+    72.191513,
+    -0.966434,
+    -0.073682,
+    -0.246123,
+    -161.973099,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_rope_1",
+   "group": "Holo",
+   "object": "arena_holo_balloon_rope_1",
+   "matrix": [
+    -0.805505,
+    0.151679,
+    0.572848,
+    -65.164856,
+    0.0,
+    0.966687,
+    -0.25596,
+    71.534233,
+    -0.592588,
+    -0.206177,
+    -0.778672,
+    -159.871155,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_rope_2",
+   "group": "Holo",
+   "object": "arena_holo_balloon_rope_2",
+   "matrix": [
+    -0.855103,
+    0.16276,
+    0.492249,
+    -77.904312,
+    0.0,
+    0.949446,
+    -0.313931,
+    71.534203,
+    -0.518459,
+    -0.268443,
+    -0.811873,
+    -154.06546,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_rope_3",
+   "group": "Holo",
+   "object": "arena_holo_balloon_rope_3",
+   "matrix": [
+    0.250058,
+    0.270536,
+    0.929667,
+    -69.686195,
+    0.0,
+    0.960171,
+    -0.279413,
+    70.495995,
+    -0.968231,
+    0.069869,
+    0.240098,
+    -170.998047,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_rope_4",
+   "group": "Holo",
+   "object": "arena_holo_balloon_rope_4",
+   "matrix": [
+    0.279332,
+    0.172916,
+    0.944496,
+    -83.335609,
+    0.0,
+    0.983651,
+    -0.180084,
+    70.495995,
+    -0.960194,
+    0.050303,
+    0.274766,
+    -164.777649,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_scrap",
+   "group": "Holo",
+   "object": "arena_holo_balloon_scrap",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -69.875816,
+    0.0,
+    1.0,
+    0.0,
+    70.693756,
+    0.0,
+    0.0,
+    1.0,
+    -153.328461,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_tail_a",
+   "group": "Holo",
+   "object": "arena_holo_balloon_tail_a",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -67.329231,
+    0.0,
+    1.0,
+    0.0,
+    106.87233,
+    0.0,
+    0.0,
+    1.0,
+    -142.924362,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_balloon_tail_b",
+   "group": "Holo",
+   "object": "arena_holo_balloon_tail_b",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -67.329231,
+    0.0,
+    1.0,
+    0.0,
+    106.87233,
+    0.0,
+    0.0,
+    1.0,
+    -142.924362,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_column_ne_ads",
+   "group": "Holo",
+   "object": "arena_holo_column_ne_ads",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    339.219238,
+    0.0,
+    1.0,
+    0.0,
+    44.0,
+    0.0,
+    0.0,
+    1.0,
+    211.967712,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_column_ne_rig",
+   "group": "Holo",
+   "object": "arena_holo_column_ne_rig",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    339.219238,
+    0.0,
+    1.0,
+    0.0,
+    44.0,
+    0.0,
+    0.0,
+    1.0,
+    211.967712,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_column_nw_ads",
+   "group": "Holo",
+   "object": "arena_holo_column_nw_ads",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -206.668518,
+    0.0,
+    1.0,
+    0.0,
+    44.0,
+    0.0,
+    0.0,
+    1.0,
+    330.73877,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_column_nw_rig",
+   "group": "Holo",
+   "object": "arena_holo_column_nw_rig",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -206.668518,
+    0.0,
+    1.0,
+    0.0,
+    44.0,
+    0.0,
+    0.0,
+    1.0,
+    330.73877,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_column_s_far_ads",
+   "group": "Holo",
+   "object": "arena_holo_column_s_far_ads",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -6.108575,
+    0.0,
+    1.0,
+    0.0,
+    190.0,
+    0.0,
+    0.0,
+    1.0,
+    -699.973328,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_column_s_far_rig",
+   "group": "Holo",
+   "object": "arena_holo_column_s_far_rig",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -6.108575,
+    0.0,
+    1.0,
+    0.0,
+    190.0,
+    0.0,
+    0.0,
+    1.0,
+    -699.973328,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_column_se_ads",
+   "group": "Holo",
+   "object": "arena_holo_column_se_ads",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    211.967712,
+    0.0,
+    1.0,
+    0.0,
+    44.0,
+    0.0,
+    0.0,
+    1.0,
+    -339.219238,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_column_se_rig",
+   "group": "Holo",
+   "object": "arena_holo_column_se_rig",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    211.967712,
+    0.0,
+    1.0,
+    0.0,
+    44.0,
+    0.0,
+    0.0,
+    1.0,
+    -339.219238,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_column_sw_ads",
+   "group": "Holo",
+   "object": "arena_holo_column_sw_ads",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -217.266891,
+    0.0,
+    1.0,
+    0.0,
+    44.0,
+    0.0,
+    0.0,
+    1.0,
+    -347.699707,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_column_sw_rig",
+   "group": "Holo",
+   "object": "arena_holo_column_sw_rig",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -217.266891,
+    0.0,
+    1.0,
+    0.0,
+    44.0,
+    0.0,
+    0.0,
+    1.0,
+    -347.699707,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_column_w_far_ads",
+   "group": "Holo",
+   "object": "arena_holo_column_w_far_ads",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -582.609436,
+    0.0,
+    1.0,
+    0.0,
+    150.0,
+    0.0,
+    0.0,
+    1.0,
+    212.05249,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_column_w_far_rig",
+   "group": "Holo",
+   "object": "arena_holo_column_w_far_rig",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -582.609436,
+    0.0,
+    1.0,
+    0.0,
+    150.0,
+    0.0,
+    0.0,
+    1.0,
+    212.05249,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_globe",
+   "group": "Holo",
+   "object": "arena_holo_globe",
+   "matrix": [
+    0.999812,
+    0.019227,
+    0.002696,
+    319.22049,
+    -0.019227,
+    0.961262,
+    0.274966,
+    222.0,
+    0.002696,
+    -0.274966,
+    0.96145,
+    22.322071,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_globe_cubes",
+   "group": "Holo",
+   "object": "arena_holo_globe_cubes",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    319.22049,
+    0.0,
+    1.0,
+    0.0,
+    222.0,
+    0.0,
+    0.0,
+    1.0,
+    22.322071,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_globe_rig",
+   "group": "Holo",
+   "object": "arena_holo_globe_rig",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    319.22049,
+    0.0,
+    1.0,
+    0.0,
+    222.0,
+    0.0,
+    0.0,
+    1.0,
+    22.322071,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_globe_ring",
+   "group": "Holo",
+   "object": "arena_holo_globe_ring",
+   "matrix": [
+    0.930386,
+    0.363724,
+    0.045688,
+    319.22049,
+    -0.366558,
+    0.924495,
+    0.104614,
+    222.0,
+    -0.004187,
+    -0.114079,
+    0.993463,
+    22.322071,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_sign_can",
+   "group": "Holo",
+   "object": "arena_holo_sign_can",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -329.54776,
+    0.0,
+    1.0,
+    0.0,
+    206.0,
+    0.0,
+    0.0,
+    1.0,
+    -17.270866,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_sign_can_rig",
+   "group": "Holo",
+   "object": "arena_holo_sign_can_rig",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -329.54776,
+    0.0,
+    1.0,
+    0.0,
+    206.0,
+    0.0,
+    0.0,
+    1.0,
+    -17.270866,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_sign_carabao",
+   "group": "Holo",
+   "object": "arena_holo_sign_carabao",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -317.417358,
+    0.0,
+    1.0,
+    0.0,
+    252.0,
+    0.0,
+    0.0,
+    1.0,
+    -121.8451,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_sign_carabao_rig",
+   "group": "Holo",
+   "object": "arena_holo_sign_carabao_rig",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -317.417358,
+    0.0,
+    1.0,
+    0.0,
+    252.0,
+    0.0,
+    0.0,
+    1.0,
+    -121.8451,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_sign_jeepney",
+   "group": "Holo",
+   "object": "arena_holo_sign_jeepney",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    110.693176,
+    0.0,
+    1.0,
+    0.0,
+    226.0,
+    0.0,
+    0.0,
+    1.0,
+    -321.476318,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_sign_jeepney_rig",
+   "group": "Holo",
+   "object": "arena_holo_sign_jeepney_rig",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    110.693176,
+    0.0,
+    1.0,
+    0.0,
+    226.0,
+    0.0,
+    0.0,
+    1.0,
+    -321.476318,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_sign_pcx_east",
+   "group": "Holo",
+   "object": "arena_holo_sign_pcx_east",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    357.083191,
+    0.0,
+    1.0,
+    0.0,
+    262.0,
+    0.0,
+    0.0,
+    1.0,
+    -129.967651,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_sign_pcx_east_cubes",
+   "group": "Holo",
+   "object": "arena_holo_sign_pcx_east_cubes",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    357.083191,
+    0.0,
+    1.0,
+    0.0,
+    262.0,
+    0.0,
+    0.0,
+    1.0,
+    -129.967651,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_sign_pcx_east_rig",
+   "group": "Holo",
+   "object": "arena_holo_sign_pcx_east_rig",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    357.083191,
+    0.0,
+    1.0,
+    0.0,
+    262.0,
+    0.0,
+    0.0,
+    1.0,
+    -129.967651,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_sign_pcx_far",
+   "group": "Holo",
+   "object": "arena_holo_sign_pcx_far",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -117.638718,
+    0.0,
+    1.0,
+    0.0,
+    524.312927,
+    0.0,
+    0.0,
+    1.0,
+    -742.741638,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_sign_pcx_far_rig",
+   "group": "Holo",
+   "object": "arena_holo_sign_pcx_far_rig",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -117.638718,
+    0.0,
+    1.0,
+    0.0,
+    524.312927,
+    0.0,
+    0.0,
+    1.0,
+    -742.741638,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_sign_rooster",
+   "group": "Holo",
+   "object": "arena_holo_sign_rooster",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -319.488708,
+    0.0,
+    1.0,
+    0.0,
+    214.0,
+    0.0,
+    0.0,
+    1.0,
+    82.625404,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_sign_rooster_rig",
+   "group": "Holo",
+   "object": "arena_holo_sign_rooster_rig",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -319.488708,
+    0.0,
+    1.0,
+    0.0,
+    214.0,
+    0.0,
+    0.0,
+    1.0,
+    82.625404,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_sign_sampaguita",
+   "group": "Holo",
+   "object": "arena_holo_sign_sampaguita",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    305.970673,
+    0.0,
+    1.0,
+    0.0,
+    206.0,
+    0.0,
+    0.0,
+    1.0,
+    123.620178,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_sign_sampaguita_rig",
+   "group": "Holo",
+   "object": "arena_holo_sign_sampaguita_rig",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    305.970673,
+    0.0,
+    1.0,
+    0.0,
+    206.0,
+    0.0,
+    0.0,
+    1.0,
+    123.620178,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_sign_tump",
+   "group": "Holo",
+   "object": "arena_holo_sign_tump",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -45.927124,
+    0.0,
+    1.0,
+    0.0,
+    218.0,
+    0.0,
+    0.0,
+    1.0,
+    326.788452,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_sign_tump_cubes",
+   "group": "Holo",
+   "object": "arena_holo_sign_tump_cubes",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -45.927124,
+    0.0,
+    1.0,
+    0.0,
+    218.0,
+    0.0,
+    0.0,
+    1.0,
+    326.788452,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_sign_tump_rig",
+   "group": "Holo",
+   "object": "arena_holo_sign_tump_rig",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    -45.927124,
+    0.0,
+    1.0,
+    0.0,
+    218.0,
+    0.0,
+    0.0,
+    1.0,
+    326.788452,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_slipper",
+   "group": "Holo",
+   "object": "arena_holo_slipper",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    95.524681,
+    0.0,
+    1.0,
+    0.0,
+    174.0,
+    0.0,
+    0.0,
+    1.0,
+    236.431885,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_slipper_cubes",
+   "group": "Holo",
+   "object": "arena_holo_slipper_cubes",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    95.524681,
+    0.0,
+    1.0,
+    0.0,
+    174.0,
+    0.0,
+    0.0,
+    1.0,
+    236.431885,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "arena_holo_slipper_rig",
+   "group": "Holo",
+   "object": "arena_holo_slipper_rig",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    95.524681,
+    0.0,
+    1.0,
+    0.0,
+    174.0,
+    0.0,
+    0.0,
+    1.0,
+    236.431885,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  {
+   "model": "stage_shaft_rim",
+   "group": "StageRim",
+   "object": "stage_shaft_rim",
+   "matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  }
+ ]
+}

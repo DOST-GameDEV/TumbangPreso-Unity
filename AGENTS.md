@@ -30,6 +30,16 @@ Soraya's existing character. Naming does not authorize kit or art redesign.
 
 ## Finalized Paete And Phaister
 
+### October 5 owner exception: adopt QoLUpdates content
+
+The owner explicitly requested merging the current QoLUpdates branch safely.
+Its incoming roster models, rig references and authored motion are adopted as
+part of that integration. The owner specifically confirmed that its incoming
+Yasmin takes precedence over the earlier request to restore her old model.
+This scoped adoption does not authorize later unrelated hero redesigns. Preserve
+stable IDs, approved display names and the current ASTRA engineering fixes.
+Remove the temporary train prank hook from the integrated release path.
+
 - The owner-approved finalized Paete and Phaister implementations are authoritative
   over stale Wiki text, old TODO entries and earlier proposals.
 - Do not change either hero's mechanics, model, animation, VFX, SFX, cutscene,
