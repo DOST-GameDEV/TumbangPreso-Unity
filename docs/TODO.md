@@ -150,6 +150,14 @@ Nothing was deleted or renumbered.
   events across restarts. Actual native listen-host Stop/restart/external shutdown
   passes; this is diagnostic evidence, not closure of current QA host loss.
   [Evidence](reports/reliability-2026-10-05/network-shutdown-origin/README.md).
+- [x] Clear stale online availability at the real Play-session boundary when
+  domain reload is disabled. Original SDKUninitialized/gameSignedIn mismatch
+  becomes Initialized/SignedIn in both candidate Play sessions with preserved
+  profile; normal corrected editor online creation succeeds.
+  [Evidence](reports/reliability-2026-10-05/editor-online-lifetime/README.md).
+- [x] Current74 full Windows package confirms real corrected caret/loading
+  feedback and typed live-code admission, both normal player exits0.
+  [Current player proof](reports/reliability-2026-10-05/current-ui-online151/README.md#current74-package-with-final-field-and-glyph-fixes).
 - [x] Recover one transient Relay request timeout with an ownership-scoped retry.
   Native2causes/2controls -> seven passes including repeat/cancel/replacement.
   [Evidence](reports/reliability-2026-10-05/relay-request-timeout/README.md).

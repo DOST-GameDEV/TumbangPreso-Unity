@@ -22,20 +22,24 @@ explicitly authorized; unnecessary AGENTS feature entry was removed at owner req
 ## Current source and live work
 
 Latest owner focus: UI appearance/quality/future-proof imports, network robustness
-and optimization. Root04ffa1bb8 ships field layering after native23360 actual thin-caret width,
-bounds/render order and visible capture PASS. Current filled-glyph one-pixel
-AA/adaptive circle unit passes native1072 Home at1080p/1440p/4K; parents terminal0.
-19310 frozen inputs restored,202 generated metadata per unit retained/restored.
-Next publish glyph unit; one next coherent Windows package includes final field
-layer and glyph smoothing. Latest893 package predates these two source units.
-No owned actors active. Preserve private draft/Auditor and all supplied PNGs.
-893 helper's31-char profile was rejected10006; future names <=30, e.g.
-pc-ui151-host1005v2. This is harness failure, not QA timeout proof.
-Independent actual c526 public/code rejoin and298s host survival passed; both
-players0 and all profiles/shared inputs restored. QA host loss remains OPEN.
+and optimization. Root74a229a19 UI field-layer/filled-glyph/source-quality changes are packaged.
+FullWindows15980 exits0,258files/2691129403bytes, runtime
+ac868b3a882dd383b5c51ff344e6f35e17e9647758fb156f5dd0219cf8fe912f.
+Actual74 normalPairKKW5 shows correct loading/caret, typed live-code joins2/4,
+host survives admission/client exit, bothplayers0; parent39716 restores inputs.
+Current narrow NetIdentity session hook: original actual editor2ndPlay has SDK
+Uninitialized vs cachedSignedIn. Candidate natural1st/2ndPlay bothInitialized/
+SignedIn with same profile; visible corrected onlinehost7WXK succeeds. Original
+editor hostedJJRM and accepted standalone peer2/4 despite staleCore, noQA kick
+reproduction. Keep reported QA timeout/hostloss OPEN. Parents73973/34184 and
+peer47013 terminal0; shared prefs/profiles/Quality/EditorSettings/lastScene and
+202 metadata restored exactly. No owned actors active. Next publish the hook
+and evidence; package with next coherent source unit, no unchanged test loops.
+ActualCLI AppData/Local/Unity/bin/unity.exe; PATHunity.cmd is an Editor wrapper,
+never use it for status. SDK profiles must be <=30chars; no made-up RAM guards.
 Current QA ONLINE timeout/hostreturnedHome remains OPEN; local97a online admission
 passed but does not resolve the tester environment. Latest Windows
-packagec526bcc5d has current retry/UI guards but predates the latest caret/browser correction.
+package74a229a19 has all current UI fixes but predates the editor availability hook.
 LAN4x30 MTDX had one row, correct192.168.1.7 hint, matching4-round headers and
 FULL records equal, match58a49ff1d17f439cb05c7127ecd57dfb. Bothplayers exited0.
 NoRoot native editor/game/proxy/recorder active. OldYasmin cyan/goggles active;

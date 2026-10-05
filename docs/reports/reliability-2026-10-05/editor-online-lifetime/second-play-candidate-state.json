@@ -1,0 +1,34 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "caller": "plugin",
+      "skill": "unity-cli",
+      "format": "json",
+      "code": "return new { playing = UnityEditor.EditorApplication.isPlaying, services = Unity.Services.Core.UnityServices.State.ToString(), identity = TumbangPreso.Net.NetIdentity.State.ToString(), attempts = TumbangPreso.Net.NetIdentity.SignInAttempts, profile = TumbangPreso.Net.NetIdentity.Profile, sdkSignedIn = Unity.Services.Core.UnityServices.State == Unity.Services.Core.ServicesInitializationState.Initialized && Unity.Services.Authentication.AuthenticationService.Instance.IsSignedIn };"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": {
+        "playing": true,
+        "services": "Initialized",
+        "identity": "SignedIn",
+        "attempts": 1,
+        "profile": "pc-ed151c1005",
+        "sdkSignedIn": true
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "C:\\Users\\matth\\Documents\\Codex\\work\\tump-competition-candidate1003i"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

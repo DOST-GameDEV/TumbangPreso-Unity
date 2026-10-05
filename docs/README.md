@@ -1,5 +1,7 @@
 # Documentation: Start Here
 
+Real editor online lifetime: [Play-session mismatch and focused correction](reports/reliability-2026-10-05/editor-online-lifetime/README.md).
+
 Browser feedback and editable text: [native correction evidence](reports/reliability-2026-10-05/browser-and-editable-text/README.md).
 
 Current Windows UI/public and code joins: [actual player evidence](reports/reliability-2026-10-05/current-ui-online151/README.md).

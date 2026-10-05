@@ -208,6 +208,14 @@ namespace TumbangPreso.Net
         /// </summary>
         /// PlayerAccount may already be signing in from the boot sting's earlier service
         /// creation. The launch profile is selected at first access and this joins its task.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void BeginPlaySession()
+        {
+            // With domain reload disabled the cached successful task survives, while
+            // Unity Services starts a new lifetime. Retain the selected launch profile.
+            ForgetCurrentSession();
+        }
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void SignInAtBoot()
         {

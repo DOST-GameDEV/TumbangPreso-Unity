@@ -43,3 +43,27 @@ started in this unit. It is not two-machine/WAN acceptance, impairment validatio
 proof of every skill/result or closure of the owner's unexplained host loss.
 
 The two UI defects now have [focused source corrections and native evidence](../browser-and-editable-text/README.md); c526 itself still predates those corrections.
+
+## Current74 package with final field and glyph fixes
+
+Exact full source74a229a19, runtimeSHA
+ac868b3a882dd383b5c51ff344e6f35e17e9647758fb156f5dd0219cf8fe912f,
+258files/2691129403bytes. Build15980 exits0;203 generated metadata/EOL deltas
+retained then restored exactly, with19310 frozen source inputs unchanged after
+classification and all profiles/preferences/input/Quality restored.
+
+Normal host15260/client15624 use valid short pc-u74 profiles. Guest/title/Home
+work, host chooses ONLINE and public roomKKW5 opens. Client's initial browser
+shows Finding public rooms rather than prematurely reporting no rooms. Normal
+CODE route shows a visible caret inside the empty and typedKKW5 field, above
+the background. Pressing JOIN admits the client to seat2 and both players show
+2/4. Host survives admission and the client's normal exit, returning to1/4.
+Host deliberately presses Back and returns Home. Both ordinary sequential
+AltF4 exits0; parent39716 restores both settings and shared input. All package
+exe/runtime hashes remain unchanged. No match was started in this UI/code unit.
+
+This closes the missing current-player proof of the latest caret layer and
+browser loading feedback. It does not close the reported QA host loss. The
+testers used Unity Editor; current source disables domain and scene reload on
+Play Mode entry (EditorSettings options3). Repeated editor sessions and normal
+editor hosting/admission are the next distinct evidence gap, not an assumed cause.
