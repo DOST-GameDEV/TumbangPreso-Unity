@@ -47,7 +47,7 @@ namespace TumbangPreso.Map
         {
             public CanvasGroup Group;
             public Image Portrait, PlateImage, Flash, BarA, BarB, Rule;
-            public RawImage Roll;
+            public RawImage Roll, Lines;
             public Text Initial, Header, Name, Sub, Stamp;
         }
 
@@ -157,16 +157,17 @@ namespace TumbangPreso.Map
 
             face.Roll = Picture(go.transform, "Roll", Backlight(), new Vector2(Wide * 1.6f, 220.0f), new Color(0.6f, 0.85f, 1.0f, 0.10f), new Rect(0, 0, 1, 1));
             Picture(go.transform, "Pixels", Pixels(), new Vector2(Wide, Tall), new Color(1.0f, 1.0f, 1.0f, 0.62f), new Rect(0, 0, Wide / 8.0f, Tall / 8.0f));
+            face.Lines = Picture(go.transform, "Scanlines", Lines(), new Vector2(Wide, Tall), new Color(1.0f, 1.0f, 1.0f, 0.55f), new Rect(0, 0, 1, Tall / 14.0f));
             face.BarA = Fill(go.transform, "Scan A", Vector2.zero, new Vector2(Wide, 26.0f), new Color(1.0f, 1.0f, 1.0f, 0.0f));
             face.BarB = Fill(go.transform, "Scan B", Vector2.zero, new Vector2(Wide, 10.0f), new Color(1.0f, 1.0f, 1.0f, 0.0f));
             face.Flash = Fill(go.transform, "Flash", Vector2.zero, new Vector2(Wide, Tall), new Color(1.0f, 1.0f, 1.0f, 0.0f));
             return face;
         }
 
-        private static Texture2D _pixels, _backlight;
+        private static Texture2D _pixels, _backlight, _lines;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics() { _pixels = null; _backlight = null; }
+        private static void ResetStatics() { _pixels = null; _backlight = null; _lines = null; }
 
         /// <summary>One LED cell, tiled: black, clear in a soft round dot at the middle, so what is under shows as dots.</summary>
         private static Texture2D Pixels()
@@ -178,12 +179,34 @@ namespace TumbangPreso.Map
                 for (int x = 0; x < n; x++)
                 {
                     float dx = (x + 0.5f) / n - 0.5f, dy = (y + 0.5f) / n - 0.5f;
+                    // ⚠️ RGB SUB-PIXELS (owner, 2026-10-06: "theres no effect on it like the rgb pixels or scanlines
+                    // or wave distort"): each cell is a red, a green and a blue stripe, faint, with a dark gap
+                    // round the cell. Up close it is a grid of coloured dots; from the stands it is a screen.
                     float gap = Mathf.Clamp01((Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dy)) - 0.30f) / 0.16f);
-                    pixels[y * n + x] = new Color32(0, 0, 4, (byte)(gap * 255.0f));
+                    int stripe = Mathf.Clamp((int)((dx + 0.5f) * 3.0f), 0, 2);
+                    float tint = 0.30f * (1.0f - gap);
+                    byte r = (byte)(stripe == 0 ? 255 : 0), g = (byte)(stripe == 1 ? 255 : 0), b = (byte)(stripe == 2 ? 255 : 0);
+                    pixels[y * n + x] = gap > 0.02f ? new Color32(0, 0, 4, (byte)(gap * 255.0f)) : new Color32(r, g, b, (byte)(tint * 255.0f));
                 }
             _pixels = new Texture2D(n, n, TextureFormat.RGBA32, true) { name = "Arena screen LED cell", wrapMode = TextureWrapMode.Repeat, filterMode = FilterMode.Trilinear, hideFlags = HideFlags.DontSave };
             _pixels.SetPixels32(pixels); _pixels.Apply(true, true);
             return _pixels;
+        }
+
+        private static void Slide(Text text, float x, float y)
+        {
+            if (text != null) text.rectTransform.anchoredPosition = new Vector2(x, y);
+        }
+
+        /// <summary>Scanlines, tiled down the screen: one dark line in every four rows.</summary>
+        private static Texture2D Lines()
+        {
+            if (_lines != null) return _lines;
+            var pixels = new Color32[8];
+            for (int y = 0; y < 8; y++) pixels[y] = new Color32(0, 0, 6, (byte)(y < 2 ? 150 : y == 2 || y == 7 ? 60 : 0));
+            _lines = new Texture2D(1, 8, TextureFormat.RGBA32, true) { name = "Arena screen scanlines", wrapMode = TextureWrapMode.Repeat, filterMode = FilterMode.Trilinear, hideFlags = HideFlags.DontSave };
+            _lines.SetPixels32(pixels); _lines.Apply(true, true);
+            return _lines;
         }
 
         /// <summary>A soft white blob, whole at the middle and nothing at the rim: the backlight, and the rolling band.</summary>
@@ -304,6 +327,17 @@ namespace TumbangPreso.Map
             for (int k = 0; k < Faces; k++)
             {
                 var face = _faces[k];
+                float clock = Time.unscaledTime;
+                if (face.Lines != null) face.Lines.uvRect = new Rect(0, clock * 0.9f, 1, Tall / 14.0f);
+                // The wave: a signal that is not quite steady. Each row of the picture slides sideways on its own
+                // phase (a few units of 1950), and now and then the whole picture jumps a line.
+                float wave = Settings.SettingsStore.Current.ReducedUiMotion ? 0.0f : 1.0f;
+                float jump = Mathf.Repeat(clock * 0.31f + k * 0.17f, 1.0f) < 0.035f ? 14.0f * wave : 0.0f;
+                Slide(face.Header, 9.0f * wave * Mathf.Sin(clock * 5.1f + 0.0f) + jump, 334.0f);
+                Slide(face.Stamp, 9.0f * wave * Mathf.Sin(clock * 5.1f + 0.0f) + jump, 334.0f);
+                Slide(face.Name, 11.0f * wave * Mathf.Sin(clock * 4.3f + 2.1f) - jump, -302.0f);
+                Slide(face.Sub, 7.0f * wave * Mathf.Sin(clock * 6.2f + 4.0f) + jump, -394.0f);
+                face.Rule.rectTransform.anchoredPosition = new Vector2(6.0f * wave * Mathf.Sin(clock * 3.7f + 1.0f), 0.0f);
                 if (face.Roll != null) face.Roll.rectTransform.anchoredPosition = new Vector2(0.0f, (0.5f - Mathf.Repeat(Time.unscaledTime * 0.22f + k * 0.13f, 1.0f)) * (Tall + 220.0f));
                 face.BarA.rectTransform.anchoredPosition = new Vector2(0.0f, (a - 0.5f) * (Tall - 40.0f));
                 face.BarB.rectTransform.anchoredPosition = new Vector2(0.0f, (b - 0.5f) * (Tall - 40.0f));
