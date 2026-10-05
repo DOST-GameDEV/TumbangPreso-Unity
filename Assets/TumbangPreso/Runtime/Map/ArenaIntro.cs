@@ -501,7 +501,10 @@ namespace TumbangPreso.Map
                 // The idle, a frame on; the limbs' rest is what it has just written, so the walk is laid over it.
                 if (_anim[s] != null)
                 {
-                    _anim[s].AdvanceHeld(Time.unscaledDeltaTime);
+                    // ⚠️ THE IDLE STARTS AT THE CUT TO THE PLAYERS, NOT AT THE FILM'S START (owner, 2026-10-06: "the idle
+                    // animations play too early so it ends when the camera cuts to the player"). Until then the pose is
+                    // held at its first frame under the walk; from just before the spotlight's shot it runs.
+                    _anim[s].AdvanceHeld(age >= t.Spot - 0.15f ? Time.unscaledDeltaTime : 0.0f);
                     for (int k = 0; k < 4; k++) if (_limb[s * 4 + k] != null) _limbRest[s * 4 + k] = _limb[s * 4 + k].localRotation;
                 }
                 if (stride <= 0.001f) continue;
