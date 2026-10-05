@@ -135,7 +135,7 @@ namespace TumbangPreso.Map
             // The comic's dots, behind everything drawn on the screen: 75 across, in a lighter blue.
             Picture(go.transform, "Dots", Pixels(), new Vector2(Wide, Tall), new Color(0.45f, 0.55f, 1.0f, 0.20f), new Rect(0, 0, Wide / 26.0f, Tall / 26.0f));
             // A chunky ink-and-light border, as a panel in the game's UI has.
-            Border(go.transform, 26.0f, 14.0f, ArenaFx.Cyan);
+            Border(go.transform, 12.0f, 12.0f, ArenaFx.Cyan);
             // ⚠️ ONE COLUMN, CENTRED (owner, 2026-10-05, drawing over the first card, which had the
             // portrait at the left, the text at the right and TAYA stamped askew in the bottom corner:
             // "idk about the taya text.. its so off-layout"). His drawing: a line of text at the top,
@@ -151,10 +151,10 @@ namespace TumbangPreso.Map
 
             face.Header = Label(go.transform, "Header", 92, new Vector2(0.0f, 334.0f), new Vector2(1700.0f, 130.0f), ArenaFx.Cyan);
             face.Header.text = "WHO'S THE TAYA?";
-            face.Name = Label(go.transform, "Name", 128, new Vector2(0.0f, -302.0f), new Vector2(1700.0f, 150.0f), ArenaFx.White);
+            face.Name = Label(go.transform, "Name", 128, new Vector2(0.0f, -288.0f), new Vector2(1700.0f, 150.0f), ArenaFx.White);
             face.Name.resizeTextForBestFit = true; face.Name.resizeTextMinSize = 60; face.Name.resizeTextMaxSize = 128;
             face.Name.horizontalOverflow = HorizontalWrapMode.Wrap; face.Name.verticalOverflow = VerticalWrapMode.Truncate;
-            face.Sub = Label(go.transform, "Sub", 52, new Vector2(0.0f, -394.0f), new Vector2(1700.0f, 64.0f), ArenaFx.Cyan);
+            face.Sub = Label(go.transform, "Sub", 52, new Vector2(0.0f, -374.0f), new Vector2(1700.0f, 64.0f), ArenaFx.Cyan);
             face.Stamp = Label(go.transform, "Stamp", 150, new Vector2(0.0f, 334.0f), new Vector2(1700.0f, 170.0f), ArenaFx.Gold);
             face.Stamp.text = "TAYA";
             face.Stamp.gameObject.SetActive(false);
@@ -340,15 +340,7 @@ namespace TumbangPreso.Map
                 var face = _faces[k];
                 float clock = Time.unscaledTime;
                 if (face.Lines != null) face.Lines.uvRect = new Rect(0, clock * 0.35f, 1, Tall / 40.0f);
-                // The wave: a signal that is not quite steady. Each row of the picture slides sideways on its own
-                // phase (a few units of 1950), and now and then the whole picture jumps a line.
-                float wave = Settings.SettingsStore.Current.ReducedUiMotion ? 0.0f : 1.0f;
-                float jump = Mathf.Repeat(clock * 0.31f + k * 0.17f, 1.0f) < 0.035f ? 14.0f * wave : 0.0f;
-                Slide(face.Header, 9.0f * wave * Mathf.Sin(clock * 5.1f + 0.0f) + jump, 334.0f);
-                Slide(face.Stamp, 9.0f * wave * Mathf.Sin(clock * 5.1f + 0.0f) + jump, 334.0f);
-                Slide(face.Name, 11.0f * wave * Mathf.Sin(clock * 4.3f + 2.1f) - jump, -302.0f);
-                Slide(face.Sub, 7.0f * wave * Mathf.Sin(clock * 6.2f + 4.0f) + jump, -394.0f);
-                face.Rule.rectTransform.anchoredPosition = new Vector2(6.0f * wave * Mathf.Sin(clock * 3.7f + 1.0f), 0.0f);
+                // No wave: the rows sliding sideways read as the words moving, not as a screen (owner, 2026-10-06).
                 if (face.Roll != null) face.Roll.rectTransform.anchoredPosition = new Vector2(0.0f, (0.5f - Mathf.Repeat(Time.unscaledTime * 0.22f + k * 0.13f, 1.0f)) * (Tall + 220.0f));
                 face.BarA.rectTransform.anchoredPosition = new Vector2(0.0f, (a - 0.5f) * (Tall - 40.0f));
                 face.BarB.rectTransform.anchoredPosition = new Vector2(0.0f, (b - 0.5f) * (Tall - 40.0f));
