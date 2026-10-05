@@ -1,0 +1,12 @@
+{
+  "originalEditorLF": "d8a10ff1d2228541a90a811c3ded1acb4582585fa85a412c3cd44e74b31c3143",
+  "candidateEditorLF": "cd4a2e6750e4b0ccc6897f0a78b68ef797058731d16dc1e73516f1f3ac8b4220",
+  "qualifiedFixtureLF": "79e7959bc266e31dd6eea6b6cd65fa53de9eb36c407b60afcb0fb437208c055a",
+  "sourceArtworkBeforeAndAfterSHA256": {
+    "Assets/TumbangPreso/Resources/UI/map-cards/Arena.png": "43d79858c04c6a2ed1a04f0d859892f207e2fafc07bafd8f42121bd2d1aebef3",
+    "Assets/TumbangPreso/Resources/UI/mode-cards/HeroStrikeChoice.png": "3a128212dbf89054c4c80d1695ce9becd98c36dcfb20d1e7bffee4421760539e",
+    "Assets/TumbangPreso/Resources/UI/brand/tump_logo.png": "0ffd1a939988c50e4afc30e12f7382c49324da59b96c2750c9f2144eeae6cc7c"
+  },
+  "mainEditorChangedByLaptop": false,
+  "publicationOwner": "Desktop"
+}

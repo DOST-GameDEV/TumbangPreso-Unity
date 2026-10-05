@@ -1,0 +1,13 @@
+{
+  "base": "8c48b58f077c6add0cca32ea543e49dd4ad2789e",
+  "rootBase": "5aa0140ec3197f69dd400786edcd81ff8cba7879",
+  "filter": "TumbangPreso.Tests.UiCardImportQualityTests",
+  "expected": 3,
+  "question": "Actualmap/mode UIimports preserve authoredpixels/aspect/uncompressedcolor; brandcontrol",
+  "candidateSHA256": "cd4a2e6750e4b0ccc6897f0a78b68ef797058731d16dc1e73516f1f3ac8b4220",
+  "sourcePublicationOwner": "Desktop",
+  "platform": "EditMode",
+  "initialFixtureSHA256": "fbb1da2c4ffd3a01a0554406564ec92dedfb6a1a969f35ed9333ce730b12636e",
+  "fixtureSHA256": "79e7959bc266e31dd6eea6b6cd65fa53de9eb36c407b60afcb0fb437208c055a",
+  "fixtureRepair": "Sequential same assertions for installed NUnit; dimension/format log preserved"
+}

@@ -1,0 +1,7 @@
+{
+  "sourceAndImportedFacts": [
+    "[UiCardImport] Assets/TumbangPreso/Resources/UI/map-cards/Arena.png source=960x540 imported=1024x512 format=DXT1 compression=Compressed npot=ToNearest",
+    "[UiCardImport] Assets/TumbangPreso/Resources/UI/mode-cards/HeroStrikeChoice.png source=1040x920 imported=1040x920 format=RGB24 compression=Uncompressed npot=None",
+    "[UiCardImport] Assets/TumbangPreso/Resources/UI/brand/tump_logo.png source=2048x1349 imported=2048x1349 format=RGBA32 compression=Uncompressed npot=None"
+  ]
+}
