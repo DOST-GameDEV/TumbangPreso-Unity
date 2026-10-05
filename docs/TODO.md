@@ -13,7 +13,10 @@
   preserve a0.6s charge window and add bounded remote grace. Protocol151 has
   Core20/20, native14/14+5/5 and matching three-process direct/delayed passes.
   The150ms one-way case agrees on4.176m/1.044m travel and0.78m final gap.
-- [ ] Windows/WAN/loss/disconnect, replay/SFX and human visual acceptance.
+- [x] Fresh source 16fdcdae Linux player passes three-process direct and seeded
+  delay/jitter/loss checks with actual packet counts.
+  [Current-source scope and provenance correction](reports/paete-current-player-2026-10-05/README.md).
+- [ ] Windows/WAN/disconnect, broader loss conditions, replay/SFX and human visual acceptance.
 
 ### LINUX-SMOKE-1004: integrated build and offline startup
 

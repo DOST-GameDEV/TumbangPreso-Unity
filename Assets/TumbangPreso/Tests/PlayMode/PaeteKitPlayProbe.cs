@@ -518,6 +518,43 @@ namespace TumbangPreso.PlayTests
         }
 
         [UnityTest, Timeout(60000)]
+        public IEnumerator HostLossRetiresPlayerVineAndAllowsFreshSessionPull()
+        {
+            int previous = Time.captureFramerate; Time.captureFramerate = 60;
+            try
+            {
+                var caster = Paete(1, new Vector3(-5, .12f, -6));
+                var target = GameServices.Round.PlayerAt(2);
+                target.Teleport(new Vector3(-5, .12f, 0));
+                caster.Intent.Parked = target.Intent.Parked = false;
+                yield return null;
+                var pull = PaetePlayerPull.Begin(caster, target);
+                Assert.IsNotNull(pull);
+                yield return new WaitForSeconds(.08f);
+                Assert.IsTrue(pull.Active, "Host loss must occur during an active reach.");
+                MatchAbandon.Note("Host left", wasLocal: false);
+                Assert.IsTrue(MatchAbandon.AuthorityRevoked);
+                yield return new WaitForFixedUpdate();
+                yield return null;
+                Assert.IsTrue(pull == null || !pull.Active, "Host loss left an active pair constraint.");
+                Assert.IsNull(PaetePlayerPull.Begin(caster, target), "A disconnected client accepted a new authoritative pull.");
+                var casterStop = caster.transform.position;
+                var targetStop = target.transform.position;
+                yield return new WaitForSeconds(.3f);
+                Assert.Less(Flat(caster.transform.position - casterStop).magnitude, .02f);
+                Assert.Less(Flat(target.transform.position - targetStop).magnitude, .02f);
+                MatchAbandon.Forget();
+                caster.Teleport(new Vector3(-5, .12f, -6));
+                target.Teleport(new Vector3(-5, .12f, 0));
+                yield return null;
+                var next = PaetePlayerPull.Begin(caster, target);
+                Assert.IsNotNull(next, "The old pair constraint leaked into a fresh session.");
+                next.Stop("test complete");
+            }
+            finally { MatchAbandon.Forget(); Time.captureFramerate = previous; }
+        }
+
+        [UnityTest, Timeout(60000)]
         public IEnumerator PlayerVineStopsAgainstAnObstacleWithoutCrossingIt()
         {
             int previous=Time.captureFramerate;Time.captureFramerate=60;

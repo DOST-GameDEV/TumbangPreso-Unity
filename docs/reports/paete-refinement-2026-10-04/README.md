@@ -157,3 +157,17 @@ fixture captured scenery only at its sampled instant, so that control does not
 certify character framing/contact. Frozen source inputs match after terminal completion; no additional
 OOM occurred. These are focused Linux native checks, not a new full release
 build or separate Windows/device acceptance. Protocol stays151.
+
+## Later full-source audit correction
+
+A complete 19,288-file comparison found that the earlier protocol 151 validation
+copy retained unused retired pose-buffer fields/writers in CharacterMotor.PaeteVine
+(no caller of its old echo-query method), older brand assets and importer-only
+metadata whitespace. Its isolated company/product settings were deliberate.
+The recorded native/player results describe that frozen artifact; they must not
+be represented as byte-identical qualification of the published tree.
+The old build input hash matches the retained helper file. Source was fully
+synchronized, and actual vine input, explicit acknowledgements/corrections and
+current logo-route checks then passed 3/3. A fresh 16fdcdae Linux build is
+[qualified separately](../paete-current-player-2026-10-05/README.md); earlier
+failures, manifests and scope remain retained.
