@@ -22,19 +22,19 @@ explicitly authorized; unnecessary AGENTS feature entry was removed at owner req
 ## Current source and live work
 
 Root checkout C:/Users/matth/Documents/Codex/work/tump-competition-candidate1003i.
-Source8d8822d31 plus the current focused LAN address/browser fix. Protocol151/recording14.
-Accepted full Windows artifact cf405096c includes boulder, palm, tag, menu-look and
-completed-departure fixes. Yasmin remains the original cyan/goggles asset; the
-Benguet integration is cancelled. Preserve Auditor dirt/private wardrobe draft.
-No Root game/Unity/share/recorder active. Native late-join rules original2FAIL,
-candidate2PASS; one targeted existing SyncRules reply before seating. LAN hint and
-duplicate room causes become4/4, with separate-host/legacy controls. Importer202
-restored, protected19,288 otherwise unchanged. Fresh packaged result header pending.
-Actual ordinary local LAN pair completed4x30 with identical full history objects;
-client header8 and wrong Npcap hint/duplicate discovery reproduced and now source-fixed;
-fresh combined standalone browser/header acceptance is next.
-Client native quit crash narrowed to NewInput::Activate/accessibility/UIA focus
-reentrancy; isolated quit control exited0, no speculative game workaround.
+Source97a313e33, protocol151/recording14. Full accepted Windows artifact97a313e33
+includes current rules/discovery fixes and all prior boulder/palm/tag/menu fixes.
+Actual local LAN4x30 pairMTDX: one discovery row, correct192.168.1.7 hint, client
+read-only rules4x30 and BOTH result headers4rounds. FULL saved objects equal,
+match58a49ff1d17f439cb05c7127ecd57dfb. Completedhostleave correctly4of4.
+Bothplayers exited0 sequentially, parent93618 terminal, sharedprefs/profiles restored.
+NoRootgame/Unity/share/recorder active. NoWAN/motion claim; transientRTT663/326ms
+retained. Prior native quit focus/UIA crash remains diagnostic, no speculative fix.
+OldYasmin cyan/goggles active; Benguet replacement cancelled. PreserveAuditor/private
+wardrobe script. Root commits/merge authoredM4tyu633; incoming19a4bb902/3d869233b/
+16fdcdaef were Codex. Owner reiterated soleM4author; checkincomingauthors/preflight.
+Next: clean verified superseded owned artifact, then receiver rules without lobby
+view and timed preferred-address expiry; no unchanged test repetition.
 
 Latest owner instruction: laptop is off; PC continues ALONE. Laptop goal was
 explicitly paused. Do not wake/message it, wait for a pair or reuse obsolete

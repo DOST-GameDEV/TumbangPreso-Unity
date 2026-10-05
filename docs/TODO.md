@@ -144,12 +144,15 @@ Nothing was deleted or renumbered.
   rules before seating. Actual four-round LAN match exposed an eight-round client
   header; native missing-reply failures become2/2 with host password/preferences
   preserved. [Evidence](reports/reliability-2026-10-05/late-join-rules/README.md).
-- [ ] Fresh standalone client result header uses the host's chosen round count.
+- [x] Fresh standalone client Rules/result header uses the host's chosen four
+  rounds. Normal two-player LAN4x30 completion has identical full saved records.
+  [Visible proof](reports/reliability-2026-10-05/lan151-visible-rules/README.md).
 - [x] Prefer usable IPv4 in the LAN hint and deduplicate current beacons by
   process/port, preserving separate-host and legacy rows. Native2causes/2controls
   become4/4. [Evidence](reports/reliability-2026-10-05/lan-browser-identity/README.md).
-- [ ] Fresh standalone LAN browser/address acceptance and timed preferred-address
-  retirement check. [Actual pair](reports/reliability-2026-10-05/local-lan151/README.md).
+- [x] Fresh standalone LAN browser has one row and the host hint shows Ethernet
+  192.168.1.7; actual join/ready/completion pass.
+- [ ] Timed preferred-address retirement check. [Actual pair](reports/reliability-2026-10-05/local-lan151/README.md).
 - [x] Menu-close look cannot leak late touch drag or held stick navigation into
   camera input in that frame; normal look resumes next frame. Two native causal
   failures plus ordinary control become3/3. Packaged pointer/relock review stays open.
