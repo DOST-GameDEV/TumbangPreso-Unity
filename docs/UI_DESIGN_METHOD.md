@@ -123,6 +123,23 @@ Trip and edge recovery are unchanged.
 
 ## Source quality across imports and resolutions
 
+For owner artwork from ibis Paint, retain the layered original and export a PNG
+at its original canvas size. Use transparent PNG for separate buttons, icons and
+panels. For a full-screen 16:9 background, author at3840x2160. Small components
+should contain at least the pixels required at their largest supported display
+size; keep separate pieces so resizing a menu does not stretch baked lettering.
+Prefer game-rendered labels when possible while preserving intentional painted text.
+
+If composing the artwork in Canva, use a canvas matching the intended export
+dimensions and download PNG with transparent background where applicable. Turn
+off file compression and file-size limits when those options are offered. Deliver
+the downloaded file plus the original ibis PNG, not a screenshot or preview.
+Compare pixel dimensions and source pixels before importing. Enlarging a raster
+image or wrapping it in SVG does not create new detail. Preserve clean alpha
+edges instead of flattening against white and removing white afterward.
+Export references: [ibis Paint](https://ibispaint.com/lecture/index.jsp?no=33)
+and [Canva](https://www.canva.com/help/transparent-background/).
+
 OwnerArtworkQualityImport owns supplied owner-menu-edits/owner-painted artwork
 and the legacy menu backdrop; BrandArtworkImport owns the selected brand exports.
 Preserve source pixels up to8192 without compression/crunch or NPOT resizing.

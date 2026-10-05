@@ -161,6 +161,11 @@ Nothing was deleted or renumbered.
 - [x] Recover one transient Relay request timeout with an ownership-scoped retry.
   Native2causes/2controls -> seven passes including repeat/cancel/replacement.
   [Evidence](reports/reliability-2026-10-05/relay-request-timeout/README.md).
+- [x] Serialize hosted-room advertisement updates and retain only the latest
+  queued state. Original delayed publication overwrites4 occupied with2;
+  candidate ten native cases pass including replacement ownership and failed
+  older-update recovery. Live QA timeout/host kick remains open.
+  [Evidence](reports/reliability-2026-10-05/hosted-publication-order/README.md).
 - [x] Preserve owner-art source resolution on reimport and smooth generated UI edges;
   three viewport captures, two allocation checks and three effective imports pass.
   [Evidence](reports/reliability-2026-10-05/ui-source-quality/README.md).

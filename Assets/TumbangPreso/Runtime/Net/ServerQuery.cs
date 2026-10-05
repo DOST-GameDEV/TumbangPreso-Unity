@@ -173,6 +173,8 @@ namespace TumbangPreso.Net
         private Func<string, Task> _deleteHostedDispatch;
         private long _hostLobbyRequest;
         private TaskCompletionSource<string> _hostLobbyCreation;
+        private Task _hostUpdateTask;
+        private UpdateLobbyOptions _pendingHostedUpdate;
 
         public IEnumerable<Entry> Servers => _seen.Values;
         public string HostedLobbyProblem { get; private set; } = "";
@@ -635,13 +637,37 @@ namespace TumbangPreso.Net
                     }
                 };
 
-                await (_updateHostedDispatch == null
-                    ? LobbyService.Instance.UpdateLobbyAsync(_activeHostLobbyId, options)
-                    : _updateHostedDispatch(_activeHostLobbyId, options));
+                // One writer per room: a slow older response must not overwrite newer
+                // counts. While it is in flight, retain only the latest complete advert.
+                _pendingHostedUpdate = options;
+                if (_hostUpdateTask == null || _hostUpdateTask.IsCompleted)
+                    _hostUpdateTask = PublishHostedUpdatesAsync(_activeHostLobbyId, _hostLobbyRequest);
+                await _hostUpdateTask;
             }
             catch (Exception e)
             {
                 NetIdentity.ReportServiceCallFailed("Lobby update", e);
+            }
+        }
+
+        private async Task PublishHostedUpdatesAsync(string lobbyId, long request)
+        {
+            while (this != null && request == _hostLobbyRequest &&
+                   lobbyId == _activeHostLobbyId && _pendingHostedUpdate != null)
+            {
+                var options = _pendingHostedUpdate;
+                _pendingHostedUpdate = null;
+                try
+                {
+                    await (_updateHostedDispatch == null
+                        ? LobbyService.Instance.UpdateLobbyAsync(lobbyId, options)
+                        : _updateHostedDispatch(lobbyId, options));
+                }
+                catch (Exception e)
+                {
+                    if (this != null && request == _hostLobbyRequest)
+                        NetIdentity.ReportServiceCallFailed("Lobby update", e);
+                }
             }
         }
 
@@ -674,6 +700,10 @@ namespace TumbangPreso.Net
             ++_hostLobbyRequest;
             _hostLobbyCreation = null;
             _activeHostLobbyId = null;
+            // A replacement room starts its own writer; the retired writer can
+            // finish its issued request but cannot drain this room's pending state.
+            _hostUpdateTask = null;
+            _pendingHostedUpdate = null;
             _creatingLobby = false;
             _hasPendingCounts = false;
             if (string.IsNullOrEmpty(id) && creation != null) id = await creation.Task;

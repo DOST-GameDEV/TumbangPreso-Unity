@@ -22,7 +22,15 @@ explicitly authorized; unnecessary AGENTS feature entry was removed at owner req
 ## Current source and live work
 
 Latest owner focus: UI appearance/quality/future-proof imports, network robustness
-and optimization. Root74a229a19 UI field-layer/filled-glyph/source-quality changes are packaged.
+and optimization. Hosted publication ordering fix is ready to publish: original
+native delayed response falsely replaces4 occupied with2; candidate10/10 passes.
+One writer per lobby coalesces queued counts and cannot drain into a replacement;
+failure recovery and seven existing lifetime controls pass. Both parents and
+exact202 metadata/shared-input/profile/Quality restorations are terminal.
+Owner ibis/Canva PNG export guidance is now in UI_DESIGN_METHOD.
+Next: publish this coherent unit then package current source for normal online
+room operations. Real QA Relay timeout/hostkick is still OPEN.
+Root74a229a19 UI field-layer/filled-glyph/source-quality changes are packaged.
 FullWindows15980 exits0,258files/2691129403bytes, runtime
 ac868b3a882dd383b5c51ff344e6f35e17e9647758fb156f5dd0219cf8fe912f.
 Actual74 normalPairKKW5 shows correct loading/caret, typed live-code joins2/4,
