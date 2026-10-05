@@ -408,7 +408,20 @@ namespace TumbangPreso.Map
             return match.MatchInProgress && !roundActive ? match.RoundNumber + 1 : match.RoundNumber;
         }
 
-        private static long MatchId() => GameServices.Match != null ? GameServices.Match.PresentationMatchId : 0L;
+        /// <summary>
+        /// The id the layouts are drawn from. ⚠️ ONLINE IT IS THE TRANSPORT'S (`MatchRpc.PresentationMatchId`),
+        /// the one number every peer is certain to share: the host stamps it when the lobby starts the match
+        /// and every client adopts it from the start message, before the arena has even loaded. The match
+        /// director's copy arrives later on a client (with the first world snapshot) and, on the host, was for a
+        /// time a different number altogether (`MatchDirector.PreparePresentationMatch`): the first online test
+        /// had the host on one layout and the others on another.
+        /// </summary>
+        private static long MatchId()
+        {
+            var rpc = Net.MatchRpc.Instance;
+            if (NetAuthority.IsNetworked && rpc != null && rpc.PresentationMatchId != 0) return rpc.PresentationMatchId;
+            return GameServices.Match != null ? GameServices.Match.PresentationMatchId : 0L;
+        }
 
         /// <summary>Switch the colliders to that round's layout NOW. The visuals follow in
         /// `LateUpdate`: they travel if a break is playing, and snap otherwise.</summary>
