@@ -120,6 +120,35 @@ namespace TumbangPreso.PlayTests
                 "Inactive-scene recovery installed hooks without owning the active scene.");
         }
 
+        private void EnableStageInInactiveScene()
+        {
+            _inactiveScene = SceneManager.CreateScene("Inactive Arena stage test");
+            _old = new GameObject("Inactive-scene Arena stage"); _old.SetActive(false);
+            SceneManager.MoveGameObjectToScene(_old, _inactiveScene);
+            var stage = _old.AddComponent<ArenaStage>(); stage.MoveFloor = -66;
+            _old.SetActive(true);
+        }
+
+        [UnityTest] public IEnumerator EnablingInactiveSceneStagePreservesActiveOwnerGlobals()
+        {
+            var current = Stage(ref _current, "Active-scene Arena stage", -44);
+            EnableStageInInactiveScene(); yield return null;
+            Assert.IsTrue(ArenaStage.Instance == current && AIController.EdgeSense && Net.MatchRpc.MoveFloorY == -44,
+                "Inactive-scene stage took active stage ownership or its movement globals.");
+            _old.SetActive(false); yield return null;
+            Assert.AreSame(current, ArenaStage.Instance); Assert.IsTrue(AIController.EdgeSense);
+            Assert.AreEqual(-44, Net.MatchRpc.MoveFloorY);
+        }
+
+        [UnityTest] public IEnumerator EnablingInactiveSceneStageWithoutOwnerPreservesOrdinaryGlobals()
+        {
+            Assert.IsNull(ArenaStage.Instance);
+            bool edge = AIController.EdgeSense; float floor = Net.MatchRpc.MoveFloorY;
+            EnableStageInInactiveScene(); yield return null;
+            Assert.IsTrue(ArenaStage.Instance == null && AIController.EdgeSense == edge && Net.MatchRpc.MoveFloorY == floor,
+                "Inactive-scene stage claimed globals without owning the active scene.");
+        }
+
         [UnityTest] public IEnumerator DisablingCurrentRecoveryRetiresItsHooks()
         {
             _current = new GameObject("Sole Arena recovery");

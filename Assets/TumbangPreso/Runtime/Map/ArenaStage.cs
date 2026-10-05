@@ -292,9 +292,12 @@ namespace TumbangPreso.Map
 
         private void Awake()
         {
-            Instance = this;
-            AIController.EdgeSense = true;
-            Net.MatchRpc.MoveFloorY = MoveFloor;
+            if (gameObject.scene == UnityEngine.SceneManagement.SceneManager.GetActiveScene())
+            {
+                Instance = this;
+                AIController.EdgeSense = true;
+                Net.MatchRpc.MoveFloorY = MoveFloor;
+            }
             DeepenTheFall();
             ApplyForRound(WantedRound());
             ShowApplied();
@@ -302,6 +305,7 @@ namespace TumbangPreso.Map
 
         private void OnEnable()
         {
+            if (gameObject.scene != UnityEngine.SceneManagement.SceneManager.GetActiveScene()) return;
             Instance = this;
             AIController.EdgeSense = true;
             Net.MatchRpc.MoveFloorY = MoveFloor;
