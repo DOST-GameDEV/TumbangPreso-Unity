@@ -1,5 +1,17 @@
 # TODO: Tumbang Preso Unity
 
+### HOST-IDENTITY-COLLISION-1005: preserve the running room owner
+
+- [x] Refuse a remote arrival claiming the running server's identity before it can
+  replace the host record/leader. Corrected native baseline reproduces the theft
+  while the transport remains listening; candidate four cases pass, preserving
+  unique arrivals, remote reconnect and local host approval. Root verifies18 raw
+  Git blobs, exact production/qualified fixture hashes and both XML results.
+  Initial fixture compiler failure is retained and does not count as behavior.
+  [Evidence](reports/laptop-validation-2026-10-05/host-identity-collision/README.md).
+- [ ] Current packaged real-client refusal/control and existing QA Relay timeout
+  and host-kick acceptance. Native public callback/logical admission is narrower.
+
 ### QOL-INTEGRATION-1005: incoming content and current peer validation
 
 - [x] Merge incoming Arena, Ilalim and roster models without conflicts. Preserve
@@ -11,7 +23,11 @@
   five cases pass including two current-owner cleanup controls. Root verifies nine
   raw Git blobs, source/fixture hashes, XML and terminal restoration receipts.
   [Arena evidence](reports/laptop-validation-2026-10-05/arena-owner/README.md).
-- [ ] Affected full map/model/camera/gameplay and replay render controls.
+- [x] Actual merged Arena scene/roster imports and changed replay contracts pass
+  three native cases, including accepted catch coat/prop/world-audio preservation.
+  Root verifies five raw Git blobs, the exact fixture and terminal restoration.
+  [Merged checks](reports/laptop-validation-2026-10-05/merged-content/README.md).
+- [ ] Full affected map/camera/gameplay and all-hero visual acceptance.
   Protocol152 requires matching peers and a current build.
   The owner's timeout/host-kick report remains unresolved.
   [Integration scope](reports/reliability-2026-10-05/qol-integration/README.md).

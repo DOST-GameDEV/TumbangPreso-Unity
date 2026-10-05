@@ -2060,7 +2060,12 @@ namespace TumbangPreso.Net
             bool blocked = hello != null &&
                            Core.SocialRules.IsBlocked(GameServices.Social?.List, hello.AccountPlayerId);
 
-            response.Approved = protocolMatches && skillsMatch && hasCapacity && !blocked;
+            // A remote reconnect can replace its prior socket, never the running server's own
+            // lobby record. The server cannot reconnect to itself through a second transport.
+            bool claimsHost = _nm != null && _nm.IsServer && hello != null
+                && request.ClientNetworkId != _nm.LocalClientId
+                && hello.Token == Lobby.PeerById((int)_nm.LocalClientId)?.Token;
+            response.Approved = protocolMatches && skillsMatch && hasCapacity && !blocked && !claimsHost;
             response.CreatePlayerObject = false;
             response.Pending = false;
             // ⚠️ THE REFUSAL SAYS WHAT THE ROOM HOLDS. "Lobby is full" is true of a room with
@@ -2078,6 +2083,8 @@ namespace TumbangPreso.Net
                     ? "Skill rules differ from the host. Use matching game builds."
                 : blocked
                     ? "Could not join this game."
+                : claimsHost
+                    ? "This player is already hosting the room. Use another account to join."
                     : hasCapacity
                         ? string.Empty
                         : $"This game is full: {LobbySession.MaxPlayers} players and "

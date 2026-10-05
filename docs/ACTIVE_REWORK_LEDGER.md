@@ -26,14 +26,19 @@ passed static checks. Protocol152 peers must match; previous151 acceptance is
 historical evidence and does not qualify this integration.
 The next QoL commit fa922a463 clears live hit/caught/frost properties from replay
 copies. Its three properties exist in the current Toon shader. Root integrates
-this narrow delta; merged native compilation and affected acceptance are pending.
+this narrow delta; merged native compilation/import passes. Affected acceptance follows.
 
 Laptop owns ArenaStage.cs, ArenaFallRecovery.cs and a focused replacement-owner
 lifecycle fixture. Published2a77b21ff fixes three reproduced retired-owner failures; all five native
 cases pass including current-owner controls. Root independently verified nine
 raw Git blobs, three LF hashes, XML and exact terminal restoration receipts.
-Merged source compiles/imports. Laptop next owns changed replay/render/roster
-checks, then a coherent152 build. Root's import/UI candidates remain unapplied.
+Merged source compiles/imports. Merged smokea971 adds three native passes for scene/roster resolution, replay
+transient copy and accepted catch coat/prop/world audio; Root verified five blobs
+and the fixture. Host admission now preserves the running server identity using
+qualified288d source and3059 fixture, original one cause/three controls ->four
+passes. Root verified18 raw blobs, source/fixture/meta LF hashes and XML.
+Laptop next qualifies root card imports and Home rendering before one152 build.
+Root's import/UI candidates remain unapplied.
 Root owns Net/UI, integration and the shared queue/checkpoint. Preserve protected
 ProjectAuditorSettings.asset dirt and private tools/build_yasmin_benguet_voxel.py.
 The uncommitted HomeModeCardReadabilityTests.cs/meta fixture is qualified, but the
@@ -71,9 +76,10 @@ after terminal/path/subject checks; preserved all active-worktree refs and build
 
 ## Next action
 
-Latest source2a77b21ff includes fa922 replay correction and checked Arena repair.
-Laptop qualifies changed replay/roster/render before a coherent152 build. Root
-prepares actual map/mode-card import baseline (default compressed/NPOT settings
-escape the existing guard) and revised Home poster/caption render checks. Exact
-packets remain in Logs/ui-card-import1005 and Logs/home-mode-card1005. Neither
-candidate is applied to production before native comparison. Keep updates every60s.
+Publish checked host-identity refusal with unchanged protocol152 and qualified
+fixture; do not rerun unchanged passes. Laptop proceeds with root card import
+baseline/candidate and Home refinement. Card fixture79e uses installed NUnit;
+Home candidate normalized LF f5e8 (raw CRLF07bb), unchanged patch. Logs packets
+are exact; initial fixture errors are preserved, never attributed to production.
+After these coherent UI fixes, package current152 and run visible live controls.
+PC remains personal-use, no Root native launches. Keep updates every60s.
