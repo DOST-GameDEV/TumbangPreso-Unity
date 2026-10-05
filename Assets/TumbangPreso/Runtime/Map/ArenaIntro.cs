@@ -76,9 +76,13 @@ namespace TumbangPreso.Map
         /// <summary>The build is the break's show on shorter beats (`ArenaStage.TryOpening`).</summary>
         public const float BuildSeconds = 5.4f;
 
+        // ⚠️ THE TAYA'S CARD IS HELD (owner, 2026-10-05: "the showing of the taya is too fast. it shows whos taya
+        // and immediately cuts to next scene. also i need the roll to flicker more. doesnt matter if it loops
+        // through the players multiple times"). The roll was 2.2 s and the landed card stayed 0.55 s; the roll is
+        // 3.3 s of faster cards (`BuildTicks`) and the landed card stays about 2 s before the cut.
         public static Times TimesFor(bool full) => full
-            ? new Times { Full = true, Walk = 1.8f, Glare = 3.6f, Peak = 5.1f, Reveal = 5.35f, Taya = 8.2f, Land = 10.4f, Spot = 10.95f, Build = 11.6f, Handoff = 11.6f + BuildSeconds, End = 11.6f + BuildSeconds + 0.8f }
-            : new Times { Full = false, Walk = -1.0f, Glare = -1.0f, Peak = -1.0f, Reveal = 0.0f, Taya = 2.0f, Land = 3.7f, Spot = 4.2f, Build = 4.8f, Handoff = 4.8f + BuildSeconds, End = 4.8f + BuildSeconds + 0.8f };
+            ? new Times { Full = true, Walk = 1.8f, Glare = 3.6f, Peak = 5.1f, Reveal = 5.35f, Taya = 8.2f, Land = 11.5f, Spot = 13.6f, Build = 14.25f, Handoff = 14.25f + BuildSeconds, End = 14.25f + BuildSeconds + 0.8f }
+            : new Times { Full = false, Walk = -1.0f, Glare = -1.0f, Peak = -1.0f, Reveal = 0.0f, Taya = 2.0f, Land = 4.7f, Spot = 6.6f, Build = 7.2f, Handoff = 7.2f + BuildSeconds, End = 7.2f + BuildSeconds + 0.8f };
 
         public static ArenaIntro Instance { get; private set; }
 
@@ -119,7 +123,7 @@ namespace TumbangPreso.Map
         /// 2026-10-05, of four abreast: "the hall is too crowded. split the characters into 2 lines like the
         /// bluelock reference"): the taya's seat leads the left file, the camera follows the rear pair.</summary>
         private static readonly float[] LaneX = { -0.85f, 0.85f, -0.85f, 0.85f }, LaneZ = { 1.9f, 1.65f, 0.1f, -0.12f };
-        private const int Seats = Core.Balance.PlayerCount, MaxTicks = 40;
+        private const int Seats = Core.Balance.PlayerCount, MaxTicks = 72;
         private const string WelcomeLine = "arena_welcome";
 
         // ---- what it was given
@@ -711,20 +715,20 @@ namespace TumbangPreso.Map
 
         /// <summary>
         /// When each card comes up, seconds from the shuffle's start: quick at first, each gap
-        /// a fifth longer than the last, the final one ON the landing. ⚠️ THE RATE IS CAPPED:
-        /// never more than eight cards a second, three under reduced effects or reduced motion.
+        /// a hair longer than the last through the first half, then slowing hard, the final one ON the landing. ⚠️ THE RATE IS CAPPED:
+        /// about fourteen cards a second at its fastest (only the portrait and the name change; the card's ground never does), three under reduced effects or reduced motion.
         /// </summary>
         private void PlanShuffle()
         {
             var settings = Settings.SettingsStore.Current;
             float span = Timeline.Land - Timeline.Taya - 0.25f;
-            float gap = settings.ReducedEffects || settings.ReducedUiMotion ? 0.32f : 0.125f, at = 0.0f;
+            float gap = settings.ReducedEffects || settings.ReducedUiMotion ? 0.32f : 0.07f, at = 0.0f;
             _ticks = 0;
             while (_ticks < MaxTicks && at <= span)
             {
                 _tickAt[_ticks++] = at;
                 at += gap;
-                gap = Mathf.Min(gap * 1.2f, 0.42f);
+                gap = Mathf.Min(gap * (gap < 0.3f && at < span * 0.55f ? 1.02f : 1.22f), 0.48f);   // a long fast flicker, then it slows into the landing
             }
 
             // Stretched so the last card lands exactly on the stamp (a stretch only widens the gaps).
