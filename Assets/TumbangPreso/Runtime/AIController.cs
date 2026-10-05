@@ -1947,7 +1947,7 @@ namespace TumbangPreso
                 // a step past the line from a stand over the lata; the one with further to run
                 // back out is the one this chase can actually catch.
                 Vector3 observed = At(who).Value;
-                float depth = Balance.ConfinementRadius
+                float depth = Confinement.Radius
                               - Mathf.Max(Mathf.Abs(observed.x), Mathf.Abs(observed.z));
                 if (depth > 0.0f) score += AiTuning.TagDepthWeight * depth;
 
@@ -2224,7 +2224,7 @@ namespace TumbangPreso
                 }
             }
 
-            Goto(intent, RingPoint(bearing, Balance.ConfinementRadius + 0.6f),
+            Goto(intent, RingPoint(bearing, Confinement.Radius + 0.6f),
                  AiTuning.ArriveSlop, false);
 
             if (_arrived) Loiter(intent);
@@ -4145,7 +4145,7 @@ namespace TumbangPreso
 
             if (lata == null) return SafeSpot();
 
-            float ring = Balance.ConfinementRadius + AiTuning.ThrowStandoff;
+            float ring = Confinement.Radius + AiTuning.ThrowStandoff;
             Vector3 here = transform.position;
 
             var taya = DefenderOf(round);
@@ -4268,7 +4268,7 @@ namespace TumbangPreso
 
             if (reach < 0.01f) { flat = new Vector2(0.0f, 1.0f); reach = 1.0f; }
 
-            float ring = Balance.ConfinementRadius + AiTuning.ThrowStandoff;
+            float ring = Confinement.Radius + AiTuning.ThrowStandoff;
             flat *= ring / reach;
 
             return ClampToPlayable(new Vector3(flat.x, 0.0f, flat.y));
@@ -4305,7 +4305,7 @@ namespace TumbangPreso
         private static Vector3 PullOutside(Vector3 point, float margin)
         {
             float reach = Mathf.Max(Mathf.Abs(point.x), Mathf.Abs(point.z));
-            float ring = Balance.ConfinementRadius + margin;
+            float ring = Confinement.Radius + margin;
 
             if (reach >= ring || reach < 0.01f) return point;
 
@@ -4318,9 +4318,10 @@ namespace TumbangPreso
         /// a bot stuck on a wall, because it is one.</summary>
         private static Vector3 ClampToBox(Vector3 point)
         {
-            float edge = Balance.ConfinementRadius - 0.35f;
-            return new Vector3(Mathf.Clamp(point.x, -edge, edge), point.y,
-                               Mathf.Clamp(point.z, -edge, edge));
+            // In the box's own shape (a square, or a circle on a map that plays one), a step inside the line.
+            float x = point.x, z = point.z;
+            Confinement.ClampToBox(ref x, ref z, Confinement.Radius - 0.35f);
+            return new Vector3(x, point.y, z);
         }
 
         /// <summary>Where a slipper already in flight will come down.</summary>
@@ -4480,7 +4481,7 @@ namespace TumbangPreso
                 Vector3 at = s.transform.position;
 
                 // Outside the box: not the taya's problem, and not reachable.
-                if (Mathf.Max(Mathf.Abs(at.x), Mathf.Abs(at.z)) >= Balance.ConfinementRadius)
+                if (!Confinement.IsInsideBox(at.x, at.z))
                     continue;
 
                 var holder = NearestClaimantTo(s);

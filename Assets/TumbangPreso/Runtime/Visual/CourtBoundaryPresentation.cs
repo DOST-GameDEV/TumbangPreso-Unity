@@ -108,7 +108,8 @@ namespace TumbangPreso.Visual
             var vertices = new List<Vector3>(PiecesPerEdge*16);
             var uv = new List<Vector2>(PiecesPerEdge*16);
             var triangles = new List<int>(PiecesPerEdge*24);
-            float r = Balance.ConfinementRadius;
+            float r = Confinement.Radius;
+            if (Confinement.Round) return BuildRoundMesh(r, vertices, uv, triangles);
             Vector3[] corners = { new Vector3(-r,0,-r),new Vector3(r,0,-r),new Vector3(r,0,r),new Vector3(-r,0,r) };
             for (int edge=0;edge<4;edge++)
             {
@@ -129,6 +130,47 @@ namespace TumbangPreso.Visual
             var mesh=new Mesh {name="Confinement chalk square"};mesh.SetVertices(vertices);mesh.SetUVs(0,uv);
             mesh.SetTriangles(triangles,0);mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
         }
+        /// <summary>
+        /// ⚠️ A ROUND BOX'S CHALK (`Confinement.Round`, the Arena): the same band, round the can at `r`, and
+        /// ONLY WHERE THERE IS A DECK UNDER IT. The Arena's stage is platforms over a shaft, and a line drawn
+        /// across the gaps hung in the air (the square one did). Each piece looks for the deck from well above
+        /// to well below, because a layout's decks stand at different heights, and is left out with none.
+        /// </summary>
+        private Mesh BuildRoundMesh(float r, List<Vector3> vertices, List<Vector2> uv, List<int> triangles)
+        {
+            int pieces = PiecesPerEdge * 4;
+            for (int piece = 0; piece < pieces; piece++)
+            {
+                float a0 = (piece / (float)pieces) * Mathf.PI * 2f, a1 = ((piece + 1f) / pieces) * Mathf.PI * 2f;
+                Vector3 d0 = new Vector3(Mathf.Cos(a0), 0, Mathf.Sin(a0)), d1 = new Vector3(Mathf.Cos(a1), 0, Mathf.Sin(a1));
+                Vector3 p = d0 * r, q = d1 * r;
+                if (!DeckAt(p, out float py) || !DeckAt(q, out float qy)) continue;
+                p.y = py + .012f; q.y = qy + .012f;
+                Vector3 s0 = d0 * HalfWidth, s1 = d1 * HalfWidth;
+                int at = vertices.Count;
+                vertices.Add(transform.InverseTransformPoint(p + s0)); vertices.Add(transform.InverseTransformPoint(p - s0));
+                vertices.Add(transform.InverseTransformPoint(q - s1)); vertices.Add(transform.InverseTransformPoint(q + s1));
+                uv.Add(new Vector2(0,0)); uv.Add(new Vector2(0,1)); uv.Add(new Vector2(1,1)); uv.Add(new Vector2(1,0));
+                triangles.Add(at); triangles.Add(at+1); triangles.Add(at+2); triangles.Add(at); triangles.Add(at+2); triangles.Add(at+3);
+            }
+            var mesh = new Mesh { name = "Confinement chalk ring" }; mesh.SetVertices(vertices); mesh.SetUVs(0, uv);
+            mesh.SetTriangles(triangles, 0); mesh.RecalculateNormals(); mesh.RecalculateBounds(); return mesh;
+        }
+
+        private bool DeckAt(Vector3 at, out float y)
+        {
+            int count = Physics.RaycastNonAlloc(new Vector3(at.x, _floor + 5f, at.z), Vector3.down, _hits, 9f, ~0, QueryTriggerInteraction.Ignore);
+            y = float.NegativeInfinity;
+            for (int i = 0; i < count; i++)
+            {
+                var c = _hits[i].collider;
+                if (c == null || c.GetComponentInParent<CharacterMotor>() != null || c.GetComponentInParent<Slipper>() != null || c.GetComponentInParent<Lata>() != null) continue;
+                if (_hits[i].normal.y < .65f) continue;
+                y = Mathf.Max(y, _hits[i].point.y);
+            }
+            return !float.IsNegativeInfinity(y);
+        }
+
         private float GroundAt(Vector3 at,float fallback)
         {
             int count=Physics.RaycastNonAlloc(new Vector3(at.x,fallback+.7f,at.z),Vector3.down,_hits,1.7f,~0,QueryTriggerInteraction.Ignore);
@@ -144,7 +186,14 @@ namespace TumbangPreso.Visual
         }
         public static Vector3 ClosestExit(Vector3 position)
         {
-            float r=Balance.ConfinementRadius;
+            float r=Confinement.Radius;
+            if(Confinement.Round)
+            {
+                // A round box: straight out from the can.
+                var flat=new Vector2(position.x,position.z);
+                if(flat.sqrMagnitude<1e-4f)flat=Vector2.up;
+                flat=flat.normalized*r;return new Vector3(flat.x,position.y,flat.y);
+            }
             return Mathf.Abs(position.x)>=Mathf.Abs(position.z)
                 ? new Vector3(position.x>=0?r:-r,position.y,Mathf.Clamp(position.z,-r,r))
                 : new Vector3(Mathf.Clamp(position.x,-r,r),position.y,position.z>=0?r:-r);
@@ -181,8 +230,25 @@ namespace TumbangPreso.Visual
             if(!upright || GameServices.Round==null || !GameServices.Round.RoundActive)return;
             _restoreAt=Time.time;_restoreOrigin=_lata.transform.position;
         }
+        private int _boxVersion = -1;
+
         private void LateUpdate()
         {
+            // The box changed under the chalk (a map with a box of its own, `Confinement.Use`): draw it again.
+            if (_mesh != null && _boxVersion != Confinement.Version)
+            {
+                bool first = _boxVersion < 0;
+                _boxVersion = Confinement.Version;
+                if (!first || Confinement.Round)
+                {
+                    var filter = GetComponent<MeshFilter>();
+                    var old = _mesh;
+                    _mesh = BuildMesh();
+                    if (filter != null) filter.sharedMesh = _mesh;
+                    if (old != null) Destroy(old);
+                }
+            }
+
             if(_recorded || _renderer==null)return;
             var round=GameServices.Round;var profile=WorldCueProfile.Current;
             ReplaceAuthored(profile.Boundary>.001f);
@@ -247,7 +313,7 @@ namespace TumbangPreso.Visual
             Vector3 closest=exit?ClosestExit(viewer.transform.position):Vector3.zero;
             _block.SetVector("_Exit",new Vector4(closest.x,closest.z,exit?Mathf.Clamp01(profile.NearestExit):0,0));
             bool sweep=armed && restoreAge>=0 && restoreAge<SweepSeconds && !Settings.SettingsStore.Current.ReducedUiMotion;
-            float far=(new Vector2(Mathf.Abs(origin.x)+Balance.ConfinementRadius,Mathf.Abs(origin.z)+Balance.ConfinementRadius)).magnitude;
+            float far=(new Vector2(Mathf.Abs(origin.x)+Confinement.Radius,Mathf.Abs(origin.z)+Confinement.Radius)).magnitude;
             _block.SetVector("_Sweep",new Vector4(origin.x,origin.z,sweep?far*restoreAge/SweepSeconds:-100,
                 sweep?(Settings.SettingsStore.Current.ReducedEffects?.45f:1):0));
             _renderer.SetPropertyBlock(_block);

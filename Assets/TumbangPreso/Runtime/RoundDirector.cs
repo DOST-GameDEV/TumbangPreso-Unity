@@ -654,7 +654,7 @@ namespace TumbangPreso
                 ThrowCooldownLeft = carrier != null && carrier.IsThrowChargeDecaying ? 1f : 0f,
                 X = who.transform.position.x,
                 Z = who.transform.position.z,
-                ConfinementRadius = Balance.ConfinementRadius,
+                ConfinementRadius = Confinement.Radius,
             };
             return ThrowRules.CanThrow(in ctx);
         }

@@ -76,7 +76,7 @@ namespace TumbangPreso.Visual
             _floor.enabled=on;_chalk.SetColor("_Medium",WorldLookPresentation.CourtChalk);
             _chalk.SetFloat("_Weight",weight);_chalk.SetFloat("_WearKind",_look.Look.WearKind);
             _wear.SetFloat("_Weight",weight);_wear.SetFloat("_WearKind",_look.Look.WearKind);
-            _wear.SetFloat("_Radius",Balance.ConfinementRadius);
+            _wear.SetFloat("_Radius",Confinement.Radius);
         }
         private void OnDisable()
         {foreach(var mark in _marks)if(mark.Renderer!=null)mark.Renderer.sharedMaterials=mark.Original;_styled=false;}

@@ -111,10 +111,19 @@ namespace TumbangPreso.Core
         public const float PlantBoxMargin = 0.6f;
 
         /// <summary>Where a plant aimed at (x, z) is allowed to land: outside the box (see <see cref="PlantBoxMargin"/>).</summary>
-        public static void PlantSpotOutsideBox(ref float x, ref float z, float radius = Balance.ConfinementRadius)
+        public static void PlantSpotOutsideBox(ref float x, ref float z) => PlantSpotOutsideBox(ref x, ref z, Confinement.Radius);
+
+        public static void PlantSpotOutsideBox(ref float x, ref float z, float radius)
         {
             if (!Confinement.IsInsideBox(x, z, radius)) return;
             float edge = radius + PlantBoxMargin;
+            if (Confinement.Round)
+            {
+                // A round box: straight out from the can, along the way the spot already lies.
+                float d = (float)System.Math.Sqrt(x * x + z * z);
+                if (d < 0.001f) { x = 0f; z = edge; } else { x *= edge / d; z *= edge / d; }
+                return;
+            }
             // The nearest edge: whichever axis is already closest to the line.
             if (System.Math.Abs(x) >= System.Math.Abs(z)) x = x >= 0f ? edge : -edge;
             else z = z >= 0f ? edge : -edge;

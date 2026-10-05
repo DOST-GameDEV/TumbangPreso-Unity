@@ -68,7 +68,7 @@ namespace TumbangPreso.Visual
         }
         public static bool TryChalkCrossing(Vector3 from,Vector3 to,out Vector3 at)
         {
-            float radius=Core.Balance.ConfinementRadius,first=2;at=to;
+            float radius=Core.Confinement.Radius,first=2;at=to;
             for(int axis=0;axis<2;axis++)for(int side=-1;side<=1;side+=2)
             {
                 float a=axis==0?from.x:from.z,b=axis==0?to.x:to.z;

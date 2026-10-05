@@ -52,7 +52,7 @@ namespace TumbangPreso.UI
                         refusal="CANNOT TAG - CAN MUST BE UPRIGHT FIRST";
                     else if(!local.IsDefender&&local.HoldingSlipper)
                     {
-                        if(Confinement.IsInsideBox(local.transform.position.x,local.transform.position.z,Balance.ConfinementRadius))
+                        if(Confinement.IsInsideBox(local.transform.position.x,local.transform.position.z))
                             refusal="CANNOT THROW - MUST BE OUTSIDE DANGER ZONE";
                     }
                 }
