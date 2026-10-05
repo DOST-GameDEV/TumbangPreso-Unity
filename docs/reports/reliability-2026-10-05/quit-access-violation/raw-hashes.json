@@ -10,5 +10,9 @@
   "windows-application-error.json": {
     "bytes": 851,
     "sha256": "2ba4f8191e89df986a05a56124a1ef02ed063ca5990d767ce8e4c9b4ec43d6d2"
+  },
+  "dump-derived-stack.json": {
+    "bytes": 1002,
+    "sha256": "ca082678ba5b8bbdb09306381f0f1fde4c9bd9720123b21801823c84bf34df9e"
   }
 }

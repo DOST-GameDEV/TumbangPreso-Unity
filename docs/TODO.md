@@ -202,6 +202,8 @@ Nothing was deleted or renumbered.
 - [ ] Latest reviewed Windows player quit exitsC0000005. Windows event identifies
   UnityPlayer.dll RVA16f9c36, locally resolved to remove_free_block +22. Allocator
   address alone does not prove the corrupting operation; no source workaround.
+  Exact19352 dump found locally: Unity Main Thread and two allocator frames,
+  then incomplete unwind. Raw memory remains private; derived receipt retained.
   Owner screenshot player remains separate and must not be interrupted.
   [Quit evidence](reports/reliability-2026-10-05/quit-access-violation/README.md).
 - [x] Preserve a body's prior or completed-match input freeze when closing its

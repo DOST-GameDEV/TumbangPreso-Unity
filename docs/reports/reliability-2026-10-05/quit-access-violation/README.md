@@ -25,10 +25,27 @@ SymLoadModuleExW returns a nonzero base. Its last-error value after success is
 not a load failure. Raw receipts preserve both the observed result and that limit.
 
 An allocator fault address does not identify the earlier corrupting operation.
-No full call stack or managed source cause was captured for this access violation.
+No full call stack or managed source cause was initially captured for this access violation.
 The earlier quit failure had a different exception/address and must not be used
 to claim this fault is caused by accessibility or input. No such systems were
 disabled and no speculative workaround was applied.
+
+## Matching retained Windows dump
+
+Windows Local CrashDumps contains the exact process19352 dump,8706216bytes.
+Its process ID and C0000005 exception address match the event. The captured
+faulting thread15248 is named Unity Main Thread. The raw dump stays local and
+uncommitted; it may contain profile/account memory and is not a sharing artifact.
+
+Read-only analysis used the captured exception context and Microsoft's
+[StackWalk64 API](https://learn.microsoft.com/en-us/windows/win32/api/dbghelp/nf-dbghelp-stackwalk64)
+with captured-memory callbacks and installed local Unity public symbols. It
+recovers remove_free_block +22 followed by DynamicHeapAllocator::RemoveBlock
++121. Unwinding stops at an address with no loaded module. This is a partial
+native stack, not an identified managed/source caller or proof of a double free.
+No process was attached, restarted or closed for this analysis. The derived
+receipt omits raw memory and absolute stack addresses; its exact bytes are
+included in the hash inventory.
 
 ## Next discriminating check
 
