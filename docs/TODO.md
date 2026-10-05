@@ -199,6 +199,11 @@ Nothing was deleted or renumbered.
   failure preserved. [Evidence](reports/reliability-2026-10-05/custom-rules-presentation/README.md).
 - [ ] Rest of session focus: UI appearance/quality, network robustness and measured
   optimization. Preserve authored designs; no speculative compression or downgrades.
+- [ ] Latest reviewed Windows player quit exitsC0000005. Windows event identifies
+  UnityPlayer.dll RVA16f9c36, locally resolved to remove_free_block +22. Allocator
+  address alone does not prove the corrupting operation; no source workaround.
+  Owner screenshot player remains separate and must not be interrupted.
+  [Quit evidence](reports/reliability-2026-10-05/quit-access-violation/README.md).
 - [x] Preserve a body's prior or completed-match input freeze when closing its
   menu and stop describing completed matches as still playing. Original three
   causes fail/two controls pass; candidate five focused native cases pass.

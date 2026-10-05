@@ -1,0 +1,14 @@
+{
+  "local-symbol-resolution.json": {
+    "bytes": 962,
+    "sha256": "b385f20c1d382f8c71b212ce16ee63e7c567cd7f498c00deb4cc24b4da693733"
+  },
+  "terminal-player-receipt.json": {
+    "bytes": 1214,
+    "sha256": "6a26070f913dfc04a8af0490a3f0665647dd72e5aaaed569a80657fcfdb72467"
+  },
+  "windows-application-error.json": {
+    "bytes": 851,
+    "sha256": "2ba4f8191e89df986a05a56124a1ef02ed063ca5990d767ce8e4c9b4ec43d6d2"
+  }
+}

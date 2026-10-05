@@ -32,8 +32,8 @@ physical Escape stopped Computer Use. Parent restores preferences after exit.
 
 HUD source40dbb7ca7 is published under M4. Owner wants this PC for personal
 use: leave mouse, keyboard, focus and windows alone until owner resumes control.
-Current local inventory has no Unity/player/Python jobs. Laptop acknowledged
-this restriction and continues its own replay lifecycle native qualification.
+Laptop acknowledged this restriction. The requested screenshot player and its
+restoration parent remain owned by the user's active use; no PC test launches.
 Continue source investigation; QA Relay timeout/host kick remains unresolved.
 
 Latest incoming f69a64a03/0d11a2716 integrated normally, M4 authors verified;
@@ -48,7 +48,10 @@ terminal, actual HUD image inspected. No source work overlaps laptop replay lane
 Combined1d401 Windows full16584/classification67631 terminal0,258files/
 2691131135B, Runtime883b2812a691351178ee2c94f05fbe22a0e8e8655f5e3c1c2b42a42e95d3d7b7.
 Actualplayer19352 updatedRules pages verified, but normalquit exitC0000005 at
-UnityPlayer.dll RVA16f9c36; retained event/log and unresolved symbol lookup.
+UnityPlayer.dll RVA16f9c36; corrected local symbol invocation resolves
+remove_free_block +22. Identical engine-module hash to earlier symbolized build;
+allocator address does not establish the corrupting call stack or source cause.
+Retained event/terminal/symbol receipts: reports/reliability-2026-10-05/quit-access-violation.
 Parent35902 terminal/profiles+input restored/runtime-exe unchanged. Do not claim
 cleanexit0. Owner complained of ChatGPT close attempts via laptop: all further
 close/AltF4 actions are STOPPED pending actual target/focus audit. Never close
